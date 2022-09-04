@@ -829,11 +829,11 @@ public class OrtakIslemler implements Serializable {
 			StringBuffer kgs = new StringBuffer(), pdks = new StringBuffer();
 			for (Iterator iterator = idler.iterator(); iterator.hasNext();) {
 				String string = (String) iterator.next();
-				if (string.indexOf("A") == 0) {
+				if (string.indexOf(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS) == 0) {
 					if (pdks.length() > 0)
 						pdks.append(", ");
 					pdks.append(string.substring(1));
-				} else if (string.indexOf("K") == 0) {
+				} else if (string.indexOf(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS) == 0) {
 					if (kgs.length() > 0)
 						kgs.append(", ");
 					kgs.append(string.substring(1));

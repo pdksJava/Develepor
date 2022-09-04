@@ -1345,7 +1345,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 				List<HareketKGS> list = null;
 				try {
-					list = ortakIslemler.getHareketIdBilgileri(null, "A" + abhCikisId, HareketKGS.class, session);
+					list = ortakIslemler.getHareketIdBilgileri(null, HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS + abhCikisId, HareketKGS.class, session);
 				} catch (Exception e) {
 					list = new ArrayList<HareketKGS>();
 					e.printStackTrace();
