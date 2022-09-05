@@ -463,9 +463,10 @@
 			</f:facet>
 			<h:form>
 				<f:verbatim> #{fazlaMesaiHesaplaHome.tmpAlan}</f:verbatim>
+				<br />
 				<ui:fragment rendered="#{not empty fazlaMesaiHesaplaHome.hareketler}">
 					<a4j:commandButton value="Hareket Aktar" action="#{fazlaMesaiHesaplaHome.ciftBolumCalisanHareketGuncelle()}"
-						onclick="#{rich:component('wait')}.show()" reRender="hareketTables" rendered="#{fazlaMesaiHesaplaHome.fazlaMesaiOnayDurum}"
+						onclick="#{rich:component('wait')}.show()" reRender="hareketTables"
 						oncomplete="#{rich:component('wait')}.hide();if (#{fazlaMesaiHesaplaHome.tmpAlan==''})   #{rich:component('editIzinliHareketPanel')}.hide() ;" />
 					<a4j:outputPanel id="onayList">
 						<rich:dataTable rowClasses="acik,koyu" value="#{fazlaMesaiHesaplaHome.hareketler}" var="hareket" rows="20" rowKeyVar="row">

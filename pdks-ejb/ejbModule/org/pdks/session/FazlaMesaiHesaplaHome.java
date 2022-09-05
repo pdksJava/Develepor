@@ -2085,13 +2085,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	}
 
 	/**
-	 * @param seciliPersonel
+	 * @param puantaj
 	 * @return
 	 */
-	public String getAylikPuantajPersonelHTML(Personel seciliPersonel) {
+	public String ciftAylikPuantajPersonelHTML(AylikPuantaj puantaj) {
 		String str = "";
-		if (seciliPersonel != null) {
-			Personel islemPersonel = ciftBolumCalisanMap.get(seciliPersonel.getId());
+		if (puantaj != null) {
+			Personel islemPersonel = ciftBolumCalisanMap.get(puantaj.getPdksPersonel().getId());
 			if (islemPersonel != null)
 				str = getPersonelAciklamaHTML(islemPersonel);
 		}
@@ -2110,7 +2110,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			str += "<tr><td><b>" + bolumAciklama + "</b></td><td><b> : </b>" + personel.getEkSaha3().getAciklama() + "</td></tr>";
 			str += "<tr><td><b>" + ortakIslemler.personelNoAciklama() + "</b></td><td><b> : </b>" + personel.getPdksSicilNo() + "</td></tr>";
 			str += "<tr><td><b>Adı Soyadı</b></td><td><b> : </b>" + personel.getAdSoyad() + "</td></tr>";
-			str += "</TABLE></br>";
+			str += "</TABLE>";
 		}
 		return str;
 	}
@@ -2150,8 +2150,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			Personel islemPersonel = ciftBolumCalisanMap.get(seciliPersonel.getId());
 			personelView = new PersonelView();
 			personelView.setId(islemPersonel.getPersonelKGS().getId());
-			String seciliAciklama = islemPersonel.getPdksSicilNo() + " - " + islemPersonel.getAdSoyad() + " aktarım için iptal edildi.";
-			islemAciklama = seciliPersonel.getPdksSicilNo() + " - " + seciliPersonel.getAdSoyad() + " hareketi aktarıldı.";
+			String seciliAciklama = seciliPersonel.getPdksSicilNo() + " - " + seciliPersonel.getAdSoyad() + " aktarım için iptal edildi.";
+			islemAciklama = islemPersonel.getPdksSicilNo() + " - " + islemPersonel.getAdSoyad() + " hareket aktarımı yapıldı.";
 			long pdksId = 0l;
 			for (HareketKGS hareketKGS : hareketler) {
 				if (hareketKGS.isCheckBoxDurum()) {
@@ -2165,13 +2165,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								kapiView = manuelCikis;
 						}
 					}
-					Long id = pdksEntityController.hareketEkleReturn(kapiView, personelView, hareketKGS.getOrjinalZaman(), authenticatedUser, nedenId, seciliAciklama, session);
+					Long id = pdksEntityController.hareketEkleReturn(kapiView, personelView, hareketKGS.getOrjinalZaman(), authenticatedUser, nedenId, islemAciklama, session);
 					if (id != null)
-						pdksEntityController.hareketSil(Long.parseLong(hareketKGS.getId().substring(1)), pdksId, authenticatedUser, nedenId, islemAciklama, session);
+						pdksEntityController.hareketSil(Long.parseLong(hareketKGS.getId().substring(1)), pdksId, authenticatedUser, nedenId, seciliAciklama, session);
 				}
 			}
 		}
 		if (personelView != null) {
+			session.flush();
 			PdksUtil.addMessageInfo(islemAciklama);
 			fillPersonelDenklestirmeList();
 		} else
@@ -2252,7 +2253,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						for (Iterator iterator = alanList.iterator(); iterator.hasNext();) {
 							Object[] objects = (Object[]) iterator.next();
 							try {
-								Long perId = ((BigDecimal) objects[0]).longValue(), perNewId = ((BigDecimal) objects[2]).longValue();
+								Long perId = ((BigDecimal) objects[0]).longValue(), perKGSNewId = ((BigDecimal) objects[1]).longValue(), perNewId = ((BigDecimal) objects[2]).longValue();
 								if (puantajMap.containsKey(perId)) {
 									AylikPuantaj aylikPuantaj = puantajMap.get(perId);
 									TreeMap<String, List<HareketKGS>> hareketMap = new TreeMap<String, List<HareketKGS>>();
@@ -2275,7 +2276,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									}
 									if (!hareketMap.isEmpty()) {
 										List<Long> perIdList = new ArrayList<Long>();
-										perIdList.add(perNewId);
+										perIdList.add(perKGSNewId);
 										List<HareketKGS> list = ortakIslemler.getHareketBilgileri(null, perIdList, aylikPuantajDefault.getIlkGun(), aylikPuantajDefault.getSonGun(), HareketKGS.class, session);
 										for (Iterator iterator2 = list.iterator(); iterator2.hasNext();) {
 											HareketKGS hareketKGS = (HareketKGS) iterator2.next();

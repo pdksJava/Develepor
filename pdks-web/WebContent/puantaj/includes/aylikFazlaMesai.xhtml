@@ -187,14 +187,14 @@
 							<ui:fragment rendered="#{not empty fazlaMesaiHesaplaHome.ciftBolumCalisanMap}">
 								<td class="#{aylikPuantaj.trClass}" style="width: 20px" align="center"><ui:fragment
 										rendered="#{fazlaMesaiHesaplaHome.ciftBolumCalisan(aylikPuantaj)}">
-										<a4j:commandLink id="editCiftLink#{aylikPuantaj.pdksPersonel.sicilNo}" ajaxSingle="true"
-											action="#{fazlaMesaiHesaplaHome.ciftBolumCalisanGetir(aylikPuantaj)}" onclick="#{rich:component('wait')}.show()"
-											oncomplete="#{rich:component('wait')}.hide();#{rich:component('editIzinliHareketPanel')}.show()" reRender="editIzinliHareketPanel">
-											<h:graphicImage value="/img/middle.gif" style="border:0" />
-										</a4j:commandLink>
-										<rich:toolTip for="editCiftLink#{aylikPuantaj.pdksPersonel.sicilNo}">
-											<f:verbatim>#{fazlaMesaiHesaplaHome.getAylikPuantajPersonelHTML(aylikPuantaj.pdksPersonel)}</f:verbatim>
-										</rich:toolTip>
+										<DIV id="editCiftLink#{aylikPuantaj.pdksPersonel.sicilNo}">
+											<a4j:commandLink ajaxSingle="true" action="#{fazlaMesaiHesaplaHome.ciftBolumCalisanGetir(aylikPuantaj)}"
+												onclick="#{rich:component('wait')}.show()"
+												oncomplete="#{rich:component('wait')}.hide();#{rich:component('editIzinliHareketPanel')}.show()" reRender="editIzinliHareketPanel">
+												<h:graphicImage value="/img/middle.gif" style="border:0" />
+											</a4j:commandLink>
+										</DIV>
+
 									</ui:fragment></td>
 							</ui:fragment>
 							<td class="#{aylikPuantaj.trClass}" style="width: 20px" align="center">
