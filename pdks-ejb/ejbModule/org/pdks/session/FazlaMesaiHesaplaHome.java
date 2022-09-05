@@ -2044,8 +2044,19 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			Date toDay = cal.getTime();
 			if (toDay.after(tarih) && (toDay.before(denklestirmeAy.getOtomatikOnayIKTarih())) || (authenticatedUser.isTestLogin() && toDay.before(tarihLast))) {
 				onayla = Boolean.FALSE;
+				// TODO
 				for (AylikPuantaj puantaj : puantajList) {
-					puantaj.setKaydet(puantaj.getPersonelDenklestirmeAylik().getDurum());
+					PersonelDenklestirme pd = puantaj.getPersonelDenklestirmeAylik();
+					boolean kaydet = pd.getDurum();
+					if (kaydet) {
+						kaydet = (!pd.isKapandi(authenticatedUser) && (PdksUtil.isDoubleDegisti(pd.getAksamVardiyaSaatSayisi(), puantaj.getAksamVardiyaSaatSayisi()) || PdksUtil.isDoubleDegisti(pd.getAksamVardiyaSayisi(), (double) puantaj.getAksamVardiyaSayisi()) || PdksUtil.isDoubleDegisti(
+								pd.getDevredenSure(), puantaj.getDevredenSure())))
+								|| PdksUtil.isDoubleDegisti(pd.getHaftaCalismaSuresi(), puantaj.getHaftaCalismaSuresi())
+								|| PdksUtil.isDoubleDegisti(pd.getResmiTatilSure(), puantaj.getResmiTatilToplami())
+								|| PdksUtil.isDoubleDegisti(pd.getOdenenSure(), puantaj.getFazlaMesaiSure())
+								|| PdksUtil.isDoubleDegisti(pd.getKesilenSure(), puantaj.getKesilenSure());
+					}
+					puantaj.setKaydet(kaydet);
 					if (puantaj.isKaydet())
 						onayla = hataYok;
 				}

@@ -983,6 +983,20 @@ public class PdksUtil implements Serializable {
 	}
 
 	/**
+	 * @param oldId
+	 * @param newId
+	 * @return
+	 */
+	public static boolean isDoubleDegisti(Double oldId, Double newId) {
+		if (oldId == null)
+			oldId = 0.0d;
+		if (newId == null)
+			newId = 0.0d;
+		boolean degisti = newId.doubleValue() != oldId.doubleValue();
+		return degisti;
+	}
+
+	/**
 	 * @param oldBoolean
 	 * @param newBoolean
 	 * @return
