@@ -2142,15 +2142,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							manuelCikis = kapiView;
 					}
 				}
-				String ciftBolumCalisanKartNedenKoduStr = ortakIslemler.getParameterKey("ciftBolumCalisanKartNedenKodu");
-				if (!ciftBolumCalisanKartNedenKoduStr.equals("")) {
-					HashMap fields = new HashMap();
-					fields.put("tipi", Tanim.TIPI_HAREKET_NEDEN);
-					fields.put("kodu", ciftBolumCalisanKartNedenKoduStr);
-					if (session != null)
-						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					ciftBolumCalisanKartNedenTanim = (Tanim) pdksEntityController.getObjectByInnerObject(fields, Tanim.class);
-				}
+				ciftBolumCalisanKartNedenTanim = ciftBolumTanimGetir();
 				break;
 			}
 		}
@@ -2232,15 +2224,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			List<String> ciftBolumList = PdksUtil.getListByString(ciftBolumCalisanStr, null);
 			Tanim ciftBolumCalisanKartNedenTanim = null;
 			if (ciftBolumList.contains(seciliBolum.getErpKodu())) {
-				String ciftBolumCalisanKartNedenKoduStr = ortakIslemler.getParameterKey("ciftBolumCalisanKartNedenKodu");
-				if (!ciftBolumCalisanKartNedenKoduStr.equals("")) {
-					HashMap fields = new HashMap();
-					fields.put("tipi", Tanim.TIPI_HAREKET_NEDEN);
-					fields.put("kodu", ciftBolumCalisanKartNedenKoduStr);
-					if (session != null)
-						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					ciftBolumCalisanKartNedenTanim = (Tanim) pdksEntityController.getObjectByInnerObject(fields, Tanim.class);
-				}
+				ciftBolumCalisanKartNedenTanim = ciftBolumTanimGetir();
 				if (ciftBolumCalisanKartNedenTanim != null) {
 					TreeMap<Long, AylikPuantaj> puantajMap = new TreeMap<Long, AylikPuantaj>();
 					for (Iterator iterator = puantajList.iterator(); iterator.hasNext();) {
@@ -2338,6 +2322,30 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		return vGunList;
 	}
 
+	/**
+ 	 * @return
+	 */
+	private Tanim ciftBolumTanimGetir() {
+		Tanim tanim = null;
+		String kodu = ortakIslemler.getParameterKey("ciftBolumCalisanKartNedenKodu");
+		if (kodu.equals("") && adminRole)
+			kodu = "cbc";
+		if (!kodu.equals("")) {
+			HashMap fields = new HashMap();
+			fields.put("tipi", Tanim.TIPI_HAREKET_NEDEN);
+			fields.put("kodu", kodu);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			tanim = (Tanim) pdksEntityController.getObjectByInnerObject(fields, Tanim.class);
+			if (tanim != null && !tanim.getDurum())
+				tanim = null;
+		}
+		return tanim;
+	}
+
+	/**
+	 * 
+	 */
 	private void saveLastParameter() {
 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
 		lastMap.put("yil", "" + yil);
