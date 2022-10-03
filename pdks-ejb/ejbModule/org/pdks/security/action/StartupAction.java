@@ -373,6 +373,18 @@ public class StartupAction implements Serializable {
 			}
 			Vardiya.setVardiyaKontrolTarih(vardiyaKontrolTarih);
 		}
+		Vardiya.setVardiyaAySonuKontrolTarih(null);
+		if (parameterMap.containsKey("vardiyaAySonuKontrolTarih")) {
+			String dateStr = parameterMap.get("vardiyaAySonuKontrolTarih");
+			Date vardiyaAySonuKontrolTarih = null;
+			try {
+				vardiyaAySonuKontrolTarih = PdksUtil.convertToJavaDate(dateStr, "yyyy-MM-dd");
+			} catch (Exception e) {
+				vardiyaAySonuKontrolTarih = null;
+			}
+			Vardiya.setVardiyaAySonuKontrolTarih(vardiyaAySonuKontrolTarih);
+		}
+		
 		if (parameterMap.containsKey("vardiyaKontrolTarih3")) {
 			String dateStr = parameterMap.get("vardiyaKontrolTarih3");
 			Date vardiyaKontrolTarih3 = null;
