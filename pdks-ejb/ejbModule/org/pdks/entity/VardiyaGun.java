@@ -1167,7 +1167,7 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public boolean isCalismayaBaslamadi() {
-		boolean iseBaslamadi = PdksUtil.tarihKarsilastirNumeric(personel.getIseBaslamaTarihi(), vardiyaDate) == 1;
+		boolean iseBaslamadi = PdksUtil.tarihKarsilastirNumeric(personel.getIseGirisTarihi(), vardiyaDate) == 1;
 		return iseBaslamadi;
 	}
 

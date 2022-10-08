@@ -682,7 +682,10 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 				}
 
 				parametreMap2.put("sskCikisTarihi>=", date);
-				parametreMap2.put("iseBaslamaTarihi<=", date);
+				if (!Personel.getGrubaGirisTarihiAlanAdi().equalsIgnoreCase(Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI))
+					parametreMap2.put("iseBaslamaTarihi<=", date);
+				else
+					parametreMap2.put("grubaGirisTarihi<=", date);
 				// parametreMap2.put("pdks=", Boolean.TRUE);
 				parametreMap2.put("id", idler);
 				if (session != null)

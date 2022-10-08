@@ -502,6 +502,7 @@ public class Vardiya extends BaseObject {
 					if (pdksVardiyaGun.getSonrakiVardiyaGun() != null && pdksVardiyaGun.getSonrakiVardiyaGun().getVardiya().isCalisma())
 						dakika = pdksVardiyaGun.getSonrakiVardiyaGun().getVardiya().getGirisErkenToleransDakika();
 					cal.set(Calendar.MINUTE, -dakika);
+					cal.set(Calendar.MILLISECOND, -100);
 					vardiyaFazlaMesaiBitZaman = cal.getTime();
 					vardiyaCalisma.setVardiyaFazlaMesaiBitZaman(vardiyaFazlaMesaiBitZaman);
 					if (pdksVardiyaGun.getSonrakiVardiya() != null) {

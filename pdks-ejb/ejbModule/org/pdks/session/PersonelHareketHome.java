@@ -986,7 +986,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 		for (Iterator<Personel> iterator = list.iterator(); iterator.hasNext();) {
 			Personel pdksPersonel = iterator.next();
 			pdksPersonel.setCheckBoxDurum(Boolean.TRUE);
-			if (!pdksPersonel.getPdks() || PdksUtil.tarihKarsilastirNumeric(pdksPersonel.getIseBaslamaTarihi(), tarih) == 1 || PdksUtil.tarihKarsilastirNumeric(tarih, pdksPersonel.getSonCalismaTarihi()) == 1)
+			if (!pdksPersonel.getPdks() || PdksUtil.tarihKarsilastirNumeric(pdksPersonel.getIseGirisTarihi(), tarih) == 1 || PdksUtil.tarihKarsilastirNumeric(tarih, pdksPersonel.getSonCalismaTarihi()) == 1)
 				pdksPersonel.setCheckBoxDurum(Boolean.FALSE);
 
 		}

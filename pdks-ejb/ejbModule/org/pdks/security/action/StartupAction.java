@@ -33,6 +33,7 @@ import org.pdks.entity.LDAPDomain;
 import org.pdks.entity.MenuItem;
 import org.pdks.entity.Notice;
 import org.pdks.entity.Parameter;
+import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.SkinBean;
@@ -374,6 +375,12 @@ public class StartupAction implements Serializable {
 			Vardiya.setVardiyaKontrolTarih(vardiyaKontrolTarih);
 		}
 		Vardiya.setVardiyaAySonuKontrolTarih(null);
+		String grubaGirisTarihiAlanAdi = null;
+		if (parameterMap.containsKey("grubaGirisTarihiAlanAdi"))
+			grubaGirisTarihiAlanAdi = parameterMap.get("grubaGirisTarihiAlanAdi");
+		if (grubaGirisTarihiAlanAdi == null || !(grubaGirisTarihiAlanAdi.trim().equalsIgnoreCase(Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI) || grubaGirisTarihiAlanAdi.trim().equalsIgnoreCase(Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI)))
+			grubaGirisTarihiAlanAdi = Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI;
+		Personel.setGrubaGirisTarihiAlanAdi(grubaGirisTarihiAlanAdi);
 		if (parameterMap.containsKey("vardiyaAySonuKontrolTarih")) {
 			String dateStr = parameterMap.get("vardiyaAySonuKontrolTarih");
 			Date vardiyaAySonuKontrolTarih = null;
@@ -384,7 +391,7 @@ public class StartupAction implements Serializable {
 			}
 			Vardiya.setVardiyaAySonuKontrolTarih(vardiyaAySonuKontrolTarih);
 		}
-		
+
 		if (parameterMap.containsKey("vardiyaKontrolTarih3")) {
 			String dateStr = parameterMap.get("vardiyaKontrolTarih3");
 			Date vardiyaKontrolTarih3 = null;
