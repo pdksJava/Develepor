@@ -1601,6 +1601,35 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param session
+	 * @return
+	 */
+	public boolean getGuncellemeDurum(Session session) {
+		boolean durum = false;
+		if (session != null) {
+			StringBuffer sb = new StringBuffer();
+			HashMap map = new HashMap();
+			try {
+				sb.append("select dbo.FN_PDKS_UPDATE_DURUM() as DURUM");
+				if (session != null)
+					map.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List list = pdksEntityController.getObjectBySQLList(sb, map, null);
+				if (list != null && !list.isEmpty()) {
+					String str = String.valueOf((Byte) list.get(0));
+					durum = str.equals("1");
+				}
+				list = null;
+			} catch (Exception e) {
+
+			}
+			map = null;
+			sb = null;
+		}
+		return durum;
+
+	}
+
+	/**
 	 * @param user
 	 * @param departmanId
 	 * @param sirket
