@@ -91,6 +91,7 @@ import org.pdks.entity.KatSayiTipi;
 import org.pdks.entity.Liste;
 import org.pdks.entity.MailGrubu;
 import org.pdks.entity.MenuItem;
+import org.pdks.entity.Notice;
 import org.pdks.entity.Parameter;
 import org.pdks.entity.PdksPersonelView;
 import org.pdks.entity.Personel;
@@ -209,6 +210,30 @@ public class OrtakIslemler implements Serializable {
 
 	}
 
+	/**
+	 * @param name
+	 * @param active
+	 * @param session
+	 * @return
+	 */
+	public Notice getNotice(String name, Boolean active, Session session) {
+		HashMap parametreMap = new HashMap();
+		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+		Notice notice = null;
+		try {
+			parametreMap.put("name", name);
+			if (active != null)
+				parametreMap.put("active", active);
+			notice = (Notice) pdksEntityController.getObjectByInnerObject(parametreMap, Notice.class);
+		} catch (Exception e) {
+
+		}
+		return notice;
+	}
+
+	/**
+	 * @return
+	 */
 	public String getStringHelpDesk() {
 		String str = null;
 		File file = new File("/opt/sertifika/websrv.txt");
