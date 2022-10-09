@@ -31,6 +31,7 @@ import org.pdks.entity.AccountPermission;
 import org.pdks.entity.AylikPuantaj;
 import org.pdks.entity.LDAPDomain;
 import org.pdks.entity.MenuItem;
+import org.pdks.entity.NoteTipi;
 import org.pdks.entity.Notice;
 import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
@@ -213,7 +214,7 @@ public class StartupAction implements Serializable {
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
-			parametreMap.put("name", "anaSayfa");
+			parametreMap.put("name", NoteTipi.ANA_SAYFA.value());
 			parametreMap.put("active", Boolean.TRUE);
 			List<Notice> noticeList = pdksEntityController.getObjectByInnerObjectList(parametreMap, Notice.class);
 			Notice notice = null;
