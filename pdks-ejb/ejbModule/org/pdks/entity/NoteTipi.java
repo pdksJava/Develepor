@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
 public enum NoteTipi {
 	@XmlEnumValue(value = "anaSayfa")
 	ANA_SAYFA("anaSayfa"), @XmlEnumValue(value = "iseGelmeDurum")
-	ISE_GELME_DURUM("iseGelmeDurum");
+	MAIL_CEVAPLAMAMA("mailCevaplamama");
 
 	private final String value;
 

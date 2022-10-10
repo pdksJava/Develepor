@@ -564,7 +564,11 @@ public class PersonelERPGuncelleme {
 							if (!deleteMailGrubuList.isEmpty()) {
 								session.saveOrUpdate(user);
 								for (MailGrubu mailGrubu : deleteMailGrubuList) {
-									session.delete(mailGrubu);
+									try {
+										session.delete(entityManager == null || entityManager.contains(mailGrubu) ? mailGrubu : entityManager.merge(mailGrubu));
+									} catch (Exception e) {
+										logger.error(e);
+									}
 								}
 							}
 							session.flush();

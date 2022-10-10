@@ -69,6 +69,8 @@ import org.pdks.entity.Dosya;
 import org.pdks.entity.FazlaMesaiTalep;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.IzinTipi;
+import org.pdks.entity.NoteTipi;
+import org.pdks.entity.Notice;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDenklestirmeDinamikAlan;
@@ -260,6 +262,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	private List<Vardiya> izinTipiVardiyaList;
 	private TreeMap<String, TreeMap<String, List<VardiyaGun>>> izinTipiPersonelVardiyaMap;
 	private AramaSecenekleri aramaSecenekleri = null;
+	private Notice uyariNot;
 	private Session session;
 
 	@Override
@@ -732,6 +735,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @return
 	 */
 	public String mesaiMudurOnayCevabi(boolean onayDurum) {
+		uyariNot = ortakIslemler.getNotice(NoteTipi.MAIL_CEVAPLAMAMA.value(), Boolean.TRUE, session);
+
 		FazlaMesaiTalep fmt = islemFazlaMesaiTalep;
 		if (toList == null)
 			toList = new ArrayList<User>();
@@ -777,6 +782,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (fmt.getIptalAciklama() != null && fmt.getIptalAciklama().trim().length() > 0) {
 			sb.append("<p><b>İptal açıklama : " + "</b>" + fmt.getIptalAciklama().trim() + "</p>");
 		}
+		if (uyariNot != null)
+			sb.append(uyariNot.getValue());
 		mailIcerik = PdksUtil.replaceAll(sb.toString(), "  ", " ");
 
 		MailStatu mailSatu = null;
@@ -2934,7 +2941,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							}
 
 							else if (pdksVardiyaGorev.getId() != null) {
-								session.delete(pdksVardiyaGorev);
+								try {
+									session.delete(entityManager == null || entityManager.contains(pdksVardiyaGorev) ? pdksVardiyaGorev : entityManager.merge(pdksVardiyaGorev));
+								} catch (Exception e) {
+									logger.error(e);
+								}
 								pdksVardiyaGorev.setId(null);
 								flush = Boolean.TRUE;
 							}
@@ -4765,7 +4776,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					pdksVardiyaGorev.setVardiyaGun(pdksVardiyaGun);
 				} else if (pdksVardiyaGorev.getYeniGorevYeri() != null && idList != null && !idList.isEmpty() && !helpPersonel(pdksVardiyaGun.getPersonel()) && idList.contains(pdksVardiyaGorev.getYeniGorevYeri().getId())) {
 					if (pdksVardiyaGorev.isOzelDurumYok()) {
-						session.delete(pdksVardiyaGorev);
+						try {
+							session.delete(entityManager == null || entityManager.contains(pdksVardiyaGorev) ? pdksVardiyaGorev : entityManager.merge(pdksVardiyaGorev));
+						} catch (Exception e) {
+							logger.error(e);
+						}
 						pdksVardiyaGorev = null;
 						pdksVardiyaGorev = new VardiyaGorev();
 						pdksVardiyaGorev.setVardiyaGun(pdksVardiyaGun);
@@ -5023,12 +5038,20 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					} else {
 						if (pdksVardiyaGun.getId() != null) {
 							if (pdksVardiyaGun.getVardiyaGorev().getId() != null) {
-								session.delete(pdksVardiyaGun.getVardiyaGorev());
+								try {
+									VardiyaGorev pdksVardiyaGorev = pdksVardiyaGun.getVardiyaGorev();
+									session.delete(entityManager == null || entityManager.contains(pdksVardiyaGorev) ? pdksVardiyaGorev : entityManager.merge(pdksVardiyaGorev));
+								} catch (Exception e) {
+									logger.error(e);
+								}
 								pdksVardiyaGun.getVardiyaGorev().setId(null);
 								pdksVardiyaGun.getVardiyaGorev().setYeniGorevYeri(null);
 							}
-
-							session.delete(pdksVardiyaGun);
+							try {
+								session.delete(entityManager == null || entityManager.contains(pdksVardiyaGun) ? pdksVardiyaGun : entityManager.merge(pdksVardiyaGun));
+							} catch (Exception e) {
+								logger.error(e);
+							}
 							flush = true;
 						}
 
@@ -5081,7 +5104,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					calisiyor = planTarih2 >= iseBasTarih && istenAyrilmaTarih >= planTarih1;
 					if (!calisiyor) {
 						if (pdksVardiyaHafta.getId() != null) {
-							session.delete(pdksVardiyaHafta);
+							try {
+								session.delete(entityManager == null || entityManager.contains(pdksVardiyaHafta) ? pdksVardiyaHafta : entityManager.merge(pdksVardiyaHafta));
+							} catch (Exception e) {
+								logger.error(e);
+							}
 							pdksVardiyaHafta.setId(null);
 							flush = true;
 						}
@@ -7780,7 +7807,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									ex.printStackTrace();
 								}
 							} else if (pdksVardiyaGun.getId() != null) {
-								session.delete(pdksVardiyaGun);
+								try {
+									session.delete(entityManager == null || entityManager.contains(pdksVardiyaGun) ? pdksVardiyaGun : entityManager.merge(pdksVardiyaGun));
+								} catch (Exception e) {
+									logger.error(e);
+								}
 							}
 						}
 
@@ -8310,7 +8341,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			boolean calisiyor = planTarih2 >= iseBasTarih && istenAyrilmaTarih >= planTarih1;
 			if (!calisiyor) {
 				if (pdksVardiyaHafta.getId() != null) {
-					session.delete(pdksVardiyaHafta);
+ 					try {
+						session.delete(entityManager == null || entityManager.contains(pdksVardiyaHafta) ? pdksVardiyaHafta : entityManager.merge(pdksVardiyaHafta));
+					} catch (Exception e) {
+						logger.error(e);
+					}
 					pdksVardiyaHafta.setId(null);
 					fiush = true;
 				}

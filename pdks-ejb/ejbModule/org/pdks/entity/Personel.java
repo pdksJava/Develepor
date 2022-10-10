@@ -1000,7 +1000,7 @@ public class Personel extends BaseObject {
 
 	@Transient
 	public Date getIseGirisTarihi() {
-		Date tarih = grubaGirisTarihiAlanAdi != null && grubaGirisTarihi != null && iseBaslamaTarihi != null && grubaGirisTarihi.before(iseBaslamaTarihi) ? grubaGirisTarihi : iseBaslamaTarihi;
+		Date tarih = !grubaGirisTarihiAlanAdi.equals(COLUMN_NAME_ISE_BASLAMA_TARIHI) && grubaGirisTarihi != null && iseBaslamaTarihi != null && grubaGirisTarihi.before(iseBaslamaTarihi) ? grubaGirisTarihi : iseBaslamaTarihi;
 		return tarih;
 	}
 

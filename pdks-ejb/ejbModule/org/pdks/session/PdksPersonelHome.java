@@ -779,16 +779,22 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							yetkiliTesisler = new ArrayList<UserTesis>(tesisler.values());
 							for (Iterator iterator = yetkiliTesisler.iterator(); iterator.hasNext();) {
 								UserTesis userTesis = (UserTesis) iterator.next();
-								session.delete(userTesis);
-
+ 								try {
+									session.delete(entityManager == null || entityManager.contains(userTesis) ? userTesis : entityManager.merge(userTesis));
+								} catch (Exception e) {
+									logger.error(e);
+								}
 							}
 						}
 						if (roller != null && !roller.isEmpty()) {
 							yetkiliRoller = new ArrayList<UserRoles>(roller.values());
 							for (Iterator iterator = yetkiliRoller.iterator(); iterator.hasNext();) {
 								UserRoles userRoles = (UserRoles) iterator.next();
-								session.delete(userRoles);
-
+ 								try {
+									session.delete(entityManager == null || entityManager.contains(userRoles) ? userRoles : entityManager.merge(userRoles));
+								} catch (Exception e) {
+									logger.error(e);
+								}
 							}
 						}
 						tesisler = null;

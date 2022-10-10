@@ -82,10 +82,18 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<UserMenuItemTime> list = pdksEntityController.getObjectByInnerObjectList(fields, UserMenuItemTime.class);
 		for (UserMenuItemTime userMenuItemTime : list) {
-			session.delete(userMenuItemTime);
+ 			try {
+				session.delete(entityManager == null || entityManager.contains(userMenuItemTime) ? userMenuItemTime : entityManager.merge(userMenuItemTime));
+			} catch (Exception e) {
+				logger.error(e);
+			}
 		}
-		session.delete(item);
-		session.flush();
+		try {
+			session.delete(entityManager == null || entityManager.contains(item) ? item : entityManager.merge(item));
+		} catch (Exception e) {
+			logger.error(e);
+		}
+ 		session.flush();
 		session.clear();
 		startupAction.fillMenuItemList(session);
 		return "";

@@ -1100,8 +1100,14 @@ public class OrtakIslemler implements Serializable {
 
 			}
 			session.saveOrUpdate(personel);
-			for (Object del : deleteList)
-				session.delete(del);
+			for (Object del : deleteList) {
+				try {
+					session.delete(entityManager == null || entityManager.contains(del) ? del : entityManager.merge(del));
+				} catch (Exception e) {
+					logger.error(e);
+				}
+			}
+
 			deleteList = null;
 		}
 	}
@@ -2142,13 +2148,7 @@ public class OrtakIslemler implements Serializable {
 	public void bakiyeIzinSil(PersonelIzin izin, Session session) {
 
 		try {
-			// if (izin.getHakEdisIzinler() != null)
-			// for (Iterator iterator = izin.getHakEdisIzinler().iterator();
-			// iterator.hasNext();) {
-			// PersonelIzinDetay personelIzinDetay = (PersonelIzinDetay)
-			// iterator.next();
-			// session.delete(personelIzinDetay);
-			// }
+
 			if (authenticatedUser != null)
 				izin.setGuncelleyenUser(authenticatedUser);
 			izin.setGuncellemeTarihi(new Date());
@@ -11745,7 +11745,7 @@ public class OrtakIslemler implements Serializable {
 								try {
 									if (personelFazlaMesai.getFazlaMesaiSaati() == null && personelFazlaMesai.getOnayDurum() == PersonelFazlaMesai.DURUM_ONAYLANDI) {
 										try {
-											session.delete(personelFazlaMesai);
+											session.delete(entityManager == null || entityManager.contains(personelFazlaMesai) ? personelFazlaMesai : entityManager.merge(personelFazlaMesai));
 											flush = Boolean.TRUE;
 										} catch (Exception e) {
 										}

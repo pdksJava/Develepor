@@ -521,7 +521,7 @@ public class IseGelmemeUyari implements Serializable {
 							}
 
 							if (kayitVar && !yoneticiMap.isEmpty()) {
-								uyariNot = ortakIslemler.getNotice(NoteTipi.ISE_GELME_DURUM.value(), Boolean.TRUE, session);
+								uyariNot = ortakIslemler.getNotice(NoteTipi.MAIL_CEVAPLAMAMA.value(), Boolean.TRUE, session);
 								ikMailList.clear();
 								fillEkSahaTanim(session);
 								hareketPersonelMap = null;

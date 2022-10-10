@@ -599,8 +599,14 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 			deleteIzinler.addAll(personelBakiyeIzinler);
 			for (Iterator iterator = deleteIzinler.iterator(); iterator.hasNext();) {
 				Object personelIzinVeri = (Object) iterator.next();
-				if (personelIzinVeri != null)
-					session.delete(personelIzinVeri);// session.delete
+				if (personelIzinVeri != null) {
+					try {
+						session.delete(entityManager == null || entityManager.contains(personelIzinVeri) ? personelIzinVeri : entityManager.merge(personelIzinVeri));
+					} catch (Exception e) {
+						logger.error(e);
+					}
+				}
+				 
 
 			}
 			deleteIzinler = null;

@@ -3650,8 +3650,13 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 
 				session.saveOrUpdate(istirahat);
 
-			} else if (istirahat.getId() != null)
-				session.delete(istirahat);
+			} else if (istirahat.getId() != null) {
+				try {
+					session.delete(entityManager == null || entityManager.contains(istirahat) ? istirahat : entityManager.merge(istirahat));
+				} catch (Exception e) {
+					logger.error(e);
+				}
+			}
 			boolean dosyaYazildi = Boolean.FALSE;
 			if (personelIzin.getIzinTipi().getDosyaEkle() != null && personelIzin.getIzinTipi().getDosyaEkle()) {
 				Dosya dosya = izinDosya.getDosya();
@@ -3670,13 +3675,21 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				}
 
 			}
-			if (!dosyaYazildi && izinDosya.getId() != null)
-
-				session.delete(izinDosya);
+			if (!dosyaYazildi && izinDosya.getId() != null) {
+				try {
+					session.delete(entityManager == null || entityManager.contains(izinDosya) ? izinDosya : entityManager.merge(izinDosya));
+				} catch (Exception e) {
+					logger.error(e);
+				}
+			}
 
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				PersonelIzinDetay personelIzinDetay = (PersonelIzinDetay) iterator.next();
-				session.delete(personelIzinDetay);
+				try {
+					session.delete(entityManager == null || entityManager.contains(personelIzinDetay) ? personelIzinDetay : entityManager.merge(personelIzinDetay));
+				} catch (Exception e) {
+					logger.error(e);
+				}
 
 			}
 			if (isYeni || (personelIzin.getOnaylayanlar() == null || personelIzin.getOnaylayanlar().isEmpty()))

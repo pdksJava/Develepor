@@ -2807,7 +2807,6 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<PersonelIzin> izinler = pdksEntityController.getObjectByInnerObjectListInLogic(fields, PersonelIzin.class);
 
-
 			List<VardiyaGun> vardiyaGunList = ortakIslemler.getIskurVardiyalar(perIdler, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), session);
 
 			List<Long> idList = null;
@@ -2985,8 +2984,12 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 						}
 					} else {
 						if (pdksVardiyaGun.getIsKurVardiya() != null && pdksVardiyaGun.getIsKurVardiya().getId() != null) {
-
-							session.delete(pdksVardiyaGun.getIsKurVardiya());
+							IsKurVardiyaGun isKurVardiya = pdksVardiyaGun.getIsKurVardiya();
+							try {
+								session.delete(entityManager == null || entityManager.contains(isKurVardiya) ? isKurVardiya : entityManager.merge(isKurVardiya));
+							} catch (Exception e) {
+								logger.error(e);
+							}
 							flush = true;
 						}
 
@@ -4253,7 +4256,11 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 									ex.printStackTrace();
 								}
 							} else if (pdksVardiyaGun.getId() != null) {
-								session.delete(pdksVardiyaGun);
+			 					try {
+									session.delete(entityManager == null || entityManager.contains(pdksVardiyaGun) ? pdksVardiyaGun : entityManager.merge(pdksVardiyaGun));
+								} catch (Exception e) {
+									logger.error(e);
+								}
 							}
 						}
 
@@ -4751,7 +4758,11 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 			boolean calisiyor = planTarih2 >= iseBasTarih && istenAyrilmaTarih >= planTarih1;
 			if (!calisiyor) {
 				if (pdksVardiyaHafta.getId() != null) {
-					session.delete(pdksVardiyaHafta);
+					try {
+						session.delete(entityManager == null || entityManager.contains(pdksVardiyaHafta) ? pdksVardiyaHafta : entityManager.merge(pdksVardiyaHafta));
+					} catch (Exception e) {
+						logger.error(e);
+					}
 					pdksVardiyaHafta.setId(null);
 					fiush = true;
 				}

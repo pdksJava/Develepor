@@ -1391,8 +1391,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 				mesai.setGuncellemeTarihi(new Date());
 				mesai.setDurum(Boolean.FALSE);
 				session.saveOrUpdate(mesai);
-				// session.delete(mesai);
-				session.flush();
+ 				session.flush();
 				fillHareketMesaiList();
 			} catch (Exception e) {
 			}
