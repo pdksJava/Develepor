@@ -356,11 +356,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					}
 					for (Iterator iterator2 = kayitliCalismaModeliVardiyaList.iterator(); iterator2.hasNext();) {
 						CalismaModeliVardiya vyi = (CalismaModeliVardiya) iterator2.next();
- 						try {
-							session.delete(entityManager == null || entityManager.contains(vyi) ? vyi : entityManager.merge(vyi));
-						} catch (Exception e) {
-							logger.error(e);
-						}
+						ortakIslemler.deleteObject(session, entityManager,vyi );
 					}
 					kayitliCalismaModeliVardiyaList = null;
 				}
@@ -389,11 +385,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					}
 					for (Iterator iterator2 = list.iterator(); iterator2.hasNext();) {
 						VardiyaYemekIzin vyi = (VardiyaYemekIzin) iterator2.next();
- 						try {
-							session.delete(entityManager == null || entityManager.contains(vyi) ? vyi : entityManager.merge(vyi));
-						} catch (Exception e) {
-							logger.error(e);
-						}
+						ortakIslemler.deleteObject(session, entityManager,vyi );
 					}
 					list = null;
 				}

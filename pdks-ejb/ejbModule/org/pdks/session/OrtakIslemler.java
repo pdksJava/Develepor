@@ -1101,14 +1101,25 @@ public class OrtakIslemler implements Serializable {
 			}
 			session.saveOrUpdate(personel);
 			for (Object del : deleteList) {
-				try {
-					session.delete(entityManager == null || entityManager.contains(del) ? del : entityManager.merge(del));
-				} catch (Exception e) {
-					logger.error(e);
-				}
+				deleteObject(session, entityManager, del);
+
 			}
 
 			deleteList = null;
+		}
+	}
+
+	/**
+	 * @param session
+	 * @param em
+	 * @param del
+	 */
+	public void deleteObject(Session session, EntityManager em, Object del) {
+		try {
+			session.delete(em == null || em.contains(del) ? del : em.merge(del));
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
 		}
 	}
 
@@ -7827,7 +7838,6 @@ public class OrtakIslemler implements Serializable {
 		sb.append(" AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "<=P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 		sb.append(" WHERE V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " :tarihler AND  V." + VardiyaGun.COLUMN_NAME_PERSONEL + "=: " + personel.getId());
 		map.put("tarihler", tarihler);
-
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<VardiyaGun> vardiyaGunList = getDataByIdList(sb, map, VardiyaGun.TABLE_NAME, VardiyaGun.class);
@@ -7878,17 +7888,34 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public List<VardiyaGun> getPersonelIdVardiyalar(List<Long> personelIdler, Date basTarih, Date bitTarih, Session session) {
+		List vardiyaGunList = getAllPersonelIdVardiyalar(personelIdler, basTarih, bitTarih, Boolean.FALSE, session);
+
+		return vardiyaGunList;
+	}
+
+	/**
+	 * @param personelIdler
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param hepsi
+	 * @param session
+	 * @return
+	 */
+	public List<VardiyaGun> getAllPersonelIdVardiyalar(List<Long> personelIdler, Date basTarih, Date bitTarih, Boolean hepsi, Session session) {
+
 		HashMap map = new HashMap();
 		StringBuffer sb = new StringBuffer();
 		sb.append("SELECT V.* FROM " + VardiyaGun.TABLE_NAME + " V WITH(nolock) ");
 		sb.append(" INNER JOIN  " + Personel.TABLE_NAME + " P ON P." + Personel.COLUMN_NAME_ID + "=V." + VardiyaGun.COLUMN_NAME_PERSONEL);
-		sb.append(" AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ">=P." + Personel.getIseGirisTarihiColumn());
-		sb.append(" AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "<=P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
+		if (hepsi == null || hepsi.booleanValue() == false) {
+			sb.append(" AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ">=P." + Personel.getIseGirisTarihiColumn());
+			sb.append(" AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "<=P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
+		}
 		sb.append(" WHERE V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ">= :basTarih AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "<= :bitTarih AND V." + VardiyaGun.COLUMN_NAME_PERSONEL + ":pId ");
 		sb.append(" ORDER BY V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 		map.put("pId", personelIdler);
-		map.put("basTarih", basTarih);
-		map.put("bitTarih", bitTarih);
+		map.put("basTarih", PdksUtil.getDate(basTarih));
+		map.put("bitTarih", PdksUtil.getDate(bitTarih));
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<VardiyaGun> vardiyaGunList = pdksEntityController.getObjectBySQLList(sb, map, VardiyaGun.class);
@@ -7925,13 +7952,15 @@ public class OrtakIslemler implements Serializable {
 					tarihMap.put(key, tarih);
 				}
 				if (vardiyaGun.getVardiyaDate().after(tarih))
-					iterator.remove();
+					if (hepsi == null || hepsi.booleanValue() == false)
+						iterator.remove();
 
 			}
 			sureMap = null;
 		}
 		map = null;
 		return vardiyaGunList;
+
 	}
 
 	/**
@@ -11745,7 +11774,7 @@ public class OrtakIslemler implements Serializable {
 								try {
 									if (personelFazlaMesai.getFazlaMesaiSaati() == null && personelFazlaMesai.getOnayDurum() == PersonelFazlaMesai.DURUM_ONAYLANDI) {
 										try {
-											session.delete(entityManager == null || entityManager.contains(personelFazlaMesai) ? personelFazlaMesai : entityManager.merge(personelFazlaMesai));
+											deleteObject(session, entityManager, personelFazlaMesai);
 											flush = Boolean.TRUE;
 										} catch (Exception e) {
 										}

@@ -779,22 +779,17 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							yetkiliTesisler = new ArrayList<UserTesis>(tesisler.values());
 							for (Iterator iterator = yetkiliTesisler.iterator(); iterator.hasNext();) {
 								UserTesis userTesis = (UserTesis) iterator.next();
- 								try {
-									session.delete(entityManager == null || entityManager.contains(userTesis) ? userTesis : entityManager.merge(userTesis));
-								} catch (Exception e) {
-									logger.error(e);
-								}
+
+								ortakIslemler.deleteObject(session, entityManager, userTesis);
+
 							}
 						}
 						if (roller != null && !roller.isEmpty()) {
 							yetkiliRoller = new ArrayList<UserRoles>(roller.values());
 							for (Iterator iterator = yetkiliRoller.iterator(); iterator.hasNext();) {
 								UserRoles userRoles = (UserRoles) iterator.next();
- 								try {
-									session.delete(entityManager == null || entityManager.contains(userRoles) ? userRoles : entityManager.merge(userRoles));
-								} catch (Exception e) {
-									logger.error(e);
-								}
+								ortakIslemler.deleteObject(session, entityManager, userRoles);
+
 							}
 						}
 						tesisler = null;
@@ -1202,7 +1197,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			if (kullanici.getId() != null)
 				PdksUtil.setUserYetki(kullanici);
 			pdksPersonel.setKullanici(kullanici);
-//			logger.info(tesisYetki + " " + kullanici.getId());
+			// logger.info(tesisYetki + " " + kullanici.getId());
 		}
 		if (pdksPersonel.getCalismaModeli() == null && calismaModeliList.size() == 1) {
 			pdksPersonel.setCalismaModeli(calismaModeliList.get(0));

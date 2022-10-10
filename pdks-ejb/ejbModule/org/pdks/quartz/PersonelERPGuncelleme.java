@@ -565,7 +565,7 @@ public class PersonelERPGuncelleme {
 								session.saveOrUpdate(user);
 								for (MailGrubu mailGrubu : deleteMailGrubuList) {
 									try {
-										session.delete(entityManager == null || entityManager.contains(mailGrubu) ? mailGrubu : entityManager.merge(mailGrubu));
+										ortakIslemler.deleteObject(session, entityManager, mailGrubu);
 									} catch (Exception e) {
 										logger.error(e);
 									}

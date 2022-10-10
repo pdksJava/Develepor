@@ -600,13 +600,9 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 			for (Iterator iterator = deleteIzinler.iterator(); iterator.hasNext();) {
 				Object personelIzinVeri = (Object) iterator.next();
 				if (personelIzinVeri != null) {
-					try {
-						session.delete(entityManager == null || entityManager.contains(personelIzinVeri) ? personelIzinVeri : entityManager.merge(personelIzinVeri));
-					} catch (Exception e) {
-						logger.error(e);
-					}
+					ortakIslemler.deleteObject(session, entityManager, personelIzinVeri);
+
 				}
-				 
 
 			}
 			deleteIzinler = null;

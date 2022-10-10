@@ -379,13 +379,9 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 						pdksTatil.setDurum(Boolean.TRUE);
 					session.saveOrUpdate(pdksTatil);
 				} else {
-					try {
-						session.delete(entityManager == null || entityManager.contains(pdksTatil) ? pdksTatil : entityManager.merge(pdksTatil));
-					} catch (Exception e) {
-						logger.error(e);
-					}
+					ortakIslemler.deleteObject(session, entityManager, pdksTatil);
 				}
-					 
+
 				session.flush();
 				session.clear();
 				fillPdksTatilList();

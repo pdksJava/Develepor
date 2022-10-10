@@ -2985,11 +2985,9 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 					} else {
 						if (pdksVardiyaGun.getIsKurVardiya() != null && pdksVardiyaGun.getIsKurVardiya().getId() != null) {
 							IsKurVardiyaGun isKurVardiya = pdksVardiyaGun.getIsKurVardiya();
-							try {
-								session.delete(entityManager == null || entityManager.contains(isKurVardiya) ? isKurVardiya : entityManager.merge(isKurVardiya));
-							} catch (Exception e) {
-								logger.error(e);
-							}
+							 
+								ortakIslemler.deleteObject(session, entityManager, isKurVardiya );
+							 
 							flush = true;
 						}
 
@@ -4256,11 +4254,9 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 									ex.printStackTrace();
 								}
 							} else if (pdksVardiyaGun.getId() != null) {
-			 					try {
-									session.delete(entityManager == null || entityManager.contains(pdksVardiyaGun) ? pdksVardiyaGun : entityManager.merge(pdksVardiyaGun));
-								} catch (Exception e) {
-									logger.error(e);
-								}
+			 					 
+			 						ortakIslemler.deleteObject(session, entityManager, pdksVardiyaGun);
+								 
 							}
 						}
 
@@ -4758,11 +4754,9 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 			boolean calisiyor = planTarih2 >= iseBasTarih && istenAyrilmaTarih >= planTarih1;
 			if (!calisiyor) {
 				if (pdksVardiyaHafta.getId() != null) {
-					try {
-						session.delete(entityManager == null || entityManager.contains(pdksVardiyaHafta) ? pdksVardiyaHafta : entityManager.merge(pdksVardiyaHafta));
-					} catch (Exception e) {
-						logger.error(e);
-					}
+					 
+						ortakIslemler.deleteObject(session, entityManager, pdksVardiyaHafta );
+					 
 					pdksVardiyaHafta.setId(null);
 					fiush = true;
 				}

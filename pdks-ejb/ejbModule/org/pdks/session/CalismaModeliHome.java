@@ -239,11 +239,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			}
 			for (Iterator iterator2 = kayitliCalismaModeliVardiyaList.iterator(); iterator2.hasNext();) {
 				CalismaModeliVardiya cmv = (CalismaModeliVardiya) iterator2.next();
- 				try {
-					session.delete(entityManager == null || entityManager.contains(cmv) ? cmv : entityManager.merge(cmv));
-				} catch (Exception e) {
-					logger.error(e);
-				}
+				ortakIslemler.deleteObject(session, entityManager, cmv);
 			}
 			session.flush();
 		} catch (Exception e) {

@@ -23,6 +23,7 @@ import org.pdks.entity.Tanim;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 import org.pdks.security.entity.UserMenuItemTime;
+import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
 
@@ -45,6 +46,9 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 	User authenticatedUser;
 	@In(create = true)
 	StartupAction startupAction;
+	@In(required = false, create = true)
+	OrtakIslemler ortakIslemler;
+
 	private Session session;
 
 	// SampleDAO sampleDAO=new SampleDAO();
@@ -82,18 +86,11 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<UserMenuItemTime> list = pdksEntityController.getObjectByInnerObjectList(fields, UserMenuItemTime.class);
 		for (UserMenuItemTime userMenuItemTime : list) {
- 			try {
-				session.delete(entityManager == null || entityManager.contains(userMenuItemTime) ? userMenuItemTime : entityManager.merge(userMenuItemTime));
-			} catch (Exception e) {
-				logger.error(e);
-			}
+			ortakIslemler.deleteObject(session, entityManager, userMenuItemTime);
 		}
-		try {
-			session.delete(entityManager == null || entityManager.contains(item) ? item : entityManager.merge(item));
-		} catch (Exception e) {
-			logger.error(e);
-		}
- 		session.flush();
+		ortakIslemler.deleteObject(session, entityManager, item);
+
+		session.flush();
 		session.clear();
 		startupAction.fillMenuItemList(session);
 		return "";

@@ -92,11 +92,9 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 		Parameter parameter = getInstance();
 		parameter.setChangeDate(new Date());
 		parameter.setChangeUser(authenticatedUser);
- 		try {
-			session.delete(entityManager == null || entityManager.contains(parameter) ? parameter : entityManager.merge(parameter));
-		} catch (Exception e) {
-			logger.error(e);
-		}
+
+		ortakIslemler.deleteObject(session, entityManager, parameter);
+
 		session.flush();
 		session.clear();
 		fillParameterList();

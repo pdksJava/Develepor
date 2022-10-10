@@ -2941,11 +2941,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							}
 
 							else if (pdksVardiyaGorev.getId() != null) {
-								try {
-									session.delete(entityManager == null || entityManager.contains(pdksVardiyaGorev) ? pdksVardiyaGorev : entityManager.merge(pdksVardiyaGorev));
-								} catch (Exception e) {
-									logger.error(e);
-								}
+
+								ortakIslemler.deleteObject(session, entityManager, pdksVardiyaGorev);
+
 								pdksVardiyaGorev.setId(null);
 								flush = Boolean.TRUE;
 							}
@@ -4747,7 +4745,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					iterator.remove();
 
 			}
-			List<VardiyaGun> vardiyaGunList = ortakIslemler.getPersonelIdVardiyalar(perIdler, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), session);
+			List<VardiyaGun> vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), Boolean.TRUE, session);
 
 			fields.clear();
 			fields.put(PdksEntityController.MAP_KEY_MAP, "getVardiyaGunId");
@@ -4776,11 +4774,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					pdksVardiyaGorev.setVardiyaGun(pdksVardiyaGun);
 				} else if (pdksVardiyaGorev.getYeniGorevYeri() != null && idList != null && !idList.isEmpty() && !helpPersonel(pdksVardiyaGun.getPersonel()) && idList.contains(pdksVardiyaGorev.getYeniGorevYeri().getId())) {
 					if (pdksVardiyaGorev.isOzelDurumYok()) {
-						try {
-							session.delete(entityManager == null || entityManager.contains(pdksVardiyaGorev) ? pdksVardiyaGorev : entityManager.merge(pdksVardiyaGorev));
-						} catch (Exception e) {
-							logger.error(e);
-						}
+						ortakIslemler.deleteObject(session, entityManager, pdksVardiyaGorev);
 						pdksVardiyaGorev = null;
 						pdksVardiyaGorev = new VardiyaGorev();
 						pdksVardiyaGorev.setVardiyaGun(pdksVardiyaGun);
@@ -4793,6 +4787,33 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 				pdksVardiyaGun.setVardiyaGorev(pdksVardiyaGorev);
 				setVardiyalarToMap(pdksVardiyaGun, vardiyalarMap, null);
+			}
+			TreeMap<Long, List> bagliIdMap = new TreeMap<Long, List>();
+			fields.clear();
+			fields.put("vardiyaGun", new ArrayList(vardiyaGunList));
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			List<PersonelFazlaMesai> personelFazlaMesaiList = pdksEntityController.getObjectByInnerObjectList(fields, PersonelFazlaMesai.class);
+			for (PersonelFazlaMesai personelFazlaMesai : personelFazlaMesaiList) {
+				Long id = personelFazlaMesai.getVardiyaGun().getId();
+				List list = bagliIdMap.containsKey(id) ? bagliIdMap.get(id) : new ArrayList();
+				if (list.isEmpty())
+					bagliIdMap.put(id, list);
+				list.add(personelFazlaMesai);
+			}
+			if (fazlaMesaiTalepVar) {
+				fields.clear();
+				fields.put("vardiyaGun", new ArrayList(vardiyaGunList));
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List<FazlaMesaiTalep> fazlaMesaiList = pdksEntityController.getObjectByInnerObjectList(fields, FazlaMesaiTalep.class);
+				for (FazlaMesaiTalep fazlaMesaiTalep : fazlaMesaiList) {
+					Long id = fazlaMesaiTalep.getVardiyaGun().getId();
+					List list = bagliIdMap.containsKey(id) ? bagliIdMap.get(id) : new ArrayList();
+					if (list.isEmpty())
+						bagliIdMap.put(id, list);
+					list.add(fazlaMesaiTalep);
+				}
 			}
 			ortakIslemler.fazlaMesaiSaatiAyarla(vardiyalarMap);
 			vardiyaGunList = null;
@@ -4976,8 +4997,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					pdksVardiyaGun.setPersonel(personel);
 					if (!personelCalmayaBasladi)
 						personelCalmayaBasladi = pdksVardiyaGunMaster.getVardiyaDate().getTime() >= iseGirisTarihi.getTime();
-					if (vardiyalarMap.containsKey(pdksVardiyaGun.getVardiyaKey()))
+					if (vardiyalarMap.containsKey(pdksVardiyaGun.getVardiyaKey())) {
 						pdksVardiyaGun = vardiyalarMap.get(pdksVardiyaGun.getVardiyaKey());
+					}
+
 					pdksVardiyaGun.setTdClass(aylikPuantaj.getTrClass());
 					String key = PdksUtil.convertToDateString(pdksVardiyaGun.getVardiyaDate(), "yyyyMMdd");
 					// logger.info(key);
@@ -5038,25 +5061,25 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					} else {
 						if (pdksVardiyaGun.getId() != null) {
 							if (pdksVardiyaGun.getVardiyaGorev().getId() != null) {
-								try {
-									VardiyaGorev pdksVardiyaGorev = pdksVardiyaGun.getVardiyaGorev();
-									session.delete(entityManager == null || entityManager.contains(pdksVardiyaGorev) ? pdksVardiyaGorev : entityManager.merge(pdksVardiyaGorev));
-								} catch (Exception e) {
-									logger.error(e);
-								}
+								VardiyaGorev pdksVardiyaGorev = pdksVardiyaGun.getVardiyaGorev();
+								ortakIslemler.deleteObject(session, entityManager, pdksVardiyaGorev);
 								pdksVardiyaGun.getVardiyaGorev().setId(null);
 								pdksVardiyaGun.getVardiyaGorev().setYeniGorevYeri(null);
 							}
-							try {
-								session.delete(entityManager == null || entityManager.contains(pdksVardiyaGun) ? pdksVardiyaGun : entityManager.merge(pdksVardiyaGun));
-							} catch (Exception e) {
-								logger.error(e);
+							if (bagliIdMap.containsKey(pdksVardiyaGun.getId())) {
+								List list = bagliIdMap.get(pdksVardiyaGun.getId());
+								for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+									Object object = (Object) iterator.next();
+									ortakIslemler.deleteObject(session, entityManager, object);
+								}
 							}
+							ortakIslemler.deleteObject(session, entityManager, pdksVardiyaGun);
 							flush = true;
+							pdksVardiyaGun.setId(null);
+							pdksVardiyaGun.setVardiya(null);
+
 						}
 
-						pdksVardiyaGun.setId(null);
-						pdksVardiyaGun.setVardiya(null);
 					}
 
 					vardiyaGunler.add(pdksVardiyaGun);
@@ -5104,11 +5127,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					calisiyor = planTarih2 >= iseBasTarih && istenAyrilmaTarih >= planTarih1;
 					if (!calisiyor) {
 						if (pdksVardiyaHafta.getId() != null) {
-							try {
-								session.delete(entityManager == null || entityManager.contains(pdksVardiyaHafta) ? pdksVardiyaHafta : entityManager.merge(pdksVardiyaHafta));
-							} catch (Exception e) {
-								logger.error(e);
-							}
+							ortakIslemler.deleteObject(session, entityManager, pdksVardiyaHafta);
+
 							pdksVardiyaHafta.setId(null);
 							flush = true;
 						}
@@ -7807,11 +7827,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									ex.printStackTrace();
 								}
 							} else if (pdksVardiyaGun.getId() != null) {
-								try {
-									session.delete(entityManager == null || entityManager.contains(pdksVardiyaGun) ? pdksVardiyaGun : entityManager.merge(pdksVardiyaGun));
-								} catch (Exception e) {
-									logger.error(e);
-								}
+
+								ortakIslemler.deleteObject(session, entityManager, pdksVardiyaGun);
 							}
 						}
 
@@ -8317,7 +8334,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		aylikPuantaj.setVardiyaHaftaList(vardiyaHaftaList);
 		long iseBasTarih = Long.parseLong(PdksUtil.convertToDateString(personel.getIseGirisTarihi(), "yyyyMMdd"));
 		long istenAyrilmaTarih = Long.parseLong(PdksUtil.convertToDateString(personel.getSonCalismaTarihi(), "yyyyMMdd"));
-
 		for (Iterator iterator = aylikPuantajSablon.getVardiyaHaftaList().iterator(); iterator.hasNext();) {
 			VardiyaHafta pdksVardiyaHaftaMaster = (VardiyaHafta) iterator.next();
 			long planTarih1 = Long.parseLong(PdksUtil.convertToDateString(pdksVardiyaHaftaMaster.getBasTarih(), "yyyyMMdd"));
@@ -8341,11 +8357,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			boolean calisiyor = planTarih2 >= iseBasTarih && istenAyrilmaTarih >= planTarih1;
 			if (!calisiyor) {
 				if (pdksVardiyaHafta.getId() != null) {
- 					try {
-						session.delete(entityManager == null || entityManager.contains(pdksVardiyaHafta) ? pdksVardiyaHafta : entityManager.merge(pdksVardiyaHafta));
-					} catch (Exception e) {
-						logger.error(e);
-					}
+					ortakIslemler.deleteObject(session, entityManager, pdksVardiyaHafta);
 					pdksVardiyaHafta.setId(null);
 					fiush = true;
 				}
