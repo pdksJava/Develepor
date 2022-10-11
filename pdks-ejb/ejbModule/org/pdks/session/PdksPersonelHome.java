@@ -780,7 +780,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							for (Iterator iterator = yetkiliTesisler.iterator(); iterator.hasNext();) {
 								UserTesis userTesis = (UserTesis) iterator.next();
 
-								ortakIslemler.deleteObject(session, entityManager, userTesis);
+								pdksEntityController.deleteObject(session, entityManager, userTesis);
 
 							}
 						}
@@ -788,7 +788,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							yetkiliRoller = new ArrayList<UserRoles>(roller.values());
 							for (Iterator iterator = yetkiliRoller.iterator(); iterator.hasNext();) {
 								UserRoles userRoles = (UserRoles) iterator.next();
-								ortakIslemler.deleteObject(session, entityManager, userRoles);
+								pdksEntityController.deleteObject(session, entityManager, userRoles);
 
 							}
 						}

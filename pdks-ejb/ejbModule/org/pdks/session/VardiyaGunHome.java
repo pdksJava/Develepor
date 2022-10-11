@@ -2452,6 +2452,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	}
 
+	
 	private void savePlanLastParameter() {
 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
 		lastMap.put("yil", "" + yil);
@@ -2506,7 +2507,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	/**
 	 * @return
 	 */
-	@Transactional
+
 	public String gunlukListeKaydet() {
 
 		return "";
@@ -2830,6 +2831,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param aylik
 	 * @throws Exception
 	 */
+	@Transactional
 	private void aylikVardiyaKontrolKaydet(Boolean aylik) throws Exception {
 		boolean flush = Boolean.FALSE;
 		boolean tekrarOku = Boolean.FALSE;
@@ -2942,7 +2944,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 							else if (pdksVardiyaGorev.getId() != null) {
 
-								ortakIslemler.deleteObject(session, entityManager, pdksVardiyaGorev);
+								pdksEntityController.deleteObject(session, entityManager, pdksVardiyaGorev);
 
 								pdksVardiyaGorev.setId(null);
 								flush = Boolean.TRUE;
@@ -4074,6 +4076,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param aylikPuantaj
 	 * @return
 	 */
+	
 	private Boolean saveOnay(Session session, AylikPuantaj aylikPuantaj) {
 		Personel personel = aylikPuantaj.getPdksPersonel();
 		PersonelDenklestirme personelDenklestirme = aylikPuantaj.getPersonelDenklestirmeAylik();
@@ -4382,6 +4385,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	/**
 	 * 
 	 */
+	@Transactional
 	private void aylikPuantajOlusturuluyor() {
 		savePlanLastParameter();
 		fazlaMesaiIzinRaporuDurum = userHome.hasPermission("fazlaMesaiIzinRaporu", "view");
@@ -4745,7 +4749,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					iterator.remove();
 
 			}
-			List<VardiyaGun> vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), Boolean.TRUE, session);
+			// List<VardiyaGun> vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), Boolean.TRUE, session);
+			List<VardiyaGun> vardiyaGunList = ortakIslemler.getPersonelIdVardiyalar(perIdler, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), session);
 
 			fields.clear();
 			fields.put(PdksEntityController.MAP_KEY_MAP, "getVardiyaGunId");
@@ -4774,7 +4779,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					pdksVardiyaGorev.setVardiyaGun(pdksVardiyaGun);
 				} else if (pdksVardiyaGorev.getYeniGorevYeri() != null && idList != null && !idList.isEmpty() && !helpPersonel(pdksVardiyaGun.getPersonel()) && idList.contains(pdksVardiyaGorev.getYeniGorevYeri().getId())) {
 					if (pdksVardiyaGorev.isOzelDurumYok()) {
-						ortakIslemler.deleteObject(session, entityManager, pdksVardiyaGorev);
+						pdksEntityController.deleteObject(session, entityManager, pdksVardiyaGorev);
 						pdksVardiyaGorev = null;
 						pdksVardiyaGorev = new VardiyaGorev();
 						pdksVardiyaGorev.setVardiyaGun(pdksVardiyaGun);
@@ -5062,7 +5067,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						if (pdksVardiyaGun.getId() != null) {
 							if (pdksVardiyaGun.getVardiyaGorev().getId() != null) {
 								VardiyaGorev pdksVardiyaGorev = pdksVardiyaGun.getVardiyaGorev();
-								ortakIslemler.deleteObject(session, entityManager, pdksVardiyaGorev);
+								pdksEntityController.deleteObject(session, entityManager, pdksVardiyaGorev);
 								pdksVardiyaGun.getVardiyaGorev().setId(null);
 								pdksVardiyaGun.getVardiyaGorev().setYeniGorevYeri(null);
 							}
@@ -5070,10 +5075,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								List list = bagliIdMap.get(pdksVardiyaGun.getId());
 								for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 									Object object = (Object) iterator.next();
-									ortakIslemler.deleteObject(session, entityManager, object);
+									pdksEntityController.deleteObject(session, entityManager, object);
 								}
 							}
-							ortakIslemler.deleteObject(session, entityManager, pdksVardiyaGun);
+							pdksEntityController.deleteObject(session, entityManager, pdksVardiyaGun);
 							flush = true;
 							pdksVardiyaGun.setId(null);
 							pdksVardiyaGun.setVardiya(null);
@@ -5127,7 +5132,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					calisiyor = planTarih2 >= iseBasTarih && istenAyrilmaTarih >= planTarih1;
 					if (!calisiyor) {
 						if (pdksVardiyaHafta.getId() != null) {
-							ortakIslemler.deleteObject(session, entityManager, pdksVardiyaHafta);
+							pdksEntityController.deleteObject(session, entityManager, pdksVardiyaHafta);
 
 							pdksVardiyaHafta.setId(null);
 							flush = true;
@@ -7828,7 +7833,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								}
 							} else if (pdksVardiyaGun.getId() != null) {
 
-								ortakIslemler.deleteObject(session, entityManager, pdksVardiyaGun);
+								pdksEntityController.deleteObject(session, entityManager, pdksVardiyaGun);
 							}
 						}
 
@@ -7915,6 +7920,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	/**
 	 * @param personelDenklestirme
 	 */
+
 	private void savePersonelDenklestirme(PersonelDenklestirme personelDenklestirme) {
 		personelDenklestirme.setOnaylandi(Boolean.FALSE);
 		personelDenklestirme.setGuncellemeTarihi(new Date());
@@ -8357,7 +8363,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			boolean calisiyor = planTarih2 >= iseBasTarih && istenAyrilmaTarih >= planTarih1;
 			if (!calisiyor) {
 				if (pdksVardiyaHafta.getId() != null) {
-					ortakIslemler.deleteObject(session, entityManager, pdksVardiyaHafta);
+					pdksEntityController.deleteObject(session, entityManager, pdksVardiyaHafta);
 					pdksVardiyaHafta.setId(null);
 					fiush = true;
 				}

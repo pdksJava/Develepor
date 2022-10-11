@@ -356,7 +356,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					}
 					for (Iterator iterator2 = kayitliCalismaModeliVardiyaList.iterator(); iterator2.hasNext();) {
 						CalismaModeliVardiya vyi = (CalismaModeliVardiya) iterator2.next();
-						ortakIslemler.deleteObject(session, entityManager,vyi );
+						pdksEntityController.deleteObject(session, entityManager,vyi );
 					}
 					kayitliCalismaModeliVardiyaList = null;
 				}
@@ -385,7 +385,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					}
 					for (Iterator iterator2 = list.iterator(); iterator2.hasNext();) {
 						VardiyaYemekIzin vyi = (VardiyaYemekIzin) iterator2.next();
-						ortakIslemler.deleteObject(session, entityManager,vyi );
+						pdksEntityController.deleteObject(session, entityManager,vyi );
 					}
 					list = null;
 				}

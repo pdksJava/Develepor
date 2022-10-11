@@ -3652,7 +3652,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 
 			} else if (istirahat.getId() != null) {
 
-				ortakIslemler.deleteObject(session, entityManager, istirahat);
+				pdksEntityController.deleteObject(session, entityManager, istirahat);
 
 			}
 			boolean dosyaYazildi = Boolean.FALSE;
@@ -3675,14 +3675,14 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			}
 			if (!dosyaYazildi && izinDosya.getId() != null) {
 			 
-					ortakIslemler.deleteObject(session, entityManager, izinDosya );
+					pdksEntityController.deleteObject(session, entityManager, izinDosya );
 				 
 			}
 
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				PersonelIzinDetay personelIzinDetay = (PersonelIzinDetay) iterator.next();
 
-				ortakIslemler.deleteObject(session, entityManager, personelIzinDetay);
+				pdksEntityController.deleteObject(session, entityManager, personelIzinDetay);
 
 			}
 			if (isYeni || (personelIzin.getOnaylayanlar() == null || personelIzin.getOnaylayanlar().isEmpty()))

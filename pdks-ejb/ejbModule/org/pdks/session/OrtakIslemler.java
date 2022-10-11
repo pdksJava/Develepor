@@ -1101,7 +1101,7 @@ public class OrtakIslemler implements Serializable {
 			}
 			session.saveOrUpdate(personel);
 			for (Object del : deleteList) {
-				deleteObject(session, entityManager, del);
+				pdksEntityController.deleteObject(session, entityManager, del);
 
 			}
 
@@ -1109,19 +1109,7 @@ public class OrtakIslemler implements Serializable {
 		}
 	}
 
-	/**
-	 * @param session
-	 * @param em
-	 * @param del
-	 */
-	public void deleteObject(Session session, EntityManager em, Object del) {
-		try {
-			session.delete(em == null || em.contains(del) ? del : em.merge(del));
-		} catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
-		}
-	}
+
 
 	/**
 	 * @param fnName
@@ -11774,7 +11762,7 @@ public class OrtakIslemler implements Serializable {
 								try {
 									if (personelFazlaMesai.getFazlaMesaiSaati() == null && personelFazlaMesai.getOnayDurum() == PersonelFazlaMesai.DURUM_ONAYLANDI) {
 										try {
-											deleteObject(session, entityManager, personelFazlaMesai);
+											pdksEntityController.deleteObject(session, entityManager, personelFazlaMesai);
 											flush = Boolean.TRUE;
 										} catch (Exception e) {
 										}

@@ -2986,7 +2986,7 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 						if (pdksVardiyaGun.getIsKurVardiya() != null && pdksVardiyaGun.getIsKurVardiya().getId() != null) {
 							IsKurVardiyaGun isKurVardiya = pdksVardiyaGun.getIsKurVardiya();
 							 
-								ortakIslemler.deleteObject(session, entityManager, isKurVardiya );
+								pdksEntityController.deleteObject(session, entityManager, isKurVardiya );
 							 
 							flush = true;
 						}
@@ -4255,7 +4255,7 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 								}
 							} else if (pdksVardiyaGun.getId() != null) {
 			 					 
-			 						ortakIslemler.deleteObject(session, entityManager, pdksVardiyaGun);
+			 						pdksEntityController.deleteObject(session, entityManager, pdksVardiyaGun);
 								 
 							}
 						}
@@ -4755,7 +4755,7 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 			if (!calisiyor) {
 				if (pdksVardiyaHafta.getId() != null) {
 					 
-						ortakIslemler.deleteObject(session, entityManager, pdksVardiyaHafta );
+						pdksEntityController.deleteObject(session, entityManager, pdksVardiyaHafta );
 					 
 					pdksVardiyaHafta.setId(null);
 					fiush = true;

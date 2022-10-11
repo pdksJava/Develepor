@@ -93,7 +93,7 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 		parameter.setChangeDate(new Date());
 		parameter.setChangeUser(authenticatedUser);
 
-		ortakIslemler.deleteObject(session, entityManager, parameter);
+		pdksEntityController.deleteObject(session, entityManager, parameter);
 
 		session.flush();
 		session.clear();

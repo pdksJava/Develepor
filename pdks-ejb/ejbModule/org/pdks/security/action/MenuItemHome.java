@@ -86,9 +86,9 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<UserMenuItemTime> list = pdksEntityController.getObjectByInnerObjectList(fields, UserMenuItemTime.class);
 		for (UserMenuItemTime userMenuItemTime : list) {
-			ortakIslemler.deleteObject(session, entityManager, userMenuItemTime);
+			pdksEntityController.deleteObject(session, entityManager, userMenuItemTime);
 		}
-		ortakIslemler.deleteObject(session, entityManager, item);
+		pdksEntityController.deleteObject(session, entityManager, item);
 
 		session.flush();
 		session.clear();
