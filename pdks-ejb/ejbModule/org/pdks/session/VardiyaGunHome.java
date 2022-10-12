@@ -2460,14 +2460,22 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @return
 	 */
 	private List getVardiyaTable(List<Long> vardiyaIdList, String tableName, String columnName, Object table) {
-		HashMap map = new HashMap();
-		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT P.* FROM " + tableName + " P WITH(nolock) ");
-		sb.append(" WHERE P." + columnName + " :id  ");
-		map.put("id", vardiyaIdList);
-		if (session != null)
-			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List list = pdksEntityController.getObjectBySQLList(sb, map, table.getClass());
+		List list = null;
+		try {
+			if (vardiyaIdList != null && !vardiyaIdList.isEmpty()) {
+				HashMap map = new HashMap();
+				StringBuffer sb = new StringBuffer();
+				sb.append("SELECT P.* FROM " + tableName + " P WITH(nolock) ");
+				sb.append(" WHERE P." + columnName + " :id  ");
+				map.put("id", vardiyaIdList);
+				if (session != null)
+					map.put(PdksEntityController.MAP_KEY_SESSION, session);
+				list = pdksEntityController.getObjectBySQLList(sb, map, table.getClass());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return list;
 	}
 
@@ -4827,21 +4835,25 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				if (!vardiyaIdList.isEmpty()) {
 					if (fazlaMesaiTalepVar) {
 						List<FazlaMesaiTalep> fazlaMesaiList = getVardiyaTable(vardiyaIdList, FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN, FazlaMesaiTalep.class);
-						for (FazlaMesaiTalep fazlaMesaiTalep : fazlaMesaiList) {
-							Long id = fazlaMesaiTalep.getVardiyaGun().getId();
-							List list = bagliIdMap.containsKey(id) ? bagliIdMap.get(id) : new ArrayList();
-							if (list.isEmpty())
-								bagliIdMap.put(id, list);
-							list.add(fazlaMesaiTalep);
+						if (fazlaMesaiList != null && !fazlaMesaiList.isEmpty()) {
+							for (FazlaMesaiTalep fazlaMesaiTalep : fazlaMesaiList) {
+								Long id = fazlaMesaiTalep.getVardiyaGun().getId();
+								List list = bagliIdMap.containsKey(id) ? bagliIdMap.get(id) : new ArrayList();
+								if (list.isEmpty())
+									bagliIdMap.put(id, list);
+								list.add(fazlaMesaiTalep);
+							}
 						}
 					}
 					List<PersonelFazlaMesai> personelFazlaMesaiList = getVardiyaTable(vardiyaIdList, PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN, PersonelFazlaMesai.class);
-					for (PersonelFazlaMesai personelFazlaMesai : personelFazlaMesaiList) {
-						Long id = personelFazlaMesai.getVardiyaGun().getId();
-						List list = bagliIdMap.containsKey(id) ? bagliIdMap.get(id) : new ArrayList();
-						if (list.isEmpty())
-							bagliIdMap.put(id, list);
-						list.add(personelFazlaMesai);
+					if (personelFazlaMesaiList != null && !personelFazlaMesaiList.isEmpty()) {
+						for (PersonelFazlaMesai personelFazlaMesai : personelFazlaMesaiList) {
+							Long id = personelFazlaMesai.getVardiyaGun().getId();
+							List list = bagliIdMap.containsKey(id) ? bagliIdMap.get(id) : new ArrayList();
+							if (list.isEmpty())
+								bagliIdMap.put(id, list);
+							list.add(personelFazlaMesai);
+						}
 					}
 				}
 				vardiyaIdList = null;
