@@ -4770,8 +4770,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					iterator.remove();
 
 			}
-			// List<VardiyaGun> vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), Boolean.TRUE, session);
-			List<VardiyaGun> vardiyaGunList = ortakIslemler.getPersonelIdVardiyalar(perIdler, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), session);
+			List<VardiyaGun> vardiyaGunList = null;
+			if (denklestirmeAyDurum)
+				vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), Boolean.FALSE, session);
+			else
+				vardiyaGunList = ortakIslemler.getPersonelIdVardiyalar(perIdler, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), session);
 
 			fields.clear();
 			fields.put(PdksEntityController.MAP_KEY_MAP, "getVardiyaGunId");
