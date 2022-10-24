@@ -2905,6 +2905,27 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						try {
 							girisHareketleri = vGun.getGirisHareketleri();
 							cikisHareketleri = vGun.getCikisHareketleri();
+							if (vGun.getFazlaMesailer() != null) {
+								List<HareketKGS> list = new ArrayList<HareketKGS>();
+								if (girisHareketleri != null && !girisHareketleri.isEmpty())
+									list.addAll(girisHareketleri);
+								if (cikisHareketleri != null && !cikisHareketleri.isEmpty())
+									list.addAll(cikisHareketleri);
+								if (!list.isEmpty()) {
+									HashMap<String, PersonelFazlaMesai> mesaiMap = new HashMap<String, PersonelFazlaMesai>();
+									for (PersonelFazlaMesai pfm : vGun.getFazlaMesailer())
+										mesaiMap.put(pfm.getHareketId(), pfm);
+									for (HareketKGS hareketKGS : list) {
+										if (hareketKGS.getId() != null && mesaiMap.containsKey(hareketKGS.getId()) && hareketKGS.getPersonelFazlaMesai() == null)
+											hareketKGS.setPersonelFazlaMesai(mesaiMap.get(hareketKGS.getId()));
+									}
+									mesaiMap = null;
+									 
+								}
+
+								list = null;
+
+							}
 							int girisAdet = girisHareketleri != null ? girisHareketleri.size() : -1, cikisAdet = cikisHareketleri != null ? cikisHareketleri.size() : -1;
 							if (girisAdet > 1 && cikisAdet == girisAdet && vGun.isHareketHatali() == false) {
 								for (int i = 0; i < girisAdet; i++) {
