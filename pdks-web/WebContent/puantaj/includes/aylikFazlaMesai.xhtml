@@ -31,7 +31,7 @@
 						<th style="width: 20px"><h:outputText value="#{ortakIslemler.personelNoAciklama()}" /></th>
 						<th style="width: 60px"><h:outputText value="Adı Soyadı" /></th>
 						<th style="width: 60px"><h:outputText value="#{ortakIslemler.yoneticiAciklama()}" /></th>
-						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.modelGoster}">
+						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.modelGoster  or fazlaMesaiHesaplaHome.ikRole}">
 							<th style="width: 30px"><h:outputText value="Çalışma Modeli" /></th>
 						</ui:fragment>
 						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.fazlaMesaiIzinKullan}">
@@ -248,7 +248,7 @@
 
 									</ui:fragment>
 								</ui:fragment></td>
-							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.modelGoster}">
+							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.modelGoster or fazlaMesaiHesaplaHome.ikRole}">
 								<td class="#{aylikPuantaj.trClass}" style="width: 20px"><ui:fragment
 										rendered="#{aylikPuantaj.personelDenklestirmeAylik!=null and aylikPuantaj.personelDenklestirmeAylik.calismaModeliAy!=null}">
 
