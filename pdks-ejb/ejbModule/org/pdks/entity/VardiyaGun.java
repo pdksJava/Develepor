@@ -73,7 +73,7 @@ public class VardiyaGun extends BaseObject {
 	private Tatil tatil;
 	private PersonelIzin izin;
 	private VardiyaSablonu vardiyaSablonu;
-	private boolean bitmemisGun = Boolean.TRUE, islendi = Boolean.FALSE, ayrikHareketVar = Boolean.FALSE;
+	private boolean bitmemisGun = Boolean.TRUE, islendi = Boolean.FALSE, ayrikHareketVar = Boolean.FALSE, manuelGirisVar = Boolean.FALSE;
 	private HareketKGS ilkGiris, sonCikis;
 	private boolean ayinGunu = Boolean.TRUE, onayli = Boolean.TRUE, guncellendi = Boolean.FALSE, fiiliHesapla = Boolean.FALSE, hataliDurum = Boolean.FALSE, donemAcik = Boolean.TRUE;
 	private List<String> linkAdresler;
@@ -1958,4 +1958,20 @@ public class VardiyaGun extends BaseObject {
 		this.calismaSuaSaati = calismaSuaSaati;
 	}
 
+	@Transient
+	public boolean isManuelGirisVar() {
+		return manuelGirisVar;
+	}
+
+	public void setManuelGirisVar(boolean manuelGirisVar) {
+		this.manuelGirisVar = manuelGirisVar;
+	}
+
+	@Transient
+	public String getManuelGirisHTML() {
+		String manuelGirisHTML = "";
+		if (manuelGirisVar)
+			manuelGirisHTML = " background-color: white;font-style: italic !important; ";
+ 		return manuelGirisHTML;
+	}
 }
