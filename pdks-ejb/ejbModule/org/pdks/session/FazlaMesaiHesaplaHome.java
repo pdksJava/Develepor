@@ -1214,7 +1214,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				LinkedHashMap<Long, PersonelIzin> izinMap = new LinkedHashMap<Long, PersonelIzin>();
 				List<VardiyaGun> offIzinliGunler = new ArrayList<VardiyaGun>();
 				kismiOdemeGoster = Boolean.FALSE;
-				manuelGirisGoster = adminRole || (ikRole && ortakIslemler.getParameterKey("manuelGirisGoster").equals("1"));
+				manuelGirisGoster = authenticatedUser.isAdmin() || (ikRole && ortakIslemler.getParameterKey("manuelGirisGoster").equals("1"));
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					double negatifBakiyeDenkSaat = 0.0;
