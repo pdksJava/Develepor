@@ -206,9 +206,9 @@
 								<f:facet name="header">
 									<h:outputText value="İşlem Yapan" />
 								</f:facet>
-								<ui:fragment rendered="#{hareket.islem!=null}">
-									<h:outputText value="#{hareket.islem.onaylayanUser.adSoyad }" />
-								</ui:fragment>
+
+								<h:outputText value="#{hareket.islemYapan}" />
+
 							</rich:column>
 							<rich:column rendered="#{not empty vardiyaGun.fazlaMesailer}" style="text-align:center;">
 								<f:facet name="header">

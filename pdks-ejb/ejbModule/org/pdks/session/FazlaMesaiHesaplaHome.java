@@ -152,7 +152,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private Boolean modelGoster = Boolean.FALSE, kullaniciPersonel = Boolean.FALSE, denklestirmeAyDurum = Boolean.FALSE, izinGoster = Boolean.FALSE, yoneticiRolVarmi = Boolean.FALSE;
 	private boolean adminRole, ikRole, personelHareketDurum, personelFazlaMesaiDurum, vardiyaPlaniDurum, personelIzinGirisiDurum, fazlaMesaiTalepOnayliDurum = Boolean.FALSE;
 	private Boolean izinCalismayanMailGonder = Boolean.FALSE, hatalariAyikla = Boolean.FALSE, kismiOdemeGoster = Boolean.FALSE;
-	private String manuelGirisGoster = "";
+	private String manuelGirisGoster = "", kapiGirisSistemAdi = "";
 	private int ay, yil, maxYil, sonDonem, pageSize;
 
 	private List<User> toList, ccList, bccList;
@@ -1215,10 +1215,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				List<VardiyaGun> offIzinliGunler = new ArrayList<VardiyaGun>();
 				kismiOdemeGoster = Boolean.FALSE;
 				manuelGirisGoster = "";
+				kapiGirisSistemAdi = "";
 				if (ikRole || adminRole) {
 					manuelGirisGoster = ortakIslemler.getParameterKey("manuelGirisGoster");
 					if (manuelGirisGoster.equals("") && authenticatedUser.isAdmin())
 						manuelGirisGoster = "background-color: white;font-style: italic !important;";
+					kapiGirisSistemAdi = manuelGirisGoster.equals("") ? "" : ortakIslemler.getParameterKey("kapiGirisSistemAdi");
 				}
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
@@ -2833,8 +2835,20 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		if (!manuelGirisGoster.equals("")) {
 			if (hareketler != null) {
 				for (HareketKGS hareketKGS : hareketler) {
-					if (manuelGirisHTML.equals("") && hareketKGS.getIslem() != null)
-						manuelGirisHTML = manuelGirisGoster;
+					String islemYapan = "";
+					if (manuelGirisHTML.equals("") && hareketKGS.getKapiView() != null) {
+						try {
+							if (hareketKGS.getIslem() != null || hareketKGS.getKapiView().getKapiKGS().isManuel()) {
+								manuelGirisHTML = manuelGirisGoster;
+								islemYapan = hareketKGS.getIslem() == null ? kapiGirisSistemAdi : (hareketKGS.getIslem().getOnaylayanUser() != null ? hareketKGS.getIslem().getOnaylayanUser().getAdSoyad() : "");
+							}
+
+						} catch (Exception e) {
+						}
+
+					}
+					hareketKGS.setIslemYapan(islemYapan);
+
 				}
 			}
 		}
@@ -5549,6 +5563,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	public void setCheckBoxDurum(Boolean checkBoxDurum) {
 		this.checkBoxDurum = checkBoxDurum;
+	}
+
+	public String getKapiGirisSistemAdi() {
+		return kapiGirisSistemAdi;
+	}
+
+	public void setKapiGirisSistemAdi(String kapiGirisSistemAdi) {
+		this.kapiGirisSistemAdi = kapiGirisSistemAdi;
 	}
 
 }

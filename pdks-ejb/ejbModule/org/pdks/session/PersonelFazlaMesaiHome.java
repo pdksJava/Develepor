@@ -153,11 +153,9 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		if (!ayniSayfa)
 			authenticatedUser.setCalistigiSayfa("personelFazlaMesai");
 
-		List<Tanim> list1 = ortakIslemler.getTanimList(Tanim.TIPI_ONAYLAMAMA_NEDEN, session);
 		fillEkSahaTanim();
 		pdksDenklestirmeAy = null;
 		tatil = null;
-		setOnaylamamaNedeniList(list1);
 		setHareketList(new ArrayList<HareketKGS>());
 		PersonelFazlaMesai mesai = new PersonelFazlaMesai();
 		HareketKGS hareket = new HareketKGS();
@@ -549,6 +547,9 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			seciliEkSaha3 = (Tanim) pdksEntityController.getObjectByInnerObject(parametreMap, Tanim.class);
 		}
+		List<Tanim> list1 = ortakIslemler.getTanimList(Tanim.TIPI_ONAYLAMAMA_NEDEN, session);
+		setOnaylamamaNedeniList(list1);
+
 		ArrayList<String> sicilNoList = ortakIslemler.getAramaPersonelSicilNo(aramaSecenekleri, Boolean.FALSE, session);
 		String sicilNo = ortakIslemler.getSicilNo(aramaSecenekleri.getSicilNo());
 		if (linkAdres != null && sicilNo != null && !sicilNo.equals("") && !sicilNoList.contains(sicilNo))
