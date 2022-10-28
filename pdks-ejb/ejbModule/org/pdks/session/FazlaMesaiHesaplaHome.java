@@ -152,7 +152,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private Boolean modelGoster = Boolean.FALSE, kullaniciPersonel = Boolean.FALSE, denklestirmeAyDurum = Boolean.FALSE, izinGoster = Boolean.FALSE, yoneticiRolVarmi = Boolean.FALSE;
 	private boolean adminRole, ikRole, personelHareketDurum, personelFazlaMesaiDurum, vardiyaPlaniDurum, personelIzinGirisiDurum, fazlaMesaiTalepOnayliDurum = Boolean.FALSE;
 	private Boolean izinCalismayanMailGonder = Boolean.FALSE, hatalariAyikla = Boolean.FALSE, kismiOdemeGoster = Boolean.FALSE;
-	private Boolean manuelGirisGoster = Boolean.FALSE;
+	private String manuelGirisGoster = "";
 	private int ay, yil, maxYil, sonDonem, pageSize;
 
 	private List<User> toList, ccList, bccList;
@@ -1214,7 +1214,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				LinkedHashMap<Long, PersonelIzin> izinMap = new LinkedHashMap<Long, PersonelIzin>();
 				List<VardiyaGun> offIzinliGunler = new ArrayList<VardiyaGun>();
 				kismiOdemeGoster = Boolean.FALSE;
-				manuelGirisGoster = authenticatedUser.isAdmin() || (ikRole && ortakIslemler.getParameterKey("manuelGirisGoster").equals("1"));
+				manuelGirisGoster = "";
+				if (ikRole || adminRole) {
+					manuelGirisGoster = ortakIslemler.getParameterKey("manuelGirisGoster");
+					if (manuelGirisGoster.equals("") && authenticatedUser.isAdmin())
+						manuelGirisGoster = "background-color: white;font-style: italic !important;";
+				}
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					double negatifBakiyeDenkSaat = 0.0;
@@ -2824,16 +2829,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		if (vGun.getCikisHareketleri() != null)
 			cikisHareketleri = new ArrayList(vGun.getCikisHareketleri());
 		hareketler = vGun.getHareketler();
-		boolean manuelGirisVar = false;
-		if (manuelGirisGoster) {
+		String manuelGirisHTML = "";
+		if (!manuelGirisGoster.equals("")) {
 			if (hareketler != null) {
 				for (HareketKGS hareketKGS : hareketler) {
-					if (!manuelGirisVar)
-						manuelGirisVar = hareketKGS.getIslem() != null;
+					if (manuelGirisHTML.equals("") && hareketKGS.getIslem() != null)
+						manuelGirisHTML = manuelGirisGoster;
 				}
 			}
 		}
-		vGun.setManuelGirisVar(manuelGirisVar);
+		vGun.setManuelGirisHTML(manuelGirisHTML);
 		islemPuantaj.setAyrikHareketVar(true);
 		if (islemPuantaj != null && hareketler != null && !hareketler.isEmpty()) {
 			ArrayList<HareketKGS> tumHareketler = islemPuantaj.getHareketler() != null ? islemPuantaj.getHareketler() : new ArrayList<HareketKGS>();

@@ -165,7 +165,7 @@
 
 							<s:formattedText value="#{vardiyaGun.titleStr}"></s:formattedText>
 
-						</ui:fragment> <ui:fragment rendered="#{vardiyaGun.manuelGirisVar}">
+						</ui:fragment> <ui:fragment rendered="#{vardiyaGun.manuelGirisHTML!=''}">
 
 							<rich:dataTable rowClasses="acik,koyu" style="background-color: white !important;" value="#{vardiyaGun.orjinalHareketler}" var="hareket"
 								rows="20" rowKeyVar="row">
