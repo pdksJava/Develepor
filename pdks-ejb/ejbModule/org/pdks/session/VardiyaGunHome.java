@@ -6523,7 +6523,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			if (vardiyaList.size() > 1)
 				vardiyaList = PdksUtil.sortObjectStringAlanList(vardiyaList, "getKisaAdiSort", null);
-			donemVardiyalariSirala(vardiyaList, aylikPuantajAllList);
+			if (!ortakIslemler.getParameterKey("donemVardiyalariSiralama").equals("1"))
+				donemVardiyalariSirala(vardiyaList, aylikPuantajAllList);
 			aylikPuantajAllList = null;
 			pdksList.clear();
 			pdksList.addAll(vardiyaList);
