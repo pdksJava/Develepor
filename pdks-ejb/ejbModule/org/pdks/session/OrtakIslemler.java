@@ -6573,7 +6573,7 @@ public class OrtakIslemler implements Serializable {
 					Tatil tatil = new Tatil();
 					tatil.setId(id);
 					tatil.setBasTarih((Date) objects[1]);
-					tatil.setBitisTarih((Date) objects[2]);
+					tatil.setBitTarih((Date) objects[2]);
 					tatilList.add(tatil);
 				}
 				map.clear();
@@ -6586,7 +6586,7 @@ public class OrtakIslemler implements Serializable {
 					Tatil orjTatil = (Tatil) tatilDataMap.get(tatil.getId()).clone();
 					orjTatil.setVersion(tatilVersionMap.get(tatil.getId()));
 					orjTatil.setBasTarih(tatil.getBasTarih());
-					orjTatil.setBitisTarih(tatil.getBitisTarih());
+					orjTatil.setBitTarih(tatil.getBitTarih());
 					Integer ver = orjTatil.getVersion() + 1;
 					tatilVersionMap.put(tatil.getId(), ver);
 					pdksTatilList.add(orjTatil);
@@ -6628,7 +6628,7 @@ public class OrtakIslemler implements Serializable {
 				Tatil pdksTatilOrj = iterator.next();
 				Tatil pdksTatil = (Tatil) pdksTatilOrj.clone();
 				if (pdksTatil.isTekSefer()) {
-					if (isObjeTarihiAraliktaMi(basTarih, bitTarih, pdksTatil.getBasTarih(), pdksTatil.getBitisTarih()))
+					if (isObjeTarihiAraliktaMi(basTarih, bitTarih, pdksTatil.getBasTarih(), pdksTatil.getBitTarih()))
 						pdksTatilList.add(pdksTatil);
 				} else
 					for (int i = basYil; i <= bitYil; i++) {
@@ -6637,11 +6637,11 @@ public class OrtakIslemler implements Serializable {
 						cal.set(Calendar.YEAR, i);
 						pdksTatilP.setYarimGun(pdksTatil.isYarimGunMu());
 						pdksTatilP.setBasTarih(cal.getTime());
-						cal.setTime(pdksTatilP.getBitisTarih());
+						cal.setTime(pdksTatilP.getBitTarih());
 						cal.set(Calendar.YEAR, i);
 						Date bitisTarih = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(cal.getTime(), "yyyyMMdd") + " 23:59:59", "yyyyMMdd HH:mm:ss");
-						pdksTatilP.setBitisTarih(bitisTarih);
-						if (isObjeTarihiAraliktaMi(basTarih, bitTarih, pdksTatilP.getBasTarih(), pdksTatilP.getBitisTarih()))
+						pdksTatilP.setBitTarih(bitisTarih);
+						if (isObjeTarihiAraliktaMi(basTarih, bitTarih, pdksTatilP.getBasTarih(), pdksTatilP.getBitTarih()))
 							pdksTatilList.add(pdksTatilP);
 					}
 
@@ -6681,12 +6681,12 @@ public class OrtakIslemler implements Serializable {
 				Boolean ilkGun = Boolean.TRUE;
 				Tatil orjTatil = (Tatil) pdksTatil.clone();
 				orjTatil.setBasTarih(PdksUtil.getDate(orjTatil.getBasTarih()));
-				orjTatil.setBitisGun(PdksUtil.tariheGunEkleCikar(PdksUtil.getDate(orjTatil.getBitisTarih()), 1));
+				orjTatil.setBitGun(PdksUtil.tariheGunEkleCikar(PdksUtil.getDate(orjTatil.getBitTarih()), 1));
 				if (pdksTatil.isYarimGunMu()) {
 					orjTatil.setBasTarih(PdksUtil.setTarih(orjTatil.getBasTarih(), Calendar.HOUR_OF_DAY, saat));
 					orjTatil.setBasTarih(PdksUtil.setTarih(orjTatil.getBasTarih(), Calendar.MINUTE, dakika));
 				}
-				while (PdksUtil.tarihKarsilastirNumeric(pdksTatil.getBitisTarih(), tarih) != -1) {
+				while (PdksUtil.tarihKarsilastirNumeric(pdksTatil.getBitTarih(), tarih) != -1) {
 					String tarihStr = PdksUtil.convertToDateString(tarih, "yyyyMMdd");
 					boolean yarimGun = ilkGun && pdksTatil.isYarimGunMu();
 					if (pdksTatil.isPeriyodik() || !ilkGun || !tatilMap.containsKey(tarihStr)) {
@@ -6712,8 +6712,8 @@ public class OrtakIslemler implements Serializable {
 							tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.HOUR_OF_DAY, saat));
 							tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.MINUTE, dakika));
 						}
-						tatil.setBitisGun(PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(tarih, 1)));
-						tatil.setBitisTarih((Date) orjTatil.getBitisGun());
+						tatil.setBitGun(PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(tarih, 1)));
+						tatil.setBitTarih((Date) orjTatil.getBitGun());
 						tatil.setBasGun(orjTatil.getBasTarih());
 						tatilMap.put(tarihStr, tatil);
 					}
@@ -6750,13 +6750,13 @@ public class OrtakIslemler implements Serializable {
 						map.put(PdksEntityController.MAP_KEY_SESSION, session);
 					List<ArifeVardiyaDonem> arifeTatilList = pdksEntityController.getObjectByInnerObjectListInLogic(map, ArifeVardiyaDonem.class);
 					boolean arifeVardiyaHesapla = false;
-					List idList = new ArrayList();
+					TreeMap<Long, Boolean> idMap = new TreeMap<Long, Boolean>();
 					for (Iterator iterator = arifeTatilList.iterator(); iterator.hasNext();) {
 						ArifeVardiyaDonem arifeVardiyaDonem = (ArifeVardiyaDonem) iterator.next();
 						if (arifeVardiyaDonem.getDurum().equals(Boolean.FALSE))
 							iterator.remove();
-						if (arifeVardiyaDonem.getVardiya() != null && !idList.contains(arifeVardiyaDonem.getVardiya().getId()))
-							idList.add(arifeVardiyaDonem.getVardiya().getId());
+						if (arifeVardiyaDonem.getVardiya() != null)
+							idMap.put(arifeVardiyaDonem.getVardiya().getId(), arifeVardiyaDonem.getDurum());
 					}
 					map.clear();
 					sb = new StringBuffer();
@@ -6804,8 +6804,10 @@ public class OrtakIslemler implements Serializable {
 								String dateStr = PdksUtil.convertToDateString(arifeBaslangicTarihi, "yyyyMMdd") + " " + tatilStr;
 								Date yeniZaman = PdksUtil.convertToJavaDate(dateStr, "yyyyMMdd HH:mm");
 								if (yeniZaman != null) {
-									if (yeniZaman.before(islemVardiya.getVardiyaBasZaman()))
-										yeniZaman = PdksUtil.tariheGunEkleCikar(yeniZaman, 1);
+									if (idMap.containsKey(vardiya.getId())) {
+										if (idMap.get(vardiya.getId()) && yeniZaman.before(islemVardiya.getVardiyaBasZaman()))
+											yeniZaman = PdksUtil.tariheGunEkleCikar(yeniZaman, 1);
+									}
 									arifeBaslangicTarihi = yeniZaman;
 								}
 
@@ -6829,7 +6831,7 @@ public class OrtakIslemler implements Serializable {
 										cal.add(Calendar.MINUTE, new Double(sure * 60).intValue());
 										arifeBaslangicTarihi = cal.getTime();
 									}
-									if (arifeVardiyaDonemDB == null && !idList.contains(vardiya.getId())) {
+									if (arifeVardiyaDonemDB == null && idMap.containsKey(vardiya.getId())) {
 										arifeVardiyaDonemDB = new ArifeVardiyaDonem();
 										arifeVardiyaDonemDB.setVardiya(vardiya);
 										arifeVardiyaDonemDB.setBasTarih(basArifeTarih);
@@ -6872,7 +6874,7 @@ public class OrtakIslemler implements Serializable {
 						}
 						session.flush();
 					}
-					idList = null;
+					idMap = null;
 					saveList = null;
 					p = null;
 					tatilIslem.setVardiyaMap(vardiyaMap);
@@ -6888,7 +6890,7 @@ public class OrtakIslemler implements Serializable {
 				if (tatilMap.containsKey(afterDateStr)) {
 					Tatil tatil = tatilMap.get(dateStr), sonrakiTatil = tatilMap.get(afterDateStr);
 					if (!sonrakiTatil.isYarimGunMu() && !tatil.getAciklama().equals(sonrakiTatil.getAciklama())) {
-						tatil.setBitisTarih(sonrakiTatil.getBitisTarih());
+						tatil.setBitTarih(sonrakiTatil.getBitTarih());
 					}
 				}
 			}
@@ -10868,7 +10870,7 @@ public class OrtakIslemler implements Serializable {
 						Date bayramBas = tatil.getBasTarih();
 						if (vardiyaGun.getVardiya().getArifeBaslangicTarihi() != null)
 							bayramBas = vardiyaGun.getVardiya().getArifeBaslangicTarihi();
-						Date bayramBit = PdksUtil.tariheGunEkleCikar(tatil.getBitisTarih(), 0);
+						Date bayramBit = PdksUtil.tariheGunEkleCikar(tatil.getBitTarih(), 0);
 						List<Date> calBas = new ArrayList<Date>(), calBit = new ArrayList<Date>(), tatilBas = new ArrayList<Date>(), tatilBit = new ArrayList<Date>();
 						vardiyaGun.setVardiyaZamani();
 						Vardiya vardiya = vardiyaGun.getIslemVardiya();
@@ -11981,12 +11983,16 @@ public class OrtakIslemler implements Serializable {
 							vardiyaYemekSuresi = vardiyaGun.getIslemVardiya() != null && vardiyaGun.getIslemVardiya().getYemekSuresi() != null ? vardiyaGun.getIslemVardiya().getYemekSuresi() / 60 : 0d;
 							vardiyaGun.setNormalSure(gunlukSaat);
 							Tatil tatil = null;
+							boolean arifeGunu = false;
 							if (vardiyaGun.getCikisHareketleri() != null && !vardiyaGun.getCikisHareketleri().isEmpty() && vardiyaGun.getHareketDurum()) {
 								if (vardiyaGun.isAyinGunu() && vardiyaGun.getTatil() != null && vardiyaGun.getHareketler() != null && !vardiyaGun.getHareketler().isEmpty()) {
 									Tatil orjTatil1 = (Tatil) vardiyaGun.getTatil().getOrjTatil().clone();
+									String arifeAyGun = orjTatil1 != null && orjTatil1.getBasTarih() != null ? PdksUtil.convertToDateString(orjTatil1.getBasTarih(), "MMdd") : "";
+									arifeGunu = orjTatil1 != null && arifeAyGun.equals(vGun.substring(4)) && orjTatil1.isYarimGunMu();
 									tatil = (Tatil) vardiyaGun.getTatil().clone();
-									if (orjTatil1.isYarimGunMu()) {
-										tatil.setBitisTarih(orjTatil1.getBitisTarih());
+									if (orjTatil1.isYarimGunMu() || arifeGunu) {
+										tatil.setBitTarih(orjTatil1.getBitTarih());
+
 									}
 									vardiyaGun.setTatil(tatil);
 									List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
@@ -11996,8 +12002,11 @@ public class OrtakIslemler implements Serializable {
 										hareketList.addAll(vardiyaGun.getCikisHareketleri());
 									hareketList = PdksUtil.sortListByAlanAdi(hareketList, "zaman", Boolean.FALSE);
 									if (!hareketList.isEmpty()) {
-										Date tatilBasTarih = tatil.getBasTarih(), tatilBitTarih = orjTatil1.isYarimGunMu() ? PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(tatil.getBitisTarih(), 1)) : tatil.getBitisTarih();
-										tatil.setBitisTarih(tatilBitTarih);
+										Date tatilBasTarih = tatil.getBasTarih(), tatilBitTarih = orjTatil1.isYarimGunMu() ? PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(tatil.getBitTarih(), 1)) : tatil.getBitTarih();
+										if (tatil.isYarimGunMu()) {
+
+										}
+										tatil.setBitTarih(tatilBitTarih);
 										long basZaman = Long.parseLong(PdksUtil.convertToDateString(tatilBasTarih, "yyyyMMddHHmm"));
 										long bitZaman = Long.parseLong(PdksUtil.convertToDateString(tatilBitTarih, "yyyyMMddHHmm"));
 										long zaman = Long.parseLong(PdksUtil.convertToDateString(hareketList.get(0).getZaman(), "yyyyMMddHHmm"));
@@ -12018,7 +12027,7 @@ public class OrtakIslemler implements Serializable {
 												hareketKGS.setTatil(Boolean.TRUE);
 												bayramBasladi = Boolean.TRUE;
 											} else if (zaman >= bitZaman && !bayramBitti && kapi.isCikisKapi()) {
-												HareketKGS cikisHareket = ((HareketKGS) hareketKGS.clone()).getYeniHareket((Date) tatil.getBitisGun(), null);
+												HareketKGS cikisHareket = ((HareketKGS) hareketKGS.clone()).getYeniHareket((Date) tatil.getBitGun(), null);
 												cikisHareket.setTatil(Boolean.TRUE);
 												cikisHareketleri.add(cikisHareket);
 												HareketKGS girisHareket = ((HareketKGS) cikisHareket.clone()).getYeniHareket(null, girisView);
@@ -12041,7 +12050,7 @@ public class OrtakIslemler implements Serializable {
 									for (HareketKGS hareketKGS : vardiyaGun.getCikisHareketleri()) {
 										if (vardiyaGun.getTatil() != null) {
 											tatil = vardiyaGun.getTatil();
-											if (hareketKGS.isTatil() == false && hareketKGS.getZaman().getTime() > tatil.getBasTarih().getTime() && hareketKGS.getZaman().getTime() <= tatil.getBitisTarih().getTime())
+											if (hareketKGS.isTatil() == false && hareketKGS.getZaman().getTime() > tatil.getBasTarih().getTime() && hareketKGS.getZaman().getTime() <= tatil.getBitTarih().getTime())
 												hareketKGS.setTatil(true);
 										}
 
@@ -12124,7 +12133,7 @@ public class OrtakIslemler implements Serializable {
 
 								if (digerAyinIlkGunu != null && tatil != null && digerAyinIlkGunu.getTime() <= tatil.getBasTarih().getTime()) {
 									long tatilBasZaman = Long.parseLong(PdksUtil.convertToDateString(orjTatil.getBasTarih(), "yyyyMMddHHmm"));
-									long tatilBitZaman = Long.parseLong(PdksUtil.convertToDateString(tatil.getBitisTarih(), "yyyyMMddHHmm"));
+									long tatilBitZaman = Long.parseLong(PdksUtil.convertToDateString(tatil.getBitTarih(), "yyyyMMddHHmm"));
 									long girisZamani = Long.parseLong(PdksUtil.convertToDateString(girisZaman, "yyyyMMddHHmm"));
 									if (girisZamani >= tatilBasZaman && girisZamani <= tatilBitZaman) {
 
@@ -12174,7 +12183,7 @@ public class OrtakIslemler implements Serializable {
 											if (tatil != null) {
 												Date tatilBasZaman = girisZaman;
 												String hareketYilAy = PdksUtil.convertToDateString(tatilBasZaman, "yyyyMM");
-												Date tatilOrjBitZaman = tatil.getBitisTarih();
+												Date tatilOrjBitZaman = tatil.getBitTarih();
 												Date tatilBitZaman = cikisZaman;
 												if (tatilBasZaman.before(tatil.getBasTarih()))
 													tatilBasZaman = tatil.getBasTarih();

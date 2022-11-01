@@ -2763,7 +2763,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							if (tatilAksam.getOrjTatil().isTekSefer())
 								tatilAksam = (Tatil) tatilAksam.getOrjTatil().clone();
 							Date tatilBas = tatilAksam.getBasTarih();
-							Date tatilBit = tatilAksam.getBitisTarih();
+							Date tatilBit = tatilAksam.getBitTarih();
 							if (tatilBit.getTime() >= girisZaman.getTime() && cikisZaman.getTime() > tatilBas.getTime()) {
 								if (girisZaman.before(tatilBas))
 									cikisZaman = tatilBas;

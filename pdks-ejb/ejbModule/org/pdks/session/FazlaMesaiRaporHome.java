@@ -1328,7 +1328,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 							if (sureAz && tatil != null) {
 								if (vardiyaGun.getCikisHareketleri() != null) {
 									HareketKGS cikisHareket = vardiyaGun.getCikisHareketleri().get(vardiyaGun.getCikisHareketleri().size() - 1);
-									sureAz = !(cikisHareket.getZaman().after(tatil.getBasTarih()) && cikisHareket.getZaman().before(tatil.getBitisTarih()));
+									sureAz = !(cikisHareket.getZaman().after(tatil.getBasTarih()) && cikisHareket.getZaman().before(tatil.getBitTarih()));
 								}
 
 							}
@@ -1474,7 +1474,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 										if (tatilSakli.getOrjTatil() != null && tatilSakli.getOrjTatil().isTekSefer())
 											tatilAksam = (Tatil) tatilSakli.getOrjTatil().clone();
 										Date tatilBas = tatilAksam.getBasTarih();
-										Date tatilBit = tatilAksam.getBitisTarih();
+										Date tatilBit = tatilAksam.getBitTarih();
 										if (tatilBit.getTime() >= girisZaman.getTime() && cikisZaman.getTime() > tatilBas.getTime()) {
 											if (girisZaman.before(tatilBas))
 												cikisZaman = tatilBas;

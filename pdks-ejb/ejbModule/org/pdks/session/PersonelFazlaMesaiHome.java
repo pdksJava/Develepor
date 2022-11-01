@@ -585,8 +585,8 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		if (!tatilMap.isEmpty()) {
 			if (tatilMap.containsKey(PdksUtil.convertToDateString(date, "yyyyMMdd"))) {
 				tatil = (Tatil) tatilMap.get((PdksUtil.convertToDateString(date, "yyyyMMdd")));
-				if (tatil.isTekSefer() && tatil.getBitisGun() != null)
-					tatil.setBitisTarih((Date) tatil.getBitisGun());
+				if (tatil.isTekSefer() && tatil.getBitGun() != null)
+					tatil.setBitTarih((Date) tatil.getBitGun());
 			}
 			fields.clear();
 			fields.put("tipi", Tanim.TIPI_HAREKET_NEDEN);
@@ -1261,7 +1261,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		boolean tatilMi = false;
 		if (zaman != null && !tatilMap.isEmpty() && tatilMap.containsKey(PdksUtil.convertToDateString(zaman, "yyyyMMdd"))) {
 			Tatil hareketTatil = tatilMap.get(PdksUtil.convertToDateString(zaman, "yyyyMMdd")).getOrjTatil();
-			tatilMi = zaman != null && zaman.getTime() >= hareketTatil.getBasTarih().getTime() && zaman.getTime() <= hareketTatil.getBitisTarih().getTime();
+			tatilMi = zaman != null && zaman.getTime() >= hareketTatil.getBasTarih().getTime() && zaman.getTime() <= hareketTatil.getBitTarih().getTime();
 			if (kgsHareket != null)
 				kgsHareket.setTatil(tatilMi);
 			else if (tatilMi)

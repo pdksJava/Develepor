@@ -2968,7 +2968,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						if (sureAz && tatil != null) {
 							if (vGun.getCikisHareketleri() != null) {
 								HareketKGS cikisHareket = vGun.getCikisHareketleri().get(vGun.getCikisHareketleri().size() - 1);
-								sureAz = !(cikisHareket.getZaman().after(tatil.getBasTarih()) && cikisHareket.getZaman().before(tatil.getBitisTarih()));
+								sureAz = !(cikisHareket.getZaman().after(tatil.getBasTarih()) && cikisHareket.getZaman().before(tatil.getBitTarih()));
 							}
 
 						}
@@ -3167,7 +3167,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										if (tatilSakli.getOrjTatil() != null && tatilSakli.getOrjTatil().isTekSefer())
 											tatilAksam = (Tatil) tatilSakli.getOrjTatil().clone();
 										Date tatilBas = tatilAksam.getBasTarih();
-										Date tatilBit = tatilAksam.getBitisTarih();
+										Date tatilBit = tatilAksam.getBitTarih();
 										if (tatilBit.getTime() >= girisZaman.getTime() && cikisZaman.getTime() > tatilBas.getTime()) {
 											if (girisZaman.before(tatilBas))
 												cikisZaman = tatilBas;
