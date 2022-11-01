@@ -6783,7 +6783,7 @@ public class OrtakIslemler implements Serializable {
 						if (vardiya.isCalisma()) {
 							String tatilStr = arifeTatilBasZaman.equals("") ? null : arifeTatilBasZaman;
 							for (ArifeVardiyaDonem arifeVardiyaDonem : arifeTatilList) {
-								if (arifeVardiyaDonem.getVardiya() != null && !vardiya.getId().equals(arifeVardiyaDonem.getVardiya()))
+								if (arifeVardiyaDonem.getVardiya() != null && !vardiya.getId().equals(arifeVardiyaDonem.getVardiya().getId()))
 									continue;
 								tatilStr = arifeVardiyaDonem.getTatilBasZaman();
 								arifeVardiyaHesapla = arifeVardiyaDonem.getArifeVardiyaHesapla();
