@@ -12250,7 +12250,7 @@ public class OrtakIslemler implements Serializable {
 									calSure += fark;
 									double resmiCalisma = resmiTatilSure;
 									if (resmiTatilSure > 0.0d) {
-										double rs = resmiCalisma > calSure ? calSure : resmiCalisma;
+										double rs = resmiCalisma > netSure ? netSure : resmiCalisma;
 										double yemekFark = PdksUtil.setSureDoubleRounded(((rs + vardiyaYemekSuresi) * fark) / (netSure + vardiyaYemekSuresi));
 										vardiyaYemekSuresi += yemekFark;
 										resmiTatilSure += yemekFark;
