@@ -1768,11 +1768,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 						sb.append("<p><b>" + mailMap.get("konu") + " var!</b></p>");
 						sb.append("<TABLE class=\"mars\" style=\"width: 90%\">");
 						boolean renkUyari = false;
-						sb.append("<THEAD><TR><TH>Personel No</TH>");
+						sb.append("<THEAD><TR><TH>" + personelNoAciklama() + "</TH>");
 						sb.append("<TH>Adı Soyadı</TH>");
 						sb.append("<TH>Tipi</TH><TH>Başlangıç Zamanı</TH>");
 						sb.append("<TH>Bitiş Zamanı</TH>");
-						sb.append("<TH>Açıklama</TH></TR></THEAD><TBODY>");
+						sb.append("<TH>" + uygulamaBordro + " Referans No</TH></TR></THEAD><TBODY>");
 						for (IzinReferansERP personelIzinTum : personelIzinList) {
 							PersonelIzin personelIzin = personelIzinTum.getIzin();
 							sb.append("<TR class=\"" + (renkUyari ? "odd" : "even") + "\">");
@@ -2166,24 +2166,17 @@ public class PdksVeriOrtakAktar implements Serializable {
 	}
 
 	public String personelNoAciklama() {
-		String personelNoAciklama = (mailMap.containsKey("personelNoAciklama") ? (String) mailMap.get("personelNoAciklama") : "");
-
-		if (personelNoAciklama.equals(""))
-			personelNoAciklama = "Personel No";
+		String personelNoAciklama = getBaslikAciklama("personelNoAciklama", "Personel No");
 		return personelNoAciklama;
 	}
 
 	private String sirketAciklama() {
-		String yoneticiAciklama = (mailMap.containsKey("sirketAciklama") ? (String) mailMap.get("sirketAciklama") : "");
-		if (yoneticiAciklama.equals(""))
-			yoneticiAciklama = "Şirket";
-		return yoneticiAciklama;
+		String sirketAciklama = getBaslikAciklama("sirketAciklama", "Şirket");
+		return sirketAciklama;
 	}
 
 	private String yoneticiAciklama() {
-		String yoneticiAciklama = (mailMap.containsKey("yoneticiAciklama") ? (String) mailMap.get("yoneticiAciklama") : "");
-		if (yoneticiAciklama.equals(""))
-			yoneticiAciklama = "Yönetici";
+		String yoneticiAciklama = getBaslikAciklama("yoneticiAciklama", "Yönetici");
 		return yoneticiAciklama;
 	}
 
@@ -3166,6 +3159,30 @@ public class PdksVeriOrtakAktar implements Serializable {
 			logger.info("aa");
 		}
 
+	}
+
+	public String getParameterKey(String key) {
+		String parameterKey = null;
+		try {
+			parameterKey = mailMap != null && mailMap.containsKey(key) ? ((String) mailMap.get(key)).trim() : "";
+		} catch (Exception e) {
+			parameterKey = "";
+		}
+		logger.debug(key + "='" + parameterKey + "'");
+		return parameterKey;
+
+	}
+
+	/**
+	 * @param key
+	 * @param defaultBaslik
+	 * @return
+	 */
+	private String getBaslikAciklama(String key, String defaultBaslik) {
+		String aciklama = getParameterKey(key);
+		if (aciklama.equals(""))
+			aciklama = defaultBaslik;
+		return aciklama;
 	}
 
 	public HashMap<String, Object> getMailMap() {
