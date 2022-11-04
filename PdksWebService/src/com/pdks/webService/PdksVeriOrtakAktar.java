@@ -1708,9 +1708,27 @@ public class PdksVeriOrtakAktar implements Serializable {
 					izinERP.setBitZaman(null);
 				}
 			}
+			Integer gecmisIzinKontrolAdet = null;
+			try {
+				if (mailMap.containsKey("gecmisIzinKontrolAdet"))
+					gecmisIzinKontrolAdet = Integer.parseInt((String) mailMap.get("gecmisIzinKontrolAdet"));
+				else {
+					kayitIzinList.clear();
+					gecmisIzinKontrolAdet = kayitIzinList.size() + 1;
+				}
 
-			if (kayitIzinList.size() > 50 && izinlerBasTarih != null && izinlerBitTarih != null && izinlerBasTarih.before(izinlerBitTarih)) {
+			} catch (Exception e) {
+				gecmisIzinKontrolAdet = null;
+			}
+			if (gecmisIzinKontrolAdet == null) {
+				kayitIzinList.clear();
+				gecmisIzinKontrolAdet = kayitIzinList.size() + 1;
+			}
+			if (kayitIzinList.size() >= gecmisIzinKontrolAdet && izinlerBasTarih != null && izinlerBitTarih != null && izinlerBasTarih.before(izinlerBitTarih)) {
 				Date tarih = PdksUtil.tariheAyEkleCikar(bugun, 2);
+				Date bTarih = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(PdksUtil.tariheAyEkleCikar(bugun, -2), "yyyyMM") + "01", "yyyyMMdd");
+				if (izinlerBasTarih.before(bTarih))
+					izinlerBasTarih = bTarih;
 				if (izinlerBitTarih.after(tarih))
 					izinlerBitTarih = tarih;
 				HashMap map = new HashMap();
@@ -1741,22 +1759,29 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 				}
 				if (!map.isEmpty()) {
-					List<PersonelIzin> personelIzinList = pdksDAO.getObjectByInnerObjectList("id", new ArrayList<Long>(map.keySet()), PersonelIzin.class);
+					List<IzinReferansERP> personelIzinList = pdksDAO.getObjectByInnerObjectList("izin.id", new ArrayList<Long>(map.keySet()), IzinReferansERP.class);
 					if (!personelIzinList.isEmpty()) {
-						personelIzinList = PdksUtil.sortListByAlanAdi(personelIzinList, "bitisZamani", Boolean.TRUE);
+						personelIzinList = PdksUtil.sortListByAlanAdi(personelIzinList, "sortAlan", Boolean.TRUE);
 						String uygulamaBordro = mailMap.containsKey("uygulamaBordro") ? (String) mailMap.get("uygulamaBordro") : "Bordro Uygulaması ";
 						mailMap.put("konu", uygulamaBordro + " gelmeyen izinler");
 						sb = new StringBuffer();
 						sb.append("<p><b>" + mailMap.get("konu") + " var!</b></p>");
 						sb.append("<TABLE class=\"mars\" style=\"width: 90%\">");
 						boolean renkUyari = false;
-						sb.append("<THEAD><TR><TH>Personel No</TH><TH>Adı Soyadı</TH><TH>Başlangıç Zamanı</TH><TH>Bitiş Zamanı</TH></TR></THEAD><TBODY>");
-						for (PersonelIzin personelIzin : personelIzinList) {
+						sb.append("<THEAD><TR><TH>Personel No</TH>");
+						sb.append("<TH>Adı Soyadı</TH>");
+						sb.append("<TH>Tipi</TH><TH>Başlangıç Zamanı</TH>");
+						sb.append("<TH>Bitiş Zamanı</TH>");
+						sb.append("<TH>Açıklama</TH></TR></THEAD><TBODY>");
+						for (IzinReferansERP personelIzinTum : personelIzinList) {
+							PersonelIzin personelIzin = personelIzinTum.getIzin();
 							sb.append("<TR class=\"" + (renkUyari ? "odd" : "even") + "\">");
 							sb.append("<TD align=\"center\">" + personelIzin.getPersonelNo() + "</TD>");
 							sb.append("<TD>" + personelIzin.getIzinSahibi().getAdSoyad() + "</TD>");
+							sb.append("<TD >" + (personelIzin.getIzinTipi() != null ? personelIzin.getIzinTipi().getIzinTipiTanim().getAciklamatr() : "") + "</TD>");
 							sb.append("<TD align=\"center\">" + PdksUtil.convertToDateString(personelIzin.getBaslangicZamani(), FORMAT_DATE_TIME) + "</TD>");
-							sb.append("<TD align=\"center\">" + PdksUtil.convertToDateString(personelIzin.getBitisZamani(), FORMAT_DATE_TIME) + "</TD></TR>");
+							sb.append("<TD align=\"center\">" + PdksUtil.convertToDateString(personelIzin.getBitisZamani(), FORMAT_DATE_TIME) + "</TD>");
+							sb.append("<TD >" + (personelIzinTum.getId() != null ? personelIzinTum.getId().trim() : "") + "</TD></TR>");
 							renkUyari = !renkUyari;
 							logger.debug(personelIzin.getPersonelNo() + " | " + PdksUtil.convertToDateString(personelIzin.getBaslangicZamani(), FORMAT_DATE_TIME) + " | " + PdksUtil.convertToDateString(personelIzin.getBitisZamani(), FORMAT_DATE_TIME) + " | " + personelIzin.getAciklama() + " | "
 									+ PdksUtil.convertToDateString(personelIzin.getOlusturmaTarihi(), FORMAT_DATE_TIME) + " | " + personelIzin.getId());
