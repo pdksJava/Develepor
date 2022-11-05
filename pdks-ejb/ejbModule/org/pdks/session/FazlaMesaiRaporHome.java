@@ -893,7 +893,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 
 					for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 						AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
-
+						int yarimYuvarla = puantaj.getYarimYuvarla();
 						puantaj.setDonemBitti(Boolean.TRUE);
 						puantaj.setAyrikHareketVar(false);
 						puantaj.setFiiliHesapla(true);
@@ -1058,7 +1058,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 
 						kayitVar = true;
 
-						puantaj.setResmiTatilToplami(User.getYuvarla(resmiTatilToplami));
+						puantaj.setResmiTatilToplami(PdksUtil.setSureDoubleTypeRounded(resmiTatilToplami, yarimYuvarla));
 
 						puantaj.setAksamVardiyaSaatSayisi(aksamVardiyaSaatSayisi);
 						puantaj.setAksamVardiyaSayisi(aksamVardiyaSayisi);
@@ -1485,7 +1485,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 										}
 									}
 								}
-								double calSure1 = girisZaman.getTime() < cikisZaman.getTime() ? User.getYuvarla(ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session)) : 0.0d;
+								double calSure1 = girisZaman.getTime() < cikisZaman.getTime() ? PdksUtil.setSureDoubleTypeRounded(ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session), vardiyaGun.getYarimYuvarla()) : 0.0d;
 
 								sure += calSure1;
 							}
@@ -1504,7 +1504,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 												girisZaman = aksamVardiyaBaslangicZamani;
 											if (cikisZaman.after(aksamVardiyaBitisZamani))
 												cikisZaman = aksamVardiyaBitisZamani;
-											double calSure1 = User.getYuvarla(ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session));
+											double calSure1 = PdksUtil.setSureDoubleTypeRounded(ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session), vardiyaGun.getYarimYuvarla());
 											if (calSure1 > fazlaMesai.getFazlaMesaiSaati())
 												calSure1 = fazlaMesai.getFazlaMesaiSaati();
 											sureMesai += calSure1;

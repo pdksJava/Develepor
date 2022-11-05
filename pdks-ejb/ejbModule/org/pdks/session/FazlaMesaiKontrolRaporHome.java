@@ -1118,6 +1118,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 				double fazlaMesaiMaxSure = ortakIslemler.getFazlaMesaiMaxSure(denklestirmeAy);
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
+					int yarimYuvarla = puantaj.getYarimYuvarla();
 					TreeMap<String, VardiyaGun> vgMap = new TreeMap<String, VardiyaGun>();
 					puantaj.setVgMap(vgMap);
 					puantaj.setDonemBitti(Boolean.TRUE);
@@ -1332,7 +1333,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 						puantaj.setSaatToplami(puantajSaatToplami);
 						puantaj.setDevredenSure(hesaplananDenklestirmeHesaplanan.getDevredenSure());
 						puantaj.setHaftaCalismaSuresi(puantajHaftaTatil);
-						puantaj.setResmiTatilToplami(User.getYuvarla(puantajResmiTatil));
+						puantaj.setResmiTatilToplami(PdksUtil.setSureDoubleTypeRounded(puantajResmiTatil, yarimYuvarla));
 					}
 					puantaj.setFazlaMesaiHesapla(puantajFazlaMesaiHesapla);
 					if (!personelDenklestirme.getDenklestirmeAy().isDurumu()) {
@@ -1481,63 +1482,6 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 			}
 		}
 
-	}
-
-	/**
-	 * @param hareketler
-	 */
-	private void manuelHareketSil(List<HareketKGS> hareketler) {
-		if (hareketler != null) {
-			for (Iterator iterator = hareketler.iterator(); iterator.hasNext();) {
-				HareketKGS hareketKGS = (HareketKGS) iterator.next();
-				if (hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.AYRIK_HAREKET))
-					iterator.remove();
-			}
-		}
-
-	}
-
-	/**
-	 * @return
-	 */
-	public String ayrikKayitlariOlustur() {
-		List<AylikPuantaj> list = new ArrayList<AylikPuantaj>(aylikPuantajList);
-		boolean devam = false;
-		for (AylikPuantaj aylikPuantaj : list) {
-			if (aylikPuantaj.isAyrikHareketVar() == false)
-				continue;
-			List<VardiyaGun> vardiyaList = new ArrayList<VardiyaGun>(aylikPuantaj.getVardiyalar());
-			int ayrikVar = 0;
-			for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
-				VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-				if (vardiyaGun.isAyinGunu() && vardiyaGun.getId() != null) {
-					if (vardiyaGun.isAyrikHareketVar()) {
-						manuelHareketSil(vardiyaGun.getGirisHareketleri());
-						manuelHareketSil(vardiyaGun.getCikisHareketleri());
-						manuelHareketSil(vardiyaGun.getHareketler());
-						++ayrikVar;
-					} else if (ayrikVar == 0)
-						iterator.remove();
-				} else
-					iterator.remove();
-
-			}
-			if (ayrikVar > 1) {
-				try {
-					ortakIslemler.addManuelGirisCikisHareketler(vardiyaList, true, null, session);
-					devam = true;
-				} catch (Exception e) {
-					logger.error(e);
-					e.printStackTrace();
-				}
-
-			}
-			vardiyaList = null;
-		}
-		list = null;
-		if (devam)
-			fillFazlaMesaiKontrolRaporList();
-		return "";
 	}
 
 	/**
@@ -1840,7 +1784,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 										}
 									}
 								}
-								double calSure1 = girisZaman.getTime() < cikisZaman.getTime() ? User.getYuvarla(ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session)) : 0.0d;
+								double calSure1 = girisZaman.getTime() < cikisZaman.getTime() ? PdksUtil.setSureDoubleTypeRounded(ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session), vardiyaGun.getYarimYuvarla()) : 0.0d;
 
 								sure += calSure1;
 							}
@@ -1859,7 +1803,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 												girisZaman = aksamVardiyaBaslangicZamani;
 											if (cikisZaman.after(aksamVardiyaBitisZamani))
 												cikisZaman = aksamVardiyaBitisZamani;
-											double calSure1 = User.getYuvarla(ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session));
+											double calSure1 = PdksUtil.setSureDoubleTypeRounded(ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session), vardiyaGun.getYarimYuvarla());
 											if (calSure1 > fazlaMesai.getFazlaMesaiSaati())
 												calSure1 = fazlaMesai.getFazlaMesaiSaati();
 											sureMesai += calSure1;

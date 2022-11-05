@@ -76,6 +76,7 @@ public class VardiyaGun extends BaseObject {
 	private PersonelIzin izin;
 	private VardiyaSablonu vardiyaSablonu;
 	private boolean bitmemisGun = Boolean.TRUE, islendi = Boolean.FALSE, ayrikHareketVar = Boolean.FALSE;
+	private int yarimYuvarla = PdksUtil.getYarimYuvarlaLast();
 	private HareketKGS ilkGiris, sonCikis;
 	private boolean ayinGunu = Boolean.TRUE, onayli = Boolean.TRUE, guncellendi = Boolean.FALSE, fiiliHesapla = Boolean.FALSE, hataliDurum = Boolean.FALSE, donemAcik = Boolean.TRUE;
 	private List<String> linkAdresler;
@@ -352,7 +353,7 @@ public class VardiyaGun extends BaseObject {
 	@Transient
 	public double getCalismaSuresi() {
 		if (calismaSuresi > 0)
-			calismaSuresi = PdksUtil.setSureDoubleRounded(calismaSuresi);
+			calismaSuresi = PdksUtil.setSureDoubleTypeRounded(calismaSuresi, yarimYuvarla);
 		return calismaSuresi;
 	}
 
@@ -1985,6 +1986,15 @@ public class VardiyaGun extends BaseObject {
 
 	public void setManuelGirisHTML(String manuelGirisHTML) {
 		this.manuelGirisHTML = manuelGirisHTML;
+	}
+
+	@Transient
+	public int getYarimYuvarla() {
+		return yarimYuvarla;
+	}
+
+	public void setYarimYuvarla(int yarimYuvarla) {
+		this.yarimYuvarla = yarimYuvarla;
 	}
 
 }

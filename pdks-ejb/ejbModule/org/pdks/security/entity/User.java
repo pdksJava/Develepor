@@ -586,6 +586,25 @@ public class User implements Serializable, Cloneable {
 		return yeniDeger;
 	}
 
+	/**
+	 * @param deger
+	 * @param yarimYuvarla
+	 * @return
+	 */
+	@Transient
+	public static Double setSureDoubleTypeRounded(Double deger, int yarimYuvarla) {
+		Double yeniDeger = null;
+		if (deger != null) {
+			if (deger > 0 && deger.doubleValue() > deger.longValue()) {
+				yeniDeger = PdksUtil.setSureDoubleTypeRounded(deger, yarimYuvarla);
+			} else
+				yeniDeger = deger;
+		}
+
+		// logger.info(deger + " " + yeniDeger);
+		return yeniDeger;
+	}
+
 	@Transient
 	public String getAyAdi(int ay) {
 		Calendar cal = Calendar.getInstance();

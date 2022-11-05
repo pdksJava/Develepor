@@ -1122,6 +1122,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				double fazlaMesaiMaxSure = ortakIslemler.getFazlaMesaiMaxSure(denklestirmeAy);
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
+					int yarimYuvarla = puantaj.getYarimYuvarla();
 					TreeMap<String, VardiyaGun> vgMap = new TreeMap<String, VardiyaGun>();
 					puantaj.setVgMap(vgMap);
 					puantaj.setDonemBitti(Boolean.TRUE);
@@ -1336,7 +1337,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						puantaj.setSaatToplami(puantajSaatToplami);
 						puantaj.setDevredenSure(hesaplananDenklestirmeHesaplanan.getDevredenSure());
 						puantaj.setHaftaCalismaSuresi(puantajHaftaTatil);
-						puantaj.setResmiTatilToplami(User.getYuvarla(puantajResmiTatil));
+						puantaj.setResmiTatilToplami(PdksUtil.setSureDoubleTypeRounded(puantajResmiTatil, yarimYuvarla));
 					}
 					puantaj.setFazlaMesaiHesapla(puantajFazlaMesaiHesapla);
 					if (!personelDenklestirme.getDenklestirmeAy().isDurumu()) {
@@ -1421,7 +1422,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					} else
 						puantaj.setAyrikHareketVar(false);
 				}
-				
+
 				if (!puantajList.isEmpty() && seciliEkSaha3Id == null)
 					fazlaMesaiOrtakIslemler.sortAylikPuantajPersonelBolum(puantajList);
 
@@ -1844,7 +1845,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 										}
 									}
 								}
-								double calSure1 = girisZaman.getTime() < cikisZaman.getTime() ? User.getYuvarla(ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session)) : 0.0d;
+								double calSure1 = girisZaman.getTime() < cikisZaman.getTime() ? PdksUtil.setSureDoubleTypeRounded(ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session), vardiyaGun.getYarimYuvarla()) : 0.0d;
 
 								sure += calSure1;
 							}
@@ -1863,7 +1864,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 												girisZaman = aksamVardiyaBaslangicZamani;
 											if (cikisZaman.after(aksamVardiyaBitisZamani))
 												cikisZaman = aksamVardiyaBitisZamani;
-											double calSure1 = User.getYuvarla(ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session));
+											double calSure1 = PdksUtil.setSureDoubleTypeRounded(ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session), vardiyaGun.getYarimYuvarla());
 											if (calSure1 > fazlaMesai.getFazlaMesaiSaati())
 												calSure1 = fazlaMesai.getFazlaMesaiSaati();
 											sureMesai += calSure1;

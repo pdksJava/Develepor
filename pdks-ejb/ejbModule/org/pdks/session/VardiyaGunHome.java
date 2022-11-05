@@ -2775,7 +2775,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						}
 					}
 				}
-				double sure = girisZaman.getTime() < cikisZaman.getTime() ? User.getYuvarla(ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, pdksVardiyaGun, session)) : 0.0d;
+
+				double sure = girisZaman.getTime() < cikisZaman.getTime() ? PdksUtil.setSureDoubleTypeRounded(ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, pdksVardiyaGun, session), pdksVardiyaGun.getYarimYuvarla()) : 0.0d;
 
 				if (sure > 0) {
 
@@ -5618,10 +5619,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 				if (!onayDurum)
 					onayDurum = aylikPuantaj.isOnayDurum();
+				int yuvarmaTipi = aylikPuantaj.getYarimYuvarla();
 				if (aylikPuantaj.getResmiTatilToplami() > 0)
-					aylikPuantaj.setResmiTatilToplami(User.getYuvarla(aylikPuantaj.getResmiTatilToplami()));
+					aylikPuantaj.setResmiTatilToplami(PdksUtil.setSureDoubleTypeRounded(aylikPuantaj.getResmiTatilToplami(), yuvarmaTipi));
 				if (aylikPuantaj.getHaftaCalismaSuresi() > 0)
-					aylikPuantaj.setHaftaCalismaSuresi(User.getYuvarla(aylikPuantaj.getHaftaCalismaSuresi()));
+					aylikPuantaj.setHaftaCalismaSuresi(PdksUtil.setSureDoubleTypeRounded(aylikPuantaj.getHaftaCalismaSuresi(), yuvarmaTipi));
 				if (aylikPuantaj.getVardiyalar() != null) {
 					for (VardiyaGun pdksVardiyaGun : aylikPuantaj.getVardiyalar()) {
 						if (pdksVardiyaGun.isAyinGunu() && pdksVardiyaGun.getVardiya() != null) {
