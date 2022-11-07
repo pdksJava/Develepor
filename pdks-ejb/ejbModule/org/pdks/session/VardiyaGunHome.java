@@ -4675,6 +4675,20 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			fazlaMesaiTalep.setBaslangicZamani(seciliVardiyaGun.getVardiyaDate());
 			fazlaMesaiTalep.setBitisZamani(seciliVardiyaGun.getVardiyaDate());
 			Vardiya vardiya = seciliVardiyaGun.getIslemVardiya();
+			List<Long> personelIdler = new ArrayList<Long>();
+			if (aylikPuantajMesaiTalepList != null)
+				for (AylikPuantaj aylikPuantaj : aylikPuantajMesaiTalepList) {
+					personelIdler.add(aylikPuantaj.getPdksPersonel().getId());
+				}
+			if (!personelIdler.isEmpty()) {
+				List<VardiyaGun> vardiyaGunler = ortakIslemler.getAllPersonelIdVardiyalar(personelIdler, seciliVardiyaGun.getVardiyaDate(), seciliVardiyaGun.getVardiyaDate(), false, session);
+				for (VardiyaGun vardiyaGun : vardiyaGunler) {
+					seciliVardiyaGun.setYarimYuvarla(vardiyaGun.getYarimYuvarla());
+					break;
+				}
+				vardiyaGunler = null;
+			}
+			personelIdler = null;
 			if (seciliVardiyaGun.getVardiya().isCalisma()) {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(vardiya.getVardiyaBitZaman());
