@@ -7527,7 +7527,6 @@ public class OrtakIslemler implements Serializable {
 		return vardiyaSonucMap;
 	}
 
-	 
 	/**
 	 * @param personeller
 	 * @param baslamaTarih
@@ -7761,10 +7760,10 @@ public class OrtakIslemler implements Serializable {
 
 		}
 		if (vardiyaIstenen != null) {
- 			HashMap<String, List<VardiyaGun>> map1 = new HashMap<String, List<VardiyaGun>>();
+			HashMap<String, List<VardiyaGun>> map1 = new HashMap<String, List<VardiyaGun>>();
 			for (String key1 : vardiyaIstenen.keySet()) {
 				VardiyaGun vardiyaGun = vardiyaIstenen.get(key1);
-				 
+
 				vardiyaGun.setVardiyaZamani();
 				String sicilNo = vardiyaGun.getPersonel().getPdksSicilNo();
 				List<VardiyaGun> list = map1.containsKey(sicilNo) ? map1.get(sicilNo) : new ArrayList<VardiyaGun>();
@@ -12400,7 +12399,11 @@ public class OrtakIslemler implements Serializable {
 										}
 										pdksVardiyaGun.setHareketler(null);
 										pdksVardiyaGun.addHareket(manuelGiris, hareketKaydet);
-										pdksVardiyaGun.getHareketler().addAll(hareketler);
+										if (hareketler != null) {
+											if (pdksVardiyaGun.getHareketler() == null)
+												pdksVardiyaGun.setHareketler(new ArrayList<HareketKGS>());
+											pdksVardiyaGun.getHareketler().addAll(hareketler);
+										}
 										if (!girisHareketler.isEmpty())
 											pdksVardiyaGun.getGirisHareketleri().addAll(girisHareketler);
 										oncekiVardiyaGun.setAyrikHareketVar(Boolean.TRUE);
