@@ -7862,7 +7862,9 @@ public class OrtakIslemler implements Serializable {
 			VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 			if (vardiyaGun.getVardiya() == null)
 				continue;
-
+			Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
+			if (islemVardiya != null)
+				islemVardiya.setIslemAdet(0);
 			Boolean geceHaftaTatilMesaiParcala = null;
 			if (haftaTatilDurum.equals("1") && vardiyaGun.getVardiya().isHaftaTatil() && vardiyaGun.getCalismaModeli() != null) {
 				geceHaftaTatilMesaiParcala = vardiyaGun.getCalismaModeli().getGeceHaftaTatilMesaiParcala();
@@ -7871,7 +7873,8 @@ public class OrtakIslemler implements Serializable {
 
 			vardiyaGun.setIslendi(vardiyaGun.getSonrakiVardiya() == null && vardiyaGun.getOncekiVardiyaGun() == null);
 			try {
-				Vardiya islemVardiya = vardiyaGun.setVardiyaZamani();
+				islemVardiya = vardiyaGun.setVardiyaZamani();
+
 				// Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
 				if (islemVardiya.getVardiyaFazlaMesaiBasZaman() == null)
 					islemVardiya.setVardiyaFazlaMesaiBasZaman(vardiyaGun.getVardiyaDate());
@@ -7942,7 +7945,8 @@ public class OrtakIslemler implements Serializable {
 					islemVardiya.setVardiyaBitZaman(PdksUtil.addTarih(islemVardiya.getVardiyaFazlaMesaiBitZaman(), Calendar.MILLISECOND, -40));
 
 				}
-
+				if (islemVardiya != null)
+					islemVardiya.setIslemAdet(-1);
 			} catch (Exception ex1) {
 				ex1.printStackTrace();
 				logger.error(vardiyaGun.getVardiyaKeyStr());
