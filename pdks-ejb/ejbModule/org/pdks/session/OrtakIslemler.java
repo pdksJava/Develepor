@@ -4500,6 +4500,8 @@ public class OrtakIslemler implements Serializable {
 					for (Iterator iterator = varList.iterator(); iterator.hasNext();) {
 						VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 						vardiyaGun.setGuncellendi(Boolean.FALSE);
+						if (vardiyaGun.getIzin() != null)
+							continue;
 						String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMMdd");
 						List<Liste> listeler = new ArrayList<Liste>();
 						for (Vardiya vardiya : vardiyaPerList) {
