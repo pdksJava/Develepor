@@ -4283,10 +4283,11 @@ public class OrtakIslemler implements Serializable {
 							for (VardiyaGun vardiyaGun : varList) {
 								Date vd = vardiyaGun.getVardiyaDate();
 								vardiyaGun.setAyinGunu(!(vd.before(donemBas) || vd.after(donemBit)));
-								if ((vardiyaGun.getId() == null || vardiyaGun.getVersion() < 0 || !vardiyaGun.getDurum()) && vardiyaGun.getVardiya() != null && vardiyaGun.isAyinGunu() && vd.before(bugun)) {
-									saveList.add(vardiyaGun);
+								if (vardiyaGun.isIzinli() == false) {
+									if ((vardiyaGun.getId() == null || vardiyaGun.getVersion() < 0 || !vardiyaGun.getDurum()) && vardiyaGun.getVardiya() != null && vardiyaGun.isAyinGunu() && vd.before(bugun)) {
+										saveList.add(vardiyaGun);
+									}
 								}
-
 							}
 							if (!saveList.isEmpty()) {
 								boolean flush = false;

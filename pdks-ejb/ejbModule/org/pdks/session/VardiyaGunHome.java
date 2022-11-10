@@ -4751,7 +4751,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								vg.setVersion(0);
 								session.saveOrUpdate(vg);
 								flush = true;
-							} else if (!vg.getDurum() && vg.getVersion() == 0 && vg.getVardiya().isHaftaTatil() == false) {
+							} else if (!vg.getDurum() && vg.getVersion() == 0 && vg.isIzinli() == false && vg.getVardiya().isHaftaTatil() == false) {
 								vg.setVersion(-1);
 								session.saveOrUpdate(vg);
 								flush = true;
@@ -5444,7 +5444,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							}
 							pdksVardiyaGun.setOlusturanUser(authenticatedUser);
 							if (pdksVardiyaGun.getId() == null && hareketKaydiVardiyaBul && pdksVardiyaGun.isAyinGunu()) {
-								if (!pdksVardiyaGun.getVardiya().isHaftaTatil())
+								if (!pdksVardiyaGun.getVardiya().isHaftaTatil() && pdksVardiyaGun.isIzinli() == false)
 									pdksVardiyaGun.setVersion(-1);
 							}
 							if (pdksVardiyaGun.getId() == null && pdksVardiyaGun.getTatil() != null && !pdksVardiyaGun.getTatil().isYarimGunMu() && pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getVardiya().isCalisma())
