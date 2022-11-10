@@ -822,6 +822,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		Date basTarih = new Date();
 		if (testDurum)
 			logger.info("fillPersonelDenklestirmeDevam 0000 " + basTarih);
+		String haftaTatilDurum = ortakIslemler.getParameterKey("haftaTatilDurum");
 		seciliBolum = null;
 		kismiOdemeGoster = Boolean.FALSE;
 		fazlaMesaiVardiyaGun = null;
@@ -951,6 +952,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 			}
 			perList.clear();
+
 			for (Iterator iterator = personelDenklestirmeler.iterator(); iterator.hasNext();) {
 				PersonelDenklestirme personelDenklestirme = (PersonelDenklestirme) iterator.next();
 				if (personelDenklestirme == null || personelDenklestirme.getPersonel() == null) {
@@ -1152,14 +1154,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					PersonelDenklestirmeTasiyici denklestirme = (PersonelDenklestirmeTasiyici) iterator1.next();
 					if (personelDenklestirmeMap.containsKey(denklestirme.getPersonel().getId())) {
 						PersonelDenklestirme personelDenklestirme = personelDenklestirmeMap.get(denklestirme.getPersonel().getId());
-						if (personelDenklestirme.getCalismaModeliAy().isHareketKaydiVardiyaBulsunmu())
+						if (haftaTatilDurum.equals("1") && personelDenklestirme.getCalismaModeliAy().isHareketKaydiVardiyaBulsunmu())
 							haftaSonuList.add(denklestirme);
 						denklestirmeIdList.add(personelDenklestirme.getId());
 					}
-
 				}
 				if (denklestirmeAyDurum && !haftaSonuList.isEmpty())
 					haftaTatilVardiyaGuncelle(haftaSonuList);
+
 				haftaSonuList = null;
 				TreeMap<String, PersonelDenklestirmeDinamikAlan> devamlilikPrimiMap = new TreeMap<String, PersonelDenklestirmeDinamikAlan>();
 				devamlilikPrimi = denklestirmeMantiksalBilgiBul(PersonelDenklestirmeDinamikAlan.TIPI_DENKLESTIRME_DEVAMLILIK_PRIMI);
@@ -1553,7 +1555,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						if (personelDenklestirme.getPersonelDenklestirmeGecenAy() != null)
 							puantaj.setDevredenSure(personelDenklestirme.getPersonelDenklestirmeGecenAy().getDevredenSure());
 					}
-
+					if (denklestirmeAyDurum == false && !haftaTatilDurum.equals("1"))
+						haftaCalismaSuresi = 0.0d;
 					puantaj.setHaftaCalismaSuresi(haftaCalismaSuresi);
 					if (!gebeGoster)
 						gebeGoster = puantaj.isGebeDurum();

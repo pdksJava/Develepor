@@ -1621,20 +1621,26 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				PdksUtil.addMessageAvailableWarn(mesaj + str + " " + (calismaModeli != null ? calismaModeli.getAciklama() + " vardiyalarına " : "çalışma modeline") + " uymayan hatalı " + (str.indexOf(",") < 0 ? "vardiyadır!" : "vardiyalardır"));
 			}
 			if (personelDenklestirme != null) {
-				for (Iterator iterator = vardiyaGunHareketOnaysizList.iterator(); iterator.hasNext();) {
-					VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-					if (vardiyaGun.getId() != null && vardiyaGun.isAyinGunu() && vardiyaGun.getVersion() < 0) {
-						vardiyaGun.setVersion(0);
-						session.saveOrUpdate(vardiyaGun);
-					}
 
-				}
 				personelDenklestirme.setOnaylandi(yaz);
 				personelDenklestirme.setDurum(Boolean.FALSE);
 				personelDenklestirme.setGuncellemeTarihi(new Date());
 				session.saveOrUpdate(personelDenklestirme);
 				session.flush();
 			}
+		} else {
+			boolean flush = false;
+			for (Iterator iterator = vardiyaGunHareketOnaysizList.iterator(); iterator.hasNext();) {
+				VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
+				if (vardiyaGun.getId() != null && vardiyaGun.isAyinGunu() && vardiyaGun.getVersion() < 0) {
+					vardiyaGun.setVersion(0);
+					session.saveOrUpdate(vardiyaGun);
+					flush = true;
+				}
+
+			}
+			if (flush)
+				session.flush();
 		}
 		vardiyaGunMap = null;
 		sb = null;
