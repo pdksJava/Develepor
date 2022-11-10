@@ -1035,8 +1035,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						list = ortakIslemler.personelDenklestir(denklestirmeDonemi, tatilGunleriMap, searchKey, perList, Boolean.TRUE, Boolean.FALSE, ayBitmedi, session);
 
 					}
-					if (denklestirmeAyDurum && !list.isEmpty())
-						haftaTatilVardiyaGuncelle(list);
+
 				} catch (Exception ex) {
 					list = new ArrayList<PersonelDenklestirmeTasiyici>();
 					logger.equals(ex);
@@ -1148,11 +1147,20 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					}
 				}
 				List<Long> denklestirmeIdList = new ArrayList<Long>();
+				List<PersonelDenklestirmeTasiyici> haftaSonuList = new ArrayList<PersonelDenklestirmeTasiyici>();
 				for (Iterator iterator1 = list.iterator(); iterator1.hasNext();) {
 					PersonelDenklestirmeTasiyici denklestirme = (PersonelDenklestirmeTasiyici) iterator1.next();
-					if (personelDenklestirmeMap.containsKey(denklestirme.getPersonel().getId()))
-						denklestirmeIdList.add(personelDenklestirmeMap.get(denklestirme.getPersonel().getId()).getId());
+					if (personelDenklestirmeMap.containsKey(denklestirme.getPersonel().getId())) {
+						PersonelDenklestirme personelDenklestirme = personelDenklestirmeMap.get(denklestirme.getPersonel().getId());
+						if (personelDenklestirme.getCalismaModeliAy().isHareketKaydiVardiyaBulsunmu())
+							haftaSonuList.add(denklestirme);
+						denklestirmeIdList.add(personelDenklestirme.getId());
+					}
+
 				}
+				if (denklestirmeAyDurum && !haftaSonuList.isEmpty())
+					haftaTatilVardiyaGuncelle(haftaSonuList);
+				haftaSonuList = null;
 				TreeMap<String, PersonelDenklestirmeDinamikAlan> devamlilikPrimiMap = new TreeMap<String, PersonelDenklestirmeDinamikAlan>();
 				devamlilikPrimi = denklestirmeMantiksalBilgiBul(PersonelDenklestirmeDinamikAlan.TIPI_DENKLESTIRME_DEVAMLILIK_PRIMI);
 				if (devamlilikPrimi != null)
