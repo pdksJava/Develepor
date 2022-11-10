@@ -1613,6 +1613,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 
 		}
+		boolean flush = false;
 		if (!yaz) {
 			if (sb.length() > 0)
 				PdksUtil.addMessageAvailableWarn(mesaj + sb.toString());
@@ -1626,10 +1627,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				personelDenklestirme.setDurum(Boolean.FALSE);
 				personelDenklestirme.setGuncellemeTarihi(new Date());
 				session.saveOrUpdate(personelDenklestirme);
-				session.flush();
+
 			}
 		} else {
-			boolean flush = false;
 			for (Iterator iterator = vardiyaGunHareketOnaysizList.iterator(); iterator.hasNext();) {
 				VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 				if (vardiyaGun.getId() != null && vardiyaGun.isAyinGunu() && vardiyaGun.getVersion() < 0) {
@@ -1639,9 +1639,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 
 			}
-			if (flush)
-				session.flush();
 		}
+		if (flush)
+			session.flush();
 		vardiyaGunMap = null;
 		sb = null;
 		sbCalismaModeliUyumsuz = null;
