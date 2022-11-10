@@ -2123,6 +2123,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			TreeMap<String, Integer> vgHaftaMap = new TreeMap<String, Integer>();
 			List<PersonelDenklestirmeTasiyici> personelDenklestirmeleri = personelDenklestirmeTasiyici.getPersonelDenklestirmeleri();
 			Calendar cal1 = Calendar.getInstance();
+			Date bugun = PdksUtil.getDate(cal1.getTime());
 			for (PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici2 : personelDenklestirmeleri) {
 				++hafta;
 				List<VardiyaGun> vardiyaGunList = personelDenklestirmeTasiyici2.getVardiyalar();
@@ -2130,13 +2131,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					continue;
 				for (VardiyaGun vardiyaGun : vardiyaGunList) {
 					String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMMdd");
-					if (vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null) {
+					boolean haftaTatil = vardiyaGun.getVardiya().isHaftaTatil();
+					if (vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null && (haftaTatil || bugun.after(vardiyaGun.getVardiyaDate()))) {
 						cal1.setTime(vardiyaGun.getVardiyaDate());
-						boolean haftaTatil = vardiyaGun.getVardiya().isHaftaTatil();
-						if (vardiyaGun.getVersion() < 0 || haftaTatil) {
+						if (haftaTatil || (vardiyaGun.getVardiya().isCalisma() && (vardiyaGun.getVersion() < 0 || vardiyaGun.getHareketler() == null || vardiyaGun.getHareketler().isEmpty()))) {
 							if (haftaTatil)
 								vgHaftaMap.put(key, hafta);
-							else if (vardiyaGun.getHareketler() == null || vardiyaGun.getHareketler().isEmpty()) {
+							else if (haftaTatil == false && (vardiyaGun.getHareketler() == null || vardiyaGun.getHareketler().isEmpty())) {
 								List<VardiyaGun> vList = haftaMap.containsKey(hafta) ? haftaMap.get(hafta) : new ArrayList<VardiyaGun>();
 								if (vList.isEmpty())
 									haftaMap.put(hafta, vList);
@@ -2153,26 +2154,21 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				for (String key : vgHaftaMap.keySet()) {
 					VardiyaGun vardiyaGun = vgMap.get(key);
 					hafta = vgHaftaMap.get(key);
-					if (vardiyaGun.getHareketler() != null && haftaMap.containsKey(hafta)) {
-
+					if ((vardiyaGun.getVardiyaDate().after(bugun) || vardiyaGun.getHareketler() != null) && haftaMap.containsKey(hafta)) {
 						List<VardiyaGun> vList = haftaMap.get(hafta);
 						if (vList.size() == 1) {
 							Vardiya vardiyaHafta = vardiyaGun.getVardiya();
-							for (VardiyaGun vardiyaCalismaGun : vList) {
-								Vardiya vardiyaCalisma = vardiyaCalismaGun.getVardiya();
-								logger.debug(vardiyaCalismaGun.getVardiyaKeyStr() + " " + key);
-								vardiyaGun.setVardiya(vardiyaCalisma);
-								vardiyaGun.setVersion(-1);
-								vardiyaCalismaGun.setVardiya(vardiyaHafta);
-								vardiyaCalismaGun.setVersion(0);
-								session.saveOrUpdate(vardiyaGun);
-								session.saveOrUpdate(vardiyaCalismaGun);
-								break;
-
-							}
-
+							VardiyaGun vardiyaCalismaGun = vList.get(0);
+							Vardiya vardiyaCalisma = vardiyaCalismaGun.getVardiya();
+							logger.debug(vardiyaCalismaGun.getVardiyaKeyStr() + " " + key);
+							vardiyaGun.setVardiya(vardiyaCalisma);
+							vardiyaGun.setVersion(-1);
+							vardiyaCalismaGun.setVardiya(vardiyaHafta);
+							vardiyaCalismaGun.setVersion(0);
+							session.saveOrUpdate(vardiyaGun);
+							session.saveOrUpdate(vardiyaCalismaGun);
+							flush = true;
 						}
-
 					}
 				}
 			}
@@ -4071,9 +4067,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			String gorevYeriAciklama = getExcelAciklama();
 			ByteArrayOutputStream baosDosya = fazlaMesaiExcelDevam(gorevYeriAciklama, aylikPuantajList);
 			if (baosDosya != null) {
- 				String dosyaAdi = "FazlaMesai_" + gorevYeriAciklama + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyyMM") + ".xlsx";
+				String dosyaAdi = "FazlaMesai_" + gorevYeriAciklama + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyyMM") + ".xlsx";
 				PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi);
- 			}
+			}
 		} catch (Exception e) {
 			logger.error("Pdks hata in : \n");
 			e.printStackTrace();

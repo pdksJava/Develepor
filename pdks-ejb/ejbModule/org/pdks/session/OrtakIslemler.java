@@ -4499,7 +4499,6 @@ public class OrtakIslemler implements Serializable {
 				if (!vardiyaPerList.isEmpty()) {
 					for (Iterator iterator = varList.iterator(); iterator.hasNext();) {
 						VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-						fazlaMesaiSaatiAyarla(vardiyalarMap);
 						vardiyaGun.setGuncellendi(Boolean.FALSE);
 						String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMMdd");
 						List<Liste> listeler = new ArrayList<Liste>();
@@ -4507,7 +4506,9 @@ public class OrtakIslemler implements Serializable {
 							personelHareketList.clear();
 							personelHareketList.addAll(personelHareketMap.get(personelKGSId));
 							VardiyaGun vardiyaGunNew = new VardiyaGun(personelDenklestirmeTasiyici.getPersonel(), vardiya, vardiyaGun.getVardiyaDate());
-							vardiyaGunNew.setVardiyaZamani();
+							vardiyalarMap.put(vardiyaGunNew.getVardiyaKeyStr(), vardiyaGunNew);
+							fazlaMesaiSaatiAyarla(vardiyalarMap);
+							// vardiyaGunNew.setVardiyaZamani();
 							for (Iterator iterator1 = personelHareketList.iterator(); iterator1.hasNext();) {
 								HareketKGS hareket = (HareketKGS) iterator1.next();
 								if (!hareketIdList.contains(hareket.getId()) && vardiyaGunNew.addHareket(hareket, Boolean.TRUE))
@@ -4545,6 +4546,7 @@ public class OrtakIslemler implements Serializable {
 							logger.debug(vg.getVardiyaKeyStr() + " " + vg.getVardiyaAdi());
 
 						}
+						vardiyalarMap.put(vardiyaGun.getVardiyaKeyStr(), vardiyaGun);
 					}
 
 				}

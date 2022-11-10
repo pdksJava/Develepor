@@ -4740,7 +4740,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								vg.setVersion(0);
 								session.saveOrUpdate(vg);
 								flush = true;
-							} else if (!vg.getDurum() && vg.getVersion() == 0) {
+							} else if (!vg.getDurum() && vg.getVersion() == 0 && vg.getVardiya().isHaftaTatil() == false) {
 								vg.setVersion(-1);
 								session.saveOrUpdate(vg);
 								flush = true;
@@ -7499,9 +7499,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			String gorevYeriAciklama = getExcelAciklama();
 			ByteArrayOutputStream baosDosya = fazlaMesaiTalepExcelDevam();
 			if (baosDosya != null) {
- 				String dosyaAdi = "AylıkFazlaMesaiTalep_" + gorevYeriAciklama + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyyMM") + ".xlsx";
+				String dosyaAdi = "AylıkFazlaMesaiTalep_" + gorevYeriAciklama + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyyMM") + ".xlsx";
 				PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi);
-  			}
+			}
 
 		} catch (Exception e) {
 			logger.error("Pdks hata in : \n");
