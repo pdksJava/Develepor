@@ -2172,8 +2172,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					}
 				}
 			}
-			if (flush)
+			if (flush) {
+				PdksUtil.addMessageWarn("Hafta tatilleri güncellendi, 'Fazla Mesai Getir' tekrar çalıştırın.");
 				session.flush();
+			}
+
 		}
 	}
 

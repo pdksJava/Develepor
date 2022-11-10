@@ -1403,6 +1403,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (vardiyaMap != null && vardiyaMap.isEmpty())
 			vardiyaMap = null;
 		TreeMap<String, VardiyaGun> vardiyaGunMap = new TreeMap<String, VardiyaGun>();
+		List<VardiyaGun> vardiyaGunHareketOnaysizList = new ArrayList<VardiyaGun>();
 		if (plan != null && plan.getVardiyaHaftaList() != null) {
 			for (VardiyaHafta vardiyaHafta : plan.getVardiyaHaftaList()) {
 				if (vardiyaHafta.getVardiyaGunler() != null) {
@@ -1478,43 +1479,43 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				List<VardiyaGun> vardiyaGunler = vardiyaHafta.getVardiyaGunler();
 				if (vardiyaGunler != null && vardiyaGunler.size() == 7) {
 					for (VardiyaGun pdksVardiyaGun : vardiyaGunler) {
-						addHaftaVardiya(list, pdksVardiyaGun, excelAktar);
+						vardiyaGunHareketOnaysizList.add(addHaftaVardiya(list, pdksVardiyaGun, excelAktar));
 						if (getVardiyaDurum(pdksVardiyaGun, i))
 							yaz = Boolean.FALSE;
 					}
 				} else {
 					if (vardiyaHafta.getVardiyaGun1().getVardiya() != null) {
-						addHaftaVardiya(list, vardiyaHafta.getVardiyaGun1(), excelAktar);
+						vardiyaGunHareketOnaysizList.add(addHaftaVardiya(list, vardiyaHafta.getVardiyaGun1(), excelAktar));
 						if (getVardiyaDurum(vardiyaHafta.getVardiyaGun1(), i))
 							yaz = Boolean.FALSE;
 					}
 					if (vardiyaHafta.getVardiyaGun2().getVardiya() != null) {
-						addHaftaVardiya(list, vardiyaHafta.getVardiyaGun2(), excelAktar);
+						vardiyaGunHareketOnaysizList.add(addHaftaVardiya(list, vardiyaHafta.getVardiyaGun2(), excelAktar));
 						if (getVardiyaDurum(vardiyaHafta.getVardiyaGun2(), i))
 							yaz = Boolean.FALSE;
 					}
 					if (vardiyaHafta.getVardiyaGun3().getVardiya() != null) {
-						addHaftaVardiya(list, vardiyaHafta.getVardiyaGun3(), excelAktar);
+						vardiyaGunHareketOnaysizList.add(addHaftaVardiya(list, vardiyaHafta.getVardiyaGun3(), excelAktar));
 						if (getVardiyaDurum(vardiyaHafta.getVardiyaGun3(), i))
 							yaz = Boolean.FALSE;
 					}
 					if (vardiyaHafta.getVardiyaGun4().getVardiya() != null) {
-						addHaftaVardiya(list, vardiyaHafta.getVardiyaGun4(), excelAktar);
+						vardiyaGunHareketOnaysizList.add(addHaftaVardiya(list, vardiyaHafta.getVardiyaGun4(), excelAktar));
 						if (getVardiyaDurum(vardiyaHafta.getVardiyaGun4(), i))
 							yaz = Boolean.FALSE;
 					}
 					if (vardiyaHafta.getVardiyaGun5().getVardiya() != null) {
-						addHaftaVardiya(list, vardiyaHafta.getVardiyaGun5(), excelAktar);
+						vardiyaGunHareketOnaysizList.add(addHaftaVardiya(list, vardiyaHafta.getVardiyaGun5(), excelAktar));
 						if (getVardiyaDurum(vardiyaHafta.getVardiyaGun5(), i))
 							yaz = Boolean.FALSE;
 					}
 					if (vardiyaHafta.getVardiyaGun6().getVardiya() != null) {
-						addHaftaVardiya(list, vardiyaHafta.getVardiyaGun6(), excelAktar);
+						vardiyaGunHareketOnaysizList.add(addHaftaVardiya(list, vardiyaHafta.getVardiyaGun6(), excelAktar));
 						if (getVardiyaDurum(vardiyaHafta.getVardiyaGun6(), i))
 							yaz = Boolean.FALSE;
 					}
 					if (vardiyaHafta.getVardiyaGun7().getVardiya() != null) {
-						addHaftaVardiya(list, vardiyaHafta.getVardiyaGun7(), excelAktar);
+						vardiyaGunHareketOnaysizList.add(addHaftaVardiya(list, vardiyaHafta.getVardiyaGun7(), excelAktar));
 						if (getVardiyaDurum(vardiyaHafta.getVardiyaGun7(), i))
 							yaz = Boolean.FALSE;
 					}
@@ -1620,6 +1621,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				PdksUtil.addMessageAvailableWarn(mesaj + str + " " + (calismaModeli != null ? calismaModeli.getAciklama() + " vardiyalarına " : "çalışma modeline") + " uymayan hatalı " + (str.indexOf(",") < 0 ? "vardiyadır!" : "vardiyalardır"));
 			}
 			if (personelDenklestirme != null) {
+				for (Iterator iterator = vardiyaGunHareketOnaysizList.iterator(); iterator.hasNext();) {
+					VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
+					if (vardiyaGun.getId() != null && vardiyaGun.isAyinGunu() && vardiyaGun.getVersion() < 0) {
+						vardiyaGun.setVersion(0);
+						session.saveOrUpdate(vardiyaGun);
+					}
+
+				}
 				personelDenklestirme.setOnaylandi(yaz);
 				personelDenklestirme.setDurum(Boolean.FALSE);
 				personelDenklestirme.setGuncellemeTarihi(new Date());
@@ -1640,7 +1649,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param vardiyaGun
 	 * @param excelAktar
 	 */
-	private void addHaftaVardiya(ArrayList<Vardiya> list, VardiyaGun vardiyaGun, boolean excelAktar) {
+	private VardiyaGun addHaftaVardiya(ArrayList<Vardiya> list, VardiyaGun vardiyaGun, boolean excelAktar) {
 		try {
 			if (vardiyaGun != null) {
 				if (vardiyaGun.getVardiya() != null) {
@@ -1656,7 +1665,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		return vardiyaGun;
 	}
 
 	/**
@@ -3825,7 +3834,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				onayDurum = vardiyaPlanKontrol(personelDenklestirme, vardiyaMap, pdksVardiyaPlan, personel.getSicilNo() + " " + personel.getAdSoyad() + " ", false);
 				asilOnay = true;
 			} else if (tumOnaylanPlanEkle) {
-
 				onayDurum = personelDenklestirme != null && personelDenklestirme.isOnaylandi();
 				eskiOnayList.add(personel.getId());
 			}
@@ -3894,17 +3902,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			if (departman != null && !departman.isAdminMi()) {
 				for (AylikPuantaj aylikPuantaj : puantajList) {
-
 					if (aylikPuantaj.isOnayDurum()) {
 						Boolean durum = saveOnay(session, aylikPuantaj);
 						aylikPuantaj.setOnayDurum(false);
 						if (durum)
 							onayDurum = Boolean.TRUE;
 					}
-
 				}
 			} else {
-
 				HashMap fields = new HashMap();
 				fields.put(PdksEntityController.MAP_KEY_MAP, "getPersonelId");
 				fields.put("pdksPersonel.id", perIdList);
