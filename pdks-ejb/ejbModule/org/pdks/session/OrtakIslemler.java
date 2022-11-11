@@ -4503,6 +4503,7 @@ public class OrtakIslemler implements Serializable {
 						vardiyaGun.setGuncellendi(Boolean.FALSE);
 						if (vardiyaGun.isIzinli())
 							continue;
+						if (vardiyaGun.getVardiya().isCalisma() == false) {
 							vardiyaGun.setVersion(0);
 							session.saveOrUpdate(vardiyaGun);
 							vardiyaGun.setGuncellendi(Boolean.TRUE);
