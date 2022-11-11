@@ -5385,6 +5385,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 				} else {
 				}
+				List<VardiyaGun> vardiyaGunHareketOnaysizList = new ArrayList<VardiyaGun>();
+
 				aylikPuantaj.setPdksPersonel(personel);
 				aylikPuantaj.setVardiyaPlan(new VardiyaPlan());
 				aylikPuantaj.getVardiyaPlan().getVardiyaHaftaList().clear();
@@ -5444,8 +5446,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							}
 							pdksVardiyaGun.setOlusturanUser(authenticatedUser);
 							if (pdksVardiyaGun.getId() == null && hareketKaydiVardiyaBul && pdksVardiyaGun.isAyinGunu()) {
-								if (!pdksVardiyaGun.getVardiya().isHaftaTatil() && pdksVardiyaGun.isIzinli() == false)
+								if (!pdksVardiyaGun.getVardiya().isHaftaTatil()) {
 									pdksVardiyaGun.setVersion(-1);
+									vardiyaGunHareketOnaysizList.add(pdksVardiyaGun);
+								}
 							}
 							if (pdksVardiyaGun.getId() == null && pdksVardiyaGun.getTatil() != null && !pdksVardiyaGun.getTatil().isYarimGunMu() && pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getVardiya().isCalisma())
 								pdksVardiyaGun.setVardiya(offVardiya);
@@ -5631,7 +5635,19 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					logger.error("Pdks hata out : " + e.getMessage());
 
 				}
+				if (!vardiyaGunHareketOnaysizList.isEmpty()) {
+					for (Iterator iterator = vardiyaGunHareketOnaysizList.iterator(); iterator.hasNext();) {
+						VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
+						if (vardiyaGun.getId() != null && vardiyaGun.isIzinli() && vardiyaGun.isAyinGunu() && vardiyaGun.getVersion() < 0) {
+							vardiyaGun.setVersion(0);
+							session.saveOrUpdate(vardiyaGun);
+							flush = true;
+						}
 
+					}
+
+				}
+				vardiyaGunHareketOnaysizList = null;
 				if (personelDenklestirme != null && personelDenklestirme.getPlanlanSure() < 0d) {
 					if (personelDenklestirme.getCalismaModeliAy() == null || personelDenklestirme.getCalismaModeliAy().getCalismaModeli().getToplamGunGuncelle().equals(Boolean.FALSE))
 						personelDenklestirme.setPlanlanSure(saatToplami);
