@@ -1157,8 +1157,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						PersonelDenklestirme personelDenklestirme = personelDenklestirmeMap.get(denklestirme.getPersonel().getId());
 						boolean hareketKaydiVardiyaBulsunmu = personelDenklestirme.getCalismaModeliAy().isHareketKaydiVardiyaBulsunmu();
 						if (hareketKaydiVardiyaBulsunmu) {
-							if (haftaTatilDurum.equals("1"))
-								haftaSonuList.add(denklestirme);
+							// if (haftaTatilDurum.equals("1"))
+							haftaSonuList.add(denklestirme);
 							TreeMap<String, VardiyaGun> vardiyaGunleriMap = denklestirme.getVardiyaGunleriMap();
 							if (vardiyaGunleriMap != null) {
 								for (String key : vardiyaGunleriMap.keySet()) {
@@ -2167,7 +2167,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	/**
 	 * @param list
 	 */
-	// TODO haftaTatilVardiyaGuncelle
 	private void haftaTatilVardiyaGuncelle(List<PersonelDenklestirmeTasiyici> list) {
 		for (PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici : list) {
 			boolean flush = false;
@@ -2561,7 +2560,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					gunAdet++;
 					logger.info(vardiyaGun.getCalismaSuresi() + " " + calismaSuresi + " " + fark);
 					if (fark >= 50) {
-						// TODO Eksik çalışma hesapla
 						adet = 0;
 						break;
 
