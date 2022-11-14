@@ -931,6 +931,24 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param id
+	 * @param session
+	 * @return
+	 */
+	public Tanim getTanimById(Long id, Session session) {
+		Tanim tanim = null;
+		if (id != null) {
+			HashMap fields = new HashMap();
+			fields.put("id", id);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			tanim = (Tanim) pdksEntityController.getObjectByInnerObject(fields, Tanim.class);
+			fields = null;
+		}
+		return tanim;
+	}
+
+	/**
 	 * @param kapiId
 	 * @param personel
 	 * @param basTarih
