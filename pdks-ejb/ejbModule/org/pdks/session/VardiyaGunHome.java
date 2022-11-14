@@ -4333,7 +4333,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 									}
 								}
-								if (hareketKGS != null) {
+								if (hareketKGS != null && (girisHareket == null || cikisHareket == null)) {
 									long kgsId = 0, pdksId = 0;
 									String id = hareketKGS.getId();
 									if (id != null && id.trim().length() > 1) {
