@@ -484,20 +484,33 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							break;
 						}
 					}
-
-				if (personel != null) {
-					if (personel.getId().equals(girisYapan.getId())) {
-						kendiGirisYapiyor = true;
-						// TODO
+				if (personel != null)
+					kendiGirisYapiyor = personel.getId().equals(girisYapan.getId());
+			}
+			int adet = 0;
+			if (kendiGirisYapiyor == false)
+				hareketPdksList = null;
+			else {
+				if (hareketPdksList != null) {
+					for (HareketKGS hareketKGS : hareketPdksList) {
+						Date zaman = hareketKGS.getOrjinalZaman();
+						if (zaman != null && baslangicZamani.getTime() <= zaman.getTime() && bitisZamani.getTime() >= zaman.getTime())
+							++adet;
 					}
 				}
 			}
-			if (kendiGirisYapiyor == false)
-				hareketPdksList = null;
 			int yarimYuvarla = seciliVardiyaGun != null ? seciliVardiyaGun.getYarimYuvarla() : PdksUtil.getYarimYuvarlaLast();
 			fazlaMesaiTalep.setMesaiSuresi(PdksUtil.setSureDoubleTypeRounded(PdksUtil.getSaatFarki(bitisZamani, baslangicZamani).doubleValue(), yarimYuvarla));
-			if (kendiGirisYapiyor && (manuelHareketEkle == null || !manuelHareketEkle))
-				manuelHareketEkle = fazlaMesaiTalep.getMesaiSuresi().doubleValue() > 0.0d;
+			if (kendiGirisYapiyor) {
+				if (adet < 2) {
+					if (manuelHareketEkle == null || !manuelHareketEkle)
+						manuelHareketEkle = fazlaMesaiTalep.getMesaiSuresi().doubleValue() > 0.0d;
+				} else
+					manuelHareketEkle = false;
+
+			} else
+				manuelHareketEkle = null;
+
 		} else
 			fazlaMesaiTalep.setMesaiSuresi(0.0d);
 
@@ -4231,9 +4244,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 								hareketPdksList = getPdksHareketler(personelKGSId, basTarih, bitTarih);
 							}
+							int doluGirisAdet = 0, doluCikisAdet = 0;
+							Integer ardisikAdet = null;
 							if (!hareketPdksList.isEmpty()) {
 								List<HareketKGS> hareketKGSList = new ArrayList<HareketKGS>(hareketPdksList);
-								HareketKGS hareketKGS = null;
+								List<HareketKGS> hareketKGSDeleteList = new ArrayList<HareketKGS>();
 								if (islemVardiya != null) {
 									seciliVardiyaGun.setHareketler(null);
 									seciliVardiyaGun.setCikisHareketleri(null);
@@ -4252,34 +4267,50 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									HareketKGS hareketOncekiKGS = null, hareketSonrakiKGS = null;
 									Date bas1 = islemVardiya.getVardiyaTelorans1BasZaman(), bas2 = islemVardiya.getVardiyaTelorans2BasZaman();
 									Date bit1 = islemVardiya.getVardiyaTelorans1BitZaman(), bit2 = islemVardiya.getVardiyaTelorans2BitZaman();
-									for (int i = 0; i < hareketKGSList.size(); i++) {
-										HareketKGS hareketKGS2 = hareketKGSList.get(i);
-										Date zaman = hareketKGS2.getOrjinalZaman(), zamanOnceki = hareketOncekiKGS != null ? hareketOncekiKGS.getOrjinalZaman() : null;
-										Kapi kapi = hareketKGS2.getKapiView().getKapi();
-										if (hareketKGS2.getId() == null) {
+									int kayitAdet = hareketKGSList.size();
+									for (int i = 0; i < kayitAdet; i++) {
+										HareketKGS hareketKGS = hareketKGSList.get(i);
+										Date zaman = hareketKGS.getOrjinalZaman(), zamanOnceki = hareketOncekiKGS != null ? hareketOncekiKGS.getOrjinalZaman() : null;
+										Kapi kapi = hareketKGS.getKapiView().getKapi();
+										if (hareketKGS.getId() == null) {
 											hareketSonrakiKGS = null;
 											if (kapi.isGirisKapi()) {
-												for (int j = i + 1; j < hareketKGSList.size(); j++) {
+												doluGirisAdet = 0;
+												ardisikAdet = 0;
+												for (int j = i + 1; j < kayitAdet; j++) {
 													HareketKGS hareketSonraki = hareketKGSList.get(j);
+													Kapi kapiSonraki = hareketSonraki.getKapiView().getKapi();
+													boolean sil = false;
 													if (hareketSonraki.getId() != null) {
+														++doluGirisAdet;
 														Date zamanSonraki = hareketSonraki.getOrjinalZaman();
 														if (bas1.getTime() <= zaman.getTime() && bas2.getTime() >= zamanSonraki.getTime()) {
 															girisHareket = new PersonelHareket();
-															hareketKGS = hareketSonraki;
+															hareketKGSDeleteList.add(hareketSonraki);
 														} else if (bit1.getTime() <= zaman.getTime() && bit2.getTime() >= zamanSonraki.getTime()) {
-															girisHareket = new PersonelHareket();
-															hareketKGS = hareketSonraki;
+															sil = kapiSonraki.isCikisKapi();
+															if (sil) {
+																girisHareket = new PersonelHareket();
+															}
+															hareketKGSDeleteList.add(hareketSonraki);
+
 														}
+
+													} else {
+														// if (i == 0)
+														// i = kayitAdet;
+														break;
 													}
+
 												}
-												if (hareketKGS == null && hareketOncekiKGS != null) {
+												if (hareketKGSDeleteList.isEmpty() && hareketOncekiKGS != null && doluGirisAdet < 2) {
 													HareketKGS hareketOnceki = hareketOncekiKGS;
-													if (bas2.getTime() >= zaman.getTime() && bas1.getTime() <= zamanOnceki.getTime()) {
+													if (bas2.getTime() >= zaman.getTime() && bas1.getTime() >= zamanOnceki.getTime()) {
 														girisHareket = new PersonelHareket();
 														// hareketKGS = hareketOnceki;
 													} else if (bit2.getTime() >= zaman.getTime() && bit1.getTime() <= zamanOnceki.getTime()) {
 														girisHareket = new PersonelHareket();
-														hareketKGS = hareketOnceki;
+														hareketKGSDeleteList.add(hareketOnceki);
 													} else if (bas2.getTime() >= zamanOnceki.getTime() && bas1.getTime() <= zamanOnceki.getTime()) {
 														if (bit2.getTime() >= zaman.getTime() && bit1.getTime() <= zaman.getTime())
 															girisHareket = new PersonelHareket();
@@ -4289,28 +4320,34 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 												}
 
 											} else if (kapi.isCikisKapi()) {
-												for (int j = i + 1; j < hareketKGSList.size(); j++) {
+												doluCikisAdet = 0;
+												for (int j = i + 1; j < kayitAdet; j++) {
 													HareketKGS hareketSonraki = hareketKGSList.get(j);
 													if (hareketSonraki.getId() != null) {
+														++doluCikisAdet;
+														Kapi kapiSonraki = hareketSonraki.getKapiView().getKapi();
 														hareketSonrakiKGS = hareketSonraki;
 														Date zamanSonraki = hareketSonraki.getOrjinalZaman();
 														if (bas1.getTime() <= zaman.getTime() && bas2.getTime() >= zamanSonraki.getTime()) {
-															cikisHareket = new PersonelHareket();
-															hareketKGS = hareketSonraki;
+															if (kapiSonraki.isGirisKapi() && doluCikisAdet == 1) {
+																cikisHareket = new PersonelHareket();
+																hareketKGSDeleteList.add(hareketSonraki);
+															}
+
 														} else if (bit1.getTime() <= zaman.getTime() && bit2.getTime() >= zamanSonraki.getTime()) {
 															cikisHareket = new PersonelHareket();
-															hareketKGS = hareketSonraki;
+															hareketKGSDeleteList.add(hareketSonraki);
 														}
 													}
 												}
-												if (hareketKGS == null) {
+												if (doluCikisAdet > 0) {
 													if (hareketOncekiKGS != null) {
 														if (bas2.getTime() >= zaman.getTime() && bas1.getTime() <= zamanOnceki.getTime()) {
 															cikisHareket = new PersonelHareket();
-															hareketKGS = hareketOncekiKGS;
+															hareketKGSDeleteList.add(hareketOncekiKGS);
 														} else if (bit2.getTime() >= zaman.getTime() && bit1.getTime() <= zamanOnceki.getTime()) {
 															cikisHareket = new PersonelHareket();
-															hareketKGS = hareketOncekiKGS;
+															hareketKGSDeleteList.add(hareketOncekiKGS);
 														} else if (bas2.getTime() >= zamanOnceki.getTime() && bas1.getTime() <= zamanOnceki.getTime()) {
 															if (bit2.getTime() >= zaman.getTime() && bit1.getTime() <= zaman.getTime())
 																cikisHareket = new PersonelHareket();
@@ -4321,35 +4358,36 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 															cikisHareket = new PersonelHareket();
 													}
 												}
-												if (cikisHareket != null)
-													break;
-											}
-											if (hareketKGS != null) {
 												break;
 											}
 										} else {
-											hareketOncekiKGS = hareketKGS2;
+											if (ardisikAdet != null)
+												++ardisikAdet;
+											hareketOncekiKGS = hareketKGS;
 										}
 
 									}
 								}
-								if (hareketKGS != null && (girisHareket == null || cikisHareket == null)) {
-									long kgsId = 0, pdksId = 0;
-									String id = hareketKGS.getId();
-									if (id != null && id.trim().length() > 1) {
-										if (id.startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS))
-											kgsId = Long.parseLong(id.trim().substring(1));
-										else if (id.startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS))
-											pdksId = Long.parseLong(id.trim().substring(1));
+								if (!hareketKGSDeleteList.isEmpty() && (girisHareket == null || cikisHareket == null)) {
+									for (HareketKGS hareketKGS3 : hareketKGSDeleteList) {
+										String id = hareketKGS3.getId();
+										long kgsId = 0, pdksId = 0;
+										if (id != null && id.trim().length() > 1) {
+											if (id.startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS))
+												kgsId = Long.parseLong(id.trim().substring(1));
+											else if (id.startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS))
+												pdksId = Long.parseLong(id.trim().substring(1));
+										}
+										if (kgsId + pdksId > 0) {
+											User sistemUser = ortakIslemler.getSistemAdminUser(session);
+											if (sistemUser == null)
+												sistemUser = authenticatedUser;
+											String aciklama = islemFazlaMesaiTalep.getAciklama() != null && islemFazlaMesaiTalep.getAciklama().trim().length() > 0 ? islemFazlaMesaiTalep.getAciklama().trim() : "";
+											pdksEntityController.hareketSil(kgsId, pdksId, sistemUser, nedenId, aciklama, session);
+											flush = true;
+										}
 									}
-									if (kgsId + pdksId > 0) {
-										User sistemUser = ortakIslemler.getSistemAdminUser(session);
-										if (sistemUser == null)
-											sistemUser = authenticatedUser;
-										String aciklama = islemFazlaMesaiTalep.getAciklama() != null && islemFazlaMesaiTalep.getAciklama().trim().length() > 0 ? islemFazlaMesaiTalep.getAciklama().trim() : "";
-										pdksEntityController.hareketSil(kgsId, pdksId, sistemUser, nedenId, aciklama, session);
-										flush = true;
-									}
+
 								}
 							}
 
@@ -4357,14 +4395,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							User guncelleyen = ortakIslemler.getSistemAdminUser(session);
 							if (!authenticatedUser.isAdmin() && userHome.hasPermission("personelHareket", "view"))
 								guncelleyen = authenticatedUser;
-							if (girisHareket == null) {
+							if (girisHareket == null && doluGirisAdet < 2) {
 								if (nedenId != null) {
 									hareketEkleReturn(guncelleyen, manuelGiris, personelKGS, tarih1, nedenId, aciklama + " giriş");
 									flush = true;
 								}
 
 							}
-							if (cikisHareket == null) {
+							if (cikisHareket == null && (ardisikAdet == null || ardisikAdet < 2)) {
 								if (nedenId != null) {
 									hareketEkleReturn(guncelleyen, manuelCikis, personelKGS, tarih2, nedenId, aciklama + " çıkış");
 									flush = true;
