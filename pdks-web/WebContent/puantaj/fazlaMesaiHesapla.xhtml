@@ -265,7 +265,7 @@
 												<TR class="koyu">
 													<TD nowrap="nowrap" align="left" valign="top"><b>Onay Nedeni</b></TD>
 													<TD nowrap="nowrap" align="left" valign="top"><b> : </b> <h:outputText value="#{hareket.islem.neden.aciklama}" /> <ui:fragment
-															rendered="#{hareket.islem.aciklama!='' and authenticatedUser.admin}">
+															rendered="#{hareket.islem.aciklamaVar and authenticatedUser.admin}">
 															<br>( <h:outputText value="#{hareket.islem.aciklama}" /> )</br>
 
 														</ui:fragment></TD>
@@ -394,7 +394,7 @@
 								</f:facet>
 								<DIV id="mnd#{fmt.id}">
 									<a href="#"><h:outputText value="#{fmt.mesaiNeden.aciklama}" /></a>
-									<ui:fragment rendered="#{fmt.aciklama!=null and fmt.aciklama!='' }">
+									<ui:fragment rendered="#{fmt.aciklamaVar}">
 										<rich:toolTip for="mnd#{fmt.id}" value="Açıklama : #{fmt.aciklama}" />
 									</ui:fragment>
 								</DIV>
