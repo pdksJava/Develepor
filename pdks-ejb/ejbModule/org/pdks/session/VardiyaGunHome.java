@@ -4383,7 +4383,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 											if (sistemUser == null)
 												sistemUser = authenticatedUser;
 											String aciklama = islemFazlaMesaiTalep.getAciklama() != null && islemFazlaMesaiTalep.getAciklama().trim().length() > 0 ? islemFazlaMesaiTalep.getAciklama().trim() : "";
-											pdksEntityController.hareketSil(kgsId, pdksId, sistemUser, nedenId, aciklama, session);
+											pdksEntityController.hareketSil(kgsId, pdksId, sistemUser, nedenId, aciklama + (referans != null ? " " + referans.trim() : ""), session);
 											flush = true;
 										}
 									}
@@ -4412,18 +4412,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							if (flush)
 								session.flush();
 						} else if (!hareketList.isEmpty()) {
-							User sistemUser = ortakIslemler.getSistemAdminUser(session);
-							User user = islemFazlaMesaiTalep.getGuncelleyenUser();
-							if (user == null)
-								user = sistemUser;
-							String aciklama = islemFazlaMesaiTalep.getIptalAciklama() != null && islemFazlaMesaiTalep.getIptalAciklama().trim().length() > 0 ? islemFazlaMesaiTalep.getIptalAciklama().trim() : "";
-							long kgsId = 0;
-							redNedeniId = islemFazlaMesaiTalep.getRedNedeni().getId();
-							for (PersonelHareket personelHareket : hareketList) {
-								if (personelHareket.getId() > 0L)
-									pdksEntityController.hareketSil(kgsId, personelHareket.getId(), user, redNedeniId, aciklama, session);
-							}
-							session.flush();
+							Long sonuc = fazlaMesaiOrtakIslemler.fazlaMesaiOtomatikHareketSil(islemFazlaMesaiTalep.getId(), session);
+							if (sonuc != null && sonuc.equals(islemFazlaMesaiTalep.getId()))
+								session.flush();
 						}
 
 					}
