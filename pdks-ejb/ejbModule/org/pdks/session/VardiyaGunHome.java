@@ -4209,7 +4209,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					}
 					if (manuelGiris.getId() != null && manuelGiris.getId() != null) {
 						Long personelKGSId = personelKGS.getId();
+
 						Long nedenId = islemFazlaMesaiTalep.getMesaiNeden() != null ? islemFazlaMesaiTalep.getMesaiNeden().getId() : null;
+						Tanim fazlaMesaiSistemOnayDurum = ortakIslemler.getOtomatikKapGirisiNeden(session);
+						if (fazlaMesaiSistemOnayDurum != null)
+							nedenId = fazlaMesaiSistemOnayDurum.getId();
 						Date tarih1 = islemFazlaMesaiTalep.getBaslangicZamani(), tarih2 = islemFazlaMesaiTalep.getBitisZamani();
 						String referans = "TRef:" + islemFazlaMesaiTalep.getId();
 						HashMap fields = new HashMap();

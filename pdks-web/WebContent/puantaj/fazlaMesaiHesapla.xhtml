@@ -265,7 +265,7 @@
 												<TR class="koyu">
 													<TD nowrap="nowrap" align="left" valign="top"><b>Onay Nedeni</b></TD>
 													<TD nowrap="nowrap" align="left" valign="top"><b> : </b> <h:outputText value="#{hareket.islem.neden.aciklama}" /> <ui:fragment
-															rendered="#{hareket.islem.aciklamaVar and authenticatedUser.admin}">
+															rendered="#{authenticatedUser.admin and hareket.islem.aciklamaVar}">
 															<br>( <h:outputText value="#{hareket.islem.aciklama}" /> )</br>
 
 														</ui:fragment></TD>

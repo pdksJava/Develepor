@@ -228,7 +228,8 @@ public class OrtakIslemler implements Serializable {
 				parametreMap.put("active", active);
 			notice = (Notice) pdksEntityController.getObjectByInnerObject(parametreMap, Notice.class);
 		} catch (Exception e) {
-
+			logger.error(e);
+			e.printStackTrace();
 		}
 		return notice;
 	}
@@ -12364,12 +12365,7 @@ public class OrtakIslemler implements Serializable {
 		Tanim neden = null;
 		User sistemUser = null;
 		if (PdksUtil.isSistemDestekVar()) {
-			HashMap fields = new HashMap();
-			fields.put("tipi", Tanim.TIPI_HAREKET_NEDEN);
-			fields.put("kodu", "sys");
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			neden = (Tanim) pdksEntityController.getObjectByInnerObject(fields, Tanim.class);
+			neden = getOtomatikKapGirisiNeden(session);
 			if (neden != null)
 				sistemUser = getSistemAdminUser(session);
 		}
@@ -12475,6 +12471,20 @@ public class OrtakIslemler implements Serializable {
 		}
 
 		return oncekiVardiyaGun;
+	}
+
+	/**
+	 * @param session
+	 * @return
+	 */
+	public Tanim getOtomatikKapGirisiNeden(Session session) {
+		HashMap fields = new HashMap();
+		fields.put("tipi", Tanim.TIPI_HAREKET_NEDEN);
+		fields.put("kodu", "sys");
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		Tanim neden = (Tanim) pdksEntityController.getObjectByInnerObject(fields, Tanim.class);
+		return neden;
 	}
 
 	/**
