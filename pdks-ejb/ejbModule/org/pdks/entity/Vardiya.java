@@ -591,6 +591,7 @@ public class Vardiya extends BaseObject {
 						}
 					} else {
 						if (sonrakiVardiya != null) {
+
 							if (sonrakiVardiya.isCalisma() == false) {
 								cal.setTime(vardiyaCalisma.getVardiyaTelorans2BitZaman());
 								sonrakiVardiya.setVardiyaFazlaMesaiBasZaman((Date) cal.getTime().clone());
@@ -612,10 +613,13 @@ public class Vardiya extends BaseObject {
 						}
 					}
 				} else {
-
 					Vardiya offCalisma = pdksVardiyaGun.getIslemVardiya();
 					offCalisma.setVardiyaTarih(tarih);
 					if (oncekiVardiya != null) {
+						if (vardiyaDateStr.equals("20221130"))
+							logger.debug("");
+
+
 						if (oncekiVardiya.isCalisma() == false || oncekiVardiya.getBitSaat() > oncekiVardiya.getBasSaat()) {
 							offCalisma.setVardiyaFazlaMesaiBasZaman(PdksUtil.getDate(tarih));
 							cal.setTime(tarih);
@@ -623,13 +627,16 @@ public class Vardiya extends BaseObject {
 							oncekiVardiya.setVardiyaFazlaMesaiBitZaman((Date) cal.getTime().clone());
 
 						} else {
-							Date tarih1 = PdksUtil.addTarih(oncekiVardiya.getVardiyaBitZaman(), Calendar.MILLISECOND, 100);
-							offCalisma.setVardiyaFazlaMesaiBasZaman(tarih1);
-							offCalisma.setVardiyaBasZaman(tarih1);
+							// Date tarih2 = PdksUtil.addTarih(oncekiVardiya.getVardiyaBitZaman(), Calendar.MILLISECOND, 100);
+							Date tarih2 = (Date) oncekiVardiya.getVardiyaBitZaman().clone();
+							offCalisma.setVardiyaFazlaMesaiBasZaman(tarih2);
+							offCalisma.setVardiyaBasZaman(tarih2);
 							cal.setTime(oncekiVardiya.getVardiyaBitZaman());
 							cal.add(Calendar.MILLISECOND, -100);
-							oncekiVardiya.setVardiyaFazlaMesaiBitZaman((Date) cal.getTime().clone());
-							oncekiVardiya.setVardiyaTelorans2BitZaman((Date) cal.getTime().clone());
+							Date tarih1 = (Date) cal.getTime().clone();
+							oncekiVardiya.setVardiyaBitZaman(tarih1);
+							oncekiVardiya.setVardiyaFazlaMesaiBitZaman(tarih1);
+							oncekiVardiya.setVardiyaTelorans2BitZaman(tarih1);
 
 						}
 

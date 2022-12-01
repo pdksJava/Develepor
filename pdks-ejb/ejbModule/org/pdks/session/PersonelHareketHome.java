@@ -708,8 +708,13 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 						if (kapiIdler != null && !kapiIdler.isEmpty()) {
 							if (islemVardiyaGun == null)
 								list = ortakIslemler.getHareketBilgileri(kapiIdler, personeller, PdksUtil.getDate(tarih), PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(tarih, 1)), HareketKGS.class, session);
-							else
-								list = ortakIslemler.getHareketBilgileri(kapiIdler, personeller, islemVardiyaGun.getIslemVardiya().getVardiyaFazlaMesaiBasZaman(), islemVardiyaGun.getIslemVardiya().getVardiyaFazlaMesaiBitZaman(), HareketKGS.class, session);
+							else {
+								Vardiya vardiya = islemVardiyaGun.getIslemVardiya();
+								Date bitTarih = vardiya.getVardiyaFazlaMesaiBitZaman(), basTarih = vardiya.getVardiyaFazlaMesaiBasZaman();
+								if (vardiya.getVardiyaBitZaman().after(bitTarih))
+									bitTarih = vardiya.getVardiyaBitZaman();
+								list = ortakIslemler.getHareketBilgileri(kapiIdler, personeller, basTarih, bitTarih, HareketKGS.class, session);
+							}
 						}
 					} catch (Exception e) {
 						logger.error("Pdks hata in : \n");
@@ -931,7 +936,10 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 			if (cikisEkle && bugun.after(islemVardiya.getVardiyaBitZaman())) {
 				HareketKGS cikis = new HareketKGS();
 				cikis.setKapiView(manuelCikis);
-				cikis.setZaman(PdksUtil.getDateTime(islemVardiya.getVardiyaBitZaman()));
+				Date zaman = islemVardiya.getVardiyaBitZaman();
+				if (islemVardiya.getBasSaat() > islemVardiya.getBitSaat() && islemVardiya.getSonrakiVardiya() != null && islemVardiya.getSonrakiVardiya().isCalisma() == false)
+					zaman = PdksUtil.addTarih(zaman, Calendar.SECOND, -1);
+				cikis.setZaman(zaman);
 				cikis.setId("Vardiya Çıkış");
 				manuelHareketMap.put("O", cikis);
 			}
