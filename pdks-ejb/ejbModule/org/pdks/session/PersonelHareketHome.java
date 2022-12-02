@@ -936,8 +936,8 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 			if (cikisEkle && bugun.after(islemVardiya.getVardiyaBitZaman())) {
 				HareketKGS cikis = new HareketKGS();
 				cikis.setKapiView(manuelCikis);
-				Date zaman = islemVardiya.getVardiyaBitZaman();
-				if (islemVardiya.getBasSaat() > islemVardiya.getBitSaat() && islemVardiya.getSonrakiVardiya() != null && islemVardiya.getSonrakiVardiya().isCalisma() == false)
+				Date zaman = PdksUtil.getDateTime(islemVardiya.getVardiyaBitZaman());
+				if (islemVardiya.isCalisma())
 					zaman = PdksUtil.addTarih(zaman, Calendar.SECOND, -1);
 				cikis.setZaman(zaman);
 				cikis.setId("Vardiya Çıkış");
@@ -946,14 +946,19 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 			if (girisMesaiEkle && bugun.after(islemVardiya.getVardiyaFazlaMesaiBasZaman())) {
 				HareketKGS girisMesai = new HareketKGS();
 				girisMesai.setKapiView(manuelGiris);
-				girisMesai.setZaman(PdksUtil.getDateTime(islemVardiya.getVardiyaFazlaMesaiBasZaman()));
+				Date zaman = PdksUtil.getDateTime(islemVardiya.getVardiyaFazlaMesaiBasZaman());
+				girisMesai.setZaman(zaman);
 				girisMesai.setId("Fazla Mesai Giriş");
 				manuelHareketMap.put("IM", girisMesai);
 			}
 			if (cikisMesaiEkle && bugun.after(islemVardiya.getVardiyaFazlaMesaiBitZaman())) {
 				HareketKGS cikisMesai = new HareketKGS();
 				cikisMesai.setKapiView(manuelCikis);
-				cikisMesai.setZaman(PdksUtil.getDateTime(islemVardiya.getVardiyaFazlaMesaiBitZaman()));
+				Date zaman = PdksUtil.getDateTime(islemVardiya.getVardiyaFazlaMesaiBitZaman());
+				if (islemVardiya.isCalisma())
+					zaman = PdksUtil.addTarih(zaman, Calendar.SECOND, -1);
+
+				cikisMesai.setZaman(zaman);
 				cikisMesai.setId("Fazla Mesai Çıkış");
 				manuelHareketMap.put("OM", cikisMesai);
 			}
