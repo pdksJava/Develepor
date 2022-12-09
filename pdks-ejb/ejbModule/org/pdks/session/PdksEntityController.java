@@ -495,7 +495,7 @@ public class PdksEntityController implements Serializable {
 		try {
 			ses.saveOrUpdate(saveObject);
 		} catch (Exception e) {
-			ses.saveOrUpdate(em == null || em.contains(saveObject) ? saveObject : em.merge(saveObject));
+			ses.saveOrUpdate(getEntityManagerObject(em, saveObject));
 		}
 	}
 
@@ -508,9 +508,19 @@ public class PdksEntityController implements Serializable {
 		try {
 			ses.delete(del);
 		} catch (Exception e) {
-			ses.delete(em == null || em.contains(del) ? del : em.merge(del));
-			
+			ses.delete(getEntityManagerObject(em, del));
+
 		}
+	}
+
+	/**
+	 * @param em
+	 * @param saveObject
+	 * @return
+	 */
+	public Object getEntityManagerObject(EntityManager em, Object saveObject) {
+		Object object = em == null || em.contains(saveObject) ? saveObject : em.merge(saveObject);
+		return object;
 	}
 
 	/**
