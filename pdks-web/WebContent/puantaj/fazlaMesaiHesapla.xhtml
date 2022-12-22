@@ -73,6 +73,17 @@
 									requiredMessage="#{fazlaMesaiHesaplaHome.bolumAciklama} giriniz!" required="#{fazlaMesaiHesaplaHome.gorevYeriList.size()>1}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{fazlaMesaiHesaplaHome.gorevYeriList}" />
+									<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaMesaiHesaplaHome.altBolumDoldur()}" ajaxSingle="true"
+										reRender="denklestirmeDonemiTable,girisler" />
+								</h:selectOneMenu>
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml"
+								rendered="#{fazlaMesaiHesaplaHome.ekSaha4Tanim!=null and fazlaMesaiHesaplaHome.altBolumList!=null and fazlaMesaiHesaplaHome.altBolumList.size()>0}">
+								<ui:define name="label">#{fazlaMesaiHesaplaHome.ekSaha4Tanim.aciklama}</ui:define>
+								<h:selectOneMenu value="#{fazlaMesaiHesaplaHome.seciliEkSaha4Id}" requiredMessage="#{fazlaMesaiHesaplaHome.ekSaha4Tanim.aciklama} giriniz!"
+									required="#{fazlaMesaiHesaplaHome.altBolumList.size()>1}">
+									<f:selectItem itemValue="-1" itemLabel="Hepsi" />
+									<f:selectItems value="#{fazlaMesaiHesaplaHome.altBolumList}" />
 									<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaMesaiHesaplaHome.aylikPuantajList.clear()}" ajaxSingle="true"
 										reRender="denklestirmeDonemiTable,girisler" />
 								</h:selectOneMenu>
@@ -572,7 +583,7 @@
 			</f:facet>
 			<h:form>
 				<ui:fragment rendered="#{fazlaMesaiHesaplaHome.onayla}">
-					<ui:fragment endered="#{fazlaMesaiHesaplaHome.seciliBolum!=null}">
+					<ui:fragment rendered="#{fazlaMesaiHesaplaHome.seciliBolum!=null}">
 						<LABEL> <B>#{fazlaMesaiHesaplaHome.bolumAciklama} : </B> <h:outputText value="#{fazlaMesaiHesaplaHome.seciliBolum.aciklama}" />
 						</LABEL>
 					</ui:fragment>

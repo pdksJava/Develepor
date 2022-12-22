@@ -105,6 +105,12 @@
 								</f:facet>
 								<h:outputText value="#{personelView.pdksPersonel.sirket.ad}" id="sirket" />
 							</rich:column>
+							<rich:column rendered="#{pdksPersonelHome.kimlikNoGoster}">
+								<f:facet name="header">
+									<h:outputText value="#{ortakIslemler.kimlikNoAciklama()}" />
+								</f:facet>
+								<h:outputText value="#{personelView.pdksPersonel.personelKGS.kimlikNo}" />
+							</rich:column>
 							<rich:column rendered="#{pdksPersonelHome.yoneticiRolVarmi}">
 								<f:facet name="header">
 									<h:outputText value="#{ortakIslemler.yoneticiAciklama()}" />
@@ -551,9 +557,9 @@
 
 									<rich:column rendered="#{pdksPersonelHome.COL_DEPARTMAN_ADI>=0}">
 										<f:facet name="header">
-											<h:outputText value="Departman" />
+											<h:outputText value="#{pdksPersonelHome.departmanAciklama}" />
 										</f:facet>
-										<h:outputText value="#{personelERP.departmanAdi}" title="Departman Kodu : #{personelERP.departmanKodu}" />
+										<h:outputText value="#{personelERP.departmanAdi}" title="#{pdksPersonelHome.departmanAciklama} Kodu : #{personelERP.departmanKodu}" />
 									</rich:column>
 									<rich:column rendered="#{pdksPersonelHome.COL_BOLUM_ADI>=0}">
 										<f:facet name="header">
@@ -805,6 +811,11 @@
 											</s:decorate>
 
 										</c:if>
+										<s:decorate template="/layout/edit.xhtml"
+											rendered="#{pdksPersonelHome.parentBordroTanim!=null and pdksPersonelHome.parentBordroTanim.erpKodu==''}">
+											<ui:define name="label">#{pdksPersonelHome.parentBordroTanim.aciklama}</ui:define>
+											#{pdksPersonelHome.instance.bordroAltAlan.aciklama}
+										</s:decorate>
 										<s:decorate template="/layout/edit.xhtml">
 											<ui:define name="label">Cinsiyet</ui:define>
 											<h:selectOneMenu value="#{pdksPersonelHome.instance.cinsiyet}"
@@ -993,10 +1004,12 @@
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">#{dpa.alan.aciklama}</ui:define>
 												<h:selectBooleanCheckbox value="#{dpa.durumSecim}">
-													<a4j:support event="onclick" />
+													<c:if test="#{dpa.alan.kodu=='ikinciYoneticiOlmaz'}">
+														<a4j:support event="onclick" reRender="ikinciYoneticiOlmaz" status="ajaxStatus"
+															action="#{pdksPersonelHome.getIkinciYoneticiOlmazList(dpa)}" />
+													</c:if>
 												</h:selectBooleanCheckbox>
 											</s:decorate>
-
 										</c:forEach>
 										<c:forEach items="#{pdksPersonelHome.dinamikPersonelAciklamaList}" var="dpa">
 											<s:decorate template="/layout/edit.xhtml">
@@ -1059,7 +1072,73 @@
 								</h:panelGrid>
 							</c:if>
 						</a4j:outputPanel>
+
 						<h:panelGrid columns="1" width="780">
+							<a4j:outputPanel id="ikinciYoneticiOlmaz">
+								<rich:dataTable rowClasses="acik,koyu" headerClass="headerWrap" columnClasses="columnWrap"
+									value="#{pdksPersonelHome.ikinciYoneticiHataliList}" rendered="#{not empty pdksPersonelHome.ikinciYoneticiHataliList}" var="p1" rows="20"
+									rowKeyVar="row" id="personel2ViewTable">
+									<f:facet name="header">
+										<h:outputText value="#{ortakIslemler.yonetici2Aciklama()} Olarak Güncellenecek Personeller" />
+									</f:facet>
+									<rich:column>
+										<f:facet name="header">
+                      			  İşlemler
+              		 			 </f:facet>
+										<h:selectBooleanCheckbox value="#{p1.checkBoxDurum}" />
+
+									</rich:column>
+									<rich:column rendered="#{authenticatedUser.admin}">
+										<f:facet name="header">
+											<h:outputText value="Personel Id" />
+										</f:facet>
+										<h:outputText value="#{p1.id}" />
+									</rich:column>
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
+										</f:facet>
+										<h:outputText value="#{p1.pdksSicilNo}"   />
+									</rich:column>
+									<rich:column>
+										<f:facet name="header" filterBy="#{user.firstname}" filterEvent="onkeyup">
+											<h:outputText value="PDKS Adı Soyadı" />
+										</f:facet>
+										<h:outputText   value="#{p1.adSoyad}"  />
+										 
+									</rich:column>
+
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="#{ortakIslemler.sirketAciklama()}" />
+										</f:facet>
+										<h:outputText value="#{p1.sirket.ad}" />
+									</rich:column>
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="#{ortakIslemler.tesisAciklama()}" />
+										</f:facet>
+										<h:outputText value="#{p1.tesis.aciklama}" />
+									</rich:column>
+									 <rich:column>
+										<f:facet name="header">
+											<h:outputText value="#{pdksPersonelHome.bolumAciklama}" />
+										</f:facet>
+										<h:outputText value="#{p1.ekSaha3.aciklama}" />
+									</rich:column>
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="#{ortakIslemler.yoneticiAciklama()}" />
+										</f:facet>
+										<h:outputText value="#{p1.pdksYonetici.adSoyad}" />
+ 									</rich:column>
+									<f:facet name="footer">
+										<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+									</f:facet>
+								</rich:dataTable>
+							</a4j:outputPanel>
+
+
 
 							<h:panelGrid columns="2" rendered="#{authenticatedUser.admin or pdksPersonelHome.instance.kullanici.admin==false}">
 								<s:decorate template="/layout/edit.xhtml">

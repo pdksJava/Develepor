@@ -279,8 +279,10 @@ public class Personel extends BaseObject {
 		return ekSaha2;
 	}
 
-	public void setEkSaha2(Tanim ekSaha2) {
-		this.ekSaha2 = ekSaha2;
+	public void setEkSaha2(Tanim value) {
+		if (this.getId() != null && !veriDegisti)
+			veriDegisti = PdksUtil.isTanimDegisti(ekSaha2, value);
+		this.ekSaha2 = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -303,8 +305,10 @@ public class Personel extends BaseObject {
 		return ekSaha4;
 	}
 
-	public void setEkSaha4(Tanim ekSaha4) {
-		this.ekSaha4 = ekSaha4;
+	public void setEkSaha4(Tanim value) {
+		if (this.getId() != null && !veriDegisti)
+			veriDegisti = PdksUtil.isTanimDegisti(ekSaha4, value);
+		this.ekSaha4 = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -407,7 +411,7 @@ public class Personel extends BaseObject {
 	}
 
 	public void setIsKurVardiyaSablonu(VardiyaSablonu isKurVardiyaSablonu) {
-	 	this.isKurVardiyaSablonu = isKurVardiyaSablonu;
+		this.isKurVardiyaSablonu = isKurVardiyaSablonu;
 	}
 
 	@Column(name = "PDKS")

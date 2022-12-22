@@ -42,6 +42,9 @@
 						<th style="width: 30px"><h:outputText value="#{ortakIslemler.personelNoAciklama()}" /></th>
 						<th><h:outputText value="Adı Soyadı" /></th>
 						<th style="width: 60px"><h:outputText value="#{ortakIslemler.yoneticiAciklama()}" /></th>
+						<ui:fragment rendered="#{vardiyaGunHome.ekSaha4Tanim!=null and vardiyaGunHome.aramaSecenekleri.ekSaha4Id lt 0}">
+							<th style="width: 30px"><h:outputText value="#{vardiyaGunHome.ekSaha4Tanim.aciklama}" /></th>
+						</ui:fragment>
 						<ui:fragment rendered="#{vardiyaGunHome.modelGoster}">
 							<th style="width: 30px"><h:outputText value="Çalışma Modeli" /></th>
 						</ui:fragment>
@@ -89,58 +92,60 @@
 
 						<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikTCS"><h:outputText
 								value="TÇS" /> <rich:toolTip for="baslikTCS">
-								<SPAN style="font-size: 12px;font-weight: normal;"> <B>Toplam Çalışma Saati: </B>Çalışanın bu listedeki toplam çalışma saati
+								<SPAN style="font-size: 12px; font-weight: normal;"> <B>Toplam Çalışma Saati: </B>Çalışanın bu listedeki toplam çalışma saati
 								</SPAN>
 
 							</rich:toolTip></th>
 						<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikCGS"><h:outputText
 								value="ÇGS" /> <rich:toolTip for="baslikCGS">
-								<SPAN style="font-size: 12px;font-weight: normal;"> <B>Çalışılması Gereken Saat: </B>Çalışanın bu listede çalışması gereken saat
+								<SPAN style="font-size: 12px; font-weight: normal;"> <B>Çalışılması Gereken Saat: </B>Çalışanın bu listede çalışması gereken saat
 								</SPAN>
 							</rich:toolTip></th>
 						<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikGM"><h:outputText
 								value="GM" /> <rich:toolTip for="baslikGM">
-								<SPAN style="font-size: 12px;font-weight: normal;"> <B>Gerçekleşen Mesai : </B>Çalışanın bu listedeki eksi/fazla çalışma saati
+								<SPAN style="font-size: 12px; font-weight: normal;"> <B>Gerçekleşen Mesai : </B>Çalışanın bu listedeki eksi/fazla çalışma saati
 								</SPAN>
 							</rich:toolTip></th>
 						<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikDM"><h:outputText
 								value="DM" /> <rich:toolTip for="baslikDM">
-								<SPAN style="font-size: 12px;font-weight: normal;"> <B>Devreden Mesai: </B>Çalışanın önceki listelerden devreden eksi/fazla mesaisi
+								<SPAN style="font-size: 12px; font-weight: normal;"> <B>Devreden Mesai: </B>Çalışanın önceki listelerden devreden eksi/fazla mesaisi
 								</SPAN>
 							</rich:toolTip></th>
 						<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikUOM"><h:outputText
 								value="ÜÖM" /> <rich:toolTip for="baslikUOM">
-								<SPAN style="font-size: 12px;font-weight: normal;"><B>Ücreti Ödenen Mesai: </B>Çalışanın bu listenin sonunda ücret olarak ödediğimiz fazla mesai saati </SPAN>
+								<SPAN style="font-size: 12px; font-weight: normal;"><B>Ücreti Ödenen Mesai: </B>Çalışanın bu listenin sonunda ücret olarak ödediğimiz
+									fazla mesai saati </SPAN>
 							</rich:toolTip></th>
 						<ui:fragment rendered="#{vardiyaGunHome.resmiTatilVar}">
 							<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikROM"><h:outputText
 									value="RÖM" /> <rich:toolTip for="baslikROM">
-									<SPAN style="font-size: 12px;font-weight: normal;"><B>Resmi Tatil Mesai: </B>Çalışanın bu listenin sonunda ücret olarak ödediğimiz resmi tatil mesai saati
-									</SPAN>
+									<SPAN style="font-size: 12px; font-weight: normal;"><B>Resmi Tatil Mesai: </B>Çalışanın bu listenin sonunda ücret olarak ödediğimiz
+										resmi tatil mesai saati </SPAN>
 								</rich:toolTip></th>
 						</ui:fragment>
 						<ui:fragment rendered="#{vardiyaGunHome.haftaTatilVar}">
 							<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikHTM"><h:outputText
 									value="HTM" /> <rich:toolTip for="baslikHTM">
-									<SPAN style="font-size: 12px;font-weight: normal;"><B>Hafta Tatil Mesai: </B>Çalışanın bu listenin sonunda ücret olarak ödediğimiz hafta tatil mesai saati
-										saati </SPAN>
+									<SPAN style="font-size: 12px; font-weight: normal;"><B>Hafta Tatil Mesai: </B>Çalışanın bu listenin sonunda ücret olarak ödediğimiz
+										hafta tatil mesai saati saati </SPAN>
 								</rich:toolTip></th>
 						</ui:fragment>
 						<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikB"><h:outputText value="B" />
 							<rich:toolTip for="baslikB">
-								<SPAN style="font-size: 12px;font-weight: normal;"><B>Bakiye: </B>Çalışanın bu liste de dahil bugüne kadarki devreden eksi/fazla mesaisi saati saati </SPAN>
+								<SPAN style="font-size: 12px; font-weight: normal;"><B>Bakiye: </B>Çalışanın bu liste de dahil bugüne kadarki devreden eksi/fazla
+									mesaisi saati saati </SPAN>
 							</rich:toolTip></th>
 
 						<ui:fragment rendered="#{vardiyaGunHome.aksamGunVar }">
 							<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikA"><h:outputText
 									value="A" /> <rich:toolTip for="baslikA">
-									<SPAN style="font-size: 12px;font-weight: normal;"><B>Akşam Vardiyası: </B>Gün Adet</SPAN>
+									<SPAN style="font-size: 12px; font-weight: normal;"><B>Akşam Vardiyası: </B>Gün Adet</SPAN>
 								</rich:toolTip></th>
 						</ui:fragment>
 						<ui:fragment rendered="#{vardiyaGunHome.aksamSaatVar}">
 							<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikAS"><h:outputText
 									value="AS" /> <rich:toolTip for="baslikAS">
-									<SPAN style="font-size: 12px;font-weight: normal;"><B>Akşam Vardiyası: </B>Saat Toplamı</SPAN>
+									<SPAN style="font-size: 12px; font-weight: normal;"><B>Akşam Vardiyası: </B>Saat Toplamı</SPAN>
 								</rich:toolTip></th>
 						</ui:fragment>
 						<ui:fragment rendered="#{vardiyaGunHome.veriGoster('suaDurum', vardiyaGunHome.aylikPuantajList)}">
@@ -243,6 +248,9 @@
 
 									</ui:fragment>
 								</ui:fragment></td>
+							<ui:fragment rendered="#{vardiyaGunHome.ekSaha4Tanim!=null and vardiyaGunHome.aramaSecenekleri.ekSaha4Id lt 0}">
+								<td class="#{aylikPuantaj.trClass}" style="width: 20px"><h:outputText value="#{aylikPuantaj.pdksPersonel.ekSaha4.aciklama}" /></td>
+							</ui:fragment>
 							<ui:fragment rendered="#{vardiyaGunHome.modelGoster}">
 								<td class="#{aylikPuantaj.trClass}" style="width: 20px" align="left"><ui:fragment
 										rendered="#{aylikPuantaj.personelDenklestirmeAylik!=null and aylikPuantaj.personelDenklestirmeAylik.calismaModeliAy!=null}">
@@ -277,8 +285,8 @@
 													<TD id="vardiya#{vardiyaGun.vardiyaKeyStr}"><h:outputText value="#{vardiyaGun.aciklama}" /> <ui:fragment
 															rendered="#{vardiyaGunHome.ikRole and vardiyaGun.izin!=null and vardiyaGun.vardiya!=null}">
 															<br /> [ #{vardiyaGun.vardiya.kisaAdi} ]</ui:fragment> <rich:toolTip for="vardiya#{vardiyaGun.vardiyaKeyStr}">
-															<SPAN style="font-size: 12px;font-weight: normal;"> #{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')} --> #{vardiyaGun.title} <ui:fragment
-																	rendered="#{vardiyaGun.resmiTatilSure>0}">
+															<SPAN style="font-size: 12px; font-weight: normal;"> #{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')} -->
+																#{vardiyaGun.title} <ui:fragment rendered="#{vardiyaGun.resmiTatilSure>0}">
 													RT : #{authenticatedUser.sayiFormatliGoster(vardiyaGun.resmiTatilSure)}
 												</ui:fragment>
 
@@ -286,7 +294,7 @@
 															<ui:fragment
 																rendered="#{(authenticatedUser.admin or ortakIslemler.testDurum) and vardiyaGun.guncelleyenUser!=null and vardiyaGun.guncellemeTarihi!=null}">
 																<br />
-																<SPAN style="font-size: 12px;font-weight: normal;">Güncelleme : #{vardiyaGun.guncelleyenUser.adSoyad} -->
+																<SPAN style="font-size: 12px; font-weight: normal;">Güncelleme : #{vardiyaGun.guncelleyenUser.adSoyad} -->
 																	#{authenticatedUser.dateTimeFormatla(vardiyaGun.guncellemeTarihi)} </SPAN>
 															</ui:fragment>
 														</rich:toolTip></TD>
@@ -347,7 +355,7 @@
 							<td class="#{aylikPuantaj.trClass}" style="width: 20px" align="center"><h:outputText
 									value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.devredenSure)}" rendered="#{aylikPuantaj.devredenSure!=0}" /></td>
 
-							
+
 							<ui:fragment rendered="#{vardiyaGunHome.aksamGunVar }">
 								<td class="#{aylikPuantaj.trClass}" style="width: 20px" align="center"><h:outputText
 										value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.aksamVardiyaSayisi)}" rendered="#{aylikPuantaj.aksamVardiyaSayisi!=0}" /></td>
@@ -370,24 +378,31 @@
 					</a4j:repeat>
 
 					<tr>
-						<ui:fragment rendered="#{vardiyaGunHome.denklestirmeAyDurum}">
-							<td colspan="1"></td>
+
+
+						<ui:fragment rendered="#{vardiyaGunHome.ekSaha4Tanim!=null and vardiyaGunHome.aramaSecenekleri.ekSaha4Id lt 0}">
+							<td></td>
 						</ui:fragment>
 						<ui:fragment rendered="#{vardiyaGunHome.modelGoster}">
-							<td colspan="1"></td>
+							<td></td>
 						</ui:fragment>
-						<ui:fragment rendered="#{ vardiyaGunHome.planGirisi}">
-							<td colspan="1"></td>
-
+						<ui:fragment rendered="#{vardiyaGunHome.planGirisi}">
+							<ui:fragment rendered="#{vardiyaGunHome.denklestirmeAyDurum}">
+								<td></td>
+							</ui:fragment>
+							<td></td>
+							<td></td>
+						</ui:fragment>
+						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.gebeGoster}">
+							<td></td>
 						</ui:fragment>
 						<ui:fragment rendered="#{vardiyaGunHome.sutIzniGoster}">
-							<td colspan="1"></td>
+							<td></td>
 						</ui:fragment>
-						<td colspan="1"></td>
-						<ui:fragment rendered="#{vardiyaGunHome.planGirisi}">
-							<td colspan="2"></td>
+						<ui:fragment rendered="#{vardiyaGunHome.partTimeGoster}">
+							<td></td>
 						</ui:fragment>
-						<td colspan="1"></td>
+						<td colspan="3"></td>
 
 						<ui:repeat value="#{vardiyaGunHome.aylikPuantajDefault.ayinVardiyalari}" var="vardiya">
 							<ui:fragment rendered="#{vardiya.tatil==null}">
@@ -422,19 +437,34 @@
 
 					<a4j:repeat value="#{vardiyaGunHome.aylikVardiyaOzetList}" var="vardiyaGun">
 						<tr>
-							<ui:fragment rendered="#{vardiyaGunHome.denklestirmeAyDurum}">
-								<td colspan="1"></td>
+
+
+
+							<ui:fragment rendered="#{vardiyaGunHome.ekSaha4Tanim!=null and vardiyaGunHome.aramaSecenekleri.ekSaha4Id lt 0}">
+								<td></td>
 							</ui:fragment>
 							<ui:fragment rendered="#{vardiyaGunHome.modelGoster}">
-								<td colspan="1"></td>
+								<td></td>
 							</ui:fragment>
-							<ui:fragment rendered="#{vardiyaGunHome.gebeGoster}">
-								<td colspan="1"></td>
+
+							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.gebeGoster}">
+								<td></td>
 							</ui:fragment>
 							<ui:fragment rendered="#{vardiyaGunHome.sutIzniGoster}">
-								<td colspan="1"></td>
+								<td></td>
 							</ui:fragment>
-							<ui:fragment rendered="#{  vardiyaGunHome.planGirisi}">
+							<ui:fragment rendered="#{vardiyaGunHome.partTimeGoster}">
+								<td></td>
+							</ui:fragment>
+							<ui:fragment rendered="#{vardiyaGunHome.planGirisi==false}">
+								<td></td>
+							</ui:fragment>
+							<ui:fragment rendered="#{vardiyaGunHome.planGirisi}">
+
+								<ui:fragment rendered="#{vardiyaGunHome.denklestirmeAyDurum}">
+									<td></td>
+								</ui:fragment>
+
 
 								<td colspan="1"></td>
 

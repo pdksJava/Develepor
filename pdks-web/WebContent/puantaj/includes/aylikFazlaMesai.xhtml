@@ -8,8 +8,14 @@
 	<ui:fragment>
 
 		<ui:fragment rendered="#{fazlaMesaiHesaplaHome.seciliBolum!=null and fazlaMesaiHesaplaHome.ikRole }">
-			<DIV style="text-align: center; font-weight: bold; color: blue; font-size: 16px;">#{fazlaMesaiHesaplaHome.seciliBolum.aciklama} [
-				#{fazlaMesaiHesaplaHome.denklestirmeAy.ayAdi} #{fazlaMesaiHesaplaHome.yil} ]</DIV>
+			<DIV style="text-align: center; font-weight: bold; color: blue; font-size: 16px;">
+				#{fazlaMesaiHesaplaHome.seciliBolum.aciklama}
+				<ui:fragment rendered="#{fazlaMesaiHesaplaHome.seciliAltBolum!=null}">
+				- #{fazlaMesaiHesaplaHome.seciliAltBolum.aciklama}
+			</ui:fragment>
+
+				[ #{fazlaMesaiHesaplaHome.denklestirmeAy.ayAdi} #{fazlaMesaiHesaplaHome.yil} ]
+			</DIV>
 		</ui:fragment>
 		<DIV class="#{authenticatedUser.scroolClass}" id="#{authenticatedUser.scroolDiv}">
 
@@ -31,6 +37,10 @@
 						<th style="width: 20px"><h:outputText value="#{ortakIslemler.personelNoAciklama()}" /></th>
 						<th style="width: 60px"><h:outputText value="Adı Soyadı" /></th>
 						<th style="width: 60px"><h:outputText value="#{ortakIslemler.yoneticiAciklama()}" /></th>
+						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ekSaha4Tanim!=null and fazlaMesaiHesaplaHome.seciliEkSaha4Id lt 0}">
+							<th style="width: 30px"><h:outputText value="#{fazlaMesaiHesaplaHome.ekSaha4Tanim.aciklama}" /></th>
+						</ui:fragment>
+
 						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.modelGoster}">
 							<th style="width: 30px"><h:outputText value="Çalışma Modeli" /></th>
 						</ui:fragment>
@@ -248,6 +258,11 @@
 
 									</ui:fragment>
 								</ui:fragment></td>
+							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ekSaha4Tanim!=null and fazlaMesaiHesaplaHome.seciliEkSaha4Id lt 0}">
+								<td class="#{aylikPuantaj.trClass}" style="width: 20px"><ui:fragment rendered="#{aylikPuantaj.pdksPersonel.ekSaha4!=null}">#{aylikPuantaj.pdksPersonel.ekSaha4.aciklama }</ui:fragment>
+
+								</td>
+							</ui:fragment>
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.modelGoster}">
 								<td class="#{aylikPuantaj.trClass}" style="width: 20px"><ui:fragment
 										rendered="#{aylikPuantaj.personelDenklestirmeAylik!=null and aylikPuantaj.personelDenklestirmeAylik.calismaModeliAy!=null}">

@@ -11,6 +11,9 @@
 				<ui:fragment>
 					<ui:fragment rendered="#{fazlaMesaiHesaplaHome.seciliBolum!=null and fazlaMesaiHesaplaHome.ikRole }">
 						<h:outputText value="#{fazlaMesaiHesaplaHome.seciliBolum.aciklama}  " />
+						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.seciliAltBolum!=null}">
+				- #{fazlaMesaiHesaplaHome.seciliAltBolum.aciklama}
+			</ui:fragment>
 					</ui:fragment>
 					<h:outputText value="Günlük Çalışma Saatleri" />
 
@@ -123,7 +126,14 @@
 				</ui:fragment>
 
 			</rich:column>
+			<rich:column class="#{aylikPuantaj.trSonucClass}" style="width: 40px;width:autostretch ;white-space: nowrap;"
+				rendered="#{fazlaMesaiHesaplaHome.ekSaha4Tanim!=null and fazlaMesaiHesaplaHome.seciliEkSaha4Id lt 0}">
+				<f:facet name="header">
+					<h:outputText value="#{fazlaMesaiHesaplaHome.ekSaha4Tanim.aciklama}" />
+				</f:facet>
+				<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.ekSaha4!=null}">#{aylikPuantaj.pdksPersonel.ekSaha4.aciklama }</ui:fragment>
 
+			</rich:column>
 			<rich:column class="#{aylikPuantaj.trSonucClass}" style="width: 40px;width:autostretch ;white-space: nowrap;"
 				rendered="#{fazlaMesaiHesaplaHome.modelGoster}">
 				<f:facet name="header">
