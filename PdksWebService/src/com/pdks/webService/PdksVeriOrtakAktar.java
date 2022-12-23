@@ -88,6 +88,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 	private Tanim bosDepartman, ikinciYoneticiOlmaz;
 
+	private TreeMap<String, Tanim> genelTanimMap;
+
 	private List<Long> yoneticiIdList = null;
 
 	public PdksVeriOrtakAktar() {
@@ -116,7 +118,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		try {
 			list = pdksDAO.execSPList(map, Personel.class);
 			if (!list.isEmpty()) {
- 				Date guncellemeTarihi = new Date();
+				Date guncellemeTarihi = new Date();
 				for (Personel personel2 : list) {
 					personel2.setAsilYonetici2(personel2.getYoneticisi());
 					personel2.setGuncellemeTarihi(guncellemeTarihi);
@@ -2130,16 +2132,19 @@ public class PdksVeriOrtakAktar implements Serializable {
 	private Tanim getTanim(String sirketKodu, String parentKey, String tanimKodu, String aciklama, TreeMap<String, TreeMap> dataMap, List saveList) {
 		Tanim tanim = null;
 		try {
+			boolean ekle = false;
 			if (tanimKodu != null && aciklama != null && tanimKodu.trim().length() > 0 && aciklama.trim().length() > 0) {
+
 				TreeMap<String, Tanim> personelEKSahaMap = dataMap.get("personelEKSahaMap");
 				Tanim parentTanim = personelEKSahaMap.containsKey(parentKey) ? personelEKSahaMap.get(parentKey) : null;
 				TreeMap<String, Tanim> personelEKSahaVeriMap = dataMap.get("personelEKSahaVeriMap");
 				String key = parentKey + "_" + (sirketKodu != null ? sirketKodu : "") + tanimKodu;
 				tanim = personelEKSahaVeriMap.containsKey(key) ? personelEKSahaVeriMap.get(key) : new Tanim();
-				if (!tanim.isGuncellendi()) {
+ 				if (!tanim.isGuncellendi()) {
 					if (tanim.getId() == null) {
 						tanim.setParentTanim(parentTanim);
-						tanim.setTipi(parentTanim != null ? Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA : parentKey);
+						String tipi = parentTanim != null ? Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA : parentKey;
+ 						tanim.setTipi(tipi);
 						tanim.setKodu((sirketKodu != null ? sirketKodu : "") + tanimKodu);
 						tanim.setErpKodu(tanimKodu);
 						tanim.setGuncelle(Boolean.FALSE);
@@ -2148,7 +2153,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						personelEKSahaVeriMap.put(key, tanim);
 
 					}
-					boolean ekle = tanim.getId() == null || !tanim.getDurum().booleanValue();
+					ekle = tanim.getId() == null || !tanim.getDurum().booleanValue();
 					if (aciklama != null) {
 						if (tanim.getAciklamatr() == null || !tanim.getAciklamatr().equalsIgnoreCase(aciklama))
 							ekle = true;
@@ -2160,6 +2165,18 @@ public class PdksVeriOrtakAktar implements Serializable {
 					tanim.setGuncellendi(Boolean.TRUE);
 					if (ekle)
 						saveList.add(tanim);
+				}
+				if (tanim.getParentTanim() == null && genelTanimMap != null) {
+					if (genelTanimMap.containsKey(tanim.getTipi())) {
+						parentTanim = genelTanimMap.get(tanim.getTipi());
+						tanim.setParentTanim(parentTanim);
+						tanim.setGuncelle(Boolean.FALSE);
+						tanim.setIslemYapan(islemYapan);
+						tanim.setIslemTarihi(new Date());
+						if (!ekle)
+							saveList.add(tanim);
+					}
+
 				}
 
 			}
@@ -2542,8 +2559,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 				if (personelERP.getHataList().isEmpty() && personelKGSMap.containsKey(personelNo)) {
 					PersonelKGS personelKGS = personelKGSMap.get(personelNo);
-
-					Personel personel = personelPDKSMap.containsKey(personelNo) ? personelPDKSMap.get(personelNo) : null;
+ 					Personel personel = personelPDKSMap.containsKey(personelNo) ? personelPDKSMap.get(personelNo) : null;
 					if (personel != null) {
 						personel.setVeriDegisti(Boolean.FALSE);
 					} else if (personelDigerMap.containsKey(personelNo)) {
@@ -2602,8 +2618,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 					Tanim bolum = getTanim(null, "ekSaha3", personelERP.getBolumKodu(), personelERP.getBolumAdi(), dataMap, saveList);
 					Tanim bordroAltAlan = null;
-
-					bordroAltAlan = getTanim(null, parentBordroTanimKodu, personelERP.getBordroAltAlanKodu(), personelERP.getBordroAltAlanAdi(), dataMap, saveList);
+ 					bordroAltAlan = getTanim(null, parentBordroTanimKodu, personelERP.getBordroAltAlanKodu(), personelERP.getBordroAltAlanAdi(), dataMap, saveList);
 					personel.setTesis(getTanim(personelERP.getSirketKodu(), Tanim.TIPI_TESIS, personelERP.getTesisKodu(), personelERP.getTesisAdi(), dataMap, saveList));
 					personel.setCinsiyet(getTanim(null, Tanim.TIPI_CINSIYET, personelERP.getCinsiyetKodu(), personelERP.getCinsiyeti(), dataMap, saveList));
 					personel.setGorevTipi(getTanim(null, Tanim.TIPI_GOREV_TIPI, personelERP.getGorevKodu(), personelERP.getGorevi(), dataMap, saveList));
@@ -2816,7 +2831,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 							} else if (yoneticiRolVarmi && sanalPersonel == false && calisiyor)
 								addHatalist(personelERP.getHataList(), kapiGiris + " 2. yönetici " + personelERP.getYonetici2PerNo().trim() + " personel no bilgisi bulunamadı!");
 						}
-						if (yoneticisi2!=null)
+						if (yoneticisi2 != null)
 							logger.debug(yoneticisi2.getId());
 						if (personelERP.getHataList().isEmpty())
 							personel.setAsilYonetici2(yoneticisi2);
@@ -2974,6 +2989,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 			fields.put("tipi", Tanim.TIPI_PERSONEL_DINAMIK_DURUM);
 			fields.put("kodu", Tanim.IKINCI_YONETICI_ONAYLAMAZ);
 			ikinciYoneticiOlmaz = (Tanim) pdksDAO.getObjectByInnerObject(fields, Tanim.class);
+
+			fields.clear();
+			fields.put(BaseDAOHibernate.MAP_KEY_MAP, "getKodu");
+			fields.put("tipi", Tanim.TIPI_GENEL_TANIM);
+			genelTanimMap = pdksDAO.getObjectByInnerObjectMap(fields, Tanim.class, false);
 			if (ikinciYoneticiOlmaz != null && !ikinciYoneticiOlmaz.getDurum())
 				ikinciYoneticiOlmaz = null;
 
@@ -3179,7 +3199,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 			if (personelList.size() > 1)
 				saveIkinciYoneticiOlmazList("ikinciYoneticiOlmaz");
- 			if (testDurum)
+			if (testDurum)
 				hataList.clear();
 			if (yoneticiIdList != null && !yoneticiIdList.isEmpty()) {
 				sb = new StringBuffer();
