@@ -5631,7 +5631,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				aylikPuantaj.setTrClass(devam ? VardiyaGun.STYLE_CLASS_ODD : VardiyaGun.STYLE_CLASS_EVEN);
 				devam = !devam;
 				List<VardiyaGun> vardiyaGunler = new ArrayList<VardiyaGun>();
-				boolean personelCalmayaBasladi = false, calisiyor = false, hareketKaydiVardiyaBul = denklestirmeAyDurum && personelDenklestirme.getCalismaModeliAy().isHareketKaydiVardiyaBulsunmu();
+				boolean personelCalmayaBasladi = false, calisiyor = false, hareketKaydiVardiyaBul = denklestirmeAyDurum && personelDenklestirme.getCalismaModeliAy() != null && personelDenklestirme.getCalismaModeliAy().isHareketKaydiVardiyaBulsunmu();
 				double saatToplami = 0d;
 				Date sonCalismaTarihi = personel.getSonCalismaTarihi(), iseGirisTarihi = personel.getIseGirisTarihi();
 				for (Iterator iterator2 = sablonVardiyalar.iterator(); iterator2.hasNext();) {

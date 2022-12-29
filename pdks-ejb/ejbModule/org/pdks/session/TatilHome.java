@@ -401,20 +401,45 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 
 	public void fillPdksTatilList() {
 		session.clear();
-		List<Tatil> list = new ArrayList<Tatil>();
 		HashMap parametreMap = new HashMap();
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		list = pdksEntityController.getObjectByInnerObjectList(parametreMap, Tatil.class);
-		if (list.size() > 1)
-			list = PdksUtil.sortListByAlanAdi(list, "bitTarih", false);
-
+		List<Tatil> list = pdksEntityController.getObjectByInnerObjectList(parametreMap, Tatil.class);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(tarih);
+		int yil = cal.get(Calendar.YEAR);
 		for (Iterator<Tatil> iterator = list.iterator(); iterator.hasNext();) {
 			Tatil pdksTatil = iterator.next();
 			if (PdksUtil.tarihKarsilastirNumeric(tarih, pdksTatil.getBitTarih()) == 1) {
 				iterator.remove();
-			}
+			} else {
+				if (pdksTatil.isPeriyodik()) {
+					cal.setTime(pdksTatil.getBasTarih());
+					cal.set(Calendar.YEAR, yil);
+					Date basTarih = cal.getTime();
+					if (basTarih.before(tarih)) {
+						cal.set(Calendar.YEAR, yil + 1);
+						basTarih = cal.getTime();
+					}
+					pdksTatil.setBasGun(basTarih);
+					cal.setTime(pdksTatil.getBitTarih());
+					cal.set(Calendar.YEAR, yil);
+					Date bitTarih = cal.getTime();
+					if (bitTarih.before(tarih)) {
+						cal.set(Calendar.YEAR, yil + 1);
+						bitTarih = cal.getTime();
+					}
+					pdksTatil.setBitGun(bitTarih);
+				} else {
+					pdksTatil.setBasGun(pdksTatil.getBasTarih());
+					pdksTatil.setBitGun(pdksTatil.getBitTarih());
+				}
+ 			}
+
 		}
+		if (list.size() > 1)
+			list = PdksUtil.sortListByAlanAdi(list, "bitGun", false);
+
 		setTatilList(list);
 	}
 
