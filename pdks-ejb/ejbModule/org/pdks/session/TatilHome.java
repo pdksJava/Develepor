@@ -407,26 +407,27 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 		List<Tatil> list = pdksEntityController.getObjectByInnerObjectList(parametreMap, Tatil.class);
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(tarih);
-		int yil = cal.get(Calendar.YEAR);
+		Integer seciliYil = cal.get(Calendar.YEAR);
 		for (Iterator<Tatil> iterator = list.iterator(); iterator.hasNext();) {
 			Tatil pdksTatil = iterator.next();
 			if (PdksUtil.tarihKarsilastirNumeric(tarih, pdksTatil.getBitTarih()) == 1) {
 				iterator.remove();
 			} else {
 				if (pdksTatil.isPeriyodik()) {
+					int yil = seciliYil;
 					cal.setTime(pdksTatil.getBasTarih());
 					cal.set(Calendar.YEAR, yil);
 					Date basTarih = cal.getTime();
 					if (basTarih.before(tarih)) {
-						cal.set(Calendar.YEAR, yil + 1);
+						cal.set(Calendar.YEAR, ++yil);
 						basTarih = cal.getTime();
 					}
 					pdksTatil.setBasGun(basTarih);
 					cal.setTime(pdksTatil.getBitTarih());
 					cal.set(Calendar.YEAR, yil);
 					Date bitTarih = cal.getTime();
-					if (bitTarih.before(tarih)) {
-						cal.set(Calendar.YEAR, yil + 1);
+					if (bitTarih.before(tarih) || bitTarih.before(basTarih)) {
+						cal.set(Calendar.YEAR, ++yil);
 						bitTarih = cal.getTime();
 					}
 					pdksTatil.setBitGun(bitTarih);
@@ -434,12 +435,15 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 					pdksTatil.setBasGun(pdksTatil.getBasTarih());
 					pdksTatil.setBitGun(pdksTatil.getBitTarih());
 				}
- 			}
+			}
 
 		}
 		if (list.size() > 1)
 			list = PdksUtil.sortListByAlanAdi(list, "bitGun", false);
-
+		for (Tatil pdksTatil : list) {
+			pdksTatil.setBasGun(null);
+			pdksTatil.setBitGun(null);
+		}
 		setTatilList(list);
 	}
 
