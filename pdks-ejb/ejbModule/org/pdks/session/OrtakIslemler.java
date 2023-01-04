@@ -11377,7 +11377,7 @@ public class OrtakIslemler implements Serializable {
 							puantajData.setPlanlananSure(0.0d);
 						}
 					}
-					if (sablonAylikPuantaj.isFazlaMesaiHesapla()) {
+					if (puantajData.isFazlaMesaiHesapla()) {
 						double hesaplananBuAySure = puantajData.getAylikFazlaMesai(), gecenAydevredenSure = puantajData.getGecenAyFazlaMesai(authenticatedUser);
 						boolean fazlaMesaiOde = puantajData.getPersonelDenklestirmeAylik().getFazlaMesaiOde() != null && puantajData.getPersonelDenklestirmeAylik().getFazlaMesaiOde();
 						if (!fazlaMesaiOde) {
