@@ -746,19 +746,7 @@ public class Vardiya extends BaseObject {
 				vardiyaBitZaman = cal.getTime();
 
 			}
-			cal.setTime((Date) vardiyaBasZaman.clone());
-			cal.add(Calendar.MINUTE, girisGecikmeToleransDakika);
-			vardiyaTelorans2BasZaman = cal.getTime();
-			cal.setTime((Date) vardiyaBasZaman.clone());
-			cal.add(Calendar.MINUTE, -girisErkenToleransDakika);
-			vardiyaTelorans1BasZaman = cal.getTime();
-
-			cal.setTime((Date) vardiyaBitZaman.clone());
-			cal.add(Calendar.MINUTE, cikisGecikmeToleransDakika);
-			vardiyaTelorans2BitZaman = cal.getTime();
-			cal.setTime((Date) vardiyaBitZaman.clone());
-			cal.add(Calendar.MINUTE, -cikisErkenToleransDakika);
-			vardiyaTelorans1BitZaman = cal.getTime();
+			setToleransZaman();
 			if (sonrakiVardiya == null && oncekiVardiya == null) {
 				double sure = PdksUtil.getSaatFarki(vardiyaBitZaman, vardiyaBasZaman).doubleValue();
 				int bosluk = new Double((33.0d - sure) / 2.0d).intValue();
@@ -887,19 +875,7 @@ public class Vardiya extends BaseObject {
 				vardiyaBitZaman = cal.getTime();
 
 			}
-			cal.setTime((Date) vardiyaBasZaman.clone());
-			cal.add(Calendar.MINUTE, girisGecikmeToleransDakika);
-			vardiyaTelorans2BasZaman = cal.getTime();
-			cal.setTime((Date) vardiyaBasZaman.clone());
-			cal.add(Calendar.MINUTE, -girisErkenToleransDakika);
-			vardiyaTelorans1BasZaman = cal.getTime();
-
-			cal.setTime((Date) vardiyaBitZaman.clone());
-			cal.add(Calendar.MINUTE, cikisGecikmeToleransDakika);
-			vardiyaTelorans2BitZaman = cal.getTime();
-			cal.setTime((Date) vardiyaBitZaman.clone());
-			cal.add(Calendar.MINUTE, -cikisErkenToleransDakika);
-			vardiyaTelorans1BitZaman = cal.getTime();
+			setToleransZaman();
 			if (sonrakiVardiya == null && oncekiVardiya == null) {
 				double sure = PdksUtil.getSaatFarki(vardiyaBitZaman, vardiyaBasZaman).doubleValue();
 				int bosluk = new Double((33.0d - sure) / 2.0d).intValue();
@@ -1081,19 +1057,7 @@ public class Vardiya extends BaseObject {
 				vardiyaBitZaman = cal.getTime();
 
 			}
-			cal.setTime((Date) vardiyaBasZaman.clone());
-			cal.add(Calendar.MINUTE, girisGecikmeToleransDakika);
-			vardiyaTelorans2BasZaman = cal.getTime();
-			cal.setTime((Date) vardiyaBasZaman.clone());
-			cal.add(Calendar.MINUTE, -girisErkenToleransDakika);
-			vardiyaTelorans1BasZaman = cal.getTime();
-
-			cal.setTime((Date) vardiyaBitZaman.clone());
-			cal.add(Calendar.MINUTE, cikisGecikmeToleransDakika);
-			vardiyaTelorans2BitZaman = cal.getTime();
-			cal.setTime((Date) vardiyaBitZaman.clone());
-			cal.add(Calendar.MINUTE, -cikisErkenToleransDakika);
-			vardiyaTelorans1BitZaman = cal.getTime();
+			setToleransZaman();
 			if (sonrakiVardiya == null && oncekiVardiya == null) {
 				double sure = PdksUtil.getSaatFarki(vardiyaBitZaman, vardiyaBasZaman).doubleValue();
 				int bosluk = new Double((33.0d - sure) / 2.0d).intValue();
@@ -1114,7 +1078,7 @@ public class Vardiya extends BaseObject {
 
 							}
 						} else {
-							int bosluk = pdksVardiyaGun.getVardiyaDate().after(vardiyaTelorans1BasZaman) ? -girisErkenToleransDakika : oncekiVardiya.getCikisGecikmeToleransDakika();
+							int bosluk = pdksVardiyaGun.getVardiyaDate().after(vardiyaTelorans1BasZaman) ? -getGirisErkenToleransDakika() : oncekiVardiya.getCikisGecikmeToleransDakika();
 							if (bosluk != 0)
 								logger.debug(key + " " + bosluk);
 							Date vfmb = PdksUtil.addTarih(pdksVardiyaGun.getVardiyaDate(), Calendar.MINUTE, bosluk);
@@ -1247,19 +1211,7 @@ public class Vardiya extends BaseObject {
 				vardiyaBitZaman = cal.getTime();
 
 			}
-			cal.setTime((Date) vardiyaBasZaman.clone());
-			cal.add(Calendar.MINUTE, girisGecikmeToleransDakika);
-			vardiyaTelorans2BasZaman = cal.getTime();
-			cal.setTime((Date) vardiyaBasZaman.clone());
-			cal.add(Calendar.MINUTE, -girisErkenToleransDakika);
-			vardiyaTelorans1BasZaman = cal.getTime();
-
-			cal.setTime((Date) vardiyaBitZaman.clone());
-			cal.add(Calendar.MINUTE, cikisGecikmeToleransDakika);
-			vardiyaTelorans2BitZaman = cal.getTime();
-			cal.setTime((Date) vardiyaBitZaman.clone());
-			cal.add(Calendar.MINUTE, -cikisErkenToleransDakika);
-			vardiyaTelorans1BitZaman = cal.getTime();
+			setToleransZaman();
 			if (sonrakiVardiya == null && oncekiVardiya == null) {
 				double sure = PdksUtil.getSaatFarki(vardiyaBitZaman, vardiyaBasZaman).doubleValue();
 				int bosluk = new Double((36.0d - sure) / 2.0d).intValue();
@@ -1407,19 +1359,7 @@ public class Vardiya extends BaseObject {
 					vardiyaBitZaman = cal.getTime();
 
 				}
-				cal.setTime((Date) vardiyaBasZaman.clone());
-				cal.add(Calendar.MINUTE, girisGecikmeToleransDakika);
-				vardiyaTelorans2BasZaman = cal.getTime();
-				cal.setTime((Date) vardiyaBasZaman.clone());
-				cal.add(Calendar.MINUTE, -girisErkenToleransDakika);
-				vardiyaTelorans1BasZaman = cal.getTime();
-
-				cal.setTime((Date) vardiyaBitZaman.clone());
-				cal.add(Calendar.MINUTE, cikisGecikmeToleransDakika);
-				vardiyaTelorans2BitZaman = cal.getTime();
-				cal.setTime((Date) vardiyaBitZaman.clone());
-				cal.add(Calendar.MINUTE, cikisErkenToleransDakika);
-				vardiyaTelorans1BitZaman = cal.getTime();
+				setToleransZaman();
 				setVardiyaFazlaMesaiBasZaman(PdksUtil.addTarih(vardiyaBasZaman, Calendar.HOUR_OF_DAY, -6));
 				setVardiyaFazlaMesaiBitZaman(PdksUtil.addTarih(vardiyaBitZaman, Calendar.HOUR_OF_DAY, 6));
 
@@ -1443,6 +1383,26 @@ public class Vardiya extends BaseObject {
 		}
 		setVardiyaTarih(tarih);
 
+	}
+
+	/**
+	 * 
+	 */
+	private void setToleransZaman() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime((Date) vardiyaBasZaman.clone());
+		cal.add(Calendar.MINUTE, getGirisGecikmeToleransDakika());
+		vardiyaTelorans2BasZaman = cal.getTime();
+		cal.setTime((Date) vardiyaBasZaman.clone());
+		cal.add(Calendar.MINUTE, -getGirisErkenToleransDakika());
+		vardiyaTelorans1BasZaman = cal.getTime();
+
+		cal.setTime((Date) vardiyaBitZaman.clone());
+		cal.add(Calendar.MINUTE, getCikisGecikmeToleransDakika());
+		vardiyaTelorans2BitZaman = cal.getTime();
+		cal.setTime((Date) vardiyaBitZaman.clone());
+		cal.add(Calendar.MINUTE, -getCikisErkenToleransDakika());
+		vardiyaTelorans1BitZaman = cal.getTime();
 	}
 
 	@Transient

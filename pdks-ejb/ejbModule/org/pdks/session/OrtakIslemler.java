@@ -8268,7 +8268,8 @@ public class OrtakIslemler implements Serializable {
 				VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 				HashMap<Integer, BigDecimal> katSayiMap = new HashMap<Integer, BigDecimal>();
 				String str = vardiyaGun.getVardiyaDateStr();
-				if (vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().isCalisma()) {
+				Vardiya vardiya = vardiyaGun.getVardiya();
+				if (vardiya != null && vardiya.isCalisma()) {
 					if (erkenGirisKontrolEt && erkenGirisMap.containsKey(str)) {
 						BigDecimal deger = erkenGirisMap.get(str);
 						if (deger != null)
@@ -8337,9 +8338,10 @@ public class OrtakIslemler implements Serializable {
 						iterator.remove();
 					}
 				}
-				if (!katSayiMap.isEmpty())
+				if (!katSayiMap.isEmpty()) {
+					vardiya.setIslemVardiyaGun(vardiyaGun);
 					vardiyaGun.setKatSayiMap(katSayiMap);
-				else
+				} else
 					katSayiMap = null;
 			}
 			if (!bosList.isEmpty())
