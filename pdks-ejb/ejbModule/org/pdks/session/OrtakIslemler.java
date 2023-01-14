@@ -11599,9 +11599,7 @@ public class OrtakIslemler implements Serializable {
 			vardiyaHafta.setVardiyaGunler(vardiyaHaftaGunleri);
 			for (Iterator iterator2 = vardiyaHaftaSablon.getVardiyaGunler().iterator(); iterator2.hasNext();) {
 				VardiyaGun vardiyaGunSablon = (VardiyaGun) iterator2.next();
-				VardiyaGun vardiyaGun = new VardiyaGun();
-				vardiyaGun.setVardiyaDate(vardiyaGunSablon.getVardiyaDate());
-				vardiyaGun.setPersonel(personel);
+				VardiyaGun vardiyaGun = new VardiyaGun(personel, null, vardiyaGunSablon.getVardiyaDate());
 				String vardiyaKey = vardiyaGun.getVardiyaKeyStr();
 				if (vardiyaMap.containsKey(vardiyaKey))
 					vardiyaGun = vardiyaMap.get(vardiyaKey);
