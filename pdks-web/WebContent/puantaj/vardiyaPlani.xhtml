@@ -205,7 +205,7 @@
 
 												<ui:fragment rendered="#{vardiya.tatil==null}">
 													<th style="width: 20px"><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'd')}" /><bR /> <h:outputText
-															value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'EEE')}" /> <ui:fragment
+															value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'EEEEE')}" /> <ui:fragment
 															rendered="#{vardiyaGunHome.denklestirmeAyDurum and vardiyaGunHome.planGirisi and authenticatedUser.departman.admin}">
 															<bR />
 
@@ -217,7 +217,7 @@
 													<td class="arife" title="#{vardiya.tatil.ad}"
 														style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;"><h:outputText
 															value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'd')}" /><bR /> <h:outputText
-															value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'EEE')}" /> <ui:fragment
+															value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'EEEEE')}" /> <ui:fragment
 															rendered="#{vardiyaGunHome.denklestirmeAyDurum and vardiyaGunHome.planGirisi  and authenticatedUser.departman.admin}">
 															<bR />
 															<h:selectBooleanCheckbox value="#{vardiya.checkBoxDurum}" action="#{vardiyaGunHome.bosIslem()}" status="ajaxStatus" />
@@ -227,7 +227,7 @@
 													<td class="bayram" title="#{vardiya.tatil.ad}"
 														style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;"><h:outputText
 															value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'd')}" /><bR /> <h:outputText
-															value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'EEE')}" /> <ui:fragment
+															value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'EEEEE')}" /> <ui:fragment
 															rendered="#{vardiyaGunHome.denklestirmeAyDurum and vardiyaGunHome.planGirisi  and authenticatedUser.departman.admin}">
 															<bR />
 															<h:selectBooleanCheckbox value="#{vardiya.checkBoxDurum}" action="#{vardiyaGunHome.bosIslem()}" status="ajaxStatus" />
@@ -907,7 +907,7 @@
 
 								<tr>
 									<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
-										<th><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'EEE')}" /></th>
+										<th><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'EEEEE')}" /></th>
 									</a4j:repeat>
 									<ui:fragment rendered="#{vardiyaGunHome.sablonGuncelle}">
 										<th width="100px">Vardiya</th>
@@ -917,18 +917,18 @@
 							<tr>
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
 									<ui:fragment rendered="#{vardiyaGun.tatil==null}">
-										<th style="width: 90px"><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')}" /></th>
+										<th style="width: 90px"><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}" /></th>
 									</ui:fragment>
 
 									<ui:fragment rendered="#{vardiyaGun.tatil.yarimGun==true}">
 										<td class="arife" title="#{vardiyaGun.tatil.ad}"
 											style="width: 90px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;"><h:outputText
-												value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')}" /></td>
+												value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}" /></td>
 									</ui:fragment>
 									<ui:fragment rendered="#{vardiyaGun.tatil.yarimGun==false}">
 										<td class="bayram" title="#{vardiyaGun.tatil.ad}"
 											style="width: 90px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;"><h:outputText
-												value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')}" /></td>
+												value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}" /></td>
 									</ui:fragment>
 
 
@@ -966,7 +966,7 @@
 													<h:outputText title="#{vardiyaGun.vardiyaAdi}" value="#{vardiyaGun.vardiya.kisaAdi}" />
 												</ui:fragment>
 												<rich:toolTip for="bilgiMesaiVardiya#{vardiyaGun.vardiyaKeyStr}">
-													<SPAN style="font-size: 12px;"><H1>#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')}
+													<SPAN style="font-size: 12px;"><H1>#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}
 															#{vardiyaGun.vardiyaAdi}</H1> <ui:fragment rendered="#{vardiyaGun.islemVardiya!=null}">
 															<c:if test="#{authenticatedUser.admin}">
 																<s:formattedText value="#{fazlaMesaiOrtakIslemler.getFazlaMesaiSaatleri(vardiyaGun)}"></s:formattedText>

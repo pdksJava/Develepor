@@ -5000,7 +5000,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * 
 	 */
 	@Transactional
-	private void aylikPuantajOlusturuluyor() {
+	private boolean aylikPuantajOlusturuluyor() {
+		boolean tekrarOku = denklestirmeAyDurum;
 		vardiyalarMap.clear();
 		vardiyaBolumList = null;
 		aylikHareketKaydiVardiyaBul = Boolean.FALSE;
@@ -5367,9 +5368,28 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 			}
 			List<VardiyaGun> vardiyaGunList = null;
-			if (denklestirmeAyDurum)
-				vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), Boolean.FALSE, session);
-			else
+
+			if (denklestirmeAyDurum) {
+
+				try {
+					int i = 0;
+					while (vardiyaGunList == null || vardiyaGunList.isEmpty()) {
+						vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), Boolean.FALSE, session);
+						if (vardiyaGunList.isEmpty()) {
+							TreeMap<String, VardiyaGun> map1 = ortakIslemler.getVardiyalar(personelList, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), true, session, false);
+							if (!map1.isEmpty())
+								vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), Boolean.FALSE, session);
+							map1 = null;
+							if (i++ > 1)
+								break;
+						} else
+							tekrarOku = i > 0;
+					}
+				} catch (Exception e) {
+
+				}
+
+			} else
 				vardiyaGunList = ortakIslemler.getPersonelIdVardiyalar(perIdler, PdksUtil.tariheGunEkleCikar(basTarih, -7), PdksUtil.tariheGunEkleCikar(bitTarih, 7), null, session);
 
 			fields.clear();
@@ -6120,7 +6140,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			aylikHareketKaydiVardiyalariBul();
 		if (!aylikPuantajList.isEmpty())
 			modelGoster = ortakIslemler.getModelGoster(denklestirmeAy, session);
-
+		return tekrarOku;
 	}
 
 	/**
@@ -6596,7 +6616,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		haftaTatilMesaiDurum = Boolean.FALSE;
 		if (!islemYapiliyor) {
 			islemYapiliyor = Boolean.TRUE;
-			aylikPuantajOlusturuluyor();
+			if (aylikPuantajOlusturuluyor())
+				aylikPuantajOlusturuluyor();
 			islemYapiliyor = Boolean.FALSE;
 		}
 		if (!(ikRole))
