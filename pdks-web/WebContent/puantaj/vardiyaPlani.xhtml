@@ -966,7 +966,10 @@
 													<h:outputText title="#{vardiyaGun.vardiyaAdi}" value="#{vardiyaGun.vardiya.kisaAdi}" />
 												</ui:fragment>
 												<rich:toolTip for="bilgiMesaiVardiya#{vardiyaGun.vardiyaKeyStr}">
-													<SPAN style="font-size: 12px;"><H1>#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}
+													<SPAN style="font-size: 12px;"><H1>
+													<ui:fragment rendered="#{vardiyaGunHome.ikRole}">#{vardiyaGun.personel.pdksSicilNo} - #{vardiyaGun.personel.adSoyad}<br />
+															</ui:fragment>
+													#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}<br />
 															#{vardiyaGun.vardiyaAdi}</H1> <ui:fragment rendered="#{vardiyaGun.islemVardiya!=null}">
 															<c:if test="#{authenticatedUser.admin}">
 																<s:formattedText value="#{fazlaMesaiOrtakIslemler.getFazlaMesaiSaatleri(vardiyaGun)}"></s:formattedText>
