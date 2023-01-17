@@ -2029,7 +2029,7 @@ public class VardiyaGun extends BaseObject {
 			if (ayinGunu)
 				style = ";font-weight: bold;";
 			else
-				style = ";color:blue;";
+				style = ";color:red;";
 		}
 
 		return style;
