@@ -288,8 +288,8 @@
 																<br /> [ #{vardiyaGun.vardiya.kisaAdi} ]</ui:fragment> <rich:toolTip for="vardiya#{vardiyaGun.vardiyaKeyStr}">
 																<SPAN style="font-size: 12px; font-weight: normal;"> #{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')} -->
 																	#{vardiyaGun.title} <ui:fragment rendered="#{vardiyaGun.resmiTatilSure>0}">
-													RT : #{authenticatedUser.sayiFormatliGoster(vardiyaGun.resmiTatilSure)}
-												</ui:fragment>
+												          	RT : #{authenticatedUser.sayiFormatliGoster(vardiyaGun.resmiTatilSure)}
+												          </ui:fragment>
 
 																</SPAN>
 																<ui:fragment
@@ -299,11 +299,13 @@
 																		#{authenticatedUser.dateTimeFormatla(vardiyaGun.guncellemeTarihi)} </SPAN>
 																</ui:fragment>
 															</rich:toolTip></TD>
-														<ui:fragment rendered="#{(authenticatedUser.admin) and vardiyaGunHome.isVardiyaFazlaMesailer(vardiyaGun)}">
-															<TD id="fmt#{vardiyaGun.vardiyaKeyStr}"><a4j:commandButton image="/img/plus.gif"
-																	action="#{vardiyaGunHome.getVardiyaFazlaMesailer(vardiyaGun)}" ajaxSingle="true"
-																	oncomplete="#{rich:component('fmtDetayPanel')}.show()" reRender="fmtDetayPanel,secimlerGunMesai" /> <rich:toolTip
-																	for="fmt#{vardiyaGun.vardiyaKeyStr}">
+														<ui:fragment
+															rendered="#{(authenticatedUser.admin or ortakIslemler.sistemDestekVar) and vardiyaGunHome.isVardiyaFazlaMesailer(vardiyaGun)   }">
+															<TD id="fmt#{vardiyaGun.vardiyaKeyStr}"><a4j:commandLink action="#{vardiyaGunHome.getVardiyaFazlaMesailer(vardiyaGun)}"
+																	onclick="#{rich:component('wait')}.show()" ajaxSingle="true"
+																	oncomplete="#{rich:component('wait')}.hide();#{rich:component('fmtDetayPanel')}.show()" reRender="fmtDetayPanel,secimlerGunMesai">
+																	<img src="/img/left_16.png" height="8px" />
+																</a4j:commandLink> <rich:toolTip for="fmt#{vardiyaGun.vardiyaKeyStr}">
 																Fazla Mesai Talep Göster
 																</rich:toolTip></TD>
 														</ui:fragment>

@@ -87,6 +87,7 @@ public class VardiyaGun extends BaseObject {
 	private CalismaModeli calismaModeli = null;
 	private Boolean fazlaMesaiOnayla;
 	private Integer version = 0;
+	private List<FazlaMesaiTalep> fazlaMesaiTalepler;
 
 	public VardiyaGun() {
 		super();
@@ -101,8 +102,6 @@ public class VardiyaGun extends BaseObject {
 		if (vardiya != null)
 			this.durum = !vardiya.isCalisma();
 	}
-
-	private List<FazlaMesaiTalep> fazlaMesaiTalepler;
 
 	@Column(name = "VERSION")
 	public Integer getVersion() {
@@ -2021,6 +2020,19 @@ public class VardiyaGun extends BaseObject {
 
 	public void setHaftaTatiliFazlaMesaiBasDakika(Integer haftaTatiliFazlaMesaiBasDakika) {
 		this.haftaTatiliFazlaMesaiBasDakika = haftaTatiliFazlaMesaiBasDakika;
+	}
+
+	@Transient
+	public String getStyleGun() {
+		String style = "";
+		if (vardiya != null && vardiya.getId() != null) {
+			if (ayinGunu)
+				style = ";font-weight: bold;";
+			else
+				style = ";color:blue;";
+		}
+
+		return style;
 	}
 
 	@Transient

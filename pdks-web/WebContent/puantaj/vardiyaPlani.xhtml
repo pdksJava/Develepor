@@ -343,17 +343,18 @@
 							<tr>
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
 									<ui:fragment rendered="#{vardiyaGun.tatil==null}">
-										<th style="width: 90px;height: 15px;"><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}" /></th>
+										<th style="width: 90px; height: 15px;"><h:outputText
+												value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}" /></th>
 									</ui:fragment>
 
 									<ui:fragment rendered="#{vardiyaGun.tatil.yarimGun==true}">
 										<td class="arife" title="#{vardiyaGun.tatil.ad}"
-											style="width: 90px;height: 15px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;"><h:outputText
+											style="width: 90px; height: 15px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;"><h:outputText
 												value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}" /></td>
 									</ui:fragment>
 									<ui:fragment rendered="#{vardiyaGun.tatil.yarimGun==false}">
 										<td class="bayram" title="#{vardiyaGun.tatil.ad}"
-											style="width: 90px;height: 15px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;"><h:outputText
+											style="width: 90px; height: 15px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;"><h:outputText
 												value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}" /></td>
 									</ui:fragment>
 
@@ -364,40 +365,44 @@
 								</ui:fragment>
 							</tr>
 							<tr>
+
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
-									<td style="width: 90px;height: 20px;" id="vardiya#{vardiyaGun.vardiyaDateStr}" class="#{vardiyaGun.getAylikClassAdi(aylikPuantaj.trClass)}" align="center">
-										<ui:fragment
+									<td style="width: 90px; height: 20px;" id="vardiya#{vardiyaGun.vardiyaDateStr}" class="#{vardiyaGun.getAylikClassAdi(aylikPuantaj.trClass)}"
+										align="center"><ui:fragment
 											rendered="#{vardiyaGun.vardiyalar==null or vardiyaGun.vardiya==null or vardiyaGun.aylikGirisYap==false or  vardiyaGun.izin!=null or vardiyaGun.kullaniciYetkili==false}">
 											<h:panelGrid id="veriDigerAy">
-												<h:outputText value="#{vardiyaGun.aciklama}" />
+												<h:outputText style="font-size: 11px;#{vardiyaGun.styleGun}" value="#{vardiyaGun.aciklama}" />
 											</h:panelGrid>
 											<rich:toolTip for="veriDigerAy" rendered="#{vardiyaGun.title!=''}">
-												<SPAN style="font-size: 14px; font-weight: bold;"> #{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')} -->
+												<SPAN style="font-size: 11px; font-weight: bold;"> #{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')} -->
 													#{vardiyaGun.title}</SPAN>
 											</rich:toolTip>
 										</ui:fragment> <ui:fragment rendered="#{vardiyaGun.vardiyalar!=null and vardiyaGun.aylikGirisYap==true  and vardiyaGun.kullaniciYetkili}">
-											<h:selectOneMenu styleClass="size10" style="width:85px" disabled="#{vardiyaGunHome.personelAylikPuantaj.kaydet==false}"
-												value="#{vardiyaGun.vardiya}" required="true" rendered="#{vardiyaGun!=null}"
-												requiredMessage="#{vardiyaGun.vardiyaGunAciklama} günü vardiyasını seçiniz">
+											<h:selectOneMenu styleClass="size10" style="width:85px#{vardiyaGun.styleGun}"
+												disabled="#{vardiyaGunHome.personelAylikPuantaj.kaydet==false}" value="#{vardiyaGun.vardiya}" required="true"
+												rendered="#{vardiyaGun!=null}" requiredMessage="#{vardiyaGun.vardiyaGunAciklama} günü vardiyasını seçiniz">
 												<s:selectItems var="comp" value="#{vardiyaGun.vardiyalar}" label="#{comp.kisaAciklama}" noSelectionLabel="Seçiniz" />
 												<s:convertEntity />
 												<a4j:support event="onchange" ajaxSingle="true" action="#{vardiyaGunHome.vardiyaDegistir(vardiyaGun)}" reRender="secimler" />
 											</h:selectOneMenu>
 											<rich:toolTip for="vardiya#{vardiyaGun.vardiyaDateStr}">
 												<ui:fragment rendered="#{vardiyaGunHome.personelAylikPuantaj.kaydet==false}">
-													<h2>#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM ')} : #{vardiyaGun.vardiyaPlanAdi}</h2>
+													<h2>#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM ')} : #{vardiyaGun.vardiyaPlanAdi}</h2>
 												</ui:fragment>
 												<ui:fragment rendered="#{vardiyaGunHome.personelAylikPuantaj.kaydet}">
 													<DIV>
-														<h2><ui:fragment rendered="#{vardiyaGunHome.ikRole}">#{vardiyaGun.personel.pdksSicilNo} - #{vardiyaGun.personel.adSoyad}<br />
-															</ui:fragment>#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}</h2>
-														<TABLE>
+														<h2>
+															<ui:fragment rendered="#{vardiyaGunHome.ikRole}">#{vardiyaGun.personel.pdksSicilNo} - #{vardiyaGun.personel.adSoyad}<br />
+															</ui:fragment>
+															#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}
+														</h2>
+									 					<TABLE>
 															<a4j:repeat value="#{vardiyaGun.vardiyalar}" var="vt">
 																<TR>
 																	<TD><ui:fragment rendered="#{vt.id==vardiyaGun.vardiya.id}">
-																			<SPAN style="font-size: 14px; font-weight: bold; color: red;">#{vardiyaGun.getVardiyaAdi(vt)}</SPAN>
+																			<SPAN style="font-size: 11px; font-weight: bold; color: red;">#{vardiyaGun.getVardiyaAdi(vt)}</SPAN>
 																		</ui:fragment> <ui:fragment rendered="#{vt.id!=vardiyaGun.vardiya.id}">
-																			<SPAN style="font-size: 14px;">#{vardiyaGun.getVardiyaAdi(vt)}</SPAN>
+																			<SPAN style="font-size: 10px;">#{vardiyaGun.getVardiyaAdi(vt)}</SPAN>
 																		</ui:fragment></TD>
 																</TR>
 															</a4j:repeat>
@@ -442,8 +447,7 @@
 
 												</h:selectBooleanCheckbox>
 											</P>
-										</ui:fragment>
-									</td>
+										</ui:fragment></td>
 
 								</a4j:repeat>
 								<ui:fragment rendered="#{vardiyaGunHome.sablonGuncelle and authenticatedUser==null}">
@@ -586,11 +590,11 @@
 					oncomplete="if (#{facesContext.maximumSeverity==null}) { #{rich:component('editAylikPanel')}.hide();}#{rich:component('wait')}.hide();" />
 			</h:form>
 		</rich:modalPanel>
-		
+
 		<rich:modalPanel id="fmtDetayPanel" autosized="true" width="900" top="30">
 			<f:facet name="header">
 				<h:outputText
-					value="#{authenticatedUser.getTarihFormatla(vardiyaGunHome.seciliVardiyaGun.vardiyaDate, 'd MMM yyyy')} #{vardiyaGunHome.seciliVardiyaGun.title}  Fazla Çalışma Talep" />
+					value="#{authenticatedUser.getTarihFormatla(vardiyaGunHome.seciliVardiyaGun.vardiyaDate, 'd MMMMM yyyy')} #{vardiyaGunHome.seciliVardiyaGun.title}  Fazla Çalışma Talep" />
 			</f:facet>
 			<f:facet name="controls">
 				<h:panelGroup>
@@ -881,6 +885,7 @@
 				</a4j:outputPanel>
 			</h:form>
 		</rich:modalPanel>
+
 		<rich:modalPanel id="mesaiAylikPanel" autosized="true" width="900" top="30">
 			<f:facet name="header">
 				<h:outputText
@@ -939,10 +944,11 @@
 							<tr>
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
 									<td style="width: 90px; height: 25px;" class="#{vardiyaGun.getAylikClassAdi(aylikPuantaj.trClass)}" align="center"><ui:fragment
-											rendered="#{vardiyaGun.vardiya==null or vardiyaGun.aylikGirisYap==false or vardiyaGun.izin!=null or vardiyaGun.kullaniciYetkili==false}">
+											rendered="#{vardiyaGun.ayinGunu==false or vardiyaGun.vardiya==null or vardiyaGun.aylikGirisYap==false or vardiyaGun.izin!=null or vardiyaGun.kullaniciYetkili==false}">
 											<h:panelGrid id="veriDigerAy">
-												<h:outputText value="#{vardiyaGun.aciklama}" />
+												<h:outputText style="font-size: 11px;#{vardiyaGun.styleGun}" value="#{vardiyaGun.aciklama}" />
 											</h:panelGrid>
+
 											<rich:toolTip for="veriDigerAy" rendered="#{vardiyaGun.title!=''}"> #{vardiyaGun.title} </rich:toolTip>
 										</ui:fragment> <ui:fragment rendered="#{vardiyaGun.vardiyalar!=null and vardiyaGun.aylikGirisYap==true}">
 											<DIV id="bilgiMesaiVardiya#{vardiyaGun.vardiyaKeyStr}">
@@ -963,15 +969,13 @@
 
 
 												</ui:fragment>
-												<ui:fragment rendered="#{vardiyaGun.ayinGunu==false}">
-													<h:outputText title="#{vardiyaGun.vardiyaAdi}" value="#{vardiyaGun.vardiya.kisaAdi}" />
-												</ui:fragment>
+
 												<rich:toolTip for="bilgiMesaiVardiya#{vardiyaGun.vardiyaKeyStr}">
 													<SPAN style="font-size: 11px;"><H2>
-													<ui:fragment rendered="#{vardiyaGunHome.ikRole}">#{vardiyaGun.personel.pdksSicilNo} - #{vardiyaGun.personel.adSoyad}<br />
+															<ui:fragment rendered="#{vardiyaGunHome.ikRole}">#{vardiyaGun.personel.pdksSicilNo} - #{vardiyaGun.personel.adSoyad}<br />
 															</ui:fragment>
-													#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}<br />
-															#{vardiyaGun.vardiyaAdi}</H2> <ui:fragment rendered="#{vardiyaGun.islemVardiya!=null}">
+															#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}<br /> #{vardiyaGun.vardiyaAdi}
+														</H2>  <ui:fragment rendered="#{vardiyaGun.islemVardiya!=null}">
 															<c:if test="#{authenticatedUser.admin}">
 																<s:formattedText value="#{fazlaMesaiOrtakIslemler.getFazlaMesaiSaatleri(vardiyaGun)}"></s:formattedText>
 															</c:if>
@@ -992,7 +996,7 @@
 				</a4j:outputPanel>
 				<a4j:outputPanel id="seciliMesaiGun">
 					<rich:panel rendered="#{vardiyaGunHome.seciliVardiyaGun!=null}"
-						header="#{authenticatedUser.getTarihFormatla(vardiyaGunHome.seciliVardiyaGun.vardiyaDate, 'd MMM yyyy')} ( #{vardiyaGunHome.seciliVardiyaGun.vardiyaAdi} )">
+						header="#{authenticatedUser.getTarihFormatla(vardiyaGunHome.seciliVardiyaGun.vardiyaDate, 'd MMMMM yyyy')} ( #{vardiyaGunHome.seciliVardiyaGun.vardiyaAdi} )">
 
 						<ui:fragment rendered="#{vardiyaGunHome.denklestirmeAyDurum and vardiyaGunHome.fazlaMesaiTalep!=null}">
 							<s:formattedText value="#{fazlaMesaiOrtakIslemler.getFazlaMesaiSaatleri(vardiyaGunHome.seciliVardiyaGun)}"></s:formattedText>

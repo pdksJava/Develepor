@@ -1356,55 +1356,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	}
 
 	/**
-	 * @param user
-	 * @param vardiyaGun
-	 * @return
-	 */
-	public VardiyaGun vardiyaKaydet(User user, VardiyaGun vardiyaGun) {
-
-		if (vardiyaGun.getVardiya() != null) {
-			vardiyaGun.setCheckBoxDurum(Boolean.TRUE);
-			if (vardiyaGun.getId() != null) {
-				if (vardiyaGun.getVardiya().isCalisma()) {
-					if (vardiyaGun.getBasSaat() == vardiyaGun.getVardiya().getBasSaat() && vardiyaGun.getBasDakika() == vardiyaGun.getVardiya().getBasDakika()) {
-						vardiyaGun.setBasSaat(null);
-						vardiyaGun.setBasDakika(null);
-					}
-					if (vardiyaGun.getBitSaat() == vardiyaGun.getVardiya().getBitSaat() && vardiyaGun.getBitDakika() == vardiyaGun.getVardiya().getBitDakika()) {
-						vardiyaGun.setBitSaat(null);
-						vardiyaGun.setBitDakika(null);
-					}
-
-				} else {
-					vardiyaGun.setBasSaat(null);
-					vardiyaGun.setBasDakika(null);
-					vardiyaGun.setBitSaat(null);
-					vardiyaGun.setBitDakika(null);
-				}
-			}
-
-			if (kaydet) {
-				if (vardiyaGun.getId() == null) {
-					vardiyaGun.setOlusturanUser(user);
-				}
-
-				else {
-					vardiyaGun.setGuncelleyenUser(user);
-					vardiyaGun.setGuncellemeTarihi(new Date());
-				}
-				vardiyaGun.setDurum(Boolean.FALSE);
-				// vardiyaGun = (VardiyaGun)
-				// pdksEntityController.save(vardiyaGun);
-
-				pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
-
-			}
-		}
-		return vardiyaGun;
-
-	}
-
-	/**
 	 * @param hafta
 	 */
 	@Transactional
@@ -8564,7 +8515,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						if (basVardiyaId != bitVardiyaId) {
 							if (pdksVardiyaGun.getYeniVardiya() != null) {
 								pdksVardiyaGun.setVardiya(pdksVardiyaGun.getYeniVardiya());
-								pdksVardiyaGun.setIslendi(Boolean.FALSE);
+ 								pdksVardiyaGun.setIslendi(Boolean.FALSE);
 								pdksVardiyaGun.setIslemVardiya(null);
 								pdksVardiyaGun.setIslemVardiyaZamani();
 								pdksEntityController.saveOrUpdate(session, entityManager, pdksVardiyaGun);
