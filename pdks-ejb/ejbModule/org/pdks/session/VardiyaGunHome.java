@@ -157,7 +157,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	private boolean fileImport = Boolean.FALSE, fazlaMesaiTalepVar = Boolean.FALSE, modelGoster = Boolean.FALSE, gebeGoster = Boolean.FALSE;
 
-	private Boolean manuelHareketEkle;
+	private Boolean manuelHareketEkle, vardiyaFazlaMesaiTalepGoster = Boolean.FALSE;
 
 	private boolean adminRole, ikRole, gorevYeriGirisDurum, fazlaMesaiTarihGuncelle = Boolean.FALSE, offIzinGuncelle = Boolean.FALSE, gebeSutIzniGuncelle = Boolean.FALSE;
 
@@ -407,7 +407,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	public boolean isVardiyaFazlaMesailer(VardiyaGun vg) {
 		boolean fmtVar = false;
-		if (planGirisi && fazlaMesaiTalepVar && vg != null && vg.getId() != null && vardiyaFazlaMesaiMap != null) {
+		if (vg != null && vg.getId() != null && vardiyaFazlaMesaiMap != null) {
 			fmtVar = vardiyaFazlaMesaiMap.containsKey(vg.getId());
 		}
 		return fmtVar;
@@ -2658,6 +2658,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		for (VardiyaGun pdksVardiyaGun : aylikPuantaj.getVardiyalar()) {
 			if (vardiyaGun != null) {
 				String tarih = pdksVardiyaGun.getVardiyaDateStr();
+				pdksVardiyaGun.setDonemStr(donem);
 				pdksVardiyaGun.setAyinGunu(tarih.startsWith(donem));
 				Vardiya sonrakVardiya = null;
 				if (pdksVardiyaGun.getVardiya() != null)
@@ -5480,6 +5481,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			String donem = String.valueOf(yil * 100 + ay);
 			for (Iterator iterator2 = sablonVardiyalar.iterator(); iterator2.hasNext();) {
 				VardiyaGun pdksVardiyaGunMaster = (VardiyaGun) iterator2.next();
+				pdksVardiyaGunMaster.setDonemStr(donem);
+
 				String tarih = PdksUtil.convertToDateString(pdksVardiyaGunMaster.getVardiyaDate(), "yyyyMMdd");
 				pdksVardiyaGunMaster.setAyinGunu(tarih.startsWith(donem));
 				if (tatilGunleriMap.containsKey(tarih))
@@ -5610,6 +5613,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (vardiyalarMap.containsKey(pdksVardiyaGun.getVardiyaKey())) {
 						pdksVardiyaGun = vardiyalarMap.get(pdksVardiyaGun.getVardiyaKey());
 					}
+					pdksVardiyaGun.setDonemStr(pdksVardiyaGunMaster.getDonemStr());
 
 					pdksVardiyaGun.setTdClass(aylikPuantaj.getTrClass());
 
@@ -6053,6 +6057,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		vardiyaFazlaMesaiMap.clear();
 		if (fazlaMesaiTalepVar && aylikPuantajList != null && !aylikPuantajList.isEmpty())
 			fazlaMesaiGunleriniBul(aylikPuantajSablon.getIlkGun(), aylikPuantajSablon.getSonGun(), aylikPuantajList);
+		vardiyaFazlaMesaiTalepGoster = planGirisi && !vardiyaFazlaMesaiMap.isEmpty() && (authenticatedUser.isAdmin() || PdksUtil.isSistemDestekVar());
 		TreeMap<String, Object> ozetMap = fazlaMesaiOrtakIslemler.getIzinOzetMap(null, aylikPuantajList, false);
 		izinTipiVardiyaList = ozetMap.containsKey("izinTipiVardiyaList") ? (List<Vardiya>) ozetMap.get("izinTipiVardiyaList") : new ArrayList<Vardiya>();
 		izinTipiPersonelVardiyaMap = ozetMap.containsKey("izinTipiPersonelVardiyaMap") ? (TreeMap<String, TreeMap<String, List<VardiyaGun>>>) ozetMap.get("izinTipiPersonelVardiyaMap") : new TreeMap<String, TreeMap<String, List<VardiyaGun>>>();
@@ -8515,7 +8520,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						if (basVardiyaId != bitVardiyaId) {
 							if (pdksVardiyaGun.getYeniVardiya() != null) {
 								pdksVardiyaGun.setVardiya(pdksVardiyaGun.getYeniVardiya());
- 								pdksVardiyaGun.setIslendi(Boolean.FALSE);
+								pdksVardiyaGun.setIslendi(Boolean.FALSE);
 								pdksVardiyaGun.setIslemVardiya(null);
 								pdksVardiyaGun.setIslemVardiyaZamani();
 								pdksEntityController.saveOrUpdate(session, entityManager, pdksVardiyaGun);
@@ -10304,5 +10309,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	public void setTesisAciklama(String tesisAciklama) {
 		this.tesisAciklama = tesisAciklama;
+	}
+
+	public Boolean getVardiyaFazlaMesaiTalepGoster() {
+		return vardiyaFazlaMesaiTalepGoster;
+	}
+
+	public void setVardiyaFazlaMesaiTalepGoster(Boolean vardiyaFazlaMesaiTalepGoster) {
+		this.vardiyaFazlaMesaiTalepGoster = vardiyaFazlaMesaiTalepGoster;
 	}
 }

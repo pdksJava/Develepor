@@ -73,7 +73,7 @@ public class VardiyaGun extends BaseObject {
 	private boolean fazlaMesaiTalepOnayliDurum = Boolean.FALSE;
 	private double calismaSuresi = 0, normalSure = 0, resmiTatilSure = 0, haftaTatilDigerSure = 0, gecenAyResmiTatilSure = 0, aksamVardiyaSaatSayisi = 0d, calisilmayanAksamSure = 0, fazlaMesaiSure = 0, bayramCalismaSuresi = 0, haftaCalismaSuresi = 0d;
 	private Integer basSaat, basDakika, bitSaat, bitDakika;
-	private String tdClass = "", style = "", manuelGirisHTML = "", vardiyaKisaAciklama, personelNo;
+	private String tdClass = "", style = "", manuelGirisHTML = "", vardiyaKisaAciklama, personelNo, vardiyaDateStr, donemStr;
 	private Tatil tatil;
 	private PersonelIzin izin;
 	private VardiyaSablonu vardiyaSablonu;
@@ -229,8 +229,14 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public String getVardiyaDateStr() {
-		return vardiyaDate != null ? PdksUtil.convertToDateString(vardiyaDate, "yyyyMMdd") : "";
+		if (vardiyaDateStr == null)
+			vardiyaDateStr = vardiyaDate != null ? PdksUtil.convertToDateString(vardiyaDate, "yyyyMMdd") : "";
+		return vardiyaDateStr;
 
+	}
+
+	public void setVardiyaDateStr(String vardiyaDateStr) {
+		this.vardiyaDateStr = vardiyaDateStr;
 	}
 
 	@Transient
@@ -2028,8 +2034,15 @@ public class VardiyaGun extends BaseObject {
 		if (vardiya != null && vardiya.getId() != null) {
 			if (ayinGunu)
 				style = ";font-weight: bold;";
-			else
+			else {
 				style = ";color:red;";
+				if (donemStr != null && vardiyaDateStr != null) {
+					if (vardiyaDateStr.compareTo(donemStr + "01") == 1) {
+						style = ";color:orange;";
+					}
+				}
+			}
+
 		}
 
 		return style;
@@ -2042,6 +2055,15 @@ public class VardiyaGun extends BaseObject {
 
 	public void setKatSayiMap(HashMap<Integer, BigDecimal> katSayiMap) {
 		this.katSayiMap = katSayiMap;
+	}
+
+	@Transient
+	public String getDonemStr() {
+		return donemStr;
+	}
+
+	public void setDonemStr(String donemStr) {
+		this.donemStr = donemStr;
 	}
 
 }

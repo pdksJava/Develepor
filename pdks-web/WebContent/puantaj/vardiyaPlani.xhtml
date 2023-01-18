@@ -1173,7 +1173,7 @@
 														<a4j:support event="onclick" ajaxSingle="true" status="ajaxStatus" action="#{vardiyaGunHome.mesaiIptalSec(fmt)}"
 															onclick="#{rich:component('wait')}.show()"
 															oncomplete="if (#{facesContext.maximumSeverity==null}) {#{rich:component('mesaiIptalPanel')}.show();} #{rich:component('wait')}.hide();"
-															reRender="mesaiIptalPanel" />
+															reRender="mesaiIptalPanel,indirimOnay" />
 													</h:graphicImage> <rich:toolTip for="mesaiIptalBilgi">
 														<B>Fazla çalışma talep iptal</B>
 													</rich:toolTip></td>
@@ -1335,50 +1335,7 @@
 		</rich:modalPanel>
 
 
-		<rich:modalPanel id="saatPanel" autosized="true" width="300">
-			<f:facet name="header">
-				<h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGunHome.seciliVardiyaGun.vardiyaDate, 'd MMMMM yyyy')} Çalışma Planı Güncelleme" />
-			</f:facet>
-			<f:facet name="controls">
-				<h:panelGroup>
-					<h:form>
-						<h:graphicImage value="/img/close.png" id="hideSaatLink" styleClass="hideSaatLink">
-							<a4j:support event="onclick" status="ajaxStatus" oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('saatPanel')}.hide();"
-								ajaxSingle="true" reRender="editAylikPanel" />
-						</h:graphicImage>
-					</h:form>
-				</h:panelGroup>
-			</f:facet>
-			<h:form>
-				<a4j:outputPanel ajaxRendered="true">
-					<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
-				</a4j:outputPanel>
-
-
-				<h:panelGrid columns="8" rendered="#{vardiyaGunHome.seciliVardiyaGun!=null}">
-
-					<rich:inputNumberSpinner styleClass="size10" inputStyle="width:20px" minValue="0" maxValue="23" inputSize="1"
-						value="#{vardiyaGunHome.seciliVardiyaGun.basSaat}">
-						<a4j:support event="onchange" action="#{vardiyaGunHome.seciliVardiyaGun.setGuncellendi(true)}" />
-					</rich:inputNumberSpinner>
-					<h:outputText value=":" styleClass="size10" />
-					<rich:inputNumberSpinner styleClass="size10" inputStyle="width:20px" minValue="0" maxValue="59" inputSize="1" step="5"
-						value="#{vardiyaGunHome.seciliVardiyaGun.basDakika}">
-						<a4j:support event="onchange" action="#{vardiyaGunHome.seciliVardiyaGun.setGuncellendi(true)}" />
-					</rich:inputNumberSpinner>
-					<h:outputText value="-" styleClass="size10" />
-					<rich:inputNumberSpinner styleClass="size10" inputStyle="width:20px" minValue="0" maxValue="23" inputSize="1"
-						value="#{vardiyaGunHome.seciliVardiyaGun.bitSaat}">
-						<a4j:support event="onchange" action="#{vardiyaGunHome.seciliVardiyaGun.setGuncellendi(true)}" />
-					</rich:inputNumberSpinner>
-					<h:outputText value=":" styleClass="size10" />
-					<rich:inputNumberSpinner styleClass="size10" inputStyle="width:20px" minValue="0" maxValue="59" inputSize="1" step="5"
-						value="#{vardiyaGunHome.seciliVardiyaGun.bitDakika}">
-						<a4j:support event="onchange" action="#{vardiyaGunHome.seciliVardiyaGun.setGuncellendi(true)}" />
-					</rich:inputNumberSpinner>
-				</h:panelGrid>
-			</h:form>
-		</rich:modalPanel>
+	 
 	</ui:define>
 
 </ui:composition>

@@ -299,8 +299,7 @@
 																		#{authenticatedUser.dateTimeFormatla(vardiyaGun.guncellemeTarihi)} </SPAN>
 																</ui:fragment>
 															</rich:toolTip></TD>
-														<ui:fragment
-															rendered="#{(authenticatedUser.admin or ortakIslemler.sistemDestekVar) and vardiyaGunHome.isVardiyaFazlaMesailer(vardiyaGun)   }">
+														<ui:fragment rendered="#{vardiyaGunHome.vardiyaFazlaMesaiTalepGoster and vardiyaGunHome.isVardiyaFazlaMesailer(vardiyaGun)   }">
 															<TD id="fmt#{vardiyaGun.vardiyaKeyStr}"><a4j:commandLink action="#{vardiyaGunHome.getVardiyaFazlaMesailer(vardiyaGun)}"
 																	onclick="#{rich:component('wait')}.show()" ajaxSingle="true"
 																	oncomplete="#{rich:component('wait')}.hide();#{rich:component('fmtDetayPanel')}.show()" reRender="fmtDetayPanel,secimlerGunMesai">
