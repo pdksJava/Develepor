@@ -8925,9 +8925,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 									for (Iterator iterator2 = sablonVardiyalar.iterator(); iterator2.hasNext();) {
 										VardiyaGun pdksVardiyaGunMaster = (VardiyaGun) iterator2.next();
-										VardiyaGun pdksVardiyaGun = new VardiyaGun();
-										pdksVardiyaGun.setVardiyaDate(pdksVardiyaGunMaster.getVardiyaDate());
-										pdksVardiyaGun.setPersonel(personel);
+										VardiyaGun pdksVardiyaGun = new VardiyaGun(personel, null, pdksVardiyaGunMaster.getVardiyaDate());
 										pdksVardiyaGun.setAyinGunu(Boolean.FALSE);
 										if (vardiyalarMap.containsKey(pdksVardiyaGun.getVardiyaKey()))
 											pdksVardiyaGun = vardiyalarMap.get(pdksVardiyaGun.getVardiyaKey());
@@ -9091,10 +9089,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			vardiyaHaftaList.add(pdksVardiyaHafta);
 			List<VardiyaGun> haftaVardiyaGunleri = pdksVardiyaHafta.getVardiyaGunler();
 			for (VardiyaGun pdksVardiyaGunMaster : pdksVardiyaHaftaMaster.getVardiyaGunler()) {
-				VardiyaGun pdksVardiyaGun2 = new VardiyaGun();
-				pdksVardiyaGun2.setVardiyaDate(pdksVardiyaGunMaster.getVardiyaDate());
-				pdksVardiyaGun2.setPersonel(personel);
-				pdksVardiyaGun2.setVardiya(null);
+				VardiyaGun pdksVardiyaGun2 = new VardiyaGun(personel, null, pdksVardiyaGunMaster.getVardiyaDate());
 				haftaVardiyaGunleri.add(pdksVardiyaGun2);
 			}
 

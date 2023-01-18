@@ -96,9 +96,9 @@ public class VardiyaGun extends BaseObject {
 
 	public VardiyaGun(Personel personel, Vardiya vardiya, Date vardiyaDate) {
 		super();
-		this.personel = personel;
-		this.vardiya = vardiya;
-		this.vardiyaDate = vardiyaDate;
+		this.setPersonel(personel);
+		this.setVardiya(vardiya);
+		this.setVardiyaDate(vardiyaDate);
 		if (vardiya != null)
 			this.durum = !vardiya.isCalisma();
 	}
@@ -248,17 +248,20 @@ public class VardiyaGun extends BaseObject {
 
 	}
 
-	public void setVardiyaDate(Date vardiyaDate1) {
+	public void setVardiyaDate(Date value) {
 		boolean gunDurum = Boolean.TRUE;
-		if (vardiyaDate1 != null)
-			gunDurum = PdksUtil.tarihKarsilastirNumeric(Calendar.getInstance().getTime(), vardiyaDate1) != 1;
+		this.setVardiyaDateStr(null);
+		if (value != null) {
+			gunDurum = PdksUtil.tarihKarsilastirNumeric(Calendar.getInstance().getTime(), value) != 1;
+			this.setVardiyaDateStr(PdksUtil.convertToDateString(value, "yyyyMMdd"));
+		}
 		setBitmemisGun(gunDurum);
-		this.vardiyaDate = vardiyaDate1;
+		this.vardiyaDate = value;
 	}
 
 	@Transient
 	public String getTarihStr() {
-		return vardiyaDate != null ? PdksUtil.convertToDateString(vardiyaDate, "yyyyMMdd") : "";
+		return this.getVardiyaDateStr();
 	}
 
 	@Transient
