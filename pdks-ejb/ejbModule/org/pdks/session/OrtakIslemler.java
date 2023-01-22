@@ -8347,7 +8347,7 @@ public class OrtakIslemler implements Serializable {
 				HashMap<Integer, BigDecimal> katSayiMap = new HashMap<Integer, BigDecimal>();
 				String str = vardiyaGun.getVardiyaDateStr();
 				Vardiya vardiya = vardiyaGun.getVardiya();
-				if (vardiya != null && vardiya.isCalisma()) {
+				if (vardiya != null) {
 					if (fmtDurumEt) {
 						if (fmtDurumMap.containsKey(str)) {
 							BigDecimal deger = fmtDurumMap.get(str);

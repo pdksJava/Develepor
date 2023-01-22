@@ -2070,6 +2070,20 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	@Transient
+	public BigDecimal getKatSayi(Integer tipi) {
+		BigDecimal katSayi = null;
+		try {
+			if (tipi != null && katSayiMap != null) {
+				if (katSayiMap.containsKey(tipi))
+					katSayi = katSayiMap.get(tipi);
+			}
+		} catch (Exception e) {
+			katSayi = null;
+		}
+		return katSayi;
+	}
+
+	@Transient
 	public HashMap<Integer, BigDecimal> getKatSayiMap() {
 		return katSayiMap;
 	}
@@ -2089,6 +2103,10 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public boolean isFazlaMesaiTalepDurum() {
+		if (!fazlaMesaiTalepDurum && izin == null && ayinGunu) {
+			BigDecimal decimal = getKatSayi(KatSayiTipi.FMT_DURUM.value());
+			fazlaMesaiTalepDurum = decimal != null && decimal.intValue() > 0;
+		}
 		return fazlaMesaiTalepDurum;
 	}
 
