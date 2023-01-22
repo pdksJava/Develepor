@@ -8353,13 +8353,12 @@ public class OrtakIslemler implements Serializable {
 				if (vardiya != null && vardiya.getId() != null) {
 					HashMap<Integer, BigDecimal> katSayiMap = new HashMap<Integer, BigDecimal>();
 					String str = vardiyaGun.getVardiyaDateStr();
-					if (fmtDurumEt) {
-						if (fmtDurumMap.containsKey(str)) {
-							BigDecimal deger = fmtDurumMap.get(str);
-							if (deger != null)
-								katSayiMap.put(KatSayiTipi.FMT_DURUM.value(), deger);
-						}
+					if (fmtDurumEt && fmtDurumMap.containsKey(str)) {
+						BigDecimal deger = fmtDurumMap.get(str);
+						if (deger != null)
+							katSayiMap.put(KatSayiTipi.FMT_DURUM.value(), deger);
 					}
+
 					if (vardiya.isCalisma()) {
 						if (erkenGirisKontrolEt && erkenGirisMap.containsKey(str)) {
 							BigDecimal deger = erkenGirisMap.get(str);
@@ -8438,7 +8437,15 @@ public class OrtakIslemler implements Serializable {
 			if (!bosList.isEmpty())
 				vardiyaGunList.addAll(bosList);
 			bosList = null;
+			allMap = null;
 			sureMap = null;
+			sureSuaMap = null;
+			yuvarlamaMap = null;
+			haftaTatilFazlaMesaiMap = null;
+			offFazlaMesaiMap = null;
+			erkenGirisMap = null;
+			gecCikisMap = null;
+			fmtDurumMap = null;
 		}
 		map = null;
 		return vardiyaGunList;
@@ -8469,30 +8476,27 @@ public class OrtakIslemler implements Serializable {
 		map.put("bitTarih", bitTarih);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		try {
-			List<Object[]> list = pdksEntityController.getObjectBySQLList(sb, map, null);
-			for (Object[] objects : list) {
-				if (objects[0] == null || objects[1] == null)
-					continue;
-				try {
-					Integer kaySayi = (Integer) objects[0];
-					KatSayiTipi key = KatSayiTipi.fromValue(kaySayi);
-					if (key != null) {
-						TreeMap<String, BigDecimal> degerMap = allMap.containsKey(key) ? allMap.get(key) : new TreeMap<String, BigDecimal>();
-						if (degerMap.isEmpty())
-							allMap.put(key, degerMap);
-						Date date = new Date(((java.sql.Timestamp) objects[1]).getTime());
-						BigDecimal deger = new BigDecimal((Double) objects[2]);
-						degerMap.put(PdksUtil.convertToDateString(date, "yyyyMMdd"), deger);
-					}
-				} catch (Exception e) {
-					// TODO: handle exception
+		List<Object[]> list = pdksEntityController.getObjectBySQLList(sb, map, null);
+		for (Object[] objects : list) {
+			if (objects[0] == null || objects[1] == null)
+				continue;
+			try {
+				Integer kaySayi = (Integer) objects[0];
+				KatSayiTipi key = KatSayiTipi.fromValue(kaySayi);
+				if (key != null) {
+					TreeMap<String, BigDecimal> degerMap = allMap.containsKey(key) ? allMap.get(key) : new TreeMap<String, BigDecimal>();
+					if (degerMap.isEmpty())
+						allMap.put(key, degerMap);
+					Date date = new Date(((java.sql.Timestamp) objects[1]).getTime());
+					BigDecimal deger = new BigDecimal((Double) objects[2]);
+					degerMap.put(PdksUtil.convertToDateString(date, "yyyyMMdd"), deger);
 				}
-
+			} catch (Exception e) {
+				// TODO: handle exception
 			}
-		} catch (Exception e) {
-			// TODO: handle exception
+
 		}
+
 		map = null;
 		return allMap;
 	}
