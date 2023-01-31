@@ -1251,6 +1251,8 @@ public class VardiyaGun extends BaseObject {
 				classAd = STYLE_CLASS_DIGER_AY;
 		} else
 			classAd = STYLE_CLASS_OFF;
+		if (ayinGunu && version < 0 && this.isIzinli() == false)
+			classAd = "hata";
 
 		return classAd;
 
