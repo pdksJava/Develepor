@@ -25,7 +25,12 @@
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
-								<h:inputText value="#{pdksPersonelHome.sicilNo}" size="10" />
+								<h:inputText value="#{pdksPersonelHome.sicilNo}" size="10">
+									<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" reRender="pdksPersonelList,aramaSonuc"
+										action="#{pdksPersonelHome.fillPersonelKGSList}" />
+
+
+								</h:inputText>
 							</s:decorate>
 						</h:panelGrid>
 						<s:decorate template="/layout/edit.xhtml">
@@ -1098,14 +1103,14 @@
 										<f:facet name="header">
 											<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
 										</f:facet>
-										<h:outputText value="#{p1.pdksSicilNo}"   />
+										<h:outputText value="#{p1.pdksSicilNo}" />
 									</rich:column>
 									<rich:column>
 										<f:facet name="header" filterBy="#{user.firstname}" filterEvent="onkeyup">
 											<h:outputText value="PDKS Adı Soyadı" />
 										</f:facet>
-										<h:outputText   value="#{p1.adSoyad}"  />
-										 
+										<h:outputText value="#{p1.adSoyad}" />
+
 									</rich:column>
 
 									<rich:column>
@@ -1120,7 +1125,7 @@
 										</f:facet>
 										<h:outputText value="#{p1.tesis.aciklama}" />
 									</rich:column>
-									 <rich:column>
+									<rich:column>
 										<f:facet name="header">
 											<h:outputText value="#{pdksPersonelHome.bolumAciklama}" />
 										</f:facet>
@@ -1131,7 +1136,7 @@
 											<h:outputText value="#{ortakIslemler.yoneticiAciklama()}" />
 										</f:facet>
 										<h:outputText value="#{p1.pdksYonetici.adSoyad}" />
- 									</rich:column>
+									</rich:column>
 									<f:facet name="footer">
 										<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 									</f:facet>
