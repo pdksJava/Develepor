@@ -3599,7 +3599,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		Sirket sirket = aramaSecenekleri.getSirket();
 		List<SelectItem> list = null;
 		String tesisId = null;
-		if (departman.isAdminMi() && sirket.getDepartmanBolumAyni() == false)
+		if (departman.isAdminMi() && sirket.isTesisDurumu())
 			tesisId = aramaSecenekleri.getTesisId() != null ? String.valueOf(aramaSecenekleri.getTesisId()) : null;
 
 		list = fazlaMesaiOrtakIslemler.getFazlaMesaiMudurBolumList(sirket, tesisId, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, getDenklestirmeDurum(), fazlaMesaiTalepDurum, session);
@@ -5007,7 +5007,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			Sirket sirket = (Sirket) pdksEntityController.getObjectByInnerObject(fields, Sirket.class);
 			if (sirket != null) {
-				departmanBolumAyni = sirket.isDepartmanBolumAynisi();
+				departmanBolumAyni = sirket.isTesisDurumu() == false;
 			}
 
 		}
@@ -6514,7 +6514,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.personelNoAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Adı Soyadı");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.sirketAciklama());
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
+		boolean tesisDurum = ortakIslemler.isTesisDurumu();
+		if (tesisDurum)
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumAciklama);
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Mesai Başlangıç Zamanı");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Mesai Bitiş Zamanı");
@@ -6535,7 +6537,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getSicilNo());
 			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getAdSoyad());
 			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(sirket.getAd());
-			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
+			if (tesisDurum)
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
 			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
 			ExcelUtil.getCell(sheet, row, col++, cellStyleDateTime).setCellValue(fmt.getBaslangicZamani());
 			ExcelUtil.getCell(sheet, row, col++, cellStyleDateTime).setCellValue(fmt.getBitisZamani());
@@ -7246,8 +7249,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (tip.equals("D"))
 						sb.append(" INNER JOIN " + Departman.TABLE_NAME + " D ON D." + Departman.COLUMN_NAME_ID + "=S." + Sirket.COLUMN_NAME_DEPARTMAN);
 				} else {
-					if (sirket.getDepartman().isAdminMi() || sirket.isDepartmanBolumAynisi() == false) {
-						if (sirket.getDepartman().isAdminMi() == false || sirket.isDepartmanBolumAynisi() == false) {
+					if (sirket.getDepartman().isAdminMi() || sirket.isTesisDurumu()) {
+						if (sirket.getDepartman().isAdminMi() == false || sirket.isTesisDurumu()) {
 							sb.append(" AND P." + Personel.COLUMN_NAME_SIRKET + "=:s");
 							fields.put("s", sirket.getId());
 						}
@@ -7526,7 +7529,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			sirket = (Sirket) pdksEntityController.getObjectByInnerObject(fields, Sirket.class);
 
 		}
-		departmanBolumAyni = sirket != null && sirket.isDepartmanBolumAynisi();
+		departmanBolumAyni = sirket != null && sirket.isTesisDurumu() == false;
 
 		if (sicilNo != null)
 			sicilNo = ortakIslemler.getSicilNo(sicilNo.trim());
@@ -7896,7 +7899,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Adı Soyadı");
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.personelNoAciklama());
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.sirketAciklama());
-			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
+			boolean tesisDurum = ortakIslemler.isTesisDurumu();
+			if (tesisDurum)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumAciklama);
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tarihi");
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya");
@@ -7927,7 +7932,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getAdSoyad());
 					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(personel.getSicilNo());
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(sirket);
-					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
+					if (tesisDurum)
+						ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
 					ExcelUtil.getCell(sheet, row, col++, date).setCellValue(vg.getVardiyaDate());
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vg.getVardiyaAciklama());
@@ -7995,7 +8001,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, null, session);
 		}
 		aramaSecenekleri.setSirket(sirket);
-		// List<SelectItem> list = fazlaMesaiOrtakIslemler.tesisDoldur(departman, aramaSecenekleri.getSirket(), aramaSecenekleri.getEkSaha1Id(), yil, ay, Boolean.FALSE, Boolean.FALSE, session);
 		List<SelectItem> list = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(aramaSecenekleri.getSirket(), denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, getDenklestirmeDurum(), session);
 		fazlaMesaiListeGuncelle(sirket, "T", list);
 		aramaSecenekleri.setTesisList(list);
@@ -8005,7 +8010,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		}
 		if (bolumDoldurDurum) {
 			if (sirket != null) {
-				if (sirket.isErp() == false || sirket.isDepartmanBolumAynisi())
+				if (sirket.isTesisDurumu() == false)
 					aramaSecenekleri.setTesisId(null);
 			}
 			bolumDoldur();
@@ -8042,7 +8047,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		List<SelectItem> list = null;
 		if (sirket != null) {
 			String tesisId = null;
-			if (departman.isAdminMi() && sirket.getDepartmanBolumAyni() == false)
+			if (departman.isAdminMi() && sirket.isTesisDurumu())
 				tesisId = aramaSecenekleri.getTesisId() != null ? String.valueOf(aramaSecenekleri.getTesisId()) : null;
 			list = fazlaMesaiOrtakIslemler.getFazlaMesaiBolumList(sirket, tesisId, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, getDenklestirmeDurum(), session);
 			fazlaMesaiListeGuncelle(sirket, "B", list);

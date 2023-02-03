@@ -2148,7 +2148,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	}
 
 	private void fillTesisTanimList() {
-		List<Tanim> tanimList = ortakIslemler.getTanimList(Tanim.TIPI_TESIS, session);
+		List<Tanim> tanimList = ortakIslemler.isTesisDurumu() ? ortakIslemler.getTanimList(Tanim.TIPI_TESIS, session) : new ArrayList<Tanim>();
 		setTesisList(tanimList);
 	}
 
@@ -2957,7 +2957,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	}
 
 	public void fillDistinctTesisList() {
-		List<Tanim> allTesis = ortakIslemler.getTanimList(Tanim.TIPI_TESIS, session);
+		List<Tanim> allTesis = ortakIslemler.isTesisDurumu() ? ortakIslemler.getTanimList(Tanim.TIPI_TESIS, session) : new ArrayList<Tanim>();
 		Personel seciliPersonel = getInstance();
 		if (seciliPersonel != null) {
 			User seciiliKullanici = seciliPersonel.getKullanici();

@@ -56,7 +56,7 @@
 								</h:selectOneMenu>
 							</s:decorate>
 
-							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiHesaplaHome.tesisList!=null and fazlaMesaiHesaplaHome.tesisList.size()>0}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.tesisDurumu and fazlaMesaiHesaplaHome.tesisList!=null and fazlaMesaiHesaplaHome.tesisList.size()>0}">
 								<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 								<h:selectOneMenu value="#{fazlaMesaiHesaplaHome.tesisId}" requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz!" required="true"
 									disabled="#{fazlaMesaiHesaplaHome.tesisList.size()==1}">

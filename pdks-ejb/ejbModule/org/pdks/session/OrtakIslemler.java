@@ -194,6 +194,9 @@ public class OrtakIslemler implements Serializable {
 	PdksSap3Controller pdksSap3Controller;
 	@In(required = false, create = true)
 	HashMap<String, String> parameterMap;
+	@In(required = false, create = true)
+	List<Sirket> pdksSirketleri;
+
 	@Out(required = false, scope = ScopeType.SESSION)
 	User seciliYonetici;
 	@In(scope = ScopeType.APPLICATION, required = false)
@@ -1666,7 +1669,7 @@ public class OrtakIslemler implements Serializable {
 					class1 = Tanim.class;
 					order = Tanim.COLUMN_NAME_ACIKLAMATR;
 				} else if (tipi.equalsIgnoreCase("T")) {
-					if (sirket == null || (sirket.isErp() && sirket.isDepartmanBolumAynisi() == false)) {
+					if (sirket == null || sirket.isTesisDurumu()) {
 						class1 = Tanim.class;
 						order = Tanim.COLUMN_NAME_ACIKLAMATR;
 					}
@@ -1711,7 +1714,7 @@ public class OrtakIslemler implements Serializable {
 					if (sirket != null) {
 						sirketId = sirket.getId();
 						if (!tipi.equalsIgnoreCase("T")) {
-							if (sirket.isErp() == false || sirket.isDepartmanBolumAynisi()) {
+							if (sirket.isTesisDurumu() == false) {
 								tesisId = "";
 								if (tipi.equalsIgnoreCase("P")) {
 									depId = sirket.getDepartman().getId();
@@ -1878,7 +1881,7 @@ public class OrtakIslemler implements Serializable {
 					class1 = Tanim.class;
 					order = Tanim.COLUMN_NAME_ACIKLAMATR;
 				} else if (tipi.equalsIgnoreCase("T")) {
-					if (sirket == null || (sirket.isErp() && sirket.isDepartmanBolumAynisi() == false)) {
+					if (sirket == null || sirket.isTesisDurumu()) {
 						class1 = Tanim.class;
 						order = Tanim.COLUMN_NAME_ACIKLAMATR;
 					}
@@ -1935,7 +1938,7 @@ public class OrtakIslemler implements Serializable {
 					if (sirket != null) {
 						sirketId = sirket.getId();
 						if (!tipi.equalsIgnoreCase("T")) {
-							if (sirket.isErp() == false || (sirket.getSirketGrupId() != null || sirket.isDepartmanBolumAynisi())) {
+							if (sirket.getSirketGrupId() != null || sirket.isTesisDurumu() == false) {
 								tesisId = "";
 								if (tipi.equalsIgnoreCase("P")) {
 									depId = sirket.getDepartman().getId();
@@ -2552,7 +2555,7 @@ public class OrtakIslemler implements Serializable {
 			fieldAdi = "ekSaha3";
 		fields.put(PdksEntityController.MAP_KEY_SELECT, fieldAdi);
 		if (sirket != null) {
-			if (sirket.isDepartmanBolumAynisi() == false) {
+			if (sirket.isTesisDurumu()) {
 				boolean tesisYetki = getParameterKey("tesisYetki").equals("1");
 				if (tesisYetki && authenticatedUser.getYetkiliTesisler() != null && !authenticatedUser.getYetkiliTesisler().isEmpty()) {
 					List<Long> idler = new ArrayList<Long>();
@@ -2668,8 +2671,8 @@ public class OrtakIslemler implements Serializable {
 		sb.append(" ORDER BY T." + Tanim.COLUMN_NAME_KODU);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<Tanim> tesisTanimList = pdksEntityController.getObjectBySQLList(sb, map, Tanim.class);
-		if (!tesisTanimList.isEmpty()) {
+		List<Tanim> tesisTanimList = isTesisDurumu() ? pdksEntityController.getObjectBySQLList(sb, map, Tanim.class) : null;
+		if (tesisTanimList != null && !tesisTanimList.isEmpty()) {
 			List<SelectItem> tesisSelectList = new ArrayList<SelectItem>();
 			for (Tanim tanim : tesisTanimList)
 				tesisSelectList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
@@ -3123,6 +3126,8 @@ public class OrtakIslemler implements Serializable {
 			if (!sirketMap.isEmpty()) {
 				List<Sirket> tempList = new ArrayList<Sirket>(sirketMap.values());
 				for (Sirket sirket2 : tempList) {
+					if (!sirket2.isTesisDurumu())
+						tesisMap.clear();
 					if (sirket2.getSirketGrup() != null)
 						sirketGrup = sirket2.getSirketGrup();
 				}
@@ -3579,6 +3584,23 @@ public class OrtakIslemler implements Serializable {
 	public String tesisAciklama() {
 		String tesisAciklama = getBaslikAciklama("tesisAciklama", "Tesis");
 		return tesisAciklama;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isTesisDurumu() {
+		String tesisDurumuStr = getParameterKey("tesisDurumu");
+		boolean tesisDurumu = tesisDurumuStr.equals("1");
+		if (!tesisDurumu && pdksSirketleri != null) {
+			for (Sirket sirket : pdksSirketleri) {
+				if (sirket.isPdksMi() && sirket.isTesisDurumu()) {
+					tesisDurumu = true;
+					break;
+				}
+			}
+		}
+		return tesisDurumu;
 	}
 
 	/**
@@ -9445,7 +9467,9 @@ public class OrtakIslemler implements Serializable {
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İzni " + yonetici2Aciklama() + " Onaylasın");
 		if (onaysizIzinKullanilir)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Onaysız İzin Girebilir");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(tesisAciklama());
+		boolean tesisDurum = isTesisDurumu();
+		if (tesisDurum)
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(tesisAciklama());
 		String ekSaha1 = null, ekSaha2 = null, ekSaha3 = null, ekSaha4 = null;
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Görevi");
 		if (admin) {
@@ -9595,7 +9619,8 @@ public class OrtakIslemler implements Serializable {
 					logger.error("Pdks hata out : " + e.getMessage());
 
 				}
-				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
+				if (tesisDurum)
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getGorevTipi() != null ? personel.getGorevTipi().getAciklama() : "");
 				if (admin) {
 					try {
