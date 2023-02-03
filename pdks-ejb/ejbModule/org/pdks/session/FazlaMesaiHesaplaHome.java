@@ -1366,8 +1366,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								sonVardiyaBitZaman = islemVardiya.getVardiyaTelorans1BitZaman();
 						}
 						personelDenklestirme = puantaj.getPersonelDenklestirmeAylik();
-						planOnayDurum = denklestirmeAyDurum && (personelDenklestirme.isOnaylandi() /** || ikRole **/
-						);
+						planOnayDurum = denklestirmeAyDurum && (personelDenklestirme.isOnaylandi());
 						if (personelDenklestirme.getDurum()) {
 							if (sonVardiyaBitZaman != null)
 								fazlaMesaiOnayla = bugun.after(sonVardiyaBitZaman);
@@ -3235,8 +3234,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									mesaiMap = null;
 
 								}
-								if (denklestirmeAyDurum)
-									personelFazlaMesaiEkle(vGun, vardiyaPlanKey);
+
+								personelFazlaMesaiEkle(vGun, vardiyaPlanKey);
 								list = null;
 
 							}
@@ -3529,19 +3528,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		cikisHareketleri = null;
 		if (vGun.getFazlaMesailer() != null) {
 			for (PersonelFazlaMesai personelFazlaMesai : vGun.getFazlaMesailer()) {
-				if (personelFazlaMesai.isOnaylandi()) {
-
-					if (fazlaMesaiOnaylaDurum) {
+				if (personelFazlaMesai.getDurum()) {
+					if (personelFazlaMesai.isOnaylandi())
 						vGun.setFazlaMesaiOnayla(false);
-						personelFazlaMesaiEkle(vGun, vardiyaPlanKey);
-					}
-					if (personelFazlaMesaiDurum) {
-						personelFazlaMesaiEkle(vGun, vardiyaPlanKey);
-						// String link = "<a href='http://" + adres + "/personelFazlaMesai?planKey=" + vardiyaPlanKey + "'>" + personelFazlaMesaiStr + "</a>";
-						// vGun.addLinkAdresler(link);
-					}
+					personelFazlaMesaiEkle(vGun, vardiyaPlanKey);
 					break;
-
 				}
 			}
 		}
