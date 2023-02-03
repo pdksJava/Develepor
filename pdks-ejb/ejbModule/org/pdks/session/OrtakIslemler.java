@@ -3736,7 +3736,7 @@ public class OrtakIslemler implements Serializable {
 				parametreMap.put("ekSaha3.id=", ekSaha3.getId());
 			if (ekSaha4 != null && (departman == null || departman.isAdminMi()) && (departman == null || departman.isAdminMi()))
 				parametreMap.put("ekSaha4.id=", ekSaha4.getId());
-			if (tesis != null)
+			if (tesis != null && (sirket == null || sirket.isTesisDurumu()))
 				parametreMap.put("tesis.id=", tesis.getId());
 			if (ad.trim().length() > 0)
 				parametreMap.put("ad like", ad.trim() + "%");
