@@ -9241,7 +9241,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public TreeMap<String, Boolean> mantiksalAlanlariDoldur(List<PersonelView> list) {
 		TreeMap<String, Boolean> map = new TreeMap<String, Boolean>();
-		Boolean fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, sanalPersonel = Boolean.FALSE, icapDurum = Boolean.FALSE;
+		Boolean fazlaMesaiIzinKullan = Boolean.FALSE, tesisDurum = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, sanalPersonel = Boolean.FALSE, icapDurum = Boolean.FALSE;
 		Boolean kullaniciPersonel = Boolean.FALSE, gebeMi = Boolean.FALSE, sutIzni = Boolean.FALSE, istenAyrilmaGoster = Boolean.FALSE;
 		Boolean ustYonetici = Boolean.FALSE, partTimeDurum = Boolean.FALSE, egitimDonemi = Boolean.FALSE, suaOlabilir = Boolean.FALSE;
 		Boolean emailCCDurum = Boolean.FALSE, emailBCCDurum = Boolean.FALSE, bordroAltAlani = Boolean.FALSE, kimlikNoGoster = Boolean.FALSE, masrafYeriGoster = Boolean.FALSE;
@@ -9264,6 +9264,8 @@ public class OrtakIslemler implements Serializable {
 					}
 
 					if (personel != null) {
+						if (!tesisDurum)
+							tesisDurum = personel.getTesis() != null;
 						if ((authenticatedUser.isAdmin() || authenticatedUser.isIK())) {
 							if (!istenAyrilmaGoster)
 								istenAyrilmaGoster = !personel.isCalisiyor();
@@ -9349,7 +9351,8 @@ public class OrtakIslemler implements Serializable {
 			}
 
 		}
-
+		if (tesisDurum)
+			map.put("tesisDurum", Boolean.TRUE);
 		if (istenAyrilmaGoster)
 			map.put("istenAyrilmaGoster", Boolean.TRUE);
 		if (bordroAltAlani)
@@ -9414,7 +9417,7 @@ public class OrtakIslemler implements Serializable {
 		boolean sutIzni = map.containsKey("sutIzni"), gebeMi = map.containsKey("gebeMi"), egitimDonemi = map.containsKey("egitimDonemi"), suaOlabilir = map.containsKey("suaOlabilir");
 		boolean emailCCDurum = map.containsKey("emailCCDurum"), emailBCCDurum = map.containsKey("emailBCCDurum"), bordroAltAlani = map.containsKey("bordroAltAlani");
 
-		boolean onaysizIzinKullanilir = map.containsKey("onaysizIzinKullanilir"), ikinciYoneticiIzinOnayla = map.containsKey("ikinciYoneticiIzinOnayla");
+		boolean onaysizIzinKullanilir = map.containsKey("onaysizIzinKullanilir"), tesisDurum = map.containsKey("tesisDurum"), ikinciYoneticiIzinOnayla = map.containsKey("ikinciYoneticiIzinOnayla");
 		boolean departmanGoster = map.containsKey("departmanGoster"), istenAyrilmaGoster = map.containsKey("istenAyrilmaGoster"), masrafYeriGoster = map.containsKey("masrafYeriGoster"), kimlikNoGoster = map.containsKey("kimlikNoGoster");
 		ByteArrayOutputStream baos = null;
 		Workbook wb = new XSSFWorkbook();
@@ -9469,7 +9472,8 @@ public class OrtakIslemler implements Serializable {
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İzni " + yonetici2Aciklama() + " Onaylasın");
 		if (onaysizIzinKullanilir)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Onaysız İzin Girebilir");
-		boolean tesisDurum = isTesisDurumu();
+		if (!tesisDurum)
+			tesisDurum = isTesisDurumu();
 		if (tesisDurum)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(tesisAciklama());
 		String ekSaha1 = null, ekSaha2 = null, ekSaha3 = null, ekSaha4 = null;

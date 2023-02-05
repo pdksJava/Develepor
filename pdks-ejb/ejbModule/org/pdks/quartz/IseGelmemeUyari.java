@@ -995,9 +995,9 @@ public class IseGelmemeUyari implements Serializable {
 					if (hariciPersonelPlandaVar)
 						sb.append("<td nowrap style=\"border: 1px solid;\">" + (personel.getPdksYonetici() != null ? personel.getPdksYonetici().getAdSoyad() : "") + "</td>");
 					if (bolumVar)
-						sb.append("<td style=\"border: 1px solid;\">" + (personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "") + "</td>");
+						sb.append("<td nowrap style=\"border: 1px solid;\">" + (personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "") + "</td>");
 					if (altBolumVar)
-						sb.append("<td style=\"border: 1px solid;\">" + (personel.getEkSaha4() != null ? personel.getEkSaha4().getAciklama() : "") + "</td>");
+						sb.append("<td nowrap style=\"border: 1px solid;\">" + (personel.getEkSaha4() != null ? personel.getEkSaha4().getAciklama() : "") + "</td>");
 					sb.append("<td nowrap style=\"border: 1px solid;\">" + personel.getAdSoyad() + "</td>");
 					sb.append("<td align=\"center\" style=\"border: 1px solid;\">" + personel.getSicilNo() + "</td>");
 					sb.append("<td align=\"center\" style=\"border: 1px solid;\">" + vg.getVardiyaZamanAdi() + "</td>");

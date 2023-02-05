@@ -219,7 +219,7 @@
 							</rich:column>
 
 
-							<rich:column rendered="#{ortakIslemler.tesisDurumu and  (authenticatedUser.admin or authenticatedUser.IKAdmin)}">
+							<rich:column rendered="#{pdksPersonelHome.tesisDurum and (authenticatedUser.admin or authenticatedUser.IKAdmin)}">
 								<f:facet name="header">
 									<h:outputText value="#{ortakIslemler.tesisAciklama()}" />
 								</f:facet>
@@ -794,7 +794,8 @@
 												<s:convertEntity />
 											</h:selectOneMenu>
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.sirket.tesisDurum and pdksPersonelHome.tesisList!=null and not empty pdksPersonelHome.tesisList}">
+										<s:decorate template="/layout/edit.xhtml"
+											rendered="#{(pdksPersonelHome.instance.sirket.tesisDurum or pdksPersonelHome.instance.tesis!=null) and pdksPersonelHome.tesisList!=null and not empty pdksPersonelHome.tesisList}">
 											<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 											<h:selectOneMenu value="#{pdksPersonelHome.instance.tesis}"
 												disabled="#{authenticatedUser.admin==false and pdksPersonelHome.personelERPGuncelleme!='1' and pdksPersonelHome.personelERPGuncelleme!='M'}">
