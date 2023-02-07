@@ -9069,7 +9069,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 										Date vardiyaDate = pdksVardiyaGun.getVardiyaDate();
 										if (!pdksVardiyaGun.isAyinGunu())
 											continue;
- 										String vardiyaKey = list.get(gun++);
+
+										String vardiyaKey = list.get(gun++);
 										Vardiya pdksVardiya = null;
 										if (vardiyaKey != null && !vardiyaKey.equals("")) {
 											if (izinler != null && !izinler.isEmpty()) {
