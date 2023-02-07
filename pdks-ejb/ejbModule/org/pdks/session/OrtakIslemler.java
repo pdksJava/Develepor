@@ -1942,7 +1942,7 @@ public class OrtakIslemler implements Serializable {
 								tesisId = "";
 								if (tipi.equalsIgnoreCase("P")) {
 									depId = sirket.getDepartman().getId();
-									if (sirket.getSirketGrupId() == null)
+									if (sirket.getSirketGrupId() != null)
 										sirketId = 0L;
 								}
 							}
