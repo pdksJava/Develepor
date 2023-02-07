@@ -8834,6 +8834,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				VardiyaPlan pdksVardiyaPlanMaster = fazlaMesaiOrtakIslemler.haftalikVardiyaOlustur(vardiyaHaftaList, aylikPuantajSablon, denklestirmeDonemi, tatilGunleriMap, sablonVardiyalar);
 				aylikPuantajSablon.setVardiyaHaftaList(pdksVardiyaPlanMaster.getVardiyaHaftaList());
 				setAylikPuantajDefault(aylikPuantajSablon);
+				String donem = String.valueOf(yil * 100 + ay);
+				for (VardiyaGun pdksVardiyaGun : sablonVardiyalar)
+					pdksVardiyaGun.setAyinGunu(pdksVardiyaGun.getVardiyaDateStr().startsWith(donem));
 				TreeMap<String, String> perMap = new TreeMap<String, String>();
 				LinkedHashMap<String, List<String>> vardiyaListMap = new LinkedHashMap<String, List<String>>();
 				Sheet sheet = wb.getSheetAt(0);
@@ -8985,6 +8988,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							Date sonGunVardiya = (Date) sonGun.clone();
 							for (String key : vardiyalarMap.keySet()) {
 								VardiyaGun pdksVardiyaGun = vardiyalarMap.get(key);
+
 								pdksVardiyaGun.setIslendi(Boolean.FALSE);
 								pdksVardiyaGun.setGuncellendi(Boolean.FALSE);
 								pdksVardiyaGun.saklaVardiya();
@@ -9025,7 +9029,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									aylikPuantajSablonNew.setVardiyaPlan(new VardiyaPlan());
 									aylikPuantajSablonNew.getVardiyaPlan().getVardiyaHaftaList().clear();
 									List<VardiyaGun> puantajVardiyaGunler = new ArrayList<VardiyaGun>();
-									aylikPuantajSablonNew.setVardiyalar(puantajVardiyaGunler);
 									devam = !devam;
 									List<Long> vardiyaIdList = null;
 									try {
@@ -9043,28 +9046,30 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									for (Iterator iterator2 = sablonVardiyalar.iterator(); iterator2.hasNext();) {
 										VardiyaGun pdksVardiyaGunMaster = (VardiyaGun) iterator2.next();
 										VardiyaGun pdksVardiyaGun = new VardiyaGun(personel, null, pdksVardiyaGunMaster.getVardiyaDate());
-										pdksVardiyaGun.setAyinGunu(Boolean.FALSE);
-										if (vardiyalarMap.containsKey(pdksVardiyaGun.getVardiyaKey()))
-											pdksVardiyaGun = vardiyalarMap.get(pdksVardiyaGun.getVardiyaKey());
-
+										String vardiyaKey = pdksVardiyaGun.getVardiyaKey();
+										if (vardiyalarMap.containsKey(vardiyaKey))
+											pdksVardiyaGun = vardiyalarMap.get(vardiyaKey);
+										else
+											vardiyalarMap.put(vardiyaKey, pdksVardiyaGun);
+										pdksVardiyaGun.setAyinGunu(pdksVardiyaGunMaster.isAyinGunu());
 										String key = PdksUtil.convertToDateString(pdksVardiyaGun.getVardiyaDate(), "yyyyMMdd");
 										if (tatilGunleriMap == null)
 											tatilGunleriMap = ortakIslemler.getTatilGunleri(null, aylikPuantajSablon.getIlkGun(), sonGunVardiya, session);
-
+										pdksVardiyaGun.setAyinGunu(pdksVardiyaGun.getVardiyaDateStr().startsWith(donem));
 										if (tatilGunleriMap.containsKey(key))
 											pdksVardiyaGun.setTatil(tatilGunleriMap.get(key));
+										puantajVardiyaGunler.add(pdksVardiyaGun);
 										haftalikSablonOlustur(aylikPuantajSablon, false, false, null, personel, personel.getSablon(), aylikPuantajSablonNew, vardiyalarMap);
 										aylikPuantajSablonNew.setVardiyaHaftaList(aylikPuantajSablonNew.getVardiyaPlan().getVardiyaHaftaList());
 									}
-
+									aylikPuantajSablonNew.setVardiyalar(puantajVardiyaGunler);
 									int gun = 0;
 									List<String> list = vardiyaListMap.get(sicilNo);
 									for (VardiyaGun pdksVardiyaGun : aylikPuantajSablonNew.getVardiyalar()) {
 										Date vardiyaDate = pdksVardiyaGun.getVardiyaDate();
-										pdksVardiyaGun.setAyinGunu(!vardiyaDate.before(aylikPuantajSablon.getIlkGun()) && !vardiyaDate.after(aylikPuantajSablon.getSonGun()));
 										if (!pdksVardiyaGun.isAyinGunu())
 											continue;
-										String vardiyaKey = list.get(gun++);
+ 										String vardiyaKey = list.get(gun++);
 										Vardiya pdksVardiya = null;
 										if (vardiyaKey != null && !vardiyaKey.equals("")) {
 											if (izinler != null && !izinler.isEmpty()) {
