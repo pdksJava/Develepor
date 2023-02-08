@@ -739,7 +739,12 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		vardiyaPlanMaster.setCheckBoxDurum(Boolean.FALSE);
 		Date tarih1 = (Date) donemi.getBaslangicTarih().clone();
 		int i = 0;
+		List<String> gunler = new ArrayList<String>();
+		if (sablonVardiyalar != null) {
+			for (VardiyaGun vg : sablonVardiyalar)
+				gunler.add(vg.getVardiyaDateStr());
 
+		}
 		aylikPuantaj.setVardiyaHaftaList(vardiyaHaftaList);
 		boolean devam = Boolean.TRUE;
 		while (devam) {
@@ -779,8 +784,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 				long ayinGunu = Long.parseLong(PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMMdd"));
 				vardiyaGun.setAyinGunu(ayinGunu >= ayinIlkGunu && ayinSonGunu >= ayinGunu);
-				if (sablonVardiyalar != null)
+				if (sablonVardiyalar != null && !gunler.contains(vardiyaGun.getVardiyaDateStr())) {
+					gunler.add(vardiyaGun.getVardiyaDateStr());
 					sablonVardiyalar.add(vardiyaGun);
+				}
+
 				String key = String.valueOf(ayinGunu);
 				if (tatillerMap != null && tatillerMap.containsKey(key))
 					vardiyaGun.setTatil(tatillerMap.get(key));
@@ -796,7 +804,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				devam = false;
 
 		}
-
+		gunler = null;
 		vardiyaPlanMaster.getVardiyaHaftaList().addAll(vardiyaHaftaList);
 		return vardiyaPlanMaster;
 	}
