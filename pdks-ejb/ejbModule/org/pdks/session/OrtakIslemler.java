@@ -8364,6 +8364,31 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public List<VardiyaGun> getAllPersonelIdVardiyalar(List<Long> personelIdler, Date basTarih, Date bitTarih, Boolean hepsi, Session session) {
+		HashMap fields = new HashMap();
+
+		fields.put("bitisZamani>=", PdksUtil.tariheGunEkleCikar(basTarih, -2));
+		fields.put("baslangicZamani<=", PdksUtil.tariheGunEkleCikar(bitTarih, 1));
+		fields.put("izinSahibi.id", new ArrayList(personelIdler));
+		fields.put("izinDurumu", getAktifIzinDurumList());
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<PersonelIzin> izinler = pdksEntityController.getObjectByInnerObjectListInLogic(fields, PersonelIzin.class);
+		HashMap<Long, List<PersonelIzin>> izinMap = new HashMap<Long, List<PersonelIzin>>();
+		for (Iterator iterator = izinler.iterator(); iterator.hasNext();) {
+			PersonelIzin personelIzin = (PersonelIzin) iterator.next();
+			IzinTipi izinTipi = personelIzin.getIzinTipi();
+			if (izinTipi.getBakiyeIzinTipi() != null)
+				iterator.remove();
+			else {
+				Long perId = personelIzin.getIzinSahibi().getId();
+				List<PersonelIzin> list = izinMap.containsKey(perId) ? izinMap.get(perId) : new ArrayList<PersonelIzin>();
+				if (list.isEmpty())
+					izinMap.put(perId, list);
+				list.add(personelIzin);
+			}
+
+		}
+
 		HashMap map = new HashMap();
 		StringBuffer sb = new StringBuffer();
 		sb.append("SELECT V.* FROM " + VardiyaGun.TABLE_NAME + " V WITH(nolock) ");
@@ -8382,13 +8407,24 @@ public class OrtakIslemler implements Serializable {
 		List<VardiyaGun> vardiyaGunList = pdksEntityController.getObjectBySQLList(sb, map, VardiyaGun.class);
 		if (!vardiyaGunList.isEmpty()) {
 			boolean suaKatSayiOku = false;
+			HashMap<Long, List<VardiyaGun>> vMap = new HashMap<Long, List<VardiyaGun>>();
 			for (VardiyaGun vardiyaGun : vardiyaGunList) {
+				vardiyaGun.setIzin(null);
+				Long perId = vardiyaGun.getPersonel().getId();
+ 				List<VardiyaGun> list = vMap.containsKey(perId) ? vMap.get(perId) : new ArrayList<VardiyaGun>();
+				if (list.isEmpty())
+					vMap.put(perId, list);
+				list.add(vardiyaGun);
 				if (vardiyaGun.getVardiya().getSua() != null && vardiyaGun.getVardiya().getSua()) {
 					suaKatSayiOku = true;
-					break;
+					if (izinMap.isEmpty())
+						break;
 				}
 
 			}
+			for (Long perId : izinMap.keySet())
+				vardiyaIzinleriGuncelle(izinMap.get(perId), vMap.get(perId));
+
 			boolean planKatSayiOku = getParameterKey("planKatSayiOku").equals("1");
 			boolean haftaTatilFazlaMesaiKatSayiOku = getParameterKey("haftaTatilFazlaMesaiKatSayiOku").equals("1");
 			boolean offFazlaMesaiKatSayiOku = getParameterKey("offFazlaMesaiKatSayiOku").equals("1");
