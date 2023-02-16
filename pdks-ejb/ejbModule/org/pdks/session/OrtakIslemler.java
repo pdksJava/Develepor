@@ -5068,11 +5068,12 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public String getCalistiMenuAdi(String menuAdi) {
 		String menuTanimAdi = null;
-		if (menuItemMap.containsKey(menuAdi)) {
-			menuTanimAdi = menuItemMap.get(menuAdi).getDescription().getAciklama();
-
+		if (menuAdi != null && menuItemMap != null) {
+			if (menuItemMap.containsKey(menuAdi)) {
+				menuTanimAdi = menuItemMap.get(menuAdi).getDescription().getAciklama();
+			} else if (menuAdi.equalsIgnoreCase("anasayfa"))
+				menuTanimAdi = "Ana Sayfa";
 		}
-
 		return menuTanimAdi;
 	}
 
