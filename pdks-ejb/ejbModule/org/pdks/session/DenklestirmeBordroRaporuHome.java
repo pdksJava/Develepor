@@ -529,13 +529,22 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	private ByteArrayOutputStream denklestirmeExcelAktarDevam() {
 		ByteArrayOutputStream baos = null;
 		try {
+			Tanim ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
 			boolean kimlikNoGoster = false;
 			String kartNoAciklama = ortakIslemler.getParameterKey("kartNoAciklama");
 			Boolean kartNoAciklamaGoster = null;
 			if (!kartNoAciklama.equals(""))
 				kartNoAciklamaGoster = false;
-			List<Tanim> bordroAlanlari = ortakIslemler.getTanimList(Tanim.TIPI_BORDRDO_ALANLARI, session);
+			String ayAdi = null;
+			for (SelectItem si : aylar) {
+				if (si.getValue().equals(ay))
+					ayAdi = si.getLabel();
+
+			}
 			String COL_SIRA = "sira";
+			String COL_YIL = "yil";
+			String COL_AY = "ay";
+			String COL_AY_ADI = "ayAdi";
 			String COL_PERSONEL_NO = "personelNo";
 			String COL_AD = "ad";
 			String COL_SOYAD = "soyad";
@@ -545,6 +554,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			String COL_SIRKET = "sirket";
 			String COL_TESIS = "tesis";
 			String COL_BOLUM = "bolumAdi";
+			String COL_ALT_BOLUM = "altBolumAdi";
 			String COL_NORMAL_GUN_ADET = "normalGunAdet";
 			String COL_HAFTA_TATIL_ADET = "haftaTatilAdet";
 			String COL_TATIL_ADET = "tatilAdet";
@@ -576,9 +586,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			}
 			if (kartNoAciklamaGoster == null)
 				kartNoAciklamaGoster = false;
+			List<Tanim> bordroAlanlari = ortakIslemler.getTanimList(Tanim.TIPI_BORDRDO_ALANLARI, session);
 			if (bordroAlanlari.isEmpty()) {
 				int sira = 0;
 				bordroAlanlari.add(getBordroAlani(++sira, COL_SIRA, "Sıra"));
+				bordroAlanlari.add(getBordroAlani(++sira, COL_YIL, "Yıl"));
+				bordroAlanlari.add(getBordroAlani(++sira, COL_AY, "Ay"));
 				bordroAlanlari.add(getBordroAlani(++sira, COL_PERSONEL_NO, ortakIslemler.personelNoAciklama()));
 				bordroAlanlari.add(getBordroAlani(++sira, COL_AD_SOYAD, "Personel"));
 				bordroAlanlari.add(getBordroAlani(++sira, COL_SIRKET + "Kodu", ortakIslemler.sirketAciklama() + " Kodu"));
@@ -592,6 +605,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 				if (kimlikNoGoster)
 					bordroAlanlari.add(getBordroAlani(++sira, COL_KIMLIK_NO, ortakIslemler.kimlikNoAciklama()));
 				bordroAlanlari.add(getBordroAlani(++sira, COL_BOLUM, bolumAciklama));
+				if (ekSaha4Tanim != null)
+					bordroAlanlari.add(getBordroAlani(++sira, COL_ALT_BOLUM, ekSaha4Tanim.getAciklama()));
 				bordroAlanlari.add(getBordroAlani(++sira, COL_NORMAL_GUN_ADET, "Normal Gün"));
 				bordroAlanlari.add(getBordroAlani(++sira, COL_HAFTA_TATIL_ADET, "H.Tatil Gün"));
 				bordroAlanlari.add(getBordroAlani(++sira, COL_TATIL_ADET, "G.Tatil Gün"));
@@ -658,6 +673,10 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					iterator.remove();
 					continue;
 				}
+				if (kodu.startsWith(COL_ALT_BOLUM) && ekSaha4Tanim == null) {
+					iterator.remove();
+					continue;
+				}
 				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(tanim.getAciklama());
 
 			}
@@ -672,6 +691,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					String kodu = tanim.getKodu();
 					if (kodu.equals(COL_SIRA))
 						ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(row);
+					else if (kodu.equals(COL_YIL))
+						ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(yil);
+					else if (kodu.equals(COL_AY))
+						ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(ay);
+					else if (kodu.equals(COL_AY_ADI))
+						ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(ayAdi);
 					else if (kodu.equals(COL_PERSONEL_NO))
 						ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(personel.getPdksSicilNo());
 					else if (kodu.equals(COL_AD_SOYAD))
@@ -708,6 +733,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 							ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
 					} else if (kodu.equals(COL_BOLUM))
 						ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
+					else if (kodu.equals(COL_ALT_BOLUM))
+						ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getEkSaha4() != null ? personel.getEkSaha4().getAciklama() : "");
 					else if (kodu.equals(COL_NORMAL_GUN_ADET))
 						ExcelUtil.getCell(sheet, row, col++, numberStyle).setCellValue(denklestirmeBordro.getNormalGunAdet());
 					else if (kodu.equals(COL_HAFTA_TATIL_ADET))
