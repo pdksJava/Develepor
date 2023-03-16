@@ -109,9 +109,11 @@ public class PdksUtil implements Serializable {
 	 * @return
 	 */
 	public static String getJsonToXML(String jsonStr, String rootName) {
-		JSONObject jsonObject = new JSONObject(jsonStr);
 		String str = "";
 		try {
+			if (jsonStr.startsWith("["))
+				jsonStr = jsonStr.substring(1, jsonStr.length() - 1);
+			JSONObject jsonObject = new JSONObject(jsonStr);
 			str = XML.toString(jsonObject);
 		} catch (Exception e) {
 			str = jsonStr;
