@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
@@ -294,7 +293,9 @@ public class PdksUtil implements Serializable {
 	public static String formatXML(String xml) {
 		String formatXML = null;
 		try {
-			final InputSource src = new InputSource(new StringReader(xml));
+			// final InputSource src = new InputSource(new StringReader(xml));
+			InputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+			final InputSource src = new InputSource(is);
 			final Node document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(src).getDocumentElement();
 			final Boolean keepDeclaration = Boolean.valueOf(xml.startsWith("<?xml"));
 			final DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
