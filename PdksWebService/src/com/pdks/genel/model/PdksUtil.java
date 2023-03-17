@@ -118,11 +118,15 @@ public class PdksUtil implements Serializable {
 				else if (jsonStr.startsWith("{"))
 					jsonStr = "{\"" + arrayTag + "\":" + jsonStr.substring(1);
 			}
-			JSONObject jsonObject = new JSONObject(jsonStr);
-			str = XML.toString(jsonObject);
+			if (jsonStr.indexOf("{") >= 0) {
+				JSONObject jsonObject = new JSONObject(jsonStr);
+				str = XML.toString(jsonObject);
+			}
 		} catch (Exception e) {
 			str = jsonStr;
 		}
+		if (str.equals(""))
+			str = jsonStr;
 		String xml = formatXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?><" + rootName + ">" + str + "</" + rootName + ">");
 		return xml;
 	}
