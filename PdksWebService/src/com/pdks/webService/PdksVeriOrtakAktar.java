@@ -843,7 +843,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						dataMap.put("mesaj", denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " dönemi " + (denklestirmeAy.getDurum() ? " ait kayıt bulunamadı!" : " kapatılmıştır!"));
 					mailAdresKontrol(mailObject, null);
 					Gson gs = new Gson();
-					String xml = PdksUtil.getJsonToXML(gs.toJson(dataMap), "getMesaiPDKS");
+					String xml = PdksUtil.getJsonToXML(gs.toJson(dataMap), "getMesaiPDKS", null);
 					MailFile mailFile = new MailFile();
 					mailFile.setDisplayName(dosyaAdi);
 					mailFile.setIcerik(xml.getBytes());
@@ -1284,7 +1284,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				mailMap.put("konu", uygulamaBordro + " saveIzinHakedisler servis hatası");
 				mailMap.put("mailIcerik", sb.toString());
 				LinkedHashMap<String, Object> fileMap = new LinkedHashMap<String, Object>();
-				fileMap.put("saveIzinHakedisler.xml", PdksUtil.getJsonToXML(jsonStr, "saveIzinHakedisler"));
+				fileMap.put("saveIzinHakedisler.xml", PdksUtil.getJsonToXML(jsonStr, "saveIzinHakedisler", "izinHakedis"));
 				mailMap.put("fileMap", fileMap);
 				mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
 				kullaniciIKYukle(mailMap, pdksDAO);
@@ -1995,7 +1995,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 							mailMap.put("mailIcerik", sb.toString());
 							if (jsonStr != null) {
 								LinkedHashMap<String, Object> fileMap = new LinkedHashMap<String, Object>();
-								fileMap.put("saveIzinler.xml", PdksUtil.getJsonToXML(jsonStr, "saveIzinler"));
+								fileMap.put("saveIzinler.xml", PdksUtil.getJsonToXML(jsonStr, "saveIzinler", "izin"));
 								mailMap.put("fileMap", fileMap);
 							}
 							mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
@@ -3428,7 +3428,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						sb.append("</TABLE>");
 						mailMap.put("mailIcerik", sb.toString());
 						LinkedHashMap<String, Object> fileMap = new LinkedHashMap<String, Object>();
-						fileMap.put("savePersoneller.xml", PdksUtil.getJsonToXML(jsonStr, "savePersoneller"));
+						fileMap.put("savePersoneller.xml", PdksUtil.getJsonToXML(jsonStr, "savePersoneller", "personel"));
 						mailMap.put("fileMap", fileMap);
 						mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
 						kullaniciIKYukle(mailMap, pdksDAO);

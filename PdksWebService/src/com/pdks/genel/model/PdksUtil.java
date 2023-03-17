@@ -106,13 +106,18 @@ public class PdksUtil implements Serializable {
 	/**
 	 * @param jsonStr
 	 * @param rootName
+	 * @param arrayTag
 	 * @return
 	 */
-	public static String getJsonToXML(String jsonStr, String rootName) {
+	public static String getJsonToXML(String jsonStr, String rootName, String arrayTag) {
 		String str = "";
 		try {
-			if (jsonStr.startsWith("["))
-				jsonStr = jsonStr.substring(1, jsonStr.length() - 1);
+			if (arrayTag != null && arrayTag.trim().length() > 0) {
+				if (jsonStr.startsWith("["))
+					jsonStr = "{\"" + arrayTag + "\":" + jsonStr + "}";
+				else if (jsonStr.startsWith("{"))
+					jsonStr = "{\"" + arrayTag + "\":" + jsonStr.substring(1);
+			}
 			JSONObject jsonObject = new JSONObject(jsonStr);
 			str = XML.toString(jsonObject);
 		} catch (Exception e) {
