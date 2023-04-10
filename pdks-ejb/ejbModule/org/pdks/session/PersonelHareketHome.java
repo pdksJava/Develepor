@@ -712,20 +712,17 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 			ArrayList<String> sicilNoList = ortakIslemler.getAramaPersonelSicilNo(aramaSecenekleri, Boolean.FALSE, session);
 
 			terminalDegistir = false;
-			if (linkAdres != null && sicilNo != null && !sicilNo.equals("") && !sicilNoList.contains(sicilNo))
+			if (fazlaMesaiVardiyaGun != null && !sicilNo.equals("") && !sicilNoList.contains(sicilNo))
 				sicilNoList.add(sicilNo);
-			if (linkAdres == null && ikRole == false && authenticatedUser.isDirektorSuperVisor() == false) {
-				Personel personel = authenticatedUser.getPdksPersonel();
-				if (personel.getYoneticisi() == null || !personel.getId().equals(personel.getYoneticisi().getId())) {
-					String userSicilNo = personel.getPdksSicilNo();
-					if (sicilNoList.contains(userSicilNo))
-						sicilNoList.remove(userSicilNo);
-				}
+			if (ikRole == false && authenticatedUser.isDirektorSuperVisor() == false) {
+				Long sirketId = aramaSecenekleri.getSirketId(), tesisId = aramaSecenekleri.getTesisId(), ekSaha3Id = aramaSecenekleri.getEkSaha3Id(), ekSaha4Id = aramaSecenekleri.getEkSaha4Id();
+ 				fazlaMesaiOrtakIslemler.setFazlaMesaiPersonel(tarih, sicilNoList, sirketId, tesisId, ekSaha3Id, ekSaha4Id, session);
+				if (sicilNoList.isEmpty())
+					fazlaMesaiPersonel = null;
 			}
 			hareket1List.clear();
 			if (sicilNoList != null && !sicilNoList.isEmpty()) {
 				HashMap parametreMap = new HashMap();
-
 				parametreMap.put("pdksSicilNo", sicilNoList);
 				if (session != null)
 					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
