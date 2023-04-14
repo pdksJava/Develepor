@@ -291,8 +291,10 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 				for (Vardiya vardiya : vardiyaList) {
 					if (vardiya.isCalisma() == false || !vardiya.getGenel())
 						continue;
+					if (vardiyaIzin.getId() == null && vardiya.getDurum().equals(Boolean.FALSE))
+						continue;
 					Long departmanId = vardiya.getDepartman() != null ? vardiya.getDepartman().getId() : null;
-					if (PdksUtil.isLongDegisti(izinDepartmanId, departmanId))
+					if (izinDepartmanId != null && PdksUtil.isLongDegisti(izinDepartmanId, departmanId))
 						continue;
 
 					izinCalismaVardiyaList.add(vardiya);
