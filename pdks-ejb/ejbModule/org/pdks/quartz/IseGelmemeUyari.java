@@ -161,7 +161,7 @@ public class IseGelmemeUyari implements Serializable {
 			sb.append("SELECT P.*   FROM  " + Personel.TABLE_NAME + "  P WITH(nolock) ");
 			// sb.append(" INNER JOIN " + Parameter.TABLE_NAME + " PA ON PA." + Parameter.COLUMN_NAME_ADI + "=:ad  AND PA." + Parameter.COLUMN_NAME_DURUM + "=1 and PA." + Parameter.COLUMN_NAME_DEGER + "=:deger ");
 			sb.append(" where P." + Personel.COLUMN_NAME_DURUM + "=1 AND P." + Personel.COLUMN_NAME_HAREKET_MAIL_ID + " IS NOT NULL");
-			sb.append(" AND P.MAIL_TAKIP=1 AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ">=CAST(GETDATE() AS date)");
+			sb.append(" AND P." + Personel.COLUMN_NAME_MAIL_TAKIP + "=1 AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ">=CAST(GETDATE() AS date)");
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			// fields.put("ad", "hareketMailGrubu");

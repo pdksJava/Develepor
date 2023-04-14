@@ -89,6 +89,7 @@ public class VardiyaGun extends BaseObject {
 	private Boolean fazlaMesaiOnayla;
 	private Integer version = 0;
 	private List<FazlaMesaiTalep> fazlaMesaiTalepler;
+	private VardiyaIzin vardiyaIzin;
 
 	public VardiyaGun() {
 		super();
@@ -2133,5 +2134,14 @@ public class VardiyaGun extends BaseObject {
 
 	public void setIzinHaftaTatilDurum(Boolean izinHaftaTatilDurum) {
 		this.izinHaftaTatilDurum = izinHaftaTatilDurum;
+	}
+
+	@Transient
+	public VardiyaIzin getVardiyaIzin() {
+		return vardiyaIzin;
+	}
+
+	public void setVardiyaIzin(VardiyaIzin vardiyaIzin) {
+		this.vardiyaIzin = vardiyaIzin;
 	}
 }

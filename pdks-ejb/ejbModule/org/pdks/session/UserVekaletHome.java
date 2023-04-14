@@ -8,11 +8,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
+import org.pdks.entity.Personel;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
 import org.pdks.security.entity.UserRoles;
@@ -267,23 +269,23 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 	}
 
 	public String fillPdksUserList() {
-		kullaniciAra(vekilAdi, vekilSoyadi, vekilSicilNo, "Vekil");
+		kullaniciAra(vekilAdi, vekilSoyadi, vekilSicilNo, "Vekil", false);
 		return "";
 
 	}
 
 	public String fillPdksUserList2() {
-		kullaniciAra(vekaletVerenAdi, vekaletVerenSoyadi, vekaletVerenSicilNo, "Vekalet Veren");
+		kullaniciAra(vekaletVerenAdi, vekaletVerenSoyadi, vekaletVerenSicilNo, "Vekalet Veren", true);
 		return "";
 	}
 
 	public String fillPdksUserList3() {
 		setInstance(devirUserVekalet);
-		kullaniciAra(devirVekilAdi, devirVekilSoyadi, devirVekilSicilNo, "devirVekilVeren");
+		kullaniciAra(devirVekilAdi, devirVekilSoyadi, devirVekilSicilNo, "devirVekilVeren", false);
 		return "";
 	}
 
-	private void kullaniciAra(String adi, String soyadi, String sicilNo, String tipi) {
+	private void kullaniciAra(String adi, String soyadi, String sicilNo, String tipi, Boolean personelYonetici) {
 		setAramaTipi(tipi);
 		List<User> list = null;
 		HashMap parametreMap = new HashMap();
@@ -294,28 +296,53 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 		Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());
 		if ((authenticatedUser.isYonetici() && !authenticatedUser.isIK()) || authenticatedUser.isMudur())
 			parametreMap.put("user<>", authenticatedUser);
-		UserVekalet userVekalet = getInstance();
-		if (userVekalet.getId() != null)
-			parametreMap.put("user<>", userVekalet.getYeniYonetici());
 		parametreMap.put("user.pdksPersonel.sskCikisTarihi>=", bugun);
 		parametreMap.put("user.pdksPersonel.iseBaslamaTarihi<=", bugun);
-		if (!sicilNo.equals(""))
+		if (PdksUtil.hasStringValue(sicilNo))
 			parametreMap.put("user.pdksPersonel.pdksSicilNo=", sicilNo);
 		else {
-			if (!adi.equals(""))
+			if (PdksUtil.hasStringValue(adi))
 				parametreMap.put("user.pdksPersonel.ad like", adi + "%");
-			if (!soyadi.equals(""))
+			if (PdksUtil.hasStringValue(soyadi))
 				parametreMap.put("user.pdksPersonel.soyad like", soyadi + "%");
 		}
+		UserVekalet userVekalet = getInstance();
+		if (userVekalet.getId() != null)
+			parametreMap.put("user.id<>", userVekalet.getYeniYonetici().getId());
 
-		if (!authenticatedUser.isAdmin())
-			parametreMap.put("user.pdksPersonel.sirket.departman=", authenticatedUser.getDepartman());
+		if (!ortakIslemler.getAdminRole(authenticatedUser))
+			parametreMap.put("user.pdksPersonel.sirket.departman.id=", authenticatedUser.getDepartman().getId());
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
 			if (parametreMap.size() > 0)
 				list = pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap, UserRoles.class);
+			if (personelYonetici && !list.isEmpty()) {
+				TreeMap<Long, User> userMap = new TreeMap<Long, User>();
+				for (User user : list) {
+					if (user.isDurum() && user.getPdksPersonel().isCalisiyor())
+						userMap.put(user.getPdksPersonel().getId(), user);
+				}
+				list.clear();
+				parametreMap.clear();
+				parametreMap.put(PdksEntityController.MAP_KEY_MAP, "getId");
+				parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "yoneticisi");
+				parametreMap.put("yoneticisi.id", new ArrayList(userMap.keySet()));
+				parametreMap.put("sskCikisTarihi>=", bugun);
+				parametreMap.put("iseBaslamaTarihi<=", bugun);
+				if (session != null)
+					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+				TreeMap<Long, Personel> yoneticiMap = pdksEntityController.getObjectByInnerObjectMapInLogic(parametreMap, Personel.class, false);
+				for (Long ld : yoneticiMap.keySet()) {
+					if (userMap.containsKey(ld))
+						list.add(userMap.get(ld));
 
+				}
+				userMap = null;
+				if (!list.isEmpty())
+					list = PdksUtil.sortObjectStringAlanList(null, list, "getAdSoyad", null);
+
+			}
 			if (!list.isEmpty()) {
 				List<User> userList = PdksUtil.sortObjectStringAlanList(null, list, "getAdSoyad", null);
 				if (tipi.equals("Vekil") || tipi.equals("Vekalet Veren")) {
