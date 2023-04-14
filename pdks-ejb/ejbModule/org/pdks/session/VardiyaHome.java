@@ -326,6 +326,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		pdksVardiya.setTipi(String.valueOf(pdksVardiya.getVardiyaTipi()));
 		fillCalismaSekilleri();
 		izinVardiyalariGetir(pdksVardiya);
+		fillVardiyaTipiList();
 	}
 
 	@Transactional
@@ -675,7 +676,6 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		fillVardiyalar();
 		fillSablonlar();
 
-		fillVardiyaTipiList();
 		if (authenticatedUser.isAdmin())
 			fillBagliOlduguDepartmanTanimList();
 	}
@@ -685,15 +685,21 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		list.add(new SelectItem(String.valueOf(Vardiya.TIPI_CALISMA), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_CALISMA, null)));
 		list.add(new SelectItem(String.valueOf(Vardiya.TIPI_HAFTA_TATIL), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_HAFTA_TATIL, "HT")));
 		list.add(new SelectItem(String.valueOf(Vardiya.TIPI_OFF), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_OFF, "OFF")));
-		if (authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin()) {
+		Vardiya vardiya = getInstance();
+		boolean adminUser = ortakIslemler.getAdminRole(authenticatedUser);
+		if (adminUser) {
+			String vardiyaTipi = vardiya.getId() != null ? String.valueOf(vardiya.getVardiyaTipi()) : "";
 			if (ortakIslemler.getParameterKey("uygulamaTipi").equals("H"))
 				list.add(new SelectItem(String.valueOf(Vardiya.TIPI_RADYASYON_IZNI), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_RADYASYON_IZNI, null)));
 			if (authenticatedUser.isAdmin()) {
-				if (ortakIslemler.getParameterKey("fazlaMesaiIzinKullan").equals("1"))
+				if (ortakIslemler.getParameterKey("fazlaMesaiIzinKullan").equals("1") || vardiyaTipi.equals(String.valueOf(Vardiya.TIPI_FMI)))
 					list.add(new SelectItem(String.valueOf(Vardiya.TIPI_FMI), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_FMI, "Fazla Mesai İzin")));
-				if (manuelVardiyaIzinGir || PdksUtil.getCanliSunucuDurum() == false) {
-					list.add(new SelectItem(String.valueOf(Vardiya.TIPI_IZIN), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_IZIN, "İzin Tatil Hariç")));
-					list.add(new SelectItem(String.valueOf(Vardiya.TIPI_HASTALIK_RAPOR), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_HASTALIK_RAPOR, "İzin Tatil Dahil")));
+				boolean izinGiris = manuelVardiyaIzinGir || PdksUtil.getCanliSunucuDurum() == false;
+				if (izinGiris || vardiyaTipi.equals(String.valueOf(Vardiya.TIPI_IZIN)) || vardiyaTipi.equals(String.valueOf(Vardiya.TIPI_HASTALIK_RAPOR))) {
+					if (izinGiris || vardiyaTipi.equals(String.valueOf(Vardiya.TIPI_IZIN)))
+						list.add(new SelectItem(String.valueOf(Vardiya.TIPI_IZIN), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_IZIN, "İzin Tatil Hariç")));
+					if (izinGiris || vardiyaTipi.equals(String.valueOf(Vardiya.TIPI_HASTALIK_RAPOR)))
+						list.add(new SelectItem(String.valueOf(Vardiya.TIPI_HASTALIK_RAPOR), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_HASTALIK_RAPOR, "İzin Tatil Dahil")));
 
 				}
 			}
