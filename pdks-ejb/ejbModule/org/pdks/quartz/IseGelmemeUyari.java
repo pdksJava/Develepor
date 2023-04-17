@@ -283,6 +283,14 @@ public class IseGelmemeUyari implements Serializable {
 					Date sonrakiGun = PdksUtil.tariheGunEkleCikar(tarih, 1);
 					// Vardiya kayıtları okunuyor
 					TreeMap<String, VardiyaGun> vardiyalar = ortakIslemler.getIslemVardiyalar(personeller, oncekiGun, sonrakiGun, Boolean.FALSE, session, Boolean.TRUE);
+					try {
+						boolean islem = ortakIslemler.getVardiyaHareketIslenecekList(new ArrayList<VardiyaGun>(vardiyalar.values()), tarih, session);
+						if (islem)
+							vardiyalar = ortakIslemler.getIslemVardiyalar(personeller, oncekiGun, sonrakiGun, Boolean.FALSE, session, Boolean.TRUE);
+
+					} catch (Exception e) {
+					}
+
 					// ortakIslemler.fazlaMesaiSaatiAyarla(vardiyalar);
 					Date vardiyaBas = null;
 					List<VardiyaGun> vardiyaList = new ArrayList<VardiyaGun>(vardiyalar.values());

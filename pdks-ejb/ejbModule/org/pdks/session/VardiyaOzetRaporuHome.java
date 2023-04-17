@@ -285,22 +285,17 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		if (!tumPersoneller.isEmpty()) {
 			Date basTarih = PdksUtil.tariheGunEkleCikar(date, -7);
 			Date bitTarih = PdksUtil.tariheGunEkleCikar(date, 7);
-			TreeMap<String, VardiyaGun> vardiyaMap = ortakIslemler.getIslemVardiyalar((List<Personel>) tumPersoneller, basTarih, bitTarih, Boolean.FALSE, session, Boolean.TRUE);
-			vardiyaGunList = new ArrayList<VardiyaGun>(vardiyaMap.values());
-			long ot = oncekiGun.getTime(), dt = date.getTime();
-			for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
-				VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
-				Vardiya vardiya = pdksVardiyaGun.getIslemVardiya();
-				long vt = pdksVardiyaGun.getVardiyaDate().getTime();
-				if (vardiya == null || vt < ot || vt > dt) {
-					iterator.remove();
-					continue;
-
-				}
-			}
+			vardiyaGunList = getVardiyalariOku(oncekiGun, tumPersoneller, basTarih, bitTarih);
 			// butun personeller icin hareket cekerken bu en kucuk tarih ile en
 			// buyuk tarih araligini kullanacaktir
 			// bu araliktaki tum hareketleri cekecektir.
+
+			try {
+				boolean islem = ortakIslemler.getVardiyaHareketIslenecekList(vardiyaGunList, date, session);
+				if (islem)
+					vardiyaGunList = getVardiyalariOku(oncekiGun, tumPersoneller, basTarih, bitTarih);
+			} catch (Exception e) {
+			}
 
 			for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 				VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
@@ -329,6 +324,8 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				}
 			}
 			if (!vardiyaGunList.isEmpty()) {
+
+				 
 				if (vardiyaGunList.size() == 1) {
 					Vardiya islemVardiya = vardiyaGunList.get(0).getIslemVardiya();
 					if (!islemVardiya.isCalisma()) {
@@ -784,7 +781,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							}
 						}
 						if (!kartBastMayanList.isEmpty()) {
-							PdksUtil.addMessageAvailableInfo("Aşağıdaki personel" + (kartBastMayanList.size() > 1 ? "ler" : "") + " mail takibi yapılmamakktadır.");
+							PdksUtil.addMessageAvailableInfo("Aşağıdaki personel" + (kartBastMayanList.size() > 1 ? "ler" : "") + " mail takibi yapılmamaktadır.");
 							for (VardiyaGun vardiyaGun : kartBastMayanList) {
 								Personel personel = vardiyaGun.getPdksPersonel();
 								PdksUtil.addMessageAvailableWarn(personel.getPdksSicilNo() + " " + personel.getAdSoyad());
@@ -803,6 +800,24 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		}
 		tesisDurumBul();
 
+	}
+
+	private List<VardiyaGun> getVardiyalariOku(Date oncekiGun, ArrayList<Personel> tumPersoneller, Date basTarih, Date bitTarih) throws Exception {
+		List<VardiyaGun> vardiyaGunList;
+		TreeMap<String, VardiyaGun> vardiyaMap = ortakIslemler.getIslemVardiyalar((List<Personel>) tumPersoneller, basTarih, bitTarih, Boolean.FALSE, session, Boolean.TRUE);
+		vardiyaGunList = new ArrayList<VardiyaGun>(vardiyaMap.values());
+		long ot = oncekiGun.getTime(), dt = date.getTime();
+		for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
+			VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
+			Vardiya vardiya = pdksVardiyaGun.getIslemVardiya();
+			long vt = pdksVardiyaGun.getVardiyaDate().getTime();
+			if (vardiya == null || vt < ot || vt > dt) {
+				iterator.remove();
+				continue;
+
+			}
+		}
+		return vardiyaGunList;
 	}
 
 	private void tesisDurumBul() {
@@ -1084,7 +1099,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	 */
 	private int vardiyaSatirEkle(Sheet sheet, int col, int row, XSSFCellStyle satirStyle, XSSFCellStyle satirCenter, VardiyaGun vg, String tip, boolean tesisDurum) {
 		Personel personel = vg.getPersonel();
- 		ExcelUtil.getCell(sheet, row, col++, satirCenter).setCellValue(personel.getPdksSicilNo());
+		ExcelUtil.getCell(sheet, row, col++, satirCenter).setCellValue(personel.getPdksSicilNo());
 		ExcelUtil.getCell(sheet, row, col++, satirStyle).setCellValue(personel.getAd());
 		ExcelUtil.getCell(sheet, row, col++, satirStyle).setCellValue(personel.getSoyad());
 		ExcelUtil.getCell(sheet, row, col++, satirStyle).setCellValue(personel.getSirket().getAd());
@@ -1096,9 +1111,9 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			ExcelUtil.getCell(sheet, row, col++, satirCenter).setCellValue("");
 			if (!vg.getVardiya().isFMI()) {
 				String aciklama = "";
-				if (vg.isIzinli())  
+				if (vg.isIzinli())
 					aciklama = vg.getIzin() != null ? vg.getIzin().getIzinTipi().getIzinTipiTanim().getAciklama() : vg.getVardiya().getAciklama();
- 				ExcelUtil.getCell(sheet, row, col++, satirStyle).setCellValue(aciklama);
+				ExcelUtil.getCell(sheet, row, col++, satirStyle).setCellValue(aciklama);
 
 			} else
 				ExcelUtil.getCell(sheet, row, col++, satirCenter).setCellValue(vg.getVardiya().getAdi());
