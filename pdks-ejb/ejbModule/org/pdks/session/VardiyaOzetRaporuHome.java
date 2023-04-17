@@ -263,7 +263,6 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		ArrayList<Personel> tumPersoneller = (ArrayList<Personel>) pdksEntityController.getObjectByInnerObjectListInLogic(map, Personel.class);
 
-		List<VardiyaGun> vardiyaGunList = new ArrayList<VardiyaGun>();
 		List<PersonelIzin> izinList = new ArrayList<PersonelIzin>();
 		List<HareketKGS> kgsList = new ArrayList<HareketKGS>();
 		Date tarih1 = null;
@@ -283,9 +282,9 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 		}
 		if (!tumPersoneller.isEmpty()) {
-			Date basTarih = PdksUtil.tariheGunEkleCikar(date, -7);
-			Date bitTarih = PdksUtil.tariheGunEkleCikar(date, 7);
-			vardiyaGunList = getVardiyalariOku(oncekiGun, tumPersoneller, basTarih, bitTarih);
+			Date basTarih = PdksUtil.tariheGunEkleCikar(date, -2);
+			Date bitTarih = PdksUtil.tariheGunEkleCikar(date, 1);
+			List<VardiyaGun> vardiyaGunList = getVardiyalariOku(oncekiGun, tumPersoneller, basTarih, bitTarih);
 			// butun personeller icin hareket cekerken bu en kucuk tarih ile en
 			// buyuk tarih araligini kullanacaktir
 			// bu araliktaki tum hareketleri cekecektir.
@@ -300,11 +299,12 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 				VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
 				Vardiya vardiya = pdksVardiyaGun.getIslemVardiya();
-				if (vardiya.isCalisma() && (PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0 && vardiya.getBitSaat() > vardiya.getBasSaat()) || (PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) == 0 && vardiya.getBitSaat() < vardiya.getBasSaat())) {
+				if (vardiya.isIzin() && PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0) {
 					iterator.remove();
 					continue;
 
-				} else if (vardiya.isIzin() && PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0) {
+				} else if (vardiya.isCalisma() && (PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0 && vardiya.getBitSaat() > vardiya.getBasSaat())
+						|| (PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) == 0 && vardiya.getBitSaat() < vardiya.getBasSaat())) {
 					iterator.remove();
 					continue;
 
@@ -325,7 +325,6 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			}
 			if (!vardiyaGunList.isEmpty()) {
 
-				 
 				if (vardiyaGunList.size() == 1) {
 					Vardiya islemVardiya = vardiyaGunList.get(0).getIslemVardiya();
 					if (!islemVardiya.isCalisma()) {
@@ -802,20 +801,31 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 	}
 
+	/**
+	 * @param oncekiGun
+	 * @param tumPersoneller
+	 * @param basTarih
+	 * @param bitTarih
+	 * @return
+	 * @throws Exception
+	 */
 	private List<VardiyaGun> getVardiyalariOku(Date oncekiGun, ArrayList<Personel> tumPersoneller, Date basTarih, Date bitTarih) throws Exception {
-		List<VardiyaGun> vardiyaGunList;
+		String pattern = "yyyyMMdd";
+		long ot = Long.parseLong(PdksUtil.convertToDateString(oncekiGun, pattern)), dt = Long.parseLong(PdksUtil.convertToDateString(date, pattern));
 		TreeMap<String, VardiyaGun> vardiyaMap = ortakIslemler.getIslemVardiyalar((List<Personel>) tumPersoneller, basTarih, bitTarih, Boolean.FALSE, session, Boolean.TRUE);
-		vardiyaGunList = new ArrayList<VardiyaGun>(vardiyaMap.values());
-		long ot = oncekiGun.getTime(), dt = date.getTime();
+		List<VardiyaGun> vardiyaGunList = new ArrayList<VardiyaGun>(vardiyaMap.values());
 		for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 			VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
 			Vardiya vardiya = pdksVardiyaGun.getIslemVardiya();
-			long vt = pdksVardiyaGun.getVardiyaDate().getTime();
+			long vt = Long.parseLong(pdksVardiyaGun.getVardiyaDateStr());
 			if (vardiya == null || vt < ot || vt > dt) {
 				iterator.remove();
 				continue;
-
+			} else if (vardiya.isCalisma() == false && vt != dt) {
+				iterator.remove();
+				continue;
 			}
+			logger.debug(pdksVardiyaGun.getVardiyaKeyStr() + " " + pdksVardiyaGun.getAciklama());
 		}
 		return vardiyaGunList;
 	}

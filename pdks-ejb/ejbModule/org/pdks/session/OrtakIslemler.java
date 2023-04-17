@@ -5276,8 +5276,10 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param vardiyaGunIslemList
+	 * @param denklestirmeAy
 	 * @param tarih
 	 * @param session
+	 * @return
 	 */
 	private boolean vardiyaGunHareketleriGuncelle(List<VardiyaGun> vardiyaGunIslemList, DenklestirmeAy denklestirmeAy, Date tarih, Session session) {
 		boolean sonuc = false;
@@ -5286,7 +5288,7 @@ public class OrtakIslemler implements Serializable {
 		TreeMap<Long, PersonelDenklestirme> denkMap = new TreeMap<Long, PersonelDenklestirme>();
 		HashMap fields = new HashMap();
 		fields.put("denklestirmeAy.id", denklestirmeAy.getId());
-
+		fields.put("hareketKaydiVardiyaBul", Boolean.TRUE);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<CalismaModeliAy> cmaList = pdksEntityController.getObjectByInnerObjectList(fields, CalismaModeliAy.class);
@@ -5296,15 +5298,16 @@ public class OrtakIslemler implements Serializable {
 		cmaList = null;
 		for (Iterator iterator = vardiyaGunIslemList.iterator(); iterator.hasNext();) {
 			VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-			if (vardiyaGun.getVardiya() == null || vardiyaGun.getVardiya().isCalisma() == false || vardiyaGun.getVersion() >= 0L || PdksUtil.tarihKarsilastirNumeric(tarih, vardiyaGun.getVardiyaDate()) != 0)
+			if (vardiyaGun.getVardiya() == null || vardiyaGun.getVardiya().isCalisma() == false || vardiyaGun.getVersion() >= 0L)
 				iterator.remove();
 			else {
 				Personel personel = vardiyaGun.getPdksPersonel();
 				List<VardiyaGun> list = personelVardiyaBulMap.containsKey(personel.getId()) ? personelVardiyaBulMap.get(personel.getId()) : new ArrayList<VardiyaGun>();
 				if (list.isEmpty()) {
+					Long cmId = personel.getCalismaModeli() != null ? personel.getCalismaModeli().getId() : null;
 					personelVardiyaBulMap.put(personel.getId(), list);
-					if (personel.getCalismaModeli() != null) {
-						PersonelDenklestirme personelDenklestirme = new PersonelDenklestirme(personel, denklestirmeAy, cmaMap.get(personel.getCalismaModeli().getId()));
+					if (cmId != null && cmaMap.containsKey(cmId)) {
+						PersonelDenklestirme personelDenklestirme = new PersonelDenklestirme(personel, denklestirmeAy, cmaMap.get(cmId));
 						denkMap.put(personel.getId(), personelDenklestirme);
 					}
 				}
@@ -5342,7 +5345,6 @@ public class OrtakIslemler implements Serializable {
 					hareketKaydiVardiyaMap.put(long1, Boolean.TRUE);
 				personelDenklestirmeMap = new TreeMap<Long, PersonelDenklestirmeTasiyici>();
 				ArrayList<Personel> tumPersoneller = new ArrayList<Personel>();
-
 				for (PersonelDenklestirme personelDenklestirme : personelDenklestirmeList) {
 					Personel personel = personelDenklestirme.getPdksPersonel();
 					CalismaModeli calismaModeli = personelDenklestirme.getCalismaModeliAy() != null ? personelDenklestirme.getCalismaModeliAy().getCalismaModeli() : personel.getCalismaModeli();
@@ -5385,20 +5387,16 @@ public class OrtakIslemler implements Serializable {
 							if (list.isEmpty())
 								personelHareketMap.put(key, list);
 							list.add(hareketKGS);
-
 						}
 						try {
 							sonuc = vardiyaHareketlerdenGuncelle(session, personelDenklestirmeMap, personelVardiyaBulMap, calismaPlaniMap, hareketKaydiVardiyaMap, personelHareketMap);
-
 						} catch (Exception e) {
 							logger.error(e);
 							e.printStackTrace();
 						}
 					}
 				}
-
 			}
-
 		}
 		return sonuc;
 	}

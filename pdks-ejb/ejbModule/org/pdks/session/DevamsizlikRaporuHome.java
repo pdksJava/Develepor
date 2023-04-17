@@ -314,12 +314,14 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 		}
 		if (!tumPersoneller.isEmpty()) {
-			TreeMap<String, VardiyaGun> vardiyaMap = ortakIslemler.getIslemVardiyalar((List<Personel>) tumPersoneller, date, PdksUtil.tariheGunEkleCikar(date, 1), Boolean.FALSE, session, Boolean.TRUE);
+			Date basTarih = PdksUtil.tariheGunEkleCikar(date, -2);
+			Date bitTarih = PdksUtil.tariheGunEkleCikar(date, 1);
+			TreeMap<String, VardiyaGun> vardiyaMap = ortakIslemler.getIslemVardiyalar((List<Personel>) tumPersoneller, basTarih, bitTarih, Boolean.FALSE, session, Boolean.TRUE);
 			try {
 				boolean islem = ortakIslemler.getVardiyaHareketIslenecekList(new ArrayList<VardiyaGun>(vardiyaMap.values()), date, session);
-				if (islem) {
-					vardiyaMap = ortakIslemler.getIslemVardiyalar((List<Personel>) tumPersoneller, date, PdksUtil.tariheGunEkleCikar(date, 1), Boolean.FALSE, session, Boolean.TRUE);
-				}
+				if (islem)  
+					vardiyaMap = ortakIslemler.getIslemVardiyalar((List<Personel>) tumPersoneller, basTarih, bitTarih, Boolean.FALSE, session, Boolean.TRUE);
+				 
 			} catch (Exception e) {
 			}
 			vardiyaList = new ArrayList<VardiyaGun>(vardiyaMap.values());
