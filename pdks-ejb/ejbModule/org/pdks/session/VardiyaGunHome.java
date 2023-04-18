@@ -6190,7 +6190,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			vardiyaHareketKontrol(defaultAylikPuantajSablon);
 		aylikPuantajAllList = null;
 		if (fazlaMesaiTalepVar && denklestirmeAyDurum && aylikPuantajList.size() > 0)
-			topluFazlaCalismaTalep = ortakIslemler.getParameterKey("topluFazlaCalismaTalep").equals("1") || userHome.hasPermission("vardiyaPlani", "update") || authenticatedUser.isAdmin();
+			topluFazlaCalismaTalep = ortakIslemler.getParameterKey("topluFazlaCalismaTalep").equals("1") || userHome.hasPermission("vardiyaPlani", "topluFazlaCalismaTalep") || authenticatedUser.isAdmin();
 		else
 			topluFazlaCalismaTalep = false;
 		for (Iterator iterator = aylikPuantajList.iterator(); iterator.hasNext();) {
@@ -8665,7 +8665,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		fileImport = Boolean.FALSE;
 		if (aylikPuantajDosyaList == null)
 			aylikPuantajDosyaList = new ArrayList<AylikPuantaj>();
-		if (authenticatedUser.isIK() && ortakIslemler.getParameterKey("fileImport").equals("1") && ay > 0 && aramaSecenekleri.getSirketId() != null) {
+		boolean fileImportDurum = userHome.hasPermission("vardiyaPlani", "fileImportPlan"); 
+		if ((fileImportDurum || (ikRole && ortakIslemler.getParameterKey("fileImport").equals("1"))) && ay > 0 && aramaSecenekleri.getSirketId() != null) {
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.MONTH, 1);
 			int donem = (cal.get(Calendar.YEAR) * 100) + cal.get(Calendar.MONTH) + 1;
