@@ -62,7 +62,9 @@ public class Personel extends BaseObject {
 	public static final String COLUMN_NAME_IZIN_HAKEDIS_TARIHI = "IZIN_HAKEDIS_TARIHI";
 	public static final String COLUMN_NAME_DOGUM_TARIHI = "DOGUM_TARIHI";
 	public static final String COLUMN_NAME_SSK_CIKIS_TARIHI = "SSK_CIKIS_TARIHI";
+	public static final String COLUMN_NAME_CALISMA_MODELI = "CALISMA_MODELI_ID";
 	public static final String COLUMN_NAME_ISKUR_SABLON = "ISKUR_SABLON_ID";
+	
 	public static final String COLUMN_NAME_MAIL_TAKIP = "MAIL_TAKIP";
 
 	public static final String STATU_HEKIM = "2";

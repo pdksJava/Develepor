@@ -8584,9 +8584,49 @@ public class OrtakIslemler implements Serializable {
 				personelIdler.add(personel.getId());
 			}
 		}
+
 		HashMap<Long, List<PersonelIzin>> izinMap = !personelIdler.isEmpty() ? getPersonelIzinMap(personelIdler, baslamaTarih, bitisTarih, session) : new HashMap<Long, List<PersonelIzin>>();
 		TreeMap<String, VardiyaGun> vardiyaIstenen = new TreeMap<String, VardiyaGun>(), vardiyaMap = new TreeMap<String, VardiyaGun>();
 		TreeMap<String, Tatil> tatillerMap = getTatilGunleri(personeller, PdksUtil.tariheAyEkleCikar(baslamaTarih, -1), PdksUtil.tariheAyEkleCikar(baslamaTarih, 1), session);
+		List<String> tarihList = new ArrayList<String>();
+		for (String key : tatillerMap.keySet()) {
+			Tatil tatil = tatillerMap.get(key);
+			if (!tatil.getYarimGun()) {
+				tarihList.add(key);
+			}
+		}
+		List<String> tatilDonemList = new ArrayList<String>();
+		if (!tarihList.isEmpty()) {
+			List<Long> idList = new ArrayList<Long>();
+			for (Personel personel : personeller) {
+				idList.add(personel.getId());
+			}
+			HashMap parametreMap = new HashMap();
+			StringBuffer sb = new StringBuffer();
+			sb.append("WITH TATILLER AS ( ");
+			for (Iterator iterator = tarihList.iterator(); iterator.hasNext();) {
+				String tarih = (String) iterator.next();
+				sb.append(" SELECT " + tarih.substring(0, 6) + " AS DONEM," + tarih + " AS TARIH " + (iterator.hasNext() ? " UNION ALL " : ""));
+
+			}
+			sb.append(") ");
+			sb.append(" SELECT  T.TARIH,P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " FROM " + Personel.TABLE_NAME + " P WITH(nolock) ");
+			sb.append(" INNER JOIN TATILLER T ON 1=1  ");
+			sb.append(" INNER JOIN " + DenklestirmeAy.TABLE_NAME + " D ON D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100+D." + DenklestirmeAy.COLUMN_NAME_AY + "=T.DONEM AND D." + DenklestirmeAy.COLUMN_NAME_DURUM + "=1 ");
+			sb.append(" LEFT JOIN " + PersonelDenklestirme.TABLE_NAME + " PD ON D." + DenklestirmeAy.COLUMN_NAME_ID + "=PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " AND PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + "=P." + Personel.COLUMN_NAME_ID);
+			sb.append(" INNER JOIN " + CalismaModeliAy.TABLE_NAME + " CA ON (CA.ID=PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " OR (D." + DenklestirmeAy.COLUMN_NAME_ID + "=CA." + CalismaModeliAy.COLUMN_NAME_DONEM + " AND CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI + "=P."
+					+ Personel.COLUMN_NAME_CALISMA_MODELI + ")) ");
+			sb.append(" AND CA." + CalismaModeliAy.COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL + "=1 ");
+			sb.append(" WHERE P." + Personel.COLUMN_NAME_ID + " :p");
+			sb.append(" ORDER BY 2,1");
+			parametreMap.put("p", idList);
+			if (session != null)
+				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+			List<Object[]> objectList = pdksEntityController.getObjectBySQLList(sb, parametreMap, null);
+			for (Object[] objects : objectList) {
+				tatilDonemList.add(objects[1] + "_" + objects[0]);
+			}
+		}
 		cal.setTime(baslamaTarih);
 		int haftaGun = cal.get(Calendar.DAY_OF_WEEK);
 		cal.add(Calendar.DATE, haftaGun == Calendar.SUNDAY ? -6 : -haftaGun + 2);
@@ -8717,13 +8757,21 @@ public class OrtakIslemler implements Serializable {
 						String vardiyaMetodName = "getVardiya" + (i + 1);
 						Vardiya vardiya = (Vardiya) PdksUtil.getMethodObject(vardiyaSablonu, vardiyaMetodName, null);
 						testVardiyaGun1.setDurum(!vardiya.isCalisma());
-						testVardiyaGun1.setVardiya((Vardiya) vardiya.clone());
 						String key = testVardiyaGun1.getVardiyaDateStr();
-						if (tatillerMap.containsKey(key) && testVardiyaGun1.getVardiya().isCalisma()) {
-							Tatil pdksTatil = tatillerMap.get(key);
-							if (!pdksTatil.isYarimGunMu())
-								vardiya = offVardiya;
+						if (tatillerMap.containsKey(key)) {
+							if (vardiya.isCalisma()) {
+								Tatil pdksTatil = tatillerMap.get(key);
+								if (!pdksTatil.isYarimGunMu()) {
+									if (!tatilDonemList.contains(vardiyaKey))
+										vardiya = offVardiya;
+									else
+										testVardiyaGun1.setVersion(-1);
+									
+								}
+
+							}
 						}
+						testVardiyaGun1.setVardiya((Vardiya) vardiya.clone());
 						if (saveList != null && testVardiyaGun1 != null) {
 							if (!vardiyaMap.containsKey(vardiyaKey)) {
 								if (veriYaz || personelYaz)
@@ -8785,6 +8833,7 @@ public class OrtakIslemler implements Serializable {
 			startWeekDate1 = (Date) cal.getTime().clone();
 			vardiyaGunleri.clear();
 		}
+		tatilDonemList = null;
 		if (!vardiyaMap.isEmpty()) {
 			vardiyaCalismaModeliGuncelle(new ArrayList<VardiyaGun>(vardiyaMap.values()), session);
 			if (vardiyaMap.size() > 1) {
@@ -9178,7 +9227,6 @@ public class OrtakIslemler implements Serializable {
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		vardiyaGunList = pdksEntityController.getObjectBySQLList(sb, map, VardiyaGun.class);
 		if (!vardiyaGunList.isEmpty()) {
-
 			HashMap<Long, List<VardiyaGun>> vMap = new HashMap<Long, List<VardiyaGun>>();
 			for (VardiyaGun vardiyaGun : vardiyaGunList) {
 				vardiyaGun.setIzin(null);
