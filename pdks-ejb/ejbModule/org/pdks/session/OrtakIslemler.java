@@ -5456,7 +5456,11 @@ public class OrtakIslemler implements Serializable {
 				list1.add(calismaModeliVardiya.getVardiya());
 			}
 		}
-
+		HashMap map = new HashMap();
+		map.put("vardiyaTipi", Vardiya.TIPI_OFF);
+		if (session != null)
+			map.put(PdksEntityController.MAP_KEY_SESSION, session);
+		Vardiya offVardiya = (Vardiya) pdksEntityController.getObjectByInnerObject(map, Vardiya.class);
 		List<HareketKGS> personelHareketList = new ArrayList<HareketKGS>();
 		Date bugun = new Date();
 		List<String> hareketIdList = new ArrayList<String>();
@@ -5502,6 +5506,9 @@ public class OrtakIslemler implements Serializable {
 						vardiyaGun.setGuncellendi(Boolean.FALSE);
 						if (vardiyaGun.isIzinli())
 							continue;
+						Tatil tatil = vardiyaGun.getTatil();
+						String vardiyaKeyStr = vardiyaGun.getVardiyaKeyStr();
+						Vardiya islemVardiyaGun = vardiyaGun.getIslemVardiya();
 						if (vardiyaGun.getVardiya().isCalisma() == false) {
 							vardiyaGun.setVersion(0);
 							pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
@@ -5510,7 +5517,7 @@ public class OrtakIslemler implements Serializable {
 						} else {
 							String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMMdd");
 							List<Liste> listeler = new ArrayList<Liste>();
-
+							boolean hareketVar = false;
 							for (Vardiya vardiya : vardiyaPerList) {
 								personelHareketList.clear();
 								personelHareketList.addAll(personelHareketMap.get(personelKGSId));
@@ -5525,7 +5532,10 @@ public class OrtakIslemler implements Serializable {
 										iterator1.remove();
 
 								}
+								if (!hareketVar)
+									hareketVar = vardiyaGunNew.getHareketler() != null;
 								if (vardiyaGunNew.getHareketler() != null && vardiyaGunNew.getHareketDurum()) {
+
 									List<HareketKGS> girisler = vardiyaGunNew.getGirisHareketleri(), cikislar = vardiyaGunNew.getCikisHareketleri();
 									int girisAdet = girisler != null ? girisler.size() : 0;
 									int cikisAdet = cikislar != null ? cikislar.size() : 0;
@@ -5573,9 +5583,25 @@ public class OrtakIslemler implements Serializable {
 								flush = true;
 								logger.debug(vg.getVardiyaKeyStr() + " " + vg.getVardiyaAdi());
 
+							} else {
+								try {
+									if (tatil != null && tatil.isYarimGunMu() == false && hareketVar == false) {
+										if (islemVardiyaGun != null && islemVardiyaGun.isCalisma() && islemVardiyaGun.getVardiyaFazlaMesaiBitZaman().before(bugun)) {
+											vardiyaGun.setVardiya(offVardiya);
+											vardiyaGun.setVersion(0);
+											pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
+											vardiyaGun.setGuncellendi(Boolean.TRUE);
+											personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(key, vardiyaGun);
+											vgMap.put(key, vardiyaGun);
+											flush = true;
+										}
+									}
+								} catch (Exception e) {
+
+								}
 							}
 						}
-						vardiyalarMap.put(vardiyaGun.getVardiyaKeyStr(), vardiyaGun);
+						vardiyalarMap.put(vardiyaKeyStr, vardiyaGun);
 					}
 
 				}
@@ -8766,7 +8792,7 @@ public class OrtakIslemler implements Serializable {
 										vardiya = offVardiya;
 									else
 										testVardiyaGun1.setVersion(-1);
-									
+
 								}
 
 							}
