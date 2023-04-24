@@ -23,8 +23,8 @@
 
 			</rich:panel>
 
-			<a4j:region>
-				<rich:panel id="hareketPanel">
+			<a4j:outputPanel id="hareketPanel">
+				<rich:panel rendered="#{not empty calismaSaatleriHome.vardiyaGunList}">
 					<rich:dataTable rowClasses="acik,koyu" value="#{calismaSaatleriHome.vardiyaGunList}" var="calismaPlani" rows="25" rowKeyVar="row"
 						id="hareketTable">
 						<f:facet name="header">
@@ -73,7 +73,7 @@
 							<f:facet name="header">
 								<h:outputText value="Calisma Suresi" />
 							</f:facet>
-							<h:outputText value="#{calismaPlani.calismaSuresi} dakika" />
+							<h:outputText value="#{calismaPlani.calismaSuresi} saat" rendered="#{calismaPlani.calismaSuresi>0}" />
 						</rich:column>
 
 						<rich:column width="100">
@@ -121,61 +121,60 @@
 							<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 						</f:facet>
 					</rich:dataTable>
-					<h:commandLink value="#{messages['ortak.etiket.excelAktar']}"
-						action="#{org.jboss.seam.excel.exporter.excelExporter.export('formExcel:hareketTable')}"
-						rendered="#{not empty calismaSaatleriHome.vardiyaGunList}" />
+					<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{calismaSaatleriHome.calismaSaatleriExcel()}" target="blank">
+						<a4j:support event="oncomplete" status="ajaxStatus" />
+					</h:commandLink>
 
 				</rich:panel>
+			</a4j:outputPanel>
 
 
+			<rich:modalPanel id="hareketDetayPanel" autosized="true" width="450">
+				<f:facet name="header">
+					<h:outputText value="#{calismaSaatleriHome.instance.personel.adSoyad} " />
+				</f:facet>
+				<f:facet name="controls">
+					<h:panelGroup>
+						<h:graphicImage value="/img/close.png" id="harekethidelink" styleClass="hidelink" />
+						<rich:componentControl for="hareketDetayPanel" attachTo="harekethidelink" operation="hide" event="onclick" />
+					</h:panelGroup>
+				</f:facet>
 
-				<rich:modalPanel id="hareketDetayPanel" autosized="true" width="450">
-					<f:facet name="header">
-						<h:outputText value="#{calismaSaatleriHome.instance.personel.adSoyad} " />
-					</f:facet>
-					<f:facet name="controls">
-						<h:panelGroup>
-							<h:graphicImage value="/img/close.png" id="harekethidelink" styleClass="hidelink" />
-							<rich:componentControl for="hareketDetayPanel" attachTo="harekethidelink" operation="hide" event="onclick" />
-						</h:panelGroup>
-					</f:facet>
+				<h:panelGrid width="400">
+					<rich:dataTable rowClasses="acik,koyu" value="#{calismaSaatleriHome.hareketList}" var="hareket" rows="20" rowKeyVar="row">
+						<f:facet name="header">
 
-					<h:panelGrid width="400">
-						<rich:dataTable rowClasses="acik,koyu" value="#{calismaSaatleriHome.hareketList}" var="hareket" rows="20" rowKeyVar="row">
+							<h:outputText value="Giris Cikis Hareketleri" />
+						</f:facet>
+						<rich:column>
 							<f:facet name="header">
-
-								<h:outputText value="Giris Cikis Hareketleri" />
+								<h:outputText value="Kapı" />
 							</f:facet>
-							<rich:column>
-								<f:facet name="header">
-									<h:outputText value="Kapı" />
-								</f:facet>
-								<h:outputText value="#{hareket.kapiView.kapi.aciklama}" />
-							</rich:column>
-							<rich:column>
-								<f:facet name="header">
-									<h:outputText value="Kapı Tip" />
-								</f:facet>
-								<h:outputText value="#{hareket.kapiView.kapi.tipi.aciklama}" />
-							</rich:column>
-							<rich:column>
-								<f:facet name="header">
-									<h:outputText value="Zamanı" />
-								</f:facet>
-								<h:outputText value="#{authenticatedUser.dateTimeFormatla(hareket.zaman)}" />
-							</rich:column>
-							<f:facet name="footer">
-								<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+							<h:outputText value="#{hareket.kapiView.kapi.aciklama}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Kapı Tip" />
 							</f:facet>
-						</rich:dataTable>
+							<h:outputText value="#{hareket.kapiView.kapi.tipi.aciklama}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Zamanı" />
+							</f:facet>
+							<h:outputText value="#{authenticatedUser.dateTimeFormatla(hareket.zaman)}" />
+						</rich:column>
+						<f:facet name="footer">
+							<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+						</f:facet>
+					</rich:dataTable>
 
-					</h:panelGrid>
+				</h:panelGrid>
 
-				</rich:modalPanel>
+			</rich:modalPanel>
 
 
 
-			</a4j:region>
 
 
 		</h:form>

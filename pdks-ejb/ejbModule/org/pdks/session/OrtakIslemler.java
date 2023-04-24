@@ -9238,7 +9238,7 @@ public class OrtakIslemler implements Serializable {
 		map.clear();
 		HashMap<Long, List<PersonelIzin>> izinMap = getPersonelIzinMap(personelIdler, basTarih, bitTarih, session);
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT V.* FROM " + VardiyaGun.TABLE_NAME + " V WITH(nolock) ");
+		sb.append("SELECT V." + VardiyaGun.COLUMN_NAME_ID + " FROM " + VardiyaGun.TABLE_NAME + " V WITH(nolock) ");
 		sb.append(" INNER JOIN  " + Personel.TABLE_NAME + " P ON P." + Personel.COLUMN_NAME_ID + "=V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 		if (hepsi == null || hepsi.booleanValue() == false) {
 			sb.append(" AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ">=P." + Personel.getIseGirisTarihiColumn());
@@ -9251,7 +9251,22 @@ public class OrtakIslemler implements Serializable {
 		map.put("bitTarih", PdksUtil.getDate(bitTarih));
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		vardiyaGunList = pdksEntityController.getObjectBySQLList(sb, map, VardiyaGun.class);
+		List<BigDecimal> idList = pdksEntityController.getObjectBySQLList(sb, map, null);
+		if (!idList.isEmpty()) {
+			List<Long> list = new ArrayList<Long>();
+			for (BigDecimal bigDecimal : idList) {
+				list.add(bigDecimal.longValue());
+			}
+			map.clear();
+			map.put("id", list);
+			if (session != null)
+				map.put(PdksEntityController.MAP_KEY_SESSION, session);
+			vardiyaGunList = pdksEntityController.getObjectByInnerObjectList(map, VardiyaGun.class);
+			list = null;
+
+		} else
+			vardiyaGunList = new ArrayList<VardiyaGun>();
+		idList = null;
 		if (!vardiyaGunList.isEmpty()) {
 			HashMap<Long, List<VardiyaGun>> vMap = new HashMap<Long, List<VardiyaGun>>();
 			for (VardiyaGun vardiyaGun : vardiyaGunList) {
@@ -12360,13 +12375,13 @@ public class OrtakIslemler implements Serializable {
 								if (!normalGun) {
 
 									boolean offIzinli = pdksVardiyaGun.isIzinli() && !(pdksVardiyaGun.getVardiya().isOffGun() || pdksVardiyaGun.getVardiya().isHaftaTatil());
-//									if (pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getIzin() != null) {
-//										if (pdksVardiyaGun.getVardiya().isOffGun()) {
-//											IzinTipi izinTipi = pdksVardiyaGun.getIzin().getIzinTipi();
-//											offIzinli = izinTipi.isOffDahilMi();
-//										}
-//
-//									}
+									// if (pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getIzin() != null) {
+									// if (pdksVardiyaGun.getVardiya().isOffGun()) {
+									// IzinTipi izinTipi = pdksVardiyaGun.getIzin().getIzinTipi();
+									// offIzinli = izinTipi.isOffDahilMi();
+									// }
+									//
+									// }
 
 									if (offIzinli || (!(pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getVardiya().getId().equals(offVardiya.getId())) && !pdksVardiyaGun.isHaftaTatil() && !raporIzni)) {
 										if (pdksVardiyaGun.getTatil() == null || !tatilGunleriMap.containsKey(key) || (pdksVardiyaGun.getTatil() != null && pdksVardiyaGun.getTatil().isYarimGunMu())) {
