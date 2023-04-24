@@ -12167,7 +12167,7 @@ public class OrtakIslemler implements Serializable {
 
 						for (VardiyaGun pdksVardiyaGun : haftaVardiyaGunler) {
 							String key = pdksVardiyaGun.getVardiyaDateStr();
-							if (key.equals("20230420") || key.equals("20220721"))
+							if (key.equals("20230415") || key.equals("20220721"))
 								logger.debug(key);
 							if (pdksVardiyaGun.isFiiliHesapla() == false) {
 								if (ilkGiris)
@@ -12359,14 +12359,14 @@ public class OrtakIslemler implements Serializable {
 
 								if (!normalGun) {
 
-									boolean offIzinli = pdksVardiyaGun.isIzinli() && !pdksVardiyaGun.getVardiya().isHaftaTatil();
-									if (pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getIzin() != null) {
-										if (pdksVardiyaGun.getVardiya().isOffGun()) {
-											IzinTipi izinTipi = pdksVardiyaGun.getIzin().getIzinTipi();
-											offIzinli = izinTipi.isOffDahilMi();
-										}
-
-									}
+									boolean offIzinli = pdksVardiyaGun.isIzinli() && !(pdksVardiyaGun.getVardiya().isOffGun() || pdksVardiyaGun.getVardiya().isHaftaTatil());
+//									if (pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getIzin() != null) {
+//										if (pdksVardiyaGun.getVardiya().isOffGun()) {
+//											IzinTipi izinTipi = pdksVardiyaGun.getIzin().getIzinTipi();
+//											offIzinli = izinTipi.isOffDahilMi();
+//										}
+//
+//									}
 
 									if (offIzinli || (!(pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getVardiya().getId().equals(offVardiya.getId())) && !pdksVardiyaGun.isHaftaTatil() && !raporIzni)) {
 										if (pdksVardiyaGun.getTatil() == null || !tatilGunleriMap.containsKey(key) || (pdksVardiyaGun.getTatil() != null && pdksVardiyaGun.getTatil().isYarimGunMu())) {
