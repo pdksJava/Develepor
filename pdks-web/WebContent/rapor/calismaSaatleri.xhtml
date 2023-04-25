@@ -73,7 +73,7 @@
 							<f:facet name="header">
 								<h:outputText value="Çalışma Süresi" />
 							</f:facet>
-							<h:outputText value="#{calismaPlani.calismaSuresi} saat" rendered="#{calismaPlani.calismaSuresi>0}" />
+							<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaPlani.calismaSuresi)} saat" rendered="#{calismaPlani.calismaSuresi>0}" />
 						</rich:column>
 
 						<rich:column width="100" style="text-align:center">
