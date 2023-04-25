@@ -140,8 +140,8 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 		TreeMap<Long, List<PersonelIzin>> izinMap = new TreeMap<Long, List<PersonelIzin>>();
 		if (!perIdList.isEmpty()) {
 			HashMap parametreMap2 = new HashMap();
-			parametreMap2.put("baslangicZamani<=", PdksUtil.tariheGunEkleCikar(date, 1));
-			parametreMap2.put("bitisZamani>=", PdksUtil.tariheGunEkleCikar(date, -1));
+			parametreMap2.put("baslangicZamani<", PdksUtil.tariheGunEkleCikar(date, 1));
+			parametreMap2.put("bitisZamani>", PdksUtil.tariheGunEkleCikar(date, -1));
 			parametreMap2.put("izinTipi.bakiyeIzinTipi=", null);
 			parametreMap2.put("izinSahibi.id", perIdList);
 			if (izinDurumList.size() > 1)
@@ -154,11 +154,14 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 			for (PersonelIzin izin : izinList) {
 				Long id = izin.getIzinSahibi().getId();
 				List<PersonelIzin> list = izinMap.containsKey(id) ? izinMap.get(id) : new ArrayList<PersonelIzin>();
-				if (list.isEmpty())
+				if (list.isEmpty()) {
+					logger.debug(id);
 					izinMap.put(id, list);
+				}
+
 				list.add(izin);
 			}
-
+			izinList = null;
 		}
 
 		TreeMap<String, VardiyaGun> vardiyaMap = !tumPersoneller.isEmpty() ? ortakIslemler.getIslemVardiyalar(tumPersoneller, date, PdksUtil.tariheGunEkleCikar(date, 1), Boolean.FALSE, session, Boolean.TRUE) : new TreeMap<String, VardiyaGun>();
@@ -171,13 +174,15 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 		Date bugun = new Date();
 		for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 			VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
+			Long personelId = pdksVardiyaGun.getPersonel().getId();
+			pdksVardiyaGun.setIzin(null);
 			Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya();
 			boolean sil = false;
 			if (islemVardiya == null) {
 				sil = true;
 			} else if (islemVardiya.isCalisma() == false) {
 				sil = PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0;
-			} else if (islemVardiya.getVardiyaFazlaMesaiBasZaman().after(bugun) || islemVardiya.getVardiyaFazlaMesaiBitZaman().before(date) || islemVardiya.getVardiyaFazlaMesaiBasZaman().after(date)) {
+			} else if (islemVardiya.getVardiyaFazlaMesaiBasZaman().after(bugun) || islemVardiya.getVardiyaFazlaMesaiBitZaman().before(date) || islemVardiya.getVardiyaFazlaMesaiBasZaman().before(date)) {
 				sil = true;
 
 			}
@@ -185,14 +190,13 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 				iterator.remove();
 				continue;
 			}
-			logger.info(pdksVardiyaGun.getVardiyaKeyStr() + " " + pdksVardiyaGun.getAciklama());
-			Long personelId = pdksVardiyaGun.getPersonel().getId();
 			if (izinMap.containsKey(personelId)) {
 				List<PersonelIzin> list = izinMap.get(personelId);
 				for (Iterator iterator2 = list.iterator(); iterator2.hasNext();) {
 					PersonelIzin personelIzin = (PersonelIzin) iterator2.next();
-					if (ortakIslemler.setIzinDurum(pdksVardiyaGun, (PersonelIzin) personelIzin.clone()) != null)
+					if (ortakIslemler.setIzinDurum(pdksVardiyaGun, (PersonelIzin) personelIzin.clone()) != null) {
 						pdksVardiyaGun.setIzin(personelIzin);
+					}
 				}
 			}
 			if ((tarih1 == null && tarih3 == null) || islemVardiya.getVardiyaBasZaman().getTime() < tarih3.getTime()) {
@@ -305,7 +309,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 		boolean tesisDurum = ortakIslemler.getListTesisDurum(vardiyaGunList), izinDurum = false, hareketDurum = false;
 		for (VardiyaGun calismaPlani : vardiyaGunList) {
 			if (izinDurum == false)
-				izinDurum = calismaPlani.isIzinli();
+				izinDurum = calismaPlani.getVardiya().isCalisma() == false || calismaPlani.isIzinli();
 			if (hareketDurum == false)
 				hareketDurum = calismaPlani.getHareketler() != null && !calismaPlani.getHareketler().isEmpty();
 			if (izinDurum && hareketDurum)
@@ -341,20 +345,20 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 			if (tesisDurum)
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
 			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
-			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiya.isCalisma() && calismaPlani.getCalismaSuresi() > 0.0d ? authenticatedUser.sayiFormatliGoster(calismaPlani.getCalismaSuresi()) + " saat" : "");
-			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiya.getAciklama());
+			ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(vardiya.isCalisma() && calismaPlani.getCalismaSuresi() > 0.0d ? authenticatedUser.sayiFormatliGoster(calismaPlani.getCalismaSuresi()) + " saat" : "");
+			ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(vardiya.isCalisma() ? authenticatedUser.dateFormatla(calismaPlani.getVardiyaDate()) + " " + vardiya.getAciklama() : "");
 			if (calismaPlani.getGirisHareket() != null)
-				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(authenticatedUser.dateTimeFormatla(calismaPlani.getGirisHareket().getOrjinalZaman()));
+				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.dateTimeFormatla(calismaPlani.getGirisHareket().getOrjinalZaman()));
 			else
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
 
 			if (calismaPlani.getCikisHareket() != null)
-				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(authenticatedUser.dateTimeFormatla(calismaPlani.getCikisHareket().getOrjinalZaman()));
+				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.dateTimeFormatla(calismaPlani.getCikisHareket().getOrjinalZaman()));
 			else
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
 			if (izinDurum) {
 				StringBuffer sb = new StringBuffer();
-				if (calismaPlani.isIzinli()) {
+				if (vardiya.isCalisma() == false || calismaPlani.isIzinli()) {
 					PersonelIzin izin = calismaPlani.getIzin();
 					if (izin != null) {
 						sb.append(izin.getIzinTipi().getIzinTipiTanim().getAciklama() + "\n");

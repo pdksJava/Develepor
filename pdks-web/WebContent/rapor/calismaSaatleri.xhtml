@@ -30,7 +30,7 @@
 						<f:facet name="header">
 							<h:outputText value="Hareket Durumu" />
 						</f:facet>
-						<rich:column width="60">
+						<rich:column width="60" style="text-align:center">
 							<f:facet name="header">
 								<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
 							</f:facet>
@@ -69,28 +69,30 @@
 							</f:facet>
 							<h:outputText value="#{calismaPlani.personel.ekSaha3.aciklama}" />
 						</rich:column>
-						<rich:column width="60">
+						<rich:column width="60" style="text-align:center">
 							<f:facet name="header">
 								<h:outputText value="Çalışma Süresi" />
 							</f:facet>
 							<h:outputText value="#{calismaPlani.calismaSuresi} saat" rendered="#{calismaPlani.calismaSuresi>0}" />
 						</rich:column>
 
-						<rich:column width="100">
+						<rich:column width="100" style="text-align:center">
 							<f:facet name="header">
 								<h:outputText value="Vardiya" />
 
 							</f:facet>
-							<h:outputText value="#{calismaPlani.vardiya.aciklama}" />
+							<ui:fragment rendered="#{calismaPlani.vardiya.calisma}">
+								<h:outputText value="#{authenticatedUser.dateFormatla(calismaPlani.vardiyaDate)} #{calismaPlani.vardiya.aciklama}" />
+							</ui:fragment>
 						</rich:column>
-						<rich:column width="60">
+						<rich:column width="60" style="text-align:center">
 							<f:facet name="header">
 								<h:outputText value="İlk Giriş" />
 							</f:facet>
 							<h:outputText title="#{calismaPlani.girisHareket.kapiView.kapi.aciklama}"
 								value=" #{authenticatedUser.dateTimeFormatla(calismaPlani.girisHareket.orjinalZaman)}" />
 						</rich:column>
-						<rich:column width="60">
+						<rich:column width="60" style="text-align:center">
 							<f:facet name="header">
 								<h:outputText value="Son Çıkış" />
 							</f:facet>
@@ -103,11 +105,11 @@
 							<f:facet name="header">
 								<h:outputText value="Hareketler" />
 							</f:facet>
-							<h:panelGrid columns="1" rendered="#{calismaPlani.hareketler!=null or calismaPlani.izinli}">
+							<h:panelGrid columns="1" rendered="#{calismaPlani.hareketler!=null or calismaPlani.vardiya.calisma==false or calismaPlani.izin!=null}">
 								<a4j:commandButton status="ajaxStatus" value="Hareketler" rendered="#{calismaPlani.hareketler!=null}"
 									oncomplete="#{rich:component('hareketDetayPanel')}.show()" action="#{calismaSaatleriHome.hareketGoster(calismaPlani)}"
 									reRender="hareketDetayPanel" />
-								<ui:fragment rendered="#{calismaPlani.izinli}">
+								<ui:fragment rendered="#{calismaPlani.vardiya.calisma==false or calismaPlani.izin!=null}">
 									<ui:fragment rendered="#{calismaPlani.izin!= null}">
 										<h:outputText value="#{calismaPlani.izin.izinTipiAciklama} izni var" />
 										<br />
