@@ -283,7 +283,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 
 			ByteArrayOutputStream baosDosya = calismaSaatleriExcelDevam();
 			if (baosDosya != null) {
-				String dosyaAdi = "ÇalışmaSaatleri_" + PdksUtil.convertToDateString(date, "yyyyMM") + ".xlsx";
+				String dosyaAdi = "ÇalışmaSaatleri_" + PdksUtil.convertToDateString(date, "yyyyMMdd") + ".xlsx";
 				PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi);
 			}
 		} catch (Exception e) {
@@ -299,10 +299,12 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 	public ByteArrayOutputStream calismaSaatleriExcelDevam() {
 		ByteArrayOutputStream baos = null;
 		Workbook wb = new XSSFWorkbook();
-		Sheet sheet = ExcelUtil.createSheet(wb, "Hareket Durumu Listesi", false);
+		Sheet sheet = ExcelUtil.createSheet(wb, "Vardiya Listesi", false);
+		Sheet sheetHareket = ExcelUtil.createSheet(wb, "Hareket  Listesi", false);
 		CellStyle style = ExcelUtil.getStyleData(wb);
 		CellStyle styleCenter = ExcelUtil.getStyleData(wb);
 		styleCenter.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		CellStyle timeStamp = ExcelUtil.getCellStyleTimeStamp(wb);
 		CellStyle header = ExcelUtil.getStyleHeader(wb);
 		int row = 0;
 		int col = 0;
@@ -332,6 +334,35 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 		if (hareketDurum)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Hareketler");
 
+		col = 0;
+		ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue(ortakIslemler.personelNoAciklama());
+		ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue("Personel");
+		ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue(ortakIslemler.yoneticiAciklama());
+		ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue(ortakIslemler.sirketAciklama());
+		if (tesisDurum)
+			ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
+		ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue(bolumAciklama);
+
+		ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue("Vardiya");
+		ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue("Kapı");
+		ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue("Zaman");
+
+		boolean manuelGiris = false;
+		for (VardiyaGun calismaPlani : vardiyaGunList) {
+			if (calismaPlani.getHareketler() != null && !calismaPlani.getHareketler().isEmpty()) {
+				for (HareketKGS hareketKGS : calismaPlani.getHareketler()) {
+					if (hareketKGS.getIslem() != null) {
+						manuelGiris = true;
+						ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue("İşlem Yapan");
+						ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue("İşlem Zamanı");
+						break;
+					}
+
+				}
+			}
+		}
+		int rowHareket = 0, colHareket = 0;
+
 		for (VardiyaGun calismaPlani : vardiyaGunList) {
 			row++;
 			col = 0;
@@ -348,12 +379,12 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 			ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(vardiya.isCalisma() && calismaPlani.getCalismaSuresi() > 0.0d ? authenticatedUser.sayiFormatliGoster(calismaPlani.getCalismaSuresi()) + " saat" : "");
 			ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(vardiya.isCalisma() ? authenticatedUser.dateFormatla(calismaPlani.getVardiyaDate()) + " " + vardiya.getAciklama() : "");
 			if (calismaPlani.getGirisHareket() != null)
-				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.dateTimeFormatla(calismaPlani.getGirisHareket().getOrjinalZaman()));
+				ExcelUtil.getCell(sheet, row, col++, timeStamp).setCellValue(calismaPlani.getGirisHareket().getOrjinalZaman());
 			else
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
 
 			if (calismaPlani.getCikisHareket() != null)
-				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.dateTimeFormatla(calismaPlani.getCikisHareket().getOrjinalZaman()));
+				ExcelUtil.getCell(sheet, row, col++, timeStamp).setCellValue(calismaPlani.getCikisHareket().getOrjinalZaman());
 			else
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
 			if (izinDurum) {
@@ -376,7 +407,35 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 					for (Iterator iterator = calismaPlani.getHareketler().iterator(); iterator.hasNext();) {
 						HareketKGS hareketKGS = (HareketKGS) iterator.next();
 						KapiKGS kapiKGS = hareketKGS.getKapiKGS();
-						sb.append((kapiKGS.getKapi() != null ? kapiKGS.getKapi().getAciklama() : kapiKGS.getAciklamaKGS()) + " --> " + authenticatedUser.dateTimeFormatla(hareketKGS.getOrjinalZaman()) + (iterator.hasNext() ? "\n" : ""));
+						String kapiAciklama = kapiKGS.getKapi() != null ? kapiKGS.getKapi().getAciklama() : kapiKGS.getAciklamaKGS();
+						sb.append(kapiAciklama + " --> " + authenticatedUser.dateTimeFormatla(hareketKGS.getOrjinalZaman()) + (iterator.hasNext() ? "\n" : ""));
+						rowHareket++;
+						colHareket = 0;
+						ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, styleCenter).setCellValue(personel.getPdksSicilNo());
+						ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, style).setCellValue(personel.getAdSoyad());
+						ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, style).setCellValue(personel.getYoneticisi() != null && personel.getYoneticisi().isCalisiyorGun(date) ? personel.getYoneticisi().getAdSoyad() : "");
+						ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, style).setCellValue(sirket.getAd());
+						if (tesisDurum)
+							ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, style).setCellValue(personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
+						ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, style).setCellValue(personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
+						ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, styleCenter).setCellValue(vardiya.isCalisma() ? authenticatedUser.dateFormatla(calismaPlani.getVardiyaDate()) + " " + vardiya.getAciklama() : vardiya.getAdi());
+						ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, style).setCellValue(kapiAciklama);
+						ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, timeStamp).setCellValue(hareketKGS.getOrjinalZaman());
+						if (manuelGiris) {
+							PersonelHareketIslem islem = hareketKGS.getIslem();
+							if (islem != null) {
+								manuelGiris = true;
+								ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, style).setCellValue(islem.getOnaylayanUser() != null ? islem.getOnaylayanUser().getAdSoyad() : "");
+								if (islem.getOlusturmaTarihi() != null)
+									ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, timeStamp).setCellValue(islem.getOlusturmaTarihi());
+								else
+									ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, style).setCellValue("");
+							} else {
+								ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, style).setCellValue("");
+								ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, style).setCellValue("");
+
+							}
+						}
 					}
 				}
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(sb.toString());
@@ -387,6 +446,8 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 
 			for (int i = 0; i < col; i++)
 				sheet.autoSizeColumn(i);
+			for (int i = 0; i < colHareket; i++)
+				sheetHareket.autoSizeColumn(i);
 			baos = new ByteArrayOutputStream();
 			wb.write(baos);
 		} catch (Exception e) {

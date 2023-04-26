@@ -70,6 +70,7 @@ import org.pdks.entity.IzinTipi;
 import org.pdks.entity.Kapi;
 import org.pdks.entity.KapiKGS;
 import org.pdks.entity.KapiView;
+import org.pdks.entity.Liste;
 import org.pdks.entity.NoteTipi;
 import org.pdks.entity.Notice;
 import org.pdks.entity.Personel;
@@ -4788,6 +4789,59 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		Personel girisYapan = authenticatedUser.getPdksPersonel(), personel = null;
 		manuelHareketEkle = null;
 		hareketPdksList = null;
+		TreeMap<Long, Liste> seciliMap = new TreeMap<Long, Liste>();
+		try {
+			for (Iterator iterator = aylikPuantajList.iterator(); iterator.hasNext();) {
+				AylikPuantaj aylikPuantaj = (AylikPuantaj) iterator.next();
+				aylikPuantaj.setVardiyaGun(null);
+				if (aylikPuantaj.isOnayDurum()) {
+					if (index < 0) {
+						for (VardiyaGun vg : aylikPuantaj.getVardiyalar()) {
+							++index;
+							if (vg.getVardiyaDate().getTime() == seciliVardiyaGun.getVardiyaDate().getTime()) {
+								break;
+							}
+						}
+					}
+					VardiyaGun vardiyaGunPer = aylikPuantaj.getVardiyalar().get(index);
+					Vardiya vardiya = vardiyaGunPer.getVardiya();
+					Long id = vardiya != null ? vardiya.getId() : null;
+					if (id != null) {
+						Liste liste = seciliMap.containsKey(id) ? seciliMap.get(id) : new Liste(id, new ArrayList<AylikPuantaj>());
+						List<AylikPuantaj> list = (List<AylikPuantaj>) liste.getValue();
+						if (list.isEmpty())
+							seciliMap.put(id, liste);
+						list.add(aylikPuantaj);
+						liste.setNumValue(list.size());
+					} else
+						aylikPuantaj.setOnayDurum(false);
+				}
+			}
+			if (seciliMap.size() > 1) {
+				List<Liste> list = PdksUtil.sortListByAlanAdi(new ArrayList<Liste>(seciliMap.values()), "numValue", true);
+				Liste listeAna = list.get(0);
+				List<AylikPuantaj> puantajList = (List<AylikPuantaj>) listeAna.getValue();
+				VardiyaGun vardiyaGunPer = puantajList.get(0).getVardiyalar().get(index);
+				Vardiya vardiya = vardiyaGunPer.getVardiya();
+				PdksUtil.addMessageAvailableInfo("Birden fazla seçemezsiniz, " + vardiya.getKisaAdi() + (vardiya.isCalisma() ? " " + vardiyaGunPer.getVardiya().getAdi() : "") + " haricindeki vardiyalar işleme alınmadı!");
+				for (int i = 1; i < list.size(); i++) {
+					Liste liste = list.get(i);
+					puantajList = (List<AylikPuantaj>) liste.getValue();
+					for (AylikPuantaj aylikPuantaj : puantajList) {
+						aylikPuantaj.setOnayDurum(false);
+					}
+					puantajList = null;
+					liste = null;
+
+				}
+				list = null;
+			}
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+
+		seciliMap = null;
 		for (Iterator iterator = aylikPuantajList.iterator(); iterator.hasNext();) {
 			AylikPuantaj aylikPuantaj = (AylikPuantaj) iterator.next();
 			aylikPuantaj.setVardiyaGun(null);
@@ -8665,7 +8719,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		fileImport = Boolean.FALSE;
 		if (aylikPuantajDosyaList == null)
 			aylikPuantajDosyaList = new ArrayList<AylikPuantaj>();
-		boolean fileImportDurum = userHome.hasPermission("vardiyaPlani", "fileImportPlan"); 
+		boolean fileImportDurum = userHome.hasPermission("vardiyaPlani", "fileImportPlan");
 		if ((fileImportDurum || (ikRole && ortakIslemler.getParameterKey("fileImport").equals("1"))) && ay > 0 && aramaSecenekleri.getSirketId() != null) {
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.MONTH, 1);
