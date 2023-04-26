@@ -3,6 +3,7 @@ package org.pdks.session;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -164,32 +165,23 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 			izinList = null;
 		}
 
-		TreeMap<String, VardiyaGun> vardiyaMap = !tumPersoneller.isEmpty() ? ortakIslemler.getIslemVardiyalar(tumPersoneller, date, PdksUtil.tariheGunEkleCikar(date, 1), Boolean.FALSE, session, Boolean.TRUE) : new TreeMap<String, VardiyaGun>();
+		TreeMap<String, VardiyaGun> vardiyaMap = !tumPersoneller.isEmpty() ? ortakIslemler.getIslemVardiyalar(tumPersoneller, PdksUtil.tariheGunEkleCikar(date, -1), date, Boolean.FALSE, session, Boolean.TRUE) : new TreeMap<String, VardiyaGun>();
 		vardiyaList = new ArrayList<VardiyaGun>(vardiyaMap.values());
+		Collections.reverse(vardiyaList);
+		Date bugun = new Date();
+		int gunDurum = PdksUtil.tarihKarsilastirNumeric(date, bugun);
 		Date tarih1 = null;
 		Date tarih2 = null;
 		Date tarih3 = null;
 		Date tarih4 = null;
-		perIdList = null;
-		Date bugun = new Date();
+		perIdList.clear();
+
 		for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 			VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
-			Long personelId = pdksVardiyaGun.getPersonel().getId();
+			Personel personel = pdksVardiyaGun.getPersonel();
+			Long personelId = personel.getId();
 			pdksVardiyaGun.setIzin(null);
-			Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya();
-			boolean sil = false;
-			if (islemVardiya == null) {
-				sil = true;
-			} else if (islemVardiya.isCalisma() == false) {
-				sil = PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0;
-			} else if (islemVardiya.getVardiyaFazlaMesaiBasZaman().after(bugun) || islemVardiya.getVardiyaFazlaMesaiBitZaman().before(date) || islemVardiya.getVardiyaFazlaMesaiBasZaman().before(date)) {
-				sil = true;
-
-			}
-			if (sil) {
-				iterator.remove();
-				continue;
-			}
+			Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya(), vardiya = pdksVardiyaGun.getVardiya();
 			if (izinMap.containsKey(personelId)) {
 				List<PersonelIzin> list = izinMap.get(personelId);
 				for (Iterator iterator2 = list.iterator(); iterator2.hasNext();) {
@@ -199,6 +191,28 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 					}
 				}
 			}
+			boolean sil = false;
+			if (islemVardiya == null || gunDurum == 1 || vardiya.getId() == null || perIdList.contains(personelId)) {
+				sil = true;
+			} else if (islemVardiya.isCalisma() == false) {
+				sil = PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0;
+			} else {
+				if (pdksVardiyaGun.getVardiyaDate().before(date)) {
+					if (pdksVardiyaGun.getIzin() != null || !(islemVardiya.getBitSaat() < islemVardiya.getBasSaat() && gunDurum == 0))
+						sil = true;
+
+				} else {
+					if (islemVardiya.getBitSaat() < islemVardiya.getBasSaat() && gunDurum == 0 && bugun.before(islemVardiya.getVardiyaBasZaman()))
+						sil = true;
+				}
+			}
+			if (sil) {
+				iterator.remove();
+				continue;
+			} else if (islemVardiya.isCalisma())
+				logger.debug(pdksVardiyaGun.getVardiyaDateStr() + " " + islemVardiya.getAdi());
+			perIdList.add(personelId);
+
 			if ((tarih1 == null && tarih3 == null) || islemVardiya.getVardiyaBasZaman().getTime() < tarih3.getTime()) {
 				tarih3 = islemVardiya.getVardiyaBasZaman();
 				tarih1 = islemVardiya.getVardiyaFazlaMesaiBasZaman();
@@ -353,13 +367,16 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 				for (HareketKGS hareketKGS : calismaPlani.getHareketler()) {
 					if (hareketKGS.getIslem() != null) {
 						manuelGiris = true;
-						ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue("İşlem Yapan");
-						ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue("İşlem Zamanı");
 						break;
 					}
-
 				}
+				if (manuelGiris)
+					break;
 			}
+		}
+		if (manuelGiris) {
+			ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue("İşlem Yapan");
+			ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue("İşlem Zamanı");
 		}
 		int rowHareket = 0, colHareket = 0;
 

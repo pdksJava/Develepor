@@ -282,9 +282,10 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 		}
 		if (!tumPersoneller.isEmpty()) {
-			Date basTarih = PdksUtil.tariheGunEkleCikar(date, -2);
-			Date bitTarih = PdksUtil.tariheGunEkleCikar(date, 1);
+			Date basTarih = PdksUtil.tariheGunEkleCikar(date, -1);
+			Date bitTarih = date;
 			List<VardiyaGun> vardiyaGunList = getVardiyalariOku(oncekiGun, tumPersoneller, basTarih, bitTarih);
+			Collections.reverse(vardiyaList);
 			// butun personeller icin hareket cekerken bu en kucuk tarih ile en
 			// buyuk tarih araligini kullanacaktir
 			// bu araliktaki tum hareketleri cekecektir.
@@ -295,27 +296,42 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					vardiyaGunList = getVardiyalariOku(oncekiGun, tumPersoneller, basTarih, bitTarih);
 			} catch (Exception e) {
 			}
-
+			Date bugun = new Date();
+			int gunDurum = PdksUtil.tarihKarsilastirNumeric(date, bugun);
+			List<Long> perIdList = new ArrayList<Long>();
 			for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 				VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
-				Vardiya vardiya = pdksVardiyaGun.getIslemVardiya();
-				if (vardiya.isIzin() && PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0) {
-					iterator.remove();
-					continue;
+				Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya(), vardiya = pdksVardiyaGun.getVardiya();
+				Personel personel = pdksVardiyaGun.getPersonel();
+				Long personelId = personel.getId();
+				boolean sil = false;
+				if (gunDurum == 1 || islemVardiya == null || vardiya.getId() == null || perIdList.contains(personelId)) {
+					sil = true;
+				} else if (islemVardiya.isCalisma() == false) {
+					sil = PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0;
+				} else {
+					if (pdksVardiyaGun.getVardiyaDate().before(date)) {
+						if (!(islemVardiya.getBitSaat() < islemVardiya.getBasSaat() && gunDurum == 0) || pdksVardiyaGun.getIzin() != null)
+							sil = true;
 
-				} else if (vardiya.isCalisma() && (PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0 && vardiya.getBitSaat() > vardiya.getBasSaat())
-						|| (PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) == 0 && vardiya.getBitSaat() < vardiya.getBasSaat())) {
-					iterator.remove();
-					continue;
-
+					} else {
+						if (islemVardiya.getBitSaat() < islemVardiya.getBasSaat() && gunDurum == 0 && bugun.before(islemVardiya.getVardiyaBasZaman()))
+							sil = true;
+					}
 				}
-				if (vardiya.isCalisma()) {
+				if (sil) {
+					iterator.remove();
+					continue;
+				} else if (islemVardiya.isCalisma())
+					logger.debug(pdksVardiyaGun.getVardiyaDateStr() + " " + islemVardiya.getAdi());
+				perIdList.add(personelId);
+				if (islemVardiya.isCalisma()) {
 					if (tarih1 == null || pdksVardiyaGun.getIslemVardiya().getVardiyaTelorans1BasZaman().getTime() < tarih1.getTime())
 						tarih1 = pdksVardiyaGun.getIslemVardiya().getVardiyaTelorans1BasZaman();
 
 					if (tarih2 == null || pdksVardiyaGun.getIslemVardiya().getVardiyaTelorans2BitZaman().getTime() > tarih2.getTime())
 						tarih2 = pdksVardiyaGun.getIslemVardiya().getVardiyaTelorans2BitZaman();
-				} else if (vardiya.isIzin()) {
+				} else if (islemVardiya.isIzin()) {
 					if (tarih1 == null)
 						tarih1 = date;
 
