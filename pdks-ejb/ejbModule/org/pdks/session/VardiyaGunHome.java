@@ -2208,6 +2208,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 			} catch (Exception ee) {
 				logger.info(ee.getMessage());
+				ee.printStackTrace();
 			} finally {
 				islemYapiliyor = Boolean.FALSE;
 			}
