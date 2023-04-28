@@ -219,7 +219,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			}
 		}
 
-		donusAdres = "";
+		donusAdres = null;
 		if (dateStr != null) {
 			donusAdres = linkAdres;
 			Date vardiyaDate = PdksUtil.convertToJavaDate(dateStr, "yyyyMMdd");
@@ -278,7 +278,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			aramaSecenekleri.setAd("");
 			aramaSecenekleri.setSoyad("");
 		}
-		if (fazlaMesaiGiris)
+		if (!fazlaMesaiGiris)
 			aramaSecenekleri = new AramaSecenekleri();
 
 		if (!ayniSayfa)
