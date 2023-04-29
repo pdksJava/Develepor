@@ -73,7 +73,16 @@
 							<f:facet name="header">
 								<h:outputText value="Çalışma Süresi" />
 							</f:facet>
-							<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaPlani.calismaSuresi + calismaPlani.fazlaMesaiSure)} saat" rendered="#{calismaPlani.calismaSuresi>0}" />
+							<ui:fragment rendered="#{calismaPlani.calismaSuresi + calismaPlani.fazlaMesaiSure>0}">
+								<ui:fragment rendered="#{calismaPlani.durum==false or calismaPlani.vardiyaSaat==null}">
+									<SPAN style="color: red;"> <h:outputText
+											value="#{authenticatedUser.sayiFormatliGoster(calismaPlani.calismaSuresi + calismaPlani.fazlaMesaiSure)} saat" /></SPAN>
+								</ui:fragment>
+								<ui:fragment rendered="#{calismaPlani.durum and calismaPlani.vardiyaSaat!=null}">
+									<SPAN style="font-weight: bold;"> <h:outputText
+											value="#{authenticatedUser.sayiFormatliGoster(calismaPlani.calismaSuresi + calismaPlani.fazlaMesaiSure)} saat" /></SPAN>
+								</ui:fragment>
+							</ui:fragment>
 						</rich:column>
 
 						<rich:column width="100" style="text-align:center">
