@@ -3,6 +3,7 @@ package org.pdks.session;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
+import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.KapiKGS;
 import org.pdks.entity.KapiView;
@@ -38,6 +40,8 @@ import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
+import org.pdks.entity.VardiyaSaat;
+import org.pdks.entity.YemekIzin;
 import org.pdks.security.entity.User;
 
 @Name("calismaSaatleriHome")
@@ -119,10 +123,6 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 	}
 
 	public void fillHareketList() throws Exception {
-		String yemekHaketmeStr = (parameterMap.containsKey("yemekHaketmeSuresi") ? (String) parameterMap.get("yemekHaketmeSuresi") : "4800");
-		String yemekSuresiStr = (parameterMap.containsKey("yemekSuresi") ? (String) parameterMap.get("yemekSuresi") : "3000");
-		double yemekHaketmeDakika = Double.parseDouble(yemekHaketmeStr);
-		double yemekSuresiDakika = Double.parseDouble(yemekSuresiStr);
 		List<VardiyaGun> vardiyaList = new ArrayList<VardiyaGun>();
 		List<PersonelIzin> izinList = new ArrayList<PersonelIzin>();
 		List<HareketKGS> kgsList = new ArrayList<HareketKGS>();
@@ -268,7 +268,17 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 		}
 
 		try {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			HashMap parametreMap2 = new HashMap();
+			parametreMap2.put("yil", cal.get(Calendar.YEAR));
+			parametreMap2.put("ay", cal.get(Calendar.MONTH) + 1);
+			if (session != null)
+				parametreMap2.put(PdksEntityController.MAP_KEY_SESSION, session);
+			DenklestirmeAy da = (DenklestirmeAy) pdksEntityController.getObjectByInnerObject(parametreMap2, DenklestirmeAy.class);
+			Double yemekMolasiYuzdesi = ortakIslemler.getYemekMolasiYuzdesi(da, session);
 
+			List<YemekIzin> yemekList = ortakIslemler.getYemekList(session);
 			for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 				VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 				Long personelId = vardiyaGun.getPersonel().getId();
@@ -288,9 +298,16 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 				int giris = vardiyaGun.getGirisHareketleri() != null ? vardiyaGun.getGirisHareketleri().size() : 0;
 				int cikis = vardiyaGun.getCikisHareketleri() != null ? vardiyaGun.getCikisHareketleri().size() : 0;
 				double calismaSuresi = 0.0d, fazlaMesaiSure = 0.0d;
+				boolean hesapla = true;
+				if (vardiyaGun.getDurum() && vardiyaGun.getVardiyaSaat() != null) {
+					VardiyaSaat vs = vardiyaGun.getVardiyaSaat();
+					calismaSuresi = vs.getCalismaSuresi();
+					hesapla = calismaSuresi == 0.0d;
+				}
 
 				if (!vardiyaGun.isHareketHatali() && giris > 0 && cikis == giris) {
 					List<String> hIdList = new ArrayList<String>();
+					double toplamYemekSuresi = 0.0d;
 					for (int i = 0; i < vardiyaGun.getGirisHareketleri().size(); i++) {
 						HareketKGS girisHareket = vardiyaGun.getGirisHareketleri().get(i);
 						HareketKGS cikisHareket = vardiyaGun.getCikisHareketleri().get(i);
@@ -298,10 +315,14 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 							hIdList.add(girisHareket.getId());
 						if (cikisHareket.getId() != null)
 							hIdList.add(cikisHareket.getId());
-						calismaSuresi += PdksUtil.getDakikaFarki(cikisHareket.getZaman(), girisHareket.getZaman());
+						if (hesapla) {
+							double yemeksizSure = ortakIslemler.getSaatSure(girisHareket.getZaman(), cikisHareket.getZaman(), yemekList, vardiyaGun, session);
+							double sure = PdksUtil.getDakikaFarki(cikisHareket.getZaman(), girisHareket.getZaman()) / 60.0d;
+							toplamYemekSuresi += sure - yemeksizSure;
+							calismaSuresi += sure;
+
+						}
 					}
-					if (calismaSuresi > yemekHaketmeDakika)
-						calismaSuresi = calismaSuresi - yemekSuresiDakika;
 					if (vardiyaGun.getId() != null && fmMap.containsKey(vardiyaGun.getId())) {
 						List<PersonelFazlaMesai> list = fmMap.get(vardiyaGun.getId());
 						for (PersonelFazlaMesai personelFazlaMesai2 : list) {
@@ -310,10 +331,21 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 						}
 					}
 					hIdList = null;
+					if (!hesapla)
+						calismaSuresi -= fazlaMesaiSure;
+					else {
+						Double vardiyaYemekSuresi = vardiyaGun.getVardiya().getYemekSuresi().doubleValue() / 60.0d;
+						Double netSuresi = vardiyaGun.getVardiya().getNetCalismaSuresi();
+						if (vardiyaYemekSuresi > toplamYemekSuresi && netSuresi * yemekMolasiYuzdesi <= calismaSuresi) {
+							calismaSuresi -= vardiyaYemekSuresi;
+						} else
+							calismaSuresi -= toplamYemekSuresi;
+					}
+
 				}
 
 				int yarimYuvarla = vardiyaGun.getYarimYuvarla();
-				vardiyaGun.setCalismaSuresi(PdksUtil.setSureDoubleTypeRounded(calismaSuresi / 60.0d, yarimYuvarla));
+				vardiyaGun.setCalismaSuresi(PdksUtil.setSureDoubleTypeRounded(calismaSuresi, yarimYuvarla));
 				vardiyaGun.setFazlaMesaiSure(fazlaMesaiSure);
 
 			}
