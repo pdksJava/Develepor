@@ -477,7 +477,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 				if (calismaPlani.getFazlaMesaiSure() > 0.0d)
 					str = authenticatedUser.sayiFormatliGoster(calismaPlani.getFazlaMesaiSure()) + " saat";
 				else if (calismaPlani.getDurum() == false && hareketler != null)
-					str = "Onaysız";
+					str = calismaPlani.getCalismaSuresi() > 0.0d ? "Onaysız" : "Hatalı Kart";
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(str);
 
 			}
