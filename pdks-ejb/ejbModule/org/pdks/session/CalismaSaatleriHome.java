@@ -228,7 +228,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 			}
 
 		}
-		List<Long> kapiIdler = !tumPersoneller.isEmpty() ? ortakIslemler.getPdksKapiIdler(session, Boolean.TRUE) : null;
+		List<Long> kapiIdler = !perIdList.isEmpty() ? ortakIslemler.getPdksKapiIdler(session, Boolean.TRUE) : null;
 
 		if (kapiIdler != null && !kapiIdler.isEmpty())
 			kgsList = ortakIslemler.getPdksHareketBilgileri(Boolean.TRUE, kapiIdler, tumPersoneller, tarih1, tarih2, HareketKGS.class, session);
