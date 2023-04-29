@@ -285,6 +285,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 				vardiyaGun.setHareketler(null);
 				vardiyaGun.setGirisHareketleri(null);
 				vardiyaGun.setCikisHareketleri(null);
+				Vardiya vardiya = vardiyaGun.getVardiya();
 				if (hareketMap.containsKey(personelId)) {
 					List<HareketKGS> list = hareketMap.get(personelId);
 					for (Iterator iterator1 = list.iterator(); iterator1.hasNext();) {
@@ -297,12 +298,14 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 
 				int giris = vardiyaGun.getGirisHareketleri() != null ? vardiyaGun.getGirisHareketleri().size() : 0;
 				int cikis = vardiyaGun.getCikisHareketleri() != null ? vardiyaGun.getCikisHareketleri().size() : 0;
-				double calismaSuresi = 0.0d, fazlaMesaiSure = 0.0d;
+				double calismaSuresi = 0.0d, fazlaMesaiSure = 0.0d, resmiMesaiSure = 0.0d;
 				boolean hesapla = true;
 				if (vardiyaGun.getDurum() && vardiyaGun.getVardiyaSaat() != null) {
 					VardiyaSaat vs = vardiyaGun.getVardiyaSaat();
 					calismaSuresi = vs.getCalismaSuresi();
+					resmiMesaiSure = vs.getResmiTatilSure();
 					hesapla = calismaSuresi == 0.0d;
+
 				}
 
 				if (!vardiyaGun.isHareketHatali() && giris > 0 && cikis == giris) {
@@ -334,8 +337,8 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 					if (!hesapla)
 						calismaSuresi -= fazlaMesaiSure;
 					else {
-						Double vardiyaYemekSuresi = vardiyaGun.getVardiya().getYemekSuresi().doubleValue() / 60.0d;
-						Double netSuresi = vardiyaGun.getVardiya().getNetCalismaSuresi();
+						Double vardiyaYemekSuresi = vardiya.getYemekSuresi().doubleValue() / 60.0d;
+						Double netSuresi = vardiya.getNetCalismaSuresi();
 						if (vardiyaYemekSuresi > toplamYemekSuresi && netSuresi * yemekMolasiYuzdesi <= calismaSuresi) {
 							calismaSuresi -= vardiyaYemekSuresi;
 						} else
@@ -347,7 +350,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 				int yarimYuvarla = vardiyaGun.getYarimYuvarla();
 				vardiyaGun.setCalismaSuresi(PdksUtil.setSureDoubleTypeRounded(calismaSuresi, yarimYuvarla));
 				vardiyaGun.setFazlaMesaiSure(fazlaMesaiSure);
-
+				vardiyaGun.setResmiTatilSure(resmiMesaiSure);
 			}
 
 		} catch (Exception e) {
