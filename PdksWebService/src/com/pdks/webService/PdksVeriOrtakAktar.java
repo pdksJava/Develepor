@@ -749,7 +749,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @throws Exception
 	 */
 	public List<MesaiPDKS> getMesaiPDKS(String sirketKodu, Integer yil, Integer ay, Boolean donemKapat) throws Exception {
-
+		sistemVerileriniYukle(pdksDAO);
+		boolean servisDurum = !(mailMap.containsKey("getMesaiPDKSDurum") && mailMap.get("getMesaiPDKSDurum").equals("0"));
+		if (!servisDurum) {
+			throw new Exception("Servis Kapalı");
+		}
 		LinkedHashMap<String, Object> inputMap = new LinkedHashMap<String, Object>();
 		if (sirketKodu != null)
 			inputMap.put("sirketKodu", sirketKodu);
@@ -831,7 +835,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 				mesajInfoYaz("getMesaiPDKS --> " + mesaj + " out " + new Date());
 				try {
 
-					sistemVerileriniYukle(pdksDAO);
 					mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
 					MailObject mailObject = kullaniciIKYukle(mailMap, pdksDAO);
 					String dosyaAdi = PdksUtil.setTurkishStr("FazlaMesai_" + +denklestirmeAy.getYil() + " " + denklestirmeAy.getAyAdi() + (sirket != null ? "_" + sirket.getAd() : "")) + ".xml";
@@ -1340,6 +1343,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 	public void saveIzinler(List<IzinERP> izinList) throws Exception {
 		if (pdksDAO != null && izinList != null && !izinList.isEmpty()) {
 			sistemVerileriniYukle(pdksDAO);
+			boolean servisDurum = !(mailMap.containsKey("saveIzinlerDurum") && mailMap.get("saveIzinlerDurum").equals("0"));
+			if (!servisDurum) {
+				throw new Exception("Servis Kapalı");
+			}
 			IzinERP erp = null;
 			boolean izinCok = izinList.size() > 1;
 			HashMap<String, List<String>> izinPersonelERPMap = new HashMap<String, List<String>>();
@@ -3176,6 +3183,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 		if (pdksDAO != null && personelList != null && !personelList.isEmpty()) {
 			sistemVerileriniYukle(pdksDAO);
+			boolean servisDurum = !(mailMap.containsKey("savePersonellerDurum") && mailMap.get("savePersonellerDurum").equals("0"));
+			if (!servisDurum) {
+				throw new Exception("Servis Kapalı");
+			}
 			altBolumDurum = false;
 			HashMap fields = new HashMap();
 			fields.put("tipi", Tanim.TIPI_PERSONEL_DINAMIK_DURUM);
