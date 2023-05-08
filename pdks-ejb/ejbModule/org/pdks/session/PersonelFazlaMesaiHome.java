@@ -1401,7 +1401,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			}
 			sistemAdminUser = ortakIslemler.getSistemAdminUser(session);
 			HareketKGS cikis = hareket.getCikisHareket() != null ? hareket.getCikisHareket() : hareket;
-			Long abhCikisId = pdksEntityController.hareketEkleReturn(manuelKapiKontrol(cikis.getKapiView()), hareket.getPersonel(), cikisZaman, sistemAdminUser, fazlaMesaiSistemOnayDurum.getId(), "", session);
+			Long abhCikisId = pdksEntityController.hareketEkle(manuelKapiKontrol(cikis.getKapiView()), hareket.getPersonel(), cikisZaman, sistemAdminUser, fazlaMesaiSistemOnayDurum.getId(), "", session);
 			if (abhCikisId != null) {
 				HashMap parametreMap = new HashMap();
 
@@ -1419,7 +1419,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 				HareketKGS kgsHareketCikis = !list.isEmpty() ? list.get(0) : null;
 				if (kgsHareketCikis != null) {
 					HareketKGS kgsHareketGiris = hareket.getGirisHareket() != null ? hareket.getGirisHareket() : hareket;
-					pdksEntityController.hareketEkleReturn(manuelKapiKontrol(kgsHareketGiris.getKapiView()), hareket.getPersonel(), girisZaman, sistemAdminUser, fazlaMesaiSistemOnayDurum.getId(), "", session);
+					pdksEntityController.hareketEkle(manuelKapiKontrol(kgsHareketGiris.getKapiView()), hareket.getPersonel(), girisZaman, sistemAdminUser, fazlaMesaiSistemOnayDurum.getId(), "", session);
 					kgsHareketCikis.setVardiyaGun(hareket.getVardiyaGun());
 					double saat = ortakIslemler.getSaatSure(girisZaman, orjCikisZaman, yemekList, hareket.getVardiyaGun(), session);
 					kgsHareketCikis.setGirisZaman(orjGirisZaman);

@@ -13817,7 +13817,7 @@ public class OrtakIslemler implements Serializable {
 										manuelCikis.setZaman(PdksUtil.getDateTime(oncekiIslemVardiya.getVardiyaFazlaMesaiBitZaman()));
 										String aciklama = "";
 										if (hareketKaydet)
-											cikisId = pdksEntityController.hareketEkleReturn(manuelCikis.getKapiView(), manuelCikis.getPersonel(), manuelCikis.getZaman(), sistemUser, neden.getId(), aciklama, session);
+											cikisId = pdksEntityController.hareketEkle(manuelCikis.getKapiView(), manuelCikis.getPersonel(), manuelCikis.getZaman(), sistemUser, neden.getId(), aciklama, session);
 										manuelCikis = getHareketKGS(manuelCikis, cikisId, session);
 										oncekiVardiyaGun.addHareket(manuelCikis, hareketKaydet);
 										oncekiVardiyaGun.setHareketHatali(false);
@@ -13827,7 +13827,7 @@ public class OrtakIslemler implements Serializable {
 										manuelGiris.setPersonel(hareketKGS.getPersonel());
 										manuelGiris.setZaman(PdksUtil.getDateTime(islemVardiya.getVardiyaFazlaMesaiBasZaman()));
 										if (hareketKaydet)
-											girisId = pdksEntityController.hareketEkleReturn(manuelGiris.getKapiView(), manuelGiris.getPersonel(), manuelGiris.getZaman(), sistemUser, neden.getId(), aciklama, session);
+											girisId = pdksEntityController.hareketEkle(manuelGiris.getKapiView(), manuelGiris.getPersonel(), manuelGiris.getZaman(), sistemUser, neden.getId(), aciklama, session);
 
 										manuelGiris = getHareketKGS(manuelGiris, girisId, session);
 										logger.debug(pdksVardiyaGun.getVardiyaDateStr() + " " + manuelGiris.getOrjinalZaman());

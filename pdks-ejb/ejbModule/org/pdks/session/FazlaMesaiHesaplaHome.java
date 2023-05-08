@@ -2518,7 +2518,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								kapiView = manuelCikis;
 						}
 					}
-					Long id = pdksEntityController.hareketEkleReturn(kapiView, personelView, hareketKGS.getOrjinalZaman(), authenticatedUser, nedenId, islemAciklama, session);
+					Long id = pdksEntityController.hareketEkle(kapiView, personelView, hareketKGS.getOrjinalZaman(), authenticatedUser, nedenId, islemAciklama, session);
 					if (id != null)
 						pdksEntityController.hareketSil(Long.parseLong(hareketKGS.getId().substring(1)), pdksId, authenticatedUser, nedenId, seciliAciklama, session);
 				}
