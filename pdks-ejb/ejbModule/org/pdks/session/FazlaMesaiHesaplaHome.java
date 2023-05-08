@@ -2290,8 +2290,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				if (onayla) {
 					mailGonder = Boolean.FALSE;
 					try {
-						if (!authenticatedUser.isAdmin())
-							fazlaMesaiOnaylaDevam(Boolean.TRUE);
+						if (!authenticatedUser.isAdmin()) {
+							setAylikPuantajList(puantajList);
+							fazlaMesaiOnaylaDevam(Boolean.TRUE, Boolean.TRUE);
+						}
+
 					} catch (Exception eo) {
 						logger.error(eo);
 						eo.printStackTrace();
@@ -3869,15 +3872,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	@Transactional
 	public String fazlaMesaiOnayla() {
-		fazlaMesaiOnaylaDevam(Boolean.TRUE);
+		fazlaMesaiOnaylaDevam(Boolean.TRUE, Boolean.FALSE);
 		return "";
 	}
 
 	/**
 	 * @param guncellendi
+	 * @param manuelOnay
 	 * @return
 	 */
-	private String fazlaMesaiOnaylaDevam(Boolean guncellendi) {
+	private String fazlaMesaiOnaylaDevam(Boolean guncellendi, Boolean manuelOnay) {
 		try {
 			boolean onaylandi = Boolean.FALSE;
 			TreeMap<Long, List<AylikPuantaj>> puantajMap = new TreeMap<Long, List<AylikPuantaj>>();
@@ -3904,8 +3908,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							personelDenklestirmeAy.setGuncellemeTarihi(new Date());
 							personelDenklestirmeAy.setGuncelleyenUser(authenticatedUser);
 						}
-						if (guncellendi)
+						if (guncellendi) {
 							pdksEntityController.saveOrUpdate(session, entityManager, personelDenklestirmeAy);
+							puantajAylik.setKaydet(Boolean.FALSE);
+						}
 						if (mailGonder) {
 							if (calisan != null && !sirketIdList.contains(calisan.getSirket().getId()))
 								sirketIdList.add(calisan.getSirket().getId());
@@ -3934,8 +3940,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (onaylandi) {
 				kaydetDurum = false;
 				session.flush();
-			} else if (guncellendi)
-				PdksUtil.addMessageAvailableWarn("Kayıt seçiniz!");
+			} else if (guncellendi) {
+				if (!manuelOnay)
+					PdksUtil.addMessageAvailableWarn("Kayıt seçiniz!");
+			}
+
 			if (mailGonder) {
 				toList = ortakIslemler.IKKullanicilariBul(new ArrayList<User>(), authenticatedUser.getPdksPersonel(), session);
 				if (!toList.isEmpty() || !yoneticiMap.isEmpty()) {
