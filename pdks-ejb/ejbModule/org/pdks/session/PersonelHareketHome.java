@@ -608,16 +608,16 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 			map1.put(PdksEntityController.MAP_KEY_SESSION, session);
 		Tanim neden = (Tanim) pdksEntityController.getObjectByInnerObject(map1, Tanim.class);
 		if (kgsHareket.getTerminalKapi() != null && neden != null) {
-			Long kgsId = 0L, abhId = 0L;
+			Long kgsId = 0L, pdksId = 0L;
 			if (kgsHareket.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS))
 				kgsId = kgsHareket.getHareketTableId();
 			else
-				abhId = kgsHareket.getHareketTableId();
+				pdksId = kgsHareket.getHareketTableId();
 			try {
 				String aciklama = kgsHareket.getKapiView().getKapi().getAciklama() + " güncellendi.";
 				KapiView terminalKapi = terminalKapiManuelUpdate(kgsHareket.getTerminalKapi());
-				pdksEntityController.hareketSil(kgsId, abhId, authenticatedUser, neden.getId(), "", session);
-				abhId = pdksEntityController.hareketEkle(terminalKapi, kgsHareket.getPersonel(), kgsHareket.getZaman(), authenticatedUser, neden.getId(), aciklama, session);
+				pdksEntityController.hareketSil(kgsId, pdksId, authenticatedUser, neden.getId(), "", session);
+				pdksId = pdksEntityController.hareketEkle(terminalKapi, kgsHareket.getPersonel(), kgsHareket.getZaman(), authenticatedUser, neden.getId(), aciklama, session);
 				session.flush();
 				session.clear();
 				fillHareketList();
@@ -649,7 +649,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 
 	@Transactional
 	public String saveGirisCikis() {
-		Long abhId = null;
+		Long pdksId = null;
 		try {
 			HareketKGS kgsHareket = getInstance();
 			PersonelView personelView = kgsHareket.getPersonel();
@@ -667,9 +667,9 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 				Date bugun = Calendar.getInstance().getTime();
 				if (bugun.after(manuelGiris.getZaman())) {
 					KapiView terminalKapi = terminalKapiManuelUpdate(manuelGiris.getKapiView());
-					abhId = pdksEntityController.hareketEkle(terminalKapi, kgsHareket.getPersonel(), manuelGiris.getZaman(), authenticatedUser, kgsHareket.getIslem().getNeden().getId(), kgsHareket.getIslem().getAciklama(), session);
+					pdksId = pdksEntityController.hareketEkle(terminalKapi, kgsHareket.getPersonel(), manuelGiris.getZaman(), authenticatedUser, kgsHareket.getIslem().getNeden().getId(), kgsHareket.getIslem().getAciklama(), session);
 				}
-				if (abhId != null && bugun.after(manuelCikis.getZaman())) {
+				if (pdksId != null && bugun.after(manuelCikis.getZaman())) {
 					KapiView terminalKapi = terminalKapiManuelUpdate(manuelCikis.getKapiView());
 					pdksEntityController.hareketEkle(terminalKapi, kgsHareket.getPersonel(), manuelCikis.getZaman(), authenticatedUser, kgsHareket.getIslem().getNeden().getId(), kgsHareket.getIslem().getAciklama(), session);
 
@@ -680,7 +680,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 			logger.info(e);
 			e.printStackTrace();
 		}
-		if (abhId != null)
+		if (pdksId != null)
 			fillHareketList();
 		return "";
 	}
@@ -711,7 +711,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 			}
 			if (authenticatedUser.isAdmin() || !islemTipi.equals("")) {
 				Date bugun = Calendar.getInstance().getTime();
-				long kgsId = 0, abhId = 0;
+				long kgsId = 0, pdksId = 0;
 				if (islemTipi.equals("E")) {
 					if ((kgsHareket.getKapiView() == null || kgsHareket.getKapiView().getId() == null) && kgsHareket.getKapiId() != null) {
 						KapiView kapiView = kgsHareket.getKapiView() == null ? new KapiView() : kgsHareket.getKapiView();
@@ -720,25 +720,25 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 					}
 					KapiView terminalKapi = terminalKapiManuelUpdate(kgsHareket.getKapiView());
 					if (bugun.after(zaman))
-						abhId = pdksEntityController.hareketEkle(terminalKapi, kgsHareket.getPersonel(), zaman, authenticatedUser, kgsHareket.getIslem().getNeden().getId(), kgsHareket.getIslem().getAciklama(), session);
+						pdksId = pdksEntityController.hareketEkle(terminalKapi, kgsHareket.getPersonel(), zaman, authenticatedUser, kgsHareket.getIslem().getNeden().getId(), kgsHareket.getIslem().getAciklama(), session);
 					session.clear();
 				} else {
 
 					if (kgsHareket.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS))
 						kgsId = kgsHareket.getHareketTableId();
 					else
-						abhId = kgsHareket.getHareketTableId();
+						pdksId = kgsHareket.getHareketTableId();
 					if (islemTipi.equals("G")) {
 						if (bugun.after(zaman))
-							pdksEntityController.hareketGuncelle(kgsId, abhId, zaman, authenticatedUser, kgsHareket.getIslem().getNeden().getId(), kgsHareket.getIslem().getAciklama(), session);
+							pdksEntityController.hareketGuncelle(kgsId, pdksId, zaman, authenticatedUser, kgsHareket.getIslem().getNeden().getId(), kgsHareket.getIslem().getAciklama(), session);
 					} else
-						pdksEntityController.hareketSil(kgsId, abhId, authenticatedUser, kgsHareket.getIslem().getNeden().getId(), kgsHareket.getIslem().getAciklama(), session);
+						pdksEntityController.hareketSil(kgsId, pdksId, authenticatedUser, kgsHareket.getIslem().getNeden().getId(), kgsHareket.getIslem().getAciklama(), session);
 
 					parametreMap.clear();
 					if (kgsId != 0)
 						parametreMap.put("hareketTableId", HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS + kgsId);
 					else
-						parametreMap.put("hareketTableId", HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS + abhId);
+						parametreMap.put("hareketTableId", HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS + pdksId);
 					if (session != null)
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 
