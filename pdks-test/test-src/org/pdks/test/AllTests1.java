@@ -6,7 +6,7 @@ import junit.framework.TestSuite;
 public class AllTests1 {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test for com.abh.test");
+		TestSuite suite = new TestSuite("Test for org.pdks.test");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(A.class);
 		suite.addTestSuite(ConfirmMatch.class);

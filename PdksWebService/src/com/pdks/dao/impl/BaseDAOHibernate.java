@@ -52,12 +52,12 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#getObject(String, java.lang.Class)
+	 * @see BaseDAO#getObject(String, java.lang.Class)
 	 */
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.asm.dao.BaseDAO#getObjectNumericId(String, java.lang.Class)
+	 * @see BaseDAO#getObjectNumericId(String, java.lang.Class)
 	 */
 	public Object getObjectNumericId(String id, Class class1) {
 		Object ob = null;
@@ -72,7 +72,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.asm.dao.BaseDAO#getObjectByInnerObjectList(java.lang.String, java.lang.Object, java.lang.Class)
+	 * @see BaseDAO#getObjectByInnerObjectList(java.lang.String, java.lang.Object, java.lang.Class)
 	 */
 	public List getObjectByInnerObjectList(String fieldName, Object fieldValue, Class class1) {
 		List list = null;
@@ -87,7 +87,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.asm.dao.BaseDAO#getObjectByInnerObject(java.util.HashMap, java.lang.Class)
+	 * @see BaseDAO#getObjectByInnerObject(java.util.HashMap, java.lang.Class)
 	 */
 	public Object getObjectByInnerObject(HashMap fields, Class class1) {
 		List list = getObjectByInnerObjectList(fields, class1);
@@ -107,7 +107,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#getObject(String, String, String, java.lang.Class)
+	 * @see BaseDAO#getObject(String, String, String, java.lang.Class)
 	 */
 	public Object getObjectByInnerObject(String fieldName, Object fieldValue, Class class1) {
 		List list = getObjectByInnerObjectList(fieldName, fieldValue, class1);
@@ -118,7 +118,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#saveObject(java.lang.Object)
+	 * @see BaseDAO#saveObject(java.lang.Object)
 	 */
 	public void saveObject(Object object) {
 		if (object != null) {
@@ -129,7 +129,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#getObjectList(java.util.List, java.lang.Class)
+	 * @see BaseDAO#getObjectList(java.util.List, java.lang.Class)
 	 */
 	public List getObjectInnerNameList(String fieldName, List list, Class class1) {
 		List liste = new ArrayList();
@@ -153,7 +153,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#getObjectList(java.util.List, java.lang.Class)
+	 * @see BaseDAO#getObjectList(java.util.List, java.lang.Class)
 	 */
 	public List getObjectList(List list, Class class1) {
 		List liste = getObjectInnerNameList("id", list, class1);
@@ -163,7 +163,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#deleteObject(java.lang.Object)
+	 * @see BaseDAO#deleteObject(java.lang.Object)
 	 */
 	public void deleteObject(Object object) {
 		if (object != null) {
@@ -174,7 +174,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#getObjectStringId(String, java.lang.Class)
+	 * @see BaseDAO#getObjectStringId(String, java.lang.Class)
 	 */
 	public Object getObjectStringId(String id, Class class1) {
 		return getObjectByInnerObject("id", id, class1);
@@ -184,7 +184,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#deleteObjectList(java.util.List)
+	 * @see BaseDAO#deleteObjectList(java.util.List)
 	 */
 	public void deleteObjectList(List objectList) {
 		if (objectList != null && !objectList.isEmpty()) {
@@ -205,7 +205,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#getObjectListStringId(String, java.lang.Class)
+	 * @see BaseDAO#getObjectListStringId(String, java.lang.Class)
 	 */
 	public List getObjectList(Class class1) {
 		// String query = "from " + class1.getName() + " " + SELECT_KARAKTER;
@@ -235,7 +235,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#saveObjectList(java.util.List)
+	 * @see BaseDAO#saveObjectList(java.util.List)
 	 */
 	public void saveObjectList(List objectList) {
 		if (objectList != null && !objectList.isEmpty()) {
@@ -275,7 +275,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.asm.dao.BaseDAO#getObjectByInnerObjectMapInLogic(java.util.HashMap , java.lang.Class)
+	 * @see BaseDAO#getObjectByInnerObjectMapInLogic(java.util.HashMap , java.lang.Class)
 	 */
 	public TreeMap getObjectByInnerObjectMapInLogic(HashMap map, Class class1, boolean uzerineYaz) {
 		TreeMap treeMap = new TreeMap();
@@ -296,7 +296,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.asm.dao.BaseDAO#getObjectByInnerObjectMap(java.util.HashMap, java.lang.Class)
+	 * @see BaseDAO#getObjectByInnerObjectMap(java.util.HashMap, java.lang.Class)
 	 */
 	public TreeMap getObjectByInnerObjectMap(HashMap map, Class class1, boolean uzerineYaz) {
 		TreeMap treeMap = new TreeMap();
@@ -315,7 +315,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#getObjectMap(java.lang.Class, boolean)
+	 * @see BaseDAO#getObjectMap(java.lang.Class, boolean)
 	 */
 	public TreeMap getObjectMap(String method, Class class1, boolean uzerineYaz) {
 		TreeMap treeMap = new TreeMap();
@@ -328,7 +328,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#getObjectByInnerObjectMap(String, java.lang.Object, java.lang.Class)
+	 * @see BaseDAO#getObjectByInnerObjectMap(String, java.lang.Object, java.lang.Class)
 	 */
 	public TreeMap getObjectByInnerObjectMap(String method, String fieldName, Object fieldValue, Class class1, boolean uzerineYaz) {
 		TreeMap treeMap = new TreeMap();
@@ -340,7 +340,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#saveObjectAndList(java.lang.Object, java.util.List, java.util.List)
+	 * @see BaseDAO#saveObjectAndList(java.lang.Object, java.util.List, java.util.List)
 	 */
 	public void saveObjectAndList(Object object, List saveList, List deleteList) {
 		if (deleteList != null)
@@ -354,7 +354,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#saveObjectAndList(java.lang.Object, java.util.List)
+	 * @see BaseDAO#saveObjectAndList(java.lang.Object, java.util.List)
 	 */
 	public void saveObjectAndList(Object object, List saveDetayObjectList) {
 		saveObjectAndList(object, saveDetayObjectList, null);
@@ -364,7 +364,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.eig.dao.BaseDAO#saveAndDeleteObjectList(java.util.List, java.util.List)
+	 * @see BaseDAO#saveAndDeleteObjectList(java.util.List, java.util.List)
 	 */
 	public void saveAndDeleteObjectList(List saveList, List deleteList) {
 		saveObjectAndList(null, saveList, deleteList);
@@ -374,7 +374,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.abh.asm.dao.BaseDAO#deleteAndSaveObject(java.lang.Object[], java.lang.Object[])
+	 * @see BaseDAO#deleteAndSaveObject(java.lang.Object[], java.lang.Object[])
 	 */
 	public void deleteAndSaveObject(Object[] saveObjectArray, Object[] deleteObjectArray) {
 		if (deleteObjectArray != null) {

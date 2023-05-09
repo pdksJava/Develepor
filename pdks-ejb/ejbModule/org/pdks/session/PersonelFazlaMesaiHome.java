@@ -1401,17 +1401,17 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			}
 			sistemAdminUser = ortakIslemler.getSistemAdminUser(session);
 			HareketKGS cikis = hareket.getCikisHareket() != null ? hareket.getCikisHareket() : hareket;
-			Long abhCikisId = pdksEntityController.hareketEkle(manuelKapiKontrol(cikis.getKapiView()), hareket.getPersonel(), cikisZaman, sistemAdminUser, fazlaMesaiSistemOnayDurum.getId(), "", session);
-			if (abhCikisId != null) {
+			Long pdksCikisId = pdksEntityController.hareketEkle(manuelKapiKontrol(cikis.getKapiView()), hareket.getPersonel(), cikisZaman, sistemAdminUser, fazlaMesaiSistemOnayDurum.getId(), "", session);
+			if (pdksCikisId != null) {
 				HashMap parametreMap = new HashMap();
 
-				parametreMap.put("hareketTableId", abhCikisId);
+				parametreMap.put("hareketTableId", pdksCikisId);
 				if (session != null)
 					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 
 				List<HareketKGS> list = null;
 				try {
-					list = ortakIslemler.getHareketIdBilgileri(null, HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS + abhCikisId, HareketKGS.class, session);
+					list = ortakIslemler.getHareketIdBilgileri(null, HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS + pdksCikisId, HareketKGS.class, session);
 				} catch (Exception e) {
 					list = new ArrayList<HareketKGS>();
 					e.printStackTrace();

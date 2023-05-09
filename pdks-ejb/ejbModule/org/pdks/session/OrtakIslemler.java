@@ -7016,7 +7016,7 @@ public class OrtakIslemler implements Serializable {
 
 			Map<String, String> reqMap = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
 			String path = reqMap.containsKey("host") ? reqMap.get("host") : "";
-			if (level > 2 && path.toUpperCase().indexOf("ABH08448:8080") < 0 && path.indexOf("localhost:8080") < 0)
+			if (level > 2 && path.toUpperCase().indexOf("PDKS08448:8080") < 0 && path.indexOf("localhost:8080") < 0)
 				level = 2;
 			HashMap map = new HashMap();
 			List<Personel> personelleriList = yoneticiPersonelleri(user.getPdksPersonel().getId(), basTarih, bitTarih, session);

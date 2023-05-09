@@ -3347,8 +3347,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				if (personelIzinBakiye.getIzinSuresi() > 0.0d || !bakiyeYillikIzinMap.containsKey(personelIzinBakiye.getBaslangicZamani()))
 					bakiyeYillikIzinMap.put(personelIzinBakiye.getBaslangicZamani(), personelIzinBakiye);
 			}
-			// map.put(AbhEntityController.MAP_KEY_MAP, "getBaslangicZamani");
-			// TreeMap bakiyeYillikIzinMap = pdksEntityController.getObjectByInnerObjectMapInLogic(map, PersonelIzin.class, Boolean.FALSE);
+ 			// TreeMap bakiyeYillikIzinMap = pdksEntityController.getObjectByInnerObjectMapInLogic(map, PersonelIzin.class, Boolean.FALSE);
 			if (bakiyeYillikIzinMap.isEmpty() && izinTipi.getBakiyeDevirTipi().equals(IzinTipi.BAKIYE_DEVIR_SENELIK)) {
 				cal = Calendar.getInstance();
 				int buYil = PdksUtil.getDateField(new Date(), Calendar.YEAR);
