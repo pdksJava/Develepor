@@ -144,9 +144,17 @@ public class StartupAction implements Serializable {
 
 	public SkinBean skinBean = new SkinBean();
 
+	public Notice getHomePageNotice() {
+		return homePageNotice;
+	}
+
 	public void addIzinliCalisilanGunlerList(String str) {
 		if (!izinliCalisilanGunler.contains(str))
 			izinliCalisilanGunler.add(str);
+	}
+
+	public void setHomePageNotice(Notice homePageNotice) {
+		this.homePageNotice = homePageNotice;
 	}
 
 	public Map<String, MenuItem> getTopActiveMenuItemMap() {
@@ -994,13 +1002,5 @@ public class StartupAction implements Serializable {
 		}
 
 		return smtpTLS;
-	}
-
-	public Notice getHomePageNotice() {
-		return homePageNotice;
-	}
-
-	public void setHomePageNotice(Notice homePageNotice) {
-		this.homePageNotice = homePageNotice;
 	}
 }
