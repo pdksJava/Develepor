@@ -5,8 +5,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -14,7 +12,7 @@ import javax.persistence.Transient;
 import org.apache.log4j.Logger;
 
 @Entity(name = VardiyaSaat.TABLE_NAME)
-public class VardiyaSaat implements Serializable, Cloneable {
+public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -24,14 +22,11 @@ public class VardiyaSaat implements Serializable, Cloneable {
 	static Logger logger = Logger.getLogger(VardiyaSaat.class);
 
 	public static final String TABLE_NAME = "VARDIYA_SAAT";
-	public static final String COLUMN_NAME_ID = "ID";
 	public static final String COLUMN_NAME_NORMAL_SURE = "NORMAL_SURE";
 	public static final String COLUMN_NAME_CALISMA_SURESI = "CALISMA_SURESI";
 	public static final String COLUMN_NAME_RESMI_TATIL_SURESI = "RESMI_TATIL_SURESI";
 	public static final String COLUMN_NAME_AKSAM_VARDIYA = "AKSAM_VARDIYA_SURESI";
 	public static final String COLUMN_NAME_GUNCELLEME_TARIHI = "GUNCELLEME_TARIHI";
-
-	private Long id;
 
 	private double normalSure = 0d, calismaSuresi = 0d, resmiTatilSure = 0d, aksamVardiyaSaatSayisi = 0d;
 
@@ -42,17 +37,6 @@ public class VardiyaSaat implements Serializable, Cloneable {
 	public VardiyaSaat() {
 		super();
 		this.guncellendi = false;
-	}
-
-	@Id
-	@GeneratedValue
-	@Column(name = COLUMN_NAME_ID)
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@Column(name = COLUMN_NAME_NORMAL_SURE)
@@ -116,17 +100,6 @@ public class VardiyaSaat implements Serializable, Cloneable {
 
 	public void setGuncellendi(boolean guncellendi) {
 		this.guncellendi = guncellendi;
-	}
-
-	@Transient
-	public Object clone() {
-		try {
-
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			// bu class cloneable oldugu icin buraya girilmemeli...
-			throw new InternalError();
-		}
 	}
 
 }

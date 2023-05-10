@@ -37,7 +37,6 @@ import org.pdks.entity.IzinHakedisHakki;
 import org.pdks.entity.IzinIstirahat;
 import org.pdks.entity.IzinTipiBirlesikHaric;
 import org.pdks.entity.IzinTipiMailAdres;
-import org.pdks.entity.KatSayi;
 import org.pdks.entity.LDAPDomain;
 import org.pdks.entity.MailUser;
 import org.pdks.entity.MenuIliski;
@@ -48,7 +47,6 @@ import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelIzin;
-import org.pdks.entity.ServisData;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.SkinBean;
 import org.pdks.entity.Tanim;
@@ -221,8 +219,6 @@ public class StartupAction implements Serializable {
 			list.add(IzinTipiBirlesikHaric.class);
 			list.add(IzinHakedisHakki.class);
 			list.add(IzinTipiMailAdres.class);
-			list.add(KatSayi.class);
-			list.add(LDAPDomain.class);
 			list.add(MailUser.class);
 			list.add(MenuIliski.class);
 			list.add(Notice.class);
@@ -236,20 +232,21 @@ public class StartupAction implements Serializable {
 			list.add(VardiyaIzin.class);
 			list.add(VardiyaYemekIzin.class);
 			list.add(YemekKartsiz.class);
-			list.add(ServisData.class);
+			// list.add(ServisData.class);
+ 			pdksEntityController.savePrepareTableID(UserRoles.class, entityManager, session);
+
 			for (Class class1 : list) {
 				long adet = pdksEntityController.savePrepareTableID(class1, entityManager, session);
 				toplamAdet += adet;
+				if (adet > 0)
+					session.flush();
 			}
-
 		} catch (Exception e) {
 			logger.error(e);
 		}
-		if (toplamAdet > 0) {
-			session.flush();
+		if (toplamAdet > 0)
 			logger.info(toplamAdet + " adet kayıt id güncellendi.");
-			session.clear();
-		}
+
 		list = null;
 	}
 

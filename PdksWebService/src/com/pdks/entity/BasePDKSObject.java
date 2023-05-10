@@ -1,4 +1,4 @@
-package org.pdks.entity;
+package com.pdks.entity;
 
 import java.io.Serializable;
 
@@ -29,14 +29,6 @@ public abstract class BasePDKSObject implements Serializable, Cloneable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	@Transient
-	public Object clone() {
-		Object object = cloneEmpty();
-
-		return object;
-
 	}
 
 	@Transient

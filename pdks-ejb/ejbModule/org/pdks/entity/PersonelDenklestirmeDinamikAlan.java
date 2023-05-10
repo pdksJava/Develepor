@@ -5,8 +5,6 @@ import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -19,7 +17,7 @@ import org.hibernate.annotations.FetchMode;
 
 @Entity(name = PersonelDenklestirmeDinamikAlan.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PersonelDenklestirmeDinamikAlan.COLUMN_NAME_PERSONEL_DENKLESTIRME, PersonelDenklestirmeDinamikAlan.COLUMN_NAME_DENKLESTIRME_ALAN_DURUM }) })
-public class PersonelDenklestirmeDinamikAlan implements Serializable {
+public class PersonelDenklestirmeDinamikAlan extends BasePDKSObject implements Serializable {
 
 	/**
 	 * 
@@ -29,14 +27,11 @@ public class PersonelDenklestirmeDinamikAlan implements Serializable {
 	static Logger logger = Logger.getLogger(PersonelDenklestirmeDinamikAlan.class);
 
 	public static final String TABLE_NAME = "PERS_DENK_DINAMIK_ALAN";
-	public static final String COLUMN_NAME_ID = "ID";
 	public static final String COLUMN_NAME_PERSONEL_DENKLESTIRME = "PERS_DENK_ID";
 	public static final String COLUMN_NAME_ALAN = "ALAN_ID";
 	public static final String COLUMN_NAME_DENKLESTIRME_ALAN_DURUM = "ALAN_DURUM";
 	public static final String COLUMN_NAME_DENKLESTIRME_ISLEM_DURUM = "ISLEM_DURUM";
 	public static final String TIPI_DENKLESTIRME_DEVAMLILIK_PRIMI = "devamlilikPrimi";
-
-	private Long id;
 
 	private Integer version = 0;
 
@@ -58,17 +53,6 @@ public class PersonelDenklestirmeDinamikAlan implements Serializable {
 		if (alan != null) {
 			this.durum = alan.getErpKodu() != null && alan.getErpKodu().equals("1");
 		}
-	}
-
-	@Id
-	@GeneratedValue
-	@Column(name = COLUMN_NAME_ID)
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@Column(name = "VERSION")

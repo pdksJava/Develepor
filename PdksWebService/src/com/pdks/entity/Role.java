@@ -6,8 +6,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -20,15 +18,14 @@ import org.hibernate.annotations.FetchMode;
 
 @Entity(name = Role.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { Role.COLUMN_NAME_ROLE_NAME }) })
-public class Role implements Serializable {
+public class Role extends BasePDKSObject implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7832116917666289661L;
 	public static final String TABLE_NAME = "ROLE";
-	public static final String COLUMN_NAME_ID = "ID";
-	public static final String COLUMN_NAME_ROLE_NAME = "ROLENAME";
+ 	public static final String COLUMN_NAME_ROLE_NAME = "ROLENAME";
 	public static final String COLUMN_NAME_DEPARTMAN = "DEPARTMAN_ID";
 	public static final String COLUMN_NAME_STATUS = "STATUS";
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
@@ -48,23 +45,13 @@ public class Role implements Serializable {
 	public static final String TIPI_OPERATOR_SSK_IZIN = "operatorSSKIzin";
 	public static final String TIPI_YEMEKHANE = "yemekHane";
 
-	private Integer id;
-	private String rolename;
+ 	private String rolename;
 	private String aciklama;
 	private Set<Role> groups;
 	private Boolean status = Boolean.TRUE;
 	private Departman departman;
 
-	@Id
-	@GeneratedValue
-	@Column(name = "ID")
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
+ 
 
 	@Column(name = COLUMN_NAME_ROLE_NAME)
 	public String getRolename() {

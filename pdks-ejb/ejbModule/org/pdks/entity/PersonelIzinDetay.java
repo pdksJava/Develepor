@@ -5,8 +5,6 @@ import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -14,14 +12,14 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.log4j.Logger;
-import org.pdks.session.PdksUtil;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.session.PdksUtil;
 
 //@Entity
 @Entity(name = PersonelIzinDetay.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PersonelIzinDetay.COLUMN_NAME_IZIN, PersonelIzinDetay.COLUMN_NAME_HAKEDIS_IZIN }) })
-public class PersonelIzinDetay implements Serializable, Cloneable {
+public class PersonelIzinDetay extends BasePDKSObject implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -29,11 +27,8 @@ public class PersonelIzinDetay implements Serializable, Cloneable {
 	private static final long serialVersionUID = -7487009656840444082L;
 	static Logger logger = Logger.getLogger(PersonelIzinDetay.class);
 	public static final String TABLE_NAME = "PERSONELIZINDETAY";
-	public static final String COLUMN_NAME_ID = "ID";
 	public static final String COLUMN_NAME_IZIN = "IZIN_ID";
 	public static final String COLUMN_NAME_HAKEDIS_IZIN = "HAKEDIS_IZIN_ID";
-
-	private Long id;
 
 	private PersonelIzin hakEdisIzin;
 
@@ -51,17 +46,6 @@ public class PersonelIzinDetay implements Serializable, Cloneable {
 		this.hakEdisIzin = hakEdisIzin;
 		this.personelIzin = personelIzin;
 		this.izinMiktari = izinMiktari;
-	}
-
-	@Id
-	@GeneratedValue
-	@Column(name = COLUMN_NAME_ID)
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -93,16 +77,6 @@ public class PersonelIzinDetay implements Serializable, Cloneable {
 
 	public void setIzinMiktari(double izinMiktari) {
 		this.izinMiktari = izinMiktari;
-	}
-
-	@Transient
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			// bu class cloneable oldugu icin buraya girilmemeli...
-			throw new InternalError();
-		}
 	}
 
 	@Transient

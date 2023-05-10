@@ -3,10 +3,7 @@ package org.pdks.entity;
 import java.io.Serializable;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -18,18 +15,15 @@ import org.hibernate.annotations.FetchMode;
 
 @Entity(name = VardiyaYemekIzin.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { VardiyaYemekIzin.COLUMN_NAME_VARDIYA, VardiyaYemekIzin.COLUMN_NAME_YEMEK_IZIN }) })
-public class VardiyaYemekIzin implements Serializable {
+public class VardiyaYemekIzin extends BasePDKSObject implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6290964256777098002L;
 	public static final String TABLE_NAME = "VARDIYA_YEMEK_IZIN";
-	public static final String COLUMN_NAME_ID = "ID";
 	public static final String COLUMN_NAME_VARDIYA = "VARDIYA_ID";
 	public static final String COLUMN_NAME_YEMEK_IZIN = "YEMEK_IZIN_ID";
-
-	private Long id;
 
 	private Vardiya vardiya;
 
@@ -43,17 +37,6 @@ public class VardiyaYemekIzin implements Serializable {
 		super();
 		this.vardiya = vardiya;
 		this.yemekIzin = yemekIzin;
-	}
-
-	@Id
-	@GeneratedValue
-	@Column(name = COLUMN_NAME_ID)
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)

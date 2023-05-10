@@ -950,9 +950,12 @@ public class PdksEntityController implements Serializable {
 
 					}
 					session.flush();
-				}
+					kayitAdet = saveList.size();
+				} else
+					kayitAdet = 0;
 			} else
 				kayitAdet = 0L;
+
 		}
 		list = null;
 		if (kayitAdet > 0)

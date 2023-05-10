@@ -6,8 +6,6 @@ import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -15,19 +13,18 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.pdks.security.entity.User;
-import org.pdks.session.PdksUtil;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.security.entity.User;
+import org.pdks.session.PdksUtil;
 
 @Entity(name = "NOTICE")
-public class Notice implements Serializable, Cloneable {
+public class Notice extends BasePDKSObject implements Serializable, Cloneable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3459223276596848291L;
-	// seam-gen attributes (you should probably edit these)
-	private Long id;
+
 	private Integer version = 0;
 	private String name = "";
 	private String value = "";
@@ -35,17 +32,6 @@ public class Notice implements Serializable, Cloneable {
 	private Boolean active = Boolean.TRUE;
 	private User changeUser;
 	private Date changeDate;
-
-	@Id
-	@GeneratedValue
-	@Column(name = "ID")
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	@Column(name = "VERSION")
 	public Integer getVersion() {
@@ -122,14 +108,4 @@ public class Notice implements Serializable, Cloneable {
 		return aciklama;
 	}
 
-	@Transient
-	public Object clone() {
-		try {
-
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			// bu class cloneable oldugu icin buraya girilmemeli...
-			throw new InternalError();
-		}
-	}
 }

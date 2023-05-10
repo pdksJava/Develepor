@@ -18,8 +18,6 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import com.pdks.genel.model.PdksUtil;
-
 @MappedSuperclass
 public abstract class BaseObject implements Serializable, Cloneable {
 
@@ -39,15 +37,7 @@ public abstract class BaseObject implements Serializable, Cloneable {
 	protected User guncelleyenUser, olusturanUser;
 	protected Date olusturmaTarihi = new Date(), guncellemeTarihi;
 	protected boolean checkBoxDurum = Boolean.FALSE;
-
-	@Column(name = COLUMN_NAME_DURUM)
-	public Boolean getDurum() {
-		return durum;
-	}
-
-	public void setDurum(Boolean durum) {
-		this.durum = durum;
-	}
+	protected String style = VardiyaGun.STYLE_CLASS_ODD, titleStr = "";
 
 	@Id
 	@GeneratedValue
@@ -58,6 +48,15 @@ public abstract class BaseObject implements Serializable, Cloneable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	@Column(name = COLUMN_NAME_DURUM)
+	public Boolean getDurum() {
+		return durum;
+	}
+
+	public void setDurum(Boolean durum) {
+		this.durum = durum;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -111,8 +110,6 @@ public abstract class BaseObject implements Serializable, Cloneable {
 		this.checkBoxDurum = checkBoxDurum;
 	}
 
-	 
-
 	@Transient
 	public User getSonIslemYapan() {
 		return guncelleyenUser != null ? guncelleyenUser : olusturanUser;
@@ -124,10 +121,12 @@ public abstract class BaseObject implements Serializable, Cloneable {
 	}
 
 	@Transient
-	public String getSonIslemTarihiStr() {
-		Date date = getSonIslemTarihi();
-		String str = date != null ? PdksUtil.convertToDateString(date, "dd/MM/yyyy HH:mm:ss") : "";
-		return str;
+	public String getStyle() {
+		return style;
+	}
+
+	public void setStyle(String style) {
+		this.style = style;
 	}
 
 	@Transient
@@ -136,11 +135,22 @@ public abstract class BaseObject implements Serializable, Cloneable {
 	}
 
 	@Transient
+	public String getTitleStr() {
+		return titleStr;
+	}
+
+	public void setTitleStr(String titleStr) {
+		this.titleStr = titleStr;
+	}
+
+	@Transient
 	public Object clone() {
 		try {
-			this.setGuncelleyenUser(null);
-			this.setGuncellemeTarihi(null);
-			return super.clone();
+			BaseObject object = (BaseObject) super.clone();
+			object.setGuncelleyenUser(null);
+			object.setGuncellemeTarihi(null);
+			object.setId(null);
+			return object;
 		} catch (CloneNotSupportedException e) {
 			// bu class cloneable oldugu icin buraya girilmemeli...
 			throw new InternalError();

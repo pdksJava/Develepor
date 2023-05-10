@@ -3,10 +3,7 @@ package org.pdks.security.entity;
 import java.io.Serializable;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -14,37 +11,24 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.entity.BasePDKSObject;
 import org.pdks.entity.Tanim;
 
 @Entity(name = UserTesis.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { UserTesis.COLUMN_NAME_USER, UserTesis.COLUMN_NAME_TESIS }) })
-public class UserTesis implements Serializable {
+public class UserTesis extends BasePDKSObject implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6676275523552065087L;
 	public static final String TABLE_NAME = "USER_TESIS";
-	public static final String COLUMN_NAME_ID = "ID";
 	public static final String COLUMN_NAME_USER = "USER_ID";
 	public static final String COLUMN_NAME_TESIS = "TESIS_ID";
-
-	private Long id;
 
 	private User user;
 
 	private Tanim tesis;
-
-	@Id
-	@GeneratedValue
-	@Column(name = COLUMN_NAME_ID)
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_USER, nullable = false)

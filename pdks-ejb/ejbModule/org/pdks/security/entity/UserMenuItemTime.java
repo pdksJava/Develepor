@@ -7,8 +7,6 @@ import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -18,11 +16,12 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.entity.BasePDKSObject;
 import org.pdks.entity.MenuItem;
 
 @Entity(name = UserMenuItemTime.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { UserMenuItemTime.COLUMN_NAME_USER, UserMenuItemTime.COLUMN_NAME_MENU, }) })
-public class UserMenuItemTime implements Serializable {
+public class UserMenuItemTime extends BasePDKSObject implements Serializable {
 
 	/**
 	 * 
@@ -30,14 +29,11 @@ public class UserMenuItemTime implements Serializable {
 	private static final long serialVersionUID = 8339875569540893616L;
 
 	public static final String TABLE_NAME = "USER_MENUITEM_TIME";
-	public static final String COLUMN_NAME_ID = "ID";
-	public static final String COLUMN_NAME_USER = "USER_ID";
+ 	public static final String COLUMN_NAME_USER = "USER_ID";
 	public static final String COLUMN_NAME_MENU = "MENU_ID";
 	public static final String COLUMN_NAME_LAST_PARAMETRE = "LAST_PARAMETRE";
 
-	private Long id;
-
-	private User user;
+ 	private User user;
 
 	private MenuItem menu;
 
@@ -60,17 +56,7 @@ public class UserMenuItemTime implements Serializable {
 		this.useCount = new BigDecimal(0L);
 		this.lastTime = new Date();
 	}
-
-	@Id
-	@GeneratedValue
-	@Column(name = COLUMN_NAME_ID)
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
+ 
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_USER, nullable = false)

@@ -6,8 +6,6 @@ import java.util.HashMap;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -20,7 +18,7 @@ import org.hibernate.annotations.FetchMode;
 
 @Entity(name = PersonelDenklestirmeBordro.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PersonelDenklestirmeBordro.COLUMN_NAME_PERSONEL_DENKLESTIRME }) })
-public class PersonelDenklestirmeBordro implements Serializable {
+public class PersonelDenklestirmeBordro extends BasePDKSObject implements Serializable {
 
 	/**
 	 * 
@@ -30,13 +28,10 @@ public class PersonelDenklestirmeBordro implements Serializable {
 	static Logger logger = Logger.getLogger(PersonelDenklestirmeBordro.class);
 
 	public static final String TABLE_NAME = "PERS_DENK_BORDRO";
-	public static final String COLUMN_NAME_ID = "ID";
 	public static final String COLUMN_NAME_PERSONEL_DENKLESTIRME = "PERS_DENK_ID";
 	public static final String COLUMN_NAME_NORMAL_GUN = "NORMAL_GUN_ADET";
 	public static final String COLUMN_NAME_HAFTA_TATIL = "HAFTA_TATIL_ADET";
 	public static final String COLUMN_NAME_G_HAFTA_TATIL = "TATIL_ADET";
-
-	private Long id;
 
 	private PersonelDenklestirme personelDenklestirme;
 
@@ -57,17 +52,6 @@ public class PersonelDenklestirmeBordro implements Serializable {
 		this.normalGunAdet = normalGunAdet;
 		this.haftaTatilAdet = haftaTatilAdet;
 		this.tatilAdet = tatilAdet;
-	}
-
-	@Id
-	@GeneratedValue
-	@Column(name = COLUMN_NAME_ID)
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -131,12 +115,14 @@ public class PersonelDenklestirmeBordro implements Serializable {
 		Double value = detay != null ? detay.doubleValue() : 0.0d;
 		return value;
 	}
+
 	@Transient
 	public Double getEksikCalismaSure() {
 		Double detay = personelDenklestirme != null ? personelDenklestirme.getEksikCalismaSure() : null;
 		Double value = detay != null ? detay.doubleValue() : 0.0d;
 		return value;
 	}
+
 	@Transient
 	public Double getResmiTatilMesai() {
 		Double detay = personelDenklestirme != null ? personelDenklestirme.getResmiTatilSure() : null;
@@ -148,7 +134,7 @@ public class PersonelDenklestirmeBordro implements Serializable {
 	public Double getHaftaTatilMesai() {
 		Double detay = personelDenklestirme != null ? personelDenklestirme.getHaftaCalismaSuresi() : null;
 		Double value = detay != null ? detay.doubleValue() : 0.0d;
- 		return value;
+		return value;
 	}
 
 	@Transient
