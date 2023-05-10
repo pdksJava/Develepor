@@ -17,12 +17,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
-import org.pdks.entity.HareketKGS;
-import org.pdks.entity.KapiView;
-import org.pdks.entity.Liste;
-import org.pdks.entity.PersonelKGS;
-import org.pdks.entity.PersonelView;
-import org.pdks.security.entity.User;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.engine.SessionImplementor;
@@ -31,6 +25,13 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Startup;
+import org.pdks.entity.BasePDKSObject;
+import org.pdks.entity.HareketKGS;
+import org.pdks.entity.KapiView;
+import org.pdks.entity.Liste;
+import org.pdks.entity.PersonelKGS;
+import org.pdks.entity.PersonelView;
+import org.pdks.security.entity.User;
 
 @Startup(depends = { "entityManager" })
 @Scope(ScopeType.APPLICATION)
@@ -816,13 +817,13 @@ public class PdksEntityController implements Serializable {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-		StringBuffer sp = new StringBuffer("SP_HAREKET_SIL"  );
+		StringBuffer sp = new StringBuffer("SP_HAREKET_SIL");
 		veriMap.put("kgsId", kgsId);
 		veriMap.put("pdksId", pdksId);
 		veriMap.put("guncelleyenId", guncelleyen.getId());
 		veriMap.put("nedenId", nedenId);
 		veriMap.put("aciklama", aciklama);
- 		if (session != null)
+		if (session != null)
 			veriMap.put(MAP_KEY_SESSION, session);
 		Long sonuc = 0L;
 		try {
@@ -883,6 +884,80 @@ public class PdksEntityController implements Serializable {
 		}
 		return sonuc;
 
+	}
+
+	/**
+	 * @param class1
+	 * @param em1
+	 * @param session
+	 * @return
+	 * @throws Exception
+	 */
+	public Long savePrepareTableID(Class class1, EntityManager em1, Session session) throws Exception {
+		HashMap fields = new HashMap();
+		if (session != null)
+			fields.put(MAP_KEY_SESSION, session);
+		List list = getObjectByInnerObjectList(fields, class1);
+		long kayitAdet = list.size();
+		if (kayitAdet > 0) {
+			if (kayitAdet > 1)
+				list = PdksUtil.sortListByAlanAdi(list, "id", true);
+			Long id = (Long) PdksUtil.getMethodObject(list.get(0), "getId", null);
+			if (id.longValue() != kayitAdet) {
+				kayitAdet = 0;
+				list = PdksUtil.sortListByAlanAdi(list, "id", false);
+				List saveList = new ArrayList(), removeList = new ArrayList();
+				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+					Object object = (Object) iterator.next();
+					kayitAdet++;
+					id = (Long) PdksUtil.getMethodObject(object, "getId", null);
+					if (id.longValue() != kayitAdet) {
+						removeList.add(object);
+						BasePDKSObject basePDKSObject = (BasePDKSObject) PdksUtil.getMethodObject(object, "cloneEmpty", null);
+						if (basePDKSObject != null)
+							saveList.add(basePDKSObject);
+					}
+				}
+				if (!saveList.isEmpty() && removeList.size() == saveList.size()) {
+					kayitAdet = saveList.size();
+					for (Object object : removeList) {
+						if (object != null) {
+							id = (Long) PdksUtil.getMethodObject(object, "getId", null);
+							if (id != null) {
+								deleteObject(session, em1, object);
+							} else {
+								saveList.clear();
+							}
+						}
+
+					}
+					session.flush();
+					session.clear();
+					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+					if (session != null)
+						veriMap.put(MAP_KEY_SESSION, session);
+					StringBuffer sp = new StringBuffer("SP_CHECKIDENT_VIEW");
+					execSP(veriMap, sp);
+					session.flush();
+					session.clear();
+					for (Object object : saveList) {
+						if (object != null) {
+							id = (Long) PdksUtil.getMethodObject(object, "getId", null);
+							if (id == null) {
+								save(object, session);
+							}
+						}
+
+					}
+					session.flush();
+				}
+			} else
+				kayitAdet = 0L;
+		}
+		list = null;
+		if (kayitAdet > 0)
+			logger.info(kayitAdet + " " + class1.getName() + " düzenlendi.");
+		return kayitAdet;
 	}
 
 	/**
