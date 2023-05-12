@@ -19,12 +19,13 @@ import org.pdks.security.entity.User;
 import org.pdks.session.PdksUtil;
 
 @Entity(name = "NOTICE")
-public class Notice extends BasePDKSObject implements Serializable, Cloneable {
+public class Notice  extends BasePDKSObject  implements Serializable, Cloneable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3459223276596848291L;
-
+	// seam-gen attributes (you should probably edit these)
+	 
 	private Integer version = 0;
 	private String name = "";
 	private String value = "";
@@ -32,6 +33,8 @@ public class Notice extends BasePDKSObject implements Serializable, Cloneable {
 	private Boolean active = Boolean.TRUE;
 	private User changeUser;
 	private Date changeDate;
+
+	 
 
 	@Column(name = "VERSION")
 	public Integer getVersion() {
@@ -108,4 +111,14 @@ public class Notice extends BasePDKSObject implements Serializable, Cloneable {
 		return aciklama;
 	}
 
+	@Transient
+	public Object clone() {
+		try {
+
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			// bu class cloneable oldugu icin buraya girilmemeli...
+			throw new InternalError();
+		}
+	}
 }

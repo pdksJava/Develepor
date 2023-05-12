@@ -41,7 +41,6 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL = "HAREKET_KAYDI_VARDIYA_BUL";
 	public static final String COLUMN_NAME_MAAS_ODEME_TIPI = "MAAS_ODEME_TIPI";
 
- 
 	private String aciklama = "";
 	private double haftaIci = 0.0d, haftaSonu = 0.0d, arife = 0.0d, izin = 9.0d, izinhaftaSonu = 0.0d, negatifBakiyeDenkSaat = 0.0d;
 
@@ -53,8 +52,6 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	private User guncelleyenUser, olusturanUser;
 	private Date olusturmaTarihi = new Date(), guncellemeTarihi;
-
- 
 
 	@Column(name = "ACIKLAMA")
 	public String getAciklama() {

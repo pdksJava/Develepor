@@ -32,14 +32,6 @@ public abstract class BasePDKSObject implements Serializable, Cloneable {
 	}
 
 	@Transient
-	public Object clone() {
-		Object object = cloneEmpty();
-
-		return object;
-
-	}
-
-	@Transient
 	public Object cloneEmpty() {
 		BasePDKSObject object = null;
 		try {

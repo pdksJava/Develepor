@@ -27,6 +27,7 @@ public class MailGrubu extends BasePDKSObject implements Serializable, Cloneable
 	public static final String TIPI_CC = "CC";
 	public static final String TIPI_BCC = "BCC";
 	public static final String TIPI_HAREKET = "HRK";
+ 
 
 	private String tipi, email;
 

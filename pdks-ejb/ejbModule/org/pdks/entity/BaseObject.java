@@ -24,6 +24,7 @@ public abstract class BaseObject extends BasePDKSObject implements Serializable,
 	/**
 	 * 
 	 */
+
 	public static final String COLUMN_NAME_DURUM = "DURUM";
 	public static final String COLUMN_NAME_OLUSTURAN = "OLUSTURANUSER_ID";
 	public static final String COLUMN_NAME_GUNCELLEYEN = "GUNCELLEYENUSER_ID";
@@ -31,6 +32,7 @@ public abstract class BaseObject extends BasePDKSObject implements Serializable,
 	public static final String COLUMN_NAME_GUNCELLEME_TARIHI = "GUNCELLEMETARIHI";
 
 	private static final long serialVersionUID = 4940573223065841991L;
+
 	protected Boolean durum = Boolean.TRUE;
 	protected User guncelleyenUser, olusturanUser;
 	protected Date olusturmaTarihi = new Date(), guncellemeTarihi;
@@ -142,15 +144,13 @@ public abstract class BaseObject extends BasePDKSObject implements Serializable,
 		this.titleStr = titleStr;
 	}
 
-	@Override
 	@Transient
 	public Object clone() {
 		try {
-			BaseObject object = (BaseObject) super.clone();
-			object.setGuncelleyenUser(null);
-			object.setGuncellemeTarihi(null);
-			return object;
-		} catch (Exception e) {
+			this.setGuncelleyenUser(null);
+			this.setGuncellemeTarihi(null);
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
 			// bu class cloneable oldugu icin buraya girilmemeli...
 			throw new InternalError();
 		}
@@ -161,7 +161,7 @@ public abstract class BaseObject extends BasePDKSObject implements Serializable,
 		try {
 			Object object = super.clone();
 			return object;
-		} catch (Exception e) {
+		} catch (CloneNotSupportedException e) {
 			// bu class cloneable oldugu icin buraya girilmemeli...
 			throw new InternalError();
 		}

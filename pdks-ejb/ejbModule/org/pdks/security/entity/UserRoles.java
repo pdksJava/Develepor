@@ -15,19 +15,23 @@ import org.pdks.entity.BasePDKSObject;
 
 @Entity(name = UserRoles.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { UserRoles.COLUMN_NAME_USER, UserRoles.COLUMN_NAME_ROLE }) })
-public class UserRoles extends BasePDKSObject implements Serializable {
+public class UserRoles  extends BasePDKSObject implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1425317555516469129L;
 	public static final String TABLE_NAME = "USERROLES";
-	public static final String COLUMN_NAME_USER = "USERID";
+ 	public static final String COLUMN_NAME_USER = "USERID";
 	public static final String COLUMN_NAME_ROLE = "ROLEID";
+
+ 
 
 	private User user;
 
 	private Role role;
+
+ 
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_USER, nullable = false)

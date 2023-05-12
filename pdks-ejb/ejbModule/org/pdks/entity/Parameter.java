@@ -34,7 +34,7 @@ public class Parameter extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final String COLUMN_NAME_HELP_DESK = "HDSK";
 
- 	private Integer version = 0;
+	private Integer version = 0;
 	private String name = "";
 	private String value = "";
 	private String description = "";
@@ -42,8 +42,6 @@ public class Parameter extends BasePDKSObject implements Serializable {
 	private User changeUser;
 	private Date changeDate;
 	private Boolean guncelle = Boolean.TRUE;
-
- 
 
 	@Column(name = "VERSION")
 	public Integer getVersion() {

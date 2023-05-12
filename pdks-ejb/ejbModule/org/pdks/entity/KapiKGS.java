@@ -27,9 +27,9 @@ public class KapiKGS extends BasePDKSObject implements Serializable {
 	 */
 	private static final long serialVersionUID = 1510062205167709853L;
 
-	public static final String TABLE_NAME = "KAPI_KGS";
-	// public static final String TABLE_NAME = "KAPI_SIRKET_KGS";
-	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
+	// public static final String TABLE_NAME = "KAPI_KGS";
+	public static final String TABLE_NAME = "KAPI_SIRKET_KGS";
+ 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final String COLUMN_NAME_KGS_ID = "KGS_ID";
 	public static final String COLUMN_NAME_KGS_SIRKET = "KGS_SIRKET_ID";
 

@@ -23,6 +23,7 @@ public class CalismaModeliAy extends BasePDKSObject implements Serializable {
 	 */
 	private static final long serialVersionUID = 4015750209129001721L;
 	public static final String TABLE_NAME = "CALISMA_MODELI_AY";
+
 	public static final String COLUMN_NAME_DURUM = "DURUM";
 	public static final String COLUMN_NAME_OLUSTURAN = "OLUSTURANUSER_ID";
 	public static final String COLUMN_NAME_GUNCELLEYEN = "GUNCELLEYENUSER_ID";

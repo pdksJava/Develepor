@@ -24,10 +24,10 @@ public class PersonelKGS extends BasePDKSObject implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -258104220283554275L;
-	public static final String TABLE_NAME = "PERSONEL_KGS";
-	// public static final String TABLE_NAME = "PERSONEL_SIRKET_KGS";
+	// public static final String TABLE_NAME = "PERSONEL_KGS";
+	public static final String TABLE_NAME = "PERSONEL_SIRKET_KGS";
 
-	public static final String COLUMN_NAME_SICIL_NO = "PERSONEL_NO";
+ 	public static final String COLUMN_NAME_SICIL_NO = "PERSONEL_NO";
 	public static final String COLUMN_NAME_KIMLIK_NO = "TC_KIMLIK_NO";
 	public static final String COLUMN_NAME_PERSONEL_ID = "PERSONEL_ID";
 	public static final String COLUMN_NAME_KULLANICI_ID = "KULLANICI_ID";

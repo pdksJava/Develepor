@@ -17,6 +17,7 @@ public class ServiceData extends BasePDKSObject implements Serializable {
 	private static final long serialVersionUID = -6386015906961813899L;
 
 	public static final String TABLE_NAME = "SERVICE_DATA";
+
 	public static final String COLUMN_NAME_OLUSTURMA_TARIHI = "TARIH";
 	public static final String COLUMN_NAME_FONKSIYON_ADI = "FONKSIYON_ADI";
 	public static final String COLUMN_NAME_ICERIK_IN = "ICERIK_IN";

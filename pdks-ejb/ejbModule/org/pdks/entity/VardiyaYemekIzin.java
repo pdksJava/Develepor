@@ -15,15 +15,17 @@ import org.hibernate.annotations.FetchMode;
 
 @Entity(name = VardiyaYemekIzin.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { VardiyaYemekIzin.COLUMN_NAME_VARDIYA, VardiyaYemekIzin.COLUMN_NAME_YEMEK_IZIN }) })
-public class VardiyaYemekIzin extends BasePDKSObject implements Serializable {
+public class VardiyaYemekIzin  extends BasePDKSObject implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6290964256777098002L;
 	public static final String TABLE_NAME = "VARDIYA_YEMEK_IZIN";
-	public static final String COLUMN_NAME_VARDIYA = "VARDIYA_ID";
+ 	public static final String COLUMN_NAME_VARDIYA = "VARDIYA_ID";
 	public static final String COLUMN_NAME_YEMEK_IZIN = "YEMEK_IZIN_ID";
+
+ 
 
 	private Vardiya vardiya;
 
@@ -39,6 +41,7 @@ public class VardiyaYemekIzin extends BasePDKSObject implements Serializable {
 		this.yemekIzin = yemekIzin;
 	}
 
+ 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_VARDIYA)
 	@Fetch(FetchMode.JOIN)

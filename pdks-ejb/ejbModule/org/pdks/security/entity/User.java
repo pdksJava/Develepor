@@ -47,7 +47,7 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	static Logger logger = Logger.getLogger(User.class);
 
 	public static final String TABLE_NAME = "PDKSUSER";
-
+ 
 	public static final String COLUMN_NAME_USERNAME = "KULLANICI_ADI";
 	public static final String COLUMN_NAME_PERSONEL = "PERSONEL_ID";
 	public static final String COLUMN_NAME_DURUM = "DURUM";
@@ -596,6 +596,16 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 		cal.set(cal.get(Calendar.YEAR), ay, 1);
 		String adi = PdksUtil.convertToDateString(cal.getTime(), "MMMMM");
 		return adi;
+	}
+
+	@Transient
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			// bu class cloneable oldugu icin buraya girilmemeli...
+			throw new InternalError();
+		}
 	}
 
 	@Transient

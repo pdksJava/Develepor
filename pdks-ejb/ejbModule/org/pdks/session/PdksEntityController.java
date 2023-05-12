@@ -702,39 +702,6 @@ public class PdksEntityController implements Serializable {
 	 * @param aciklama
 	 * @return
 	 */
-	public long hareketEkle(KapiView kapi, PersonelView personel, Date zaman, User guncelleyen, long nedenId, String aciklama, Session session) {
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-		StringBuffer sp = new StringBuffer("SP_HAREKET_EKLE");
-		veriMap.put("kapi", kapi.getId());
-		veriMap.put("personel", personel.getId());
-		veriMap.put("zaman", zaman);
-		veriMap.put("guncelleyenId", guncelleyen.getId());
-		veriMap.put("nedenId", nedenId);
-		veriMap.put("aciklama", aciklama);
-		if (session != null)
-			veriMap.put(MAP_KEY_SESSION, session);
-		Long sonuc = null;
-		try {
-			List<BigDecimal> list = execSPList(veriMap, sp, null);
-			if (!list.isEmpty())
-				sonuc = list.get(0).longValue();
-		} catch (Exception e) {
-			sonuc = 0L;
-		}
-		return sonuc;
-	}
-
-	/**
-	 * @param kapi
-	 * @param personel
-	 * @param zaman
-	 * @param guncelleyen
-	 * @param nedenId
-	 * @param aciklama
-	 * @return
-	 */
 	public HareketKGS hareketSistemEkleReturn(KapiView kapi, PersonelKGS personel, Date zaman, Session session) {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
@@ -772,26 +739,63 @@ public class PdksEntityController implements Serializable {
 	}
 
 	/**
-	 * @param kgsId
-	 * @param pdksId
+	 * @param kapi
+	 * @param personel
 	 * @param zaman
 	 * @param guncelleyen
 	 * @param nedenId
 	 * @param aciklama
 	 * @return
 	 */
-	public Long hareketGuncelle(long kgsId, long pdksId, Date zaman, User guncelleyen, long nedenId, String aciklama, Session session) {
+	public Long hareketEkle(KapiView kapi, PersonelView personel, Date zaman, User guncelleyen, long nedenId, String aciklama, Session session) {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-		StringBuffer sp = new StringBuffer("SP_HAREKET_GUNCELLE");
+		StringBuffer sp = new StringBuffer("SP_HAREKET_EKLE");
+		veriMap.put("kapi", kapi.getId());
+		veriMap.put("personel", personel.getId());
+		veriMap.put("zaman", zaman);
+		veriMap.put("guncelleyenId", guncelleyen.getId());
+		veriMap.put("nedenId", nedenId);
+		veriMap.put("aciklama", aciklama);
+		if (session != null)
+			veriMap.put(MAP_KEY_SESSION, session);
+		Long sonuc = null;
+		try {
+			List<BigDecimal> list = execSPList(veriMap, sp, null);
+			if (!list.isEmpty())
+				sonuc = list.get(0).longValue();
+		} catch (Exception e) {
+			sonuc = 0L;
+		}
+		return sonuc;
+	}
+
+	/**
+	 * @param kgsId
+	 * @param pdksId
+	 * @param zaman
+	 * @param guncelleyen
+	 * @param nedenId
+	 * @param aciklama
+	 * @param sirketId
+	 * @param sirketStr
+	 * @param session
+	 * @return
+	 */
+	public Long hareketGuncelle(long kgsId, long pdksId, Date zaman, User guncelleyen, long nedenId, String aciklama, long sirketId, String sirketStr, Session session) {
+		if (session == null)
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+		StringBuffer sp = new StringBuffer("SP_HAREKET_GUNCELLE" + sirketStr);
 		veriMap.put("kgsId", kgsId);
 		veriMap.put("pdksId", pdksId);
 		veriMap.put("zaman", zaman);
 		veriMap.put("guncelleyen", guncelleyen.getId());
 		veriMap.put("nedenId", nedenId);
 		veriMap.put("aciklama", aciklama);
-
+		if (!sirketStr.equals(""))
+			veriMap.put("sirketId", sirketId);
 		if (session != null)
 			veriMap.put(MAP_KEY_SESSION, session);
 		Long sonuc = 0L;
@@ -811,18 +815,23 @@ public class PdksEntityController implements Serializable {
 	 * @param guncelleyen
 	 * @param nedenId
 	 * @param aciklama
+	 * @param sirketId
+	 * @param sirketStr
+	 * @param session
 	 * @return
 	 */
-	public Long hareketSil(long kgsId, long pdksId, User guncelleyen, long nedenId, String aciklama, Session session) {
+	public Long hareketSil(long kgsId, long pdksId, User guncelleyen, long nedenId, String aciklama, long sirketId, String sirketStr, Session session) {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-		StringBuffer sp = new StringBuffer("SP_HAREKET_SIL");
+		StringBuffer sp = new StringBuffer("SP_HAREKET_SIL" + sirketStr);
 		veriMap.put("kgsId", kgsId);
 		veriMap.put("pdksId", pdksId);
 		veriMap.put("guncelleyenId", guncelleyen.getId());
 		veriMap.put("nedenId", nedenId);
 		veriMap.put("aciklama", aciklama);
+		if (!sirketStr.equals(""))
+			veriMap.put("sirketId", sirketId);
 		if (session != null)
 			veriMap.put(MAP_KEY_SESSION, session);
 		Long sonuc = 0L;
@@ -834,56 +843,6 @@ public class PdksEntityController implements Serializable {
 			sonuc = 0L;
 		}
 		return sonuc;
-	}
-
-	/**
-	 * @param islemId
-	 * @param guncelleyen
-	 * @return
-	 */
-	public int hareketOnayla(long islemId, User guncelleyen, Session session) {
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-		StringBuffer sp = new StringBuffer("SP_HAREKET_ONAYLA");
-		veriMap.put("islemId", islemId);
-		veriMap.put("guncelleyen", guncelleyen.getId());
-		if (session != null)
-			veriMap.put(MAP_KEY_SESSION, session);
-		int sonuc = 0;
-		try {
-			sonuc = execSP(veriMap, sp);
-		} catch (Exception e) {
-			sonuc = 0;
-		}
-		return sonuc;
-
-	}
-
-	/**
-	 * @param kgsId
-	 * @param pdksId
-	 * @param guncelleyen
-	 * @return
-	 */
-	public int hareketOnaylama(long kgsId, long pdksId, User guncelleyen, Session session) {
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-		StringBuffer sp = new StringBuffer("SP_HAREKET_ONAYLAMA");
-		veriMap.put("kgsId", kgsId);
-		veriMap.put("pdksId", pdksId);
-		veriMap.put("guncelleyen", guncelleyen.getId());
-		if (session != null)
-			veriMap.put(MAP_KEY_SESSION, session);
-		int sonuc = 0;
-		try {
-			sonuc = execSP(veriMap, sp);
-		} catch (Exception e) {
-			sonuc = 0;
-		}
-		return sonuc;
-
 	}
 
 	/**
@@ -950,17 +909,64 @@ public class PdksEntityController implements Serializable {
 
 					}
 					session.flush();
-					kayitAdet = saveList.size();
-				} else
-					kayitAdet = 0;
+				}
 			} else
 				kayitAdet = 0L;
-
 		}
 		list = null;
 		if (kayitAdet > 0)
 			logger.info(kayitAdet + " " + class1.getName() + " düzenlendi.");
 		return kayitAdet;
+	}
+
+	/**
+	 * @param islemId
+	 * @param guncelleyen
+	 * @return
+	 */
+	public int hareketOnayla(long islemId, User guncelleyen, Session session) {
+		if (session == null)
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+		StringBuffer sp = new StringBuffer("SP_HAREKET_ONAYLA");
+		veriMap.put("islemId", islemId);
+		veriMap.put("guncelleyen", guncelleyen.getId());
+		if (session != null)
+			veriMap.put(MAP_KEY_SESSION, session);
+		int sonuc = 0;
+		try {
+			sonuc = execSP(veriMap, sp);
+		} catch (Exception e) {
+			sonuc = 0;
+		}
+		return sonuc;
+
+	}
+
+	/**
+	 * @param kgsId
+	 * @param pdksId
+	 * @param guncelleyen
+	 * @return
+	 */
+	public int hareketOnaylama(long kgsId, long pdksId, User guncelleyen, Session session) {
+		if (session == null)
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+		StringBuffer sp = new StringBuffer("SP_HAREKET_ONAYLAMA");
+		veriMap.put("kgsId", kgsId);
+		veriMap.put("pdksId", pdksId);
+		veriMap.put("guncelleyen", guncelleyen.getId());
+		if (session != null)
+			veriMap.put(MAP_KEY_SESSION, session);
+		int sonuc = 0;
+		try {
+			sonuc = execSP(veriMap, sp);
+		} catch (Exception e) {
+			sonuc = 0;
+		}
+		return sonuc;
+
 	}
 
 	/**

@@ -23,7 +23,7 @@ import com.pdks.genel.model.Constants;
 import com.pdks.genel.model.PdksUtil;
 
 @Entity(name = Tanim.TABLE_NAME)
-public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
+public class Tanim  extends BasePDKSObject implements Serializable, Cloneable {
 	/**
 	 * 
 	 */
@@ -36,7 +36,8 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	public static final String COLUMN_NAME_KODU = "KODU";
 	public static final String COLUMN_NAME_ERP_KODU = "ERP_KODU";
 	public static final String COLUMN_NAME_TIPI = "TIPI";
- 	public static final String COLUMN_NAME_PARENT_ID = "PARENTTANIM_ID";
+ 
+	public static final String COLUMN_NAME_PARENT_ID = "PARENTTANIM_ID";
 	public static final String COLUMN_NAME_DURUM = "DURUM";
 	public static final int DURUM_PASIF = 0;
 	public static final int DURUM_AKTIF = 1;
@@ -84,7 +85,7 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	public static final String IKINCI_YONETICI_ONAYLAMAZ = "ikinciYoneticiOlmaz";
 	public static final String DEFAULT_DOVIZ_KODU = "TL";
 	
-	private Long id;
+	 
 	private String tipi;
 	private Tanim parentTanim;
 	private String kodu = "", erpKodu = "";

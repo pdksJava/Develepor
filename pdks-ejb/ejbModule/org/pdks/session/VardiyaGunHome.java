@@ -3629,9 +3629,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						aramaSecenekleri.setTesisId(oncekiId);
 				}
 			}
-		} else {
-			aramaSecenekleri.setTesisId(null);
-			fillBolumDoldur();
 		}
 		aramaSecenekleri.setTesisList(list);
 		if (bolumDoldur) {
@@ -4447,20 +4444,24 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								}
 								if (!hareketKGSDeleteList.isEmpty() && (girisHareket == null || cikisHareket == null)) {
 									for (HareketKGS hareketKGS3 : hareketKGSDeleteList) {
-										String id = hareketKGS3.getId();
+
 										long kgsId = 0, pdksId = 0;
-										if (id != null && id.trim().length() > 1) {
-											if (id.startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS))
-												kgsId = Long.parseLong(id.trim().substring(1));
-											else if (id.startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS))
-												pdksId = Long.parseLong(id.trim().substring(1));
-										}
+										String str = hareketKGS3.getId();
+										Long id = Long.parseLong(str.substring(1));
+										if (str.startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS))
+											kgsId = id;
+										else
+											pdksId = id;
 										if (kgsId + pdksId > 0) {
 											User sistemUser = ortakIslemler.getSistemAdminUser(session);
 											if (sistemUser == null)
 												sistemUser = authenticatedUser;
 											String aciklama = islemFazlaMesaiTalep.getAciklama() != null && islemFazlaMesaiTalep.getAciklama().trim().length() > 0 ? islemFazlaMesaiTalep.getAciklama().trim() : "";
-											pdksEntityController.hareketSil(kgsId, pdksId, sistemUser, nedenId, aciklama + (referans != null ? " " + referans.trim() : ""), session);
+											String birdenFazlaKGSSirketSQL = ortakIslemler.getBirdenFazlaKGSSirketSQL(session);
+											String sirketStr = "";
+											if (!birdenFazlaKGSSirketSQL.equals(""))
+												sirketStr = "_SIRKET";
+											pdksEntityController.hareketSil(kgsId, pdksId, sistemUser, nedenId, aciklama + (referans != null ? " " + referans.trim() : ""), hareketKGS3.getKgsSirketId(), sirketStr, session);
 											flush = true;
 										}
 									}
@@ -7742,15 +7743,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					session);
 			List<String> perList = new ArrayList<String>();
 			for (Personel personel : personelList) {
-				Sirket sirket2 = personel.getSirket();
-				if (departmanId != null && !sirket2.getDepartman().getId().equals(departmanId))
-					continue;
-				if (sirketId != null && !sirket2.getId().equals(sirketId))
-					continue;
-				if (tesisId != null && (personel.getTesis() == null || !personel.getTesis().getId().equals(tesisId)))
-					continue;
-				if (seciliEkSaha3Id != null && (personel.getEkSaha3() == null || !personel.getEkSaha3().getId().equals(seciliEkSaha3Id)))
-					continue;
 				if (sicilNo.equals("") || sicilNo.equals(personel.getPdksSicilNo()))
 					perList.add(personel.getPdksSicilNo());
 
@@ -7780,15 +7772,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				StringBuffer sb = new StringBuffer();
 				sb.append("SELECT F.* FROM " + VardiyaGun.TABLE_NAME + " V WITH(nolock) ");
 				sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P ON P.ID=V." + VardiyaGun.COLUMN_NAME_PERSONEL);
-				if (sirketId != null)
-					sb.append(" AND P." + Personel.COLUMN_NAME_SIRKET + "=" + sirketId);
-				else if (departmanId != null) {
-					sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S ON S." + Sirket.COLUMN_NAME_ID + "=P." + Personel.COLUMN_NAME_SIRKET + " AND S." + Sirket.COLUMN_NAME_DEPARTMAN + "=" + departmanId);
-				}
-				if (tesisId != null)
-					sb.append(" AND P." + Personel.COLUMN_NAME_TESIS + "=" + tesisId);
-				if (seciliEkSaha3Id != null)
-					sb.append(" AND P." + Personel.COLUMN_NAME_EK_SAHA3 + "=" + seciliEkSaha3Id);
 				sb.append(" AND P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :p");
 				sb.append(" INNER JOIN " + FazlaMesaiTalep.TABLE_NAME + " F ON F." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + "=V.ID AND F.DURUM=1  ");
 				if (talepOnayDurum > 0) {

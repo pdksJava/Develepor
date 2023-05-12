@@ -711,7 +711,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see SapController#pdksTanimsizPersonel(java.util.List, java.lang.String)
+	 * @see com.abh.sap.action.SapController#pdksTanimsizPersonel(java.util.List, java.lang.String)
 	 */
 	public List<Personel> pdksTanimsizPersonel(TreeMap<String, Personel> perKayitliMap, String sapKodu, Session session) throws Exception {
 		ConnectionMan sapRfcManager = new ConnectionMan();

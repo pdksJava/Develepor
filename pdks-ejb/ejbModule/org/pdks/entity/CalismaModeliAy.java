@@ -27,7 +27,6 @@ public class CalismaModeliAy extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_CALISMA_MODELI = "CALISMA_MODELI_ID";
 	public static final String COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL = "HAREKET_KAYDI_VARDIYA_BUL";
 
- 
 	private DenklestirmeAy denklestirmeAy;
 
 	private CalismaModeli calismaModeli;
@@ -49,8 +48,6 @@ public class CalismaModeliAy extends BasePDKSObject implements Serializable {
 			this.hareketKaydiVardiyaBul = calismaModeli.getHareketKaydiVardiyaBul();
 		}
 	}
-
- 
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_DONEM)

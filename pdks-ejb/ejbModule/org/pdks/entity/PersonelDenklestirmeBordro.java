@@ -18,7 +18,7 @@ import org.hibernate.annotations.FetchMode;
 
 @Entity(name = PersonelDenklestirmeBordro.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PersonelDenklestirmeBordro.COLUMN_NAME_PERSONEL_DENKLESTIRME }) })
-public class PersonelDenklestirmeBordro extends BasePDKSObject implements Serializable {
+public class PersonelDenklestirmeBordro  extends BasePDKSObject  implements Serializable {
 
 	/**
 	 * 
@@ -28,10 +28,12 @@ public class PersonelDenklestirmeBordro extends BasePDKSObject implements Serial
 	static Logger logger = Logger.getLogger(PersonelDenklestirmeBordro.class);
 
 	public static final String TABLE_NAME = "PERS_DENK_BORDRO";
-	public static final String COLUMN_NAME_PERSONEL_DENKLESTIRME = "PERS_DENK_ID";
+ 	public static final String COLUMN_NAME_PERSONEL_DENKLESTIRME = "PERS_DENK_ID";
 	public static final String COLUMN_NAME_NORMAL_GUN = "NORMAL_GUN_ADET";
 	public static final String COLUMN_NAME_HAFTA_TATIL = "HAFTA_TATIL_ADET";
 	public static final String COLUMN_NAME_G_HAFTA_TATIL = "TATIL_ADET";
+
+ 
 
 	private PersonelDenklestirme personelDenklestirme;
 
@@ -53,6 +55,8 @@ public class PersonelDenklestirmeBordro extends BasePDKSObject implements Serial
 		this.haftaTatilAdet = haftaTatilAdet;
 		this.tatilAdet = tatilAdet;
 	}
+
+ 
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_PERSONEL_DENKLESTIRME, nullable = false)
@@ -115,14 +119,12 @@ public class PersonelDenklestirmeBordro extends BasePDKSObject implements Serial
 		Double value = detay != null ? detay.doubleValue() : 0.0d;
 		return value;
 	}
-
 	@Transient
 	public Double getEksikCalismaSure() {
 		Double detay = personelDenklestirme != null ? personelDenklestirme.getEksikCalismaSure() : null;
 		Double value = detay != null ? detay.doubleValue() : 0.0d;
 		return value;
 	}
-
 	@Transient
 	public Double getResmiTatilMesai() {
 		Double detay = personelDenklestirme != null ? personelDenklestirme.getResmiTatilSure() : null;
@@ -134,7 +136,7 @@ public class PersonelDenklestirmeBordro extends BasePDKSObject implements Serial
 	public Double getHaftaTatilMesai() {
 		Double detay = personelDenklestirme != null ? personelDenklestirme.getHaftaCalismaSuresi() : null;
 		Double value = detay != null ? detay.doubleValue() : 0.0d;
-		return value;
+ 		return value;
 	}
 
 	@Transient

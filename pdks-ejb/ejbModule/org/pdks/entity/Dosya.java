@@ -23,15 +23,14 @@ public class Dosya extends BasePDKSObject implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -2908520509292855097L;
- 	private Integer version = 0;
+
+	private Integer version = 0;
 
 	private byte[] dosyaIcerik;
 	private String icerikTipi, dosyaAdi, aciklama;
 
 	private Integer size;
 	private boolean islemYapildi = Boolean.FALSE;
-
- 
 
 	@Column(name = "VERSION")
 	public Integer getVersion() {

@@ -34,6 +34,8 @@ public class Parameter extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final String COLUMN_NAME_HELP_DESK = "HDSK";
 
+	// seam-gen attributes (you should probably edit these)
+
 	private Integer version = 0;
 	private String name = "";
 	private String value = "";

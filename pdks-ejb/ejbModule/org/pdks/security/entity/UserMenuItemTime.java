@@ -33,7 +33,7 @@ public class UserMenuItemTime extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_MENU = "MENU_ID";
 	public static final String COLUMN_NAME_LAST_PARAMETRE = "LAST_PARAMETRE";
 
- 	private User user;
+	private User user;
 
 	private MenuItem menu;
 
@@ -56,7 +56,6 @@ public class UserMenuItemTime extends BasePDKSObject implements Serializable {
 		this.useCount = new BigDecimal(0L);
 		this.lastTime = new Date();
 	}
- 
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_USER, nullable = false)

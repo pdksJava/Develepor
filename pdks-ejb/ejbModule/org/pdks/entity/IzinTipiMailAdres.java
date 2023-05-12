@@ -24,6 +24,7 @@ public class IzinTipiMailAdres extends BasePDKSObject implements Serializable, C
 	private static final long serialVersionUID = 56230242920057020L;
 	public static final String TABLE_NAME = "IZIN_TIPI_MAIL_ADRES";
 	public static final String COLUMN_NAME_MAIL_TIPI = "MAIL_TIPI";
+	public static final String COLUMN_NAME_MAIL_ID = "ID";
 	public static final String COLUMN_NAME_IZIN_TIPI = "IZIN_TIPI_ID";
 	public static final String COLUMN_NAME_MAIL_ADRES = "MAIL_ADRES";
 	public static final String TIPI_CC = "CC";
@@ -82,6 +83,16 @@ public class IzinTipiMailAdres extends BasePDKSObject implements Serializable, C
 
 	public void setSira(int sira) {
 		this.sira = sira;
+	}
+
+	@Transient
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			// bu class cloneable oldugu icin buraya girilmemeli...
+			throw new InternalError();
+		}
 	}
 
 }

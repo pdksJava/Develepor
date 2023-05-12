@@ -1,7 +1,6 @@
 package com.pdks.entity;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -12,12 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-
-import com.pdks.genel.model.PdksUtil;
 
 @Entity(name = CalismaModeli.TABLE_NAME)
 public class CalismaModeli extends BasePDKSObject implements Serializable {
@@ -27,29 +23,16 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	 */
 	private static final long serialVersionUID = 4015750209129001721L;
 	public static final String TABLE_NAME = "CALISMA_MODELI";
+
 	public static final String COLUMN_NAME_DURUM = "DURUM";
-	public static final String COLUMN_NAME_GENEL_VARDIYA = "GENEL_VARDIYA";
-	public static final String COLUMN_NAME_HAFTA_TATIL_MESAI_ODE = "HAFTA_TATIL_MESAI_ODE";
-	public static final String COLUMN_NAME_GECE_HAFTA_TATIL_MESAI_PARCALA = "GECE_HAFTA_TATIL_MESAI_PARCALA";
-	public static final String COLUMN_NAME_GECE_CALISMA_ODEME_VAR = "GECE_CALISMA_ODEME_VAR";
 	public static final String COLUMN_NAME_OLUSTURAN = "OLUSTURANUSER_ID";
 	public static final String COLUMN_NAME_GUNCELLEYEN = "GUNCELLEYENUSER_ID";
 	public static final String COLUMN_NAME_OLUSTURMA_TARIHI = "OLUSTURMATARIHI";
 	public static final String COLUMN_NAME_GUNCELLEME_TARIHI = "GUNCELLEMETARIHI";
-	public static final String COLUMN_NAME_BAGLI_VARDIYA_SABLON = "BAGLI_VARDIYA_SABLON_ID";
-	public static final String COLUMN_NAME_DEPARTMAN = "DEPARTMAN_ID";
-	public static final String COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL = "HAREKET_KAYDI_VARDIYA_BUL";
-	public static final String COLUMN_NAME_MAAS_ODEME_TIPI = "MAAS_ODEME_TIPI";
 
 	private String aciklama = "";
-	private double haftaIci = 0.0d, haftaSonu = 0.0d, arife = 0.0d, izin = 9.0d, izinhaftaSonu = 0.0d, negatifBakiyeDenkSaat = 0.0d;
-
-	private Boolean toplamGunGuncelle = Boolean.FALSE, durum = Boolean.TRUE, genelVardiya = Boolean.TRUE, hareketKaydiVardiyaBul = Boolean.FALSE;
-	private Boolean haftaTatilMesaiOde = Boolean.FALSE, geceHaftaTatilMesaiParcala = Boolean.FALSE, geceCalismaOdemeVar = Boolean.FALSE;
-	private VardiyaSablonu bagliVardiyaSablonu;
-	private Departman departman;
-	private Boolean aylikMaas = Boolean.TRUE;
-
+	private double haftaIci = 0.0d, haftaSonu = 0.0d, izin = 9.0d;
+	private Boolean durum = Boolean.TRUE;
 	private User guncelleyenUser, olusturanUser;
 	private Date olusturmaTarihi = new Date(), guncellemeTarihi;
 
@@ -89,69 +72,6 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 		this.izin = izin;
 	}
 
-	@Column(name = "IZIN_CUMARTESI_SAAT")
-	public double getIzinhaftaSonu() {
-		return izinhaftaSonu;
-	}
-
-	public void setIzinhaftaSonu(double izinhaftaSonu) {
-		this.izinhaftaSonu = izinhaftaSonu;
-	}
-
-	@Column(name = "ARIFE_SAAT")
-	public double getArife() {
-		return arife;
-	}
-
-	public void setArife(double arife) {
-		this.arife = arife;
-	}
-
-	@Column(name = "NEGATIF_BAKIYE_SAAT")
-	public double getNegatifBakiyeDenkSaat() {
-		return negatifBakiyeDenkSaat;
-	}
-
-	public void setNegatifBakiyeDenkSaat(double negatifBakiyeDenkSaat) {
-		this.negatifBakiyeDenkSaat = negatifBakiyeDenkSaat;
-	}
-
-	@Column(name = COLUMN_NAME_GENEL_VARDIYA)
-	public Boolean getGenelVardiya() {
-		return genelVardiya;
-	}
-
-	public void setGenelVardiya(Boolean genelVardiya) {
-		this.genelVardiya = genelVardiya;
-	}
-
-	@Column(name = COLUMN_NAME_HAFTA_TATIL_MESAI_ODE)
-	public Boolean getHaftaTatilMesaiOde() {
-		return haftaTatilMesaiOde;
-	}
-
-	public void setHaftaTatilMesaiOde(Boolean haftaTatilMesaiOde) {
-		this.haftaTatilMesaiOde = haftaTatilMesaiOde;
-	}
-
-	@Column(name = COLUMN_NAME_GECE_HAFTA_TATIL_MESAI_PARCALA)
-	public Boolean getGeceHaftaTatilMesaiParcala() {
-		return geceHaftaTatilMesaiParcala;
-	}
-
-	public void setGeceHaftaTatilMesaiParcala(Boolean geceHaftaTatilMesaiParcala) {
-		this.geceHaftaTatilMesaiParcala = geceHaftaTatilMesaiParcala;
-	}
-
-	@Column(name = COLUMN_NAME_GECE_CALISMA_ODEME_VAR)
-	public Boolean getGeceCalismaOdemeVar() {
-		return geceCalismaOdemeVar;
-	}
-
-	public void setGeceCalismaOdemeVar(Boolean geceCalismaOdemeVar) {
-		this.geceCalismaOdemeVar = geceCalismaOdemeVar;
-	}
-
 	@Column(name = COLUMN_NAME_DURUM)
 	public Boolean getDurum() {
 		return durum;
@@ -159,55 +79,6 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	public void setDurum(Boolean durum) {
 		this.durum = durum;
-	}
-
-	@Column(name = "TOPLAM_GUN_GUNCELLE")
-	public Boolean getToplamGunGuncelle() {
-		return toplamGunGuncelle;
-	}
-
-	public void setToplamGunGuncelle(Boolean toplamGunGuncelle) {
-		this.toplamGunGuncelle = toplamGunGuncelle;
-	}
-
-	@Column(name = COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL)
-	public Boolean getHareketKaydiVardiyaBul() {
-		return hareketKaydiVardiyaBul;
-	}
-
-	public void setHareketKaydiVardiyaBul(Boolean hareketKaydiVardiyaBul) {
-		this.hareketKaydiVardiyaBul = hareketKaydiVardiyaBul;
-	}
-
-	@Column(name = COLUMN_NAME_MAAS_ODEME_TIPI)
-	public Boolean getAylikMaas() {
-		return aylikMaas;
-	}
-
-	public void setAylikMaas(Boolean aylikMaas) {
-		this.aylikMaas = aylikMaas;
-	}
-
-	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = COLUMN_NAME_BAGLI_VARDIYA_SABLON)
-	@Fetch(FetchMode.JOIN)
-	public VardiyaSablonu getBagliVardiyaSablonu() {
-		return bagliVardiyaSablonu;
-	}
-
-	public void setBagliVardiyaSablonu(VardiyaSablonu bagliVardiyaSablonu) {
-		this.bagliVardiyaSablonu = bagliVardiyaSablonu;
-	}
-
-	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "DEPARTMAN_ID")
-	@Fetch(FetchMode.JOIN)
-	public Departman getDepartman() {
-		return departman;
-	}
-
-	public void setDepartman(Departman departman) {
-		this.departman = departman;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -250,65 +121,6 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	public void setGuncellemeTarihi(Date guncellemeTarihi) {
 		this.guncellemeTarihi = guncellemeTarihi;
-	}
-
-	@Transient
-	public User getSonIslemYapan() {
-		return guncelleyenUser != null ? guncelleyenUser : olusturanUser;
-	}
-
-	@Transient
-	public Date getSonIslemTarihi() {
-		return guncellemeTarihi != null ? guncellemeTarihi : olusturmaTarihi;
-	}
-
-	@Transient
-	public String getSonIslemTarihiStr() {
-		Date date = getSonIslemTarihi();
-		String str = date != null ? PdksUtil.convertToDateString(date, PdksUtil.getDateFormat() + " H:mm:ss") : "";
-		return str;
-	}
-
-	@Transient
-	public boolean isHareketKaydiVardiyaBulsunmu() {
-		return hareketKaydiVardiyaBul != null && hareketKaydiVardiyaBul.booleanValue();
-	}
-
-	@Transient
-	public boolean isSaatlikOdeme() {
-		return aylikMaas == null || aylikMaas.equals(Boolean.FALSE);
-	}
-
-	@Transient
-	public boolean isAylikOdeme() {
-		return aylikMaas != null && aylikMaas.equals(Boolean.TRUE);
-	}
-
-	@Transient
-	public String getMaasOdemeTipiAciklama() {
-		String str = "";
-		if (aylikMaas != null) {
-			if (isAylikOdeme())
-				str = "Aylık";
-			else if (isSaatlikOdeme())
-				str = "Saatlik";
-		}
-		return str;
-	}
-
-	@Transient
-	public double getIzinSaat(VardiyaGun pdksVardiyaGun) {
-		double izinSure = izin;
-		if (izinhaftaSonu > 0.0d) {
-			Calendar cal = Calendar.getInstance();
-			Date vardiyaDate = pdksVardiyaGun.getVardiyaDate();
-			cal.setTime(vardiyaDate);
-			int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-			if (dayOfWeek == Calendar.SATURDAY)
-				izinSure = izinhaftaSonu;
-		}
-
-		return izinSure;
 	}
 
 }

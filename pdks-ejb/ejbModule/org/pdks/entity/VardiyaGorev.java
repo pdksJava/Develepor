@@ -25,12 +25,13 @@ public class VardiyaGorev extends BasePDKSObject implements Serializable {
 
 	public static final String TABLE_NAME = "VARDIYA_GOREV";
 	public static final String COLUMN_NAME_VARDIYA_GUN = "VARDIYA_GUN_ID";
-	public static final int OZEL_SUT_IZNI = 5;
+ 	public static final int OZEL_SUT_IZNI = 5;
 	public static final int OZEL_ISTIFA = 4;
 	public static final int OZEL_RAPOR_IZNI = 3;
 	public static final int OZEL_ISTEK_EGITIM = 2;
 	public static final int OZEL_ISTEK_PERSONEL = 1;
 	public static final int OZEL_ISTEK_YOK = 0;
+
 	private VardiyaGun vardiyaGun;
 	private Tanim yeniGorevYeri;
 	private BolumKat bolumKat;

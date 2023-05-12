@@ -11,13 +11,16 @@ import javax.persistence.Transient;
 @MappedSuperclass
 public abstract class BasePDKSObject implements Serializable, Cloneable {
 
+ 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3045809958792260856L;
 
+
 	public static final String COLUMN_NAME_ID = "ID";
 
+ 
 	protected Long id;
 
 	@Id
@@ -33,10 +36,10 @@ public abstract class BasePDKSObject implements Serializable, Cloneable {
 
 	@Transient
 	public Object cloneEmpty() {
-		BasePDKSObject object = null;
+		Object object = null;
 		try {
-			object = (BasePDKSObject) super.clone();
-			object.setId(null);
+			this.setId(null);
+			object = super.clone();
 		} catch (CloneNotSupportedException e) {
 
 		}
