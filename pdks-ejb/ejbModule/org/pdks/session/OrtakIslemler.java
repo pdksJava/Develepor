@@ -1583,7 +1583,7 @@ public class OrtakIslemler implements Serializable {
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<KapiSirket> list = pdksEntityController.getObjectByInnerObjectListInLogic(map, KapiSirket.class);
-			if (list.size() > 1)
+			if (!list.isEmpty())
 				sql = birdenFazlaKGSSirketSQL;
 
 		}
@@ -1621,8 +1621,8 @@ public class OrtakIslemler implements Serializable {
 				List<Object[]> perList = pdksEntityController.getObjectBySQLList(sb, map, null);
 				for (Object[] objects : perList) {
 					BigDecimal refId = (BigDecimal) objects[1], id = (BigDecimal) objects[0];
-					iliskiMap.put(refId.longValue(), id.longValue());
-					// personelIdList.add(refId.longValue());
+					if (refId.longValue() != id.longValue())
+						iliskiMap.put(refId.longValue(), id.longValue());
 				}
 			} catch (Exception e) {
 				logger.error(sb.toString() + " " + e);
@@ -1669,8 +1669,15 @@ public class OrtakIslemler implements Serializable {
 			if (class1.getName().equals(HareketKGS.class.getName()))
 				getHareketKGSByBasitHareketList(list, iliskiMap, session);
 			else if (!iliskiMap.isEmpty()) {
+				List<String> hList = new ArrayList<String>();
 				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 					BasitHareket basitHareket = (BasitHareket) iterator.next();
+					String id = (basitHareket.getKgsSirketId() == null ? 0L : basitHareket.getKgsSirketId()) + basitHareket.getId();
+					if (hList.contains(id)) {
+						iterator.remove();
+						continue;
+					}
+					hList.add(id);
 					if (iliskiMap.containsKey(basitHareket.getPersonelId()))
 						basitHareket.setPersonelId(iliskiMap.get(basitHareket.getPersonelId()));
 				}
