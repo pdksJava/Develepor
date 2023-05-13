@@ -1958,7 +1958,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 								for (PersonelKGS personelKGS : personelKGSList) {
 									if (personelKGS.getKapiSirket().getDurum()) {
 										Long id = iliskiMap.get(personelKGS.getId());
-										PersonelKGS personelKGS2 = idMap.get(id);
+										PersonelKGS personelKGS2 = id != null ? idMap.get(id) : null;
 										if (personelKGS2 != null && !personelKGS.getKapiSirket().getId().equals(personelKGS2.getKapiSirket().getId()) && personelKGS2.getAdSoyad().equals(personelKGS.getAdSoyad()))
 											personelKGSMap.put(id, personelKGS);
 									}
