@@ -319,9 +319,9 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			TreeMap<String, VardiyaGun> vardiyaMap = ortakIslemler.getIslemVardiyalar((List<Personel>) tumPersoneller, basTarih, bitTarih, Boolean.FALSE, session, Boolean.TRUE);
 			try {
 				boolean islem = ortakIslemler.getVardiyaHareketIslenecekList(new ArrayList<VardiyaGun>(vardiyaMap.values()), date, session);
-				if (islem)  
+				if (islem)
 					vardiyaMap = ortakIslemler.getIslemVardiyalar((List<Personel>) tumPersoneller, basTarih, bitTarih, Boolean.FALSE, session, Boolean.TRUE);
-				 
+
 			} catch (Exception e) {
 			}
 			vardiyaList = new ArrayList<VardiyaGun>(vardiyaMap.values());

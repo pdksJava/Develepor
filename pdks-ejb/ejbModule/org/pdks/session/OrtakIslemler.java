@@ -1520,7 +1520,7 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param pdks
-	 * @param kapiId
+	 * @param kapiIdList
 	 * @param personelList
 	 * @param basTarih
 	 * @param bitTarih
@@ -1529,7 +1529,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public List getPdksHareketBilgileri(Boolean pdks, List<Long> kapiId, List personelList, Date basTarih, Date bitTarih, Class class1, Session session) throws Exception {
+	public List getPdksHareketBilgileri(Boolean pdks, List<Long> kapiIdList, List personelList, Date basTarih, Date bitTarih, Class class1, Session session) throws Exception {
 		List<Long> personelId = null;
 		if (personelList != null && !personelList.isEmpty()) {
 			personelId = new ArrayList<Long>();
@@ -1551,7 +1551,7 @@ public class OrtakIslemler implements Serializable {
 			if (personelId.isEmpty())
 				personelId = null;
 		}
-		List list = getHareketAktifBilgileri(kapiId, personelId, basTarih, bitTarih, class1, session);
+		List list = getHareketAktifBilgileri(kapiIdList, personelId, basTarih, bitTarih, class1, session);
 		return list;
 	}
 
@@ -1585,9 +1585,9 @@ public class OrtakIslemler implements Serializable {
 			HashMap map = new HashMap();
 			map.put("id>", 0L);
 			if (bitTarih != null)
-				map.put("basTarih<=", bitTarih);
+				map.put("basTarih<=", PdksUtil.tariheGunEkleCikar(bitTarih, +7));
 			if (basTarih != null)
-				map.put("bitTarih>=", basTarih);
+				map.put("bitTarih>=", PdksUtil.tariheGunEkleCikar(basTarih, -7));
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<KapiSirket> list = pdksEntityController.getObjectByInnerObjectListInLogic(map, KapiSirket.class);
@@ -8591,15 +8591,17 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public HashMap<Long, ArrayList<HareketKGS>> fillPersonelKGSHareketMap(List<Long> kgsPerIdler, Date vardiyaBas, Date vardiyaBit, Session session) {
- 		HashMap<Long, KapiView> kapiMap = fillPDKSKapilari(session);
+		HashMap<Long, KapiView> kapiMap = fillPDKSKapilari(session);
 		List<Long> kapiIdIList = new ArrayList<Long>(kapiMap.keySet());
 		if (vardiyaBas != null && vardiyaBit != null) {
 			try {
+				Date tarih1 = PdksUtil.tariheGunEkleCikar(vardiyaBas, -7);
+				Date tarih2 = PdksUtil.tariheGunEkleCikar(vardiyaBit, 7);
 				for (Iterator iterator = kapiIdIList.iterator(); iterator.hasNext();) {
 					Long key = (Long) iterator.next();
 					KapiSirket kapiSirket = kapiMap.get(key).getKapiKGS().getKapiSirket();
 					if (kapiSirket != null) {
-						if (kapiSirket.getBitTarih() != null && vardiyaBas.getTime() <= kapiSirket.getBitTarih().getTime() && kapiSirket.getBasTarih() != null && vardiyaBit.getTime() >= kapiSirket.getBasTarih().getTime())
+						if (kapiSirket.getBitTarih() != null && tarih1.getTime() <= kapiSirket.getBitTarih().getTime() && kapiSirket.getBasTarih() != null && tarih2.getTime() >= kapiSirket.getBasTarih().getTime())
 							continue;
 						else
 							iterator.remove();
@@ -14905,7 +14907,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public List<Long> getPdksKapiIdler(Session session, Boolean girisCikisKapilari) {
 
-		List<Long> kapiIdler = getKapiIdler(session, Boolean.TRUE, Boolean.TRUE);
+		List<Long> kapiIdler = getKapiIdler(session, Boolean.TRUE, girisCikisKapilari);
 
 		return kapiIdler;
 	}

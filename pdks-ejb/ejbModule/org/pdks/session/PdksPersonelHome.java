@@ -1932,7 +1932,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				}
 				if (!idMap.isEmpty()) {
 					try {
-						String birdenFazlaKGSSirketSQL = ortakIslemler.getBirdenFazlaKGSSirketSQL(session);
+						String birdenFazlaKGSSirketSQL = ortakIslemler.getBirdenFazlaKGSSirketSQL(null, null, session);
 						if (!birdenFazlaKGSSirketSQL.equals("")) {
 							TreeMap<Long, Long> iliskiMap = new TreeMap<Long, Long>();
 							fields.clear();
