@@ -5513,7 +5513,7 @@ public class OrtakIslemler implements Serializable {
 							calismaPlaniMap.put(key, new ArrayList<VardiyaGun>(personelVardiyaBulMap.get(key)));
 						}
 					}
-					List<Long> kapiIdler = getPdksKapiIdler(session, Boolean.TRUE);
+					List<Long> kapiIdler = getPdksDonemselKapiIdler(tarih, tarih, session);
 					List<HareketKGS> kgsList = null;
 					try {
 						if (kapiIdler != null && !kapiIdler.isEmpty())
@@ -14898,6 +14898,56 @@ public class OrtakIslemler implements Serializable {
 			}
 
 		}
+	}
+
+	/**
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param session
+	 * @return
+	 */
+	public List<Long> getPdksDonemselKapiIdler(Date basTarih, Date bitTarih, Session session) {
+		List<Long> kapiIdIList = null;
+		if (basTarih != null && bitTarih != null) {
+			HashMap fields = new HashMap();
+			List<Long> tipler = null;
+ 			List<String> hareketTip = new ArrayList<String>();
+ 			hareketTip.add(Kapi.TIPI_KODU_GIRIS);
+			hareketTip.add(Kapi.TIPI_KODU_CIKIS);
+			fields.put(PdksEntityController.MAP_KEY_SELECT, "id");
+			fields.put("kodu", hareketTip);
+ 			fields.put("tipi=", Tanim.TIPI_KAPI_TIPI);
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			tipler = pdksEntityController.getObjectByInnerObjectListInLogic(fields, Tanim.class);
+			if (tipler.isEmpty())
+				tipler = null;
+			fields.clear();
+			fields.put(PdksEntityController.MAP_KEY_MAP, "getId");
+			fields.put(PdksEntityController.MAP_KEY_SELECT, "kapiKGS");
+			fields.put("pdks=", Boolean.TRUE);
+			if (!tipler.isEmpty())
+				fields.put("tipi.id", tipler);
+ 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			TreeMap<Long, KapiKGS> kapiMap = pdksEntityController.getObjectByInnerObjectMapInLogic(fields, Kapi.class, false);
+			Date tarih1 = PdksUtil.tariheGunEkleCikar(basTarih, -7);
+			Date tarih2 = PdksUtil.tariheGunEkleCikar(bitTarih, 7);
+			kapiIdIList = new ArrayList<Long>(kapiMap.keySet());
+			for (Iterator iterator = kapiIdIList.iterator(); iterator.hasNext();) {
+				Long key = (Long) iterator.next();
+				KapiSirket kapiSirket = kapiMap.get(key).getKapiSirket();
+				if (kapiSirket != null) {
+					if (kapiSirket.getBitTarih() != null && tarih1.getTime() <= kapiSirket.getBitTarih().getTime() && kapiSirket.getBasTarih() != null && tarih2.getTime() >= kapiSirket.getBasTarih().getTime())
+						continue;
+					else
+						iterator.remove();
+				}
+			}
+		} else
+			kapiIdIList = getKapiIdler(session, Boolean.TRUE, Boolean.TRUE);
+
+		return kapiIdIList;
 	}
 
 	/**

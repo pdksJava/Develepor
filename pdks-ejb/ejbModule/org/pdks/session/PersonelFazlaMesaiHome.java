@@ -778,7 +778,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					}
 
 				}
-				List<Long> kapiIdler = ortakIslemler.getPdksKapiIdler(session, Boolean.TRUE);
+				List<Long> kapiIdler = ortakIslemler.getPdksDonemselKapiIdler(tarih1, tarih2, session);
 				if (!personelList.isEmpty()) {
 					List<Long> perIdler = new ArrayList<Long>();
 					for (Iterator iterator2 = personelList.iterator(); iterator2.hasNext();) {
