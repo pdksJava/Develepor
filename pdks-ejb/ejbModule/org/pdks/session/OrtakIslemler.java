@@ -1452,12 +1452,14 @@ public class OrtakIslemler implements Serializable {
 	/**
 	 * @param hareketKGSList
 	 * @param hareketKGS
+	 * @param basTarih
+	 * @param bitTarih
 	 * @param session
 	 * @return
 	 * @throws Exception
 	 */
-	public List getHareketIdBilgileri(List<HareketKGS> hareketKGSList, HareketKGS hareketKGS, Session session) throws Exception {
-		String birdenFazlaKGSSirketSQL = getBirdenFazlaKGSSirketSQL(session);
+	public List getHareketIdBilgileri(List<HareketKGS> hareketKGSList, HareketKGS hareketKGS, Date basTarih, Date bitTarih, Session session) throws Exception {
+		String birdenFazlaKGSSirketSQL = getBirdenFazlaKGSSirketSQL(basTarih, bitTarih, session);
 		String sirketStr = "";
 		if (!birdenFazlaKGSSirketSQL.equals(""))
 			sirketStr = "_SIRKET";
@@ -1572,14 +1574,20 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param basTarih
+	 * @param bitTarih
 	 * @param session
 	 * @return
 	 */
-	public String getBirdenFazlaKGSSirketSQL(Session session) {
+	public String getBirdenFazlaKGSSirketSQL(Date basTarih, Date bitTarih, Session session) {
 		String birdenFazlaKGSSirketSQL = getParameterKey("birdenFazlaKGSSirketSQL"), sql = "";
 		if (!birdenFazlaKGSSirketSQL.equals("")) {
 			HashMap map = new HashMap();
 			map.put("id>", 0L);
+			if (bitTarih != null)
+				map.put("basTarih<=", bitTarih);
+			if (basTarih != null)
+				map.put("bitTarih>=", basTarih);
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<KapiSirket> list = pdksEntityController.getObjectByInnerObjectListInLogic(map, KapiSirket.class);
@@ -1606,13 +1614,22 @@ public class OrtakIslemler implements Serializable {
 		String formatStr = "yyyy-MM-dd HH:mm:ss";
 		TreeMap<Long, Long> iliskiMap = new TreeMap<Long, Long>();
 		StringBuffer sb = new StringBuffer();
-		String birdenFazlaKGSSirketSQL = getBirdenFazlaKGSSirketSQL(session);
+		String birdenFazlaKGSSirketSQL = getBirdenFazlaKGSSirketSQL(basTarih, bitTarih, session);
 		String sirketStr = "";
 		if (!birdenFazlaKGSSirketSQL.equals("")) {
 			sirketStr = "_SIRKET";
 			HashMap map = new HashMap();
 			sb.append("SELECT P." + PersonelKGS.COLUMN_NAME_ID + ", K." + PersonelKGS.COLUMN_NAME_ID + " AS REF from " + PersonelKGS.TABLE_NAME + " P WITH(nolock) ");
 			sb.append(" INNER JOIN " + PersonelKGS.TABLE_NAME + " K ON " + birdenFazlaKGSSirketSQL);
+			sb.append(" INNER JOIN " + KapiSirket.TABLE_NAME + " KS ON KS." + KapiSirket.COLUMN_NAME_ID + "=K." + PersonelKGS.COLUMN_NAME_KGS_SIRKET);
+			if (basTarih != null) {
+				sb.append(" AND KS." + KapiSirket.COLUMN_NAME_BIT_TARIH + ">=:b1 ");
+				map.put("b1", basTarih);
+			}
+			if (bitTarih != null) {
+				sb.append(" AND KS." + KapiSirket.COLUMN_NAME_BAS_TARIH + "<=:b2 ");
+				map.put("b2", bitTarih);
+			}
 			sb.append(" WHERE P." + PersonelKGS.COLUMN_NAME_ID + " :p AND  P." + PersonelKGS.COLUMN_NAME_SICIL_NO + " <>''");
 			map.put("p", personelIdList);
 			if (session != null)
@@ -8574,13 +8591,28 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public HashMap<Long, ArrayList<HareketKGS>> fillPersonelKGSHareketMap(List<Long> kgsPerIdler, Date vardiyaBas, Date vardiyaBit, Session session) {
-
-		HashMap<Long, KapiView> kapiMap = fillPDKSKapilari(session);
+ 		HashMap<Long, KapiView> kapiMap = fillPDKSKapilari(session);
+		List<Long> kapiIdIList = new ArrayList<Long>(kapiMap.keySet());
+		if (vardiyaBas != null && vardiyaBit != null) {
+			try {
+				for (Iterator iterator = kapiIdIList.iterator(); iterator.hasNext();) {
+					Long key = (Long) iterator.next();
+					KapiSirket kapiSirket = kapiMap.get(key).getKapiKGS().getKapiSirket();
+					if (kapiSirket != null) {
+						if (kapiSirket.getBitTarih() != null && vardiyaBas.getTime() <= kapiSirket.getBitTarih().getTime() && kapiSirket.getBasTarih() != null && vardiyaBit.getTime() >= kapiSirket.getBasTarih().getTime())
+							continue;
+						else
+							iterator.remove();
+					}
+				}
+			} catch (Exception e) {
+			}
+		}
 
 		List<BasitHareket> hareketList = null;
 
 		try {
-			hareketList = getHareketBilgileri(new ArrayList(kapiMap.keySet()), kgsPerIdler, vardiyaBas, vardiyaBit, BasitHareket.class, session);
+			hareketList = getHareketBilgileri(kapiIdIList, kgsPerIdler, vardiyaBas, vardiyaBit, BasitHareket.class, session);
 
 		} catch (Exception e) {
 			hareketList = new ArrayList<BasitHareket>();
@@ -11761,7 +11793,7 @@ public class OrtakIslemler implements Serializable {
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
 			List list = pdksEntityController.getObjectBySQLList(qsb, parametreMap, null);
-			kgsList = getHareketIdBilgileri(list, null, session);
+			kgsList = getHareketIdBilgileri(list, null, basTarih, bitTarih, session);
 			list = null;
 		} catch (Exception e) {
 			kgsList = new ArrayList<HareketKGS>();
