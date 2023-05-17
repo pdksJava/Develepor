@@ -8972,11 +8972,8 @@ public class OrtakIslemler implements Serializable {
 							if (vardiya.isCalisma()) {
 								Tatil pdksTatil = tatillerMap.get(key);
 								if (!pdksTatil.isYarimGunMu()) {
-									if (!tatilDonemList.contains(vardiyaKey))
-										vardiya = offVardiya;
-									else
-										testVardiyaGun1.setVersion(-1);
-
+									vardiya = offVardiya;
+									testVardiyaGun1.setVersion(0);
 								}
 
 							}

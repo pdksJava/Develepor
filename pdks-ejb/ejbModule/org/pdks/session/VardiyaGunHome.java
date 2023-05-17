@@ -2722,8 +2722,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 		List<YemekIzin> yemekler = null;
 		Date aksamVardiyaBaslangicZamani = null, aksamVardiyaBitisZamani = null;
-
+		String keyDonem = String.valueOf(yil * 100 + ay);
 		for (VardiyaGun pdksVardiyaGun : aylikPuantaj.getVardiyalar()) {
+			pdksVardiyaGun.setAyinGunu(pdksVardiyaGun.getVardiyaDateStr().startsWith(keyDonem));
 			if (pdksVardiyaGun != null)
 				pdksVardiyaGun.setGorevliPersonelMap(gorevliPersonelMap);
 			pdksVardiyaGun.setVardiyalar(null);
@@ -5827,8 +5828,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								if (hareketKaydiVardiyaBul && !pdksVardiyaGun.getVardiya().isHaftaTatil() && pdksVardiyaGun.getVersion() >= 0) {
 									if ((yeniKayit || yeniVardiyaMap.containsKey(vardiyaKey))) {
 										kayit = true;
-
-										pdksVardiyaGun.setVersion(-1);
+										if (pdksVardiyaGun.getVardiya().isCalisma())
+											pdksVardiyaGun.setVersion(-1);
 										vardiyaGunHareketOnaysizList.add(pdksVardiyaGun);
 
 									}
