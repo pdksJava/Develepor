@@ -13667,7 +13667,7 @@ public class OrtakIslemler implements Serializable {
 								}
 
 						}
-						if (resmiTatilSure > 0) {
+						if (calismaModeli.isFazlaMesaiVarMi() && resmiTatilSure > 0) {
 							// TODO Resmi tatil çalışma saatinden düşüyor
 							// if (vardiyaGun.getCalismaSuresi() >= resmiTatilSure)
 							// vardiyaGun.addCalismaSuresi(-resmiTatilSure);

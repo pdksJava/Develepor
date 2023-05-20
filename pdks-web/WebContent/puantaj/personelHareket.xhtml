@@ -515,7 +515,7 @@
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml" rendered="#{personelHareketHome.islemTipi=='E'}">
 										<ui:define name="label">Kapi</ui:define>
-										<h:selectOneMenu value="#{personelHareketHome.instance.kapiId}" style="width:350px" required="true" requiredMessage="Kapi Seciniz">
+										<h:selectOneMenu value="#{personelHareketHome.instance.kapiId}" style="width:350px" required="false" requiredMessage="Kapi Seciniz">
 											<f:selectItem itemLabel="Lütfen seçiniz" />
 											<f:selectItems value="#{personelHareketHome.kapiList}" />
 
