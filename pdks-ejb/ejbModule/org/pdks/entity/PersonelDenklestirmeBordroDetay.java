@@ -35,7 +35,7 @@ public class PersonelDenklestirmeBordroDetay extends BasePDKSObject implements S
 
 	private String tipi;
 
-	private BordroIzinGrubu bordroIzinGrubu;
+	private BordroDetayTipi bordroIzinGrubu;
 
 	private Double miktar = 0.0d;
 
@@ -46,7 +46,7 @@ public class PersonelDenklestirmeBordroDetay extends BasePDKSObject implements S
 
 	}
 
-	public PersonelDenklestirmeBordroDetay(PersonelDenklestirmeBordro personelDenklestirmeBordro, BordroIzinGrubu bordroIzinGrubu) {
+	public PersonelDenklestirmeBordroDetay(PersonelDenklestirmeBordro personelDenklestirmeBordro, BordroDetayTipi bordroIzinGrubu) {
 		super();
 		this.personelDenklestirmeBordro = personelDenklestirmeBordro;
 		this.tipi = bordroIzinGrubu.value();
@@ -70,7 +70,7 @@ public class PersonelDenklestirmeBordroDetay extends BasePDKSObject implements S
 
 	public void setTipi(String value) {
 		if (value != null)
-			this.bordroIzinGrubu = BordroIzinGrubu.fromValue(value);
+			this.bordroIzinGrubu = BordroDetayTipi.fromValue(value);
 		this.tipi = value;
 	}
 
@@ -86,11 +86,11 @@ public class PersonelDenklestirmeBordroDetay extends BasePDKSObject implements S
 	}
 
 	@Transient
-	public BordroIzinGrubu getBordroIzinGrubu() {
+	public BordroDetayTipi getBordroIzinGrubu() {
 		return bordroIzinGrubu;
 	}
 
-	public void setBordroIzinGrubu(BordroIzinGrubu bordroIzinGrubu) {
+	public void setBordroIzinGrubu(BordroDetayTipi bordroIzinGrubu) {
 		this.bordroIzinGrubu = bordroIzinGrubu;
 	}
 

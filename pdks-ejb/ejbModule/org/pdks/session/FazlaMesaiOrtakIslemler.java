@@ -29,7 +29,7 @@ import org.jboss.seam.annotations.Out;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.security.Identity;
 import org.pdks.entity.AylikPuantaj;
-import org.pdks.entity.BordroIzinGrubu;
+import org.pdks.entity.BordroDetayTipi;
 import org.pdks.entity.CalismaModeli;
 import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.Departman;
@@ -102,7 +102,9 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	 * @param donemStr
 	 * @param session
 	 */
-	public void bordroVeriOlustur(List<AylikPuantaj> puantajList, Boolean fazlaMesaiHesapla, String donemStr, Session session) {
+	public TreeMap<String, Boolean> bordroVeriOlustur(List<AylikPuantaj> puantajList, Boolean fazlaMesaiHesapla, String donemStr, Session session) {
+		TreeMap<String, Boolean> baslikMap = new TreeMap<String, Boolean>();
+		String arifeGunuBordroYarim = ortakIslemler.getParameterKey("arifeGunuBordroYarim");
 		HashMap fields = new HashMap();
 		fields.put("tipi", Tanim.TIPI_IZIN_GRUPLARI);
 		fields.put("durum", Boolean.TRUE);
@@ -111,8 +113,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		List<Tanim> list = pdksEntityController.getObjectByInnerObjectList(fields, Tanim.class);
 		TreeMap<String, String> izinGrupMap = new TreeMap<String, String>();
 		if (list.isEmpty()) {
-			BordroIzinGrubu[] bordroTipileri = new BordroIzinGrubu[] { BordroIzinGrubu.UCRETLI_IZIN, BordroIzinGrubu.UCRETSIZ_IZIN, BordroIzinGrubu.RAPORLU_IZIN };
-			for (BordroIzinGrubu bordroTipi : bordroTipileri) {
+			BordroDetayTipi[] bordroTipileri = new BordroDetayTipi[] { BordroDetayTipi.UCRETLI_IZIN, BordroDetayTipi.UCRETSIZ_IZIN, BordroDetayTipi.RAPORLU_IZIN };
+			for (BordroDetayTipi bordroTipi : bordroTipileri) {
 				Tanim tanim = new Tanim();
 				tanim.setTipi(Tanim.TIPI_IZIN_GRUPLARI);
 				tanim.setAciklamatr(bordroTipi.name());
@@ -134,11 +136,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		list = pdksEntityController.getObjectByInnerObjectList(fields, Tanim.class);
 		if (!list.isEmpty()) {
 			for (Tanim tanim : list) {
-				if (!tanim.getKodu().equals(BordroIzinGrubu.TANIMSIZ.value())) {
-					BordroIzinGrubu bordroTipi = null;
+				if (!tanim.getKodu().equals(BordroDetayTipi.TANIMSIZ.value())) {
+					BordroDetayTipi bordroTipi = null;
 					try {
 						if (tanim.getKodu().trim().length() > 0)
-							bordroTipi = BordroIzinGrubu.fromValue(tanim.getKodu().trim());
+							bordroTipi = BordroDetayTipi.fromValue(tanim.getKodu().trim());
 					} catch (Exception e) {
 					}
 					if (bordroTipi != null)
@@ -147,25 +149,25 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			}
 		}
 		Calendar cal = Calendar.getInstance();
-		Date bugun = PdksUtil.getDate(cal.getTime());
+		// Date bugun = PdksUtil.getDate(cal.getTime());
 		Date tarih = PdksUtil.convertToJavaDate(donemStr + "01", "yyyyMMdd");
 		cal.setTime(tarih);
 		int ayGunSayisi = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-		List<Long> idList = new ArrayList<Long>();
+		TreeMap<Long, AylikPuantaj> puantajMap = new TreeMap<Long, AylikPuantaj>();
 		for (AylikPuantaj ap : puantajList) {
 			PersonelDenklestirme personelDenklestirme = ap.getPersonelDenklestirmeAylik();
 			if (personelDenklestirme.getId() != null)
-				idList.add(personelDenklestirme.getId());
+				puantajMap.put(personelDenklestirme.getId(), ap);
 		}
-		if (!idList.isEmpty()) {
+		if (!puantajMap.isEmpty()) {
 			fields.clear();
-			fields.put("personelDenklestirme.id", idList);
+			fields.put("personelDenklestirme.id", new ArrayList(puantajMap.keySet()));
 			fields.put(PdksEntityController.MAP_KEY_MAP, "getPersonelDenklestirmeId");
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			TreeMap<Long, PersonelDenklestirmeBordro> bordroMap = pdksEntityController.getObjectByInnerObjectMap(fields, PersonelDenklestirmeBordro.class, false);
 			TreeMap<String, PersonelDenklestirmeBordroDetay> bordroDetayMap = null;
-			idList.clear();
+			List<Long> idList = new ArrayList<Long>();
 			if (!bordroMap.isEmpty()) {
 				for (Long key : bordroMap.keySet())
 					idList.add(bordroMap.get(key).getId());
@@ -212,26 +214,35 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					ex.printStackTrace();
 				}
 
-				Integer normalGunAdet = 0, haftaTatilAdet = 0, tatilAdet = 0;
-				// boolean calisiyor = ap.getSaatToplami() > 0.0d;
-				LinkedHashMap<BordroIzinGrubu, Double> detayMap = new LinkedHashMap<BordroIzinGrubu, Double>();
+				double normalGunAdet = 0.0d, haftaTatilAdet = 0.0d, resmiTatilAdet = 0.0d, artikAdet = 0.0d, izinGunAdet = 0.0d;
+				double normalSaat = 0.0d, resmiTatilSaat = 0.0d, haftaTatilSaat = 0.0d, izinGunSaat = 0.0d;
+				LinkedHashMap<BordroDetayTipi, Double> detayMap = new LinkedHashMap<BordroDetayTipi, Double>();
 				boolean saatlikCalisma = calismaModeli.isSaatlikOdeme();
 				for (VardiyaGun vardiyaGun : ap.getVardiyalar()) {
 					if (vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null) {
-						if (bugun.before(vardiyaGun.getVardiyaDate()) && fazlaMesaiHesapla)
-							continue;
-						// boolean pazar = vardiyaGun.isPazar();
-						boolean haftaTatil = vardiyaGun.isHaftaTatil();
+
 						Vardiya vardiya = vardiyaGun.getVardiya();
-						int calismaGun = 1;
+						boolean haftaTatil = vardiya.isHaftaTatil();
+						Tatil tatil = vardiyaGun.getTatil();
+						boolean resmiTatil = tatil != null;
+						double calismaGun = 1.0d;
 						if (vardiyaGun.isIzinli()) {
 							// calisiyor = true;
 							String izinKodu = null;
 							double artiGun = 1.0d;
 							if (saatlikCalisma)
-								artiGun = calismaModeli.getIzin();
+								artiGun = vardiyaGun.getSaatCalisanIzinGunKatsayisi();
 							if (vardiyaGun.getIzin() != null) {
 								IzinTipi izinTipi = vardiyaGun.getIzin().getIzinTipi();
+								if (izinTipi != null) {
+									if (izinTipi.isUcretsizIzinTipi())
+										calismaGun = 0;
+									else if (saatlikCalisma) {
+										if (vardiyaGun.isHaftaIci())
+											izinGunSaat += resmiTatil == false ? vardiyaGun.getSaatCalisanIzinGunKatsayisi() : 0;
+									}
+								}
+
 								if (izinTipi.getTakvimGunumu() == false) {
 									if (vardiyaGun.getVardiya().isOffGun()) {
 										if (izinTipi.isOffDahilMi() == false)
@@ -241,50 +252,88 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 											artiGun = 0.0d;
 
 									}
-									if (artiGun == 0.0d)
-										logger.debug(vardiyaGun.getVardiyaKeyStr() + " " + izinTipi.getIzinTipiTanim().getAciklama());
+									if (izinTipi.getUcretli()) {
+										if (vardiyaGun.isHaftaIci() && resmiTatil == false)
+											izinGunAdet += 1.0d;
+
+									}
 								}
 								izinKodu = izinTipi.getIzinTipiTanim().getErpKodu();
 								if (izinTipi.isUcretsizIzinTipi()) {
-									izinKodu = BordroIzinGrubu.UCRETSIZ_IZIN.value();
+									izinKodu = BordroDetayTipi.UCRETSIZ_IZIN.value();
+									calismaGun = 0;
 								}
 
-								else if (!izinGrupMap.containsKey(izinKodu))
-									izinKodu = null;
+								else {
+									if (!izinGrupMap.containsKey(izinKodu))
+										izinKodu = null;
+									else
+										izinKodu = izinGrupMap.get(izinKodu);
+								}
 							} else
 								izinKodu = vardiya.getStyleClass();
 							if (artiGun > 0.0d && izinKodu != null) {
-								BordroIzinGrubu bordroTipi = null;
+								BordroDetayTipi bordroTipi = null;
 								try {
 									if (izinKodu.trim().length() > 0)
-										bordroTipi = BordroIzinGrubu.fromValue(izinKodu);
+										bordroTipi = BordroDetayTipi.fromValue(izinKodu);
 								} catch (Exception e) {
 								}
 								if (bordroTipi != null) {
 									double miktar = (detayMap.containsKey(bordroTipi) ? detayMap.get(bordroTipi) : 0.0d) + artiGun;
 									detayMap.put(bordroTipi, miktar);
-									if (bordroTipi.equals(BordroIzinGrubu.RAPORLU_IZIN) || bordroTipi.equals(BordroIzinGrubu.UCRETSIZ_IZIN))
+									if (bordroTipi.equals(BordroDetayTipi.RAPORLU_IZIN) || bordroTipi.equals(BordroDetayTipi.UCRETSIZ_IZIN))
 										calismaGun = 0;
 								}
 							}
 
 						}
-						if (calismaGun > 0) {
+						if (calismaGun > 0.0d) {
+							if (resmiTatil) {
+								if (!tatil.isYarimGunMu()) {
+									resmiTatilAdet += calismaGun;
+									calismaGun = 0;
+								} else if (!arifeGunuBordroYarim.equals("")) {
+									calismaGun = 0.5d;
+									resmiTatilAdet += calismaGun;
+								}
+							}
 							if (!haftaTatil)
 								normalGunAdet += calismaGun;
-							else
+							else {
 								haftaTatilAdet += calismaGun;
+							}
+							// logger.info(vardiyaGun.getVardiyaDateStr() + " " + (normalGunAdet + haftaTatilAdet + resmiTatilAdet));
+						}
+
+						if (vardiyaGun.isIzinli() == false) {
+							if (resmiTatil) {
+								if (!tatil.isYarimGunMu())
+									resmiTatilSaat += vardiyaGun.getSaatCalisanResmiTatilKatsayisi();
+								else {
+									resmiTatilSaat += vardiyaGun.getSaatCalisanArifeTatilKatsayisi();
+									normalSaat += vardiyaGun.getSaatCalisanArifeNormalKatsayisi();
+								}
+							} else if (haftaTatil)
+								haftaTatilSaat += vardiyaGun.getSaatCalisanHaftaTatilKatsayisi();
+							else if (vardiyaGun.isHaftaIci()) {
+								normalSaat += vardiyaGun.getSaatCalisanNormalGunKatsayisi();
+								logger.debug(vardiyaGun.getVardiyaDateStr() + " " + normalGunAdet);
+							}
+
 						}
 					}
 
 				}
 
-				int toplamAdet = normalGunAdet + haftaTatilAdet;
-				if (toplamAdet > 0) {
+				double toplamAdet = normalGunAdet + haftaTatilAdet + resmiTatilAdet;
+				double toplamSaatAdet = saatlikCalisma ? normalSaat + haftaTatilSaat + resmiTatilSaat + izinGunSaat : 0;
+				double normalCalisma = ap.getSaatToplami() - ap.getResmiTatilToplami() - resmiTatilSaat - haftaTatilSaat - izinGunSaat - ap.getFazlaMesaiSure();
+				if ((saatlikCalisma == false && toplamAdet > 0) || (saatlikCalisma && toplamSaatAdet > 0)) {
 					if (ayGunSayisi == toplamAdet)
 						normalGunAdet += 30 - ayGunSayisi;
 					if (toplamAdet > 30) {
-						tatilAdet = 1;
+						artikAdet = 1;
 					}
 
 					PersonelDenklestirmeBordro denklestirmeBordro = bordroMap.containsKey(personelDenklestirme.getId()) ? bordroMap.get(personelDenklestirme.getId()) : null;
@@ -297,14 +346,37 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					denklestirmeBordro.setGuncellendi(denklestirmeBordro.getId() == null);
 					denklestirmeBordro.setNormalGunAdet(normalGunAdet);
 					denklestirmeBordro.setHaftaTatilAdet(haftaTatilAdet);
-					denklestirmeBordro.setTatilAdet(tatilAdet);
+					denklestirmeBordro.setResmiTatilAdet(resmiTatilAdet);
+					denklestirmeBordro.setArtikAdet(artikAdet);
+					if (izinGunAdet > 0)
+						detayMap.put(BordroDetayTipi.IZIN_GUN, izinGunAdet);
+
+					if (!saatlikCalisma) {
+						normalCalisma = 0.0d;
+						resmiTatilSaat = 0.0d;
+						haftaTatilSaat = 0.0d;
+						izinGunSaat = 0.0d;
+						normalSaat = 0.0d;
+					}
+
+					if (normalCalisma > 0)
+						detayMap.put(BordroDetayTipi.SAAT_NORMAL, normalCalisma);
+					if (resmiTatilSaat > 0)
+						detayMap.put(BordroDetayTipi.SAAT_RESMI_TATIL, resmiTatilSaat);
+					if (haftaTatilSaat > 0)
+						detayMap.put(BordroDetayTipi.SAAT_HAFTA_TATIL, haftaTatilSaat);
+					if (izinGunSaat > 0)
+						detayMap.put(BordroDetayTipi.SAAT_IZIN, izinGunSaat);
+
 					if (denklestirmeBordro.isGuncellendi()) {
 						pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeBordro);
 						flush = true;
 					}
-
+					ap.setDenklestirmeBordro(denklestirmeBordro);
+					HashMap<BordroDetayTipi, PersonelDenklestirmeBordroDetay> detayMap1 = new HashMap<BordroDetayTipi, PersonelDenklestirmeBordroDetay>();
+					denklestirmeBordro.setDetayMap(detayMap1);
 					if (!detayMap.isEmpty()) {
-						for (BordroIzinGrubu bordroIzinGrubu : detayMap.keySet()) {
+						for (BordroDetayTipi bordroIzinGrubu : detayMap.keySet()) {
 							PersonelDenklestirmeBordroDetay bordroDetay = null;
 							String detayKey = PersonelDenklestirmeBordroDetay.getDetayKey(denklestirmeBordro, bordroIzinGrubu.value());
 							if (bordroDetayMap.containsKey(detayKey)) {
@@ -313,6 +385,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 							} else {
 								bordroDetay = new PersonelDenklestirmeBordroDetay(denklestirmeBordro, bordroIzinGrubu);
 							}
+							detayMap1.put(bordroIzinGrubu, bordroDetay);
 							bordroDetay.setGuncellendi(bordroDetay.getId() == null);
 							bordroDetay.setMiktar(detayMap.get(bordroIzinGrubu));
 							if (bordroDetay.isGuncellendi()) {
@@ -326,6 +399,26 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				detayMap = null;
 				if (flush)
 					session.flush();
+
+				baslikGuncelle(baslikMap, ortakIslemler.devredenMesaiKod(), ap.getGecenAyFazlaMesai(authenticatedUser));
+				baslikGuncelle(baslikMap, ortakIslemler.devredenBakiyeKod(), ap.getDevredenSure());
+				String keyEk = saatlikCalisma ? "" : "G";
+				baslikGuncelle(baslikMap, ortakIslemler.normalCalismaSaatKod() + keyEk, normalSaat);
+				baslikGuncelle(baslikMap, ortakIslemler.haftaTatilCalismaSaatKod() + keyEk, haftaTatilSaat);
+				baslikGuncelle(baslikMap, ortakIslemler.resmiTatilCalismaSaatKod() + keyEk, resmiTatilSaat);
+				baslikGuncelle(baslikMap, ortakIslemler.izinSureSaatKod() + keyEk, izinGunSaat);
+				baslikGuncelle(baslikMap, ortakIslemler.izinSureGunAdetKod(), izinGunAdet);
+				if (ap.getDenklestirmeBordro() != null) {
+					baslikGuncelle(baslikMap, ortakIslemler.ucretliIzinGunKod(), ap.getDenklestirmeBordro().getUcretliIzin().doubleValue());
+					baslikGuncelle(baslikMap, ortakIslemler.ucretsizIzinGunKod(), ap.getDenklestirmeBordro().getUcretsizIzin().doubleValue());
+					baslikGuncelle(baslikMap, ortakIslemler.hastalikIzinGunKod(), ap.getDenklestirmeBordro().getRaporluIzin().doubleValue());
+					baslikGuncelle(baslikMap, ortakIslemler.normalGunKod(), ap.getDenklestirmeBordro().getNormalGunAdet());
+					baslikGuncelle(baslikMap, ortakIslemler.haftaTatilGunKod(), ap.getDenklestirmeBordro().getHaftaTatilAdet());
+					baslikGuncelle(baslikMap, ortakIslemler.artikGunKod(), ap.getDenklestirmeBordro().getArtikAdet());
+					baslikGuncelle(baslikMap, ortakIslemler.resmiTatilGunKod(), ap.getDenklestirmeBordro().getResmiTatilAdet());
+					baslikGuncelle(baslikMap, ortakIslemler.bordroToplamGunKod(), ap.getDenklestirmeBordro().getBordroToplamGunAdet());
+				}
+
 			}
 			if (!bordroDetayMap.isEmpty()) {
 				for (String key : bordroDetayMap.keySet()) {
@@ -336,6 +429,17 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			bordroDetayMap = null;
 			bordroMap = null;
 		}
+		return baslikMap;
+	}
+
+	/**
+	 * @param baslikMap
+	 * @param key
+	 * @param deger
+	 */
+	private void baslikGuncelle(TreeMap<String, Boolean> baslikMap, String key, Double deger) {
+		if (!baslikMap.containsKey(key) && deger != null && deger.doubleValue() != 0)
+			baslikMap.put(key, Boolean.TRUE);
 	}
 
 	/**

@@ -30,7 +30,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.AylikPuantaj;
-import org.pdks.entity.BordroIzinGrubu;
+import org.pdks.entity.BordroDetayTipi;
 import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.Departman;
 import org.pdks.entity.Dosya;
@@ -75,7 +75,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 	private List<AylikPuantaj> personelDenklestirmeList;
 
-	private Boolean secimDurum = Boolean.FALSE, sureDurum, fazlaMesaiDurum, haftaTatilDurum, resmiTatilDurum, durumERP, onaylanmayanDurum, personelERP, modelGoster = Boolean.FALSE;
+	private Boolean secimDurum = Boolean.FALSE, sureDurum, fazlaMesaiDurum, haftaTatilDurum, artikGunDurum, resmiTatilGunDurum, resmiTatilDurum, durumERP, onaylanmayanDurum, personelERP, modelGoster = Boolean.FALSE;
+	private Boolean normalGunSaatDurum = Boolean.FALSE, haftaTatilSaatDurum = Boolean.FALSE, resmiTatilSaatDurum = Boolean.FALSE, izinSaatDurum = Boolean.FALSE;
 
 	private int ay, yil, maxYil, minYil;
 
@@ -99,7 +100,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	private String COL_ALT_BOLUM = "altBolumAdi";
 	private String COL_NORMAL_GUN_ADET = "normalGunAdet";
 	private String COL_HAFTA_TATIL_ADET = "haftaTatilAdet";
-	private String COL_TATIL_ADET = "tatilAdet";
+	private String COL_RESMI_TATIL_ADET = "resmiTatilAdet";
+	private String COL_ARTIK_ADET = "artikAdet";
+	private String COL_NORMAL_GUN_SAAT = "normalGunSaat";
+	private String COL_HAFTA_TATIL_SAAT = "haftaTatilSaat";
+	private String COL_RESMI_TATIL_SAAT = "resmiTatilSaat";
+	private String COL_IZIN_SAAT = "izinSaat";
 	private String COL_UCRETLI_IZIN = "ucretliIzin";
 	private String COL_RAPORLU_IZIN = "raporluIzin";
 	private String COL_UCRETSIZ_IZIN = "ucretsizIzin";
@@ -405,6 +411,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		haftaCalisma = Boolean.FALSE;
 		resmiTatilDurum = Boolean.FALSE;
 		maasKesintiGoster = Boolean.FALSE;
+		artikGunDurum = Boolean.FALSE;
+		resmiTatilGunDurum = Boolean.FALSE;
+		normalGunSaatDurum = Boolean.FALSE;
+		haftaTatilSaatDurum = Boolean.FALSE;
+		resmiTatilSaatDurum = Boolean.FALSE;
+		izinSaatDurum = Boolean.FALSE;
 		HashMap fields = new HashMap();
 		fields.put("ay", ay);
 		fields.put("yil", yil);
@@ -460,9 +472,26 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				List<PersonelDenklestirmeBordro> borDenklestirmeBordroList = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDenklestirmeBordro.class);
 				if (!borDenklestirmeBordroList.isEmpty()) {
-					HashMap<Long, PersonelDenklestirmeBordro> idMap = new HashMap<Long, PersonelDenklestirmeBordro>();
+					TreeMap<Long, PersonelDenklestirmeBordro> idMap = new TreeMap<Long, PersonelDenklestirmeBordro>();
+
 					for (PersonelDenklestirmeBordro personelDenklestirmeBordro : borDenklestirmeBordroList) {
 						PersonelDenklestirme personelDenklestirme = personelDenklestirmeBordro.getPersonelDenklestirme();
+
+						if (!normalGunSaatDurum)
+							normalGunSaatDurum = personelDenklestirmeBordro.getSaatNormal() != null && personelDenklestirmeBordro.getSaatNormal().doubleValue() > 0.0d;
+						if (!haftaTatilSaatDurum)
+							haftaTatilSaatDurum = personelDenklestirmeBordro.getSaatHaftaTatil() != null && personelDenklestirmeBordro.getSaatHaftaTatil().doubleValue() > 0.0d;
+						if (!resmiTatilSaatDurum)
+							resmiTatilSaatDurum = personelDenklestirmeBordro.getSaatResmiTatil() != null && personelDenklestirmeBordro.getSaatResmiTatil().doubleValue() > 0.0d;
+						if (!izinSaatDurum)
+							izinSaatDurum = personelDenklestirmeBordro.getSaatIzin() != null && personelDenklestirmeBordro.getSaatIzin().doubleValue() > 0.0d;
+
+						if (!artikGunDurum)
+							artikGunDurum = personelDenklestirmeBordro.getArtikAdet() != null && personelDenklestirmeBordro.getArtikAdet().doubleValue() > 0.0d;
+						if (!resmiTatilGunDurum)
+							resmiTatilGunDurum = personelDenklestirmeBordro.getResmiTatilAdet() != null && personelDenklestirmeBordro.getResmiTatilAdet().doubleValue() > 0.0d;
+						if (!artikGunDurum)
+							artikGunDurum = personelDenklestirmeBordro.getArtikAdet() != null && personelDenklestirmeBordro.getArtikAdet().doubleValue() > 0.0d;
 						if (!haftaCalisma)
 							haftaCalisma = personelDenklestirme.getHaftaCalismaSuresi() != null && personelDenklestirme.getHaftaCalismaSuresi().doubleValue() > 0.0d;
 						if (!resmiTatilDurum)
@@ -474,7 +503,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						if (!maasKesintiGoster)
 							setMaasKesintiGoster(personelDenklestirme.getEksikCalismaSure() != null && personelDenklestirme.getEksikCalismaSure().doubleValue() > 0.0d);
 
-						personelDenklestirmeBordro.setDetayMap(new HashMap<BordroIzinGrubu, PersonelDenklestirmeBordroDetay>());
+						personelDenklestirmeBordro.setDetayMap(new HashMap<BordroDetayTipi, PersonelDenklestirmeBordroDetay>());
 						AylikPuantaj aylikPuantaj = new AylikPuantaj(personelDenklestirmeBordro);
 						idMap.put(personelDenklestirmeBordro.getId(), personelDenklestirmeBordro);
 						personelDenklestirmeList.add(aylikPuantaj);
@@ -506,8 +535,18 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					List<PersonelDenklestirmeBordroDetay> list = pdksEntityController.getObjectByInnerObjectList(fields, PersonelDenklestirmeBordroDetay.class);
 					for (PersonelDenklestirmeBordroDetay detay : list) {
 						Long key = detay.getPersonelDenklestirmeBordro().getId();
-						BordroIzinGrubu bordroIzinGrubu = BordroIzinGrubu.fromValue(detay.getTipi());
-						idMap.get(key).getDetayMap().put(bordroIzinGrubu, detay);
+						BordroDetayTipi bordroDetayTipi = BordroDetayTipi.fromValue(detay.getTipi());
+						idMap.get(key).getDetayMap().put(bordroDetayTipi, detay);
+					}
+					for (PersonelDenklestirmeBordro personelDenklestirmeBordro : borDenklestirmeBordroList) {
+ 						if (!normalGunSaatDurum)
+							normalGunSaatDurum = personelDenklestirmeBordro.getSaatNormal() != null && personelDenklestirmeBordro.getSaatNormal().doubleValue() > 0.0d;
+						if (!haftaTatilSaatDurum)
+							haftaTatilSaatDurum = personelDenklestirmeBordro.getSaatHaftaTatil() != null && personelDenklestirmeBordro.getSaatHaftaTatil().doubleValue() > 0.0d;
+						if (!resmiTatilSaatDurum)
+							resmiTatilSaatDurum = personelDenklestirmeBordro.getSaatResmiTatil() != null && personelDenklestirmeBordro.getSaatResmiTatil().doubleValue() > 0.0d;
+						if (!izinSaatDurum)
+							izinSaatDurum = personelDenklestirmeBordro.getSaatIzin() != null && personelDenklestirmeBordro.getSaatIzin().doubleValue() > 0.0d;
 					}
 					idMap = null;
 					list = null;
@@ -759,8 +798,18 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						ExcelUtil.getCell(sheet, row, col++, numberStyle).setCellValue(denklestirmeBordro.getNormalGunAdet());
 					else if (kodu.equals(COL_HAFTA_TATIL_ADET))
 						ExcelUtil.getCell(sheet, row, col++, numberStyle).setCellValue(denklestirmeBordro.getHaftaTatilAdet());
-					else if (kodu.equals(COL_TATIL_ADET))
-						ExcelUtil.getCell(sheet, row, col++, numberStyle).setCellValue(denklestirmeBordro.getTatilAdet());
+					else if (kodu.equals(COL_RESMI_TATIL_ADET))
+						ExcelUtil.getCell(sheet, row, col++, numberStyle).setCellValue(denklestirmeBordro.getResmiTatilAdet());
+					else if (kodu.equals(COL_ARTIK_ADET))
+						ExcelUtil.getCell(sheet, row, col++, numberStyle).setCellValue(denklestirmeBordro.getArtikAdet());
+					else if (kodu.equals(COL_NORMAL_GUN_SAAT))
+						ExcelUtil.getCell(sheet, row, col++, numberStyle).setCellValue(denklestirmeBordro.getSaatNormal());
+					else if (kodu.equals(COL_HAFTA_TATIL_SAAT))
+						ExcelUtil.getCell(sheet, row, col++, numberStyle).setCellValue(denklestirmeBordro.getSaatHaftaTatil());
+					else if (kodu.equals(COL_RESMI_TATIL_SAAT))
+						ExcelUtil.getCell(sheet, row, col++, numberStyle).setCellValue(denklestirmeBordro.getSaatResmiTatil());
+					else if (kodu.equals(COL_IZIN_SAAT))
+						ExcelUtil.getCell(sheet, row, col++, numberStyle).setCellValue(denklestirmeBordro.getSaatIzin());
 					else if (kodu.equals(COL_UCRETLI_IZIN))
 						ExcelUtil.getCell(sheet, row, col++, numberStyle).setCellValue(denklestirmeBordro.getUcretliIzin());
 					else if (kodu.equals(COL_RAPORLU_IZIN))
@@ -842,7 +891,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			bordroAlanlari.add(getBordroAlani(++sira, COL_ALT_BOLUM, ekSaha4Tanim.getAciklama()));
 		bordroAlanlari.add(getBordroAlani(++sira, COL_NORMAL_GUN_ADET, "Normal Gün"));
 		bordroAlanlari.add(getBordroAlani(++sira, COL_HAFTA_TATIL_ADET, "H.Tatil Gün"));
-		bordroAlanlari.add(getBordroAlani(++sira, COL_TATIL_ADET, "G.Tatil Gün"));
+		bordroAlanlari.add(getBordroAlani(++sira, COL_RESMI_TATIL_ADET, "R.Tatil Gün"));
+		bordroAlanlari.add(getBordroAlani(++sira, COL_ARTIK_ADET, "Artık Gün"));
 		bordroAlanlari.add(getBordroAlani(++sira, COL_UCRETLI_IZIN, "Ücretli İzin Gün"));
 		bordroAlanlari.add(getBordroAlani(++sira, COL_RAPORLU_IZIN, "Raporlu (Hasta)"));
 		bordroAlanlari.add(getBordroAlani(++sira, COL_UCRETSIZ_IZIN, "Ücretsiz İzin Gün"));
@@ -1298,14 +1348,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		COL_HAFTA_TATIL_ADET = cOL_HAFTA_TATIL_ADET;
 	}
 
-	public String getCOL_TATIL_ADET() {
-		return COL_TATIL_ADET;
-	}
-
-	public void setCOL_TATIL_ADET(String cOL_TATIL_ADET) {
-		COL_TATIL_ADET = cOL_TATIL_ADET;
-	}
-
 	public String getCOL_UCRETLI_IZIN() {
 		return COL_UCRETLI_IZIN;
 	}
@@ -1392,5 +1434,101 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 	public void setCOL_EKSIK_CALISMA(String cOL_EKSIK_CALISMA) {
 		COL_EKSIK_CALISMA = cOL_EKSIK_CALISMA;
+	}
+
+	public String getCOL_RESMI_TATIL_ADET() {
+		return COL_RESMI_TATIL_ADET;
+	}
+
+	public void setCOL_RESMI_TATIL_ADET(String cOL_RESMI_TATIL_ADET) {
+		COL_RESMI_TATIL_ADET = cOL_RESMI_TATIL_ADET;
+	}
+
+	public String getCOL_ARTIK_ADET() {
+		return COL_ARTIK_ADET;
+	}
+
+	public void setCOL_ARTIK_ADET(String cOL_ARTIK_ADET) {
+		COL_ARTIK_ADET = cOL_ARTIK_ADET;
+	}
+
+	public Boolean getArtikGunDurum() {
+		return artikGunDurum;
+	}
+
+	public void setArtikGunDurum(Boolean artikGunDurum) {
+		this.artikGunDurum = artikGunDurum;
+	}
+
+	public Boolean getResmiTatilGunDurum() {
+		return resmiTatilGunDurum;
+	}
+
+	public void setResmiTatilGunDurum(Boolean resmiTatilGunDurum) {
+		this.resmiTatilGunDurum = resmiTatilGunDurum;
+	}
+
+	public String getCOL_NORMAL_GUN_SAAT() {
+		return COL_NORMAL_GUN_SAAT;
+	}
+
+	public void setCOL_NORMAL_GUN_SAAT(String cOL_NORMAL_GUN_SAAT) {
+		COL_NORMAL_GUN_SAAT = cOL_NORMAL_GUN_SAAT;
+	}
+
+	public String getCOL_HAFTA_TATIL_SAAT() {
+		return COL_HAFTA_TATIL_SAAT;
+	}
+
+	public void setCOL_HAFTA_TATIL_SAAT(String cOL_HAFTA_TATIL_SAAT) {
+		COL_HAFTA_TATIL_SAAT = cOL_HAFTA_TATIL_SAAT;
+	}
+
+	public String getCOL_RESMI_TATIL_SAAT() {
+		return COL_RESMI_TATIL_SAAT;
+	}
+
+	public void setCOL_RESMI_TATIL_SAAT(String cOL_RESMI_TATIL_SAAT) {
+		COL_RESMI_TATIL_SAAT = cOL_RESMI_TATIL_SAAT;
+	}
+
+	public String getCOL_IZIN_SAAT() {
+		return COL_IZIN_SAAT;
+	}
+
+	public void setCOL_IZIN_SAAT(String cOL_IZIN_SAAT) {
+		COL_IZIN_SAAT = cOL_IZIN_SAAT;
+	}
+
+	public Boolean getNormalGunSaatDurum() {
+		return normalGunSaatDurum;
+	}
+
+	public void setNormalGunSaatDurum(Boolean normalGunSaatDurum) {
+		this.normalGunSaatDurum = normalGunSaatDurum;
+	}
+
+	public Boolean getHaftaTatilSaatDurum() {
+		return haftaTatilSaatDurum;
+	}
+
+	public void setHaftaTatilSaatDurum(Boolean haftaTatilSaatDurum) {
+		this.haftaTatilSaatDurum = haftaTatilSaatDurum;
+	}
+
+	public Boolean getResmiTatilSaatDurum() {
+		return resmiTatilSaatDurum;
+	}
+
+	public void setResmiTatilSaatDurum(Boolean resmiTatilSaatDurum) {
+		this.resmiTatilSaatDurum = resmiTatilSaatDurum;
+	}
+
+	public Boolean getIzinSaatDurum() {
+		return izinSaatDurum;
+	}
+
+	public void setIzinSaatDurum(Boolean izinSaatDurum) {
+		this.izinSaatDurum = izinSaatDurum;
 	}
 }

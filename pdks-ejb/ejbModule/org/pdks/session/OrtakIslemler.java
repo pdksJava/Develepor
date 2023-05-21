@@ -71,7 +71,7 @@ import org.pdks.entity.ArifeVardiyaDonem;
 import org.pdks.entity.AylikPuantaj;
 import org.pdks.entity.BaseObject;
 import org.pdks.entity.BasitHareket;
-import org.pdks.entity.BordroIzinGrubu;
+import org.pdks.entity.BordroDetayTipi;
 import org.pdks.entity.CalismaModeli;
 import org.pdks.entity.CalismaModeliAy;
 import org.pdks.entity.CalismaModeliVardiya;
@@ -4216,6 +4216,111 @@ public class OrtakIslemler implements Serializable {
 		if (aciklama.equals(""))
 			aciklama = defaultBaslik;
 		return aciklama;
+	}
+
+	public String devredenMesaiKod() {
+		String kod = getBaslikAciklama("devredenMesaiKod", "DM");
+		return kod;
+	}
+
+	public String kismiOdemeKod() {
+		String kod = getBaslikAciklama("kismiOdemeKod", "KOM");
+		return kod;
+	}
+
+	public String ucretiOdenenKod() {
+		String kod = getBaslikAciklama("ucretiOdenenKod", "UOM");
+		return kod;
+	}
+
+	public String devredenBakiyeKod() {
+		String kod = getBaslikAciklama("devredenBakiyeKod", "B");
+		return kod;
+	}
+
+	public String normalCalismaSaatKod() {
+		String kod = getBaslikAciklama("normalCalismaSaatKod", "NMC");
+		return kod;
+	}
+
+	public String normalCalismaGunKod() {
+		String kod = normalCalismaSaatKod() + "G";
+		return kod;
+	}
+
+	public String haftaTatilCalismaSaatKod() {
+		String kod = getBaslikAciklama("haftaTatilCalismaSaatKod", "HTC");
+		return kod;
+	}
+
+	public String haftaTatilCalismaGunKod() {
+		String kod = haftaTatilCalismaSaatKod() + "G";
+		return kod;
+	}
+
+	public String resmiTatilCalismaSaatKod() {
+		String kod = getBaslikAciklama("resmiTatilCalismaSaatKod", "RTC");
+		return kod;
+	}
+
+	public String resmiTatilCalismaGunKod() {
+		String kod = resmiTatilCalismaSaatKod() + "G";
+		return kod;
+	}
+
+	public String izinSureSaatKod() {
+		String kod = getBaslikAciklama("izinSureSaatKod", "IZNS");
+		return kod;
+	}
+
+	public String izinSureGunKod() {
+		String kod = izinSureSaatKod() + "G";
+		return kod;
+	}
+
+	public String izinSureGunAdetKod() {
+		String kod = getBaslikAciklama("izinSureGunAdetKod", "IZGA");
+		return kod;
+	}
+
+	public String ucretliIzinGunKod() {
+		String kod = getBaslikAciklama("ucretliIzinGunKod", "ULIG");
+		return kod;
+	}
+
+	public String ucretsizIzinGunKod() {
+		String kod = getBaslikAciklama("ucretsizIzinGunKod", "USIZG");
+		return kod;
+	}
+
+	public String hastalikIzinGunKod() {
+		String kod = getBaslikAciklama("hastalikIzinGunKod", "HASIZG");
+		return kod;
+	}
+
+	public String normalGunKod() {
+		String kod = getBaslikAciklama("normalGunKod", "NG");
+		return kod;
+	}
+
+	public String haftaTatilGunKod() {
+		String kod = getBaslikAciklama("haftaTatilGunKod", "HG");
+		return kod;
+	}
+
+	public String artikGunKod() {
+		String kod = getBaslikAciklama("artikGunKod", "AG");
+		return kod;
+	}
+
+	public String resmiTatilGunKod() {
+		String kod = getBaslikAciklama("resmiTatilGunKod", "RG");
+		return kod;
+	}
+
+	public String bordroToplamGunKod() {
+		String kod = getBaslikAciklama("bordroToplamGunKod", "TG");
+		return kod;
 	}
 
 	/**
@@ -14185,9 +14290,9 @@ public class OrtakIslemler implements Serializable {
 				logger.debug(vardiyaGun.getId());
 			if (personelIzin != null && vardiyaGun != null && islemVardiya != null && vardiyaGun.getPersonel().getId().equals(personelIzin.getIzinSahibi().getId())) {
 				boolean vardiyaIzin = vardiyaGun.getVardiya().isIzin();
-				BordroIzinGrubu izinGrubu = null;
+				BordroDetayTipi izinGrubu = null;
 				if (vardiyaIzin && PdksUtil.hasStringValue(islemVardiya.getStyleClass()))
-					izinGrubu = BordroIzinGrubu.fromValue(islemVardiya.getStyleClass());
+					izinGrubu = BordroDetayTipi.fromValue(islemVardiya.getStyleClass());
 				if (vardiyaIzin == false || izinGrubu == null) {
 					Date vardiyaDate = vardiyaGun.getVardiyaDate();
 					if (!personelIzin.getIzinTipi().getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK))

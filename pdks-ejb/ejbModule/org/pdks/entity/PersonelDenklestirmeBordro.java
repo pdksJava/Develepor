@@ -28,35 +28,33 @@ public class PersonelDenklestirmeBordro  extends BasePDKSObject  implements Seri
 	static Logger logger = Logger.getLogger(PersonelDenklestirmeBordro.class);
 
 	public static final String TABLE_NAME = "PERS_DENK_BORDRO";
- 	public static final String COLUMN_NAME_PERSONEL_DENKLESTIRME = "PERS_DENK_ID";
+	public static final String COLUMN_NAME_PERSONEL_DENKLESTIRME = "PERS_DENK_ID";
 	public static final String COLUMN_NAME_NORMAL_GUN = "NORMAL_GUN_ADET";
 	public static final String COLUMN_NAME_HAFTA_TATIL = "HAFTA_TATIL_ADET";
+	public static final String COLUMN_NAME_RESMI_HAFTA_TATIL = "RESMI_TATIL_ADET";
 	public static final String COLUMN_NAME_G_HAFTA_TATIL = "TATIL_ADET";
-
- 
 
 	private PersonelDenklestirme personelDenklestirme;
 
-	private Integer normalGunAdet = 0, haftaTatilAdet = 0, tatilAdet = 0;
+	private Double normalGunAdet = 0.0d, haftaTatilAdet = 0.0d, resmiTatilAdet = 0.0d, artikAdet = 0.0d;
 
 	private boolean guncellendi = false;
 
-	private HashMap<BordroIzinGrubu, PersonelDenklestirmeBordroDetay> detayMap;
+	private HashMap<BordroDetayTipi, PersonelDenklestirmeBordroDetay> detayMap;
 
 	public PersonelDenklestirmeBordro() {
 		super();
 
 	}
 
-	public PersonelDenklestirmeBordro(PersonelDenklestirme personelDenklestirme, Integer normalGunAdet, Integer haftaTatilAdet, Integer tatilAdet) {
+	public PersonelDenklestirmeBordro(PersonelDenklestirme personelDenklestirme, Double normalGunAdet, Double haftaTatilAdet, Double resmiTatilAdet, Double artikAdet) {
 		super();
 		this.personelDenklestirme = personelDenklestirme;
 		this.normalGunAdet = normalGunAdet;
 		this.haftaTatilAdet = haftaTatilAdet;
-		this.tatilAdet = tatilAdet;
+		this.resmiTatilAdet = resmiTatilAdet;
+		this.artikAdet = artikAdet;
 	}
-
- 
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_PERSONEL_DENKLESTIRME, nullable = false)
@@ -70,38 +68,49 @@ public class PersonelDenklestirmeBordro  extends BasePDKSObject  implements Seri
 	}
 
 	@Column(name = COLUMN_NAME_NORMAL_GUN)
-	public Integer getNormalGunAdet() {
+	public Double getNormalGunAdet() {
 		return normalGunAdet;
 	}
 
-	public void setNormalGunAdet(Integer value) {
+	public void setNormalGunAdet(Double value) {
 		if (guncellendi == false)
-			this.setGuncellendi(this.normalGunAdet == null || this.normalGunAdet.intValue() != value.intValue());
+			this.setGuncellendi(this.normalGunAdet == null || this.normalGunAdet.doubleValue() != value.doubleValue());
 
 		this.normalGunAdet = value;
 	}
 
 	@Column(name = COLUMN_NAME_HAFTA_TATIL)
-	public Integer getHaftaTatilAdet() {
+	public Double getHaftaTatilAdet() {
 		return haftaTatilAdet;
 	}
 
-	public void setHaftaTatilAdet(Integer value) {
+	public void setHaftaTatilAdet(Double value) {
 		if (guncellendi == false)
-			this.setGuncellendi(this.haftaTatilAdet == null || this.haftaTatilAdet.intValue() != value.intValue());
+			this.setGuncellendi(this.haftaTatilAdet == null || this.haftaTatilAdet.doubleValue() != value.doubleValue());
 
 		this.haftaTatilAdet = value;
 	}
 
-	@Column(name = COLUMN_NAME_G_HAFTA_TATIL)
-	public Integer getTatilAdet() {
-		return tatilAdet;
+	@Column(name = COLUMN_NAME_RESMI_HAFTA_TATIL)
+	public Double getResmiTatilAdet() {
+		return resmiTatilAdet;
 	}
 
-	public void setTatilAdet(Integer value) {
+	public void setResmiTatilAdet(Double value) {
 		if (guncellendi == false)
-			this.setGuncellendi(this.tatilAdet == null || this.tatilAdet.intValue() != value.intValue());
-		this.tatilAdet = value;
+			this.setGuncellendi(this.resmiTatilAdet == null || this.resmiTatilAdet.doubleValue() != value.doubleValue());
+		this.resmiTatilAdet = value;
+	}
+
+	@Column(name = COLUMN_NAME_G_HAFTA_TATIL)
+	public Double getArtikAdet() {
+		return artikAdet;
+	}
+
+	public void setArtikAdet(Double value) {
+		if (guncellendi == false)
+			this.setGuncellendi(this.artikAdet == null || this.artikAdet.doubleValue() != value.doubleValue());
+		this.artikAdet = value;
 	}
 
 	@Transient
@@ -119,12 +128,14 @@ public class PersonelDenklestirmeBordro  extends BasePDKSObject  implements Seri
 		Double value = detay != null ? detay.doubleValue() : 0.0d;
 		return value;
 	}
+
 	@Transient
 	public Double getEksikCalismaSure() {
 		Double detay = personelDenklestirme != null ? personelDenklestirme.getEksikCalismaSure() : null;
 		Double value = detay != null ? detay.doubleValue() : 0.0d;
 		return value;
 	}
+
 	@Transient
 	public Double getResmiTatilMesai() {
 		Double detay = personelDenklestirme != null ? personelDenklestirme.getResmiTatilSure() : null;
@@ -136,7 +147,7 @@ public class PersonelDenklestirmeBordro  extends BasePDKSObject  implements Seri
 	public Double getHaftaTatilMesai() {
 		Double detay = personelDenklestirme != null ? personelDenklestirme.getHaftaCalismaSuresi() : null;
 		Double value = detay != null ? detay.doubleValue() : 0.0d;
- 		return value;
+		return value;
 	}
 
 	@Transient
@@ -155,31 +166,78 @@ public class PersonelDenklestirmeBordro  extends BasePDKSObject  implements Seri
 	}
 
 	@Transient
+	public Double getSaatResmiTatil() {
+		PersonelDenklestirmeBordroDetay detay = getBordroDetay(BordroDetayTipi.SAAT_RESMI_TATIL);
+		Double value = detay != null ? detay.getMiktar().doubleValue() : 0.0d;
+		return value;
+	}
+
+	@Transient
+	public Double getSaatHaftaTatil() {
+		PersonelDenklestirmeBordroDetay detay = getBordroDetay(BordroDetayTipi.SAAT_HAFTA_TATIL);
+		Double value = detay != null ? detay.getMiktar().doubleValue() : 0.0d;
+		return value;
+	}
+
+	@Transient
+	public Double getBordroToplamGunAdet() {
+		double toplamGun = 0;
+		if (normalGunAdet != null)
+			toplamGun += normalGunAdet.doubleValue();
+		if (haftaTatilAdet != null)
+			toplamGun += haftaTatilAdet.doubleValue();
+		if (resmiTatilAdet != null)
+			toplamGun += resmiTatilAdet.doubleValue();
+		return toplamGun;
+	}
+
+	@Transient
+	public Double getSaatNormal() {
+		PersonelDenklestirmeBordroDetay detay = getBordroDetay(BordroDetayTipi.SAAT_NORMAL);
+		Double value = detay != null ? detay.getMiktar().doubleValue() : 0.0d;
+		return value;
+	}
+
+	@Transient
+	public Double getSaatIzin() {
+		PersonelDenklestirmeBordroDetay detay = getBordroDetay(BordroDetayTipi.SAAT_IZIN);
+		Double value = detay != null ? detay.getMiktar().doubleValue() : 0.0d;
+		return value;
+	}
+
+	@Transient
 	public Integer getUcretliIzin() {
-		PersonelDenklestirmeBordroDetay detay = getBordroDetay(BordroIzinGrubu.UCRETLI_IZIN);
+		PersonelDenklestirmeBordroDetay detay = getBordroDetay(BordroDetayTipi.UCRETLI_IZIN);
+		Integer value = detay != null ? detay.getMiktar().intValue() : 0;
+		return value;
+	}
+
+	@Transient
+	public Integer getUcretliIzinGunAdet() {
+		PersonelDenklestirmeBordroDetay detay = getBordroDetay(BordroDetayTipi.IZIN_GUN);
 		Integer value = detay != null ? detay.getMiktar().intValue() : 0;
 		return value;
 	}
 
 	@Transient
 	public Integer getUcretsizIzin() {
-		PersonelDenklestirmeBordroDetay detay = getBordroDetay(BordroIzinGrubu.UCRETSIZ_IZIN);
+		PersonelDenklestirmeBordroDetay detay = getBordroDetay(BordroDetayTipi.UCRETSIZ_IZIN);
 		Integer value = detay != null ? detay.getMiktar().intValue() : 0;
 		return value;
 	}
 
 	@Transient
 	public Integer getRaporluIzin() {
-		PersonelDenklestirmeBordroDetay detay = getBordroDetay(BordroIzinGrubu.RAPORLU_IZIN);
+		PersonelDenklestirmeBordroDetay detay = getBordroDetay(BordroDetayTipi.RAPORLU_IZIN);
 		Integer value = detay != null ? detay.getMiktar().intValue() : 0;
 		return value;
 	}
 
 	@Transient
-	public PersonelDenklestirmeBordroDetay getBordroDetay(BordroIzinGrubu bordroIzinGrubu) {
+	public PersonelDenklestirmeBordroDetay getBordroDetay(BordroDetayTipi bordroDetayTipi) {
 		PersonelDenklestirmeBordroDetay bordroDetay = null;
-		if (bordroIzinGrubu != null && detayMap != null && detayMap.containsKey(bordroIzinGrubu))
-			bordroDetay = detayMap.get(bordroIzinGrubu);
+		if (bordroDetayTipi != null && detayMap != null && detayMap.containsKey(bordroDetayTipi))
+			bordroDetay = detayMap.get(bordroDetayTipi);
 		return bordroDetay;
 	}
 
@@ -189,11 +247,11 @@ public class PersonelDenklestirmeBordro  extends BasePDKSObject  implements Seri
 	}
 
 	@Transient
-	public HashMap<BordroIzinGrubu, PersonelDenklestirmeBordroDetay> getDetayMap() {
+	public HashMap<BordroDetayTipi, PersonelDenklestirmeBordroDetay> getDetayMap() {
 		return detayMap;
 	}
 
-	public void setDetayMap(HashMap<BordroIzinGrubu, PersonelDenklestirmeBordroDetay> detayMap) {
+	public void setDetayMap(HashMap<BordroDetayTipi, PersonelDenklestirmeBordroDetay> detayMap) {
 		this.detayMap = detayMap;
 	}
 
