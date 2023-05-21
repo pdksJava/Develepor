@@ -13964,7 +13964,7 @@ public class OrtakIslemler implements Serializable {
 			KapiView girisKapi = null, cikisKapi = null;
 			for (Iterator iterator = kapiList.iterator(); iterator.hasNext();) {
 				KapiView kapiView = (KapiView) iterator.next();
-				if (!kapiView.getKapiKGS().isManuel())
+				if (!kapiView.getKapiKGS().isPdksManuel())
 					iterator.remove();
 
 			}
