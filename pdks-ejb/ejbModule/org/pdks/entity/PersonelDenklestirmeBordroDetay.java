@@ -27,7 +27,7 @@ public class PersonelDenklestirmeBordroDetay extends BasePDKSObject implements S
 	static Logger logger = Logger.getLogger(PersonelDenklestirmeBordroDetay.class);
 
 	public static final String TABLE_NAME = "PERS_DENK_BORDRO_DETAY";
- 	public static final String COLUMN_NAME_PERSONEL_DENKLESTIRME_BORDRO = "PERS_DENK_BORDRO_ID";
+	public static final String COLUMN_NAME_PERSONEL_DENKLESTIRME_BORDRO = "PERS_DENK_BORDRO_ID";
 	public static final String COLUMN_NAME_TIPI = "TIPI";
 	public static final String COLUMN_NAME_MIKTAR = "MIKTAR";
 
@@ -105,7 +105,11 @@ public class PersonelDenklestirmeBordroDetay extends BasePDKSObject implements S
 
 	@Transient
 	public static String getDetayKey(PersonelDenklestirmeBordro personelDenklestirmeBordro, String tipi) {
-		String detayKey = (personelDenklestirmeBordro != null ? personelDenklestirmeBordro.getId() : 0l) + "_" + (tipi != null ? tipi : "");
+		String detayKey = null;
+		try {
+			detayKey = (personelDenklestirmeBordro != null && personelDenklestirmeBordro.getId() != null ? personelDenklestirmeBordro.getId() : 0l) + "_" + (tipi != null ? tipi : "");
+		} catch (Exception e) {
+		}
 		return detayKey;
 	}
 
