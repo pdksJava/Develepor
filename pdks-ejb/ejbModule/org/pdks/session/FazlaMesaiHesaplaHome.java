@@ -2335,7 +2335,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				String str = ortakIslemler.getParameterKey("bordroVeriOlustur");
 				int donem = yil * 100 + ay;
 				if (donem >= Integer.parseInt(str))
-					fazlaMesaiOrtakIslemler.bordroVeriOlustur(puantajList, true, String.valueOf(donem), session);
+					fazlaMesaiOrtakIslemler.bordroVeriOlustur(denklestirmeAyDurum, puantajList, true, String.valueOf(donem), session);
 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();

@@ -6360,7 +6360,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				String str = ortakIslemler.getParameterKey("bordroVeriOlustur");
 				int donem = yil * 100 + ay;
 				if (donem >= Integer.parseInt(str))
-					fazlaMesaiOrtakIslemler.bordroVeriOlustur(puantajList, false, String.valueOf(donem), session);
+					fazlaMesaiOrtakIslemler.bordroVeriOlustur(false, puantajList, false, String.valueOf(donem), session);
 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
