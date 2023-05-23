@@ -2078,6 +2078,49 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	@Transient
+	public BigDecimal getKatSayi(Integer tipi) {
+		BigDecimal katSayi = null;
+		try {
+			if (tipi != null && katSayiMap != null) {
+				if (katSayiMap.containsKey(tipi))
+					katSayi = katSayiMap.get(tipi);
+			}
+		} catch (Exception e) {
+			katSayi = null;
+		}
+		return katSayi;
+	}
+
+	@Transient
+	public HashMap<Integer, BigDecimal> getKatSayiMap() {
+		return katSayiMap;
+	}
+
+	public void setKatSayiMap(HashMap<Integer, BigDecimal> katSayiMap) {
+		this.katSayiMap = katSayiMap;
+	}
+
+	@Transient
+	public String getDonemStr() {
+		return donemStr;
+	}
+
+	public void setDonemStr(String donemStr) {
+		this.donemStr = donemStr;
+	}
+
+	// SAAT_CALISAN_NORMAL_GUN(91), SAAT_CALISAN_IZIN_GUN(92), SAAT_CALISAN_HAFTA_TATIL(93), SAAT_CALISAN_RESMI_TATIL(
+	@Transient
+	public double getSaatCalisanNormalGunKatsayisi() {
+		double katSayi = 0.0d;
+		if (ayinGunu) {
+			BigDecimal decimal = getKatSayi(KatSayiTipi.SAAT_CALISAN_NORMAL_GUN.value());
+			katSayi = decimal != null ? decimal.doubleValue() : 9.0d;
+		}
+		return katSayi;
+	}
+
+	@Transient
 	public double getSaatCalisanIzinGunKatsayisi() {
 		double katSayi = 0.0d;
 		if (ayinGunu) {
@@ -2109,11 +2152,11 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	@Transient
-	public double getSaatCalisanArifeTatilKatsayisi() {
+	public double getSaatCalisanGunlukKatsayisi() {
 		double katSayi = 0.0d;
 		if (ayinGunu) {
-			BigDecimal decimal = getKatSayi(KatSayiTipi.SAAT_CALISAN_ARIFE_TATIL_SAAT.value());
-			katSayi = decimal != null ? decimal.doubleValue() : 5.0d;
+			BigDecimal decimal = getKatSayi(KatSayiTipi.SAAT_CALISAN_GUN.value());
+			katSayi = decimal != null ? decimal.doubleValue() : 7.5d;
 		}
 		return katSayi;
 	}
@@ -2123,51 +2166,19 @@ public class VardiyaGun extends BaseObject {
 		double katSayi = 0.0d;
 		if (ayinGunu) {
 			BigDecimal decimal = getKatSayi(KatSayiTipi.SAAT_CALISAN_ARIFE_NORMAL_SAAT.value());
-			katSayi = decimal != null ? decimal.doubleValue() : 4.0d;
+			katSayi = decimal != null ? decimal.doubleValue() : 3.75d;
 		}
 		return katSayi;
 	}
 
 	@Transient
-	public double getSaatCalisanNormalGunKatsayisi() {
+	public double getSaatCalisanArifeTatilKatsayisi() {
 		double katSayi = 0.0d;
 		if (ayinGunu) {
-			BigDecimal decimal = getKatSayi(KatSayiTipi.SAAT_CALISAN_NORMAL_GUN.value());
-			katSayi = decimal != null ? decimal.doubleValue() : 9.0d;
+			BigDecimal decimal = getKatSayi(KatSayiTipi.SAAT_CALISAN_ARIFE_TATIL_SAAT.value());
+			katSayi = decimal != null ? decimal.doubleValue() : 3.75d;
 		}
 		return katSayi;
-	}
-
-	@Transient
-	public BigDecimal getKatSayi(Integer tipi) {
-		BigDecimal katSayi = null;
-		try {
-			if (tipi != null && katSayiMap != null) {
-				if (katSayiMap.containsKey(tipi))
-					katSayi = katSayiMap.get(tipi);
-			}
-		} catch (Exception e) {
-			katSayi = null;
-		}
-		return katSayi;
-	}
-
-	@Transient
-	public HashMap<Integer, BigDecimal> getKatSayiMap() {
-		return katSayiMap;
-	}
-
-	public void setKatSayiMap(HashMap<Integer, BigDecimal> katSayiMap) {
-		this.katSayiMap = katSayiMap;
-	}
-
-	@Transient
-	public String getDonemStr() {
-		return donemStr;
-	}
-
-	public void setDonemStr(String donemStr) {
-		this.donemStr = donemStr;
 	}
 
 	@Transient

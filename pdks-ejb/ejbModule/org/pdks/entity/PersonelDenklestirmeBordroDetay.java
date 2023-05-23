@@ -35,7 +35,7 @@ public class PersonelDenklestirmeBordroDetay extends BasePDKSObject implements S
 
 	private String tipi;
 
-	private BordroDetayTipi bordroIzinGrubu;
+	private BordroDetayTipi bordroDetayTipi;
 
 	private Double miktar = 0.0d;
 
@@ -46,10 +46,10 @@ public class PersonelDenklestirmeBordroDetay extends BasePDKSObject implements S
 
 	}
 
-	public PersonelDenklestirmeBordroDetay(PersonelDenklestirmeBordro personelDenklestirmeBordro, BordroDetayTipi bordroIzinGrubu) {
+	public PersonelDenklestirmeBordroDetay(PersonelDenklestirmeBordro personelDenklestirmeBordro, BordroDetayTipi bordroDetayTipi) {
 		super();
 		this.personelDenklestirmeBordro = personelDenklestirmeBordro;
-		this.tipi = bordroIzinGrubu.value();
+		this.tipi = bordroDetayTipi.value();
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -70,7 +70,7 @@ public class PersonelDenklestirmeBordroDetay extends BasePDKSObject implements S
 
 	public void setTipi(String value) {
 		if (value != null)
-			this.bordroIzinGrubu = BordroDetayTipi.fromValue(value);
+			this.bordroDetayTipi = BordroDetayTipi.fromValue(value);
 		this.tipi = value;
 	}
 
@@ -83,15 +83,6 @@ public class PersonelDenklestirmeBordroDetay extends BasePDKSObject implements S
 		if (guncellendi == false)
 			this.setGuncellendi(this.miktar == null || this.miktar.doubleValue() != value.doubleValue());
 		this.miktar = value;
-	}
-
-	@Transient
-	public BordroDetayTipi getBordroIzinGrubu() {
-		return bordroIzinGrubu;
-	}
-
-	public void setBordroIzinGrubu(BordroDetayTipi bordroIzinGrubu) {
-		this.bordroIzinGrubu = bordroIzinGrubu;
 	}
 
 	@Transient
@@ -117,5 +108,14 @@ public class PersonelDenklestirmeBordroDetay extends BasePDKSObject implements S
 	public String getDetayKey() {
 		String detayKey = getDetayKey(personelDenklestirmeBordro, tipi);
 		return detayKey;
+	}
+
+	@Transient
+	public BordroDetayTipi getBordroDetayTipi() {
+		return bordroDetayTipi;
+	}
+
+	public void setBordroDetayTipi(BordroDetayTipi bordroDetayTipi) {
+		this.bordroDetayTipi = bordroDetayTipi;
 	}
 }

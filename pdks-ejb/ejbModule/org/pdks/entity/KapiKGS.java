@@ -50,7 +50,7 @@ public class KapiKGS extends BasePDKSObject implements Serializable {
 	public void setKgsId(Long kgsId) {
 		this.kgsId = kgsId;
 	}
- 
+
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_NAME_KGS_SIRKET, nullable = true)
 	@Fetch(FetchMode.JOIN)

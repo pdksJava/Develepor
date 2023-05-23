@@ -504,7 +504,7 @@
 				<a4j:outputPanel id="hareketAlan">
 					<table>
 						<tr>
-							<TD valign="top"><h:panelGrid columns="1" cellpadding="0" cellspacing="0">
+							<TD valign="top"><h:panelGrid columns="1" cellpadding="0" cellspacing="0" id="hareketIslem">
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">Personel Adi</ui:define>
 										<h:outputText value="#{personelHareketHome.instance.personel.pdksPersonel.adSoyad}" />
@@ -545,6 +545,7 @@
 										<h:selectOneMenu value="#{personelHareketHome.instance.islem.neden}" required="true" requiredMessage="Islem seciniz">
 											<s:selectItems var="comp" value="#{personelHareketHome.hareketIslemList}" label="#{comp.aciklama}" noSelectionLabel="Lutfen Seciniz" />
 											<s:convertEntity />
+											<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" reRender="hareketIslem" />
 										</h:selectOneMenu>
 									</s:decorate>
 
@@ -567,8 +568,8 @@
 										rendered="#{empty personelHareketHome.hareketList }">
 										<br></br>
 
-										<a4j:commandButton status="ajaxStatus" value="Giriş ve Çıkış Kaydet" action="#{personelHareketHome.saveGirisCikis}" reRender="hareketForm"
-											oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+										<a4j:commandButton status="ajaxStatus" value="Giriş ve Çıkış Kaydet" action="#{personelHareketHome.saveGirisCikis}"
+											reRender="hareketForm" oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
 
 									</ui:fragment></TD>
 							</ui:fragment>
