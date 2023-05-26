@@ -14341,6 +14341,7 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param manuelKapiMap
 	 * @param gunMap
 	 * @param hareketEkle
 	 * @param yemekAraliklari
