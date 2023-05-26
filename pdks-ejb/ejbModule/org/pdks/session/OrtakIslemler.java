@@ -5211,6 +5211,31 @@ public class OrtakIslemler implements Serializable {
 					tarih = cal.getTime();
 				}
 				List<VardiyaGun> vardiyaDblar = denklestirmeVardiyalariGetir(denklestirmeDonemi, (ArrayList<Personel>) perList, zamanGuncelle, session);
+				boolean fazlaMesaiTalepDurum = getParameterKey("fazlaMesaiTalepDurum").equals("1");
+				TreeMap<Long, VardiyaGun> vMap = new TreeMap<Long, VardiyaGun>();
+				for (Iterator<VardiyaGun> iterator2 = vardiyaDblar.iterator(); iterator2.hasNext();) {
+					VardiyaGun vardiyaGun = iterator2.next();
+					if (vardiyaGun == null)
+						continue;
+					vardiyaGun.setFazlaMesaiTalepler(null);
+					if (fazlaMesaiTalepDurum && vardiyaGun.getId() != null)
+						vMap.put(vardiyaGun.getId(), vardiyaGun);
+
+				}
+				if (!vMap.isEmpty()) {
+					HashMap fields = new HashMap();
+					fields.put("vardiyaGun.id", new ArrayList(vMap.keySet()));
+					if (session != null)
+						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+					List<FazlaMesaiTalep> veriList = pdksEntityController.getObjectByInnerObjectList(fields, FazlaMesaiTalep.class);
+					for (FazlaMesaiTalep fazlaMesaiTalep : veriList) {
+						if (fazlaMesaiTalep.getDurum())
+							vMap.get(fazlaMesaiTalep.getVardiyaGun().getId()).addFazlaMesaiTalep(fazlaMesaiTalep);
+
+					}
+					veriList = null;
+				}
+				vMap = null;
 				List<Long> personelIdler = new ArrayList<Long>();
 				for (Personel personel : perList)
 					personelIdler.add(personel.getId());
@@ -5256,15 +5281,10 @@ public class OrtakIslemler implements Serializable {
 						personelDenklestirmeTasiyici.setPersonel(personel);
 						personelDenklestirmeTasiyici.setGenelHaftaMap((TreeMap<String, Integer>) genelHaftaMap.clone(), tatilGunleriMap);
 						if (personelDenklestirmeTasiyici.getVardiyaGunleriMap() != null && !personelDenklestirmeTasiyici.getVardiyaGunleriMap().isEmpty()) {
-							TreeMap<Long, VardiyaGun> vMap = new TreeMap<Long, VardiyaGun>();
-							boolean fazlaMesaiTalepDurum = getParameterKey("fazlaMesaiTalepDurum").equals("1");
 							for (Iterator<VardiyaGun> iterator2 = vardiyaDblar.iterator(); iterator2.hasNext();) {
 								VardiyaGun vardiyaGun = iterator2.next();
 								if (vardiyaGun == null)
 									continue;
-								vardiyaGun.setFazlaMesaiTalepler(null);
-								if (fazlaMesaiTalepDurum && vardiyaGun.getId() != null)
-									vMap.put(vardiyaGun.getId(), vardiyaGun);
 								// vardiyaGun.setVardiyaZamani();
 								String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMMdd");
 								vardiyaGun.setZamanGuncelle(zamanGuncelle);
@@ -5299,18 +5319,7 @@ public class OrtakIslemler implements Serializable {
 								}
 
 							}
-							if (!vMap.isEmpty()) {
-								HashMap fields = new HashMap();
-								fields.put("vardiyaGun.id", new ArrayList(vMap.keySet()));
-								if (session != null)
-									fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-								List<FazlaMesaiTalep> veriList = pdksEntityController.getObjectByInnerObjectList(fields, FazlaMesaiTalep.class);
-								for (FazlaMesaiTalep fazlaMesaiTalep : veriList) {
-									if (fazlaMesaiTalep.getDurum())
-										vMap.get(fazlaMesaiTalep.getVardiyaGun().getId()).addFazlaMesaiTalep(fazlaMesaiTalep);
 
-								}
-							}
 							ArrayList<VardiyaGun> varList = new ArrayList<VardiyaGun>(personelDenklestirmeTasiyici.getVardiyaGunleriMap().values());
 							for (Iterator iterator = varList.iterator(); iterator.hasNext();) {
 								VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
@@ -5390,14 +5399,8 @@ public class OrtakIslemler implements Serializable {
 					List<YemekIzin> yemekList = getYemekList(session);
 					List<PersonelFazlaMesai> fazlaMesailer = denklestirmeFazlaMesaileriGetir(denklestirmeDonemi != null ? denklestirmeDonemi.getDenklestirmeAy() : null, vardiyalar, session);
 					Long perNoId = null;
-					boolean kartOkuyucuDurum = getParameterKey("kartOkuyucuDurum").equals("0");
-					HashMap<String, KapiView> manuelKapiMap = null;
-
-					KapiView girisView = null;
-					if (tarihHareketEkle || kartOkuyucuDurum) {
-						manuelKapiMap = getManuelKapiMap(null, session);
-						girisView = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS);
-					}
+					HashMap<String, KapiView> manuelKapiMap = getManuelKapiMap(null, session);
+					KapiView girisView = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS);
 
 					for (Iterator<Long> iterator2 = personelDenklestirmeMap.keySet().iterator(); iterator2.hasNext();) {
 						perNoId = iterator2.next();
