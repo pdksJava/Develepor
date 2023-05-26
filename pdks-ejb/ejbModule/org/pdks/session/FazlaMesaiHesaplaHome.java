@@ -3184,6 +3184,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (hareketler != null) {
 				for (HareketKGS hareketKGS : hareketler) {
 					String islemYapan = "";
+					if (hareketKGS.getId() != null && hareketKGS.getId().startsWith("V"))
+						continue;
 					if (hareketKGS.getKapiView() != null) {
 						try {
 							if (hareketKGS.isManuelGiris()) {
