@@ -57,7 +57,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), kayitliVardiyaList = new ArrayList<Vardiya>();
 	private List<Departman> departmanList;
 
-	private Boolean hareketKaydiVardiyaBul = Boolean.FALSE;
+	private Boolean hareketKaydiVardiyaBul = Boolean.FALSE, saatlikCalismaVar = false;
 
 	private Session session;
 
@@ -78,8 +78,12 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	public String calismaModeliEkle(CalismaModeli xCalismaModeli) {
 
-		if (xCalismaModeli == null)
+		if (xCalismaModeli == null) {
+
 			xCalismaModeli = new CalismaModeli();
+			if (!saatlikCalismaVar)
+				xCalismaModeli.setAylikMaas(Boolean.TRUE);
+		}
 
 		setCalismaModeli(xCalismaModeli);
 
@@ -90,6 +94,18 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 		fillVardiyalar();
 		return "";
+	}
+
+	public String calismaModeliKopyala(CalismaModeli xCalismaModeli) {
+		CalismaModeli calismaModeliYeni = (CalismaModeli) xCalismaModeli.cloneEmpty();
+
+		calismaModeliYeni.setId(null);
+		if (calismaModeliYeni.getAciklama() != null)
+			calismaModeliYeni.setAciklama(xCalismaModeli.getAciklama() + " kopya");
+		setCalismaModeli(calismaModeliYeni);
+		fillVardiyalar();
+		return "";
+
 	}
 
 	public void fillBagliOlduguDepartmanTanimList() {
@@ -168,9 +184,9 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		} else
 			kayitliVardiyaList = new ArrayList<Vardiya>();
 		if (vardiyaList.size() > 1)
-			vardiyaList = PdksUtil.sortListByAlanAdi(vardiyaList, "vardiyaNumeric", false);
+			vardiyaList = PdksUtil.sortObjectStringAlanList(vardiyaList, "getKisaAdi", null);
 		if (kayitliVardiyaList.size() > 1)
-			kayitliVardiyaList = PdksUtil.sortListByAlanAdi(kayitliVardiyaList, "vardiyaNumeric", false);
+			kayitliVardiyaList = PdksUtil.sortObjectStringAlanList(kayitliVardiyaList, "getKisaAdi", null);
 
 		return "";
 	}
@@ -248,6 +264,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	public void fillCalismaModeliList() {
 		hareketKaydiVardiyaBul = ortakIslemler.getParameterKey("hareketKaydiVardiyaBul").equals("1");
+		saatlikCalismaVar = ortakIslemler.getParameterKey("saatlikCalismaVar").equals("1");
 		calismaModeli = new CalismaModeli();
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("durum", Boolean.TRUE);
@@ -324,6 +341,21 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	public void setSession(Session session) {
 		this.session = session;
+	}
+
+	/**
+	 * @return the saatlikCalismaVar
+	 */
+	public Boolean getSaatlikCalismaVar() {
+		return saatlikCalismaVar;
+	}
+
+	/**
+	 * @param saatlikCalismaVar
+	 *            the saatlikCalismaVar to set
+	 */
+	public void setSaatlikCalismaVar(Boolean saatlikCalismaVar) {
+		this.saatlikCalismaVar = saatlikCalismaVar;
 	}
 
 }

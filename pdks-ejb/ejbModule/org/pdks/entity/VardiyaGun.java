@@ -89,6 +89,7 @@ public class VardiyaGun extends BaseObject {
 	private Boolean fazlaMesaiOnayla;
 	private Integer version = 0;
 	private List<FazlaMesaiTalep> fazlaMesaiTalepler;
+	private List<YemekIzin> yemekList;
 
 	public VardiyaGun() {
 		super();
@@ -388,8 +389,11 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public void addCalismaSuresi(double value) {
-		if (this.getVardiyaDateStr().equals("20210928") && value != 0.0d)
-			logger.debug(value);
+		if (value != 0.0d) {
+			if (this.getVardiyaDateStr().equals("20230420"))
+				logger.debug(value);
+		}
+
 		calismaSuresi += value;
 	}
 
@@ -541,30 +545,52 @@ public class VardiyaGun extends BaseObject {
 			}
 
 			boolean ekle = Boolean.TRUE;
+			KapiSirket kapiSirket = hareket.getKapiView().getKapiKGS() != null ? hareket.getKapiView().getKapiKGS().getKapiSirket() : null;
+
 			if (!hareketler.isEmpty()) {
 				int indexSon = hareketler.size() - 1;
 				HareketKGS oncekiHareket = hareketler.get(indexSon);
 				Double fark = PdksUtil.getDakikaFarki(hareket.getZaman(), oncekiHareket.getZaman());
 				if (kapi.isGirisKapi()) {
-					if (oncekiHareket.getKapiView().getKapi().isGirisKapi() && fark < beklemeSuresi)
+					if (oncekiHareket.getKapiView().getKapi().isGirisKapi() && fark < beklemeSuresi) {
+						boolean duzelt = false;
+						KapiSirket oncekiKapiSirket = oncekiHareket.getKapiView().getKapiKGS() != null ? oncekiHareket.getKapiView().getKapiKGS().getKapiSirket() : null;
+						if (oncekiKapiSirket != null && kapiSirket != null) {
+							duzelt = oncekiKapiSirket.getId().equals(kapiSirket.getId()) || hareket.getZaman().getTime() <= kapiSirket.getBitTarih().getTime();
+						} else
+							duzelt = true;
+
+						if (duzelt) {
+							hareketler.set(indexSon, hareket);
+
+						}
 						ekle = Boolean.FALSE;
+					}
+
 				} else if (oncekiHareket.getKapiView().getKapi().isCikisKapi()) {
 					if (fark < beklemeSuresi) {
 						ekle = Boolean.FALSE;
+						KapiSirket oncekiKapiSirket = oncekiHareket.getKapiView().getKapiKGS() != null ? oncekiHareket.getKapiView().getKapiKGS().getKapiSirket() : null;
 						HareketKGS yeniHareket = (HareketKGS) hareket.clone();
-						if (hareketDuzelt) {
-							yeniHareket.setOrjinalZaman((Date) yeniHareket.getZaman().clone());
+						boolean duzelt = false;
+						if (oncekiKapiSirket != null && kapiSirket != null) {
+							duzelt = oncekiKapiSirket.getId().equals(kapiSirket.getId()) || yeniHareket.getZaman().getTime() <= kapiSirket.getBitTarih().getTime();
+						} else
+							duzelt = true;
+						if (duzelt) {
+							if (hareketDuzelt) {
+								yeniHareket.setOrjinalZaman((Date) yeniHareket.getZaman().clone());
+								if (yeniHareket.getZaman().getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime())
+									yeniHareket.setZaman(islemVardiya.getVardiyaBasZaman());
+								else if (yeniHareket.getZaman().getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime())
+									yeniHareket.setZaman(islemVardiya.getVardiyaBitZaman());
 
-							if (yeniHareket.getZaman().getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime())
-								yeniHareket.setZaman(islemVardiya.getVardiyaBasZaman());
-							else if (yeniHareket.getZaman().getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime())
-								yeniHareket.setZaman(islemVardiya.getVardiyaBitZaman());
-
+							}
+							indexSon = cikisHareketleri.size() - 1;
+							cikisHareketleri.set(indexSon, yeniHareket);
+							indexSon = hareketler.size() - 1;
+							hareketler.set(indexSon, yeniHareket);
 						}
-						indexSon = cikisHareketleri.size() - 1;
-						cikisHareketleri.set(indexSon, yeniHareket);
-						indexSon = hareketler.size() - 1;
-						hareketler.set(indexSon, yeniHareket);
 
 					}
 
@@ -1830,7 +1856,7 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public void addBayramCalismaSuresi(double value) {
-		if (value > 0.0d)
+		if (value != 0.0d)
 			logger.debug(value);
 		bayramCalismaSuresi += value;
 	}
@@ -1917,8 +1943,10 @@ public class VardiyaGun extends BaseObject {
 		return fazlaMesaiOnayla;
 	}
 
-	public void setFazlaMesaiOnayla(Boolean fazlaMesaiOnayla) {
-		this.fazlaMesaiOnayla = fazlaMesaiOnayla;
+	public void setFazlaMesaiOnayla(Boolean value) {
+		if (vardiyaDateStr.endsWith("01"))
+			logger.debug(vardiyaDateStr + " " + value);
+		this.fazlaMesaiOnayla = value;
 	}
 
 	@Transient
@@ -1989,8 +2017,10 @@ public class VardiyaGun extends BaseObject {
 		return fazlaMesaiTalepOnayliDurum;
 	}
 
-	public void setFazlaMesaiTalepOnayliDurum(boolean fazlaMesaiTalepOnayliDurum) {
-		this.fazlaMesaiTalepOnayliDurum = fazlaMesaiTalepOnayliDurum;
+	public void setFazlaMesaiTalepOnayliDurum(boolean value) {
+		if (vardiyaDateStr.endsWith("01"))
+			logger.debug("" + value);
+		this.fazlaMesaiTalepOnayliDurum = value;
 	}
 
 	@Transient
@@ -2205,6 +2235,24 @@ public class VardiyaGun extends BaseObject {
 
 	public void setIzinHaftaTatilDurum(Boolean izinHaftaTatilDurum) {
 		this.izinHaftaTatilDurum = izinHaftaTatilDurum;
+	}
+
+	@Transient
+	public boolean isYemekHesabiSureEkle() {
+		BigDecimal decimal = getKatSayi(KatSayiTipi.YEMEK_SURE_EKLE_DURUM.value());
+		boolean tatilYemekHesabiSureEkle = decimal != null && decimal.intValue() > 0;
+		return tatilYemekHesabiSureEkle;
+	}
+
+	@Transient
+	public List<YemekIzin> getYemekList() {
+		if (yemekList == null)
+			yemekList = new ArrayList<YemekIzin>();
+		return yemekList;
+	}
+
+	public void setYemekList(List<YemekIzin> yemekList) {
+		this.yemekList = yemekList;
 	}
 
 }

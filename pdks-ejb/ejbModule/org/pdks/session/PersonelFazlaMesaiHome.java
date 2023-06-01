@@ -92,7 +92,6 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	private HashMap<String, List<Tanim>> ekSahaListMap;
 	private TreeMap<String, Tanim> ekSahaTanimMap;
 	private KapiView manuelGiris = null, manuelCikis = null;
-	private List<YemekIzin> yemekList = new ArrayList<YemekIzin>();
 	private Tatil tatil, tatilMesai;
 	private DenklestirmeAy pdksDenklestirmeAy = null;
 	private String donusAdres = "";
@@ -643,8 +642,11 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		if (personeller != null && !personeller.isEmpty()) {
 			saveLastParameter();
 			boolean fazlaMesaiYemekHesapla = ortakIslemler.getParameterKey("fazlaMesaiYemekHesapla").equals("1");
+			List<YemekIzin> yemekGenelList = null;
 			if (fazlaMesaiYemekHesapla)
-				yemekList = ortakIslemler.getYemekList(session);
+				yemekGenelList = ortakIslemler.getYemekList(session);
+			else
+				yemekGenelList = new ArrayList<YemekIzin>();
 
 			boolean giris = Boolean.TRUE;
 			boolean yaz = Boolean.FALSE;
@@ -688,6 +690,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					perIdList = null;
 				}
 				vardiyaList = new ArrayList<VardiyaGun>(vardiyaMap.values());
+				ortakIslemler.setVardiyaYemekList(vardiyaList, yemekGenelList);
 				Date bugun = Calendar.getInstance().getTime();
 				TreeMap<String, List<VardiyaGun>> perVardiyaMap = new TreeMap<String, List<VardiyaGun>>();
 				for (VardiyaGun vardiyaGun : vardiyaList) {
@@ -826,15 +829,18 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						boolean durum = false;
 						for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 							VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-
-							if (vardiyaGun.getPersonel().getId().equals(perId)) {
-								if (vardiyaGun.addHareket(kgsHareket, Boolean.FALSE))
+ 							if (vardiyaGun.getPersonel().getId().equals(perId)) {
+								if (vardiyaGun.addHareket(kgsHareket, Boolean.FALSE)) {
 									durum = true;
+								}
+
 							}
 
 						}
-						if (!durum)
+						if (!durum) {
+							iterator1.remove();
 							continue;
+						}
 						if (kgsHareket.getKapiView().getKapi().isGirisKapi()) {
 							if (!girisMap.containsKey(perId)) {
 								kgsHareket.setGirisZaman(kgsHareket.getZaman());
@@ -853,6 +859,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 						if (vardiyaGun.getHareketler() == null)
 							continue;
+						List<YemekIzin> yemekList = vardiyaGun.getYemekList();
 						yuvarmaTipi = vardiyaGun.getYarimYuvarla();
 						List<HareketKGS> girisHareketleri = vardiyaGun.getGirisHareketleri(), cikisHareketleri = vardiyaGun.getCikisHareketleri();
 						if (girisHareketleri == null || cikisHareketleri == null || cikisHareketleri.size() != girisHareketleri.size())
@@ -879,13 +886,19 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 									Date vardiyaTelorans2BitZaman = islemVardiya.getVardiyaTelorans2BitZaman();
 									Date vardiyaFazlaMesaiBitZaman = islemVardiya.getVardiyaFazlaMesaiBitZaman();
 									for (int j = 0; j < cikisHareketleri.size(); j++) {
-										HareketKGS kgsHareketGiris = (HareketKGS) girisHareketleri.get(j).clone();
-										HareketKGS kgsHareketCikis = (HareketKGS) cikisHareketleri.get(j).clone();
+										HareketKGS hareketGiris = girisHareketleri.get(j);
+										HareketKGS hareketCikis = cikisHareketleri.get(j);
+										// if (hareketGiris.getOrjinalZaman() != null)
+										// hareketGiris.setZaman(hareketGiris.getOrjinalZaman());
+										// if (hareketCikis.getOrjinalZaman() != null)
+										// hareketCikis.setZaman(hareketCikis.getOrjinalZaman());
+										HareketKGS kgsHareketGiris = (HareketKGS) hareketGiris.clone();
+										HareketKGS kgsHareketCikis = (HareketKGS) hareketCikis.clone();
 
 										try {
 											Long kgsZaman = kgsHareketCikis.getZaman().getTime();
-											Date girisZaman = kgsHareketGiris != null && kgsHareketGiris.getZaman() != null ? (Date) kgsHareketGiris.getZaman().clone() : null;
-											Date cikisZaman = kgsHareketCikis != null && kgsHareketCikis.getZaman() != null ? (Date) kgsHareketCikis.getZaman().clone() : null;
+											Date girisZaman = kgsHareketGiris != null && kgsHareketGiris.getOrjinalZaman() != null ? (Date) kgsHareketGiris.getZaman().clone() : null;
+											Date cikisZaman = kgsHareketCikis != null && kgsHareketCikis.getOrjinalZaman() != null ? (Date) kgsHareketCikis.getZaman().clone() : null;
 
 											if ((cikisZaman.getTime() > vardiyaTelorans2BitZaman.getTime()) && (cikisZaman.getTime() <= vardiyaFazlaMesaiBitZaman.getTime())) {
 												kgsHareketCikis.setVardiyaGun(vardiyaGun);
@@ -1403,6 +1416,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					e.printStackTrace();
 				}
 				HareketKGS kgsHareketCikis = !list.isEmpty() ? list.get(0) : null;
+				List<YemekIzin> yemekList = hareket.getVardiyaGun().getYemekList();
 				if (kgsHareketCikis != null) {
 					HareketKGS kgsHareketGiris = hareket.getGirisHareket() != null ? hareket.getGirisHareket() : hareket;
 					pdksEntityController.hareketEkle(manuelKapiKontrol(kgsHareketGiris.getKapiView()), hareket.getPersonel(), girisZaman, sistemAdminUser, fazlaMesaiSistemOnayDurum.getId(), "", session);
@@ -1579,14 +1593,6 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 	public void setDonusAdres(String donusAdres) {
 		this.donusAdres = donusAdres;
-	}
-
-	public List<YemekIzin> getYemekList() {
-		return yemekList;
-	}
-
-	public void setYemekList(List<YemekIzin> yemekList) {
-		this.yemekList = yemekList;
 	}
 
 	public Tatil getTatil() {
