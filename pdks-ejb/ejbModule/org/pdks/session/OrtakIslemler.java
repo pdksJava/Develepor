@@ -13777,8 +13777,17 @@ public class OrtakIslemler implements Serializable {
 										calSure += fark;
 										double resmiCalisma = resmiTatilSure;
 										if (resmiTatilSure > 0.0d) {
-											double rs = resmiCalisma > netSure ? netSure : resmiCalisma;
-											double yemekFark = PdksUtil.setSureDoubleTypeRounded(((rs + vardiyaYemekSuresi) * fark) / (netSure + vardiyaYemekSuresi), vardiyaGun.getYarimYuvarla());
+											double yemekFark = 0.0d;
+											if (tatilYemekHesabiSureEkle == false) {
+												double rs = resmiCalisma > netSure ? netSure : resmiCalisma;
+												double pay = rs;
+												double payda = netSure + vardiyaYemekSuresi;
+												yemekFark = PdksUtil.setSureDoubleTypeRounded((pay * fark) / payda, vardiyaGun.getYarimYuvarla());
+											} else {
+												double rs = resmiCalisma > netSure ? netSure : resmiCalisma;
+												yemekFark = PdksUtil.setSureDoubleTypeRounded(((rs + vardiyaYemekSuresi) * fark) / (netSure + vardiyaYemekSuresi), vardiyaGun.getYarimYuvarla());
+
+											}
 											vardiyaYemekSuresi += yemekFark;
 											resmiTatilSure += yemekFark;
 											vardiyaGun.addBayramCalismaSuresi(yemekFark);
