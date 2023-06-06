@@ -1,7 +1,9 @@
 package org.pdks.session;
 
+import java.awt.Color;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -19,6 +21,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.jboss.seam.annotations.Name;
 
 @Name("excelUtil")
@@ -31,9 +35,48 @@ public class ExcelUtil implements Serializable {
 	private static String FONT_NAME = "Arial";
 	private static Integer NORMAL_WEIGHT = 8;
 	private static Integer BOLD_WEIGHT = 9;
+	public static final String HEADER_COLOR = "excelHeaderColor";
+	public static final String ROW_COLOR = "excelRowColor";
+	public static final String ALIGN_CENTER = "alignCenter";
+	public static final String ALIGN_RIGHT = "alignRight";
+	public static final String EVEN_COLOR = "excelEvenColor";
+	public static final String EVEN_DAY_COLOR = "excelEvenDayColor";
+	public static final String ODD_COLOR = "excelOddColor";
+	public static final String ODD_DAY_COLOR = "excelOddDayColor";
+	public static final String COLOR = "color";
+	public static final String BACKGROUND_COLOR = "backgroundColor";
+	public static final String FORMAT_NUMBER = "formatNumber";
+	public static final String FORMAT_TUTAR = "formatTutar";
+	public static final String FORMAT_DATE = "formatDate";
+	public static final String FORMAT_DATETIME = "formatDateTime";
+	public static final String FORMAT_TIME = "formatTime";
+	public static final String FORMAT_DATA_NUMBER = "#,##0";
+	public static final String FORMAT_DATA_TUTAR = "#,##0.00";
+	public static final String FORMAT_DATA_TIME = "h:mm";
+
+	private static HashMap<String, HashMap<String, Integer[]>> colorMap = new HashMap<String, HashMap<String, Integer[]>>();
 
 	static Logger logger = Logger.getLogger(ExcelUtil.class);
 
+	/**
+	 * @param rgb1
+	 * @param rgb2
+	 * @param rgb3
+	 * @return
+	 */
+	public static XSSFColor getXSSFColor(Integer rgb1, Integer rgb2, Integer rgb3) {
+		XSSFColor color = new XSSFColor(new byte[] { rgb1.byteValue(), rgb2.byteValue(), rgb3.byteValue() });
+		return color;
+	}
+
+	/**
+	 * @param firstRow
+	 * @param firstCol
+	 * @param lastRow
+	 * @param lastCol
+	 * @return
+	 * @throws Exception
+	 */
 	public static CellRangeAddress getRegion(int firstRow, int firstCol, int lastRow, int lastCol) throws Exception {
 		CellRangeAddress cellRangeAddress = null;
 		try {
@@ -101,6 +144,12 @@ public class ExcelUtil implements Serializable {
 		return headerFont;
 	}
 
+	/**
+	 * @param sheet
+	 * @param row
+	 * @param col
+	 * @return
+	 */
 	public static Cell getCell(Sheet sheet, int row, int col) {
 		Cell cell = null;
 		try {
@@ -112,6 +161,11 @@ public class ExcelUtil implements Serializable {
 		return cell;
 	}
 
+	/**
+	 * @param cell
+	 * @return
+	 * @throws Exception
+	 */
 	public static Double getSheetDoubleValue(Cell cell) throws Exception {
 		Double value = null;
 		if (cell != null) {
@@ -130,12 +184,25 @@ public class ExcelUtil implements Serializable {
 		return value;
 	}
 
+	/**
+	 * @param sheet
+	 * @param row
+	 * @param col
+	 * @return
+	 * @throws Exception
+	 */
 	public static Double getSheetDoubleValue(Sheet sheet, int row, int col) throws Exception {
 		Cell cell = getCell(sheet, row, col);
 		Double value = cell != null && cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC ? new Double(cell.getNumericCellValue()) : null;
 		return value;
 	}
 
+	/**
+	 * @param cell
+	 * @param pattern
+	 * @return
+	 * @throws Exception
+	 */
 	public static Date getSheetDateValue(Cell cell, String pattern) throws Exception {
 		Date value = null;
 		try {
@@ -147,12 +214,24 @@ public class ExcelUtil implements Serializable {
 		return value;
 	}
 
+	/**
+	 * @param sheet
+	 * @param row
+	 * @param col
+	 * @return
+	 * @throws Exception
+	 */
 	public static Date getSheetDateValue(Sheet sheet, int row, int col) throws Exception {
 		Cell cell = getCell(sheet, row, col);
 		Date value = cell != null ? cell.getDateCellValue() : null;
 		return value;
 	}
 
+	/**
+	 * @param cell
+	 * @return
+	 * @throws Exception
+	 */
 	public static String getSheetStringValue(Cell cell) throws Exception {
 		String value = null;
 		if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING)
@@ -164,6 +243,13 @@ public class ExcelUtil implements Serializable {
 		return value;
 	}
 
+	/**
+	 * @param sheet
+	 * @param row
+	 * @param col
+	 * @return
+	 * @throws Exception
+	 */
 	public static String getSheetStringValue(Sheet sheet, int row, int col) throws Exception {
 		Cell cell = getCell(sheet, row, col);
 		String value = null;
@@ -182,8 +268,138 @@ public class ExcelUtil implements Serializable {
 		return value;
 	}
 
+	/**
+	 * @param formatStr
+	 * @param wb
+	 * @return
+	 */
+	public static CellStyle getStyleDayOdd(String formatStr, Workbook wb) {
+		CellStyle style = formatOddEven(formatStr, wb);
+		HashMap<String, Integer[]> styleMap = setStyleColor(ODD_DAY_COLOR, style);
+		if (styleMap != null)
+			styleMap = null;
+		return style;
+	}
+
+	/**
+	 * @param formatStr
+	 * @param wb
+	 * @return
+	 */
+	public static CellStyle getStyleDayEven(String formatStr, Workbook wb) {
+		CellStyle style = formatOddEven(formatStr, wb);
+		HashMap<String, Integer[]> styleMap = setStyleColor(EVEN_DAY_COLOR, style);
+		if (styleMap != null)
+			styleMap = null;
+		return style;
+	}
+
+	/**
+	 * @param formatStr
+	 * @param wb
+	 * @return
+	 */
+	public static CellStyle getStyleOdd(String formatStr, Workbook wb) {
+		CellStyle style = formatOddEven(formatStr, wb);
+		HashMap<String, Integer[]> styleMap = setStyleColor(ODD_COLOR, style);
+		if (!styleMap.containsKey(BACKGROUND_COLOR)) {
+			XSSFCellStyle styleOdd = (XSSFCellStyle) style;
+			setFillForegroundColor(styleOdd, 219, 248, 219);
+		}
+		styleMap = null;
+		return style;
+	}
+
+	/**
+	 * @param formatStr
+	 * @param wb
+	 * @return
+	 */
+	public static CellStyle getStyleEven(String formatStr, Workbook wb) {
+		CellStyle style = formatOddEven(formatStr, wb);
+		HashMap<String, Integer[]> styleMap = setStyleColor(EVEN_COLOR, style);
+		if (!styleMap.containsKey(BACKGROUND_COLOR)) {
+			XSSFCellStyle styleEven = (XSSFCellStyle) style;
+			setFillForegroundColor(styleEven, 213, 228, 251);
+
+		}
+
+		styleMap = null;
+		return style;
+	}
+
+	/**
+	 * @param formatStr
+	 * @param wb
+	 * @return
+	 */
+	private static CellStyle formatOddEven(String formatStr, Workbook wb) {
+		CellStyle style = getStyleData(wb);
+		if (formatStr != null) {
+			String str = null;
+			if (formatStr.equals(FORMAT_NUMBER)) {
+				style.setAlignment(CellStyle.ALIGN_RIGHT);
+				str = FORMAT_DATA_NUMBER;
+			} else if (formatStr.equals(FORMAT_TUTAR)) {
+				style.setAlignment(CellStyle.ALIGN_RIGHT);
+				str = FORMAT_DATA_TUTAR;
+			} else if (formatStr.equals(FORMAT_TIME)) {
+				style.setAlignment(CellStyle.ALIGN_CENTER);
+				str = FORMAT_DATA_TIME;
+			} else if (formatStr.equals(FORMAT_DATE)) {
+				style.setAlignment(CellStyle.ALIGN_CENTER);
+				str = PdksUtil.getDateFormat();
+			} else if (formatStr.equals(FORMAT_DATETIME)) {
+				style.setAlignment(CellStyle.ALIGN_CENTER);
+				str = PdksUtil.getDateFormat() + " " + FORMAT_DATA_TIME;
+			} else if (formatStr.equals(ALIGN_CENTER)) {
+				style.setAlignment(CellStyle.ALIGN_CENTER);
+				str = "";
+			} else if (formatStr.equals(ALIGN_RIGHT)) {
+				style.setAlignment(CellStyle.ALIGN_RIGHT);
+				str = "";
+			}
+			if (str != null) {
+				if (PdksUtil.hasStringValue(str)) {
+					Integer formatType = getDataFormat(formatStr, wb);
+					if (formatType != null) {
+						style.setDataFormat(formatType.shortValue());
+					}
+				}
+			} else
+				style.setAlignment(CellStyle.ALIGN_LEFT);
+
+		}
+		return style;
+	}
+
+	/**
+	 * @param wb
+	 * @return
+	 */
+	public static CellStyle getStyleDataCenter(Workbook wb) {
+		CellStyle style = getStyleData(wb);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
+		return style;
+	}
+
+	/**
+	 * @param wb
+	 * @return
+	 */
+	public static CellStyle getStyleDataRight(Workbook wb) {
+		CellStyle style = getStyleData(wb);
+		style.setAlignment(CellStyle.ALIGN_RIGHT);
+		return style;
+	}
+
+	/**
+	 * @param wb
+	 * @return
+	 */
 	public static CellStyle getStyleData(Workbook wb) {
 		CellStyle style = wb.createCellStyle();
+		style.setAlignment(CellStyle.ALIGN_LEFT);
 		style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
 		setFontNormal(wb, style);
 		style.setBorderTop(HSSFCellStyle.BORDER_THIN);
@@ -263,7 +479,10 @@ public class ExcelUtil implements Serializable {
 		style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
 		style.setBorderRight(HSSFCellStyle.BORDER_THIN);
 		style.setWrapText(Boolean.TRUE);
-		style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
+		HashMap<String, Integer[]> styleMap = setStyleColor(HEADER_COLOR, style);
+		if (styleMap != null)
+			styleMap = null;
 		return style;
 
 	}
@@ -283,7 +502,7 @@ public class ExcelUtil implements Serializable {
 	 * @return
 	 */
 	public static CellStyle getCellStyleTutar(Workbook wb) {
-		CellStyle cellStyleTutar = getCellStyleFormat("#,##0.00", Integer.parseInt(String.valueOf(HSSFCellStyle.ALIGN_RIGHT)), wb);
+		CellStyle cellStyleTutar = getCellStyleFormat(FORMAT_DATA_TUTAR, Integer.parseInt(String.valueOf(CellStyle.ALIGN_RIGHT)), wb);
 		return cellStyleTutar;
 	}
 
@@ -292,7 +511,7 @@ public class ExcelUtil implements Serializable {
 	 * @return
 	 */
 	public static CellStyle getCellStyleNumber(Workbook wb) {
-		CellStyle cellStyleTutar = getCellStyleFormat("#,##0", Integer.parseInt(String.valueOf(HSSFCellStyle.ALIGN_RIGHT)), wb);
+		CellStyle cellStyleTutar = getCellStyleFormat(FORMAT_DATA_NUMBER, Integer.parseInt(String.valueOf(CellStyle.ALIGN_RIGHT)), wb);
 		return cellStyleTutar;
 	}
 
@@ -314,18 +533,12 @@ public class ExcelUtil implements Serializable {
 		return format;
 	}
 
-	// /**
-	// * @param formatStr
-	// * @param wb
-	// * @return
-	// */
-	// public static CellStyle getCellStyleTutar(String formatStr, Workbook wb) {
-	// CellStyle cellStyleTutar = getCellStyleFormat(formatStr, Integer.parseInt(String.valueOf(HSSFCellStyle.ALIGN_RIGHT)), wb);
-	// return cellStyleTutar;
-	// }
-
+	/**
+	 * @param wb
+	 * @return
+	 */
 	public static CellStyle getCellStyleTimeStamp(Workbook wb) {
-		CellStyle cellStyleDate = getCellStyleFormat(PdksUtil.getDateFormat() + " h:mm", Integer.parseInt(String.valueOf(HSSFCellStyle.ALIGN_CENTER)), wb);
+		CellStyle cellStyleDate = getCellStyleFormat(PdksUtil.getDateFormat() + " " + FORMAT_DATA_TIME, Integer.parseInt(String.valueOf(CellStyle.ALIGN_CENTER)), wb);
 		return cellStyleDate;
 	}
 
@@ -334,7 +547,7 @@ public class ExcelUtil implements Serializable {
 	 * @return
 	 */
 	public static CellStyle getCellStyleTime(Workbook wb) {
-		CellStyle cellStyleDate = getCellStyleFormat("h:mm", Integer.parseInt(String.valueOf(HSSFCellStyle.ALIGN_CENTER)), wb);
+		CellStyle cellStyleDate = getCellStyleFormat(FORMAT_DATA_TIME, Integer.parseInt(String.valueOf(CellStyle.ALIGN_CENTER)), wb);
 		return cellStyleDate;
 	}
 
@@ -343,7 +556,7 @@ public class ExcelUtil implements Serializable {
 	 * @return
 	 */
 	public static CellStyle getCellStyleDate(Workbook wb) {
-		CellStyle cellStyleDate = getCellStyleFormat(PdksUtil.getDateFormat(), Integer.parseInt(String.valueOf(HSSFCellStyle.ALIGN_CENTER)), wb);
+		CellStyle cellStyleDate = getCellStyleFormat(PdksUtil.getDateFormat(), Integer.parseInt(String.valueOf(CellStyle.ALIGN_CENTER)), wb);
 		return cellStyleDate;
 	}
 
@@ -389,6 +602,13 @@ public class ExcelUtil implements Serializable {
 
 	}
 
+	/**
+	 * @param sheet
+	 * @param rowNo
+	 * @param columnNo
+	 * @param style
+	 * @return
+	 */
 	public static Cell getCell(Sheet sheet, int rowNo, int columnNo, CellStyle style) {
 		Row row = sheet.getRow(rowNo);
 		if (row == null)
@@ -400,6 +620,91 @@ public class ExcelUtil implements Serializable {
 			cell.setCellStyle(style);
 
 		return cell;
+	}
+
+	/**
+	 * @param cellStyle
+	 * @param rgb1
+	 * @param rgb2
+	 * @param rgb3
+	 */
+	public static void setFontColor(CellStyle cellStyle, Integer rgb1, Integer rgb2, Integer rgb3) {
+		XSSFCellStyle xssfCellStyle = (XSSFCellStyle) cellStyle;
+		xssfCellStyle.getFont().setColor(getXSSFColor(rgb1, rgb2, rgb3));
+	}
+
+	/**
+	 * @param cellStyle
+	 * @param color
+	 */
+	public static void setFontColor(CellStyle cellStyle, Color color) {
+		XSSFCellStyle xssfCellStyle = (XSSFCellStyle) cellStyle;
+		xssfCellStyle.getFont().setColor(new XSSFColor(color));
+	}
+
+	/**
+	 * @param cellStyle
+	 * @param rgb1
+	 * @param rgb2
+	 * @param rgb3
+	 */
+	public static void setFillForegroundColor(CellStyle cellStyle, Integer rgb1, Integer rgb2, Integer rgb3) {
+		XSSFCellStyle xssfCellStyle = (XSSFCellStyle) cellStyle;
+		cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		xssfCellStyle.setFillForegroundColor(getXSSFColor(rgb1, rgb2, rgb3));
+	}
+
+	/**
+	 * @param type
+	 * @param cellStyle
+	 */
+	protected static HashMap<String, Integer[]> setStyleColor(String type, CellStyle cellStyle) {
+		HashMap<String, Integer[]> styleMap = new HashMap<String, Integer[]>();
+		if (colorMap.containsKey(type)) {
+			XSSFCellStyle xssfCellStyle = (XSSFCellStyle) cellStyle;
+			HashMap<String, Integer[]> map = colorMap.get(type);
+			if (map.containsKey(BACKGROUND_COLOR)) {
+				Integer[] colors = map.get(BACKGROUND_COLOR);
+				if (colors != null && colors.length == 3) {
+					cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+					XSSFColor color = getXSSFColor(colors[0], colors[1], colors[2]);
+					if (colors != null) {
+						xssfCellStyle.setFillForegroundColor(color);
+						styleMap.put(BACKGROUND_COLOR, colors);
+					}
+
+				}
+
+			}
+			if (map.containsKey(COLOR)) {
+				Integer[] colors = map.get(COLOR);
+				if (colors != null && colors.length == 3) {
+					XSSFColor color = getXSSFColor(colors[0], colors[1], colors[2]);
+					if (color != null) {
+						styleMap.put(COLOR, colors);
+						xssfCellStyle.getFont().setColor(color);
+					}
+
+				}
+			}
+		}
+		return styleMap;
+
+	}
+
+	/**
+	 * @return the colorMap
+	 */
+	public static HashMap<String, HashMap<String, Integer[]>> getColorMap() {
+		return colorMap;
+	}
+
+	/**
+	 * @param colorMap
+	 *            the colorMap to set
+	 */
+	public static void setColorMap(HashMap<String, HashMap<String, Integer[]>> colorMap) {
+		ExcelUtil.colorMap = colorMap;
 	}
 
 }

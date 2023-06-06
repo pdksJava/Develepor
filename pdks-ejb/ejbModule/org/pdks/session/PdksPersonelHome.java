@@ -21,7 +21,6 @@ import javax.persistence.EntityManager;
 import javax.ws.rs.HttpMethod;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -3194,8 +3193,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		Workbook wb = new XSSFWorkbook();
 		Sheet sheet = ExcelUtil.createSheet(wb, "Personel WebService Listesi", false);
 		CellStyle style = ExcelUtil.getStyleData(wb);
-		CellStyle styleCenter = ExcelUtil.getStyleData(wb);
-		styleCenter.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		CellStyle styleCenter = ExcelUtil.getStyleDataCenter(wb);
 		CellStyle header = ExcelUtil.getStyleHeader(wb);
 		CellStyle cellStyleDate = ExcelUtil.getCellStyleDate(wb);
 		int row = 0;

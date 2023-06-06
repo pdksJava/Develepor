@@ -18,7 +18,6 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
@@ -532,22 +531,16 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 		try {
 			Workbook wb = new XSSFWorkbook();
 			Sheet sheet = ExcelUtil.createSheet(wb, "FazlaMesaiIzinRaporu " + PdksUtil.convertToDateString(date, "yyyyMMdd"), Boolean.TRUE);
-			XSSFCellStyle styleCenter = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-			styleCenter.setAlignment(CellStyle.ALIGN_CENTER);
-			XSSFCellStyle header = (XSSFCellStyle) ExcelUtil.getStyleHeader(wb);
-			XSSFCellStyle styleOdd = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-			styleOdd.setAlignment(CellStyle.ALIGN_LEFT);
-			styleOdd.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			styleOdd.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
-			XSSFCellStyle styleOddTutar = (XSSFCellStyle) styleOdd.clone();
+	 		CellStyle header =  ExcelUtil.getStyleHeader(wb);
+			XSSFCellStyle styleOdd =  (XSSFCellStyle) ExcelUtil.getStyleData(wb);
+ 			styleOdd.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
+			CellStyle styleOddTutar =  (CellStyle) styleOdd.clone();
 			styleOddTutar.setAlignment(CellStyle.ALIGN_RIGHT);
-			XSSFCellStyle styleOddCenter = (XSSFCellStyle) styleOdd.clone();
+			XSSFCellStyle styleOddCenter =  (XSSFCellStyle) styleOdd.clone();
 			styleOddCenter.setAlignment(CellStyle.ALIGN_CENTER);
-			XSSFCellStyle styleEven = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-			styleEven.setAlignment(CellStyle.ALIGN_LEFT);
-			styleEven.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			styleEven.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 219, (byte) 248, (byte) 219 }));
-			XSSFCellStyle styleEvenTutar = (XSSFCellStyle) styleEven.clone();
+			XSSFCellStyle styleEven =  (XSSFCellStyle) ExcelUtil.getStyleData(wb);
+ 			ExcelUtil.setFillForegroundColor(styleEven,219, 248, 219 );
+			XSSFCellStyle styleEvenTutar =  (XSSFCellStyle) styleEven.clone();
 			styleEvenTutar.setAlignment(CellStyle.ALIGN_RIGHT);
 			XSSFCellStyle styleEvenCenter = (XSSFCellStyle) styleEven.clone();
 			styleEvenCenter.setAlignment(CellStyle.ALIGN_CENTER);
@@ -557,7 +550,7 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 			if (izinVardiyaGunList.size() > 0) {
 
 				boolean renk = false;
-				XSSFCellStyle satirStyle = null, satirCenter = null;
+				CellStyle satirStyle = null, satirCenter = null;
 				List<Integer> baslikList = new ArrayList<Integer>();
 
 				ExcelUtil.getCell(sheet, row, col, header).setCellValue("İZİN  TABLOSU");
@@ -619,7 +612,7 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 	 * @param tesisDurum
 	 * @return
 	 */
-	private int vardiyaSatirEkle(Sheet sheet, int col, int row, XSSFCellStyle satirStyle, XSSFCellStyle satirCenter, VardiyaGun vg, boolean tesisDurum) {
+	private int vardiyaSatirEkle(Sheet sheet, int col, int row, CellStyle satirStyle, CellStyle satirCenter, VardiyaGun vg, boolean tesisDurum) {
 		Personel personel = vg.getPersonel();
 		ExcelUtil.getCell(sheet, row, col++, satirCenter).setCellValue(personel.getPdksSicilNo());
 		ExcelUtil.getCell(sheet, row, col++, satirStyle).setCellValue(personel.getAd());

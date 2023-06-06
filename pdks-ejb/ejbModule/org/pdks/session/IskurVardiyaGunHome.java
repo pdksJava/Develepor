@@ -27,13 +27,10 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
@@ -940,52 +937,28 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 		String aciklamaExcel = PdksUtil.replaceAll(gorevYeriAciklama + " " + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyy MMMMMM  "), "_", "");
 		Workbook wb = new XSSFWorkbook();
 		Sheet sheet = ExcelUtil.createSheet(wb, PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "MMMMM yyyy") + " İşkur Çalışma Planı", Boolean.TRUE);
-		XSSFCellStyle styleCenter = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleCenter.setAlignment(CellStyle.ALIGN_CENTER);
-		XSSFCellStyle styleOdd = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		XSSFCellStyle styleEven = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		XSSFCellStyle styleTatil = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleTatil.setAlignment(CellStyle.ALIGN_CENTER);
+		CellStyle styleOdd = ExcelUtil.getStyleOdd(null, wb);
+		CellStyle styleEven = ExcelUtil.getStyleEven(null, wb);
+		CellStyle styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
+		CellStyle styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
+		XSSFCellStyle styleTatil = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
 
-		XSSFCellStyle styleIstek = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleIstek.setAlignment(CellStyle.ALIGN_CENTER);
-		XSSFCellStyle styleEgitim = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleEgitim.setAlignment(CellStyle.ALIGN_CENTER);
-		XSSFCellStyle styleOff = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleOff.setAlignment(CellStyle.ALIGN_CENTER);
-		XSSFFont xssfFont = styleOff.getFont();
-		xssfFont.setColor(new XSSFColor(Color.WHITE));
-		XSSFCellStyle styleIzin = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleIzin.setAlignment(CellStyle.ALIGN_CENTER);
-		XSSFCellStyle header = (XSSFCellStyle) ExcelUtil.getStyleHeader(wb);
-		XSSFCellStyle styleCalisma = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleCalisma.setAlignment(CellStyle.ALIGN_CENTER);
+		XSSFCellStyle styleIstek = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
+		XSSFCellStyle styleEgitim = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
+		XSSFCellStyle styleOff = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
+		ExcelUtil.setFontColor(styleOff, Color.WHITE);
+		XSSFCellStyle styleIzin = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
+		CellStyle header = ExcelUtil.getStyleHeader(wb);
+		XSSFCellStyle styleCalisma = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
 		int row = 0, col = 0;
 
-		header.setWrapText(true);
-
-		header.setWrapText(true);
-		header.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		header.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 156, (byte) 192, (byte) 223 }));
-
-		styleOdd.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleOdd.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
-		styleEven.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleEven.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 219, (byte) 248, (byte) 219 }));
-
-		styleTatil.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleTatil.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 255, (byte) 153, (byte) 204 }));
-		styleIstek.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleIstek.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 255, (byte) 255, (byte) 0 }));
-		styleIzin.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleIzin.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 146, (byte) 208, (byte) 80 }));
-		styleCalisma.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleCalisma.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 255, (byte) 255, (byte) 255 }));
-		styleEgitim.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleEgitim.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 0, (byte) 0, (byte) 255 }));
-		styleOff.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleOff.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 13, (byte) 12, (byte) 89 }));
-		styleOff.getFont().setColor(new XSSFColor(new byte[] { (byte) 256, (byte) 256, (byte) 256 }));
+	 	ExcelUtil.setFillForegroundColor(styleTatil, 255, 153, 204);
+		ExcelUtil.setFillForegroundColor(styleIstek, 255, 255, 0);
+		ExcelUtil.setFillForegroundColor(styleIzin, 146, 208, 80);
+		ExcelUtil.setFillForegroundColor(styleCalisma, 255, 255, 255);
+		ExcelUtil.setFillForegroundColor(styleEgitim, 0, 0, 255);
+		ExcelUtil.setFillForegroundColor(styleOff, 13, 12, 89);
+		ExcelUtil.setFontColor(styleOff, 256, 256, 256);
 		ExcelUtil.getCell(sheet, row, col, header).setCellValue(aciklamaExcel);
 		for (int i = 0; i < 3; i++)
 			ExcelUtil.getCell(sheet, row, col + i + 1, header).setCellValue("");
@@ -1023,15 +996,16 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 			row++;
 			boolean help = helpPersonel(aylikPuantaj.getPdksPersonel());
 
-			XSSFCellStyle styleGenelCenter = null, styleGenel = null;
+			CellStyle styleGenelCenter = null, styleGenel = null;
 			try {
-				if (row % 2 == 0) {
-					styleGenel = (XSSFCellStyle) styleOdd.clone();
+				if (row % 2 != 0) {
+					styleGenel = styleOdd;
+					styleGenelCenter = styleOddCenter;
 				} else {
-					styleGenel = (XSSFCellStyle) styleEven.clone();
+					styleGenel = styleEven;
+					styleGenelCenter = styleEvenCenter;
 				}
-				styleGenelCenter = (XSSFCellStyle) styleGenel.clone();
-				styleGenelCenter.setAlignment(CellStyle.ALIGN_CENTER);
+
 				boolean koyuRenkli = onayDurumList.size() == 2 && aylikPuantaj.isOnayDurum();
 				if (koyuRenkli) {
 					ExcelUtil.setFontNormalBold(wb, styleGenel);

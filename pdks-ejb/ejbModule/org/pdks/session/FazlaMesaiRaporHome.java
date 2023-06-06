@@ -27,12 +27,10 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.FlushMode;
@@ -1263,8 +1261,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 		Drawing drawing = sheet.createDrawingPatriarch();
 		ClientAnchor anchor = factory.createClientAnchor();
 		CellStyle style = ExcelUtil.getStyleData(wb);
-		CellStyle styleCenter = ExcelUtil.getStyleData(wb);
-		styleCenter.setAlignment(CellStyle.ALIGN_CENTER);
+		CellStyle styleCenter = ExcelUtil.getStyleDataCenter(wb);
 		CellStyle header = ExcelUtil.getStyleHeader(wb);
 		CellStyle timeStamp = ExcelUtil.getCellStyleTimeStamp(wb);
 		CellStyle date = ExcelUtil.getCellStyleDate(wb);
@@ -1463,68 +1460,35 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 		Workbook wb = new XSSFWorkbook();
 		Sheet sheet = ExcelUtil.createSheet(wb, "Dönemsel Çalışma", Boolean.TRUE);
 
-		XSSFCellStyle styleTutarEven = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleTutarEven.setAlignment(CellStyle.ALIGN_RIGHT);
-		styleTutarEven.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleTutarEven.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 219, (byte) 248, (byte) 219 }));
+		CellStyle styleTutarEven = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_TUTAR, wb);
+		CellStyle styleTutarOdd = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_TUTAR, wb);
+		CellStyle styleOdd = ExcelUtil.getStyleOdd(null, wb);
+		CellStyle styleEven = ExcelUtil.getStyleEven(null, wb);
+	 	CellStyle styleTutarEvenDay = ExcelUtil.getStyleDayEven(ExcelUtil.FORMAT_TUTAR, wb);
+		styleTutarEvenDay.setAlignment(CellStyle.ALIGN_CENTER);
+		CellStyle styleTutarOddDay = ExcelUtil.getStyleDayOdd(ExcelUtil.FORMAT_TUTAR, wb);
+		styleTutarOddDay.setAlignment(CellStyle.ALIGN_CENTER);
+		CellStyle styleTutarDay = null;
+		CellStyle header = ExcelUtil.getStyleHeader(wb);
+		CellStyle styleGenel = ExcelUtil.getStyleData(wb);
 
-		XSSFCellStyle styleTutarOdd = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleTutarOdd.setAlignment(CellStyle.ALIGN_RIGHT);
-		styleTutarOdd.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleTutarOdd.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
-		XSSFCellStyle styleGenel = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleGenel.setAlignment(CellStyle.ALIGN_LEFT);
-		XSSFCellStyle styleOdd = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		XSSFCellStyle styleOddCenter = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleOddCenter.setAlignment(CellStyle.ALIGN_CENTER);
-		XSSFCellStyle styleEven = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		XSSFCellStyle styleEvenCenter = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleEvenCenter.setAlignment(CellStyle.ALIGN_CENTER);
-		XSSFCellStyle styleTatil = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleTatil.setAlignment(CellStyle.ALIGN_CENTER);
+		CellStyle styleTatil = ExcelUtil.getStyleDataCenter(wb);
 
-		XSSFCellStyle styleIstek = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleIstek.setAlignment(CellStyle.ALIGN_CENTER);
-		XSSFCellStyle styleEgitim = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleEgitim.setAlignment(CellStyle.ALIGN_CENTER);
-		XSSFCellStyle styleOff = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleOff.setAlignment(CellStyle.ALIGN_CENTER);
-		XSSFFont xssfFont = styleOff.getFont();
-		xssfFont.setColor(new XSSFColor(Color.WHITE));
-		XSSFCellStyle styleIzin = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleIzin.setAlignment(CellStyle.ALIGN_CENTER);
-		XSSFCellStyle header = (XSSFCellStyle) ExcelUtil.getStyleHeader(wb);
-		XSSFCellStyle styleCalisma = (XSSFCellStyle) ExcelUtil.getStyleData(wb);
-		styleCalisma.setAlignment(CellStyle.ALIGN_CENTER);
+		CellStyle styleIstek = ExcelUtil.getStyleDataCenter(wb);
+		CellStyle styleEgitim = ExcelUtil.getStyleDataCenter(wb);
+		XSSFCellStyle styleOff = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
+		ExcelUtil.setFontColor(styleOff, Color.WHITE);
+		CellStyle styleIzin = ExcelUtil.getStyleDataCenter(wb);
+		CellStyle styleCalisma = ExcelUtil.getStyleDataCenter(wb);
 		int row = 0, col = 0;
 
-		header.setWrapText(true);
-
-		header.setWrapText(true);
-		header.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		header.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 156, (byte) 192, (byte) 223 }));
-
-		styleOdd.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleOdd.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
-		styleOddCenter.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleOddCenter.setFillForegroundColor(new XSSFColor(new byte[] { (byte) -1, (byte) 213, (byte) 228, (byte) 251 }));
-		styleEven.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleEven.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 219, (byte) 248, (byte) 219 }));
-		styleEvenCenter.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleEvenCenter.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 219, (byte) 248, (byte) 219 }));
-		styleTatil.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleTatil.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 255, (byte) 153, (byte) 204 }));
-		styleIstek.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleIstek.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 255, (byte) 255, (byte) 0 }));
-		styleIzin.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleIzin.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 146, (byte) 208, (byte) 80 }));
-		styleCalisma.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleCalisma.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 255, (byte) 255, (byte) 255 }));
-		styleEgitim.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleEgitim.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 0, (byte) 0, (byte) 255 }));
-		styleOff.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		styleOff.setFillForegroundColor(new XSSFColor(new byte[] { (byte) 13, (byte) 12, (byte) 89 }));
-		styleOff.getFont().setColor(new XSSFColor(new byte[] { (byte) 256, (byte) 256, (byte) 256 }));
+		ExcelUtil.setFillForegroundColor(styleTatil, 255, 153, 204);
+		ExcelUtil.setFillForegroundColor(styleIstek, 255, 255, 0);
+		ExcelUtil.setFillForegroundColor(styleIzin, 146, 208, 80);
+		ExcelUtil.setFillForegroundColor(styleCalisma, 255, 255, 255);
+		ExcelUtil.setFillForegroundColor(styleEgitim, 0, 0, 255);
+		ExcelUtil.setFillForegroundColor(styleOff, 13, 12, 89);
+		ExcelUtil.setFontColor(styleOff, 256, 256, 256);
 		String aciklamaExcel = PdksUtil.replaceAll(gorevYeriAciklama + " " + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateFormat()) + " - " + PdksUtil.convertToDateString(bitTarih, PdksUtil.getDateFormat() + "  "), "_", "");
 		ExcelUtil.getCell(sheet, row, col, header).setCellValue(aciklamaExcel);
 		for (int i = 0; i < 3; i++)
@@ -1585,9 +1549,11 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 			try {
 				boolean help = helpPersonel(aylikPuantaj.getPdksPersonel());
 				try {
-					if (row % 2 == 0)
+					if (row % 2 != 0) {
+						styleTutarDay = styleTutarOddDay;
 						styleGenel = styleOdd;
-					else {
+					} else {
+						styleTutarDay = styleTutarEvenDay;
 						styleGenel = styleEven;
 					}
 					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(personel.getSicilNo());
@@ -1616,7 +1582,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 					for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 						VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 						String styleText = vardiyaGun.getAylikClassAdi(aylikPuantaj.getTrClass());
-						styleGenel = styleCalisma;
+						styleGenel = styleTutarDay;
 						if (styleText.equals(VardiyaGun.STYLE_CLASS_HAFTA_TATIL))
 							styleGenel = styleTatil;
 						else if (styleText.equals(VardiyaGun.STYLE_CLASS_IZIN))
@@ -1643,7 +1609,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 
 					}
 					if (!help) {
-						if (row % 2 == 0)
+						if (row % 2 != 0)
 							styleGenel = styleTutarOdd;
 						else {
 							styleGenel = styleTutarEven;

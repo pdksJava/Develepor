@@ -20,7 +20,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -598,11 +597,8 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 		Workbook wb = new XSSFWorkbook();
 		Sheet sheet = ExcelUtil.createSheet(wb, PdksUtil.setTurkishStr(PdksUtil.convertToDateString(basGun, " MMMMM yyyy")) + " Liste", Boolean.TRUE);
 		CellStyle style = ExcelUtil.getStyleData(wb);
-		CellStyle styleCenter = ExcelUtil.getStyleData(wb);
-		styleCenter.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-		CellStyle stytleNumeric = ExcelUtil.getStyleData(wb);
-		stytleNumeric.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
-		CellStyle header = ExcelUtil.getStyleHeader(wb);
+		CellStyle styleCenter = ExcelUtil.getStyleDataCenter(wb);
+ 		CellStyle header = ExcelUtil.getStyleHeader(wb);
 		boolean bordroAltAlani = false;
 		for (PersonelDenklestirme mesai : onaysizPersonelDenklestirmeList) {
 			Personel personel = mesai.getPersonel();
@@ -713,10 +709,8 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 		Workbook wb = new XSSFWorkbook();
 		Sheet sheet = ExcelUtil.createSheet(wb, PdksUtil.setTurkishStr(PdksUtil.convertToDateString(basGun, " MMMMM yyyy")) + " Liste", Boolean.TRUE);
 		CellStyle style = ExcelUtil.getStyleData(wb);
-		CellStyle styleCenter = ExcelUtil.getStyleData(wb);
-		styleCenter.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-		CellStyle stytleNumeric = ExcelUtil.getStyleData(wb);
-		stytleNumeric.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+		CellStyle styleCenter = ExcelUtil.getStyleDataCenter(wb);
+		CellStyle stytleNumeric = ExcelUtil.getStyleDataRight(wb);
 		CellStyle header = ExcelUtil.getStyleHeader(wb);
 		CellStyle tutarStyle = ExcelUtil.getCellStyleTutar(wb);
 		int row = 0, col = 0;
