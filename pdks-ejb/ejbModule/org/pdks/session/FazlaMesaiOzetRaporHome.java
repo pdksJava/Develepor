@@ -1572,7 +1572,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			String gorevYeriAciklama = getExcelAciklama();
 			ByteArrayOutputStream baosDosya = fazlaMesaiExcelDevam(gorevYeriAciklama, aylikPuantajList);
 			if (baosDosya != null) {
-				String dosyaAdi = "FazlaMesai_" + gorevYeriAciklama + (sirket != null ? "_" + sirket.getAd() : "") + (tesis != null ? "_" + tesis.getAciklama() : "") + "_" + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyyMM") + ".xlsx";
+				String dosyaAdi = "FazlaMesai" + (sirket != null ? "_" + sirket.getAd() : "") + (tesis != null ? "_" + tesis.getAciklama() : "") + "_" + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyyMM") + ".xlsx";
 				PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi);
 			}
 		} catch (Exception e) {
@@ -1662,7 +1662,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			col = 0;
 			++row;
 		}
-		String aciklamaExcel = PdksUtil.replaceAll(gorevYeriAciklama + " " + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyy MMMMMM  "), "_", "");
+		String aciklamaExcel = PdksUtil.replaceAll(PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyy MMMMMM  "), "_", "");
 		ExcelUtil.getCell(sheet, row, col, header).setCellValue(aciklamaExcel);
 		for (int i = 0; i < 3; i++)
 			ExcelUtil.getCell(sheet, row, col + i + 1, header).setCellValue("");
