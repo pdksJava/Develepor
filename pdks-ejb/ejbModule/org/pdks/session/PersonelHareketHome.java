@@ -97,7 +97,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 	private VardiyaGun islemVardiyaGun;
 	private String islemTipi, donusAdres = "", planKey;
 	private boolean denklestirmeAyDurum, ikRole, adminRole;
-	private Boolean visibled = false;
+	private Boolean visibled = false, kgsUpdateGoster = false;
 	private Tanim sonIslemNeden = null;
 	private List<String> roller;
 	private Date tarih;
@@ -957,13 +957,18 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 
 			}
 		}
+		kgsUpdateGoster = false;
 		setPdksDenklestirmeAy(denklestirmeAy);
 		if (denklestirmeAyDurum && !hareket1List.isEmpty()) {
 			boolean hareketEkle = true;
 			for (Iterator iterator = hareket1List.iterator(); iterator.hasNext();) {
 				HareketKGS hareketKGS = (HareketKGS) iterator.next();
-				if (hareketKGS.getHareketEkleDurum())
+				if (hareketKGS.getHareketEkleDurum()) {
+					if (!kgsUpdateGoster)
+						kgsUpdateGoster = hareketKGS.getIslem() != null && hareketKGS.getKgsZaman() != null;
 					hareketEkle = false;
+				}
+
 			}
 			if (hareketEkle)
 				hareket1List.clear();
@@ -1454,6 +1459,14 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 
 	public void setVisibled(Boolean visibled) {
 		this.visibled = visibled;
+	}
+
+	public Boolean getKgsUpdateGoster() {
+		return kgsUpdateGoster;
+	}
+
+	public void setKgsUpdateGoster(Boolean kgsUpdateGoster) {
+		this.kgsUpdateGoster = kgsUpdateGoster;
 	}
 
 }
