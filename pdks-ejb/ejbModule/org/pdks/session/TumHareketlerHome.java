@@ -578,7 +578,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 						if (kgsHareket.getIslemId() != null && islemMap.containsKey(kgsHareket.getIslemId())) {
 							PersonelHareketIslem islem = islemMap.get(kgsHareket.getIslemId());
 							kgsHareket.setIslem(islem);
-							if (islem != null)
+							if (islem != null && kgsHareket.getKgsZaman() != null)
 								guncellenmis = Boolean.TRUE;
 							if (islem.getIslemTipi().equalsIgnoreCase("U") && islemTarihMap.containsKey(kgsHareket.getIslemId())) {
 								kgsHareket.setOrjinalZaman(islemTarihMap.get(kgsHareket.getIslemId()));
@@ -710,14 +710,13 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 				sb.append(hareket.getAdSoyad() + "|");
 				sb.append(hareket.getSicilNo() + "|");
 				sb.append(hareket.getKapiView().getAciklama() + "|");
+
 				if (guncellenmis) {
-					if (guncellenmis) {
-						if ((hareket.getSirket() != null && hareket.getSirket().equals(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS)) || hareket.getIslem() != null) {
-							sb.append((hareket.getOrjinalZaman() != null ? PdksUtil.convertToDateString(hareket.getOrjinalZaman(), "dd/MM/yyyy HH:mm") : "") + "|");
-							sb.append((hareket.getIslem() != null ? hareket.getIslem().getGuncelleyenUser().getAdSoyad() : "") + "|");
-						} else {
-							sb.append("||");
-						}
+					if (hareket.getKgsZaman() != null && hareket.getIslem() != null) {
+						sb.append((hareket.getOrjinalZaman() != null ? PdksUtil.convertToDateString(hareket.getKgsZaman(), "dd/MM/yyyy HH:mm") : "") + "|");
+						sb.append((hareket.getIslem() != null ? hareket.getIslem().getGuncelleyenUser().getAdSoyad() : "") + "|");
+					} else {
+						sb.append("||");
 					}
 				}
 
@@ -967,9 +966,9 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel != null && personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
 				if (guncellenmis) {
-					if ((hareket.getSirket() != null && hareket.getSirket().equals(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS)) || hareket.getIslem() != null) {
-						if (hareket.getOrjinalZaman() != null)
-							ExcelUtil.getCell(sheet, row, col++, styleTimeStamp).setCellValue(hareket.getOrjinalZaman());
+					if (hareket.getKgsZaman() != null && hareket.getIslem() != null) {
+						if (hareket.getKgsZaman() != null)
+							ExcelUtil.getCell(sheet, row, col++, styleTimeStamp).setCellValue(hareket.getKgsZaman());
 						else
 							ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
 						ExcelUtil.getCell(sheet, row, col++, style).setCellValue(hareket.getIslem() != null ? hareket.getIslem().getGuncelleyenUser().getAdSoyad() : "");

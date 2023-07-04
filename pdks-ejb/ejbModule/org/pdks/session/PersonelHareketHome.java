@@ -957,25 +957,31 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 
 			}
 		}
-		kgsUpdateGoster = false;
 		setPdksDenklestirmeAy(denklestirmeAy);
 		if (denklestirmeAyDurum && !hareket1List.isEmpty()) {
 			boolean hareketEkle = true;
 			for (Iterator iterator = hareket1List.iterator(); iterator.hasNext();) {
 				HareketKGS hareketKGS = (HareketKGS) iterator.next();
-				if (hareketKGS.getHareketEkleDurum()) {
-					if (!kgsUpdateGoster)
-						kgsUpdateGoster = hareketKGS.getIslem() != null && hareketKGS.getKgsZaman() != null;
+				if (hareketKGS.getHareketEkleDurum())
 					hareketEkle = false;
-				}
 
 			}
 			if (hareketEkle)
 				hareket1List.clear();
 		}
 
+		
 		setHareketList(hareket1List);
+		kgsUpdateGoster = false;
+		for (Iterator iterator = hareketList.iterator(); iterator.hasNext();) {
+			HareketKGS hareketKGS = (HareketKGS) iterator.next();
+			if (hareketKGS.getHareketEkleDurum()) {
+				if (!kgsUpdateGoster)
+					kgsUpdateGoster = hareketKGS.getIslem() != null && hareketKGS.getKgsZaman() != null;
 
+			}
+
+		}
 		if (islemVardiyaGun != null)
 			islemVardiyaDuzenle();
 	}
