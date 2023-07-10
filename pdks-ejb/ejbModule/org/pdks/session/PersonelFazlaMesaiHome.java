@@ -386,8 +386,14 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	 * @param onayDurum
 	 */
 	public void ekle(HareketKGS hareket, boolean onayDurum) {
-		String tipi = onayDurum ? Tanim.TIPI_FAZLA_MESAI_NEDEN : Tanim.TIPI_ONAYLAMAMA_NEDEN;
-		String sort = onayDurum ? "getAciklama" : "getKodu";
+		String tipi = null, sort = null;
+		if (onayDurum) {
+			tipi = Tanim.TIPI_FAZLA_MESAI_NEDEN;
+			sort = "getAciklama";
+		} else {
+			tipi = Tanim.TIPI_ONAYLAMAMA_NEDEN;
+			sort = "getKodu";
+		}
 		List<Tanim> list = ortakIslemler.getTanimAlanList(tipi, sort, "S", session);
 		PersonelFazlaMesai fazlaMesai = getInstance();
 		fazlaMesai.setBasZaman(hareket.getGirisZaman());
