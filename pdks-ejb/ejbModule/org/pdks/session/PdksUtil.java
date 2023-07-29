@@ -2295,7 +2295,6 @@ public class PdksUtil implements Serializable {
 
 						}
 					}
-
 					yuvarlanmisDeger = doubleValue.longValue() + arti;
 					break;
 
