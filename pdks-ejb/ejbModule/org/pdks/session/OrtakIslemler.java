@@ -12829,7 +12829,7 @@ public class OrtakIslemler implements Serializable {
 				try {
 					List<VardiyaHafta> vardiyaHaftas = puantajData.getVardiyaHaftaList();
 					int hafta = 0;
-					int toplamCalismaGunSayisi = 0;
+					int toplamCalismaGunSayisi = 0, offGunSayisi = 0;
 
 					for (VardiyaHafta pdksVardiyaHafta : vardiyaHaftas) {
 						int calismaGunSayisi = 0, raporGunSayisi = 0;
@@ -12876,7 +12876,12 @@ public class OrtakIslemler implements Serializable {
 							Vardiya islemVardiya = null;
 							Double islemVardiyaSuresi = null;
 							boolean gebeMi = Boolean.FALSE, suaMi = suaVar;
-							if (pdksVardiyaGun.getTatil() == null) {
+							Tatil tatil2 = pdksVardiyaGun.getTatil();
+							if (vardiyaIzin != null && (vardiyaIzin.isOffGun() || vardiyaIzin.isFMI()) && pdksVardiyaGun.getIzin() == null) {
+								if (tatil2 == null || tatil2.isYarimGunMu())
+									++offGunSayisi;
+							}
+							if (tatil2 == null) {
 								if (pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getVardiya().isCalisma()) {
 									Vardiya sonrakiVardiya = pdksVardiyaGun.getSonrakiVardiya();
 									pdksVardiyaGun.setSonrakiVardiya(null);
@@ -13030,8 +13035,8 @@ public class OrtakIslemler implements Serializable {
 										if (pdksVardiyaGun.getTatil() == null || !tatilGunleriMap.containsKey(key) || (pdksVardiyaGun.getTatil() != null && pdksVardiyaGun.getTatil().isYarimGunMu())) {
 											VardiyaGun gun = new VardiyaGun();
 											gun.setDurum(Boolean.FALSE);
-											Tatil tatil2 = pdksVardiyaGun.getTatil();
-											gun.setTatil(tatil2);
+											Tatil tatil3 = pdksVardiyaGun.getTatil();
+											gun.setTatil(tatil3);
 											gun.setVardiyaDate(pdksVardiyaGun.getVardiyaDate());
 											gun.setVardiya(normalCalisma);
 											if (islemVardiyaSuresi != null && normalCalismaSuresi > islemVardiya.getNetCalismaSuresi())
@@ -13207,7 +13212,7 @@ public class OrtakIslemler implements Serializable {
 					puantajData.planSureHesapla(tatilGunleriMap);
 
 					int yarimYuvarla = puantajData.getYarimYuvarla();
-					if (toplamCalismaGunSayisi == 0 && puantajData.getSaatToplami() == 0.0d) {
+					if (toplamCalismaGunSayisi + offGunSayisi == 0 && puantajData.getSaatToplami() == 0.0d) {
 						if (puantajData.getPlanlananSure() != 0.0d) {
 							puantajData.setPlanlananSure(0.0d);
 						}
