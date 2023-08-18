@@ -812,7 +812,7 @@
 
 				</h:panelGrid>
 				<ui:fragment rendered="#{personelKalanIzinHome.updateIzin.izinKagidiGeldi==null}">
-					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{personelKalanIzinHome.kaydet(false)}" reRender="izinDetayPanel,izinPanel"
+					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{personelKalanIzinHome.kaydet}" reRender="izinDetayPanel,izinPanel"
 						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
 				</ui:fragment>
 				<ui:fragment rendered="#{personelKalanIzinHome.updateIzin.izinKagidiGeldi!=null}">

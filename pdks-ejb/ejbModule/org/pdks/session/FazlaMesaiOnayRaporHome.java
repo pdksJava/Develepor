@@ -1004,7 +1004,7 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				ExcelUtil.getCell(sheet, row, col++, styleZaman).setCellValue(personelFazlaMesai.getBitZaman());
 				if (onayDurum) {
 					Double tutar = personelFazlaMesai.getFazlaMesaiSaati();
-					if (tutar.doubleValue() > tutar.longValue())
+					if (PdksUtil.isDoubleValueNotLong(tutar))
 						ExcelUtil.getCell(sheet, row, col++, styleTutar).setCellValue(tutar);
 					else
 						ExcelUtil.getCell(sheet, row, col++, styleNumber).setCellValue(tutar.longValue());
@@ -1053,8 +1053,6 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			sheet.autoSizeColumn(i);
 	}
 
-	
-
 	/**
 	 * @param wb
 	 * @param factory
@@ -1094,7 +1092,7 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			b1 = 0;
 			for (int j = 0; j < uz.length; j++) {
 				try {
- 					b2 = bas[j];
+					b2 = bas[j];
 					rt.applyFont(b1, b2, fontBold);
 					b1 = uz[j];
 					// b1 = b2 + 1;
