@@ -638,7 +638,12 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 	@Transactional
 	public String fillPersonelDenklestirmeRaporList() {
 		boolean devam = true;
-		if (basTarih.getTime() <= bitTarih.getTime()) {
+		Calendar cal = Calendar.getInstance();
+		listeTemizle();
+		if (cal.getTime().before(bitTarih)) {
+			PdksUtil.addMessageAvailableWarn("Bitiş tarihi sistem tarihinden sonra olamaz!");
+			devam = false;
+		} else if (basTarih.getTime() <= bitTarih.getTime()) {
 			Date sonGun = PdksUtil.tariheGunEkleCikar(basTarih, maxFazlaCalismaGun);
 			if (!raporSecim.equals("maxToplamMesai")) {
 				Long gun = PdksUtil.tarihFarki(basTarih, bitTarih) + 1;
@@ -648,8 +653,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 						devam = false;
 					}
 				} else if (raporSecim.equals("maxHaftaCalismaSaat")) {
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(basTarih);
+ 					cal.setTime(basTarih);
 					long mod = gun.longValue() % 7;
 					if (gun > 32 || mod != 0) {
 						PdksUtil.addMessageAvailableWarn("Bir aylık süreyi aşamazsınız ve gün sayısı 7'nin katları olmalıdır!");
@@ -658,6 +662,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 						PdksUtil.addMessageAvailableWarn("Başlangıç günü PAZARTESİ olmalıdır!");
 						devam = false;
 					}
+
 				}
 
 			}
@@ -678,7 +683,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		session.clear();
 
-		listeTemizle();
+	 
 
 		try {
 			DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
