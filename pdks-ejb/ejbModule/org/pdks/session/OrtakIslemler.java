@@ -3067,7 +3067,14 @@ public class OrtakIslemler implements Serializable {
 			if (basTarih != null && bitTarih != null && session != null) {
 				if (user == null)
 					user = authenticatedUser;
-				boolean ikRol = user.isAdmin() || user.isIK() || user.isSistemYoneticisi();
+				boolean ikRol = user.isAdmin() || user.isIK() || user.isSistemYoneticisi() || user.isGenelMudur();
+				if (!ikRol && PdksUtil.hasStringValue(user.getCalistigiSayfa())) {
+					String ikRaporlar = getParameterKey("ikRaporlar");
+					if (!ikRaporlar.equals("")) {
+						List<String> sayfalar = PdksUtil.getListStringTokenizer(ikRaporlar, null);
+						ikRol = sayfalar.contains(user.getCalistigiSayfa());
+					}
+				}
 				Class class1 = null;
 				boolean tesisYetki = getParameterKey("tesisYetki").equals("1");
 				Departman departman = null;
