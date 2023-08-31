@@ -1543,7 +1543,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				if (haftaTatilCalismaGunAdetMaxSaat != null) {
 					if (vardiya.isHaftaTatil()) {
 						if ((haftaTatilCalismaGunAdetSaat != null) && (haftaTatilCalismaGunAdetSaat.intValue() > haftaTatilCalismaGunAdetMaxSaat.intValue())) {
-							yaz = Boolean.FALSE.booleanValue();
+							yaz = ikRole;
 							haftaTatilCalismaGunAdetMaxSaatStr = haftaTatilCalismaGunAdetMaxSaat + " günden fazla ardışık çalışma olamaz! ";
 							haftaTatilCalismaGunAdetMaxSaat = null;
 						}
@@ -1557,9 +1557,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if ((!vardiya.isAksamVardiyasi()) || (vardiyaGun.getIzin() != null)) {
 						if (vardiya.isCalisma()) {
 							if ((geceVardiyaAdetSaat > 0) && (geceVardiyaAdetSaat > geceVardiyaAdetMaxSaat.intValue())) {
-								yaz = Boolean.FALSE.booleanValue();
+								yaz = ikRole;
 								geceVardiyaAdetMaxSaatStr = geceVardiyaAdetMaxSaat + " günden fazla ardışık akşam çalışma olamaz! ";
-
 								geceVardiyaAdetMaxSaat = null;
 							}
 							geceVardiyaAdetSaat = 0;
@@ -1577,15 +1576,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						Date bitSaat = vardiyaGun.getIslemVardiya().getVardiyaBasZaman();
 						double toplamSure = PdksUtil.setSureDoubleTypeRounded(Double.valueOf(PdksUtil.getSaatFarki(bitSaat, basSaat).doubleValue()), vardiyaGun.getYarimYuvarla());
 						if (toplamSure < kisaDonemSaat.doubleValue() && calismaPlanDenetimTarihKontrol) {
-							yaz = Boolean.FALSE.booleanValue();
+							yaz = ikRole;
 							sb.append(PdksUtil.convertToDateString(bitSaat, "d MMMMMM EEEEE HH:ss") + " kısa çalışma olamaz! ");
 						}
-
 					}
-
-					if (calismaPlanDenetimTarihKontrol) {
+					if (calismaPlanDenetimTarihKontrol)
 						oncekiVardiyaGunKontrol = vardiyaGun;
-					}
+
 				}
 				if (vardiya.isCalisma() && vardiya.getGenel() && vardiyaMap != null && !vardiyaMap.containsKey(vardiya.getId())) {
 					if (vardiyaGun.isAyinGunu()) {
