@@ -1793,7 +1793,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				PdksUtil.addMessageAvailableWarn(mesaj + str + " " + (calismaModeli != null ? calismaModeli.getAciklama() + " vardiyalarına " : "çalışma modeline") + " uymayan hatalı " + (str.indexOf(",") < 0 ? "vardiyadır!" : "vardiyalardır"));
 			}
 			if (personelDenklestirme != null) {
-
+				if (ikMesaj)
+					personelDenklestirme.setGuncelleyenUser(authenticatedUser);
 				personelDenklestirme.setOnaylandi(yaz);
 				personelDenklestirme.setDurum(Boolean.FALSE);
 				personelDenklestirme.setGuncellemeTarihi(new Date());
