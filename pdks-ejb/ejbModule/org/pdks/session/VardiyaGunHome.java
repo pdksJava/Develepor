@@ -1452,7 +1452,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		StringBuffer sb = new StringBuffer();
 		if (vardiyaMap != null && vardiyaMap.isEmpty())
 			vardiyaMap = null;
-
+		boolean ikMesaj = false;
 		TreeMap<String, VardiyaGun> vardiyaGunMap = new TreeMap<String, VardiyaGun>();
 		List<VardiyaGun> vardiyaGunHareketOnaysizList = new ArrayList<VardiyaGun>();
 		Date basGun = null;
@@ -1544,6 +1544,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (vardiya.isHaftaTatil()) {
 						if ((haftaTatilCalismaGunAdetSaat != null) && (haftaTatilCalismaGunAdetSaat.intValue() > haftaTatilCalismaGunAdetMaxSaat.intValue())) {
 							yaz = ikRole;
+							if (!ikMesaj)
+								ikMesaj = ikRole;
 							haftaTatilCalismaGunAdetMaxSaatStr = haftaTatilCalismaGunAdetMaxSaat + " günden fazla ardışık çalışma olamaz! ";
 							haftaTatilCalismaGunAdetMaxSaat = null;
 						}
@@ -1558,6 +1560,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						if (vardiya.isCalisma()) {
 							if ((geceVardiyaAdetSaat > 0) && (geceVardiyaAdetSaat > geceVardiyaAdetMaxSaat.intValue())) {
 								yaz = ikRole;
+								if (!ikMesaj)
+									ikMesaj = ikRole;
 								geceVardiyaAdetMaxSaatStr = geceVardiyaAdetMaxSaat + " günden fazla ardışık akşam çalışma olamaz! ";
 								geceVardiyaAdetMaxSaat = null;
 							}
@@ -1577,6 +1581,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						double toplamSure = PdksUtil.setSureDoubleTypeRounded(Double.valueOf(PdksUtil.getSaatFarki(bitSaat, basSaat).doubleValue()), vardiyaGun.getYarimYuvarla());
 						if (toplamSure < kisaDonemSaat.doubleValue() && calismaPlanDenetimTarihKontrol) {
 							yaz = ikRole;
+							if (!ikMesaj)
+								ikMesaj = ikRole;
 							sb.append(PdksUtil.convertToDateString(bitSaat, "d MMMMMM EEEEE HH:ss") + " kısa çalışma olamaz! ");
 						}
 					}
@@ -1779,7 +1785,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 		}
 		boolean flush = false;
-		if (!yaz) {
+		if (!yaz || (ikMesaj && sb.length() > 0)) {
 			if (sb.length() > 0)
 				PdksUtil.addMessageAvailableWarn(mesaj + sb.toString());
 			if (sbCalismaModeliUyumsuz.length() > 0) {
