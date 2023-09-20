@@ -380,7 +380,8 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 				if (PdksUtil.isTanimDegisti(izinTipiTanim.getParentTanim(), bilgiTipi) || PdksUtil.hasStringValue(deger) && !kisaAdi.equals(deger)) {
 					Tanim tanim = izinTipi.getIzinTipiTanim();
 					izinTipiTanim.setParentTanim(bilgiTipi);
-					tanim.setKodu(deger);
+					if (!(izinTipi.isSenelikIzin() || izinTipi.isSutIzin()))
+						tanim.setKodu(deger);
 					tanim.setIslemTarihi(new Date());
 					pdksEntityController.saveOrUpdate(session, entityManager, tanim);
 				}

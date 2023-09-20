@@ -1643,7 +1643,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 							String kisaAciklama = getIzinKisaAciklama(aciklama);
 							izinTipiTanim.setAciklamatr(aciklama);
 							izinTipiTanim.setAciklamaen(aciklama);
-							izinTipiTanim.setKodu(kisaAciklama);
+							if (!(izinTipi.isSenelikIzin() || izinTipi.isSutIzin()))
+								izinTipiTanim.setKodu(kisaAciklama);
 							izinTipiTanim.setIslemYapan(islemYapan);
 							izinTipiTanim.setIslemTarihi(islemZamani);
 							izinTipi.setMesaj(aciklama);
