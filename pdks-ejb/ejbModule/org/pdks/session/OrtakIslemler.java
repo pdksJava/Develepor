@@ -15345,6 +15345,16 @@ public class OrtakIslemler implements Serializable {
 		List<YemekIzin> yemekList = denklestirmeMap.containsKey("yemekList") ? (List<YemekIzin>) denklestirmeMap.get("yemekList") : null;
 		boolean testDurum = PdksUtil.getTestDurum() && false;
 		boolean hareketKopyala = getParameterKey("kapiGirisHareketKopyala").equals("1");
+		boolean kapiDegistirKontrol = false;
+		if (perHareketList != null) {
+			for (HareketKGS hareketKGS : perHareketList) {
+				if (!kapiDegistirKontrol)
+					kapiDegistirKontrol = hareketKGS.getKapiKGS().isKapiDegistirir();
+				if (kapiDegistirKontrol)
+					break;
+
+			}
+		}
 		denklestirmeMap = null;
 		if (testDurum)
 			logger.info(perNoId + " denklestirmeOlustur 0100 " + new Date());
@@ -15473,9 +15483,11 @@ public class OrtakIslemler implements Serializable {
 							try {
 								if (vardiyaGun.addHareket(hareket, Boolean.TRUE)) {
 									hareketList.add(hareket);
-									KapiKGS kapiKGS = hareket.getKapiKGS();
-									if (!bagliKapiVar)
-										bagliKapiVar = kapiKGS != null && kapiKGS.getBagliKapiKGS() != null;
+									if (kapiDegistirKontrol) {
+										KapiKGS kapiKGS = hareket.getKapiKGS();
+										if (!bagliKapiVar)
+											bagliKapiVar = kapiKGS != null && kapiKGS.getBagliKapiKGS() != null;
+									}
 									iterator5.remove();
 								}
 							} catch (Exception ex) {
