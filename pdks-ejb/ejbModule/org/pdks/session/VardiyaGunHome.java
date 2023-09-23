@@ -4752,11 +4752,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 											if (sistemUser == null)
 												sistemUser = authenticatedUser;
 											String aciklama = islemFazlaMesaiTalep.getAciklama() != null && islemFazlaMesaiTalep.getAciklama().trim().length() > 0 ? islemFazlaMesaiTalep.getAciklama().trim() : "";
-											String birdenFazlaKGSSirketSQL = ortakIslemler.getBirdenFazlaKGSSirketSQL(null, null, session);
-											String sirketStr = "";
-											if (!birdenFazlaKGSSirketSQL.equals(""))
-												sirketStr = "_SIRKET";
-											pdksEntityController.hareketSil(kgsId, pdksId, sistemUser, nedenId, aciklama + (referans != null ? " " + referans.trim() : ""), hareketKGS3.getKgsSirketId(), sirketStr, session);
+ 											pdksEntityController.hareketSil(kgsId, pdksId, sistemUser, nedenId, aciklama + (referans != null ? " " + referans.trim() : ""), hareketKGS3.getKgsSirketId(), session);
 											flush = true;
 										}
 									}
@@ -4865,7 +4861,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		Long id = null;
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		try {
-			StringBuffer sp = new StringBuffer("dbo.SP_HAREKET_EKLE_RETURN");
+			StringBuffer sp = new StringBuffer("SP_HAREKET_EKLE_RETURN");
 			veriMap.put("kapi", kapi.getId());
 			veriMap.put("personelKGS", personelKGS.getId());
 			veriMap.put("zaman", zaman);
