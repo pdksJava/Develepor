@@ -139,7 +139,7 @@
 			</a4j:outputPanel>
 		</h:form>
 
-		<rich:modalPanel id="fileImportPanel" autosized="true" width="1000" top="30">
+		<rich:modalPanel id="fileImportPanel" autosized="true" width="900" top="30">
 			<f:facet name="header">
 				<h:outputText value="Excel'den Çalışma Planı Güncelleme" />
 			</f:facet>
@@ -159,7 +159,7 @@
 				<rich:panel header="Çalışma Planı Güncelleme">
 					<a4j:outputPanel id="dosyaPaneli">
 
-						<h:panelGrid columns="2" style="width:900px;">
+						<h:panelGrid columns="2" style="width:700px;">
 
 							<rich:fileUpload id="fileUpload" fileUploadListener="#{vardiyaGunHome.listenerFileImportDosya}" listHeight="50px" listWidth="300px"
 								sizeErrorLabel="Dosya boyutu büyük" maxFilesQuantity="1" immediateUpload="true" acceptedTypes="xls,xlsx"
