@@ -2601,14 +2601,18 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 				for (VardiyaGun vg : aylikPuantajSablon.getVardiyalar()) {
 					if (vg.isAyinGunu()) {
 						cal.setTime(vg.getVardiyaDate());
-						if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+						int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+						if (dayOfWeek != Calendar.SUNDAY) {
 							if (vg.getTatil() == null) {
-								sure += cal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY ? cm.getHaftaIci() : cm.getHaftaSonu();
-								toplamIzinSure += cal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY ? 7.5d : 0;
+								sure += dayOfWeek != Calendar.SATURDAY ? cm.getHaftaIci() : cm.getHaftaSonu();
+								toplamIzinSure += dayOfWeek != Calendar.SATURDAY ? 7.5d : 0;
 							} else if (vg.getTatil().isYarimGunMu()) {
 								if (PdksUtil.tarihKarsilastirNumeric(vg.getVardiyaDate(), vg.getTatil().getBasTarih()) == 0) {
-									sure += cm.getArife();
-									toplamIzinSure += cm.getArife();
+									if (cm.getHaftaSonu() > 0 || dayOfWeek != Calendar.SATURDAY) {
+										sure += cm.getArife();
+										toplamIzinSure += cm.getArife();
+									}
+
 								}
 
 							}
