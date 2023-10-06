@@ -13385,7 +13385,7 @@ public class OrtakIslemler implements Serializable {
 									}
 									if (calismayanSure > 0.0d) {
 										vardiyasizSure += calismayanSure;
-//										logger.info(pdksVardiyaGun.getVardiyaDateStr() + " " + vardiyasizSure + " " + calismayanSure);
+										// logger.info(pdksVardiyaGun.getVardiyaDateStr() + " " + vardiyasizSure + " " + calismayanSure);
 									}
 
 								}
@@ -13654,7 +13654,7 @@ public class OrtakIslemler implements Serializable {
 							if (vardiyasizSure > gunduzCalismaSaat)
 								vardiyasizSure = gunduzCalismaSaat;
 							izinSuresi += vardiyasizSure;
-//							logger.info(izinSuresi + " " + vardiyasizSure);
+							// logger.info(izinSuresi + " " + vardiyasizSure);
 						}
 						if (haftalikIzinSuresi > gunduzCalismaSaat) {
 							// logger.info(izinSuresi + " " +
@@ -15574,7 +15574,7 @@ public class OrtakIslemler implements Serializable {
 										if (girisDurum && hareketKGS.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS)) {
 											hareketHatali = true;
 											hareketKGS.setKapiKGS(bagliKapiKGS);
-											hareketKapiUpdateMap.put(hareketKGS.getHareketTableId(), kapiKGS);
+											hareketKapiUpdateMap.put(hareketKGS.getHareketTableId(), bagliKapiKGS);
 											logger.debug(vardiyaGun.getVardiyaKeyStr() + " " + hareketKGS.getId());
 										}
 									}
@@ -15766,28 +15766,35 @@ public class OrtakIslemler implements Serializable {
 					for (PdksLog pdksLog : list) {
 						if (hareketKapiUpdateMap.containsKey(pdksLog.getId())) {
 							KapiKGS kapiKGS = hareketKapiUpdateMap.get(pdksLog.getId());
-							if (hareketKopyala) {
-								PdksLog pdksLog2 = (PdksLog) pdksLog.clone();
-								pdksLog2.setId(null);
-								pdksLog2.setGuncellemeZamani(null);
-								pdksLog2.setKapiId(kapiKGS.getKgsId());
-								session.saveOrUpdate(pdksLog2);
-								if (islemNeden != null) {
-									PersonelHareketIslem islem = new PersonelHareketIslem();
-									islem.setAciklama(pdksLog2.getKgsId() + " " + kapiKGS.getKapi().getAciklama() + " olarak güncellendi. [ " + pdksLog2.getId() + " ]");
-									islem.setOnayDurum(PersonelHareketIslem.ONAY_DURUM_ONAYLANDI);
-									islem.setOlusturmaTarihi(guncellemeZamani);
-									islem.setGuncelleyenUser(onaylayanUser);
-									islem.setOnaylayanUser(authenticatedUser);
-									islem.setZaman(pdksLog.getZaman());
-									islem.setIslemTipi("U");
-									islem.setNeden(islemNeden);
-									session.saveOrUpdate(islem);
-									pdksLog.setIslemId(islem.getId());
+							if (hareketKopyala || pdksLog.getKgsId() < 0l) {
+								if (pdksLog.getKgsId() < 0l) {
+									pdksLog.setGuncellemeZamani(guncellemeZamani);
+									pdksLog.setKapiId(kapiKGS.getKgsId());
+									session.saveOrUpdate(pdksLog);
+								} else {
+									PdksLog pdksLog2 = (PdksLog) pdksLog.clone();
+									pdksLog2.setId(null);
+									pdksLog2.setGuncellemeZamani(null);
+									pdksLog2.setKapiId(kapiKGS.getKgsId());
+									session.saveOrUpdate(pdksLog2);
+									if (islemNeden != null) {
+										PersonelHareketIslem islem = new PersonelHareketIslem();
+										islem.setAciklama(pdksLog2.getKgsId() + " " + kapiKGS.getKapi().getAciklama() + " olarak güncellendi. [ " + pdksLog2.getId() + " ]");
+										islem.setOnayDurum(PersonelHareketIslem.ONAY_DURUM_ONAYLANDI);
+										islem.setOlusturmaTarihi(guncellemeZamani);
+										islem.setGuncelleyenUser(onaylayanUser);
+										islem.setOnaylayanUser(authenticatedUser);
+										islem.setZaman(pdksLog.getZaman());
+										islem.setIslemTipi("U");
+										islem.setNeden(islemNeden);
+										session.saveOrUpdate(islem);
+										pdksLog.setIslemId(islem.getId());
+									}
+									pdksLog.setGuncellemeZamani(guncellemeZamani);
+									pdksLog.setDurum(Boolean.FALSE);
+									session.saveOrUpdate(pdksLog);
 								}
-								pdksLog.setGuncellemeZamani(guncellemeZamani);
-								pdksLog.setDurum(Boolean.FALSE);
-								session.saveOrUpdate(pdksLog);
+
 							} else {
 								StringBuffer sb = new StringBuffer();
 								sb.append("SP_POOL_TERMINAL_UPDATE");
