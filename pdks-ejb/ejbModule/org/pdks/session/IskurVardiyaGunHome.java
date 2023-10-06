@@ -943,7 +943,7 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 		CellStyle styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
 		CellStyle styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
 		XSSFCellStyle styleTatil = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
- 		XSSFCellStyle styleIstek = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
+		XSSFCellStyle styleIstek = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
 		XSSFCellStyle styleEgitim = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
 		XSSFCellStyle styleOff = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
 		ExcelUtil.setFontColor(styleOff, Color.WHITE);
@@ -951,7 +951,7 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 		XSSFCellStyle styleCalisma = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
 		int row = 0, col = 0;
 
-	 	ExcelUtil.setFillForegroundColor(styleTatil, 255, 153, 204);
+		ExcelUtil.setFillForegroundColor(styleTatil, 255, 153, 204);
 		ExcelUtil.setFillForegroundColor(styleIstek, 255, 255, 0);
 		ExcelUtil.setFillForegroundColor(styleIzin, 146, 208, 80);
 		ExcelUtil.setFillForegroundColor(styleCalisma, 255, 255, 255);
@@ -2608,11 +2608,9 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 								toplamIzinSure += dayOfWeek != Calendar.SATURDAY ? 7.5d : 0;
 							} else if (vg.getTatil().isYarimGunMu()) {
 								if (PdksUtil.tarihKarsilastirNumeric(vg.getVardiyaDate(), vg.getTatil().getBasTarih()) == 0) {
-									if (cm.getHaftaSonu() > 0 || dayOfWeek != Calendar.SATURDAY) {
+									if (cm.getHaftaSonu() > 0 || dayOfWeek != Calendar.SATURDAY)
 										sure += cm.getArife();
-										toplamIzinSure += cm.getArife();
-									}
-
+									toplamIzinSure += cm.getArife();
 								}
 
 							}

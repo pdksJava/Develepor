@@ -5509,11 +5509,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								toplamIzinSure += dayOfWeek != Calendar.SATURDAY ? 7.5d : 0;
 							} else if (vg.getTatil().isYarimGunMu()) {
 								if (PdksUtil.tarihKarsilastirNumeric(vg.getVardiyaDate(), vg.getTatil().getBasTarih()) == 0) {
-									if (cm.getHaftaSonu() > 0 || dayOfWeek != Calendar.SATURDAY) {
+									if (cm.getHaftaSonu() > 0 || dayOfWeek != Calendar.SATURDAY)
 										sure += cm.getArife();
-										toplamIzinSure += cm.getArife();
-									}
 
+									toplamIzinSure += cm.getArife();
 								}
 
 							}
