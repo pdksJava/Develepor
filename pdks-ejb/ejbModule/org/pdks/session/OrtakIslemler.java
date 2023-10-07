@@ -13265,6 +13265,14 @@ public class OrtakIslemler implements Serializable {
 				List<String> resmiTatilDepartmanlari = !resmiTatilDepartmanlariStr.equals("") ? PdksUtil.getListByString(resmiTatilDepartmanlariStr, null) : null;
 				List<String> vardiyaAksamSabahAdlari = !resmiTatilVardiyaEkleStr.equals("") ? PdksUtil.getListByString(resmiTatilVardiyaEkleStr, null) : null;
 				boolean resmiTatilEkle = getParameterKey("resmiTatilEkle").equals("1");
+				String haftaIciIzinGunEkle = getParameterKey("haftaIciIzinGunEkle");
+				Date haftaIciIzinGunTarih = null;
+				if (PdksUtil.hasStringValue(haftaIciIzinGunEkle))
+					try {
+						haftaIciIzinGunTarih = PdksUtil.getDateFromString(haftaIciIzinGunEkle);
+					} catch (Exception e) {
+						haftaIciIzinGunTarih = null;
+					}
 				DenklestirmeAy denklestirmeAy = puantajData.getDenklestirmeAy();
 				if (denklestirmeAy == null && puantajData.getPersonelDenklestirmeAylik() != null)
 					denklestirmeAy = puantajData.getPersonelDenklestirmeAylik().getDenklestirmeAy();
@@ -13510,8 +13518,26 @@ public class OrtakIslemler implements Serializable {
 
 									}
 								}
+
 								if (!normalGun) {
 									boolean offIzinli = pdksVardiyaGun.isIzinli() && !(pdksVardiyaGun.getVardiya().isOffGun() || pdksVardiyaGun.getVardiya().isHaftaTatil());
+									if (key.equals("20230915"))
+										logger.debug(key);
+
+									if (offIzinli == false && calismaModeli != null && pdksVardiyaGun.getVardiya().isOffGun()) {
+										if (haftaIciIzinGunTarih != null && pdksVardiyaGun.getVardiyaDate().after(haftaIciIzinGunTarih)) {
+											cal.setTime(pdksVardiyaGun.getVardiyaDate());
+											int dayOffWeek = cal.get(Calendar.DAY_OF_WEEK);
+											if (dayOffWeek == Calendar.SATURDAY)
+												offIzinli = calismaModeli.getHaftaSonu() == calismaModeli.getHaftaIci();
+											else {
+												if (dayOffWeek != Calendar.SUNDAY)
+													offIzinli = calismaModeli.getHaftaIci() > 0;
+											}
+										}
+
+									}
+
 									if (offIzinli || (!(pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getVardiya().getId().equals(offVardiya.getId())) && !pdksVardiyaGun.isHaftaTatil() && !raporIzni)) {
 										if (pdksVardiyaGun.getTatil() == null || !tatilGunleriMap.containsKey(key) || (pdksVardiyaGun.getTatil() != null && pdksVardiyaGun.getTatil().isYarimGunMu())) {
 											VardiyaGun gun = new VardiyaGun();
