@@ -363,12 +363,11 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		String sayfa = "/izin/izinKartiPdf.xhtml";
 		if (tempIzin != null) {
 			List<TempIzin> list = new ArrayList<TempIzin>();
-			String bakiyeYil = PdksUtil.convertToDateString(tempIzin.getPersonelIzin().getBaslangicZamani(), "yyyy");
 			list.add(tempIzin);
 			ByteArrayOutputStream baosPDF = null;
 			/** *********** DOSYASI YARATMA KODLARI************ */
 			try {
-				baosPDF = ortakIslemler.izinBakiyeTopluITextPDF(Integer.parseInt(bakiyeYil), list, false, false);
+				baosPDF = ortakIslemler.izinBakiyeTopluITextPDF(-1, list, false, false);
 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
@@ -817,11 +816,13 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 					continue;
 				ArrayList<PersonelIzin> yillikTemIzinler = new ArrayList<PersonelIzin>(), yillikIzinler = tempIzin.getYillikIzinler();
 				boolean guncelle = false;
-
+				boolean sifirla = true;
+				if (authenticatedUser.isAdmin() || authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi())
+					sifirla = PersonelIzin.getYillikIzinMaxBakiye() > 0;
 				for (PersonelIzin personelIzin : yillikIzinler) {
 					PersonelIzin personelIzinNew = (PersonelIzin) personelIzin.clone();
 					personelIzinNew.setKontrolIzin(personelIzin);
-					if (personelIzinNew.getBitisZamani().after(tarih)) {
+					if (sifirla && personelIzinNew.getBitisZamani().after(tarih)) {
 						guncelle = true;
 						double izinSuresi = personelIzinNew.getIzinSuresi(), harcanan = personelIzinNew.getHarcananIzin();
 						personelIzinNew.setDonemSonu(tarih);
@@ -1737,11 +1738,15 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		Date tarih = PdksUtil.getDate(new Date());
 		if (donemSonu != null && donemSonu.after(tarih))
 			tarih = donemSonu;
+		boolean sifirla = true;
+		if (authenticatedUser.isAdmin() || authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi())
+			sifirla = PersonelIzin.getYillikIzinMaxBakiye() > 0;
+
 		for (PersonelIzin personelIzin : izinler) {
 			PersonelIzin personelIzinNew = (PersonelIzin) personelIzin.clone();
 			personelIzinNew.setKontrolIzin(personelIzin);
 			personelIzinNew.setDonemSonu(tarih);
-			if (personelIzinNew.getBitisZamani().after(tarih)) {
+			if (sifirla && personelIzinNew.getBitisZamani().after(tarih)) {
 				guncelle = true;
 				personelIzinNew.setIzinSuresi(0D);
 			}
