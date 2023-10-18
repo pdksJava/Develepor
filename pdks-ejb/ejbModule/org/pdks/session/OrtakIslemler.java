@@ -16631,6 +16631,8 @@ public class OrtakIslemler implements Serializable {
 				Date sonGun = null;
 				if (calismayanPersonelYoneticiDurum && !aylikPuantajList.isEmpty())
 					sonGun = PdksUtil.tariheGunEkleCikar(aylikPuantajList.get(0).getSonGun(), 1);
+
+				boolean yoneticiTanimli = !PdksUtil.hasStringValue(getParameterKey("yoneticiTanimsiz"));
 				for (AylikPuantaj aylikPuantaj : aylikPuantajList) {
 					boolean yoneticiKontrol = true;
 					Personel personel = aylikPuantaj.getPdksPersonel();
@@ -16679,7 +16681,8 @@ public class OrtakIslemler implements Serializable {
 					if (kontrolEtme)
 						yoneticiUser.setId(-1L);
 					yoneticiUser.setAd("");
-					yoneticiUser.setSoyad("kullanıcı tanımsız!");
+					if (yoneticiTanimli)
+						yoneticiUser.setSoyad("kullanıcı tanımsız!");
 
 					fields.clear();
 					fields.put(PdksEntityController.MAP_KEY_SELECT, "pdksPersonel");
@@ -16693,9 +16696,10 @@ public class OrtakIslemler implements Serializable {
 						for (AylikPuantaj aylikPuantaj : list) {
 							Long id = aylikPuantaj.getYonetici().getId();
 							Personel yonetici1 = personelMap.get(id);
+							Personel yoneticiUserClone = (Personel) yoneticiUser.clone();
 							if (yonetici1 == null) {
-								yoneticiUser.setAd(aylikPuantaj.getYonetici().getAdSoyad());
-								yonetici1 = yoneticiUser;
+								yoneticiUserClone.setAd(aylikPuantaj.getYonetici().getAdSoyad());
+								yonetici1 = yoneticiUserClone;
 							}
 							aylikPuantaj.setYonetici(yonetici1);
 						}
