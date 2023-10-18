@@ -3360,12 +3360,13 @@ public class OrtakIslemler implements Serializable {
 	 * @param personel
 	 * @param donem
 	 * @param bakiyeIzinTipi
+	 * @param sure
 	 * @param kidemYil
 	 * @param session
 	 * @return
 	 * @throws Exception
 	 */
-	public PersonelIzin getBakiyeIzin(User user, Personel personel, Date donem, IzinTipi bakiyeIzinTipi, int kidemYil, Session session) throws Exception {
+	public PersonelIzin getBakiyeIzin(User user, Personel personel, Date donem, IzinTipi bakiyeIzinTipi, Double sure, int kidemYil, Session session) throws Exception {
 		PersonelIzin bakiyeIzin = null;
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(donem);
@@ -3391,7 +3392,8 @@ public class OrtakIslemler implements Serializable {
 				}
 
 			} else {
-				double sure = bakiyeIzinTipi.getKotaBakiye() != null ? bakiyeIzinTipi.getKotaBakiye() : 0D;
+				if (sure == null)
+					sure = bakiyeIzinTipi.getKotaBakiye() != null ? bakiyeIzinTipi.getKotaBakiye() : 0D;
 				if (user == null)
 					user = getSistemAdminUser(session);
 				cal = Calendar.getInstance();
@@ -3399,7 +3401,9 @@ public class OrtakIslemler implements Serializable {
 				cal.setTime(personel.getIzinHakEdisTarihi());
 				cal.set(Calendar.YEAR, yil);
 				String hakedisTarih = "convert(datetime, '" + PdksUtil.convertToDateString(cal.getTime(), "yyyyMMdd") + "', 112)";
-				String aciklama = String.valueOf(kidemYil);
+				String aciklama = bakiyeIzinTipi != null ? bakiyeIzinTipi.getIzinTipiTanim().getAciklama() : "Bakiye İzin";
+				if (kidemYil >= 0)
+					aciklama = kidemYil > 0 ? String.valueOf(kidemYil) : "";
 				queryStr = new StringBuilder("INSERT INTO " + PersonelIzin.TABLE_NAME + " (" + PersonelIzin.COLUMN_NAME_DURUM + ",  " + PersonelIzin.COLUMN_NAME_OLUSTURMA_TARIHI + ", " + PersonelIzin.COLUMN_NAME_ACIKLAMA + ", " + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ", "
 						+ PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + ",");
 				queryStr.append(PersonelIzin.COLUMN_NAME_IZIN_SURESI + ", " + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + "," + PersonelIzin.COLUMN_NAME_VERSION + "," + PersonelIzin.COLUMN_NAME_OLUSTURAN + ", " + PersonelIzin.COLUMN_NAME_PERSONEL + ", " + PersonelIzin.COLUMN_NAME_IZIN_TIPI + ")");
@@ -3412,8 +3416,11 @@ public class OrtakIslemler implements Serializable {
 				queryStr.append(" WHERE  T." + IzinTipi.COLUMN_NAME_ID + "= " + bakiyeIzinTipi.getId() + " AND I." + PersonelIzin.COLUMN_NAME_ID + " IS NULL");
 				String sqlStr = queryStr.toString();
 				try {
-					query1 = session.createSQLQuery(sqlStr);
-					query1.executeUpdate();
+					if (sure >= 0) {
+						query1 = session.createSQLQuery(sqlStr);
+						query1.executeUpdate();
+					}
+
 				} catch (Exception e) {
 					logger.error("Pdks hata in : \n");
 					e.printStackTrace();
@@ -8454,7 +8461,7 @@ public class OrtakIslemler implements Serializable {
 			IzinTipi izinTipi = (IzinTipi) pdksEntityController.getObjectByInnerObject(map, IzinTipi.class);
 			if (izinTipi != null) {
 				try {
-					personelBakiyeIzin = getBakiyeIzin(user, izinSahibi, baslangicZamani, izinTipi, kidemYil, session);
+					personelBakiyeIzin = getBakiyeIzin(user, izinSahibi, baslangicZamani, izinTipi, null, kidemYil, session);
 				} catch (Exception e) {
 					logger.error("Pdks hata in : \n");
 					e.printStackTrace();
@@ -8466,7 +8473,10 @@ public class OrtakIslemler implements Serializable {
 					personelBakiyeIzin = new PersonelIzin();
 					personelBakiyeIzin.setBaslangicZamani(baslangicZamani);
 					personelBakiyeIzin.setBitisZamani(baslangicZamani);
-					personelBakiyeIzin.setAciklama("Bakiye Senelik Izin");
+					String aciklama = izinTipi != null ? izinTipi.getIzinTipiTanim().getAciklama() : "Bakiye İzin";
+					if (kidemYil >= 0)
+						aciklama = kidemYil > 0 ? String.valueOf(kidemYil) : "";
+					personelBakiyeIzin.setAciklama(aciklama);
 					personelBakiyeIzin.setIzinSahibi(izinSahibi);
 					personelBakiyeIzin.setIzinTipi(izinTipi);
 					personelBakiyeIzin.setOlusturanUser(authenticatedUser);
@@ -8935,7 +8945,7 @@ public class OrtakIslemler implements Serializable {
 			cal.set(yil, 0, 1);
 			Date baslangicZamani = PdksUtil.getDate(cal.getTime());
 			Date bitisZamani = baslangicZamani;
-			personelIzin = getBakiyeIzin(user, izinSahibi, baslangicZamani, izinTipi, kidemYil, session);
+			personelIzin = getBakiyeIzin(user, izinSahibi, baslangicZamani, izinTipi, null, kidemYil, session);
 
 			if (personelIzin == null) {
 				personelIzin = new PersonelIzin();
@@ -9039,7 +9049,7 @@ public class OrtakIslemler implements Serializable {
 			HashMap<Integer, Integer> map1 = getTarihMap(izinSahibi != null ? izinSahibi.getIzinHakEdisTarihi() : null, bitisZamani);
 			int kidemYil = map1.get(Calendar.YEAR);
 			String aciklama = String.valueOf(kidemYil);
-			personelIzin = getBakiyeIzin(user, izinSahibi, baslangicZamani, izinTipi, kidemYil, session);
+			personelIzin = getBakiyeIzin(user, izinSahibi, baslangicZamani, izinTipi, null, kidemYil, session);
 			if (personelIzin == null) {
 				personelIzin = new PersonelIzin();
 				personelIzin.setIzinSahibi(izinSahibi);
@@ -9102,7 +9112,7 @@ public class OrtakIslemler implements Serializable {
 
 		PersonelIzin personelIzin = null;
 		HashMap map = new HashMap();
-
+		User sistemYonetici = getSistemAdminUser(session);
 		int yillikIzinMaxBakiye = PersonelIzin.getYillikIzinMaxBakiye();
 		cal.setTime(izinSahibi.getIzinHakEdisTarihi());
 		int girisYil = cal.get(Calendar.YEAR);
@@ -9156,24 +9166,48 @@ public class OrtakIslemler implements Serializable {
 			yasTipi = IzinHakedisHakki.YAS_TIPI_COCUK;
 		else if (departman.getYasliYasAltSiniri() <= yas)
 			yasTipi = IzinHakedisHakki.YAS_TIPI_YASLI;
+		boolean kidemEkle = false, yeniKidemBakiyeOlustur = true;
 		if (izinTipi != null) {
-			if (kidemYil > 0) {
+			if (yillikIzinMaxBakiye < 0 && (kidemYil == 0 || tarihGelmedi)) {
+				kidemEkle = kidemYil == 0;
+				kidemMap.put(Calendar.YEAR, kidemYil + 1);
+				if (kidemEkle) {
+					kidemYil++;
+					cal.setTime(izinHakEttigiTarihi);
+					cal.add(Calendar.YEAR, 1);
+					izinHakEttigiTarihi = cal.getTime();
+				} else
+					yeniKidemBakiyeOlustur = false;
+
+			}
+
+			if (kidemYil > 0 || kidemEkle) {
 				if (!tarihGelmedi)
 					izinHakedisHakki = getIzinHakedis(kidemYil, hakedisMap, session, yasTipi, suaDurum, departman, map);
 				if (tarihGelmedi) {
-					izinHakedisHakki = new IzinHakedisHakki();
-					izinHakedisHakki.setIzinSuresi(yillikIzinMaxBakiye);
+					if (yillikIzinMaxBakiye > 0) {
+						izinHakedisHakki = new IzinHakedisHakki();
+						izinHakedisHakki.setIzinSuresi(yillikIzinMaxBakiye);
+					} else
+						izinHakedisHakki = getIzinHakedis(kidemYil + 1, hakedisMap, session, yasTipi, suaDurum, departman, map);
 				}
 
 				if (izinHakedisHakki != null && izinTipi != null) {
-					cal.set(yil, 0, 1);
+					cal.set((kidemEkle ? 1 : 0) + yil, 0, 1);
 					Date baslangicZamani = PdksUtil.getDate(cal.getTime());
 					cal.setTime(izinSahibi.getIzinHakEdisTarihi());
-					cal.set(Calendar.YEAR, yil);
+					cal.set(Calendar.YEAR, (kidemEkle ? 1 : 0) + yil);
 					izinHakEttigiTarihi = PdksUtil.getDate(cal.getTime());
+
 					Date kidemTarih = tarihGelmedi ? izinHakEttigiTarihi : PdksUtil.getDate(bugun);
 					kidemMap = getTarihMap(izinSahibi != null ? izinSahibi.getIzinHakEdisTarihi() : null, kidemTarih);
 					kidemYil = kidemMap.get(Calendar.YEAR);
+					if (yillikIzinMaxBakiye < 0)
+						yeniKidemBakiyeOlustur = kidemYil > 0 && !izinHakEttigiTarihi.after(PdksUtil.getDate(bugun));
+					if (kidemEkle) {
+						++kidemYil;
+
+					}
 					HashMap<Integer, Integer> yasMap = getTarihMap(izinSahibi != null ? izinSahibi.getDogumTarihi() : null, kidemTarih);
 					int yasYeni = yasMap.get(Calendar.YEAR);
 					if (yasYeni != yas) {
@@ -9188,7 +9222,10 @@ public class OrtakIslemler implements Serializable {
 					String aciklama = String.valueOf(kidemYil);
 					if (genelDirektorIzinSuresi != 0)
 						izinHakedisHakki.setIzinSuresi(genelDirektorIzinSuresi);
-					personelIzin = getBakiyeIzin(user, izinSahibi, baslangicZamani, izinTipi, kidemYil, session);
+					double izinSuresi = tarihGelmedi && yillikIzinMaxBakiye > 0 ? yillikIzinMaxBakiye : (double) izinHakedisHakki.getIzinSuresi();
+
+					personelIzin = getBakiyeIzin(sistemYonetici, izinSahibi, baslangicZamani, izinTipi, izinSuresi, kidemYil, session);
+
 					if (yil > sistemKontrolYili) {
 						if (personelIzin == null) {
 							personelIzin = new PersonelIzin();
@@ -9196,12 +9233,12 @@ public class OrtakIslemler implements Serializable {
 							personelIzin.setBaslangicZamani(baslangicZamani);
 							personelIzin.setBitisZamani(izinHakEttigiTarihi);
 							personelIzin.setIzinTipi(izinTipi);
-							personelIzin.setIzinSuresi(0D);
+							personelIzin.setIzinSuresi(izinSuresi);
 							personelIzin.setKullanilanIzinSuresi(0D);
-							personelIzin.setOlusturanUser(user);
 						}
+						if (personelIzin.getId() == null)
+							personelIzin.setOlusturanUser(sistemYonetici);
 						if (personelIzin.getIzinKagidiGeldi() == null) {
-							double izinSuresi = tarihGelmedi ? yillikIzinMaxBakiye : (double) izinHakedisHakki.getIzinSuresi();
 							if (personelIzin.getGuncellemeTarihi() != null && !PdksUtil.getDate(bugun).after(PdksUtil.getDate(personelIzin.getGuncellemeTarihi())))
 								izinSuresi = personelIzin.getIzinSuresi().intValue();
 							if (genelDirektorIzinSuresi != 0)
@@ -9223,8 +9260,8 @@ public class OrtakIslemler implements Serializable {
 					}
 				}
 			}
-			if (yeniBakiyeOlustur) {
-				if ((!tarihGelmedi && kidemYil > 0) || yil == girisYil)
+			if (yeniBakiyeOlustur && yeniKidemBakiyeOlustur) {
+				if (((tarihGelmedi == false || yillikIzinMaxBakiye < 0) && kidemYil > 0) || yil == girisYil)
 					++yil;
 				cal.set(yil, 0, 1);
 				Date baslangicZamani = PdksUtil.convertToJavaDate(yil + "0101", "yyyyMMdd");
@@ -9232,12 +9269,19 @@ public class OrtakIslemler implements Serializable {
 				cal.set(Calendar.YEAR, yil);
 				izinHakEttigiTarihi = PdksUtil.getDate(cal.getTime());
 				if (baslangicZamani.after(izinSahibi.getIzinHakEdisTarihi())) {
-					izinHakedisHakki = new IzinHakedisHakki();
-					izinHakedisHakki.setIzinSuresi(yillikIzinMaxBakiye);
+					if (yillikIzinMaxBakiye > 0) {
+						izinHakedisHakki = new IzinHakedisHakki();
+						izinHakedisHakki.setIzinSuresi(yillikIzinMaxBakiye);
+					} else
+						izinHakedisHakki = getIzinHakedis(kidemYil + 1, hakedisMap, session, yasTipi, suaDurum, departman, map);
+
 					HashMap<Integer, Integer> map1 = getTarihMap(izinSahibi != null ? izinSahibi.getIzinHakEdisTarihi() : null, izinHakEttigiTarihi);
 					kidemYil = map1.get(Calendar.YEAR);
 					String aciklama = String.valueOf(kidemYil);
-					personelIzin = getBakiyeIzin(user, izinSahibi, baslangicZamani, izinTipi, kidemYil, session);
+					double izinSuresi = (double) izinHakedisHakki.getIzinSuresi();
+					if (genelDirektorIzinSuresi != 0)
+						izinSuresi = genelDirektorIzinSuresi;
+					personelIzin = getBakiyeIzin(sistemYonetici, izinSahibi, baslangicZamani, izinTipi, izinSuresi, kidemYil, session);
 					if (personelIzin == null) {
 						personelIzin = new PersonelIzin();
 						personelIzin.setIzinSahibi(izinSahibi);
@@ -9245,16 +9289,13 @@ public class OrtakIslemler implements Serializable {
 						personelIzin.setBitisZamani(izinHakEttigiTarihi);
 						personelIzin.setAciklama(aciklama);
 						personelIzin.setIzinTipi(izinTipi);
-						personelIzin.setIzinSuresi(0D);
+						personelIzin.setIzinSuresi(izinSuresi);
 						personelIzin.setKullanilanIzinSuresi(0D);
-						personelIzin.setOlusturanUser(user);
 					}
-
+					if (personelIzin.getId() == null)
+						personelIzin.setOlusturanUser(sistemYonetici);
 					if (personelIzin.getIzinKagidiGeldi() == null && kidemYil > 0) {
-						double izinSuresi = (double) izinHakedisHakki.getIzinSuresi();
-						if (genelDirektorIzinSuresi != 0)
-							izinSuresi = genelDirektorIzinSuresi;
-						if (izinDegisti(personelIzin, izinHakEttigiTarihi, izinSuresi, aciklama)) {
+						if (izinSuresi > 0 && izinDegisti(personelIzin, izinHakEttigiTarihi, izinSuresi, aciklama)) {
 							if (personelIzin.getId() != null) {
 								if (user != null)
 									personelIzin.setGuncelleyenUser(user);
@@ -9315,7 +9356,8 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	private boolean izinDegisti(PersonelIzin personelIzin, Date tarih, double izinSuresi, String aciklama) {
-		return !personelIzin.getAciklama().equals(aciklama) || PdksUtil.tarihKarsilastirNumeric(tarih, personelIzin.getBitisZamani()) != 0 || personelIzin.getIzinSuresi() != izinSuresi || personelIzin.getIzinDurumu() != PersonelIzin.IZIN_DURUMU_ONAYLANDI;
+		boolean degisti = !personelIzin.getAciklama().equals(aciklama) || PdksUtil.tarihKarsilastirNumeric(tarih, personelIzin.getBitisZamani()) != 0 || personelIzin.getIzinSuresi() != izinSuresi || personelIzin.getIzinDurumu() != PersonelIzin.IZIN_DURUMU_ONAYLANDI;
+		return degisti;
 	}
 
 	/**
@@ -12204,15 +12246,23 @@ public class OrtakIslemler implements Serializable {
 	 * @throws Exception
 	 */
 	private List<LinkedHashMap<String, Object>> getPDFITextYillikIzinKarti(int baslangicYil, List<TempIzin> bakiyeList, boolean zipDosya) throws Exception {
-		List<LinkedHashMap<String, Object>> list = new ArrayList<LinkedHashMap<String, Object>>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		NumberFormat nf = DecimalFormat.getNumberInstance(locale);
-		Date bugun = new Date();
-		Image image = getProjeImage();
 		BaseFont baseFont = BaseFont.createFont("ARIAL.TTF", BaseFont.IDENTITY_H, true);
 		Font fontH = new Font(baseFont, 7f, Font.BOLD, BaseColor.BLACK);
 		Font fontBaslik = new Font(baseFont, 14f, Font.BOLD, BaseColor.BLACK);
 		Font font = new Font(baseFont, 7f, Font.NORMAL, BaseColor.BLACK);
+		Image image = getProjeImage();
+		PdfPTable tableImage = null;
+		if (image != null) {
+			tableImage = new PdfPTable(1);
+			com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
+			cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+			tableImage.addCell(cellImage);
+		}
+		List<LinkedHashMap<String, Object>> list = new ArrayList<LinkedHashMap<String, Object>>();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		NumberFormat nf = DecimalFormat.getNumberInstance(locale);
+		Date bugun = new Date();
+
 		for (TempIzin tempIzin : bakiyeList) {
 			if (tempIzin.getToplamBakiyeIzin() == 0.0d)
 				continue;
@@ -12232,13 +12282,13 @@ public class OrtakIslemler implements Serializable {
 				try {
 					++sayfa;
 					String bakiyeYil = PdksUtil.convertToDateString(bakiyeIzin.getBaslangicZamani(), "yyyy");
-					if (Integer.parseInt(bakiyeYil) < baslangicYil)
+					if (baslangicYil > 0 && Integer.parseInt(bakiyeYil) < baslangicYil)
 						continue;
 					if (map == null)
 						map = new LinkedHashMap<String, Object>();
 					Personel personel = tempIzin.getPersonel();
-					if (image != null)
-						doc.add(image);
+					if (tableImage != null)
+						doc.add(tableImage);
 
 					doc.add(PDFITextUtils.getParagraph("YILLIK ÜCRETLİ İZİN KARTI", fontBaslik, Element.ALIGN_CENTER));
 					table = new PdfPTable(15);
@@ -12340,22 +12390,52 @@ public class OrtakIslemler implements Serializable {
 		return list;
 	}
 
+	public HashMap<String, Object> getProjeHeaderImageMap() {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		String projeHeaderImageName = getParameterKey("projeHeaderImageName");
+		File projeHeader = new File("/opt/pdks/" + projeHeaderImageName);
+		if (projeHeader.exists()) {
+			try {
+				byte[] projeHeaderImage = PdksUtil.getFileByteArray(projeHeader);
+				map.put("projeHeaderImage", projeHeaderImage);
+				float projeHeaderImageHeight = 450f, projeHeaderImageWidth = 450f;
+				if (parameterMap.containsKey("projeHeaderSize")) {
+					String deger = parameterMap.get("projeHeaderSize");
+					LinkedHashMap<String, String> map1 = PdksUtil.parametreAyikla(deger);
+					if (map1.containsKey("width"))
+						projeHeaderImageWidth = new Double(map1.get("width")).floatValue();
+					if (map1.containsKey("height"))
+						projeHeaderImageHeight = new Double(map1.get("height")).floatValue();
+				}
+				map.put("projeHeaderImageHeight", projeHeaderImageHeight);
+				map.put("projeHeaderImageWidth", projeHeaderImageWidth);
+			} catch (Exception e) {
+
+				e.printStackTrace();
+			}
+		}
+		return map;
+	}
+
 	/**
 	 * @return
 	 * @throws Exception
 	 */
-	private Image getProjeImage() throws Exception {
-		String projeHeaderImageName = getParameterKey("projeHeaderImageName");
-		File projeHeader = new File("/opt/pdks/" + projeHeaderImageName);
+	public Image getProjeImage() throws Exception {
+		HashMap<String, Object> projeImageMap = getProjeHeaderImageMap();
 		Image image = null;
-		if (projeHeader.exists()) {
-			image = Image.getInstance(PdksUtil.getFileByteArray(projeHeader));
+		if (projeImageMap.containsKey("projeHeaderImage")) {
+			byte[] projeHeaderImage = (byte[]) projeImageMap.get("projeHeaderImage");
+			image = Image.getInstance(projeHeaderImage);
+			// ImageData data = ImageDataFactory.create(projeHeaderImage);
+			// Image img = new Image(data);
 			if (image != null) {
-				image.setAbsolutePosition(450f, 10f);
-				image.scaleToFit(450f, 450f);
+				float projeHeaderImageHeight = (Float) projeImageMap.get("projeHeaderImageHeight");
+				float projeHeaderImageWidth = (Float) projeImageMap.get("projeHeaderImageWidth");
+				image.scaleToFit(projeHeaderImageHeight, projeHeaderImageWidth);
 			}
-
 		}
+
 		return image;
 	}
 
@@ -12363,15 +12443,16 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	private com.lowagie.text.Image getLowagieProjeImage() throws Exception {
-		String projeHeaderImageName = getParameterKey("projeHeaderImageName");
-		File projeHeader = new File("/opt/pdks/" + projeHeaderImageName);
+	public com.lowagie.text.Image getLowagieProjeImage() throws Exception {
+		HashMap<String, Object> projeImageMap = getProjeHeaderImageMap();
 		com.lowagie.text.Image image = null;
-		if (projeHeader.exists()) {
-			image = com.lowagie.text.Image.getInstance(PdksUtil.getFileByteArray(projeHeader));
+		if (projeImageMap.containsKey("projeHeaderImage")) {
+			byte[] projeHeaderImage = (byte[]) projeImageMap.get("projeHeaderImage");
+			image = com.lowagie.text.Image.getInstance(projeHeaderImage);
 			if (image != null) {
-				image.setAbsolutePosition(450f, 10f);
-				image.scaleToFit(450f, 450f);
+				float projeHeaderImageHeight = (Float) projeImageMap.get("projeHeaderImageHeight");
+				float projeHeaderImageWidth = (Float) projeImageMap.get("projeHeaderImageWidth");
+				image.scaleToFit(projeHeaderImageHeight, projeHeaderImageWidth);
 			}
 
 		}
