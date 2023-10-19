@@ -1235,7 +1235,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			pdksPersonel.setAd(personelKGS.getAd());
 			pdksPersonel.setSoyad(personelKGS.getSoyad());
 			pdksPersonel.setDurum(personelKGS.getDurum());
- 			pdksPersonel.setDogumTarihi(personelKGS.getDogumTarihi());
+			pdksPersonel.setDogumTarihi(personelKGS.getDogumTarihi());
 			pdksPersonel.setIseBaslamaTarihi(personelKGS.getIseBaslamaTarihi());
 			pdksPersonel.setGrubaGirisTarihi(personelKGS.getIseBaslamaTarihi());
 			pdksPersonel.setIzinHakEdisTarihi(personelKGS.getIseBaslamaTarihi());
@@ -2325,7 +2325,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				logger.error("PDKS hata out : " + e.getMessage());
 
 			}
-		}
+		} else
+			personelView.setPdksPersonel(null);
 
 	}
 
