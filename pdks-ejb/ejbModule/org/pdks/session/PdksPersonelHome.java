@@ -2313,9 +2313,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	}
 
 	public void instanceRefresh() {
-		if (getInstance().getId() != null) {
+		Personel pdksPersonel = getInstance();
+		if (pdksPersonel != null && pdksPersonel.getId() != null) {
 			try {
-				Personel pdksPersonel = getInstance();
 				if (pdksPersonel.getKullanici() != null && pdksPersonel.getKullanici().getId() != null)
 					session.refresh(pdksPersonel.getKullanici());
 				session.refresh(pdksPersonel);
@@ -2325,8 +2325,10 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				logger.error("PDKS hata out : " + e.getMessage());
 
 			}
-		} else
+		} else {
 			personelView.setPdksPersonel(null);
+			personelView.setKullanici(null);
+		}
 
 	}
 
