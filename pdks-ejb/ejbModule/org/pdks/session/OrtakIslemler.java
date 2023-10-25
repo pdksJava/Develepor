@@ -2314,7 +2314,6 @@ public class OrtakIslemler implements Serializable {
 	 */
 	private List getSPPersonelHareketList(List<Long> personelList, String kapi, String basTarihStr, String bitTarihStr, Class class2, Session session) throws Exception {
 		StringBuffer sb = new StringBuffer("SP_GET_HAREKET_SIRKET");
-
 		LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
 		fields.put("kapi", kapi);
 		fields.put("personel", getListIdStr(personelList));
@@ -2328,6 +2327,8 @@ public class OrtakIslemler implements Serializable {
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List list2 = pdksEntityController.execSPList(fields, sb, class2);
+		fields = null;
+		sb = null;
 		return list2;
 	}
 
