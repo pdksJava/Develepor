@@ -526,7 +526,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			bitGun = PdksUtil.tariheAyEkleCikar(basGun, 1);
 			String str = ortakIslemler.getParameterKey("bordroVeriOlustur");
 			saveLastParameter();
-			if (!str.equals("") && yil * 100 + ay >= Integer.parseInt(str)) {
+			if (PdksUtil.hasStringValue(sicilNo) && yil * 100 + ay >= Integer.parseInt(str)) {
 				fields.clear();
 				StringBuffer sb = new StringBuffer();
 				sb.append("SELECT  B.* FROM " + PersonelDenklestirme.TABLE_NAME + " V WITH(nolock) ");
@@ -633,7 +633,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 				boolean kimlikNoGoster = false;
 				String kartNoAciklama = ortakIslemler.getParameterKey("kartNoAciklama");
 				Boolean kartNoAciklamaGoster = null;
-				if (!kartNoAciklama.equals(""))
+				if (PdksUtil.hasStringValue(kartNoAciklama))
 					kartNoAciklamaGoster = false;
 
 				for (AylikPuantaj aylikPuantaj : personelDenklestirmeList) {
@@ -774,7 +774,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			Boolean kartNoAciklamaGoster = null;
 			String kartNoAciklama = ortakIslemler.getParameterKey("kartNoAciklama");
 
-			if (!kartNoAciklama.equals(""))
+			if (PdksUtil.hasStringValue(kartNoAciklama))
 				kartNoAciklamaGoster = false;
 
 			if (kartNoAciklamaGoster == null)
