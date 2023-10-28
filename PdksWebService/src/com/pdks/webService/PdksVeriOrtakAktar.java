@@ -2115,12 +2115,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				if (hataList != null) {
 					for (Iterator iterator = hataList.iterator(); iterator.hasNext();) {
 						IzinERP izinERP = (IzinERP) iterator.next();
-						if (izinERP.getHataList().isEmpty())
-							iterator.remove();
-					}
-					for (Iterator iterator = hataList.iterator(); iterator.hasNext();) {
-						IzinERP izinERP = (IzinERP) iterator.next();
-						if (izinERP == null || izinERP.getDurum() == null)
+						if (izinERP == null || izinERP.getDurum() == null || izinERP.getHataList().isEmpty())
 							iterator.remove();
 					}
 					if (!hataList.isEmpty()) {
