@@ -218,6 +218,22 @@
 								</f:facet>
 								<h:outputText value="#{puantaj.calismaModeli.aciklama}" style="font-size: 9px;width:autostretch ;white-space: nowrap;" />
 							</rich:column>
+							<rich:column style="text-align:center">
+								<f:facet name="header">
+									<h:outputText value="#{denklestirmeBordroRaporuHome.getBaslikAciklama(denklestirmeBordroRaporuHome.COL_ISE_BASLAMA_TARIHI)}" />
+								</f:facet>
+								<ui:fragment rendered="#{puantaj.pdksPersonel.iseBaslamaTarihi.after(denklestirmeBordroRaporuHome.ilkGun)}">
+									<h:outputText value="#{authenticatedUser.dateFormatla(puantaj.pdksPersonel.iseBaslamaTarihi)}" />
+								</ui:fragment>
+							</rich:column>
+							<rich:column style="text-align:center">
+								<f:facet name="header">
+									<h:outputText value="#{denklestirmeBordroRaporuHome.getBaslikAciklama(denklestirmeBordroRaporuHome.COL_SSK_CIKIS_TARIHI)}" />
+								</f:facet>
+								<ui:fragment rendered="#{puantaj.pdksPersonel.isCalisiyorGun(denklestirmeBordroRaporuHome.sonGun)==false}">
+									<h:outputText value="#{authenticatedUser.dateFormatla(puantaj.pdksPersonel.istenAyrilisTarihi)}" />
+								</ui:fragment>
+							</rich:column>
 							<rich:column style="text-align: center;" headerClass="bordroGun">
 								<f:facet name="header">
 									<h:outputText value="#{denklestirmeBordroRaporuHome.getBaslikAciklama(denklestirmeBordroRaporuHome.COL_NORMAL_GUN_ADET)}" />
