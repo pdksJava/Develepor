@@ -1010,9 +1010,9 @@ public class IseGelmemeUyari implements Serializable {
 			if (listeler.size() > 1)
 				listeler = PdksUtil.sortObjectStringAlanList(listeler, "getSelected", null);
 
-			TreeMap<Long, Sheet> sheetMap = new TreeMap<Long, Sheet>();
-			TreeMap<Long, Integer> sheetSatirMap = new TreeMap<Long, Integer>();
-			TreeMap<Long, Integer> sheetSutunMap = new TreeMap<Long, Integer>();
+			TreeMap<String, Sheet> sheetMap = new TreeMap<String, Sheet>();
+			TreeMap<String, Integer> sheetSatirMap = new TreeMap<String, Integer>();
+			TreeMap<String, Integer> sheetSutunMap = new TreeMap<String, Integer>();
 			for (Liste liste : listeler) {
 				List<VardiyaGun> sirketSubeList = PdksUtil.sortObjectStringAlanList((List<VardiyaGun>) liste.getValue(), "getSortBolumKey", null);
 				boolean calismaModeliVar = Boolean.FALSE, hataliHareketGundeVar = Boolean.FALSE, izinGirisVar = Boolean.FALSE, hariciPersonelPlandaVar = Boolean.FALSE, altBolumVar = Boolean.FALSE, altBolumDurum = PdksUtil.isPuantajSorguAltBolumGir();
@@ -1072,27 +1072,25 @@ public class IseGelmemeUyari implements Serializable {
 				Tanim altBolum = altBolumMap.size() == 1 ? new ArrayList<Tanim>(altBolumMap.values()).get(0) : null;
 				if (bolum != null && altBolum != null && !PdksUtil.isStrDegisti(bolum.getAciklama(), altBolum.getAciklama()))
 					altBolum = null;
-				String sirketBaslik = (sirket.getSirketGrup() == null ? sirket.getAd() : sirket.getSirketGrup().getAciklama()) + (tesis != null ? " " + tesis.getAciklama() + " " + tesisAciklama.toLowerCase(PdksUtil.TR_LOCALE) : "");
-				String baslik = sirketBaslik + (bolum != null && bolum.getId() > 0L ? " " + bolum.getAciklama() + " " + bolumAciklama.toLowerCase(PdksUtil.TR_LOCALE) : "");
+				String sirketBaslik = (sirket.getSirketGrup() == null ? sirket.getAd() : sirket.getSirketGrup().getAciklama());
+				String baslik = tesis != null ? " " + tesis.getAciklama() + " " + tesisAciklama.toLowerCase(PdksUtil.TR_LOCALE) : "" + sirketBaslik + (bolum != null && bolum.getId() > 0L ? " " + bolum.getAciklama() + " " + bolumAciklama.toLowerCase(PdksUtil.TR_LOCALE) : "");
 				baslik += (altBolum != null && altBolum.getId() > 0L ? " " + altBolum.getAciklama() + " " + altBolumAciklama.toLowerCase(PdksUtil.TR_LOCALE) : "") + calismaModeliAciklama;
 				Sheet sheet = null;
 				int row = 0;
 				int col = 0;
-
 				int uz = 5 + (hariciPersonelPlandaVar ? 1 : 0) + (bolumVar ? 1 : 0) + (calismaModeliVar ? 1 : 0) + (altBolumVar ? 1 : 0) + (hataliHareketGundeVar ? 1 : 0) + (izinGirisVar ? 1 : 0);
-				long sirketId = sirket.getId();
-
-				if (sheetMap.containsKey(sirketId)) {
-					sheet = sheetMap.get(sirketId);
-					row = sheetSatirMap.get(sirketId) + 2;
+				String sirketIdStr = sirket.getSirketGrup() == null ? "S" + sirket.getId() : "G" + sirket.getSirketGrup().getId();
+				if (sheetMap.containsKey(sirketIdStr)) {
+					sheet = sheetMap.get(sirketIdStr);
+					row = sheetSatirMap.get(sirketIdStr) + 2;
 				} else {
 					try {
-						sheet = ExcelUtil.createSheet(wb, sirket.getAd(), false);
+						sheet = ExcelUtil.createSheet(wb, sirketBaslik, false);
 					} catch (Exception e) {
-						sheet = ExcelUtil.createSheet(wb, ortakIslemler.sirketAciklama() + "_" + sirket.getErpKodu(), false);
+						sheet = ExcelUtil.createSheet(wb, sirketBaslik + "_" + sirket.getErpKodu(), false);
 					}
 					if (sheet != null)
-						sheetMap.put(sirketId, sheet);
+						sheetMap.put(sirketIdStr, sheet);
 				}
 
 				if (sheet != null) {
@@ -1269,16 +1267,16 @@ public class IseGelmemeUyari implements Serializable {
 				sb.append("</TBODY></TABLE><BR/><BR/>");
 
 				if (sheet != null) {
-					if (sheetSutunMap.containsKey(sirketId)) {
-						int uz2 = sheetSutunMap.get(sirketId);
+					if (sheetSutunMap.containsKey(sirketIdStr)) {
+						int uz2 = sheetSutunMap.get(sirketIdStr);
 						if (uz2 > uz)
 							uz = uz2;
 					}
 					for (int i = 0; i < uz; i++)
 						sheet.autoSizeColumn(i);
 				}
-				sheetSatirMap.put(sirketId, row);
-				sheetSutunMap.put(sirketId, uz);
+				sheetSatirMap.put(sirketIdStr, row);
+				sheetSutunMap.put(sirketIdStr, uz);
 			}
 
 		}
