@@ -236,7 +236,7 @@ public class OrtakIslemler implements Serializable {
 
 				if (sil)
 					iterator.remove();
-				else {
+				else if (vardiyaGun.getVardiya() != null) {
 					String donem = vardiyaGun.getVardiyaDateStr().substring(0, 6);
 					Long perId = vardiyaGun.getPdksPersonel().getId();
 					List<Long> idList = donemPerMap.containsKey(donem) ? donemPerMap.get(donem) : new ArrayList<Long>();
@@ -271,7 +271,7 @@ public class OrtakIslemler implements Serializable {
 								donemPerDenkMap.put(key + "_" + personelDenklestirme.getPersonelId(), personelDenklestirme);
 							veriList = null;
 						}
- 					}
+					}
 					if (!donemPerDenkMap.isEmpty()) {
 						for (VardiyaGun vardiyaGun : vardiyaList) {
 							Personel personel = vardiyaGun.getPersonel();
@@ -3295,8 +3295,7 @@ public class OrtakIslemler implements Serializable {
 							}
 						}
 					}
-					// String spAdi = PdksUtil.isPuantajSorguAltBolumGir() || bolumId != null ? "SP_GET_FAZLA_MESAI_DATA_ALT" : "SP_GET_FAZLA_MESAI_DATA";
-					String spAdi = "SP_GET_FAZLA_MESAI_DATA_ALT";
+ 					String spAdi = "SP_GET_FAZLA_MESAI_DATA_ALT";
 					StringBuffer sp = new StringBuffer(spAdi);
 					LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 					Long denklestirmeDeger = 0L;
@@ -6103,12 +6102,19 @@ public class OrtakIslemler implements Serializable {
 							hareketKaydiVardiyaMap.put(long1, Boolean.TRUE);
 
 					}
+					List<VardiyaGun> vardiyaGunModelGuncelleList = new ArrayList<VardiyaGun>();
 
 					for (Personel personel : perList) {
 
 						PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici = new PersonelDenklestirmeTasiyici();
+						String donem = "";
+						CalismaModeli cm = null;
+						DenklestirmeAy denklestirmeAy = null;
 						if (personelDenklestirmeDonemMap.containsKey(personel.getId())) {
 							PersonelDenklestirme personelDenklestirme = personelDenklestirmeDonemMap.get(personel.getId());
+							cm = personelDenklestirme.getCalismaModeli();
+							denklestirmeAy = personelDenklestirme.getDenklestirmeAy();
+							donem = String.valueOf(denklestirmeAy.getYil() * 100 + denklestirmeAy.getAy());
 							if (personelDenklestirme.getCalismaModeliAy() != null)
 								personelDenklestirmeTasiyici.setCalismaModeliAy(personelDenklestirme.getCalismaModeliAy());
 						}
@@ -6120,8 +6126,14 @@ public class OrtakIslemler implements Serializable {
 								VardiyaGun vardiyaGun = iterator2.next();
 								if (vardiyaGun == null)
 									continue;
-								// vardiyaGun.setVardiyaZamani();
+
 								String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMMdd");
+								vardiyaGun.setAyinGunu(donem.length() > 0 && key.startsWith(donem));
+								if (cm != null && vardiyaGun.isAyinGunu())
+									vardiyaGun.setCalismaModeli(cm);
+								else if (denklestirmeAy != null && vardiyaGun.getVardiya() != null) {
+									vardiyaGunModelGuncelleList.add(vardiyaGun);
+								}
 								vardiyaGun.setZamanGuncelle(zamanGuncelle);
 								vardiyaTarihMap.put(key, vardiyaGun);
 								if (vardiyaGun.getPersonel().getId().equals(personel.getId())) {
@@ -6206,7 +6218,10 @@ public class OrtakIslemler implements Serializable {
 						}
 						personelDenklestirmeMap.put(personel.getId(), personelDenklestirmeTasiyici);
 					}
+					if (!vardiyaGunModelGuncelleList.isEmpty())
+						sonrakiGunVardiyalariAyikla(null, vardiyaGunModelGuncelleList, session);
 
+					vardiyaGunModelGuncelleList = null;
 					Date tarih1 = PdksUtil.tariheGunEkleCikar(denklestirmeDonemi.getBaslangicTarih(), -1);
 					Date tarih2 = PdksUtil.tariheGunEkleCikar(denklestirmeDonemi.getBitisTarih(), 1);
 					// Personel izinleri bulunuyor
@@ -6315,25 +6330,25 @@ public class OrtakIslemler implements Serializable {
 			boolean hataYok = Boolean.TRUE;
 			// Bos kayitlar siliniyor hatali kayitlar set ediliyor
 			for (Iterator<PersonelDenklestirmeTasiyici> iterator = personelDenklestirmeTasiyiciList.iterator(); iterator.hasNext();) {
-				PersonelDenklestirmeTasiyici personelDenklestirme = iterator.next();
+				PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici = iterator.next();
 				double normalFazlaMesai = 0, resmiTatilMesai = 0;
-				personelDenklestirme.setCheckBoxDurum(Boolean.TRUE);
-				if (personelDenklestirme.getDurum())
-					personelDenklestirme.setTrClass(String.valueOf(durum));
+				personelDenklestirmeTasiyici.setCheckBoxDurum(Boolean.TRUE);
+				if (personelDenklestirmeTasiyici.getDurum())
+					personelDenklestirmeTasiyici.setTrClass(String.valueOf(durum));
 
-				for (PersonelDenklestirmeTasiyici denklestirme : personelDenklestirme.getPersonelDenklestirmeleri()) {
-					if (!denklestirme.isCheckBoxDurum())
-						personelDenklestirme.setCheckBoxDurum(Boolean.FALSE);
+				for (PersonelDenklestirmeTasiyici denklestirmeTasiyici : personelDenklestirmeTasiyici.getPersonelDenklestirmeleri()) {
+					if (!denklestirmeTasiyici.isCheckBoxDurum())
+						personelDenklestirmeTasiyici.setCheckBoxDurum(Boolean.FALSE);
 					else {
-						normalFazlaMesai += denklestirme.getCalisilanFark();
-						resmiTatilMesai += denklestirme.getResmiTatilMesai();
+						normalFazlaMesai += denklestirmeTasiyici.getCalisilanFark();
+						resmiTatilMesai += denklestirmeTasiyici.getResmiTatilMesai();
 					}
 				}
-				personelDenklestirme.setNormalFazlaMesai(PdksUtil.setSureDoubleTypeRounded(normalFazlaMesai, personelDenklestirme.getYarimYuvarla()));
-				personelDenklestirme.setResmiTatilMesai(resmiTatilMesai);
+				personelDenklestirmeTasiyici.setNormalFazlaMesai(PdksUtil.setSureDoubleTypeRounded(normalFazlaMesai, personelDenklestirmeTasiyici.getYarimYuvarla()));
+				personelDenklestirmeTasiyici.setResmiTatilMesai(resmiTatilMesai);
 				durum = !durum;
 				if (hataYok)
-					hataYok = personelDenklestirme.isCheckBoxDurum();
+					hataYok = personelDenklestirmeTasiyici.isCheckBoxDurum();
 			}
 		}
 		gunMap = null;
