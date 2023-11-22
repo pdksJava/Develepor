@@ -178,23 +178,17 @@ public class MailManager implements Serializable {
 	 * @return
 	 */
 	public static TreeMap<String, User> getUserRoller(Date tarih, List<String> mailList) {
-		List<String> list = new ArrayList<String>();
-		for (String string : mailList)
-			list.add("'" + string + "'");
-
 		TreeMap<String, User> userMap = new TreeMap<String, User>();
 		HashMap fields = new HashMap();
-		fields.put("email", list);
-
+		fields.put("email", mailList);
 		List<User> userList = Constants.pdksDAO.getObjectByInnerObjectList(fields, User.class);
 		if (!userList.isEmpty()) {
 			if (tarih == null)
 				tarih = PdksUtil.getDate(new Date());
 			for (Iterator iterator = userList.iterator(); iterator.hasNext();) {
 				User user = (User) iterator.next();
-
 				String ePosta = user.getEmail();
-				if (user.getPdksPersonel().isCalisiyorGun(tarih)) {
+				if (user.getPdksPersonel().isCalisiyorGun(tarih) && user.isDurum()) {
 					userMap.put(ePosta, user);
 					if (!mailList.contains(ePosta))
 						mailList.add(ePosta);
@@ -210,7 +204,6 @@ public class MailManager implements Serializable {
 
 		}
 		userList = null;
-		list = null;
 		return userMap;
 	}
 
