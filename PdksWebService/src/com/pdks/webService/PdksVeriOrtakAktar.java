@@ -1481,6 +1481,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				HashMap<String, List<String>> izinPersonelERPMap = new HashMap<String, List<String>>();
 				HashMap<String, Integer> referansNoMap = new HashMap<String, Integer>();
 				TreeMap<Integer, IzinERP> referansSiraMap = new TreeMap<Integer, IzinERP>();
+				Date olusturmaTarihi = null;
 				for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
 					IzinERP izinERP = (IzinERP) iterator.next();
 					if (izinCok) {
@@ -1871,7 +1872,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 								izinlerBasTarih = baslangicZamani;
 							if (izinlerBitTarih == null || bitisZamani.after(izinlerBitTarih))
 								izinlerBitTarih = bitisZamani;
-
+							if (personelIzin.getId() != null && (olusturmaTarihi == null || olusturmaTarihi.before(personelIzin.getOlusturmaTarihi())))
+								olusturmaTarihi = personelIzin.getOlusturmaTarihi();
 							personelIzin.setIzinSahibi(izinSahibi);
 							personelIzin.setBaslangicZamani(baslangicZamani);
 							personelIzin.setBitisZamani(bitisZamani);
@@ -2036,7 +2038,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					kayitIzinList.clear();
 					gecmisIzinKontrolAdet = kayitIzinList.size() + 1;
 				}
-				if (kayitIzinList.size() >= gecmisIzinKontrolAdet && izinlerBasTarih != null && izinlerBitTarih != null && izinlerBasTarih.before(izinlerBitTarih)) {
+				if (mailBosGonder && kayitIzinList.size() >= gecmisIzinKontrolAdet && izinlerBasTarih != null && izinlerBitTarih != null && izinlerBasTarih.before(izinlerBitTarih)) {
 					Date tarih = PdksUtil.tariheAyEkleCikar(bugun, 2);
 					Date bTarih = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(PdksUtil.tariheAyEkleCikar(bugun, -2), "yyyyMM") + "01", "yyyyMMdd");
 					if (izinlerBasTarih.before(bTarih))
@@ -2053,6 +2055,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 					sb.append(" WHERE I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + "<=:b2 AND I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + ">=:b1 ");
 					sb.append(" AND I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + "<>:d1 AND  I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + "<>:d2  ");
 					sb.append(" AND I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + "<>:d1 AND  I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + "<>:d2  ");
+					if (olusturmaTarihi != null) {
+						sb.append(" AND I." + Personel.COLUMN_NAME_OLUSTURMA_TARIHI + "<=:o");
+						map.put("o", PdksUtil.getDate(olusturmaTarihi));
+					}
+
 					sb.append(" ORDER BY I." + PersonelIzin.COLUMN_NAME_PERSONEL_NO + ",I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
 					map.put("b", PdksUtil.getDate(bugun));
 					map.put("b1", izinlerBasTarih);
@@ -3328,7 +3335,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 						if (!updateYonetici2)
 							updateYonetici2 = true;
-						
+
 					} else if (personel.getId() == null && !calisiyor && !(iskurManuelGiris && sanalPersonel)) {
 						personelERP.setYazildi(Boolean.FALSE);
 						continue;
