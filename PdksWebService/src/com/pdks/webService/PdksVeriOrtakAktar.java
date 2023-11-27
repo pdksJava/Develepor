@@ -129,6 +129,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				MailObject mailObject = new MailObject();
 				String subject = uygulamaBordro + " " + fonksiyonAdi + " fonksiyon " + bilgi + " güncellemesi";
 				String body = subject + " " + list.size() + " adet kayıt için başarılı olarak tamamlandı.";
+				logger.info(PdksUtil.setTurkishStr(subject + "\n" + body));
 				mailObject.setSubject(subject);
 				mailObject.setBody(body);
 				try {
