@@ -46,9 +46,9 @@ public class Zamanlayici implements Serializable {
 	@In
 	IzinBakiyeGuncelleme izinBakiyeGuncelleme;
 	@In
-	YemekMukkerrerBilgilendirme yemekMukkerrerBilgilendirme;
-	@In
 	SertifikaSSLKontrol sertifikaSSLKontrol;
+	@In
+	FazlaMesaiGuncelleme fazlaMesaiGuncelleme;
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
 	@In(required = false, create = true)
@@ -75,16 +75,8 @@ public class Zamanlayici implements Serializable {
 
 	}
 
-	public void scheduleYemekMukkerrerBilgilendirmeTimer() {
-		logger.info("scheduleYemekMukkerrerBilgilendirmeTimer start : " + new Date());
-		yemekMukkerrerBilgilendirme.yemekMukkerrerBilgilendirmeTimer(new Date(), "0 0/5 5-21 ? * *");
-
-	}
-
 	public void schedulePersonelERPGuncellemeTimer() {
 		logger.info("schedulePersonelERPGuncellemeTimer start : " + new Date());
-
-		// sapPersonelGuncelleme.sapPersonelGuncellemeTimer(new Date(), "* 0/2 14 * * ?");
 		personelERPGuncelleme.personelERPGuncellemeTimer(new Date(), "0 0/5 3-21 ? * *");
 
 	}
@@ -92,6 +84,11 @@ public class Zamanlayici implements Serializable {
 	public void izinBakiyeGuncellemeTimer() {
 		logger.info("izinBakiyeGuncellemeTimer start : " + new Date());
 		izinBakiyeGuncelleme.izinBakiyeGuncellemeTimer(new Date(), "0 0/5 3-18 ? * *");
+	}
+
+	public void fazlaMesaiGuncellemeTimer() {
+		logger.info("fazlaMesaiGuncellemeTimer start : " + new Date());
+		fazlaMesaiGuncelleme.fazlaMesaiGuncellemeTimer(new Date(), "0 0/5 3-21 ? * *");
 	}
 
 	/**

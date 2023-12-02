@@ -22,7 +22,7 @@
 										<ui:define name="label">Yıl</ui:define>
 										<rich:inputNumberSpinner styleClass="size10" inputStyle="width:20px" minValue="#{denklestirmeBordroRaporuHome.minYil}"
 											maxValue="#{denklestirmeBordroRaporuHome.maxYil}" inputSize="1" value="#{denklestirmeBordroRaporuHome.yil}">
-											<a4j:support event="onchange" action="#{denklestirmeBordroRaporuHome.fillSirketList()}" ajaxSingle="true"
+											<a4j:support event="onchange" action="#{denklestirmeBordroRaporuHome.yilDegisti()}" ajaxSingle="true"
 												reRender="denklestirmeDonemiTable,anaForm" />
 										</rich:inputNumberSpinner>
 									</s:decorate>
@@ -113,7 +113,12 @@
 					<h:panelGrid columns="5">
 						<a4j:commandButton status="ajaxStatus" action="#{denklestirmeBordroRaporuHome.fillPersonelDenklestirmeList}" value="Getir"
 							reRender="denklestirmeDonemiTable" />
-
+						<ui:fragment rendered="#{denklestirmeBordroRaporuHome.adminRole and denklestirmeBordroRaporuHome.denklestirmeAy.durum }">
+							<ui:fragment rendered="#{denklestirmeBordroRaporuHome.sirket.tesisDurum==false or denklestirmeBordroRaporuHome.tesisId gt 0 }">
+								<a4j:commandButton status="ajaxStatus" value="#{ortakIslemler.sirketAciklama()} Fazla Mesai Hesapla"
+									action="#{denklestirmeBordroRaporuHome.sirketFazlaMesaiGuncelleme()}" reRender="denklestirmeDonemiTable" />
+							</ui:fragment>
+						</ui:fragment>
 						<h:commandLink value="Excel" action="#{denklestirmeBordroRaporuHome.denklestirmeExcelAktar}" target="blank"
 							rendered="#{not empty denklestirmeBordroRaporuHome.personelDenklestirmeList}">
 							<a4j:support event="oncomplete" status="ajaxStatus" process="vardiyaTable" reRender="vardiyaTable" />
@@ -198,7 +203,7 @@
 
 								</DIV>
 							</rich:column>
-							<rich:column style="text-align: left;">
+							<rich:column style="text-align: left;" filterBy="#{puantaj.pdksPersonel.adSoyad}" filterEvent="onkeyup">
 								<f:facet name="header">
 									<h:outputText value="#{denklestirmeBordroRaporuHome.getBaslikAciklama(denklestirmeBordroRaporuHome.COL_AD_SOYAD)}" />
 								</f:facet>
@@ -211,7 +216,7 @@
 								</f:facet>
 								<h:outputText value="#{puantaj.pdksPersonel.tesis.aciklama}" style="font-size: 9px;width:autostretch ;white-space: nowrap;" />
 							</rich:column>
-							<rich:column style="text-align: left;">
+							<rich:column style="text-align: left;" filterBy="#{puantaj.pdksPersonel.ekSaha3.aciklama}" filterEvent="onkeyup">
 								<f:facet name="header">
 									<h:outputText value="#{denklestirmeBordroRaporuHome.bolumAciklama}" />
 								</f:facet>

@@ -60,7 +60,7 @@ public class PersonelERPGuncelleme {
 	@In(required = false, create = true)
 	HashMap<String, String> parameterMap;
 	@In(required = false, create = true)
-	public Zamanlayici zamanlayici;
+	Zamanlayici zamanlayici;
 	@In(required = false, create = true)
 	EntityManager entityManager;
 	@In(required = false, create = true)
@@ -80,11 +80,11 @@ public class PersonelERPGuncelleme {
 
 	@Asynchronous
 	@SuppressWarnings("unchecked")
+	@Transactional
 	// @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public QuartzTriggerHandle personelERPGuncellemeTimer(@Expiration Date when, @IntervalCron String interval) {
 		hataKonum = "personelERPGuncellemeTimer başladı ";
-
-		if (pdksEntityController != null && !isCalisiyor()) {
+ 		if (pdksEntityController != null && !isCalisiyor()) {
 			ozelKontrol = Boolean.FALSE;
 			setCalisiyor(Boolean.TRUE);
 			boolean hataGonder = Boolean.FALSE;
