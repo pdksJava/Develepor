@@ -104,13 +104,13 @@ public class WSLoggingInInterceptor extends AbstractSoapInterceptor {
 				}
 
 			}
-			if (soapAction == null && xml != null && xml.trim().length() > 0) {
+			if (soapAction == null && PdksUtil.hasStringValue(xml)) {
 				logger.info(xml);
 				soapAction = "noAction";
 			}
 			try {
 				// now get the request xml
-				if (soapAction != null && !soapAction.trim().equals("")) {
+				if (PdksUtil.hasStringValue(soapAction)) {
 					int index = soapAction.indexOf(":");
 					if (index > 0)
 						soapAction = soapAction.substring(index + 1);
@@ -188,7 +188,7 @@ public class WSLoggingInInterceptor extends AbstractSoapInterceptor {
 		Element root = null;
 		// XMLDecoder xmlDecoder = null;
 		try {
-			if (xmlString != null && xmlString.trim().length() > 0) {
+			if (PdksUtil.hasStringValue(xmlString)) {
 				if (xmlString.indexOf("&") > 0)
 					xmlString = PdksUtil.replaceAll(xmlString, "&", "&amp;");
 				document = DocumentHelper.parseText(xmlString);
@@ -228,7 +228,7 @@ public class WSLoggingInInterceptor extends AbstractSoapInterceptor {
 		Element root = null;
 		// XMLDecoder xmlDecoder = null;
 		try {
-			if (xmlString != null && xmlString.trim().length() > 0) {
+			if (PdksUtil.hasStringValue(xmlString)) {
 				// if (xmlString.indexOf("&") > 0)
 				// xmlString = PdksUtil.replaceAll(xmlString, "&", "&amp;");
 				document = DocumentHelper.parseText(xmlString);

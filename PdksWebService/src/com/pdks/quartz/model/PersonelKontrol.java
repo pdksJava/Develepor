@@ -185,7 +185,7 @@ public final class PersonelKontrol extends QuartzJobBean {
 			logger.info("Personel Kontrol start " + new Date());
 			fields.clear();
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT D.* FROM " + HataliPersonel.VIEW_NAME + " D ");
+			sb.append("SELECT D.* FROM " + HataliPersonel.VIEW_NAME + " D WITH(nolock)");
 			sb.append(" ORDER BY D." + HataliPersonel.COLUMN_NAME_TIP + ",D." + HataliPersonel.COLUMN_NAME_PERSONEL_NO + ", D." + HataliPersonel.COLUMN_NAME_ID);
 			List<HataliPersonel> hataliPersonelList = pdksDAO.getNativeSQLList(fields, sb, HataliPersonel.class);
 			if (hataliPersonelList != null && !hataliPersonelList.isEmpty()) {
@@ -200,7 +200,7 @@ public final class PersonelKontrol extends QuartzJobBean {
 				List<HataliPersonel> bosPersonelList = new ArrayList<HataliPersonel>();
 				for (Iterator iterator = hataliPersonelList.iterator(); iterator.hasNext();) {
 					HataliPersonel hataliPersonel = (HataliPersonel) iterator.next();
-					if (hataliPersonel.getPersonelNo() == null || hataliPersonel.getPersonelNo().trim().equals("")) {
+					if (!PdksUtil.hasStringValue(hataliPersonel.getPersonelNo())) {
 						bosPersonelList.add(hataliPersonel);
 						iterator.remove();
 					}
@@ -217,7 +217,7 @@ public final class PersonelKontrol extends QuartzJobBean {
 					tabloYaz(header, hataliPersonelList, sb, true);
 				}
 
-				mailMap.put("konu", (kapiGirisUygulama.equals("") ? "Kapı" : kapiGirisUygulama + " kapi") + " girişi personel bilgi kontrol problem");
+				mailMap.put("konu", (!PdksUtil.hasStringValue(kapiGirisUygulama) ? "Kapı" : kapiGirisUygulama + " kapi") + " girişi personel bilgi kontrol problem");
 				sb.append("</br><P>Saygılarımla</P>");
 				mailMap.put("mailIcerik", sb.toString());
 				// mailMap.put("bccTestMailAdres", "hasansayar58@gmail.com");

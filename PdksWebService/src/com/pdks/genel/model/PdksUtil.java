@@ -144,7 +144,7 @@ public class PdksUtil implements Serializable {
 	public static String getJsonToXML(String jsonStr, String rootName, String arrayTag) {
 		String str = "";
 		try {
-			if (arrayTag != null && arrayTag.trim().length() > 0) {
+			if (hasStringValue(arrayTag)) {
 				if (jsonStr.startsWith("["))
 					jsonStr = "{\"" + arrayTag + "\":" + jsonStr + "}";
 				else if (jsonStr.startsWith("{"))
@@ -157,7 +157,7 @@ public class PdksUtil implements Serializable {
 		} catch (Exception e) {
 			str = jsonStr;
 		}
-		if (str.equals(""))
+		if (!hasStringValue(str))
 			str = jsonStr;
 		String xml = formatXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?><" + rootName + ">" + str + "</" + rootName + ">");
 		return xml;
@@ -425,12 +425,40 @@ public class PdksUtil implements Serializable {
 	 * @param newId
 	 * @return
 	 */
+	public static boolean isIntegerDegisti(Integer oldId, Integer newId) {
+		if (oldId == null)
+			oldId = 0;
+		if (newId == null)
+			newId = 0;
+		boolean degisti = newId.intValue() != oldId.intValue();
+		return degisti;
+	}
+
+	/**
+	 * @param oldId
+	 * @param newId
+	 * @return
+	 */
 	public static boolean isLongDegisti(Long oldId, Long newId) {
 		if (oldId == null)
 			oldId = 0L;
 		if (newId == null)
 			newId = 0L;
 		boolean degisti = newId.longValue() != oldId.longValue();
+		return degisti;
+	}
+
+	/**
+	 * @param oldId
+	 * @param newId
+	 * @return
+	 */
+	public static boolean isDoubleDegisti(Double oldId, Double newId) {
+		if (oldId == null)
+			oldId = 0.0d;
+		if (newId == null)
+			newId = 0.0d;
+		boolean degisti = newId.doubleValue() != oldId.doubleValue();
 		return degisti;
 	}
 
@@ -524,7 +552,7 @@ public class PdksUtil implements Serializable {
 		try {
 			if (in != null) {
 				str = IOUtils.toString(in, "utf-8");
-				if (str != null && str.trim().equals(""))
+				if (str != null && hasStringValue(str) == false)
 					str = null;
 			}
 
@@ -980,7 +1008,7 @@ public class PdksUtil implements Serializable {
 					String token = (String) iterator.next();
 					try {
 						String parca = PdksUtil.getInternetAdres(token.trim());
-						if (parca != null && !parca.trim().equals(""))
+						if (hasStringValue(parca))
 							list.add(parca);
 					} catch (Exception e) {
 						logger.error("PDKS hata in : \n");
@@ -1245,7 +1273,6 @@ public class PdksUtil implements Serializable {
 		RuleBasedCollator tr_Collator = (RuleBasedCollator) Collator.getInstance(Constants.TR_LOCALE);
 		try {
 			tr_Collator = new RuleBasedCollator("<a,A<b,B<c,C<ç,Ç<d,D<e,E<f,F<g,G<\u011f,\u011e<ğ,Ğ<h,H<ı=\u0131;I<i,\u0130=İ<j,J" + "<k,K<l,L<m,M<n,N<o,O<ö,Ö<p,P<q,Q<r,R<s,S<\u015f=ş;\u015e=Ş<t,T<u,U<ü,Ü<v,V<x,X<w,W<y,Y<z,Z<'-'<' '");
-
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 		}
@@ -1263,12 +1290,11 @@ public class PdksUtil implements Serializable {
 	public static RuleBasedCollator getRuRuleBasedCollator() {
 		RuleBasedCollator collator = (RuleBasedCollator) Collator.getInstance(Constants.RU_LOCALE);
 		try {
-			String ruHarf = "< \u0430=?; \u0410=?" + "< \u0431=?; \u0411=?" + "< \u0432=?; \u0412=?" + "< \u0433=?; \u0413=?" + "< \u0434=?; \u0414=?" + "< \u0435=?; \u0415=?" + "< \u0451=?; \u0401=?" + "< \u0436=?; \u0416=?" + "< \u0437=?; \u0417=?" + "< \u0438=?; \u0418=?"
-					+ "< \u0439=?; \u0419=?" + "< \u043A=?; \u041A=?" + "< \u043B=?; \u041B=?" + "< \u043C=?; \u041C=?" + "< \u043D=?; \u041D=?" + "< \u043E=?; \u041E=?" + "< \u043F=?; \u041F=?" + "< \u0440=?; \u0420=?" + "< \u0441=?; \u0421=?" + "< \u0442=?; \u0422=?" + "< \u0443=?; \u0423=?"
-					+ "< \u0444=?; \u0424=?" + "< \u0445=?; \u0425=?" + "< \u0446=?; \u0426=?" + "< \u0447=?; \u0427=?" + "< \u0448=?; \u0428=?" + "< \u0449=?; \u0429=?" + "< \u044A=?; \u042A=?" + "< \u044B=?; \u042B=?" + "< \u044C=?; \u042C=?" + "< \u044D=?; \u042D=?" + "< \u044E=?; \u042E=?"
-					+ "< \u044F=?; \u042F=?" + "<'-'<' '";
+			String ruHarf = "< \u0430=?; \u0410=?" + "< \u0431=?; \u0411=?" + "< \u0432=?; \u0412=?" + "< \u0433=?; \u0413=?" + "< \u0434=?; \u0414=?" + "< \u0435=?; \u0415=?" + "< \u0451=?; \u0401=?" + "< \u0436=?; \u0416=?" + "< \u0437=?; \u0417=?"
+					+ "< \u0438=?; \u0418=?" + "< \u0439=?; \u0419=?" + "< \u043A=?; \u041A=?" + "< \u043B=?; \u041B=?" + "< \u043C=?; \u041C=?" + "< \u043D=?; \u041D=?" + "< \u043E=?; \u041E=?" + "< \u043F=?; \u041F=?" + "< \u0440=?; \u0420=?" + "< \u0441=?; \u0421=?" + "< \u0442=?; \u0422=?"
+					+ "< \u0443=?; \u0423=?" + "< \u0444=?; \u0424=?" + "< \u0445=?; \u0425=?" + "< \u0446=?; \u0426=?" + "< \u0447=?; \u0427=?" + "< \u0448=?; \u0428=?" + "< \u0449=?; \u0429=?" + "< \u044A=?; \u042A=?" + "< \u044B=?; \u042B=?" + "< \u044C=?; \u042C=?" + "< \u044D=?; \u042D=?"
+					+ "< \u044E=?; \u042E=?" + "< \u044F=?; \u042F=?" + "<'-'<' '";
 			collator = new RuleBasedCollator(ruHarf);
-
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 		}
@@ -1343,7 +1369,7 @@ public class PdksUtil implements Serializable {
 		ArrayList list = (ArrayList) veriList.clone();
 		veriList.clear();
 		int sayfaNo = 0;
-		if (request.getParameter("sayfaNo" + sonEk) != null && !request.getParameter("sayfaNo" + sonEk).trim().equals(""))
+		if (hasStringValue(request.getParameter("sayfaNo" + sonEk)))
 			sayfaNo = Integer.parseInt(request.getParameter("sayfaNo" + sonEk)) - 1;
 
 		request.setAttribute("sayfaNo" + sonEk, String.valueOf(sayfaNo + 1));

@@ -4,9 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -27,9 +31,11 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import com.google.gson.Gson;
 import com.pdks.entity.ServiceData;
+import com.pdks.entity.User;
 import com.pdks.mail.model.MailFile;
 import com.pdks.mail.model.MailObject;
 import com.pdks.mail.model.MailPersonel;
+import com.pdks.mail.model.MailStatu;
 import com.sun.mail.util.MailSSLSocketFactory;
 
 /**
@@ -167,10 +173,69 @@ public class MailManager implements Serializable {
 	}
 
 	/**
+	 * @param tarih
+	 * @param mailList
+	 * @param session
+	 * @return
+	 */
+	public static TreeMap<String, User> getUserRoller(Date tarih, List<String> mailList) {
+		TreeMap<String, User> userMap = new TreeMap<String, User>();
+		HashMap fields = new HashMap();
+		fields.put("email", mailList);
+		List<User> userList = Constants.pdksDAO.getObjectByInnerObjectList(fields, User.class);
+		if (!userList.isEmpty()) {
+			if (tarih == null)
+				tarih = PdksUtil.getDate(new Date());
+			for (Iterator iterator = userList.iterator(); iterator.hasNext();) {
+				User user = (User) iterator.next();
+				String ePosta = user.getEmail();
+				if (user.getPdksPersonel().isCalisiyorGun(tarih) && user.isDurum()) {
+					userMap.put(ePosta, user);
+					if (!mailList.contains(ePosta))
+						mailList.add(ePosta);
+				} else {
+					if (!userMap.containsKey(ePosta)) {
+						if (mailList.contains(ePosta))
+							mailList.remove(ePosta);
+					}
+					iterator.remove();
+				}
+
+			}
+
+		}
+		userList = null;
+		return userMap;
+	}
+
+	/**
+	 * @param mailObject
+	 * @param bccAdresName
+	 * @param mailMap
+	 */
+	public static void addMailAdresBCC(MailObject mailObject, String bccAdresName, HashMap<String, Object> mailMap) {
+		if (mailObject != null && mailMap.containsKey(bccAdresName)) {
+			String bccAdres = (String) mailMap.get(bccAdresName);
+			if (bccAdres.indexOf("@") > 1) {
+				List<String> list = PdksUtil.getListByString(bccAdres, null);
+				for (String email : list) {
+					if (email.indexOf("@") > 1 && PdksUtil.isValidEmail(email)) {
+						MailPersonel mailPersonel = new MailPersonel();
+						mailPersonel.setePosta(email);
+						mailObject.getBccList().add(mailPersonel);
+					}
+
+				}
+			}
+		}
+	}
+
+	/**
 	 * @param parameterMap
 	 * @throws Exception
 	 */
-	public static void ePostaGonder(HashMap<String, Object> parameterMap) throws Exception {
+	public static MailStatu ePostaGonder(HashMap<String, Object> parameterMap) throws Exception {
+		MailStatu mailStatu = new MailStatu();
 		Properties props = null;
 		boolean uyariServisMailGonder = false;
 		if (parameterMap.containsKey("uyariServisMailGonder")) {
@@ -301,13 +366,50 @@ public class MailManager implements Serializable {
 			// messageBodyPart.setText(mailIcerik);
 			mp.addBodyPart(messageBodyPart);
 			message.setContent(mp);
+
+			List<String> list = new ArrayList<String>();
+			LinkedHashMap<String, List<MailPersonel>> mailMap = new LinkedHashMap<String, List<MailPersonel>>();
+			if (uyariServisMailGonder) {
+				mailMap.put("to", mailObject.getToList());
+				mailMap.put("cc", mailObject.getCcList());
+			}
+			if (PdksUtil.isSistemDestekVar()) {
+				addMailAdresBCC(mailObject, "bccAdres", parameterMap);
+				addMailAdresBCC(mailObject, "bccEntegrasyonAdres", parameterMap);
+			}
+			mailMap.put("bcc", mailObject.getBccList());
+			for (String key : mailMap.keySet()) {
+				List<MailPersonel> mailList = mailMap.get(key);
+				for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
+					MailPersonel mailPersonel = (MailPersonel) iterator.next();
+					if (!list.contains(mailPersonel.getePosta()))
+						list.add(mailPersonel.getePosta());
+					else
+						iterator.remove();
+				}
+			}
+			TreeMap<String, User> userMap = getUserRoller(null, list);
+			for (String key : mailMap.keySet()) {
+				List<MailPersonel> mailList = mailMap.get(key);
+				for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
+					MailPersonel mailPersonel = (MailPersonel) iterator.next();
+					String ePosta = mailPersonel.getePosta();
+					if (!list.contains(ePosta))
+						iterator.remove();
+					else if (PdksUtil.hasStringValue(mailPersonel.getAdiSoyadi()) == false) {
+						if (userMap.containsKey(ePosta))
+							mailPersonel.setAdiSoyadi(userMap.get(ePosta).getAdSoyad());
+					}
+
+				}
+			}
+
 			List<String> mailList = new ArrayList<String>();
 			if (uyariServisMailGonder) {
 				message.setRecipients(Message.RecipientType.TO, adresleriDuzenle(mailObject.getToList(), mailList));
 				message.setRecipients(Message.RecipientType.CC, adresleriDuzenle(mailObject.getCcList(), mailList));
 			}
 			message.setRecipients(Message.RecipientType.BCC, adresleriDuzenle(mailObject.getBccList(), mailList));
-
 			for (MailFile mailFile : mailObject.getAttachmentFiles()) {
 				DataSource fds = null;
 				File file = null;
@@ -332,11 +434,19 @@ public class MailManager implements Serializable {
 			}
 			Exception hata = null;
 			try {
-				if (!mailList.isEmpty())
+				if (!list.isEmpty()) {
 					Transport.send(message);
+					mailStatu.setDurum(true);
+					mailStatu.setHataMesai("");
+				} else
+					mailStatu.setHataMesai("Mail gönderilecek e-posta yok!");
+
 			} catch (Exception e) {
 				hata = e;
+
 				try {
+					if (e.toString() != null)
+						mailStatu.setHataMesai(PdksUtil.replaceAll(e.toString(), "\n", ""));
 					if (e instanceof javax.mail.SendFailedException) {
 						javax.mail.SendFailedException se = (javax.mail.SendFailedException) e;
 						if (se.getInvalidAddresses() != null) {
@@ -354,7 +464,7 @@ public class MailManager implements Serializable {
 
 			}
 			mailList = null;
-			saveLog(mailObject);
+			saveLog(mailObject, parameterMap);
 			for (File file : dosyalar) {
 				if (file.exists())
 					file.delete();
@@ -365,25 +475,41 @@ public class MailManager implements Serializable {
 			}
 
 		}
+		return mailStatu;
 	}
 
 	/**
-	 * @param gsonObject
+	 * @param jsonMailStrings
+	 * @param object
 	 * @param gson
 	 * @return
 	 */
-	private static String getJsonObject(Object object, Gson gson) {
+	private static String getJsonObject(String jsonMailStrings, Object object, Gson gson) {
 		String str = null;
 		if (object != null) {
 			if (gson == null)
 				gson = new Gson();
 			str = PdksUtil.toPrettyFormat(gson.toJson(object));
 			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("\\u003c", "<");
-			map.put("\\u003e", ">");
-			map.put("\\u0026", "&");
-			map.put("\\u003d", "=");
-			map.put("\\u0027", "'");
+			if (PdksUtil.hasStringValue(jsonMailStrings)) {
+				List<String> list = PdksUtil.getListByString(jsonMailStrings, "|");
+				for (String string : list) {
+					if (string.indexOf("_") > 0 && string.length() > 2) {
+						String[] veri = string.split("_");
+						if (veri.length == 2) {
+							map.put(veri[0], veri[1]);
+						} else if (veri.length == 1)
+							map.put(veri[0], " ");
+					}
+				}
+				list = null;
+			} else {
+				map.put("\\u003c", "<");
+				map.put("\\u003e", ">");
+				map.put("\\u0026", "&");
+				map.put("\\u003d", "=");
+				map.put("\\u0027", "'");
+			}
 			for (String pattern : map.keySet()) {
 				if (str.indexOf(pattern) > 0)
 					str = PdksUtil.replaceAllManuel(str, pattern, map.get(pattern));
@@ -392,10 +518,7 @@ public class MailManager implements Serializable {
 		return str;
 	}
 
-	/**
-	 * @param mail
-	 */
-	private static void saveLog(MailObject mail) {
+	private static void saveLog(MailObject mail, HashMap<String, Object> map) {
 		try {
 			MailObject mailObject = (MailObject) mail.clone();
 			mailObject.setSmtpPassword("");
@@ -423,12 +546,11 @@ public class MailManager implements Serializable {
 					mailObject.getAttachmentFiles().addAll(attachmentFiles);
 				}
 				attachmentFiles = null;
-				serviceData.setOutputData(getJsonObject(mailObject, gson));
+				String jsonMailStrings = map.containsKey("jsonMailStrings") ? (String) map.get("jsonMailStrings") : null;
+				serviceData.setOutputData(getJsonObject(jsonMailStrings, mailObject, gson));
 				Constants.pdksDAO.saveObject(serviceData);
 			} catch (Exception ex) {
-				mailObject.getAttachmentFiles().clear();
-				serviceData.setOutputData(getJsonObject(mailObject, gson));
-				Constants.pdksDAO.saveObject(serviceData);
+
 			}
 			gson = null;
 		} catch (Exception e) {
@@ -452,7 +574,7 @@ public class MailManager implements Serializable {
 				if (email.indexOf("@") > 0 && !mailList.contains(email)) {
 					try {
 						InternetAddress ia = new InternetAddress(email);
-						if (mailUser.getAdiSoyadi() != null && mailUser.getAdiSoyadi().trim().length() > 0)
+						if (PdksUtil.hasStringValue(mailUser.getAdiSoyadi()))
 							ia.setPersonal(mailUser.getAdiSoyadi(), "UTF-8");
 						adreslerList.add(ia);
 						mailList.add(email);
