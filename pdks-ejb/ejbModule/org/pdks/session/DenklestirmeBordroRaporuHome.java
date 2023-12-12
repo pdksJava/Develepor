@@ -210,6 +210,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		return str;
 	}
 
+	@Transactional
 	public String sirketFazlaMesaiGuncelleme() {
 		HashMap fields = new HashMap();
 		fields.put("id", sirketId);

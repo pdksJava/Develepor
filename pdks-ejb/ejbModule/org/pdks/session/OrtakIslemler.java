@@ -16804,6 +16804,7 @@ public class OrtakIslemler implements Serializable {
 					setUserRoller(user, session);
 					user.setAdmin(Boolean.FALSE);
 					user.setIK(Boolean.FALSE);
+					user.setLogin(Boolean.FALSE);
 				} catch (Exception e) {
 					logger.error("Pdks hata in : \n");
 					e.printStackTrace();
