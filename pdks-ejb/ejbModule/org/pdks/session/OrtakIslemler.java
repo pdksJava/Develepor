@@ -4242,7 +4242,7 @@ public class OrtakIslemler implements Serializable {
 		sb.append(" ORDER BY T." + Tanim.COLUMN_NAME_KODU);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<Tanim> tesisTanimList = isTesisDurumu() ? pdksEntityController.getObjectBySQLList(sb, map, Tanim.class) : null;
+		List<Tanim> tesisTanimList = getTesisDurumu() ? pdksEntityController.getObjectBySQLList(sb, map, Tanim.class) : null;
 		if (tesisTanimList != null && !tesisTanimList.isEmpty()) {
 			List<SelectItem> tesisSelectList = new ArrayList<SelectItem>();
 			for (Tanim tanim : tesisTanimList)
@@ -5390,7 +5390,7 @@ public class OrtakIslemler implements Serializable {
 	/**
 	 * @return
 	 */
-	public boolean isTesisDurumu() {
+	public Boolean getTesisDurumu() {
 		String tesisDurumuStr = getParameterKey("tesisDurumu");
 		boolean tesisDurumu = tesisDurumuStr.equals("1");
 		if (!tesisDurumu && pdksSirketleri != null) {
@@ -5498,7 +5498,7 @@ public class OrtakIslemler implements Serializable {
 		} catch (Exception e) {
 		}
 		List sicilller2 = null;
-		boolean tesisDurum = isTesisDurumu();
+		boolean tesisDurum = getTesisDurumu();
 
 		if (istenAyrilanEkle == false && ikinciYonetici) {
 			sicilller2 = authenticatedUser.getIkinciYoneticiPersonelSicilleri();
