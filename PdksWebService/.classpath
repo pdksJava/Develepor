@@ -20,7 +20,6 @@
 	<classpathentry kind="lib" path="C:/opt/lib/gl/javax.ws.rs.jar"/>
 	<classpathentry kind="lib" path="C:/opt/lib/gl/jersey-bundle-1.2.jar"/>
 	<classpathentry kind="lib" path="C:/opt/lib/gl/json-20140107.jar"/>
-	<classpathentry kind="lib" path="C:/opt/lib/gl/log4j-1.2.13.jar"/>
 	<classpathentry kind="lib" path="C:/opt/lib/gl/ojdbc14.jar"/>
 	<classpathentry kind="lib" path="C:/opt/lib/gl/ostermillerutils_1_04_03_for_kaffe.jar"/>
 	<classpathentry kind="lib" path="C:/opt/lib/gl/poi-2.5.1-final-20040804.jar"/>
