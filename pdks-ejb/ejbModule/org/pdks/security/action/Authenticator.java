@@ -162,7 +162,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 				authenticatedUser = (User) pdksEntityController.getObjectBySQL(sb, parametreMap, User.class);
 
 				if (authenticatedUser != null) {
-					logger.info(PdksUtil.setTurkishStr(authenticatedUser.getUsername() + " kullanıcı bilgisi okundu."));
+					logger.info(authenticatedUser.getUsername() + " kullanıcı bilgisi okundu.");
 					authenticatedUser.setUsername(ldapUser.getUsername());
 					if (!parametreMap.containsKey("emailBozuk"))
 						authenticatedUser.setEmail(ldapUser.getEmail());
@@ -256,7 +256,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 								map1.put(PdksEntityController.MAP_KEY_SESSION, session);
 							List<SAPSunucu> sapSunucular = pdksEntityController.getObjectByInnerObjectList(map1, SAPSunucu.class);
 							if (!sapSunucular.isEmpty())
-								logger.info(PdksUtil.setTurkishStr("SAP sunucuları okundu."));
+								logger.info("SAP sunucuları okundu.");
 
 							SapRfcManager.setSapSunucular(sapSunucular);
 
@@ -278,10 +278,8 @@ public class Authenticator implements IAuthenticator, Serializable {
 							authenticatedUser.setTestLogin(test);
 							authenticatedUser.setCalistigiSayfa("anasayfa");
 							ortakIslemler.sistemeGirisIslemleri(authenticatedUser, Boolean.TRUE, null, null, session);
-							logger.info(authenticatedUser.getUsername()
-									+ " "
-									+ PdksUtil.setTurkishStr(authenticatedUser.getAdSoyad() + " " + (authenticatedUser.getEmail() != null && !authenticatedUser.getEmail().equals(authenticatedUser.getUsername()) ? authenticatedUser.getEmail() + " E-postali" : "")
-											+ " kullanıcısı PDKS sistemine login oldu. " + new Date()));
+							logger.info(authenticatedUser.getUsername() + " " + authenticatedUser.getAdSoyad() + " " + (authenticatedUser.getEmail() != null && !authenticatedUser.getEmail().equals(authenticatedUser.getUsername()) ? authenticatedUser.getEmail() + " E-postali" : "")
+									+ " kullanıcısı PDKS sistemine login oldu. " + new Date());
 							authenticatedUser.setSessionSQL(session);
 						} catch (Exception e) {
 							logger.error("PDKS hata in : \n");
@@ -313,7 +311,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 				if (session != null)
 					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 				List perList = pdksEntityController.getObjectByInnerObjectList(parametreMap, Personel.class);
-				logger.info(PdksUtil.setTurkishStr(authenticatedUser.getUsername() + " kullanıcı bilgisi okundu."));
+				logger.info(authenticatedUser.getUsername() + " kullanıcı bilgisi okundu.");
 
 				if (!perList.isEmpty())
 					logger.error(perList.size() + " " + new Date());

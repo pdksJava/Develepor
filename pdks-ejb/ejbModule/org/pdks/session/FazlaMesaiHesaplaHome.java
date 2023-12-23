@@ -2357,7 +2357,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (puantajList.size() > pageSize) {
 				Date bitTarih = new Date();
 				Date fark = new Date(bitTarih.getTime() - basTarih.getTime());
-				String str = yil + " " + denklestirmeAy.getAyAdi() + " " + puantajList.size() + " adet " + PdksUtil.setTurkishStr((seciliBolum != null ? seciliBolum.getAciklama() + " personeli " : " personel ") + loginUser.getAdSoyad());
+				String str = yil + " " + denklestirmeAy.getAyAdi() + " " + puantajList.size() + " adet " + (seciliBolum != null ? seciliBolum.getAciklama() + " personeli " : " personel ") + loginUser.getAdSoyad();
 				if (userLogin.getLogin())
 					logger.info(str + " --> " + PdksUtil.convertToDateString(basTarih, "HH:mm:ss") + " - " + PdksUtil.convertToDateString(bitTarih, "HH:mm:ss") + " : " + PdksUtil.convertToDateString(fark, "mm:ss"));
 			}
@@ -2955,7 +2955,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		}
 		if (adet == 0 || gunAdet > 1)
 			islemDurum = Boolean.FALSE;
-		logger.debug(PdksUtil.setTurkishStr(aylikPuantaj.getPersonelDenklestirmeAylik().getPersonel().getAdSoyad()) + " " + islemDurum);
+		logger.debug(aylikPuantaj.getPersonelDenklestirmeAylik().getPersonel().getAdSoyad() + " " + islemDurum);
 		if (!islemDurum.equals(denklestirmeDinamikAlan.getIslemDurum())) {
 			denklestirmeDinamikAlan.setIslemDurum(islemDurum);
 			pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeDinamikAlan);
@@ -3065,7 +3065,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						PdksUtil.addMessageAvailableWarn(izinStr);
 					String str = izinStr + " ( Izin Id : " + izinId + " )";
 					if (userLogin.getLogin())
-						logger.info(PdksUtil.setTurkishStr(userLogin.getAdSoyad() + " --> " + str + " " + izinSahibi.getAdSoyad()));
+						logger.info(userLogin.getAdSoyad() + " --> " + str + " " + izinSahibi.getAdSoyad());
 					if (izinCalismayanMailGonder && !izinliCalisilanGunler.contains(str)) {
 						strList.add(str);
 						startupAction.addIzinliCalisilanGunlerList(str);

@@ -319,7 +319,7 @@ public class IseGelmemeUyari implements Serializable {
 					else if (!pdksSirket.getDurum() || !pdksSirket.getPdks())
 						islemDevam = false;
 					if (!islemDevam) {
-						// logger.info(PdksUtil.setTurkishStr(per.getPdksSicilNo() + " - " + per.getAdSoyad()));
+						// logger.info(per.getPdksSicilNo() + " - " + per.getAdSoyad()));
 						iterator.remove();
 						continue;
 					}
@@ -517,7 +517,7 @@ public class IseGelmemeUyari implements Serializable {
 								if (!hareketVar) {
 									hareketVar = izinMap.containsKey(pdksPersonel.getId());
 									if (hareketVar) {
-										logger.debug(PdksUtil.setTurkishStr(pdksPersonel.getPdksSicilNo() + " - " + pdksPersonel.getAdSoyad()));
+										logger.debug(pdksPersonel.getPdksSicilNo() + " - " + pdksPersonel.getAdSoyad());
 									}
 								}
 								if (!kayitVar)
@@ -549,7 +549,7 @@ public class IseGelmemeUyari implements Serializable {
 								}
 								if (yoneticisi != null && ekle) {
 									if (!calisma)
-										logger.debug(PdksUtil.setTurkishStr(pdksVardiyaGun.getVardiyaKeyStr() + " " + pdksPersonel.getAdSoyad()));
+										logger.debug(pdksVardiyaGun.getVardiyaKeyStr() + " " + pdksPersonel.getAdSoyad());
 									if (geciciYoneticiMap.containsKey(pdksVardiyaGun.getPersonel().getId()))
 										yoneticisi = (Personel) geciciYoneticiMap.get(pdksVardiyaGun.getPersonel().getId()).getYeniYonetici().getPdksPersonel().clone();
 									if (vekaletMap.containsKey(yoneticisi.getId()))
@@ -866,7 +866,7 @@ public class IseGelmemeUyari implements Serializable {
 						User user = yonetici != null ? (User) yonetici.clone() : null;
 						if (user == null || !user.isDurum() || !user.getPdksPersonel().isCalisiyor()) {
 							if (personelYonetici != null && user != null)
-								logger.info(PdksUtil.setTurkishStr(personelYonetici.getPdksSicilNo() + " " + personelYonetici.getAdSoyad() + " personel veya kullanıcısında sorun var!"));
+								logger.info(personelYonetici.getPdksSicilNo() + " " + personelYonetici.getAdSoyad() + " personel veya kullanıcısında sorun var!");
 							continue;
 						}
 
@@ -897,7 +897,7 @@ public class IseGelmemeUyari implements Serializable {
 								// ortakIslemler.mailGonder(renderer, renderAdres);
 								if (mailSatu != null && mailSatu.isDurum())
 
-									logger.info(PdksUtil.setTurkishStr(userYonetici.getPdksPersonel().getSirket().getAd() + " " + user.getAdSoyad() + " " + eposta + " iseGelisUyariMail mesaj gönderildi! "));
+									logger.info(userYonetici.getPdksPersonel().getSirket().getAd() + " " + user.getAdSoyad() + " " + eposta + " iseGelisUyariMail mesaj gönderildi! ");
 							}
 						} catch (Exception ee) {
 							if (islemYapan != null)
@@ -941,7 +941,7 @@ public class IseGelmemeUyari implements Serializable {
 						user = bosYonetici;
 						user.setEmail(email);
 					} else if (!user.getPdksPersonel().isCalisiyor()) {
-						logger.error(PdksUtil.setTurkishStr(user.getAdSoyad() + " MAİL GÖNDERİLEMİYOR!"));
+						logger.error(user.getAdSoyad() + " MAİL GÖNDERİLEMİYOR!");
 						continue;
 					}
 					List<Role> yetkiliRollerim = user.getYetkiliRollerim();
@@ -968,7 +968,7 @@ public class IseGelmemeUyari implements Serializable {
 							// ortakIslemler.mailGonder(renderer, renderAdres);
 							mailSatu = mailGonder(renderAdres, true, session);
 							if (mailSatu != null && mailSatu.isDurum())
-								logger.info(PdksUtil.setTurkishStr(userYonetici.getPdksPersonel().getSirket().getAd() + " " + userYonetici.getAdSoyad() + " " + userYonetici.getEmail() + " iseGelisUyariMail mesaj gönderildi! "));
+								logger.info(userYonetici.getPdksPersonel().getSirket().getAd() + " " + userYonetici.getAdSoyad() + " " + userYonetici.getEmail() + " iseGelisUyariMail mesaj gönderildi! ");
 
 							if (!userYoneticiMap.containsKey(userYonetici.getId())) {
 								userYoneticiMap.put(userYonetici.getId(), userYonetici);

@@ -364,9 +364,9 @@ public class PersonelERPGuncelleme implements Serializable {
 					}
 					sicilNo = String.valueOf(Long.parseLong(pdksPersonel.getSicilNo().trim()));
 					hataKonum = (list.size() - guncelleyenMap.size()) + ". personelERPGuncelleme : " + pdksPersonel.getSicilNo().trim() + " " + pdksPersonel.getAdSoyad();
-					// logger.info(pdksUtil.setTurkishStr(hataKonum));
+					// logger.info(hataKonum));
 				} catch (Exception e) {
-					logger.error(PdksUtil.setTurkishStr("HATALI PERSONEL NO " + pdksPersonel.getSicilNo() + " " + pdksPersonel.getAdSoyad()));
+					logger.error("HATALI PERSONEL NO " + pdksPersonel.getSicilNo() + " " + pdksPersonel.getAdSoyad());
 					sicilNo = "";
 				}
 				try {
@@ -382,7 +382,7 @@ public class PersonelERPGuncelleme implements Serializable {
 							personel.setGuncellemeTarihi(bugun);
 							personel.setGuncelleyenUser(user);
 							pdksEntityController.saveOrUpdate(session, entityManager, personel);
-							logger.error(PdksUtil.setTurkishStr(pdksPersonel.getSicilNo() + " " + pdksPersonel.getAdSoyad() + " SAP'den anaveri bilgisi okunamadı! "));
+							logger.error(pdksPersonel.getSicilNo() + " " + pdksPersonel.getAdSoyad() + " SAP'den anaveri bilgisi okunamadı! ");
 						}
 
 						session.flush();
@@ -394,7 +394,7 @@ public class PersonelERPGuncelleme implements Serializable {
 					if (hataliPersonelList != null)
 						hataliPersonelList.add(pdksPersonel);
 					iterator.remove();
-					logger.info(PdksUtil.setTurkishStr(hataKonum));
+					logger.info(hataKonum);
 
 					logger.error("personelERPGuncellemeTimer hata 1 : " + sicilNo + " " + e1.getMessage());
 					break;
@@ -465,7 +465,7 @@ public class PersonelERPGuncelleme implements Serializable {
 				sb.append(" WHERE P." + Personel.COLUMN_NAME_DURUM + "=1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ">=CAST(GETDATE() AS date)");
 				sb.append(" ORDER BY P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
 				HashMap fields = new HashMap();
-				fields.put("sapKodu", sapKodu.trim());
+				fields.put("erpKodu", sapKodu.trim());
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				List<String> pdksPersonelList = pdksEntityController.getObjectBySQLList(sb, fields, null);
