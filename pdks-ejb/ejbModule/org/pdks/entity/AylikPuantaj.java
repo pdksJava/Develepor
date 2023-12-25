@@ -158,8 +158,11 @@ public class AylikPuantaj implements Serializable, Cloneable {
 			if (vgMap.containsKey(key))
 				vardiyaGun = vgMap.get(key);
 		}
-		if (vardiyaGun == null)
-			vardiyaGun = gun;
+		if (vardiyaGun == null) {
+			vardiyaGun = new VardiyaGun(this.getPdksPersonel(), null, gun.getVardiyaDate());
+
+		}
+
 		return vardiyaGun;
 	}
 
@@ -819,6 +822,17 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public static void baslikCell(CreationHelper factory, Drawing drawing, ClientAnchor anchor, Cell cell, String value, String title) {
 		cell.setCellValue(value != null ? value.trim() : "");
+		cellComment(factory, drawing, anchor, cell, title);
+	}
+
+	/**
+	 * @param factory
+	 * @param drawing
+	 * @param anchor
+	 * @param cell
+	 * @param title
+	 */
+	public static void cellComment(CreationHelper factory, Drawing drawing, ClientAnchor anchor, Cell cell, String title) {
 		if (PdksUtil.hasStringValue(title)) {
 			Comment comment1 = drawing.createCellComment(anchor);
 			RichTextString str1 = factory.createRichTextString(title.trim());
