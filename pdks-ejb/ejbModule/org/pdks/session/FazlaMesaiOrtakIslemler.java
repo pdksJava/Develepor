@@ -42,6 +42,7 @@ import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.AylikPuantaj;
 import org.pdks.entity.BordroDetayTipi;
 import org.pdks.entity.CalismaModeli;
+import org.pdks.entity.CalismaModeliAy;
 import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.Departman;
 import org.pdks.entity.DepartmanDenklestirmeDonemi;
@@ -895,11 +896,14 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 								if (izinTipi.getTakvimGunumu() == false) {
 									if (vardiyaGun.getVardiya().isOffGun()) {
-										if (izinTipi.isOffDahilMi() == false)
+										if (izinTipi.isOffDahilMi() == false) {
 											artiGun = 0.0d;
+										}
+
 									} else if (haftaTatil) {
-										if (izinTipi.isHTDahil() == false)
+										if (izinTipi.isHTDahil() == false) {
 											artiGun = 0.0d;
+										}
 
 									}
 									if (izinTipi.getUcretli())
@@ -936,6 +940,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 							if (!haftaTatil)
 								normalGunAdet += calismaGun;
 							else {
+
 								haftaTatilAdet += calismaGun;
 							}
 							// logger.info(vardiyaGun.getVardiyaDateStr() + " " + (normalGunAdet + haftaTatilAdet + resmiTatilAdet));
@@ -949,14 +954,14 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 									resmiTatilSaat += vardiyaGun.getSaatCalisanArifeTatilKatsayisi();
 									normalSaat += vardiyaGun.getSaatCalisanArifeNormalKatsayisi();
 								}
-							} else if (haftaTatil)
-								haftaTatilSaat += vardiyaGun.getSaatCalisanHaftaTatilKatsayisi();
-							else if (vardiyaGun.isHaftaIci()) {
+							} else if (vardiyaGun.isHaftaIci()) {
 								normalSaat += vardiyaGun.getSaatCalisanNormalGunKatsayisi();
 								logger.debug(vardiyaGun.getVardiyaDateStr() + " " + normalGunAdet);
 							}
 
 						}
+						if (haftaTatil)
+							haftaTatilSaat += vardiyaGun.getSaatCalisanHaftaTatilKatsayisi();
 					}
 
 				}
@@ -1505,9 +1510,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				idList.add(personel.getId());
 			StringBuffer sb = new StringBuffer();
 			sb.append("SELECT DISTINCT P.* FROM " + PersonelDenklestirme.TABLE_NAME + " PD WITH(nolock) ");
+			sb.append(" INNER JOIN " + CalismaModeliAy.TABLE_NAME + " CD ON CD." + CalismaModeliAy.COLUMN_NAME_ID + "=PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY);
+			sb.append(" INNER JOIN " + CalismaModeli.TABLE_NAME + " CM  ON CM." + CalismaModeli.COLUMN_NAME_ID + "=CD." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI);
 			sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P ON P." + Personel.COLUMN_NAME_ID + "=" + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
-			sb.append(" AND P.PDKS=1");
 			sb.append(" WHERE PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + "=" + dm.getId());
+			sb.append(" AND (P.MAIL_TAKIP=1 OR P.PDKS=1 OR CM.FAZLA_CALISMA_GORUNTULENSIN=1)");
 			sb.append(" AND PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :s");
 			HashMap fields = new HashMap();
 			fields.put("s", idList);
