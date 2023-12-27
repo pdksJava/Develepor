@@ -16837,6 +16837,7 @@ public class OrtakIslemler implements Serializable {
 			List<User> userList = pdksEntityController.getObjectBySQLList(sb, fields, User.class);
 			if (userList != null && !userList.isEmpty())
 				user = userList.get(0);
+			userList = null;
 		}
 		if (startUp == false || user == null) {
 			if (user == null) {
