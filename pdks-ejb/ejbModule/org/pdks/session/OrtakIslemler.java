@@ -13881,6 +13881,15 @@ public class OrtakIslemler implements Serializable {
 		return fazlaMesaiMaxSure;
 	}
 
+	/**
+	 * @param normalCalismaVardiya
+	 * @param yemekHesapla
+	 * @param puantajData
+	 * @param kaydet
+	 * @param tatilGunleriMap
+	 * @param session
+	 * @return
+	 */
 	public PersonelDenklestirme aylikPlanSureHesapla(Vardiya normalCalismaVardiya, boolean yemekHesapla, AylikPuantaj puantajData, boolean kaydet, TreeMap<String, Tatil> tatilGunleriMap, Session session) {
 		User loginUser = puantajData.getLoginUser() != null ? puantajData.getLoginUser() : authenticatedUser;
 		List<YemekIzin> yemekBosList = yemekHesapla ? null : new ArrayList<YemekIzin>();
