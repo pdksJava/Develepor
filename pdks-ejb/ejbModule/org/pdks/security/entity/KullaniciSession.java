@@ -32,7 +32,7 @@ public class KullaniciSession implements Serializable {
 
 	public KullaniciSession(HttpSession xsession, Date simdix, int zoneFarkx) {
 		this.session = xsession;
-		if (session.getAttribute(SessionListener.SESSION_USER_NAME) != null)
+		if (xsession != null && session.getAttribute(SessionListener.SESSION_USER_NAME) != null)
 			this.kullanici = (User) session.getAttribute(SessionListener.SESSION_USER_NAME);
 		this.zoneFark = zoneFarkx;
 		this.simdi = simdix;

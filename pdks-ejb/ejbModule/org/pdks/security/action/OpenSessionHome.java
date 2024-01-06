@@ -129,9 +129,7 @@ public class OpenSessionHome extends EntityHome<User> implements Serializable {
 					map.put(session.getId(), session);
 				}
 			} catch (Exception e) {
-				logger.error("PDKS hata in : \n");
-				e.printStackTrace();
-				logger.error("PDKS hata out : " + e.getMessage());
+				logger.error("PDKS hata  : " + e.getMessage());
 
 			}
 
