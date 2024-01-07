@@ -4624,7 +4624,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			for (AylikPuantaj aylikPuantaj : puantajList) {
 				aylikPuantaj.setOnayDurum(false);
 			}
-			session.flush();
+			try {
+				session.flush();
+			} catch (Exception es) {
+				ortakIslemler.setExceptionLog(null, es);
+			}
+
 			if (onayDurum) {
 				aylikPuantajOlusturuluyor();
 				puantajList = aylikPuantajList;
