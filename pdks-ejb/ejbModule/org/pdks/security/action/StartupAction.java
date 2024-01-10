@@ -848,7 +848,7 @@ public class StartupAction implements Serializable {
 		String helpDeskLastDateKey = "helpDeskLastDate";
 		OrtakIslemler islemler = new OrtakIslemler();
 		Gson gson = new Gson();
-		if (!PdksUtil.getCanliSunucuDurum()) {
+		if (PdksUtil.getCanliSunucuDurum()) {
 			String helpDeskLastDateStr = islemler.getStringHelpDesk();
 			if (helpDeskLastDateStr != null && pmMap.containsKey(helpDeskLastDateKey)) {
 				Parameter parameter = pmMap.get(helpDeskLastDateKey);
