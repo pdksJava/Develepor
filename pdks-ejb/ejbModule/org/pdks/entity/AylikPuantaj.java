@@ -103,11 +103,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	private TreeMap<Long, PersonelDenklestirmeDinamikAlan> dinamikAlanMap;
 
-	private TreeMap<Long, PersonelDinamikAlan> personelDinamikAlanMap;
-
 	private PersonelDenklestirmeDinamikAlan personelDenklestirmeDinamikAlan;
-
-	private PersonelDinamikAlan personelDinamikAlan;
 
 	private User loginUser;
 
@@ -1193,14 +1189,6 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		return personelDenklestirmeDinamikAlan;
 	}
 
-	public PersonelDinamikAlan getPersonelDinamikAlan(Long key) {
-		personelDinamikAlan = null;
-		if (personelDinamikAlanMap != null && key != null && personelDinamikAlanMap.containsKey(key))
-			personelDinamikAlan = personelDinamikAlanMap.get(key);
-
-		return personelDinamikAlan;
-	}
-
 	public TreeMap<Long, PersonelDenklestirmeDinamikAlan> getDinamikAlanMap() {
 		return dinamikAlanMap;
 	}
@@ -1335,22 +1323,6 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public void setLoginUser(User loginUser) {
 		this.loginUser = loginUser;
-	}
-
-	public TreeMap<Long, PersonelDinamikAlan> getPersonelDinamikAlanMap() {
-		return personelDinamikAlanMap;
-	}
-
-	public void setPersonelDinamikAlanMap(TreeMap<Long, PersonelDinamikAlan> personelDinamikAlanMap) {
-		this.personelDinamikAlanMap = personelDinamikAlanMap;
-	}
-
-	public PersonelDinamikAlan getPersonelDinamikAlan() {
-		return personelDinamikAlan;
-	}
-
-	public void setPersonelDinamikAlan(PersonelDinamikAlan personelDinamikAlan) {
-		this.personelDinamikAlan = personelDinamikAlan;
 	}
 
 }

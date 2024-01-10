@@ -2461,50 +2461,6 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param idInputList
-	 * @param spName
-	 * @param fieldName
-	 * @param fieldsOrj
-	 * @param class1
-	 * @param session
-	 * @return
-	 */
-	public List getSPParamLongList(List<Long> idInputList, String spName, String fieldName, LinkedHashMap<String, Object> fieldsOrj, Class class1, Session session) {
-		StringBuffer sb = new StringBuffer(spName);
-		List<Long> idList = new ArrayList<Long>();
-		List veriList = new ArrayList();
-		try {
-			int size = 1800 - fieldsOrj.size();
-			while (!idInputList.isEmpty()) {
-				HashMap map = new HashMap();
-				for (Iterator iterator = idInputList.iterator(); iterator.hasNext();) {
-					Long long1 = (Long) iterator.next();
-					idList.add(long1);
-					iterator.remove();
-					if (idList.size() + map.size() >= size)
-						break;
-				}
-				LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
-				fields.putAll(fieldsOrj);
-				fields.put(fieldName, getListIdStr(idList));
-				if (session != null)
-					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List list = pdksEntityController.execSPList(fields, sb, class1);
-				if (!list.isEmpty())
-					veriList.addAll(list);
-				list = null;
-				fields = null;
-				idList.clear();
-			}
-		} catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
-		}
-
-		return veriList;
-	}
-
-	/**
 	 * @param kapiIdList
 	 * @param personel
 	 * @param basTarih
@@ -2612,15 +2568,23 @@ public class OrtakIslemler implements Serializable {
 	 * @throws Exception
 	 */
 	private List getSPPersonelHareketList(List<Long> personelList, String kapi, String basTarihStr, String bitTarihStr, Class class2, Session session) throws Exception {
+		User loginUser = authenticatedUser != null ? authenticatedUser : new User();
+		StringBuffer sb = new StringBuffer("SP_GET_HAREKET_SIRKET");
 		LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
-		String fieldName = "personel";
 		fields.put("kapi", kapi);
-		fields.put(fieldName, "");
+		fields.put("personel", getListIdStr(personelList));
 		fields.put("basTarih", basTarihStr);
 		fields.put("bitTarih", bitTarihStr);
 		fields.put("df", null);
-		List list2 = getSPParamLongList(personelList, "SP_GET_HAREKET_SIRKET", fieldName, fields, class2, session);
+		if (loginUser != null && loginUser.isAdmin()) {
+			Gson gson = new Gson();
+			logger.debug(gson.toJson(fields));
+		}
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List list2 = pdksEntityController.execSPList(fields, sb, class2);
 		fields = null;
+		sb = null;
 		return list2;
 	}
 
@@ -3967,12 +3931,10 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public double getSaatSure(Date basTarih, Date bitTarih, List<YemekIzin> yemekList, VardiyaGun vardiyaGun, Session session) {
-		double sure = 0, toplamYemekSure = 0.0d;
-		double yemekVardiyaSuresi = vardiyaGun != null && vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().getYemekSuresi() != null ? vardiyaGun.getVardiya().getYemekSuresi() / 60.0d : 0.0d;
+		double sure = 0;
 		if (bitTarih.getTime() > basTarih.getTime()) {
 			sure = PdksUtil.getSaatFarki(bitTarih, basTarih).doubleValue();
 			boolean yarimdenFazla = sure > 10;
-			List<Long> idList = new ArrayList<Long>();
 			if (sure > 0) {
 				if (yemekList == null) {
 					if (vardiyaGun != null && vardiyaGun.getId() != null)
@@ -4008,8 +3970,6 @@ public class OrtakIslemler implements Serializable {
 					List<Integer> aralikList = new ArrayList<Integer>();
 					for (Iterator iterator = yemekList.iterator(); iterator.hasNext();) {
 						YemekIzin yemekIzin = (YemekIzin) iterator.next();
-						if (idList.contains(yemekIzin.getId()))
-							continue;
 						if (yemekIzin.isOzelMolaVarmi() && !yemekIzin.containsKey(vardiyaId))
 							continue;
 						if (!(yemekIzin.getBitTarih().getTime() > basTarih.getTime() && yemekIzin.getBasTarih().getTime() < bitTarih.getTime()))
@@ -4040,30 +4000,20 @@ public class OrtakIslemler implements Serializable {
 								aralikList.add(i);
 							}
 
-						}
-						if (yemekSaat > 0 && yemekSure > yemekSaat)
-							yemekSure = yemekSaat;
-						if (yemekSure > 0.0d) {
-							toplamYemekSure += yemekSure;
-							if (vardiyaGun != null && vardiyaGun.getTatil() != null)
-								logger.debug(vardiyaGun.getVardiyaDateStr() + " " + yemekIzin.getId() + " " + yemekIzin.getYemekAciklama() + "" + yemekSure + " " + toplamYemekSure);
-							idList.add(yemekIzin.getId());
+							if (yemekSaat > 0 && yemekSure > yemekSaat)
+								yemekSure = yemekSaat;
+							sure -= yemekSure;
 						}
 
 						if (cik)
 							break;
 
 					}
-					if (toplamYemekSure > 0) {
-						if (toplamYemekSure > yemekVardiyaSuresi)
-							toplamYemekSure = yemekVardiyaSuresi;
-						sure = sure - toplamYemekSure;
-					}
 					aralikList = null;
-				} else if (yemekVardiyaSuresi > 0) {
-
+				} else if (vardiyaGun != null && vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().getYemekSuresi() != null && vardiyaGun.getVardiya().getYemekSuresi() > 0) {
+					double yemekSuresi = (double) vardiyaGun.getVardiya().getYemekSuresi() / 60.0d;
 					if (sure > vardiyaGun.getVardiya().getNetCalismaSuresi()) {
-						sure = sure - yemekVardiyaSuresi;
+						sure = sure - yemekSuresi;
 					}
 				}
 			}
@@ -15223,7 +15173,7 @@ public class OrtakIslemler implements Serializable {
 										for (HareketKGS hareketKGS : hareketList) {
 											zaman = Long.parseLong(PdksUtil.convertToDateString(hareketKGS.getZaman(), "yyyyMMddHHmm"));
 											Kapi kapi = hareketKGS.getKapiView().getKapi();
-											if (zaman >= basZaman && zaman <= bitZaman) {
+											if (zaman >= basZaman && zaman < bitZaman) {
 												if (girisKapi != null && !bayramBasladi && kapi.isCikisKapi()) {
 													HareketKGS cikisHareket = ((HareketKGS) hareketKGS.clone()).getYeniHareket(tatil.getBasTarih(), null);
 													cikisHareketleri.add(cikisHareket);
@@ -16976,7 +16926,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public User getSistemAdminUserByParamMap(HashMap<String, String> map, PdksEntityController pec, Session session) {
 		User user = null;
-		LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
+		HashMap fields = new HashMap();
 		boolean startUp = map != null;
 		if (startUp == false)
 			map = parameterMap;
@@ -16984,18 +16934,12 @@ public class OrtakIslemler implements Serializable {
 			pec = pdksEntityController;
 		if (map != null) {
 			StringBuffer sb = new StringBuffer();
-			sb.append("SP_GET_SISTEM_ADMIN_LIST");
-			fields.put("TIP", "U");
+			sb.append("SELECT * FROM FN_SISTEM_ADMIN_LIST() ");
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			try {
-				List<User> userList = pec.execSPList(fields, sb, User.class);
-				if (userList != null && !userList.isEmpty())
-					user = userList.get(0);
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-
+			List<User> userList = pec.getObjectBySQLList(sb, fields, User.class);
+			if (userList != null && !userList.isEmpty())
+				user = userList.get(0);
 		}
 		if (startUp == false || user == null) {
 			if (user == null) {
