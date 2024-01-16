@@ -82,6 +82,7 @@ import org.pdks.security.action.StartupAction;
 import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.User;
 
+import com.google.gson.Gson;
 import com.pdks.webservice.MailFile;
 import com.pdks.webservice.MailObject;
 import com.pdks.webservice.MailStatu;
@@ -1159,7 +1160,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 				} catch (Exception ex) {
 					list = new ArrayList<PersonelDenklestirmeTasiyici>();
-					logger.equals(ex);
+					LinkedHashMap<String, Object> veriLastMap = ortakIslemler.getLastParameter(sayfaURL, session);
+					Gson gson = new Gson();
+					logger.equals(gson.toJson(veriLastMap) + "\n" + ex);
 					ex.printStackTrace();
 				}
 				if (testDurum)
