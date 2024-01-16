@@ -3383,6 +3383,22 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param sayfaAdi
+	 * @param ex
+	 */
+	public void loggerErrorYaz(String sayfaAdi, Exception ex) throws Exception {
+		StringBuffer sb = new StringBuffer();
+		sb.append(ex);
+		if (authenticatedUser != null && PdksUtil.hasStringValue(sayfaAdi) && PdksUtil.hasStringValue(authenticatedUser.getParametreJSON())) {
+			if (authenticatedUser.getParametreJSON().indexOf(sayfaAdi) > 0)
+				sb.append(authenticatedUser.getParametreJSON() + "\n");
+		}
+		logger.error(sb.toString());
+		sb = null;
+		throw new Exception(ex);
+	}
+
+	/**
 	 * @param user
 	 * @param session
 	 * @return
