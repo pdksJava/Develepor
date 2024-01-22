@@ -453,18 +453,18 @@ public class PdksVeriOrtakAktar implements Serializable {
 	public static User getSistemAdminUser(PdksDAO dao) {
 		if (dao == null)
 			dao = Constants.pdksDAO;
-		try {
-			Departman departman = (Departman) dao.getObjectByInnerObject("id", 1L, Departman.class);
-			if (departman != null) {
-				Sirket sirket = (Sirket) dao.getObjectByInnerObject("id", 2L, Sirket.class);
-				if (sirket != null)
-					System.out.println(sirket.getAd());
-			}
-
-		} catch (Exception e) {
-			System.err.println(e);
-			e.printStackTrace();
-		}
+//		try {
+//			Departman departman = (Departman) dao.getObjectByInnerObject("id", 1L, Departman.class);
+//			if (departman != null) {
+//				Sirket sirket = (Sirket) dao.getObjectByInnerObject("id", 2L, Sirket.class);
+//				if (sirket != null)
+//					System.out.println(sirket.getAd());
+//			}
+//
+//		} catch (Exception e) {
+//			System.err.println(e);
+//			e.printStackTrace();
+//		}
 		User user = null;
 		try {
 			LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
@@ -2847,7 +2847,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 								sirket.setDepartman(departman);
 								sirket.setFazlaMesaiTalepGirilebilir(departman.getFazlaMesaiTalepGirilebilir());
 								sirket.setErpKodu(personelERP.getSirketKodu());
-								sirket.setErp(Boolean.TRUE);
+								sirket.setErpDurum(Boolean.TRUE);
 								sirket.setAd(personelERP.getSirketAdi());
 								sirket.setAciklama(personelERP.getSirketAdi());
 								sirket.setPdks(Boolean.TRUE);
