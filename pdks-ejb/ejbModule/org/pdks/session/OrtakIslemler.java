@@ -4947,7 +4947,8 @@ public class OrtakIslemler implements Serializable {
 			if (izinList != null && !izinList.isEmpty()) {
 				List<IzinERP> izinERPList = new ArrayList<IzinERP>();
 				for (IzinERPDB izinERPDB : izinList) {
-					izinERPList.add(izinERPDB.getIzinERP());
+					IzinERP izinERP = izinERPDB.getIzinERP();
+					izinERPList.add(izinERP);
 				}
 				try {
 					PdksSoapVeriAktar service = getPdksSoapVeriAktar();
@@ -4981,7 +4982,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<IzinERPDB> getIzinERPDBList(String parameterName, Session session) throws Exception {
+	private List<IzinERPDB> getIzinERPDBList(String parameterName, Session session) throws Exception {
 		String izinERPTableViewAdi = getParameterKey(parameterName);
 		List<Tanim> list = getTanimList(Tanim.TIPI_ERP_IZIN_DB, session);
 		List<IzinERPDB> izinList = null;
@@ -5010,12 +5011,33 @@ public class OrtakIslemler implements Serializable {
 
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-
+			HashMap<String, IzinERPDB> iptalMap = new HashMap<String, IzinERPDB>();
 			try {
 				izinList = pdksEntityController.getObjectBySQLList(sb, parametreMap, IzinERPDB.class);
+				for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
+					IzinERPDB izinERPDB = (IzinERPDB) iterator.next();
+					if (izinERPDB.getDurum().booleanValue() == false) {
+						iptalMap.put(izinERPDB.getReferansNoERP(), izinERPDB);
+						iterator.remove();
+					}
+
+				}
 			} catch (Exception ex1) {
 				loggerErrorYaz(null, ex1);
 			}
+			if (!iptalMap.isEmpty()) {
+				parametreMap.clear();
+				parametreMap.put("id", new ArrayList(iptalMap.keySet()));
+				parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "id");
+				if (session != null)
+					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List<String> referansNoList = pdksEntityController.getObjectByInnerObjectList(parametreMap, IzinReferansERP.class);
+				for (String key : referansNoList) {
+					izinList.add(iptalMap.get(key));
+				}
+				referansNoList = null;
+			}
+			iptalMap = null;
 			if (izinList != null && !izinList.isEmpty()) {
 				if (parameter != null) {
 					parameter.setChangeDate(new Date());
