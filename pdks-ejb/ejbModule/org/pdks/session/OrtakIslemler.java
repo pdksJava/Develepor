@@ -244,6 +244,33 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param personelIdler
+	 * @param calSure
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param session
+	 * @return
+	 */
+	public List<VardiyaGun> getVardiyaList(List<Long> personelIdler, Double calSure, Date basTarih, Date bitTarih, Session session) {
+		LinkedHashMap linkedHashMap = new LinkedHashMap();
+		linkedHashMap.put("perList", null);
+		linkedHashMap.put("basTarih", PdksUtil.convertToDateString(basTarih, "yyyyMMdd"));
+		linkedHashMap.put("bitTarih", PdksUtil.convertToDateString(bitTarih, "yyyyMMdd"));
+		linkedHashMap.put("calSure", calSure);
+		linkedHashMap.put("format", null);
+		if (session != null)
+			linkedHashMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List list = null;
+		try {
+			list = getSPParamLongList(personelIdler, "SP_GET_FAZLA_MESAI_VARDIYA", "perList", linkedHashMap, VardiyaGun.class, session);
+		} catch (Exception e) {
+			list = new ArrayList();
+		}
+		linkedHashMap = null;
+		return list;
+	}
+
+	/**
 	 * @param tarih
 	 * @param mailList
 	 * @param session
@@ -2509,6 +2536,37 @@ public class OrtakIslemler implements Serializable {
 		}
 
 		return veriList;
+	}
+
+	/**
+	 * @param personelIdler
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param saat
+	 * @param session
+	 * @return
+	 */
+	public List<VardiyaGun> getPersonelEksikVardiyaCalismaList(List<Long> personelIdler, Date basTarih, Date bitTarih, Session session) {
+		Double saat = null;
+		try {
+			if (getParameterKeyHasStringValue("minGunCalismaSaat"))
+				saat = Double.parseDouble(getParameterKey("minGunCalismaSaat"));
+		} catch (Exception e) {
+		}
+		if (saat == null || saat.doubleValue() < 0.0d)
+			saat = 0.5d;
+		String formatStr = "yyyy-MM-dd HH:mm:ss";
+		String basTarihStr = basTarih != null ? PdksUtil.convertToDateString(basTarih, formatStr) : null;
+		String bitTarihStr = bitTarih != null ? PdksUtil.convertToDateString(bitTarih, formatStr) : null;
+		String fieldName = "personel";
+		LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
+		fields.put("saat", saat);
+		fields.put(fieldName, "");
+		fields.put("basTarih", basTarihStr);
+		fields.put("bitTarih", bitTarihStr);
+		fields.put("df", null);
+		List<VardiyaGun> list = getSPParamLongList(personelIdler, "SP_GET_EKSIK_CALISAN_VARDIYALAR", fieldName, fields, VardiyaGun.class, session);
+		return list;
 	}
 
 	/**
@@ -9935,6 +9993,12 @@ public class OrtakIslemler implements Serializable {
 		return tarihGelmedi;
 	}
 
+	public int getYillikIzinMaxBakiye() {
+		int yillikIzinMaxBakiye = PersonelIzin.getYillikIzinMaxBakiye();
+		return yillikIzinMaxBakiye;
+
+	}
+
 	/**
 	 * @param veriMap
 	 * @param session
@@ -9969,7 +10033,7 @@ public class OrtakIslemler implements Serializable {
 		if (kidemYok)
 			logger.debug("");
 
-		int yillikIzinMaxBakiye = PersonelIzin.getYillikIzinMaxBakiye();
+		int yillikIzinMaxBakiye = getYillikIzinMaxBakiye();
 
 		cal.set(Calendar.YEAR, yil);
 		Date izinHakEttigiTarihi = PdksUtil.getDate((Date) cal.getTime().clone());
@@ -10165,8 +10229,8 @@ public class OrtakIslemler implements Serializable {
 					}
 					if (personelIzin.getId() == null)
 						personelIzin.setOlusturanUser(sistemYonetici);
-					if (yeniBakiyeOlustur || personelIzin.getId() != null) {
-						if (personelIzin.getIzinKagidiGeldi() == null && kidemYil > 0) {
+					if (personelIzin.getIzinKagidiGeldi() == null) {
+						if (kidemYil > 0 && (yeniBakiyeOlustur || personelIzin.getId() != null)) {
 							if (izinSuresi > 0 && izinDegisti(personelIzin, izinHakEttigiTarihi, izinSuresi, aciklama)) {
 								if (personelIzin.getId() != null) {
 									if (user != null)
@@ -11836,16 +11900,19 @@ public class OrtakIslemler implements Serializable {
 									// kidemMap = getTarihMap(personel != null ?
 									// personel.getIzinHakEdisTarihi() : null,
 									// bugun);
-									if (personel.getIzinHakEdisTarihi().before(bugun) && yil > 1) {
-										// int kidemYil = yil - 1;
-										// senelikIzinOlustur(personel, suaDurum, buYil, yil, izinTipiMap, hakedisMap, user, session, izinTipi, bugun, Boolean.FALSE);
-										veriMap.put("suaDurum", suaDurum);
-										veriMap.put("yil", buYil);
-										veriMap.put("kidemYil", yil);
-										veriMap.put("izinTipi", izinTipi);
-										veriMap.put("islemTarihi", bugun);
-										veriMap.put("yeniBakiyeOlustur", Boolean.FALSE);
-										izinTipi = senelikIzinOlustur(veriMap, session);
+									if (yil >= 1) {
+										Date kidemBaslangicTarihi = PdksUtil.tariheAyEkleCikar(personel.getIzinHakEdisTarihi(), 12);
+										if (kidemBaslangicTarihi.before(bugun)) {
+											// int kidemYil = yil - 1;
+											// senelikIzinOlustur(personel, suaDurum, buYil, yil, izinTipiMap, hakedisMap, user, session, izinTipi, bugun, Boolean.FALSE);
+											veriMap.put("suaDurum", suaDurum);
+											veriMap.put("yil", buYil);
+											veriMap.put("kidemYil", yil);
+											veriMap.put("izinTipi", izinTipi);
+											veriMap.put("islemTarihi", bugun);
+											veriMap.put("yeniBakiyeOlustur", Boolean.FALSE);
+											izinTipi = senelikIzinOlustur(veriMap, session);
+										}
 									}
 
 								}
@@ -15815,6 +15882,7 @@ public class OrtakIslemler implements Serializable {
 								if (girisZaman.before(ilkGun) && PdksUtil.hasStringValue(cikisId) == false)
 									continue;
 								PersonelFazlaMesai personelFazlaMesai = girisHareket.getPersonelFazlaMesai() != null ? girisHareket.getPersonelFazlaMesai() : cikisHareket.getPersonelFazlaMesai();
+								
 								if (tatilGunu == false && (girisHareket.isOrjinalZamanGetir() || cikisHareket.isOrjinalZamanGetir())) {
 									if (personelFazlaMesai == null) {
 										boolean devam = true;
@@ -17023,7 +17091,6 @@ public class OrtakIslemler implements Serializable {
 								if (vardiyaGun.addHareket(hareket, Boolean.TRUE)) {
 									// TODO isOtomatikFazlaCalismaOnaylansinmi GETİR
 									List<HareketKGS> vardiyaHareketler = null;
-
 									hareket.setOrjinalZamanGetir(false);
 									if (otomatikOnayKontrol && hareket.getKapiView() != null && hareket.getKapiView().getKapi() != null)
 										vardiyaHareketler = hareket.getKapiView().getKapi().isGirisKapi() ? vardiyaGun.getGirisHareketleri() : vardiyaGun.getCikisHareketleri();
@@ -17258,71 +17325,7 @@ public class OrtakIslemler implements Serializable {
 
 			}
 			if (!hareketKapiUpdateMap.isEmpty()) {
-				HashMap fields = new HashMap();
-				fields.put("id", new ArrayList(hareketKapiUpdateMap.keySet()));
-				if (session != null)
-					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<PdksLog> list = pdksEntityController.getObjectByInnerObjectList(fields, PdksLog.class);
-				if (!list.isEmpty()) {
-					Tanim islemNeden = getOtomatikKapGirisiNeden(session);
-					User onaylayanUser = getSistemAdminUser(session);
-					Date guncellemeZamani = new Date();
-
-					for (PdksLog pdksLog : list) {
-						if (hareketKapiUpdateMap.containsKey(pdksLog.getId())) {
-							KapiKGS kapiKGS = hareketKapiUpdateMap.get(pdksLog.getId());
-							if (hareketKopyala || pdksLog.getKgsId() < 0l) {
-								if (pdksLog.getKgsId() < 0l) {
-									pdksLog.setGuncellemeZamani(guncellemeZamani);
-									pdksLog.setKapiId(kapiKGS.getKgsId());
-									session.saveOrUpdate(pdksLog);
-								} else {
-									PdksLog pdksLog2 = (PdksLog) pdksLog.clone();
-									pdksLog2.setId(null);
-									pdksLog2.setGuncellemeZamani(null);
-									pdksLog2.setKapiId(kapiKGS.getKgsId());
-									session.saveOrUpdate(pdksLog2);
-									if (islemNeden != null) {
-										PersonelHareketIslem islem = new PersonelHareketIslem();
-										islem.setAciklama(pdksLog2.getKgsId() + " " + kapiKGS.getKapi().getAciklama() + " olarak güncellendi. [ " + pdksLog2.getId() + " ]");
-										islem.setOnayDurum(PersonelHareketIslem.ONAY_DURUM_ONAYLANDI);
-										islem.setOlusturmaTarihi(guncellemeZamani);
-										islem.setGuncelleyenUser(onaylayanUser);
-										islem.setOnaylayanUser(loginUser);
-										islem.setZaman(pdksLog.getZaman());
-										islem.setIslemTipi("U");
-										islem.setNeden(islemNeden);
-										session.saveOrUpdate(islem);
-										pdksLog.setIslemId(islem.getId());
-									}
-									pdksLog.setGuncellemeZamani(guncellemeZamani);
-									pdksLog.setDurum(Boolean.FALSE);
-									session.saveOrUpdate(pdksLog);
-								}
-
-							} else {
-								StringBuffer sp = new StringBuffer();
-								sp.append("SP_POOL_TERMINAL_UPDATE");
-								LinkedHashMap map = new LinkedHashMap();
-								if (session != null)
-									map.put(PdksEntityController.MAP_KEY_SESSION, session);
-								map.put("eklenenId", pdksLog.getKgsId());
-								map.put("pdks", 1);
-								try {
-									pdksEntityController.execSPList(map, sp, null);
-								} catch (Exception e) {
-									pdksLog.setGuncellemeZamani(guncellemeZamani);
-									pdksLog.setKapiId(kapiKGS.getKgsId());
-									session.saveOrUpdate(pdksLog);
-								}
-								sp = null;
-							}
-
-						}
-					}
-					session.flush();
-				}
-				list = null;
+				hareketKapiUpdate(hareketKapiUpdateMap, hareketKopyala, loginUser, session);
 			}
 			hareketKapiUpdateMap = null;
 		}
@@ -17400,6 +17403,79 @@ public class OrtakIslemler implements Serializable {
 				logger.info(perNoId + " denklestirmeOlustur 0200 " + getCurrentTimeStampStr());
 
 		}
+	}
+
+	/**
+	 * @param hareketKapiUpdateMap
+	 * @param hareketKopyala
+	 * @param loginUser
+	 * @param session
+	 */
+	public void hareketKapiUpdate(HashMap<Long, KapiKGS> hareketKapiUpdateMap, boolean hareketKopyala, User loginUser, Session session) {
+		HashMap fields = new HashMap();
+		fields.put("id", new ArrayList(hareketKapiUpdateMap.keySet()));
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<PdksLog> list = pdksEntityController.getObjectByInnerObjectList(fields, PdksLog.class);
+		if (!list.isEmpty()) {
+			Tanim islemNeden = getOtomatikKapGirisiNeden(session);
+			User onaylayanUser = getSistemAdminUser(session);
+			Date guncellemeZamani = new Date();
+			for (PdksLog pdksLog : list) {
+				if (hareketKapiUpdateMap.containsKey(pdksLog.getId())) {
+					KapiKGS kapiKGS = hareketKapiUpdateMap.get(pdksLog.getId());
+					if (hareketKopyala || pdksLog.getKgsId() < 0l) {
+						if (pdksLog.getKgsId() < 0l) {
+							pdksLog.setGuncellemeZamani(guncellemeZamani);
+							pdksLog.setKapiId(kapiKGS.getKgsId());
+							session.saveOrUpdate(pdksLog);
+						} else {
+							PdksLog pdksLog2 = (PdksLog) pdksLog.clone();
+							pdksLog2.setId(null);
+							pdksLog2.setGuncellemeZamani(null);
+							pdksLog2.setKapiId(kapiKGS.getKgsId());
+							session.saveOrUpdate(pdksLog2);
+							if (islemNeden != null) {
+								PersonelHareketIslem islem = new PersonelHareketIslem();
+								islem.setAciklama(pdksLog2.getKgsId() + " " + kapiKGS.getKapi().getAciklama() + " olarak güncellendi. [ " + pdksLog2.getId() + " ]");
+								islem.setOnayDurum(PersonelHareketIslem.ONAY_DURUM_ONAYLANDI);
+								islem.setOlusturmaTarihi(guncellemeZamani);
+								islem.setGuncelleyenUser(onaylayanUser);
+								islem.setOnaylayanUser(loginUser);
+								islem.setZaman(pdksLog.getZaman());
+								islem.setIslemTipi("U");
+								islem.setNeden(islemNeden);
+								session.saveOrUpdate(islem);
+								pdksLog.setIslemId(islem.getId());
+							}
+							pdksLog.setGuncellemeZamani(guncellemeZamani);
+							pdksLog.setDurum(Boolean.FALSE);
+							session.saveOrUpdate(pdksLog);
+						}
+
+					} else {
+						StringBuffer sp = new StringBuffer();
+						sp.append("SP_POOL_TERMINAL_UPDATE");
+						LinkedHashMap map = new LinkedHashMap();
+						if (session != null)
+							map.put(PdksEntityController.MAP_KEY_SESSION, session);
+						map.put("eklenenId", pdksLog.getKgsId());
+						map.put("pdks", 1);
+						try {
+							pdksEntityController.execSPList(map, sp, null);
+						} catch (Exception e) {
+							pdksLog.setGuncellemeZamani(guncellemeZamani);
+							pdksLog.setKapiId(kapiKGS.getKgsId());
+							session.saveOrUpdate(pdksLog);
+						}
+						sp = null;
+					}
+
+				}
+			}
+			session.flush();
+		}
+		list = null;
 	}
 
 	/**
