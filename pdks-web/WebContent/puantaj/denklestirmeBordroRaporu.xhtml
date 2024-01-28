@@ -23,7 +23,7 @@
 									reRender="denklestirmeDonemiTable,anaForm" />
 							</rich:inputNumberSpinner>
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{denklestirmeBordroRaporuHome.aylar!=null}">
 							<ui:define name="label">Ay</ui:define>
 							<h:selectOneMenu value="#{denklestirmeBordroRaporuHome.ay}" required="true" requiredMessage="Başlangıç ay seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
