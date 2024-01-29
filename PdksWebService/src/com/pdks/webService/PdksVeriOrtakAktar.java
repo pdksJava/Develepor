@@ -1617,7 +1617,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 			veriIsle("izinTipi", izinERP.getIzinTipi(), veriSorguMap);
 			veriIsle("personelIzin", izinERP.getReferansNoERP(), veriSorguMap);
 		}
-		List<Personel> personelList = pdksDAO.getObjectByInnerObjectList("pdksSicilNo", veriSorguMap.get("personel"), Personel.class);
+
+		List<Personel> personelList = getObjectListFromDataList("pdksSicilNo", veriSorguMap.get("personel"), Personel.class);
 		if (personelList.size() > 1)
 			personelList = PdksUtil.sortListByAlanAdi(personelList, "iseBaslamaTarihi", Boolean.FALSE);
 		TreeMap<String, Personel> personelMap = new TreeMap<String, Personel>();
@@ -1628,8 +1629,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 		}
 		personelList = null;
 		// TreeMap<String, Personel> personelMap = veriSorguMap.containsKey("personel") ? pdksDAO.getObjectByInnerObjectMap("getPdksSicilNo", "pdksSicilNo", veriSorguMap.get("personel"), Personel.class, false) : new TreeMap<String, Personel>();
-		TreeMap<String, ERPPersonel> personelERPHataliMap = veriSorguMap.containsKey("personel") ? pdksDAO.getObjectByInnerObjectMap("getSicilNo", "sicilNo", veriSorguMap.get("personel"), ERPPersonel.class, false) : new TreeMap<String, ERPPersonel>();
-		TreeMap<String, IzinReferansERP> izinERPMap = veriSorguMap.containsKey("personelIzin") ? pdksDAO.getObjectByInnerObjectMap("getId", "id", veriSorguMap.get("personelIzin"), IzinReferansERP.class, false) : new TreeMap<String, IzinReferansERP>();
+		TreeMap<String, ERPPersonel> personelERPHataliMap = veriSorguMap.containsKey("personel") ? getParamListMap("getSicilNo", "sicilNo", veriSorguMap.get("personel"), ERPPersonel.class, false) : new TreeMap<String, ERPPersonel>();
+		TreeMap<String, IzinReferansERP> izinERPMap = veriSorguMap.containsKey("personelIzin") ? getParamListMap("getId", "id", veriSorguMap.get("personelIzin"), IzinReferansERP.class, false) : new TreeMap<String, IzinReferansERP>();
 		TreeMap<String, IzinTipi> izinTipiMap = null;
 		String erpIzinTipiOlusturStr = sistemDestekVar && mailMap.containsKey("erpIzinTipiOlustur") ? (String) mailMap.get("erpIzinTipiOlustur") : "";
 		boolean erpIzinTipiOlustur = erpIzinTipiOlusturStr.equals("1");
@@ -3551,6 +3552,64 @@ public class PdksVeriOrtakAktar implements Serializable {
 	}
 
 	/**
+	 * @param method
+	 * @param fieldName
+	 * @param dataIdList
+	 * @param class1
+	 * @param yaz
+	 * @return
+	 */
+	public TreeMap getParamListMap(String method, String fieldName, List dataIdList, Class class1, boolean yaz) {
+		TreeMap map = new TreeMap();
+		if (dataIdList != null) {
+			List veriList = getObjectListFromDataList(fieldName, dataIdList, class1);
+			if (!veriList.isEmpty())
+				map = pdksDAO.getTreeMapByList(veriList, method, yaz);
+		}
+		return map;
+	}
+
+	/**
+	 * @param fieldName
+	 * @param dataIdList
+	 * @param class1
+	 * @return
+	 */
+	public List getObjectListFromDataList(String fieldName, List dataIdList, Class class1) {
+		List idList = new ArrayList();
+		List veriList = new ArrayList();
+		if (pdksDAO == null)
+			pdksDAO = Constants.pdksDAO;
+		int size = 1800;
+		List idInputList = new ArrayList(dataIdList);
+		while (!idInputList.isEmpty()) {
+			for (Iterator iterator = idInputList.iterator(); iterator.hasNext();) {
+				Object long1 = (Object) iterator.next();
+				idList.add(long1);
+				iterator.remove();
+				if (idList.size() >= size)
+					break;
+			}
+			HashMap fields = new HashMap();
+			fields.put(fieldName, idList);
+			try {
+				List list = pdksDAO.getObjectByInnerObjectList(fields, class1);
+				if (!list.isEmpty())
+					veriList.addAll(list);
+				list = null;
+			} catch (Exception e) {
+				logger.error(e);
+				idInputList.clear();
+			}
+
+			fields = null;
+			idList.clear();
+
+		}
+		return veriList;
+	}
+
+	/**
 	 * @param dataIdList
 	 * @param sb
 	 * @param fieldName
@@ -3800,9 +3859,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 			personelDigerMap.put(personelKGS.getSicilNo(), personel);
 		}
 		personelDigerList = null;
-		TreeMap<String, ERPPersonel> personelERPHataliMap = !fields.isEmpty() ? pdksDAO.getObjectByInnerObjectMap(fields, ERPPersonel.class, true) : new TreeMap<String, ERPPersonel>();
-		TreeMap<String, Sirket> sirketMap = veriSorguMap.containsKey("sirket") ? pdksDAO.getObjectByInnerObjectMap("getErpKodu", "erpKodu", veriSorguMap.get("sirket"), Sirket.class, false) : new TreeMap<String, Sirket>();
-		TreeMap<String, Personel> personelPDKSMap = veriSorguMap.containsKey("personel") ? pdksDAO.getObjectByInnerObjectMap("getPdksSicilNo", "pdksSicilNo", veriSorguMap.get("personel"), Personel.class, false) : new TreeMap<String, Personel>();
+
+		TreeMap<String, ERPPersonel> personelERPHataliMap = !personelNoList.isEmpty() ? getParamListMap("getSicilNo", "sicilNo", personelNoList, ERPPersonel.class, true) : new TreeMap<String, ERPPersonel>();
+		TreeMap<String, Sirket> sirketMap = veriSorguMap.containsKey("sirket") ? getParamListMap("getErpKodu", "erpKodu", veriSorguMap.get("sirket"), Sirket.class, false) : new TreeMap<String, Sirket>();
+		TreeMap<String, Personel> personelPDKSMap = veriSorguMap.containsKey("personel") ? getParamListMap("getPdksSicilNo", "pdksSicilNo", veriSorguMap.get("personel"), Personel.class, false) : new TreeMap<String, Personel>();
 		fields.clear();
 		fields.put("Map", "getKodu");
 		fields.put("tipi", Tanim.TIPI_PERSONEL_EK_SAHA);
