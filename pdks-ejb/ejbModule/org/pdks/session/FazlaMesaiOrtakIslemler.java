@@ -758,7 +758,6 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	 */
 	public int aylariDoldur(int donemYil, int donemAy, List<SelectItem> aylar, Session session) {
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.MONTH, 1);
 		int maxYil = cal.get(Calendar.YEAR);
 		int sonDonem = (maxYil * 100) + cal.get(Calendar.MONTH) + 1;
 		HashMap fields = new HashMap();
