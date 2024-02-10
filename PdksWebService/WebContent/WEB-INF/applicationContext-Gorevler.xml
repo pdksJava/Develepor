@@ -4,7 +4,7 @@
 <beans>
 	<bean name="personelKontrol" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass">
-			<value>com.pdks.quartz.model.PersonelKontrol</value>
+			<value>org.pdks.quartz.model.PersonelKontrol</value>
 		</property>
 		<property name="jobDataAsMap">
 			<map>
@@ -24,7 +24,7 @@
 	</bean>
 	<bean name="logRefresh" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass">
-			<value>com.pdks.quartz.model.LogRefresh</value>
+			<value>org.pdks.quartz.model.LogRefresh</value>
 		</property>
 		<property name="jobDataAsMap">
 			<map>
