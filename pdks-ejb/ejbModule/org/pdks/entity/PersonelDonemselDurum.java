@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -24,7 +25,8 @@ public class PersonelDonemselDurum extends BaseObject {
 	private Personel personel;
 
 	private Date basTarih, bitTarih;
-	private PersonelDurumTipi PersonelDurumTipi;
+	private PersonelDurumTipi personelDurumTipi;
+	private Integer personelDurumTipiId;
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "PERSONEL_ID", nullable = false)
@@ -59,11 +61,39 @@ public class PersonelDonemselDurum extends BaseObject {
 
 	@Column(name = "DURUM_TIPI")
 	public PersonelDurumTipi getPersonelDurumTipi() {
-		return PersonelDurumTipi;
+		return personelDurumTipi;
 	}
 
 	public void setPersonelDurumTipi(PersonelDurumTipi personelDurumTipi) {
-		PersonelDurumTipi = personelDurumTipi;
+		this.personelDurumTipiId = personelDurumTipi != null ? personelDurumTipi.value() : null;
+		this.personelDurumTipi = personelDurumTipi;
 	}
 
+	@Transient
+	public Integer getPersonelDurumTipiId() {
+		return personelDurumTipiId;
+	}
+
+	public void setPersonelDurumTipiId(Integer personelDurumTipiId) {
+		this.personelDurumTipi = personelDurumTipiId != null ? PersonelDurumTipi.fromValue(personelDurumTipiId) : null;
+		this.personelDurumTipiId = personelDurumTipiId;
+	}
+
+	@Transient
+	public String getPersonelDurumTipiAciklama() {
+		return PersonelDonemselDurum.getPersonelDurumTipiAciklama(personelDurumTipi);
+	}
+
+	@Transient
+	public static String getPersonelDurumTipiAciklama(PersonelDurumTipi tipi) {
+		String aciklama = "";
+		if (tipi != null) {
+			Integer value = tipi.value();
+			if (value.equals(PersonelDurumTipi.GEBE.value()))
+				aciklama = "Gebe";
+			else if (value.equals(PersonelDurumTipi.SUT_IZNI.value()))
+				aciklama = "Süt İzni";
+		}
+		return aciklama;
+	}
 }

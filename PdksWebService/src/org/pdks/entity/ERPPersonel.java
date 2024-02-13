@@ -11,6 +11,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Immutable;
+
 import org.pdks.genel.model.PdksUtil;
 
 @Entity(name = ERPPersonel.TABLE_NAME)

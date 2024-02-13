@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.mail.internet.InternetAddress;
 import javax.persistence.EntityManager;
 import javax.ws.rs.HttpMethod;
@@ -47,6 +48,8 @@ import org.pdks.entity.Notice;
 import org.pdks.entity.PdksPersonelView;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDinamikAlan;
+import org.pdks.entity.PersonelDonemselDurum;
+import org.pdks.entity.PersonelDurumTipi;
 import org.pdks.entity.PersonelExtra;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.PersonelIzinDetay;
@@ -115,7 +118,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 	private PersonelDinamikAlan personelDinamikAlan;
 	private HashMap<String, Boolean> personelDurumMap = new HashMap<String, Boolean>();
-
+	private PersonelDonemselDurum donemselDurum;
+	private List<SelectItem> personelDurumTipiList;
+	private List<PersonelDonemselDurum> donemselDurumList;
 	private TreeMap<String, PersonelDinamikAlan> personelDinamikMap;
 	private PersonelView personelView;
 	private List<Departman> departmanTanimList = new ArrayList<Departman>(), departmanKullaniciList = new ArrayList<Departman>();
@@ -136,6 +141,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 	private List<Role> distinctRoleList = new ArrayList<Role>();
 	private List<Tanim> distinctTesisList = new ArrayList<Tanim>();
+	private List<Long> gebeSutIzniDurumList = new ArrayList<Long>();
 
 	private List<String> ccAdresList = null, bccAdresList = null, hareketAdresList = null;
 	private String adi, soyadi, sicilNo, yoneticiTipi, ccAdres, adresTipi, sanalPersonelAciklama, ePosta, denemeMesaj;
@@ -178,6 +184,79 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	@Begin(join = true)
 	public void create() {
 		super.create();
+	}
+
+	/**
+	 * @param id
+	 * @return
+	 */
+	public boolean gebeSutIzniDurum(Long id) {
+		boolean gebeSutIzniDurum = false;
+		if (id != null && gebeSutIzniDurumList != null)
+			gebeSutIzniDurum = gebeSutIzniDurumList.contains(id);
+		return gebeSutIzniDurum;
+	}
+
+	/**
+	 * @param personel
+	 * @return
+	 */
+	public String gebeSutIzniSecimi(Personel personel) {
+		donemselDurum = new PersonelDonemselDurum();
+		donemselDurum.setPersonel(personel);
+		donemselDurumList = null;
+		personelDurumTipiList = new ArrayList<SelectItem>();
+		if (personel != null) {
+			HashMap fields = new HashMap();
+			fields.put("personel.id", personel.getId());
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			donemselDurumList = pdksEntityController.getObjectByInnerObjectList(fields, PersonelDonemselDurum.class);
+			if (!donemselDurumList.isEmpty())
+				donemselDurumList = PdksUtil.sortListByAlanAdi(donemselDurumList, "basTarih", Boolean.FALSE);
+			if (getPersonelSirketGebelikDurum(personel.getSirket()))
+				personelDurumTipiList.add(new SelectItem(PersonelDurumTipi.GEBE.value(), PersonelDonemselDurum.getPersonelDurumTipiAciklama(PersonelDurumTipi.GEBE)));
+			personelDurumTipiList.add(new SelectItem(PersonelDurumTipi.SUT_IZNI.value(), PersonelDonemselDurum.getPersonelDurumTipiAciklama(PersonelDurumTipi.SUT_IZNI)));
+			if (personelDurumTipiList.size() == 1)
+				donemselDurum.setPersonelDurumTipiId((Integer) personelDurumTipiList.get(0).getValue());
+		}
+		setInstance(personel);
+		return "";
+
+	}
+
+	/**
+	 * @param value
+	 * @return
+	 */
+	public String setPersonelDonemselDurum(PersonelDonemselDurum value) {
+		if (value == null) {
+			Personel personel = getInstance();
+			value = new PersonelDonemselDurum();
+			value.setPersonel(personel);
+			if (personelDurumTipiList.size() == 1)
+				donemselDurum.setPersonelDurumTipiId((Integer) personelDurumTipiList.get(0).getValue());
+		}
+		donemselDurum = value;
+		return "";
+	}
+
+	/**
+	 * @param personel
+	 * @return
+	 */
+	@Transactional
+	public String savePersonelDonemselDurum() {
+		if (donemselDurum.getBasTarih().after(donemselDurum.getBitTarih())) {
+			PdksUtil.addMessageWarn("Başlangıç tarihi bitişi tarihinden büyük olamaz!");
+		} else {
+			pdksEntityController.saveOrUpdate(session, entityManager, donemselDurum);
+			gebeSutIzniSecimi(donemselDurum.getPersonel());
+
+		}
+
+		return "";
+
 	}
 
 	/**
@@ -224,6 +303,20 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		Personel pdksPersonel = getInstance();
 		Sirket sirket = pdksPersonel.getSirket();
 		if (sirket != null && pdksPersonel.getCinsiyetBayan()) {
+
+			getPersonelSirketGebelikDurum(sirket);
+
+		}
+		return "";
+	}
+
+	/**
+	 * @param sirket
+	 * @return
+	 */
+	private boolean getPersonelSirketGebelikDurum(Sirket sirket) {
+		gebeSecim = false;
+		if (sirket != null) {
 			Departman departman = sirket.getDepartman();
 			HashMap parametreMap = new HashMap();
 			parametreMap.put("durum", Boolean.TRUE);
@@ -239,7 +332,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			gebeSecim = !list.isEmpty();
 			list = null;
 		}
-		return "";
+
+		return gebeSecim;
 	}
 
 	/**
@@ -442,7 +536,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			else
 				calismaModeliList = new ArrayList<CalismaModeli>();
 			if (pdksPersonel.getSirket() != null) {
- 				fillCalismaModeli(pdksPersonel);
+				fillCalismaModeli(pdksPersonel);
 				if (calismaModeliList.size() == 1) {
 					pdksPersonel.setCalismaModeli(calismaModeliList.get(0));
 					modelDegisti();
@@ -1945,6 +2039,10 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 */
 	public String fillPersonelKGSList() {
 		personelDurumMap.clear();
+		if (gebeSutIzniDurumList == null)
+			gebeSutIzniDurumList = new ArrayList<Long>();
+		else
+			gebeSutIzniDurumList.clear();
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		session.clear();
@@ -2091,10 +2189,15 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				else
 					personelKGSMap.clear();
 				HashMap<Long, PersonelKGS> idMap = new HashMap<Long, PersonelKGS>();
+
 				for (PersonelView personelView : list) {
 					boolean personelTanimli = false;
 					Personel pdksPersonel = personelView.getPdksPersonel();
 					if (pdksPersonel != null && pdksPersonel.getSirket() != null) {
+						if (pdksPersonel.getSirket().isGebelikSutIzinVar()) {
+							if (pdksPersonel.getCinsiyetBayan())
+								gebeSutIzniDurumList.add(pdksPersonel.getId());
+						}
 						PersonelKGS personelKGS = pdksPersonel.getPersonelKGS();
 						if (personelKGS.getKapiSirket() != null && personelKGS.getKapiSirket().getDurum().equals(Boolean.FALSE))
 							idMap.put(personelKGS.getId(), personelKGS);
@@ -2171,6 +2274,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			logger.error("PDKS hata out : " + e.getMessage());
 
 		}
+		if (!ortakIslemler.getParameterKeyHasStringValue("gebeSutIzniDurum"))
+			gebeSutIzniDurumList.clear();
 		dosyaGuncelleDurum();
 		setTanimsizPersonelList(list);
 		return "";
@@ -4790,6 +4895,38 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 	public void setCOL_PERSONEL_TIPI_ADI(int cOL_PERSONEL_TIPI_ADI) {
 		COL_PERSONEL_TIPI_ADI = cOL_PERSONEL_TIPI_ADI;
+	}
+
+	public List<Long> getGebeSutIzniDurumList() {
+		return gebeSutIzniDurumList;
+	}
+
+	public void setGebeSutIzniDurumList(List<Long> gebeSutIzniDurumList) {
+		this.gebeSutIzniDurumList = gebeSutIzniDurumList;
+	}
+
+	public PersonelDonemselDurum getDonemselDurum() {
+		return donemselDurum;
+	}
+
+	public void setDonemselDurum(PersonelDonemselDurum donemselDurum) {
+		this.donemselDurum = donemselDurum;
+	}
+
+	public List<PersonelDonemselDurum> getDonemselDurumList() {
+		return donemselDurumList;
+	}
+
+	public void setDonemselDurumList(List<PersonelDonemselDurum> donemselDurumList) {
+		this.donemselDurumList = donemselDurumList;
+	}
+
+	public List<SelectItem> getPersonelDurumTipiList() {
+		return personelDurumTipiList;
+	}
+
+	public void setPersonelDurumTipiList(List<SelectItem> personelDurumTipiList) {
+		this.personelDurumTipiList = personelDurumTipiList;
 	}
 
 }

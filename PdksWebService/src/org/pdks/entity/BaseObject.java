@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+
 import org.pdks.genel.model.PdksUtil;
 
 @MappedSuperclass
