@@ -59,36 +59,44 @@ public class PersonelDonemselDurum extends BaseObject {
 		this.bitTarih = bitTarih;
 	}
 
-	@Column(name = "DURUM_TIPI")
+	@Column(name = "DURUM_TIPI", nullable = false)
+	public Integer getPersonelDurumTipiId() {
+		return personelDurumTipiId;
+	}
+
+	public void setPersonelDurumTipiId(Integer value) {
+		this.personelDurumTipi = value != null ? PersonelDurumTipi.fromValue(value) : null;
+		this.personelDurumTipiId = value;
+	}
+
+	@Transient
 	public PersonelDurumTipi getPersonelDurumTipi() {
 		return personelDurumTipi;
 	}
 
 	public void setPersonelDurumTipi(PersonelDurumTipi personelDurumTipi) {
-		this.personelDurumTipiId = personelDurumTipi != null ? personelDurumTipi.value() : null;
 		this.personelDurumTipi = personelDurumTipi;
 	}
 
 	@Transient
-	public Integer getPersonelDurumTipiId() {
-		return personelDurumTipiId;
-	}
-
-	public void setPersonelDurumTipiId(Integer personelDurumTipiId) {
-		this.personelDurumTipi = personelDurumTipiId != null ? PersonelDurumTipi.fromValue(personelDurumTipiId) : null;
-		this.personelDurumTipiId = personelDurumTipiId;
-	}
-
-	@Transient
 	public String getPersonelDurumTipiAciklama() {
-		return PersonelDonemselDurum.getPersonelDurumTipiAciklama(personelDurumTipi);
+		return PersonelDonemselDurum.getPersonelDurumTipiAciklama(personelDurumTipiId);
 	}
 
 	@Transient
-	public static String getPersonelDurumTipiAciklama(PersonelDurumTipi tipi) {
+	public boolean isGebe() {
+		return personelDurumTipiId != null && PersonelDurumTipi.GEBE.value().equals(personelDurumTipiId);
+	}
+
+	@Transient
+	public boolean isSutIzni() {
+		return personelDurumTipiId != null && PersonelDurumTipi.SUT_IZNI.value().equals(personelDurumTipiId);
+	}
+
+	@Transient
+	public static String getPersonelDurumTipiAciklama(Integer value) {
 		String aciklama = "";
-		if (tipi != null) {
-			Integer value = tipi.value();
+		if (value != null) {
 			if (value.equals(PersonelDurumTipi.GEBE.value()))
 				aciklama = "Gebe";
 			else if (value.equals(PersonelDurumTipi.SUT_IZNI.value()))

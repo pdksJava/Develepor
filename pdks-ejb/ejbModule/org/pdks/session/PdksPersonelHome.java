@@ -207,16 +207,61 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		donemselDurumList = null;
 		personelDurumTipiList = new ArrayList<SelectItem>();
 		if (personel != null) {
+			session.clear();
 			HashMap fields = new HashMap();
 			fields.put("personel.id", personel.getId());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			donemselDurumList = pdksEntityController.getObjectByInnerObjectList(fields, PersonelDonemselDurum.class);
-			if (!donemselDurumList.isEmpty())
+			if (!donemselDurumList.isEmpty()) {
+				Date bugun = PdksUtil.getDate(new Date());
 				donemselDurumList = PdksUtil.sortListByAlanAdi(donemselDurumList, "basTarih", Boolean.FALSE);
+				boolean flush = false;
+				List<PersonelDonemselDurum> pasifList = new ArrayList<PersonelDonemselDurum>();
+				for (Iterator iterator = donemselDurumList.iterator(); iterator.hasNext();) {
+					PersonelDonemselDurum personelDonemselDurum = (PersonelDonemselDurum) iterator.next();
+					if (personelDonemselDurum.getDurum()) {
+						if (personelDonemselDurum.getBasTarih().getTime() <= bugun.getTime() && personelDonemselDurum.getBitTarih().getTime() >= bugun.getTime()) {
+							if (personelDonemselDurum.isGebe()) {
+								if (personel.isGebelikMuayeneIzniKullan() == false || personel.isSutIzniKullan()) {
+									personel.setGebeMi(true);
+									personel.setSutIzni(false);
+									personel.setGuncellemeTarihi(personelDonemselDurum.getSonIslemTarihi());
+									personel.setGuncelleyenUser(personelDonemselDurum.getSonIslemYapan());
+									flush = true;
+								}
+							} else if (personelDonemselDurum.isSutIzni()) {
+								if (personel.isGebelikMuayeneIzniKullan() || personel.isSutIzniKullan() == false) {
+									personel.setGebeMi(false);
+									personel.setSutIzni(true);
+									personel.setGuncellemeTarihi(personelDonemselDurum.getSonIslemTarihi());
+									personel.setGuncelleyenUser(personelDonemselDurum.getSonIslemYapan());
+									flush = true;
+								}
+							}
+						}
+					} else {
+						pasifList.add(personelDonemselDurum);
+						iterator.remove();
+					}
+
+				}
+				if (!pasifList.isEmpty())
+					donemselDurumList.addAll(pasifList);
+				pasifList = null;
+				if (flush) {
+					pdksEntityController.saveOrUpdate(session, entityManager, personel);
+					session.flush();
+				}
+
+			}
+			List<Integer> list = new ArrayList<Integer>();
 			if (getPersonelSirketGebelikDurum(personel.getSirket()))
-				personelDurumTipiList.add(new SelectItem(PersonelDurumTipi.GEBE.value(), PersonelDonemselDurum.getPersonelDurumTipiAciklama(PersonelDurumTipi.GEBE)));
-			personelDurumTipiList.add(new SelectItem(PersonelDurumTipi.SUT_IZNI.value(), PersonelDonemselDurum.getPersonelDurumTipiAciklama(PersonelDurumTipi.SUT_IZNI)));
+				list.add(PersonelDurumTipi.GEBE.value());
+			list.add(PersonelDurumTipi.SUT_IZNI.value());
+			for (Integer tipi : list)
+				personelDurumTipiList.add(new SelectItem(tipi, PersonelDonemselDurum.getPersonelDurumTipiAciklama(tipi)));
+			list = null;
 			if (personelDurumTipiList.size() == 1)
 				donemselDurum.setPersonelDurumTipiId((Integer) personelDurumTipiList.get(0).getValue());
 		}
@@ -247,12 +292,40 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 */
 	@Transactional
 	public String savePersonelDonemselDurum() {
-		if (donemselDurum.getBasTarih().after(donemselDurum.getBitTarih())) {
-			PdksUtil.addMessageWarn("Başlangıç tarihi bitişi tarihinden büyük olamaz!");
-		} else {
-			pdksEntityController.saveOrUpdate(session, entityManager, donemselDurum);
-			gebeSutIzniSecimi(donemselDurum.getPersonel());
-
+		List<PersonelDonemselDurum> list = null;
+		if (donemselDurum.getDurum()) {
+			if (donemselDurum.getBasTarih().after(donemselDurum.getBitTarih())) {
+				PdksUtil.addMessageWarn("Başlangıç tarihi bitişi tarihinden büyük olamaz!");
+			} else {
+				HashMap fields = new HashMap();
+				fields.put("personel.id=", donemselDurum.getPersonel().getId());
+				fields.put("bitTarih>=", donemselDurum.getBasTarih());
+				fields.put("basTarih<=", donemselDurum.getBitTarih());
+				if (donemselDurum.getId() != null)
+					fields.put("id<>", donemselDurum.getId());
+				list = pdksEntityController.getObjectByInnerObjectListInLogic(fields, PersonelDonemselDurum.class);
+				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+					PersonelDonemselDurum personelDonemselDurum = (PersonelDonemselDurum) iterator.next();
+					if (personelDonemselDurum.getDurum().equals(Boolean.FALSE))
+						iterator.remove();
+				}
+			}
+			if (list == null || list.isEmpty()) {
+				if (donemselDurum.getId() == null) {
+					donemselDurum.setOlusturmaTarihi(new Date());
+					donemselDurum.setOlusturanUser(authenticatedUser);
+				} else {
+					donemselDurum.setGuncellemeTarihi(new Date());
+					donemselDurum.setGuncelleyenUser(authenticatedUser);
+				}
+				pdksEntityController.saveOrUpdate(session, entityManager, donemselDurum);
+				session.flush();
+				gebeSutIzniSecimi(donemselDurum.getPersonel());
+			} else {
+				PersonelDonemselDurum personelDonemselDurum = list.get(0);
+				PdksUtil.addMessageWarn(authenticatedUser.dateFormatla(personelDonemselDurum.getBasTarih()) + " - " + authenticatedUser.dateFormatla(personelDonemselDurum.getBitTarih()) + " " + personelDonemselDurum.getPersonelDurumTipiAciklama() + " bilgisi girilmiştir!");
+			}
+			list = null;
 		}
 
 		return "";
