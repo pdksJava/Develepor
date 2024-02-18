@@ -60,6 +60,7 @@ import org.pdks.entity.Tanim;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaSablonu;
 import org.pdks.quartz.PersonelERPGuncelleme;
+import org.pdks.sap.entity.PersonelERPDB;
 import org.pdks.security.entity.DefaultPasswordGenerator;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
@@ -157,7 +158,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private Sirket oldSirket;
 	private Personel asilYonetici1;
 	private String hataMesaj = "", personelERPGuncelleme = "";
-	private Boolean updateValue, pdks, servisCalisti = Boolean.FALSE, fazlaMesaiIzinKullan = Boolean.FALSE, gebeMi = Boolean.FALSE, tesisYetki = Boolean.FALSE, istenAyrilmaGoster = Boolean.FALSE;
+	private Boolean updateValue, yeniPersonelGuncelle, pdks, servisCalisti = Boolean.FALSE, fazlaMesaiIzinKullan = Boolean.FALSE, gebeMi = Boolean.FALSE, tesisYetki = Boolean.FALSE, istenAyrilmaGoster = Boolean.FALSE;
 	private Boolean sutIzni = Boolean.FALSE, kimlikNoGoster = Boolean.FALSE, kullaniciPersonel = Boolean.FALSE, sanalPersonel = Boolean.FALSE, icapDurum = Boolean.FALSE, yoneticiRolVarmi = Boolean.FALSE;
 	private Boolean ustYonetici = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, suaOlabilir = Boolean.FALSE, egitimDonemi = Boolean.FALSE, partTimeDurum = Boolean.FALSE, tesisDurum = Boolean.FALSE;
 	private Boolean emailCCDurum = Boolean.FALSE, emailBCCDurum = Boolean.FALSE, taseronKulaniciTanimla = Boolean.FALSE, manuelTanimla = Boolean.FALSE, ikinciYoneticiManuelTanimla = Boolean.FALSE;
@@ -2105,6 +2106,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			ortakIslemler.loggerErrorYaz(null, ex);
 		}
 		setTanimsizPersonelList(list);
+		yeniPersonelOlustur();
 		return "";
 	}
 
@@ -2352,6 +2354,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			gebeSutIzniDurumList.clear();
 		dosyaGuncelleDurum();
 		setTanimsizPersonelList(list);
+		yeniPersonelOlustur();
 		return "";
 	}
 
@@ -2713,6 +2716,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		fazlaMesaiIzinKullan = Boolean.FALSE;
+		yeniPersonelGuncelle = Boolean.FALSE;
 		bakiyeIzinGoster = Boolean.FALSE;
 		fazlaMesaiOde = Boolean.FALSE;
 		sanalPersonel = Boolean.FALSE;
@@ -2769,6 +2773,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (tableERPOku && (authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()))
 			updateValue = (authenticatedUser.isIK() == false && PdksUtil.getTestSunucuDurum()) || ortakIslemler.getParameterKeyHasStringValue(PersonelERPGuncelleme.PARAMETER_KEY + "Update");
 		dosyaGuncelleDurum();
+		yeniPersonelOlustur();
 	}
 
 	/**
@@ -2778,7 +2783,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public String personelERPDBGuncelle() throws Exception {
 		try {
 			ortakIslemler.personelERPDBGuncelle(true, null, session);
-
+			yeniPersonelOlustur();
 		} catch (Exception ex) {
 			try {
 				ortakIslemler.loggerErrorYaz(authenticatedUser.getCalistigiSayfa(), ex);
@@ -2789,6 +2794,28 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		}
 
 		return "";
+	}
+
+	private void yeniPersonelOlustur() {
+		yeniPersonelGuncelle = false;
+		String key = ortakIslemler.getParametrePersonelERPTableView();
+		if (ortakIslemler.getParameterKeyHasStringValue(key)) {
+			StringBuffer sb = new StringBuffer();
+			sb.append(" SELECT D.* FROM " + PersonelERPDB.VIEW_NAME + " D WITH(nolock) ");
+			sb.append(" INNER JOIN " + PersonelKGS.TABLE_NAME + " PS ON PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + "=D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO);
+			sb.append(" INNER JOIN " + KapiSirket.TABLE_NAME + " K ON K." + KapiSirket.COLUMN_NAME_ID + " = PS." + PersonelKGS.COLUMN_NAME_KGS_SIRKET + "  AND PS." + PersonelKGS.COLUMN_NAME_DURUM + " = 1");
+			sb.append(" AND K." + KapiSirket.COLUMN_NAME_DURUM + " = 1 AND K." + KapiSirket.COLUMN_NAME_BIT_TARIH + " > GETDATE()");
+			sb.append(" LEFT JOIN " + Personel.TABLE_NAME + " P ON P." + Personel.COLUMN_NAME_KGS_PERSONEL + " = PS." + PersonelKGS.COLUMN_NAME_ID);
+			sb.append(" WHERE P." + Personel.COLUMN_NAME_ID + " IS NULL");
+			sb.append(" AND PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " NOT IN ( SELECT " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " FROM " + Personel.TABLE_NAME + ")");
+			HashMap fields = new HashMap();
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			List<PersonelERPDB> list2 = pdksEntityController.getObjectBySQLList(sb, fields, PersonelERPDB.class);
+			yeniPersonelGuncelle = !list2.isEmpty();
+			list2 = null;
+		}
+
 	}
 
 	/**
@@ -5032,6 +5059,14 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 	public void setUpdateValue(Boolean updateValue) {
 		this.updateValue = updateValue;
+	}
+
+	public Boolean getYeniPersonelGuncelle() {
+		return yeniPersonelGuncelle;
+	}
+
+	public void setYeniPersonelGuncelle(Boolean yeniPersonelGuncelle) {
+		this.yeniPersonelGuncelle = yeniPersonelGuncelle;
 	}
 
 }
