@@ -2551,7 +2551,7 @@ public class OrtakIslemler implements Serializable {
 		List idList = new ArrayList();
 		List veriList = new ArrayList();
 		try {
-			int size = 1800 - fieldsOrj.size();
+			int size = PdksEntityController.LIST_MAX_SIZE - fieldsOrj.size();
 			List idInputList = new ArrayList(dataIdList);
 			while (!idInputList.isEmpty()) {
 				HashMap map = new HashMap();
@@ -6564,7 +6564,8 @@ public class OrtakIslemler implements Serializable {
 	private List denklestirmePersonelBul(DepartmanDenklestirmeDonemi denklestirmeDonemi, String searchKey, Object value, boolean pdks, Session session) {
 		HashMap parametreMap = new HashMap();
 		// parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "personel");
-		parametreMap.put("pdksPersonel." + searchKey, value);
+		String fieldName = "pdksPersonel." + searchKey;
+		parametreMap.put(fieldName, value);
 		parametreMap.put("pdksPersonel.sskCikisTarihi>=", denklestirmeDonemi.getBaslangicTarih());
 		if (!Personel.getGrubaGirisTarihiAlanAdi().equalsIgnoreCase(Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI))
 			parametreMap.put("pdksPersonel.iseBaslamaTarihi<=", denklestirmeDonemi.getBitisTarih());
@@ -6576,7 +6577,8 @@ public class OrtakIslemler implements Serializable {
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<PersonelView> perList;
 		try {
-			perList = getPersonelViewList(pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap, PdksPersonelView.class));
+//			perList = getPersonelViewList(pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap, PdksPersonelView.class));
+			perList = getPersonelViewList(getParamList(true, (List) value, fieldName, parametreMap, PdksPersonelView.class, session));
 		} catch (Exception e) {
 			logger.error("Pdks hata in : \n");
 			e.printStackTrace();
