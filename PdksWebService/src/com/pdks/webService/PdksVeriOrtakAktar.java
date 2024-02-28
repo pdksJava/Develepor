@@ -971,15 +971,17 @@ public class PdksVeriOrtakAktar implements Serializable {
 								perNoList.add(mesaiPDKS.getPersonelNo());
 						}
 						if (perNoList != null && !perNoList.isEmpty()) {
+							String fieldName = "p";
 							HashMap fields = new HashMap();
 							StringBuffer sb = new StringBuffer();
 							sb.append("SELECT D.* FROM " + PersonelDenklestirme.TABLE_NAME + " D WITH(nolock)");
 							sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P ON  P." + Personel.COLUMN_NAME_ID + "=D." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
-							sb.append(" AND P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :p ");
+							sb.append(" AND P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
 							sb.append(" WHERE D." + PersonelDenklestirme.COLUMN_NAME_DONEM + "=" + denklestirmeAy.getId());
 							sb.append(" AND (D.ERP_AKTARILDI IS NULL OR D.ERP_AKTARILDI<>1)");
-							fields.put("p", perNoList);
-							List<PersonelDenklestirme> personelDenklestirmeList = pdksDAO.getNativeSQLList(fields, sb, PersonelDenklestirme.class);
+							fields.put(fieldName, perNoList);
+							List<PersonelDenklestirme> personelDenklestirmeList = getNativeSQLParamList(perNoList, sb, fieldName, fields, PersonelDenklestirme.class);
+							// pdksDAO.getNativeSQLList(fields, sb, PersonelDenklestirme.class);
 							if (!personelDenklestirmeList.isEmpty()) {
 								Date guncellemeTarihi = new Date();
 								for (PersonelDenklestirme personelDenklestirme : personelDenklestirmeList) {
@@ -2163,6 +2165,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 								idList.add(personelIzin.getId());
 						}
 						if (!idList.isEmpty()) {
+							String fieldName = "p";
 							fields.clear();
 							sb = new StringBuffer();
 							sb.append("SELECT I." + PersonelIzin.COLUMN_NAME_ID + ",P." + PersonelDenklestirme.COLUMN_NAME_ID + " AS PD_ID FROM " + PersonelIzin.TABLE_NAME + " I WITH(nolock)");
@@ -2170,10 +2173,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 							sb.append(" AND D." + DenklestirmeAy.COLUMN_NAME_AY + "= MONTH(I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ") AND D." + DenklestirmeAy.COLUMN_NAME_DURUM + "=1");
 							sb.append(" INNER JOIN  " + PersonelDenklestirme.TABLE_NAME + " P ON P." + PersonelDenklestirme.COLUMN_NAME_DONEM + "=D." + DenklestirmeAy.COLUMN_NAME_ID);
 							sb.append(" AND P." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + "=I." + PersonelIzin.COLUMN_NAME_PERSONEL);
-							sb.append(" WHERE I." + PersonelIzin.COLUMN_NAME_ID + " :p");
+							sb.append(" WHERE I." + PersonelIzin.COLUMN_NAME_ID + " :" + fieldName);
 							sb.append(" ORDER BY I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " DESC");
-							fields.put("p", idList);
-							List<Object[]> izinAcikList = pdksDAO.getNativeSQLList(fields, sb, null);
+							fields.put(fieldName, idList);
+							List<Object[]> izinAcikList = getNativeSQLParamList(idList, sb, fieldName, fields, null);
+
+							// pdksDAO.getNativeSQLList(fields, sb, null);
 							if (!izinAcikList.isEmpty()) {
 								List saveIzinList = new ArrayList();
 								Date guncellemeTarihi = new Date();
@@ -3998,8 +4003,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		}
 		fields.put(fieldName, personelNoList);
 		List<Personel> personelDigerList = getNativeSQLParamList(personelNoList, sb, fieldName, fields, Personel.class);
-		// List<Personel> personelDigerList = pdksDAO.getNativeSQLList(fields, sb, Personel.class);
-		TreeMap<String, Personel> personelDigerMap = new TreeMap<String, Personel>();
+ 		TreeMap<String, Personel> personelDigerMap = new TreeMap<String, Personel>();
 		for (Personel personel : personelDigerList) {
 			PersonelKGS personelKGS = personel.getPersonelKGS();
 			personelDigerMap.put(personelKGS.getSicilNo(), personel);
@@ -4116,6 +4120,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			saveIkinciYoneticiOlmazList("ikinciYoneticiOlmaz");
 
 		if (yoneticiIdList != null && !yoneticiIdList.isEmpty()) {
+			fieldName = "p";
 			sb = new StringBuffer();
 			sb.append(" WITH VERI AS ( ");
 			if (ikinciYoneticiOlmaz != null) {
@@ -4133,11 +4138,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 			sb.append(" WHERE U." + User.COLUMN_NAME_DURUM + "=1");
 			sb.append(" ) ");
 			sb.append(" SELECT DISTINCT P.* FROM VERI P ");
-			sb.append(" WHERE  P.ID :p ");
+			sb.append(" WHERE  P.ID :" + fieldName);
 
 			fields.clear();
-			fields.put("p", yoneticiIdList);
-			List<BigDecimal> list2 = pdksDAO.getNativeSQLList(fields, sb, null);
+			fields.put(fieldName, yoneticiIdList);
+			List<BigDecimal> list2 = getNativeSQLParamList(yoneticiIdList, sb, fieldName, fields, null);
 			if (!list2.isEmpty()) {
 				LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 				map.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_GET_IKINCI_BIRINCI_YONETICI_UPDATE");
