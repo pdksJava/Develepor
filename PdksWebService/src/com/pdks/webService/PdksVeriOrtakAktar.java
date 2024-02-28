@@ -3716,7 +3716,16 @@ public class PdksVeriOrtakAktar implements Serializable {
 				}
 				HashMap<String, Object> fields = new HashMap<String, Object>();
 				fields.putAll(fieldsOrj);
-				fields.put(fieldName, idList);
+				Object data = idList;
+				String key = fieldName;
+				if (idList.size() == 1 && fields.containsKey(fieldName)) {
+					fields.remove(fieldName);
+					data = idList.get(0);
+					if (logic)
+						key = fieldName + "=";
+				}
+				fields.put(key, data);
+
 				try {
 					List list = logic ? pdksDAO.getObjectByInnerObjectListInLogic(fields, class1) : pdksDAO.getObjectByInnerObjectList(fields, class1);
 					if (!list.isEmpty())
@@ -3755,6 +3764,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			pdksDAO = Constants.pdksDAO;
 		try {
 			int size = LIST_MAX_SIZE - fieldsOrj.size();
+			String str = ":" + fieldName, sqlStr = sb.toString();
 			List idInputList = new ArrayList(dataIdList);
 			while (!idInputList.isEmpty()) {
 				HashMap map = new HashMap();
@@ -3767,7 +3777,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 				}
 				HashMap<String, Object> fields = new HashMap<String, Object>();
 				fields.putAll(fieldsOrj);
-				fields.put(fieldName, idList);
+				if (idList.size() > 1 || sqlStr.indexOf(str) < 1)
+					fields.put(fieldName, idList);
+				else {
+					sb = new StringBuffer(PdksUtil.replaceAllManuel(sqlStr, str, "=:" + fieldName));
+					fields.put(fieldName, idList.get(0));
+				}
 				try {
 					List list = pdksDAO.getNativeSQLList(fields, sb, class1);
 					if (!list.isEmpty())
@@ -4003,7 +4018,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		}
 		fields.put(fieldName, personelNoList);
 		List<Personel> personelDigerList = getNativeSQLParamList(personelNoList, sb, fieldName, fields, Personel.class);
- 		TreeMap<String, Personel> personelDigerMap = new TreeMap<String, Personel>();
+		TreeMap<String, Personel> personelDigerMap = new TreeMap<String, Personel>();
 		for (Personel personel : personelDigerList) {
 			PersonelKGS personelKGS = personel.getPersonelKGS();
 			personelDigerMap.put(personelKGS.getSicilNo(), personel);
