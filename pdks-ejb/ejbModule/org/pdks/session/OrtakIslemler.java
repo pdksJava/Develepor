@@ -14534,10 +14534,10 @@ public class OrtakIslemler implements Serializable {
 			tanimYemek.setYemekAciklama("Tanimsiz");
 			HashMap<String, HareketKGS> yemekZamanMap = new HashMap<String, HareketKGS>();
 			String pattern = PdksUtil.getDateTimeFormat();
-			List<String> list=new ArrayList<String>();
+			List<String> list = new ArrayList<String>();
 			for (Iterator iterator = kgsList.iterator(); iterator.hasNext();) {
 				HareketKGS hareketKGS = (HareketKGS) iterator.next();
-				if (hareketKGS.getId()==null || list.contains(hareketKGS.getId()) ) {
+				if (hareketKGS.getId() == null || list.contains(hareketKGS.getId())) {
 					iterator.remove();
 					continue;
 				}
@@ -14614,6 +14614,7 @@ public class OrtakIslemler implements Serializable {
 				}
 
 			}
+			list = null;
 
 		}
 		return kgsList;
