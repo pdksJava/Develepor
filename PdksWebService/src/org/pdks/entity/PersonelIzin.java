@@ -16,7 +16,6 @@ import javax.persistence.Transient;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-
 import org.pdks.genel.model.PdksUtil;
 
 @Entity(name = PersonelIzin.TABLE_NAME)
@@ -488,6 +487,12 @@ public class PersonelIzin extends BaseObject {
 
 	public void setMesaj(String mesaj) {
 		this.mesaj = mesaj;
+	}
+
+	@Transient
+	public String getDonemKey() {
+		String str = this.getPersonelNo() + "_" + PdksUtil.convertToDateString(this.getBaslangicZamani(), "yyyy");
+		return str;
 	}
 
 	@Transient

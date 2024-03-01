@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.Min;
-
 import org.pdks.genel.model.PdksUtil;
 
 @Entity(name = Vardiya.TABLE_NAME)
