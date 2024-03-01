@@ -5,20 +5,20 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Immutable;
-import org.pdks.entity.BasePDKSObject;
 import org.pdks.session.PdksUtil;
 
 import com.pdks.webservice.IzinERP;
 
 @Entity(name = IzinHakEdisERPDB.VIEW_NAME)
 @Immutable
-public class IzinHakEdisERPDB extends BasePDKSObject implements Serializable, Cloneable {
+public class IzinHakEdisERPDB implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -27,9 +27,10 @@ public class IzinHakEdisERPDB extends BasePDKSObject implements Serializable, Cl
 	public static final String VIEW_NAME = "PERSONEL_IZIN_HAKEDIS_VIEW";
 	public static final String COLUMN_NAME_PERSONEL_NO = "PERSONEL_NO";
 	public static final String COLUMN_NAME_KIDEM_YIL = "KIDEM_YIL";
-
+	public static final String COLUMN_NAME_ID = "ID";
 	static Logger logger = Logger.getLogger(IzinHakEdisERPDB.class);
 
+	private String id;
 	private String personelNo;
 	private String kodu;
 	private String erpKodu;
@@ -48,6 +49,16 @@ public class IzinHakEdisERPDB extends BasePDKSObject implements Serializable, Cl
 
 	public IzinHakEdisERPDB() {
 		super();
+	}
+
+	@Id
+	@Column(name = COLUMN_NAME_ID)
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	@Column(name = COLUMN_NAME_PERSONEL_NO)
@@ -212,7 +223,7 @@ public class IzinHakEdisERPDB extends BasePDKSObject implements Serializable, Cl
 		izinERP.setIzinTipi(this.getErpKodu());
 		izinERP.setIzinTipiAciklama(this.getIzinTipi());
 		izinERP.setPersonelNo(this.getPersonelNo());
-		izinERP.setReferansNoERP(String.valueOf(this.getId()));
+		izinERP.setReferansNoERP(this.getId());
 		izinERP.setSureBirimi(this.getSureBirimi());
 		return izinERP;
 	}
