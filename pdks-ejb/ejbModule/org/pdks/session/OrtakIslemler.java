@@ -2517,7 +2517,7 @@ public class OrtakIslemler implements Serializable {
 					sql = PdksUtil.replaceAllManuel(sql, str, "");
 				else {
 					int andIndex = sql.toUpperCase().indexOf("AND");
-					if (andIndex > 1)
+					if (andIndex > 1 || andIndex < 0)
 						sql = " AND " + sql;
 				}
 				sql = PdksUtil.replaceAllManuel(str + sql, "  ", " ");;
