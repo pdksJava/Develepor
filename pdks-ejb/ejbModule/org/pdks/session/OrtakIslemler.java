@@ -2520,10 +2520,9 @@ public class OrtakIslemler implements Serializable {
 					if (andIndex > 1 || andIndex < 0)
 						sql = " AND " + sql;
 				}
-				sql = PdksUtil.replaceAllManuel(str + sql, "  ", " ");;
+				sql = PdksUtil.replaceAllManuel(str + sql, "  ", " ");
 			}
 		}
-
 		return sql;
 	}
 
