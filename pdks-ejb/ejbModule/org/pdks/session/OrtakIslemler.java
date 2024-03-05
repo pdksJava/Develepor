@@ -2498,7 +2498,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String getBirdenFazlaKGSSirketSQL(Date basTarih, Date bitTarih, Session session) {
-		String str = "K." + PersonelKGS.COLUMN_NAME_SICIL_NO + "=P." + PersonelKGS.COLUMN_NAME_SICIL_NO + " AND K." + PersonelKGS.COLUMN_NAME_ID + "<>P." + PersonelKGS.COLUMN_NAME_ID;
+		String str = "K." + PersonelKGS.COLUMN_NAME_SICIL_NO + " = P." + PersonelKGS.COLUMN_NAME_SICIL_NO + " AND K." + PersonelKGS.COLUMN_NAME_ID + " <> P." + PersonelKGS.COLUMN_NAME_ID;
 		String birdenFazlaKGSSirketSQL = getParameterKey("birdenFazlaKGSSirketSQL"), sql = str;
 		if (PdksUtil.hasStringValue(birdenFazlaKGSSirketSQL)) {
 			Calendar cal = Calendar.getInstance();
@@ -2515,7 +2515,12 @@ public class OrtakIslemler implements Serializable {
 				sql = birdenFazlaKGSSirketSQL;
 				if (sql.indexOf(str) >= 0)
 					sql = PdksUtil.replaceAllManuel(sql, str, "");
-				sql = str + sql;
+				else {
+					int andIndex = sql.toUpperCase().indexOf("AND");
+					if (andIndex > 1)
+						sql = " AND " + sql;
+				}
+				sql = PdksUtil.replaceAllManuel(str + sql, "  ", " ");;
 			}
 		}
 
