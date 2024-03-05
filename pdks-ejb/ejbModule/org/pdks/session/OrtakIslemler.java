@@ -15137,7 +15137,7 @@ public class OrtakIslemler implements Serializable {
 							Vardiya vardiyaIzin = pdksVardiyaGun.getVardiya();
 							if (personelDenklestirme != null && personelDenklestirme.getCalismaModeliAy() != null) {
 								CalismaModeli calismaModeliAy = personelDenklestirme.getCalismaModeli();
-								if (key.equals("20240218"))
+								if (key.equals("20240203"))
 									logger.debug("");
 								izinSaat = calismaModeliAy.getIzinSaat(pdksVardiyaGun);
 								if (pdksVardiyaGun.getIzin() != null && pdksVardiyaGun.getIzin().getIzinTipi().isIslemYokCGS()) {
@@ -15507,7 +15507,8 @@ public class OrtakIslemler implements Serializable {
 								haftaTatilDigerSure += pdksVardiyaGun.getHaftaTatilDigerSure();
 							if (izinToplam < izinSuresi) {
 								izinToplam = izinSuresi;
-								logger.debug(key + " " + izinSuresi);
+								if (pdksVardiyaGun.getIzin() != null)
+									logger.debug(key + " " + izinSuresi);
 							}
 
 						}
