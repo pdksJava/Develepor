@@ -14256,6 +14256,7 @@ public class OrtakIslemler implements Serializable {
 
 		}
 
+		List<PersonelIzin> izinList;
 		parametreMap.clear();
 		List<String> kodlar = new ArrayList<String>();
 		List<IzinTipi> izinTipleri = null;
@@ -14310,7 +14311,7 @@ public class OrtakIslemler implements Serializable {
 			// qsb.append(" AND S." + PersonelIzin.COLUMN_NAME_IZIN_KAGIDI_GELDI
 			// + " IS NULL");
 		}
-		List<PersonelIzin> izinList = null;
+
 		try {
 			if (!parametreMap.isEmpty()) {
 				if (session != null)
@@ -14366,18 +14367,8 @@ public class OrtakIslemler implements Serializable {
 
 		}
 		TreeMap<Long, List<PersonelIzin>> map1 = new TreeMap<Long, List<PersonelIzin>>();
-		TreeMap<Long, PersonelIzin> izinlerMap = new TreeMap<Long, PersonelIzin>();
-
-		if (!izinList.isEmpty() || !hakedilmeyenIzinler.isEmpty()) {
-
-			for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
-				PersonelIzin personelIzin = (PersonelIzin) iterator.next();
-				izinlerMap.put(personelIzin.getId(), personelIzin);
-				hakedisIdList.add(personelIzin.getId());
-
-			}
-
-			for (PersonelIzin personelIzin : hakedilmeyenIzinler) {
+		if (!izinList.isEmpty()) {
+			for (PersonelIzin personelIzin : izinList) {
 				hakedisIdList.add(personelIzin.getId());
 			}
 			String fieldName = "h";
@@ -14398,15 +14389,6 @@ public class OrtakIslemler implements Serializable {
 				for (PersonelIzinDetay personelIzinDetay : list) {
 					Long key = personelIzinDetay.getHakEdisIzin().getId();
 					List<PersonelIzin> izinler = map1.containsKey(key) ? map1.get(key) : new ArrayList<PersonelIzin>();
-					if (!izinlerMap.containsKey(key)) {
-						PersonelIzin izin = (PersonelIzin) personelIzinDetay.getHakEdisIzin().clone();
-						izin.setIzinSuresi(0.0d);
-						hakedilmeyenIzinler.add(izin);
-						izin.setDevirIzin(Boolean.TRUE);
-						izinlerMap.put(key, izin);
-						izinList.add(izin);
-					}
-
 					if (izinler.isEmpty())
 						map1.put(key, izinler);
 					izinler.add(personelIzinDetay.getPersonelIzin());
@@ -14421,6 +14403,9 @@ public class OrtakIslemler implements Serializable {
 			}
 		}
 
+		// if (!izinList.isEmpty())
+		// izinList = PdksUtil.sortListByAlanAdi(izinList, "baslangicZamani",
+		// Boolean.TRUE);
 		if (!personelKontrol)
 			sicilNoList = authenticatedUser.getYetkiTumPersonelNoList();
 		Calendar cal = Calendar.getInstance();
