@@ -6637,8 +6637,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							aylikPuantaj.setCalismaModeliAy(personelDenklestirme.getCalismaModeliAy());
 							CalismaModeli calismaModeli = personelDenklestirme.getCalismaModeli();
 							aylikPuantaj.setLoginUser(loginUser);
-							if (!helpPersonel(personel))
+							if (!helpPersonel(personel)) {
+								aylikPuantaj.setFazlaMesaiHesapla(Boolean.TRUE);
 								ortakIslemler.aylikPlanSureHesapla(getNormalCalismaVardiya(), true, aylikPuantaj, denklestirmeAyDurum, tatilGunleriMap, session);
+							}
 
 							if (denklestirmeAy.getSure() == 0.0d) {
 								Double genelSaatToplami = aylikPuantaj.getSaatToplami();
@@ -9364,7 +9366,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			} else {
 				fillSirketList();
 				if (aramaSecenekleri.getSirketId() != null) {
-					tesisDoldur(false);
+					tesisDoldur(true);
 				}
 
 			}
