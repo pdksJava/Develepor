@@ -1048,8 +1048,10 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		return calismaModeliAy;
 	}
 
-	public void setCalismaModeliAy(CalismaModeliAy calismaModeliAy) {
-		this.calismaModeliAy = calismaModeliAy;
+	public void setCalismaModeliAy(CalismaModeliAy value) {
+		if (value != null && denklestirmeAy == null)
+			this.denklestirmeAy = value.getDenklestirmeAy();
+		this.calismaModeliAy = value;
 	}
 
 	public Double getSaatlikIzinSuresi() {

@@ -2550,7 +2550,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 					if (!helpPersonel(personelAylikPuantaj.getPdksPersonel())) {
 
-						ortakIslemler.aylikPlanSureHesapla(getNormalCalismaVardiya(), true, personelAylikPuantaj, false, tatilGunleriMap, session);
+						ortakIslemler.aylikPlanSureHesapla(false, getNormalCalismaVardiya(), true, personelAylikPuantaj, false, tatilGunleriMap, session);
 
 					}
 				}
@@ -3336,7 +3336,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		}
 
 		if (haftaCalismaSuresi > 0)
-			ortakIslemler.aylikPlanSureHesapla(getNormalCalismaVardiya(), false, aylikPuantaj, false, tatilGunleriMap, session);
+			ortakIslemler.aylikPlanSureHesapla(false, getNormalCalismaVardiya(), false, aylikPuantaj, false, tatilGunleriMap, session);
 
 		aylikPuantaj.setAksamVardiyaSaatSayisi(aksamVardiyaSaatSayisi);
 		aylikPuantaj.setAksamVardiyaSayisi(aksamVardiyaSayisi);
@@ -3430,7 +3430,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			plan.getVardiyaGunMap().clear();
 		boolean durum = !vardiyalarMap.isEmpty();
 		if (!helpPersonel(personelAylikPuantaj.getPdksPersonel()))
-			ortakIslemler.aylikPlanSureHesapla(getNormalCalismaVardiya(), true, personelAylikPuantaj, false, tatilGunleriMap, session);
+			ortakIslemler.aylikPlanSureHesapla(false, getNormalCalismaVardiya(), true, personelAylikPuantaj, false, tatilGunleriMap, session);
 		TreeMap<Long, VardiyaGun> mesaiMap = new TreeMap<Long, VardiyaGun>();
 		for (VardiyaGun pdksVardiyaGun : personelAylikPuantaj.getVardiyalar()) {
 			if (pdksVardiyaGun.isGuncellendi() || pdksVardiyaGun.getId() == null) {
@@ -3641,7 +3641,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				if (tekrarOku && !baskaKayitVar)
 					fillAylikVardiyaPlanList();
 				else if (!helpPersonel(personelAylikPuantaj.getPdksPersonel()))
-					ortakIslemler.aylikPlanSureHesapla(getNormalCalismaVardiya(), true, personelAylikPuantaj, true, tatilGunleriMap, session);
+					ortakIslemler.aylikPlanSureHesapla(false, getNormalCalismaVardiya(), true, personelAylikPuantaj, true, tatilGunleriMap, session);
 				aylikVardiyaOzetOlustur();
 			}
 
@@ -6577,7 +6577,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							if (gecenAylikPuantaj.getPersonelDenklestirmeAylik() != null && !helpPersonel(personel) && loginUser.getLogin()) {
 								gecenAylikPuantaj.setCalismaModeliAy(gecenAylikPuantaj.getPersonelDenklestirmeAylik().getCalismaModeliAy());
 								gecenAylikPuantaj.setLoginUser(loginUser);
-								ortakIslemler.aylikPlanSureHesapla(getNormalCalismaVardiya(), true, gecenAylikPuantaj, false, tatilGunleriMap, session);
+								ortakIslemler.aylikPlanSureHesapla(false, getNormalCalismaVardiya(), true, gecenAylikPuantaj, false, tatilGunleriMap, session);
 							}
 
 						} catch (Exception e) {
@@ -6638,8 +6638,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							CalismaModeli calismaModeli = personelDenklestirme.getCalismaModeli();
 							aylikPuantaj.setLoginUser(loginUser);
 							if (!helpPersonel(personel)) {
-								aylikPuantaj.setFazlaMesaiHesapla(Boolean.TRUE);
-								ortakIslemler.aylikPlanSureHesapla(getNormalCalismaVardiya(), true, aylikPuantaj, denklestirmeAyDurum, tatilGunleriMap, session);
+								ortakIslemler.aylikPlanSureHesapla(false, getNormalCalismaVardiya(), true, aylikPuantaj, denklestirmeAyDurum, tatilGunleriMap, session);
 							}
 
 							if (denklestirmeAy.getSure() == 0.0d) {
@@ -6653,7 +6652,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								denklestirmeAy.setGuncellemeTarihi(new Date());
 								denklestirmeAy.setGuncelleyenUser(sistemUser);
 								pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeAy);
-								ortakIslemler.aylikPlanSureHesapla(getNormalCalismaVardiya(), true, aylikPuantaj, denklestirmeAyDurum, tatilGunleriMap, session);
+								ortakIslemler.aylikPlanSureHesapla(false, getNormalCalismaVardiya(), true, aylikPuantaj, denklestirmeAyDurum, tatilGunleriMap, session);
 								flush = true;
 							}
 							if (!denklestirmeAyDurum) {
