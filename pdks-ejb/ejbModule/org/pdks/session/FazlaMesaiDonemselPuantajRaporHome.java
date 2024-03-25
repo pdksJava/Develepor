@@ -938,6 +938,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		resmiTatilVar = false;
 		haftaTatilVar = false;
 		kismiOdemeGoster = false;
+		session.clear();
 		bordroPuantajEkranindaGoster = ortakIslemler.getParameterKey("bordroPuantajEkranindaGoster").equals("1");
 		yasalFazlaCalismaAsanSaat = false;
 		StringBuffer sb = new StringBuffer();
