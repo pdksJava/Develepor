@@ -738,7 +738,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		for (Iterator iter = puantajList.iterator(); iter.hasNext();) {
 			AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
 			PersonelDenklestirme personelDenklestirme = aylikPuantaj.getPersonelDenklestirme();
-			DenklestirmeAy da = personelDenklestirme != null ? aylikPuantaj.getDenklestirmeAy() : null;
+			DenklestirmeAy da = personelDenklestirme != null ? personelDenklestirme.getDenklestirmeAy() : aylikPuantaj.getDenklestirmeAy();
 			if (ayAdet % 2 != 0) {
 				styleCenter = styleOddCenter;
 				styleStrDay = styleCenterOddDay;
@@ -755,8 +755,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			row++;
 			col = 0;
 			ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue("");
-
-			ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+ 			ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
 			if (fazlaMesaiOde)
 				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
 			if (fazlaMesaiIzinKullan)
@@ -782,8 +781,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			}
 			ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
 			ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
-
-			if (fazlaMesaiVar) {
+ 			if (fazlaMesaiVar) {
 				if (yasalFazlaCalismaAsanSaat)
 					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
 				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
@@ -848,7 +846,6 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
 				}
 			}
-
 			if (personelDenklestirme != null) {
 				CalismaModeli calismaModeli = aylikPuantaj.getCalismaModeli();
 				PersonelDenklestirme personelDenklestirmeGecenAy = personelDenklestirme != null ? personelDenklestirme.getPersonelDenklestirmeGecenAy() : null;
