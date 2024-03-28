@@ -874,6 +874,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		if (secPersonel != null && secPersonel.getEkSaha3() != null) {
 			sicilNo = secPersonel.getPdksSicilNo();
 			seciliEkSaha3Id = secPersonel.getEkSaha3().getId();
+			if (ekSaha4Tanim != null && secPersonel.getEkSaha4() != null) {
+				seciliEkSaha4Id = secPersonel.getEkSaha4().getId();
+				altBolumDoldur();
+			}
 			fillPersonelDenklestirmeList();
 		}
 
@@ -5506,7 +5510,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 
 				else {
-					if (ortakIslemler.getParameterKey("tumBolumPersonelGetir").equals("1") && !(ikRole || adminRole)) {
+					if (ortakIslemler.getParameterKey("tumBolumPersonelGetir").equals("1") == false && !(ikRole || adminRole)) {
 						tumBolumPersonelleri = fazlaMesaiOrtakIslemler.getTumBolumPersonelListesi(sirket, denklestirmeAy, tesisId, sadeceFazlaMesai, session);
 						if (tumBolumPersonelleri != null) {
 							if (!tumBolumPersonelleri.isEmpty())
