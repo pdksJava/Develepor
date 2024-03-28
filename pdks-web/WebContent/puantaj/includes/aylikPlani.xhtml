@@ -303,9 +303,9 @@
 										<table>
 											<TR>
 												<ui:fragment
-													rendered="#{vardiyaGunHome.kullaniciPersonel==false and (vardiyaGunHome.yoneticiERP1Kontrol==false or aylikPuantaj.yonetici.id!=null or aylikPuantaj.pdksPersonel.sanalPersonel)}">
+													rendered="#{(vardiyaGunHome.kullaniciPersonel==false or vardiyaGunHome.calismaPlanKilit!=null) and (vardiyaGunHome.yoneticiERP1Kontrol==false or aylikPuantaj.yonetici.id!=null or aylikPuantaj.pdksPersonel.sanalPersonel)}">
 
-													<TD><h:selectBooleanCheckbox value="#{aylikPuantaj.onayDurum}">
+													<TD><h:selectBooleanCheckbox value="#{aylikPuantaj.onayDurum}" disabled="#{vardiyaGunHome.calismaPlanKilit!=null}">
 															<a4j:support event="onclick" />
 														</h:selectBooleanCheckbox></TD>
 													<TD><a4j:commandLink id="editAylikLink" ajaxSingle="true" action="#{vardiyaGunHome.aylikPuantajSec(aylikPuantaj,'P')}"
@@ -726,9 +726,18 @@
 					</a4j:repeat>
 				</tbody>
 			</table>
-			<a4j:commandButton status="ajaxStatus" value="Onayla" action="#{vardiyaGunHome.planOnayla()}" reRender="vardiyaPanel"
-				rendered="#{vardiyaGunHome.denklestirmeAyDurum and vardiyaGunHome.planGirisi and vardiyaGunHome.kullaniciPersonel==false}" />
+			<ui:fragment rendered="#{vardiyaGunHome.denklestirmeAyDurum and vardiyaGunHome.planGirisi }">
+				<ui:fragment rendered="#{vardiyaGunHome.kullaniciPersonel==false}"> 
+					<a4j:commandButton status="ajaxStatus" value="Onayla" action="#{vardiyaGunHome.planOnayla()}" reRender="vardiyaPanel" />
+				</ui:fragment>
+				<ui:fragment rendered="#{vardiyaGunHome.kullaniciPersonel}"> 
+					<ui:fragment rendered="#{vardiyaGunHome.calismaPlanKilit.kilitDurum and vardiyaGunHome.ikRole}">
+						<a4j:commandButton status="ajaxStatus" value="Kilit Aç" action="#{vardiyaGunHome.planKilitAc()}" reRender="vardiyaPanel"
+							rendered="#{vardiyaGunHome.calismaPlanKilit.talepKontrol==false or vardiyaGunHome.calismaPlanKilit.talep!=null}" />
+					</ui:fragment>
+				</ui:fragment>
 
+			</ui:fragment>
 			<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{vardiyaGunHome.aylikVardiyaExcel}" target="blank">
 				<a4j:support event="oncomplete" status="ajaxStatus" />
 			</h:commandLink>
