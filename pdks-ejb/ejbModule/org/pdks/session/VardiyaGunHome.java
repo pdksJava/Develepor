@@ -5571,6 +5571,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			sicilNo = secPersonel.getPdksSicilNo();
 			// aramaSecenekleri.setSicilNo(secPersonel.getPdksSicilNo());
 			aramaSecenekleri.setEkSaha3Id(secPersonel.getEkSaha3().getId());
+			if (ekSaha4Tanim != null && secPersonel.getEkSaha4() != null) {
+				aramaSecenekleri.setEkSaha4Id(secPersonel.getEkSaha4().getId());
+				altBolumDoldur();
+			}
 			aylikPuantajOlusturuluyor();
 		}
 		return "";
@@ -9137,6 +9141,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			Long tesisId = aramaSecenekleri.getTesisId();
 
 			altBolumIdList = fazlaMesaiOrtakIslemler.getFazlaMesaiAltBolumList(aramaSecenekleri.getSirket(), tesisId != null ? String.valueOf(tesisId) : null, aramaSecenekleri.getEkSaha3Id(), denklestirmeAy != null ? aylikPuantajDonem : null, getDenklestirmeDurum(), session);
+
 			boolean eski = altBolumIdList.size() == 1;
 			if (eski)
 				seciliEkSaha4Id = (Long) altBolumIdList.get(0).getValue();
