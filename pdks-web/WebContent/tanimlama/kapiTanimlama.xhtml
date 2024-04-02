@@ -53,11 +53,11 @@
 								<f:facet name="header">
 									<h:outputText value="KGS Kapı Adı" />
 								</f:facet>
-								<SPAN id="#{kapi.kapiView.kapiKGS.id}"> <h:outputText value="#{kapi.kapiView.kapiKGSAciklama}" /> <ui:fragment
+								<SPAN id="#{kapi.kapiView.kapiKGS.id}"> <h:outputText value="#{kapi.kapiView.kapiKGSAciklama} - #{kapi.kapiKGS.kapiSirket.aciklama}" /> <ui:fragment
 										rendered="#{kapiHome.birdenFazlaKGSSirketSQL!=''}">
 										<rich:toolTip for="#{kapi.kapiView.kapiKGS.id}">
 											<B>KGS Uygulama Adı : </B>
-											<h:outputText value="#{kapi.kapiView.kapiKGS.kapiSirket.aciklama}" />
+											<h:outputText value="#{kapi.kapiView.kapiKGS.kapiSirket.aciklama} [#{kapi.kapiView.kapiKGS.kgsId}]" />
 										</rich:toolTip>
 									</ui:fragment>
 
