@@ -1955,12 +1955,12 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 							else
 								ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
 						}
-						if (resmiTatilVar)
-							setCell(sheet, row, col++, styleTutar, aylikPuantaj.getResmiTatilToplami());
-						if (haftaTatilVar)
-							setCell(sheet, row, col++, styleTutar, aylikPuantaj.getHaftaCalismaSuresi());
 
 					}
+					if (resmiTatilVar)
+						setCell(sheet, row, col++, styleTutar, aylikPuantaj.getResmiTatilToplami());
+					if (haftaTatilVar)
+						setCell(sheet, row, col++, styleTutar, aylikPuantaj.getHaftaCalismaSuresi());
 					if (devredenBakiyeKod) {
 						if (aylikPuantaj.isFazlaMesaiHesapla()) {
 							Cell devredenSureCell = setCell(sheet, row, col++, styleTutar, aylikPuantaj.getDevredenSure());
