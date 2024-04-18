@@ -5588,11 +5588,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					// planTanimsizBolumList = fazlaMesaiOrtakIslemler.getFazlaMesaiBolumList(sirket, null, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, false, session);
 					planTanimsizBolumList = fazlaMesaiOrtakIslemler.getFazlaMesaiTanimsizBolumList(sirket, null, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, session);
 				}
-				if (planTanimsizBolumList != null) {
-			 
-					if (planTanimsizBolumList != null && planTanimsizBolumList.isEmpty())
-						planTanimsizBolumList = null;
-				}
+
+				if (planTanimsizBolumList != null && planTanimsizBolumList.isEmpty())
+					planTanimsizBolumList = null;
+
 			}
 			altBolumList = null;
 			seciliEkSaha4Id = null;
