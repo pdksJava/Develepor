@@ -2036,11 +2036,20 @@ public class PdksVeriOrtakAktar implements Serializable {
 				IzinTipi izinTipi = izinTipiMap.get(izinERP.getIzinTipi());
 				List<PersonelDenklestirme> kapaliDenklestirmeler = null;
 				boolean donemKapali = false;
+				Boolean izinDegisti = personelIzin.getId() == null;
 				if (izinERP.getHataList().isEmpty()) {
-					long gecerliDonem = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(new Date(), -10), "yyyyMM"));
-					long basDonem = Long.parseLong(PdksUtil.convertToDateString(baslangicZamani, "yyyyMM"));
-					if (gecerliDonem > basDonem)
-						kapaliDenklestirmeler = getDenklestirmeList(izinSahibi != null ? izinSahibi.getPdksSicilNo() : null, baslangicZamani, bitisZamani, false);
+					if (!mailEkle && personelIzin.getId() != null) {
+						boolean izinDurum = personelIzin.getIzinDurumu() == PersonelIzin.IZIN_DURUMU_ONAYLANDI;
+						izinDegisti = !izinSahibi.getId().equals(personelIzin.getIzinSahibi().getId()) || !izinTipi.getId().equals(personelIzin.getIzinTipi().getId()) || izinDurum != izinERP.getDurum().booleanValue() || baslangicZamani.getTime() != personelIzin.getBaslangicZamani().getTime()
+								|| bitisZamani.getTime() != personelIzin.getBitisZamani().getTime();
+						mailEkle = izinDegisti && doktor;
+					}
+					if (izinDegisti) {
+						long gecerliDonem = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(new Date(), -10), "yyyyMM"));
+						long basDonem = Long.parseLong(PdksUtil.convertToDateString(baslangicZamani, "yyyyMM"));
+						if (gecerliDonem > basDonem)
+							kapaliDenklestirmeler = getDenklestirmeList(izinSahibi != null ? izinSahibi.getPdksSicilNo() : null, baslangicZamani, bitisZamani, false);
+					}
 				}
 
 				if (kapaliDenklestirmeler != null && !kapaliDenklestirmeler.isEmpty()) {
@@ -2067,14 +2076,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 				}
 
 				if (izinTipi != null && (donemKapali || izinERP.getHataList().isEmpty())) {
-
-					Boolean izinDegisti = false;
-					if (!mailEkle && personelIzin.getId() != null) {
-						boolean izinDurum = personelIzin.getIzinDurumu() == PersonelIzin.IZIN_DURUMU_ONAYLANDI;
-						izinDegisti = !izinSahibi.getId().equals(personelIzin.getIzinSahibi().getId()) || !izinTipi.getId().equals(personelIzin.getIzinTipi().getId()) || izinDurum != izinERP.getDurum().booleanValue() || baslangicZamani.getTime() != personelIzin.getBaslangicZamani().getTime()
-								|| bitisZamani.getTime() != personelIzin.getBitisZamani().getTime();
-						mailEkle = izinDegisti && doktor;
-					}
 
 					if ((izinERP.getSureBirimi() == null && izinTipi.getHesapTipi() != null && izinTipi.getHesapTipi().equals(PersonelIzin.HESAP_TIPI_GUN)) || izinERP.getSureBirimi().value().equals(SureBirimi.GUN.value())) {
 						if (izinServisGun != null) {
@@ -2630,7 +2631,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @param donemDurum
 	 * @return
 	 */
-	protected List<PersonelDenklestirme> getDenklestirmeList(String perNo, Date basTarih, Date bitTarih, boolean donemDurum) {
+	private List<PersonelDenklestirme> getDenklestirmeList(String perNo, Date basTarih, Date bitTarih, boolean donemDurum) {
 		List<PersonelDenklestirme> list = null;
 		if (basTarih != null && bitTarih != null && PdksUtil.hasStringValue(perNo)) {
 			String d1 = PdksUtil.convertToDateString(basTarih, "yyyyMM"), d2 = PdksUtil.convertToDateString(bitTarih, "yyyyMM");
