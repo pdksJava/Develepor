@@ -3222,7 +3222,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								continue;
 							}
 							devam = true;
-							izinStr += virgul + PdksUtil.convertToDateString(vGun.getVardiyaDate(), "d MMM EEEEE");
+							izinStr += virgul + PdksUtil.convertToDateString(vGun.getVardiyaDate(), "d MMMMM EEEEE");
 							virgul = ", ";
 						}
 						if (!izin.getCalisilanGunler().isEmpty()) {
@@ -3250,6 +3250,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 			}
 			if (!strList.isEmpty()) {
+				if (bolumAciklama == null)
+					fillEkSahaTanim();
 				MailObject mail = new MailObject();
 				String konu = (strList.size() > 1 ? "" : izinSahibiTEK.getPdksSicilNo() + " " + ortakIslemler.personelNoAciklama() + " " + izinSahibiTEK.getAdSoyad() + " ait ");
 				mail.setSubject(konu + (denklestirmeAy != null ? denklestirmeAy.getYil() + " - " + denklestirmeAy.getAyAdi() + " dönemi " : "") + "İzin gününde hatalı girişler");
