@@ -2059,6 +2059,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				}
 
 				if (kapaliDenklestirmeler != null && !kapaliDenklestirmeler.isEmpty()) {
+
 					StringBuffer donemStr = new StringBuffer();
 					// donemKapali = true;
 					for (Iterator iterator2 = kapaliDenklestirmeler.iterator(); iterator2.hasNext();) {
@@ -2078,7 +2079,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 					else
 						izinERP.setDurum(null);
 					String str = donemStr.toString();
-
+					if (personelIzin.getId() == null && izinDurum == false) {
+						iterator.remove();
+						continue;
+					}
 					addHatalist(izinERP.getHataList(), str + " " + (kapaliDenklestirmeler.size() > 1 ? " dönemleri" : " dönemi") + " kapalıdır");
 
 				}
