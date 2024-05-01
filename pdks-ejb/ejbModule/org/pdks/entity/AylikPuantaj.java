@@ -496,25 +496,27 @@ public class AylikPuantaj implements Serializable, Cloneable {
 									if (tatil.getVardiyaMap() != null && tatil.getVardiyaMap().containsKey(vardiya.getId())) {
 										Vardiya vardiyaTatil = tatil.getVardiyaMap().get(vardiya.getId());
 										vardiya.setArifeBaslangicTarihi(vardiyaTatil.getArifeBaslangicTarihi());
+										if (vg.getPdksPersonel().getPdksSicilNo().equals("2737"))
+											logger.debug("");
 										if (vardiyaTatil.getArifeBaslangicTarihi() != null && vardiyaTatil.getArifeCalismaSure() != null) {
 											if (vardiyaTatil.getArifeBaslangicTarihi().getTime() <= vardiya.getVardiyaBasZaman().getTime()) {
 												if (vg.getResmiTatilSure() > 0.0d) {
 													saatToplami -= vg.getCalismaSuresi() - vg.getResmiTatilSure();
 													vg.setResmiTatilSure(vg.getCalismaSuresi());
 												}
-												if (vardiya.getKisaAdi().equals("V2") || tatil.isArifeCalismaSaatYokCGSDussun())
+												if (vardiyaTatil.isArifeCalismaSaatYokCGSDussun())
 													arifeSure = 0.0d;
 												// yarimGun = 0.0d;
 											} else if (vardiyaTatil.getArifeBaslangicTarihi().getTime() >= vardiya.getVardiyaBitZaman().getTime()) {
 												// arifeSure = 0.0d;
 												if (vg.getCalismaSuresi() > 0.0d) {
 													yarimGun = 0.0d;
-												} else if (vardiya.getKisaAdi().equals("V1") || tatil.isArifeCalismaSaatYokCGSDussun())
+												} else if (vardiyaTatil.isArifeCalismaSaatYokCGSDussun())
 													arifeSure = 0.0d;
 
 											} else if (vg.getCalismaSuresi() <= 0.0d) {
 												// TODO Arife çalışmıyorsa ÇGS sayma
-												if (tatil.isArifeCalismaSaatYokCGSDussun())
+												if (vardiyaTatil.isArifeCalismaSaatYokCGSDussun())
 													arifeSure = 0.0d;
 											}
 										}
