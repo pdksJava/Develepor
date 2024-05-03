@@ -1881,8 +1881,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			if (flush)
 				session.flush();
-		} else
+		} else {
 			yaz = false;
+			PdksUtil.addMessageAvailableWarn(mesaj + sb.toString());
+		}
+			
 		vardiyaGunMap = null;
 		sb = null;
 		sbCalismaModeliUyumsuz = null;
@@ -6899,7 +6902,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							if (gecenAylikPuantaj.getPersonelDenklestirme() != null && !helpPersonel(personel) && loginUser.getLogin()) {
 								gecenAylikPuantaj.setCalismaModeliAy(gecenAylikPuantaj.getPersonelDenklestirme().getCalismaModeliAy());
 								gecenAylikPuantaj.setLoginUser(loginUser);
-								ortakIslemler.aylikPlanSureHesapla(false, getNormalCalismaVardiya(), true, gecenAylikPuantaj, false, tatilGunleriMap, session);
+						//		ortakIslemler.aylikPlanSureHesapla(false, getNormalCalismaVardiya(), true, gecenAylikPuantaj, false, tatilGunleriMap, session);
 							}
 
 						} catch (Exception e) {
@@ -6961,9 +6964,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							if (aylikPuantaj.getPersonelDenklestirme() == null)
 								aylikPuantaj.setPersonelDenklestirme(personelDenklestirme);
 							aylikPuantaj.setLoginUser(loginUser);
-							if (!helpPersonel(personel)) {
-								ortakIslemler.aylikPlanSureHesapla(false, getNormalCalismaVardiya(), true, aylikPuantaj, denklestirmeAyDurum, tatilGunleriMap, session);
-							}
+//							if (!helpPersonel(personel)) {
+//								ortakIslemler.aylikPlanSureHesapla(false, getNormalCalismaVardiya(), true, aylikPuantaj, denklestirmeAyDurum, tatilGunleriMap, session);
+//							}
 
 							if (denklestirmeAy.getSure() == 0.0d) {
 								Double genelSaatToplami = aylikPuantaj.getSaatToplami();
