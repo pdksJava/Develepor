@@ -15755,7 +15755,13 @@ public class OrtakIslemler implements Serializable {
 								if (pdksVardiyaGun.getIzin() != null)
 									logger.debug(key + " " + izinSuresi);
 							}
-							logger.debug(key + " " + toplamSure + " " + calisilmayanSuresi);
+							if (pdksVardiyaGun.getResmiTatilSure() > 0.0d && puantajData.isFazlaMesaiHesapla() == false) {
+								pdksVardiyaGun.addCalismaSuresi(pdksVardiyaGun.getResmiTatilSure());
+								toplamSure += pdksVardiyaGun.getResmiTatilSure();
+							}
+
+							if (pdksVardiyaGun.isAyinGunu() && pdksVardiyaGun.getCalismaSuresi() > 0.0d)
+								logger.debug(key + " " + toplamSure + " " + pdksVardiyaGun.getCalismaSuresi());
 						}
 
 						if (resmiTatilDepartmanlari == null || (departmanKodu != null && resmiTatilDepartmanlari.contains(departmanKodu)))
