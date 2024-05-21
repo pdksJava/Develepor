@@ -2217,13 +2217,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		Date tarih = PdksUtil.getDate(cal.getTime());
 		List<PersonelView> list2 = new ArrayList<PersonelView>();
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-			PersonelView pw = (PersonelView) iterator.next();
-			Personel personel = pw.getPdksPersonel();
-			if (personel == null || personel.isCalisiyorGun(tarih) == false) {
-				if (personel != null)
-					list2.add(pw);
-				else
-					logger.debug(pw.getId());
+			PersonelView personelView = (PersonelView) iterator.next();
+			if (personelView.getPdksPersonel() == null || personelView.getPdksPersonel().isCalisiyorGun(tarih) == false) {
+				list2.add(personelView);
 				iterator.remove();
 
 			}
