@@ -160,9 +160,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private Boolean modelGoster = Boolean.FALSE, kullaniciPersonel = Boolean.FALSE, denklestirmeAyDurum = Boolean.FALSE, gecenAyDurum = Boolean.FALSE, izinGoster = Boolean.FALSE, yoneticiRolVarmi = Boolean.FALSE;
 	private boolean adminRole, hareketIptalEt = false, ikRole, personelHareketDurum, personelFazlaMesaiDurum, vardiyaPlaniDurum, personelIzinGirisiDurum, fazlaMesaiTalepOnayliDurum = Boolean.FALSE;
 	private Boolean izinCalismayanMailGonder = Boolean.FALSE, hatalariAyikla = Boolean.FALSE, kismiOdemeGoster = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE;
-	private String manuelGirisGoster = "", kapiGirisSistemAdi = "", birdenFazlaKGSSirketSQL = "";
-	private boolean yarimYuvarla = true, sadeceFazlaMesai = true, saatlikCalismaGoster = false, izinBordoroGoster = false, bordroPuantajEkranindaGoster = false, planOnayDurum, eksikCalismaGoster, eksikMaasGoster = false;
+	private boolean topluGuncelle = false, yarimYuvarla = true, sadeceFazlaMesai = true, saatlikCalismaGoster = false, izinBordoroGoster = false, bordroPuantajEkranindaGoster = false, planOnayDurum, eksikCalismaGoster, eksikMaasGoster = false;
 	private int ay, yil, maxYil, sonDonem, pageSize;
+	private String manuelGirisGoster = "", kapiGirisSistemAdi = "", birdenFazlaKGSSirketSQL = "";
 
 	private List<User> toList, ccList, bccList;
 
@@ -980,6 +980,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				aylikPuantaj.setLoginUser(authenticatedUser);
 				denklestirmeDonemi.setLoginUser(authenticatedUser);
 				denklestirmeDonemi.setDenklestirmeAy(denklestirmeAy);
+				setTopluGuncelle(false);
 				fillPersonelDenklestirmeDevam(aylikPuantaj, denklestirmeDonemi);
 			} catch (Exception ee) {
 				ortakIslemler.setExceptionLog(null, ee);
@@ -2556,9 +2557,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			hataYok = false;
 			if (userLogin.getLogin())
 				PdksUtil.addMessageAvailableError(gecenAy.getAyAdi() + " " + gecenAy.getYil() + " dönemi açıktır!");
-		} else if (kullaniciPersonel.equals(Boolean.FALSE) && ikRole && denklestirmeAyDurum && denklestirmeAy.getOtomatikOnayIKTarih() != null) {
+		} else if ((topluGuncelle || (kullaniciPersonel.equals(Boolean.FALSE) && ikRole)) && denklestirmeAyDurum && denklestirmeAy.getOtomatikOnayIKTarih() != null) {
 			Calendar cal = Calendar.getInstance();
 			Date otomatikOnayIKTarih = denklestirmeAy.getOtomatikOnayIKTarih();
+			if (topluGuncelle)
+				otomatikOnayIKTarih = PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(cal.getTime(), 1));
 			cal.setTime(PdksUtil.getDate(cal.getTime()));
 			cal.set(Calendar.YEAR, denklestirmeAy.getYil());
 			cal.set(Calendar.MONTH, denklestirmeAy.getAy() - 1);
@@ -7231,6 +7234,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	public void setIslemHareketKGS(HareketKGS islemHareketKGS) {
 		this.islemHareketKGS = islemHareketKGS;
+	}
+
+	public boolean isTopluGuncelle() {
+		return topluGuncelle;
+	}
+
+	public void setTopluGuncelle(boolean topluGuncelle) {
+		this.topluGuncelle = topluGuncelle;
 	}
 
 }

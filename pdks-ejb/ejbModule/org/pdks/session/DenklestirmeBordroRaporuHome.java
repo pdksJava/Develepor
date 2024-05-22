@@ -317,6 +317,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		Long seciliTesisId = paramMap.containsKey("seciliTesisId") ? (Long) paramMap.get("seciliTesisId") : null;
 		List<SelectItem> bolumList = fazlaMesaiOrtakIslemler.getFazlaMesaiBolumList(seciliSirket, seciliTesisId != null ? String.valueOf(seciliTesisId) : "", aylikPuantaj, authenticatedUser.isAdmin() == false, session);
 		fazlaMesaiHesaplaHome.setTesisId(seciliTesisId);
+		fazlaMesaiHesaplaHome.setTopluGuncelle(true);
+		
 		HashMap fields = new HashMap();
 		Tanim tesis = null;
 		if (seciliTesisId != null && seciliSirket.isTesisDurumu()) {
