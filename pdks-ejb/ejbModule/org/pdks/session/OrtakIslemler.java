@@ -16993,7 +16993,7 @@ public class OrtakIslemler implements Serializable {
 
 								boolean tatilYemekHesabiSureEkle = vardiyaGun.isYemekHesabiSureEkle();
 								double fark = toplamYemekSuresi - vardiyaYemekSuresi;
-								if (vardiyaGun.isAyinGunu() && gun.equals("29"))
+								if (vardiyaGun.isAyinGunu() && gun.equals("16"))
 									logger.debug(calSure);
 								if (yemekList.isEmpty()) {
 									double eksikSure = netSure + vardiyaYemekSuresi - calSure;
