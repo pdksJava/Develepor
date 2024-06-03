@@ -11905,7 +11905,9 @@ public class OrtakIslemler implements Serializable {
 			vardiyaGun.setIslendi(vardiyaGun.getSonrakiVardiya() == null && vardiyaGun.getOncekiVardiyaGun() == null);
 			try {
 				islemVardiya = vardiyaGun.setVardiyaZamani();
-
+				String key = vardiyaGun.getVardiyaDateStr();
+				if (key.endsWith("0525"))
+					logger.debug(key);
 				// Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
 				if (islemVardiya.getVardiyaFazlaMesaiBasZaman() == null)
 					islemVardiya.setVardiyaFazlaMesaiBasZaman(vardiyaGun.getVardiyaDate());
@@ -11983,7 +11985,9 @@ public class OrtakIslemler implements Serializable {
 					if (sonrakiVardiyaGun != null) {
 						Vardiya vardiya = sonrakiVardiyaGun.getIslemVardiya();
 						if (vardiya != null && vardiya.isCalisma() == false) {
-							islemVardiya.setVardiyaFazlaMesaiBitZaman(addTarih(cal, vardiya.getVardiyaFazlaMesaiBasZaman(), Calendar.MILLISECOND, -40));
+							Date vardiyaFazlaMesaiBasZaman = vardiya.getVardiyaTarih();
+							islemVardiya.setVardiyaFazlaMesaiBitZaman(addTarih(cal, vardiyaFazlaMesaiBasZaman, Calendar.MILLISECOND, -40));
+							sonrakiVardiyaGun.getIslemVardiya().setVardiyaFazlaMesaiBasZaman(vardiyaFazlaMesaiBasZaman);
 						}
 					}
 				}
@@ -15967,7 +15971,7 @@ public class OrtakIslemler implements Serializable {
 					if (!calismaModeli.isFazlaMesaiVarMi()) {
 						puantajData.setHaftaCalismaSuresi(0.0d);
 						puantajData.setFazlaMesaiSure(0.0d);
- 						puantajData.setUcretiOdenenMesaiSure(0.0d);
+						puantajData.setUcretiOdenenMesaiSure(0.0d);
 						puantajData.setAksamVardiyaSaatSayisi(0.0d);
 						puantajData.setAksamVardiyaSayisi(0);
 						puantajData.setResmiTatilToplami(0.0d);
