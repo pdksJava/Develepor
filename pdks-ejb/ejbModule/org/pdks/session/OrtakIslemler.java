@@ -3829,6 +3829,25 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param name
+	 * @param session
+	 * @return
+	 */
+	public boolean isExisStoreProcedure(String name, Session session) {
+		boolean durum = false;
+		StringBuffer sb = new StringBuffer();
+		sb.append("select name, object_id from sys.procedures");
+		sb.append(" where name = :k");
+		HashMap fields = new HashMap();
+		fields.put("k", name);
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List list = pdksEntityController.getObjectBySQLList(sb, fields, null);
+		durum = list != null && list.size() == 1;
+		return durum;
+	}
+
+	/**
 	 * @param user
 	 * @param departmanId
 	 * @param sirket
@@ -3923,9 +3942,7 @@ public class OrtakIslemler implements Serializable {
 							}
 						}
 					}
-					// String spAdi = "SP_GET_FAZLA_MESAI_DATA_ALT";
-					String spAdi = "SP_GET_FAZLA_MESAI_DATA";
-					StringBuffer sp = new StringBuffer(spAdi);
+
 					LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 					Long denklestirmeDeger = 0L;
 					if (denklestirme) {
@@ -3954,6 +3971,20 @@ public class OrtakIslemler implements Serializable {
 							}
 						}
 					}
+					Integer mudurDurum = 0;
+					String spAdi = "SP_GET_FAZLA_MESAI_DATA_MUD";
+					if (isExisStoreProcedure(spAdi, session) == false) {
+						mudurDurum = null;
+						spAdi = "SP_GET_FAZLA_MESAI_DATA";
+					} else {
+						try {
+							mudurDurum = direktorId == null && loginUser.getPdksPersonel().getIkinciYoneticiIzinOnayla() ? 1 : 0;
+						} catch (Exception e) {
+							mudurDurum = 0;
+						}
+						if (ikRol || direktorId != null)
+							mudurDurum = 0;
+					}
 					map.put("departmanId", depId);
 					map.put("sirketId", sirketId);
 					map.put("tesisId", tesisId != null ? tesisId : "");
@@ -3961,16 +3992,18 @@ public class OrtakIslemler implements Serializable {
 					map.put("bolumId", bolumId != null ? bolumId : 0L);
 					// if (PdksUtil.isPuantajSorguAltBolumGir() || bolumId != null)
 					map.put("altBolumId", altBolumId);
+					if (mudurDurum != null)
+						map.put("mudurDurum", mudurDurum);
 					map.put("tipi", tipi);
 					map.put("basTarih", PdksUtil.convertToDateString(basTarih, "yyyyMMdd"));
 					map.put("bitTarih", PdksUtil.convertToDateString(bitTarih, "yyyyMMdd"));
 					map.put("format", "112");
 					map.put("order", order != null ? order : "");
 					Gson gson = new Gson();
-					map.put(PdksEntityController.MAP_KEY_SESSION, session);
 					try {
+						StringBuffer sp = new StringBuffer(spAdi);
 						list = pdksEntityController.execSPList(map, sp, class1);
-						if (tipi.endsWith("+") && loginUser.isAdmin())
+						if (tipi.endsWith("P") && loginUser.isAdmin())
 							logger.debug(spAdi + " " + tipi + " " + list.size() + "\n" + gson.toJson(map));
 					} catch (Exception e) {
 						logger.error(e + "\n" + spAdi + "\n" + gson.toJson(map));
@@ -9424,7 +9457,7 @@ public class OrtakIslemler implements Serializable {
 		boolean durum = false;
 		if (eMail != null) {
 			int index1 = eMail.indexOf("@"), index2 = eMail.lastIndexOf(".");
- 			if (index1 > 1 && index2 > index1) {
+			if (index1 > 1 && index2 > index1) {
 				eMail = PdksUtil.getInternetAdres(eMail);
 				durum = PdksUtil.hasStringValue(eMail);
 			}
