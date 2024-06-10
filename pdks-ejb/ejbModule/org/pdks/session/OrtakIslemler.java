@@ -225,6 +225,65 @@ public class OrtakIslemler implements Serializable {
 	FacesMessages facesMessages;
 
 	/**
+	 * @param personel
+	 * @param session
+	 * @return
+	 */
+	public Boolean getMudurAltSeviyeDurum(Personel personel, Session session) {
+		Boolean durum = false;
+		if (personel == null) {
+			if (authenticatedUser.isIK() == false && authenticatedUser.isSistemYoneticisi() == false && authenticatedUser.isGenelMudur() == false && authenticatedUser.isAdmin() == false)
+				personel = authenticatedUser.getPdksPersonel();
+		}
+		if (personel != null && personel.getId() != null) {
+			List<PersonelDinamikAlan> list = getPersonelTanimSecimDurum(personel.getId(), FazlaMesaiOrtakIslemler.PERSONEL_TANIM_SECIM_MUDUR_ALT_SEVIYE, session);
+			if (list != null && !list.isEmpty())
+				durum = list.get(0).getDurumSecim();
+			list = null;
+		}
+		return durum;
+	}
+
+	/**
+	 * @param personelObject
+	 * @param kodu
+	 * @param session
+	 * @return
+	 */
+	public List<PersonelDinamikAlan> getPersonelTanimSecimDurum(Object personelObject, String kodu, Session session) {
+		List<PersonelDinamikAlan> list = null;
+		if (personelObject != null) {
+			List idList = new ArrayList();
+			if (personelObject instanceof List)
+				idList.addAll((List) personelObject);
+			else
+				idList.add(personelObject);
+			if (!idList.isEmpty()) {
+				HashMap fields = new HashMap();
+				StringBuffer sb = new StringBuffer();
+				sb.append("  SELECT  D.* FROM " + PersonelDinamikAlan.TABLE_NAME + " D  WITH(nolock) ");
+				sb.append(" INNER JOIN " + Tanim.TABLE_NAME + " T  ON  T." + Tanim.COLUMN_NAME_ID + "= D." + PersonelDinamikAlan.COLUMN_NAME_ALAN);
+				sb.append("  AND T." + Tanim.COLUMN_NAME_TIPI + " = :t AND T." + Tanim.COLUMN_NAME_KODU + " = :k ");
+				sb.append(" AND T." + Tanim.COLUMN_NAME_DURUM + " = 1 ");
+				sb.append(" WHERE D." + PersonelDinamikAlan.COLUMN_NAME_PERSONEL + " :p");
+				fields.put("p", idList);
+				fields.put("t", Tanim.TIPI_PERSONEL_DINAMIK_DURUM);
+				fields.put("k", kodu);
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				try {
+					list = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDinamikAlan.class);
+
+				} catch (Exception e) {
+				}
+			}
+
+		}
+
+		return list;
+	}
+
+	/**
 	 * @param obj
 	 * @param list
 	 */
@@ -3978,7 +4037,12 @@ public class OrtakIslemler implements Serializable {
 						spAdi = "SP_GET_FAZLA_MESAI_DATA";
 					} else {
 						try {
-							mudurDurum = direktorId == null && loginUser.getPdksPersonel().getIkinciYoneticiIzinOnayla() ? 1 : 0;
+							Personel per = loginUser.getPdksPersonel();
+							if (per.getMudurAltSeviye() == null) {
+								Boolean mudurAltSeviye = getMudurAltSeviyeDurum(per, session);
+								per.setMudurAltSeviye(mudurAltSeviye);
+							}
+							mudurDurum = direktorId == null && per.getMudurAltSeviye() ? 1 : 0;
 						} catch (Exception e) {
 							mudurDurum = 0;
 						}
@@ -3990,7 +4054,6 @@ public class OrtakIslemler implements Serializable {
 					map.put("tesisId", tesisId != null ? tesisId : "");
 					map.put("direktorId", direktorId != null ? direktorId : 0L);
 					map.put("bolumId", bolumId != null ? bolumId : 0L);
-					// if (PdksUtil.isPuantajSorguAltBolumGir() || bolumId != null)
 					map.put("altBolumId", altBolumId);
 					if (mudurDurum != null)
 						map.put("mudurDurum", mudurDurum);
