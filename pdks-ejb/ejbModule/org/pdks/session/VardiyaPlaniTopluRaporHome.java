@@ -226,6 +226,9 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 	public String sayfaGirisAction() {
 		tumVardiyaList = null;
 		vardiyaAdetMap = null;
+		if (ortakIslemler.getParameterKey("vardiyaPlanTopluAdet").equals("1"))
+			vardiyaAdetMap = new HashMap<String, Long>();
+
 		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals(sayfaURL);
 		if (!ayniSayfa)
 			authenticatedUser.setCalistigiSayfa(sayfaURL);
@@ -759,13 +762,11 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 	@Transactional
 	public void fillVardiyaPlaniTopluRaporDevam(AylikPuantaj aylikPuantajSablon, DepartmanDenklestirmeDonemi denklestirmeDonemi) throws Exception {
 		fazlaMesaiVardiyaGun = null;
-		if (ortakIslemler.getParameterKey("vardiyaPlanTopluAdet").equals("1")) {
-			if (vardiyaAdetMap != null)
-				vardiyaAdetMap.clear();
-			else
-				vardiyaAdetMap = new HashMap<String, Long>();
-		}
-
+		tumVardiyaList = null;
+		vardiyaAdetMap = null;
+		if (seciliEkSaha3Id != null || ortakIslemler.getParameterKey("vardiyaPlanTopluAdet").equals("1"))
+			vardiyaAdetMap = new HashMap<String, Long>();
+		
 		HashMap<Long, Vardiya> vardiyaMap = new HashMap<Long, Vardiya>();
 		bordroPuantajEkranindaGoster = ortakIslemler.getParameterKey("bordroPuantajEkranindaGoster").equals("1");
 		fazlaMesaiVar = false;
