@@ -2141,7 +2141,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									personelDenklestirme.setDevredenSure(0D);
 									personelDenklestirme.setAksamVardiyaSaatSayisi(0D);
 									personelDenklestirme.setAksamVardiyaSayisi(0D);
-									personelDenklestirme.setHesaplananSure(0D);
 								}
 
 							}
