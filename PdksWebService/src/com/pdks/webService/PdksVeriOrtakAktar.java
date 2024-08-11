@@ -1703,11 +1703,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	private void izinBilgileriniGuncelle(List<IzinERP> izinList) throws Exception {
 		IzinERP erp = null;
 		bugun = PdksUtil.getDate(new Date());
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(bugun);
-		cal.add(Calendar.MONTH, -3);
-		cal.set(Calendar.DATE, 1);
-		Date sonGun = PdksUtil.getDate(cal.getTime());
+
 		Boolean izinCok = izinList.size() > 1;
 		MailStatu mailStatu = null;
 		Boolean mailBosGonder = izinCok;
@@ -1773,7 +1769,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		if (izinBitisTarihiAySayisi == null || izinBitisTarihiAySayisi < 0)
 			izinBitisTarihiAySayisi = 3;
 		TreeMap<String, List<String>> veriSorguMap = new TreeMap<String, List<String>>();
-		cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.DATE, 1);
 		cal.add(Calendar.MONTH, -izinBitisTarihiAySayisi);
 		Date gecmisTarihi = PdksUtil.getDate(cal.getTime());
@@ -2075,10 +2071,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 							personelDenklestirme.setDurum(Boolean.FALSE);
 						}
 					}
-					if (!kapaliDenklestirmeler.isEmpty()) {
-						if (bitisZamani == null || bitisZamani.after(sonGun))
-							hataList.add(izinERP);
-					} else
+					if (!kapaliDenklestirmeler.isEmpty())
+						hataList.add(izinERP);
+					else
 						izinERP.setDurum(null);
 					String str = donemStr.toString();
 					if (personelIzin.getId() == null && izinDurum == false) {

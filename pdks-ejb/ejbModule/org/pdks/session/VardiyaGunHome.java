@@ -2988,9 +2988,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (ikRole == false || denklestirmeAyDurum == false || vg.getTatil() != null || vg.getVardiya().isOffGun() == false)
 				izinGuncelleme = true;
 			else if (cm != null) {
-				int haftaGun = vg.getHaftaninGunu();
-				boolean cumartesiCalisiyor = cm.getHaftaSonu() > 0.0d;
-				if (haftaGun != Calendar.SUNDAY && (cumartesiCalisiyor == false || haftaGun != Calendar.SATURDAY))
+				// int haftaGun = vg.getHaftaninGunu();
+				boolean cumartesiCalisiyor = cm.isHaftaTatilVar();
+				if (vg.isHaftaIci() && cumartesiCalisiyor == false)
 					izinGuncelleme = !offIzinGuncelle;
 			}
 			if (izinGuncelleme)
@@ -6187,6 +6187,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			List<String> talepGunList = new ArrayList<String>();
 			ArrayList<String> perNoList = perList.isEmpty() ? new ArrayList<String>() : new ArrayList<String>(perList);
 			while (!perNoList.isEmpty() && okumaAdet < 2) {
+				boolean gunSaatGuncelle = false;
 				Boolean tekrarOku = false;
 				++okumaAdet;
 				boolean flush = false;
@@ -6552,7 +6553,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							pdksVardiyaGunMaster.setTatil(null);
 					}
 					TreeMap<String, CalismaModeliAy> cmaMap = new TreeMap<String, CalismaModeliAy>();
-					boolean gunSaatGuncelle = false;
+
 					for (Personel personel : personelList) {
 
 						boolean pdks = false;
@@ -6590,6 +6591,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								}
 								cmaMap.put(cmaKey, cma);
 							}
+
 							personelDenklestirme = new PersonelDenklestirme(personel, denklestirmeAy, cma);
 							pdksEntityController.saveOrUpdate(session, entityManager, personelDenklestirme);
 							flush = true;
@@ -6612,11 +6614,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							cmaMap.put(cmaKey, cma);
 
 						}
-						if (cma != null && cma.getDurum().booleanValue() == false) {
-							cma.setDurum(Boolean.TRUE);
-							pdksEntityController.saveOrUpdate(session, entityManager, cma);
-							flush = true;
-							gunSaatGuncelle = true;
+						if (cma != null) {
+							if (!gunSaatGuncelle)
+								gunSaatGuncelle = cma.getSure() == 0.0d || cma.getToplamIzinSure() == 0.0d;
+							if (cma.getDurum().booleanValue() == false) {
+								cma.setDurum(Boolean.TRUE);
+								pdksEntityController.saveOrUpdate(session, entityManager, cma);
+								flush = true;
+								gunSaatGuncelle = true;
+							}
 						}
 
 						if (personelDenklestirme.getId() != null && hashMap.containsKey(personelDenklestirme.getId())) {
@@ -7133,8 +7139,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					session.flush();
 					veriGuncellendi = Boolean.TRUE;
 				}
-				if (tekrarOku) {
-					tekrarOku = (ikRole == false && adminRole == false) && denklestirmeAyDurum && !aylikPuantajList.isEmpty();
+				if (tekrarOku || gunSaatGuncelle) {
+					tekrarOku = gunSaatGuncelle || (ikRole == false && adminRole == false) && denklestirmeAyDurum && !aylikPuantajList.isEmpty();
 					if (tekrarOku) {
 						aylikPuantajList.clear();
 						talepGunList.clear();
@@ -7660,7 +7666,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (dayOfWeek != Calendar.SUNDAY) {
 						boolean sutIzniYok = vg.getVardiyaDate().before(pdd.getBasTarih()) || vg.getVardiyaDate().after(pdd.getBitTarih());
 						if (vg.getTatil() == null) {
-							double gunSure = dayOfWeek != Calendar.SATURDAY ? cm.getHaftaIci() : cm.getHaftaSonu();
+							double gunSure = cm.getSaat(dayOfWeek);
 							if (sutIzniYok == false)
 								sutIzinSure += gunSure > 7.5d ? 7.5d : gunSure;
 							else
@@ -7669,7 +7675,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							if (PdksUtil.tarihKarsilastirNumeric(vg.getVardiyaDate(), vg.getTatil().getBasTarih()) == 0) {
 								if (sutIzniYok == false)
 									sutIzinSure += cm.getArife();
-								else if (cm.getHaftaSonu() > 0 || dayOfWeek != Calendar.SATURDAY)
+								else if (cm.isHaftaTatilVar() || vg.isHaftaIci())
 									sure += cm.getArife();
 							}
 						}
