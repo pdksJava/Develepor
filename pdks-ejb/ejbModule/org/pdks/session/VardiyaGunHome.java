@@ -6034,25 +6034,16 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			Date basGun = PdksUtil.getDate(cal.getTime());
 			boolean devam = true;
 			List<VardiyaHafta> vardiyaHaftaList = null;
+			tatilGunleriMap = null;
 			if (testDurum)
 				logger.info("aylikPuantajOlusturuluyor 1000 " + PdksUtil.getCurrentTimeStampStr());
 			if (departmanDenklestirmeDonemi == null)
 				departmanDenklestirmeDonemi = new DepartmanDenklestirmeDonemi();
-			defaultAylikPuantajSablon = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, departmanDenklestirmeDonemi, session);
-			tatilGunleriMap = null;
-			fazlaMesaiOrtakIslemler.setDenklestirmeAySure(defaultAylikPuantajSablon.getVardiyalar(), aramaSecenekleri.getSirket(), denklestirmeAy, session);
-			for (CalismaModeliAy cm : denklestirmeAy.getModeller()) {
-				modelMap.put(cm.getCalismaModeli().getId(), cm);
-			}
 
 			if (sicilNo != null)
 				sicilNo = sicilNo.trim();
 
-			defaultAylikPuantajSablon.setFazlaMesaiHesapla(Boolean.TRUE);
 			AylikPuantaj gecenAylikPuantajSablon = null;
-
-			basTarih = departmanDenklestirmeDonemi.getBaslangicTarih();
-			bitTarih = departmanDenklestirmeDonemi.getBitisTarih();
 
 			devam = true;
 			User islemYapan = (User) loginUser.clone();
@@ -6081,58 +6072,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 
 			}
-			if (!perList.isEmpty()) {
-				if (aramaSecenekleri.getEkSaha3Id() != null && PdksUtil.isSistemDestekVar()) {
-					HashMap parametreMap = new HashMap();
-					parametreMap.put("id", aramaSecenekleri.getEkSaha3Id());
-					if (session != null)
-						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-					seciliBolum = (Tanim) pdksEntityController.getObjectByInnerObject(parametreMap, Tanim.class);
 
-				}
-				if (aramaSecenekleri.getEkSaha4Id() != null && PdksUtil.isSistemDestekVar()) {
-					HashMap parametreMap = new HashMap();
-					parametreMap.put("id", aramaSecenekleri.getEkSaha4Id());
-					if (session != null)
-						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-					seciliAltBolum = (Tanim) pdksEntityController.getObjectByInnerObject(parametreMap, Tanim.class);
-
-				}
-
-			}
-
-			if (!loginUser.isDirektorSuperVisor() && !loginUser.isIK() && (loginUser.isYonetici() || loginUser.isYoneticiKontratli())) {
-				ortakIslemler.sistemeGirisIslemleri(islemYapan, Boolean.TRUE, basTarih, bitTarih, session);
-
-				boolean hastane = ortakIslemler.getParameterKey("uygulamaTipi").equals("H");
-
-				if (aramaSecenekleri.getEkSaha3Id() != null && hastane) {
-					if (aramaSecenekleri.getGorevYeriList() != null) {
-						if (aramaSecenekleri.getEkSaha3Id() != null)
-							gorevYerileri.add(aramaSecenekleri.getEkSaha3Id());
-						else
-							for (Iterator iterator = aramaSecenekleri.getGorevYeriList().iterator(); iterator.hasNext();) {
-								SelectItem item = (SelectItem) iterator.next();
-								gorevYerileri.add((Long) item.getValue());
-							}
-						List<VardiyaGorev> gorevliler = ortakIslemler.getVardiyaGorevYerleri(loginUser, defaultAylikPuantajSablon.getIlkGun(), defaultAylikPuantajSablon.getSonGun(), gorevYerileri, session);
-						for (VardiyaGorev pdksVardiyaGorev : gorevliler) {
-							Personel personel = pdksVardiyaGorev.getVardiyaGun().getPersonel();
-							String perNo = personel.getPdksSicilNo();
-							if (PdksUtil.hasStringValue(perNo) == false)
-								continue;
-							perNo = perNo.trim();
-							if (!perList.contains(perNo) && (PdksUtil.hasStringValue(sicilNo) == false || sicilNo.equals(perNo)))
-								gorevliPersonelMap.put(personel.getPdksSicilNo().trim(), personel);
-						}
-
-						if (!gorevliPersonelMap.isEmpty())
-							perList.addAll(new ArrayList(gorevliPersonelMap.keySet()));
-					}
-
-				}
-
-			}
 			if (adminRole || islemYapan.getYetkiTumPersonelNoList().contains(sicilNo))
 				if (PdksUtil.hasStringValue(sicilNo))
 					perList.add(sicilNo);
@@ -6177,6 +6117,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 
 				if (!perList.isEmpty()) {
+					defaultAylikPuantajSablon = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, departmanDenklestirmeDonemi, session);
+					fazlaMesaiOrtakIslemler.setDenklestirmeAySure(defaultAylikPuantajSablon.getVardiyalar(), aramaSecenekleri.getSirket(), denklestirmeAy, session);
+					for (CalismaModeliAy cm : denklestirmeAy.getModeller()) {
+						modelMap.put(cm.getCalismaModeli().getId(), cm);
+					}
+					defaultAylikPuantajSablon.setFazlaMesaiHesapla(Boolean.TRUE);
+
+					basTarih = departmanDenklestirmeDonemi.getBaslangicTarih();
+					bitTarih = departmanDenklestirmeDonemi.getBitisTarih();
 					if (gorevTipiId != null)
 						fields.put("gorevTipi.id=", gorevTipiId);
 					if (departmanBolumAyni == false && aramaSecenekleri.getTesisId() != null && aramaSecenekleri.getTesisId() > 0)
@@ -6234,6 +6183,55 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 				if (!personelList.isEmpty()) {
 					if (denklestirmeGecenAy == null || denklestirmeGelecekAy == null) {
+						if (aramaSecenekleri.getEkSaha3Id() != null && PdksUtil.isSistemDestekVar()) {
+							HashMap parametreMap = new HashMap();
+							parametreMap.put("id", aramaSecenekleri.getEkSaha3Id());
+							if (session != null)
+								parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+							seciliBolum = (Tanim) pdksEntityController.getObjectByInnerObject(parametreMap, Tanim.class);
+
+						}
+						if (aramaSecenekleri.getEkSaha4Id() != null && PdksUtil.isSistemDestekVar()) {
+							HashMap parametreMap = new HashMap();
+							parametreMap.put("id", aramaSecenekleri.getEkSaha4Id());
+							if (session != null)
+								parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+							seciliAltBolum = (Tanim) pdksEntityController.getObjectByInnerObject(parametreMap, Tanim.class);
+
+						}
+
+						if (!loginUser.isDirektorSuperVisor() && !loginUser.isIK() && (loginUser.isYonetici() || loginUser.isYoneticiKontratli())) {
+							ortakIslemler.sistemeGirisIslemleri(islemYapan, Boolean.TRUE, basTarih, bitTarih, session);
+
+							boolean hastane = ortakIslemler.getParameterKey("uygulamaTipi").equals("H");
+
+							if (aramaSecenekleri.getEkSaha3Id() != null && hastane) {
+								if (aramaSecenekleri.getGorevYeriList() != null) {
+									if (aramaSecenekleri.getEkSaha3Id() != null)
+										gorevYerileri.add(aramaSecenekleri.getEkSaha3Id());
+									else
+										for (Iterator iterator = aramaSecenekleri.getGorevYeriList().iterator(); iterator.hasNext();) {
+											SelectItem item = (SelectItem) iterator.next();
+											gorevYerileri.add((Long) item.getValue());
+										}
+									List<VardiyaGorev> gorevliler = ortakIslemler.getVardiyaGorevYerleri(loginUser, defaultAylikPuantajSablon.getIlkGun(), defaultAylikPuantajSablon.getSonGun(), gorevYerileri, session);
+									for (VardiyaGorev pdksVardiyaGorev : gorevliler) {
+										Personel personel = pdksVardiyaGorev.getVardiyaGun().getPersonel();
+										String perNo = personel.getPdksSicilNo();
+										if (PdksUtil.hasStringValue(perNo) == false)
+											continue;
+										perNo = perNo.trim();
+										if (!perList.contains(perNo) && (PdksUtil.hasStringValue(sicilNo) == false || sicilNo.equals(perNo)))
+											gorevliPersonelMap.put(personel.getPdksSicilNo().trim(), personel);
+									}
+
+									if (!gorevliPersonelMap.isEmpty())
+										perList.addAll(new ArrayList(gorevliPersonelMap.keySet()));
+								}
+
+							}
+
+						}
 						fields.clear();
 						int gecenAy = ay - 1;
 						int gecenYil = yil;
@@ -7151,8 +7149,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (gunSaatGuncelle)
 						fazlaMesaiOrtakIslemler.setDenklestirmeAySure(defaultAylikPuantajSablon.getVardiyalar(), aramaSecenekleri.getSirket(), denklestirmeAy, session);
 
-				} else
+				} else {
+					PdksUtil.addMessageWarn(denklestirmeAy.getAyAdi() + " " + yil + " dönemine ait çalışma planı bulunamadı!");
 					return false;
+				}
 
 				if (testDurum)
 					logger.info("aylikPuantajOlusturuluyor 8000 " + PdksUtil.getCurrentTimeStampStr());
