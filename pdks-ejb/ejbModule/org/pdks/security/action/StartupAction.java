@@ -134,6 +134,9 @@ public class StartupAction implements Serializable {
 	public byte[] projeHeaderImage;
 
 	@Out(scope = ScopeType.APPLICATION, required = false)
+	public byte[] projeFooterImage;
+
+	@Out(scope = ScopeType.APPLICATION, required = false)
 	public String projeHeaderColor = "white";
 
 	@Out(scope = ScopeType.APPLICATION, required = false)
@@ -143,7 +146,22 @@ public class StartupAction implements Serializable {
 	public String projeHeaderImageWidth = "480";
 
 	@Out(scope = ScopeType.APPLICATION, required = false)
+	public String projePowerBy = "Hasan Sayar";
+
+	@Out(scope = ScopeType.APPLICATION, required = false)
+	public String projeFooterBackgroundColor = "white";
+
+	@Out(scope = ScopeType.APPLICATION, required = false)
+	public String projePowerURL;
+
+	@Out(scope = ScopeType.APPLICATION, required = false)
 	public String projeHeaderImageHeight = "83";
+
+	@Out(scope = ScopeType.APPLICATION, required = false)
+	public String projeFooterImageWidth = "480";
+
+	@Out(scope = ScopeType.APPLICATION, required = false)
+	public String projeFooterImageHeight = "83";
 
 	private int smtpHostPort;
 
@@ -496,6 +514,16 @@ public class StartupAction implements Serializable {
 				MailManager.setHeaderRenk(deger);
 		}
 		String fontSize = "22px";
+		projePowerURL = null;
+		projeFooterBackgroundColor = "white";
+		if (parameterMap.containsKey("projePowerBy")) {
+			projePowerBy = parameterMap.get("projePowerBy");
+			if (parameterMap.containsKey("projePowerURL"))
+				projePowerURL = parameterMap.get("projePowerURL");
+			if (parameterMap.containsKey("projeFooterBackgroundColor"))
+				projeFooterBackgroundColor = parameterMap.get("projeFooterBackgroundColor");
+
+		}
 		if (parameterMap.containsKey("projeHeaderRenk")) {
 			String deger = parameterMap.get("projeHeaderRenk");
 			LinkedHashMap<String, String> map = PdksUtil.parametreAyikla(deger);
@@ -614,6 +642,27 @@ public class StartupAction implements Serializable {
 			haftaTatiliFazlaMesaiBasDakika = value;
 		}
 		Vardiya.setIntHaftaTatiliFazlaMesaiBasDakika(haftaTatiliFazlaMesaiBasDakika);
+		projeFooterImage = null;
+		if (parameterMap.containsKey("projeFooterImageName")) {
+			String imageName = parameterMap.get("projeFooterImageName");
+			File projeImage = new File("/opt/pdks/" + imageName);
+			if (projeImage.exists()) {
+				try {
+					projeFooterImage = PdksUtil.getFileByteArray(projeImage);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if (parameterMap.containsKey("projeFooterImageSize")) {
+				String deger = parameterMap.get("projeFooterImageSize");
+				LinkedHashMap<String, String> map = PdksUtil.parametreAyikla(deger);
+				if (map.containsKey("width"))
+					projeFooterImageWidth = map.get("width");
+				if (map.containsKey("height"))
+					projeFooterImageHeight = map.get("height");
+			}
+		}
+
 		if (parameterMap.containsKey("projeHeaderSize")) {
 			String deger = parameterMap.get("projeHeaderSize");
 			LinkedHashMap<String, String> map = PdksUtil.parametreAyikla(deger);
@@ -1190,5 +1239,53 @@ public class StartupAction implements Serializable {
 		}
 
 		return smtpTLS;
+	}
+
+	public byte[] getProjeFooterImage() {
+		return projeFooterImage;
+	}
+
+	public void setProjeFooterImage(byte[] projeFooterImage) {
+		this.projeFooterImage = projeFooterImage;
+	}
+
+	public String getProjePowerBy() {
+		return projePowerBy;
+	}
+
+	public void setProjePowerBy(String projePowerBy) {
+		this.projePowerBy = projePowerBy;
+	}
+
+	public String getProjeFooterImageWidth() {
+		return projeFooterImageWidth;
+	}
+
+	public void setProjeFooterImageWidth(String projeFooterImageWidth) {
+		this.projeFooterImageWidth = projeFooterImageWidth;
+	}
+
+	public String getProjeFooterImageHeight() {
+		return projeFooterImageHeight;
+	}
+
+	public void setProjeFooterImageHeight(String projeFooterImageHeight) {
+		this.projeFooterImageHeight = projeFooterImageHeight;
+	}
+
+	public String getProjePowerURL() {
+		return projePowerURL;
+	}
+
+	public void setProjePowerURL(String projePowerURL) {
+		this.projePowerURL = projePowerURL;
+	}
+
+	public String getProjeFooterBackgroundColor() {
+		return projeFooterBackgroundColor;
+	}
+
+	public void setProjeFooterBackgroundColor(String projeFooterBackgroundColor) {
+		this.projeFooterBackgroundColor = projeFooterBackgroundColor;
 	}
 }
