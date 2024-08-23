@@ -3261,7 +3261,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					cal.setTime(pdksVardiyaGun.getVardiyaDate());
 					cal.set(Calendar.HOUR_OF_DAY, aksamVardiyaBitSaat);
 					cal.set(Calendar.MINUTE, aksamVardiyaBitDakika);
-					if (vardiya.getBasSaat() > vardiya.getBitSaat())
+					if (vardiya.getBasDonem() > vardiya.getBitDonem())
 						cal.add(Calendar.DATE, 1);
 					aksamVardiyaBitisZamani = cal.getTime();
 				}
@@ -3270,7 +3270,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					cal.setTime(pdksVardiyaGun.getVardiyaDate());
 					cal.set(Calendar.HOUR_OF_DAY, aksamVardiyaBasSaat);
 					cal.set(Calendar.MINUTE, aksamVardiyaBasDakika);
-					if (vardiya.getBasSaat() < vardiya.getBitSaat())
+					if (vardiya.getBasDonem() < vardiya.getBitDonem())
 						cal.add(Calendar.DATE, -1);
 					aksamVardiyaBaslangicZamani = cal.getTime();
 				}
@@ -3294,7 +3294,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						if (vardiyaMap != null && pdksVardiyaGun.getVardiya().isCalisma() && !pdksVardiyaGun.isRaporIzni()) {
 							int index = PdksUtil.getDateField(pdksVardiyaGun.getVardiyaDate(), Calendar.DATE) - 1;
 							Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya();
-							if (!gorevli && islemVardiya.getBasSaat() >= islemVardiya.getBitSaat()) {
+							if (!gorevli && islemVardiya.getBasDonem() >= islemVardiya.getBitDonem()) {
 								if (pdksVardiyaGun.getSonrakiVardiyaGun() != null) {
 									try {
 										if (haftaTatilDurum && pdksVardiyaGun.getSonrakiVardiya() != null && pdksVardiyaGun.getSonrakiVardiya().isHaftaTatil()) {

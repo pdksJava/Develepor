@@ -343,7 +343,7 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 			for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 				VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
 				Vardiya vardiya = pdksVardiyaGun.getIslemVardiya();
-				if ((PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0 && vardiya.getBitSaat() > vardiya.getBasSaat()) || (PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) == 0 && vardiya.getBitSaat() < vardiya.getBasSaat())) {
+				if ((PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0 && vardiya.getBitDonem() > vardiya.getBasDonem()) || (PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) == 0 && vardiya.getBitDonem() < vardiya.getBasDonem())) {
 					iterator.remove();
 					continue;
 

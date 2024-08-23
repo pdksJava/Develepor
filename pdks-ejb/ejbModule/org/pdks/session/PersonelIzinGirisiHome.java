@@ -3222,7 +3222,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 								if (vardiya != null) {
 									cal.setTime(PdksUtil.getDate(personelIzin.getBitisZamani()));
 									if (isSaatGosterilecek() == false) {
-										if (vardiya.getBasSaat() < vardiya.getBitSaat()) {
+										if (vardiya.getBasDonem() < vardiya.getBitDonem()) {
 											cal.set(Calendar.HOUR_OF_DAY, vardiya.getBasSaat());
 											cal.set(Calendar.MINUTE, vardiya.getBasDakika());
 										} else {
