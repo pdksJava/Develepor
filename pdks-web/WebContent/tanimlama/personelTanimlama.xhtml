@@ -487,15 +487,25 @@
 								<a4j:support event="onuploadcomplete" process="fileUpload" ajaxSingle="true" reRender="dosyaPanel" />
 							</rich:fileUpload>
 							<rich:toolTip for="fileUpload">
-								<table class="mars">
-									<thead>
-										<tr>
-											<a4j:repeat value="#{pdksPersonelHome.dosyaTanimList}" var="liste">
-												<th>#{liste.value.aciklama}</th>
-											</a4j:repeat>
-										</tr>
-									</thead>
-								</table>
+								<rich:dataTable rowClasses="acik,koyu" headerClass="headerWrap" columnClasses="columnWrap" value="#{pdksPersonelHome.personelERPReturnList}"
+									rendered="#{empty pdksPersonelHome.personelERPReturnList}" var="personelHata" rows="50" rowKeyVar="row" id="personelBosViewTable">
+									<f:facet name="header">
+										<h:outputText value="Personeller" />
+									</f:facet>
+									<c:forEach items="#{pdksPersonelHome.dosyaTanimList}" var="liste">
+										<rich:column style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;">
+											<f:facet name="header">
+												<ui:fragment>
+														#{liste.value.aciklama}
+													</ui:fragment>
+											</f:facet>
+
+
+										</rich:column>
+									</c:forEach>
+								</rich:dataTable>
+
+
 
 							</rich:toolTip>
 							<a4j:outputPanel id="personelDosya">
@@ -1599,7 +1609,7 @@
 					</a4j:outputPanel>
 					<!--  -->
 					<a4j:outputPanel id="butonlar">
-						 
+
 						<ui:fragment rendered="#{authenticatedUser.admin or pdksPersonelHome.instance.kullanici.admin==false}">
 							<table width="50%">
 								<tr>
