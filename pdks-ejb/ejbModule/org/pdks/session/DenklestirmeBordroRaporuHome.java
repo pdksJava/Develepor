@@ -464,7 +464,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			yil = cal.get(Calendar.YEAR);
 			maxYil = yil;
 			try {
-				minYil = Integer.parseInt(ortakIslemler.getParameterKey("sistemBaslangicYili"));
+				minYil = maxYil;
 				if (str.length() > 5) {
 					int yil = Integer.parseInt(str.substring(0, 4));
 					if (yil > minYil && maxYil >= yil)
