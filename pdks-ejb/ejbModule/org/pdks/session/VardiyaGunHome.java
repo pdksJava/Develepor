@@ -7178,6 +7178,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					++okumaAdet;
 
 			}
+			if (defaultAylikPuantajSablon == null)
+				defaultAylikPuantajSablon = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, departmanDenklestirmeDonemi, session);
+
 			defaultAylikPuantajSablon.setVardiyalar(aylikSablonVardiyalar);
 			setAylikPuantajDefault(defaultAylikPuantajSablon);
 			bitTarih = null;
