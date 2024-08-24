@@ -318,7 +318,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		List<SelectItem> bolumList = fazlaMesaiOrtakIslemler.getFazlaMesaiBolumList(seciliSirket, seciliTesisId != null ? String.valueOf(seciliTesisId) : "", aylikPuantaj, authenticatedUser.isAdmin() == false, session);
 		fazlaMesaiHesaplaHome.setTesisId(seciliTesisId);
 		fazlaMesaiHesaplaHome.setTopluGuncelle(true);
-		
+
 		HashMap fields = new HashMap();
 		Tanim tesis = null;
 		if (seciliTesisId != null && seciliSirket.isTesisDurumu()) {
@@ -465,8 +465,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			maxYil = yil;
 			try {
 				minYil = Integer.parseInt(ortakIslemler.getParameterKey("sistemBaslangicYili"));
-				if (str.length() > 5)
-					minYil = Integer.parseInt(str.substring(0, 4));
+				if (str.length() > 5) {
+					int yil = Integer.parseInt(str.substring(0, 4));
+					if (yil > minYil && maxYil >= yil)
+						minYil = yil;
+				}
+
 			} catch (Exception e) {
 
 			}
