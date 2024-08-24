@@ -540,7 +540,7 @@ public class Vardiya extends BaseObject {
 					vardiyaCalisma.setVardiyaTarih(tarih);
 					cal.setTime(tarih);
 
-					if (vardiya.getBitSaat() > vardiya.getBasSaat()) {
+					if (vardiya.getBitDonem() > vardiya.getBasDonem()) {
 
 						if (vardiyaCalisma.getVardiyaTelorans1BasZaman() != null && vardiyaCalisma.getVardiyaTelorans1BasZaman().before(tarih)) {
 							int bosluk = -vardiyaCalisma.getGirisErkenToleransDakika();
@@ -559,7 +559,7 @@ public class Vardiya extends BaseObject {
 						} else {
 							if (oncekiVardiya != null) {
 								if (oncekiVardiya.isCalisma() && oncekiGunIzinli == false) {
-									if (oncekiVardiya.getBitSaat() > oncekiVardiya.getBasSaat()) {
+									if (oncekiVardiya.getBitDonem() > oncekiVardiya.getBasDonem()) {
 										vardiyaCalisma.setVardiyaFazlaMesaiBasZaman(PdksUtil.getDate(tarih));
 										cal.add(Calendar.MILLISECOND, -100);
 										oncekiVardiya.setVardiyaFazlaMesaiBitZaman((Date) cal.getTime().clone());
@@ -573,7 +573,7 @@ public class Vardiya extends BaseObject {
 						}
 						if (sonrakiVardiya != null) {
 							if (sonrakiVardiya.isCalisma() && sonrakiGunIzinli == false) {
-								if (sonrakiVardiya.getBitSaat() > sonrakiVardiya.getBasSaat()) {
+								if (sonrakiVardiya.getBitDonem() > sonrakiVardiya.getBasDonem()) {
 									sonrakiVardiya.setVardiyaFazlaMesaiBasZaman(sonrakiVardiya.getVardiyaTarih());
 									cal.setTime(sonrakiVardiya.getVardiyaTarih());
 									if (sonrakiVardiya.getVardiyaTelorans1BasZaman() != null && sonrakiVardiya.getVardiyaTelorans1BasZaman().before(PdksUtil.tariheGunEkleCikar(tarih, 1))) {
@@ -656,7 +656,7 @@ public class Vardiya extends BaseObject {
 					offCalisma.setVardiyaTarih(tarih);
 					if (oncekiVardiya != null) {
 
-						if (oncekiGunIzinli || oncekiVardiya.isCalisma() == false || oncekiVardiya.getBitSaat() > oncekiVardiya.getBasSaat()) {
+						if (oncekiGunIzinli || oncekiVardiya.isCalisma() == false || oncekiVardiya.getBitDonem() > oncekiVardiya.getBasDonem()) {
 							offCalisma.setVardiyaFazlaMesaiBasZaman(PdksUtil.getDate(tarih));
 							offCalisma.setVardiyaTelorans1BasZaman(PdksUtil.getDate(tarih));
 							offCalisma.setVardiyaTelorans2BasZaman(PdksUtil.getDate(tarih));
@@ -698,7 +698,7 @@ public class Vardiya extends BaseObject {
 					cal.setTime(sonrakiGun);
 					cal.add(Calendar.MILLISECOND, -100);
 					vardiya.setVardiyaFazlaMesaiBitZaman((Date) cal.getTime().clone());
-					if (vardiya.isCalisma() && vardiya.getBitSaat() < vardiya.getBasSaat()) {
+					if (vardiya.isCalisma() && vardiya.getBitDonem() < vardiya.getBasDonem()) {
 						vardiya.setVardiyaFazlaMesaiBitZaman(vardiya.getVardiyaTelorans2BitZaman());
 					}
 				}
@@ -728,7 +728,7 @@ public class Vardiya extends BaseObject {
 		Calendar cal1 = Calendar.getInstance();
 		cal1.setTime(vardiyaTarih);
 		Date sonGun = null;
-		if (bitSaat > basSaat) {
+		if (this.getBitDonem() > this.getBasDonem()) {
 			if (sonrakiVardiya != null && sonrakiVardiya.isHaftaTatil()) {
 				cal1.add(Calendar.MINUTE, this.getHaftaTatiliFazlaMesaiBasDakika());
 				if (vardiyaBitZaman != null && cal1.getTime().after(vardiyaBitZaman))
@@ -835,7 +835,7 @@ public class Vardiya extends BaseObject {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(vardiyaTarih);
 		Date sonGun = null;
-		if (bitSaat > basSaat) {
+		if (this.getBitDonem() > this.getBasDonem()) {
 			if (sonrakiVardiya != null && sonrakiVardiya.isHaftaTatil()) {
 				cal.add(Calendar.MINUTE, this.getHaftaTatiliFazlaMesaiBasDakika());
 				if (vardiyaBitZaman != null && cal.getTime().after(vardiyaBitZaman))
@@ -994,7 +994,7 @@ public class Vardiya extends BaseObject {
 		Calendar cal = Calendar.getInstance();
 
 		Date sonGun = null;
-		if (bitSaat > basSaat) {
+		if (this.getBitDonem() > this.getBasDonem()) {
 			if (sonrakiVardiya != null && sonrakiVardiya.isHaftaTatil()) {
 				cal.setTime(vardiyaTarih);
 				cal.add(Calendar.MINUTE, this.getHaftaTatiliFazlaMesaiBasDakika());
@@ -1129,7 +1129,7 @@ public class Vardiya extends BaseObject {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(vardiyaTarih);
 		Date sonGun = null;
-		if (bitSaat > basSaat) {
+		if (this.getBitDonem() > this.getBasDonem()) {
 			if (sonrakiVardiya != null && sonrakiVardiya.isCalisma() == false) {
 				cal.setTime(vardiyaTarih);
 				cal.add(Calendar.MINUTE, sonrakiVardiya.isHaftaTatil() ? this.getHaftaTatiliFazlaMesaiBasDakika() : this.getOffFazlaMesaiBasDakika());
@@ -1272,34 +1272,6 @@ public class Vardiya extends BaseObject {
 		return zaman;
 	}
 
-	// @Transient
-	// public void setVardiyaZamani(Date tarih) {
-	// if (tarih != null) {
-	// setVardiyaTarih(tarih);
-	// if (isCalisma()) {
-	// setToleransZaman();
-	// setVardiyaFazlaMesaiBasZaman(PdksUtil.addTarih(vardiyaBasZaman, Calendar.HOUR_OF_DAY, -6));
-	// setVardiyaFazlaMesaiBitZaman(PdksUtil.addTarih(vardiyaBitZaman, Calendar.HOUR_OF_DAY, 6));
-	// } else {
-	// Calendar cal = Calendar.getInstance();
-	// cal.setTime(tarih);
-	// cal.set(Calendar.HOUR_OF_DAY, 0);
-	// cal.set(Calendar.MINUTE, 0);
-	// cal.set(Calendar.SECOND, 0);
-	// cal.set(Calendar.MILLISECOND, 0);
-	// vardiyaBasZaman = cal.getTime();
-	// vardiyaTelorans1BasZaman = vardiyaBasZaman;
-	// this.setVardiyaTelorans2BasZaman(vardiyaBasZaman;
-	// setVardiyaFazlaMesaiBasZaman(vardiyaBasZaman);
-	// cal.add(Calendar.DATE, 1);
-	// vardiyaBitZaman = cal.getTime();
-	// vardiyaTelorans1BitZaman = vardiyaBitZaman;
-	// vardiyaTelorans2BitZaman = vardiyaBitZaman;
-	// setVardiyaFazlaMesaiBitZaman(vardiyaBitZaman);
-	// }
-	// }
-	// }
-
 	/**
 	 * @param tarih
 	 */
@@ -1376,7 +1348,7 @@ public class Vardiya extends BaseObject {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(vardiyaTarih);
 			if (this.isCalisma()) {
-				if (basSaat > bitSaat)
+				if (this.getBitDonem() < this.getBasDonem())
 					cal.add(Calendar.DATE, 1);
 				cal.add(Calendar.HOUR_OF_DAY, bitSaat);
 				cal.add(Calendar.MINUTE, bitDakika - getCikisErkenToleransDakika());
@@ -1399,7 +1371,7 @@ public class Vardiya extends BaseObject {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(vardiyaTarih);
 			if (this.isCalisma()) {
-				if (basSaat > bitSaat)
+				if (this.getBitDonem() < this.getBasDonem())
 					cal.add(Calendar.DATE, 1);
 				cal.add(Calendar.HOUR_OF_DAY, bitSaat);
 				cal.add(Calendar.MINUTE, bitDakika + getCikisGecikmeToleransDakika());
@@ -1812,6 +1784,24 @@ public class Vardiya extends BaseObject {
 		}
 
 		return katSayi;
+	}
+
+	@Transient
+	public static int getDonem(short saat, short dakika) {
+		int donem = (saat * 100) + dakika;
+		return donem;
+	}
+
+	@Transient
+	public int getBitDonem() {
+		int donem = getDonem(this.getBitSaat(), this.getBitDakika());
+		return donem;
+	}
+
+	@Transient
+	public int getBasDonem() {
+		int donem = getDonem(this.getBasSaat(), this.getBasDakika());
+		return donem;
 	}
 
 	@Transient

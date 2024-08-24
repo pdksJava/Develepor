@@ -3499,7 +3499,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				cal.setTime(vGun.getVardiyaDate());
 				cal.set(Calendar.HOUR_OF_DAY, aksamVardiyaBitSaat);
 				cal.set(Calendar.MINUTE, aksamVardiyaBitDakika);
-				if (vardiya.getBasSaat() > vardiya.getBitSaat() && vardiya.isCalisma())
+				if (vardiya.getBasDonem() > vardiya.getBitDonem() && vardiya.isCalisma())
 					cal.add(Calendar.DATE, 1);
 				aksamVardiyaBitisZamani = cal.getTime();
 			}
@@ -3508,7 +3508,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				cal.setTime(vGun.getVardiyaDate());
 				cal.set(Calendar.HOUR_OF_DAY, aksamVardiyaBasSaat);
 				cal.set(Calendar.MINUTE, aksamVardiyaBasDakika);
-				if (vardiya.getBasSaat() < vardiya.getBitSaat() || vardiya.isCalisma() == false)
+				if (vardiya.getBasDonem() < vardiya.getBitDonem() || vardiya.isCalisma() == false)
 					cal.add(Calendar.DATE, -1);
 				aksamVardiyaBaslangicZamani = cal.getTime();
 			}

@@ -155,9 +155,9 @@
 											rendered="#{not empty personelKalanIzinHome.personelBakiyeIzinList}" reRender="izinPanel" />
 
 										<rich:toolTip for="dosyaOku" rendered="#{personelKalanIzinHome.personelBakiyeIzinList.isEmpty()}">
-											<TABLE class="mars">
-												<thead>
-													<tr>
+											<TABLE class="rich-table">
+												<thead class="rich-table-thead">
+													<tr class="rich-table-subheader">
 														<th>#{ortakIslemler.personelNoAciklama()}</th>
 														<th>ADI SOYADI</th>
 														<th>GRUBA GIRIS</th>
@@ -176,7 +176,7 @@
 													</tr>
 												</thead>
 												<tbody>
-													<tr class="odd">
+													<tr class="acik">
 														<td align="center">90015654</td>
 														<td>PAKIZE YILMAZ</td>
 														<td align="center">17/05/2011</td>
@@ -193,7 +193,7 @@
 														<td align="center">16/06/2012</td>
 														<td align="center">01/07/2012</td>
 													</tr>
-													<tr class="even">
+													<tr class="koyu">
 														<td align="center">90015654</td>
 														<td>PAKIZE YILMAZ</td>
 														<td align="center">17/05/2011</td>
@@ -210,7 +210,7 @@
 														<td align="center">10/09/2012</td>
 														<td align="center">25/09/2012</td>
 													</tr>
-													<tr class="odd">
+													<tr class="acik">
 														<td align="center">90015654</td>
 														<td>PAKIZE YILMAZ</td>
 														<td align="center">17/05/2011</td>

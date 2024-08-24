@@ -297,7 +297,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					vg.setFiiliHesapla(vg.getTatil() != null);
 				}
 
-				if (vg.isFiiliHesapla() == false && islemVardiya.getBasSaat() > islemVardiya.getBitSaat() && vg.getTatil() == null) {
+				if (vg.isFiiliHesapla() == false && islemVardiya.getBasDonem() > islemVardiya.getBitDonem() && vg.getTatil() == null) {
 					cal.setTime(vg.getVardiyaDate());
 					int day = cal.get(Calendar.DATE), sonGun = cal.getActualMaximum(Calendar.DATE);
 					if (day == sonGun)
@@ -1932,7 +1932,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						VardiyaGun oncekiVardiyaGun = vardiyaGun.getOncekiVardiyaGun();
 						if (oncekiVardiyaGun != null && oncekiVardiyaGun.isAyinGunu() == false && oncekiVardiyaGun.getVardiya() != null) {
 							Vardiya tmpVardiya = vardiyaGun.getOncekiVardiyaGun().getIslemVardiya();
-							if (tmpVardiya.getBasSaat() > tmpVardiya.getBitSaat()) {
+							if (tmpVardiya.getBasDonem() > tmpVardiya.getBitDonem()) {
 								sb.append("<B>" + PdksUtil.convertToDateString(oncekiVardiyaGun.getVardiyaDate(), PdksUtil.getDateFormat()) + " Vardiya : </B>" + oncekiVardiyaGun.getVardiyaPlanAdi() + brStr);
 							}
 						}

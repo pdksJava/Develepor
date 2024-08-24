@@ -324,11 +324,11 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 				sil = PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0;
 			} else {
 				if (pdksVardiyaGun.getVardiyaDate().before(date)) {
-					if (pdksVardiyaGun.getIzin() != null || !(islemVardiya.getBitSaat() < islemVardiya.getBasSaat() && gunDurum == 0))
+					if (pdksVardiyaGun.getIzin() != null || !(islemVardiya.getBitDonem() < islemVardiya.getBasDonem() && gunDurum == 0))
 						sil = true;
 
 				} else {
-					if (islemVardiya.getBitSaat() < islemVardiya.getBasSaat() && gunDurum == 0 && bugun.before(islemVardiya.getVardiyaBasZaman()))
+					if (islemVardiya.getBitDonem() < islemVardiya.getBasDonem() && gunDurum == 0 && bugun.before(islemVardiya.getVardiyaBasZaman()))
 						sil = true;
 				}
 			}

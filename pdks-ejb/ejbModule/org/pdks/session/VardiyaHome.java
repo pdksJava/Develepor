@@ -356,7 +356,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 				if (!pdksVardiya.isCalisma())
 					pdksVardiya.setMesaiOde(null);
 				else if (pdksVardiya.getAksamVardiya() != null && pdksVardiya.getAksamVardiya().booleanValue())
-					pdksVardiya.setAksamVardiya(pdksVardiya.getBasSaat() >= pdksVardiya.getBitSaat());
+					pdksVardiya.setAksamVardiya(pdksVardiya.getBasDonem() >= pdksVardiya.getBitDonem());
 				if (pdksVardiya.getGenel() != null && pdksVardiya.getGenel()) {
 					pdksVardiya.setIcapVardiya(Boolean.FALSE);
 					pdksVardiya.setSua(Boolean.FALSE);
