@@ -30,11 +30,22 @@
 		<h:outputText value="Seçili Super Visör : #{authenticatedUser.seciliSuperVisor.adSoyad}"
 			rendered="#{identity.loggedIn and authenticatedUser.superVisor and authenticatedUser.seciliSuperVisor!=null}" />
 		<ui:fragment rendered="#{identity.loggedIn}">
-			<SPAN id="userInfo"> <h:outputText title="Kısa Kullanıcı : #{authenticatedUser.shortUsername}" value="#{authenticatedUser.adSoyad}"
-					rendered="#{authenticatedUser.shortUsername!=null and authenticatedUser.shortUsername!=''}" /> <h:outputText
-					value="#{authenticatedUser.adSoyad}" rendered="#{authenticatedUser.shortUsername==null or authenticatedUser.shortUsername==''}" />
-			</SPAN>
-			
+			<DIV id="userInfo">
+				<ui:fragment rendered="#{authenticatedUser.shortUsername!=null and authenticatedUser.shortUsername!=''}">
+					<h:outputText title="Kısa Kullanıcı : #{authenticatedUser.shortUsername}" value="#{authenticatedUser.adSoyad}" />
+				</ui:fragment>
+				<ui:fragment rendered="#{authenticatedUser.shortUsername==null or authenticatedUser.shortUsername==''}">
+					<h:outputText value="#{authenticatedUser.adSoyad}" />
+				</ui:fragment>
+
+			</DIV>
+			<ui:fragment rendered="#{authenticatedUser.menuItemTime!=null}">
+				<rich:toolTip for="userInfo">
+					<SPAN style="font-size: 9px;background-color: #{startupAction.projeHeaderBackgroundColor};color: #{startupAction.projeHeaderColor};"> #{authenticatedUser.menuItemTime.menu.description.aciklama} :
+						#{authenticatedUser.sayiFormatliGoster(authenticatedUser.menuItemTime.useCount)} -->
+						#{authenticatedUser.timeLongFormatla(authenticatedUser.menuItemTime.lastTime)}</SPAN>
+				</rich:toolTip>
+			</ui:fragment>
 		</ui:fragment>
 		<s:link view="#{menuItemConstant.home}" value="Ana Sayfa" propagation="none" rendered="#{identity.loggedIn}" />
 

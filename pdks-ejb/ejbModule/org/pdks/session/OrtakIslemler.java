@@ -8306,6 +8306,19 @@ public class OrtakIslemler implements Serializable {
 	public String getMenuUserAdi(Session sessionx, String menuAdi) {
 		boolean logYaz = authenticatedUser.getCalistigiSayfa() == null || !authenticatedUser.getCalistigiSayfa().equals(menuAdi);
 		String menuTanimAdi = getMenuUserLogAdi(sessionx, menuAdi, logYaz);
+//		try {
+//			if (authenticatedUser != null && authenticatedUser.getId() != null && PdksUtil.hasStringValue(authenticatedUser.getCalistigiSayfa())) {
+//				HashMap fields = new HashMap();
+//				fields.put("user.id", authenticatedUser.getId());
+//				fields.put("menu.name", menuAdi);
+//				if (sessionx != null)
+//					fields.put(PdksEntityController.MAP_KEY_SESSION, sessionx);
+//				UserMenuItemTime menuItemTime = (UserMenuItemTime) pdksEntityController.getObjectByInnerObject(fields, UserMenuItemTime.class);
+//				authenticatedUser.setMenuItemTime(menuItemTime);
+//			}
+//		} catch (Exception e) {
+//		}
+
 		return menuTanimAdi;
 	}
 
