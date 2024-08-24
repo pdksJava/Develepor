@@ -3717,7 +3717,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (flush) {
 			if (pdGuncellendi) {
 				boolean sutIzin = personel.isSutIzniKullan() || personelDenklestirme.isSutIzniVar();
-				if (!sutIzin && gebeSutIzniGuncelle == false) {
+				if (!sutIzin && gebeSutIzniGuncelle == false && personelDenklestirme.getCalismaModeli().isUpdateCGS() == false) {
 					if (personelDenklestirme.getSutIzniSaatSayisi() != null && personelDenklestirme.getSutIzniSaatSayisi().doubleValue() > 0.0d)
 						personelDenklestirme.setSutIzniSaatSayisi(0.0d);
 				}
