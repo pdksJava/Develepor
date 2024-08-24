@@ -8306,18 +8306,18 @@ public class OrtakIslemler implements Serializable {
 	public String getMenuUserAdi(Session sessionx, String menuAdi) {
 		boolean logYaz = authenticatedUser.getCalistigiSayfa() == null || !authenticatedUser.getCalistigiSayfa().equals(menuAdi);
 		String menuTanimAdi = getMenuUserLogAdi(sessionx, menuAdi, logYaz);
-//		try {
-//			if (authenticatedUser != null && authenticatedUser.getId() != null && PdksUtil.hasStringValue(authenticatedUser.getCalistigiSayfa())) {
-//				HashMap fields = new HashMap();
-//				fields.put("user.id", authenticatedUser.getId());
-//				fields.put("menu.name", menuAdi);
-//				if (sessionx != null)
-//					fields.put(PdksEntityController.MAP_KEY_SESSION, sessionx);
-//				UserMenuItemTime menuItemTime = (UserMenuItemTime) pdksEntityController.getObjectByInnerObject(fields, UserMenuItemTime.class);
-//				authenticatedUser.setMenuItemTime(menuItemTime);
-//			}
-//		} catch (Exception e) {
-//		}
+		// try {
+		// if (authenticatedUser != null && authenticatedUser.getId() != null && PdksUtil.hasStringValue(authenticatedUser.getCalistigiSayfa())) {
+		// HashMap fields = new HashMap();
+		// fields.put("user.id", authenticatedUser.getId());
+		// fields.put("menu.name", menuAdi);
+		// if (sessionx != null)
+		// fields.put(PdksEntityController.MAP_KEY_SESSION, sessionx);
+		// UserMenuItemTime menuItemTime = (UserMenuItemTime) pdksEntityController.getObjectByInnerObject(fields, UserMenuItemTime.class);
+		// authenticatedUser.setMenuItemTime(menuItemTime);
+		// }
+		// } catch (Exception e) {
+		// }
 
 		return menuTanimAdi;
 	}
@@ -19250,10 +19250,31 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public void yoneticiPuantajKontrol(User loginUser, List<AylikPuantaj> aylikPuantajList, Boolean calismayanPersonelYoneticiDurum, Session session) {
 		String key = getParameterKey("yoneticiPuantajKontrol");
+
 		boolean kontrolEtme = !PdksUtil.hasStringValue(key);
 		if (aylikPuantajList != null) {
+			String yoneticiRolleriHaric = getParameterKey("yoneticiRolleriHaric");
+			List<String> yoneticiRolleriHaricList = PdksUtil.getListByString(yoneticiRolleriHaric, null);
+			yoneticiRolleriHaricList.add(Role.TIPI_ANAHTAR_KULLANICI);
+			yoneticiRolleriHaricList.add(Role.TIPI_SISTEM_YONETICI);
+			yoneticiRolleriHaricList.add(Role.TIPI_ADMIN);
+			yoneticiRolleriHaricList.add(Role.TIPI_IK_DIREKTOR);
+			yoneticiRolleriHaricList.add(Role.TIPI_IK_Tesis);
+			yoneticiRolleriHaricList.add(Role.TIPI_IK_YETKILI_RAPOR_KULLANICI);
 			Calendar cal = Calendar.getInstance();
 			HashMap fields = new HashMap();
+			fields.put("role.rolename not ", yoneticiRolleriHaricList);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			List<UserRoles> rolList = pdksEntityController.getObjectByInnerObjectList(fields, UserRoles.class);
+			for (Iterator iterator = rolList.iterator(); iterator.hasNext();) {
+				UserRoles userRoles = (UserRoles) iterator.next();
+				User user = userRoles.getUser();
+				if (user.isDurum() == false || user.getPdksPersonel().isCalisiyor() == false)
+					iterator.remove();
+			}
+
+			fields.clear();
 			fields.put("tipi", Tanim.TIPI_PERSONEL_DINAMIK_DURUM);
 			fields.put("kodu", Tanim.IKINCI_YONETICI_ONAYLAMAZ);
 			if (session != null)
@@ -19266,13 +19287,16 @@ public class OrtakIslemler implements Serializable {
 			List<Long> idList = new ArrayList<Long>(), id2List = new ArrayList<Long>(), idPasifList = new ArrayList<Long>();
 			try {
 				Personel yonetici = null;
-				if (key.equals("0") || loginUser.isAdmin() || loginUser.isSistemYoneticisi()) {
-					yonetici = new Personel();
-					if (kontrolEtme == false)
-						yonetici.setId(-1L);
-					yonetici.setAd(yoneticiAciklama());
-					yonetici.setSoyad("tanımsız!");
+				if (!rolList.isEmpty()) {
+					if (key.equals("0") || loginUser.isAdmin() || loginUser.isSistemYoneticisi()) {
+						yonetici = new Personel();
+						if (kontrolEtme == false)
+							yonetici.setId(-1L);
+						yonetici.setAd(yoneticiAciklama());
+						yonetici.setSoyad("tanımsız!");
+					}
 				}
+
 				Date sonGun = null;
 				boolean yoneticiTanimli = !PdksUtil.hasStringValue(getParameterKey("yoneticiTanimsiz"));
 				if (calismayanPersonelYoneticiDurum && !aylikPuantajList.isEmpty())
@@ -19323,11 +19347,15 @@ public class OrtakIslemler implements Serializable {
 
 				if (kontrolEtme == false && !idList.isEmpty()) {
 					Personel yoneticiUser = new Personel();
+
 					if (kontrolEtme)
 						yoneticiUser.setId(-1L);
-					yoneticiUser.setAd("");
-					if (yoneticiTanimli)
-						yoneticiUser.setSoyad("kullanıcı tanımsız!");
+					if (!rolList.isEmpty()) {
+						yoneticiUser.setAd("");
+						if (yoneticiTanimli)
+							yoneticiUser.setSoyad("kullanıcı tanımsız!");
+					}
+
 					String fieldName = "pdksPersonel.id";
 					fields.clear();
 					fields.put(PdksEntityController.MAP_KEY_SELECT, "pdksPersonel");
