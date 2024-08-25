@@ -10,7 +10,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -47,17 +46,10 @@ public class YemekIzinHome extends EntityHome<YemekIzin> implements Serializable
 	@In(required = true, create = true)
 	OrtakIslemler ortakIslemler;
 
+	public static String sayfaURL = "yemekIzinTanimlama";
 	private List<YemekIzin> yemekList = new ArrayList<YemekIzin>();
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), kayitliVardiyaList = new ArrayList<Vardiya>();
 	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	@Override
 	public Object getId() {
@@ -117,7 +109,7 @@ public class YemekIzinHome extends EntityHome<YemekIzin> implements Serializable
 			}
 			for (Iterator iterator2 = kayitliVardiyaYemekIzinList.iterator(); iterator2.hasNext();) {
 				VardiyaYemekIzin vyi = (VardiyaYemekIzin) iterator2.next();
-				pdksEntityController.deleteObject(session, entityManager,vyi );
+				pdksEntityController.deleteObject(session, entityManager, vyi);
 			}
 
 			session.flush();
@@ -142,7 +134,7 @@ public class YemekIzinHome extends EntityHome<YemekIzin> implements Serializable
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 				session.clear();
 			}
- 			list = pdksEntityController.getObjectByInnerObjectList(parametreMap, YemekIzin.class);
+			list = pdksEntityController.getObjectByInnerObjectList(parametreMap, YemekIzin.class);
 			if (list.size() > 1)
 				list = PdksUtil.sortListByAlanAdi(list, "yemekNumeric", false);
 		} catch (Exception e) {
@@ -209,8 +201,7 @@ public class YemekIzinHome extends EntityHome<YemekIzin> implements Serializable
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fillPdksYemekList();
 
 	}
@@ -239,4 +230,19 @@ public class YemekIzinHome extends EntityHome<YemekIzin> implements Serializable
 		this.kayitliVardiyaList = kayitliVardiyaList;
 	}
 
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		YemekIzinHome.sayfaURL = sayfaURL;
+	}
 }

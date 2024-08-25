@@ -15,7 +15,6 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -62,7 +61,8 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 	HashMap parameterMap;
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
-
+	
+	public static String sayfaURL = "taseronPersonelKopyala";
 	private List<PersonelView> personelList = new ArrayList<PersonelView>();
 	private List<SelectItem> sirketList = new ArrayList<SelectItem>();
 
@@ -111,8 +111,7 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 	public String sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		if (sirketList == null)
 			sirketList = new ArrayList<SelectItem>();
 		else
@@ -427,5 +426,13 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 
 	public void setSorunYok(boolean sorunYok) {
 		this.sorunYok = sorunYok;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		TaseronPersonelKopyalaHome.sayfaURL = sayfaURL;
 	}
 }

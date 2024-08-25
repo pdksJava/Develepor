@@ -15,7 +15,6 @@ import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -64,6 +63,8 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 
 	@In(required = true, create = true)
 	Renderer renderer;
+
+	public static String sayfaURL = "personelGeciciYonetici";
 	private boolean aramaVisible = Boolean.FALSE;
 
 	private List<Personel> personelList = new ArrayList<Personel>();
@@ -598,7 +599,7 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 			// parametreMap.put(PdksEntityController.MAP_KEY_MAP, "getId");
 			// TreeMap<Long, Personel> yoneticiMap = pdksEntityController.getObjectByInnerObjectMapInLogic(parametreMap, Personel.class, false);
 			TreeMap<Long, Personel> yoneticiMap = ortakIslemler.getParamTreeMap(Boolean.TRUE, "getId", Boolean.FALSE, dataIdList, fieldName, parametreMap, Personel.class, session);
- 			for (Long ld : yoneticiMap.keySet()) {
+			for (Long ld : yoneticiMap.keySet()) {
 				if (userMap.containsKey(ld))
 					list.add(userMap.get(ld));
 
@@ -629,8 +630,7 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fillGirisEkSahaTanim();
 		setSeciliPersonel(new Personel());
 		setVisibled(Boolean.TRUE);
@@ -1030,5 +1030,13 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 
 	public void setYonetici(boolean yonetici) {
 		this.yonetici = yonetici;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		PersonelGeciciYoneticiHome.sayfaURL = sayfaURL;
 	}
 }

@@ -11,7 +11,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -54,6 +53,7 @@ public class IzinKagidiHome extends EntityHome<PersonelIzin> implements Serializ
 	@In(required = true, create = true)
 	Renderer renderer;
 
+	public static String sayfaURL = "izinKagidi";
 	private Personel seciliPersonel;
 
 	User yoneticiUser;
@@ -65,14 +65,6 @@ public class IzinKagidiHome extends EntityHome<PersonelIzin> implements Serializ
 	private List<Personel> pdksPersonelList = new ArrayList<Personel>();
 	private List<User> toUserList = new ArrayList<User>(), ccUserList = new ArrayList<User>();
 	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	@In(required = false)
 	FacesMessages facesMessages;
@@ -96,8 +88,7 @@ public class IzinKagidiHome extends EntityHome<PersonelIzin> implements Serializ
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		// setPersonelizinList(new ArrayList());
 		fillIzinKagidiList();
 	}
@@ -295,4 +286,19 @@ public class IzinKagidiHome extends EntityHome<PersonelIzin> implements Serializ
 		this.ccUserList = ccUserList;
 	}
 
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		IzinKagidiHome.sayfaURL = sayfaURL;
+	}
 }

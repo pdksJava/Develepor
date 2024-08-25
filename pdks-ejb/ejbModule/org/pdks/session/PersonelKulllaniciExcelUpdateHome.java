@@ -19,7 +19,6 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -66,6 +65,8 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 	HashMap parameterMap;
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
+	
+	public static String sayfaURL = "personelKullaniciExcelGuncelle";
 
 	private List<PersonelView> personelList = new ArrayList<PersonelView>();
 	private List<SelectItem> islemList = new ArrayList<SelectItem>();
@@ -73,21 +74,7 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 	private FileUpload file;
 	private Session session;
 
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
-
-	public String getIslemTipi() {
-		return islemTipi;
-	}
-
-	public void setIslemTipi(String islemTipi) {
-		this.islemTipi = islemTipi;
-	}
+	
 
 	@Override
 	public Object getId() {
@@ -556,8 +543,7 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 	public String sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		islemTipi = "";
 		mailAdres = "";
 		ekleSil = "";
@@ -620,5 +606,27 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 	public void setEkleSil(String ekleSil) {
 		this.ekleSil = ekleSil;
 	}
+	public Session getSession() {
+		return session;
+	}
 
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public String getIslemTipi() {
+		return islemTipi;
+	}
+
+	public void setIslemTipi(String islemTipi) {
+		this.islemTipi = islemTipi;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		PersonelKulllaniciExcelUpdateHome.sayfaURL = sayfaURL;
+	}
 }

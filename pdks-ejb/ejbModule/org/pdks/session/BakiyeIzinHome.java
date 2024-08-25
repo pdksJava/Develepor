@@ -18,7 +18,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -58,6 +57,7 @@ public class BakiyeIzinHome extends EntityHome<PersonelIzin> {
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
 
+	public static String sayfaURL = "bakiyeIzin";
 	private PersonelIzin updateIzin;
 	private TempIzin updateTempIzin;
 
@@ -168,10 +168,9 @@ public class BakiyeIzinHome extends EntityHome<PersonelIzin> {
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
-
-		session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		if (session == null)
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		HashMap fields = new HashMap();
 		fields.put("durum=", Boolean.TRUE);
 		fields.put("bakiyeIzinTipi.izinTipiTanim.kodu<>", IzinTipi.YILLIK_UCRETLI_IZIN);
@@ -568,5 +567,13 @@ public class BakiyeIzinHome extends EntityHome<PersonelIzin> {
 
 	public void setIzinTipiTanim(Tanim izinTipiTanim) {
 		this.izinTipiTanim = izinTipiTanim;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		BakiyeIzinHome.sayfaURL = sayfaURL;
 	}
 }

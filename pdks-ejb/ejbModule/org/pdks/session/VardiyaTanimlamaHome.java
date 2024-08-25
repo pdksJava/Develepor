@@ -16,7 +16,6 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -64,7 +63,8 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	OrtakIslemler ortakIslemler;
 	@In(required = false, create = true)
 	FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemler;
-
+	
+	public static String sayfaURL = "pdksVardiyaTanimlama";
 	private List<DenklestirmeAy> aylikList = null;
 	private String maxYil = null, vardiyaTanimKodu = null;
 	private int yilEdit, yilModal, yilSelect, yil;
@@ -227,8 +227,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		Calendar calendar = Calendar.getInstance();
 		yil = calendar.get(Calendar.YEAR);
 		calendar.add(Calendar.MONTH, 1);
@@ -972,6 +971,14 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 
 	public void setModelMap(TreeMap<String, CalismaModeliAy> modelMap) {
 		this.modelMap = modelMap;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		VardiyaTanimlamaHome.sayfaURL = sayfaURL;
 	}
 
 }

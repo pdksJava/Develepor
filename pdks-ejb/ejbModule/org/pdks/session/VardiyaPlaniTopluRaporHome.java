@@ -30,7 +30,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Begin;
@@ -84,6 +83,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 	 */
 	private static final long serialVersionUID = -267996967387268542L;
 	static Logger logger = Logger.getLogger(VardiyaPlaniTopluRaporHome.class);
+	
 	public static String sayfaURL = "vardiyaPlaniTopluRapor";
 
 	@RequestParameter
@@ -224,6 +224,9 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
+		if (session == null)
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		tumVardiyaList = null;
 		vardiyaAdetMap = null;
 		if (ortakIslemler.getParameterKey("vardiyaPlanTopluAdet").equals("1"))
@@ -232,10 +235,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals(sayfaURL);
 		if (!ayniSayfa)
 			authenticatedUser.setCalistigiSayfa(sayfaURL);
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+ 
 		toplamSutunGoster = false;
 		if (gosterimTipleri == null)
 			gosterimTipleri = new ArrayList<SelectItem>();
@@ -3792,6 +3792,14 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 
 	public void setTumVardiyaList(List<VardiyaGun> tumVardiyaList) {
 		this.tumVardiyaList = tumVardiyaList;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		VardiyaPlaniTopluRaporHome.sayfaURL = sayfaURL;
 	}
 
 }

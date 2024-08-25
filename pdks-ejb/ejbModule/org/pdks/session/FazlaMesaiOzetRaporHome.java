@@ -30,7 +30,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Begin;
@@ -79,6 +78,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	 */
 	private static final long serialVersionUID = 5201033120905302620L;
 	static Logger logger = Logger.getLogger(FazlaMesaiOzetRaporHome.class);
+	
 	public static String sayfaURL = "fazlaMesaiOzetRapor";
 
 	@RequestParameter
@@ -210,14 +210,13 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
-		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals("fazlaMesaiOzetRapor");
-		if (!ayniSayfa)
-			authenticatedUser.setCalistigiSayfa("fazlaMesaiOzetRapor");
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
-		tumVardiyaList = null;
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+ 		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals(sayfaURL);
+		if (!ayniSayfa)
+			authenticatedUser.setCalistigiSayfa(sayfaURL);
+ 		tumVardiyaList = null;
 		vardiyaAdetMap = null;
 		if (baslikMap == null)
 			baslikMap = new TreeMap<String, Boolean>();
@@ -3864,5 +3863,13 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	public void setSession(Session session) {
 		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		FazlaMesaiOzetRaporHome.sayfaURL = sayfaURL;
 	}
 }

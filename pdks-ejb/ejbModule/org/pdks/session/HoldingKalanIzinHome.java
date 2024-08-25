@@ -23,7 +23,6 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -61,6 +60,8 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 	OrtakIslemler ortakIslemler;
 	@In(required = false, create = true)
 	IzinBakiyeGuncelleme izinBakiyeGuncelleme;
+
+	public static String sayfaURL = "holdingKalanIzin";
 
 	private String kidemYili, bolumAciklama;
 
@@ -107,8 +108,7 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 	public String sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		istenAyrilanEkle = Boolean.FALSE;
 		if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)
 			aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
@@ -522,6 +522,14 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 
 	public void setBolumAciklama(String bolumAciklama) {
 		this.bolumAciklama = bolumAciklama;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		HoldingKalanIzinHome.sayfaURL = sayfaURL;
 	}
 
 }

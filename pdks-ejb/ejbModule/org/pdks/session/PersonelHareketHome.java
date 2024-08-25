@@ -17,7 +17,6 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.Max;
 import org.hibernate.validator.Min;
@@ -55,6 +54,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 	 */
 	private static final long serialVersionUID = -3323735011423501133L;
 	static Logger logger = Logger.getLogger(PersonelHareketHome.class);
+
 	public static String sayfaURL = "personelHareket";
 
 	@RequestParameter
@@ -293,13 +293,14 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() throws Exception {
-
+		if (session == null)
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		if (personelList == null)
 			personelList = new ArrayList<Personel>();
 		else
 			personelList.clear();
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+
 		visibled = null;
 		adminRoleDurum();
 		sonIslemNeden = null;
@@ -308,8 +309,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 		if (linkAdres == null && ikRole == false && authenticatedUser.isDirektorSuperVisor() == false)
 			donusAdres = "";
 		terminalDegistir = false;
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+
 		manuelHareketMap = null;
 		manuelHareketList = null;
 		manuelGiris = null;
@@ -1463,6 +1463,14 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 
 	public void setKgsUpdateGoster(Boolean kgsUpdateGoster) {
 		this.kgsUpdateGoster = kgsUpdateGoster;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		PersonelHareketHome.sayfaURL = sayfaURL;
 	}
 
 }

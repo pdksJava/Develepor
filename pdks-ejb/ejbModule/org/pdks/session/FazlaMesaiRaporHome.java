@@ -29,7 +29,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Begin;
@@ -72,6 +71,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 	 */
 	private static final long serialVersionUID = 5201033120905302620L;
 	static Logger logger = Logger.getLogger(FazlaMesaiRaporHome.class);
+
 	public static String sayfaURL = "fazlaMesaiRapor";
 
 	@RequestParameter
@@ -199,17 +199,17 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
+		if (session == null)
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fazlaMesaiSayfa = false;
 		yasalFazlaCalismaAsanSaat = Boolean.FALSE;
 		sirketGoster = Boolean.FALSE;
 		adminRoleDurum();
-		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals("fazlaMesaiRapor");
+		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals(sayfaURL);
 		if (!ayniSayfa)
-			authenticatedUser.setCalistigiSayfa("fazlaMesaiRapor");
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+			authenticatedUser.setCalistigiSayfa(sayfaURL);
+
 		yil = -1;
 		ay = -1;
 		fazlaMesaiVardiyaGun = null;
@@ -2450,6 +2450,14 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 
 	public void setSirketGoster(Boolean sirketGoster) {
 		this.sirketGoster = sirketGoster;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		FazlaMesaiRaporHome.sayfaURL = sayfaURL;
 	}
 
 }

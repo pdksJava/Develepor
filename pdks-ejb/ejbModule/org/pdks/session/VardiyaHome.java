@@ -14,7 +14,6 @@ import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -58,7 +57,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	OrtakIslemler ortakIslemler;
 	@In(required = false)
 	FacesMessages facesMessages;
-
+	
+	public static String sayfaURL = "vardiyaTanimlama";
 	private List<String> saatList = new ArrayList<String>();
 	private List<String> dakikaList = new ArrayList<String>();
 	private List<String> toleransDakikaList = new ArrayList<String>();
@@ -659,8 +659,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fillSaatler();
 		fillVardiyalar();
 		fillSablonlar();
@@ -839,5 +838,13 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 	public void setIzinCalismaVardiyaList(List<Vardiya> izinCalismaVardiyaList) {
 		this.izinCalismaVardiyaList = izinCalismaVardiyaList;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		VardiyaHome.sayfaURL = sayfaURL;
 	}
 }

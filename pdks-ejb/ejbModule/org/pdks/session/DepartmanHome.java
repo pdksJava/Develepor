@@ -16,7 +16,6 @@ import javax.mail.internet.InternetAddress;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -51,19 +50,12 @@ public class DepartmanHome extends EntityHome<Departman> implements Serializable
 	@In(required = true, create = true)
 	OrtakIslemler ortakIslemler;
 
+	public static String sayfaURL = "departmanTanimlama";
 	private List<Tanim> departmanTanimList = new ArrayList<Tanim>(), girisTipiTanimList = new ArrayList<Tanim>();
 	private List<Departman> departmanList = new ArrayList<Departman>();
 	private Session session;
 	private List<String> adresler;
 	private String mailAdres;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	@Override
 	public Object getId() {
@@ -289,8 +281,7 @@ public class DepartmanHome extends EntityHome<Departman> implements Serializable
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fillDepartmanTanimList();
 	}
 
@@ -334,4 +325,19 @@ public class DepartmanHome extends EntityHome<Departman> implements Serializable
 		this.adresler = adresler;
 	}
 
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		DepartmanHome.sayfaURL = sayfaURL;
+	}
 }

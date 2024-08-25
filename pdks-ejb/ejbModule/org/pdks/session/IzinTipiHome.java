@@ -13,14 +13,6 @@ import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.pdks.entity.Departman;
-import org.pdks.entity.Sirket;
-import org.pdks.entity.IzinTipi;
-import org.pdks.entity.IzinTipiMailAdres;
-import org.pdks.entity.PersonelIzin;
-import org.pdks.entity.Tanim;
-import org.pdks.security.entity.User;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -30,6 +22,13 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
+import org.pdks.entity.Departman;
+import org.pdks.entity.IzinTipi;
+import org.pdks.entity.IzinTipiMailAdres;
+import org.pdks.entity.PersonelIzin;
+import org.pdks.entity.Sirket;
+import org.pdks.entity.Tanim;
+import org.pdks.security.entity.User;
 
 @Name("izinTipiHome")
 public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
@@ -53,6 +52,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 	@In(required = false)
 	FacesMessages facesMessages;
 
+	public static String sayfaURL = "izinTipiTanimlama";
 	private List<Departman> departmanList = new ArrayList<Departman>();
 	private List<Sirket> sirketList = new ArrayList<Sirket>();
 	private List<IzinTipi> izinTipiList = new ArrayList<IzinTipi>();
@@ -68,14 +68,6 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 	private List<IzinTipiMailAdres> mailCCAdresList, mailBCCAdresList;
 	private String mailTipi, mailAdres, kisaAdi = "";
 	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	@Override
 	public Object getId() {
@@ -606,8 +598,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		durumCGSList.clear();
 		durumCGSList.add(new SelectItem(IzinTipi.CGS_DURUM_YOK, IzinTipi.getDurumCGSAciklama(IzinTipi.CGS_DURUM_YOK)));
 		durumCGSList.add(new SelectItem(IzinTipi.CGS_DURUM_CIKAR, IzinTipi.getDurumCGSAciklama(IzinTipi.CGS_DURUM_CIKAR)));
@@ -799,5 +790,21 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 
 	public void setKisaAdi(String kisaAdi) {
 		this.kisaAdi = kisaAdi;
+	}
+
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		IzinTipiHome.sayfaURL = sayfaURL;
 	}
 }

@@ -22,7 +22,6 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -66,6 +65,7 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 	@In(required = false, create = true)
 	List<User> userList;
 
+	public static String sayfaURL = "girisCikisKontrol";
 	List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 	List<VardiyaGun> vardiyaGunList = new ArrayList<VardiyaGun>();
 
@@ -97,8 +97,7 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		setHareketList(new ArrayList<HareketKGS>());
 		setVardiyaGunList(new ArrayList<VardiyaGun>());
 		HareketKGS hareket = new HareketKGS();
@@ -595,6 +594,14 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 
 	public void setAramaSecenekleri(AramaSecenekleri aramaSecenekleri) {
 		this.aramaSecenekleri = aramaSecenekleri;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		GirisCikisKontrolHome.sayfaURL = sayfaURL;
 	}
 
 }

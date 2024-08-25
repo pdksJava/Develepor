@@ -50,6 +50,7 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 	@In(required = true, create = true)
 	OrtakIslemler ortakIslemler;
 
+	public static String sayfaURL = "yemekTanimlama";
 	private List<YemekOgun> yemekList = new ArrayList<YemekOgun>();
 	private List<Sirket> sirketList = new ArrayList<Sirket>();
 	private List<Departman> departmanList = new ArrayList<Departman>();
@@ -59,14 +60,6 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 
 	private Date basTarih, bitTarih;
 	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	@Override
 	public Object getId() {
@@ -243,8 +236,7 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fillPdksYemekList();
 
 	}
@@ -330,4 +322,11 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 		this.sirketList = sirketList;
 	}
 
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
 }

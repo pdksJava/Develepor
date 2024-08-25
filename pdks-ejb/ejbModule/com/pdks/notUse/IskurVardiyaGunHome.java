@@ -30,7 +30,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
@@ -116,6 +115,8 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 	PersonelIzinGirisiHome personelIzinGirisiHome;
 	@In(required = false, create = true)
 	String linkAdres;
+	
+	public static String sayfaURL = "isKurVardiyaPlani";
 
 	private TreeMap<String, Tanim> fazlaMesaiMap;
 
@@ -3637,10 +3638,8 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 	public void sayfaGirisAction() throws Exception {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		adminRoleDurum(authenticatedUser);
-
-		session.clear();
 		donusAdres = "";
 		denklestirmeAyDurum = Boolean.FALSE;
 		modelList = new ArrayList<CalismaModeliAy>();
@@ -5669,5 +5668,13 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 
 	public void setBolumAciklama(String bolumAciklama) {
 		this.bolumAciklama = bolumAciklama;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		IskurVardiyaGunHome.sayfaURL = sayfaURL;
 	}
 }

@@ -19,7 +19,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -60,6 +59,7 @@ public class IzinAylikRaporHome extends EntityHome<PersonelIzin> implements Seri
 	@In(required = true, create = true)
 	PersonelIzinGirisiHome personelIzinGirisiHome;
 
+	public static String sayfaURL = "aylikIzinRapor";
 	User yoneticiUser;
 
 	private int yil, maxYil, gunSayisi;
@@ -109,8 +109,7 @@ public class IzinAylikRaporHome extends EntityHome<PersonelIzin> implements Seri
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fillAyList();
 		setSirket(null);
 		if (authenticatedUser.isIK() || authenticatedUser.isAdmin()) {
@@ -406,8 +405,7 @@ public class IzinAylikRaporHome extends EntityHome<PersonelIzin> implements Seri
 				}
 
 			}
-			
-			
+
 			vardiyaMap = ortakIslemler.getVardiyalar((List<Personel>) personelList.clone(), basDate, bitDate, izinMap, Boolean.FALSE, session, Boolean.TRUE);
 			if (!personelizinList.isEmpty()) {
 				TreeMap<String, Tatil> tatilGunleriMap = ortakIslemler.getTatilGunleri(personelList, basDate, bitDate, session);
@@ -636,6 +634,14 @@ public class IzinAylikRaporHome extends EntityHome<PersonelIzin> implements Seri
 
 	public void setBasDate(Date basDate) {
 		this.basDate = basDate;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		IzinAylikRaporHome.sayfaURL = sayfaURL;
 	}
 
 }

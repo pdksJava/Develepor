@@ -14,12 +14,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
-import org.pdks.entity.Personel;
-import org.pdks.security.entity.Role;
-import org.pdks.security.entity.User;
-import org.pdks.security.entity.UserRoles;
-import org.pdks.security.entity.UserVekalet;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -29,6 +23,11 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
+import org.pdks.entity.Personel;
+import org.pdks.security.entity.Role;
+import org.pdks.security.entity.User;
+import org.pdks.security.entity.UserRoles;
+import org.pdks.security.entity.UserVekalet;
 
 @Name("userVekaletHome")
 public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializable {
@@ -52,6 +51,7 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 	@In(required = false)
 	FacesMessages facesMessages;
 
+	public static String sayfaURL = "vekilTanimlama";
 	public List<User> kullaniciList = null;
 	public List<User> kullaniciList2 = null;
 	private List<String> roleList = new ArrayList<String>();
@@ -73,14 +73,6 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 	private String aramaTipi;
 	private UserVekalet devirUserVekalet;
 	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	public List<UserVekalet> getUserTotalVekaletList() {
 		return userTotalVekaletList;
@@ -183,8 +175,7 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		if (bitDate == null) {
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.MONTH, 6);
@@ -799,6 +790,22 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 
 	public void setBitDate(Date bitDate) {
 		this.bitDate = bitDate;
+	}
+
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		UserVekaletHome.sayfaURL = sayfaURL;
 	}
 
 }

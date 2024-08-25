@@ -19,7 +19,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -71,6 +70,8 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 	@In(required = false, create = true)
 	HashMap parameterMap;
 
+	public static String sayfaURL = "calismaSaatleri";
+
 	List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 	List<VardiyaGun> vardiyaGunList = new ArrayList<VardiyaGun>();
 
@@ -102,8 +103,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		sicilNo = "";
 		setHareketList(new ArrayList<HareketKGS>());
 		setVardiyaGunList(new ArrayList<VardiyaGun>());
@@ -787,6 +787,14 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 
 	public void setDigerTesisDurum(boolean digerTesisDurum) {
 		this.digerTesisDurum = digerTesisDurum;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		CalismaSaatleriHome.sayfaURL = sayfaURL;
 	}
 
 }

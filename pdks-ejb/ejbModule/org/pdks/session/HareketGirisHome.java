@@ -18,7 +18,6 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -64,6 +63,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 	@In(required = true, create = true)
 	OrtakIslemler ortakIslemler;
 
+	public static String sayfaURL = "hareketGiris";
 	private Date tarih;
 	private int saat;
 	private int dakika;
@@ -374,9 +374,8 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
 		try {
+			ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 			if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)
 				aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
 			aramaSecenekleri.setSessionClear(Boolean.FALSE);
@@ -525,6 +524,14 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 
 	public void setKapiId(Long kapiId) {
 		this.kapiId = kapiId;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		HareketGirisHome.sayfaURL = sayfaURL;
 	}
 
 }

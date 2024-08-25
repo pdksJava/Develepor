@@ -17,7 +17,6 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -58,6 +57,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	 */
 	private static final long serialVersionUID = -6296894631826661965L;
 	static Logger logger = Logger.getLogger(PersonelFazlaMesaiHome.class);
+	
 	public static String sayfaURL = "personelFazlaMesai";
 
 	@RequestParameter
@@ -143,8 +143,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	public String sayfaGirisAction() throws Exception {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fazlaMesaiGirisDurum = false;
 		adminRole = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIKAdmin();
 		ikRole = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || (PdksUtil.isSistemDestekVar() && authenticatedUser.isIK());
@@ -153,9 +152,9 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 		aramaSecenekleri.setSessionClear(Boolean.FALSE);
 		aramaSecenekleri.setStajyerOlmayanSirket(Boolean.TRUE);
-		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals("personelFazlaMesai");
+		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals(sayfaURL);
 		if (!ayniSayfa)
-			authenticatedUser.setCalistigiSayfa("personelFazlaMesai");
+			authenticatedUser.setCalistigiSayfa(sayfaURL);
 
 		fillEkSahaTanim();
 		pdksDenklestirmeAy = null;
@@ -1787,6 +1786,14 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 	public void setFazlaMesaiGirisDurum(boolean fazlaMesaiGirisDurum) {
 		this.fazlaMesaiGirisDurum = fazlaMesaiGirisDurum;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		PersonelFazlaMesaiHome.sayfaURL = sayfaURL;
 	}
 
 }

@@ -11,12 +11,6 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 
-import org.pdks.entity.Personel;
-import org.pdks.entity.IseGelmeyenDisplay;
-import org.pdks.entity.PersonelHareket;
-import org.pdks.entity.PersonelIzin;
-import org.pdks.security.entity.User;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -25,6 +19,11 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
+import org.pdks.entity.IseGelmeyenDisplay;
+import org.pdks.entity.Personel;
+import org.pdks.entity.PersonelHareket;
+import org.pdks.entity.PersonelIzin;
+import org.pdks.security.entity.User;
 
 @Name("iseGelmeyenPersonelHome")
 public class IseGelmeyenPersonelHome extends EntityHome<PersonelIzin> implements Serializable {
@@ -47,20 +46,14 @@ public class IseGelmeyenPersonelHome extends EntityHome<PersonelIzin> implements
 	EntityManager entityManager;
 	@In(required = false, create = true)
 	List<User> userList;
+
+	public static String sayfaURL = "iseGelmeyenPersonelDagilimi";
 	Date date;
 	List<IseGelmeyenDisplay> iseGelmeyenList = new ArrayList<IseGelmeyenDisplay>();
 	List<PersonelIzin> izinList = new ArrayList<PersonelIzin>();
 	List<PersonelHareket> hareketList = new ArrayList<PersonelHareket>();
 	List<Personel> personelList = new ArrayList<Personel>();
 	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	@In(required = false)
 	FacesMessages facesMessages;
@@ -84,8 +77,7 @@ public class IseGelmeyenPersonelHome extends EntityHome<PersonelIzin> implements
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		// default bugun icin ise gelmeyen raporu cekili olsun
 		setDate(PdksUtil.buGun());
 		gelmeyenListOlustur();
@@ -237,6 +229,22 @@ public class IseGelmeyenPersonelHome extends EntityHome<PersonelIzin> implements
 
 	public void setPersonelList(List<Personel> personelList) {
 		this.personelList = personelList;
+	}
+
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		IseGelmeyenPersonelHome.sayfaURL = sayfaURL;
 	}
 
 }

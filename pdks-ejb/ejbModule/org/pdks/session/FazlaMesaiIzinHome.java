@@ -12,7 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -50,6 +49,7 @@ public class FazlaMesaiIzinHome extends EntityHome<PersonelIzin> implements Seri
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
 
+	public static String sayfaURL = "fazlaMesaiIzin";
 	private List<PersonelIzin> personelizinList = new ArrayList<PersonelIzin>();
 	private List<TempIzin> pdksPersonelList = new ArrayList<TempIzin>();
 	private TempIzin updateTempIzin;
@@ -118,8 +118,7 @@ public class FazlaMesaiIzinHome extends EntityHome<PersonelIzin> implements Seri
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fillEkSahaTanim();
 		setBitTarih(new Date());
 		Calendar cal = Calendar.getInstance();
@@ -406,6 +405,14 @@ public class FazlaMesaiIzinHome extends EntityHome<PersonelIzin> implements Seri
 
 	public void setSeciliTesis(Tanim seciliTesis) {
 		this.seciliTesis = seciliTesis;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		FazlaMesaiIzinHome.sayfaURL = sayfaURL;
 	}
 
 }

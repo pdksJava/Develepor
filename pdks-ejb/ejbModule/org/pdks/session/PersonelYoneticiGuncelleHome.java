@@ -11,7 +11,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -47,6 +46,8 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 	OrtakIslemler ortakIslemler;
 	@In(required = false)
 	FacesMessages facesMessages;
+	
+	public static String sayfaURL = "personelYoneticiGuncelle";
 	private List<Personel> yoneticiList, iptalYoneticiList, personelList;
 	private Personel yonetici, iptalYonetici;
 	private List<Sirket> sirketList;
@@ -222,11 +223,11 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		setInstance(new Personel());
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		setInstance(new Personel());
+ ;
 		sanalPersonelAciklama = ortakIslemler.sanalPersonelAciklama();
 		fillSirketList();
 
@@ -326,6 +327,14 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 
 	public void setSession(Session session) {
 		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		PersonelYoneticiGuncelleHome.sayfaURL = sayfaURL;
 	}
 
 }

@@ -10,10 +10,6 @@ import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.pdks.entity.Departman;
-import org.pdks.entity.IzinHakedisHakki;
-import org.pdks.security.entity.User;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.Max;
 import org.hibernate.validator.Min;
@@ -24,6 +20,9 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.framework.EntityHome;
+import org.pdks.entity.Departman;
+import org.pdks.entity.IzinHakedisHakki;
+import org.pdks.security.entity.User;
 
 @Name("izinHakedisHakkiHome")
 public class IzinHakedisHakkiHome extends EntityHome<IzinHakedisHakki> implements Serializable {
@@ -45,6 +44,7 @@ public class IzinHakedisHakkiHome extends EntityHome<IzinHakedisHakki> implement
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
 
+	public static String sayfaURL = "izinHakedisHakkiTanimlama";
 	private List<IzinHakedisHakki> izinHakedisHakkiList = new ArrayList<IzinHakedisHakki>();
 	private List<Departman> departmanList = new ArrayList<Departman>();
 	private List<SelectItem> yasTipiList = new ArrayList<SelectItem>();
@@ -54,14 +54,6 @@ public class IzinHakedisHakkiHome extends EntityHome<IzinHakedisHakki> implement
 	private int bitisYil;
 	private String yasTipi;
 	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	@Override
 	public Object getId() {
@@ -267,8 +259,7 @@ public class IzinHakedisHakkiHome extends EntityHome<IzinHakedisHakki> implement
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fillIzinHakedisHakkiList();
 		fillDepartmanList();
 	}
@@ -309,4 +300,19 @@ public class IzinHakedisHakkiHome extends EntityHome<IzinHakedisHakki> implement
 		this.yasTipi = yasTipi;
 	}
 
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		IzinHakedisHakkiHome.sayfaURL = sayfaURL;
+	}
 }

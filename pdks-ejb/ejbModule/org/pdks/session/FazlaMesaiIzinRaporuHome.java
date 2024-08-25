@@ -20,7 +20,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -64,6 +63,8 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 	EntityManager entityManager;
 	@In(required = false, create = true)
 	List<User> userList;
+
+	public static String sayfaURL = "fazlaMesaiIzinRaporu";
 	Date date;
 	List<Personel> devamsizlikList = new ArrayList<Personel>();
 
@@ -102,8 +103,7 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		if (aramaSecenekleri == null)
 			aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
 		fillEkSahaTanim();
@@ -682,5 +682,13 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 
 	public void setTesisDurum(boolean tesisDurum) {
 		this.tesisDurum = tesisDurum;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		FazlaMesaiIzinRaporuHome.sayfaURL = sayfaURL;
 	}
 }

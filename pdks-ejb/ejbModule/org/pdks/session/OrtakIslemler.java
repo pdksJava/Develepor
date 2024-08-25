@@ -56,6 +56,7 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.FlushMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.jboss.seam.ScopeType;
@@ -8299,6 +8300,36 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param session
+	 * @param menuAdi
+	 * @return
+	 */
+	public void setUserMenuItemTime(Session session, String menuAdi) {
+		try {
+			if (session != null) {
+				session.setFlushMode(FlushMode.MANUAL);
+				session.clear();
+				if (authenticatedUser != null) {
+					UserMenuItemTime menuItemTime = null;
+					if (authenticatedUser.getId() != null && PdksUtil.hasStringValue(authenticatedUser.getCalistigiSayfa())) {
+						if (authenticatedUser.isAdmin() || authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi()) {
+							HashMap fields = new HashMap();
+							fields.put("user.id", authenticatedUser.getId());
+							fields.put("menu.name", menuAdi);
+							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+							menuItemTime = (UserMenuItemTime) pdksEntityController.getObjectByInnerObject(fields, UserMenuItemTime.class);
+
+						}
+					}
+					authenticatedUser.setMenuItemTime(menuItemTime);
+				}
+			}
+		} catch (Exception e) {
+		}
+
+	}
+
+	/**
 	 * @param sessionx
 	 * @param menuAdi
 	 * @return
@@ -8344,7 +8375,8 @@ public class OrtakIslemler implements Serializable {
 					if (logYaz)
 						logger.info(mesaj);
 				}
-				authenticatedUser.setMenuItemTime(null);
+				if (authenticatedUser.getMenuItemTime() != null && !authenticatedUser.getMenuItemTime().getMenu().getName().equals(menuAdi))
+					authenticatedUser.setMenuItemTime(null);
 				if (sessionx != null) {
 					try {
 						HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);

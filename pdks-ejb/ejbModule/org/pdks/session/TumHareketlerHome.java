@@ -29,7 +29,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.In;
@@ -82,6 +81,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 	@In(required = false, create = true)
 	EntityManager entityManager;
 
+	public static String sayfaURL = "tumHareketler";
 	private List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 	private List<Kapi> kapiList = new ArrayList<Kapi>();
 	private Tanim seciliEkSaha1, seciliEkSaha2, seciliEkSaha3, seciliEkSaha4;
@@ -138,8 +138,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		vardiyaOku = false;
 		if (vardiyaOkuDurum == null) {
 			if (authenticatedUser.isAdmin() || ortakIslemler.getParameterKeyHasStringValue("hareketVardiyaOku"))
@@ -1371,5 +1370,13 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 
 	public void setVardiyaOkuDurum(Boolean vardiyaOkuDurum) {
 		this.vardiyaOkuDurum = vardiyaOkuDurum;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		TumHareketlerHome.sayfaURL = sayfaURL;
 	}
 }

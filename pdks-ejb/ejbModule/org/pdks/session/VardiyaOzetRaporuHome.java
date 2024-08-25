@@ -22,7 +22,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -66,6 +65,8 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	EntityManager entityManager;
 	@In(required = false, create = true)
 	List<User> userList;
+
+	public static String sayfaURL = "vardiyaOzetRaporu";
 	Date date;
 	List<Personel> devamsizlikList = new ArrayList<Personel>();
 	List<PersonelIzin> izinList = new ArrayList<PersonelIzin>();
@@ -107,8 +108,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		if (aramaSecenekleri == null)
 			aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
 		fillEkSahaTanim();
@@ -1412,5 +1412,13 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 	public void setCalismayanVardiyaGunList(List<VardiyaGun> calismayanVardiyaGunList) {
 		this.calismayanVardiyaGunList = calismayanVardiyaGunList;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		VardiyaOzetRaporuHome.sayfaURL = sayfaURL;
 	}
 }

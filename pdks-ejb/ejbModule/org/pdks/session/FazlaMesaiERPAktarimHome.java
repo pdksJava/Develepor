@@ -24,7 +24,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -79,6 +78,8 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 	@In(required = false, create = true)
 	FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemler;
 
+	public static String sayfaURL = "fazlaMesaiERPAktarim";
+	
 	private List<PersonelDenklestirme> personelDenklestirmeList, onaysizPersonelDenklestirmeList, personelDenklestirmeler;
 
 	private Boolean secimDurum = Boolean.FALSE, sureDurum, fazlaMesaiDurum, haftaTatilDurum, maasKesintiGoster, resmiTatilDurum, durumERP, onaylanmayanDurum, personelERP, modelGoster = Boolean.FALSE;
@@ -130,6 +131,9 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
+		if (session == null)
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+  		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		aylar = PdksUtil.getAyListesi(Boolean.TRUE);
 		String sapControllerStr = ortakIslemler.getParameterKey("sapController");
 		erpAktarimDurum = sapControllerStr.equals("2") || sapControllerStr.equals("3");
@@ -146,10 +150,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 		yil = cal.get(Calendar.YEAR);
 		maxYil = yil + 1;
 		sicilNo = "";
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+ 
 		setDepartmanId(null);
 		setDepartman(null);
 		setInstance(new DenklestirmeAy());
@@ -1639,5 +1640,13 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 
 	public void setMaasKesintiGoster(Boolean maasKesintiGoster) {
 		this.maasKesintiGoster = maasKesintiGoster;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		FazlaMesaiERPAktarimHome.sayfaURL = sayfaURL;
 	}
 }

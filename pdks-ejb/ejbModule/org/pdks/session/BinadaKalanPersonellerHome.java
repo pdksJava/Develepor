@@ -17,7 +17,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -60,6 +59,9 @@ public class BinadaKalanPersonellerHome extends EntityHome<VardiyaGun> implement
 	List<User> userList;
 	@In(required = false)
 	FacesMessages facesMessages;
+
+	public static String sayfaURL = "binadaKalanPersoneller";
+
 	List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 	List<VardiyaGun> vardiyaGunList = new ArrayList<VardiyaGun>();
 
@@ -87,8 +89,7 @@ public class BinadaKalanPersonellerHome extends EntityHome<VardiyaGun> implement
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		setHareketList(new ArrayList<HareketKGS>());
 		setVardiyaGunList(new ArrayList<VardiyaGun>());
 		HareketKGS hareket = new HareketKGS();
@@ -386,6 +387,14 @@ public class BinadaKalanPersonellerHome extends EntityHome<VardiyaGun> implement
 
 	public void setSession(Session session) {
 		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		BinadaKalanPersonellerHome.sayfaURL = sayfaURL;
 	}
 
 }

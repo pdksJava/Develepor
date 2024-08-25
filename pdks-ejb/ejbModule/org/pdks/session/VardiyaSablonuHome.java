@@ -10,7 +10,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -47,7 +46,8 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 	FacesMessages facesMessages;
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
-
+	
+	public static String sayfaURL = "vardiyaSablonTanimlama";
 	private List<VardiyaSablonu> vardiyaSablonList = new ArrayList<VardiyaSablonu>();
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), vardiyaCalisanList = new ArrayList<Vardiya>(), isKurVardiyaList = new ArrayList<Vardiya>();
 	private boolean vardiyaVar = Boolean.FALSE, isKur = Boolean.FALSE, isKurGoster = Boolean.FALSE;
@@ -55,14 +55,6 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 	private List<Departman> departmanList = new ArrayList<Departman>();
 	private List<CalismaModeli> modelList;
 	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	@Override
 	public Object getId() {
@@ -318,8 +310,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fillPdksVardiyaSablonList();
 		if (authenticatedUser.isAdmin())
 			fillBagliOlduguDepartmanTanimList();
@@ -407,5 +398,21 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 
 	public void setVardiyaCalisanList(List<Vardiya> vardiyaCalisanList) {
 		this.vardiyaCalisanList = vardiyaCalisanList;
+	}
+
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		VardiyaSablonuHome.sayfaURL = sayfaURL;
 	}
 }

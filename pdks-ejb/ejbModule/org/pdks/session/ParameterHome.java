@@ -11,13 +11,6 @@ import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.pdks.entity.Parameter;
-import org.pdks.entity.SkinBean;
-import org.pdks.entity.Tanim;
-import org.pdks.security.action.StartupAction;
-import org.pdks.security.entity.MenuItemConstant;
-import org.pdks.security.entity.User;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -27,6 +20,12 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.framework.EntityHome;
+import org.pdks.entity.Parameter;
+import org.pdks.entity.SkinBean;
+import org.pdks.entity.Tanim;
+import org.pdks.security.action.StartupAction;
+import org.pdks.security.entity.MenuItemConstant;
+import org.pdks.security.entity.User;
 
 import com.pdks.webservice.MailObject;
 import com.pdks.webservice.MailStatu;
@@ -55,6 +54,7 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
 
+	public static String sayfaURL = "parameter";
 	private Parameter currentParameter;
 	private List<Parameter> parametreList;
 	private List<SelectItem> skinList;
@@ -81,8 +81,7 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		admin = authenticatedUser.isAdmin();
 		fillParameterList();
 	}
@@ -334,6 +333,14 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 
 	public void setAdmin(Boolean admin) {
 		this.admin = admin;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		ParameterHome.sayfaURL = sayfaURL;
 	}
 
 }

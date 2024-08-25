@@ -16,7 +16,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -55,6 +54,7 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
 
+	public static String sayfaURL = "gunlukIzinRapor";
 	private Tanim seciliTesis, seciliEkSaha1, seciliEkSaha2, seciliEkSaha3, seciliEkSaha4;
 	private Sirket sirket;
 	private HashMap<String, List<Tanim>> ekSahaListMap;
@@ -74,14 +74,6 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 	private Integer yil;
 	private Tanim izinTipiTanim;
 	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	@In(required = false)
 	FacesMessages facesMessages;
@@ -111,8 +103,7 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fillEkSahaTanim();
 		fillTarih();
 		setSirket(null);
@@ -358,10 +349,10 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 					gunlerList.add(tarih1);
 					tarih1 = ortakIslemler.tariheGunEkleCikar(cal, tarih1, 1);
 				}
-				
+
 				for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
 					PersonelIzin personelIzin = (PersonelIzin) iterator.next();
- 					double saat = PdksUtil.getSaatFarki(personelIzin.getBitisZamani(), personelIzin.getBaslangicZamani());
+					double saat = PdksUtil.getSaatFarki(personelIzin.getBitisZamani(), personelIzin.getBaslangicZamani());
 					if (saat < 24)
 						continue;
 					tarih1 = (Date) personelIzin.getBaslangicZamani().clone();
@@ -561,6 +552,22 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 
 	public void setSeciliTesis(Tanim seciliTesis) {
 		this.seciliTesis = seciliTesis;
+	}
+
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		GunlukIzinRaporHome.sayfaURL = sayfaURL;
 	}
 
 }

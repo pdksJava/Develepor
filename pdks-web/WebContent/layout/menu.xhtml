@@ -41,9 +41,10 @@
 			</DIV>
 			<ui:fragment rendered="#{authenticatedUser.menuItemTime!=null}">
 				<rich:toolTip for="userInfo">
-					<SPAN style="font-size: 9px;background-color: #{startupAction.projeHeaderBackgroundColor};color: #{startupAction.projeHeaderColor};"> #{authenticatedUser.menuItemTime.menu.description.aciklama} :
-						#{authenticatedUser.sayiFormatliGoster(authenticatedUser.menuItemTime.useCount)} -->
-						#{authenticatedUser.timeLongFormatla(authenticatedUser.menuItemTime.lastTime)}</SPAN>
+					<SPAN style="background-color: #{startupAction.projeHeaderBackgroundColor};color: #{startupAction.projeHeaderColor};font-size: 9px; "> #{authenticatedUser.menuItemTime.menu.description.aciklama} :
+						<ui:fragment rendered="#{authenticatedUser.menuItemTime.useCount > 0}"> #{authenticatedUser.sayiFormatliGoster(authenticatedUser.menuItemTime.useCount)} --></ui:fragment>
+ 						#{authenticatedUser.dateTimeFormatla(authenticatedUser.menuItemTime.lastTime)}
+					</SPAN>
 				</rich:toolTip>
 			</ui:fragment>
 		</ui:fragment>

@@ -32,7 +32,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
@@ -298,9 +297,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
-		planTanimsizBolumList = null;
-		componentState.setSeciliTab("tab1");
+		if (session == null)
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		userLogin = authenticatedUser;
+ 		planTanimsizBolumList = null;
+		componentState.setSeciliTab("tab1");
+
 		tumBolumPersonelleri = null;
 		bordroPuantajEkranindaGoster = false;
 		saatlikCalismaGoster = false;
@@ -310,12 +313,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		boolean ayniSayfa = userLogin.getCalistigiSayfa() != null && userLogin.getCalistigiSayfa().equals(sayfaURL);
 		// if (!ayniSayfa)
 		// userLogin.setCalistigiSayfa(sayfaURL);
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, userLogin);
-		session.setFlushMode(FlushMode.MANUAL);
+
 		izinCalismayanMailGonder = Boolean.FALSE;
 		adminRoleDurum();
-		session.clear();
+
 		denklestirmeAy = null;
 		fazlaMesaiVardiyaGun = null;
 		bolumleriTemizle();
@@ -2140,7 +2141,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									personelDenklestirme.setDevredenSure(0D);
 									personelDenklestirme.setAksamVardiyaSaatSayisi(0D);
 									personelDenklestirme.setAksamVardiyaSayisi(0D);
- 								}
+								}
 
 							}
 							if (!hataYok)

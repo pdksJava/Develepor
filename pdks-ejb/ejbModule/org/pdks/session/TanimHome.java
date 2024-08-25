@@ -15,7 +15,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -44,21 +43,16 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 	User authenticatedUser;
 	@In(required = false, create = true)
 	EntityManager entityManager;
+	@In(create = true, required = true)
+	OrtakIslemler ortakIslemler;
 
+	public static String sayfaURL = "tanim";
 	private Tanim genelTanim = new Tanim();
 	private List<Tanim> genelTanimList = new ArrayList<Tanim>();
 	private List<Tanim> tanimList = new ArrayList<Tanim>();
 	private List<Tanim> childTanimList = new ArrayList<Tanim>();
 	private Tanim selectedParentTanim = new Tanim();
 	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	@Override
 	public Object getId() {
@@ -86,8 +80,7 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		setGenelTanim(new Tanim());
 		setSelectedParentTanim(new Tanim());
 		setTanimList(new ArrayList<Tanim>());
@@ -368,5 +361,21 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 
 	public String getDurumAciklama() {
 		return getInstance().getId() != null ? " Güncelle" : " Ekle";
+	}
+
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		TanimHome.sayfaURL = sayfaURL;
 	}
 }

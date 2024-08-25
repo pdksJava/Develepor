@@ -20,7 +20,6 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -64,6 +63,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	 * 
 	 */
 	private static final long serialVersionUID = -9211132861369205688L;
+
 	public static String sayfaURL = "denklestirmeBordroRaporu";
 
 	static Logger logger = Logger.getLogger(DenklestirmeBordroRaporuHome.class);
@@ -447,6 +447,9 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
 		try {
+			if (session == null)
+				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 			fazlaMesaiHesaplaMenuAdi = "";
 			String str = ortakIslemler.getParameterKey("bordroVeriOlustur");
 			boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals(sayfaURL);
@@ -478,11 +481,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 				baslikMap = new TreeMap<String, Tanim>();
 
 			sicilNo = "";
-			if (session == null)
-				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-			session.setFlushMode(FlushMode.MANUAL);
 
-			session.clear();
 			setDepartmanId(null);
 			setDepartman(null);
 			setInstance(new DenklestirmeAy());
@@ -1923,5 +1922,13 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 	public void setDenklestirmeAyDurum(Boolean denklestirmeAyDurum) {
 		this.denklestirmeAyDurum = denklestirmeAyDurum;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		DenklestirmeBordroRaporuHome.sayfaURL = sayfaURL;
 	}
 }

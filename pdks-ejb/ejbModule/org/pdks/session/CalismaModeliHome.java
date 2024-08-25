@@ -12,7 +12,6 @@ import java.util.TreeMap;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -53,6 +52,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
 
+	public static String sayfaURL = "calismaModeliTanimlama";
 	private CalismaModeli calismaModeli;
 
 	private List<CalismaModeli> calismaModeliList;
@@ -269,8 +269,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fillCalismaModeliList();
 	}
 
@@ -514,6 +513,14 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	public void setCmgPage(CalismaModeliGun cmgPage) {
 		this.cmgPage = cmgPage;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		CalismaModeliHome.sayfaURL = sayfaURL;
 	}
 
 }

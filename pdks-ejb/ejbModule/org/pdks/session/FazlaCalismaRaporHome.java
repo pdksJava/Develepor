@@ -29,7 +29,6 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Begin;
@@ -70,6 +69,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	private static final long serialVersionUID = -3864181405990033326L;
 	static Logger logger = Logger.getLogger(FazlaCalismaRaporHome.class);
+
 	public static String sayfaURL = "fazlaCalismaRapor";
 
 	@RequestParameter
@@ -192,6 +192,9 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
+		if (session == null)
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fazlaMesaiSayfa = false;
 		aksamAdetGoster = false;
 		aksamSaatGoster = false;
@@ -199,11 +202,8 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 		adminRoleDurum();
 		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals("fazlaCalismaRapor");
 		if (!ayniSayfa)
-			authenticatedUser.setCalistigiSayfa("fazlaCalismaRapor");
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+			authenticatedUser.setCalistigiSayfa(sayfaURL);
+
 		yil = -1;
 		ay = -1;
 		fazlaMesaiVardiyaGun = null;
@@ -2445,5 +2445,13 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	public void setSirketGoster(Boolean sirketGoster) {
 		this.sirketGoster = sirketGoster;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		FazlaCalismaRaporHome.sayfaURL = sayfaURL;
 	}
 }

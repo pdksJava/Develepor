@@ -23,7 +23,6 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -70,6 +69,7 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 	@In(required = true, create = true)
 	Renderer renderer;
 
+	public static String sayfaURL = "fazlaMesaiDonemselRapor";
 	private Integer yil, sonDonem, basAy, bitAy, maxYil;
 	private Long sirketId, tesisId;
 	private List<SelectItem> donemler, sirketler, tesisler;
@@ -89,8 +89,7 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		if (donemler == null)
 			donemler = new ArrayList<SelectItem>();
 		if (sirketler == null)
@@ -747,6 +746,14 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 
 	public void setBitTarih(Date bitTarih) {
 		this.bitTarih = bitTarih;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		FazlaMesaiDonemselRaporHome.sayfaURL = sayfaURL;
 	}
 
 }

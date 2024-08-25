@@ -99,6 +99,8 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 	@In(required = false)
 	FacesMessages facesMessages;
 
+	public static String sayfaURL = "personelKalanIzin";
+
 	private Dosya izinBakiyeDosya = new Dosya();
 
 	private List<IzinTipi> izinTipiList;
@@ -738,8 +740,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 	public String sayfaGirisAction() throws Exception {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		aramaSecenekleri = null;
 		if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)
 			aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
@@ -2223,6 +2224,14 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 	 */
 	public void setBakiyeIzinGoster(boolean bakiyeIzinGoster) {
 		this.bakiyeIzinGoster = bakiyeIzinGoster;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		PersonelKalanIzinHome.sayfaURL = sayfaURL;
 	}
 
 }

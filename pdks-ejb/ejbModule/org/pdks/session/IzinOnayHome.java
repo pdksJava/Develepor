@@ -11,7 +11,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -58,6 +57,7 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 	@In(required = true, create = true)
 	PersonelIzinGirisiHome personelIzinGirisiHome;
 
+	public static String sayfaURL = "izinOnay";
 	private Personel seciliPersonel;
 
 	User yoneticiUser;
@@ -72,14 +72,6 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 	private List<User> userList = new ArrayList<User>();
 	private List<String> ccMailList = new ArrayList<String>();
 	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	@In(required = false)
 	FacesMessages facesMessages;
@@ -103,8 +95,7 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		String fromAciklama = ortakIslemler.getParameterKey("fromName");
 		if (PdksUtil.hasStringValue(fromAciklama))
 			setKullaniciIslemleriMailAciklama(fromAciklama);
@@ -327,6 +318,22 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 
 	public void setCcMailList(List<String> ccMailList) {
 		this.ccMailList = ccMailList;
+	}
+
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		IzinOnayHome.sayfaURL = sayfaURL;
 	}
 
 }

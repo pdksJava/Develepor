@@ -66,6 +66,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 
 	@In(required = false)
 	FacesMessages facesMessages;
+
 	private List<PersonelIzin> personelIzinList = new ArrayList<PersonelIzin>();
 
 	private TempIzin updateTempIzin;

@@ -13,7 +13,6 @@ import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -60,6 +59,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
 
+	public static String sayfaURL = "tatilTanimlama";
 	private List<String> mesajList = new ArrayList<String>();
 	private List<Tanim> tatilTanimList = new ArrayList<Tanim>();
 	private List<Tatil> tatilList = new ArrayList<Tatil>();
@@ -74,14 +74,6 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	private Tatil oldPdksTatil;
 	private User islemYapan;
 	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	public List<Tanim> getTatilTanimList() {
 		return tatilTanimList;
@@ -664,7 +656,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		setIslemYapan(authenticatedUser);
 		fillPdksTatilList();
 		fillAyList();
@@ -766,4 +758,11 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 		this.yilSayisi = yilSayisi;
 	}
 
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
 }

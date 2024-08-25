@@ -10,7 +10,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -48,6 +47,8 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
+	
+	public static String sayfaURL = "kapiTanimlama";
 	private List<KapiKGS> kapiKGSList = new ArrayList<KapiKGS>();
 	private List<KapiKGS> tanimsizKapiList = new ArrayList<KapiKGS>();
 	private List<Kapi> kapiList = new ArrayList<Kapi>();
@@ -299,10 +300,10 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		kapiView = new KapiView();
 		kapiView.setKapi(new Kapi());
-		session.clear();
+
 		eskiKayitDurum = null;
 		fillKapiTipleri();
 		setkapiList(new ArrayList<Kapi>());

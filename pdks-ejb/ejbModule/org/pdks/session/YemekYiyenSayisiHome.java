@@ -19,6 +19,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
+import org.jboss.seam.annotations.FlushModeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.web.RequestParameter;
@@ -57,6 +58,8 @@ public class YemekYiyenSayisiHome extends EntityHome<VardiyaGun> implements Seri
 	List<User> userList;
 	@In(required = false)
 	FacesMessages facesMessages;
+
+	public static String sayfaURL = "yemekYiyenSayisi";
 	private List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 	private List<HareketKGS> toplamYemekList = new ArrayList<HareketKGS>();
 	private List<HareketKGS> ciftYemekList = new ArrayList<HareketKGS>();
@@ -89,10 +92,11 @@ public class YemekYiyenSayisiHome extends EntityHome<VardiyaGun> implements Seri
 
 	}
 
+	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.clear();
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		ogunVar = false;
 
 		setHareketList(new ArrayList<HareketKGS>());
@@ -677,5 +681,13 @@ public class YemekYiyenSayisiHome extends EntityHome<VardiyaGun> implements Seri
 
 	public void setOgunVar(boolean ogunVar) {
 		this.ogunVar = ogunVar;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		YemekYiyenSayisiHome.sayfaURL = sayfaURL;
 	}
 }

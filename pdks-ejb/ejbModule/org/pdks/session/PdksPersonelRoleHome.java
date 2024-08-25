@@ -8,9 +8,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.pdks.security.entity.Role;
-import org.pdks.security.entity.User;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -19,6 +16,8 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
+import org.pdks.security.entity.Role;
+import org.pdks.security.entity.User;
 
 @Name("pdksPersonelRoleHome")
 public class PdksPersonelRoleHome extends EntityHome<Role> implements Serializable {
@@ -37,19 +36,15 @@ public class PdksPersonelRoleHome extends EntityHome<Role> implements Serializab
 	User authenticatedUser;
 	@In(required = false)
 	FacesMessages facesMessages;
+	@In(required = false, create = true)
+	OrtakIslemler ortakIslemler;
+
+	public static String sayfaURL = "personelRoleTanimlama";
 	private Role roleView;
 	private Boolean rolAktif;
 	private List<Role> rolList = new ArrayList<Role>();
 	private String rolAdi, rolAciklama;
 	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	public String rolGetir() {
 		HashMap parametreMap = new HashMap();
@@ -64,8 +59,7 @@ public class PdksPersonelRoleHome extends EntityHome<Role> implements Serializab
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		rolAdi = "";
 		rolAciklama = "";
 		rolAktif = Boolean.TRUE;
@@ -182,4 +176,19 @@ public class PdksPersonelRoleHome extends EntityHome<Role> implements Serializab
 		this.roleView = roleView;
 	}
 
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		PdksPersonelRoleHome.sayfaURL = sayfaURL;
+	}
 }

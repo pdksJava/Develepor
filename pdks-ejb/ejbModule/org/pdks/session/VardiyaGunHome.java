@@ -117,7 +117,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	private static final long serialVersionUID = 5067953117682032644L;
 	static Logger logger = Logger.getLogger(VardiyaGunHome.class);
-	public static String sayfaURL = "vardiyaPlani";
+	
+	
 
 	@RequestParameter
 	Long pdksVardiyaGunId;
@@ -148,6 +149,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	@In(scope = ScopeType.SESSION, required = false)
 	String bordroAdres;
 
+	public static String sayfaURL = "vardiyaPlani";
+	
 	private TreeMap<String, Tanim> fazlaMesaiMap;
 
 	private Integer aksamVardiyaBasSaat, aksamVardiyaBitSaat, aksamVardiyaBasDakika, aksamVardiyaBitDakika;
@@ -9684,12 +9687,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() throws Exception {
+		if (session == null)
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		componentState.setSeciliTab("");
 		tumBolumPersonelleri = null;
 		bordroPuantajEkranindaGoster = false;
 		linkBordroAdres = null;
-
-		aylikVardiyaPlanGiris("vardiyaPlani", true);
+ 		aylikVardiyaPlanGiris(sayfaURL, true);
 
 	}
 
@@ -12589,6 +12594,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	public void setFazlaMesaiIzinKullan(boolean fazlaMesaiIzinKullan) {
 		this.fazlaMesaiIzinKullan = fazlaMesaiIzinKullan;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		VardiyaGunHome.sayfaURL = sayfaURL;
 	}
 
 }

@@ -11,7 +11,6 @@ import java.util.TreeMap;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -55,6 +54,7 @@ public class KGSHareketHome extends EntityHome<HareketKGS> {
 	@In(required = false)
 	FacesMessages facesMessages;
 
+	public static String sayfaURL = "kgsHareket";
 	private List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 	private String ad = "", soyad = "", sicilNo = "", islemTipi;
 	private Date tarih, basTarih, bitTarih;
@@ -66,14 +66,6 @@ public class KGSHareketHome extends EntityHome<HareketKGS> {
 	private List<Sirket> sirketList = new ArrayList<Sirket>();
 	private boolean iptalEdilir;
 	private Session session;
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
-	}
 
 	long kgsId = 0, pdksId = 0;
 
@@ -107,8 +99,7 @@ public class KGSHareketHome extends EntityHome<HareketKGS> {
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		setHareketList(new ArrayList<HareketKGS>());
 		HareketKGS hareket = new HareketKGS();
 		hareket.setPersonel(new PersonelView());
@@ -257,6 +248,7 @@ public class KGSHareketHome extends EntityHome<HareketKGS> {
 		if (!yenile)
 			fillHareketList();
 	}
+
 	@Transactional
 	public void onayla() {
 		HareketKGS kgsHareket = this.getInstance();
@@ -264,6 +256,7 @@ public class KGSHareketHome extends EntityHome<HareketKGS> {
 		session.flush();
 
 	}
+
 	@Transactional
 	public void onaylama() {
 		HareketKGS kgsHareket = this.getInstance();
@@ -431,4 +424,19 @@ public class KGSHareketHome extends EntityHome<HareketKGS> {
 		this.seciliTesis = seciliTesis;
 	}
 
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public static String getSayfaURL() {
+		return sayfaURL;
+	}
+
+	public static void setSayfaURL(String sayfaURL) {
+		KGSHareketHome.sayfaURL = sayfaURL;
+	}
 }
