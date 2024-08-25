@@ -7,12 +7,14 @@
 
 	<ui:fragment rendered="#{not empty vardiyaGunHome.aylikPuantajList}">
 		<DIV class="#{authenticatedUser.scroolClass}" id="#{authenticatedUser.scroolDiv}">
-			<table class="mars" cellpadding="1" cellspacing="1">
-				<thead>
-					<tr>
+
+			<table class="rich-table" cellpadding="1" cellspacing="1">
+				<thead class="rich-table-thead">
+					<tr class="rich-table-subheader">
+
 						<ui:fragment rendered="#{vardiyaGunHome.planGirisi and vardiyaGunHome.denklestirmeAyDurum}">
 							<th style="width: 90px"><ui:fragment rendered="#{vardiyaGunHome.departman.admin}">
-									<TABLE class="mars">
+									<table class="rich-table-thead">
 										<thead>
 											<tr>
 
@@ -34,7 +36,7 @@
 
 											</tr>
 										</thead>
-									</TABLE>
+									</table>
 
 
 								</ui:fragment></th>
@@ -422,7 +424,7 @@
 								<ui:fragment rendered="#{vardiyaGun.ayinGunu}">
 									<td align="center" class="#{vardiyaGun.getAylikClassAdi(aylikPuantaj.trClass)}" style="width: 20px"><ui:fragment id="veri"
 											rendered="#{vardiyaGun.calisan}">
-											<TABLE>
+											<table>
 												<TR>
 													<TD id="vardiya#{vardiyaGun.vardiyaKeyStr}"><h:outputText value="#{vardiyaGun.aciklama}" /> <ui:fragment
 															rendered="#{vardiyaGunHome.ikRole and vardiyaGun.izin!=null and vardiyaGun.vardiya.izin==false}">
@@ -451,7 +453,7 @@
 													</ui:fragment>
 
 												</TR>
-											</TABLE>
+											</table>
 										</ui:fragment></td>
 
 								</ui:fragment>
@@ -801,7 +803,7 @@
 						</ui:fragment>
 						<ui:fragment rendered="#{not empty vardiyaGunHome.kilitliPlanList and vardiyaGunHome.ikRole}">
 							<td valign="top">
-								<TABLE class="mars">
+								<table class="mars">
 									<thead>
 										<tr>
 											<c:forEach items="#{vardiyaGunHome.kilitliPlanList}" var="kilit">
@@ -827,7 +829,7 @@
 										</tr>
 									</tbody>
 
-								</TABLE>
+								</table>
 							</td>
 
 

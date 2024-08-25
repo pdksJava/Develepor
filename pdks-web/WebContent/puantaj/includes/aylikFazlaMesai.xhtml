@@ -19,9 +19,9 @@
 		</ui:fragment>
 		<DIV class="#{authenticatedUser.scroolClass}" id="#{authenticatedUser.scroolDiv}">
 
-			<table class="mars">
-				<thead>
-					<tr>
+			<table class="rich-table">
+				<thead class="rich-table-thead">
+					<tr class="rich-table-subheader">
 						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and  fazlaMesaiHesaplaHome.hataYok }">
 							<th style="width: 10px"><ui:fragment rendered="#{fazlaMesaiHesaplaHome.kullaniciPersonel==false and fazlaMesaiHesaplaHome.hataYok}">
 									<h:selectBooleanCheckbox value="#{fazlaMesaiHesaplaHome.kaydetDurum}">
