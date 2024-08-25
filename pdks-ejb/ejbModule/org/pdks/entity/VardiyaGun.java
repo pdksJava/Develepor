@@ -52,8 +52,8 @@ public class VardiyaGun extends BaseObject {
 	public static final String STYLE_CLASS_IZIN = "izinAylik";
 	public static final String STYLE_CLASS_HAFTA_TATIL = "tatilAylik";
 	public static final String STYLE_CLASS_DIGER_AY = "digerAy";
-	public static final String STYLE_CLASS_ODD = "odd";
-	public static final String STYLE_CLASS_EVEN = "even";
+	public static final String STYLE_CLASS_ODD = "acik";
+	public static final String STYLE_CLASS_EVEN = "koyu";
 	public static final String STYLE_CLASS_HATA = "hata";
 	public static boolean haftaTatilDurum;
 

@@ -683,8 +683,12 @@
 					</a4j:repeat>
 
 					<tr>
-
-
+						<ui:fragment rendered="#{vardiyaGunHome.planGirisi and vardiyaGunHome.denklestirmeAyDurum}">
+							<td></td>
+						</ui:fragment>
+						<td></td>
+						<td></td>
+						<td></td>
 						<ui:fragment rendered="#{vardiyaGunHome.ekSaha4Tanim!=null and vardiyaGunHome.aramaSecenekleri.ekSaha4Id lt 0}">
 							<td></td>
 						</ui:fragment>
@@ -692,13 +696,15 @@
 							<td></td>
 						</ui:fragment>
 						<ui:fragment rendered="#{vardiyaGunHome.planGirisi}">
-							<ui:fragment rendered="#{vardiyaGunHome.denklestirmeAyDurum}">
+							<td></td>
+							<ui:fragment rendered="#{vardiyaGunHome.fazlaMesaiOde}">
 								<td></td>
 							</ui:fragment>
-							<td></td>
-							<td></td>
+							<ui:fragment rendered="#{vardiyaGunHome.fazlaMesaiIzinKullan}">
+								<td></td>
+							</ui:fragment>
 						</ui:fragment>
-						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.gebeGoster}">
+						<ui:fragment rendered="#{vardiyaGunHome.gebeGoster}">
 							<td></td>
 						</ui:fragment>
 						<ui:fragment rendered="#{vardiyaGunHome.sutIzniGoster}">
@@ -707,7 +713,11 @@
 						<ui:fragment rendered="#{vardiyaGunHome.partTimeGoster}">
 							<td></td>
 						</ui:fragment>
-						<td colspan="3"></td>
+
+
+
+
+
 
 						<ui:repeat value="#{vardiyaGunHome.aylikPuantajDefault.ayinVardiyalari}" var="vardiya">
 							<td class="#{vardiya.headerClass}" id="tatilFooter#{vardiya.vardiyaDateStr}"
@@ -728,7 +738,9 @@
 					<a4j:repeat value="#{vardiyaGunHome.aylikVardiyaOzetList}" var="vardiyaGun">
 						<tr>
 
-
+							<ui:fragment rendered="#{vardiyaGunHome.planGirisi and vardiyaGunHome.denklestirmeAyDurum}">
+								<td></td>
+							</ui:fragment>
 
 							<ui:fragment rendered="#{vardiyaGunHome.ekSaha4Tanim!=null and vardiyaGunHome.aramaSecenekleri.ekSaha4Id lt 0}">
 								<td></td>
@@ -736,8 +748,15 @@
 							<ui:fragment rendered="#{vardiyaGunHome.modelGoster}">
 								<td></td>
 							</ui:fragment>
-
-							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.gebeGoster}">
+							<ui:fragment rendered="#{vardiyaGunHome.planGirisi}">
+								<ui:fragment rendered="#{vardiyaGunHome.fazlaMesaiOde}">
+									<td></td>
+								</ui:fragment>
+								<ui:fragment rendered="#{vardiyaGunHome.fazlaMesaiIzinKullan}">
+									<td></td>
+								</ui:fragment>
+							</ui:fragment>
+							<ui:fragment rendered="#{vardiyaGunHome.gebeGoster}">
 								<td></td>
 							</ui:fragment>
 							<ui:fragment rendered="#{vardiyaGunHome.sutIzniGoster}">
@@ -746,27 +765,12 @@
 							<ui:fragment rendered="#{vardiyaGunHome.partTimeGoster}">
 								<td></td>
 							</ui:fragment>
-							<ui:fragment rendered="#{vardiyaGunHome.planGirisi==false}">
-								<td></td>
-							</ui:fragment>
-							<ui:fragment rendered="#{vardiyaGunHome.planGirisi}">
 
-								<ui:fragment rendered="#{vardiyaGunHome.denklestirmeAyDurum}">
-									<td></td>
-								</ui:fragment>
+							<td colspan="2"><b> #{vardiyaGun.personel.planGrup2.aciklama}</b></td>
 
+							<td><b> #{vardiyaGun.personel.planGrup2.aciklama}</b></td>
 
-								<td colspan="1"></td>
-
-
-
-								<td colspan="1"></td>
-								<td colspan="2"><b> #{vardiyaGun.personel.planGrup2.aciklama}</b></td>
-							</ui:fragment>
-							<ui:fragment rendered="#{vardiyaGunHome.planGirisi==false}">
-								<td><b> #{vardiyaGun.personel.planGrup2.aciklama}</b></td>
-							</ui:fragment>
-							<td title="#{vardiyaGun.vardiya.vardiyaAciklama}" align="center" style="border: 1px solid #000000; background-color: yellow;"><b>
+							<td title="#{vardiyaGun.vardiya.vardiyaAciklama}" ><b>
 									#{vardiyaGun.vardiya.kisaAciklama}</b></td>
 							<a4j:repeat value="#{vardiyaGun.vardiya.gunlukList}" var="gun">
 								<td align="center" style="border-left: 0px !important; border: 1px solid #dedede; background-color: yellow;"><h:outputText value="#{gun}"

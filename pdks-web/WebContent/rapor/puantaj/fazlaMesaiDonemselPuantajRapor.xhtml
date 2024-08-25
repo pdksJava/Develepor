@@ -217,9 +217,9 @@
 									<a4j:support event="oncomplete" onclick="#{rich:component('wait')}.show()" oncomplete=" #{rich:component('wait')}.hide()" />
 								</h:commandLink>
 								<br></br> <br></br>
-								<table class="mars">
-									<thead>
-										<TR>
+								<table class="rich-table">
+									<thead class="rich-table-thead">
+										<tr class="rich-table-subheader">
 											<th></th>
 											<th>Dönem</th>
 											<th style="width: 30px"><h:outputText value="#{ortakIslemler.calismaModeliAciklama()}" /></th>
@@ -260,8 +260,7 @@
 												<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;"
 													id="baslik#{ortakIslemler.yasalFazlaCalismaAsanSaatKod()}"><h:outputText value="#{ortakIslemler.yasalFazlaCalismaAsanSaatKod()}" />
 													<rich:toolTip for="baslik#{ortakIslemler.yasalFazlaCalismaAsanSaatKod()}">
-														<SPAN style="font-size: 12px; font-weight: normal;"> <b>Yasal Çalışmayı Aşan Mesai : </b> 
-															11 saati aşan çalışma toplam miktarı
+														<SPAN style="font-size: 12px; font-weight: normal;"> <b>Yasal Çalışmayı Aşan Mesai : </b> 11 saati aşan çalışma toplam miktarı
 														</SPAN>
 													</rich:toolTip></th>
 											</ui:fragment>
@@ -439,7 +438,7 @@
 
 											</ui:fragment>
 											<th>Dönem</th>
-										</TR>
+										</tr>
 									</thead>
 									<tbody>
 										<a4j:repeat value="#{fazlaMesaiDonemselPuantajRaporHome.puantajList}" var="ap">
@@ -592,7 +591,8 @@
 
 
 												</td>
-												<td nowrap="nowrap" class="#{ap.trClass}" style="width: 50px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold;"><b>#{ap.denklestirmeAy.ayAdi}
+												<td nowrap="nowrap" class="#{ap.trClass}"
+													style="width: 50px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold;"><b>#{ap.denklestirmeAy.ayAdi}
 														#{ap.denklestirmeAy.yil}</b></td>
 												<td class="#{ap.trClass}" style="width: 50px; font-family: Arial, Verdana, sans-serif; font-size: 11px;">#{ap.calismaModeli.aciklama}</td>
 												<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.fazlaMesaiOde}">
@@ -943,7 +943,8 @@
 													</ui:fragment>
 
 												</ui:fragment>
-												<td nowrap="nowrap" class="#{ap.trClass}" style="width: 50px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold;"><b>#{ap.denklestirmeAy.ayAdi}
+												<td nowrap="nowrap" class="#{ap.trClass}"
+													style="width: 50px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold;"><b>#{ap.denklestirmeAy.ayAdi}
 														#{ap.denklestirmeAy.yil}</b></td>
 											</tr>
 										</a4j:repeat>
