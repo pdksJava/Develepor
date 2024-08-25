@@ -57,25 +57,30 @@
 							<a4j:commandButton value="Taşeron Veri Kopyala" action="#{taseronPersonelKopyalaHome.taseronKopyala}" reRender="personelList"
 								rendered="#{taseronPersonelKopyalaHome.sorunYok and not empty taseronPersonelKopyalaHome.personelList}" />
 							<rich:toolTip for="yoneticiVeri">
-								<TABLE class="mars">
-									<TR>
-										<TH>#{ortakIslemler.personelNoAciklama()}</TH>
-										<TH>#{ortakIslemler.kimlikNoAciklama()}</TH>
-										<TH>Yeni #{ortakIslemler.personelNoAciklama()}</TH>
+								<TABLE class="rich-table">
+									<thead class="rich-table-thead">
+										<tr class="rich-table-subheader">
+											<TH>#{ortakIslemler.personelNoAciklama()}</TH>
+											<TH>#{ortakIslemler.kimlikNoAciklama()}</TH>
+											<TH>Yeni #{ortakIslemler.personelNoAciklama()}</TH>
 
-									</TR>
-									<TR class="koyu">
-										<TD align="center">9000348</TD>
-										<TD align="center">99825138344</TD>
-										<TD>9000446</TD>
+										</TR>
+									</thead>
+									<tbody>
+										<TR class="acik">
+											<TD align="center">9000144</TD>
+											<TD align="center">99459666764</TD>
+											<TD>9000440</TD>
 
-									</TR>
-									<TR class="acik">
-										<TD align="center">9000144</TD>
-										<TD align="center">99459666764</TD>
-										<TD>9000440</TD>
+										</TR>
+										<TR class="koyu">
+											<TD align="center">9000348</TD>
+											<TD align="center">99825138344</TD>
+											<TD>9000446</TD>
 
-									</TR>
+										</TR>
+
+									</tbody>
 								</TABLE>
 							</rich:toolTip>
 
