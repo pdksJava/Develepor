@@ -749,6 +749,7 @@
 								<td></td>
 							</ui:fragment>
 							<ui:fragment rendered="#{vardiyaGunHome.planGirisi}">
+								<td></td>
 								<ui:fragment rendered="#{vardiyaGunHome.fazlaMesaiOde}">
 									<td></td>
 								</ui:fragment>
@@ -767,11 +768,7 @@
 							</ui:fragment>
 
 							<td colspan="2"><b> #{vardiyaGun.personel.planGrup2.aciklama}</b></td>
-
-							<td><b> #{vardiyaGun.personel.planGrup2.aciklama}</b></td>
-
-							<td title="#{vardiyaGun.vardiya.vardiyaAciklama}" ><b>
-									#{vardiyaGun.vardiya.kisaAciklama}</b></td>
+							<td title="#{vardiyaGun.vardiya.vardiyaAciklama}"><b> #{vardiyaGun.vardiya.kisaAciklama}</b></td>
 							<a4j:repeat value="#{vardiyaGun.vardiya.gunlukList}" var="gun">
 								<td align="center" style="border-left: 0px !important; border: 1px solid #dedede; background-color: yellow;"><h:outputText value="#{gun}"
 										rendered="#{gun!=0}" /> <h:outputText value="." rendered="#{gun==0}" /></td>
