@@ -443,7 +443,7 @@
 							<tr>
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
 									<ui:fragment rendered="#{vardiyaGun.tatil==null}">
-										<td class="acik" style="width: 90px; height: 15px; font-weight: bold;text-align: center;"><h:outputText
+										<td class="acik" style="width: 90px; height: 15px; font-weight: bold; text-align: center;"><h:outputText
 												value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}" /></td>
 									</ui:fragment>
 
@@ -1082,23 +1082,24 @@
 					<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 				</a4j:outputPanel>
 				<a4j:outputPanel id="secimlerMesai">
-					<table class="mars">
+					<table class="rich-table">
 						<a4j:repeat value="#{vardiyaGunHome.personelAylikPuantaj.vardiyaHaftaList}" var="vardiyaHafta">
 							<ui:fragment rendered="#{vardiyaHafta.hafta==1}">
-
-								<tr>
-									<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
-										<th><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'EEEEE')}" /></th>
-									</a4j:repeat>
-									<ui:fragment rendered="#{vardiyaGunHome.sablonGuncelle}">
-										<th width="100px">Vardiya</th>
-									</ui:fragment>
-								</tr>
+								<thead class="rich-table-thead">
+									<tr>
+										<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
+											<th><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'EEEEE')}" /></th>
+										</a4j:repeat>
+										<ui:fragment rendered="#{vardiyaGunHome.sablonGuncelle}">
+											<th width="100px">Vardiya</th>
+										</ui:fragment>
+									</tr>
+								</thead>
 							</ui:fragment>
-							<tr>
+							<tr class="acik">
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
 									<ui:fragment rendered="#{vardiyaGun.tatil==null}">
-										<th style="width: 90px"><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}" /></th>
+										<td style="width: 90px;font-weight: bold;text-align: center;"><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}" /></td>
 									</ui:fragment>
 
 									<ui:fragment rendered="#{vardiyaGun.tatil.yarimGun==true}">
@@ -1116,7 +1117,7 @@
 								</a4j:repeat>
 
 							</tr>
-							<tr>
+							<tr class="koyu">
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
 									<td style="width: 90px; height: 25px;" class="#{vardiyaGun.getAylikClassAdi(aylikPuantaj.trClass)}" align="center"><ui:fragment
 											rendered="#{vardiyaGun.ayinGunu==false or vardiyaGun.fazlaMesaiTalepDurum==false or vardiyaGun.vardiya==null   or vardiyaGun.izin!=null or vardiyaGun.kullaniciYetkili==false}">
