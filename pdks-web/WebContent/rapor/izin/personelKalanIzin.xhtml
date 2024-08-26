@@ -238,12 +238,13 @@
 					</a4j:outputPanel>
 					<DIV class="#{authenticatedUser.scroolClass}" id="#{authenticatedUser.scroolDiv}1">
 						<ui:fragment id="bakiyeIzinTable" rendered="#{not empty personelKalanIzinHome.personelBakiyeIzinList}">
-							<table class="mars">
+							<table class="rich-table">
+
 								<caption>
 									<B>Personeller Bakiye İzinleri</B>
 								</caption>
-								<thead>
-									<tr>
+								<thead class="rich-table-thead">
+									<tr class="rich-table-subheader">
 
 										<th style="width: 90px"><h:outputText value="#{ortakIslemler.personelNoAciklama()}" /></th>
 										<th><h:outputText value="Adı Soyadı" /></th>
@@ -542,7 +543,8 @@
 				<h:panelGrid width="500">
 					<rich:dataTable rowClasses="acik,koyu" value="#{personelKalanIzinHome.harcananIzinler}" var="harcananIzin" rows="20" rowKeyVar="row">
 						<f:facet name="header">
-							<h:outputText value="#{authenticatedUser.getTarihFormatla(personelKalanIzinHome.updateIzin.baslangicZamani,'yyyy')} İzin Hakediş Yılı Kullanılan İzinler" />
+							<h:outputText
+								value="#{authenticatedUser.getTarihFormatla(personelKalanIzinHome.updateIzin.baslangicZamani,'yyyy')} İzin Hakediş Yılı Kullanılan İzinler" />
 						</f:facet>
 
 						<rich:column style="text-align:center">
