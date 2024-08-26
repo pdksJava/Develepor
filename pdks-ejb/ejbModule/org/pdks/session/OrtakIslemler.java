@@ -8318,7 +8318,11 @@ public class OrtakIslemler implements Serializable {
 							fields.put("menu.name", menuAdi);
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 							menuItemTime = (UserMenuItemTime) pdksEntityController.getObjectByInnerObject(fields, UserMenuItemTime.class);
-
+							if (menuItemTime != null) {
+								menuItemTime.setLastTime(new Date());
+								session.saveOrUpdate(menuItemTime);
+								session.flush();
+							}
 						}
 					}
 					authenticatedUser.setMenuItemTime(menuItemTime);
