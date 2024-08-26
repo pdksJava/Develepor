@@ -8309,7 +8309,7 @@ public class OrtakIslemler implements Serializable {
 			if (session != null) {
 				session.setFlushMode(FlushMode.MANUAL);
 				session.clear();
-				if (authenticatedUser != null) {
+				if (authenticatedUser != null && getParameterKeyHasStringValue("userMenuGirisGoster")) {
 					UserMenuItemTime menuItemTime = null;
 					if (authenticatedUser.getId() != null && PdksUtil.hasStringValue(authenticatedUser.getCalistigiSayfa())) {
 						if (authenticatedUser.isAdmin() || authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi()) {
@@ -19275,6 +19275,37 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param session
+	 * @return
+	 */
+	public boolean yoneticiRolVar(Session session) {
+		String yoneticiRolleriHaric = getParameterKey("yoneticiRolleriHaric");
+		List<String> yoneticiRolleriHaricList = PdksUtil.getListByString(yoneticiRolleriHaric, null);
+		yoneticiRolleriHaricList.add(Role.TIPI_ANAHTAR_KULLANICI);
+		yoneticiRolleriHaricList.add(Role.TIPI_SISTEM_YONETICI);
+		yoneticiRolleriHaricList.add(Role.TIPI_ADMIN);
+		yoneticiRolleriHaricList.add(Role.TIPI_IK_DIREKTOR);
+		yoneticiRolleriHaricList.add(Role.TIPI_IK_Tesis);
+		yoneticiRolleriHaricList.add(Role.TIPI_IK_YETKILI_RAPOR_KULLANICI);
+		HashMap fields = new HashMap();
+		fields.put("role.rolename not ", yoneticiRolleriHaricList);
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<UserRoles> rolList = pdksEntityController.getObjectByInnerObjectList(fields, UserRoles.class);
+		for (Iterator iterator = rolList.iterator(); iterator.hasNext();) {
+			UserRoles userRoles = (UserRoles) iterator.next();
+			User user = userRoles.getUser();
+			if (user.isDurum() == false || user.getPdksPersonel().isCalisiyor() == false)
+				iterator.remove();
+		}
+		boolean rolVar = !rolList.isEmpty();
+		rolList = null;
+		yoneticiRolleriHaricList = null;
+		return rolVar;
+
+	}
+
+	/**
 	 * @param loginUser
 	 * @param aylikPuantajList
 	 * @param calismayanPersonelYoneticiDurum
@@ -19285,28 +19316,11 @@ public class OrtakIslemler implements Serializable {
 
 		boolean kontrolEtme = !PdksUtil.hasStringValue(key);
 		if (aylikPuantajList != null) {
-			String yoneticiRolleriHaric = getParameterKey("yoneticiRolleriHaric");
-			List<String> yoneticiRolleriHaricList = PdksUtil.getListByString(yoneticiRolleriHaric, null);
-			yoneticiRolleriHaricList.add(Role.TIPI_ANAHTAR_KULLANICI);
-			yoneticiRolleriHaricList.add(Role.TIPI_SISTEM_YONETICI);
-			yoneticiRolleriHaricList.add(Role.TIPI_ADMIN);
-			yoneticiRolleriHaricList.add(Role.TIPI_IK_DIREKTOR);
-			yoneticiRolleriHaricList.add(Role.TIPI_IK_Tesis);
-			yoneticiRolleriHaricList.add(Role.TIPI_IK_YETKILI_RAPOR_KULLANICI);
-			Calendar cal = Calendar.getInstance();
-			HashMap fields = new HashMap();
-			fields.put("role.rolename not ", yoneticiRolleriHaricList);
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<UserRoles> rolList = pdksEntityController.getObjectByInnerObjectList(fields, UserRoles.class);
-			for (Iterator iterator = rolList.iterator(); iterator.hasNext();) {
-				UserRoles userRoles = (UserRoles) iterator.next();
-				User user = userRoles.getUser();
-				if (user.isDurum() == false || user.getPdksPersonel().isCalisiyor() == false)
-					iterator.remove();
-			}
+			boolean rolVar = yoneticiRolVar(session);
 
-			fields.clear();
+			Calendar cal = Calendar.getInstance();
+
+			HashMap fields = new HashMap();
 			fields.put("tipi", Tanim.TIPI_PERSONEL_DINAMIK_DURUM);
 			fields.put("kodu", Tanim.IKINCI_YONETICI_ONAYLAMAZ);
 			if (session != null)
@@ -19319,7 +19333,7 @@ public class OrtakIslemler implements Serializable {
 			List<Long> idList = new ArrayList<Long>(), id2List = new ArrayList<Long>(), idPasifList = new ArrayList<Long>();
 			try {
 				Personel yonetici = null;
-				if (!rolList.isEmpty()) {
+				if (rolVar) {
 					if (key.equals("0") || loginUser.isAdmin() || loginUser.isSistemYoneticisi()) {
 						yonetici = new Personel();
 						if (kontrolEtme == false)
@@ -19382,7 +19396,7 @@ public class OrtakIslemler implements Serializable {
 
 					if (kontrolEtme)
 						yoneticiUser.setId(-1L);
-					if (!rolList.isEmpty()) {
+					if (rolVar) {
 						yoneticiUser.setAd("");
 						if (yoneticiTanimli)
 							yoneticiUser.setSoyad("kullanıcı tanımsız!");

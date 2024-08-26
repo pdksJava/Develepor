@@ -656,7 +656,7 @@ sari {
 }
 
 .calismaAylik {
-	background: white;
+	background: #F1F1F1;
 	color: black;
 	font-size: 10px;
 	white-space: nowrap;
@@ -664,7 +664,7 @@ sari {
 }
 
 .calismaAylikEven {
-	background: #efe9e1;
+	background: #D5E4FB;
 	color: black;
 	font-size: 10px;
 	white-space: nowrap;

@@ -117,8 +117,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	private static final long serialVersionUID = 5067953117682032644L;
 	static Logger logger = Logger.getLogger(VardiyaGunHome.class);
-	
-	
 
 	@RequestParameter
 	Long pdksVardiyaGunId;
@@ -150,7 +148,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	String bordroAdres;
 
 	public static String sayfaURL = "vardiyaPlani";
-	
+
 	private TreeMap<String, Tanim> fazlaMesaiMap;
 
 	private Integer aksamVardiyaBasSaat, aksamVardiyaBitSaat, aksamVardiyaBasDakika, aksamVardiyaBitDakika;
@@ -1957,7 +1955,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				onayDurumList.add(aylikPuantaj.isOnayDurum());
 		}
 		ByteArrayOutputStream baos = null;
-		String aciklamaExcel = PdksUtil.replaceAll(gorevYeriAciklama + " " + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyy MMMMMM  "), "_", "");
+		String aciklamaExcel = PdksUtil.replaceAll(gorevYeriAciklama + " " + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyy MMMMMM  "), "_", " ");
 		Workbook wb = new XSSFWorkbook();
 		Sheet sheet = ExcelUtil.createSheet(wb, PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "MMMMM yyyy") + " Çalışma Planı", Boolean.TRUE);
 
@@ -2232,8 +2230,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 				ExcelUtil.getCell(sheet, row, col++, styleGenelLeft).setCellValue(aylikPuantaj.getYonetici() != null && aylikPuantaj.getYonetici().getId() != null ? aylikPuantaj.getYonetici().getAdSoyad() : "");
 
-				List vardiyaList = aylikPuantaj.getAyinVardiyalari();
-
+				List<VardiyaGun> vardiyaList = aylikPuantaj.getAyinVardiyalari();
 				for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 					VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
 					String styleText = pdksVardiyaGun.getAylikClassAdi(aylikPuantaj.getTrClass());
@@ -2399,6 +2396,29 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		}
 		if (sonucGoster && sayac > 1) {
 			row += 2;
+			col = 0;
+			ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
+			ExcelUtil.getCell(sheet, row, col++, styleGenelLeft).setCellValue("");
+			ExcelUtil.getCell(sheet, row, col++, styleGenelLeft).setCellValue("");
+			for (VardiyaGun vardiyaGun : aylikPuantajDefault.getVardiyalar()) {
+				try {
+					if (!vardiyaGun.isAyinGunu())
+						continue;
+					cal.setTime(vardiyaGun.getVardiyaDate());
+					CellStyle headerVardiya = headerVardiyaGun;
+					String title = null;
+					if (vardiyaGun.getTatil() != null) {
+						Tatil tatil = vardiyaGun.getTatil();
+						title = tatil.getAd();
+						headerVardiya = tatil.isYarimGunMu() ? headerVardiyaTatilYarimGun : headerVardiyaTatilGun;
+					}
+					Cell cell = ExcelUtil.getCell(sheet, row, col++, headerVardiya);
+					ExcelUtil.baslikCell(cell, anchor, helper, drawing, cal.get(Calendar.DAY_OF_MONTH) + "\n " + authenticatedUser.getTarihFormatla(cal.getTime(), "EEE"), title);
+
+				} catch (Exception e) {
+				}
+			}
+			col = 0;
 			boolean renk = Boolean.TRUE;
 			for (VardiyaGun vardiyaGun : aylikVardiyaOzetList) {
 				Vardiya vardiya = vardiyaGun.getVardiya();
@@ -5946,7 +5966,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		seciliBolum = null;
 		seciliAltBolum = null;
 		bordroPuantajEkranindaGoster = ortakIslemler.getParameterKey("bordroPuantajEkranindaGoster").equals("1");
-		yoneticiERP1Kontrol = !ortakIslemler.getParameterKeyHasStringValue("yoneticiERP1Kontrol");
+		yoneticiERP1Kontrol = !ortakIslemler.getParameterKeyHasStringValue("yoneticiERP1Kontrol") && ortakIslemler.yoneticiRolVar(session);
 		bordroAlanKapat();
 		Boolean kontrolDurum = false;
 		String donem = String.valueOf(yil * 100 + ay);
@@ -9689,12 +9709,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	public void sayfaGirisAction() throws Exception {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		componentState.setSeciliTab("");
 		tumBolumPersonelleri = null;
 		bordroPuantajEkranindaGoster = false;
 		linkBordroAdres = null;
- 		aylikVardiyaPlanGiris(sayfaURL, true);
+		aylikVardiyaPlanGiris(sayfaURL, true);
 
 	}
 
