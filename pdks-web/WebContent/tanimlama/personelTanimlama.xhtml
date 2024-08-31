@@ -1016,16 +1016,16 @@
 											<ui:fragment rendered="#{pdksPersonelHome.instance.calismaModeli!=null}">
 												<rich:toolTip for="perCalismaModeli">
 													<h:panelGrid columns="1">
-														<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.calismaModeli.izin!=0}">
-															<ui:define name="label">Hafta İçi İzin Saati</ui:define>
-															<h:outputText value="#{authenticatedUser.sayiFormatliGoster(pdksPersonelHome.instance.calismaModeli.izin)}" />
+														<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.calismaModeli.haftaIci!=0}">
+															<ui:define name="label">Hafta İçi Saati</ui:define>
+															<h:outputText value="#{authenticatedUser.sayiFormatliGoster(pdksPersonelHome.instance.calismaModeli.haftaIci)}" />
 														</s:decorate>
 														<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.calismaModeli.cumartesiSaat!=0}">
-															<ui:define name="label">#{ortakIslemler.getGunAdi(6,null)} İzin Saati </ui:define>
+															<ui:define name="label">#{ortakIslemler.getGunAdi(6,null)} Saati </ui:define>
 															<h:outputText value="#{authenticatedUser.sayiFormatliGoster(pdksPersonelHome.instance.calismaModeli.cumartesiSaat)}" />
 														</s:decorate>
 														<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.calismaModeli.pazarSaat!=0}">
-															<ui:define name="label">#{ortakIslemler.getGunAdi(7,null)} İzin Saati </ui:define>
+															<ui:define name="label">#{ortakIslemler.getGunAdi(7,null)} Saati </ui:define>
 															<h:outputText value="#{authenticatedUser.sayiFormatliGoster(pdksPersonelHome.instance.calismaModeli.pazarSaat)}" />
 														</s:decorate>
 													</h:panelGrid>

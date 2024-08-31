@@ -2708,9 +2708,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			for (Iterator iterator = modelList.iterator(); iterator.hasNext();) {
 				CalismaModeliAy cma = (CalismaModeliAy) iterator.next();
 				CalismaModeli cm = cma.getCalismaModeli();
-				if (cma.getDurum().booleanValue() == false && cm.getDurum().booleanValue() == false)
-					iterator.remove();
-				else if (cm.getDepartman() != null && !cm.getDepartman().getId().equals(aramaSecenekleri.getDepartmanId()))
+				if (cm.getDepartman() != null && !cm.getDepartman().getId().equals(aramaSecenekleri.getDepartmanId()))
 					iterator.remove();
 			}
 			if (aylikPuantaj.getPersonelDenklestirme() != null)
@@ -2718,12 +2716,17 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			List<Long> idList = new ArrayList<Long>();
 			for (Iterator iterator = modelList.iterator(); iterator.hasNext();) {
 				CalismaModeliAy cma = (CalismaModeliAy) iterator.next();
-				if (cma.getId() == null || idList.contains(cma.getId()) || !cma.getDenklestirmeAy().getId().equals(denklestirmeAy.getId())) {
+				CalismaModeli cm = cma.getCalismaModeli();
+				if (cma.getDurum().booleanValue() == false && cm.getDurum().booleanValue() == false)
+					iterator.remove();
+				else if (cma.getId() == null || idList.contains(cma.getId()) || !cma.getDenklestirmeAy().getId().equals(denklestirmeAy.getId())) {
 					iterator.remove();
 				} else
 					idList.add(cma.getId());
 
 			}
+			// if (modelList.size()>1)
+			// modelList=PdksUtil.sortObjectStringAlanList(modelList, "getAciklama", null);
 			if (personel.isGebelikSutIzinVar()) {
 				fields.clear();
 				Date bitTarih = null, basTarih = null;

@@ -584,17 +584,17 @@
 							<ui:fragment rendered="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy!=null}">
 								<rich:toolTip for="perCalismaModeli">
 									<h:panelGrid columns="1">
-										<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.izin!=0}">
-											<ui:define name="label">Hafta İçi İzin Saati</ui:define>
+										<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.haftaIci!=0}">
+											<ui:define name="label">Hafta İçi Saati</ui:define>
 											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.izin)}" />
 										</s:decorate>
 										<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.cumartesiSaat!=0}">
-											<ui:define name="label">#{ortakIslemler.getGunAdi(6,null)} İzin Saati </ui:define>
+											<ui:define name="label">#{ortakIslemler.getGunAdi(6,null)} Saati </ui:define>
 											<h:outputText
 												value="#{authenticatedUser.sayiFormatliGoster(vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.cumartesiSaat)}" />
 										</s:decorate>
 										<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.pazarSaat!=0}">
-											<ui:define name="label">#{ortakIslemler.getGunAdi(7,null)} İzin Saati </ui:define>
+											<ui:define name="label">#{ortakIslemler.getGunAdi(7,null)} Saati </ui:define>
 											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.pazarSaat)}" />
 										</s:decorate>
 									</h:panelGrid>
