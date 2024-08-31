@@ -679,12 +679,18 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 */
 	private void fillCalismaModeli(Personel pdksPersonel) {
 		Departman pdksDepartman = pdksPersonel.getSirket().getDepartman();
-		HashMap parametreMap = new HashMap();
-		parametreMap.put("durum", Boolean.TRUE);
+		StringBuffer sb = new StringBuffer();
+		sb.append(" SELECT D.* FROM " + CalismaModeli.TABLE_NAME + " D WITH(nolock) ");
+		sb.append(" WHERE D." + CalismaModeli.COLUMN_NAME_DURUM + "=1 ");
+		HashMap fields = new HashMap();
+		if (pdksDepartman != null) {
+			sb.append(" AND D." + CalismaModeli.COLUMN_NAME_DEPARTMAN + "=:d ");
+			fields.put("d", pdksDepartman.getId());
+		}
 
 		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		calismaModeliList = pdksEntityController.getObjectByInnerObjectList(parametreMap, CalismaModeli.class);
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		calismaModeliList = pdksEntityController.getObjectBySQLList(sb, fields, CalismaModeli.class);
 		for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
 			CalismaModeli cm = (CalismaModeli) iterator.next();
 			if (pdksPersonel.getGebeMi().equals(Boolean.FALSE) && pdksPersonel.getSutIzni().equals(Boolean.FALSE)) {
@@ -694,9 +700,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				}
 
 			}
-			if (pdksDepartman != null && cm.getDepartman() != null && !cm.getDepartman().getId().equals(pdksDepartman.getId()))
-				iterator.remove();
-			else if (pdksPersonel.getCalismaModeli() == null && cm.isIdariModelMi())
+			if (pdksPersonel.getCalismaModeli() == null && cm.isIdariModelMi())
 				pdksPersonel.setCalismaModeli(cm);
 		}
 	}
