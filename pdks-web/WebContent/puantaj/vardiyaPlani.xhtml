@@ -443,7 +443,7 @@
 							<tr>
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
 									<ui:fragment rendered="#{vardiyaGun.tatil==null}">
-										<td class="acik" style="width: 90px; height: 15px; font-weight: bold; text-align: center;"><h:outputText
+										<td class="koyu" style="width: 90px; height: 15px; font-weight: bold; text-align: center;"><h:outputText
 												value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}" /></td>
 									</ui:fragment>
 
@@ -464,7 +464,7 @@
 									<th width="100px">Şablonu</th>
 								</ui:fragment>
 							</tr>
-							<tr>
+							<tr class="acik">
 
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
 									<td style="width: 90px; height: 20px;" id="vardiya#{vardiyaGun.vardiyaDateStr}" class="#{vardiyaGun.getAylikClassAdi(aylikPuantaj.trClass)}"
