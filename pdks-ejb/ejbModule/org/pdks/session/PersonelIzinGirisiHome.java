@@ -4638,8 +4638,10 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			StringBuffer sb = new StringBuffer();
 			Double yemekMolasiYuzdesi = ortakIslemler.getYemekMolasiYuzdesi(null, session);
 			boolean cumaBasla = false;
-			if (izinTipi.isCumaCumartesiTekIzinSaysin() && izinTipi.isOffDahilMi())
-				cumaBasla = PdksUtil.getDateField(izinBasTarih, Calendar.DAY_OF_WEEK) == Calendar.FRIDAY;
+			if (izinTipi.isCumaCumartesiTekIzinSaysin() && izinTipi.isOffDahilMi()) {
+				cumaBasla = PdksUtil.getDateField(izinBasTarih, Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && PdksUtil.getDateField(izinBasTarih, Calendar.DAY_OF_WEEK) != Calendar.SUNDAY;
+
+			}
 			int cumartesi = 0;
 			ortakIslemler.setVardiyaYemekList(new ArrayList<VardiyaGun>(vardiyalar.values()), yemekGenelList);
 			if (izinTipi.isSenelikIzin() == false) {
@@ -4661,6 +4663,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					}
 				}
 			}
+			int tatilSuresi = 0;
 
 			while (PdksUtil.tarihKarsilastirNumeric(personelIzin.getBitisZamani(), vardiyaDate) >= durum) {
 				pdksVardiyaGun.setVardiyaDate(vardiyaDate);
@@ -4691,6 +4694,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 						eklenecekGun = 1.0d;
 						if (resmiTatilGunleri.containsKey(tatilGunuKey) && tatilSay == false) {
 							eklenecekGun = 0.0d;
+							++tatilSuresi;
 						}
 						if (artiklarMap != null) {
 							if (!artikIizinVar && bayramArtikIzinSifirla.equals("1"))
@@ -4803,9 +4807,10 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			if (cumartesi == 1 && izinSuresiSaatGun == 2) {
 				izinSuresiSaatGun = 1;
 				cal.setTime(personelIzin.getBaslangicZamani());
-				cal.add(Calendar.DATE, 1);
+				cal.add(Calendar.DATE, 1 + tatilSuresi);
 				Date bitisZamani = cal.getTime();
 				personelIzin.setBitisZamani(bitisZamani);
+
 			}
 		} else if (izinTipi.getTakvimGunumu()) {
 			// 2 tarih arasindaki gun sayısı kadar izinden dusulur
