@@ -681,13 +681,12 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		Departman pdksDepartman = pdksPersonel.getSirket().getDepartman();
 		StringBuffer sb = new StringBuffer();
 		sb.append(" SELECT D.* FROM " + CalismaModeli.TABLE_NAME + " D WITH(nolock) ");
-		sb.append(" WHERE D." + CalismaModeli.COLUMN_NAME_DURUM + "=1 ");
+		sb.append(" WHERE D." + CalismaModeli.COLUMN_NAME_DURUM + "=1  ");
 		HashMap fields = new HashMap();
 		if (pdksDepartman != null) {
-			sb.append(" AND D." + CalismaModeli.COLUMN_NAME_DEPARTMAN + "=:d ");
+			sb.append(" AND ( D." + CalismaModeli.COLUMN_NAME_DEPARTMAN + " IS NULL OR D." + CalismaModeli.COLUMN_NAME_DEPARTMAN + "=:d )");
 			fields.put("d", pdksDepartman.getId());
 		}
-
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		calismaModeliList = pdksEntityController.getObjectBySQLList(sb, fields, CalismaModeli.class);
