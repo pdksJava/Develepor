@@ -286,69 +286,81 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	@Transactional
 	public String kaydet() {
 		try {
-			if (calismaModeli.getId() != null) {
-				calismaModeli.setGuncellemeTarihi(new Date());
-				calismaModeli.setGuncelleyenUser(authenticatedUser);
-			} else {
-				calismaModeli.setOlusturmaTarihi(new Date());
-				calismaModeli.setOlusturanUser(authenticatedUser);
+			boolean devam = true;
+			if (calismaModeli.getHaftaTatilGun() != null) {
+				double saat = calismaModeli.getSaat(calismaModeli.getHaftaTatilGun());
+				if (saat != 0) {
+					devam = false;
+					PdksUtil.addMessageWarn("Hafta tatil günü çalışma saati tanımlıdır!");
+				}
 			}
-			List<CalismaModeliVardiya> kayitliCalismaModeliVardiyaList = null;
-			if (calismaModeli.getId() != null && calismaModeli.getGenelVardiya().equals(Boolean.FALSE)) {
-				HashMap parametreMap = new HashMap();
-				parametreMap.put("calismaModeli.id", calismaModeli.getId());
-				if (session != null)
-					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				kayitliCalismaModeliVardiyaList = pdksEntityController.getObjectByInnerObjectList(parametreMap, CalismaModeliVardiya.class);
-			} else
-				kayitliCalismaModeliVardiyaList = new ArrayList<CalismaModeliVardiya>();
-			String haftaTatilDurum = ortakIslemler.getParameterKey("haftaTatilDurum");
-			if (!haftaTatilDurum.equals("1"))
-				calismaModeli.setHaftaTatilMesaiOde(Boolean.FALSE);
-			if (calismaModeli.getHaftaTatilMesaiOde().equals(Boolean.FALSE))
-				calismaModeli.setGeceHaftaTatilMesaiParcala(Boolean.FALSE);
-			pdksEntityController.saveOrUpdate(session, entityManager, calismaModeli);
-			if (calismaModeli.getGenelVardiya() || calismaModeli.isOrtakVardiyadir())
-				kayitliVardiyaList.clear();
-			for (Iterator iterator = kayitliVardiyaList.iterator(); iterator.hasNext();) {
-				Vardiya kayitliVardiya = (Vardiya) iterator.next();
-				boolean ekle = true;
+			if (devam) {
+
+				if (calismaModeli.getId() != null) {
+					calismaModeli.setGuncellemeTarihi(new Date());
+					calismaModeli.setGuncelleyenUser(authenticatedUser);
+				} else {
+					calismaModeli.setOlusturmaTarihi(new Date());
+					calismaModeli.setOlusturanUser(authenticatedUser);
+				}
+				List<CalismaModeliVardiya> kayitliCalismaModeliVardiyaList = null;
+				if (calismaModeli.getId() != null && calismaModeli.getGenelVardiya().equals(Boolean.FALSE)) {
+					HashMap parametreMap = new HashMap();
+					parametreMap.put("calismaModeli.id", calismaModeli.getId());
+					if (session != null)
+						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+					kayitliCalismaModeliVardiyaList = pdksEntityController.getObjectByInnerObjectList(parametreMap, CalismaModeliVardiya.class);
+				} else
+					kayitliCalismaModeliVardiyaList = new ArrayList<CalismaModeliVardiya>();
+				String haftaTatilDurum = ortakIslemler.getParameterKey("haftaTatilDurum");
+				if (!haftaTatilDurum.equals("1"))
+					calismaModeli.setHaftaTatilMesaiOde(Boolean.FALSE);
+				if (calismaModeli.getHaftaTatilMesaiOde().equals(Boolean.FALSE))
+					calismaModeli.setGeceHaftaTatilMesaiParcala(Boolean.FALSE);
+				pdksEntityController.saveOrUpdate(session, entityManager, calismaModeli);
+				if (calismaModeli.getGenelVardiya() || calismaModeli.isOrtakVardiyadir())
+					kayitliVardiyaList.clear();
+				for (Iterator iterator = kayitliVardiyaList.iterator(); iterator.hasNext();) {
+					Vardiya kayitliVardiya = (Vardiya) iterator.next();
+					boolean ekle = true;
+					for (Iterator iterator2 = kayitliCalismaModeliVardiyaList.iterator(); iterator2.hasNext();) {
+						CalismaModeliVardiya cmv = (CalismaModeliVardiya) iterator2.next();
+						if (cmv.getVardiya().getId().equals(kayitliVardiya.getId())) {
+							ekle = false;
+							iterator2.remove();
+							break;
+						}
+
+					}
+					if (ekle) {
+						CalismaModeliVardiya cmv = new CalismaModeliVardiya(kayitliVardiya, calismaModeli);
+						pdksEntityController.saveOrUpdate(session, entityManager, cmv);
+					}
+				}
 				for (Iterator iterator2 = kayitliCalismaModeliVardiyaList.iterator(); iterator2.hasNext();) {
 					CalismaModeliVardiya cmv = (CalismaModeliVardiya) iterator2.next();
-					if (cmv.getVardiya().getId().equals(kayitliVardiya.getId())) {
-						ekle = false;
-						iterator2.remove();
-						break;
-					}
-
+					pdksEntityController.deleteObject(session, entityManager, cmv);
 				}
-				if (ekle) {
-					CalismaModeliVardiya cmv = new CalismaModeliVardiya(kayitliVardiya, calismaModeli);
-					pdksEntityController.saveOrUpdate(session, entityManager, cmv);
-				}
-			}
-			for (Iterator iterator2 = kayitliCalismaModeliVardiyaList.iterator(); iterator2.hasNext();) {
-				CalismaModeliVardiya cmv = (CalismaModeliVardiya) iterator2.next();
-				pdksEntityController.deleteObject(session, entityManager, cmv);
-			}
-			if (cmGunMap != null && !cmGunMap.isEmpty()) {
-				for (Integer gunTipi : cmGunMap.keySet()) {
-					double sure = gunTipi.equals(CalismaModeliGun.GUN_SAAT) ? calismaModeli.getHaftaIci() : calismaModeli.getHaftaIciSutIzniSure();
-					List<CalismaModeliGun> list = cmGunMap.get(gunTipi);
-					for (CalismaModeliGun calismaModeliGun : list) {
-						if (calismaModeliGun.getSure() == sure) {
-							if (calismaModeliGun.getId() != null)
-								session.delete(calismaModeliGun);
-						} else if (calismaModeliGun.isGuncellendi())
-							pdksEntityController.saveOrUpdate(session, entityManager, calismaModeliGun);
+				if (cmGunMap != null && !cmGunMap.isEmpty()) {
+					for (Integer gunTipi : cmGunMap.keySet()) {
+						double sure = gunTipi.equals(CalismaModeliGun.GUN_SAAT) ? calismaModeli.getHaftaIci() : calismaModeli.getHaftaIciSutIzniSure();
+						List<CalismaModeliGun> list = cmGunMap.get(gunTipi);
+						for (CalismaModeliGun calismaModeliGun : list) {
+							if (calismaModeliGun.getSure() == sure) {
+								if (calismaModeliGun.getId() != null)
+									session.delete(calismaModeliGun);
+							} else if (calismaModeliGun.isGuncellendi())
+								pdksEntityController.saveOrUpdate(session, entityManager, calismaModeliGun);
+						}
 					}
 				}
+				session.flush();
+				fillCalismaModeliList();
 			}
-			session.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		fillCalismaModeliList();
+
 		return "";
 	}
 
