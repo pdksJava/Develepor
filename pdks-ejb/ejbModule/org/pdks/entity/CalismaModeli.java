@@ -54,7 +54,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_ILK_PLAN_ONAYLI = "ILK_PLAN_ONAYLI";
 	public static final String COLUMN_NAME_GUN_MAX_CALISMA_SURESI_ODENIR = "GUN_MAX_CALISMA_SURESI_ODENIR";
 	public static final String COLUMN_NAME_PERSONEL_TIPI = "PERSONEL_TIPI_ID";
-	public static final String COLUMN_NAME_HAFTA_TATIL = "HAFTA_TATIL_PAZAR";
+	public static final String COLUMN_NAME_HAFTA_TATIL = "HT_GUN";
 	public static final String COLUMN_NAME_GENEL_MODEL = "GENEL_MODEL";
 	public static final String COLUMN_NAME_IDARI_MODEL = "IDARI_MODEL";
 	public static final String COLUMN_NAME_HAFTA_ICI_SUT_IZNI_SURE = "HAFTA_ICI_SUT_IZNI_SURE";
