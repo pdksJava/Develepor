@@ -63,6 +63,8 @@ public class PersonelDenklestirme extends BaseObject {
 
 	private PersonelDenklestirme personelDenklestirmeGecenAy, personelDenklestirmeDB;
 
+	private VardiyaGun izinVardiyaGun;
+
 	private Double planlanSure = 0d, eksikCalismaSure = 0d, hesaplananSure = 0d, resmiTatilSure = 0d, haftaCalismaSuresi = 0d, fazlaMesaiSure = 0d, odenenSure = 0d;
 
 	private Double devredenSure, kesilenSure = 0d, calismaSuaSaati = calismaSaatiSua, kismiOdemeSure = 0d, aksamVardiyaSayisi = 0d, aksamVardiyaSaatSayisi = 0d, sutIzniSaatSayisi = 0d;
@@ -671,6 +673,15 @@ public class PersonelDenklestirme extends BaseObject {
 			this.egitimSuresiAksamGunSayisi = pd.getEgitimSuresiAksamGunSayisi();
 			this.partTime = pd.getPartTime();
 		}
+	}
+
+	@Transient
+	public VardiyaGun getIzinVardiyaGun() {
+		return izinVardiyaGun;
+	}
+
+	public void setIzinVardiyaGun(VardiyaGun izinVardiyaGun) {
+		this.izinVardiyaGun = izinVardiyaGun;
 	}
 
 }

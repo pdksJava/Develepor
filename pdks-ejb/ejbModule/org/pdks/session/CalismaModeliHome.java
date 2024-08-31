@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 
+import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
@@ -60,6 +61,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), kayitliVardiyaList = new ArrayList<Vardiya>();
 	private List<CalismaModeliGun> cmGunList;
 	private List<Departman> departmanList;
+	private List<SelectItem> haftaTatilGunleri;
 	private HashMap<Integer, List<CalismaModeliGun>> cmGunMap;
 
 	private CalismaModeliGun cmgPage = new CalismaModeliGun();
@@ -188,6 +190,14 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	}
 
 	public String fillVardiyalar() {
+
+		haftaTatilGunleri.clear();
+		Calendar cal = Calendar.getInstance();
+		haftaTatilGunleri.add(new SelectItem(null, "Sabit Gün Değil"));
+		for (int i = 1; i <= 7; i++) {
+			cal.set(Calendar.DAY_OF_WEEK, i);
+			haftaTatilGunleri.add(new SelectItem(i, PdksUtil.convertToDateString(cal.getTime(), "EEEEE")));
+		}
 		gunleriSifirla();
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("durum", Boolean.TRUE);
@@ -352,6 +362,9 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	}
 
 	public void fillCalismaModeliList() {
+		if (haftaTatilGunleri == null)
+			haftaTatilGunleri = new ArrayList<SelectItem>();
+
 		izinGoster = false;
 		session.clear();
 		hareketKaydiVardiyaBul = ortakIslemler.getParameterKey("hareketKaydiVardiyaBul").equals("1");
@@ -521,6 +534,14 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	public static void setSayfaURL(String sayfaURL) {
 		CalismaModeliHome.sayfaURL = sayfaURL;
+	}
+
+	public List<SelectItem> getHaftaTatilGunleri() {
+		return haftaTatilGunleri;
+	}
+
+	public void setHaftaTatilGunleri(List<SelectItem> haftaTatilGunleri) {
+		this.haftaTatilGunleri = haftaTatilGunleri;
 	}
 
 }

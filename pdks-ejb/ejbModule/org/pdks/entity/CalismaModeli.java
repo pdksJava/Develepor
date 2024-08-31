@@ -54,7 +54,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_ILK_PLAN_ONAYLI = "ILK_PLAN_ONAYLI";
 	public static final String COLUMN_NAME_GUN_MAX_CALISMA_SURESI_ODENIR = "GUN_MAX_CALISMA_SURESI_ODENIR";
 	public static final String COLUMN_NAME_PERSONEL_TIPI = "PERSONEL_TIPI_ID";
-	public static final String COLUMN_NAME_HAFTA_TATIL_PAZAR = "HAFTA_TATIL_PAZAR";
+	public static final String COLUMN_NAME_HAFTA_TATIL = "HAFTA_TATIL_PAZAR";
 	public static final String COLUMN_NAME_GENEL_MODEL = "GENEL_MODEL";
 	public static final String COLUMN_NAME_IDARI_MODEL = "IDARI_MODEL";
 	public static final String COLUMN_NAME_HAFTA_ICI_SUT_IZNI_SURE = "HAFTA_ICI_SUT_IZNI_SURE";
@@ -75,7 +75,8 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	private Boolean fazlaMesaiVar = Boolean.TRUE, toplamGunGuncelle = Boolean.FALSE, durum = Boolean.TRUE, genelVardiya = Boolean.TRUE, hareketKaydiVardiyaBul = Boolean.FALSE;
 	private Boolean haftaTatilMesaiOde = Boolean.FALSE, geceHaftaTatilMesaiParcala = Boolean.FALSE, geceCalismaOdemeVar = Boolean.FALSE, otomatikFazlaCalismaOnaylansin = Boolean.FALSE;
 	private Boolean ortakVardiya = Boolean.FALSE, fazlaMesaiGoruntulensin = Boolean.TRUE, ilkPlanOnayliDurum = Boolean.FALSE, gunMaxCalismaOdemeDurum = Boolean.TRUE;
-	private Boolean haftaTatilPazar = Boolean.FALSE, genelModel = Boolean.TRUE, idariModel = Boolean.FALSE;
+	private Boolean genelModel = Boolean.TRUE, idariModel = Boolean.FALSE;
+	private Integer haftaTatilGun = Calendar.SUNDAY;
 	private VardiyaSablonu bagliVardiyaSablonu;
 	private Departman departman;
 	private Tanim personelTipi;
@@ -313,14 +314,13 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 		this.gunMaxCalismaOdemeDurum = gunMaxCalismaOdemeDurum;
 	}
 
-	@Transient
-	// @Column(name = COLUMN_NAME_HAFTA_TATIL_PAZAR)
-	public Boolean getHaftaTatilPazar() {
-		return haftaTatilPazar;
+	@Column(name = COLUMN_NAME_HAFTA_TATIL)
+	public Integer getHaftaTatilGun() {
+		return haftaTatilGun;
 	}
 
-	public void setHaftaTatilPazar(Boolean haftaTatilPazar) {
-		this.haftaTatilPazar = haftaTatilPazar;
+	public void setHaftaTatilGun(Integer haftaTatilGun) {
+		this.haftaTatilGun = haftaTatilGun;
 	}
 
 	@Column(name = COLUMN_NAME_GENEL_MODEL)
@@ -538,8 +538,8 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	}
 
 	@Transient
-	public boolean isHaftaTatilPazardir() {
-		return haftaTatilPazar != null && haftaTatilPazar;
+	public boolean isHaftaTatilSabitDegil() {
+		return haftaTatilGun == null || (haftaTatilGun >= 1 && haftaTatilGun <= 7) == false;
 	}
 
 	@Transient
@@ -629,6 +629,19 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 			}
 		}
 		return sure;
+	}
+
+	@Transient
+	public String getHaftaTatil() {
+		String str = "Sabit Gün Değil";
+		if (haftaTatilGun != null) {
+			if (haftaTatilGun >= 1 && haftaTatilGun <= 7) {
+				Calendar cal = Calendar.getInstance();
+				cal.set(Calendar.DAY_OF_WEEK, haftaTatilGun);
+				str = PdksUtil.convertToDateString(cal.getTime(), "EEEEE");
+			}
+		}
+		return str;
 	}
 
 	@Transient

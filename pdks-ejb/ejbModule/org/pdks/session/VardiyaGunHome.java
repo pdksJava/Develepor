@@ -2715,6 +2715,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			if (aylikPuantaj.getPersonelDenklestirme() != null)
 				ortakIslemler.addObjectList(aylikPuantaj.getPersonelDenklestirme().getCalismaModeliAy(), modelList, null);
+			List<Long> idList = new ArrayList<Long>();
+			for (Iterator iterator = modelList.iterator(); iterator.hasNext();) {
+				CalismaModeliAy cma = (CalismaModeliAy) iterator.next();
+				if (cma.getId() == null || idList.contains(cma.getId()) || !cma.getDenklestirmeAy().getId().equals(denklestirmeAy.getId())) {
+					iterator.remove();
+				} else
+					idList.add(cma.getId());
+
+			}
 			if (personel.isGebelikSutIzinVar()) {
 				fields.clear();
 				Date bitTarih = null, basTarih = null;

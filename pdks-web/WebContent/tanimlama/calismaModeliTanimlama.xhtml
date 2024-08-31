@@ -91,6 +91,12 @@
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.arife)}" rendered="#{calismaModeli.arife!=0}" />
 						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Hafta Tatil" />
+							</f:facet>
+							<h:outputText value="#{calismaModeli.haftaTatil}" rendered="#{calismaModeli.haftaTatilGun!=null}" />
+						</rich:column>
 						<rich:column rendered="#{authenticatedUser.admin}">
 							<f:facet name="header">
 								<h:outputText value="Negatif Bakiye Max (Saat)" />
@@ -237,7 +243,7 @@
 					<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 				</a4j:outputPanel>
 				<h:panelGrid columns="1">
-					<h:panelGrid columns="2" id="calismaModeliGiris">
+					<h:panelGrid columns="3" id="calismaModeliGiris">
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.calismaModeliAciklama()} Adı</ui:define>
 							<h:inputText required="true" value="#{calismaModeliHome.calismaModeli.aciklama}" disabled="#{authenticatedUser.admin==false}" size="35"
@@ -267,6 +273,18 @@
 
 							</h:selectBooleanCheckbox>
 						</s:decorate>
+
+						<s:decorate template="/layout/edit.xhtml" >
+							<ui:define name="label">Hafta Tatil</ui:define>
+							<h:selectOneMenu value="#{calismaModeliHome.calismaModeli.haftaTatilGun}" disabled="#{authenticatedUser.admin==false}">
+ 								<f:selectItems value="#{calismaModeliHome.haftaTatilGunleri}" />
+								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" />
+							</h:selectOneMenu>
+						</s:decorate>
+
+
+
+
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Hafta İçi (Saati)</ui:define>
 							<ui:fragment>

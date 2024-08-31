@@ -803,7 +803,7 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setIzin(PersonelIzin value) {
-		if (vardiyaDateStr.equals("20231112")) {
+		if (vardiyaDateStr.equals("20240821")) {
 			if (value != null)
 				logger.debug(vardiyaDateStr + " " + value.getId() + " " + value.getAciklama());
 			else
@@ -1026,8 +1026,8 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public String getVardiyaKey() {
-		if (!fiiliHesapla)
-			setIzin(null);
+//		if (!fiiliHesapla)
+//			setIzin(null);
 		String key = getVardiyaKeyStr();
 		return key;
 

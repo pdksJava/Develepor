@@ -15625,7 +15625,9 @@ public class OrtakIslemler implements Serializable {
 							if (ilkGiris)
 								puantajData.setResmiTatilToplami(0.0d);
 							ilkGiris = false;
-
+							if (pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getVardiya().isHaftaTatil()) {
+								personelDenklestirme.setIzinVardiyaGun(pdksVardiyaGun);
+							}
 							List<YemekIzin> yemekList = yemekHesapla ? pdksVardiyaGun.getYemekList() : yemekBosList;
 							Double izinSaat = null;
 							Tatil tatilOrj = tatilGunleriMap.get(key);
@@ -15634,9 +15636,22 @@ public class OrtakIslemler implements Serializable {
 							boolean arifeGunu = false;
 							Vardiya vardiyaIzin = pdksVardiyaGun.getVardiya();
 							if (personelDenklestirme != null && personelDenklestirme.getCalismaModeliAy() != null) {
-								CalismaModeli calismaModeliAy = personelDenklestirme.getCalismaModeli();
-
+								CalismaModeli calismaModeliAy = pdksVardiyaGun.getCalismaModeli() != null ? pdksVardiyaGun.getCalismaModeli() : personelDenklestirme.getCalismaModeli();
 								izinSaat = pdksVardiyaGun.isIzinli() ? calismaModeliAy.getIzinSaat(pdksVardiyaGun) : 0.0d;
+								if (pdksVardiyaGun.isIzinli() && personelDenklestirme != null && calismaModeli.isHaftaTatilSabitDegil()) {
+									Vardiya vardiya = pdksVardiyaGun.getVardiya();
+									if (izinSaat == 0 || vardiya.isHaftaTatil()) {
+										if (vardiya.isHaftaTatil()) {
+											personelDenklestirme.setIzinVardiyaGun(pdksVardiyaGun);
+											izinSaat = 0.0d;
+										} else if (personelDenklestirme.getIzinVardiyaGun() != null) {
+											VardiyaGun izinVardiyaGun = personelDenklestirme.getIzinVardiyaGun();
+											int haftaGun = PdksUtil.getDateField(izinVardiyaGun.getVardiyaDate(), Calendar.DAY_OF_WEEK);
+											izinSaat = calismaModeli.getSaat(haftaGun);
+										}
+									}
+
+								}
 								if (pdksVardiyaGun.getIzin() != null && pdksVardiyaGun.getIzin().getIzinTipi().isIslemYokCGS()) {
 									izinSaat = 0.0d;
 								}
@@ -16277,10 +16292,24 @@ public class OrtakIslemler implements Serializable {
 				boolean raporIzni = getParameterKey("raporIzniKontrolEt").equals("1") && izinTipi.isRaporIzin();
 				if (izinTipi != null && !raporIzni) {
 					// TODO İzin
-					CalismaModeli calismaModeli = personelDenklestirme.getCalismaModeli();
+					CalismaModeli calismaModeli = pdksVardiyaGun.getCalismaModeli() != null ? pdksVardiyaGun.getCalismaModeli() : personelDenklestirme.getCalismaModeli();
 					if (calismaModeli != null) {
 						int haftaGun = PdksUtil.getDateField(pdksVardiyaGun.getVardiyaDate(), Calendar.DAY_OF_WEEK);
 						double saat = calismaModeli.getSaat(haftaGun), izinSaat = calismaModeli.getIzinSaat(haftaGun);
+						if (calismaModeli.isHaftaTatilSabitDegil() && personelDenklestirme != null) {
+							Vardiya vardiya = pdksVardiyaGun.getVardiya();
+							if (izinSaat == 0 || vardiya.isHaftaTatil()) {
+								if (vardiya.isHaftaTatil()) {
+									personelDenklestirme.setIzinVardiyaGun(pdksVardiyaGun);
+									izinSaat = 0.0d;
+								} else if (personelDenklestirme.getIzinVardiyaGun() != null) {
+									VardiyaGun izinVardiyaGun = personelDenklestirme.getIzinVardiyaGun();
+									haftaGun = PdksUtil.getDateField(izinVardiyaGun.getVardiyaDate(), Calendar.DAY_OF_WEEK);
+									izinSaat = calismaModeli.getSaat(haftaGun);
+								}
+							}
+
+						}
 						if (haftaGun == Calendar.SATURDAY || haftaGun == Calendar.SUNDAY) {
 							if (saat <= 0.0d)
 								sure = 0.0d;
@@ -18063,6 +18092,9 @@ public class OrtakIslemler implements Serializable {
 						}
 
 						if (gunIzin) {
+							if (vardiyaDateStr.equals("20240822")) {
+								logger.debug("");
+							}
 							if (izinVardiyaKontrol) {
 								baslangicZamani = islemVardiya.getVardiyaBasZaman();
 								if (vardiyaGun.getOncekiVardiyaGun() != null && vardiyaGun.getOncekiVardiyaGun().getIzin() != null)
