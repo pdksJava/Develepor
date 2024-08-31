@@ -1,9 +1,11 @@
 package org.pdks.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -666,6 +668,55 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 		if (gunSure > 0.0d)
 			logger.debug(dayOfWeek + " : " + gunSure);
 		return gunSure;
+	}
+
+	@Transient
+	public List<Liste> getHaftaSaatList() {
+		List<Liste> list = getHaftaList(CalismaModeliGun.GUN_SAAT);
+		return list;
+	}
+
+	@Transient
+	public List<Liste> getHaftaIzinList() {
+		List<Liste> list = getHaftaList(CalismaModeliGun.GUN_IZIN);
+		return list;
+	}
+
+	@Transient
+	public List<Liste> getHaftaList(int gunTipi) {
+		List<Liste> list = new ArrayList<Liste>();
+		List<Integer> gunler = new ArrayList<Integer>();
+		for (int i = Calendar.MONDAY; i <= Calendar.SATURDAY; i++)
+			gunler.add(i);
+		gunler.add(Calendar.SUNDAY);
+		Calendar cal = Calendar.getInstance();
+		double toplam = 0.0d;
+		for (Integer dayOfWeek : gunler) {
+			double sure = 0.0d;
+			if (gunTipi == CalismaModeliGun.GUN_SAAT)
+				sure = getSaat(dayOfWeek);
+			else if (gunTipi == CalismaModeliGun.GUN_IZIN)
+				sure = getIzinSaat(dayOfWeek);
+			if (sure > 0.0d) {
+				cal.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+				try {
+					list.add(new Liste(PdksUtil.convertToDateString(cal.getTime(), "EEEEE"), PdksUtil.numericValueFormatStr(sure, null)));
+					toplam += sure;
+				} catch (Exception e) {
+					 
+				}
+
+			}
+		}
+		try {
+			if (toplam > 0.0d)
+				list.add(new Liste("TOPLAM", PdksUtil.numericValueFormatStr(toplam, null)));
+		} catch (Exception e) {
+			 
+		}
+
+		gunler = null;
+		return list;
 	}
 
 	@Transient

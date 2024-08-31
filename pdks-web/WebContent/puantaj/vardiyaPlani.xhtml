@@ -583,21 +583,30 @@
 							</h:selectOneMenu>
 							<ui:fragment rendered="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy!=null}">
 								<rich:toolTip for="perCalismaModeli">
-									<h:panelGrid columns="1">
-										<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.haftaIci!=0}">
-											<ui:define name="label">Hafta İçi Saati</ui:define>
-											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.izin)}" />
-										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.cumartesiSaat!=0}">
-											<ui:define name="label">#{ortakIslemler.getGunAdi(6,null)} Saati </ui:define>
-											<h:outputText
-												value="#{authenticatedUser.sayiFormatliGoster(vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.cumartesiSaat)}" />
-										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.pazarSaat!=0}">
-											<ui:define name="label">#{ortakIslemler.getGunAdi(7,null)} Saati </ui:define>
-											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.pazarSaat)}" />
-										</s:decorate>
-									</h:panelGrid>
+
+									<rich:dataTable rowClasses="acik,koyu" value="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.haftaSaatList}" var="hs"
+										rows="10" rowKeyVar="row">
+										<f:facet name="header">
+											<h:outputText value="Haftalık Çalışma Saatleri" />
+										</f:facet>
+										<rich:column>
+											<f:facet name="header">
+												<h:outputText value="Gün" />
+											</f:facet>
+											<h:outputText value="#{hs.id}" />
+										</rich:column>
+										<rich:column style="text-align:center;">
+											<f:facet name="header">
+												<h:outputText value="Saat" />
+											</f:facet>
+											<h:outputText value="#{hs.value}" />
+										</rich:column>
+										<f:facet name="footer">
+											<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+										</f:facet>
+									</rich:dataTable>
+
+
 									<rich:dataTable rowClasses="acik,koyu" value="#{vardiyaGunHome.calismaModeliVardiyaList}" var="vardiya" rows="20" rowKeyVar="row"
 										rendered="#{vardiyaGunHome.calismaModeliVardiyaList!=null}" id="vardiyaTable">
 										<f:facet name="header">
@@ -1099,7 +1108,8 @@
 							<tr class="acik">
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
 									<ui:fragment rendered="#{vardiyaGun.tatil==null}">
-										<td style="width: 90px;font-weight: bold;text-align: center;"><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}" /></td>
+										<td style="width: 90px; font-weight: bold; text-align: center;"><h:outputText
+												value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}" /></td>
 									</ui:fragment>
 
 									<ui:fragment rendered="#{vardiyaGun.tatil.yarimGun==true}">

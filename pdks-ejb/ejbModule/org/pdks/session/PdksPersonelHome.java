@@ -681,13 +681,19 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		Departman pdksDepartman = pdksPersonel.getSirket().getDepartman();
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("durum", Boolean.TRUE);
-		if (pdksPersonel.getGebeMi().equals(Boolean.FALSE) && pdksPersonel.getSutIzni().equals(Boolean.FALSE))
-			parametreMap.put("toplamGunGuncelle", Boolean.FALSE);
+
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		calismaModeliList = pdksEntityController.getObjectByInnerObjectList(parametreMap, CalismaModeli.class);
 		for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
 			CalismaModeli cm = (CalismaModeli) iterator.next();
+			if (pdksPersonel.getGebeMi().equals(Boolean.FALSE) && pdksPersonel.getSutIzni().equals(Boolean.FALSE)) {
+				if (cm.getToplamGunGuncelle().equals(Boolean.TRUE)) {
+					iterator.remove();
+					continue;
+				}
+
+			}
 			if (pdksDepartman != null && cm.getDepartman() != null && !cm.getDepartman().getId().equals(pdksDepartman.getId()))
 				iterator.remove();
 			else if (pdksPersonel.getCalismaModeli() == null && cm.isIdariModelMi())
@@ -2177,7 +2183,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, "personelListesi");
 		personelDurumMap.clear();
-		
+
 		sanalPersonelAciklama = ortakIslemler.sanalPersonelAciklama();
 		yoneticiRolVarmi = ortakIslemler.yoneticiRolKontrol(session);
 		fillEkSahaTanim();
