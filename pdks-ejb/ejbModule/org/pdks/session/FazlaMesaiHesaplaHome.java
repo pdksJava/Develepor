@@ -159,7 +159,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private Boolean modelGoster = Boolean.FALSE, kullaniciPersonel = Boolean.FALSE, denklestirmeAyDurum = Boolean.FALSE, gecenAyDurum = Boolean.FALSE, izinGoster = Boolean.FALSE, yoneticiRolVarmi = Boolean.FALSE;
 	private boolean adminRole, hareketIptalEt = false, ikRole, personelHareketDurum, personelFazlaMesaiDurum, vardiyaPlaniDurum, personelIzinGirisiDurum, fazlaMesaiTalepOnayliDurum = Boolean.FALSE;
 	private Boolean izinCalismayanMailGonder = Boolean.FALSE, hatalariAyikla = Boolean.FALSE, kismiOdemeGoster = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE;
-	private boolean topluGuncelle = false, yarimYuvarla = true, sadeceFazlaMesai = true, saatlikCalismaGoster = false, izinBordoroGoster = false, bordroPuantajEkranindaGoster = false, planOnayDurum, eksikCalismaGoster, eksikMaasGoster = false;
+	private boolean topluGuncelle = false, yarimYuvarla = true, istifaGoster = false, sadeceFazlaMesai = true, saatlikCalismaGoster = false, izinBordoroGoster = false, bordroPuantajEkranindaGoster = false, planOnayDurum, eksikCalismaGoster, eksikMaasGoster = false;
 	private int ay, yil, maxYil, sonDonem, pageSize;
 	private String manuelGirisGoster = "", kapiGirisSistemAdi = "", birdenFazlaKGSSirketSQL = "";
 
@@ -301,7 +301,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		userLogin = authenticatedUser;
- 		planTanimsizBolumList = null;
+		planTanimsizBolumList = null;
 		componentState.setSeciliTab("tab1");
 
 		tumBolumPersonelleri = null;
@@ -1567,7 +1567,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				boolean sirketFazlaMesaiIzinKullan = sirket.getFazlaMesaiIzinKullan() != null && sirket.getFazlaMesaiIzinKullan();
 				boolean sirketFazlaMesaiOde = sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde();
 				Date yeniDonem = PdksUtil.tariheAyEkleCikar(PdksUtil.convertToJavaDate((yil * 100 + ay) + "01", "yyyyMMdd"), 1);
-
+				istifaGoster = false;
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					puantaj.setFazlaMesaiHesapla(true);
@@ -1587,7 +1587,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					Boolean tarihGecti = Boolean.TRUE;
 					Boolean gebemi = Boolean.FALSE, calisiyor = Boolean.FALSE;
 					puantaj.setKaydet(Boolean.FALSE);
+
 					puantaj.setCalisiyor(personel.isCalisiyorGun(yeniDonem));
+					if (istifaGoster == false)
+						istifaGoster = puantaj.isCalisiyor() == false;
+
 					personelFazlaMesaiStr = personelFazlaMesaiOrjStr;
 					puantaj.setSablonAylikPuantaj(aylikPuantajSablon);
 					puantaj.setFazlaMesaiHesapla(Boolean.FALSE);
@@ -5105,7 +5109,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 			}
 		}
-		if (ikRole)
+		boolean istifaGosterDurum = istifaGoster && (ikRole || mailGonder);
+		if (istifaGosterDurum)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Durum");
 		for (Iterator iter = list.iterator(); iter.hasNext();) {
 			AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
@@ -5363,7 +5368,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 						}
 					}
-					if (ikRole)
+					if (istifaGosterDurum)
 						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(aylikPuantaj.isCalisiyor() ? "Çalışıyor" : "Ayrılmış");
 					styleGenel = null;
 				} catch (Exception e) {
@@ -7319,6 +7324,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	public void setSuaGoster(Boolean suaGoster) {
 		this.suaGoster = suaGoster;
+	}
+
+	public boolean isIstifaGoster() {
+		return istifaGoster;
+	}
+
+	public void setIstifaGoster(boolean istifaGoster) {
+		this.istifaGoster = istifaGoster;
 	}
 
 }
