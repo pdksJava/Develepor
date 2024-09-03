@@ -400,6 +400,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 				break;
 
 		}
+		logger.info(baslik + " OK " + PdksUtil.getCurrentTimeStampStr());
+
 		return hataYok;
 	}
 
