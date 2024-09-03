@@ -703,7 +703,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 					list.add(new Liste(PdksUtil.convertToDateString(cal.getTime(), "EEEEE"), PdksUtil.numericValueFormatStr(sure, null)));
 					toplam += sure;
 				} catch (Exception e) {
-					 
+
 				}
 
 			}
@@ -712,11 +712,23 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 			if (toplam > 0.0d)
 				list.add(new Liste("TOPLAM", PdksUtil.numericValueFormatStr(toplam, null)));
 		} catch (Exception e) {
-			 
+
 		}
 
 		gunler = null;
 		return list;
+	}
+
+	@Transient
+	public String getAciklamaHT() {
+		String st = aciklama;
+		if (haftaTatilGun != null) {
+			String ht = this.getHaftaTatil();
+			if (PdksUtil.hasStringValue(ht)) {
+				st = aciklama + " [ HT : " + ht + " ]";
+			}
+		}
+		return st;
 	}
 
 	@Transient

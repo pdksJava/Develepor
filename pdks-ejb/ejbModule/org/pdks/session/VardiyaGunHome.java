@@ -211,7 +211,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	private boolean vardiyaVar = Boolean.FALSE, seciliDurum, mailGonder, mesaiOnayla, haftaTatilMesaiDurum = Boolean.FALSE, vardiyaGuncelle = Boolean.FALSE, hastaneSuperVisor = Boolean.FALSE;
 	private boolean fazlaMesaiIzinRaporuDurum, onayDurum = Boolean.FALSE, partTimeGoster = Boolean.FALSE, sutIzniGoster = Boolean.FALSE, planGirisi, sablonGuncelle, veriGuncellendi;
-
+	private boolean plansiz = false;
 	private ArrayList<Date> islemGunleri;
 
 	private AylikPuantaj aylikPuantajDonem;
@@ -6607,7 +6607,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							pdksVardiyaGunMaster.setTatil(null);
 					}
 					TreeMap<String, CalismaModeliAy> cmaMap = new TreeMap<String, CalismaModeliAy>();
-
+					List<Long> plansizList = new ArrayList<Long>();
 					for (Personel personel : personelList) {
 
 						boolean pdks = false;
@@ -6648,6 +6648,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 							personelDenklestirme = new PersonelDenklestirme(personel, denklestirmeAy, cma);
 							pdksEntityController.saveOrUpdate(session, entityManager, personelDenklestirme);
+							if (plansiz)
+								plansizList.add(personel.getId());
 							flush = true;
 
 						}
@@ -7181,6 +7183,16 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						if (vardiyaCalisiyor)
 							aylikPuantajList.add(aylikPuantaj);
 					}
+					if (!plansizList.isEmpty()) {
+						for (Iterator iterator = aylikPuantajList.iterator(); iterator.hasNext();) {
+							AylikPuantaj ap = (AylikPuantaj) iterator.next();
+							if (!plansizList.contains(ap.getPdksPersonel().getId()))
+								iterator.remove();
+
+						}
+						plansiz = false;
+					}
+					plansizList = null;
 					if (gunSaatGuncelle)
 						fazlaMesaiOrtakIslemler.setDenklestirmeAySure(defaultAylikPuantajSablon.getVardiyalar(), aramaSecenekleri.getSirket(), denklestirmeAy, session);
 
@@ -10037,6 +10049,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			AramaSecenekleri saveAramaSecenekleri = null;
 			Long tesisId = null, ekSaha4Id = null;
 			String doldurStr = null;
+			plansiz = false;
 			if (planKey == null) {
 				veriLastMap = ortakIslemler.getLastParameter(calistigiSayfa, session);
 				if (veriLastMap != null) {
@@ -10064,6 +10077,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						}
 						if (veriLastMap.containsKey("veriDoldur")) {
 							doldurStr = (String) veriLastMap.get("veriDoldur");
+
+						}
+						if (veriLastMap.containsKey("plansiz")) {
+							plansiz = true;
 
 						}
 

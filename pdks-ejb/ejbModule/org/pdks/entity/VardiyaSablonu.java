@@ -1,6 +1,7 @@
 package org.pdks.entity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -418,6 +419,31 @@ public class VardiyaSablonu extends BaseObject {
 	}
 
 	@Transient
+	public List<Liste> getHaftaList() {
+		List<Liste> list = new ArrayList<Liste>();
+		List<Integer> gunler = new ArrayList<Integer>();
+		for (int i = Calendar.MONDAY; i <= Calendar.SATURDAY; i++)
+			gunler.add(i);
+		gunler.add(Calendar.SUNDAY);
+		Calendar cal = Calendar.getInstance();
+		for (Integer dayOfWeek : gunler) {
+			int gun = dayOfWeek == Calendar.SUNDAY ? 7 : dayOfWeek - 1;
+			Vardiya vardiya = (Vardiya) PdksUtil.getMethodObject(this, "getVardiya" + gun, null);
+			if (vardiya != null) {
+				cal.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+				try {
+					list.add(new Liste(PdksUtil.convertToDateString(cal.getTime(), "EEEEE"), vardiya.getOzelAdi()));
+
+				} catch (Exception e) {
+
+				}
+			}
+		}
+		gunler = null;
+		return list;
+	}
+
+	@Transient
 	public boolean isIsKurMu() {
 		boolean isKurDurum = false;
 		if (departman != null && departman.isAdminMi())
@@ -427,6 +453,6 @@ public class VardiyaSablonu extends BaseObject {
 
 	public void entityRefresh() {
 		// TODO entityRefresh
-		
+
 	}
 }

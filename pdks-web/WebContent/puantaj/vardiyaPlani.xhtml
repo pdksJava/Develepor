@@ -583,45 +583,52 @@
 							</h:selectOneMenu>
 							<ui:fragment rendered="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy!=null}">
 								<rich:toolTip for="perCalismaModeli">
-
-									<rich:dataTable rowClasses="acik,koyu" value="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.haftaSaatList}" var="hs"
-										rows="10" rowKeyVar="row">
-										<f:facet name="header">
-											<h:outputText value="Haftalık Çalışma Saatleri" />
-										</f:facet>
-										<rich:column>
+									<h:panelGrid columns="1">
+										<rich:dataTable rowClasses="acik,koyu" value="#{vardiyaGunHome.calismaModeliVardiyaList}" var="vardiya" rows="20" rowKeyVar="row"
+											rendered="#{vardiyaGunHome.calismaModeliVardiyaList!=null}" id="vardiyaTable">
 											<f:facet name="header">
-												<h:outputText value="Gün" />
+												<h:outputText value="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama} Çalışma Modeli" />
 											</f:facet>
-											<h:outputText value="#{hs.id}" />
-										</rich:column>
-										<rich:column style="text-align:center;">
-											<f:facet name="header">
-												<h:outputText value="Saat" />
+											<rich:column>
+												<f:facet name="header">
+													<h:outputText value="Vardiya" />
+												</f:facet>
+												<h:outputText value="#{vardiya.vardiyaAdi}" />
+											</rich:column>
+											<f:facet name="footer">
+												<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 											</f:facet>
-											<h:outputText value="#{hs.value}" />
-										</rich:column>
-										<f:facet name="footer">
-											<rich:datascroller renderIfSinglePage="false" maxPages="5" />
-										</f:facet>
-									</rich:dataTable>
+										</rich:dataTable>
+										<ui:fragment>
+											<span><B>Hafta Tatili : </B>#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.haftaTatil}</span>
+										</ui:fragment>
 
 
-									<rich:dataTable rowClasses="acik,koyu" value="#{vardiyaGunHome.calismaModeliVardiyaList}" var="vardiya" rows="20" rowKeyVar="row"
-										rendered="#{vardiyaGunHome.calismaModeliVardiyaList!=null}" id="vardiyaTable">
-										<f:facet name="header">
-											<h:outputText value="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama} Çalışma Modeli" />
-										</f:facet>
-										<rich:column>
+										<rich:dataTable rowClasses="acik,koyu" value="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.haftaSaatList}" var="hs"
+											rows="10" rowKeyVar="row">
 											<f:facet name="header">
-												<h:outputText value="Vardiya" />
+												<h:outputText value="Haftalık Çalışma Saatleri" />
 											</f:facet>
-											<h:outputText value="#{vardiya.vardiyaAdi}" />
-										</rich:column>
-										<f:facet name="footer">
-											<rich:datascroller renderIfSinglePage="false" maxPages="5" />
-										</f:facet>
-									</rich:dataTable>
+											<rich:column>
+												<f:facet name="header">
+													<h:outputText value="Gün" />
+												</f:facet>
+												<h:outputText value="#{hs.id}" />
+											</rich:column>
+											<rich:column style="text-align:center;">
+												<f:facet name="header">
+													<h:outputText value="Saat" />
+												</f:facet>
+												<h:outputText value="#{hs.value}" />
+											</rich:column>
+											<f:facet name="footer">
+												<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+											</f:facet>
+										</rich:dataTable>
+
+
+
+									</h:panelGrid>
 								</rich:toolTip>
 							</ui:fragment>
 						</s:decorate>

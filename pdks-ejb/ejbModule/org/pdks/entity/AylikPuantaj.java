@@ -459,11 +459,15 @@ public class AylikPuantaj implements Serializable, Cloneable {
 			logger.debug(personelDenklestirme.getId());
 		if (calismaModeliAy != null && personelDenklestirme.getCalismaModeliAy() == null)
 			personelDenklestirme.setCalismaModeliAy(calismaModeliAy);
+		boolean suaDurum = personelDenklestirme.isSuaDurumu();
 		CalismaModeli calismaModeli = personelDenklestirme.getCalismaModeliAy() != null ? personelDenklestirme.getCalismaModeli() : null;
-		if (personelDenklestirme.isSuaDurumu()) {
-			for (VardiyaGun vg : vardiyalar) {
-				if (vg.isAyinGunu() && vg.getVardiya() != null && vg.getVardiya().isSuaMi() && vg.getVardiya().getId() != null)
+		for (VardiyaGun vg : vardiyalar) {
+			Vardiya vardiya = vg.getVardiya();
+			if (vg.isAyinGunu() && vardiya != null && vardiya.getId() != null) {
+				if (suaDurum && vardiya.isSuaMi()) {
 					personelDenklestirme.setCalismaSuaSaati(vg.getCalismaSuaSaati());
+				}
+
 			}
 		}
 		if (dinamikAlanMap != null) {

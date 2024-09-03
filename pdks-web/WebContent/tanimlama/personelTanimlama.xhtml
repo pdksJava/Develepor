@@ -947,49 +947,27 @@
 															<h:outputText value="#{authenticatedUser.sayiFormatliGoster(pdksPersonelHome.instance.sablon.toplamSaat)}" id="toplamSaat" />
 														</s:decorate>
 
-														<s:decorate template="/layout/edit.xhtml">
-															<ui:define name="label">
-																<h:outputText value="#{ortakIslemler.getGunAdi(1,null)}" />
-															</ui:define>
-															<h:outputText value="#{pdksPersonelHome.instance.sablon.vardiya1.ozelAdi}" id="vardiya1" />
-														</s:decorate>
-														<s:decorate template="/layout/edit.xhtml">
-															<ui:define name="label">
-																<h:outputText value="#{ortakIslemler.getGunAdi(2,null)}" />
-															</ui:define>
-															<h:outputText value="#{pdksPersonelHome.instance.sablon.vardiya2.ozelAdi}" id="vardiya2" />
-														</s:decorate>
-														<s:decorate template="/layout/edit.xhtml">
-															<ui:define name="label">
-																<h:outputText value="#{ortakIslemler.getGunAdi(3,null)}" />
-															</ui:define>
-															<h:outputText value="#{pdksPersonelHome.instance.sablon.vardiya3.ozelAdi}" id="vardiya3" />
-														</s:decorate>
-														<s:decorate template="/layout/edit.xhtml">
-															<ui:define name="label">
-																<h:outputText value="#{ortakIslemler.getGunAdi(4,null)}" />
-															</ui:define>
-															<h:outputText value="#{pdksPersonelHome.instance.sablon.vardiya4.ozelAdi}" id="vardiya4" />
-														</s:decorate>
-														<s:decorate template="/layout/edit.xhtml">
-															<ui:define name="label">
-																<h:outputText value="#{ortakIslemler.getGunAdi(5,null)}" />
-															</ui:define>
-															<h:outputText value="#{pdksPersonelHome.instance.sablon.vardiya5.ozelAdi}" id="vardiya5" />
-														</s:decorate>
-														<s:decorate template="/layout/edit.xhtml">
-															<ui:define name="label">
-																<h:outputText value="#{ortakIslemler.getGunAdi(6,null)}" />
-															</ui:define>
-															<h:outputText value="#{pdksPersonelHome.instance.sablon.vardiya6.ozelAdi}" id="vardiya6" />
-														</s:decorate>
-														<s:decorate template="/layout/edit.xhtml">
-															<ui:define name="label">
-																<h:outputText value="#{ortakIslemler.getGunAdi(7,null)}" />
-															</ui:define>
-															<h:outputText value="#{pdksPersonelHome.instance.sablon.vardiya7.ozelAdi}" id="vardiya7" />
-														</s:decorate>
-
+														 
+														<rich:dataTable rowClasses="acik,koyu" value="#{pdksPersonelHome.instance.sablon.haftaList}" var="hs" rows="10" rowKeyVar="row">
+															<f:facet name="header">
+																<h:outputText value="Haftalık Sabit Vardiya Plan" />
+															</f:facet>
+															<rich:column>
+																<f:facet name="header">
+																	<h:outputText value="Gün" />
+																</f:facet>
+																<h:outputText value="#{hs.id}" />
+															</rich:column>
+															<rich:column style="text-align:center;">
+																<f:facet name="header">
+																	<h:outputText value="Vardiya" />
+																</f:facet>
+																<h:outputText value="#{hs.value}" />
+															</rich:column>
+															<f:facet name="footer">
+																<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+															</f:facet>
+														</rich:dataTable>
 													</h:panelGrid>
 
 												</rich:toolTip>
@@ -1015,45 +993,50 @@
 											</h:selectOneMenu>
 											<ui:fragment rendered="#{pdksPersonelHome.instance.calismaModeli!=null}">
 												<rich:toolTip for="perCalismaModeli">
-													<rich:dataTable rowClasses="acik,koyu" value="#{pdksPersonelHome.instance.calismaModeli.haftaSaatList}" var="hs" rows="10"
-														rowKeyVar="row">
-														<f:facet name="header">
-															<h:outputText value="Haftalık Çalışma Saatleri" />
-														</f:facet>
-														<rich:column>
+													<h:panelGrid columns="1">
+														<rich:dataTable rowClasses="acik,koyu" value="#{pdksPersonelHome.calismaModeliVardiyaList}" var="vardiya" rows="20" rowKeyVar="row"
+															rendered="#{pdksPersonelHome.calismaModeliVardiyaList!=null}" id="vardiyaTable">
 															<f:facet name="header">
-																<h:outputText value="Gün" />
+																<h:outputText value="#{pdksPersonelHome.instance.calismaModeli.aciklama} Çalışma Modeli" />
 															</f:facet>
-															<h:outputText value="#{hs.id}" />
-														</rich:column>
-														<rich:column style="text-align:center;">
+															<rich:column>
+																<f:facet name="header">
+																	<h:outputText value="Vardiya" />
+																</f:facet>
+																<h:outputText value="#{vardiya.vardiyaAdi}" />
+															</rich:column>
+															<f:facet name="footer">
+																<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+															</f:facet>
+														</rich:dataTable>
+														<ui:fragment>
+															<span><B>Hafta Tatili : </B>#{pdksPersonelHome.instance.calismaModeli.haftaTatil}</span>
+														</ui:fragment>
+														<rich:dataTable rowClasses="acik,koyu" value="#{pdksPersonelHome.instance.calismaModeli.haftaSaatList}" var="hs" rows="10"
+															rowKeyVar="row">
 															<f:facet name="header">
-																<h:outputText value="Saat" />
+																<h:outputText value="Haftalık Çalışma Saatleri" />
 															</f:facet>
-															<h:outputText value="#{hs.value}" />
-														</rich:column>
-														<f:facet name="footer">
-															<rich:datascroller renderIfSinglePage="false" maxPages="5" />
-														</f:facet>
-													</rich:dataTable>
+															<rich:column>
+																<f:facet name="header">
+																	<h:outputText value="Gün" />
+																</f:facet>
+																<h:outputText value="#{hs.id}" />
+															</rich:column>
+															<rich:column style="text-align:center;">
+																<f:facet name="header">
+																	<h:outputText value="Saat" />
+																</f:facet>
+																<h:outputText value="#{hs.value}" />
+															</rich:column>
+															<f:facet name="footer">
+																<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+															</f:facet>
+														</rich:dataTable>
+													</h:panelGrid>
 
 
 
-													<rich:dataTable rowClasses="acik,koyu" value="#{pdksPersonelHome.calismaModeliVardiyaList}" var="vardiya" rows="20" rowKeyVar="row"
-														rendered="#{pdksPersonelHome.calismaModeliVardiyaList!=null}" id="vardiyaTable">
-														<f:facet name="header">
-															<h:outputText value="#{pdksPersonelHome.instance.calismaModeli.aciklama} Çalışma Modeli" />
-														</f:facet>
-														<rich:column>
-															<f:facet name="header">
-																<h:outputText value="Vardiya" />
-															</f:facet>
-															<h:outputText value="#{vardiya.vardiyaAdi}" />
-														</rich:column>
-														<f:facet name="footer">
-															<rich:datascroller renderIfSinglePage="false" maxPages="5" />
-														</f:facet>
-													</rich:dataTable>
 												</rich:toolTip>
 											</ui:fragment>
 										</s:decorate>

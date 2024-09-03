@@ -880,6 +880,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			} else if (planTanimsizBolumId != null)
 				lastMap.put("bolumId", "" + planTanimsizBolumId);
 			lastMap.put("veriDoldur", "F");
+			lastMap.put("plansiz", yil * 100 + ay);
 			lastMap.put("sayfaURL", sayfa);
 			try {
 				ortakIslemler.saveLastParameter(lastMap, session);
