@@ -3961,7 +3961,7 @@ public class OrtakIslemler implements Serializable {
 						departman = (Departman) pdksEntityController.getObjectByInnerObject(fields, Departman.class);
 					}
 					order = Sirket.COLUMN_NAME_AD;
-				} else if (tipi.equalsIgnoreCase("B")) {
+				} else if (tipi.startsWith("B")) {
 					class1 = Tanim.class;
 					order = Tanim.COLUMN_NAME_ACIKLAMATR;
 				} else if (tipi.startsWith("AB")) {
