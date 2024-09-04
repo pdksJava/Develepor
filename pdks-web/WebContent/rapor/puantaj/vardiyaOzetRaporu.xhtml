@@ -82,9 +82,9 @@
 				</ui:fragment>
 				<ui:fragment rendered="#{not empty vardiyaOzetRaporuHome.puantajList}">
 
-					<table class="mars">
-						<thead>
-							<tr>
+					<table class="rich-table">
+						<thead class="rich-table-thead">
+							<tr class="rich-table-subheader">
 
 								<th style="width: 150px">VARDİYA ÖZET RAPOR</th>
 								<ui:repeat value="#{vardiyaOzetRaporuHome.vardiyaList}" var="vardiya">
@@ -138,9 +138,10 @@
 				</ui:fragment>
 				<ui:fragment
 					rendered="#{not empty vardiyaOzetRaporuHome.izinVardiyaGunList or not empty vardiyaOzetRaporuHome.gelmeyenVardiyaGunList or not empty vardiyaOzetRaporuHome.gecGelenVardiyaGunList}">
-					<table class="mars" width="500">
-						<thead>
-							<tr>
+
+					<table class="rich-table" width="500">
+						<thead class="rich-table-thead">
+							<tr class="rich-table-subheader">
 								<TH colspan="9">RAPOR/İZİN/GEÇ GİRİŞ TABLOSU</TH>
 							</tr>
 							<tr>
@@ -238,9 +239,9 @@
 					</table>
 				</ui:fragment>
 				<ui:fragment rendered="#{not empty vardiyaOzetRaporuHome.erkenCikanVardiyaGunList}">
-					<table class="mars" width="500">
-						<thead>
-							<tr>
+						<table class="rich-table" width="500">
+						<thead class="rich-table-thead">
+							<tr class="rich-table-subheader">
 								<TH colspan="9">ERKEN ÇIKAN TABLOSU</TH>
 							</tr>
 							<tr>

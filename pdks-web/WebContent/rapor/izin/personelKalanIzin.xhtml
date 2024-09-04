@@ -268,7 +268,8 @@
 											<td align="right"><h:outputText
 													value="#{authenticatedUser.sayiFormatliGoster(bakiyeIzinler.toplamBakiyeIzin - bakiyeIzinler.kullanilanIzin)}" /></td>
 											<td colspan="8" style="width: 500px">
-												<table class="mars" style="width: 100%">
+												<table class="rich-table">
+
 													<tbody>
 														<ui:repeat value="#{bakiyeIzinler.yillikIzinler}" var="yillikIzin">
 															<tr class="#{bakiyeIzinler.styleClass}">
@@ -279,7 +280,7 @@
 																<td align="right" style="width: 30px"><h:outputText value="#{yillikIzin.aciklama}" /></td>
 																<td><h:outputText value="#{yillikIzin.izinTipi.bakiyeIzinTipi.izinTipiTanim.aciklama}" /></td>
 																<td style="width: 150px">
-																	<table class="mars" style="width: 100%">
+																	<table class="rich-table">
 																		<tbody>
 																			<ui:repeat value="#{yillikIzin.harcananDigerIzinler}" var="kullanilan">
 																				<tr class="#{bakiyeIzinler.styleClass}">
@@ -296,7 +297,7 @@
 														</ui:repeat>
 													</tbody>
 												</table>
-											</td>
+										</td>
 										</tr>
 									</ui:repeat>
 

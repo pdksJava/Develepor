@@ -114,20 +114,21 @@
 					<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 				</a4j:outputPanel>
 				<a4j:outputPanel id="secimler">
-					<table class="mars">
+					<table class="rich-table">
 						<a4j:repeat value="#{iskurVardiyaGunHome.personelAylikPuantaj.vardiyaPlan.vardiyaHaftaList}" var="vardiyaHafta">
 							<ui:fragment rendered="#{vardiyaHafta.hafta==1}">
-
-								<tr>
-									<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
-										<th><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'EEE')}" /></th>
-									</a4j:repeat>
-									<ui:fragment rendered="#{iskurVardiyaGunHome.sablonGuncelle}">
-										<th width="100px">Vardiya</th>
-									</ui:fragment>
-								</tr>
+								<thead class="rich-table-thead">
+									<tr class="rich-table-subheader">
+										<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
+											<th><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'EEE')}" /></th>
+										</a4j:repeat>
+										<ui:fragment rendered="#{iskurVardiyaGunHome.sablonGuncelle}">
+											<th width="100px">Vardiya</th>
+										</ui:fragment>
+									</tr>
+								</thead>
 							</ui:fragment>
-							<tr>
+							<tr class="koyu">
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
 									<ui:fragment rendered="#{vardiyaGun.tatil==null}">
 										<th style="width: 90px"><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')}" /></th>
@@ -150,7 +151,7 @@
 									<th width="100px">Şablonu</th>
 								</ui:fragment>
 							</tr>
-							<tr>
+							<tr class="acik">
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
 									<td style="width: 90px" id="vardiya#{vardiyaGun.vardiyaDateStr}" class="#{vardiyaGun.getAylikClassAdi(aylikPuantaj.trClass)}" align="center"><ui:fragment
 											rendered="#{vardiyaGun.vardiya==null or vardiyaGun.aylikGirisYap==false or vardiyaGun.izin!=null or vardiyaGun.kullaniciYetkili==false}">

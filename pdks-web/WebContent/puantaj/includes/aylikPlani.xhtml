@@ -804,9 +804,9 @@
 						</ui:fragment>
 						<ui:fragment rendered="#{not empty vardiyaGunHome.kilitliPlanList and vardiyaGunHome.ikRole}">
 							<td valign="top">
-								<table class="mars">
-									<thead>
-										<tr>
+								<table class="rich-table">
+									<thead class="rich-table-thead">
+										<tr class="rich-table-subheader">
 											<c:forEach items="#{vardiyaGunHome.kilitliPlanList}" var="kilit">
 												<th style="width: 50px" nowrap="nowrap"><h:outputText value="#{kilit.olusturanUser.adSoyad}" /></th>
 											</c:forEach>
