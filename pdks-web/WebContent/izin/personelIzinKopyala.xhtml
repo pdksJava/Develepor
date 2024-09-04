@@ -19,8 +19,8 @@
 						<rich:panel header="Bakiye Dosya Ekleme" rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin }">
 							<h:panelGrid columns="2" style="width:700px;">
 								<a4j:outputPanel id="fileUpload">
-									<rich:fileUpload id="dosyaSifirla" fileUploadListener="#{personelIzinKopyalaHome.listenerIzinBakiyeDosya}" listHeight="50px" listWidth="300px"
-										sizeErrorLabel="Dosya boyutu büyük" maxFilesQuantity="1" immediateUpload="true" acceptedTypes="xls,xlsx"
+									<rich:fileUpload id="dosyaSifirla" fileUploadListener="#{personelIzinKopyalaHome.listenerIzinBakiyeDosya}" listHeight="50px"
+										listWidth="300px" sizeErrorLabel="Dosya boyutu büyük" maxFilesQuantity="1" immediateUpload="true" acceptedTypes="xls,xlsx"
 										transferErrorLabel="İzin dosyası hatalı yüklenmiştir" doneLabel="Bitti" addControlLabel="Dosya Seçin (Excel)"
 										uploadControlLabel="Dosya Kaydet" cancelEntryControlLabel="Temizle" allowFlash="false">
 										<a4j:support event="onuploadcomplete" process="dosyaSifirla" ajaxSingle="true" reRender="dosyaPaneli,bakiyeIzinTable" />
@@ -42,10 +42,9 @@
 											rendered="#{personelIzinKopyalaHome.sbAll.length()==0}" reRender="bakiyeIzinTable" />
 									</ui:fragment>
 									<rich:toolTip for="dosyaOku" rendered="#{personelIzinKopyalaHome.personelBakiyeIzinList.isEmpty()}">
-										<TABLE class="mars">
-											<thead>
-									 
-												<tr>
+										<table class="rich-table">
+											<thead class="rich-table-thead">
+												<tr class="rich-table-subheader">
 													<th>ESKİ #{ortakIslemler.personelNoAciklama()}</th>
 													<th>YENİ #{ortakIslemler.personelNoAciklama()}</th>
 													<th>ADI SOYADI</th>
@@ -55,24 +54,24 @@
 											<tbody>
 												<tr class="odd">
 													<td align="center">90015650E</td>
- 													<td align="center">90015650Y</td>
+													<td align="center">90015650Y</td>
 													<td>PAKIZE YILMAZ</td>
 
 												</tr>
 												<tr class="even">
 													<td align="center">90015657E</td>
-	 												<td align="center">90015657Y</td>
+													<td align="center">90015657Y</td>
 													<td>YILMAZ DAĞ</td>
 
 												</tr>
 												<tr class="odd">
 													<td align="center">90015654E</td>
-	 												<td align="center">90015654Y</td>
+													<td align="center">90015654Y</td>
 													<td>CEMİL DEMİR</td>
 
 												</tr>
 											</tbody>
-										</TABLE>
+										</table>
 									</rich:toolTip>
 								</ui:fragment>
 
@@ -83,12 +82,12 @@
 					<a4j:outputPanel id="bakiyeIzinTable">
 
 						<ui:fragment rendered="#{not empty personelIzinKopyalaHome.personelBakiyeIzinList}">
-							<table class="mars">
+							<table class="rich-table">
 								<caption>
 									<B>Personeller Bakiye İzinleri</B>
 								</caption>
-								<thead>
-									<tr>
+								<thead class="rich-table-thead">
+									<tr class="rich-table-subheader">
 										<th></th>
 										<th colspan="5">E S K İ</th>
 										<th colspan="5">Y E N İ</th>
@@ -128,8 +127,7 @@
 													value="#{authenticatedUser.dateFormatla(bakiyeIzinler.personel.iseBaslamaTarihi)}" /></td>
 											<td align="center" style="width: 120px"><h:outputText
 													value="#{authenticatedUser.dateFormatla(bakiyeIzinler.personel.izinHakEdisTarihi)}" /></td>
-											<td align="center" style="width: 120px"><h:outputText
-													value="#{authenticatedUser.dateFormatla(bakiyeIzinler.personel.dogumTarihi)}" /></td>
+											<td align="center" style="width: 120px"><h:outputText value="#{authenticatedUser.dateFormatla(bakiyeIzinler.personel.dogumTarihi)}" /></td>
 
 											<td align="center"><h:outputText value="#{bakiyeIzinler.yeniPersonel.sicilNo}" /></td>
 											<td><span><h:outputText value="#{bakiyeIzinler.yeniPersonel.adSoyad}" /> <ui:fragment

@@ -1026,8 +1026,8 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public String getVardiyaKey() {
-//		if (!fiiliHesapla)
-//			setIzin(null);
+		// if (!fiiliHesapla)
+		// setIzin(null);
 		String key = getVardiyaKeyStr();
 		return key;
 

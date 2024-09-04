@@ -14,8 +14,9 @@
 			</a4j:outputPanel>
 			<a4j:outputPanel ajaxRendered="true">
 
-				<rich:panel style="vardiyaGun" header="#{ortakIslemler.getMenuUserAdi(personelKulllaniciExcelUpdateHome.session,'personelKullaniciExcelGuncelle')}">
-					<h:panelGrid columns="2" cellpadding="0" cellspacing="0" id="dosyaSec" >
+				<rich:panel style="vardiyaGun"
+					header="#{ortakIslemler.getMenuUserAdi(personelKulllaniciExcelUpdateHome.session,'personelKullaniciExcelGuncelle')}">
+					<h:panelGrid columns="2" cellpadding="0" cellspacing="0" id="dosyaSec">
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">İşlem Tipi</ui:define>
 							<h:panelGrid columns="1" id="myRadio2" style="width:400px">
@@ -53,53 +54,63 @@
 									<h:inputText value="#{personelKulllaniciExcelUpdateHome.mailAdres}" maxlength="200" required="true" requiredMessage="Adres giriniz!" />
 								</s:decorate>
 								<ui:fragment>
-									<a4j:commandButton id="yoneticiVeri" value="#{ortakIslemler.yoneticiAciklama()} Veri Oku" action="#{personelKulllaniciExcelUpdateHome.setYoneticiVeri}"
+									<a4j:commandButton id="yoneticiVeri" value="#{ortakIslemler.yoneticiAciklama()} Veri Oku"
+										action="#{personelKulllaniciExcelUpdateHome.setYoneticiVeri}"
 										rendered="#{personelKulllaniciExcelUpdateHome.islemTipi=='Y1' or personelKulllaniciExcelUpdateHome.islemTipi=='Y2'}" reRender="personelList" />
 									<a4j:commandButton id="adresVeri" value="Adres Veri Oku" action="#{personelKulllaniciExcelUpdateHome.setAdres}"
 										rendered="#{personelKulllaniciExcelUpdateHome.ekleSil!='' and personelKulllaniciExcelUpdateHome.islemTipi!='Y1' and personelKulllaniciExcelUpdateHome.islemTipi!='Y2'}"
 										reRender="personelList" />
 									<rich:toolTip for="yoneticiVeri">
-										<TABLE class="mars">
-											<TR>
-												<TH>#{ortakIslemler.personelNoAciklama()}</TH>
-												<TH>Adı Soyadı</TH>
-												<TH>#{ortakIslemler.yoneticiAciklama()} #{ortakIslemler.personelNoAciklama()}</TH>
-												<TH>#{ortakIslemler.yoneticiAciklama()} Adı Soyadı</TH>
-												<TH>#{ortakIslemler.yonetici2Aciklama()} #{ortakIslemler.personelNoAciklama()}</TH>
-												<TH>#{ortakIslemler.yonetici2Aciklama()} Adı Soyadı</TH>
-											</TR>
-											<TR class="koyu">
-												<TD align="center">90011779</TD>
-												<TD>FİGEN AKIN</TD>
-												<TD align="center">90008241</TD>
-												<TD>LAKME EREN</TD>
-												<TD align="center">90014995</TD>
-												<TD>ENES MURAT ATASOYU</TD>
-											</TR>
-											<TR class="acik">
-												<TD align="center">90012370</TD>
-												<TD>SEVİM GÜLBAŞ</TD>
-												<TD align="center">90008241</TD>
-												<TD>LAKME EREN</TD>
-												<TD align="center">90014995</TD>
-												<TD>ENES MURAT ATASOYU</TD>
-											</TR>
+										<table class="rich-table">
+											<thead class="rich-table-thead">
+												<tr class="rich-table-subheader">
+													<TH>#{ortakIslemler.personelNoAciklama()}</TH>
+													<TH>Adı Soyadı</TH>
+													<TH>#{ortakIslemler.yoneticiAciklama()} #{ortakIslemler.personelNoAciklama()}</TH>
+													<TH>#{ortakIslemler.yoneticiAciklama()} Adı Soyadı</TH>
+													<TH>#{ortakIslemler.yonetici2Aciklama()} #{ortakIslemler.personelNoAciklama()}</TH>
+													<TH>#{ortakIslemler.yonetici2Aciklama()} Adı Soyadı</TH>
+												</TR>
+											</thead>
+											<tbody>
+												<TR class="koyu">
+													<TD align="center">90011779</TD>
+													<TD>FİGEN AKIN</TD>
+													<TD align="center">90008241</TD>
+													<TD>LAKME EREN</TD>
+													<TD align="center">90014995</TD>
+													<TD>ENES MURAT ATASOYU</TD>
+												</TR>
+												<TR class="acik">
+													<TD align="center">90012370</TD>
+													<TD>SEVİM GÜLBAŞ</TD>
+													<TD align="center">90008241</TD>
+													<TD>LAKME EREN</TD>
+													<TD align="center">90014995</TD>
+													<TD>ENES MURAT ATASOYU</TD>
+												</TR>
+											</tbody>
 										</TABLE>
 									</rich:toolTip>
 									<rich:toolTip for="adresVeri">
-										<TABLE class="mars">
-											<TR>
-												<TH>#{ortakIslemler.personelNoAciklama()}</TH>
-												<TH>Adı Soyadı</TH>
-											</TR>
-											<TR class="koyu">
-												<TD align="center">90011779</TD>
-												<TD>FİGEN AKIN</TD>
-											</TR>
-											<TR class="acik">
-												<TD align="center">90012370</TD>
-												<TD>SEVİM GÜLBAŞ</TD>
-											</TR>
+										<table class="rich-table">
+											<thead class="rich-table-thead">
+												<tr class="rich-table-subheader">
+
+													<TH>#{ortakIslemler.personelNoAciklama()}</TH>
+													<TH>Adı Soyadı</TH>
+												</TR>
+											</thead>
+											<tbody>
+												<TR class="koyu">
+													<TD align="center">90011779</TD>
+													<TD>FİGEN AKIN</TD>
+												</TR>
+												<TR class="acik">
+													<TD align="center">90012370</TD>
+													<TD>SEVİM GÜLBAŞ</TD>
+												</TR>
+											</tbody>
 										</TABLE>
 
 									</rich:toolTip>

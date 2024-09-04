@@ -504,11 +504,9 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public double getIzinSaat(VardiyaGun pdksVardiyaGun) {
 		int dayOfWeek = PdksUtil.getDateField(pdksVardiyaGun.getVardiyaDate(), Calendar.DAY_OF_WEEK);
 		double izinSure = this.getIzinSaat(dayOfWeek);
+		if (pdksVardiyaGun.getVardiyaDateStr().equals("20240801"))
+			logger.debug(izinSure);
 
-		// if (dayOfWeek == Calendar.SUNDAY) {
-		// if (isHaftaTatilPazardir())
-		// izinSure = 0.0d;
-		// }
 
 		return izinSure;
 	}
