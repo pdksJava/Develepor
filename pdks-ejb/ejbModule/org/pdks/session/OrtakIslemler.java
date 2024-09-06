@@ -2157,7 +2157,7 @@ public class OrtakIslemler implements Serializable {
 		if (dosya != null && dosya.getDosyaIcerik() != null) {
 			ByteArrayInputStream bis = new ByteArrayInputStream(dosya.getDosyaIcerik());
 			if (dosya.getDosyaAdi() != null) {
-				if (dosya.getDosyaAdi().endsWith(".xlsx"))
+				if (dosya.getDosyaAdi().endsWith(".xlsx") || dosya.getDosyaAdi().endsWith(".xls"))
 					wb = new XSSFWorkbook(bis);
 				// else
 				//
