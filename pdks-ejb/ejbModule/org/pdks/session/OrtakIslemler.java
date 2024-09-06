@@ -47,7 +47,6 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.ws.BindingProvider;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -2157,10 +2156,14 @@ public class OrtakIslemler implements Serializable {
 		Workbook wb = null;
 		if (dosya != null && dosya.getDosyaIcerik() != null) {
 			ByteArrayInputStream bis = new ByteArrayInputStream(dosya.getDosyaIcerik());
-			if (dosya.getDosyaAdi() != null && dosya.getDosyaAdi().endsWith(".xls"))
-				wb = new HSSFWorkbook(bis);
-			else
-				wb = new XSSFWorkbook(bis);
+			if (dosya.getDosyaAdi() != null) {
+				if (dosya.getDosyaAdi().endsWith(".xlsx"))
+					wb = new XSSFWorkbook(bis);
+				// else
+				//
+				// wb = new HSSFWorkbook(bis);
+			}
+
 			bis = null;
 		}
 
