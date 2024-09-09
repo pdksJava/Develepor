@@ -1614,7 +1614,7 @@
 									<td><a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{pdksPersonelHome.save}" reRender="pdksPersonelList,roller"
 											oncomplete="if (#{pdksPersonelHome.hataMesaj==''}) #{rich:component('editPanel')}.hide();" /></td>
 									<ui:fragment rendered="#{ortakIslemler.getParameterKey('deletePersonel')=='1' and pdksPersonelHome.instance.id!=null}">
-										<ui:fragment rendered="#{ pdksPersonelHome.instance.personelKGS.id>0 and authenticatedUser.admin}">
+										<ui:fragment rendered="#{ pdksPersonelHome.instance.personelKGS.id>0 and pdksPersonelHome.instance.personelKGS.durum==false and authenticatedUser.admin}">
 											<td><a4j:commandButton status="ajaxStatus" value="Sil" reRender="deletePersonelPanel"
 													oncomplete="#{rich:component('deletePersonelPanel')}.show();" /></td>
 										</ui:fragment>
