@@ -256,9 +256,14 @@ public class MailManager implements Serializable {
 	public MailStatu ePostaGonder(MailObject mailObject, Session sessionDB) throws Exception {
 		MailStatu mailStatu = new MailStatu();
 		Properties props = null;
+		boolean smtpTLSDurum = false, smtpSSLDurum = false, smtpServerDebug = false;
 
 		try {
 			if (mailObject != null) {
+				if (parameterMap.containsKey("smtpServerDebug"))
+					smtpServerDebug = ((String) parameterMap.get("smtpServerDebug")).equals("1");
+				if (smtpServerDebug)
+					logger.info("ePostaGonder in " + PdksUtil.getCurrentTimeStampStr());
 				props = new Properties();
 				String konu = mailObject.getSubject();
 				String mailIcerik = mailObject.getBody(), mailAdresFROM = null;
@@ -293,9 +298,6 @@ public class MailManager implements Serializable {
 				if (password != null)
 					sender.setPassword(password);
 
-				boolean smtpTLSDurum = false, smtpSSLDurum = false, smtpServerDebug = false;
-				if (parameterMap.containsKey("smtpServerDebug"))
-					smtpServerDebug = ((String) parameterMap.get("smtpServerDebug")).equals("1");
 				if (parameterMap.containsKey("smtpTLSDurum"))
 					smtpTLSDurum = ((String) parameterMap.get("smtpTLSDurum")).equals("1");
 				if (parameterMap.containsKey("smtpSSLDurum"))
@@ -307,7 +309,7 @@ public class MailManager implements Serializable {
 					props.put("mail.smtp.auth", Boolean.TRUE);
 				}
 				props.put("mail.smtp.starttls.enable", smtpTLSDurum);
-				props.put("mail.debug", Boolean.FALSE);
+				props.put("mail.debug", smtpServerDebug);
 				props.setProperty("mail.transport.protocol", "smtp");
 				if (!smtpTLSDurum)
 					props.put("mail.smtp.socketFactory.port", port);
@@ -329,7 +331,12 @@ public class MailManager implements Serializable {
 					MailSSLSocketFactory sf = new MailSSLSocketFactory();
 					sf.setTrustAllHosts(true);
 					props.put("mail.imap.ssl.trust", "*");
-					props.put("mail.imap.ssl.socketFactory", sf);
+					// props.put("mail.imap.ssl.socketFactory", sf);
+
+					props.put("mail.imap.host", smtpHostIp);
+					props.put("mail.imap.port", "993");
+					props.put("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+
 				}
 
 				javax.mail.Session session = null;
@@ -442,6 +449,8 @@ public class MailManager implements Serializable {
 
 			}
 		} catch (Exception e) {
+			if (smtpServerDebug)
+				logger.error("ePostaGonder error " + e.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());
 			Gson gson = new Gson();
 			logger.error(e + "\n" + gson.toJson(props));
 			e.printStackTrace();
