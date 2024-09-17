@@ -95,7 +95,7 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		String fromAciklama = ortakIslemler.getParameterKey("fromName");
 		if (PdksUtil.hasStringValue(fromAciklama))
 			setKullaniciIslemleriMailAciklama(fromAciklama);
@@ -208,7 +208,8 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 			setUserList(list);
 			MailStatu mailSatu = null;
 			try {
-				String mailPersonelAciklama = personel.getSirket().getAd() + " " + (personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() + " bölümü " : "") + personel.getAdSoyad();
+				String bolumu = personel.getEkSaha3() != null && personel.getEkSaha3().getParentTanim() != null ? personel.getEkSaha3().getParentTanim().getAciklama() : ortakIslemler.bolumAciklama();
+				String mailPersonelAciklama = personel.getSirket().getAd() + " " + (personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() + " " + bolumu.toLowerCase(PdksUtil.TR_LOCALE) + " " : "") + personel.getAdSoyad();
 
 				MailObject mail = new MailObject();
 				mail.setSubject("İzin Onay");

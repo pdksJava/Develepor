@@ -5079,7 +5079,7 @@ public class OrtakIslemler implements Serializable {
 		HashMap sonucMap = fillEkSahaTanimBul(kendisiBul, sirketEkle, session);
 		TreeMap<String, Tanim> tanimMap = (TreeMap<String, Tanim>) sonucMap.get("ekSahaTanimMap");
 		String departmanAciklama = tanimMap != null && tanimMap.containsKey("ekSaha1") ? tanimMap.get("ekSaha1").getAciklama() : "Departman";
-		String bolumAciklama = tanimMap != null && tanimMap.containsKey("ekSaha3") ? tanimMap.get("ekSaha3").getAciklama() : "Bölüm";
+		String bolumAciklama = tanimMap != null && tanimMap.containsKey("ekSaha3") ? tanimMap.get("ekSaha3").getAciklama() : bolumAciklama();
 		String altBolumAciklama = tanimMap != null && tanimMap.containsKey("ekSaha4") ? tanimMap.get("ekSaha4").getAciklama() : "Alt Bölüm";
 		if (bolumAciklama == null)
 			bolumAciklama = bolumAciklama();
@@ -5445,19 +5445,42 @@ public class OrtakIslemler implements Serializable {
 		List<PersonelERP> personelERPReturnList = null;
 		String parameterName = getParametrePersonelERPTableView();
 		if (getParameterKeyHasStringValue(parameterName)) {
+			HashMap<String, Date> updateMap = new HashMap<String, Date>();
 			List<PersonelERPDB> personelList = getPersonelERPDBList(guncellemeDurum, perNoList, parameterName, session);
 			if (personelList != null && !personelList.isEmpty()) {
 				List<PersonelERP> personelERPList = new ArrayList<PersonelERP>();
-				for (PersonelERPDB personelERPDB : personelList)
+				for (PersonelERPDB personelERPDB : personelList) {
 					personelERPList.add(personelERPDB.getPersonelERP());
+					if (personelERPDB.getGuncellemeTarihi() != null)
+						updateMap.put(personelERPDB.getPersonelNo(), personelERPDB.getGuncellemeTarihi());
+				}
+
 				try {
 					PdksSoapVeriAktar service = getPdksSoapVeriAktar();
 					personelERPReturnList = service.savePersoneller(personelERPList);
-					Parameter parameter = getParameter(session, parameterName);
-					if (parameter != null) {
-						parameter.setChangeDate(new Date());
-						pdksEntityController.saveOrUpdate(session, entityManager, parameter);
-						session.flush();
+					Date changeDate = null;
+					if (personelERPReturnList != null) {
+						changeDate = new Date();
+						for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
+							PersonelERP personelERP = (PersonelERP) iterator.next();
+							if (personelERP.getYazildi() == null || personelERP.getYazildi().booleanValue() == false) {
+								if (updateMap.containsKey(personelERP.getPersonelNo())) {
+									Date tarih = updateMap.get(personelERP.getPersonelNo());
+									if (tarih.before(changeDate))
+										changeDate = tarih;
+								}
+
+							} else
+								iterator.remove();
+						}
+					}
+					if (changeDate != null) {
+						Parameter parameter = getParameter(session, parameterName);
+						if (parameter != null) {
+							parameter.setChangeDate(changeDate);
+							pdksEntityController.saveOrUpdate(session, entityManager, parameter);
+							session.flush();
+						}
 					}
 
 				} catch (Exception ex) {
@@ -5481,7 +5504,7 @@ public class OrtakIslemler implements Serializable {
 				personelERPList = null;
 			}
 			personelList = null;
-
+			updateMap = null;
 		}
 		return personelERPReturnList;
 	}
@@ -5496,21 +5519,43 @@ public class OrtakIslemler implements Serializable {
 		List<IzinERP> izinERPReturnList = null;
 		String parameterName = getParametreIzinERPTableView();
 		if (getParameterKeyHasStringValue(parameterName)) {
+			HashMap<String, Date> updateMap = new HashMap<String, Date>();
 			List<IzinERPDB> izinList = getIzinERPDBList(guncellemeDurum, parameterName, session);
 			if (izinList != null && !izinList.isEmpty()) {
 				List<IzinERP> izinERPList = new ArrayList<IzinERP>();
 				for (IzinERPDB izinERPDB : izinList) {
 					IzinERP izinERP = izinERPDB.getIzinERP();
+					if (izinERPDB.getGuncellemeTarihi() != null)
+						updateMap.put(izinERPDB.getReferansNoERP(), izinERPDB.getGuncellemeTarihi());
 					izinERPList.add(izinERP);
 				}
 				try {
 					PdksSoapVeriAktar service = getPdksSoapVeriAktar();
 					izinERPReturnList = service.saveIzinler(izinERPList);
-					Parameter parameter = getParameter(session, parameterName);
-					if (parameter != null) {
-						parameter.setChangeDate(new Date());
-						pdksEntityController.saveOrUpdate(session, entityManager, parameter);
-						session.flush();
+
+					Date changeDate = null;
+					if (izinERPReturnList != null) {
+						changeDate = new Date();
+						for (Iterator iterator = izinERPReturnList.iterator(); iterator.hasNext();) {
+							IzinERP izinERP = (IzinERP) iterator.next();
+							if (izinERP.getYazildi() == null || izinERP.getYazildi().booleanValue() == false) {
+								if (updateMap.containsKey(izinERP.getReferansNoERP())) {
+									Date tarih = updateMap.get(izinERP.getReferansNoERP());
+									if (tarih.before(changeDate))
+										changeDate = tarih;
+								}
+
+							} else
+								iterator.remove();
+						}
+					}
+					if (changeDate != null) {
+						Parameter parameter = getParameter(session, parameterName);
+						if (parameter != null) {
+							parameter.setChangeDate(changeDate);
+							pdksEntityController.saveOrUpdate(session, entityManager, parameter);
+							session.flush();
+						}
 					}
 
 				} catch (Exception ex) {
@@ -5531,7 +5576,7 @@ public class OrtakIslemler implements Serializable {
 				izinERPList = null;
 			}
 			izinList = null;
-
+			updateMap = null;
 		}
 		return izinERPReturnList;
 	}
@@ -5649,6 +5694,7 @@ public class OrtakIslemler implements Serializable {
 		Parameter parameter = null;
 		if (!list.isEmpty()) {
 			HashMap parametreMap = new HashMap();
+			boolean kapiKontrol = false;
 			StringBuffer sb = new StringBuffer("SELECT ");
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				Tanim tanim = (Tanim) iterator.next();
@@ -5663,6 +5709,7 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" WHERE " + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " :p ");
 				parametreMap.put("p", perNoList);
 			} else {
+				kapiKontrol = true;
 				parameter = getParameter(session, parameterName);
 				tarih = parameter.getChangeDate();
 				if (tarih != null) {
@@ -5677,7 +5724,22 @@ public class OrtakIslemler implements Serializable {
 					parametreMap.put("t", PdksUtil.getDate(tarih));
 				}
 			}
+			if (kapiKontrol) {
+				String str = sb.toString();
+				sb = new StringBuffer("WITH DATA AS (" + str + ")");
+				sb.append(" SELECT D.* FROM DATA D");
+				sb.append(" WHERE D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " NOT IN (");
+				sb.append(" SELECT K." + PersonelKGS.COLUMN_NAME_SICIL_NO + " FROM " + PersonelKGS.TABLE_NAME + " K");
+				sb.append(" INNER JOIN " + KapiSirket.TABLE_NAME + " KS ON KS. " + KapiSirket.COLUMN_NAME_ID + "= K." + PersonelKGS.COLUMN_NAME_KGS_SIRKET);
+				sb.append(" AND  KS." + KapiSirket.COLUMN_NAME_DURUM + " =1 ");
+				sb.append(" AND ( GETDATE() BETWEEN KS." + KapiSirket.COLUMN_NAME_BAS_TARIH + " AND KS." + KapiSirket.COLUMN_NAME_BIT_TARIH + " ) ");
+				sb.append(" LEFT JOIN  " + Personel.TABLE_NAME + " P ON  K." + PersonelKGS.COLUMN_NAME_ID + "=P." + Personel.COLUMN_NAME_ID);
+				sb.append(" WHERE K." + PersonelKGS.COLUMN_NAME_DURUM + " = 0 AND K." + PersonelKGS.COLUMN_NAME_KGS_SIRKET + " > 0 ");
+				sb.append(" AND P." + Personel.COLUMN_NAME_ID + " IS NULL");
+				sb.append(" )");
+			}
 			TreeMap<String, PersonelERPDB> ayrilanMap = new TreeMap<String, PersonelERPDB>();
+
 			try {
 				if (session != null)
 					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -13671,7 +13733,7 @@ public class OrtakIslemler implements Serializable {
 		if (!izinERPUpdate)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Doğum Tarihi");
 		if (ikAdminDegil)
-			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Bölüm");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumAciklama());
 
 		if (ikinciYoneticiIzinOnayla)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İzni " + yonetici2Aciklama() + " Onaylasın");

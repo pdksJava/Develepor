@@ -176,7 +176,7 @@ public class BinadaKalanPersonellerHome extends EntityHome<VardiyaGun> implement
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.yoneticiAciklama());
 		if (tesisDurum)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolum != null ? bolum.getAciklama() : "Bölüm");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolum != null ? bolum.getAciklama() : ortakIslemler.bolumAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İlk Giriş");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Son Çıkış");

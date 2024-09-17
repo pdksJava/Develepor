@@ -333,7 +333,7 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 		if (ekSaha2)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(aramaSecenekleri.getEkSahaTanimMap().get("ekSaha2").getAciklama());
 		if (ekSaha3)
-			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumYok ? aramaSecenekleri.getEkSahaTanimMap().get("ekSaha3").getAciklama() : "Bölüm");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumYok ? aramaSecenekleri.getEkSahaTanimMap().get("ekSaha3").getAciklama() :ortakIslemler.bolumAciklama());
 		if (ekSaha4)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(aramaSecenekleri.getEkSahaTanimMap().get("ekSaha4").getAciklama());
 

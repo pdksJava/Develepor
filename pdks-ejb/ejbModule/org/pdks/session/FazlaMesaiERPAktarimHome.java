@@ -79,7 +79,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 	FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemler;
 
 	public static String sayfaURL = "fazlaMesaiERPAktarim";
-	
+
 	private List<PersonelDenklestirme> personelDenklestirmeList, onaysizPersonelDenklestirmeList, personelDenklestirmeler;
 
 	private Boolean secimDurum = Boolean.FALSE, sureDurum, fazlaMesaiDurum, haftaTatilDurum, maasKesintiGoster, resmiTatilDurum, durumERP, onaylanmayanDurum, personelERP, modelGoster = Boolean.FALSE;
@@ -133,7 +133,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 	public String sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-  		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		aylar = PdksUtil.getAyListesi(Boolean.TRUE);
 		String sapControllerStr = ortakIslemler.getParameterKey("sapController");
 		erpAktarimDurum = sapControllerStr.equals("2") || sapControllerStr.equals("3");
@@ -150,7 +150,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 		yil = cal.get(Calendar.YEAR);
 		maxYil = yil + 1;
 		sicilNo = "";
- 
+
 		setDepartmanId(null);
 		setDepartman(null);
 		setInstance(new DenklestirmeAy());
@@ -909,7 +909,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 					ExcelUtil.getCell(sheetERP, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
 				}
 				if (bolumVar) {
-					ExcelUtil.getCell(sheetERP, row, col++, header).setCellValue("Bölüm Kodu");
+					ExcelUtil.getCell(sheetERP, row, col++, header).setCellValue(bolumAciklama + " Kodu");
 					ExcelUtil.getCell(sheetERP, row, col++, header).setCellValue(bolumAciklama);
 				}
 				if (bordroAltAlanVar) {
