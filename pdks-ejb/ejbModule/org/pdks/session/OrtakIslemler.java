@@ -5613,6 +5613,7 @@ public class OrtakIslemler implements Serializable {
 
 			parameter = getParameter(session, parameterName);
 			Date tarih = parameter.getChangeDate();
+
 			if (tarih != null) {
 				if (guncellemeDurum == false)
 					tarih = PdksUtil.tariheAyEkleCikar(PdksUtil.getDate(tarih), -5);
@@ -5625,20 +5626,18 @@ public class OrtakIslemler implements Serializable {
 					sb.append(" WHERE " + IzinERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " >=:t ");
 				parametreMap.put("t", PdksUtil.getDate(tarih));
 			}
-
+			String str = sb.toString();
+			sb = new StringBuffer("WITH DATA AS (" + str + " ) ");
+			sb.append("SELECT D.* FROM DATA D WITH(nolock) ");
+			sb.append(" LEFT JOIN " + IzinReferansERP.TABLE_NAME + " IR ON IR." + IzinReferansERP.COLUMN_NAME_ID + " = D." + IzinERPDB.COLUMN_NAME_REFERANS_NO);
+			sb.append(" WHERE IR." + IzinReferansERP.COLUMN_NAME_IZIN_ID + " IS NOT NULL OR D." + IzinERPDB.COLUMN_NAME_DURUM + " = 1");
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+			sb.append(" ORDER BY  D." + IzinERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + ", D." + IzinERPDB.COLUMN_NAME_BAS_TARIHI);
 			HashMap<String, IzinERPDB> iptalMap = new HashMap<String, IzinERPDB>();
 			try {
 				izinList = pdksEntityController.getObjectBySQLList(sb, parametreMap, IzinERPDB.class);
-				for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
-					IzinERPDB izinERPDB = (IzinERPDB) iterator.next();
-					if (izinERPDB.getDurum().booleanValue() == false) {
-						iptalMap.put(izinERPDB.getReferansNoERP(), izinERPDB);
-						iterator.remove();
-					}
 
-				}
 			} catch (Exception ex1) {
 				loggerErrorYaz(null, ex1);
 			}

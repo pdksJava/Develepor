@@ -131,12 +131,15 @@
 
 							<rich:toolTip for="addlink" value="Add" />
 							<a4j:commandButton status="ajaxStatus" value="Test Mail" action="#{parameterHome.testMail()}" />
-							<a4j:commandButton status="ajaxStatus" value="hakEdisIzinERPDBGuncelleCalistir"
+							<a4j:commandButton status="ajaxStatus" value="hakEdisIzinERPDBGuncelle Calistir"
 								rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametreHakEdisIzinERPTableView)}"
 								action="#{ortakIslemler.hakEdisIzinERPDBGuncelle(parameterHome.session)}" />
-							<a4j:commandButton status="ajaxStatus" value="personelERPDBGuncelleCalistir"
+							<a4j:commandButton status="ajaxStatus" value="personelERPDBGuncelle Calistir"
 								rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametrePersonelERPTableView)}"
 								action="#{ortakIslemler.personelERPDBGuncelle(true,null,parameterHome.session)}" />
+							<a4j:commandButton status="ajaxStatus" value="izinERPDBGuncelle Calistir"
+								rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametreIzinERPTableView)}"
+								action="#{ortakIslemler.izinERPDBGuncelle(true,parameterHome.session)}" />	
 
 						</ui:fragment>
 					</a4j:outputPanel>

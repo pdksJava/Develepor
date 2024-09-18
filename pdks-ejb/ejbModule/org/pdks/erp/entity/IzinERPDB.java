@@ -29,6 +29,7 @@ public class IzinERPDB implements Serializable, Cloneable {
 	public static final String COLUMN_NAME_BIT_TARIHI = "BITIS_ZAMANI";
 	public static final String COLUMN_NAME_REFERANS_NO = "REFERANS_ID";
 	public static final String COLUMN_NAME_GUNCELLEME_TARIHI = "GUNCELLEME_TARIHI";
+	public static final String COLUMN_NAME_DURUM = "DURUM";
 
 	static Logger logger = Logger.getLogger(IzinERPDB.class);
 
@@ -132,7 +133,7 @@ public class IzinERPDB implements Serializable, Cloneable {
 		this.sureBirimi = sureBirimi;
 	}
 
-	@Column(name = "DURUM")
+	@Column(name = COLUMN_NAME_DURUM)
 	public Boolean getDurum() {
 		return durum;
 	}
