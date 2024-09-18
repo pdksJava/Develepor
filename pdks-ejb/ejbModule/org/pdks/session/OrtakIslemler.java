@@ -5459,6 +5459,7 @@ public class OrtakIslemler implements Serializable {
 					PdksSoapVeriAktar service = getPdksSoapVeriAktar();
 					personelERPReturnList = service.savePersoneller(personelERPList);
 					Date changeDate = null;
+					boolean update = false;
 					if (personelERPReturnList != null) {
 						changeDate = new Date();
 						for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
@@ -5470,11 +5471,13 @@ public class OrtakIslemler implements Serializable {
 										changeDate = tarih;
 								}
 
-							} else
+							} else {
+								update = true;
 								iterator.remove();
+							}
 						}
 					}
-					if (changeDate != null) {
+					if (update && changeDate != null) {
 						Parameter parameter = getParameter(session, parameterName);
 						if (parameter != null) {
 							parameter.setChangeDate(changeDate);
@@ -5532,8 +5535,8 @@ public class OrtakIslemler implements Serializable {
 				try {
 					PdksSoapVeriAktar service = getPdksSoapVeriAktar();
 					izinERPReturnList = service.saveIzinler(izinERPList);
-
 					Date changeDate = null;
+					boolean update = false;
 					if (izinERPReturnList != null) {
 						changeDate = new Date();
 						for (Iterator iterator = izinERPReturnList.iterator(); iterator.hasNext();) {
@@ -5545,11 +5548,14 @@ public class OrtakIslemler implements Serializable {
 										changeDate = tarih;
 								}
 
-							} else
+							} else {
+								update = true;
 								iterator.remove();
+							}
+
 						}
 					}
-					if (changeDate != null) {
+					if (update && changeDate != null) {
 						Parameter parameter = getParameter(session, parameterName);
 						if (parameter != null) {
 							parameter.setChangeDate(changeDate);
@@ -5737,6 +5743,8 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" WHERE K." + PersonelKGS.COLUMN_NAME_DURUM + " = 0 AND K." + PersonelKGS.COLUMN_NAME_KGS_SIRKET + " > 0 ");
 				sb.append(" AND P." + Personel.COLUMN_NAME_ID + " IS NULL");
 				sb.append(" )");
+				sb.append(" AND (D." + PersonelERPDB.COLUMN_NAME_ISTEN_AYRILMA_TARIHI + ">=CONVERT(DATE,GETDATE()) OR " + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + ">DATEADD(MONTH,-3,GETDATE()))");
+				sb.append(" ORDER BY D." + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI);
 			}
 			TreeMap<String, PersonelERPDB> ayrilanMap = new TreeMap<String, PersonelERPDB>();
 

@@ -2787,6 +2787,29 @@ public class PdksUtil implements Serializable {
 	}
 
 	/**
+	 * @param str
+	 * @return
+	 */
+	public static List<String> getStringTokenizer(String str) {
+		StringTokenizer st = null;
+		List<String> list = new ArrayList<String>();
+		String delim = str;
+		if (str.indexOf(",") > 0)
+			delim = ",";
+		else if (str.indexOf(";") > 0)
+			delim = ";";
+		else if (str.indexOf("_") > 0)
+			delim = "_";
+		st = new StringTokenizer(str, delim);
+		while (st.hasMoreTokens()) {
+			list.add(st.nextToken());
+		}
+		if (list.isEmpty())
+			list.add(str);
+		return list;
+	}
+
+	/**
 	 * @param adi
 	 * @param str
 	 * @param time
@@ -2802,26 +2825,32 @@ public class PdksUtil implements Serializable {
 			int simdikiSaat = cal.get(Calendar.HOUR_OF_DAY);
 			int simdikiDakika = cal.get(Calendar.MINUTE);
 			if (str.length() > 0) {
-				String delim = null;
-				if (str.indexOf(",") > 0)
-					delim = ",";
-				else if (str.indexOf(";") > 0)
-					delim = ";";
-				else if (str.indexOf("|") > 0)
-					delim = "|";
-				else if (str.indexOf(" ") > 0)
-					delim = " ";
-				if (delim != null) {
-					StringTokenizer st = new StringTokenizer(str, delim);
-					while (!zamaniGeldi && st.hasMoreTokens()) {
-						String zaman = st.nextToken();
-						if (!zamaniGeldi)
-							zamaniGeldi = zamaniGeldimi(simdikiSaat, simdikiDakika, zaman);
-					}
-					st = null;
-				} else
-					zamaniGeldi = zamaniGeldimi(simdikiSaat, simdikiDakika, str);
+				str = PdksUtil.replaceAll(str, " ", "");
+				StringTokenizer st1 = new StringTokenizer(str, "|");
+				while (!zamaniGeldi && st1.hasMoreTokens()) {
+					str = st1.nextToken();
+					if (str.indexOf(":") > 0) {
+						String parca[] = str.split(":");
+						if (parca.length != 2)
+							continue;
+						List<String> saatList = getStringTokenizer(parca[0]);
+						List<String> dakikaList = getStringTokenizer(parca[1]);
+						for (String saat : saatList) {
+							for (String dakika : dakikaList) {
+								zamaniGeldi = zamaniGeldimi(simdikiSaat, simdikiDakika, saat + ":" + dakika);
+								if (zamaniGeldi)
+									break;
+							}
+							if (zamaniGeldi)
+								break;
+						}
+						parca = null;
+						saatList = null;
+						dakikaList = null;
 
+					} else
+						zamaniGeldi = zamaniGeldimi(simdikiSaat, simdikiDakika, str);
+				}
 			}
 			if (zamaniGeldi)
 				logger.info(adi + " : " + zamaniGeldi + " " + str + " Zaman - " + simdikiSaat + ":" + simdikiDakika);
