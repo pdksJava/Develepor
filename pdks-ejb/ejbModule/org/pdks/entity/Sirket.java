@@ -32,6 +32,8 @@ public class Sirket extends BaseObject {
 	public static final String COLUMN_NAME_FAZLA_MESAI_TALEP_GIRILEBILIR = "FAZLA_MESAI_TALEP_GIRILEBILIR";
 	public static final String COLUMN_NAME_TESIS_DURUM = "TESIS_DURUM";
 	public static final String COLUMN_NAME_AD = "AD";
+	public static final String COLUMN_NAME_ERP_KODU = "ERP_KODU";
+	 
 	public static final String SIRKET_ERP_KODU = "3030";
 	private Long sirketGrupId;
 	private String ad, aciklama, erpKodu = "", lpdapOnEk = "";
@@ -82,7 +84,7 @@ public class Sirket extends BaseObject {
 		this.aciklama = aciklama;
 	}
 
-	@Column(name = "ERP_KODU")
+	@Column(name = COLUMN_NAME_ERP_KODU)
 	public String getErpKodu() {
 		return erpKodu;
 	}

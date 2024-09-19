@@ -30,6 +30,7 @@ public class PersonelERPDB implements Serializable, Cloneable {
 	public static final String COLUMN_NAME_ISTEN_AYRILMA_TARIHI = "ISTEN_AYRILMA_TARIHI";
 	public static final String COLUMN_NAME_GUNCELLEME_TARIHI = "GUNCELLEME_TARIHI";
 	public static final String COLUMN_NAME_PERSONEL_NO = "PERSONEL_NO";
+	public static final String COLUMN_NAME_SIRKET_KODU = "SIRKET_KODU";
 
 	static Logger logger = Logger.getLogger(PersonelERPDB.class);
 
@@ -271,7 +272,7 @@ public class PersonelERPDB implements Serializable, Cloneable {
 		this.sirketAdi = sirketAdi;
 	}
 
-	@Column(name = "SIRKET_KODU")
+	@Column(name = COLUMN_NAME_SIRKET_KODU)
 	public String getSirketKodu() {
 		return sirketKodu;
 	}

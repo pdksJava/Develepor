@@ -5699,7 +5699,7 @@ public class OrtakIslemler implements Serializable {
 		Parameter parameter = null;
 		if (!list.isEmpty()) {
 			HashMap parametreMap = new HashMap();
-			boolean kapiKontrol = false;
+			boolean update = false;
 			StringBuffer sb = new StringBuffer("SELECT ");
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				Tanim tanim = (Tanim) iterator.next();
@@ -5714,7 +5714,7 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" WHERE " + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " :p ");
 				parametreMap.put("p", perNoList);
 			} else {
-				kapiKontrol = true;
+				update = true;
 				parameter = getParameter(session, parameterName);
 				tarih = parameter.getChangeDate();
 				if (tarih != null) {
@@ -5725,15 +5725,16 @@ public class OrtakIslemler implements Serializable {
 						tarih = getERPManuelTarih(tarih, null);
 						sb.append(" WHERE " + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " >=:t ");
 					}
-
 					parametreMap.put("t", PdksUtil.getDate(tarih));
 				}
 			}
-			if (kapiKontrol) {
+			if (update) {
 				String str = sb.toString();
 				sb = new StringBuffer("WITH DATA AS (" + str + ")");
 				sb.append(" SELECT D.* FROM DATA D");
-				sb.append(" WHERE D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " NOT IN (");
+				sb.append(" LEFT JOIN " + Sirket.TABLE_NAME + " S ON S." + Sirket.COLUMN_NAME_ERP_KODU + " = D." + PersonelERPDB.COLUMN_NAME_SIRKET_KODU);
+				sb.append(" WHERE (S." + Sirket.COLUMN_NAME_ID + " IS NULL OR S." + Sirket.COLUMN_NAME_DURUM + " = 1 ) ");
+				sb.append(" AND D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " NOT IN (");
 				sb.append(" SELECT K." + PersonelKGS.COLUMN_NAME_SICIL_NO + " FROM " + PersonelKGS.TABLE_NAME + " K");
 				sb.append(" INNER JOIN " + KapiSirket.TABLE_NAME + " KS ON KS. " + KapiSirket.COLUMN_NAME_ID + "= K." + PersonelKGS.COLUMN_NAME_KGS_SIRKET);
 				sb.append(" AND  KS." + KapiSirket.COLUMN_NAME_DURUM + " =1 ");
