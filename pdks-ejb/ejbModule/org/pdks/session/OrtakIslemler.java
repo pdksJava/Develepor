@@ -8367,6 +8367,14 @@ public class OrtakIslemler implements Serializable {
 	/**
 	 * @return
 	 */
+	public boolean getCanliDurum() {
+		boolean test = PdksUtil.getCanliSunucuDurum();
+		return test;
+	}
+
+	/**
+	 * @return
+	 */
 	public String getHostName() {
 		String str = PdksUtil.getHostName(true);
 		return str;

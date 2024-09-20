@@ -2,7 +2,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j" template="/layout/template.xhtml">
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:c="http://java.sun.com/jstl/core" template="/layout/template.xhtml">
 	<ui:define name="title">
 		<h:outputText value="#{ortakIslemler.getMenuAdi('parameter')}" />
 	</ui:define>
@@ -127,20 +127,19 @@
 								<a4j:commandButton status="ajaxStatus" value="Skin Guncelle" action="#{parameterHome.skinUpdate()}" reRender="anaForm" />
 
 							</h:panelGrid>
-
-
 							<rich:toolTip for="addlink" value="Add" />
 							<a4j:commandButton status="ajaxStatus" value="Test Mail" action="#{parameterHome.testMail()}" />
-							<a4j:commandButton status="ajaxStatus" value="hakEdisIzinERPDBGuncelle Calistir"
-								rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametreHakEdisIzinERPTableView)}"
-								action="#{ortakIslemler.hakEdisIzinERPDBGuncelle(parameterHome.session)}" />
-							<a4j:commandButton status="ajaxStatus" value="personelERPDBGuncelle Calistir"
-								rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametrePersonelERPTableView)}"
-								action="#{ortakIslemler.personelERPDBGuncelle(true,null,parameterHome.session)}" />
-							<a4j:commandButton status="ajaxStatus" value="izinERPDBGuncelle Calistir"
-								rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametreIzinERPTableView)}"
-								action="#{ortakIslemler.izinERPDBGuncelle(true,parameterHome.session)}" />	
-
+							<c:if test="#{ortakIslemler.canliDurum==false}">
+								<a4j:commandButton status="ajaxStatus" value="hakEdisIzinERPDBGuncelle Calistir"
+									rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametreHakEdisIzinERPTableView)}"
+									action="#{ortakIslemler.hakEdisIzinERPDBGuncelle(parameterHome.session)}" />
+								<a4j:commandButton status="ajaxStatus" value="personelERPDBGuncelle Calistir"
+									rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametrePersonelERPTableView)}"
+									action="#{ortakIslemler.personelERPDBGuncelle(true,null,parameterHome.session)}" />
+								<a4j:commandButton status="ajaxStatus" value="izinERPDBGuncelle Calistir"
+									rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametreIzinERPTableView)}"
+									action="#{ortakIslemler.izinERPDBGuncelle(true,parameterHome.session)}" />
+							</c:if>
 						</ui:fragment>
 					</a4j:outputPanel>
 				</rich:panel>
