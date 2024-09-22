@@ -2070,6 +2070,20 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (loginUser == null)
 			loginUser = authenticatedUser;
 		List<Sirket> list = ortakIslemler.getFazlaMesaiList(loginUser, departmanId, null, null, null, null, aylikPuantaj, "S", denklestirme, session);
+		if (loginUser != null && loginUser.isIKSirket()) {
+			try {
+				Sirket sirketUser = list != null && loginUser.getPdksPersonel() != null ? loginUser.getPdksPersonel().getSirket() : null;
+				if (sirketUser != null) {
+					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+						Sirket sirket = (Sirket) iterator.next();
+						if (!sirket.getId().equals(sirketUser.getId()))
+							iterator.remove();
+					}
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
 		List<SelectItem> selectList = new ArrayList<SelectItem>();
 		if (!list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);

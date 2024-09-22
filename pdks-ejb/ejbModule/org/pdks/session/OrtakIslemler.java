@@ -4634,7 +4634,8 @@ public class OrtakIslemler implements Serializable {
 			parametreMap.put("pdks", pdks);
 		if (identity.isLoggedIn() && !authenticatedUser.isAdmin() && !authenticatedUser.isIKAdmin() && !authenticatedUser.getDepartman().isAdminMi())
 			parametreMap.put("departman.id", authenticatedUser.getDepartman().getId());
-
+		if (authenticatedUser.isIKSirket() && authenticatedUser.getPdksPersonel() != null)
+			parametreMap.put("id", authenticatedUser.getPdksPersonel().getSirket().getId());
 		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		pdksSirketList = pdksEntityController.getObjectByInnerObjectList(parametreMap, Sirket.class);
 		if (identity.isLoggedIn() && !authenticatedUser.isAdmin() && !authenticatedUser.isIKAdmin() && authenticatedUser.getDepartman().isAdminMi()) {

@@ -2603,6 +2603,7 @@ public class PdksUtil implements Serializable {
 			user.setOperatorSSK(Boolean.FALSE);
 			user.setYoneticiKontratli(Boolean.FALSE);
 			user.setDirektorSuperVisor(Boolean.FALSE);
+			user.setIKSirket(Boolean.FALSE);
 			user.setIK_Tesis(Boolean.FALSE);
 			user.setSistemYoneticisi(Boolean.FALSE);
 			user.setPersonel(Boolean.FALSE);
@@ -2624,7 +2625,10 @@ public class PdksUtil implements Serializable {
 						user.setSistemYoneticisi(Boolean.TRUE);
 					} else if (role.getRolename().equals(Role.TIPI_IK))
 						user.setIK(Boolean.TRUE);
-					else if (role.getRolename().equals(Role.TIPI_IK_Tesis)) {
+					else if (role.getRolename().equals(Role.TIPI_IK_SIRKET)) {
+						user.setIKSirket(Boolean.TRUE);
+						user.setIK(Boolean.TRUE);
+					} else if (role.getRolename().equals(Role.TIPI_IK_Tesis)) {
 						user.setIK_Tesis(Boolean.TRUE);
 						user.setIK(Boolean.TRUE);
 					} else if (role.getRolename().equals(Role.TIPI_IK_DIREKTOR)) {

@@ -169,6 +169,7 @@ public class PersonelERPGuncelleme implements Serializable {
 				String uygulamaBordro = ortakIslemler.getParameterKey("uygulamaBordro");
 				logger.info(uygulamaBordro + " personel bilgileri güncelleniyor in " + PdksUtil.getCurrentTimeStampStr());
 				ortakIslemler.personelERPDBGuncelle(guncellemeDBDurum, null, session);
+				ortakIslemler.yeniPersonelleriOlustur(session);
 				logger.info(uygulamaBordro + " personel bilgileri güncelleniyor out " + PdksUtil.getCurrentTimeStampStr());
 			} else if (guncellemeDBDurum == false) {
 

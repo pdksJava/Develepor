@@ -65,7 +65,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	private String newPassword1, newPassword2, passwordHash, oldUserName;
 	private String changeUserName = "";
 	private List<User> allUserList = new ArrayList<User>();
-	private List ikYetkiliRoller = Arrays.asList(new String[] { Role.TIPI_ANAHTAR_KULLANICI, Role.TIPI_IK_Tesis, Role.TIPI_IK_DIREKTOR, Role.TIPI_SISTEM_YONETICI, Role.TIPI_GENEL_MUDUR });
+	private List ikYetkiliRoller = Arrays.asList(new String[] { Role.TIPI_ANAHTAR_KULLANICI, Role.TIPI_IK_Tesis, Role.TIPI_IK_SIRKET, Role.TIPI_IK_DIREKTOR, Role.TIPI_SISTEM_YONETICI, Role.TIPI_GENEL_MUDUR });
 	private Session session;
 
 	@Override

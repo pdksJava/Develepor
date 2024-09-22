@@ -2670,7 +2670,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 			}
 			if (!list.isEmpty()) {
-				if (authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin()) {
+				Sirket sirketUser = authenticatedUser.isIKSirket() && authenticatedUser.getPdksPersonel() != null ? authenticatedUser.getPdksPersonel().getSirket() : null;
+				if (authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin() || sirketUser != null) {
 					for (Iterator<PersonelView> iterator = list.iterator(); iterator.hasNext();) {
 						PersonelView personelView = iterator.next();
 						Personel pdksPersonel = personelView.getPdksPersonel();
@@ -2700,6 +2701,10 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							}
 
 							Sirket sirket = ppdksPersonel != null ? ppdksPersonel.getSirket() : null;
+							if (sirketUser != null && sirket != null && !sirket.getId().equals(sirketUser.getId())) {
+								iterator.remove();
+								continue;
+							}
 							if (!eksahaGoster && sirket != null)
 								eksahaGoster = sirket.getDepartman().isAdminMi();
 						}
@@ -3301,8 +3306,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			sb.append(" INNER JOIN " + PersonelKGS.TABLE_NAME + " PS ON PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " = D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO);
 			sb.append(" INNER JOIN " + KapiSirket.TABLE_NAME + " K ON K." + KapiSirket.COLUMN_NAME_ID + " = PS." + PersonelKGS.COLUMN_NAME_KGS_SIRKET + " AND PS." + PersonelKGS.COLUMN_NAME_DURUM + " = 1");
 			sb.append(" AND K." + KapiSirket.COLUMN_NAME_DURUM + " = 1 AND K." + KapiSirket.COLUMN_NAME_BIT_TARIH + " > GETDATE()");
+			sb.append(" LEFT JOIN " + Sirket.TABLE_NAME + " S ON S." + Sirket.COLUMN_NAME_ERP_KODU + " = D." + PersonelERPDB.COLUMN_NAME_SIRKET_KODU);
 			sb.append(" LEFT JOIN " + Personel.TABLE_NAME + " P ON P." + Personel.COLUMN_NAME_KGS_PERSONEL + " = PS." + PersonelKGS.COLUMN_NAME_ID);
-			sb.append(" WHERE P." + Personel.COLUMN_NAME_ID + " IS NULL");
+			sb.append(" WHERE P." + Personel.COLUMN_NAME_ID + " IS NULL AND COALESCE(S." + Sirket.COLUMN_NAME_DURUM + ",1) = 1 ");
 			sb.append(" AND PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " NOT IN ( SELECT " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " FROM " + Personel.TABLE_NAME + ")");
 			HashMap fields = new HashMap();
 			if (session != null)

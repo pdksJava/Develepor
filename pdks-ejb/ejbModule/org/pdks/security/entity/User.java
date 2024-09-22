@@ -76,7 +76,7 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	// private Set<UserRoles> yetkilerim;
 
-	private boolean durum = Boolean.TRUE, yeniSifre = Boolean.FALSE, admin = Boolean.FALSE, IK = Boolean.FALSE, IK_Tesis = Boolean.FALSE;
+	private boolean durum = Boolean.TRUE, yeniSifre = Boolean.FALSE, admin = Boolean.FALSE, IK = Boolean.FALSE, IKSirket = Boolean.FALSE, IK_Tesis = Boolean.FALSE;
 	private boolean sistemYoneticisi = Boolean.FALSE, yonetici = Boolean.FALSE, anahtarKullanici = Boolean.FALSE, yoneticiKontratli = Boolean.FALSE, genelMudur = Boolean.FALSE, sekreter = Boolean.FALSE;
 	private boolean projeMuduru = Boolean.FALSE, mudur = Boolean.FALSE, superVisor = Boolean.FALSE, IKDirektor = Boolean.FALSE, personel = Boolean.FALSE;
 	private boolean operatorSSK = Boolean.FALSE, yetkiSet = Boolean.FALSE, direktorSuperVisor = Boolean.FALSE, taseronAdmin = Boolean.FALSE;
@@ -1081,9 +1081,18 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 		this.parametreJSON = parametreJSON;
 	}
 
+	@Transient
+	public boolean isIKSirket() {
+		return IKSirket;
+	}
+
+	public void setIKSirket(boolean iKSirket) {
+		IKSirket = iKSirket;
+	}
+
 	public void entityRefresh() {
 		// TODO entityRefresh
-		
+
 	}
 
 }
