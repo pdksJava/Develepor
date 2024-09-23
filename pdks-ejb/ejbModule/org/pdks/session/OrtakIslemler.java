@@ -4314,8 +4314,10 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" INNER JOIN " + KapiSirket.TABLE_NAME + " K ON K." + KapiSirket.COLUMN_NAME_ID + " = PS." + PersonelKGS.COLUMN_NAME_KGS_SIRKET + " AND PS." + PersonelKGS.COLUMN_NAME_DURUM + " = 1");
 			sb.append(" AND K." + KapiSirket.COLUMN_NAME_DURUM + " = 1 AND K." + KapiSirket.COLUMN_NAME_BIT_TARIH + " > GETDATE()");
 			sb.append(" LEFT JOIN " + Personel.TABLE_NAME + " P ON P." + Personel.COLUMN_NAME_KGS_PERSONEL + " = PS." + PersonelKGS.COLUMN_NAME_ID);
-			sb.append(" WHERE P." + Personel.COLUMN_NAME_ID + " IS NULL");
-			sb.append(" AND PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " NOT IN ( SELECT " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " FROM " + Personel.TABLE_NAME + ")");
+			sb.append(" LEFT JOIN " + Sirket.TABLE_NAME + " S ON S." + Sirket.COLUMN_NAME_ERP_KODU + " = D." + PersonelERPDB.COLUMN_NAME_SIRKET_KODU);
+			sb.append(" WHERE P." + Personel.COLUMN_NAME_ID + " IS NULL  AND COALESCE(S." + Sirket.COLUMN_NAME_DURUM + ",1) = 1 ");
+			sb.append("AND PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " NOT IN ( SELECT " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " FROM " + Personel.TABLE_NAME + ")");
+
 			HashMap fields = new HashMap();
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -5734,7 +5736,7 @@ public class OrtakIslemler implements Serializable {
 				sb = new StringBuffer("WITH DATA AS (" + str + ")");
 				sb.append(" SELECT D.* FROM DATA D");
 				sb.append(" LEFT JOIN " + Sirket.TABLE_NAME + " S ON S." + Sirket.COLUMN_NAME_ERP_KODU + " = D." + PersonelERPDB.COLUMN_NAME_SIRKET_KODU);
-				sb.append(" WHERE COALESCE(S." + Sirket.COLUMN_NAME_DURUM + ",1) = 1 "); 
+				sb.append(" WHERE COALESCE(S." + Sirket.COLUMN_NAME_DURUM + ",1) = 1 ");
 				sb.append(" AND D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " NOT IN (");
 				sb.append(" SELECT K." + PersonelKGS.COLUMN_NAME_SICIL_NO + " FROM " + PersonelKGS.TABLE_NAME + " K");
 				sb.append(" INNER JOIN " + KapiSirket.TABLE_NAME + " KS ON KS. " + KapiSirket.COLUMN_NAME_ID + "= K." + PersonelKGS.COLUMN_NAME_KGS_SIRKET);
