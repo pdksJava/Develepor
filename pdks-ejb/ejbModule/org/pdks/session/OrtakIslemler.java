@@ -145,6 +145,7 @@ import org.pdks.pdf.action.HeaderIText;
 import org.pdks.pdf.action.HeaderLowagie;
 import org.pdks.pdf.action.PDFITextUtils;
 import org.pdks.pdf.action.PDFUtils;
+import org.pdks.quartz.KapiGirisGuncelleme;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
@@ -708,6 +709,23 @@ public class OrtakIslemler implements Serializable {
 			donemPerMap = null;
 		}
 
+	}
+
+	/**
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param session
+	 * @throws Exception
+	 */
+	public void kapiGirisGuncelle(Date basTarih, Date bitTarih, Session session) throws Exception {
+		String name = KapiGirisGuncelleme.SP_NAME;
+		if (session != null && isExisStoreProcedure(name, session)) {
+			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+			StringBuffer sp = new StringBuffer(KapiGirisGuncelleme.SP_NAME);
+			veriMap.put("basTarih", basTarih);
+			veriMap.put("bitTarih", bitTarih);
+			pdksEntityController.execSP(veriMap, sp);
+		}
 	}
 
 	/**
@@ -3018,6 +3036,8 @@ public class OrtakIslemler implements Serializable {
 		String birdenFazlaKGSSirketSQL = getBirdenFazlaKGSSirketSQL(tariheGunEkleCikar(cal, basTarih, -1), tariheGunEkleCikar(cal, bitTarih, 1), session);
 		LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
 		List list = new ArrayList();
+		if (authenticatedUser == null || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi())
+			kapiGirisGuncelle(basTarih, bitTarih, session);
 		String kapi = getListIdStr(kapiIdIList);
 		String basTarihStr = basTarih != null ? PdksUtil.convertToDateString(basTarih, formatStr) : null;
 		String bitTarihStr = bitTarih != null ? PdksUtil.convertToDateString(bitTarih, formatStr) : null;

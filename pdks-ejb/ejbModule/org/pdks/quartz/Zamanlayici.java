@@ -54,7 +54,7 @@ public class Zamanlayici implements Serializable {
 	@In
 	SertifikaSSLKontrol sertifikaSSLKontrol;
 	@In
-	FazlaMesaiGuncelleme fazlaMesaiGuncelleme;
+	KapiGirisGuncelleme kapiGirisGuncelleme;
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
 	@In(required = false, create = true)
@@ -64,14 +64,11 @@ public class Zamanlayici implements Serializable {
 	@In(required = false)
 	User authenticatedUser;
 
-	public void scheduleFazlaMesaiGuncellemeTimer() {
-		fazlaMesaiGuncelleme.fazlaMesaiGuncellemeTimer(new Date(), "0 0/5 3-23 ? * *");
-		logger.info("fazlaMesaiGuncellemeTimer start : " + PdksUtil.getCurrentTimeStampStr());
-	}
-
 	public void scheduleSertifikaSSLKontrolTimer() {
 		sertifikaSSLKontrol.sertifikaSSLKontrolTimer(new Date(), "0 0/15 8-21 ? * *");
 		logger.info("scheduleSertifikaSSLKontrolTimer start : " + PdksUtil.getCurrentTimeStampStr());
+		kapiGirisGuncelleme.kapiGirisGuncellemeTimer(new Date(), "0 0/1 * ? * *");
+		logger.info("fazlaMesaiGuncellemeTimer start : " + PdksUtil.getCurrentTimeStampStr());
 	}
 
 	public void scheduleIseGelmemeUyariTimer() {
