@@ -3036,8 +3036,12 @@ public class OrtakIslemler implements Serializable {
 		String birdenFazlaKGSSirketSQL = getBirdenFazlaKGSSirketSQL(tariheGunEkleCikar(cal, basTarih, -1), tariheGunEkleCikar(cal, bitTarih, 1), session);
 		LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
 		List list = new ArrayList();
-		if (authenticatedUser == null || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi())
-			kapiGirisGuncelle(basTarih, bitTarih, session);
+		if (authenticatedUser == null || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()) {
+			boolean sistemDurum = PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum();
+			if (sistemDurum && getParameterKeyHasStringValue("otomatikGuncellemeYok"))
+				kapiGirisGuncelle(basTarih, bitTarih, session);
+		}
+
 		String kapi = getListIdStr(kapiIdIList);
 		String basTarihStr = basTarih != null ? PdksUtil.convertToDateString(basTarih, formatStr) : null;
 		String bitTarihStr = bitTarih != null ? PdksUtil.convertToDateString(bitTarih, formatStr) : null;

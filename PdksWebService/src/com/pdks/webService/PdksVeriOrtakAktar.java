@@ -3398,6 +3398,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 
 					Tanim bolum = getTanim(null, "ekSaha3", personelERP.getBolumKodu(), personelERP.getBolumAdi(), dataMap, saveList);
+					boolean bolumYok = bolum != null && bolum.getKodu().equalsIgnoreCase("yok");
 					Tanim bordroAltAlan = getTanim(null, parentBordroTanimKoduStr, personelERP.getBordroAltAlanKodu(), personelERP.getBordroAltAlanAdi(), dataMap, saveList);
 					personel.setTesis(getTanim(personelERP.getSirketKodu(), Tanim.TIPI_TESIS, personelERP.getTesisKodu(), personelERP.getTesisAdi(), dataMap, saveList));
 					personel.setGorevTipi(getTanim(null, Tanim.TIPI_GOREV_TIPI, personelERP.getGorevKodu(), personelERP.getGorevi(), dataMap, saveList));
@@ -3445,7 +3446,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						else
 							addHatalist(personelERP.getHataList(), "İşten ayrılma tarihi hatalıdır! (" + personelERP.getIstenAyrilmaTarihi() + " --> format : " + FORMAT_DATE + " )");
 					}
-					if (izinGirisiVar) {
+					if (izinGirisiVar && bolumYok == false) {
 						if (dogumTarihi == null && calisiyor) {
 							String str = null;
 							if (notEmptyStr(personelERP.getDogumTarihi()) == false)
@@ -3477,7 +3478,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						}
 
 					}
-					if (dogumTarihi != null) {
+					if (dogumTarihi != null && bolumYok == false) {
 						String str = null;
 						if (iseBaslamaTarihi != null && iseBaslamaTarihi.before(dogumTarihi))
 							str = "İşe giriş tarihi doğum tarihinden önce olamaz!";
@@ -3602,7 +3603,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 											}
 
 										}
-										if (yoneticiRolVarmi && yoneticiERP1Kontrol) {
+										if (yoneticiRolVarmi && yoneticiERP1Kontrol && bolumYok == false) {
 											if (yoneticisi == null)
 												kidemHataList.add(yoneticiAciklama + " bilgisi boş olamaz!" + (personelERP.getGorevKodu() != null && personelERP.getGorevi() != null ? "[ " + personelERP.getGorevKodu() + " - " + personelERP.getGorevi() + " ]" : ""));
 											else if (yoneticisi != null)
@@ -3628,9 +3629,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 								if (yoneticisi2 != null) {
 									if (yoneticisi != null && yoneticisi.getYoneticisi() != null && yoneticisi2.getId().equals(yoneticisi.getYoneticisi().getId())) {
 										yoneticisi2 = null;
-									} else if (yoneticiRolVarmi && !yoneticisi2.isCalisiyor())
+									} else if (yoneticiRolVarmi && !yoneticisi2.isCalisiyor() && bolumYok == false)
 										kidemHataList.add("2. yönetici " + yonetici2No.trim() + " " + yoneticisi2.getAdSoyad() + " çalışmıyor!");
-								} else if (yoneticiRolVarmi && sanalPersonel == false && calisiyor)
+								} else if (yoneticiRolVarmi && sanalPersonel == false && calisiyor && bolumYok == false)
 									kidemHataList.add(kapiGiris + " 2. yönetici " + yonetici2No.trim() + " personel no bilgisi bulunamadı!");
 							}
 							if (yoneticisi2 != null)
@@ -3642,7 +3643,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 							if (yoneticiKodu2Var) {
 								String yonetici2PerNo = PdksUtil.textBaslangicinaKarakterEkle(yonetici2No.trim(), '0', sicilNoUzunluk);
 								yoneticisi2 = personelPDKSMap.get(yonetici2PerNo);
-								if (yoneticiRolVarmi) {
+								if (yoneticiRolVarmi && bolumYok == false) {
 									if (yoneticisi2 != null)
 										addHatalist(personelERP.getHataList(), "2. yönetici " + yonetici2No.trim() + " " + yoneticisi2.getAdSoyad() + " güncellemesi sistemde açık değildir!");
 									else
@@ -3651,6 +3652,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 							}
 						}
 					}
+
 					if (personelERP.getHataList().isEmpty()) {
 						if (personel.isDegisti()) {
 							if (personel.getId() != null) {

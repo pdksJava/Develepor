@@ -64,7 +64,6 @@ public class KapiGirisGuncelleme implements Serializable {
 			Session session = null;
 			try {
 				boolean sistemDurum = PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum();
-				sistemDurum = true;
 				if (sistemDurum) {
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 					if (session != null) {
