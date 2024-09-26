@@ -1926,6 +1926,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		List<String> kayitIzinList = new ArrayList<String>();
 		for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
 			IzinERP izinERP = (IzinERP) iterator.next();
+			boolean tamam = false;
 			String referansNoERP = izinERP.getReferansNoERP();
 			String personelNo = izinERP.getPersonelNo();
 			Date islemZamani = new Date();
@@ -2160,6 +2161,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 					personelIzin.setIzinSahibi(izinSahibi);
 					personelIzin.setBaslangicZamani(baslangicZamani);
 					personelIzin.setBitisZamani(bitisZamani);
+					if (izinERP.getDurum().booleanValue() == false && (personelIzin.getId() == null || personelIzin.getIzinDurumu() == PersonelIzin.IZIN_DURUMU_REDEDILDI)) {
+						tamam = true;
+						izinERP.setId(personelIzin.getId());
+						izinERP.setYazildi(true);
+					}
 					if (izinERP.getDurum().booleanValue() || personelIzin.getId() != null) {
 						Date bitTarih = PdksUtil.getDate(bitisZamani);
 						if (izinVardiyaKontrol != 0)
@@ -2286,8 +2292,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 						} else if (!izinERP.getHataList().isEmpty())
 							hataList.add((IzinERP) izinERP.clone());
 						kapaliDenklestirmeler = null;
-					} else
-						addHatalist(izinERP.getHataList(), "İptal yeni kayıt sisteme yazılmadı!");
+					} else {
+						if (tamam == false)
+							addHatalist(izinERP.getHataList(), "İptal yeni kayıt sisteme yazılmadı!");
+					}
+
 				}
 			} else if (!izinERP.getHataList().isEmpty()) {
 				hataList.add((IzinERP) izinERP.clone());
