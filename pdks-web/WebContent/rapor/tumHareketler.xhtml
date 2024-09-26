@@ -75,9 +75,15 @@
 
 
 						</h:panelGrid>
-						<s:decorate template="/layout/edit.xhtml">
-							<a4j:commandButton status="ajaxStatus" value="Listele" action="#{tumHareketlerHome.fillHareketList}" reRender="hareketPanel" />
-						</s:decorate>
+						<h:panelGrid columns="4">
+							<s:decorate template="/layout/edit.xhtml">
+								<a4j:commandButton status="ajaxStatus" value="Listele" action="#{tumHareketlerHome.fillHareketList}" reRender="hareketPanel" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<a4j:commandButton status="ajaxStatus" value="#{ortakIslemler.getParameterKey('kapiGirisSistemAdi')} Güncelle"
+									action="#{tumHareketlerHome.kapiGirisGuncellemeBasla}" reRender="hareketPanel" />
+							</s:decorate>
+						</h:panelGrid>
 					</h:panelGrid>
 				</a4j:outputPanel>
 			</rich:panel>

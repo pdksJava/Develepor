@@ -3038,7 +3038,7 @@ public class OrtakIslemler implements Serializable {
 		List list = new ArrayList();
 		if (authenticatedUser == null || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()) {
 			boolean sistemDurum = PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum();
-			if (sistemDurum && getParameterKeyHasStringValue("otomatikGuncellemeYok"))
+			if (sistemDurum && getParameterKey("otomatikGuncellemeYok").equalsIgnoreCase(KapiGirisGuncelleme.SP_NAME))
 				kapiGirisGuncelle(basTarih, bitTarih, session);
 		}
 
@@ -5468,6 +5468,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
+	@Transactional
 	public List<PersonelERP> personelERPDBGuncelle(boolean guncellemeDurum, List<String> perNoList, Session session) throws Exception {
 		List<PersonelERP> personelERPReturnList = null;
 		String parameterName = getParametrePersonelERPTableView();

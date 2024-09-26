@@ -469,6 +469,30 @@ public class PdksVeriOrtakAktar implements Serializable {
 	}
 
 	/**
+	 * @return
+	 */
+	public String getParametrePersonelERPTableView() {
+		String str = "personelERPTableViewAdi";
+		return str;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getParametreHakEdisIzinERPTableView() {
+		String str = "hakEdisIzinERPTableViewAdi";
+		return str;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getParametreIzinERPTableView() {
+		String str = "izinERPTableViewAdi";
+		return str;
+	}
+
+	/**
 	 * @param dao
 	 */
 	private void personelKontrolVerileriAyarla(PdksDAO dao) {
@@ -2618,7 +2642,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 			doktorUserMap = null;
 		}
-		if (mailBosGonder && mailStatu == null)
+		if (mailBosGonder && mailStatu == null && !mailMap.containsKey(getParametreIzinERPTableView()))
 			mailBosGonder("saveIzinler", "izin", izinList);
 		hataList = null;
 		saveFonksiyonVeri(null, izinList);
@@ -4493,7 +4517,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 		}
 
-		if (mailBosGonder && mailStatu == null)
+		if (mailBosGonder && mailStatu == null && !mailMap.containsKey(getParametrePersonelERPTableView()))
 			mailBosGonder("savePersoneller", "personel", personelList);
 		if (updateYonetici2)
 			setIkinciYoneticiSifirla();

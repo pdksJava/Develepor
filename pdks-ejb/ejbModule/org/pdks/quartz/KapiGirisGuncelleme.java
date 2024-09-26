@@ -1,7 +1,9 @@
 package org.pdks.quartz;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 
@@ -63,11 +65,59 @@ public class KapiGirisGuncelleme implements Serializable {
 			logger.debug("kapiGirisGuncelleme in " + PdksUtil.getCurrentTimeStampStr());
 			Session session = null;
 			try {
-				boolean sistemDurum = PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum();
+				String key = "kapiGirisGuncellemeTimer";
+				boolean sistemDurum = ortakIslemler.getParameterKeyHasStringValue(key) && (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum());
+				// sistemDurum = true;
+				boolean logYaz = false;
+				if (sistemDurum) {
+					String str = ortakIslemler.getParameterKey(key);
+					Integer mesai = 2, mesaiDisi = 10;
+					List<String> list = PdksUtil.getListByString(str, null);
+					for (String parca : list) {
+						String string = parca.trim();
+						if (string.length() > 1) {
+							if (string.startsWith("+")) {
+								try {
+									mesai = Integer.parseInt(string.substring(1));
+								} catch (Exception e) {
+									mesai = 0;
+								}
+							} else if (string.startsWith("-")) {
+								try {
+									mesaiDisi = Integer.parseInt(string.substring(1));
+								} catch (Exception e) {
+									mesaiDisi = 0;
+								}
+
+							}
+						} else if (!logYaz)
+							logYaz = string.equalsIgnoreCase("L");
+
+					}
+					if (mesai == null || mesai < 1)
+						mesai = 2;
+					if (mesaiDisi == null || mesaiDisi < 1)
+						mesaiDisi = 10;
+
+					Calendar cal = Calendar.getInstance();
+					int dakika = cal.get(Calendar.MINUTE);
+					if (dakika != 0) {
+						int saat = cal.get(Calendar.HOUR_OF_DAY);
+						if (saat >= 8 && saat <= 21)
+							sistemDurum = dakika % mesai == 0;
+						else
+							sistemDurum = dakika % mesaiDisi == 0;
+					}
+
+				}
 				if (sistemDurum) {
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 					if (session != null) {
+						if (logYaz)
+							logger.info("kapiGirisGuncellemeTimer start " + PdksUtil.getCurrentTimeStampStr());
 						kapiGirisGuncellemeBasla(false, session);
+						if (logYaz)
+							logger.info("kapiGirisGuncellemeTimer stop " + PdksUtil.getCurrentTimeStampStr());
 					}
 
 				}
@@ -93,7 +143,7 @@ public class KapiGirisGuncelleme implements Serializable {
 	 * @throws Exception
 	 */
 	public void kapiGirisGuncellemeBasla(boolean manuel, Session session) throws Exception {
-		ortakIslemler.kapiGirisGuncelle(PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(new Date(), -1)), null, session);
+		ortakIslemler.kapiGirisGuncelle(PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(new Date(), -61)), null, session);
 	}
 
 	public static boolean isCalisiyor() {
