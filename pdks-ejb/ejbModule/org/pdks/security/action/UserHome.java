@@ -200,6 +200,15 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
+	public void sifreUnuttumAction() {
+		if (session == null)
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+		session.setFlushMode(FlushMode.MANUAL);
+		session.clear();
+
+	}
+
+	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);

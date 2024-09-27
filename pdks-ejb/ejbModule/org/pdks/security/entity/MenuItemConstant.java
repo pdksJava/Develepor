@@ -31,6 +31,9 @@ public class MenuItemConstant implements Serializable {
 	public static String home = "/home.xhtml";
 	public static String role = "/Role.xhtml";
 	public static String roleList = "/RoleList.xhtml";
+	
+	
+	
 
 	public static String importSSL = "/general/importSSL.xhtml";
 	public static String notice = "/general/notice.xhtml";
@@ -110,6 +113,7 @@ public class MenuItemConstant implements Serializable {
 	public static String openSession = "/security/openSession.xhtml";
 	public static String user = "/security/user.xhtml";
 	public static String sifreDegistirme = "/security/sifreDegistirme.xhtml";
+	public static String sifreUnuttum = "/security/sifreUnuttum.xhtml";
 	public static String superVisorDegistir = "/security/superVisorDegistir.xhtml";
 	public static String yoneticiDegistir = "/security/yoneticiDegistir.xhtml";
 
