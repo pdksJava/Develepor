@@ -13,25 +13,34 @@
 			<rich:panel>
 
 				<f:facet name="header">Giriş</f:facet>
+
+
 				<div class="dialog" style="height: 400px">
 					<h:panelGrid columns="2" rowClasses="prop" columnClasses="name,value">
 						<h:outputLabel for="username">Kullanıcı adı</h:outputLabel>
+
 						<h:inputText id="username" value="#{credentials.username}" size="128" required="true" requiredMessage="Kullancı adı giriniz" />
 						<h:outputLabel for="password">Şifre</h:outputLabel>
 						<h:inputSecret id="password" value="#{credentials.password}" size="64" required="true" requiredMessage="Şifre giriniz" />
-						<ui:fragment>
-							<h:outputLabel for="rememberMe">Beni hatırla</h:outputLabel>
-							<h:selectBooleanCheckbox id="rememberMe" value="#{identity.rememberMe}" />
-							<h:commandLink action="#{userHome.sifreUnuttumAction()}" value="Şifre Unuttum">
-								
-							</h:commandLink>
-						</ui:fragment>
+						<a4j:outputPanel id="sifre">
+							<h:panelGrid columns="3">
+								<h:outputLabel for="rememberMe">Beni hatırla</h:outputLabel>
+								<h:selectBooleanCheckbox id="rememberMe" value="#{identity.rememberMe}" />
+								<ui:fragment rendered="#{ortakIslemler.getParameterKeyHasStringValue('sifreUnuttum')}">
+									<a4j:commandLink action="#{userHome.sifreUnuttumAction()}" value="Şifre Unuttum" status="ajaxStatus" ajaxSingle="true" reRender="sifre">
+										<f:param name="username" value="#{credentials.username}" />
+									</a4j:commandLink>
+								</ui:fragment>
+							</h:panelGrid>
+						</a4j:outputPanel>
 						<h:outputLabel for="username"></h:outputLabel>
 						<a4j:commandButton status="ajaxStatus" value="Sisteme Giriş" action="#{identity.login}">
 							<s:defaultAction />
 						</a4j:commandButton>
 					</h:panelGrid>
 				</div>
+
+
 
 			</rich:panel>
 

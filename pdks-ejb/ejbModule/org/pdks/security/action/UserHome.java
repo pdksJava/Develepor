@@ -3,11 +3,15 @@ package org.pdks.security.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
+import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.hibernate.FlushMode;
@@ -23,6 +27,7 @@ import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.persistence.PersistenceProvider;
 import org.jboss.seam.security.Identity;
 import org.pdks.entity.AccountPermission;
+import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
 import org.pdks.session.OrtakIslemler;
@@ -30,6 +35,9 @@ import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
 
 import com.Ostermiller.util.RandPass;
+import com.pdks.webservice.MailObject;
+import com.pdks.webservice.MailPersonel;
+import com.pdks.webservice.MailStatu;
 
 @Name("userHome")
 public class UserHome extends EntityHome<User> implements Serializable {
@@ -119,18 +127,18 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	@Transactional
 	public String changePassword() {
 		User user = getInstance();
-		String oldPasswordData = user.getPasswordHash();
+		String oldPasswordData = authenticatedUser != null ? user.getPasswordHash() : null;
 
 		String ekran = "";
 		// ilk olarak eski sifre dogru mu kontrol edelim
 		try {
-			String oldPassword = PdksUtil.encodePassword(passwordHash);
-			if (!oldPassword.equals(oldPasswordData))
+			String oldPassword = passwordHash != null ? PdksUtil.encodePassword(passwordHash) : null;
+			if (oldPasswordData != null && !oldPassword.equals(oldPasswordData))
 				facesMessages.add("Eski şifre doğru girilmelidir.", "");
 
 			else if (!newPassword1.equals(newPassword2))
 				facesMessages.add("Yeni şifre onayı farklı doğru girilmelidir.", "");
-			else if (newPassword1.equals(passwordHash))
+			else if (passwordHash != null && newPassword1.equals(passwordHash))
 				facesMessages.add("Yeni şifreyi farklı girmelisiniz.", "");
 
 			else {
@@ -139,7 +147,10 @@ public class UserHome extends EntityHome<User> implements Serializable {
 				pdksEntityController.saveOrUpdate(session, entityManager, user);
 				session.flush();
 				facesMessages.add("Yeni şifre değiştirilmiştir.", "");
-				ekran = "anaSayfa";
+				if (authenticatedUser != null)
+					ekran = "anaSayfa";
+				else
+					ekran = MenuItemConstant.login;
 			}
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
@@ -200,12 +211,68 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
-	public void sifreUnuttumAction() {
+	public String sifreUnuttumAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		session.setFlushMode(FlushMode.MANUAL);
 		session.clear();
+		String str = MenuItemConstant.login;
+		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		String username = (String) req.getParameter("username");
+		if (PdksUtil.hasStringValue(username)) {
+			HashMap fields = new HashMap();
+			fields.put("username", username);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			User user = (User) pdksEntityController.getObjectByInnerObject(fields, User.class);
+			if (user != null) {
+				if (user.isDurum()) {
+					if (user.getPdksPersonel().isCalisiyor()) {
+						MailObject mailObject = new MailObject();
+						MailPersonel mp = new MailPersonel();
+						mp.setAdiSoyadi(user.getAdSoyad());
+						mp.setEPosta(user.getEmail());
+						mailObject.setSubject("Şifre güncelleme");
+						mailObject.getToList().add(mp);
+						MailStatu ms = null;
+						Exception ex = null;
+						StringBuffer body = new StringBuffer();
+						Map<String, String> map = null;
+						try {
+							map = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
 
+						} catch (Exception e) {
+						}
+						String id = ortakIslemler.getEncodeStringByBase64("&userId=" + user.getId() + "&tarih=" + new Date().getTime());
+						String donusAdres = map.containsKey("host") ? map.get("host") : "";
+						body.append("<p><TABLE style=\"width: 270px;\"><TR>");
+						body.append("<td width=\"90px\"><a style=\"font-size: 16px;\" href=\"http://" + donusAdres + "/sifreDegistirme?id=" + id + "\"><b>Şifre güncellemek için tıklayınız.</b></a></td>");
+						body.append("</TR></TABLE></p>");
+						mailObject.setBody(body.toString());
+						try {
+							ms = ortakIslemler.mailSoapServisGonder(true, mailObject, null, "/email/fazlaMesaiTalepMail.xhtml", session);
+
+						} catch (Exception e) {
+							ex = e;
+						}
+						if (ms != null) {
+							if (ms.getDurum())
+								PdksUtil.addMessageAvailableInfo("Şifre güncellemek için " + user.getEmail() + " mail kutunuzu kontrol ediniz.");
+							else
+								PdksUtil.addMessageAvailableError(ms.getHataMesai());
+						} else if (ex != null)
+							PdksUtil.addMessageAvailableError(ex.getMessage());
+
+					} else
+						PdksUtil.addMessageAvailableWarn("Kullanıcı çalışmıyor!");
+				} else
+					PdksUtil.addMessageAvailableWarn("Kullanıcı aktif değildir!");
+
+			} else
+				PdksUtil.addMessageAvailableWarn("Hatalı kullanıcı adı giriniz!");
+		} else
+			PdksUtil.addMessageAvailableError("Kullanıcı adı giriniz!");
+		return str;
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
@@ -220,12 +287,39 @@ public class UserHome extends EntityHome<User> implements Serializable {
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sifreDegistirAction() {
+		User user = authenticatedUser;
 		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUser(entityManager, user);
 		session.setFlushMode(FlushMode.MANUAL);
 		session.clear();
-		authenticatedUser.setNewPassword("");
-		setInstance(authenticatedUser);
+
+		if (user != null) {
+			authenticatedUser.setNewPassword("");
+		} else {
+			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+			String id = (String) req.getParameter("id");
+			if (id != null) {
+				String decodeStr = OrtakIslemler.getDecodeStringByBase64(id);
+				StringTokenizer st = new StringTokenizer(decodeStr, "&");
+				HashMap<String, String> param = new HashMap<String, String>();
+
+				while (st.hasMoreTokens()) {
+					String tk = st.nextToken();
+					String[] parStrings = tk.split("=");
+					param.put(parStrings[0], parStrings[1]);
+				}
+				if (param.containsKey("userId")) {
+
+					HashMap fields = new HashMap();
+					fields.put("id", new Long(param.get("userId")));
+					if (session != null)
+						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+					user = (User) pdksEntityController.getObjectByInnerObject(fields, User.class);
+				}
+			}
+
+		}
+		setInstance(user);
 	}
 
 	public void fillAllUserList() {

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <page view-id="#{menuItemConstant.sifreUnuttum}" xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.1.xsd">
-	<restrict>#{ authenticatedUser.username!=null}</restrict>
+	<restrict>#{authenticatedUser.username!=null}</restrict>
 	<rewrite pattern="/sifreUnuttum" />
-	<f:param name="username" value="#{credentials.username}" />
 	<action execute="#{userHome.sifreUnuttumAction()}" on-postback="false" />
 	<navigation>
 		<rule if-outcome="sifreUnuttum">
-			<redirect view-id="#{menuItemConstant.sifreUnuttum}" />
+			<redirect view-id="#{menuItemConstant.login}" />
 		</rule>
 		<rule if-outcome="anaSayfa">
-			<redirect view-id="/home.xhtml" />
+			<redirect view-id="#{menuItemConstant.login}" />
 		</rule>
 
 	</navigation>
