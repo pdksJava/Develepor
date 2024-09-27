@@ -122,6 +122,17 @@ public class PdksVeriOrtakAktar implements Serializable {
 	}
 
 	/**
+	 * @return
+	 */
+	public boolean getTestSunucuDurum() {
+		String hostName = PdksUtil.getHostName(false);
+		String testSunucu = mailMap.containsKey("testSunucu") ? (String) mailMap.get("testSunucu") : null;
+		String sunucu = testSunucu != null ? testSunucu.toLowerCase(Locale.ENGLISH) : "srvglf";
+		boolean test = hostName.toLowerCase(Locale.ENGLISH).startsWith(sunucu);
+		return test;
+	}
+
+	/**
 	 * @param basTarih
 	 * @param bitTarih
 	 * @return
@@ -2651,7 +2662,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 			doktorUserMap = null;
 		}
-		if (mailBosGonder && mailStatu == null && !mailMap.containsKey(getParametreIzinERPTableView()))
+		if (mailBosGonder && mailStatu == null && (getTestSunucuDurum() || !mailMap.containsKey(getParametreIzinERPTableView())))
 			mailBosGonder("saveIzinler", "izin", izinList);
 		hataList = null;
 		saveFonksiyonVeri(null, izinList);
@@ -4526,7 +4537,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 		}
 
-		if (mailBosGonder && mailStatu == null && !mailMap.containsKey(getParametrePersonelERPTableView()))
+		if (mailBosGonder && mailStatu == null && (getTestSunucuDurum() || !mailMap.containsKey(getParametrePersonelERPTableView())))
 			mailBosGonder("savePersoneller", "personel", personelList);
 		if (updateYonetici2)
 			setIkinciYoneticiSifirla();

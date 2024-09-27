@@ -105,6 +105,24 @@ public class PdksUtil implements Serializable {
 
 	private static String sqlDateFormat = "yyyy-MM-dd", dateFormat = "dd/MM/yyyy", saatFormat = "H:mm", dateTimeFormat;
 
+
+	/**
+	 * @param orjinalName
+	 * @return
+	 */
+	public static String getHostName(boolean orjinalName) {
+		String hostName = null;
+		try {
+			InetAddress thisIp = InetAddress.getLocalHost();
+			hostName = orjinalName ? thisIp.getHostName() : thisIp.getHostName().toLowerCase(Locale.ENGLISH);
+			logger.debug("hostName : " + hostName);
+		} catch (Exception e) {
+			hostName = "";
+		}
+
+		return hostName;
+	}
+	
 	/**
 	 * @return
 	 */
