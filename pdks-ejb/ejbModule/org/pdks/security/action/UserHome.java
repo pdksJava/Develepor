@@ -3,6 +3,7 @@ package org.pdks.security.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -286,40 +287,48 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
-	public void sifreDegistirAction() {
+	public String sifreDegistirAction() {
 		User user = authenticatedUser;
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, user);
 		session.setFlushMode(FlushMode.MANUAL);
 		session.clear();
-
+		String sayfa = "";
 		if (user != null) {
 			authenticatedUser.setNewPassword("");
 		} else {
+			user = null;
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			String id = (String) req.getParameter("id");
 			if (id != null) {
 				String decodeStr = OrtakIslemler.getDecodeStringByBase64(id);
 				StringTokenizer st = new StringTokenizer(decodeStr, "&");
 				HashMap<String, String> param = new HashMap<String, String>();
-
 				while (st.hasMoreTokens()) {
 					String tk = st.nextToken();
 					String[] parStrings = tk.split("=");
 					param.put(parStrings[0], parStrings[1]);
 				}
-				if (param.containsKey("userId")) {
+				Date tarih = null;
+				if (param.containsKey("tarih"))
+					tarih = new Date(Long.parseLong(param.get("tarih")));
 
+				if (tarih == null || PdksUtil.addTarih(tarih, Calendar.MINUTE, 5).before(new Date())) {
+					PdksUtil.addMessageAvailableWarn("Link geçersizdir");
+					sayfa = MenuItemConstant.login;
+				} else if (param.containsKey("userId")) {
 					HashMap fields = new HashMap();
 					fields.put("id", new Long(param.get("userId")));
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 					user = (User) pdksEntityController.getObjectByInnerObject(fields, User.class);
 				}
-			}
+			} else
+				sayfa = MenuItemConstant.login;
 
 		}
 		setInstance(user);
+		return sayfa;
 	}
 
 	public void fillAllUserList() {

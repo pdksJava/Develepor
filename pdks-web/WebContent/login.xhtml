@@ -23,7 +23,7 @@
 						<h:outputLabel for="password">Şifre</h:outputLabel>
 						<h:inputSecret id="password" value="#{credentials.password}" size="64" required="true" requiredMessage="Şifre giriniz" />
 						<a4j:outputPanel id="sifre">
-							<h:panelGrid columns="3">
+							<h:panelGrid columns="3" width="300px">
 								<h:outputLabel for="rememberMe">Beni hatırla</h:outputLabel>
 								<h:selectBooleanCheckbox id="rememberMe" value="#{identity.rememberMe}" />
 								<ui:fragment rendered="#{ortakIslemler.getParameterKeyHasStringValue('sifreUnuttum')}">
