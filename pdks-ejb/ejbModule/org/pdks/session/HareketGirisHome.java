@@ -16,6 +16,8 @@ import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.hibernate.Session;
@@ -171,20 +173,23 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 		Workbook wb = ortakIslemler.getWorkbook(dosya);
 		vardiyaGunleri.clear();
 		sicilNoList = new ArrayList<String>();
-		LinkedHashMap<String, Date> veriMap = new LinkedHashMap<String, Date>();
+		// LinkedHashMap<String, Date> veriMap = new LinkedHashMap<String, Date>();
 		LinkedHashMap<String, String> perMap = new LinkedHashMap<String, String>();
+		LinkedHashMap<Long, HashMap<Integer, Object>> dataMap = new LinkedHashMap<Long, HashMap<Integer, Object>>();
 		if (wb != null) {
 			Sheet sheet = wb.getSheetAt(0);
 			try {
-				int adet = 0;
+				long adet = 0;
+				long sira = 0;
 				for (int j = 1; j <= sheet.getLastRowNum(); j++) {
 					String sicilNo = "", adSoyad = "";
 					Date zaman = null;
+					Row row = sheet.getRow(j);
 					try {
-						sicilNo = sheet.getRow(j).getCell(0).getStringCellValue();
+						sicilNo = row.getCell(0).getStringCellValue();
 					} catch (Exception e) {
 						try {
-							Double numara = sheet.getRow(j).getCell(0).getNumericCellValue();
+							Double numara = row.getCell(0).getNumericCellValue();
 							sicilNo = numara.longValue() + "";
 
 						} catch (Exception e2) {
@@ -192,7 +197,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 						}
 					}
 					try {
-						adSoyad = sheet.getRow(j).getCell(1).getStringCellValue();
+						adSoyad = row.getCell(1).getStringCellValue();
 					} catch (Exception e) {
 						try {
 							adSoyad = "";
@@ -216,10 +221,67 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 
 						break;
 					}
-
+					++sira;
 					adet = 0;
-					veriMap.put(sicilNo, zaman);
+					// veriMap.put(sicilNo, zaman);
 					perMap.put(sicilNo, adSoyad);
+					HashMap<Integer, Object> map = new HashMap<Integer, Object>();
+
+					for (int i = 0; i < 6; i++) {
+						try {
+							Cell cell = row.getCell(i);
+							if (cell != null) {
+								switch (cell.getCellType()) {
+								case Cell.CELL_TYPE_STRING:
+									if (cell.getStringCellValue() != null)
+										map.put(i, cell.getStringCellValue());
+									break;
+								case Cell.CELL_TYPE_NUMERIC:
+									if (i == 2 && cell.getDateCellValue() != null)
+										map.put(i, cell.getDateCellValue());
+									else
+										map.put(i, cell.getNumericCellValue());
+									break;
+								case Cell.CELL_TYPE_BOOLEAN:
+
+									map.put(i, cell.getBooleanCellValue());
+									break;
+
+								default:
+									if (cell.getDateCellValue() != null)
+										map.put(i, cell.getDateCellValue());
+									break;
+								}
+
+								// if (cell.getStringCellValue() != null)
+								// map.put(i, cell.getStringCellValue());
+								// else if (cell.getDateCellValue() != null)
+								// map.put(i, cell.getDateCellValue());
+								// else {
+								// try {
+								// double d = cell.getNumericCellValue();
+								// map.put(i, d);
+								// } catch (Exception e) {
+								// try {
+								// boolean b = cell.getBooleanCellValue();
+								// map.put(i, b);
+								// } catch (Exception e2) {
+								//
+								// }
+								// }
+								// }
+							}
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+
+					}
+					if (zaman != null)
+						map.put(-1, zaman);
+					if (!map.isEmpty())
+						dataMap.put(sira, map);
+					else
+						map = null;
 
 				}
 			} catch (Exception e) {
@@ -228,18 +290,34 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 				logger.error("PDKS hata out : " + e.getMessage());
 			}
 		}
-		if (!veriMap.isEmpty()) {
-			List dataIdList = new ArrayList(veriMap.keySet());
+		if (!dataMap.isEmpty()) {
+			List<Long> dataIdList = new ArrayList(dataMap.keySet());
+			List<String> perNoList = new ArrayList(perMap.keySet());
 			String fieldName = "pdksSicilNo";
 			HashMap parametreMap = new HashMap();
-			parametreMap.put("pdksSicilNo", dataIdList);
+			parametreMap.put("pdksSicilNo", perNoList);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_MAP, "getPdksSicilNo");
 			// parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			// TreeMap<String, Personel> personelMap = pdksEntityController.getObjectByInnerObjectMap(parametreMap, Personel.class, false);
-			TreeMap<String, Personel> personelMap = ortakIslemler.getParamTreeMap(Boolean.FALSE, "getPdksSicilNo", false, dataIdList, fieldName, parametreMap, Personel.class, session);
+			TreeMap<String, Personel> personelMap = ortakIslemler.getParamTreeMap(Boolean.FALSE, "getPdksSicilNo", false, perNoList, fieldName, parametreMap, Personel.class, session);
 			List<Personel> list = new ArrayList<Personel>();
-			for (String pdksSicilNo : veriMap.keySet()) {
+			HashMap<Long, KapiView> map1 = new HashMap<Long, KapiView>();
+			for (SelectItem st : kapiList) {
+				KapiView kapiView = new KapiView();
+				kapiView.setId((Long) st.getValue());
+				kapiView.setKapiAciklama(st.getLabel());
+				map1.put(kapiView.getId(), kapiView);
+
+			}
+			for (Long sira : dataIdList) {
+				HashMap<Integer, Object> map = dataMap.get(sira);
+				String pdksSicilNo = null;
+				try {
+					pdksSicilNo = (String) map.get(0);
+				} catch (Exception e) {
+					pdksSicilNo = "";
+				}
 				Personel personel = personelMap.containsKey(pdksSicilNo) ? personelMap.get(pdksSicilNo) : new Personel();
 				if (personel.getId() == null) {
 					personel.setAd(perMap.get(pdksSicilNo));
@@ -247,16 +325,58 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 					personel.setPdksSicilNo(pdksSicilNo);
 					list.add(personel);
 				} else {
-					Date zaman = veriMap.get(pdksSicilNo), vardiyaDate = null;
-					if (zaman == null) {
+					Date tarih = map.containsKey(2) ? (Date) map.get(2) : null, zaman = map.containsKey(-1) ? (Date) map.get(-1) : null, vardiyaDate = null;
+					if (tarih == null) {
 						vardiyaDate = zamanGuncelle();
 					} else {
-						vardiyaDate = PdksUtil.setTarih(tarih, Calendar.HOUR_OF_DAY, PdksUtil.getDateField(zaman, Calendar.HOUR_OF_DAY));
-						vardiyaDate = PdksUtil.setTarih(vardiyaDate, Calendar.MINUTE, PdksUtil.getDateField(zaman, Calendar.MINUTE));
-						vardiyaDate = PdksUtil.setTarih(vardiyaDate, Calendar.SECOND, 0);
-						vardiyaDate = PdksUtil.setTarih(vardiyaDate, Calendar.MILLISECOND, 0);
+						if (zaman == null) {
+							vardiyaDate = PdksUtil.setTarih(tarih, Calendar.HOUR_OF_DAY, PdksUtil.getDateField(zaman, Calendar.HOUR_OF_DAY));
+							vardiyaDate = PdksUtil.setTarih(vardiyaDate, Calendar.MINUTE, PdksUtil.getDateField(zaman, Calendar.MINUTE));
+							vardiyaDate = PdksUtil.setTarih(vardiyaDate, Calendar.SECOND, 0);
+							vardiyaDate = PdksUtil.setTarih(vardiyaDate, Calendar.MILLISECOND, 0);
+						} else
+							vardiyaDate = tarih;
+
 					}
-					vardiyaGunleri.add(new VardiyaGun(personel, null, vardiyaDate));
+					VardiyaGun vg = new VardiyaGun(personel, null, vardiyaDate);
+					Long kapi = null;
+					if (map.containsKey(3)) {
+						try {
+							if (map.get(3) instanceof Double) {
+								Double veri = (Double) map.get(3);
+
+								for (SelectItem st : kapiList) {
+									if (st.getValue().equals(veri.longValue()))
+										kapi = veri.longValue();
+
+								}
+								if (kapi != null)
+									vg.setId(kapi);
+							}
+						} catch (Exception e) {
+
+						}
+					} else
+						kapi = kapiId;
+					if (kapi != null && map1.containsKey(kapi)) {
+						HareketKGS hareketKGS = new HareketKGS();
+						hareketKGS.setKapiId(kapi);
+						hareketKGS.setKapiView(map1.get(kapi));
+						hareketKGS.setZaman(vardiyaDate);
+						vg.setIlkGiris(hareketKGS);
+					}
+
+					if (map.containsKey(4)) {
+						try {
+							if (map.get(4) instanceof String) {
+								String veri = (String) map.get(4);
+								vg.setVardiyaKisaAciklama(veri);
+							}
+						} catch (Exception e) {
+
+						}
+					}
+					vardiyaGunleri.add(vg);
 				}
 			}
 			dosyaTamam = list.isEmpty();
@@ -337,9 +457,11 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 		String formatStr = "yyyy-MM-dd HH:mm";
 		Date bugun = Calendar.getInstance().getTime();
 		boolean hareketTarihKontrol = ortakIslemler.getParameterKeyHasStringValue("hareketTarihKontrol");
+
 		for (Iterator iterator1 = vardiyaGunleri.iterator(); iterator1.hasNext();) {
 			VardiyaGun vg = (VardiyaGun) iterator1.next();
-			Date zaman = vg.getVardiyaDate();
+			HareketKGS hareketKGS = vg.getIlkGiris();
+			Date zaman = hareketKGS.getZaman();
 			String zamanStr = PdksUtil.convertToDateString(zaman, formatStr);
 			if (PdksUtil.getCanliSunucuDurum() && !(hareketTarihKontrol && bugun.after(tarih)))
 				continue;
@@ -354,8 +476,14 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 				iterator2.remove();
 
 			}
-			if (yaz)
-				pdksEntityController.hareketEkle(kapiView, personel.getPersonelView(), zaman, authenticatedUser, hareketler.getIslem().getNeden().getId(), hareketler.getIslem().getAciklama(), session);
+			if (yaz) {
+				String nedenAciklama = PdksUtil.hasStringValue(vg.getVardiyaKisaAciklama()) ? vg.getVardiyaKisaAciklama() : hareketler.getIslem().getAciklama();
+
+				KapiView kv = hareketKGS.getKapiView();
+
+				pdksEntityController.hareketEkle(kv, personel.getPersonelView(), hareketKGS.getZaman(), authenticatedUser, hareketler.getIslem().getNeden().getId(), nedenAciklama, session);
+
+			}
 
 		}
 		session.flush();

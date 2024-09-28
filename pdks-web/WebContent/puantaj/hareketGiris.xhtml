@@ -124,13 +124,19 @@
 							<h:outputText value="#{vg.personel.pdksYonetici.adSoyad}" title="#{vg.personel.asilYonetici1.adSoyad}" />
 						</rich:column>
 
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Kapı" />
+							</f:facet>
+							<h:outputText value="#{vg.ilkGiris.kapiView.kapiAciklama}" />
+						</rich:column>
 
 
 						<rich:column>
 							<f:facet name="header">
 								<h:outputText value="Zaman" />
 							</f:facet>
-							<h:outputText value="#{authenticatedUser.dateTimeFormatla(vg.vardiyaDate)}" />
+							<h:outputText value="#{authenticatedUser.dateTimeFormatla(vg.ilkGiris.zaman)}" />
 						</rich:column>
 
 
