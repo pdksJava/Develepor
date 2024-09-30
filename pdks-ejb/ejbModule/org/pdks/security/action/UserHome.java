@@ -221,6 +221,8 @@ public class UserHome extends EntityHome<User> implements Serializable {
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String username = (String) req.getParameter("username");
 		if (PdksUtil.hasStringValue(username)) {
+			if (username.indexOf("@") > 1)
+				username = PdksUtil.getInternetAdres(username);
 			HashMap fields = new HashMap();
 			fields.put("username", username);
 			if (session != null)
