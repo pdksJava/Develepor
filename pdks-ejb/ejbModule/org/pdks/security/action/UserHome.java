@@ -221,6 +221,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String username = (String) req.getParameter("username");
 		if (PdksUtil.hasStringValue(username)) {
+
 			if (username.indexOf("@") > 1)
 				username = PdksUtil.getInternetAdres(username);
 			HashMap fields = new HashMap();
@@ -231,6 +232,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 			if (user != null) {
 				if (user.isDurum()) {
 					if (user.getPdksPersonel().isCalisiyor()) {
+
 						MailObject mailObject = new MailObject();
 						MailPersonel mp = new MailPersonel();
 						mp.setAdiSoyadi(user.getAdSoyad());
@@ -314,8 +316,16 @@ public class UserHome extends EntityHome<User> implements Serializable {
 				Date tarih = null;
 				if (param.containsKey("tarih"))
 					tarih = new Date(Long.parseLong(param.get("tarih")));
-
-				if (tarih == null || PdksUtil.addTarih(tarih, Calendar.MINUTE, 5).before(new Date())) {
+				String sifreUnuttum = ortakIslemler.getParameterKey("sifreUnuttum");
+				Integer dakika = null;
+				try {
+					dakika = Integer.parseInt(sifreUnuttum);
+				} catch (Exception e) {
+					dakika = -1;
+				}
+				if (dakika < 1)
+					dakika = 5;
+				if (tarih == null || PdksUtil.addTarih(tarih, Calendar.MINUTE, dakika).before(new Date())) {
 					PdksUtil.addMessageAvailableWarn("Link geçersizdir");
 					sayfa = MenuItemConstant.login;
 				} else if (param.containsKey("userId")) {
