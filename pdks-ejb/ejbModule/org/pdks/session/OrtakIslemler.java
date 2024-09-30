@@ -15725,6 +15725,7 @@ public class OrtakIslemler implements Serializable {
 							if (pdksIzinTarihKontrolTarihi != null && pdksIzinTarihKontrolTarihi.getTime() <= pdksVardiyaGun.getVardiyaDate().getTime())
 								izinTarihKontrolTarihi = pdksVardiyaGun.getVardiyaDate();
 							String key = pdksVardiyaGun.getVardiyaDateStr();
+
 							if (calismaModeli == null) {
 								calismaModeli = pdksVardiyaGun.getCalismaModeli();
 								if (calismaModeli == null)
@@ -15745,6 +15746,7 @@ public class OrtakIslemler implements Serializable {
 							boolean arifeGunu = false;
 							Vardiya vardiyaIzin = pdksVardiyaGun.getVardiya();
 							if (personelDenklestirme != null && personelDenklestirme.getCalismaModeliAy() != null) {
+								pdksVardiyaGun.setCalismaModeli(personelDenklestirme.getCalismaModeliAy().getCalismaModeli());
 								CalismaModeli calismaModeliAy = pdksVardiyaGun.getCalismaModeli() != null ? pdksVardiyaGun.getCalismaModeli() : personelDenklestirme.getCalismaModeli();
 								izinSaat = pdksVardiyaGun.isIzinli() ? calismaModeliAy.getIzinSaat(pdksVardiyaGun) : 0.0d;
 								if (pdksVardiyaGun.isIzinli() && personelDenklestirme != null && calismaModeli.isHaftaTatilSabitDegil()) {
@@ -16146,8 +16148,7 @@ public class OrtakIslemler implements Serializable {
 							// logger.info(izinSuresi + " " + vardiyasizSure);
 						}
 						if (haftalikIzinSuresi > gunduzCalismaSaat) {
-							// logger.info(izinSuresi + " " +
-							// haftalikIzinSuresi);
+							// logger.info(izinSuresi + " " + haftalikIzinSuresi);
 							izinSuresi -= haftalikIzinSuresi - gunduzCalismaSaat;
 
 						}
