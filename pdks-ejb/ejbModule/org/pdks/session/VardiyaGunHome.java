@@ -1679,7 +1679,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					istenAyrilmaTarihi = vardiyaGun.getPersonel().getSonCalismaTarihi();
 				if (vardiyaGun.getVardiya().isHaftaTatil()) {
 					if (haftaTatil) {
-						yaz = Boolean.FALSE;
+						if (authenticatedUser.isIK() == false)
+							yaz = Boolean.FALSE;
 						sb.append("Arka arkaya hafta tatili olamaz! ");
 					}
 					haftaTatil = Boolean.TRUE;
