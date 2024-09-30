@@ -19566,6 +19566,14 @@ public class OrtakIslemler implements Serializable {
 								yoneticiUserClone.setAd(aylikPuantaj.getYonetici().getAdSoyad());
 								yonetici1 = yoneticiUserClone;
 							}
+							if (authenticatedUser.isIK() && aylikPuantaj.getYonetici() != null) {
+								if (yonetici1 == null || yonetici1.getId() == null) {
+									yonetici1 = (Personel) aylikPuantaj.getYonetici().clone();
+									yonetici1.setAd(aylikPuantaj.getYonetici().getAdSoyad());
+									yonetici1.setSoyad("Kullanıcı Tanımsız");
+								}
+
+							}
 							aylikPuantaj.setYonetici(yonetici1);
 						}
 					}
