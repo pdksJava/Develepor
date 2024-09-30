@@ -253,23 +253,6 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 									break;
 								}
 
-								// if (cell.getStringCellValue() != null)
-								// map.put(i, cell.getStringCellValue());
-								// else if (cell.getDateCellValue() != null)
-								// map.put(i, cell.getDateCellValue());
-								// else {
-								// try {
-								// double d = cell.getNumericCellValue();
-								// map.put(i, d);
-								// } catch (Exception e) {
-								// try {
-								// boolean b = cell.getBooleanCellValue();
-								// map.put(i, b);
-								// } catch (Exception e2) {
-								//
-								// }
-								// }
-								// }
 							}
 						} catch (Exception e) {
 							// TODO: handle exception
@@ -295,12 +278,12 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 			List<String> perNoList = new ArrayList(perMap.keySet());
 			String fieldName = "pdksSicilNo";
 			HashMap parametreMap = new HashMap();
-			parametreMap.put("pdksSicilNo", perNoList);
+			parametreMap.put("kgsSicilNo", perNoList);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_MAP, "getPdksSicilNo");
 			// parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			// TreeMap<String, Personel> personelMap = pdksEntityController.getObjectByInnerObjectMap(parametreMap, Personel.class, false);
-			TreeMap<String, Personel> personelMap = ortakIslemler.getParamTreeMap(Boolean.FALSE, "getPdksSicilNo", false, perNoList, fieldName, parametreMap, Personel.class, session);
+			TreeMap<String, PersonelView> personelMap = ortakIslemler.getParamTreeMap(Boolean.FALSE, "getKgsSicilNo", false, perNoList, fieldName, parametreMap, PersonelView.class, session);
 			List<Personel> list = new ArrayList<Personel>();
 			HashMap<Long, KapiView> map1 = new HashMap<Long, KapiView>();
 			for (SelectItem st : kapiList) {
@@ -318,7 +301,9 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 				} catch (Exception e) {
 					pdksSicilNo = "";
 				}
-				Personel personel = personelMap.containsKey(pdksSicilNo) ? personelMap.get(pdksSicilNo) : new Personel();
+				Personel personel = personelMap.containsKey(pdksSicilNo) ? personelMap.get(pdksSicilNo).getPdksPersonel() : null;
+				if (personel == null)
+					personel = new Personel();
 				if (personel.getId() == null) {
 					personel.setAd(perMap.get(pdksSicilNo));
 					personel.setSoyad("");
