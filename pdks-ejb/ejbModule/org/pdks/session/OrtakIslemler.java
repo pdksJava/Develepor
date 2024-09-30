@@ -5505,7 +5505,7 @@ public class OrtakIslemler implements Serializable {
 							}
 						}
 					}
-					if (update && changeDate != null) {
+					if (guncellemeDurum && update && changeDate != null) {
 						Parameter parameter = getParameter(session, parameterName);
 						if (parameter != null) {
 							parameter.setChangeDate(changeDate);

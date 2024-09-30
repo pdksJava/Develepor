@@ -1360,14 +1360,23 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (personelERPGuncelleme != null && personelERPGuncelleme.equalsIgnoreCase("E"))
 			erpVeriGuncelle(personelView, personel, Boolean.TRUE);
 		else if (ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametrePersonelERPTableView())) {
-			if (personel != null && PdksUtil.hasStringValue(personel.getPdksSicilNo())) {
+			String sicilNo = personel != null && personel.getId() != null ? personel.getPdksSicilNo() : personelView.getSicilNo();
+			if (sicilNo != null && PdksUtil.hasStringValue(sicilNo)) {
 				List<String> list = new ArrayList<String>();
-				list.add(personelView.getPdksPersonel().getPdksSicilNo());
+				list.add(sicilNo);
 				List<PersonelERP> updateList = ortakIslemler.personelERPDBGuncelle(false, list, session);
 				if (updateList != null) {
 					if (updateList.isEmpty()) {
 						fillPersonelKGSList();
-						PdksUtil.addMessageInfo(personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " güncellendi");
+						PdksUtil.addMessageInfo(sicilNo + " " + personelView.getAdSoyad() + " güncellendi");
+					} else if (updateList.size() == 1) {
+						PersonelERP personelERP = updateList.get(0);
+						if (!personelERP.getHataList().isEmpty()) {
+							for (String mesaj : personelERP.getHataList()) {
+								PdksUtil.addMessageAvailableWarn(sicilNo + " " + personelView.getAdSoyad() + " --> " + mesaj);
+
+							}
+						}
 					}
 				}
 			}
@@ -2548,7 +2557,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			ortakIslemler.loggerErrorYaz(null, ex);
 		}
 		setTanimsizPersonelList(list);
-		yeniPersonelOlustur();
+		yeniPersonelOlustur(true);
 		return "";
 	}
 
@@ -2813,7 +2822,21 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			gebeSutIzniDurumList.clear();
 		dosyaGuncelleDurum();
 		setTanimsizPersonelList(list);
-		yeniPersonelOlustur();
+		List<String> yeniList = yeniPersonelOlustur(false);
+		if (yeniList != null && !tanimsizPersonelList.isEmpty()) {
+			List<PersonelView> eskiList = new ArrayList<PersonelView>();
+			for (Iterator iterator = tanimsizPersonelList.iterator(); iterator.hasNext();) {
+				PersonelView pw = (PersonelView) iterator.next();
+				pw.setYeniPersonel(yeniList.contains(pw.getSicilNo()));
+				if (pw.isYeniPersonelMi() == false) {
+					eskiList.add(pw);
+					iterator.remove();
+				}
+			}
+			if (!eskiList.isEmpty())
+				tanimsizPersonelList.addAll(eskiList);
+			eskiList = null;
+		}
 		return "";
 	}
 
@@ -3258,7 +3281,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if ((authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()))
 			updateValue = tableERPOku || ortakIslemler.getParameterKeyHasStringValue(PersonelERPGuncelleme.PARAMETER_KEY + "Update");
 		dosyaGuncelleDurum();
-		yeniPersonelOlustur();
+		yeniPersonelOlustur(true);
 
 	}
 
@@ -3281,7 +3304,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public String personelERPDBGuncelle() throws Exception {
 		try {
 			ortakIslemler.personelERPDBGuncelle(true, null, session);
-			yeniPersonelOlustur();
+			yeniPersonelOlustur(true);
 		} catch (Exception ex) {
 			try {
 				ortakIslemler.loggerErrorYaz(authenticatedUser.getCalistigiSayfa(), ex);
@@ -3295,11 +3318,13 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	}
 
 	/**
-	 * 
+	 * @param organizasyonDurum
+	 * @return
 	 */
-	private void yeniPersonelOlustur() {
+	public List<String> yeniPersonelOlustur(boolean organizasyonDurum) {
 		yeniPersonelGuncelle = Boolean.FALSE;
 		String key = ortakIslemler.getParametrePersonelERPTableView();
+		List<String> list = null;
 		if (ortakIslemler.getParameterKeyHasStringValue(key)) {
 			StringBuffer sb = new StringBuffer();
 			sb.append(" SELECT PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " FROM " + PersonelERPDB.VIEW_NAME + " D WITH(nolock) ");
@@ -3313,11 +3338,14 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			HashMap fields = new HashMap();
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<String> list = pdksEntityController.getObjectBySQLList(sb, fields, null);
+			list = pdksEntityController.getObjectBySQLList(sb, fields, null);
 			yeniPersonelGuncelle = !list.isEmpty();
-			list = null;
+			if (organizasyonDurum || yeniPersonelGuncelle == false)
+				list = null;
 		}
+
 		organizasyonDurumSorgula();
+		return list;
 	}
 
 	/**

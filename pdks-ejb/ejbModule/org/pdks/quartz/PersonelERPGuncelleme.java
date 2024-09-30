@@ -106,7 +106,7 @@ public class PersonelERPGuncelleme implements Serializable {
 					parameter = ortakIslemler.getParameter(session, PARAMETER_KEY);
 					String value = (parameter != null) ? parameter.getValue() : null;
 					hataKonum = "Paramatre okundu ";
-					guncellemeDBDurum = false;
+					 
 					String personelERPTableViewAdi = ortakIslemler.getParameterKey(ortakIslemler.getParametrePersonelERPTableView());
 					boolean tableERPOku = PdksUtil.hasStringValue(personelERPTableViewAdi);
 					if (value != null || tableERPOku) {

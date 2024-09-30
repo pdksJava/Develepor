@@ -109,8 +109,8 @@
 												</a4j:commandLink> <rich:toolTip for="editGebeGiris">Gebe/Süt İzin</rich:toolTip></TD>
 										</ui:fragment>
 										<TD><ui:fragment
-												rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametrePersonelERPTableView) or pdksPersonelHome.personelERPGuncelleme=='E'}">
-												<a4j:commandButton status="ajaxStatus" id="editERPLink" image="/img/left_16.png" rendered="#{personelView.pdksPersonel.sirket.erp==true}"
+												rendered="#{ ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametrePersonelERPTableView) or pdksPersonelHome.personelERPGuncelleme=='E'}">
+												<a4j:commandButton status="ajaxStatus" id="editERPLink" image="/img/left_16.png" rendered="#{personelView.yeniPersonelMi or personelView.pdksPersonel.sirket.erp==true}"
 													action="#{pdksPersonelHome.kayitERPGuncelle(personelView)}" reRender="pdksPersonelList" ajaxSingle="true" />
 												<rich:toolTip for="editERPLink">#{ortakIslemler.getParameterKey('uygulamaBordro')} Güncelle #{personelView.pdksPersonel.pdksSicilNo}</rich:toolTip>
 											</ui:fragment></TD>

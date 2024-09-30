@@ -48,7 +48,8 @@ public class PersonelView implements Serializable {
 	private String pdksPersonelAciklama, kgsSicilNo, ccAdres, bccAdres, hareketAdres;
 	private List<PersonelView> altPersoneller;
 	private Long pdksPersonelId, kullaniciId;
-	private Boolean durum, organizasyonDurum;
+
+	private Boolean durum, organizasyonDurum, yeniPersonel;
 
 	private Personel yonetici1, yonetici2;
 	private PersonelView ustPersonelView;
@@ -186,7 +187,7 @@ public class PersonelView implements Serializable {
 
 	@Transient
 	public String getAdSoyad() {
-		String adiSoyad = pdksPersonel != null && pdksPersonel.getId() != null ? pdksPersonel.getAdSoyad() : personelKGS.getAdSoyad();
+		String adiSoyad = pdksPersonel != null && pdksPersonel.getId() != null ? pdksPersonel.getAdSoyad() : (personelKGS != null ? personelKGS.getAdSoyad() : "");
 		return adiSoyad;
 	}
 
@@ -333,4 +334,17 @@ public class PersonelView implements Serializable {
 
 	}
 
+	@Transient
+	public Boolean getYeniPersonel() {
+		return yeniPersonel;
+	}
+
+	public void setYeniPersonel(Boolean yeniPersonel) {
+		this.yeniPersonel = yeniPersonel;
+	}
+
+	@Transient
+	public boolean isYeniPersonelMi() {
+		return yeniPersonel != null && yeniPersonel.booleanValue();
+	}
 }
