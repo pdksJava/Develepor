@@ -1717,6 +1717,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							vardiyaGun.setOnayli(Boolean.TRUE);
 							vardiyaGun.setHataliDurum(Boolean.FALSE);
 							vardiyaGun.setPersonel(puantaj.getPdksPersonel());
+							vardiyaGun.setCalismaModeli(puantaj.getCalismaModeli());
 							vardiyaGun.setFiiliHesapla(fazlaMesaiHesapla);
 
 							if (vardiyaGun.getVardiya() != null && vardiyaGun.getVardiyaDate().getTime() >= puantaj.getIlkGun().getTime() && vardiyaGun.getVardiyaDate().getTime() <= puantaj.getSonGun().getTime()) {
