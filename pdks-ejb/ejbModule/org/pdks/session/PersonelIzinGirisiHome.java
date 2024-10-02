@@ -624,7 +624,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				perNoList.add(sicilNo.trim());
 		}
 		if (parametreMap.isEmpty()) {
-			sb.append(" INNER JOIN " + PersonelKGS.TABLE_NAME + " K ON K." + PersonelKGS.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_KGS_PERSONEL);
+			sb.append(" INNER JOIN " + PersonelKGS.TABLE_NAME + " K WITH(nolock) ON K." + PersonelKGS.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_KGS_PERSONEL);
 			sb.append(" AND K." + PersonelKGS.COLUMN_NAME_SICIL_NO + " :kSicilNo");
 			parametreMap.put("kSicilNo", perNoList);
 		}
@@ -1562,7 +1562,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		HashMap parametreMap = new HashMap();
 		StringBuffer builder = new StringBuffer();
 		builder.append("SELECT  I.ONAY_ID  FROM  dbo.ONAY_BEKLEYEN_IZIN_VIEW I WITH(nolock)  ");
-		builder.append(" INNER JOIN " + PersonelIzinOnay.TABLE_NAME + " O ON O." + PersonelIzinOnay.COLUMN_NAME_ID + " = I.ONAY_ID ");
+		builder.append(" INNER JOIN " + PersonelIzinOnay.TABLE_NAME + " O WITH(nolock) ON O." + PersonelIzinOnay.COLUMN_NAME_ID + " = I.ONAY_ID ");
 		if (mailIzin != null && mailIzin.getId() != null) {
 			builder.append(" AND O." + PersonelIzinOnay.COLUMN_NAME_PERSONEL_IZIN_ID + " = :izinId");
 			parametreMap.put("izinId", mailIzin.getId());
@@ -1577,7 +1577,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		if (authenticatedUser.isIK() && mailIzin == null) {
 			builder.append(" UNION   ");
 			builder.append("  SELECT  I.ONAY_ID  FROM  dbo.ONAY_BEKLEYEN_IZIN_VIEW I WITH(nolock)  ");
-			builder.append(" INNER JOIN " + PersonelIzinOnay.TABLE_NAME + " O ON O." + PersonelIzinOnay.COLUMN_NAME_ID + " = I.ONAY_ID ");
+			builder.append(" INNER JOIN " + PersonelIzinOnay.TABLE_NAME + " O WITH(nolock) ON O." + PersonelIzinOnay.COLUMN_NAME_ID + " = I.ONAY_ID ");
 			builder.append(" where  KULLANICI_DURUM=0 AND IZIN_DURUMU IN (1,2) AND DEPARTMAN_ID=:departmanId ");
 			builder.append(" AND I.BASLANGIC_ZAMANI<=:bitDate1  AND I.BITIS_ZAMANI>=:basDate1 ");
 			parametreMap.put("bitDate1", bitDate);
@@ -2455,7 +2455,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					sb = new StringBuffer();
 					sb.append("SELECT DISTINCT P.* FROM " + IzinTipi.TABLE_NAME + " P WITH(nolock)");
 					if (isGirisSSK()) {
-						sb.append(" INNER JOIN " + Tanim.TABLE_NAME + " T ON T." + Tanim.COLUMN_NAME_ID + " = P." + IzinTipi.COLUMN_NAME_IZIN_TIPI);
+						sb.append(" INNER JOIN " + Tanim.TABLE_NAME + " T WITH(nolock) ON T." + Tanim.COLUMN_NAME_ID + " = P." + IzinTipi.COLUMN_NAME_IZIN_TIPI);
 						sb.append(" AND T." + Tanim.COLUMN_NAME_TIPI + " = :tipi AND T." + Tanim.COLUMN_NAME_KODU + " like '%I%'");
 						paramMap.put("tipi", Tanim.TIPI_IZIN_TIPI);
 						// paramMap.put("kodu", IzinTipi.SSK_ISTIRAHAT);
@@ -2651,8 +2651,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		sb.append("	 WHERE " + DenklestirmeAy.COLUMN_NAME_DURUM + " = 0");
 		sb.append(" ) ");
 		sb.append(" SELECT  PD.* FROM  DENKAY D WITH(nolock) ");
-		sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P ON  P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :p ");
-		sb.append(" INNER JOIN " + PersonelDenklestirme.TABLE_NAME + " PD ON P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " AND PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
+		sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P WITH(nolock) ON  P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :p ");
+		sb.append(" INNER JOIN " + PersonelDenklestirme.TABLE_NAME + " PD WITH(nolock) ON P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " AND PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
 		sb.append(" AND PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 ");
 		sb.append(" WHERE D.DONEM>=:d1 AND  D.DONEM<=:d2 ");
 		sb.append(" ORDER BY D.DONEM");

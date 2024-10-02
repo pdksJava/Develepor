@@ -614,6 +614,8 @@ public class HareketKGS implements Serializable, Cloneable {
 	}
 
 	public void setIslemYapan(String islemYapan) {
+		if (id.equals("A6865"))
+			logger.debug(islemYapan);
 		this.islemYapan = islemYapan;
 	}
 

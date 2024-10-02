@@ -81,7 +81,7 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		admin = authenticatedUser.isAdmin();
 		fillParameterList();
 	}
@@ -176,10 +176,7 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 			if (skin.getValue().equals(skinKodu)) {
 				SkinBean.setSkinKodu(skinKodu);
 				SkinBean.setSkinAdi(skin.getLabel());
-				HashMap fields = new HashMap();
-				fields.put("name", "skin");
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				Parameter skinParameter = (Parameter) pdksEntityController.getObjectByInnerObject(fields, Parameter.class);
+				Parameter skinParameter = ortakIslemler.getParameter(session, "skin");
 				try {
 					if (skinParameter != null) {
 						skinParameter.setValue(skin.getLabel());
@@ -216,17 +213,29 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 		}
 
 		HashMap parametreMap = new HashMap();
-		if (!authenticatedUser.isAdmin()) {
-			parametreMap.put("guncelle", Boolean.TRUE);
-			parametreMap.put("helpDesk", Boolean.FALSE);
-		}
-		// if (pasifGoster == null || pasifGoster.equals(Boolean.FALSE))
-		// parametreMap.put("active", Boolean.TRUE);
+		// if (!authenticatedUser.isAdmin()) {
+		// parametreMap.put("guncelle", Boolean.TRUE);
+		// parametreMap.put("helpDesk", Boolean.FALSE);
+		// }
+		//
+
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 
 		helpDesk = false;
-		List<Parameter> list = pdksEntityController.getObjectByInnerObjectList(parametreMap, Parameter.class);
+		// List<Parameter> list = pdksEntityController.getObjectByInnerObjectList(parametreMap, Parameter.class);
+		//
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT   T.* FROM " + Parameter.TABLE_NAME + " T WITH(nolock) ");
+		if (!authenticatedUser.isAdmin()) {
+			sb.append(" WHERE T." + Parameter.COLUMN_NAME_GUNCELLE + " = 1 AND T." + Parameter.COLUMN_NAME_HELP_DESK + " = 0 ");
+
+		}
+
+		if (session != null)
+			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<Parameter> list = pdksEntityController.getObjectBySQLList(sb, parametreMap, Parameter.class);
+
 		list = PdksUtil.sortListByAlanAdi(list, "id", admin);
 		if (authenticatedUser.isAdmin()) {
 			List<Parameter> aktifList = new ArrayList<Parameter>(), pasifList = new ArrayList<Parameter>();

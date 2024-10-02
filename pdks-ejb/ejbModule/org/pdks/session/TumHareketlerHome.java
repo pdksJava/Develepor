@@ -448,7 +448,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 			if ((personelId == null || personelId.isEmpty()) && (sirketId != null || departmanId != null)) {
 				sb = new StringBuffer();
 				sb.append("SELECT  V.* FROM " + PdksPersonelView.TABLE_NAME + " V WITH(nolock) ");
-				sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P ON P." + Personel.COLUMN_NAME_ID + " = V." + PdksPersonelView.COLUMN_NAME_PERSONEL);
+				sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P WITH(nolock) ON P." + Personel.COLUMN_NAME_ID + " = V." + PdksPersonelView.COLUMN_NAME_PERSONEL);
 				if (!admin) {
 					sb.append(" AND  P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :ys");
 					ArrayList<String> list = authenticatedUser.getYetkiTumPersonelNoList();
@@ -462,7 +462,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 						sb.append(" AND  P." + Personel.COLUMN_NAME_SIRKET + " = :sirketId");
 						parametreMap.put("sirketId", sirketId);
 					} else if (departmanId != null) {
-						sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S ON S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
+						sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S WITH(nolock) ON S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
 						sb.append(" AND  S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :departmanId");
 						parametreMap.put("departmanId", departmanId);
 					}
@@ -665,7 +665,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					parametreMap.clear();
 					sb = new StringBuffer();
 					sb.append("SELECT P.ISLEM_ID,HAREKET_ZAMANI from PDKS_LOG P WITH(nolock) ");
-					sb.append(" INNER JOIN PDKS_ISLEM I ON I.ID=P.ISLEM_ID AND I.ISLEM_TIPI='U' ");
+					sb.append(" INNER JOIN PDKS_ISLEM I WITH(nolock) ON I.ID=P.ISLEM_ID AND I.ISLEM_TIPI='U' ");
 
 					sb.append(" WHERE P.ISLEM_ID :" + fieldName + " AND P.DURUM=0 ");
 					parametreMap.put(fieldName, islemIdler);

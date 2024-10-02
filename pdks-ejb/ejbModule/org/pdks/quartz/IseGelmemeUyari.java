@@ -1890,7 +1890,7 @@ public class IseGelmemeUyari implements Serializable {
 			sb.append("		WHERE R." + Role.COLUMN_NAME_ROLE_NAME + " = '" + Role.TIPI_DIREKTOR_SUPER_VISOR + "' AND R." + Role.COLUMN_NAME_STATUS + " = 1 ");
 			sb.append("	) ");
 			sb.append("	SELECT COALESCE(DY.DEP_YONETICI_ROL_ADI,'') DEP_YONETICI_ROL_ADI, GETDATE() AS TARIH FROM BUGUN B ");
-			sb.append("	LEFT JOIN DEP_YONETICI DY ON 1=1");
+			sb.append("	LEFT JOIN DEP_YONETICI DY WITH(nolock) ON 1=1");
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<Object[]> veriList = pdksEntityController.getObjectBySQLList(sb, fields, null);

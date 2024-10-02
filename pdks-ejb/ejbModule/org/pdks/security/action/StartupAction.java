@@ -414,10 +414,14 @@ public class StartupAction implements Serializable {
 		List<Parameter> parameterList = null;
 		parameterMap.clear();
 		try {
-			// fields.put("active", Boolean.TRUE);
+
+			StringBuffer sb = new StringBuffer();
+			sb.append("SELECT   T.* FROM " + Parameter.TABLE_NAME + " T WITH(nolock) ");
+
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			parameterList = (ArrayList<Parameter>) pdksEntityController.getObjectByInnerObjectList(fields, Parameter.class);
+			parameterList = pdksEntityController.getObjectBySQLList(sb, fields, Parameter.class);
+
 		} catch (Exception e) {
 			logger.error("PDKS hata out : " + e.getMessage());
 			parameterList = new ArrayList<Parameter>();
