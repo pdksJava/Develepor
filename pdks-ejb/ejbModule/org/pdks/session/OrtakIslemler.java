@@ -5220,18 +5220,39 @@ public class OrtakIslemler implements Serializable {
 		String lastParameterValue = getParameterKey("lastParameterValue");
 		if (key != null && (authenticatedUser.isAdmin() || lastParameterValue.equals("1"))) {
 			try {
-				HashMap parametreMap = new HashMap();
+
 				StringBuffer sb = new StringBuffer();
-				sb.append("SELECT I." + UserMenuItemTime.COLUMN_NAME_ID + ",M." + MenuItem.COLUMN_NAME_ID + " AS MENU_ID,I." + UserMenuItemTime.COLUMN_NAME_LAST_PARAMETRE + " FROM " + User.TABLE_NAME + " U WITH(nolock) ");
-				sb.append(" INNER JOIN " + MenuItem.TABLE_NAME + " M ON M." + MenuItem.COLUMN_NAME_ADI + " = :a ");
-				sb.append(" LEFT JOIN " + UserMenuItemTime.TABLE_NAME + " I ON I." + UserMenuItemTime.COLUMN_NAME_USER + " = U." + User.COLUMN_NAME_ID);
-				sb.append(" AND I." + UserMenuItemTime.COLUMN_NAME_MENU + " = M." + MenuItem.COLUMN_NAME_ID);
-				sb.append(" WHERE U." + User.COLUMN_NAME_ID + " = :u");
-				parametreMap.put("a", key);
-				parametreMap.put("u", authenticatedUser.getId());
-				if (session != null)
-					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<Object[]> veriler = pdksEntityController.getObjectBySQLList(sb, parametreMap, null);
+				HashMap parametreMap = new HashMap();
+				List<Object[]> veriler = null;
+				try {
+					String name = "SP_GET_USER_MENU";
+					if (isExisStoreProcedure(name, session)) {
+						sb = new StringBuffer();
+						sb.append(name);
+						LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
+						fields.put("menuAdi", key);
+						fields.put("userName", authenticatedUser.getId());
+						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+						veriler = pdksEntityController.execSPList(fields, sb, null);
+					}
+
+				} catch (Exception e) {
+
+				}
+
+				if (veriler == null) {
+					sb = new StringBuffer();
+					sb.append("SELECT I." + UserMenuItemTime.COLUMN_NAME_ID + ",M." + MenuItem.COLUMN_NAME_ID + " AS MENU_ID,I." + UserMenuItemTime.COLUMN_NAME_LAST_PARAMETRE + " FROM " + User.TABLE_NAME + " U WITH(nolock) ");
+					sb.append(" INNER JOIN " + MenuItem.TABLE_NAME + " M  WITH(nolock) ON M." + MenuItem.COLUMN_NAME_ADI + " = :a ");
+					sb.append(" LEFT JOIN " + UserMenuItemTime.TABLE_NAME + " I WITH(nolock) ON I." + UserMenuItemTime.COLUMN_NAME_USER + " = U." + User.COLUMN_NAME_ID);
+					sb.append(" AND I." + UserMenuItemTime.COLUMN_NAME_MENU + " = M." + MenuItem.COLUMN_NAME_ID);
+					sb.append(" WHERE U." + User.COLUMN_NAME_ID + " = :u");
+					parametreMap.put("a", key);
+					parametreMap.put("u", authenticatedUser.getId());
+					if (session != null)
+						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+					veriler = pdksEntityController.getObjectBySQLList(sb, parametreMap, null);
+				}
 				if (veriler != null) {
 					Gson gson = new Gson();
 					Object[] veri = veriler.get(0);
@@ -5298,8 +5319,8 @@ public class OrtakIslemler implements Serializable {
 				HashMap parametreMap = new HashMap();
 				StringBuffer sb = new StringBuffer();
 				sb.append("SELECT I.* FROM " + User.TABLE_NAME + " U WITH(nolock) ");
-				sb.append(" INNER JOIN " + MenuItem.TABLE_NAME + " M ON M." + MenuItem.COLUMN_NAME_ADI + " = :a ");
-				sb.append(" INNER JOIN " + UserMenuItemTime.TABLE_NAME + " I ON I." + UserMenuItemTime.COLUMN_NAME_USER + " = U." + User.COLUMN_NAME_ID);
+				sb.append(" INNER JOIN " + MenuItem.TABLE_NAME + " M  WITH(nolock) ON M." + MenuItem.COLUMN_NAME_ADI + " = :a ");
+				sb.append(" INNER JOIN " + UserMenuItemTime.TABLE_NAME + " I  WITH(nolock) ON I." + UserMenuItemTime.COLUMN_NAME_USER + " = U." + User.COLUMN_NAME_ID);
 				sb.append(" AND I." + UserMenuItemTime.COLUMN_NAME_MENU + " = M." + MenuItem.COLUMN_NAME_ID);
 				sb.append(" WHERE U." + User.COLUMN_NAME_ID + " = :u");
 				parametreMap.put("a", key);
@@ -5657,7 +5678,9 @@ public class OrtakIslemler implements Serializable {
 			String str = sb.toString();
 			sb = new StringBuffer("WITH DATA AS (" + str + " ) ");
 			sb.append("SELECT D.* FROM DATA D WITH(nolock) ");
-			sb.append(" LEFT JOIN " + IzinReferansERP.TABLE_NAME + " IR ON IR." + IzinReferansERP.COLUMN_NAME_ID + " = D." + IzinERPDB.COLUMN_NAME_REFERANS_NO);
+ 			sb.append(" INNER JOIN " + PersonelERPDB.VIEW_NAME + " P  WITH(nolock)   ON P." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " = D." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
+			sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S WITH(nolock) ON S." + Sirket.COLUMN_NAME_ERP_KODU + " = P.SIRKET_KODU AND S." + Sirket.COLUMN_NAME_DURUM + " = 1");
+ 			sb.append(" LEFT JOIN " + IzinReferansERP.TABLE_NAME + " IR WITH(nolock) ON IR." + IzinReferansERP.COLUMN_NAME_ID + " = D." + IzinERPDB.COLUMN_NAME_REFERANS_NO);
 			sb.append(" WHERE IR." + IzinReferansERP.COLUMN_NAME_IZIN_ID + " IS NOT NULL OR D." + IzinERPDB.COLUMN_NAME_DURUM + " = 1");
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);

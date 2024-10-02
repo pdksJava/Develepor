@@ -1457,7 +1457,7 @@ public class Vardiya extends BaseObject {
 			cal.setTime(tarih);
 			cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), basSaat, basDakika, 0);
 			Date basZaman = cal.getTime();
-			if (basZaman.getTime() > bitZaman.getTime()) {
+			if (basZaman.getTime() >= bitZaman.getTime()) {
 				cal.setTime(basZaman);
 				cal.add(Calendar.DATE, -1);
 				basZaman = cal.getTime();
