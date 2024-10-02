@@ -201,7 +201,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						}
 						if (gunSure > 0) {
 							sure += gunSure;
-//							logger.info(vg.getVardiyaDateStr() + " --> " + gunSure + " :  " + sure);
+							// logger.info(vg.getVardiyaDateStr() + " --> " + gunSure + " :  " + sure);
 						}
 
 					}
@@ -1324,7 +1324,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 							if (gunlukKatsayi == null || gunlukKatsayi.doubleValue() < 7.5d)
 								gunlukKatsayi = gunlukKatsayi.doubleValue();
 						}
-
+//						boolean sonrakiIzinli = vardiyaGun.getSonrakiVardiyaGun() != null && vardiyaGun.getSonrakiVardiyaGun().getVardiya() != null && vardiyaGun.getSonrakiVardiyaGun().isIzinli();
 						Vardiya vardiya = vardiyaGun.getVardiya();
 						boolean haftaTatil = vardiya.isHaftaTatil();
 						Tatil tatil = vardiyaGun.getTatil();
@@ -1397,6 +1397,10 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 								if (haftaTatil && izinBordroDetayTipi != null) {
 									haftaTatil = (izinTipi != null && izinTipi.isHTDahil() == false) || izinBordroDetayTipi.value().equals(BordroDetayTipi.UCRETLI_IZIN.value());
+									if (izinBordroDetayTipi.value().equals(BordroDetayTipi.RAPORLU_IZIN.value()) && vardiya.isHaftaTatil()) {
+										artiGun = 0;
+									} else
+
 									if (haftaTatil == false)
 										artiGun = 1;
 								}
