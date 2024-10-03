@@ -446,8 +446,15 @@ public class Vardiya extends BaseObject {
 	}
 
 	public void setVardiyaBasZaman(Date date) {
-		if (date != null && vardiyaDateStr.endsWith("0909"))
-			logger.debug(PdksUtil.convertToDateString(date, PdksUtil.getDateTimeFormat()));
+		if (date != null && vardiyaDateStr.endsWith("0908")) {
+
+			++islemAdet;
+			String str = PdksUtil.convertToDateString(date, PdksUtil.getDateTimeFormat());
+			if (str.endsWith("10:30"))
+				logger.debug(str);
+
+		}
+
 		this.vardiyaBasZaman = date;
 	}
 
@@ -1428,10 +1435,11 @@ public class Vardiya extends BaseObject {
 
 	public void setVardiyaFazlaMesaiBitZaman(Date value) {
 		if (value != null) {
-			if (vardiyaDateStr != null && vardiyaDateStr.endsWith("0908")) {
+			if (vardiyaDateStr != null && vardiyaDateStr.endsWith("0907")) {
 				++islemAdet;
-				if (vardiyaBitZaman != null && value.before(vardiyaBitZaman))
-					logger.debug(PdksUtil.convertToDateString(value, PdksUtil.getDateTimeFormat()));
+				String str = PdksUtil.convertToDateString(value, PdksUtil.getDateTimeFormat());
+				if (str.endsWith("8:50"))
+					logger.debug(str);
 			}
 			this.vardiyaFazlaMesaiBitZaman = value;
 		}

@@ -25,6 +25,8 @@ public class Kapi extends BaseObject {
 	public static final String COLUMN_NAME_KGS_ID = "KGS_ID";
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final String COLUMN_NAME_KAPI_TIPI = "KAPI_TIPI_ID";
+	public static final String COLUMN_NAME_PDKS = "PDKS";
+	
 
 	// seam-gen attributes (you should probably edit these)
 	public static final String TIPI_KODU_GIRIS = "G";
@@ -70,7 +72,7 @@ public class Kapi extends BaseObject {
 		this.aciklama = pdksAciklama;
 	}
 
-	@Column(name = "PDKS")
+	@Column(name = COLUMN_NAME_PDKS)
 	public Boolean getPdks() {
 		return pdks;
 	}
