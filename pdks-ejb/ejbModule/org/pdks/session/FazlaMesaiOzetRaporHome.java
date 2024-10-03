@@ -78,7 +78,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	 */
 	private static final long serialVersionUID = 5201033120905302620L;
 	static Logger logger = Logger.getLogger(FazlaMesaiOzetRaporHome.class);
-	
+
 	public static String sayfaURL = "fazlaMesaiOzetRapor";
 
 	@RequestParameter
@@ -213,10 +213,10 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
- 		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals(sayfaURL);
+		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals(sayfaURL);
 		if (!ayniSayfa)
 			authenticatedUser.setCalistigiSayfa(sayfaURL);
- 		tumVardiyaList = null;
+		tumVardiyaList = null;
 		vardiyaAdetMap = null;
 		if (baslikMap == null)
 			baslikMap = new TreeMap<String, Boolean>();
@@ -1998,6 +1998,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		sirket = null;
 		tesis = null;
 		boolean kismiOdemeGoster = false;
+		Tanim ekSaha1 = ekSahaTanimMap != null && ekSahaTanimMap.containsKey("ekSaha1") ? ekSahaTanimMap.get("ekSaha1") : null;
 		for (Iterator iter = list.iterator(); iter.hasNext();) {
 			AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
 			PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
@@ -2126,6 +2127,12 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.yoneticiAciklama());
 		if (sirketGoster)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.sirketAciklama());
+		if (ekSaha1 != null)
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ekSaha1.getAciklama());
+
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Görevi");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İşe Giriş Tarihi");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İşten Ayrılma Tarihi");
 		if (modelGoster)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.calismaModeliAciklama());
 		if (fazlaMesaiOde)
@@ -2377,6 +2384,20 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(aylikPuantaj.getYonetici() != null && aylikPuantaj.getYonetici().getId() != null ? aylikPuantaj.getYonetici().getAdSoyad() : "");
 					if (sirketGoster)
 						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(personel.getSirket() != null ? personel.getSirket().getAd() : "");
+					if (ekSaha1 != null)
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(personel.getEkSaha1() != null ? personel.getEkSaha1().getAciklama() : "");
+					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(personel.getGorevTipi() != null ? personel.getGorevTipi().getAciklama() : "");
+
+					if (personel.getIseBaslamaTarihi() != null)
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(authenticatedUser.dateFormatla(personel.getIseBaslamaTarihi()));
+					else
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+
+					if (personel.isCalisiyor())
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+					else
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(authenticatedUser.dateFormatla(personel.getSonCalismaTarihi()));
+
 					if (modelGoster) {
 						String modelAciklama = "";
 						if (aylikPuantaj.getPersonelDenklestirme() != null && aylikPuantaj.getPersonelDenklestirme().getCalismaModeliAy() != null) {
