@@ -5678,7 +5678,7 @@ public class OrtakIslemler implements Serializable {
 			String str = sb.toString();
 			sb = new StringBuffer("WITH DATA AS (" + str + " ) ");
 			sb.append("SELECT D.* FROM DATA D WITH(nolock) ");
-			sb.append(" INNER JOIN " + PersonelERPDB.VIEW_NAME + " P  WITH(nolock)   WITH(nolock) ON P." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " = D." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
+			sb.append(" INNER JOIN " + PersonelERPDB.VIEW_NAME + " P  WITH(nolock)  ON P." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " = D." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
 			sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S WITH(nolock) ON S." + Sirket.COLUMN_NAME_ERP_KODU + " = P.SIRKET_KODU AND S." + Sirket.COLUMN_NAME_DURUM + " = 1");
 			sb.append(" LEFT JOIN " + IzinReferansERP.TABLE_NAME + " IR WITH(nolock) ON IR." + IzinReferansERP.COLUMN_NAME_ID + " = D." + IzinERPDB.COLUMN_NAME_REFERANS_NO);
 			sb.append(" WHERE IR." + IzinReferansERP.COLUMN_NAME_IZIN_ID + " IS NOT NULL OR D." + IzinERPDB.COLUMN_NAME_DURUM + " = 1");
