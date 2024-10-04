@@ -5239,9 +5239,9 @@ public class OrtakIslemler implements Serializable {
 	 */
 	@Transactional
 	public LinkedHashMap<String, Object> getLastParameter(String key, Session session) {
-		
+
 		LinkedHashMap<String, Object> map = null;
-	
+
 		String lastParameterValue = getParameterKey("lastParameterValue");
 		if (key != null && (authenticatedUser.isAdmin() || lastParameterValue.equals("1"))) {
 			try {
@@ -5285,11 +5285,12 @@ public class OrtakIslemler implements Serializable {
 
 					} else if (veri[1] != null) {
 						Long menuId = ((BigDecimal) veri[1]).longValue();
-						parametreMap.clear();
-						parametreMap.put("id", menuId);
-						if (session != null)
-							parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-						MenuItem menuItem = (MenuItem) pdksEntityController.getObjectByInnerObject(parametreMap, MenuItem.class);
+						// parametreMap.clear();
+						// parametreMap.put("id", menuId);
+						// if (session != null)
+						// parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+						// MenuItem menuItem = (MenuItem) pdksEntityController.getObjectByInnerObject(parametreMap, MenuItem.class);
+						MenuItem menuItem = (MenuItem) getObjectByField(MenuItem.COLUMN_NAME_ID, menuId, MenuItem.TABLE_NAME, MenuItem.class, session);
 						if (menuItem != null) {
 							menuItemTime = new UserMenuItemTime(authenticatedUser, menuItem);
 							menuItemTime.setFirstTime(new Date());
