@@ -722,9 +722,33 @@ public class OrtakIslemler implements Serializable {
 		if (session != null && isExisStoreProcedure(name, session)) {
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 			StringBuffer sp = new StringBuffer(KapiGirisGuncelleme.SP_NAME);
+			if (basTarih == null && authenticatedUser != null)
+				basTarih = PdksUtil.getDate(new Date());
 			veriMap.put("basTarih", basTarih);
 			veriMap.put("bitTarih", bitTarih);
-			pdksEntityController.execSP(veriMap, sp);
+			try {
+				List list = pdksEntityController.execSPList(veriMap, sp, null);
+				if (list != null) {
+					if (!list.isEmpty()) {
+						String value = (String) list.get(0);
+						if (PdksUtil.hasStringValue(value)) {
+							Parameter parameter = getParameter(session, "cihazGecisIdSon");
+							if (parameter != null) {
+								if (authenticatedUser == null)
+									parameter.setChangeDate(new Date());
+								parameter.setValue(value);
+								pdksEntityController.saveOrUpdate(session, entityManager, parameter);
+								session.flush();
+							}
+						}
+					}
+					list = null;
+
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+
 		}
 	}
 

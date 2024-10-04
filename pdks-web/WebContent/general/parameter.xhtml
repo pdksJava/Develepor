@@ -139,6 +139,9 @@
 								<a4j:commandButton status="ajaxStatus" value="izinERPDBGuncelle Calistir"
 									rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametreIzinERPTableView)}"
 									action="#{ortakIslemler.izinERPDBGuncelle(true,parameterHome.session)}" />
+								<a4j:commandButton status="ajaxStatus" value="kapiGirisGuncelle Calistir"
+									rendered="#{ortakIslemler.getParameterKeyHasStringValue('cihazGecisIdSon')}"
+									action="#{ortakIslemler.kapiGirisGuncelle(null,null,parameterHome.session)}" />
 							</c:if>
 						</ui:fragment>
 					</a4j:outputPanel>
