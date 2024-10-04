@@ -734,8 +734,12 @@ public class OrtakIslemler implements Serializable {
 						if (PdksUtil.hasStringValue(value)) {
 							Parameter parameter = getParameter(session, "cihazGecisIdSon");
 							if (parameter != null) {
-								if (authenticatedUser == null)
+								if (authenticatedUser == null) {
+									User changeUser = getSistemAdminUser(session);
+									parameter.setChangeUser(changeUser);
 									parameter.setChangeDate(new Date());
+								}
+
 								parameter.setValue(value);
 								pdksEntityController.saveOrUpdate(session, entityManager, parameter);
 								session.flush();
