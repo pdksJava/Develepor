@@ -28,6 +28,8 @@ public class Sirket extends BaseObject {
 	public static final String COLUMN_NAME_FAZLA_MESAI = "FAZLA_MESAI";
 	public static final String COLUMN_NAME_ISTEN_AYR_TAR_CALISIYOR = "ISTEN_AYR_TAR_CALISIYOR";
 	public static final String COLUMN_NAME_ERP_DURUM = "ERP_DURUM";
+	public static final String COLUMN_NAME_ERP_KODU = "ERP_KODU";
+	
 
 	public static final String COLUMN_NAME_FAZLA_MESAI_IZIN_KULLAN = "FAZLA_MESAI_IZIN_KULLAN";
 	public static final String COLUMN_NAME_FAZLA_MESAI_TALEP_GIRILEBILIR = "FAZLA_MESAI_TALEP_GIRILEBILIR";
@@ -83,7 +85,7 @@ public class Sirket extends BaseObject {
 		this.aciklama = aciklama;
 	}
 
-	@Column(name = "ERP_KODU")
+	@Column(name = COLUMN_NAME_ERP_KODU)
 	public String getErpKodu() {
 		return erpKodu;
 	}

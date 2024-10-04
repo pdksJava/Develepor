@@ -4252,9 +4252,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	private List<PersonelDenklestirme> getPdksPersonelDenklestirmeler(List<Long> perIdList) {
 		List<PersonelDenklestirme> list = fazlaMesaiOrtakIslemler.getPdksPersonelDenklestirmeler(perIdList, denklestirmeAy, session);
+		boolean hgDurum = denklestirmeAyDurum && hataliPuantajGoster != null && hataliPuantajGoster && PdksUtil.hasStringValue(sicilNo) == false;
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			PersonelDenklestirme personelDenklestirme = (PersonelDenklestirme) iterator.next();
 			if (sadeceFazlaMesai && !personelDenklestirme.isDenklestirmeDurum())
+				iterator.remove();
+			else if (hgDurum && personelDenklestirme.getDurum())
 				iterator.remove();
 		}
 		return list;

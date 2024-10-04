@@ -665,7 +665,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 			try {
 				fields.clear();
-				List<Parameter> list = dao.getObjectByInnerObjectList(fields, Parameter.class);
+				// List<Parameter> list = dao.getObjectByInnerObjectList(fields, Parameter.class);
+
+				HashMap fields = new HashMap();
+				StringBuffer sb = new StringBuffer();
+				sb.append("SELECT  R.* FROM " + Parameter.TABLE_NAME + " R WITH(nolock)");
+				sb.append(" WHERE R." + Parameter.COLUMN_NAME_DURUM + " = 1 ");
+				List<Parameter> list = dao.getNativeSQLList(fields, sb, Parameter.class);
+
 				for (Parameter parameter : list) {
 					String key = parameter.getName().trim(), deger = parameter.getValue().trim();
 					pmMap.put(key, parameter);
@@ -1061,7 +1068,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 			if (list != null && !list.isEmpty()) {
 				int sira = 0;
 				HashMap<String, String> mesaiKodMap = new HashMap<String, String>();
-				List<Tanim> tipList = pdksDAO.getObjectByInnerObjectList("tipi", Tanim.TIPI_ERP_FAZLA_MESAI, Tanim.class);
+				// List<Tanim> tipList = pdksDAO.getObjectByInnerObjectList("tipi", Tanim.TIPI_ERP_FAZLA_MESAI, Tanim.class);
+				List<Tanim> tipList = getSQLTanimList(Tanim.TIPI_ERP_FAZLA_MESAI, null, null);
 				for (Tanim tanim : tipList)
 					mesaiKodMap.put(tanim.getKodu(), tanim.getErpKodu());
 				DenklestirmeAy denklestirmeAy = null;
@@ -1131,7 +1139,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 			if (list != null && !list.isEmpty()) {
 				HashMap<String, String> mesaiKodMap = new HashMap<String, String>();
-				List<Tanim> tipList = pdksDAO.getObjectByInnerObjectList("tipi", Tanim.TIPI_ERP_FAZLA_MESAI, Tanim.class);
+				// List<Tanim> tipList = pdksDAO.getObjectByInnerObjectList("tipi", Tanim.TIPI_ERP_FAZLA_MESAI, Tanim.class);
+				List<Tanim> tipList = getSQLTanimList(Tanim.TIPI_ERP_FAZLA_MESAI, null, null);
 				for (Tanim tanim : tipList) {
 					mesaiKodMap.put(tanim.getKodu(), tanim.getErpKodu());
 				}
@@ -1834,7 +1843,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			veriIsle("personelIzin", izinERP.getReferansNoERP(), veriSorguMap);
 		}
 
-		List<Personel> personelList = getObjectListFromDataList("pdksSicilNo", veriSorguMap.get("personel"), Personel.class);
+		List<Personel> personelList = getSQLObjectListFromDataList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, veriSorguMap.get("personel"), Personel.class);
 		if (personelList.size() > 1)
 			personelList = PdksUtil.sortListByAlanAdi(personelList, "iseBaslamaTarihi", Boolean.FALSE);
 		TreeMap<String, Personel> personelMap = new TreeMap<String, Personel>();
@@ -1845,8 +1854,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 		}
 		personelList = null;
 		// TreeMap<String, Personel> personelMap = veriSorguMap.containsKey("personel") ? pdksDAO.getObjectByInnerObjectMap("getPdksSicilNo", "pdksSicilNo", veriSorguMap.get("personel"), Personel.class, false) : new TreeMap<String, Personel>();
-		TreeMap<String, ERPPersonel> personelERPHataliMap = veriSorguMap.containsKey("personel") ? getParamListMap("getSicilNo", "sicilNo", veriSorguMap.get("personel"), ERPPersonel.class, false) : new TreeMap<String, ERPPersonel>();
-		TreeMap<String, IzinReferansERP> izinERPMap = veriSorguMap.containsKey("personelIzin") ? getParamListMap("getId", "id", veriSorguMap.get("personelIzin"), IzinReferansERP.class, false) : new TreeMap<String, IzinReferansERP>();
+		TreeMap<String, ERPPersonel> personelERPHataliMap = veriSorguMap.containsKey("personel") ? getSQLParamListMap(ERPPersonel.TABLE_NAME, "getSicilNo", ERPPersonel.COLUMN_NAME_SICIL_NO, veriSorguMap.get("personel"), ERPPersonel.class, false) : new TreeMap<String, ERPPersonel>();
+		TreeMap<String, IzinReferansERP> izinERPMap = veriSorguMap.containsKey("personelIzin") ? getSQLParamListMap(IzinReferansERP.TABLE_NAME, "getId", IzinReferansERP.COLUMN_NAME_ID, veriSorguMap.get("personelIzin"), IzinReferansERP.class, false) : new TreeMap<String, IzinReferansERP>();
 		TreeMap<String, IzinTipi> izinTipiMap = null;
 		String erpIzinTipiOlusturStr = sistemDestekVar && mailMap.containsKey("erpIzinTipiOlustur") ? (String) mailMap.get("erpIzinTipiOlustur") : "";
 		boolean erpIzinTipiOlustur = erpIzinTipiOlusturStr.equals("1");
@@ -1861,7 +1870,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				fields.put("durum=", Boolean.TRUE);
 
 			fields.put(fieldName, list);
-			List<Long> idList = getSQLParamList(true, list, fieldName, fields, Tanim.class);
+			List<Long> idList = getParamList(true, list, fieldName, fields, Tanim.class);
 			// pdksDAO.getObjectByInnerObjectListInLogic(fields, Tanim.class);
 			if (!idList.isEmpty()) {
 				fieldName = "izinTipiTanim.id";
@@ -1883,10 +1892,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 			fields.clear();
 			fields.put("id", 1L);
 			departman = (Departman) pdksDAO.getObjectByInnerObject(fields, Departman.class);
-			fields.clear();
-			fields.put(BaseDAOHibernate.MAP_KEY_MAP, "getErpKodu");
-			fields.put("tipi=", Tanim.TIPI_IZIN_TIPI);
-			izinTipiTanimMap = pdksDAO.getObjectByInnerObjectMapInLogic(fields, Tanim.class, false);
+			// fields.clear();
+			// fields.put(BaseDAOHibernate.MAP_KEY_MAP, "getErpKodu");
+			// fields.put("tipi=", Tanim.TIPI_IZIN_TIPI);
+			// izinTipiTanimMap = pdksDAO.getObjectByInnerObjectMapInLogic(fields, Tanim.class, false);
+			izinTipiTanimMap = getSQLTaniMap(Tanim.TIPI_IZIN_TIPI, null, null, "getErpKodu");
 		} else
 			izinTipiTanimMap = new TreeMap<String, Tanim>();
 		TreeMap<String, Tanim> izinGrupTanimMap = null;
@@ -3011,9 +3021,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 		Tanim parentDepartman = personelEKSahaMap != null && personelEKSahaMap.containsKey("ekSaha1") ? personelEKSahaMap.get("ekSaha1") : null;
 
 		fields.clear();
-		fields.put("tipi", Tanim.TIPI_GENEL_TANIM);
-		fields.put("kodu", Tanim.TIPI_BORDRO_ALT_BIRIMI);
-		Tanim parentBordroTanim = (Tanim) pdksDAO.getObjectByInnerObject(fields, Tanim.class);
+		// fields.put("tipi", Tanim.TIPI_GENEL_TANIM);
+		// fields.put("kodu", Tanim.TIPI_BORDRO_ALT_BIRIMI);
+		// Tanim parentBordroTanim = (Tanim) pdksDAO.getObjectByInnerObject(fields, Tanim.class);
+		Tanim parentBordroTanim = getSQLTanim(Tanim.TIPI_GENEL_TANIM, Tanim.TIPI_BORDRO_ALT_BIRIMI, null);
 		String parentBordroTanimKodu = Tanim.TIPI_BORDRO_ALT_BIRIMI;
 		parentBordroTanimKoduStr = "";
 		String durumParentBordroTanimKoduStr = "";
@@ -3052,10 +3063,16 @@ public class PdksVeriOrtakAktar implements Serializable {
 				Tanim parentEkSaha = personelEKSahaMap != null && personelEKSahaMap.containsKey(parentBordroTanimKoduStr) ? personelEKSahaMap.get(parentBordroTanimKoduStr) : null;
 				if (parentEkSaha != null) {
 					fields.clear();
-					fields.put("parentTanim.id", parentEkSaha.getId());
-					fields.put("tipi", Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA);
-					fields.put("kodu", "END");
-					istenAyrilanEkSaha = (Tanim) pdksDAO.getObjectByInnerObject(fields, Tanim.class);
+					// fields.put("parentTanim.id", parentEkSaha.getId());
+					// fields.put("tipi", Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA);
+					// fields.put("kodu", "END");
+					// istenAyrilanEkSaha = (Tanim) pdksDAO.getObjectByInnerObject(fields, Tanim.class);
+					List<Tanim> list = getSQLTanimList(Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA, "END", null);
+					for (Tanim tanim : list) {
+						if (tanim.getParentTanim() != null && tanim.getParentTanim().equals(parentEkSaha.getId()))
+							istenAyrilanEkSaha = tanim;
+					}
+					list = null;
 				}
 			}
 
@@ -3066,12 +3083,18 @@ public class PdksVeriOrtakAktar implements Serializable {
 		HashMap map = new HashMap();
 		if (bosDepartman == null && departmanYoneticiRolVar && parentDepartman != null && mailMap.containsKey("bosDepartmanKodu")) {
 			String bosDepartmanKodu = (String) mailMap.get("bosDepartmanKodu");
-			fields.clear();
-			fields.put("parentTanim.id", parentDepartman.getId());
-			fields.put("tipi", Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA);
-			fields.put("kodu", bosDepartmanKodu);
-			fields.put("durum", Boolean.FALSE);
-			bosDepartman = (Tanim) pdksDAO.getObjectByInnerObject(fields, Tanim.class);
+			// fields.clear();
+			// fields.put("parentTanim.id", parentDepartman.getId());
+			// fields.put("tipi", Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA);
+			// fields.put("kodu", bosDepartmanKodu);
+			// fields.put("durum", Boolean.FALSE);
+			// bosDepartman = (Tanim) pdksDAO.getObjectByInnerObject(fields, Tanim.class);
+			List<Tanim> list = getSQLTanimList(Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA, bosDepartmanKodu, Boolean.FALSE);
+			for (Tanim tanim : list) {
+				if (tanim.getParentTanim() != null && tanim.getParentTanim().equals(parentDepartman.getId()))
+					bosDepartman = tanim;
+			}
+			list = null;
 		}
 		Date lastDate = getTarih(LAST_DATE, FORMAT_DATE);
 		Personel personelTest = new Personel();
@@ -3887,6 +3910,24 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @param yaz
 	 * @return
 	 */
+	private TreeMap getSQLParamListMap(String tableName, String method, String fieldName, List dataIdList, Class class1, boolean yaz) {
+		TreeMap map = new TreeMap();
+		if (dataIdList != null) {
+			List veriList = getSQLObjectListFromDataList(tableName, fieldName, dataIdList, class1);
+			if (!veriList.isEmpty())
+				map = pdksDAO.getTreeMapByList(veriList, method, yaz);
+		}
+		return map;
+	}
+
+	/**
+	 * @param method
+	 * @param fieldName
+	 * @param dataIdList
+	 * @param class1
+	 * @param yaz
+	 * @return
+	 */
 	private TreeMap getParamListMap(String method, String fieldName, List dataIdList, Class class1, boolean yaz) {
 		TreeMap map = new TreeMap();
 		if (dataIdList != null) {
@@ -3906,7 +3947,83 @@ public class PdksVeriOrtakAktar implements Serializable {
 	private List getObjectListFromDataList(String fieldName, List dataIdList, Class class1) {
 		HashMap<String, Object> fieldsOrj = new HashMap<String, Object>();
 		fieldsOrj.put(fieldName, dataIdList);
-		List veriList = getSQLParamList(false, dataIdList, fieldName, fieldsOrj, class1);
+		List veriList = getParamList(false, dataIdList, fieldName, fieldsOrj, class1);
+		return veriList;
+	}
+
+	/**
+	 * @param tipi
+	 * @param kodu
+	 * @param durum
+	 * @param methodAdi
+	 * @return
+	 */
+	public TreeMap getSQLTaniMap(String tipi, String kodu, Boolean durum, String methodAdi) {
+		TreeMap map = new TreeMap();
+		List<Tanim> list = getSQLTanimList(tipi, kodu, durum);
+		if (list != null)
+			map = pdksDAO.getTreeMapByList(list, methodAdi, true);
+		list = null;
+		return map;
+	}
+
+	/**
+	 * @param tipi
+	 * @param kodu
+	 * @param durum
+	 * @return
+	 */
+	private List getSQLTanimList(String tipi, String kodu, Boolean durum) {
+		HashMap<String, Object> fieldsOrj = new HashMap<String, Object>();
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT  P.* FROM " + Tanim.TABLE_NAME + " P WITH(nolock) ");
+		sb.append(" WHERE  P." + Tanim.COLUMN_NAME_TIPI + " =:t ");
+		fieldsOrj.put("t", tipi);
+		if (kodu != null) {
+			fieldsOrj.put("k", kodu);
+			sb.append(" AND  P." + Tanim.COLUMN_NAME_KODU + " =:k ");
+		}
+		if (durum != null)
+			sb.append(" AND  P." + Tanim.COLUMN_NAME_DURUM + "=" + (durum ? 1 : 0));
+		List list = pdksDAO.getNativeSQLList(fieldsOrj, sb, Tanim.class);
+		return list;
+	}
+
+	/**
+	 * @param tipi
+	 * @param kodu
+	 * @param durum
+	 * @return
+	 */
+	private Tanim getSQLTanim(String tipi, String kodu, Boolean durum) {
+		List<Tanim> list = getSQLTanimList(tipi, kodu, durum);
+		Tanim tanim = list != null && !list.isEmpty() ? list.get(0) : null;
+		list = null;
+		return tanim;
+	}
+
+	/**
+	 * @param tableName
+	 * @param fieldName
+	 * @param dataIdList
+	 * @param class1
+	 * @return
+	 */
+	private List getSQLObjectListFromDataList(String tableName, String fieldName, List dataIdList, Class class1) {
+		HashMap<String, Object> fieldsOrj = new HashMap<String, Object>();
+		List veriList = null;
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT  P.*   FROM " + tableName + " P WITH(nolock) ");
+		if (dataIdList.size() > 1) {
+			sb.append(" WHERE P." + fieldName + " :q ");
+			fieldsOrj.put(fieldName, dataIdList);
+			veriList = getNativeSQLParamList(dataIdList, sb, "q", fieldsOrj, class1);
+		} else {
+			sb.append(" WHERE P." + fieldName + " =:q ");
+			fieldsOrj.put("q", dataIdList.get(0));
+			veriList = pdksDAO.getNativeSQLList(fieldsOrj, sb, class1);
+		}
+
 		return veriList;
 	}
 
@@ -3948,7 +4065,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		}
 
 		if (class1 != null) {
-			List list = getSQLParamList(logic, dataIdList, fieldName, fieldsOrj, class1);
+			List list = getParamList(logic, dataIdList, fieldName, fieldsOrj, class1);
 			map = pdksDAO.getTreeMapByList(list, methodAdi, uzerineYaz);
 
 		}
@@ -3963,7 +4080,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @param class1
 	 * @return
 	 */
-	public List getSQLParamList(boolean logic, List dataIdList, String fieldName, HashMap<String, Object> fieldsOrj, Class class1) {
+	public List getParamList(boolean logic, List dataIdList, String fieldName, HashMap<String, Object> fieldsOrj, Class class1) {
 		List idList = new ArrayList();
 		List veriList = new ArrayList();
 		if (pdksDAO == null)
@@ -4095,14 +4212,16 @@ public class PdksVeriOrtakAktar implements Serializable {
 		MailStatu mailStatu = null;
 		altBolumDurum = false;
 		HashMap fields = new HashMap();
-		fields.put("tipi", Tanim.TIPI_PERSONEL_DINAMIK_DURUM);
-		fields.put("kodu", Tanim.IKINCI_YONETICI_ONAYLAMAZ);
-		ikinciYoneticiOlmaz = (Tanim) pdksDAO.getObjectByInnerObject(fields, Tanim.class);
+		// fields.put("tipi", Tanim.TIPI_PERSONEL_DINAMIK_DURUM);
+		// fields.put("kodu", Tanim.IKINCI_YONETICI_ONAYLAMAZ);
+		// ikinciYoneticiOlmaz = (Tanim) pdksDAO.getObjectByInnerObject(fields, Tanim.class);;
+		ikinciYoneticiOlmaz = getSQLTanim(Tanim.TIPI_PERSONEL_DINAMIK_DURUM, Tanim.IKINCI_YONETICI_ONAYLAMAZ, null);
 
 		fields.clear();
-		fields.put(BaseDAOHibernate.MAP_KEY_MAP, "getKodu");
-		fields.put("tipi", Tanim.TIPI_GENEL_TANIM);
-		genelTanimMap = pdksDAO.getObjectByInnerObjectMap(fields, Tanim.class, false);
+		// fields.put(BaseDAOHibernate.MAP_KEY_MAP, "getKodu");
+		// fields.put("tipi", Tanim.TIPI_GENEL_TANIM);
+		// genelTanimMap = pdksDAO.getObjectByInnerObjectMap(fields, Tanim.class, false);
+		genelTanimMap = getSQLTaniMap(Tanim.TIPI_GENEL_TANIM, null, null, "getKodu");
 		if (ikinciYoneticiOlmaz != null && !ikinciYoneticiOlmaz.getDurum())
 			ikinciYoneticiOlmaz = null;
 
@@ -4291,24 +4410,29 @@ public class PdksVeriOrtakAktar implements Serializable {
 		}
 		personelDigerList = null;
 
-		TreeMap<String, ERPPersonel> personelERPHataliMap = !personelNoList.isEmpty() ? getParamListMap("getSicilNo", "sicilNo", personelNoList, ERPPersonel.class, true) : new TreeMap<String, ERPPersonel>();
-		TreeMap<String, Sirket> sirketMap = veriSorguMap.containsKey("sirket") ? getParamListMap("getErpKodu", "erpKodu", veriSorguMap.get("sirket"), Sirket.class, false) : new TreeMap<String, Sirket>();
-		TreeMap<String, Personel> personelPDKSMap = veriSorguMap.containsKey("personel") ? getParamListMap("getPdksSicilNo", "pdksSicilNo", veriSorguMap.get("personel"), Personel.class, false) : new TreeMap<String, Personel>();
+		TreeMap<String, ERPPersonel> personelERPHataliMap = !personelNoList.isEmpty() ? getSQLParamListMap(ERPPersonel.TABLE_NAME, "getSicilNo", ERPPersonel.COLUMN_NAME_SICIL_NO, personelNoList, ERPPersonel.class, true) : new TreeMap<String, ERPPersonel>();
+		TreeMap<String, Sirket> sirketMap = veriSorguMap.containsKey("sirket") ? getSQLParamListMap(Sirket.TABLE_NAME, "getErpKodu", Sirket.COLUMN_NAME_ERP_KODU, veriSorguMap.get("sirket"), Sirket.class, false) : new TreeMap<String, Sirket>();
+		TreeMap<String, Personel> personelPDKSMap = veriSorguMap.containsKey("personel") ? getSQLParamListMap(Personel.TABLE_NAME, "getPdksSicilNo", Personel.COLUMN_NAME_PDKS_SICIL_NO, veriSorguMap.get("personel"), Personel.class, false) : new TreeMap<String, Personel>();
 		fields.clear();
-		fields.put(BaseDAOHibernate.MAP_KEY_MAP, "getKodu");
-		fields.put("tipi", Tanim.TIPI_PERSONEL_EK_SAHA);
-		fields.put("durum", Boolean.TRUE);
-		TreeMap<String, Tanim> personelEKSahaMap = pdksDAO.getObjectByInnerObjectMap(fields, Tanim.class, false);
+		// fields.put(BaseDAOHibernate.MAP_KEY_MAP, "getKodu");
+		// fields.put("tipi", Tanim.TIPI_PERSONEL_EK_SAHA);
+		// fields.put("durum", Boolean.TRUE);
+		// TreeMap<String, Tanim> personelEKSahaMap = pdksDAO.getObjectByInnerObjectMap(fields, Tanim.class, false);
+		TreeMap<String, Tanim> personelEKSahaMap = getSQLTaniMap(Tanim.TIPI_PERSONEL_EK_SAHA, null, Boolean.TRUE, "getKodu");
 		TreeMap<String, Tanim> personelEKSahaVeriMap = new TreeMap<String, Tanim>();
 		for (String key : personelEKSahaMap.keySet()) {
 			Tanim parentTanim = personelEKSahaMap.get(key);
 			fields.clear();
-			fields.put("tipi", Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA);
-			fields.put("parentTanim.id", parentTanim.getId());
-			List<Tanim> personelEKSahaAciklamaList = pdksDAO.getObjectByInnerObjectList(fields, Tanim.class);
+			// fields.put("tipi", Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA);
+			// fields.put("parentTanim.id", parentTanim.getId());
+			// List<Tanim> personelEKSahaAciklamaList = pdksDAO.getObjectByInnerObjectList(fields, Tanim.class);
+			List<Tanim> personelEKSahaAciklamaList = getSQLTanimList(Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA, null, null);
 			for (Tanim tanim : personelEKSahaAciklamaList) {
-				tanim.setGuncellendi(Boolean.FALSE);
-				personelEKSahaVeriMap.put(key + "_" + tanim.getErpKodu(), tanim);
+				if (tanim.getParentTanim() != null && tanim.getParentTanim().getId().equals(parentTanim.getId())) {
+					tanim.setGuncellendi(Boolean.FALSE);
+					personelEKSahaVeriMap.put(key + "_" + tanim.getErpKodu(), tanim);
+				}
+
 			}
 		}
 		tanimGetir(personelEKSahaVeriMap, Tanim.TIPI_GIRIS_TIPI);
