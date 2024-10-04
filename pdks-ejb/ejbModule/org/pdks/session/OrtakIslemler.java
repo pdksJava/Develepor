@@ -5210,17 +5210,41 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param name
+	 * @param value
+	 * @param tableName
+	 * @param class1
+	 * @param session
+	 * @return
+	 */
+	public Object getObjectByField(String name, Object value, String tableName, Class class1, Session session) {
+		HashMap parametreMap = new HashMap();
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT TOP 1 U.* FROM " + tableName + " U WITH(nolock) ");
+		sb.append(" WHERE U." + name + " = :u");
+		parametreMap.put("u", value);
+		if (session != null)
+			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List list = pdksEntityController.getObjectBySQLList(sb, parametreMap, class1);
+		Object object = !list.isEmpty() ? list.get(0) : null;
+		list = null;
+		parametreMap = null;
+		return object;
+	}
+
+	/**
 	 * @param key
 	 * @param session
 	 * @return
 	 */
 	@Transactional
 	public LinkedHashMap<String, Object> getLastParameter(String key, Session session) {
+		
 		LinkedHashMap<String, Object> map = null;
+	
 		String lastParameterValue = getParameterKey("lastParameterValue");
 		if (key != null && (authenticatedUser.isAdmin() || lastParameterValue.equals("1"))) {
 			try {
-
 				StringBuffer sb = new StringBuffer();
 				HashMap parametreMap = new HashMap();
 				List<Object[]> veriler = null;
@@ -5237,9 +5261,7 @@ public class OrtakIslemler implements Serializable {
 					}
 
 				} catch (Exception e) {
-
 				}
-
 				if (veriler == null) {
 					sb = new StringBuffer();
 					sb.append("SELECT I." + UserMenuItemTime.COLUMN_NAME_ID + ",M." + MenuItem.COLUMN_NAME_ID + " AS MENU_ID,I." + UserMenuItemTime.COLUMN_NAME_LAST_PARAMETRE + " FROM " + User.TABLE_NAME + " U WITH(nolock) ");
@@ -5259,11 +5281,8 @@ public class OrtakIslemler implements Serializable {
 					Long id = veri[0] != null ? ((BigDecimal) veri[0]).longValue() : null;
 					UserMenuItemTime menuItemTime = null;
 					if (id != null) {
-						parametreMap.clear();
-						parametreMap.put("id", id);
-						if (session != null)
-							parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-						menuItemTime = (UserMenuItemTime) pdksEntityController.getObjectByInnerObject(parametreMap, UserMenuItemTime.class);
+						menuItemTime = (UserMenuItemTime) getObjectByField(User.COLUMN_NAME_ID, id, UserMenuItemTime.TABLE_NAME, UserMenuItemTime.class, session);
+
 					} else if (veri[1] != null) {
 						Long menuId = ((BigDecimal) veri[1]).longValue();
 						parametreMap.clear();
