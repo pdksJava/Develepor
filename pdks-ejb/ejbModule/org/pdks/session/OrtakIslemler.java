@@ -4660,7 +4660,7 @@ public class OrtakIslemler implements Serializable {
 			parametreMap.put("pdks", pdks);
 		if (identity.isLoggedIn() && !authenticatedUser.isAdmin() && !authenticatedUser.isIKAdmin() && !authenticatedUser.getDepartman().isAdminMi())
 			parametreMap.put("departman.id", authenticatedUser.getDepartman().getId());
-		if (authenticatedUser.isIKSirket() && authenticatedUser.getPdksPersonel() != null)
+		if (authenticatedUser != null && authenticatedUser.isIKSirket() && authenticatedUser.getPdksPersonel() != null)
 			parametreMap.put("id", authenticatedUser.getPdksPersonel().getSirket().getId());
 		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		pdksSirketList = pdksEntityController.getObjectByInnerObjectList(parametreMap, Sirket.class);
@@ -19724,11 +19724,11 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public List<KapiView> fillKapiPDKSList(Session session) {
 		HashMap parametreMap = new HashMap();
- 		StringBuffer sb = new StringBuffer();
+		StringBuffer sb = new StringBuffer();
 		sb.append("SELECT V.* FROM " + KapiKGS.TABLE_NAME + " V WITH(nolock) ");
 		sb.append(" INNER JOIN " + Kapi.TABLE_NAME + " K WITH(nolock) ON K." + Kapi.COLUMN_NAME_KGS_ID + " = V." + VardiyaGun.COLUMN_NAME_ID);
 		sb.append(" AND K." + VardiyaGun.COLUMN_NAME_DURUM + " = 1 AND K." + Kapi.COLUMN_NAME_PDKS + " = 1");
- 		sb.append(" WHERE V." + KapiKGS.COLUMN_NAME_DURUM + " = 1 ");
+		sb.append(" WHERE V." + KapiKGS.COLUMN_NAME_DURUM + " = 1 ");
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<KapiKGS> kapiKGSList = pdksEntityController.getObjectBySQLList(sb, parametreMap, KapiKGS.class);
