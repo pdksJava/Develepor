@@ -678,20 +678,14 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * @param pdksPersonel
 	 */
 	private void fillCalismaModeli(Personel pdksPersonel) {
-		Departman pdksDepartman = pdksPersonel.getSirket().getDepartman();
-		StringBuffer sb = new StringBuffer();
-		sb.append(" SELECT D.* FROM " + CalismaModeli.TABLE_NAME + " D WITH(nolock) ");
-		sb.append(" WHERE D." + CalismaModeli.COLUMN_NAME_DURUM + "=1  ");
-		HashMap fields = new HashMap();
-		if (pdksDepartman != null) {
-			sb.append(" AND ( D." + CalismaModeli.COLUMN_NAME_DEPARTMAN + " IS NULL OR D." + CalismaModeli.COLUMN_NAME_DEPARTMAN + "=:d )");
-			fields.put("d", pdksDepartman.getId());
-		}
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		calismaModeliList = pdksEntityController.getObjectBySQLList(sb, fields, CalismaModeli.class);
+		Long pdksDepartmanId = pdksPersonel.getSirket() != null ? pdksPersonel.getSirket().getDepartman().getId() : null;
+		calismaModeliList = ortakIslemler.getSQLParamByFieldList(CalismaModeli.TABLE_NAME, CalismaModeli.COLUMN_NAME_DURUM, 1, CalismaModeli.class, session);
 		for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
 			CalismaModeli cm = (CalismaModeli) iterator.next();
+			if (cm.getDepartman() != null && pdksDepartmanId != null && !pdksDepartmanId.equals(cm.getDepartman().getId())) {
+				iterator.remove();
+				continue;
+			}
 			if (pdksPersonel.getGebeMi().equals(Boolean.FALSE) && pdksPersonel.getSutIzni().equals(Boolean.FALSE)) {
 				if (cm.getToplamGunGuncelle().equals(Boolean.TRUE)) {
 					iterator.remove();

@@ -153,12 +153,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			}
 
 			if (pdksVardiya.getId() != null) {
-				HashMap parametreMap = new HashMap();
-				parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "calismaModeli");
-				parametreMap.put("vardiya.id", pdksVardiya.getId());
-				if (session != null)
-					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				calismaModeliKayitliList = pdksEntityController.getObjectByInnerObjectList(parametreMap, CalismaModeliVardiya.class);
+				calismaModeliKayitliList = ortakIslemler.fillCalismaModeliVardiyaList(pdksVardiya, session);
 				if (calismaModeliKayitliList.size() > 1)
 					calismaModeliKayitliList = PdksUtil.sortObjectStringAlanList(calismaModeliKayitliList, "getAciklama", null);
 			} else

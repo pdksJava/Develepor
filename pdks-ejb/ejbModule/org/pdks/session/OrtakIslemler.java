@@ -373,23 +373,32 @@ public class OrtakIslemler implements Serializable {
 	public List fillCalismaModeliVardiyaList(BasePDKSObject bpo, Session session) {
 		List calismaModeliVardiyaList = null;
 		if (bpo != null && bpo.getId() != null) {
-			HashMap parametreMap = new HashMap();
+			String fieldName = null, method = null;
+			Long value = bpo.getId();
 			if (bpo instanceof CalismaModeli) {
-				parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "vardiya");
-				parametreMap.put("calismaModeli.id", bpo.getId());
-				parametreMap.put("calismaModeli.durum", Boolean.TRUE);
+				method = "getAdi";
+				fieldName = CalismaModeliVardiya.COLUMN_NAME_CALISMA_MODELI;
 			} else if (bpo instanceof Vardiya) {
-				parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "calismaModeli");
-				parametreMap.put("vardiya.id", bpo.getId());
-				parametreMap.put("vardiya.durum", Boolean.TRUE);
+				method = "getAciklama";
+				fieldName = CalismaModeliVardiya.COLUMN_NAME_VARDIYA;
+			}
+
+			List<CalismaModeliVardiya> list = getSQLParamByFieldList(CalismaModeliVardiya.TABLE_NAME, fieldName, value, CalismaModeliVardiya.class, session);
+			calismaModeliVardiyaList = new ArrayList();
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				CalismaModeliVardiya cmv = (CalismaModeliVardiya) iterator.next();
+				if (cmv.getCalismaModeli().getDurum().equals(Boolean.FALSE) || cmv.getVardiya().getDurum().equals(Boolean.FALSE))
+					iterator.remove();
+				else {
+					if (fieldName.equals(CalismaModeliVardiya.COLUMN_NAME_CALISMA_MODELI))
+						calismaModeliVardiyaList.add(cmv.getVardiya());
+					else if (fieldName.equals(CalismaModeliVardiya.COLUMN_NAME_VARDIYA))
+						calismaModeliVardiyaList.add(cmv.getCalismaModeli());
+				}
 
 			}
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			calismaModeliVardiyaList = pdksEntityController.getObjectByInnerObjectList(parametreMap, CalismaModeliVardiya.class);
-
 			if (calismaModeliVardiyaList.size() > 1)
-				calismaModeliVardiyaList = PdksUtil.sortListByAlanAdi(calismaModeliVardiyaList, "id", true);
+				calismaModeliVardiyaList = PdksUtil.sortObjectStringAlanList(calismaModeliVardiyaList, method, null);
 		} else
 			calismaModeliVardiyaList = new ArrayList<Vardiya>();
 
@@ -2913,9 +2922,8 @@ public class OrtakIslemler implements Serializable {
 		HashMap<String, Object> fields = new HashMap<String, Object>();
 		sb.append("SELECT P.* from " + tableName + " P WITH(nolock) ");
 		if (PdksUtil.hasStringValue(fieldName)) {
-			if (value != null && value instanceof Boolean) {
+			if (value != null && value instanceof Boolean)
 				value = (Boolean) value ? 1 : 0;
-			}
 			String key = "v";
 			sb.append(" WHERE P." + fieldName + " = :" + key);
 			fields.put(key, value);
@@ -2923,6 +2931,8 @@ public class OrtakIslemler implements Serializable {
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		}
 		List list = pdksEntityController.getObjectBySQLList(sb, fields, class1);
+		fields = null;
+		sb = null;
 		return list;
 	}
 
