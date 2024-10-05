@@ -730,16 +730,18 @@ public class OrtakIslemler implements Serializable {
 				List list = pdksEntityController.execSPList(veriMap, sp, null);
 				if (list != null) {
 					if (!list.isEmpty()) {
-						String value = (String) list.get(0);
-						if (PdksUtil.hasStringValue(value)) {
-							Parameter parameter = getParameter(session, "cihazGecisIdSon");
-							if (parameter != null) {
+						Object[] objects = (Object[]) list.get(0);
+						String value = (String) objects[0];
+						if (PdksUtil.hasStringValue(value) && objects[1] != null) {
+							BigDecimal id = (BigDecimal) objects[1];
+							List<Parameter> parameterList = getSQLParamByFieldList(Parameter.TABLE_NAME, Parameter.COLUMN_NAME_ID, id.longValue(), Parameter.class, session);
+							if (parameterList != null && !parameterList.isEmpty()) {
+								Parameter parameter = parameterList.get(0);
 								if (authenticatedUser == null) {
 									User changeUser = getSistemAdminUser(session);
 									parameter.setChangeUser(changeUser);
 									parameter.setChangeDate(new Date());
 								}
-
 								parameter.setValue(value);
 								pdksEntityController.saveOrUpdate(session, entityManager, parameter);
 								session.flush();
