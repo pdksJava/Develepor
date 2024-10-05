@@ -57,7 +57,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	OrtakIslemler ortakIslemler;
 	@In(required = false)
 	FacesMessages facesMessages;
-	
+
 	public static String sayfaURL = "vardiyaTanimlama";
 	private List<String> saatList = new ArrayList<String>();
 	private List<String> dakikaList = new ArrayList<String>();
@@ -71,7 +71,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	private List<CalismaSekli> calismaSekliList;
 	private List<YemekIzin> yemekList;
 	private int saat = 13, dakika = 0;
-	private boolean manuelVardiyaIzinGir = false;
+
+	private boolean pasifGoster = Boolean.FALSE, manuelVardiyaIzinGir = false;
 	private Session session;
 
 	@Override
@@ -450,9 +451,12 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 		HashMap parametreMap = new HashMap();
 		try {
+			if (pasifGoster == false)
+				parametreMap.put("durum", Boolean.TRUE);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			manuelVardiyaIzinGir = ortakIslemler.getVardiyaIzinGir(session, authenticatedUser.getDepartman());
+
 			List<Vardiya> vardiyalar = pdksEntityController.getObjectByInnerObjectList(parametreMap, Vardiya.class);
 			yemekList = ortakIslemler.getYemekList(new Date(), null, session);
 			HashMap<Long, Vardiya> vardiyaMap = new HashMap<Long, Vardiya>();
@@ -660,6 +664,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		pasifGoster = false;
 		fillSaatler();
 		fillVardiyalar();
 		fillSablonlar();
@@ -846,5 +851,13 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 	public static void setSayfaURL(String sayfaURL) {
 		VardiyaHome.sayfaURL = sayfaURL;
+	}
+
+	public boolean isPasifGoster() {
+		return pasifGoster;
+	}
+
+	public void setPasifGoster(boolean pasifGoster) {
+		this.pasifGoster = pasifGoster;
 	}
 }

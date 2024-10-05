@@ -66,7 +66,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	private CalismaModeliGun cmgPage = new CalismaModeliGun();
 
-	private Boolean hareketKaydiVardiyaBul = Boolean.FALSE, saatlikCalismaVar = false, otomatikFazlaCalismaOnaylansinVar = false, izinGoster = false;
+	private Boolean pasifGoster = Boolean.FALSE, hareketKaydiVardiyaBul = Boolean.FALSE, saatlikCalismaVar = false, otomatikFazlaCalismaOnaylansinVar = false, izinGoster = false;
 
 	private Session session;
 
@@ -279,6 +279,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+		pasifGoster = false;
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fillCalismaModeliList();
 	}
@@ -384,6 +385,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		otomatikFazlaCalismaOnaylansinVar = ortakIslemler.getParameterKey("otomatikFazlaCalismaOnaylansin").equals("1");
 		calismaModeli = new CalismaModeli();
 		HashMap parametreMap = new HashMap();
+		if (pasifGoster == false)
+			parametreMap.put("durum", Boolean.TRUE);
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		calismaModeliList = pdksEntityController.getObjectByInnerObjectList(parametreMap, CalismaModeli.class);
@@ -554,6 +557,14 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	public void setHaftaTatilGunleri(List<SelectItem> haftaTatilGunleri) {
 		this.haftaTatilGunleri = haftaTatilGunleri;
+	}
+
+	public Boolean getPasifGoster() {
+		return pasifGoster;
+	}
+
+	public void setPasifGoster(Boolean pasifGoster) {
+		this.pasifGoster = pasifGoster;
 	}
 
 }

@@ -473,11 +473,11 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	/**
-	 * @param calismaModeli
+	 * @param cm
+	 * @param vardiyalar
 	 * @return
 	 */
-	public double getPlananSureHesapla(List<VardiyaGun> vardiyalar) {
-		CalismaModeli cm = calismaModeliAy != null ? calismaModeliAy.getCalismaModeli() : personel.getCalismaModeli();
+	private double getPlananSureHesapla(CalismaModeli cm, List<VardiyaGun> vardiyalar) {
 		double sure = 0.0d, gun = cm.getIzinSaat(2);
 		for (VardiyaGun vg : vardiyalar) {
 			Tatil tatil = vg.getTatil();
@@ -507,15 +507,14 @@ public class PersonelDenklestirme extends BaseObject {
 	public Double getMaksimumSure(double izinSure, double arifeToplamSure, List<VardiyaGun> vardiyalar) {
 		CalismaModeli cm = calismaModeliAy != null ? calismaModeliAy.getCalismaModeli() : personel.getCalismaModeli();
 		double aylikSure = calismaModeliAy != null ? calismaModeliAy.getSure() : denklestirmeAy.getSure();
-		if (cm.isHaftaTatilSabitDegil())
-			aylikSure = getPlananSureHesapla(vardiyalar);
 		double aylikSutSure = calismaModeliAy != null ? calismaModeliAy.getToplamIzinSure() : denklestirmeAy.getToplamIzinSure();
-		if (calismaModeliAy != null && calismaModeliAy.getCalismaModeli().getToplamGunGuncelle() && sutIzniSaatSayisi > 0) {
-			aylikSure = sutIzniSaatSayisi;
-		}
-
-		if (izinSure > 0.0d)
+		if (cm.isHaftaTatilSabitDegil())
+			aylikSure = getPlananSureHesapla(cm, vardiyalar);
+		else if (izinSure > 0.0d)
 			aylikSure -= izinSure;
+		if (calismaModeliAy != null && calismaModeliAy.getCalismaModeli().getToplamGunGuncelle() && sutIzniSaatSayisi > 0)
+			aylikSure = sutIzniSaatSayisi;
+
 		Double gunlukCalismaSuresi = calismaModeliAy != null ? AylikPuantaj.getGunlukCalismaSuresi() : null;
 		if (isSuaDurumu()) {
 			aylikSure = aylikSureHesapla(aylikSure - arifeToplamSure, calismaSuaSaati, gunlukCalismaSuresi) + arifeToplamSure;
