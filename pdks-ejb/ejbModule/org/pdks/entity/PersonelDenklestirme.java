@@ -1,6 +1,7 @@
 package org.pdks.entity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -472,12 +473,42 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	/**
+	 * @param calismaModeli
+	 * @return
+	 */
+	public double getPlananSureHesapla(List<VardiyaGun> vardiyalar) {
+		CalismaModeli cm = calismaModeliAy != null ? calismaModeliAy.getCalismaModeli() : personel.getCalismaModeli();
+		double sure = 0.0d, gun = cm.getIzinSaat(2);
+		for (VardiyaGun vg : vardiyalar) {
+			Tatil tatil = vg.getTatil();
+			Vardiya vardiya = vg.getVardiya();
+			double gunPlanSure = gun;
+			if (vg.isAyinGunu() && vardiya != null && vardiya.getId() != null) {
+				boolean hesapla = !(vg.isIzinli() || vardiya.isHaftaTatil() || tatil != null);
+				if (!hesapla) {
+					gunPlanSure = 0;
+					if (tatil != null && tatil.isYarimGunMu()) {
+						gunPlanSure = cm.getArife();
+						hesapla = true;
+					}
+				}
+				if (hesapla)
+					sure += gunPlanSure;
+			}
+		}
+		return sure;
+	}
+
+	/**
 	 * @param izinSure
 	 * @return
 	 */
 	@Transient
-	public Double getMaksimumSure(double izinSure, double arifeToplamSure) {
+	public Double getMaksimumSure(double izinSure, double arifeToplamSure, List<VardiyaGun> vardiyalar) {
+		CalismaModeli cm = calismaModeliAy != null ? calismaModeliAy.getCalismaModeli() : personel.getCalismaModeli();
 		double aylikSure = calismaModeliAy != null ? calismaModeliAy.getSure() : denklestirmeAy.getSure();
+		if (cm.isHaftaTatilSabitDegil())
+			aylikSure = getPlananSureHesapla(vardiyalar);
 		double aylikSutSure = calismaModeliAy != null ? calismaModeliAy.getToplamIzinSure() : denklestirmeAy.getToplamIzinSure();
 		if (calismaModeliAy != null && calismaModeliAy.getCalismaModeli().getToplamGunGuncelle() && sutIzniSaatSayisi > 0) {
 			aylikSure = sutIzniSaatSayisi;
