@@ -12,9 +12,9 @@
 
 			<rich:panel header="#{ortakIslemler.getMenuUserAdi(tanimHome.session,'tanim')}">
 				<a4j:outputPanel ajaxRendered="true" id="anaForm">
-					<TABLE style="vertical-align: top;" width="80%">
+					<TABLE style="vertical-align: top;" width="90%">
 						<TR>
-							<TD valign="top"><h:panelGrid columns="1" style="vertical-align: top;">
+							<TD valign="top" width="50%"><h:panelGrid columns="1" style="vertical-align: top;">
 									<s:decorate template="/layout/edit.xhtml" style="vertical-align: top;">
 										<ui:define name="label">Tanım Tipi</ui:define>
 										<h:selectOneMenu id="genelTanim" value="#{tanimHome.genelTanim}">
@@ -52,7 +52,7 @@
 													<rich:toolTip for="childTanim" value="#{tanim.aciklama} #{tanimHome.genelTanim.childGenelTanim.aciklama}lerini Görüntüle" />
 												</h:panelGrid>
 											</rich:column>
-											<rich:column rendered="#{authenticatedUser.admin}">
+											<rich:column rendered="#{authenticatedUser.admin}" filterBy="#{tanim.id}" filterEvent="onkeyup" style="width:60px">
 												<f:facet name="header">
 													<h:outputText value="Id" />
 												</f:facet>
@@ -64,13 +64,13 @@
 												</f:facet>
 												<h:outputText value="#{tanim.kodu}" id="kodu" />
 											</rich:column>
-											<rich:column>
+											<rich:column filterBy="#{tanim.erpKodu}" filterEvent="onkeyup">
 												<f:facet name="header">
 													<h:outputText value="ERP Kodu" />
 												</f:facet>
 												<h:outputText value="#{tanim.erpKodu}" id="erpKodu" />
 											</rich:column>
-											<rich:column>
+											<rich:column filterBy="#{tanim.aciklamatr}" filterEvent="onkeyup">
 												<f:facet name="header">
 													<h:outputText value="Türkçe" />
 												</f:facet>
@@ -115,7 +115,7 @@
 									</a4j:outputPanel>
 								</h:panelGrid></TD>
 
-							<TD valign="top"><a4j:outputPanel id="childTanimGroup">
+							<TD valign="top" width="50%"><a4j:outputPanel id="childTanimGroup">
 									<rich:panel header="#{tanimHome.selectedParentTanim.aciklama}"
 										rendered="#{tanimHome.genelTanim.childGenelTanim!=null and tanimHome.selectedParentTanim.id!=null}">
 										<h:panelGrid columns="1">
