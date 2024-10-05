@@ -2899,6 +2899,32 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param tableName
+	 * @param fieldName
+	 * @param value
+	 * @param class1
+	 * @param session
+	 * @return
+	 */
+	public List getSQLParamByFieldList(String tableName, String fieldName, Object value, Class class1, Session session) {
+		StringBuffer sb = new StringBuffer();
+		HashMap<String, Object> fields = new HashMap<String, Object>();
+		sb.append("SELECT P.* from " + tableName + " P WITH(nolock) ");
+		if (PdksUtil.hasStringValue(fieldName)) {
+			if (value != null && value instanceof Boolean) {
+				value = (Boolean) value ? 1 : 0;
+			}
+			String key = "v";
+			sb.append(" WHERE P." + fieldName + " = :" + key);
+			fields.put(key, value);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		}
+		List list = pdksEntityController.getObjectBySQLList(sb, fields, class1);
+		return list;
+	}
+
+	/**
 	 * @param dataIdList
 	 * @param sb
 	 * @param fieldName
@@ -3600,21 +3626,14 @@ public class OrtakIslemler implements Serializable {
 	 * @param name
 	 * @return
 	 */
-	public Parameter getParameter(Session session, String name) {
-		HashMap map = new HashMap();
-		map.put("adi", name);
-		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT TOP 1  T.* FROM " + Parameter.TABLE_NAME + " T WITH(nolock) ");
-		sb.append(" WHERE T." + Parameter.COLUMN_NAME_ADI + " = :adi  ");
-		if (session != null)
-			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<Parameter> list = pdksEntityController.getObjectBySQLList(sb, map, Parameter.class);
+	public Parameter getParameter(Session session, String value) {
+		List<Parameter> list = getSQLParamByFieldList(Parameter.TABLE_NAME, Parameter.COLUMN_NAME_ADI, value, Parameter.class, session);
 		Parameter parameter = null;
 		if (!list.isEmpty())
 			parameter = list.get(0);
 		if (parameter != null && (parameter.getActive().equals(Boolean.FALSE) || (parameter.isHelpDeskMi() && PdksUtil.isSistemDestekVar() == false)))
 			parameter = null;
-		map = null;
+
 		return parameter;
 	}
 
@@ -19766,11 +19785,7 @@ public class OrtakIslemler implements Serializable {
 
 	}
 
-	/**
-	 * @param session
-	 * @return
-	 */
-	public List<KapiView> fillKapiPDKSList(Session session) {
+	public List<KapiKGS> fillKapiKGSList(Session session) {
 		HashMap parametreMap = new HashMap();
 		StringBuffer sb = new StringBuffer();
 		sb.append("SELECT V.* FROM " + KapiKGS.TABLE_NAME + " V WITH(nolock) ");
@@ -19780,14 +19795,16 @@ public class OrtakIslemler implements Serializable {
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<KapiKGS> kapiKGSList = pdksEntityController.getObjectBySQLList(sb, parametreMap, KapiKGS.class);
+		return kapiKGSList;
+	}
 
-		//
-		// parametreMap.put("durum", Boolean.TRUE);
-		// parametreMap.put("kapi.durum", Boolean.TRUE);
-		// parametreMap.put("kapi.pdks", Boolean.TRUE);
-		// if (session != null)
-		// parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		// List<KapiKGS> kapiKGSList = pdksEntityController.getObjectByInnerObjectList(parametreMap, KapiKGS.class);
+	/**
+	 * @param session
+	 * @return
+	 */
+	public List<KapiView> fillKapiPDKSList(Session session) {
+
+		List<KapiKGS> kapiKGSList = fillKapiKGSList(session);
 
 		List<KapiView> list = new ArrayList<KapiView>();
 		for (KapiKGS kapiKGS : kapiKGSList)

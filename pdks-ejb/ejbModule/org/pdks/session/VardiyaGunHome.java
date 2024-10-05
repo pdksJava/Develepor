@@ -5421,13 +5421,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * 
 	 */
 	private void fillKapiPDKSList() {
-		HashMap parametreMap = new HashMap();
-		parametreMap.put("durum", Boolean.TRUE);
-		parametreMap.put("kapi.durum", Boolean.TRUE);
-		parametreMap.put("kapi.pdks", Boolean.TRUE);
-		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<KapiKGS> kapiKGSList = pdksEntityController.getObjectByInnerObjectList(parametreMap, KapiKGS.class);
+		List<KapiKGS> kapiKGSList = ortakIslemler.fillKapiKGSList(session);
 		List<KapiView> list = new ArrayList<KapiView>();
 		for (KapiKGS kapiKGS : kapiKGSList)
 			list.add(kapiKGS.getKapiView());

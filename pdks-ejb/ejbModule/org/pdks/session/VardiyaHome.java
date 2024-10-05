@@ -451,13 +451,16 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 		HashMap parametreMap = new HashMap();
 		try {
-			if (pasifGoster == false)
-				parametreMap.put("durum", Boolean.TRUE);
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			manuelVardiyaIzinGir = ortakIslemler.getVardiyaIzinGir(session, authenticatedUser.getDepartman());
+			// if (pasifGoster == false)
+			// parametreMap.put("durum", Boolean.TRUE);
+			// if (session != null)
+			// parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+			//
+			// List<Vardiya> vardiyalar = pdksEntityController.getObjectByInnerObjectList(parametreMap, Vardiya.class);
 
-			List<Vardiya> vardiyalar = pdksEntityController.getObjectByInnerObjectList(parametreMap, Vardiya.class);
+			List<Vardiya> vardiyalar = ortakIslemler.getSQLParamByFieldList(Vardiya.TABLE_NAME, pasifGoster == false ? Vardiya.COLUMN_NAME_DURUM : null, Boolean.TRUE, Vardiya.class, session);
+
 			yemekList = ortakIslemler.getYemekList(new Date(), null, session);
 			HashMap<Long, Vardiya> vardiyaMap = new HashMap<Long, Vardiya>();
 			Calendar cal = Calendar.getInstance();
