@@ -242,6 +242,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			}
 
 		}
+		if (vardiyaList.size() > 1)
+			vardiyaList = PdksUtil.sortObjectStringAlanList(vardiyaList, "getAdi", null);
 		if (calismaModeli.getId() != null) {
 			parametreMap.clear();
 			parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "vardiya");
@@ -259,13 +261,11 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 				}
 			}
+			if (kayitliVardiyaList.size() > 1)
+				vardiyaList = PdksUtil.sortObjectStringAlanList(kayitliVardiyaList, "getAdi", null);
 
 		} else
 			kayitliVardiyaList = new ArrayList<Vardiya>();
-		if (vardiyaList.size() > 1)
-			vardiyaList = PdksUtil.sortObjectStringAlanList(vardiyaList, "getKisaAdi", null);
-		if (kayitliVardiyaList.size() > 1)
-			kayitliVardiyaList = PdksUtil.sortObjectStringAlanList(kayitliVardiyaList, "getKisaAdi", null);
 
 		return "";
 	}

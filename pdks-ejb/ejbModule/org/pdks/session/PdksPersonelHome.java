@@ -696,6 +696,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			if (pdksPersonel.getCalismaModeli() == null && cm.isIdariModelMi())
 				pdksPersonel.setCalismaModeli(cm);
 		}
+		calismaModeliList = PdksUtil.sortObjectStringAlanList(calismaModeliList, "getAciklama", null);
 	}
 
 	/**

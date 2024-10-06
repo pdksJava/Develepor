@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -79,6 +80,7 @@ import org.pdks.entity.BasitHareket;
 import org.pdks.entity.BordroDetayTipi;
 import org.pdks.entity.CalismaModeli;
 import org.pdks.entity.CalismaModeliAy;
+import org.pdks.entity.CalismaModeliGun;
 import org.pdks.entity.CalismaModeliVardiya;
 import org.pdks.entity.CalismaSekli;
 import org.pdks.entity.DenklestirmeAy;
@@ -8231,7 +8233,6 @@ public class OrtakIslemler implements Serializable {
 		fields.put(fieldName, idList);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		// List<CalismaModeliVardiya> calismaModeliVardiyaList = pdksEntityController.getObjectByInnerObjectList(fields, CalismaModeliVardiya.class);
 		List<CalismaModeliVardiya> calismaModeliVardiyaList = getParamList(false, idList, fieldName, fields, CalismaModeliVardiya.class, session);
 		HashMap<Long, List<Vardiya>> calismaModeliVardiyaMap = new HashMap<Long, List<Vardiya>>();
 		for (CalismaModeliVardiya calismaModeliVardiya : calismaModeliVardiyaList) {
@@ -12476,60 +12477,90 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 */
 	public void vardiyaCalismaModeliGuncelle(List<VardiyaGun> vardiyaGunList, Session session) {
-		String haftaTatilDurum = getParameterKey("haftaTatilDurum");
-		if (haftaTatilDurum.equals("1")) {
-			List<Long> perIdList = new ArrayList<Long>();
-			Date basTarih = null, bitTarih = null;
-			for (VardiyaGun vardiyaGun : vardiyaGunList) {
-				Long perId = vardiyaGun.getPersonel().getId();
-				if (basTarih == null) {
+
+		List<Long> perIdList = new ArrayList<Long>();
+		Date basTarih = null, bitTarih = null;
+		for (VardiyaGun vardiyaGun : vardiyaGunList) {
+			Long perId = vardiyaGun.getPersonel().getId();
+			if (basTarih == null) {
+				basTarih = vardiyaGun.getVardiyaDate();
+				bitTarih = vardiyaGun.getVardiyaDate();
+			} else {
+				if (vardiyaGun.getVardiyaDate().before(basTarih))
 					basTarih = vardiyaGun.getVardiyaDate();
+				if (vardiyaGun.getVardiyaDate().after(bitTarih))
 					bitTarih = vardiyaGun.getVardiyaDate();
-				} else {
-					if (vardiyaGun.getVardiyaDate().before(basTarih))
-						basTarih = vardiyaGun.getVardiyaDate();
-					if (vardiyaGun.getVardiyaDate().after(bitTarih))
-						bitTarih = vardiyaGun.getVardiyaDate();
-				}
-				if (!perIdList.contains(perId))
-					perIdList.add(perId);
 			}
-			HashMap map = new HashMap();
-			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT DISTINCT P." + VardiyaGun.COLUMN_NAME_ID + " FROM " + PersonelDenklestirme.TABLE_NAME + " P WITH(nolock) ");
-			sb.append(" INNER JOIN " + DenklestirmeAy.TABLE_NAME + " D WITH(nolock) ON P." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
-			sb.append(" AND (D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+D." + DenklestirmeAy.COLUMN_NAME_AY + " >= " + PdksUtil.convertToDateString(basTarih, "yyyyMM"));
-			sb.append(" AND (D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+D." + DenklestirmeAy.COLUMN_NAME_AY + " <= " + PdksUtil.convertToDateString(bitTarih, "yyyyMM"));
-			sb.append(" WHERE P." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :p ");
-			map.put("p", perIdList);
+			if (!perIdList.contains(perId))
+				perIdList.add(perId);
+		}
+		HashMap map = new HashMap();
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT DISTINCT P." + VardiyaGun.COLUMN_NAME_ID + " FROM " + PersonelDenklestirme.TABLE_NAME + " P WITH(nolock) ");
+		sb.append(" INNER JOIN " + DenklestirmeAy.TABLE_NAME + " D WITH(nolock) ON P." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
+		sb.append(" AND (D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+D." + DenklestirmeAy.COLUMN_NAME_AY + " >= " + PdksUtil.convertToDateString(basTarih, "yyyyMM"));
+		sb.append(" AND (D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+D." + DenklestirmeAy.COLUMN_NAME_AY + " <= " + PdksUtil.convertToDateString(bitTarih, "yyyyMM"));
+		sb.append(" WHERE P." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :p ");
+		map.put("p", perIdList);
+		if (session != null)
+			map.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<PersonelDenklestirme> personelDenkList = getDataByIdList(sb, map, PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.class);
+		if (!personelDenkList.isEmpty()) {
+			TreeMap<String, PersonelDenklestirme> denkMap = new TreeMap<String, PersonelDenklestirme>();
+			TreeMap<Long, CalismaModeli> cmMap = new TreeMap<Long, CalismaModeli>();
+			TreeMap<Long, List<CalismaModeliGun>> cmGunMap = new TreeMap<Long, List<CalismaModeliGun>>();
+			for (PersonelDenklestirme personelDenklestirme : personelDenkList) {
+				DenklestirmeAy denklestirmeAy = personelDenklestirme.getDenklestirmeAy();
+				CalismaModeli cm = personelDenklestirme.getCalismaModeliAy() != null ? personelDenklestirme.getCalismaModeliAy().getCalismaModeli() : personelDenklestirme.getPdksPersonel().getCalismaModeli();
+				cmMap.put(cm.getId(), cm);
+				if (!cmGunMap.containsKey(cm.getId()))
+					cmGunMap.put(cm.getId(), new ArrayList<CalismaModeliGun>());
+				denkMap.put(((denklestirmeAy.getYil() * 100) + denklestirmeAy.getAy()) + "_" + personelDenklestirme.getPersonelId(), personelDenklestirme);
+			}
+			map.clear();
+			sb = new StringBuffer();
+			sb.append("SELECT DISTINCT P.* FROM " + CalismaModeliGun.TABLE_NAME + " P WITH(nolock) ");
+			String keyField="p";
+			sb.append(" WHERE P." + CalismaModeliGun.COLUMN_NAME_CALISMA_MODELI + " :"+keyField);
+			map.put(keyField, new ArrayList(cmMap.keySet()));
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<PersonelDenklestirme> personelDenkList = getDataByIdList(sb, map, PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.class);
-			if (!personelDenkList.isEmpty()) {
-				TreeMap<String, PersonelDenklestirme> denkMap = new TreeMap<String, PersonelDenklestirme>();
-				for (PersonelDenklestirme personelDenklestirme : personelDenkList) {
-					DenklestirmeAy denklestirmeAy = personelDenklestirme.getDenklestirmeAy();
-					denkMap.put(((denklestirmeAy.getYil() * 100) + denklestirmeAy.getAy()) + "_" + personelDenklestirme.getPersonelId(), personelDenklestirme);
-				}
-				for (VardiyaGun vardiyaGun : vardiyaGunList) {
-					String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMM") + "_" + vardiyaGun.getPersonel().getId();
-					if (denkMap.containsKey(key)) {
-						PersonelDenklestirme denklestirme = denkMap.get(key);
-						try {
-							if (denklestirme.getCalismaModeliAy() != null)
-								vardiyaGun.setCalismaModeli(denklestirme.getCalismaModeli());
-						} catch (Exception e) {
-							logger.equals(e);
-							e.printStackTrace();
+
+			List<CalismaModeliGun> calismaModeliGunList = getSQLParamList(new ArrayList(cmMap.keySet()), sb, keyField, map, CalismaModeliGun.class, session);
+			for (CalismaModeliGun calismaModeliGun : calismaModeliGunList) {
+				cmGunMap.get(calismaModeliGun.getCalismaModeli().getId()).add(calismaModeliGun);
+			}
+			TreeMap<Long, Set<CalismaModeliGun>> cmGunSetMap = new TreeMap<Long, Set<CalismaModeliGun>>();
+			for (Long cmId : cmGunMap.keySet()) {
+				if (!cmGunMap.get(cmId).isEmpty())
+					cmGunSetMap.put(cmId, new HashSet<CalismaModeliGun>(cmGunMap.get(cmId)));
+			}
+			calismaModeliGunList = null;
+			cmGunMap = null;
+			for (VardiyaGun vardiyaGun : vardiyaGunList) {
+				String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMM") + "_" + vardiyaGun.getPersonel().getId();
+				if (denkMap.containsKey(key)) {
+					PersonelDenklestirme denklestirme = denkMap.get(key);
+					try {
+						if (denklestirme.getCalismaModeliAy() != null) {
+							CalismaModeli cm = denklestirme.getCalismaModeli();
+							if (cm.getCalismaModeliGunler() == null)
+								cm.setCalismaModeliGunler(cmGunSetMap.get(cm.getId()));
+							vardiyaGun.setCalismaModeli(cm);
 						}
 
+					} catch (Exception e) {
+						logger.equals(e);
+						e.printStackTrace();
 					}
-				}
-				denkMap = null;
-			}
-			personelDenkList = null;
 
+				}
+			}
+			cmGunSetMap = null;
+			denkMap = null;
 		}
+		personelDenkList = null;
+
 	}
 
 	/**

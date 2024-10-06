@@ -14,7 +14,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -124,9 +123,10 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 		this.pazarSaat = pazarSaat;
 	}
 
-	@OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "calismaModeli", targetEntity = CalismaModeliGun.class)
+//	@OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "calismaModeli", targetEntity = CalismaModeliGun.class)
+	@Transient
 	public Set<CalismaModeliGun> getCalismaModeliGunler() {
-		return calismaModeliGunler;
+ 		return calismaModeliGunler;
 	}
 
 	public void setCalismaModeliGunler(Set<CalismaModeliGun> calismaModeliGunler) {
