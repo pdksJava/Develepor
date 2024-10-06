@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12520,8 +12519,8 @@ public class OrtakIslemler implements Serializable {
 			map.clear();
 			sb = new StringBuffer();
 			sb.append("SELECT DISTINCT P.* FROM " + CalismaModeliGun.TABLE_NAME + " P WITH(nolock) ");
-			String keyField="p";
-			sb.append(" WHERE P." + CalismaModeliGun.COLUMN_NAME_CALISMA_MODELI + " :"+keyField);
+			String keyField = "p";
+			sb.append(" WHERE P." + CalismaModeliGun.COLUMN_NAME_CALISMA_MODELI + " :" + keyField);
 			map.put(keyField, new ArrayList(cmMap.keySet()));
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -12530,10 +12529,10 @@ public class OrtakIslemler implements Serializable {
 			for (CalismaModeliGun calismaModeliGun : calismaModeliGunList) {
 				cmGunMap.get(calismaModeliGun.getCalismaModeli().getId()).add(calismaModeliGun);
 			}
-			TreeMap<Long, Set<CalismaModeliGun>> cmGunSetMap = new TreeMap<Long, Set<CalismaModeliGun>>();
+			TreeMap<Long, List<CalismaModeliGun>> cmGunSetMap = new TreeMap<Long, List<CalismaModeliGun>>();
 			for (Long cmId : cmGunMap.keySet()) {
 				if (!cmGunMap.get(cmId).isEmpty())
-					cmGunSetMap.put(cmId, new HashSet<CalismaModeliGun>(cmGunMap.get(cmId)));
+					cmGunSetMap.put(cmId, cmGunMap.get(cmId));
 			}
 			calismaModeliGunList = null;
 			cmGunMap = null;

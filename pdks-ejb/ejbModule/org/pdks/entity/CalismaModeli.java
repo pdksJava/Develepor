@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -85,7 +84,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	private User guncelleyenUser, olusturanUser;
 	private Date olusturmaTarihi = new Date(), guncellemeTarihi;
-	private Set<CalismaModeliGun> calismaModeliGunler;
+	private List<CalismaModeliGun> calismaModeliGunler;
 
 	@Column(name = COLUMN_NAME_ACIKLAMA)
 	public String getAciklama() {
@@ -123,13 +122,12 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 		this.pazarSaat = pazarSaat;
 	}
 
-//	@OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "calismaModeli", targetEntity = CalismaModeliGun.class)
 	@Transient
-	public Set<CalismaModeliGun> getCalismaModeliGunler() {
- 		return calismaModeliGunler;
+	public List<CalismaModeliGun> getCalismaModeliGunler() {
+		return calismaModeliGunler;
 	}
 
-	public void setCalismaModeliGunler(Set<CalismaModeliGun> calismaModeliGunler) {
+	public void setCalismaModeliGunler(List<CalismaModeliGun> calismaModeliGunler) {
 		this.calismaModeliGunler = calismaModeliGunler;
 	}
 
@@ -506,7 +504,6 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 		double izinSure = this.getIzinSaat(dayOfWeek);
 		if (pdksVardiyaGun.getVardiyaDateStr().equals("20240801"))
 			logger.debug(izinSure);
-
 
 		return izinSure;
 	}

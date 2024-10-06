@@ -101,7 +101,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		if (xCalismaModeli.getId() == null && departmanList.size() > 0)
 			xCalismaModeli.setDepartman(departmanList.get(0));
 
-		fillVardiyalar();
+		fillVardiyalar(xCalismaModeli);
 
 		return "";
 	}
@@ -126,7 +126,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		if (authenticatedUser.isAdmin())
 			fillBagliOlduguDepartmanTanimList();
 		setCalismaModeli(calismaModeliYeni);
-		fillVardiyalar();
+		fillVardiyalar(xCalismaModeli);
 		return "";
 
 	}
@@ -172,9 +172,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	}
 
 	public void fillBagliOlduguDepartmanTanimList() {
-
 		List tanimList = null;
-
 		try {
 			tanimList = ortakIslemler.fillDepartmanTanimList(session);
 		} catch (Exception e) {
@@ -189,8 +187,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		setDepartmanList(tanimList);
 	}
 
-	public String fillVardiyalar() {
-
+	public String fillVardiyalar(CalismaModeli cm) {
 		haftaTatilGunleri.clear();
 		Calendar cal = Calendar.getInstance();
 		haftaTatilGunleri.add(new SelectItem(null, "Sabit Gün Değil"));
@@ -201,8 +198,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		gunleriSifirla();
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("durum", Boolean.TRUE);
-		if (calismaModeli.getDepartman() != null)
-			parametreMap.put("departman.id", calismaModeli.getDepartman().getId());
+		if (cm.getDepartman() != null)
+			parametreMap.put("departman.id", cm.getDepartman().getId());
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		sablonList = pdksEntityController.getObjectByInnerObjectList(parametreMap, VardiyaSablonu.class);
@@ -212,9 +209,9 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 				iterator.remove();
 
 		}
-		if (calismaModeli.getBagliVardiyaSablonu() != null) {
+		if (cm.getBagliVardiyaSablonu() != null) {
 			boolean ekle = true;
-			Long id = calismaModeli.getBagliVardiyaSablonu().getId();
+			Long id = cm.getBagliVardiyaSablonu().getId();
 			for (VardiyaSablonu sablonu : sablonList) {
 				if (sablonu.getId().equals(id)) {
 					ekle = false;
@@ -222,15 +219,14 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 				}
 			}
 			if (ekle)
-				sablonList.add(calismaModeli.getBagliVardiyaSablonu());
+				sablonList.add(cm.getBagliVardiyaSablonu());
 		}
 		parametreMap.clear();
-
 		parametreMap.put("durum", Boolean.TRUE);
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		vardiyaList = pdksEntityController.getObjectByInnerObjectList(parametreMap, Vardiya.class);
-		Long cmaDepartmanId = calismaModeli.getDepartman() != null ? calismaModeli.getDepartman().getId() : null;
+		Long cmaDepartmanId = cm.getDepartman() != null ? cm.getDepartman().getId() : null;
 		for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 			Vardiya vardiya = (Vardiya) iterator.next();
 			if (vardiya.getKisaAdi().equals("TA") || vardiya.getKisaAdi().equals("TG"))
@@ -244,10 +240,10 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		}
 		if (vardiyaList.size() > 1)
 			vardiyaList = PdksUtil.sortObjectStringAlanList(vardiyaList, "getAdi", null);
-		if (calismaModeli.getId() != null) {
+		if (cm.getId() != null) {
 			parametreMap.clear();
 			parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "vardiya");
-			parametreMap.put("calismaModeli.id", calismaModeli.getId());
+			parametreMap.put("calismaModeli.id", cm.getId());
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			kayitliVardiyaList = pdksEntityController.getObjectByInnerObjectList(parametreMap, CalismaModeliVardiya.class);
@@ -262,7 +258,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 				}
 			}
 			if (kayitliVardiyaList.size() > 1)
-				vardiyaList = PdksUtil.sortObjectStringAlanList(kayitliVardiyaList, "getAdi", null);
+				kayitliVardiyaList = PdksUtil.sortObjectStringAlanList(kayitliVardiyaList, "getAdi", null);
 
 		} else
 			kayitliVardiyaList = new ArrayList<Vardiya>();
