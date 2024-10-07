@@ -187,6 +187,27 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		setDepartmanList(tanimList);
 	}
 
+	/**
+	 * @param list
+	 * @return
+	 */
+	private List<Vardiya> vardiyaAyir(List<Vardiya> list) {
+		list = PdksUtil.sortObjectStringAlanList(list, "getAdi", null);
+		List<Vardiya> ozelList = new ArrayList<Vardiya>();
+		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+			Vardiya vardiya = (Vardiya) iterator.next();
+			if (vardiya.getGenel().equals(Boolean.FALSE)) {
+				ozelList.add(vardiya);
+				iterator.remove();
+			}
+		}
+		if (!ozelList.isEmpty())
+			list.addAll(ozelList);
+		ozelList = null;
+		return list;
+
+	}
+
 	public String fillVardiyalar(CalismaModeli cm) {
 		haftaTatilGunleri.clear();
 		Calendar cal = Calendar.getInstance();
@@ -231,15 +252,14 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			Vardiya vardiya = (Vardiya) iterator.next();
 			if (vardiya.getKisaAdi().equals("TA") || vardiya.getKisaAdi().equals("TG"))
 				logger.debug(vardiya.getId() + " " + vardiya.getKisaAdi());
-			if (cmaDepartmanId != null && vardiya.getDepartman() != null && !vardiya.getDepartman().getId().equals(cmaDepartmanId))
+			if (vardiya.isCalisma() == false)
 				iterator.remove();
-			else if (!vardiya.isCalisma() || vardiya.getGenel().equals(Boolean.FALSE)) {
+			else if (cmaDepartmanId != null && vardiya.getDepartman() != null && !vardiya.getDepartman().getId().equals(cmaDepartmanId))
 				iterator.remove();
-			}
 
 		}
 		if (vardiyaList.size() > 1)
-			vardiyaList = PdksUtil.sortObjectStringAlanList(vardiyaList, "getAdi", null);
+			vardiyaList = vardiyaAyir(vardiyaList);
 		if (cm.getId() != null) {
 			parametreMap.clear();
 			parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "vardiya");
@@ -258,7 +278,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 				}
 			}
 			if (kayitliVardiyaList.size() > 1)
-				kayitliVardiyaList = PdksUtil.sortObjectStringAlanList(kayitliVardiyaList, "getAdi", null);
+				kayitliVardiyaList = vardiyaAyir(kayitliVardiyaList);
 
 		} else
 			kayitliVardiyaList = new ArrayList<Vardiya>();
