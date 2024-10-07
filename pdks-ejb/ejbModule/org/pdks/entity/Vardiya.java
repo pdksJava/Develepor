@@ -30,6 +30,8 @@ public class Vardiya extends BaseObject {
 	static Logger logger = Logger.getLogger(Vardiya.class);
 	public static final String TABLE_NAME = "VARDIYA";
 	public static final String COLUMN_NAME_VARDIYA_TIPI = "VARDIYATIPI";
+	public static final String COLUMN_NAME_ADI = "ADI";
+
 	public static final String COLUMN_NAME_SUA = "SUA";
 	public static final String COLUMN_NAME_ISKUR = "ISKUR";
 	public static final String COLUMN_NAME_GEBELIK = "GEBELIK";
@@ -84,7 +86,7 @@ public class Vardiya extends BaseObject {
 		this.version = version;
 	}
 
-	@Column(name = "ADI")
+	@Column(name = COLUMN_NAME_ADI)
 	public String getAdi() {
 		return adi;
 	}
