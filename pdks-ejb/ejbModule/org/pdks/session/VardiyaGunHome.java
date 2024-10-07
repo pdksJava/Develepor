@@ -8478,10 +8478,68 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 			HashMap map = new HashMap();
 			StringBuffer sb = new StringBuffer();
+			String gebeStr = "g", suaStr = "s", icapStr = "i";
+			HashMap<String, String> ozelMap = new HashMap<String, String>();
+			ozelMap.put(gebeStr, "");
+			ozelMap.put(suaStr, "");
+			ozelMap.put(icapStr, "");
+			if (pd.getCalismaModeliAy() != null) {
+				if (pd.getCalismaModeliAy() != null) {
+					try {
+						CalismaModeliAy calismaModeliAy = pd.getCalismaModeliAy();
+						CalismaModeli cm = calismaModeliAy.getCalismaModeli();
+						if (cm.getGenelVardiya().equals(Boolean.FALSE) && cm.isOrtakVardiyadir() == false) {
+							sb.append("SELECT V.* FROM " + Vardiya.TABLE_NAME + " V WITH(nolock) ");
+							sb.append(" INNER JOIN " + CalismaModeliVardiya.TABLE_NAME + " CV WITH(nolock) ON CV." + CalismaModeliVardiya.COLUMN_NAME_CALISMA_MODELI + " = " + calismaModeliAy.getCalismaModeli().getId());
+							sb.append(" AND CV." + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " = V." + Vardiya.COLUMN_NAME_ID);
+							sb.append(" WHERE V." + Vardiya.COLUMN_NAME_DURUM + " = 1 AND V." + Vardiya.COLUMN_NAME_GENEL + " <> 1");
+							if (session != null)
+								map.put(PdksEntityController.MAP_KEY_SESSION, session);
+							List<Vardiya> list = pdksEntityController.getObjectBySQLList(sb, map, Vardiya.class);
+							if (!list.isEmpty()) {
+								HashMap<String, List<Vardiya>> varMap = new HashMap<String, List<Vardiya>>();
+								for (Vardiya vardiya : list) {
+									String key = "";
+									if (vardiya.isGebelikMi())
+										key = gebeStr;
+									else if (vardiya.isSuaMi())
+										key = suaStr;
+									else if (vardiya.isIcapVardiyasi())
+										key = icapStr;
+									else
+										continue;
+									List<Vardiya> vList = varMap.containsKey(key) ? varMap.get(key) : new ArrayList<Vardiya>();
+									if (vList.isEmpty())
+										varMap.put(key, vList);
+									vList.add(vardiya);
+								}
+								for (String key : varMap.keySet()) {
+									String str = "";
+									list = varMap.get(key);
+									for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+										Vardiya vardiya = (Vardiya) iterator.next();
+
+										str += vardiya.getId() + (iterator.hasNext() ? ", " : "");
+									}
+									str = " AND " + Vardiya.COLUMN_NAME_ID + (list.size() == 1 ? " = " + str : " IN (" + str + ")");
+									ozelMap.put(key, str);
+								}
+
+							}
+
+						}
+					} catch (Exception eee) {
+						logger.error(eee);
+					}
+
+				}
+
+			}
+
+			sb = new StringBuffer();
 			sb.append("WITH VARDIYA_DATA AS ( ");
 			sb.append("SELECT V.* FROM " + Vardiya.TABLE_NAME + " V WITH(nolock) ");
 			if (pd != null) {
-
 				if (pd.getCalismaModeliAy() != null) {
 					try {
 						CalismaModeliAy calismaModeliAy = pd.getCalismaModeliAy();
@@ -8506,17 +8564,17 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (gebeMi) {
 				sb.append(" UNION ");
 				sb.append(" SELECT * FROM " + Vardiya.TABLE_NAME + " WITH(nolock) ");
-				sb.append(" WHERE " + Vardiya.COLUMN_NAME_GEBELIK + " = 1 ");
+				sb.append(" WHERE " + Vardiya.COLUMN_NAME_GEBELIK + " = 1 " + ozelMap.get(gebeStr));
 			}
 			if (sua) {
 				sb.append(" UNION ");
 				sb.append(" SELECT * FROM " + Vardiya.TABLE_NAME + " WITH(nolock) ");
-				sb.append(" WHERE " + Vardiya.COLUMN_NAME_SUA + " = 1 ");
+				sb.append(" WHERE " + Vardiya.COLUMN_NAME_SUA + " = 1 " + ozelMap.get(suaStr));
 			}
 			if (icap) {
 				sb.append(" UNION ");
 				sb.append(" SELECT * FROM " + Vardiya.TABLE_NAME + " WITH(nolock) ");
-				sb.append(" WHERE " + Vardiya.COLUMN_NAME_ICAP + " = 1 ");
+				sb.append(" WHERE " + Vardiya.COLUMN_NAME_ICAP + " = 1 " + ozelMap.get(icapStr));
 
 			}
 			if (calismaOlmayanVardiyalar) {
@@ -8552,8 +8610,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					Vardiya pdksVardiya = iterator.next();
 					if (pdksVardiya.isGebelikMi() && !gebeMi)
 						continue;
-					if (!vardiyaMap.containsKey(pdksVardiya.getId()))
-						vardiyaMap.put(pdksVardiya.getId(), pdksVardiya);
+					if (vardiyaMap.containsKey(pdksVardiya.getId()))
+						vardiyaMap.remove(pdksVardiya.getId());
 					if (!pdksVardiya.getGenel()) {
 
 						if (!pdksVardiya.isRadyasyonIzni() || (pdksVardiya.isRadyasyonIzni() && (sua || radyolojiIzinDurum.equals("1"))))
@@ -8579,20 +8637,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				String fieldName = "id";
 				List idList = new ArrayList(vardiyaMap.keySet());
 				sb = new StringBuffer();
-				sb.append("WITH VERI AS ( ");
+
 				sb.append("SELECT V.* FROM " + Vardiya.TABLE_NAME + " V WITH(nolock) ");
 				sb.append(" WHERE V." + Vardiya.COLUMN_NAME_ID + " :" + fieldName);
 				sb.append(" AND V." + Vardiya.COLUMN_NAME_DURUM + " = 1   ");
-				sb.append(" ), ");
-				sb.append(" SIRA_VARDIYA AS (");
-				sb.append(" SELECT CASE WHEN " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'' THEN 1  ");
-				sb.append(" WHEN " + Vardiya.COLUMN_NAME_GENEL + " = 1 THEN 2 ");
-				sb.append("WHEN " + Vardiya.COLUMN_NAME_GEBELIK + " = 1 THEN 12 WHEN " + Vardiya.COLUMN_NAME_SUA + " = 1 THEN 13 WHEN " + Vardiya.COLUMN_NAME_ICAP + " = 1 THEN 14  ELSE 99 END * 10000 + ");
-				sb.append(" CASE WHEN " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'' THEN " + Vardiya.COLUMN_NAME_ID + " ELSE 0 END ONCELIK_SIRA,   " + Vardiya.COLUMN_NAME_ID + " FROM VERI ");
-				sb.append(" ) ");
-				sb.append(" SELECT V.* FROM VERI V ");
-				sb.append(" INNER JOIN SIRA_VARDIYA S ON S." + Vardiya.COLUMN_NAME_ID + " = V." + Vardiya.COLUMN_NAME_ID + " ");
-				sb.append(" ORDER BY S.ONCELIK_SIRA, V." + Vardiya.COLUMN_NAME_ADI);
+
 				map.put(fieldName, idList);
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -8630,6 +8679,34 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			String donemVardiyalariSiralama = ortakIslemler.getParameterKey("donemVardiyalariSira");
 			if (donemVardiyalariSiralama.equals("1"))
 				donemVardiyalariSirala(vardiyaList, aylikPuantajAllList);
+			else {
+				vardiyaMap.clear();
+				map.clear();
+				for (Vardiya pdksVardiya : vardiyaList)
+					vardiyaMap.put(pdksVardiya.getId(), pdksVardiya);
+				String fieldName = "id";
+				idList = new ArrayList(vardiyaMap.keySet());
+				sb = new StringBuffer();
+				sb.append("WITH VERI AS ( ");
+				sb.append("SELECT V.* FROM " + Vardiya.TABLE_NAME + " V WITH(nolock) ");
+				sb.append(" WHERE V." + Vardiya.COLUMN_NAME_ID + " :" + fieldName);
+				sb.append(" AND V." + Vardiya.COLUMN_NAME_DURUM + " = 1   ");
+				sb.append(" ), ");
+				sb.append(" SIRA_VARDIYA AS (");
+				sb.append(" SELECT CASE WHEN " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'' THEN 1  ");
+				sb.append(" WHEN " + Vardiya.COLUMN_NAME_GENEL + " = 1 THEN 99 ");
+				sb.append(" WHEN " + Vardiya.COLUMN_NAME_GEBELIK + " = 1 THEN 12 WHEN " + Vardiya.COLUMN_NAME_SUA + " = 1 THEN 13 WHEN " + Vardiya.COLUMN_NAME_ICAP + " = 1 THEN 14  ELSE 19 END * 10000 + ");
+				sb.append(" CASE WHEN " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'' THEN " + Vardiya.COLUMN_NAME_ID + " ELSE 0 END ONCELIK_SIRA,   " + Vardiya.COLUMN_NAME_ID + " FROM VERI ");
+				sb.append(" ) ");
+				sb.append(" SELECT V.* FROM VERI V ");
+				sb.append(" INNER JOIN SIRA_VARDIYA S ON S." + Vardiya.COLUMN_NAME_ID + " = V." + Vardiya.COLUMN_NAME_ID + " ");
+				sb.append(" ORDER BY S.ONCELIK_SIRA, V." + Vardiya.COLUMN_NAME_ADI);
+				map.put(fieldName, idList);
+				if (session != null)
+					map.put(PdksEntityController.MAP_KEY_SESSION, session);
+				// vardiyaList = pdksEntityController.getObjectBySQLList(sb, map, Vardiya.class);
+				vardiyaList = ortakIslemler.getSQLParamList(idList, sb, fieldName, map, Vardiya.class, session);
+			}
 			aylikPuantajAllList = null;
 			pdksList.clear();
 			pdksList.addAll(vardiyaList);
