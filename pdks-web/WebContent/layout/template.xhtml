@@ -77,8 +77,10 @@ function upload(file) {
 }
 
 var newwindow;
-function createPop(url) {    
-   newwindow=window.open(url,'projePowerByULL','top=100,toolbar=0,menubar=0,location=0');  
+function createPop(url,id) {    
+    var width = screen.width * 80 / 100;
+    var params='toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,top=100,width='+width;
+    newwindow=window.open(url,id,params );  
    if (window.focus) {
 	   newwindow.focus();
    }
@@ -136,11 +138,11 @@ if (typeof window.event == 'undefined'){
 		<tr style="background-color: #{startupAction.projeHeaderBackgroundColor};">
 			<td width="120" height="83"><ui:fragment rendered="#{startupAction.projeHeaderImage!=null}">
 					<ui:fragment rendered="#{startupAction.projeURL!=null}">
-						<a href="#" onclick="createPop('#{startupAction.projeURL}');return false;"> <s:graphicImage id="imageURL"
+						<a href="#" id="imageURL" onclick="createPop('#{startupAction.projeURL}',this.id);return false;"> <s:graphicImage
 								value="#{startupAction.projeHeaderImage}" width="#{startupAction.projeHeaderImageWidth}" height="#{startupAction.projeHeaderImageHeight}" /></a>
 					</ui:fragment>
 					<ui:fragment rendered="#{startupAction.projeURL==null}">
-						<s:graphicImage id="image" value="#{startupAction.projeHeaderImage}" width="#{startupAction.projeHeaderImageWidth}"
+						<s:graphicImage value="#{startupAction.projeHeaderImage}" width="#{startupAction.projeHeaderImageWidth}"
 							height="#{startupAction.projeHeaderImageHeight}" />
 					</ui:fragment>
 
@@ -161,12 +163,11 @@ if (typeof window.event == 'undefined'){
 			<tr style="background-color: #{startupAction.projeFooterBackgroundColor};">
 				<td width="120" height="83"><ui:fragment rendered="#{startupAction.projeFooterImage!=null}">
 						<ui:fragment rendered="#{startupAction.projePowerURL!=null}">
-							<a href="#" style="font-weight: bold;" onclick="createPop('#{startupAction.projePowerURL}');return false;"> <s:graphicImage
-									id="imageFooterURL1" value="#{startupAction.projeFooterImage}" width="#{startupAction.projeFooterImageWidth}"
-									height="#{startupAction.projeFooterImageHeight}" /></a>
+							<a href="#" id="imageFooterURL" style="font-weight: bold;" onclick="createPop('#{startupAction.projePowerURL}',this.id);return false;"> <s:graphicImage
+									value="#{startupAction.projeFooterImage}" width="#{startupAction.projeFooterImageWidth}" height="#{startupAction.projeFooterImageHeight}" /></a>
 						</ui:fragment>
 						<ui:fragment rendered="#{startupAction.projePowerURL==null}">
-							<s:graphicImage id="imageFooterURL2" value="#{startupAction.projeFooterImage}" width="#{startupAction.projeFooterImageWidth}"
+							<s:graphicImage value="#{startupAction.projeFooterImage}" width="#{startupAction.projeFooterImageWidth}"
 								height="#{startupAction.projeFooterImageHeight}" />
 						</ui:fragment>
 
