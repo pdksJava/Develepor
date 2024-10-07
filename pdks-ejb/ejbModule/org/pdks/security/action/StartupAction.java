@@ -155,6 +155,9 @@ public class StartupAction implements Serializable {
 	public String projePowerURL;
 
 	@Out(scope = ScopeType.APPLICATION, required = false)
+	public String projeURL;
+
+	@Out(scope = ScopeType.APPLICATION, required = false)
 	public String projeHeaderImageHeight = "83";
 
 	@Out(scope = ScopeType.APPLICATION, required = false)
@@ -518,6 +521,11 @@ public class StartupAction implements Serializable {
 				MailManager.setHeaderRenk(deger);
 		}
 		String fontSize = "22px";
+
+		projeURL = null;
+		if (parameterMap.containsKey("projeURL")) {
+			projeURL = parameterMap.get("projeURL");
+		}
 		projePowerURL = null;
 		projeFooterBackgroundColor = "white";
 		if (parameterMap.containsKey("projePowerBy")) {
@@ -1291,5 +1299,13 @@ public class StartupAction implements Serializable {
 
 	public void setProjeFooterBackgroundColor(String projeFooterBackgroundColor) {
 		this.projeFooterBackgroundColor = projeFooterBackgroundColor;
+	}
+
+	public String getProjeURL() {
+		return projeURL;
+	}
+
+	public void setProjeURL(String projeURL) {
+		this.projeURL = projeURL;
 	}
 }
