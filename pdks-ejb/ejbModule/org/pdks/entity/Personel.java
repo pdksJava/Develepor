@@ -543,7 +543,7 @@ public class Personel extends BaseObject {
 
 	@Column(name = COLUMN_NAME_FAZLA_MESAI_IZIN_KULLAN)
 	public Boolean getFazlaMesaiIzinKullan() {
-		return fazlaMesaiIzinKullan;
+		return fazlaMesaiIzinKullan != null && fazlaMesaiIzinKullan;
 	}
 
 	public void setFazlaMesaiIzinKullan(Boolean fazlaMesaiIzinKullan) {

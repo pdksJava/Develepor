@@ -1502,7 +1502,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			personel = getInstance();
 		Sirket sirket = personel.getSirket();
 		List<String> gebeIcapSuaDurumList = sirket != null && sirket.isGebelikSutIzinVar() ? getGebeIcapSuaDurumList(personel) : null;
-		boolean secim = personel.getCinsiyetBayan() && gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.GEBE_KEY);
+		boolean secim = personel.getGebeMi() || (personel.getCinsiyetBayan() && gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.GEBE_KEY));
 		gebeIcapSuaDurumList = null;
 		return secim;
 	}
@@ -1515,7 +1515,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (personel == null)
 			personel = getInstance();
 		Sirket sirket = personel.getSirket();
-		boolean secim = personel.getCinsiyetBayan() && sirket != null && sirket.isGebelikSutIzinVar();
+		boolean secim = personel.isSutIzniKullan() || (personel.getCinsiyetBayan() && sirket != null && sirket.isGebelikSutIzinVar());
 		return secim;
 	}
 
@@ -1526,8 +1526,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public Boolean secFMI(Personel personel) {
 		if (personel == null)
 			personel = getInstance();
-		List<String> gebeIcapSuaDurumList = getGebeIcapSuaDurumList(personel);
-		boolean secim = personel.getSirket() != null && personel.getSirket().getFazlaMesaiIzinKullan() && gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.FMI_KEY);
+		Sirket sirket = personel.getSirket();
+		List<String> gebeIcapSuaDurumList = sirket != null && sirket.getFazlaMesaiIzinKullan() ? getGebeIcapSuaDurumList(personel) : null;
+		boolean secim = personel.getFazlaMesaiIzinKullan() || (gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.FMI_KEY));
 		gebeIcapSuaDurumList = null;
 		return secim;
 	}
@@ -1539,8 +1540,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public Boolean secSua(Personel personel) {
 		if (personel == null)
 			personel = getInstance();
-		List<String> gebeIcapSuaDurumList = getGebeIcapSuaDurumList(personel);
-		boolean secim = personel.getSirket() != null && personel.getSirket().getSuaOlabilir() && gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.SUA_KEY);
+		Sirket sirket = personel.getSirket();
+		List<String> gebeIcapSuaDurumList = sirket != null && sirket.getSuaOlabilir() ? getGebeIcapSuaDurumList(personel) : null;
+		boolean secim = personel.isSuaOlur() || (gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.SUA_KEY));
 		gebeIcapSuaDurumList = null;
 		return secim;
 	}
@@ -1552,8 +1554,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public Boolean secIcap(Personel personel) {
 		if (personel == null)
 			personel = getInstance();
-		List<String> gebeIcapSuaDurumList = getGebeIcapSuaDurumList(personel);
-		boolean secim = personel.getSirket() != null && gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.ICAP_KEY);
+		Sirket sirket = personel.getSirket();
+		List<String> gebeIcapSuaDurumList = sirket != null ? getGebeIcapSuaDurumList(personel) : null;
+		boolean secim = personel.getIcapciOlabilir() || (gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.ICAP_KEY));
 		gebeIcapSuaDurumList = null;
 		return secim;
 	}
