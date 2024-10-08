@@ -49,7 +49,7 @@ public class Vardiya extends BaseObject {
 	public static final char TIPI_IZIN = 'I';
 	public static final char TIPI_HASTALIK_RAPOR = 'S';
 
-	public static final String GEBE_KEY = "g", SUA_KEY = "s", ICAP_KEY = "i";
+	public static final String GEBE_KEY = "g", SUA_KEY = "s", ICAP_KEY = "i", FMI_KEY = "f";
 
 	public static Date vardiyaKontrolTarih, vardiyaKontrolTarih2, vardiyaKontrolTarih3, vardiyaAySonuKontrolTarih;
 

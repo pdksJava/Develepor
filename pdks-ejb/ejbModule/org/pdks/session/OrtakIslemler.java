@@ -12511,6 +12511,7 @@ public class OrtakIslemler implements Serializable {
 			TreeMap<Long, CalismaModeli> cmMap = new TreeMap<Long, CalismaModeli>();
 			TreeMap<Long, List<CalismaModeliGun>> cmGunMap = new TreeMap<Long, List<CalismaModeliGun>>();
 			for (PersonelDenklestirme personelDenklestirme : personelDenkList) {
+				personelDenklestirme.setSutIzniPersonelDonemselDurum(null);
 				DenklestirmeAy denklestirmeAy = personelDenklestirme.getDenklestirmeAy();
 				CalismaModeli cm = personelDenklestirme.getCalismaModeliAy() != null ? personelDenklestirme.getCalismaModeliAy().getCalismaModeli() : personelDenklestirme.getPdksPersonel().getCalismaModeli();
 				cmMap.put(cm.getId(), cm);
@@ -12525,10 +12526,10 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" AND P." + PersonelDonemselDurum.COLUMN_NAME_BITIS_ZAMANI + ">= :d ");
 			map.put("p", perIdList);
 			map.put("e", bitTarih);
-			map.put("d", bitTarih);
+			map.put("d", basTarih);
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<PersonelDonemselDurum> personelDurumList = getDataByIdList(sb, map, PersonelDonemselDurum.TABLE_NAME, PersonelDonemselDurum.class);
+			List<PersonelDonemselDurum> personelDurumList = getSQLParamList(perIdList, sb, "p", map, PersonelDonemselDurum.class, session);
 			TreeMap<Long, List<PersonelDonemselDurum>> personelDurumMap = new TreeMap<Long, List<PersonelDonemselDurum>>();
 			for (PersonelDonemselDurum pdd : personelDurumList) {
 				Long key = pdd.getPersonel().getId();
@@ -12562,14 +12563,18 @@ public class OrtakIslemler implements Serializable {
 				Long perId = vardiyaGun.getPersonel().getId();
 				String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMM") + "_" + perId;
 				boolean gebeMi = false, sutIzniVar = false;
+				PersonelDonemselDurum sutIzniPersonelDonemselDurum = null;
 				if (personelDurumMap.containsKey(perId)) {
-					List<PersonelDonemselDurum> list = personelDurumMap.get(key);
+					List<PersonelDonemselDurum> list = personelDurumMap.get(perId);
 					for (PersonelDonemselDurum personelDonemselDurum : list) {
 						if (personelDonemselDurum.getBasTarih().getTime() <= vardiyaGun.getVardiyaDate().getTime() && personelDonemselDurum.getBitTarih().getTime() >= vardiyaGun.getVardiyaDate().getTime()) {
 							if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.GEBE))
 								gebeMi = true;
-							else if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.SUT_IZNI))
+							else if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.SUT_IZNI)) {
 								sutIzniVar = true;
+								sutIzniPersonelDonemselDurum = personelDonemselDurum;
+							}
+
 						}
 
 					}
@@ -12577,6 +12582,8 @@ public class OrtakIslemler implements Serializable {
 				}
 				if (denkMap.containsKey(key)) {
 					PersonelDenklestirme denklestirme = denkMap.get(key);
+					if (denklestirme.getSutIzniPersonelDonemselDurum() == null)
+						denklestirme.setSutIzniPersonelDonemselDurum(sutIzniPersonelDonemselDurum);
 					try {
 						if (!sutIzniVar)
 							sutIzniVar = denklestirme.isSutIzniVar();

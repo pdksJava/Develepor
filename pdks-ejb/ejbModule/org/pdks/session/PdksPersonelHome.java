@@ -145,6 +145,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private List<UserMenuItemTime> menuItemTimeList;
 	private List<PersonelView> personelList = new ArrayList<PersonelView>();
 	private List<Liste> dosyaTanimList = new ArrayList<Liste>();
+	private HashMap<Long, List<String>> gebeIcapSuaDurumMap = new HashMap<Long, List<String>>();
 
 	private List<CalismaModeli> calismaModeliList = new ArrayList<CalismaModeli>();
 
@@ -268,7 +269,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 			}
 			List<Integer> list = new ArrayList<Integer>();
-			if (getPersonelSirketGebelikDurum(personel.getSirket()))
+			if (secGebe(personel))
 				list.add(PersonelDurumTipi.GEBE.value());
 			list.add(PersonelDurumTipi.SUT_IZNI.value());
 			for (Integer tipi : list)
@@ -386,41 +387,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * @return
 	 */
 	public String cinsiyetDegisti() {
-		gebeSecim = Boolean.FALSE;
-		Personel pdksPersonel = getInstance();
-		Sirket sirket = pdksPersonel.getSirket();
-		if (sirket != null && pdksPersonel.getCinsiyetBayan()) {
-
-			getPersonelSirketGebelikDurum(sirket);
-
-		}
 		return "";
-	}
-
-	/**
-	 * @param sirket
-	 * @return
-	 */
-	private boolean getPersonelSirketGebelikDurum(Sirket sirket) {
-		gebeSecim = false;
-		if (sirket != null) {
-			Departman departman = sirket.getDepartman();
-			HashMap parametreMap = new HashMap();
-			parametreMap.put("durum", Boolean.TRUE);
-			parametreMap.put("gebelik", Boolean.TRUE);
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<Vardiya> list = pdksEntityController.getObjectByInnerObjectList(parametreMap, Vardiya.class);
-			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-				Vardiya vardiya = (Vardiya) iterator.next();
-				if (vardiya.getDepartman() != null && !vardiya.getDepartman().getId().equals(departman.getId()))
-					iterator.remove();
-			}
-			gebeSecim = !list.isEmpty();
-			list = null;
-		}
-
-		return gebeSecim;
 	}
 
 	/**
@@ -1038,6 +1005,16 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					if (mesajList.isEmpty()) {
 
 						ortakIslemler.personelKaydet(pdksPersonel, session);
+						if (secGebe(pdksPersonel).booleanValue() == false)
+							pdksPersonel.setGebeMi(Boolean.FALSE);
+						if (secSutIzni(pdksPersonel).booleanValue() == false)
+							pdksPersonel.setSutIzni(Boolean.FALSE);
+						if (secSua(pdksPersonel).booleanValue() == false)
+							pdksPersonel.setSuaOlabilir(Boolean.FALSE);
+						if (secIcap(pdksPersonel).booleanValue() == false)
+							pdksPersonel.setIcapciOlabilir(Boolean.FALSE);
+						if (secFMI(pdksPersonel).booleanValue() == false)
+							pdksPersonel.setFazlaMesaiIzinKullan(Boolean.FALSE);
 						if (pdksPersonel.getFazlaMesaiIzinKullan())
 							pdksPersonel.setFazlaMesaiOde(Boolean.FALSE);
 						if (pdksPersonel.getCalismaModeli() != null && pdksPersonel.getCalismaModeli().isFazlaMesaiVarMi() == false) {
@@ -1494,6 +1471,130 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	}
 
 	/**
+	 * @param personel
+	 * @return
+	 */
+	private List<String> getGebeIcapSuaDurumList(Personel personel) {
+		List<String> list = null;
+		if (personel != null && gebeIcapSuaDurumMap != null && !gebeIcapSuaDurumMap.isEmpty()) {
+			if (gebeIcapSuaDurumMap.containsKey(-1))
+				list = gebeIcapSuaDurumMap.get(-1);
+			if (personel.getSirket() != null) {
+				Long key = personel.getSirket().getDepartman().getId();
+				if (gebeIcapSuaDurumMap.containsKey(key)) {
+					if (list == null)
+						list = new ArrayList<String>();
+					list.addAll(gebeIcapSuaDurumMap.get(key));
+
+				}
+			}
+
+		}
+		return list;
+	}
+
+	/**
+	 * @param personel
+	 * @return
+	 */
+	public Boolean secGebe(Personel personel) {
+		if (personel == null)
+			personel = getInstance();
+		List<String> gebeIcapSuaDurumList = getGebeIcapSuaDurumList(personel);
+		boolean secim = personel.getCinsiyetBayan() && gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.GEBE_KEY);
+		gebeIcapSuaDurumList = null;
+		return secim;
+	}
+
+	/**
+	 * @param personel
+	 * @return
+	 */
+	public Boolean secSutIzni(Personel personel) {
+		if (personel == null)
+			personel = getInstance();
+		boolean secim = personel.getCinsiyetBayan();
+		return secim;
+	}
+
+	/**
+	 * @param personel
+	 * @return
+	 */
+	public Boolean secFMI(Personel personel) {
+		if (personel == null)
+			personel = getInstance();
+		List<String> gebeIcapSuaDurumList = getGebeIcapSuaDurumList(personel);
+		boolean secim = personel.getSirket() != null && personel.getSirket().getFazlaMesaiIzinKullan() && gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.FMI_KEY);
+		gebeIcapSuaDurumList = null;
+		return secim;
+	}
+
+	/**
+	 * @param personel
+	 * @return
+	 */
+	public Boolean secSua(Personel personel) {
+		if (personel == null)
+			personel = getInstance();
+		List<String> gebeIcapSuaDurumList = getGebeIcapSuaDurumList(personel);
+		boolean secim = personel.getSirket() != null && personel.getSirket().getSuaOlabilir() && gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.SUA_KEY);
+		gebeIcapSuaDurumList = null;
+		return secim;
+	}
+
+	/**
+	 * @param personel
+	 * @return
+	 */
+	public Boolean secIcap(Personel personel) {
+		if (personel == null)
+			personel = getInstance();
+		List<String> gebeIcapSuaDurumList = getGebeIcapSuaDurumList(personel);
+		boolean secim = personel.getSirket() != null && gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.ICAP_KEY);
+		gebeIcapSuaDurumList = null;
+		return secim;
+	}
+
+	private void gebeSuaIcapGuncelle() {
+		if (gebeIcapSuaDurumMap == null)
+			gebeIcapSuaDurumMap = new HashMap<Long, List<String>>();
+		else
+			gebeIcapSuaDurumMap.clear();
+
+		StringBuffer sb = new StringBuffer();
+		HashMap fields = new HashMap();
+		sb.append("SELECT DISTINCT COALESCE(" + Vardiya.COLUMN_NAME_DEPARTMAN + ",-1) " + Vardiya.COLUMN_NAME_DEPARTMAN + ", CASE WHEN " + Vardiya.COLUMN_NAME_GEBELIK + "=1 THEN '" + Vardiya.GEBE_KEY + "' ");
+		sb.append("	WHEN " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :fm1 THEN '" + Vardiya.FMI_KEY + "' ");
+		sb.append("	WHEN " + Vardiya.COLUMN_NAME_SUA + " = 1 THEN '" + Vardiya.SUA_KEY + "' ");
+		sb.append("	WHEN " + Vardiya.COLUMN_NAME_ICAP + " = 1 THEN '" + Vardiya.ICAP_KEY + "' END SONUC from " + Vardiya.TABLE_NAME + " P WITH(nolock) ");
+		sb.append(" WHERE P." + PersonelKGS.COLUMN_NAME_DURUM + " = 1 ");
+		sb.append(" AND (" + Vardiya.COLUMN_NAME_GEBELIK + " + " + Vardiya.COLUMN_NAME_SUA + " + " + Vardiya.COLUMN_NAME_ICAP + " = 1 OR " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :fm2 ) ");
+		fields.put("fm1", Vardiya.TIPI_FMI);
+		fields.put("fm2", Vardiya.TIPI_FMI);
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		try {
+			List<Object[]> veriler = pdksEntityController.getObjectBySQLList(sb, fields, null);
+			for (Iterator iterator = veriler.iterator(); iterator.hasNext();) {
+				Object[] objects = (Object[]) iterator.next();
+				Long key = ((BigDecimal) objects[0]).longValue();
+				String tip = (String) objects[1];
+				List<String> list = gebeIcapSuaDurumMap.containsKey(key) ? gebeIcapSuaDurumMap.get(key) : new ArrayList<String>();
+				if (list.isEmpty())
+					gebeIcapSuaDurumMap.put(key, list);
+				list.add(tip);
+			}
+			veriler = null;
+		} catch (Exception e) {
+
+			logger.error(e + "\n" + sb.toString());
+
+		}
+
+	}
+
+	/**
 	 * @param personelView
 	 * @param pdksDurum
 	 */
@@ -1826,6 +1927,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 			}
 		}
+
 	}
 
 	/**
@@ -2560,7 +2662,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * @return
 	 */
 	public String fillPersonelKGSList() {
-
 		personelDurumMap.clear();
 		if (gebeSutIzniDurumList == null)
 			gebeSutIzniDurumList = new ArrayList<Long>();
@@ -2817,6 +2918,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			gebeSutIzniDurumList.clear();
 		dosyaGuncelleDurum();
 		setTanimsizPersonelList(list);
+
 		List<String> yeniList = yeniPersonelOlustur(false);
 		if (yeniList != null && !tanimsizPersonelList.isEmpty()) {
 			List<PersonelView> eskiList = new ArrayList<PersonelView>();
@@ -2832,6 +2934,10 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				tanimsizPersonelList.addAll(eskiList);
 			eskiList = null;
 		}
+		if (tanimsizPersonelList.isEmpty()) {
+			gebeIcapSuaDurumMap = new HashMap<Long, List<String>>();
+		} else
+			gebeSuaIcapGuncelle();
 		return "";
 	}
 

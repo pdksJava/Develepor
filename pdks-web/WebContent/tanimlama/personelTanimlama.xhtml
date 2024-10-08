@@ -101,6 +101,7 @@
 													for="editKapiGiris">Personel Değiştir</rich:toolTip></TD>
 										</ui:fragment>
 										<ui:fragment rendered="#{personelView.pdksPersonel!=null and pdksPersonelHome.gebeSutIzniDurumList.contains(personelView.pdksPersonel.id)}">
+											<ui:fragment rendered="#{pdksPersonelHome.secGebe(personelView.pdksPersonel) or pdksPersonelHome.secSutIzni(personelView.pdksPersonel)}"></ui:fragment>
 											<TD><a4j:commandLink status="ajaxStatus" id="editGebeGiris" action="#{pdksPersonelHome.gebeSutIzniSecimi(personelView.pdksPersonel)}"
 													oncomplete="if (#{pdksPersonelHome.donemselDurumList!=null}) #{rich:component('editWomanPanel')}.show()" reRender="editWomanPanel"
 													ajaxSingle="true">
@@ -110,7 +111,8 @@
 										</ui:fragment>
 										<TD><ui:fragment
 												rendered="#{ ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametrePersonelERPTableView) or pdksPersonelHome.personelERPGuncelleme=='E'}">
-												<a4j:commandButton status="ajaxStatus" id="editERPLink" image="/img/left_16.png" rendered="#{personelView.yeniPersonelMi or personelView.pdksPersonel.sirket.erp==true}"
+												<a4j:commandButton status="ajaxStatus" id="editERPLink" image="/img/left_16.png"
+													rendered="#{personelView.yeniPersonelMi or personelView.pdksPersonel.sirket.erp==true}"
 													action="#{pdksPersonelHome.kayitERPGuncelle(personelView)}" reRender="pdksPersonelList" ajaxSingle="true" />
 												<rich:toolTip for="editERPLink">#{ortakIslemler.getParameterKey('uygulamaBordro')} Güncelle #{personelView.pdksPersonel.pdksSicilNo}</rich:toolTip>
 											</ui:fragment></TD>
@@ -947,7 +949,7 @@
 															<h:outputText value="#{authenticatedUser.sayiFormatliGoster(pdksPersonelHome.instance.sablon.toplamSaat)}" id="toplamSaat" />
 														</s:decorate>
 
-														 
+
 														<rich:dataTable rowClasses="acik,koyu" value="#{pdksPersonelHome.instance.sablon.haftaList}" var="hs" rows="10" rowKeyVar="row">
 															<f:facet name="header">
 																<h:outputText value="Haftalık Sabit Vardiya Plan" />
@@ -1081,14 +1083,14 @@
 
 											</h:selectOneMenu>
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.gebelikSutIzinVar}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.secSutIzni(null)}">
 											<ui:define name="label">Süt İzni</ui:define>
 											<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.sutIzni}">
 												<a4j:support event="onclick" action="#{pdksPersonelHome.durumGebeSutIzni('S')}" reRender="sirketDegisti" status="ajaxStatus"
 													ajaxSingle="true" />
 											</h:selectBooleanCheckbox>
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.gebelikSutIzinVar and pdksPersonelHome.gebeSecim}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.secGebe(null)}">
 											<ui:define name="label">GebeMi</ui:define>
 											<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.gebeMi}">
 												<a4j:support event="onclick" action="#{pdksPersonelHome.durumGebeSutIzni('G')}" reRender="sirketDegisti" status="ajaxStatus"
@@ -1201,7 +1203,7 @@
 												<a4j:support event="onclick" reRender="sirketDegisti" status="ajaxStatus" ajaxSingle="true" />
 											</h:selectBooleanCheckbox>
 										</s:decorate>
-										<c:if test="#{pdksPersonelHome.instance.sirket.fazlaMesaiIzinKullan}">
+										<c:if test="#{pdksPersonelHome.secFMI(null)}">
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Fazla Mesai İzin Kullandır</ui:define>
 												<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.fazlaMesaiIzinKullan}">
@@ -1242,15 +1244,13 @@
 												</rich:toolTip>
 											</s:decorate>
 										</c:if>
-										<s:decorate template="/layout/edit.xhtml"
-											rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H' and pdksPersonelHome.instance.sirket.suaOlabilir}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H' and pdksPersonelHome.secSua(null)}">
 											<ui:define name="label">Şua</ui:define>
 											<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.suaOlabilir}">
 												<a4j:support event="onclick" />
 											</h:selectBooleanCheckbox>
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml"
-											rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H' and pdksPersonelHome.instance.sirket.suaOlabilir}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H' and pdksPersonelHome.secIcap(null)}">
 											<ui:define name="label">İcapçı Olabilir</ui:define>
 											<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.icapciOlabilir}">
 												<a4j:support event="onclick" />
@@ -1614,7 +1614,8 @@
 									<td><a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{pdksPersonelHome.save}" reRender="pdksPersonelList,roller"
 											oncomplete="if (#{pdksPersonelHome.hataMesaj==''}) #{rich:component('editPanel')}.hide();" /></td>
 									<ui:fragment rendered="#{ortakIslemler.getParameterKey('deletePersonel')=='1' and pdksPersonelHome.instance.id!=null}">
-										<ui:fragment rendered="#{ pdksPersonelHome.instance.personelKGS.id>0 and pdksPersonelHome.instance.personelKGS.durum==false and authenticatedUser.admin}">
+										<ui:fragment
+											rendered="#{ pdksPersonelHome.instance.personelKGS.id>0 and pdksPersonelHome.instance.personelKGS.durum==false and authenticatedUser.admin}">
 											<td><a4j:commandButton status="ajaxStatus" value="Sil" reRender="deletePersonelPanel"
 													oncomplete="#{rich:component('deletePersonelPanel')}.show();" /></td>
 										</ui:fragment>

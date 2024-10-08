@@ -66,6 +66,8 @@ public class PersonelDenklestirme extends BaseObject {
 
 	private VardiyaGun izinVardiyaGun;
 
+	private PersonelDonemselDurum sutIzniPersonelDonemselDurum;
+
 	private Double planlanSure = 0d, eksikCalismaSure = 0d, hesaplananSure = 0d, resmiTatilSure = 0d, haftaCalismaSuresi = 0d, fazlaMesaiSure = 0d, odenenSure = 0d;
 
 	private Double devredenSure, kesilenSure = 0d, calismaSuaSaati = calismaSaatiSua, kismiOdemeSure = 0d, aksamVardiyaSayisi = 0d, aksamVardiyaSaatSayisi = 0d, sutIzniSaatSayisi = 0d;
@@ -512,8 +514,12 @@ public class PersonelDenklestirme extends BaseObject {
 		double aylikSutSure = calismaModeliAy != null ? calismaModeliAy.getToplamIzinSure() : denklestirmeAy.getToplamIzinSure();
 		if (calismaModeliAy != null && cm.getToplamGunGuncelle() && sutIzniSaatSayisi > 0)
 			aylikSure = sutIzniSaatSayisi;
-		else if (cm.isHaftaTatilSabitDegil())
+		else if (cm.isHaftaTatilSabitDegil()) {
 			aylikSure = getPlananSureHesapla(cm, vardiyalar);
+			if (sutIzniPersonelDonemselDurum != null)
+				aylikSutSure = aylikSure;
+		}
+
 		else if (izinSure > 0.0d)
 			aylikSure -= izinSure;
 
@@ -714,6 +720,15 @@ public class PersonelDenklestirme extends BaseObject {
 
 	public void setIzinVardiyaGun(VardiyaGun izinVardiyaGun) {
 		this.izinVardiyaGun = izinVardiyaGun;
+	}
+
+	@Transient
+	public PersonelDonemselDurum getSutIzniPersonelDonemselDurum() {
+		return sutIzniPersonelDonemselDurum;
+	}
+
+	public void setSutIzniPersonelDonemselDurum(PersonelDonemselDurum sutIzniPersonelDonemselDurum) {
+		this.sutIzniPersonelDonemselDurum = sutIzniPersonelDonemselDurum;
 	}
 
 }
