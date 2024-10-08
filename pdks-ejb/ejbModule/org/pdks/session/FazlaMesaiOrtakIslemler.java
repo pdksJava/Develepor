@@ -177,33 +177,35 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 			if (calismaModeliAy.getSure() == 0.0d || calismaModeliAy.getToplamIzinSure() == 0.0d || ((dm.getSure() == 0.0d || dm.getToplamIzinSure() == 0.0d) && cm.getHaftaIci() == 9.0d)) {
 				double sure = 0.0d, toplamIzinSure = 0.0d;
-				Calendar cal = Calendar.getInstance();
-				for (VardiyaGun vg : vardiyaGunList) {
-					if (vg.isAyinGunu()) {
-						double gunSure = 0.0d;
-						cal.setTime(vg.getVardiyaDate());
-						int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-						if (vg.getTatil() == null) {
-							gunSure = cm.getSaat(dayOfWeek);
-							double sutIzinSure = cm.getSutIzinSaat(dayOfWeek);
-							double izinSure = sutIzinSure > 7.5d ? 7.5d : sutIzinSure;
-							toplamIzinSure += izinSure;
-						} else if (vg.getTatil().isYarimGunMu()) {
-							if (PdksUtil.tarihKarsilastirNumeric(vg.getVardiyaDate(), vg.getTatil().getBasTarih()) == 0) {
-								if (vg.isHaftaIci() || cm.getSaat(dayOfWeek) > 0.0d) {
-									gunSure += cm.getArife();
-									logger.info(vg.getVardiyaDateStr() + " " + sure);
-									toplamIzinSure += cm.getArife();
+				if (cm.isHaftaTatilSabitDegil() == false) {
+ 					Calendar cal = Calendar.getInstance();
+					for (VardiyaGun vg : vardiyaGunList) {
+						if (vg.isAyinGunu()) {
+							double gunSure = 0.0d;
+							cal.setTime(vg.getVardiyaDate());
+							int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+							if (vg.getTatil() == null) {
+								gunSure = cm.getSaat(dayOfWeek);
+								double sutIzinSure = cm.getSutIzinSaat(dayOfWeek);
+								double izinSure = sutIzinSure > 7.5d ? 7.5d : sutIzinSure;
+								toplamIzinSure += izinSure;
+							} else if (vg.getTatil().isYarimGunMu()) {
+								if (PdksUtil.tarihKarsilastirNumeric(vg.getVardiyaDate(), vg.getTatil().getBasTarih()) == 0) {
+									if (vg.isHaftaIci() || cm.getSaat(dayOfWeek) > 0.0d) {
+										gunSure += cm.getArife();
+										logger.info(vg.getVardiyaDateStr() + " " + sure);
+										toplamIzinSure += cm.getArife();
+									}
+
 								}
 
 							}
+							if (gunSure > 0) {
+								sure += gunSure;
+								 
+							}
 
 						}
-						if (gunSure > 0) {
-							sure += gunSure;
-							// logger.info(vg.getVardiyaDateStr() + " --> " + gunSure + " :  " + sure);
-						}
-
 					}
 				}
 
@@ -1324,7 +1326,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 							if (gunlukKatsayi == null || gunlukKatsayi.doubleValue() < 7.5d)
 								gunlukKatsayi = gunlukKatsayi.doubleValue();
 						}
-//						boolean sonrakiIzinli = vardiyaGun.getSonrakiVardiyaGun() != null && vardiyaGun.getSonrakiVardiyaGun().getVardiya() != null && vardiyaGun.getSonrakiVardiyaGun().isIzinli();
+						// boolean sonrakiIzinli = vardiyaGun.getSonrakiVardiyaGun() != null && vardiyaGun.getSonrakiVardiyaGun().getVardiya() != null && vardiyaGun.getSonrakiVardiyaGun().isIzinli();
 						Vardiya vardiya = vardiyaGun.getVardiya();
 						boolean haftaTatil = vardiya.isHaftaTatil();
 						Tatil tatil = vardiyaGun.getTatil();

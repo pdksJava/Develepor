@@ -82,13 +82,14 @@ public class VardiyaGun extends BaseObject {
 	private PersonelIzin izin;
 	private VardiyaSablonu vardiyaSablonu;
 	private HashMap<Integer, BigDecimal> katSayiMap;
-	private boolean bitmemisGun = Boolean.TRUE, islendi = Boolean.FALSE, ayrikHareketVar = Boolean.FALSE;
+	private boolean bitmemisGun = Boolean.TRUE, islendi = Boolean.FALSE, ayrikHareketVar = Boolean.FALSE, gebeMi=false,sutIzniVar=false;
 	private int yarimYuvarla = PdksUtil.getYarimYuvarlaLast();
 	private HareketKGS ilkGiris, sonCikis;
 	private boolean ayinGunu = Boolean.TRUE, onayli = Boolean.TRUE, fiiliHesapla = Boolean.FALSE, hataliDurum = Boolean.FALSE, donemAcik = Boolean.TRUE;
 	private List<String> linkAdresler;
 	private HashMap<String, Personel> gorevliPersonelMap;
 	private CalismaModeli calismaModeli = null;
+
 	private Boolean fazlaMesaiOnayla;
 	private Integer version = 0;
 	private List<FazlaMesaiTalep> fazlaMesaiTalepler;
@@ -2333,6 +2334,23 @@ public class VardiyaGun extends BaseObject {
 	public void entityRefresh() {
 		// TODO entityRefresh
 
+	}
+	@Transient
+	public boolean isGebeMi() {
+		return gebeMi;
+	}
+
+	public void setGebeMi(boolean gebeMi) {
+		this.gebeMi = gebeMi;
+	}
+	@Transient
+	 
+	public boolean isSutIzniVar() {
+		return sutIzniVar;
+	}
+
+	public void setSutIzniVar(boolean sutIzniVar) {
+		this.sutIzniVar = sutIzniVar;
 	}
 
 }

@@ -14,13 +14,18 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-@Entity(name = "PERSONEL_DONEMSEL_DURUM")
+@Entity(name = PersonelDonemselDurum.TABLE_NAME)
 public class PersonelDonemselDurum extends BaseObject {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4547549693648759736L;
+	public static final String TABLE_NAME = "PERSONEL_DONEMSEL_DURUM";
+	public static final String COLUMN_NAME_PERSONEL = "PERSONEL_ID";
+	public static final String COLUMN_NAME_BASLANGIC_ZAMANI = "BAS_TARIH";
+	public static final String COLUMN_NAME_BITIS_ZAMANI = "BIT_TARIH";
+	public static final String COLUMN_NAME_DURUM_TIPI = "DURUM_TIPI";
 
 	private Personel personel;
 
@@ -29,7 +34,7 @@ public class PersonelDonemselDurum extends BaseObject {
 	private Integer personelDurumTipiId;
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "PERSONEL_ID", nullable = false)
+	@JoinColumn(name = COLUMN_NAME_PERSONEL, nullable = false)
 	@Fetch(FetchMode.JOIN)
 	public Personel getPersonel() {
 		return personel;
@@ -40,7 +45,7 @@ public class PersonelDonemselDurum extends BaseObject {
 	}
 
 	@Temporal(TemporalType.DATE)
-	@Column(name = "BAS_TARIH")
+	@Column(name = COLUMN_NAME_BASLANGIC_ZAMANI)
 	public Date getBasTarih() {
 		return basTarih;
 	}
@@ -50,7 +55,7 @@ public class PersonelDonemselDurum extends BaseObject {
 	}
 
 	@Temporal(TemporalType.DATE)
-	@Column(name = "BIT_TARIH")
+	@Column(name = COLUMN_NAME_BITIS_ZAMANI)
 	public Date getBitTarih() {
 		return bitTarih;
 	}
@@ -59,7 +64,7 @@ public class PersonelDonemselDurum extends BaseObject {
 		this.bitTarih = bitTarih;
 	}
 
-	@Column(name = "DURUM_TIPI", nullable = false)
+	@Column(name = COLUMN_NAME_DURUM_TIPI, nullable = false)
 	public Integer getPersonelDurumTipiId() {
 		return personelDurumTipiId;
 	}
@@ -107,6 +112,6 @@ public class PersonelDonemselDurum extends BaseObject {
 
 	public void entityRefresh() {
 		// TODO entityRefresh
-		
+
 	}
 }

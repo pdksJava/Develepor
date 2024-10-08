@@ -483,6 +483,8 @@ public class PersonelDenklestirme extends BaseObject {
 			Tatil tatil = vg.getTatil();
 			Vardiya vardiya = vg.getVardiya();
 			double gunPlanSure = gun;
+			if (vg.isSutIzniVar())
+				gunPlanSure = gunPlanSure <= 9.0d ? gunPlanSure / 1.2d : 7.5d;
 			if (vg.isAyinGunu() && vardiya != null && vardiya.getId() != null) {
 				boolean hesapla = !(vg.isIzinli() || vardiya.isHaftaTatil() || tatil != null);
 				if (!hesapla) {

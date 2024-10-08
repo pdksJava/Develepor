@@ -112,6 +112,8 @@ import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDenklestirmeDinamikAlan;
 import org.pdks.entity.PersonelDenklestirmeTasiyici;
 import org.pdks.entity.PersonelDinamikAlan;
+import org.pdks.entity.PersonelDonemselDurum;
+import org.pdks.entity.PersonelDurumTipi;
 import org.pdks.entity.PersonelExtra;
 import org.pdks.entity.PersonelFazlaMesai;
 import org.pdks.entity.PersonelGeciciYonetici;
@@ -12516,6 +12518,26 @@ public class OrtakIslemler implements Serializable {
 					cmGunMap.put(cm.getId(), new ArrayList<CalismaModeliGun>());
 				denkMap.put(((denklestirmeAy.getYil() * 100) + denklestirmeAy.getAy()) + "_" + personelDenklestirme.getPersonelId(), personelDenklestirme);
 			}
+			sb = new StringBuffer();
+			sb.append("SELECT DISTINCT P.* FROM " + PersonelDonemselDurum.TABLE_NAME + " P WITH(nolock) ");
+			sb.append(" WHERE P." + PersonelDonemselDurum.COLUMN_NAME_PERSONEL + " :p ");
+			sb.append(" AND P." + PersonelDonemselDurum.COLUMN_NAME_BASLANGIC_ZAMANI + " <=:e ");
+			sb.append(" AND P." + PersonelDonemselDurum.COLUMN_NAME_BITIS_ZAMANI + ">= :d ");
+			map.put("p", perIdList);
+			map.put("e", bitTarih);
+			map.put("d", bitTarih);
+			if (session != null)
+				map.put(PdksEntityController.MAP_KEY_SESSION, session);
+			List<PersonelDonemselDurum> personelDurumList = getDataByIdList(sb, map, PersonelDonemselDurum.TABLE_NAME, PersonelDonemselDurum.class);
+			TreeMap<Long, List<PersonelDonemselDurum>> personelDurumMap = new TreeMap<Long, List<PersonelDonemselDurum>>();
+			for (PersonelDonemselDurum pdd : personelDurumList) {
+				Long key = pdd.getPersonel().getId();
+				List<PersonelDonemselDurum> list = personelDurumMap.containsKey(key) ? personelDurumMap.get(key) : new ArrayList<PersonelDonemselDurum>();
+				if (list.isEmpty())
+					personelDurumMap.put(key, list);
+				list.add(pdd);
+			}
+			personelDurumList = null;
 			map.clear();
 			sb = new StringBuffer();
 			sb.append("SELECT DISTINCT P.* FROM " + CalismaModeliGun.TABLE_NAME + " P WITH(nolock) ");
@@ -12537,10 +12559,27 @@ public class OrtakIslemler implements Serializable {
 			calismaModeliGunList = null;
 			cmGunMap = null;
 			for (VardiyaGun vardiyaGun : vardiyaGunList) {
-				String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMM") + "_" + vardiyaGun.getPersonel().getId();
+				Long perId = vardiyaGun.getPersonel().getId();
+				String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMM") + "_" + perId;
+				boolean gebeMi = false, sutIzniVar = false;
+				if (personelDurumMap.containsKey(perId)) {
+					List<PersonelDonemselDurum> list = personelDurumMap.get(key);
+					for (PersonelDonemselDurum personelDonemselDurum : list) {
+						if (personelDonemselDurum.getBasTarih().getTime() <= vardiyaGun.getVardiyaDate().getTime() && personelDonemselDurum.getBitTarih().getTime() >= vardiyaGun.getVardiyaDate().getTime()) {
+							if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.GEBE))
+								gebeMi = true;
+							else if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.SUT_IZNI))
+								sutIzniVar = true;
+						}
+
+					}
+
+				}
 				if (denkMap.containsKey(key)) {
 					PersonelDenklestirme denklestirme = denkMap.get(key);
 					try {
+						if (!sutIzniVar)
+							sutIzniVar = denklestirme.isSutIzniVar();
 						if (denklestirme.getCalismaModeliAy() != null) {
 							CalismaModeli cm = denklestirme.getCalismaModeli();
 							if (cm.getCalismaModeliGunler() == null)
@@ -12554,7 +12593,10 @@ public class OrtakIslemler implements Serializable {
 					}
 
 				}
+				vardiyaGun.setSutIzniVar(sutIzniVar);
+				vardiyaGun.setGebeMi(gebeMi);
 			}
+			personelDurumMap = null;
 			cmGunSetMap = null;
 			denkMap = null;
 		}
