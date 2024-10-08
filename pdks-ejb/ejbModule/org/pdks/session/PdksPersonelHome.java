@@ -1513,7 +1513,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public Boolean secSutIzni(Personel personel) {
 		if (personel == null)
 			personel = getInstance();
-		boolean secim = personel.getCinsiyetBayan();
+		boolean secim = personel.getCinsiyetBayan() && personel.getSirket() != null && personel.getSirket().isGebelikSutIzinVar();
 		return secim;
 	}
 
