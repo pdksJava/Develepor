@@ -1500,7 +1500,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public Boolean secGebe(Personel personel) {
 		if (personel == null)
 			personel = getInstance();
-		List<String> gebeIcapSuaDurumList = getGebeIcapSuaDurumList(personel);
+		Sirket sirket = personel.getSirket();
+		List<String> gebeIcapSuaDurumList = sirket != null && sirket.isGebelikSutIzinVar() ? getGebeIcapSuaDurumList(personel) : null;
 		boolean secim = personel.getCinsiyetBayan() && gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.GEBE_KEY);
 		gebeIcapSuaDurumList = null;
 		return secim;
@@ -1513,7 +1514,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public Boolean secSutIzni(Personel personel) {
 		if (personel == null)
 			personel = getInstance();
-		boolean secim = personel.getCinsiyetBayan() && personel.getSirket() != null && personel.getSirket().isGebelikSutIzinVar();
+		Sirket sirket = personel.getSirket();
+		boolean secim = personel.getCinsiyetBayan() && sirket != null && sirket.isGebelikSutIzinVar();
 		return secim;
 	}
 
