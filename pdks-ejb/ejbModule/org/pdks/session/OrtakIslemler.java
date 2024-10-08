@@ -12567,12 +12567,14 @@ public class OrtakIslemler implements Serializable {
 				if (personelDurumMap.containsKey(perId)) {
 					List<PersonelDonemselDurum> list = personelDurumMap.get(perId);
 					for (PersonelDonemselDurum personelDonemselDurum : list) {
-						if (personelDonemselDurum.getBasTarih().getTime() <= vardiyaGun.getVardiyaDate().getTime() && personelDonemselDurum.getBitTarih().getTime() >= vardiyaGun.getVardiyaDate().getTime()) {
-							if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.GEBE))
+						boolean donemTamam = personelDonemselDurum.getBasTarih().getTime() <= vardiyaGun.getVardiyaDate().getTime() && personelDonemselDurum.getBitTarih().getTime() >= vardiyaGun.getVardiyaDate().getTime();
+						if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.GEBE)) {
+							if (donemTamam)
 								gebeMi = true;
-							else if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.SUT_IZNI)) {
+						} else if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.SUT_IZNI)) {
+							sutIzniPersonelDonemselDurum = personelDonemselDurum;
+							if (donemTamam) {
 								sutIzniVar = true;
-								sutIzniPersonelDonemselDurum = personelDonemselDurum;
 							}
 
 						}
@@ -12584,6 +12586,8 @@ public class OrtakIslemler implements Serializable {
 					PersonelDenklestirme denklestirme = denkMap.get(key);
 					if (denklestirme.getSutIzniPersonelDonemselDurum() == null)
 						denklestirme.setSutIzniPersonelDonemselDurum(sutIzniPersonelDonemselDurum);
+					if (sutIzniPersonelDonemselDurum == null)
+						sutIzniVar = denklestirme.isSutIzniVar();
 					try {
 						if (!sutIzniVar)
 							sutIzniVar = denklestirme.isSutIzniVar();
