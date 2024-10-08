@@ -12589,8 +12589,6 @@ public class OrtakIslemler implements Serializable {
 					if (sutIzniPersonelDonemselDurum == null)
 						sutIzniVar = denklestirme.isSutIzniVar();
 					try {
-						if (!sutIzniVar)
-							sutIzniVar = denklestirme.isSutIzniVar();
 						if (denklestirme.getCalismaModeliAy() != null) {
 							CalismaModeli cm = denklestirme.getCalismaModeli();
 							if (cm.getCalismaModeliGunler() == null)
