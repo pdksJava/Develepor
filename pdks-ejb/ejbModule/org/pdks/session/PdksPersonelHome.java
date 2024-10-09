@@ -315,6 +315,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				fields.put("basTarih<=", donemselDurum.getBitTarih());
 				if (donemselDurum.getId() != null)
 					fields.put("id<>", donemselDurum.getId());
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				list = pdksEntityController.getObjectByInnerObjectListInLogic(fields, PersonelDonemselDurum.class);
 				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 					PersonelDonemselDurum personelDonemselDurum = (PersonelDonemselDurum) iterator.next();

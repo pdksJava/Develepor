@@ -193,7 +193,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 								if (PdksUtil.tarihKarsilastirNumeric(vg.getVardiyaDate(), vg.getTatil().getBasTarih()) == 0) {
 									if (vg.isHaftaIci() || cm.getSaat(dayOfWeek) > 0.0d) {
 										gunSure += cm.getArife();
-										logger.info(vg.getVardiyaDateStr() + " " + sure);
+										logger.debug(vg.getVardiyaDateStr() + " " + sure);
 										toplamIzinSure += cm.getArife();
 									}
 

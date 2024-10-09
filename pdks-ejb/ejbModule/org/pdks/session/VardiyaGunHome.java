@@ -2851,6 +2851,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 				list = null;
 				idList = null;
+				ortakIslemler.vardiyaCalismaModeliGuncelle(aylikPuantaj.getVardiyalar(), session);
 
 			}
 		} catch (Exception ed) {

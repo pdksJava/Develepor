@@ -12478,7 +12478,6 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 */
 	public void vardiyaCalismaModeliGuncelle(List<VardiyaGun> vardiyaGunList, Session session) {
-
 		List<Long> perIdList = new ArrayList<Long>();
 		Date basTarih = null, bitTarih = null;
 		for (VardiyaGun vardiyaGun : vardiyaGunList) {
@@ -12523,7 +12522,8 @@ public class OrtakIslemler implements Serializable {
 			sb.append("SELECT DISTINCT P.* FROM " + PersonelDonemselDurum.TABLE_NAME + " P WITH(nolock) ");
 			sb.append(" WHERE P." + PersonelDonemselDurum.COLUMN_NAME_PERSONEL + " :p ");
 			sb.append(" AND P." + PersonelDonemselDurum.COLUMN_NAME_BASLANGIC_ZAMANI + " <=:e ");
-			sb.append(" AND P." + PersonelDonemselDurum.COLUMN_NAME_BITIS_ZAMANI + ">= :d ");
+			sb.append(" AND P." + PersonelDonemselDurum.COLUMN_NAME_BITIS_ZAMANI + " >= :d ");
+			sb.append(" AND P." + PersonelDonemselDurum.COLUMN_NAME_DURUM + " = 1 ");
 			map.put("p", perIdList);
 			map.put("e", bitTarih);
 			map.put("d", basTarih);
