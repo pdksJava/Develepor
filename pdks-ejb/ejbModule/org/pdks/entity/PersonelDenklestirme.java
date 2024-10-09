@@ -480,7 +480,7 @@ public class PersonelDenklestirme extends BaseObject {
 	 * @return
 	 */
 	private double getPlananSureHesapla(CalismaModeli cm, List<VardiyaGun> vardiyalar) {
-		double sure = 0.0d, gun = cm.getIzinSaat(2);
+		double sure = 0.0d, gun = cm.getHaftaIci();
 		for (VardiyaGun vg : vardiyalar) {
 			Tatil tatil = vg.getTatil();
 			Vardiya vardiya = vg.getVardiya();
@@ -496,8 +496,11 @@ public class PersonelDenklestirme extends BaseObject {
 						hesapla = true;
 					}
 				}
-				if (hesapla)
+				if (hesapla) {
 					sure += gunPlanSure;
+					logger.debug(vg.getVardiyaDateStr() + " " + gunPlanSure + " " + sure);
+				}
+
 			}
 		}
 		return sure;
