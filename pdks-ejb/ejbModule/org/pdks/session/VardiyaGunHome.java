@@ -1233,7 +1233,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		PersonelDenklestirme seciliPersonelDenklestirme = personelAylikPuantaj.getPersonelDenklestirme();
 		boolean sutIzin = personel.isSutIzniKullan() || seciliPersonelDenklestirme.isSutIzniVar();
 		if (!sutIzin && AylikPuantaj.getGebelikGuncelle()) {
-			if (seciliVardiyaGun.getVardiya().isGebelikMi())
+			if (seciliVardiyaGun.getVardiya().isGebelikMi() || seciliVardiyaGun.isGebeMi())
 				gebeSutIzniGuncelle = true;
 			else {
 				gebeSutIzniGuncelle = false;
@@ -1678,7 +1678,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					} else if (calismaModeliVardiyaOzelMap != null && calismaModeliVardiyaOzelMap.containsKey(cm.getId())) {
 						HashMap<String, Boolean> map = calismaModeliVardiyaOzelMap.get(cm.getId());
 						boolean ozel = false;
-						if (vardiya.isGebelikMi())
+						if (vardiya.isGebelikMi() || vardiyaGun.isGebeMi())
 							ozel = map.containsKey(Vardiya.GEBE_KEY) && map.get(Vardiya.GEBE_KEY);
 						if (vardiya.isSuaMi())
 							ozel = map.containsKey(Vardiya.SUA_KEY) && map.get(Vardiya.SUA_KEY);
@@ -8653,13 +8653,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (vardiyaMap.containsKey(pdksVardiya.getId()))
 						vardiyaMap.remove(pdksVardiya.getId());
 					if (!pdksVardiya.getGenel()) {
-
 						if (!pdksVardiya.isRadyasyonIzni() || (pdksVardiya.isRadyasyonIzni() && (sua || radyolojiIzinDurum.equals("1"))))
 							pdksList.add(pdksVardiya);
 					} else if (!pdksVardiya.isIsKurMu()) {
 						pdksList.add(pdksVardiya);
 					}
-
 				}
 			}
 

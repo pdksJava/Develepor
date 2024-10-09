@@ -12560,14 +12560,17 @@ public class OrtakIslemler implements Serializable {
 			calismaModeliGunList = null;
 			cmGunMap = null;
 			for (VardiyaGun vardiyaGun : vardiyaGunList) {
-				Long perId = vardiyaGun.getPersonel().getId();
+				Personel personel = vardiyaGun.getPersonel();
+				Vardiya vardiya = vardiyaGun.getVardiya();
+				Long perId = personel.getId();
 				String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMM") + "_" + perId;
 				boolean gebeMi = false, sutIzniVar = false;
-				PersonelDonemselDurum sutIzniPersonelDonemselDurum = null;
+				PersonelDonemselDurum sutIzniPersonelDonemselDurum = null, gebePersonelDonemselDurum = null;
 				if (personelDurumMap.containsKey(perId)) {
 					List<PersonelDonemselDurum> list = personelDurumMap.get(perId);
 					for (PersonelDonemselDurum personelDonemselDurum : list) {
 						boolean donemTamam = personelDonemselDurum.getBasTarih().getTime() <= vardiyaGun.getVardiyaDate().getTime() && personelDonemselDurum.getBitTarih().getTime() >= vardiyaGun.getVardiyaDate().getTime();
+						gebePersonelDonemselDurum = personelDonemselDurum;
 						if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.GEBE)) {
 							if (donemTamam)
 								gebeMi = true;
@@ -12588,6 +12591,8 @@ public class OrtakIslemler implements Serializable {
 						denklestirme.setSutIzniPersonelDonemselDurum(sutIzniPersonelDonemselDurum);
 					if (sutIzniPersonelDonemselDurum == null)
 						sutIzniVar = denklestirme.isSutIzniVar();
+					if (gebePersonelDonemselDurum == null)
+						gebeMi = personel.getGebeMi() || vardiya.isGebelikMi();
 					try {
 						if (denklestirme.getCalismaModeliAy() != null) {
 							CalismaModeli cm = denklestirme.getCalismaModeli();
