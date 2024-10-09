@@ -56,7 +56,7 @@
 								</rich:column>
 								<c:if test="#{vardiyaTanimlaHome.calismaModeliList!=null}">
 									<c:forEach items="#{vardiyaTanimlaHome.calismaModeliList}" var="cm">
-										<c:if test="#{(cm.updateCGS==false or authenticatedUser.admin ) and cm.genelModel}">
+										<c:if test="#{(cm.updateCGS==false or authenticatedUser.admin ) and cm.genelModel and cm.haftaTatilSabitDegil==false}">
 											<rich:column style="text-align: center;width: 40px;">
 												<f:facet name="header">#{cm.aciklama} Süre</f:facet>
 											#{authenticatedUser.sayiFormatliGoster( vardiyaTanimlaHome.getCalismaModeliAy(vardiyaView,cm).sure)}

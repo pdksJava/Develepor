@@ -664,6 +664,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				pdksPersonel.setCalismaModeli(cm);
 		}
 		calismaModeliList = PdksUtil.sortObjectStringAlanList(calismaModeliList, "getAciklama", null);
+		if (pdksPersonel.isCalisiyor() == false && pdksPersonel.getCalismaModeli() != null && pdksPersonel.getCalismaModeli().getDurum().equals(Boolean.FALSE))
+			calismaModeliList.add(pdksPersonel.getCalismaModeli());
 	}
 
 	/**
@@ -734,6 +736,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				}
 			} else
 				sablonList = new ArrayList<VardiyaSablonu>();
+			if (pdksPersonel.isCalisiyor() == false && pdksPersonel.getSablon() != null && pdksPersonel.getSablon().getDurum().equals(Boolean.FALSE))
+				sablonList.add(pdksPersonel.getSablon());
 			if (sablonIskurList.size() == 1 && pdksPersonel.getIsKurVardiyaSablonu() == null && pdksPersonel.isCalisiyor()) {
 				pdksPersonel.setIsKurVardiyaSablonu(sablonIskurList.get(0));
 				savePersonel(pdksPersonel);
@@ -2081,6 +2085,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);
 			}
 		}
+		if (pdksPersonel.isCalisiyor() == false && pdksPersonel.getSirket() != null && pdksPersonel.getSirket().getDurum().equals(Boolean.FALSE))
+			list.add(pdksPersonel.getSirket());
 		setSirketList(list);
 	}
 
