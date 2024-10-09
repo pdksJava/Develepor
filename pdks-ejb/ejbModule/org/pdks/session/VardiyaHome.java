@@ -294,7 +294,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			pdksVardiya.setCikisGecikmeToleransDakika((short) 0);
 		}
 		vardiyaAlanlariDoldur(pdksVardiya);
-
+		setInstance(pdksVardiya);
 	}
 
 	/**
