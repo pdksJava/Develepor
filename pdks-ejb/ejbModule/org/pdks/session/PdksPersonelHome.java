@@ -1503,20 +1503,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * @param personel
 	 * @return
 	 */
-	public Boolean secGebe(Personel personel) {
-		if (personel == null)
-			personel = getInstance();
-		Sirket sirket = personel.getSirket();
-		List<String> gebeIcapSuaDurumList = sirket != null && sirket.isGebelikSutIzinVar() ? getGebeIcapSuaDurumList(personel) : null;
-		boolean secim = personel.getGebeMi() || (personel.getCinsiyetBayan() && gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.GEBE_KEY));
-		gebeIcapSuaDurumList = null;
-		return secim;
-	}
-
-	/**
-	 * @param personel
-	 * @return
-	 */
 	public Boolean secSutIzni(Personel personel) {
 		if (personel == null)
 			personel = getInstance();
@@ -1529,13 +1515,13 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * @param personel
 	 * @return
 	 */
-	public Boolean secFMI(Personel personel) {
+	public Boolean secGebe(Personel personel) {
 		if (personel == null)
 			personel = getInstance();
 		Sirket sirket = personel.getSirket();
-		List<String> gebeIcapSuaDurumList = sirket != null && sirket.getFazlaMesaiIzinKullan() ? getGebeIcapSuaDurumList(personel) : null;
-		boolean secim = personel.getFazlaMesaiIzinKullan() || (gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.FMI_KEY));
-		gebeIcapSuaDurumList = null;
+		List<String> list = sirket != null && sirket.isGebelikSutIzinVar() ? getGebeIcapSuaDurumList(personel) : null;
+		boolean secim = personel.getGebeMi() || (personel.getCinsiyetBayan() && list != null && list.contains(Vardiya.GEBE_KEY));
+		list = null;
 		return secim;
 	}
 
@@ -1547,9 +1533,23 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (personel == null)
 			personel = getInstance();
 		Sirket sirket = personel.getSirket();
-		List<String> gebeIcapSuaDurumList = sirket != null && sirket.getSuaOlabilir() ? getGebeIcapSuaDurumList(personel) : null;
-		boolean secim = personel.isSuaOlur() || (gebeIcapSuaDurumList != null && gebeIcapSuaDurumList.contains(Vardiya.SUA_KEY));
-		gebeIcapSuaDurumList = null;
+		List<String> list = sirket != null && sirket.getSuaOlabilir() ? getGebeIcapSuaDurumList(personel) : null;
+		boolean secim = personel.isSuaOlur() || (list != null && list.contains(Vardiya.SUA_KEY));
+		list = null;
+		return secim;
+	}
+
+	/**
+	 * @param personel
+	 * @return
+	 */
+	public Boolean secFMI(Personel personel) {
+		if (personel == null)
+			personel = getInstance();
+		Sirket sirket = personel.getSirket();
+		List<String> list = sirket != null && sirket.getFazlaMesaiIzinKullan() ? getGebeIcapSuaDurumList(personel) : null;
+		boolean secim = personel.getFazlaMesaiIzinKullan() || (list != null && list.contains(Vardiya.FMI_KEY));
+		list = null;
 		return secim;
 	}
 
