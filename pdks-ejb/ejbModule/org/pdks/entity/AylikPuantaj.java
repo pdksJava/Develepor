@@ -570,32 +570,6 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	}
 
-	// /**
-	// * @param calismaModeli
-	// * @return
-	// */
-	// private double getPlananSureHesapla(CalismaModeli calismaModeli) {
-	// double sure = 0.0d, gun = calismaModeli.getIzinSaat(2);
-	// for (VardiyaGun vg : vardiyalar) {
-	// Tatil tatil = vg.getTatil();
-	// Vardiya vardiya = vg.getVardiya();
-	// double gunPlanSure = gun;
-	// if (vg.isAyinGunu() && vardiya != null && vardiya.getId() != null) {
-	// boolean hesapla = !(vg.isIzinli() || vardiya.isHaftaTatil() || tatil != null);
-	// if (!hesapla) {
-	// gunPlanSure = 0;
-	// if (tatil != null && tatil.isYarimGunMu()) {
-	// gunPlanSure = calismaModeli.getArife();
-	// hesapla = true;
-	// }
-	// }
-	// if (hesapla)
-	// sure += gunPlanSure;
-	// }
-	// }
-	// return sure;
-	// }
-
 	/**
 	 * @param tatilGunleriMap
 	 * @param calismaModeli
