@@ -237,7 +237,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						if (personelDonemselDurum.getBasTarih().getTime() <= bugun.getTime() && personelDonemselDurum.getBitTarih().getTime() >= bugun.getTime()) {
 							if (personelDonemselDurum.isGebe()) {
 								if (personel.isGebelikMuayeneIzniKullan() == false || personel.isSutIzniKullan()) {
-									personel.setGebeMi(true);
+									personel.setGebeMi(false);
 									personel.setSutIzni(false);
 									personel.setGuncellemeTarihi(personelDonemselDurum.getSonIslemTarihi());
 									personel.setGuncelleyenUser(personelDonemselDurum.getSonIslemYapan());
@@ -246,7 +246,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							} else if (personelDonemselDurum.isSutIzni()) {
 								if (personel.isGebelikMuayeneIzniKullan() || personel.isSutIzniKullan() == false) {
 									personel.setGebeMi(false);
-									personel.setSutIzni(true);
+									personel.setSutIzni(false);
 									personel.setGuncellemeTarihi(personelDonemselDurum.getSonIslemTarihi());
 									personel.setGuncelleyenUser(personelDonemselDurum.getSonIslemYapan());
 									flush = true;

@@ -12523,8 +12523,7 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" WHERE P." + PersonelDonemselDurum.COLUMN_NAME_PERSONEL + " :p ");
 			sb.append(" AND P." + PersonelDonemselDurum.COLUMN_NAME_BASLANGIC_ZAMANI + " <=:e ");
 			sb.append(" AND P." + PersonelDonemselDurum.COLUMN_NAME_BITIS_ZAMANI + " >= :d ");
-			sb.append(" AND P." + PersonelDonemselDurum.COLUMN_NAME_DURUM + " = 1 ");
-			map.put("p", perIdList);
+ 			map.put("p", perIdList);
 			map.put("e", bitTarih);
 			map.put("d", basTarih);
 			if (session != null)
@@ -12532,11 +12531,14 @@ public class OrtakIslemler implements Serializable {
 			List<PersonelDonemselDurum> personelDurumList = getSQLParamList(perIdList, sb, "p", map, PersonelDonemselDurum.class, session);
 			TreeMap<Long, List<PersonelDonemselDurum>> personelDurumMap = new TreeMap<Long, List<PersonelDonemselDurum>>();
 			for (PersonelDonemselDurum pdd : personelDurumList) {
-				Long key = pdd.getPersonel().getId();
-				List<PersonelDonemselDurum> list = personelDurumMap.containsKey(key) ? personelDurumMap.get(key) : new ArrayList<PersonelDonemselDurum>();
-				if (list.isEmpty())
-					personelDurumMap.put(key, list);
-				list.add(pdd);
+				if (pdd.getDurum()) {
+					Long key = pdd.getPersonel().getId();
+					List<PersonelDonemselDurum> list = personelDurumMap.containsKey(key) ? personelDurumMap.get(key) : new ArrayList<PersonelDonemselDurum>();
+					if (list.isEmpty())
+						personelDurumMap.put(key, list);
+					list.add(pdd);
+				}
+			
 			}
 			personelDurumList = null;
 			map.clear();
