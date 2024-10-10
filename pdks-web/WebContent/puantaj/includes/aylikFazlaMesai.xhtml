@@ -478,15 +478,19 @@
 									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.planlananSure)}" rendered="#{aylikPuantaj.planlananSure!=0}" />
 								</DIV> <ui:fragment
 									rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy!=null and aylikPuantaj.gebeDurum==false and aylikPuantaj.sutIzniDurum==false }">
-									<rich:toolTip for="planlananSureAciklama#{aylikPuantaj.personelDenklestirme.id}">
+									<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.haftaTatilSabitDegil==false}">
+										<rich:toolTip for="planlananSureAciklama#{aylikPuantaj.personelDenklestirme.id}">
+									
 										#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama} :
 										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle==false}">
 											      #{authenticatedUser.sayiFormatliGoster(aylikPuantaj.personelDenklestirme.calismaModeliAy.sure)}  
 										</ui:fragment>
-										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle}">
+											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle}">
 											   #{authenticatedUser.sayiFormatliGoster(aylikPuantaj.personelDenklestirme.planlanSure)}  
 										</ui:fragment>
-									</rich:toolTip>
+
+										</rich:toolTip>
+									</ui:fragment>
 								</ui:fragment>
 							</td>
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.yasalFazlaCalismaAsanSaat}">

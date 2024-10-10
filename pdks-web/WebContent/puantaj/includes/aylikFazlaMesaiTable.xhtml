@@ -271,15 +271,17 @@
 				</DIV>
 				<ui:fragment
 					rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy!=null and aylikPuantaj.gebeDurum==false and aylikPuantaj.sutIzniDurum==false }">
-					<rich:toolTip for="planlananSureAciklama#{aylikPuantaj.personelDenklestirme.id}">
+					<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.haftaTatilSabitDegil==false}">
+						<rich:toolTip for="planlananSureAciklama#{aylikPuantaj.personelDenklestirme.id}">
 										#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama} :
 										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle==false}">
 											      #{authenticatedUser.sayiFormatliGoster(aylikPuantaj.personelDenklestirme.calismaModeliAy.sure)}  
 										</ui:fragment>
-						<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle}">
+							<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle}">
 											   #{authenticatedUser.sayiFormatliGoster(aylikPuantaj.personelDenklestirme.planlanSure)}  
 										</ui:fragment>
-					</rich:toolTip>
+						</rich:toolTip>
+					</ui:fragment>
 				</ui:fragment>
 			</rich:column>
 			<rich:column style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;color:black;"
@@ -792,7 +794,8 @@
 				</c:forEach>
 
 			</c:if>
-			<rich:column rendered="#{fazlaMesaiHesaplaHome.istifaGoster and fazlaMesaiHesaplaHome.ikRole}" class="#{aylikPuantaj.trSonucClass}" style="width: 30px">
+			<rich:column rendered="#{fazlaMesaiHesaplaHome.istifaGoster and fazlaMesaiHesaplaHome.ikRole}" class="#{aylikPuantaj.trSonucClass}"
+				style="width: 30px">
 				<f:facet name="header">
 							Durum
 						</f:facet>
