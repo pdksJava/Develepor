@@ -11115,7 +11115,7 @@ public class OrtakIslemler implements Serializable {
 		int yil = (Integer) veriMap.get("yil");
 		if (yil >= PdksUtil.getSistemBaslangicYili() || getParameterKey("izinHakedisGuncelle").equals("1")) {
 			Personel izinSahibi = (Personel) veriMap.get("izinSahibi");
-			boolean suaDurum = false;
+			boolean suaDurum = (Boolean) veriMap.get("suaDurum");
 			HashMap<String, IzinHakedisHakki> hakedisMap = (HashMap<String, IzinHakedisHakki>) veriMap.get("hakedisMap");
 			User user = (User) veriMap.get("user");
 			boolean yeniBakiyeOlustur = (Boolean) veriMap.get("yeniBakiyeOlustur");
