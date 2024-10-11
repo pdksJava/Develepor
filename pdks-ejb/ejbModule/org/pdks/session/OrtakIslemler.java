@@ -12523,7 +12523,7 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" WHERE P." + PersonelDonemselDurum.COLUMN_NAME_PERSONEL + " :p ");
 			sb.append(" AND P." + PersonelDonemselDurum.COLUMN_NAME_BASLANGIC_ZAMANI + " <=:e ");
 			sb.append(" AND P." + PersonelDonemselDurum.COLUMN_NAME_BITIS_ZAMANI + " >= :d ");
- 			map.put("p", perIdList);
+			map.put("p", perIdList);
 			map.put("e", bitTarih);
 			map.put("d", basTarih);
 			if (session != null)
@@ -12538,7 +12538,7 @@ public class OrtakIslemler implements Serializable {
 						personelDurumMap.put(key, list);
 					list.add(pdd);
 				}
-			
+
 			}
 			personelDurumList = null;
 			map.clear();
@@ -12593,8 +12593,15 @@ public class OrtakIslemler implements Serializable {
 						denklestirme.setSutIzniPersonelDonemselDurum(sutIzniPersonelDonemselDurum);
 					if (sutIzniPersonelDonemselDurum == null)
 						sutIzniVar = denklestirme.isSutIzniVar();
-					if (gebePersonelDonemselDurum == null)
-						gebeMi = personel.getGebeMi() || vardiya.isGebelikMi();
+					if (gebePersonelDonemselDurum == null) {
+						try {
+							gebeMi = personel.getGebeMi() || (vardiya != null && vardiya.isGebelikMi());
+						} catch (Exception e) {
+							logger.error(e);
+						}
+
+					}
+
 					try {
 						if (denklestirme.getCalismaModeliAy() != null) {
 							CalismaModeli cm = denklestirme.getCalismaModeli();

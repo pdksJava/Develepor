@@ -6018,8 +6018,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		bordroAlanKapat();
 		Boolean kontrolDurum = false;
 		String donem = String.valueOf(yil * 100 + ay);
-		session.clear();
-		vardiyalarMap.clear();
+ 		vardiyalarMap.clear();
 		vardiyaBolumList = null;
 		aylikHareketKaydiVardiyaBul = Boolean.FALSE;
 		savePlanLastParameter();
