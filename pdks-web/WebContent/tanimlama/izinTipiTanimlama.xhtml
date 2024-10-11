@@ -229,10 +229,14 @@
 							<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 						</f:facet>
 					</rich:dataTable>
+					<ui:fragment>
+						<a4j:commandButton status="ajaxStatus" value="İzin Tipi Ekle" action="#{izinTipiHome.izinTipiEkle}"
+							oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" />
+						<rich:toolTip for="addlink" value="Add" />
 
-					<a4j:commandButton status="ajaxStatus" value="İzin Tipi Ekle" action="#{izinTipiHome.izinTipiEkle}"
-						oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" />
-					<rich:toolTip for="addlink" value="Add" />
+						<a4j:commandButton status="ajaxStatus" value="izinGunceleme Calistir" rendered="#{authenticatedUser.admin and ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametreIzinERPTableView)}"
+							action="#{izinBakiyeGuncelleme.izinGuncelemeCalistir(true,parameterHome.session)}" />
+					</ui:fragment>
 				</a4j:outputPanel>
 			</rich:panel>
 

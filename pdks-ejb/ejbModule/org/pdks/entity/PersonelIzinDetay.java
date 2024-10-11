@@ -27,7 +27,8 @@ public class PersonelIzinDetay extends BasePDKSObject implements Serializable, C
 	private static final long serialVersionUID = -7487009656840444082L;
 	static Logger logger = Logger.getLogger(PersonelIzinDetay.class);
 	public static final String TABLE_NAME = "PERSONELIZINDETAY";
- 	public static final String COLUMN_NAME_IZIN = "IZIN_ID";
+	public static final String SP_NAME = "SP_IZIN_HAKEDIS_GUNCELLE";
+  	public static final String COLUMN_NAME_IZIN = "IZIN_ID";
 	public static final String COLUMN_NAME_HAKEDIS_IZIN = "HAKEDIS_IZIN_ID";
 
 	private PersonelIzin hakEdisIzin;

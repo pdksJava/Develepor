@@ -4361,6 +4361,7 @@ public class OrtakIslemler implements Serializable {
 						if (sure >= 0) {
 							query1 = session.createSQLQuery(sqlStr);
 							query1.executeUpdate();
+							session.flush();
 							yeni = true;
 						}
 
@@ -11112,9 +11113,9 @@ public class OrtakIslemler implements Serializable {
 	public IzinTipi senelikIzinOlustur(HashMap<String, Object> veriMap, Session session) {
 		IzinTipi izinTipi = (IzinTipi) veriMap.get("izinTipi");
 		int yil = (Integer) veriMap.get("yil");
-		if (yil >= PdksUtil.getSistemBaslangicYili()) {
+		if (yil >= PdksUtil.getSistemBaslangicYili() || getParameterKey("izinHakedisGuncelle").equals("1")) {
 			Personel izinSahibi = (Personel) veriMap.get("izinSahibi");
-			boolean suaDurum = (Boolean) veriMap.get("suaDurum");
+			boolean suaDurum = false;
 			HashMap<String, IzinHakedisHakki> hakedisMap = (HashMap<String, IzinHakedisHakki>) veriMap.get("hakedisMap");
 			User user = (User) veriMap.get("user");
 			boolean yeniBakiyeOlustur = (Boolean) veriMap.get("yeniBakiyeOlustur");
@@ -11249,8 +11250,12 @@ public class OrtakIslemler implements Serializable {
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
-						if (personelIzin != null)
+						if (personelIzin != null) {
 							flush = personelIzin.isCheckBoxDurum();
+							if (authenticatedUser != null && yeniBakiyeOlustur && getParameterKey("izinHakedisGuncelle").equals("1"))
+								veriMap.put("hakEdisIzin", personelIzin);
+						}
+
 						Date oncekiHakedisTarihi = PdksUtil.addTarih(izinHakEttigiTarihi, Calendar.YEAR, -1);
 						if (yil > sistemKontrolYili && (personelIzin != null || bugun.after(oncekiHakedisTarihi))) {
 							if (personelIzin == null) {
@@ -12523,7 +12528,7 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" WHERE P." + PersonelDonemselDurum.COLUMN_NAME_PERSONEL + " :p ");
 			sb.append(" AND P." + PersonelDonemselDurum.COLUMN_NAME_BASLANGIC_ZAMANI + " <=:e ");
 			sb.append(" AND P." + PersonelDonemselDurum.COLUMN_NAME_BITIS_ZAMANI + " >= :d ");
- 			map.put("p", perIdList);
+			map.put("p", perIdList);
 			map.put("e", bitTarih);
 			map.put("d", basTarih);
 			if (session != null)
@@ -12538,7 +12543,7 @@ public class OrtakIslemler implements Serializable {
 						personelDurumMap.put(key, list);
 					list.add(pdd);
 				}
-			
+
 			}
 			personelDurumList = null;
 			map.clear();
@@ -12594,7 +12599,7 @@ public class OrtakIslemler implements Serializable {
 					if (sutIzniPersonelDonemselDurum == null)
 						sutIzniVar = denklestirme.isSutIzniVar();
 					if (gebePersonelDonemselDurum == null)
-						gebeMi = personel.getGebeMi() || vardiya.isGebelikMi();
+						gebeMi = personel.getGebeMi() || (vardiya != null && vardiya.isGebelikMi());
 					try {
 						if (denklestirme.getCalismaModeliAy() != null) {
 							CalismaModeli cm = denklestirme.getCalismaModeli();
@@ -13115,8 +13120,9 @@ public class OrtakIslemler implements Serializable {
 			return kidemMap;
 		int kidemYili = 0;
 		String izinERPUpdate = getParameterKey("izinERPUpdate");
-		if (!izinERPUpdate.equals("1") || personel.getSirket().getDepartman().getIzinGirilebilir()) {
-
+		String parameterName = getParameterKey(getParametreHakEdisIzinERPTableView());
+		boolean izinTipiGiris = !PdksUtil.hasStringValue(parameterName);
+		if (izinTipiGiris || !izinERPUpdate.equals("1") || personel.getSirket().getDepartman().getIzinGirilebilir()) {
 			if (personel.getIzinHakEdisTarihi() != null) {
 				int yil = kidemMap.get(Calendar.YEAR);
 				kidemYili = yil;
@@ -13124,8 +13130,8 @@ public class OrtakIslemler implements Serializable {
 					IzinTipi izinTipi = null;
 					String key = departmanKey;
 					boolean ekle = Boolean.FALSE;
-					boolean suaOlabilir = personel.isSuaOlur();
-					boolean senelikKullan = getParameterKey("suaSenelikKullan").equals("1") || !suaOlabilir;
+					boolean suaOlabilir = false;
+					boolean senelikKullan = true;
 					if (senelikKullan) {
 						key = departmanKey + IzinTipi.YILLIK_UCRETLI_IZIN;
 
@@ -13150,7 +13156,35 @@ public class OrtakIslemler implements Serializable {
 							veriMap.put("islemTarihi", bugun);
 							veriMap.put("yeniBakiyeOlustur", yeniBakiyeOlustur);
 							izinTipi = senelikIzinOlustur(veriMap, session);
+							if (izinTipi != null && veriMap.containsKey("hakEdisIzin")) {
+								PersonelIzin hakEdisIzin = (PersonelIzin) veriMap.get("hakEdisIzin");
+								veriMap.remove("hakEdisIzin");
+								if (buYil == PdksUtil.getSistemBaslangicYili()) {
+									int gecmisYil = buYil, gecmisKidem = yil;
+
+									Date islemTarihi = bugun;
+									if (hakEdisIzin != null) {
+										islemTarihi = hakEdisIzin.getBitisZamani();
+										gecmisYil = PdksUtil.getDateField(islemTarihi, Calendar.YEAR);
+										gecmisKidem = Integer.parseInt(hakEdisIzin.getAciklama()) - 1;
+									}
+									for (int i = gecmisKidem; i > 0; i--) {
+										veriMap.put("izinSahibi", personel);
+										veriMap.put("sistemYonetici", sistemYonetici);
+										veriMap.put("suaDurum", suaDurum);
+										veriMap.put("yil", --gecmisYil);
+										veriMap.put("kidemYil", i);
+										veriMap.put("hakedisMap", hakedisMap);
+										veriMap.put("user", user);
+										veriMap.put("izinTipi", izinTipi);
+										veriMap.put("islemTarihi", bugun);
+										veriMap.put("yeniBakiyeOlustur", false);
+										izinTipi = senelikIzinOlustur(veriMap, session);
+									}
+								}
+							}
 							if (gecmis && izinTipi != null) {
+
 								cal.setTime(bugun);
 								cal.add(Calendar.MONTH, -2);
 								if (senelikKullan && buYil != cal.get(Calendar.YEAR)) {
@@ -15112,7 +15146,7 @@ public class OrtakIslemler implements Serializable {
 		if (!izinTipiIdler.isEmpty()) {
 			parametreMap.clear();
 			parametreMap.put("bakiyeIzinTipi.izinTipiTanim.id", izinTipiIdler);
-			parametreMap.put("bakiyeIzinTipi.personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+			// parametreMap.put("bakiyeIzinTipi.personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
 			if (xSirket != null)
 				parametreMap.put("departman.id=", xSirket.getDepartman().getId());
 			if (session != null)

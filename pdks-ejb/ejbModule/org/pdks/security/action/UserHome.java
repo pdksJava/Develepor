@@ -432,7 +432,9 @@ public class UserHome extends EntityHome<User> implements Serializable {
 			boolean sistemYoneticisi = authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin() || authenticatedUser.isSistemYoneticisi();
 			if (izinRaporlari.contains(target) || izinIslemler.contains(target)) {
 				sonuc = authenticatedUser.isIzinGirebilir();
-				if (target.equals("onayimaGelenIzinler") || target.equals("izinIslemleri"))
+				if (target.equals("personelKalanIzin") || target.equals("izinIslemleri"))
+					sonuc = ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametreHakEdisIzinERPTableView()) || ortakIslemler.getParameterKey("izinHakedisGuncelle").equals("1");
+				else if (target.equals("onayimaGelenIzinler") || target.equals("izinIslemleri"))
 					sonuc = authenticatedUser.isIzinOnaylayabilir() || (target.equals("izinIslemleri") && sistemYoneticisi);
 				else {
 					if (target.equals("sskIzinGirisi"))
