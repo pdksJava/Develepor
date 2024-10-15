@@ -2087,7 +2087,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);
 			}
 		}
-		if (pdksPersonel.isCalisiyor() == false && pdksPersonel.getSirket() != null && pdksPersonel.getSirket().getDurum().equals(Boolean.FALSE))
+		if (pdksPersonel.getSirket() != null && pdksPersonel.isCalisiyor() == false && pdksPersonel.getSirket().getDurum().equals(Boolean.FALSE))
 			list.add(pdksPersonel.getSirket());
 		setSirketList(list);
 	}
