@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -18,14 +19,17 @@ import org.hibernate.annotations.FetchMode;
 import org.pdks.security.entity.User;
 import org.pdks.session.PdksUtil;
 
-@Entity(name = "NOTICE")
-public class Notice  extends BasePDKSObject  implements Serializable, Cloneable {
+@Entity 
+@Table(name = Notice.TABLE_NAME)
+public class Notice extends BasePDKSObject implements Serializable, Cloneable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3459223276596848291L;
-	// seam-gen attributes (you should probably edit these)
-	 
+	public static final String TABLE_NAME = "NOTICE";
+	public static final String COLUMN_NAME_ADI = "NAME";
+	public static final String COLUMN_NAME_DURUM = "ACTIVE";
+
 	private Integer version = 0;
 	private String name = "";
 	private String value = "";
@@ -33,8 +37,6 @@ public class Notice  extends BasePDKSObject  implements Serializable, Cloneable 
 	private Boolean active = Boolean.TRUE;
 	private User changeUser;
 	private Date changeDate;
-
-	 
 
 	@Column(name = "VERSION")
 	public Integer getVersion() {
@@ -45,7 +47,7 @@ public class Notice  extends BasePDKSObject  implements Serializable, Cloneable 
 		this.version = version;
 	}
 
-	@Column(name = "NAME", length = 20)
+	@Column(name = COLUMN_NAME_ADI, length = 20)
 	public String getName() {
 		return name;
 	}
@@ -75,7 +77,7 @@ public class Notice  extends BasePDKSObject  implements Serializable, Cloneable 
 		this.description = description;
 	}
 
-	@Column(name = "ACTIVE")
+	@Column(name = COLUMN_NAME_DURUM)
 	public Boolean getActive() {
 		return active;
 	}
@@ -112,6 +114,11 @@ public class Notice  extends BasePDKSObject  implements Serializable, Cloneable 
 	}
 
 	@Transient
+	public Boolean getDurum() {
+		return active;
+	}
+
+	@Transient
 	public Object clone() {
 		try {
 
@@ -124,6 +131,6 @@ public class Notice  extends BasePDKSObject  implements Serializable, Cloneable 
 
 	public void entityRefresh() {
 		// TODO entityRefresh
-		
+
 	}
 }

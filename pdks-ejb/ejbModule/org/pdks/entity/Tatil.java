@@ -16,7 +16,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.pdks.session.PdksUtil;
 
-@Entity(name = "TATIL")
+@Entity(name = Tatil.TABLE_NAME)
 public class Tatil extends BaseObject {
 	/**
 	 * 
@@ -24,6 +24,8 @@ public class Tatil extends BaseObject {
 	private static final long serialVersionUID = -8647887629561748025L;
 	public static final String TATIL_TIPI_PERIYODIK = "P";
 	public static final String TATIL_TIPI_TEK_SEFER = "D";
+	
+	public static final String TABLE_NAME = "TATIL";
 
 	private Boolean yarimGun = Boolean.FALSE, arifeSonraVardiyaDenklestirmeVar = Boolean.FALSE;
 	private String ad, aciklama;

@@ -12,13 +12,15 @@ import org.pdks.entity.BasePDKSObject;
  *  
  * 
  */
-@Entity(name = "SAP_SERVER")
+@Entity(name = SAPSunucu.TABLE_NAME)
 public class SAPSunucu  extends BasePDKSObject  implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1006000544009889053L;
+	public static final String TABLE_NAME = "SAP_SERVER";
+	public static final String COLUMN_NAME_DURUM = "DURUM";
 	public final static int SUNUCU_TIPI_CANLI = 0;
 	public final static int SUNUCU_TIPI_TEST = 1;
 	public final static int SUNUCU_TIPI_QAY = 2;
@@ -103,7 +105,7 @@ public class SAPSunucu  extends BasePDKSObject  implements Serializable {
 		this.sunucuTipi = sunucuTipi;
 	}
 
-	@Column(name = "DURUM", insertable = false, updatable = false)
+	@Column(name = COLUMN_NAME_DURUM, insertable = false, updatable = false)
 	public Integer getDurum() {
 		return durum;
 	}
@@ -112,7 +114,7 @@ public class SAPSunucu  extends BasePDKSObject  implements Serializable {
 		this.durum = durum;
 	}
 
-	@Column(name = "DURUM")
+	@Column(name = COLUMN_NAME_DURUM)
 	public Boolean getAktif() {
 		return aktif;
 	}
