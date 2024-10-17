@@ -203,6 +203,10 @@ public class Departman extends BaseObject {
 		return fazlaMesaiTalepGirilebilir != null && fazlaMesaiTalepGirilebilir.booleanValue();
 	}
 
+	@Transient
+	public boolean isIzinGirer() {
+		return izinGirilebilir != null && izinGirilebilir.booleanValue();
+	}
 	public void entityRefresh() {
 		// TODO entityRefresh
 

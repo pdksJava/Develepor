@@ -33,7 +33,7 @@ public class Sirket extends BaseObject {
 	public static final String COLUMN_NAME_TESIS_DURUM = "TESIS_DURUM";
 	public static final String COLUMN_NAME_AD = "AD";
 	public static final String COLUMN_NAME_ERP_KODU = "ERP_KODU";
-	 
+
 	public static final String SIRKET_ERP_KODU = "3030";
 	private Long sirketGrupId;
 	private String ad, aciklama, erpKodu = "", lpdapOnEk = "";
@@ -262,9 +262,14 @@ public class Sirket extends BaseObject {
 		return gebelikSutIzin != null && gebelikSutIzin;
 	}
 
+	@Transient
+	public boolean isIzinGirer() {
+		return departman != null && departman.isIzinGirer();
+	}
+
 	public void entityRefresh() {
 		// TODO entityRefresh
-		
+
 	}
 
 }

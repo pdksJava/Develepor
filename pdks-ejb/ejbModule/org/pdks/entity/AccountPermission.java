@@ -17,13 +17,15 @@ import org.jboss.seam.annotations.security.permission.PermissionTarget;
 import org.jboss.seam.annotations.security.permission.PermissionUser;
 import org.pdks.security.entity.Role;
 
-@Entity(name = "ACCOUNTPERMISSION")
+@Entity(name = AccountPermission.TABLE_NAME)
 public class AccountPermission extends BasePDKSObject implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1736440142880303400L;
+	public static final String TABLE_NAME = "ACCOUNTPERMISSION";
+	public static final String COLUMN_NAME_DURUM = "STATUS";
 	public static final String ACTION_VIEW = "view";
 	public static final String ACTION_READ = "read";
 	public static final String ACTION_WRITE = "write";
@@ -108,7 +110,7 @@ public class AccountPermission extends BasePDKSObject implements Serializable {
 		this.targetDescription = targetDescription;
 	}
 
-	@Column(name = "STATUS")
+	@Column(name = COLUMN_NAME_DURUM)
 	public Boolean getStatus() {
 		return status;
 	}
@@ -135,6 +137,10 @@ public class AccountPermission extends BasePDKSObject implements Serializable {
 		this.check = check;
 	}
 
+	@Transient
+	public Boolean getDurum() {
+		return status;
+	}
 	public void entityRefresh() {
 		// TODO entityRefresh
 		

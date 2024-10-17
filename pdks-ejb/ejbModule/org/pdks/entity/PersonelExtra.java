@@ -14,7 +14,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-@Entity(name = "PERSONEL_EXTRA")
+@Entity(name = PersonelExtra.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "PERSONEL_ID" }) })
 public class PersonelExtra extends BasePDKSObject implements Serializable {
 
@@ -22,6 +22,9 @@ public class PersonelExtra extends BasePDKSObject implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -3881392269334061361L;
+	
+	public static final String TABLE_NAME = "PERSONEL_EXTRA";
+	public static final String COLUMN_NAME_PERSONEL = "PERSONEL_ID";
 
 	private Personel personel;
 
@@ -39,7 +42,7 @@ public class PersonelExtra extends BasePDKSObject implements Serializable {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "PERSONEL_ID", nullable = false)
+	@JoinColumn(name = COLUMN_NAME_PERSONEL, nullable = false)
 	@Fetch(FetchMode.JOIN)
 	public Personel getPersonel() {
 		return personel;

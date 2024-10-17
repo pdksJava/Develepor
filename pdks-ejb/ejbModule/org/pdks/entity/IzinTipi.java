@@ -28,6 +28,8 @@ public class IzinTipi extends BaseObject {
 	public static final String COLUMN_NAME_MAIL_GONDERIM_DURUMU = "MAIL_GONDERIM_DURUMU";
 	public static final String COLUMN_NAME_GIRIS_TIPI = "GIRIS_TIPI";
 	public static final String COLUMN_NAME_UCRETLI = "UCRETLI";
+	public static final String COLUMN_NAME_SAAT_GOSTERILECEK = "SAAT_GOSTERILECEK";
+	
 	public static final String COLUMN_NAME_CUMA_CUMARTESI_TEK_IZIN_SAY = "CUMA_CUMARTESI_TEK_IZIN_SAY";
 	public static final String COLUMN_NAME_BASLANGIC_ZAMANI_CALISMA_OLUR = "BASLANGIC_ZAMANI_CALISMA_OLUR";
 	public static final String COLUMN_NAME_TATIL_SAY = "TATIL_SAY";
@@ -200,7 +202,7 @@ public class IzinTipi extends BaseObject {
 		this.takvimGunumu = takvimGunumu;
 	}
 
-	@Column(name = "SAAT_GOSTERILECEK")
+	@Column(name = COLUMN_NAME_SAAT_GOSTERILECEK)
 	public Boolean getSaatGosterilecek() {
 		return saatGosterilecek;
 	}
