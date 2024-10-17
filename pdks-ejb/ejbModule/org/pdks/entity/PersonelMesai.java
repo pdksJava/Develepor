@@ -15,7 +15,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Immutable;
 
-@Entity(name = "Z_NOT_USED_TABLE_PERSONE_MESAI")
+@Entity(name = PersonelMesai.VIEW_NAME)
 @Immutable
 public class PersonelMesai implements Serializable, Cloneable {
 
@@ -23,6 +23,8 @@ public class PersonelMesai implements Serializable, Cloneable {
 	 * 
 	 */
 	private static final long serialVersionUID = 7158233889486878730L;
+	
+	public static final String VIEW_NAME = "Z_NOT_USED_TABLE_PERSONE_MESAI";
 
 	static Logger logger = Logger.getLogger(PersonelMesai.class);
 

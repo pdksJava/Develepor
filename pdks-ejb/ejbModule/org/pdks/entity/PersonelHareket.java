@@ -16,7 +16,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Immutable;
 
-@Entity(name = "PDKS_HAREKET")
+@Entity(name = PersonelHareket.TABLE_NAME)
 @Immutable
 public class PersonelHareket extends BasePDKSObject implements Serializable {
 
@@ -24,6 +24,10 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -5219058136293602171L;
+	
+	public static final String TABLE_NAME = "PDKS_HAREKET";
+	
+	
 
 	public static final String COLUMN_NAME_PER_NO = "PER_NO";
 	public static final String COLUMN_NAME_PERSONEL = "PERSONEL";

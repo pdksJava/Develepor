@@ -11,13 +11,16 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.pdks.session.PdksUtil;
 
-@Entity(name = "BOLUM_KAT")
+@Entity(name = BolumKat.TABLE_NAME)
 public class BolumKat extends BaseObject {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -9213795871677729380L;
+	public static final String TABLE_NAME = "BOLUM_KAT";
+	public static final String COLUMN_NAME_BOLUM = "KAT_ID";
+
 	private Tanim bolum;
 	private String kodu;
 	private String aciklama;
@@ -34,7 +37,7 @@ public class BolumKat extends BaseObject {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "KAT_ID", nullable = false, unique = true)
+	@JoinColumn(name = COLUMN_NAME_BOLUM, nullable = false, unique = true)
 	@Fetch(FetchMode.JOIN)
 	public Tanim getBolum() {
 		return bolum;
@@ -79,6 +82,6 @@ public class BolumKat extends BaseObject {
 
 	public void entityRefresh() {
 		// TODO entityRefresh
-		
+
 	}
 }

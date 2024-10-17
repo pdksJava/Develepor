@@ -13,14 +13,17 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.pdks.session.PdksUtil;
 
-@Entity(name = "IZINISTIRAHAT")
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "PERSONEL_IZIN_ID" }) })
+@Entity(name = IzinIstirahat.TABLE_NAME)
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { IzinIstirahat.COLUMN_NAME_IZIN }) })
 public class IzinIstirahat extends BaseObject {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2243793232101002019L;
+
+	public static final String TABLE_NAME = "IZINISTIRAHAT";
+	public static final String COLUMN_NAME_IZIN = "PERSONEL_IZIN_ID";
 
 	public static final String RAPOR_KAYNAK_KODU = "1";
 	public static final String RAPOR_KAYNAK_KODU_DISI = "2";
@@ -50,7 +53,7 @@ public class IzinIstirahat extends BaseObject {
 	}
 
 	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "PERSONEL_IZIN_ID", nullable = false)
+	@JoinColumn(name = COLUMN_NAME_IZIN, nullable = false)
 	@Fetch(FetchMode.JOIN)
 	public PersonelIzin getPersonelIzin() {
 		return personelIzin;
@@ -139,7 +142,7 @@ public class IzinIstirahat extends BaseObject {
 
 	public void entityRefresh() {
 		// TODO entityRefresh
-		
+
 	}
 
 }

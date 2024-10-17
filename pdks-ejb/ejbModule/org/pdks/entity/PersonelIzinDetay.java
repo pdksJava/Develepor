@@ -28,8 +28,10 @@ public class PersonelIzinDetay extends BasePDKSObject implements Serializable, C
 	static Logger logger = Logger.getLogger(PersonelIzinDetay.class);
 	public static final String TABLE_NAME = "PERSONELIZINDETAY";
 	public static final String SP_NAME = "SP_IZIN_HAKEDIS_GUNCELLE";
-  	public static final String COLUMN_NAME_IZIN = "IZIN_ID";
+	public static final String COLUMN_NAME_IZIN = "IZIN_ID";
 	public static final String COLUMN_NAME_HAKEDIS_IZIN = "HAKEDIS_IZIN_ID";
+
+	private static boolean izinHakedisGuncelle;
 
 	private PersonelIzin hakEdisIzin;
 
@@ -105,9 +107,18 @@ public class PersonelIzinDetay extends BasePDKSObject implements Serializable, C
 		return aciklama;
 	}
 
+	@Transient
+	public static boolean isIzinHakedisGuncelle() {
+		return izinHakedisGuncelle;
+	}
+
+	public static void setIzinHakedisGuncelle(boolean izinHakedisGuncelle) {
+		PersonelIzinDetay.izinHakedisGuncelle = izinHakedisGuncelle;
+	}
+
 	public void entityRefresh() {
 		// TODO entityRefresh
-		
+
 	}
 
 }

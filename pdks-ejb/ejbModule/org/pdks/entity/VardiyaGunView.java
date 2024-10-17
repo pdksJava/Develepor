@@ -16,13 +16,15 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Immutable;
 
-@Entity(name = "VARDIYA_GUN_VIEW")
+@Entity(name = VardiyaGunView.VIEW_NAME)
 @Immutable
 public class VardiyaGunView implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3921863401103682355L;
+	
+	public static final String VIEW_NAME = "VARDIYA_GUN_VIEW";
 	/**
 	 * 
 	 */

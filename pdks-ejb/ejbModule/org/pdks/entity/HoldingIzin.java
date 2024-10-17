@@ -16,7 +16,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Immutable;
 
-@Entity(name = "Z_NOT_USED_TABLE_HOLDING_IZIN")
+@Entity(name = HoldingIzin.VIEW_NAME)
 @Immutable
 public class HoldingIzin implements Serializable, Cloneable {
 
@@ -25,6 +25,7 @@ public class HoldingIzin implements Serializable, Cloneable {
 	 */
 	private static final long serialVersionUID = -7487009656840444082L;
 	static Logger logger = Logger.getLogger(HoldingIzin.class);
+	public static final String VIEW_NAME = "Z_NOT_USED_TABLE_HOLDING_IZIN";
 	public static final String TABLE_NAME = "SP_HOLDING_IZIN_BAKIYE_HEPSI";
 	public static final String COLUMN_NAME_ID = "PERSONEL_ID";
 	public static final String COLUMN_NAME_SIRKET = "SIRKET_ID";

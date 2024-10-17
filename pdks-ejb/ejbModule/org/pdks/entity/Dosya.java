@@ -16,13 +16,14 @@ import org.pdks.session.PdksUtil;
  * 
  */
 
-@Entity(name = "DOSYA")
+@Entity(name = Dosya.TABLE_NAME)
 public class Dosya extends BasePDKSObject implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2908520509292855097L;
+	public static final String TABLE_NAME = "DOSYA";
 
 	private Integer version = 0;
 

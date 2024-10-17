@@ -24,13 +24,17 @@ public class VardiyaSablonu extends BaseObject {
 	 * 
 	 */
 	private static final long serialVersionUID = 3465834359641056337L;
-	
+
 	public static final String TABLE_NAME = "VARDIYASABLONU";
 
 	public static final String COLUMN_NAME_ISKUR = "ISKUR";
 	public static final String COLUMN_NAME_BEYAZ_YAKA = "BEYAZ_YAKA";
+	public static final String COLUMN_NAME_SIRKET = "SIRKET_ID";
+	public static final String COLUMN_NAME_DEPARTMAN = "DEPARTMAN_ID";
+	
 
 	private String adi;
+	private Sirket sirket;
 	private Vardiya vardiya1, vardiya2, vardiya3, vardiya4, vardiya5, vardiya6, vardiya7;
 	private CalismaModeli calismaModeli;
 	private double toplamSaat = 0;
@@ -66,7 +70,7 @@ public class VardiyaSablonu extends BaseObject {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "DEPARTMAN_ID")
+	@JoinColumn(name = COLUMN_NAME_DEPARTMAN)
 	@Fetch(FetchMode.JOIN)
 	public Departman getDepartman() {
 		return departman;
@@ -74,6 +78,17 @@ public class VardiyaSablonu extends BaseObject {
 
 	public void setDepartman(Departman departman) {
 		this.departman = departman;
+	}
+
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_SIRKET)
+	@Fetch(FetchMode.JOIN)
+	public Sirket getSirket() {
+		return sirket;
+	}
+
+	public void setSirket(Sirket sirket) {
+		this.sirket = sirket;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)

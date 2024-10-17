@@ -9,13 +9,14 @@ import javax.persistence.ManyToOne;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-@Entity(name = "IZINTIPIBIRLESIKHARIC")
+@Entity(name = IzinTipiBirlesikHaric.TABLE_NAME)
 public class IzinTipiBirlesikHaric extends BaseObject {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 56230242920057020L;
+	public static final String TABLE_NAME = "IZINTIPIBIRLESIKHARIC";
 
 	private Tanim izinTipiTanim;
 	private Tanim birlesikIzinTipiTanim;

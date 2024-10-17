@@ -9,7 +9,7 @@ import javax.persistence.TemporalType;
 
 import org.pdks.session.PdksUtil;
 
-@Entity(name = "YEMEKOGUN")
+@Entity(name = YemekOgun.TABLE_NAME)
 public class YemekOgun extends BaseObject {
 	// seam-gen attributes (you should probably edit these)
 
@@ -17,6 +17,8 @@ public class YemekOgun extends BaseObject {
 	 * 
 	 */
 	private static final long serialVersionUID = -2645411245304870287L;
+
+	public static final String TABLE_NAME = "YEMEKOGUN";
 	private String yemekAciklama = "";
 	private int baslangicSaat, baslangicDakika, bitisSaat, bitisDakika;
 	private Date basTarih, bitTarih = PdksUtil.getSonSistemTarih();
@@ -98,7 +100,7 @@ public class YemekOgun extends BaseObject {
 
 	public void entityRefresh() {
 		// TODO entityRefresh
-		
+
 	}
 
 }

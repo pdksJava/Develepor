@@ -16,7 +16,7 @@ import org.pdks.session.PdksUtil;
 
 import com.pdks.webservice.IzinERP;
 
-@Entity(name = "Z_NOT_USED_IZIN_ERP_DB")
+@Entity(name = IzinERPDB.VIEW_NAME)
 @Immutable
 public class IzinERPDB implements Serializable, Cloneable {
 
@@ -24,6 +24,8 @@ public class IzinERPDB implements Serializable, Cloneable {
 	 * 
 	 */
 	private static final long serialVersionUID = 6307241769198780131L;
+	
+	public static final String VIEW_NAME = "Z_NOT_USED_IZIN_ERP_DB";
 	public static final String FORMAT_DATE_TIME = "yyyy-MM-dd HH:mm";
 	public static final String COLUMN_NAME_BAS_TARIHI = "BASLANGIC_ZAMANI";
 	public static final String COLUMN_NAME_BIT_TARIHI = "BITIS_ZAMANI";

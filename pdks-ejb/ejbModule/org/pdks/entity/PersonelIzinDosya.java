@@ -18,20 +18,23 @@ import org.hibernate.annotations.FetchMode;
  * 
  */
 
-@Entity(name = "PERSONEL_IZIN_DOSYA")
+@Entity(name = PersonelIzinDosya.TABLE_NAME)
 public class PersonelIzinDosya extends BasePDKSObject implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3123614718217801665L;
+	
+	public static final String TABLE_NAME = "PERSONEL_IZIN_DOSYA";
+	public static final String COLUMN_NAME_IZIN = "PERSONEL_IZIN_ID";
 
 	private PersonelIzin personelIzin;
 
 	private Dosya dosya;
 
 	@OneToOne(cascade = CascadeType.REFRESH, optional = false)
-	@JoinColumn(name = "PERSONEL_IZIN_ID")
+	@JoinColumn(name = COLUMN_NAME_IZIN)
 	@Fetch(FetchMode.JOIN)
 	public PersonelIzin getPersonelIzin() {
 		return personelIzin;

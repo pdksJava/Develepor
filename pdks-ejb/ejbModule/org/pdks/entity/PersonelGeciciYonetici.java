@@ -11,13 +11,17 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.pdks.security.entity.User;
 
-@Entity(name = "PERSONEL_GECICI_YONETICI")
+@Entity(name = PersonelGeciciYonetici.TABLE_NAME)
 public class PersonelGeciciYonetici extends YetkiBaseObject {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6118941829992674855L;
+	
+	public static final String TABLE_NAME = "PERSONEL_GECICI_YONETICI";
+	public static final String COLUMN_NAME_VEKALET_VEREN = "VEKALET_VEREN";
+	public static final String COLUMN_NAME_PERSONEL_GECICI = "PERSONEL_GECICI";
 
 	private Personel personelGecici;
 
@@ -26,7 +30,7 @@ public class PersonelGeciciYonetici extends YetkiBaseObject {
 	private boolean calendarPopup = Boolean.TRUE;
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "VEKALET_VEREN", nullable = false)
+	@JoinColumn(name = COLUMN_NAME_VEKALET_VEREN, nullable = false)
 	@Fetch(FetchMode.JOIN)
 	public User getBagliYonetici() {
 		return bagliYonetici;
@@ -37,7 +41,7 @@ public class PersonelGeciciYonetici extends YetkiBaseObject {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "PERSONEL_GECICI", nullable = false)
+	@JoinColumn(name = COLUMN_NAME_PERSONEL_GECICI, nullable = false)
 	@Fetch(FetchMode.JOIN)
 	public Personel getPersonelGecici() {
 		return personelGecici;
