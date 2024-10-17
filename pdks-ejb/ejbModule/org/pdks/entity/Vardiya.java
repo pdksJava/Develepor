@@ -433,10 +433,14 @@ public class Vardiya extends BaseObject {
 	public boolean isRadyasyonIzni() {
 		return vardiyaTipi == TIPI_RADYASYON_IZNI;
 	}
+	@Transient
+	public boolean isIzinVardiya() {
+		return vardiyaTipi == TIPI_IZIN ;
+	}
 
 	@Transient
 	public boolean isIzin() {
-		return vardiyaTipi == TIPI_IZIN || isHastalikRapor();
+		return isIzinVardiya()|| isHastalikRapor();
 	}
 
 	@Transient
