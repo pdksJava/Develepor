@@ -18,12 +18,14 @@ import org.pdks.session.PdksUtil;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-@Entity(name = "VARDIYASABLONU")
+@Entity(name = VardiyaSablonu.TABLE_NAME)
 public class VardiyaSablonu extends BaseObject {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3465834359641056337L;
+	
+	public static final String TABLE_NAME = "VARDIYASABLONU";
 
 	public static final String COLUMN_NAME_ISKUR = "ISKUR";
 	public static final String COLUMN_NAME_BEYAZ_YAKA = "BEYAZ_YAKA";
