@@ -65,6 +65,10 @@ public class Personel extends BaseObject {
 	public static final String COLUMN_NAME_CALISMA_MODELI = "CALISMA_MODELI_ID";
 	public static final String COLUMN_NAME_ISKUR_SABLON = "ISKUR_SABLON_ID";
 	public static final String COLUMN_NAME_PERSONEL_TIPI = "PERSONEL_TIPI_ID";
+	public static final String COLUMN_NAME_GOREV_TIPI = "GOREV_TIPI_ID";
+	public static final String COLUMN_NAME_SABLON = "SABLON_ID";
+	
+	
 
 	public static final String COLUMN_NAME_MAIL_TAKIP = "MAIL_TAKIP";
 
@@ -203,7 +207,7 @@ public class Personel extends BaseObject {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = "GOREV_TIPI_ID")
+	@JoinColumn(name = COLUMN_NAME_GOREV_TIPI)
 	@Fetch(FetchMode.JOIN)
 	public Tanim getGorevTipi() {
 		return gorevTipi;
@@ -340,7 +344,7 @@ public class Personel extends BaseObject {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = "SABLON_ID")
+	@JoinColumn(name = COLUMN_NAME_SABLON)
 	@Fetch(FetchMode.JOIN)
 	public VardiyaSablonu getSablon() {
 		return sablon;
