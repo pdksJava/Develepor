@@ -34,7 +34,7 @@ public class AramaSecenekleri implements Serializable, Cloneable {
 
 	private TreeMap<String, Tanim> ekSahaTanimMap;
 
-	private Boolean stajyerOlmayanSirket = Boolean.TRUE, sessionClear = Boolean.TRUE, sirketIzinKontrolYok = Boolean.TRUE;
+	private Boolean stajyerOlmayanSirket = Boolean.TRUE, sessionClear = Boolean.TRUE, ayrilanlariGetir = Boolean.FALSE, sirketIzinKontrolYok = Boolean.TRUE;
 
 	private Tanim ekSaha1, ekSaha2, ekSaha3, ekSaha4;
 
@@ -367,6 +367,12 @@ public class AramaSecenekleri implements Serializable, Cloneable {
 		this.yetkiliPersoneller = yetkiliPersoneller;
 	}
 
+	public Boolean getAyrilanlariGetir() {
+		return ayrilanlariGetir;
+	}
 
+	public void setAyrilanlariGetir(Boolean ayrilanlariGetir) {
+		this.ayrilanlariGetir = ayrilanlariGetir;
+	}
 
 }

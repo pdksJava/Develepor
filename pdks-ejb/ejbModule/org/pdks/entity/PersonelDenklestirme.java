@@ -68,7 +68,7 @@ public class PersonelDenklestirme extends BaseObject {
 
 	private VardiyaGun izinVardiyaGun;
 
-	private PersonelDonemselDurum sutIzniPersonelDonemselDurum;
+	private PersonelDonemselDurum sutIzniPersonelDonemselDurum, gebePersonelDonemselDurum;
 
 	private Double planlanSure = 0d, eksikCalismaSure = 0d, hesaplananSure = 0d, resmiTatilSure = 0d, haftaCalismaSuresi = 0d, fazlaMesaiSure = 0d, odenenSure = 0d;
 
@@ -737,6 +737,15 @@ public class PersonelDenklestirme extends BaseObject {
 
 	public void setSutIzniPersonelDonemselDurum(PersonelDonemselDurum sutIzniPersonelDonemselDurum) {
 		this.sutIzniPersonelDonemselDurum = sutIzniPersonelDonemselDurum;
+	}
+
+	@Transient
+	public PersonelDonemselDurum getGebePersonelDonemselDurum() {
+		return gebePersonelDonemselDurum;
+	}
+
+	public void setGebePersonelDonemselDurum(PersonelDonemselDurum gebePersonelDonemselDurum) {
+		this.gebePersonelDonemselDurum = gebePersonelDonemselDurum;
 	}
 
 }
