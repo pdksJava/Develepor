@@ -130,6 +130,7 @@
 				</a4j:outputPanel>
 				<rich:panel id="izinPanel">
 					<a4j:outputPanel id="dosyaPaneli">
+					<ui:fragment rendered="#{ortakIslemler.getParameterKey('izinHakedisDosyaTranfer')=='1'}">
 						<rich:panel header="Bakiye Dosya Ekleme" rendered="#{authenticatedUser.admin or authenticatedUser.IK or authenticatedUser.IKAdmin}">
 							<h:panelGrid columns="2" style="width:700px;">
 								<a4j:outputPanel id="fileUpload">
@@ -234,7 +235,7 @@
 								</a4j:outputPanel>
 
 							</h:panelGrid>
-						</rich:panel>
+						</rich:panel></ui:fragment>
 					</a4j:outputPanel>
 					<DIV class="#{authenticatedUser.scroolClass}" id="#{authenticatedUser.scroolDiv}1">
 						<ui:fragment id="bakiyeIzinTable" rendered="#{not empty personelKalanIzinHome.personelBakiyeIzinList}">
