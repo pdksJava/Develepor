@@ -199,13 +199,9 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 		mailTipiList.add(new SelectItem(IzinTipiMailAdres.TIPI_CC, "CC"));
 		mailTipiList.add(new SelectItem(IzinTipiMailAdres.TIPI_BCC, "BCC"));
 		if (izinTipi.getId() != 0) {
-			HashMap parametreMap = new HashMap();
 
-			parametreMap.put("bakiyeIzinTipi", izinTipi);
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+			IzinTipi bakiyeIzin = (IzinTipi) pdksEntityController.getSQLParamByFieldObject(IzinTipi.TABLE_NAME, IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI, izinTipi.getId(), IzinTipi.class, session);
 
-			IzinTipi bakiyeIzin = (IzinTipi) pdksEntityController.getObjectByInnerObject(parametreMap, IzinTipi.class);
 			setBakiyeIzinTipi(bakiyeIzin);
 			HashMap fields = new HashMap();
 			fields.put("izinTipi.id", izinTipi.getId());
@@ -575,7 +571,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 			list = ortakIslemler.fillDepartmanTanimList(session);
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				Departman departman = (Departman) iterator.next();
-				if (departman.getIzinGirilebilir().equals(Boolean.FALSE))
+				if (departman.isIzinGirer() == false)
 					iterator.remove();
 
 			}
@@ -598,7 +594,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		durumCGSList.clear();
 		durumCGSList.add(new SelectItem(IzinTipi.CGS_DURUM_YOK, IzinTipi.getDurumCGSAciklama(IzinTipi.CGS_DURUM_YOK)));
 		durumCGSList.add(new SelectItem(IzinTipi.CGS_DURUM_CIKAR, IzinTipi.getDurumCGSAciklama(IzinTipi.CGS_DURUM_CIKAR)));

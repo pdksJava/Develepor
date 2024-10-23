@@ -316,12 +316,9 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 				eklenecekPersonelIdList.add(pdksPersonel.getId());
 			}
 		}
-		HashMap parametreMap = new HashMap();
+ 
+		yeniYonetici = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID,yeniYoneticiId, User.class, session);
 
-		parametreMap.put("id", yeniYoneticiId);
-		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		yeniYonetici = (User) pdksEntityController.getObjectByInnerObject(parametreMap, User.class);
 		HashMap param = new HashMap();
 		param.put("bagliYonetici.id", seciliUser.getId());
 		param.put("personelGecici.id", eklenecekPersonelIdList);

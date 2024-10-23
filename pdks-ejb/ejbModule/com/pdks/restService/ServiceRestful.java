@@ -3,7 +3,6 @@ package com.pdks.restService;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -90,10 +89,10 @@ public class ServiceRestful implements Serializable {
 		String message = null;
 		if (sessionSQL != null) {
 			PdksEntityController controller = new PdksEntityController();
-			HashMap fields = new HashMap();
-			fields.put("pdksSicilNo", pdksSicilNo);
-			fields.put(PdksEntityController.MAP_KEY_SESSION, sessionSQL);
-			Personel personel = (Personel) controller.getObjectByInnerObject(fields, Personel.class);
+		
+			Personel personel = (Personel) controller.getSQLParamByFieldObject(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, pdksSicilNo, Personel.class, sessionSQL);
+
+					 
 			if (personel != null) {
 				OrtakIslemler ortakIslemler = new OrtakIslemler();
 				List<Personel> personeller = new ArrayList<Personel>();

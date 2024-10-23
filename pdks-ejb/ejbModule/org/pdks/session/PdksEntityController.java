@@ -25,10 +25,12 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Startup;
+import org.pdks.entity.BaseObject;
 import org.pdks.entity.BasePDKSObject;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.KapiView;
 import org.pdks.entity.Liste;
+import org.pdks.entity.PersonelExtra;
 import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.PersonelView;
 import org.pdks.security.entity.User;
@@ -58,6 +60,8 @@ public class PdksEntityController implements Serializable {
 	public static final String MAP_KEY_SQLADD = "sql_add";
 	public static final String MAP_KEY_SQLPARAMS = "sql_params";
 	public static final String MAP_KEY_TRANSACTION = "transaction";
+
+	private static String selectLOCK = "WITH(NOLOCK)", joinLOCK = "WITH(NOLOCK)";
 
 	public static final String SELECT_KARAKTER = "c";
 
@@ -730,8 +734,8 @@ public class PdksEntityController implements Serializable {
 				HashMap fields = new HashMap();
 				fields.put("hareketId", kgsId);
 				fields.put(MAP_KEY_SESSION, session);
-				sb.append("SELECT  'K' + CAST(Z." + HareketKGS.COLUMN_NAME_ID + " AS VARCHAR(12)) AS ID, 'K' AS SIRKET, Z." + HareketKGS.COLUMN_NAME_ID + " AS TABLE_ID, Z.USERID AS " + HareketKGS.COLUMN_NAME_PERSONEL + " ,");
-				sb.append(" Z.KAPIID AS " + HareketKGS.COLUMN_NAME_KAPI + ", Z.HAREKET_ZAMANI AS ZAMAN, Z.DURUM, Z.ISLEM_ID, NULL AS ORJ_ZAMAN,Z.OLUSTURMA_ZAMANI,Z.KGS_SIRKET_ID   FROM " + HareketKGS.TABLE_NAME + " AS Z WITH (nolock)");
+				sb.append("SELECT 'K' + CAST(Z." + HareketKGS.COLUMN_NAME_ID + " AS VARCHAR(12)) AS ID, 'K' AS SIRKET, Z." + HareketKGS.COLUMN_NAME_ID + " AS TABLE_ID, Z.USERID AS " + HareketKGS.COLUMN_NAME_PERSONEL + " ,");
+				sb.append(" Z.KAPIID AS " + HareketKGS.COLUMN_NAME_KAPI + ", Z.HAREKET_ZAMANI AS ZAMAN, Z.DURUM, Z.ISLEM_ID, NULL AS ORJ_ZAMAN,Z.OLUSTURMA_ZAMANI,Z.KGS_SIRKET_ID FROM " + HareketKGS.TABLE_NAME + " AS Z " + selectLOCK);
 				sb.append(" WHERE " + HareketKGS.COLUMN_NAME_ID + " = :hareketId");
 				List<HareketKGS> list1 = getObjectBySQLList(sb, fields, HareketKGS.class);
 				if (!list1.isEmpty())
@@ -1091,6 +1095,108 @@ public class PdksEntityController implements Serializable {
 	}
 
 	/**
+	 * @param tableName
+	 * @param fieldName
+	 * @param value
+	 * @param class1
+	 * @param method
+	 * @param uzerineYaz
+	 * @param session
+	 * @return
+	 */
+	public TreeMap getSQLParamByFieldMap(String tableName, String fieldName, Object value, Class class1, String method, boolean uzerineYaz, Session session) {
+		List list = getSQLParamByFieldList(tableName, fieldName, value, class1, session);
+		TreeMap treeMap = getTreeMapByList(list, method, uzerineYaz);
+		return treeMap;
+	}
+
+	/**
+	 * @param tableName
+	 * @param fieldName
+	 * @param value
+	 * @param class1
+	 * @param session
+	 * @return
+	 */
+	public List getSQLParamByFieldList(String tableName, String fieldName, Object value, Class class1, Session session) {
+		// if (fieldName.equalsIgnoreCase("NAME"))
+		// fieldName = "[" + fieldName + "]";
+		StringBuffer sb = new StringBuffer();
+		List list = null;
+		HashMap<String, Object> fields = new HashMap<String, Object>();
+		sb.append("SELECT * from " + tableName + " " + selectLOCK);
+		Collection collection = null;
+		if (value instanceof Collection) {
+			collection = (Collection) value;
+			if (collection.size() == 1) {
+				for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
+					Object object = (Object) iterator.next();
+					value = object;
+				}
+			}
+		}
+		if (value instanceof Collection) {
+			String key = "v";
+			sb.append(" WHERE " + fieldName + " :" + key);
+			fields.put(key, value);
+			list = getSQLParamList((List) collection, sb, fieldName, fields, class1, session);
+		} else {
+			if (PdksUtil.hasStringValue(fieldName)) {
+				if (value != null && value instanceof Boolean)
+					value = (Boolean) value ? 1 : 0;
+				if (fieldName != null) {
+					String key = "v";
+					sb.append(" WHERE " + fieldName + " = :" + key);
+					fields.put(key, value);
+				}
+
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			}
+			list = getObjectBySQLList(sb, fields, class1);
+
+		}
+		return list;
+	}
+
+	/**
+	 * @param tableName
+	 * @param fieldName
+	 * @param value
+	 * @param class1
+	 * @param session
+	 * @return
+	 */
+	public List getSQLParamByAktifFieldList(String tableName, String fieldName, Object value, Class class1, Session session) {
+		List list = null;
+		try {
+			list = getSQLParamByFieldList(tableName, fieldName, value, class1, session);
+		} catch (Exception e) {
+			logger.error(tableName + " --> " + fieldName + " = " + value + " : " + class1.getName() + "\n" + e.getMessage());
+			e.printStackTrace();
+		}
+		if (list != null) {
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				Object object = (Object) iterator.next();
+				boolean sil = false;
+				if (object instanceof BaseObject) {
+					BaseObject new_name = (BaseObject) object;
+					sil = new_name.getDurum() == null || new_name.getDurum().booleanValue() == false;
+
+				} else {
+					Boolean durum = (Boolean) PdksUtil.getMethodObject(object, "getDurum", null);
+					if (durum != null)
+						sil = durum.booleanValue() == false;
+				}
+				if (sil)
+					iterator.remove();
+
+			}
+		}
+		return list;
+	}
+
+	/**
 	 * @param sb
 	 * @param fields
 	 * @param class1
@@ -1111,26 +1217,13 @@ public class PdksEntityController implements Serializable {
 			if (session == null)
 				session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 			Object tr = null;
-			Boolean lockRead = false;
+
 			if (fields.containsKey(MAP_KEY_TRANSACTION)) {
 				tr = fields.get(MAP_KEY_TRANSACTION);
-				lockRead = !((Integer) tr).equals(Connection.TRANSACTION_READ_UNCOMMITTED);
+
 				fields.remove(MAP_KEY_TRANSACTION);
 			}
 
-			try {
-				if (!lockRead) {
-					// SessionImplementor si = (SessionImplementor) session;
-					// cn = si.connection();
-					// ti = cn.getTransactionIsolation();
-					// cn.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
-
-				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.info(e.getMessage());
-			}
 			String sql = sb.toString();
 			TreeMap fieldsOther = new TreeMap();
 			sb = null;
@@ -1180,11 +1273,7 @@ public class PdksEntityController implements Serializable {
 					logger.info(sql + " out " + PdksUtil.convertToDateString(new Date(), PdksUtil.getDateFormat() + " H:mm:ss"));
 
 			}
-			// if (ti != null)
-			// try {
-			// cn.setTransactionIsolation(ti);
-			// } catch (Exception e) {
-			// }
+
 			if (tr != null)
 				fields.put(MAP_KEY_TRANSACTION, tr);
 
@@ -1194,12 +1283,195 @@ public class PdksEntityController implements Serializable {
 
 	}
 
+	/**
+	 * @param sb
+	 * @param map
+	 * @param tableName
+	 * @param class1
+	 * @param idColumn
+	 * @return
+	 */
+	public List getDataByIdList(StringBuffer sb, HashMap map, String tableName, Class class1, String idColumn) {
+		List list = null;
+		Session session = map.containsKey(PdksEntityController.MAP_KEY_SESSION) ? (Session) map.get(PdksEntityController.MAP_KEY_SESSION) : PdksUtil.getSessionUser(entityManager, authenticatedUser);
+		List idler = getObjectBySQLList(sb, map, null);
+		if (idler != null && !idler.isEmpty()) {
+			String fieldName = "id";
+			if (idColumn == null)
+				idColumn = BaseObject.COLUMN_NAME_ID;
+			map.clear();
+			sb = null;
+			sb = new StringBuffer();
+			sb.append("SELECT * FROM " + tableName + " " + selectLOCK);
+			sb.append(" WHERE " + idColumn + " :" + fieldName);
+			map.put(fieldName, idler);
+			if (session != null)
+				map.put(PdksEntityController.MAP_KEY_SESSION, session);
+			list = getSQLParamList(idler, sb, fieldName, map, class1, session);
+
+		}
+		if (list == null)
+			list = new ArrayList();
+		return list;
+	}
+
+	/**
+	 * @param method
+	 * @param uzerineYaz
+	 * @param dataIdList
+	 * @param sb
+	 * @param fieldName
+	 * @param fieldsOrj
+	 * @param class1
+	 * @param session
+	 * @return
+	 */
+	public TreeMap getSQLParamTreeMap(String method, boolean uzerineYaz, List dataIdList, StringBuffer sb, String fieldName, HashMap<String, Object> fieldsOrj, Class class1, Session session) {
+		TreeMap treeMap = null;
+		if (fieldsOrj != null && fieldsOrj.containsKey(PdksEntityController.MAP_KEY_MAP)) {
+			if (PdksUtil.hasStringValue(method) == false)
+				method = (String) fieldsOrj.get(PdksEntityController.MAP_KEY_MAP);
+			fieldsOrj.remove(PdksEntityController.MAP_KEY_MAP);
+		}
+		List veriList = getSQLParamList(dataIdList, sb, fieldName, fieldsOrj, class1, session);
+		if (veriList != null)
+			treeMap = getTreeMapByList(veriList, method, uzerineYaz);
+		return treeMap;
+	}
+
+	/**
+	 * @param tableName
+	 * @param fieldName
+	 * @param value
+	 * @param class1
+	 * @param session
+	 * @return
+	 */
+	public Object getSQLParamByFieldObject(String tableName, String fieldName, Object value, Class class1, Session session) {
+		Object object = null;
+		try {
+			HashMap parametreMap = new HashMap();
+			StringBuffer sb = new StringBuffer();
+			sb.append("SELECT TOP 1 * FROM " + tableName + " " + selectLOCK);
+			if (value != null) {
+				sb.append(" WHERE " + fieldName + " = :u");
+				parametreMap.put("u", value);
+			} else
+				sb.append(" WHERE " + fieldName + "  IS NULL");
+
+			if (session != null)
+				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+			List list = null;
+			try {
+				list = getObjectBySQLList(sb, parametreMap, class1);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			object = list != null && !list.isEmpty() ? list.get(0) : null;
+			if (object == null && class1 != null && !class1.getName().equals(PersonelExtra.class.getName())) {
+				StringBuffer sb1 = new StringBuffer();
+				if (authenticatedUser != null && PdksUtil.hasStringValue(authenticatedUser.getCalistigiSayfa())) {
+					sb1.append(authenticatedUser.getCalistigiSayfa() + "\n");
+				}
+				sb1.append(sb.toString() + " --> " + value + " " + class1.getName());
+				if (value != null)
+					logger.error(sb1.toString());
+				sb1 = null;
+			}
+			sb = null;
+			list = null;
+			parametreMap = null;
+
+		} catch (Exception e) {
+			logger.error(tableName + " --> " + fieldName + " : " + value + " " + class1.getName() + "\n" + e.getMessage());
+		}
+
+		return object;
+	}
+
+	/**
+	 * @param dataIdList
+	 * @param sb
+	 * @param fieldName
+	 * @param fieldsOrj
+	 * @param class1
+	 * @param session
+	 * @return
+	 */
+	public List getSQLParamList(List dataIdList, StringBuffer sb, String fieldName, HashMap<String, Object> fieldsOrj, Class class1, Session session) {
+		List idList = new ArrayList();
+		List veriList = new ArrayList();
+		try {
+			if (session == null && fieldsOrj != null && fieldsOrj.containsKey(PdksEntityController.MAP_KEY_SESSION))
+				session = (Session) fieldsOrj.get(PdksEntityController.MAP_KEY_SESSION);
+			int size = PdksEntityController.LIST_MAX_SIZE - fieldsOrj.size();
+			List idInputList = new ArrayList(dataIdList);
+			String str = ":" + fieldName, sqlStr = sb.toString();
+			while (!idInputList.isEmpty()) {
+				HashMap map = new HashMap();
+				for (Iterator iterator = idInputList.iterator(); iterator.hasNext();) {
+					Object long1 = (Object) iterator.next();
+					idList.add(long1);
+					iterator.remove();
+					if (idList.size() + map.size() >= size)
+						break;
+				}
+				HashMap<String, Object> fields = new HashMap<String, Object>();
+				fields.putAll(fieldsOrj);
+				if (fields.containsKey(PdksEntityController.MAP_KEY_SESSION))
+					fields.remove(PdksEntityController.MAP_KEY_SESSION);
+				if (idList.size() > 1 || sqlStr.indexOf(str) < 1)
+					fields.put(fieldName, idList);
+				else {
+					sb = new StringBuffer(PdksUtil.replaceAll(sqlStr, str, " = :" + fieldName));
+					fields.put(fieldName, idList.get(0));
+				}
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				try {
+					List list = getObjectBySQLList(sb, fields, class1);
+					if (!list.isEmpty())
+						veriList.addAll(list);
+					list = null;
+				} catch (Exception e) {
+					logger.error(sb + "\n" + e);
+					idInputList.clear();
+				}
+
+				fields = null;
+				idList.clear();
+			}
+			idInputList = null;
+		} catch (Exception ex) {
+			logger.error(sb + "\n" + ex);
+
+		}
+
+		return veriList;
+	}
+
 	public static boolean isShowSQL() {
 		return showSQL;
 	}
 
 	public static void setShowSQL(boolean showSQL) {
 		PdksEntityController.showSQL = showSQL;
+	}
+
+	public static String getSelectLOCK() {
+		return selectLOCK;
+	}
+
+	public static void setSelectLOCK(String selectLOCK) {
+		PdksEntityController.selectLOCK = selectLOCK;
+	}
+
+	public static String getJoinLOCK() {
+		return joinLOCK;
+	}
+
+	public static void setJoinLOCK(String joinLOCK) {
+		PdksEntityController.joinLOCK = joinLOCK;
 	}
 
 }

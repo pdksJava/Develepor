@@ -123,8 +123,8 @@ public final class PersonelKontrol extends QuartzJobBean {
 		HashMap fields = new HashMap();
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select P.* from " + Personel.TABLE_NAME + " P ");
-		sql.append(" INNER JOIN " + Sirket.TABLE_NAME + " S WITH(nolock) ON S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " AND S." + Sirket.COLUMN_NAME_DURUM + " = 1 AND S." + Sirket.COLUMN_NAME_ERP_DURUM + " = 1 ");
-		sql.append(" INNER JOIN " + Personel.TABLE_NAME + " Y WITH(nolock) ON Y." + Personel.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_YONETICI + " AND Y." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + "<GETDATE() ");
+		sql.append(" INNER JOIN " + Sirket.TABLE_NAME + " S " + PdksVeriOrtakAktar.getJoinLOCK() + " ON S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " AND S." + Sirket.COLUMN_NAME_DURUM + " = 1 AND S." + Sirket.COLUMN_NAME_ERP_DURUM + " = 1 ");
+		sql.append(" INNER JOIN " + Personel.TABLE_NAME + " Y " + PdksVeriOrtakAktar.getJoinLOCK() + " ON Y." + Personel.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_YONETICI + " AND Y." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + "<GETDATE() ");
 		sql.append(" WHERE P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE()) AND P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
 		sql.append(" AND P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " >= GETDATE() ");
 		sql.append(" ORDER BY Y." + Personel.COLUMN_NAME_AD + ",Y." + Personel.COLUMN_NAME_SOYAD + ",Y." + Personel.COLUMN_NAME_ID);
@@ -185,7 +185,7 @@ public final class PersonelKontrol extends QuartzJobBean {
 			logger.info("Personel Kontrol start " + PdksUtil.getCurrentTimeStampStr());
 			fields.clear();
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT D.* FROM " + HataliPersonel.VIEW_NAME + " D WITH(nolock)");
+			sb.append("SELECT D.* FROM " + HataliPersonel.VIEW_NAME + " D " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
 			sb.append(" ORDER BY D." + HataliPersonel.COLUMN_NAME_TIP + ",D." + HataliPersonel.COLUMN_NAME_PERSONEL_NO + ", D." + HataliPersonel.COLUMN_NAME_ID);
 			List<HataliPersonel> hataliPersonelList = pdksDAO.getNativeSQLList(fields, sb, HataliPersonel.class);
 			if (hataliPersonelList != null && !hataliPersonelList.isEmpty()) {

@@ -126,11 +126,9 @@ public class IzinKagidiHome extends EntityHome<PersonelIzin> implements Serializ
 		Personel pdksPersonel = (Personel) personel.clone();
 
 		List<User> list = new ArrayList<User>();
-		HashMap parametreMap = new HashMap();
-		parametreMap.put("pdksPersonel.id", pdksPersonel.getId());
-		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		User izinSahibiUser = (User) pdksEntityController.getObjectByInnerObject(parametreMap, User.class);
+	 
+		User izinSahibiUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, pdksPersonel.getId(), User.class, session);
+ 
 		if (izinSahibiUser != null) {
 			if (izinSahibiUser.isSuperVisor()) {
 				Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());
@@ -167,11 +165,8 @@ public class IzinKagidiHome extends EntityHome<PersonelIzin> implements Serializ
 		}
 
 		if (pdksPersonel.getPdksYonetici() != null) {
-			parametreMap.clear();
-			parametreMap.put("pdksPersonel.id", pdksPersonel.getPdksYonetici().getId());
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			User userYonetici = (User) pdksEntityController.getObjectByInnerObject(parametreMap, User.class);
+			 
+			User userYonetici = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, pdksPersonel.getPdksYonetici().getId(), User.class, session);
 			if (userYonetici != null) {
 				list.add(userYonetici);
 				try {

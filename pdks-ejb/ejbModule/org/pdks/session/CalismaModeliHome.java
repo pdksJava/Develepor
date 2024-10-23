@@ -26,6 +26,7 @@ import org.pdks.entity.CalismaModeli;
 import org.pdks.entity.CalismaModeliGun;
 import org.pdks.entity.CalismaModeliVardiya;
 import org.pdks.entity.Departman;
+import org.pdks.entity.Sirket;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaSablonu;
 import org.pdks.security.entity.User;
@@ -58,6 +59,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	private List<CalismaModeli> calismaModeliList;
 	private List<VardiyaSablonu> sablonList;
+	private List<Sirket> sirketList;
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), kayitliVardiyaList = new ArrayList<Vardiya>();
 	private List<CalismaModeliGun> cmGunList;
 	private List<Departman> departmanList;
@@ -209,6 +211,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	}
 
 	public String fillVardiyalar(CalismaModeli cm) {
+		Sirket sirket = cm.getSirket();
 		haftaTatilGunleri.clear();
 		Calendar cal = Calendar.getInstance();
 		haftaTatilGunleri.add(new SelectItem(null, "Sabit Gün Değil"));
@@ -217,13 +220,10 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			haftaTatilGunleri.add(new SelectItem(i, PdksUtil.convertToDateString(cal.getTime(), "EEEEE")));
 		}
 		gunleriSifirla();
-		HashMap parametreMap = new HashMap();
-		parametreMap.put("durum", Boolean.TRUE);
-		if (cm.getDepartman() != null)
-			parametreMap.put("departman.id", cm.getDepartman().getId());
-		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		sablonList = pdksEntityController.getObjectByInnerObjectList(parametreMap, VardiyaSablonu.class);
+		Long departmanId = cm.getDepartman() != null ? cm.getDepartman().getId() : null;
+
+		sablonList = ortakIslemler.getVardiyaSablonuList(sirket, departmanId, session);
+
 		for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
 			VardiyaSablonu sablonu = (VardiyaSablonu) iterator.next();
 			if (sablonu.getCalismaModeli() != null)
@@ -242,19 +242,14 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			if (ekle)
 				sablonList.add(cm.getBagliVardiyaSablonu());
 		}
-		parametreMap.clear();
-		parametreMap.put("durum", Boolean.TRUE);
-		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		vardiyaList = pdksEntityController.getObjectByInnerObjectList(parametreMap, Vardiya.class);
 		Long cmaDepartmanId = cm.getDepartman() != null ? cm.getDepartman().getId() : null;
+		HashMap parametreMap = new HashMap();
+		vardiyaList = ortakIslemler.getVardiyaList(sirket, cmaDepartmanId, session);
 		for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 			Vardiya vardiya = (Vardiya) iterator.next();
 			if (vardiya.getKisaAdi().equals("TA") || vardiya.getKisaAdi().equals("TG"))
 				logger.debug(vardiya.getId() + " " + vardiya.getKisaAdi());
 			if (vardiya.isCalisma() == false)
-				iterator.remove();
-			else if (cmaDepartmanId != null && vardiya.getDepartman() != null && !vardiya.getDepartman().getId().equals(cmaDepartmanId))
 				iterator.remove();
 
 		}
@@ -282,6 +277,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 		} else
 			kayitliVardiyaList = new ArrayList<Vardiya>();
+		sirketList = pdksEntityController.getSQLParamByAktifFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_PDKS, Boolean.TRUE, Sirket.class, session);
 
 		return "";
 	}
@@ -406,7 +402,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		// if (session != null)
 		// parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		// calismaModeliList = pdksEntityController.getObjectByInnerObjectList(parametreMap, CalismaModeli.class);
-		calismaModeliList = ortakIslemler.getSQLParamByFieldList(CalismaModeli.TABLE_NAME, pasifGoster == false ? CalismaModeli.COLUMN_NAME_DURUM : null, Boolean.TRUE, CalismaModeli.class, session);
+		calismaModeliList = pdksEntityController.getSQLParamByFieldList(CalismaModeli.TABLE_NAME, pasifGoster == false ? CalismaModeli.COLUMN_NAME_DURUM : null, Boolean.TRUE, CalismaModeli.class, session);
 		if (!hareketKaydiVardiyaBul || !otomatikFazlaCalismaOnaylansinVar) {
 			List<CalismaModeli> pasifList = new ArrayList<CalismaModeli>();
 			for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
@@ -582,6 +578,14 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	public void setPasifGoster(Boolean pasifGoster) {
 		this.pasifGoster = pasifGoster;
+	}
+
+	public List<Sirket> getSirketList() {
+		return sirketList;
+	}
+
+	public void setSirketList(List<Sirket> sirketList) {
+		this.sirketList = sirketList;
 	}
 
 }

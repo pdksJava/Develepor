@@ -62,6 +62,12 @@
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
+										<h:outputText value="#{ortakIslemler.sirketAciklama()}" />
+									</f:facet>
+									<h:outputText value="#{vardiya.sirket.ad}" />
+								</rich:column>
+								<rich:column>
+									<f:facet name="header">
 										<h:outputText value="Ekran Sıra" />
 									</f:facet>
 									<h:outputText value="#{vardiya.ekranSira}" />
@@ -474,6 +480,17 @@
 										<ui:define name="label">Aktif</ui:define>
 										<h:selectBooleanCheckbox value="#{vardiyaHome.instance.durum}" />
 									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.sirketList!=null}">
+										<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
+										<h:selectOneMenu value="#{vardiyaHome.instance.sirket}">
+											<s:selectItems var="comp" value="#{vardiyaHome.sirketList}" label="#{comp.ad}" noSelectionLabel="Lütfen seçiniz" />
+											<a4j:support event="onchange" action="#{vardiyaHome.fillCalismaModeliList(vardiyaHome.instance)}" reRender="modeller" status="ajaxStatus"
+												ajaxSingle="true" />
+											<s:convertEntity />
+										</h:selectOneMenu>
+
+									</s:decorate>
+									<a4j:outputPanel id="modeller">
 									<rich:simpleTogglePanel rendered="#{vardiyaHome.calismaModeliList.size()+vardiyaHome.calismaModeliKayitliList.size()>1}" switchType="client"
 										label="Çalışma Modelleri" height="110" opened="true">
 
@@ -490,7 +507,7 @@
 											<s:convertEntity />
 										</rich:listShuttle>
 
-									</rich:simpleTogglePanel>
+									</rich:simpleTogglePanel></a4j:outputPanel>
 									<rich:simpleTogglePanel rendered="#{vardiyaHome.yemekIzinList.size()+ vardiyaHome.yemekIzinKayitliList.size()>1}" switchType="client"
 										label="Dinlenmeler" height="110" opened="true">
 

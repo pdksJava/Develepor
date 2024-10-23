@@ -514,6 +514,7 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 	 * @param tempRoleFromDataTable
 	 * @param tempMenuItemFromTree
 	 */
+	 
 	private void altMenuBilesenlerindenYetkileriCikar(ArrayList<AccountPermission> deleteAccountPermissionList, HashMap parametreMap, Role tempRoleFromDataTable, MenuItem tempMenuItemFromTree) {
 		String key;
 		for (MenuItem childOfTempMenuItemFromTree : tempMenuItemFromTree.getChildMenuItemListSirali()) {
@@ -693,18 +694,12 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 		ArrayList<AccountPermission> deleteAccountPermissionList = new ArrayList<AccountPermission>();
 		// permissionun ait oldugu menuitem bulunur.
 		HashMap parametreMap = new HashMap();
-
-		parametreMap.put("name", selectedAccPermission.getTarget());
-		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		MenuItem menuItem = (MenuItem) pdksEntityController.getObjectByInnerObject(parametreMap, MenuItem.class, "");
+ 
+		MenuItem menuItem = (MenuItem) pdksEntityController.getSQLParamByFieldObject(MenuItem.TABLE_NAME, MenuItem.COLUMN_NAME_ADI, selectedAccPermission.getTarget(), MenuItem.class, session);
+				 
 		// permissionun ait oldugu rol bulunur.
-		parametreMap.clear();
-
-		parametreMap.put("rolename", selectedAccPermission.getRecipient());
-		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		Role rol = (Role) pdksEntityController.getObjectByInnerObject(parametreMap, Role.class, "");
+	 
+		Role rol = (Role) pdksEntityController.getSQLParamByFieldObject(Role.TABLE_NAME, Role.COLUMN_NAME_ROLE_NAME, selectedAccPermission.getRecipient(), Role.class, session);
 
 		// permissionlar cekilir ve mape konur.
 		parametreMap.clear();

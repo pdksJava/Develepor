@@ -138,13 +138,28 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 
 	public void fillSirketList() {
 		HashMap map = new HashMap();
-		map.put("durum", Boolean.TRUE);
-		map.put("pdks", Boolean.TRUE);
-		if (!authenticatedUser.isAdmin())
-			map.put("departman", authenticatedUser.getDepartman());
+		// map.put("durum", Boolean.TRUE);
+		// map.put("pdks", Boolean.TRUE);
+		// if (!authenticatedUser.isAdmin())
+		// map.put("departman", authenticatedUser.getDepartman());
+		//
+		// map.put(PdksEntityController.MAP_KEY_SESSION, session);
+		// List<Sirket> list = pdksEntityController.getObjectByInnerObjectList(map, Sirket.class);
 
-		map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<Sirket> list = pdksEntityController.getObjectByInnerObjectList(map, Sirket.class);
+		StringBuffer sb = new StringBuffer();
+		sb.append("select S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" WHERE S." + Sirket.COLUMN_NAME_DURUM + " = 1  AND S." + Sirket.COLUMN_NAME_PDKS + " = 1");
+		if (!authenticatedUser.isAdmin()) {
+			sb.append(" AND S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d");
+			map.put("d", authenticatedUser.getDepartman().getId());
+			if (authenticatedUser.isIKSirket())
+				sb.append(" AND S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
+		}
+
+		if (session != null)
+			map.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<Sirket> list = pdksEntityController.getObjectBySQLList(sb, map, Sirket.class);
+
 		if (list.size() > 1)
 			list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);
 		setSirketList(list);

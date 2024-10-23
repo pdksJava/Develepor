@@ -255,7 +255,7 @@ public class YemekCiftBasanRaporHome extends EntityHome<VardiyaGun> implements S
 		// parametreMap.put("bitTarih", PdksUtil.getDate(ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 1)));
 		//
 		// StringBuffer qsb = new StringBuffer();
-		// qsb.append("SELECT S." + HareketKGS.COLUMN_NAME_ID + " FROM " + HareketKGS.TABLE_NAME + " S  WITH(nolock) ");
+		// qsb.append("SELECT S." + HareketKGS.COLUMN_NAME_ID + " FROM " + HareketKGS.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
 		// qsb.append(" where  S." + HareketKGS.COLUMN_NAME_ZAMAN + " >=:basTarih AND S." + HareketKGS.COLUMN_NAME_ZAMAN + " <:bitTarih ");
 		// if (!yemekKapiList.isEmpty()) {
 		// qsb.append(" AND S." + HareketKGS.COLUMN_NAME_KAPI + " :kapiId");

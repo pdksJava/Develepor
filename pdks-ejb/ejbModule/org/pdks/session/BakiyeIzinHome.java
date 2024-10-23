@@ -144,12 +144,9 @@ public class BakiyeIzinHome extends EntityHome<PersonelIzin> {
 			query.setParameter(3, kullanilanIzinSuresi);
 			query.setParameter(4, updateIzin.getId());
 			query.executeUpdate();
-			HashMap parametreMap = new HashMap();
 
-			parametreMap.put("id", updateIzin.getId());
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			PersonelIzin izin = (PersonelIzin) pdksEntityController.getObjectByInnerObject(parametreMap, PersonelIzin.class);
+			PersonelIzin izin = (PersonelIzin) pdksEntityController.getSQLParamByFieldObject(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, updateIzin.getId(), PersonelIzin.class, session);
+
 			session.refresh(izin);
 			session.flush();
 			fillIzinList();
@@ -279,22 +276,19 @@ public class BakiyeIzinHome extends EntityHome<PersonelIzin> {
 		if (PdksUtil.hasStringValue(sicilNo) == false && aramaSecenekleri.getSirketId() == null) {
 			PdksUtil.addMessageWarn("" + ortakIslemler.sirketAciklama() + " seçiniz!");
 		} else {
-			HashMap fields = new HashMap();
-			// ArrayList<String> sicilNoList = ortakIslemler.getPersonelSicilNo(ad, soyad, sicilNo, sirket, seciliEkSaha1, seciliEkSaha2, seciliEkSaha3, seciliEkSaha4, Boolean.TRUE, session);
+ 			// ArrayList<String> sicilNoList = ortakIslemler.getPersonelSicilNo(ad, soyad, sicilNo, sirket, seciliEkSaha1, seciliEkSaha2, seciliEkSaha3, seciliEkSaha4, Boolean.TRUE, session);
 			ArrayList<String> sicilNoList = ortakIslemler.getAramaPersonelSicilNo(aramaSecenekleri, Boolean.TRUE, session);
 			if (izinTipiId != null) {
-				fields.put("id", izinTipiId);
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				izinTipiTanim = (Tanim) pdksEntityController.getObjectByInnerObject(fields, Tanim.class);
+
+				izinTipiTanim = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, izinTipiId, Tanim.class, session);
+				 
 			} else
 				izinTipiTanim = null;
 
 			String izinTipiKodu = izinTipiTanim != null ? izinTipiTanim.getKodu() : null;
 			if (sicilNoList != null && !sicilNoList.isEmpty() && izinTipiKodu != null) {
-				fields.clear();
-				fields.put("id", aramaSecenekleri.getSirketId());
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				Sirket sirket = (Sirket) pdksEntityController.getObjectByInnerObject(fields, Sirket.class);
+				Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
+
 				izinMap = ortakIslemler.bakiyeIzinListesiOlustur(izinTipiKodu, sicilNoList, sirket, tarih, yil, Boolean.TRUE, session);
 			}
 

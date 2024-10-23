@@ -176,10 +176,9 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 			Date bugun = PdksUtil.getDate(date);
 			List<Tanim> list = new ArrayList<Tanim>();
 			HashMap map = new HashMap();
-			map.put("id ", aramaSecenekleri.getSirketId());
-			if (session != null)
-				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			Sirket sirket = (Sirket) pdksEntityController.getObjectByInnerObject(map, Sirket.class);
+		 
+			Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
+
 			if (aramaSecenekleri.getTesisList() != null)
 				aramaSecenekleri.getTesisList().clear();
 			else

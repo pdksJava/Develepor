@@ -61,7 +61,7 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 	HashMap parameterMap;
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
-	
+
 	public static String sayfaURL = "taseronPersonelKopyala";
 	private List<PersonelView> personelList = new ArrayList<PersonelView>();
 	private List<SelectItem> sirketList = new ArrayList<SelectItem>();
@@ -111,7 +111,7 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 	public String sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		if (sirketList == null)
 			sirketList = new ArrayList<SelectItem>();
 		else
@@ -325,13 +325,10 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			TreeMap<String, Personel> personelMap = pdksEntityController.getObjectByInnerObjectMap(map, Personel.class, false);
 			Sirket sirket = null;
-			if (sirketId != null) {
-				map.clear();
-				map.put("id", sirketId);
-				if (session != null)
-					map.put(PdksEntityController.MAP_KEY_SESSION, session);
-				sirket = (Sirket) pdksEntityController.getObjectByInnerObject(map, Sirket.class);
-			}
+			if (sirketId != null)
+
+				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
+
 			Date istenAyrilisTarihi = basSirketTarih != null ? ortakIslemler.tariheGunEkleCikar(cal, basSirketTarih, -1) : null, olusturmaTarihi = new Date();
 			User olusturanUser = ortakIslemler.getSistemAdminUser(session);
 			if (olusturanUser == null)

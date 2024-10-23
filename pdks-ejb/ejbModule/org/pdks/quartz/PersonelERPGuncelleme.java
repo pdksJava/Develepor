@@ -397,10 +397,8 @@ public class PersonelERPGuncelleme implements Serializable {
 						Boolean durum = ortakIslemler.sapVeriGuncelle(session, user, bordroAltBirimiMap, masrafYeriMap, pdksPersonel, null, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
 
 						if (!durum.equals(pdksPersonel.getDurum())) {
-							map.clear();
-							map.put("id", pdksPersonel.getId());
-							map.put(PdksEntityController.MAP_KEY_SESSION, session);
-							Personel personel = (Personel) pdksEntityController.getObjectByInnerObject(map, Personel.class);
+ 							Personel personel = (Personel) pdksEntityController.getSQLParamByFieldObject(Personel.TABLE_NAME, Personel.COLUMN_NAME_ID, pdksPersonel.getId(), Personel.class, session);
+ 
 							personel.setDurum(durum);
 							personel.setGuncellemeTarihi(bugun);
 							personel.setGuncelleyenUser(user);
@@ -457,8 +455,8 @@ public class PersonelERPGuncelleme implements Serializable {
 		}
 
 		StringBuffer sb = new StringBuffer();
-		sb.append("select P.* from " + Personel.TABLE_NAME + " P  WITH(nolock) ");
-		sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S WITH(nolock) ON S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " AND S." + Sirket.COLUMN_NAME_DURUM + " = 1 AND S." + Sirket.COLUMN_NAME_ERP_DURUM + " = 1 ");
+		sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " ON S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " AND S." + Sirket.COLUMN_NAME_DURUM + " = 1 AND S." + Sirket.COLUMN_NAME_ERP_DURUM + " = 1 ");
 		sb.append(" AND S." + Sirket.COLUMN_NAME_PDKS + " = 1  AND S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1   ");
 		sb.append(" WHERE P." + Personel.COLUMN_NAME_DURUM + " = 0 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
 		sb.append(" ORDER BY P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
@@ -482,8 +480,8 @@ public class PersonelERPGuncelleme implements Serializable {
 			String sapKodu = parameter.getValue();
 			if (sapKodu != null && sapKodu.trim().length() == 4) {
 				StringBuffer sb = new StringBuffer();
-				sb.append("select P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + " P  WITH(nolock)");
-				sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S WITH(nolock) ON S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " AND S." + Sirket.COLUMN_NAME_DURUM + " = 1 AND S." + Sirket.COLUMN_NAME_DURUM + " = 1 ");
+				sb.append("select P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " ON S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " AND S." + Sirket.COLUMN_NAME_DURUM + " = 1 AND S." + Sirket.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" AND S." + Sirket.COLUMN_NAME_PDKS + " = 1  AND S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1 AND S.ERP_KODU=:sapKodu ");
 				sb.append(" WHERE P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
 				sb.append(" ORDER BY P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
@@ -509,7 +507,7 @@ public class PersonelERPGuncelleme implements Serializable {
 	public String aktifMailAdressGuncelle(Session session) {
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT DISTINCT P.*  FROM " + Personel.TABLE_NAME + " P WITH(nolock) ");
+		sb.append("SELECT DISTINCT P.* FROM " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" WHERE P." + Personel.COLUMN_NAME_DURUM + " = 1 AND (" + Personel.COLUMN_NAME_MAIL_CC_ID + " IS NOT NULL OR " + Personel.COLUMN_NAME_MAIL_BCC_ID + " IS NOT NULL OR " + Personel.COLUMN_NAME_HAREKET_MAIL_ID + " IS NOT NULL)");
 		sb.append(" AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=convert(date,GETDATE())   ");
 		if (session != null)

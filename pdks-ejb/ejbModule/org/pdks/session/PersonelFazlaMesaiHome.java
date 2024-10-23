@@ -57,7 +57,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	 */
 	private static final long serialVersionUID = -6296894631826661965L;
 	static Logger logger = Logger.getLogger(PersonelFazlaMesaiHome.class);
-	
+
 	public static String sayfaURL = "personelFazlaMesai";
 
 	@RequestParameter
@@ -143,7 +143,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	public String sayfaGirisAction() throws Exception {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fazlaMesaiGirisDurum = false;
 		adminRole = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIKAdmin();
 		ikRole = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || (PdksUtil.isSistemDestekVar() && authenticatedUser.isIK());
@@ -221,12 +221,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			setDate(vardiyaDate);
 			if (perKGSId != null) {
 
-				HashMap parametreMap = new HashMap();
-
-				parametreMap.put("id", perKGSId);
-				if (session != null)
-					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				PersonelKGS personelKGS = (PersonelKGS) pdksEntityController.getObjectByInnerObject(parametreMap, PersonelKGS.class);
+				PersonelKGS personelKGS = (PersonelKGS) pdksEntityController.getSQLParamByFieldObject(PersonelKGS.TABLE_NAME, PersonelKGS.COLUMN_NAME_ID, perKGSId, PersonelKGS.class, session);
 				PersonelView personelView = personelKGS != null ? personelKGS.getPersonelView() : null;
 				if (personelView != null && personelView.getPdksPersonel() != null) {
 					Personel pdksPersonel = personelView.getPdksPersonel();
@@ -306,12 +301,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		List<Sirket> list = null;
 		if (departmanId != null) {
 
-			HashMap parametreMap = new HashMap();
-
-			parametreMap.put("id", departmanId);
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			departman = (Departman) pdksEntityController.getObjectByInnerObject(parametreMap, Departman.class);
+			departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
 
 		} else
 			departman = null;
@@ -320,18 +310,24 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		if (authenticatedUser.isAdmin() || authenticatedUser.isIK()) {
 
 			HashMap map = new HashMap();
-			map.put(PdksEntityController.MAP_KEY_MAP, "getId");
-			map.put(PdksEntityController.MAP_KEY_SELECT, "sirket");
-			map.put("sirket.durum", Boolean.TRUE);
-			// map.put("pdksSirket.pdks", Boolean.TRUE);
-			map.put("sirket.fazlaMesai", Boolean.TRUE);
+
+			StringBuffer sb = new StringBuffer();
+			sb.append("SELECT DISTINCT S.* FROM " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+			sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
+			sb.append(" WHERE S." + Sirket.COLUMN_NAME_DURUM + " = 1  AND S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1 ");
+			if (authenticatedUser.isIKSirket())
+				sb.append(" AND S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
+			sb.append(" AND S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d ");
+			
 			if (!authenticatedUser.isAdmin() && !authenticatedUser.isIKAdmin())
-				map.put("sirket.departman.id", authenticatedUser.getDepartman().getId());
+				map.put("d", authenticatedUser.getDepartman().getId());
 			else if (departman != null)
-				map.put("sirket.departman.id", departman.getId());
+				map.put("d", departman.getId());
+			map.put(PdksEntityController.MAP_KEY_MAP, "getId");
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			TreeMap sirketMap = pdksEntityController.getObjectByInnerObjectMap(map, Personel.class, Boolean.FALSE);
+			TreeMap sirketMap = pdksEntityController.getObjectBySQLMap(sb, map, Sirket.class, Boolean.FALSE);
+
 			setSirketList(null);
 			if (!sirketMap.isEmpty())
 				list = new ArrayList<Sirket>(sirketMap.values());
@@ -363,12 +359,9 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		Departman departman = null;
 
 		if (departmanId != null) {
-			HashMap parametreMap = new HashMap();
 
-			parametreMap.put("id", departmanId);
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			departman = (Departman) pdksEntityController.getObjectByInnerObject(parametreMap, Departman.class);
+			departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
+			;
 
 		}
 		bolumDepartmanlari = departman != null && !departman.isAdminMi() ? ortakIslemler.getBolumDepartmanSelectItems(departman.getId(), session) : null;
@@ -505,11 +498,9 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					pdksVardiyaGun = vardiyalar.get(key);
 				fazlaMesai.setVardiyaGun(pdksVardiyaGun);
 			} else {
-				HashMap parametreMap = new HashMap();
-				parametreMap.put("id", fazlaMesai.getVardiyaGun().getId());
-				if (session != null)
-					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				pdksVardiyaGun = (VardiyaGun) pdksEntityController.getObjectByInnerObject(parametreMap, VardiyaGun.class);
+				 
+				pdksVardiyaGun = (VardiyaGun) pdksEntityController.getSQLParamByFieldObject(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, fazlaMesai.getVardiyaGun().getId(), VardiyaGun.class, session);
+					 
 
 			}
 
@@ -575,18 +566,13 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		session.clear();
 		seciliEkSaha3 = null;
 		if (seciliEkSaha3Id != null) {
-			HashMap parametreMap = new HashMap();
-			parametreMap.put("id", seciliEkSaha3Id);
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			seciliEkSaha3 = (Tanim) pdksEntityController.getObjectByInnerObject(parametreMap, Tanim.class);
+
+			seciliEkSaha3 = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha3Id, Tanim.class, session);
+
 		}
 		if (seciliEkSaha4Id != null) {
-			HashMap parametreMap = new HashMap();
-			parametreMap.put("id", seciliEkSaha4Id);
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			seciliEkSaha4 = (Tanim) pdksEntityController.getObjectByInnerObject(parametreMap, Tanim.class);
+
+			seciliEkSaha4 = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha4Id, Tanim.class, session);
 		}
 
 		ArrayList<String> sicilNoList = null;
@@ -608,12 +594,9 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			sicilNoList.add(sicilNo);
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		HashMap fields = new HashMap();
-		fields.put("yil", cal.get(Calendar.YEAR));
-		fields.put("ay", cal.get(Calendar.MONTH) + 1);
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		pdksDenklestirmeAy = (DenklestirmeAy) pdksEntityController.getObjectByInnerObject(fields, DenklestirmeAy.class);
+
+		pdksDenklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(cal, session);
+
 		if (ikRole == false && authenticatedUser.isDirektorSuperVisor() == false) {
 			Long sirketId = aramaSecenekleri.getSirketId(), tesisId = aramaSecenekleri.getTesisId(), ekSaha3Id = aramaSecenekleri.getEkSaha3Id(), ekSaha4Id = aramaSecenekleri.getEkSaha4Id();
 			fazlaMesaiOrtakIslemler.setFazlaMesaiPersonel(date, sicilNoList, sirketId, tesisId, ekSaha3Id, ekSaha4Id, session);
@@ -624,13 +607,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		List<HareketKGS> kgsList1 = new ArrayList<HareketKGS>();
 		ArrayList<Personel> personeller = null;
 		if (sicilNoList != null && !sicilNoList.isEmpty()) {
-			HashMap parametreMap = new HashMap();
-
-			parametreMap.put("pdksSicilNo", sicilNoList.clone());
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			personeller = (ArrayList<Personel>) pdksEntityController.getObjectByInnerObjectList(parametreMap, Personel.class);
-
+			personeller = (ArrayList<Personel>) pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, sicilNoList.clone(), Personel.class, session);
 		}
 		tatilMap = ortakIslemler.getTatilGunleri(personeller, ortakIslemler.tariheGunEkleCikar(cal, date, -1), ortakIslemler.tariheGunEkleCikar(cal, date, 1), session);
 		tatil = null;
@@ -730,38 +707,43 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					}
 					HashMap parametreMap2 = new HashMap();
 					List idler = new ArrayList();
-					String fieldName = "id";
-					for (Personel personel : personeller) {
-						// if (personel.getPdksSicilNo().equals("90019025"))
+					StringBuffer sb = new StringBuffer();
+					String fieldName = "p";
+					sb.append("SELECT * FROM " + Personel.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+					sb.append(" WHERE " + Personel.COLUMN_NAME_ID + " :" + fieldName + "  AND " + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :s ");
+					for (Personel personel : personeller)
 						idler.add(personel.getId());
 
-					}
-
-					parametreMap2.put("sskCikisTarihi>=", date);
 					if (!Personel.getGrubaGirisTarihiAlanAdi().equalsIgnoreCase(Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI))
-						parametreMap2.put("iseBaslamaTarihi<=", date);
+						sb.append(" AND " + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b");
 					else
-						parametreMap2.put("grubaGirisTarihi<=", date);
-					// parametreMap2.put("pdks=", Boolean.TRUE);
+						sb.append(" AND " + Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI + " <= :b");
+					parametreMap2.put("b", date);
+
+					parametreMap2.put("s", date);
 					parametreMap2.put(fieldName, idler);
 					if (session != null)
 						parametreMap2.put(PdksEntityController.MAP_KEY_SESSION, session);
-
-	 				List<Personel> personelList = ortakIslemler.getParamList(true, idler, fieldName, parametreMap2, Personel.class, session);
+					List<Personel> personelList = pdksEntityController.getSQLParamList(idler, sb, fieldName, parametreMap2, Personel.class, session);
 					if (!personelList.isEmpty()) {
 						idler.clear();
 						for (Personel personel : personelList) {
 							idler.add(personel.getId());
 						}
-						fieldName = "vardiyaGun.personel.id";
+						fieldName = "p";
+						sb = new StringBuffer();
+						sb.append("SELECT F.* FROM " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
+						sb.append(" INNER JOIN " + PersonelFazlaMesai.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " ON F." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
+						sb.append(" AND F." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1 ");
+						sb.append(" WHERE V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " :t AND  V." + VardiyaGun.COLUMN_NAME_PERSONEL + "  :" + fieldName);
 						parametreMap2.clear();
-						parametreMap2.put("vardiyaGun.vardiyaDate=", date);
+						parametreMap2.put("t", date);
 						parametreMap2.put(fieldName, idler);
-						parametreMap2.put("durum=", Boolean.TRUE);
 						if (session != null)
 							parametreMap2.put(PdksEntityController.MAP_KEY_SESSION, session);
 						// mesaiList = pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap2, PersonelFazlaMesai.class);
-						mesaiList = ortakIslemler.getParamList(true, idler, fieldName, parametreMap2, PersonelFazlaMesai.class, session);
+						mesaiList = pdksEntityController.getSQLParamList(idler, sb, fieldName, parametreMap2, PersonelFazlaMesai.class, session);
+
 					} else
 						mesaiList = new ArrayList<PersonelFazlaMesai>();
 					idler = null;
@@ -792,7 +774,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						}
 
 						try {
- 							kgsList = ortakIslemler.getHareketBilgileri(kapiIdler, perIdler, tarih1, PdksUtil.addTarih(tarih2, Calendar.SECOND, 1), HareketKGS.class, session);
+							kgsList = ortakIslemler.getHareketBilgileri(kapiIdler, perIdler, tarih1, PdksUtil.addTarih(tarih2, Calendar.SECOND, 1), HareketKGS.class, session);
 							for (Iterator iterator = kgsList.iterator(); iterator.hasNext();) {
 								HareketKGS hareket = (HareketKGS) iterator.next();
 								if (hareket.getDurum() != HareketKGS.DURUM_AKTIF)
@@ -1443,12 +1425,8 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 	@Transactional
 	public String mesaiSil() {
-		HashMap parametreMap = new HashMap();
-
-		parametreMap.put("id", seciliHareket.getPersonelFazlaMesai().getId());
-		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		PersonelFazlaMesai mesai = (PersonelFazlaMesai) pdksEntityController.getObjectByInnerObject(parametreMap, PersonelFazlaMesai.class);
+		 
+		PersonelFazlaMesai mesai = (PersonelFazlaMesai) pdksEntityController.getSQLParamByFieldObject(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_ID, seciliHareket.getPersonelFazlaMesai().getId(), PersonelFazlaMesai.class, session);
 		if (mesai != null) {
 			try {
 				mesai.setGuncelleyenUser(authenticatedUser);

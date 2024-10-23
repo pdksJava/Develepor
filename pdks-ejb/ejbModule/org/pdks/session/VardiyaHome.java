@@ -27,6 +27,7 @@ import org.pdks.entity.CalismaModeli;
 import org.pdks.entity.CalismaModeliVardiya;
 import org.pdks.entity.CalismaSekli;
 import org.pdks.entity.Departman;
+import org.pdks.entity.Sirket;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaSablonu;
@@ -69,6 +70,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	private List<CalismaModeli> calismaModeliList = new ArrayList<CalismaModeli>(), calismaModeliKayitliList = new ArrayList<CalismaModeli>();
 	private List<YemekIzin> yemekIzinList = new ArrayList<YemekIzin>(), yemekIzinKayitliList = new ArrayList<YemekIzin>();
 	private List<CalismaSekli> calismaSekliList;
+	private List<Sirket> sirketList;
 	private List<YemekIzin> yemekList;
 	private int saat = 13, dakika = 0;
 
@@ -135,17 +137,13 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	 */
 	public void fillCalismaModeliList(Vardiya pdksVardiya) {
 		if (pdksVardiya.getId() == null || pdksVardiya.isCalisma()) {
-			HashMap map = new HashMap();
-			map.put("durum", Boolean.TRUE);
-			map.put("genelVardiya", Boolean.FALSE);
-			if (session != null)
-				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			calismaModeliList = pdksEntityController.getObjectByInnerObjectList(map, CalismaModeli.class);
-			Long cmId = pdksVardiya.getDepartman() != null ? pdksVardiya.getDepartman().getId() : null;
-			if (cmId != null) {
+			Long pdksDepartmanId = pdksVardiya.getDepartman() != null ? pdksVardiya.getDepartman().getId() : null;
+			calismaModeliList = ortakIslemler.getCalismaModeliList(pdksVardiya.getSirket(), pdksDepartmanId, false, session);
+
+			if (pdksDepartmanId != null) {
 				for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
 					CalismaModeli cm = (CalismaModeli) iterator.next();
-					if (cm.getDepartman() != null && !cm.getDepartman().getId().equals(cmId))
+					if (cm.getDepartman() != null && !cm.getDepartman().getId().equals(pdksDepartmanId))
 						iterator.remove();
 				}
 			}
@@ -307,6 +305,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		pdksVardiya.setTipi(String.valueOf(pdksVardiya.getVardiyaTipi()));
 		fillCalismaSekilleri();
 		fillVardiyaTipiList();
+		sirketList = pdksEntityController.getSQLParamByAktifFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_PDKS, Boolean.TRUE, Sirket.class, session);
 	}
 
 	@Transactional
@@ -333,10 +332,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			}
 			if (yaz) {
 				HashMap parametreMap = new HashMap();
-				parametreMap.put("id", authenticatedUser.getId());
-				if (session != null)
-					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				User islemYapan = (User) pdksEntityController.getObjectByInnerObject(parametreMap, User.class);
+				User islemYapan = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, authenticatedUser.getId(), User.class, session);
+
 				if (pdksVardiya.getId() == null) {
 					pdksVardiya.setOlusturmaTarihi(new Date());
 					pdksVardiya.setOlusturanUser(islemYapan);
@@ -444,14 +441,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		HashMap parametreMap = new HashMap();
 		try {
 			manuelVardiyaIzinGir = ortakIslemler.getVardiyaIzinGir(session, authenticatedUser.getDepartman());
-			// if (pasifGoster == false)
-			// parametreMap.put("durum", Boolean.TRUE);
-			// if (session != null)
-			// parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			//
-			// List<Vardiya> vardiyalar = pdksEntityController.getObjectByInnerObjectList(parametreMap, Vardiya.class);
 
-			List<Vardiya> vardiyalar = ortakIslemler.getSQLParamByFieldList(Vardiya.TABLE_NAME, pasifGoster == false ? Vardiya.COLUMN_NAME_DURUM : null, Boolean.TRUE, Vardiya.class, session);
+			List<Vardiya> vardiyalar = pdksEntityController.getSQLParamByFieldList(Vardiya.TABLE_NAME, pasifGoster == false ? Vardiya.COLUMN_NAME_DURUM : null, Boolean.TRUE, Vardiya.class, session);
 
 			yemekList = ortakIslemler.getYemekList(new Date(), null, session);
 			HashMap<Long, Vardiya> vardiyaMap = new HashMap<Long, Vardiya>();
@@ -490,7 +481,6 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					parametreMap.put(fieldName, idList);
 					if (session != null)
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-					// List<VardiyaYemekIzin> vardiyaYemekIzinList = pdksEntityController.getObjectByInnerObjectList(parametreMap, VardiyaYemekIzin.class);
 					List<VardiyaYemekIzin> vardiyaYemekIzinList = ortakIslemler.getParamList(false, idList, fieldName, parametreMap, VardiyaYemekIzin.class, session);
 					if (!vardiyaYemekIzinList.isEmpty()) {
 						if (vardiyaYemekIzinList.size() > 1)
@@ -851,5 +841,13 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 	public void setPasifGoster(boolean pasifGoster) {
 		this.pasifGoster = pasifGoster;
+	}
+
+	public List<Sirket> getSirketList() {
+		return sirketList;
+	}
+
+	public void setSirketList(List<Sirket> sirketList) {
+		this.sirketList = sirketList;
 	}
 }

@@ -186,10 +186,8 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 			filDepartmanList();
 			if (departmanList.size() == 1) {
 				departmanId = (Long) departmanList.get(0).getValue();
-				HashMap fields = new HashMap();
-				fields.put("id", departmanId);
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				departman = (Departman) pdksEntityController.getObjectByInnerObject(fields, Departman.class);
+
+				departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
 
 			}
 
@@ -226,11 +224,9 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 		List<Sirket> list = new ArrayList<Sirket>();
 
 		if (departmanId != null && (authenticatedUser.isAdmin() || ikRole)) {
-			HashMap parametreMap = new HashMap();
-			parametreMap.put("id", departmanId);
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			departman = (Departman) pdksEntityController.getObjectByInnerObject(parametreMap, Departman.class);
+
+			departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
+
 			HashMap map = new HashMap();
 			map.put(PdksEntityController.MAP_KEY_MAP, "getId");
 			map.put(PdksEntityController.MAP_KEY_SELECT, "sirket");
@@ -447,8 +443,8 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 			StringBuffer sb = null;
 			if ((personelId == null || personelId.isEmpty()) && (sirketId != null || departmanId != null)) {
 				sb = new StringBuffer();
-				sb.append("SELECT  V.* FROM " + PdksPersonelView.TABLE_NAME + " V WITH(nolock) ");
-				sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P WITH(nolock) ON P." + Personel.COLUMN_NAME_ID + " = V." + PdksPersonelView.COLUMN_NAME_PERSONEL);
+				sb.append("SELECT V.* FROM " + PdksPersonelView.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_ID + " = V." + PdksPersonelView.COLUMN_NAME_PERSONEL);
 				if (!admin) {
 					sb.append(" AND  P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :ys");
 					ArrayList<String> list = authenticatedUser.getYetkiTumPersonelNoList();
@@ -462,7 +458,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 						sb.append(" AND  P." + Personel.COLUMN_NAME_SIRKET + " = :sirketId");
 						parametreMap.put("sirketId", sirketId);
 					} else if (departmanId != null) {
-						sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S WITH(nolock) ON S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
+						sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " ON S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
 						sb.append(" AND  S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :departmanId");
 						parametreMap.put("departmanId", departmanId);
 					}
@@ -484,7 +480,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 
 			parametreMap.clear();
 			sb = new StringBuffer();
-			sb.append("SELECT  V." + HareketKGS.COLUMN_NAME_ID + " FROM " + HareketKGS.TABLE_NAME + " V WITH(nolock) ");
+			sb.append("SELECT V." + HareketKGS.COLUMN_NAME_ID + " FROM " + HareketKGS.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 
 			sb.append(" WHERE V." + HareketKGS.COLUMN_NAME_ZAMAN + " >=:vardiyaBas");
 			sb.append(" AND V." + HareketKGS.COLUMN_NAME_ZAMAN + " <:vardiyaBit");
@@ -556,8 +552,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					parametreMap.put(fieldName, idList);
 					if (session != null)
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-					// List<KapiKGS> list1 = pdksEntityController.getObjectByInnerObjectList(parametreMap, KapiKGS.class);
-					List<KapiKGS> list1 = ortakIslemler.getParamList(false, idList, fieldName, parametreMap, KapiKGS.class, session);
+ 					List<KapiKGS> list1 = ortakIslemler.getParamList(false, idList, fieldName, parametreMap, KapiKGS.class, session);
 
 					for (KapiKGS kapiKGS : list1)
 						kapiMap.put(kapiKGS.getId(), kapiKGS.getKapiView());
@@ -572,8 +567,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					parametreMap.put(fieldName, idList);
 					if (session != null)
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-					// List<PersonelKGS> list = pdksEntityController.getObjectByInnerObjectList(parametreMap, PersonelKGS.class);
-					List<PersonelKGS> list = ortakIslemler.getParamList(false, idList, fieldName, parametreMap, PersonelKGS.class, session);
+ 					List<PersonelKGS> list = ortakIslemler.getParamList(false, idList, fieldName, parametreMap, PersonelKGS.class, session);
 
 					perMap.clear();
 
@@ -664,8 +658,8 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					String fieldName = "s";
 					parametreMap.clear();
 					sb = new StringBuffer();
-					sb.append("SELECT P.ISLEM_ID,HAREKET_ZAMANI from PDKS_LOG P WITH(nolock) ");
-					sb.append(" INNER JOIN PDKS_ISLEM I WITH(nolock) ON I.ID=P.ISLEM_ID AND I.ISLEM_TIPI='U' ");
+					sb.append("SELECT P.ISLEM_ID,HAREKET_ZAMANI from PDKS_LOG P " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append(" INNER JOIN PDKS_ISLEM I " + PdksEntityController.getJoinLOCK() + " ON I.ID=P.ISLEM_ID AND I.ISLEM_TIPI='U' ");
 
 					sb.append(" WHERE P.ISLEM_ID :" + fieldName + " AND P.DURUM=0 ");
 					parametreMap.put(fieldName, islemIdler);
@@ -673,7 +667,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 					TreeMap<Long, Date> islemTarihMap = new TreeMap<Long, Date>();
 					// List<Object[]> islemList = pdksEntityController.getObjectBySQLList(sb, parametreMap, null);
-					List<Object[]> islemList = ortakIslemler.getSQLParamList(islemIdler, sb, fieldName, parametreMap, null, session);
+					List<Object[]> islemList = pdksEntityController.getSQLParamList(islemIdler, sb, fieldName, parametreMap, null, session);
 
 					for (Object[] objects : islemList) {
 						Long key = ((BigInteger) objects[0]).longValue();

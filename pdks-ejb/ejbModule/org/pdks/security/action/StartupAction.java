@@ -49,6 +49,7 @@ import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelIzin;
+import org.pdks.entity.PersonelIzinDetay;
 import org.pdks.entity.ServiceData;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.SkinBean;
@@ -203,23 +204,20 @@ public class StartupAction implements Serializable {
 		if (session == null)
 			session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		fillAccountPermission(session, null);
-		HashMap parametreMap = new HashMap();
-		parametreMap.put(PdksEntityController.MAP_KEY_ORDER, "orderNo");
-		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<MenuItem> menuItemList = pdksEntityController.getObjectByInnerObjectList(parametreMap, MenuItem.class);
+
+		List<MenuItem> menuItemList = pdksEntityController.getSQLParamByFieldList(MenuItem.TABLE_NAME, null, null, MenuItem.class, session);
+		if (menuItemList.size() > 1)
+			menuItemList = PdksUtil.sortListByAlanAdi(menuItemList, "orderNo", false);
 		HashMap<String, MenuItem> menuItemMapYeni = new HashMap<String, MenuItem>();
 		for (MenuItem menuItem : menuItemList)
 			menuItemMapYeni.put(menuItem.getName(), menuItem);
 
 		setMenuItemMap(menuItemMapYeni);
 		setMenuItemList(menuItemList);
-		parametreMap.clear();
-		parametreMap.put("status", Boolean.TRUE);
-		parametreMap.put(PdksEntityController.MAP_KEY_ORDER, "orderNo");
-		parametreMap.put("topMenu", Boolean.TRUE);
-		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
-			List<MenuItem> allTreeMenuItemList = pdksEntityController.getObjectByInnerObjectList(parametreMap, MenuItem.class);
+			List<MenuItem> allTreeMenuItemList = pdksEntityController.getSQLParamByAktifFieldList(MenuItem.TABLE_NAME, MenuItem.COLUMN_NAME_TOP_MENU, Boolean.TRUE, MenuItem.class, session);
+			if (allTreeMenuItemList.size() > 1)
+				allTreeMenuItemList = PdksUtil.sortListByAlanAdi(allTreeMenuItemList, "orderNo", false);
 			for (MenuItem menuItem : allTreeMenuItemList)
 				topActiveMenuItemMap.put(menuItem.getName(), menuItem);
 
@@ -330,16 +328,11 @@ public class StartupAction implements Serializable {
 				session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		}
 		logger.info("Sistem verileri yukleniyor in " + PdksUtil.getCurrentTimeStampStr());
-
-		HashMap parametreMap = new HashMap();
-		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+		fillParameter(session);
 		try {
-			parametreMap.put("name", NoteTipi.ANA_SAYFA.value());
-			parametreMap.put("active", Boolean.TRUE);
-			List<Notice> noticeList = pdksEntityController.getObjectByInnerObjectList(parametreMap, Notice.class);
+			List<Notice> noticeList = pdksEntityController.getSQLParamByAktifFieldList(Notice.TABLE_NAME, Notice.COLUMN_NAME_ADI, NoteTipi.ANA_SAYFA.value(), Notice.class, session);
 			Notice notice = null;
-			if (!noticeList.isEmpty()) {
+			if (noticeList != null && !noticeList.isEmpty()) {
 				if (noticeList.size() == 1)
 					notice = (Notice) noticeList.get(0).clone();
 				else {
@@ -370,14 +363,9 @@ public class StartupAction implements Serializable {
 			logger.error("PDKS hata out : " + e.getMessage());
 			logger.error(e);
 		}
-		HashMap map1 = new HashMap();
-		map1.put("durum", SAPSunucu.DURUM_AKTIF);
-		if (session != null)
-			map1.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<SAPSunucu> sapSunucular = pdksEntityController.getObjectByInnerObjectList(map1, SAPSunucu.class);
-		SapRfcManager.setSapSunucular(sapSunucular);
 
-		fillParameter(session);
+		List<SAPSunucu> sapSunucular = pdksEntityController.getSQLParamByFieldList(SAPSunucu.TABLE_NAME, SAPSunucu.COLUMN_NAME_DURUM, Boolean.TRUE, SAPSunucu.class, session);
+		SapRfcManager.setSapSunucular(sapSunucular);
 
 		fillAccountPermission(session, user);
 
@@ -392,13 +380,12 @@ public class StartupAction implements Serializable {
 	 */
 	public void fillSirketList(Session session) {
 		pdksSirketleri.clear();
-		HashMap fields = new HashMap();
+
 		List<Sirket> list = null;
 		try {
-			fields.put("durum", Boolean.TRUE);
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			list = pdksEntityController.getObjectByInnerObjectList(fields, Sirket.class);
+
+			list = pdksEntityController.getSQLParamByFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_DURUM, Boolean.TRUE, Sirket.class, session);
+
 		} catch (Exception e) {
 			logger.error("PDKS hata out : " + e.getMessage());
 			list = new ArrayList<Sirket>();
@@ -406,7 +393,7 @@ public class StartupAction implements Serializable {
 		if (list != null)
 			pdksSirketleri.addAll(list);
 		list = null;
-		fields = null;
+
 	}
 
 	/**
@@ -415,20 +402,23 @@ public class StartupAction implements Serializable {
 	public void fillParameter(Session session) {
 		HashMap fields = new HashMap();
 		List<Parameter> parameterList = null;
-		parameterMap.clear();
 		try {
-
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT   T.* FROM " + Parameter.TABLE_NAME + " T WITH(nolock) ");
-
+			sb.append("SELECT * FROM " + Parameter.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			parameterList = pdksEntityController.getObjectBySQLList(sb, fields, Parameter.class);
-
 		} catch (Exception e) {
-			logger.error("PDKS hata out : " + e.getMessage());
-			parameterList = new ArrayList<Parameter>();
+			try {
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				parameterList = pdksEntityController.getObjectByInnerObjectList(fields, Parameter.class);
+			} catch (Exception e2) {
+				logger.error("PDKS hata out : " + e2.getMessage());
+				e2.printStackTrace();
+			}
 		}
+		parameterMap.clear();
 		List<String> helpDeskList = new ArrayList<String>();
 		HashMap<String, Parameter> pmMap = new HashMap<String, Parameter>();
 		for (Parameter parameter : parameterList) {
@@ -521,7 +511,10 @@ public class StartupAction implements Serializable {
 				MailManager.setHeaderRenk(deger);
 		}
 		String fontSize = "22px";
-
+		boolean izinHakedisGuncelle = false;
+		if (parameterMap.containsKey("izinHakedisGuncelle"))
+			izinHakedisGuncelle = parameterMap.get("izinHakedisGuncelle").equals("1");
+		PersonelIzinDetay.setIzinHakedisGuncelle(izinHakedisGuncelle);
 		projeURL = null;
 		if (parameterMap.containsKey("projeURL")) {
 			projeURL = parameterMap.get("projeURL");
@@ -1042,7 +1035,7 @@ public class StartupAction implements Serializable {
 			session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		HashMap fields = new HashMap();
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List ldapUserList = pdksEntityController.getObjectByInnerObjectListInLogic(fields, LDAPDomain.class);
+		List ldapUserList = pdksEntityController.getSQLParamByFieldList(LDAPDomain.TABLE_NAME, null, null, LDAPDomain.class, session);
 		LDAPDomain ldapUser = LDAPUserManager.getDefaultLDAPUser();
 		LDAPDomain ldapUserAna = null;
 		if (!ldapUserList.isEmpty()) {
@@ -1103,11 +1096,9 @@ public class StartupAction implements Serializable {
 			if (session == null)
 				session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		}
-		HashMap parametreMap = new HashMap();
-		parametreMap.put("status", Boolean.TRUE);
-		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<AccountPermission> permissionList = (ArrayList<AccountPermission>) pdksEntityController.getObjectByInnerObjectList(parametreMap, AccountPermission.class);
+
+		List<AccountPermission> permissionList = (ArrayList<AccountPermission>) pdksEntityController.getSQLParamByFieldList(AccountPermission.TABLE_NAME, AccountPermission.COLUMN_NAME_DURUM, Boolean.TRUE, AccountPermission.class, session);
+
 		String key = "";
 		accountPermissionMap = new HashMap<String, AccountPermission>();
 		for (AccountPermission accountPermission : permissionList) {
@@ -1115,11 +1106,7 @@ public class StartupAction implements Serializable {
 			accountPermissionMap.put(key, accountPermission);
 		}
 		if (user != null) {
-			parametreMap.clear();
-			parametreMap.put("status", Boolean.FALSE);
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<AccountPermission> deletePermissionList = (ArrayList<AccountPermission>) pdksEntityController.getObjectByInnerObjectList(parametreMap, AccountPermission.class);
+			List<AccountPermission> deletePermissionList = (ArrayList<AccountPermission>) pdksEntityController.getSQLParamByFieldList(AccountPermission.TABLE_NAME, AccountPermission.COLUMN_NAME_DURUM, Boolean.FALSE, AccountPermission.class, session);
 			if (!deletePermissionList.isEmpty()) {
 				for (Iterator iterator = deletePermissionList.iterator(); iterator.hasNext();) {
 					AccountPermission accountPermission = (AccountPermission) iterator.next();

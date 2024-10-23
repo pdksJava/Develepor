@@ -156,10 +156,8 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 			else if (!PdksUtil.hasStringValue(spName))
 				spName = "SP_HOLDING_IZIN_RAPOR_ALL";
 			String hakedisTarihiStr = hakedisTarihi != null ? PdksUtil.convertToDateString(hakedisTarihi, "yyyy-MM-dd") : "";
-			fields.clear();
-			fields.put("id", aramaSecenekleri.getSirketId());
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			Sirket sirket = (Sirket) pdksEntityController.getObjectByInnerObject(fields, Sirket.class);
+
+			Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
 
 			aramaSecenekleri.setSirket(sirket);
 
@@ -173,41 +171,50 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 			StringBuffer sb = null;
 
 			LinkedHashMap<Long, String> dataMap = new LinkedHashMap<Long, String>();
-			while (!sicilNoList.isEmpty()) {
-				List<String> sorguList = new ArrayList<String>();
-				for (Iterator iterator = sicilNoList.iterator(); iterator.hasNext();) {
-					String string = (String) iterator.next();
-					sorguList.add(string);
-					iterator.remove();
-					if (sorguList.size() >= 1500)
-						break;
-				}
-				fields.clear();
-				String fieldName = "p";
-				sb = new StringBuffer();
-				sb.append("SELECT P." + Personel.COLUMN_NAME_ID + " AS PER_ID," + Personel.COLUMN_NAME_IZIN_HAKEDIS_TARIHI + ", P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + " P WITH(nolock) ");
-				sb.append(" WHERE P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
-				sb.append(" AND P." + Personel.COLUMN_NAME_SIRKET + " = :t");
-				fields.put("t", sirket.getId());
-				if (istenAyrilanEkle) {
-					sb.append(" AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=:ia");
-					fields.put("ia", istenAyrilmaTarih);
-				}
-				sb.append(" ORDER BY " + Personel.COLUMN_NAME_IZIN_HAKEDIS_TARIHI + ", P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
+			if (ortakIslemler.isExisStoreProcedure(spName, session)) {
+				while (!sicilNoList.isEmpty()) {
+					List<String> sorguList = new ArrayList<String>();
+					for (Iterator iterator = sicilNoList.iterator(); iterator.hasNext();) {
+						String string = (String) iterator.next();
+						sorguList.add(string);
+						iterator.remove();
+						if (sorguList.size() >= 1500)
+							break;
+					}
+					fields.clear();
+					String fieldName = "p";
+					sb = new StringBuffer();
+					sb.append("SELECT P." + Personel.COLUMN_NAME_ID + " AS PER_ID," + Personel.COLUMN_NAME_IZIN_HAKEDIS_TARIHI + ", P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + ", P." + Personel.COLUMN_NAME_SIRKET + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append(" WHERE P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
+					sb.append(" AND P." + Personel.COLUMN_NAME_IZIN_KARTI_VAR + " = 1");
+					if (sirket != null) {
+						sb.append(" AND P." + Personel.COLUMN_NAME_SIRKET + " = :t ");
+						fields.put("t", sirket.getId());
+					}
 
-				fields.put(fieldName, sorguList);
-				if (session != null)
-					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// List<Object[]> idList = pdksEntityController.getObjectBySQLList(sb, fields, null);
-				List<Object[]> idList = ortakIslemler.getSQLParamList(sorguList, sb, fieldName, fields, null, session);
+					if (istenAyrilanEkle) {
+						sb.append(" AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=:ia");
+						fields.put("ia", istenAyrilmaTarih);
+					}
+					sb.append(" ORDER BY " + Personel.COLUMN_NAME_IZIN_HAKEDIS_TARIHI + ", P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
 
-				for (Iterator iterator = idList.iterator(); iterator.hasNext();) {
-					Object[] objects = (Object[]) iterator.next();
-					dataMap.put(((BigDecimal) objects[0]).longValue(), (String) objects[2]);
+					fields.put(fieldName, sorguList);
+					if (session != null)
+						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+					// List<Object[]> idList = pdksEntityController.getObjectBySQLList(sb, fields, null);
+					List<Object[]> idList = pdksEntityController.getSQLParamList(sorguList, sb, fieldName, fields, null, session);
+
+					for (Iterator iterator = idList.iterator(); iterator.hasNext();) {
+						Object[] objects = (Object[]) iterator.next();
+						dataMap.put(((BigDecimal) objects[0]).longValue(), (String) objects[2]);
+						if (aramaSecenekleri.getSirketId() == null && objects[3] != null)
+							aramaSecenekleri.setSirketId((((BigDecimal) objects[3]).longValue()));
+
+					}
+
+					idList = null;
+					sorguList.clear();
 				}
-
-				idList = null;
-				sorguList.clear();
 			}
 			List list = new ArrayList(dataMap.keySet());
 
@@ -230,7 +237,7 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 					sb.append(spName);
 					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 					veriMap.put("personelList", personelList);
-					veriMap.put("sirketId", String.valueOf(aramaSecenekleri.getSirketId()));
+					veriMap.put("sirketId", aramaSecenekleri.getSirketId() != null ? String.valueOf(aramaSecenekleri.getSirketId()) : null);
 					veriMap.put("tarih", hakedisTarihiStr);
 					veriMap.put("format", "120");
 					veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -267,8 +274,9 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 				List numStrList = new ArrayList(dataMap.keySet());
 				fields.clear();
 				sb = new StringBuffer();
-				sb.append("SELECT P.* from " + Personel.TABLE_NAME + " P WITH(nolock) ");
-				sb.append(" WHERE P." + Personel.COLUMN_NAME_ID + " :" + fieldName + " AND P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <=:ia2");
+				sb.append("SELECT P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append(" WHERE P." + Personel.COLUMN_NAME_ID + " :" + fieldName);
+				sb.append(" AND P." + Personel.COLUMN_NAME_IZIN_KARTI_VAR + " = 1 AND P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <=:ia2");
 				fields.put("ia1", istenAyrilmaTarih);
 				if (hakedisTarihi != null) {
 					sb.append(" AND  P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=:ia1");
@@ -279,7 +287,7 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				// List<Personel> idList = pdksEntityController.getObjectBySQLList(sb, fields, Personel.class);
-				List<Personel> idList = ortakIslemler.getSQLParamList(numStrList, sb, fieldName, fields, Personel.class, session);
+				List<Personel> idList = pdksEntityController.getSQLParamList(numStrList, sb, fieldName, fields, Personel.class, session);
 				for (Iterator iterator = idList.iterator(); iterator.hasNext();) {
 					Personel personel = (Personel) iterator.next();
 					holdingIzinList.add(new HoldingIzin(personel));
@@ -309,10 +317,8 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 		int row = 0, col = 0;
 		boolean ekSaha1 = false, ekSaha2 = false, ekSaha3 = true, ekSaha4 = false;
 		HashMap<String, Boolean> map = ortakIslemler.getListEkSahaDurumMap(holdingIzinList, null);
-		HashMap fields = new HashMap();
-		fields.put("id", aramaSecenekleri.getSirketId());
-		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		Sirket sirket = (Sirket) pdksEntityController.getObjectByInnerObject(fields, Sirket.class);
+
+		Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
 		boolean bolumYok = sirket.getDepartman().isAdminMi();
 		if (bolumYok) {
 			ekSaha1 = (authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin()) && map.containsKey("ekSaha1");
@@ -333,7 +339,7 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 		if (ekSaha2)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(aramaSecenekleri.getEkSahaTanimMap().get("ekSaha2").getAciklama());
 		if (ekSaha3)
-			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumYok ? aramaSecenekleri.getEkSahaTanimMap().get("ekSaha3").getAciklama() :ortakIslemler.bolumAciklama());
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumYok ? aramaSecenekleri.getEkSahaTanimMap().get("ekSaha3").getAciklama() : ortakIslemler.bolumAciklama());
 		if (ekSaha4)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(aramaSecenekleri.getEkSahaTanimMap().get("ekSaha4").getAciklama());
 

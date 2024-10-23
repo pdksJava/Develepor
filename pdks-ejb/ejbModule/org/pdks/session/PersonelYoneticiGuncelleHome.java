@@ -112,11 +112,11 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 						List<PersonelIzinOnay> onaylanmisIzinler = pdksEntityController.getObjectByInnerObjectList(fields, PersonelIzinOnay.class);
 
 						if (!onaylanmisIzinler.isEmpty()) {
-							fields.clear();
-							fields.put("pdksPersonel.id", yonetici.getId());
-							if (session != null)
-								fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-							User guncelleyenUser = (User) pdksEntityController.getObjectByInnerObject(fields, User.class);
+ 
+							User guncelleyenUser = (User)pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, yonetici.getId(), User.class, session);
+
+									
+									 
 							for (PersonelIzinOnay personelIzinOnay : onaylanmisIzinler) {
 								personelIzinOnay.setGuncelleyenUser(guncelleyenUser);
 								pdksEntityController.saveOrUpdate(session, entityManager, personelIzinOnay);
@@ -175,8 +175,8 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 		if (sirket != null) {
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT DISTINCT Y.* FROM " + Personel.TABLE_NAME + " P WITH(nolock) ");
-			sb.append("INNER JOIN " + Personel.TABLE_NAME + " Y WITH(nolock) ON Y." + Personel.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_YONETICI);
+			sb.append("SELECT DISTINCT Y.* FROM " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append("INNER JOIN " + Personel.TABLE_NAME + " Y " + PdksEntityController.getJoinLOCK() + " ON Y." + Personel.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_YONETICI);
 			sb.append(" WHERE P." + Personel.COLUMN_NAME_SIRKET + " = :s AND P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
 			sb.append(" AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
 			sb.append(" ORDER BY Y." + Personel.COLUMN_NAME_AD + ",Y." + Personel.COLUMN_NAME_SOYAD + ",Y." + Personel.COLUMN_NAME_ID);

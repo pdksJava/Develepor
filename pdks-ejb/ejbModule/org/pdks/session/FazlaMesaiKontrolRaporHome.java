@@ -68,7 +68,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 	 */
 	private static final long serialVersionUID = 5201033120905302620L;
 	static Logger logger = Logger.getLogger(FazlaMesaiKontrolRaporHome.class);
-	
+
 	public static String sayfaURL = "fazlaMesaiKontrolRapor";
 
 	@RequestParameter
@@ -198,7 +198,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals(sayfaURL);
 		if (!ayniSayfa)
 			authenticatedUser.setCalistigiSayfa(sayfaURL);
-		 
+
 		fazlaMesaiVardiyaGun = null;
 		adminRoleDurum();
 		if (!authenticatedUser.isAdmin()) {
@@ -345,12 +345,9 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 							if (!sirket.getId().equals(sirketId))
 								sirket = null;
 						}
-						HashMap parametreMap = new HashMap();
 
-						parametreMap.put("id", sirketId);
-						if (session != null)
-							parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-						sirket = (Sirket) pdksEntityController.getObjectByInnerObject(parametreMap, Sirket.class);
+						sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
+
 						if (sirket != null) {
 							departmanId = sirket.getDepartman().getId();
 							fillSirketList();
@@ -384,7 +381,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 				parametreMap.put("id", departmanId);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			setDepartman(departmanId != null ? (Departman) pdksEntityController.getObjectByInnerObject(parametreMap, Departman.class) : null);
+			setDepartman(departmanId != null ? (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session) : null);
 			if (tesisIdStr != null) {
 				if (!tesisList.isEmpty())
 					setTesisId(Long.parseLong(tesisIdStr));
@@ -426,13 +423,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 			aylikPuantajList.clear();
 		if (denklestirmeAy == null && ay > 0) {
 			HashMap fields = new HashMap();
-			fields.put("ay", ay);
-			fields.put("yil", yil);
-			if (aylikPuantajList != null)
-				aylikPuantajList.clear();
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			denklestirmeAy = (DenklestirmeAy) pdksEntityController.getObjectByInnerObject(fields, DenklestirmeAy.class);
+			denklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
 			if (denklestirmeAy != null) {
 				if (denklestirmeAy.getFazlaMesaiMaxSure() == null)
 					fazlaMesaiOrtakIslemler.setFazlaMesaiMaxSure(denklestirmeAy, session);
@@ -531,11 +522,8 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 			e.printStackTrace();
 		}
 		if (departmanId != null) {
-			HashMap parametreMap = new HashMap();
-			parametreMap.put("id", departmanId);
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			setDepartman((Departman) pdksEntityController.getObjectByInnerObject(parametreMap, Departman.class));
+
+			setDepartman((Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session));
 
 		} else
 			setDepartman(null);
@@ -559,11 +547,9 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 					}
 				}
 				if (sirketId != null) {
-					HashMap map = new HashMap();
-					map.put("id", sirketId);
-					if (session != null)
-						map.put(PdksEntityController.MAP_KEY_SESSION, session);
-					sirket = (Sirket) pdksEntityController.getObjectByInnerObject(map, Sirket.class);
+
+					sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
+
 				}
 			}
 			setPdksSirketList(sirketler);
@@ -747,12 +733,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 			if (seciliEkSaha3Id != null && seciliEkSaha3Id > 0) {
 				fields.put("ekSaha3.id=", seciliEkSaha3Id);
 
-				HashMap parametreMap = new HashMap();
-
-				parametreMap.put("id", seciliEkSaha3Id);
-				if (session != null)
-					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				seciliBolum = (Tanim) pdksEntityController.getObjectByInnerObject(parametreMap, Tanim.class);
+				seciliBolum = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha3Id, Tanim.class, session);
 
 			}
 			if (gorevTipiId != null && gorevTipiId > 0)
@@ -796,11 +777,8 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 				sirket = authenticatedUser.getPdksPersonel().getSirket();
 			}
 			if (sirketId != null && (authenticatedUser.isIK() || authenticatedUser.isAdmin())) {
-				HashMap parametreMap = new HashMap();
-				parametreMap.put("id", sirketId);
-				if (session != null)
-					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				sirket = (Sirket) pdksEntityController.getObjectByInnerObject(parametreMap, Sirket.class);
+
+				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 
 			}
 
@@ -973,13 +951,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 					sabahVardiyalar = Arrays.asList(new String[] { "S", "Sİ", "SI" });
 				String gunduzVardiyaVar = ortakIslemler.getParameterKey("gunduzVardiyaVar");
 				if (gunduzVardiyaVar.equals("1")) {
-					map.clear();
-					map.put("kisaAdi", sabahVardiyalar);
-					map.put("departman.id", departmanId);
-					map.put("durum", Boolean.TRUE);
-					if (session != null)
-						map.put(PdksEntityController.MAP_KEY_SESSION, session);
-					sabahVardiya = (Vardiya) pdksEntityController.getObjectByInnerObject(map, Vardiya.class);
+					sabahVardiya = ortakIslemler.getSabahVardiya(sabahVardiyalar, departmanId, session);
 				} else
 					sabahVardiya = null;
 				value = perList;
@@ -1488,8 +1460,8 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 		String fieldName = "p";
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT S.* from " + PersonelDenklestirme.TABLE_NAME + " S WITH(nolock) ");
-		sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P WITH(nolock) ON P." + Personel.COLUMN_NAME_ID + " = S." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
+		sb.append("SELECT S.* from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_ID + " = S." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 		sb.append(" AND P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " IS NOT NULL AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " IS NOT NULL ");
 		sb.append(" AND P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
 		sb.append(" WHERE S." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " AND S." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 ");
@@ -1500,7 +1472,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		// List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDenklestirme.class);
-		List<PersonelDenklestirme> list = ortakIslemler.getSQLParamList(siciller, sb, fieldName, fields, PersonelDenklestirme.class, session);
+		List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(siciller, sb, fieldName, fields, PersonelDenklestirme.class, session);
 		fields = null;
 		sb = null;
 		return list;
@@ -1515,33 +1487,22 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 		if (gorevYeri != null)
 			gorevYeriAciklama = gorevYeri.getAciklama() + "_";
 		else if (seciliEkSaha3Id != null || tesisId != null) {
-			HashMap parametreMap = new HashMap();
 			Tanim ekSaha3 = null, tesis = null;
 			if (tesisId != null) {
-				parametreMap.clear();
-				parametreMap.put("id", tesisId);
-				if (session != null)
-					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				tesis = (Tanim) pdksEntityController.getObjectByInnerObject(parametreMap, Tanim.class);
+				tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, tesisId, Tanim.class, session);
 			}
 
 			if (seciliEkSaha3Id != null) {
-				parametreMap.clear();
-				parametreMap.put("id", seciliEkSaha3Id);
-				if (session != null)
-					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				ekSaha3 = (Tanim) pdksEntityController.getObjectByInnerObject(parametreMap, Tanim.class);
+				ekSaha3 = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha3Id, Tanim.class, session);
 			}
 			if (tesis != null)
 				gorevYeriAciklama = tesis.getAciklama() + "_";
 			if (ekSaha3 != null)
 				gorevYeriAciklama += ekSaha3.getAciklama() + "_";
 		} else if (sirketId != null && tekSirket) {
-			HashMap parametreMap = new HashMap();
-			parametreMap.put("id", sirketId);
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			Sirket sirket = (Sirket) pdksEntityController.getObjectByInnerObject(parametreMap, Sirket.class);
+
+			Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
+
 			if (sirket != null)
 				gorevYeriAciklama = sirket.getAciklama() + "_";
 		}
@@ -1725,11 +1686,9 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 			setTesisList(new ArrayList<SelectItem>());
 		else {
 			if (sirketId != null) {
-				HashMap fields = new HashMap();
-				fields.put("id", sirketId);
-				if (session != null)
-					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				sirket = (Sirket) pdksEntityController.getObjectByInnerObject(fields, Sirket.class);
+
+				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
+
 			}
 			List<SelectItem> list = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, true, session);
 			setTesisList(list);
@@ -1766,14 +1725,8 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 		if (pdksSirketList == null || pdksSirketList.isEmpty())
 			setGorevYeriList(new ArrayList<SelectItem>());
 		else {
-			HashMap fields = new HashMap();
-			fields.put("ay", ay);
-			fields.put("yil", yil);
-			if (personelDenklestirmeList != null)
-				personelDenklestirmeList.clear();
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			denklestirmeAy = (DenklestirmeAy) pdksEntityController.getObjectByInnerObject(fields, DenklestirmeAy.class);
+
+			denklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
 			if (authenticatedUser.getSuperVisorHemsirePersonelNoList() != null) {
 				if (hastaneSuperVisor == null) {
 					String calistigiSayfa = authenticatedUser.getCalistigiSayfa();
@@ -1793,11 +1746,9 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 				aylikPuantajList.clear();
 			Sirket sirket = null;
 			if (sirketId != null) {
-				HashMap parametreMap = new HashMap();
-				parametreMap.put("id", sirketId);
-				if (session != null)
-					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				sirket = (Sirket) pdksEntityController.getObjectByInnerObject(parametreMap, Sirket.class);
+
+				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
+
 			}
 			setSirket(sirket);
 			if (sirket != null) {

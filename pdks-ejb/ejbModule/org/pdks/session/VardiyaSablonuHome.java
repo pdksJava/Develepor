@@ -21,6 +21,7 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.CalismaModeli;
 import org.pdks.entity.Departman;
+import org.pdks.entity.Sirket;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaSablonu;
 import org.pdks.security.entity.User;
@@ -46,12 +47,13 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 	FacesMessages facesMessages;
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
-	
+
 	public static String sayfaURL = "vardiyaSablonTanimlama";
 	private List<VardiyaSablonu> vardiyaSablonList = new ArrayList<VardiyaSablonu>();
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), vardiyaCalisanList = new ArrayList<Vardiya>(), isKurVardiyaList = new ArrayList<Vardiya>();
 	private boolean vardiyaVar = Boolean.FALSE, isKur = Boolean.FALSE, isKurGoster = Boolean.FALSE;
 	private Vardiya lastVardiya;
+	private List<Sirket> sirketList;
 	private List<Departman> departmanList = new ArrayList<Departman>();
 	private List<CalismaModeli> modelList;
 	private Session session;
@@ -75,8 +77,12 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 		setLastVardiya(pdksVardiya);
 	}
 
-	public void kayitGuncelle() {
+	public void kayitGuncelle(VardiyaSablonu sablonu) {
+		if (sablonu == null)
+			sablonu = new VardiyaSablonu();
+		setInstance(sablonu);
 		fillPdksVardiyaList();
+		sirketList = pdksEntityController.getSQLParamByAktifFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_PDKS, Boolean.TRUE, Sirket.class, session);
 		setVardiyaVar(Boolean.TRUE);
 
 	}
@@ -87,7 +93,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 
 		try {
 			tanimList = ortakIslemler.fillDepartmanTanimList(session);
-			;
+
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
@@ -207,18 +213,12 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 
 	}
 
-	private void fillCalismaModelList() {
+	private void fillCalismaModelList(VardiyaSablonu pdksVardiyaSablonu) {
 		List<CalismaModeli> list = null;
-		VardiyaSablonu pdksVardiyaSablonu = getInstance();
+		Long pdksDepartmanId = pdksVardiyaSablonu.getDepartman() != null ? pdksVardiyaSablonu.getDepartman().getId() : null;
 		try {
-			HashMap parametreMap = new HashMap();
-			parametreMap.put("durum", Boolean.TRUE);
-			parametreMap.put("toplamGunGuncelle", Boolean.FALSE);
-			if (pdksVardiyaSablonu.getDepartman() != null)
-				parametreMap.put("departman.id", pdksVardiyaSablonu.getDepartman().getId());
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			list = pdksEntityController.getObjectByInnerObjectList(parametreMap, CalismaModeli.class);
+
+			list = ortakIslemler.getCalismaModeliList(pdksVardiyaSablonu.getSirket(), pdksDepartmanId, false, session);
 			if (list.size() > 1)
 				list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
 
@@ -242,16 +242,15 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 	}
 
 	public void fillPdksVardiyaList() {
-		fillCalismaModelList();
-		List<Vardiya> pdksList = new ArrayList<Vardiya>();
 		VardiyaSablonu pdksVardiyaSablonu = getInstance();
+		fillCalismaModelList(pdksVardiyaSablonu);
+		List<Vardiya> pdksList = new ArrayList<Vardiya>();
+		Long depLong = pdksVardiyaSablonu.getDepartman() != null ? pdksVardiyaSablonu.getDepartman().getId() : null;
+		Sirket sirket = pdksVardiyaSablonu.getSirket();
 		boolean durum = Boolean.FALSE;
 		try {
-			HashMap parametreMap = new HashMap();
-			parametreMap.put("durum", Boolean.TRUE);
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			pdksList = pdksEntityController.getObjectByInnerObjectList(parametreMap, Vardiya.class);
+			pdksList = ortakIslemler.getVardiyaList(sirket, depLong, session);
+
 			if (pdksList.size() > 1)
 				pdksList = PdksUtil.sortListByAlanAdi(pdksList, "vardiyaNumeric", false);
 			if (isKurVardiyaList == null)
@@ -414,5 +413,13 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 
 	public static void setSayfaURL(String sayfaURL) {
 		VardiyaSablonuHome.sayfaURL = sayfaURL;
+	}
+
+	public List<Sirket> getSirketList() {
+		return sirketList;
+	}
+
+	public void setSirketList(List<Sirket> sirketList) {
+		this.sirketList = sirketList;
 	}
 }

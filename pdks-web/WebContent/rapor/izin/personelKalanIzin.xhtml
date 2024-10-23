@@ -86,7 +86,7 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<h:panelGrid columns="2" rendered="#{authenticatedUser.admin or authenticatedUser.IK }">
-							<s:decorate template="/layout/edit.xhtml">
+							<s:decorate template="/layout/edit.xhtml" >
 								<ui:define name="label">Borç Oluşturulan İzinleri Göster </ui:define>
 								<h:selectBooleanCheckbox value="#{personelKalanIzinHome.gelecekIzinGoster}" />
 							</s:decorate>

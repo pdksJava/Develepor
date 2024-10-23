@@ -115,7 +115,7 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 	PersonelIzinGirisiHome personelIzinGirisiHome;
 	@In(required = false, create = true)
 	String linkAdres;
-	
+
 	public static String sayfaURL = "isKurVardiyaPlani";
 
 	private TreeMap<String, Tanim> fazlaMesaiMap;
@@ -1852,9 +1852,9 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 		int donem = denklestirmeAy.getYil() * 100 + denklestirmeAy.getAy();
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append(" SELECT DISTINCT D.* FROM " + Personel.TABLE_NAME + " P    WITH(nolock)");
-		sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S  WITH(nolock) ON  S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
-		sb.append(" INNER JOIN " + Departman.TABLE_NAME + " D  WITH(nolock) ON  S." + Sirket.COLUMN_NAME_DEPARTMAN + " = D." + Departman.COLUMN_NAME_ID);
+		sb.append(" SELECT DISTINCT D.* FROM " + Personel.TABLE_NAME + " P  " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " ON  S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
+		sb.append(" INNER JOIN " + Departman.TABLE_NAME + " D " + PdksEntityController.getJoinLOCK() + " ON  S." + Sirket.COLUMN_NAME_DEPARTMAN + " = D." + Departman.COLUMN_NAME_ID);
 		sb.append(" WHERE P." + Personel.COLUMN_NAME_ISKUR_SABLON + " IS NOT NULL ");
 		sb.append(" AND YEAR(" + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + ")*100+MONTH(" + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + ")<=:d1");
 		sb.append(" AND YEAR(" + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ")*100+MONTH(" + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ")>=:d2");
@@ -2004,12 +2004,12 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 		StringBuffer sb = new StringBuffer();
 		sb.append("WITH PER_TARIH AS ( ");
 		sb.append(" SELECT YEAR(" + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + ")*100+MONTH(" + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + ") AS D1,");
-		sb.append(" YEAR(" + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ")*100+MONTH(" + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ") AS D2 FROM " + Personel.TABLE_NAME + " WITH(nolock)");
+		sb.append(" YEAR(" + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ")*100+MONTH(" + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ") AS D2 FROM " + Personel.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" WHERE " + Personel.COLUMN_NAME_ISKUR_SABLON + " IS NOT NULL )");
-		sb.append(" select DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D WITH(nolock) ");
-		sb.append(" INNER  JOIN PER_TARIH PD WITH(nolock) ON PD.D1<=(D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + " AND PD.D2>=(D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY);
+		sb.append(" select DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" INNER  JOIN PER_TARIH PD " + PdksEntityController.getJoinLOCK() + " ON PD.D1<=(D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + " AND PD.D2>=(D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY);
 		if (buYil > yil) {
-			sb.append(" INNER  JOIN " + IsKurVardiyaGun.TABLE_NAME + " V WITH(nolock) ON YEAR(V." + IsKurVardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ")= D." + DenklestirmeAy.COLUMN_NAME_YIL);
+			sb.append(" INNER  JOIN " + IsKurVardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " ON YEAR(V." + IsKurVardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ")= D." + DenklestirmeAy.COLUMN_NAME_YIL);
 			sb.append(" AND  MONTH(V." + IsKurVardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ")= D." + DenklestirmeAy.COLUMN_NAME_AY);
 		}
 		sb.append(" WHERE D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y  AND D." + DenklestirmeAy.COLUMN_NAME_AY + ">0 ");
@@ -2285,8 +2285,8 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 			int donem = denklestirmeAy.getYil() * 100 + denklestirmeAy.getAy();
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
-			sb.append(" SELECT DISTINCT S.* FROM " + Personel.TABLE_NAME + " P    WITH(nolock)");
-			sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S  WITH(nolock) ON  S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
+			sb.append(" SELECT DISTINCT S.* FROM " + Personel.TABLE_NAME + " P  " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " ON  S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
 			if (aramaSecenekleri.getDepartmanId() != null) {
 				sb.append(" AND  S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d");
 				fields.put("d", aramaSecenekleri.getDepartmanId());
@@ -2665,7 +2665,7 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 		int donem = denklestirmeAy.getYil() * 100 + denklestirmeAy.getAy();
 		fields.clear();
 		StringBuffer sb = new StringBuffer();
-		sb.append(" SELECT DISTINCT P.* FROM " + Personel.TABLE_NAME + " P    WITH(nolock)");
+		sb.append(" SELECT DISTINCT P.* FROM " + Personel.TABLE_NAME + " P  " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" WHERE P." + Personel.COLUMN_NAME_ISKUR_SABLON + " IS NOT NULL ");
 		if (aramaSecenekleri.getSirket() != null) {
 			sb.append(" AND  P." + Personel.COLUMN_NAME_SIRKET + " = :s");
@@ -3227,7 +3227,7 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 		fields.put(PdksEntityController.MAP_KEY_MAP, "getPersonelId");
 
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT S." + PersonelDenklestirme.COLUMN_NAME_ID + " from " + PersonelDenklestirme.TABLE_NAME + " S WITH(nolock) ");
+		sb.append("SELECT S." + PersonelDenklestirme.COLUMN_NAME_ID + " from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" WHERE S." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = :denklestirmeAy AND S." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :p");
 		fields.put("denklestirmeAy", denklestirmeAy.getId());
 		fields.put("p", idler);
@@ -3285,7 +3285,7 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 	private TreeMap<String, VardiyaHafta> getVardiyaHaftaMap(ArrayList<Long> idler) {
 		HashMap map = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT DISTINCT * FROM " + VardiyaHafta.TABLE_NAME + " WITH(nolock) ");
+		sb.append("SELECT DISTINCT * FROM " + VardiyaHafta.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" WHERE " + VardiyaHafta.COLUMN_NAME_BAS_TARIH + " <= :bitTarih AND " + VardiyaHafta.COLUMN_NAME_BIT_TARIH + " >= :basTarih AND " + VardiyaHafta.COLUMN_NAME_PERSONEL + ":pId ");
 		map.put(PdksEntityController.MAP_KEY_MAP, "getKeyHafta");
 		map.put("pId", idler);
@@ -3391,7 +3391,7 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 			HashMap map = new HashMap();
 			StringBuffer sb = new StringBuffer();
 			sb.append("WITH VARDIYA_DATA AS ( ");
-			sb.append("SELECT V.* FROM " + Vardiya.TABLE_NAME + " V WITH(nolock) ");
+			sb.append("SELECT V.* FROM " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 			if (pd == null)
 				pd = aylikPuantaj.getPersonelDenklestirme();
 			boolean calismaOlmayanVardiyalar = false;
@@ -3401,7 +3401,7 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 					try {
 						CalismaModeliAy calismaModeliAy = pd.getCalismaModeliAy();
 						if (calismaModeliAy.getCalismaModeli().getGenelVardiya().equals(Boolean.FALSE)) {
-							sb.append(" INNER JOIN " + CalismaModeliVardiya.TABLE_NAME + " CV WITH(nolock) ON CV." + CalismaModeliVardiya.COLUMN_NAME_CALISMA_MODELI + " = :cm  ");
+							sb.append(" INNER JOIN " + CalismaModeliVardiya.TABLE_NAME + " CV " + PdksEntityController.getJoinLOCK() + " ON CV." + CalismaModeliVardiya.COLUMN_NAME_CALISMA_MODELI + " = :cm  ");
 							sb.append(" AND CV." + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " = V." + Vardiya.COLUMN_NAME_ID);
 							map.put("cm", calismaModeliAy.getCalismaModeli().getId());
 							calismaOlmayanVardiyalar = true;
@@ -3419,29 +3419,29 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 			sb.append(" AND V." + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'I'  ");
 			if (gebeMi) {
 				sb.append(" UNION ");
-				sb.append(" SELECT * FROM " + Vardiya.TABLE_NAME + " WITH(nolock) ");
+				sb.append(" SELECT * FROM " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" WHERE " + Vardiya.COLUMN_NAME_GEBELIK + " = 1 ");
 			}
 			if (sua) {
 				sb.append(" UNION ");
-				sb.append(" SELECT * FROM " + Vardiya.TABLE_NAME + " WITH(nolock) ");
+				sb.append(" SELECT * FROM " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" WHERE " + Vardiya.COLUMN_NAME_SUA + " = 1 ");
 			}
 			if (icap) {
 				sb.append(" UNION ");
-				sb.append(" SELECT * FROM " + Vardiya.TABLE_NAME + " WITH(nolock) ");
+				sb.append(" SELECT * FROM " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" WHERE " + Vardiya.COLUMN_NAME_ICAP + " = 1 ");
 
 			}
 			if (calismaOlmayanVardiyalar) {
 				sb.append(" UNION ");
-				sb.append(" SELECT * FROM " + Vardiya.TABLE_NAME + " WITH(nolock) ");
+				sb.append(" SELECT * FROM " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" WHERE " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'' AND " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'I'  ");
 			}
 			if (manuelVardiyaIzinGir) {
 				sb.append(" UNION ");
-				sb.append(" SELECT DISTINCT V.* FROM " + Vardiya.TABLE_NAME + " V WITH(nolock) ");
-				sb.append(" LEFT JOIN " + IzinTipi.TABLE_NAME + " I WITH(nolock) ON I." + IzinTipi.COLUMN_NAME_DEPARTMAN + " = V." + Vardiya.COLUMN_NAME_DEPARTMAN + " AND I." + IzinTipi.COLUMN_NAME_DURUM + " = 1 ");
+				sb.append(" SELECT DISTINCT V.* FROM " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append(" LEFT JOIN " + IzinTipi.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " ON I." + IzinTipi.COLUMN_NAME_DEPARTMAN + " = V." + Vardiya.COLUMN_NAME_DEPARTMAN + " AND I." + IzinTipi.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append("  AND I." + IzinTipi.COLUMN_NAME_GIRIS_TIPI + " = 0 AND I." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " IS NULL");
 				sb.append(" WHERE V." + Vardiya.COLUMN_NAME_DEPARTMAN + " = " + personel.getSirket().getDepartman().getId() + " AND V." + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append("  AND V." + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " IN ('" + Vardiya.TIPI_IZIN + "','" + Vardiya.TIPI_HASTALIK_RAPOR + "')  AND I." + IzinTipi.COLUMN_NAME_ID + " IS NULL ");
@@ -3488,7 +3488,7 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 				for (Vardiya pdksVardiya : vardiyaList)
 					vardiyaMap.put(pdksVardiya.getId(), pdksVardiya);
 				sb = new StringBuffer();
-				sb.append("SELECT V.* FROM " + Vardiya.TABLE_NAME + " V WITH(nolock) ");
+				sb.append("SELECT V.* FROM " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" WHERE V." + Vardiya.COLUMN_NAME_ID + ":id");
 				sb.append(" AND V." + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
 				map.put("id", new ArrayList(vardiyaMap.keySet()));
@@ -4269,7 +4269,7 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 			session.clear();
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT S.* from " + Vardiya.TABLE_NAME + " S WITH(nolock) ");
+			sb.append("SELECT S.* from " + Vardiya.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" WHERE (S." + Vardiya.COLUMN_NAME_DEPARTMAN + " IS NULL  OR S." + Vardiya.COLUMN_NAME_DEPARTMAN + " = :deptId )");
 			sb.append(" AND  S." + Vardiya.COLUMN_NAME_KISA_ADI + " <> '' AND S." + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
 			fields.put("deptId", departman.getId());
@@ -4416,8 +4416,8 @@ public class IskurVardiyaGunHome extends EntityHome<VardiyaPlan> implements Seri
 
 						fields.clear();
 						sb = new StringBuffer();
-						sb.append("SELECT S.* from " + Personel.TABLE_NAME + " S WITH(nolock) ");
-						sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " SI WITH(nolock) ON SI." + Sirket.COLUMN_NAME_ID + " = S." + Personel.COLUMN_NAME_SIRKET);
+						sb.append("SELECT S.* from " + Personel.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
+						sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " SI " + PdksEntityController.getJoinLOCK() + " ON SI." + Sirket.COLUMN_NAME_ID + " = S." + Personel.COLUMN_NAME_SIRKET);
 						sb.append(" AND SI." + Sirket.COLUMN_NAME_DEPARTMAN + " = :deptId ");
 						sb.append(" WHERE S." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
 						sb.append(" AND  S." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :bitTarih ");

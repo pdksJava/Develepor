@@ -108,7 +108,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		if (aramaSecenekleri == null)
 			aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
 		fillEkSahaTanim();
@@ -139,16 +139,33 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		List<Sirket> list = new ArrayList<Sirket>();
 		HashMap map = new HashMap();
 		map.put(PdksEntityController.MAP_KEY_MAP, "getId");
-		map.put(PdksEntityController.MAP_KEY_SELECT, "sirket");
-		map.put("pdks=", Boolean.TRUE);
-		map.put("durum=", Boolean.TRUE);
-		map.put("sskCikisTarihi>=", bugun);
-		map.put("iseBaslamaTarihi<=", bugun);
-		if (aramaSecenekleri.getDepartmanId() != null && (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIKAdmin() || !authenticatedUser.isYoneticiKontratli()))
-			map.put("sirket.departman.id=", aramaSecenekleri.getDepartmanId());
+		// map.put(PdksEntityController.MAP_KEY_SELECT, "sirket");
+		// map.put("pdks=", Boolean.TRUE);
+		// map.put("durum=", Boolean.TRUE);
+		// map.put("sskCikisTarihi>=", bugun);
+		// map.put("iseBaslamaTarihi<=", bugun);
+		// if (aramaSecenekleri.getDepartmanId() != null && (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIKAdmin() || !authenticatedUser.isYoneticiKontratli()))
+		// map.put("sirket.departman.id=", aramaSecenekleri.getDepartmanId());
+		//
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT DISTINCT S.* FROM " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+		sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
+		sb.append(" AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :b2   AND P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b1 ");
+		sb.append(" WHERE S." + Sirket.COLUMN_NAME_DURUM + " = 1  AND S." + Sirket.COLUMN_NAME_PDKS + " = 1 ");
+		if (authenticatedUser.isIKSirket())
+			sb.append(" AND S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
+		map.put("b1", bugun);
+		map.put("b2", bugun);
+
+		if (aramaSecenekleri.getDepartmanId() != null && (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIKAdmin() || !authenticatedUser.isYoneticiKontratli())) {
+			sb.append(" AND S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d ");
+			map.put("d", aramaSecenekleri.getDepartmanId());
+		}
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		TreeMap sirketMap = pdksEntityController.getObjectByInnerObjectMapInLogic(map, Personel.class, Boolean.FALSE);
+
+		TreeMap sirketMap = pdksEntityController.getObjectBySQLMap(sb, map, Sirket.class, Boolean.FALSE);
 
 		aramaSecenekleri.setSirketId(null);
 		if (aramaSecenekleri.getSirketIdList() != null)
@@ -187,10 +204,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			Date bugun = PdksUtil.getDate(date);
 			List<Tanim> list = new ArrayList<Tanim>();
 			HashMap map = new HashMap();
-			map.put("id ", aramaSecenekleri.getSirketId());
-			if (session != null)
-				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			Sirket sirket = (Sirket) pdksEntityController.getObjectByInnerObject(map, Sirket.class);
+			Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
 			if (aramaSecenekleri.getTesisList() != null)
 				aramaSecenekleri.getTesisList().clear();
 			else
@@ -269,24 +283,31 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		Calendar cal = Calendar.getInstance();
 		Date oncekiGun = ortakIslemler.tariheGunEkleCikar(cal, date, -1);
 		HashMap map = new HashMap();
-		map.put("durum=", Boolean.TRUE);
-		if (PdksUtil.hasStringValue(sicilNo))
-			map.put("pdksSicilNo=", sicilNo);
-		if (aramaSecenekleri.getSirketId() != null)
-			map.put("sirket.id=", aramaSecenekleri.getSirketId());
-		else {
-			map.put("sirket.pdks=", true);
-			if (aramaSecenekleri.getDepartmanId() != null)
-				map.put("sirket.departman.id=", aramaSecenekleri.getDepartmanId());
-		}
-		if (aramaSecenekleri.getTesisId() != null)
-			map.put("tesis.id=", aramaSecenekleri.getTesisId());
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT DISTINCT P.* FROM " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+		sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
+		sb.append(" AND S." + Sirket.COLUMN_NAME_PDKS + " = 1");
+		if (aramaSecenekleri.getDepartmanId() != null)
+			sb.append(" AND S." + Sirket.COLUMN_NAME_DEPARTMAN + " = " + aramaSecenekleri.getDepartmanId());
 
-		map.put("sskCikisTarihi>=", oncekiGun);
-		map.put("iseBaslamaTarihi<=", date);
+		sb.append(" WHERE P." + Personel.COLUMN_NAME_DURUM + " = 1  AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :b2 ");
+		sb.append(" AND P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b1 ");
+		if (aramaSecenekleri.getTesisId() != null)
+			sb.append(" AND P." + Personel.COLUMN_NAME_TESIS + " = " + aramaSecenekleri.getTesisId());
+		if (aramaSecenekleri.getSirketId() != null)
+			sb.append(" AND P." + Personel.COLUMN_NAME_SIRKET + " = " + aramaSecenekleri.getSirketId());
+
+		if (PdksUtil.hasStringValue(sicilNo)) {
+			sb.append(" AND P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :s");
+			map.put("s", sicilNo);
+		}
+
+		map.put("b1", date);
+		map.put("b2", oncekiGun);
+
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		ArrayList<Personel> tumPersoneller = (ArrayList<Personel>) pdksEntityController.getObjectByInnerObjectListInLogic(map, Personel.class);
+		ArrayList<Personel> tumPersoneller = (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(sb, map, Personel.class);
 
 		List<HareketKGS> kgsList = new ArrayList<HareketKGS>();
 		Date tarih1 = null;

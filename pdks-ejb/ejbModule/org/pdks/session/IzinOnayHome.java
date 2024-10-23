@@ -147,11 +147,9 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 		session.refresh(izin);
 		Personel personel = izin.getIzinSahibi();
 		Personel pdksPersonel = (Personel) personel.clone();
-		HashMap parametreMap = new HashMap();
-		parametreMap.put("pdksPersonel.id", pdksPersonel.getId());
-		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		User izinSahibiUser = (User) pdksEntityController.getObjectByInnerObject(parametreMap, User.class);
+		 
+ 
+		User izinSahibiUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, pdksPersonel.getId(), User.class, session);
 		User userYonetici = null;
 		List<User> list = new ArrayList<User>();
 

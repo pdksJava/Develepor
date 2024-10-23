@@ -151,8 +151,8 @@ public class Authenticator implements IAuthenticator, Serializable {
 				String sicilNo = "900" + ldapUser.getStaffId().substring(3).trim();
 				HashMap parametreMap = new HashMap();
 				StringBuffer sb = new StringBuffer();
-				sb.append("SELECT U.* FROM " + Personel.TABLE_NAME + " P WITH(nolock)");
-				sb.append("INNER JOIN " + User.TABLE_NAME + " U WITH(nolock) ON P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " AND U." + User.COLUMN_NAME_DURUM + " = 1 AND U." + User.COLUMN_NAME_DEPARTMAN + " IS NOT NULL ");
+				sb.append("SELECT U.* FROM " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+				sb.append("INNER JOIN " + User.TABLE_NAME + " U " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " AND U." + User.COLUMN_NAME_DURUM + " = 1 AND U." + User.COLUMN_NAME_DEPARTMAN + " IS NOT NULL ");
 				sb.append(" WHERE P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :sicilNo AND P." + Personel.COLUMN_NAME_DURUM + " = 1  ");
 				sb.append(" AND  P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= convert(date,GETDATE()) AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
 				sb.append(" AND  P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
@@ -250,11 +250,9 @@ public class Authenticator implements IAuthenticator, Serializable {
 								identity.addRole(role.getRolename());
 						}
 						try {
-							HashMap map1 = new HashMap();
-							map1.put("durum", SAPSunucu.DURUM_AKTIF);
-							if (session != null)
-								map1.put(PdksEntityController.MAP_KEY_SESSION, session);
-							List<SAPSunucu> sapSunucular = pdksEntityController.getObjectByInnerObjectList(map1, SAPSunucu.class);
+
+							List<SAPSunucu> sapSunucular = pdksEntityController.getSQLParamByFieldList(SAPSunucu.TABLE_NAME, SAPSunucu.COLUMN_NAME_DURUM, SAPSunucu.DURUM_AKTIF, SAPSunucu.class, session);
+
 							if (!sapSunucular.isEmpty())
 								logger.info("SAP sunucuları okundu.");
 
@@ -304,13 +302,10 @@ public class Authenticator implements IAuthenticator, Serializable {
 			return sonuc;
 		} catch (Exception ex) {
 			logger.debug("Hata : " + ex.getMessage());
-			HashMap parametreMap = new HashMap();
+
 			try {
-				parametreMap.clear();
-				parametreMap.put("id", 1);
-				if (session != null)
-					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List perList = pdksEntityController.getObjectByInnerObjectList(parametreMap, Personel.class);
+
+				List perList = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_ID, 1L, Personel.class, session);
 				logger.info(authenticatedUser.getUsername() + " kullanıcı bilgisi okundu.");
 
 				if (!perList.isEmpty())
@@ -334,8 +329,8 @@ public class Authenticator implements IAuthenticator, Serializable {
 	 */
 	private User getKullanici(String userName, String fieldName) {
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT S.* FROM " + User.TABLE_NAME + " S  WITH(nolock) ");
-		sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P WITH(nolock) ON  P." + Personel.COLUMN_NAME_ID + " = S." + User.COLUMN_NAME_PERSONEL);
+		sb.append("SELECT S.* FROM " + User.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+		sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON  P." + Personel.COLUMN_NAME_ID + " = S." + User.COLUMN_NAME_PERSONEL);
 		sb.append(" AND  P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= convert(date,GETDATE()) AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
 		if (userName.indexOf("%") > 0)
 			sb.append(" WHERE S." + fieldName + " LIKE :userName");

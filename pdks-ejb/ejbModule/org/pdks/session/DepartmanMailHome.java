@@ -160,11 +160,10 @@ public class DepartmanMailHome extends EntityHome<DepartmanMailGrubu> implements
 		if (mailList.size() > 0)
 			mailList.clear();
 		departmanMail = null;
-		HashMap parametreMap = new HashMap();
-		parametreMap.put("departman.id", departmanTanim.getId());
-		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		departmanMail = (DepartmanMailGrubu) pdksEntityController.getObjectByInnerObject(parametreMap, DepartmanMailGrubu.class);
+		 
+
+		departmanMail = (DepartmanMailGrubu) pdksEntityController.getSQLParamByFieldObject(DepartmanMailGrubu.TABLE_NAME, DepartmanMailGrubu.COLUMN_NAME_DEPARTMAN, departmanTanim.getId(), DepartmanMailGrubu.class, session);
+
 		if (departmanMail == null) {
 			departmanMail = new DepartmanMailGrubu();
 			departmanMail.setDepartman(departmanTanim);

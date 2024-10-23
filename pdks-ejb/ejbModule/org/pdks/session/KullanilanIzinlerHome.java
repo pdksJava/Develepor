@@ -304,16 +304,12 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		ArrayList<String> sicilNoList = ortakIslemler.getAramaPersonelSicilNo(aramaSecenekleri, Boolean.TRUE, istenAyrilanEkle, session);
 		if (sicilNoList != null && !sicilNoList.isEmpty()) {
 			HashMap parametreMap = new HashMap();
-			parametreMap.put("pdksSicilNo", sicilNoList);
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<Personel> personeller = pdksEntityController.getObjectByInnerObjectList(parametreMap, Personel.class);
-			parametreMap.clear();
-			parametreMap.put("id", aramaSecenekleri.getSirketId());
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			Sirket sirket = (Sirket) pdksEntityController.getObjectByInnerObject(parametreMap, Sirket.class);
-			parametreMap.clear();
+			 
+			List<Personel> personeller = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, sicilNoList, Personel.class, session) ;
+	 
+			Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID,  aramaSecenekleri.getSirketId(), Sirket.class, session);
+
+			 
 
 			if (izinTipiTanim != null) {
 				if (sirket != null)
@@ -513,11 +509,9 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<Long> personeller = pdksEntityController.getObjectByInnerObjectList(parametreMap, Personel.class);
 			IzinTipi izinTipi = null;
-			parametreMap.clear();
-			parametreMap.put("id", aramaSecenekleri.getSirketId());
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			Sirket sirket = (Sirket) pdksEntityController.getObjectByInnerObject(parametreMap, Sirket.class);
+			
+			Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
+
 			parametreMap.clear();
 			if (sirket != null)
 				parametreMap.put("departman.id=", sirket.getDepartman().getId());

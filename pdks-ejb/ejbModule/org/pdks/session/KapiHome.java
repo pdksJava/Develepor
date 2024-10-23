@@ -111,8 +111,8 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 		HashMap parametreMap = new HashMap();
 		try {
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT P.*   FROM  VIEW_KAPI_SIRKET_KGS_LIST  P ");
-			String str = " INNER  JOIN " + Kapi.TABLE_NAME + " K WITH(nolock) ON K." + Kapi.COLUMN_NAME_KGS_ID + " = P." + KapiKGS.COLUMN_NAME_ID;
+			sb.append("SELECT P.* FROM VIEW_KAPI_SIRKET_KGS_LIST  P ");
+			String str = " INNER  JOIN " + Kapi.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " ON K." + Kapi.COLUMN_NAME_KGS_ID + " = P." + KapiKGS.COLUMN_NAME_ID;
 			if (PdksUtil.hasStringValue(kapiView.getKapiAciklama())) {
 				sb.append(str);
 				sb.append(" AND K." + Kapi.COLUMN_NAME_ACIKLAMA + " LIKE :k");
@@ -158,14 +158,14 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 				String fieldName = "k";
 				HashMap fields = new HashMap();
 				sb = new StringBuffer();
-				sb.append("SELECT P.*   FROM " + KapiKGS.TABLE_NAME + " P   WITH(nolock) ");
+				sb.append("SELECT P.* FROM " + KapiKGS.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" where  P." + KapiKGS.COLUMN_NAME_ID + " :" + fieldName);
 				sb.append(" ORDER BY " + KapiKGS.COLUMN_NAME_ACIKLAMA);
 				fields.put(fieldName, idList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				// kapiKGSList = pdksEntityController.getObjectBySQLList(sb, fields, KapiKGS.class);
-				kapiKGSList = ortakIslemler.getSQLParamList(idList, sb, fieldName, fields, KapiKGS.class, session);
+				kapiKGSList = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, KapiKGS.class, session);
 
 				list.clear();
 				for (Iterator iterator = kapiKGSList.iterator(); iterator.hasNext();) {

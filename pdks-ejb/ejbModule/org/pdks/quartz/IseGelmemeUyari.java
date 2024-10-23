@@ -185,7 +185,7 @@ public class IseGelmemeUyari implements Serializable {
 		try {
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT P.*   FROM " + Personel.TABLE_NAME + " P WITH(nolock) ");
+			sb.append("SELECT P.* FROM " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 1 AND P." + Personel.COLUMN_NAME_HAREKET_MAIL_ID + " IS NOT NULL");
 			sb.append(" AND P." + Personel.COLUMN_NAME_MAIL_TAKIP + " = 1 AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
 			if (session != null)
@@ -767,11 +767,9 @@ public class IseGelmemeUyari implements Serializable {
 						else
 							userIKList = new ArrayList<User>();
 						if (yonetici != null && yonetici.isSuperVisor() && personelYonetici.getYoneticisi() != null && personelYonetici.getYoneticisi().isCalisiyor()) {
-							HashMap fields = new HashMap();
-							if (session != null)
-								fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-							fields.put("pdksPersonel.id", personelYonetici.getYoneticisi().getId());
-							User yoneticiDiger = (User) pdksEntityController.getObjectByInnerObject(fields, User.class);
+							 
+							User yoneticiDiger = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL,  personelYonetici.getYoneticisi().getId(), User.class, session);
+
 							if (yoneticiDiger != null && yoneticiDiger.isDurum()) {
 								ortakIslemler.setUserRoller(yoneticiDiger, session);
 								if (yoneticiDiger.isYoneticiKontratli())
@@ -1886,11 +1884,11 @@ public class IseGelmemeUyari implements Serializable {
 			sb.append("		select 1 AS ID ");
 			sb.append("	),");
 			sb.append("	DEP_YONETICI AS (");
-			sb.append("		SELECT R.ROLENAME DEP_YONETICI_ROL_ADI FROM " + Role.TABLE_NAME + " R WITH(nolock)");
+			sb.append("		SELECT R.ROLENAME DEP_YONETICI_ROL_ADI FROM " + Role.TABLE_NAME + " R " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append("		WHERE R." + Role.COLUMN_NAME_ROLE_NAME + " = '" + Role.TIPI_DIREKTOR_SUPER_VISOR + "' AND R." + Role.COLUMN_NAME_STATUS + " = 1 ");
 			sb.append("	) ");
 			sb.append("	SELECT COALESCE(DY.DEP_YONETICI_ROL_ADI,'') DEP_YONETICI_ROL_ADI, GETDATE() AS TARIH FROM BUGUN B ");
-			sb.append("	LEFT JOIN DEP_YONETICI DY WITH(nolock) ON 1=1");
+			sb.append("	LEFT JOIN DEP_YONETICI DY " + PdksEntityController.getJoinLOCK() + " ON 1=1");
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<Object[]> veriList = pdksEntityController.getObjectBySQLList(sb, fields, null);

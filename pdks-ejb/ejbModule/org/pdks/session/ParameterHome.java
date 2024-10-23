@@ -226,7 +226,7 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 		// List<Parameter> list = pdksEntityController.getObjectByInnerObjectList(parametreMap, Parameter.class);
 		//
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT   T.* FROM " + Parameter.TABLE_NAME + " T WITH(nolock) ");
+		sb.append("SELECT T.* FROM " + Parameter.TABLE_NAME + " T " + PdksEntityController.getSelectLOCK() + " ");
 		if (!authenticatedUser.isAdmin()) {
 			sb.append(" WHERE T." + Parameter.COLUMN_NAME_GUNCELLE + " = 1 AND T." + Parameter.COLUMN_NAME_HELP_DESK + " = 0 ");
 

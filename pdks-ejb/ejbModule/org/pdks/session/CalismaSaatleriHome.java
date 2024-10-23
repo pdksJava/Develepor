@@ -178,10 +178,9 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 			Date bugun = PdksUtil.getDate(date);
 			List<Tanim> list = new ArrayList<Tanim>();
 			HashMap map = new HashMap();
-			map.put("id ", aramaSecenekleri.getSirketId());
-			if (session != null)
-				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			Sirket sirket = (Sirket) pdksEntityController.getObjectByInnerObject(map, Sirket.class);
+
+			Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
+
 			if (aramaSecenekleri.getTesisList() != null)
 				aramaSecenekleri.getTesisList().clear();
 			else
@@ -402,12 +401,8 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 		try {
 
 			cal.setTime(date);
-			HashMap parametreMap2 = new HashMap();
-			parametreMap2.put("yil", cal.get(Calendar.YEAR));
-			parametreMap2.put("ay", cal.get(Calendar.MONTH) + 1);
-			if (session != null)
-				parametreMap2.put(PdksEntityController.MAP_KEY_SESSION, session);
-			DenklestirmeAy da = (DenklestirmeAy) pdksEntityController.getObjectByInnerObject(parametreMap2, DenklestirmeAy.class);
+
+			DenklestirmeAy da = (DenklestirmeAy) ortakIslemler.getSQLDenklestirmeAy(cal, session);
 			Double yemekMolasiYuzdesi = ortakIslemler.getYemekMolasiYuzdesi(da, session);
 
 			List<YemekIzin> yemekGenelList = ortakIslemler.getYemekList(tarih1, tarih2, session);

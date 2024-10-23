@@ -409,18 +409,10 @@ public class PdksSapController implements ERPController, Serializable {
 					map.put("durum=", Boolean.TRUE);
 					// map.put("pdks=", Boolean.TRUE);
 					TreeMap sirketMap = pdksEntityController.getObjectByInnerObjectMapInLogic(map, Sirket.class, Boolean.FALSE);
-					map.clear();
-					if (session != null)
-						map.put(PdksEntityController.MAP_KEY_SESSION, session);
-					map.put("tipi", Tanim.TIPI_GENEL_TANIM);
-					map.put("kodu", Tanim.TIPI_SAP_MASRAF_YERI);
-					Tanim bagliMasrafYeri = (Tanim) pdksEntityController.getObjectByInnerObject(map, Tanim.class);
-					map.clear();
-					if (session != null)
-						map.put(PdksEntityController.MAP_KEY_SESSION, session);
-					map.put("tipi", Tanim.TIPI_GENEL_TANIM);
-					map.put("kodu", Tanim.TIPI_BORDRO_ALT_BIRIMI);
-					Tanim bagliBodroAltBirimi = (Tanim) pdksEntityController.getObjectByInnerObject(map, Tanim.class);
+					Tanim bagliMasrafYeri = (Tanim) ortakIslemler.getSQLTanimByTipErpKodu(Tanim.TIPI_GENEL_TANIM, Tanim.TIPI_SAP_MASRAF_YERI, session);
+
+					Tanim bagliBodroAltBirimi = (Tanim) ortakIslemler.getSQLTanimByTipErpKodu(Tanim.TIPI_GENEL_TANIM, Tanim.TIPI_BORDRO_ALT_BIRIMI, session);
+
 					if (masrafYeriMap == null) {
 						map.clear();
 						if (session != null)
@@ -468,18 +460,12 @@ public class PdksSapController implements ERPController, Serializable {
 								else {
 									try {
 										boolean durumUpdate = sirketKodu.length() < 4;
-										HashMap fields = new HashMap();
-										if (!durumUpdate) {
-											fields.put("erpKodu", sirketKodu);
-											fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-											sirket = (Sirket) pdksEntityController.getObjectByInnerObject(fields, Sirket.class);
+ 										if (!durumUpdate) {
+											sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ERP_KODU, sirketKodu, Sirket.class, session);
 											durumUpdate = sirket != null;
 											if (sirket == null) {
 												if (departman == null) {
-													fields.clear();
-													fields.put("id", 1L);
-													fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-													departman = (Departman) pdksEntityController.getObjectByInnerObject(fields, Departman.class);
+													departman = (Departman)pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, 1L, Departman.class, session);
 
 												}
 												if (olusturanUser == null)

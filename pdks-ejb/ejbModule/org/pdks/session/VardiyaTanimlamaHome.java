@@ -63,7 +63,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	OrtakIslemler ortakIslemler;
 	@In(required = false, create = true)
 	FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemler;
-	
+
 	public static String sayfaURL = "pdksVardiyaTanimlama";
 	private List<DenklestirmeAy> aylikList = null;
 	private String maxYil = null, vardiyaTanimKodu = null;
@@ -338,7 +338,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 				if (!hucreMap.isEmpty()) {
 					HashMap fields = new HashMap();
 					StringBuffer sb = new StringBuffer();
-					sb.append("SELECT  V." + Personel.COLUMN_NAME_ID + " FROM " + Personel.TABLE_NAME + " V WITH(nolock) ");
+					sb.append("SELECT V." + Personel.COLUMN_NAME_ID + " FROM " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 					sb.append(" WHERE " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :pId  ");
 					sb.append(" AND V." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
 					sb.append(" AND V." + Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI + " <= :bitTarih ");
@@ -363,12 +363,8 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 							sonrakiAy = 1;
 							sonrakiYil++;
 						}
-						HashMap map = new HashMap();
-						map.put("yil", sonrakiYil);
-						map.put("ay", sonrakiAy);
-						if (session != null)
-							map.put(PdksEntityController.MAP_KEY_SESSION, session);
-						DenklestirmeAy sonrakiDonem = (DenklestirmeAy) pdksEntityController.getObjectByInnerObject(map, DenklestirmeAy.class);
+
+						DenklestirmeAy sonrakiDonem = ortakIslemler.getSQLDenklestirmeAy(sonrakiYil, sonrakiAy, session);
 
 						List personelIdler = new ArrayList();
 						for (Iterator iterator = personelMap.keySet().iterator(); iterator.hasNext();) {
@@ -377,7 +373,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 						}
 						fields.clear();
 						sb = new StringBuffer();
-						sb.append("SELECT  V." + PersonelDenklestirme.COLUMN_NAME_ID + " FROM " + PersonelDenklestirme.TABLE_NAME + " V WITH(nolock) ");
+						sb.append("SELECT V." + PersonelDenklestirme.COLUMN_NAME_ID + " FROM " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 						sb.append(" WHERE " + PersonelDenklestirme.COLUMN_NAME_DONEM + " = :denklestirmeAy AND " + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :pId  ");
 						fields.put(PdksEntityController.MAP_KEY_MAP, "getSicilNo");
 						fields.put("denklestirmeAy", denklestirmeAy.getId());
@@ -388,7 +384,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 						bakiySonrakiMap = null;
 						if (sonrakiDonem != null) {
 							sb = new StringBuffer();
-							sb.append("SELECT  V." + PersonelDenklestirme.COLUMN_NAME_ID + " FROM " + PersonelDenklestirme.TABLE_NAME + " V WITH(nolock) ");
+							sb.append("SELECT V." + PersonelDenklestirme.COLUMN_NAME_ID + " FROM " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 							sb.append(" WHERE " + PersonelDenklestirme.COLUMN_NAME_DONEM + " = :denklestirmeAy AND " + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :pId  ");
 							sb.append(" AND GECEN_AY_DENKLESTIRME_ID IS NULL ");
 							fields.put(PdksEntityController.MAP_KEY_MAP, "getSicilNo");
@@ -530,7 +526,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 				if (!hucreMap.isEmpty()) {
 					HashMap fields = new HashMap();
 					StringBuffer sb = new StringBuffer();
-					sb.append("SELECT  V." + Personel.COLUMN_NAME_ID + " FROM " + Personel.TABLE_NAME + " V WITH(nolock) ");
+					sb.append("SELECT V." + Personel.COLUMN_NAME_ID + " FROM " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 					sb.append(" WHERE " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :pId  ");
 					sb.append(" AND V." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
 					sb.append(" AND V." + Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI + " <= :bitTarih ");
@@ -556,7 +552,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 						}
 						fields.clear();
 						sb = new StringBuffer();
-						sb.append("SELECT  V." + PersonelDenklestirme.COLUMN_NAME_ID + " FROM " + PersonelDenklestirme.TABLE_NAME + " V WITH(nolock) ");
+						sb.append("SELECT V." + PersonelDenklestirme.COLUMN_NAME_ID + " FROM " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 						sb.append(" WHERE " + PersonelDenklestirme.COLUMN_NAME_DONEM + " = :denklestirmeAy AND " + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :pId  ");
 						fields.put(PdksEntityController.MAP_KEY_MAP, "getSicilNo");
 						fields.put("denklestirmeAy", denklestirmeAy.getId());

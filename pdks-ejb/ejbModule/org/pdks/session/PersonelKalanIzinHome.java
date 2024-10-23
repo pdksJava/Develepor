@@ -136,6 +136,34 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		super.create();
 	}
 
+	/**
+	 * @param izin
+	 * @return
+	 */
+	public List<PersonelIzin> getIzinList(TempIzin izin) {
+		StringBuffer sb = new StringBuffer();
+		List dataIdList = izin.getIzinler();
+		String fieldName = "s";
+		sb.append("SELECT * FROM " + PersonelIzin.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+		sb.append(" WHERE " + PersonelIzin.COLUMN_NAME_ID + " :" + fieldName);
+		HashMap fields = new HashMap();
+		fields.put(fieldName, dataIdList);
+		if (izin.getPersonel().getSirket().getDepartman().isAdminMi()) {
+			if (bakiyeIzinGoster)
+				sb.append(" AND " + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " >= :b ");
+			else
+				sb.append(" AND " + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " > :b ");
+			fields.put("b", PdksUtil.getBakiyeYil());
+		}
+
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<PersonelIzin> list = pdksEntityController.getSQLParamList(dataIdList, sb, fieldName, fields, PersonelIzin.class, session);
+		dataIdList = null;
+		fields = null;
+		return list;
+	}
+
 	public String izinKarti(TempIzin izin) {
 		List<Long> idList = new ArrayList<Long>();
 		if (gelecekIzinGoster == false) {
@@ -147,18 +175,11 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		}
 		updateTempIzin = izin;
 		suaVar = Boolean.FALSE;
-		HashMap fields = new HashMap();
-		fields.put("id", izin.getIzinler().clone());
-		if (izin.getPersonel().getSirket().getDepartman().isAdminMi()) {
-			if (bakiyeIzinGoster)
-				fields.put("baslangicZamani>=", PdksUtil.getBakiyeYil());
-			else
-				fields.put("baslangicZamani>", PdksUtil.getBakiyeYil());
-		}
+
 		List<PersonelIzin> bakiyeIzinler = new ArrayList<PersonelIzin>();
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<PersonelIzin> list = pdksEntityController.getObjectByInnerObjectListInLogic(fields, PersonelIzin.class);
+
+		List<PersonelIzin> list = getIzinList(izin);
+
 		for (PersonelIzin personelIzin : list) {
 			if (idList.contains(personelIzin.getId())) {
 				PersonelIzin personelIzin2 = (PersonelIzin) personelIzin.clone();
@@ -168,7 +189,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 				bakiyeIzinler.add(personelIzin);
 
 		}
-		fields = null;
+
 		if (gelecekIzinGoster)
 			bakiyeIzinler = borcluIzinleriSifirla(bakiyeIzinler);
 		for (PersonelIzin personelIzin : bakiyeIzinler) {
@@ -196,18 +217,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 			}
 		}
 		List<PersonelIzin> bakiyeIzinler = new ArrayList<PersonelIzin>();
-		HashMap fields = new HashMap();
-		fields.put("id", izin.getIzinler().clone());
-		if (izin.getPersonel().getSirket().getDepartman().isAdminMi()) {
-			if (bakiyeIzinGoster)
-				fields.put("baslangicZamani>=", PdksUtil.getBakiyeYil());
-			else
-				fields.put("baslangicZamani>", PdksUtil.getBakiyeYil());
-		}
-
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<PersonelIzin> list = pdksEntityController.getObjectByInnerObjectListInLogic(fields, PersonelIzin.class);
+		List<PersonelIzin> list = getIzinList(izin);
 		for (PersonelIzin personelIzin : list) {
 			if (idList.contains(personelIzin.getId())) {
 				PersonelIzin personelIzin2 = (PersonelIzin) personelIzin.clone();
@@ -509,11 +519,8 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 				String ek = "";
 				if (pdksPersonelList.size() > 1) {
 					if (aramaSecenekleri.getEkSaha1Id() != null) {
-						HashMap fields = new HashMap();
-						fields.put("id", aramaSecenekleri.getEkSaha1Id());
-						if (session != null)
-							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-						Tanim departmanTanim = (Tanim) pdksEntityController.getObjectByInnerObject(fields, Tanim.class);
+
+						Tanim departmanTanim = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, aramaSecenekleri.getEkSaha1Id(), Tanim.class, session);
 						if (departmanTanim != null)
 							ek = "_" + PdksUtil.replaceAll(PdksUtil.setTurkishStr(departmanTanim.getAciklama()), " ", "_");
 					} else if (aramaSecenekleri.getSirketId() != null) {
@@ -521,7 +528,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 						fields.put("id", aramaSecenekleri.getSirketId());
 						if (session != null)
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-						Sirket sirket = (Sirket) pdksEntityController.getObjectByInnerObject(fields, Sirket.class);
+						Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
 						if (sirket != null)
 							ek = "_" + PdksUtil.replaceAll(PdksUtil.setTurkishStr(sirket.getAd()), " ", "_");
 					}
@@ -588,12 +595,13 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		if (PdksUtil.hasStringValue(sicilNo) == false && aramaSecenekleri.getSirketId() == null && (authenticatedUser.isIK() || authenticatedUser.isAdmin()))
 			PdksUtil.addMessageError("" + ortakIslemler.sirketAciklama() + " seçiniz!");
 		else {
+			aramaSecenekleri.setAyrilanlariGetir(istenAyrilanEkle);
 			ArrayList<String> siciller = ortakIslemler.getAramaPersonelSicilNo(aramaSecenekleri, Boolean.TRUE, session);
 			if (!siciller.isEmpty()) {
 				String hata = null;
 				try {
 
-					izinBakiyeGuncelleme.izinleriBakiyeleriniHesapla(session, siciller, aramaSecenekleri.getSirket(), null, Boolean.FALSE, Boolean.TRUE);
+					izinBakiyeGuncelleme.izinleriBakiyeleriniHesapla(session, siciller, aramaSecenekleri.getSirket(), null, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, istenAyrilanEkle == false);
 				} catch (Exception e) {
 					logger.error("Pdks hata in : \n");
 					e.printStackTrace();
@@ -670,10 +678,9 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		String durum = "persist";
 		try {
 			boolean sureGuncelleme = authenticatedUser.isIK();
-			HashMap fields = new HashMap();
-			fields.put("id", updateIzin.getId());
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			updateIzin = (PersonelIzin) pdksEntityController.getObjectByInnerObject(fields, PersonelIzin.class);
+
+			updateIzin = (PersonelIzin) pdksEntityController.getSQLParamByFieldObject(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, updateIzin.getId(), PersonelIzin.class, session);
+
 			updateIzin.setIzinKagidiGeldi(null);
 			updateIzin.setAciklama(kidemYili);
 			updateIzin.setBitisZamani(hakedisTarihi);
@@ -741,6 +748,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+
 		aramaSecenekleri = null;
 		if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)
 			aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
@@ -755,6 +763,8 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		}
 		if (personelBakiyeIzinList != null)
 			personelBakiyeIzinList.clear();
+		if (authenticatedUser.isIK() || authenticatedUser.isAdmin())
+			gelecekIzinGoster = ortakIslemler.getParameterKey("borcluIzinleriiGetir").equals("1");
 		return pos;
 
 	}
@@ -799,11 +809,19 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		else
 			tipler = Arrays.asList(new String[] { IzinTipi.YILLIK_UCRETLI_IZIN });
 		HashMap fields = new HashMap();
-		fields.put("durum=", Boolean.TRUE);
-		fields.put("bakiyeIzinTipi.izinTipiTanim.kodu", tipler);
+		StringBuffer sb = new StringBuffer();
+		String fieldName = "k";
+		sb.append("SELECT  I.* FROM " + IzinTipi.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK());
+		sb.append(" INNER JOIN " + IzinTipi.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " ON B." + IzinTipi.COLUMN_NAME_ID + " = I." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI);
+		sb.append(" AND B." + IzinTipi.COLUMN_NAME_DURUM + " = 1");
+		sb.append(" INNER JOIN " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " ON T." + Tanim.COLUMN_NAME_ID + " = B." + IzinTipi.COLUMN_NAME_IZIN_TIPI);
+		sb.append(" AND T." + Tanim.COLUMN_NAME_KODU + " :" + fieldName);
+		sb.append(" WHERE I." + IzinTipi.COLUMN_NAME_DURUM + " = 1");
+		fields.put(fieldName, tipler);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<IzinTipi> list = pdksEntityController.getObjectByInnerObjectListInLogic(fields, IzinTipi.class);
+		List<IzinTipi> list = pdksEntityController.getSQLParamList(tipler, sb, fieldName, fields, IzinTipi.class, session);
+
 		return list;
 	}
 
@@ -848,6 +866,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 			}
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<Personel> personelList = pdksEntityController.getObjectByInnerObjectListInLogic(fields, Personel.class);
+
 			if (personelList.size() == 1) {
 				Personel personel = personelList.get(0);
 				if (personel.isCalisiyor() == false) {
@@ -871,14 +890,10 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 			ArrayList<String> sicilNoList = ortakIslemler.getAramaPersonelSicilNo(aramaSecenekleri, Boolean.TRUE, istenAyrilanEkle, session);
 			// ArrayList<String> sicilNoList = ortakIslemler.getPersonelSicilNo(ad, soyad, sicilNo, sirket, seciliEkSaha1, seciliEkSaha2, seciliEkSaha3, seciliEkSaha4, Boolean.TRUE, istenAyrilanEkle, session);
 			if (sicilNoList != null) {
-				HashMap fields = new HashMap();
-				fields.put("id", aramaSecenekleri.getSirketId());
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				Sirket sirket = (Sirket) pdksEntityController.getObjectByInnerObject(fields, Sirket.class);
+				Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
 				izinMap = ortakIslemler.senelikIzinListesiOlustur(sicilNoList, gecerlilikTarih, sirket, harcananIzinlerHepsi, Boolean.TRUE, iptalIzinleriGetir, session);
 
 			}
-
 		}
 		personelBakiyeIzinList.clear();
 		List<TempIzin> izinList = new ArrayList<TempIzin>(izinMap.values());
@@ -1343,13 +1358,9 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 						String key = (String) iterator.next();
 						Personel personel = null;
 						if (!hucreMap.containsKey(key)) {
-							HashMap parametreMap = new HashMap();
 
-							parametreMap.put("pdksSicilNo", key);
-							if (session != null)
-								parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+							personel = (Personel) pdksEntityController.getSQLParamByFieldObject(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, key, Personel.class, session);
 
-							personel = (Personel) pdksEntityController.getObjectByInnerObject(parametreMap, Personel.class);
 							if (personel != null) {
 								Personel personelExcel = bosPersonelMap.get(key);
 								personel.setIzinHakEdisTarihi(personelExcel.getIzinHakEdisTarihi());
@@ -1415,12 +1426,8 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 								sicilNo = perSicilNo;
 								izinMap.clear();
 								personelIzinMap.clear();
-								HashMap parametreMap = new HashMap();
 
-								parametreMap.put("pdksSicilNo", perSicilNo);
-								if (session != null)
-									parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-								personel = (Personel) pdksEntityController.getObjectByInnerObject(parametreMap, Personel.class);
+								personel = (Personel) pdksEntityController.getSQLParamByFieldObject(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, perSicilNo, Personel.class, session);
 								fields.clear();
 								fields.put("izinSahibi.id", personel.getId());
 								fields.put("izinTipi", izinTipleri);
@@ -1897,17 +1904,8 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		Personel pdksPersonel = tempIzin.getPersonel();
 		setUpdateTempIzin(tempIzin);
 		HashMap fields = new HashMap();
-		fields.put("id", tempIzin.getIzinler().clone());
-		if (pdksPersonel.getSirket().getDepartman().isAdminMi()) {
-			if (bakiyeIzinGoster)
-				fields.put("baslangicZamani>=", PdksUtil.getBakiyeYil());
-			else
-				fields.put("baslangicZamani>", PdksUtil.getBakiyeYil());
-		}
 
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<PersonelIzin> list = tempIzin.getIzinler().isEmpty() ? new ArrayList<PersonelIzin>() : pdksEntityController.getObjectByInnerObjectListInLogic(fields, PersonelIzin.class);
+		List<PersonelIzin> list = getIzinList(tempIzin);
 		List<PersonelIzin> izinList1 = new ArrayList<PersonelIzin>();
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.MONTH, Calendar.JANUARY);

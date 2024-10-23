@@ -28,6 +28,7 @@ import org.jboss.seam.framework.EntityHome;
 import org.jboss.seam.persistence.PersistenceProvider;
 import org.jboss.seam.security.Identity;
 import org.pdks.entity.AccountPermission;
+import org.pdks.entity.PersonelIzinDetay;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
@@ -175,10 +176,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	}
 
 	public void changeUser() {
-		// HashMap parametreMap = new HashMap();
-		// parametreMap.put("username", getChangeUserName());
-		// User user = (User)
-		// pdksEntityController.getObjectByInnerObject(parametreMap, User.class);
+
 	}
 
 	public boolean isWired() {
@@ -224,11 +222,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 
 			if (username.indexOf("@") > 1)
 				username = PdksUtil.getInternetAdres(username);
-			HashMap fields = new HashMap();
-			fields.put("username", username);
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			User user = (User) pdksEntityController.getObjectByInnerObject(fields, User.class);
+			User user = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_USERNAME, username, User.class, session);
 			if (user != null) {
 				if (user.isDurum()) {
 					if (user.getPdksPersonel().isCalisiyor()) {
@@ -329,11 +323,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 					PdksUtil.addMessageAvailableWarn("Link geçersizdir");
 					sayfa = MenuItemConstant.login;
 				} else if (param.containsKey("userId")) {
-					HashMap fields = new HashMap();
-					fields.put("id", new Long(param.get("userId")));
-					if (session != null)
-						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					user = (User) pdksEntityController.getObjectByInnerObject(fields, User.class);
+					user = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, new Long(param.get("userId")), User.class, session);
 				}
 			} else
 				sayfa = MenuItemConstant.login;
@@ -432,7 +422,13 @@ public class UserHome extends EntityHome<User> implements Serializable {
 			boolean sistemYoneticisi = authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin() || authenticatedUser.isSistemYoneticisi();
 			if (izinRaporlari.contains(target) || izinIslemler.contains(target)) {
 				sonuc = authenticatedUser.isIzinGirebilir();
-				if (target.equals("onayimaGelenIzinler") || target.equals("izinIslemleri"))
+				if (target.equals("personelKalanIzin") || target.equals("izinRaporlari")) {
+					sonuc = ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametreIzinERPTableView());
+
+				} else if (target.equals("holdingKalanIzin") || target.equals("izinRaporlari")) {
+					sonuc = authenticatedUser.isIzinGirebilir() || PersonelIzinDetay.isIzinHakedisGuncelle();
+
+				} else if (target.equals("onayimaGelenIzinler") || target.equals("izinIslemleri"))
 					sonuc = authenticatedUser.isIzinOnaylayabilir() || (target.equals("izinIslemleri") && sistemYoneticisi);
 				else {
 					if (target.equals("sskIzinGirisi"))

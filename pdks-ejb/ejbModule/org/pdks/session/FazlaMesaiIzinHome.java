@@ -179,11 +179,8 @@ public class FazlaMesaiIzinHome extends EntityHome<PersonelIzin> implements Seri
 			query.setParameter(3, kullanilanIzinSuresi);
 			query.setParameter(4, updateIzin.getId());
 			query.executeUpdate();
-			HashMap parametreMap = new HashMap();
-			parametreMap.put("id", updateIzin.getId());
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			PersonelIzin izin = (PersonelIzin) pdksEntityController.getObjectByInnerObject(parametreMap, PersonelIzin.class);
+			 
+			PersonelIzin izin = (PersonelIzin)pdksEntityController.getSQLParamByFieldObject(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, updateIzin.getId(), PersonelIzin.class, session);
 			session.refresh(izin);
 			session.flush();
 			fillIzinList();

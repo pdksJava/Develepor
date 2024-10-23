@@ -100,7 +100,7 @@
 													action="#{pdksPersonelHome.personelDegistir(personelView)}" reRender="pdksPersonelList" ajaxSingle="true" /> <rich:toolTip
 													for="editKapiGiris">Personel Değiştir</rich:toolTip></TD>
 										</ui:fragment>
-										<ui:fragment rendered="#{personelView.pdksPersonel!=null and pdksPersonelHome.gebeSutIzniDurumList.contains(personelView.pdksPersonel.id)}">
+										<ui:fragment rendered="#{personelView.pdksPersonel!=null and personelView.pdksPersonel.cinsiyetBayan and pdksPersonelHome.gebeSutIzniDurumList.contains(personelView.pdksPersonel.id)}">
 											<ui:fragment rendered="#{pdksPersonelHome.secGebe(personelView.pdksPersonel) or pdksPersonelHome.secSutIzni(personelView.pdksPersonel)}"></ui:fragment>
 											<TD><a4j:commandLink status="ajaxStatus" id="editGebeGiris" action="#{pdksPersonelHome.gebeSutIzniSecimi(personelView.pdksPersonel)}"
 													oncomplete="if (#{pdksPersonelHome.donemselDurumList!=null}) #{rich:component('editWomanPanel')}.show()" reRender="editWomanPanel"
@@ -251,7 +251,12 @@
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.icapciOlabilir)}" />
 							</rich:column>
-
+							<rich:column style="text-align:center">
+								<f:facet name="header">
+									<h:outputText value="İzin Kartı Var" />
+								</f:facet>
+								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.izinKartiVardir)}" />
+							</rich:column>
 							<rich:column style="text-align:center" rendered="#{pdksPersonelHome.personelDurumMap.get('onaysizIzinKullanilir')}">
 								<f:facet name="header">
 									<h:outputText value="Onaysız İzin Girebilir" />
@@ -1250,12 +1255,20 @@
 												<a4j:support event="onclick" />
 											</h:selectBooleanCheckbox>
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H' and pdksPersonelHome.secIcap(null)}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.sirket.izinKartiVardir}">
+											<ui:define name="label">İzin Kartı Var</ui:define>
+											<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.izinKartiVar}">
+												<a4j:support event="onclick" />
+											</h:selectBooleanCheckbox>
+										</s:decorate>
+										<s:decorate template="/layout/edit.xhtml"
+											rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H' and pdksPersonelHome.secIcap(null)}">
 											<ui:define name="label">İcapçı Olabilir</ui:define>
 											<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.icapciOlabilir}">
 												<a4j:support event="onclick" />
 											</h:selectBooleanCheckbox>
 										</s:decorate>
+										
 										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.sanalPersonelAciklama!=''}">
 											<ui:define name="label">#{pdksPersonelHome.sanalPersonelAciklama}</ui:define>
 											<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.sanalPersonel}"
