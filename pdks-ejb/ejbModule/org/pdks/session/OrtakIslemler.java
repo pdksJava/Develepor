@@ -12691,8 +12691,7 @@ public class OrtakIslemler implements Serializable {
 					if (denklestirme.getSutIzniPersonelDonemselDurum() == null) {
 						denklestirme.setSutIzniPersonelDonemselDurum(sutIzniPersonelDonemselDurum);
 						if (denklestirme.isSutIzniVar() == false) {
-							denklestirme.setSutIzniDurum(true);
-							pdksEntityController.saveOrUpdate(session, entityManager, denklestirme);
+ 							pdksEntityController.saveOrUpdate(session, entityManager, denklestirme);
 							session.flush();
 						}
 					}

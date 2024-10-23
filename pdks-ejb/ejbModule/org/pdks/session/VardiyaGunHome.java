@@ -238,7 +238,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	private User loginUser = null;
 
-	private String sicilNo = "", sicilYeniNo = "", dosyaAdi, donusAdres = "";
+	private String sicilNo = "", sicilYeniNo = "", dosyaAdi, donusAdres;
 
 	private Boolean denklestirmeHesapla = Boolean.FALSE, gunSec = Boolean.FALSE, gorevli = false, ozelIstek = Boolean.FALSE, islemYapiliyor = Boolean.FALSE, departmanBolumAyni = Boolean.FALSE;
 
@@ -822,7 +822,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 		} catch (Exception e) {
 		}
-		donusAdres = map.containsKey("host") ? map.get("host") : "";
+		setDonusAdres(map.containsKey("host") ? map.get("host") : "");
 		boolean test = donusAdres.indexOf("localhost:") >= 0;
 		if (toList == null)
 			toList = new ArrayList<User>();
@@ -4565,7 +4565,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 			} catch (Exception e) {
 			}
-			donusAdres = map.containsKey("host") ? map.get("host") : "";
+			setDonusAdres(map.containsKey("host") ? map.get("host") : "");
 			for (User ikUser : ikList) {
 				toList.clear();
 				toList.add(ikUser);
@@ -6145,13 +6145,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 
 				if (!perList.isEmpty()) {
-					Map<String, String> map = null;
-					try {
-						map = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
-
-					} catch (Exception e) {
-					}
-					donusAdres = map.containsKey("host") ? map.get("host") : "";
+					// Map<String, String> map = null;
+					// try {
+					// map = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
+					//
+					// } catch (Exception e) {
+					// }
+					// setDonusAdres( map.containsKey("host") ? map.get("host") : "";
 					defaultAylikPuantajSablon = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, departmanDenklestirmeDonemi, session);
 					fazlaMesaiOrtakIslemler.setDenklestirmeAySure(defaultAylikPuantajSablon.getVardiyalar(), aramaSecenekleri.getSirket(), denklestirmeAy, session);
 					for (CalismaModeliAy cm : denklestirmeAy.getModeller()) {
@@ -6657,8 +6657,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									else if (pdd.isSutIzni()) {
 										personelDenklestirme.setSutIzniPersonelDonemselDurum(pdd);
 										if (personelDenklestirme.isSutIzniVar() == false) {
-											personelDenklestirme.setSutIzniDurum(true);
-											pdksEntityController.saveOrUpdate(session, entityManager, cma);
+ 											pdksEntityController.saveOrUpdate(session, entityManager, cma);
 											flush = true;
 										}
 
@@ -9167,7 +9166,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (aramaSecenekleri.getGorevYeriList() == null && departman != null && !departman.isAdminMi())
 				aramaSecenekleri.setGorevYeriList(fazlaMesaiOrtakIslemler.getBolumDepartmanSelectItems(departman.getId(), aramaSecenekleri.getSirketId(), yil, ay, Boolean.FALSE, session));
 
-			donusAdres = "";
+			setDonusAdres("");
 			Long tesisId = null, ekSaha4Id = null;
 
 			if (veriLastMap != null) {
@@ -9211,7 +9210,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (!ayniSayfa)
 				authenticatedUser.setCalistigiSayfa("");
 			if (donusAdres.equals("fazlaMesaiTalep"))
-				donusAdres = "";
+				setDonusAdres("");
 
 			if (fazlaMesaiTalepDurumList == null)
 				fazlaMesaiTalepDurumList = new ArrayList<SelectItem>();
@@ -10020,7 +10019,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		}
 		setAylikPuantajDonem(denklestirmeAy);
 
-		donusAdres = "";
+		setDonusAdres("");
 		denklestirmeAyDurum = Boolean.FALSE;
 		modelList = new ArrayList<CalismaModeliAy>();
 		if (fazlaMesaiTalepler == null)
@@ -10150,7 +10149,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							}
 
 							else
-								donusAdres = planGirisiDurum ? linkAdres : "";
+								setDonusAdres(planGirisiDurum ? linkAdres : "");
 							saveAramaSecenekleri = (AramaSecenekleri) aramaSecenekleri.clone();
 						}
 
@@ -10160,7 +10159,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 
 			if (dateStr != null && perIdStr != null) {
-				donusAdres = planGirisiDurum ? linkAdres : "";
+				setDonusAdres(planGirisiDurum ? linkAdres : "");
 				if (linkBordroAdres != null)
 					doldurStr = "F";
 				Date vardiyaDate = PdksUtil.convertToJavaDate(dateStr, "yyyyMMdd");
@@ -10212,7 +10211,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (planGirisiDurum)
 						fillAylikVardiyaPlanList();
 				} else
-					donusAdres = "";
+					setDonusAdres("");
 			} else {
 				fillSirketList();
 				if (aramaSecenekleri.getSirketId() == null) {
@@ -10236,7 +10235,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			fileImportKontrol();
 
 			if (donusAdres != null && donusAdres.equals(calistigiSayfa))
-				donusAdres = "";
+				setDonusAdres("");
 
 		} catch (Exception e) {
 			e.printStackTrace();
