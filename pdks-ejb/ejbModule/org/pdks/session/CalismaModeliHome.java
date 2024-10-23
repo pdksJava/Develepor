@@ -277,7 +277,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 		} else
 			kayitliVardiyaList = new ArrayList<Vardiya>();
-		sirketList = pdksEntityController.getSQLParamByAktifFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_PDKS, Boolean.TRUE, Sirket.class, session);
+ 		sirketList = ortakIslemler.getDepartmanPDKSSirketList(cm.getDepartman(), session);
 
 		return "";
 	}

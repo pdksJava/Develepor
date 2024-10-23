@@ -305,7 +305,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		pdksVardiya.setTipi(String.valueOf(pdksVardiya.getVardiyaTipi()));
 		fillCalismaSekilleri();
 		fillVardiyaTipiList();
-		sirketList = pdksEntityController.getSQLParamByAktifFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_PDKS, Boolean.TRUE, Sirket.class, session);
+		sirketList = ortakIslemler.getDepartmanPDKSSirketList(pdksVardiya.getDepartman(), session);
 	}
 
 	@Transactional

@@ -82,7 +82,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 			sablonu = new VardiyaSablonu();
 		setInstance(sablonu);
 		fillPdksVardiyaList();
-		sirketList = pdksEntityController.getSQLParamByAktifFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_PDKS, Boolean.TRUE, Sirket.class, session);
+		sirketList = ortakIslemler.getDepartmanPDKSSirketList(sablonu.getDepartman(), session);
 		setVardiyaVar(Boolean.TRUE);
 
 	}
