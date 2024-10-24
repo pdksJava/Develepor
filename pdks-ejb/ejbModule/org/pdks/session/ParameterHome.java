@@ -97,7 +97,7 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 		session.flush();
 		session.clear();
 		fillParameterList();
-		startupAction.fillStartMethod(authenticatedUser, session);
+		startupAction.fillStartMethod(authenticatedUser, true, session);
 		return "persisted";
 	}
 
@@ -122,7 +122,7 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 		session.flush();
 		session.clear();
 		fillParameterList();
-		startupAction.fillStartMethod(authenticatedUser, session);// fill all list fillParameter();
+		startupAction.fillStartMethod(authenticatedUser, true, session);// fill all list fillParameter();
 		return "persisted";
 
 	}

@@ -292,7 +292,7 @@ public class StartupAction implements Serializable {
 		if (cal.get(Calendar.HOUR_OF_DAY) < 7)
 			savePrepareAllTableID(session);
 		viewRefresh(session);
-		fillStartMethod(null, session);
+		fillStartMethod(null, false, session);
 	}
 
 	/**
@@ -319,16 +319,17 @@ public class StartupAction implements Serializable {
 
 	/**
 	 * @param user
+	 * @param lockVar
 	 * @param session
 	 */
-	public void fillStartMethod(User user, Session session) {
+	public void fillStartMethod(User user, boolean lockVar, Session session) {
 		if (session == null) {
 			session = user != null ? user.getSessionSQL() : null;
 			if (session == null)
 				session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		}
 		logger.info("Sistem verileri yukleniyor in " + PdksUtil.getCurrentTimeStampStr());
-		fillParameter(session);
+		fillParameter(session, lockVar);
 		try {
 			List<Notice> noticeList = pdksEntityController.getSQLParamByAktifFieldList(Notice.TABLE_NAME, Notice.COLUMN_NAME_ADI, NoteTipi.ANA_SAYFA.value(), Notice.class, session);
 			Notice notice = null;
@@ -396,15 +397,12 @@ public class StartupAction implements Serializable {
 
 	}
 
-	/**
-	 * @param session
-	 */
-	public void fillParameter(Session session) {
+	public void fillParameter(Session session, boolean lockVar) {
 		HashMap fields = new HashMap();
 		List<Parameter> parameterList = null;
 		try {
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT * FROM " + Parameter.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+			sb.append("SELECT * FROM " + Parameter.TABLE_NAME + (lockVar ? " " + PdksEntityController.getSelectLOCK() : ""));
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			parameterList = pdksEntityController.getObjectBySQLList(sb, fields, Parameter.class);

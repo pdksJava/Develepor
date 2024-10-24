@@ -73,7 +73,7 @@ public class NoticeHome extends EntityHome<Notice> {
 			logger.debug("DUYURU KAYDETMEDE HATA: " + e.getMessage());
 		}
 		// fillNotice();
-		startupAction.fillStartMethod(authenticatedUser, session);
+		startupAction.fillStartMethod(authenticatedUser, true, session);
 		// session.refresh(notice);
 		return "persisted";
 

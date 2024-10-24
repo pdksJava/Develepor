@@ -651,10 +651,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 	}
 
+	 
 	/**
 	 * @param dao
+	 * @param lockVar
 	 */
-	public void sistemVerileriniYukle(PdksDAO dao) {
+	public void sistemVerileriniYukle(PdksDAO dao, boolean lockVar) {
 		if (dao != null) {
 			mesaj = null;
 			List<String> helpDeskList = new ArrayList<String>();
@@ -668,7 +670,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				fields.clear();
 				HashMap fields = new HashMap();
 				StringBuffer sb = new StringBuffer();
-				sb.append("SELECT R.* FROM " + Parameter.TABLE_NAME + " R ");
+				sb.append("SELECT R.* FROM " + Parameter.TABLE_NAME + " R " + (lockVar ? selectLOCK : ""));
 				sb.append(" WHERE R." + Parameter.COLUMN_NAME_DURUM + " = 1 ");
 				List<Parameter> list = dao.getNativeSQLList(fields, sb, Parameter.class);
 
@@ -929,7 +931,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			if (sb.length() > 0)
 				mailStatu.setHataMesai(sb.toString());
 			else {
-				sistemVerileriniYukle(pdksDAO);
+				sistemVerileriniYukle(pdksDAO, true);
 				StringBuffer pasifPersonelSB = new StringBuffer();
 				String smtpUserName = mailMap.containsKey("smtpUserName") ? (String) mailMap.get("smtpUserName") : "";
 				String smtpPassword = mailMap.containsKey("smtpPassword") ? (String) mailMap.get("smtpPassword") : "";
@@ -1223,7 +1225,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @throws Exception
 	 */
 	public List<MesaiPDKS> getMesaiPDKS(String sirketKodu, Integer yil, Integer ay, Boolean donemKapat) throws Exception {
-		sistemVerileriniYukle(pdksDAO);
+		sistemVerileriniYukle(pdksDAO, true);
 		boolean servisDurum = !PdksUtil.getCanliSunucuDurum() || !(mailMap.containsKey("getMesaiPDKSDurum") && mailMap.get("getMesaiPDKSDurum").equals("0"));
 		List<MesaiPDKS> list = null;
 		if (servisDurum) {
@@ -1380,7 +1382,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			bugun = PdksUtil.getDate(new Date());
 			if (izinHakedisList.size() == 1)
 				mesaj = izinHakedisList.get(0).getPersonelNo();
-			sistemVerileriniYukle(pdksDAO);
+			sistemVerileriniYukle(pdksDAO, true);
 			setSicilNoUzunluk();
 			saveFonksiyonVeri("saveHakedisIzinler", izinHakedisList);
 			String personelNoAciklama = personelNoAciklama();
@@ -1711,7 +1713,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @throws Exception
 	 */
 	public boolean helpDeskStatus() throws Exception {
-		sistemVerileriniYukle(pdksDAO);
+		sistemVerileriniYukle(pdksDAO, true);
 		return sistemDestekVar;
 	}
 
@@ -1721,7 +1723,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 */
 	public String helpDeskDate() throws Exception {
 		String helpDeskLastDateStr = "";
-		sistemVerileriniYukle(pdksDAO);
+		sistemVerileriniYukle(pdksDAO, true);
 		if (mailMap.containsKey("helpDeskLastDate"))
 			helpDeskLastDateStr = (String) mailMap.get("helpDeskLastDate");
 		return helpDeskLastDateStr;
@@ -1734,7 +1736,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	public void saveIzinler(List<IzinERP> izinList) throws Exception {
 		servisAdi = "saveIzinler";
 		if (pdksDAO != null && izinList != null && !izinList.isEmpty()) {
-			sistemVerileriniYukle(pdksDAO);
+			sistemVerileriniYukle(pdksDAO, true);
 			boolean servisDurum = !PdksUtil.getCanliSunucuDurum() || !(mailMap.containsKey(servisAdi + "Durum") && mailMap.get(servisAdi + "Durum").equals("0"));
 			if (servisDurum) {
 				izinBilgileriniGuncelle(izinList);
@@ -3899,7 +3901,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	public void savePersoneller(List<PersonelERP> personelList) throws Exception {
 		servisAdi = "savePersoneller";
 		if (pdksDAO != null && personelList != null && !personelList.isEmpty()) {
-			sistemVerileriniYukle(pdksDAO);
+			sistemVerileriniYukle(pdksDAO, true);
 			Boolean servisDurum = !PdksUtil.getCanliSunucuDurum() || !(mailMap.containsKey(servisAdi + "Durum") && mailMap.get(servisAdi + "Durum").equals("0"));
 			if (servisDurum) {
 				personelBilgileriniGuncelle(personelList);

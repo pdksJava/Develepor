@@ -46,7 +46,7 @@ public class Startup extends HttpServlet {
 
 			sc.setAttribute(Constants.WEB_DATASOURCE, webDS);
 			PdksVeriOrtakAktar pdksVeriOrtakAktar = new PdksVeriOrtakAktar();
-			pdksVeriOrtakAktar.sistemVerileriniYukle(pdksDAO);
+			pdksVeriOrtakAktar.sistemVerileriniYukle(pdksDAO, false);
 		} catch (Exception e) {
 
 		}

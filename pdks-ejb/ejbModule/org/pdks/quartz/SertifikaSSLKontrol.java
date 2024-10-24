@@ -71,7 +71,7 @@ public class SertifikaSSLKontrol implements Serializable {
 				if (zamanlayici.isPazar() == false) {
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 					if (dakika % 30 == 0 && hour > 18) {
-						startupAction.fillParameter(session);
+						startupAction.fillParameter(session,true);
 						logger.debug("Parametreler güncellendi " + PdksUtil.getCurrentTimeStampStr());
 					}
 				}
