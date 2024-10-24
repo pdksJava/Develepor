@@ -276,9 +276,9 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 		if (!dataMap.isEmpty()) {
 			List<Long> dataIdList = new ArrayList(dataMap.keySet());
 			List<String> perNoList = new ArrayList(perMap.keySet());
-			String fieldName = "pdksSicilNo";
+			String fieldName = "personelKGS.sicilNo";
 			HashMap parametreMap = new HashMap();
-			parametreMap.put("kgsSicilNo", perNoList);
+			parametreMap.put(fieldName, perNoList);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_MAP, "getPdksSicilNo");
 			// parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
