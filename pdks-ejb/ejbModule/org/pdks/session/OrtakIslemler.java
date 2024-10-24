@@ -2997,7 +2997,7 @@ public class OrtakIslemler implements Serializable {
 	public DenklestirmeAy getSQLDenklestirmeAy(int yil, int ay, Session session) {
 		StringBuffer sb = new StringBuffer();
 		HashMap fields = new HashMap();
-		sb.append("SELECT TOP 1 P.* from " + DenklestirmeAy.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("SELECT P.* from " + DenklestirmeAy.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" WHERE P." + DenklestirmeAy.COLUMN_NAME_YIL + " = " + yil);
 		sb.append(" AND P." + DenklestirmeAy.COLUMN_NAME_AY + " = " + ay);
 		if (session != null)
@@ -3066,7 +3066,7 @@ public class OrtakIslemler implements Serializable {
 	public Tanim getSQLTanimByTipErpKodu(String tip, String erpKodu, Session session) {
 		StringBuffer sb = new StringBuffer();
 		HashMap fields = new HashMap();
-		sb.append("SELECT TOP 1 P.* from " + Tanim.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("SELECT P.* from " + Tanim.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" WHERE P." + Tanim.COLUMN_NAME_TIPI + " = :t");
 		sb.append(" AND P." + Tanim.COLUMN_NAME_ERP_KODU + " = :k ");
 		if (session != null)
@@ -3086,7 +3086,7 @@ public class OrtakIslemler implements Serializable {
 		HashMap map = new HashMap();
 		String fieldName = "k";
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT TOP 1 * FROM " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("SELECT * FROM " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" WHERE " + Vardiya.COLUMN_NAME_DEPARTMAN + " = :d AND " + Vardiya.COLUMN_NAME_DURUM + " = 1");
 		sb.append(" AND " + Vardiya.COLUMN_NAME_KISA_ADI + " :" + fieldName);
 		map.put(fieldName, list);
@@ -8619,7 +8619,7 @@ public class OrtakIslemler implements Serializable {
 						if (authenticatedUser.isAdmin() || authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi()) {
 							StringBuffer sb = new StringBuffer();
 							HashMap fields = new HashMap();
-							sb.append("SELECT TOP 1 P.* from " + UserMenuItemTime.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+							sb.append("SELECT P.* from " + UserMenuItemTime.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 							sb.append("  INNER JOIN " + MenuItem.TABLE_NAME + " M " + PdksEntityController.getJoinLOCK() + " ON M." + MenuItem.COLUMN_NAME_ID + " = P." + UserMenuItemTime.COLUMN_NAME_MENU);
 							sb.append("  AND M." + MenuItem.COLUMN_NAME_ADI + " = :n");
 							sb.append(" WHERE P." + UserMenuItemTime.COLUMN_NAME_USER + " = :u");
@@ -16746,7 +16746,7 @@ public class OrtakIslemler implements Serializable {
 			kisaAdi = "G";
 		HashMap map = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT TOP 1 * FROM " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("SELECT * FROM " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" WHERE " + Vardiya.COLUMN_NAME_KISA_ADI + " = :k AND " + Vardiya.COLUMN_NAME_DURUM + " = 1");
 		map.put("k", kisaAdi);
 		if (session != null)

@@ -651,12 +651,13 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 	}
 
-	 
 	/**
 	 * @param dao
 	 * @param lockVar
 	 */
 	public void sistemVerileriniYukle(PdksDAO dao, boolean lockVar) {
+		if (dao == null)
+			dao = Constants.pdksDAO;
 		if (dao != null) {
 			mesaj = null;
 			List<String> helpDeskList = new ArrayList<String>();
@@ -670,8 +671,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				fields.clear();
 				HashMap fields = new HashMap();
 				StringBuffer sb = new StringBuffer();
-				sb.append("SELECT R.* FROM " + Parameter.TABLE_NAME + " R " + (lockVar ? selectLOCK : ""));
-				sb.append(" WHERE R." + Parameter.COLUMN_NAME_DURUM + " = 1 ");
+				sb.append("SELECT * FROM " + Parameter.TABLE_NAME + (lockVar ? " " + selectLOCK : ""));
+				sb.append(" WHERE " + Parameter.COLUMN_NAME_DURUM + " = 1 ");
 				List<Parameter> list = dao.getNativeSQLList(fields, sb, Parameter.class);
 
 				for (Parameter parameter : list) {

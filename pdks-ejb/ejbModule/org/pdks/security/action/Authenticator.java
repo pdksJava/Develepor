@@ -328,22 +328,24 @@ public class Authenticator implements IAuthenticator, Serializable {
 	 * @return
 	 */
 	private User getKullanici(String userName, String fieldName) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT S.* FROM " + User.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
-		sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON  P." + Personel.COLUMN_NAME_ID + " = S." + User.COLUMN_NAME_PERSONEL);
-		sb.append(" AND  P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= convert(date,GETDATE()) AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
-		if (userName.indexOf("%") > 0)
-			sb.append(" WHERE S." + fieldName + " LIKE :userName");
-		else
-			sb.append(" WHERE S." + fieldName + " = :userName");
-		HashMap fields = new HashMap();
-		fields.put("userName", userName);
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		User authenticated = (User) pdksEntityController.getObjectBySQL(sb, fields, User.class);
-		fields = null;
+		User authenticated = null;
+		if (userName.indexOf("%") > 0) {
+			StringBuffer sb = new StringBuffer();
+			sb.append("SELECT S.* FROM " + User.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+			sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON  P." + Personel.COLUMN_NAME_ID + " = S." + User.COLUMN_NAME_PERSONEL);
+			sb.append(" AND  P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= convert(date,GETDATE()) AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
+			if (userName.indexOf("%") > 0)
+				sb.append(" WHERE S." + fieldName + " LIKE :userName");
+			HashMap fields = new HashMap();
+			fields.put("userName", userName);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			authenticated = (User) pdksEntityController.getObjectBySQL(sb, fields, User.class);
+		} else
+			authenticated = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, fieldName, userName, User.class, session);
+
 		if (authenticated != null) {
-			if (authenticated.isDurum() == false || authenticated.getDepartman() == null || authenticated.getPdksPersonel().getDurum().equals(Boolean.FALSE))
+			if (authenticated.isDurum() == false || authenticated.getDepartman() == null || authenticated.getPdksPersonel().getDurum().equals(Boolean.FALSE) || authenticated.getPdksPersonel().isCalisiyor() == false)
 				authenticated = null;
 
 		}
