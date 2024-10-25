@@ -945,9 +945,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				AylikPuantaj aylikPuantajSablon = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, denklestirmeDonemi, session);
 				List<Personel> donemPerList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(sirket, tesisId != null ? String.valueOf(tesisId) : null, seciliEkSaha3Id, seciliEkSaha4Id, denklestirmeAy != null ? aylikPuantajSablon : null, sadeceFazlaMesai, session);
 				List<Long> perIdList = new ArrayList<Long>();
-				for (Personel personel : donemPerList) {
+				for (Personel personel : donemPerList)
 					perIdList.add(personel.getId());
-				}
+
 				List<PersonelDenklestirme> list = getPdksPersonelDenklestirmeler(perIdList);
 				hataliPersoneller = null;
 				perIdList = null;
@@ -964,7 +964,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (!kayitVar) {
 						sicilNo = (String) hataliPersoneller.get(0).getValue();
 						hataliSicilNo = null;
-					}
+					} else
+						hataliPuantajGoster = true;
 
 				}
 				list = null;

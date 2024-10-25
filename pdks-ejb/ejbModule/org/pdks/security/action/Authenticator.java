@@ -332,10 +332,10 @@ public class Authenticator implements IAuthenticator, Serializable {
 		if (userName.indexOf("%") > 0) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("SELECT S.* FROM " + User.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
-			sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON  P." + Personel.COLUMN_NAME_ID + " = S." + User.COLUMN_NAME_PERSONEL);
-			sb.append(" AND  P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= convert(date,GETDATE()) AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
-			if (userName.indexOf("%") > 0)
-				sb.append(" WHERE S." + fieldName + " LIKE :userName");
+			// sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON  P." + Personel.COLUMN_NAME_ID + " = S." + User.COLUMN_NAME_PERSONEL);
+			// sb.append(" AND  P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= convert(date,GETDATE()) AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
+			// if (userName.indexOf("%") > 0)
+			sb.append(" WHERE S." + fieldName + " LIKE :userName");
 			HashMap fields = new HashMap();
 			fields.put("userName", userName);
 			if (session != null)

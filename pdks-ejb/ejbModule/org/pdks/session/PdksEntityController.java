@@ -840,7 +840,6 @@ public class PdksEntityController implements Serializable {
 		veriMap.put("guncelleyenId", guncelleyen.getId());
 		veriMap.put("nedenId", nedenId);
 		veriMap.put("aciklama", aciklama);
-
 		veriMap.put("sirketId", sirketId);
 		if (session != null)
 			veriMap.put(MAP_KEY_SESSION, session);

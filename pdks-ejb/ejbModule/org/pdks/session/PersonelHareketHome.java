@@ -593,15 +593,9 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 	@Transactional
 	public String terminalDegistir() {
 		HareketKGS kgsHareket = getInstance();
-
 		Tanim neden = (Tanim) ortakIslemler.getSQLTanimByTipKodu(Tanim.TIPI_HAREKET_NEDEN, "T", session);
 		if (kgsHareket.getTerminalKapi() != null && neden != null) {
 			Long kgsId = 0L, pdksId = 0L;
-			// if (kgsHareket.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS))
-			// kgsId = kgsHareket.getHareketTableId();
-			// else
-			// abhId = kgsHareket.getHareketTableId();
-
 			String str = kgsHareket.getId();
 			Long id = Long.parseLong(str.substring(1));
 			if (str.startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS))
@@ -611,11 +605,28 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 			try {
 				String aciklama = kgsHareket.getKapiView().getKapi().getAciklama() + " güncellendi.";
 				KapiView terminalKapi = terminalKapiManuelUpdate(kgsHareket.getTerminalKapi());
+				String name = "SP_HAREKET_TERMINAL_SIRKET";
+				if (ortakIslemler.isExisStoreProcedure(name, session)) {
+					StringBuffer sb = new StringBuffer(name);
+					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+					veriMap.put("kgsId", kgsId);
+					veriMap.put("pdksId", pdksId);
+					veriMap.put("kapi", terminalKapi.getId());
+					veriMap.put("personel", kgsHareket.getPersonel().getId());
+					veriMap.put("zaman", kgsHareket.getZaman());
+					veriMap.put("guncelleyenId", authenticatedUser.getId());
+					veriMap.put("nedenId", neden.getId());
+					veriMap.put("aciklama", aciklama);
+					veriMap.put("sirketId", kgsHareket.getKgsSirketId());
+					if (session != null)
+						veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+					pdksEntityController.execSP(veriMap, sb);
+				} else {
+					pdksEntityController.hareketSil(kgsId, pdksId, authenticatedUser, neden.getId(), "", kgsHareket.getKgsSirketId(), session);
+					pdksId = pdksEntityController.hareketEkle(terminalKapi, kgsHareket.getPersonel(), kgsHareket.getZaman(), authenticatedUser, neden.getId(), aciklama, session);
 
-				pdksEntityController.hareketSil(kgsId, pdksId, authenticatedUser, neden.getId(), "", kgsHareket.getKgsSirketId(), session);
-				pdksId = pdksEntityController.hareketEkle(terminalKapi, kgsHareket.getPersonel(), kgsHareket.getZaman(), authenticatedUser, neden.getId(), aciklama, session);
-				session.flush();
-				session.clear();
+				}
+
 				fillHareketList();
 			} catch (Exception e) {
 				logger.error(e);
