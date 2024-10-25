@@ -316,7 +316,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		fazlaMesaiHesaplaHome.setTesisId(seciliTesisId);
 		fazlaMesaiHesaplaHome.setTopluGuncelle(true);
 
- 		Tanim tesis = null;
+		Tanim tesis = null;
 		if (seciliTesisId != null && seciliSirket.isTesisDurumu()) {
 
 			tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliTesisId, Tanim.class, session);
@@ -377,7 +377,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 				loginUser.setAdmin(Boolean.TRUE);
 				List<AylikPuantaj> puantajList = null;
 				if (kayitAdet > 0 && gelecekTarih == false)
-					puantajList = fazlaMesaiHesaplaHome.fillPersonelDenklestirmeDevam(aylikPuantaj, denklestirmeDonemi);
+					puantajList = fazlaMesaiHesaplaHome.fillPersonelDenklestirmeDevam(null, aylikPuantaj, denklestirmeDonemi);
 				if (puantajList != null && !puantajList.isEmpty()) {
 					session.flush();
 				}
@@ -630,8 +630,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		Long onceki = null;
 		if (sirketId != null) {
 			onceki = tesisId;
-		 
-		 
+
 			sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 
 			if (sirket != null) {
@@ -674,19 +673,16 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 	public void fillSirketList() {
 		personelDenklestirmeList.clear();
-		 
- 
+
 		if (departmanId != null)
 			departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
 
 		else
 			departman = null;
 
-	 
 		if (ay <= 0)
 			ay = (Integer) aylar.get(aylar.size() - 1).getValue();
 
- 
 		denklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
 		denklestirmeAyDurum = fazlaMesaiOrtakIslemler.getDurum(denklestirmeAy);
 		List<SelectItem> sirketList = fazlaMesaiOrtakIslemler.getFazlaMesaiSirketList(departmanId, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, authenticatedUser.isAdmin() == false, session);
@@ -762,7 +758,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		haftaTatilSaatDurum = Boolean.FALSE;
 		resmiTatilSaatDurum = Boolean.FALSE;
 		izinSaatDurum = Boolean.FALSE;
- 	 
+
 		ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
 		personelDenklestirmeList.clear();
 		denklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
@@ -921,7 +917,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 				if (sirket != null)
 					dosyaAdi += "_" + sirket.getAd();
 				if (tesisId != null) {
-					 
+
 					Tanim tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, tesisId, Tanim.class, session);
 
 					if (tesis != null)

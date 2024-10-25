@@ -131,7 +131,7 @@
 							<c:if test="#{fazlaMesaiHesaplaHome.denklestirmeAy!=null and  not empty fazlaMesaiHesaplaHome.gorevYeriList}">
 								<TABLE width="45%">
 									<TR>
-										<TD width="35%" valign="top"><a4j:commandButton action="#{fazlaMesaiHesaplaHome.fillPersonelDenklestirmeList}"
+										<TD width="35%" valign="top"><a4j:commandButton action="#{fazlaMesaiHesaplaHome.fillPersonelDenklestirmeList(null)}"
 												value="Fazla Mesai Getir" rendered="#{not empty fazlaMesaiHesaplaHome.pdksSirketList}" reRender="denklestirmeDonemiTable,hareketTables"
 												onclick="#{rich:component('wait')}.show()" oncomplete="#{rich:component('wait')}.hide()" /></TD>
 
@@ -199,10 +199,10 @@
 									</ui:fragment>
 
 								</TABLE>
-								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum}">
-									<h:panelGrid columns="1" rendered="#{fazlaMesaiHesaplaHome.hataliPersoneller!=null}">
+								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and not empty fazlaMesaiHesaplaHome.gorevYeriList}">
+									<h:panelGrid columns="1" rendered="#{not empty fazlaMesaiHesaplaHome.hataliPersoneller}">
 										<s:decorate template="/layout/edit.xhtml">
-											<ui:define name="label">Hatalı Personel</ui:define>
+											<ui:define name="label">Hatalı Personeller</ui:define>
 											<h:selectOneMenu value="#{fazlaMesaiHesaplaHome.hataliSicilNo}">
 												<f:selectItem itemLabel="Lütfen seçiniz" />
 												<f:selectItems value="#{fazlaMesaiHesaplaHome.hataliPersoneller}" />
