@@ -2209,7 +2209,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 							StringBuffer sb = new StringBuffer();
 							sb.append(" SELECT R." + IzinReferansERP.COLUMN_NAME_ID + ",I." + PersonelIzin.COLUMN_NAME_ID + " AS " + IzinReferansERP.COLUMN_NAME_IZIN_ID + " FROM " + PersonelIzin.TABLE_NAME + " I " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
 							sb.append(" LEFT JOIN " + IzinReferansERP.TABLE_NAME + " R " + PdksVeriOrtakAktar.getJoinLOCK() + " ON I." + PersonelIzin.COLUMN_NAME_ID + " = R." + IzinReferansERP.COLUMN_NAME_IZIN_ID);
-							sb.append(" WHERE I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = " + izinSahibi.getId() + " AND I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> " + PersonelIzin.IZIN_DURUMU_REDEDILDI);
+							sb.append(" WHERE I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = " + izinSahibi.getId());
+							sb.append(" AND I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " NOT IN ( " + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + "," + PersonelIzin.IZIN_DURUMU_REDEDILDI + ")");
 							sb.append(" AND I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " < :b2 AND I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " > :b1");
 							if (personelIzin.getId() != null)
 								sb.append(" AND I." + PersonelIzin.COLUMN_NAME_ID + " <> " + personelIzin.getId());
