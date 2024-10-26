@@ -6657,7 +6657,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									else if (pdd.isSutIzni()) {
 										personelDenklestirme.setSutIzniPersonelDonemselDurum(pdd);
 										if (personelDenklestirme.isSutIzniVar() == false) {
- 											pdksEntityController.saveOrUpdate(session, entityManager, cma);
+											pdksEntityController.saveOrUpdate(session, entityManager, cma);
 											flush = true;
 										}
 
@@ -8560,6 +8560,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 			}
 			Sirket sirket = personel.getSirket();
+			VardiyaSablonu vardiyaSablonu = personel.getSablon();
 			sb.append(" WHERE V." + Vardiya.COLUMN_NAME_GENEL + " = 1 AND V." + Vardiya.COLUMN_NAME_GEBELIK + " = 0   ");
 			sb.append(" AND V." + Vardiya.COLUMN_NAME_GEBELIK + " = 0 AND V." + Vardiya.COLUMN_NAME_ICAP + " = 0  AND V." + Vardiya.COLUMN_NAME_SUA + " = 0 ");
 			sb.append(" AND V." + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'I'  ");
@@ -8572,6 +8573,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				sb.append(" UNION ");
 				sb.append(" SELECT * FROM " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" WHERE " + Vardiya.COLUMN_NAME_SUA + " = 1 " + ozelMap.get(Vardiya.SUA_KEY));
+			}
+			if (vardiyaSablonu != null && vardiyaSablonu.getVardiya1() != null && vardiyaSablonu.getVardiya1().isIzinVardiya()) {
+				sb.append(" UNION ");
+				sb.append(" SELECT * FROM " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append(" WHERE " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = 'I' ");
 			}
 			if (icap) {
 				sb.append(" UNION ");
@@ -8649,7 +8655,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				// vardiyaList = pdksEntityController.getObjectBySQLList(sb, map, Vardiya.class);
 				vardiyaList = pdksEntityController.getSQLParamList(idList, sb, fieldName, map, Vardiya.class, session);
 			}
-			VardiyaSablonu vardiyaSablonu = personel.getSablon();
+			vardiyaSablonu = personel.getSablon();
 			vardiyaSablonu.setVardiyaList(null);
 			List<Vardiya> list = new ArrayList<Vardiya>(vardiyaSablonu.getVardiyaList());
 			List<Long> idList = new ArrayList<Long>();

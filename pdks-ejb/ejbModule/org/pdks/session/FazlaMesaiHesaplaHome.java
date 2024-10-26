@@ -560,7 +560,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			setDenklestirmeAyDurum(fazlaMesaiOrtakIslemler.getDurum(denklestirmeAy));
 
 			if (hataliPuantajGoster != null && hataliPuantajGoster && PdksUtil.hasStringValue(sicilNo) && PdksUtil.hasStringValue(hataliSicilNo) == false)
-				hataliPersonelleriGuncelle();
+				fillHataliPersonelleriGuncelle();
 
 			if (denklestirmeAyDurum.equals(Boolean.FALSE))
 				hataliPuantajGoster = denklestirmeAyDurum;
@@ -949,14 +949,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			sicilNo = hataliSicilNo;
 
 			fillPersonelDenklestirmeList(hataliSicilNo);
-			hataliPersonelleriGuncelle();
+			fillHataliPersonelleriGuncelle();
 
 		}
 		return "";
 
 	}
 
-	private void hataliPersonelleriGuncelle() {
+	private void fillHataliPersonelleriGuncelle() {
 
 		hataliPersoneller = null;
 		if (denklestirmeAyDurum) {
@@ -972,6 +972,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (!list.isEmpty()) {
 				hataliPersoneller = new ArrayList<SelectItem>();
 				boolean kayitVar = false;
+				if (hataliSicilNo == null)
+					hataliSicilNo = "";
+				List<String> perNoList = new ArrayList<String>();
 				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 					PersonelDenklestirme personelDenklestirme = (PersonelDenklestirme) iterator.next();
 					if (personelDenklestirme.getDurum()) {
@@ -979,15 +982,15 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						continue;
 					}
 					Personel personel = personelDenklestirme.getPdksPersonel();
-					hataliPersoneller.add(new SelectItem(personel.getPdksSicilNo(), personel.getAdSoyad() + " [ " + personel.getPdksSicilNo() + " ]"));
+					String perNo = personel.getPdksSicilNo();
+					perNoList.add(perNo);
+					hataliPersoneller.add(new SelectItem(perNo, personel.getAdSoyad() + " [ " + perNo + " ]"));
 					if (!kayitVar)
-						kayitVar = personel.getPdksSicilNo().equals(hataliSicilNo);
+						kayitVar = perNo.equals(hataliSicilNo);
 				}
-				if (!kayitVar) {
-					sicilNo = (String) hataliPersoneller.get(0).getValue();
-					hataliSicilNo = null;
-				}
-
+				if (!kayitVar)
+					hataliSicilNo = perNoList.contains(sicilNo) ? sicilNo : (hataliPersoneller.isEmpty() ? null : (String) hataliPersoneller.get(0).getValue());
+				perNoList = null;
 			}
 			hataliPuantajGoster = !list.isEmpty();
 			list = null;
@@ -5697,6 +5700,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			altBolumList = null;
 			seciliEkSaha4Id = null;
 			aylikPuantajList.clear();
+			if (seciliEkSaha3Id != null)
+				fillHataliPersonelleriGuncelle();
 		}
 
 		return "";
@@ -5733,10 +5738,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			aylikPuantajList.clear();
 
 		} else {
-			hataliPersonelleriGuncelle();
+
 			altBolumList = null;
 			seciliEkSaha4Id = null;
 		}
+		if (seciliEkSaha4Id != null)
+			fillHataliPersonelleriGuncelle();
 
 		return "";
 	}

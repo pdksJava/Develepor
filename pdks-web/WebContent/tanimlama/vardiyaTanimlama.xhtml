@@ -13,7 +13,14 @@
 				<rich:panel style="vardiyaGun" header="#{ortakIslemler.getMenuUserAdi(vardiyaHome.session,'vardiyaTanimlama')}">
 					<a4j:outputPanel id="anaForm">
 						<h:panelGrid columns="1">
-
+							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
+								<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
+								<h:selectOneMenu value="#{vardiyaHome.seciliSirket}">
+									<s:selectItems var="comp" value="#{vardiyaHome.pdksSirketList}" label="#{comp.ad}" noSelectionLabel="Lütfen seçiniz" />
+									<s:convertEntity />
+									<a4j:support event="onchange" reRender="anaForm" status="ajaxStatus" ajaxSingle="true" action="#{vardiyaHome.fillVardiyalar()}" />
+								</h:selectOneMenu>
+							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaHome.pasifGoster!=null}">
 								<ui:define name="label">Pasif Göster</ui:define>
 								<h:selectBooleanCheckbox value="#{vardiyaHome.pasifGoster}">
@@ -491,23 +498,24 @@
 
 									</s:decorate>
 									<a4j:outputPanel id="modeller">
-									<rich:simpleTogglePanel rendered="#{vardiyaHome.calismaModeliList.size()+vardiyaHome.calismaModeliKayitliList.size()>1}" switchType="client"
-										label="Çalışma Modelleri" height="110" opened="true">
+										<rich:simpleTogglePanel rendered="#{vardiyaHome.calismaModeliList.size()+vardiyaHome.calismaModeliKayitliList.size()>1}" switchType="client"
+											label="Çalışma Modelleri" height="110" opened="true">
 
-										<rich:listShuttle sourceValue="#{vardiyaHome.calismaModeliList}" fastOrderControlsVisible="false" orderControlsVisible="false"
-											targetValue="#{vardiyaHome.calismaModeliKayitliList}" var="calismaModeli"
-											copyControlLabel="#{messages['listShuttle.etiket.copyControlLabel']}"
-											removeControlLabel="#{messages['listShuttle.etiket.removeControlLabel']}"
-											copyAllControlLabel="#{messages['listShuttle.etiket.copyAllControlLabel']}"
-											removeAllControlLabel="#{messages['listShuttle.etiket.removeAllControlLabel']}" required="true"
-											requiredMessage="#{ortakIslemler.calismaModeliAciklama()} seçiniz">
-											<h:column>
-												<h:outputText value="#{calismaModeli.aciklama}" />
-											</h:column>
-											<s:convertEntity />
-										</rich:listShuttle>
+											<rich:listShuttle sourceValue="#{vardiyaHome.calismaModeliList}" fastOrderControlsVisible="false" orderControlsVisible="false"
+												targetValue="#{vardiyaHome.calismaModeliKayitliList}" var="calismaModeli"
+												copyControlLabel="#{messages['listShuttle.etiket.copyControlLabel']}"
+												removeControlLabel="#{messages['listShuttle.etiket.removeControlLabel']}"
+												copyAllControlLabel="#{messages['listShuttle.etiket.copyAllControlLabel']}"
+												removeAllControlLabel="#{messages['listShuttle.etiket.removeAllControlLabel']}" required="true"
+												requiredMessage="#{ortakIslemler.calismaModeliAciklama()} seçiniz">
+												<h:column>
+													<h:outputText value="#{calismaModeli.aciklama}" />
+												</h:column>
+												<s:convertEntity />
+											</rich:listShuttle>
 
-									</rich:simpleTogglePanel></a4j:outputPanel>
+										</rich:simpleTogglePanel>
+									</a4j:outputPanel>
 									<rich:simpleTogglePanel rendered="#{vardiyaHome.yemekIzinList.size()+ vardiyaHome.yemekIzinKayitliList.size()>1}" switchType="client"
 										label="Dinlenmeler" height="110" opened="true">
 

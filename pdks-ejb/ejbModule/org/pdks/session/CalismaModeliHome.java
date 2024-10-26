@@ -59,13 +59,13 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	private List<CalismaModeli> calismaModeliList;
 	private List<VardiyaSablonu> sablonList;
-	private List<Sirket> sirketList;
+	private List<Sirket> sirketList, pdksSirketList;
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), kayitliVardiyaList = new ArrayList<Vardiya>();
 	private List<CalismaModeliGun> cmGunList;
 	private List<Departman> departmanList;
 	private List<SelectItem> haftaTatilGunleri;
 	private HashMap<Integer, List<CalismaModeliGun>> cmGunMap;
-
+	private Sirket seciliSirket;
 	private CalismaModeliGun cmgPage = new CalismaModeliGun();
 
 	private Boolean pasifGoster = Boolean.FALSE, hareketKaydiVardiyaBul = Boolean.FALSE, saatlikCalismaVar = false, otomatikFazlaCalismaOnaylansinVar = false, izinGoster = false;
@@ -94,6 +94,10 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			xCalismaModeli = new CalismaModeli();
 			if (!saatlikCalismaVar)
 				xCalismaModeli.setAylikMaas(Boolean.TRUE);
+			if (seciliSirket != null) {
+				xCalismaModeli.setSirket(seciliSirket);
+				xCalismaModeli.setDepartman(seciliSirket.getDepartman());
+			}
 		}
 
 		setCalismaModeli(xCalismaModeli);
@@ -277,7 +281,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 		} else
 			kayitliVardiyaList = new ArrayList<Vardiya>();
- 		sirketList = ortakIslemler.getDepartmanPDKSSirketList(cm.getDepartman(), session);
+		sirketList = ortakIslemler.getDepartmanPDKSSirketList(cm.getDepartman(), session);
 
 		return "";
 	}
@@ -293,6 +297,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		pasifGoster = false;
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		pdksSirketList = ortakIslemler.getDepartmanPDKSSirketList(null, session);
 		fillCalismaModeliList();
 	}
 
@@ -396,13 +401,24 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		saatlikCalismaVar = ortakIslemler.getParameterKey("saatlikCalismaVar").equals("1");
 		otomatikFazlaCalismaOnaylansinVar = ortakIslemler.getParameterKey("otomatikFazlaCalismaOnaylansin").equals("1");
 		calismaModeli = new CalismaModeli();
-		// HashMap parametreMap = new HashMap();
-		// if (pasifGoster == false)
-		// parametreMap.put("durum", Boolean.TRUE);
-		// if (session != null)
-		// parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		// calismaModeliList = pdksEntityController.getObjectByInnerObjectList(parametreMap, CalismaModeli.class);
+
 		calismaModeliList = pdksEntityController.getSQLParamByFieldList(CalismaModeli.TABLE_NAME, pasifGoster == false ? CalismaModeli.COLUMN_NAME_DURUM : null, Boolean.TRUE, CalismaModeli.class, session);
+		if (seciliSirket != null) {
+			Departman seciliDepartman = seciliSirket.getDepartman();
+			for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
+				CalismaModeli cmd = (CalismaModeli) iterator.next();
+				Departman departman = cmd.getDepartman();
+				Sirket sirket = cmd.getSirket();
+				boolean sil = false;
+				if (departman != null && !seciliDepartman.getId().equals(departman.getId()))
+					sil = true;
+				if (sirket != null && !seciliSirket.getId().equals(sirket.getId()))
+					sil = true;
+				if (sil)
+					iterator.remove();
+			}
+
+		}
 		if (!hareketKaydiVardiyaBul || !otomatikFazlaCalismaOnaylansinVar) {
 			List<CalismaModeli> pasifList = new ArrayList<CalismaModeli>();
 			for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
@@ -586,6 +602,22 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	public void setSirketList(List<Sirket> sirketList) {
 		this.sirketList = sirketList;
+	}
+
+	public List<Sirket> getPdksSirketList() {
+		return pdksSirketList;
+	}
+
+	public void setPdksSirketList(List<Sirket> pdksSirketList) {
+		this.pdksSirketList = pdksSirketList;
+	}
+
+	public Sirket getSeciliSirket() {
+		return seciliSirket;
+	}
+
+	public void setSeciliSirket(Sirket seciliSirket) {
+		this.seciliSirket = seciliSirket;
 	}
 
 }
