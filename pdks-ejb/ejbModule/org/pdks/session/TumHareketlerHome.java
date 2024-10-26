@@ -164,7 +164,9 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals("tumHareketler");
 		if (!ayniSayfa)
 			authenticatedUser.setCalistigiSayfa("tumHareketler");
+
 		sayfaGiris(session);
+
 		ikRole = ortakIslemler.getIKRolSayfa(authenticatedUser) || authenticatedUser.isRaporKullanici();
 		setHareketList(new ArrayList<HareketKGS>());
 		HareketKGS hareket = new HareketKGS();
@@ -247,7 +249,9 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					if (!sirket.getPdks())
 						iterator.remove();
 				}
-				setDepartman(list.get(0).getDepartman());
+
+				if (!list.isEmpty())
+					setDepartman(list.get(0).getDepartman());
 			}
 
 			if (list.size() > 1)
@@ -552,7 +556,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					parametreMap.put(fieldName, idList);
 					if (session != null)
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
- 					List<KapiKGS> list1 = ortakIslemler.getParamList(false, idList, fieldName, parametreMap, KapiKGS.class, session);
+					List<KapiKGS> list1 = ortakIslemler.getParamList(false, idList, fieldName, parametreMap, KapiKGS.class, session);
 
 					for (KapiKGS kapiKGS : list1)
 						kapiMap.put(kapiKGS.getId(), kapiKGS.getKapiView());
@@ -567,7 +571,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					parametreMap.put(fieldName, idList);
 					if (session != null)
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
- 					List<PersonelKGS> list = ortakIslemler.getParamList(false, idList, fieldName, parametreMap, PersonelKGS.class, session);
+					List<PersonelKGS> list = ortakIslemler.getParamList(false, idList, fieldName, parametreMap, PersonelKGS.class, session);
 
 					perMap.clear();
 
