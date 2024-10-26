@@ -14,22 +14,24 @@
 				<rich:panel header="#{ortakIslemler.getMenuUserAdi(calismaModeliHome.session,'calismaModeliTanimlama')}">
 					<a4j:outputPanel id="anaForm">
 						<h:panelGrid columns="1">
-							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
-								<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
-								<h:selectOneMenu value="#{calismaModeliHome.seciliSirket}">
-									<s:selectItems var="comp" value="#{calismaModeliHome.pdksSirketList}" label="#{comp.ad}" noSelectionLabel="Lütfen seçiniz" />
-									<s:convertEntity />
-									<a4j:support event="onchange" reRender="anaForm" status="ajaxStatus" ajaxSingle="true" action="#{calismaModeliHome.fillCalismaModeliList()}" />
-								</h:selectOneMenu>
-							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and calismaModeliHome.pasifGoster!=null}">
-								<ui:define name="label">Pasif Göster</ui:define>
-								<h:selectBooleanCheckbox value="#{calismaModeliHome.pasifGoster}">
-									<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" reRender="anaForm" action="#{calismaModeliHome.fillCalismaModeliList()}" />
-								</h:selectBooleanCheckbox>
+							<c:if test="#{authenticatedUser.admin}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{ calismaModeliHome.pdksSirketList.size() gt 0}">
+									<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
+									<h:selectOneMenu value="#{calismaModeliHome.seciliSirket}">
+										<s:selectItems var="comp" value="#{calismaModeliHome.pdksSirketList}" label="#{comp.ad}" noSelectionLabel="Lütfen seçiniz" />
+										<s:convertEntity />
+										<a4j:support event="onchange" reRender="anaForm" status="ajaxStatus" ajaxSingle="true" action="#{calismaModeliHome.fillCalismaModeliList()}" />
+									</h:selectOneMenu>
+								</s:decorate>
+								<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and calismaModeliHome.pasifGoster!=null}">
+									<ui:define name="label">Pasif Göster</ui:define>
+									<h:selectBooleanCheckbox value="#{calismaModeliHome.pasifGoster}">
+										<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" reRender="anaForm" action="#{calismaModeliHome.fillCalismaModeliList()}" />
+									</h:selectBooleanCheckbox>
 
 
-							</s:decorate>
+								</s:decorate>
+							</c:if>
 							<rich:dataTable rowClasses="acik,koyu" value="#{calismaModeliHome.calismaModeliList}" var="calismaModeli" rows="40" rowKeyVar="row"
 								id="sablonTable">
 								<f:facet name="header">

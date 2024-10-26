@@ -12,14 +12,16 @@
 			<a4j:region>
 				<rich:panel header="#{ortakIslemler.getMenuUserAdi(vardiyaSablonuHome.session,'vardiyaSablonTanimlama')}">
 					<h:panelGrid columns="1">
-						<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
+						<c:if test="#{authenticatedUser.admin}">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaSablonuHome.pdksSirketList.size() gt 0}">
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 							<h:selectOneMenu value="#{vardiyaSablonuHome.seciliSirket}">
 								<s:selectItems var="comp" value="#{vardiyaSablonuHome.pdksSirketList}" label="#{comp.ad}" noSelectionLabel="Lütfen seçiniz" />
 								<s:convertEntity />
-								<a4j:support event="onchange" reRender="anaForm" status="ajaxStatus" ajaxSingle="true" action="#{vardiyaSablonuHome.fillPdksVardiyaSablonList()}" />
+								<a4j:support event="onchange" reRender="anaForm" status="ajaxStatus" ajaxSingle="true"
+									action="#{vardiyaSablonuHome.fillPdksVardiyaSablonList()}" />
 							</h:selectOneMenu>
-						</s:decorate>
+						</s:decorate></c:if>
 						<a4j:outputPanel id="anaForm">
 							<rich:dataTable rowClasses="acik,koyu" value="#{vardiyaSablonuHome.vardiyaSablonList}" var="vardiyaSablon" rows="20" rowKeyVar="row"
 								id="sablonTable">
