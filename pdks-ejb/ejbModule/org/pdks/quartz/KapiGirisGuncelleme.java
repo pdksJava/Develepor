@@ -55,6 +55,8 @@ public class KapiGirisGuncelleme implements Serializable {
 
 	private static boolean calisiyor = Boolean.FALSE;
 
+	private static Boolean kapiGirisGuncelleDurum;
+
 	@Asynchronous
 	@SuppressWarnings("unchecked")
 	@Transactional
@@ -146,12 +148,27 @@ public class KapiGirisGuncelleme implements Serializable {
 		ortakIslemler.kapiGirisGuncelle(PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(new Date(), -61)), null, session);
 	}
 
+	public boolean kapiGirisGuncellemeKontrol(Session session) {
+		if (kapiGirisGuncelleDurum == null)
+			kapiGirisGuncelleDurum = ortakIslemler.isExisStoreProcedure(SP_NAME, session);
+
+		return kapiGirisGuncelleDurum;
+	}
+
 	public static boolean isCalisiyor() {
 		return calisiyor;
 	}
 
 	public static void setCalisiyor(boolean calisiyor) {
 		KapiGirisGuncelleme.calisiyor = calisiyor;
+	}
+
+	public static Boolean getKapiGirisGuncelleDurum() {
+		return kapiGirisGuncelleDurum;
+	}
+
+	public static void setKapiGirisGuncelleDurum(Boolean kapiGirisGuncelleDurum) {
+		KapiGirisGuncelleme.kapiGirisGuncelleDurum = kapiGirisGuncelleDurum;
 	}
 
 }

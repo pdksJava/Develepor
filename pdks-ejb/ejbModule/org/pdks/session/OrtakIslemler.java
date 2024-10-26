@@ -827,6 +827,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public void kapiGirisGuncelle(Date basTarih, Date bitTarih, Session session) throws Exception {
 		String name = KapiGirisGuncelleme.SP_NAME;
+		boolean durum = false;
 		if (session != null && isExisStoreProcedure(name, session)) {
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 			StringBuffer sp = new StringBuffer(KapiGirisGuncelleme.SP_NAME);
@@ -861,11 +862,13 @@ public class OrtakIslemler implements Serializable {
 					list = null;
 
 				}
+				durum = true;
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
 
 		}
+		KapiGirisGuncelleme.setKapiGirisGuncelleDurum(durum);
 	}
 
 	/**
@@ -9219,15 +9222,15 @@ public class OrtakIslemler implements Serializable {
 		IzinTipi izinTipiSSK = null;
 		if (izinGirebilir && (user.isAdmin() || user.isIK())) {
 			HashMap hashMap = new HashMap();
-//			if (!user.isIKAdmin() && user.isIK())
-//				hashMap.put("departman.id=", authenticatedUser.getDepartman().getId());
-//			hashMap.put("izinTipiTanim.kodu like", "%I%");
-//			// hashMap.put("izinTipiTanim.kodu=", IzinTipi.SSK_ISTIRAHAT);
-//			hashMap.put("personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
-//			hashMap.put("durum=", Boolean.TRUE);
-//			if (session != null)
-//				hashMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-//			izinTipiSSK = (IzinTipi) pdksEntityController.getObjectByInnerObjectInLogic(hashMap, IzinTipi.class);
+			// if (!user.isIKAdmin() && user.isIK())
+			// hashMap.put("departman.id=", authenticatedUser.getDepartman().getId());
+			// hashMap.put("izinTipiTanim.kodu like", "%I%");
+			// // hashMap.put("izinTipiTanim.kodu=", IzinTipi.SSK_ISTIRAHAT);
+			// hashMap.put("personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+			// hashMap.put("durum=", Boolean.TRUE);
+			// if (session != null)
+			// hashMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+			// izinTipiSSK = (IzinTipi) pdksEntityController.getObjectByInnerObjectInLogic(hashMap, IzinTipi.class);
 			StringBuffer sb = new StringBuffer();
 			sb.append("SELECT I.*  from " + IzinTipi.TABLE_NAME + "  I " + PdksEntityController.getSelectLOCK());
 			sb.append(" INNER JOIN " + Tanim.TABLE_NAME + "  T " + PdksEntityController.getJoinLOCK() + " ON T." + Tanim.COLUMN_NAME_ID + " = I." + IzinTipi.COLUMN_NAME_IZIN_TIPI);
