@@ -9219,15 +9219,32 @@ public class OrtakIslemler implements Serializable {
 		IzinTipi izinTipiSSK = null;
 		if (izinGirebilir && (user.isAdmin() || user.isIK())) {
 			HashMap hashMap = new HashMap();
-			if (!user.isIKAdmin() && user.isIK())
-				hashMap.put("departman.id=", authenticatedUser.getDepartman().getId());
-			hashMap.put("izinTipiTanim.kodu like", "%I%");
-			// hashMap.put("izinTipiTanim.kodu=", IzinTipi.SSK_ISTIRAHAT);
-			hashMap.put("personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
-			hashMap.put("durum=", Boolean.TRUE);
+//			if (!user.isIKAdmin() && user.isIK())
+//				hashMap.put("departman.id=", authenticatedUser.getDepartman().getId());
+//			hashMap.put("izinTipiTanim.kodu like", "%I%");
+//			// hashMap.put("izinTipiTanim.kodu=", IzinTipi.SSK_ISTIRAHAT);
+//			hashMap.put("personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+//			hashMap.put("durum=", Boolean.TRUE);
+//			if (session != null)
+//				hashMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+//			izinTipiSSK = (IzinTipi) pdksEntityController.getObjectByInnerObjectInLogic(hashMap, IzinTipi.class);
+			StringBuffer sb = new StringBuffer();
+			sb.append("SELECT I.*  from " + IzinTipi.TABLE_NAME + "  I " + PdksEntityController.getSelectLOCK());
+			sb.append(" INNER JOIN " + Tanim.TABLE_NAME + "  T " + PdksEntityController.getJoinLOCK() + " ON T." + Tanim.COLUMN_NAME_ID + " = I." + IzinTipi.COLUMN_NAME_IZIN_TIPI);
+			sb.append(" AND T." + Tanim.COLUMN_NAME_KODU + " LIKE :k");
+			sb.append(" WHERE I." + IzinTipi.COLUMN_NAME_GIRIS_TIPI + " <> :g AND I." + IzinTipi.COLUMN_NAME_DURUM + " = 1");
+			if (!user.isIKAdmin() && user.isIK()) {
+				sb.append(" AND " + IzinTipi.COLUMN_NAME_DEPARTMAN + " = :t ");
+				hashMap.put("t", authenticatedUser.getDepartman().getId());
+			}
+			hashMap.put("k", "%I%");
+			hashMap.put("g", IzinTipi.GIRIS_TIPI_YOK);
 			if (session != null)
 				hashMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			izinTipiSSK = (IzinTipi) pdksEntityController.getObjectByInnerObjectInLogic(hashMap, IzinTipi.class);
+			List<IzinTipi> idList = pdksEntityController.getObjectBySQLList(sb, hashMap, IzinTipi.class);
+			if (!idList.isEmpty())
+				izinTipiSSK = idList.get(0);
+			idList = null;
 		}
 		user.setIzinGirebilir(izinGirebilir);
 		user.setIzinSSKGirebilir(izinTipiSSK != null);
@@ -12690,10 +12707,7 @@ public class OrtakIslemler implements Serializable {
 					PersonelDenklestirme denklestirme = denkMap.get(key);
 					if (denklestirme.getSutIzniPersonelDonemselDurum() == null) {
 						denklestirme.setSutIzniPersonelDonemselDurum(sutIzniPersonelDonemselDurum);
-						if (denklestirme.isSutIzniVar() == false) {
- 							pdksEntityController.saveOrUpdate(session, entityManager, denklestirme);
-							session.flush();
-						}
+
 					}
 
 					if (sutIzniPersonelDonemselDurum == null)
