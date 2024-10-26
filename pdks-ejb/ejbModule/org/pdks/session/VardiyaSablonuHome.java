@@ -53,9 +53,10 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), vardiyaCalisanList = new ArrayList<Vardiya>(), isKurVardiyaList = new ArrayList<Vardiya>();
 	private boolean vardiyaVar = Boolean.FALSE, isKur = Boolean.FALSE, isKurGoster = Boolean.FALSE;
 	private Vardiya lastVardiya;
-	private List<Sirket> sirketList;
+	private List<Sirket> sirketList, pdksSirketList;
 	private List<Departman> departmanList = new ArrayList<Departman>();
 	private List<CalismaModeli> modelList;
+	private Sirket seciliSirket;
 	private Session session;
 
 	@Override
@@ -78,8 +79,13 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 	}
 
 	public void kayitGuncelle(VardiyaSablonu sablonu) {
-		if (sablonu == null)
+		if (sablonu == null) {
 			sablonu = new VardiyaSablonu();
+			if (seciliSirket != null) {
+				sablonu.setSirket(seciliSirket);
+				sablonu.setDepartman(seciliSirket.getDepartman());
+			}
+		}
 		setInstance(sablonu);
 		fillPdksVardiyaList();
 		sirketList = ortakIslemler.getDepartmanPDKSSirketList(sablonu.getDepartman(), session);
@@ -190,6 +196,22 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 			}
 			vardiyaSablonList.clear();
 			isKurGoster = Boolean.FALSE;
+			if (seciliSirket != null) {
+				Departman seciliDepartman = seciliSirket.getDepartman();
+				for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
+					VardiyaSablonu vardiyaSablonu = (VardiyaSablonu) iterator.next();
+					Departman departman = vardiyaSablonu.getDepartman();
+					Sirket sirket = vardiyaSablonu.getSirket();
+					boolean sil = false;
+					if (departman != null && !seciliDepartman.getId().equals(departman.getId()))
+						sil = true;
+					if (sirket != null && !seciliSirket.getId().equals(sirket.getId()))
+						sil = true;
+					if (sil)
+						iterator.remove();
+				}
+
+			}
 			if (!sablonList.isEmpty()) {
 				sablonList = PdksUtil.sortListByAlanAdi(sablonList, "sonIslemTarihi", Boolean.TRUE);
 				for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
@@ -310,6 +332,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		pdksSirketList = ortakIslemler.getDepartmanPDKSSirketList(null, session);
 		fillPdksVardiyaSablonList();
 		if (authenticatedUser.isAdmin())
 			fillBagliOlduguDepartmanTanimList();
@@ -421,5 +444,21 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 
 	public void setSirketList(List<Sirket> sirketList) {
 		this.sirketList = sirketList;
+	}
+
+	public List<Sirket> getPdksSirketList() {
+		return pdksSirketList;
+	}
+
+	public void setPdksSirketList(List<Sirket> pdksSirketList) {
+		this.pdksSirketList = pdksSirketList;
+	}
+
+	public Sirket getSeciliSirket() {
+		return seciliSirket;
+	}
+
+	public void setSeciliSirket(Sirket seciliSirket) {
+		this.seciliSirket = seciliSirket;
 	}
 }
