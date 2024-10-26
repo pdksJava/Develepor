@@ -270,6 +270,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		HashMap<Long, Double> netSureMap = new HashMap<Long, Double>();
 		for (AylikPuantaj ap : puantajList) {
 			PersonelDenklestirme pd = ap.getPersonelDenklestirme();
+			Personel personel = pd.getPdksPersonel();
+			logger.debug(personel.getPdksSicilNo() + " " + personel.getAdSoyad());
 			PersonelDonemselDurum sutIzniPersonelDonemselDurum = pd != null ? pd.getSutIzniPersonelDonemselDurum() : null;
 			PersonelView personelView = null;
 			VardiyaGun sonVardiyaGun = null;
