@@ -79,10 +79,12 @@
 							<s:decorate template="/layout/edit.xhtml">
 								<a4j:commandButton status="ajaxStatus" value="Listele" action="#{tumHareketlerHome.fillHareketList}" reRender="hareketPanel" />
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
-								<a4j:commandButton status="ajaxStatus" value="#{ortakIslemler.getParameterKey('kapiGirisSistemAdi')} Güncelle"
-									action="#{tumHareketlerHome.kapiGirisGuncellemeBasla}" reRender="hareketPanel" />
-							</s:decorate>
+							<ui:fragment rendered="#{kapiGirisGuncelleme.kapiGirisGuncellemeKontrol(tumHareketlerHome.session)}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
+									<a4j:commandButton status="ajaxStatus" value="#{ortakIslemler.getParameterKey('kapiGirisSistemAdi')} Güncelle"
+										action="#{tumHareketlerHome.kapiGirisGuncellemeBasla}" reRender="hareketPanel" />
+								</s:decorate>
+							</ui:fragment>
 						</h:panelGrid>
 					</h:panelGrid>
 				</a4j:outputPanel>
