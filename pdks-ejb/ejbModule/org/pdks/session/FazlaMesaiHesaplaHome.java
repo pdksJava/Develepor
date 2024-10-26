@@ -1195,8 +1195,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			}
 
 			List<PersonelDenklestirme> personelDenklestirmeler = null;
-			if (!perIdList.isEmpty())
+			if (!perIdList.isEmpty()) {
 				personelDenklestirmeler = getPdksPersonelDenklestirmeler(perIdList);
+				if (personelDenklestirmeler.isEmpty() && denklestirmeAyDurum && hataliPuantajGoster != null && hataliPuantajGoster) {
+					hataliPuantajGoster = false;
+					personelDenklestirmeler = getPdksPersonelDenklestirmeler(perIdList);
+					if (!personelDenklestirmeler.isEmpty())
+						PdksUtil.addMessageInfo("Hatalı personel puantajı bulunmadı.");
+				}
+			}
+
 			else
 				personelDenklestirmeler = new ArrayList<PersonelDenklestirme>();
 

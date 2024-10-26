@@ -132,7 +132,7 @@
 								<TABLE width="45%">
 									<TR>
 										<TD width="35%" valign="top"><a4j:commandButton action="#{fazlaMesaiHesaplaHome.fillPersonelDenklestirmeList(null)}"
-												value="Fazla Mesai Getir" rendered="#{not empty fazlaMesaiHesaplaHome.pdksSirketList}" reRender="denklestirmeDonemiTable,hareketTables"
+												value="Fazla Mesai Getir" rendered="#{not empty fazlaMesaiHesaplaHome.pdksSirketList}" reRender="denklestirmeDonemiTable,hataliPuantajGoster,hareketTables"
 												onclick="#{rich:component('wait')}.show()" oncomplete="#{rich:component('wait')}.hide()" /></TD>
 
 										<TD width="35%" valign="top"><ui:fragment rendered="#{not empty fazlaMesaiHesaplaHome.aylikPuantajList}">
@@ -208,7 +208,7 @@
 												<f:selectItem itemLabel="Lütfen seçiniz" />
 												<f:selectItems value="#{fazlaMesaiHesaplaHome.hataliPersoneller}" />
 												<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaMesaiHesaplaHome.fillHataliPersonelDenklestirmeList()}" ajaxSingle="true"
-													reRender="denklestirmeDonemiTable,girisler" />
+													reRender="denklestirmeDonemiTable,girisler,hataliPuantajGoster" />
 											</h:selectOneMenu>
 										</s:decorate>
 									</h:panelGrid>
