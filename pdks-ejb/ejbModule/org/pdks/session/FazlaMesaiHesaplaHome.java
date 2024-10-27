@@ -988,8 +988,20 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (!kayitVar)
 						kayitVar = perNo.equals(hataliSicilNo);
 				}
-				if (!kayitVar)
-					hataliSicilNo = perNoList.contains(sicilNo) ? sicilNo : (hataliPersoneller.isEmpty() ? null : (String) hataliPersoneller.get(0).getValue());
+				if (list.isEmpty()) {
+					PdksUtil.addMessageInfo("Hatalı personel puantajı bulunmadı.");
+					hataliSicilNo = "";
+				} else if (!kayitVar) {
+					if (perNoList.contains(sicilNo))
+						hataliSicilNo = sicilNo;
+					else {
+						hataliSicilNo = (String) hataliPersoneller.get(0).getValue();
+						sicilNo = hataliSicilNo;
+					}
+				}
+				if (hataliPersoneller.isEmpty())
+					hataliPersoneller = null;
+
 				perNoList = null;
 			}
 			hataliPuantajGoster = !list.isEmpty();
@@ -2747,11 +2759,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 		if (testDurum)
 			logger.info("fillPersonelDenklestirmeDevam 9300 " + PdksUtil.getCurrentTimeStampStr());
-		hataliPersoneller = null;
+
 		if (denklestirmeAyDurum) {
 			boolean tekSicil = PdksUtil.hasStringValue(sicilNo);
-			if (tekSicil == false) {
-				hataliPersoneller = new ArrayList<SelectItem>();
+			if (tekSicil == false || (hataliPersoneller != null && hataliPersoneller.size() > 1)) {
+				if (hataliPersoneller == null)
+					hataliPersoneller = new ArrayList<SelectItem>();
+				else
+					hataliPersoneller.clear();
 				for (AylikPuantaj ap : puantajList) {
 					PersonelDenklestirme pd = ap.getPersonelDenklestirme();
 					if (pd.getDurum().equals(Boolean.FALSE)) {
@@ -2759,8 +2774,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						hataliPersoneller.add(new SelectItem(personel.getPdksSicilNo(), personel.getAdSoyad() + " [ " + personel.getPdksSicilNo() + " ]"));
 					}
 				}
-			}
-		}
+				if (hataliPersoneller.isEmpty())
+					hataliPersoneller = null;
+			} else
+				hataliPersoneller = null;
+		} else
+			hataliPersoneller = null;
 		setAylikPuantajList(puantajList);
 		return puantajList;
 	}

@@ -1843,7 +1843,7 @@ public class OrtakIslemler implements Serializable {
 		sb.append(" WHERE P." + Notice.COLUMN_NAME_ADI + " = :t");
 		fields.put("t", name);
 		if (active != null) {
-			sb.append(" AND P." + Tanim.COLUMN_NAME_DURUM + " = :d ");
+			sb.append(" AND P." + Notice.COLUMN_NAME_DURUM + " = :d ");
 			fields.put("d", active ? 1 : 0);
 		}
 		if (session != null)
