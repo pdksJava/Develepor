@@ -2762,24 +2762,31 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 		if (denklestirmeAyDurum) {
 			boolean tekSicil = PdksUtil.hasStringValue(sicilNo);
-			if (tekSicil == false || (hataliPersoneller != null && hataliPersoneller.size() > 1)) {
-				if (hataliPersoneller == null)
-					hataliPersoneller = new ArrayList<SelectItem>();
-				else
+			if (hataliPersoneller == null)
+				hataliPersoneller = new ArrayList<SelectItem>();
+			if (tekSicil == false)
+				if (hataliPersoneller != null)
 					hataliPersoneller.clear();
-				for (AylikPuantaj ap : puantajList) {
-					PersonelDenklestirme pd = ap.getPersonelDenklestirme();
-					if (pd.getDurum().equals(Boolean.FALSE)) {
-						Personel personel = pd.getPdksPersonel();
-						hataliPersoneller.add(new SelectItem(personel.getPdksSicilNo(), personel.getAdSoyad() + " [ " + personel.getPdksSicilNo() + " ]"));
+
+			for (AylikPuantaj ap : puantajList) {
+				PersonelDenklestirme pd = ap.getPersonelDenklestirme();
+				if (pd.getDurum().equals(Boolean.FALSE)) {
+					Personel personel = pd.getPdksPersonel();
+					boolean ekle = true;
+					if (tekSicil) {
+						for (SelectItem st : hataliPersoneller) {
+							if (st.getValue().equals(sicilNo))
+								ekle = false;
+						}
 					}
+					if (ekle)
+						hataliPersoneller.add(new SelectItem(personel.getPdksSicilNo(), personel.getAdSoyad() + " [ " + personel.getPdksSicilNo() + " ]"));
 				}
-				if (hataliPersoneller.isEmpty())
-					hataliPersoneller = null;
-			} else
+			}
+			if (hataliPersoneller.isEmpty())
 				hataliPersoneller = null;
-		} else
-			hataliPersoneller = null;
+
+		}
 		setAylikPuantajList(puantajList);
 		return puantajList;
 	}
