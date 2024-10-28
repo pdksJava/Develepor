@@ -664,8 +664,8 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				sb.append(" AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 				sb.append(" WHERE V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :bitTarih");
 				sb.append(" AND V." + VardiyaGun.COLUMN_NAME_DURUM + " = 1");
-				// sb.append(" AND V." + VardiyaGun.COLUMN_NAME_PERSONEL + ":pId ");
-				// map.put("pId", personelIdler);
+				sb.append(" AND V." + VardiyaGun.COLUMN_NAME_PERSONEL + ":pId ");
+				map.put("pId", personelIdler);
 				sb.append(" ORDER BY V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 				map.put("basTarih", PdksUtil.getDate(basTarih));
 				map.put("bitTarih", PdksUtil.getDate(bitTarih));

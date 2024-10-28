@@ -4380,8 +4380,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			} else
 				bolumKatlari = new ArrayList<BolumKat>();
 			AylikPuantaj aylikPuantajToplam = new AylikPuantaj();
+			try {
+				puantajYetkilendir(null, aylikPuantaj, aylikPuantajToplam, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
-			puantajYetkilendir(null, aylikPuantaj, aylikPuantajToplam, null);
 		}
 
 	}
