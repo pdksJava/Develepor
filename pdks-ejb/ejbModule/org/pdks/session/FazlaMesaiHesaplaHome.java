@@ -407,7 +407,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					else
 						sadeceFazlaMesai = Boolean.TRUE;
 					if ((ikRole) && veriLastMap.containsKey("sicilNo"))
-						sicilNo = (String) veriLastMap.get("sicilNo");
+						setSicilNo((String) veriLastMap.get("sicilNo"));
 					if (veriLastMap.containsKey("hataliPuantajGoster"))
 						hataliPuantajGoster = new Boolean((String) veriLastMap.get("hataliPuantajGoster"));
 					if (veriLastMap.containsKey("sayfaURL")) {
@@ -441,7 +441,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (veriMap.containsKey("tesisId"))
 						tesisIdStr = veriMap.get("tesisId");
 					if (veriMap.containsKey("sicilNo"))
-						sicilNo = veriMap.get("sicilNo");
+						setSicilNo(veriMap.get("sicilNo"));
 					if (veriMap.containsKey("hataliPuantajGoster"))
 						hataliPuantajGoster = new Boolean((String) veriMap.get("hataliPuantajGoster"));
 					if (veriMap.containsKey("gorevYeriId"))
@@ -579,7 +579,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		kullaniciPersonel = ortakIslemler.getKullaniciPersonel(userLogin);
 		if (kullaniciPersonel) {
 			tesisList = null;
-			sicilNo = userLogin.getPdksPersonel().getPdksSicilNo();
+			setSicilNo(userLogin.getPdksPersonel().getPdksSicilNo());
 		}
 
 		return "";
@@ -917,7 +917,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		else {
 			sicilYeniNo = ortakIslemler.getSicilNo(sicilNo);
 			if (sicilNo != null && !sicilYeniNo.equals(sicilNo))
-				sicilNo = sicilYeniNo;
+				setSicilNo(sicilYeniNo);
 			try {
 				fillPersonelDenklestirmeList(null);
 			} catch (Exception e) {
@@ -937,7 +937,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	@Transactional
 	public String fillBolumPersonelDenklestirmeList(Personel secPersonel) {
 		if (secPersonel != null && secPersonel.getEkSaha3() != null) {
-			sicilNo = secPersonel.getPdksSicilNo();
+			setSicilNo(secPersonel.getPdksSicilNo());
 			seciliEkSaha3Id = secPersonel.getEkSaha3().getId();
 			if (ekSaha4Tanim != null && secPersonel.getEkSaha4() != null) {
 				seciliEkSaha4Id = secPersonel.getEkSaha4().getId();
@@ -951,7 +951,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	public String fillHataliPersonelDenklestirmeList() {
 		if (PdksUtil.hasStringValue(hataliSicilNo)) {
-			sicilNo = hataliSicilNo;
+			setSicilNo(hataliSicilNo);
 			fillPersonelDenklestirmeList(hataliSicilNo);
 			fillHataliPersonelleriGuncelle();
 		}
@@ -990,7 +990,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (!kayitVar)
 						kayitVar = perNo.equals(hataliSicilNo);
 				}
-				if (list.isEmpty()) {
+				if (list.isEmpty() && PdksUtil.hasStringValue(bordroAdres) == false) {
 					PdksUtil.addMessageInfo("Hatalı personel puantajı bulunmadı.");
 					hataliSicilNo = "";
 				} else if (!kayitVar) {
@@ -998,7 +998,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						hataliSicilNo = sicilNo;
 					else {
 						hataliSicilNo = (String) hataliPersoneller.get(0).getValue();
-						sicilNo = hataliSicilNo;
+						if (PdksUtil.hasStringValue(bordroAdres) == false)
+							setSicilNo(hataliSicilNo);
 					}
 				}
 				if (hataliPersoneller.isEmpty())
@@ -1145,7 +1146,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 		departmanBolumAyni = sirket != null && sirket.isTesisDurumu() == false;
 		if (sicilNo != null)
-			sicilNo = sicilNo.trim();
+			setSicilNo(sicilNo.trim());
 		setHataYok(Boolean.FALSE);
 		if (denklestirmeDinamikAlanlar == null)
 			denklestirmeDinamikAlanlar = new ArrayList<Tanim>();
@@ -1181,7 +1182,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			for (Personel personel : donemPerList) {
 				if (PdksUtil.hasStringValue(sicilNo) == false || ortakIslemler.isStringEqual(sicilYeniNo, personel.getPdksSicilNo())) {
 					if (PdksUtil.hasStringValue(sicilNo) && personel.getPdksSicilNo().endsWith(sicilYeniNo))
-						sicilNo = personel.getPdksSicilNo();
+						setSicilNo(personel.getPdksSicilNo());
 					perIdList.add(personel.getId());
 				}
 
