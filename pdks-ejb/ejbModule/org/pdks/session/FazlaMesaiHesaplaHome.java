@@ -996,7 +996,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				} else if (!kayitVar) {
 					if (perNoList.contains(sicilNo))
 						hataliSicilNo = sicilNo;
-					else {
+					else if (!hataliPersoneller.isEmpty()) {
 						hataliSicilNo = (String) hataliPersoneller.get(0).getValue();
 						if (PdksUtil.hasStringValue(bordroAdres) == false)
 							setSicilNo(hataliSicilNo);
