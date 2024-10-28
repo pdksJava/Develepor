@@ -549,6 +549,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					setTesisId(Long.parseLong(tesisIdStr));
 				bolumDoldur();
 			} else if (veriLastMap == null || linkBordroAdres != null) {
+				setDenklestirmeAyDurum(fazlaMesaiOrtakIslemler.getDurum(denklestirmeAy));
+				if (linkBordroAdres != null && PdksUtil.hasStringValue(sicilNo)) {
+					inputPersonelNo = sicilNo;
+					hataliPuantajGoster = true;
+				}
 				if (inputPersonelNo == null || !(hataliPuantajGoster != null && hataliPuantajGoster && PdksUtil.hasStringValue(sicilNo)))
 					fillPersonelDenklestirmeList(null);
 				else {
@@ -947,17 +952,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	public String fillHataliPersonelDenklestirmeList() {
 		if (PdksUtil.hasStringValue(hataliSicilNo)) {
 			sicilNo = hataliSicilNo;
-
 			fillPersonelDenklestirmeList(hataliSicilNo);
 			fillHataliPersonelleriGuncelle();
-
 		}
 		return "";
 
 	}
 
 	private void fillHataliPersonelleriGuncelle() {
-
 		hataliPersoneller = null;
 		if (denklestirmeAyDurum) {
 			DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
@@ -2785,8 +2787,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			}
 			if (hataliPersoneller.isEmpty())
 				hataliPersoneller = null;
-
-		}
+		} else
+			hataliPersoneller = null;
 		setAylikPuantajList(puantajList);
 		return puantajList;
 	}
