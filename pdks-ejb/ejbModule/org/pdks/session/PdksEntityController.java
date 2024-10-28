@@ -1374,7 +1374,7 @@ public class PdksEntityController implements Serializable {
 				}
 				sb1.append(sb.toString() + " --> " + value + " " + class1.getName());
 				if (value != null)
-					logger.error(sb1.toString());
+					logger.debug(sb1.toString());
 				sb1 = null;
 			}
 			sb = null;
