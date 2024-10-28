@@ -318,7 +318,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			if (authenticatedUser.isIKSirket())
 				sb.append(" AND S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
 			sb.append(" AND S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d ");
-			
+
 			if (!authenticatedUser.isAdmin() && !authenticatedUser.isIKAdmin())
 				map.put("d", authenticatedUser.getDepartman().getId());
 			else if (departman != null)
@@ -498,9 +498,8 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					pdksVardiyaGun = vardiyalar.get(key);
 				fazlaMesai.setVardiyaGun(pdksVardiyaGun);
 			} else {
-				 
+
 				pdksVardiyaGun = (VardiyaGun) pdksEntityController.getSQLParamByFieldObject(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, fazlaMesai.getVardiyaGun().getId(), VardiyaGun.class, session);
-					 
 
 			}
 
@@ -735,7 +734,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						sb.append("SELECT F.* FROM " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 						sb.append(" INNER JOIN " + PersonelFazlaMesai.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " ON F." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 						sb.append(" AND F." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1 ");
-						sb.append(" WHERE V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " :t AND  V." + VardiyaGun.COLUMN_NAME_PERSONEL + "  :" + fieldName);
+						sb.append(" WHERE V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " =:t AND  V." + VardiyaGun.COLUMN_NAME_PERSONEL + "  :" + fieldName);
 						parametreMap2.clear();
 						parametreMap2.put("t", date);
 						parametreMap2.put(fieldName, idler);
@@ -1425,7 +1424,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 	@Transactional
 	public String mesaiSil() {
-		 
+
 		PersonelFazlaMesai mesai = (PersonelFazlaMesai) pdksEntityController.getSQLParamByFieldObject(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_ID, seciliHareket.getPersonelFazlaMesai().getId(), PersonelFazlaMesai.class, session);
 		if (mesai != null) {
 			try {

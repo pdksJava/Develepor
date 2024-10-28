@@ -1406,40 +1406,44 @@ public class PdksEntityController implements Serializable {
 			int size = PdksEntityController.LIST_MAX_SIZE - fieldsOrj.size();
 			List idInputList = new ArrayList(dataIdList);
 			String str = ":" + fieldName, sqlStr = sb.toString();
-			while (!idInputList.isEmpty()) {
-				HashMap map = new HashMap();
-				for (Iterator iterator = idInputList.iterator(); iterator.hasNext();) {
-					Object long1 = (Object) iterator.next();
-					idList.add(long1);
-					iterator.remove();
-					if (idList.size() + map.size() >= size)
-						break;
-				}
-				HashMap<String, Object> fields = new HashMap<String, Object>();
-				fields.putAll(fieldsOrj);
-				if (fields.containsKey(PdksEntityController.MAP_KEY_SESSION))
-					fields.remove(PdksEntityController.MAP_KEY_SESSION);
-				if (idList.size() > 1 || sqlStr.indexOf(str) < 1)
-					fields.put(fieldName, idList);
-				else {
-					sb = new StringBuffer(PdksUtil.replaceAll(sqlStr, str, " = :" + fieldName));
-					fields.put(fieldName, idList.get(0));
-				}
-				if (session != null)
-					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				try {
-					List list = getObjectBySQLList(sb, fields, class1);
-					if (!list.isEmpty())
-						veriList.addAll(list);
-					list = null;
-				} catch (Exception e) {
-					logger.error(sb + "\n" + e);
-					idInputList.clear();
-				}
+			if (dataIdList.size() == 1) {
+				fieldsOrj.put(fieldName, dataIdList);
+				veriList = getObjectBySQLList(sb, fieldsOrj, class1);
+			} else
+				while (!idInputList.isEmpty()) {
+					HashMap map = new HashMap();
+					for (Iterator iterator = idInputList.iterator(); iterator.hasNext();) {
+						Object long1 = (Object) iterator.next();
+						idList.add(long1);
+						iterator.remove();
+						if (idList.size() + map.size() >= size)
+							break;
+					}
+					HashMap<String, Object> fields = new HashMap<String, Object>();
+					fields.putAll(fieldsOrj);
+					if (fields.containsKey(PdksEntityController.MAP_KEY_SESSION))
+						fields.remove(PdksEntityController.MAP_KEY_SESSION);
+					if (idList.size() > 1 || sqlStr.indexOf(str) < 1)
+						fields.put(fieldName, idList);
+					else {
+						sb = new StringBuffer(PdksUtil.replaceAll(sqlStr, str, " = :" + fieldName));
+						fields.put(fieldName, idList.get(0));
+					}
+					if (session != null)
+						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+					try {
+						List list = getObjectBySQLList(sb, fields, class1);
+						if (!list.isEmpty())
+							veriList.addAll(list);
+						list = null;
+					} catch (Exception e) {
+						logger.error(sb + "\n" + e);
+						idInputList.clear();
+					}
 
-				fields = null;
-				idList.clear();
-			}
+					fields = null;
+					idList.clear();
+				}
 			idInputList = null;
 		} catch (Exception ex) {
 			logger.error(sb + "\n" + ex);
