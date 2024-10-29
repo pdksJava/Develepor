@@ -200,7 +200,7 @@
 								</TABLE>
 								<ui:fragment
 									rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and (fazlaMesaiHesaplaHome.seciliEkSaha3Id!=null or fazlaMesaiHesaplaHome.seciliEkSaha4Id!=null)}">
-									<h:panelGrid columns="1" rendered="#{not empty fazlaMesaiHesaplaHome.hataliPersoneller}">
+									<h:panelGrid columns="1" rendered="#{ortakIslemler.getParameterKey('hataliPersonelGuncelle')=='1' and not empty fazlaMesaiHesaplaHome.hataliPersoneller}">
 										<s:decorate template="/layout/edit.xhtml">
 											<ui:define name="label">Hatalı Personeller</ui:define>
 											<h:selectOneMenu value="#{fazlaMesaiHesaplaHome.hataliSicilNo}">
