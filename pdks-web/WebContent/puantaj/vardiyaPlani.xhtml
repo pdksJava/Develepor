@@ -82,8 +82,7 @@
 							<ui:define name="label">#{vardiyaGunHome.ekSaha4Tanim.aciklama}</ui:define>
 							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.ekSaha4Id}" requiredMessage="#{vardiyaGunHome.ekSaha4Tanim.aciklama} seçiniz!"
 								required="#{vardiyaGunHome.aramaSecenekleri.altBolumIdList.size()>1}">
-								<f:selectItem itemValue="-1" itemLabel="Hepsi" />
-								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.altBolumIdList}" />
+ 								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.altBolumIdList}" />
 								<a4j:support event="onchange" status="ajaxStatus" action="#{vardiyaGunHome.aylikPuantajList.clear()}" ajaxSingle="true"
 									reRender="vardiyaPanel,girisler" />
 							</h:selectOneMenu>

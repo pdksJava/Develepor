@@ -1138,7 +1138,7 @@ public class PdksEntityController implements Serializable {
 			String key = "v";
 			sb.append(" WHERE " + fieldName + " :" + key);
 			fields.put(key, value);
-			list = getSQLParamList((List) collection, sb, fieldName, fields, class1, session);
+			list = getSQLParamList((List) collection, sb, key, fields, class1, session);
 		} else {
 			if (PdksUtil.hasStringValue(fieldName)) {
 				if (value != null && value instanceof Boolean)
@@ -1409,14 +1409,23 @@ public class PdksEntityController implements Serializable {
 			if (dataIdList.size() == 1) {
 				fieldsOrj.put(fieldName, dataIdList);
 				veriList = getObjectBySQLList(sb, fieldsOrj, class1);
-			} else
+			} else {
+				int adet = 0;
+				for (String key : fieldsOrj.keySet()) {
+					if (!key.equals(PdksEntityController.MAP_KEY_SESSION) && !key.equals(fieldName)) {
+						Object object = fieldsOrj.get(key);
+						if (object instanceof Collection)
+							adet += ((Collection) object).size();
+						else
+							++adet;
+					}
+				}
 				while (!idInputList.isEmpty()) {
-					HashMap map = new HashMap();
 					for (Iterator iterator = idInputList.iterator(); iterator.hasNext();) {
 						Object long1 = (Object) iterator.next();
 						idList.add(long1);
 						iterator.remove();
-						if (idList.size() + map.size() >= size)
+						if (idList.size() + adet >= size)
 							break;
 					}
 					HashMap<String, Object> fields = new HashMap<String, Object>();
@@ -1440,10 +1449,11 @@ public class PdksEntityController implements Serializable {
 						logger.error(sb + "\n" + e);
 						idInputList.clear();
 					}
-
-					fields = null;
 					idList.clear();
+					fields = null;
+
 				}
+			}
 			idInputList = null;
 		} catch (Exception ex) {
 			logger.error(sb + "\n" + ex);

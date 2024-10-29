@@ -9950,18 +9950,33 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (ekSaha4Tanim != null) {
 			Long tesisId = aramaSecenekleri.getTesisId();
 
-			altBolumIdList = fazlaMesaiOrtakIslemler.getFazlaMesaiAltBolumList(aramaSecenekleri.getSirket(), tesisId != null ? String.valueOf(tesisId) : null, aramaSecenekleri.getEkSaha3Id(), denklestirmeAy != null ? aylikPuantajDonem : null, getDenklestirmeDurum(), session);
-
-			boolean eski = altBolumIdList.size() == 1;
+			List<SelectItem> list = fazlaMesaiOrtakIslemler.getFazlaMesaiAltBolumList(aramaSecenekleri.getSirket(), tesisId != null ? String.valueOf(tesisId) : null, aramaSecenekleri.getEkSaha3Id(), denklestirmeAy != null ? aylikPuantajDonem : null, getDenklestirmeDurum(), session);
+			altBolumIdList = new ArrayList<SelectItem>();
+			if (list.size() > 1) {
+				List<Personel> donemPerList = null;
+				try {
+					donemPerList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(aramaSecenekleri.getSirket(), tesisId != null ? String.valueOf(tesisId) : null, aramaSecenekleri.getEkSaha3Id(), null, denklestirmeAy != null ? aylikPuantajDonem : null, getDenklestirmeDurum(), session);
+				} catch (Exception e) {
+					logger.error(e);
+				}
+				if (donemPerList != null && donemPerList.size() > 100)
+					altBolumIdList.add(new SelectItem(null, "Seçiniz"));
+				else
+					altBolumIdList.add(new SelectItem(-1L, "Hepsi"));
+				donemPerList = null;
+			}
+			altBolumIdList.addAll(list);
+			boolean eski = list.size() == 1;
 			if (eski)
 				seciliEkSaha4Id = (Long) altBolumIdList.get(0).getValue();
 			else if (seciliEkSaha4Id != null) {
 
-				for (SelectItem st : altBolumIdList) {
+				for (SelectItem st : list) {
 					if (st.getValue().equals(seciliEkSaha4Id))
 						eski = true;
 				}
 			}
+			list = null;
 			if (!eski)
 				seciliEkSaha4Id = -1L;
 		} else

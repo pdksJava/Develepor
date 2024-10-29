@@ -299,6 +299,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	public String sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		hataliPersoneller = null;
 		userLogin = authenticatedUser;
@@ -745,6 +746,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 			}
 			if (bolumDoldurulmadi) {
+
 				if (tesisId != null || seciliEkSaha3Id != null || (sirket != null && sirket.isTesisDurumu() == false))
 					bolumDoldur();
 				if (seciliEkSaha3Id != null && ekSaha4Tanim != null)
@@ -936,6 +938,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	@Transactional
 	public String fillBolumPersonelDenklestirmeList(Personel secPersonel) {
+
 		if (secPersonel != null && secPersonel.getEkSaha3() != null) {
 			setSicilNo(secPersonel.getPdksSicilNo());
 			seciliEkSaha3Id = secPersonel.getEkSaha3().getId();
@@ -5752,19 +5755,37 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @return
 	 */
 	public String altBolumDoldur() {
+
 		aylikPuantajList.clear();
 		hataliPersoneller = null;
 		if (ekSaha4Tanim != null) {
-			altBolumList = fazlaMesaiOrtakIslemler.getFazlaMesaiAltBolumList(sirket, tesisId != null ? String.valueOf(tesisId) : null, seciliEkSaha3Id, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, sadeceFazlaMesai, session);
-			boolean eski = altBolumList.size() == 1;
+
+			List<SelectItem> list = fazlaMesaiOrtakIslemler.getFazlaMesaiAltBolumList(sirket, tesisId != null ? String.valueOf(tesisId) : null, seciliEkSaha3Id, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, sadeceFazlaMesai, session);
+			altBolumList = new ArrayList<SelectItem>();
+			if (list.size() > 1) {
+				List<Personel> donemPerList = null;
+				try {
+					donemPerList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(sirket, tesisId != null ? String.valueOf(tesisId) : null, seciliEkSaha3Id, null, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, sadeceFazlaMesai, session);
+				} catch (Exception e) {
+					logger.error(e);
+				}
+				if (donemPerList != null && donemPerList.size() > 100)
+					altBolumList.add(new SelectItem(null, "Seçiniz"));
+				else
+					altBolumList.add(new SelectItem(-1L, "Hepsi"));
+				donemPerList = null;
+			}
+			altBolumList.addAll(list);
+			boolean eski = list.size() == 1;
 			if (eski)
 				seciliEkSaha4Id = (Long) altBolumList.get(0).getValue();
 			else if (seciliEkSaha4Id != null) {
-				for (SelectItem st : altBolumList) {
+				for (SelectItem st : list) {
 					if (st.getValue().equals(seciliEkSaha4Id))
 						eski = true;
 				}
 			}
+			list = null;
 			if (!eski)
 				seciliEkSaha4Id = -1L;
 
