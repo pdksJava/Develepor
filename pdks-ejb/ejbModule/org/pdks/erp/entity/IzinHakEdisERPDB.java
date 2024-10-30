@@ -24,7 +24,7 @@ public class IzinHakEdisERPDB implements Serializable, Cloneable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1163591238528656143L;
-	public static final String VIEW_NAME = "PERSONEL_IZIN_HAKEDIS_VIEW";
+	public static final String VIEW_NAME = "Z_NOT_USED_IZIN_HAKEDIS_ERP_DB";
 	public static final String COLUMN_NAME_PERSONEL_NO = "PERSONEL_NO";
 	public static final String COLUMN_NAME_KIDEM_YIL = "KIDEM_YIL";
 	public static final String COLUMN_NAME_ID = "ID";
