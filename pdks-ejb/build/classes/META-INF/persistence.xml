@@ -5,95 +5,7 @@
 	<persistence-unit name="pdks" transaction-type="JTA">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<jta-data-source>jdbc/pdks</jta-data-source>
-		<class>com.pdks.notUse.IsKurVardiyaGun</class>
-		<class>org.pdks.entity.AccountPermission</class>
-		<class>org.pdks.entity.ArifeVardiyaDonem</class>
-		<class>org.pdks.entity.BasitHareket</class>
-		<class>org.pdks.entity.BolumKat</class>
-		<class>org.pdks.entity.CalismaModeli</class>
-		<class>org.pdks.entity.CalismaModeliAy</class>
-		<class>org.pdks.entity.CalismaModeliGun</class>
-		<class>org.pdks.entity.CalismaModeliVardiya</class>
-		<class>org.pdks.entity.CalismaPlanKilit</class>
-		<class>org.pdks.entity.CalismaPlanKilitTalep</class>
-		<class>org.pdks.entity.CalismaSekli</class>
-		<class>org.pdks.entity.DeleteIzinERPView</class>
-		<class>org.pdks.entity.DenklestirmeAy</class>
-		<class>org.pdks.entity.Departman</class>
-		<class>org.pdks.entity.DepartmanMailGrubu</class>
-		<class>org.pdks.entity.Dosya</class>
-		<class>org.pdks.entity.FazlaMesaiTalep</class>
-		<class>org.pdks.entity.HareketKGS</class>
-		<class>org.pdks.entity.HoldingIzin</class>
-		<class>org.pdks.entity.IzinHakedisHakki</class>
-		<class>org.pdks.entity.IzinIstirahat</class>
-		<class>org.pdks.entity.IzinReferansERP</class>
-		<class>org.pdks.entity.IzinTipi</class>
-		<class>org.pdks.entity.IzinTipiBirlesikHaric</class>
-		<class>org.pdks.entity.IzinTipiMailAdres</class>
-		<class>org.pdks.entity.Kapi</class>
-		<class>org.pdks.entity.KapiKGS</class>
-		<class>org.pdks.entity.KapiSirket</class>
-		<class>org.pdks.entity.KapiView</class>
-		<class>org.pdks.entity.KatSayi</class>
-		<class>org.pdks.entity.LDAPDomain</class>
-		<class>org.pdks.entity.MailGrubu</class>
-		<class>org.pdks.entity.MailUser</class>
-		<class>org.pdks.entity.MenuIliski</class>
-		<class>org.pdks.entity.MenuItem</class>
-		<class>org.pdks.entity.Notice</class>
-		<class>org.pdks.entity.OnaylanmamisIzinIKView</class>
-		<class>org.pdks.entity.Parameter</class>
-		<class>org.pdks.entity.PdksLog</class>
-		<class>org.pdks.entity.PdksPersonelView</class>
-		<class>org.pdks.entity.Personel</class>
-		<class>org.pdks.entity.PersonelDenklestirme</class>
-		<class>org.pdks.entity.PersonelDenklestirmeBordro</class>
-		<class>org.pdks.entity.PersonelDenklestirmeBordroDetay</class>
-		<class>org.pdks.entity.PersonelDenklestirmeDinamikAlan</class>
-		<class>org.pdks.entity.PersonelDenklestirmeOnaylanmayan</class>
-		<class>org.pdks.entity.PersonelDinamikAlan</class>
-		<class>org.pdks.entity.PersonelDonemselDurum</class>
-		<class>org.pdks.entity.PersonelExtra</class>
-		<class>org.pdks.entity.PersonelFazlaMesai</class>
-		<class>org.pdks.entity.PersonelGeciciYonetici</class>
-		<class>org.pdks.entity.PersonelHareket</class>
-		<class>org.pdks.entity.PersonelHareketIslem</class>
-		<class>org.pdks.entity.PersonelIzin</class>
-		<class>org.pdks.entity.PersonelIzinDetay</class>
-		<class>org.pdks.entity.PersonelIzinDetay</class>
-		<class>org.pdks.entity.PersonelIzinDosya</class>
-		<class>org.pdks.entity.PersonelIzinOnay</class>
-		<class>org.pdks.entity.PersonelKGS</class>
-		<class>org.pdks.entity.PersonelMesai</class>
-		<class>org.pdks.entity.PersonelView</class>
-		<class>org.pdks.entity.ServiceData</class>
-		<class>org.pdks.entity.Sirket</class>
-		<class>org.pdks.entity.Tanim</class>
-		<class>org.pdks.entity.Tatil</class>
-		<class>org.pdks.entity.Vardiya</class>
-		<class>org.pdks.entity.VardiyaGorev</class>
-		<class>org.pdks.entity.VardiyaGun</class>
-		<class>org.pdks.entity.VardiyaGunView</class>
-		<class>org.pdks.entity.VardiyaHafta</class>
-		<class>org.pdks.entity.VardiyaSaat</class>
-		<class>org.pdks.entity.VardiyaSablonu</class>
-		<class>org.pdks.entity.VardiyaYemekIzin</class>
-		<class>org.pdks.entity.YemekIzin</class>
-		<class>org.pdks.entity.YemekKartsiz</class>
-		<class>org.pdks.entity.YemekOgun</class>
-		<class>org.pdks.erp.entity.IzinERPDB</class>
-		<class>org.pdks.erp.entity.IzinHakEdisERPDB</class>
-		<class>org.pdks.erp.entity.PersonelERPDB</class>
-		<class>org.pdks.erp.entity.SAPSunucu</class>
-		<class>org.pdks.security.entity.Role</class>
-		<class>org.pdks.security.entity.User</class>
-		<class>org.pdks.security.entity.UserMenuItemTime</class>
-		<class>org.pdks.security.entity.UserRoles</class>
-		<class>org.pdks.security.entity.UserTesis</class>
-		<class>org.pdks.security.entity.UserVekalet</class>
-		<exclude-unlisted-classes>true</exclude-unlisted-classes>
-		<properties>
+ 		<properties>
 			<!-- CANLI <property name="hibernate.hbm2ddl.auto" value="update"/> Dev -->
 			<property name="hibernate.format_sql" value="false" />
 			<property name="hibernate.max_fetch_depth" value="2" />
@@ -108,28 +20,7 @@
 
 		</properties>
 	</persistence-unit>
-	<persistence-unit name="bordro" transaction-type="JTA">
-		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<jta-data-source>jdbc/bordroERP</jta-data-source>
-		<class>org.bordro.entity.DeleteIzinERPView</class>
-		<class>org.bordro.entity.IzinERPDBPView</class>
-		<class>org.bordro.entity.IzinHakEdisERPDBPView</class>
-		<class>org.bordro.entity.PersonelERPDBPView</class>
-		<properties>
-			<!-- CANLI <property name="hibernate.hbm2ddl.auto" value="update"/> Dev -->
-			<property name="hibernate.format_sql" value="false" />
-			<property name="hibernate.max_fetch_depth" value="2" />
-			<property name="hibernate.default_batch_fetch_size" value="32" />
-			<property name="hibernate.jdbc.batch_size" value="25" />
-			<property name="hibernate.jdbc.fetch_size" value="8" />
-
-
-			<property name="hibernate.connection.characterEncoding" value="UTF-8" />
-			<!-- glassfish -->
-			<property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.SunONETransactionManagerLookup" />
-
-		</properties>
-	</persistence-unit>
+	 
 
 
 </persistence>

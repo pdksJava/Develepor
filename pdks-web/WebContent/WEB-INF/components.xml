@@ -34,8 +34,6 @@
 		name="entityManager4" auto-create="true" entity-manager-factory="#{pdksOracleDatasource}" /> -->
 	<persistence:entity-manager-factory name="pdks" />
 	<persistence:managed-persistence-context name="entityManager" auto-create="true" entity-manager-factory="#{pdks}" />
-	<persistence:entity-manager-factory name="bordro" />
-	<persistence:managed-persistence-context name="entityManagerBordro" auto-create="true" entity-manager-factory="#{bordro}" />
 
 	<!-- glassfish te -->
 
