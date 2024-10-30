@@ -217,8 +217,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 				for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
 					VardiyaSablonu pdksVardiyaSablonu = (VardiyaSablonu) iterator.next();
 					if (pdksVardiyaSablonu.getDurum()) {
-						if (!isKurGoster)
-							isKurGoster = pdksVardiyaSablonu.isIsKurMu();
+					 
 						vardiyaSablonList.add(pdksVardiyaSablonu);
 						iterator.remove();
 					}
@@ -304,8 +303,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 			}
 			if (!pdksList.isEmpty())
 				vardiyaCalisanList.addAll(pdksList);
-			if (pdksVardiyaSablonu.isIsKurMu())
-				pdksList = isKurVardiyaList;
+			 
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
@@ -320,12 +318,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 		if (getInstance().getId() != null)
 			session.refresh(getInstance());
 	}
-
-	public String sablonIskurDegisti() {
-		VardiyaSablonu pdksVardiyaSablonu = getInstance();
-		vardiyaList = !pdksVardiyaSablonu.isIsKurMu() ? vardiyaCalisanList : isKurVardiyaList;
-		return "";
-	}
+ 
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {

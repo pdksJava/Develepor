@@ -27,11 +27,9 @@ public class VardiyaSablonu extends BaseObject {
 
 	public static final String TABLE_NAME = "VARDIYASABLONU";
 
-	public static final String COLUMN_NAME_ISKUR = "ISKUR";
 	public static final String COLUMN_NAME_BEYAZ_YAKA = "BEYAZ_YAKA";
 	public static final String COLUMN_NAME_SIRKET = "SIRKET_ID";
 	public static final String COLUMN_NAME_DEPARTMAN = "DEPARTMAN_ID";
-	
 
 	private String adi;
 	private Sirket sirket;
@@ -46,7 +44,7 @@ public class VardiyaSablonu extends BaseObject {
 	private PersonelIzin izin1, izin2, izin3, izin4, izin5, izin6, izin7;
 	private Departman departman;
 	private Integer version = 0;
-	private Boolean beyazYakaDefault = Boolean.FALSE, isKur = Boolean.FALSE;
+	private Boolean beyazYakaDefault = Boolean.FALSE;
 
 	@Column(name = "VERSION")
 	public Integer getVersion() {
@@ -186,15 +184,6 @@ public class VardiyaSablonu extends BaseObject {
 
 	public void setBeyazYakaDefault(Boolean beyazYakaDefault) {
 		this.beyazYakaDefault = beyazYakaDefault;
-	}
-
-	@Column(name = COLUMN_NAME_ISKUR)
-	public Boolean getIsKur() {
-		return isKur;
-	}
-
-	public void setIsKur(Boolean isKur) {
-		this.isKur = isKur;
 	}
 
 	@Transient
@@ -458,14 +447,6 @@ public class VardiyaSablonu extends BaseObject {
 		}
 		gunler = null;
 		return list;
-	}
-
-	@Transient
-	public boolean isIsKurMu() {
-		boolean isKurDurum = false;
-		if (departman != null && departman.isAdminMi())
-			isKurDurum = isKur != null && isKur;
-		return isKurDurum;
 	}
 
 	public void entityRefresh() {

@@ -31,9 +31,6 @@ public class MenuItemConstant implements Serializable {
 	public static String home = "/home.xhtml";
 	public static String role = "/Role.xhtml";
 	public static String roleList = "/RoleList.xhtml";
-	
-	
-	
 
 	public static String importSSL = "/general/importSSL.xhtml";
 	public static String notice = "/general/notice.xhtml";
@@ -58,7 +55,6 @@ public class MenuItemConstant implements Serializable {
 	public static String fazlaMesaiHesapla = "/puantaj/fazlaMesaiHesapla.xhtml";
 	public static String fazlaMesaiTalep = "/puantaj/fazlaMesaiTalep.xhtml";
 	public static String hareketGiris = "/puantaj/hareketGiris.xhtml";
-	public static String isKurVardiyaPlani = "/puantaj/isKurVardiyaPlani.xhtml";
 	public static String kgsHareket = "/puantaj/kgsHareket.xhtml";
 	public static String mesaiTalepLinkOnay = "/puantaj/mesaiTalepLinkOnay.xhtml";
 	public static String mesaiTalepListesi = "/puantaj/mesaiTalepListesi.xhtml";
@@ -922,14 +918,6 @@ public class MenuItemConstant implements Serializable {
 
 	public static void setFazlaMesaiDonemselRapor(String fazlaMesaiDonemselRapor) {
 		MenuItemConstant.fazlaMesaiDonemselRapor = fazlaMesaiDonemselRapor;
-	}
-
-	public static String getIsKurVardiyaPlani() {
-		return isKurVardiyaPlani;
-	}
-
-	public static void setIsKurVardiyaPlani(String isKurVardiyaPlani) {
-		MenuItemConstant.isKurVardiyaPlani = isKurVardiyaPlani;
 	}
 
 	public static String getFazlaMesaiIzinRaporu() {

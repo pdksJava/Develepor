@@ -83,7 +83,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 	private User islemYapan = null;
 
-	private VardiyaSablonu vardiyaSablonu = null, isKurVardiyaSablonu = null;
+	private VardiyaSablonu vardiyaSablonu = null;
 
 	private CalismaModeli calismaModeli = null;
 
@@ -3609,15 +3609,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 					personel.setDogumTarihi(dogumTarihi);
 					personel.setIzinHakEdisTarihi(izinHakEdisTarihi);
 					personel.setSanalPersonel(sanalPersonel);
-					if (sanalPersonel == false) {
-						if (personel.getIsKurVardiyaSablonu() != null) {
-							personel.setIsKurVardiyaSablonu(null);
-
-						}
-					} else if (personel.getIsKurVardiyaSablonu() == null && isKurVardiyaSablonu != null) {
-						personel.setIsKurVardiyaSablonu(isKurVardiyaSablonu);
-
-					}
 
 					if (grubaGirisTarihi == null) {
 						grubaGirisTarihi = iseBaslamaTarihi;
@@ -4337,17 +4328,13 @@ public class PdksVeriOrtakAktar implements Serializable {
 		}
 		fields.clear();
 		fields.put("beyazYakaDefault", Boolean.TRUE);
-		fields.put("isKur", Boolean.FALSE);
 		vardiyaSablonu = (VardiyaSablonu) pdksDAO.getObjectByInnerObject(fields, VardiyaSablonu.class);
 		fields.clear();
-		fields.put("beyazYakaDefault", Boolean.TRUE);
-		fields.put("isKur", Boolean.TRUE);
-		isKurVardiyaSablonu = (VardiyaSablonu) pdksDAO.getObjectByInnerObject(fields, VardiyaSablonu.class);
+
 		sablonCalismaModeliVar = false;
 		personelCalismaModeliVar = false;
 		fields.clear();
 		fields.put("durum", Boolean.TRUE);
-		fields.put("isKur", Boolean.FALSE);
 		sablonlar = pdksDAO.getObjectByInnerObjectList(fields, VardiyaSablonu.class);
 		for (Iterator iterator = sablonlar.iterator(); iterator.hasNext();) {
 			VardiyaSablonu sablon = (VardiyaSablonu) iterator.next();

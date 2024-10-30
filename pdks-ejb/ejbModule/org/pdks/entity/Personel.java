@@ -63,7 +63,6 @@ public class Personel extends BaseObject {
 	public static final String COLUMN_NAME_DOGUM_TARIHI = "DOGUM_TARIHI";
 	public static final String COLUMN_NAME_SSK_CIKIS_TARIHI = "SSK_CIKIS_TARIHI";
 	public static final String COLUMN_NAME_CALISMA_MODELI = "CALISMA_MODELI_ID";
-	public static final String COLUMN_NAME_ISKUR_SABLON = "ISKUR_SABLON_ID";
 	public static final String COLUMN_NAME_PERSONEL_TIPI = "PERSONEL_TIPI_ID";
 	public static final String COLUMN_NAME_GOREV_TIPI = "GOREV_TIPI_ID";
 	public static final String COLUMN_NAME_SABLON = "SABLON_ID";
@@ -87,7 +86,7 @@ public class Personel extends BaseObject {
 	private String ad = "", soyad = "", erpSicilNo = "", pdksSicilNo, sortAlanAdi = "";
 
 	private PersonelKGS personelKGS;
-	private VardiyaSablonu sablon, isKurVardiyaSablonu;
+	private VardiyaSablonu sablon;
 	private Sirket sirket;
 	private CalismaModeli calismaModeli;
 	private Tanim gorevTipi, ekSaha1, ekSaha2, ekSaha3, ekSaha4, tesis, masrafYeri, ekSaha, cinsiyet, bordroAltAlan, personelTipi;
@@ -351,17 +350,6 @@ public class Personel extends BaseObject {
 
 	public void setSablon(VardiyaSablonu sablon) {
 		this.sablon = sablon;
-	}
-
-	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = COLUMN_NAME_ISKUR_SABLON)
-	@Fetch(FetchMode.JOIN)
-	public VardiyaSablonu getIsKurVardiyaSablonu() {
-		return isKurVardiyaSablonu;
-	}
-
-	public void setIsKurVardiyaSablonu(VardiyaSablonu isKurVardiyaSablonu) {
-		this.isKurVardiyaSablonu = isKurVardiyaSablonu;
 	}
 
 	@Column(name = "PDKS")

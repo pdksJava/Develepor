@@ -1056,20 +1056,7 @@
 												<s:convertEntity />
 											</h:selectOneMenu>
 										</s:decorate>
-										<c:if test="#{pdksPersonelHome.instance.sanalPersonel and pdksPersonelHome.sablonIskurList.size()>0}">
-											<s:decorate template="/layout/edit.xhtml">
-												<ui:define name="label">İşkur Şablonu</ui:define>
-												<h:selectOneMenu value="#{pdksPersonelHome.instance.isKurVardiyaSablonu}" required="#{pdksPersonelHome.sablonIskurList.size()>1}"
-													requiredMessage="Şablon seçiniz"
-													disabled="#{pdksPersonelHome.sablonIskurList.size()==1 and pdksPersonelHome.instance.isKurVardiyaSablonu!=null}">
-													<s:selectItems var="comp" value="#{pdksPersonelHome.sablonIskurList}" label="#{comp.adi}" noSelectionLabel="Lütfen seçiniz" />
-													<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" />
-
-													<s:convertEntity />
-												</h:selectOneMenu>
-											</s:decorate>
-
-										</c:if>
+										 
 										<s:decorate template="/layout/edit.xhtml"
 											rendered="#{pdksPersonelHome.parentBordroTanim!=null and pdksPersonelHome.parentBordroTanim.erpKodu==''}">
 											<ui:define name="label">#{pdksPersonelHome.parentBordroTanim.aciklama}</ui:define>

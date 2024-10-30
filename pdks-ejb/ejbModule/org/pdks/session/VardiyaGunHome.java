@@ -8560,7 +8560,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			sb.append(" )   ");
 
 			sb.append(" SELECT DISTINCT D.* FROM VARDIYA_DATA D ");
-			sb.append(" WHERE " + Vardiya.COLUMN_NAME_DURUM + " = 1  AND COALESCE(" + Vardiya.COLUMN_NAME_ISKUR + ",0) = 0");
+			sb.append(" WHERE " + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
 			sb.append(" AND (" + Vardiya.COLUMN_NAME_DEPARTMAN + " IS NULL OR " + Vardiya.COLUMN_NAME_DEPARTMAN + " = " + sirket.getDepartman().getId() + ") ");
 			sb.append(" AND (" + Vardiya.COLUMN_NAME_SIRKET + " IS NULL OR " + Vardiya.COLUMN_NAME_SIRKET + " = " + sirket.getId() + ") ");
 			if (fmi == false) {
@@ -10693,7 +10693,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			StringBuffer sb = new StringBuffer();
 			sb.append("SELECT S.* from " + Vardiya.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" WHERE (S." + Vardiya.COLUMN_NAME_DEPARTMAN + " IS NULL  OR S." + Vardiya.COLUMN_NAME_DEPARTMAN + " = :deptId )");
-			sb.append(" AND  S." + Vardiya.COLUMN_NAME_KISA_ADI + " <> '' AND S." + Vardiya.COLUMN_NAME_DURUM + " = 1  AND COALESCE(S." + Vardiya.COLUMN_NAME_ISKUR + ",0)<>1");
+			sb.append(" AND  S." + Vardiya.COLUMN_NAME_KISA_ADI + " <> '' AND S." + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
 			fields.put("deptId", departman.getId());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);

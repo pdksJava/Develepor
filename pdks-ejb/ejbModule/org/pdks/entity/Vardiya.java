@@ -33,8 +33,7 @@ public class Vardiya extends BaseObject {
 	public static final String COLUMN_NAME_ADI = "ADI";
 
 	public static final String COLUMN_NAME_SUA = "SUA";
-	public static final String COLUMN_NAME_ISKUR = "ISKUR";
-	public static final String COLUMN_NAME_GEBELIK = "GEBELIK";
+ 	public static final String COLUMN_NAME_GEBELIK = "GEBELIK";
 	public static final String COLUMN_NAME_ICAP = "ICAP_VARDIYA";
 	public static final String COLUMN_NAME_KISA_ADI = "KISA_ADI";
 	public static final String COLUMN_NAME_GENEL = "GENEL";
@@ -148,15 +147,7 @@ public class Vardiya extends BaseObject {
 		this.styleClass = styleClass;
 	}
 
-	@Column(name = COLUMN_NAME_ISKUR)
-	public Boolean getIsKur() {
-		return isKur;
-	}
-
-	public void setIsKur(Boolean isKur) {
-		this.isKur = isKur;
-	}
-
+ 
 	@Column(name = COLUMN_NAME_GEBELIK)
 	public Boolean getGebelik() {
 		return gebelik;

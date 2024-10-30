@@ -177,7 +177,6 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.lowagie.text.Table;
 import com.pdks.mail.model.MailManager;
-import com.pdks.notUse.IsKurVardiyaGun;
 import com.pdks.webservice.IzinERP;
 import com.pdks.webservice.IzinHakedis;
 import com.pdks.webservice.IzinHakedisDetay;
@@ -8298,7 +8297,7 @@ public class OrtakIslemler implements Serializable {
 		StringBuffer sb = new StringBuffer();
 		sb.append("SELECT S.* from " + Vardiya.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" WHERE (S." + Vardiya.COLUMN_NAME_DEPARTMAN + " IS NULL  OR S." + Vardiya.COLUMN_NAME_DEPARTMAN + " = :deptId )");
-		sb.append(" AND  S." + Vardiya.COLUMN_NAME_KISA_ADI + " <> '' AND S." + Vardiya.COLUMN_NAME_DURUM + " = 1  AND COALESCE(S." + Vardiya.COLUMN_NAME_ISKUR + ",0)<>1");
+		sb.append(" AND  S." + Vardiya.COLUMN_NAME_KISA_ADI + " <> '' AND S." + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
 		fields.put("deptId", departman.getId());
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -12754,39 +12753,6 @@ public class OrtakIslemler implements Serializable {
 		map = null;
 		idList = null;
 		return vardiyaGunList;
-	}
-
-	/**
-	 * @param personelIdler
-	 * @param basTarih
-	 * @param bitTarih
-	 * @param session
-	 * @return
-	 */
-	public List<VardiyaGun> getIskurVardiyalar(List<Long> personelIdler, Date basTarih, Date bitTarih, Session session) {
-		HashMap map = new HashMap();
-		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT V.* FROM " + IsKurVardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_ID + " = V." + IsKurVardiyaGun.COLUMN_NAME_PERSONEL);
-		sb.append(" AND V." + IsKurVardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
-		sb.append(" AND V." + IsKurVardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
-		sb.append(" WHERE V." + IsKurVardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :bitTarih AND V." + IsKurVardiyaGun.COLUMN_NAME_PERSONEL + ":pId ");
-		sb.append(" ORDER BY V." + IsKurVardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",V." + IsKurVardiyaGun.COLUMN_NAME_PERSONEL);
-		map.put("pId", personelIdler);
-		map.put("basTarih", basTarih);
-		map.put("bitTarih", bitTarih);
-		if (session != null)
-			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<IsKurVardiyaGun> vardiyaGunList = pdksEntityController.getObjectBySQLList(sb, map, IsKurVardiyaGun.class);
-
-		List<VardiyaGun> list = new ArrayList<VardiyaGun>();
-		if (!vardiyaGunList.isEmpty()) {
-			for (IsKurVardiyaGun isKurVardiya : vardiyaGunList) {
-				VardiyaGun pdksVardiyaGun = isKurVardiya.getVardiyaGun();
-				list.add(pdksVardiyaGun);
-			}
-		}
-		return list;
 	}
 
 	/**

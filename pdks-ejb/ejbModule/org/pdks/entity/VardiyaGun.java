@@ -25,8 +25,6 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.pdks.session.PdksUtil;
 
-import com.pdks.notUse.IsKurVardiyaGun;
-
 @Entity(name = VardiyaGun.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI, VardiyaGun.COLUMN_NAME_PERSONEL }) })
 public class VardiyaGun extends BaseObject {
@@ -68,7 +66,6 @@ public class VardiyaGun extends BaseObject {
 	private ArrayList<PersonelFazlaMesai> fazlaMesailer;
 	private ArrayList<Vardiya> vardiyalar;
 	private VardiyaGun oncekiVardiyaGun, sonrakiVardiyaGun;
-	private IsKurVardiyaGun isKurVardiya;
 	private int beklemeSuresi = 6;
 	private Double calismaSuaSaati = PersonelDenklestirme.getCalismaSaatiSua();
 	private Boolean izinHaftaTatilDurum;
@@ -149,8 +146,7 @@ public class VardiyaGun extends BaseObject {
 		Long oldId = eskiVardiya != null && eskiVardiya.getId() != null ? eskiVardiya.getId() : 0l;
 		if (value != null && value.getId() != null)
 			value.setIslemVardiyaGun(this);
-		if (isKurVardiya != null)
-			isKurVardiya.setVardiya(value);
+
 		if (this.isGuncellendi() == false) {
 			Long newId = value != null && value.getId() != null ? value.getId() : 0l;
 			this.guncellendi = PdksUtil.isLongDegisti(oldId, newId);
@@ -2068,15 +2064,6 @@ public class VardiyaGun extends BaseObject {
 
 	public void setBeklemeSuresi(int beklemeSuresi) {
 		this.beklemeSuresi = beklemeSuresi;
-	}
-
-	@Transient
-	public IsKurVardiyaGun getIsKurVardiya() {
-		return isKurVardiya;
-	}
-
-	public void setIsKurVardiya(IsKurVardiyaGun isKurVardiya) {
-		this.isKurVardiya = isKurVardiya;
 	}
 
 	@Transient

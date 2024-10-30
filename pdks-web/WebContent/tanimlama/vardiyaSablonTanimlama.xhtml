@@ -13,15 +13,16 @@
 				<rich:panel header="#{ortakIslemler.getMenuUserAdi(vardiyaSablonuHome.session,'vardiyaSablonTanimlama')}">
 					<h:panelGrid columns="1">
 						<c:if test="#{authenticatedUser.admin}">
-						<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaSablonuHome.pdksSirketList.size() gt 0}">
-							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
-							<h:selectOneMenu value="#{vardiyaSablonuHome.seciliSirket}">
-								<s:selectItems var="comp" value="#{vardiyaSablonuHome.pdksSirketList}" label="#{comp.ad}" noSelectionLabel="Lütfen seçiniz" />
-								<s:convertEntity />
-								<a4j:support event="onchange" reRender="anaForm" status="ajaxStatus" ajaxSingle="true"
-									action="#{vardiyaSablonuHome.fillPdksVardiyaSablonList()}" />
-							</h:selectOneMenu>
-						</s:decorate></c:if>
+							<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaSablonuHome.pdksSirketList.size() gt 0}">
+								<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
+								<h:selectOneMenu value="#{vardiyaSablonuHome.seciliSirket}">
+									<s:selectItems var="comp" value="#{vardiyaSablonuHome.pdksSirketList}" label="#{comp.ad}" noSelectionLabel="Lütfen seçiniz" />
+									<s:convertEntity />
+									<a4j:support event="onchange" reRender="anaForm" status="ajaxStatus" ajaxSingle="true"
+										action="#{vardiyaSablonuHome.fillPdksVardiyaSablonList()}" />
+								</h:selectOneMenu>
+							</s:decorate>
+						</c:if>
 						<a4j:outputPanel id="anaForm">
 							<rich:dataTable rowClasses="acik,koyu" value="#{vardiyaSablonuHome.vardiyaSablonList}" var="vardiyaSablon" rows="20" rowKeyVar="row"
 								id="sablonTable">
@@ -123,12 +124,7 @@
 									</f:facet>
 									<h:outputText value="#{vardiyaSablon.calismaModeli.aciklama}" id="calismaModeli" />
 								</rich:column>
-								<rich:column rendered="#{vardiyaSablonuHome.kurGoster}">
-									<f:facet name="header">
-										<h:outputText value="İşkur" />
-									</f:facet>
-									<h:outputText value="#{authenticatedUser.getYesNo(vardiyaSablon.isKurMu)}" />
-								</rich:column>
+
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="Aktif" />
@@ -243,13 +239,6 @@
 
 					</s:decorate>
 					<a4j:outputPanel id="vardiyalar">
-
-						<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaSablonuHome.kur or  vardiyaSablonuHome.instance.isKurMu}">
-							<ui:define name="label">İşkur</ui:define>
-							<h:selectBooleanCheckbox value="#{vardiyaSablonuHome.instance.isKur}">
-								<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" reRender="vardiyalar" action="#{vardiyaSablonuHome.sablonIskurDegisti()}" />
-							</h:selectBooleanCheckbox>
-						</s:decorate>
 
 						<h:panelGrid columns="1" rendered="#{vardiyaSablonuHome.instance.toplamSaat>0 and vardiyaSablonuHome.instance.calismaGunSayisi>0}">
 							<s:decorate template="/layout/edit.xhtml" cellpadding="0" cellspacing="0" style="text-align : left">

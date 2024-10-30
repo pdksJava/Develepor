@@ -23,7 +23,6 @@ public class VardiyaSablonu extends BaseObject {
 	 * 
 	 */
 	private static final long serialVersionUID = 4226475989248347517L;
-	public static final String COLUMN_NAME_ISKUR = "ISKUR";
 	public static final String COLUMN_NAME_BEYAZ_YAKA = "BEYAZ_YAKA";
 
 	private String adi;
@@ -36,7 +35,7 @@ public class VardiyaSablonu extends BaseObject {
 	private PersonelIzin izin1, izin2, izin3, izin4, izin5, izin6, izin7;
 	private Departman departman;
 	private Integer version = 0;
-	private Boolean beyazYakaDefault = Boolean.FALSE, isKur = Boolean.FALSE;
+	private Boolean beyazYakaDefault = Boolean.FALSE;
 
 	@Column(name = "VERSION")
 	public Integer getVersion() {
@@ -165,15 +164,6 @@ public class VardiyaSablonu extends BaseObject {
 		this.beyazYakaDefault = beyazYakaDefault;
 	}
 
-	@Column(name = COLUMN_NAME_ISKUR)
-	public Boolean getIsKur() {
-		return isKur;
-	}
-
-	public void setIsKur(Boolean isKur) {
-		this.isKur = isKur;
-	}
-
 	@Transient
 	public Personel getPersonel() {
 		return personel;
@@ -278,11 +268,4 @@ public class VardiyaSablonu extends BaseObject {
 		this.izin7 = izin7;
 	}
 
-	@Transient
-	public boolean isIsKurMu() {
-		boolean isKurDurum = false;
-		if (departman != null && departman.isAdminMi())
-			isKurDurum = isKur != null && isKur;
-		return isKurDurum;
-	}
 }

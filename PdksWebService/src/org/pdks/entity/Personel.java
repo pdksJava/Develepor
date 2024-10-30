@@ -61,7 +61,6 @@ public class Personel extends BaseObject {
 	public static final String COLUMN_NAME_DOGUM_TARIHI = "DOGUM_TARIHI";
 	public static final String COLUMN_NAME_SSK_CIKIS_TARIHI = "SSK_CIKIS_TARIHI";
 	public static final String COLUMN_NAME_IZIN_HAKEDIS_TARIHI = "IZIN_HAKEDIS_TARIHI";
-	public static final String COLUMN_NAME_ISKUR_SABLON = "ISKUR_SABLON_ID";
 	public static final String COLUMN_NAME_PERSONEL_TIPI = "PERSONEL_TIPI_ID";
 
 	public static final String STATU_HEKIM = "2";
@@ -77,7 +76,7 @@ public class Personel extends BaseObject {
 	private String ad = "", soyad = "", erpSicilNo = "", pdksSicilNo, sortAlanAdi = "";
 
 	private PersonelKGS personelKGS;
-	private VardiyaSablonu sablon, isKurVardiyaSablonu;
+	private VardiyaSablonu sablon;
 	private MailGrubu mailGrubuCC, mailGrubuBCC, hareketMailGrubu;
 	private Sirket sirket;
 	private CalismaModeli calismaModeli;
@@ -412,17 +411,6 @@ public class Personel extends BaseObject {
 		if (this.isDegisti() == false)
 			this.setDegisti(PdksUtil.isLongDegisti(sablon != null ? sablon.getId() : null, value != null ? value.getId() : null));
 		this.sablon = value;
-	}
-
-	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = COLUMN_NAME_ISKUR_SABLON)
-	@Fetch(FetchMode.JOIN)
-	public VardiyaSablonu getIsKurVardiyaSablonu() {
-		return isKurVardiyaSablonu;
-	}
-
-	public void setIsKurVardiyaSablonu(VardiyaSablonu isKurVardiyaSablonu) {
-		this.isKurVardiyaSablonu = isKurVardiyaSablonu;
 	}
 
 	@Column(name = "PDKS")

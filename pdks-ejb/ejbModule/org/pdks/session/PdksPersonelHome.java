@@ -137,7 +137,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private List<Departman> departmanTanimList = new ArrayList<Departman>(), departmanKullaniciList = new ArrayList<Departman>();
 	private List<Tanim> unvanTanimList = new ArrayList<Tanim>(), departmanPDKSTanimList = new ArrayList<Tanim>(), cinsiyetList, masrafYeriList, tesisList, yoneticiVardiyaTipiList, vardiyaGirisTipiTanimList = new ArrayList<Tanim>();
 	private List<PersonelERP> personelERPList;
-	private List<VardiyaSablonu> sablonlar = new ArrayList<VardiyaSablonu>(), sablonIskurList = new ArrayList<VardiyaSablonu>();
+	private List<VardiyaSablonu> sablonlar = new ArrayList<VardiyaSablonu>();
 	private List<PersonelKGS> personelKGSList = new ArrayList<PersonelKGS>();
 	private List<PersonelView> tanimsizPersonelList = new ArrayList<PersonelView>();
 	private List<Personel> pdksPersonelList = new ArrayList<Personel>(), yoneticiList, yonetici2List, ikinciYoneticiHataliList;
@@ -688,10 +688,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			Personel pdksPersonel = getInstance();
 			Departman pdksDepartman = pdksPersonel.getSirket() != null ? pdksPersonel.getSirket().getDepartman() : null;
 			sablonlar.clear();
-			if (sablonIskurList == null)
-				sablonIskurList = new ArrayList<VardiyaSablonu>();
-			else
-				sablonIskurList.clear();
+
 			Long departmanId = pdksDepartman != null ? pdksDepartman.getId() : null;
 			sablonList = ortakIslemler.getVardiyaSablonuList(pdksPersonel.getSirket(), departmanId, session);
 
@@ -699,8 +696,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				VardiyaSablonu vardiyaSablonu = (VardiyaSablonu) iterator.next();
 				if (vardiyaSablonu.getDepartman() != null && !pdksDepartman.getId().equals(vardiyaSablonu.getDepartman().getId()))
 					iterator.remove();
-				else if (pdksPersonel.isSanalPersonelMi() && vardiyaSablonu.isIsKurMu())
-					sablonIskurList.add(vardiyaSablonu);
+
 			}
 			if (!sablonList.isEmpty()) {
 				sablonlar.addAll(sablonList);
@@ -734,11 +730,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 			if (pdksPersonel.isCalisiyor() == false && pdksPersonel.getSablon() != null && pdksPersonel.getSablon().getDurum().equals(Boolean.FALSE))
 				sablonList.add(pdksPersonel.getSablon());
-			if (sablonIskurList.size() == 1 && pdksPersonel.getIsKurVardiyaSablonu() == null && pdksPersonel.isCalisiyor()) {
-				pdksPersonel.setIsKurVardiyaSablonu(sablonIskurList.get(0));
-				savePersonel(pdksPersonel);
-
-			}
 
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
@@ -5518,14 +5509,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 	public void setSession(Session session) {
 		this.session = session;
-	}
-
-	public List<VardiyaSablonu> getSablonIskurList() {
-		return sablonIskurList;
-	}
-
-	public void setSablonIskurList(List<VardiyaSablonu> sablonIskurList) {
-		this.sablonIskurList = sablonIskurList;
 	}
 
 	public String getBolumAciklama() {
