@@ -757,8 +757,9 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					boolean tekrarOnaylar = onaylayacakYonetici != null && onaylayacakYonetici.isCalisiyor() && onaylayacakYonetici.isCalisiyorGun(sistemTarihi);
 					User onaylayacakYoneticiUser = null;
 					if (tekrarOnaylar && onaylayacakYonetici != null) {
-
-						onaylayacakYoneticiUser = (User) pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, onaylayacakYonetici.getId(), User.class, session);
+						List<User> list = pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, onaylayacakYonetici.getId(), User.class, session);
+						if (!list.isEmpty())
+							onaylayacakYoneticiUser = list.get(0);
 						if (onaylayacakYoneticiUser != null) {
 							tekrarOnaylar = Boolean.TRUE;
 							ortakIslemler.setUserRoller(onaylayacakYoneticiUser, session);
