@@ -5759,7 +5759,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		aylikPuantajList.clear();
 		hataliPersoneller = null;
 		if (ekSaha4Tanim != null) {
-
+			boolean hepsiEkle = true;
 			List<SelectItem> list = fazlaMesaiOrtakIslemler.getFazlaMesaiAltBolumList(sirket, tesisId != null ? String.valueOf(tesisId) : null, seciliEkSaha3Id, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, sadeceFazlaMesai, session);
 			altBolumList = new ArrayList<SelectItem>();
 			if (list.size() > 1) {
@@ -5769,25 +5769,30 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				} catch (Exception e) {
 					logger.error(e);
 				}
-				if (donemPerList != null && donemPerList.size() > 100)
+				hepsiEkle = donemPerList == null || donemPerList.size() < 100;
+				if (hepsiEkle == false)
 					altBolumList.add(new SelectItem(null, "Seçiniz"));
-				else
-					altBolumList.add(new SelectItem(-1L, "Hepsi"));
+
 				donemPerList = null;
 			}
-			altBolumList.addAll(list);
-			boolean eski = list.size() == 1;
-			if (eski)
-				seciliEkSaha4Id = (Long) altBolumList.get(0).getValue();
-			else if (seciliEkSaha4Id != null) {
-				for (SelectItem st : list) {
-					if (st.getValue().equals(seciliEkSaha4Id))
-						eski = true;
+			if (hepsiEkle)
+				altBolumList.add(new SelectItem(-1L, "Hepsi"));
+			if (list != null && !list.isEmpty()) {
+				altBolumList.addAll(list);
+				boolean eski = list.size() == 1;
+				if (eski)
+					seciliEkSaha4Id = (Long) altBolumList.get(0).getValue();
+				else if (seciliEkSaha4Id != null) {
+					for (SelectItem st : list) {
+						if (st.getValue().equals(seciliEkSaha4Id))
+							eski = true;
+					}
 				}
+
+				if (!eski)
+					seciliEkSaha4Id = -1L;
 			}
 			list = null;
-			if (!eski)
-				seciliEkSaha4Id = -1L;
 
 			if ((ikRole || adminRole || authenticatedUser.isDirektorSuperVisor()) & denklestirmeAyDurum && altBolumList != null) {
 				planTanimsizBolumList = fazlaMesaiOrtakIslemler.getFazlaMesaiTanimsizAltBolumList(sirket, tesisId != null ? String.valueOf(tesisId) : null, seciliEkSaha3Id, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, session);
