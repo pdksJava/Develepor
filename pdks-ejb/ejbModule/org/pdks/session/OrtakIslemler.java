@@ -933,7 +933,7 @@ public class OrtakIslemler implements Serializable {
 					fields.put("basTarih", PdksUtil.getDate(basTarih));
 					fields.put("bitTarih", PdksUtil.getDate(bitTarih));
 					fazlaCalismalar = getVardiyaGunList(fields, sb, session);
- 				}
+				}
 				if (!fazlaCalismalar.isEmpty()) {
 					TreeMap<String, Liste> listeMap = new TreeMap<String, Liste>();
 					boolean tesisDurum = false, altBolumVar = false;
@@ -12834,7 +12834,6 @@ public class OrtakIslemler implements Serializable {
 		map.put("b2", PdksUtil.getDate(bitTarih));
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		// List<BigDecimal> idList = pdksEntityController.getObjectBySQLList(sb, map, null);
 		List<BigDecimal> idList = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, map, null, session);
 		List<VardiyaGun> vardiyaGunList = null;
 		if (idList != null && !idList.isEmpty()) {
@@ -12845,6 +12844,7 @@ public class OrtakIslemler implements Serializable {
 			vardiyaGunList = new ArrayList<VardiyaGun>();
 		map = null;
 		idList = null;
+		// List<VardiyaGun> vardiyaGunList = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, map, VardiyaGun.class, session);
 
 		if (!vardiyaGunList.isEmpty()) {
 			HashMap<Long, List<VardiyaGun>> vMap = new HashMap<Long, List<VardiyaGun>>();
