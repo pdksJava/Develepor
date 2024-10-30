@@ -2977,6 +2977,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		try {
 			izinKaydet();
 		} catch (Exception e) {
+			e.printStackTrace();
 			try {
 				ortakIslemler.loggerErrorYaz("personelIzinGirisi", e);
 			} catch (Exception e1) {
@@ -3742,7 +3743,10 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					Personel yonetici = personelIzin.getIzinSahibi().getPdksYonetici();
 					User ilkYoneticiUser = null;
 					if (yonetici != null) {
-						ilkYoneticiUser = (User) pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, yonetici.getId(), User.class, session);
+						List<User> list = pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, yonetici.getId(), User.class, session);
+						if (!list.isEmpty())
+							ilkYoneticiUser = list.get(0);
+						list = null;
 					}
 					String onaylayanTipi = izinTipi.getOnaylayanTipi();
 					if (yonetici == null && (onaylayanTipi.equals(IzinTipi.ONAYLAYAN_TIPI_YONETICI1) || onaylayanTipi.equals(IzinTipi.ONAYLAYAN_TIPI_YONETICI2))) {
@@ -4145,7 +4149,11 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				if (ccMailList == null)
 					ccMailList = new ArrayList<String>();
 
-				User izinSahibiUser = (User) pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, personelIzin.getIzinSahibi().getId(), User.class, session);
+				List<User> list = pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, personelIzin.getIzinSahibi().getId(), User.class, session);
+
+				User izinSahibiUser = null;
+				if (!list.isEmpty())
+					izinSahibiUser = list.get(0);
 
 				if (izinSahibiUser != null) {
 					mailUserSakla(mailUserMap, izinSahibiUser);
