@@ -10875,9 +10875,9 @@ public class OrtakIslemler implements Serializable {
 					Personel p = new Personel();
 					List<YemekIzin> yemekDataList = getYemekList(tarihi, null, session);
 					Date basArifeTarih = tariheGunEkleCikar(cal, tarihi, -1), bitArifeTarih = PdksUtil.convertToJavaDate("99991231", "yyyyMMdd");
+					boolean arifeTatilBasZamanSabit = getParameterKeyHasStringValue("arifeTatilBasZaman");
 					User sistemUser = null;
 					List saveList = new ArrayList();
-
 					for (Vardiya vardiyaTatil : vardiyalar) {
 						VardiyaGun tmp = new VardiyaGun(p, vardiyaTatil, tarihi);
 						tmp.setVardiyaZamani();
@@ -10905,7 +10905,7 @@ public class OrtakIslemler implements Serializable {
 								Date yeniZaman = PdksUtil.convertToJavaDate(dateStr, "yyyyMMdd HH:mm");
 								if (yeniZaman != null) {
 									if (idMap.containsKey(vardiyaTatil.getId())) {
-										if (idMap.get(vardiyaTatil.getId()) && yeniZaman.before(islemVardiya.getVardiyaBasZaman()))
+										if (arifeTatilBasZamanSabit == false && idMap.get(vardiyaTatil.getId()) && yeniZaman.before(islemVardiya.getVardiyaBasZaman()))
 											yeniZaman = tariheGunEkleCikar(cal, yeniZaman, 1);
 									}
 									arifeBaslangicTarihi = yeniZaman;
