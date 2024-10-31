@@ -757,9 +757,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					boolean tekrarOnaylar = onaylayacakYonetici != null && onaylayacakYonetici.isCalisiyor() && onaylayacakYonetici.isCalisiyorGun(sistemTarihi);
 					User onaylayacakYoneticiUser = null;
 					if (tekrarOnaylar && onaylayacakYonetici != null) {
-						List<User> list = pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, onaylayacakYonetici.getId(), User.class, session);
-						if (!list.isEmpty())
-							onaylayacakYoneticiUser = list.get(0);
+						onaylayacakYoneticiUser = (User) pdksEntityController.getSQLParamByAktifFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, onaylayacakYonetici.getId(), User.class, session);
 						if (onaylayacakYoneticiUser != null) {
 							tekrarOnaylar = Boolean.TRUE;
 							ortakIslemler.setUserRoller(onaylayacakYoneticiUser, session);
@@ -3743,13 +3741,9 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				if (personelIzin.getId() == null) {
 					Personel yonetici = personelIzin.getIzinSahibi().getPdksYonetici();
 					User ilkYoneticiUser = null;
-					if (yonetici != null) {
-						List<User> list = pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, yonetici.getId(), User.class, session);
-						if (!list.isEmpty())
-							ilkYoneticiUser = list.get(0);
-						list = null;
-					}
-					String onaylayanTipi = izinTipi.getOnaylayanTipi();
+					if (yonetici != null)  
+						ilkYoneticiUser = (User) pdksEntityController.getSQLParamByAktifFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, yonetici.getId(), User.class, session);
+ 					String onaylayanTipi = izinTipi.getOnaylayanTipi();
 					if (yonetici == null && (onaylayanTipi.equals(IzinTipi.ONAYLAYAN_TIPI_YONETICI1) || onaylayanTipi.equals(IzinTipi.ONAYLAYAN_TIPI_YONETICI2))) {
 						PdksUtil.addMessageWarn(ortakIslemler.yoneticiAciklama() + " tanımsızdır.");
 						durum = "";
@@ -4150,11 +4144,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				if (ccMailList == null)
 					ccMailList = new ArrayList<String>();
 
-				List<User> list = pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, personelIzin.getIzinSahibi().getId(), User.class, session);
-
-				User izinSahibiUser = null;
-				if (!list.isEmpty())
-					izinSahibiUser = list.get(0);
+				User izinSahibiUser = (User) pdksEntityController.getSQLParamByAktifFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, personelIzin.getIzinSahibi().getId(), User.class, session);
 
 				if (izinSahibiUser != null) {
 					mailUserSakla(mailUserMap, izinSahibiUser);

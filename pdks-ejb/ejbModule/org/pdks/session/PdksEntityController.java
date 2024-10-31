@@ -1166,6 +1166,21 @@ public class PdksEntityController implements Serializable {
 	 * @param session
 	 * @return
 	 */
+	public Object getSQLParamByAktifFieldObject(String tableName, String fieldName, Object value, Class class1, Session session) {
+		List list = getSQLParamByAktifFieldList(tableName, fieldName, value, class1, session);
+		Object object = list != null && !list.isEmpty() ? list.get(0) : null;
+		list = null;
+		return object;
+	}
+
+	/**
+	 * @param tableName
+	 * @param fieldName
+	 * @param value
+	 * @param class1
+	 * @param session
+	 * @return
+	 */
 	public List getSQLParamByAktifFieldList(String tableName, String fieldName, Object value, Class class1, Session session) {
 		List list = null;
 		try {
