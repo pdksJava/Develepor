@@ -50,11 +50,14 @@ public class UserMenuItemTime extends BasePDKSObject implements Serializable {
 
 	public UserMenuItemTime(User user, MenuItem menu) {
 		super();
+		Date bugun = new Date();
 		this.user = user;
 		this.menu = menu;
 		this.sessionId = "";
 		this.useCount = new BigDecimal(0L);
-		this.lastTime = new Date();
+		this.firstTime = bugun;
+		this.lastTime = bugun;
+		this.parametreJSON = null;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -128,7 +131,7 @@ public class UserMenuItemTime extends BasePDKSObject implements Serializable {
 
 	public void entityRefresh() {
 		// TODO entityRefresh
-		
+
 	}
 
 }

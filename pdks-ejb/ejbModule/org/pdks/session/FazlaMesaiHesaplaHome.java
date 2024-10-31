@@ -1182,6 +1182,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			HashMap map = new HashMap();
 			List<String> perList = new ArrayList<String>();
 			sicilYeniNo = ortakIslemler.getSicilNo(sicilNo);
+			if (sirketId != null && (sirket == null || sirket.getDepartman() == null))
+				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 			List<Personel> donemPerList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(sirket, tesisId != null ? String.valueOf(tesisId) : null, seciliEkSaha3Id, seciliEkSaha4Id, denklestirmeAy != null ? aylikPuantajSablon : null, sadeceFazlaMesai, session);
 			if (testDurum)
 				logger.info("fillPersonelDenklestirmeDevam 1000 " + basTarih);

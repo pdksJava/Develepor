@@ -6616,10 +6616,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 										personelDenklestirme.setGebePersonelDonemselDurum(pdd);
 									else if (pdd.isSutIzni()) {
 										personelDenklestirme.setSutIzniPersonelDonemselDurum(pdd);
-										if (personelDenklestirme.isSutIzniVar() == false) {
-											pdksEntityController.saveOrUpdate(session, entityManager, cma);
-											flush = true;
-										}
 
 									}
 								}

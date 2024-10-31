@@ -4144,12 +4144,8 @@ public class OrtakIslemler implements Serializable {
 				}
 				if (tipi.equalsIgnoreCase("S")) {
 					class1 = Sirket.class;
-
-					if (departmanId != null && tesisYetki) {
-
+					if (departmanId != null && tesisYetki)
 						departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
-
-					}
 					order = Sirket.COLUMN_NAME_AD;
 				} else if (tipi.startsWith("B")) {
 					class1 = Tanim.class;
@@ -4216,7 +4212,10 @@ public class OrtakIslemler implements Serializable {
 							if (sirket.getSirketGrupId() != null || sirket.isTesisDurumu() == false) {
 								tesisId = "";
 								if (tipi.equalsIgnoreCase("P")) {
-									depId = sirket.getDepartman().getId();
+									if (sirket.getDepartman() == null && sirket.getId() != null)
+										sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirket.getId(), Sirket.class, session);
+
+									depId = sirket.getDepartman() != null ? sirket.getDepartman().getId() : 1L;
 									if (sirket.getSirketGrupId() != null)
 										sirketId = 0L;
 								}
@@ -5448,8 +5447,6 @@ public class OrtakIslemler implements Serializable {
 						MenuItem menuItem = (MenuItem) pdksEntityController.getSQLParamByFieldObject(MenuItem.TABLE_NAME, MenuItem.COLUMN_NAME_ID, menuId, MenuItem.class, session);
 						if (menuItem != null) {
 							menuItemTime = new UserMenuItemTime(authenticatedUser, menuItem);
-							menuItemTime.setFirstTime(new Date());
-							menuItemTime.setParametreJSON(null);
 							HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 							if (mySession != null)
 								menuItemTime.setSessionId(mySession.getId());
@@ -5529,12 +5526,23 @@ public class OrtakIslemler implements Serializable {
 				if (menuItemTime != null) {
 					menuItemTime = veriler.get(0);
 					if (menuItemTime.getParametreJSON() == null || !parametreJSON.equals(menuItemTime.getParametreJSON())) {
-						menuItemTime.setParametreJSON(parametreJSON);
+						String spName = "SP_UPDATE_USER_MENUITEM_TIME";
 						HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-						if (mySession != null)
-							menuItemTime.setSessionId(mySession.getId());
-						menuItemTime.setLastTime(new Date());
-						pdksEntityController.saveOrUpdate(session, entityManager, menuItemTime);
+						if (menuItemTime.getId() == null || isExisStoreProcedure(spName, session) == false) {
+							menuItemTime.setParametreJSON(parametreJSON);
+							if (mySession != null)
+								menuItemTime.setSessionId(mySession.getId());
+							menuItemTime.setLastTime(new Date());
+							pdksEntityController.saveOrUpdate(session, entityManager, menuItemTime);
+						} else {
+							StringBuffer sp = new StringBuffer(spName);
+							LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+							veriMap.put("j", parametreJSON);
+							veriMap.put("s", mySession != null ? mySession.getId() : menuItemTime.getSessionId());
+							veriMap.put("mt", menuItemTime.getId());
+							veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+							pdksEntityController.execSP(veriMap, sp);
+						}
 						session.flush();
 					}
 					if (authenticatedUser != null && parametreJSON != null)
