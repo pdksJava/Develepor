@@ -672,9 +672,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				HashMap fields = new HashMap();
 				StringBuffer sb = new StringBuffer();
 				sb.append("SELECT * FROM " + Parameter.TABLE_NAME + (lockVar ? " " + selectLOCK : ""));
-				sb.append(" WHERE " + Parameter.COLUMN_NAME_DURUM + " = 1 ");
+				// sb.append(" WHERE " + Parameter.COLUMN_NAME_DURUM + " = 1 ");
 				List<Parameter> list = dao.getNativeSQLList(fields, sb, Parameter.class);
-
 				for (Parameter parameter : list) {
 					String key = parameter.getName().trim(), deger = parameter.getValue().trim();
 					pmMap.put(key, parameter);
@@ -1385,7 +1384,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				mesaj = izinHakedisList.get(0).getPersonelNo();
 			sistemVerileriniYukle(pdksDAO, true);
 			setSicilNoUzunluk();
-			if (mailMap == null || mailMap.containsKey(getParametreHakEdisIzinERPTableView()) == false)
+			boolean erpVeriOku = mailMap != null && mailMap.containsKey(getParametreHakEdisIzinERPTableView());
+			if (erpVeriOku == false)
 				saveFonksiyonVeri("saveHakedisIzinler", izinHakedisList);
 			String personelNoAciklama = personelNoAciklama();
 			LinkedHashMap<String, Object> izinKeyAciklamaMap = new LinkedHashMap<String, Object>();
@@ -1630,7 +1630,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 				personelMap = null;
 			}
-			if (mailMap == null || mailMap.containsKey(getParametreHakEdisIzinERPTableView()) == false)
+			if (erpVeriOku == false)
 				saveFonksiyonVeri(null, izinHakedisList);
 			mesajInfoYaz("saveHakedisIzinler --> " + mesaj + " out " + PdksUtil.getCurrentTimeStampStr());
 			bugun = PdksUtil.getDate(new Date());
@@ -1806,7 +1806,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				dosyaEkAdi = erp.getPersonelNo();
 		}
 		setSicilNoUzunluk();
-		if (mailMap == null || mailMap.containsKey(getParametreIzinERPTableView()) == false)
+		boolean erpVeriOku = mailMap != null && mailMap.containsKey(getParametreIzinERPTableView());
+		if (erpVeriOku == false)
 			saveFonksiyonVeri("saveIzinler", izinList);
 
 		if (erp != null)
@@ -1935,7 +1936,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		HashMap<String, PersonelIzin> izinMap = new HashMap<String, PersonelIzin>();
 		HashMap fields = new HashMap();
 		fields.put("beyazYakaDefault", Boolean.TRUE);
-//		fields.put("isKur", Boolean.FALSE);
+		// fields.put("isKur", Boolean.FALSE);
 		VardiyaSablonu beyazYakaDefaultVardiyaSablonu = (VardiyaSablonu) pdksDAO.getObjectByInnerObject(fields, VardiyaSablonu.class);
 		Integer izinServisGun = null;
 		if (mailMap.containsKey("izinServisGunDuzelt")) {
@@ -2686,10 +2687,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 			doktorUserMap = null;
 		}
-		if (mailBosGonder && mailStatu == null && (getTestSunucuDurum() || !mailMap.containsKey(getParametreIzinERPTableView())))
+		if (mailBosGonder && mailStatu == null && (getTestSunucuDurum() || erpVeriOku == false))
 			mailBosGonder("saveIzinler", "izin", izinList);
 		hataList = null;
-		if (mailMap == null || mailMap.containsKey(getParametreIzinERPTableView()) == false)
+		if (erpVeriOku == false)
 			saveFonksiyonVeri(null, izinList);
 
 		mesajInfoYaz("saveIzinler --> " + mesaj + " out " + PdksUtil.getCurrentTimeStampStr());
@@ -4257,7 +4258,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 			}
 		}
-		if (mailMap == null || mailMap.containsKey(getParametrePersonelERPTableView()) == false)
+		boolean erpVeriOku = mailMap != null && mailMap.containsKey(getParametrePersonelERPTableView());
+		if (erpVeriOku == false)
 			saveFonksiyonVeri("savePersoneller", personelList);
 
 		if (personelList.size() == 1) {
@@ -4666,11 +4668,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 		}
 
-		if (mailBosGonder && mailStatu == null && (getTestSunucuDurum() || !mailMap.containsKey(getParametrePersonelERPTableView())))
+		if (mailBosGonder && mailStatu == null && (getTestSunucuDurum() || erpVeriOku == false))
 			mailBosGonder("savePersoneller", "personel", personelList);
 		if (updateYonetici2)
 			setIkinciYoneticiSifirla();
-		if (mailMap == null || mailMap.containsKey(getParametrePersonelERPTableView()) == false)
+		if (erpVeriOku == false)
 			saveFonksiyonVeri(null, personelList);
 		hataList = null;
 
