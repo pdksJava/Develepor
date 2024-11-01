@@ -106,7 +106,7 @@ public class PersonelERPGuncelleme implements Serializable {
 					parameter = ortakIslemler.getParameter(session, PARAMETER_KEY);
 					String value = (parameter != null) ? parameter.getValue() : null;
 					hataKonum = "Paramatre okundu ";
-					 
+
 					String personelERPTableViewAdi = ortakIslemler.getParameterKey(ortakIslemler.getParametrePersonelERPTableView());
 					boolean tableERPOku = PdksUtil.hasStringValue(personelERPTableViewAdi);
 					if (value != null || tableERPOku) {
@@ -118,7 +118,11 @@ public class PersonelERPGuncelleme implements Serializable {
 							String parameterUpdateKey = PARAMETER_KEY + "Update";
 							value = ortakIslemler.getParameterKey(PARAMETER_KEY + "Update");
 							guncellemeDBDurum = PdksUtil.zamanKontrol(parameterUpdateKey, value, tarih);
-
+							if (guncellemeDBDurum == false) {
+								Calendar cal = Calendar.getInstance();
+								int gun = cal.get(Calendar.DATE), saat = cal.get(Calendar.HOUR_OF_DAY);
+								guncellemeDBDurum = (gun > 25 || gun < 6) && (saat > 7 && saat < 20);
+							}
 						}
 						if (zamanDurum || guncellemeDBDurum) {
 							if (ortakIslemler.getGuncellemeDurum(Personel.TABLE_NAME, session))
@@ -397,8 +401,8 @@ public class PersonelERPGuncelleme implements Serializable {
 						Boolean durum = ortakIslemler.sapVeriGuncelle(session, user, bordroAltBirimiMap, masrafYeriMap, pdksPersonel, null, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
 
 						if (!durum.equals(pdksPersonel.getDurum())) {
- 							Personel personel = (Personel) pdksEntityController.getSQLParamByFieldObject(Personel.TABLE_NAME, Personel.COLUMN_NAME_ID, pdksPersonel.getId(), Personel.class, session);
- 
+							Personel personel = (Personel) pdksEntityController.getSQLParamByFieldObject(Personel.TABLE_NAME, Personel.COLUMN_NAME_ID, pdksPersonel.getId(), Personel.class, session);
+
 							personel.setDurum(durum);
 							personel.setGuncellemeTarihi(bugun);
 							personel.setGuncelleyenUser(user);

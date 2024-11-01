@@ -122,6 +122,11 @@ public class IzinBakiyeGuncelleme implements Serializable {
 				String parameterUpdateKey = PARAMETER_KEY + "Update";
 				value = ortakIslemler.getParameterKey(parameterUpdateKey);
 				guncellemeDBDurum = PdksUtil.zamanKontrol(parameterUpdateKey, value, time);
+				if (guncellemeDBDurum == false) {
+					Calendar cal = Calendar.getInstance();
+					int gun = cal.get(Calendar.DATE), saat = cal.get(Calendar.HOUR_OF_DAY);
+					guncellemeDBDurum = (gun > 25 || gun < 6) && (saat > 7 && saat < 20);
+				}
 			}
 			hataKonum = "Paramatre okundu ";
 			if (zamanDurum || guncellemeDBDurum) {
