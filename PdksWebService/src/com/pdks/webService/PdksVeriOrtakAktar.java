@@ -1385,7 +1385,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				mesaj = izinHakedisList.get(0).getPersonelNo();
 			sistemVerileriniYukle(pdksDAO, true);
 			setSicilNoUzunluk();
-			saveFonksiyonVeri("saveHakedisIzinler", izinHakedisList);
+			if (mailMap == null || mailMap.containsKey(getParametreHakEdisIzinERPTableView()) == false)
+				saveFonksiyonVeri("saveHakedisIzinler", izinHakedisList);
 			String personelNoAciklama = personelNoAciklama();
 			LinkedHashMap<String, Object> izinKeyAciklamaMap = new LinkedHashMap<String, Object>();
 			LinkedHashMap<String, String> izinKeyPersonelMap = new LinkedHashMap<String, String>();
@@ -1629,8 +1630,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 				personelMap = null;
 			}
-
-			saveFonksiyonVeri(null, izinHakedisList);
+			if (mailMap == null || mailMap.containsKey(getParametreHakEdisIzinERPTableView()) == false)
+				saveFonksiyonVeri(null, izinHakedisList);
 			mesajInfoYaz("saveHakedisIzinler --> " + mesaj + " out " + PdksUtil.getCurrentTimeStampStr());
 			bugun = PdksUtil.getDate(new Date());
 
@@ -1805,7 +1806,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				dosyaEkAdi = erp.getPersonelNo();
 		}
 		setSicilNoUzunluk();
-		saveFonksiyonVeri("saveIzinler", izinList);
+		if (mailMap == null || mailMap.containsKey(getParametreIzinERPTableView()) == false)
+			saveFonksiyonVeri("saveIzinler", izinList);
 
 		if (erp != null)
 			mesaj = PdksUtil.setTurkishStr(erp.getPersonelNo() + " " + erp.getIzinTipiAciklama() + " bilgisi guncellenecektir.");
@@ -2687,7 +2689,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 		if (mailBosGonder && mailStatu == null && (getTestSunucuDurum() || !mailMap.containsKey(getParametreIzinERPTableView())))
 			mailBosGonder("saveIzinler", "izin", izinList);
 		hataList = null;
-		saveFonksiyonVeri(null, izinList);
+		if (mailMap == null || mailMap.containsKey(getParametreIzinERPTableView()) == false)
+			saveFonksiyonVeri(null, izinList);
 
 		mesajInfoYaz("saveIzinler --> " + mesaj + " out " + PdksUtil.getCurrentTimeStampStr());
 	}
@@ -4254,7 +4257,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 			}
 		}
-		saveFonksiyonVeri("savePersoneller", personelList);
+		if (mailMap == null || mailMap.containsKey(getParametrePersonelERPTableView()) == false)
+			saveFonksiyonVeri("savePersoneller", personelList);
 
 		if (personelList.size() == 1) {
 			PersonelERP erp = personelList.get(0);
@@ -4666,8 +4670,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 			mailBosGonder("savePersoneller", "personel", personelList);
 		if (updateYonetici2)
 			setIkinciYoneticiSifirla();
-
-		saveFonksiyonVeri(null, personelList);
+		if (mailMap == null || mailMap.containsKey(getParametrePersonelERPTableView()) == false)
+			saveFonksiyonVeri(null, personelList);
 		hataList = null;
 
 		mesajInfoYaz("savePersoneller --> " + mesaj + " out " + PdksUtil.getCurrentTimeStampStr());
