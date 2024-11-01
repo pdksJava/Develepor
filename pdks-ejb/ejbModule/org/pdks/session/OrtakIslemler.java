@@ -7049,7 +7049,7 @@ public class OrtakIslemler implements Serializable {
 				siciller.add(sicilNo.trim());
 			}
 			String fieldName = null;
-			if (siciller != null && !siciller.isEmpty()) {
+			if (siciller != null && !siciller.isEmpty() && PdksUtil.hasStringValue(sicilNo)) {
 				fieldName = "s";
 				parametreMap.put(fieldName, siciller);
 			}
