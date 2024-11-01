@@ -1935,7 +1935,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		HashMap<String, PersonelIzin> izinMap = new HashMap<String, PersonelIzin>();
 		HashMap fields = new HashMap();
 		fields.put("beyazYakaDefault", Boolean.TRUE);
-		fields.put("isKur", Boolean.FALSE);
+//		fields.put("isKur", Boolean.FALSE);
 		VardiyaSablonu beyazYakaDefaultVardiyaSablonu = (VardiyaSablonu) pdksDAO.getObjectByInnerObject(fields, VardiyaSablonu.class);
 		Integer izinServisGun = null;
 		if (mailMap.containsKey("izinServisGunDuzelt")) {
