@@ -342,7 +342,7 @@ public class IseGelmemeUyari implements Serializable {
 					// Vardiya kayıtları okunuyor
 					TreeMap<String, VardiyaGun> vardiyalar = ortakIslemler.getIslemVardiyalar(personeller, oncekiGun, sonrakiGun, Boolean.FALSE, session, Boolean.TRUE);
 					try {
-						boolean islem = ortakIslemler.getVardiyaHareketIslenecekList(new ArrayList<VardiyaGun>(vardiyalar.values()), tarih, session);
+						boolean islem = ortakIslemler.getVardiyaHareketIslenecekList(new ArrayList<VardiyaGun>(vardiyalar.values()), tarih, tarih, session);
 						if (islem)
 							vardiyalar = ortakIslemler.getIslemVardiyalar(personeller, oncekiGun, sonrakiGun, Boolean.FALSE, session, Boolean.TRUE);
 
@@ -767,8 +767,8 @@ public class IseGelmemeUyari implements Serializable {
 						else
 							userIKList = new ArrayList<User>();
 						if (yonetici != null && yonetici.isSuperVisor() && personelYonetici.getYoneticisi() != null && personelYonetici.getYoneticisi().isCalisiyor()) {
-							 
-							User yoneticiDiger = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL,  personelYonetici.getYoneticisi().getId(), User.class, session);
+
+							User yoneticiDiger = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, personelYonetici.getYoneticisi().getId(), User.class, session);
 
 							if (yoneticiDiger != null && yoneticiDiger.isDurum()) {
 								ortakIslemler.setUserRoller(yoneticiDiger, session);

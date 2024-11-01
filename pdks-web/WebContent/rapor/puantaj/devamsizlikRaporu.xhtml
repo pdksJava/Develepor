@@ -18,9 +18,18 @@
 				<a4j:outputPanel id="anaForm">
 					<h:panelGrid columns="1">
 						<h:panelGrid columns="3">
-							<s:decorate template="/layout/edit.xhtml">
+
+							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin==false}">
 								<ui:define name="label">Tarih</ui:define>
 								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{devamsizlikRaporuHome.date}" id="dateFilter" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
+								<ui:define name="label">Başlangıç Tarih</ui:define>
+								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{devamsizlikRaporuHome.date}" id="dateFilter1" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
+								<ui:define name="label">Bitiş Tarih</ui:define>
+								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{devamsizlikRaporuHome.bitisTarih}" id="dateFilter2" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
 								<ui:define name="label">İzinli Göster</ui:define>
@@ -94,7 +103,12 @@
 							</f:facet>
 							<h:outputText value="#{calismaPlani.personel.ekSaha3.aciklama}" />
 						</rich:column>
-
+						<rich:column width="30" style="text-align:center" rendered="#{devamsizlikRaporuHome.bitisTarih!=null}">
+							<f:facet name="header">
+								<h:outputText value="Tarihi" />
+							</f:facet>
+							<h:outputText value="#{authenticatedUser.dateFormatla( calismaPlani.vardiyaDate)}" />
+						</rich:column>
 						<rich:column width="100" style="text-align:center">
 							<f:facet name="header">
 								<h:outputText value="Vardiya" />
@@ -119,7 +133,8 @@
 								value="#{authenticatedUser.dateTimeFormatla(calismaPlani.cikisHareket.orjinalZaman)}" />
 						</rich:column>
 
-						<rich:column width="60" rendered="#{devamsizlikRaporuHome.izinliGoster or devamsizlikRaporuHome.gelenGoster or (authenticatedUser.admin or authenticatedUser.IK)}">
+						<rich:column width="60"
+							rendered="#{devamsizlikRaporuHome.izinliGoster or devamsizlikRaporuHome.gelenGoster or (authenticatedUser.admin or authenticatedUser.IK)}">
 							<f:facet name="header">
 								<h:outputText value="Açıklama" />
 							</f:facet>
@@ -131,7 +146,7 @@
 										value="#{devamsizlikRaporuHome.getVardiyaAciklama(calismaPlani)}" /></SPAN>
 								<rich:toolTip for="calismaPlani#{calismaPlani.id}">
 										#{calismaPlani.izin.izinTipi.izinTipiTanim.aciklama}<br />
-										<ui:fragment rendered="#{calismaPlani.izin.orjIzin!=null}">
+									<ui:fragment rendered="#{calismaPlani.izin.orjIzin!=null}">
 										#{authenticatedUser.dateTimeFormatla(calismaPlani.izin.orjIzin.baslangicZamani)} - 
 										#{authenticatedUser.dateTimeFormatla(calismaPlani.izin.orjIzin.bitisZamani)}
 										</ui:fragment>

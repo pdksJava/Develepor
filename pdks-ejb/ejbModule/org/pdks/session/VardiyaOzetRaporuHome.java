@@ -339,7 +339,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			// bu araliktaki tum hareketleri cekecektir.
 
 			try {
-				boolean islem = ortakIslemler.getVardiyaHareketIslenecekList(vardiyaGunList, date, session);
+				boolean islem = ortakIslemler.getVardiyaHareketIslenecekList(vardiyaGunList, date, date, session);
 				if (islem)
 					vardiyaGunList = getVardiyalariOku(oncekiGun, tumPersoneller, date, date);
 			} catch (Exception e) {

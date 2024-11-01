@@ -60,7 +60,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	List<User> userList;
 
 	public static String sayfaURL = "devamsizlikRaporu";
-	Date date;
+	private Date date, bitisTarih;
 	List<Personel> devamsizlikList = new ArrayList<Personel>();
 	List<PersonelIzin> izinList = new ArrayList<PersonelIzin>();
 	List<Personel> personelList = new ArrayList<Personel>();
@@ -120,7 +120,11 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		try {
 			baosDosya = excelAktarDevam();
 			if (baosDosya != null) {
-				String dosyaAdi = "DevamsizlikRaporu_" + PdksUtil.convertToDateString(date, "yyyy_MM_dd") + ".xlsx";
+				String dosyaAdi = null;
+				if (bitisTarih == null || PdksUtil.tarihKarsilastirNumeric(date, bitisTarih) == 0)
+					dosyaAdi = "DevamsizlikRaporu_" + PdksUtil.convertToDateString(date, "yyyy_MM_dd") + ".xlsx";
+				else
+					dosyaAdi = "DevamsizlikRaporu_" + PdksUtil.convertToDateString(date, "yyyyMMdd") + "_" + PdksUtil.convertToDateString(bitisTarih, "yyyyMMdd") + ".xlsx";
 				PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi);
 			}
 		} catch (Exception e) {
@@ -138,9 +142,11 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		CellStyle styleOdd = ExcelUtil.getStyleOdd(null, wb);
 		CellStyle styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
 		CellStyle styleOddDateTime = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATETIME, wb);
+		CellStyle styleOddDate = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATE, wb);
 		CellStyle styleEven = ExcelUtil.getStyleEven(null, wb);
 		CellStyle styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
 		CellStyle styleEvenDateTime = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATETIME, wb);
+		CellStyle styleEvenDate = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATE, wb);
 
 		CreationHelper helper = wb.getCreationHelper();
 		ClientAnchor anchor = helper.createClientAnchor();
@@ -150,12 +156,15 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.sirketAciklama());
 		boolean tesisDurum = ortakIslemler.getListTesisDurum(vardiyaGunList);
+		boolean tekTarih = bitisTarih == null || PdksUtil.tarihKarsilastirNumeric(date, bitisTarih) == 0;
 		if (tesisDurum)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.yoneticiAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumAciklama);
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.personelNoAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Adı Soyadı");
+		if (tekTarih == false)
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tarih");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Giriş");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Çıkış");
@@ -165,7 +174,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Kapı");
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Zaman");
 		}
-
+		boolean renk = true;
 		for (VardiyaGun vardiyaGun : vardiyaGunList) {
 			Personel personel = vardiyaGun.getPersonel();
 			Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
@@ -175,17 +184,19 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				hareketler = new ArrayList<HareketKGS>();
 				hareketler.add(null);
 			}
-			boolean renk = true;
 			for (Object hareket : hareketler) {
 				HareketKGS hareketKGS = hareket != null ? (HareketKGS) hareket : null;
 				row++;
 				col = 0;
-				CellStyle style = null, styleCenter = null, cellStyleDateTime = null;
+				CellStyle style = null, styleCenter = null, cellStyleDateTime = null, cellStyleDate = null;
 				if (renk) {
+					cellStyleDate = styleOddDate;
 					cellStyleDateTime = styleOddDateTime;
 					style = styleOdd;
 					styleCenter = styleOddCenter;
+
 				} else {
+					cellStyleDate = styleEvenDate;
 					cellStyleDateTime = styleEvenDateTime;
 					style = styleEven;
 					styleCenter = styleEvenCenter;
@@ -203,7 +214,10 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(personel.getPdksSicilNo());
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getAdSoyad());
+				if (tekTarih == false)
+					ExcelUtil.getCell(sheet, row, col++, cellStyleDate).setCellValue(vardiyaGun.getVardiyaDate());
 				Cell vardiyaCell = ExcelUtil.getCell(sheet, row, col++, styleCenter);
+
 				vardiyaCell.setCellValue(islemVardiya.getKisaAdi());
 				String vardiyaTitle = authenticatedUser.timeFormatla(islemVardiya.getVardiyaBasZaman()) + " - " + authenticatedUser.timeFormatla(islemVardiya.getVardiyaBitZaman());
 				ExcelUtil.setCellComment(vardiyaCell, anchor, helper, drawing, vardiyaTitle);
@@ -344,12 +358,13 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		}
 		if (!tumPersoneller.isEmpty()) {
 			Calendar cal = Calendar.getInstance();
+			Date date2 = bitisTarih == null ? date : bitisTarih;
 			Date basTarih = ortakIslemler.tariheGunEkleCikar(cal, date, -2);
-			Date bitTarih = ortakIslemler.tariheGunEkleCikar(cal, date, 1);
+			Date bitTarih = ortakIslemler.tariheGunEkleCikar(cal, date2, 1);
 			TreeMap<String, VardiyaGun> vardiyaMap = null;
 			try {
 				vardiyaMap = ortakIslemler.getIslemVardiyalar((List<Personel>) tumPersoneller, basTarih, bitTarih, Boolean.FALSE, session, Boolean.TRUE);
-				boolean islem = ortakIslemler.getVardiyaHareketIslenecekList(new ArrayList<VardiyaGun>(vardiyaMap.values()), date, session);
+				boolean islem = ortakIslemler.getVardiyaHareketIslenecekList(new ArrayList<VardiyaGun>(vardiyaMap.values()), date, date2, session);
 				if (islem)
 					vardiyaMap = ortakIslemler.getIslemVardiyalar((List<Personel>) tumPersoneller, basTarih, bitTarih, Boolean.FALSE, session, Boolean.TRUE);
 
@@ -358,13 +373,13 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				e.printStackTrace();
 			}
 			vardiyaList = vardiyaMap != null ? new ArrayList<VardiyaGun>(vardiyaMap.values()) : new ArrayList<VardiyaGun>();
-			ortakIslemler.sonrakiGunVardiyalariAyikla(date, vardiyaList, session);
+			ortakIslemler.sonrakiGunVardiyalariAyikla(date2, vardiyaList, session);
 			// butun personeller icin hareket cekerken bu en kucuk tarih ile en
 			// buyuk tarih araligini kullanacaktir
 			// bu araliktaki tum hareketleri cekecektir.
 			for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 				VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
-				if (PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0) {
+				if (pdksVardiyaGun.getVardiyaDate().before(date) || pdksVardiyaGun.getVardiyaDate().after(date2)) {
 					iterator.remove();
 					continue;
 
@@ -649,4 +664,13 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	public static void setSayfaURL(String sayfaURL) {
 		DevamsizlikRaporuHome.sayfaURL = sayfaURL;
 	}
+
+	public Date getBitisTarih() {
+		return bitisTarih;
+	}
+
+	public void setBitisTarih(Date bitisTarih) {
+		this.bitisTarih = bitisTarih;
+	}
+
 }

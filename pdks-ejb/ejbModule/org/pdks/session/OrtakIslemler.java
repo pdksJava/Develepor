@@ -2062,7 +2062,7 @@ public class OrtakIslemler implements Serializable {
 			Personel personel = vardiyaGun.getPersonel();
 			if (tesisList != null && personel.getTesis() != null && !tesisList.contains(personel.getTesis().getId()))
 				continue;
-			String key = personel.getSirket().getAd() + "_" + (personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
+			String key = personel.getSirket().getAd() + "_" + (personel.getTesis() != null ? personel.getTesis().getAciklama() : "") + PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyMMdd");
 			List<VardiyaGun> ozelList = sirketParcalaMap.containsKey(key) ? sirketParcalaMap.get(key) : new ArrayList<VardiyaGun>();
 			if (ozelList.isEmpty()) {
 				Liste liste = new Liste(key, ozelList);
@@ -8106,26 +8106,35 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param vardiyaGunList
-	 * @param tarih
+	 * @param tarih1
+	 * @param tarih2
 	 * @param session
 	 * @return
 	 */
 	@Transactional
-	public boolean getVardiyaHareketIslenecekList(List<VardiyaGun> vardiyaGunList, Date tarih, Session session) {
+	public boolean getVardiyaHareketIslenecekList(List<VardiyaGun> vardiyaGunList, Date tarih1, Date tarih2, Session session) {
 		boolean sonuc = false;
 		List<VardiyaGun> vardiyaGunIslemList = new ArrayList<VardiyaGun>();
 		if (!vardiyaGunList.isEmpty()) {
+			HashMap fields = new HashMap();
 			Calendar cal = Calendar.getInstance();
-			cal.setTime(tarih);
+			cal.setTime(tarih1);
+			StringBuffer sb = new StringBuffer();
+			sb.append("SELECT " + DenklestirmeAy.COLUMN_NAME_ID + " FROM " + DenklestirmeAy.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+			sb.append(" WHERE ( " + DenklestirmeAy.COLUMN_NAME_YIL + " * 100 ) + " + DenklestirmeAy.COLUMN_NAME_AY + " BETWEEN :d1 AND :d2");
+			fields.put("d1", Long.parseLong(PdksUtil.convertToDateString(tarih1, "yyyyMM")));
+			fields.put("d2", Long.parseLong(PdksUtil.convertToDateString(tarih2 == null ? tarih1 : tarih2, "yyyyMM")));
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 
-			DenklestirmeAy denklestirmeAy = getSQLDenklestirmeAy(cal, session);
-			if (denklestirmeAy != null && denklestirmeAy.getDurum()) {
-				HashMap fields = new HashMap();
-				StringBuffer sb = new StringBuffer();
+			List<Long> donemIdList = getLongByBigDecimalList(pdksEntityController.getObjectBySQLList(sb, fields, null));
+			if (donemIdList != null) {
+				fields.clear();
+				sb = new StringBuffer();
 				sb.append("SELECT C.* FROM " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getSelectLOCK());
 				sb.append(" INNER JOIN " + CalismaModeli.TABLE_NAME + " C " + PdksEntityController.getJoinLOCK() + " ON C." + CalismaModeli.COLUMN_NAME_ID + " = CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI);
-				sb.append(" WHERE CA." + CalismaModeliAy.COLUMN_NAME_DONEM + " = :d AND CA." + CalismaModeliAy.COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL + " = 1");
-				fields.put("d", denklestirmeAy.getId());
+				sb.append(" WHERE CA." + CalismaModeliAy.COLUMN_NAME_DONEM + "  :d AND CA." + CalismaModeliAy.COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL + " = 1");
+				fields.put("d", donemIdList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				fields.put(PdksEntityController.MAP_KEY_MAP, "getId");
@@ -8153,7 +8162,7 @@ public class OrtakIslemler implements Serializable {
 			}
 			if (!vardiyaGunIslemList.isEmpty())
 				try {
-					sonuc = vardiyaGunHareketleriGuncelle(vardiyaGunIslemList, denklestirmeAy, tarih, session);
+					sonuc = vardiyaGunHareketleriGuncelle(vardiyaGunIslemList, donemIdList, tarih1, tarih2, session);
 				} catch (Exception e) {
 					logger.error(e);
 					e.printStackTrace();
@@ -8168,17 +8177,18 @@ public class OrtakIslemler implements Serializable {
 	/**
 	 * @param vardiyaGunIslemList
 	 * @param denklestirmeAy
-	 * @param tarih
+	 * @param tarih1
+	 * @param tarih2
 	 * @param session
 	 * @return
 	 */
-	private boolean vardiyaGunHareketleriGuncelle(List<VardiyaGun> vardiyaGunIslemList, DenklestirmeAy denklestirmeAy, Date tarih, Session session) {
+	private boolean vardiyaGunHareketleriGuncelle(List<VardiyaGun> vardiyaGunIslemList, List<Long> denklestirmeAyIdList, Date tarih1, Date tarih2, Session session) {
 		boolean sonuc = false;
 		TreeMap<Long, List<VardiyaGun>> personelVardiyaBulMap = new TreeMap<Long, List<VardiyaGun>>();
 		TreeMap<Long, PersonelDenklestirmeTasiyici> personelDenklestirmeMap = null;
 		TreeMap<Long, PersonelDenklestirme> denkMap = new TreeMap<Long, PersonelDenklestirme>();
 		HashMap fields = new HashMap();
-		fields.put("denklestirmeAy.id", denklestirmeAy.getId());
+		fields.put("denklestirmeAy.id", denklestirmeAyIdList);
 		fields.put("hareketKaydiVardiyaBul", Boolean.TRUE);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -8198,7 +8208,8 @@ public class OrtakIslemler implements Serializable {
 					Long cmId = personel.getCalismaModeli() != null ? personel.getCalismaModeli().getId() : null;
 					personelVardiyaBulMap.put(personel.getId(), list);
 					if (cmId != null && cmaMap.containsKey(cmId)) {
-						PersonelDenklestirme personelDenklestirme = new PersonelDenklestirme(personel, denklestirmeAy, cmaMap.get(cmId));
+						CalismaModeliAy calismaModeliAy = cmaMap.get(cmId);
+						PersonelDenklestirme personelDenklestirme = new PersonelDenklestirme(personel, calismaModeliAy.getDenklestirmeAy(), cmaMap.get(cmId));
 						denkMap.put(personel.getId(), personelDenklestirme);
 					}
 				}
@@ -8212,7 +8223,7 @@ public class OrtakIslemler implements Serializable {
 			List idList = new ArrayList(perIdList);
 			String fieldName = "personel.id";
 			HashMap map1 = new HashMap();
-			map1.put("denklestirmeAy.id", denklestirmeAy.getId());
+			map1.put("denklestirmeAy.id", denklestirmeAyIdList);
 			map1.put(fieldName, idList);
 			if (session != null)
 				map1.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -8230,7 +8241,7 @@ public class OrtakIslemler implements Serializable {
 				HashMap<Long, Boolean> hareketKaydiVardiyaMap = new HashMap<Long, Boolean>();
 				fields.clear();
 				fields.put(PdksEntityController.MAP_KEY_SELECT, "calismaModeli.id");
-				fields.put("denklestirmeAy.id", denklestirmeAy.getId());
+				fields.put("denklestirmeAy.id", denklestirmeAyIdList);
 				fields.put("hareketKaydiVardiyaBul", Boolean.TRUE);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -8247,7 +8258,7 @@ public class OrtakIslemler implements Serializable {
 						personelDenklestirmeTasiyici.setPersonel(personel);
 						personelDenklestirmeTasiyici.setVardiyaGunleriMap(new TreeMap<String, VardiyaGun>());
 						tumPersoneller.add(personel);
-						personelDenklestirmeTasiyici.setDenklestirmeAy(denklestirmeAy);
+						personelDenklestirmeTasiyici.setDenklestirmeAy(personelDenklestirme.getDenklestirmeAy());
 						personelDenklestirmeTasiyici.setCalismaModeli(calismaModeli);
 						personelDenklestirmeMap.put(personelDenklestirme.getPdksPersonel().getId(), personelDenklestirmeTasiyici);
 					}
@@ -8261,11 +8272,11 @@ public class OrtakIslemler implements Serializable {
 							calismaPlaniMap.put(key, new ArrayList<VardiyaGun>(personelVardiyaBulMap.get(key)));
 						}
 					}
-					List<Long> kapiIdler = getPdksDonemselKapiIdler(tarih, tarih, session);
+					List<Long> kapiIdler = getPdksDonemselKapiIdler(tarih1, tarih2, session);
 					List<HareketKGS> kgsList = null;
 					try {
 						if (kapiIdler != null && !kapiIdler.isEmpty())
-							kgsList = getPdksHareketBilgileri(Boolean.TRUE, kapiIdler, (List<Personel>) tumPersoneller.clone(), tariheGunEkleCikar(cal, tarih, -1), tariheGunEkleCikar(cal, tarih, 1), HareketKGS.class, session);
+							kgsList = getPdksHareketBilgileri(Boolean.TRUE, kapiIdler, (List<Personel>) tumPersoneller.clone(), tariheGunEkleCikar(cal, tarih1, -1), tariheGunEkleCikar(cal, tarih2, 1), HareketKGS.class, session);
 
 					} catch (Exception e) {
 					}
