@@ -85,6 +85,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 	private VardiyaSablonu vardiyaSablonu = null;
 
+	private boolean erpVeriOku;
+
 	private CalismaModeli calismaModeli = null;
 
 	private KapiSirket kapiSirket = null;
@@ -1383,8 +1385,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 			if (izinHakedisList.size() == 1)
 				mesaj = izinHakedisList.get(0).getPersonelNo();
 			sistemVerileriniYukle(pdksDAO, true);
+			erpVeriOku = mailMap == null || mailMap.containsKey(getParametreHakEdisIzinERPTableView());
 			setSicilNoUzunluk();
-			boolean erpVeriOku = mailMap != null && mailMap.containsKey(getParametreHakEdisIzinERPTableView());
 			if (erpVeriOku == false)
 				saveFonksiyonVeri("saveHakedisIzinler", izinHakedisList);
 			String personelNoAciklama = personelNoAciklama();
@@ -1739,6 +1741,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		servisAdi = "saveIzinler";
 		if (pdksDAO != null && izinList != null && !izinList.isEmpty()) {
 			sistemVerileriniYukle(pdksDAO, true);
+			erpVeriOku = mailMap == null || mailMap.containsKey(getParametreIzinERPTableView());
 			boolean servisDurum = !PdksUtil.getCanliSunucuDurum() || !(mailMap.containsKey(servisAdi + "Durum") && mailMap.get(servisAdi + "Durum").equals("0"));
 			if (servisDurum) {
 				izinBilgileriniGuncelle(izinList);
@@ -1806,7 +1809,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				dosyaEkAdi = erp.getPersonelNo();
 		}
 		setSicilNoUzunluk();
-		boolean erpVeriOku = mailMap != null && mailMap.containsKey(getParametreIzinERPTableView());
+
 		if (erpVeriOku == false)
 			saveFonksiyonVeri("saveIzinler", izinList);
 
@@ -3899,6 +3902,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		servisAdi = "savePersoneller";
 		if (pdksDAO != null && personelList != null && !personelList.isEmpty()) {
 			sistemVerileriniYukle(pdksDAO, true);
+			erpVeriOku = mailMap == null || mailMap.containsKey(getParametrePersonelERPTableView());
 			Boolean servisDurum = !PdksUtil.getCanliSunucuDurum() || !(mailMap.containsKey(servisAdi + "Durum") && mailMap.get(servisAdi + "Durum").equals("0"));
 			if (servisDurum) {
 				personelBilgileriniGuncelle(personelList);
@@ -4258,7 +4262,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 			}
 		}
-		boolean erpVeriOku = mailMap != null && mailMap.containsKey(getParametrePersonelERPTableView());
+
 		if (erpVeriOku == false)
 			saveFonksiyonVeri("savePersoneller", personelList);
 

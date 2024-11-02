@@ -268,7 +268,7 @@
 									</span>
 								</ui:fragment>
 								<ui:fragment rendered="#{personelFazlaMesaiHome.denklestirmeAyDurum}">
-									<a4j:commandButton status="ajaxStatus" value="Onay Sil" action="#{personelFazlaMesaiHome.mesaiSec(mesai)}" reRender="hareketSilPanel"
+									<a4j:commandButton status="ajaxStatus" value="Onay Sil" rendered="#{mesai.personelFazlaMesai.id!=null}" action="#{personelFazlaMesaiHome.mesaiSec(mesai)}" reRender="hareketSilPanel"
 										oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('hareketSilPanel')}.show();" />
 
 								</ui:fragment>
@@ -528,9 +528,7 @@
 			</f:facet>
 
 			<h:form>
-
-				<a4j:outputPanel ajaxRendered="true">
-				</a4j:outputPanel>
+ 
 				<a4j:outputPanel id="fazlaMesaiOnaylama">
 					<h:panelGrid columns="1" width="600">
 
@@ -550,7 +548,7 @@
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Onaylamama Neden</ui:define>
-							<h:selectOneMenu value="#{personelFazlaMesaiHome.instance.fazlaMesaiOnayDurum}" style="width:350px" requiredMessage="Islem seciniz">
+							<h:selectOneMenu value="#{personelFazlaMesaiHome.instance.fazlaMesaiOnayDurum}" style="width:350px" requiredMessage="Neden seciniz">
 								<s:selectItems var="comp" value="#{personelFazlaMesaiHome.onaylamamaNedeniList}" label="#{comp.aciklama}" noSelectionLabel="Lutfen Seciniz" />
 								<s:convertEntity />
 							</h:selectOneMenu>

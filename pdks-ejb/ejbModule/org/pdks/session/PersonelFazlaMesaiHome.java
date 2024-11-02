@@ -510,50 +510,57 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	@Transactional
 	public String onaylama() {
 		PersonelFazlaMesai fazlaMesai = getInstance();
-		boolean yeni = fazlaMesai.getId() == null;
-		try {
-			VardiyaGun pdksVardiyaGun = getVardiyaPlan(fazlaMesai);
-			List<HareketKGS> list = ortakIslemler.getHareketIdBilgileri(null, fazlaMesai.getHareket(), date, date, session);
-			HareketKGS hareket = !list.isEmpty() ? list.get(0) : null;
+		String islem = "";
+		if (fazlaMesai.getFazlaMesaiOnayDurum() != null) {
+			boolean yeni = fazlaMesai.getId() == null;
+			try {
+				VardiyaGun pdksVardiyaGun = getVardiyaPlan(fazlaMesai);
+				List<HareketKGS> list = ortakIslemler.getHareketIdBilgileri(null, fazlaMesai.getHareket(), date, date, session);
+				HareketKGS hareket = !list.isEmpty() ? list.get(0) : null;
 
-			if (hareket != null) {
-				fazlaMesai.setHareketId(hareket.getId());
-				fazlaMesai.setHareket(hareket);
-				// fazlaMesai.setHareket(hareket);
-				fazlaMesai.setVardiyaGun(pdksVardiyaGun);
-				fazlaMesai.setFazlaMesaiSaati(0.0d);
-				fazlaMesai.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANMADI);
+				if (hareket != null) {
+					fazlaMesai.setHareketId(hareket.getId());
+					fazlaMesai.setHareket(hareket);
+					// fazlaMesai.setHareket(hareket);
+					fazlaMesai.setVardiyaGun(pdksVardiyaGun);
+					fazlaMesai.setFazlaMesaiSaati(0.0d);
+					fazlaMesai.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANMADI);
 
-				if (yeni) {
-					fazlaMesai.setOlusturanUser(authenticatedUser);
+					if (yeni) {
+						fazlaMesai.setOlusturanUser(authenticatedUser);
 
-				} else {
-					fazlaMesai.setGuncelleyenUser(authenticatedUser);
-					fazlaMesai.setGuncellemeTarihi(new Date());
+					} else {
+						fazlaMesai.setGuncelleyenUser(authenticatedUser);
+						fazlaMesai.setGuncellemeTarihi(new Date());
+					}
+
+					try {
+						pdksEntityController.saveOrUpdate(session, entityManager, fazlaMesai);
+						session.flush();
+					} catch (Exception e) {
+						logger.error("Pdks hata in : \n");
+						e.printStackTrace();
+						logger.error("Pdks hata out : " + e.getMessage());
+
+					}
+					session.refresh(this.getInstance());
+					setInstance(new PersonelFazlaMesai());
+					fillHareketMesaiList();
+					islem = "persisted";
 				}
 
-				try {
-					pdksEntityController.saveOrUpdate(session, entityManager, fazlaMesai);
-					session.flush();
-				} catch (Exception e) {
-					logger.error("Pdks hata in : \n");
-					e.printStackTrace();
-					logger.error("Pdks hata out : " + e.getMessage());
+			} catch (Exception e) {
+				logger.error("Pdks hata in : \n");
+				e.printStackTrace();
+				logger.error("Pdks hata out : " + e.getMessage());
 
-				}
-				session.refresh(this.getInstance());
-				setInstance(new PersonelFazlaMesai());
-				fillHareketMesaiList();
 			}
-
-		} catch (Exception e) {
-			logger.error("Pdks hata in : \n");
-			e.printStackTrace();
-			logger.error("Pdks hata out : " + e.getMessage());
-
+		} else {
+			fazlaMesai.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANMADI);
+			PdksUtil.addMessageAvailableWarn("Neden seçiniz!");
 		}
 
-		return "persisted";
+		return islem;
 
 	}
 
