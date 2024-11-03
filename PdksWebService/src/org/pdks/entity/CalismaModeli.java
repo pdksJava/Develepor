@@ -1,10 +1,11 @@
 package org.pdks.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,7 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -44,6 +44,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_GUNCELLEME_TARIHI = "GUNCELLEMETARIHI";
 	public static final String COLUMN_NAME_BAGLI_VARDIYA_SABLON = "BAGLI_VARDIYA_SABLON_ID";
 	public static final String COLUMN_NAME_DEPARTMAN = "DEPARTMAN_ID";
+	public static final String COLUMN_NAME_SIRKET = "SIRKET_ID";
 	public static final String COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL = "HAREKET_KAYDI_VARDIYA_BUL";
 	public static final String COLUMN_NAME_MAAS_ODEME_TIPI = "MAAS_ODEME_TIPI";
 	public static final String COLUMN_NAME_FAZLA_MESAI_VAR = "FAZLA_MESAI_VAR";
@@ -68,6 +69,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 
+	private Sirket sirket;
 	private String aciklama = "";
 	private double haftaIci = 0.0d, arife = 0.0d, negatifBakiyeDenkSaat = 0.0d;
 	private Double haftaIciSutIzniSure = 7.5d, cumartesiSaat = 0.0d, izin = 0.0d, cumartesiIzinSaat = 0.0d, cumartesiSutIzniSure = 0.0d, pazarSaat = 0.0d, pazarIzinSaat = 0.0d, pazarSutIzniSure = 0.0d;
@@ -83,7 +85,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	private User guncelleyenUser, olusturanUser;
 	private Date olusturmaTarihi = new Date(), guncellemeTarihi;
-	private Set<CalismaModeliGun> calismaModeliGunler;
+	private List<CalismaModeliGun> calismaModeliGunler;
 
 	@Column(name = COLUMN_NAME_ACIKLAMA)
 	public String getAciklama() {
@@ -92,6 +94,17 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	public void setAciklama(String aciklama) {
 		this.aciklama = aciklama;
+	}
+
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_SIRKET)
+	@Fetch(FetchMode.JOIN)
+	public Sirket getSirket() {
+		return sirket;
+	}
+
+	public void setSirket(Sirket sirket) {
+		this.sirket = sirket;
 	}
 
 	@Column(name = "HAFTA_ICI_SAAT")
@@ -121,12 +134,12 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 		this.pazarSaat = pazarSaat;
 	}
 
-	@OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "calismaModeli", targetEntity = CalismaModeliGun.class)
-	public Set<CalismaModeliGun> getCalismaModeliGunler() {
+	@Transient
+	public List<CalismaModeliGun> getCalismaModeliGunler() {
 		return calismaModeliGunler;
 	}
 
-	public void setCalismaModeliGunler(Set<CalismaModeliGun> calismaModeliGunler) {
+	public void setCalismaModeliGunler(List<CalismaModeliGun> calismaModeliGunler) {
 		this.calismaModeliGunler = calismaModeliGunler;
 	}
 
@@ -501,11 +514,8 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public double getIzinSaat(VardiyaGun pdksVardiyaGun) {
 		int dayOfWeek = PdksUtil.getDateField(pdksVardiyaGun.getVardiyaDate(), Calendar.DAY_OF_WEEK);
 		double izinSure = this.getIzinSaat(dayOfWeek);
-
-		// if (dayOfWeek == Calendar.SUNDAY) {
-		// if (isHaftaTatilPazardir())
-		// izinSure = 0.0d;
-		// }
+		if (pdksVardiyaGun.getVardiyaDateStr().equals("20240801"))
+			logger.debug(izinSure);
 
 		return izinSure;
 	}
@@ -665,6 +675,67 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 		if (gunSure > 0.0d)
 			logger.debug(dayOfWeek + " : " + gunSure);
 		return gunSure;
+	}
+
+	@Transient
+	public List<Liste> getHaftaSaatList() {
+		List<Liste> list = getHaftaList(CalismaModeliGun.GUN_SAAT);
+		return list;
+	}
+
+	@Transient
+	public List<Liste> getHaftaIzinList() {
+		List<Liste> list = getHaftaList(CalismaModeliGun.GUN_IZIN);
+		return list;
+	}
+
+	@Transient
+	public List<Liste> getHaftaList(int gunTipi) {
+		List<Liste> list = new ArrayList<Liste>();
+		List<Integer> gunler = new ArrayList<Integer>();
+		for (int i = Calendar.MONDAY; i <= Calendar.SATURDAY; i++)
+			gunler.add(i);
+		gunler.add(Calendar.SUNDAY);
+		Calendar cal = Calendar.getInstance();
+		double toplam = 0.0d;
+		for (Integer dayOfWeek : gunler) {
+			double sure = 0.0d;
+			if (gunTipi == CalismaModeliGun.GUN_SAAT)
+				sure = getSaat(dayOfWeek);
+			else if (gunTipi == CalismaModeliGun.GUN_IZIN)
+				sure = getIzinSaat(dayOfWeek);
+			if (sure > 0.0d) {
+				cal.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+				try {
+					list.add(new Liste(PdksUtil.convertToDateString(cal.getTime(), "EEEEE"), PdksUtil.numericValueFormatStr(sure, null)));
+					toplam += sure;
+				} catch (Exception e) {
+
+				}
+
+			}
+		}
+		try {
+			if (toplam > 0.0d)
+				list.add(new Liste("TOPLAM", PdksUtil.numericValueFormatStr(toplam, null)));
+		} catch (Exception e) {
+
+		}
+
+		gunler = null;
+		return list;
+	}
+
+	@Transient
+	public String getAciklamaHT() {
+		String st = aciklama;
+		if (haftaTatilGun != null) {
+			String ht = this.getHaftaTatil();
+			if (PdksUtil.hasStringValue(ht)) {
+				st = aciklama + " [ HT : " + ht + " ]";
+			}
+		}
+		return st;
 	}
 
 	@Transient

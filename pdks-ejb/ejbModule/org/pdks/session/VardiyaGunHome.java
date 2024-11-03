@@ -2604,7 +2604,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			try {
 				islemYapiliyor = Boolean.TRUE;
 				if (personelAylikPuantaj.isGorevYeriSec()) {
-					session.clear();
 					islemYapiliyor = Boolean.FALSE;
 					if (personelAylikPuantaj != null && (!vardiyalarMap.isEmpty() || personelDenklestirme.isGuncellendi()) && personelAylikPuantaj.isKaydet())
 						fillAylikVardiyaPlanList();
@@ -7169,8 +7168,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						aylikPuantajList.clear();
 						talepGunList.clear();
 
-						session.clear();
-
 					}
 
 				}
@@ -8384,7 +8381,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		ArrayList<Vardiya> pdksList = new ArrayList<Vardiya>();
 		String radyolojiIzinDurum = ortakIslemler.getParameterKey("radyolojiIzinDurum");
 		TreeMap<Long, Vardiya> vardiyaMap = new TreeMap<Long, Vardiya>();
-
 		try {
 			if (pd == null && aylikPuantaj != null)
 				pd = aylikPuantaj.getPersonelDenklestirme();
@@ -8877,6 +8873,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (session == null)
 			session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		session.setFlushMode(FlushMode.MANUAL);
+		session.clear();
 		if (authenticatedUser != null)
 			adminRoleDurum(authenticatedUser);
 		fazlaMesaiTalepDurum = Boolean.TRUE;
@@ -8908,7 +8905,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			boolean islemYapildi = fmtIdStr != null && onayDurumuStr != null;
 			try {
-				session.clear();
+
 				if (islemYapildi) {
 					int onayDurumu = Integer.parseInt(onayDurumuStr);
 					long fmtId = Long.parseLong(fmtIdStr);
@@ -9979,7 +9976,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		adminRoleDurum(authenticatedUser);
 		loginUser = authenticatedUser;
 		loginUser.setLogin(authenticatedUser != null);
-		session.clear();
 		aylikHareketKaydiVardiyaBul = Boolean.FALSE;
 		fillEkSahaTanim();
 		Calendar cal = Calendar.getInstance();
