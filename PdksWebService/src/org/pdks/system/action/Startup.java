@@ -1,5 +1,7 @@
 package org.pdks.system.action;
 
+import java.util.HashMap;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -43,15 +45,16 @@ public class Startup extends HttpServlet {
 		try {
 			javax.naming.Context ctx = new javax.naming.InitialContext();
 			webDS = (DataSource) ctx.lookup(servletConfig.getInitParameter(Constants.WEB_DATASOURCE));
-
 			sc.setAttribute(Constants.WEB_DATASOURCE, webDS);
 			PdksVeriOrtakAktar pdksVeriOrtakAktar = new PdksVeriOrtakAktar();
-			pdksVeriOrtakAktar.sistemVerileriniYukle(pdksDAO, false);
+			HashMap<String, Object> map = pdksVeriOrtakAktar.sistemVerileriniYukle(pdksDAO, false);
+			PdksVeriOrtakAktar.erpVeriOkuSaveIzinler = map == null || map.containsKey(PdksVeriOrtakAktar.getParametreIzinERPTableView());
+			PdksVeriOrtakAktar.erpVeriOkuSavePersoneller = map == null || map.containsKey(PdksVeriOrtakAktar.getParametrePersonelERPTableView());
+			PdksVeriOrtakAktar.erpVeriOkuSaveHakedisIzinler = map == null || map.containsKey(PdksVeriOrtakAktar.getParametreHakEdisIzinERPTableView());
 		} catch (Exception e) {
 
 		}
 		logger.info(Constants.UYGULAMA_VERSION + " start out " + PdksUtil.getCurrentTimeStampStr());
 
 	}
-
 }

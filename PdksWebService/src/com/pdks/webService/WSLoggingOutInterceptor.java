@@ -186,16 +186,25 @@ public class WSLoggingOutInterceptor extends AbstractSoapInterceptor {
 									}
 								}
 								if (!sonucMap.isEmpty()) {
-									ServiceData serviceData = new ServiceData(fonksiyonAdi);
-									LinkedHashMap<String, String> map = WSLoggingOutInterceptor.getChangeMap();
-									serviceData.setInputData(getString(map, sonucMap.get("data")));
-									serviceData.setOutputData(getString(map, sonucMap.get("return")));
-									try {
-										Constants.pdksDAO.saveObject(serviceData);
-									} catch (Exception e1) {
-										logger.error(e1);
+									boolean serviceDataYaz = true;
+									if (fonksiyonAdi.equals("SaveIzinler"))
+										serviceDataYaz = PdksVeriOrtakAktar.erpVeriOkuSaveIzinler == false;
+									else if (fonksiyonAdi.equals("SavePersoneller"))
+										serviceDataYaz = PdksVeriOrtakAktar.erpVeriOkuSavePersoneller == false;
+									else if (fonksiyonAdi.equals("SaveHakedisIzinler"))
+										serviceDataYaz = PdksVeriOrtakAktar.erpVeriOkuSaveHakedisIzinler == false;
+									if (serviceDataYaz) {
+										ServiceData serviceData = new ServiceData(fonksiyonAdi);
+										LinkedHashMap<String, String> map = WSLoggingOutInterceptor.getChangeMap();
+										serviceData.setInputData(getString(map, sonucMap.get("data")));
+										serviceData.setOutputData(getString(map, sonucMap.get("return")));
+										try {
+											Constants.pdksDAO.saveObject(serviceData);
+										} catch (Exception e1) {
+											logger.error(e1);
+										}
+										map = null;
 									}
-									map = null;
 
 								}
 								sonucMap = null;
