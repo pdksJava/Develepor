@@ -2995,7 +2995,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		Departman departman = null;
 		if (map != null && !map.isEmpty()) {
 			String key = "";
-			if (sirket != null) {
+			if (sirket != null && sirket.getDepartman().isAdminMi()) {
 				key = "0_" + sirket.getId();
 				object = map.get(key);
 				if (object == null && departman == null)
@@ -4341,11 +4341,15 @@ public class PdksVeriOrtakAktar implements Serializable {
 		for (VardiyaSablonu vs : sablonuList) {
 			String key = "0_0";
 			if (vs.getSirket() != null) {
-				key = "0_" + vs.getSirket().getId();
-				sablonMap.put(key, vs);
+				if (vs.getSirket().getDepartman().isAdminMi()) {
+					key = "0_" + vs.getSirket().getId();
+					sablonMap.put(key, vs);
+				}
 			} else if (vs.getDepartman() != null) {
-				key = vs.getDepartman().getId() + "_0";
-				sablonMap.put(key, vs);
+				if (vs.getDepartman().isAdminMi()) {
+					key = vs.getDepartman().getId() + "_0";
+					sablonMap.put(key, vs);
+				}
 			} else
 				sablonMap.put(key, vs);
 
@@ -4359,11 +4363,15 @@ public class PdksVeriOrtakAktar implements Serializable {
 		for (CalismaModeli cm : modelList) {
 			String key = "0_0";
 			if (cm.getSirket() != null) {
-				key = "0_" + cm.getSirket().getId();
-				cmMap.put(key, cm);
+				if (cm.getSirket().getDepartman().isAdminMi()) {
+					key = "0_" + cm.getSirket().getId();
+					cmMap.put(key, cm);
+				}
 			} else if (cm.getDepartman() != null) {
-				key = cm.getDepartman().getId() + "_0";
-				cmMap.put(key, cm);
+				if (cm.getDepartman().isAdminMi()) {
+					key = cm.getDepartman().getId() + "_0";
+					cmMap.put(key, cm);
+				}
 			} else
 				cmMap.put(key, cm);
 
