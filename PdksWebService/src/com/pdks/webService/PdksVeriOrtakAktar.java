@@ -88,8 +88,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 	private boolean erpVeriOku = false;
 
-	private CalismaModeli calismaModeli = null;
-
 	private KapiSirket kapiSirket = null;
 
 	private String mesaj = null, dosyaEkAdi, parentBordroTanimKoduStr = "", kapiGiris, uygulamaBordro, ekSahaAdi = "", servisAdi;
@@ -3142,15 +3140,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 		HashMap map = new HashMap();
 		if (bosDepartman == null && departmanYoneticiRolVar && parentDepartman != null && mailMap.containsKey("bosDepartmanKodu")) {
 			String bosDepartmanKodu = (String) mailMap.get("bosDepartmanKodu");
-			// fields.clear();
-			// fields.put("parentTanim.id", parentDepartman.getId());
-			// fields.put("tipi", Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA);
-			// fields.put("kodu", bosDepartmanKodu);
-			// fields.put("durum", Boolean.FALSE);
-			// bosDepartman = (Tanim) pdksDAO.getObjectByInnerObject(fields, Tanim.class);
 			List<Tanim> list = getSQLTanimList(Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA, bosDepartmanKodu, Boolean.FALSE);
 			for (Tanim tanim : list) {
-				if (tanim.getParentTanim() != null && tanim.getParentTanim().equals(parentDepartman.getId()))
+				if (tanim.getParentTanim() != null && tanim.getParentTanim().getId().equals(parentDepartman.getId()))
 					bosDepartman = tanim;
 			}
 			list = null;
@@ -3392,49 +3384,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 					Personel personel = personelPDKSMap.containsKey(personelNo) ? personelPDKSMap.get(personelNo) : null;
 					if (personel != null) {
 						personel.setPersonelTipi(personelTipi);
-						if (personel.getCalismaModeli() == null) {
-							CalismaModeli cm = null;
-							if (personel.getSirket() != null)
-								cm = (CalismaModeli) getCalismaModel_VardiyaSablonByMap(personel.getSirket(), cmMap);
-							if (cm == null && modeller.size() == 1)
-								cm = modeller.get(0);
-							if (cm != null)
-								personel.setCalismaModeli(cm);
-
-						}
-						// if (personelTipi != null && personelCalismaModeliVar) {
-						// long id = personelTipi.getId().longValue();
-						// for (Iterator iterator = modelList.iterator(); iterator.hasNext();) {
-						// CalismaModeli calismaModeli = (CalismaModeli) iterator.next();
-						// if (calismaModeli.getPersonelTipi() != null && calismaModeli.getPersonelTipi().getId().longValue() != id)
-						// iterator.remove();
-						// }
-						// if (modelList.size() == 1)
-						// personel.setCalismaModeli(modelList.get(0));
-						// }
-
-						if (personel.getSablon() == null) {
-							VardiyaSablonu vs = null;
-							if (personel.getSirket() != null)
-								vs = (VardiyaSablonu) getCalismaModel_VardiyaSablonByMap(personel.getSirket(), sablonMap);
-							if (vs != null)
-								personel.setSablon(vs);
-							else {
-								sablonList.addAll(sablonlar);
-								if (personelTipi != null && personelCalismaModeliVar) {
-									long id = personelTipi.getId().longValue();
-									for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
-										VardiyaSablonu vardiyaSablonu = (VardiyaSablonu) iterator.next();
-										if (vardiyaSablonu.getCalismaModeli() != null && vardiyaSablonu.getCalismaModeli().getId().longValue() != id)
-											iterator.remove();
-									}
-								}
-								if (sablonList.size() == 1)
-									personel.setSablon(sablonList.get(0));
-							}
-
-						}
-
 						sablonList.clear();
 						modelList.clear();
 						PersonelKGS personelKGS2 = personel.getPersonelKGS();
@@ -3483,7 +3432,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 							personel.setMailTakip(Boolean.TRUE);
 						personel.setPdks(Boolean.TRUE);
 						personel.setPersonelKGS(personelKGS);
-						personel.setSablon(vardiyaSablonu);
 						personel.setFazlaMesaiIzinKullan(Boolean.FALSE);
 						personelPDKSMap.put(personelNo, personel);
 
@@ -3756,6 +3704,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 							}
 						}
 					}
+
 					Personel yoneticisi2 = yonetici2ERPKontrol ? null : personel.getAsilYonetici2();
 					if (personel.getId() == null && yonetici2No.equals(personelNo))
 						yoneticisi2 = personel;
@@ -3793,6 +3742,39 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 
 					if (personelERP.getHataList().isEmpty()) {
+						if (personel.getId() == null) {
+							if (personel.getCalismaModeli() == null) {
+								CalismaModeli cm = null;
+								if (personel.getSirket() != null)
+									cm = (CalismaModeli) getCalismaModel_VardiyaSablonByMap(personel.getSirket(), cmMap);
+								if (cm == null && modeller.size() == 1)
+									cm = modeller.get(0);
+								if (cm != null)
+									personel.setCalismaModeli(cm);
+
+							}
+							if (personel.getSablon() == null) {
+								VardiyaSablonu vs = null;
+								if (personel.getSirket() != null)
+									vs = (VardiyaSablonu) getCalismaModel_VardiyaSablonByMap(personel.getSirket(), sablonMap);
+								if (vs != null)
+									personel.setSablon(vs);
+								else {
+									sablonList.addAll(sablonlar);
+									if (personelTipi != null && personelCalismaModeliVar) {
+										long id = personelTipi.getId().longValue();
+										for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
+											VardiyaSablonu vardiyaSablonu = (VardiyaSablonu) iterator.next();
+											if (vardiyaSablonu.getCalismaModeli() != null && vardiyaSablonu.getCalismaModeli().getId().longValue() != id)
+												iterator.remove();
+										}
+									}
+									if (sablonList.size() == 1)
+										personel.setSablon(sablonList.get(0));
+								}
+
+							}
+						}
 						if (personel.isDegisti()) {
 							if (personel.getId() != null) {
 								personel.setGuncellemeTarihi(new Date());
@@ -3802,6 +3784,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 								personel.setOlusturanUser(islemYapan);
 								personel.setPdksSicilNo(personelNo);
 							}
+							if (personel.getSablon() == null)
+								personel.setSablon(vardiyaSablonu);
 							saveList.add(personel);
 						} else {
 							personelERP.setYazildi(Boolean.TRUE);
@@ -3811,9 +3795,21 @@ public class PdksVeriOrtakAktar implements Serializable {
 						if (!updateYonetici2)
 							updateYonetici2 = true;
 
-					} else if (personel.getId() == null && !calisiyor && !(iskurManuelGiris && sanalPersonel)) {
-						personelERP.setYazildi(Boolean.FALSE);
-						continue;
+					} else {
+						boolean sil = false;
+						for (Iterator iterator = saveList.iterator(); iterator.hasNext();) {
+							Object object = (Object) iterator.next();
+							if (object instanceof Personel) {
+								sil = true;
+								break;
+							}
+						}
+						if (sil)
+							saveList.clear();
+						if (personel.getId() == null && !calisiyor && !(iskurManuelGiris && sanalPersonel)) {
+							personelERP.setYazildi(Boolean.FALSE);
+							continue;
+						}
 					}
 
 				}
@@ -3843,7 +3839,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 						e.printStackTrace();
 						addHatalist(personelERP.getHataList(), e.getMessage());
 					}
-
 				}
 
 			}
@@ -3902,15 +3897,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 	private void setPersonel(Personel personel, PersonelERP personelERP, String pattern) {
 		if (personel != null && personelERP != null) {
 			try {
-				if (personel.getCalismaModeli() == null)
-					personel.setCalismaModeli(calismaModeli);
 				personel.setAd(PdksUtil.getCutFirstSpaces(personelERP.getAdi()));
 				personel.setSoyad(PdksUtil.getCutFirstSpaces(personelERP.getSoyadi()));
-				// personel.setDogumTarihi(PdksUtil.convertToJavaDate(personelERP.getDogumTarihi(), pattern));
-				// personel.setIseBaslamaTarihi(PdksUtil.convertToJavaDate(personelERP.getIseGirisTarihi(), pattern));
-				// personel.setIzinHakEdisTarihi(PdksUtil.convertToJavaDate(personelERP.getKidemTarihi(), pattern));
-				// personel.setIstenAyrilisTarihi(PdksUtil.convertToJavaDate(personelERP.getIstenAyrilmaTarihi(), pattern));
-
 			} catch (Exception e) {
 				logger.error(e);
 			}
@@ -4468,15 +4456,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			else if (!personelCalismaModeliVar)
 				personelCalismaModeliVar = calismaModeli.getPersonelTipi() != null;
 		}
-		if (!modeller.isEmpty()) {
-			if (modeller.size() == 1)
-				calismaModeli = modeller.get(0);
-			else
-				for (CalismaModeli cm : modeller) {
-					if (cm.isIdariModelMi())
-						calismaModeli = cm;
-				}
-		}
+
 		fields.clear();
 		if (veriSorguMap.containsKey("personel")) {
 			fields.put(BaseDAOHibernate.MAP_KEY_MAP, "getSicilNo");
