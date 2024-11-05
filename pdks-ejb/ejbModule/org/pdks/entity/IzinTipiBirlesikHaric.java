@@ -17,6 +17,10 @@ public class IzinTipiBirlesikHaric extends BaseObject {
 	 */
 	private static final long serialVersionUID = 56230242920057020L;
 	public static final String TABLE_NAME = "IZINTIPIBIRLESIKHARIC";
+	
+	public static final String COLUMN_NAME_IZIN_ARALIK_SAAT = "IZIN_ARALIK_SAAT";
+	public static final String COLUMN_NAME_BIRLESIK_IZIN_TIPI = "BIRLESIK_IZIN_TIPI_ID";
+	public static final String COLUMN_NAME_IZIN_TIPI = "IZIN_TIPI_ID";
 
 	private Tanim izinTipiTanim;
 	private Tanim birlesikIzinTipiTanim;
@@ -34,7 +38,7 @@ public class IzinTipiBirlesikHaric extends BaseObject {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "BIRLESIK_IZIN_TIPI_ID", nullable = false)
+	@JoinColumn(name = COLUMN_NAME_BIRLESIK_IZIN_TIPI, nullable = false)
 	@Fetch(FetchMode.JOIN)
 	public Tanim getBirlesikIzinTipiTanim() {
 		return birlesikIzinTipiTanim;
@@ -44,7 +48,7 @@ public class IzinTipiBirlesikHaric extends BaseObject {
 		this.birlesikIzinTipiTanim = birlesikIzinTipiTanim;
 	}
 
-	@Column(name = "IZIN_ARALIK_SAAT")
+	@Column(name = COLUMN_NAME_IZIN_ARALIK_SAAT)
 	public double getIzinAralikSaat() {
 		return izinAralikSaat;
 	}
@@ -54,7 +58,7 @@ public class IzinTipiBirlesikHaric extends BaseObject {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "IZIN_TIPI_ID", nullable = false)
+	@JoinColumn(name = COLUMN_NAME_IZIN_TIPI, nullable = false)
 	@Fetch(FetchMode.JOIN)
 	public Tanim getIzinTipiTanim() {
 		return izinTipiTanim;
@@ -66,7 +70,7 @@ public class IzinTipiBirlesikHaric extends BaseObject {
 
 	public void entityRefresh() {
 		// TODO entityRefresh
-		
+
 	}
 
 }

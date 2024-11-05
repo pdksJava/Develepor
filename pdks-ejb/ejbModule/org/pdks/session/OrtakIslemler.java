@@ -4304,13 +4304,17 @@ public class OrtakIslemler implements Serializable {
 		List<Personel> ikinciYoneticiPersonelleri = findIkinciYoneticiPersonel(user, session);
 		Date tarih = Calendar.getInstance().getTime();
 		HashMap map = new HashMap();
-		map.put(PdksEntityController.MAP_KEY_SELECT, "vekaletVeren");
-		map.put("bitTarih>=", tarih);
-		map.put("basTarih<=", tarih);
-		map.put("yeniYonetici.id=", user.getId());
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT U.* FROM " + UserVekalet.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
+		sb.append(" INNER JOIN  " + User.TABLE_NAME + " U " + PdksEntityController.getJoinLOCK() + " ON V." + UserVekalet.COLUMN_NAME_VEKALET_VEREN + " = U." + User.COLUMN_NAME_ID);
+		sb.append(" WHERE V." + UserVekalet.COLUMN_NAME_YENI_YONETICI + " = :y AND V." + UserVekalet.COLUMN_NAME_BITIS_TARIHI + " >= :b2");
+		sb.append(" AND V." + UserVekalet.COLUMN_NAME_BASLANGIC_TARIHI + " <= :b1 AND V." + UserVekalet.COLUMN_NAME_DURUM + " = 1");
+		map.put("y", user.getId());
+		map.put("b1", tarih);
+		map.put("b2", tarih);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<User> vekaletYoneticileri = pdksEntityController.getObjectByInnerObjectListInLogic(map, UserVekalet.class);
+		List<User> vekaletYoneticileri = pdksEntityController.getObjectBySQLList(sb, map, User.class);
 		for (Iterator iterator = vekaletYoneticileri.iterator(); iterator.hasNext();) {
 			User user2 = (User) iterator.next();
 			List<Personel> vekilIkinciYoneticiPersonelleri = findIkinciYoneticiPersonel(user2, session);
