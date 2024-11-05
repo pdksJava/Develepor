@@ -261,6 +261,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		TreeMap<String, VardiyaGun> vardiyaGunMap = new TreeMap<String, VardiyaGun>();
 		for (AylikPuantaj ap : puantajList) {
 			for (VardiyaGun vg : ap.getVardiyalar()) {
+				if (vg.isGuncellendi())
+					logger.debug(vg.getVardiyaDateStr());
 				vardiyaGunMap.put(vg.getVardiyaKeyStr(), vg);
 			}
 		}

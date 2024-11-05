@@ -129,6 +129,21 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 		super.create();
 	}
 
+	/**
+	 * 
+	 */
+	private void sessionClear() {
+		session.clear();
+	}
+
+	/**
+	 * 
+	 */
+	@Transactional
+	private void sessionFlush() {
+		session.flush();
+	}
+
 	public String fillPersonelList() {
 		try {
 			List<Personel> list = ortakIslemler.getAramaSecenekleriPersonelList(authenticatedUser, tarih, aramaSecenekleriPer, session);
@@ -734,7 +749,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 					KapiView terminalKapi = terminalKapiManuelUpdate(kgsHareket.getKapiView());
 					if (bugun.after(zaman))
 						pdksId = pdksEntityController.hareketEkle(terminalKapi, kgsHareket.getPersonel(), zaman, authenticatedUser, kgsHareket.getIslem().getNeden().getId(), kgsHareket.getIslem().getAciklama(), session);
-					session.clear();
+					sessionClear();
 				} else {
 					String str = kgsHareket.getId();
 					Long id = Long.parseLong(str.substring(1));
@@ -759,8 +774,8 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 
 				}
-				session.flush();
-				session.clear();
+				sessionFlush();
+				sessionClear();
 				if (islemVardiyaGun != null)
 					tarih = islemVardiyaGun.getVardiyaDate();
 
@@ -782,7 +797,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 	}
 
 	public void fillHareketList() throws Exception {
-		session.clear();
+		sessionClear();
 		TreeMap<Long, KapiView> terminalGirisCikisMap = fillKGSKapiList();
 		manuelHareketDuzenle(false);
 		donemBul(tarih);

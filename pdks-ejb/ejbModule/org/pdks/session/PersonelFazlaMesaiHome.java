@@ -126,6 +126,30 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		super.create();
 	}
 
+	/**
+	 * 
+	 */
+	private void sessionClear() {
+		session.clear();
+	}
+
+	/**
+	 * @param object
+	 */
+	@Transactional
+	private void saveOrUpdate(Object object) {
+		if (object != null)
+			pdksEntityController.saveOrUpdate(session, entityManager, object);
+	}
+
+	/**
+	 * 
+	 */
+	@Transactional
+	private void sessionFlush() {
+		session.flush();
+	}
+
 	public void instanceRefresh() {
 		if (getInstance().getId() != null)
 			session.refresh(getInstance());
@@ -461,8 +485,8 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			}
 
 			try {
-				pdksEntityController.saveOrUpdate(session, entityManager, fazlaMesai);
-				session.flush();
+				saveOrUpdate(fazlaMesai);
+				sessionFlush();
 			} catch (Exception e) {
 				logger.error("Pdks hata in : \n");
 				e.printStackTrace();
@@ -535,8 +559,8 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					}
 
 					try {
-						pdksEntityController.saveOrUpdate(session, entityManager, fazlaMesai);
-						session.flush();
+						saveOrUpdate(fazlaMesai);
+						sessionFlush();
 					} catch (Exception e) {
 						logger.error("Pdks hata in : \n");
 						e.printStackTrace();
@@ -569,7 +593,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	}
 
 	public void fillHareketMesaiList() throws Exception {
-		session.clear();
+		sessionClear();
 		seciliEkSaha3 = null;
 		if (seciliEkSaha3Id != null) {
 
@@ -1438,8 +1462,8 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 				mesai.setGuncelleyenUser(authenticatedUser);
 				mesai.setGuncellemeTarihi(new Date());
 				mesai.setDurum(Boolean.FALSE);
-				pdksEntityController.saveOrUpdate(session, entityManager, mesai);
-				session.flush();
+				saveOrUpdate(mesai);
+				sessionFlush();
 				fillHareketMesaiList();
 			} catch (Exception e) {
 			}
