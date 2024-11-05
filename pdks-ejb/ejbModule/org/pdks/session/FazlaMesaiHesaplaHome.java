@@ -893,19 +893,33 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
 			lastMap.put("yil", "" + yil);
 			lastMap.put("ay", "" + ay);
-			if (departmanId != null)
+			if (departmanId != null) {
 				lastMap.put("departmanId", "" + departmanId);
-			if (sirketId != null)
+				lastMap.put("departman", ortakIslemler.getSelectItemText(departmanId, departmanList));
+			}
+
+			if (sirketId != null) {
 				lastMap.put("sirketId", "" + sirketId);
-			if (tesisId != null)
+				lastMap.put("sirket", ortakIslemler.getSelectItemText(sirketId, pdksSirketList));
+			}
+
+			if (tesisId != null) {
 				lastMap.put("tesisId", "" + tesisId);
+				lastMap.put("tesis", ortakIslemler.getSelectItemText(tesisId, tesisList));
+			}
+
 			if (ekSaha4Tanim != null) {
 				if (seciliEkSaha3Id != null) {
 					lastMap.put("bolumId", "" + seciliEkSaha3Id);
+					lastMap.put("bolum", ortakIslemler.getSelectItemText(seciliEkSaha3Id, gorevYeriList));
 					lastMap.put("altBolumId", "" + planTanimsizBolumId);
+					lastMap.put("altBolum", ortakIslemler.getSelectItemText(planTanimsizBolumId, altBolumList));
 				}
-			} else if (planTanimsizBolumId != null)
+			} else if (planTanimsizBolumId != null) {
 				lastMap.put("bolumId", "" + planTanimsizBolumId);
+				lastMap.put("bolum", ortakIslemler.getSelectItemText(planTanimsizBolumId, gorevYeriList));
+			}
+				
 			lastMap.put("veriDoldur", "F");
 			lastMap.put("plansiz", yil * 100 + ay);
 			lastMap.put("sayfaURL", sayfa);

@@ -10234,7 +10234,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				if (doldurStr.equals("F")) {
 					planGirisiDurum = planGirisiDurum && aramaSecenekleri.getEkSaha3Id() != null;
 					if (planGirisiDurum)
-						fillAylikVardiyaPlanList();
+						fillStartAylikVardiyaPlanList();
 				} else
 					setDonusAdres("");
 			} else {

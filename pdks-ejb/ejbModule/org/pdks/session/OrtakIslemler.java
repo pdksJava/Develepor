@@ -4258,7 +4258,7 @@ public class OrtakIslemler implements Serializable {
 					try {
 						StringBuffer sp = new StringBuffer(spAdi);
 						list = pdksEntityController.execSPList(map, sp, class1);
-						if (tipi.endsWith("P") && loginUser.isAdmin())
+						if ((tipi.endsWith("P") || tipi.indexOf("+") >= 0) && loginUser.isAdmin())
 							logger.debug(spAdi + " " + tipi + " " + list.size() + "\n" + gson.toJson(map));
 					} catch (Exception e) {
 						logger.error(e + "\n" + spAdi + "\n" + gson.toJson(map));
