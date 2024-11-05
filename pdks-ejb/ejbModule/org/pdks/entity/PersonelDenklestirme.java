@@ -519,7 +519,7 @@ public class PersonelDenklestirme extends BaseObject {
 	public Double getMaksimumSure(double izinSure, double arifeToplamSure, List<VardiyaGun> vardiyalar) {
 		CalismaModeli cm = calismaModeliAy != null ? calismaModeliAy.getCalismaModeli() : personel.getCalismaModeli();
 		double aylikSure = calismaModeliAy != null ? calismaModeliAy.getSure() : denklestirmeAy.getSure();
-		double aylikSutSure = calismaModeliAy != null ? calismaModeliAy.getToplamIzinSure() : denklestirmeAy.getToplamIzinSure();
+		double aylikSutSure = calismaModeliAy != null && calismaModeliAy.getToplamIzinSure() > 0.0d ? calismaModeliAy.getToplamIzinSure() : denklestirmeAy.getToplamIzinSure();
 		if (calismaModeliAy != null && cm.getToplamGunGuncelle() && sutIzniSaatSayisi > 0)
 			aylikSure = sutIzniSaatSayisi;
 		else if (cm.isHaftaTatilSabitDegil() || sutIzniPersonelDonemselDurum != null) {
