@@ -4168,20 +4168,25 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		Personel personel = getInstance();
 		List<String> yoneticiOlmayanRoller = getPersonelYoneticiolmayanRoller(personel);
 		List<Role> allRoles = ortakIslemler.yetkiRolleriGetir(session);
-		for (Iterator iterator = allRoles.iterator(); iterator.hasNext();) {
-			Role role = (Role) iterator.next();
-			if ((authenticatedUser.isIK_Tesis() == false || authenticatedUser.isIKSirket()) && role.isIK())
-				iterator.remove();
-			else if (authenticatedUser.isAdmin() == false && role.isAdminRoleMu())
-				iterator.remove();
-			else if (role.getDepartman() != null && !departmanKullaniciList.contains(role.getDepartman()))
-				iterator.remove();
-			else if (yoneticiOlmayanRoller != null && role.isAdminRoleMu() == false) {
-				String rolAdi = role.getRolename();
-				if (!yoneticiOlmayanRoller.contains(rolAdi))
+		if (authenticatedUser.isAdmin() == false) {
+			for (Iterator iterator = allRoles.iterator(); iterator.hasNext();) {
+				Role role = (Role) iterator.next();
+				if (role.getStatus().booleanValue() == false)
 					iterator.remove();
+				else if ((authenticatedUser.isIK_Tesis() || authenticatedUser.isIKSirket()) && role.isIK())
+					iterator.remove();
+				else if (authenticatedUser.isAdmin() == false && role.isAdminRoleMu())
+					iterator.remove();
+				else if (role.getDepartman() != null && !departmanKullaniciList.contains(role.getDepartman()))
+					iterator.remove();
+				else if (yoneticiOlmayanRoller != null && role.isAdminRoleMu() == false) {
+					String rolAdi = role.getRolename();
+					if (!yoneticiOlmayanRoller.contains(rolAdi))
+						iterator.remove();
+				}
 			}
 		}
+
 		if (personel != null) {
 			User seciliKullanici = personel.getKullanici();
 			ortakIslemler.setUserRoller(seciliKullanici, session);
