@@ -3521,12 +3521,13 @@ public class PdksVeriOrtakAktar implements Serializable {
 							}
 
 						}
+						if (sirket!= null) {
+							personel.setFazlaMesaiOde(sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde());
+						}
 					}
 
 					setPersonel(personel, personelERP, FORMAT_DATE);
-					if (personel.getId() == null && personel.getSirket() != null) {
-						personel.setFazlaMesaiOde(personel.getSirket().getFazlaMesaiOde() != null && personel.getSirket().getFazlaMesaiOde());
-					}
+					
 
 					Tanim bolum = getTanim(null, "ekSaha3", personelERP.getBolumKodu(), personelERP.getBolumAdi(), dataMap, saveList);
 					boolean bolumYok = bolum != null && bolum.getKodu().equalsIgnoreCase("yok");
