@@ -625,10 +625,10 @@
 														</ui:fragment></td>
 												</ui:fragment>
 												<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.sutIzniDurum}">
-													<td class="#{ap.trClass}" style="width: 30px"><ui:fragment rendered="#{ap.personelDenklestirme.sutIzniDurum}">
-															<b><h:outputText value="#{authenticatedUser.getYesNo(ap.personelDenklestirme.sutIzniDurum)}" /></b>
-														</ui:fragment> <ui:fragment rendered="#{ap.personelDenklestirme.sutIzniDurum==false}">
-															<h:outputText value="#{authenticatedUser.getYesNo(ap.personelDenklestirme.sutIzniDurum)}" />
+													<td class="#{ap.trClass}" style="width: 30px"><ui:fragment rendered="#{ap.sutIzniDurumu}">
+															<b><h:outputText value="#{authenticatedUser.getYesNo(ap.sutIzniDurumu)}" /></b>
+														</ui:fragment> <ui:fragment rendered="#{ap.sutIzniDurumu==false}">
+															<h:outputText value="#{authenticatedUser.getYesNo(ap.sutIzniDurumu)}" />
 														</ui:fragment></td>
 												</ui:fragment>
 												<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.partTime}">

@@ -309,11 +309,11 @@
 											<f:facet name="header">
 												<h:outputText value="Süt İzni" />
 											</f:facet>
-											<ui:fragment rendered="#{ap.personelDenklestirme.sutIzniDurum}">
-												<b><h:outputText value="#{authenticatedUser.getYesNo(ap.personelDenklestirme.sutIzniDurum)}" /></b>
+											<ui:fragment rendered="#{ap.sutIzniDurumu}">
+												<b><h:outputText value="#{authenticatedUser.getYesNo(ap.sutIzniDurumu)}" /></b>
 											</ui:fragment>
-											<ui:fragment rendered="#{ap.personelDenklestirme.sutIzniDurum==false}">
-												<h:outputText value="#{authenticatedUser.getYesNo(ap.personelDenklestirme.sutIzniDurum)}" />
+											<ui:fragment rendered="#{ap.sutIzniDurumu==false}">
+												<h:outputText value="#{authenticatedUser.getYesNo(ap.sutIzniDurumu)}" />
 											</ui:fragment>
 										</rich:column>
 										<rich:column rendered="#{vardiyaPlaniTopluRaporHome.partTime}" style="text-align: center;width: 60px;">

@@ -204,7 +204,7 @@
 				<f:facet name="header">
 					<h:outputText value="Süt İzni" />
 				</f:facet>
-				<h:outputText value="#{authenticatedUser.getYesNo(aylikPuantaj.personelDenklestirme.sutIzniDurum)}" />
+				<h:outputText value="#{authenticatedUser.getYesNo(aylikPuantaj.sutIzniDurumu)}" />
 			</rich:column>
 
 			<rich:column class="#{aylikPuantaj.trSonucClass}" rendered="#{fazlaMesaiHesaplaHome.partTimeGoster}" style="width: 60px">
