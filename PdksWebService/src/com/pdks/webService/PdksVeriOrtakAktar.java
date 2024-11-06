@@ -570,10 +570,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 			if (PdksUtil.getCanliSunucuDurum()) {
 				HashMap fields = new HashMap();
 				sb.append("SELECT U.* FROM " + Role.TABLE_NAME + " R " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
-				sb.append(" INNER JOIN " + UserRoles.TABLE_NAME + " UR " + PdksVeriOrtakAktar.getJoinLOCK() + " ON UR." + UserRoles.COLUMN_NAME_ROLE + " = R.ID ");
-				sb.append(" INNER JOIN " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " ON U.ID=UR." + UserRoles.COLUMN_NAME_USER + " AND U.DURUM=1 ");
-				sb.append(" INNER JOIN " + Departman.TABLE_NAME + " D " + PdksVeriOrtakAktar.getJoinLOCK() + " ON D.ID=U." + User.COLUMN_NAME_DEPARTMAN + " AND D.ADMIN_DURUM=1 AND D.DURUM=1 ");
-				sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " ON P.ID=U." + User.COLUMN_NAME_PERSONEL + " AND P.DURUM=1 AND P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + ">GETDATE() ");
+				sb.append(" INNER JOIN " + UserRoles.TABLE_NAME + " UR " + PdksVeriOrtakAktar.getJoinLOCK() + " ON UR." + UserRoles.COLUMN_NAME_ROLE + " = R." + Role.COLUMN_NAME_ID);
+				sb.append(" INNER JOIN " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " ON U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER + " AND U." + User.COLUMN_NAME_DURUM + " = 1 ");
+				sb.append(" INNER JOIN " + Departman.TABLE_NAME + " D " + PdksVeriOrtakAktar.getJoinLOCK() + " ON D." + Departman.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_DEPARTMAN + " AND D." + Departman.COLUMN_NAME_ADMIN_DURUM + " = 1 AND D." + Departman.COLUMN_NAME_DURUM + " = 1 ");
+				sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " AND P." + Personel.COLUMN_NAME_DURUM + " = 1 AND P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " > GETDATE() ");
 				sb.append(" WHERE R." + Role.COLUMN_NAME_ROLE_NAME + " = :r ");
 				fields.put("r", Role.TIPI_IK);
 				userList = dao.getNativeSQLList(fields, sb, User.class);
