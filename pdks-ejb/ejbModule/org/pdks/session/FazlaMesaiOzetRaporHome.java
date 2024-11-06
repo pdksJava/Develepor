@@ -1102,6 +1102,15 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 								continue;
 							}
 							if (vardiyaGun.getId() != null) {
+								if (puantaj.isGebeDurum() == false && (vardiyaGun.isGebeMi() || vardiyaGun.isGebePersonelDonemselDurum())) {
+									gebeDurum = true;
+									puantaj.setGebeDurum(true);
+								}
+								if (puantaj.isSuaDurum() == false && (vardiyaGun.isSutIzniVar() || vardiyaGun.isSutIzniPersonelDonemselDurum())) {
+									sutIzniDurum = true;
+									puantaj.setSutIzniDurumu(true);
+								}
+
 								++sayac;
 								Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
 								String keyStr = String.valueOf(islemVardiya.getId());
@@ -2391,7 +2400,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					if (gebeDurum)
 						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(authenticatedUser.getYesNo(aylikPuantaj.isGebeDurum()));
 					if (sutIzniDurum)
-						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(authenticatedUser.getYesNo(personelDenklestirme.getSutIzniDurum()));
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(authenticatedUser.getYesNo(aylikPuantaj.isSutIzniDurumu()));
 					if (partTime)
 						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(authenticatedUser.getYesNo(personelDenklestirme.isPartTimeDurumu()));
 

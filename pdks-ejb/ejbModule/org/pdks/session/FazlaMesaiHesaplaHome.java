@@ -919,7 +919,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				lastMap.put("bolumId", "" + planTanimsizBolumId);
 				lastMap.put("bolum", ortakIslemler.getSelectItemText(planTanimsizBolumId, gorevYeriList));
 			}
-				
+
 			lastMap.put("veriDoldur", "F");
 			lastMap.put("plansiz", yil * 100 + ay);
 			lastMap.put("sayfaURL", sayfa);
@@ -2135,7 +2135,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (!yasalFazlaCalismaAsanSaat && personelDenklestirme.getCalismaModeliAy().isGunMaxCalismaOdenir())
 						yasalFazlaCalismaAsanSaat = calismaModeli.isFazlaMesaiVarMi() && ucretiOdenenMesaiSure > 0.0d;
 					if (!sutIzniGoster)
-						sutIzniGoster = personelDenklestirme != null && personelDenklestirme.getSutIzniDurum() != null && personelDenklestirme.getSutIzniDurum();
+						sutIzniGoster = personelDenklestirme != null && (personelDenklestirme.getSutIzniDurum() != null && personelDenklestirme.getSutIzniDurum());
 					if (!partTimeGoster)
 						partTimeGoster = personelDenklestirme != null && personelDenklestirme.isPartTimeDurumu();
 					if (!suaGoster)
@@ -3617,8 +3617,19 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		Date aksamVardiyaBitisZamani = null, aksamVardiyaBaslangicZamani = null;
 		Vardiya vardiya = vGun.getVardiya();
 		String key1 = vGun.getVardiyaDateStr(), vardiyaKey = vGun.getVardiyaKeyStr();
-		if (!izinGoster)
-			izinGoster = vardiya.isIzin();
+
+		if (islemPuantaj.isGebeDurum() == false && (vGun.isGebeMi() || vGun.isGebePersonelDonemselDurum())) {
+			gebeGoster = true;
+			islemPuantaj.setGebeDurum(true);
+		}
+		if (islemPuantaj.isSuaDurum() == false && (vGun.isSutIzniVar() || vGun.isSutIzniPersonelDonemselDurum())) {
+			sutIzniGoster = true;
+			islemPuantaj.setSutIzniDurumu(true);
+		}
+		if (vardiya.isIzin()) {
+			izinGoster = true;
+		}
+
 		// boolean aksamVardiyasi = vardiya.isAksamVardiyasi();
 		if (perCalismaModeli != null && perCalismaModeli.getGeceCalismaOdemeVar().equals(Boolean.TRUE)) {
 			if (aksamVardiyaBitSaat != null && aksamVardiyaBitDakika != null) {

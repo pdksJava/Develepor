@@ -81,7 +81,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	private boolean kaydet, calisiyor = true, gorevYeriSec = false, secili, onayDurum, vardiyaOlustu = Boolean.FALSE, vardiyaDegisti = Boolean.FALSE, fiiliHesapla = Boolean.FALSE;
 
-	private boolean donemBitti = Boolean.TRUE, ayrikHareketVar = Boolean.FALSE, fazlaMesaiIzinKontrol = Boolean.TRUE, gebeDurum = Boolean.TRUE;
+	private boolean donemBitti = Boolean.TRUE, ayrikHareketVar = Boolean.FALSE, fazlaMesaiIzinKontrol = Boolean.TRUE, gebeDurum = Boolean.FALSE, sutIzniDurumu = Boolean.FALSE;
 
 	private Double saatToplami = 0d, resmiTatilToplami = 0d, haftaCalismaSuresi = 0d, ucretiOdenenMesaiSure = 0d, fazlaMesaiSure = 0d, odenenSure = 0d, planlananSure = 0d, offSure = 0.0d;
 
@@ -137,6 +137,8 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		boolean sutIzniDurum = false;
 		if (personelDenklestirme != null && personelDenklestirme.getId() != null)
 			sutIzniDurum = personelDenklestirme.isSutIzniVar();
+		if (sutIzniDurum == false)
+			sutIzniDurum = sutIzniDurumu;
 		return sutIzniDurum;
 	}
 
@@ -493,8 +495,8 @@ public class AylikPuantaj implements Serializable, Cloneable {
 					continue;
 				String key = vg.getVardiyaDateStr();
 				if (vg.isAyinGunu()) {
-					if (!gebeDurum && vg.getVardiya() != null) {
-						this.setGebeDurum(calismaModeliAy != null && vg.getIzin() == null && vg.getVardiya().getGebelik());
+					if (!gebeDurum && vg.getVardiya() != null && this.isGebeDurum() == false) {
+						this.setGebeDurum(vg.isGebePersonelDonemselDurum() || (calismaModeliAy != null && vg.getIzin() == null && vg.getVardiya().getGebelik()));
 						if (gebeDurum)
 							logger.debug("");
 					}
@@ -1417,6 +1419,16 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public void setCalisiyor(boolean calisiyor) {
 		this.calisiyor = calisiyor;
+	}
+
+	public boolean isSutIzniDurumu() {
+		if (sutIzniDurumu == false)
+			sutIzniDurumu = getSutIzniDurum();
+		return sutIzniDurumu;
+	}
+
+	public void setSutIzniDurumu(boolean sutIzniDurumu) {
+		this.sutIzniDurumu = sutIzniDurumu;
 	}
 
 }

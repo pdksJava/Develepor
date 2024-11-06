@@ -7373,7 +7373,39 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			boolean sirketFazlaMesaiOde = sirket != null && sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde();
 			for (Iterator iterator = aylikPuantajList.iterator(); iterator.hasNext();) {
 				AylikPuantaj aylikPuantaj = (AylikPuantaj) iterator.next();
+
 				aylikPuantaj.setDinamikAlanMap(new TreeMap<Long, PersonelDenklestirmeDinamikAlan>());
+
+				if (aylikPuantaj.isSutIzniDurumu() == false || aylikPuantaj.isGebeDurum() == false) {
+					Personel personel = aylikPuantaj.getPdksPersonel();
+					if (pddMap.containsKey(personel.getId())) {
+						List<PersonelDonemselDurum> pddList = pddMap.get(personel.getId());
+						for (VardiyaGun vGun : aylikPuantaj.getVardiyalar()) {
+							if (vGun.isAyinGunu() && vGun.getVardiya() != null) {
+								for (PersonelDonemselDurum pdd : pddList) {
+									boolean donemIci = vGun.getVardiyaDate().getTime() <= pdd.getBitTarih().getTime() && vGun.getVardiyaDate().getTime() >= pdd.getBasTarih().getTime();
+									if (donemIci) {
+										if (pdd.isSutIzni())
+											vGun.setSutIzniPersonelDonemselDurum(pdd);
+										else if (pdd.isGebe())
+											vGun.setGebePersonelDonemselDurum(pdd);
+										if (aylikPuantaj.isGebeDurum() == false && (vGun.isGebeMi() || vGun.isGebePersonelDonemselDurum())) {
+											gebeGoster = true;
+											aylikPuantaj.setGebeDurum(true);
+										}
+										if (aylikPuantaj.isSuaDurum() == false && (vGun.isSutIzniVar() || vGun.isSutIzniPersonelDonemselDurum())) {
+											sutIzniGoster = true;
+											aylikPuantaj.setSutIzniDurumu(true);
+										}
+									}
+
+								}
+
+							}
+
+						}
+					}
+				}
 				if (!gebeGoster)
 					gebeGoster = aylikPuantaj.isGebeDurum();
 				PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();

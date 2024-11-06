@@ -3464,7 +3464,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 							personel.setMailTakip(Boolean.FALSE);
 					}
 
-					setPersonel(personel, personelERP, FORMAT_DATE);
+
 					personel.setCinsiyet(bayanSoyadKontrol || cinsiyet != null ? cinsiyet : null);
 
 					personelERP.setSoyadi(soyadi);
@@ -3489,6 +3489,41 @@ public class PdksVeriOrtakAktar implements Serializable {
 						}
 					}
 					personel.setSirket(sirket);
+					if (personel.getId() == null) {
+						if (personel.getCalismaModeli() == null) {
+							CalismaModeli cm = null;
+							if (personel.getSirket() != null)
+								cm = (CalismaModeli) getCalismaModel_VardiyaSablonByMap(personel.getSirket(), cmMap);
+							if (cm == null && modeller.size() == 1)
+								cm = modeller.get(0);
+							if (cm != null)
+								personel.setCalismaModeli(cm);
+
+						}
+						if (personel.getSablon() == null) {
+							VardiyaSablonu vs = null;
+							if (personel.getSirket() != null)
+								vs = (VardiyaSablonu) getCalismaModel_VardiyaSablonByMap(personel.getSirket(), sablonMap);
+							if (vs != null)
+								personel.setSablon(vs);
+							else {
+								sablonList.addAll(sablonlar);
+								if (personelTipi != null && personelCalismaModeliVar) {
+									long id = personelTipi.getId().longValue();
+									for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
+										VardiyaSablonu vardiyaSablonu = (VardiyaSablonu) iterator.next();
+										if (vardiyaSablonu.getCalismaModeli() != null && vardiyaSablonu.getCalismaModeli().getId().longValue() != id)
+											iterator.remove();
+									}
+								}
+								if (sablonList.size() == 1)
+									personel.setSablon(sablonList.get(0));
+							}
+
+						}
+					}
+
+					setPersonel(personel, personelERP, FORMAT_DATE);
 					if (personel.getId() == null && personel.getSirket() != null) {
 						personel.setFazlaMesaiOde(personel.getSirket().getFazlaMesaiOde() != null && personel.getSirket().getFazlaMesaiOde());
 					}
@@ -3742,39 +3777,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 
 					if (personelERP.getHataList().isEmpty()) {
-						if (personel.getId() == null) {
-							if (personel.getCalismaModeli() == null) {
-								CalismaModeli cm = null;
-								if (personel.getSirket() != null)
-									cm = (CalismaModeli) getCalismaModel_VardiyaSablonByMap(personel.getSirket(), cmMap);
-								if (cm == null && modeller.size() == 1)
-									cm = modeller.get(0);
-								if (cm != null)
-									personel.setCalismaModeli(cm);
 
-							}
-							if (personel.getSablon() == null) {
-								VardiyaSablonu vs = null;
-								if (personel.getSirket() != null)
-									vs = (VardiyaSablonu) getCalismaModel_VardiyaSablonByMap(personel.getSirket(), sablonMap);
-								if (vs != null)
-									personel.setSablon(vs);
-								else {
-									sablonList.addAll(sablonlar);
-									if (personelTipi != null && personelCalismaModeliVar) {
-										long id = personelTipi.getId().longValue();
-										for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
-											VardiyaSablonu vardiyaSablonu = (VardiyaSablonu) iterator.next();
-											if (vardiyaSablonu.getCalismaModeli() != null && vardiyaSablonu.getCalismaModeli().getId().longValue() != id)
-												iterator.remove();
-										}
-									}
-									if (sablonList.size() == 1)
-										personel.setSablon(sablonList.get(0));
-								}
-
-							}
-						}
 						if (personel.isDegisti()) {
 							if (personel.getId() != null) {
 								personel.setGuncellemeTarihi(new Date());

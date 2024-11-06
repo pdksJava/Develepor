@@ -671,12 +671,12 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				sb.append(" INNER  JOIN " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " ON S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
 				if (authenticatedUser.isIKSirket())
 					sb.append(" AND S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
- 				sb.append(" WHERE PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " :" + fieldName);
+				sb.append(" WHERE PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " :" + fieldName);
 				sb.append("   AND  PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 				sb.append(" ORDER BY S." + Sirket.COLUMN_NAME_ID);
 				fields.put(fieldName, idList);
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
- 				List<Sirket> sirketList = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, Sirket.class, session);
+				List<Sirket> sirketList = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, Sirket.class, session);
 				if (!sirketList.isEmpty()) {
 					sirketDoldur();
 				}
@@ -1529,9 +1529,10 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				for (AylikPuantaj dap : dataList) {
 					dap.setSuaDurum(dap.getPersonelDenklestirme().isSuaDurumu());
 					dap.setGebeDurum(Boolean.FALSE);
+					dap.setSutIzniDurumu(false);
 					if (!suaDurum)
 						suaDurum = dap.getPersonelDenklestirme().isSuaDurumu();
-					dap.setGebeDurum(dap.getPersonelDenklestirme().isSuaDurumu());
+					 
 					PersonelDenklestirme personelDenklestirme = dap.getPersonelDenklestirme();
 					double fazlaMesaiMaxSure = personelDenklestirme.getDenklestirmeAy().getFazlaMesaiMaxSure();
 					double ucretiOdenenMesaiSure = 0.0d;
@@ -1550,7 +1551,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 									if (!suaDurum)
 										suaDurum = vardiya.isSuaMi();
 								}
-								if (vardiya.isGebelikMi()) {
+								if (dap.isSutIzniDurumu() == false)
+									dap.setSutIzniDurumu(vg.isSutIzniPersonelDonemselDurum());
+								if (vardiya.isGebelikMi() || vg.isGebePersonelDonemselDurum()) {
 									dap.setGebeDurum(Boolean.TRUE);
 									if (!gebeDurum)
 										gebeDurum = vardiya.isGebelikMi();

@@ -86,7 +86,7 @@ public class VardiyaGun extends BaseObject {
 	private List<String> linkAdresler;
 	private HashMap<String, Personel> gorevliPersonelMap;
 	private CalismaModeli calismaModeli = null;
-
+	private PersonelDonemselDurum sutIzniPersonelDonemselDurum, gebePersonelDonemselDurum;
 	private Boolean fazlaMesaiOnayla;
 	private Integer version = 0;
 	private List<FazlaMesaiTalep> fazlaMesaiTalepler;
@@ -2334,6 +2334,34 @@ public class VardiyaGun extends BaseObject {
 
 	public void setSutIzniVar(boolean sutIzniVar) {
 		this.sutIzniVar = sutIzniVar;
+	}
+
+	@Transient
+	public PersonelDonemselDurum getSutIzniPersonelDonemselDurum() {
+		return sutIzniPersonelDonemselDurum;
+	}
+
+	public void setSutIzniPersonelDonemselDurum(PersonelDonemselDurum sutIzniPersonelDonemselDurum) {
+		this.sutIzniPersonelDonemselDurum = sutIzniPersonelDonemselDurum;
+	}
+
+	@Transient
+	public boolean isSutIzniPersonelDonemselDurum() {
+		return sutIzniPersonelDonemselDurum != null && sutIzniPersonelDonemselDurum.isSutIzni();
+	}
+
+	@Transient
+	public PersonelDonemselDurum getGebePersonelDonemselDurum() {
+		return gebePersonelDonemselDurum;
+	}
+
+	public void setGebePersonelDonemselDurum(PersonelDonemselDurum gebePersonelDonemselDurum) {
+		this.gebePersonelDonemselDurum = gebePersonelDonemselDurum;
+	}
+
+	@Transient
+	public boolean isGebePersonelDonemselDurum() {
+		return gebePersonelDonemselDurum != null && gebePersonelDonemselDurum.isGebe();
 	}
 
 	public void entityRefresh() {

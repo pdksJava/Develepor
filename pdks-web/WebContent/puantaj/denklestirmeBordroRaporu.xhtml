@@ -281,7 +281,7 @@
 									<h:outputText value="#{puantaj.pdksPersonel.sirket.ad}" style="font-size: 9px;width:autostretch ;white-space: nowrap;" />
 								</rich:column>
 								<rich:column style="text-align: left;"
-									rendered="#{denklestirmeBordroRaporuHome.tesisId==null and ortakIslemler.getListTesisDurum(denklestirmeBordroRaporuHome.personelDenklestirmeList)}">
+									rendered="#{denklestirmeBordroRaporuHome.tesisId==null and ortakIslemler.tesisDurumu and denklestirmeBordroRaporuHome.tesisList!=null and denklestirmeBordroRaporuHome.tesisList.size()>0}">
 									<f:facet name="header">
 										<h:outputText value="#{ortakIslemler.tesisAciklama()}" />
 									</f:facet>

@@ -998,6 +998,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 					AylikPuantaj puantaj = (AylikPuantaj) aylikPuantajSablon.clone();
 					PersonelDenklestirme valueBuAy = personelDenklestirmeMap.get(denklestirmeTasiyici.getPersonel().getId());
 					puantaj.setGebeDurum(false);
+					puantaj.setSutIzniDurumu(false);
 					if (!sutIzniDurum)
 						sutIzniDurum = valueBuAy.isSutIzniVar();
 					if (!partTime)
@@ -1051,6 +1052,14 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 								continue;
 							}
 							if (vardiyaGun.getId() != null) {
+								if (puantaj.isGebeDurum() == false && (vardiyaGun.isGebeMi() || vardiyaGun.isGebePersonelDonemselDurum())) {
+									gebeDurum = true;
+									puantaj.setGebeDurum(true);
+								}
+								if (puantaj.isSuaDurum() == false && (vardiyaGun.isSutIzniVar() || vardiyaGun.isSutIzniPersonelDonemselDurum())) {
+									sutIzniDurum = true;
+									puantaj.setSutIzniDurumu(true);
+								}
 								++sayac;
 								Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
 								if (islemVardiya != null) {

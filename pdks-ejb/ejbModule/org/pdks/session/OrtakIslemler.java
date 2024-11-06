@@ -12705,8 +12705,8 @@ public class OrtakIslemler implements Serializable {
 					List<PersonelDonemselDurum> list = personelDurumMap.get(perId);
 					for (PersonelDonemselDurum personelDonemselDurum : list) {
 						boolean donemTamam = personelDonemselDurum.getBasTarih().getTime() <= vardiyaGun.getVardiyaDate().getTime() && personelDonemselDurum.getBitTarih().getTime() >= vardiyaGun.getVardiyaDate().getTime();
-						gebePersonelDonemselDurum = personelDonemselDurum;
 						if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.GEBE)) {
+							gebePersonelDonemselDurum = personelDonemselDurum;
 							if (donemTamam)
 								gebeMi = true;
 						} else if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.SUT_IZNI)) {
@@ -12720,11 +12720,16 @@ public class OrtakIslemler implements Serializable {
 					}
 
 				}
+				vardiyaGun.setSutIzniPersonelDonemselDurum(sutIzniPersonelDonemselDurum);
+				vardiyaGun.setGebePersonelDonemselDurum(gebePersonelDonemselDurum);
 				if (denkMap.containsKey(key)) {
+
 					PersonelDenklestirme denklestirme = denkMap.get(key);
 					if (denklestirme.getSutIzniPersonelDonemselDurum() == null) {
 						denklestirme.setSutIzniPersonelDonemselDurum(sutIzniPersonelDonemselDurum);
-
+					}
+					if (denklestirme.getGebePersonelDonemselDurum() == null) {
+						denklestirme.setGebePersonelDonemselDurum(gebePersonelDonemselDurum);
 					}
 
 					if (sutIzniPersonelDonemselDurum == null)

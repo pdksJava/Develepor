@@ -1052,6 +1052,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 				}
 				List<AylikPuantaj> puantajDenklestirmeList = new ArrayList<AylikPuantaj>();
 				aylikPuantajSablon.setGebeDurum(false);
+				aylikPuantajSablon.setSutIzniDurumu(false);
 				aylikPuantajSablon.setSuaDurum(false);
 				for (Iterator iterator1 = list.iterator(); iterator1.hasNext();) {
 					PersonelDenklestirmeTasiyici denklestirmeTasiyici = (PersonelDenklestirmeTasiyici) iterator1.next();
@@ -1145,10 +1146,18 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 								iterator.remove();
 								continue;
 							}
-							String key = vardiyaGun.getVardiyaDateStr();
-							if (key.equals("20211110"))
-								logger.debug(vardiyaGun.getVardiyaKeyStr());
+//							String key = vardiyaGun.getVardiyaDateStr();
+//							if (key.equals("20211110"))
+//								logger.debug(vardiyaGun.getVardiyaKeyStr());
 							if (vardiyaGun.getId() != null) {
+								if (puantaj.isGebeDurum() == false && (vardiyaGun.isGebeMi() || vardiyaGun.isGebePersonelDonemselDurum())) {
+									gebemi = true;
+									puantaj.setGebeDurum(true);
+								}
+								if (puantaj.isSuaDurum() == false && (vardiyaGun.isSutIzniVar() || vardiyaGun.isSutIzniPersonelDonemselDurum())) {
+									sutIzniGoster = true;
+									puantaj.setSutIzniDurumu(true);
+								}
 								if (vardiyaGun.getVardiya().isCalisma())
 									vardiyaGunSon = vardiyaGun;
 								vgIdList.add(vardiyaGun.getId());
