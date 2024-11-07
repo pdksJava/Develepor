@@ -3840,13 +3840,31 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 				islemYapiliyor = false;
 				if (tekrarOku) {
-					fillStartAylikVardiyaPlanList();
-					// if ( !baskaKayitVar) {
-					// fillAylikVardiyaPlanList();
-					// } else if (!helpPersonel(personelAylikPuantaj.getPdksPersonel())) {
-					// calismaPlaniDenklestir(departmanDenklestirmeDonemi, null, personelAylikPuantaj);
-					// aylikVardiyaOzetOlustur();
+					// int index = -1;
+					// if (aylikPuantajList.size() > 1) {
+					// List<AylikPuantaj> aylikPuantajOrjinalList = new ArrayList<AylikPuantaj>(aylikPuantajList);
+					// String islemSicilNo = new String(sicilNo);
+					// for (int i = 0; i < aylikPuantajOrjinalList.size(); i++) {
+					// AylikPuantaj ap = aylikPuantajOrjinalList.get(i);
+					// if (ap.getPersonelDenklestirme().getId().equals(personelAylikPuantaj.getPersonelDenklestirme().getId())) {
+					// index = i;
+					// break;
 					// }
+					// }
+					// if (index >= 0) {
+					// sicilNo = personelAylikPuantaj.getPdksPersonel().getPdksSicilNo();
+					// fillAylikVardiyaPlanList();
+					// personelAylikPuantaj = aylikPuantajList.get(0);
+					// aylikPuantajOrjinalList.set(index, personelAylikPuantaj);
+					// aylikPuantajList.clear();
+					// aylikPuantajList.addAll(aylikPuantajOrjinalList);
+					// sicilNo = islemSicilNo;
+					// }
+					// aylikPuantajOrjinalList = null;
+					// }
+					// if (index < 0)
+					fillStartAylikVardiyaPlanList();
+
 				}
 
 			}
