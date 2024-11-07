@@ -648,8 +648,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				if (idList.isEmpty()) {
 					denklestirmeAy = null;
 					if (userLogin.getLogin())
-						PdksUtil.addMessageAvailableWarn((ay > 0 ? yil + " " + (aylar.get(ay - 1).getLabel()) : "") + " döneme ait denkleştirme verisi tanımlanmamıştır!");
-				}
+						PdksUtil.addMessageWarn((ay > 0 ? yil + " " + (aylar.get(ay - 1).getLabel()) : "") + " döneme ait denkleştirme verisi tanımlanmamıştır!");
+ 				}
 
 				idList = null;
 			} else if (userLogin.getLogin())
