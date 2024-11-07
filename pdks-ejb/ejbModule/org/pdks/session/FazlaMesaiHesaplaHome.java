@@ -649,7 +649,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					denklestirmeAy = null;
 					if (userLogin.getLogin())
 						PdksUtil.addMessageWarn((ay > 0 ? yil + " " + (aylar.get(ay - 1).getLabel()) : "") + " döneme ait denkleştirme verisi tanımlanmamıştır!");
- 				}
+				}
 
 				idList = null;
 			} else if (userLogin.getLogin())
@@ -3268,16 +3268,28 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
 		lastMap.put("yil", "" + yil);
 		lastMap.put("ay", "" + ay);
-		if (departmanId != null)
+		if (departmanId != null) {
 			lastMap.put("departmanId", "" + departmanId);
-		if (sirketId != null)
+			lastMap.put("departman", ortakIslemler.getSelectItemText(departmanId, departmanList));
+		}
+		if (sirketId != null) {
 			lastMap.put("sirketId", "" + sirketId);
-		if (tesisId != null)
+			lastMap.put("sirket", ortakIslemler.getSelectItemText(sirketId, pdksSirketList));
+		}
+		if (tesisId != null) {
 			lastMap.put("tesisId", "" + tesisId);
-		if (seciliEkSaha3Id != null)
+			lastMap.put("tesis", ortakIslemler.getSelectItemText(tesisId, tesisList));
+		}
+		if (seciliEkSaha3Id != null) {
 			lastMap.put("bolumId", "" + seciliEkSaha3Id);
-		if (seciliEkSaha4Id != null)
+			lastMap.put("bolum", ortakIslemler.getSelectItemText(seciliEkSaha3Id, gorevYeriList));
+		}
+
+		if (seciliEkSaha4Id != null) {
 			lastMap.put("altBolumId", "" + seciliEkSaha4Id);
+			lastMap.put("altBolum", ortakIslemler.getSelectItemText(seciliEkSaha4Id, altBolumList));
+		}
+
 		if (hataliPuantajGoster != null)
 			lastMap.put("hataliPuantajGoster", "" + hataliPuantajGoster);
 		if (inputPersonelNo != null)

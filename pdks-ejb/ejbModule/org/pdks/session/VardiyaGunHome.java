@@ -3187,16 +3187,27 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
 		lastMap.put("yil", "" + yil);
 		lastMap.put("ay", "" + ay);
-		if (aramaSecenekleri.getDepartmanId() != null)
+		if (aramaSecenekleri.getDepartmanId() != null) {
 			lastMap.put("departmanId", "" + aramaSecenekleri.getDepartmanId());
-		if (aramaSecenekleri.getSirketId() != null)
+			lastMap.put("departman", ortakIslemler.getSelectItemText(aramaSecenekleri.getDepartmanId(), aramaSecenekleri.getDepartmanIdList()));
+		}
+		if (aramaSecenekleri.getSirketId() != null) {
 			lastMap.put("sirketId", "" + aramaSecenekleri.getSirketId());
-		if (aramaSecenekleri.getTesisId() != null)
+			lastMap.put("sirket", ortakIslemler.getSelectItemText(aramaSecenekleri.getSirketId(), aramaSecenekleri.getSirketIdList()));
+		}
+		if (aramaSecenekleri.getTesisId() != null) {
 			lastMap.put("tesisId", "" + aramaSecenekleri.getTesisId());
-		if (aramaSecenekleri.getEkSaha4Id() != null)
-			lastMap.put("altBolumId", "" + aramaSecenekleri.getEkSaha4Id());
-		if (aramaSecenekleri.getEkSaha3Id() != null)
+			lastMap.put("tesis", ortakIslemler.getSelectItemText(aramaSecenekleri.getTesisId(), aramaSecenekleri.getTesisList()));
+		}
+
+		if (aramaSecenekleri.getEkSaha3Id() != null) {
 			lastMap.put("bolumId", "" + aramaSecenekleri.getEkSaha3Id());
+			lastMap.put("bolum", ortakIslemler.getSelectItemText(aramaSecenekleri.getEkSaha3Id(), aramaSecenekleri.getGorevYeriList()));
+		}
+		if (aramaSecenekleri.getEkSaha4Id() != null) {
+			lastMap.put("altBolumId", "" + aramaSecenekleri.getEkSaha4Id());
+			lastMap.put("altBolum", ortakIslemler.getSelectItemText(aramaSecenekleri.getEkSaha4Id(), aramaSecenekleri.getAltBolumIdList()));
+		}
 		if ((ikRole) && PdksUtil.hasStringValue(sicilNo))
 			lastMap.put("sicilNo", sicilNo.trim());
 		try {
