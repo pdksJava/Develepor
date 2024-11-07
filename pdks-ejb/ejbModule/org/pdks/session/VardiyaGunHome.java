@@ -4084,6 +4084,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			sb.append(" AND ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ")<=:s");
 			fields.put("s", sonDonem);
 		}
+		String ilkDonem = ortakIslemler.getParameterKey("ilkMaasDonemi");
+		if (PdksUtil.hasStringValue(ilkDonem) == false) {
+			String sistemBaslangicYili = ortakIslemler.getParameterKey("sistemBaslangicYili");
+			if (PdksUtil.hasStringValue(sistemBaslangicYili))
+				ilkDonem = sistemBaslangicYili + ilkDonem;
+		}
+		if (PdksUtil.hasStringValue(ilkDonem))
+			sb.append(" AND ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100) + D." + DenklestirmeAy.COLUMN_NAME_AY + ")>=" + ilkDonem);
+
 		fields.put("y", yil);
 		sb.append(" ORDER BY D." + DenklestirmeAy.COLUMN_NAME_AY);
 		if (session != null)
