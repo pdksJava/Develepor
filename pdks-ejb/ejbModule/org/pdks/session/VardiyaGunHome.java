@@ -3852,13 +3852,21 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					// }
 					// }
 					// if (index >= 0) {
+					// session.flush();
 					// sicilNo = personelAylikPuantaj.getPdksPersonel().getPdksSicilNo();
-					// fillAylikVardiyaPlanList();
+					// double saatToplami = personelAylikPuantaj.getSaatToplami();
+					// aylikPuantajOlusturuluyor();
+					// if (saatToplami == personelAylikPuantaj.getSaatToplami())
+					// index = -1;
+					// else {
 					// personelAylikPuantaj = aylikPuantajList.get(0);
 					// aylikPuantajOrjinalList.set(index, personelAylikPuantaj);
 					// aylikPuantajList.clear();
 					// aylikPuantajList.addAll(aylikPuantajOrjinalList);
+					// aylikVardiyaOzetOlustur();
+					// }
 					// sicilNo = islemSicilNo;
+					//
 					// }
 					// aylikPuantajOrjinalList = null;
 					// }
@@ -6158,6 +6166,23 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			ArrayList<Long> perIdler = new ArrayList<Long>();
 			List<Personel> personelList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(aramaSecenekleri.getSirket(), aramaSecenekleri.getTesisId() != null ? String.valueOf(aramaSecenekleri.getTesisId()) : null, aramaSecenekleri.getEkSaha3Id(), aramaSecenekleri.getEkSaha4Id(),
 					denklestirmeAy != null ? aylikPuantajDonem : null, getDenklestirmeDurum(), session);
+
+			List<Personel> personelFMList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(aramaSecenekleri.getSirket(), aramaSecenekleri.getTesisId() != null ? String.valueOf(aramaSecenekleri.getTesisId()) : null, aramaSecenekleri.getEkSaha3Id(), aramaSecenekleri.getEkSaha4Id(),
+					denklestirmeAy != null ? aylikPuantajDonem : null, true, session);
+
+			for (Personel personelFm : personelFMList) {
+				boolean ekle = true;
+				for (Personel personelPlan : personelList) {
+					if (personelPlan.getId().equals(personelFm.getId())) {
+						ekle = false;
+						break;
+					}
+				}
+				if (ekle)
+					personelList.add(personelFm);
+			}
+
+			personelFMList = null;
 			perList = new ArrayList<String>();
 			for (Iterator iterator = personelList.iterator(); iterator.hasNext();) {
 				Personel personel = (Personel) iterator.next();
