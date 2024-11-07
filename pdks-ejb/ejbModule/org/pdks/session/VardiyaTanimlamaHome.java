@@ -127,14 +127,34 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	@Transactional
 	public String fillPdksYoneticiDenklestirme(Session xSession) {
 		HashMap map = new HashMap();
-		map.put("yil=", yil);
 		Calendar cal = Calendar.getInstance();
-		if (cal.get(Calendar.YEAR) == yil)
-			map.put("ay<=", cal.get(Calendar.MONTH) + 2);
-		if (xSession != null)
-			map.put(PdksEntityController.MAP_KEY_SESSION, xSession);
-		denklestirmeAylar = pdksEntityController.getObjectByInnerObjectListInLogic(map, DenklestirmeAy.class);
-		denklestirmeAylar = PdksUtil.sortListByAlanAdi(denklestirmeAylar, "ay", false);
+
+		// map.put("yil=", yil);
+
+		// if (xSession != null)
+		// map.put(PdksEntityController.MAP_KEY_SESSION, xSession);
+		// denklestirmeAylar = pdksEntityController.getObjectByInnerObjectListInLogic(map, DenklestirmeAy.class);
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" WHERE D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y  AND D." + DenklestirmeAy.COLUMN_NAME_AY + ">0 ");
+		if (cal.get(Calendar.YEAR) == yil) {
+			sb.append(" AND  D." + DenklestirmeAy.COLUMN_NAME_AY + "<=" + (cal.get(Calendar.MONTH) + 2));
+		}
+		String ilkDonem = ortakIslemler.getParameterKey("ilkMaasDonemi");
+		if (PdksUtil.hasStringValue(ilkDonem) == false) {
+			String sistemBaslangicYili = ortakIslemler.getParameterKey("sistemBaslangicYili");
+			if (PdksUtil.hasStringValue(sistemBaslangicYili))
+				ilkDonem = sistemBaslangicYili + ilkDonem;
+		}
+		if (PdksUtil.hasStringValue(ilkDonem))
+			sb.append(" AND ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100) + D." + DenklestirmeAy.COLUMN_NAME_AY + ")>=" + ilkDonem);
+		map.put("y", yil);
+		sb.append(" ORDER BY D." + DenklestirmeAy.COLUMN_NAME_AY);
+		if (session != null)
+			map.put(PdksEntityController.MAP_KEY_SESSION, session);
+		denklestirmeAylar = pdksEntityController.getObjectBySQLList(sb, map, DenklestirmeAy.class);
+
 		List<Long> dmIdList = new ArrayList<Long>();
 		for (DenklestirmeAy dm : denklestirmeAylar) {
 			dmIdList.add(dm.getId());
@@ -718,17 +738,10 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 			xSession = session;
 		xSession.clear();
 		fillCalismaModeller(xSession);
-		HashMap map = new HashMap();
-		map.put(PdksEntityController.MAP_KEY_MAP, "getAy");
-		map.put("yil=", yil);
-
-		if (xSession != null)
-			map.put(PdksEntityController.MAP_KEY_SESSION, xSession);
-		TreeMap<Integer, DenklestirmeAy> ayMap = pdksEntityController.getObjectByInnerObjectMapInLogic(map, DenklestirmeAy.class, false);
 
 		try {
 			kesintiTuruList.clear();
-			denklestirmeKesintiYap = ortakIslemler.yilAyKontrol(yil, ayMap, xSession);
+			denklestirmeKesintiYap = ortakIslemler.yilAyKontrol(yil, null, xSession);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

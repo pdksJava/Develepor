@@ -1685,6 +1685,34 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param yil
+	 * @param session
+	 * @return
+	 */
+	private TreeMap<Integer, DenklestirmeAy> getAyMap(int yil, Session session) {
+		HashMap fields = new HashMap();
+		fields.put(PdksEntityController.MAP_KEY_MAP, "getAy");
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
+ 		sb.append(" WHERE D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y  AND D." + DenklestirmeAy.COLUMN_NAME_AY + ">0 ");
+
+		String ilkDonem = getParameterKey("ilkMaasDonemi");
+		if (PdksUtil.hasStringValue(ilkDonem) == false) {
+			String sistemBaslangicYili = getParameterKey("sistemBaslangicYili");
+			if (PdksUtil.hasStringValue(sistemBaslangicYili))
+				ilkDonem = sistemBaslangicYili + ilkDonem;
+		}
+		if (PdksUtil.hasStringValue(ilkDonem))
+			sb.append(" AND ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100) + D." + DenklestirmeAy.COLUMN_NAME_AY + ")>=" + ilkDonem);
+		fields.put("y", yil);
+		sb.append(" ORDER BY D." + DenklestirmeAy.COLUMN_NAME_AY);
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		TreeMap<Integer, DenklestirmeAy> ayMap = pdksEntityController.getObjectBySQLMap(sb, fields, DenklestirmeAy.class, true);
+		return ayMap;
+	}
+
+	/**
+	 * @param yil
 	 * @param ayMap
 	 * @param xSession
 	 * @return
@@ -1692,14 +1720,9 @@ public class OrtakIslemler implements Serializable {
 	@Transactional
 	public Boolean yilAyKontrol(int yil, TreeMap<Integer, DenklestirmeAy> ayMap, Session xSession) {
 		Boolean denklestirmeKesintiYap = Boolean.FALSE;
-		if (ayMap == null) {
-			HashMap map = new HashMap();
-			map.put(PdksEntityController.MAP_KEY_MAP, "getAy");
-			map.put("yil", yil);
-			if (xSession != null)
-				map.put(PdksEntityController.MAP_KEY_SESSION, xSession);
-			ayMap = pdksEntityController.getObjectByInnerObjectMap(map, DenklestirmeAy.class, false);
-		}
+		if (ayMap == null)  
+			ayMap = getAyMap(yil, xSession);
+		 
 		Integer denklestirmeKesintiDurum = null;
 		KesintiTipi kesintiTipi = null;
 		try {
@@ -1718,6 +1741,13 @@ public class OrtakIslemler implements Serializable {
 		if (user == null)
 			user = authenticatedUser;
 		int buYil = PdksUtil.getDateField(new Date(), Calendar.YEAR);
+		String ilkDonem = getParameterKey("ilkMaasDonemi");
+		if (PdksUtil.hasStringValue(ilkDonem) == false) {
+			String sistemBaslangicYili = getParameterKey("sistemBaslangicYili");
+			if (PdksUtil.hasStringValue(sistemBaslangicYili))
+				ilkDonem = sistemBaslangicYili + ilkDonem;
+		}
+		int basDonem = Integer.parseInt(ilkDonem);
 		for (int i = 1; i <= 12; i++) {
 			DenklestirmeAy denklestirmeAy = null;
 			boolean flush = false;
@@ -1734,7 +1764,8 @@ public class OrtakIslemler implements Serializable {
 					flush = true;
 				}
 			} else {
-				if (buYil > yil)
+				int donem = (yil * 100) + i;
+				if (buYil > yil || basDonem > donem)
 					continue;
 				flush = true;
 				denklestirmeAy = new DenklestirmeAy();
