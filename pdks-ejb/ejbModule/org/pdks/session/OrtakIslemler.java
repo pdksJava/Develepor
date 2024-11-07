@@ -1693,7 +1693,7 @@ public class OrtakIslemler implements Serializable {
 		fields.put(PdksEntityController.MAP_KEY_MAP, "getAy");
 		StringBuffer sb = new StringBuffer();
 		sb.append("SELECT DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
- 		sb.append(" WHERE D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y  AND D." + DenklestirmeAy.COLUMN_NAME_AY + ">0 ");
+		sb.append(" WHERE D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y  AND D." + DenklestirmeAy.COLUMN_NAME_AY + ">0 ");
 
 		String ilkDonem = getParameterKey("ilkMaasDonemi");
 		if (PdksUtil.hasStringValue(ilkDonem) == false) {
@@ -1720,9 +1720,8 @@ public class OrtakIslemler implements Serializable {
 	@Transactional
 	public Boolean yilAyKontrol(int yil, TreeMap<Integer, DenklestirmeAy> ayMap, Session xSession) {
 		Boolean denklestirmeKesintiYap = Boolean.FALSE;
-		if (ayMap == null)  
+		if (ayMap == null)
 			ayMap = getAyMap(yil, xSession);
-		 
 		Integer denklestirmeKesintiDurum = null;
 		KesintiTipi kesintiTipi = null;
 		try {
@@ -1777,7 +1776,7 @@ public class OrtakIslemler implements Serializable {
 				denklestirmeAy.setSure(0d);
 				denklestirmeAy.setYemekMolasiYuzdesi(yemekMolasiYuzdesi);
 				denklestirmeAy.setFazlaMesaiMaxSure(fazlaMesaiMaxSure);
-				denklestirmeAy.setDurum(Boolean.TRUE);
+				denklestirmeAy.setDurum(basDonem != donem);
 			}
 			if (flush) {
 				pdksEntityController.saveOrUpdate(xSession, entityManager, denklestirmeAy);

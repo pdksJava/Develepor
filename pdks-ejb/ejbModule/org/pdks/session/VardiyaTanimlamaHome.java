@@ -128,14 +128,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	public String fillPdksYoneticiDenklestirme(Session xSession) {
 		HashMap map = new HashMap();
 		Calendar cal = Calendar.getInstance();
-
-		// map.put("yil=", yil);
-
-		// if (xSession != null)
-		// map.put(PdksEntityController.MAP_KEY_SESSION, xSession);
-		// denklestirmeAylar = pdksEntityController.getObjectByInnerObjectListInLogic(map, DenklestirmeAy.class);
-
-		StringBuffer sb = new StringBuffer();
+ 		StringBuffer sb = new StringBuffer();
 		sb.append("SELECT DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" WHERE D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y  AND D." + DenklestirmeAy.COLUMN_NAME_AY + ">0 ");
 		if (cal.get(Calendar.YEAR) == yil) {
@@ -154,8 +147,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		denklestirmeAylar = pdksEntityController.getObjectBySQLList(sb, map, DenklestirmeAy.class);
-
-		List<Long> dmIdList = new ArrayList<Long>();
+ 		List<Long> dmIdList = new ArrayList<Long>();
 		for (DenklestirmeAy dm : denklestirmeAylar) {
 			dmIdList.add(dm.getId());
 		}
