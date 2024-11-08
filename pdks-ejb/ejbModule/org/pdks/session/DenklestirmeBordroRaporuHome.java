@@ -415,6 +415,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			lastMap.put("sirketId", "" + sirketId);
 		if (tesisId != null)
 			lastMap.put("tesisId", "" + tesisId);
+		else if (tesisList != null && !tesisList.isEmpty() && personel.getTesis() != null)
+			lastMap.put("tesisId", "" + personel.getTesis().getId());
 		if (personel.getEkSaha3() != null)
 			lastMap.put("bolumId", "" + personel.getEkSaha3().getId());
 		if (ekSaha4Tanim != null)

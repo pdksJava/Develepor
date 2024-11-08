@@ -5910,13 +5910,14 @@ public class OrtakIslemler implements Serializable {
 					tarih = getERPManuelTarih(tarih, null);
 				}
 				if (guncellemeDurum == false)
-					sb.append(" WHERE " + IzinERPDB.COLUMN_NAME_BIT_TARIHI + " >=:t ");
+					sb.append(" WHERE " + IzinERPDB.COLUMN_NAME_BIT_TARIHI + " >=:t OR ");
 				else
-					sb.append(" WHERE " + IzinERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " >=:t ");
+					sb.append(" WHERE " + IzinERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " >=:t OR ");
 				parametreMap.put("t", PdksUtil.getDate(tarih));
-			}
-			sb.append(" OR  REFERANS_ID NOT IN ( SELECT " + IzinReferansERP.COLUMN_NAME_ID + " FROM " + IzinReferansERP.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + ")");
- 			String str = sb.toString();
+			} else
+				sb.append(" WHERE ");
+			sb.append(" ( DURUM = 1 AND  REFERANS_ID NOT IN ( SELECT " + IzinReferansERP.COLUMN_NAME_ID + " FROM " + IzinReferansERP.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ) )");
+			String str = sb.toString();
 			sb = new StringBuffer("WITH DATA AS (" + str + " ) ");
 			sb.append("SELECT DISTINCT D.* FROM DATA D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" INNER JOIN " + PersonelERPDB.VIEW_NAME + " P  " + PdksEntityController.getJoinLOCK() + " ON P." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " = D." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
