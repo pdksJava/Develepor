@@ -5915,9 +5915,10 @@ public class OrtakIslemler implements Serializable {
 					sb.append(" WHERE " + IzinERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " >=:t ");
 				parametreMap.put("t", PdksUtil.getDate(tarih));
 			}
-			String str = sb.toString();
+			sb.append(" OR  REFERANS_ID NOT IN ( SELECT " + IzinReferansERP.COLUMN_NAME_ID + " FROM " + IzinReferansERP.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + ")");
+ 			String str = sb.toString();
 			sb = new StringBuffer("WITH DATA AS (" + str + " ) ");
-			sb.append("SELECT D.* FROM DATA D " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append("SELECT DISTINCT D.* FROM DATA D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" INNER JOIN " + PersonelERPDB.VIEW_NAME + " P  " + PdksEntityController.getJoinLOCK() + " ON P." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " = D." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
 			sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " ON S." + Sirket.COLUMN_NAME_ERP_KODU + " = P.SIRKET_KODU AND S." + Sirket.COLUMN_NAME_DURUM + " = 1");
 			sb.append(" LEFT JOIN " + IzinReferansERP.TABLE_NAME + " IR " + PdksEntityController.getJoinLOCK() + " ON IR." + IzinReferansERP.COLUMN_NAME_ID + " = D." + IzinERPDB.COLUMN_NAME_REFERANS_NO);
@@ -16090,9 +16091,9 @@ public class OrtakIslemler implements Serializable {
 						haftaIciIzinGunTarih = null;
 					}
 				DenklestirmeAy denklestirmeAy = puantajData.getDenklestirmeAy();
-				
-//				if (denklestirmeAy == null && puantajData.getPersonelDenklestirme() != null)
-//					denklestirmeAy = puantajData.getPersonelDenklestirme().getDenklestirmeAy();
+
+				// if (denklestirmeAy == null && puantajData.getPersonelDenklestirme() != null)
+				// denklestirmeAy = puantajData.getPersonelDenklestirme().getDenklestirmeAy();
 				String donemKodu = String.valueOf(denklestirmeAy.getDonem());
 				double planlanSure = 0, izinSuresi = 0d, ucretiOdenenMesaiSure = 0d, fazlaMesaiMaxSure = getFazlaMesaiMaxSure(denklestirmeAy), resmiTatilSure = 0d;
 				boolean resmiTatilVardiyaEkle = false;
@@ -16638,7 +16639,7 @@ public class OrtakIslemler implements Serializable {
 					PersonelDenklestirme hesaplananDenklestirme = puantajData.getPersonelDenklestirme(fazlaMesaiOde, hesaplananBuAySure, gecenAydevredenSure);
 					puantajData.setFazlaMesaiSure(PdksUtil.setSureDoubleTypeRounded((hesaplananDenklestirme.getOdenenSure() > 0 ? hesaplananDenklestirme.getOdenenSure() : 0) + ucretiOdenenMesaiSure, yarimYuvarla));
 					puantajData.setHesaplananSure(hesaplananDenklestirme.getHesaplananSure());
-					 
+
 					puantajData.setEksikCalismaSure(0.0d);
 					if (hesaplananDenklestirme.getDevredenSure() != 0.0d)
 						hesaplananDenklestirme.setDevredenSure(PdksUtil.setSureDoubleTypeRounded(hesaplananDenklestirme.getDevredenSure(), yarimYuvarla));
