@@ -3866,19 +3866,21 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						}
 						if (index >= 0) {
 							session.flush();
-							sicilNo = personelAylikPuantaj.getPdksPersonel().getPdksSicilNo();
-							double saatToplami = personelAylikPuantaj.getSaatToplami();
-							aylikPuantajOlusturuluyor();
-							personelAylikPuantaj = aylikPuantajList.get(0);
-							if (saatToplami == personelAylikPuantaj.getSaatToplami())
-								index = -1;
-							else {
-								aylikPuantajOrjinalList.set(index, personelAylikPuantaj);
-								aylikPuantajList.clear();
-								aylikPuantajList.addAll(aylikPuantajOrjinalList);
-								// ortakIslemler.aylikPlanSureHesapla(false, normalCalismaVardiya, true, personelAylikPuantaj, false, tatilGunleriMap, session);
-								aylikVardiyaOzetOlustur();
-							}
+							ortakIslemler.aylikPlanSureHesapla(false, normalCalismaVardiya, true, personelAylikPuantaj, false, tatilGunleriMap, session);
+							aylikVardiyaOzetOlustur();
+							// sicilNo = personelAylikPuantaj.getPdksPersonel().getPdksSicilNo();
+							// double saatToplami = personelAylikPuantaj.getSaatToplami();
+							// aylikPuantajOlusturuluyor();
+							// personelAylikPuantaj = aylikPuantajList.get(0);
+							// if (saatToplami == personelAylikPuantaj.getSaatToplami())
+							// index = -1;
+							// else {
+							// aylikPuantajOrjinalList.set(index, personelAylikPuantaj);
+							// aylikPuantajList.clear();
+							// aylikPuantajList.addAll(aylikPuantajOrjinalList);
+							// // ortakIslemler.aylikPlanSureHesapla(false, normalCalismaVardiya, true, personelAylikPuantaj, false, tatilGunleriMap, session);
+							// aylikVardiyaOzetOlustur();
+							// }
 							sicilNo = orjSicilNo;
 						}
 						aylikPuantajOrjinalList = null;

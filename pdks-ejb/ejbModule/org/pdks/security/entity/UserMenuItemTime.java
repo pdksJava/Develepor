@@ -12,7 +12,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.servlet.http.HttpSession;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -42,6 +44,8 @@ public class UserMenuItemTime extends BasePDKSObject implements Serializable {
 	private Date firstTime, lastTime;
 
 	private BigDecimal useCount = new BigDecimal(0L);
+
+	private HttpSession mySession;
 
 	public UserMenuItemTime() {
 		super();
@@ -129,9 +133,17 @@ public class UserMenuItemTime extends BasePDKSObject implements Serializable {
 		this.useCount = useCount;
 	}
 
+	@Transient
+	public HttpSession getMySession() {
+		return mySession;
+	}
+
+	public void setMySession(HttpSession mySession) {
+		this.mySession = mySession;
+	}
+
 	public void entityRefresh() {
 		// TODO entityRefresh
 
 	}
-
 }
