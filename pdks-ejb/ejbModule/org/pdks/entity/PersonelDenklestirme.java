@@ -495,7 +495,7 @@ public class PersonelDenklestirme extends BaseObject {
 				boolean hesapla = !(vg.isIzinli() || vardiya.isHaftaTatil() || tatil != null);
 				if (!hesapla) {
 					gunPlanSure = 0;
-					if (vardiya.isHaftaTatil() == false && tatil != null && tatil.isYarimGunMu()) {
+					if (vardiya.isHaftaTatil() == false && tatil != null && tatil.isYarimGunMu() && vg.isIzinli() == false) {
 						gunPlanSure = cm.getArife();
 						if (sutIzniSure > 0.0d && gunPlanSure > sutIzniSure)
 							gunPlanSure = sutIzniSure;
