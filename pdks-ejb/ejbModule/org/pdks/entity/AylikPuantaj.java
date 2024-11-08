@@ -79,7 +79,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	private String trClass;
 
-	private boolean kaydet, calisiyor = true, gorevYeriSec = false, secili, onayDurum, vardiyaOlustu = Boolean.FALSE, vardiyaDegisti = Boolean.FALSE, fiiliHesapla = Boolean.FALSE;
+	private boolean kaydet, calisiyor = true, gorevYeriSec = false, yoneticiZorunlu = true, secili, onayDurum, vardiyaOlustu = Boolean.FALSE, vardiyaDegisti = Boolean.FALSE, fiiliHesapla = Boolean.FALSE;
 
 	private boolean donemBitti = Boolean.TRUE, ayrikHareketVar = Boolean.FALSE, fazlaMesaiIzinKontrol = Boolean.TRUE, gebeDurum = Boolean.FALSE, sutIzniDurumu = Boolean.FALSE;
 
@@ -755,20 +755,23 @@ public class AylikPuantaj implements Serializable, Cloneable {
 			if (personelDenklestirme == null || personelDenklestirme.isDenklestirmeDurum() == false || personelDenklestirme.isOnaylandi() == false)
 				value = false;
 			else if (pdksPersonel != null && yonetici == null) {
-				Personel yoneticisi = pdksPersonel.getYoneticisi();
-				if (yoneticisi != null && (yonetici == null || yonetici.getId() == null)) {
-					String dateStr = (yil * 100 + ay) + "01";
-					Date basTarih = PdksUtil.convertToJavaDate(dateStr, "yyyyMMdd");
-					Date bitTarih = PdksUtil.tariheGunEkleCikar(PdksUtil.tariheAyEkleCikar(basTarih, 1), -1);
-					try {
-						if (yoneticisi.getIseGirisTarihi() != null && yoneticisi.getSskCikisTarihi() != null && yoneticisi.getIseGirisTarihi().getTime() <= bitTarih.getTime() && yoneticisi.getSskCikisTarihi().getTime() >= basTarih.getTime())
-							yonetici = yoneticisi;
-					} catch (Exception e) {
-						logger.equals(e);
-					}
+				Personel yoneticisi = null;
+				if (yoneticiZorunlu) {
+					yoneticisi = pdksPersonel.getYoneticisi();
+					if (yoneticisi != null && (yonetici == null || yonetici.getId() == null)) {
+						String dateStr = (yil * 100 + ay) + "01";
+						Date basTarih = PdksUtil.convertToJavaDate(dateStr, "yyyyMMdd");
+						Date bitTarih = PdksUtil.tariheGunEkleCikar(PdksUtil.tariheAyEkleCikar(basTarih, 1), -1);
+						try {
+							if (yoneticisi.getIseGirisTarihi() != null && yoneticisi.getSskCikisTarihi() != null && yoneticisi.getIseGirisTarihi().getTime() <= bitTarih.getTime() && yoneticisi.getSskCikisTarihi().getTime() >= basTarih.getTime())
+								yonetici = yoneticisi;
+						} catch (Exception e) {
+							logger.equals(e);
+						}
 
+					}
 				}
-				value = (yonetici != null && yonetici.getId() != null) || pdksPersonel.isSanalPersonelMi();
+				value = yoneticiZorunlu == false || (yonetici != null && yonetici.getId() != null) || pdksPersonel.isSanalPersonelMi();
 			}
 
 		}
@@ -1429,6 +1432,14 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public void setSutIzniDurumu(boolean sutIzniDurumu) {
 		this.sutIzniDurumu = sutIzniDurumu;
+	}
+
+	public boolean isYoneticiZorunlu() {
+		return yoneticiZorunlu;
+	}
+
+	public void setYoneticiZorunlu(boolean yoneticiZorunlu) {
+		this.yoneticiZorunlu = yoneticiZorunlu;
 	}
 
 }

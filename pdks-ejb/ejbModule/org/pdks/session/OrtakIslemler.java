@@ -5920,18 +5920,20 @@ public class OrtakIslemler implements Serializable {
 					tarih = getERPManuelTarih(tarih, null);
 				}
 				if (guncellemeDurum == false)
-					sb.append(" WHERE " + IzinERPDB.COLUMN_NAME_BIT_TARIHI + " >=:t ");
+					sb.append(" WHERE " + IzinERPDB.COLUMN_NAME_BIT_TARIHI + " >=:t OR ");
 				else
-					sb.append(" WHERE " + IzinERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " >=:t ");
+					sb.append(" WHERE " + IzinERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " >=:t OR ");
 				parametreMap.put("t", PdksUtil.getDate(tarih));
-			}
+			} else
+				sb.append(" WHERE ");
+			sb.append(" ( DURUM = 1 AND  REFERANS_ID NOT IN ( SELECT " + IzinReferansERP.COLUMN_NAME_ID + " FROM " + IzinReferansERP.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ) )");
 			String str = sb.toString();
 			sb = new StringBuffer("WITH DATA AS (" + str + " ) ");
-			sb.append("SELECT D.* FROM DATA D " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append("SELECT DISTINCT D.* FROM DATA D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" INNER JOIN " + PersonelERPDB.VIEW_NAME + " P  " + PdksEntityController.getJoinLOCK() + " ON P." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " = D." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
 			sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " ON S." + Sirket.COLUMN_NAME_ERP_KODU + " = P.SIRKET_KODU AND S." + Sirket.COLUMN_NAME_DURUM + " = 1");
 			sb.append(" LEFT JOIN " + IzinReferansERP.TABLE_NAME + " IR " + PdksEntityController.getJoinLOCK() + " ON IR." + IzinReferansERP.COLUMN_NAME_ID + " = D." + IzinERPDB.COLUMN_NAME_REFERANS_NO);
-			sb.append(" WHERE IR." + IzinReferansERP.COLUMN_NAME_IZIN_ID + " IS NOT NULL OR D." + IzinERPDB.COLUMN_NAME_DURUM + " = 1");
+			sb.append(" WHERE IR." + IzinReferansERP.COLUMN_NAME_IZIN_ID + " IS NOT NULL OR ( D." + IzinERPDB.COLUMN_NAME_DURUM + " = 1 AND D." + IzinERPDB.COLUMN_NAME_IZIN_SURESI + " > 0 )");
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			sb.append(" ORDER BY  D." + IzinERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + ", D." + IzinERPDB.COLUMN_NAME_BAS_TARIHI);

@@ -497,7 +497,7 @@ public class PdksUtil implements Serializable {
 		String label = "";
 		if (list != null && value != null) {
 			for (SelectItem selectItem : list) {
-				if (selectItem.getValue().equals(value))
+				if (selectItem.getValue() != null && selectItem.getValue().equals(value))
 					try {
 						label = selectItem.getLabel();
 						break;

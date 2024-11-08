@@ -3619,8 +3619,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		for (VardiyaGun pdksVardiyaGun : personelAylikPuantaj.getVardiyalar()) {
 			if (pdksVardiyaGun.isGuncellendi() || pdksVardiyaGun.getId() == null) {
 				try {
-					if (pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getVardiya().isCalisma() == false)
-						pdksVardiyaGun.setCalismaSuresi(0.0d);
+					pdksVardiyaGun.setHaftaTatilDigerSure(0.0d);
+					pdksVardiyaGun.setHaftaCalismaSuresi(0.0d);
+					pdksVardiyaGun.setCalismaSuresi(0.0d);
+					pdksVardiyaGun.setResmiTatilSure(0.0d);
 					Long newVardiyaId = pdksVardiyaGun.getVardiya() != null ? pdksVardiyaGun.getVardiya().getId() : 0L;
 					Long eskiVardiyaId = pdksVardiyaGun.getEskiVardiya() != null ? pdksVardiyaGun.getEskiVardiya().getId() : 0L;
 					pdksVardiyaGun.setGuncellendi(PdksUtil.isLongDegisti(newVardiyaId, eskiVardiyaId));
