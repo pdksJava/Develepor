@@ -16090,8 +16090,10 @@ public class OrtakIslemler implements Serializable {
 						haftaIciIzinGunTarih = null;
 					}
 				DenklestirmeAy denklestirmeAy = puantajData.getDenklestirmeAy();
-				if (denklestirmeAy == null && puantajData.getPersonelDenklestirme() != null)
-					denklestirmeAy = puantajData.getPersonelDenklestirme().getDenklestirmeAy();
+				
+//				if (denklestirmeAy == null && puantajData.getPersonelDenklestirme() != null)
+//					denklestirmeAy = puantajData.getPersonelDenklestirme().getDenklestirmeAy();
+				String donemKodu = String.valueOf(denklestirmeAy.getDonem());
 				double planlanSure = 0, izinSuresi = 0d, ucretiOdenenMesaiSure = 0d, fazlaMesaiMaxSure = getFazlaMesaiMaxSure(denklestirmeAy), resmiTatilSure = 0d;
 				boolean resmiTatilVardiyaEkle = false;
 
@@ -16138,6 +16140,7 @@ public class OrtakIslemler implements Serializable {
 							if (pdksIzinTarihKontrolTarihi != null && pdksIzinTarihKontrolTarihi.getTime() <= pdksVardiyaGun.getVardiyaDate().getTime())
 								izinTarihKontrolTarihi = pdksVardiyaGun.getVardiyaDate();
 							String key = pdksVardiyaGun.getVardiyaDateStr();
+							pdksVardiyaGun.setAyinGunu(key.startsWith(donemKodu));
 
 							if (calismaModeli == null) {
 								calismaModeli = pdksVardiyaGun.getCalismaModeli();
@@ -16343,7 +16346,7 @@ public class OrtakIslemler implements Serializable {
 												calisilanSure += sure;
 
 											}
-											if (pdksVardiyaGun.getResmiTatilSure() == 0)
+											if (pdksVardiyaGun.getResmiTatilSure() == 0 && pdksVardiyaGun.isAyinGunu())
 												toplamSure += sure;
 											if (!bazSureHesapla) {
 												bazSure += sure;
@@ -16542,7 +16545,7 @@ public class OrtakIslemler implements Serializable {
 							}
 							if (izinSuresi != 0.0d)
 								logger.debug(key + " " + izinSuresi);
-							if (pdksVardiyaGun.getResmiTatilSure() > 0.0d) {
+							if (pdksVardiyaGun.getResmiTatilSure() > 0.0d && pdksVardiyaGun.isAyinGunu()) {
 								toplamSure += pdksVardiyaGun.getCalismaSuresi() - (pdksVardiyaGun.getResmiTatilSure() - pdksVardiyaGun.getGecenAyResmiTatilSure());
 							}
 
@@ -16585,7 +16588,7 @@ public class OrtakIslemler implements Serializable {
 
 						toplamCalismaGunSayisi += calismaGunSayisi;
 
-						if (loginUser.isAdmin() && toplamSure + izinSuresi != 0) {
+						if ((loginUser.isAdmin() || loginUser.isIK()) && toplamSure + izinSuresi != 0) {
 							logger.debug(personel.getPdksSicilNo() + " --> " + hafta + " : " + raporGunSayisi + " " + toplamSure + " " + calismaGunSayisi + " " + izinSuresi + " " + haftaTatiliFark);
 							logger.debug(personel.getPdksSicilNo() + "   " + planlanSure + " " + toplamSure + " " + calisilmayanSuresi);
 						}
@@ -16635,15 +16638,7 @@ public class OrtakIslemler implements Serializable {
 					PersonelDenklestirme hesaplananDenklestirme = puantajData.getPersonelDenklestirme(fazlaMesaiOde, hesaplananBuAySure, gecenAydevredenSure);
 					puantajData.setFazlaMesaiSure(PdksUtil.setSureDoubleTypeRounded((hesaplananDenklestirme.getOdenenSure() > 0 ? hesaplananDenklestirme.getOdenenSure() : 0) + ucretiOdenenMesaiSure, yarimYuvarla));
 					puantajData.setHesaplananSure(hesaplananDenklestirme.getHesaplananSure());
-					if (loginUser.isAdmin()) {
-						try {
-							if (denklestirmeAy == null)
-								denklestirmeAy = puantajData.getPersonelDenklestirme().getDenklestirmeAy();
-						} catch (Exception e) {
-
-						}
-
-					}
+					 
 					puantajData.setEksikCalismaSure(0.0d);
 					if (hesaplananDenklestirme.getDevredenSure() != 0.0d)
 						hesaplananDenklestirme.setDevredenSure(PdksUtil.setSureDoubleTypeRounded(hesaplananDenklestirme.getDevredenSure(), yarimYuvarla));

@@ -3619,6 +3619,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		for (VardiyaGun pdksVardiyaGun : personelAylikPuantaj.getVardiyalar()) {
 			if (pdksVardiyaGun.isGuncellendi() || pdksVardiyaGun.getId() == null) {
 				try {
+					if (pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getVardiya().isCalisma() == false)
+						pdksVardiyaGun.setCalismaSuresi(0.0d);
 					Long newVardiyaId = pdksVardiyaGun.getVardiya() != null ? pdksVardiyaGun.getVardiya().getId() : 0L;
 					Long eskiVardiyaId = pdksVardiyaGun.getEskiVardiya() != null ? pdksVardiyaGun.getEskiVardiya().getId() : 0L;
 					pdksVardiyaGun.setGuncellendi(PdksUtil.isLongDegisti(newVardiyaId, eskiVardiyaId));
@@ -3853,8 +3855,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				if (tekrarOku) {
 					int index = -1;
 					if (aylikPuantajList.size() > 1) {
+						String orjSicilNo = new String(sicilNo);
 						List<AylikPuantaj> aylikPuantajOrjinalList = new ArrayList<AylikPuantaj>(aylikPuantajList);
- 						for (int i = 0; i < aylikPuantajOrjinalList.size(); i++) {
+						for (int i = 0; i < aylikPuantajOrjinalList.size(); i++) {
 							AylikPuantaj ap = aylikPuantajOrjinalList.get(i);
 							if (ap.getPersonelDenklestirme().getId().equals(personelAylikPuantaj.getPersonelDenklestirme().getId())) {
 								index = i;
@@ -3866,13 +3869,17 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							sicilNo = personelAylikPuantaj.getPdksPersonel().getPdksSicilNo();
 							double saatToplami = personelAylikPuantaj.getSaatToplami();
 							aylikPuantajOlusturuluyor();
+							personelAylikPuantaj = aylikPuantajList.get(0);
 							if (saatToplami == personelAylikPuantaj.getSaatToplami())
 								index = -1;
 							else {
-								personelAylikPuantaj = aylikPuantajList.get(0);
-								ortakIslemler.aylikPlanSureHesapla(false, normalCalismaVardiya, true, personelAylikPuantaj, false, tatilGunleriMap, session);
+								aylikPuantajOrjinalList.set(index, personelAylikPuantaj);
+								aylikPuantajList.clear();
+								aylikPuantajList.addAll(aylikPuantajOrjinalList);
+								// ortakIslemler.aylikPlanSureHesapla(false, normalCalismaVardiya, true, personelAylikPuantaj, false, tatilGunleriMap, session);
 								aylikVardiyaOzetOlustur();
 							}
+							sicilNo = orjSicilNo;
 						}
 						aylikPuantajOrjinalList = null;
 					}
