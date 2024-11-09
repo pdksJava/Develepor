@@ -86,7 +86,7 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<h:panelGrid columns="2" rendered="#{authenticatedUser.admin or authenticatedUser.IK }">
-							<s:decorate template="/layout/edit.xhtml" >
+							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Borç Oluşturulan İzinleri Göster </ui:define>
 								<h:selectBooleanCheckbox value="#{personelKalanIzinHome.gelecekIzinGoster}" />
 							</s:decorate>
@@ -130,112 +130,113 @@
 				</a4j:outputPanel>
 				<rich:panel id="izinPanel">
 					<a4j:outputPanel id="dosyaPaneli">
-					<ui:fragment rendered="#{ortakIslemler.getParameterKey('izinHakedisDosyaTranfer')=='1'}">
-						<rich:panel header="Bakiye Dosya Ekleme" rendered="#{authenticatedUser.admin or authenticatedUser.IK or authenticatedUser.IKAdmin}">
-							<h:panelGrid columns="2" style="width:700px;">
-								<a4j:outputPanel id="fileUpload">
-									<rich:fileUpload id="dosyaSifirla" fileUploadListener="#{personelKalanIzinHome.listenerIzinBakiyeDosya}" listHeight="50px" listWidth="300px"
-										sizeErrorLabel="Dosya boyutu büyük" maxFilesQuantity="1" immediateUpload="true" acceptedTypes="xls,xlsx"
-										transferErrorLabel="İzin dosyası hatalı yüklenmiştir" doneLabel="Bitti" addControlLabel="Dosya Seçin (Excel)"
-										uploadControlLabel="Dosya Kaydet" cancelEntryControlLabel="Temizle" allowFlash="false">
-										<a4j:support event="onuploadcomplete" process="dosyaSifirla" ajaxSingle="true" reRender="dosyaPaneli" />
-									</rich:fileUpload>
-								</a4j:outputPanel>
-								<a4j:outputPanel id="izinDosya">
-									<ui:fragment rendered="#{personelKalanIzinHome.izinBakiyeDosya.dosyaIcerik!=null}">
-										<h:panelGrid columns="3">
-											<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="izinPanel" ajaxSingle="true"
-												action="#{personelKalanIzinHome.izinDosyaSifirla}" />
-											<h:outputText value="#{personelKalanIzinHome.izinBakiyeDosya.dosyaAdi}" />
-										</h:panelGrid>
+						<ui:fragment rendered="#{ortakIslemler.getParameterKey('izinHakedisDosyaTranfer')=='1'}">
+							<rich:panel header="Bakiye Dosya Ekleme" rendered="#{authenticatedUser.admin or authenticatedUser.IK or authenticatedUser.IKAdmin}">
+								<h:panelGrid columns="2" style="width:700px;">
+									<a4j:outputPanel id="fileUpload">
+										<rich:fileUpload id="dosyaSifirla" fileUploadListener="#{personelKalanIzinHome.listenerIzinBakiyeDosya}" listHeight="50px" listWidth="300px"
+											sizeErrorLabel="Dosya boyutu büyük" maxFilesQuantity="1" immediateUpload="true" acceptedTypes="xls,xlsx"
+											transferErrorLabel="İzin dosyası hatalı yüklenmiştir" doneLabel="Bitti" addControlLabel="Dosya Seçin (Excel)"
+											uploadControlLabel="Dosya Kaydet" cancelEntryControlLabel="Temizle" allowFlash="false">
+											<a4j:support event="onuploadcomplete" process="dosyaSifirla" ajaxSingle="true" reRender="dosyaPaneli" />
+										</rich:fileUpload>
+									</a4j:outputPanel>
+									<a4j:outputPanel id="izinDosya">
+										<ui:fragment rendered="#{personelKalanIzinHome.izinBakiyeDosya.dosyaIcerik!=null}">
+											<h:panelGrid columns="3">
+												<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="izinPanel" ajaxSingle="true"
+													action="#{personelKalanIzinHome.izinDosyaSifirla}" />
+												<h:outputText value="#{personelKalanIzinHome.izinBakiyeDosya.dosyaAdi}" />
+											</h:panelGrid>
 
-										<a4j:commandButton id="dosyaOku" value="Dosya Oku" status="ajaxStatus" ajaxSingle="true"
-											action="#{personelKalanIzinHome.izinBakiyeDosyaOku}" rendered="#{personelKalanIzinHome.personelBakiyeIzinList.isEmpty()}"
-											reRender="izinPanel"></a4j:commandButton>
-										<a4j:commandButton value="Dosya Aktar" status="ajaxStatus" ajaxSingle="true" action="#{personelKalanIzinHome.izinBakiyeDosyaYaz}"
-											rendered="#{not empty personelKalanIzinHome.personelBakiyeIzinList}" reRender="izinPanel" />
+											<a4j:commandButton id="dosyaOku" value="Dosya Oku" status="ajaxStatus" ajaxSingle="true"
+												action="#{personelKalanIzinHome.izinBakiyeDosyaOku}" rendered="#{personelKalanIzinHome.personelBakiyeIzinList.isEmpty()}"
+												reRender="izinPanel"></a4j:commandButton>
+											<a4j:commandButton value="Dosya Aktar" status="ajaxStatus" ajaxSingle="true" action="#{personelKalanIzinHome.izinBakiyeDosyaYaz}"
+												rendered="#{not empty personelKalanIzinHome.personelBakiyeIzinList}" reRender="izinPanel" />
 
-										<rich:toolTip for="dosyaOku" rendered="#{personelKalanIzinHome.personelBakiyeIzinList.isEmpty()}">
-											<TABLE class="rich-table">
-												<thead class="rich-table-thead">
-													<tr class="rich-table-subheader">
-														<th>#{ortakIslemler.personelNoAciklama()}</th>
-														<th>ADI SOYADI</th>
-														<th>GRUBA GIRIS</th>
-														<th>ISE GIRIS TARIHI</th>
-														<th>IZIN HAKEDIS</th>
-														<th>DOGUM TARIHI</th>
-														<th>IZIN TÜRÜ</th>
-														<th>YIL</th>
-														<th>ÖNCEKI HAKEDIS</th>
-														<th>HAKETTIGI TARIH</th>
-														<th>KIDEM</th>
-														<th>IZIN GÜN</th>
-														<th>IZIN SÜRE</th>
-														<th>IZIN BASL. TARIHI</th>
-														<th>IZIN BITIS TARIHI</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr class="acik">
-														<td align="center">90015654</td>
-														<td>PAKIZE YILMAZ</td>
-														<td align="center">17/05/2011</td>
-														<td align="center">17/05/2011</td>
-														<td align="center">17/05/2011</td>
-														<td align="center">21/09/1988</td>
-														<td align="center">Yİ</td>
-														<td align="center">2012</td>
-														<td align="center"></td>
-														<td align="center">17/05/2012</td>
-														<td align="center">1</td>
-														<td align="center">30</td>
-														<td align="center">15</td>
-														<td align="center">16/06/2012</td>
-														<td align="center">01/07/2012</td>
-													</tr>
-													<tr class="koyu">
-														<td align="center">90015654</td>
-														<td>PAKIZE YILMAZ</td>
-														<td align="center">17/05/2011</td>
-														<td align="center">17/05/2011</td>
-														<td align="center">17/05/2011</td>
-														<td align="center">21/09/1988</td>
-														<td align="center">Yİ</td>
-														<td align="center">2012</td>
-														<td align="center"></td>
-														<td align="center">17/05/2012</td>
-														<td align="center">1</td>
-														<td align="center">30</td>
-														<td align="center">15</td>
-														<td align="center">10/09/2012</td>
-														<td align="center">25/09/2012</td>
-													</tr>
-													<tr class="acik">
-														<td align="center">90015654</td>
-														<td>PAKIZE YILMAZ</td>
-														<td align="center">17/05/2011</td>
-														<td align="center">17/05/2011</td>
-														<td align="center">17/05/2011</td>
-														<td align="center">21/09/1988</td>
-														<td align="center">Yİ</td>
-														<td align="center">2013</td>
-														<td align="center">17/05/2012</td>
-														<td align="center">17/05/2013</td>
-														<td align="center">2</td>
-														<td align="center">30</td>
-														<td align="center">15</td>
-														<td align="center">27/05/2013</td>
-														<td align="center">10/06/2013</td>
-													</tr>
-												</tbody>
-											</TABLE>
-										</rich:toolTip>
-									</ui:fragment>
-								</a4j:outputPanel>
+											<rich:toolTip for="dosyaOku" rendered="#{personelKalanIzinHome.personelBakiyeIzinList.isEmpty()}">
+												<TABLE class="rich-table">
+													<thead class="rich-table-thead">
+														<tr class="rich-table-subheader">
+															<th>#{ortakIslemler.personelNoAciklama()}</th>
+															<th>ADI SOYADI</th>
+															<th>GRUBA GIRIS</th>
+															<th>ISE GIRIS TARIHI</th>
+															<th>IZIN HAKEDIS</th>
+															<th>DOGUM TARIHI</th>
+															<th>IZIN TÜRÜ</th>
+															<th>YIL</th>
+															<th>ÖNCEKI HAKEDIS</th>
+															<th>HAKETTIGI TARIH</th>
+															<th>KIDEM</th>
+															<th>IZIN GÜN</th>
+															<th>IZIN SÜRE</th>
+															<th>IZIN BASL. TARIHI</th>
+															<th>IZIN BITIS TARIHI</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr class="acik">
+															<td align="center">90015654</td>
+															<td>PAKIZE YILMAZ</td>
+															<td align="center">17/05/2011</td>
+															<td align="center">17/05/2011</td>
+															<td align="center">17/05/2011</td>
+															<td align="center">21/09/1988</td>
+															<td align="center">Yİ</td>
+															<td align="center">2012</td>
+															<td align="center"></td>
+															<td align="center">17/05/2012</td>
+															<td align="center">1</td>
+															<td align="center">30</td>
+															<td align="center">15</td>
+															<td align="center">16/06/2012</td>
+															<td align="center">01/07/2012</td>
+														</tr>
+														<tr class="koyu">
+															<td align="center">90015654</td>
+															<td>PAKIZE YILMAZ</td>
+															<td align="center">17/05/2011</td>
+															<td align="center">17/05/2011</td>
+															<td align="center">17/05/2011</td>
+															<td align="center">21/09/1988</td>
+															<td align="center">Yİ</td>
+															<td align="center">2012</td>
+															<td align="center"></td>
+															<td align="center">17/05/2012</td>
+															<td align="center">1</td>
+															<td align="center">30</td>
+															<td align="center">15</td>
+															<td align="center">10/09/2012</td>
+															<td align="center">25/09/2012</td>
+														</tr>
+														<tr class="acik">
+															<td align="center">90015654</td>
+															<td>PAKIZE YILMAZ</td>
+															<td align="center">17/05/2011</td>
+															<td align="center">17/05/2011</td>
+															<td align="center">17/05/2011</td>
+															<td align="center">21/09/1988</td>
+															<td align="center">Yİ</td>
+															<td align="center">2013</td>
+															<td align="center">17/05/2012</td>
+															<td align="center">17/05/2013</td>
+															<td align="center">2</td>
+															<td align="center">30</td>
+															<td align="center">15</td>
+															<td align="center">27/05/2013</td>
+															<td align="center">10/06/2013</td>
+														</tr>
+													</tbody>
+												</TABLE>
+											</rich:toolTip>
+										</ui:fragment>
+									</a4j:outputPanel>
 
-							</h:panelGrid>
-						</rich:panel></ui:fragment>
+								</h:panelGrid>
+							</rich:panel>
+						</ui:fragment>
 					</a4j:outputPanel>
 					<DIV class="#{authenticatedUser.scroolClass}" id="#{authenticatedUser.scroolDiv}1">
 						<ui:fragment id="bakiyeIzinTable" rendered="#{not empty personelKalanIzinHome.personelBakiyeIzinList}">
@@ -298,7 +299,7 @@
 														</ui:repeat>
 													</tbody>
 												</table>
-										</td>
+											</td>
 										</tr>
 									</ui:repeat>
 
@@ -529,7 +530,7 @@
 
 
 
-		<rich:modalPanel id="izinHarcamaPanel" autosized="true" width="550">
+		<rich:modalPanel id="izinHarcamaPanel" autosized="true" top="100" width="800">
 			<f:facet name="header">
 
 				<h:outputText value="#{personelKalanIzinHome.updateTempIzin.personel.sicilNo} - #{personelKalanIzinHome.updateTempIzin.personel.adSoyad} " />
@@ -548,7 +549,13 @@
 							<h:outputText
 								value="#{authenticatedUser.getTarihFormatla(personelKalanIzinHome.updateIzin.baslangicZamani,'yyyy')} İzin Hakediş Yılı Kullanılan İzinler" />
 						</f:facet>
+						<rich:column style="text-align:center" rendered="#{personelKalanIzinHome.manuelIzinGuncelle}">
+							<f:facet name="header"></f:facet>
+							<a4j:commandButton image="/img/edit.gif" title="Güncelle" status="ajaxStatus"
+								action="#{personelKalanIzinHome.secManuelIzin(harcananIzin.personelIzin)}" reRender="harcananIzinUpdate" ajaxSingle="true"
+								rendered="#{harcananIzin.personelIzin.manuelReferansERP}" />
 
+						</rich:column>
 						<rich:column style="text-align:center">
 							<f:facet name="header">
 								<h:outputText value="İzin Başlangıç Zamanı" />
@@ -595,6 +602,41 @@
 					</rich:dataTable>
 
 				</h:panelGrid>
+				<a4j:outputPanel id="harcananIzinUpdate">
+					<ui:fragment rendered="#{personelKalanIzinHome.manuelIzin!=null}">
+						<h:panelGrid columns="2">
+
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">İzin Başlangıç Zamanı</ui:define>
+								<h:inputText readonly="true" value="#{authenticatedUser.dateTimeFormatla(personelKalanIzinHome.manuelIzin.baslangicZamani)}" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">İşe Başlama Zamanı</ui:define>
+								<h:inputText readonly="true" value="#{authenticatedUser.dateTimeFormatla(personelKalanIzinHome.manuelIzin.bitisZamani)}" />
+							</s:decorate>
+
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Süresi</ui:define>
+								<h:inputText value="#{personelKalanIzinHome.manuelIzin.gunAdet}" disabled="#{personelKalanIzinHome.manuelIzin.redmi}" />
+							</s:decorate>
+
+
+
+						</h:panelGrid>
+						<ui:fragment rendered="#{personelKalanIzinHome.manuelIzin.redmi==false}">
+							<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{personelKalanIzinHome.manuelIzinKaydet(true)}" ajaxSingle="true"
+								oncomplete="#{rich:component('izinDetayPanel')}.hide();#{rich:component('izinHarcamaPanel')}.hide();" reRender="izinPanel" />
+							<a4j:commandButton status="ajaxStatus" value="Sil" action="#{personelKalanIzinHome.manuelIzinKaydet(false)}" ajaxSingle="true"
+								oncomplete="#{rich:component('izinDetayPanel')}.hide();#{rich:component('izinHarcamaPanel')}.hide();" reRender="izinPanel" />
+						</ui:fragment>
+						<ui:fragment rendered="#{personelKalanIzinHome.manuelIzin.redmi}">
+							<a4j:commandButton status="ajaxStatus" value="İptal Geri Al" action="#{personelKalanIzinHome.manuelIzinKaydet(true)}" ajaxSingle="true"
+								oncomplete="#{rich:component('izinDetayPanel')}.hide();#{rich:component('izinHarcamaPanel')}.hide();" reRender="izinPanel" />
+						</ui:fragment>
+						<a4j:commandButton status="ajaxStatus" value="Vazgeç" action="#{personelKalanIzinHome.secManuelIzin(null)}" reRender="harcananIzinUpdate"
+							ajaxSingle="true" />
+					</ui:fragment>
+				</a4j:outputPanel>
 			</h:form>
 		</rich:modalPanel>
 
@@ -659,7 +701,7 @@
 													rendered="#{personelKalanIzinHome.iptalIzinleriGetir and kalanIzinler.izinKagidiGeldi==false and kalanIzinler.kullanilanIzinSuresi eq 0}"
 													action="#{personelKalanIzinHome.guncelle(kalanIzinler)}" oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
 													<h:graphicImage value="/img/login.png" height="16" for="iptalGeri" />
- 												</a4j:commandLink>
+												</a4j:commandLink>
 												<a4j:commandButton image="/img/edit.gif" title="Güncelle" status="ajaxStatus"
 													rendered="#{authenticatedUser.IK  and kalanIzinler.izinKagidiGeldi==null}" action="#{personelKalanIzinHome.guncelle(kalanIzinler)}"
 													oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" />
@@ -669,8 +711,9 @@
 											</ui:fragment></TD>
 									</ui:fragment>
 									<ui:fragment rendered="#{(authenticatedUser.admin or authenticatedUser.IK) }">
-										<TD><a4j:commandButton image="/img/down.gif" title="Kullanılan İzinler" action="#{personelKalanIzinHome.getHarcananIzinler(kalanIzinler)}"  rendered="#{kalanIzinler.harcananIzinler!=null}"
-												status="ajaxStatus" oncomplete="#{rich:component('izinHarcamaPanel')}.show()" reRender="izinHarcamaPanel">
+										<TD><a4j:commandButton image="/img/down.gif" title="Kullanılan İzinler"
+												action="#{personelKalanIzinHome.getHarcananIzinler(kalanIzinler)}" rendered="#{kalanIzinler.harcananIzinler!=null}" status="ajaxStatus"
+												oncomplete="#{rich:component('izinHarcamaPanel')}.show()" reRender="izinHarcamaPanel">
 
 											</a4j:commandButton></TD>
 										<TD><a4j:commandButton image="/img/delete.gif" title="Sil" status="ajaxStatus" action="#{personelKalanIzinHome.sil(kalanIzinler)}"

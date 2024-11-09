@@ -79,7 +79,7 @@ public class PersonelIzin extends BaseObject {
 
 	private Double izinSuresi = 0D, kullanilanIzinSuresi = 0D, bakiyeSuresi;
 
-	private int izinDurumu = IZIN_DURUMU_BIRINCI_YONETICI_ONAYINDA;
+	private int izinDurumu = IZIN_DURUMU_BIRINCI_YONETICI_ONAYINDA, gunAdet;
 
 	private String aciklama, mesaj, personelNo, referansERP;
 
@@ -663,9 +663,10 @@ public class PersonelIzin extends BaseObject {
 					harcananIzinler.add((PersonelIzinDetay) personelIzinDetay.clone());
 
 				}
-				if (harcananIzinler != null && harcananIzinler.size() > 1)
-					harcananIzinler = PdksUtil.sortListByAlanAdi(harcananIzinler, "id", Boolean.FALSE);
+
 			}
+			if (harcananIzinler != null && harcananIzinler.size() > 1)
+				harcananIzinler = PdksUtil.sortListByAlanAdi(harcananIzinler, "id", Boolean.FALSE);
 		}
 		return harcananIzinler;
 	}
@@ -823,7 +824,7 @@ public class PersonelIzin extends BaseObject {
 	}
 
 	@Transient
-	public boolean isManuelReferansERP() {
+	public Boolean getManuelReferansERP() {
 		return referansERP != null && referansERP.startsWith(IZIN_MANUEL_EK);
 	}
 
@@ -844,6 +845,15 @@ public class PersonelIzin extends BaseObject {
 	 */
 	public void setDevirIzin(Boolean devirIzin) {
 		this.devirIzin = devirIzin;
+	}
+
+	@Transient
+	public int getGunAdet() {
+		return gunAdet;
+	}
+
+	public void setGunAdet(int gunAdet) {
+		this.gunAdet = gunAdet;
 	}
 
 	public void entityRefresh() {
