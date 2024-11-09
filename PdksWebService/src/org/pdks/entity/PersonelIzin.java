@@ -52,7 +52,7 @@ public class PersonelIzin extends BaseObject {
 	public static final int HESAP_TIPI_GUN_SAAT_SECILDI = 3;
 	public static final int HESAP_TIPI_SAAT_GUN_SECILDI = 4;
 	public static final int ACIKLAMA_UZUNLUK = 256;
-
+	public static final String IZIN_MANUEL_EK = "NB";
 	public static final String IZIN_DURUMU_ACIKLAMA_BIRINCI_YONETICI_ONAYINDA = "Birinci Yönetici Onayında";
 	public static final String IZIN_DURUMU_ACIKLAMA_IKINCI_YONETICI_ONAYINDA = "İkinci Yönetici Onayında";
 	public static final String IZIN_DURUMU_ACIKLAMA_GENEL_MUDUR_ONAYINDA = "Genel Müdür Onayında";

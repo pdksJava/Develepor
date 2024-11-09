@@ -42,6 +42,7 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.Dosya;
+import org.pdks.entity.IzinReferansERP;
 import org.pdks.entity.IzinTipi;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelIzin;
@@ -164,8 +165,33 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		return list;
 	}
 
+	/**
+	 * @param izin
+	 * @return
+	 */
+	public String getHarcananIzinler(PersonelIzin izin) {
+		harcananIzinler = izin.getHarcananIzinler();
+		HashMap<Long, PersonelIzin> map = new HashMap<Long, PersonelIzin>();
+		for (PersonelIzinDetay detay : harcananIzinler) {
+			PersonelIzin personelIzin = detay.getPersonelIzin();
+			if (personelIzin.getIzinTipi().getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK) && PdksUtil.hasStringValue(personelIzin.getReferansERP()) == false)
+				map.put(detay.getPersonelIzin().getId(), detay.getPersonelIzin());
+		}
+		if (!map.isEmpty()) {
+			List<IzinReferansERP> list = pdksEntityController.getSQLParamByAktifFieldList(IzinReferansERP.TABLE_NAME, IzinReferansERP.COLUMN_NAME_IZIN_ID, new ArrayList(map.values()), IzinReferansERP.class, session);
+			for (IzinReferansERP izinReferansERP : list)
+				map.get(izinReferansERP.getIzin().getId()).setReferansERP(izinReferansERP.getId());
+
+			list = null;
+		}
+		map = null;
+		updateIzin = izin;
+		return "";
+	}
+
 	public String izinKarti(TempIzin izin) {
 		List<Long> idList = new ArrayList<Long>();
+
 		if (gelecekIzinGoster == false) {
 			for (PersonelIzin bakiye : izin.getYillikIzinler()) {
 				if (bakiye.getDevirIzin() && bakiye.getIzinSuresi().doubleValue() == 0.0d)

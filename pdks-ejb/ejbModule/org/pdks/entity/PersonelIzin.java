@@ -59,7 +59,7 @@ public class PersonelIzin extends BaseObject {
 	public static final int HESAP_TIPI_GUN_SAAT_SECILDI = 3;
 	public static final int HESAP_TIPI_SAAT_GUN_SECILDI = 4;
 	public static final int ACIKLAMA_UZUNLUK = 256;
-
+	public static final String IZIN_MANUEL_EK = "NWP";
 	public static final String IZIN_DURUMU_ACIKLAMA_BIRINCI_YONETICI_ONAYINDA = "Birinci Yönetici Onayında";
 	public static final String IZIN_DURUMU_ACIKLAMA_IKINCI_YONETICI_ONAYINDA = "İkinci Yönetici Onayında";
 	public static final String IZIN_DURUMU_ACIKLAMA_GENEL_MUDUR_ONAYINDA = "Genel Müdür Onayında";
@@ -665,9 +665,7 @@ public class PersonelIzin extends BaseObject {
 				}
 				if (harcananIzinler != null && harcananIzinler.size() > 1)
 					harcananIzinler = PdksUtil.sortListByAlanAdi(harcananIzinler, "id", Boolean.FALSE);
-
 			}
-
 		}
 		return harcananIzinler;
 	}
@@ -825,14 +823,18 @@ public class PersonelIzin extends BaseObject {
 	}
 
 	@Transient
+	public boolean isManuelReferansERP() {
+		return referansERP != null && referansERP.startsWith(IZIN_MANUEL_EK);
+	}
+
+	@Transient
 	public Boolean getDevirIzin() {
-		if (devirIzin == null)  
+		if (devirIzin == null)
 			try {
 				devirIzin = baslangicZamani.getTime() == PdksUtil.getBakiyeYil().getTime();
 			} catch (Exception e) {
- 			}
-			
-		 
+			}
+
 		return devirIzin;
 	}
 
@@ -846,6 +848,6 @@ public class PersonelIzin extends BaseObject {
 
 	public void entityRefresh() {
 		// TODO entityRefresh
-		
+
 	}
 }

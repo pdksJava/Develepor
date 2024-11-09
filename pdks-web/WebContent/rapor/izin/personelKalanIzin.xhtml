@@ -659,8 +659,7 @@
 													rendered="#{personelKalanIzinHome.iptalIzinleriGetir and kalanIzinler.izinKagidiGeldi==false and kalanIzinler.kullanilanIzinSuresi eq 0}"
 													action="#{personelKalanIzinHome.guncelle(kalanIzinler)}" oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
 													<h:graphicImage value="/img/login.png" height="16" for="iptalGeri" />
-
-												</a4j:commandLink>
+ 												</a4j:commandLink>
 												<a4j:commandButton image="/img/edit.gif" title="Güncelle" status="ajaxStatus"
 													rendered="#{authenticatedUser.IK  and kalanIzinler.izinKagidiGeldi==null}" action="#{personelKalanIzinHome.guncelle(kalanIzinler)}"
 													oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" />
@@ -670,10 +669,9 @@
 											</ui:fragment></TD>
 									</ui:fragment>
 									<ui:fragment rendered="#{(authenticatedUser.admin or authenticatedUser.IK) }">
-										<TD><a4j:commandButton image="/img/down.gif" title="Kullanılan İzinler" rendered="#{kalanIzinler.harcananIzinler!=null}"
+										<TD><a4j:commandButton image="/img/down.gif" title="Kullanılan İzinler" action="#{personelKalanIzinHome.getHarcananIzinler(kalanIzinler)}"  rendered="#{kalanIzinler.harcananIzinler!=null}"
 												status="ajaxStatus" oncomplete="#{rich:component('izinHarcamaPanel')}.show()" reRender="izinHarcamaPanel">
-												<f:setPropertyActionListener value="#{kalanIzinler}" target="#{personelKalanIzinHome.updateIzin}" />
-												<f:setPropertyActionListener value="#{kalanIzinler.harcananIzinler}" target="#{personelKalanIzinHome.harcananIzinler}" />
+
 											</a4j:commandButton></TD>
 										<TD><a4j:commandButton image="/img/delete.gif" title="Sil" status="ajaxStatus" action="#{personelKalanIzinHome.sil(kalanIzinler)}"
 												rendered="#{authenticatedUser.admin and kalanIzinler.isBakiyeSil(authenticatedUser)}"
