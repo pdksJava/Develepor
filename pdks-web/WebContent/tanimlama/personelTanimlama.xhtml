@@ -100,7 +100,8 @@
 													action="#{pdksPersonelHome.personelDegistir(personelView)}" reRender="pdksPersonelList" ajaxSingle="true" /> <rich:toolTip
 													for="editKapiGiris">Personel Değiştir</rich:toolTip></TD>
 										</ui:fragment>
-										<ui:fragment rendered="#{personelView.pdksPersonel!=null and personelView.pdksPersonel.cinsiyetBayan and pdksPersonelHome.gebeSutIzniDurumList.contains(personelView.pdksPersonel.id)}">
+										<ui:fragment
+											rendered="#{personelView.pdksPersonel!=null and personelView.pdksPersonel.cinsiyetBayan and pdksPersonelHome.gebeSutIzniDurumList.contains(personelView.pdksPersonel.id)}">
 											<ui:fragment rendered="#{pdksPersonelHome.secGebe(personelView.pdksPersonel) or pdksPersonelHome.secSutIzni(personelView.pdksPersonel)}"></ui:fragment>
 											<TD><a4j:commandLink status="ajaxStatus" id="editGebeGiris" action="#{pdksPersonelHome.gebeSutIzniSecimi(personelView.pdksPersonel)}"
 													oncomplete="if (#{pdksPersonelHome.donemselDurumList!=null}) #{rich:component('editWomanPanel')}.show()" reRender="editWomanPanel"
@@ -1056,7 +1057,7 @@
 												<s:convertEntity />
 											</h:selectOneMenu>
 										</s:decorate>
-										 
+
 										<s:decorate template="/layout/edit.xhtml"
 											rendered="#{pdksPersonelHome.parentBordroTanim!=null and pdksPersonelHome.parentBordroTanim.erpKodu==''}">
 											<ui:define name="label">#{pdksPersonelHome.parentBordroTanim.aciklama}</ui:define>
@@ -1203,8 +1204,9 @@
 
 												</h:selectBooleanCheckbox>
 											</s:decorate>
-
-											<s:decorate template="/layout/edit.xhtml" id="fazlaMesaiOde1" rendered="#{pdksPersonelHome.instance.fazlaMesaiIzinKullan==false}">
+										</c:if>
+										<c:if test="#{pdksPersonelHome.secFMI(null)==false}">
+											<s:decorate template="/layout/edit.xhtml" id="fazlaMesaiOde1" >
 												<ui:define name="label">
 											 		Fazla Mesai Ödeme Durum</ui:define>
 												<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.fazlaMesaiOde}">
@@ -1220,22 +1222,8 @@
 												</rich:toolTip>
 											</s:decorate>
 										</c:if>
-										<c:if test="#{pdksPersonelHome.instance.sirket.fazlaMesaiIzinKullan==false}">
-											<s:decorate template="/layout/edit.xhtml" id="fazlaMesaiOde2" rendered="#{pdksPersonelHome.instance.sirket.fazlaMesaiIzinKullan==false }">
-												<ui:define name="label">Fazla Mesai  Ödeme Durum</ui:define>
-												<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.fazlaMesaiOde}">
-													<a4j:support event="onclick" reRender="fazlaMesaiOde1" status="ajaxStatus" ajaxSingle="true" />
-												</h:selectBooleanCheckbox>
-												<rich:toolTip for="fazlaMesaiOde2">
-													<ui:fragment rendered="#{pdksPersonelHome.instance.fazlaMesaiOde}">
-														<SPAN style="color: black;">Fazla mesai ay sonunda ödenecek.</SPAN>
-													</ui:fragment>
-													<ui:fragment rendered="#{pdksPersonelHome.instance.fazlaMesaiOde==false}">
-														<SPAN style="color: red;">Fazla mesai denkleşmezse sonraki ay ödenecek.</SPAN>
-													</ui:fragment>
-												</rich:toolTip>
-											</s:decorate>
-										</c:if>
+
+									 
 										<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H' and pdksPersonelHome.secSua(null)}">
 											<ui:define name="label">Şua</ui:define>
 											<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.suaOlabilir}">
@@ -1255,7 +1243,7 @@
 												<a4j:support event="onclick" />
 											</h:selectBooleanCheckbox>
 										</s:decorate>
-										
+
 										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.sanalPersonelAciklama!=''}">
 											<ui:define name="label">#{pdksPersonelHome.sanalPersonelAciklama}</ui:define>
 											<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.sanalPersonel}"
