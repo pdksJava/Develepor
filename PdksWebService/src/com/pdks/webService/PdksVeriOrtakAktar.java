@@ -2274,7 +2274,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 							personelIzin.setIzinTipi(izinTipi);
 							Double izinSuresi = izinERP.getIzinSuresi();
 							String aciklama = izinERP.getAciklama() != null ? izinERP.getAciklama() : izinTipi.getMesaj();
-							personelIzin.setAciklama((aciklama != null ? aciklama.trim() : "") + " ( " + uygulamaBordro + " referans no : " + referansNoERP + " )");
+							String referansBaslik = PdksUtil.hasStringValue(referansNoERP) == false || referansNoERP.startsWith(PersonelIzin.IZIN_MANUEL_EK) == false ? uygulamaBordro : "IK aktarım ";
+							personelIzin.setAciklama((aciklama != null ? aciklama.trim() : "") + " ( " + referansBaslik + " referans no : " + referansNoERP + " )");
 							Integer hesapTipi = null;
 							if (izinERP.getSureBirimi() != null) {
 								hesapTipi = Integer.parseInt(izinERP.getSureBirimi().value());
