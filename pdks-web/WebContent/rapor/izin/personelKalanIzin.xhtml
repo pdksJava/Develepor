@@ -576,6 +576,12 @@
 							</f:facet>
 							<h:outputText value="#{harcananIzin.izinSuresiAciklama}" />
 						</rich:column>
+						<rich:column style="width: 150px;width:autostretch ;white-space: nowrap;" rendered="#{personelKalanIzinHome.manuelIzinGuncelle}">
+							<f:facet name="header">Açıklama</f:facet>
+							 
+								 #{harcananIzin.personelIzin.aciklama} 
+
+						</rich:column>
 						<rich:column>
 							<f:facet name="header">
 								<h:outputText value="Onay Durum" />

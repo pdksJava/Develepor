@@ -194,6 +194,10 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 			manuelIzin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
 		}
 		try {
+			if (authenticatedUser.isAdmin() == false) {
+				manuelIzin.setGuncellemeTarihi(new Date());
+				manuelIzin.setGuncelleyenUser(authenticatedUser);
+			}
 			pdksEntityController.saveOrUpdate(session, entityManager, manuelIzin);
 			session.flush();
 			fillTarihIzinList();
@@ -210,7 +214,6 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 	 */
 	public String getHarcananIzinler(PersonelIzin izin) {
 		manuelIzinGuncelle = false;
-
 		updateIzin = izin;
 		manuelIzin = null;
 		if (authenticatedUser.isAdmin()) {
@@ -221,7 +224,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 					harcananIzinler = new ArrayList<PersonelIzinDetay>();
 				harcananIzinler.add((PersonelIzinDetay) personelIzinDetay.clone());
 				PersonelIzin personelIzin = personelIzinDetay.getPersonelIzin();
-				if (personelIzin.getIzinTipi().getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK) && PdksUtil.hasStringValue(personelIzin.getReferansERP()) == false)
+				if (personelIzin.getIzinTipi().getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK))
 					map.put(personelIzin.getId(), personelIzin);
 			}
 			if (harcananIzinler != null && harcananIzinler.size() > 1)
@@ -233,13 +236,13 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 					PersonelIzin personelIzin = map.get(izinReferansERP.getIzin().getId());
 					personelIzin.setReferansERP(izinReferansERP.getId());
 					if (!manuelIzinGuncelle)
-						manuelIzinGuncelle = personelIzin.getManuelReferansERP();
+						manuelIzinGuncelle = personelIzin.isManuelReferansERP();
 				}
 
 				for (Iterator iterator = harcananIzinler.iterator(); iterator.hasNext();) {
 					PersonelIzinDetay detay = (PersonelIzinDetay) iterator.next();
 					PersonelIzin personelIzin = detay.getPersonelIzin();
-					if (personelIzin.isRedmi() && personelIzin.getManuelReferansERP().booleanValue() == false)
+					if (personelIzin.isRedmi() && personelIzin.isManuelReferansERP() == false)
 						iterator.remove();
 
 				}

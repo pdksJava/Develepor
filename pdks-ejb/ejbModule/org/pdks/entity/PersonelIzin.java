@@ -824,8 +824,9 @@ public class PersonelIzin extends BaseObject {
 	}
 
 	@Transient
-	public Boolean getManuelReferansERP() {
-		return referansERP != null && referansERP.startsWith(IZIN_MANUEL_EK);
+	public boolean isManuelReferansERP() {
+		boolean manuelReferansERP = referansERP != null && referansERP.startsWith(IZIN_MANUEL_EK);
+		return manuelReferansERP;
 	}
 
 	@Transient
