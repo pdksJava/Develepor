@@ -274,6 +274,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		pdksVardiyaYeni.setAdi(pdksVardiya.getAdi() + " kopya");
 		vardiyaAlanlariDoldur(pdksVardiya);
 		setInstance(pdksVardiyaYeni);
+		fillVardiyaTipiList();
 		return "";
 
 	}
@@ -299,6 +300,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		}
 		vardiyaAlanlariDoldur(pdksVardiya);
 		setInstance(pdksVardiya);
+		fillVardiyaTipiList();
 	}
 
 	/**
@@ -310,8 +312,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		fillCalismaModeliList(pdksVardiya);
 		pdksVardiya.setTipi(String.valueOf(pdksVardiya.getVardiyaTipi()));
 		fillCalismaSekilleri();
-		fillVardiyaTipiList();
-		sirketList = ortakIslemler.getDepartmanPDKSSirketList(pdksVardiya.getDepartman(), session);
+ 		sirketList = ortakIslemler.getDepartmanPDKSSirketList(pdksVardiya.getDepartman(), session);
 	}
 
 	@Transactional
