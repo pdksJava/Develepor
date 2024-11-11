@@ -3660,11 +3660,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			for (VardiyaHafta pdksVardiyaHafta : plan.getVardiyaHaftaList())
 				pdksVardiyaHafta.setCheckBoxDurum(Boolean.TRUE);
 			if (vardiyaGuncellendi && !vardiyalarMap.isEmpty())
-				durum = vardiyaPlanKontrol(personelDenklestirme, null, null, plan, "", false);
+				durum = vardiyaPlanKontrol(personelDenklestirme, null, null, plan, "", false) || ortakIslemler.getParameterKey("calismaPlanKaydetme").equals("1") == false;
 			if (durum) {
 				if (personelDenklestirme.isGuncellendi())
-
-					flush = Boolean.TRUE;
+ 					flush = Boolean.TRUE;
 
 				for (VardiyaGun pdksVardiyaGun : personelAylikPuantaj.getVardiyalar()) {
 					if (pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getId() != null) {
