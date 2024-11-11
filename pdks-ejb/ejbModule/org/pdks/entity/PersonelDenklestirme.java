@@ -504,7 +504,7 @@ public class PersonelDenklestirme extends BaseObject {
 				}
 				if (hesapla) {
 					sure += gunPlanSure;
-					logger.info(vg.getVardiyaDateStr() + " " + gunPlanSure + " " + sure);
+					logger.debug(vg.getVardiyaDateStr() + " " + gunPlanSure + " " + sure);
 				}
 			}
 		}
