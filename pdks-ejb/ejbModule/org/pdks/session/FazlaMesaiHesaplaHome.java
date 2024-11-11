@@ -4238,7 +4238,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				logger.debug(vGun.getVardiyaKeyStr());
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			
 		}
 
 		paramsMap.put("fazlaMesaiHesapla", fazlaMesaiHesapla);

@@ -142,7 +142,7 @@ public class AccountPermission extends BasePDKSObject implements Serializable {
 		return status;
 	}
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

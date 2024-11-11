@@ -255,7 +255,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 
 							}
 						} catch (Exception e) {
-							// TODO: handle exception
+							
 						}
 
 					}

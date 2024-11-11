@@ -1091,7 +1091,7 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 

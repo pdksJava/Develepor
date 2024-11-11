@@ -180,7 +180,7 @@ public class PersonelDinamikAlan extends BasePDKSObject implements Serializable 
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 }

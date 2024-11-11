@@ -43,7 +43,7 @@ public class DepartmanMailGrubu extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

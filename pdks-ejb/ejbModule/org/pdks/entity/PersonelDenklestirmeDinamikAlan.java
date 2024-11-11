@@ -192,7 +192,7 @@ public class PersonelDenklestirmeDinamikAlan extends BasePDKSObject implements S
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

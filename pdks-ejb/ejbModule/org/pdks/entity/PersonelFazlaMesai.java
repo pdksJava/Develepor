@@ -188,7 +188,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

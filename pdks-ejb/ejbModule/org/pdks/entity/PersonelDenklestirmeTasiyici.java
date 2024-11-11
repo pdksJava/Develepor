@@ -455,7 +455,7 @@ public class PersonelDenklestirmeTasiyici extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 }

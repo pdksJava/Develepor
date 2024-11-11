@@ -170,7 +170,7 @@ public class CalismaModeliAy extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 

@@ -63,7 +63,7 @@ public class PersonelIzinDosya extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

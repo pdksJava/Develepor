@@ -140,7 +140,7 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

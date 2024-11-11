@@ -144,7 +144,7 @@ public class CalismaSekli extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

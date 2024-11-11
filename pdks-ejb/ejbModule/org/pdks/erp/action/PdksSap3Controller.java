@@ -894,7 +894,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 	}
 
 	public List<PersonelERP> topluHaldePersonelBilgisiNoSapDBGetir(Session session, List<String> personelList, Date baslangicZamani, Date bitisZamani) throws Exception {
-		// TODO entityRefresh
+		
 		return null;
 	}
 }

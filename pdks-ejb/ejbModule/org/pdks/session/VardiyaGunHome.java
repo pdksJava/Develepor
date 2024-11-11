@@ -8535,10 +8535,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		try {
 			if (pd == null && aylikPuantaj != null)
 				pd = aylikPuantaj.getPersonelDenklestirme();
-			boolean fmi = pd != null && fazlaMesaiIzinRaporuDurum && (pd.getFazlaMesaiIzinKullan() == null || pd.getFazlaMesaiIzinKullan());
-			if (!fmi && pd.getFazlaMesaiOde().booleanValue() == false)
-				fmi = pd.getPdksPersonel() != null && pd.getPdksPersonel().getSirket().getFazlaMesaiIzinKullan();
-
+			boolean fmi = true;
 			boolean calismaOlmayanVardiyalar = false;
 			List<AylikPuantaj> aylikPuantajAllList = new ArrayList<AylikPuantaj>();
 			Personel personel = null;

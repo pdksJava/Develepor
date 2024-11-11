@@ -195,7 +195,7 @@ public class VardiyaPlan extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 }

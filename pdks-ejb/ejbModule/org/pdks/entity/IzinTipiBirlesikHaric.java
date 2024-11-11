@@ -69,7 +69,7 @@ public class IzinTipiBirlesikHaric extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 

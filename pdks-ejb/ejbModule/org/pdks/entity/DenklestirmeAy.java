@@ -325,7 +325,7 @@ public class DenklestirmeAy extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 

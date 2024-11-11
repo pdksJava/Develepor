@@ -282,7 +282,7 @@ public class Sirket extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 

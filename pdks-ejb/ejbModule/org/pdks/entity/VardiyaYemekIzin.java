@@ -83,7 +83,7 @@ public class VardiyaYemekIzin  extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

@@ -111,7 +111,7 @@ public class PersonelDonemselDurum extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 }

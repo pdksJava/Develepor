@@ -1382,7 +1382,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 									if (izinBordroDetayTipi == null)
 										izinBordroDetayTipi = BordroDetayTipi.fromValue(izinKodu);
 								} catch (Exception e) {
-									// TODO: handle exception
+									
 								}
 
 								if (haftaTatil && izinBordroDetayTipi != null) {
@@ -2076,7 +2076,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					}
 				}
 			} catch (Exception e) {
-				// TODO: handle exception
+				
 			}
 		}
 		List<SelectItem> selectList = new ArrayList<SelectItem>();

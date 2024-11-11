@@ -99,7 +99,7 @@ public class YemekOgun extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 

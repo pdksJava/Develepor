@@ -127,7 +127,7 @@ public class ArifeVardiyaDonem extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

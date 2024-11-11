@@ -161,7 +161,7 @@ public class CalismaPlanKilit extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

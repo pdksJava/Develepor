@@ -1101,7 +1101,7 @@ public class Personel extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 

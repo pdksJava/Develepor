@@ -450,7 +450,7 @@ public class VardiyaSablonu extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 }

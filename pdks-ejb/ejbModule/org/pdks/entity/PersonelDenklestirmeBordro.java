@@ -263,7 +263,7 @@ public class PersonelDenklestirmeBordro extends BasePDKSObject implements Serial
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

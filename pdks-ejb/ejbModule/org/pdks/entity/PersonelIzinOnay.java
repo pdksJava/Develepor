@@ -216,7 +216,7 @@ public class PersonelIzinOnay extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 }

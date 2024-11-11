@@ -1873,7 +1873,7 @@ public class Vardiya extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 }

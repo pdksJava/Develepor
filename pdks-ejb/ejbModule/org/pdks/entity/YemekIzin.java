@@ -201,7 +201,7 @@ public class YemekIzin extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

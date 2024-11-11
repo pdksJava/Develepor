@@ -81,7 +81,7 @@ public class BolumKat extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 }

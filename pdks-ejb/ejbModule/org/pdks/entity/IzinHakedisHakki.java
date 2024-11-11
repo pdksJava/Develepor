@@ -156,7 +156,7 @@ public class IzinHakedisHakki extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

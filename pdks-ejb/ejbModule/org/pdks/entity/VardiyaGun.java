@@ -2365,7 +2365,7 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 }

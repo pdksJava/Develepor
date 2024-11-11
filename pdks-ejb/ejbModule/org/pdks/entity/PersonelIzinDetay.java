@@ -117,7 +117,7 @@ public class PersonelIzinDetay extends BasePDKSObject implements Serializable, C
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 

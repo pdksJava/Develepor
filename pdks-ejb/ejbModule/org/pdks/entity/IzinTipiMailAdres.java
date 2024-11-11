@@ -96,7 +96,7 @@ public class IzinTipiMailAdres extends BasePDKSObject implements Serializable, C
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

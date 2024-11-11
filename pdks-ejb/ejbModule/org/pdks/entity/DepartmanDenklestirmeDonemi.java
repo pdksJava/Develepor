@@ -188,7 +188,7 @@ public class DepartmanDenklestirmeDonemi extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

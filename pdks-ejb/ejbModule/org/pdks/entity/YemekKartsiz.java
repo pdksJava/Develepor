@@ -101,7 +101,7 @@ public class YemekKartsiz extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 

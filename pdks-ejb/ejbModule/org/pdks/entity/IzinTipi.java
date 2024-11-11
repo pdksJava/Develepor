@@ -774,7 +774,7 @@ public class IzinTipi extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

@@ -141,7 +141,7 @@ public class IzinIstirahat extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 

@@ -958,7 +958,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 				if (ortakIslemler.getParameterKeyHasStringValue("minGunCalismaSaat"))
 					saat = Double.parseDouble(ortakIslemler.getParameterKey("minGunCalismaSaat"));
 			} catch (Exception e) {
-				// TODO: handle exception
+				
 			}
 			if (saat == null || saat.doubleValue() < 0.0d)
 				saat = 0.5d;

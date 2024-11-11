@@ -109,7 +109,7 @@ public class PersonelDenklestirmeBordroDetay extends BasePDKSObject implements S
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 }

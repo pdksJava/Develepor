@@ -863,7 +863,7 @@ public class OrtakIslemler implements Serializable {
 				}
 				durum = true;
 			} catch (Exception e) {
-				// TODO: handle exception
+
 			}
 
 		}
@@ -5518,12 +5518,25 @@ public class OrtakIslemler implements Serializable {
 		}
 		if (key != null && map != null && (authenticatedUser.isAdmin() || lastParameterValue.equals("1"))) {
 			try {
-				//TODO ISLEM YAP
-				UserMenuItemTime menuItemTime = getUserMenuItem(key, session);
+				HashMap fields = new HashMap();
+				StringBuffer sb = new StringBuffer();
+				sb.append("SELECT UM.* FROM " + UserMenuItemTime.TABLE_NAME + " UM " + PdksEntityController.getSelectLOCK());
+				sb.append(" INNER JOIN " + MenuItem.TABLE_NAME + " M " + PdksEntityController.getJoinLOCK() + " ON M." + MenuItem.COLUMN_NAME_ID + " = UM." + UserMenuItemTime.COLUMN_NAME_MENU);
+				sb.append(" AND M." + MenuItem.COLUMN_NAME_ADI + " = :m");
+				sb.append(" WHERE UM." + UserMenuItemTime.COLUMN_NAME_USER + " = :u");
+				fields.put("m", key);
+				fields.put("u", authenticatedUser.getId());
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List<UserMenuItemTime> list = pdksEntityController.getObjectBySQLList(sb, fields, UserMenuItemTime.class);
+ 				UserMenuItemTime menuItemTime = !list.isEmpty() ? list.get(0) : getUserMenuItem(key, session);
+				if (list.isEmpty())
+					session.flush();
+				list = null;
 				Gson gson = new Gson();
 				LinkedHashMap<String, Object> map1 = new LinkedHashMap<String, Object>();
 				map1.put("kullanici", authenticatedUser.getAdSoyad());
-				map1.put("menuAdi", getMenuUserLogAdi(null, key, false));
+				map1.put("menuAdi", menuItemTime.getMenu().getDescription().getAciklama());
 				map1.putAll(map);
 				String parametreJSON = gson.toJson(map1);
 				if (menuItemTime != null) {
@@ -5660,7 +5673,7 @@ public class OrtakIslemler implements Serializable {
 							service.saveIzinHakedisler(new ArrayList<IzinHakedis>(map.values()));
 					}
 				} catch (Exception e) {
-					// TODO: handle exception
+
 				}
 				map = null;
 
@@ -11935,7 +11948,7 @@ public class OrtakIslemler implements Serializable {
 							idList.add(bo.getId());
 					}
 				} catch (Exception e) {
-					// TODO: handle exception
+
 				}
 
 			}
@@ -15548,7 +15561,7 @@ public class OrtakIslemler implements Serializable {
 			list2 = getHareketBilgileri(yemekKapiList, null, PdksUtil.getDate(basTarih), PdksUtil.getDate(tariheGunEkleCikar(cal, bitTarih, 1)), HareketKGS.class, session);
 
 		} catch (Exception e) {
-			// TODO: handle exception
+
 		}
 		if (list2 != null) {
 
@@ -17668,7 +17681,7 @@ public class OrtakIslemler implements Serializable {
 																bayramCalisma -= yemekCikisSure + (PdksUtil.setSureDoubleTypeRounded((yemekCikisToplamSure * bayramCalisma) / netCikisSure, cikisHareket.getVardiyaGun().getYarimYuvarla()));
 															}
 														} catch (Exception e) {
-															// TODO: handle exception
+
 														}
 														bayramCalisma = PdksUtil.setSureDoubleTypeRounded(bayramCalisma, cikisHareket.getVardiyaGun().getYarimYuvarla());
 														vardiyaGun.addGecenAyResmiTatilSure(bayramCalisma);
@@ -18076,7 +18089,7 @@ public class OrtakIslemler implements Serializable {
 			if (izinKodu != null)
 				izinBordroDetayTipi = BordroDetayTipi.fromValue(izinKodu);
 		} catch (Exception e) {
-			// TODO: handle exception
+
 		}
 		return izinBordroDetayTipi;
 	}
@@ -19326,7 +19339,7 @@ public class OrtakIslemler implements Serializable {
 				if (userList != null && !userList.isEmpty())
 					user = userList.get(0);
 			} catch (Exception e) {
-				// TODO: handle exception
+
 			}
 
 		}

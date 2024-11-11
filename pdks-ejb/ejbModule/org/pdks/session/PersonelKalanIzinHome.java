@@ -202,7 +202,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 			session.flush();
 			fillTarihIzinList();
 		} catch (Exception e) {
-			// TODO: handle exception
+			
 		}
 
 		return "";

@@ -438,7 +438,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		try {
 			kidemHesabiMap = ortakIslemler.getKidemHesabi(dataKidemMap, session);
 		} catch (Exception e) {
-			// TODO: handle exception
+			
 		}
 		dataKidemMap = null;
 		return kidemHesabiMap;

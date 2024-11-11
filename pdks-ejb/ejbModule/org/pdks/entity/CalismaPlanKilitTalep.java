@@ -93,7 +93,7 @@ public class CalismaPlanKilitTalep extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

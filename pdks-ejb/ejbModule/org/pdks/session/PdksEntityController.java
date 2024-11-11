@@ -1379,7 +1379,7 @@ public class PdksEntityController implements Serializable {
 			try {
 				list = getObjectBySQLList(sb, parametreMap, class1);
 			} catch (Exception e) {
-				// TODO: handle exception
+				
 			}
 			object = list != null && !list.isEmpty() ? list.get(0) : null;
 			if (object == null && class1 != null && !class1.getName().equals(PersonelExtra.class.getName())) {

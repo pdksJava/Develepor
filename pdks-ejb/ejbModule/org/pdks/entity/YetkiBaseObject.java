@@ -101,7 +101,7 @@ public class YetkiBaseObject extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

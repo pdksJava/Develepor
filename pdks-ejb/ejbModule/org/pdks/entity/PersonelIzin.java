@@ -858,7 +858,7 @@ public class PersonelIzin extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 }

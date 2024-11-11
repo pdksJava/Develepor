@@ -208,7 +208,7 @@ public class Departman extends BaseObject {
 		return izinGirilebilir != null && izinGirilebilir.booleanValue();
 	}
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 

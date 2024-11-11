@@ -269,7 +269,7 @@ public class FazlaMesaiTalep extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 }

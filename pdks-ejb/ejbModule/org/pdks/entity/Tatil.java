@@ -229,7 +229,7 @@ public class Tatil extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 

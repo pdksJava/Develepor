@@ -124,7 +124,7 @@ public class CalismaModeliGun extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 
 	}
 

@@ -158,7 +158,7 @@ public class SAPSunucu  extends BasePDKSObject  implements Serializable {
 	}
 
 	public void entityRefresh() {
-		// TODO entityRefresh
+		
 		
 	}
 }
