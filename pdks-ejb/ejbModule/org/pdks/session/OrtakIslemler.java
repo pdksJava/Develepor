@@ -5529,7 +5529,7 @@ public class OrtakIslemler implements Serializable {
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				List<UserMenuItemTime> list = pdksEntityController.getObjectBySQLList(sb, fields, UserMenuItemTime.class);
- 				UserMenuItemTime menuItemTime = !list.isEmpty() ? list.get(0) : getUserMenuItem(key, session);
+				UserMenuItemTime menuItemTime = !list.isEmpty() ? list.get(0) : getUserMenuItem(key, session);
 				if (list.isEmpty())
 					session.flush();
 				list = null;
@@ -5828,11 +5828,21 @@ public class OrtakIslemler implements Serializable {
 					Date changeDate = null;
 					boolean update = false;
 					if (izinERPReturnList != null) {
+						TreeMap<String, IzinReferansERP> refMap = authenticatedUser != null ? new TreeMap<String, IzinReferansERP>() : pdksEntityController.getSQLParamByFieldMap(IzinReferansERP.TABLE_NAME, IzinReferansERP.COLUMN_NAME_ID, new ArrayList(updateMap.keySet()), IzinReferansERP.class,
+								"getId", false, session);
 						changeDate = new Date();
 						for (Iterator iterator = izinERPReturnList.iterator(); iterator.hasNext();) {
 							IzinERP izinERP = (IzinERP) iterator.next();
 							if (izinERP.getYazildi() == null || izinERP.getYazildi().booleanValue() == false) {
-								if (updateMap.containsKey(izinERP.getReferansNoERP())) {
+								if (updateMap.containsKey(izinERP.getReferansNoERP()) && !refMap.containsKey(izinERP.getReferansNoERP())) {
+									if (authenticatedUser != null) {
+										for (String message : izinERP.getHataList()) {
+											if (message.indexOf(izinERP.getPersonelNo()) < 0)
+												message = izinERP.getPersonelNo() + " : " + message;
+											PdksUtil.addMessageAvailableWarn(message);
+										}
+
+									}
 									Date tarih = updateMap.get(izinERP.getReferansNoERP());
 									if (tarih.before(changeDate))
 										changeDate = tarih;
