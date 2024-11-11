@@ -5443,7 +5443,7 @@ public class OrtakIslemler implements Serializable {
 				try {
 					String name = "SP_GET_USER_MENU";
 					if (isExisStoreProcedure(name, session)) {
- 						sb.append(name);
+						sb.append(name);
 						LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
 						fields.put("menuAdi", key);
 						fields.put("userName", authenticatedUser.getId());
@@ -5518,6 +5518,7 @@ public class OrtakIslemler implements Serializable {
 		}
 		if (key != null && map != null && (authenticatedUser.isAdmin() || lastParameterValue.equals("1"))) {
 			try {
+				//TODO ISLEM YAP
 				UserMenuItemTime menuItemTime = getUserMenuItem(key, session);
 				Gson gson = new Gson();
 				LinkedHashMap<String, Object> map1 = new LinkedHashMap<String, Object>();
@@ -5566,7 +5567,7 @@ public class OrtakIslemler implements Serializable {
 					menuItemTime = veriler.get(0);
 					menuItemTime.setMySession(mySession);
 				}
-				// session.flush();
+				session.flush();
 				veriler = null;
 			} catch (Exception e) {
 
