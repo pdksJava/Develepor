@@ -265,6 +265,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	 * @return
 	 */
 	public String kayitKopyala(Vardiya pdksVardiya) {
+		vardiyaAlanlariDoldur(pdksVardiya);
 		Vardiya pdksVardiyaYeni = (Vardiya) pdksVardiya.clone();
 		if (authenticatedUser.isIK())
 			pdksVardiyaYeni.setDepartman(authenticatedUser.getDepartman());
@@ -272,9 +273,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		if (pdksVardiya.getKisaAdi() != null)
 			pdksVardiyaYeni.setKisaAdi(pdksVardiya.getKisaAdi() + " kopya");
 		pdksVardiyaYeni.setAdi(pdksVardiya.getAdi() + " kopya");
-		vardiyaAlanlariDoldur(pdksVardiya);
+
 		setInstance(pdksVardiyaYeni);
-		fillVardiyaTipiList();
 		return "";
 
 	}
@@ -299,8 +299,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			pdksVardiya.setCikisGecikmeToleransDakika((short) 0);
 		}
 		vardiyaAlanlariDoldur(pdksVardiya);
+
 		setInstance(pdksVardiya);
-		fillVardiyaTipiList();
 	}
 
 	/**
@@ -312,7 +312,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		fillCalismaModeliList(pdksVardiya);
 		pdksVardiya.setTipi(String.valueOf(pdksVardiya.getVardiyaTipi()));
 		fillCalismaSekilleri();
- 		sirketList = ortakIslemler.getDepartmanPDKSSirketList(pdksVardiya.getDepartman(), session);
+		fillVardiyaTipiList(pdksVardiya);
+		sirketList = ortakIslemler.getDepartmanPDKSSirketList(pdksVardiya.getDepartman(), session);
 	}
 
 	@Transactional
@@ -677,12 +678,14 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			fillBagliOlduguDepartmanTanimList();
 	}
 
-	public void fillVardiyaTipiList() {
+	/**
+	 * @param vardiya
+	 */
+	public void fillVardiyaTipiList(Vardiya vardiya) {
 		List<SelectItem> list = new ArrayList<SelectItem>();
 		list.add(new SelectItem(String.valueOf(Vardiya.TIPI_CALISMA), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_CALISMA, null)));
 		list.add(new SelectItem(String.valueOf(Vardiya.TIPI_HAFTA_TATIL), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_HAFTA_TATIL, "HT")));
 		list.add(new SelectItem(String.valueOf(Vardiya.TIPI_OFF), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_OFF, "OFF")));
-		Vardiya vardiya = getInstance();
 		boolean adminUser = ortakIslemler.getAdminRole(authenticatedUser);
 		if (adminUser) {
 			String vardiyaTipi = vardiya.getId() != null ? String.valueOf(vardiya.getVardiyaTipi()) : "";
