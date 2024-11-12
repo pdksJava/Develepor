@@ -8765,7 +8765,7 @@ public class OrtakIslemler implements Serializable {
 					if (logYaz)
 						logger.info(mesaj);
 				}
-				if (menuAdi != null && authenticatedUser.getMenuItemTime() != null && !authenticatedUser.getMenuItemTime().getMenu().getName().equals(menuAdi))
+				if (menuAdi != null && authenticatedUser.getMenuItemTime() != null && authenticatedUser.getMenuItemTime().getMenu() != null && !authenticatedUser.getMenuItemTime().getMenu().getName().equals(menuAdi))
 					authenticatedUser.setMenuItemTime(null);
 				if (sessionx != null) {
 					try {

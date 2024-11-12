@@ -212,6 +212,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		Sirket sirketSecili = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 		if (sirketSecili != null) {
 			User loginUser = ortakIslemler != null ? ortakIslemler.getSistemAdminUser(session) : null;
+			if (authenticatedUser != null && authenticatedUser.isIK())
+				loginUser = authenticatedUser;
 			loginUser.setAdmin(Boolean.TRUE);
 			DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 			AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, denklestirmeDonemi, session);
