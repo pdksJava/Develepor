@@ -255,7 +255,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 
 							}
 						} catch (Exception e) {
-							
+
 						}
 
 					}
@@ -437,18 +437,18 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 				hMap.put(key, list);
 			list.add(hareketKGS);
 		}
+		Date bugun = Calendar.getInstance().getTime();
+		boolean hareketTarihKontrol = ortakIslemler.getParameterKeyHasStringValue("hareketTarihKontrol") == false;
+		String formatStr = "yyyy-MM-dd HH:mm";
 		personelId = null;
 		kapiId = null;
-		String formatStr = "yyyy-MM-dd HH:mm";
-		Date bugun = Calendar.getInstance().getTime();
-		boolean hareketTarihKontrol = ortakIslemler.getParameterKeyHasStringValue("hareketTarihKontrol");
 
 		for (Iterator iterator1 = vardiyaGunleri.iterator(); iterator1.hasNext();) {
 			VardiyaGun vg = (VardiyaGun) iterator1.next();
 			HareketKGS hareketKGS = vg.getIlkGiris();
 			Date zaman = hareketKGS.getZaman();
 			String zamanStr = PdksUtil.convertToDateString(zaman, formatStr);
-			if (PdksUtil.getCanliSunucuDurum() && !(hareketTarihKontrol && bugun.after(tarih)))
+			if ((hareketTarihKontrol && bugun.after(tarih)) == false)
 				continue;
 			PersonelKGS personel = vg.getPersonel().getPersonelKGS();
 			Boolean yaz = bugun.after(zaman) || authenticatedUser.isIK();
@@ -456,7 +456,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 			for (Iterator iterator2 = list.iterator(); iterator2.hasNext();) {
 				HareketKGS kgs = (HareketKGS) iterator2.next();
 				String dateStr = PdksUtil.convertToDateString(new Date(kgs.getZaman().getTime()), formatStr);
-				if (zamanStr.equals(dateStr))
+				if ((tarih == null || kapiId == null) && zamanStr.equals(dateStr))
 					yaz = Boolean.FALSE;
 				iterator2.remove();
 
