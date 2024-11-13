@@ -11300,7 +11300,10 @@ public class OrtakIslemler implements Serializable {
 	public IzinTipi senelikIzinOlustur(HashMap<String, Object> veriMap, Session session) {
 		IzinTipi izinTipi = (IzinTipi) veriMap.get("izinTipi");
 		int yil = (Integer) veriMap.get("yil");
+		Integer donemBitis = veriMap.containsKey("donemBitis") ? (Integer) veriMap.get("donemBitis") : null;
 		boolean gecmisHakedisGuncelle = veriMap.containsKey("gecmisHakedisGuncelle");
+		if (gecmisHakedisGuncelle)
+			gecmisHakedisGuncelle = donemBitis == null || donemBitis<= yil;
 		if (yil >= PdksUtil.getSistemBaslangicYili() || gecmisHakedisGuncelle) {
 			Personel izinSahibi = (Personel) veriMap.get("izinSahibi");
 			boolean suaDurum = (Boolean) veriMap.get("suaDurum");
@@ -13242,6 +13245,15 @@ public class OrtakIslemler implements Serializable {
 		User sistemYonetici = (User) dataKidemMap.get("sistemYonetici");
 		Date bugun = (Date) dataKidemMap.get("bugun");
 		Personel personel = (Personel) dataKidemMap.get("personel");
+		String bakiyeIzinGosterStr = getParameterKey("bakiyeIzinGoster");
+		Integer donemBitis = null;
+		if (PdksUtil.hasStringValue(bakiyeIzinGosterStr))
+			try {
+				donemBitis = Integer.parseInt(bakiyeIzinGosterStr.substring(0, 4));
+			} catch (Exception e) {
+				donemBitis = null;
+			}
+
 		HashMap<String, IzinTipi> izinTipiMap = (HashMap<String, IzinTipi>) dataKidemMap.get("izinTipiMap");
 		HashMap<String, IzinHakedisHakki> hakedisMap = (HashMap<String, IzinHakedisHakki>) dataKidemMap.get("hakedisMap");
 		User user = (User) dataKidemMap.get("user");
@@ -13300,6 +13312,8 @@ public class OrtakIslemler implements Serializable {
 							veriMap.put("izinTipi", izinTipi);
 							veriMap.put("islemTarihi", bugun);
 							veriMap.put("yeniBakiyeOlustur", yeniBakiyeOlustur);
+							if (donemBitis != null)
+								veriMap.put("donemBitis", donemBitis);
 							izinTipi = senelikIzinOlustur(veriMap, session);
 							if (izinTipi != null && veriMap.containsKey("hakEdisIzin")) {
 								PersonelIzin hakEdisIzin = (PersonelIzin) veriMap.get("hakEdisIzin");
@@ -13317,18 +13331,26 @@ public class OrtakIslemler implements Serializable {
 									sb.append("WITH DATA AS (");
 									String str = "";
 									HashMap fields = new HashMap();
+									boolean islemYap = false;
 									for (int i = gecmisKidem; i > 0; i--) {
 										int izinYil = --gecmisYil;
-										String donem = izinYil + "-01-01";
-										sb.append(str + " SELECT " + (i) + " AS KIDEM_YIL," + izinYil + " AS  YIL,'" + donem + "' AS " + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ", P." + IzinTipi.COLUMN_NAME_ID + " FROM " + IzinTipi.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
-										sb.append(" WHERE P." + IzinTipi.COLUMN_NAME_ID + " = " + izinTipi.getId() + " AND P." + IzinTipi.COLUMN_NAME_DURUM + " = 1");
-										str = " UNION ALL ";
+										if (donemBitis == null || donemBitis <= izinYil) {
+											String donem = izinYil + "-01-01";
+											sb.append(str + " SELECT " + (i) + " AS KIDEM_YIL," + izinYil + " AS  YIL,'" + donem + "' AS " + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ", P." + IzinTipi.COLUMN_NAME_ID + " FROM " + IzinTipi.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+											sb.append(" WHERE P." + IzinTipi.COLUMN_NAME_ID + " = " + izinTipi.getId() + " AND P." + IzinTipi.COLUMN_NAME_DURUM + " = 1");
+											str = " UNION ALL ";
+											islemYap = true;
+										}
+
 									}
 									sb.append(")");
 									sb.append(" SELECT D.* FROM DATA D " + PdksEntityController.getSelectLOCK());
 									sb.append(" LEFT JOIN " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " ON I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " = D." + IzinTipi.COLUMN_NAME_ID);
 									sb.append(" AND I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = " + personel.getId() + " AND I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " = D." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
-									sb.append(" WHERE I." + PersonelIzin.COLUMN_NAME_ID + " IS NULL  OR I." + PersonelIzin.COLUMN_NAME_IZIN_SURESI + " <= 0");
+									if (islemYap)
+										sb.append(" WHERE I." + PersonelIzin.COLUMN_NAME_ID + " IS NULL  OR I." + PersonelIzin.COLUMN_NAME_IZIN_SURESI + " <= 0");
+									else
+										sb.append(" WHERE 1 = 2");
 									sb.append(" ORDER BY D." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " DESC");
 									if (session != null)
 										fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -13347,7 +13369,8 @@ public class OrtakIslemler implements Serializable {
 											veriMap.put("islemTarihi", bugun);
 											veriMap.put("yeniBakiyeOlustur", false);
 											veriMap.put("gecmisHakedisGuncelle", "1");
-
+											if (donemBitis != null)
+												veriMap.put("donemBitis", donemBitis);
 											izinTipi = senelikIzinOlustur(veriMap, session);
 
 										}
@@ -13402,6 +13425,8 @@ public class OrtakIslemler implements Serializable {
 											veriMap.put("izinTipi", izinTipi);
 											veriMap.put("islemTarihi", bugun);
 											veriMap.put("yeniBakiyeOlustur", Boolean.FALSE);
+											if (donemBitis != null)
+												veriMap.put("donemBitis", donemBitis);
 											izinTipi = senelikIzinOlustur(veriMap, session);
 										}
 									}
@@ -13962,7 +13987,7 @@ public class OrtakIslemler implements Serializable {
 		Boolean fazlaMesaiIzinKullan = Boolean.FALSE, tesisDurum = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, sanalPersonel = Boolean.FALSE, icapDurum = Boolean.FALSE;
 		Boolean kullaniciPersonel = Boolean.FALSE, gebeMi = Boolean.FALSE, sutIzni = Boolean.FALSE, istenAyrilmaGoster = Boolean.FALSE, personelTipiGoster = Boolean.FALSE;
 		Boolean ustYonetici = Boolean.FALSE, partTimeDurum = Boolean.FALSE, egitimDonemi = Boolean.FALSE, suaOlabilir = Boolean.FALSE;
-		Boolean emailCCDurum = Boolean.FALSE, emailBCCDurum = Boolean.FALSE, bordroAltAlani = Boolean.FALSE, kimlikNoGoster = Boolean.FALSE, masrafYeriGoster = Boolean.FALSE;
+		Boolean emailCCDurum = Boolean.FALSE, emailBCCDurum = Boolean.FALSE, izinKartiVardir = Boolean.FALSE, bordroAltAlani = Boolean.FALSE, kimlikNoGoster = Boolean.FALSE, masrafYeriGoster = Boolean.FALSE;
 		boolean ikRol = authenticatedUser.isSistemYoneticisi() || authenticatedUser.isAdmin();
 		List<Long> depIdList = new ArrayList<Long>();
 		Boolean kartNoGoster = null;
@@ -14073,6 +14098,12 @@ public class OrtakIslemler implements Serializable {
 							if (gebeMi)
 								map.put("gebeMi", gebeMi);
 						}
+
+						if (!izinKartiVardir) {
+							izinKartiVardir = personel.getIzinKartiVar();
+							if (izinKartiVardir)
+								map.put("izinKartiVardir", izinKartiVardir);
+						}
 						if (!personelTipiGoster)
 							personelTipiGoster = personel.getPersonelTipi() != null;
 
@@ -14154,7 +14185,7 @@ public class OrtakIslemler implements Serializable {
 		boolean emailCCDurum = map.containsKey("emailCCDurum"), emailBCCDurum = map.containsKey("emailBCCDurum"), bordroAltAlani = map.containsKey("bordroAltAlani");
 		boolean kimlikNoGoster = map.containsKey("kimlikNoGoster"), onaysizIzinKullanilir = map.containsKey("onaysizIzinKullanilir"), tesisDurum = map.containsKey("tesisDurum"), ikinciYoneticiIzinOnayla = map.containsKey("ikinciYoneticiIzinOnayla");
 		boolean departmanGoster = map.containsKey("departmanGoster"), istenAyrilmaGoster = map.containsKey("istenAyrilmaGoster"), masrafYeriGoster = map.containsKey("masrafYeriGoster"), kartNoGoster = map.containsKey("kartNoGoster");
-		boolean personelTipiGoster = map.containsKey("personelTipiGoster");
+		boolean personelTipiGoster = map.containsKey("personelTipiGoster"), izinKartiVardir = map.containsKey("izinKartiVardir");
 		ByteArrayOutputStream baos = null;
 		Workbook wb = new XSSFWorkbook();
 		for (Iterator iter = personelList.iterator(); iter.hasNext();) {
@@ -14217,8 +14248,11 @@ public class OrtakIslemler implements Serializable {
 
 		if (ikinciYoneticiIzinOnayla)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İzni " + yonetici2Aciklama() + " Onaylasın");
+		if (izinKartiVardir)
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İzin Kartı Var");
 		if (onaysizIzinKullanilir)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Onaysız İzin Girebilir");
+
 		if (tesisDurum)
 			tesisDurum = getListTesisDurum(personelList);
 		if (tesisDurum)
@@ -14385,12 +14419,13 @@ public class OrtakIslemler implements Serializable {
 
 				}
 				try {
+
+					if (izinKartiVardir)
+						ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(user.getYesNo(personel.getIzinKartiVar()));
+
 					if (onaysizIzinKullanilir)
 						ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(user.getYesNo(personel.getOnaysizIzinKullanilir()));
 				} catch (Exception e) {
-					logger.error("Pdks hata in : \n");
-					e.printStackTrace();
-					logger.error("Pdks hata out : " + e.getMessage());
 
 				}
 				if (tesisDurum)

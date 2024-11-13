@@ -170,7 +170,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private String hataMesaj = "", personelERPGuncelleme = "";
 	private Boolean updateValue, yeniPersonelGuncelle, pdks, servisCalisti = Boolean.FALSE, fazlaMesaiIzinKullan = Boolean.FALSE, gebeMi = Boolean.FALSE, tesisYetki = Boolean.FALSE, istenAyrilmaGoster = Boolean.FALSE;
 	private Boolean sutIzni = Boolean.FALSE, kimlikNoGoster = Boolean.FALSE, kullaniciPersonel = Boolean.FALSE, sanalPersonel = Boolean.FALSE, icapDurum = Boolean.FALSE, yoneticiRolVarmi = Boolean.FALSE;
-	private Boolean ustYonetici = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, suaOlabilir = Boolean.FALSE, egitimDonemi = Boolean.FALSE, partTimeDurum = Boolean.FALSE, tesisDurum = Boolean.FALSE;
+	private Boolean ustYonetici = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, suaOlabilir = Boolean.FALSE, izinKartiVardir = Boolean.FALSE, egitimDonemi = Boolean.FALSE, partTimeDurum = Boolean.FALSE, tesisDurum = Boolean.FALSE;
 	private Boolean emailCCDurum = Boolean.FALSE, emailBCCDurum = Boolean.FALSE, taseronKulaniciTanimla = Boolean.FALSE, manuelTanimla = Boolean.FALSE, ikinciYoneticiManuelTanimla = Boolean.FALSE;
 	private Boolean onaysizIzinKullanilir = Boolean.FALSE, departmanGoster = Boolean.FALSE, kartNoGoster = Boolean.FALSE, ikinciYoneticiIzinOnayla = Boolean.FALSE, izinGirisiVar = Boolean.FALSE, dosyaGuncellemeYetki = Boolean.FALSE;
 	private Boolean ekSaha1Disable, ekSaha2Disable, ekSaha4Disable, transferAciklamaCiftKontrol, bakiyeIzinGoster = Boolean.FALSE, gebeSecim = Boolean.FALSE, personelTipiGoster = Boolean.FALSE;
@@ -1878,7 +1878,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		}
 		PersonelIzin izin = null;
 		try {
-			bakiyeIzinGoster = ortakIslemler.getParameterKeyHasStringValue("bakiyeIzinGoster");
+			bakiyeDurumKontrolEt(pdksPersonel);
+
 			if (bakiyeIzinGoster) {
 				Departman departman = pdksPersonel.getSirket() != null ? pdksPersonel.getSirket().getDepartman() : null;
 				if (pdksPersonel.getId() != null)
@@ -1923,6 +1924,25 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 			}
 		}
+	}
+
+	/**
+	 * @param pdksPersonel
+	 * @return
+	 */
+	public String bakiyeDurumKontrolEt(Personel pdksPersonel) {
+		String bakiyeIzinGosterStr = ortakIslemler.getParameterKey("bakiyeIzinGoster");
+		try {
+			bakiyeIzinGoster = pdksPersonel.getIzinKartiVar() && PdksUtil.hasStringValue(bakiyeIzinGosterStr);
+			if (bakiyeIzinGoster) {
+				long donemBitis = Long.parseLong(bakiyeIzinGosterStr);
+				bakiyeIzinGoster = pdksPersonel.getIzinHakEdisTarihi() == null || Long.parseLong(PdksUtil.convertToDateString(pdksPersonel.getIzinHakEdisTarihi(), "yyyyMM")) < donemBitis;
+			}
+		} catch (Exception e) {
+			bakiyeIzinGoster = false;
+		}
+
+		return "";
 	}
 
 	/**
@@ -2943,6 +2963,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		fazlaMesaiOde = map.containsKey("fazlaMesaiOde");
 		sanalPersonel = map.containsKey("sanalPersonel");
 		kullaniciPersonel = map.containsKey("kullaniciPersonel");
+		izinKartiVardir = map.containsKey("izinKartiVardir");
 		gebeMi = map.containsKey("gebeMi");
 		sutIzni = map.containsKey("sutIzni");
 		kimlikNoGoster = map.containsKey("kimlikNoGoster");
@@ -5779,6 +5800,14 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 	public static void setSayfaURL(String sayfaURL) {
 		PdksPersonelHome.sayfaURL = sayfaURL;
+	}
+
+	public Boolean getIzinKartiVardir() {
+		return izinKartiVardir;
+	}
+
+	public void setIzinKartiVardir(Boolean izinKartiVardir) {
+		this.izinKartiVardir = izinKartiVardir;
 	}
 
 }
