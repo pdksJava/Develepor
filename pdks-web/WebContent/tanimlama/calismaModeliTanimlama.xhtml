@@ -504,13 +504,18 @@
 							rendered="#{calismaModeliHome.calismaModeli.genelVardiya==false and calismaModeliHome.calismaModeli.ortakVardiya==false}" switchType="client"
 							label="Vardiyalar" height="110" opened="true">
 							<s:decorate>
-								<rich:listShuttle id="shuttle" sourceValue="#{calismaModeliHome.vardiyaList}" fastOrderControlsVisible="false" orderControlsVisible="false"
-									targetValue="#{calismaModeliHome.kayitliVardiyaList}" var="vardiya" copyControlLabel="#{messages['listShuttle.etiket.copyControlLabel']}"
+								<rich:listShuttle style="width:550px; white-space:normal!important" id="shuttle" sourceValue="#{calismaModeliHome.vardiyaList}"
+									fastOrderControlsVisible="false" orderControlsVisible="false" targetValue="#{calismaModeliHome.kayitliVardiyaList}" var="vardiya"
+									copyControlLabel="#{messages['listShuttle.etiket.copyControlLabel']}"
 									removeControlLabel="#{messages['listShuttle.etiket.removeControlLabel']}"
 									copyAllControlLabel="#{messages['listShuttle.etiket.copyAllControlLabel']}"
 									removeAllControlLabel="#{messages['listShuttle.etiket.removeAllControlLabel']}" required="true" requiredMessage="Vardiya seçiniz">
-									<h:column>
-										<h:outputText value="#{vardiya.vardiyaAdi}" />
+									<h:column >
+
+										<div style="overflow: hidden; width: 200px; word-wrap: break-word;">
+											<h:outputText value="#{vardiya.ozelAdi}" />
+											 
+										</div>
 									</h:column>
 									<s:convertEntity />
 								</rich:listShuttle>
