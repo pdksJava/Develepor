@@ -11303,7 +11303,7 @@ public class OrtakIslemler implements Serializable {
 		Integer donemBitis = veriMap.containsKey("donemBitis") ? (Integer) veriMap.get("donemBitis") : null;
 		boolean gecmisHakedisGuncelle = veriMap.containsKey("gecmisHakedisGuncelle");
 		if (gecmisHakedisGuncelle)
-			gecmisHakedisGuncelle = donemBitis == null || donemBitis<= yil;
+			gecmisHakedisGuncelle = donemBitis == null || donemBitis <= yil;
 		if (yil >= PdksUtil.getSistemBaslangicYili() || gecmisHakedisGuncelle) {
 			Personel izinSahibi = (Personel) veriMap.get("izinSahibi");
 			boolean suaDurum = (Boolean) veriMap.get("suaDurum");
@@ -17174,7 +17174,7 @@ public class OrtakIslemler implements Serializable {
 		Double yemekMolasiYuzdesi = getYemekMolasiYuzdesi(denklestirmeTasiyici.getDenklestirmeAy(), session);
 		DenklestirmeAy denklestirmeAy = denklestirmeTasiyici.getDenklestirmeAy();
 		Date ilkGun = PdksUtil.convertToJavaDate(String.valueOf(denklestirmeAy.getYil() * 100 + denklestirmeAy.getAy()) + "01", "yyyyMMdd");
-
+		boolean arifeTatilBasZamanVar = getParameterKeyHasStringValue("arifeTatilBasZaman");
 		if (denklestirmeTasiyici.getVardiyalar() != null) {
 			List<VardiyaGun> vardiyalar = denklestirmeTasiyici.getVardiyalar();
 			if (vardiyalar != null)
@@ -17833,15 +17833,6 @@ public class OrtakIslemler implements Serializable {
 
 									}
 								}
-								// double fazlaCalismaToplamSure = 0.0d;
-								// if (vardiyaGun.getFazlaMesailer() != null) {
-								// for (PersonelFazlaMesai personelFazlaMesai : sonVardiyaGun.getFazlaMesailer()) {
-								// if (personelFazlaMesai.isOnaylandi() && personelFazlaMesai.getDurum()) {
-								// fazlaCalismaToplamSure += personelFazlaMesai.getFazlaMesaiSaati();
-								//
-								// }
-								// }
-								// }
 
 								if (calSure > netSure) {
 									// if (resmiTatilSure + netSure - calSure > 0.0d)
@@ -17849,7 +17840,8 @@ public class OrtakIslemler implements Serializable {
 									calSure = netSure;
 
 								}
-								if (arifeSureMap.containsKey("T_B") && arifeSureMap.containsKey("A_N")) {
+								if (arifeTatilBasZamanVar == false && arifeSureMap.containsKey("T_B") && arifeSureMap.containsKey("A_N")) {
+									// todo kontrol ekle
 									Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
 									double toplamBrutSure = arifeSureMap.get("T_B");
 									double netCalismaSure = islemVardiya.getNetCalismaSuresi() / 2.0d;
