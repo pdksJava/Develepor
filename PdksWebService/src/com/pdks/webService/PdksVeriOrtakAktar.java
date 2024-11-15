@@ -2106,7 +2106,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				Date bitTarih = PdksUtil.getDate(bitisZamani);
 				if (izinBitisEksiGun != 0)
 					bitTarih = PdksUtil.tariheGunEkleCikar(bitTarih, -izinBitisEksiGun);
-				if (bitTarih.before(baslangicZamani))
+				if (bitisZamani.before(baslangicZamani))
 					addHatalist(izinERP.getHataList(), "İzin başlama zamanı bitiş tarihinden sonra olamaz!");
 				if (baslangicZamani.before(izinSahibi.getIseBaslamaTarihi()))
 					addHatalist(izinERP.getHataList(), "İzin başlangıç zamanı işe giriş tarihi " + PdksUtil.convertToDateString(izinSahibi.getIseBaslamaTarihi(), FORMAT_DATE) + " den önce olamaz! [ " + izinSahibi.getAdSoyad() + " ]");
