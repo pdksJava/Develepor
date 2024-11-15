@@ -649,7 +649,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		// calismaModeliList = pdksEntityController.getSQLParamByFieldList(CalismaModeli.TABLE_NAME, CalismaModeli.COLUMN_NAME_DURUM, 1, CalismaModeli.class, session);
 		for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
 			CalismaModeli cm = (CalismaModeli) iterator.next();
-			if (cm.getDepartman() != null && pdksDepartmanId != null && !pdksDepartmanId.equals(cm.getDepartman().getId())) {
+			Departman departman = cm.getSirket() != null ? cm.getSirket().getDepartman() : cm.getDepartman();
+			if (departman != null && pdksDepartmanId != null && !pdksDepartmanId.equals(departman.getId())) {
 				iterator.remove();
 				continue;
 			}
@@ -691,10 +692,10 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 			Long departmanId = pdksDepartman != null ? pdksDepartman.getId() : null;
 			sablonList = ortakIslemler.getVardiyaSablonuList(pdksPersonel.getSirket(), departmanId, session);
-
 			for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
 				VardiyaSablonu vardiyaSablonu = (VardiyaSablonu) iterator.next();
-				if (vardiyaSablonu.getDepartman() != null && !pdksDepartman.getId().equals(vardiyaSablonu.getDepartman().getId()))
+				Departman departman = vardiyaSablonu.getSirket() != null ? vardiyaSablonu.getSirket().getDepartman() : vardiyaSablonu.getDepartman();
+				if (departman != null && !pdksDepartman.getId().equals(departman.getId()))
 					iterator.remove();
 
 			}
