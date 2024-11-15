@@ -1865,6 +1865,17 @@ public class PdksVeriOrtakAktar implements Serializable {
 		if (personelList.size() > 1)
 			personelList = PdksUtil.sortListByAlanAdi(personelList, "iseBaslamaTarihi", Boolean.FALSE);
 		TreeMap<String, Personel> personelMap = new TreeMap<String, Personel>();
+		String izinVardiyaKontrolStr = mailMap.containsKey("izinVardiyaKontrol") ? (String) mailMap.get("izinVardiyaKontrol") : null;
+		Integer izinBitisEksiGun = null;
+		try {
+			if (izinVardiyaKontrolStr != null)
+				izinBitisEksiGun = Integer.parseInt(izinVardiyaKontrolStr);
+		} catch (Exception e) {
+			izinBitisEksiGun = null;
+		}
+		if (izinBitisEksiGun == null)
+			izinBitisEksiGun = 0;
+
 		for (Personel personel : personelList) {
 			if ((tarih1 == null || personel.getSskCikisTarihi().getTime() >= PdksUtil.getDate(tarih1).getTime()) && (tarih2 == null || personel.getIseBaslamaTarihi().getTime() <= PdksUtil.getDate(tarih2).getTime())) {
 				personelMap.put(personel.getPdksSicilNo(), personel);
@@ -1955,13 +1966,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		}
 
 		List<String> kidemHataList = new ArrayList<String>();
-		String izinVardiyaKontrolStr = mailMap.containsKey("izinVardiyaKontrol") ? (String) mailMap.get("izinVardiyaKontrol") : "0";
-		int izinVardiyaKontrol = 0;
-		try {
-			izinVardiyaKontrol = Integer.parseInt(izinVardiyaKontrolStr);
-		} catch (Exception e) {
-			izinVardiyaKontrol = 0;
-		}
+
 		String kapaliDonemOkuma = mailMap.containsKey("kapaliDonemOkuma") ? (String) mailMap.get("kapaliDonemOkuma") : "";
 		boolean kapaliDonemOku = kapaliDonemOkuma.equals("1") == false;
 		List<String> kayitIzinList = new ArrayList<String>();
@@ -2098,11 +2103,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 				boolean doktor = izinSahibi.isHekim();
 				boolean mailEkle = doktor && personelIzin.getId() == null;
 				Date sonCalismaTarihi = izinSahibi.getSskCikisTarihi();
-				if (bitisZamani.before(baslangicZamani))
+				Date bitTarih = PdksUtil.getDate(bitisZamani);
+				if (izinBitisEksiGun != 0)
+					bitTarih = PdksUtil.tariheGunEkleCikar(bitTarih, -izinBitisEksiGun);
+				if (bitTarih.before(baslangicZamani))
 					addHatalist(izinERP.getHataList(), "İzin başlama zamanı bitiş tarihinden sonra olamaz!");
 				if (baslangicZamani.before(izinSahibi.getIseBaslamaTarihi()))
 					addHatalist(izinERP.getHataList(), "İzin başlangıç zamanı işe giriş tarihi " + PdksUtil.convertToDateString(izinSahibi.getIseBaslamaTarihi(), FORMAT_DATE) + " den önce olamaz! [ " + izinSahibi.getAdSoyad() + " ]");
-				if (PdksUtil.getDate(bitisZamani).after(sonCalismaTarihi))
+				if (PdksUtil.tarihKarsilastirNumeric(bitTarih, sonCalismaTarihi) > 1)
 					addHatalist(izinERP.getHataList(), "İzin bitiş zamanı işten ayrılma tarihi " + PdksUtil.convertToDateString(sonCalismaTarihi, FORMAT_DATE) + " den sonra olamaz! [ " + izinSahibi.getAdSoyad() + " ]");
 				IzinTipi izinTipi = izinTipiMap.get(izinERP.getIzinTipi());
 				List<PersonelDenklestirme> kapaliDenklestirmeler = null;
@@ -2209,9 +2217,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 						izinERP.setYazildi(true);
 					}
 					if (izinERP.getDurum().booleanValue() || personelIzin.getId() != null) {
-						Date bitTarih = PdksUtil.getDate(bitisZamani);
-						if (izinVardiyaKontrol != 0)
-							bitTarih = PdksUtil.tariheGunEkleCikar(bitTarih, -izinVardiyaKontrol);
 						if (!izinSahibi.isCalisiyorGun(bitTarih) && personelIzin.getId() == null)
 							addHatalist(izinERP.getHataList(), PdksUtil.convertToDateString(personelIzin.getBitisZamani(), FORMAT_DATE_TIME) + " tarihinde çalışmıyor!!");
 						if (izinERP.getDurum().booleanValue() || donemKapali) {
