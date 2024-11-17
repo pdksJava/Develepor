@@ -228,6 +228,61 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param personel
+	 * @param alan
+	 * @param map
+	 * @return
+	 */
+	public Tanim getTanimDeger(Personel personel, Tanim alan, TreeMap<String, PersonelDinamikAlan> map) {
+		Tanim tanimDeger = null;
+		if (personel != null && alan != null && map != null) {
+			String key = PersonelDinamikAlan.getKey(personel, alan);
+			tanimDeger = map.containsKey(key) ? map.get(key).getTanimDeger() : null;
+		}
+		return tanimDeger;
+
+	}
+
+	/**
+	 * @param personel
+	 * @param alan
+	 * @param map
+	 * @return
+	 */
+	public TreeMap<String, PersonelDinamikAlan> getPersonelDinamikAlanMap(List<Personel> personelList, List<Tanim> alanList, Session session) {
+		TreeMap<String, PersonelDinamikAlan> map = new TreeMap<String, PersonelDinamikAlan>();
+		if (personelList != null && !personelList.isEmpty()) {
+			if (alanList == null)
+				alanList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_PERSONEL_DINAMIK_TANIM, Tanim.class, session);
+
+			List<Long> personelIdList = new ArrayList<Long>(), alanIdList = new ArrayList<Long>();
+			for (Personel personel : personelList)
+				personelIdList.add(personel.getId());
+			HashMap fields = new HashMap();
+			StringBuffer sb = new StringBuffer();
+			String fieldName = "p";
+			fields.put(fieldName, personelIdList);
+			sb.append("SELECT * FROM " + PersonelDinamikAlan.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+			sb.append(" WHERE " + PersonelDinamikAlan.COLUMN_NAME_PERSONEL + " :" + fieldName);
+			if (alanList.isEmpty() == false) {
+				for (Tanim alan : alanList)
+					alanIdList.add(alan.getId());
+				sb.append(" AND " + PersonelDinamikAlan.COLUMN_NAME_ALAN + " :x");
+				fields.put("x", alanIdList);
+			}
+			List<PersonelDinamikAlan> list = pdksEntityController.getSQLParamList(personelIdList, sb, fieldName, fields, PersonelDinamikAlan.class, session);
+
+			for (PersonelDinamikAlan personelDinamikAlan : list)
+				map.put(personelDinamikAlan.getKey(), personelDinamikAlan);
+			list = null;
+			personelIdList = null;
+			alanIdList = null;
+		}
+		return map;
+
+	}
+
+	/**
+	 * @param personel
 	 * @param session
 	 * @return
 	 */
