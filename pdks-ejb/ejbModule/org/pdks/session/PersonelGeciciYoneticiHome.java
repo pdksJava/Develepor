@@ -479,7 +479,7 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 	public void fillDepartmanList() {
 		List<Tanim> list = new ArrayList<Tanim>();
 		if (sapDepartman)
-			list = ortakIslemler.getTanimList(Tanim.TIPI_SAP_DEPARTMAN, session);
+			list = ortakIslemler.getTanimList(Tanim.TIPI_ERP_DEPARTMAN, session);
 		if (pdksDepartman) {
 			List pdksDepartmanList = ortakIslemler.getTanimList(Tanim.TIPI_PDKS_DEPARTMAN, session);
 			if (!pdksDepartmanList.isEmpty())

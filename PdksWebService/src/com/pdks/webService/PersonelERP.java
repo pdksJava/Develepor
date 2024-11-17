@@ -36,6 +36,26 @@ public class PersonelERP extends BaseERPObject {
 	private Boolean sanalPersonel;
 	private String grubaGirisTarihi;
 	private String yonetici2PerNo;
+	protected String digerTanimAlan01;
+	protected String digerTanimAlan01Kodu;
+	protected String digerTanimAlan02;
+	protected String digerTanimAlan02Kodu;
+	protected String digerTanimAlan03;
+	protected String digerTanimAlan03Kodu;
+	protected String digerTanimAlan04;
+	protected String digerTanimAlan04Kodu;
+	protected String digerTanimAlan05;
+	protected String digerTanimAlan05Kodu;
+	protected String digerTanimAlan06;
+	protected String digerTanimAlan06Kodu;
+	protected String digerTanimAlan07;
+	protected String digerTanimAlan07Kodu;
+	protected String digerTanimAlan08;
+	protected String digerTanimAlan08Kodu;
+	protected String digerTanimAlan09;
+	protected String digerTanimAlan09Kodu;
+	protected String digerTanimAlan10;
+	protected String digerTanimAlan10Kodu;
 
 	public String getPersonelNo() {
 		return personelNo;
@@ -267,6 +287,166 @@ public class PersonelERP extends BaseERPObject {
 
 	public void setYonetici2PerNo(String yonetici2PerNo) {
 		this.yonetici2PerNo = yonetici2PerNo;
+	}
+
+	public String getDigerTanimAlan01() {
+		return digerTanimAlan01;
+	}
+
+	public void setDigerTanimAlan01(String digerTanimAlan01) {
+		this.digerTanimAlan01 = digerTanimAlan01;
+	}
+
+	public String getDigerTanimAlan01Kodu() {
+		return digerTanimAlan01Kodu;
+	}
+
+	public void setDigerTanimAlan01Kodu(String digerTanimAlan01Kodu) {
+		this.digerTanimAlan01Kodu = digerTanimAlan01Kodu;
+	}
+
+	public String getDigerTanimAlan02() {
+		return digerTanimAlan02;
+	}
+
+	public void setDigerTanimAlan02(String digerTanimAlan02) {
+		this.digerTanimAlan02 = digerTanimAlan02;
+	}
+
+	public String getDigerTanimAlan02Kodu() {
+		return digerTanimAlan02Kodu;
+	}
+
+	public void setDigerTanimAlan02Kodu(String digerTanimAlan02Kodu) {
+		this.digerTanimAlan02Kodu = digerTanimAlan02Kodu;
+	}
+
+	public String getDigerTanimAlan03() {
+		return digerTanimAlan03;
+	}
+
+	public void setDigerTanimAlan03(String digerTanimAlan03) {
+		this.digerTanimAlan03 = digerTanimAlan03;
+	}
+
+	public String getDigerTanimAlan03Kodu() {
+		return digerTanimAlan03Kodu;
+	}
+
+	public void setDigerTanimAlan03Kodu(String digerTanimAlan03Kodu) {
+		this.digerTanimAlan03Kodu = digerTanimAlan03Kodu;
+	}
+
+	public String getDigerTanimAlan04() {
+		return digerTanimAlan04;
+	}
+
+	public void setDigerTanimAlan04(String digerTanimAlan04) {
+		this.digerTanimAlan04 = digerTanimAlan04;
+	}
+
+	public String getDigerTanimAlan04Kodu() {
+		return digerTanimAlan04Kodu;
+	}
+
+	public void setDigerTanimAlan04Kodu(String digerTanimAlan04Kodu) {
+		this.digerTanimAlan04Kodu = digerTanimAlan04Kodu;
+	}
+
+	public String getDigerTanimAlan05() {
+		return digerTanimAlan05;
+	}
+
+	public void setDigerTanimAlan05(String digerTanimAlan05) {
+		this.digerTanimAlan05 = digerTanimAlan05;
+	}
+
+	public String getDigerTanimAlan05Kodu() {
+		return digerTanimAlan05Kodu;
+	}
+
+	public void setDigerTanimAlan05Kodu(String digerTanimAlan05Kodu) {
+		this.digerTanimAlan05Kodu = digerTanimAlan05Kodu;
+	}
+
+	public String getDigerTanimAlan06() {
+		return digerTanimAlan06;
+	}
+
+	public void setDigerTanimAlan06(String digerTanimAlan06) {
+		this.digerTanimAlan06 = digerTanimAlan06;
+	}
+
+	public String getDigerTanimAlan06Kodu() {
+		return digerTanimAlan06Kodu;
+	}
+
+	public void setDigerTanimAlan06Kodu(String digerTanimAlan06Kodu) {
+		this.digerTanimAlan06Kodu = digerTanimAlan06Kodu;
+	}
+
+	public String getDigerTanimAlan07() {
+		return digerTanimAlan07;
+	}
+
+	public void setDigerTanimAlan07(String digerTanimAlan07) {
+		this.digerTanimAlan07 = digerTanimAlan07;
+	}
+
+	public String getDigerTanimAlan07Kodu() {
+		return digerTanimAlan07Kodu;
+	}
+
+	public void setDigerTanimAlan07Kodu(String digerTanimAlan07Kodu) {
+		this.digerTanimAlan07Kodu = digerTanimAlan07Kodu;
+	}
+
+	public String getDigerTanimAlan08() {
+		return digerTanimAlan08;
+	}
+
+	public void setDigerTanimAlan08(String digerTanimAlan08) {
+		this.digerTanimAlan08 = digerTanimAlan08;
+	}
+
+	public String getDigerTanimAlan08Kodu() {
+		return digerTanimAlan08Kodu;
+	}
+
+	public void setDigerTanimAlan08Kodu(String digerTanimAlan08Kodu) {
+		this.digerTanimAlan08Kodu = digerTanimAlan08Kodu;
+	}
+
+	public String getDigerTanimAlan09() {
+		return digerTanimAlan09;
+	}
+
+	public void setDigerTanimAlan09(String digerTanimAlan09) {
+		this.digerTanimAlan09 = digerTanimAlan09;
+	}
+
+	public String getDigerTanimAlan09Kodu() {
+		return digerTanimAlan09Kodu;
+	}
+
+	public void setDigerTanimAlan09Kodu(String digerTanimAlan09Kodu) {
+		this.digerTanimAlan09Kodu = digerTanimAlan09Kodu;
+	}
+
+	public String getDigerTanimAlan10() {
+		return digerTanimAlan10;
+	}
+
+	public void setDigerTanimAlan10(String digerTanimAlan10) {
+		this.digerTanimAlan10 = digerTanimAlan10;
+	}
+
+	public String getDigerTanimAlan10Kodu() {
+		return digerTanimAlan10Kodu;
+	}
+
+	public void setDigerTanimAlan10Kodu(String digerTanimAlan10Kodu) {
+		this.digerTanimAlan10Kodu = digerTanimAlan10Kodu;
 	}
 
 }

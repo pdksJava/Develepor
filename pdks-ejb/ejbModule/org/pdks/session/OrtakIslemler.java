@@ -4630,7 +4630,7 @@ public class OrtakIslemler implements Serializable {
 					}
 					map.clear();
 					map.put(PdksEntityController.MAP_KEY_MAP, "getKodu");
-					map.put("tipi", Tanim.TIPI_SAP_MASRAF_YERI);
+					map.put("tipi", Tanim.TIPI_ERP_MASRAF_YERI);
 					if (session != null)
 						map.put(PdksEntityController.MAP_KEY_SESSION, session);
 					TreeMap masrafYeriMap = pdksEntityController.getObjectByInnerObjectMap(map, Tanim.class, Boolean.FALSE);
@@ -10107,7 +10107,7 @@ public class OrtakIslemler implements Serializable {
 			personelNumaralariListesi.add(user.getStaffId());
 			LinkedHashMap yoneticilerMap = null;
 
-			TreeMap masrafYeriMap = pdksEntityController.getSQLParamByFieldMap(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_SAP_MASRAF_YERI, Tanim.class, "getKodu", false, session);
+			TreeMap masrafYeriMap = pdksEntityController.getSQLParamByFieldMap(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_ERP_MASRAF_YERI, Tanim.class, "getKodu", false, session);
 
 			TreeMap bordroAltBirimiMap = pdksEntityController.getSQLParamByFieldMap(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_BORDRO_ALT_BIRIMI, Tanim.class, "getKodu", false, session);
 

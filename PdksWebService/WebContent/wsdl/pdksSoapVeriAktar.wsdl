@@ -70,6 +70,26 @@
 							<xs:element minOccurs="0" name="yoneticiPerNo" type="xs:string" />
 							<xs:element minOccurs="0" name="grubaGirisTarihi" type="xs:string" nillable="true" />
 							<xs:element minOccurs="0" name="yonetici2PerNo" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan01" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan01Kodu" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan02" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan02Kodu" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan03" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan03Kodu" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan04" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan04Kodu" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan05" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan05Kodu" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan06" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan06Kodu" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan07" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan07Kodu" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan08" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan08Kodu" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan09" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan09Kodu" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan10" type="xs:string" nillable="true" />
+							<xs:element minOccurs="0" name="digerTanimAlan10Kodu" type="xs:string" nillable="true" />
 
 						</xs:sequence>
 					</xs:extension>

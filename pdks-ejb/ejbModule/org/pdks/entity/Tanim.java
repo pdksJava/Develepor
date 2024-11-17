@@ -49,19 +49,20 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	public static final String TIPI_IL = "IL";
 	public static final String TIPI_ILCE = "ILCE";
 	public static final String TIPI_MENU_BILESENI = "MENU_BILESENI";
+	
 	public static final String TIPI_DUYURU = "DUYURULAR";
 	public static final String TIPI_BAGLI_DEPARTMANLAR = "BAGLI_DEPARTMAN";
 	public static final String TIPI_TATIL_TIPI = "TATIL_TIPI";
 	public static final String TIPI_IZIN_TIPI = "IZIN_TIPI";
 	public static final String TIPI_BORDRDO_ALANLARI = "BORDRDO_ALANLARI";
-	public static final String TIPI_SAP_IZIN_BILGI_TIPI = "SAP_IZIN_BILGI_TIPI";
+	public static final String TIPI_ERP_IZIN_BILGI_TIPI = "ERP_IZIN_BILGI_TIPI";
 	public static final String TIPI_BAKIYE_IZIN_TIPI = "BAKIYE_IZIN_TIPI";
 	public static final String TIPI_GOREV_TIPI = "GOREV_TIPI";
 	public static final String TIPI_ERP_PERSONEL_ALAN = "TIPI_ERP_PERSONEL_ALAN";
 	public static final String TIPI_KAPI_TIPI = "KAPI_TIPI";
 	public static final String TIPI_IZIN_GRUPLARI = "IZIN_TIPI_GRUPLARI";
 	public static final String TIPI_IZIN_KODU_GRUPLARI = "IZIN_KODU_GRUBU";
-	public static final String TIPI_SAP_DEPARTMAN = "SAP_DEPARTMAN";
+	public static final String TIPI_ERP_DEPARTMAN = "ERP_DEPARTMAN";
 	public static final String TIPI_PDKS_DEPARTMAN = "PDKS_DEPARTMAN";
 	public static final String TIPI_TESIS = "TESIS";
 	public static final String TIPI_SIRKET_GRUP = "SIRKET_GRUP";
@@ -77,6 +78,7 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	public static final String TIPI_PERSONEL_DINAMIK_DURUM = "PERSONEL_DINAMIK_DURUM";
 	public static final String TIPI_PERSONEL_DINAMIK_SAYISAL = "PERSONEL_DINAMIK_SAYISAL";
 	public static final String TIPI_PERSONEL_DINAMIK_TANIM = "PERSONEL_DINAMIK_TANIM";
+	public static final String TIPI_PERSONEL_DINAMIK_LISTE_TANIM = "PERSONEL_DINAMIK_LISTE_TANIM";
 	public static final String TIPI_PERSONEL_DINAMIK_ACIKLAMA = "PERSONEL_DINAMIK_ACIKLAMA";
 	public static final String TIPI_PERSONEL_DENKLESTIRME_DINAMIK_DURUM = "DENKLESTIRME_DINAMIK_DURUM";
 	public static final String TIPI_DENKLESTIRME_DINAMIK_SAYISAL = "DENKLESTIRME_DINAMIK_SAYISAL";
@@ -91,7 +93,7 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	public static final String TIPI_PERSONEL_TIPI = "PERSONEL_TIPI";
 	public static final String TIPI_SKIN = "SKIN";
 
-	public static final String TIPI_SAP_MASRAF_YERI = "SAP_MASRAF_YERI";
+	public static final String TIPI_ERP_MASRAF_YERI = "ERP_MASRAF_YERI";
 	public static final String TIPI_BORDRO_ALT_BIRIMI = "BORDRO_ALT_BIRIMI";
 	public static final String TIPI_GIRIS_TIPI = "GIRIS_TIPI";
 	public static final String TIPI_YONETICI_VARDIYA = "YONETICI_VARDIYA";

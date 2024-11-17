@@ -277,7 +277,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 					TreeMap sirketMap = pdksEntityController.getObjectByInnerObjectMapInLogic(map, Sirket.class, Boolean.FALSE);
 					map.clear();
 
-					Tanim bagliMasrafYeri = (Tanim) ortakIslemler.getSQLTanimByTipErpKodu(Tanim.TIPI_GENEL_TANIM, Tanim.TIPI_SAP_MASRAF_YERI, session);
+					Tanim bagliMasrafYeri = (Tanim) ortakIslemler.getSQLTanimByTipErpKodu(Tanim.TIPI_GENEL_TANIM, Tanim.TIPI_ERP_MASRAF_YERI, session);
 
 					Tanim bagliBodroAltBirimi = (Tanim) ortakIslemler.getSQLTanimByTipErpKodu(Tanim.TIPI_GENEL_TANIM, Tanim.TIPI_BORDRO_ALT_BIRIMI, session);
 					if (masrafYeriMap == null) {
@@ -285,7 +285,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 						if (session != null)
 							map.put(PdksEntityController.MAP_KEY_SESSION, session);
 						map.put(PdksEntityController.MAP_KEY_MAP, "getKodu");
-						map.put("tipi", Tanim.TIPI_SAP_MASRAF_YERI);
+						map.put("tipi", Tanim.TIPI_ERP_MASRAF_YERI);
 						masrafYeriMap = pdksEntityController.getObjectByInnerObjectMap(map, Tanim.class, Boolean.FALSE);
 
 					}
@@ -385,7 +385,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 								}
 								try {
 									if (sonucResultTable.getString("KOSTL") != null)
-										masrafYeri = getTanim(masrafYeriMap, Tanim.TIPI_SAP_MASRAF_YERI, sonucResultTable.getString("KOSTL"), sonucResultTable.getString("KTEXT"), bagliMasrafYeri);
+										masrafYeri = getTanim(masrafYeriMap, Tanim.TIPI_ERP_MASRAF_YERI, sonucResultTable.getString("KOSTL"), sonucResultTable.getString("KTEXT"), bagliMasrafYeri);
 									if (masrafYeri != null && masrafYeri.isGuncellendi()) {
 										if (yeni)
 											session.clear();

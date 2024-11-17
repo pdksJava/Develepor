@@ -348,7 +348,7 @@ public class PersonelERPGuncelleme implements Serializable {
 		HashMap map = new HashMap();
 
 		map.put(PdksEntityController.MAP_KEY_MAP, "getKodu");
-		map.put("tipi", Tanim.TIPI_SAP_MASRAF_YERI);
+		map.put("tipi", Tanim.TIPI_ERP_MASRAF_YERI);
 		map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		TreeMap masrafYeriMap = pdksEntityController.getObjectByInnerObjectMap(map, Tanim.class, Boolean.FALSE);
 		map.clear();

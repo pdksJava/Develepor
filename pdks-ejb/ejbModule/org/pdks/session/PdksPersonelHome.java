@@ -3230,7 +3230,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * 
 	 */
 	private void fillMasrafYeriTanimList() {
-		List<Tanim> tanimList = ortakIslemler.getTanimList(Tanim.TIPI_SAP_MASRAF_YERI, session);
+		List<Tanim> tanimList = ortakIslemler.getTanimList(Tanim.TIPI_ERP_MASRAF_YERI, session);
 		setMasrafYeriList(tanimList);
 	}
 

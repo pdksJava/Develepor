@@ -419,7 +419,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 	}
 
 	public void fillBilgiTipiList() {
-		List<Tanim> tanimList = ortakIslemler.getTanimList(Tanim.TIPI_SAP_IZIN_BILGI_TIPI, session);
+		List<Tanim> tanimList = ortakIslemler.getTanimList(Tanim.TIPI_ERP_IZIN_BILGI_TIPI, session);
 		setBilgiTipiList(tanimList);
 	}
 

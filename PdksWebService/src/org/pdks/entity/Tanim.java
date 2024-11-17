@@ -18,7 +18,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.Length;
-
 import org.pdks.genel.model.Constants;
 import org.pdks.genel.model.PdksUtil;
 
@@ -36,9 +35,11 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	public static final String COLUMN_NAME_KODU = "KODU";
 	public static final String COLUMN_NAME_ERP_KODU = "ERP_KODU";
 	public static final String COLUMN_NAME_TIPI = "TIPI";
-
 	public static final String COLUMN_NAME_PARENT_ID = "PARENTTANIM_ID";
 	public static final String COLUMN_NAME_DURUM = "DURUM";
+	public static final String COLUMN_NAME_ACIKLAMATR = "ACIKLAMATR";
+	public static final String COLUMN_NAME_ACIKLAMAEN = "ACIKLAMAEN";
+
 	public static final int DURUM_PASIF = 0;
 	public static final int DURUM_AKTIF = 1;
 	public static final String TIPI_GENEL_TANIM = "GENEL_TANIM";
@@ -46,19 +47,25 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	public static final String TIPI_IL = "IL";
 	public static final String TIPI_ILCE = "ILCE";
 	public static final String TIPI_MENU_BILESENI = "MENU_BILESENI";
+
+	public static final String TIPI_DUYURU = "DUYURULAR";
 	public static final String TIPI_BAGLI_DEPARTMANLAR = "BAGLI_DEPARTMAN";
 	public static final String TIPI_TATIL_TIPI = "TATIL_TIPI";
 	public static final String TIPI_IZIN_TIPI = "IZIN_TIPI";
-	public static final String TIPI_SAP_IZIN_BILGI_TIPI = "SAP_IZIN_BILGI_TIPI";
+	public static final String TIPI_BORDRDO_ALANLARI = "BORDRDO_ALANLARI";
+	public static final String TIPI_ERP_IZIN_BILGI_TIPI = "ERP_IZIN_BILGI_TIPI";
 	public static final String TIPI_BAKIYE_IZIN_TIPI = "BAKIYE_IZIN_TIPI";
 	public static final String TIPI_GOREV_TIPI = "GOREV_TIPI";
-	public static final String TIPI_PERSONEL_DINAMIK_DURUM = "PERSONEL_DINAMIK_DURUM";
+	public static final String TIPI_ERP_PERSONEL_ALAN = "TIPI_ERP_PERSONEL_ALAN";
 	public static final String TIPI_KAPI_TIPI = "KAPI_TIPI";
-	public static final String TIPI_SAP_DEPARTMAN = "SAP_DEPARTMAN";
-	public static final String TIPI_PDKS_DEPARTMAN = "PDKS_DEPARTMAN";
+	public static final String TIPI_IZIN_GRUPLARI = "IZIN_TIPI_GRUPLARI";
 	public static final String TIPI_IZIN_KODU_GRUPLARI = "IZIN_KODU_GRUBU";
+	public static final String TIPI_ERP_DEPARTMAN = "ERP_DEPARTMAN";
+	public static final String TIPI_PDKS_DEPARTMAN = "PDKS_DEPARTMAN";
 	public static final String TIPI_TESIS = "TESIS";
+	public static final String TIPI_SIRKET_GRUP = "SIRKET_GRUP";
 	public static final String TIPI_CINSIYET = "CINSIYET";
+	public static final String TIPI_FAZLA_MESAI_IPTAL_NEDEN = "FAZLA_MESAI_IPTAL_NEDEN";
 	public static final String TIPI_HAREKET_NEDEN = "TIPI_HAREKET_NEDEN";
 	public static final String TIPI_FAZLA_MESAI_NEDEN = "TIPI_FAZLA_MESAI_NEDEN";
 	public static final String TIPI_ONAYLAMAMA_NEDEN = "ONAYLAMAMA_NEDEN";
@@ -66,8 +73,21 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	public static final String TIPI_ISTIRAHAT_KAYNAGI = "ISTIRAHAT_KAYNAGI";
 	public static final String TIPI_PERSONEL_EK_SAHA = "PERSONEL_EK_SAHA";
 	public static final String TIPI_PERSONEL_EK_SAHA_ACIKLAMA = "PERSONEL_EK_SAHA_ACIKLAMA";
+	public static final String TIPI_PERSONEL_DINAMIK_DURUM = "PERSONEL_DINAMIK_DURUM";
+	public static final String TIPI_PERSONEL_DINAMIK_SAYISAL = "PERSONEL_DINAMIK_SAYISAL";
+	public static final String TIPI_PERSONEL_DINAMIK_TANIM = "PERSONEL_DINAMIK_TANIM";
+	public static final String TIPI_PERSONEL_DINAMIK_LISTE_TANIM = "PERSONEL_DINAMIK_LISTE_TANIM";
+	public static final String TIPI_PERSONEL_DINAMIK_ACIKLAMA = "PERSONEL_DINAMIK_ACIKLAMA";
+	public static final String TIPI_PERSONEL_DENKLESTIRME_DINAMIK_DURUM = "DENKLESTIRME_DINAMIK_DURUM";
+	public static final String TIPI_DENKLESTIRME_DINAMIK_SAYISAL = "DENKLESTIRME_DINAMIK_SAYISAL";
+	public static final String TIPI_DENKLESTIRME_DINAMIK_TANIM = "DENKLESTIRME_DINAMIK_TANIM";
 	public static final String TIPI_ISTIRAHAT_KAYNAK = "ISTIRAHAT_KAYNAK";
 	public static final String TIPI_BOLUM_DEPARTMAN = "BOLUM_DEPARTMAN";
+	public static final String TIPI_GOREV_DEPARTMAN = "GOREV_DEPARTMAN";
+	public static final String TIPI_ERP_FAZLA_MESAI = "ERP_FAZLA_MESAI";
+	public static final String TIPI_ERP_PERSONEL_DB = "ERP_PERSONEL_DB";
+	public static final String TIPI_ERP_HAKEDIS_DB = "ERP_HAKEDIS_DB";
+	public static final String TIPI_ERP_IZIN_DB = "ERP_IZIN_DB";
 	public static final String TIPI_PERSONEL_TIPI = "PERSONEL_TIPI";
 	public static final String TIPI_SKIN = "SKIN";
 
@@ -78,13 +98,13 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	public static final String TIPI_GOREV_YERI = "GOREV_YERI";
 	public static final String DEPARTMAN_KONTRATLI_HIZMETLER = "02";
 	public static final String DEPARTMAN_INSAN_KAYNAKLARI = "01";
-	public static final String TIPI_ERP_FAZLA_MESAI = "ERP_FAZLA_MESAI";
 
 	public static final String GOREV_TIPI_PERSONEL = "01";
 	public static final String GOREV_TIPI_PROJE_MUDURU = "02";
 	public static final String GOREV_TIPI_SUPERVISOR = "03";
-	public static final String IKINCI_YONETICI_ONAYLAMAZ = "ikinciYoneticiOlmaz";
+
 	public static final String DEFAULT_DOVIZ_KODU = "TL";
+	public static final String IKINCI_YONETICI_ONAYLAMAZ = "ikinciYoneticiOlmaz";
 
 	private String tipi;
 	private Tanim parentTanim;
@@ -97,9 +117,6 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	private User islemYapan;
 	private Date islemTarihi = Calendar.getInstance().getTime();
 
-	// seam-gen attribute getters/setters with annotations (you probably should
-	// edit)
-
 	public Tanim() {
 		super();
 
@@ -111,7 +128,7 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	}
 
 	@Length(max = 60)
-	@Column(name = "ACIKLAMATR")
+	@Column(name = COLUMN_NAME_ACIKLAMATR)
 	public String getAciklamatr() {
 		return aciklamatr != null ? aciklamatr.trim() : "";
 	}
@@ -122,7 +139,7 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	}
 
 	@Length(max = 60)
-	@Column(name = "ACIKLAMAEN")
+	@Column(name = COLUMN_NAME_ACIKLAMAEN)
 	public String getAciklamaen() {
 		return aciklamaen != null ? aciklamaen.trim() : "";
 	}
@@ -274,8 +291,6 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 		return super.clone();
 	}
 
- 
-
 	public boolean equals(Tanim obj) {
 		boolean eq = Boolean.FALSE;
 		if (obj != null)
@@ -283,6 +298,10 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 		else
 			eq = this.id == null;
 		return eq;
+
+	}
+
+	public void entityRefresh() {
 
 	}
 
