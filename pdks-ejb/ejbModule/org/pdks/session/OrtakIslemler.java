@@ -5660,7 +5660,7 @@ public class OrtakIslemler implements Serializable {
 		menuItemTime.setLastTime(new Date());
 		if (menuItemTime.getId() == null || isExisStoreProcedure(spName, session) == false) {
 			pdksEntityController.saveOrUpdate(session, entityManager, menuItemTime);
-		} else {
+		} else if (PdksUtil.isStrDegisti(mySession.getId(), menuItemTime.getSessionId()) || PdksUtil.isStrDegisti(parametreJSON, menuItemTime.getParametreJSON())) {
 			StringBuffer sp = new StringBuffer(spName);
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 			veriMap.put("j", parametreJSON);

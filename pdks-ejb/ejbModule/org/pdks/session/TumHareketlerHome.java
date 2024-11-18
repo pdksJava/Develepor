@@ -89,8 +89,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 	private HashMap<String, List<Tanim>> ekSahaListMap;
 	private TreeMap<String, Tanim> ekSahaTanimMap;
 	private Departman departman;
-	private Long departmanId, sirketId;
-	private List<SelectItem> sirketList;
+	private Long departmanId, sirketId, kapiId;
 	private Date basTarih, bitTarih;
 	private Kapi kapi;
 	private boolean pdksKapi = Boolean.TRUE, pdksHaricKapi = Boolean.FALSE, yemekKapi = Boolean.FALSE, guncellenmis = Boolean.FALSE, kgsUpdateGoster = Boolean.FALSE;
@@ -98,7 +97,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 	private Boolean vardiyaOkuDurum = null;
 	private String sicilNo = "", adi = "", soyadi = "", bolumAciklama;
 	private byte[] zipVeri;
-	private List<SelectItem> departmanList;
+	private List<SelectItem> departmanList, sirketList, kapiPDKSHaricList;
 
 	private Session session;
 
@@ -319,8 +318,13 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 				List<Long> list = new ArrayList<Long>(kapiMap.keySet());
 				for (Long key : list) {
 					Kapi kapi = kapiMap.get(key).getKapi();
-					if (kapi != null && kapi.getPdks())
-						kapiMap.remove(key);
+					if (kapi != null) {
+						if (kapi.getPdks())
+							kapiMap.remove(key);
+						else if (kapi.isYemekHaneKapi() && yemekKapi == false)
+							kapiMap.remove(key);
+					}
+
 				}
 				list = null;
 			}
@@ -1404,5 +1408,21 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 
 	public void setKapiGirisGuncelle(boolean kapiGirisGuncelle) {
 		this.kapiGirisGuncelle = kapiGirisGuncelle;
+	}
+
+	public List<SelectItem> getKapiPDKSHaricList() {
+		return kapiPDKSHaricList;
+	}
+
+	public void setKapiPDKSHaricList(List<SelectItem> kapiPDKSHaricList) {
+		this.kapiPDKSHaricList = kapiPDKSHaricList;
+	}
+
+	public Long getKapiId() {
+		return kapiId;
+	}
+
+	public void setKapiId(Long kapiId) {
+		this.kapiId = kapiId;
 	}
 }
