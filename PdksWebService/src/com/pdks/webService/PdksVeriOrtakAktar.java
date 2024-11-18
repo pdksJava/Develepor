@@ -2824,6 +2824,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 					parentTanim.setGuncelle(Boolean.FALSE);
 					parentTanim.setIslemYapan(islemYapan);
 					parentTanim.setIslemTarihi(new Date());
+					parentTanim.setAciklamatr(parentKey + " Tanımsız");
+					parentTanim.setAciklamaen(parentKey + " Tanımsız");
 					personelDinamikTanimAlanMap.put(parentKey, parentTanim);
 
 					saveList.add(parentTanim);
