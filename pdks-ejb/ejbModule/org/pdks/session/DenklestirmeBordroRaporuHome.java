@@ -44,6 +44,7 @@ import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDenklestirmeBordro;
 import org.pdks.entity.PersonelDenklestirmeBordroDetay;
 import org.pdks.entity.PersonelDenklestirmeDinamikAlan;
+import org.pdks.entity.PersonelDinamikAlan;
 import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
@@ -90,6 +91,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	String bordroAdres;
 
 	private List<AylikPuantaj> personelDenklestirmeList;
+	private TreeMap<String, PersonelDinamikAlan> personelDinamikAlanMap;
 
 	private Boolean secimDurum = Boolean.FALSE, sureDurum, fazlaMesaiDurum, haftaTatilDurum, artikGunDurum, resmiTatilGunDurum, resmiTatilDurum, durumERP, onaylanmayanDurum, personelERP, modelGoster = Boolean.FALSE;
 	private Boolean normalGunSaatDurum = Boolean.FALSE, haftaTatilSaatDurum = Boolean.FALSE, resmiTatilSaatDurum = Boolean.FALSE, izinSaatDurum = Boolean.FALSE;
@@ -796,6 +798,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					as.setSirket(sirket);
 					as.setTesisId(tesisId);
 					as.setLoginUser(authenticatedUser);
+					List<Personel> donemPerList = new ArrayList<Personel>();
 					try {
 						if (denklestirmeAyDurum == false)
 							denklestirmeAyDurum = authenticatedUser.isAdmin() == false && authenticatedUser.isIK() == false;
@@ -811,6 +814,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 								for (AylikPuantaj aylikPuantaj : personelDenklestirmeList) {
 									Personel personel = aylikPuantaj.getPdksPersonel();
+
 									PersonelKGS personelKGS = personel.getPersonelKGS();
 									if (personelKGS != null) {
 										if (kartNoAciklamaGoster != null && kartNoAciklamaGoster.booleanValue() == false) {
@@ -842,6 +846,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 							boolean devamlikDurumBaslik = PdksUtil.hasStringValue(getBaslikAciklama(COL_DEVAMLILIK_PRIMI));
 							for (AylikPuantaj ap : personelDenklestirmeList) {
 								PersonelDenklestirme pd = ap.getPersonelDenklestirme();
+								donemPerList.add(pd.getPdksPersonel());
 								PersonelDenklestirmeBordro personelDenklestirmeBordro = ap.getDenklestirmeBordro();
 								if (personelDenklestirmeBordro == null) {
 									personelDenklestirmeBordro = new PersonelDenklestirmeBordro();
@@ -887,6 +892,19 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 									devamlikDurumBaslik = personelDenklestirmeBordro.getDevamlilikPrimi() != null && personelDenklestirmeBordro.getDevamlilikPrimi();
 
 							}
+							personelDinamikAlanlar = PdksUtil.getAktifList(ortakIslemler.getSQLTanimListByTipKodu(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, null, session));
+							personelDinamikAlanMap = ortakIslemler.getPersonelDinamikAlanMap(donemPerList, personelDinamikAlanlar, session);
+							TreeMap<Long, Tanim> tanimMap = new TreeMap<Long, Tanim>();
+							personelDinamikAlanlar.clear();
+							for (String key : personelDinamikAlanMap.keySet()) {
+								PersonelDinamikAlan personelDinamikAlan = personelDinamikAlanMap.get(key);
+								Tanim alan = personelDinamikAlan.getAlan();
+								if (baslikMap.containsKey(alan.getKodu()) && !tanimMap.containsKey(alan.getId()))
+									tanimMap.put(alan.getId(), alan);
+							}
+							if (!tanimMap.isEmpty()) {
+								personelDinamikAlanlar.addAll(PdksUtil.sortTanimList(null, new ArrayList(tanimMap.values())));
+							}
 							setDevamlikPrimGoster(devamlikDurumBaslik);
 						}
 					} catch (Exception es) {
@@ -912,31 +930,30 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	}
 
 	public String denklestirmeExcelAktar() {
+		ByteArrayOutputStream baosDosya = null;
 		try {
-			ByteArrayOutputStream baosDosya = null;
-
 			baosDosya = denklestirmeExcelAktarDevam();
-			if (baosDosya != null) {
-				String dosyaAdi = "bordroVeri";
-				if (sirket != null)
-					dosyaAdi += "_" + sirket.getAd();
-				if (tesisId != null) {
-
-					Tanim tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, tesisId, Tanim.class, session);
-
-					if (tesis != null)
-						dosyaAdi += "_" + tesis.getAciklama();
-				}
-				if (baosDosya != null)
-					PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi + PdksUtil.convertToDateString(basGun, "_MMMMM_yyyy") + ".xlsx");
-			}
-
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
 			logger.error("PDKS hata out : " + e.getMessage());
 
 		}
+		if (baosDosya != null) {
+			String dosyaAdi = "bordroVeri";
+			if (sirket != null)
+				dosyaAdi += "_" + sirket.getAd();
+			if (tesisId != null) {
+
+				Tanim tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, tesisId, Tanim.class, session);
+
+				if (tesis != null)
+					dosyaAdi += "_" + tesis.getAciklama();
+			}
+			if (baosDosya != null)
+				PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi + PdksUtil.convertToDateString(basGun, "_MMMMM_yyyy") + ".xlsx");
+		} else
+			PdksUtil.addMessageAvailableWarn("Aktarılacak veri bulunamadı!");
 
 		return "";
 	}
@@ -968,6 +985,10 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		veriMap.put("personelDenklestirmeList", personelDenklestirmeList);
 		if (ekSaha4Tanim != null)
 			veriMap.put("ekSaha4Tanim", ekSaha4Tanim);
+		if (personelDinamikAlanlar != null && !personelDinamikAlanlar.isEmpty())
+			veriMap.put("personelDinamikAlanlar", personelDinamikAlanlar);
+		if (personelDinamikAlanMap != null && !personelDinamikAlanMap.isEmpty())
+			veriMap.put("personelDinamikAlanMap", personelDinamikAlanMap);
 		try {
 			baos = fazlaMesaiOrtakIslemler.denklestirmeExcelAktarDevam(veriMap, session);
 		} catch (Exception e) {
@@ -1912,5 +1933,13 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 	public void setPersonelDinamikAlanlar(List<Tanim> personelDinamikAlanlar) {
 		this.personelDinamikAlanlar = personelDinamikAlanlar;
+	}
+
+	public TreeMap<String, PersonelDinamikAlan> getPersonelDinamikAlanMap() {
+		return personelDinamikAlanMap;
+	}
+
+	public void setPersonelDinamikAlanMap(TreeMap<String, PersonelDinamikAlan> personelDinamikAlanMap) {
+		this.personelDinamikAlanMap = personelDinamikAlanMap;
 	}
 }

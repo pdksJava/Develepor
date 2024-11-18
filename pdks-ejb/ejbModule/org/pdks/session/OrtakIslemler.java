@@ -5655,12 +5655,14 @@ public class OrtakIslemler implements Serializable {
 	private void saveUserMenuItemDeger(UserMenuItemTime menuItemTime, String parametreJSON, HttpSession mySession, Session session) throws Exception {
 		String spName = "SP_UPDATE_USER_MENUITEM_TIME";
 		menuItemTime.setParametreJSON(parametreJSON);
+		if (mySession == null)
+			mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 		if (mySession != null)
 			menuItemTime.setSessionId(mySession.getId());
 		menuItemTime.setLastTime(new Date());
 		if (menuItemTime.getId() == null || isExisStoreProcedure(spName, session) == false) {
 			pdksEntityController.saveOrUpdate(session, entityManager, menuItemTime);
-		} else if (PdksUtil.isStrDegisti(mySession.getId(), menuItemTime.getSessionId()) || PdksUtil.isStrDegisti(parametreJSON, menuItemTime.getParametreJSON())) {
+		} else if (PdksUtil.isStrDegisti(mySession != null ? mySession.getId() : "", menuItemTime.getSessionId()) || PdksUtil.isStrDegisti(parametreJSON, menuItemTime.getParametreJSON())) {
 			StringBuffer sp = new StringBuffer(spName);
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 			veriMap.put("j", parametreJSON);

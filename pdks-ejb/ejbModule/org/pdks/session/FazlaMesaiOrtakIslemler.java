@@ -57,6 +57,7 @@ import org.pdks.entity.PersonelDenklestirmeBordro;
 import org.pdks.entity.PersonelDenklestirmeBordroDetay;
 import org.pdks.entity.PersonelDenklestirmeDinamikAlan;
 import org.pdks.entity.PersonelDenklestirmeTasiyici;
+import org.pdks.entity.PersonelDinamikAlan;
 import org.pdks.entity.PersonelDonemselDurum;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.PersonelKGS;
@@ -808,6 +809,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	public ByteArrayOutputStream denklestirmeExcelAktarDevam(HashMap<String, Object> veriMap, Session session) throws IOException {
 		ByteArrayOutputStream baos = null;
 		List<AylikPuantaj> personelDenklestirmeList = veriMap.containsKey("personelDenklestirmeList") ? (List<AylikPuantaj>) veriMap.get("personelDenklestirmeList") : new ArrayList<AylikPuantaj>();
+		List<Tanim> personelDinamikAlanlar = veriMap.containsKey("personelDinamikAlanlar") ? (List<Tanim>) veriMap.get("personelDinamikAlanlar") : new ArrayList<Tanim>();
+		TreeMap<String, PersonelDinamikAlan> personelDinamikAlanMap = veriMap.containsKey("personelDinamikAlanMap") ? (TreeMap<String, PersonelDinamikAlan>) veriMap.get("personelDinamikAlanMap") : new TreeMap<String, PersonelDinamikAlan>();
 		Sirket sirket = veriMap.containsKey("sirket") ? (Sirket) veriMap.get("sirket") : null;
 		User loginUser = veriMap.containsKey("loginUser") ? (User) veriMap.get("loginUser") : authenticatedUser;
 		if (!personelDenklestirmeList.isEmpty()) {
@@ -970,6 +973,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						baslikHeader = headerBTGun;
 
 					ExcelUtil.getCell(sheet, row, col++, baslikHeader).setCellValue(baslikMap.get(kodu));
+					if (kodu.equals(home.COL_CALISMA_MODELI)) {
+						for (Tanim alan : personelDinamikAlanlar) {
+							ExcelUtil.getCell(sheet, row, col++, baslikHeader).setCellValue(alan.getAciklama());
+						}
+					}
 
 				}
 				PersonelDenklestirmeBordro denklestirmeBordroBos = new PersonelDenklestirmeBordro();
@@ -1008,6 +1016,12 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					for (String kodu : baslikMap.keySet()) {
 						if (kodu.startsWith(home.COL_CALISMA_MODELI)) {
 							ExcelUtil.getCell(sheet, row, col++, style).setCellValue(ap.getCalismaModeli().getAciklama());
+
+							for (Tanim alan : personelDinamikAlanlar) {
+								Tanim deger = ortakIslemler.getTanimDeger(personel, alan, personelDinamikAlanMap);
+								ExcelUtil.getCell(sheet, row, col++, style).setCellValue(deger != null ? deger.getAciklama() : "");
+							}
+
 						} else if (kodu.equals(home.COL_SIRA))
 							ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(row);
 						else if (kodu.equals(home.COL_ISE_BASLAMA_TARIHI))
@@ -1382,7 +1396,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 									if (izinBordroDetayTipi == null)
 										izinBordroDetayTipi = BordroDetayTipi.fromValue(izinKodu);
 								} catch (Exception e) {
-									
+
 								}
 
 								if (haftaTatil && izinBordroDetayTipi != null) {
@@ -2076,7 +2090,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					}
 				}
 			} catch (Exception e) {
-				
+
 			}
 		}
 		List<SelectItem> selectList = new ArrayList<SelectItem>();
