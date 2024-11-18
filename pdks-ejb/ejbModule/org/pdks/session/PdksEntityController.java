@@ -1189,24 +1189,9 @@ public class PdksEntityController implements Serializable {
 			logger.error(tableName + " --> " + fieldName + " = " + value + " : " + class1.getName() + "\n" + e.getMessage());
 			e.printStackTrace();
 		}
-		if (list != null) {
-			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-				Object object = (Object) iterator.next();
-				boolean sil = false;
-				if (object instanceof BaseObject) {
-					BaseObject new_name = (BaseObject) object;
-					sil = new_name.getDurum() == null || new_name.getDurum().booleanValue() == false;
+		if (list != null)
+			PdksUtil.getAktifList(list);
 
-				} else {
-					Boolean durum = (Boolean) PdksUtil.getMethodObject(object, "getDurum", null);
-					if (durum != null)
-						sil = durum.booleanValue() == false;
-				}
-				if (sil)
-					iterator.remove();
-
-			}
-		}
 		return list;
 	}
 
@@ -1379,7 +1364,7 @@ public class PdksEntityController implements Serializable {
 			try {
 				list = getObjectBySQLList(sb, parametreMap, class1);
 			} catch (Exception e) {
-				
+
 			}
 			object = list != null && !list.isEmpty() ? list.get(0) : null;
 			if (object == null && class1 != null && !class1.getName().equals(PersonelExtra.class.getName())) {

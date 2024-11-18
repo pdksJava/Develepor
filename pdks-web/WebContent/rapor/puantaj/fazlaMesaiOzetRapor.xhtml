@@ -281,6 +281,17 @@
 									</f:facet>
 									<h:outputText value="#{ap.pdksPersonel.gorevTipi.aciklama}" />
 								</rich:column>
+								<c:forEach items="#{fazlaMesaiOzetRaporHome.personelDinamikAlanlar}" var="alan">
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="#{alan.aciklama}" />
+										</f:facet>
+										<ui:fragment rendered="#{ap.pdksPersonel!=null}">
+											<h:outputText value="#{ortakIslemler.getTanimDeger(ap.pdksPersonel,alan,fazlaMesaiOzetRaporHome.personelDinamikAlanMap).aciklama}" />
+										</ui:fragment>
+
+									</rich:column>
+								</c:forEach>
 								<rich:column style="text-align:center">
 									<f:facet name="header">
 										<h:outputText value="İşe Giriş Tarihi" />

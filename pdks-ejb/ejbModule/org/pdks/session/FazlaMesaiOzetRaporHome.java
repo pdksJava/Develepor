@@ -57,6 +57,7 @@ import org.pdks.entity.PersonelDenklestirmeBordro;
 import org.pdks.entity.PersonelDenklestirmeBordroDetay;
 import org.pdks.entity.PersonelDenklestirmeDinamikAlan;
 import org.pdks.entity.PersonelDenklestirmeTasiyici;
+import org.pdks.entity.PersonelDinamikAlan;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
@@ -117,7 +118,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	private HashMap<String, List<Tanim>> ekSahaListMap;
 
-	private List<Tanim> denklestirmeDinamikAlanlar;
+	private List<Tanim> denklestirmeDinamikAlanlar, personelDinamikAlanlar;
 
 	private VardiyaGun vardiyaGun;
 
@@ -126,6 +127,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	private DenklestirmeAy denklestirmeAy;
 
 	private TreeMap<String, Tatil> tatilGunleriMap;
+	private TreeMap<String, PersonelDinamikAlan> personelDinamikAlanMap;
 
 	private Boolean hataYok, fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, yetkili = Boolean.FALSE, resmiTatilVar = Boolean.FALSE, haftaTatilVar = Boolean.FALSE, kaydetDurum = Boolean.FALSE;
 	private Boolean onayla, hastaneSuperVisor = Boolean.FALSE, sirketIzinGirisDurum = Boolean.FALSE, hataliPuantajVar = Boolean.FALSE;
@@ -213,6 +215,10 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		if (personelDinamikAlanMap == null)
+			personelDinamikAlanMap = new TreeMap<String, PersonelDinamikAlan>();
+		else
+			personelDinamikAlanMap.clear();
 		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals(sayfaURL);
 		if (!ayniSayfa)
 			authenticatedUser.setCalistigiSayfa(sayfaURL);
@@ -862,6 +868,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 			}
 			List<Personel> donemPerList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(sirket, tesisId != null ? String.valueOf(tesisId) : null, seciliEkSaha3Id, null, denklestirmeAy != null ? aylikPuantajSablon : null, true, session);
+
 			List<Long> perIdList = new ArrayList<Long>();
 
 			for (Personel personel : donemPerList) {
@@ -883,6 +890,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				PdksUtil.addMessageWarn("Çalışma planı kaydı bulunmadı!");
 
 			}
+			donemPerList.clear();
 			for (Iterator iterator = personelDenklestirmeler.iterator(); iterator.hasNext();) {
 				PersonelDenklestirme personelDenklestirme = (PersonelDenklestirme) iterator.next();
 				if (personelDenklestirme == null || personelDenklestirme.getPersonel() == null) {
@@ -893,7 +901,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				personelDenklestirme.setGuncellendi(personelDenklestirme.getId() == null);
 				if (personelDenklestirme.isDenklestirmeDurum()) {
 					personelDenklestirmeMap.put(personelDenklestirme.getPersonelId(), personelDenklestirme);
-
+					donemPerList.add(personelDenklestirme.getPdksPersonel());
 				} else
 					iterator.remove();
 
@@ -904,7 +912,19 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			}
 			HashMap<Long, Double> sureMap = new HashMap<Long, Double>();
 			Date bugun = new Date(), sonCikisZamani = null, sonCalismaGunu = aylikPuantajSablon.getIlkGun();
-
+			personelDinamikAlanlar = PdksUtil.getAktifList(ortakIslemler.getSQLTanimListByTipKodu(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, null, session));
+			personelDinamikAlanMap = ortakIslemler.getPersonelDinamikAlanMap(donemPerList, personelDinamikAlanlar, session);
+			TreeMap<Long, Tanim> tanimMap = new TreeMap<Long, Tanim>();
+			personelDinamikAlanlar.clear();
+			for (String key : personelDinamikAlanMap.keySet()) {
+				PersonelDinamikAlan personelDinamikAlan = personelDinamikAlanMap.get(key);
+				if (!tanimMap.containsKey(personelDinamikAlan.getAlan().getId()))
+					tanimMap.put(personelDinamikAlan.getAlan().getId(), personelDinamikAlan.getAlan());
+			}
+			if (!tanimMap.isEmpty()) {
+				personelDinamikAlanlar.addAll(PdksUtil.sortTanimList(null, new ArrayList(tanimMap.values())));
+			}
+			tanimMap = null;
 			Calendar cal = Calendar.getInstance();
 			for (VardiyaGun vardiyaGun : aylikPuantajSablon.getVardiyalar()) {
 				cal.setTime(vardiyaGun.getVardiyaDate());
@@ -2115,6 +2135,9 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ekSaha1.getAciklama());
 
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Görevi");
+		for (Tanim alan : personelDinamikAlanlar) {
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(alan.getAciklama());
+		}
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İşe Giriş Tarihi");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İşten Ayrılma Tarihi");
 		if (modelGoster)
@@ -2371,7 +2394,10 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					if (ekSaha1 != null)
 						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(personel.getEkSaha1() != null ? personel.getEkSaha1().getAciklama() : "");
 					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(personel.getGorevTipi() != null ? personel.getGorevTipi().getAciklama() : "");
-
+					for (Tanim alan : personelDinamikAlanlar) {
+						Tanim deger = ortakIslemler.getTanimDeger(personel, alan, personelDinamikAlanMap);
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(deger != null ? deger.getAciklama() : "");
+					}
 					if (personel.getIseBaslamaTarihi() != null)
 						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(authenticatedUser.dateFormatla(personel.getIseBaslamaTarihi()));
 					else
@@ -3865,5 +3891,21 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	public static void setSayfaURL(String sayfaURL) {
 		FazlaMesaiOzetRaporHome.sayfaURL = sayfaURL;
+	}
+
+	public List<Tanim> getPersonelDinamikAlanlar() {
+		return personelDinamikAlanlar;
+	}
+
+	public void setPersonelDinamikAlanlar(List<Tanim> personelDinamikAlanlar) {
+		this.personelDinamikAlanlar = personelDinamikAlanlar;
+	}
+
+	public TreeMap<String, PersonelDinamikAlan> getPersonelDinamikAlanMap() {
+		return personelDinamikAlanMap;
+	}
+
+	public void setPersonelDinamikAlanMap(TreeMap<String, PersonelDinamikAlan> personelDinamikAlanMap) {
+		this.personelDinamikAlanMap = personelDinamikAlanMap;
 	}
 }

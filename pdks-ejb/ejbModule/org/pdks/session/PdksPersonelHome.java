@@ -123,8 +123,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private HashMap<Long, List<Tanim>> dinamikPersonelAciklamaMap;
 	private TreeMap<String, Tanim> ekSahaTanimMap;
 	private List<Tanim> bolumDepartmanlari, gorevDepartmanlari, personelTipleri;
-	private List<Tanim> dinamikDurumList, dinamikSayisalList, dinamikAciklamaList;
-	private List<PersonelDinamikAlan> dinamikPersonelDurumList, dinamikPersonelSayisalList, dinamikPersonelAciklamaList;
+	private List<Tanim> dinamikDurumList, dinamikSayisalList, dinamikTanimList;
+	private List<PersonelDinamikAlan> dinamikPersonelDurumList, dinamikPersonelSayisalList, dinamikPersonelTanimList;
 
 	private PersonelDinamikAlan personelDinamikAlan;
 	private HashMap<String, Boolean> personelDurumMap = new HashMap<String, Boolean>();
@@ -1022,7 +1022,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 										pdksEntityController.saveOrUpdate(session, entityManager, pda);
 									}
 								}
-								for (PersonelDinamikAlan pda : dinamikPersonelAciklamaList) {
+								for (PersonelDinamikAlan pda : dinamikPersonelTanimList) {
 									if (pda.getId() != null || pda.getTanimDeger() != null) {
 										pda.setPersonel(pdksPersonel);
 										pdksEntityController.saveOrUpdate(session, entityManager, pda);
@@ -1808,7 +1808,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 		dinamikPersonelDurumList.clear();
 		dinamikPersonelSayisalList.clear();
-		dinamikPersonelAciklamaList.clear();
+		dinamikPersonelTanimList.clear();
 		dinamikPersonelAciklamaMap.clear();
 		if (pdksPersonel.getId() != null)
 			getPersonelDinamikMap(pdksPersonel.getId());
@@ -1824,11 +1824,13 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 		for (Tanim tanim : dinamikSayisalList)
 			dinamikPersonelSayisalList.add(getPersonelDinamikAlan(tanim, pdksPersonel));
-		if (!dinamikAciklamaList.isEmpty()) {
+		for (Tanim tanim : dinamikTanimList)
+			dinamikPersonelTanimList.add(getPersonelDinamikAlan(tanim, pdksPersonel));
+		if (!dinamikTanimList.isEmpty()) {
 			List<Long> idList = new ArrayList<Long>();
-			for (Tanim tanim : dinamikAciklamaList) {
+			for (Tanim tanim : dinamikTanimList) {
 				idList.add(tanim.getId());
-				dinamikPersonelAciklamaList.add(getPersonelDinamikAlan(tanim, pdksPersonel));
+
 			}
 			HashMap map = new HashMap();
 
@@ -1838,11 +1840,10 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			sb.append(" WHERE " + Tanim.COLUMN_NAME_DURUM + " = 1  AND " + Tanim.COLUMN_NAME_TIPI + " = :t ");
 			sb.append(" AND " + Tanim.COLUMN_NAME_PARENT_ID + "  :" + fieldName);
 			map.put(fieldName, idList);
-			map.put("t", Tanim.TIPI_PERSONEL_DINAMIK_ACIKLAMA);
+			map.put("t", Tanim.TIPI_PERSONEL_DINAMIK_LISTE_TANIM);
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<Tanim> tanimList = pdksEntityController.getSQLParamList(idList, sb, fieldName, map, Tanim.class, session);
-
 			if (!tanimList.isEmpty())
 				tanimList = PdksUtil.sortObjectStringAlanList(tanimList, "getErpKodu", null);
 			for (Tanim tanim : tanimList) {
@@ -2984,8 +2985,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				dinamikPersonelDurumList = new ArrayList<PersonelDinamikAlan>();
 			if (dinamikPersonelSayisalList == null)
 				dinamikPersonelSayisalList = new ArrayList<PersonelDinamikAlan>();
-			if (dinamikPersonelAciklamaList == null)
-				dinamikPersonelAciklamaList = new ArrayList<PersonelDinamikAlan>();
+			if (dinamikPersonelTanimList == null)
+				dinamikPersonelTanimList = new ArrayList<PersonelDinamikAlan>();
+
 			if (dinamikPersonelAciklamaMap == null)
 				dinamikPersonelAciklamaMap = new HashMap<Long, List<Tanim>>();
 			if (dinamikDurumList == null)
@@ -2996,10 +2998,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				dinamikSayisalList = new ArrayList<Tanim>();
 			else
 				dinamikSayisalList.clear();
-			if (dinamikAciklamaList == null)
-				dinamikAciklamaList = new ArrayList<Tanim>();
-			else
-				dinamikAciklamaList.clear();
+
 			if (personelDinamikMap == null)
 				personelDinamikMap = new TreeMap<String, PersonelDinamikAlan>();
 			if (personelDinamikMap == null)
@@ -3015,7 +3014,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				if (!perIdList.isEmpty()) {
 					getPersonelDinamikMap(perIdList);
 				}
-				dinamikAciklamaList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, session);
+				dinamikTanimList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, session);
 				dinamikDurumList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_DURUM, session);
 				dinamikSayisalList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_SAYISAL, session);
 			}
@@ -3365,10 +3364,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			dinamikSayisalList = new ArrayList<Tanim>();
 		else
 			dinamikSayisalList.clear();
-		if (dinamikAciklamaList == null)
-			dinamikAciklamaList = new ArrayList<Tanim>();
-		else
-			dinamikAciklamaList.clear();
 
 		if (personelERPList == null)
 			personelERPList = new ArrayList<PersonelERP>();
@@ -5378,14 +5373,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		this.dinamikSayisalList = dinamikSayisalList;
 	}
 
-	public List<Tanim> getDinamikAciklamaList() {
-		return dinamikAciklamaList;
-	}
-
-	public void setDinamikAciklamaList(List<Tanim> dinamikAciklamaList) {
-		this.dinamikAciklamaList = dinamikAciklamaList;
-	}
-
 	public TreeMap<String, PersonelDinamikAlan> getPersonelDinamikMap() {
 		return personelDinamikMap;
 	}
@@ -5416,14 +5403,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 	public void setDinamikPersonelSayisalList(List<PersonelDinamikAlan> dinamikPersonelSayisalList) {
 		this.dinamikPersonelSayisalList = dinamikPersonelSayisalList;
-	}
-
-	public List<PersonelDinamikAlan> getDinamikPersonelAciklamaList() {
-		return dinamikPersonelAciklamaList;
-	}
-
-	public void setDinamikPersonelAciklamaList(List<PersonelDinamikAlan> dinamikPersonelAciklamaList) {
-		this.dinamikPersonelAciklamaList = dinamikPersonelAciklamaList;
 	}
 
 	public HashMap<Long, List<Tanim>> getDinamikPersonelAciklamaMap() {
@@ -5809,6 +5788,22 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 	public void setIzinKartiVardir(Boolean izinKartiVardir) {
 		this.izinKartiVardir = izinKartiVardir;
+	}
+
+	public List<Tanim> getDinamikTanimList() {
+		return dinamikTanimList;
+	}
+
+	public void setDinamikTanimList(List<Tanim> dinamikTanimList) {
+		this.dinamikTanimList = dinamikTanimList;
+	}
+
+	public List<PersonelDinamikAlan> getDinamikPersonelTanimList() {
+		return dinamikPersonelTanimList;
+	}
+
+	public void setDinamikPersonelTanimList(List<PersonelDinamikAlan> dinamikPersonelTanimList) {
+		this.dinamikPersonelTanimList = dinamikPersonelTanimList;
 	}
 
 }

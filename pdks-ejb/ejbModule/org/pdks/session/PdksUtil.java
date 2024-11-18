@@ -77,6 +77,7 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.persistence.HibernateSessionProxy;
 import org.json.JSONObject;
 import org.json.XML;
+import org.pdks.entity.BaseObject;
 import org.pdks.entity.Dosya;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
@@ -132,6 +133,31 @@ public class PdksUtil implements Serializable {
 	private static Integer yarimYuvarlaLast = 1, sicilNoUzunluk = null;
 
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
+
+	/**
+	 * @param list
+	 */
+	public static List getAktifList(List list) {
+		if (list != null) {
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				Object object = (Object) iterator.next();
+				boolean sil = false;
+				if (object instanceof BaseObject) {
+					BaseObject new_name = (BaseObject) object;
+					sil = new_name.getDurum() == null || new_name.getDurum().booleanValue() == false;
+
+				} else {
+					Boolean durum = (Boolean) PdksUtil.getMethodObject(object, "getDurum", null);
+					if (durum != null)
+						sil = durum.booleanValue() == false;
+				}
+				if (sil)
+					iterator.remove();
+
+			}
+		}
+		return list;
+	}
 
 	/**
 	 * @param gunSira

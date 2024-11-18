@@ -381,7 +381,7 @@
 
 								</rich:column>
 							</c:forEach>
-							<c:forEach items="#{pdksPersonelHome.dinamikAciklamaList}" var="alan">
+							<c:forEach items="#{pdksPersonelHome.dinamikTanimList}" var="alan">
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="#{alan.aciklama}" />
@@ -1305,10 +1305,10 @@
 												</h:selectBooleanCheckbox>
 											</s:decorate>
 										</c:forEach>
-										<c:forEach items="#{pdksPersonelHome.dinamikPersonelAciklamaList}" var="dpa">
+										<c:forEach items="#{pdksPersonelHome.dinamikPersonelTanimList}" var="dpa">
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">#{dpa.alan.aciklama}</ui:define>
-												<h:selectOneMenu value="#{dpa.tanimDeger}">
+												<h:selectOneMenu value="#{dpa.tanimDeger}" disabled="#{dpa.alan.guncelle==false}">
 													<s:selectItems var="alan" value="#{pdksPersonelHome.dinamikPersonelAciklamaMap.get(dpa.alan.id)}" label="#{alan.aciklama}"
 														noSelectionLabel="Lütfen seçiniz" />
 													<s:convertEntity />

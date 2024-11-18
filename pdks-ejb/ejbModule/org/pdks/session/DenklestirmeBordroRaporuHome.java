@@ -161,7 +161,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	private TreeMap<String, TreeMap<String, List<VardiyaGun>>> izinTipiPersonelVardiyaMap;
 	private TreeMap<String, Tanim> baslikMap;
 	private TreeMap<Long, Personel> izinTipiPersonelMap;
-
+	private List<Tanim> personelDinamikAlanlar;
 	private Date sonGun, ilkGun;
 	private Session session;
 
@@ -1904,5 +1904,13 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 	public static void setSayfaURL(String sayfaURL) {
 		DenklestirmeBordroRaporuHome.sayfaURL = sayfaURL;
+	}
+
+	public List<Tanim> getPersonelDinamikAlanlar() {
+		return personelDinamikAlanlar;
+	}
+
+	public void setPersonelDinamikAlanlar(List<Tanim> personelDinamikAlanlar) {
+		this.personelDinamikAlanlar = personelDinamikAlanlar;
 	}
 }
