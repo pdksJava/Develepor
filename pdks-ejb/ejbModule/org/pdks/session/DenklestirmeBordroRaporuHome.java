@@ -892,19 +892,31 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 									devamlikDurumBaslik = personelDenklestirmeBordro.getDevamlilikPrimi() != null && personelDenklestirmeBordro.getDevamlilikPrimi();
 
 							}
-							personelDinamikAlanlar = PdksUtil.getAktifList(ortakIslemler.getSQLTanimListByTipKodu(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, null, session));
-							personelDinamikAlanMap = ortakIslemler.getPersonelDinamikAlanMap(donemPerList, personelDinamikAlanlar, session);
-							TreeMap<Long, Tanim> tanimMap = new TreeMap<Long, Tanim>();
-							personelDinamikAlanlar.clear();
-							for (String key : personelDinamikAlanMap.keySet()) {
-								PersonelDinamikAlan personelDinamikAlan = personelDinamikAlanMap.get(key);
-								Tanim alan = personelDinamikAlan.getAlan();
-								if (baslikMap.containsKey(alan.getKodu()) && !tanimMap.containsKey(alan.getId()))
-									tanimMap.put(alan.getId(), alan);
+							if (baslikMap.containsKey(COL_CALISMA_MODELI)) {
+								personelDinamikAlanlar = PdksUtil.getAktifList(ortakIslemler.getSQLTanimListByTipKodu(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, null, session));
+								personelDinamikAlanMap = ortakIslemler.getPersonelDinamikAlanMap(donemPerList, personelDinamikAlanlar, session);
+								TreeMap<Long, Tanim> tanimMap = new TreeMap<Long, Tanim>();
+								personelDinamikAlanlar.clear();
+								for (String key : personelDinamikAlanMap.keySet()) {
+									PersonelDinamikAlan personelDinamikAlan = personelDinamikAlanMap.get(key);
+									Tanim alan = personelDinamikAlan.getAlan();
+									if (baslikMap.containsKey(alan.getKodu()) && !tanimMap.containsKey(alan.getId()))
+										tanimMap.put(alan.getId(), alan);
+								}
+								if (!tanimMap.isEmpty()) {
+									personelDinamikAlanlar.addAll(PdksUtil.sortTanimList(null, new ArrayList(tanimMap.values())));
+								}
+							} else {
+								if (personelDinamikAlanlar == null)
+									personelDinamikAlanlar = new ArrayList<Tanim>();
+								else
+									personelDinamikAlanlar.clear();
+								if (personelDinamikAlanMap == null)
+									personelDinamikAlanMap = new TreeMap<String, PersonelDinamikAlan>();
+								else
+									personelDinamikAlanMap.clear();
 							}
-							if (!tanimMap.isEmpty()) {
-								personelDinamikAlanlar.addAll(PdksUtil.sortTanimList(null, new ArrayList(tanimMap.values())));
-							}
+
 							setDevamlikPrimGoster(devamlikDurumBaslik);
 						}
 					} catch (Exception es) {
