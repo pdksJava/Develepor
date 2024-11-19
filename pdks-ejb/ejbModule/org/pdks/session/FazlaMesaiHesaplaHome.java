@@ -444,6 +444,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 				}
 			}
+			linkAdres = null;
 			if (linkAdresKey != null || (ayStr != null && yilStr != null)) {
 				if (linkAdresKey != null) {
 					HashMap<String, String> veriMap = PdksUtil.getDecodeMapByBase64(linkAdresKey);
