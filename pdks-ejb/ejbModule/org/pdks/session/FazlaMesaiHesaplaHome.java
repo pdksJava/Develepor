@@ -1470,7 +1470,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				sirketIdMap = null;
 				kontratliPerIdList = null;
 				perMap = null;
-				linkAdres = getLinkAdresBilgi(inputPersonelNo, true);
 				boolean flush = Boolean.FALSE;
 				List<String> gunList = new ArrayList<String>();
 				for (Iterator iterator = aylikPuantajDefault.getAyinVardiyalari().iterator(); iterator.hasNext();) {
@@ -2539,6 +2538,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					}
 
 				}
+
 				if (!(authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()) && yasalFazlaCalismaAsanSaat)
 					yasalFazlaCalismaAsanSaat = ortakIslemler.getParameterKey("yasalFazlaCalismaAsanSaat").equals("1");
 				if (testDurum)
@@ -2831,6 +2831,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		} else
 			hataliPersoneller = null;
 		setAylikPuantajList(puantajList);
+		linkAdres = null;
+		if (denklestirmeAyDurum)
+			linkAdres = getLinkAdresBilgi(inputPersonelNo, true);
+
 		return puantajList;
 	}
 

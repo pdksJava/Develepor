@@ -1790,6 +1790,7 @@ public class VardiyaGun extends BaseObject {
 			if (personel != null)
 				key += "&";
 			key += "tarih=" + PdksUtil.convertToDateString(vardiyaDate, "yyyyMMdd");
+			key += "&calistir=" + vardiyaDate.getTime();
 		}
 		String planKey = PdksUtil.getEncodeStringByBase64(key);
 		return planKey;
@@ -2365,7 +2366,6 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
 
 	}
 }
