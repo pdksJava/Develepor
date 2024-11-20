@@ -2931,6 +2931,25 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (!ortakIslemler.getParameterKeyHasStringValue("gebeSutIzniDurum"))
 			gebeSutIzniDurumList.clear();
 		dosyaGuncelleDurum();
+		if (!list.isEmpty()) {
+			if (ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametrePersonelERPTableView()) || personelERPGuncelleme.equalsIgnoreCase("E")) {
+				TreeMap<String, PersonelView> viewMap = new TreeMap<String, PersonelView>();
+				for (PersonelView personelView : list) {
+					if (personelView.isERPGuncelle() == false) {
+						viewMap.put(personelView.getSicilNo(), personelView);
+					}
+				}
+				if (!viewMap.isEmpty()) {
+					String tableName = ortakIslemler.getParameterKey(ortakIslemler.getParametrePersonelERPTableView());
+					List<PersonelERPDB> erpList = pdksEntityController.getSQLParamByFieldList(tableName, PersonelERPDB.COLUMN_NAME_PERSONEL_NO, new ArrayList(viewMap.keySet()), PersonelERPDB.class, session);
+					for (PersonelERPDB personelERPDB : erpList) {
+						viewMap.get(personelERPDB.getPersonelNo()).setYeniPersonel(Boolean.TRUE);
+					}
+					erpList = null;
+				}
+				viewMap = null;
+			}
+		}
 		setTanimsizPersonelList(list);
 
 		List<String> yeniList = yeniPersonelOlustur(false);

@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Immutable;
+import org.pdks.erp.entity.PersonelERPDB;
 import org.pdks.security.entity.User;
 import org.pdks.session.PdksUtil;
 
@@ -43,6 +44,7 @@ public class PersonelView implements Serializable {
 	private Long id;
 	private Personel pdksPersonel;
 	private PersonelKGS personelKGS;
+	private PersonelERPDB personelERPDB;
 	private String adi, soyadi;
 	private User kullanici;
 	private String pdksPersonelAciklama, kgsSicilNo, ccAdres, bccAdres, hareketAdres;
@@ -346,5 +348,22 @@ public class PersonelView implements Serializable {
 	@Transient
 	public boolean isYeniPersonelMi() {
 		return yeniPersonel != null && yeniPersonel.booleanValue();
+	}
+
+	@Transient
+	public boolean isERPGuncelle() {
+		boolean guncelle = personelKGS != null;
+		if (guncelle)
+			guncelle = personelERPDB != null || (pdksPersonel != null && pdksPersonel.getId() != null);
+		return guncelle;
+	}
+
+	@Transient
+	public PersonelERPDB getPersonelERPDB() {
+		return personelERPDB;
+	}
+
+	public void setPersonelERPDB(PersonelERPDB personelERPDB) {
+		this.personelERPDB = personelERPDB;
 	}
 }
