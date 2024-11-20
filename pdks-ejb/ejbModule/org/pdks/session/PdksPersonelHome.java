@@ -695,7 +695,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
 				VardiyaSablonu vardiyaSablonu = (VardiyaSablonu) iterator.next();
 				Departman departman = vardiyaSablonu.getSirket() != null ? vardiyaSablonu.getSirket().getDepartman() : vardiyaSablonu.getDepartman();
-				if (departman != null && !pdksDepartman.getId().equals(departman.getId()))
+				if (departman != null && pdksDepartman != null && !pdksDepartman.getId().equals(departman.getId()))
 					iterator.remove();
 
 			}
