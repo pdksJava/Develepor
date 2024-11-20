@@ -92,7 +92,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 	private Long departmanId, sirketId, kapiId;
 	private Date basTarih, bitTarih;
 	private Kapi kapi;
-	private boolean pdksKapi = Boolean.TRUE, pdksHaricKapi = Boolean.FALSE, yemekKapi = Boolean.FALSE, guncellenmis = Boolean.FALSE, kgsUpdateGoster = Boolean.FALSE;
+	private boolean pdksKapi = Boolean.TRUE, pdksHaricKapi = Boolean.FALSE, pdksHaricKapiVar = Boolean.FALSE, yemekKapi = Boolean.FALSE, yemekKapiVar = Boolean.FALSE, guncellenmis = Boolean.FALSE, kgsUpdateGoster = Boolean.FALSE;
 	private boolean ikRole = false, vardiyaOku = false, kapiGirisGuncelle = false;
 	private Boolean vardiyaOkuDurum = null;
 	private String sicilNo = "", adi = "", soyadi = "", bolumAciklama;
@@ -183,15 +183,23 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 			setPdksKapi(Boolean.TRUE);
 		setKapiList(new ArrayList<Kapi>());
 		departmanId = null;
+		pdksKapi = true;
+		yemekKapiVar = false;
+		pdksHaricKapiVar = false;
 		if (authenticatedUser.isAdmin() || ikRole) {
 			filDepartmanList();
 			if (departmanList.size() == 1) {
 				departmanId = (Long) departmanList.get(0).getValue();
-
 				departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
-
 			}
-
+			List<Kapi> kapiList = pdksEntityController.getSQLParamByFieldList(Kapi.TABLE_NAME, Kapi.COLUMN_NAME_DURUM, Boolean.TRUE, Kapi.class, session);
+			for (Kapi kapi : kapiList) {
+				if (!pdksHaricKapiVar)
+					pdksHaricKapiVar = kapi.getPdks() != null && kapi.getPdks().booleanValue() == false;
+				if (!yemekKapiVar)
+					yemekKapiVar = kapi.isYemekHaneKapi();
+			}
+			kapiList = null;
 		}
 
 		if (!authenticatedUser.isAdmin()) {
@@ -1424,5 +1432,21 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 
 	public void setKapiId(Long kapiId) {
 		this.kapiId = kapiId;
+	}
+
+	public boolean isPdksHaricKapiVar() {
+		return pdksHaricKapiVar;
+	}
+
+	public void setPdksHaricKapiVar(boolean pdksHaricKapiVar) {
+		this.pdksHaricKapiVar = pdksHaricKapiVar;
+	}
+
+	public boolean isYemekKapiVar() {
+		return yemekKapiVar;
+	}
+
+	public void setYemekKapiVar(boolean yemekKapiVar) {
+		this.yemekKapiVar = yemekKapiVar;
 	}
 }

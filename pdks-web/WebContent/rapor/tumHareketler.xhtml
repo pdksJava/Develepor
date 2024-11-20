@@ -60,18 +60,20 @@
 								<ui:define name="label">PDKS Kapilari</ui:define>
 								<h:selectBooleanCheckbox value="#{tumHareketlerHome.pdksKapi}" />
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or tumHareketlerHome.ikRole}">
-								<ui:define name="label">PDKS Hariç Kapilari</ui:define>
-								<h:selectBooleanCheckbox value="#{tumHareketlerHome.pdksHaricKapi}">
-									<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" reRender="hareketGirisForm" />
-
-								</h:selectBooleanCheckbox>
-							</s:decorate>
-							<c:if test="#{tumHareketlerHome.pdksHaricKapi}">
+							<c:if test="#{tumHareketlerHome.pdksHaricKapiVar}">
 								<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or tumHareketlerHome.ikRole}">
-									<ui:define name="label">Yemek Hane Kapilari</ui:define>
-									<h:selectBooleanCheckbox value="#{tumHareketlerHome.yemekKapi}" />
+									<ui:define name="label">PDKS Hariç Kapilari</ui:define>
+									<h:selectBooleanCheckbox value="#{tumHareketlerHome.pdksHaricKapi}">
+										<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" reRender="hareketGirisForm" />
+
+									</h:selectBooleanCheckbox>
 								</s:decorate>
+								<c:if test="#{tumHareketlerHome.pdksHaricKapi and tumHareketlerHome.yemekKapiVar}">
+									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or tumHareketlerHome.ikRole}">
+										<ui:define name="label">Yemek Hane Kapilari</ui:define>
+										<h:selectBooleanCheckbox value="#{tumHareketlerHome.yemekKapi}" />
+									</s:decorate>
+								</c:if>
 							</c:if>
 							<ui:fragment rendered="#{authenticatedUser.admin or tumHareketlerHome.ikRole or authenticatedUser.sistemYoneticisi}">
 								<s:decorate template="/layout/edit.xhtml"
