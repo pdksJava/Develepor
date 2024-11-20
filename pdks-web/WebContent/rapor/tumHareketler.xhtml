@@ -56,11 +56,11 @@
 
 								</h:selectOneMenu>
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or tumHareketlerHome.ikRole}">
-								<ui:define name="label">PDKS Kapilari</ui:define>
-								<h:selectBooleanCheckbox value="#{tumHareketlerHome.pdksKapi}" />
-							</s:decorate>
-							<c:if test="#{tumHareketlerHome.pdksHaricKapiVar}">
+ 							<c:if test="#{tumHareketlerHome.pdksHaricKapiVar}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or tumHareketlerHome.ikRole}">
+									<ui:define name="label">PDKS Kapilari</ui:define>
+									<h:selectBooleanCheckbox value="#{tumHareketlerHome.pdksKapi}" />
+								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or tumHareketlerHome.ikRole}">
 									<ui:define name="label">PDKS Hariç Kapilari</ui:define>
 									<h:selectBooleanCheckbox value="#{tumHareketlerHome.pdksHaricKapi}">
