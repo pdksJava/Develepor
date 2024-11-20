@@ -99,6 +99,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		// default bugun icin ise gelmeyen raporu cekili olsun
 		Date dateBas = PdksUtil.buGun();
 		setDate(dateBas);
+		setBitisTarih(dateBas);
 		vardiyaGunList.clear();
 		// devamsizlikListeOlustur();
 
