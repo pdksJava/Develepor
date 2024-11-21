@@ -1715,7 +1715,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (haftaTatil) {
 						if (authenticatedUser.isIK() == false)
 							yaz = Boolean.FALSE;
-						sb.append("Arka arkaya hafta tatili olamaz! ");
+						sb.append("Arka arkaya hafta tatili olamaz! [ " + authenticatedUser.dateFormatla(vardiyaGun.getVardiyaDate()) + " ] ");
 					}
 					haftaTatil = Boolean.TRUE;
 				} else
@@ -3663,7 +3663,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				durum = vardiyaPlanKontrol(personelDenklestirme, null, null, plan, "", false) || ortakIslemler.getParameterKey("calismaPlanKaydetme").equals("1") == false;
 			if (durum) {
 				if (personelDenklestirme.isGuncellendi())
- 					flush = Boolean.TRUE;
+					flush = Boolean.TRUE;
 
 				for (VardiyaGun pdksVardiyaGun : personelAylikPuantaj.getVardiyalar()) {
 					if (pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getId() != null) {
