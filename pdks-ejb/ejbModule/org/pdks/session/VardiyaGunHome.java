@@ -3802,6 +3802,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 				if (personelDenklestirme.getFazlaMesaiIzinKullan())
 					personelDenklestirme.setFazlaMesaiOde(Boolean.FALSE);
+
 				savePersonelDenklestirme(personelDenklestirme);
 				if (personelDenklestirme.getCalismaModeliAy() != null && personelDenklestirme.getCalismaModeliAy().getDurum().booleanValue() == false) {
 					CalismaModeliAy cma = personelDenklestirme.getCalismaModeliAy();
@@ -10800,6 +10801,26 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		personelDenklestirme.setGuncellemeTarihi(new Date());
 		personelDenklestirme.setDevredenSure(null);
 		saveOrUpdate(personelDenklestirme);
+		if (personelDenklestirme.getPersonelDenklestirmeGecenAy() == null && personelDenklestirme.getCalismaModeliAy() != null) {
+			try {
+				CalismaModeli cm = personelDenklestirme.getCalismaModeliAy().getCalismaModeli();
+				if (cm != null) {
+					Personel personel = personelDenklestirme.getPdksPersonel();
+					if (personel.getCalismaModeli() == null || !personel.getCalismaModeli().getId().equals(cm.getId())) {
+						personel.setCalismaModeli(cm);
+						if (authenticatedUser.isAdmin() == false) {
+							personel.setGuncellemeTarihi(new Date());
+							personel.setGuncelleyenUser(authenticatedUser);
+						}
+						saveOrUpdate(personel);
+					}
+				}
+
+			} catch (Exception e) {
+
+			}
+
+		}
 	}
 
 	/**
