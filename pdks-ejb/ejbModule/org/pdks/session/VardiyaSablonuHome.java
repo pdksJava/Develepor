@@ -78,13 +78,18 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 		setLastVardiya(pdksVardiya);
 	}
 
+	/**
+	 * @param sablonu
+	 */
 	public void kayitGuncelle(VardiyaSablonu sablonu) {
 		if (sablonu == null) {
+			fillBagliOlduguDepartmanTanimList();
 			sablonu = new VardiyaSablonu();
 			if (seciliSirket != null) {
 				sablonu.setSirket(seciliSirket);
 				sablonu.setDepartman(seciliSirket.getDepartman());
-			}
+			} else if (departmanList.size() == 1)
+				sablonu.setDepartman(departmanList.get(0));
 		}
 		setInstance(sablonu);
 		fillPdksVardiyaList();
@@ -110,16 +115,6 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 		}
 
 		setDepartmanList(tanimList);
-	}
-
-	public void vardiyaSablonuEkle() {
-		this.clearInstance();
-		fillPdksVardiyaList();
-		setVardiyaList(new ArrayList<Vardiya>());
-		setVardiyaVar(Boolean.FALSE);
-		VardiyaSablonu sablonu = getInstance();
-		if (departmanList.size() == 1)
-			sablonu.setDepartman(departmanList.get(0));
 	}
 
 	@Override
@@ -217,7 +212,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 				for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
 					VardiyaSablonu pdksVardiyaSablonu = (VardiyaSablonu) iterator.next();
 					if (pdksVardiyaSablonu.getDurum()) {
-					 
+
 						vardiyaSablonList.add(pdksVardiyaSablonu);
 						iterator.remove();
 					}
@@ -303,7 +298,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 			}
 			if (!pdksList.isEmpty())
 				vardiyaCalisanList.addAll(pdksList);
-			 
+
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
@@ -318,7 +313,6 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 		if (getInstance().getId() != null)
 			session.refresh(getInstance());
 	}
- 
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
