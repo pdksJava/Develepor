@@ -5660,8 +5660,10 @@ public class OrtakIslemler implements Serializable {
 		if (mySession != null)
 			menuItemTime.setSessionId(mySession.getId());
 		menuItemTime.setLastTime(new Date());
+		boolean flush = false;
 		if (menuItemTime.getId() == null || isExisStoreProcedure(spName, session) == false) {
 			pdksEntityController.saveOrUpdate(session, entityManager, menuItemTime);
+			flush = true;
 		} else if (PdksUtil.isStrDegisti(mySession != null ? mySession.getId() : "", menuItemTime.getSessionId()) || PdksUtil.isStrDegisti(parametreJSON, menuItemTime.getParametreJSON())) {
 			StringBuffer sp = new StringBuffer(spName);
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
@@ -5670,8 +5672,10 @@ public class OrtakIslemler implements Serializable {
 			veriMap.put("mt", menuItemTime.getId());
 			veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			pdksEntityController.execSP(veriMap, sp);
+			flush = true;
 		}
-		session.flush();
+		if (flush)
+			session.flush();
 	}
 
 	/**
