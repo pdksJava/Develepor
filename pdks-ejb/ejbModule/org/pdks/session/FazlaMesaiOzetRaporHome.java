@@ -686,9 +686,10 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 		lastMap.put("sicilNo", seciliPersonel.getPdksSicilNo());
 		String sayfa = MenuItemConstant.fazlaMesaiHesapla;
-		if (personelDenklestirme.getDurum().equals(Boolean.TRUE) || personelDenklestirme.isOnaylandi())
+		if (personelDenklestirme.getDurum().equals(Boolean.TRUE) || personelDenklestirme.isOnaylandi()) {
+			lastMap.put("calistir", Boolean.TRUE);
 			lastMap.put("sayfaURL", FazlaMesaiHesaplaHome.sayfaURL);
-		else {
+		} else {
 			lastMap.put("sayfaURL", VardiyaGunHome.sayfaURL);
 			sayfa = MenuItemConstant.vardiyaPlani;
 		}

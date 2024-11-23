@@ -429,7 +429,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		String sayfa = MenuItemConstant.fazlaMesaiHesapla;
 		if (personelDenklestirme.getDurum().equals(Boolean.TRUE) || personelDenklestirme.isOnaylandi()) {
 			lastMap.put("sayfaURL", FazlaMesaiHesaplaHome.sayfaURL);
-			lastMap.put("calistir", FazlaMesaiHesaplaHome.sayfaURL);
+			lastMap.put("calistir", Boolean.TRUE);
 		} else {
 			lastMap.put("sayfaURL", VardiyaGunHome.sayfaURL);
 			sayfa = MenuItemConstant.vardiyaPlani;

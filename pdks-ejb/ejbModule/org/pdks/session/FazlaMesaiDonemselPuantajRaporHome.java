@@ -271,9 +271,10 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 
 		lastMap.put("sicilNo", seciliPersonel.getPdksSicilNo());
 		String sayfa = MenuItemConstant.fazlaMesaiHesapla;
-		if (personelDenklestirme.getDurum().equals(Boolean.TRUE) || personelDenklestirme.isOnaylandi())
+		if (personelDenklestirme.getDurum().equals(Boolean.TRUE) || personelDenklestirme.isOnaylandi()) {
 			lastMap.put("sayfaURL", FazlaMesaiHesaplaHome.sayfaURL);
-		else {
+			lastMap.put("calistir", Boolean.TRUE);
+		} else {
 			lastMap.put("sayfaURL", VardiyaGunHome.sayfaURL);
 			sayfa = MenuItemConstant.vardiyaPlani;
 		}
@@ -1532,7 +1533,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 					dap.setSutIzniDurumu(false);
 					if (!suaDurum)
 						suaDurum = dap.getPersonelDenklestirme().isSuaDurumu();
-					 
+
 					PersonelDenklestirme personelDenklestirme = dap.getPersonelDenklestirme();
 					double fazlaMesaiMaxSure = personelDenklestirme.getDenklestirmeAy().getFazlaMesaiMaxSure();
 					double ucretiOdenenMesaiSure = 0.0d;
