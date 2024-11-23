@@ -5595,10 +5595,11 @@ public class OrtakIslemler implements Serializable {
 				map1.putAll(map);
 				String parametreJSON = gson.toJson(map1);
 				if (menuItemTime != null) {
-					if (menuItemTime.getParametreJSON() == null || !parametreJSON.equals(menuItemTime.getParametreJSON()))
+					if (menuItemTime.getParametreJSON() == null || !parametreJSON.equals(menuItemTime.getParametreJSON())) {
 						saveUserMenuItemDeger(menuItemTime, parametreJSON, menuItemTime.getMySession(), session);
-
-					if (authenticatedUser != null && parametreJSON != null)
+						session.flush();
+					}
+ 					if (authenticatedUser != null && parametreJSON != null)
 						authenticatedUser.setParametreJSON(parametreJSON);
 					map1 = null;
 					gson = null;
