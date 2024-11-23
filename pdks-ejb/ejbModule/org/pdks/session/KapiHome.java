@@ -111,22 +111,22 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 		HashMap parametreMap = new HashMap();
 		try {
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT P.* FROM VIEW_KAPI_SIRKET_KGS_LIST  P ");
-			String str = " INNER  JOIN " + Kapi.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " ON K." + Kapi.COLUMN_NAME_KGS_ID + " = P." + KapiKGS.COLUMN_NAME_ID;
+			sb.append("select P.* from VIEW_KAPI_SIRKET_KGS_LIST  P ");
+			String str = " inner  join " + Kapi.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on K." + Kapi.COLUMN_NAME_KGS_ID + " = P." + KapiKGS.COLUMN_NAME_ID;
 			if (PdksUtil.hasStringValue(kapiView.getKapiAciklama())) {
 				sb.append(str);
-				sb.append(" AND K." + Kapi.COLUMN_NAME_ACIKLAMA + " LIKE :k");
+				sb.append(" and K." + Kapi.COLUMN_NAME_ACIKLAMA + " like :k");
 				parametreMap.put("k", "%" + kapiView.getKapiAciklama().trim() + "%");
 				str = "";
 			}
 			if (kapiView.getKapi().getTipi() != null) {
 				sb.append(str);
-				sb.append(" AND K." + Kapi.COLUMN_NAME_KAPI_TIPI + " = :t");
+				sb.append(" and K." + Kapi.COLUMN_NAME_KAPI_TIPI + " = :t");
 				parametreMap.put("t", kapiView.getKapi().getTipi().getId());
 				str = "";
 			}
 			if (PdksUtil.hasStringValue(kapiView.getKapiKGSAciklama())) {
-				sb.append(" WHERE P." + KapiKGS.COLUMN_NAME_ACIKLAMA + " LIKE :ka");
+				sb.append(" where P." + KapiKGS.COLUMN_NAME_ACIKLAMA + " like :ka");
 				parametreMap.put("ka", "%" + kapiView.getKapiKGSAciklama().trim() + "%");
 			}
 			if (session != null)
@@ -158,9 +158,9 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 				String fieldName = "k";
 				HashMap fields = new HashMap();
 				sb = new StringBuffer();
-				sb.append("SELECT P.* FROM " + KapiKGS.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append("select P.* from " + KapiKGS.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" where  P." + KapiKGS.COLUMN_NAME_ID + " :" + fieldName);
-				sb.append(" ORDER BY " + KapiKGS.COLUMN_NAME_ACIKLAMA);
+				sb.append(" order by " + KapiKGS.COLUMN_NAME_ACIKLAMA);
 				fields.put(fieldName, idList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);

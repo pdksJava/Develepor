@@ -336,12 +336,12 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			HashMap map = new HashMap();
 
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT DISTINCT S.* FROM " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
-			sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
-			sb.append(" WHERE S." + Sirket.COLUMN_NAME_DURUM + " = 1  AND S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1 ");
+			sb.append("select DISTINCT S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
+			sb.append(" where S." + Sirket.COLUMN_NAME_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1 ");
 			if (authenticatedUser.isIKSirket())
-				sb.append(" AND S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
-			sb.append(" AND S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d ");
+				sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
+			sb.append(" and S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d ");
 
 			if (!authenticatedUser.isAdmin() && !authenticatedUser.isIKAdmin())
 				map.put("d", authenticatedUser.getDepartman().getId());
@@ -739,15 +739,15 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					List idler = new ArrayList();
 					StringBuffer sb = new StringBuffer();
 					String fieldName = "p";
-					sb.append("SELECT * FROM " + Personel.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
-					sb.append(" WHERE " + Personel.COLUMN_NAME_ID + " :" + fieldName + "  AND " + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :s ");
+					sb.append("select * from " + Personel.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+					sb.append(" where " + Personel.COLUMN_NAME_ID + " :" + fieldName + " and " + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :s ");
 					for (Personel personel : personeller)
 						idler.add(personel.getId());
 
 					if (!Personel.getGrubaGirisTarihiAlanAdi().equalsIgnoreCase(Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI))
-						sb.append(" AND " + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b");
+						sb.append(" and " + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b");
 					else
-						sb.append(" AND " + Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI + " <= :b");
+						sb.append(" and " + Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI + " <= :b");
 					parametreMap2.put("b", date);
 
 					parametreMap2.put("s", date);
@@ -762,10 +762,10 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						}
 						fieldName = "p";
 						sb = new StringBuffer();
-						sb.append("SELECT F.* FROM " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
-						sb.append(" INNER JOIN " + PersonelFazlaMesai.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " ON F." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
-						sb.append(" AND F." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1 ");
-						sb.append(" WHERE V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " =:t AND  V." + VardiyaGun.COLUMN_NAME_PERSONEL + "  :" + fieldName);
+						sb.append("select F.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
+						sb.append(" inner join " + PersonelFazlaMesai.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " on F." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
+						sb.append(" and F." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1 ");
+						sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " =:t and  V." + VardiyaGun.COLUMN_NAME_PERSONEL + "  :" + fieldName);
 						parametreMap2.clear();
 						parametreMap2.put("t", date);
 						parametreMap2.put(fieldName, idler);

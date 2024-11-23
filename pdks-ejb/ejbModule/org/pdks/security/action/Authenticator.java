@@ -151,11 +151,11 @@ public class Authenticator implements IAuthenticator, Serializable {
 				String sicilNo = "900" + ldapUser.getStaffId().substring(3).trim();
 				HashMap parametreMap = new HashMap();
 				StringBuffer sb = new StringBuffer();
-				sb.append("SELECT U.* FROM " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
-				sb.append("INNER JOIN " + User.TABLE_NAME + " U " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " AND U." + User.COLUMN_NAME_DURUM + " = 1 AND U." + User.COLUMN_NAME_DEPARTMAN + " IS NOT NULL ");
-				sb.append(" WHERE P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :sicilNo AND P." + Personel.COLUMN_NAME_DURUM + " = 1  ");
-				sb.append(" AND  P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= convert(date,GETDATE()) AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
-				sb.append(" AND  P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
+				sb.append("select U.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+				sb.append("inner join " + User.TABLE_NAME + " U " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " and U." + User.COLUMN_NAME_DURUM + " = 1 and U." + User.COLUMN_NAME_DEPARTMAN + " is not null ");
+				sb.append(" where P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :sicilNo and P." + Personel.COLUMN_NAME_DURUM + " = 1  ");
+				sb.append(" and  P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= convert(date,GETDATE()) and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
+				sb.append(" and  P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
 				parametreMap.put("sicilNo", sicilNo);
 				if (session != null)
 					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -331,11 +331,11 @@ public class Authenticator implements IAuthenticator, Serializable {
 		User authenticated = null;
 		if (userName.indexOf("%") > 0) {
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT S.* FROM " + User.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
-			// sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON  P." + Personel.COLUMN_NAME_ID + " = S." + User.COLUMN_NAME_PERSONEL);
-			// sb.append(" AND  P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= convert(date,GETDATE()) AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
+			sb.append("select S.* from " + User.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+			// sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = S." + User.COLUMN_NAME_PERSONEL);
+			// sb.append(" and  P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= convert(date,GETDATE()) and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
 			// if (userName.indexOf("%") > 0)
-			sb.append(" WHERE S." + fieldName + " LIKE :userName");
+			sb.append(" where S." + fieldName + " like :userName");
 			HashMap fields = new HashMap();
 			fields.put("userName", userName);
 			if (session != null)

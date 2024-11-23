@@ -459,23 +459,23 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 			StringBuffer sb = null;
 			if ((personelId == null || personelId.isEmpty()) && (sirketId != null || departmanId != null)) {
 				sb = new StringBuffer();
-				sb.append("SELECT V.* FROM " + PdksPersonelView.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
-				sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_ID + " = V." + PdksPersonelView.COLUMN_NAME_PERSONEL);
+				sb.append("select V.* from " + PdksPersonelView.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PdksPersonelView.COLUMN_NAME_PERSONEL);
 				if (!admin) {
-					sb.append(" AND  P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :ys");
+					sb.append(" and  P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :ys");
 					ArrayList<String> list = authenticatedUser.getYetkiTumPersonelNoList();
 					parametreMap.put("ys", list);
 				}
 				if (PdksUtil.hasStringValue(sicilNo)) {
-					sb.append(" AND  P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :sicilNo");
+					sb.append(" and  P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :sicilNo");
 					parametreMap.put("sicilNo", sicilNo);
 				} else if (admin) {
 					if (sirketId != null) {
-						sb.append(" AND  P." + Personel.COLUMN_NAME_SIRKET + " = :sirketId");
+						sb.append(" and  P." + Personel.COLUMN_NAME_SIRKET + " = :sirketId");
 						parametreMap.put("sirketId", sirketId);
 					} else if (departmanId != null) {
-						sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " ON S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
-						sb.append(" AND  S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :departmanId");
+						sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
+						sb.append(" and  S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :departmanId");
 						parametreMap.put("departmanId", departmanId);
 					}
 				}
@@ -496,13 +496,13 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 
 			parametreMap.clear();
 			sb = new StringBuffer();
-			sb.append("SELECT V." + HareketKGS.COLUMN_NAME_ID + " FROM " + HareketKGS.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append("select V." + HareketKGS.COLUMN_NAME_ID + " from " + HareketKGS.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 
-			sb.append(" WHERE V." + HareketKGS.COLUMN_NAME_ZAMAN + " >=:vardiyaBas");
-			sb.append(" AND V." + HareketKGS.COLUMN_NAME_ZAMAN + " <:vardiyaBit");
+			sb.append(" where V." + HareketKGS.COLUMN_NAME_ZAMAN + " >=:vardiyaBas");
+			sb.append(" and V." + HareketKGS.COLUMN_NAME_ZAMAN + " <:vardiyaBit");
 
 			if (kapiMap != null && !kapiMap.isEmpty()) {
-				sb.append(" AND  V." + HareketKGS.COLUMN_NAME_KAPI + (kapiMap.size() > 1 ? " IN  ( " : "="));
+				sb.append(" and  V." + HareketKGS.COLUMN_NAME_KAPI + (kapiMap.size() > 1 ? " IN  ( " : "="));
 				for (Iterator iterator = kapiMap.keySet().iterator(); iterator.hasNext();) {
 					Long kapiId = (Long) iterator.next();
 					sb.append(kapiId + (iterator.hasNext() ? "," : ""));
@@ -510,12 +510,12 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 				if (kapiMap.size() > 1)
 					sb.append(" )");
 			} else
-				sb.append(" AND 1=2");
+				sb.append(" and 1=2");
 
 			if ((sirketId != null || departmanId != null) && personelId.isEmpty())
-				sb.append(" AND 1=2");
+				sb.append(" and 1=2");
 			else if (!admin && personelId != null && !personelId.isEmpty() && (kapiMap.size() + personelId.size() < 1900)) {
-				sb.append(" AND V." + HareketKGS.COLUMN_NAME_PERSONEL + ":p");
+				sb.append(" and V." + HareketKGS.COLUMN_NAME_PERSONEL + ":p");
 				parametreMap.put("p", (ArrayList) personelId.clone());
 			}
 
@@ -674,10 +674,10 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					String fieldName = "s";
 					parametreMap.clear();
 					sb = new StringBuffer();
-					sb.append("SELECT P.ISLEM_ID,HAREKET_ZAMANI from PDKS_LOG P " + PdksEntityController.getSelectLOCK() + " ");
-					sb.append(" INNER JOIN PDKS_ISLEM I " + PdksEntityController.getJoinLOCK() + " ON I.ID=P.ISLEM_ID AND I.ISLEM_TIPI='U' ");
+					sb.append("select P.ISLEM_ID,HAREKET_ZAMANI from PDKS_LOG P " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append(" inner join PDKS_ISLEM I " + PdksEntityController.getJoinLOCK() + " on I.ID=P.ISLEM_ID and I.ISLEM_TIPI='U' ");
 
-					sb.append(" WHERE P.ISLEM_ID :" + fieldName + " AND P.DURUM=0 ");
+					sb.append(" where P.ISLEM_ID :" + fieldName + " and P.DURUM=0 ");
 					parametreMap.put(fieldName, islemIdler);
 					if (session != null)
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);

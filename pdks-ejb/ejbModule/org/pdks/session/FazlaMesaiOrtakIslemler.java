@@ -409,21 +409,21 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		TreeMap<String, DenklestirmeAy> map = new TreeMap<String, DenklestirmeAy>();
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("select D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 		String str = "WHERE";
 		if (basTarih != null) {
 			sb.append(str + " (D." + DenklestirmeAy.COLUMN_NAME_YIL + " * 100 + D." + DenklestirmeAy.COLUMN_NAME_AY + ">=:b1)");
 			int b1 = Integer.parseInt(PdksUtil.convertToDateString(basTarih, "yyyyMM"));
 			fields.put("b1", b1);
-			str = " AND ";
+			str = " and ";
 		}
 		if (bitTarih != null) {
 			sb.append(str + " (D." + DenklestirmeAy.COLUMN_NAME_YIL + " * 100 + D." + DenklestirmeAy.COLUMN_NAME_AY + "<=:b2)");
 			int b2 = Integer.parseInt(PdksUtil.convertToDateString(bitTarih, "yyyyMM"));
 			fields.put("b2", b2);
-			str = " AND ";
+			str = " and ";
 		}
-		sb.append(" ORDER BY D." + DenklestirmeAy.COLUMN_NAME_AY);
+		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_AY);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<DenklestirmeAy> list = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
@@ -544,8 +544,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				String fieldName = "p";
 				fields.clear();
 				sb = new StringBuffer();
-				sb.append("SELECT V.* FROM " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
-				sb.append(" WHERE V." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + dm.getId() + " AND V." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
+				sb.append("select V.* from " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append(" where V." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + dm.getId() + " and V." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
 				if (sicilDolu == false && (hataliVeriGetir == null || hataliVeriGetir == false)) {
 					hataliDurum = true;
 				}
@@ -633,14 +633,14 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				String fieldName = "p";
 				HashMap map = new HashMap();
 				sb = new StringBuffer();
-				sb.append("SELECT DISTINCT V.* FROM " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
-				sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
-				sb.append(" AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
-				sb.append(" AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
-				sb.append(" WHERE V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "< :bitTarih  ");
-				sb.append("  AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <=CONVERT(DATE, GETDATE() ) AND  V." + VardiyaGun.COLUMN_NAME_DURUM + " = 0 ");
-				sb.append(" AND V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
-				sb.append(" ORDER BY V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
+				sb.append("select DISTINCT V.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
+				sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
+				sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
+				sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "< :bitTarih  ");
+				sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <=CONVERT(DATE, GETDATE() ) and  V." + VardiyaGun.COLUMN_NAME_DURUM + " = 0 ");
+				sb.append(" and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
+				sb.append(" order by V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 				Date basTarih = PdksUtil.getDateFromString((yil * 100 + ay) + "01");
 				Date bitTarih = ortakIslemler.tariheAyEkleCikar(cal, basTarih, 1);
 				map.put(fieldName, perIdList);
@@ -677,15 +677,15 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					String fieldName = "p";
 					HashMap map = new HashMap();
 					sb = new StringBuffer();
-					sb.append("SELECT DISTINCT VG.* FROM VARDIYA_GUN_SAAT_VIEW V " + PdksEntityController.getSelectLOCK() + " ");
-					sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
-					sb.append(" AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
-					sb.append(" AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
-					sb.append(" INNER JOIN " + Vardiya.TABLE_NAME + " VA " + PdksEntityController.getJoinLOCK() + " ON VA." + Vardiya.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA + " AND VA.VARDIYATIPI=''");
-					sb.append(" INNER JOIN " + VardiyaGun.TABLE_NAME + " VG " + PdksEntityController.getJoinLOCK() + " ON VG." + VardiyaGun.COLUMN_NAME_ID + " = V.VARDIYA_GUN_ID ");
-					sb.append(" WHERE V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "< :bitTarih  ");
-					sb.append("  AND V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " < CONVERT(DATE, GETDATE() ) AND  V." + VardiyaSaat.COLUMN_NAME_CALISMA_SURESI + " = 0 ");
-					sb.append("  AND  V." + VardiyaSaat.COLUMN_NAME_NORMAL_SURE + " > 0   AND  V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
+					sb.append("select DISTINCT VG.* from VARDIYA_GUN_SAAT_VIEW V " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
+					sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
+					sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
+					sb.append(" inner join " + Vardiya.TABLE_NAME + " VA " + PdksEntityController.getJoinLOCK() + " on VA." + Vardiya.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA + " and VA.VARDIYATIPI=''");
+					sb.append(" inner join " + VardiyaGun.TABLE_NAME + " VG " + PdksEntityController.getJoinLOCK() + " on VG." + VardiyaGun.COLUMN_NAME_ID + " = V.VARDIYA_GUN_ID ");
+					sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "< :bitTarih  ");
+					sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " < CONVERT(DATE, GETDATE() ) and  V." + VardiyaSaat.COLUMN_NAME_CALISMA_SURESI + " = 0 ");
+					sb.append(" and  V." + VardiyaSaat.COLUMN_NAME_NORMAL_SURE + " > 0  and  V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
 					Date basTarih = PdksUtil.getDateFromString((yil * 100 + ay) + "01");
 					Date bitTarih = ortakIslemler.tariheAyEkleCikar(cal, basTarih, 1);
 					map.put(fieldName, perIdList);
@@ -1174,12 +1174,12 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		int sonDonem = (maxYil * 100) + cal.get(Calendar.MONTH) + 1;
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" INNER  JOIN " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " ON PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
-		sb.append("    AND  PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
-		sb.append(" WHERE D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y  AND D." + DenklestirmeAy.COLUMN_NAME_AY + ">0 ");
+		sb.append("select DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" inner  join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
+		sb.append("   and  PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
+		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_AY + ">0 ");
 		if (donemYil == maxYil) {
-			sb.append(" AND ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ")<=:s");
+			sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ")<=:s");
 			fields.put("s", sonDonem);
 		}
 		String ilkDonem = ortakIslemler.getParameterKey("ilkMaasDonemi");
@@ -1189,9 +1189,9 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				ilkDonem = sistemBaslangicYili + ilkDonem;
 		}
 		if (PdksUtil.hasStringValue(ilkDonem))
-			sb.append(" AND ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100) + D." + DenklestirmeAy.COLUMN_NAME_AY + ")> " + ilkDonem);
+			sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100) + D." + DenklestirmeAy.COLUMN_NAME_AY + ")> " + ilkDonem);
 		fields.put("y", donemYil);
-		sb.append(" ORDER BY D." + DenklestirmeAy.COLUMN_NAME_AY);
+		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_AY);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<DenklestirmeAy> list = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
@@ -1685,8 +1685,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	public List<AylikPuantaj> getAylikFazlaMesaiKontrol(int yil, int ay, Integer ardisik, Long bolumId, boolean ardisikDurum, TreeMap<Long, Personel> idMap, Session session) {
 		List<AylikPuantaj> aylikPuantajList = new ArrayList<AylikPuantaj>();
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT * FROM " + DenklestirmeAy.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
-		sb.append(" WHERE " + DenklestirmeAy.COLUMN_NAME_YIL + " = :y  AND " + DenklestirmeAy.COLUMN_NAME_AY + " <= :a");
+		sb.append("select * from " + DenklestirmeAy.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+		sb.append(" where " + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and " + DenklestirmeAy.COLUMN_NAME_AY + " <= :a");
 		HashMap fields = new HashMap();
 		fields.put("a", ay);
 		fields.put("y", yil);
@@ -2041,13 +2041,13 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				idList.add(personel.getId());
 			String fieldName = "s";
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT DISTINCT P.* FROM " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append(" INNER JOIN " + CalismaModeliAy.TABLE_NAME + " CD " + PdksEntityController.getJoinLOCK() + " ON CD." + CalismaModeliAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY);
-			sb.append(" INNER JOIN " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " ON CM." + CalismaModeli.COLUMN_NAME_ID + " = CD." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI);
-			sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_ID + " = " + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
-			sb.append(" WHERE PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + dm.getId());
-			sb.append(" AND (P.MAIL_TAKIP=1 OR P.PDKS=1 OR CM.FAZLA_CALISMA_GORUNTULENSIN=1)");
-			sb.append(" AND PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
+			sb.append("select DISTINCT P.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CD " + PdksEntityController.getJoinLOCK() + " on CD." + CalismaModeliAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY);
+			sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CM." + CalismaModeli.COLUMN_NAME_ID + " = CD." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI);
+			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = " + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
+			sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + dm.getId());
+			sb.append(" and (P.MAIL_TAKIP=1 or P.PDKS=1 or CM.FAZLA_CALISMA_GORUNTULENSIN=1)");
+			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
 			HashMap fields = new HashMap();
 			fields.put(fieldName, idList);
 			if (session != null)
@@ -2407,23 +2407,23 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 			StringBuffer sb = new StringBuffer();
 			String fieldName = "s";
-			sb.append("SELECT DISTINCT S.* FROM " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_ID + " = " + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
-			sb.append(" AND " + Personel.COLUMN_NAME_SIRKET + " :" + fieldName);
+			sb.append("select DISTINCT S.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = " + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
+			sb.append(" and " + Personel.COLUMN_NAME_SIRKET + " :" + fieldName);
 			if (bitTarih != null) {
-				sb.append(" AND P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :a1 ");
+				sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :a1 ");
 				fields.put("a1", bitTarih);
 			}
 			if (basTarih != null) {
-				sb.append(" AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :a2 ");
+				sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :a2 ");
 				fields.put("a2", basTarih);
 			}
-			sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " ON S." + Tanim.COLUMN_NAME_ID + " = " + Personel.COLUMN_NAME_SIRKET);
-			sb.append(" WHERE PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
-			sb.append(" AND PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
+			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Tanim.COLUMN_NAME_ID + " = " + Personel.COLUMN_NAME_SIRKET);
+			sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
+			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 			if (authenticatedUser.isIKSirket())
-				sb.append(" AND S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
-			sb.append(" ORDER BY S." + Sirket.COLUMN_NAME_AD);
+				sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
+			sb.append(" order by S." + Sirket.COLUMN_NAME_AD);
 			fields.put(fieldName, idler);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -2751,25 +2751,25 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						idler.add(tanim.getId());
 
 				StringBuffer sb = new StringBuffer();
-				sb.append("SELECT DISTINCT T.* FROM " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
-				sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_ID + " = " + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
+				sb.append("select DISTINCT T.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = " + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 				if (bitTarih != null) {
-					sb.append(" AND P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :a1 ");
+					sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :a1 ");
 					fields.put("a1", bitTarih);
 				}
 				if (basTarih != null) {
-					sb.append(" AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :a2 ");
+					sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :a2 ");
 					fields.put("a2", basTarih);
 				}
 				if (sirket != null)
-					sb.append(" AND P." + Personel.COLUMN_NAME_SIRKET + " = " + sirket.getId());
+					sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + sirket.getId());
 				if (tesisId != null && tesisId > 0L)
-					sb.append(" AND P." + Personel.COLUMN_NAME_TESIS + " = " + tesisId);
-				sb.append(" INNER JOIN " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " ON T." + Tanim.COLUMN_NAME_ID + " = " + (fieldAdi.equals("ekSaha3") ? Personel.COLUMN_NAME_EK_SAHA3 : Personel.COLUMN_NAME_TESIS));
+					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = " + tesisId);
+				sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = " + (fieldAdi.equals("ekSaha3") ? Personel.COLUMN_NAME_EK_SAHA3 : Personel.COLUMN_NAME_TESIS));
 				String fieldName = "t";
-				sb.append(" AND T." + Tanim.COLUMN_NAME_ID + " :" + fieldName);
-				sb.append(" WHERE PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
-				sb.append(" AND PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
+				sb.append(" and T." + Tanim.COLUMN_NAME_ID + " :" + fieldName);
+				sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
+				sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 				fields.put(fieldName, idler);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -2807,8 +2807,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		String fieldName = "p";
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT S.* from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" WHERE S." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " AND S." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
+		sb.append("select S.* from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" where S." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " and S." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
 		fields.put(fieldName, perIdList);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -2953,16 +2953,16 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 							idler.add(tanim.getId());
 
 					StringBuffer sb = new StringBuffer();
-					sb.append("SELECT DISTINCT T.* FROM " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
-					sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_ID + " = " + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
+					sb.append("select DISTINCT T.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = " + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 					if (sirketId != null)
-						sb.append(" AND P." + Personel.COLUMN_NAME_SIRKET + " = " + sirketId);
+						sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + sirketId);
 
 					String fieldName = "t";
-					sb.append(" INNER JOIN " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " ON T." + Tanim.COLUMN_NAME_ID + " = " + Personel.COLUMN_NAME_EK_SAHA3);
-					sb.append(" AND T." + Tanim.COLUMN_NAME_ID + " :" + fieldName);
-					sb.append(" WHERE PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
-					sb.append(" AND PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
+					sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = " + Personel.COLUMN_NAME_EK_SAHA3);
+					sb.append(" and T." + Tanim.COLUMN_NAME_ID + " :" + fieldName);
+					sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
+					sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 					fields.put(fieldName, idler);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);

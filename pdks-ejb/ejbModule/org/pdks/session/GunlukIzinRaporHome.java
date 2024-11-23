@@ -148,12 +148,12 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 
 		StringBuffer sb = new StringBuffer();
 		sb.append("select S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" WHERE S." + Sirket.COLUMN_NAME_DURUM + " = 1  AND S." + Sirket.COLUMN_NAME_PDKS + " = 1");
+		sb.append(" where S." + Sirket.COLUMN_NAME_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_PDKS + " = 1");
 		if (!authenticatedUser.isAdmin()) {
-			sb.append(" AND S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d");
+			sb.append(" and S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d");
 			map.put("d", authenticatedUser.getDepartman().getId());
 			if (authenticatedUser.isIKSirket())
-				sb.append(" AND S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
+				sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
 		}
 
 		if (session != null)

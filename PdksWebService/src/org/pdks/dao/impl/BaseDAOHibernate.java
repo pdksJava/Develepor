@@ -48,7 +48,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	public static final String MAP_KEY_SP_NAME = "SP_NAME";
 	public static final String MAP_KEY_SESSION = "session";
 	public static final String SELECT_KARAKTER = "t";
-	public static final String WHERE = " where ";
+	public static final String where = " where ";
 
 	/*
 	 * (non-Javadoc)

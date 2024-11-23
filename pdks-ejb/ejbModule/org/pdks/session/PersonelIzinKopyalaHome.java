@@ -248,8 +248,8 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 					parametreMap.put("p", tumPersonel);
 					parametreMap.put(PdksEntityController.MAP_KEY_MAP, "getPdksSicilNo");
 					StringBuffer sb = new StringBuffer();
-					sb.append("SELECT V.* FROM " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
-					sb.append(" WHERE V." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :p");
+					sb.append("select V.* from " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append(" where V." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :p");
 					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 					TreeMap<String, Personel> map = pdksEntityController.getObjectBySQLMap(sb, parametreMap, Personel.class, Boolean.FALSE);
 					boolean renk = false;
@@ -476,12 +476,12 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 	protected void izinKopyalaJAVA(String idStr, TreeMap<Long, Personel> iliskiMap, User sistemAdminUser) {
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT I.* FROM " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" INNER JOIN " + IzinTipi.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " ON T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI);
-		sb.append(" WHERE I." + PersonelIzin.COLUMN_NAME_PERSONEL + " :pId");
+		sb.append("select I.* from " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" inner join " + IzinTipi.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI);
+		sb.append(" where I." + PersonelIzin.COLUMN_NAME_PERSONEL + " :pId");
 		if (idStr.length() > 0)
-			sb.append(" AND I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " IN (" + idStr + ") ");
-		sb.append(" ORDER BY I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
+			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " IN (" + idStr + ") ");
+		sb.append(" order by I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
 		fields.put("pId", iliskiMap.keySet());
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<PersonelIzin> personelBakiyeIzinler = pdksEntityController.getObjectBySQLList(sb, fields, PersonelIzin.class);

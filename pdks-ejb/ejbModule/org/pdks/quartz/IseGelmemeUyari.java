@@ -185,9 +185,9 @@ public class IseGelmemeUyari implements Serializable {
 		try {
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT P.* FROM " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 1 AND P." + Personel.COLUMN_NAME_HAREKET_MAIL_ID + " IS NOT NULL");
-			sb.append(" AND P." + Personel.COLUMN_NAME_MAIL_TAKIP + " = 1 AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
+			sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_HAREKET_MAIL_ID + " is not null");
+			sb.append(" and P." + Personel.COLUMN_NAME_MAIL_TAKIP + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			// fields.put("ad", "hareketMailGrubu");
@@ -1880,15 +1880,15 @@ public class IseGelmemeUyari implements Serializable {
 			MailObject mail = new MailObject();
 			HashMap fields = new HashMap();
 			sb = new StringBuffer();
-			sb.append("WITH BUGUN AS ( ");
-			sb.append("		select 1 AS ID ");
+			sb.append("with BUGUN as ( ");
+			sb.append("		select 1 as ID ");
 			sb.append("	),");
-			sb.append("	DEP_YONETICI AS (");
-			sb.append("		SELECT R.ROLENAME DEP_YONETICI_ROL_ADI FROM " + Role.TABLE_NAME + " R " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append("		WHERE R." + Role.COLUMN_NAME_ROLE_NAME + " = '" + Role.TIPI_DIREKTOR_SUPER_VISOR + "' AND R." + Role.COLUMN_NAME_STATUS + " = 1 ");
+			sb.append("	DEP_YONETICI as (");
+			sb.append("		select R.ROLENAME DEP_YONETICI_ROL_ADI from " + Role.TABLE_NAME + " R " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append("		where R." + Role.COLUMN_NAME_ROLE_NAME + " = '" + Role.TIPI_DIREKTOR_SUPER_VISOR + "' and R." + Role.COLUMN_NAME_STATUS + " = 1 ");
 			sb.append("	) ");
-			sb.append("	SELECT COALESCE(DY.DEP_YONETICI_ROL_ADI,'') DEP_YONETICI_ROL_ADI, GETDATE() AS TARIH FROM BUGUN B ");
-			sb.append("	LEFT JOIN DEP_YONETICI DY " + PdksEntityController.getJoinLOCK() + " ON 1=1");
+			sb.append("	select COALESCE(DY.DEP_YONETICI_ROL_ADI,'') DEP_YONETICI_ROL_ADI, GETDATE() as TARIH from BUGUN B ");
+			sb.append("	left join DEP_YONETICI DY " + PdksEntityController.getJoinLOCK() + " on 1=1");
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<Object[]> veriList = pdksEntityController.getObjectBySQLList(sb, fields, null);

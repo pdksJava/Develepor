@@ -247,10 +247,10 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				if (!hucreMap.isEmpty()) {
 					HashMap fields = new HashMap();
 					StringBuffer sb = new StringBuffer();
-					sb.append("SELECT V." + Personel.COLUMN_NAME_ID + " FROM " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
-					sb.append(" WHERE " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :pId  ");
-					sb.append(" AND V." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
-					sb.append(" AND V." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :bitTarih ");
+					sb.append("select V." + Personel.COLUMN_NAME_ID + " from " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append(" where " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :pId  ");
+					sb.append(" and V." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
+					sb.append(" and V." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :bitTarih ");
 					Calendar cal = Calendar.getInstance();
 					cal.set(denklestirmeAy.getYil(), denklestirmeAy.getAy() - 1, 1);
 					Date basTarih = PdksUtil.getDate(cal.getTime());
@@ -271,8 +271,8 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 						}
 						fields.clear();
 						sb = new StringBuffer();
-						sb.append("SELECT V." + PersonelDenklestirme.COLUMN_NAME_ID + " FROM " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
-						sb.append(" WHERE " + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " AND " + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :pId  ");
+						sb.append("select V." + PersonelDenklestirme.COLUMN_NAME_ID + " from " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+						sb.append(" where " + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " and " + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :pId  ");
 						fields.put(PdksEntityController.MAP_KEY_MAP, "getSicilNo");
 						// fields.put("denklestirmeAy", denklestirmeAy.getId());
 						fields.put("pId", personelIdler);
@@ -1083,11 +1083,11 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 
 			fields.clear();
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT V." + PersonelDenklestirme.COLUMN_NAME_ID + " FROM " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append("select V." + PersonelDenklestirme.COLUMN_NAME_ID + " from " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 			Boolean ikSirket = departman == null || departman.isAdminMi();
 			if (sirketId != null || (sicilNo != null && sicilNo.length() > 0) || sanalPersonelDurum != 0) {
-				sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON  P." + Personel.COLUMN_NAME_ID + " = V." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
-				sb.append(" AND  P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + "<:bitGun AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basGun ");
+				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
+				sb.append(" and  P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + "<:bitGun and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basGun ");
 				fields.put("basGun", basGun);
 				fields.put("bitGun", bitGun);
 				if (sirketId != null) {
@@ -1096,16 +1096,16 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 
 				}
 				if (sicilNo != null && sicilNo.length() > 0) {
-					sb.append(" AND P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :sicilNo ");
+					sb.append(" and P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :sicilNo ");
 					fields.put("sicilNo", sicilNo);
 				}
 				if (sanalPersonelDurum != 0)
-					sb.append(" AND P." + Personel.COLUMN_NAME_SANAL_PERSONEL + " = 1 ");
+					sb.append(" and P." + Personel.COLUMN_NAME_SANAL_PERSONEL + " = 1 ");
 			}
-			sb.append(" WHERE v." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = :denklestirmeAy AND V." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1  ");
-			sb.append(" AND V." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1  AND V." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
-			sb.append(" AND (V." + PersonelDenklestirme.COLUMN_NAME_ODENEN_SURE + ">0  OR V." + PersonelDenklestirme.COLUMN_NAME_HAFTA_TATIL_SURE + ">0 OR V." + PersonelDenklestirme.COLUMN_NAME_RESMI_TATIL_SURE + ">0");
-			sb.append("  OR V." + PersonelDenklestirme.COLUMN_NAME_EKSIK_CALISMA_SURE + ">0  OR V." + PersonelDenklestirme.COLUMN_NAME_AKSAM_VARDIYA_SAAT + ">0 OR V." + PersonelDenklestirme.COLUMN_NAME_AKSAM_VARDIYA_GUN_ADET + ">0 )");
+			sb.append(" where v." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = :denklestirmeAy and V." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1  ");
+			sb.append(" and V." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and V." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
+			sb.append(" and (V." + PersonelDenklestirme.COLUMN_NAME_ODENEN_SURE + ">0  or V." + PersonelDenklestirme.COLUMN_NAME_HAFTA_TATIL_SURE + ">0 or V." + PersonelDenklestirme.COLUMN_NAME_RESMI_TATIL_SURE + ">0");
+			sb.append("  or V." + PersonelDenklestirme.COLUMN_NAME_EKSIK_CALISMA_SURE + ">0  or V." + PersonelDenklestirme.COLUMN_NAME_AKSAM_VARDIYA_SAAT + ">0 or V." + PersonelDenklestirme.COLUMN_NAME_AKSAM_VARDIYA_GUN_ADET + ">0 )");
 
 			fields.put("denklestirmeAy", denklestirmeAy.getId());
 			if (session != null)
@@ -1119,13 +1119,13 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				String fieldName = "p";
 				fields.clear();
 				sb = new StringBuffer();
-				sb.append("SELECT V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_ID + " FROM " + PersonelDenklestirmeOnaylanmayan.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append("select V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_ID + " from " + PersonelDenklestirmeOnaylanmayan.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 				if (sirketId != null) {
-					sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON  P." + Personel.COLUMN_NAME_ID + " = V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PERSONEL_ID);
-					sb.append(" AND P." + Personel.COLUMN_NAME_SIRKET + " = " + sirketId);
+					sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PERSONEL_ID);
+					sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + sirketId);
 				}
-				sb.append(" WHERE v." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
-				sb.append(" AND V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PERSONEL_ID + " :" + fieldName);
+				sb.append(" where v." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
+				sb.append(" and V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PERSONEL_ID + " :" + fieldName);
 				List veriList = authenticatedUser.getYetkiliPersonelIdler();
 				fields.put(fieldName, veriList);
 				if (session != null)
@@ -1207,10 +1207,10 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				fields.clear();
 				sb = new StringBuffer();
 				sb.append("select DISTINCT G.* from " + VardiyaGun.TABLE_NAME + " G " + PdksEntityController.getSelectLOCK() + " ");
-				sb.append(" INNER JOIN " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " ON V." + Vardiya.COLUMN_NAME_ID + " = G." + VardiyaGun.COLUMN_NAME_VARDIYA);
-				sb.append("  AND   V." + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " IN ('" + Vardiya.TIPI_IZIN + "','" + Vardiya.TIPI_HASTALIK_RAPOR + "') ");
-				sb.append(" WHERE G." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :t1 AND G." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "<:t2");
-				sb.append(" AND G." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
+				sb.append(" inner join " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + Vardiya.COLUMN_NAME_ID + " = G." + VardiyaGun.COLUMN_NAME_VARDIYA);
+				sb.append(" and   V." + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " IN ('" + Vardiya.TIPI_IZIN + "','" + Vardiya.TIPI_HASTALIK_RAPOR + "') ");
+				sb.append(" where G." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :t1 and G." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "<:t2");
+				sb.append(" and G." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
 				fields.put(fieldName, perIdList);
 				fields.put("t1", basTarih);
 				fields.put("t2", bitTarih);
@@ -1267,21 +1267,21 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 		if (onaysizPersonelDenklestirmeList == null && onaylanmayanDurum) {
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT V.* FROM " + PersonelDenklestirmeOnaylanmayan.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append("select V.* from " + PersonelDenklestirmeOnaylanmayan.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 			if (sirketId != null || sanalPersonelDurum != 0) {
-				sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON  P." + Personel.COLUMN_NAME_ID + " = V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PERSONEL_ID);
+				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PERSONEL_ID);
 				if (sirketId != null)
-					sb.append(" AND P." + Personel.COLUMN_NAME_SIRKET + " = " + sirketId);
+					sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + sirketId);
 				if (sanalPersonelDurum != 0)
-					sb.append(" AND P." + Personel.COLUMN_NAME_SANAL_PERSONEL + " = 1");
+					sb.append(" and P." + Personel.COLUMN_NAME_SANAL_PERSONEL + " = 1");
 			}
-			sb.append(" WHERE v." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_YIL + " = " + yil + " AND v." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_AY + " = " + ay);
+			sb.append(" where v." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_YIL + " = " + yil + " and v." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_AY + " = " + ay);
 
-			sb.append(" AND V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PERSONEL_ID + " :p ");
+			sb.append(" and V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PERSONEL_ID + " :p ");
 			List veriList = authenticatedUser.getYetkiliPersonelIdler();
 			String fieldName = "p";
 			fields.put(fieldName, veriList);
-			sb.append(" ORDER BY V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_YONETICI + ", V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_BOLUM + "," + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PDKS_SICIL_NO);
+			sb.append(" order by V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_YONETICI + ", V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_BOLUM + "," + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PDKS_SICIL_NO);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			// List<PersonelDenklestirmeOnaylanmayan> list = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDenklestirmeOnaylanmayan.class);

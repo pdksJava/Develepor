@@ -184,19 +184,19 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 					fields.clear();
 					String fieldName = "p";
 					sb = new StringBuffer();
-					sb.append("SELECT P." + Personel.COLUMN_NAME_ID + " AS PER_ID," + Personel.COLUMN_NAME_IZIN_HAKEDIS_TARIHI + ", P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + ", P." + Personel.COLUMN_NAME_SIRKET + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
-					sb.append(" WHERE P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
-					sb.append(" AND P." + Personel.COLUMN_NAME_IZIN_KARTI_VAR + " = 1");
+					sb.append("select P." + Personel.COLUMN_NAME_ID + " as PER_ID," + Personel.COLUMN_NAME_IZIN_HAKEDIS_TARIHI + ", P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + ", P." + Personel.COLUMN_NAME_SIRKET + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append(" where P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
+					sb.append(" and P." + Personel.COLUMN_NAME_IZIN_KARTI_VAR + " = 1");
 					if (sirket != null) {
-						sb.append(" AND P." + Personel.COLUMN_NAME_SIRKET + " = :t ");
+						sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :t ");
 						fields.put("t", sirket.getId());
 					}
 
 					if (istenAyrilanEkle) {
-						sb.append(" AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=:ia");
+						sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=:ia");
 						fields.put("ia", istenAyrilmaTarih);
 					}
-					sb.append(" ORDER BY " + Personel.COLUMN_NAME_IZIN_HAKEDIS_TARIHI + ", P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
+					sb.append(" order by " + Personel.COLUMN_NAME_IZIN_HAKEDIS_TARIHI + ", P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
 
 					fields.put(fieldName, sorguList);
 					if (session != null)
@@ -274,15 +274,15 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 				List numStrList = new ArrayList(dataMap.keySet());
 				fields.clear();
 				sb = new StringBuffer();
-				sb.append("SELECT P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
-				sb.append(" WHERE P." + Personel.COLUMN_NAME_ID + " :" + fieldName);
-				sb.append(" AND P." + Personel.COLUMN_NAME_IZIN_KARTI_VAR + " = 1 AND P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <=:ia2");
+				sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append(" where P." + Personel.COLUMN_NAME_ID + " :" + fieldName);
+				sb.append(" and P." + Personel.COLUMN_NAME_IZIN_KARTI_VAR + " = 1 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <=:ia2");
 				fields.put("ia1", istenAyrilmaTarih);
 				if (hakedisTarihi != null) {
-					sb.append(" AND  P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=:ia1");
+					sb.append(" and  P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=:ia1");
 					fields.put("ia2", hakedisTarihi);
 				}
-				sb.append(" ORDER BY " + Personel.COLUMN_NAME_IZIN_HAKEDIS_TARIHI + ", P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
+				sb.append(" order by " + Personel.COLUMN_NAME_IZIN_HAKEDIS_TARIHI + ", P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
 				fields.put(fieldName, numStrList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);

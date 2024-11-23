@@ -61,7 +61,7 @@ public class PdksEntityController implements Serializable {
 	public static final String MAP_KEY_SQLPARAMS = "sql_params";
 	public static final String MAP_KEY_TRANSACTION = "transaction";
 
-	private static String selectLOCK = "WITH(NOLOCK)", joinLOCK = "WITH(NOLOCK)";
+	private static String selectLOCK = "with(nolock)", joinLOCK = "with(nolock)";
 
 	public static final String SELECT_KARAKTER = "c";
 
@@ -734,9 +734,9 @@ public class PdksEntityController implements Serializable {
 				HashMap fields = new HashMap();
 				fields.put("hareketId", kgsId);
 				fields.put(MAP_KEY_SESSION, session);
-				sb.append("SELECT 'K' + CAST(Z." + HareketKGS.COLUMN_NAME_ID + " AS VARCHAR(12)) AS ID, 'K' AS SIRKET, Z." + HareketKGS.COLUMN_NAME_ID + " AS TABLE_ID, Z.USERID AS " + HareketKGS.COLUMN_NAME_PERSONEL + " ,");
-				sb.append(" Z.KAPIID AS " + HareketKGS.COLUMN_NAME_KAPI + ", Z.HAREKET_ZAMANI AS ZAMAN, Z.DURUM, Z.ISLEM_ID, NULL AS ORJ_ZAMAN,Z.OLUSTURMA_ZAMANI,Z.KGS_SIRKET_ID FROM " + HareketKGS.TABLE_NAME + " AS Z " + selectLOCK);
-				sb.append(" WHERE " + HareketKGS.COLUMN_NAME_ID + " = :hareketId");
+				sb.append("select 'K' + CAST(Z." + HareketKGS.COLUMN_NAME_ID + " as VARCHAR(12)) as ID, 'K' as SIRKET, Z." + HareketKGS.COLUMN_NAME_ID + " as TABLE_ID, Z.USERID as " + HareketKGS.COLUMN_NAME_PERSONEL + " ,");
+				sb.append(" Z.KAPIID as " + HareketKGS.COLUMN_NAME_KAPI + ", Z.HAREKET_ZAMANI as ZAMAN, Z.DURUM, Z.ISLEM_ID, NULL as ORJ_ZAMAN,Z.OLUSTURMA_ZAMANI,Z.KGS_SIRKET_ID from " + HareketKGS.TABLE_NAME + " as Z " + selectLOCK);
+				sb.append(" where " + HareketKGS.COLUMN_NAME_ID + " = :hareketId");
 				List<HareketKGS> list1 = getObjectBySQLList(sb, fields, HareketKGS.class);
 				if (!list1.isEmpty())
 					id = list1.get(0);
@@ -1123,7 +1123,7 @@ public class PdksEntityController implements Serializable {
 		StringBuffer sb = new StringBuffer();
 		List list = null;
 		HashMap<String, Object> fields = new HashMap<String, Object>();
-		sb.append("SELECT * from " + tableName + " " + selectLOCK);
+		sb.append("select * from " + tableName + " " + selectLOCK);
 		Collection collection = null;
 		if (value instanceof Collection) {
 			collection = (Collection) value;
@@ -1136,7 +1136,7 @@ public class PdksEntityController implements Serializable {
 		}
 		if (value instanceof Collection) {
 			String key = "v";
-			sb.append(" WHERE " + fieldName + " :" + key);
+			sb.append(" where " + fieldName + " :" + key);
 			fields.put(key, value);
 			list = getSQLParamList((List) collection, sb, key, fields, class1, session);
 		} else {
@@ -1145,7 +1145,7 @@ public class PdksEntityController implements Serializable {
 					value = (Boolean) value ? 1 : 0;
 				if (fieldName != null) {
 					String key = "v";
-					sb.append(" WHERE " + fieldName + " = :" + key);
+					sb.append(" where " + fieldName + " = :" + key);
 					fields.put(key, value);
 				}
 
@@ -1247,7 +1247,7 @@ public class PdksEntityController implements Serializable {
 						}
 						String parametreler = sb.toString();
 						sb = null;
-						sql = PdksUtil.replaceAll(sql, parametreKey, parametreler.indexOf(",") > 0 ? " IN ( " + parametreler + " ) " : " = " + parametreler);
+						sql = PdksUtil.replaceAll(sql, parametreKey, parametreler.indexOf(",") > 0 ? " in ( " + parametreler + " ) " : " = " + parametreler);
 					} else {
 						list = getObjectBySQLList(session, LIST_MAX_SIZE, sql, key, (Collection) object, class1);
 						devam = Boolean.FALSE;
@@ -1301,8 +1301,8 @@ public class PdksEntityController implements Serializable {
 			map.clear();
 			sb = null;
 			sb = new StringBuffer();
-			sb.append("SELECT * FROM " + tableName + " " + selectLOCK);
-			sb.append(" WHERE " + idColumn + " :" + fieldName);
+			sb.append("select * from " + tableName + " " + selectLOCK);
+			sb.append(" where " + idColumn + " :" + fieldName);
 			map.put(fieldName, idler);
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -1351,12 +1351,12 @@ public class PdksEntityController implements Serializable {
 		try {
 			HashMap parametreMap = new HashMap();
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT TOP 1 * FROM " + tableName + " " + selectLOCK);
+			sb.append("select TOP 1 * from " + tableName + " " + selectLOCK);
 			if (value != null) {
-				sb.append(" WHERE " + fieldName + " = :u");
+				sb.append(" where " + fieldName + " = :u");
 				parametreMap.put("u", value);
 			} else
-				sb.append(" WHERE " + fieldName + "  IS NULL");
+				sb.append(" where " + fieldName + "  is null");
 
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);

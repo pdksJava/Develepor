@@ -175,11 +175,11 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 		if (sirket != null) {
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT DISTINCT Y.* FROM " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append("INNER JOIN " + Personel.TABLE_NAME + " Y " + PdksEntityController.getJoinLOCK() + " ON Y." + Personel.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_YONETICI);
-			sb.append(" WHERE P." + Personel.COLUMN_NAME_SIRKET + " = :s AND P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
-			sb.append(" AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
-			sb.append(" ORDER BY Y." + Personel.COLUMN_NAME_AD + ",Y." + Personel.COLUMN_NAME_SOYAD + ",Y." + Personel.COLUMN_NAME_ID);
+			sb.append("select DISTINCT Y.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append("inner join " + Personel.TABLE_NAME + " Y " + PdksEntityController.getJoinLOCK() + " on Y." + Personel.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_YONETICI);
+			sb.append(" where P." + Personel.COLUMN_NAME_SIRKET + " = :s and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
+			sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
+			sb.append(" order by Y." + Personel.COLUMN_NAME_AD + ",Y." + Personel.COLUMN_NAME_SOYAD + ",Y." + Personel.COLUMN_NAME_ID);
 			fields.put("s", sirket.getId());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);

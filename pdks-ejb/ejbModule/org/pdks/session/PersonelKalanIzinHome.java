@@ -145,15 +145,15 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		StringBuffer sb = new StringBuffer();
 		List dataIdList = izin.getIzinler();
 		String fieldName = "s";
-		sb.append("SELECT * FROM " + PersonelIzin.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
-		sb.append(" WHERE " + PersonelIzin.COLUMN_NAME_ID + " :" + fieldName);
+		sb.append("select * from " + PersonelIzin.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+		sb.append(" where " + PersonelIzin.COLUMN_NAME_ID + " :" + fieldName);
 		HashMap fields = new HashMap();
 		fields.put(fieldName, dataIdList);
 		if (izin.getPersonel().getSirket().getDepartman().isAdminMi()) {
 			if (bakiyeIzinGoster)
-				sb.append(" AND " + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " >= :b ");
+				sb.append(" and " + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " >= :b ");
 			else
-				sb.append(" AND " + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " > :b ");
+				sb.append(" and " + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " > :b ");
 			fields.put("b", PdksUtil.getBakiyeYil());
 		}
 
@@ -903,12 +903,12 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
 		String fieldName = "k";
-		sb.append("SELECT  I.* FROM " + IzinTipi.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK());
-		sb.append(" INNER JOIN " + IzinTipi.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " ON B." + IzinTipi.COLUMN_NAME_ID + " = I." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI);
-		sb.append(" AND B." + IzinTipi.COLUMN_NAME_DURUM + " = 1");
-		sb.append(" INNER JOIN " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " ON T." + Tanim.COLUMN_NAME_ID + " = B." + IzinTipi.COLUMN_NAME_IZIN_TIPI);
-		sb.append(" AND T." + Tanim.COLUMN_NAME_KODU + " :" + fieldName);
-		sb.append(" WHERE I." + IzinTipi.COLUMN_NAME_DURUM + " = 1");
+		sb.append("select I.* from " + IzinTipi.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK());
+		sb.append(" inner join " + IzinTipi.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " on B." + IzinTipi.COLUMN_NAME_ID + " = I." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI);
+		sb.append(" and B." + IzinTipi.COLUMN_NAME_DURUM + " = 1");
+		sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = B." + IzinTipi.COLUMN_NAME_IZIN_TIPI);
+		sb.append(" and T." + Tanim.COLUMN_NAME_KODU + " :" + fieldName);
+		sb.append(" where I." + IzinTipi.COLUMN_NAME_DURUM + " = 1");
 		fields.put(fieldName, tipler);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);

@@ -129,10 +129,10 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		HashMap map = new HashMap();
 		Calendar cal = Calendar.getInstance();
  		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" WHERE D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y  AND D." + DenklestirmeAy.COLUMN_NAME_AY + ">0 ");
+		sb.append("select DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_AY + ">0 ");
 		if (cal.get(Calendar.YEAR) == yil) {
-			sb.append(" AND  D." + DenklestirmeAy.COLUMN_NAME_AY + "<=" + (cal.get(Calendar.MONTH) + 2));
+			sb.append(" and  D." + DenklestirmeAy.COLUMN_NAME_AY + "<=" + (cal.get(Calendar.MONTH) + 2));
 		}
 		String ilkDonem = ortakIslemler.getParameterKey("ilkMaasDonemi");
 		if (PdksUtil.hasStringValue(ilkDonem) == false) {
@@ -141,9 +141,9 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 				ilkDonem = sistemBaslangicYili + ilkDonem;
 		}
 		if (PdksUtil.hasStringValue(ilkDonem))
-			sb.append(" AND ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100) + D." + DenklestirmeAy.COLUMN_NAME_AY + ")>=" + ilkDonem);
+			sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100) + D." + DenklestirmeAy.COLUMN_NAME_AY + ")>=" + ilkDonem);
 		map.put("y", yil);
-		sb.append(" ORDER BY D." + DenklestirmeAy.COLUMN_NAME_AY);
+		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_AY);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		denklestirmeAylar = pdksEntityController.getObjectBySQLList(sb, map, DenklestirmeAy.class);
@@ -350,10 +350,10 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 				if (!hucreMap.isEmpty()) {
 					HashMap fields = new HashMap();
 					StringBuffer sb = new StringBuffer();
-					sb.append("SELECT V." + Personel.COLUMN_NAME_ID + " FROM " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
-					sb.append(" WHERE " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :pId  ");
-					sb.append(" AND V." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
-					sb.append(" AND V." + Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI + " <= :bitTarih ");
+					sb.append("select V." + Personel.COLUMN_NAME_ID + " from " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append(" where " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :pId  ");
+					sb.append(" and V." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
+					sb.append(" and V." + Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI + " <= :bitTarih ");
 					Calendar cal = Calendar.getInstance();
 					cal.set(denklestirmeAy.getYil(), denklestirmeAy.getAy() - 1, 1);
 					Date basTarih = PdksUtil.getDate(cal.getTime());
@@ -385,8 +385,8 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 						}
 						fields.clear();
 						sb = new StringBuffer();
-						sb.append("SELECT V." + PersonelDenklestirme.COLUMN_NAME_ID + " FROM " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
-						sb.append(" WHERE " + PersonelDenklestirme.COLUMN_NAME_DONEM + " = :denklestirmeAy AND " + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :pId  ");
+						sb.append("select V." + PersonelDenklestirme.COLUMN_NAME_ID + " from " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+						sb.append(" where " + PersonelDenklestirme.COLUMN_NAME_DONEM + " = :denklestirmeAy and " + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :pId  ");
 						fields.put(PdksEntityController.MAP_KEY_MAP, "getSicilNo");
 						fields.put("denklestirmeAy", denklestirmeAy.getId());
 						fields.put("pId", personelIdler);
@@ -396,9 +396,9 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 						bakiySonrakiMap = null;
 						if (sonrakiDonem != null) {
 							sb = new StringBuffer();
-							sb.append("SELECT V." + PersonelDenklestirme.COLUMN_NAME_ID + " FROM " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
-							sb.append(" WHERE " + PersonelDenklestirme.COLUMN_NAME_DONEM + " = :denklestirmeAy AND " + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :pId  ");
-							sb.append(" AND GECEN_AY_DENKLESTIRME_ID IS NULL ");
+							sb.append("select V." + PersonelDenklestirme.COLUMN_NAME_ID + " from " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+							sb.append(" where " + PersonelDenklestirme.COLUMN_NAME_DONEM + " = :denklestirmeAy and " + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :pId  ");
+							sb.append(" and GECEN_AY_DENKLESTIRME_ID is null ");
 							fields.put(PdksEntityController.MAP_KEY_MAP, "getSicilNo");
 							fields.put("denklestirmeAy", sonrakiDonem.getId());
 							fields.put("pId", personelIdler);
@@ -538,10 +538,10 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 				if (!hucreMap.isEmpty()) {
 					HashMap fields = new HashMap();
 					StringBuffer sb = new StringBuffer();
-					sb.append("SELECT V." + Personel.COLUMN_NAME_ID + " FROM " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
-					sb.append(" WHERE " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :pId  ");
-					sb.append(" AND V." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
-					sb.append(" AND V." + Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI + " <= :bitTarih ");
+					sb.append("select V." + Personel.COLUMN_NAME_ID + " from " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append(" where " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :pId  ");
+					sb.append(" and V." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
+					sb.append(" and V." + Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI + " <= :bitTarih ");
 					Calendar cal = Calendar.getInstance();
 					cal.set(denklestirmeAy.getYil(), denklestirmeAy.getAy() - 1, 1);
 					Date basTarih = PdksUtil.getDate(cal.getTime());
@@ -564,8 +564,8 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 						}
 						fields.clear();
 						sb = new StringBuffer();
-						sb.append("SELECT V." + PersonelDenklestirme.COLUMN_NAME_ID + " FROM " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
-						sb.append(" WHERE " + PersonelDenklestirme.COLUMN_NAME_DONEM + " = :denklestirmeAy AND " + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :pId  ");
+						sb.append("select V." + PersonelDenklestirme.COLUMN_NAME_ID + " from " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+						sb.append(" where " + PersonelDenklestirme.COLUMN_NAME_DONEM + " = :denklestirmeAy and " + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :pId  ");
 						fields.put(PdksEntityController.MAP_KEY_MAP, "getSicilNo");
 						fields.put("denklestirmeAy", denklestirmeAy.getId());
 						fields.put("pId", personelIdler);

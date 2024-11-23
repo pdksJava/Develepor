@@ -149,17 +149,17 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		//
 
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT DISTINCT S.* FROM " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
-		sb.append(" INNER JOIN " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
-		sb.append(" AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :b2   AND P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b1 ");
-		sb.append(" WHERE S." + Sirket.COLUMN_NAME_DURUM + " = 1  AND S." + Sirket.COLUMN_NAME_PDKS + " = 1 ");
+		sb.append("select DISTINCT S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
+		sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :b2  and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b1 ");
+		sb.append(" where S." + Sirket.COLUMN_NAME_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_PDKS + " = 1 ");
 		if (authenticatedUser.isIKSirket())
-			sb.append(" AND S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
+			sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
 		map.put("b1", bugun);
 		map.put("b2", bugun);
 
 		if (aramaSecenekleri.getDepartmanId() != null && (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIKAdmin() || !authenticatedUser.isYoneticiKontratli())) {
-			sb.append(" AND S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d ");
+			sb.append(" and S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d ");
 			map.put("d", aramaSecenekleri.getDepartmanId());
 		}
 		if (session != null)
@@ -284,21 +284,21 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		Date oncekiGun = ortakIslemler.tariheGunEkleCikar(cal, date, -1);
 		HashMap map = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT DISTINCT P.* FROM " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
-		sb.append(" INNER JOIN " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " ON P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
-		sb.append(" AND S." + Sirket.COLUMN_NAME_PDKS + " = 1");
+		sb.append("select DISTINCT P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+		sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
+		sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1");
 		if (aramaSecenekleri.getDepartmanId() != null)
-			sb.append(" AND S." + Sirket.COLUMN_NAME_DEPARTMAN + " = " + aramaSecenekleri.getDepartmanId());
+			sb.append(" and S." + Sirket.COLUMN_NAME_DEPARTMAN + " = " + aramaSecenekleri.getDepartmanId());
 
-		sb.append(" WHERE P." + Personel.COLUMN_NAME_DURUM + " = 1  AND P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :b2 ");
-		sb.append(" AND P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b1 ");
+		sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :b2 ");
+		sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b1 ");
 		if (aramaSecenekleri.getTesisId() != null)
-			sb.append(" AND P." + Personel.COLUMN_NAME_TESIS + " = " + aramaSecenekleri.getTesisId());
+			sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = " + aramaSecenekleri.getTesisId());
 		if (aramaSecenekleri.getSirketId() != null)
-			sb.append(" AND P." + Personel.COLUMN_NAME_SIRKET + " = " + aramaSecenekleri.getSirketId());
+			sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + aramaSecenekleri.getSirketId());
 
 		if (PdksUtil.hasStringValue(sicilNo)) {
-			sb.append(" AND P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :s");
+			sb.append(" and P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :s");
 			map.put("s", sicilNo);
 		}
 

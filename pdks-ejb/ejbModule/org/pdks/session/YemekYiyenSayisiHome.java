@@ -380,10 +380,10 @@ public class YemekYiyenSayisiHome extends EntityHome<VardiyaGun> implements Seri
 		// parametreMap.put("basTarih", PdksUtil.getDate(basTarih));
 		// parametreMap.put("bitTarih", PdksUtil.getDate(ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 1)));
 		// StringBuffer qsb = new StringBuffer();
-		// qsb.append("SELECT S." + HareketKGS.COLUMN_NAME_ID + " S." + HareketKGS.COLUMN_NAME_TABLE_ID + " FROM " + HareketKGS.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
-		// qsb.append(" where  S." + HareketKGS.COLUMN_NAME_ZAMAN + " >=:basTarih AND S." + HareketKGS.COLUMN_NAME_ZAMAN + " <:bitTarih ");
+		// qsb.append("select S." + HareketKGS.COLUMN_NAME_ID + " S." + HareketKGS.COLUMN_NAME_TABLE_ID + " from " + HareketKGS.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
+		// qsb.append(" where  S." + HareketKGS.COLUMN_NAME_ZAMAN + " >=:basTarih and S." + HareketKGS.COLUMN_NAME_ZAMAN + " <:bitTarih ");
 		// if (!yemekKapiList.isEmpty()) {
-		// qsb.append(" AND S." + HareketKGS.COLUMN_NAME_KAPI + " :kapiId");
+		// qsb.append(" and S." + HareketKGS.COLUMN_NAME_KAPI + " :kapiId");
 		// parametreMap.put("kapiId", yemekKapiList);
 		// }
 		// if (session != null)

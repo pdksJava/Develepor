@@ -849,8 +849,8 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 					HashMap parametreMap = new HashMap();
 					HashMap map = new HashMap();
 					StringBuffer sb = new StringBuffer();
-					sb.append("SELECT P." + Personel.COLUMN_NAME_KGS_PERSONEL + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
-					sb.append(" WHERE P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
+					sb.append("select P." + Personel.COLUMN_NAME_KGS_PERSONEL + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append(" where P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
 					map.put(fieldName, sicilNoList);
 					if (session != null)
 						map.put(PdksEntityController.MAP_KEY_SESSION, session);

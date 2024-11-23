@@ -402,7 +402,7 @@ public class StartupAction implements Serializable {
 		List<Parameter> parameterList = null;
 		try {
 			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT * FROM " + Parameter.TABLE_NAME + (lockVar ? " " + PdksEntityController.getSelectLOCK() : ""));
+			sb.append("select * from " + Parameter.TABLE_NAME + (lockVar ? " " + PdksEntityController.getSelectLOCK() : ""));
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			parameterList = pdksEntityController.getObjectBySQLList(sb, fields, Parameter.class);
