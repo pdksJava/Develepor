@@ -3227,7 +3227,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 		Personel personelTest = new Personel();
 
 		String personelERPGuncelleme = mailMap.containsKey("personelERPOku") ? (String) mailMap.get("personelERPOku") : "";
-		boolean personelERPGuncellemeDurum = personelERPGuncelleme != null && personelERPGuncelleme.equalsIgnoreCase("M");
+		String personelERPTableViewAdi = mailMap.containsKey("personelERPTableViewAdi") ? (String) mailMap.get("personelERPTableViewAdi") : "";
+		boolean personelERPGuncellemeDurum = PdksUtil.hasStringValue(personelERPTableViewAdi) || (personelERPGuncelleme != null && personelERPGuncelleme.equalsIgnoreCase("M"));
 		List<CalismaModeli> modelList = new ArrayList<CalismaModeli>();
 		List<VardiyaSablonu> sablonList = new ArrayList<VardiyaSablonu>();
 		String tumPersonelDenklestirme = mailMap.containsKey("tumPersonelDenklestirme") ? (String) mailMap.get("tumPersonelDenklestirme") : "";
