@@ -520,12 +520,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 		sb.append("	),");
 		sb.append("	DEP_YONETICI as (");
 		sb.append("		select R.ROLENAME DEP_YONETICI_ROL_ADI from " + Role.TABLE_NAME + " R " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
-		sb.append("		where R." + Role.COLUMN_NAME_ROLE_NAME + " = '" + Role.TIPI_DEPARTMAN_SUPER_VISOR + "' and R." + Role.COLUMN_NAME_STATUS + " = 1 ");
+		sb.append(" where R." + Role.COLUMN_NAME_ROLE_NAME + " = '" + Role.TIPI_DEPARTMAN_SUPER_VISOR + "' and R." + Role.COLUMN_NAME_STATUS + " = 1 ");
 		sb.append("	),");
 		sb.append("	IZIN_DURUM as (");
 		sb.append("		select count(I.ID) as IZIN_TIPI_ADET from " + IzinTipi.TABLE_NAME + " I " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
 		sb.append("			inner join " + Departman.TABLE_NAME + " D " + PdksVeriOrtakAktar.getJoinLOCK() + " on D." + Departman.COLUMN_NAME_ID + " = I." + IzinTipi.COLUMN_NAME_DEPARTMAN + " and D." + Departman.COLUMN_NAME_ADMIN_DURUM + " = 1 and D." + Departman.COLUMN_NAME_DURUM + " = 1 ");
-		sb.append("		where I." + IzinTipi.COLUMN_NAME_DEPARTMAN + " = 1 and I." + IzinTipi.COLUMN_NAME_DURUM + " = 1 and I." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null and I." + IzinTipi.COLUMN_NAME_GIRIS_TIPI + " <> '" + IzinTipi.GIRIS_TIPI_YOK + "'");
+		sb.append(" where I." + IzinTipi.COLUMN_NAME_DEPARTMAN + " = 1 and I." + IzinTipi.COLUMN_NAME_DURUM + " = 1 and I." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null and I." + IzinTipi.COLUMN_NAME_GIRIS_TIPI + " <> '" + IzinTipi.GIRIS_TIPI_YOK + "'");
 		sb.append("	)");
 		sb.append("	select COALESCE(DY.DEP_YONETICI_ROL_ADI,'') DEP_YONETICI_ROL_ADI,");
 		sb.append("		COALESCE(ID.IZIN_TIPI_ADET,0) IZIN_TIPI_ADET, GETDATE() as TARIH from BUGUN B ");

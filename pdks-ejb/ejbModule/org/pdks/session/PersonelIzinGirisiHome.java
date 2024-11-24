@@ -571,12 +571,12 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		String whereStr = " where ";
 		if (PdksUtil.hasStringValue(adi)) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_AD + " like :ad");
-			whereStr = " and ";
+	 whereStr = " and ";
 			parametreMap.put("ad", adi.trim() + "%");
 		}
 		if (PdksUtil.hasStringValue(soyadi)) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_SOYAD + " like :soyad");
-			whereStr = " and ";
+	 whereStr = " and ";
 			parametreMap.put("soyad", soyadi.trim() + "%");
 		}
 		if (PdksUtil.hasStringValue(sicilNo)) {
@@ -599,7 +599,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			}
 
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " " + eqStr + " :sicilNo");
-			whereStr = " and ";
+	 whereStr = " and ";
 		}
 		Long seciliSirketId = aramaSecenekleri.getSirketId();
 		if (authenticatedUser.isYoneticiKontratli()) {
@@ -608,32 +608,32 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		}
 		if (seciliSirketId != null) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_SIRKET + " = :sirketId");
-			whereStr = " and ";
+	 whereStr = " and ";
 			parametreMap.put("sirketId", seciliSirketId);
 		}
 		if (aramaSecenekleri.getEkSaha1Id() != null) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_EK_SAHA1 + " = :ekSaha1");
-			whereStr = " and ";
+	 whereStr = " and ";
 			parametreMap.put("ekSaha1", aramaSecenekleri.getEkSaha1Id());
 		}
 		if (aramaSecenekleri.getEkSaha2Id() != null) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_EK_SAHA2 + " = :ekSaha2");
-			whereStr = " and ";
+	 whereStr = " and ";
 			parametreMap.put("ekSaha2", aramaSecenekleri.getEkSaha2Id());
 		}
 		if (aramaSecenekleri.getEkSaha3Id() != null) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_EK_SAHA3 + " = :ekSaha3");
-			whereStr = " and ";
+	 whereStr = " and ";
 			parametreMap.put("ekSaha3", aramaSecenekleri.getEkSaha3Id());
 		}
 		if (aramaSecenekleri.getEkSaha4Id() != null) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_EK_SAHA4 + " = :ekSaha4");
-			whereStr = " and ";
+	 whereStr = " and ";
 			parametreMap.put("ekSaha4", aramaSecenekleri.getEkSaha4Id());
 		}
 		if (!authenticatedUser.isYoneticiKontratli() && !aramaSecenekleri.getSirketIdList().isEmpty()) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_SIRKET + " :srk");
-			whereStr = " and ";
+	 whereStr = " and ";
 			List<Long> sList = new ArrayList<Long>();
 			for (SelectItem sr : aramaSecenekleri.getSirketIdList())
 				sList.add((Long) sr.getValue());
@@ -1576,7 +1576,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			parametreMap.put("basDate", basDate);
 
 		}
-		builder.append("  and I.KULLANICI_ID =:userId and  I.ONAY_ID is not null");
+		builder.append(" and I.KULLANICI_ID =:userId and  I.ONAY_ID is not null");
 		parametreMap.put("userId", user.getId());
 		if (authenticatedUser.isIK() && mailIzin == null) {
 			builder.append(" union   ");
@@ -1723,7 +1723,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			builder.append(" where I.BASLANGIC_ZAMANI<=:bitDate and I.BITIS_ZAMANI>=:basDate   ");
 			if (user.isIKAdmin() == false) {
 				fields.put("departmanId", departmanId);
-				builder.append("  and I.DEPARTMAN_ID=:departmanId  ");
+				builder.append(" and I.DEPARTMAN_ID=:departmanId  ");
 			}
 
 			if (session != null)
@@ -2327,7 +2327,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			StringBuffer sb = new StringBuffer();
 			sb.append("select P." + Personel.COLUMN_NAME_ID + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" where P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
-			sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + "<:bitTarih ");
+			sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " < :bitTarih ");
 			sb.append(" and P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " like :p ");
 			map.put("basTarih", startDatedt);
 			map.put("bitTarih", endDatedt);
@@ -3521,7 +3521,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		// tablosunda gecerli oldugu sure
 		// ile toplayip gecerliligine bakilmalidir
 
-		// KONTROL istedigi kadar izni kalmis mi , bakiye kontrolu yapilmasi
+		// KONTROL istedigi kadar izni kalmis mi, bakiye kontrolu yapilmasi
 		// gereken izinler icin bu kontrol yapilir.
 		if (PdksUtil.hasStringValue(durum) && !izinTipi.getBakiyeDevirTipi().equals(IzinTipi.BAKIYE_DEVIR_YOK)) {
 			// dusulecek izin gunu once gecmis yillardan izin varsa eritilir
@@ -3859,7 +3859,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		}
 
 		try {
-			// izini giren kisi IK personel ise , izintipindeki onay sirasinin
+			// izini giren kisi IK personel ise, izintipindeki onay sirasinin
 			// yada kisinin onemi yoktur.
 			// Onaylanmis gibi kaydedilir, mail gitmez
 

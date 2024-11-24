@@ -1051,9 +1051,9 @@ public class PdksEntityController implements Serializable {
 			}
 			String parametreler = strArray.toString();
 			strArray = null;
-			String sql = PdksUtil.replaceAll(sqlSTR, parametreKey, parametreler.indexOf(",") > 0 ? " IN ( " + parametreler + " ) " : " = " + parametreler);
+			String str = sqlSTR.indexOf(" " + parametreKey) > 0 ? PdksUtil.replaceAll(sqlSTR, " " + parametreKey, parametreKey) : parametreKey;
+			String sql = PdksUtil.replaceAll(str, parametreKey, parametreler.indexOf(",") > 0 ? " in ( " + parametreler + " ) " : " = " + parametreler);
 			SQLQuery query = session.createSQLQuery(sql);
-
 			if (class1 != null)
 				query.addEntity(class1);
 			for (Iterator iterator = fieldsOther.keySet().iterator(); iterator.hasNext();) {

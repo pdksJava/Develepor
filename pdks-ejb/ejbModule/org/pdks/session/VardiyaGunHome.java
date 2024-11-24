@@ -2731,8 +2731,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				sb.append("	select CMA.* from VERI V " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append("	inner join " + CalismaModeliAy.TABLE_NAME + " CMA " + PdksEntityController.getJoinLOCK() + " on V." + CalismaModeliAy.COLUMN_NAME_ID + " = CMA." + CalismaModeliAy.COLUMN_NAME_ID);
 				sb.append("	inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CM." + CalismaModeli.COLUMN_NAME_ID + " = CMA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI);
-				sb.append("	AND ( CM." + CalismaModeli.COLUMN_NAME_DEPARTMAN + " is null  or CM." + CalismaModeli.COLUMN_NAME_DEPARTMAN + " = " + sirket.getDepartman().getId() + " )");
-				sb.append("	AND ( CM." + CalismaModeli.COLUMN_NAME_SIRKET + " is null  or CM." + CalismaModeli.COLUMN_NAME_SIRKET + " = " + sirket.getId() + " )");
+				sb.append("	AND ( CM." + CalismaModeli.COLUMN_NAME_DEPARTMAN + " is null or CM." + CalismaModeli.COLUMN_NAME_DEPARTMAN + " = " + sirket.getDepartman().getId() + " )");
+				sb.append("	AND ( CM." + CalismaModeli.COLUMN_NAME_SIRKET + " is null or CM." + CalismaModeli.COLUMN_NAME_SIRKET + " = " + sirket.getId() + " )");
 				sb.append("	order by V.ADET DESC, CM." + CalismaModeli.COLUMN_NAME_ACIKLAMA);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -4122,7 +4122,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " FT " + PdksEntityController.getJoinLOCK() + " on FT." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = VG." + VardiyaGun.COLUMN_NAME_ID);
 			sb.append(" and FT." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1");
 		}
-		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_AY + ">0 ");
+		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0 ");
 		if (yil == maxYil) {
 			sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ")<=:s");
 			fields.put("s", sonDonem);
@@ -9547,11 +9547,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				String baglac = " WHERE";
 				if (tip.equals("T") || tip.equals("B")) {
 					if (aramaSecenekleri.getSirketId() != null) {
-						whereStr += baglac + " D." + Personel.COLUMN_NAME_SIRKET + " = " + aramaSecenekleri.getSirketId();
+				 whereStr += baglac + " D." + Personel.COLUMN_NAME_SIRKET + " = " + aramaSecenekleri.getSirketId();
 						baglac = " and ";
 					}
 					if (tip.equals("B") && aramaSecenekleri.getTesisId() != null) {
-						whereStr += baglac + " D." + Personel.COLUMN_NAME_TESIS + " = " + aramaSecenekleri.getTesisId();
+				 whereStr += baglac + " D." + Personel.COLUMN_NAME_TESIS + " = " + aramaSecenekleri.getTesisId();
 						baglac = " and ";
 					}
 					class1 = Tanim.class;
@@ -9560,15 +9560,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				else if (tip.equals("P")) {
 					class1 = Personel.class;
 					if (aramaSecenekleri.getSirketId() != null) {
-						whereStr += baglac + " D." + Personel.COLUMN_NAME_SIRKET + " = " + aramaSecenekleri.getSirketId();
+				 whereStr += baglac + " D." + Personel.COLUMN_NAME_SIRKET + " = " + aramaSecenekleri.getSirketId();
 						baglac = " and ";
 					}
 					if (tip.equals("B") && aramaSecenekleri.getTesisId() != null) {
-						whereStr += baglac + " D." + Personel.COLUMN_NAME_TESIS + " = " + aramaSecenekleri.getTesisId();
+				 whereStr += baglac + " D." + Personel.COLUMN_NAME_TESIS + " = " + aramaSecenekleri.getTesisId();
 						baglac = " and ";
 					}
 					if (tip.equals("B") && aramaSecenekleri.getEkSaha3Id() != null) {
-						whereStr += baglac + " D." + Personel.COLUMN_NAME_EK_SAHA3 + " = " + aramaSecenekleri.getEkSaha3Id();
+				 whereStr += baglac + " D." + Personel.COLUMN_NAME_EK_SAHA3 + " = " + aramaSecenekleri.getEkSaha3Id();
 						baglac = " and ";
 					}
 				}
@@ -10852,7 +10852,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			fields.clear();
 			StringBuffer sb = new StringBuffer();
 			sb.append("select S.* from " + Vardiya.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append(" where (S." + Vardiya.COLUMN_NAME_DEPARTMAN + " is null  or S." + Vardiya.COLUMN_NAME_DEPARTMAN + " = :deptId )");
+			sb.append(" where (S." + Vardiya.COLUMN_NAME_DEPARTMAN + " is null or S." + Vardiya.COLUMN_NAME_DEPARTMAN + " = :deptId )");
 			sb.append(" and  S." + Vardiya.COLUMN_NAME_KISA_ADI + " <> '' and S." + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
 			fields.put("deptId", departman.getId());
 			if (session != null)

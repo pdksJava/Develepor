@@ -1885,7 +1885,7 @@ public class IseGelmemeUyari implements Serializable {
 			sb.append("	),");
 			sb.append("	DEP_YONETICI as (");
 			sb.append("		select R.ROLENAME DEP_YONETICI_ROL_ADI from " + Role.TABLE_NAME + " R " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append("		where R." + Role.COLUMN_NAME_ROLE_NAME + " = '" + Role.TIPI_DIREKTOR_SUPER_VISOR + "' and R." + Role.COLUMN_NAME_STATUS + " = 1 ");
+			sb.append(" where R." + Role.COLUMN_NAME_ROLE_NAME + " = '" + Role.TIPI_DIREKTOR_SUPER_VISOR + "' and R." + Role.COLUMN_NAME_STATUS + " = 1 ");
 			sb.append("	) ");
 			sb.append("	select COALESCE(DY.DEP_YONETICI_ROL_ADI,'') DEP_YONETICI_ROL_ADI, GETDATE() as TARIH from BUGUN B ");
 			sb.append("	left join DEP_YONETICI DY " + PdksEntityController.getJoinLOCK() + " on 1=1");

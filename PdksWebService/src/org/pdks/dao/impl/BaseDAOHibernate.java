@@ -276,7 +276,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.pdks.dao.BaseDAO#getObjectByInnerObjectMapInLogic(java.util.HashMap , java.lang.Class)
+	 * @see org.pdks.dao.BaseDAO#getObjectByInnerObjectMapInLogic(java.util.HashMap, java.lang.Class)
 	 */
 	public TreeMap getObjectByInnerObjectMapInLogic(HashMap map, Class class1, boolean uzerineYaz) {
 		TreeMap treeMap = new TreeMap();

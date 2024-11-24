@@ -617,7 +617,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
 		sb.append("select DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + "=:y");
+		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y");
 		sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ D." + DenklestirmeAy.COLUMN_NAME_AY + ")<=:s");
 		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0");
 		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 0");
@@ -673,7 +673,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				if (authenticatedUser.isIKSirket())
 					sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
 				sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " :" + fieldName);
-				sb.append("  and  PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
+				sb.append(" and  PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 				sb.append(" order by S." + Sirket.COLUMN_NAME_ID);
 				fields.put(fieldName, idList);
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -1354,7 +1354,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		personelSQLBagla(sb, fields);
 
 		donemSQLKontrol(sb);
-		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_YIL + " , D." + DenklestirmeAy.COLUMN_NAME_AY);
+		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_YIL + ", D." + DenklestirmeAy.COLUMN_NAME_AY);
 
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
