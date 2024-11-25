@@ -23,7 +23,6 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-
 import org.pdks.genel.model.PdksUtil;
 
 @Entity(name = Personel.TABLE_NAME)
@@ -32,6 +31,8 @@ public class Personel extends BaseObject {
 	/**
 	 * 
 	 */
+	private static final long serialVersionUID = -3135466261052396262L;
+
 	static Logger logger = Logger.getLogger(Personel.class);
 
 	public static final String TABLE_NAME = "PERSONEL";
@@ -41,11 +42,11 @@ public class Personel extends BaseObject {
 	public static final String COLUMN_NAME_KGS_PERSONEL = "KGS_PERSONEL_ID";
 	public static final String COLUMN_NAME_PDKS_SICIL_NO = "PDKS_SICIL_NO";
 	public static final String COLUMN_NAME_SIRKET = "SIRKET_ID";
+	public static final String COLUMN_NAME_TESIS = "TESIS_ID";
 	public static final String COLUMN_NAME_YONETICI = "YONETICI_ID";
 	public static final String COLUMN_NAME_ISE_BASLAMA_TARIHI = "ISE_BASLAMA_TARIHI";
 	public static final String COLUMN_NAME_ISTEN_AYRILIS_TARIHI = "ISTEN_AYRILIS_TARIHI";
 	public static final String COLUMN_NAME_GRUBA_GIRIS_TARIHI = "GRUBA_GIRIS_TARIHI";
-	public static final String COLUMN_NAME_FAZLA_MESAI_IZIN_KULLAN = "FAZLA_MESAI_IZIN_KULLAN";
 	public static final String COLUMN_NAME_EK_SAHA1 = "EK_SAHA1_ID";
 	public static final String COLUMN_NAME_EK_SAHA2 = "EK_SAHA2_ID";
 	public static final String COLUMN_NAME_EK_SAHA3 = "EK_SAHA3_ID";
@@ -53,15 +54,22 @@ public class Personel extends BaseObject {
 	public static final String COLUMN_NAME_AD = "AD";
 	public static final String COLUMN_NAME_SOYAD = "SOYAD";
 	public static final String COLUMN_NAME_SUA_OLABILIR = "SUA_OLABILIR";
+	public static final String COLUMN_NAME_FAZLA_MESAI_ODE = "FAZLA_MESAI_ODE";
 	public static final String COLUMN_NAME_SANAL_PERSONEL = "SANAL_PERSONEL";
+	public static final String COLUMN_NAME_FAZLA_MESAI_IZIN_KULLAN = "FAZLA_MESAI_IZIN_KULLAN";
 	public static final String COLUMN_NAME_MAIL_CC_ID = "MAIL_CC_ID";
 	public static final String COLUMN_NAME_MAIL_BCC_ID = "MAIL_BCC_ID";
 	public static final String COLUMN_NAME_HAREKET_MAIL_ID = "MAIL_HAREKET_ID";
-	public static final String COLUMN_NAME_FAZLA_MESAI_ODE = "FAZLA_MESAI_ODE";
+	public static final String COLUMN_NAME_IZIN_HAKEDIS_TARIHI = "IZIN_HAKEDIS_TARIHI";
 	public static final String COLUMN_NAME_DOGUM_TARIHI = "DOGUM_TARIHI";
 	public static final String COLUMN_NAME_SSK_CIKIS_TARIHI = "SSK_CIKIS_TARIHI";
-	public static final String COLUMN_NAME_IZIN_HAKEDIS_TARIHI = "IZIN_HAKEDIS_TARIHI";
+	public static final String COLUMN_NAME_CALISMA_MODELI = "CALISMA_MODELI_ID";
 	public static final String COLUMN_NAME_PERSONEL_TIPI = "PERSONEL_TIPI_ID";
+	public static final String COLUMN_NAME_GOREV_TIPI = "GOREV_TIPI_ID";
+	public static final String COLUMN_NAME_SABLON = "SABLON_ID";
+	public static final String COLUMN_NAME_IZIN_KARTI_VAR = "IZIN_KARTI_VAR";
+
+	public static final String COLUMN_NAME_MAIL_TAKIP = "MAIL_TAKIP";
 
 	public static final String STATU_HEKIM = "2";
 
@@ -71,27 +79,29 @@ public class Personel extends BaseObject {
 
 	public static final String MASRAF_YERI_GENEL_DIREKTOR = "310000";
 
-	private static final long serialVersionUID = -3910172727430872797L;
+	public static String grubaGirisTarihiAlanAdi = COLUMN_NAME_ISE_BASLAMA_TARIHI;
+	public static String altBolumGrupGoster = "ABG";
 	// seam-gen attributes (you should probably edit these)
 	private String ad = "", soyad = "", erpSicilNo = "", pdksSicilNo, sortAlanAdi = "";
 
 	private PersonelKGS personelKGS;
 	private VardiyaSablonu sablon;
-	private MailGrubu mailGrubuCC, mailGrubuBCC, hareketMailGrubu;
 	private Sirket sirket;
 	private CalismaModeli calismaModeli;
 	private Tanim gorevTipi, ekSaha1, ekSaha2, ekSaha3, ekSaha4, tesis, masrafYeri, ekSaha, cinsiyet, bordroAltAlan, personelTipi;
 	private Boolean pdks = Boolean.FALSE, mailTakip = Boolean.FALSE, icapciOlabilir = Boolean.FALSE, ustYonetici = Boolean.FALSE, sutIzni = Boolean.FALSE;
 	private Boolean suaOlabilir = Boolean.FALSE, fazlaMesaiIzinKullan = Boolean.FALSE, sanalPersonel = Boolean.FALSE, onaysizIzinKullanilir = Boolean.FALSE, egitimDonemi = Boolean.FALSE;
-	private Boolean partTime = Boolean.FALSE, ikinciYoneticiIzinOnayla = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, gebeMi = Boolean.FALSE;
-	private Personel yoneticisi, asilYonetici1, asilYonetici2, tmpYonetici;
+	private Boolean partTime = Boolean.FALSE, ikinciYoneticiIzinOnayla = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, izinKartiVar = Boolean.FALSE, gebeMi = Boolean.FALSE, mudurAltSeviye;
+	private Personel yoneticisi, asilYonetici1, asilYonetici2, pdksYonetici, tmpYonetici;
 	private Date izinHakEdisTarihi, iseBaslamaTarihi, grubaGirisTarihi, istenAyrilisTarihi = PdksUtil.getSonSistemTarih(), sskCikisTarihi, dogumTarihi;
 	private VardiyaSablonu workSablon;
 	private PersonelIzin personelIzin;
+
+	private PersonelView personelView;
+	private MailGrubu mailGrubuCC, mailGrubuBCC, hareketMailGrubu;
 	private String emailCC = "", emailBCC = "", hareketMail = "";
-
 	private List<PersonelIzin> personelIzinList;
-
+	private List<VardiyaGun> personelVardiyalari;
 	private double fazlaMesaiIzin = 0, senelikIzin = 0;
 
 	// private double mazeretIzin = 0, icEgitimIzin = 0, disEgitimIzin = 0;
@@ -104,7 +114,6 @@ public class Personel extends BaseObject {
 	public Personel() {
 		super();
 		this.setPdks(true);
-		this.setDegisti(false);
 	}
 
 	@Column(name = "VERSION")
@@ -123,10 +132,8 @@ public class Personel extends BaseObject {
 		return personelKGS;
 	}
 
-	public void setPersonelKGS(PersonelKGS value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isLongDegisti(personelKGS != null ? personelKGS.getId() : null, value != null ? value.getId() : null));
-		this.personelKGS = value;
+	public void setPersonelKGS(PersonelKGS personelKGS) {
+		this.personelKGS = personelKGS;
 	}
 
 	@Column(name = COLUMN_NAME_AD)
@@ -134,15 +141,14 @@ public class Personel extends BaseObject {
 		return ad;
 	}
 
-	public void setAd(String value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isStrDegisti(ad, value));
-		value = PdksUtil.convertUTF8(value);
-		this.ad = value;
+	public void setAd(String ad) {
+		ad = PdksUtil.convertUTF8(ad);
+		this.ad = ad;
 	}
 
 	@Column(name = COLUMN_NAME_SOYAD)
 	public String getSoyad() {
+
 		return soyad;
 	}
 
@@ -151,17 +157,13 @@ public class Personel extends BaseObject {
 		return pdksSicilNo;
 	}
 
-	public void setPdksSicilNo(String value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isStrDegisti(pdksSicilNo, value));
-		this.pdksSicilNo = value;
+	public void setPdksSicilNo(String pdksSicilNo) {
+		this.pdksSicilNo = pdksSicilNo;
 	}
 
-	public void setSoyad(String value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isStrDegisti(soyad, value));
-		value = PdksUtil.convertUTF8(value);
-		this.soyad = value;
+	public void setSoyad(String soyad) {
+		soyad = PdksUtil.convertUTF8(soyad);
+		this.soyad = soyad;
 	}
 
 	@Transient
@@ -186,10 +188,8 @@ public class Personel extends BaseObject {
 		return sirket;
 	}
 
-	public void setSirket(Sirket value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isLongDegisti(sirket != null ? sirket.getId() : null, value != null ? value.getId() : null));
-		this.sirket = value;
+	public void setSirket(Sirket sirket) {
+		this.sirket = sirket;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -199,59 +199,19 @@ public class Personel extends BaseObject {
 		return calismaModeli;
 	}
 
-	public void setCalismaModeli(CalismaModeli value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isLongDegisti(calismaModeli != null ? calismaModeli.getId() : null, value != null ? value.getId() : null));
-		this.calismaModeli = value;
+	public void setCalismaModeli(CalismaModeli calismaModeli) {
+		this.calismaModeli = calismaModeli;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = "GOREV_TIPI_ID")
+	@JoinColumn(name = COLUMN_NAME_GOREV_TIPI)
 	@Fetch(FetchMode.JOIN)
 	public Tanim getGorevTipi() {
 		return gorevTipi;
 	}
 
-	public void setGorevTipi(Tanim value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isTanimDegisti(gorevTipi, value));
-		this.gorevTipi = value;
-	}
-
-	@OneToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = COLUMN_NAME_MAIL_CC_ID)
-	@Fetch(FetchMode.JOIN)
-	public MailGrubu getMailGrubuCC() {
-		return mailGrubuCC;
-	}
-
-	public void setMailGrubuCC(MailGrubu value) {
-		this.emailCC = value != null ? value.getEmail() : null;
-		this.mailGrubuCC = value;
-	}
-
-	@OneToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = COLUMN_NAME_MAIL_BCC_ID)
-	@Fetch(FetchMode.JOIN)
-	public MailGrubu getMailGrubuBCC() {
-		return mailGrubuBCC;
-	}
-
-	public void setMailGrubuBCC(MailGrubu value) {
-		this.emailBCC = value != null ? value.getEmail() : null;
-		this.mailGrubuBCC = value;
-	}
-
-	@OneToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = COLUMN_NAME_HAREKET_MAIL_ID)
-	@Fetch(FetchMode.JOIN)
-	public MailGrubu getHareketMailGrubu() {
-		return hareketMailGrubu;
-	}
-
-	public void setHareketMailGrubu(MailGrubu value) {
-		this.hareketMail = value != null ? value.getEmail() : null;
-		this.hareketMailGrubu = value;
+	public void setGorevTipi(Tanim gorevTipi) {
+		this.gorevTipi = gorevTipi;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -261,10 +221,8 @@ public class Personel extends BaseObject {
 		return ekSaha1;
 	}
 
-	public void setEkSaha1(Tanim value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isTanimDegisti(ekSaha1, value));
-		this.ekSaha1 = value;
+	public void setEkSaha1(Tanim ekSaha1) {
+		this.ekSaha1 = ekSaha1;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -274,10 +232,8 @@ public class Personel extends BaseObject {
 		return ekSaha2;
 	}
 
-	public void setEkSaha2(Tanim value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isTanimDegisti(ekSaha2, value));
-		this.ekSaha2 = value;
+	public void setEkSaha2(Tanim ekSaha2) {
+		this.ekSaha2 = ekSaha2;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -287,10 +243,8 @@ public class Personel extends BaseObject {
 		return ekSaha3;
 	}
 
-	public void setEkSaha3(Tanim value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isTanimDegisti(ekSaha3, value));
-		this.ekSaha3 = value;
+	public void setEkSaha3(Tanim ekSaha3) {
+		this.ekSaha3 = ekSaha3;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -300,10 +254,8 @@ public class Personel extends BaseObject {
 		return ekSaha4;
 	}
 
-	public void setEkSaha4(Tanim value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isTanimDegisti(ekSaha4, value));
-		this.ekSaha4 = value;
+	public void setEkSaha4(Tanim ekSaha4) {
+		this.ekSaha4 = ekSaha4;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -313,10 +265,8 @@ public class Personel extends BaseObject {
 		return bordroAltAlan;
 	}
 
-	public void setBordroAltAlan(Tanim value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isTanimDegisti(bordroAltAlan, value));
-		this.bordroAltAlan = value;
+	public void setBordroAltAlan(Tanim bordroAltAlan) {
+		this.bordroAltAlan = bordroAltAlan;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -326,10 +276,8 @@ public class Personel extends BaseObject {
 		return personelTipi;
 	}
 
-	public void setPersonelTipi(Tanim value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isTanimDegisti(personelTipi, value));
-		this.personelTipi = value;
+	public void setPersonelTipi(Tanim personelTipi) {
+		this.personelTipi = personelTipi;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -339,23 +287,19 @@ public class Personel extends BaseObject {
 		return cinsiyet;
 	}
 
-	public void setCinsiyet(Tanim value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isTanimDegisti(cinsiyet, value));
-		this.cinsiyet = value;
+	public void setCinsiyet(Tanim cinsiyet) {
+		this.cinsiyet = cinsiyet;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = "TESIS_ID")
+	@JoinColumn(name = COLUMN_NAME_TESIS)
 	@Fetch(FetchMode.JOIN)
 	public Tanim getTesis() {
 		return tesis;
 	}
 
-	public void setTesis(Tanim value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isTanimDegisti(tesis, value));
-		this.tesis = value;
+	public void setTesis(Tanim tesis) {
+		this.tesis = tesis;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -365,21 +309,17 @@ public class Personel extends BaseObject {
 		return masrafYeri;
 	}
 
-	public void setMasrafYeri(Tanim value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isTanimDegisti(masrafYeri, value));
-		this.masrafYeri = value;
+	public void setMasrafYeri(Tanim masrafYeri) {
+		this.masrafYeri = masrafYeri;
 	}
 
-	@Column(name = "MAIL_TAKIP")
+	@Column(name = COLUMN_NAME_MAIL_TAKIP)
 	public Boolean getMailTakip() {
 		return mailTakip;
 	}
 
-	public void setMailTakip(Boolean value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isBooleanDegisti(mailTakip, value));
-		this.mailTakip = value;
+	public void setMailTakip(Boolean mailTakip) {
+		this.mailTakip = mailTakip;
 	}
 
 	@Column(name = "GEBE_MI")
@@ -401,16 +341,14 @@ public class Personel extends BaseObject {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = "SABLON_ID")
+	@JoinColumn(name = COLUMN_NAME_SABLON)
 	@Fetch(FetchMode.JOIN)
 	public VardiyaSablonu getSablon() {
 		return sablon;
 	}
 
-	public void setSablon(VardiyaSablonu value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isLongDegisti(sablon != null ? sablon.getId() : null, value != null ? value.getId() : null));
-		this.sablon = value;
+	public void setSablon(VardiyaSablonu sablon) {
+		this.sablon = sablon;
 	}
 
 	@Column(name = "PDKS")
@@ -438,10 +376,8 @@ public class Personel extends BaseObject {
 		return yoneticisi;
 	}
 
-	public void setYoneticisi(Personel value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isLongDegisti(yoneticisi != null ? yoneticisi.getId() : null, value != null ? value.getId() : null));
-		this.yoneticisi = value;
+	public void setYoneticisi(Personel yoneticisi) {
+		this.yoneticisi = yoneticisi;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -451,10 +387,8 @@ public class Personel extends BaseObject {
 		return asilYonetici1;
 	}
 
-	public void setAsilYonetici1(Personel value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isLongDegisti(asilYonetici1 != null ? asilYonetici1.getId() : null, value != null ? value.getId() : null));
-		this.asilYonetici1 = value;
+	public void setAsilYonetici1(Personel asilYonetici1) {
+		this.asilYonetici1 = asilYonetici1;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -464,10 +398,8 @@ public class Personel extends BaseObject {
 		return asilYonetici2;
 	}
 
-	public void setAsilYonetici2(Personel value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isLongDegisti(asilYonetici2 != null ? asilYonetici2.getId() : null, value != null ? value.getId() : null));
-		this.asilYonetici2 = value;
+	public void setAsilYonetici2(Personel asilYonetici2) {
+		this.asilYonetici2 = asilYonetici2;
 	}
 
 	@Transient
@@ -494,10 +426,8 @@ public class Personel extends BaseObject {
 		return iseBaslamaTarihi;
 	}
 
-	public void setIseBaslamaTarihi(Date value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isDateDegisti(iseBaslamaTarihi, value));
-		this.iseBaslamaTarihi = value;
+	public void setIseBaslamaTarihi(Date iseBaslamaTarihi) {
+		this.iseBaslamaTarihi = iseBaslamaTarihi;
 	}
 
 	@Temporal(value = TemporalType.DATE)
@@ -506,10 +436,8 @@ public class Personel extends BaseObject {
 		return grubaGirisTarihi;
 	}
 
-	public void setGrubaGirisTarihi(Date value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isDateDegisti(grubaGirisTarihi, value));
-		this.grubaGirisTarihi = value;
+	public void setGrubaGirisTarihi(Date grubaGirisTarihi) {
+		this.grubaGirisTarihi = grubaGirisTarihi;
 	}
 
 	@Temporal(value = TemporalType.DATE)
@@ -518,10 +446,8 @@ public class Personel extends BaseObject {
 		return istenAyrilisTarihi;
 	}
 
-	public void setIstenAyrilisTarihi(Date value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isDateDegisti(istenAyrilisTarihi, value));
-		this.istenAyrilisTarihi = value;
+	public void setIstenAyrilisTarihi(Date istenAyrilisTarihi) {
+		this.istenAyrilisTarihi = istenAyrilisTarihi;
 	}
 
 	@Temporal(value = TemporalType.DATE)
@@ -536,7 +462,7 @@ public class Personel extends BaseObject {
 
 	@Generated(value = GenerationTime.ALWAYS)
 	@Temporal(value = TemporalType.DATE)
-	@Column(name = COLUMN_NAME_SSK_CIKIS_TARIHI)
+	@Column(name = COLUMN_NAME_SSK_CIKIS_TARIHI, insertable = false, updatable = false)
 	public Date getSskCikisTarihi() {
 		return sskCikisTarihi;
 	}
@@ -551,10 +477,8 @@ public class Personel extends BaseObject {
 		return izinHakEdisTarihi;
 	}
 
-	public void setIzinHakEdisTarihi(Date value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isDateDegisti(izinHakEdisTarihi, value));
-		this.izinHakEdisTarihi = value;
+	public void setIzinHakEdisTarihi(Date izinHakEdisTarihi) {
+		this.izinHakEdisTarihi = izinHakEdisTarihi;
 	}
 
 	@Column(name = "ICAP_OLABILIR")
@@ -593,24 +517,27 @@ public class Personel extends BaseObject {
 		this.egitimDonemi = egitimDonemi;
 	}
 
-	@Column(name = COLUMN_NAME_FAZLA_MESAI_IZIN_KULLAN)
-	public Boolean getFazlaMesaiIzinKullan() {
-		return fazlaMesaiIzinKullan;
-	}
-
-	public void setFazlaMesaiIzinKullan(Boolean fazlaMesaiIzinKullan) {
-		this.fazlaMesaiIzinKullan = fazlaMesaiIzinKullan;
-	}
-
 	@Column(name = COLUMN_NAME_SANAL_PERSONEL)
 	public Boolean getSanalPersonel() {
 		return sanalPersonel;
 	}
 
-	public void setSanalPersonel(Boolean value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isBooleanDegisti(sanalPersonel, value));
-		this.sanalPersonel = value;
+	public void setSanalPersonel(Boolean sanalPersonel) {
+		this.sanalPersonel = sanalPersonel;
+	}
+
+	@Transient
+	public boolean isSanalPersonelMi() {
+		return sanalPersonel != null && sanalPersonel;
+	}
+
+	@Column(name = COLUMN_NAME_FAZLA_MESAI_IZIN_KULLAN)
+	public Boolean getFazlaMesaiIzinKullan() {
+		return fazlaMesaiIzinKullan != null && fazlaMesaiIzinKullan;
+	}
+
+	public void setFazlaMesaiIzinKullan(Boolean fazlaMesaiIzinKullan) {
+		this.fazlaMesaiIzinKullan = fazlaMesaiIzinKullan;
 	}
 
 	@Column(name = COLUMN_NAME_SUA_OLABILIR)
@@ -636,10 +563,53 @@ public class Personel extends BaseObject {
 		return fazlaMesaiOde;
 	}
 
-	public void setFazlaMesaiOde(Boolean value) {
-		if (this.isDegisti() == false)
-			this.setDegisti(PdksUtil.isBooleanDegisti(fazlaMesaiOde, value));
-		this.fazlaMesaiOde = value;
+	public void setFazlaMesaiOde(Boolean fazlaMesaiOde) {
+		this.fazlaMesaiOde = fazlaMesaiOde;
+	}
+
+	@Column(name = COLUMN_NAME_IZIN_KARTI_VAR)
+	public Boolean getIzinKartiVar() {
+		return izinKartiVar;
+	}
+
+	public void setIzinKartiVar(Boolean izinKartiVar) {
+		this.izinKartiVar = izinKartiVar;
+	}
+
+	@OneToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_MAIL_CC_ID)
+	@Fetch(FetchMode.JOIN)
+	public MailGrubu getMailGrubuCC() {
+		return mailGrubuCC;
+	}
+
+	public void setMailGrubuCC(MailGrubu value) {
+		this.emailCC = value != null ? value.getEmail() : null;
+		this.mailGrubuCC = value;
+	}
+
+	@OneToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_MAIL_BCC_ID)
+	@Fetch(FetchMode.JOIN)
+	public MailGrubu getMailGrubuBCC() {
+		return mailGrubuBCC;
+	}
+
+	public void setMailGrubuBCC(MailGrubu value) {
+		this.emailBCC = value != null ? value.getEmail() : null;
+		this.mailGrubuBCC = value;
+	}
+
+	@OneToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_HAREKET_MAIL_ID)
+	@Fetch(FetchMode.JOIN)
+	public MailGrubu getHareketMailGrubu() {
+		return hareketMailGrubu;
+	}
+
+	public void setHareketMailGrubu(MailGrubu value) {
+		this.hareketMail = value != null ? value.getEmail() : null;
+		this.hareketMailGrubu = value;
 	}
 
 	@Transient
@@ -666,7 +636,7 @@ public class Personel extends BaseObject {
 		if (iseBaslamaTarihi != null && istenAyrilisTarihi != null) {
 			if (bugun == null)
 				bugun = PdksUtil.getDate(new Date());
-			calisiyor = bugun.getTime() >= iseBaslamaTarihi.getTime() && bugun.getTime() <= getSonCalismaTarihi().getTime();
+			calisiyor = bugun.getTime() >= iseBaslamaTarihi.getTime() && bugun.getTime() <= getSskCikisTarihi().getTime();
 		}
 		return calisiyor && durum;
 	}
@@ -711,6 +681,15 @@ public class Personel extends BaseObject {
 			adiSoyadi = adiSoyadi.substring(0, 11) + "..";
 		}
 		return adiSoyadi;
+	}
+
+	@Transient
+	public List<VardiyaGun> getPersonelVardiyalari() {
+		return personelVardiyalari;
+	}
+
+	public void setPersonelVardiyalari(List<VardiyaGun> personelVardiyalari) {
+		this.personelVardiyalari = personelVardiyalari;
 	}
 
 	@Transient
@@ -774,10 +753,10 @@ public class Personel extends BaseObject {
 		if (pdksPersonel != null && !pdksPersonel.isCalisiyor())
 			pdksPersonel = null;
 		if (pdksPersonel == null) {
-			if (getYonetici1() != null) {
-				pdksPersonel = getYonetici1();
+			if (getPdksYonetici() != null) {
+				pdksPersonel = getPdksYonetici();
 				if (pdksPersonel != null)
-					pdksPersonel = pdksPersonel.getYonetici1();
+					pdksPersonel = pdksPersonel.getPdksYonetici();
 			}
 		}
 		if (pdksPersonel != null && !pdksPersonel.isCalisiyor())
@@ -786,11 +765,17 @@ public class Personel extends BaseObject {
 	}
 
 	@Transient
-	public Personel getYonetici1() {
-		Personel pdksPersonel = yoneticisi;
-		if (pdksPersonel != null && !pdksPersonel.isCalisiyor())
-			pdksPersonel = null;
-		return pdksPersonel;
+	public Personel getPdksYonetici() {
+		if (pdksYonetici == null) {
+			pdksYonetici = yoneticisi;
+			if (pdksYonetici != null && !pdksYonetici.isCalisiyor() && asilYonetici1 != null && asilYonetici1.isCalisiyor())
+				pdksYonetici = asilYonetici1;
+		}
+		return pdksYonetici;
+	}
+
+	public void setPdksYonetici(Personel pdksYonetici) {
+		this.pdksYonetici = pdksYonetici;
 	}
 
 	@Transient
@@ -869,31 +854,62 @@ public class Personel extends BaseObject {
 	}
 
 	@Transient
-	public boolean isCinsiyetBay() {
-		boolean cinsiyetDurum = cinsiyet != null && cinsiyet.getKodu().equalsIgnoreCase("e");
+	public Boolean getCinsiyetBay() {
+		Boolean cinsiyetDurum = cinsiyet != null && cinsiyet.getKodu().equalsIgnoreCase("e");
 		return cinsiyetDurum;
 	}
 
 	@Transient
-	public boolean isCinsiyetBayan() {
-		boolean cinsiyetDurum = cinsiyet != null && cinsiyet.getKodu().equalsIgnoreCase("k");
+	public Boolean getCinsiyetBayan() {
+		Boolean cinsiyetDurum = cinsiyet != null && cinsiyet.getKodu().equalsIgnoreCase("k");
 		return cinsiyetDurum;
 	}
 
-	public String getEmailStr(MailGrubu value) {
-		String str = null;
-		if (mailGrubuCC != null)
-			mailGrubuCC.setGuncellendi(Boolean.FALSE);
-		if (value != null && value.getEmail() != null && value.getEmail().indexOf("@") > 1) {
-			str = value.getEmail().trim();
+	@Transient
+	public boolean isGebelikSutIzinVar() {
+		boolean gebelikDurum = getCinsiyetBayan();
+		if (gebelikDurum && sirket != null)
+			gebelikDurum = sirket.isGebelikSutIzinVar();
+		return gebelikDurum;
+	}
+
+	@Transient
+	public Personel getAktifAsilYonetici2() {
+		Personel personel = asilYonetici2;
+		try {
+			if (personel != null && !personel.isCalisiyor())
+				personel = null;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return str;
+		return personel;
+	}
+
+	@Transient
+	public Date getSonCalismaTarihi() {
+		Date sonCalismaTarihi = getSskCikisTarihi();
+		if (sonCalismaTarihi == null) {
+			sonCalismaTarihi = istenAyrilisTarihi;
+			if (sirket != null && (sirket.getIstenAyrilmaTarihindeCalisiyor() == null || sirket.getIstenAyrilmaTarihindeCalisiyor().equals(Boolean.FALSE))) {
+				if (istenAyrilisTarihi != null && PdksUtil.tarihKarsilastirNumeric(istenAyrilisTarihi, PdksUtil.getSonSistemTarih()) != 0)
+					sonCalismaTarihi = PdksUtil.tariheGunEkleCikar(istenAyrilisTarihi, -1);
+			}
+
+		}
+
+		return sonCalismaTarihi;
+	}
+
+	@Transient
+	public static Personel newpdksPersonel() {
+		Personel pdksPersonel = new Personel();
+		pdksPersonel.setPdks(Boolean.TRUE);
+		pdksPersonel.setMailTakip(Boolean.TRUE);
+		return pdksPersonel;
 	}
 
 	@Transient
 	public String getEmailCC() {
-		if (emailCC == null && mailGrubuCC != null)
-			emailCC = getEmailStr(mailGrubuCC);
 		return emailCC;
 	}
 
@@ -912,8 +928,6 @@ public class Personel extends BaseObject {
 
 	@Transient
 	public String getEmailBCC() {
-		if (emailBCC == null && mailGrubuBCC != null)
-			emailBCC = getEmailStr(mailGrubuBCC);
 		return emailBCC;
 	}
 
@@ -950,24 +964,114 @@ public class Personel extends BaseObject {
 	}
 
 	@Transient
-	public String getSirketSicilNo() {
-		String str = (sirket != null && sirket.isErp() ? sirket.getErpKodu().trim() + "_" : "") + (pdksSicilNo != null ? pdksSicilNo.trim() : "");
-		return str;
+	public List<String> getEMailCCList() {
+		if (mailGrubuCC != null && (!PdksUtil.hasStringValue(emailCC)))
+			emailCC = mailGrubuCC.getEmail();
+		List<String> mailList = PdksUtil.getListFromString(emailCC, null);
+		return mailList;
 	}
 
 	@Transient
-	public Date getSonCalismaTarihi() {
-		Date sonCalismaTarihi = getSskCikisTarihi();
-		if (sonCalismaTarihi == null) {
-			sonCalismaTarihi = istenAyrilisTarihi;
-			if (sirket != null && (sirket.getIstenAyrilmaTarihindeCalisiyor() == null || sirket.getIstenAyrilmaTarihindeCalisiyor().equals(Boolean.FALSE))) {
-				if (istenAyrilisTarihi != null && PdksUtil.tarihKarsilastirNumeric(istenAyrilisTarihi, PdksUtil.getSonSistemTarih()) != 0)
-					sonCalismaTarihi = PdksUtil.tariheGunEkleCikar(istenAyrilisTarihi, -1);
+	public List<String> getEMailHareketList() {
+		if (hareketMailGrubu != null && (!PdksUtil.hasStringValue(hareketMail)))
+			hareketMail = hareketMailGrubu.getEmail();
+		List<String> mailList = PdksUtil.getListFromString(hareketMail, null);
+		return mailList;
+	}
+
+	@Transient
+	public List<String> getEMailBCCList() {
+		if (mailGrubuBCC != null && (!PdksUtil.hasStringValue(emailBCC)))
+			emailBCC = mailGrubuBCC.getEmail();
+		List<String> mailList = PdksUtil.getListFromString(emailBCC, null);
+		return mailList;
+	}
+
+	@Transient
+	public Date getIseGirisTarihi() {
+		Date tarih = !grubaGirisTarihiAlanAdi.equals(COLUMN_NAME_ISE_BASLAMA_TARIHI) && grubaGirisTarihi != null && iseBaslamaTarihi != null && grubaGirisTarihi.before(iseBaslamaTarihi) ? grubaGirisTarihi : iseBaslamaTarihi;
+		return tarih;
+	}
+
+	@Transient
+	private String getBolumOzelAciklamaGetir(boolean ozel) {
+		String bolumAciklama = "";
+		if (ekSaha3 != null) {
+			bolumAciklama = ekSaha3.getAciklama();
+			if (ekSaha4 != null) {
+				if (ozel == false || (ekSaha3.getKodu() != null && ekSaha3.getKodu().endsWith(altBolumGrupGoster)))
+					bolumAciklama += " / " + ekSaha4.getAciklama();
 			}
-
 		}
+		return bolumAciklama;
+	}
 
-		return sonCalismaTarihi;
+	@Transient
+	public String getBolumOzelAciklama() {
+		String bolumOzelAciklama = getBolumOzelAciklamaGetir(true);
+		return bolumOzelAciklama;
+	}
+
+	@Transient
+	public String getBolumAciklama() {
+		String bolumAciklama = getBolumOzelAciklamaGetir(false);
+		return bolumAciklama;
+	}
+
+	@Transient
+	public Personel getPdksPersonel() {
+		return this;
+	}
+
+	@Transient
+	public PersonelView getPersonelView() {
+		if (personelView == null) {
+			personelView = new PersonelView();
+			personelView.setPdksPersonel(this);
+			personelView.setPersonelKGS(personelKGS);
+			personelView.setId(personelKGS.getId());
+			personelView.setAdi(this.getAd());
+			personelView.setSoyadi(this.getSoyad());
+			personelView.setKgsSicilNo(this.getPdksSicilNo());
+		}
+		return personelView;
+	}
+
+	public static String getIseGirisTarihiColumn() {
+		String str = PdksUtil.hasStringValue(grubaGirisTarihiAlanAdi) ? grubaGirisTarihiAlanAdi : COLUMN_NAME_ISE_BASLAMA_TARIHI;
+		return str;
+	}
+
+	public static String getGrubaGirisTarihiAlanAdi() {
+		String grubaGirisTarihiAlanAdiStr = grubaGirisTarihiAlanAdi != null ? grubaGirisTarihiAlanAdi.trim() : COLUMN_NAME_ISE_BASLAMA_TARIHI;
+		return grubaGirisTarihiAlanAdiStr;
+	}
+
+	public static void setGrubaGirisTarihiAlanAdi(String grubaGirisTarihiAlanAdi) {
+		Personel.grubaGirisTarihiAlanAdi = grubaGirisTarihiAlanAdi;
+	}
+
+	@Transient
+	public static String getAltBolumGrupGoster() {
+		return altBolumGrupGoster;
+	}
+
+	public static void setAltBolumGrupGoster(String altBolumGrupGoster) {
+		Personel.altBolumGrupGoster = altBolumGrupGoster;
+	}
+
+	@Transient
+	public Boolean getMudurAltSeviye() {
+		return mudurAltSeviye;
+	}
+
+	@Transient
+	public boolean isIzinKartiVardir() {
+		return sirket.isIzinGirer() || izinKartiVar != null && izinKartiVar;
+	}
+
+	public void setMudurAltSeviye(Boolean mudurAltSeviye) {
+		this.mudurAltSeviye = mudurAltSeviye;
 	}
 
 	@Transient
@@ -977,6 +1081,10 @@ public class Personel extends BaseObject {
 
 	public void setTmpYonetici(Personel tmpYonetici) {
 		this.tmpYonetici = tmpYonetici;
+	}
+
+	public void entityRefresh() {
+
 	}
 
 }

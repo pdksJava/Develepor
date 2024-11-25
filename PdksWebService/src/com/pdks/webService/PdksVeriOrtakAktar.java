@@ -3401,7 +3401,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 								String mesaj = "adı ve soyadı";
 								if (personelERP.getAdi() != null) {
 									mesaj = "soyadı";
-									bayanSoyad = personelTest.isCinsiyetBayan();
+									bayanSoyad = personelTest.getCinsiyetBayan();
 									if (bayanSoyad)
 										personelERP.setSoyadi(personelKGSData.getSoyad());
 
@@ -3434,7 +3434,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 										mesaj = "adı";
 									} else if (!soyadiUyumlu) {
 										mesaj = "soyadi";
-										bayanSoyad = personelTest.isCinsiyetBayan();
+										bayanSoyad = personelTest.getCinsiyetBayan();
 										if (bayanSoyad)
 											personelERP.setSoyadi(personelKGS.getSoyad());
 
@@ -3482,7 +3482,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 							else {
 								String uygulamaFark = kapiSirket.getAciklama() + " ile " + personelKGS2.getKapiSirket().getAciklama();
 								if (adBenzer) {
-									bayanSoyad = personelTest.isCinsiyetBayan();
+									bayanSoyad = personelTest.getCinsiyetBayan();
 									if (bayanSoyad)
 										personelERP.setSoyadi(personelKGS2.getSoyad());
 									addHatalist(bayanSoyad == false ? personelERP.getHataList() : kidemHataList, PdksUtil.replaceAllManuel(uygulamaFark + " soyad uyumsuz!", "  ", " "));
@@ -3871,6 +3871,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 								personel.setOlusturmaTarihi(new Date());
 								personel.setOlusturanUser(islemYapan);
 								personel.setPdksSicilNo(personelNo);
+								personel.setIzinKartiVar(dogumTarihi != null && izinHakEdisTarihi != null);
 							}
 							if (personel.getSablon() == null)
 								personel.setSablon(vardiyaSablonu);

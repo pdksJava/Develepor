@@ -34,6 +34,8 @@ public class Personel extends BaseObject {
 	 */
 	static Logger logger = Logger.getLogger(Personel.class);
 
+	private static final long serialVersionUID = -3910172727430872797L;
+
 	public static final String TABLE_NAME = "PERSONEL";
 	public static final String VIEW_YONETICI_KONTRATLI = "YONETICI_KONTRATLI_VIEW";
 	public static final String VIEW_YONETICI_KONTRATLI_AYRILMIS = "YONETICI_KONTRATLI_AYRILMIS_VIEW";
@@ -78,8 +80,6 @@ public class Personel extends BaseObject {
 
 	public static final String MASRAF_YERI_GENEL_DIREKTOR = "310000";
 
-	private static final long serialVersionUID = -3910172727430872797L;
-
 	public static String grubaGirisTarihiAlanAdi = COLUMN_NAME_ISE_BASLAMA_TARIHI;
 	public static String altBolumGrupGoster = "ABG";
 	// seam-gen attributes (you should probably edit these)
@@ -93,7 +93,7 @@ public class Personel extends BaseObject {
 	private Boolean pdks = Boolean.FALSE, mailTakip = Boolean.FALSE, icapciOlabilir = Boolean.FALSE, ustYonetici = Boolean.FALSE, sutIzni = Boolean.FALSE;
 	private Boolean suaOlabilir = Boolean.FALSE, fazlaMesaiIzinKullan = Boolean.FALSE, sanalPersonel = Boolean.FALSE, onaysizIzinKullanilir = Boolean.FALSE, egitimDonemi = Boolean.FALSE;
 	private Boolean partTime = Boolean.FALSE, ikinciYoneticiIzinOnayla = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, izinKartiVar = Boolean.FALSE, gebeMi = Boolean.FALSE, mudurAltSeviye;
-	private Personel yoneticisi, asilYonetici1, asilYonetici2, pdksYonetici;
+	private Personel yoneticisi, asilYonetici1, asilYonetici2, pdksYonetici, tmpYonetici;
 	private Date izinHakEdisTarihi, iseBaslamaTarihi, grubaGirisTarihi, istenAyrilisTarihi = PdksUtil.getSonSistemTarih(), sskCikisTarihi, dogumTarihi;
 	private VardiyaSablonu workSablon;
 	private PersonelIzin personelIzin;
@@ -1100,8 +1100,16 @@ public class Personel extends BaseObject {
 		this.mudurAltSeviye = mudurAltSeviye;
 	}
 
+	@Transient
+	public Personel getTmpYonetici() {
+		return tmpYonetici;
+	}
+
+	public void setTmpYonetici(Personel tmpYonetici) {
+		this.tmpYonetici = tmpYonetici;
+	}
+
 	public void entityRefresh() {
-		
 
 	}
 
