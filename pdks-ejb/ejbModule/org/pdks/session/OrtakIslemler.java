@@ -842,7 +842,7 @@ public class OrtakIslemler implements Serializable {
 							String fieldName = "p";
 							map.clear();
 							StringBuffer sb = new StringBuffer();
-							sb.append(" select R.* from " + PersonelDenklestirme.TABLE_NAME + " R " + PdksEntityController.getSelectLOCK() );
+							sb.append(" select R.* from " + PersonelDenklestirme.TABLE_NAME + " R " + PdksEntityController.getSelectLOCK());
 							sb.append(" where R." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " and R." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
 							List<Long> list = donemPerMap.get(key);
 							map.put(fieldName, list);
@@ -4309,21 +4309,23 @@ public class OrtakIslemler implements Serializable {
 					}
 					Integer mudurDurum = 0;
 					String spAdi = "SP_GET_FAZLA_MESAI_DATA_MUD";
+					boolean ustYonetici = false;
 					if (isExisStoreProcedure(spAdi, session) == false) {
 						mudurDurum = null;
 						spAdi = "SP_GET_FAZLA_MESAI_DATA";
 					} else {
 						try {
 							Personel per = loginUser.getPdksPersonel();
+							ustYonetici = per.getUstYonetici() != null && per.getUstYonetici();
 							if (per.getMudurAltSeviye() == null) {
 								Boolean mudurAltSeviye = getMudurAltSeviyeDurum(per, session);
 								per.setMudurAltSeviye(mudurAltSeviye);
 							}
-							mudurDurum = direktorId == null && per.getMudurAltSeviye() ? 1 : 0;
+							mudurDurum = ustYonetici || (direktorId == null && per.getMudurAltSeviye()) ? 1 : 0;
 						} catch (Exception e) {
 							mudurDurum = 0;
 						}
-						if (ikRol || direktorId != null)
+						if (ikRol || (ustYonetici == false && direktorId != null))
 							mudurDurum = 0;
 					}
 					map.put("departmanId", depId);
