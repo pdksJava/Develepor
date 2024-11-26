@@ -5598,8 +5598,10 @@ public class OrtakIslemler implements Serializable {
 				String parametreJSON = gson.toJson(map1);
 				if (menuItemTime != null) {
 					if (menuItemTime.getParametreJSON() == null || !parametreJSON.equals(menuItemTime.getParametreJSON())) {
-						saveUserMenuItemDeger(menuItemTime, parametreJSON, menuItemTime.getMySession(), session);
-//						session.flush();
+						boolean durum = saveUserMenuItemDeger(menuItemTime, parametreJSON, menuItemTime.getMySession(), session);
+						if (durum == false)
+							session.flush();
+
 					}
 					if (authenticatedUser != null && parametreJSON != null)
 						authenticatedUser.setParametreJSON(parametreJSON);
@@ -5655,16 +5657,16 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @throws Exception
 	 */
-	private void saveUserMenuItemDeger(UserMenuItemTime menuItemTime, String parametreJSON, HttpSession mySession, Session session) throws Exception {
+	private boolean saveUserMenuItemDeger(UserMenuItemTime menuItemTime, String parametreJSON, HttpSession mySession, Session session) throws Exception {
 		String spName = "SP_UPDATE_USER_MENUITEM_TIME";
-		menuItemTime.setParametreJSON(parametreJSON);
-		if (mySession == null)
-			mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-		if (mySession != null)
-			menuItemTime.setSessionId(mySession.getId());
-		menuItemTime.setLastTime(new Date());
 		boolean flush = false;
 		if (menuItemTime.getId() == null || isExisStoreProcedure(spName, session) == false) {
+			menuItemTime.setParametreJSON(parametreJSON);
+			if (mySession == null)
+				mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+			if (mySession != null)
+				menuItemTime.setSessionId(mySession.getId());
+			menuItemTime.setLastTime(new Date());
 			pdksEntityController.saveOrUpdate(session, entityManager, menuItemTime);
 			flush = true;
 		} else if (PdksUtil.isStrDegisti(mySession != null ? mySession.getId() : "", menuItemTime.getSessionId()) || PdksUtil.isStrDegisti(parametreJSON, menuItemTime.getParametreJSON())) {
@@ -5679,6 +5681,7 @@ public class OrtakIslemler implements Serializable {
 		}
 		if (flush)
 			session.flush();
+		return flush;
 	}
 
 	/**
@@ -12817,6 +12820,7 @@ public class OrtakIslemler implements Serializable {
 			for (VardiyaGun vardiyaGun : vardiyaGunList) {
 				Personel personel = vardiyaGun.getPersonel();
 				Vardiya vardiya = vardiyaGun.getVardiya();
+				Date vardiyaTarihi = vardiyaGun.getVardiyaDate();
 				Long perId = personel.getId();
 				String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMM") + "_" + perId;
 				boolean gebeMi = false, sutIzniVar = false;
@@ -12824,7 +12828,8 @@ public class OrtakIslemler implements Serializable {
 				if (personelDurumMap.containsKey(perId)) {
 					List<PersonelDonemselDurum> list = personelDurumMap.get(perId);
 					for (PersonelDonemselDurum personelDonemselDurum : list) {
-						boolean donemTamam = personelDonemselDurum.getBasTarih().getTime() <= vardiyaGun.getVardiyaDate().getTime() && personelDonemselDurum.getBitTarih().getTime() >= vardiyaGun.getVardiyaDate().getTime();
+						Date donemBasTarih = personelDonemselDurum.getBasTarih(), donemBitTarih = personelDonemselDurum.getBitTarih();
+						boolean donemTamam = donemBasTarih.getTime() <= vardiyaTarihi.getTime() && donemBitTarih.getTime() >= vardiyaTarihi.getTime();
 						if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.GEBE)) {
 							gebePersonelDonemselDurum = personelDonemselDurum;
 							if (donemTamam)
