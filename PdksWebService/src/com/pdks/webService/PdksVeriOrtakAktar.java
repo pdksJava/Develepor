@@ -3872,9 +3872,24 @@ public class PdksVeriOrtakAktar implements Serializable {
 								personel.setOlusturanUser(islemYapan);
 								personel.setPdksSicilNo(personelNo);
 								personel.setIzinKartiVar(dogumTarihi != null && izinHakEdisTarihi != null);
+								if (bolum != null && bolum.getKodu() != null) {
+									String kodu = bolum.getKodu();
+									if (kodu.equalsIgnoreCase("YOK")) {
+										personel.setMailTakip(Boolean.FALSE);
+										personel.setFazlaMesaiOde(Boolean.FALSE);
+										personel.setPdks(Boolean.FALSE);
+										personel.setCalismaModeli(null);
+									} else if (kodu.equalsIgnoreCase(IzinTipi.SUA_IZNI)) {
+										if (sirket != null && sirket.getSuaOlabilir() != null && sirket.getSuaOlabilir())
+											personel.setSuaOlabilir(Boolean.TRUE);
+
+									}
+
+								}
 							}
 							if (personel.getSablon() == null)
 								personel.setSablon(vardiyaSablonu);
+
 							saveList.add(personel);
 						} else {
 							personelERP.setYazildi(Boolean.TRUE);
