@@ -842,7 +842,7 @@ public class OrtakIslemler implements Serializable {
 							String fieldName = "p";
 							map.clear();
 							StringBuffer sb = new StringBuffer();
-							sb.append(" select R.* from " + PersonelDenklestirme.TABLE_NAME + " R " + PdksEntityController.getSelectLOCK() );
+							sb.append(" select R.* from " + PersonelDenklestirme.TABLE_NAME + " R " + PdksEntityController.getSelectLOCK());
 							sb.append(" where R." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " and R." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
 							List<Long> list = donemPerMap.get(key);
 							map.put(fieldName, list);
@@ -5597,7 +5597,7 @@ public class OrtakIslemler implements Serializable {
 				if (menuItemTime != null) {
 					if (menuItemTime.getParametreJSON() == null || !parametreJSON.equals(menuItemTime.getParametreJSON())) {
 						saveUserMenuItemDeger(menuItemTime, parametreJSON, menuItemTime.getMySession(), session);
-						session.flush();
+//						session.flush();
 					}
 					if (authenticatedUser != null && parametreJSON != null)
 						authenticatedUser.setParametreJSON(parametreJSON);
@@ -12834,12 +12834,10 @@ public class OrtakIslemler implements Serializable {
 							}
 
 						}
-
 					}
-
 				}
-				vardiyaGun.setSutIzniPersonelDonemselDurum(sutIzniPersonelDonemselDurum);
-				vardiyaGun.setGebePersonelDonemselDurum(gebePersonelDonemselDurum);
+				vardiyaGun.setSutIzniPersonelDonemselDurum(sutIzniVar ? sutIzniPersonelDonemselDurum : null);
+				vardiyaGun.setGebePersonelDonemselDurum(gebeMi ? gebePersonelDonemselDurum : null);
 				if (denkMap.containsKey(key)) {
 
 					PersonelDenklestirme denklestirme = denkMap.get(key);

@@ -487,8 +487,12 @@ public class PersonelDenklestirme extends BaseObject {
 			Tatil tatil = vg.getTatil();
 			Vardiya vardiya = vg.getVardiya();
 			double gunPlanSure = gun, sutIzniSure = 0.0d;
-			if (vg.isSutIzniVar()) {
+ 			if (vg.isSutIzniVar()) {
 				sutIzniSure = gunPlanSure <= 9.0d ? cm.getSutIzinSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK)) : 7.5d;
+				gunPlanSure = sutIzniSure;
+			} else if (vg.isGebePersonelDonemselDurum()) {
+				gunPlanSure = cm.getSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK));
+				sutIzniSure = gunPlanSure > 7.5d ? 7.5d : gunPlanSure;
 				gunPlanSure = sutIzniSure;
 			}
 			if (vg.isAyinGunu() && vardiya != null && vardiya.getId() != null) {
@@ -522,7 +526,7 @@ public class PersonelDenklestirme extends BaseObject {
 		double aylikSutSure = calismaModeliAy != null && calismaModeliAy.getToplamIzinSure() > 0.0d ? calismaModeliAy.getToplamIzinSure() : denklestirmeAy.getToplamIzinSure();
 		if (calismaModeliAy != null && cm.getToplamGunGuncelle() && sutIzniSaatSayisi > 0)
 			aylikSure = sutIzniSaatSayisi;
-		else if (cm.isHaftaTatilSabitDegil() || sutIzniPersonelDonemselDurum != null) {
+		else if (cm.isHaftaTatilSabitDegil() || sutIzniPersonelDonemselDurum != null || gebePersonelDonemselDurum != null) {
 			aylikSure = getPlananSureHesapla(cm, vardiyalar);
 			if (sutIzniPersonelDonemselDurum != null)
 				aylikSutSure = aylikSure;
