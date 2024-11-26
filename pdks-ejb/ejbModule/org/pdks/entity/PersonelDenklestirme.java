@@ -486,12 +486,11 @@ public class PersonelDenklestirme extends BaseObject {
 		for (VardiyaGun vg : vardiyalar) {
 			Tatil tatil = vg.getTatil();
 			Vardiya vardiya = vg.getVardiya();
-			double gunPlanSure = gun, sutIzniSure = 0.0d;
- 			if (vg.isSutIzniVar()) {
+			double gunPlanSure = gebePersonelDonemselDurum == null ? gun : cm.getSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK)), sutIzniSure = 0.0d;
+			if (vg.isSutIzniVar()) {
 				sutIzniSure = gunPlanSure <= 9.0d ? cm.getSutIzinSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK)) : 7.5d;
 				gunPlanSure = sutIzniSure;
 			} else if (vg.isGebePersonelDonemselDurum()) {
-				gunPlanSure = cm.getSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK));
 				sutIzniSure = gunPlanSure > 7.5d ? 7.5d : gunPlanSure;
 				gunPlanSure = sutIzniSure;
 			}
