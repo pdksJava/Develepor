@@ -4309,23 +4309,21 @@ public class OrtakIslemler implements Serializable {
 					}
 					Integer mudurDurum = 0;
 					String spAdi = "SP_GET_FAZLA_MESAI_DATA_MUD";
-					boolean ustYonetici = false;
 					if (isExisStoreProcedure(spAdi, session) == false) {
 						mudurDurum = null;
 						spAdi = "SP_GET_FAZLA_MESAI_DATA";
 					} else {
 						try {
 							Personel per = loginUser.getPdksPersonel();
-							ustYonetici = per.getUstYonetici() != null && per.getUstYonetici();
 							if (per.getMudurAltSeviye() == null) {
 								Boolean mudurAltSeviye = getMudurAltSeviyeDurum(per, session);
 								per.setMudurAltSeviye(mudurAltSeviye);
 							}
-							mudurDurum = ustYonetici || (direktorId == null && per.getMudurAltSeviye()) ? 1 : 0;
+							mudurDurum = direktorId == null && per.getMudurAltSeviye() ? 1 : 0;
 						} catch (Exception e) {
 							mudurDurum = 0;
 						}
-						if (ikRol || (ustYonetici == false && direktorId != null))
+						if (ikRol || direktorId != null)
 							mudurDurum = 0;
 					}
 					map.put("departmanId", depId);
