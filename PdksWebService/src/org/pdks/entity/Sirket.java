@@ -16,31 +16,32 @@ import org.pdks.genel.model.PdksUtil;
 @Entity(name = Sirket.TABLE_NAME)
 public class Sirket extends BaseObject {
 
+	 
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7429465630343438835L;
-
+	private static final long serialVersionUID = -1698513023307208515L;
 	public static final String TABLE_NAME = "SIRKET";
 	public static final String COLUMN_NAME_DEPARTMAN = "DEPARTMAN_ID";
 	public static final String COLUMN_NAME_SIRKET_GRUP = "SIRKET_GRUP_ID";
 	public static final String COLUMN_NAME_PDKS = "PDKS_DURUM";
 	public static final String COLUMN_NAME_FAZLA_MESAI = "FAZLA_MESAI";
 	public static final String COLUMN_NAME_ISTEN_AYR_TAR_CALISIYOR = "ISTEN_AYR_TAR_CALISIYOR";
-	public static final String COLUMN_NAME_ERP_DURUM = "ERP_DURUM";
-	public static final String COLUMN_NAME_ERP_KODU = "ERP_KODU";
-	
 
 	public static final String COLUMN_NAME_FAZLA_MESAI_IZIN_KULLAN = "FAZLA_MESAI_IZIN_KULLAN";
 	public static final String COLUMN_NAME_FAZLA_MESAI_TALEP_GIRILEBILIR = "FAZLA_MESAI_TALEP_GIRILEBILIR";
 	public static final String COLUMN_NAME_TESIS_DURUM = "TESIS_DURUM";
 	public static final String COLUMN_NAME_AD = "AD";
+	public static final String COLUMN_NAME_ERP_KODU = "ERP_KODU";
+	public static final String COLUMN_NAME_ERP_DURUM = "ERP_DURUM";
+	public static final String COLUMN_NAME_IZIN_KARTI_VAR = "IZIN_KARTI_VAR";
 	public static final String SIRKET_ERP_KODU = "3030";
 	private Long sirketGrupId;
 	private String ad, aciklama, erpKodu = "", lpdapOnEk = "";
 	private Boolean erpDurum = Boolean.FALSE, ldapDurum = Boolean.FALSE, pdks = Boolean.FALSE, suaOlabilir = Boolean.FALSE, tesisDurum = Boolean.FALSE;
 	private Boolean fazlaMesaiOde = Boolean.FALSE, fazlaMesai = Boolean.FALSE, istenAyrilmaTarihindeCalisiyor = Boolean.FALSE;
-	private Boolean fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiTalepGirilebilir = Boolean.FALSE;
+	private Boolean fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiTalepGirilebilir = Boolean.FALSE, izinKartiVar = Boolean.FALSE, gebelikSutIzin = Boolean.FALSE;
 	private Tanim sirketGrup;
 	private Departman departman;
 	private Integer version = 0;
@@ -229,6 +230,24 @@ public class Sirket extends BaseObject {
 		this.fazlaMesaiIzinKullan = fazlaMesaiIzinKullan;
 	}
 
+	@Column(name = COLUMN_NAME_IZIN_KARTI_VAR)
+	public Boolean getIzinKartiVar() {
+		return izinKartiVar;
+	}
+
+	public void setIzinKartiVar(Boolean izinKartiVar) {
+		this.izinKartiVar = izinKartiVar;
+	}
+
+	@Column(name = "GEBELIK_SUT_IZIN")
+	public Boolean getGebelikSutIzin() {
+		return gebelikSutIzin;
+	}
+
+	public void setGebelikSutIzin(Boolean gebelikSutIzin) {
+		this.gebelikSutIzin = gebelikSutIzin;
+	}
+
 	@Transient
 	public boolean isLdap() {
 		return ldapDurum != null ? ldapDurum.booleanValue() : false;
@@ -249,6 +268,24 @@ public class Sirket extends BaseObject {
 		return fazlaMesaiTalepGirilebilir != null && fazlaMesaiTalepGirilebilir.booleanValue();
 	}
 
-	 
+	@Transient
+	public boolean isGebelikSutIzinVar() {
+		return gebelikSutIzin != null && gebelikSutIzin;
+	}
+
+	@Transient
+	public boolean isIzinKartiVardir() {
+		return isIzinGirer() == false && (izinKartiVar != null && izinKartiVar);
+	}
+
+	@Transient
+	public boolean isIzinGirer() {
+		return departman != null && departman.isIzinGirer();
+	}
+
+	public void entityRefresh() {
+		
+
+	}
 
 }

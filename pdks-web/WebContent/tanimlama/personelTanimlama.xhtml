@@ -911,7 +911,9 @@
 											<rich:calendar enableManualInput="#{authenticatedUser.admin}" value="#{pdksPersonelHome.instance.dogumTarihi}"
 												datePattern="#{authenticatedUser.dateFormat}"
 												disabled="#{pdksPersonelHome.instance.id!=null and pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme!='1' and pdksPersonelHome.personelERPGuncelleme!='M' and pdksPersonelHome.instance.sanalPersonel==false}"
-												required="#{pdksPersonelHome.izinGirisiVar}" requiredMessage="Doğum tarihini giriniz" />
+												required="#{pdksPersonelHome.izinGirisiVar}" requiredMessage="Doğum tarihini giriniz">
+												<a4j:support event="onchanged" ajaxSingle="true" reRender="sirketDegisti" />
+											</rich:calendar>
 										</s:decorate>
 										<s:decorate template="/layout/edit.xhtml">
 											<ui:define name="label">#{ortakIslemler.kidemBasTarihiAciklama()}</ui:define>
@@ -1248,13 +1250,15 @@
 												<a4j:support event="onclick" />
 											</h:selectBooleanCheckbox>
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.sirket.izinKartiVardir}">
-											<ui:define name="label">İzin Kartı Var</ui:define>
-											<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.izinKartiVar}">
-												<a4j:support event="onclick" action="#{pdksPersonelHome.bakiyeDurumKontrolEt(pdksPersonelHome.instance)}" ajaxSingle="true"
-													reRender="sirketDegisti" />
-											</h:selectBooleanCheckbox>
-										</s:decorate>
+										<c:if test="#{pdksPersonelHome.instance.dogumTarihi!=null and pdksPersonelHome.instance.izinHakEdisTarihi!=null}">
+											<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.sirket.izinKartiVardir}">
+												<ui:define name="label">İzin Kartı Var</ui:define>
+												<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.izinKartiVar}">
+													<a4j:support event="onclick" action="#{pdksPersonelHome.bakiyeDurumKontrolEt(pdksPersonelHome.instance)}" ajaxSingle="true"
+														reRender="sirketDegisti" />
+												</h:selectBooleanCheckbox>
+											</s:decorate>
+										</c:if>
 										<s:decorate template="/layout/edit.xhtml"
 											rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H' and pdksPersonelHome.secIcap(null)}">
 											<ui:define name="label">İcapçı Olabilir</ui:define>
@@ -1284,15 +1288,15 @@
 
 										</c:if>
 
-										 
-											<c:if test="#{pdksPersonelHome.bakiyeIzinGoster}">
-												<s:decorate template="/layout/edit.xhtml">
-													<ui:define name="label">Devir Yıllık İzin</ui:define>
-													<h:inputText value="#{pdksPersonelHome.bakiyeIzinSuresi}"
-														disabled="#{authenticatedUser.IK and ortakIslemler.getParameterKey('bakiyeIzinGoster')=='190001'}" />
-												</s:decorate>
-											</c:if>
-										 
+
+										<c:if test="#{pdksPersonelHome.bakiyeIzinGoster}">
+											<s:decorate template="/layout/edit.xhtml">
+												<ui:define name="label">Devir Yıllık İzin</ui:define>
+												<h:inputText value="#{pdksPersonelHome.bakiyeIzinSuresi}"
+													disabled="#{authenticatedUser.IK and ortakIslemler.getParameterKey('bakiyeIzinGoster')=='190001'}" />
+											</s:decorate>
+										</c:if>
+
 
 										<c:forEach items="#{pdksPersonelHome.dinamikPersonelDurumList}" var="dpa">
 											<s:decorate template="/layout/edit.xhtml">

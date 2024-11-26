@@ -17,12 +17,12 @@ import org.hibernate.validator.Min;
 @Entity(name = Departman.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { Departman.COLUMN_NAME_DEPARTMAN }) })
 public class Departman extends BaseObject {
- 
+	 
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -2041353495228095459L;
+	private static final long serialVersionUID = -2813353467551968197L;
 
 	public static final String TABLE_NAME = "DEPARTMAN";
 
@@ -205,6 +205,10 @@ public class Departman extends BaseObject {
 		return fazlaMesaiTalepGirilebilir != null && fazlaMesaiTalepGirilebilir.booleanValue();
 	}
 
+	@Transient
+	public boolean isIzinGirer() {
+		return izinGirilebilir != null && izinGirilebilir.booleanValue();
+	}
 	public void entityRefresh() {
 		
 
