@@ -2873,7 +2873,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	}
 
 	/**
-	 * @param sirketKodu
+	 * @param ekKodu
 	 * @param parentKey
 	 * @param tanimKodu
 	 * @param aciklama
@@ -2881,7 +2881,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @param saveList
 	 * @return
 	 */
-	private Tanim getTanim(String sirketKodu, String parentKey, String tanimKodu, String aciklama, TreeMap<String, TreeMap> dataMap, List saveList) {
+	private Tanim getTanim(String ekKodu, String parentKey, String tanimKodu, String aciklama, TreeMap<String, TreeMap> dataMap, List saveList) {
 		Tanim tanim = null;
 		try {
 			boolean ekle = false;
@@ -2890,7 +2890,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				Tanim parentTanim = personelEKSahaMap.containsKey(parentKey) ? personelEKSahaMap.get(parentKey) : null;
 				String tipi = parentTanim != null ? Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA : parentKey;
 				TreeMap<String, Tanim> personelEKSahaVeriMap = dataMap.get("personelEKSahaVeriMap");
-				String key = parentKey + "_" + (sirketKodu != null ? sirketKodu : "") + tanimKodu;
+				String key = parentKey + "_" + (ekKodu != null ? ekKodu : "") + tanimKodu;
 				tanim = personelEKSahaVeriMap.containsKey(key) ? personelEKSahaVeriMap.get(key) : new Tanim();
 				if (tanim.getId() == null && parentTanim == null) {
 					if (genelTanimMap.containsKey(tipi))
@@ -2900,7 +2900,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					if (tanim.getId() == null) {
 						tanim.setParentTanim(parentTanim);
 						tanim.setTipi(tipi);
-						tanim.setKodu((sirketKodu != null ? sirketKodu : "") + tanimKodu);
+						tanim.setKodu((ekKodu != null ? ekKodu : "") + tanimKodu);
 						tanim.setErpKodu(tanimKodu);
 						tanim.setGuncelle(Boolean.FALSE);
 						tanim.setIslemYapan(islemYapan);
@@ -2912,7 +2912,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					if (aciklama != null) {
 						if (aciklama.indexOf("&amp;") > 0)
 							aciklama = PdksUtil.replaceAllManuel(aciklama, "&amp;", "&");
-						if (tanim.getAciklamatr() == null || !tanim.getAciklamatr().equalsIgnoreCase(aciklama))
+						if (tanim.getAciklamatr() == null || PdksUtil.isStrDegisti(tanim.getAciklamatr(), aciklama))
 							ekle = true;
 						tanim.setAciklamaen(aciklama);
 						tanim.setAciklamatr(aciklama);
@@ -3225,7 +3225,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		}
 		Date lastDate = getTarih(LAST_DATE, FORMAT_DATE);
 		Personel personelTest = new Personel();
-
+		boolean sirketBirlestirme = mailMap.containsKey("sirketKoduBirlestirme");
 		String personelERPGuncelleme = mailMap.containsKey("personelERPOku") ? (String) mailMap.get("personelERPOku") : "";
 		String personelERPTableViewAdi = mailMap.containsKey("personelERPTableViewAdi") ? (String) mailMap.get("personelERPTableViewAdi") : "";
 		boolean personelERPGuncellemeDurum = PdksUtil.hasStringValue(personelERPTableViewAdi) || (personelERPGuncelleme != null && personelERPGuncelleme.equalsIgnoreCase("M"));
@@ -3616,7 +3616,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 					boolean bolumYok = bolum != null && bolum.getKodu().equalsIgnoreCase("yok");
 					Tanim bordroAltAlan = getTanim(null, parentBordroTanimKoduStr, personelERP.getBordroAltAlanKodu(), personelERP.getBordroAltAlanAdi(), dataMap, saveList);
-					personel.setTesis(getTanim(personelERP.getSirketKodu(), Tanim.TIPI_TESIS, personelERP.getTesisKodu(), personelERP.getTesisAdi(), dataMap, saveList));
+					personel.setTesis(getTanim((sirketBirlestirme ? null : personelERP.getSirketKodu()), Tanim.TIPI_TESIS, personelERP.getTesisKodu(), personelERP.getTesisAdi(), dataMap, saveList));
 					personel.setGorevTipi(getTanim(null, Tanim.TIPI_GOREV_TIPI, personelERP.getGorevKodu(), personelERP.getGorevi(), dataMap, saveList));
 					personel.setMasrafYeri(getTanim(null, Tanim.TIPI_ERP_MASRAF_YERI, personelERP.getMasrafYeriKodu(), personelERP.getMasrafYeriAdi(), dataMap, saveList));
 					Date dogumTarihi = getTarih(personelERP.getDogumTarihi(), FORMAT_DATE);
@@ -3770,11 +3770,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 					Personel yoneticisi = yoneticiNo.equals(personelNo) && personel.getId() == null ? personel : null;
 					if (yoneticisi == null) {
-						if (yoneticiKoduVar && personelPDKSMap.containsKey(yoneticiNo)) {
-							yoneticisi = personelPDKSMap.get(yoneticiNo);
-							yoneticiKoduVar = yoneticisi != null && (personel.isCalisiyor() == false || yoneticisi.isCalisiyor());
-						}
 						if (yoneticiKoduVar) {
+							if (personelPDKSMap.containsKey(yoneticiNo)) {
+								yoneticisi = personelPDKSMap.get(yoneticiNo);
+								yoneticiKoduVar = yoneticisi != null && (personel.isCalisiyor() == false || yoneticisi.isCalisiyor());
+							}
 							if (yoneticisi != null) {
 								if (yoneticisi.getId() == null) {
 									personel.setTmpYonetici(yoneticisi);
@@ -3794,7 +3794,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 								if (sanalPersonel == false && calisiyor) {
 									if (yoneticiKoduVar == false) {
 										if (personel.getId() != null && personel.getYoneticisi() != null) {
-											if (yoneticiERP1Kontrol) {
+											if (yoneticiERP1Kontrol == false) {
 												personel.setYoneticisi(null);
 												personel.setAsilYonetici1(null);
 											}
@@ -3813,8 +3813,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 										if (yoneticiRolVarmi && yoneticiERP1Kontrol && bolumYok == false) {
 											if (yoneticisi == null)
 												kidemHataList.add(yoneticiAciklama + " bilgisi boş olamaz!" + (personelERP.getGorevKodu() != null && personelERP.getGorevi() != null ? "[ " + personelERP.getGorevKodu() + " - " + personelERP.getGorevi() + " ]" : ""));
-											else if (yoneticisi != null)
-												kidemHataList.add(yoneticisi.getPdksSicilNo() + " " + yoneticisi.getAdSoyad() + " yönetici çalışmıyor!");
+											// else if (yoneticisi != null)
+											// kidemHataList.add(yoneticisi.getPdksSicilNo() + " " + yoneticisi.getAdSoyad() + " yönetici çalışmıyor!");
 										}
 									}
 								}

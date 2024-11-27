@@ -36,7 +36,8 @@ public abstract class BaseObject extends BasePDKSObject implements Serializable,
 	protected Boolean durum = Boolean.TRUE, guncellendi;
 	protected User guncelleyenUser, olusturanUser;
 	protected Date olusturmaTarihi = new Date(), guncellemeTarihi;
-	protected boolean checkBoxDurum = Boolean.FALSE;
+	protected boolean checkBoxDurum = Boolean.FALSE, degisti = Boolean.FALSE;
+
 	protected String style = VardiyaGun.STYLE_CLASS_ODD, titleStr = "";
 	protected BaseObject baseObject;
 
@@ -170,6 +171,15 @@ public abstract class BaseObject extends BasePDKSObject implements Serializable,
 
 	public void setBaseObject(BaseObject baseObject) {
 		this.baseObject = baseObject;
+	}
+
+	@Transient
+	public boolean isDegisti() {
+		return degisti;
+	}
+
+	public void setDegisti(boolean degisti) {
+		this.degisti = degisti;
 	}
 
 	@Transient

@@ -96,7 +96,7 @@ public class Personel extends BaseObject {
 	private Date izinHakEdisTarihi, iseBaslamaTarihi, grubaGirisTarihi, istenAyrilisTarihi = PdksUtil.getSonSistemTarih(), sskCikisTarihi, dogumTarihi;
 	private VardiyaSablonu workSablon;
 	private PersonelIzin personelIzin;
-
+	private PersonelExtra personelExtra;
 	private PersonelView personelView;
 	private MailGrubu mailGrubuCC, mailGrubuBCC, hareketMailGrubu;
 	private String emailCC = "", emailBCC = "", hareketMail = "";
@@ -114,6 +114,7 @@ public class Personel extends BaseObject {
 	public Personel() {
 		super();
 		this.setPdks(true);
+		this.setDegisti(false);
 	}
 
 	@Column(name = "VERSION")
@@ -132,8 +133,10 @@ public class Personel extends BaseObject {
 		return personelKGS;
 	}
 
-	public void setPersonelKGS(PersonelKGS personelKGS) {
-		this.personelKGS = personelKGS;
+	public void setPersonelKGS(PersonelKGS value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isLongDegisti(personelKGS != null ? personelKGS.getId() : null, value != null ? value.getId() : null));
+		this.personelKGS = value;
 	}
 
 	@Column(name = COLUMN_NAME_AD)
@@ -141,9 +144,11 @@ public class Personel extends BaseObject {
 		return ad;
 	}
 
-	public void setAd(String ad) {
-		ad = PdksUtil.convertUTF8(ad);
-		this.ad = ad;
+	public void setAd(String value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isStrDegisti(ad, value));
+		value = PdksUtil.convertUTF8(value);
+		this.ad = value;
 	}
 
 	@Column(name = COLUMN_NAME_SOYAD)
@@ -157,13 +162,17 @@ public class Personel extends BaseObject {
 		return pdksSicilNo;
 	}
 
-	public void setPdksSicilNo(String pdksSicilNo) {
-		this.pdksSicilNo = pdksSicilNo;
+	public void setPdksSicilNo(String value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isStrDegisti(pdksSicilNo, value));
+		this.pdksSicilNo = value;
 	}
 
-	public void setSoyad(String soyad) {
-		soyad = PdksUtil.convertUTF8(soyad);
-		this.soyad = soyad;
+	public void setSoyad(String value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isStrDegisti(soyad, value));
+		value = PdksUtil.convertUTF8(value);
+		this.soyad = value;
 	}
 
 	@Transient
@@ -188,8 +197,10 @@ public class Personel extends BaseObject {
 		return sirket;
 	}
 
-	public void setSirket(Sirket sirket) {
-		this.sirket = sirket;
+	public void setSirket(Sirket value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isLongDegisti(sirket != null ? sirket.getId() : null, value != null ? value.getId() : null));
+		this.sirket = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -199,8 +210,10 @@ public class Personel extends BaseObject {
 		return calismaModeli;
 	}
 
-	public void setCalismaModeli(CalismaModeli calismaModeli) {
-		this.calismaModeli = calismaModeli;
+	public void setCalismaModeli(CalismaModeli value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isLongDegisti(calismaModeli != null ? calismaModeli.getId() : null, value != null ? value.getId() : null));
+		this.calismaModeli = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -210,8 +223,10 @@ public class Personel extends BaseObject {
 		return gorevTipi;
 	}
 
-	public void setGorevTipi(Tanim gorevTipi) {
-		this.gorevTipi = gorevTipi;
+	public void setGorevTipi(Tanim value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isTanimDegisti(gorevTipi, value));
+		this.gorevTipi = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -221,8 +236,10 @@ public class Personel extends BaseObject {
 		return ekSaha1;
 	}
 
-	public void setEkSaha1(Tanim ekSaha1) {
-		this.ekSaha1 = ekSaha1;
+	public void setEkSaha1(Tanim value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isTanimDegisti(ekSaha1, value));
+		this.ekSaha1 = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -232,8 +249,10 @@ public class Personel extends BaseObject {
 		return ekSaha2;
 	}
 
-	public void setEkSaha2(Tanim ekSaha2) {
-		this.ekSaha2 = ekSaha2;
+	public void setEkSaha2(Tanim value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isTanimDegisti(ekSaha2, value));
+		this.ekSaha2 = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -243,8 +262,10 @@ public class Personel extends BaseObject {
 		return ekSaha3;
 	}
 
-	public void setEkSaha3(Tanim ekSaha3) {
-		this.ekSaha3 = ekSaha3;
+	public void setEkSaha3(Tanim value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isTanimDegisti(ekSaha3, value));
+		this.ekSaha3 = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -254,8 +275,10 @@ public class Personel extends BaseObject {
 		return ekSaha4;
 	}
 
-	public void setEkSaha4(Tanim ekSaha4) {
-		this.ekSaha4 = ekSaha4;
+	public void setEkSaha4(Tanim value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isTanimDegisti(ekSaha4, value));
+		this.ekSaha4 = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -265,8 +288,10 @@ public class Personel extends BaseObject {
 		return bordroAltAlan;
 	}
 
-	public void setBordroAltAlan(Tanim bordroAltAlan) {
-		this.bordroAltAlan = bordroAltAlan;
+	public void setBordroAltAlan(Tanim value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isTanimDegisti(bordroAltAlan, value));
+		this.bordroAltAlan = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -276,8 +301,10 @@ public class Personel extends BaseObject {
 		return personelTipi;
 	}
 
-	public void setPersonelTipi(Tanim personelTipi) {
-		this.personelTipi = personelTipi;
+	public void setPersonelTipi(Tanim value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isTanimDegisti(personelTipi, value));
+		this.personelTipi = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -287,8 +314,10 @@ public class Personel extends BaseObject {
 		return cinsiyet;
 	}
 
-	public void setCinsiyet(Tanim cinsiyet) {
-		this.cinsiyet = cinsiyet;
+	public void setCinsiyet(Tanim value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isTanimDegisti(cinsiyet, value));
+		this.cinsiyet = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -298,8 +327,10 @@ public class Personel extends BaseObject {
 		return tesis;
 	}
 
-	public void setTesis(Tanim tesis) {
-		this.tesis = tesis;
+	public void setTesis(Tanim value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isTanimDegisti(tesis, value));
+		this.tesis = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -309,8 +340,10 @@ public class Personel extends BaseObject {
 		return masrafYeri;
 	}
 
-	public void setMasrafYeri(Tanim masrafYeri) {
-		this.masrafYeri = masrafYeri;
+	public void setMasrafYeri(Tanim value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isTanimDegisti(masrafYeri, value));
+		this.masrafYeri = value;
 	}
 
 	@Column(name = COLUMN_NAME_MAIL_TAKIP)
@@ -318,8 +351,10 @@ public class Personel extends BaseObject {
 		return mailTakip;
 	}
 
-	public void setMailTakip(Boolean mailTakip) {
-		this.mailTakip = mailTakip;
+	public void setMailTakip(Boolean value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isBooleanDegisti(mailTakip, value));
+		this.mailTakip = value;
 	}
 
 	@Column(name = "GEBE_MI")
@@ -347,8 +382,10 @@ public class Personel extends BaseObject {
 		return sablon;
 	}
 
-	public void setSablon(VardiyaSablonu sablon) {
-		this.sablon = sablon;
+	public void setSablon(VardiyaSablonu value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isLongDegisti(sablon != null ? sablon.getId() : null, value != null ? value.getId() : null));
+		this.sablon = value;
 	}
 
 	@Column(name = "PDKS")
@@ -356,8 +393,10 @@ public class Personel extends BaseObject {
 		return pdks;
 	}
 
-	public void setPdks(Boolean pdks) {
-		this.pdks = pdks;
+	public void setPdks(Boolean value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isBooleanDegisti(pdks, value));
+		this.pdks = value;
 	}
 
 	@Column(name = "UST_YONETICIMI")
@@ -376,8 +415,10 @@ public class Personel extends BaseObject {
 		return yoneticisi;
 	}
 
-	public void setYoneticisi(Personel yoneticisi) {
-		this.yoneticisi = yoneticisi;
+	public void setYoneticisi(Personel value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isLongDegisti(yoneticisi != null ? yoneticisi.getId() : null, value != null ? value.getId() : null));
+		this.yoneticisi = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -387,8 +428,10 @@ public class Personel extends BaseObject {
 		return asilYonetici1;
 	}
 
-	public void setAsilYonetici1(Personel asilYonetici1) {
-		this.asilYonetici1 = asilYonetici1;
+	public void setAsilYonetici1(Personel value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isLongDegisti(asilYonetici1 != null ? asilYonetici1.getId() : null, value != null ? value.getId() : null));
+		this.asilYonetici1 = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -398,8 +441,10 @@ public class Personel extends BaseObject {
 		return asilYonetici2;
 	}
 
-	public void setAsilYonetici2(Personel asilYonetici2) {
-		this.asilYonetici2 = asilYonetici2;
+	public void setAsilYonetici2(Personel value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isLongDegisti(asilYonetici2 != null ? asilYonetici2.getId() : null, value != null ? value.getId() : null));
+		this.asilYonetici2 = value;
 	}
 
 	@Transient
@@ -426,8 +471,10 @@ public class Personel extends BaseObject {
 		return iseBaslamaTarihi;
 	}
 
-	public void setIseBaslamaTarihi(Date iseBaslamaTarihi) {
-		this.iseBaslamaTarihi = iseBaslamaTarihi;
+	public void setIseBaslamaTarihi(Date value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isDateDegisti(iseBaslamaTarihi, value));
+		this.iseBaslamaTarihi = value;
 	}
 
 	@Temporal(value = TemporalType.DATE)
@@ -436,8 +483,10 @@ public class Personel extends BaseObject {
 		return grubaGirisTarihi;
 	}
 
-	public void setGrubaGirisTarihi(Date grubaGirisTarihi) {
-		this.grubaGirisTarihi = grubaGirisTarihi;
+	public void setGrubaGirisTarihi(Date value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isDateDegisti(grubaGirisTarihi, value));
+		this.grubaGirisTarihi = value;
 	}
 
 	@Temporal(value = TemporalType.DATE)
@@ -446,8 +495,10 @@ public class Personel extends BaseObject {
 		return istenAyrilisTarihi;
 	}
 
-	public void setIstenAyrilisTarihi(Date istenAyrilisTarihi) {
-		this.istenAyrilisTarihi = istenAyrilisTarihi;
+	public void setIstenAyrilisTarihi(Date value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isDateDegisti(istenAyrilisTarihi, value));
+		this.istenAyrilisTarihi = value;
 	}
 
 	@Temporal(value = TemporalType.DATE)
@@ -456,8 +507,10 @@ public class Personel extends BaseObject {
 		return dogumTarihi;
 	}
 
-	public void setDogumTarihi(Date dogumTarihi) {
-		this.dogumTarihi = dogumTarihi;
+	public void setDogumTarihi(Date value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isDateDegisti(dogumTarihi, value));
+		this.dogumTarihi = value;
 	}
 
 	@Generated(value = GenerationTime.ALWAYS)
@@ -477,8 +530,10 @@ public class Personel extends BaseObject {
 		return izinHakEdisTarihi;
 	}
 
-	public void setIzinHakEdisTarihi(Date izinHakEdisTarihi) {
-		this.izinHakEdisTarihi = izinHakEdisTarihi;
+	public void setIzinHakEdisTarihi(Date value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isDateDegisti(izinHakEdisTarihi, value));
+		this.izinHakEdisTarihi = value;
 	}
 
 	@Column(name = "ICAP_OLABILIR")
@@ -522,8 +577,10 @@ public class Personel extends BaseObject {
 		return sanalPersonel;
 	}
 
-	public void setSanalPersonel(Boolean sanalPersonel) {
-		this.sanalPersonel = sanalPersonel;
+	public void setSanalPersonel(Boolean value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isBooleanDegisti(sanalPersonel, value));
+		this.sanalPersonel = value;
 	}
 
 	@Transient
@@ -563,8 +620,10 @@ public class Personel extends BaseObject {
 		return fazlaMesaiOde;
 	}
 
-	public void setFazlaMesaiOde(Boolean fazlaMesaiOde) {
-		this.fazlaMesaiOde = fazlaMesaiOde;
+	public void setFazlaMesaiOde(Boolean value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isBooleanDegisti(fazlaMesaiOde, value));
+		this.fazlaMesaiOde = value;
 	}
 
 	@Column(name = COLUMN_NAME_IZIN_KARTI_VAR)
@@ -636,7 +695,14 @@ public class Personel extends BaseObject {
 		if (iseBaslamaTarihi != null && istenAyrilisTarihi != null) {
 			if (bugun == null)
 				bugun = PdksUtil.getDate(new Date());
-			calisiyor = bugun.getTime() >= iseBaslamaTarihi.getTime() && bugun.getTime() <= getSskCikisTarihi().getTime();
+			try {
+				Date cikisTarihi = getSskCikisTarihi();
+				if (cikisTarihi == null)
+					cikisTarihi = this.getSonCalismaTarihi();
+				calisiyor = iseBaslamaTarihi != null && bugun.getTime() >= iseBaslamaTarihi.getTime() && bugun.getTime() <= cikisTarihi.getTime();
+			} catch (Exception e) {
+				calisiyor = false;
+			}
 		}
 		return calisiyor && durum;
 	}
@@ -1081,6 +1147,15 @@ public class Personel extends BaseObject {
 
 	public void setTmpYonetici(Personel tmpYonetici) {
 		this.tmpYonetici = tmpYonetici;
+	}
+
+	@Transient
+	public PersonelExtra getPersonelExtra() {
+		return personelExtra;
+	}
+
+	public void setPersonelExtra(PersonelExtra personelExtra) {
+		this.personelExtra = personelExtra;
 	}
 
 	public void entityRefresh() {
