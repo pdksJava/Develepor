@@ -549,7 +549,7 @@ public class VardiyaGun extends BaseObject {
 		// if (hareket.getId().equals("A10823"))
 		// logger.info(hareket.getId() + " " + this.getVardiyaDateStr() + " " + hareket.getZaman() + " " + this.getIslemVardiya().getVardiyaFazlaMesaiBasZaman() + " " + this.getIslemVardiya().getVardiyaFazlaMesaiBitZaman());
 		// }
-		if (hareket != null && (kapi.isGirisKapi() || kapi.isCikisKapi())) {
+		if (kapi != null && hareket != null && (kapi.isGirisKapi() || kapi.isCikisKapi())) {
 			if (hareketler == null) {
 				hareketler = new ArrayList<HareketKGS>();
 				setHareketHatali(kapi.isCikisKapi());
