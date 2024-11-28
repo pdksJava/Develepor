@@ -2,6 +2,7 @@ package org.pdks.session;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
+import org.pdks.entity.Departman;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDonemselDurum;
 import org.pdks.entity.Sirket;
@@ -53,13 +55,15 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 
 	private List<PersonelDonemselDurum> personelDonemDurumList;
 
-	private List<SelectItem> mudurlukList, tesisList;
+	private List<SelectItem> sirketList, tesisList;
 
 	private Date basTarih, bitTarih;
-	
-	private Long mudurlukId, tesisId;
-	
+
+	private Long sirketId, tesisId;
+
 	private boolean tesisDurum;
+
+	private Sirket sirket = null;
 
 	private Session session;
 
@@ -84,17 +88,50 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		bitTarih = PdksUtil.getDate(new Date());
+		basTarih = PdksUtil.tariheAyEkleCikar(bitTarih, -12);
+		Departman departman = null;
+		sirketId = null;
+		if (authenticatedUser.isIKSirket())
+			sirketId = authenticatedUser.getPdksPersonel().getSirket().getId();
+		if (!(authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin()))
+			departman = authenticatedUser.getDepartman();
+		List<Sirket> pdksSirketList = ortakIslemler.getDepartmanPDKSSirketList(departman, session);
+		if (sirketList == null)
+			sirketList = new ArrayList<SelectItem>();
+		else
+			sirketList.clear();
+		if (tesisList == null)
+			tesisList = new ArrayList<SelectItem>();
+		else
+			tesisList.clear();
+		if (personelDonemDurumList == null)
+			personelDonemDurumList = new ArrayList<PersonelDonemselDurum>();
+		else
+			personelDonemDurumList.clear();
+
+		for (Sirket pdksSirket : pdksSirketList) {
+			if (sirketId == null || pdksSirket.getId().equals(sirketId)) {
+				if (sirketId != null)
+					sirket = pdksSirket;
+				sirketList.add(new SelectItem(pdksSirket.getId(), pdksSirket.getAd()));
+			}
+
+		}
+
 	}
 
 	public String fillMudurlukList() {
+		fillMudurlukTesisList("S");
 		return "";
 	}
 
 	public String fillMudurlukTesisList(String tip) {
+		personelDonemDurumList.clear();
 		return "";
 	}
 
 	public String fillTesisList() {
+		fillMudurlukTesisList("T");
 		return "";
 	}
 
@@ -107,7 +144,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 
 			ByteArrayOutputStream baosDosya = excelDevam();
 			if (baosDosya != null) {
-				String dosyaAdi = "GebeSutIzniRapor_" + PdksUtil.convertToDateString(basTarih, "yyyyMMdd") +"_" + PdksUtil.convertToDateString(bitTarih, "yyyyMMdd") + ".xlsx";
+				String dosyaAdi = "GebeSutIzniRapor_" + PdksUtil.convertToDateString(basTarih, "yyyyMMdd") + "_" + PdksUtil.convertToDateString(bitTarih, "yyyyMMdd") + ".xlsx";
 				PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi);
 			}
 		} catch (Exception e) {
@@ -119,7 +156,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 
 		return "";
 	}
-	
+
 	private ByteArrayOutputStream excelDevam() {
 		boolean tesisDurum = false;
 		Tanim bolum = null;
@@ -150,10 +187,10 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 		if (tesisDurum)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolum != null ? bolum.getAciklama() : ortakIslemler.bolumAciklama());
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İlk Giriş");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Son Çıkış");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Son Giriş");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tipi");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Başlangıç Tarih");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Bitiş Tarih");
+		;
 		boolean renk = true;
 		for (PersonelDonemselDurum vg : personelDonemDurumList) {
 			++row;
@@ -182,7 +219,10 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
 			}
 			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
-	  
+			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vg.getPersonelDurumTipiAciklama());
+			ExcelUtil.getCell(sheet, row, col++, cellStyleDate).setCellValue(vg.getBasTarih());
+			ExcelUtil.getCell(sheet, row, col++, cellStyleDate).setCellValue(vg.getBitTarih());
+
 		}
 		try {
 
@@ -199,6 +239,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 		return baos;
 
 	}
+
 	public Session getSession() {
 		return session;
 	}
@@ -221,14 +262,6 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 
 	public void setPersonelDonemDurumList(List<PersonelDonemselDurum> personelDonemDurumList) {
 		this.personelDonemDurumList = personelDonemDurumList;
-	}
-
-	public List<SelectItem> getMudurlukList() {
-		return mudurlukList;
-	}
-
-	public void setMudurlukList(List<SelectItem> mudurlukList) {
-		this.mudurlukList = mudurlukList;
 	}
 
 	public List<SelectItem> getTesisList() {
@@ -263,20 +296,36 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 		this.tesisDurum = tesisDurum;
 	}
 
-	public Long getMudurlukId() {
-		return mudurlukId;
-	}
-
-	public void setMudurlukId(Long mudurlukId) {
-		this.mudurlukId = mudurlukId;
-	}
-
 	public Long getTesisId() {
 		return tesisId;
 	}
 
 	public void setTesisId(Long tesisId) {
 		this.tesisId = tesisId;
+	}
+
+	public List<SelectItem> getSirketList() {
+		return sirketList;
+	}
+
+	public void setSirketList(List<SelectItem> sirketList) {
+		this.sirketList = sirketList;
+	}
+
+	public Long getSirketId() {
+		return sirketId;
+	}
+
+	public void setSirketId(Long sirketId) {
+		this.sirketId = sirketId;
+	}
+
+	public Sirket getSirket() {
+		return sirket;
+	}
+
+	public void setSirket(Sirket sirket) {
+		this.sirket = sirket;
 	}
 
 }

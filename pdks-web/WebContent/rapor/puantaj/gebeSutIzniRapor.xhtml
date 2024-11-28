@@ -12,21 +12,48 @@
 		<h:form id="formgebeSutIzniRapor">
 
 			<rich:panel header="#{ortakIslemler.getMenuUserAdi(gebeSutIzniRaporHome.session,'gebeSutIzniRapor')}">
-				<h:panelGrid columns="1">
+				<h:panelGrid columns="2">
 
 					<s:decorate template="/layout/edit.xhtml">
-						<ui:define name="label">Tarih</ui:define>
-						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.date}" required="true"
-							requiredMessage="Tarih giriniz" />
+						<ui:define name="label">Başlangıç Tarih</ui:define>
+						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.basTarih}"
+							required="#{authenticatedUser.admin==false}" requiredMessage="Başlangıç Tarih giriniz" />
 					</s:decorate>
-					<a4j:commandButton status="ajaxStatus" value="Hareket Listele" action="#{gebeSutIzniRaporHome.fillHareketList}" reRender="hareketPanel" />
+					<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">Bitiş Tarih</ui:define>
+						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.basTarih}"
+							required="#{authenticatedUser.admin==false}" requiredMessage="Bitiş Tarih giriniz" />
+					</s:decorate>
+					<s:decorate template="/layout/edit.xhtml">
+						<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
+						<h:selectOneMenu id="sirketSec" value="#{gebeSutIzniRaporHome.sirketId}" disabled="#{gebeSutIzniRaporHome.sirketList.size()==1}"
+							required="true" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
+							<f:selectItem itemLabel="Lütfen seçiniz" />
+							<f:selectItems value="#{gebeSutIzniRaporHome.sirketList}" />
+							<a4j:support event="onchange" status="ajaxStatus" action="#{gebeSutIzniRaporHome.fillTesisList()}" ajaxSingle="true"
+								reRender="denklestirmeDonemiTable,girisler" />
+						</h:selectOneMenu>
+					</s:decorate>
+					<s:decorate template="/layout/edit.xhtml"
+						rendered="#{ortakIslemler.tesisDurumu and  gebeSutIzniRaporHome.sirket.tesisDurumu and gebeSutIzniRaporHome.tesisList!=null and gebeSutIzniRaporHome.tesisList.size()>0}">
+						<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
+						<h:selectOneMenu value="#{gebeSutIzniRaporHome.tesisId}" requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz!" required="true"
+							disabled="#{gebeSutIzniRaporHome.tesisList.size()==1}">
+							<f:selectItem itemLabel="Lütfen seçiniz" /> 
+							<f:selectItems value="#{gebeSutIzniRaporHome.tesisList}" />
+							<a4j:support event="onchange" status="ajaxStatus"  ajaxSingle="true" action="#{gebeSutIzniRaporHome.personelDonemDurumList.clear()}"
+								reRender="denklestirmeDonemiTable,girisler" />
+						</h:selectOneMenu>
+					</s:decorate>
 				</h:panelGrid>
+				<a4j:commandButton status="ajaxStatus" value="Listele" action="#{gebeSutIzniRaporHome.fillPersonelDonemselDurumList}" reRender="hareketPanel" />
+
 
 			</rich:panel>
 
 			<a4j:region>
 				<rich:panel id="hareketPanel">
-					<rich:dataTable rowClasses="acik,koyu" value="#{gebeSutIzniRaporHome.vardiyaGunList}" var="calismaPlani" rows="25" rowKeyVar="row"
+					<rich:dataTable rowClasses="acik,koyu" value="#{gebeSutIzniRaporHome.personelDonemDurumList}" var="calismaPlani" rows="25" rowKeyVar="row"
 						id="hareketTable">
 						<f:facet name="header">
 							<h:outputText value="Bina İçinde Kalan Personeller" />
