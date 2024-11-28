@@ -243,6 +243,29 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param user
+	 * @param session
+	 * @return
+	 */
+	public List<Tanim> filUserTesisList(User user, Session session) {
+ 		List<Tanim> tesisTanimList = null;
+		if (user != null) {
+			HashMap fields = new HashMap();
+			StringBuffer sb = new StringBuffer();
+			sb.append("select T.* from " + UserTesis.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+			sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = P." + UserTesis.COLUMN_NAME_TESIS);
+			sb.append(" where P." + UserTesis.COLUMN_NAME_USER + " = :s ");
+			fields.put("s", user.getId());
+			tesisTanimList = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
+			if (tesisTanimList.size() > 1)
+				tesisTanimList = PdksUtil.sortTanimList(null, tesisTanimList);
+		} else
+			tesisTanimList = new ArrayList<Tanim>();
+
+		return tesisTanimList;
+	}
+
+	/**
 	 * @param personel
 	 * @param alan
 	 * @param map

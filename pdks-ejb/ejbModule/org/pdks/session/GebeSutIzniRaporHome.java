@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
@@ -57,6 +59,8 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 
 	private List<SelectItem> sirketList, tesisList;
 
+	private List<Tanim> tesisTanimList = null;
+
 	private Date basTarih, bitTarih;
 
 	private Long sirketId, tesisId;
@@ -64,6 +68,8 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 	private boolean tesisDurum;
 
 	private Sirket sirket = null;
+
+	private String bolumAciklama;
 
 	private Session session;
 
@@ -91,6 +97,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 		basTarih = PdksUtil.tariheAyEkleCikar(bitTarih, -12);
 		Departman departman = null;
 		sirketId = null;
+		tesisDurum = false;
 		if (authenticatedUser.isIKSirket())
 			sirketId = authenticatedUser.getPdksPersonel().getSirket().getId();
 		if (!(authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin()))
@@ -108,7 +115,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 			personelDonemDurumList = new ArrayList<PersonelDonemselDurum>();
 		else
 			personelDonemDurumList.clear();
-
+		tesisTanimList = null;
 		for (Sirket pdksSirket : pdksSirketList) {
 			if (sirketId == null || pdksSirket.getId().equals(sirketId)) {
 				if (sirketId != null)
@@ -117,25 +124,113 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 			}
 
 		}
-
+		if (sirket != null)
+			fillTesisList();
+		HashMap sonucMap = ortakIslemler.fillEkSahaTanim(session, Boolean.FALSE, null);
+		bolumAciklama = (String) sonucMap.get("bolumAciklama");
 	}
 
+	/**
+	 * @return
+	 */
 	public String fillMudurlukList() {
+		sirket = sirketId != null ? (Sirket) pdksEntityController.getSQLParamByAktifFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session) : null;
 		fillMudurlukTesisList("S");
 		return "";
 	}
 
+	/**
+	 * @param tip
+	 * @return
+	 */
 	public String fillMudurlukTesisList(String tip) {
 		personelDonemDurumList.clear();
+		tesisList.clear();
+		tesisDurum = false;
+		if (sirket != null && sirket.isTesisDurumu()) {
+			HashMap fields = new HashMap();
+			StringBuffer sb = new StringBuffer();
+			sb.append("select DISTINCT T.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+			sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_TESIS);
+			sb.append(" where P." + Personel.COLUMN_NAME_SIRKET + " = :s and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b2");
+			sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :b1");
+
+			List<Long> list = null;
+			if (authenticatedUser.isIK_Tesis()) {
+				if (tesisTanimList == null)
+					tesisTanimList = ortakIslemler.filUserTesisList(authenticatedUser, session);
+				if (!tesisTanimList.isEmpty()) {
+					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t");
+					list = new ArrayList<Long>();
+					for (Tanim tesis : tesisTanimList) {
+						list.add(tesis.getId());
+					}
+					fields.put("t", list);
+				}
+			}
+			fields.put("s", sirketId);
+			fields.put("b1", basTarih);
+			fields.put("b2", bitTarih);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			List<Tanim> tesisTanimList = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
+			if (tesisTanimList.size() > 1)
+				tesisTanimList = PdksUtil.sortTanimList(null, tesisTanimList);
+			for (Tanim tesis : tesisTanimList) {
+				tesisList.add(new SelectItem(tesis.getId(), tesis.getAciklama()));
+			}
+			tesisDurum = tesisList.size() > 0;
+		}
 		return "";
 	}
 
 	public String fillTesisList() {
+		tesisId = null;
+		sirket = sirketId != null ? (Sirket) pdksEntityController.getSQLParamByAktifFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session) : null;
 		fillMudurlukTesisList("T");
 		return "";
 	}
 
 	public String fillPersonelDonemselDurumList() {
+		HashMap fields = new HashMap();
+		StringBuffer sb = new StringBuffer();
+		sb.append("select D.* from " + PersonelDonemselDurum.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
+		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = D." + PersonelDonemselDurum.COLUMN_NAME_PERSONEL);
+		if (sirketId != null) {
+			if (sirket.getSirketGrup() == null) {
+				sb.append(" AND P." + Personel.COLUMN_NAME_SIRKET + " = :s");
+				fields.put("s", sirketId);
+			} else {
+				sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
+				sb.append(" and S." + Sirket.COLUMN_NAME_SIRKET_GRUP + " = :g");
+				fields.put("g", sirket.getSirketGrup().getId());
+			}
+		}
+		if (tesisId != null) {
+			sb.append(" AND P." + Personel.COLUMN_NAME_TESIS + " = :t");
+			fields.put("t", tesisId);
+		}
+		sb.append(" where D." + PersonelDonemselDurum.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :b2");
+		sb.append(" and D." + PersonelDonemselDurum.COLUMN_NAME_BITIS_ZAMANI + " >= :b1");
+		sb.append(" order by D." + PersonelDonemselDurum.COLUMN_NAME_BITIS_ZAMANI + " desc");
+
+		fields.put("b1", basTarih);
+		fields.put("b2", bitTarih);
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		personelDonemDurumList = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDonemselDurum.class);
+		if (sirketId == null)
+			tesisDurum = false;
+		for (Iterator iterator = personelDonemDurumList.iterator(); iterator.hasNext();) {
+			PersonelDonemselDurum pdd = (PersonelDonemselDurum) iterator.next();
+			if (pdd.getDurum().equals(Boolean.FALSE))
+				iterator.remove();
+			else if (sirketId == null) {
+				Personel personel = pdd.getPersonel();
+				if (!tesisDurum)
+					tesisDurum = personel.getSirket().isTesisDurumu();
+			}
+		}
 		return "";
 	}
 
@@ -326,6 +421,14 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 
 	public void setSirket(Sirket sirket) {
 		this.sirket = sirket;
+	}
+
+	public String getBolumAciklama() {
+		return bolumAciklama;
+	}
+
+	public void setBolumAciklama(String bolumAciklama) {
+		this.bolumAciklama = bolumAciklama;
 	}
 
 }

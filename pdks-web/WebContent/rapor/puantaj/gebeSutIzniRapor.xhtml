@@ -12,193 +12,124 @@
 		<h:form id="formgebeSutIzniRapor">
 
 			<rich:panel header="#{ortakIslemler.getMenuUserAdi(gebeSutIzniRaporHome.session,'gebeSutIzniRapor')}">
-				<h:panelGrid columns="2">
+				<a4j:outputPanel id="girisler">
+					<h:panelGrid columns="2">
 
-					<s:decorate template="/layout/edit.xhtml">
-						<ui:define name="label">Başlangıç Tarih</ui:define>
-						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.basTarih}"
-							required="#{authenticatedUser.admin==false}" requiredMessage="Başlangıç Tarih giriniz" />
-					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml">
-						<ui:define name="label">Bitiş Tarih</ui:define>
-						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.basTarih}"
-							required="#{authenticatedUser.admin==false}" requiredMessage="Bitiş Tarih giriniz" />
-					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml">
-						<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
-						<h:selectOneMenu id="sirketSec" value="#{gebeSutIzniRaporHome.sirketId}" disabled="#{gebeSutIzniRaporHome.sirketList.size()==1}"
-							required="true" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
-							<f:selectItem itemLabel="Lütfen seçiniz" />
-							<f:selectItems value="#{gebeSutIzniRaporHome.sirketList}" />
-							<a4j:support event="onchange" status="ajaxStatus" action="#{gebeSutIzniRaporHome.fillTesisList()}" ajaxSingle="true"
-								reRender="denklestirmeDonemiTable,girisler" />
-						</h:selectOneMenu>
-					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{ortakIslemler.tesisDurumu and  gebeSutIzniRaporHome.sirket.tesisDurumu and gebeSutIzniRaporHome.tesisList!=null and gebeSutIzniRaporHome.tesisList.size()>0}">
-						<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
-						<h:selectOneMenu value="#{gebeSutIzniRaporHome.tesisId}" requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz!" required="true"
-							disabled="#{gebeSutIzniRaporHome.tesisList.size()==1}">
-							<f:selectItem itemLabel="Lütfen seçiniz" /> 
-							<f:selectItems value="#{gebeSutIzniRaporHome.tesisList}" />
-							<a4j:support event="onchange" status="ajaxStatus"  ajaxSingle="true" action="#{gebeSutIzniRaporHome.personelDonemDurumList.clear()}"
-								reRender="denklestirmeDonemiTable,girisler" />
-						</h:selectOneMenu>
-					</s:decorate>
-				</h:panelGrid>
-				<a4j:commandButton status="ajaxStatus" value="Listele" action="#{gebeSutIzniRaporHome.fillPersonelDonemselDurumList}" reRender="hareketPanel" />
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Başlangıç Tarih</ui:define>
+							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.basTarih}"
+								required="#{authenticatedUser.admin==false}" requiredMessage="Başlangıç Tarih giriniz" />
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Bitiş Tarih</ui:define>
+							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.basTarih}"
+								required="#{authenticatedUser.admin==false}" requiredMessage="Bitiş Tarih giriniz" />
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
+							<h:selectOneMenu id="sirketSec" value="#{gebeSutIzniRaporHome.sirketId}" disabled="#{gebeSutIzniRaporHome.sirketList.size()==1}">
+								<f:selectItem itemLabel="Lütfen seçiniz" />
+								<f:selectItems value="#{gebeSutIzniRaporHome.sirketList}" />
+								<a4j:support event="onchange" status="ajaxStatus" action="#{gebeSutIzniRaporHome.fillTesisList()}" reRender="denklestirmeDonemiTable,girisler" />
+							</h:selectOneMenu>
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml"
+							rendered="#{gebeSutIzniRaporHome.sirket.tesisDurumu and gebeSutIzniRaporHome.tesisList!=null and gebeSutIzniRaporHome.tesisList.size()>0}">
+							<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
+							<h:selectOneMenu value="#{gebeSutIzniRaporHome.tesisId}" disabled="#{gebeSutIzniRaporHome.tesisList.size()==1}">
+								<f:selectItem itemLabel="Lütfen seçiniz" />
+								<f:selectItems value="#{gebeSutIzniRaporHome.tesisList}" />
+								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{gebeSutIzniRaporHome.personelDonemDurumList.clear()}"
+									reRender="denklestirmeDonemiTable,girisler" />
+							</h:selectOneMenu>
+						</s:decorate>
+					</h:panelGrid>
+				</a4j:outputPanel>
+				<a4j:commandButton status="ajaxStatus" value="Listele" action="#{gebeSutIzniRaporHome.fillPersonelDonemselDurumList}"
+					reRender="denklestirmeDonemiTable" />
 
 
 			</rich:panel>
 
-			<a4j:region>
-				<rich:panel id="hareketPanel">
-					<rich:dataTable rowClasses="acik,koyu" value="#{gebeSutIzniRaporHome.personelDonemDurumList}" var="calismaPlani" rows="25" rowKeyVar="row"
+			<a4j:outputPanel id="denklestirmeDonemiTable">
+				<rich:panel>
+					<rich:dataTable rowClasses="acik,koyu" value="#{gebeSutIzniRaporHome.personelDonemDurumList}" var="personelDurum" rows="25" rowKeyVar="row"
 						id="hareketTable">
 						<f:facet name="header">
-							<h:outputText value="Bina İçinde Kalan Personeller" />
+							<h:outputText value="Gebe / Süt İzni Personeller" />
 						</f:facet>
-						<rich:column width="60">
+						<rich:column width="60" style="text-align:center">
 							<f:facet name="header">
 								<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
 							</f:facet>
-							<h:outputText value="#{calismaPlani.personel.sicilNo}" />
+							<h:outputText value="#{personelDurum.personel.sicilNo}" />
 						</rich:column>
 						<rich:column width="100">
 							<f:facet name="header">
 								<h:outputText value="Personel" />
 							</f:facet>
-							<h:outputText value="#{calismaPlani.personel.adSoyad}" />
+							<h:outputText value="#{personelDurum.personel.adSoyad}" />
 						</rich:column>
-						<rich:column width="60">
+						<rich:column width="120">
 							<f:facet name="header">
 								<h:outputText value="#{ortakIslemler.yoneticiAciklama()}" />
 							</f:facet>
-							<h:outputText value="#{calismaPlani.personel.yoneticisi.adSoyad}" />
+							<h:outputText value="#{personelDurum.personel.yoneticisi.adSoyad}" />
 						</rich:column>
-						<rich:column width="60">
+						<rich:column width="120">
 							<f:facet name="header">
 								<h:outputText value="#{ortakIslemler.sirketAciklama()}" />
 							</f:facet>
-							<h:outputText value="#{calismaPlani.personel.sirket.ad}" />
+							<h:outputText value="#{personelDurum.personel.sirket.ad}" />
 						</rich:column>
-						<rich:column width="60" rendered="#{ortakIslemler.getListTesisDurum(gebeSutIzniRaporHome.vardiyaGunList)}">
+						<rich:column width="120" rendered="#{gebeSutIzniRaporHome.tesisDurum}">
 							<f:facet name="header">
 								<h:outputText value="#{ortakIslemler.tesisAciklama()}" />
 							</f:facet>
-							<h:outputText value="#{calismaPlani.personel.tesis.aciklama}" />
+							<h:outputText value="#{personelDurum.personel.tesis.aciklama}" />
 						</rich:column>
 						<rich:column width="60">
 							<f:facet name="header">
 								<h:outputText value="#{gebeSutIzniRaporHome.bolumAciklama}" />
 							</f:facet>
-							<h:outputText value="#{calismaPlani.personel.ekSaha3.aciklama}" />
-						</rich:column>
-						<rich:column width="100">
-							<f:facet name="header">
-								<h:outputText value="Vardiya" />
-
-							</f:facet>
-							<h:outputText value="#{calismaPlani.vardiya.aciklama}">
-
-							</h:outputText>
-
+							<h:outputText value="#{personelDurum.personel.ekSaha3.aciklama}" />
 						</rich:column>
 						<rich:column width="60">
 							<f:facet name="header">
-								<h:outputText value="İlk Giriş" />
+								<h:outputText value="Tip" />
 							</f:facet>
-							<h:outputText title="#{calismaPlani.girisHareket.kapiView.kapi.aciklama}"
-								value="#{authenticatedUser.dateTimeFormatla(calismaPlani.girisHareket.orjinalZaman)}" />
+							<h:outputText value="#{personelDurum.personelDurumTipiAciklama}" />
 						</rich:column>
-						<rich:column width="60">
+						
+						<rich:column width="60" style="text-align:center">
 							<f:facet name="header">
-								<h:outputText value="Son Çıkış" />
+								<h:outputText value="Başlangıç Tarihi" />
 							</f:facet>
-							<h:outputText title="#{calismaPlani.cikisHareket.kapiView.kapi.aciklama}"
-								value="#{authenticatedUser.dateTimeFormatla(calismaPlani.cikisHareket.orjinalZaman)}" />
+							<h:outputText value="#{authenticatedUser.dateFormatla(personelDurum.basTarih)}" />
 						</rich:column>
 
-						<rich:column width="60">
+						<rich:column width="60" style="text-align:center">
 							<f:facet name="header">
-								<h:outputText value="Son Giriş" />
+								<h:outputText value="Bitiş Tarihi" />
 							</f:facet>
-							<h:outputText title="#{calismaPlani.sonGirisHareket.kapiView.kapi.aciklama}"
-								value="#{authenticatedUser.dateTimeFormatla(calismaPlani.sonGirisHareket.orjinalZaman)}" />
+							<h:outputText value="#{authenticatedUser.dateFormatla(personelDurum.bitTarih)}" />
 						</rich:column>
-
-
-
-						<rich:column width="60">
-							<f:facet name="header">
-								<h:outputText value="Hareketler" />
-							</f:facet>
-							<a4j:commandButton status="ajaxStatus" value="Hareketler" rendered="#{calismaPlani.hareketler!=null}"
-								oncomplete="#{rich:component('hareketDetayPanel')}.show()" action="#{gebeSutIzniRaporHome.hareketGoster(calismaPlani)}"
-								reRender="hareketDetayPanel" />
-
-
-						</rich:column>
-
 
 						<f:facet name="footer">
 							<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 						</f:facet>
 					</rich:dataTable>
 					<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{gebeSutIzniRaporHome.excelListe()}"
-						rendered="#{not empty gebeSutIzniRaporHome.vardiyaGunList}" target="blank">
+						rendered="#{not empty gebeSutIzniRaporHome.personelDonemDurumList}" target="blank">
 						<a4j:support event="oncomplete" status="ajaxStatus" />
 					</h:commandLink>
 				</rich:panel>
+			</a4j:outputPanel>
 
 
 
-				<rich:modalPanel id="hareketDetayPanel" autosized="true" width="450">
-					<f:facet name="header">
-						<h:outputText value="#{gebeSutIzniRaporHome.instance.personel.adSoyad} " />
-					</f:facet>
-					<f:facet name="controls">
-						<h:panelGroup>
-							<h:graphicImage value="/img/close.png" id="harekethidelink" styleClass="hidelink" />
-							<rich:componentControl for="hareketDetayPanel" attachTo="harekethidelink" operation="hide" event="onclick" />
-						</h:panelGroup>
-					</f:facet>
-
-					<h:panelGrid width="400">
-						<rich:dataTable rowClasses="acik,koyu" value="#{gebeSutIzniRaporHome.hareketList}" var="hareket" rows="20" rowKeyVar="row">
-							<f:facet name="header">
-
-								<h:outputText value="Giris Cikis Hareketleri" />
-							</f:facet>
-							<rich:column>
-								<f:facet name="header">
-									<h:outputText value="Kapı" />
-								</f:facet>
-								<h:outputText value="#{hareket.kapiView.kapi.aciklama}" />
-							</rich:column>
-							<rich:column>
-								<f:facet name="header">
-									<h:outputText value="Kapı Tip" />
-								</f:facet>
-								<h:outputText value="#{hareket.kapiView.kapi.tipi.aciklama}" />
-							</rich:column>
-							<rich:column>
-								<f:facet name="header">
-									<h:outputText value="Zamanı" />
-								</f:facet>
-								<h:outputText value="#{authenticatedUser.dateTimeFormatla(hareket.orjinalZaman)}" />
-							</rich:column>
-							<f:facet name="footer">
-								<rich:datascroller renderIfSinglePage="false" maxPages="5" />
-							</f:facet>
-						</rich:dataTable>
-					</h:panelGrid>
-
-				</rich:modalPanel>
 
 
-
-			</a4j:region>
 
 
 		</h:form>
