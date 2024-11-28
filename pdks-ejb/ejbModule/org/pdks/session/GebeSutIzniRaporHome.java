@@ -117,12 +117,13 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 			personelDonemDurumList.clear();
 		tesisTanimList = null;
 		for (Sirket pdksSirket : pdksSirketList) {
-			if (sirketId == null || pdksSirket.getId().equals(sirketId)) {
-				if (sirketId != null)
-					sirket = pdksSirket;
-				sirketList.add(new SelectItem(pdksSirket.getId(), pdksSirket.getAd()));
+			if (pdksSirket.isGebelikSutIzinVar()) {
+				if (sirketId == null || pdksSirket.getId().equals(sirketId)) {
+					if (sirketId != null)
+						sirket = pdksSirket;
+					sirketList.add(new SelectItem(pdksSirket.getId(), pdksSirket.getAd()));
+				}
 			}
-
 		}
 		if (sirket != null)
 			fillTesisList();
