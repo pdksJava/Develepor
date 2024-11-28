@@ -86,7 +86,9 @@
 							<f:facet name="header">
 								<h:outputText value="#{ortakIslemler.tesisAciklama()}" />
 							</f:facet>
-							<h:outputText value="#{personelDurum.personel.tesis.aciklama}" />
+							<ui:fragment rendered="#{personelDurum.personel.sirket.tesisDurumu}">
+								<h:outputText value="#{personelDurum.personel.tesis.aciklama}" />
+							</ui:fragment>
 						</rich:column>
 						<rich:column width="60">
 							<f:facet name="header">
