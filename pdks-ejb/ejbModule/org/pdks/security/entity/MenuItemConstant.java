@@ -78,6 +78,7 @@ public class MenuItemConstant implements Serializable {
 	public static String personelKalanIzin = "/rapor/izin/personelKalanIzin.xhtml";
 	public static String sskIstirahatIzinleri = "/rapor/izin/sskIstirahatIzinleri.xhtml";
 
+	public static String gebeSutIzniRapor = "/rapor/puantaj/gebeSutIzniRapor.xhtml";
 	public static String aylikPlanRapor = "/rapor/puantaj/aylikPlanRapor.xhtml";
 	public static String binadaKalanPersoneller = "/rapor/puantaj/binadaKalanPersoneller.xhtml";
 	public static String calismaSaatleri = "/rapor/puantaj/calismaSaatleri.xhtml";

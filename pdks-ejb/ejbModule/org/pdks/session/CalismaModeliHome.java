@@ -396,7 +396,6 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			haftaTatilGunleri = new ArrayList<SelectItem>();
 
 		izinGoster = false;
-		session.clear();
 		hareketKaydiVardiyaBul = ortakIslemler.getParameterKey("hareketKaydiVardiyaBul").equals("1");
 		saatlikCalismaVar = ortakIslemler.getParameterKey("saatlikCalismaVar").equals("1");
 		otomatikFazlaCalismaOnaylansinVar = ortakIslemler.getParameterKey("otomatikFazlaCalismaOnaylansin").equals("1");
