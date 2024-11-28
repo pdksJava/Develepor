@@ -102,9 +102,14 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 		}
 	}
 
+	@Transient
+	public boolean getEksikCalisma() {
+		boolean eksikCalisma = normalSure > 0 && normalSure > calismaSuresi;
+		return eksikCalisma;
+	}
+
 	public void entityRefresh() {
-		
-		
+
 	}
 
 }

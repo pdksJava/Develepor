@@ -6075,12 +6075,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @return
 	 */
 	private String getEksikCalismaHTML(VardiyaGun vg) {
-		Double calSure = calismaSuresi(vg);
 		String str1 = "";
-		if (calSure >= 0.0d) {
+		VardiyaSaat vs = vg.getVardiyaSaat();
+		if (vg.getDurum() && vs != null && vs.getEksikCalisma()) {
+			Double calSure = vs.getCalismaSuresi();
 			String str = "";
 			try {
-				Double sure = new Double((vg.getVardiya().getNetCalismaSuresi() - calSure));
+				Double sure = new Double((vs.getNormalSure() - calSure));
 				if (sure < 1.0d)
 					str = PdksUtil.numericValueFormatStr(sure * 60.0d, null) + " dakika ";
 				else
