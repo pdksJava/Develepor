@@ -100,7 +100,7 @@
 							</f:facet>
 							<h:outputText value="#{personelDurum.personelDurumTipiAciklama}" />
 						</rich:column>
-						
+
 						<rich:column width="60" style="text-align:center">
 							<f:facet name="header">
 								<h:outputText value="Başlangıç Tarihi" />
@@ -114,7 +114,19 @@
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.dateFormatla(personelDurum.bitTarih)}" />
 						</rich:column>
+						<rich:column width="120">
+							<f:facet name="header">
+								<h:outputText value="Son İşlem Yapan" />
+							</f:facet>
+							<h:outputText value="#{personelDurum.sonIslemYapan.adSoyad}" />
+						</rich:column>
 
+						<rich:column width="60" style="text-align: center;">
+							<f:facet name="header">
+								<h:outputText value="Son İşlem Tarihi" />
+							</f:facet>
+							<h:outputText value="#{personelDurum.sonIslemTarihiStr}" />
+						</rich:column>
 						<f:facet name="footer">
 							<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 						</f:facet>

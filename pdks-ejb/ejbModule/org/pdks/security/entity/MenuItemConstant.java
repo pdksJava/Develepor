@@ -1001,4 +1001,12 @@ public class MenuItemConstant implements Serializable {
 		MenuItemConstant.vardiyaPlaniTopluRapor = vardiyaPlaniTopluRapor;
 	}
 
+	public static String getGebeSutIzniRapor() {
+		return gebeSutIzniRapor;
+	}
+
+	public static void setGebeSutIzniRapor(String gebeSutIzniRapor) {
+		MenuItemConstant.gebeSutIzniRapor = gebeSutIzniRapor;
+	}
+
 }
