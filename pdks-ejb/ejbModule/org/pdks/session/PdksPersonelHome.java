@@ -211,6 +211,23 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	}
 
 	/**
+	 * @param tipi
+	 * @return
+	 */
+	public String gebeSutIzniTarihDegisti() {
+		if (donemselDurum.getId() == null && donemselDurum.isSutIzni()) {
+			if (donemselDurum.getBasTarih() == null) {
+				if (donemselDurum.getBitTarih() != null)
+					donemselDurum.setBasTarih(PdksUtil.tariheAyEkleCikar(donemselDurum.getBitTarih(), -12));
+			} else if (donemselDurum.getBitTarih() == null) {
+				if (donemselDurum.getBasTarih() != null)
+					donemselDurum.setBitTarih(PdksUtil.tariheAyEkleCikar(donemselDurum.getBasTarih(), 12));
+ 			}
+ 		}
+		return "";
+	}
+
+	/**
 	 * @param personel
 	 * @return
 	 */

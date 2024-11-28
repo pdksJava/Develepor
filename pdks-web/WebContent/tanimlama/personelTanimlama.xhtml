@@ -1903,31 +1903,39 @@
 				<a4j:outputPanel id="seciliOzelDurum" rendered="#{not empty pdksPersonelHome.personelDurumTipiList}">
 					<ui:fragment rendered="#{pdksPersonelHome.instance.calisiyor}">
 						<h:panelGrid columns="1">
-							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Başlangıç Zamanı</ui:define>
-								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{pdksPersonelHome.donemselDurum.basTarih}" showWeekDaysBar="false"
-									showWeeksBar="false" required="true" requiredMessage="Başlangıç zamanı seçiniz" />
-							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Bitiş Zamanı</ui:define>
-								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{pdksPersonelHome.donemselDurum.bitTarih}" showWeekDaysBar="false"
-									showWeeksBar="false" required="true" requiredMessage="Bitiş zamanı seçiniz" />
-							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.personelDurumTipiList.size()>0}">
 								<ui:define name="label">Durum Tipi</ui:define>
 								<h:selectOneRadio value="#{pdksPersonelHome.donemselDurum.personelDurumTipiId}" disabled="#{pdksPersonelHome.personelDurumTipiList.size()==1}"
 									required="true" requiredMessage="Durum tipi seçiniz">
 									<f:selectItems value="#{pdksPersonelHome.personelDurumTipiList}" />
-
+									<a4j:support event="onchange" action="#{pdksPersonelHome.gebeSutIzniTarihDegisti()}" ajaxSingle="true" reRender="seciliOzelDurum" />
 								</h:selectOneRadio>
 
 							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Başlangıç Zamanı</ui:define>
+								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{pdksPersonelHome.donemselDurum.basTarih}" showWeekDaysBar="false"
+									showWeeksBar="false" required="true" requiredMessage="Başlangıç zamanı seçiniz">
+									<a4j:support event="onchanged" action="#{pdksPersonelHome.gebeSutIzniTarihDegisti()}" ajaxSingle="true" reRender="seciliOzelDurum" />
+								</rich:calendar>
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Bitiş Zamanı</ui:define>
+								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{pdksPersonelHome.donemselDurum.bitTarih}" showWeekDaysBar="false"
+									showWeeksBar="false" required="true" requiredMessage="Bitiş zamanı seçiniz">
+									<a4j:support event="onchanged" action="#{pdksPersonelHome.gebeSutIzniTarihDegisti()}" ajaxSingle="true" reRender="seciliOzelDurum" />
+								</rich:calendar>
+							</s:decorate>
+
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Aktif</ui:define>
 								<h:selectBooleanCheckbox value="#{pdksPersonelHome.donemselDurum.durum}" />
 							</s:decorate>
 						</h:panelGrid>
-						<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{pdksPersonelHome.savePersonelDonemselDurum()}" reRender="seciliOzelDurum" />
+						<ui:fragment
+							rendered="#{pdksPersonelHome.donemselDurum.basTarih!=null and pdksPersonelHome.donemselDurum.bitTarih!=null and pdksPersonelHome.donemselDurum.personelDurumTipiId!=null}">
+							<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{pdksPersonelHome.savePersonelDonemselDurum()}" reRender="seciliOzelDurum" />
+						</ui:fragment>
 						<a4j:commandButton status="ajaxStatus" value="Yeni Özel Durum" action="#{pdksPersonelHome.setPersonelDonemselDurum(null)}" ajaxSingle="true"
 							reRender="seciliOzelDurum" />
 					</ui:fragment>
