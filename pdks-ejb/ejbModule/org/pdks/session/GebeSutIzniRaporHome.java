@@ -192,6 +192,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 	}
 
 	public String fillPersonelDonemselDurumList() {
+		List<Long> list = new ArrayList<Long>();
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
 		sb.append("select D.* from " + PersonelDonemselDurum.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
@@ -209,6 +210,12 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 		if (tesisId != null) {
 			sb.append(" AND P." + Personel.COLUMN_NAME_TESIS + " = :t");
 			fields.put("t", tesisId);
+		} else if (tesisTanimList != null && !tesisTanimList.isEmpty()) {
+			for (Tanim tesis : tesisTanimList) {
+				list.add(tesis.getId());
+			}
+			sb.append(" AND P." + Personel.COLUMN_NAME_TESIS + " :t");
+			fields.put("t", list);
 		}
 		sb.append(" where D." + PersonelDonemselDurum.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :b2");
 		sb.append(" and D." + PersonelDonemselDurum.COLUMN_NAME_BITIS_ZAMANI + " >= :b1");
@@ -231,6 +238,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 					tesisDurum = personel.getSirket().isTesisDurumu();
 			}
 		}
+		list = null;
 		return "";
 	}
 
