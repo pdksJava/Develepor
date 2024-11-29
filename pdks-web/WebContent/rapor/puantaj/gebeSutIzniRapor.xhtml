@@ -58,6 +58,12 @@
 						<f:facet name="header">
 							<h:outputText value="Gebe / Süt İzni Personeller" />
 						</f:facet>
+						<rich:column width="60" style="text-align:center" rendered="#{authenticatedUser.admin}">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<h:outputText value="#{personelDurum.id}" />
+						</rich:column>
 						<rich:column width="60" style="text-align:center">
 							<f:facet name="header">
 								<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
