@@ -222,8 +222,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			} else if (donemselDurum.getBitTarih() == null) {
 				if (donemselDurum.getBasTarih() != null)
 					donemselDurum.setBitTarih(PdksUtil.tariheAyEkleCikar(donemselDurum.getBasTarih(), 12));
- 			}
- 		}
+			}
+		}
 		return "";
 	}
 
@@ -319,10 +319,24 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	@Transactional
 	public String savePersonelDonemselDurum() {
 		List<PersonelDonemselDurum> list = null;
-		if (donemselDurum.getDurum()) {
-			if (donemselDurum.getBasTarih().after(donemselDurum.getBitTarih())) {
-				PdksUtil.addMessageWarn("Başlangıç tarihi bitişi tarihinden büyük olamaz!");
-			} else {
+		boolean devam = true;
+		if (donemselDurum.getPersonelDurumTipiId() == null) {
+			PdksUtil.addMessageWarn("Tipi seçiniz!!");
+			devam = false;
+		}
+		if (donemselDurum.getBasTarih() == null) {
+			PdksUtil.addMessageWarn("Başlangıç tarihi giriniz!");
+			devam = false;
+		} else if (donemselDurum.getBitTarih() == null) {
+			PdksUtil.addMessageWarn("Bitiş tarihi giriniz!");
+			devam = false;
+		} else if (donemselDurum.getBasTarih().after(donemselDurum.getBitTarih())) {
+			PdksUtil.addMessageWarn("Başlangıç tarihi bitişi tarihinden büyük olamaz!");
+			devam = false;
+		}
+
+		if (devam) {
+			if (donemselDurum.getDurum()) {
 				HashMap fields = new HashMap();
 				fields.put("personel.id=", donemselDurum.getPersonel().getId());
 				fields.put("bitTarih>=", donemselDurum.getBasTarih());
