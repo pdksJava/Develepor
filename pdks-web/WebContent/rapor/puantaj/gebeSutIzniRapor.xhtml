@@ -30,7 +30,7 @@
 							<h:selectOneMenu id="sirketSec" value="#{gebeSutIzniRaporHome.sirketId}" disabled="#{gebeSutIzniRaporHome.sirketList.size()==1}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{gebeSutIzniRaporHome.sirketList}" />
-								<a4j:support event="onchange" status="ajaxStatus" action="#{gebeSutIzniRaporHome.fillTesisList()}" reRender="denklestirmeDonemiTable,girisler" />
+								<a4j:support event="onchange" status="ajaxStatus" action="#{gebeSutIzniRaporHome.fillTesisList()}" reRender="personelDurumTable,girisler" />
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
@@ -40,21 +40,20 @@
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{gebeSutIzniRaporHome.tesisList}" />
 								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{gebeSutIzniRaporHome.personelDonemDurumList.clear()}"
-									reRender="denklestirmeDonemiTable,girisler" />
+									reRender="personelDurumTable,girisler" />
 							</h:selectOneMenu>
 						</s:decorate>
 					</h:panelGrid>
 				</a4j:outputPanel>
 				<a4j:commandButton status="ajaxStatus" value="Listele" action="#{gebeSutIzniRaporHome.fillPersonelDonemselDurumList}"
-					reRender="denklestirmeDonemiTable" />
+					reRender="personelDurumTable" />
 
 
 			</rich:panel>
 
-			<a4j:outputPanel id="denklestirmeDonemiTable">
+			<a4j:outputPanel id="personelDurumTable">
 				<rich:panel>
-					<rich:dataTable rowClasses="acik,koyu" value="#{gebeSutIzniRaporHome.personelDonemDurumList}" var="personelDurum" rows="25" rowKeyVar="row"
-						id="hareketTable">
+					<rich:dataTable rowClasses="acik,koyu" value="#{gebeSutIzniRaporHome.personelDonemDurumList}" var="personelDurum" rows="25" rowKeyVar="row">
 						<f:facet name="header">
 							<h:outputText value="Gebe / Süt İzni Personeller" />
 						</f:facet>
