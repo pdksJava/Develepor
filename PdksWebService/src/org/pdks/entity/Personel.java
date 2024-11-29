@@ -869,6 +869,22 @@ public class Personel extends BaseObject {
 	}
 
 	@Transient
+	public String getPersonelExtraAciklama() {
+		StringBuffer sb = new StringBuffer();
+		if (personelExtra != null) {
+			if (PdksUtil.hasStringValue(personelExtra.getIlce()))
+				sb.append(personelExtra.getIlce().trim() + " ");
+			if (PdksUtil.hasStringValue(personelExtra.getCepTelefon()))
+				sb.append(personelExtra.getCepTelefon().trim() + " ");
+			if (PdksUtil.hasStringValue(personelExtra.getOzelNot()))
+				sb.append(personelExtra.getOzelNot().trim() + " ");
+		}
+		String str = sb.toString();
+		sb = null;
+		return str;
+	}
+
+	@Transient
 	public boolean isHastaneSuperVisor() {
 		boolean durum = ekSaha3 != null && ekSaha3.getKodu().equals(BOLUM_SUPERVISOR);
 		return durum;

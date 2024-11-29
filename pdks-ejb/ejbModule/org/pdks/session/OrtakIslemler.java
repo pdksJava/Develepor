@@ -248,7 +248,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public List<Tanim> filUserTesisList(User user, Session session) {
- 		List<Tanim> tesisTanimList = null;
+		List<Tanim> tesisTanimList = null;
 		if (user != null) {
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
@@ -7137,7 +7137,6 @@ public class OrtakIslemler implements Serializable {
 		Departman departman = sirket != null ? sirket.getDepartman() : null;
 		Date bugun = PdksUtil.buGun();
 		String mySicilNo = null;
-
 		if (istenAyrilanEkle == false && authenticatedUser.isYoneticiKontratli())
 			digerPersoneller(null, perNoList, bugun, bugun, session);
 		try {
@@ -7199,6 +7198,8 @@ public class OrtakIslemler implements Serializable {
 				parametreMap.put("ad like", ad.trim() + "%");
 			if (PdksUtil.hasStringValue(soyad))
 				parametreMap.put("soyad like", soyad.trim() + "%");
+			if (istenAyrilanEkleDurum == false)
+				parametreMap.put("sskCikisTarihi>=", bugun);
 			List siciller = null;
 			if (!istenAyrilanEkle) {
 				siciller = (List) authenticatedUser.getYetkiTumPersonelNoList().clone();
@@ -7220,7 +7221,12 @@ public class OrtakIslemler implements Serializable {
 				if (fieldName != null) {
 					StringBuffer sb = new StringBuffer();
 					sb.append("select " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
-					sb.append(" where  " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
+					sb.append(" where " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
+					if (istenAyrilanEkleDurum == false) {
+						sb.append(" and " + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " > :b");
+						parametreMap.put("b", bugun);
+					}
+
 					perNoList = (ArrayList<String>) pdksEntityController.getSQLParamList(siciller, sb, fieldName, parametreMap, null, session);
 
 				} else
