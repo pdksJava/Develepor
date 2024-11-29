@@ -3287,7 +3287,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 								sirket.setDepartman(departman);
 								sirket.setFazlaMesaiTalepGirilebilir(departman.getFazlaMesaiTalepGirilebilir());
 								sirket.setErpKodu(personelERP.getSirketKodu());
-								sirket.setErpDurum(Boolean.TRUE);
+								sirket.setGebelikSutIzin(Boolean.TRUE);
+								if (mailMap.containsKey("uygulamaTipi")) {
+									String uygulamaTipi = (String) mailMap.get("uygulamaTipi");
+									sirket.setSuaOlabilir(uygulamaTipi.equalsIgnoreCase("H"));
+								}
+ 								sirket.setErpDurum(Boolean.TRUE);
 								sirket.setAd(personelERP.getSirketAdi());
 								sirket.setAciklama(personelERP.getSirketAdi());
 								sirket.setPdks(Boolean.TRUE);
