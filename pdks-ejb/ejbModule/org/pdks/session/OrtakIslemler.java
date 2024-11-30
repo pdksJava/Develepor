@@ -5646,6 +5646,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
+	@Transactional
 	private UserMenuItemTime getUserMenuItem(String key, Session session) throws Exception {
 		UserMenuItemTime menuItemTime = null;
 		if (authenticatedUser != null && PdksUtil.hasStringValue(key)) {
@@ -5680,6 +5681,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @throws Exception
 	 */
+	@Transactional
 	private boolean saveUserMenuItemDeger(UserMenuItemTime menuItemTime, String parametreJSON, HttpSession mySession, Session session) throws Exception {
 		String spName = "SP_UPDATE_USER_MENUITEM_TIME";
 		boolean flush = false;
@@ -8854,7 +8856,6 @@ public class OrtakIslemler implements Serializable {
 					authenticatedUser.setCalistigiSayfa(menuAdi);
 					if (PdksUtil.getTestDurum())
 						sessionx = null;
-
 				}
 				if (authenticatedUser.isIK() || authenticatedUser.isAdmin()) {
 					String mesaj = authenticatedUser.getAdSoyad() + " Sayfa : " + menuTanimAdi + " " + PdksUtil.getCurrentTimeStampStr();
@@ -8866,7 +8867,6 @@ public class OrtakIslemler implements Serializable {
 					authenticatedUser.setMenuItemTime(null);
 				if (sessionx != null) {
 					try {
-
 						UserMenuItemTime menuItemTime = getUserMenuItem(menuAdi, sessionx);
 						if (menuItemTime != null) {
 							HttpSession mySession = menuItemTime.getMySession();
