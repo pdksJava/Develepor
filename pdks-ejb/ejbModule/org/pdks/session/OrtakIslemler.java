@@ -16413,17 +16413,17 @@ public class OrtakIslemler implements Serializable {
 
 									}
 									if (!gebeMi)
-										gebeMi = suaVar || pdksVardiyaGun.getVardiya().isGebelikMi();
+										gebeMi = pdksVardiyaGun.getVardiya().isGebelikMi();
 									if (!suaMi)
 										suaMi = pdksVardiyaGun.getVardiya().getSua();
 								}
 								boolean ozelDurum = gebeMi || suaMi;
 								double ozelDurumSaat = 0;
 								if (ozelDurum) {
-									if (suaMi)
-										ozelDurumSaat = personelDenklestirme.getCalismaSuaSaati();
-									else if (gebeMi)
+									if (gebeMi)
 										ozelDurumSaat = AylikPuantaj.getGunlukAnneCalismaSuresi();
+									else if (suaMi)
+										ozelDurumSaat = personelDenklestirme.getCalismaSuaSaati();
 
 								}
 

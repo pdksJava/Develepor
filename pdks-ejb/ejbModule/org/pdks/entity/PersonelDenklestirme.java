@@ -495,9 +495,13 @@ public class PersonelDenklestirme extends BaseObject {
 				logger.debug("Gebe");
 				sutIzniSure = gunPlanSure > 7.5d ? 7.5d : gunPlanSure;
 				gunPlanSure = sutIzniSure;
+			} else if (isSuaDurumu()) {
+				logger.debug("Şua");
+				sutIzniSure = gunPlanSure > 7.5d ? 7.5d : gunPlanSure;
+				gunPlanSure = AylikPuantaj.getGunlukCalismaSuresi();
 			}
 			if (vg.isAyinGunu() && vardiya != null && vardiya.getId() != null) {
-				boolean hesapla = !(vg.isIzinli() || vardiya.isHaftaTatil() || tatil != null);
+				boolean hesapla = !(vg.isIzinli() || vardiya.isHaftaTatil() || tatil != null || (isSuaDurumu() && vardiya.isOff()));
 				if (!hesapla) {
 					gunPlanSure = 0;
 					if (vardiya.isHaftaTatil() == false && tatil != null && tatil.isYarimGunMu() && vg.isIzinli() == false) {
