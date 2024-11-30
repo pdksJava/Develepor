@@ -584,6 +584,8 @@ public class AylikPuantaj implements Serializable, Cloneable {
 				OrtakIslemler ortakIslemler = new OrtakIslemler();
 				Calendar cal = Calendar.getInstance();
 				for (VardiyaGun vg : vardiyalar) {
+					if (vg.isAyinGunu() == false)
+						continue;
 					cal.setTime(vg.getVardiyaDate());
 					int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 					if (dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY || vg.getVardiya() == null || vg.getVardiya().getId() == null)
