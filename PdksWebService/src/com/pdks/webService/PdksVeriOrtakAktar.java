@@ -686,6 +686,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 
 				}
+				String readUnCommitted = "";
+				if (mailMap.containsKey("readUnCommitted"))
+					readUnCommitted = (String) mailMap.get("readUnCommitted");
+				BaseDAOHibernate.setReadUnCommitted(readUnCommitted != null && readUnCommitted.equals("1"));
 				String selectLOCK = "WITH(NOLOCK)", joinLOCK = "WITH(NOLOCK)";
 				if (mailMap.containsKey("selectLOCK"))
 					selectLOCK = (String) mailMap.get("selectLOCK");
@@ -693,6 +697,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					joinLOCK = (String) mailMap.get("joinLOCK");
 				PdksVeriOrtakAktar.setSelectLOCK(" " + selectLOCK + " ");
 				PdksVeriOrtakAktar.setJoinLOCK(" " + joinLOCK + " ");
+
 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
