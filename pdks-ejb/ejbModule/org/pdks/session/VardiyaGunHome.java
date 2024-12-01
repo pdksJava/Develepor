@@ -2208,6 +2208,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 		}
 		int sayac = 0;
+		TreeMap<Long, CalismaModeli> modelMap = new TreeMap<Long, CalismaModeli>();
 		for (Iterator iter = puantajList.iterator(); iter.hasNext();) {
 			AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
 
@@ -2221,7 +2222,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				calismaModeli = personel.getCalismaModeli();
 			boolean help = helpPersonel(aylikPuantaj.getPdksPersonel());
 			++sayac;
-
+			if (calismaModeli != null && calismaModeli.getDurum()) {
+				if (!modelMap.containsKey(calismaModeli.getId()))
+					modelMap.put(calismaModeli.getId(), calismaModeli);
+			}
 			try {
 				if (row % 2 != 0) {
 					styleTutarDay = styleTutarOddDay;
@@ -2497,7 +2501,81 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		try {
 			for (int i = 0; i < col; i++)
 				sheet.autoSizeColumn(i);
+			if (!modelMap.isEmpty()) {
+				styleTutarEvenDay = ExcelUtil.setAlignment(ExcelUtil.getStyleEven(ExcelUtil.FORMAT_TUTAR, wb), CellStyle.ALIGN_CENTER);
+				styleTutarOddDay = ExcelUtil.setAlignment(ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_TUTAR, wb), CellStyle.ALIGN_CENTER);
 
+				HashMap<Long, List<Vardiya>> hashMap = new HashMap<Long, List<Vardiya>>();
+				List<CalismaModeliVardiya> calismaModeliVardiyaList = pdksEntityController.getSQLParamByAktifFieldList(CalismaModeliVardiya.TABLE_NAME, CalismaModeliVardiya.COLUMN_NAME_CALISMA_MODELI, new ArrayList(modelMap.keySet()), CalismaModeliVardiya.class, session);
+				for (CalismaModeliVardiya calismaModeliVardiya : calismaModeliVardiyaList) {
+					Vardiya vardiya = calismaModeliVardiya.getVardiya();
+					if (vardiya.isCalisma() && vardiya.getDurum()) {
+						Long cmId = calismaModeliVardiya.getCalismaModeli().getId();
+						List<Vardiya> vardiyaList = hashMap.containsKey(cmId) ? hashMap.get(cmId) : new ArrayList<Vardiya>();
+						if (vardiyaList.isEmpty())
+							hashMap.put(cmId, vardiyaList);
+						vardiyaList.add(vardiya);
+					}
+				}
+				for (Long cmId : hashMap.keySet()) {
+					CalismaModeli calismaModeli = modelMap.get(cmId);
+					Sheet sheetModel = ExcelUtil.createSheet(wb, calismaModeli.getAciklama(), Boolean.TRUE);
+					List<Vardiya> vardiyaList = hashMap.get(cmId);
+					row = 0;
+					col = 0;
+					ExcelUtil.getCell(sheetModel, row, col, header).setCellValue(calismaModeli.getAciklama() + " " + ortakIslemler.calismaModeliAciklama() + " Vardiyaları");
+					int adet = authenticatedUser.isAdmin() ? 5 : 4;
+					for (int i = 0; i < adet; i++)
+						ExcelUtil.getCell(sheetModel, row, col + i + 1, style).setCellValue("");
+
+					try {
+						sheetModel.addMergedRegion(ExcelUtil.getRegion((int) row, (int) 0, (int) row, (int) adet));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					if (vardiyaList.size() > 1)
+						vardiyaList = PdksUtil.sortObjectStringAlanList(vardiyaList, "getAdi", null);
+					++row;
+					col = 0;
+					if (authenticatedUser.isAdmin())
+						ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Vardiya Id");
+					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Vardiya Adı");
+					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Vardiya Kısa Adı");
+					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Toplam Çalışma Süresi (Saat)");
+					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Mola Süresi (Dakika)");
+					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Net Çalışma Süresi (Saat)");
+					boolean renk = Boolean.TRUE;
+					for (Vardiya vardiya : vardiyaList) {
+						++row;
+						col = 0;
+						if (renk) {
+							styleGenelLeft = styleOdd;
+							styleGenelCenter = styleOddCenter;
+							styleTutarDay = styleTutarOddDay;
+						} else {
+							styleGenelLeft = styleEven;
+							styleGenelCenter = styleEvenCenter;
+							styleTutarDay = styleTutarEvenDay;
+						}
+						renk = !renk;
+						if (authenticatedUser.isAdmin())
+							ExcelUtil.getCell(sheetModel, row, col++, styleGenelCenter).setCellValue(vardiya.getId());
+						ExcelUtil.getCell(sheetModel, row, col++, styleGenelCenter).setCellValue(vardiya.getAdi());
+						ExcelUtil.getCell(sheetModel, row, col++, styleGenelCenter).setCellValue(vardiya.getKisaAdi());
+						double netSure = vardiya.getNetCalismaSuresi();
+						double toplamSure = netSure + (vardiya.getYemekSuresi() / 60.d);
+						ExcelUtil.getCell(sheetModel, row, col++, styleTutarDay).setCellValue(toplamSure);
+						if (toplamSure > netSure)
+							ExcelUtil.getCell(sheetModel, row, col++, styleGenelCenter).setCellValue(vardiya.getYemekSuresi().longValue());
+						else
+							ExcelUtil.getCell(sheetModel, row, col++, styleGenel).setCellValue("");
+						ExcelUtil.getCell(sheetModel, row, col++, styleTutarDay).setCellValue(netSure);
+					}
+					for (int i = 0; i < col; i++)
+						sheetModel.autoSizeColumn(i);
+				}
+			}
 			baos = new ByteArrayOutputStream();
 			wb.write(baos);
 		} catch (Exception e) {
@@ -9547,11 +9625,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				String baglac = " WHERE";
 				if (tip.equals("T") || tip.equals("B")) {
 					if (aramaSecenekleri.getSirketId() != null) {
-				 whereStr += baglac + " D." + Personel.COLUMN_NAME_SIRKET + " = " + aramaSecenekleri.getSirketId();
+						whereStr += baglac + " D." + Personel.COLUMN_NAME_SIRKET + " = " + aramaSecenekleri.getSirketId();
 						baglac = " and ";
 					}
 					if (tip.equals("B") && aramaSecenekleri.getTesisId() != null) {
-				 whereStr += baglac + " D." + Personel.COLUMN_NAME_TESIS + " = " + aramaSecenekleri.getTesisId();
+						whereStr += baglac + " D." + Personel.COLUMN_NAME_TESIS + " = " + aramaSecenekleri.getTesisId();
 						baglac = " and ";
 					}
 					class1 = Tanim.class;
@@ -9560,15 +9638,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				else if (tip.equals("P")) {
 					class1 = Personel.class;
 					if (aramaSecenekleri.getSirketId() != null) {
-				 whereStr += baglac + " D." + Personel.COLUMN_NAME_SIRKET + " = " + aramaSecenekleri.getSirketId();
+						whereStr += baglac + " D." + Personel.COLUMN_NAME_SIRKET + " = " + aramaSecenekleri.getSirketId();
 						baglac = " and ";
 					}
 					if (tip.equals("B") && aramaSecenekleri.getTesisId() != null) {
-				 whereStr += baglac + " D." + Personel.COLUMN_NAME_TESIS + " = " + aramaSecenekleri.getTesisId();
+						whereStr += baglac + " D." + Personel.COLUMN_NAME_TESIS + " = " + aramaSecenekleri.getTesisId();
 						baglac = " and ";
 					}
 					if (tip.equals("B") && aramaSecenekleri.getEkSaha3Id() != null) {
-				 whereStr += baglac + " D." + Personel.COLUMN_NAME_EK_SAHA3 + " = " + aramaSecenekleri.getEkSaha3Id();
+						whereStr += baglac + " D." + Personel.COLUMN_NAME_EK_SAHA3 + " = " + aramaSecenekleri.getEkSaha3Id();
 						baglac = " and ";
 					}
 				}

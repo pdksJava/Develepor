@@ -457,12 +457,48 @@
 										value="#{authenticatedUser.getYesNo(aylikPuantaj.personelDenklestirme.suaDurumu)}" /></td>
 							</ui:fragment>
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.gebeGoster}">
-								<td class="#{aylikPuantaj.trClass}" style="width: 60px" align="center"><h:outputText
-										value="#{authenticatedUser.getYesNo(aylikPuantaj.gebeDurum)}" /></td>
+								<td class="#{aylikPuantaj.trClass}" style="width: 60px" align="center"><ui:fragment
+										rendered="#{aylikPuantaj.personelDenklestirme.gebePersonelDonemselDurum==null}">
+										<h:outputText value="#{authenticatedUser.getYesNo(aylikPuantaj.gebeDurum)}" />
+									</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.gebePersonelDonemselDurum!=null}">
+										<span id="gebe#{aylikPuantaj.pdksPersonel.id}" style="font-weight: bold;"> <h:outputText
+												value="#{authenticatedUser.getYesNo(aylikPuantaj.gebeDurum)}" /></span>
+										<ui:fragment rendered="#{vardiyaGunHome.ikRole or vardiyaGunHome.adminRole}">
+											<rich:toolTip for="gebe#{aylikPuantaj.pdksPersonel.id}">
+												<h:panelGrid columns="1">
+													<ui:fragment>
+														<B>#{aylikPuantaj.personelDenklestirme.gebePersonelDonemselDurum.personelDurumTipiAciklama} Dönemi :</B>
+													</ui:fragment>
+													<h:outputText
+														value="#{authenticatedUser.dateFormatla(aylikPuantaj.personelDenklestirme.gebePersonelDonemselDurum.basTarih)}   -
+													#{authenticatedUser.dateFormatla(aylikPuantaj.personelDenklestirme.gebePersonelDonemselDurum.bitTarih)}" />
+
+												</h:panelGrid>
+											</rich:toolTip>
+										</ui:fragment>
+									</ui:fragment></td>
 							</ui:fragment>
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.sutIzniGoster}">
-								<td class="#{aylikPuantaj.trClass}" style="width: 60px" align="center"><h:outputText
-										value="#{authenticatedUser.getYesNo(aylikPuantaj.sutIzniDurumu)}" /></td>
+								<td class="#{aylikPuantaj.trClass}" style="width: 60px" align="center"><ui:fragment
+										rendered="#{aylikPuantaj.personelDenklestirme.sutIzniPersonelDonemselDurum==null}">
+										<h:outputText value="#{authenticatedUser.getYesNo(aylikPuantaj.sutIzniDurumu)}" />
+									</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.sutIzniPersonelDonemselDurum!=null}">
+										<span id="sutIzni#{aylikPuantaj.pdksPersonel.id}" style="font-weight: bold;"> <h:outputText
+												value="#{authenticatedUser.getYesNo(aylikPuantaj.sutIzniDurumu)}" /></span>
+										<ui:fragment rendered="#{vardiyaGunHome.ikRole or vardiyaGunHome.adminRole}">
+											<rich:toolTip for="sutIzni#{aylikPuantaj.pdksPersonel.id}">
+												<h:panelGrid columns="1">
+													<ui:fragment>
+														<B>#{aylikPuantaj.personelDenklestirme.sutIzniPersonelDonemselDurum.personelDurumTipiAciklama} Dönemi :</B>
+													</ui:fragment>
+													<h:outputText
+														value="#{authenticatedUser.dateFormatla(aylikPuantaj.personelDenklestirme.sutIzniPersonelDonemselDurum.basTarih)}   -
+													 #{authenticatedUser.dateFormatla(aylikPuantaj.personelDenklestirme.sutIzniPersonelDonemselDurum.bitTarih)}" />
+
+												</h:panelGrid>
+											</rich:toolTip>
+										</ui:fragment>
+									</ui:fragment></td>
 							</ui:fragment>
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.partTimeGoster}">
 								<td class="#{aylikPuantaj.trClass}" style="width: 60px" align="center"><h:outputText

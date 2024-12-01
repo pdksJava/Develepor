@@ -60,8 +60,10 @@ public class PdksEntityController implements Serializable {
 	public static final String MAP_KEY_SQLADD = "sql_add";
 	public static final String MAP_KEY_SQLPARAMS = "sql_params";
 	public static final String MAP_KEY_TRANSACTION = "transaction";
-
+	public static final String TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED = "read uncommitted";
+	public static final String TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED = "read committed";
 	private static String selectLOCK = "with(nolock)", joinLOCK = "with(nolock)";
+	private static boolean readUnCommitted = false;
 
 	public static final String SELECT_KARAKTER = "c";
 
@@ -639,10 +641,20 @@ public class PdksEntityController implements Serializable {
 	public List execSPList(LinkedHashMap<String, Object> veriMap, StringBuffer sp, Class class1) throws Exception {
 		List sonucList = null;
 		try {
+			Session session = veriMap.containsKey(MAP_KEY_SESSION) ? (Session) veriMap.get(MAP_KEY_SESSION) : PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			SQLQuery queryReadUnCommitted = null;
+			if (readUnCommitted) {
+				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED));
+				queryReadUnCommitted.executeUpdate();
+			}
 			SQLQuery query = prepareProcedure(veriMap, sp);
 			if (class1 != null)
 				query.addEntity(class1);
 			sonucList = query.list();
+			if (queryReadUnCommitted != null) {
+				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
+				queryReadUnCommitted.executeUpdate();
+			}
 		} catch (Exception e) {
 			Gson gson = new Gson();
 			logger.error(sp.toString() + (veriMap != null && !veriMap.isEmpty() ? "\n" + gson.toJson(veriMap) : "") + "\n" + e);
@@ -661,8 +673,18 @@ public class PdksEntityController implements Serializable {
 	public int execSP(LinkedHashMap<String, Object> veriMap, StringBuffer sp) throws Exception {
 		Integer sonuc = null;
 		try {
+			Session session = veriMap.containsKey(MAP_KEY_SESSION) ? (Session) veriMap.get(MAP_KEY_SESSION) : PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			SQLQuery queryReadUnCommitted = null;
+			if (readUnCommitted) {
+				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED));
+				queryReadUnCommitted.executeUpdate();
+			}
 			SQLQuery query = prepareProcedure(veriMap, sp);
 			sonuc = query.executeUpdate();
+			if (queryReadUnCommitted != null) {
+				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
+				queryReadUnCommitted.executeUpdate();
+			}
 		} catch (Exception e) {
 			Gson gson = new Gson();
 			logger.error(sp.toString() + (veriMap != null && !veriMap.isEmpty() ? "\n" + gson.toJson(veriMap) : "") + "\n" + e);
@@ -671,6 +693,15 @@ public class PdksEntityController implements Serializable {
 
 		return sonuc;
 
+	}
+
+	/**
+	 * @param level
+	 * @return
+	 */
+	private String setTransactionIsolationLevel(String level) {
+		String levelStr = "set transaction isolation level " + level;
+		return levelStr;
 	}
 
 	/**
@@ -1222,8 +1253,9 @@ public class PdksEntityController implements Serializable {
 
 				fields.remove(MAP_KEY_TRANSACTION);
 			}
-
 			String sql = sb.toString();
+			if (readUnCommitted)
+				sql = setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED) + ";" + sql + ";" + setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED);
 			TreeMap fieldsOther = new TreeMap();
 			sb = null;
 			Boolean devam = Boolean.TRUE;
@@ -1485,6 +1517,14 @@ public class PdksEntityController implements Serializable {
 
 	public static void setJoinLOCK(String joinLOCK) {
 		PdksEntityController.joinLOCK = joinLOCK;
+	}
+
+	public static boolean isReadUnCommitted() {
+		return readUnCommitted;
+	}
+
+	public static void setReadUnCommitted(boolean readUnCommitted) {
+		PdksEntityController.readUnCommitted = readUnCommitted;
 	}
 
 }

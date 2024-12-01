@@ -740,12 +740,17 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	}
 
 	@Transient
+	public String getCalismaTipi() {
+		String calismaTipi = "";
+		return calismaTipi;
+	}
+
+	@Transient
 	public Boolean isIdariModelMi() {
 		return idariModel != null && idariModel;
 	}
 
 	public void entityRefresh() {
-		
 
 	}
 

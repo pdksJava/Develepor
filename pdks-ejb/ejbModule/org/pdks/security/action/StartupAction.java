@@ -707,6 +707,7 @@ public class StartupAction implements Serializable {
 		if (!parameterList.isEmpty())
 			try {
 				// Setting up LDAP attributes..
+				PdksEntityController.setReadUnCommitted(parameterMap.containsKey("readUnCommitted") && parameterMap.get("readUnCommitted").equals("1"));
 				PdksEntityController.setShowSQL(parameterMap.containsKey("showSql") && parameterMap.get("showSql").equals("1"));
 				VardiyaGun.setHaftaTatilDurum(parameterMap.containsKey("haftaTatilDurum") && parameterMap.get("haftaTatilDurum").equals("1"));
 				if (parameterMap.containsKey("sicilNoUzunluk")) {
