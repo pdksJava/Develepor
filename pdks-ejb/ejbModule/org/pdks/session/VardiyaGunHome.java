@@ -2526,7 +2526,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					ExcelUtil.getCell(sheetModel, row, col, header).setCellValue(calismaModeli.getAciklama() + " " + ortakIslemler.calismaModeliAciklama() + " Vardiyaları");
 					int adet = authenticatedUser.isAdmin() ? 5 : 4;
 					for (int i = 0; i < adet; i++)
-						ExcelUtil.getCell(sheetModel, row, col + i + 1, style).setCellValue("");
+						ExcelUtil.getCell(sheetModel, row, col + i + 1, header).setCellValue("");
 
 					try {
 						sheetModel.addMergedRegion(ExcelUtil.getRegion((int) row, (int) 0, (int) row, (int) adet));
@@ -2540,11 +2540,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					col = 0;
 					if (authenticatedUser.isAdmin())
 						ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Vardiya Id");
-					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Vardiya Adı");
-					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Vardiya Kısa Adı");
-					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Toplam Çalışma Süresi (Saat)");
-					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Mola Süresi (Dakika)");
-					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Net Çalışma Süresi (Saat)");
+					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Saat Aralığı");
+					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Kısa Adı");
+					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Toplam Çalışma (Saat)");
+					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Mola (Dakika)");
+					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Net Çalışma (Saat)");
 					boolean renk = Boolean.TRUE;
 					for (Vardiya vardiya : vardiyaList) {
 						++row;
@@ -2569,7 +2569,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						if (toplamSure > netSure)
 							ExcelUtil.getCell(sheetModel, row, col++, styleGenelCenter).setCellValue(vardiya.getYemekSuresi().longValue());
 						else
-							ExcelUtil.getCell(sheetModel, row, col++, styleGenel).setCellValue("");
+							ExcelUtil.getCell(sheetModel, row, col++, styleGenelCenter).setCellValue("");
 						ExcelUtil.getCell(sheetModel, row, col++, styleTutarDay).setCellValue(netSure);
 					}
 					for (int i = 0; i < col; i++)
