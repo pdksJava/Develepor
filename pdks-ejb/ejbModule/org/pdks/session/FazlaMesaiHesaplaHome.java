@@ -2063,7 +2063,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						fazlaMesaiOde = personelDenklestirme.getFazlaMesaiOde() != null && !personelDenklestirme.getFazlaMesaiOde().equals(sirketFazlaMesaiOde);
 
 					double resmiTatilToplami = puantaj.getResmiTatilToplami();
-					double kesilenSure = personelDenklestirme.getKesilenSure();
+					double kesilenSure = personelDenklestirme != null ? personelDenklestirme.getKesilenSure() : 0.0d;
 					int izinsizGun = 0;
 					ortakIslemler.setVardiyaYemekList(puantaj.getVardiyalar(), yemekAraliklari);
 					double ucretiOdenenMesaiSure = 0.0d;

@@ -657,10 +657,15 @@ public class PdksEntityController implements Serializable {
 	 */
 	public List execSPList(LinkedHashMap<String, Object> veriMap, StringBuffer sp, Class class1) throws Exception {
 		List sonucList = null;
+		boolean manuelReadUnCommitted = false;
 		try {
+			if (veriMap.containsKey("readUnCommitted")) {
+				manuelReadUnCommitted = true;
+				veriMap.remove("readUnCommitted");
+			}
 			Session session = veriMap.containsKey(MAP_KEY_SESSION) ? (Session) veriMap.get(MAP_KEY_SESSION) : PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			SQLQuery queryReadUnCommitted = null;
-			if (readUnCommitted) {
+			if (readUnCommitted || manuelReadUnCommitted) {
 				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED));
 				queryReadUnCommitted.executeUpdate();
 			}
@@ -678,6 +683,8 @@ public class PdksEntityController implements Serializable {
 			gson = null;
 			throw new Exception(e);
 		}
+		if (manuelReadUnCommitted)
+			veriMap.put("readUnCommitted", true);
 
 		return sonucList;
 
@@ -689,10 +696,15 @@ public class PdksEntityController implements Serializable {
 	 */
 	public int execSP(LinkedHashMap<String, Object> veriMap, StringBuffer sp) throws Exception {
 		Integer sonuc = null;
-		try {
+		boolean manuelReadUnCommitted = false;
+ 		try {
+			if (veriMap.containsKey("readUnCommitted")) {
+				manuelReadUnCommitted = true;
+				veriMap.remove("readUnCommitted");
+			}
 			Session session = veriMap.containsKey(MAP_KEY_SESSION) ? (Session) veriMap.get(MAP_KEY_SESSION) : PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			SQLQuery queryReadUnCommitted = null;
-			if (readUnCommitted) {
+			if (readUnCommitted || manuelReadUnCommitted) {
 				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED));
 				queryReadUnCommitted.executeUpdate();
 			}
@@ -707,7 +719,8 @@ public class PdksEntityController implements Serializable {
 			logger.error(sp.toString() + (veriMap != null && !veriMap.isEmpty() ? "\n" + gson.toJson(veriMap) : "") + "\n" + e);
 			gson = null;
 		}
-
+		if (manuelReadUnCommitted)
+			veriMap.put("readUnCommitted", true);
 		return sonuc;
 
 	}

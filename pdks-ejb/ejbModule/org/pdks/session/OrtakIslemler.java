@@ -3417,15 +3417,16 @@ public class OrtakIslemler implements Serializable {
 	 * @throws Exception
 	 */
 	private List getSPPersonelHareketList(List<Long> personelList, String kapi, String basTarihStr, String bitTarihStr, Class class2, Session session) throws Exception {
-		LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
+		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		String fieldName = "personel";
-		fields.put("kapi", kapi);
-		fields.put(fieldName, "");
-		fields.put("basTarih", basTarihStr);
-		fields.put("bitTarih", bitTarihStr);
-		fields.put("df", null);
-		List list2 = getSPParamLongList(personelList, "SP_GET_HAREKET_SIRKET", fieldName, fields, class2, session);
-		fields = null;
+		veriMap.put("kapi", kapi);
+		veriMap.put(fieldName, "");
+		veriMap.put("basTarih", basTarihStr);
+		veriMap.put("bitTarih", bitTarihStr);
+		veriMap.put("df", null);
+//		veriMap.put("readUnCommitted", Boolean.TRUE);
+		List list2 = getSPParamLongList(personelList, "SP_GET_HAREKET_SIRKET", fieldName, veriMap, class2, session);
+		veriMap = null;
 		return list2;
 	}
 
@@ -4367,6 +4368,7 @@ public class OrtakIslemler implements Serializable {
 					Gson gson = new Gson();
 					try {
 						StringBuffer sp = new StringBuffer(spAdi);
+//						map.put("readUnCommitted", Boolean.TRUE);
 						list = pdksEntityController.execSPList(map, sp, class1);
 						if ((tipi.endsWith("P") || tipi.indexOf("+") >= 0) && loginUser.isAdmin())
 							logger.debug(spAdi + " " + tipi + " " + list.size() + "\n" + gson.toJson(map));
@@ -5524,11 +5526,12 @@ public class OrtakIslemler implements Serializable {
 					String name = "SP_GET_USER_MENU";
 					if (isExisStoreProcedure(name, session)) {
 						sb.append(name);
-						LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
-						fields.put("menuAdi", key);
-						fields.put("userName", authenticatedUser.getId());
-						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-						veriler = pdksEntityController.execSPList(fields, sb, null);
+						LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+//						veriMap.put("readUnCommitted", Boolean.TRUE);
+						veriMap.put("menuAdi", key);
+						veriMap.put("userName", authenticatedUser.getId());
+						veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+						veriler = pdksEntityController.execSPList(veriMap, sb, null);
 					}
 
 				} catch (Exception e) {
@@ -5654,12 +5657,13 @@ public class OrtakIslemler implements Serializable {
 				HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 				StringBuffer sb = new StringBuffer();
 				sb.append("SP_USER_MENUITEM");
-				LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
-				fields.put("sId", mySession.getId());
-				fields.put("userName", authenticatedUser.getUsername());
-				fields.put("menuAdi", key);
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<UserMenuItemTime> veriler = pdksEntityController.execSPList(fields, sb, UserMenuItemTime.class);
+				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+//				veriMap.put("readUnCommitted", Boolean.TRUE);
+				veriMap.put("sId", mySession.getId());
+				veriMap.put("userName", authenticatedUser.getUsername());
+				veriMap.put("menuAdi", key);
+				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List<UserMenuItemTime> veriler = pdksEntityController.execSPList(veriMap, sb, UserMenuItemTime.class);
 				if (!veriler.isEmpty()) {
 					menuItemTime = veriler.get(0);
 					menuItemTime.setMySession(mySession);
@@ -5697,6 +5701,7 @@ public class OrtakIslemler implements Serializable {
 		} else if (PdksUtil.isStrDegisti(mySession != null ? mySession.getId() : "", menuItemTime.getSessionId()) || PdksUtil.isStrDegisti(parametreJSON, menuItemTime.getParametreJSON())) {
 			StringBuffer sp = new StringBuffer(spName);
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+//			veriMap.put("readUnCommitted", Boolean.TRUE);
 			veriMap.put("j", parametreJSON);
 			veriMap.put("s", mySession != null ? mySession.getId() : menuItemTime.getSessionId());
 			veriMap.put("mt", menuItemTime.getId());

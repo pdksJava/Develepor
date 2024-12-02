@@ -2209,6 +2209,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		}
 		int sayac = 0;
 		TreeMap<Long, CalismaModeli> modelMap = new TreeMap<Long, CalismaModeli>();
+		boolean yoneticiRol = adminRole == false && ikRole == false;
 		for (Iterator iter = puantajList.iterator(); iter.hasNext();) {
 			AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
 
@@ -2222,7 +2223,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				calismaModeli = personel.getCalismaModeli();
 			boolean help = helpPersonel(aylikPuantaj.getPdksPersonel());
 			++sayac;
-			if (calismaModeli != null && calismaModeli.getDurum()) {
+			if (yoneticiRol == false && calismaModeli != null && calismaModeli.getDurum()) {
 				if (!modelMap.containsKey(calismaModeli.getId()))
 					modelMap.put(calismaModeli.getId(), calismaModeli);
 			}
@@ -2501,6 +2502,37 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		try {
 			for (int i = 0; i < col; i++)
 				sheet.autoSizeColumn(i);
+			if (yoneticiRol) {
+				AylikPuantaj aylikPuantajSablon = new AylikPuantaj(denklestirmeAy);
+				aylikPuantajSablon.setLoginUser(authenticatedUser);
+				List<Personel> donemPerList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(null, null, null, null, denklestirmeAy != null ? aylikPuantajSablon : null, true, session);
+				if (donemPerList.isEmpty() == false) {
+					ArrayList<Long> idler = (ArrayList<Long>) ortakIslemler.getBaseObjectIdList(donemPerList);
+					String fieldName = "p";
+					HashMap fields = new HashMap();
+					StringBuffer sb = new StringBuffer();
+					sb.append("select distinct CMA.* from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append("inner join " + CalismaModeliAy.TABLE_NAME + " CMA " + PdksEntityController.getJoinLOCK() + " on CMA." + CalismaModeliAy.COLUMN_NAME_ID + " = S." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY);
+					sb.append(" where S." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " and S." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
+					fields.put(fieldName, idler);
+					// fields.put(PdksEntityController.MAP_KEY_MAP, "getPersonelId");
+					if (session != null)
+						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+					List<CalismaModeliAy> list = pdksEntityController.getSQLParamList(idler, sb, fieldName, fields, CalismaModeliAy.class, session);
+					for (CalismaModeliAy calismaModeliAy : list) {
+						CalismaModeli calismaModeli = calismaModeliAy.getCalismaModeli();
+						if (calismaModeli == null)
+							continue;
+						if (calismaModeli != null && calismaModeli.getDurum()) {
+							if (!modelMap.containsKey(calismaModeli.getId()))
+								modelMap.put(calismaModeli.getId(), calismaModeli);
+						}
+					}
+					idler = null;
+					list = null;
+				}
+				donemPerList = null;
+			}
 			if (!modelMap.isEmpty()) {
 				styleTutarEvenDay = ExcelUtil.setAlignment(ExcelUtil.getStyleEven(ExcelUtil.FORMAT_TUTAR, wb), CellStyle.ALIGN_CENTER);
 				styleTutarOddDay = ExcelUtil.setAlignment(ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_TUTAR, wb), CellStyle.ALIGN_CENTER);
@@ -8230,7 +8262,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		String fieldName = "p";
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		// sb.append("select S." + PersonelDenklestirme.COLUMN_NAME_ID + " from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append("select S.* from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where S." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " and S." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
 		fields.put(fieldName, idler);
@@ -8243,9 +8274,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			pd.setGuncellendi(Boolean.FALSE);
 			denklestirmeMap.put(pd.getPersonelId(), pd);
 		}
-		// TreeMap<Long, PersonelDenklestirme> denklestirmeMap = ortakIslemler.getDataByIdMap(sb, fields, PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.class);
-		// for (Long key : denklestirmeMap.keySet())
-		// denklestirmeMap.get(key).setGuncellendi(Boolean.FALSE);
 		list = null;
 		sb = null;
 		fields = null;
