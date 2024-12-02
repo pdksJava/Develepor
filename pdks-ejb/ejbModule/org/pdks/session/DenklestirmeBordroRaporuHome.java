@@ -449,6 +449,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			if (session == null)
 				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+			adminRoleDurum();
 			fazlaMesaiHesaplaMenuAdi = "";
 			String str = ortakIslemler.getParameterKey("bordroVeriOlustur");
 			boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals(sayfaURL);
@@ -567,7 +568,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			bordroAdres = null;
 			if (linkAdresKey != null)
 				fillPersonelDenklestirmeList();
-			adminRoleDurum();
+
 		} catch (Exception exx) {
 			exx.printStackTrace();
 		}
