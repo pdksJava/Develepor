@@ -2515,8 +2515,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					sb.append("inner join " + CalismaModeliAy.TABLE_NAME + " CMA " + PdksEntityController.getJoinLOCK() + " on CMA." + CalismaModeliAy.COLUMN_NAME_ID + " = S." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY);
 					sb.append(" where S." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " and S." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
 					fields.put(fieldName, idler);
-					// fields.put(PdksEntityController.MAP_KEY_MAP, "getPersonelId");
-					if (session != null)
+ 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 					List<CalismaModeliAy> list = pdksEntityController.getSQLParamList(idler, sb, fieldName, fields, CalismaModeliAy.class, session);
 					for (CalismaModeliAy calismaModeliAy : list) {
