@@ -462,20 +462,20 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 				sb.append("select V.* from " + PdksPersonelView.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PdksPersonelView.COLUMN_NAME_PERSONEL);
 				if (!admin) {
-					sb.append(" and  P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :ys");
+					sb.append(" and P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :ys");
 					ArrayList<String> list = authenticatedUser.getYetkiTumPersonelNoList();
 					parametreMap.put("ys", list);
 				}
 				if (PdksUtil.hasStringValue(sicilNo)) {
-					sb.append(" and  P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :sicilNo");
+					sb.append(" and P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :sicilNo");
 					parametreMap.put("sicilNo", sicilNo);
 				} else if (admin) {
 					if (sirketId != null) {
-						sb.append(" and  P." + Personel.COLUMN_NAME_SIRKET + " = :sirketId");
+						sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :sirketId");
 						parametreMap.put("sirketId", sirketId);
 					} else if (departmanId != null) {
 						sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
-						sb.append(" and  S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :departmanId");
+						sb.append(" and S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :departmanId");
 						parametreMap.put("departmanId", departmanId);
 					}
 				}
@@ -498,11 +498,11 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 			sb = new StringBuffer();
 			sb.append("select V." + HareketKGS.COLUMN_NAME_ID + " from " + HareketKGS.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 
-			sb.append(" where V." + HareketKGS.COLUMN_NAME_ZAMAN + " >=:vardiyaBas");
+			sb.append(" where V." + HareketKGS.COLUMN_NAME_ZAMAN + " >= :vardiyaBas");
 			sb.append(" and V." + HareketKGS.COLUMN_NAME_ZAMAN + " <:vardiyaBit");
 
 			if (kapiMap != null && !kapiMap.isEmpty()) {
-				sb.append(" and  V." + HareketKGS.COLUMN_NAME_KAPI + (kapiMap.size() > 1 ? " IN  ( " : "="));
+				sb.append(" and V." + HareketKGS.COLUMN_NAME_KAPI + (kapiMap.size() > 1 ? " IN  ( " : "="));
 				for (Iterator iterator = kapiMap.keySet().iterator(); iterator.hasNext();) {
 					Long kapiId = (Long) iterator.next();
 					sb.append(kapiId + (iterator.hasNext() ? "," : ""));

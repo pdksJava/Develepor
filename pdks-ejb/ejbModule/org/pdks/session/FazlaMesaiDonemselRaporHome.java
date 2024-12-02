@@ -141,7 +141,7 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 
 				sb.append("select DISTINCT TE.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner  join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
-				sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 and  PD." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and  PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
+				sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 				sb.append(" and ( PD." + PersonelDenklestirme.COLUMN_NAME_ODENEN_SURE + " <> 0 or PD." + PersonelDenklestirme.COLUMN_NAME_DEVREDEN_SURE + " <> 0 ) ");
 
 				sb.append(" inner  join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
@@ -190,14 +190,14 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 			HashMap fields = new HashMap();
 			sb.append("select DISTINCT S.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner  join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
-			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 and  PD." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and  PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
+			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 			sb.append(" inner  join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 			sb.append(" inner  join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
 			if (authenticatedUser.isIKSirket())
 				sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
 
 			sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0 ");
-			sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ")<=:s");
+			sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ") <= :s");
 			if (basAy != null) {
 				sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_AY + " >= :d1");
 				fields.put("d1", basAy);
@@ -242,7 +242,7 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 		StringBuffer sb = new StringBuffer();
 		sb.append("select DISTINCT PD.* from " + DenklestirmeAy.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where PD." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y");
-		sb.append(" and ((PD." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ PD." + DenklestirmeAy.COLUMN_NAME_AY + ")<=:s");
+		sb.append(" and ((PD." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ PD." + DenklestirmeAy.COLUMN_NAME_AY + ") <= :s");
 		sb.append(" order by PD." + DenklestirmeAy.COLUMN_NAME_AY);
 		fields.put("y", yil);
 		fields.put("s", sonDonem);
@@ -266,7 +266,7 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 				if (authenticatedUser.isIKSirket())
 					sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
 				sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " :" + fieldName);
-				sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 and  PD." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and  PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
+				sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 				sb.append(" order by S." + Sirket.COLUMN_NAME_ID);
 				fields.put(fieldName, idList);
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -525,7 +525,7 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 		HashMap fields = new HashMap();
 		sb.append("select PD.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner  join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
-		sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 and  PD." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and  PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
+		sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 		sb.append(" and ( PD." + PersonelDenklestirme.COLUMN_NAME_ODENEN_SURE + " <> 0 or PD." + PersonelDenklestirme.COLUMN_NAME_DEVREDEN_SURE + " <> 0 ) ");
 		if (sirketId != null) {
 			sb.append(" inner  join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);

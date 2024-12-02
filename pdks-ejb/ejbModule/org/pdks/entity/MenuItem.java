@@ -28,9 +28,9 @@ public class MenuItem extends BasePDKSObject implements Serializable {
 	private static final long serialVersionUID = 6647696654599482807L;
 	public static final String TABLE_NAME = "MENUITEM";
 	public static final String COLUMN_NAME_ADI = "NAME";
+	public static final String COLUMN_NAME_MENU_ADI = "MENU_ADI";
 	public static final String COLUMN_NAME_DURUM = "STATUS";
 	public static final String COLUMN_NAME_TOP_MENU = "TOPMENU";
-	
 
 	private String name = "";
 	private List<MenuItem> childMenuItemList = new ArrayList<MenuItem>();;
@@ -42,6 +42,15 @@ public class MenuItem extends BasePDKSObject implements Serializable {
 	private Boolean check = Boolean.FALSE;
 	private MenuItem parentMenuItem;
 	private List<UserMenuItemTime> menuItemTimeList;
+
+	public MenuItem() {
+		super();
+	}
+
+	public MenuItem(Long value) {
+		super();
+		this.id = value;
+	}
 
 	/**
 	 * @return the name
@@ -216,7 +225,6 @@ public class MenuItem extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		
 
 	}
 }

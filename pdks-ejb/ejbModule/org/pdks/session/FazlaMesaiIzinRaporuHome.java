@@ -267,7 +267,7 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 			sb.append(" and V." + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :vt");
 			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on VG." + VardiyaGun.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID);
 			sb.append("	where VG." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
-			sb.append("	AND VG." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >=:b1 and VG." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <=:b2 ");
+			sb.append("	AND VG." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :b1 and VG." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "  <= :b2 ");
 			fields.put("vt", Vardiya.TIPI_FMI);
 			fields.put("b1", basTarih);
 			fields.put("b2", bitTarih);
@@ -285,7 +285,7 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 			sb.append(" and T." + Tanim.COLUMN_NAME_KODU + " = :k");
 			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID);
 			sb.append("	where I." + PersonelIzin.COLUMN_NAME_PERSONEL + " :" + fieldName);
-			sb.append("	AND I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >=:b1 and I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " <=:b2 ");
+			sb.append("	AND I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= :b1 and I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + "  <= :b2 ");
 			fields.put("k", IzinTipi.FAZLA_MESAI);
 			fields.put("b1", basTarih);
 			fields.put("b2", bitTarih);

@@ -2395,8 +2395,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 			sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :b");
 			sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + "< I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
 			sb.append(" where I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :b2 and I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= :b1 ");
-			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> :d1 and  I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> :d2  ");
-			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> :d1 and  I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> :d2  ");
+			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> :d1 and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> :d2  ");
+			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> :d1 and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> :d2  ");
 			if (olusturmaTarihi != null) {
 				sb.append(" and I." + Personel.COLUMN_NAME_OLUSTURMA_TARIHI + " <= :o");
 				map.put("o", PdksUtil.getDate(olusturmaTarihi));
@@ -2444,7 +2444,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 							sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
 							sb.append(" and P." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " = I." + PersonelIzin.COLUMN_NAME_PERSONEL);
 							sb.append(" where I." + PersonelIzin.COLUMN_NAME_ID + " :" + fieldName);
-							sb.append(" order by I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " DESC");
+							sb.append(" order by I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " desc");
 							fields.put(fieldName, idList);
 							List<Object[]> izinAcikList = getNativeSQLParamList(idList, sb, fieldName, fields, null);
 
@@ -2765,8 +2765,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 			sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " and PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D."
 					+ DenklestirmeAy.COLUMN_NAME_ID);
 			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 ");
-			sb.append(" where D.DONEM>=:d1 and  D.DONEM<=:d2 ");
-			sb.append(" order by D.DONEM DESC");
+			sb.append(" where D.DONEM >= :d1 and D.DONEM <= :d2 ");
+			sb.append(" order by D.DONEM desc");
 			fields.put("d1", Long.parseLong(d1));
 			fields.put("d2", Long.parseLong(d2));
 			fields.put("p", perNo);
@@ -4168,14 +4168,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 		HashMap<String, Object> fieldsOrj = new HashMap<String, Object>();
 		StringBuffer sb = new StringBuffer();
 		sb.append("select P.* from " + Tanim.TABLE_NAME + " P " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
-		sb.append(" where  P." + Tanim.COLUMN_NAME_TIPI + " =:t ");
+		sb.append(" where  P." + Tanim.COLUMN_NAME_TIPI + " = :t ");
 		fieldsOrj.put("t", tipi);
 		if (kodu != null) {
 			fieldsOrj.put("k", kodu);
-			sb.append(" and  P." + Tanim.COLUMN_NAME_KODU + " =:k ");
+			sb.append(" and P." + Tanim.COLUMN_NAME_KODU + " = :k ");
 		}
 		if (durum != null)
-			sb.append(" and  P." + Tanim.COLUMN_NAME_DURUM + "=" + (durum ? 1 : 0));
+			sb.append(" and P." + Tanim.COLUMN_NAME_DURUM + "=" + (durum ? 1 : 0));
 		List list = pdksDAO.getNativeSQLList(fieldsOrj, sb, Tanim.class);
 		return list;
 	}
@@ -4210,7 +4210,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			fieldsOrj.put(fieldName, dataIdList);
 			veriList = getNativeSQLParamList(dataIdList, sb, "q", fieldsOrj, class1);
 		} else {
-			sb.append(" where P." + fieldName + " =:q ");
+			sb.append(" where P." + fieldName + " = :q ");
 			fieldsOrj.put("q", dataIdList.get(0));
 			veriList = pdksDAO.getNativeSQLList(fieldsOrj, sb, class1);
 		}

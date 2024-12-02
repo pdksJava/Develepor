@@ -1571,19 +1571,19 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			builder.append(" and O." + PersonelIzinOnay.COLUMN_NAME_PERSONEL_IZIN_ID + " = :izinId");
 			parametreMap.put("izinId", mailIzin.getId());
 		} else {
-			builder.append(" where I.BASLANGIC_ZAMANI<=:bitDate and I.BITIS_ZAMANI>=:basDate and IZIN_DURUMU IN (1,2) ");
+			builder.append(" where I.BASLANGIC_ZAMANI <= :bitDate and I.BITIS_ZAMANI >= :basDate and IZIN_DURUMU IN (1,2) ");
 			parametreMap.put("bitDate", bitDate);
 			parametreMap.put("basDate", basDate);
 
 		}
-		builder.append(" and I.KULLANICI_ID =:userId and  I.ONAY_ID is not null");
+		builder.append(" and I.KULLANICI_ID = :userId and I.ONAY_ID is not null");
 		parametreMap.put("userId", user.getId());
 		if (authenticatedUser.isIK() && mailIzin == null) {
 			builder.append(" union   ");
 			builder.append(" select I.ONAY_ID from dbo.ONAY_BEKLEYEN_IZIN_VIEW I " + PdksEntityController.getSelectLOCK() + " ");
 			builder.append(" inner join " + PersonelIzinOnay.TABLE_NAME + " O " + PdksEntityController.getJoinLOCK() + " on O." + PersonelIzinOnay.COLUMN_NAME_ID + " = I.ONAY_ID ");
-			builder.append(" where  KULLANICI_DURUM=0 and IZIN_DURUMU IN (1,2) and DEPARTMAN_ID=:departmanId ");
-			builder.append(" and I.BASLANGIC_ZAMANI<=:bitDate1 and I.BITIS_ZAMANI>=:basDate1 ");
+			builder.append(" where  KULLANICI_DURUM=0 and IZIN_DURUMU IN (1,2) and DEPARTMAN_ID= :departmanId ");
+			builder.append(" and I.BASLANGIC_ZAMANI <= :bitDate1 and I.BITIS_ZAMANI >= :basDate1 ");
 			parametreMap.put("bitDate1", bitDate);
 			parametreMap.put("basDate1", basDate);
 			parametreMap.put("departmanId", authenticatedUser.getDepartman().getId());
@@ -1646,12 +1646,12 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				while (!tumPersoneller.isEmpty() && (mailIzin == null || mailIzin.getId() == null)) {
 					builder = new StringBuffer();
 					builder.append(" select  I.ONAY_ID from dbo.ONAY_BEKLEYEN_IZIN_VIEW I " + PdksEntityController.getSelectLOCK() + " ");
-					builder.append(" where I.BASLANGIC_ZAMANI<=:bitDate and I.BITIS_ZAMANI>=:basDate and IZIN_DURUMU IN (1,2) and  I.ONAY_ID is not null  ");
+					builder.append(" where I.BASLANGIC_ZAMANI <= :bitDate and I.BITIS_ZAMANI >= :basDate and IZIN_DURUMU IN (1,2) and I.ONAY_ID is not null  ");
 					for (Iterator iterator = tumPersoneller.iterator(); iterator.hasNext();) {
 						Personel pdksPersonel = (Personel) iterator.next();
 						if (onaylayanPersonel == null || !onaylayanPersonel.getId().equals(pdksPersonel.getId())) {
 							if (onayId.isEmpty())
-								builder.append(" and  I.PERSONEL_ID :p");
+								builder.append(" and I.PERSONEL_ID :p");
 							onayId.add(pdksPersonel.getId());
 						}
 						iterator.remove();
@@ -1720,10 +1720,10 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			fields.put("basDate", basDate);
 			builder = new StringBuffer();
 			builder.append(" select  I.* from dbo." + OnaylanmamisIzinIKView.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK() + " ");
-			builder.append(" where I.BASLANGIC_ZAMANI<=:bitDate and I.BITIS_ZAMANI>=:basDate   ");
+			builder.append(" where I.BASLANGIC_ZAMANI <= :bitDate and I.BITIS_ZAMANI >= :basDate   ");
 			if (user.isIKAdmin() == false) {
 				fields.put("departmanId", departmanId);
-				builder.append(" and I.DEPARTMAN_ID=:departmanId  ");
+				builder.append(" and I.DEPARTMAN_ID= :departmanId  ");
 			}
 
 			if (session != null)
@@ -2638,7 +2638,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " and PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D."
 				+ DenklestirmeAy.COLUMN_NAME_ID);
 		sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 ");
-		sb.append(" where D.DONEM>=:d1 and  D.DONEM<=:d2 ");
+		sb.append(" where D.DONEM >= :d1 and D.DONEM <= :d2 ");
 		sb.append(" order by D.DONEM");
 		fields.put("d1", Long.parseLong(d1));
 		fields.put("d2", Long.parseLong(d2));
@@ -5041,7 +5041,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		StringBuffer sb = new StringBuffer();
 		sb.append("select * from " + IzinTipi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 		sb.append(" where  " + IzinTipi.COLUMN_NAME_DEPARTMAN + " = :d and " + IzinTipi.COLUMN_NAME_GIRIS_TIPI + " <> :g");
-		sb.append(" and  " + IzinTipi.COLUMN_NAME_DURUM + " = 1");
+		sb.append(" and " + IzinTipi.COLUMN_NAME_DURUM + " = 1");
 		parametreMap.put("d", authenticatedUser.getDepartman().getId());
 		parametreMap.put("g", IzinTipi.GIRIS_TIPI_YOK);
 		if (session != null)

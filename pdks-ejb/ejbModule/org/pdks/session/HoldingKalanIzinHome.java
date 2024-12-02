@@ -193,7 +193,7 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 					}
 
 					if (istenAyrilanEkle) {
-						sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=:ia");
+						sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :ia");
 						fields.put("ia", istenAyrilmaTarih);
 					}
 					sb.append(" order by " + Personel.COLUMN_NAME_IZIN_HAKEDIS_TARIHI + ", P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
@@ -276,10 +276,10 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 				sb = new StringBuffer();
 				sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" where P." + Personel.COLUMN_NAME_ID + " :" + fieldName);
-				sb.append(" and P." + Personel.COLUMN_NAME_IZIN_KARTI_VAR + " = 1 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <=:ia2");
+				sb.append(" and P." + Personel.COLUMN_NAME_IZIN_KARTI_VAR + " = 1 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + "  <= :ia2");
 				fields.put("ia1", istenAyrilmaTarih);
 				if (hakedisTarihi != null) {
-					sb.append(" and  P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=:ia1");
+					sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :ia1");
 					fields.put("ia2", hakedisTarihi);
 				}
 				sb.append(" order by " + Personel.COLUMN_NAME_IZIN_HAKEDIS_TARIHI + ", P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);

@@ -481,7 +481,7 @@ public class PersonelERPGuncelleme implements Serializable {
 				StringBuffer sb = new StringBuffer();
 				sb.append("select P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " and S." + Sirket.COLUMN_NAME_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_DURUM + " = 1 ");
-				sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1 and S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1 and S.ERP_KODU=:sapKodu ");
+				sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1 and S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1 and S.ERP_KODU= :sapKodu ");
 				sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
 				sb.append(" order by P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
 				HashMap fields = new HashMap();

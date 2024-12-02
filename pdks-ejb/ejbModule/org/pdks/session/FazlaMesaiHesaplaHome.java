@@ -664,7 +664,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			sb.append("select D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" where (D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ D." + DenklestirmeAy.COLUMN_NAME_AY + " <:s");
 			fields.put("s", denklestirmeAy.getYil() * 100 + denklestirmeAy.getAy());
-			sb.append(" order by (D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ D." + DenklestirmeAy.COLUMN_NAME_AY + " DESC ");
+			sb.append(" order by (D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ D." + DenklestirmeAy.COLUMN_NAME_AY + " desc ");
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<DenklestirmeAy> list = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
@@ -3525,11 +3525,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				StringBuffer sb = new StringBuffer();
 				sb.append("select DISTINCT PD.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + Personel.TABLE_NAME + " P1 " + PdksEntityController.getJoinLOCK() + " on P1." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
-				sb.append(" inner join " + PersonelKGS.TABLE_NAME + " K1 " + PdksEntityController.getJoinLOCK() + " on K1." + PersonelKGS.COLUMN_NAME_ID + " = P1." + Personel.COLUMN_NAME_KGS_PERSONEL + " and  COALESCE(K1.TC_KIMLIK_NO,'')<>'' ");
-				sb.append(" inner join " + PersonelKGS.TABLE_NAME + " K2 " + PdksEntityController.getJoinLOCK() + " on K1.TC_KIMLIK_NO=K2.TC_KIMLIK_NO and  K1." + PersonelKGS.COLUMN_NAME_ID + " <> K2." + PersonelKGS.COLUMN_NAME_ID);
+				sb.append(" inner join " + PersonelKGS.TABLE_NAME + " K1 " + PdksEntityController.getJoinLOCK() + " on K1." + PersonelKGS.COLUMN_NAME_ID + " = P1." + Personel.COLUMN_NAME_KGS_PERSONEL + " and COALESCE(K1.TC_KIMLIK_NO,'')<>'' ");
+				sb.append(" inner join " + PersonelKGS.TABLE_NAME + " K2 " + PdksEntityController.getJoinLOCK() + " on K1.TC_KIMLIK_NO=K2.TC_KIMLIK_NO and K1." + PersonelKGS.COLUMN_NAME_ID + " <> K2." + PersonelKGS.COLUMN_NAME_ID);
 				sb.append(" inner join " + Personel.TABLE_NAME + " P2 " + PdksEntityController.getJoinLOCK() + " on P2." + Personel.COLUMN_NAME_KGS_PERSONEL + " = K2." + PersonelKGS.COLUMN_NAME_ID + " and P2." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ">P1." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 				sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PY " + PdksEntityController.getJoinLOCK() + " on PY.PERSONEL_ID=P2." + Personel.COLUMN_NAME_ID + " and PY." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = PD." + PersonelDenklestirme.COLUMN_NAME_DONEM
-						+ " and  PY.FAZLA_MESAI_IZIN_KULLAN=1 ");
+						+ " and PY.FAZLA_MESAI_IZIN_KULLAN=1 ");
 				sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_ID + " :" + fieldName);
 				fields.put(fieldName, tempList);
 				if (session != null)

@@ -132,7 +132,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		sb.append("select DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0 ");
 		if (cal.get(Calendar.YEAR) == yil) {
-			sb.append(" and  D." + DenklestirmeAy.COLUMN_NAME_AY + "<=" + (cal.get(Calendar.MONTH) + 2));
+			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_AY + "<=" + (cal.get(Calendar.MONTH) + 2));
 		}
 		String ilkDonem = ortakIslemler.getParameterKey("ilkMaasDonemi");
 		if (PdksUtil.hasStringValue(ilkDonem) == false) {

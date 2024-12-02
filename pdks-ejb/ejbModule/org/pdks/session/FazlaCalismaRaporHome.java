@@ -758,7 +758,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 					sb.append(" inner join " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + Vardiya.COLUMN_NAME_ID + " = G." + VardiyaGun.COLUMN_NAME_VARDIYA + " and V.AKSAM_VARDIYA=1");
 					sb.append(" inner join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = G." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT + " and S.CALISMA_SURESI>0");
 					sb.append(" where G." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :t1 and G." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :t2 ");
-					sb.append(" and  G." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName + " and G." + VardiyaGun.COLUMN_NAME_DURUM + " = 1 ");
+					sb.append(" and G." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName + " and G." + VardiyaGun.COLUMN_NAME_DURUM + " = 1 ");
 					fields.put("t1", basTarih);
 					fields.put("t2", bitTarih);
 					fields.put(fieldName, personelIdler);
