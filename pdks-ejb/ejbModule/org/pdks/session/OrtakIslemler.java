@@ -2315,7 +2315,7 @@ public class OrtakIslemler implements Serializable {
 		sb.append("select DISTINCT D.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + Departman.TABLE_NAME + " D " + PdksEntityController.getJoinLOCK() + " on D." + Departman.COLUMN_NAME_ID + " = S." + Sirket.COLUMN_NAME_DEPARTMAN + " and D." + Departman.COLUMN_NAME_DURUM + " = 1 ");
 		sb.append(" where S." + Sirket.COLUMN_NAME_DURUM + " = 1 ");
-		sb.append(" order by D." + Departman.COLUMN_NAME_ADMIN_DURUM + " desc,D." + Departman.COLUMN_NAME_ID);
+		sb.append(" order by D." + Departman.COLUMN_NAME_ADMIN_DURUM + " desc, D." + Departman.COLUMN_NAME_ID);
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<Departman> list = pdksEntityController.getObjectBySQLList(sb, parametreMap, Departman.class);

@@ -9576,8 +9576,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					map.put("b1", aylikPuantajSablon.getIlkGun());
 
 				}
-				sb.append(" order by V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " desc,F." + FazlaMesaiTalep.COLUMN_NAME_BASLANGIC_ZAMANI + " desc,");
-				sb.append(" " + Personel.COLUMN_NAME_AD + "," + Personel.COLUMN_NAME_SOYAD);
+				sb.append(" order by V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " desc, F." + FazlaMesaiTalep.COLUMN_NAME_BASLANGIC_ZAMANI + " desc, ");
+				sb.append(Personel.COLUMN_NAME_AD + "," + Personel.COLUMN_NAME_SOYAD);
 				map.put(fieldName, perList);
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
