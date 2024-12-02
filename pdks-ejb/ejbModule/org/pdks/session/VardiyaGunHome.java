@@ -2511,17 +2511,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					String fieldName = "p";
 					HashMap fields = new HashMap();
 					StringBuffer sb = new StringBuffer();
-					sb.append("select distinct CMA.* from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
-					sb.append("inner join " + CalismaModeliAy.TABLE_NAME + " CMA " + PdksEntityController.getJoinLOCK() + " on CMA." + CalismaModeliAy.COLUMN_NAME_ID + " = S." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY);
+					sb.append("select distinct CM.* from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+					sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CMA " + PdksEntityController.getJoinLOCK() + " on CMA." + CalismaModeliAy.COLUMN_NAME_ID + " = S." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY);
+					sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CM." + CalismaModeliAy.COLUMN_NAME_ID + " = CMA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI);
 					sb.append(" where S." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " and S." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
 					fields.put(fieldName, idler);
- 					if (session != null)
+					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<CalismaModeliAy> list = pdksEntityController.getSQLParamList(idler, sb, fieldName, fields, CalismaModeliAy.class, session);
-					for (CalismaModeliAy calismaModeliAy : list) {
-						CalismaModeli calismaModeli = calismaModeliAy.getCalismaModeli();
-						if (calismaModeli == null)
-							continue;
+					List<CalismaModeli> list = pdksEntityController.getSQLParamList(idler, sb, fieldName, fields, CalismaModeli.class, session);
+					for (CalismaModeli calismaModeli : list) {
 						if (calismaModeli != null && calismaModeli.getDurum()) {
 							if (!modelMap.containsKey(calismaModeli.getId()))
 								modelMap.put(calismaModeli.getId(), calismaModeli);
@@ -2548,8 +2546,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						vardiyaList.add(vardiya);
 					}
 				}
-				for (Long cmId : hashMap.keySet()) {
-					CalismaModeli calismaModeli = modelMap.get(cmId);
+				List<CalismaModeli> cmList = new ArrayList<CalismaModeli>(modelMap.values());
+				if (cmList.size() > 1)
+					cmList = PdksUtil.sortObjectStringAlanList(cmList, "getAciklama", null);
+				modelMap = null;
+				for (CalismaModeli calismaModeli : cmList) {
+					Long cmId = calismaModeli.getId();
+					if (!hashMap.containsKey(cmId))
+						continue;
 					Sheet sheetModel = ExcelUtil.createSheet(wb, calismaModeli.getAciklama(), Boolean.TRUE);
 					List<Vardiya> vardiyaList = hashMap.get(cmId);
 					row = 0;
@@ -2606,6 +2610,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					for (int i = 0; i < col; i++)
 						sheetModel.autoSizeColumn(i);
 				}
+				cmList = null;
 			}
 			baos = new ByteArrayOutputStream();
 			wb.write(baos);
