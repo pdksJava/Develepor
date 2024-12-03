@@ -79,7 +79,7 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	private boolean durum = Boolean.TRUE, yeniSifre = Boolean.FALSE, admin = Boolean.FALSE, IK = Boolean.FALSE, IKSirket = Boolean.FALSE, IK_Tesis = Boolean.FALSE;
 	private boolean sistemYoneticisi = Boolean.FALSE, yonetici = Boolean.FALSE, anahtarKullanici = Boolean.FALSE, yoneticiKontratli = Boolean.FALSE, genelMudur = Boolean.FALSE, sekreter = Boolean.FALSE;
 	private boolean projeMuduru = Boolean.FALSE, mudur = Boolean.FALSE, superVisor = Boolean.FALSE, IKDirektor = Boolean.FALSE, personel = Boolean.FALSE;
-	private boolean operatorSSK = Boolean.FALSE, yetkiSet = Boolean.FALSE, direktorSuperVisor = Boolean.FALSE, taseronAdmin = Boolean.FALSE;
+	private boolean operatorSSK = Boolean.FALSE, yetkiSet = Boolean.FALSE, tesisSuperVisor = Boolean.FALSE, direktorSuperVisor = Boolean.FALSE, taseronAdmin = Boolean.FALSE;
 	private boolean browserIE, izinGirebilir = Boolean.FALSE, izinSSKGirebilir = Boolean.FALSE, izinOnaylayabilir = Boolean.FALSE, testLogin = Boolean.FALSE;
 	private boolean tesisYonetici, raporKullanici = Boolean.FALSE;
 	private ArrayList<User> userVekaletList;
@@ -1090,8 +1090,16 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 		IKSirket = iKSirket;
 	}
 
+	@Transient
+	public boolean isTesisSuperVisor() {
+		return tesisSuperVisor;
+	}
+
+	public void setTesisSuperVisor(boolean tesisSuperVisor) {
+		this.tesisSuperVisor = tesisSuperVisor;
+	}
+
 	public void entityRefresh() {
-		
 
 	}
 
