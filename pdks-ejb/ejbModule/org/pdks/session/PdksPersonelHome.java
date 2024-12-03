@@ -1964,11 +1964,11 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * @return
 	 */
 	public String bakiyeDurumKontrolEt(Personel pdksPersonel) {
-		String bakiyeIzinGosterStr = ortakIslemler.getParameterKey("bakiyeIzinGoster");
+		String bakiyeIzinSoDonemStr = ortakIslemler.getParameterKey("bakiyeIzinSonDonem");
 		try {
-			bakiyeIzinGoster = pdksPersonel.getIzinKartiVar() && PdksUtil.hasStringValue(bakiyeIzinGosterStr);
+			bakiyeIzinGoster = pdksPersonel.getIzinKartiVar() && PdksUtil.hasStringValue(bakiyeIzinSoDonemStr);
 			if (bakiyeIzinGoster) {
-				long donemBitis = Long.parseLong(bakiyeIzinGosterStr);
+				long donemBitis = Long.parseLong(bakiyeIzinSoDonemStr);
 				bakiyeIzinGoster = pdksPersonel.getIzinHakEdisTarihi() == null || Long.parseLong(PdksUtil.convertToDateString(pdksPersonel.getIzinHakEdisTarihi(), "yyyyMM")) < donemBitis;
 			}
 		} catch (Exception e) {
