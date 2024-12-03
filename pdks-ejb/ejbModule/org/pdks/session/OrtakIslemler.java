@@ -4257,9 +4257,13 @@ public class OrtakIslemler implements Serializable {
 						departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
 					order = Sirket.COLUMN_NAME_AD;
 				} else if (tipi.startsWith("B")) {
+					if (loginUser.isTesisSuperVisor())
+						ikRol = true;
 					class1 = Tanim.class;
 					order = Tanim.COLUMN_NAME_ACIKLAMATR;
 				} else if (tipi.startsWith("AB")) {
+					if (loginUser.isTesisSuperVisor())
+						ikRol = true;
 					class1 = Tanim.class;
 					order = Tanim.COLUMN_NAME_ACIKLAMATR;
 				} else if (tipi.startsWith("T")) {
@@ -4268,6 +4272,8 @@ public class OrtakIslemler implements Serializable {
 						order = Tanim.COLUMN_NAME_ACIKLAMATR;
 					}
 				} else if (tipi.equalsIgnoreCase("P")) {
+					if (loginUser.isTesisSuperVisor())
+						ikRol = true;
 					class1 = Personel.class;
 				} else if (tipi.equalsIgnoreCase("D")) {
 					if (ikRol) {
@@ -11763,20 +11769,25 @@ public class OrtakIslemler implements Serializable {
 		List<Long> kapiTipleri = getLongByBigDecimalList(list);
 
 		parametreMap.clear();
-		// parametreMap.put("pdks", Boolean.TRUE);
-		// parametreMap.put("tipi.kodu", hareketTip);
-		parametreMap.put("t", kapiTipleri);
-		// // parametreMap.put("durum", Boolean.TRUE);
-		// if (session != null)
-		// parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		// List<Kapi> kapilar = pdksEntityController.getObjectBySQLList(sb, fields, class1)
 		sb = new StringBuffer();
 		sb.append("select P.* from " + Kapi.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" where  P." + Kapi.COLUMN_NAME_PDKS + " = 1 and P." + Kapi.COLUMN_NAME_KAPI_TIPI + " :t");
+		if (session != null)
+			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+		// sb.append(" where  P." + Kapi.COLUMN_NAME_PDKS + " = 1 and P." + Kapi.COLUMN_NAME_KAPI_TIPI + " :t");
+		// parametreMap.put("t", kapiTipleri);
 		List<Kapi> kapilar = pdksEntityController.getObjectBySQLList(sb, parametreMap, Kapi.class);
 		HashMap<Long, KapiView> kapiMap = new HashMap<Long, KapiView>();
 		HashMap<String, HashMap<Integer, KapiKGS>> dMap = new HashMap<String, HashMap<Integer, KapiKGS>>();
-		for (Kapi kapi : kapilar) {
+		for (Iterator iterator = kapilar.iterator(); iterator.hasNext();) {
+			Kapi kapi = (Kapi) iterator.next();
+			if (kapi.getPdks() == null || kapi.getPdks().booleanValue() == false) {
+				iterator.remove();
+				continue;
+			}
+			if (kapi.getTipi() == null || !kapiTipleri.contains(kapi.getTipi().getId())) {
+				iterator.remove();
+				continue;
+			}
 			KapiKGS kapiKGS = kapi.getKapiKGS();
 			kapiKGS.setBagliKapiKGS(null);
 			if (kapiKGS.isKapiDegistirir() && kapiKGS.isManuel() == false && kapiKGS.getKapiSirket() != null && kapiKGS.getTerminalNo() != null) {
