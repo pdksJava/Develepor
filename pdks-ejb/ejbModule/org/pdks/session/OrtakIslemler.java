@@ -11766,7 +11766,7 @@ public class OrtakIslemler implements Serializable {
 		parametreMap.clear();
 		sb = new StringBuffer();
 		sb.append("select P.* from " + Kapi.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
- 		sb.append(" where  P." + Kapi.COLUMN_NAME_PDKS + " = 1");
+ 		sb.append(" where P." + Kapi.COLUMN_NAME_PDKS + " = 1");
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		// sb.append("and P." + Kapi.COLUMN_NAME_KAPI_TIPI + " :t");
