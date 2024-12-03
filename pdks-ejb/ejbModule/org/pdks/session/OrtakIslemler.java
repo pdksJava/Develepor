@@ -4247,7 +4247,6 @@ public class OrtakIslemler implements Serializable {
 				boolean tesisYetki = getParameterKey("tesisYetki").equals("1");
 				Departman departman = null;
 				String order = null;
-
 				if (tesisYetki && loginUser.getId() != null && (loginUser.isIK() || loginUser.isDirektorSuperVisor()) && (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty())) {
 					setUserTesisler(loginUser, session);
 				}
@@ -4305,7 +4304,6 @@ public class OrtakIslemler implements Serializable {
 							}
 						}
 					}
-
 					LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 					Long denklestirmeDeger = 0L;
 					if (denklestirme) {
