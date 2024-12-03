@@ -4168,7 +4168,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		HashMap<String, Object> fieldsOrj = new HashMap<String, Object>();
 		StringBuffer sb = new StringBuffer();
 		sb.append("select P.* from " + Tanim.TABLE_NAME + " P " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
-		sb.append(" where  P." + Tanim.COLUMN_NAME_TIPI + " = :t ");
+		sb.append(" where P." + Tanim.COLUMN_NAME_TIPI + " = :t ");
 		fieldsOrj.put("t", tipi);
 		if (kodu != null) {
 			fieldsOrj.put("k", kodu);
@@ -4450,7 +4450,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		HashMap<String, Object> fieldsOrj = new HashMap<String, Object>();
 		StringBuffer sbAna = new StringBuffer();
 		sbAna.append("select P.* from " + VardiyaSablonu.TABLE_NAME + " P " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
-		sbAna.append(" where  P." + VardiyaSablonu.COLUMN_NAME_BEYAZ_YAKA + " = 1 and P." + VardiyaSablonu.COLUMN_NAME_DURUM + " = 1");
+		sbAna.append(" where P." + VardiyaSablonu.COLUMN_NAME_BEYAZ_YAKA + " = 1 and P." + VardiyaSablonu.COLUMN_NAME_DURUM + " = 1");
 		List<VardiyaSablonu> sablonuList = pdksDAO.getNativeSQLList(fieldsOrj, sbAna, VardiyaSablonu.class);
 		TreeMap<String, VardiyaSablonu> sablonMap = new TreeMap<String, VardiyaSablonu>();
 		for (VardiyaSablonu vs : sablonuList) {
@@ -4472,7 +4472,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		sablonuList = null;
 		sbAna = new StringBuffer();
 		sbAna.append("select P.* from " + CalismaModeli.TABLE_NAME + " P " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
-		sbAna.append(" where  P." + CalismaModeli.COLUMN_NAME_IDARI_MODEL + " = 1 and P." + VardiyaSablonu.COLUMN_NAME_DURUM + " = 1");
+		sbAna.append(" where P." + CalismaModeli.COLUMN_NAME_IDARI_MODEL + " = 1 and P." + VardiyaSablonu.COLUMN_NAME_DURUM + " = 1");
 		List<CalismaModeli> modelList = pdksDAO.getNativeSQLList(fieldsOrj, sbAna, CalismaModeli.class);
 		TreeMap<String, CalismaModeli> cmMap = new TreeMap<String, CalismaModeli>();
 		for (CalismaModeli cm : modelList) {

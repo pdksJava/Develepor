@@ -1582,7 +1582,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			builder.append(" union   ");
 			builder.append(" select I.ONAY_ID from dbo.ONAY_BEKLEYEN_IZIN_VIEW I " + PdksEntityController.getSelectLOCK() + " ");
 			builder.append(" inner join " + PersonelIzinOnay.TABLE_NAME + " O " + PdksEntityController.getJoinLOCK() + " on O." + PersonelIzinOnay.COLUMN_NAME_ID + " = I.ONAY_ID ");
-			builder.append(" where  KULLANICI_DURUM=0 and IZIN_DURUMU IN (1,2) and DEPARTMAN_ID= :departmanId ");
+			builder.append(" where KULLANICI_DURUM=0 and IZIN_DURUMU IN (1,2) and DEPARTMAN_ID= :departmanId ");
 			builder.append(" and I.BASLANGIC_ZAMANI <= :bitDate1 and I.BITIS_ZAMANI >= :basDate1 ");
 			parametreMap.put("bitDate1", bitDate);
 			parametreMap.put("basDate1", basDate);
@@ -5040,7 +5040,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		HashMap parametreMap = new HashMap();
 		StringBuffer sb = new StringBuffer();
 		sb.append("select * from " + IzinTipi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
-		sb.append(" where  " + IzinTipi.COLUMN_NAME_DEPARTMAN + " = :d and " + IzinTipi.COLUMN_NAME_GIRIS_TIPI + " <> :g");
+		sb.append(" where " + IzinTipi.COLUMN_NAME_DEPARTMAN + " = :d and " + IzinTipi.COLUMN_NAME_GIRIS_TIPI + " <> :g");
 		sb.append(" and " + IzinTipi.COLUMN_NAME_DURUM + " = 1");
 		parametreMap.put("d", authenticatedUser.getDepartman().getId());
 		parametreMap.put("g", IzinTipi.GIRIS_TIPI_YOK);

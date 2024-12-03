@@ -159,7 +159,7 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 				HashMap fields = new HashMap();
 				sb = new StringBuffer();
 				sb.append("select P.* from " + KapiKGS.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
-				sb.append(" where  P." + KapiKGS.COLUMN_NAME_ID + " :" + fieldName);
+				sb.append(" where P." + KapiKGS.COLUMN_NAME_ID + " :" + fieldName);
 				sb.append(" order by " + KapiKGS.COLUMN_NAME_ACIKLAMA);
 				fields.put(fieldName, idList);
 				if (session != null)
