@@ -2014,7 +2014,12 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		User loginUser = aylikPuantaj != null && aylikPuantaj.getLoginUser() != null ? aylikPuantaj.getLoginUser() : null;
 		if (loginUser == null)
 			loginUser = authenticatedUser;
-		List<Departman> list = ortakIslemler.getFazlaMesaiList(loginUser, null, null, null, null, null, aylikPuantaj, "D", denklestirme, session);
+		Long depId = null;
+		if (loginUser.isTesisSuperVisor()) {
+			Personel personel = loginUser.getPdksPersonel();
+			depId = personel.getSirket().getDepartman().getId();
+		}
+		List<Departman> list = ortakIslemler.getFazlaMesaiList(loginUser, depId, null, null, null, null, aylikPuantaj, "D", denklestirme, session);
 		List<SelectItem> selectList = new ArrayList<SelectItem>();
 		if (!list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
@@ -2077,7 +2082,12 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		User loginUser = aylikPuantaj != null && aylikPuantaj.getLoginUser() != null ? aylikPuantaj.getLoginUser() : null;
 		if (loginUser == null)
 			loginUser = authenticatedUser;
-		List<Sirket> list = ortakIslemler.getFazlaMesaiList(loginUser, departmanId, null, null, null, null, aylikPuantaj, "S", denklestirme, session);
+		Sirket sirketPersonel = null;
+		if (loginUser.isTesisSuperVisor()) {
+			Personel personel = loginUser.getPdksPersonel();
+			sirketPersonel = personel.getSirket();
+		}
+		List<Sirket> list = ortakIslemler.getFazlaMesaiList(loginUser, departmanId, sirketPersonel, null, null, null, aylikPuantaj, "S", denklestirme, session);
 		if (loginUser != null && loginUser.isIKSirket()) {
 			try {
 				Sirket sirketUser = list != null && loginUser.getPdksPersonel() != null ? loginUser.getPdksPersonel().getSirket() : null;
@@ -2115,8 +2125,15 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (loginUser == null)
 			loginUser = authenticatedUser;
 		List<Tanim> list = null;
-		if (sirket != null && sirket.isTesisDurumu())
-			list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, null, null, null, aylikPuantaj, "T", denklestirme, session);
+		if (sirket != null && sirket.isTesisDurumu()) {
+			String tesisId = null;
+			if (loginUser.isTesisSuperVisor()) {
+				Personel personel = loginUser.getPdksPersonel();
+				if (personel.getTesis() != null)
+					tesisId = String.valueOf(personel.getTesis().getId());
+			}
+			list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, null, null, aylikPuantaj, "T", denklestirme, session);
+ 		}
 		List<SelectItem> selectList = new ArrayList<SelectItem>();
 		if (list != null && !list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
