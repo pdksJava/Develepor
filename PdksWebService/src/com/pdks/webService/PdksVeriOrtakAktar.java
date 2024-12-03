@@ -2753,7 +2753,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	private List<PersonelDenklestirme> getDenklestirmeList(String perNo, Date basTarih, Date bitTarih, boolean donemDurum) {
 		List<PersonelDenklestirme> list = null;
 		if (basTarih != null && bitTarih != null && PdksUtil.hasStringValue(perNo)) {
-			String d1 = PdksUtil.convertToDateString(basTarih, "yyyyMM"), d2 = PdksUtil.convertToDateString(bitTarih, "yyyyMM");
+			String d1 = PdksUtil.convertToDateString(bitTarih, "yyyyMM"), d2 = PdksUtil.convertToDateString(bitTarih, "yyyyMM");
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
 			sb.append("with DENKAY as ( ");
