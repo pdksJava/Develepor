@@ -11771,19 +11771,16 @@ public class OrtakIslemler implements Serializable {
 		parametreMap.clear();
 		sb = new StringBuffer();
 		sb.append("select P.* from " + Kapi.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" where  P." + Kapi.COLUMN_NAME_PDKS + " = 1");
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		// sb.append(" where  P." + Kapi.COLUMN_NAME_PDKS + " = 1 and P." + Kapi.COLUMN_NAME_KAPI_TIPI + " :t");
+		// sb.append("and P." + Kapi.COLUMN_NAME_KAPI_TIPI + " :t");
 		// parametreMap.put("t", kapiTipleri);
 		List<Kapi> kapilar = pdksEntityController.getObjectBySQLList(sb, parametreMap, Kapi.class);
 		HashMap<Long, KapiView> kapiMap = new HashMap<Long, KapiView>();
 		HashMap<String, HashMap<Integer, KapiKGS>> dMap = new HashMap<String, HashMap<Integer, KapiKGS>>();
 		for (Iterator iterator = kapilar.iterator(); iterator.hasNext();) {
 			Kapi kapi = (Kapi) iterator.next();
-			if (kapi.getPdks() == null || kapi.getPdks().booleanValue() == false) {
-				iterator.remove();
-				continue;
-			}
 			if (kapi.getTipi() == null || !kapiTipleri.contains(kapi.getTipi().getId())) {
 				iterator.remove();
 				continue;
