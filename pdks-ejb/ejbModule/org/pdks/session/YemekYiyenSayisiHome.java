@@ -381,7 +381,7 @@ public class YemekYiyenSayisiHome extends EntityHome<VardiyaGun> implements Seri
 		// parametreMap.put("bitTarih", PdksUtil.getDate(ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 1)));
 		// StringBuffer qsb = new StringBuffer();
 		// qsb.append("select S." + HareketKGS.COLUMN_NAME_ID + " S." + HareketKGS.COLUMN_NAME_TABLE_ID + " from " + HareketKGS.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
-		// qsb.append(" where  S." + HareketKGS.COLUMN_NAME_ZAMAN + " >= :basTarih and S." + HareketKGS.COLUMN_NAME_ZAMAN + " <:bitTarih ");
+		// qsb.append(" where S." + HareketKGS.COLUMN_NAME_ZAMAN + " >= :basTarih and S." + HareketKGS.COLUMN_NAME_ZAMAN + " <:bitTarih ");
 		// if (!yemekKapiList.isEmpty()) {
 		// qsb.append(" and S." + HareketKGS.COLUMN_NAME_KAPI + " :kapiId");
 		// parametreMap.put("kapiId", yemekKapiList);

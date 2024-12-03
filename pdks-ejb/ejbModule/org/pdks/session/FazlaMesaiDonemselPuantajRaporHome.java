@@ -1698,7 +1698,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		} else {
 			int donem1 = basYil * 100 + (basAy != null ? basAy : 1);
 			int donem2 = bitYil * 100 + (bitAy != null ? bitAy : 12);
-			sb.append(" where  (100 * D." + DenklestirmeAy.COLUMN_NAME_YIL + " + D." + DenklestirmeAy.COLUMN_NAME_AY + " ) > = " + donem1);
+			sb.append(" where (100 * D." + DenklestirmeAy.COLUMN_NAME_YIL + " + D." + DenklestirmeAy.COLUMN_NAME_AY + " ) > = " + donem1);
 			sb.append(" and (100 * D." + DenklestirmeAy.COLUMN_NAME_YIL + " + D." + DenklestirmeAy.COLUMN_NAME_AY + " ) < = " + donem2);
 		}
 

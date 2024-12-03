@@ -2965,7 +2965,7 @@ public class OrtakIslemler implements Serializable {
 			HashMap map = new HashMap();
 			StringBuffer sb = new StringBuffer();
 			sb.append("select * from " + KapiSirket.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append(" where  " + KapiSirket.COLUMN_NAME_ID + " > 0");
+			sb.append(" where " + KapiSirket.COLUMN_NAME_ID + " > 0");
 			if (bitTarih != null) {
 				sb.append(" and " + KapiSirket.COLUMN_NAME_BAS_TARIH + " <= :t1");
 				map.put("t1", tariheGunEkleCikar(cal, bitTarih, 7));
@@ -11772,7 +11772,7 @@ public class OrtakIslemler implements Serializable {
 		// List<Kapi> kapilar = pdksEntityController.getObjectBySQLList(sb, fields, class1)
 		sb = new StringBuffer();
 		sb.append("select P.* from " + Kapi.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" where  P." + Kapi.COLUMN_NAME_PDKS + " = 1 and P." + Kapi.COLUMN_NAME_KAPI_TIPI + " :t");
+		sb.append(" where P." + Kapi.COLUMN_NAME_PDKS + " = 1 and P." + Kapi.COLUMN_NAME_KAPI_TIPI + " :t");
 		List<Kapi> kapilar = pdksEntityController.getObjectBySQLList(sb, parametreMap, Kapi.class);
 		HashMap<Long, KapiView> kapiMap = new HashMap<Long, KapiView>();
 		HashMap<String, HashMap<Integer, KapiKGS>> dMap = new HashMap<String, HashMap<Integer, KapiKGS>>();
@@ -19665,7 +19665,7 @@ public class OrtakIslemler implements Serializable {
 			sb = new StringBuffer();
 			sb.append("select K.* from " + Kapi.TABLE_NAME + " T " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join  " + KapiKGS.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on K." + KapiKGS.COLUMN_NAME_ID + " = T." + Kapi.COLUMN_NAME_KGS_ID);
-			sb.append(" where  T." + Kapi.COLUMN_NAME_PDKS + " = 1 ");
+			sb.append(" where T." + Kapi.COLUMN_NAME_PDKS + " = 1 ");
 			if (tipler != null) {
 				sb.append(" and T." + Kapi.COLUMN_NAME_KAPI_TIPI + " :" + fieldName);
 				fields.put(fieldName, tipler);
