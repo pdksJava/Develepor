@@ -128,7 +128,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	public String fillPdksYoneticiDenklestirme(Session xSession) {
 		HashMap map = new HashMap();
 		Calendar cal = Calendar.getInstance();
- 		StringBuffer sb = new StringBuffer();
+		StringBuffer sb = new StringBuffer();
 		sb.append("select DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0 ");
 		if (cal.get(Calendar.YEAR) == yil) {
@@ -147,7 +147,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		denklestirmeAylar = pdksEntityController.getObjectBySQLList(sb, map, DenklestirmeAy.class);
- 		List<Long> dmIdList = new ArrayList<Long>();
+		List<Long> dmIdList = new ArrayList<Long>();
 		for (DenklestirmeAy dm : denklestirmeAylar) {
 			dmIdList.add(dm.getId());
 		}
@@ -348,10 +348,11 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 
 				}
 				if (!hucreMap.isEmpty()) {
+					String fieldName = "pId";
 					HashMap fields = new HashMap();
 					StringBuffer sb = new StringBuffer();
-					sb.append("select V." + Personel.COLUMN_NAME_ID + " from " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
-					sb.append(" where " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :pId  ");
+					sb.append("select V.* from " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append(" where " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
 					sb.append(" and V." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
 					sb.append(" and V." + Personel.COLUMN_NAME_GRUBA_GIRIS_TARIHI + " <= :bitTarih ");
 					Calendar cal = Calendar.getInstance();
@@ -360,13 +361,13 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 					cal.add(Calendar.MONTH, 1);
 					cal.add(Calendar.DATE, -1);
 					Date bitTarih = PdksUtil.getDate(cal.getTime());
-					fields.put("pId", siciller);
+					fields.put(fieldName, siciller);
 					fields.put("basTarih", basTarih);
 					fields.put("bitTarih", bitTarih);
-					fields.put(PdksEntityController.MAP_KEY_MAP, "getPdksSicilNo");
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					TreeMap<String, Personel> personelMap = ortakIslemler.getDataByIdMap(sb, fields, Personel.TABLE_NAME, Personel.class);
+					TreeMap<String, Personel> personelMap = pdksEntityController.getTreeMapByList(pdksEntityController.getSQLParamList(siciller, sb, fieldName, fields, Personel.class, session), "getPdksSicilNo", true);
+
 					sb = null;
 					if (!personelMap.isEmpty()) {
 						int sonrakiYil = denklestirmeAy.getYil();
