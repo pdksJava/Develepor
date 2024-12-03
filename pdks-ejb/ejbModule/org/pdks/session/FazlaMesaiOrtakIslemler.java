@@ -2086,6 +2086,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (loginUser.isTesisSuperVisor()) {
 			Personel personel = loginUser.getPdksPersonel();
 			sirketPersonel = personel.getSirket();
+			departmanId = sirketPersonel.getDepartman().getId();
 		}
 		List<Sirket> list = ortakIslemler.getFazlaMesaiList(loginUser, departmanId, sirketPersonel, null, null, null, aylikPuantaj, "S", denklestirme, session);
 		if (loginUser != null && loginUser.isIKSirket()) {
@@ -2133,7 +2134,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					tesisId = String.valueOf(personel.getTesis().getId());
 			}
 			list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, null, null, aylikPuantaj, "T", denklestirme, session);
- 		}
+		}
 		List<SelectItem> selectList = new ArrayList<SelectItem>();
 		if (list != null && !list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
