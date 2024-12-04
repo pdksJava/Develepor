@@ -8812,7 +8812,18 @@ public class OrtakIslemler implements Serializable {
 					menuItemTime = (UserMenuItemTime) pdksEntityController.getSQLParamByFieldObject(UserMenuItemTime.TABLE_NAME, UserMenuItemTime.COLUMN_NAME_ID, menuItemTimeId, UserMenuItemTime.class, sessionx);
 				if (menuItemTime != null) {
 					if (yeni == false) {
-						if (!menuItemTime.getSessionId().equals(sessionId)) {
+						Gson gson = new Gson();
+						LinkedHashMap<String, Object> map = null;
+						if (menuItemTime.getParametreJSON() != null)
+							map = gson.fromJson(menuItemTime.getParametreJSON(), LinkedHashMap.class);
+						else
+							map = new LinkedHashMap<String, Object>();
+						if (!menuItemTime.getSessionId().equals(sessionId) || map.isEmpty()) {
+							if (map.isEmpty()) {
+								map.put("kullanici", authenticatedUser.getAdSoyad());
+								map.put("menuAdi", getMenuAdi(menuAdi));
+								menuItemTime.setParametreJSON(gson.toJson(map));
+							}
 							menuItemTime.setLastTime(lastTime);
 							menuItemTime.setUseCount(menuItemTime.getUseCount().add(new BigDecimal(1L)));
 							menuItemTime.setSessionId(mySession.getId());
