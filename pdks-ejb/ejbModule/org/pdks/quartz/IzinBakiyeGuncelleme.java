@@ -121,11 +121,13 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			if (!zamanDurum && tableERPOku) {
 				String parameterUpdateKey = PARAMETER_KEY + "Update";
 				value = ortakIslemler.getParameterKey(parameterUpdateKey);
-				guncellemeDBDurum = PdksUtil.zamanKontrol(parameterUpdateKey, value, time);
-				if (guncellemeDBDurum == false) {
-					Calendar cal = Calendar.getInstance();
-					int gun = cal.get(Calendar.DATE), saat = cal.get(Calendar.HOUR_OF_DAY), dayOffWeek = cal.get(Calendar.DAY_OF_WEEK);
-					guncellemeDBDurum = dayOffWeek != Calendar.SATURDAY && dayOffWeek != Calendar.SUNDAY && (gun > 25 || gun < 6) && (saat > 7 && saat < 20);
+				if (PdksUtil.hasStringValue(value)) {
+					guncellemeDBDurum = PdksUtil.zamanKontrol(parameterUpdateKey, value, time);
+					if (guncellemeDBDurum == false) {
+						Calendar cal = Calendar.getInstance();
+						int gun = cal.get(Calendar.DATE), saat = cal.get(Calendar.HOUR_OF_DAY), dayOffWeek = cal.get(Calendar.DAY_OF_WEEK);
+						guncellemeDBDurum = dayOffWeek != Calendar.SATURDAY && dayOffWeek != Calendar.SUNDAY && (gun > 25 || gun < 6) && (saat > 7 && saat < 20);
+					}
 				}
 			}
 			hataKonum = "Paramatre okundu ";
