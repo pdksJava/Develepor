@@ -67,6 +67,17 @@ public class Role extends BasePDKSObject implements Serializable {
 	private Boolean status = Boolean.TRUE, adminRole = Boolean.FALSE;
 	private Departman departman;
 
+	public Role() {
+		super();
+
+	}
+
+	public Role(String rolename) {
+		super();
+		this.rolename = rolename;
+		this.status = Boolean.TRUE;
+	}
+
 	@RoleName
 	@Column(name = COLUMN_NAME_ROLE_NAME)
 	public String getRolename() {

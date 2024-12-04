@@ -2637,69 +2637,117 @@ public class PdksUtil implements Serializable {
 			user.setTaseronAdmin(Boolean.FALSE);
 			user.setTesisYonetici(Boolean.FALSE);
 			user.setRaporKullanici(Boolean.FALSE);
-			Personel pdksPersonel = user.getPdksPersonel();
 			List<Role> rollerim = user.getYetkiliRollerim();
-			if (rollerim != null)
-				for (Role role : rollerim) {
-					String rolAdi = role.getRolename();
-					if (rolAdi.equals(Role.TIPI_IK_YETKILI_RAPOR_KULLANICI))
-						user.setRaporKullanici(Boolean.TRUE);
-					else if (rolAdi.equals(Role.TIPI_ADMIN))
-						user.setAdmin(Boolean.TRUE);
-					else if (rolAdi.equals(Role.TIPI_ANAHTAR_KULLANICI)) {
-						user.setIK(Boolean.TRUE);
-						user.setAnahtarKullanici(Boolean.TRUE);
-					} else if (rolAdi.equals(Role.TIPI_SISTEM_YONETICI)) {
-						user.setIK(Boolean.TRUE);
-						user.setSistemYoneticisi(Boolean.TRUE);
-					} else if (rolAdi.equals(Role.TIPI_IK))
-						user.setIK(Boolean.TRUE);
-					else if (rolAdi.equals(Role.TIPI_IK_SIRKET)) {
-						user.setIKSirket(Boolean.TRUE);
-						user.setIK(Boolean.TRUE);
-					} else if (rolAdi.equals(Role.TIPI_IK_Tesis)) {
-						user.setIK_Tesis(Boolean.TRUE);
-						user.setIK(Boolean.TRUE);
-					} else if (rolAdi.equals(Role.TIPI_IK_DIREKTOR)) {
-						user.setIK(Boolean.TRUE);
-						user.setIKDirektor(Boolean.TRUE);
-					} else if (rolAdi.equals(Role.TIPI_YONETICI))
-						user.setYonetici(Boolean.TRUE);
-					else if (rolAdi.equals(Role.TIPI_YONETICI_KONTRATLI)) {
-						user.setYonetici(Boolean.TRUE);
-						user.setYoneticiKontratli(Boolean.TRUE);
-					} else if (rolAdi.equals(Role.TIPI_GENEL_MUDUR)) {
-						user.setIK(Boolean.TRUE);
-						user.setGenelMudur(Boolean.TRUE);
-					} else if (rolAdi.equals(Role.TIPI_SEKRETER))
-						user.setSekreter(Boolean.TRUE);
-					else if (rolAdi.equals(Role.TIPI_TASERON_ADMIN))
-						user.setTaseronAdmin(Boolean.TRUE);
-					else if (rolAdi.equals(Role.TIPI_SUPER_VISOR)) {
-						user.setSuperVisor(Boolean.TRUE);
-						user.setYonetici(Boolean.TRUE);
-					} else if (rolAdi.equals(Role.TIPI_DIREKTOR_SUPER_VISOR)) {
-						user.setDirektorSuperVisor(pdksPersonel != null && pdksPersonel.getEkSaha1() != null && pdksPersonel.getEkSaha1().getDurum());
-						user.setYonetici(Boolean.TRUE);
-					} else if (rolAdi.equals(Role.TIPI_PROJE_MUDURU))
-						user.setProjeMuduru(Boolean.TRUE);
-					else if (rolAdi.equals(Role.TIPI_MUDUR))
-						user.setMudur(Boolean.TRUE);
-					else if (rolAdi.equals(Role.TIPI_OPERATOR_SSK_IZIN))
-						user.setOperatorSSK(Boolean.TRUE);
-					else if (rolAdi.equals(Role.TIPI_PERSONEL))
-						user.setPersonel(Boolean.TRUE);
-					else if (rolAdi.equals(Role.TIPI_TESIS_SUPER_VISOR))
-						user.setTesisSuperVisor(Boolean.TRUE);
-					else if (rolAdi.equals(Role.TIPI_TESIS_YONETICI)) {
-						user.setYonetici(Boolean.TRUE);
-						user.setTesisYonetici(Boolean.TRUE);
-					}
-					;
+			if (rollerim != null) {
+				List<Role> digerRoller = setUserYetkiler(user, rollerim);
+				if (!digerRoller.isEmpty()) {
+					rollerim.addAll(digerRoller);
+					setUserYetkiler(user, digerRoller);
 				}
+				digerRoller = null;
+			}
 
 		}
 		user.setYetkiSet(Boolean.TRUE);
+	}
+
+	/**
+	 * @param user
+	 * @param roller
+	 * @return
+	 */
+	private static List<Role> setUserYetkiler(User user, List<Role> roller) {
+		List<Role> digerRoller = new ArrayList<Role>();
+		Personel pdksPersonel = user.getPdksPersonel();
+		HashMap<String, Role> roleMap = new HashMap<String, Role>();
+		for (Role role : roller)
+			roleMap.put(role.getRolename(), role);
+		for (Role role : roller) {
+			String rolAdi = role.getRolename();
+			if (rolAdi.equals(Role.TIPI_IK_YETKILI_RAPOR_KULLANICI))
+				user.setRaporKullanici(Boolean.TRUE);
+			else if (rolAdi.equals(Role.TIPI_ADMIN))
+				user.setAdmin(Boolean.TRUE);
+			else if (rolAdi.equals(Role.TIPI_ANAHTAR_KULLANICI)) {
+				esRolKontrol(Role.TIPI_IK, roleMap, digerRoller);
+				// user.setAnahtarKullanici(Boolean.TRUE);
+			} else if (rolAdi.equals(Role.TIPI_SISTEM_YONETICI)) {
+				esRolKontrol(Role.TIPI_IK, roleMap, digerRoller);
+				// user.setIK(Boolean.TRUE);
+				user.setSistemYoneticisi(Boolean.TRUE);
+			} else if (rolAdi.equals(Role.TIPI_IK))
+				user.setIK(Boolean.TRUE);
+			else if (rolAdi.equals(Role.TIPI_IK_SIRKET)) {
+				esRolKontrol(Role.TIPI_IK, roleMap, digerRoller);
+				// user.setIK(Boolean.TRUE);
+				user.setIKSirket(Boolean.TRUE);
+			} else if (rolAdi.equals(Role.TIPI_IK_Tesis)) {
+				esRolKontrol(Role.TIPI_IK, roleMap, digerRoller);
+				// user.setIK_Tesis(Boolean.TRUE);
+				user.setIK(Boolean.TRUE);
+			} else if (rolAdi.equals(Role.TIPI_IK_DIREKTOR)) {
+				esRolKontrol(Role.TIPI_IK, roleMap, digerRoller);
+				// user.setIK(Boolean.TRUE);
+				user.setIKDirektor(Boolean.TRUE);
+			} else if (rolAdi.equals(Role.TIPI_YONETICI))
+				user.setYonetici(Boolean.TRUE);
+			else if (rolAdi.equals(Role.TIPI_YONETICI_KONTRATLI)) {
+				esRolKontrol(Role.TIPI_YONETICI, roleMap, digerRoller);
+				// user.setYonetici(Boolean.TRUE);
+				user.setYoneticiKontratli(Boolean.TRUE);
+			} else if (rolAdi.equals(Role.TIPI_GENEL_MUDUR)) {
+				esRolKontrol(Role.TIPI_IK, roleMap, digerRoller);
+				// user.setIK(Boolean.TRUE);
+				user.setGenelMudur(Boolean.TRUE);
+			} else if (rolAdi.equals(Role.TIPI_SEKRETER))
+				user.setSekreter(Boolean.TRUE);
+			else if (rolAdi.equals(Role.TIPI_TASERON_ADMIN))
+				user.setTaseronAdmin(Boolean.TRUE);
+			else if (rolAdi.equals(Role.TIPI_SUPER_VISOR)) {
+				esRolKontrol(Role.TIPI_YONETICI, roleMap, digerRoller);
+				// user.setYonetici(Boolean.TRUE);
+				user.setSuperVisor(Boolean.TRUE);
+			} else if (rolAdi.equals(Role.TIPI_DIREKTOR_SUPER_VISOR)) {
+				esRolKontrol(Role.TIPI_YONETICI, roleMap, digerRoller);
+				// user.setYonetici(Boolean.TRUE);
+				user.setDirektorSuperVisor(pdksPersonel != null && pdksPersonel.getEkSaha1() != null && pdksPersonel.getEkSaha1().getDurum());
+			} else if (rolAdi.equals(Role.TIPI_PROJE_MUDURU)) {
+				esRolKontrol(Role.TIPI_YONETICI, roleMap, digerRoller);
+				// user.setYonetici(Boolean.TRUE);
+				user.setProjeMuduru(Boolean.TRUE);
+			} else if (rolAdi.equals(Role.TIPI_MUDUR)) {
+				esRolKontrol(Role.TIPI_YONETICI, roleMap, digerRoller);
+				// user.setYonetici(Boolean.TRUE);
+				user.setMudur(Boolean.TRUE);
+			} else if (rolAdi.equals(Role.TIPI_OPERATOR_SSK_IZIN))
+				user.setOperatorSSK(Boolean.TRUE);
+			else if (rolAdi.equals(Role.TIPI_PERSONEL))
+				user.setPersonel(Boolean.TRUE);
+			else if (rolAdi.equals(Role.TIPI_TESIS_SUPER_VISOR)) {
+				esRolKontrol(Role.TIPI_YONETICI, roleMap, digerRoller);
+				// user.setYonetici(Boolean.TRUE);
+				user.setTesisSuperVisor(Boolean.TRUE);
+			} else if (rolAdi.equals(Role.TIPI_TESIS_YONETICI)) {
+				esRolKontrol(Role.TIPI_YONETICI, roleMap, digerRoller);
+				// user.setYonetici(Boolean.TRUE);
+				user.setTesisYonetici(Boolean.TRUE);
+			}
+		}
+		roleMap = null;
+		return digerRoller;
+	}
+
+	/**
+	 * @param roleName
+	 * @param roleMap
+	 * @param digerRoller
+	 */
+	private static void esRolKontrol(String roleName, HashMap<String, Role> roleMap, List<Role> digerRoller) {
+		if (roleMap != null && !roleMap.containsKey(roleName)) {
+			Role role2 = new Role(roleName);
+			digerRoller.add(role2);
+			roleMap.put(role2.getRolename(), role2);
+		}
 	}
 
 	/**
