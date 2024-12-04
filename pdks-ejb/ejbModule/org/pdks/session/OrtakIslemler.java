@@ -5515,10 +5515,11 @@ public class OrtakIslemler implements Serializable {
 	@Transactional
 	public LinkedHashMap<String, Object> getLastParameter(String key, Session session) {
 		LinkedHashMap<String, Object> map = null;
-		String lastParameterValue = getParameterKey("lastParameterValue");
-		if (key != null && (authenticatedUser.isAdmin() || lastParameterValue.equals("1"))) {
+		if (key != null) {
 			try {
-				UserMenuItemTime menuItemTime = setUserMenuItem(key, session);
+				UserMenuItemTime menuItemTime = authenticatedUser.getMenuItemTime();
+				if (menuItemTime == null || !menuItemTime.getMenu().getName().equals(key))
+					menuItemTime = setUserMenuItem(key, session);
 				if (menuItemTime != null && menuItemTime.getParametreJSON() != null) {
 					try {
 						Gson gson = new Gson();
@@ -8735,41 +8736,27 @@ public class OrtakIslemler implements Serializable {
 	 * @param menuAdi
 	 * @return
 	 */
-	public void setUserMenuItemTime(Session session, String menuAdi) {
+	public UserMenuItemTime setUserMenuItemTime(Session session, String menuAdi) {
+		UserMenuItemTime menuItemTime = null;
 		try {
 			if (session != null) {
 				session.setFlushMode(FlushMode.MANUAL);
 				session.clear();
-				if (authenticatedUser != null && getParameterKey("userMenuGirisGoster").equals("1")) {
-					UserMenuItemTime menuItemTime = null;
-					if (authenticatedUser.getId() != null && PdksUtil.hasStringValue(authenticatedUser.getCalistigiSayfa())) {
-						if (authenticatedUser.isAdmin() || authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi()) {
-							StringBuffer sb = new StringBuffer();
-							HashMap fields = new HashMap();
-							sb.append("select P.* from " + UserMenuItemTime.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
-							sb.append("  inner join " + MenuItem.TABLE_NAME + " M " + PdksEntityController.getJoinLOCK() + " on M." + MenuItem.COLUMN_NAME_ID + " = P." + UserMenuItemTime.COLUMN_NAME_MENU);
-							sb.append(" and M." + MenuItem.COLUMN_NAME_ADI + " = :n");
-							sb.append(" where P." + UserMenuItemTime.COLUMN_NAME_USER + " = :u");
-							fields.put("u", authenticatedUser.getId());
-							fields.put("n", menuAdi);
-							if (session != null)
-								fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-							List<UserMenuItemTime> list = pdksEntityController.getObjectBySQLList(sb, fields, UserMenuItemTime.class);
-							menuItemTime = list != null && !list.isEmpty() ? list.get(0) : null;
-
-							if (menuItemTime != null) {
-								menuItemTime.setLastTime(new Date());
-								session.saveOrUpdate(menuItemTime);
-								session.flush();
-							}
+				if (authenticatedUser != null) {
+					if (PdksUtil.isStrDegisti(authenticatedUser.getCalistigiSayfa(), menuAdi)) {
+						if (authenticatedUser.isIK() || authenticatedUser.isAdmin()) {
+							String mesaj = authenticatedUser.getAdSoyad() + " Sayfa : " + getMenuAdi(menuAdi) + " " + PdksUtil.getCurrentTimeStampStr();
+							logger.info(mesaj);
 						}
-					}
+						menuItemTime = setUserMenuItem(menuAdi, session);
+					} else if (authenticatedUser.getMenuItemTime() != null)
+						menuItemTime = (UserMenuItemTime) pdksEntityController.getSQLParamByFieldObject(UserMenuItemTime.TABLE_NAME, UserMenuItemTime.COLUMN_NAME_ID, authenticatedUser.getMenuItemTime().getId(), UserMenuItemTime.class, session);
 					authenticatedUser.setMenuItemTime(menuItemTime);
 				}
 			}
 		} catch (Exception e) {
 		}
-
+		return menuItemTime;
 	}
 
 	/**
@@ -8778,52 +8765,8 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String getMenuUserAdi(Session sessionx, String menuAdi) {
-		boolean logYaz = authenticatedUser.getCalistigiSayfa() == null || !authenticatedUser.getCalistigiSayfa().equals(menuAdi);
-		String menuTanimAdi = getMenuUserLogAdi(sessionx, menuAdi, logYaz);
-
+		String menuTanimAdi = getMenuAdi(menuAdi);
 		return menuTanimAdi;
-	}
-
-	/**
-	 * @param sessionx
-	 * @param menuAdi
-	 * @return
-	 */
-	@Transactional
-	public String getMenuUserLogAdi(Session sessionx, String menuAdi, boolean logYaz) {
-		String menuTanimAdi = null;
-		if (menuItemMap.containsKey(menuAdi) || menuAdi.equals("anaSayfa")) {
-			menuTanimAdi = menuAdi.equals("anaSayfa") ? "Ana Sayfa" : menuItemMap.get(menuAdi).getDescription().getAciklama();
-			if (authenticatedUser != null && (authenticatedUser.getCalistigiSayfa() == null || !menuAdi.equals(authenticatedUser.getCalistigiSayfa()))) {
-				if (sessionx != null) {
-					authenticatedUser.setCalistigiSayfa(menuAdi);
-					if (PdksUtil.getTestDurum())
-						sessionx = null;
-				}
-				if (authenticatedUser.isIK() || authenticatedUser.isAdmin()) {
-					String mesaj = authenticatedUser.getAdSoyad() + " Sayfa : " + menuTanimAdi + " " + PdksUtil.getCurrentTimeStampStr();
-					if (logYaz)
-						logger.info(mesaj);
-				}
-				MenuItem menu = authenticatedUser.getMenuItemTime() != null ? authenticatedUser.getMenuItemTime().getMenu() : null;
-				if (menuAdi != null && menu != null && !menu.getName().equals(menuAdi))
-					authenticatedUser.setMenuItemTime(null);
-				if (sessionx != null) {
-					try {
-						setUserMenuItem(menuAdi, sessionx);
-					} catch (Exception e) {
-						logger.error(e);
-						e.printStackTrace();
-					}
-				}
-
-			}
-
-		} else if (sessionx != null)
-			authenticatedUser.setCalistigiSayfa("");
-
-		return menuTanimAdi;
-
 	}
 
 	/**
@@ -8831,6 +8774,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param sessionx
 	 */
 	private UserMenuItemTime setUserMenuItem(String menuAdi, Session sessionx) {
+		authenticatedUser.setCalistigiSayfa(menuAdi);
 		UserMenuItemTime menuItemTime = null;
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
@@ -8856,6 +8800,8 @@ public class OrtakIslemler implements Serializable {
 					Gson gson = new Gson();
 					LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 					menuItemTime = new UserMenuItemTime(authenticatedUser, new MenuItem(menuId));
+					map.put("kullanici", authenticatedUser.getAdSoyad());
+					map.put("menuAdi", getMenuAdi(menuAdi));
 					menuItemTime.setParametreJSON(gson.toJson(map));
 					menuItemTime.setSessionId(sessionId);
 					pdksEntityController.save(menuItemTime, sessionx);
@@ -8873,7 +8819,6 @@ public class OrtakIslemler implements Serializable {
 							pdksEntityController.saveOrUpdate(sessionx, entityManager, menuItemTime);
 							flush = true;
 						}
-
 					}
 					authenticatedUser.setMenuItemTime(menuItemTime);
 					if (flush)
@@ -8891,7 +8836,8 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String getMenuAdi(String menuAdi) {
-		String menuTanimAdi = getMenuUserLogAdi(null, menuAdi, false);
+		String menuTanimAdi = menuAdi.equals("anaSayfa") ? "Ana Sayfa" : menuItemMap.get(menuAdi).getDescription().getAciklama();
+
 		return menuTanimAdi;
 	}
 

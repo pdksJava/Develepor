@@ -433,7 +433,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 			authenticatedUser.setCalistigiSayfa("");
 		Boolean kullaniciPersonel = ortakIslemler.getKullaniciPersonel(authenticatedUser);
 		if (kullaniciPersonel) {
-			PdksUtil.addMessageAvailableWarn("'" + ortakIslemler.getMenuUserLogAdi(null, "personelHareket", false) + "' sayfasına giriş yetkiniz yoktur!");
+			PdksUtil.addMessageAvailableWarn("'" + ortakIslemler.getMenuAdi("personelHareket") + "' sayfasına giriş yetkiniz yoktur!");
 			return MenuItemConstant.home;
 		}
 		return "";

@@ -935,7 +935,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		if (personelDenklestirmeList.isEmpty())
 			PdksUtil.addMessageWarn("İlgili döneme ait fazla mesai bulunamadı!");
 		else
-			fazlaMesaiHesaplaMenuAdi = ortakIslemler.getMenuUserLogAdi(null, "fazlaMesaiHesapla", false);
+			fazlaMesaiHesaplaMenuAdi = ortakIslemler.getMenuAdi("fazlaMesaiHesapla" );
 
 		setInstance(denklestirmeAy);
 

@@ -10063,12 +10063,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 		} else
 			aramaSecenekleri.setTesisId(null);
-		if (bolumDoldurDurum || sirket.getTesisDurum() == false) {
-			if (sirket != null) {
-				if (sirket.isTesisDurumu() == false)
-					aramaSecenekleri.setTesisId(null);
+		if (sirket != null) {
+			if (bolumDoldurDurum || sirket.getTesisDurum() == null || sirket.getTesisDurum() == false) {
+				if (sirket != null) {
+					if (sirket.isTesisDurumu() == false)
+						aramaSecenekleri.setTesisId(null);
+				}
+				bolumDoldur();
 			}
-			bolumDoldur();
 		}
 
 		aylikPuantajList.clear();

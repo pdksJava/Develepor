@@ -299,7 +299,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			authenticatedUser.setCalistigiSayfa("");
 		Boolean kullaniciPersonel = ortakIslemler.getKullaniciPersonel(authenticatedUser);
 		if (kullaniciPersonel) {
-			PdksUtil.addMessageAvailableWarn("'" + ortakIslemler.getMenuUserLogAdi(null, "personelFazlaMesai", false) + "' sayfasına giriş yetkiniz yoktur!");
+			PdksUtil.addMessageAvailableWarn("'" + ortakIslemler.getMenuAdi("personelFazlaMesai") + "' sayfasına giriş yetkiniz yoktur!");
 			return MenuItemConstant.home;
 		}
 		return "";
