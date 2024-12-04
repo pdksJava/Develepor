@@ -5546,27 +5546,31 @@ public class OrtakIslemler implements Serializable {
 	 * @param map
 	 * @param session
 	 */
-	@Transactional
-	public void saveLastParameter(LinkedHashMap<String, Object> map, Session session) {
-		String key = authenticatedUser.getCalistigiSayfa(), lastParameterValue = getParameterKey("lastParameterValue");
-		if (map.containsKey("sayfaURL")) {
-			key = (String) map.get("sayfaURL");
-		}
-		if (key != null && map != null && (authenticatedUser.isAdmin() || lastParameterValue.equals("1"))) {
+	// @Transactional
+	public void saveLastParameter(LinkedHashMap<String, Object> map, Session session) throws Exception {
+		String key = authenticatedUser.getCalistigiSayfa();
+		if (key != null && map != null) {
+			if (map.containsKey("sayfaURL"))
+				key = (String) map.get("sayfaURL");
 			try {
-				HashMap fields = new HashMap();
-				StringBuffer sb = new StringBuffer();
-				sb.append("select UM.* from " + UserMenuItemTime.TABLE_NAME + " UM " + PdksEntityController.getSelectLOCK());
-				sb.append(" inner join " + MenuItem.TABLE_NAME + " M " + PdksEntityController.getJoinLOCK() + " on M." + MenuItem.COLUMN_NAME_ID + " = UM." + UserMenuItemTime.COLUMN_NAME_MENU);
-				sb.append(" and M." + MenuItem.COLUMN_NAME_ADI + " = :m");
-				sb.append(" where UM." + UserMenuItemTime.COLUMN_NAME_USER + " = :u");
-				fields.put("m", key);
-				fields.put("u", authenticatedUser.getId());
-				if (session != null)
-					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<UserMenuItemTime> list = pdksEntityController.getObjectBySQLList(sb, fields, UserMenuItemTime.class);
-				UserMenuItemTime menuItemTime = !list.isEmpty() ? list.get(0) : getUserMenuItem(key, session);
-				list = null;
+				UserMenuItemTime menuItemTime = null;
+				if (authenticatedUser.getMenuItemTime() != null && authenticatedUser.getMenuItemTime().getMenu().getName().equals(key))
+					menuItemTime = (UserMenuItemTime) pdksEntityController.getSQLParamByFieldObject(UserMenuItemTime.TABLE_NAME, UserMenuItemTime.COLUMN_NAME_ID, authenticatedUser.getMenuItemTime().getId(), UserMenuItemTime.class, session);
+				if (menuItemTime == null) {
+					HashMap fields = new HashMap();
+					StringBuffer sb = new StringBuffer();
+					sb.append("select UM.* from " + UserMenuItemTime.TABLE_NAME + " UM " + PdksEntityController.getSelectLOCK());
+					sb.append(" inner join " + MenuItem.TABLE_NAME + " M " + PdksEntityController.getJoinLOCK() + " on M." + MenuItem.COLUMN_NAME_ID + " = UM." + UserMenuItemTime.COLUMN_NAME_MENU);
+					sb.append(" and M." + MenuItem.COLUMN_NAME_ADI + " = :m");
+					sb.append(" where UM." + UserMenuItemTime.COLUMN_NAME_USER + " = :u");
+					fields.put("m", key);
+					fields.put("u", authenticatedUser.getId());
+					if (session != null)
+						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+					List<UserMenuItemTime> list = pdksEntityController.getObjectBySQLList(sb, fields, UserMenuItemTime.class);
+					menuItemTime = !list.isEmpty() ? list.get(0) : getUserMenuItem(key, session);
+					list = null;
+				}
 				if (menuItemTime != null) {
 					Gson gson = new Gson();
 					LinkedHashMap<String, Object> map1 = new LinkedHashMap<String, Object>();
@@ -5574,9 +5578,32 @@ public class OrtakIslemler implements Serializable {
 					map1.put("menuAdi", menuItemTime.getMenu().getDescription().getAciklama());
 					map1.putAll(map);
 					String parametreJSON = gson.toJson(map1);
-					if (menuItemTime.getParametreJSON() == null || !parametreJSON.equals(menuItemTime.getParametreJSON())) {
-						boolean durum = saveUserMenuItemDeger(menuItemTime, parametreJSON, menuItemTime.getMySession(), session);
-						if (durum == false)
+					HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+					String sessionId = mySession != null ? mySession.getId() : null;
+					if (PdksUtil.isStrDegisti(parametreJSON, menuItemTime.getParametreJSON())) {
+						boolean flush = false;
+						if (PdksUtil.isStrDegisti(mySession != null ? mySession.getId() : "", menuItemTime.getSessionId()) || PdksUtil.isStrDegisti(parametreJSON, menuItemTime.getParametreJSON())) {
+							String spName = "SP_UPDATE_USER_MENUITEM_TIME_IPTAL";
+							if (menuItemTime.getId() == null || isExisStoreProcedure(spName, session) == false) {
+								menuItemTime.setParametreJSON(parametreJSON);
+								if (sessionId != null)
+									menuItemTime.setSessionId(sessionId);
+								menuItemTime.setLastTime(new Date());
+								pdksEntityController.saveOrUpdate(session, entityManager, menuItemTime);
+								flush = true;
+							} else {
+								StringBuffer sp = new StringBuffer(spName);
+								LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+								// veriMap.put("readUnCommitted", Boolean.TRUE);
+								veriMap.put("j", parametreJSON);
+								veriMap.put("s", sessionId != null ? sessionId : menuItemTime.getSessionId());
+								veriMap.put("mt", menuItemTime.getId());
+								veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+								pdksEntityController.execSP(veriMap, sp);
+								flush = true;
+							}
+						}
+						if (flush)
 							session.flush();
 
 					}
@@ -5613,44 +5640,6 @@ public class OrtakIslemler implements Serializable {
 		}
 
 		return menuItemTime;
-	}
-
-	/**
-	 * @param menuItemTime
-	 * @param parametreJSON
-	 * @param mySession
-	 * @param session
-	 * @throws Exception
-	 */
-	@Transactional
-	private boolean saveUserMenuItemDeger(UserMenuItemTime menuItemTime, String parametreJSON, HttpSession mySession, Session session) throws Exception {
-		String spName = "SP_UPDATE_USER_MENUITEM_TIME_IPTAL";
-		boolean flush = false;
-		if (PdksUtil.isStrDegisti(mySession != null ? mySession.getId() : "", menuItemTime.getSessionId()) || PdksUtil.isStrDegisti(parametreJSON, menuItemTime.getParametreJSON())) {
-			if (menuItemTime.getId() == null || isExisStoreProcedure(spName, session) == false) {
-				menuItemTime.setParametreJSON(parametreJSON);
-				if (mySession == null)
-					mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-				if (mySession != null)
-					menuItemTime.setSessionId(mySession.getId());
-				menuItemTime.setLastTime(new Date());
-				pdksEntityController.saveOrUpdate(session, entityManager, menuItemTime);
-				flush = true;
-			} else {
-				StringBuffer sp = new StringBuffer(spName);
-				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-				// veriMap.put("readUnCommitted", Boolean.TRUE);
-				veriMap.put("j", parametreJSON);
-				veriMap.put("s", mySession != null ? mySession.getId() : menuItemTime.getSessionId());
-				veriMap.put("mt", menuItemTime.getId());
-				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				pdksEntityController.execSP(veriMap, sp);
-				flush = true;
-			}
-		}
-		if (flush)
-			session.flush();
-		return flush;
 	}
 
 	/**

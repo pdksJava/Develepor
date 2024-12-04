@@ -435,11 +435,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			sayfa = MenuItemConstant.vardiyaPlani;
 		}
 		bordroAdres = "<a href='http://" + adres + "/" + sayfaURL + "?linkAdresKey=" + aylikPuantaj.getPersonelDenklestirme().getId() + "'>" + ortakIslemler.getCalistiMenuAdi(sayfaURL) + " Ekranına Geri Dön</a>";
+
 		try {
 			ortakIslemler.saveLastParameter(lastMap, session);
 		} catch (Exception e) {
+ 		}
 
-		}
 		return sayfa;
 	}
 
@@ -607,13 +608,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			if (eksikCalisanVeriGetir != null)
 				lastMap.put("eksikCalisanVeriGetir", "" + eksikCalisanVeriGetir);
 		}
-
+		lastMap.put("sayfaURL", sayfaURL);
 		try {
-			lastMap.put("sayfaURL", sayfaURL);
 			ortakIslemler.saveLastParameter(lastMap, session);
 		} catch (Exception e) {
+ 		}
 
-		}
 	}
 
 	public void filDepartmanList() {
@@ -935,7 +935,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		if (personelDenklestirmeList.isEmpty())
 			PdksUtil.addMessageWarn("İlgili döneme ait fazla mesai bulunamadı!");
 		else
-			fazlaMesaiHesaplaMenuAdi = ortakIslemler.getMenuAdi("fazlaMesaiHesapla" );
+			fazlaMesaiHesaplaMenuAdi = ortakIslemler.getMenuAdi("fazlaMesaiHesapla");
 
 		setInstance(denklestirmeAy);
 

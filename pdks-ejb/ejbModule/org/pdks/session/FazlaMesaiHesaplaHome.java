@@ -928,17 +928,17 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			lastMap.put("sayfaURL", sayfa);
 			try {
 				ortakIslemler.saveLastParameter(lastMap, session);
-				Map<String, String> requestHeaderMap = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
-				adres = requestHeaderMap.containsKey("host") ? requestHeaderMap.get("host") : "";
-				linkAdres = getLinkAdresBilgi(sicilNo, false);
-				if (ekSaha4Tanim == null)
-					seciliEkSaha3Id = planTanimsizBolumId;
-				else
-					seciliEkSaha4Id = planTanimsizBolumId;
-				saveLastParameter(null);
 			} catch (Exception e) {
-
 			}
+			Map<String, String> requestHeaderMap = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
+			adres = requestHeaderMap.containsKey("host") ? requestHeaderMap.get("host") : "";
+			linkAdres = getLinkAdresBilgi(sicilNo, false);
+			if (ekSaha4Tanim == null)
+				seciliEkSaha3Id = planTanimsizBolumId;
+			else
+				seciliEkSaha4Id = planTanimsizBolumId;
+			saveLastParameter(null);
+
 			str = MenuItemConstant.vardiyaPlani;
 		} else {
 			if (ekSaha4Tanim == null)
@@ -3324,10 +3324,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		}
 		lastMap.put("sayfaURL", sayfaURL);
 		try {
-
 			ortakIslemler.saveLastParameter(lastMap, session);
 		} catch (Exception e) {
-
 		}
 	}
 
