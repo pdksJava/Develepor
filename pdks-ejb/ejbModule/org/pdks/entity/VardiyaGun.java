@@ -800,7 +800,7 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setIzin(PersonelIzin value) {
-		if (vardiyaDateStr.equals("20240821")) {
+		if (vardiyaDateStr.equals("20241124")) {
 			if (value != null)
 				logger.debug(vardiyaDateStr + " " + value.getId() + " " + value.getAciklama());
 			else
@@ -1583,7 +1583,7 @@ public class VardiyaGun extends BaseObject {
 	public String getOzelAciklama(boolean durum) {
 		String aciklama = "";
 		boolean istifa = vardiya != null && vardiyaGorev != null && vardiyaGorev.isIstifa();
-		if (vardiyaDateStr.equals("20230904"))
+		if (vardiyaDateStr.equals("20241117"))
 			logger.debug("");
 		if (vardiya == null || istifa) {
 			if (isAyinGunu() && (istifa || isCalismayiBirakti()))
@@ -1598,7 +1598,7 @@ public class VardiyaGun extends BaseObject {
 					else if (izinTipi.isTakvimGunuMu() == false && izinTipi.isHTDahil() == false)
 						haftaTatilDurum = true;
 				}
-				if (haftaTatilDurum) {
+				if (haftaTatilDurum && izinTipi.isHTDahil() == false) {
 					aciklama = ".";
 				} else
 					try {
