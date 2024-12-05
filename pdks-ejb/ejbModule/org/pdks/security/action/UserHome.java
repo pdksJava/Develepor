@@ -364,16 +364,27 @@ public class UserHome extends EntityHome<User> implements Serializable {
 			if (identity != null && identity.isLoggedIn() && authenticatedUser != null) {
 				String key = action + "-" + target + "-" + authenticatedUser.getUsername() + "-" + AccountPermission.DISCRIMINATOR_USER;
 				boolean adminRole = authenticatedUser.isAdmin();
+
 				if (accountPermissionMap.containsKey(key)) {
 					sonuc = getSonuc(target);
 				} else {
+					List<Role> yetkiliRollerim = new ArrayList<Role>();
 					if (session == null)
 						session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-					ortakIslemler.setUserRoller(authenticatedUser, session);
+					if (authenticatedUser.getYetkiliRollerim() == null || authenticatedUser.getYetkiliRollerim().isEmpty())
+						ortakIslemler.setUserRoller(authenticatedUser, session);
+					if (authenticatedUser.getYetkiliRollerim() != null)
+						yetkiliRollerim.addAll(authenticatedUser.getYetkiliRollerim());
+					List<Role> digerRoller = PdksUtil.setUserYetki(authenticatedUser);
+
+					if (digerRoller != null) {
+						yetkiliRollerim.addAll(digerRoller);
+						digerRoller = null;
+					}
 					if (adminRole)
 						sonuc = getSonuc(target);
-					else if (authenticatedUser.getYetkiliRollerim() != null) {
-						for (Object obj : authenticatedUser.getYetkiliRollerim().toArray()) {
+					else if (yetkiliRollerim != null) {
+						for (Object obj : yetkiliRollerim.toArray()) {
 							Role role = (Role) obj;
 							String roleName = role.getRolename();
 							if (ikYetkiliRoller.contains(roleName)) {
@@ -395,7 +406,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 							}
 						}
 					}
-
+					yetkiliRollerim = null;
 				}
 				if (sonuc && adminRole == false && menuKapali) {
 					String menuKapaliStr = ortakIslemler.getParameterKey("menuKapali");
