@@ -82,12 +82,12 @@
 							<ui:define name="label">#{vardiyaGunHome.ekSaha4Tanim.aciklama}</ui:define>
 							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.ekSaha4Id}" requiredMessage="#{vardiyaGunHome.ekSaha4Tanim.aciklama} seçiniz!"
 								required="#{vardiyaGunHome.aramaSecenekleri.altBolumIdList.size()>1}">
- 								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.altBolumIdList}" />
+								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.altBolumIdList}" />
 								<a4j:support event="onchange" status="ajaxStatus" action="#{vardiyaGunHome.aylikPuantajList.clear()}" ajaxSingle="true"
 									reRender="vardiyaPanel,girisler" />
 							</h:selectOneMenu>
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml" >
+						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
 							<h:inputText value="#{vardiyaGunHome.sicilNo}">
 								<a4j:support event="onchange" status="ajaxStatus" action="#{vardiyaGunHome.fillPersonelSicilAylikPlanRaporList}" ajaxSingle="true"
@@ -774,9 +774,64 @@
 						#{authenticatedUser.dateFormatla(vardiyaGunHome.personelGebeDurum.bitTarih)}</SPAN>
 					<br></br>
 				</ui:fragment>
+				<a4j:outputPanel id="butonlar">
+					<h:panelGrid columns="5">
+						<a4j:commandButton value="Kaydet" action="#{vardiyaGunHome.aylikKaydet}" reRender="vardiyaPanel" onclick="#{rich:component('wait')}.show()"
+							oncomplete="if (#{facesContext.maximumSeverity==null}) { #{rich:component('editAylikPanel')}.hide();}#{rich:component('wait')}.hide();" />
+						<ui:fragment rendered="#{vardiyaGunHome.kartBasmayanPersonel}">
+							<a4j:commandButton value="Şablon Vardiyalarını Güncelle" id="sablonlar"
+								action="#{vardiyaGunHome.saveSablonGuncelle()}" reRender="secimler,butonlar" ajaxSingle="true" />
+							<rich:toolTip for="sablonlar">
+								<h:panelGrid columns="1">
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">
+											<h:outputText value="Şablon Adı" />
+										</ui:define>
+										<h:outputText value="#{vardiyaGunHome.personelAylikPuantaj.pdksPersonel.sablon.adi}" id="vardiyaAdi" />
+									</s:decorate>
 
-				<a4j:commandButton value="Kaydet" action="#{vardiyaGunHome.aylikKaydet}" reRender="vardiyaPanel" onclick="#{rich:component('wait')}.show()"
-					oncomplete="if (#{facesContext.maximumSeverity==null}) { #{rich:component('editAylikPanel')}.hide();}#{rich:component('wait')}.hide();" />
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">
+											<h:outputText value="Gün Sayisi" />
+										</ui:define>
+										<h:outputText value="#{vardiyaGunHome.personelAylikPuantaj.pdksPersonel.sablon.calismaGunSayisi}" id="calismaGunSayisi" />
+									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">
+											<h:outputText value="Toplam Saat" />
+										</ui:define>
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaGunHome.personelAylikPuantaj.pdksPersonel.sablon.toplamSaat)}"
+											id="toplamSaat" />
+									</s:decorate>
+
+
+									<rich:dataTable rowClasses="acik,koyu" value="#{vardiyaGunHome.personelAylikPuantaj.pdksPersonel.sablon.haftaList}" var="hs" rows="10"
+										rowKeyVar="row">
+										<f:facet name="header">
+											<h:outputText value="Haftalık Sabit Vardiya Plan" />
+										</f:facet>
+										<rich:column>
+											<f:facet name="header">
+												<h:outputText value="Gün" />
+											</f:facet>
+											<h:outputText value="#{hs.id}" />
+										</rich:column>
+										<rich:column style="text-align:center;">
+											<f:facet name="header">
+												<h:outputText value="Vardiya" />
+											</f:facet>
+											<h:outputText value="#{hs.value}" />
+										</rich:column>
+										<f:facet name="footer">
+											<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+										</f:facet>
+									</rich:dataTable>
+								</h:panelGrid>
+
+							</rich:toolTip>
+						</ui:fragment>
+					</h:panelGrid>
+				</a4j:outputPanel>
 
 			</h:form>
 		</rich:modalPanel>
