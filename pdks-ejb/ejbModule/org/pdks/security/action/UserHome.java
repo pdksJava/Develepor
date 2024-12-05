@@ -358,13 +358,17 @@ public class UserHome extends EntityHome<User> implements Serializable {
 		getInstance().setYetkiliRollerim(roller);
 	}
 
+	/**
+	 * @param target
+	 * @param action
+	 * @return
+	 */
 	public boolean hasPermission(Object target, String action) {
 		boolean sonuc = Boolean.FALSE;
 		try {
 			if (identity != null && identity.isLoggedIn() && authenticatedUser != null) {
 				String key = action + "-" + target + "-" + authenticatedUser.getUsername() + "-" + AccountPermission.DISCRIMINATOR_USER;
 				boolean adminRole = authenticatedUser.isAdmin();
-
 				if (accountPermissionMap.containsKey(key)) {
 					sonuc = getSonuc(target);
 				} else {
@@ -375,11 +379,16 @@ public class UserHome extends EntityHome<User> implements Serializable {
 						ortakIslemler.setUserRoller(authenticatedUser, session);
 					if (authenticatedUser.getYetkiliRollerim() != null)
 						yetkiliRollerim.addAll(authenticatedUser.getYetkiliRollerim());
-					List<Role> digerRoller = PdksUtil.setUserYetki(authenticatedUser);
 
+					if (authenticatedUser.getBagliRoller() == null) {
+						List<Role> bagliRoller = PdksUtil.setUserYetki(authenticatedUser);
+						if (bagliRoller == null)
+							bagliRoller = new ArrayList<Role>();
+						authenticatedUser.setBagliRoller(bagliRoller);
+					}
+					List<Role> digerRoller = authenticatedUser.getBagliRoller();
 					if (digerRoller != null) {
 						yetkiliRollerim.addAll(digerRoller);
-						digerRoller = null;
 					}
 					if (adminRole)
 						sonuc = getSonuc(target);

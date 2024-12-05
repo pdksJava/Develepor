@@ -66,7 +66,7 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	private UserMenuItemTime menuItemTime;
 
-	private List<Role> yetkiliRollerim, yetkiliRoller;
+	private List<Role> yetkiliRollerim, yetkiliRoller, bagliRoller;
 
 	private List<Tanim> yetkiliTesisler;
 
@@ -785,7 +785,6 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	@Transient
 	public List<Role> getYetkiliRollerim() {
-
 		return yetkiliRollerim;
 	}
 
@@ -1097,6 +1096,15 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	public void setTesisSuperVisor(boolean tesisSuperVisor) {
 		this.tesisSuperVisor = tesisSuperVisor;
+	}
+
+	@Transient
+	public List<Role> getBagliRoller() {
+		return bagliRoller;
+	}
+
+	public void setBagliRoller(List<Role> bagliRoller) {
+		this.bagliRoller = bagliRoller;
 	}
 
 	public void entityRefresh() {
