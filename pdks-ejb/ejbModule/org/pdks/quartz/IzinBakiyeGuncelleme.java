@@ -255,7 +255,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		try {
 			sb.append(" select DISTINCT  I.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID);
-			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " NOT IN (8,9) and I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
+			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (8,9) and I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 			sb.append(" inner join " + IzinTipi.TABLE_NAME + "  T " + PdksEntityController.getJoinLOCK() + " on T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " and T." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is not null");
 			sb.append(" left join " + PersonelIzinDetay.TABLE_NAME + " D " + PdksEntityController.getJoinLOCK() + " on D." + PersonelIzinDetay.COLUMN_NAME_HAKEDIS_IZIN + " = I." + IzinTipi.COLUMN_NAME_ID);
 			sb.append(" where P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " <= convert(date,GETDATE()) and D." + PersonelIzinDetay.COLUMN_NAME_ID + " is null");
@@ -304,7 +304,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 				sb.append(" inner join " + IzinTipi.TABLE_NAME + " IT " + PdksEntityController.getJoinLOCK() + " on IT." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " and IT." + IzinTipi.COLUMN_NAME_DEPARTMAN + " = 1 and IT." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI
 						+ " is not null ");
 				sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = IT." + IzinTipi.COLUMN_NAME_IZIN_TIPI + " and T." + Tanim.COLUMN_NAME_KODU + " IN ('" + IzinTipi.YILLIK_UCRETLI_IZIN + "','" + IzinTipi.SUA_IZNI + "') ");
-				sb.append(" where I." + PersonelIzin.COLUMN_NAME_IZIN_SURESI + " > 0 and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " NOT IN (8,9) ");
+				sb.append(" where I." + PersonelIzin.COLUMN_NAME_IZIN_SURESI + " > 0 and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (8,9) ");
 				sb.append(" group by YEAR(I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ")  ,I." + PersonelIzin.COLUMN_NAME_PERSONEL + ",I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI);
 				sb.append(" ), ");
 				sb.append(" CIFT_IZIN as ( ");

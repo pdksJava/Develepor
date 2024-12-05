@@ -9237,7 +9237,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				HashMap fields = new HashMap();
 				sb.append("select DISTINCT " + tip + ".ID from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " FT " + PdksEntityController.getJoinLOCK() + " on FT." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
-				sb.append(" and FT." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1 and FT." + FazlaMesaiTalep.COLUMN_NAME_ONAY_DURUMU + " NOT IN (" + FazlaMesaiTalep.ONAY_DURUM_RED + ") ");
+				sb.append(" and FT." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1 and FT." + FazlaMesaiTalep.COLUMN_NAME_ONAY_DURUMU + " not in (" + FazlaMesaiTalep.ONAY_DURUM_RED + ") ");
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 				if (sirket == null) {
 					sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);

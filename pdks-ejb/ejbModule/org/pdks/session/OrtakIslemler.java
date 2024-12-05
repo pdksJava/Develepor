@@ -4617,7 +4617,7 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" left join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_KGS_PERSONEL + " = PS." + PersonelKGS.COLUMN_NAME_ID);
 			sb.append(" left join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ERP_KODU + " = D." + PersonelERPDB.COLUMN_NAME_SIRKET_KODU);
 			sb.append(" where P." + Personel.COLUMN_NAME_ID + " is null and COALESCE(S." + Sirket.COLUMN_NAME_DURUM + ",1) = 1 ");
-			sb.append("AND PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " NOT IN ( select " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + ")");
+			sb.append("AND PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " not in ( select " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + ")");
 
 			HashMap fields = new HashMap();
 			if (session != null)
@@ -5975,7 +5975,7 @@ public class OrtakIslemler implements Serializable {
 				parametreMap.put("t", PdksUtil.getDate(tarih));
 			} else
 				sb.append(" where ");
-			sb.append(" ( DURUM = 1 and REFERANS_ID NOT IN ( select " + IzinReferansERP.COLUMN_NAME_ID + " from " + IzinReferansERP.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ) )");
+			sb.append(" ( DURUM = 1 and REFERANS_ID not in ( select " + IzinReferansERP.COLUMN_NAME_ID + " from " + IzinReferansERP.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ) )");
 			String str = sb.toString();
 			sb = new StringBuffer("with DATA as (" + str + " ) ");
 			sb.append("select DISTINCT D.* from DATA D " + PdksEntityController.getSelectLOCK() + " ");
@@ -6085,7 +6085,7 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" select D.* from DATA D");
 				sb.append(" left join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ERP_KODU + " = D." + PersonelERPDB.COLUMN_NAME_SIRKET_KODU);
 				sb.append(" where COALESCE(S." + Sirket.COLUMN_NAME_DURUM + ",1) = 1 ");
-				sb.append(" and D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " NOT IN (");
+				sb.append(" and D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " not in (");
 				sb.append(" select K." + PersonelKGS.COLUMN_NAME_SICIL_NO + " from " + PersonelKGS.TABLE_NAME + " K");
 				sb.append(" inner join " + KapiSirket.TABLE_NAME + " KS " + PdksEntityController.getJoinLOCK() + " on KS. " + KapiSirket.COLUMN_NAME_ID + "= K." + PersonelKGS.COLUMN_NAME_KGS_SIRKET);
 				sb.append(" and KS." + KapiSirket.COLUMN_NAME_DURUM + " = 1 ");
@@ -11918,22 +11918,24 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" inner join " + IzinTipi.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " and T." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null");
 			sb.append(" where I." + PersonelIzin.COLUMN_NAME_PERSONEL + " :" + fieldName);
 			sb.append(" and I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= :basTarih and I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :bitTarih");
-			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " NOT IN (" + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + "," + PersonelIzin.IZIN_DURUMU_REDEDILDI + ")");
-			sb.append(" order by I." + PersonelIzin.COLUMN_NAME_PERSONEL + ",I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
+			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (" + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + "," + PersonelIzin.IZIN_DURUMU_REDEDILDI + ")");
+			sb.append(" order by I." + PersonelIzin.COLUMN_NAME_PERSONEL + ", I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
 			fields.put("bitTarih", bitisTarih);
 			fields.put("basTarih", baslamaTarih);
 			fields.put(fieldName, perIdList);
 			List<PersonelIzin> izinList = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, fields, PersonelIzin.class, session);
-			for (PersonelIzin izin : izinList) {
-				Long id = izin.getIzinSahibi().getId();
-				List<PersonelIzin> list = izinMap.containsKey(id) ? izinMap.get(id) : new ArrayList<PersonelIzin>();
-				if (list.isEmpty()) {
-					logger.debug(id);
-					izinMap.put(id, list);
+			if (izinList != null) {
+				for (PersonelIzin izin : izinList) {
+					Long id = izin.getIzinSahibi().getId();
+					List<PersonelIzin> list = izinMap.containsKey(id) ? izinMap.get(id) : new ArrayList<PersonelIzin>();
+					if (list.isEmpty()) {
+						logger.debug(id);
+						izinMap.put(id, list);
+					}
+					list.add(izin);
 				}
-				list.add(izin);
+				izinList = null;
 			}
-			izinList = null;
 		}
 		return izinMap;
 	}
@@ -15511,7 +15513,7 @@ public class OrtakIslemler implements Serializable {
 			sb.append("select DISTINCT D.* from " + PersonelIzinDetay.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + PersonelIzin.TABLE_NAME + " H " + PdksEntityController.getJoinLOCK() + " on H." + PersonelIzin.COLUMN_NAME_ID + " = D." + PersonelIzinDetay.COLUMN_NAME_HAKEDIS_IZIN);
 			sb.append(" inner join " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_ID + " = D." + PersonelIzinDetay.COLUMN_NAME_IZIN);
-			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " NOT IN (8,9)");
+			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (8,9)");
 			sb.append(" where D." + PersonelIzinDetay.COLUMN_NAME_HAKEDIS_IZIN + " :" + fieldName);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
