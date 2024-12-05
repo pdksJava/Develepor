@@ -11220,7 +11220,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							sb.append(" inner join " + IzinTipi.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + IzinTipi.COLUMN_NAME_ID + " = D." + PersonelIzin.COLUMN_NAME_IZIN_TIPI);
 							sb.append(" and T." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null ");
 							sb.append(" where D." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= :b1 and D." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :b2");
-							sb.append(" and D." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " NOT :d");
+							sb.append(" and D." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not :d");
 							fields.put("b1", aylikPuantajSablon.getIlkGun());
 							fields.put("b2", sonGunVardiya);
 							fields.put("d", Arrays.asList(new Integer[] { PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL, PersonelIzin.IZIN_DURUMU_REDEDILDI }));

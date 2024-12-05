@@ -19931,7 +19931,7 @@ public class OrtakIslemler implements Serializable {
 		StringBuffer sb = new StringBuffer();
 		sb.append("select UR.* from " + UserRoles.TABLE_NAME + " UR " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + Role.TABLE_NAME + " R " + PdksEntityController.getJoinLOCK() + " on R." + Role.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_ROLE);
-		sb.append(" and R." + Role.COLUMN_NAME_ROLE_NAME + " NOT  :r");
+		sb.append(" and R." + Role.COLUMN_NAME_ROLE_NAME + " not :r");
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<UserRoles> rolList = pdksEntityController.getObjectBySQLList(sb, fields, UserRoles.class);
