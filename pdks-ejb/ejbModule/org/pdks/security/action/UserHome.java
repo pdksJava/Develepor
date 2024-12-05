@@ -382,14 +382,12 @@ public class UserHome extends EntityHome<User> implements Serializable {
 
 					if (authenticatedUser.getBagliRoller() == null) {
 						List<Role> bagliRoller = PdksUtil.setUserYetki(authenticatedUser);
-						if (bagliRoller == null)
-							bagliRoller = new ArrayList<Role>();
 						authenticatedUser.setBagliRoller(bagliRoller);
 					}
 					List<Role> digerRoller = authenticatedUser.getBagliRoller();
-					if (digerRoller != null) {
+					if (digerRoller != null && !digerRoller.isEmpty())
 						yetkiliRollerim.addAll(digerRoller);
-					}
+
 					if (adminRole)
 						sonuc = getSonuc(target);
 					else if (yetkiliRollerim != null) {

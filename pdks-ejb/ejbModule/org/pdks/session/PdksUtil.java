@@ -2615,7 +2615,7 @@ public class PdksUtil implements Serializable {
 	 * @param user
 	 */
 	public static List<Role> setUserYetki(User user) {
-		List<Role> digerRoller = null;
+		List<Role> bagliRoller = null;
 		if (user != null) {
 			user.setAdmin(Boolean.FALSE);
 			user.setGenelMudur(Boolean.FALSE);
@@ -2640,15 +2640,17 @@ public class PdksUtil implements Serializable {
 			user.setRaporKullanici(Boolean.FALSE);
 			List<Role> rollerim = user.getYetkiliRollerim();
 			if (rollerim != null) {
-				digerRoller = setUserYetkiler(user, rollerim);
-				if (!digerRoller.isEmpty())
-					setUserYetkiler(user, digerRoller);
-				else
-					digerRoller = null;
+				bagliRoller = setUserYetkiler(user, rollerim);
+				if (!bagliRoller.isEmpty())
+					setUserYetkiler(user, bagliRoller);
+
 			}
 		}
+		if (bagliRoller == null)
+			bagliRoller = new ArrayList<Role>();
+		user.setBagliRoller(bagliRoller);
 		user.setYetkiSet(Boolean.TRUE);
-		return digerRoller;
+		return bagliRoller;
 	}
 
 	/**
