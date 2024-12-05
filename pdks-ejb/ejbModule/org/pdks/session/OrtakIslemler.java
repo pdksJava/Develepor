@@ -10014,7 +10014,6 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" inner join " + Role.TABLE_NAME + " R " + PdksEntityController.getJoinLOCK() + "  on R." + Role.COLUMN_NAME_ID + " = T." + UserRoles.COLUMN_NAME_ROLE);
 			sb.append(" where T." + UserRoles.COLUMN_NAME_USER + " = :u");
 			map.put("u", user.getId());
-			map.put(PdksEntityController.MAP_KEY_SELECT, "role");
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
