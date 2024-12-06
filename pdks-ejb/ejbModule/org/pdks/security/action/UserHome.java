@@ -391,8 +391,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 					if (adminRole)
 						sonuc = getSonuc(target);
 					else if (yetkiliRollerim != null) {
-						for (Object obj : yetkiliRollerim.toArray()) {
-							Role role = (Role) obj;
+						for (Role role : yetkiliRollerim) {
 							String roleName = role.getRolename();
 							if (ikYetkiliRoller.contains(roleName)) {
 								key = action + "-" + target + "-" + AccountPermission.IK_ROLE + "-" + AccountPermission.DISCRIMINATOR_ROLE;
