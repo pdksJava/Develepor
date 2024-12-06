@@ -4208,21 +4208,36 @@ public class OrtakIslemler implements Serializable {
 		return durum;
 	}
 
+	// public List getFazlaMesaiList(User loginUser, Long departmanId, Sirket sirket, String tesisId, Long bolumId, Long altBolumId, AylikPuantaj aylikPuantaj, String tipi, boolean denklestirme, Session session) {
 	/**
-	 * @param user
-	 * @param departmanId
-	 * @param sirket
-	 * @param tesisId
-	 * @param bolumId
-	 * @param altBolumId
-	 * @param aylikPuantaj
-	 * @param tipi
-	 * @param denklestirme
+	 * @param paramsMap
 	 * @param session
 	 * @return
 	 */
-	public List getFazlaMesaiList(User loginUser, Long departmanId, Sirket sirket, String tesisId, Long bolumId, Long altBolumId, AylikPuantaj aylikPuantaj, String tipi, boolean denklestirme, Session session) {
+	public List getFazlaMesaiList(LinkedHashMap<String, Object> paramsMap, Session session) {
 		List list = null;
+		User loginUser = null;
+		Long departmanId = null;
+		Sirket sirket = null;
+		String tesisId = null;
+		Long bolumId = null;
+		Long altBolumId = null;
+		AylikPuantaj aylikPuantaj = null;
+		String tipi = null, tableName = null, fieldName = null;
+		Boolean denklestirme = null;
+		if (paramsMap != null) {
+			loginUser = paramsMap.containsKey("loginUser") ? (User) paramsMap.get("loginUser") : null;
+			departmanId = paramsMap.containsKey("departmanId") ? (Long) paramsMap.get("departmanId") : null;
+			sirket = paramsMap.containsKey("sirket") ? (Sirket) paramsMap.get("sirket") : null;
+			tesisId = paramsMap.containsKey("tesisId") ? (String) paramsMap.get("tesisId") : null;
+			bolumId = paramsMap.containsKey("bolumId") ? (Long) paramsMap.get("bolumId") : null;
+			altBolumId = paramsMap.containsKey("altBolumId") ? (Long) paramsMap.get("altBolumId") : null;
+			aylikPuantaj = paramsMap.containsKey("aylikPuantaj") ? (AylikPuantaj) paramsMap.get("aylikPuantaj") : null;
+			tipi = paramsMap.containsKey("tipi") ? (String) paramsMap.get("tipi") : null;
+			fieldName = paramsMap.containsKey("fieldName") ? (String) paramsMap.get("fieldName") : null;
+			denklestirme = paramsMap.containsKey("denklestirme") ? (Boolean) paramsMap.get("denklestirme") : null;
+		}
+		boolean tumAlanlar = fieldName == null || fieldName.equals("*");
 		if (aylikPuantaj != null) {
 			if (loginUser == null)
 				loginUser = aylikPuantaj.getLoginUser() != null ? aylikPuantaj.getLoginUser() : authenticatedUser;
@@ -4254,30 +4269,43 @@ public class OrtakIslemler implements Serializable {
 				}
 				if (tipi.equalsIgnoreCase("S")) {
 					class1 = Sirket.class;
+					tableName = Sirket.TABLE_NAME;
+					fieldName = Sirket.COLUMN_NAME_ID;
 					if (departmanId != null && tesisYetki)
 						departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
 					order = Sirket.COLUMN_NAME_AD;
 				} else if (tipi.startsWith("B")) {
 					class1 = Tanim.class;
+					tableName = Tanim.TABLE_NAME;
+					fieldName = Tanim.COLUMN_NAME_ID;
 					order = Tanim.COLUMN_NAME_ACIKLAMATR;
 				} else if (tipi.startsWith("AB")) {
 					class1 = Tanim.class;
+					tableName = Tanim.TABLE_NAME;
+					fieldName = Tanim.COLUMN_NAME_ID;
 					order = Tanim.COLUMN_NAME_ACIKLAMATR;
 				} else if (tipi.startsWith("T")) {
 					if (sirket == null || sirket.isTesisDurumu()) {
 						class1 = Tanim.class;
+						fieldName = Tanim.COLUMN_NAME_ID;
+						tableName = Tanim.TABLE_NAME;
 						order = Tanim.COLUMN_NAME_ACIKLAMATR;
 					}
 				} else if (tipi.equalsIgnoreCase("P")) {
-
 					class1 = Personel.class;
+					fieldName = Personel.COLUMN_NAME_ID;
+					tableName = Personel.TABLE_NAME;
 				} else if (tipi.equalsIgnoreCase("D")) {
 					if (ikRol) {
 						tesisYetki = getParameterKey("tesisYetki").equals("1");
 						class1 = Departman.class;
+						fieldName = Departman.COLUMN_NAME_ID;
+						tableName = Departman.TABLE_NAME;
 					}
 				}
 				if (class1 != null) {
+					if (tumAlanlar)
+						fieldName = "*";
 					Personel personel = loginUser != null ? loginUser.getPdksPersonel() : new Personel();
 					if (loginUser.isTesisYonetici()) {
 						sirket = personel.getSirket();
@@ -4333,26 +4361,32 @@ public class OrtakIslemler implements Serializable {
 						}
 					}
 					Integer mudurDurum = 0;
-					String spAdi = "SP_GET_FAZLA_MESAI_DATA_MUD";
+					String spAdi = "SP_GET_FAZLA_MESAI_DATA_ALAN";
 					boolean ustYonetici = false;
-					if (isExisStoreProcedure(spAdi, session) == false) {
-						mudurDurum = null;
-						spAdi = "SP_GET_FAZLA_MESAI_DATA";
-					} else {
-						try {
-							Personel per = loginUser.getPdksPersonel();
-							ustYonetici = per.getUstYonetici() != null && per.getUstYonetici();
-							if (per.getMudurAltSeviye() == null) {
-								Boolean mudurAltSeviye = getMudurAltSeviyeDurum(per, session);
-								per.setMudurAltSeviye(mudurAltSeviye);
-							}
-							mudurDurum = ustYonetici || (direktorId == null && per.getMudurAltSeviye()) ? 1 : 0;
-						} catch (Exception e) {
-							mudurDurum = 0;
+					String alanStr = null;
+					boolean procedureOk = false;
+					if (isExisStoreProcedure(spAdi, session)) {
+						if (PdksUtil.hasStringValue(fieldName) && PdksUtil.hasStringValue(tableName)) {
+							alanStr = fieldName;
+							procedureOk = true;
 						}
-						if (ikRol || (ustYonetici == false && direktorId != null))
-							mudurDurum = 0;
 					}
+					if (procedureOk == false)
+						spAdi = "SP_GET_FAZLA_MESAI_DATA_MUD";
+					try {
+						Personel per = loginUser.getPdksPersonel();
+						ustYonetici = per.getUstYonetici() != null && per.getUstYonetici();
+						if (per.getMudurAltSeviye() == null) {
+							Boolean mudurAltSeviye = getMudurAltSeviyeDurum(per, session);
+							per.setMudurAltSeviye(mudurAltSeviye);
+						}
+						mudurDurum = ustYonetici || (direktorId == null && per.getMudurAltSeviye()) ? 1 : 0;
+					} catch (Exception e) {
+						mudurDurum = 0;
+					}
+					if (ikRol || (ustYonetici == false && direktorId != null))
+						mudurDurum = 0;
+
 					map.put("departmanId", depId);
 					map.put("sirketId", sirketId);
 					map.put("tesisId", tesisId != null ? tesisId : "");
@@ -4362,15 +4396,26 @@ public class OrtakIslemler implements Serializable {
 					if (mudurDurum != null)
 						map.put("mudurDurum", mudurDurum);
 					map.put("tipi", tipi);
+					if (alanStr != null)
+						map.put("alanAdiStr", alanStr);
 					map.put("basTarih", PdksUtil.convertToDateString(basTarih, "yyyyMMdd"));
 					map.put("bitTarih", PdksUtil.convertToDateString(bitTarih, "yyyyMMdd"));
 					map.put("format", "112");
-					map.put("order", order != null ? order : "");
+					map.put("order", order != null && (alanStr == null || alanStr.equals("*")) ? order : "");
 					Gson gson = new Gson();
 					try {
 						StringBuffer sp = new StringBuffer(spAdi);
-						// map.put("readUnCommitted", Boolean.TRUE);
-						list = pdksEntityController.execSPList(map, sp, class1);
+						if (alanStr == null || alanStr.equals("*"))
+							list = pdksEntityController.execSPList(map, sp, class1);
+						else {
+							List bigDecimalList = pdksEntityController.execSPList(map, sp, null);
+							if (bigDecimalList != null && bigDecimalList.isEmpty() == false)
+								list = pdksEntityController.getSQLParamByFieldList(tableName, fieldName, bigDecimalList, class1, session);
+							else
+								list = new ArrayList();
+							bigDecimalList = null;
+						}
+
 						if ((tipi.endsWith("P") || tipi.indexOf("+") >= 0) && loginUser.isAdmin())
 							logger.debug(spAdi + " " + tipi + " " + list.size() + "\n" + gson.toJson(map));
 					} catch (Exception e) {

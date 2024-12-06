@@ -75,7 +75,6 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	private String newPassword1, newPassword2, passwordHash, oldUserName;
 	private String changeUserName = "";
 	private List<User> allUserList = new ArrayList<User>();
-	private List ikYetkiliRoller = Arrays.asList(new String[] { Role.TIPI_ANAHTAR_KULLANICI, Role.TIPI_IK_Tesis, Role.TIPI_IK_SIRKET, Role.TIPI_IK_DIREKTOR, Role.TIPI_SISTEM_YONETICI, Role.TIPI_GENEL_MUDUR });
 	private Session session;
 
 	@Override
@@ -367,57 +366,62 @@ public class UserHome extends EntityHome<User> implements Serializable {
 		boolean sonuc = Boolean.FALSE;
 		try {
 			if (identity != null && identity.isLoggedIn() && authenticatedUser != null) {
-				String key = action + "-" + target + "-" + authenticatedUser.getUsername() + "-" + AccountPermission.DISCRIMINATOR_USER;
-				boolean adminRole = authenticatedUser.isAdmin();
-				if (accountPermissionMap.containsKey(key)) {
-					sonuc = getSonuc(target);
+				HashMap<String, Boolean> menuYetkiMap = authenticatedUser.getMenuYetkiMap();
+				if (menuYetkiMap == null) {
+					menuYetkiMap = new HashMap<String, Boolean>();
+					authenticatedUser.setMenuYetkiMap(menuYetkiMap);
+				}
+				String startKey = action + "-" + target;
+				String key = startKey + authenticatedUser.getUsername() + "-" + AccountPermission.DISCRIMINATOR_USER;
+				if (menuYetkiMap.containsKey(startKey)) {
+					sonuc = menuYetkiMap.get(startKey);
 				} else {
-					List<Role> yetkiliRollerim = new ArrayList<Role>();
-					if (session == null)
-						session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-					if (authenticatedUser.getYetkiliRollerim() == null || authenticatedUser.getYetkiliRollerim().isEmpty())
-						ortakIslemler.setUserRoller(authenticatedUser, session);
-					if (authenticatedUser.getYetkiliRollerim() != null)
-						yetkiliRollerim.addAll(authenticatedUser.getYetkiliRollerim());
-
-					if (authenticatedUser.getBagliRoller() == null) {
-						List<Role> bagliRoller = PdksUtil.setUserYetki(authenticatedUser);
-						authenticatedUser.setBagliRoller(bagliRoller);
-					}
-					List<Role> digerRoller = authenticatedUser.getBagliRoller();
-					if (digerRoller != null && !digerRoller.isEmpty())
-						yetkiliRollerim.addAll(digerRoller);
-
-					if (adminRole)
+					boolean adminRole = authenticatedUser.isAdmin();
+					if (accountPermissionMap.containsKey(key)) {
 						sonuc = getSonuc(target);
-					else if (yetkiliRollerim != null) {
-						for (Role role : yetkiliRollerim) {
-							String roleName = role.getRolename();
-							if (ikYetkiliRoller.contains(roleName)) {
-								key = action + "-" + target + "-" + AccountPermission.IK_ROLE + "-" + AccountPermission.DISCRIMINATOR_ROLE;
+					} else {
+						List<Role> yetkiliRollerim = new ArrayList<Role>();
+						if (session == null)
+							session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+						if (authenticatedUser.getYetkiliRollerim() == null || authenticatedUser.getYetkiliRollerim().isEmpty())
+							ortakIslemler.setUserRoller(authenticatedUser, session);
+						if (authenticatedUser.getYetkiliRollerim() != null)
+							yetkiliRollerim.addAll(authenticatedUser.getYetkiliRollerim());
+
+						if (authenticatedUser.getBagliRoller() == null) {
+							List<Role> bagliRoller = PdksUtil.setUserYetki(authenticatedUser);
+							authenticatedUser.setBagliRoller(bagliRoller);
+						}
+						List<Role> digerRoller = authenticatedUser.getBagliRoller();
+						if (digerRoller != null && !digerRoller.isEmpty())
+							yetkiliRollerim.addAll(digerRoller);
+
+						if (adminRole)
+							sonuc = getSonuc(target);
+						else if (yetkiliRollerim != null) {
+							for (Role role : yetkiliRollerim) {
+								String roleName = role.getRolename();
+								if (roleName.equals(AccountPermission.ADMIN_ROLE)) {// admin
+									// herşeye
+									// yetkilidir
+									sonuc = getSonuc(target);
+									break;
+								}
+								key = startKey + "-" + roleName + "-" + AccountPermission.DISCRIMINATOR_ROLE;
 								if (accountPermissionMap.containsKey(key)) {
 									sonuc = getSonuc(target);
 									break;
 								}
-							} else if (roleName.equals(AccountPermission.ADMIN_ROLE)) {// admin
-								// herşeye
-								// yetkilidir
-								sonuc = getSonuc(target);
-								break;
-							}
-							key = action + "-" + target + "-" + roleName + "-" + AccountPermission.DISCRIMINATOR_ROLE;
-							if (accountPermissionMap.containsKey(key)) {
-								sonuc = getSonuc(target);
-								break;
 							}
 						}
+						yetkiliRollerim = null;
 					}
-					yetkiliRollerim = null;
-				}
-				if (sonuc && adminRole == false && menuKapali) {
-					String menuKapaliStr = ortakIslemler.getParameterKey("menuKapali");
-					if (!(menuKapaliStr.equalsIgnoreCase("ik") && (authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi())))
-						sonuc = !menuKapali;
+					if (sonuc && adminRole == false && menuKapali) {
+						String menuKapaliStr = ortakIslemler.getParameterKey("menuKapali");
+						if (!(menuKapaliStr.equalsIgnoreCase("ik") && (authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi())))
+							sonuc = !menuKapali;
+					}
+					menuYetkiMap.put(startKey, sonuc);
 				}
 
 			}

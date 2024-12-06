@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -91,6 +92,8 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	private User seciliSuperVisor;
 
 	private Boolean vardiyaDuzeltYetki = Boolean.FALSE, secili = Boolean.FALSE, login = Boolean.FALSE;
+
+	private HashMap<String, Boolean> menuYetkiMap;
 
 	private HttpSession session;
 
@@ -1107,8 +1110,16 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 		this.bagliRoller = bagliRoller;
 	}
 
+	@Transient
+	public HashMap<String, Boolean> getMenuYetkiMap() {
+		return menuYetkiMap;
+	}
+
+	public void setMenuYetkiMap(HashMap<String, Boolean> menuYetkiMap) {
+		this.menuYetkiMap = menuYetkiMap;
+	}
+
 	public void entityRefresh() {
 
 	}
-
 }

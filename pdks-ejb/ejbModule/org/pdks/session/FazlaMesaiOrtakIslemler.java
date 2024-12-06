@@ -2015,11 +2015,19 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (loginUser == null)
 			loginUser = authenticatedUser;
 		Long depId = null;
-		if (loginUser.isTesisSuperVisor()) {
+		if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
 			Personel personel = loginUser.getPdksPersonel();
 			depId = personel.getSirket().getDepartman().getId();
 		}
-		List<Departman> list = ortakIslemler.getFazlaMesaiList(loginUser, depId, null, null, null, null, aylikPuantaj, "D", denklestirme, session);
+		LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
+		paramsMap.put("loginUser", loginUser);
+		paramsMap.put("departmanId", depId);
+		paramsMap.put("aylikPuantaj", aylikPuantaj);
+		paramsMap.put("denklestirme", denklestirme);
+		paramsMap.put("tipi", "D");
+		paramsMap.put("fieldName", Departman.COLUMN_NAME_ID);
+		List<Departman> list = ortakIslemler.getFazlaMesaiList(paramsMap, session);
+		// List<Departman> list = ortakIslemler.getFazlaMesaiList(loginUser, depId, null, null, null, null, aylikPuantaj, "D", denklestirme, session);
 		List<SelectItem> selectList = new ArrayList<SelectItem>();
 		if (!list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
@@ -2083,14 +2091,24 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (loginUser == null)
 			loginUser = authenticatedUser;
 		Sirket sirketPersonel = null;
-		if (loginUser.isTesisSuperVisor()) {
+		if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
 			Personel personel = loginUser.getPdksPersonel();
 			sirketPersonel = personel.getSirket();
 			departmanId = sirketPersonel.getDepartman().getId();
 		}
-		List<Sirket> list = ortakIslemler.getFazlaMesaiList(loginUser, departmanId, sirketPersonel, null, null, null, aylikPuantaj, "S", denklestirme, session);
+		LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
+		paramsMap.put("loginUser", loginUser);
+		paramsMap.put("departmanId", departmanId);
+		paramsMap.put("sirket", sirketPersonel);
+		paramsMap.put("aylikPuantaj", aylikPuantaj);
+		paramsMap.put("denklestirme", denklestirme);
+		paramsMap.put("tipi", "S");
+		paramsMap.put("fieldName", Sirket.COLUMN_NAME_ID);
+		List<Sirket> list = ortakIslemler.getFazlaMesaiList(paramsMap, session);
+		// List<Sirket> list = ortakIslemler.getFazlaMesaiList(loginUser, departmanId, sirketPersonel, null, null, null, aylikPuantaj, "S", denklestirme, session);
 		if (loginUser != null && loginUser.isIKSirket()) {
 			try {
+				list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);
 				Sirket sirketUser = list != null && loginUser.getPdksPersonel() != null ? loginUser.getPdksPersonel().getSirket() : null;
 				if (sirketUser != null) {
 					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -2126,22 +2144,30 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (loginUser == null)
 			loginUser = authenticatedUser;
 		List<Tanim> list = null;
+
 		if (sirket != null && sirket.isTesisDurumu()) {
 			String tesisId = null;
-			if (loginUser.isTesisSuperVisor()) {
+			if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
 				Personel personel = loginUser.getPdksPersonel();
 				if (personel.getTesis() != null)
 					tesisId = String.valueOf(personel.getTesis().getId());
 			}
-			list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, null, null, aylikPuantaj, "T", denklestirme, session);
+			LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
+			paramsMap.put("loginUser", loginUser);
+			paramsMap.put("sirket", sirket);
+			paramsMap.put("tesisId", tesisId);
+			paramsMap.put("aylikPuantaj", aylikPuantaj);
+			paramsMap.put("denklestirme", denklestirme);
+			paramsMap.put("tipi", "T");
+			paramsMap.put("fieldName", Tanim.COLUMN_NAME_ID);
+			list = ortakIslemler.getFazlaMesaiList(paramsMap, session);
+			// list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, null, null, aylikPuantaj, "T", denklestirme, session);
 		}
 		List<SelectItem> selectList = new ArrayList<SelectItem>();
 		if (list != null && !list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
-			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-				Tanim veri = (Tanim) iterator.next();
+			for (Tanim veri : list)
 				selectList.add(new SelectItem(veri.getId(), veri.getAciklama()));
-			}
 		}
 
 		return selectList;
@@ -2158,7 +2184,16 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		User loginUser = aylikPuantaj != null && aylikPuantaj.getLoginUser() != null ? aylikPuantaj.getLoginUser() : null;
 		if (loginUser == null)
 			loginUser = authenticatedUser;
-		List<Tanim> list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, null, null, aylikPuantaj, "B+", true, session);
+		LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
+		paramsMap.put("loginUser", loginUser);
+		paramsMap.put("sirket", sirket);
+		paramsMap.put("tesisId", tesisId);
+		paramsMap.put("aylikPuantaj", aylikPuantaj);
+		paramsMap.put("denklestirme", true);
+		paramsMap.put("tipi", "B+");
+		paramsMap.put("fieldName", Tanim.COLUMN_NAME_ID);
+		List<Tanim> list = ortakIslemler.getFazlaMesaiList(paramsMap, session);
+		// List<Tanim> list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, null, null, aylikPuantaj, "B+", true, session);
 		List<SelectItem> selectList = new ArrayList<SelectItem>();
 		if (!list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
@@ -2182,7 +2217,16 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		User loginUser = aylikPuantaj != null && aylikPuantaj.getLoginUser() != null ? aylikPuantaj.getLoginUser() : null;
 		if (loginUser == null)
 			loginUser = authenticatedUser;
-		List<Tanim> list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, null, null, aylikPuantaj, "B", denklestirme, session);
+		LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
+		paramsMap.put("loginUser", loginUser);
+		paramsMap.put("sirket", sirket);
+		paramsMap.put("tesisId", tesisId);
+		paramsMap.put("aylikPuantaj", aylikPuantaj);
+		paramsMap.put("denklestirme", denklestirme);
+		paramsMap.put("tipi", "B");
+		paramsMap.put("fieldName", Tanim.COLUMN_NAME_ID);
+		List<Tanim> list = ortakIslemler.getFazlaMesaiList(paramsMap, session);
+		// List<Tanim> list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, null, null, aylikPuantaj, "B", denklestirme, session);
 		List<SelectItem> selectList = new ArrayList<SelectItem>();
 		if (!list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
@@ -2206,7 +2250,17 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		User loginUser = aylikPuantaj != null && aylikPuantaj.getLoginUser() != null ? aylikPuantaj.getLoginUser() : null;
 		if (loginUser == null)
 			loginUser = authenticatedUser;
-		List<Tanim> list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, bolumId, null, aylikPuantaj, "AB+", true, session);
+		LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
+		paramsMap.put("loginUser", loginUser);
+		paramsMap.put("sirket", sirket);
+		paramsMap.put("tesisId", tesisId);
+		paramsMap.put("bolumId", bolumId);
+		paramsMap.put("aylikPuantaj", aylikPuantaj);
+		paramsMap.put("denklestirme", true);
+		paramsMap.put("tipi", "AB+");
+		paramsMap.put("fieldName", Tanim.COLUMN_NAME_ID);
+		List<Tanim> list = ortakIslemler.getFazlaMesaiList(paramsMap, session);
+		// List<Tanim> list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, bolumId, null, aylikPuantaj, "AB+", true, session);
 		List<SelectItem> selectList = new ArrayList<SelectItem>();
 		if (!list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
@@ -2232,7 +2286,17 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		User loginUser = aylikPuantaj != null && aylikPuantaj.getLoginUser() != null ? aylikPuantaj.getLoginUser() : null;
 		if (loginUser == null)
 			loginUser = authenticatedUser;
-		List<Tanim> list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, bolumId, null, aylikPuantaj, "AB", denklestirme, session);
+		LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
+		paramsMap.put("loginUser", loginUser);
+		paramsMap.put("sirket", sirket);
+		paramsMap.put("tesisId", tesisId);
+		paramsMap.put("bolumId", bolumId);
+		paramsMap.put("aylikPuantaj", aylikPuantaj);
+		paramsMap.put("denklestirme", denklestirme);
+		paramsMap.put("tipi", "AB");
+		paramsMap.put("fieldName", Tanim.COLUMN_NAME_ID);
+		List<Tanim> list = ortakIslemler.getFazlaMesaiList(paramsMap, session);
+		// List<Tanim> list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, bolumId, null, aylikPuantaj, "AB", denklestirme, session);
 		List<SelectItem> selectList = new ArrayList<SelectItem>();
 		if (!list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
@@ -2291,7 +2355,18 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		User loginUser = aylikPuantaj != null && aylikPuantaj.getLoginUser() != null ? aylikPuantaj.getLoginUser() : null;
 		if (loginUser == null)
 			loginUser = authenticatedUser;
-		List<Personel> list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, bolumId, altBolumId, aylikPuantaj, "P", denklestirme, session);
+		LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
+		paramsMap.put("loginUser", loginUser);
+		paramsMap.put("sirket", sirket);
+		paramsMap.put("tesisId", tesisId);
+		paramsMap.put("bolumId", bolumId);
+		paramsMap.put("altBolumId", altBolumId);
+		paramsMap.put("aylikPuantaj", aylikPuantaj);
+		paramsMap.put("denklestirme", denklestirme);
+		paramsMap.put("tipi", "P");
+		paramsMap.put("fieldName", Personel.COLUMN_NAME_ID);
+		List<Personel> list = ortakIslemler.getFazlaMesaiList(paramsMap, session);
+		// List<Personel> list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, bolumId, altBolumId, aylikPuantaj, "P", denklestirme, session);
 		if (!list.isEmpty())
 			list = PdksUtil.sortObjectStringAlanList(list, "getAdSoyad", null);
 
