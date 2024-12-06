@@ -51,6 +51,7 @@ public class PersonelDenklestirme extends BaseObject {
 	public static final String COLUMN_NAME_KISMI_ODEME_SAAT = "KISMI_ODEME_SAAT";
 	public static final String COLUMN_NAME_PERSONEL_NO = "PERSONEL_NO";
 	public static final String COLUMN_NAME_EKSIK_CALISMA_SURE = "EKSIK_CALISMA_SURE";
+	public static final String COLUMN_NAME_GECEN_AY_DENKLESTIRME = "GECEN_AY_DENKLESTIRME_ID";
 
 	public static double calismaSaatiSua = 7.0d, calismaSaatiPartTime = 4.5d;
 
@@ -159,7 +160,7 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "GECEN_AY_DENKLESTIRME_ID")
+	@JoinColumn(name = COLUMN_NAME_GECEN_AY_DENKLESTIRME)
 	@Fetch(FetchMode.JOIN)
 	public PersonelDenklestirme getPersonelDenklestirmeGecenAy() {
 		return personelDenklestirmeGecenAy;

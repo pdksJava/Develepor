@@ -2015,7 +2015,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (loginUser == null)
 			loginUser = authenticatedUser;
 		Long depId = null;
-		if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
+		if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis() || loginUser.isIKSirket()) {
 			Personel personel = loginUser.getPdksPersonel();
 			depId = personel.getSirket().getDepartman().getId();
 		}
@@ -2091,7 +2091,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (loginUser == null)
 			loginUser = authenticatedUser;
 		Sirket sirketPersonel = null;
-		if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
+		if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis() || loginUser.isIKSirket()) {
 			Personel personel = loginUser.getPdksPersonel();
 			sirketPersonel = personel.getSirket();
 			departmanId = sirketPersonel.getDepartman().getId();
