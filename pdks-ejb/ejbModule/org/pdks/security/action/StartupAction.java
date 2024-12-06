@@ -13,7 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.faces.FacesException;
+import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -63,6 +66,7 @@ import org.pdks.entity.VardiyaYemekIzin;
 import org.pdks.entity.YemekKartsiz;
 import org.pdks.erp.action.SapRfcManager;
 import org.pdks.erp.entity.SAPSunucu;
+import org.pdks.security.entity.KullaniciSession;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 import org.pdks.security.entity.UserRoles;
@@ -1097,7 +1101,6 @@ public class StartupAction implements Serializable {
 		}
 
 		List<AccountPermission> permissionList = (ArrayList<AccountPermission>) pdksEntityController.getSQLParamByFieldList(AccountPermission.TABLE_NAME, AccountPermission.COLUMN_NAME_DURUM, Boolean.TRUE, AccountPermission.class, session);
-
 		String key = "";
 		accountPermissionMap = new HashMap<String, AccountPermission>();
 		for (AccountPermission accountPermission : permissionList) {
@@ -1113,6 +1116,31 @@ public class StartupAction implements Serializable {
 				}
 				entityManager.flush();
 			}
+		}
+		try {
+			ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+			if (servletContext != null) {
+				List<HttpSession> sessionList = new ArrayList(SessionListener.getSessionList(servletContext));
+				if (sessionList != null) {
+					Calendar cal = Calendar.getInstance();
+					int zoneFark = cal.get(Calendar.ZONE_OFFSET);
+					Date simdi = new Date();
+					HashMap<String, HttpSession> map = new HashMap<String, HttpSession>();
+					for (HttpSession httpSession : sessionList) {
+						if (!map.containsKey(httpSession.getId())) {
+							KullaniciSession kullaniciSession = new KullaniciSession(httpSession, simdi, zoneFark);
+							if (kullaniciSession.getKullanici() != null) {
+								User kullanici = kullaniciSession.getKullanici();
+								if (kullanici.getMenuYetkiMap() != null)
+									kullanici.getMenuYetkiMap().clear();
+							}
+							map.put(httpSession.getId(), httpSession);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 
 	}
