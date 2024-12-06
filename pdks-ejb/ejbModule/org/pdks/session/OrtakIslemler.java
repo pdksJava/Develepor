@@ -4366,9 +4366,12 @@ public class OrtakIslemler implements Serializable {
 					String alanStr = null;
 					boolean procedureOk = false;
 					if (isExisStoreProcedure(spAdi, session)) {
+						if (getParameterKey("mesaiTumDataGetir").equals("1"))
+							fieldName = "*";
 						if (PdksUtil.hasStringValue(fieldName) && PdksUtil.hasStringValue(tableName)) {
 							alanStr = fieldName;
 							procedureOk = true;
+
 						}
 					}
 					if (procedureOk == false)
