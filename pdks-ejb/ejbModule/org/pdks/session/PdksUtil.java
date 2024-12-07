@@ -2688,7 +2688,7 @@ public class PdksUtil implements Serializable {
 			else if (rolAdi.equals(Role.TIPI_IK_SIRKET))
 				user.setIKSirket(Boolean.TRUE);
 			else if (rolAdi.equals(Role.TIPI_IK_Tesis))
-				user.setIK(Boolean.TRUE);
+				user.setIK_Tesis(Boolean.TRUE);
 			else if (rolAdi.equals(Role.TIPI_IK_DIREKTOR))
 				user.setIKDirektor(Boolean.TRUE);
 			else if (rolAdi.equals(Role.TIPI_YONETICI))

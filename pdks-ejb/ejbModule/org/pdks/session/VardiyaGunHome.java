@@ -4544,8 +4544,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (!sirketler.isEmpty()) {
 				Long onceki = aramaSecenekleri.getSirketId();
 				if (sirketler.size() == 1) {
-					aramaSecenekleri.setSirketId((Long) sirketler.get(0).getValue());
 					onceki = aramaSecenekleri.getSirketId();
+					aramaSecenekleri.setSirketId((Long) sirketler.get(0).getValue());
 				} else if (onceki != null) {
 					for (SelectItem st : sirketler) {
 						if (st.getValue().equals(onceki))
@@ -10461,7 +10461,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (doldurStr != null) {
 				Long sirketId = aramaSecenekleri.getSirketId();
 				fillSirketList();
-				if (sirketId != null)
+				if (sirketId != null && (aramaSecenekleri.getSirketIdList() == null || aramaSecenekleri.getSirketIdList().size() != 1))
 					aramaSecenekleri.setSirketId(sirketId);
 				tesisDoldur(false);
 				bolumDoldur();

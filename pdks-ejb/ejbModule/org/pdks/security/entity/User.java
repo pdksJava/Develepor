@@ -1076,6 +1076,9 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 		IKSirket = iKSirket;
 	}
 
+	/**
+	 * @return
+	 */
 	@Transient
 	public boolean isTesisSuperVisor() {
 		if (!yetkiSet)
