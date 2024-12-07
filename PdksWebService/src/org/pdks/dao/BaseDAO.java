@@ -230,19 +230,8 @@ public interface BaseDAO extends DAO {
 	 */
 	public void execSP(LinkedHashMap<String, Object> fields);
 
-	/**
-	 * @param veriMap
-	 * @param class1
-	 * @return
-	 * @throws Exception
-	 */
+ 
 	public List execSPList(LinkedHashMap<String, Object> veriMap, Class class1) throws Exception;
-
-	/**
-	 * @param fields
-	 * @return
-	 */
-	public List getSPList(HashMap fields);
 
 	/**
 	 * @param fields

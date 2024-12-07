@@ -57,6 +57,8 @@ public class Cihaz implements Serializable {
 	}
 
 	public CihazTipi getCihazTipi() {
+		if (cihazTipi == null && tipi != null)
+			this.cihazTipi = CihazTipi.fromValue(tipi);
 		return cihazTipi;
 	}
 
