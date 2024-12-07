@@ -44,13 +44,13 @@ public class Role extends BasePDKSObject implements Serializable {
 	public static final String TIPI_IK = "IK";
 	public static final String TIPI_IK_SIRKET = "IKSirket";
 	public static final String TIPI_IK_Tesis = "IKTesis";
-	public static final String TIPI_TESIS_YONETICI = "tesisYonetici";
 	public static final String TIPI_IK_DIREKTOR = "IKDirektor";
 	public static final String TIPI_PROJE_MUDURU = "projeMuduru";
 	public static final String TIPI_SEKRETER = "sekreter";
 	public static final String TIPI_SUPER_VISOR = "superVisor";
+	public static final String TIPI_SIRKET_SUPER_VISOR = "sirketSuperVisor";
+	public static final String TIPI_TESIS_SUPER_VISOR = "tesisSuperVisor";
 	public static final String TIPI_DIREKTOR_SUPER_VISOR = "superVisorDirektor";
-	public static final String TIPI_TESIS_SUPER_VISOR = "superVisorTesis";
 	public static final String TIPI_YONETICI = "yonetici";
 	public static final String TIPI_YONETICI_KONTRATLI = "yoneticiKontratli";
 	public static final String TIPI_PERSONEL = "personel";

@@ -2595,8 +2595,10 @@ public class OrtakIslemler implements Serializable {
 					addUserList(user, userList, geciciPersoneller, "setDirektorSuperVisor");
 				if (user.isSuperVisor())
 					addUserList(user, userList, geciciPersoneller, "setSuperVisor");
-				if (user.isTesisYonetici())
-					addUserList(user, userList, geciciPersoneller, "setTesisYonetici");
+				if (user.isTesisSuperVisor())
+					addUserList(user, userList, geciciPersoneller, "setTesisSuperVisor");
+				if (user.isSirketSuperVisor())
+					addUserList(user, userList, geciciPersoneller, "setSirketSuperVisor");
 			}
 		}
 		islemUserList = null;
@@ -2652,7 +2654,7 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + seciliSirketId);
 
 			Long tesisId = aramaSecenekleriPer.getTesisId();
-			if (islemUser.isTesisYonetici())
+			if (islemUser.isTesisSuperVisor())
 				tesisId = islemUser.getPdksPersonel().getTesis() != null ? islemUser.getPdksPersonel().getTesis().getId() : null;
 			if (islemUser.getYetkiliTesisler() != null) {
 				List<Long> list = new ArrayList<Long>();
@@ -4258,7 +4260,7 @@ public class OrtakIslemler implements Serializable {
 			}
 			if (basTarih != null && bitTarih != null && session != null) {
 				boolean ikRol = getIKRolSayfa(loginUser);
-				if (loginUser.isTesisSuperVisor())
+				if (loginUser.isTesisSuperVisor() || loginUser.isSirketSuperVisor())
 					ikRol = true;
 				Class class1 = null;
 				boolean tesisYetki = getParameterKey("tesisYetki").equals("1");
@@ -4307,11 +4309,7 @@ public class OrtakIslemler implements Serializable {
 					if (tumAlanlar)
 						fieldName = "*";
 					Personel personel = loginUser != null ? loginUser.getPdksPersonel() : new Personel();
-					if (loginUser.isTesisYonetici()) {
-						sirket = personel.getSirket();
-						tesisId = "" + (personel.getTesis() != null && personel.getTesis().getId() != null ? personel.getTesis().getId() : 0L);
-						ikRol = true;
-					}
+
 					boolean departmanYonetici = ikRol == false && loginUser.isDepartmentAdmin() && getParameterKey("tesisYetki").equals("1");
 					Long direktorId = null;
 					if ((loginUser.isDirektorSuperVisor() || departmanYonetici) && personel.getEkSaha1() != null)
@@ -9254,7 +9252,7 @@ public class OrtakIslemler implements Serializable {
 
 				}
 			}
-			if (user.isTesisYonetici()) {
+			if (user.isTesisSuperVisor() || user.isSirketSuperVisor() || user.isIKSirket() || user.isIK_Tesis()) {
 				try {
 					tesisYoneticiIslemleri(user, basTarih, bitTarih, session);
 				} catch (Exception e) {
@@ -9276,8 +9274,8 @@ public class OrtakIslemler implements Serializable {
 		} else {
 			if (user.isProjeMuduru()) {
 				try {
-					projeMuduruIslemleri(user, basTarih, bitTarih, session);
-				} catch (Exception e) {
+					tesisYoneticiIslemleri(user, basTarih, bitTarih, session);
+ 				} catch (Exception e) {
 					logger.error("Pdks hata in : \n");
 					e.printStackTrace();
 					logger.error("Pdks hata out : " + e.getMessage());
@@ -9526,23 +9524,26 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 */
 	private void tesisYoneticiIslemleri(User user, Date basTarih, Date bitTarih, Session session) {
-		Personel yoneticiPersonel = user.getPdksPersonel();
+		Personel userPersonel = user.getPdksPersonel();
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
 		sb.append("select P." + Personel.COLUMN_NAME_ID + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" where P." + Personel.COLUMN_NAME_SIRKET + " = :s");
-		sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t");
-		sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
+		sb.append(" where P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
 		sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :bitTarih ");
+		sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s");
 		fields.put("basTarih", basTarih);
 		fields.put("bitTarih", bitTarih);
-		fields.put("s", yoneticiPersonel.getSirket().getId());
-		fields.put("t", yoneticiPersonel.getTesis() != null ? yoneticiPersonel.getTesis().getId() : 0L);
+		fields.put("s", userPersonel.getSirket().getId());
+		if (user.isTesisSuperVisor() || user.isIK_Tesis()) {
+			sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t");
+			fields.put("t", userPersonel.getTesis() != null ? userPersonel.getTesis().getId() : 0L);
+		}
+		sb.append(" order by P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<Personel> userList = getPersonelList(sb, fields);
-		TreeMap personelMap = new TreeMap();
-		personelMap.put(yoneticiPersonel.getSicilNo(), yoneticiPersonel);
+		LinkedHashMap personelMap = new LinkedHashMap();
+		personelMap.put(userPersonel.getSicilNo(), userPersonel);
 		for (Personel personel : userList) {
 			try {
 				if (personel.getDurum())
@@ -9560,44 +9561,6 @@ public class OrtakIslemler implements Serializable {
 		}
 		personelMap = null;
 
-	}
-
-	/**
-	 * @param user
-	 * @param basTarih
-	 * @param bitTarih
-	 * @param session
-	 */
-	private void projeMuduruIslemleri(User user, Date basTarih, Date bitTarih, Session session) {
-		HashMap fields = new HashMap();
-		StringBuffer sb = new StringBuffer();
-		sb.append("select P." + Personel.COLUMN_NAME_ID + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" where P." + Personel.COLUMN_NAME_SIRKET + " = :s");
-		fields.put("basTarih", basTarih);
-		sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
-
-		fields.put("s", user.getPdksPersonel().getSirket().getId());
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<Personel> userList = getPersonelList(sb, fields);
-		long lBitTarih = bitTarih.getTime(), lBasTarih = basTarih.getTime();
-		TreeMap personelMap = new TreeMap();
-		for (Personel personel : userList) {
-			try {
-				if (personel.getDurum() && personel.getIseBaslamaTarihi() != null && personel.getIseBaslamaTarihi().getTime() <= lBitTarih && personel.getSonCalismaTarihi().getTime() >= lBasTarih)
-					if (PdksUtil.hasStringValue(personel.getPdksSicilNo()))
-						personelMap.put(personel.getSicilNo(), personel);
-
-			} catch (Exception e) {
-				logger.error(personel.getAdSoyad() + " " + e.getMessage());
-				e.printStackTrace();
-			}
-		}
-		if (!personelMap.isEmpty()) {
-			user.setYetkiliPersonelNoList(new ArrayList(personelMap.keySet()));
-			user.setYetkiliPersoneller(new ArrayList<Personel>(personelMap.values()));
-		}
-		personelMap = null;
 	}
 
 	/**

@@ -82,7 +82,7 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	private boolean projeMuduru = Boolean.FALSE, mudur = Boolean.FALSE, superVisor = Boolean.FALSE, IKDirektor = Boolean.FALSE, personel = Boolean.FALSE;
 	private boolean operatorSSK = Boolean.FALSE, yetkiSet = Boolean.FALSE, tesisSuperVisor = Boolean.FALSE, direktorSuperVisor = Boolean.FALSE, taseronAdmin = Boolean.FALSE;
 	private boolean browserIE, izinGirebilir = Boolean.FALSE, izinSSKGirebilir = Boolean.FALSE, izinOnaylayabilir = Boolean.FALSE, testLogin = Boolean.FALSE;
-	private boolean tesisYonetici, raporKullanici = Boolean.FALSE;
+	private boolean sirketSuperVisor = Boolean.FALSE, raporKullanici = Boolean.FALSE;
 	private ArrayList<User> userVekaletList;
 
 	private List<Personel> yetkiliPersoneller, ikinciYoneticiPersonel;
@@ -321,17 +321,6 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	public void setProjeMuduru(Boolean projeMuduru) {
 		this.projeMuduru = projeMuduru;
-	}
-
-	@Transient
-	public boolean isTesisYonetici() {
-		if (!yetkiSet)
-			PdksUtil.setUserYetki(this);
-		return tesisYonetici;
-	}
-
-	public void setTesisYonetici(Boolean tesisYonetici) {
-		this.tesisYonetici = tesisYonetici;
 	}
 
 	@Transient
@@ -1000,6 +989,8 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	@Transient
 	public boolean isSistemYoneticisi() {
+		if (!yetkiSet)
+			PdksUtil.setUserYetki(this);
 		return sistemYoneticisi;
 	}
 
@@ -1075,16 +1066,9 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	}
 
 	@Transient
-	public String getParametreJSON() {
-		return parametreJSON;
-	}
-
-	public void setParametreJSON(String parametreJSON) {
-		this.parametreJSON = parametreJSON;
-	}
-
-	@Transient
 	public boolean isIKSirket() {
+		if (!yetkiSet)
+			PdksUtil.setUserYetki(this);
 		return IKSirket;
 	}
 
@@ -1094,11 +1078,33 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	@Transient
 	public boolean isTesisSuperVisor() {
+		if (!yetkiSet)
+			PdksUtil.setUserYetki(this);
 		return tesisSuperVisor;
 	}
 
 	public void setTesisSuperVisor(boolean tesisSuperVisor) {
 		this.tesisSuperVisor = tesisSuperVisor;
+	}
+
+	@Transient
+	public boolean isSirketSuperVisor() {
+		if (!yetkiSet)
+			PdksUtil.setUserYetki(this);
+		return sirketSuperVisor;
+	}
+
+	public void setSirketSuperVisor(boolean sirketSuperVisor) {
+		this.sirketSuperVisor = sirketSuperVisor;
+	}
+
+	@Transient
+	public String getParametreJSON() {
+		return parametreJSON;
+	}
+
+	public void setParametreJSON(String parametreJSON) {
+		this.parametreJSON = parametreJSON;
 	}
 
 	@Transient
@@ -1122,4 +1128,5 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	public void entityRefresh() {
 
 	}
+
 }
