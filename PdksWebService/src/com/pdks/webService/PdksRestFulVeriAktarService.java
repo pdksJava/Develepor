@@ -26,7 +26,7 @@ import org.pdks.mail.model.MailObject;
 import org.pdks.mail.model.MailStatu;
 
 @Service
-@Path("/services")
+@Path("/servicesPDKS")
 public class PdksRestFulVeriAktarService implements Serializable {
 
 	/**
@@ -55,7 +55,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	public Response sendMail() throws Exception {
 		MailObject mail = null;
 		String sonuc = "";
-		String data = getBodyString();
+		String data = getBodyString(request);
 		MailStatu mailStatu = null;
 		if (data != null) {
 			mail = gson.fromJson(data, MailObject.class);
@@ -86,7 +86,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 		}
 		return response;
 	}
-	
+
 	/**
 	 * @return
 	 * @throws Exception
@@ -143,7 +143,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	public Response saveIzinler() throws Exception {
 		List<IzinERP> izinList = null;
 		String sonuc = "";
-		String data = getBodyString();
+		String data = getBodyString(request);
 		if (data != null) {
 			List<LinkedTreeMap> jsonList = gson.fromJson(data, List.class);
 			izinList = new ArrayList<IzinERP>();
@@ -177,7 +177,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response savePersoneller() throws Exception {
 		List<PersonelERP> personelList = null;
-		String data = getBodyString();
+		String data = getBodyString(request);
 		if (data != null) {
 			List<LinkedTreeMap> list3 = gson.fromJson(data, List.class);
 			personelList = new ArrayList<PersonelERP>();
@@ -217,7 +217,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	private String getBodyString() throws Exception {
+	public static String getBodyString(HttpServletRequest request) throws Exception {
 		String data = PdksUtil.StringToByInputStream(request.getInputStream());
 		return data;
 	}
