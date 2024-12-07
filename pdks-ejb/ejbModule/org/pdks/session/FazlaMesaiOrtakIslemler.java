@@ -2145,7 +2145,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			loginUser = authenticatedUser;
 		List<Tanim> list = null;
 
-		if (sirket != null && sirket.isTesisDurumu()) {
+		if (sirket != null && (sirket.isTesisDurumu() || loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis())) {
 			String tesisId = null;
 			if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
 				Personel personel = loginUser.getPdksPersonel();
