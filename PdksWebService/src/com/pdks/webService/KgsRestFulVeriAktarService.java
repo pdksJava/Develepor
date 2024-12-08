@@ -23,6 +23,7 @@ import org.pdks.dao.impl.BaseDAOHibernate;
 import org.pdks.genel.model.Constants;
 import org.pdks.genel.model.PdksUtil;
 import org.pdks.kgs.model.Cihaz;
+import org.pdks.kgs.model.CihazPersonel;
 import org.pdks.kgs.model.CihazTipi;
 import org.pdks.kgs.model.Durum;
 import org.springframework.stereotype.Service;
@@ -139,7 +140,8 @@ public class KgsRestFulVeriAktarService implements Serializable {
 				} else
 					sonuc = getKullaniciHatali("Cihaz yok!");
 
-			}
+			} else
+				sonuc = getKullaniciHatali("Kullanıcı bilgileri eksik!");
 		} catch (Exception e) {
 			sonuc = getKullaniciHatali("Hata oluştu!-->" + e);
 		}
@@ -155,12 +157,66 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	@Path("/savePersonel")
 	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	/**	
+	[
+	{
+		"id": 1,
+		"adi": "AHMET",
+		"soyadi": "CİNGÖZ",
+		"personelNo": "00121",
+		"kimlikNo": "3233300121",
+		"durum": 1
+	},
+	{
+		"id": 2,
+		"adi": "MERYEM",
+		"soyadi": "DEMİR",
+		"personelNo": "00123",
+		"kimlikNo": "3233222300121",
+		"durum": 1
+	}
+	]
+	  http://localhost:8080/PdksWebService/rest/servicesKGS/savePersonel
+	 **/
 	public Response savePersonel() throws Exception {
 		fonksiyon = "savePersonel";
-		HashMap<String, Object> durumMap = new HashMap<String, Object>();
 		Response response = null;
+		String sonuc = null;
 		try {
-			String sonuc = gson.toJson(durumMap);
+			LinkedHashMap<String, String> headers = getHeaders();
+			if (headers.containsKey("username") && headers.containsKey("password")) {
+				String json = PdksRestFulVeriAktarService.getBodyString(request);
+				List<LinkedTreeMap> dataList = gson.fromJson(json, List.class);
+				List<CihazPersonel> personeller = new ArrayList<CihazPersonel>();
+				if (!dataList.isEmpty()) {
+					for (LinkedTreeMap linkedTreeMap : dataList) {
+						json = gson.toJson(linkedTreeMap);
+						CihazPersonel cihazPersonel = gson.fromJson(json, CihazPersonel.class);
+						if (cihazPersonel.getId() != null && PdksUtil.hasStringValue(cihazPersonel.getPersonelNo()))
+							personeller.add(cihazPersonel);
+					}
+					if (!personeller.isEmpty()) {
+						LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+						headers.put("personeller", gson.toJson(personeller));
+						veriMap.put("jsonData", gson.toJson(headers));
+						PdksDAO pdksDAO = Constants.pdksDAO;
+						veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_PERSONEL");
+						String mesaj = null;
+						List sonucList = pdksDAO.execSPList(veriMap, null);
+						if (!sonucList.isEmpty() && sonucList.size() == 1) {
+							Object object = (Object) sonucList.get(0);
+							if (object instanceof String)
+								mesaj = (String) object;
+						}
+						sonuc = getKullaniciHatali(mesaj);
+					} else
+						sonuc = getKullaniciHatali("Personel bilgileri eksik!");
+				} else
+					sonuc = getKullaniciHatali("Personel yok!");
+
+			} else
+				sonuc = getKullaniciHatali("Kullanıcı bilgileri eksik!");
+
 			response = Response.ok(sonuc, MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {
 		}

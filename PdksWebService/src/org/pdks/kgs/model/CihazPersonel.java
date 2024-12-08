@@ -19,10 +19,6 @@ public class CihazPersonel implements Serializable {
 
 	private String kimlikNo;
 
-	private String girisTarihi;
-
-	private String cikisTarihi;
-
 	private Integer durum = Durum.AKTIF.value();
 
 	public CihazPersonel() {
@@ -76,22 +72,6 @@ public class CihazPersonel implements Serializable {
 
 	public void setKimlikNo(String kimlikNo) {
 		this.kimlikNo = kimlikNo;
-	}
-
-	public String getGirisTarihi() {
-		return girisTarihi;
-	}
-
-	public void setGirisTarihi(String girisTarihi) {
-		this.girisTarihi = girisTarihi;
-	}
-
-	public String getCikisTarihi() {
-		return cikisTarihi;
-	}
-
-	public void setCikisTarihi(String cikisTarihi) {
-		this.cikisTarihi = cikisTarihi;
 	}
 
 	public Integer getDurum() {
