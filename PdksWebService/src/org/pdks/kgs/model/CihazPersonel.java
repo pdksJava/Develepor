@@ -23,7 +23,7 @@ public class CihazPersonel implements Serializable {
 
 	private String cikisTarihi;
 
-	private Boolean durum = Boolean.TRUE;
+	private Integer durum = Durum.AKTIF.value();
 
 	public CihazPersonel() {
 		super();
@@ -94,11 +94,11 @@ public class CihazPersonel implements Serializable {
 		this.cikisTarihi = cikisTarihi;
 	}
 
-	public Boolean getDurum() {
+	public Integer getDurum() {
 		return durum;
 	}
 
-	public void setDurum(Boolean durum) {
+	public void setDurum(Integer durum) {
 		this.durum = durum;
 	}
 

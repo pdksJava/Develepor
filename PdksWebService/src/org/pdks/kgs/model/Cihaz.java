@@ -2,7 +2,9 @@ package org.pdks.kgs.model;
 
 import java.io.Serializable;
 
-public class Cihaz implements Serializable {
+import javax.persistence.Transient;
+
+public class Cihaz implements    Serializable, Cloneable {
 
 	/**
 	 * 
@@ -17,13 +19,13 @@ public class Cihaz implements Serializable {
 
 	private CihazTipi cihazTipi;
 
-	private Boolean durum = Boolean.TRUE;
+	private Integer durum = Durum.AKTIF.value();
 
 	public Cihaz() {
 		super();
 	}
 
-	public Cihaz(Long id, String adi, String tipi, Boolean durum) {
+	public Cihaz(Long id, String adi, String tipi, int durum) {
 		super();
 		this.id = id;
 		this.adi = adi;
@@ -66,12 +68,21 @@ public class Cihaz implements Serializable {
 		this.cihazTipi = cihazTipi;
 	}
 
-	public Boolean getDurum() {
+	public Integer getDurum() {
 		return durum;
 	}
 
-	public void setDurum(Boolean durum) {
+	public void setDurum(Integer durum) {
 		this.durum = durum;
 	}
-
+	@Transient
+	public Object clone() {
+		try {
+ 
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			// bu class cloneable oldugu icin buraya girilmemeli...
+			throw new InternalError();
+		}
+	}
 }

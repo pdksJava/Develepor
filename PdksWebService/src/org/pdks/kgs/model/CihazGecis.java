@@ -30,7 +30,7 @@ public class CihazGecis implements Serializable {
 
 	private CihazTipi cihazTipi;
 
-	private Boolean durum = Boolean.TRUE;
+	private Integer durum = Durum.AKTIF.value();
 
 	public CihazGecis() {
 		super();
@@ -103,11 +103,11 @@ public class CihazGecis implements Serializable {
 		this.cihazTipi = cihazTipi;
 	}
 
-	public Boolean getDurum() {
+	public Integer getDurum() {
 		return durum;
 	}
 
-	public void setDurum(Boolean durum) {
+	public void setDurum(Integer durum) {
 		this.durum = durum;
 	}
 

@@ -24,10 +24,11 @@ import org.pdks.genel.model.Constants;
 import org.pdks.genel.model.PdksUtil;
 import org.pdks.kgs.model.Cihaz;
 import org.pdks.kgs.model.CihazTipi;
+import org.pdks.kgs.model.Durum;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 
 @Service
 @Path("/servicesKGS")
@@ -47,6 +48,8 @@ public class KgsRestFulVeriAktarService implements Serializable {
 
 	private Gson gson = new Gson();
 
+	private String fonksiyon;
+
 	/**
 	 * @return
 	 * @throws Exception
@@ -56,83 +59,87 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	/**	
-	 {
-	 "id": 1,
-	 "adi": "Giriş",
-	 "tipi": "1",
-	 "durum": true
-	 }
+	[
+	{
+		"id": 1,
+		"adi": "Personel",
+		"tipi": "1",
+		"durum": 1
+	},
+	{
+		"id": 2,
+		"adi": "Muhasebe",
+		"tipi": null,
+		"durum": 1
+	}
+	]
 	  http://localhost:8080/PdksWebService/rest/servicesKGS/saveCihaz
 	 **/
 	public Response saveCihaz() throws Exception {
+		fonksiyon = "saveCihaz";
 		Response response = null;
 		String sonuc = null;
 		try {
 			LinkedHashMap<String, String> headers = getHeaders();
 			if (headers.containsKey("username") && headers.containsKey("password")) {
 				String json = PdksRestFulVeriAktarService.getBodyString(request);
-				Cihaz cihaz = gson.fromJson(json, Cihaz.class);
-				boolean devam = true;
-				CihazTipi cihazTipi = null;
-				if (PdksUtil.hasStringValue(cihaz.getTipi())) {
-					cihazTipi = cihaz.getCihazTipi();
-					if (cihazTipi == null) {
-						sonuc = getKullaniciHatali("Cihaz tipi hatalı [1:Giriş/2:Çıkış]");
-						devam = false;
-					}
-				}
-				if (devam) {
-					List<LinkedHashMap<String, Object>> list = new ArrayList<LinkedHashMap<String, Object>>();
-					int durum = cihaz.getDurum() != null && cihaz.getDurum() ? 1 : 0;
-					if (cihazTipi != null) {
-						LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-						veriMap.put("id", cihaz.getId());
-						veriMap.put("ad", cihaz.getAdi());
-						veriMap.put("tipi", cihazTipi.value());
-						veriMap.put("durum", durum);
-						veriMap.putAll(headers);
-						list.add(veriMap);
-					} else {
-						LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-						veriMap.put("id", cihaz.getId());
-						veriMap.put("ad", cihaz.getAdi() + " GİRİŞ");
-						veriMap.put("tipi", CihazTipi.GIRIS);
-						veriMap.put("durum", durum);
-						veriMap.putAll(headers);
-						list.add(veriMap);
-						veriMap = new LinkedHashMap<String, Object>();
-						veriMap.put("id", cihaz.getId());
-						veriMap.put("ad", cihaz.getAdi() + " ÇIKIŞ");
-						veriMap.put("tipi", CihazTipi.CIKIS);
-						veriMap.put("durum", durum);
-						veriMap.putAll(headers);
-						list.add(veriMap);
-					}
-					PdksDAO pdksDAO = Constants.pdksDAO;
-					int adet = 0;
-					String mesaj = "";
-					for (LinkedHashMap<String, Object> veriMap : list) {
-						veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ");
-						List<Object[]> sonucList = pdksDAO.execSPList(veriMap, null);
-						if (!sonucList.isEmpty()) {
-							Object[] objects = sonucList.get(0);
-							mesaj = (String) objects[0];
+				List<LinkedTreeMap> dataList = gson.fromJson(json, List.class);
+				List<Cihaz> cihazlar = new ArrayList<Cihaz>();
+				if (!dataList.isEmpty()) {
+					for (LinkedTreeMap linkedTreeMap : dataList) {
+						json = gson.toJson(linkedTreeMap);
+						Cihaz cihaz = gson.fromJson(json, Cihaz.class);
+						boolean devam = true;
+						CihazTipi cihazTipi = null;
+						if (PdksUtil.hasStringValue(cihaz.getTipi())) {
+							cihazTipi = cihaz.getCihazTipi();
+							if (cihazTipi == null) {
+								sonuc = getKullaniciHatali("Cihaz tipi hatalı [1:Giriş/2:Çıkış]");
+								devam = false;
+							}
 						}
-						adet += (sonucList != null && sonucList.size() == 1 ? 1 : 0);
+						if (devam)
+							if (cihaz.getId() == null || PdksUtil.hasStringValue(cihaz.getAdi()) == false)
+								devam = false;
+
+						if (devam) {
+							if (cihaz.getDurum() == null)
+								cihaz.setDurum(Durum.PASIF.value());
+							if (cihazTipi != null) {
+								cihazlar.add(cihaz);
+							} else {
+								Cihaz cihazGiris = (Cihaz) cihaz.clone(), cihazCikis = (Cihaz) cihaz.clone();
+								cihazlar.add(cihazGiris);
+								cihazlar.add(cihazCikis);
+								cihazGiris.setAdi(cihaz.getAdi() + " GİRİŞ");
+								cihazGiris.setTipi(CihazTipi.GIRIS.value());
+								cihazCikis.setAdi(cihaz.getAdi() + " ÇIKIŞ");
+								cihazCikis.setTipi(CihazTipi.CIKIS.value());
+
+							}
+						}
 					}
-					if (adet == list.size() && PdksUtil.hasStringValue(mesaj) == false) {
+					if (!cihazlar.isEmpty()) {
 						LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-						veriMap.put("id", cihaz.getId());
-						veriMap.put("durum", Boolean.TRUE);
-						sonuc = gson.toJson(veriMap);
-					} else
+						headers.put("cihazlar", gson.toJson(cihazlar));
+						veriMap.put("jsonData", gson.toJson(headers));
+						PdksDAO pdksDAO = Constants.pdksDAO;
+						veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ");
+						String mesaj = null;
+						List sonucList = pdksDAO.execSPList(veriMap, null);
+						if (!sonucList.isEmpty() && sonucList.size() == 1) {
+							Object object = (Object) sonucList.get(0);
+							if (object instanceof String)
+								mesaj = (String) object;
+						}
 						sonuc = getKullaniciHatali(mesaj);
+					} else
+						sonuc = getKullaniciHatali("Cihaz bilgileri eksik!");
 
-				}
+				} else
+					sonuc = getKullaniciHatali("Cihaz yok!");
 
-			} else
-				sonuc = getKullaniciHatali("Kullanıcı bilgi eksik!");
-
+			}
 		} catch (Exception e) {
 			sonuc = getKullaniciHatali("Hata oluştu!-->" + e);
 		}
@@ -148,7 +155,8 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	@Path("/savePersonel")
 	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response savePersonel(@RequestHeader(value = "User-Agent") String userAgent) throws Exception {
+	public Response savePersonel() throws Exception {
+		fonksiyon = "savePersonel";
 		HashMap<String, Object> durumMap = new HashMap<String, Object>();
 		Response response = null;
 		try {
@@ -167,8 +175,8 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	@Path("/saveCihazGecis")
 	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response saveCihazGecis(@RequestHeader(value = "User-Agent") String userAgent) throws Exception {
-
+	public Response saveCihazGecis() throws Exception {
+		fonksiyon = "saveCihazGecis";
 		HashMap<String, Object> durumMap = new HashMap<String, Object>();
 
 		Response response = null;
@@ -185,8 +193,11 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	 * @return
 	 */
 	private String getKullaniciHatali(String mesaj) {
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("hata", mesaj);
+		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+		map.put("fonksiyon", fonksiyon);
+		map.put("durum", mesaj == null);
+		if (mesaj != null)
+			map.put("hata", mesaj);
 		String sonuc = gson.toJson(map);
 		map = null;
 		return sonuc;
