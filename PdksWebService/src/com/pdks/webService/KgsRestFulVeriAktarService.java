@@ -17,14 +17,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.pdks.dao.PdksDAO;
-import org.pdks.dao.impl.BaseDAOHibernate;
-import org.pdks.genel.model.Constants;
-import org.pdks.genel.model.PdksUtil;
 import org.pdks.kgs.model.Cihaz;
 import org.pdks.kgs.model.CihazGecis;
 import org.pdks.kgs.model.CihazPersonel;
-import org.pdks.kgs.model.CihazTipi;
 import org.pdks.kgs.model.Sonuc;
 import org.springframework.stereotype.Service;
 

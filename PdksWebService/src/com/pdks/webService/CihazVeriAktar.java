@@ -44,8 +44,7 @@ public class CihazVeriAktar implements Serializable {
 		LinkedHashMap<String, String> headers = getHeaders();
 		if (headers != null && headers.isEmpty() == false) {
 			if (cihazlar != null && cihazlar.isEmpty() == false) {
-
-				CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
+ 				CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
 				sonuc = cihazVeriOrtakAktar.saveCihaz(cihazlar, headers);
 			} else
 				sonuc = getKullaniciHatali("Cihaz yok!");
