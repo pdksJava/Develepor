@@ -26,6 +26,7 @@ import org.pdks.kgs.model.CihazGecis;
 import org.pdks.kgs.model.CihazPersonel;
 import org.pdks.kgs.model.CihazTipi;
 import org.pdks.kgs.model.Durum;
+import org.pdks.kgs.model.Sonuc;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
@@ -320,15 +321,8 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	 * @return
 	 */
 	private String getKullaniciHatali(String mesaj) {
-		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-		map.put("fonksiyon", fonksiyon);
-		map.put("durum", mesaj == null);
-		if (mesaj != null)
-			map.put("hata", mesaj);
-		String sonuc = gson.toJson(map);
-		map = null;
-		return sonuc;
-
+		String string = gson.toJson(new Sonuc(fonksiyon, mesaj == null, mesaj));
+		return string;
 	}
 
 	/**
