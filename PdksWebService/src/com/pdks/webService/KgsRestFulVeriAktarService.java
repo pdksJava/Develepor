@@ -87,8 +87,9 @@ public class KgsRestFulVeriAktarService implements Serializable {
 						Cihaz cihaz = gson.fromJson(json, Cihaz.class);
 						cihazList.add(cihaz);
 					}
-
-				}
+				} else
+					sonuc = getKullaniciHatali("Cihaz yok!");
+				dataList = null;
 				CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
 				sonuc = getKullaniciHatali(cihazVeriOrtakAktar.saveCihaz(cihazList, headers).getHata());
 				cihazList = null;
@@ -139,8 +140,8 @@ public class KgsRestFulVeriAktarService implements Serializable {
 			if (headers.containsKey("username") && headers.containsKey("password")) {
 				String json = PdksRestFulVeriAktarService.getBodyString(request);
 				List<LinkedTreeMap> dataList = gson.fromJson(json, List.class);
-				List<CihazPersonel> personelList = new ArrayList<CihazPersonel>();
 				if (!dataList.isEmpty()) {
+					List<CihazPersonel> personelList = new ArrayList<CihazPersonel>();
 					for (LinkedTreeMap linkedTreeMap : dataList) {
 						json = gson.toJson(linkedTreeMap);
 						CihazPersonel cihazPersonel = gson.fromJson(json, CihazPersonel.class);
@@ -148,9 +149,10 @@ public class KgsRestFulVeriAktarService implements Serializable {
 					}
 					CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
 					sonuc = getKullaniciHatali(cihazVeriOrtakAktar.savePersonel(personelList, headers).getHata());
+					personelList = null;
 				} else
 					sonuc = getKullaniciHatali("Personel yok!");
-
+				dataList = null;
 			} else
 				sonuc = getKullaniciHatali("Kullanıcı bilgileri eksik!");
 
@@ -212,8 +214,8 @@ public class KgsRestFulVeriAktarService implements Serializable {
 			if (headers.containsKey("username") && headers.containsKey("password")) {
 				String json = PdksRestFulVeriAktarService.getBodyString(request);
 				List<LinkedTreeMap> dataList = gson.fromJson(json, List.class);
-				List<CihazGecis> gecisList = new ArrayList<CihazGecis>();
 				if (!dataList.isEmpty()) {
+					List<CihazGecis> gecisList = new ArrayList<CihazGecis>();
 					for (LinkedTreeMap linkedTreeMap : dataList) {
 						json = gson.toJson(linkedTreeMap);
 						CihazGecis cihazGecis = gson.fromJson(json, CihazGecis.class);
@@ -221,9 +223,10 @@ public class KgsRestFulVeriAktarService implements Serializable {
 					}
 					CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
 					sonuc = getKullaniciHatali(cihazVeriOrtakAktar.saveCihazGecis(gecisList, headers).getHata());
+					gecisList = null;
 				} else
 					sonuc = getKullaniciHatali("Cihaz geçiş yok!");
-
+				dataList = null;
 			} else
 				sonuc = getKullaniciHatali("Kullanıcı bilgileri eksik!");
 
