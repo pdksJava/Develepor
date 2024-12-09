@@ -3,7 +3,6 @@ package com.pdks.webService;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -23,6 +22,7 @@ import org.pdks.dao.impl.BaseDAOHibernate;
 import org.pdks.genel.model.Constants;
 import org.pdks.genel.model.PdksUtil;
 import org.pdks.kgs.model.Cihaz;
+import org.pdks.kgs.model.CihazGecis;
 import org.pdks.kgs.model.CihazPersonel;
 import org.pdks.kgs.model.CihazTipi;
 import org.pdks.kgs.model.Durum;
@@ -192,6 +192,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 					for (LinkedTreeMap linkedTreeMap : dataList) {
 						json = gson.toJson(linkedTreeMap);
 						CihazPersonel cihazPersonel = gson.fromJson(json, CihazPersonel.class);
+
 						if (cihazPersonel.getId() != null && PdksUtil.hasStringValue(cihazPersonel.getPersonelNo()))
 							personeller.add(cihazPersonel);
 					}
@@ -231,13 +232,83 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	@Path("/saveCihazGecis")
 	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	/**
+	
+	 [
+	 {
+	 "id": 1,
+	 "cihazId": 1,
+	 "personelId": 1,
+	 "tarih": "20241124",
+	 "saat": "1145",
+	 "tipi": "1",
+	 "durum": 1
+	 },
+	 {
+	 "id": 2,
+	 "cihazId": 2,
+	 "personelId": 2,
+	 "tarih": "20241124",
+	 "saat": "1135",
+	 "tipi": "1",
+	 "durum": 1
+	 },
+	 {
+	 "id": 3,
+	 "cihazId": 2,
+	 "personelId": 2,
+	 "tarih": "20241124",
+	 "saat": "1645",
+	 "tipi": "2",
+	 "durum": 1
+	 }	
+	
+	 ]
+	
+	 *  http://localhost:8080/PdksWebService/rest/servicesKGS/saveCihazGecis
+	 */
 	public Response saveCihazGecis() throws Exception {
 		fonksiyon = "saveCihazGecis";
-		HashMap<String, Object> durumMap = new HashMap<String, Object>();
-
+		String sonuc = null;
 		Response response = null;
 		try {
-			String sonuc = gson.toJson(durumMap);
+			LinkedHashMap<String, String> headers = getHeaders();
+			if (headers.containsKey("username") && headers.containsKey("password")) {
+				String json = PdksRestFulVeriAktarService.getBodyString(request);
+				List<LinkedTreeMap> dataList = gson.fromJson(json, List.class);
+				List<CihazGecis> gecisler = new ArrayList<CihazGecis>();
+				if (!dataList.isEmpty()) {
+					for (LinkedTreeMap linkedTreeMap : dataList) {
+						json = gson.toJson(linkedTreeMap);
+						CihazGecis cihazGecis = gson.fromJson(json, CihazGecis.class);
+						CihazTipi cihazTipi = CihazTipi.fromValue(cihazGecis.getTipi());
+						if (cihazGecis.getPersonelId() == null || cihazGecis.getCihazId() == null || cihazTipi == null)
+							continue;
+						if (cihazGecis.getId() != null && PdksUtil.hasStringValue(cihazGecis.getTarih()) && PdksUtil.hasStringValue(cihazGecis.getSaat()))
+							gecisler.add(cihazGecis);
+					}
+					if (!gecisler.isEmpty()) {
+						LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+						headers.put("gecisler", gson.toJson(gecisler));
+						veriMap.put("jsonData", gson.toJson(headers));
+						PdksDAO pdksDAO = Constants.pdksDAO;
+						veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_GECIS");
+						String mesaj = null;
+						List sonucList = pdksDAO.execSPList(veriMap, null);
+						if (!sonucList.isEmpty() && sonucList.size() == 1) {
+							Object object = (Object) sonucList.get(0);
+							if (object instanceof String)
+								mesaj = (String) object;
+						}
+						sonuc = getKullaniciHatali(mesaj);
+					} else
+						sonuc = getKullaniciHatali("Cihaz geçiş bilgileri eksik!");
+				} else
+					sonuc = getKullaniciHatali("Cihaz geçiş yok!");
+
+			} else
+				sonuc = getKullaniciHatali("Kullanıcı bilgileri eksik!");
+
 			response = Response.ok(sonuc, MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {
 		}
