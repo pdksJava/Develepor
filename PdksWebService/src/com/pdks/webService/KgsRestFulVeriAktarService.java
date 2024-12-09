@@ -90,7 +90,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 
 				}
 				CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
-				sonuc = cihazVeriOrtakAktar.saveCihaz(cihazList, headers).getHata();
+				sonuc = getKullaniciHatali(cihazVeriOrtakAktar.saveCihaz(cihazList, headers).getHata());
 				cihazList = null;
 			} else
 				sonuc = getKullaniciHatali("Kullanıcı bilgileri eksik!");
@@ -147,7 +147,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 						personelList.add(cihazPersonel);
 					}
 					CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
-					sonuc = cihazVeriOrtakAktar.savePersonel(personelList, headers).getHata();
+					sonuc = getKullaniciHatali(cihazVeriOrtakAktar.savePersonel(personelList, headers).getHata());
 				} else
 					sonuc = getKullaniciHatali("Personel yok!");
 
@@ -220,7 +220,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 						gecisList.add(cihazGecis);
 					}
 					CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
-					sonuc = cihazVeriOrtakAktar.saveCihazGecis(gecisList, headers).getHata();
+					sonuc = getKullaniciHatali(cihazVeriOrtakAktar.saveCihazGecis(gecisList, headers).getHata());
 				} else
 					sonuc = getKullaniciHatali("Cihaz geçiş yok!");
 

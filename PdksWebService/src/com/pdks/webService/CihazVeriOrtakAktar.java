@@ -88,8 +88,7 @@ public class CihazVeriOrtakAktar implements Serializable {
 				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 				headers.put("cihazlar", gson.toJson(cihazlar));
 				veriMap.put("jsonData", gson.toJson(headers));
-				PdksDAO pdksDAO = Constants.pdksDAO;
-				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ");
+ 				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ");
 				String mesaj = null;
 				List sonucList = pdksDAO.execSPList(veriMap, null);
 				if (!sonucList.isEmpty() && sonucList.size() == 1) {
@@ -126,8 +125,7 @@ public class CihazVeriOrtakAktar implements Serializable {
 				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 				headers.put("personeller", gson.toJson(personeller));
 				veriMap.put("jsonData", gson.toJson(headers));
-				PdksDAO pdksDAO = Constants.pdksDAO;
-				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_PERSONEL");
+ 				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_PERSONEL");
 				String mesaj = null;
 				List sonucList = pdksDAO.execSPList(veriMap, null);
 				if (!sonucList.isEmpty() && sonucList.size() == 1) {
@@ -166,8 +164,7 @@ public class CihazVeriOrtakAktar implements Serializable {
 				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 				headers.put("gecisler", gson.toJson(gecisler));
 				veriMap.put("jsonData", gson.toJson(headers));
-				PdksDAO pdksDAO = Constants.pdksDAO;
-				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_GECIS");
+ 				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_GECIS");
 				String mesaj = null;
 				List sonucList = pdksDAO.execSPList(veriMap, null);
 				if (!sonucList.isEmpty() && sonucList.size() == 1) {
