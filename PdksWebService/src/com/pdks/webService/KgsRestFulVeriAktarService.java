@@ -25,7 +25,6 @@ import org.pdks.kgs.model.Cihaz;
 import org.pdks.kgs.model.CihazGecis;
 import org.pdks.kgs.model.CihazPersonel;
 import org.pdks.kgs.model.CihazTipi;
-import org.pdks.kgs.model.Durum;
 import org.pdks.kgs.model.Sonuc;
 import org.springframework.stereotype.Service;
 
@@ -86,61 +85,18 @@ public class KgsRestFulVeriAktarService implements Serializable {
 			if (headers.containsKey("username") && headers.containsKey("password")) {
 				String json = PdksRestFulVeriAktarService.getBodyString(request);
 				List<LinkedTreeMap> dataList = gson.fromJson(json, List.class);
-				List<Cihaz> cihazlar = new ArrayList<Cihaz>();
+				List<Cihaz> cihazList = new ArrayList<Cihaz>();
 				if (!dataList.isEmpty()) {
 					for (LinkedTreeMap linkedTreeMap : dataList) {
 						json = gson.toJson(linkedTreeMap);
 						Cihaz cihaz = gson.fromJson(json, Cihaz.class);
-						boolean devam = true;
-						CihazTipi cihazTipi = null;
-						if (PdksUtil.hasStringValue(cihaz.getTipi())) {
-							cihazTipi = cihaz.getCihazTipi();
-							if (cihazTipi == null) {
-								sonuc = getKullaniciHatali("Cihaz tipi hatalı [1:Giriş/2:Çıkış]");
-								devam = false;
-							}
-						}
-						if (devam)
-							if (cihaz.getId() == null || PdksUtil.hasStringValue(cihaz.getAdi()) == false)
-								devam = false;
-
-						if (devam) {
-							if (cihaz.getDurum() == null)
-								cihaz.setDurum(Durum.PASIF.value());
-							if (cihazTipi != null) {
-								cihazlar.add(cihaz);
-							} else {
-								Cihaz cihazGiris = (Cihaz) cihaz.clone(), cihazCikis = (Cihaz) cihaz.clone();
-								cihazlar.add(cihazGiris);
-								cihazlar.add(cihazCikis);
-								cihazGiris.setAdi(cihaz.getAdi() + " GİRİŞ");
-								cihazGiris.setTipi(CihazTipi.GIRIS.value());
-								cihazCikis.setAdi(cihaz.getAdi() + " ÇIKIŞ");
-								cihazCikis.setTipi(CihazTipi.CIKIS.value());
-
-							}
-						}
+						cihazList.add(cihaz);
 					}
-					if (!cihazlar.isEmpty()) {
-						LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-						headers.put("cihazlar", gson.toJson(cihazlar));
-						veriMap.put("jsonData", gson.toJson(headers));
-						PdksDAO pdksDAO = Constants.pdksDAO;
-						veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ");
-						String mesaj = null;
-						List sonucList = pdksDAO.execSPList(veriMap, null);
-						if (!sonucList.isEmpty() && sonucList.size() == 1) {
-							Object object = (Object) sonucList.get(0);
-							if (object instanceof String)
-								mesaj = (String) object;
-						}
-						sonuc = getKullaniciHatali(mesaj);
-					} else
-						sonuc = getKullaniciHatali("Cihaz bilgileri eksik!");
 
-				} else
-					sonuc = getKullaniciHatali("Cihaz yok!");
-
+				}
+				CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
+				sonuc = cihazVeriOrtakAktar.saveCihaz(cihazList, headers).getHata();
+				cihazList = null;
 			} else
 				sonuc = getKullaniciHatali("Kullanıcı bilgileri eksik!");
 		} catch (Exception e) {
@@ -188,31 +144,15 @@ public class KgsRestFulVeriAktarService implements Serializable {
 			if (headers.containsKey("username") && headers.containsKey("password")) {
 				String json = PdksRestFulVeriAktarService.getBodyString(request);
 				List<LinkedTreeMap> dataList = gson.fromJson(json, List.class);
-				List<CihazPersonel> personeller = new ArrayList<CihazPersonel>();
+				List<CihazPersonel> personelList = new ArrayList<CihazPersonel>();
 				if (!dataList.isEmpty()) {
 					for (LinkedTreeMap linkedTreeMap : dataList) {
 						json = gson.toJson(linkedTreeMap);
 						CihazPersonel cihazPersonel = gson.fromJson(json, CihazPersonel.class);
-
-						if (cihazPersonel.getId() != null && PdksUtil.hasStringValue(cihazPersonel.getPersonelNo()))
-							personeller.add(cihazPersonel);
+						personelList.add(cihazPersonel);
 					}
-					if (!personeller.isEmpty()) {
-						LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-						headers.put("personeller", gson.toJson(personeller));
-						veriMap.put("jsonData", gson.toJson(headers));
-						PdksDAO pdksDAO = Constants.pdksDAO;
-						veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_PERSONEL");
-						String mesaj = null;
-						List sonucList = pdksDAO.execSPList(veriMap, null);
-						if (!sonucList.isEmpty() && sonucList.size() == 1) {
-							Object object = (Object) sonucList.get(0);
-							if (object instanceof String)
-								mesaj = (String) object;
-						}
-						sonuc = getKullaniciHatali(mesaj);
-					} else
-						sonuc = getKullaniciHatali("Personel bilgileri eksik!");
+					CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
+					sonuc = cihazVeriOrtakAktar.savePersonel(personelList, headers).getHata();
 				} else
 					sonuc = getKullaniciHatali("Personel yok!");
 
@@ -277,33 +217,15 @@ public class KgsRestFulVeriAktarService implements Serializable {
 			if (headers.containsKey("username") && headers.containsKey("password")) {
 				String json = PdksRestFulVeriAktarService.getBodyString(request);
 				List<LinkedTreeMap> dataList = gson.fromJson(json, List.class);
-				List<CihazGecis> gecisler = new ArrayList<CihazGecis>();
+				List<CihazGecis> gecisList = new ArrayList<CihazGecis>();
 				if (!dataList.isEmpty()) {
 					for (LinkedTreeMap linkedTreeMap : dataList) {
 						json = gson.toJson(linkedTreeMap);
 						CihazGecis cihazGecis = gson.fromJson(json, CihazGecis.class);
-						CihazTipi cihazTipi = CihazTipi.fromValue(cihazGecis.getTipi());
-						if (cihazGecis.getPersonelId() == null || cihazGecis.getCihazId() == null || cihazTipi == null)
-							continue;
-						if (cihazGecis.getId() != null && PdksUtil.hasStringValue(cihazGecis.getTarih()) && PdksUtil.hasStringValue(cihazGecis.getSaat()))
-							gecisler.add(cihazGecis);
+						gecisList.add(cihazGecis);
 					}
-					if (!gecisler.isEmpty()) {
-						LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-						headers.put("gecisler", gson.toJson(gecisler));
-						veriMap.put("jsonData", gson.toJson(headers));
-						PdksDAO pdksDAO = Constants.pdksDAO;
-						veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_GECIS");
-						String mesaj = null;
-						List sonucList = pdksDAO.execSPList(veriMap, null);
-						if (!sonucList.isEmpty() && sonucList.size() == 1) {
-							Object object = (Object) sonucList.get(0);
-							if (object instanceof String)
-								mesaj = (String) object;
-						}
-						sonuc = getKullaniciHatali(mesaj);
-					} else
-						sonuc = getKullaniciHatali("Cihaz geçiş bilgileri eksik!");
+					CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
+					sonuc = cihazVeriOrtakAktar.saveCihazGecis(gecisList, headers).getHata();
 				} else
 					sonuc = getKullaniciHatali("Cihaz geçiş yok!");
 

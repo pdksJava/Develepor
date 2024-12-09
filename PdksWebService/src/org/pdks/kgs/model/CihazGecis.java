@@ -1,9 +1,6 @@
 package org.pdks.kgs.model;
 
 import java.io.Serializable;
-import java.util.Date;
-
-import org.pdks.genel.model.PdksUtil;
 
 public class CihazGecis implements Serializable {
 
@@ -25,10 +22,6 @@ public class CihazGecis implements Serializable {
 	private String saat;
 
 	private String tipi;
-
-	private Date zaman;
-
-	private CihazTipi cihazTipi;
 
 	private Integer durum = Durum.AKTIF.value();
 
@@ -95,14 +88,6 @@ public class CihazGecis implements Serializable {
 		this.tipi = tipi;
 	}
 
-	public CihazTipi getCihazTipi() {
-		return cihazTipi;
-	}
-
-	public void setCihazTipi(CihazTipi cihazTipi) {
-		this.cihazTipi = cihazTipi;
-	}
-
 	public Integer getDurum() {
 		return durum;
 	}
@@ -113,18 +98,6 @@ public class CihazGecis implements Serializable {
 
 	public static String getTarihFormat() {
 		return tarihFormat;
-	}
-
-	public Date getZaman() {
-		if (zaman == null) {
-			String pattern = (PdksUtil.hasStringValue(tarihFormat) ? tarihFormat : "yyyyMMdd").substring(0, tarih.length()) + " " + (PdksUtil.hasStringValue(saatFormat) ? saatFormat : "HHmmss").substring(0, saat.length());
-			zaman = PdksUtil.convertToJavaDate(tarih + " " + saat, pattern);
-		}
-		return zaman;
-	}
-
-	public void setZaman(Date zaman) {
-		this.zaman = zaman;
 	}
 
 	public static void setTarihFormat(String tarihFormat) {

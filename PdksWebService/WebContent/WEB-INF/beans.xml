@@ -4,10 +4,21 @@
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
-	<bean id="myInInterceptor" class="com.pdks.webService.WSLoggingInInterceptor"/>
-	<bean id="myOutInterceptor" class="com.pdks.webService.WSLoggingOutInterceptor"/>
+	<bean id="myInInterceptor" class="com.pdks.webService.WSLoggingInInterceptor" />
+	<bean id="myOutInterceptor" class="com.pdks.webService.WSLoggingOutInterceptor" />
 	<jaxws:endpoint xmlns:tns="http://webService.pdks.com/" id="pdkssoapveriaktar" implementor="com.pdks.webService.PdksSoapVeriAktar"
 		wsdlLocation="wsdl/pdksSoapVeriAktar.wsdl" endpointName="tns:PdksSoapVeriAktarPort" serviceName="tns:PdksSoapVeriAktarService" address="/PdksSoapVeriAktarPort">
+		<jaxws:inInterceptors>
+			<bean class="com.pdks.webService.WSLoggingInInterceptor" />
+			<ref bean="myInInterceptor" />
+		</jaxws:inInterceptors>
+		<jaxws:outInterceptors>
+			<bean class="com.pdks.webService.WSLoggingOutInterceptor" />
+			<ref bean="myOutInterceptor" />
+		</jaxws:outInterceptors>
+	</jaxws:endpoint>
+	<jaxws:endpoint xmlns:tns="http://webService.pdks.com/" id="cihazveriaktar" implementor="com.pdks.webService.CihazVeriAktar"
+		wsdlLocation="wsdl/cihazVeriAktar.wsdl" endpointName="tns:CihazVeriAktarPort" serviceName="tns:CihazVeriAktar" address="/CihazVeriAktarPort">
 		<jaxws:inInterceptors>
 			<bean class="com.pdks.webService.WSLoggingInInterceptor" />
 			<ref bean="myInInterceptor" />

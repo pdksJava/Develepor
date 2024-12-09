@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="CihazVeriAktar" targetNamespace="http://webService.pdks.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:tns="http://webService.pdks.com/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+	<wsdl:types>
+		<xs:schema attributeFormDefault="unqualıfıed" elementFormDefault="unqualıfıed" targetNamespace="http://webService.pdks.com/" xmlns:tns="http://webService.pdks.com/"
+			xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:complexType name="cihazPersonel">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="adi" type="xs:string" />
+					<xs:element minOccurs="0" name="durum" type="xs:int" />
+					<xs:element minOccurs="0" name="id" type="xs:long" />
+					<xs:element minOccurs="0" name="kimlikNo" type="xs:string" />
+					<xs:element minOccurs="0" name="personelNo" type="xs:string" />
+					<xs:element minOccurs="0" name="soyadi" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="sonuc">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="durum" type="xs:boolean" />
+					<xs:element minOccurs="0" name="fonksiyon" type="xs:string" />
+					<xs:element minOccurs="0" name="hata" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="cihaz">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="adi" type="xs:string" />
+					<xs:element minOccurs="0" name="durum" type="xs:int" />
+					<xs:element minOccurs="0" name="id" type="xs:long" />
+					<xs:element minOccurs="0" name="tipi" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="cihazGecis">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="cihazId" type="xs:long" />
+					<xs:element minOccurs="0" name="durum" type="xs:int" />
+					<xs:element minOccurs="0" name="id" type="xs:long" />
+					<xs:element minOccurs="0" name="personelId" type="xs:long" />
+					<xs:element minOccurs="0" name="saat" type="xs:string" />
+					<xs:element minOccurs="0" name="tarih" type="xs:string" />
+					<xs:element minOccurs="0" name="tipi" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:simpleType name="CihazTipi">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="1" />
+					<xs:enumeration value="2" />
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="Exception" type="tns:Exception" />
+			<xs:complexType name="Exception">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="message" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="savePersonel" type="tns:savePersonel" />
+			<xs:complexType name="savePersonel">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="personeller" type="tns:cihazPersonel" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="savePersonelResponse" type="tns:savePersonelResponse" />
+			<xs:complexType name="savePersonelResponse">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="return" type="tns:sonuc" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="saveCihaz" type="tns:saveCihaz" />
+			<xs:complexType name="saveCihaz">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="cihazlar" type="tns:cihaz" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="saveCihazResponse" type="tns:saveCihazResponse" />
+			<xs:complexType name="saveCihazResponse">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="return" type="tns:sonuc" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="saveCihazGecis" type="tns:saveCihazGecis" />
+			<xs:complexType name="saveCihazGecis">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="gecisler" type="tns:cihazGecis" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="saveCihazGecisResponse" type="tns:saveCihazGecisResponse" />
+			<xs:complexType name="saveCihazGecisResponse">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="return" type="tns:sonuc" />
+				</xs:sequence>
+			</xs:complexType>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="savePersonel">
+		<wsdl:part name="parameters" element="tns:savePersonel">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="saveCihaz">
+		<wsdl:part name="parameters" element="tns:saveCihaz">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="saveCihazResponse">
+		<wsdl:part name="parameters" element="tns:saveCihazResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="savePersonelResponse">
+		<wsdl:part name="parameters" element="tns:savePersonelResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="Exception">
+		<wsdl:part name="Exception" element="tns:Exception">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="saveCihazGecis">
+		<wsdl:part name="parameters" element="tns:saveCihazGecis">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="saveCihazGecisResponse">
+		<wsdl:part name="parameters" element="tns:saveCihazGecisResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="CihazVeriAktarPortType">
+		<wsdl:operation name="savePersonel">
+			<wsdl:input name="savePersonel" message="tns:savePersonel">
+			</wsdl:input>
+			<wsdl:output name="savePersonelResponse" message="tns:savePersonelResponse">
+			</wsdl:output>
+			<wsdl:fault name="Exception" message="tns:Exception">
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="saveCihaz">
+			<wsdl:input name="saveCihaz" message="tns:saveCihaz">
+			</wsdl:input>
+			<wsdl:output name="saveCihazResponse" message="tns:saveCihazResponse">
+			</wsdl:output>
+			<wsdl:fault name="Exception" message="tns:Exception">
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="saveCihazGecis">
+			<wsdl:input name="saveCihazGecis" message="tns:saveCihazGecis">
+			</wsdl:input>
+			<wsdl:output name="saveCihazGecisResponse" message="tns:saveCihazGecisResponse">
+			</wsdl:output>
+			<wsdl:fault name="Exception" message="tns:Exception">
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="CihazVeriAktarSoapBinding" type="tns:CihazVeriAktarPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="savePersonel">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input name="savePersonel">
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output name="savePersonelResponse">
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="Exception">
+				<soap:fault name="Exception" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="saveCihaz">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input name="saveCihaz">
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output name="saveCihazResponse">
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="Exception">
+				<soap:fault name="Exception" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="saveCihazGecis">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input name="saveCihazGecis">
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output name="saveCihazGecisResponse">
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="Exception">
+				<soap:fault name="Exception" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="CihazVeriAktar">
+		<wsdl:port name="CihazVeriAktarPort" binding="tns:CihazVeriAktarSoapBinding">
+			<soap:address location="http://localhost:8080/PdksWebService/services/CihazVeriAktarPort" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

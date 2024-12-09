@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Transient;
 
-public class Cihaz implements    Serializable, Cloneable {
+public class Cihaz implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -16,8 +16,6 @@ public class Cihaz implements    Serializable, Cloneable {
 	private String adi;
 
 	private String tipi;
-
-	private CihazTipi cihazTipi;
 
 	private Integer durum = Durum.AKTIF.value();
 
@@ -31,7 +29,6 @@ public class Cihaz implements    Serializable, Cloneable {
 		this.adi = adi;
 		this.tipi = tipi;
 		this.durum = durum;
-		this.setCihazTipi(CihazTipi.fromValue(tipi));
 	}
 
 	public Long getId() {
@@ -58,16 +55,6 @@ public class Cihaz implements    Serializable, Cloneable {
 		this.tipi = tipi;
 	}
 
-	public CihazTipi getCihazTipi() {
-		if (cihazTipi == null && tipi != null)
-			this.cihazTipi = CihazTipi.fromValue(tipi);
-		return cihazTipi;
-	}
-
-	public void setCihazTipi(CihazTipi cihazTipi) {
-		this.cihazTipi = cihazTipi;
-	}
-
 	public Integer getDurum() {
 		return durum;
 	}
@@ -75,10 +62,11 @@ public class Cihaz implements    Serializable, Cloneable {
 	public void setDurum(Integer durum) {
 		this.durum = durum;
 	}
+
 	@Transient
 	public Object clone() {
 		try {
- 
+
 			return super.clone();
 		} catch (CloneNotSupportedException e) {
 			// bu class cloneable oldugu icin buraya girilmemeli...
