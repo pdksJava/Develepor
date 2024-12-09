@@ -5,11 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.jws.WebMethod;
 import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebServiceContext;
 
 import org.apache.cxf.headers.Header;
@@ -22,7 +18,6 @@ import org.pdks.kgs.model.CihazGecis;
 import org.pdks.kgs.model.CihazPersonel;
 import org.pdks.kgs.model.Sonuc;
 
-@WebService(targetNamespace = "http://webService.pdks.com/", portName = "CihazVeriAktarPort", serviceName = "CihazVeriAktarService")
 public class CihazVeriAktar implements Serializable {
 
 	/**
@@ -35,16 +30,13 @@ public class CihazVeriAktar implements Serializable {
 	@Resource
 	private WebServiceContext context;
 
-	@WebMethod(operationName = "saveCihaz", action = "urn:SaveCihaz")
-	@RequestWrapper(className = "com.pdks.webService.jaxws.SaveCihaz", localName = "saveCihaz", targetNamespace = "http://webService.pdks.com/")
-	@ResponseWrapper(className = "com.pdks.webService.jaxws.SaveCihazResponse", localName = "saveCihazResponse", targetNamespace = "http://webService.pdks.com/")
 	public Sonuc saveCihaz(@WebParam(name = "cihazlar") List<Cihaz> cihazlar) throws Exception {
 		fonksiyon = "saveCihaz";
 		Sonuc sonuc = null;
 		LinkedHashMap<String, String> headers = getHeaders();
 		if (headers != null && headers.isEmpty() == false) {
 			if (cihazlar != null && cihazlar.isEmpty() == false) {
- 				CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
+				CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
 				sonuc = cihazVeriOrtakAktar.saveCihaz(cihazlar, headers);
 			} else
 				sonuc = getKullaniciHatali("Cihaz yok!");
@@ -54,9 +46,6 @@ public class CihazVeriAktar implements Serializable {
 		return sonuc;
 	}
 
-	@WebMethod(operationName = "savePersonel", action = "urn:SavePersonel")
-	@RequestWrapper(className = "com.pdks.webService.jaxws.SavePersonel", localName = "savePersonel", targetNamespace = "http://webService.pdks.com/")
-	@ResponseWrapper(className = "com.pdks.webService.jaxws.SavePersonelResponse", localName = "savePersonelResponse", targetNamespace = "http://webService.pdks.com/")
 	public Sonuc savePersonel(@WebParam(name = "personeller") List<CihazPersonel> personeller) throws Exception {
 		fonksiyon = "savePersonel";
 		Sonuc sonuc = null;
@@ -73,9 +62,6 @@ public class CihazVeriAktar implements Serializable {
 		return sonuc;
 	}
 
-	@WebMethod(operationName = "saveCihazGecis", action = "urn:SaveCihazGecis")
-	@RequestWrapper(className = "com.pdks.webService.jaxws.SaveCihazGecis", localName = "saveCihazGecis", targetNamespace = "http://webService.pdks.com/")
-	@ResponseWrapper(className = "com.pdks.webService.jaxws.SaveCihazGecisResponse", localName = "saveCihazGecisResponse", targetNamespace = "http://webService.pdks.com/")
 	public Sonuc saveCihazGecis(@WebParam(name = "gecisler") List<CihazGecis> gecisler) throws Exception {
 		fonksiyon = "saveCihazGecis";
 		Sonuc sonuc = null;

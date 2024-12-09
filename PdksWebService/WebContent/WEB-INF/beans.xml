@@ -17,15 +17,5 @@
 			<ref bean="myOutInterceptor" />
 		</jaxws:outInterceptors>
 	</jaxws:endpoint>
-	<jaxws:endpoint xmlns:tns="http://webService.pdks.com/" id="cihazveriaktar" implementor="com.pdks.webService.CihazVeriAktar"
-		wsdlLocation="wsdl/cihazVeriAktar.wsdl" endpointName="tns:CihazVeriAktarPort" serviceName="tns:CihazVeriAktar" address="/CihazVeriAktarPort">
-		<jaxws:inInterceptors>
-			<bean class="com.pdks.webService.WSLoggingInInterceptor" />
-			<ref bean="myInInterceptor" />
-		</jaxws:inInterceptors>
-		<jaxws:outInterceptors>
-			<bean class="com.pdks.webService.WSLoggingOutInterceptor" />
-			<ref bean="myOutInterceptor" />
-		</jaxws:outInterceptors>
-	</jaxws:endpoint>
+	 
 </beans>
