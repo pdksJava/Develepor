@@ -1,11 +1,14 @@
 package com.pdks.webService;
 
 import java.io.Serializable;
+import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.jws.WebParam;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import javax.xml.ws.WebServiceContext;
 
 import org.apache.cxf.headers.Header;
@@ -29,6 +32,9 @@ public class CihazVeriAktar implements Serializable {
 
 	@Resource
 	private WebServiceContext context;
+	
+	@Context
+	HttpServletRequest request;
 
 	public Sonuc saveCihaz(@WebParam(name = "cihazlar") List<Cihaz> cihazlar) throws Exception {
 		fonksiyon = "saveCihaz";
@@ -77,7 +83,7 @@ public class CihazVeriAktar implements Serializable {
 		return sonuc;
 	}
 
-	private LinkedHashMap<String, String> getHeaders() {
+	public LinkedHashMap<String, String> getMessageHeaders() {
 		LinkedHashMap<String, String> headerMap = new LinkedHashMap<String, String>();
 		MessageContext messageContext = (MessageContext) context.getMessageContext();
 		if (messageContext == null || !(messageContext instanceof WrappedMessageContext)) {
@@ -98,6 +104,27 @@ public class CihazVeriAktar implements Serializable {
 
 		}
 		return headerMap;
+	}
+	
+	/**
+	 * @return
+	 */
+	private LinkedHashMap<String, String> getHeaders() {
+		LinkedHashMap<String, String> headers = new LinkedHashMap<String, String>();
+		String username = null, password = null;
+		for (Enumeration<String> e = request.getHeaderNames(); e.hasMoreElements();) {
+			String nextHeaderName = (String) e.nextElement();
+			String headerValue = request.getHeader(nextHeaderName);
+			if (nextHeaderName.equals("username"))
+				username = headerValue;
+			else if (nextHeaderName.equals("password"))
+				password = headerValue;
+		}
+		if (username != null)
+			headers.put("username", username);
+		if (password != null)
+			headers.put("password", password);
+		return headers;
 	}
 
 	/**
