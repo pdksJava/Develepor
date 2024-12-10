@@ -9275,7 +9275,7 @@ public class OrtakIslemler implements Serializable {
 			if (user.isProjeMuduru()) {
 				try {
 					tesisYoneticiIslemleri(user, basTarih, bitTarih, session);
- 				} catch (Exception e) {
+				} catch (Exception e) {
 					logger.error("Pdks hata in : \n");
 					e.printStackTrace();
 					logger.error("Pdks hata out : " + e.getMessage());
@@ -9534,9 +9534,11 @@ public class OrtakIslemler implements Serializable {
 		fields.put("basTarih", basTarih);
 		fields.put("bitTarih", bitTarih);
 		fields.put("s", userPersonel.getSirket().getId());
+		Long tesisId = null;
 		if (user.isTesisSuperVisor() || user.isIK_Tesis()) {
-			sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t");
-			fields.put("t", userPersonel.getTesis() != null ? userPersonel.getTesis().getId() : 0L);
+			tesisId = userPersonel.getTesis() != null ? userPersonel.getTesis().getId() : null;
+			// sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t");
+			// fields.put("t", userPersonel.getTesis() != null ? userPersonel.getTesis().getId() : 0L);
 		}
 		sb.append(" order by P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
 		if (session != null)
@@ -9544,8 +9546,11 @@ public class OrtakIslemler implements Serializable {
 		List<Personel> userList = getPersonelList(sb, fields);
 		LinkedHashMap personelMap = new LinkedHashMap();
 		personelMap.put(userPersonel.getSicilNo(), userPersonel);
+
 		for (Personel personel : userList) {
 			try {
+				if (tesisId != null && (personel.getTesis() == null || personel.getTesis().getId().equals(tesisId) == false))
+					continue;
 				if (personel.getDurum())
 					if (PdksUtil.hasStringValue(personel.getPdksSicilNo()))
 						personelMap.put(personel.getSicilNo(), personel);
