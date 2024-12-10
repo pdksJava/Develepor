@@ -1,18 +1,23 @@
 package com.pdks.webService;
 
 import java.io.Serializable;
-import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
+import javax.jws.WebResult;
+import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
+import javax.xml.ws.RequestWrapper;
+import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebServiceContext;
 
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
+import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.cxf.jaxrs.ext.MessageContext;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Message;
@@ -20,8 +25,11 @@ import org.apache.log4j.Logger;
 import org.pdks.kgs.model.Cihaz;
 import org.pdks.kgs.model.CihazGecis;
 import org.pdks.kgs.model.CihazPersonel;
+import org.pdks.kgs.model.CihazUser;
 import org.pdks.kgs.model.Sonuc;
 
+@WebService(targetNamespace = "http://webService.pdks.com/", portName = "CihazSoapVeriAktarPort", serviceName = "CihazSoapVeriAktarService")
+@InInterceptors(interceptors = { "com.pdks.webService.WSLoggingInInterceptor" })
 public class CihazSoapVeriAktar implements Serializable {
 
 	/**
@@ -38,14 +46,24 @@ public class CihazSoapVeriAktar implements Serializable {
 	@Context
 	HttpServletRequest request;
 
-	public Sonuc saveCihaz(@WebParam(name = "cihazlar") List<Cihaz> cihazlar) throws Exception {
+	@WebResult(name = "sonuc", targetNamespace = "")
+	@WebMethod(operationName = "saveCihaz", action = "urn:SaveCihaz")
+	@RequestWrapper(className = "com.pdks.webService.jaxws.SaveCihaz", localName = "saveCihaz", targetNamespace = "http://webService.pdks.com/")
+	@ResponseWrapper(className = "com.pdks.webService.jaxws.SaveCihazResponse", localName = "saveCihazResponse", targetNamespace = "http://webService.pdks.com/")
+	public Sonuc saveCihaz(@WebParam(name = "cihazlar") List<Cihaz> cihazlar, @WebParam(name = "user") CihazUser user) {
 		fonksiyon = "saveCihaz";
 		Sonuc sonuc = null;
-		LinkedHashMap<String, String> headers = getHeaders();
-		if (headers != null && headers.isEmpty() == false) {
+		if (user != null) {
 			if (cihazlar != null && cihazlar.isEmpty() == false) {
 				CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
-				sonuc = cihazVeriOrtakAktar.saveCihaz(cihazlar, headers);
+				try {
+					sonuc = cihazVeriOrtakAktar.saveCihaz(cihazlar, user);
+				} catch (Exception e) {
+					if (e.getMessage() != null)
+						sonuc = getKullaniciHatali(e.getMessage());
+					else
+						sonuc = getKullaniciHatali("Hata oluştu!");
+				}
 			} else
 				sonuc = getKullaniciHatali("Cihaz yok!");
 
@@ -54,14 +72,24 @@ public class CihazSoapVeriAktar implements Serializable {
 		return sonuc;
 	}
 
-	public Sonuc savePersonel(@WebParam(name = "personeller") List<CihazPersonel> personeller) throws Exception {
+	@WebResult(name = "sonuc", targetNamespace = "")
+	@WebMethod(operationName = "savePersonel", action = "urn:SavePersonel")
+	@RequestWrapper(className = "com.pdks.webService.jaxws.SavePersonel", localName = "savePersonel", targetNamespace = "http://webService.pdks.com/")
+	@ResponseWrapper(className = "com.pdks.webService.jaxws.SavePersonelResponse", localName = "savePersonelResponse", targetNamespace = "http://webService.pdks.com/")
+	public Sonuc savePersonel(@WebParam(name = "personeller") List<CihazPersonel> personeller, @WebParam(name = "user") CihazUser user) {
 		fonksiyon = "savePersonel";
 		Sonuc sonuc = null;
-		LinkedHashMap<String, String> headers = getHeaders();
-		if (headers != null && headers.isEmpty() == false) {
+		if (user != null) {
 			if (personeller != null && personeller.isEmpty() == false) {
 				CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
-				sonuc = cihazVeriOrtakAktar.savePersonel(personeller, headers);
+				try {
+					sonuc = cihazVeriOrtakAktar.savePersonel(personeller, user);
+				} catch (Exception e) {
+					if (e.getMessage() != null)
+						sonuc = getKullaniciHatali(e.getMessage());
+					else
+						sonuc = getKullaniciHatali("Hata oluştu!");
+				}
 			} else
 				sonuc = getKullaniciHatali("Personel yok!");
 
@@ -70,14 +98,24 @@ public class CihazSoapVeriAktar implements Serializable {
 		return sonuc;
 	}
 
-	public Sonuc saveCihazGecis(@WebParam(name = "gecisler") List<CihazGecis> gecisler) throws Exception {
+	@WebResult(name = "sonuc", targetNamespace = "")
+	@WebMethod(operationName = "saveCihazGecis", action = "urn:SaveCihazGecis")
+	@RequestWrapper(className = "com.pdks.webService.jaxws.SaveCihazGecis", localName = "saveCihazGecis", targetNamespace = "http://webService.pdks.com/")
+	@ResponseWrapper(className = "com.pdks.webService.jaxws.SaveCihazGecisResponse", localName = "saveCihazGecisResponse", targetNamespace = "http://webService.pdks.com/")
+	public Sonuc saveCihazGecis(@WebParam(name = "gecisler") List<CihazGecis> gecisler, @WebParam(name = "user") CihazUser user) {
 		fonksiyon = "saveCihazGecis";
 		Sonuc sonuc = null;
-		LinkedHashMap<String, String> headers = getHeaders();
-		if (headers != null && headers.isEmpty() == false) {
+		if (user != null) {
 			if (gecisler != null && gecisler.isEmpty() == false) {
 				CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
-				sonuc = cihazVeriOrtakAktar.saveCihazGecis(gecisler, headers);
+				try {
+					sonuc = cihazVeriOrtakAktar.saveCihazGecis(gecisler, user);
+				} catch (Exception e) {
+					if (e.getMessage() != null)
+						sonuc = getKullaniciHatali(e.getMessage());
+					else
+						sonuc = getKullaniciHatali("Hata oluştu!");
+				}
 			} else
 				sonuc = getKullaniciHatali("Cihaz geçiş yok!");
 		} else
@@ -87,46 +125,33 @@ public class CihazSoapVeriAktar implements Serializable {
 
 	protected LinkedHashMap<String, String> getMessageHeaders() {
 		LinkedHashMap<String, String> headerMap = new LinkedHashMap<String, String>();
-		MessageContext messageContext = (MessageContext) context.getMessageContext();
-		if (messageContext == null || !(messageContext instanceof WrappedMessageContext)) {
-			return headerMap;
-		}
-		Message message = ((WrappedMessageContext) messageContext).getWrappedMessage();
-		List<Header> headers = CastUtils.cast((List<?>) message.get(Header.HEADER_LIST));
-		if (headers != null) {
+		if (context.getMessageContext() != null) {
+			try {
+				MessageContext messageContext = (MessageContext) context.getMessageContext();
+				if (!(messageContext == null || !(messageContext instanceof WrappedMessageContext))) {
 
-			// String username = null, password = null;
-			// for (Header header : headers) {
-			//
-			// }
-			// if (username != null)
-			// headerMap.put("username", username);
-			// if (password != null)
-			// headerMap.put("password", password);
+					Message message = ((WrappedMessageContext) messageContext).getWrappedMessage();
+					List<Header> headers = CastUtils.cast((List<?>) message.get(Header.HEADER_LIST));
+					if (headers != null) {
+
+						// String username = null, password = null;
+						// for (Header header : headers) {
+						//
+						// }
+						// if (username != null)
+						// headerMap.put("username", username);
+						// if (password != null)
+						// headerMap.put("password", password);
+
+					}
+				}
+			} catch (Exception e) {
+
+			}
 
 		}
+
 		return headerMap;
-	}
-
-	/**
-	 * @return
-	 */
-	private LinkedHashMap<String, String> getHeaders() {
-		LinkedHashMap<String, String> headers = new LinkedHashMap<String, String>();
-		String username = null, password = null;
-		for (Enumeration<String> e = request.getHeaderNames(); e.hasMoreElements();) {
-			String nextHeaderName = (String) e.nextElement();
-			String headerValue = request.getHeader(nextHeaderName);
-			if (nextHeaderName.equals("username"))
-				username = headerValue;
-			else if (nextHeaderName.equals("password"))
-				password = headerValue;
-		}
-		if (username != null)
-			headers.put("username", username);
-		if (password != null)
-			headers.put("password", password);
-		return headers;
 	}
 
 	/**

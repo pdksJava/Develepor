@@ -15,7 +15,7 @@ public class Cihaz implements Serializable, Cloneable {
 
 	private String adi;
 
-	private String tipi;
+	private Integer tipi;
 
 	private Integer durum = Durum.AKTIF.value();
 
@@ -23,7 +23,7 @@ public class Cihaz implements Serializable, Cloneable {
 		super();
 	}
 
-	public Cihaz(Long id, String adi, String tipi, int durum) {
+	public Cihaz(Long id, String adi, Integer tipi, int durum) {
 		super();
 		this.id = id;
 		this.adi = adi;
@@ -47,11 +47,11 @@ public class Cihaz implements Serializable, Cloneable {
 		this.adi = adi;
 	}
 
-	public String getTipi() {
+	public Integer getTipi() {
 		return tipi;
 	}
 
-	public void setTipi(String tipi) {
+	public void setTipi(Integer tipi) {
 		this.tipi = tipi;
 	}
 

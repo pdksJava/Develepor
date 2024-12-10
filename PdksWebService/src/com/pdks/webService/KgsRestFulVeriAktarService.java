@@ -3,7 +3,6 @@ package com.pdks.webService;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.pdks.kgs.model.Cihaz;
 import org.pdks.kgs.model.CihazGecis;
 import org.pdks.kgs.model.CihazPersonel;
+import org.pdks.kgs.model.CihazUser;
 import org.pdks.kgs.model.Sonuc;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +59,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	{
 		"id": 1,
 		"adi": "Personel",
-		"tipi": "1",
+		"tipi": 1,
 		"durum": 1
 	},
 	{
@@ -76,8 +76,8 @@ public class KgsRestFulVeriAktarService implements Serializable {
 		Response response = null;
 		String sonuc = null;
 		try {
-			LinkedHashMap<String, String> headers = getHeaders();
-			if (headers.containsKey("username") && headers.containsKey("password")) {
+			CihazUser cihazUser = getCihazUser();
+			if (cihazUser != null) {
 				String json = PdksRestFulVeriAktarService.getBodyString(request);
 				List<LinkedTreeMap> dataList = gson.fromJson(json, List.class);
 				List<Cihaz> cihazList = new ArrayList<Cihaz>();
@@ -91,7 +91,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 					sonuc = getKullaniciHatali("Cihaz yok!");
 				dataList = null;
 				CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
-				sonuc = getKullaniciHatali(cihazVeriOrtakAktar.saveCihaz(cihazList, headers).getHata());
+				sonuc = getKullaniciHatali(cihazVeriOrtakAktar.saveCihaz(cihazList, cihazUser).getHata());
 				cihazList = null;
 			} else
 				sonuc = getKullaniciHatali("Kullanıcı bilgileri eksik!");
@@ -136,8 +136,8 @@ public class KgsRestFulVeriAktarService implements Serializable {
 		Response response = null;
 		String sonuc = null;
 		try {
-			LinkedHashMap<String, String> headers = getHeaders();
-			if (headers.containsKey("username") && headers.containsKey("password")) {
+			CihazUser cihazUser = getCihazUser();
+			if (cihazUser != null) {
 				String json = PdksRestFulVeriAktarService.getBodyString(request);
 				List<LinkedTreeMap> dataList = gson.fromJson(json, List.class);
 				if (!dataList.isEmpty()) {
@@ -148,7 +148,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 						personelList.add(cihazPersonel);
 					}
 					CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
-					sonuc = getKullaniciHatali(cihazVeriOrtakAktar.savePersonel(personelList, headers).getHata());
+					sonuc = getKullaniciHatali(cihazVeriOrtakAktar.savePersonel(personelList, cihazUser).getHata());
 					personelList = null;
 				} else
 					sonuc = getKullaniciHatali("Personel yok!");
@@ -179,7 +179,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	 "personelId": 1,
 	 "tarih": "20241124",
 	 "saat": "1145",
-	 "tipi": "1",
+	 "tipi": 1,
 	 "durum": 1
 	 },
 	 {
@@ -188,7 +188,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	 "personelId": 2,
 	 "tarih": "20241124",
 	 "saat": "1135",
-	 "tipi": "1",
+	 "tipi": 1,
 	 "durum": 1
 	 },
 	 {
@@ -197,7 +197,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	 "personelId": 2,
 	 "tarih": "20241124",
 	 "saat": "1645",
-	 "tipi": "2",
+	 "tipi": 2,
 	 "durum": 1
 	 }	
 	
@@ -210,8 +210,8 @@ public class KgsRestFulVeriAktarService implements Serializable {
 		String sonuc = null;
 		Response response = null;
 		try {
-			LinkedHashMap<String, String> headers = getHeaders();
-			if (headers.containsKey("username") && headers.containsKey("password")) {
+			CihazUser cihazUser = getCihazUser();
+			if (cihazUser != null) {
 				String json = PdksRestFulVeriAktarService.getBodyString(request);
 				List<LinkedTreeMap> dataList = gson.fromJson(json, List.class);
 				if (!dataList.isEmpty()) {
@@ -222,7 +222,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 						gecisList.add(cihazGecis);
 					}
 					CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
-					sonuc = getKullaniciHatali(cihazVeriOrtakAktar.saveCihazGecis(gecisList, headers).getHata());
+					sonuc = getKullaniciHatali(cihazVeriOrtakAktar.saveCihazGecis(gecisList, cihazUser).getHata());
 					gecisList = null;
 				} else
 					sonuc = getKullaniciHatali("Cihaz geçiş yok!");
@@ -248,8 +248,8 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	/**
 	 * @return
 	 */
-	private LinkedHashMap<String, String> getHeaders() {
-		LinkedHashMap<String, String> headers = new LinkedHashMap<String, String>();
+	private CihazUser getCihazUser() {
+		CihazUser user = null;
 		String username = null, password = null;
 		for (Enumeration<String> e = request.getHeaderNames(); e.hasMoreElements();) {
 			String nextHeaderName = (String) e.nextElement();
@@ -259,10 +259,9 @@ public class KgsRestFulVeriAktarService implements Serializable {
 			else if (nextHeaderName.equals("password"))
 				password = headerValue;
 		}
-		if (username != null)
-			headers.put("username", username);
-		if (password != null)
-			headers.put("password", password);
-		return headers;
+		if (username != null && password != null)
+			user = new CihazUser(username, password);
+
+		return user;
 	}
 }

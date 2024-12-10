@@ -4,33 +4,32 @@
 package org.pdks.kgs.model;
 
 import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType(name = "CihazTipi")
 @XmlEnum
 public enum CihazTipi {
-	@XmlEnumValue(value = "1")	GIRIS("1"),
-	@XmlEnumValue(value = "2") 	CIKIS("2");
+	GIRIS(1), CIKIS(2);
 
+	private final Integer value;
 
-	private final String value;
-
-	CihazTipi(String v) {
+	CihazTipi(Integer v) {
 		value = v;
 	}
 
-	public String value() {
+	public Integer value() {
 		return value;
 	}
 
-	public static CihazTipi fromValue(String v) {
+	public static CihazTipi fromValue(Integer v) {
+		CihazTipi ct = null;
 		for (CihazTipi c : CihazTipi.values()) {
 			if (c.value.equals(v)) {
-				return c;
+				ct = c;
 			}
 		}
-		throw new IllegalArgumentException( v);
+		return ct;
+
 	}
 
 }

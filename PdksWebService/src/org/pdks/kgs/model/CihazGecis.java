@@ -21,7 +21,7 @@ public class CihazGecis implements Serializable {
 
 	private String saat;
 
-	private String tipi;
+	private Integer tipi;
 
 	private Integer durum = Durum.AKTIF.value();
 
@@ -80,11 +80,11 @@ public class CihazGecis implements Serializable {
 		this.saat = saat;
 	}
 
-	public String getTipi() {
+	public Integer getTipi() {
 		return tipi;
 	}
 
-	public void setTipi(String tipi) {
+	public void setTipi(Integer tipi) {
 		this.tipi = tipi;
 	}
 
