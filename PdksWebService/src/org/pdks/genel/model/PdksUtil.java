@@ -59,6 +59,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.json.XML;
+import org.pdks.entity.Tanim;
 import org.w3c.dom.Node;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
@@ -70,7 +71,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.pdks.entity.Tanim;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.QNameMap;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
@@ -105,7 +105,6 @@ public class PdksUtil implements Serializable {
 
 	private static String sqlDateFormat = "yyyy-MM-dd", dateFormat = "dd/MM/yyyy", saatFormat = "H:mm", dateTimeFormat;
 
-
 	/**
 	 * @param orjinalName
 	 * @return
@@ -122,7 +121,7 @@ public class PdksUtil implements Serializable {
 
 		return hostName;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -616,19 +615,28 @@ public class PdksUtil implements Serializable {
 	 * @return
 	 */
 	public static String StringToByInputStream(InputStream in) {
-		String str = null;
+		String read = null;
 		try {
 			if (in != null) {
-				str = IOUtils.toString(in, "utf-8");
-				if (str != null && hasStringValue(str) == false)
-					str = null;
+				read = IOUtils.toString(in, "utf-8");
+				if (read != null && hasStringValue(read) == false)
+					read = null;
+				// StringBuilder sb = new StringBuilder();
+				// BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+				// while ((read = br.readLine()) != null)
+				// sb.append(read);
+				//
+				// br.close();
+				// read = sb.toString();
+				// sb = null;
+
 			}
 
 		} catch (Exception e) {
 			logger.error(e);
 		}
 
-		return str;
+		return read;
 	}
 
 	/**
