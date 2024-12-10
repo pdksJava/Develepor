@@ -21,7 +21,7 @@ import org.pdks.kgs.model.CihazGecis;
 import org.pdks.kgs.model.CihazPersonel;
 import org.pdks.kgs.model.Sonuc;
 
-public class CihazVeriAktar implements Serializable {
+public class CihazSoapVeriAktar implements Serializable {
 
 	/**
 	 * 
@@ -32,7 +32,7 @@ public class CihazVeriAktar implements Serializable {
 
 	@Resource
 	private WebServiceContext context;
-	
+
 	@Context
 	HttpServletRequest request;
 
@@ -83,7 +83,7 @@ public class CihazVeriAktar implements Serializable {
 		return sonuc;
 	}
 
-	public LinkedHashMap<String, String> getMessageHeaders() {
+	protected LinkedHashMap<String, String> getMessageHeaders() {
 		LinkedHashMap<String, String> headerMap = new LinkedHashMap<String, String>();
 		MessageContext messageContext = (MessageContext) context.getMessageContext();
 		if (messageContext == null || !(messageContext instanceof WrappedMessageContext)) {
@@ -105,7 +105,7 @@ public class CihazVeriAktar implements Serializable {
 		}
 		return headerMap;
 	}
-	
+
 	/**
 	 * @return
 	 */
