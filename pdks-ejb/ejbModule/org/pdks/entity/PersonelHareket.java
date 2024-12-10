@@ -24,13 +24,12 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -5219058136293602171L;
-	
+
 	public static final String TABLE_NAME = "PDKS_HAREKET";
-	
-	
 
 	public static final String COLUMN_NAME_PER_NO = "PER_NO";
 	public static final String COLUMN_NAME_PERSONEL = "PERSONEL";
+	public static final String COLUMN_NAME_KGS_ID = "KGS_ID";
 
 	private PersonelView personel;
 	private PersonelKGS personelKGS;
@@ -39,10 +38,10 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	private Date zaman;
 	private PersonelHareketIslem islem;
 	private String personelNo;
-	
+
 	private Integer durum = 1;
 	private Long kgsHareket;
-	
+
 	public PersonelHareket() {
 		super();
 	}
@@ -112,7 +111,7 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 		this.durum = durum;
 	}
 
-	@Column(name = "KGS_ID")
+	@Column(name = COLUMN_NAME_KGS_ID)
 	public Long getKgsHareket() {
 		return kgsHareket;
 	}
@@ -140,8 +139,7 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		
-		
+
 	}
 
 }

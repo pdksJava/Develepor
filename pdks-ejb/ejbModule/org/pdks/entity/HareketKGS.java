@@ -79,7 +79,7 @@ public class HareketKGS implements Serializable, Cloneable {
 	private YemekOgun yemekOgun;
 	private List<HareketKGS> yemekList;
 	protected boolean checkBoxDurum;
-	protected String style = VardiyaGun.STYLE_CLASS_ODD, islemYapan = "";
+	protected String style = VardiyaGun.STYLE_CLASS_ODD, islemYapan = "", orjinalId;
 
 	public HareketKGS() {
 		super();
@@ -644,6 +644,15 @@ public class HareketKGS implements Serializable, Cloneable {
 	 */
 	public void setOrjinalZamanGetir(boolean value) {
 		this.orjinalZamanGetir = value;
+	}
+
+	@Transient
+	public String getOrjinalId() {
+		return orjinalId;
+	}
+
+	public void setOrjinalId(String orjinalId) {
+		this.orjinalId = orjinalId;
 	}
 
 }
