@@ -13850,6 +13850,8 @@ public class OrtakIslemler implements Serializable {
 		Departman departman = personel != null ? personel.getSirket().getDepartman() : null;
 		List<String> roleList = new ArrayList<String>();
 		roleList.add(Role.TIPI_IK);
+		roleList.add(Role.TIPI_IK_SIRKET);
+		roleList.add(Role.TIPI_IK_Tesis);
 		if (personel != null && personel.getUstYonetici() != null && personel.getUstYonetici().booleanValue())
 			roleList.add(Role.TIPI_IK_DIREKTOR);
 		List<User> userList = getRoleKullanicilari(roleList.size() > 1 ? roleList : roleList.get(0), departman, null, session);
