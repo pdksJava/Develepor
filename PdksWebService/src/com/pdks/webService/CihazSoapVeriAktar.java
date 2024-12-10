@@ -16,6 +16,7 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxrs.ext.MessageContext;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Message;
+import org.apache.log4j.Logger;
 import org.pdks.kgs.model.Cihaz;
 import org.pdks.kgs.model.CihazGecis;
 import org.pdks.kgs.model.CihazPersonel;
@@ -27,6 +28,7 @@ public class CihazSoapVeriAktar implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 6449982763733901391L;
+	public Logger logger = Logger.getLogger(CihazSoapVeriAktar.class);
 
 	private String fonksiyon;
 
