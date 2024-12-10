@@ -520,7 +520,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		sb.append("	),");
 		sb.append("	DEP_YONETICI as (");
 		sb.append("		select R.ROLENAME DEP_YONETICI_ROL_ADI from " + Role.TABLE_NAME + " R " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
-		sb.append(" where R." + Role.COLUMN_NAME_ROLE_NAME + " = '" + Role.TIPI_DEPARTMAN_SUPER_VISOR + "' and R." + Role.COLUMN_NAME_STATUS + " = 1 ");
+		sb.append(" where R." + Role.COLUMN_NAME_ROLE_NAME + " = '" + Role.TIPI_DIREKTOR_SUPER_VISOR + "' and R." + Role.COLUMN_NAME_STATUS + " = 1 ");
 		sb.append("	),");
 		sb.append("	IZIN_DURUM as (");
 		sb.append("		select count(I.ID) as IZIN_TIPI_ADET from " + IzinTipi.TABLE_NAME + " I " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
@@ -569,14 +569,15 @@ public class PdksVeriOrtakAktar implements Serializable {
 			mailMap = mailDataMap;
 		if (!mailDataMap.containsKey("ikMailIptal")) {
 			if (PdksUtil.getCanliSunucuDurum()) {
+				List<String> ikYetkiliRoller = Arrays.asList(new String[] { Role.TIPI_IK, Role.TIPI_IK_Tesis, Role.TIPI_IK_SIRKET });
 				HashMap fields = new HashMap();
 				sb.append("select U.* from " + Role.TABLE_NAME + " R " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
 				sb.append(" inner join " + UserRoles.TABLE_NAME + " UR " + PdksVeriOrtakAktar.getJoinLOCK() + " on UR." + UserRoles.COLUMN_NAME_ROLE + " = R." + Role.COLUMN_NAME_ID);
 				sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER + " and U." + User.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" inner join " + Departman.TABLE_NAME + " D " + PdksVeriOrtakAktar.getJoinLOCK() + " on D." + Departman.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_DEPARTMAN + " and D." + Departman.COLUMN_NAME_ADMIN_DURUM + " = 1 and D." + Departman.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " > GETDATE() ");
-				sb.append(" where R." + Role.COLUMN_NAME_ROLE_NAME + " = :r ");
-				fields.put("r", Role.TIPI_IK);
+				sb.append(" where R." + Role.COLUMN_NAME_ROLE_NAME + " :r ");
+				fields.put("r", ikYetkiliRoller);
 				userList = dao.getNativeSQLList(fields, sb, User.class);
 				if (userList != null && !userList.isEmpty()) {
 					userList = PdksUtil.sortObjectStringAlanList(userList, "getAdSoyad", null);
