@@ -456,7 +456,7 @@
 													<TD nowrap="nowrap" align="left"><b> : </b> <h:outputText
 															value="#{authenticatedUser.dateTimeFormatla(hareket.islem.olusturmaTarihi)}" /></TD>
 												</TR>
-												<ui:fragment rendered="#{hareket.islem.orjinalId!=null}">
+												<ui:fragment rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and hareket.islem.orjinalId!=null}">
 													<TR class="koyu">
 														<TD nowrap="nowrap" align="left"><b>Orjinal Geçiş Id</b></TD>
 														<TD nowrap="nowrap" align="left"><b> : </b><span style="color: red;"> <h:outputText value="#{hareket.islem.orjinalId}" /></span></TD>
