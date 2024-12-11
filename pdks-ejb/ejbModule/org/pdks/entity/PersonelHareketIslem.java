@@ -34,7 +34,7 @@ public class PersonelHareketIslem extends BasePDKSObject implements Serializable
 
 	private User guncelleyenUser, onaylayanUser;
 	private Date zaman, olusturmaTarihi = new Date();
-	private String aciklama, islemTipi;
+	private String aciklama, islemTipi, orjinalId;
 	private int onayDurum;
 	private Tanim neden;
 	private boolean puantajOnayDurum = Boolean.TRUE;
@@ -150,9 +150,16 @@ public class PersonelHareketIslem extends BasePDKSObject implements Serializable
 		this.puantajOnayDurum = puantajOnayDurum;
 	}
 
-	public void entityRefresh() {
-		
-		
+	@Transient
+	public String getOrjinalId() {
+		return orjinalId;
 	}
+
+	public void setOrjinalId(String orjinalId) {
+		this.orjinalId = orjinalId;
+	}
+
+	public void entityRefresh() {
+ 	}
 
 }

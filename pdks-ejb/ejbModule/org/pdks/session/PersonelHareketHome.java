@@ -2,7 +2,6 @@ package org.pdks.session;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,10 +34,8 @@ import org.pdks.entity.DepartmanDenklestirmeDonemi;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.Kapi;
 import org.pdks.entity.KapiView;
-import org.pdks.entity.PdksLog;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
-import org.pdks.entity.PersonelHareket;
 import org.pdks.entity.PersonelHareketIslem;
 import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.PersonelView;
@@ -962,44 +959,15 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 
 		setHareketList(hareket1List);
 		kgsUpdateGoster = false;
-		TreeMap<Long, HareketKGS> updateKGSHareketMap = new TreeMap<Long, HareketKGS>();
-		for (Iterator iterator = hareketList.iterator(); iterator.hasNext();) {
+		ortakIslemler.setUpdateKGSHareket(hareketList,session);
+ 		for (Iterator iterator = hareketList.iterator(); iterator.hasNext();) {
 			HareketKGS hareketKGS = (HareketKGS) iterator.next();
-			if (hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS) && hareketKGS.getDurum() == 1) {
-				updateKGSHareketMap.put(hareketKGS.getHareketTableId(), hareketKGS);
-			}
-
-			if (hareketKGS.getHareketEkleDurum()) {
+ 			if (hareketKGS.getHareketEkleDurum()) {
 				if (!kgsUpdateGoster)
 					kgsUpdateGoster = hareketKGS.getIslem() != null && hareketKGS.getKgsZaman() != null;
-
-			}
-
-		}
-		if (!updateKGSHareketMap.isEmpty()) {
-			String fieldname = "h";
-			HashMap fields = new HashMap();
-			StringBuffer sb = new StringBuffer();
-			sb.append("select H." + PersonelHareket.COLUMN_NAME_ID + ", H." + PersonelHareket.COLUMN_NAME_KGS_ID + ",L." + PdksLog.COLUMN_NAME_ZAMAN + " from " + PersonelHareket.TABLE_NAME + " H " + PdksEntityController.getSelectLOCK());
-			sb.append(" inner join " + PersonelKGS.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + PersonelKGS.COLUMN_NAME_ID + " = H." + PersonelHareket.COLUMN_NAME_PERSONEL);
-			sb.append(" inner join " + PdksLog.TABLE_NAME + " L " + PdksEntityController.getJoinLOCK() + " on L." + PdksLog.COLUMN_NAME_KGS_ID + " = H." + PersonelHareket.COLUMN_NAME_KGS_ID);
-			sb.append(" and L." + PdksLog.COLUMN_NAME_KGS_SIRKET + " = P." + PersonelKGS.COLUMN_NAME_KGS_SIRKET + " and L." + PdksLog.COLUMN_NAME_DURUM + " = 0");
-			sb.append(" where H." + PersonelHareket.COLUMN_NAME_ID + " :" + fieldname);
-			List<Long> dataIdList = new ArrayList<Long>(updateKGSHareketMap.keySet());
-			fields.put(fieldname, dataIdList);
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<Object[]> list = pdksEntityController.getSQLParamList(dataIdList, sb, fieldname, fields, null, session);
-			for (Object[] objects : list) {
-				Long id = ((BigDecimal) objects[0]).longValue();
-				Date zaman = new Date(((Timestamp) objects[2]).getTime());
-				HareketKGS hareketKGS = updateKGSHareketMap.get(id);
-				hareketKGS.setOrjinalId(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS + objects[1]);
-				hareketKGS.setOrjinalZaman(zaman);
-			}
-			list = null;
-		}
-		updateKGSHareketMap = null;
+ 			}
+ 		}
+		
 		if (islemVardiyaGun != null)
 			islemVardiyaDuzenle();
 	}

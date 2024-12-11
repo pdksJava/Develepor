@@ -431,8 +431,8 @@
 													</f:facet>
 													<ui:fragment rendered="#{hareketler.islem!=null and hareketler.kgsZaman!=null}">
 														<h:outputText value="#{authenticatedUser.dateTimeLongFormatla(hareketler.kgsZaman)}" />
-														<ui:fragment rendered="#{hareketler.orjinalId!=null}">
-														<BR></BR> #{hareketler.orjinalId}
+														<ui:fragment rendered="#{hareketler.islem.orjinalId!=null}">
+														<BR></BR> #{hareketler.islem.orjinalId}
 														</ui:fragment>
 														
 													</ui:fragment>

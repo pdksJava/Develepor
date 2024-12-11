@@ -456,6 +456,18 @@
 													<TD nowrap="nowrap" align="left"><b> : </b> <h:outputText
 															value="#{authenticatedUser.dateTimeFormatla(hareket.islem.olusturmaTarihi)}" /></TD>
 												</TR>
+												<ui:fragment rendered="#{hareket.islem.orjinalId!=null}">
+													<TR class="koyu">
+														<TD nowrap="nowrap" align="left"><b>Orjinal Geçiş Id</b></TD>
+														<TD nowrap="nowrap" align="left"><b> : </b><span style="color: red;"> <h:outputText value="#{hareket.islem.orjinalId}" /></span></TD>
+													</TR>
+													<TR class="acik">
+														<TD nowrap="nowrap" align="left"><b>Orjinal Zamanı</b></TD>
+														<TD nowrap="nowrap" align="left"><b> : </b><span style="color: red;"> <h:outputText
+																	value="#{authenticatedUser.dateTimeLongFormatla(hareket.kgsZaman)}" /></span></TD>
+
+													</TR>
+												</ui:fragment>
 
 
 											</TABLE>
