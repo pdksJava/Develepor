@@ -71,7 +71,7 @@ public class HareketKGS implements Serializable, Cloneable {
 
 	private int yemekYiyenSayisi, gecerliYemekAdet = 0;
 	private int toplam;
-	private Boolean gecerliYemek;
+	private Boolean gecerliYemek, oncekiGun = Boolean.FALSE;
 	private Long kapiId;
 	private Long personelId;
 	private boolean tatil = Boolean.FALSE, puantajOnayDurum, cokluOgun = Boolean.FALSE, gecerliDegil = Boolean.FALSE, orjinalZamanGetir = Boolean.FALSE;
@@ -614,8 +614,6 @@ public class HareketKGS implements Serializable, Cloneable {
 	}
 
 	public void setIslemYapan(String islemYapan) {
-		if (id.equals("A6865"))
-			logger.debug(islemYapan);
 		this.islemYapan = islemYapan;
 	}
 
@@ -644,6 +642,15 @@ public class HareketKGS implements Serializable, Cloneable {
 	 */
 	public void setOrjinalZamanGetir(boolean value) {
 		this.orjinalZamanGetir = value;
+	}
+
+	@Transient
+	public Boolean getOncekiGun() {
+		return oncekiGun;
+	}
+
+	public void setOncekiGun(Boolean oncekiGun) {
+		this.oncekiGun = oncekiGun;
 	}
 
 }
