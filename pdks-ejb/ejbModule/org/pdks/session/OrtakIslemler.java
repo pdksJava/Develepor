@@ -559,6 +559,46 @@ public class OrtakIslemler implements Serializable {
 		return list;
 	}
 
+	// TODO
+	/**
+	 * @param vardiyaGun
+	 * @param veriMap
+	 */
+	private void setArifeYemekSure(VardiyaGun vardiyaGun, HashMap<String, HashMap<String, HashMap<String, Double>>> veriMap) {
+		Vardiya islemVardiya = vardiyaGun != null && vardiyaGun.getVardiya() != null ? vardiyaGun.getIslemVardiya() : null;
+		if (islemVardiya != null && veriMap != null && islemVardiya.isCalisma() && islemVardiya.getBasDonem() > islemVardiya.getBitDonem()) {
+			String key = islemVardiya.getId() + "_" + vardiyaGun.getYarimYuvarla();
+			if (!veriMap.containsKey(key)) {
+				Date araTarih = PdksUtil.getDate(islemVardiya.getVardiyaBitZaman());
+				double yemekSure = islemVardiya.getYemekSuresi().doubleValue() / 60.0d, netSure = islemVardiya.getNetCalismaSuresi();
+				double toplamSure = netSure + yemekSure;
+				double yemekNormal = 0.0d, yemekArife = 0.0d;
+				double sureNormal = PdksUtil.getSaatFarki(araTarih, islemVardiya.getVardiyaBasZaman()).doubleValue();
+				double sureArife = PdksUtil.getSaatFarki(islemVardiya.getVardiyaBitZaman(), araTarih).doubleValue();
+				if (sureArife > sureNormal) {
+					double molaSure = PdksUtil.setSureDoubleTypeRounded(sureArife * yemekSure / toplamSure, vardiyaGun.getYarimYuvarla());
+					yemekArife = sureArife - molaSure;
+					yemekNormal = sureNormal - (yemekSure - molaSure);
+				} else {
+					double molaSure = PdksUtil.setSureDoubleTypeRounded(sureNormal * yemekSure / toplamSure, vardiyaGun.getYarimYuvarla());
+					yemekNormal = sureNormal - molaSure;
+					yemekArife = sureArife - (yemekSure - molaSure);
+				}
+				HashMap<String, HashMap<String, Double>> vardiyaMap = new HashMap<String, HashMap<String, Double>>();
+				veriMap.put(key, vardiyaMap);
+				HashMap<String, Double> arifeMap = new HashMap<String, Double>(), normalMap = new HashMap<String, Double>();
+				vardiyaMap.put("A", arifeMap);
+				vardiyaMap.put("N", normalMap);
+				arifeMap.put("T", sureArife);
+				arifeMap.put("Y", yemekArife);
+				normalMap.put("T", sureNormal);
+				normalMap.put("Y", yemekNormal);
+			}
+
+		}
+
+	}
+
 	/**
 	 * @param sirket
 	 * @param departmanId
@@ -17303,7 +17343,11 @@ public class OrtakIslemler implements Serializable {
 				if (calismaModeli == null)
 					calismaModeli = new CalismaModeli();
 			}
-
+			HashMap<String, HashMap<String, HashMap<String, Double>>> veriMap = new HashMap<String, HashMap<String, HashMap<String, Double>>>();
+			if (tatilGunleriMap != null && tatilGunleriMap.isEmpty() == false) {
+				for (VardiyaGun vardiyaGun : vardiyalar)
+					setArifeYemekSure(vardiyaGun, veriMap);
+			}
 			if (haftaTatilDurum.equals("1") && calismaModeli.getHaftaTatilMesaiOde()) {
 				for (VardiyaGun vardiyaGun : vardiyalar) {
 					if (vardiyaGun.getVardiya() != null) {
@@ -17911,14 +17955,31 @@ public class OrtakIslemler implements Serializable {
 								}
 								oncekiCikisZaman = (Date) cikisZaman.clone();
 							}
+							if (gun.equals("31"))
+								logger.debug("");
 							if (oncekiGunNormalSure + oncekiGunTatilSure > 0.0d) {
-								oncekiGunNormalSure = PdksUtil.setSureDoubleTypeRounded(oncekiGunNormalSure, oncekiVardiyaGun.getYarimYuvarla());
 								Vardiya vardiya2 = oncekiVardiyaGun.getIslemVardiya();
-								double yemekSureOnceki = vardiya2.getYemekSuresi().doubleValue() / 60.0d, netSureOnceki = vardiya2.getNetCalismaSuresi();
-								double farkOncekiGun = PdksUtil.setSureDoubleTypeRounded(oncekiGunNormalSure - (oncekiGunNormalSure * yemekSureOnceki / (yemekSureOnceki + netSureOnceki)), oncekiVardiyaGun.getYarimYuvarla());
-								farkOncekiGun = (oncekiGunNormalSure - farkOncekiGun) - yemekSureOnceki;
-								oncekiGunTatilSure += farkOncekiGun * (oncekiGunNormalSure + oncekiGunTatilSure) / (yemekSureOnceki + netSureOnceki);
+								// todo xxx
+								String vkey = vardiya2.getId() + "_" + oncekiVardiyaGun.getYarimYuvarla();
+								if (veriMap.containsKey(vkey)) {
+									HashMap<String, HashMap<String, Double>> vardiyaMap = veriMap.get(vkey);
+									HashMap<String, Double> normalMap = vardiyaMap.get("A");
+									double toplamSureParcali = normalMap.get("T"), yemekSureParcali = normalMap.get("Y");
+									if (toplamSureParcali * yemekMolasiYuzdesi < oncekiGunTatilSure)
+										oncekiGunTatilSure = yemekSureParcali;
+									else {
+										oncekiGunTatilSure = yemekSureParcali * oncekiGunTatilSure / toplamSureParcali;
+									}
+								} else {
+									oncekiGunNormalSure = PdksUtil.setSureDoubleTypeRounded(oncekiGunNormalSure, oncekiVardiyaGun.getYarimYuvarla());
+									double yemekSureOnceki = vardiya2.getYemekSuresi().doubleValue() / 60.0d, netSureOnceki = vardiya2.getNetCalismaSuresi();
+									double farkOncekiGun = PdksUtil.setSureDoubleTypeRounded(oncekiGunNormalSure - (oncekiGunNormalSure * yemekSureOnceki / (yemekSureOnceki + netSureOnceki)), oncekiVardiyaGun.getYarimYuvarla());
+									farkOncekiGun = (oncekiGunNormalSure - farkOncekiGun) - yemekSureOnceki;
+									oncekiGunTatilSure += farkOncekiGun * (oncekiGunNormalSure + oncekiGunTatilSure) / (yemekSureOnceki + netSureOnceki);
+
+								}
 								vardiyaGun.addGecenAyResmiTatilSure(PdksUtil.setSureDoubleTypeRounded(oncekiGunTatilSure, vardiyaGun.getYarimYuvarla()));
+
 							}
 
 							if (sureHesapla && gunlukSaat > 0) {
@@ -17976,10 +18037,26 @@ public class OrtakIslemler implements Serializable {
 												vardiyaGun.addBayramCalismaSuresi(yemekFark);
 											}
 										} else {
-											double yemekOranFark = PdksUtil.setSureDoubleTypeRounded(toplamYemekSuresi - (calSure * vardiyaYemekSuresi) / (netSure + vardiyaYemekSuresi), vardiyaGun.getYarimYuvarla());
-											if (fark < yemekOranFark && yemekOranFark < 0)
-												fark = yemekOranFark;
-											calSure += fark;
+											String vkey = vardiyaGun != null ? vardiyaGun.getVardiya().getId() + "_" + vardiyaGun.getYarimYuvarla() : "";
+											if (vardiyaGun.getSonrakiVardiyaGun() == null || vardiyaGun.getSonrakiVardiyaGun().isAyinGunu())
+												vkey = "";
+											if (veriMap.containsKey(vkey)) {
+												HashMap<String, HashMap<String, Double>> vardiyaMap = veriMap.get(vkey);
+												HashMap<String, Double> normalMap = vardiyaMap.get("N");
+												double toplamSureParcali = normalMap.get("T"), yemekSureParcali = normalMap.get("Y");
+												if (toplamSureParcali * yemekMolasiYuzdesi < calSure)
+													calSure = yemekSureParcali;
+												else {
+													calSure = yemekSureParcali * calSure / toplamSureParcali;
+												}
+												 
+											} else {
+												double yemekOranFark = PdksUtil.setSureDoubleTypeRounded(toplamYemekSuresi - (calSure * vardiyaYemekSuresi) / (netSure + vardiyaYemekSuresi), vardiyaGun.getYarimYuvarla());
+												if (fark < yemekOranFark && yemekOranFark < 0)
+													fark = yemekOranFark;
+												calSure += fark;
+											}
+
 										}
 									} else if (parcalanmisSureVar && toplamParcalanmisSure == netSure + vardiyaYemekSuresi) {
 										double yemekFark = PdksUtil.setSureDoubleTypeRounded(toplamYemekSuresi - (vardiyaYemekSuresi * calSure / toplamParcalanmisSure), vardiyaGun.getYarimYuvarla());

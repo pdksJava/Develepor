@@ -86,7 +86,7 @@ public class CihazVeriOrtakAktar implements Serializable {
 				LinkedHashMap<String, Object> headers = getHeaders(user);
 				headers.put("cihazlar", gson.toJson(cihazlar));
 				veriMap.put("jsonData", gson.toJson(headers));
-				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ");
+				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_JSON_DATA");
 				String mesaj = null;
 				List sonucList = null;
 				try {
@@ -127,7 +127,7 @@ public class CihazVeriOrtakAktar implements Serializable {
 				LinkedHashMap<String, Object> headers = getHeaders(cihazUser);
 				headers.put("personeller", gson.toJson(personeller));
 				veriMap.put("jsonData", gson.toJson(headers));
-				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_PERSONEL");
+				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_PERSONEL_JSON_DATA");
 				String mesaj = null;
 				List sonucList = null;
 				try {
@@ -170,7 +170,7 @@ public class CihazVeriOrtakAktar implements Serializable {
 				LinkedHashMap<String, Object> headers = getHeaders(cihazUser);
 				headers.put("gecisler", gson.toJson(gecisler));
 				veriMap.put("jsonData", gson.toJson(headers));
-				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_GECIS");
+				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_GECIS_JSON_DATA");
 				String mesaj = null;
 				List sonucList = null;
 				try {
