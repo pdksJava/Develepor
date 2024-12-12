@@ -372,7 +372,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			yil = cal.get(Calendar.YEAR);
 			cal.add(Calendar.WEEK_OF_YEAR, 1);
 			maxYil = cal.get(Calendar.YEAR);
-			if (authenticatedUser.isAdmin() && ay == 12)
+			if (ortakIslemler.getCanliDurum() == false && authenticatedUser.isAdmin() && ay == 12)
 				++maxYil;
 			sonDonem = (maxYil * 100) + cal.get(Calendar.MONTH) + 1;
 			aylikPuantajList = new ArrayList<AylikPuantaj>();
