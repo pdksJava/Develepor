@@ -87,11 +87,10 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		hataKonum = "izinBakiyeGuncellemeTimer başladı ";
 		if (pdksEntityController != null && !isCalisiyor()) {
 			Session session = null;
-			boolean sunucuDurum = PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum();
+
 			zamanDurum = false;
-			// sunucuDurum = true;
-			if (sunucuDurum)
-				izinGuncelemeCalistir(false, session);
+
+			izinGuncelemeCalistir(false, session);
 		}
 		return null;
 	}
@@ -116,7 +115,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			String value = (parameter != null) ? parameter.getValue() : null;
 			String izinERPTableViewAdi = ortakIslemler.getParameterKey(ortakIslemler.getParametreIzinERPTableView());
 			boolean izinBakiye = value != null && (manuel || PdksUtil.zamanKontrol(PARAMETER_KEY, value, time));
-			zamanDurum = manuel || PdksUtil.zamanKontrol(PARAMETER_KEY, value, time);
+			boolean sunucuDurum = PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum();
+			zamanDurum = sunucuDurum && (manuel || PdksUtil.zamanKontrol(PARAMETER_KEY, value, time));
 			boolean tableERPOku = PdksUtil.hasStringValue(izinERPTableViewAdi);
 			if (!zamanDurum && tableERPOku) {
 				String parameterUpdateKey = PARAMETER_KEY + "Update";
