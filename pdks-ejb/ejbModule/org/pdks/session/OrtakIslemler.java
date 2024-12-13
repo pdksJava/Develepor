@@ -17311,7 +17311,7 @@ public class OrtakIslemler implements Serializable {
 		VardiyaGun sonVardiyaGun = denklestirmeTasiyici.getSonVardiyaGun();
 		Double yemekMolasiYuzdesi = getYemekMolasiYuzdesi(denklestirmeTasiyici.getDenklestirmeAy(), session);
 		DenklestirmeAy denklestirmeAy = denklestirmeTasiyici.getDenklestirmeAy();
-		String donemStr=String.valueOf(denklestirmeAy.getDonem());
+		String donemStr = String.valueOf(denklestirmeAy.getDonem());
 		Date ilkGun = PdksUtil.convertToJavaDate(donemStr + "01", "yyyyMMdd");
 		boolean arifeTatilBasZamanVar = getParameterKeyHasStringValue("arifeTatilBasZaman");
 		if (denklestirmeTasiyici.getVardiyalar() != null) {
@@ -18035,7 +18035,7 @@ public class OrtakIslemler implements Serializable {
 											}
 										} else {
 											String vkey = vardiyaGun != null ? vardiyaGun.getVardiya().getId() + "_" + vardiyaGun.getYarimYuvarla() : "";
-											if (vardiyaGun.getSonrakiVardiyaGun() == null || vardiyaGun.getSonrakiVardiyaGun().getVardiyaDateStr().startsWith(donemStr))
+											if (vardiyaGun.getSonrakiVardiyaGun() == null || vardiyaGun.getTatil() == null || vardiyaGun.getSonrakiVardiyaGun().getVardiyaDateStr().startsWith(donemStr))
 												vkey = "";
 											if (veriMap.containsKey(vkey)) {
 												HashMap<String, HashMap<String, Double>> vardiyaMap = veriMap.get(vkey);
