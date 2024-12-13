@@ -448,7 +448,6 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 							if (!degisti)
 								degisti = PdksUtil.isDoubleDegisti(pd.getIzinSuresi(), personelIzin.getIzinSuresi());
 							personelIzin.setOrjIzin(pd);
-
 						}
 						list = null;
 						personelIdler = null;
@@ -487,7 +486,29 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 	}
 
 	@Transactional
-	public String bakiyeIzinDosyaYaz() {
+	public String bakiyeIzinDosyaYaz() throws Exception {
+		boolean flush = false;
+		for (PersonelIzin personelIzin : bakiyeIzinler) {
+			Personel personel = personelIzin.getIzinSahibi();
+			if (personel.getId() != null) {
+				PersonelIzin orjIzin = personelIzin.getOrjIzin();
+				if (orjIzin == null)
+					orjIzin = ortakIslemler.getPersonelBakiyeIzin(0, authenticatedUser, personel, session);
+
+				if (PdksUtil.isDoubleDegisti(orjIzin.getIzinSuresi(), personelIzin.getIzinSuresi())) {
+					orjIzin.setIzinSuresi(personelIzin.getIzinSuresi());
+					pdksEntityController.saveOrUpdate(session, entityManager, orjIzin);
+					flush = true;
+				}
+			}
+		}
+		if (flush) {
+			session.flush();
+			bakiyeIzinler.clear();
+			PdksUtil.addMessageAvailableInfo("Güncelleneme başarılı yapıldı.");
+		} else
+			PdksUtil.addMessageWarn("Güncellenecek bakiye yoktur!");
+
 		return "";
 
 	}

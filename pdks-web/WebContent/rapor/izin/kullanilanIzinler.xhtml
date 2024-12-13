@@ -519,13 +519,13 @@
 
 								<a4j:commandButton id="dosyaOku" value="Dosya Oku" status="ajaxStatus" action="#{kullanilanIzinlerHome.bakiyeIzinDosyaOku}"
 									rendered="#{kullanilanIzinlerHome.bakiyeIzinler.isEmpty()}" reRender="dosyaPaneli"></a4j:commandButton>
-								<a4j:commandButton value="Dosya Aktar" status="ajaxStatus" action="#{kullanilanIzinlerHome.bakiyeIzinDosyaYaz}" reRender="dosyaPaneli"
-									rendered="#{not empty kullanilanIzinlerHome.bakiyeIzinler and kullanilanIzinlerHome.degisti}" />
-
+								
 								<rich:toolTip for="dosyaOku" rendered="#{kullanilanIzinlerHome.bakiyeIzinler.isEmpty()}">
 
 								</rich:toolTip>
-							</ui:fragment>
+							</ui:fragment><a4j:commandButton value="Dosya Aktar" status="ajaxStatus" action="#{kullanilanIzinlerHome.bakiyeIzinDosyaYaz}" reRender="dosyaPaneli"
+									rendered="#{not empty kullanilanIzinlerHome.bakiyeIzinler and kullanilanIzinlerHome.degisti}" />
+							
 
 
 						</h:panelGrid>
