@@ -301,7 +301,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		if (bakiyeIzinTipiList == null)
 			bakiyeIzinTipiList = new ArrayList<IzinTipi>();
 
-		if (authenticatedUser.isAdmin()) {
+		if (authenticatedUser.isAdmin() && ortakIslemler.getParameterKeyHasStringValue("bakiyeIzinGoster")) {
 			map.clear();
 			StringBuffer sb = new StringBuffer();
 			sb.append("select * from " + IzinTipi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
