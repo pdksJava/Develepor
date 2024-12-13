@@ -959,15 +959,15 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 
 		setHareketList(hareket1List);
 		kgsUpdateGoster = false;
-		ortakIslemler.setUpdateKGSHareket(hareketList,session);
- 		for (Iterator iterator = hareketList.iterator(); iterator.hasNext();) {
+		ortakIslemler.setUpdateKGSHareket(hareketList, session);
+		for (Iterator iterator = hareketList.iterator(); iterator.hasNext();) {
 			HareketKGS hareketKGS = (HareketKGS) iterator.next();
- 			if (hareketKGS.getHareketEkleDurum()) {
+			if (hareketKGS.getHareketEkleDurum()) {
 				if (!kgsUpdateGoster)
 					kgsUpdateGoster = hareketKGS.getIslem() != null && hareketKGS.getKgsZaman() != null;
- 			}
- 		}
-		
+			}
+		}
+
 		if (islemVardiyaGun != null)
 			islemVardiyaDuzenle();
 	}
@@ -1091,10 +1091,16 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 				try {
 					Date zaman = hk.getZaman();
 					if (hk.getKapiView().getKapi().isGirisKapi()) {
-						if (zaman.getTime() >= islemVardiya.getVardiyaTelorans1BasZaman().getTime() && zaman.getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime())
+						if (zaman.getTime() >= islemVardiya.getVardiyaTelorans1BasZaman().getTime() && zaman.getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime()) {
 							girisEkle = false;
-						if (zaman.getTime() >= islemVardiya.getVardiyaFazlaMesaiBasZaman().getTime() && zaman.getTime() < islemVardiya.getVardiyaTelorans1BasZaman().getTime())
+						}
+
+						if (zaman.getTime() >= islemVardiya.getVardiyaFazlaMesaiBasZaman().getTime() && zaman.getTime() < islemVardiya.getVardiyaTelorans1BasZaman().getTime()) {
+							if (hareketList.size() == 1)
+								girisEkle = false;
 							girisMesaiEkle = false;
+						}
+
 					} else if (hk.getKapiView().getKapi().isCikisKapi()) {
 						if (zaman.getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime() && zaman.getTime() <= islemVardiya.getVardiyaTelorans2BitZaman().getTime())
 							cikisEkle = false;
