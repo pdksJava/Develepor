@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -24,6 +25,7 @@ import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
@@ -32,6 +34,7 @@ import org.pdks.entity.Dosya;
 import org.pdks.entity.IzinIstirahat;
 import org.pdks.entity.IzinTipi;
 import org.pdks.entity.Personel;
+import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
@@ -67,7 +70,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 	@In(required = false)
 	FacesMessages facesMessages;
 
-	private List<PersonelIzin> personelIzinList = new ArrayList<PersonelIzin>();
+	private List<PersonelIzin> personelIzinList = new ArrayList<PersonelIzin>(), bakiyeIzinler;
 
 	private TempIzin updateTempIzin;
 	private PersonelIzin updateIzin;
@@ -78,8 +81,8 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 	private String islemTipi;
 	private List<SelectItem> islemTipleri;
 	private Dosya izinDosya = new Dosya();
-
 	private Date basTarih, bitTarih;
+	private Boolean degisti;
 
 	private Integer yil;
 
@@ -87,6 +90,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 	private Session session;
 	private AramaSecenekleri aramaSecenekleri = null;
 	private List<SelectItem> izinTanimIdList;
+	private List<IzinTipi> bakiyeIzinTipiList;
 	private Tanim izinTipiTanim;
 	private Long izinTipiId;
 
@@ -252,6 +256,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		setBasTarih(cal.getTime());
 		fillEkSahaTanim();
 		fillIzinTanimList();
+
 		if (islemTipleri == null) {
 			islemTipleri = new ArrayList<SelectItem>();
 			islemTipleri.add(new SelectItem("K", "Onaylanan izinler"));
@@ -293,6 +298,197 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		for (Tanim tanim : list) {
 			izinTanimIdList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
 		}
+		if (bakiyeIzinTipiList == null)
+			bakiyeIzinTipiList = new ArrayList<IzinTipi>();
+
+		if (authenticatedUser.isAdmin()) {
+			map.clear();
+			StringBuffer sb = new StringBuffer();
+			sb.append("select * from " + IzinTipi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+			sb.append(" where " + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is not null and " + IzinTipi.COLUMN_NAME_DURUM + " = 1");
+			map.put(PdksEntityController.MAP_KEY_SESSION, session);
+			bakiyeIzinTipiList = pdksEntityController.getObjectBySQLList(sb, map, IzinTipi.class);
+			for (Iterator iterator = bakiyeIzinTipiList.iterator(); iterator.hasNext();) {
+				IzinTipi izinTipi = (IzinTipi) iterator.next();
+				IzinTipi bakiyeIzinTipi = izinTipi.getBakiyeIzinTipi();
+				if (bakiyeIzinTipi.getIzinTipiTanim() == null || !bakiyeIzinTipi.getIzinTipiTanim().getKodu().equals(IzinTipi.YILLIK_UCRETLI_IZIN))
+					iterator.remove();
+
+			}
+
+		} else
+			bakiyeIzinTipiList.clear();
+
+	}
+
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	public String fileImportDosyaSifirla() throws Exception {
+		if (bakiyeIzinler == null)
+			bakiyeIzinler = new ArrayList<PersonelIzin>();
+		else
+			bakiyeIzinler.clear();
+		izinDosya.setDosyaIcerik(null);
+		degisti = Boolean.FALSE;
+
+		return "";
+	}
+
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	public void listenerFileImportDosya(UploadEvent event) throws Exception {
+		UploadItem item = event.getUploadItem();
+		PdksUtil.getDosya(item, izinDosya);
+		bakiyeIzinler.clear();
+	}
+
+	public String bakiyeIzinDosyaOku() {
+
+		bakiyeIzinler.clear();
+		try {
+			degisti = false;
+
+			Workbook wb = ortakIslemler.getWorkbook(izinDosya);
+
+			if (wb != null) {
+				Sheet sheet = wb.getSheetAt(0);
+				// logger.info(sheet.getSheetName());
+				int COL_SICIL_NO = 0;
+				int COL_AD_SOYAD = 1;
+
+				int COL_DEVIR_BAKIYE = 2;
+				String perSicilNo = null;
+				List<String> siciller = new ArrayList<String>();
+				String sicilNoUzunlukStr = ortakIslemler.getParameterKey("sicilNoUzunluk");
+				int maxTextLength = 0;
+				try {
+					if (PdksUtil.hasStringValue(sicilNoUzunlukStr))
+						maxTextLength = Integer.parseInt(sicilNoUzunlukStr);
+				} catch (Exception e) {
+					maxTextLength = 0;
+				}
+				int sonSatir = sheet.getLastRowNum();
+				LinkedHashMap<String, PersonelIzin> bakiyeMap = new LinkedHashMap<String, PersonelIzin>();
+
+				for (int row = 1; row <= sonSatir; row++) {
+					try {
+						String key = null;
+						try {
+							perSicilNo = getSheetStringValue(sheet, row, COL_SICIL_NO);
+							if (maxTextLength > 0 && perSicilNo != null && perSicilNo.trim().length() < maxTextLength)
+								perSicilNo = PdksUtil.textBaslangicinaKarakterEkle(perSicilNo, '0', maxTextLength);
+							key = perSicilNo;
+						} catch (Exception e) {
+							logger.error("PDKS hata in : \n");
+							e.printStackTrace();
+							logger.error("PDKS hata out : " + e.getMessage());
+							break;
+						}
+						if (!bakiyeMap.containsKey(perSicilNo)) {
+							siciller.add(perSicilNo);
+							PersonelIzin personelIzin = new PersonelIzin();
+							Personel izinSahibi = new Personel();
+							izinSahibi.setAd(getSheetStringValue(sheet, row, COL_AD_SOYAD));
+							izinSahibi.setSoyad("");
+							izinSahibi.setPdksSicilNo(perSicilNo);
+							personelIzin.setIzinSahibi(izinSahibi);
+							personelIzin.setIzinSuresi(ExcelUtil.getSheetDoubleValue(ExcelUtil.getCell(sheet, row, COL_DEVIR_BAKIYE)));
+							bakiyeMap.put(key, personelIzin);
+						}
+
+					} catch (Exception e) {
+						logger.error("PDKS hata in : \n");
+						e.printStackTrace();
+						logger.error("PDKS hata out : " + e.getMessage());
+
+					}
+
+				}
+				if (!siciller.isEmpty()) {
+					String fieldName = "pId";
+					HashMap fields = new HashMap();
+					StringBuffer sb = new StringBuffer();
+					sb.append("select * from " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append(" where " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
+					fields.put(fieldName, siciller);
+					if (session != null)
+						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+					TreeMap<String, Personel> personelMap = pdksEntityController.getTreeMapByList(pdksEntityController.getSQLParamList(siciller, sb, fieldName, fields, Personel.class, session), "getPdksSicilNo", true);
+					sb = null;
+					if (!personelMap.isEmpty()) {
+						List personelIdler = new ArrayList(), izinTipiIdler = new ArrayList();
+						for (IzinTipi izinTipi : bakiyeIzinTipiList)
+							izinTipiIdler.add(izinTipi.getId());
+
+						for (Iterator iterator = personelMap.keySet().iterator(); iterator.hasNext();) {
+							String key = (String) iterator.next();
+							bakiyeMap.get(key).setIzinSahibi(personelMap.get(key));
+							personelIdler.add(personelMap.get(key).getId());
+						}
+						fields.clear();
+						sb = new StringBuffer();
+						fieldName = "pId";
+						sb.append("select * from " + PersonelIzin.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+						sb.append(" where " + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " :t and " + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
+						sb.append(" and " + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " = :b ");
+						fields.put("b", PdksUtil.convertToJavaDate("19000101", "yyyyMMdd"));
+						fields.put("t", izinTipiIdler);
+						fields.put(fieldName, personelIdler);
+						if (session != null)
+							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+
+						List<PersonelIzin> list = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, fields, PersonelIzin.class, session);
+						for (PersonelIzin pd : list) {
+							String key = pd.getIzinSahibi().getPdksSicilNo();
+							PersonelIzin personelIzin = bakiyeMap.get(key);
+							if (!degisti)
+								degisti = PdksUtil.isDoubleDegisti(pd.getIzinSuresi(), personelIzin.getIzinSuresi());
+							personelIzin.setOrjIzin(pd);
+
+						}
+						list = null;
+						personelIdler = null;
+						izinTipiIdler = null;
+
+					}
+					personelMap = null;
+				}
+				bakiyeIzinler.addAll(new ArrayList<PersonelIzin>(bakiyeMap.values()));
+				bakiyeMap = null;
+			}
+		} catch (Exception e) {
+			logger.error("PDKS hata in : \n");
+			e.printStackTrace();
+			logger.error("PDKS hata out : " + e.getMessage());
+
+		}
+
+		izinDosya.setDosyaIcerik(null);
+
+		return "";
+	}
+
+	private String getSheetStringValue(Sheet sheet, int row, int col) throws Exception {
+		String value = null;
+
+		try {
+			value = ExcelUtil.getSheetStringValue(sheet, row, col);
+			if (value == null)
+				value = String.valueOf(ExcelUtil.getSheetDoubleValue(sheet, row, col).longValue());
+		} catch (Exception e) {
+			value = String.valueOf(ExcelUtil.getSheetDoubleValue(sheet, row, col).longValue());
+
+		}
+		return value;
+	}
+
+	@Transactional
+	public String bakiyeIzinDosyaYaz() {
+		return "";
 
 	}
 
@@ -304,12 +500,10 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		ArrayList<String> sicilNoList = ortakIslemler.getAramaPersonelSicilNo(aramaSecenekleri, Boolean.TRUE, istenAyrilanEkle, session);
 		if (sicilNoList != null && !sicilNoList.isEmpty()) {
 			HashMap parametreMap = new HashMap();
-			 
-			List<Personel> personeller = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, sicilNoList, Personel.class, session) ;
-	 
-			Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID,  aramaSecenekleri.getSirketId(), Sirket.class, session);
 
-			 
+			List<Personel> personeller = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, sicilNoList, Personel.class, session);
+
+			Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
 
 			if (izinTipiTanim != null) {
 				if (sirket != null)
@@ -509,7 +703,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<Long> personeller = pdksEntityController.getObjectByInnerObjectList(parametreMap, Personel.class);
 			IzinTipi izinTipi = null;
-			
+
 			Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
 
 			parametreMap.clear();
@@ -908,6 +1102,30 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 
 	public void setIzinERPReturnList(List<IzinERP> izinERPReturnList) {
 		this.izinERPReturnList = izinERPReturnList;
+	}
+
+	public List<PersonelIzin> getBakiyeIzinler() {
+		return bakiyeIzinler;
+	}
+
+	public void setBakiyeIzinler(List<PersonelIzin> bakiyeIzinler) {
+		this.bakiyeIzinler = bakiyeIzinler;
+	}
+
+	public Boolean getDegisti() {
+		return degisti;
+	}
+
+	public void setDegisti(Boolean degisti) {
+		this.degisti = degisti;
+	}
+
+	public List<IzinTipi> getBakiyeIzinTipiList() {
+		return bakiyeIzinTipiList;
+	}
+
+	public void setBakiyeIzinTipiList(List<IzinTipi> bakiyeIzinTipiList) {
+		this.bakiyeIzinTipiList = bakiyeIzinTipiList;
 	}
 
 }

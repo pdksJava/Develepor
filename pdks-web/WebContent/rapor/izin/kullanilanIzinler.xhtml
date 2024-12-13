@@ -114,15 +114,23 @@
 						<ui:define name="label">İşten Ayrılanları Getir</ui:define>
 						<h:selectBooleanCheckbox value="#{kullanilanIzinlerHome.istenAyrilanEkle}" />
 					</s:decorate>
-					<h:panelGrid columns="2">
-						<a4j:commandButton status="ajaxStatus" value="Listele" action="#{kullanilanIzinlerHome.fillIzinList}" reRender="izinPanel" />
-						<a4j:commandButton title="#{ortakIslemler.hostName}" status="ajaxStatus" value="İzin Dosya'dan Güncelle"
-							rendered="#{kullanilanIzinlerHome.dosyaGuncellemeYetki}" action="#{kullanilanIzinlerHome.izinDosyaOkuBasla()}"
-							oncomplete="#{rich:component('dosyaTransferPanel')}.show();" reRender="dosyaTransferPanel" />
-					</h:panelGrid>
+
 
 
 				</h:panelGrid>
+
+				<a4j:commandButton status="ajaxStatus" value="Listele" action="#{kullanilanIzinlerHome.fillIzinList}" reRender="izinPanel" />
+				<a4j:commandButton title="#{ortakIslemler.hostName}" status="ajaxStatus" value="İzin Dosya'dan Güncelle"
+					rendered="#{kullanilanIzinlerHome.dosyaGuncellemeYetki}" action="#{kullanilanIzinlerHome.izinDosyaOkuBasla()}"
+					oncomplete="#{rich:component('dosyaTransferPanel')}.show();" reRender="dosyaTransferPanel" />
+				<ui:fragment rendered="#{authenticatedUser.admin}">
+					<a4j:commandButton value="Excel'den Bakiye Güncelle" onclick="#{rich:component('wait')}.show()"
+						rendered="#{not empty kullanilanIzinlerHome.bakiyeIzinTipiList}" action="#{kullanilanIzinlerHome.fileImportDosyaSifirla()}" ajaxSingle="true"
+						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('wait')}.hide();#{rich:component('fileImportPanel')}.show()"
+						reRender="fileImportPanel" />
+
+
+				</ui:fragment>
 
 			</rich:panel>
 
@@ -472,6 +480,125 @@
 						</ui:fragment>
 					</rich:panel>
 				</a4j:outputPanel>
+			</h:form>
+		</rich:modalPanel>
+		<rich:modalPanel id="fileImportPanel" autosized="true" width="900" top="30">
+			<f:facet name="header">
+				<h:outputText value="Excel'den Yıllık İzin Bakiye Güncelleme" />
+			</f:facet>
+			<f:facet name="controls">
+				<h:panelGroup>
+					<h:form>
+						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
+							<a4j:support event="onclick" onclick="#{rich:component('wait')}.show()"
+								oncomplete="if (#{facesContext.maximumSeverity==null}) { #{rich:component('fileImportPanel')}.hide();#{rich:component('wait')}.hide();}" />
+						</h:graphicImage>
+					</h:form>
+				</h:panelGroup>
+			</f:facet>
+
+			<h:form>
+
+				<rich:panel header="Yıllık İzin Bakiye Güncelleme">
+					<a4j:outputPanel id="dosyaPaneli">
+
+						<h:panelGrid columns="2" style="width:700px;">
+
+							<rich:fileUpload id="fileUpload" fileUploadListener="#{kullanilanIzinlerHome.listenerFileImportDosya}" listHeight="50px" listWidth="300px"
+								sizeErrorLabel="Dosya boyutu büyük" maxFilesQuantity="1" immediateUpload="true" acceptedTypes="xls,xlsx"
+								transferErrorLabel="Vardiya planı dosyası hatalı yüklenmiştir" doneLabel="Bitti" addControlLabel="Dosya Seçin (Excel)"
+								uploadControlLabel="Dosya Kaydet" cancelEntryControlLabel="Temizle" allowFlash="false">
+								<a4j:support event="onuploadcomplete" process="fileUpload" ajaxSingle="true" reRender="dosyaPaneli" />
+							</rich:fileUpload>
+							<ui:fragment rendered="#{kullanilanIzinlerHome.izinDosya.dosyaIcerik!=null}">
+								<h:panelGrid columns="3">
+									<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="dosyaPaneli" ajaxSingle="true"
+										action="#{kullanilanIzinlerHome.fileImportDosyaSifirla}" />
+									<h:outputText value="#{kullanilanIzinlerHome.izinDosya.dosyaAdi}" />
+								</h:panelGrid>
+
+								<a4j:commandButton id="dosyaOku" value="Dosya Oku" status="ajaxStatus" action="#{kullanilanIzinlerHome.bakiyeIzinDosyaOku}"
+									rendered="#{kullanilanIzinlerHome.bakiyeIzinler.isEmpty()}" reRender="dosyaPaneli"></a4j:commandButton>
+								<a4j:commandButton value="Dosya Aktar" status="ajaxStatus" action="#{kullanilanIzinlerHome.bakiyeIzinDosyaYaz}" reRender="dosyaPaneli"
+									rendered="#{not empty kullanilanIzinlerHome.bakiyeIzinler and kullanilanIzinlerHome.degisti}" />
+
+								<rich:toolTip for="dosyaOku" rendered="#{kullanilanIzinlerHome.bakiyeIzinler.isEmpty()}">
+
+								</rich:toolTip>
+							</ui:fragment>
+
+
+						</h:panelGrid>
+
+
+						<ui:fragment rendered="#{not empty kullanilanIzinlerHome.bakiyeIzinler}">
+							<DIV class="#{authenticatedUser.scroolClass}" id="#{authenticatedUser.scroolDiv}">
+								<rich:dataTable rowClasses="acik,koyu" value="#{kullanilanIzinlerHome.bakiyeIzinler}" var="izinler" rows="50" rowKeyVar="row" id="izinTable">
+									<f:facet name="header">
+										<h:outputText value="Personeller İzinleri" />
+									</f:facet>
+
+
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="#{ortakIslemler.sirketAciklama()}" />
+										</f:facet>
+										<h:outputText value="#{izinler.izinSahibi.sirket.ad}" />
+									</rich:column>
+
+ 
+									<rich:column style="text-align:center">
+										<f:facet name="header">
+											<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
+										</f:facet>
+										<h:outputText value="#{izinler.izinSahibi.sicilNo}" />
+									</rich:column>
+
+									<rich:column  filterEvent="onkeyup">
+										<f:facet name="header">
+											<h:outputText value="Adı Soyadı" />
+										</f:facet>
+										<h:outputText value="#{izinler.izinSahibi.adSoyad}" />
+									</rich:column>
+									<rich:column style="text-align:center">
+										<f:facet name="header">
+											<h:outputText value="#{ortakIslemler.kidemBasTarihiAciklama()}" />
+										</f:facet>
+										<h:outputText value="#{authenticatedUser.dateFormatla(izinler.izinSahibi.izinHakEdisTarihi)}" />
+									</rich:column>
+
+
+
+									<rich:column style="text-align:center">
+										<f:facet name="header">
+											<h:outputText value="Bakiye İzin Süresi" />
+										</f:facet>
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(izinler.izinSuresi)} Gün" />
+									</rich:column>
+
+									<rich:column style="text-align:center">
+										<f:facet name="header">
+											<h:outputText value="Kayıtlı Bakiye İzin Süresi" />
+										</f:facet>
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(izinler.orjIzin.izinSuresi)} Gün" />
+									</rich:column>
+
+
+									<f:facet name="footer">
+										<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+									</f:facet>
+								</rich:dataTable>
+								<ui:fragment rendered="#{not empty personelKalanIzinHome.pdksPersonelList}">
+									<SCRIPT>
+									tableScroll("#{authenticatedUser.scroolDiv}",700);
+	 							</SCRIPT>
+
+								</ui:fragment>
+							</DIV>
+
+						</ui:fragment>
+					</a4j:outputPanel>
+				</rich:panel>
 			</h:form>
 		</rich:modalPanel>
 
