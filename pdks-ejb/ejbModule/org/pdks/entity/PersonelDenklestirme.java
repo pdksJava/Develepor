@@ -484,11 +484,11 @@ public class PersonelDenklestirme extends BaseObject {
 	 */
 	private double getPlananSureHesapla(CalismaModeli cm, List<VardiyaGun> vardiyalar) {
 		double sure = 0.0d, gun = cm.getHaftaIci();
-
+		Double sutIzniSabitSaat = null;
+		if (cm.getSutIzniSabitSaat() != null && cm.getSutIzniSabitSaat().doubleValue() > 0.0d)
+			sutIzniSabitSaat = cm.getSutIzniSabitSaat();
 		for (VardiyaGun vg : vardiyalar) {
-			double sureGunlukSut = cm.getSutIzinSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK));
-			if (cm.isHaftaTatilSabitDegil())
-				sureGunlukSut = cm.getHaftaIciSutIzniSure();
+			double sureGunlukSut = sutIzniSabitSaat == null ? cm.getSutIzinSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK)) : sutIzniSabitSaat;
 			Tatil tatil = vg.getTatil();
 			Vardiya vardiya = vg.getVardiya();
 			double gunPlanSure = gebePersonelDonemselDurum == null ? gun : cm.getSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK)), sutIzniSure = 0.0d;

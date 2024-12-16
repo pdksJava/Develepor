@@ -396,7 +396,12 @@
 							</h:inputText>
 						</s:decorate>
 
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Süt İzin Sabit (Saati)</ui:define>
+							<h:inputText value="#{calismaModeliHome.calismaModeli.sutIzniSabitSaat}" disabled="#{authenticatedUser.admin==false}" size="6"/>
 
+							 
+						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Arife Günü (Saati)</ui:define>
 							<h:inputText required="true" value="#{calismaModeliHome.calismaModeli.arife}" disabled="#{authenticatedUser.admin==false}" size="6"
@@ -510,11 +515,11 @@
 									removeControlLabel="#{messages['listShuttle.etiket.removeControlLabel']}"
 									copyAllControlLabel="#{messages['listShuttle.etiket.copyAllControlLabel']}"
 									removeAllControlLabel="#{messages['listShuttle.etiket.removeAllControlLabel']}" required="true" requiredMessage="Vardiya seçiniz">
-									<h:column >
+									<h:column>
 
 										<div style="overflow: hidden; width: 200px; word-wrap: break-word;">
 											<h:outputText value="#{vardiya.ozelAdi}" />
-											 
+
 										</div>
 									</h:column>
 									<s:convertEntity />

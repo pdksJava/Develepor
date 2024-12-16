@@ -62,18 +62,18 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_CUMARTESI_SUT_IZNI_SURE = "CUMARTESI_SUT_IZNI_SURE";
 	public static final String COLUMN_NAME_CUMARTESI_SAAT = "CUMARTESI_SAAT";
 	public static final String COLUMN_NAME_PAZAR_SAAT = "PAZAR_SAAT";
-
 	public static final String COLUMN_NAME_IZIN_SAAT = "IZIN_SAAT";
 	public static final String COLUMN_NAME_IZIN_CUMARTESI_SAAT = "IZIN_CUMARTESI_SAAT";
 	public static final String COLUMN_NAME_IZIN_PAZAR_SAAT = "IZIN_PAZAR_SAAT";
 	public static final String COLUMN_NAME_PAZAR_SUT_IZNI_SURE = "PAZAR_SUT_IZNI_SURE";
-
+	public static final String COLUMN_NAME_SUT_IZNI_SABIT = "SUT_IZNI_SABIT";
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 
 	private Sirket sirket;
 	private String aciklama = "";
 	private double haftaIci = 0.0d, arife = 0.0d, negatifBakiyeDenkSaat = 0.0d;
-	private Double haftaIciSutIzniSure = 7.5d, cumartesiSaat = 0.0d, izin = 0.0d, cumartesiIzinSaat = 0.0d, cumartesiSutIzniSure = 0.0d, pazarSaat = 0.0d, pazarIzinSaat = 0.0d, pazarSutIzniSure = 0.0d;
+	private Double haftaIciSutIzniSure = 7.5d, cumartesiSaat = 0.0d, izin = 0.0d, cumartesiIzinSaat = 0.0d, cumartesiSutIzniSure = 0.0d, sutIzniSabitSaat;
+ 	private Double pazarSaat = 0.0d, pazarIzinSaat = 0.0d, pazarSutIzniSure = 0.0d;
 	private Boolean fazlaMesaiVar = Boolean.TRUE, toplamGunGuncelle = Boolean.FALSE, durum = Boolean.TRUE, genelVardiya = Boolean.TRUE, hareketKaydiVardiyaBul = Boolean.FALSE;
 	private Boolean haftaTatilMesaiOde = Boolean.FALSE, geceHaftaTatilMesaiParcala = Boolean.FALSE, geceCalismaOdemeVar = Boolean.FALSE, otomatikFazlaCalismaOnaylansin = Boolean.FALSE;
 	private Boolean ortakVardiya = Boolean.FALSE, fazlaMesaiGoruntulensin = Boolean.TRUE, ilkPlanOnayliDurum = Boolean.FALSE, gunMaxCalismaOdemeDurum = Boolean.TRUE;
@@ -403,6 +403,15 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	public void setPazarSutIzniSure(Double pazarSutIzniSure) {
 		this.pazarSutIzniSure = pazarSutIzniSure;
+	}
+	
+	@Column(name = COLUMN_NAME_SUT_IZNI_SABIT)
+	public Double getSutIzniSabitSaat() {
+		return sutIzniSabitSaat;
+	}
+
+	public void setSutIzniSabitSaat(Double sutIzniSabitSaat) {
+		this.sutIzniSabitSaat = sutIzniSabitSaat;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -753,5 +762,6 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public void entityRefresh() {
 
 	}
+	
 
 }
