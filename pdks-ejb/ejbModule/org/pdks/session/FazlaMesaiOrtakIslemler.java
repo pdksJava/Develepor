@@ -276,6 +276,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			Personel personel = pd.getPdksPersonel();
 			logger.debug(personel.getPdksSicilNo() + " " + personel.getAdSoyad());
 			PersonelDonemselDurum sutIzniPersonelDonemselDurum = pd != null ? pd.getSutIzniPersonelDonemselDurum() : null;
+			PersonelDonemselDurum gebePersonelDonemselDurum = pd != null ? pd.getGebePersonelDonemselDurum() : null;
 			PersonelView personelView = null;
 			VardiyaGun sonVardiyaGun = null;
 			for (VardiyaGun vg : ap.getVardiyalar()) {
@@ -285,18 +286,24 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				}
 
 			}
+			boolean sutIzniDurum = sutIzniPersonelDonemselDurum != null && sutIzniPersonelDonemselDurum.isSutIzni();
+			boolean gebeDurum = gebePersonelDonemselDurum != null && gebePersonelDonemselDurum.isGebe();
 			for (VardiyaGun vg : ap.getVardiyalar()) {
 				Vardiya vardiya = vg.getVardiya();
 				if (vardiya == null)
 					continue;
+				if (sutIzniDurum) {
+					boolean sutIzniDonemTamam = sutIzniPersonelDonemselDurum.getBasTarih().getTime() <= vg.getVardiyaDate().getTime() && sutIzniPersonelDonemselDurum.getBitTarih().getTime() >= vg.getVardiyaDate().getTime();
+					vg.setSutIzniVar(sutIzniDonemTamam);
+				}
+				if (gebeDurum) {
+					boolean gebeDonemTamam = gebePersonelDonemselDurum.getBasTarih().getTime() <= vg.getVardiyaDate().getTime() && gebePersonelDonemselDurum.getBitTarih().getTime() >= vg.getVardiyaDate().getTime();
+					vg.setGebeMi(gebeDonemTamam);
+				}
+
 				if (vg.getIzin() != null || vardiya.isCalisma() == false)
 					continue;
 
-				boolean donemTamam = false;
-				if (sutIzniPersonelDonemselDurum != null)
-					donemTamam = sutIzniPersonelDonemselDurum.getBasTarih().getTime() <= vg.getVardiyaDate().getTime() && sutIzniPersonelDonemselDurum.getBitTarih().getTime() >= vg.getVardiyaDate().getTime();
-				if (donemTamam)
-					vg.setSutIzniVar(sutIzniPersonelDonemselDurum.isSutIzni());
 				if (!vardiyaNetCalismaSuresiMap.containsKey(vardiya.getId()))
 					vardiyaNetCalismaSuresiMap.put(vardiya.getId(), vardiya.getNetCalismaSuresi());
 				Vardiya islemVardiya = vg.getIslemVardiya();

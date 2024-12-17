@@ -301,7 +301,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		if (bakiyeIzinTipiList == null)
 			bakiyeIzinTipiList = new ArrayList<IzinTipi>();
 
-		if (authenticatedUser.isAdmin() && ortakIslemler.getParameterKeyHasStringValue("bakiyeIzinGoster")) {
+		if (authenticatedUser.isAdmin() && ortakIslemler.getParameterKeyHasStringValue("dosyaIzinGuncellemeYetki")) {
 			map.clear();
 			StringBuffer sb = new StringBuffer();
 			sb.append("select * from " + IzinTipi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
@@ -921,11 +921,11 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 	 * 
 	 */
 	private void dosyaGuncelleDurum() {
-		dosyaGuncellemeYetki = ortakIslemler.getTestDurum() && (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIK());
+		dosyaGuncellemeYetki = (ortakIslemler.getTestDurum() || (bakiyeIzinTipiList != null && bakiyeIzinTipiList.isEmpty() == false)) && (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIK());
 		if (dosyaGuncellemeYetki) {
 			if (authenticatedUser.isIK()) {
-				String dosyaGuncellemeYetkiStr = ortakIslemler.getParameterKey("dosyaGuncellemeYetki");
-				dosyaGuncellemeYetki = dosyaGuncellemeYetkiStr.equals("1");
+				String dosyaGuncellemeYetkiStr = ortakIslemler.getParameterKey("dosyaIzinGuncellemeYetki");
+				dosyaGuncellemeYetki = dosyaGuncellemeYetkiStr.equalsIgnoreCase("IK");
 			}
 
 		}

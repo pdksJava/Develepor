@@ -125,7 +125,7 @@
 					oncomplete="#{rich:component('dosyaTransferPanel')}.show();" reRender="dosyaTransferPanel" />
 				<ui:fragment rendered="#{authenticatedUser.admin}">
 					<a4j:commandButton value="Excel'den Bakiye Güncelle" onclick="#{rich:component('wait')}.show()"
-						rendered="#{not empty kullanilanIzinlerHome.bakiyeIzinTipiList}" action="#{kullanilanIzinlerHome.fileImportDosyaSifirla()}" ajaxSingle="true"
+						rendered="#{not empty kullanilanIzinlerHome.bakiyeIzinTipiList and ortakIslemler.getParameterKeyHasStringValue('bakiyeIzinGoster')}" action="#{kullanilanIzinlerHome.fileImportDosyaSifirla()}" ajaxSingle="true"
 						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('wait')}.hide();#{rich:component('fileImportPanel')}.show()"
 						reRender="fileImportPanel" />
 
