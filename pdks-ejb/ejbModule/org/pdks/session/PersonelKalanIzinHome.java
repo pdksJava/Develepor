@@ -202,7 +202,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 			session.flush();
 			fillTarihIzinList();
 		} catch (Exception e) {
-			
+
 		}
 
 		return "";
@@ -809,8 +809,12 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		if (aramaSecenekleri.getSirketList() != null) {
 			List<SelectItem> sirketIdList = ortakIslemler.getIzinSirketItemList(aramaSecenekleri.getSirketList());
 			aramaSecenekleri.setSirketIdList(sirketIdList);
-			if (aramaSecenekleri.getSirketIdList().size() == 1)
+			if (aramaSecenekleri.getSirketIdList().size() == 1) {
 				aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
+				ortakIslemler.getTesisList(aramaSecenekleri.getTesisList(), null, aramaSecenekleri.getSirketId(), true, session);
+				if (aramaSecenekleri.getTesisList() != null && aramaSecenekleri.getTesisList().size() == 1)
+					aramaSecenekleri.setTesisId((Long) aramaSecenekleri.getTesisList().get(0).getValue());
+			}
 		}
 
 	}

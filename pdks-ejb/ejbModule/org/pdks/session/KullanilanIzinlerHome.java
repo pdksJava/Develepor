@@ -122,9 +122,12 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 			if (sirket.getFazlaMesai() && sirket.getPdks())
 				aramaSecenekleri.getSirketIdList().add(new SelectItem(sirket.getId(), sirket.getAd()));
 		}
-		if (aramaSecenekleri.getSirketIdList().size() == 1)
+		if (aramaSecenekleri.getSirketIdList().size() == 1) {
 			aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
-		if (aramaSecenekleri.getTesisList() != null)
+			ortakIslemler.getTesisList(aramaSecenekleri.getTesisList(), null, aramaSecenekleri.getSirketId(), true, session);
+			if (aramaSecenekleri.getTesisList() != null && aramaSecenekleri.getTesisList().size() == 1)
+				aramaSecenekleri.setTesisId((Long) aramaSecenekleri.getTesisList().get(0).getValue());
+		} else if (aramaSecenekleri.getTesisList() != null)
 			aramaSecenekleri.getTesisList().clear();
 	}
 

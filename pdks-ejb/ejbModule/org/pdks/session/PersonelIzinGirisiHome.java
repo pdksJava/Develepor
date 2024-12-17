@@ -874,9 +874,12 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		}
 		Tanim ekSaha3 = aramaSecenekleri.getEkSahaTanimMap() != null && aramaSecenekleri.getEkSahaTanimMap().containsKey("ekSaha3") ? aramaSecenekleri.getEkSahaTanimMap().get("ekSaha3") : null;
 		bolumAciklama = (ekSaha3 != null ? ekSaha3.getAciklama() : ortakIslemler.bolumAciklama()).toLowerCase(PdksUtil.TR_LOCALE);
-		if (aramaSecenekleri.getSirketIdList().size() == 1)
+		if (aramaSecenekleri.getSirketIdList().size() == 1) {
 			aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
-		if (aramaListeSecenekleri.getTesisList() != null)
+			ortakIslemler.getTesisList(aramaListeSecenekleri.getTesisList(), null, aramaListeSecenekleri.getSirketId(), true, session);
+			if (aramaListeSecenekleri.getTesisList() != null && aramaListeSecenekleri.getTesisList().size() == 1)
+				aramaListeSecenekleri.setTesisId((Long) aramaListeSecenekleri.getTesisList().get(0).getValue());
+		} else if (aramaListeSecenekleri.getTesisList() != null)
 			aramaListeSecenekleri.getTesisList().clear();
 	}
 

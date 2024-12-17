@@ -358,7 +358,7 @@
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{personelIzinGirisiHome.aramaListeSecenekleri.sirketIdList}" />
 							<a4j:support event="onchange" 
-								action="#{fazlaMesaiOrtakIslemler.getTesisList(personelIzinGirisiHome.aramaListeSecenekleri.tesisList,null,personelIzinGirisiHome.aramaListeSecenekleri.sirketId,true,personelIzinGirisiHome.session)}" 
+								action="#{ortakIslemler.getTesisList(personelIzinGirisiHome.aramaListeSecenekleri.tesisList,null,personelIzinGirisiHome.aramaListeSecenekleri.sirketId,true,personelIzinGirisiHome.session)}" 
 								ajaxSingle="true" reRender="secim" />
 							
 							

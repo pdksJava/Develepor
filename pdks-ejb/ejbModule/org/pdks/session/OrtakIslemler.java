@@ -4294,6 +4294,61 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param tesisList
+	 * @param sirket
+	 * @param sirketId
+	 * @param selectItemDurum
+	 * @param session
+	 * @return
+	 */
+	public List getTesisList(List tesisList, Sirket sirket, Long sirketId, boolean selectItemDurum, Session session) {
+		AylikPuantaj aylikPuantaj = new AylikPuantaj();
+		aylikPuantaj.setIlkGun(PdksUtil.getDate(new Date()));
+		aylikPuantaj.setSonGun(aylikPuantaj.getIlkGun());
+		User loginUser = authenticatedUser;
+		List<Tanim> list = null;
+		if (sirketId != null)
+			sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
+
+		if (sirket != null && (sirket.isTesisDurumu() || loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis())) {
+			String tesisId = null;
+			if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
+				Personel personel = loginUser.getPdksPersonel();
+				if (personel.getTesis() != null)
+					tesisId = String.valueOf(personel.getTesis().getId());
+			}
+			LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
+			paramsMap.put("loginUser", loginUser);
+			paramsMap.put("sirket", sirket);
+			paramsMap.put("tesisId", tesisId);
+			paramsMap.put("aylikPuantaj", aylikPuantaj);
+			paramsMap.put("denklestirme", false);
+			paramsMap.put("tipi", "T");
+			paramsMap.put("fieldName", Tanim.COLUMN_NAME_ID);
+			list = getFazlaMesaiList(paramsMap, session);
+		}
+		List selectList = null;
+		if (selectItemDurum) {
+			selectList = new ArrayList<SelectItem>();
+			if (list != null && !list.isEmpty()) {
+				list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
+				for (Tanim veri : list)
+					selectList.add(new SelectItem(veri.getId(), veri.getAciklama()));
+			}
+		} else
+			selectList = list;
+		if (tesisList == null)
+			tesisList = selectList != null ? selectList : new ArrayList();
+		else {
+			tesisList.clear();
+			if (!selectList.isEmpty())
+				tesisList.addAll(selectList);
+		}
+		return tesisList;
+
+	}
+
+	/**
 	 * @param paramsMap
 	 * @param session
 	 * @return
@@ -5071,7 +5126,7 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" and " + Sirket.COLUMN_NAME_DEPARTMAN + " = :d");
 		}
 
-		if (authenticatedUser != null && authenticatedUser.isIKSirket() && authenticatedUser.getPdksPersonel() != null) {
+		if (authenticatedUser != null && (authenticatedUser.isIK_Tesis() || authenticatedUser.isIKSirket()) && authenticatedUser.getPdksPersonel() != null) {
 			parametreMap.put("s", authenticatedUser.getPdksPersonel().getSirket().getId());
 			sb.append(" and " + Sirket.COLUMN_NAME_ID + " = :s");
 		}
