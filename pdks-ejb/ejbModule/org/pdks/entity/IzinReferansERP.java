@@ -28,6 +28,7 @@ public class IzinReferansERP implements Serializable {
 	public static final String TABLE_NAME = "IZIN_REFERANS_ERP";
 	public static final String COLUMN_NAME_ID = "REFERANS_ID";
 	public static final String COLUMN_NAME_IZIN_ID = "IZIN_ID";
+	public static final String PDKS_REFERANS_START = "NP_";
 
 	private String id;
 

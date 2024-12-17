@@ -32,6 +32,7 @@ import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.Dosya;
 import org.pdks.entity.IzinIstirahat;
+import org.pdks.entity.IzinReferansERP;
 import org.pdks.entity.IzinTipi;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
@@ -86,7 +87,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 
 	private Integer yil;
 
-	private boolean tumIzinler = Boolean.FALSE, istenAyrilanEkle = Boolean.FALSE, servisAktarDurum, dosyaGuncellemeYetki, servisCalisti;
+	private boolean tumIzinler = Boolean.FALSE, istenAyrilanEkle = Boolean.FALSE, servisAktarDurum, dosyaGuncellemeYetki, servisCalisti, referansOtomatikOlustur;
 	private Session session;
 	private AramaSecenekleri aramaSecenekleri = null;
 	private List<SelectItem> izinTanimIdList;
@@ -825,6 +826,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 	}
 
 	public String izinDosyaSifirla() throws Exception {
+		referansOtomatikOlustur = Boolean.FALSE;
 		servisCalisti = Boolean.FALSE;
 		izinERPList.clear();
 		izinDosya.setDosyaIcerik(null);
@@ -858,7 +860,10 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 					izinERP.setIzinTipi(ExcelUtil.getSheetStringValueTry(sheet, row, col++));
 					izinERP.setIzinTipiAciklama(ExcelUtil.getSheetStringValueTry(sheet, row, col++));
 					izinERP.setPersonelNo(ExcelUtil.getSheetStringValueTry(sheet, row, col++));
-					izinERP.setReferansNoERP(ExcelUtil.getSheetStringValueTry(sheet, row, col++));
+					String referansNoERP = ExcelUtil.getSheetStringValueTry(sheet, row, col++);
+					if (referansOtomatikOlustur || PdksUtil.hasStringValue(referansNoERP) == false)
+						referansNoERP = IzinReferansERP.PDKS_REFERANS_START + izinERP.getPersonelNo() + izinERP.getBasZaman();
+					izinERP.setReferansNoERP(referansNoERP);
 					izinERP.setSureBirimi(ExcelUtil.getSheetStringValueTry(sheet, row, col++));
 				} catch (Exception e) {
 					logger.error(e);
@@ -1147,6 +1152,14 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 
 	public void setBakiyeIzinTipiList(List<IzinTipi> bakiyeIzinTipiList) {
 		this.bakiyeIzinTipiList = bakiyeIzinTipiList;
+	}
+
+	public boolean isReferansOtomatikOlustur() {
+		return referansOtomatikOlustur;
+	}
+
+	public void setReferansOtomatikOlustur(boolean referansOtomatikOlustur) {
+		this.referansOtomatikOlustur = referansOtomatikOlustur;
 	}
 
 }

@@ -125,7 +125,8 @@
 					oncomplete="#{rich:component('dosyaTransferPanel')}.show();" reRender="dosyaTransferPanel" />
 				<ui:fragment rendered="#{authenticatedUser.admin}">
 					<a4j:commandButton value="Excel'den Bakiye Güncelle" onclick="#{rich:component('wait')}.show()"
-						rendered="#{not empty kullanilanIzinlerHome.bakiyeIzinTipiList and ortakIslemler.getParameterKeyHasStringValue('bakiyeIzinGoster')}" action="#{kullanilanIzinlerHome.fileImportDosyaSifirla()}" ajaxSingle="true"
+						rendered="#{not empty kullanilanIzinlerHome.bakiyeIzinTipiList and ortakIslemler.getParameterKeyHasStringValue('bakiyeIzinGoster')}"
+						action="#{kullanilanIzinlerHome.fileImportDosyaSifirla()}" ajaxSingle="true"
 						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('wait')}.hide();#{rich:component('fileImportPanel')}.show()"
 						reRender="fileImportPanel" />
 
@@ -290,8 +291,13 @@
 				</a4j:outputPanel>
 				<a4j:outputPanel id="dosyaPanel">
 					<rich:panel header="Dosya Ekleme" rendered="#{authenticatedUser.admin }">
-						<h:panelGrid columns="2" style="width:700px;">
-
+						<h:panelGrid columns="1" style="width:700px;">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{kullanilanIzinlerHome.izinDosya.dosyaIcerik!=null}">
+								<ui:define name="label">Referans Otomatik Oluştur</ui:define>
+								<h:selectBooleanCheckbox value="#{kullanilanIzinlerHome.referansOtomatikOlustur}">
+									<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" />
+								</h:selectBooleanCheckbox>
+							</s:decorate>
 							<rich:fileUpload id="fileUpload" fileUploadListener="#{kullanilanIzinlerHome.listenerizinDosya}" listHeight="50px" listWidth="300px"
 								sizeErrorLabel="Dosya boyutu büyük" maxFilesQuantity="1" immediateUpload="true" acceptedTypes="xls,xlsx"
 								transferErrorLabel="İzin webservice dosyası hatalı yüklenmiştir" doneLabel="Bitti" addControlLabel="Dosya Seçin (Excel)"
@@ -519,13 +525,14 @@
 
 								<a4j:commandButton id="dosyaOku" value="Dosya Oku" status="ajaxStatus" action="#{kullanilanIzinlerHome.bakiyeIzinDosyaOku}"
 									rendered="#{kullanilanIzinlerHome.bakiyeIzinler.isEmpty()}" reRender="dosyaPaneli"></a4j:commandButton>
-								
+
 								<rich:toolTip for="dosyaOku" rendered="#{kullanilanIzinlerHome.bakiyeIzinler.isEmpty()}">
 
 								</rich:toolTip>
-							</ui:fragment><a4j:commandButton value="Dosya Aktar" status="ajaxStatus" action="#{kullanilanIzinlerHome.bakiyeIzinDosyaYaz}" reRender="dosyaPaneli"
-									rendered="#{not empty kullanilanIzinlerHome.bakiyeIzinler and kullanilanIzinlerHome.degisti}" />
-							
+							</ui:fragment>
+							<a4j:commandButton value="Dosya Aktar" status="ajaxStatus" action="#{kullanilanIzinlerHome.bakiyeIzinDosyaYaz}" reRender="dosyaPaneli"
+								rendered="#{not empty kullanilanIzinlerHome.bakiyeIzinler and kullanilanIzinlerHome.degisti}" />
+
 
 
 						</h:panelGrid>
@@ -546,7 +553,7 @@
 										<h:outputText value="#{izinler.izinSahibi.sirket.ad}" />
 									</rich:column>
 
- 
+
 									<rich:column style="text-align:center">
 										<f:facet name="header">
 											<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
@@ -554,7 +561,7 @@
 										<h:outputText value="#{izinler.izinSahibi.sicilNo}" />
 									</rich:column>
 
-									<rich:column  filterEvent="onkeyup">
+									<rich:column filterEvent="onkeyup">
 										<f:facet name="header">
 											<h:outputText value="Adı Soyadı" />
 										</f:facet>
