@@ -37,6 +37,9 @@
 								requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz!">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{personelKalanIzinHome.aramaSecenekleri.sirketIdList}" />
+								<a4j:support event="onchange" 
+								action="#{fazlaMesaiOrtakIslemler.getTesisList(personelKalanIzinHome.aramaSecenekleri.tesisList,null,personelKalanIzinHome.aramaSecenekleri.sirketId,true,personelKalanIzinHome.session)}" 
+								ajaxSingle="true" reRender="secim" />
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">

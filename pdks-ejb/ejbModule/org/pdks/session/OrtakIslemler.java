@@ -4293,7 +4293,6 @@ public class OrtakIslemler implements Serializable {
 		return durum;
 	}
 
-	// public List getFazlaMesaiList(User loginUser, Long departmanId, Sirket sirket, String tesisId, Long bolumId, Long altBolumId, AylikPuantaj aylikPuantaj, String tipi, boolean denklestirme, Session session) {
 	/**
 	 * @param paramsMap
 	 * @param session

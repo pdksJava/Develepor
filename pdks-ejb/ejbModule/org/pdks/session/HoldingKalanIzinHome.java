@@ -96,6 +96,8 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 		bolumAciklama = (String) sonucMap.get("bolumAciklama");
 		if (aramaSecenekleri.getSirketIdList().size() == 1)
 			aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
+		if (aramaSecenekleri.getTesisList() != null)
+			aramaSecenekleri.getTesisList().clear();
 
 	}
 

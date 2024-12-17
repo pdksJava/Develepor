@@ -124,6 +124,8 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		}
 		if (aramaSecenekleri.getSirketIdList().size() == 1)
 			aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
+		if (aramaSecenekleri.getTesisList() != null)
+			aramaSecenekleri.getTesisList().clear();
 	}
 
 	public String excelAktar() {

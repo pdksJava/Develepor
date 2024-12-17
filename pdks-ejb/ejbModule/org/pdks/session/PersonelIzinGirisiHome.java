@@ -438,7 +438,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		try {
 			kidemHesabiMap = ortakIslemler.getKidemHesabi(dataKidemMap, session);
 		} catch (Exception e) {
-			
+
 		}
 		dataKidemMap = null;
 		return kidemHesabiMap;
@@ -571,12 +571,12 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		String whereStr = " where ";
 		if (PdksUtil.hasStringValue(adi)) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_AD + " like :ad");
-	 whereStr = " and ";
+			whereStr = " and ";
 			parametreMap.put("ad", adi.trim() + "%");
 		}
 		if (PdksUtil.hasStringValue(soyadi)) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_SOYAD + " like :soyad");
-	 whereStr = " and ";
+			whereStr = " and ";
 			parametreMap.put("soyad", soyadi.trim() + "%");
 		}
 		if (PdksUtil.hasStringValue(sicilNo)) {
@@ -599,7 +599,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			}
 
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " " + eqStr + " :sicilNo");
-	 whereStr = " and ";
+			whereStr = " and ";
 		}
 		Long seciliSirketId = aramaSecenekleri.getSirketId();
 		if (authenticatedUser.isYoneticiKontratli()) {
@@ -608,32 +608,32 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		}
 		if (seciliSirketId != null) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_SIRKET + " = :sirketId");
-	 whereStr = " and ";
+			whereStr = " and ";
 			parametreMap.put("sirketId", seciliSirketId);
 		}
 		if (aramaSecenekleri.getEkSaha1Id() != null) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_EK_SAHA1 + " = :ekSaha1");
-	 whereStr = " and ";
+			whereStr = " and ";
 			parametreMap.put("ekSaha1", aramaSecenekleri.getEkSaha1Id());
 		}
 		if (aramaSecenekleri.getEkSaha2Id() != null) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_EK_SAHA2 + " = :ekSaha2");
-	 whereStr = " and ";
+			whereStr = " and ";
 			parametreMap.put("ekSaha2", aramaSecenekleri.getEkSaha2Id());
 		}
 		if (aramaSecenekleri.getEkSaha3Id() != null) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_EK_SAHA3 + " = :ekSaha3");
-	 whereStr = " and ";
+			whereStr = " and ";
 			parametreMap.put("ekSaha3", aramaSecenekleri.getEkSaha3Id());
 		}
 		if (aramaSecenekleri.getEkSaha4Id() != null) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_EK_SAHA4 + " = :ekSaha4");
-	 whereStr = " and ";
+			whereStr = " and ";
 			parametreMap.put("ekSaha4", aramaSecenekleri.getEkSaha4Id());
 		}
 		if (!authenticatedUser.isYoneticiKontratli() && !aramaSecenekleri.getSirketIdList().isEmpty()) {
 			sb.append(whereStr + " P." + Personel.COLUMN_NAME_SIRKET + " :srk");
-	 whereStr = " and ";
+			whereStr = " and ";
 			List<Long> sList = new ArrayList<Long>();
 			for (SelectItem sr : aramaSecenekleri.getSirketIdList())
 				sList.add((Long) sr.getValue());
@@ -876,6 +876,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		bolumAciklama = (ekSaha3 != null ? ekSaha3.getAciklama() : ortakIslemler.bolumAciklama()).toLowerCase(PdksUtil.TR_LOCALE);
 		if (aramaSecenekleri.getSirketIdList().size() == 1)
 			aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
+		if (aramaListeSecenekleri.getTesisList() != null)
+			aramaListeSecenekleri.getTesisList().clear();
 	}
 
 	/**

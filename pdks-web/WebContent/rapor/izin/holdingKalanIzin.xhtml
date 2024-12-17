@@ -34,7 +34,10 @@
 								requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz!">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{holdingKalanIzinHome.aramaSecenekleri.sirketIdList}" />
-								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" reRender="izinPanel" />
+								 
+								<a4j:support event="onchange"
+								action="#{fazlaMesaiOrtakIslemler.getTesisList(holdingKalanIzinHome.aramaSecenekleri.tesisList,null,holdingKalanIzinHome.aramaSecenekleri.sirketId,true,holdingKalanIzinHome.session)}"
+								ajaxSingle="true" reRender="secim" />
 							</h:selectOneMenu>
 						</s:decorate>
 

@@ -11,7 +11,7 @@
 		<h:form id="formKullanilanIzinler">
 
 			<rich:panel header="#{ortakIslemler.getMenuUserAdi(kullanilanIzinlerHome.session,'kullanilanIzinler')}">
-				<h:panelGrid columns="2">
+				<h:panelGrid columns="2" id="secim">
 					<s:decorate template="/layout/edit.xhtml">
 						<ui:define name="label">Başlangıç Tarihi</ui:define>
 						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{kullanilanIzinlerHome.basTarih}" required="true"
@@ -40,6 +40,9 @@
 						<h:selectOneMenu value="#{kullanilanIzinlerHome.aramaSecenekleri.sirketId}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{kullanilanIzinlerHome.aramaSecenekleri.sirketIdList}" />
+							<a4j:support event="onchange" 
+								action="#{fazlaMesaiOrtakIslemler.getTesisList(kullanilanIzinlerHome.aramaSecenekleri.tesisList,null,kullanilanIzinlerHome.aramaSecenekleri.sirketId,true,kullanilanIzinlerHome.session)}" 
+								ajaxSingle="true" reRender="secim" />
 						</h:selectOneMenu>
 					</s:decorate>
 
@@ -595,7 +598,7 @@
 										<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 									</f:facet>
 								</rich:dataTable>
-								<ui:fragment rendered="#{not empty personelKalanIzinHome.pdksPersonelList}">
+								<ui:fragment rendered="#{not empty kullanilanIzinlerHome.pdksPersonelList}">
 									<SCRIPT>
 									tableScroll("#{authenticatedUser.scroolDiv}",700);
 	 							</SCRIPT>

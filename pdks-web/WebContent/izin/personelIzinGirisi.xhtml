@@ -335,7 +335,7 @@
 		<h:form>
 			<rich:panel header="İzin Takip">
 
-				<h:panelGrid columns="2">
+				<h:panelGrid columns="2" id="secim">
 					<s:decorate id="baslangicField" template="/layout/edit.xhtml">
 						<ui:define name="label">Başlangıç Tarihi</ui:define>
 						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{personelIzinGirisiHome.filtreBaslangicZamani}" required="true"
@@ -357,6 +357,11 @@
 						<h:selectOneMenu value="#{personelIzinGirisiHome.aramaListeSecenekleri.sirketId}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{personelIzinGirisiHome.aramaListeSecenekleri.sirketIdList}" />
+							<a4j:support event="onchange" 
+								action="#{fazlaMesaiOrtakIslemler.getTesisList(personelIzinGirisiHome.aramaListeSecenekleri.tesisList,null,personelIzinGirisiHome.aramaListeSecenekleri.sirketId,true,personelIzinGirisiHome.session)}" 
+								ajaxSingle="true" reRender="secim" />
+							
+							
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
