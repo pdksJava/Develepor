@@ -79,7 +79,7 @@
 								</f:facet>
 								<h:outputText value="#{personelView.pdksPersonel.calismaModeli.aciklama}" id="calismaModeli" />
 							</rich:column>
-							<rich:column style="text-align:center" rendered="#{authenticatedUser.admin or ortakIslemler.getParameterKey('izinERPUpdate')!='1'}">
+							<rich:column style="text-align:center" rendered="#{pdksPersonelHome.bakiyeTakipEdiliyor or ortakIslemler.getParameterKey('izinERPUpdate')!='1'}">
 								<f:facet name="header">
 									<h:outputText value="#{ortakIslemler.kidemBasTarihiAciklama()}" />
 								</f:facet>
@@ -99,7 +99,7 @@
 									<h:outputText value="#{authenticatedUser.dateFormatla(personelView.pdksPersonel.istenAyrilisTarihi)}" />
 								</ui:fragment>
 							</rich:column>
-							<rich:column style="text-align:center" rendered="#{authenticatedUser.admin or ortakIslemler.getParameterKey('izinERPUpdate')!='1'}">
+							<rich:column style="text-align:center" rendered="#{pdksPersonelHome.bakiyeTakipEdiliyor or ortakIslemler.getParameterKey('izinERPUpdate')!='1'}">
 								<f:facet name="header">
 									<h:outputText value="Doğum Tarihi" />
 								</f:facet>

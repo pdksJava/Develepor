@@ -860,7 +860,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		if (personelBakiyeIzinList != null)
 			personelBakiyeIzinList.clear();
 		if (authenticatedUser.isIK() || authenticatedUser.isAdmin())
-			gelecekIzinGoster = ortakIslemler.getParameterKey("borcluIzinleriiGetir").equals("1");
+			gelecekIzinGoster = ortakIslemler.getParameterKey("borcluIzinleriGetir").equals("1");
 		return pos;
 
 	}

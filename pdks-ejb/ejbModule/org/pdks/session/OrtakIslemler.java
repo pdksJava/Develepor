@@ -14376,7 +14376,7 @@ public class OrtakIslemler implements Serializable {
 		boolean emailCCDurum = map.containsKey("emailCCDurum"), emailBCCDurum = map.containsKey("emailBCCDurum"), bordroAltAlani = map.containsKey("bordroAltAlani");
 		boolean kimlikNoGoster = map.containsKey("kimlikNoGoster"), onaysizIzinKullanilir = map.containsKey("onaysizIzinKullanilir"), tesisDurum = map.containsKey("tesisDurum"), ikinciYoneticiIzinOnayla = map.containsKey("ikinciYoneticiIzinOnayla");
 		boolean departmanGoster = map.containsKey("departmanGoster"), istenAyrilmaGoster = map.containsKey("istenAyrilmaGoster"), masrafYeriGoster = map.containsKey("masrafYeriGoster"), kartNoGoster = map.containsKey("kartNoGoster");
-		boolean personelTipiGoster = map.containsKey("personelTipiGoster"), izinKartiVardir = map.containsKey("izinKartiVardir");
+		boolean personelTipiGoster = map.containsKey("personelTipiGoster"), izinKartiVardir = map.containsKey("izinKartiVardir"), bakiyeTakipEdiliyor = map.containsKey("bakiyeTakipEdiliyor");
 		ByteArrayOutputStream baos = null;
 		Workbook wb = new XSSFWorkbook();
 		for (Iterator iter = personelList.iterator(); iter.hasNext();) {
@@ -14427,12 +14427,12 @@ public class OrtakIslemler implements Serializable {
 		if (personelTipiGoster)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(personelTipiAciklama());
 
-		if (!izinERPUpdate)
+		if (bakiyeTakipEdiliyor || !izinERPUpdate)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(kidemBasTarihiAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İşe Giriş Tarihi");
 		if (istenAyrilmaGoster)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İşten Ayrılma Tarihi");
-		if (!izinERPUpdate)
+		if (bakiyeTakipEdiliyor || !izinERPUpdate)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Doğum Tarihi");
 		if (ikAdminDegil)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumAciklama());
@@ -14573,7 +14573,7 @@ public class OrtakIslemler implements Serializable {
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getCalismaModeli() != null ? personel.getCalismaModeli().getAciklama() : "");
 				if (personelTipiGoster)
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getPersonelTipi() != null ? personel.getPersonelTipi().getAciklama() : "");
-				if (!izinERPUpdate) {
+				if (bakiyeTakipEdiliyor || !izinERPUpdate) {
 					if (personel.getIzinHakEdisTarihi() != null)
 						ExcelUtil.getCell(sheet, row, col++, cellStyleDate).setCellValue(personel.getIzinHakEdisTarihi());
 					else
@@ -14589,7 +14589,7 @@ public class OrtakIslemler implements Serializable {
 					else
 						ExcelUtil.getCell(sheet, row, col++, cellStyleDate).setCellValue(personel.getSonCalismaTarihi());
 				}
-				if (!izinERPUpdate) {
+				if (bakiyeTakipEdiliyor || !izinERPUpdate) {
 					if (personel.getDogumTarihi() != null)
 						ExcelUtil.getCell(sheet, row, col++, cellStyleDate).setCellValue(personel.getDogumTarihi());
 					else
