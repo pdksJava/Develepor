@@ -2337,26 +2337,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, "personelListesi");
 		personelDurumMap.clear();
-		bakiyeTakipEdiliyor = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi();
-		if (bakiyeTakipEdiliyor == false && authenticatedUser.isIK()) {
-			HashMap map = new HashMap();
-			StringBuffer sb = new StringBuffer();
-			sb.append("select * from " + IzinTipi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
-			sb.append(" where " + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is not null and " + IzinTipi.COLUMN_NAME_DURUM + " = 1");
-			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List bakiyeIzinTipiList = pdksEntityController.getObjectBySQLList(sb, map, IzinTipi.class);
-			if (bakiyeIzinTipiList != null) {
-				for (Iterator iterator = bakiyeIzinTipiList.iterator(); iterator.hasNext();) {
-					IzinTipi izinTipi = (IzinTipi) iterator.next();
-					IzinTipi bakiyeIzinTipi = izinTipi.getBakiyeIzinTipi();
-					if (bakiyeIzinTipi.getIzinTipiTanim() == null || !bakiyeIzinTipi.getIzinTipiTanim().getKodu().equals(IzinTipi.YILLIK_UCRETLI_IZIN))
-						iterator.remove();
-
-				}
-				bakiyeTakipEdiliyor = bakiyeIzinTipiList.isEmpty() == false;
-			}
-
-		}
+		bakiyeTakipEdiliyor = ortakIslemler.getBakiyeTakipEdiliyor(session);
 		sanalPersonelAciklama = ortakIslemler.sanalPersonelAciklama();
 		yoneticiRolVarmi = ortakIslemler.yoneticiRolKontrol(session);
 		fillEkSahaTanim();
@@ -3028,7 +3009,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * @param list
 	 */
 	private TreeMap<String, Boolean> mantiksalAlanlariDoldur(List<PersonelView> list) {
-		TreeMap<String, Boolean> map = ortakIslemler.mantiksalAlanlariDoldur(list);
+		TreeMap<String, Boolean> map = ortakIslemler.mantiksalAlanlariDoldur(list, bakiyeTakipEdiliyor);
 		fazlaMesaiIzinKullan = map.containsKey("fazlaMesaiIzinKullan");
 		istenAyrilmaGoster = map.containsKey("istenAyrilmaGoster");
 		fazlaMesaiOde = map.containsKey("fazlaMesaiOde");
@@ -4626,7 +4607,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		try {
 			if (list == null)
 				list = personelList;
-			ByteArrayOutputStream baosDosya = ortakIslemler.personelExcelDevam(Boolean.TRUE, list, ekSahaTanimMap, authenticatedUser, personelDinamikMap, session);
+			ByteArrayOutputStream baosDosya = ortakIslemler.personelExcelDevam(Boolean.TRUE, list, ekSahaTanimMap, authenticatedUser, personelDinamikMap, bakiyeTakipEdiliyor, session);
 			if (baosDosya != null)
 				PdksUtil.setExcelHttpServletResponse(baosDosya, "personelListesi.xlsx");
 

@@ -14169,11 +14169,13 @@ public class OrtakIslemler implements Serializable {
 		return file;
 	}
 
+	 
 	/**
 	 * @param list
+	 * @param bakiyeTakipEdiliyor
 	 * @return
 	 */
-	public TreeMap<String, Boolean> mantiksalAlanlariDoldur(List<PersonelView> list) {
+	public TreeMap<String, Boolean> mantiksalAlanlariDoldur(List<PersonelView> list, boolean bakiyeTakipEdiliyor) {
 		TreeMap<String, Boolean> map = new TreeMap<String, Boolean>();
 		Boolean fazlaMesaiIzinKullan = Boolean.FALSE, tesisDurum = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, sanalPersonel = Boolean.FALSE, icapDurum = Boolean.FALSE;
 		Boolean kullaniciPersonel = Boolean.FALSE, gebeMi = Boolean.FALSE, sutIzni = Boolean.FALSE, istenAyrilmaGoster = Boolean.FALSE, personelTipiGoster = Boolean.FALSE;
@@ -14306,7 +14308,9 @@ public class OrtakIslemler implements Serializable {
 		}
 		if (kartNoGoster != null && kartNoGoster)
 			map.put("kartNoGoster", Boolean.TRUE);
-
+		
+		if (bakiyeTakipEdiliyor)
+			map.put("bakiyeTakipEdiliyor", Boolean.TRUE);
 		if (personelTipiGoster)
 			map.put("personelTipiGoster", Boolean.TRUE);
 		if (tesisDurum)
@@ -14342,18 +14346,45 @@ public class OrtakIslemler implements Serializable {
 		return list;
 
 	}
+	/**
+	 * @param session
+	 * @return
+	 */
+	public boolean getBakiyeTakipEdiliyor(Session session) {
+		boolean bakiyeTakipEdiliyor = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi();
+		if (bakiyeTakipEdiliyor == false && authenticatedUser.isIK()) {
+			HashMap map = new HashMap();
+			StringBuffer sb = new StringBuffer();
+			sb.append("select * from " + IzinTipi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+			sb.append(" where " + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is not null and " + IzinTipi.COLUMN_NAME_DURUM + " = 1");
+			map.put(PdksEntityController.MAP_KEY_SESSION, session);
+			List bakiyeIzinTipiList = pdksEntityController.getObjectBySQLList(sb, map, IzinTipi.class);
+			if (bakiyeIzinTipiList != null) {
+				for (Iterator iterator = bakiyeIzinTipiList.iterator(); iterator.hasNext();) {
+					IzinTipi izinTipi = (IzinTipi) iterator.next();
+					IzinTipi bakiyeIzinTipi = izinTipi.getBakiyeIzinTipi();
+					if (bakiyeIzinTipi.getIzinTipiTanim() == null || !bakiyeIzinTipi.getIzinTipiTanim().getKodu().equals(IzinTipi.YILLIK_UCRETLI_IZIN))
+						iterator.remove();
 
+				}
+				bakiyeTakipEdiliyor = bakiyeIzinTipiList.isEmpty() == false;
+			}
+
+		}
+		return bakiyeTakipEdiliyor;
+	}
 	/**
 	 * @param ldap
 	 * @param list
 	 * @param tanimMap
 	 * @param user
 	 * @param personelDinamikMap
+	 * @param bakiyeTakipEdiliyor
 	 * @param session
 	 * @return
 	 * @throws Exception
 	 */
-	public ByteArrayOutputStream personelExcelDevam(Boolean ldap, List<PersonelView> list, TreeMap<String, Tanim> tanimMap, User user, TreeMap<String, PersonelDinamikAlan> personelDinamikMap, Session session) throws Exception {
+	public ByteArrayOutputStream personelExcelDevam(Boolean ldap, List<PersonelView> list, TreeMap<String, Tanim> tanimMap, User user, TreeMap<String, PersonelDinamikAlan> personelDinamikMap,boolean bakiyeTakipEdiliyor, Session session) throws Exception {
 		if (tanimMap == null)
 			tanimMap = new TreeMap<String, Tanim>();
 		if (user == null) {
@@ -14369,14 +14400,14 @@ public class OrtakIslemler implements Serializable {
 			sanalPersonelAciklama = "Sanal Personel";
 
 		List<PersonelView> personelList = new ArrayList<PersonelView>(list);
-		TreeMap<String, Boolean> map = mantiksalAlanlariDoldur(personelList);
+		TreeMap<String, Boolean> map = mantiksalAlanlariDoldur(personelList,bakiyeTakipEdiliyor);
 		boolean izinERPUpdate = str.equals("1"), fazlaMesaiIzinKullan = map.containsKey("fazlaMesaiIzinKullan"), fazlaMesaiOde = map.containsKey("fazlaMesaiOde");
 		boolean sanalPersonel = map.containsKey("sanalPersonel"), icapDurum = map.containsKey("icapDurum"), partTimeDurum = map.containsKey("partTimeDurum");
 		boolean sutIzni = map.containsKey("sutIzni"), gebeMi = map.containsKey("gebeMi"), egitimDonemi = map.containsKey("egitimDonemi"), suaOlabilir = map.containsKey("suaOlabilir");
 		boolean emailCCDurum = map.containsKey("emailCCDurum"), emailBCCDurum = map.containsKey("emailBCCDurum"), bordroAltAlani = map.containsKey("bordroAltAlani");
 		boolean kimlikNoGoster = map.containsKey("kimlikNoGoster"), onaysizIzinKullanilir = map.containsKey("onaysizIzinKullanilir"), tesisDurum = map.containsKey("tesisDurum"), ikinciYoneticiIzinOnayla = map.containsKey("ikinciYoneticiIzinOnayla");
 		boolean departmanGoster = map.containsKey("departmanGoster"), istenAyrilmaGoster = map.containsKey("istenAyrilmaGoster"), masrafYeriGoster = map.containsKey("masrafYeriGoster"), kartNoGoster = map.containsKey("kartNoGoster");
-		boolean personelTipiGoster = map.containsKey("personelTipiGoster"), izinKartiVardir = map.containsKey("izinKartiVardir"), bakiyeTakipEdiliyor = map.containsKey("bakiyeTakipEdiliyor");
+		boolean personelTipiGoster = map.containsKey("personelTipiGoster"), izinKartiVardir = map.containsKey("izinKartiVardir") ;
 		ByteArrayOutputStream baos = null;
 		Workbook wb = new XSSFWorkbook();
 		for (Iterator iter = personelList.iterator(); iter.hasNext();) {

@@ -54,7 +54,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	User authenticatedUser;
 	@In(required = false, create = true)
 	StartupAction startupAction;
-	
+
 	public static String sayfaURL = "sirketTanimlama";
 	private List<Departman> departmanList = new ArrayList<Departman>();
 	private List<Sirket> sirketList = new ArrayList<Sirket>();
@@ -85,7 +85,8 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	public String excelAktar() {
 		try {
 			Sirket sirket = getInstance();
-			ByteArrayOutputStream baosDosya = ortakIslemler.personelExcelDevam(sirket.isLdap(), personelList, ekSahaTanimMap, authenticatedUser, null, session);
+			boolean bakiyeTakipEdiliyor = ortakIslemler.getBakiyeTakipEdiliyor(session);
+			ByteArrayOutputStream baosDosya = ortakIslemler.personelExcelDevam(sirket.isLdap(), personelList, ekSahaTanimMap, authenticatedUser, null, bakiyeTakipEdiliyor, session);
 			if (baosDosya != null)
 				PdksUtil.setExcelHttpServletResponse(baosDosya, "personelListesi.xlsx");
 
@@ -285,7 +286,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 
 		fillsirketList();
 	}
