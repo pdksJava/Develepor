@@ -46,7 +46,7 @@
 							</s:decorate>
 
 
-							<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.tesisDurumu and personelHareketHome.aramaSecenekleriPer.tesisList!=null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.tesisDurumu and personelHareketHome.aramaSecenekleriPer.tesisList!=null and not empty personelHareketHome.aramaSecenekleriPer.tesisList}">
 								<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 								<h:selectOneMenu value="#{personelHareketHome.aramaSecenekleriPer.tesisId}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -232,7 +232,7 @@
 											</s:decorate>
 											<c:if test="${authenticatedUser.admin or authenticatedUser.IKAdmin}">
 
-												<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.tesisDurumu and personelHareketHome.aramaSecenekleri.tesisList!=null}">
+												<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.tesisDurumu and personelHareketHome.aramaSecenekleri.tesisList!=null and not empty personelHareketHome.aramaSecenekleri.tesisList}">
 													<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 													<h:selectOneMenu value="#{personelHareketHome.aramaSecenekleri.tesisId}" disabled="#{personelHareketHome.visibled==null}">
 														<f:selectItem itemLabel="Lütfen seçiniz" />

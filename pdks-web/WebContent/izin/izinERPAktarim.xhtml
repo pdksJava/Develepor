@@ -38,8 +38,9 @@
 						</h:selectOneMenu>
 					</s:decorate>
 
-					
-					<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.tesisDurumu and (authenticatedUser.admin or authenticatedUser.IKAdmin) and  izinERPAktarimHome.aramaSecenekleri.tesisList!=null}">
+
+					<s:decorate template="/layout/edit.xhtml"
+						rendered="#{ortakIslemler.tesisDurumu and (authenticatedUser.admin or authenticatedUser.IKAdmin) and  izinERPAktarimHome.aramaSecenekleri.tesisList!=null and not empty izinERPAktarimHome.aramaSecenekleri.tesisList}">
 						<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 						<h:selectOneMenu value="#{izinERPAktarimHome.aramaSecenekleri.tesisId}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -185,7 +186,7 @@
 								</f:facet>
 								<h:outputText value="#{izin.sonIslemYapan.adSoyad}" />
 							</rich:column>
- 
+
 							<f:facet name="footer">
 								<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 							</f:facet>
