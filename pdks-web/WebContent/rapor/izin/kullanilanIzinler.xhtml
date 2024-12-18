@@ -40,8 +40,8 @@
 						<h:selectOneMenu value="#{kullanilanIzinlerHome.aramaSecenekleri.sirketId}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{kullanilanIzinlerHome.aramaSecenekleri.sirketIdList}" />
-							<a4j:support event="onchange" 
-								action="#{ortakIslemler.getTesisList(kullanilanIzinlerHome.aramaSecenekleri.tesisList,null,kullanilanIzinlerHome.aramaSecenekleri.sirketId,true,kullanilanIzinlerHome.session)}" 
+							<a4j:support event="onchange"
+								action="#{ortakIslemler.getTesisList(kullanilanIzinlerHome.aramaSecenekleri.tesisList,null,kullanilanIzinlerHome.aramaSecenekleri.sirketId,true,kullanilanIzinlerHome.session)}"
 								ajaxSingle="true" reRender="secim" />
 						</h:selectOneMenu>
 					</s:decorate>
@@ -311,15 +311,17 @@
 								<table class="rich-table">
 									<thead class="rich-table-thead">
 										<tr class="rich-table-subheader">
-											<th>Açıklama</th>
+											<th>Personel No</th>
+											<th>Adı</th>
+											<th>Soyado</th>
+											<th>İzin Süresi</th>
 											<th>Başlangıç Zaman</th>
 											<th>Bitiş Zaman</th>
+											<th>Açıklama</th>
+											<th>Referans ERP No</th>
 											<th>Durum</th>
-											<th>İzin Süresi</th>
 											<th>İzin Tipi</th>
 											<th>İzin Tipi Açıklama</th>
-											<th>Personel No</th>
-											<th>Referans ERP No</th>
 											<th>Süre Birimi</th> >
 										</tr>
 									</thead>
@@ -355,6 +357,7 @@
 									</f:facet>
 									<h:outputText value="#{izinHata.personelNo}" />
 								</rich:column>
+
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="İzin Adı" />
@@ -408,12 +411,27 @@
 									<f:facet name="header">
 										<h:outputText value="İzinler" />
 									</f:facet>
-									<rich:column>
+
+									<rich:column style="text-align:center;">
 										<f:facet name="header">
-											<h:outputText value="Açıklama" />
+											<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
 
 										</f:facet>
-										<h:outputText value="#{izinERP.aciklama}" />
+										<h:outputText value="#{izinERP.personelNo}" />
+									</rich:column>
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="Adı Soyadı" />
+
+										</f:facet>
+										<h:outputText value="#{kullanilanIzinlerHome.getPersonelAdiSoyadi(izinERP.personelNo) }" />
+									</rich:column>
+									<rich:column style="text-align:center;">
+										<f:facet name="header">
+											<h:outputText value="İzin Süresi" />
+
+										</f:facet>
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(izinERP.izinSuresi)}" />
 									</rich:column>
 									<rich:column style="text-align:center;">
 										<f:facet name="header">
@@ -436,13 +454,7 @@
 										</f:facet>
 										<h:outputText value="#{authenticatedUser.getYesNo(izinERP.durum)}" />
 									</rich:column>
-									<rich:column style="text-align:center;">
-										<f:facet name="header">
-											<h:outputText value="İzin Süresi" />
 
-										</f:facet>
-										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(izinERP.izinSuresi)}" />
-									</rich:column>
 									<rich:column style="text-align:center;">
 										<f:facet name="header">
 											<h:outputText value="İzin Tipi Kodu" />
@@ -457,13 +469,7 @@
 										</f:facet>
 										<h:outputText value="#{izinERP.izinTipiAciklama}" />
 									</rich:column>
-									<rich:column style="text-align:center;">
-										<f:facet name="header">
-											<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
 
-										</f:facet>
-										<h:outputText value="#{izinERP.personelNo}" />
-									</rich:column>
 									<rich:column>
 										<f:facet name="header">
 											<h:outputText value="ERP Referans No" />
@@ -471,7 +477,13 @@
 										</f:facet>
 										<h:outputText value="#{izinERP.referansNoERP}" />
 									</rich:column>
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="Açıklama" />
 
+										</f:facet>
+										<h:outputText value="#{izinERP.aciklama}" />
+									</rich:column>
 									<rich:column style="text-align:center;">
 										<f:facet name="header">
 											<h:outputText value="Süre Birimi" />

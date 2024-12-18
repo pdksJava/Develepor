@@ -15,6 +15,7 @@ import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -79,6 +80,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 	private List<String> yilList = new ArrayList<String>();
 	private List<IzinERP> izinERPList = new ArrayList<IzinERP>(), izinERPReturnList;
 	private TreeMap<Long, IzinIstirahat> izinIstirahatMap;
+	private TreeMap<String, Personel> personelMap;
 	private String islemTipi;
 	private List<SelectItem> islemTipleri;
 	private Dosya izinDosya = new Dosya();
@@ -353,7 +355,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 	}
 
 	public String bakiyeIzinDosyaOku() {
-
+		personelMap = null;
 		bakiyeIzinler.clear();
 		try {
 			degisti = false;
@@ -423,7 +425,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 					fields.put(fieldName, siciller);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					TreeMap<String, Personel> personelMap = pdksEntityController.getTreeMapByList(pdksEntityController.getSQLParamList(siciller, sb, fieldName, fields, Personel.class, session), "getPdksSicilNo", true);
+					personelMap = pdksEntityController.getTreeMapByList(pdksEntityController.getSQLParamList(siciller, sb, fieldName, fields, Personel.class, session), "getPdksSicilNo", true);
 					sb = null;
 					if (!personelMap.isEmpty()) {
 						List personelIdler = new ArrayList(), izinTipiIdler = new ArrayList();
@@ -475,6 +477,13 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		izinDosya.setDosyaIcerik(null);
 
 		return "";
+	}
+
+	public String getPersonelAdiSoyadi(String perNo) {
+		String deger = null;
+		if (personelMap != null && perNo != null)
+			deger = personelMap.get(perNo).getAdSoyad();
+		return deger;
 	}
 
 	private String getSheetStringValue(Sheet sheet, int row, int col) throws Exception {
@@ -853,31 +862,122 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		if (wb != null) {
 			Sheet sheet = wb.getSheetAt(0);
 			int col = 0;
+			IzinTipi yillikIzin = null;
+			if (bakiyeIzinTipiList != null) {
+				for (IzinTipi bakiyeIzinTipi : bakiyeIzinTipiList) {
+					if (bakiyeIzinTipi.getBakiyeIzinTipi() != null) {
+						IzinTipi izinTipi = bakiyeIzinTipi.getBakiyeIzinTipi();
+						if (izinTipi.isSenelikIzin())
+							yillikIzin = izinTipi;
+					}
+
+				}
+			}
+
+			String pattern = "yyyy-MM-dd HH:mm";
+			LinkedHashMap<String, List<IzinERP>> izinMap = new LinkedHashMap<String, List<IzinERP>>();
+			HashMap<String, String> perMap = new HashMap<String, String>();
 			for (int row = 1; row <= sheet.getLastRowNum(); row++) {
 				col = 0;
-				IzinERP izinERP = new IzinERP();
 				try {
-					izinERP.setAciklama(ExcelUtil.getSheetStringValueTry(sheet, row, col++));
-					izinERP.setBasZaman(ExcelUtil.getSheetStringValueTry(sheet, row, col++));
-					izinERP.setBitZaman(ExcelUtil.getSheetStringValueTry(sheet, row, col++));
-					izinERP.setDurum(new Boolean(ExcelUtil.getSheetStringValueTry(sheet, row, col++)));
-					izinERP.setIzinSuresi(ExcelUtil.getSheetDoubleValue(sheet, row, col++));
-					izinERP.setIzinTipi(ExcelUtil.getSheetStringValueTry(sheet, row, col++));
-					izinERP.setIzinTipiAciklama(ExcelUtil.getSheetStringValueTry(sheet, row, col++));
-					izinERP.setPersonelNo(ExcelUtil.getSheetStringValueTry(sheet, row, col++));
-					String referansNoERP = ExcelUtil.getSheetStringValueTry(sheet, row, col++);
-					if (referansOtomatikOlustur || PdksUtil.hasStringValue(referansNoERP) == false)
-						referansNoERP = IzinReferansERP.PDKS_REFERANS_START + izinERP.getPersonelNo() + izinERP.getBasZaman();
-					izinERP.setReferansNoERP(referansNoERP);
-					izinERP.setSureBirimi(ExcelUtil.getSheetStringValueTry(sheet, row, col++));
+					Cell cellPersonelNo = ExcelUtil.getCell(sheet, row, col++);
+					if (PdksUtil.hasStringValue(cellPersonelNo.getStringCellValue())) {
+						Cell cellAdi = ExcelUtil.getCell(sheet, row, col++);
+						Cell cellSoyadi = ExcelUtil.getCell(sheet, row, col++);
+						if (PdksUtil.hasStringValue(cellAdi.getStringCellValue()) && PdksUtil.hasStringValue(cellSoyadi.getStringCellValue())) {
+							IzinERP izinERP = new IzinERP();
+							izinERP.setPersonelNo(cellPersonelNo.getStringCellValue());
+
+							izinERP.setIzinSuresi(ExcelUtil.getSheetDoubleValue(sheet, row, col++));
+
+							Cell cellBasZaman = ExcelUtil.getCell(sheet, row, col++);
+							if (cellBasZaman.getDateCellValue() == null)
+								izinERP.setBasZaman(cellBasZaman.getStringCellValue());
+							else
+								izinERP.setBasZaman(PdksUtil.convertToDateString(cellBasZaman.getDateCellValue(), pattern));
+
+							Cell cellBitZaman = ExcelUtil.getCell(sheet, row, col++);
+							if (cellBitZaman.getDateCellValue() == null)
+								izinERP.setBitZaman(cellBitZaman.getStringCellValue());
+							else
+								izinERP.setBitZaman(PdksUtil.convertToDateString(cellBitZaman.getDateCellValue(), pattern));
+
+							Cell cellAciklama = ExcelUtil.getCell(sheet, row, col++);
+							izinERP.setAciklama(cellAciklama.getStringCellValue());
+
+							Cell cellReferansNoERP = ExcelUtil.getCell(sheet, row, col++);
+							String referansNoERP = cellReferansNoERP != null ? cellReferansNoERP.getStringCellValue() : null;
+							if (referansOtomatikOlustur || PdksUtil.hasStringValue(referansNoERP) == false)
+								referansNoERP = IzinReferansERP.PDKS_REFERANS_START + izinERP.getPersonelNo() + PdksUtil.replaceAll(izinERP.getBasZaman().substring(0, 10), "-", "");
+							izinERP.setReferansNoERP(referansNoERP);
+
+							Cell cellIzinTipi = ExcelUtil.getCell(sheet, row, col++);
+							if (cellIzinTipi != null && PdksUtil.hasStringValue(cellIzinTipi.getStringCellValue()))
+								izinERP.setIzinTipi(cellIzinTipi.getStringCellValue());
+							else if (yillikIzin != null && yillikIzin.getIzinTipiTanim() != null)
+								izinERP.setIzinTipi(yillikIzin.getIzinTipiTanim().getErpKodu());
+
+							Cell cellIzinTipiAciklama = ExcelUtil.getCell(sheet, row, col++);
+							if (cellIzinTipiAciklama != null && PdksUtil.hasStringValue(cellIzinTipiAciklama.getStringCellValue()))
+								izinERP.setIzinTipiAciklama(cellIzinTipiAciklama.getStringCellValue());
+							else if (yillikIzin != null && yillikIzin.getIzinTipiTanim() != null)
+								izinERP.setIzinTipiAciklama(yillikIzin.getIzinTipiTanim().getAciklama());
+
+							Cell cellDurum = ExcelUtil.getCell(sheet, row, col++);
+							if (cellDurum != null)	
+								izinERP.setDurum(cellDurum.getStringCellValue() == null ? new Boolean(cellDurum.getBooleanCellValue()) : new Boolean(cellDurum.getStringCellValue()));
+							else
+								izinERP.setDurum(Boolean.TRUE);
+
+							Cell cellSureBirimi = ExcelUtil.getCell(sheet, row, col++);
+							if (cellSureBirimi != null && PdksUtil.hasStringValue(cellSureBirimi.getStringCellValue()))
+								izinERP.setSureBirimi(cellSureBirimi.getStringCellValue());
+							else if (yillikIzin != null && yillikIzin.getHesapTipi() != null)
+								izinERP.setSureBirimi(String.valueOf(yillikIzin.getHesapTipi()));
+
+							List<IzinERP> list = izinMap.containsKey(izinERP.getPersonelNo()) ? izinMap.get(izinERP.getPersonelNo()) : new ArrayList<IzinERP>();
+							if (list.isEmpty()) {
+								perMap.put(izinERP.getPersonelNo(), cellAdi.getStringCellValue() + " " + cellSoyadi.getStringCellValue());
+								izinMap.put(izinERP.getPersonelNo(), list);
+							}
+							list.add(izinERP);
+						}
+					} else
+						break;
 				} catch (Exception e) {
 					logger.error(e);
 					e.printStackTrace();
 				}
-				if (col > 0)
-					izinERPList.add(izinERP);
+
+			}
+			if (!izinMap.isEmpty()) {
+				String fieldName = "p";
+				List<String> dataIdList = new ArrayList<String>(izinMap.keySet());
+				HashMap fields = new HashMap();
+				StringBuffer sb = new StringBuffer();
+				sb.append("select * from " + Personel.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+				sb.append(" where " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
+				fields.put(PdksEntityController.MAP_KEY_MAP, "getPdksSicilNo");
+ 				fields.put(fieldName, dataIdList);
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				personelMap = pdksEntityController.getSQLParamTreeMap("getPdksSicilNo", true, dataIdList, sb, fieldName, fields, Personel.class, session);
+				sb = new StringBuffer();
+				for (String key : dataIdList) {
+					if (personelMap.containsKey(key))
+						izinERPList.addAll(izinMap.get(key));
+					else {
+						if (sb.length() > 0)
+							sb.append(", ");
+						sb.append(key + " " + perMap.get(key));
+					}
+				}
+				if (sb.length() > 0)
+					PdksUtil.addMessageAvailableWarn(sb.toString() + " personel bilgisi bulunamadı!");
 			}
 		}
+		if (personelMap == null)
+			personelMap = new TreeMap<String, Personel>();
 		return "";
 	}
 
@@ -1165,6 +1265,14 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 
 	public void setReferansOtomatikOlustur(boolean referansOtomatikOlustur) {
 		this.referansOtomatikOlustur = referansOtomatikOlustur;
+	}
+
+	public TreeMap<String, Personel> getPersonelMap() {
+		return personelMap;
+	}
+
+	public void setPersonelMap(TreeMap<String, Personel> personelMap) {
+		this.personelMap = personelMap;
 	}
 
 }
