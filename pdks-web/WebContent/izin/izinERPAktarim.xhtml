@@ -34,7 +34,9 @@
 							required="#{not empty izinERPAktarimHome.aramaSecenekleri.sirketIdList}" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz!">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{izinERPAktarimHome.aramaSecenekleri.sirketIdList}" />
-							<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" reRender="izinPanel" />
+							<a4j:support event="onchange"
+								action="#{ortakIslemler.getTesisList(izinERPAktarimHome.aramaSecenekleri.tesisList,null,izinERPAktarimHome.aramaSecenekleri.sirketId,true,izinERPAktarimHome.session)}"
+								ajaxSingle="true" reRender="izinPanel" />
 						</h:selectOneMenu>
 					</s:decorate>
 

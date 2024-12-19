@@ -32,10 +32,13 @@
 						<h:selectOneMenu value="#{bakiyeIzinHome.aramaSecenekleri.sirketId}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{bakiyeIzinHome.aramaSecenekleri.sirketIdList}" />
+							<a4j:support event="onchange"
+								action="#{ortakIslemler.getTesisList(bakiyeIzinHome.aramaSecenekleri.tesisList,null,bakiyeIzinHome.aramaSecenekleri.sirketId,true,bakiyeIzinHome.session)}"
+								ajaxSingle="true" reRender="girisDegerleri" />
 						</h:selectOneMenu>
 					</s:decorate>
 
-					 
+
 					<s:decorate template="/layout/edit.xhtml"
 						rendered="#{ortakIslemler.tesisDurumu and (authenticatedUser.admin or authenticatedUser.IKAdmin) and  bakiyeIzinHome.aramaSecenekleri.tesisList!=null and not empty bakiyeIzinHome.aramaSecenekleri.tesisList}">
 						<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
@@ -88,7 +91,8 @@
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK }">
 						<ui:define name="label">Tarihi</ui:define>
-						<rich:calendar value="#{bakiyeIzinHome.tarih}" datePattern="#{authenticatedUser.dateFormat}" cellWidth="24px" cellHeight="22px" style="width:200px" />
+						<rich:calendar value="#{bakiyeIzinHome.tarih}" datePattern="#{authenticatedUser.dateFormat}" cellWidth="24px" cellHeight="22px"
+							style="width:200px" />
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml">
 						<ui:define name="label">Yili</ui:define>
@@ -115,20 +119,22 @@
 							</f:facet>
 							<h:outputText value="#{izinler.personel.sirket.ad}" />
 						</rich:column>
-						 
+
 						<rich:column rendered="#{ortakIslemler.getListTesisDurum(bakiyeIzinHome.pdksPersonelList)}">
 							<f:facet name="header">
 								<h:outputText value="#{ortakIslemler.tesisAciklama()}" />
 							</f:facet>
 							<h:outputText value="#{izinler.personel.tesis.aciklama}" />
 						</rich:column>
-						<rich:column rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and bakiyeIzinHome.ekSahaTanimMap.ekSaha1!=null and ortakIslemler.getListEkSahaDurum(bakiyeIzinHome.pdksPersonelList,'1')}">
+						<rich:column
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and bakiyeIzinHome.ekSahaTanimMap.ekSaha1!=null and ortakIslemler.getListEkSahaDurum(bakiyeIzinHome.pdksPersonelList,'1')}">
 							<f:facet name="header">
 								<h:outputText value="#{bakiyeIzinHome.ekSaha1.aciklama}" />
 							</f:facet>
 							<h:outputText value="#{izinler.personel.ekSaha1.aciklama}" />
 						</rich:column>
-						<rich:column rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and bakiyeIzinHome.ekSahaTanimMap.ekSaha2!=null and ortakIslemler.getListEkSahaDurum(bakiyeIzinHome.pdksPersonelList,'2')}">
+						<rich:column
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and bakiyeIzinHome.ekSahaTanimMap.ekSaha2!=null and ortakIslemler.getListEkSahaDurum(bakiyeIzinHome.pdksPersonelList,'2')}">
 							<f:facet name="header">
 								<h:outputText value="#{bakiyeIzinHome.ekSaha2.aciklama}" />
 							</f:facet>
@@ -140,7 +146,8 @@
 							</f:facet>
 							<h:outputText value="#{izinler.personel.ekSaha3.aciklama}" />
 						</rich:column>
-						<rich:column rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and bakiyeIzinHome.ekSahaTanimMap.ekSaha4!=null and ortakIslemler.getListEkSahaDurum(bakiyeIzinHome.pdksPersonelList,'4')}">
+						<rich:column
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and bakiyeIzinHome.ekSahaTanimMap.ekSaha4!=null and ortakIslemler.getListEkSahaDurum(bakiyeIzinHome.pdksPersonelList,'4')}">
 							<f:facet name="header">
 								<h:outputText value="#{bakiyeIzinHome.ekSaha4.aciklama}" />
 							</f:facet>

@@ -42,6 +42,9 @@
 								<h:selectOneMenu value="#{personelHareketHome.aramaSecenekleriPer.sirketId}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{personelHareketHome.aramaSecenekleriPer.sirketIdList}" />
+									<a4j:support event="onchange"
+									action="#{ortakIslemler.getTesisList(personelHareketHome.aramaSecenekleriPer.tesisList,null,personelHareketHome.aramaSecenekleriPer.sirketId,true,personelHareketHome.session)}"
+									ajaxSingle="true" reRender="personelKullaniciAramaPanel" />
 								</h:selectOneMenu>
 							</s:decorate>
 
@@ -228,6 +231,9 @@
 												<h:selectOneMenu value="#{personelHareketHome.aramaSecenekleri.sirketId}" disabled="#{personelHareketHome.visibled==null}">
 													<f:selectItem itemLabel="Lütfen seçiniz" />
 													<f:selectItems value="#{personelHareketHome.aramaSecenekleri.sirketIdList}" />
+													<a4j:support event="onchange"
+									action="#{ortakIslemler.getTesisList(personelHareketHome.aramaSecenekleri.tesisList,null,personelHareketHome.aramaSecenekleri.sirketId,true,personelHareketHome.session)}"
+									ajaxSingle="true" reRender="hareketForm" />
 												</h:selectOneMenu>
 											</s:decorate>
 											<c:if test="${authenticatedUser.admin or authenticatedUser.IKAdmin}">

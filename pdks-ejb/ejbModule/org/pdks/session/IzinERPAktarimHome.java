@@ -125,8 +125,13 @@ public class IzinERPAktarimHome extends EntityHome<PersonelIzin> implements Seri
 				if (!sirketMap.containsKey(selectItem.getValue()))
 					iterator.remove();
 			}
-			if (sirketIdList.size() == 1)
+			if (sirketIdList.size() == 1) {
 				aramaSecenekleri.setSirketId((Long) sirketIdList.get(0).getValue());
+				ortakIslemler.getTesisList(aramaSecenekleri.getTesisList(), null, aramaSecenekleri.getSirketId(), true, session);
+				if (aramaSecenekleri.getTesisList() != null && aramaSecenekleri.getTesisList().size() == 1)
+					aramaSecenekleri.setTesisId((Long) aramaSecenekleri.getTesisList().get(0).getValue());
+			}
+
 			sirketMap = null;
 		}
 

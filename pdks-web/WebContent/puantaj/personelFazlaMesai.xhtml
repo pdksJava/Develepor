@@ -30,7 +30,9 @@
 						<h:selectOneMenu id="sirketSec" value="#{personelFazlaMesaiHome.aramaSecenekleri.sirketId}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{personelFazlaMesaiHome.aramaSecenekleri.sirketIdList}" />
-							<a4j:support event="onchange" status="ajaxStatus" action="#{personelFazlaMesaiHome.hareketList.clear()}" reRender="hareketPanel,girisler" />
+							<a4j:support event="onchange"
+								action="#{ortakIslemler.getTesisList(personelFazlaMesaiHome.aramaSecenekleri.tesisList,null,personelFazlaMesaiHome.aramaSecenekleri.sirketId,true,personelFazlaMesaiHome.session)}"
+								ajaxSingle="true" reRender="hareketPanel,girisler" />
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.bolumDepartmanlari!=null}">
@@ -46,7 +48,8 @@
 					<c:if test="${personelFazlaMesaiHome.departman.admin and (authenticatedUser.admin or authenticatedUser.IKAdmin)}">
 
 
-						<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.tesisDurumu and personelFazlaMesaiHome.aramaSecenekleri.tesisList!=null and not empty personelFazlaMesaiHome.aramaSecenekleri.tesisList}">
+						<s:decorate template="/layout/edit.xhtml"
+							rendered="#{ortakIslemler.tesisDurumu and personelFazlaMesaiHome.aramaSecenekleri.tesisList!=null and not empty personelFazlaMesaiHome.aramaSecenekleri.tesisList}">
 							<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 							<h:selectOneMenu value="#{personelFazlaMesaiHome.aramaSecenekleri.tesisId}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -268,7 +271,8 @@
 									</span>
 								</ui:fragment>
 								<ui:fragment rendered="#{personelFazlaMesaiHome.denklestirmeAyDurum}">
-									<a4j:commandButton status="ajaxStatus" value="Onay Sil" rendered="#{mesai.personelFazlaMesai.id!=null}" action="#{personelFazlaMesaiHome.mesaiSec(mesai)}" reRender="hareketSilPanel"
+									<a4j:commandButton status="ajaxStatus" value="Onay Sil" rendered="#{mesai.personelFazlaMesai.id!=null}"
+										action="#{personelFazlaMesaiHome.mesaiSec(mesai)}" reRender="hareketSilPanel"
 										oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('hareketSilPanel')}.show();" />
 
 								</ui:fragment>
@@ -528,7 +532,7 @@
 			</f:facet>
 
 			<h:form>
- 
+
 				<a4j:outputPanel id="fazlaMesaiOnaylama">
 					<h:panelGrid columns="1" width="600">
 

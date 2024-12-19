@@ -98,8 +98,12 @@ public class BakiyeIzinHome extends EntityHome<PersonelIzin> {
 		if (aramaSecenekleri.getSirketList() != null) {
 			List<SelectItem> sirketIdList = ortakIslemler.getIzinSirketItemList(aramaSecenekleri.getSirketList());
 			aramaSecenekleri.setSirketIdList(sirketIdList);
-			if (aramaSecenekleri.getSirketIdList().size() == 1)
+			if (aramaSecenekleri.getSirketIdList().size() == 1) {
 				aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
+				ortakIslemler.getTesisList(aramaSecenekleri.getTesisList(), null, aramaSecenekleri.getSirketId(), true, session);
+				if (aramaSecenekleri.getTesisList() != null && aramaSecenekleri.getTesisList().size() == 1)
+					aramaSecenekleri.setTesisId((Long) aramaSecenekleri.getTesisList().get(0).getValue());
+			}
 		}
 	}
 
@@ -276,12 +280,12 @@ public class BakiyeIzinHome extends EntityHome<PersonelIzin> {
 		if (PdksUtil.hasStringValue(sicilNo) == false && aramaSecenekleri.getSirketId() == null) {
 			PdksUtil.addMessageWarn("" + ortakIslemler.sirketAciklama() + " seçiniz!");
 		} else {
- 			// ArrayList<String> sicilNoList = ortakIslemler.getPersonelSicilNo(ad, soyad, sicilNo, sirket, seciliEkSaha1, seciliEkSaha2, seciliEkSaha3, seciliEkSaha4, Boolean.TRUE, session);
+			// ArrayList<String> sicilNoList = ortakIslemler.getPersonelSicilNo(ad, soyad, sicilNo, sirket, seciliEkSaha1, seciliEkSaha2, seciliEkSaha3, seciliEkSaha4, Boolean.TRUE, session);
 			ArrayList<String> sicilNoList = ortakIslemler.getAramaPersonelSicilNo(aramaSecenekleri, Boolean.TRUE, session);
 			if (izinTipiId != null) {
 
 				izinTipiTanim = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, izinTipiId, Tanim.class, session);
-				 
+
 			} else
 				izinTipiTanim = null;
 

@@ -159,8 +159,12 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		ortakIslemler.fillEkSahaTanimAramaSecenekAta(session, Boolean.FALSE, null, aramaSecenekleri);
 		HashMap sonucMap = ortakIslemler.fillEkSahaTanim(session, Boolean.FALSE, null);
 		bolumAciklama = (String) sonucMap.get("bolumAciklama");
-		if (aramaSecenekleri.getSirketIdList().size() == 1)
+		if (aramaSecenekleri.getSirketIdList().size() == 1) {
 			aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
+			ortakIslemler.getTesisList(aramaSecenekleri.getTesisList(), null, aramaSecenekleri.getSirketId(), true, session);
+			if (aramaSecenekleri.getTesisList() != null && aramaSecenekleri.getTesisList().size() == 1)
+				aramaSecenekleri.setTesisId((Long) aramaSecenekleri.getTesisList().get(0).getValue());
+		}
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)

@@ -11,7 +11,7 @@
 		<h:form id="formSskIstirahatIzinleri">
 
 			<rich:panel header="#{ortakIslemler.getMenuUserAdi(kullanilanIzinlerHome.session,'sskIstirahatIzinleri')}">
-				<h:panelGrid columns="2">
+				<h:panelGrid columns="2" id="secim">
 					<s:decorate template="/layout/edit.xhtml">
 						<ui:define name="label">Başlangıç Tarihi</ui:define>
 						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{kullanilanIzinlerHome.basTarih}" required="true" requiredMessage="Tarih giriniz" />
@@ -37,9 +37,12 @@
 						<h:selectOneMenu value="#{kullanilanIzinlerHome.aramaSecenekleri.sirketId}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{kullanilanIzinlerHome.aramaSecenekleri.sirketIdList}" />
+							<a4j:support event="onchange"
+									action="#{ortakIslemler.getTesisList(kullanilanIzinlerHome.aramaSecenekleri.tesisList,null,kullanilanIzinlerHome.aramaSecenekleri.sirketId,true,kullanilanIzinlerHome.session)}"
+									ajaxSingle="true" reRender="secim" />
 						</h:selectOneMenu>
 					</s:decorate>
-					
+
 					<s:decorate template="/layout/edit.xhtml"
 						rendered="#{ortakIslemler.tesisDurumu and (authenticatedUser.admin or authenticatedUser.IKAdmin) and  kullanilanIzinlerHome.aramaSecenekleri.tesisList!=null and not empty kullanilanIzinlerHome.aramaSecenekleri.tesisList}}">
 						<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>

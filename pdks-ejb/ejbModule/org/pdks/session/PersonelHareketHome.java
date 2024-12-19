@@ -157,9 +157,12 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 
 	private void fillEkSahaTanim() {
 		ortakIslemler.fillEkSahaTanimAramaSecenekAta(session, Boolean.FALSE, null, aramaSecenekleri);
-
-		if (aramaSecenekleriPer != null && aramaSecenekleri != null && aramaSecenekleri.getSirketIdList() != null && aramaSecenekleri.getSirketIdList().size() == 1)
+ 		if (aramaSecenekleriPer != null && aramaSecenekleri != null && aramaSecenekleri.getSirketIdList() != null && aramaSecenekleri.getSirketIdList().size() == 1) {
 			aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
+			ortakIslemler.getTesisList(aramaSecenekleri.getTesisList(), null, aramaSecenekleri.getSirketId(), true, session);
+			if (aramaSecenekleri.getTesisList() != null && aramaSecenekleri.getTesisList().size() == 1)
+				aramaSecenekleri.setTesisId((Long) aramaSecenekleri.getTesisList().get(0).getValue());
+		}
 	}
 
 	/**
