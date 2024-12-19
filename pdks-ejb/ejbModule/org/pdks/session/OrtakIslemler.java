@@ -14169,7 +14169,6 @@ public class OrtakIslemler implements Serializable {
 		return file;
 	}
 
-	 
 	/**
 	 * @param list
 	 * @param bakiyeTakipEdiliyor
@@ -14308,7 +14307,7 @@ public class OrtakIslemler implements Serializable {
 		}
 		if (kartNoGoster != null && kartNoGoster)
 			map.put("kartNoGoster", Boolean.TRUE);
-		
+
 		if (bakiyeTakipEdiliyor)
 			map.put("bakiyeTakipEdiliyor", Boolean.TRUE);
 		if (personelTipiGoster)
@@ -14346,6 +14345,7 @@ public class OrtakIslemler implements Serializable {
 		return list;
 
 	}
+
 	/**
 	 * @param session
 	 * @return
@@ -14353,26 +14353,41 @@ public class OrtakIslemler implements Serializable {
 	public boolean getBakiyeTakipEdiliyor(Session session) {
 		boolean bakiyeTakipEdiliyor = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi();
 		if (bakiyeTakipEdiliyor == false && authenticatedUser.isIK()) {
-			HashMap map = new HashMap();
-			StringBuffer sb = new StringBuffer();
-			sb.append("select * from " + IzinTipi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
-			sb.append(" where " + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is not null and " + IzinTipi.COLUMN_NAME_DURUM + " = 1");
-			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List bakiyeIzinTipiList = pdksEntityController.getObjectBySQLList(sb, map, IzinTipi.class);
-			if (bakiyeIzinTipiList != null) {
-				for (Iterator iterator = bakiyeIzinTipiList.iterator(); iterator.hasNext();) {
-					IzinTipi izinTipi = (IzinTipi) iterator.next();
-					IzinTipi bakiyeIzinTipi = izinTipi.getBakiyeIzinTipi();
-					if (bakiyeIzinTipi.getIzinTipiTanim() == null || !bakiyeIzinTipi.getIzinTipiTanim().getKodu().equals(IzinTipi.YILLIK_UCRETLI_IZIN))
-						iterator.remove();
-
-				}
-				bakiyeTakipEdiliyor = bakiyeIzinTipiList.isEmpty() == false;
-			}
-
+			List bakiyeIzinTipiList = getYillikIzinBakiyeListesi(session);
+			bakiyeTakipEdiliyor = bakiyeIzinTipiList != null && bakiyeIzinTipiList.isEmpty() == false;
+			bakiyeIzinTipiList = null;
 		}
 		return bakiyeTakipEdiliyor;
 	}
+
+	/**
+	 * @param session
+	 * @return
+	 */
+	public List getYillikIzinBakiyeListesi(Session session) {
+		HashMap map = new HashMap();
+		StringBuffer sb = new StringBuffer();
+		sb.append("select * from " + IzinTipi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+		sb.append(" where " + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is not null and " + IzinTipi.COLUMN_NAME_DURUM + " = 1");
+		if (authenticatedUser.isIKAdmin() == false && authenticatedUser.isAdmin() == false) {
+			sb.append(" and " + IzinTipi.COLUMN_NAME_DEPARTMAN + " = :d");
+			map.put("d", authenticatedUser.getDepartman().getId());
+		}
+		map.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List bakiyeIzinTipiList = pdksEntityController.getObjectBySQLList(sb, map, IzinTipi.class);
+		if (bakiyeIzinTipiList != null) {
+			for (Iterator iterator = bakiyeIzinTipiList.iterator(); iterator.hasNext();) {
+				IzinTipi izinTipi = (IzinTipi) iterator.next();
+				IzinTipi bakiyeIzinTipi = izinTipi.getBakiyeIzinTipi();
+				if (bakiyeIzinTipi.getIzinTipiTanim() == null || !bakiyeIzinTipi.getIzinTipiTanim().getKodu().equals(IzinTipi.YILLIK_UCRETLI_IZIN))
+					iterator.remove();
+
+			}
+
+		}
+		return bakiyeIzinTipiList;
+	}
+
 	/**
 	 * @param ldap
 	 * @param list
@@ -14384,7 +14399,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public ByteArrayOutputStream personelExcelDevam(Boolean ldap, List<PersonelView> list, TreeMap<String, Tanim> tanimMap, User user, TreeMap<String, PersonelDinamikAlan> personelDinamikMap,boolean bakiyeTakipEdiliyor, Session session) throws Exception {
+	public ByteArrayOutputStream personelExcelDevam(Boolean ldap, List<PersonelView> list, TreeMap<String, Tanim> tanimMap, User user, TreeMap<String, PersonelDinamikAlan> personelDinamikMap, boolean bakiyeTakipEdiliyor, Session session) throws Exception {
 		if (tanimMap == null)
 			tanimMap = new TreeMap<String, Tanim>();
 		if (user == null) {
@@ -14400,14 +14415,14 @@ public class OrtakIslemler implements Serializable {
 			sanalPersonelAciklama = "Sanal Personel";
 
 		List<PersonelView> personelList = new ArrayList<PersonelView>(list);
-		TreeMap<String, Boolean> map = mantiksalAlanlariDoldur(personelList,bakiyeTakipEdiliyor);
+		TreeMap<String, Boolean> map = mantiksalAlanlariDoldur(personelList, bakiyeTakipEdiliyor);
 		boolean izinERPUpdate = str.equals("1"), fazlaMesaiIzinKullan = map.containsKey("fazlaMesaiIzinKullan"), fazlaMesaiOde = map.containsKey("fazlaMesaiOde");
 		boolean sanalPersonel = map.containsKey("sanalPersonel"), icapDurum = map.containsKey("icapDurum"), partTimeDurum = map.containsKey("partTimeDurum");
 		boolean sutIzni = map.containsKey("sutIzni"), gebeMi = map.containsKey("gebeMi"), egitimDonemi = map.containsKey("egitimDonemi"), suaOlabilir = map.containsKey("suaOlabilir");
 		boolean emailCCDurum = map.containsKey("emailCCDurum"), emailBCCDurum = map.containsKey("emailBCCDurum"), bordroAltAlani = map.containsKey("bordroAltAlani");
 		boolean kimlikNoGoster = map.containsKey("kimlikNoGoster"), onaysizIzinKullanilir = map.containsKey("onaysizIzinKullanilir"), tesisDurum = map.containsKey("tesisDurum"), ikinciYoneticiIzinOnayla = map.containsKey("ikinciYoneticiIzinOnayla");
 		boolean departmanGoster = map.containsKey("departmanGoster"), istenAyrilmaGoster = map.containsKey("istenAyrilmaGoster"), masrafYeriGoster = map.containsKey("masrafYeriGoster"), kartNoGoster = map.containsKey("kartNoGoster");
-		boolean personelTipiGoster = map.containsKey("personelTipiGoster"), izinKartiVardir = map.containsKey("izinKartiVardir") ;
+		boolean personelTipiGoster = map.containsKey("personelTipiGoster"), izinKartiVardir = map.containsKey("izinKartiVardir");
 		ByteArrayOutputStream baos = null;
 		Workbook wb = new XSSFWorkbook();
 		for (Iterator iter = personelList.iterator(); iter.hasNext();) {

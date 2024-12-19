@@ -310,20 +310,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 			bakiyeIzinTipiList = new ArrayList<IzinTipi>();
 
 		if (authenticatedUser.isAdmin() && ortakIslemler.getParameterKeyHasStringValue("dosyaIzinGuncellemeYetki")) {
-			map.clear();
-			StringBuffer sb = new StringBuffer();
-			sb.append("select * from " + IzinTipi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
-			sb.append(" where " + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is not null and " + IzinTipi.COLUMN_NAME_DURUM + " = 1");
-			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			bakiyeIzinTipiList = pdksEntityController.getObjectBySQLList(sb, map, IzinTipi.class);
-			for (Iterator iterator = bakiyeIzinTipiList.iterator(); iterator.hasNext();) {
-				IzinTipi izinTipi = (IzinTipi) iterator.next();
-				IzinTipi bakiyeIzinTipi = izinTipi.getBakiyeIzinTipi();
-				if (bakiyeIzinTipi.getIzinTipiTanim() == null || !bakiyeIzinTipi.getIzinTipiTanim().getKodu().equals(IzinTipi.YILLIK_UCRETLI_IZIN))
-					iterator.remove();
-
-			}
-
+			bakiyeIzinTipiList = ortakIslemler.getYillikIzinBakiyeListesi(session);
 		} else
 			bakiyeIzinTipiList.clear();
 
@@ -924,7 +911,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 								izinERP.setIzinTipiAciklama(yillikIzin.getIzinTipiTanim().getAciklama());
 
 							Cell cellDurum = ExcelUtil.getCell(sheet, row, col++);
-							if (cellDurum != null)	
+							if (cellDurum != null)
 								izinERP.setDurum(cellDurum.getStringCellValue() == null ? new Boolean(cellDurum.getBooleanCellValue()) : new Boolean(cellDurum.getStringCellValue()));
 							else
 								izinERP.setDurum(Boolean.TRUE);
@@ -958,7 +945,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 				sb.append("select * from " + Personel.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 				sb.append(" where " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
 				fields.put(PdksEntityController.MAP_KEY_MAP, "getPdksSicilNo");
- 				fields.put(fieldName, dataIdList);
+				fields.put(fieldName, dataIdList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				personelMap = pdksEntityController.getSQLParamTreeMap("getPdksSicilNo", true, dataIdList, sb, fieldName, fields, Personel.class, session);
