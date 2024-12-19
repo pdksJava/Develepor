@@ -13,7 +13,7 @@
 		<rich:dropDownMenu binding="#{menuLoaderAction.kullaniciIslemleri}" />
 	</h:form>
 	<h:form id="izinIslemleri"
-		rendered="#{userHome.hasPermission('izinIslemleri','view') and ( authenticatedUser.izinGirebilir  or authenticatedUser.IK or authenticatedUser.admin or ortakIslemler.getParameterKey('izinERPUpdate')!='1')}">
+		rendered="#{userHome.hasPermission('izinIslemleri','view') and ( authenticatedUser.izinGirebilir  or authenticatedUser.IK or authenticatedUser.admin or ortakIslemler.getParameterKey('izinERPUpdate') != '1')}">
 		<rich:dropDownMenu binding="#{menuLoaderAction.izinIslemleri}" />
 	</h:form>
 	<h:form id="puantajIslemleri" rendered="#{userHome.hasPermission('puantajIslemleri','view')}">
@@ -26,20 +26,20 @@
 	<rich:toolBarGroup location="right">
 
 		<h:outputText value="Seçili #{ortakIslemler.yoneticiAciklama()} : #{authenticatedUser.seciliSuperVisor.adSoyad}"
-			rendered="#{identity.loggedIn and authenticatedUser.mudur and authenticatedUser.seciliSuperVisor!=null}" />
+			rendered="#{identity.loggedIn and authenticatedUser.mudur and authenticatedUser.seciliSuperVisor != null}" />
 		<h:outputText value="Seçili Super Visör : #{authenticatedUser.seciliSuperVisor.adSoyad}"
-			rendered="#{identity.loggedIn and authenticatedUser.superVisor and authenticatedUser.seciliSuperVisor!=null}" />
+			rendered="#{identity.loggedIn and authenticatedUser.superVisor and authenticatedUser.seciliSuperVisor != null}" />
 		<ui:fragment rendered="#{identity.loggedIn}">
 			<DIV id="userInfo">
-				<ui:fragment rendered="#{authenticatedUser.shortUsername!=null and authenticatedUser.shortUsername!=''}">
+				<ui:fragment rendered="#{authenticatedUser.shortUsername != null and authenticatedUser.shortUsername != ''}">
 					<h:outputText title="Kısa Kullanıcı : #{authenticatedUser.shortUsername}" value="#{authenticatedUser.adSoyad}" />
 				</ui:fragment>
-				<ui:fragment rendered="#{authenticatedUser.shortUsername==null or authenticatedUser.shortUsername==''}">
+				<ui:fragment rendered="#{authenticatedUser.shortUsername == null or authenticatedUser.shortUsername == ''}">
 					<h:outputText value="#{authenticatedUser.adSoyad}" />
 				</ui:fragment>
 
 			</DIV>
-			<ui:fragment rendered="#{authenticatedUser.menuItemTime!=null}">
+			<ui:fragment rendered="#{authenticatedUser.menuItemTime != null}">
 				<rich:toolTip for="userInfo">
 					<SPAN style="background-color: #{startupAction.projeHeaderBackgroundColor};color: #{startupAction.projeHeaderColor};font-size: 9px; "> #{authenticatedUser.menuItemTime.menu.description.aciklama} :
 						<ui:fragment rendered="#{authenticatedUser.menuItemTime.useCount > 0}"> #{authenticatedUser.sayiFormatliGoster(authenticatedUser.menuItemTime.useCount)} --></ui:fragment>

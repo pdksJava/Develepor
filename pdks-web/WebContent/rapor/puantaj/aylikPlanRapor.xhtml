@@ -30,7 +30,7 @@
 									reRender="vardiyaPanel,girisler" />
 							</h:selectOneMenu>
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.adminRole  and vardiyaGunHome.aramaSecenekleri.departmanIdList.size()>1}">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.adminRole and vardiyaGunHome.aramaSecenekleri.departmanIdList.size()>1}">
 							<ui:define name="label">PDKS Departman</ui:define>
 							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.departmanId}" required="true" requiredMessage="PDKS Departman seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -42,7 +42,7 @@
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.aramaSecenekleri.sirketIdList.size()>0}">
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
-							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.sirketId}" disabled="#{vardiyaGunHome.aramaSecenekleri.sirketIdList.size()==1}"
+							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.sirketId}" disabled="#{vardiyaGunHome.aramaSecenekleri.sirketIdList.size() == 1}"
 								required="true" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.sirketIdList}" />
@@ -51,19 +51,19 @@
 						</s:decorate>
 
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{ortakIslemler.tesisDurumu and vardiyaGunHome.aramaSecenekleri.tesisList!=null and vardiyaGunHome.aramaSecenekleri.tesisList.size()>0}">
+							rendered="#{ortakIslemler.tesisDurumu and vardiyaGunHome.aramaSecenekleri.tesisList != null and vardiyaGunHome.aramaSecenekleri.tesisList.size()>0}">
 							<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.tesisId}" requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz!" required="true"
-								disabled="#{vardiyaGunHome.aramaSecenekleri.tesisList.size()==1}">
+								disabled="#{vardiyaGunHome.aramaSecenekleri.tesisList.size() == 1}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.tesisList}" />
 								<a4j:support event="onchange" status="ajaxStatus" action="#{vardiyaGunHome.bolumDoldur()}" ajaxSingle="true" reRender="vardiyaPanel,girisler" />
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{vardiyaGunHome.aramaSecenekleri.gorevYeriList!=null and vardiyaGunHome.aramaSecenekleri.gorevYeriList.size()>0}">
+							rendered="#{vardiyaGunHome.aramaSecenekleri.gorevYeriList != null and vardiyaGunHome.aramaSecenekleri.gorevYeriList.size()>0}">
 							<ui:define name="label">#{vardiyaGunHome.bolumAciklama}</ui:define>
-							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.ekSaha3Id}" disabled="#{vardiyaGunHome.aramaSecenekleri.gorevYeriList.size()==1}"
+							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.ekSaha3Id}" disabled="#{vardiyaGunHome.aramaSecenekleri.gorevYeriList.size() == 1}"
 								requiredMessage="#{vardiyaGunHome.bolumAciklama} seçiniz!" required="#{vardiyaGunHome.aramaSecenekleri.gorevYeriList.size()>1}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.gorevYeriList}" />
@@ -72,7 +72,7 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{vardiyaGunHome.ekSaha4Tanim!=null and vardiyaGunHome.aramaSecenekleri.altBolumIdList!=null and vardiyaGunHome.aramaSecenekleri.altBolumIdList.size()>0}">
+							rendered="#{vardiyaGunHome.ekSaha4Tanim != null and vardiyaGunHome.aramaSecenekleri.altBolumIdList != null and vardiyaGunHome.aramaSecenekleri.altBolumIdList.size()>0}">
 							<ui:define name="label">#{vardiyaGunHome.ekSaha4Tanim.aciklama}</ui:define>
 							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.ekSaha4Id}" requiredMessage="#{vardiyaGunHome.ekSaha4Tanim.aciklama} seçiniz!"
 								required="#{vardiyaGunHome.aramaSecenekleri.altBolumIdList.size()>1}">
@@ -92,7 +92,7 @@
 
 					</h:panelGrid>
 					<a4j:commandButton value="Aylık Plan Getir" action="#{vardiyaGunHome.fillAylikPlanRaporList}" onclick="#{rich:component('wait')}.show()"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('wait')}.hide()" reRender="vardiyaPanel,girisler" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('wait')}.hide()" reRender="vardiyaPanel,girisler" />
 
 				</rich:panel>
 			</a4j:region>

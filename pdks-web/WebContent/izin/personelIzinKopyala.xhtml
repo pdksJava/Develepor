@@ -27,7 +27,7 @@
 									</rich:fileUpload>
 								</a4j:outputPanel>
 
-								<ui:fragment rendered="#{personelIzinKopyalaHome.izinBakiyeDosya.dosyaIcerik!=null}">
+								<ui:fragment rendered="#{personelIzinKopyalaHome.izinBakiyeDosya.dosyaIcerik != null}">
 									<h:panelGrid columns="3">
 										<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="dosyaPaneli,bakiyeIzinTable"
 											ajaxSingle="true" action="#{personelIzinKopyalaHome.izinDosyaSifirla}" />
@@ -39,7 +39,7 @@
 									</ui:fragment>
 									<ui:fragment rendered="#{not empty personelIzinKopyalaHome.personelBakiyeIzinList.isEmpty()}">
 										<a4j:commandButton value="Dosya Aktar" status="ajaxStatus" action="#{personelIzinKopyalaHome.izinKartiKopyala}"
-											rendered="#{personelIzinKopyalaHome.sbAll.length()==0}" reRender="bakiyeIzinTable" />
+											rendered="#{personelIzinKopyalaHome.sbAll.length() == 0}" reRender="bakiyeIzinTable" />
 									</ui:fragment>
 									<rich:toolTip for="dosyaOku" rendered="#{personelIzinKopyalaHome.personelBakiyeIzinList.isEmpty()}">
 										<table class="rich-table">
@@ -94,7 +94,7 @@
 									</tr>
 									<tr>
 										<th><br></br> <h:selectBooleanCheckbox value="#{personelIzinKopyalaHome.checkBoxDurum}"
-												rendered="#{personelIzinKopyalaHome.checkBoxDurum!=null and (authenticatedUser.IK or authenticatedUser.admin)}">
+												rendered="#{personelIzinKopyalaHome.checkBoxDurum != null and (authenticatedUser.IK or authenticatedUser.admin)}">
 												<a4j:support event="onclick" status="ajaxStatus" action="#{personelIzinKopyalaHome.durumDegistir}" reRender="bakiyeIzinTable" />
 
 											</h:selectBooleanCheckbox></th>
@@ -114,12 +114,12 @@
 									<ui:repeat value="#{personelIzinKopyalaHome.personelBakiyeIzinList}" var="bakiyeIzinler">
 										<tr class="#{bakiyeIzinler.styleClass}">
 											<td align="center"><ui:fragment
-													rendered="#{bakiyeIzinler.secim!=null and  bakiyeIzinler.personel.id!=null and bakiyeIzinler.yeniPersonel.id!=null}">
+													rendered="#{bakiyeIzinler.secim != null and bakiyeIzinler.personel.id != null and bakiyeIzinler.yeniPersonel.id != null}">
 													<h:selectBooleanCheckbox value="#{bakiyeIzinler.secim}" />
 												</ui:fragment></td>
 											<td align="center"><h:outputText value="#{bakiyeIzinler.personel.sicilNo}" /></td>
 											<td><SPAN> <h:outputText value="#{bakiyeIzinler.personel.adSoyad}" /> <ui:fragment
-														rendered="#{bakiyeIzinler.personel.sirket!=null}">
+														rendered="#{bakiyeIzinler.personel.sirket != null}">
 													- <h:outputText value="#{bakiyeIzinler.personel.sirket.ad}" />
 													</ui:fragment></SPAN></td>
 
@@ -131,7 +131,7 @@
 
 											<td align="center"><h:outputText value="#{bakiyeIzinler.yeniPersonel.sicilNo}" /></td>
 											<td><span><h:outputText value="#{bakiyeIzinler.yeniPersonel.adSoyad}" /> <ui:fragment
-														rendered="#{bakiyeIzinler.yeniPersonel.sirket!=null}">
+														rendered="#{bakiyeIzinler.yeniPersonel.sirket != null}">
 													- <h:outputText value="#{bakiyeIzinler.yeniPersonel.sirket.ad}" />
 													</ui:fragment> </span></td>
 

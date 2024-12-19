@@ -106,7 +106,7 @@
 							<f:facet name="header">
 								<h:outputText value="Hareketler" />
 							</f:facet>
-							<a4j:commandButton status="ajaxStatus" value="Hareketler" rendered="#{calismaPlani.hareketler!=null}"
+							<a4j:commandButton status="ajaxStatus" value="Hareketler" rendered="#{calismaPlani.hareketler != null}"
 								oncomplete="#{rich:component('hareketDetayPanel')}.show()" action="#{binadaKalanPersonellerHome.hareketGoster(calismaPlani)}"
 								reRender="hareketDetayPanel" />
 

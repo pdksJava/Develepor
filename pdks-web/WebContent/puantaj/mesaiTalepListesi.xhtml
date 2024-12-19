@@ -51,12 +51,12 @@
 
 					</h:panelGrid>
 					<a4j:commandButton value="Aylık Fazla Mesai Talep Getir" action="#{vardiyaGunHome.fillAylikMesaiTalepList}" reRender="girisler"
-						onclick="#{rich:component('wait')}.show()" oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('wait')}.hide()" />
+						onclick="#{rich:component('wait')}.show()" oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('wait')}.hide()" />
 
 
 					<a4j:commandButton value="Fazla Mesai Onay" action="#{vardiyaGunHome.mesaiOnay}" reRender="girisler" onclick="#{rich:component('wait')}.show()"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('wait')}.hide()"
-						rendered="#{vardiyaGunHome.aylikFazlaMesaiTalepler.size()>0 and vardiyaGunHome.islemYapiliyor!=null}" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('wait')}.hide()"
+						rendered="#{vardiyaGunHome.aylikFazlaMesaiTalepler.size()>0 and vardiyaGunHome.islemYapiliyor != null}" />
 
 					<h:commandLink value="Excel" action="#{vardiyaGunHome.excelAylikMesaiTalepList}" target="blank"
 						rendered="#{vardiyaGunHome.aylikFazlaMesaiTalepler.size()>0}">
@@ -72,7 +72,7 @@
 							<f:facet name="header">
 								<ui:fragment>
 									İşlemler
-									<ui:fragment rendered="#{vardiyaGunHome.islemYapiliyor!=null}">
+									<ui:fragment rendered="#{vardiyaGunHome.islemYapiliyor != null}">
 										<br />
 										<h:selectBooleanCheckbox value="#{vardiyaGunHome.islemYapiliyor}">
 											<a4j:support event="onclick" ajaxSingle="true" status="ajaxStatus" action="#{vardiyaGunHome.mesaiOnayDurumDegisti()}"
@@ -82,14 +82,14 @@
 								</ui:fragment>
 
 							</f:facet>
-							<ui:fragment rendered="#{fmt.olusturanUser.id==authenticatedUser.id or authenticatedUser.IK or authenticatedUser.admin }">
+							<ui:fragment rendered="#{fmt.olusturanUser.id == authenticatedUser.id or authenticatedUser.IK or authenticatedUser.admin }">
 								<TABLE>
 									<tr>
 										<ui:fragment rendered="#{fmt.hatirlatmaMail}">
-											<ui:fragment rendered="#{fmt.islemYapildi==true}">
+											<ui:fragment rendered="#{fmt.islemYapildi == true}">
 												<td><h:selectBooleanCheckbox value="#{fmt.checkBoxDurum}" /></td>
 											</ui:fragment>
-											<ui:fragment rendered="#{fmt.islemYapildi==false}">
+											<ui:fragment rendered="#{fmt.islemYapildi == false}">
 												<td><h:graphicImage value="/img/mail.png" style="border:0" height="24" id="mesaiMailHatirlatmaBilgi">
 														<a4j:support event="onclick" ajaxSingle="true" status="ajaxStatus" action="#{vardiyaGunHome.mesaiMailHatirlatma(fmt)}" />
 													</h:graphicImage> <rich:toolTip for="mesaiMailHatirlatmaBilgi">
@@ -103,7 +103,7 @@
 											<td><h:graphicImage value="/img/delete.png" style="border:0" id="mesaiIptalBilgi">
 													<a4j:support event="onclick" ajaxSingle="true" status="ajaxStatus" action="#{vardiyaGunHome.mesaiIptalSec(fmt)}"
 														onclick="#{rich:component('wait')}.show()"
-														oncomplete="if (#{facesContext.maximumSeverity==null}) {#{rich:component('mesaiIptalPanel')}.show();} #{rich:component('wait')}.hide();"
+														oncomplete="if (#{facesContext.maximumSeverity == null}) {#{rich:component('mesaiIptalPanel')}.show();} #{rich:component('wait')}.hide();"
 														reRender="girisler" />
 												</h:graphicImage> <rich:toolTip for="mesaiIptalBilgi">
 													<B>Fazla mesai talep iptal</B>
@@ -168,7 +168,7 @@
 								<h:outputText value="Mesai Nedeni" />
 							</f:facet>
 							<h:outputText value="#{fmt.mesaiNeden.aciklama}" id="mnd" />
-							<ui:fragment rendered="#{fmt.aciklama!=null and fmt.aciklama!='' }">
+							<ui:fragment rendered="#{fmt.aciklama != null and fmt.aciklama != '' }">
 								<rich:toolTip for="mnd" value="Açıklama : #{fmt.aciklama}" />
 							</ui:fragment>
 						</rich:column>
@@ -221,7 +221,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
 							<a4j:support event="onclick" onclick="#{rich:component('wait')}.show()"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) { #{rich:component('mesaiIptalPanel')}.hide();#{rich:component('wait')}.hide();}"
+								oncomplete="if (#{facesContext.maximumSeverity == null}) { #{rich:component('mesaiIptalPanel')}.hide();#{rich:component('wait')}.hide();}"
 								ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
@@ -241,12 +241,12 @@
 								<h:outputText value="#{vardiyaGunHome.islemFazlaMesaiTalep.vardiyaGun.personel.sirket.ad}" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" style="vertical-align: top;"
-								rendered="#{vardiyaGunHome.islemFazlaMesaiTalep.vardiyaGun.personel.tesis!=null}">
+								rendered="#{vardiyaGunHome.islemFazlaMesaiTalep.vardiyaGun.personel.tesis != null}">
 								<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 								<h:outputText value="#{vardiyaGunHome.islemFazlaMesaiTalep.vardiyaGun.personel.tesis.aciklama}" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" style="vertical-align: top;"
-								rendered="#{vardiyaGunHome.islemFazlaMesaiTalep.vardiyaGun.personel.ekSaha3!=null}">
+								rendered="#{vardiyaGunHome.islemFazlaMesaiTalep.vardiyaGun.personel.ekSaha3 != null}">
 								<ui:define name="label">#{vardiyaGunHome.bolumAciklama}</ui:define>
 								<h:outputText value="#{vardiyaGunHome.islemFazlaMesaiTalep.vardiyaGun.personel.ekSaha3.aciklama}" />
 							</s:decorate>
@@ -282,9 +282,9 @@
 							<ui:define name="label">İptal Açıklama</ui:define>
 							<h:inputTextarea value="#{vardiyaGunHome.islemFazlaMesaiTalep.iptalAciklama}" cols="80" rows="3" />
 						</s:decorate>
-						<a4j:commandButton value="İptal Et" action="#{vardiyaGunHome.mesaiIptal}" rendered="#{vardiyaGunHome.mesaiIptalNedenTanimList!=null}"
+						<a4j:commandButton value="İptal Et" action="#{vardiyaGunHome.mesaiIptal}" rendered="#{vardiyaGunHome.mesaiIptalNedenTanimList != null}"
 							onclick="#{rich:component('wait')}.show()" reRender="girisler"
-							oncomplete="#{rich:component('wait')}.hide();if (#{facesContext.maximumSeverity==null}) #{rich:component('mesaiIptalPanel')}.hide();" />
+							oncomplete="#{rich:component('wait')}.hide();if (#{facesContext.maximumSeverity == null}) #{rich:component('mesaiIptalPanel')}.hide();" />
 
 					</h:panelGrid>
 				</a4j:outputPanel>

@@ -5,14 +5,14 @@
 	xmlns:a4j="http://richfaces.org/a4j" xmlns:c="http://java.sun.com/jstl/core">
 
 
-	<ui:fragment rendered="#{vardiyaGun.vardiya==null}">
+	<ui:fragment rendered="#{vardiyaGun.vardiya == null}">
 		<td align="center" class="off" style="width: 20px" id="istifa#{vardiyaGun.vardiyaKeyStr}"><ui:fragment
 				rendered="#{vardiyaGun.calismayiBirakti}">-
 																<rich:toolTip for="istifa#{vardiyaGun.vardiyaKeyStr}">
 					<SPAN style="color: black"> <B>İSTİFA</B>
 					</SPAN>
 				</rich:toolTip>
-			</ui:fragment> <ui:fragment rendered="#{vardiyaGun.calismayiBirakti==false}">.
+			</ui:fragment> <ui:fragment rendered="#{vardiyaGun.calismayiBirakti == false}">.
 															<rich:toolTip for="istifa#{vardiyaGun.vardiyaKeyStr}">
 					<SPAN style="color: black"> <B>İŞ BAŞI YAPMADI</B>
 					</SPAN>
@@ -20,25 +20,25 @@
 			</ui:fragment></td>
 
 	</ui:fragment>
-	<ui:fragment rendered="#{vardiyaGun.vardiya!=null}">
+	<ui:fragment rendered="#{vardiyaGun.vardiya != null}">
 		<td align="center" class="#{vardiyaGun.getAylikClassAdi(aylikPuantaj.trClass)}" style="width: 20px;" id="vardiya#{vardiyaGun.vardiyaKeyStr}"><h:panelGrid
 				id="veri" style="#{vardiyaGun.manuelGirisHTML}">
 				<DIV>
-					<ui:fragment rendered="#{vardiyaGun.hareketDurum==false}">
+					<ui:fragment rendered="#{vardiyaGun.hareketDurum == false}">
 						<ui:fragment rendered="#{not empty vardiyaGun.hareketler}">
 							<a4j:commandLink action="#{fazlaMesaiHesaplaHome.vardiyaGoster(vardiyaGun)}" ajaxSingle="true"
 								oncomplete="#{rich:component('hareketDetayPanel')}.show()" reRender="hareketDetayPanel">
-								<ui:fragment rendered="#{vardiyaGun.fazlaMesaiOnayla!=null}">
+								<ui:fragment rendered="#{vardiyaGun.fazlaMesaiOnayla != null}">
 
 									<h:graphicImage value="/img/#{fazlaMesaiHesaplaHome.msgFazlaMesaiError}" style="border:0" reRender="editPanel" height="18"
-										rendered="#{fazlaMesaiHesaplaHome.fazlaMesaiTalepOnayliDurum==false or vardiyaGun.fazlaMesaiTalepOnayliDurum==false}" />
+										rendered="#{fazlaMesaiHesaplaHome.fazlaMesaiTalepOnayliDurum == false or vardiyaGun.fazlaMesaiTalepOnayliDurum == false}" />
 									<h:graphicImage value="/img/#{fazlaMesaiHesaplaHome.msgFazlaMesaiInfo}" style="border:0" reRender="editPanel" height="18"
 										rendered="#{fazlaMesaiHesaplaHome.fazlaMesaiTalepOnayliDurum and vardiyaGun.fazlaMesaiTalepOnayliDurum}" />
 
 
 								</ui:fragment>
-								<ui:fragment rendered="#{vardiyaGun.fazlaMesaiOnayla==null}">
-									<h:graphicImage value="/img/#{fazlaMesaiHesaplaHome.msgError}" rendered="#{vardiyaGun.ayrikHareketVar==false}" style="border:0"
+								<ui:fragment rendered="#{vardiyaGun.fazlaMesaiOnayla == null}">
+									<h:graphicImage value="/img/#{fazlaMesaiHesaplaHome.msgError}" rendered="#{vardiyaGun.ayrikHareketVar == false}" style="border:0"
 										reRender="editPanel" height="18" />
 									<h:graphicImage value="/img/#{fazlaMesaiHesaplaHome.msgError}" rendered="#{vardiyaGun.ayrikHareketVar}"
 										style="border:0;background-color: red;" reRender="editPanel" height="18" />
@@ -47,10 +47,10 @@
 						</ui:fragment>
 					</ui:fragment>
 
-					<ui:fragment rendered="#{vardiyaGun.hareketDurum==true}">
+					<ui:fragment rendered="#{vardiyaGun.hareketDurum == true}">
 						<ui:fragment rendered="#{vardiyaGun.hataliDurum}">
-							<ui:fragment rendered="#{vardiyaGun.vardiya.icapVardiyasi==false}">
-								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla==false or aylikPuantaj.fazlaMesaiHesapla==false}">
+							<ui:fragment rendered="#{vardiyaGun.vardiya.icapVardiyasi == false}">
+								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla == false or aylikPuantaj.fazlaMesaiHesapla == false}">
 									<a4j:commandLink action="#{fazlaMesaiHesaplaHome.vardiyaGoster(vardiyaGun)}" ajaxSingle="true"
 										oncomplete="#{rich:component('hareketDetayPanel')}.show()" reRender="hareketDetayPanel">
 										<h:graphicImage value="/img/msgwarn.png" height="18" style="border:0" reRender="editPanel" />
@@ -66,11 +66,11 @@
 								</ui:fragment>
 
 							</ui:fragment>
-							<ui:fragment rendered="#{vardiyaGun.vardiya.icapVardiyasi==true}">
+							<ui:fragment rendered="#{vardiyaGun.vardiya.icapVardiyasi == true}">
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla and aylikPuantaj.fazlaMesaiHesapla}">
 									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaGun.calismaSuresi)}" />
 								</ui:fragment>
-								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla==false or aylikPuantaj.fazlaMesaiHesapla==false}">
+								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla == false or aylikPuantaj.fazlaMesaiHesapla == false}">
 									<a4j:commandLink action="#{fazlaMesaiHesaplaHome.vardiyaGoster(vg)}" ajaxSingle="true"
 										oncomplete="#{rich:component('hareketDetayPanel')}.show()" reRender="hareketDetayPanel">
 										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vg.calismaSuresi)}" />
@@ -78,11 +78,11 @@
 								</ui:fragment>
 							</ui:fragment>
 						</ui:fragment>
-						<ui:fragment rendered="#{vardiyaGun.hataliDurum==false}">
+						<ui:fragment rendered="#{vardiyaGun.hataliDurum == false}">
 
 							<ui:fragment rendered="#{not empty vardiyaGun.hareketler}">
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla and aylikPuantaj.fazlaMesaiHesapla}">
-									<ui:fragment rendered="#{vardiyaGun.tatilMesai==false}">
+									<ui:fragment rendered="#{vardiyaGun.tatilMesai == false}">
 										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaGun.calismaSuresi)}" />
 									</ui:fragment>
 									<ui:fragment rendered="#{vardiyaGun.tatilMesai}">
@@ -90,10 +90,10 @@
 												value="#{authenticatedUser.sayiFormatliGoster(vardiyaGun.calismaSuresi)}" /></SPAN>
 									</ui:fragment>
 								</ui:fragment>
-								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla==false or aylikPuantaj.fazlaMesaiHesapla==false}">
+								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla == false or aylikPuantaj.fazlaMesaiHesapla == false}">
 									<a4j:commandLink action="#{fazlaMesaiHesaplaHome.vardiyaGoster(vardiyaGun)}" ajaxSingle="true"
 										oncomplete="#{rich:component('hareketDetayPanel')}.show()" reRender="hareketDetayPanel">
-										<ui:fragment rendered="#{vardiyaGun.tatilMesai==false}">
+										<ui:fragment rendered="#{vardiyaGun.tatilMesai == false}">
 											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaGun.calismaSuresi)}" />
 										</ui:fragment>
 										<ui:fragment rendered="#{vardiyaGun.tatilMesai}">
@@ -106,12 +106,12 @@
 							</ui:fragment>
 
 							<ui:fragment rendered="#{empty vardiyaGun.hareketler}">
-								<ui:fragment rendered="#{vardiyaGun.zamanGelmedi==false}">
-									<ui:fragment rendered="#{vardiyaGun.izin!=null or vardiyaGun.vardiya.calisma==false}">
+								<ui:fragment rendered="#{vardiyaGun.zamanGelmedi == false}">
+									<ui:fragment rendered="#{vardiyaGun.izin != null or vardiyaGun.vardiya.calisma == false}">
 									
-										<ui:fragment rendered="#{vardiyaGun.calismaSuresi==0 or (vardiyaGun.haftaCalismaSuresi+vardiyaGun.resmiTatilSure>0)}">
+										<ui:fragment rendered="#{vardiyaGun.calismaSuresi == 0 or (vardiyaGun.haftaCalismaSuresi+vardiyaGun.resmiTatilSure>0)}">
 											
-											<ui:fragment rendered="#{vardiyaGun.haftaCalismaSuresi+vardiyaGun.resmiTatilSure==0}">
+											<ui:fragment rendered="#{vardiyaGun.haftaCalismaSuresi+vardiyaGun.resmiTatilSure == 0}">
 												<h:outputText value="#{vardiyaGun.aciklama}" />
 											</ui:fragment>
 											<span style="color: black; font-size: 11px; font-weight: bold;"> 
@@ -122,16 +122,16 @@
 												</ui:fragment>
 											</span>
 										</ui:fragment>
-										<ui:fragment rendered="#{vardiyaGun.calismaSuresi>0 and (vardiyaGun.haftaCalismaSuresi+vardiyaGun.resmiTatilSure==0)}">
+										<ui:fragment rendered="#{vardiyaGun.calismaSuresi>0 and (vardiyaGun.haftaCalismaSuresi+vardiyaGun.resmiTatilSure == 0)}">
 											<span style="color: black; font-size: 11px; font-weight: bold;"><h:outputText value="#{vardiyaGun.aciklama}" />
 											</span>
 										</ui:fragment>
 									</ui:fragment>
-									<ui:fragment rendered="#{vardiyaGun.izin==null and vardiyaGun.vardiya.calisma}">
+									<ui:fragment rendered="#{vardiyaGun.izin == null and vardiyaGun.vardiya.calisma}">
 										<span style="color: red; font-size: 11px;"> <ui:fragment
 												rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla and aylikPuantaj.fazlaMesaiHesapla}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaGun.calismaSuresi)}" />
-											</ui:fragment> <ui:fragment rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla==false or aylikPuantaj.fazlaMesaiHesapla==false}">
+											</ui:fragment> <ui:fragment rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla == false or aylikPuantaj.fazlaMesaiHesapla == false}">
 												<a4j:commandLink action="#{fazlaMesaiHesaplaHome.vardiyaGoster(vg)}" ajaxSingle="true"
 													oncomplete="#{rich:component('hareketDetayPanel')}.show()" reRender="hareketDetayPanel">
 													<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vg.calismaSuresi)}" />
@@ -150,25 +150,25 @@
 										</span>
 									</ui:fragment>
 									<SPAN style="#{vardiyaGun.style}"> <h:outputText value="#{vardiyaGun.aciklama}"
-											rendered="#{vardiyaGun.izin!=null or vardiyaGun.vardiya.izin or vardiyaGun.vardiya.haftaTatil or vardiyaGun.vardiya.FMI}" />
+											rendered="#{vardiyaGun.izin != null or vardiyaGun.vardiya.izin or vardiyaGun.vardiya.haftaTatil or vardiyaGun.vardiya.FMI}" />
 									</SPAN>
 								</ui:fragment>
 							</ui:fragment>
 						</ui:fragment>
-						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ikRole and vardiyaGun.izin!=null and vardiyaGun.vardiya.izin==false}">
+						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ikRole and vardiyaGun.izin != null and vardiyaGun.vardiya.izin == false}">
 							<SPAN style="#{vardiyaGun.style}"><br />[#{vardiyaGun.vardiya.kisaAdi}]</SPAN>
 						</ui:fragment>
 					</ui:fragment>
 				</DIV>
 			</h:panelGrid> <rich:toolTip for="vardiya#{vardiyaGun.vardiyaKeyStr}">
 				<SPAN style="font-size: 12px;">#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')} --> #{vardiyaGun.fazlaMesaiTitle} <ui:fragment
-						rendered="#{vardiyaGun.islemVardiya!=null}">
+						rendered="#{vardiyaGun.islemVardiya != null}">
 						<br />
 						<br />
 
 						<s:formattedText value="#{vardiyaGun.titleStr}"></s:formattedText>
 
-					</ui:fragment> <ui:fragment rendered="#{vardiyaGun.manuelGirisHTML!=''}">
+					</ui:fragment> <ui:fragment rendered="#{vardiyaGun.manuelGirisHTML != ''}">
 						 <rich:dataTable rowClasses="acik,koyu" style="background-color: white !important;"
 								value="#{vardiyaGun.orjinalHareketler}" var="hareket" rows="20" rowKeyVar="row">
 								<rich:column rendered="#{fazlaMesaiHesaplaHome.ikRole}" style="text-align:center;">
@@ -183,11 +183,11 @@
 									<f:facet name="header">
 										<h:outputText value="Kapı" />
 									</f:facet><SPAN style="font-size: 8px">
-									<ui:fragment rendered="#{hareket.islem==null}">
+									<ui:fragment rendered="#{hareket.islem == null}">
 										<h:outputText value="#{hareket.kapiView.kapi.aciklama}" />
 									</ui:fragment>
-									<ui:fragment rendered="#{hareket.islem!=null}">
-										<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ikRole==false and fazlaMesaiHesaplaHome.adminRole==false}">
+									<ui:fragment rendered="#{hareket.islem != null}">
+										<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ikRole == false and fazlaMesaiHesaplaHome.adminRole == false}">
 											<h:outputText value="#{hareket.kapiView.kapi.aciklama}" />
 										</ui:fragment>
 										<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ikRole or fazlaMesaiHesaplaHome.adminRole}">
@@ -217,7 +217,7 @@
 									<f:facet name="header">
 										<h:outputText value="Neden" />
 									</f:facet>
-									<ui:fragment rendered="#{hareket.islem!=null and hareket.islem.neden.durum}">
+									<ui:fragment rendered="#{hareket.islem != null and hareket.islem.neden.durum}">
 									<SPAN style="font-size: 8px">
 										<h:outputText value="#{hareket.islem.neden.aciklama}" /> -
 										#{authenticatedUser.dateTimeFormatla(hareket.islem.olusturmaTarihi)}</SPAN>
@@ -230,12 +230,12 @@
 									</f:facet>
 
 									<ui:fragment
-										rendered="#{hareket.personelFazlaMesai!=null and hareket.personelFazlaMesai.onaylandi and hareket.personelFazlaMesai.fazlaMesaiSaati!=0}">
+										rendered="#{hareket.personelFazlaMesai != null and hareket.personelFazlaMesai.onaylandi and hareket.personelFazlaMesai.fazlaMesaiSaati != 0}">
 										<SPAN style="font-size: 8px">
 										<A href="#"> <h:outputText value="#{authenticatedUser.sayiFormatliGoster(hareket.personelFazlaMesai.fazlaMesaiSaati)} " />
 										</A>
 
-										<ui:fragment rendered="#{hareket.personelFazlaMesai.tatilDurum!=null}">
+										<ui:fragment rendered="#{hareket.personelFazlaMesai.tatilDurum != null}">
 											<h:outputText title="Resmi Tatil" value="(*)" />
 										</ui:fragment></SPAN>
 									</ui:fragment>

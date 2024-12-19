@@ -33,7 +33,7 @@
 						<s:decorate template="/layout/edit.xhtml" id="sirketId" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 							<h:selectOneMenu value="#{personelKalanIzinHome.aramaSecenekleri.sirketId}"
-								required="#{personelKalanIzinHome.aramaSecenekleri.sicilNo==null or personelKalanIzinHome.aramaSecenekleri.sicilNo==''}"
+								required="#{personelKalanIzinHome.aramaSecenekleri.sicilNo == null or personelKalanIzinHome.aramaSecenekleri.sicilNo == ''}"
 								requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz!">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{personelKalanIzinHome.aramaSecenekleri.sirketIdList}" />
@@ -48,7 +48,7 @@
 						</s:decorate>
 
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{ortakIslemler.tesisDurumu and (authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.tesisList!=null and not empty personelKalanIzinHome.aramaSecenekleri.tesisList}">
+							rendered="#{ortakIslemler.tesisDurumu and (authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.tesisList != null and not empty personelKalanIzinHome.aramaSecenekleri.tesisList}">
 							<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 							<h:selectOneMenu value="#{personelKalanIzinHome.aramaSecenekleri.tesisId}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -57,7 +57,7 @@
 						</s:decorate>
 
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha1!=null}">
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha1 != null}">
 							<ui:define name="label">#{personelKalanIzinHome.aramaSecenekleri.ekSaha1.aciklama}</ui:define>
 							<h:selectOneMenu value="#{personelKalanIzinHome.aramaSecenekleri.ekSaha1Id}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -65,7 +65,7 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha2!=null}">
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha2 != null}">
 							<ui:define name="label">#{personelKalanIzinHome.aramaSecenekleri.ekSaha2.aciklama}</ui:define>
 							<h:selectOneMenu value="#{personelKalanIzinHome.aramaSecenekleri.ekSaha2Id}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -73,7 +73,7 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha3!=null}">
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha3 != null}">
 							<ui:define name="label">#{personelKalanIzinHome.aramaSecenekleri.ekSaha3.aciklama}</ui:define>
 							<h:selectOneMenu value="#{personelKalanIzinHome.aramaSecenekleri.ekSaha3Id}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -81,7 +81,7 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha4!=null}">
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha4 != null}">
 							<ui:define name="label">#{personelKalanIzinHome.aramaSecenekleri.ekSaha4.aciklama}</ui:define>
 							<h:selectOneMenu value="#{personelKalanIzinHome.aramaSecenekleri.ekSaha4Id}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -133,7 +133,7 @@
 				</a4j:outputPanel>
 				<rich:panel id="izinPanel">
 					<a4j:outputPanel id="dosyaPaneli">
-						<ui:fragment rendered="#{ortakIslemler.getParameterKey('izinHakedisDosyaTranfer')=='1'}">
+						<ui:fragment rendered="#{ortakIslemler.getParameterKey('izinHakedisDosyaTranfer') == '1'}">
 							<rich:panel header="Bakiye Dosya Ekleme" rendered="#{authenticatedUser.admin or authenticatedUser.IK or authenticatedUser.IKAdmin}">
 								<h:panelGrid columns="2" style="width:700px;">
 									<a4j:outputPanel id="fileUpload">
@@ -145,7 +145,7 @@
 										</rich:fileUpload>
 									</a4j:outputPanel>
 									<a4j:outputPanel id="izinDosya">
-										<ui:fragment rendered="#{personelKalanIzinHome.izinBakiyeDosya.dosyaIcerik!=null}">
+										<ui:fragment rendered="#{personelKalanIzinHome.izinBakiyeDosya.dosyaIcerik != null}">
 											<h:panelGrid columns="3">
 												<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="izinPanel" ajaxSingle="true"
 													action="#{personelKalanIzinHome.izinDosyaSifirla}" />
@@ -358,28 +358,28 @@
 									<h:outputText value="#{izinler.personel.tesis.aciklama}" />
 								</rich:column>
 								<rich:column
-									rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha1!=null and ortakIslemler.getListEkSahaDurum(personelKalanIzinHome.pdksPersonelList,'1') }">
+									rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha1 != null and ortakIslemler.getListEkSahaDurum(personelKalanIzinHome.pdksPersonelList,'1') }">
 									<f:facet name="header">
 										<h:outputText value="#{personelKalanIzinHome.aramaSecenekleri.ekSaha1.aciklama}" />
 									</f:facet>
 									<h:outputText value="#{izinler.personel.ekSaha1.aciklama}" />
 								</rich:column>
 								<rich:column
-									rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha2!=null and ortakIslemler.getListEkSahaDurum(personelKalanIzinHome.pdksPersonelList,'2') }">
+									rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha2 != null and ortakIslemler.getListEkSahaDurum(personelKalanIzinHome.pdksPersonelList,'2') }">
 									<f:facet name="header">
 										<h:outputText value="#{personelKalanIzinHome.aramaSecenekleri.ekSaha2.aciklama}" />
 									</f:facet>
 									<h:outputText value="#{izinler.personel.ekSaha2.aciklama}" />
 								</rich:column>
 								<rich:column filterBy="#{izinler.personel.ekSaha3.aciklama}" filterEvent="onkeyup"
-									rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha3!=null}">
+									rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha3 != null}">
 									<f:facet name="header">
 										<h:outputText value="#{personelKalanIzinHome.aramaSecenekleri.ekSaha3.aciklama}" />
 									</f:facet>
 									<h:outputText value="#{izinler.personel.ekSaha3.aciklama}" />
 								</rich:column>
 								<rich:column
-									rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha4!=null and ortakIslemler.getListEkSahaDurum(personelKalanIzinHome.pdksPersonelList,'4') }">
+									rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha4 != null and ortakIslemler.getListEkSahaDurum(personelKalanIzinHome.pdksPersonelList,'4') }">
 									<f:facet name="header">
 										<h:outputText value="#{personelKalanIzinHome.aramaSecenekleri.ekSaha4.aciklama}" />
 									</f:facet>
@@ -437,10 +437,10 @@
 									<f:facet name="header">
 										<h:outputText value="" />
 									</f:facet>
-									<ui:fragment rendered="#{izinler.toplamBakiyeIzin!=0 or izinler.kullanilanIzin!=0}">
+									<ui:fragment rendered="#{izinler.toplamBakiyeIzin != 0 or izinler.kullanilanIzin != 0}">
 										<TABLE>
 											<TR>
-												<ui:fragment rendered="#{izinler.izinler!=null}">
+												<ui:fragment rendered="#{izinler.izinler != null}">
 													<TD><a4j:commandButton status="ajaxStatus" value="İzin Detay" oncomplete="#{rich:component('izinDetayPanel')}.show()"
 															action="#{personelKalanIzinHome.izinGoster(izinler)}" reRender="izinDetayPanel" /></TD>
 
@@ -612,7 +612,7 @@
 
 				</h:panelGrid>
 				<a4j:outputPanel id="harcananIzinUpdate">
-					<ui:fragment rendered="#{personelKalanIzinHome.manuelIzin!=null}">
+					<ui:fragment rendered="#{personelKalanIzinHome.manuelIzin != null}">
 						<h:panelGrid columns="2">
 
 							<s:decorate template="/layout/edit.xhtml">
@@ -632,7 +632,7 @@
 
 
 						</h:panelGrid>
-						<ui:fragment rendered="#{personelKalanIzinHome.manuelIzin.redmi==false}">
+						<ui:fragment rendered="#{personelKalanIzinHome.manuelIzin.redmi == false}">
 							<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{personelKalanIzinHome.manuelIzinKaydet(true)}" ajaxSingle="true"
 								oncomplete="#{rich:component('izinDetayPanel')}.hide();#{rich:component('izinHarcamaPanel')}.hide();" reRender="izinPanel" />
 							<a4j:commandButton status="ajaxStatus" value="Sil" action="#{personelKalanIzinHome.manuelIzinKaydet(false)}" ajaxSingle="true"
@@ -702,26 +702,26 @@
 							</f:facet>
 							<TABLE>
 								<TR>
-									<ui:fragment rendered="#{kalanIzinler.devirIzin==false and ( authenticatedUser.admin or authenticatedUser.IK)}">
+									<ui:fragment rendered="#{kalanIzinler.devirIzin == false and ( authenticatedUser.admin or authenticatedUser.IK)}">
 
 										<TD nowrap="nowrap"><ui:fragment>
 
 												<a4j:commandLink title="İptal Geri Al" status="ajaxStatus" id="iptalGeri"
-													rendered="#{personelKalanIzinHome.iptalIzinleriGetir and kalanIzinler.izinKagidiGeldi==false and kalanIzinler.kullanilanIzinSuresi eq 0}"
+													rendered="#{personelKalanIzinHome.iptalIzinleriGetir and kalanIzinler.izinKagidiGeldi == false and kalanIzinler.kullanilanIzinSuresi eq 0}"
 													action="#{personelKalanIzinHome.guncelle(kalanIzinler)}" oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
 													<h:graphicImage value="/img/login.png" height="16" for="iptalGeri" />
 												</a4j:commandLink>
 												<a4j:commandButton image="/img/edit.gif" title="Güncelle" status="ajaxStatus"
-													rendered="#{authenticatedUser.IK  and kalanIzinler.izinKagidiGeldi==null}" action="#{personelKalanIzinHome.guncelle(kalanIzinler)}"
+													rendered="#{authenticatedUser.IK and kalanIzinler.izinKagidiGeldi == null}" action="#{personelKalanIzinHome.guncelle(kalanIzinler)}"
 													oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" />
 												<a4j:commandButton image="/img/beklemede.gif" title="Sıfırla" status="ajaxStatus"
-													rendered="#{false and kalanIzinler.kontrolIzin==null and (authenticatedUser.admin or ( authenticatedUser.IKAdmin and ortakIslemler.yillikIzinMaxBakiye gt 0) ) and kalanIzinler.izinKagidiGeldi==null and kalanIzinler.harcananIzin le 0.0}"
+													rendered="#{false and kalanIzinler.kontrolIzin == null and (authenticatedUser.admin or ( authenticatedUser.IKAdmin and ortakIslemler.yillikIzinMaxBakiye gt 0) ) and kalanIzinler.izinKagidiGeldi == null and kalanIzinler.harcananIzin le 0.0}"
 													action="#{personelKalanIzinHome.sifirla(kalanIzinler)}" oncomplete="#{rich:component('izinDetayPanel')}.hide()" reRender="izinPanel" />
 											</ui:fragment></TD>
 									</ui:fragment>
 									<ui:fragment rendered="#{(authenticatedUser.admin or authenticatedUser.IK) }">
 										<TD><a4j:commandButton image="/img/down.gif" title="Kullanılan İzinler"
-												action="#{personelKalanIzinHome.getHarcananIzinler(kalanIzinler)}" rendered="#{kalanIzinler.harcananIzinler!=null}" status="ajaxStatus"
+												action="#{personelKalanIzinHome.getHarcananIzinler(kalanIzinler)}" rendered="#{kalanIzinler.harcananIzinler != null}" status="ajaxStatus"
 												oncomplete="#{rich:component('izinHarcamaPanel')}.show()" reRender="izinHarcamaPanel">
 
 											</a4j:commandButton></TD>
@@ -744,7 +744,7 @@
 							<f:facet name="header">
 								<h:outputText value="İzin Hakediş Yılı" />
 							</f:facet>
-							<ui:fragment rendered="#{kalanIzinler.devirIzin==false}">
+							<ui:fragment rendered="#{kalanIzinler.devirIzin == false}">
 								<h:outputText value="#{kalanIzinler.izinDonem}" />
 							</ui:fragment>
 
@@ -753,7 +753,7 @@
 							<f:facet name="header">
 								<h:outputText value="Hakettiği Tarihi" />
 							</f:facet>
-							<ui:fragment rendered="#{kalanIzinler.devirIzin==false}">
+							<ui:fragment rendered="#{kalanIzinler.devirIzin == false}">
 								<h:outputText value="#{authenticatedUser.dateFormatla(kalanIzinler.bitisZamani)}" />
 							</ui:fragment>
 
@@ -770,7 +770,7 @@
 							<f:facet name="header">
 								<h:outputText value="Toplam İzin Süresi" />
 							</f:facet>
-							<ui:fragment rendered="#{kalanIzinler.izinSuresi!=0}">
+							<ui:fragment rendered="#{kalanIzinler.izinSuresi != 0}">
 								<h:outputText value="#{authenticatedUser.sayiFormatliGoster(kalanIzinler.izinSuresi)} Gün" />
 							</ui:fragment>
 						</rich:column>
@@ -816,7 +816,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" styleClass="hidelink">
 							<a4j:support event="onclick" action="#{personelKalanIzinHome.instanceRefresh}" reRender="izinDetayPanel"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
 
@@ -855,11 +855,11 @@
 						<h:inputText value="#{personelKalanIzinHome.kidemYili}" />
 					</s:decorate>
 
-					<s:decorate template="/layout/edit.xhtml" rendered="#{personelKalanIzinHome.izinTipiList==null}">
+					<s:decorate template="/layout/edit.xhtml" rendered="#{personelKalanIzinHome.izinTipiList == null}">
 						<ui:define name="label">İzin Tipi</ui:define>
 						<h:outputText value="#{personelKalanIzinHome.updateIzin.izinTipi.bakiyeIzinTipi.izinTipiTanim.aciklama}" />
 					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml" rendered="#{personelKalanIzinHome.izinTipiList!=null}">
+					<s:decorate template="/layout/edit.xhtml" rendered="#{personelKalanIzinHome.izinTipiList != null}">
 						<ui:define name="label">İzin Tipi</ui:define>
 						<h:selectOneMenu value="#{personelKalanIzinHome.updateIzin.izinTipi}">
 							<s:selectItems var="izinTipi" value="#{personelKalanIzinHome.izinTipiList}" label="#{izinTipi.bakiyeIzinTipi.izinTipiTanim.aciklama}"
@@ -871,19 +871,19 @@
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml">
 						<ui:define name="label">Toplam Süresi</ui:define>
-						<h:inputText disabled="#{authenticatedUser.IK==false}" value="#{personelKalanIzinHome.izinSuresi}" required="true"
+						<h:inputText disabled="#{authenticatedUser.IK == false}" value="#{personelKalanIzinHome.izinSuresi}" required="true"
 							requiredMessage="Toplam süre giriniz!" />
 					</s:decorate>
 
 
 				</h:panelGrid>
-				<ui:fragment rendered="#{personelKalanIzinHome.updateIzin.izinKagidiGeldi==null}">
+				<ui:fragment rendered="#{personelKalanIzinHome.updateIzin.izinKagidiGeldi == null}">
 					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{personelKalanIzinHome.kaydet(true)}" reRender="izinDetayPanel,izinPanel"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 				</ui:fragment>
-				<ui:fragment rendered="#{personelKalanIzinHome.updateIzin.izinKagidiGeldi!=null}">
+				<ui:fragment rendered="#{personelKalanIzinHome.updateIzin.izinKagidiGeldi != null}">
 					<a4j:commandButton status="ajaxStatus" value="Geri Al" action="#{personelKalanIzinHome.kaydet(true)}" reRender="izinDetayPanel,izinPanel"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 				</ui:fragment>
 
 			</h:form>

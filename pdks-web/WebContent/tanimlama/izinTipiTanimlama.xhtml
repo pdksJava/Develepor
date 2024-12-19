@@ -99,13 +99,13 @@
 							<f:facet name="header">
 								<h:outputText value="OFF Dahil" />
 							</f:facet>
-							<h:outputText value="#{authenticatedUser.getYesNo(izinTipi.offDahilMi)}" rendered="#{izinTipi.takvimGunumu==false}" />
+							<h:outputText value="#{authenticatedUser.getYesNo(izinTipi.offDahilMi)}" rendered="#{izinTipi.takvimGunumu == false}" />
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
 								<h:outputText value="HT Dahil" />
 							</f:facet>
-							<h:outputText value="#{authenticatedUser.getYesNo(izinTipi.htDahil)}" rendered="#{izinTipi.takvimGunumu==false}" />
+							<h:outputText value="#{authenticatedUser.getYesNo(izinTipi.htDahil)}" rendered="#{izinTipi.takvimGunumu == false}" />
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
@@ -185,7 +185,7 @@
 							<f:facet name="header">
 								<h:outputText value="Dosya Ekle" />
 							</f:facet>
-							<h:outputText value="#{authenticatedUser.getYesNo(izinTipi.dosyaEkle)}" rendered="#{izinTipi.dosyaEkle!=null}" />
+							<h:outputText value="#{authenticatedUser.getYesNo(izinTipi.dosyaEkle)}" rendered="#{izinTipi.dosyaEkle != null}" />
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
@@ -251,7 +251,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
 							<a4j:support event="onclick" action="#{izinTipiHome.instanceRefresh}" reRender="izinPanel"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
 				</h:panelGroup>
@@ -316,7 +316,7 @@
 						</s:decorate>
 						<a4j:outputPanel id="devir1">
 							<s:decorate template="/layout/edit.xhtml"
-								rendered="#{izinTipiHome.instance.bakiyeDevirTipi!='0' and not empty izinTipiHome.bakiyeIzinTipiTanimList}">
+								rendered="#{izinTipiHome.instance.bakiyeDevirTipi != '0' and not empty izinTipiHome.bakiyeIzinTipiTanimList}">
 								<ui:define name="label">Bakiye İzin Tipi</ui:define>
 								<h:selectOneMenu value="#{izinTipiHome.bakiyeIzinTipi.izinTipiTanim}">
 									<s:selectItems var="comp" value="#{izinTipiHome.bakiyeIzinTipiTanimList}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
@@ -327,7 +327,7 @@
 							</s:decorate>
 						</a4j:outputPanel>
 						<a4j:outputPanel id="devir2" ajaxRendered="false">
-							<s:decorate template="/layout/edit.xhtml" rendered="#{izinTipiHome.instance.bakiyeDevirTipi!='0' and izinTipiHome.instance.bakiyeSenelik}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{izinTipiHome.instance.bakiyeDevirTipi != '0' and izinTipiHome.instance.bakiyeSenelik}">
 								<ui:define name="label">Kotası</ui:define>
 								<h:inputText value="#{izinTipiHome.bakiyeIzinTipi.kotaBakiye}" size="5" />
 							</s:decorate>
@@ -419,7 +419,7 @@
 							<h:inputText value="#{izinTipiHome.instance.listeSira}" size="5" />
 						</s:decorate>
 						<a4j:outputPanel id="artikIzinGun" ajaxRendered="false" rendered="#{authenticatedUser.admin or izinTipiHome.instance.departman.admin }">
-							<s:decorate template="/layout/edit.xhtml" rendered="#{izinTipiHome.instance.saatGosterilecek==false and izinTipiHome.instance.senelikIzin}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{izinTipiHome.instance.saatGosterilecek == false and izinTipiHome.instance.senelikIzin}">
 								<ui:define name="label">Artık İzin Gün</ui:define>
 								<h:inputText required="true" value="#{izinTipiHome.instance.artikIzinGun}" size="5">
 									<f:validateDoubleRange minimum="0.0" maximum="0.5" />
@@ -437,18 +437,18 @@
 							</h:selectBooleanCheckbox>
 						</s:decorate>
 						<a4j:outputPanel id="offDahil">
-							<s:decorate template="/layout/edit.xhtml" rendered="#{izinTipiHome.instance.takvimGunumu==false}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{izinTipiHome.instance.takvimGunumu == false}">
 								<ui:define name="label">OFF Dahil</ui:define>
 								<h:selectBooleanCheckbox value="#{izinTipiHome.instance.offDahil}" />
 							</s:decorate>
 						</a4j:outputPanel>
 						<a4j:outputPanel id="htDahil">
-							<s:decorate template="/layout/edit.xhtml" rendered="#{izinTipiHome.instance.takvimGunumu==false}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{izinTipiHome.instance.takvimGunumu == false}">
 								<ui:define name="label">HT Dahil</ui:define>
 								<h:selectBooleanCheckbox value="#{izinTipiHome.instance.htDahil}" />
 							</s:decorate>
 						</a4j:outputPanel>
-						<s:decorate template="/layout/edit.xhtml" rendered="#{izinTipiHome.mailGonderimDurumlari!=null}">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{izinTipiHome.mailGonderimDurumlari != null}">
 							<ui:define name="label">Mail Gönderim Durumu</ui:define>
 							<h:selectOneMenu value="#{izinTipiHome.instance.mailGonderimDurumu}">
 								<f:selectItem itemLabel="Yok" />
@@ -464,7 +464,7 @@
 
 					</s:decorate>
 					<a4j:outputPanel id="mailAdreslerGiris">
-						<h:panelGrid columns="1" width="100%" rendered="#{izinTipiHome.mailTipiList!=null and izinTipiHome.instance.mailGonderimDurumu!=null}">
+						<h:panelGrid columns="1" width="100%" rendered="#{izinTipiHome.mailTipiList != null and izinTipiHome.instance.mailGonderimDurumu != null}">
 
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Mail Adres</ui:define>
@@ -544,7 +544,7 @@
 				</h:panelGrid>
 
 				<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{izinTipiHome.save}" process="izinTable" reRender="izinTable"
-					oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+					oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
 			</h:form>

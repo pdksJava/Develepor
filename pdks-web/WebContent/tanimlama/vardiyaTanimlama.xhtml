@@ -22,7 +22,7 @@
 										<a4j:support event="onchange" reRender="anaForm" status="ajaxStatus" ajaxSingle="true" action="#{vardiyaHome.fillVardiyalar()}" />
 									</h:selectOneMenu>
 								</s:decorate>
-								<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.pasifGoster!=null}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.pasifGoster != null}">
 									<ui:define name="label">Pasif Göster</ui:define>
 									<h:selectBooleanCheckbox value="#{vardiyaHome.pasifGoster}">
 										<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" reRender="anaForm" action="#{vardiyaHome.fillVardiyalar()}" />
@@ -118,7 +118,7 @@
 									<f:facet name="header">
 										<h:outputText value="Çalışma Şekli" />
 									</f:facet>
-									<ui:fragment rendered="#{vardiya.calismaSekli!=null}">
+									<ui:fragment rendered="#{vardiya.calismaSekli != null}">
 										<h:outputText value="#{vardiya.calismaSekli.adi}" />
 
 									</ui:fragment>
@@ -126,7 +126,7 @@
 									<h:graphicImage id="bilgiLink" value="/img/msginfo.png" />
 									<rich:toolTip for="bilgiLink">
 										<s:formattedText value="#{vardiyaHome.getArifeMesaiAciklama(vardiya)}" />
-										<ui:fragment rendered="#{vardiya.yemekIzinList!=null}">
+										<ui:fragment rendered="#{vardiya.yemekIzinList != null}">
 											<br />
 											<b>Yemek molaları</b>
 											<a4j:repeat value="#{vardiya.yemekIzinList}" var="yemek">
@@ -294,7 +294,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
 							<a4j:support event="onclick" action="#{vardiyaHome.instanceRefresh}" reRender="vardiyaTable"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
 				</h:panelGroup>
@@ -325,13 +325,13 @@
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Vardiya Tipi</ui:define>
-								<h:selectOneMenu required="true" value="#{vardiyaHome.instance.tipi}" rendered="#{authenticatedUser.admin==true}"
+								<h:selectOneMenu required="true" value="#{vardiyaHome.instance.tipi}" rendered="#{authenticatedUser.admin == true}"
 									requiredMessage="Vardiya tipini seçiniz">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{vardiyaHome.vardiyaTipiList}" />
 									<a4j:support event="onchange" reRender="saatler" status="ajaxStatus" ajaxSingle="true" />
 								</h:selectOneMenu>
-								<h:outputText value="#{vardiyaHome.instance.vardiyaTipiAciklama}" rendered="#{authenticatedUser.admin==false}" />
+								<h:outputText value="#{vardiyaHome.instance.vardiyaTipiAciklama}" rendered="#{authenticatedUser.admin == false}" />
 							</s:decorate>
 							<a4j:outputPanel id="saatler">
 
@@ -415,7 +415,7 @@
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Çalışma Şekli</ui:define>
 												<h:selectOneMenu value="#{vardiyaHome.instance.calismaSekli}"
-													required="#{vardiyaHome.instance.calismaSekli!=null or vardiyaHome.instance.arifeNormalCalismaDakika>0}"
+													required="#{vardiyaHome.instance.calismaSekli != null or vardiyaHome.instance.arifeNormalCalismaDakika>0}"
 													requiredMessage="Çalışma şekli seçiniz">
 													<s:selectItems var="comp" value="#{vardiyaHome.calismaSekliList}" label="#{comp.adi}" noSelectionLabel="Lütfen seçiniz" />
 													<s:convertEntity />
@@ -431,7 +431,7 @@
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Arife Normal Çalışma(Dakika)</ui:define>
 												<h:inputText value="#{vardiyaHome.instance.arifeNormalCalismaDakika}"
-													required="#{vardiyaHome.instance.calismaSekli!=null or vardiyaHome.instance.arifeNormalCalismaDakika>0}"
+													required="#{vardiyaHome.instance.calismaSekli != null or vardiyaHome.instance.arifeNormalCalismaDakika>0}"
 													requiredMessage="Arife Normal Çalışma giriniz" size="2">
 													<a4j:support event="onchange" reRender="saatler" status="ajaxStatus" ajaxSingle="true" />
 												</h:inputText>
@@ -445,7 +445,7 @@
 											</s:decorate>
 
 
-											<c:if test="#{vardiyaHome.instance.genel==false}">
+											<c:if test="#{vardiyaHome.instance.genel == false}">
 												<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.instance.departman.admin}">
 													<ui:define name="label">İcap Vardiya Mı?</ui:define>
 													<h:selectBooleanCheckbox value="#{vardiyaHome.instance.icapVardiya}" />
@@ -461,14 +461,14 @@
 													<h:selectBooleanCheckbox value="#{vardiyaHome.instance.gebelik}" />
 												</s:decorate>
 											</c:if>
-											<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('isKurCalismaPlani')!='1'}">
+											<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('isKurCalismaPlani') != '1'}">
 												<ui:define name="label">Mesai Ödenir</ui:define>
 												<h:selectBooleanCheckbox value="#{vardiyaHome.instance.mesaiOde}" />
 											</s:decorate>
 										</c:if>
 									</h:panelGrid>
 									
-									<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.sirketList!=null}">
+									<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.sirketList != null}">
 										<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 										<h:selectOneMenu value="#{vardiyaHome.instance.sirket}">
 											<s:selectItems var="comp" value="#{vardiyaHome.sirketList}" label="#{comp.ad}" noSelectionLabel="Lütfen seçiniz" />
@@ -539,7 +539,7 @@
 					<!--  -->
 
 					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{vardiyaHome.save}" reRender="vardiyaTable"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
 

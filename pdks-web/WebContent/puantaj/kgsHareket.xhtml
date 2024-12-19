@@ -43,7 +43,7 @@
 		 
 
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and  kgsHareketHome.ekSahaTanimMap.ekSaha1!=null}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and kgsHareketHome.ekSahaTanimMap.ekSaha1 != null}">
 						<ui:define name="label">#{kgsHareketHome.ekSaha1.aciklama}</ui:define>
 						<h:selectOneMenu value="#{kgsHareketHome.seciliEkSaha1}">
 							<s:selectItems var="comp" value="#{kgsHareketHome.ekSahaListMap.get('ekSaha1')}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
@@ -51,7 +51,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and  kgsHareketHome.ekSahaTanimMap.ekSaha2!=null}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and kgsHareketHome.ekSahaTanimMap.ekSaha2 != null}">
 						<ui:define name="label">#{kgsHareketHome.ekSaha2.aciklama}</ui:define>
 						<h:selectOneMenu value="#{kgsHareketHome.seciliEkSaha2}">
 							<s:selectItems var="comp" value="#{kgsHareketHome.ekSahaListMap.get('ekSaha2')}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
@@ -59,7 +59,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and  kgsHareketHome.ekSahaTanimMap.ekSaha3!=null}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and kgsHareketHome.ekSahaTanimMap.ekSaha3 != null}">
 						<ui:define name="label">#{kgsHareketHome.ekSaha3.aciklama}</ui:define>
 						<h:selectOneMenu value="#{kgsHareketHome.seciliEkSaha3}">
 							<s:selectItems var="comp" value="#{kgsHareketHome.ekSahaListMap.get('ekSaha3')}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
@@ -67,7 +67,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and  kgsHareketHome.ekSahaTanimMap.ekSaha4!=null}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and kgsHareketHome.ekSahaTanimMap.ekSaha4 != null}">
 						<ui:define name="label">#{kgsHareketHome.ekSaha4.aciklama}</ui:define>
 						<h:selectOneMenu value="#{kgsHareketHome.seciliEkSaha4}">
 							<s:selectItems var="comp" value="#{kgsHareketHome.ekSahaListMap.get('ekSaha4')}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
@@ -89,7 +89,7 @@
 							<f:facet name="header">
 								<h:outputText value="Onaylanacak Hareket" />
 							</f:facet>
-							<h:selectBooleanCheckbox value="#{hareket.checkBoxDurum}" rendered="#{hareket.islem!=null and hareket.islem.onaylayanUser==null}" />
+							<h:selectBooleanCheckbox value="#{hareket.checkBoxDurum}" rendered="#{hareket.islem != null and hareket.islem.onaylayanUser == null}" />
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
@@ -157,15 +157,15 @@
 								<h:outputText value="Onaylama Durumu" />
 							</f:facet>
 							<h:outputText value="#{hareket.islem.onaylayanUser.adSoyad}   #{hareket.islem.onayDurumAciklama}"
-								rendered="#{hareket.islem.onaylayanUser!=null}" />
+								rendered="#{hareket.islem.onaylayanUser != null}" />
 							<a4j:commandButton status="ajaxStatus" value="Red" reRender="hareketPanel"
-								rendered="#{hareket.islem!=null and hareket.islem.onaylayanUser==null}" action="#{kgsHareketHome.onaylamaIslemi(hareket, false)}" />
+								rendered="#{hareket.islem != null and hareket.islem.onaylayanUser == null}" action="#{kgsHareketHome.onaylamaIslemi(hareket, false)}" />
 						</rich:column>
 						<rich:column rendered="#{kgsHareketHome.iptalEdilir}">
 							<f:facet name="header">
 								<h:outputText value="İptal Durumu" />
 							</f:facet>
-							<a4j:commandButton image="/img/delete.gif" status="ajaxStatus" rendered="#{hareket.vardiyaGun==null}" reRender="deletePanel"
+							<a4j:commandButton image="/img/delete.gif" status="ajaxStatus" rendered="#{hareket.vardiyaGun == null}" reRender="deletePanel"
 								oncomplete="#{rich:component('deletePanel')}.show()">
 								<f:setPropertyActionListener value="#{hareket}" target="#{kgsHareketHome.instance}">
 									<s:convertEntity />
@@ -214,7 +214,7 @@
 					</a4j:outputPanel>
 
 					<a4j:commandButton status="ajaxStatus" value="Onay Islemi" action="#{kgsHareketHome.onaylamaIslemi(true)}" reRender="hareketTable"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
 
@@ -257,7 +257,7 @@
 								<h:outputText value="#{authenticatedUser.dateTimeLongFormatla(kgsHareketHome.instance.zaman)}" />
 							</s:decorate>
 
-							<s:decorate template="/layout/edit.xhtml" rendered="#{kgsHareketHome.instance.orjinalZaman!=null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{kgsHareketHome.instance.orjinalZaman != null}">
 								<ui:define name="label">
 									<h:outputText value="Orjinal Zaman" />
 								</ui:define>
@@ -317,7 +317,7 @@
 					</a4j:outputPanel>
 
 					<a4j:commandButton status="ajaxStatus" value="İptal Islemi" action="#{kgsHareketHome.iptalIslemi}" reRender="hareketPanel"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('deletePanel')}.hide();" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('deletePanel')}.hide();" />
 
 
 

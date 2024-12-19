@@ -51,7 +51,7 @@
 									<a4j:commandButton status="ajaxStatus" value="#{ortakIslemler.getParameterKey('uygulamaBordro')}  Güncelle"
 										action="#{pdksPersonelHome.personelERPDBGuncelle()}" />
 								</ui:fragment>
-								<ui:fragment rendered="#{pdksPersonelHome.personelERPGuncelleme=='1' or pdksPersonelHome.yeniPersonelGuncelle}">
+								<ui:fragment rendered="#{pdksPersonelHome.personelERPGuncelleme == '1' or pdksPersonelHome.yeniPersonelGuncelle}">
 									<ui:fragment rendered="#{authenticatedUser.admin}">
 										<a4j:commandButton status="ajaxStatus" action="#{pdksPersonelHome.yeniPersonelleriGuncelle()}" reRender="pdksPersonelList,aramaSonuc"
 											value="#{ortakIslemler.getParameterKey('uygulamaBordro')} Yeni Personel Güncelle" />
@@ -90,7 +90,7 @@
 									<TR>
 										<ui:fragment rendered="#{personelView.isGuncelle(authenticatedUser)}">
 											<TD><a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink" action="#{pdksPersonelHome.kayitGuncelle(personelView,true)}"
-													rendered="#{pdksPersonelHome.personelERPGuncelleme=='M' or pdksPersonelHome.manuelTanimla or personelView.pdksPersonel.id!=null  }"
+													rendered="#{pdksPersonelHome.personelERPGuncelleme == 'M' or pdksPersonelHome.manuelTanimla or personelView.pdksPersonel.id != null  }"
 													oncomplete="if (#{not empty pdksPersonelHome.sirketList}) #{rich:component('editPanel')}.show()" reRender="editPanel">
 													<h:graphicImage value="/img/edit.gif" style="border:0" reRender="editPanel" />
 												</a4j:commandLink> <rich:toolTip for="editlink" value="Güncelle" /></TD>
@@ -101,19 +101,19 @@
 													for="editKapiGiris">Personel Değiştir</rich:toolTip></TD>
 										</ui:fragment>
 										<ui:fragment
-											rendered="#{personelView.pdksPersonel!=null and personelView.pdksPersonel.cinsiyetBayan and pdksPersonelHome.gebeSutIzniDurumList.contains(personelView.pdksPersonel.id)}">
+											rendered="#{personelView.pdksPersonel != null and personelView.pdksPersonel.cinsiyetBayan and pdksPersonelHome.gebeSutIzniDurumList.contains(personelView.pdksPersonel.id)}">
 											<ui:fragment rendered="#{pdksPersonelHome.secGebe(personelView.pdksPersonel) or pdksPersonelHome.secSutIzni(personelView.pdksPersonel)}"></ui:fragment>
 											<TD><a4j:commandLink status="ajaxStatus" id="editGebeGiris" action="#{pdksPersonelHome.gebeSutIzniSecimi(personelView.pdksPersonel)}"
-													oncomplete="if (#{pdksPersonelHome.donemselDurumList!=null}) #{rich:component('editWomanPanel')}.show()" reRender="editWomanPanel"
+													oncomplete="if (#{pdksPersonelHome.donemselDurumList != null}) #{rich:component('editWomanPanel')}.show()" reRender="editWomanPanel"
 													ajaxSingle="true">
 													<h:graphicImage value="/img/pregnant-woman.png" style="border:0" alt="Edit" height="14px" />
 
 												</a4j:commandLink> <rich:toolTip for="editGebeGiris">Gebe/Süt İzin</rich:toolTip></TD>
 										</ui:fragment>
 										<TD><ui:fragment
-												rendered="#{ ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametrePersonelERPTableView) or pdksPersonelHome.personelERPGuncelleme=='E'}">
+												rendered="#{ ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametrePersonelERPTableView) or pdksPersonelHome.personelERPGuncelleme == 'E'}">
 												<a4j:commandButton status="ajaxStatus" id="editERPLink" image="/img/left_16.png"
-													rendered="#{personelView.yeniPersonelMi or personelView.pdksPersonel.sirket.erp==true}"
+													rendered="#{personelView.yeniPersonelMi or personelView.pdksPersonel.sirket.erp == true}"
 													action="#{pdksPersonelHome.kayitERPGuncelle(personelView)}" reRender="pdksPersonelList" ajaxSingle="true" />
 												<rich:toolTip for="editERPLink">#{ortakIslemler.getParameterKey('uygulamaBordro')} Güncelle #{personelView.pdksPersonel.pdksSicilNo}</rich:toolTip>
 											</ui:fragment></TD>
@@ -131,7 +131,7 @@
 									<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
 								</f:facet>
 								<SPAN id="KGS#{personelView.id}"> <h:outputText value="#{personelView.personelKGS.sicilNo}" /></SPAN>
-								<ui:fragment rendered="#{personelView.personelKGS.kapiSirket!=null}">
+								<ui:fragment rendered="#{personelView.personelKGS.kapiSirket != null}">
 									<rich:toolTip for="KGS#{personelView.id}">
 										<b>KGS Şirket : </b>#{personelView.personelKGS.kapiSirket.aciklama}
 								</rich:toolTip>
@@ -142,7 +142,7 @@
 									<h:outputText value="PDKS Adı Soyadı" />
 								</f:facet>
 								<h:outputText title="#{personelView.pdksPersonelAciklama}" value="#{personelView.personelKGS.adSoyad}" id="adSoyad" />
-								<ui:fragment rendered="#{personelView.personelKGS.durum==false and personelView.pdksPersonel.calisiyor}">
+								<ui:fragment rendered="#{personelView.personelKGS.durum == false and personelView.pdksPersonel.calisiyor}">
 									<h:graphicImage value="/img/msgerror.png" style="border:0" id="hataKGS" />
 									<rich:toolTip for="hataKGS">
 										<b>ERP hata : </b>#{personelView.personelKGS.sicilNo} #{personelView.personelKGS.adSoyad} #{ortakIslemler.getParameterKey('kapiGirisUygulama')}  kapı girişi iptal!</rich:toolTip>
@@ -176,7 +176,7 @@
 								</f:facet>
 								<h:outputText value="#{personelView.pdksPersonel.pdksYonetici.adSoyad}" />
 								<ui:fragment
-									rendered="#{personelView.pdksPersonel.asilYonetici1!=null and personelView.pdksPersonel.asilYonetici1.id!=personelView.pdksPersonel.yoneticisi.id}">
+									rendered="#{personelView.pdksPersonel.asilYonetici1 != null and personelView.pdksPersonel.asilYonetici1.id != personelView.pdksPersonel.yoneticisi.id}">
 									<br />
 									<h:graphicImage url="/img/msginfo.png" title="ERP #{ortakIslemler.yoneticiAciklama()} : #{personelView.pdksPersonel.asilYonetici1.adSoyad}" />
 								</ui:fragment>
@@ -188,14 +188,14 @@
 									<h:outputText value="#{ortakIslemler.yonetici2Aciklama()}" />
 								</f:facet>
 								<h:outputText value="#{personelView.pdksPersonel.yonetici2.adSoyad}" />
-								<ui:fragment rendered="#{personelView.pdksPersonel.asilYonetici2!=null}">
+								<ui:fragment rendered="#{personelView.pdksPersonel.asilYonetici2 != null}">
 									<br />
 									<h:graphicImage url="/img/msginfo.png"
 										title="ERP #{ortakIslemler.yonetici2Aciklama()} : #{personelView.pdksPersonel.asilYonetici1.pdksYonetici.adSoyad}"
-										rendered="#{personelView.pdksPersonel.asilYonetici1!=null and personelView.pdksPersonel.asilYonetici1.pdksYonetici!=null}" />
+										rendered="#{personelView.pdksPersonel.asilYonetici1 != null and personelView.pdksPersonel.asilYonetici1.pdksYonetici != null}" />
 									<h:graphicImage url="/img/msginfo.png"
 										title="ERP #{ortakIslemler.yonetici2Aciklama()}: #{personelView.pdksPersonel.yoneticisi.pdksYonetici.adSoyad}"
-										rendered="#{personelView.pdksPersonel.asilYonetici1==null and personelView.pdksPersonel.yoneticisi.pdksYonetici!=null}" />
+										rendered="#{personelView.pdksPersonel.asilYonetici1 == null and personelView.pdksPersonel.yoneticisi.pdksYonetici != null}" />
 								</ui:fragment>
 							</rich:column>
 							<rich:column>
@@ -210,7 +210,7 @@
 								</f:facet>
 								<h:outputText value="#{personelView.pdksPersonel.calismaModeli.aciklama}" id="calismaModeli" />
 							</rich:column>
-							<rich:column style="text-align:center" rendered="#{authenticatedUser.admin or ortakIslemler.getParameterKey('izinERPUpdate')!='1'}">
+							<rich:column style="text-align:center" rendered="#{authenticatedUser.admin or ortakIslemler.getParameterKey('izinERPUpdate') != '1'}">
 								<f:facet name="header">
 									<h:outputText value="#{ortakIslemler.kidemBasTarihiAciklama()}" />
 								</f:facet>
@@ -228,13 +228,13 @@
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.dateFormatla(personelView.pdksPersonel.istenAyrilisTarihi)}" />
 							</rich:column>
-							<rich:column style="text-align:center" rendered="#{authenticatedUser.admin or ortakIslemler.getParameterKey('izinERPUpdate')!='1'}">
+							<rich:column style="text-align:center" rendered="#{authenticatedUser.admin or ortakIslemler.getParameterKey('izinERPUpdate') != '1'}">
 								<f:facet name="header">
 									<h:outputText value="Doğum Tarihi" />
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.dateFormatla(personelView.pdksPersonel.dogumTarihi)}" />
 							</rich:column>
-							<rich:column rendered="#{authenticatedUser.IK and authenticatedUser.IKAdmin==false}">
+							<rich:column rendered="#{authenticatedUser.IK and authenticatedUser.IKAdmin == false}">
 								<f:facet name="header">
 									<h:outputText value="#{pdksPersonelHome.bolumAciklama}" />
 								</f:facet>
@@ -263,7 +263,7 @@
 									<h:outputText value="Onaysız İzin Girebilir" />
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.onaysizIzinKullanilir)}"
-									rendered="#{personelView.pdksPersonel.id!=null}" />
+									rendered="#{personelView.pdksPersonel.id != null}" />
 							</rich:column>
 							<rich:column style="text-align:center"
 								rendered="#{pdksPersonelHome.yoneticiRolVarmi and pdksPersonelHome.personelDurumMap.get('ikinciYoneticiIzinOnayla')}">
@@ -271,13 +271,13 @@
 									<h:outputText value="İzni #{ortakIslemler.yonetici2Aciklama()} Onaylasın" />
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.ikinciYoneticiIzinOnayla)}"
-									rendered="#{personelView.pdksPersonel.id!=null}" />
+									rendered="#{personelView.pdksPersonel.id != null}" />
 							</rich:column>
 							<rich:column style="text-align:center" rendered="#{pdksPersonelHome.ustYonetici}">
 								<f:facet name="header">
 									<h:outputText value="Üst #{ortakIslemler.yoneticiAciklama()}" />
 								</f:facet>
-								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.ustYonetici)}" rendered="#{personelView.pdksPersonel.id!=null}" />
+								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.ustYonetici)}" rendered="#{personelView.pdksPersonel.id != null}" />
 							</rich:column>
 
 
@@ -327,13 +327,13 @@
 								<f:facet name="header">
 									Part Time
 								</f:facet>
-								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.partTime)}" rendered="#{personelView.pdksPersonel.id!=null}" />
+								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.partTime)}" rendered="#{personelView.pdksPersonel.id != null}" />
 							</rich:column>
 							<rich:column style="text-align:center" rendered="#{pdksPersonelHome.fazlaMesaiOde}">
 								<f:facet name="header">
 									<h:outputText value="Fazla Mesai Öde" />
 								</f:facet>
-								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.fazlaMesaiOde)}" rendered="#{personelView.pdksPersonel.id!=null}" />
+								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.fazlaMesaiOde)}" rendered="#{personelView.pdksPersonel.id != null}" />
 							</rich:column>
 
 							<rich:column style="text-align:center" rendered="#{pdksPersonelHome.fazlaMesaiIzinKullan }">
@@ -341,26 +341,26 @@
 									<h:outputText value="Fazla Mesai İzin Kullandır" />
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.fazlaMesaiIzinKullan)}"
-									rendered="#{personelView.pdksPersonel.id!=null}" />
+									rendered="#{personelView.pdksPersonel.id != null}" />
 							</rich:column>
 							<rich:column style="text-align:center" rendered="#{pdksPersonelHome.suaOlabilir}">
 								<f:facet name="header">
 									Şua
 								</f:facet>
-								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.suaOlabilir)}" rendered="#{personelView.pdksPersonel.id!=null}" />
+								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.suaOlabilir)}" rendered="#{personelView.pdksPersonel.id != null}" />
 							</rich:column>
 							<rich:column style="text-align:center" rendered="#{pdksPersonelHome.sutIzni}">
 								<f:facet name="header">
 									Süt İzni
 								</f:facet>
-								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.sutIzni)}" rendered="#{personelView.pdksPersonel.id!=null}" />
+								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.sutIzni)}" rendered="#{personelView.pdksPersonel.id != null}" />
 							</rich:column>
 							<rich:column style="text-align:center" rendered="#{pdksPersonelHome.gebeMi}">
 								<f:facet name="header">
 									<h:outputText value="Gebelik Durumu" />
 								</f:facet>
 								<ui:fragment rendered="#{personelView.pdksPersonel.cinsiyetBayan}">
-									<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.gebeMi)}" rendered="#{personelView.pdksPersonel.id!=null}" />
+									<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.gebeMi)}" rendered="#{personelView.pdksPersonel.id != null}" />
 								</ui:fragment>
 
 							</rich:column>
@@ -368,14 +368,14 @@
 								<f:facet name="header">
 									<h:outputText value="#{pdksPersonelHome.sanalPersonelAciklama}" />
 								</f:facet>
-								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.sanalPersonel)}" rendered="#{personelView.pdksPersonel.id!=null}" />
+								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.sanalPersonel)}" rendered="#{personelView.pdksPersonel.id != null}" />
 							</rich:column>
 							<c:forEach items="#{pdksPersonelHome.dinamikDurumList}" var="alan">
 								<rich:column style="text-align:center">
 									<f:facet name="header">
 										<h:outputText value="#{alan.aciklama}" />
 									</f:facet>
-									<ui:fragment rendered="#{personelView.pdksPersonel!=null}">
+									<ui:fragment rendered="#{personelView.pdksPersonel != null}">
 										<h:outputText value="#{authenticatedUser.getYesNo(pdksPersonelHome.getPersonelDinamikAlan(alan,personelView.pdksPersonel).durumSecim)}" />
 									</ui:fragment>
 
@@ -386,7 +386,7 @@
 									<f:facet name="header">
 										<h:outputText value="#{alan.aciklama}" />
 									</f:facet>
-									<ui:fragment rendered="#{personelView.pdksPersonel!=null}">
+									<ui:fragment rendered="#{personelView.pdksPersonel != null}">
 										<h:outputText value="#{pdksPersonelHome.getPersonelDinamikAlan(alan,personelView.pdksPersonel).tanimDeger.aciklama}" />
 									</ui:fragment>
 
@@ -397,7 +397,7 @@
 									<f:facet name="header">
 										<h:outputText value="#{alan.aciklama}" />
 									</f:facet>
-									<ui:fragment rendered="#{personelView.pdksPersonel!=null}">
+									<ui:fragment rendered="#{personelView.pdksPersonel != null}">
 										<h:outputText
 											value="#{authenticatedUser.sayiFormatliGoster(pdksPersonelHome.getPersonelDinamikAlan(alan,personelView.pdksPersonel).sayisalDeger)}" />
 									</ui:fragment>
@@ -409,7 +409,7 @@
 									<h:outputText value="Kullanici Adı" />
 								</f:facet>
 								<h:outputText value="#{personelView.userName}" id="username" />
-								<ui:fragment rendered="#{authenticatedUser.admin and personelView.kullanici!=null and personelView.kullanici.lastLogin!=null}">
+								<ui:fragment rendered="#{authenticatedUser.admin and personelView.kullanici != null and personelView.kullanici.lastLogin != null}">
 									<rich:toolTip for="username">
 										<h:outputText value="#{authenticatedUser.dateTimeFormatla(personelView.kullanici.lastLogin)}" />
 									</rich:toolTip>
@@ -421,14 +421,14 @@
 								<f:facet name="header">
 									<h:outputText value="Kullanıcı Aktif" />
 								</f:facet>
-								<h:outputText rendered="#{personelView.kullanici!=null}" value="#{authenticatedUser.getYesNo(personelView.kullanici.durum)}" />
+								<h:outputText rendered="#{personelView.kullanici != null}" value="#{authenticatedUser.getYesNo(personelView.kullanici.durum)}" />
 							</rich:column>
 
 							<rich:column style="text-align:center">
 								<f:facet name="header">
 									<h:outputText value="Aktif" />
 								</f:facet>
-								<h:outputText value="#{authenticatedUser.getYesNo(personelView.durumu)}" id="active" rendered="#{personelView.pdksPersonel.id!=null}" />
+								<h:outputText value="#{authenticatedUser.getYesNo(personelView.durumu)}" id="active" rendered="#{personelView.pdksPersonel.id != null}" />
 							</rich:column>
 
 
@@ -476,7 +476,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" styleClass="hidelink">
 							<a4j:support event="onclick" action="#{pdksPersonelHome.personelDosyaSifirla}"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('dosyaTransferPanel')}.hide();" ajaxSingle="true" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('dosyaTransferPanel')}.hide();" ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
 				</h:panelGroup>
@@ -517,7 +517,7 @@
 
 							</rich:toolTip>
 							<a4j:outputPanel id="personelDosya">
-								<ui:fragment rendered="#{pdksPersonelHome.personelDosya.dosyaIcerik!=null}">
+								<ui:fragment rendered="#{pdksPersonelHome.personelDosya.dosyaIcerik != null}">
 									<h:panelGrid columns="3">
 										<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="dosyaPanel" ajaxSingle="true"
 											action="#{pdksPersonelHome.personelDosyaSifirla}" />
@@ -527,12 +527,12 @@
 									<a4j:commandButton id="dosyaOku" value="Dosya Oku" status="ajaxStatus" ajaxSingle="true" action="#{pdksPersonelHome.personelDosyaOku}"
 										rendered="#{pdksPersonelHome.personelERPList.isEmpty()}" reRender="dosyaPanel"></a4j:commandButton>
 									<a4j:commandButton value="Dosya Aktar" status="ajaxStatus" ajaxSingle="true" action="#{pdksPersonelHome.personelDosyaYaz}"
-										rendered="#{not empty pdksPersonelHome.personelERPList and pdksPersonelHome.servisCalisti==false}" reRender="dosyaPanel" />
+										rendered="#{not empty pdksPersonelHome.personelERPList and pdksPersonelHome.servisCalisti == false}" reRender="dosyaPanel" />
 								</ui:fragment>
 							</a4j:outputPanel>
 						</h:panelGrid>
 
-						<ui:fragment rendered="#{pdksPersonelHome.personelDosya.dosyaIcerik!=null}">
+						<ui:fragment rendered="#{pdksPersonelHome.personelDosya.dosyaIcerik != null}">
 							<rich:dataTable rowClasses="acik,koyu" headerClass="headerWrap" columnClasses="columnWrap" value="#{pdksPersonelHome.personelERPReturnList}"
 								rendered="#{not empty pdksPersonelHome.personelERPReturnList}" var="personelHata" rows="50" rowKeyVar="row" id="personelHataViewTable">
 								<f:facet name="header">
@@ -702,7 +702,7 @@
 										<f:facet name="header">
 											<h:outputText value="Hata List" />
 										</f:facet>
-										<ui:fragment rendered="#{personelERP.hataList!=null}">
+										<ui:fragment rendered="#{personelERP.hataList != null}">
 
 											<ui:repeat value="#{personelERP.hataList}" var="mesaj">
 												 #{mesaj}<br />
@@ -797,7 +797,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" styleClass="hidelink">
 							<a4j:support event="onclick" action="#{pdksPersonelHome.instanceRefresh}" reRender="pdksPersonelList"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
 				</h:panelGroup>
@@ -815,12 +815,12 @@
 								<h:outputText value="#{pdksPersonelHome.instance.personelKGS.sicilNo}" />
 							</s:decorate>
 							<h:panelGrid columns="1">
-								<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.personelKGS.kimlikNo!=''}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.personelKGS.kimlikNo != ''}">
 									<ui:define name="label">Kimlik No</ui:define>
 									<h:outputText value="#{pdksPersonelHome.instance.personelKGS.kimlikNo}" />
 
 								</s:decorate>
-								<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.kartNoAciklama!=''}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.kartNoAciklama != ''}">
 									<ui:define name="label">#{pdksPersonelHome.kartNoAciklama}</ui:define>
 									<h:outputText value="#{pdksPersonelHome.instance.personelKGS.kartNo}" />
 
@@ -829,13 +829,13 @@
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Adı</ui:define>
 								<h:inputText required="true" requiredMessage="Adı giriniz" value="#{pdksPersonelHome.instance.ad}"
-									disabled="#{pdksPersonelHome.instance.id!=null and pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme!='M'}"
+									disabled="#{pdksPersonelHome.instance.id != null and pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme != 'M'}"
 									size="35" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Soyadı</ui:define>
 								<h:inputText required="true" requiredMessage="Soyadı giriniz" value="#{pdksPersonelHome.instance.soyad}"
-									disabled="#{pdksPersonelHome.instance.id!=null and pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme!='M'}"
+									disabled="#{pdksPersonelHome.instance.id != null and pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme != 'M'}"
 									size="35" />
 							</s:decorate>
 
@@ -844,8 +844,8 @@
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 								<h:selectOneMenu value="#{pdksPersonelHome.instance.sirket}" required="true" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz"
-									disabled="#{pdksPersonelHome.sirketList.size()==1 or ( pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme!='1' and pdksPersonelHome.personelERPGuncelleme!='M')}"
-									rendered="#{pdksPersonelHome.sirketList!=null}">
+									disabled="#{pdksPersonelHome.sirketList.size() == 1 or ( pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme != '1' and pdksPersonelHome.personelERPGuncelleme != 'M')}"
+									rendered="#{pdksPersonelHome.sirketList != null}">
 									<s:selectItems var="comp" value="#{pdksPersonelHome.sirketList}" label="#{comp.ad}" noSelectionLabel="Lütfen seçiniz" />
 									<a4j:support event="onchange" action="#{pdksPersonelHome.fillPdksPersonelList}" reRender="sirketDegisti,butonlar"
 										status="ajaxStatus" ajaxSingle="true" />
@@ -857,18 +857,18 @@
 
 						</h:panelGrid>
 						<a4j:outputPanel id="sirketDegisti">
-							<c:if test="#{pdksPersonelHome.instance.sirket!=null}">
+							<c:if test="#{pdksPersonelHome.instance.sirket != null}">
 								<h:panelGrid columns="2">
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">Görevi</ui:define>
-										<ui:fragment rendered="#{pdksPersonelHome.gorevDepartmanlari==null}">
+										<ui:fragment rendered="#{pdksPersonelHome.gorevDepartmanlari == null}">
 											<h:selectOneMenu value="#{pdksPersonelHome.instance.gorevTipi}"
-												disabled="#{authenticatedUser.admin==false and pdksPersonelHome.personelERPGuncelleme!='1' and pdksPersonelHome.personelERPGuncelleme!='M'}">
+												disabled="#{authenticatedUser.admin == false and pdksPersonelHome.personelERPGuncelleme != '1' and pdksPersonelHome.personelERPGuncelleme != 'M'}">
 												<s:selectItems var="comp" value="#{pdksPersonelHome.unvanTanimList}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
 												<s:convertEntity />
 											</h:selectOneMenu>
 										</ui:fragment>
-										<ui:fragment rendered="#{pdksPersonelHome.gorevDepartmanlari!=null}">
+										<ui:fragment rendered="#{pdksPersonelHome.gorevDepartmanlari != null}">
 											<h:selectOneMenu value="#{pdksPersonelHome.instance.gorevTipi}">
 												<s:selectItems var="comp" value="#{pdksPersonelHome.gorevDepartmanlari}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
 												<s:convertEntity />
@@ -879,14 +879,14 @@
 										<ui:define name="label">İşten Ayrılma Tarihi</ui:define>
 										<h:panelGrid columns="2" id="istenAyrilisTarihi">
 											<ui:fragment
-												rendered="#{pdksPersonelHome.instance.sirket.erp==false or pdksPersonelHome.personelERPGuncelleme=='M' or (pdksPersonelHome.instance.sanalPersonel and pdksPersonelHome.personelERPGuncelleme!='1' and pdksPersonelHome.personelERPGuncelleme!='M')}">
+												rendered="#{pdksPersonelHome.instance.sirket.erp == false or pdksPersonelHome.personelERPGuncelleme == 'M' or (pdksPersonelHome.instance.sanalPersonel and pdksPersonelHome.personelERPGuncelleme != '1' and pdksPersonelHome.personelERPGuncelleme != 'M')}">
 												<rich:calendar enableManualInput="#{authenticatedUser.admin}" value="#{pdksPersonelHome.instance.istenAyrilisTarihi}"
 													datePattern="#{authenticatedUser.dateFormat}" required="true" />
 												<a4j:commandButton image="/img/plus.gif" title="Tarih sınırsız yap" ajaxSingle="true" reRender="istenAyrilisTarihi">
 													<f:setPropertyActionListener target="#{pdksPersonelHome.instance.istenAyrilisTarihi}" value="#{authenticatedUser.tarihUzat}" />
 												</a4j:commandButton>
 											</ui:fragment>
-											<ui:fragment rendered="#{pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.instance.sanalPersonel==false}">
+											<ui:fragment rendered="#{pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.instance.sanalPersonel == false}">
 												<h:outputText value="#{authenticatedUser.dateFormatla(pdksPersonelHome.instance.istenAyrilisTarihi)}" />
 											</ui:fragment>
 										</h:panelGrid>
@@ -895,7 +895,7 @@
 										<ui:define name="label">İşe Giriş Tarihi</ui:define>
 										<rich:calendar enableManualInput="#{authenticatedUser.admin}" value="#{pdksPersonelHome.instance.iseBaslamaTarihi}"
 											datePattern="#{authenticatedUser.dateFormat}"
-											disabled="#{pdksPersonelHome.instance.id!=null and pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme!='1' and pdksPersonelHome.personelERPGuncelleme!='M' and pdksPersonelHome.instance.sanalPersonel==false}"
+											disabled="#{pdksPersonelHome.instance.id != null and pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme != '1' and pdksPersonelHome.personelERPGuncelleme != 'M' and pdksPersonelHome.instance.sanalPersonel == false}"
 											required="true" requiredMessage="İşe Giriş Tarihi Seçiniz" />
 									</s:decorate>
 									<c:if test="#{pdksPersonelHome.instance.sirket.fazlaMesai}">
@@ -903,14 +903,14 @@
 										<s:decorate template="/layout/edit.xhtml">
 											<ui:define name="label">Grup'ta Başlama Tarihi</ui:define>
 											<rich:calendar enableManualInput="#{authenticatedUser.admin}" value="#{pdksPersonelHome.instance.grubaGirisTarihi}"
-												datePattern="#{authenticatedUser.dateFormat}" disabled="#{authenticatedUser.admin and pdksPersonelHome.instance.id!=null}"
+												datePattern="#{authenticatedUser.dateFormat}" disabled="#{authenticatedUser.admin and pdksPersonelHome.instance.id != null}"
 												required="#{pdksPersonelHome.instance.sirket.erp}" requiredMessage="Grup'ta Başlama Tarihi Seçiniz" />
 										</s:decorate>
 										<s:decorate template="/layout/edit.xhtml">
 											<ui:define name="label">Doğum Tarihi</ui:define>
 											<rich:calendar enableManualInput="#{authenticatedUser.admin}" value="#{pdksPersonelHome.instance.dogumTarihi}"
 												datePattern="#{authenticatedUser.dateFormat}"
-												disabled="#{pdksPersonelHome.instance.id!=null and pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme!='1' and pdksPersonelHome.personelERPGuncelleme!='M' and pdksPersonelHome.instance.sanalPersonel==false}"
+												disabled="#{pdksPersonelHome.instance.id != null and pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme != '1' and pdksPersonelHome.personelERPGuncelleme != 'M' and pdksPersonelHome.instance.sanalPersonel == false}"
 												required="#{pdksPersonelHome.izinGirisiVar}" requiredMessage="Doğum tarihini giriniz">
 												<a4j:support event="onchanged" ajaxSingle="true" reRender="sirketDegisti" />
 											</rich:calendar>
@@ -919,8 +919,8 @@
 											<ui:define name="label">#{ortakIslemler.kidemBasTarihiAciklama()}</ui:define>
 											<rich:calendar enableManualInput="#{authenticatedUser.admin}" value="#{pdksPersonelHome.instance.izinHakEdisTarihi}"
 												datePattern="#{authenticatedUser.dateFormat}"
-												disabled="#{pdksPersonelHome.instance.id!=null and pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme!='1' and pdksPersonelHome.personelERPGuncelleme!='M' and pdksPersonelHome.instance.sanalPersonel==false}"
-												required="#{pdksPersonelHome.izinGirisiVar and pdksPersonelHome.instance.sanalPersonel==false}"
+												disabled="#{pdksPersonelHome.instance.id != null and pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme != '1' and pdksPersonelHome.personelERPGuncelleme != 'M' and pdksPersonelHome.instance.sanalPersonel == false}"
+												required="#{pdksPersonelHome.izinGirisiVar and pdksPersonelHome.instance.sanalPersonel == false}"
 												requiredMessage="#{ortakIslemler.kidemBasTarihiAciklama()}ni seçiniz">
 												<a4j:support event="onchanged" action="#{pdksPersonelHome.bakiyeDurumKontrolEt(pdksPersonelHome.instance)}" ajaxSingle="true"
 													reRender="sirketDegisti" />
@@ -930,14 +930,14 @@
 										<s:decorate template="/layout/edit.xhtml" id="sablonlar">
 											<ui:define name="label">Vardiya Şablonu</ui:define>
 											<h:selectOneMenu id="toComp" value="#{pdksPersonelHome.instance.sablon}" required="true" requiredMessage="Şablon seçiniz"
-												disabled="#{pdksPersonelHome.sablonlar.size()==1 and pdksPersonelHome.instance.sablon!=null}">
+												disabled="#{pdksPersonelHome.sablonlar.size() == 1 and pdksPersonelHome.instance.sablon != null}">
 												<s:selectItems var="comp" value="#{pdksPersonelHome.sablonlar}" label="#{comp.adi}" noSelectionLabel="Lütfen seçiniz" />
 												<a4j:support event="onchange" action="#{pdksPersonelHome.sablonDegisti()}" reRender="sirketDegisti" status="ajaxStatus"
 													ajaxSingle="true" />
 
 												<s:convertEntity />
 											</h:selectOneMenu>
-											<ui:fragment rendered="#{pdksPersonelHome.instance.sablon!=null}">
+											<ui:fragment rendered="#{pdksPersonelHome.instance.sablon != null}">
 												<rich:toolTip for="sablonlar">
 													<h:panelGrid columns="1">
 														<s:decorate template="/layout/edit.xhtml">
@@ -989,7 +989,7 @@
 										<s:decorate template="/layout/edit.xhtml" id="tipler" rendered="#{not empty pdksPersonelHome.personelTipleri}">
 											<ui:define name="label">#{ortakIslemler.personelTipiAciklama()}</ui:define>
 											<h:selectOneMenu value="#{pdksPersonelHome.instance.personelTipi}" required="#{pdksPersonelHome.instance.pdks}"
-												disabled="#{pdksPersonelHome.personelTipleri.size()==1 and pdksPersonelHome.instance.personelTipi!=null}">
+												disabled="#{pdksPersonelHome.personelTipleri.size() == 1 and pdksPersonelHome.instance.personelTipi != null}">
 												<s:selectItems var="comp" value="#{pdksPersonelHome.personelTipleri}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
 												<a4j:support event="onchange" action="#{pdksPersonelHome.personelTipiDegisti()}" reRender="sirketDegisti" status="ajaxStatus"
 													ajaxSingle="true" />
@@ -999,16 +999,16 @@
 										<s:decorate template="/layout/edit.xhtml" id="modeller">
 											<ui:define name="label">#{ortakIslemler.calismaModeliAciklama()}</ui:define>
 											<h:selectOneMenu value="#{pdksPersonelHome.instance.calismaModeli}" required="#{pdksPersonelHome.instance.pdks}" id="perCalismaModeli"
-												disabled="#{pdksPersonelHome.calismaModeliList.size()==1 and pdksPersonelHome.instance.calismaModeli!=null}">
+												disabled="#{pdksPersonelHome.calismaModeliList.size() == 1 and pdksPersonelHome.instance.calismaModeli != null}">
 												<s:selectItems var="comp" value="#{pdksPersonelHome.calismaModeliList}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
 												<a4j:support event="onchange" action="#{pdksPersonelHome.modelDegisti()}" reRender="sirketDegisti" status="ajaxStatus" ajaxSingle="true" />
 												<s:convertEntity />
 											</h:selectOneMenu>
-											<ui:fragment rendered="#{pdksPersonelHome.instance.calismaModeli!=null}">
+											<ui:fragment rendered="#{pdksPersonelHome.instance.calismaModeli != null}">
 												<rich:toolTip for="perCalismaModeli">
 													<h:panelGrid columns="1">
 														<rich:dataTable rowClasses="acik,koyu" value="#{pdksPersonelHome.calismaModeliVardiyaList}" var="vardiya" rows="20" rowKeyVar="row"
-															rendered="#{pdksPersonelHome.calismaModeliVardiyaList!=null}" id="vardiyaTable">
+															rendered="#{pdksPersonelHome.calismaModeliVardiyaList != null}" id="vardiyaTable">
 															<f:facet name="header">
 																<h:outputText value="#{pdksPersonelHome.instance.calismaModeli.aciklama} Çalışma Modeli" />
 															</f:facet>
@@ -1054,24 +1054,24 @@
 											</ui:fragment>
 										</s:decorate>
 										<s:decorate template="/layout/edit.xhtml"
-											rendered="#{(pdksPersonelHome.instance.sirket.tesisDurum or pdksPersonelHome.instance.tesis!=null) and pdksPersonelHome.tesisList!=null and not empty pdksPersonelHome.tesisList}">
+											rendered="#{(pdksPersonelHome.instance.sirket.tesisDurum or pdksPersonelHome.instance.tesis != null) and pdksPersonelHome.tesisList != null and not empty pdksPersonelHome.tesisList}">
 											<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 											<h:selectOneMenu value="#{pdksPersonelHome.instance.tesis}"
-												disabled="#{authenticatedUser.admin==false and pdksPersonelHome.personelERPGuncelleme!='1' and pdksPersonelHome.personelERPGuncelleme!='M'}">
+												disabled="#{authenticatedUser.admin == false and pdksPersonelHome.personelERPGuncelleme != '1' and pdksPersonelHome.personelERPGuncelleme != 'M'}">
 												<s:selectItems var="comp" value="#{pdksPersonelHome.tesisList}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
 												<s:convertEntity />
 											</h:selectOneMenu>
 										</s:decorate>
 
 										<s:decorate template="/layout/edit.xhtml"
-											rendered="#{pdksPersonelHome.parentBordroTanim!=null and pdksPersonelHome.parentBordroTanim.erpKodu==''}">
+											rendered="#{pdksPersonelHome.parentBordroTanim != null and pdksPersonelHome.parentBordroTanim.erpKodu == ''}">
 											<ui:define name="label">#{pdksPersonelHome.parentBordroTanim.aciklama}</ui:define>
 											#{pdksPersonelHome.instance.bordroAltAlan.aciklama}
 										</s:decorate>
 										<s:decorate template="/layout/edit.xhtml">
 											<ui:define name="label">Cinsiyet</ui:define>
 											<h:selectOneMenu value="#{pdksPersonelHome.instance.cinsiyet}"
-												disabled="#{authenticatedUser.admin==false and pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme!='1' and pdksPersonelHome.personelERPGuncelleme!='M'}"
+												disabled="#{authenticatedUser.admin == false and pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme != '1' and pdksPersonelHome.personelERPGuncelleme != 'M'}"
 												required="true" requiredMessage="Cinsiyet seçiniz">
 												<s:selectItems var="cinsiyet" value="#{pdksPersonelHome.cinsiyetList}" label="#{cinsiyet.aciklama}" noSelectionLabel="Lütfen seçiniz">
 													<a4j:support event="onchange" reRender="sirketDegisti" action="#{pdksPersonelHome.cinsiyetDegisti()}" status="ajaxStatus"
@@ -1096,19 +1096,19 @@
 
 											</h:selectBooleanCheckbox>
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.sirket.erp==false}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.sirket.erp == false}">
 											<ui:define name="label">#{ortakIslemler.yoneticiAciklama()}</ui:define>
 											<h:selectOneMenu id="toComp" value="#{pdksPersonelHome.instance.yoneticisi}"
-												disabled="#{pdksPersonelHome.instance.sirket.erp and (ortakIslemler.getParameterKey('yoneticiERPKontrol')=='' or ortakIslemler.getParameterKey('yoneticiERPKontrol')=='1')}">
+												disabled="#{pdksPersonelHome.instance.sirket.erp and (ortakIslemler.getParameterKey('yoneticiERPKontrol') == '' or ortakIslemler.getParameterKey('yoneticiERPKontrol') == '1')}">
 												<s:selectItems var="comp" value="#{pdksPersonelHome.pdksPersonelList}" label="#{comp.adSoyad}" noSelectionLabel="Lütfen seçiniz" />
 												<a4j:support event="onchange" />
 												<s:convertEntity />
 											</h:selectOneMenu>
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.sirket.departman.admin==false }">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.sirket.departman.admin == false }">
 											<ui:define name="label">#{ortakIslemler.yonetici2Aciklama()}</ui:define>
 											<h:selectOneMenu id="toComp" value="#{pdksPersonelHome.instance.asilYonetici2}"
-												disabled="#{pdksPersonelHome.ikinciYoneticiManuelTanimla==false}">
+												disabled="#{pdksPersonelHome.ikinciYoneticiManuelTanimla == false}">
 												<s:selectItems var="comp" value="#{pdksPersonelHome.pdksPersonelList}" label="#{comp.adSoyad}" noSelectionLabel="Lütfen seçiniz" />
 												<s:convertEntity />
 											</h:selectOneMenu>
@@ -1116,7 +1116,7 @@
 										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.yoneticiRolVarmi and pdksPersonelHome.instance.sirket.erp}">
 											<ui:define name="label">#{ortakIslemler.yoneticiAciklama()}</ui:define>
 											<h:selectOneMenu id="toComp" value="#{pdksPersonelHome.asilYonetici1}"
-												disabled="#{pdksPersonelHome.personelERPGuncelleme!='M' and pdksPersonelHome.instance.sanalPersonel==false and pdksPersonelHome.instance.sirket.erp and (ortakIslemler.getParameterKey('yoneticiERPKontrol')=='' or ortakIslemler.getParameterKey('yoneticiERPKontrol')=='1')}">
+												disabled="#{pdksPersonelHome.personelERPGuncelleme != 'M' and pdksPersonelHome.instance.sanalPersonel == false and pdksPersonelHome.instance.sirket.erp and (ortakIslemler.getParameterKey('yoneticiERPKontrol') == '' or ortakIslemler.getParameterKey('yoneticiERPKontrol') == '1')}">
 												<s:selectItems var="comp" value="#{pdksPersonelHome.yoneticiList}" label="#{comp.adSoyad}" noSelectionLabel="Lütfen seçiniz" />
 												<s:convertEntity />
 											</h:selectOneMenu>
@@ -1125,13 +1125,13 @@
 											rendered="#{pdksPersonelHome.yoneticiRolVarmi and pdksPersonelHome.instance.sirket.departman.admin}">
 											<ui:define name="label">#{ortakIslemler.yonetici2Aciklama()}</ui:define>
 											<h:selectOneMenu id="toComp" value="#{pdksPersonelHome.instance.asilYonetici2}"
-												disabled="#{pdksPersonelHome.personelERPGuncelleme!='M' and pdksPersonelHome.ikinciYoneticiManuelTanimla==false}">
+												disabled="#{pdksPersonelHome.personelERPGuncelleme != 'M' and pdksPersonelHome.ikinciYoneticiManuelTanimla == false}">
 												<s:selectItems var="comp" value="#{pdksPersonelHome.yonetici2List}" label="#{comp.adSoyad}" noSelectionLabel="Lütfen seçiniz" />
 												<s:convertEntity />
 											</h:selectOneMenu>
 										</s:decorate>
 
-										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.bolumDepartmanlari!=null}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.bolumDepartmanlari != null}">
 											<ui:define name="label">#{pdksPersonelHome.bolumAciklama}</ui:define>
 											<h:selectOneMenu value="#{pdksPersonelHome.instance.ekSaha3}" required="#{pdksPersonelHome.instance.sirket.fazlaMesai}"
 												requiredMessage="#{pdksPersonelHome.bolumAciklama} seçiniz!">
@@ -1162,7 +1162,7 @@
 											rendered="#{pdksPersonelHome.instance.sirket.departman.admin and pdksPersonelHome.ekSahaTanimMap.containsKey('ekSaha3')}">
 											<ui:define name="label">#{pdksPersonelHome.ekSahaTanimMap.get('ekSaha3').aciklama}</ui:define>
 											<h:selectOneMenu value="#{pdksPersonelHome.instance.ekSaha3}"
-												disabled="#{authenticatedUser.admin==false and pdksPersonelHome.personelERPGuncelleme!='1' and pdksPersonelHome.personelERPGuncelleme!='M'}">
+												disabled="#{authenticatedUser.admin == false and pdksPersonelHome.personelERPGuncelleme != '1' and pdksPersonelHome.personelERPGuncelleme != 'M'}">
 												<s:selectItems var="comp" value="#{pdksPersonelHome.ekSahaListMap.get('ekSaha3')}" label="#{comp.aciklama}"
 													noSelectionLabel="Lütfen seçiniz" />
 												<s:convertEntity />
@@ -1209,7 +1209,7 @@
 
 												</h:selectBooleanCheckbox>
 											</s:decorate>
-											<s:decorate template="/layout/edit.xhtml" id="fazlaMesaiOde2" rendered="#{pdksPersonelHome.instance.fazlaMesaiIzinKullan==false}">
+											<s:decorate template="/layout/edit.xhtml" id="fazlaMesaiOde2" rendered="#{pdksPersonelHome.instance.fazlaMesaiIzinKullan == false}">
 												<ui:define name="label">
 											 		Fazla Mesai Ödeme Durum</ui:define>
 												<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.fazlaMesaiOde}">
@@ -1219,13 +1219,13 @@
 													<ui:fragment rendered="#{pdksPersonelHome.instance.fazlaMesaiOde}">
 														<SPAN style="color: black;">Fazla mesai ay sonunda ödenecek.</SPAN>
 													</ui:fragment>
-													<ui:fragment rendered="#{pdksPersonelHome.instance.fazlaMesaiOde==false}">
+													<ui:fragment rendered="#{pdksPersonelHome.instance.fazlaMesaiOde == false}">
 														<SPAN style="color: red;">Fazla mesai denkleşmezse sonraki ay ödenecek.</SPAN>
 													</ui:fragment>
 												</rich:toolTip>
 											</s:decorate>
 										</c:if>
-										<c:if test="#{pdksPersonelHome.secFMI(null)==false}">
+										<c:if test="#{pdksPersonelHome.secFMI(null) == false}">
 											<s:decorate template="/layout/edit.xhtml" id="fazlaMesaiOde1">
 												<ui:define name="label">
 											 		Fazla Mesai Ödeme Durum</ui:define>
@@ -1236,7 +1236,7 @@
 													<ui:fragment rendered="#{pdksPersonelHome.instance.fazlaMesaiOde}">
 														<SPAN style="color: black;">Fazla mesai ay sonunda ödenecek.</SPAN>
 													</ui:fragment>
-													<ui:fragment rendered="#{pdksPersonelHome.instance.fazlaMesaiOde==false}">
+													<ui:fragment rendered="#{pdksPersonelHome.instance.fazlaMesaiOde == false}">
 														<SPAN style="color: red;">Fazla mesai denkleşmezse sonraki ay ödenecek.</SPAN>
 													</ui:fragment>
 												</rich:toolTip>
@@ -1244,13 +1244,13 @@
 										</c:if>
 
 
-										<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H' and pdksPersonelHome.secSua(null)}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('uygulamaTipi') == 'H' and pdksPersonelHome.secSua(null)}">
 											<ui:define name="label">Şua</ui:define>
 											<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.suaOlabilir}">
 												<a4j:support event="onclick" />
 											</h:selectBooleanCheckbox>
 										</s:decorate>
-										<c:if test="#{pdksPersonelHome.instance.dogumTarihi!=null and pdksPersonelHome.instance.izinHakEdisTarihi!=null}">
+										<c:if test="#{pdksPersonelHome.instance.dogumTarihi != null and pdksPersonelHome.instance.izinHakEdisTarihi != null}">
 											<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.sirket.izinKartiVardir}">
 												<ui:define name="label">İzin Kartı Var</ui:define>
 												<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.izinKartiVar}">
@@ -1260,17 +1260,17 @@
 											</s:decorate>
 										</c:if>
 										<s:decorate template="/layout/edit.xhtml"
-											rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H' and pdksPersonelHome.secIcap(null)}">
+											rendered="#{ortakIslemler.getParameterKey('uygulamaTipi') == 'H' and pdksPersonelHome.secIcap(null)}">
 											<ui:define name="label">İcapçı Olabilir</ui:define>
 											<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.icapciOlabilir}">
 												<a4j:support event="onclick" />
 											</h:selectBooleanCheckbox>
 										</s:decorate>
 
-										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.sanalPersonelAciklama!=''}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.sanalPersonelAciklama != ''}">
 											<ui:define name="label">#{pdksPersonelHome.sanalPersonelAciklama}</ui:define>
 											<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.sanalPersonel}"
-												disabled="#{pdksPersonelHome.instance.id!=null and authenticatedUser.admin==false and ortakIslemler.getParameterKey('iskurManuelGiris')!='1'  and pdksPersonelHome.personelERPGuncelleme!='M'}" />
+												disabled="#{pdksPersonelHome.instance.id != null and authenticatedUser.admin == false and ortakIslemler.getParameterKey('iskurManuelGiris') != '1' and pdksPersonelHome.personelERPGuncelleme != 'M'}" />
 										</s:decorate>
 										<c:if test="#{pdksPersonelHome.izinGirisiVar}">
 											<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.ikinciYoneticiIzinOnayla}">
@@ -1279,7 +1279,7 @@
 
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml"
-												rendered="#{pdksPersonelHome.onaysizIzinKullanilir or  ortakIslemler.getParameterKey('izinERPUpdate')!='1'}">
+												rendered="#{pdksPersonelHome.onaysizIzinKullanilir or  ortakIslemler.getParameterKey('izinERPUpdate') != '1'}">
 												<ui:define name="label">Onaysız İzin Girebilir</ui:define>
 												<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.onaysizIzinKullanilir}">
 													<a4j:support event="onclick" />
@@ -1293,7 +1293,7 @@
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Devir Yıllık İzin</ui:define>
 												<h:inputText value="#{pdksPersonelHome.bakiyeIzinSuresi}"
-													disabled="#{authenticatedUser.IK and ortakIslemler.getParameterKey('bakiyeIzinGoster')=='190001'}" />
+													disabled="#{authenticatedUser.IK and ortakIslemler.getParameterKey('bakiyeIzinGoster') == '190001'}" />
 											</s:decorate>
 										</c:if>
 
@@ -1302,7 +1302,7 @@
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">#{dpa.alan.aciklama}</ui:define>
 												<h:selectBooleanCheckbox value="#{dpa.durumSecim}">
-													<c:if test="#{dpa.alan.kodu=='ikinciYoneticiOlmaz'}">
+													<c:if test="#{dpa.alan.kodu == 'ikinciYoneticiOlmaz'}">
 														<a4j:support event="onclick" reRender="ikinciYoneticiOlmaz" status="ajaxStatus"
 															action="#{pdksPersonelHome.getIkinciYoneticiOlmazList(dpa)}" />
 													</c:if>
@@ -1312,7 +1312,7 @@
 										<c:forEach items="#{pdksPersonelHome.dinamikPersonelTanimList}" var="dpa">
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">#{dpa.alan.aciklama}</ui:define>
-												<h:selectOneMenu value="#{dpa.tanimDeger}" disabled="#{dpa.alan.guncelle==false}">
+												<h:selectOneMenu value="#{dpa.tanimDeger}" disabled="#{dpa.alan.guncelle == false}">
 													<s:selectItems var="alan" value="#{pdksPersonelHome.dinamikPersonelAciklamaMap.get(dpa.alan.id)}" label="#{alan.aciklama}"
 														noSelectionLabel="Lütfen seçiniz" />
 													<s:convertEntity />
@@ -1349,7 +1349,7 @@
 												<rich:toolTip for="idEMailBCC" value="#{pdksPersonelHome.instance.emailBCC}" />
 											</a4j:region>
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('yoneticiMailGonderme')!='1'}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('yoneticiMailGonderme') != '1'}">
 											<ui:define name="label">E-Posta Hareket</ui:define>
 											<a4j:region>
 												<h:inputText id="idEMailHareket" title="#{pdksPersonelHome.instance.hareketMail}" value="#{pdksPersonelHome.instance.hareketMail}"
@@ -1365,7 +1365,7 @@
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">Aktif</ui:define>
 										<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.durum}"
-											disabled="#{pdksPersonelHome.instance.id!=null and pdksPersonelHome.instance.sirket.erp and authenticatedUser.IK  and pdksPersonelHome.personelERPGuncelleme!='M'}" />
+											disabled="#{pdksPersonelHome.instance.id != null and pdksPersonelHome.instance.sirket.erp and authenticatedUser.IK and pdksPersonelHome.personelERPGuncelleme != 'M'}" />
 									</s:decorate>
 								</h:panelGrid>
 							</c:if>
@@ -1439,7 +1439,7 @@
 
 
 
-							<h:panelGrid columns="2" rendered="#{authenticatedUser.admin or pdksPersonelHome.instance.kullanici.admin==false}">
+							<h:panelGrid columns="2" rendered="#{authenticatedUser.admin or pdksPersonelHome.instance.kullanici.admin == false}">
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Kullanici Durum</ui:define>
 									<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.kullanici.durum}" id="kullaniciDurum">
@@ -1449,14 +1449,14 @@
 
 
 								<a4j:commandButton value="#{pdksPersonelHome.eskiKullanici.username} Güncelle" action="#{pdksPersonelHome.saveKullanici()}"
-									rendered="#{pdksPersonelHome.eskiKullanici!=null}" reRender="pdksPersonelList"
-									oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+									rendered="#{pdksPersonelHome.eskiKullanici != null}" reRender="pdksPersonelList"
+									oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
 
 							</h:panelGrid>
 							<a4j:outputPanel id="kullaniciBilgi">
-								<ui:fragment rendered="#{authenticatedUser.admin and pdksPersonelHome.menuItemTimeList!=null}">
+								<ui:fragment rendered="#{authenticatedUser.admin and pdksPersonelHome.menuItemTimeList != null}">
 									<rich:toolTip for="kullaniciDurum">
 										<rich:dataTable rowClasses="acik,koyu" value="#{pdksPersonelHome.menuItemTimeList}" var="menuUser" rows="20" rowKeyVar="row" id="table">
 											<f:facet name="header">
@@ -1493,7 +1493,7 @@
 									</rich:toolTip>
 								</ui:fragment>
 								<ui:fragment
-									rendered="#{pdksPersonelHome.instance.kullanici.durum and (authenticatedUser.admin or pdksPersonelHome.instance.kullanici.admin==false)}">
+									rendered="#{pdksPersonelHome.instance.kullanici.durum and (authenticatedUser.admin or pdksPersonelHome.instance.kullanici.admin == false)}">
 
 
 
@@ -1532,7 +1532,7 @@
 																ajaxSingle="true" />
 														</h:inputText>
 														<a4j:commandLink status="ajaxStatus" id="updatelink" ajaxSingle="true" title="Test mail gönder"
-															rendered="#{pdksPersonelHome.instance.sirket.ldap==false}" action="#{pdksPersonelHome.denemeMesajHazirla()}"
+															rendered="#{pdksPersonelHome.instance.sirket.ldap == false}" action="#{pdksPersonelHome.denemeMesajHazirla()}"
 															oncomplete="#{rich:component('testMailPanel')}.show()" reRender="testMailPanel">
 															<h:graphicImage value="/img/mail.png" style="border:0" height="18" />
 
@@ -1541,7 +1541,7 @@
 													</s:decorate>
 												</h:panelGrid>
 											</a4j:region>
-											<c:if test="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and  pdksPersonelHome.instance.sirket.departman.admin}">
+											<c:if test="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and pdksPersonelHome.instance.sirket.departman.admin}">
 												<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.ikinciYoneticiIzinOnayla}">
 													<ui:define name="label">#{ortakIslemler.yonetici2Aciklama()} İzin Onayla</ui:define>
 													<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.kullanici.ikinciYoneticiIzinOnayla}" />
@@ -1569,10 +1569,10 @@
 															copyAllControlLabel="#{messages['listShuttle.etiket.copyAllControlLabel']}"
 															removeAllControlLabel="#{messages['listShuttle.etiket.removeAllControlLabel']}" required="true" requiredMessage="Rol seçiniz">
 															<h:column>
-																<ui:fragment rendered="#{pdksPersonelHome.departmanKullaniciList.size()>1 and rol.departman!=null}">
+																<ui:fragment rendered="#{pdksPersonelHome.departmanKullaniciList.size()>1 and rol.departman != null}">
 																	<SPAN id="role#{rol.id}" title="#{rol.departman.departmanTanim.aciklama}"><h:outputText value="#{rol.aciklama}" /></SPAN>
 																</ui:fragment>
-																<ui:fragment rendered="#{pdksPersonelHome.departmanKullaniciList.size()==1 or rol.departman==null}">
+																<ui:fragment rendered="#{pdksPersonelHome.departmanKullaniciList.size() == 1 or rol.departman == null}">
 																	<h:outputText value="#{rol.aciklama}" />
 																</ui:fragment>
 
@@ -1620,20 +1620,20 @@
 					<!--  -->
 					<a4j:outputPanel id="butonlar">
 
-						<ui:fragment rendered="#{authenticatedUser.admin or pdksPersonelHome.instance.kullanici.admin==false}">
+						<ui:fragment rendered="#{authenticatedUser.admin or pdksPersonelHome.instance.kullanici.admin == false}">
 							<table width="50%">
 								<tr>
 									<ui:fragment
-										rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametrePersonelERPTableView) or pdksPersonelHome.personelERPGuncelleme=='1'}">
+										rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametrePersonelERPTableView) or pdksPersonelHome.personelERPGuncelleme == '1'}">
 
 										<td><a4j:commandButton status="ajaxStatus" ajaxSingle="true" value="#{ortakIslemler.getParameterKey('uygulamaBordro')} Güncelle"
 												action="#{pdksPersonelHome.erpVeriGuncelle()}" reRender="personelBilgi" rendered="#{pdksPersonelHome.instance.sirket.erp}" /></td>
 									</ui:fragment>
 									<td><a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{pdksPersonelHome.save}" reRender="pdksPersonelList,roller"
-											oncomplete="if (#{pdksPersonelHome.hataMesaj==''}) #{rich:component('editPanel')}.hide();" /></td>
-									<ui:fragment rendered="#{ortakIslemler.getParameterKey('deletePersonel')=='1' and pdksPersonelHome.instance.id!=null}">
+											oncomplete="if (#{pdksPersonelHome.hataMesaj == ''}) #{rich:component('editPanel')}.hide();" /></td>
+									<ui:fragment rendered="#{ortakIslemler.getParameterKey('deletePersonel') == '1' and pdksPersonelHome.instance.id != null}">
 										<ui:fragment
-											rendered="#{ pdksPersonelHome.instance.personelKGS.id>0 and pdksPersonelHome.instance.personelKGS.durum==false and authenticatedUser.admin}">
+											rendered="#{ pdksPersonelHome.instance.personelKGS.id>0 and pdksPersonelHome.instance.personelKGS.durum == false and authenticatedUser.admin}">
 											<td><a4j:commandButton status="ajaxStatus" value="Sil" reRender="deletePersonelPanel"
 													oncomplete="#{rich:component('deletePersonelPanel')}.show();" /></td>
 										</ui:fragment>
@@ -1890,7 +1890,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" id="hideGunlink" styleClass="hidelink">
 							<a4j:support event="onclick" onclick="#{rich:component('wait')}.show()" action="#{pdksPersonelHome.fillPersonelKGSList}"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) { #{rich:component('editWomanPanel')}.hide();#{rich:component('wait')}.hide();}"
+								oncomplete="if (#{facesContext.maximumSeverity == null}) { #{rich:component('editWomanPanel')}.hide();#{rich:component('wait')}.hide();}"
 								ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
@@ -1905,7 +1905,7 @@
 						<h:panelGrid columns="1">
 							<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.personelDurumTipiList.size()>0}">
 								<ui:define name="label">Durum Tipi</ui:define>
-								<h:selectOneRadio value="#{pdksPersonelHome.donemselDurum.personelDurumTipiId}" disabled="#{pdksPersonelHome.personelDurumTipiList.size()==1}"
+								<h:selectOneRadio value="#{pdksPersonelHome.donemselDurum.personelDurumTipiId}" disabled="#{pdksPersonelHome.personelDurumTipiList.size() == 1}"
 									required="true" requiredMessage="Durum tipi seçiniz">
 									<f:selectItems value="#{pdksPersonelHome.personelDurumTipiList}" />
 									<a4j:support event="onchange" action="#{pdksPersonelHome.gebeSutIzniTarihDegisti()}" ajaxSingle="true" reRender="seciliOzelDurum" />
@@ -1933,13 +1933,13 @@
 							</s:decorate>
 						</h:panelGrid>
 						<ui:fragment
-							rendered="#{pdksPersonelHome.donemselDurum.basTarih!=null and pdksPersonelHome.donemselDurum.bitTarih!=null and pdksPersonelHome.donemselDurum.personelDurumTipiId!=null}">
+							rendered="#{pdksPersonelHome.donemselDurum.basTarih != null and pdksPersonelHome.donemselDurum.bitTarih != null and pdksPersonelHome.donemselDurum.personelDurumTipiId != null}">
 							<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{pdksPersonelHome.savePersonelDonemselDurum()}" reRender="seciliOzelDurum" />
 						</ui:fragment>
 						<a4j:commandButton status="ajaxStatus" value="Yeni Özel Durum" action="#{pdksPersonelHome.setPersonelDonemselDurum(null)}" ajaxSingle="true"
 							reRender="seciliOzelDurum" />
 					</ui:fragment>
-					<ui:fragment rendered="#{empty pdksPersonelHome.donemselDurumList and pdksPersonelHome.instance.calisiyor==false}">
+					<ui:fragment rendered="#{empty pdksPersonelHome.donemselDurumList and pdksPersonelHome.instance.calisiyor == false}">
 						<SPAN style="color: red; font-size: 18px; font-weight: bold;"> İşten ayrılan personele ait Gebe/Süt izni bulunmamaktadır. </SPAN>
 					</ui:fragment>
 					<rich:dataTable rowClasses="acik,koyu" value="#{pdksPersonelHome.donemselDurumList}" var="ozelDurum" rows="50" rowKeyVar="row"

@@ -78,7 +78,7 @@
 								<h:outputText value="#{openSessionHome.bolumAciklama}" />
 							</f:facet>
 							<h:outputText value="#{user.kullanici.pdksPersonel.ekSaha3.aciklama}" id="gorevTipi" />
-							<ui:fragment rendered="#{user.kullanici.pdksPersonel.ekSaha1!=null}">
+							<ui:fragment rendered="#{user.kullanici.pdksPersonel.ekSaha1 != null}">
 								<rich:toolTip for="gorevTipi">
 								#{user.kullanici.pdksPersonel.ekSaha1.aciklama}
 								</rich:toolTip>
@@ -105,7 +105,7 @@
 								<h:outputText value="#{user.kullanici.remoteAddr}" />
 
 							</ui:fragment>
-							<ui:fragment rendered="#{openSessionHome.isKapatilabir(user.session)==false}">
+							<ui:fragment rendered="#{openSessionHome.isKapatilabir(user.session) == false}">
 								<SPAN style="font-weight: bold; color: red;"><h:outputText value="#{user.kullanici.remoteAddr }" /></SPAN>
 							</ui:fragment>
 

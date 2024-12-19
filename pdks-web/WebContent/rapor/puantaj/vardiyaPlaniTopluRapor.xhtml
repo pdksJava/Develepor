@@ -50,7 +50,7 @@
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 
 							<h:selectOneMenu id="sirketSec" value="#{vardiyaPlaniTopluRaporHome.sirketId}"
-								disabled="#{vardiyaPlaniTopluRaporHome.pdksSirketList.size()==1}" required="true" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
+								disabled="#{vardiyaPlaniTopluRaporHome.pdksSirketList.size() == 1}" required="true" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaPlaniTopluRaporHome.pdksSirketList}" />
 								<a4j:support event="onchange" status="ajaxStatus" action="#{vardiyaPlaniTopluRaporHome.tesisDoldur(true)}" ajaxSingle="true"
@@ -60,10 +60,10 @@
 						<c:if test="#{not empty vardiyaPlaniTopluRaporHome.pdksSirketList}">
 
 							<s:decorate template="/layout/edit.xhtml"
-								rendered="#{ortakIslemler.tesisDurumu and vardiyaPlaniTopluRaporHome.tesisList!=null and vardiyaPlaniTopluRaporHome.tesisList.size()>0}">
+								rendered="#{ortakIslemler.tesisDurumu and vardiyaPlaniTopluRaporHome.tesisList != null and vardiyaPlaniTopluRaporHome.tesisList.size()>0}">
 								<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 								<h:selectOneMenu value="#{vardiyaPlaniTopluRaporHome.tesisId}" requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz!" required="true"
-									disabled="#{vardiyaPlaniTopluRaporHome.tesisList.size()==1}">
+									disabled="#{vardiyaPlaniTopluRaporHome.tesisList.size() == 1}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{vardiyaPlaniTopluRaporHome.tesisList}" />
 									<a4j:support event="onchange" status="ajaxStatus" action="#{vardiyaPlaniTopluRaporHome.bolumDoldur()}" ajaxSingle="true"
@@ -71,9 +71,9 @@
 								</h:selectOneMenu>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml"
-								rendered="#{  vardiyaPlaniTopluRaporHome.gorevYeriList!=null and vardiyaPlaniTopluRaporHome.gorevYeriList.size()>0}">
+								rendered="#{  vardiyaPlaniTopluRaporHome.gorevYeriList != null and vardiyaPlaniTopluRaporHome.gorevYeriList.size()>0}">
 								<ui:define name="label">#{vardiyaPlaniTopluRaporHome.bolumAciklama}</ui:define>
-								<h:selectOneMenu value="#{vardiyaPlaniTopluRaporHome.seciliEkSaha3Id}" disabled="#{vardiyaPlaniTopluRaporHome.gorevYeriList.size()==1}"
+								<h:selectOneMenu value="#{vardiyaPlaniTopluRaporHome.seciliEkSaha3Id}" disabled="#{vardiyaPlaniTopluRaporHome.gorevYeriList.size() == 1}"
 									requiredMessage="#{vardiyaPlaniTopluRaporHome.bolumAciklama} giriniz!" required="false">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{vardiyaPlaniTopluRaporHome.gorevYeriList}" />
@@ -81,7 +81,7 @@
 										reRender="denklestirmeDonemiTable,girisler" />
 								</h:selectOneMenu>
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaPlaniTopluRaporHome.kullaniciPersonel==false}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaPlaniTopluRaporHome.kullaniciPersonel == false}">
 								<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
 								<h:inputText value="#{vardiyaPlaniTopluRaporHome.sicilNo}">
 									<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" reRender="denklestirmeDonemiTable"
@@ -96,7 +96,7 @@
 										status="ajaxStatus" limitToList="true" ajaxSingle="true" />
 								</h:selectOneRadio>
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaPlaniTopluRaporHome.seciliEkSaha3Id==null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaPlaniTopluRaporHome.seciliEkSaha3Id == null}">
 								<ui:define name="label">Mesai Toplam  Getir</ui:define>
 								<h:selectBooleanCheckbox value="#{vardiyaPlaniTopluRaporHome.toplamSutunGoster}">
 									<a4j:support event="onclick" status="ajaxStatus" action="#{vardiyaPlaniTopluRaporHome.aylikPuantajList.clear()}" ajaxSingle="true"
@@ -157,10 +157,10 @@
 											<f:facet name="header">
 												<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
 											</f:facet>
-											<ui:fragment rendered="#{ap.personelDenklestirme.onaylandi==false or ap.pdksPersonel.pdks==false}">
+											<ui:fragment rendered="#{ap.personelDenklestirme.onaylandi == false or ap.pdksPersonel.pdks == false}">
 												<SPAN style="color: red"><h:outputText value="#{ap.pdksPersonel.sicilNo}" /> </SPAN>
 											</ui:fragment>
-											<ui:fragment rendered="#{ap.personelDenklestirme.onaylandi  and ap.pdksPersonel.pdks }">
+											<ui:fragment rendered="#{ap.personelDenklestirme.onaylandi and ap.pdksPersonel.pdks }">
 												<h:outputText value="#{ap.pdksPersonel.sicilNo}" />
 
 											</ui:fragment>
@@ -193,13 +193,13 @@
 											</f:facet>
 											<h:outputText value="#{ap.pdksPersonel.tesis.aciklama}" style="width:autostretch ;white-space: nowrap;" />
 										</rich:column>
-										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{vardiyaPlaniTopluRaporHome.seciliEkSaha3Id==null}">
+										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{vardiyaPlaniTopluRaporHome.seciliEkSaha3Id == null}">
 											<f:facet name="header">
 												<h:outputText value="#{vardiyaPlaniTopluRaporHome.bolumAciklama}" />
 											</f:facet>
 											<h:outputText value="#{ap.pdksPersonel.ekSaha3.aciklama}" style="width:autostretch ;white-space: nowrap;" />
 										</rich:column>
-										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{vardiyaPlaniTopluRaporHome.ekSaha4Tanim!=null}">
+										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{vardiyaPlaniTopluRaporHome.ekSaha4Tanim != null}">
 											<f:facet name="header">
 												<h:outputText value="#{vardiyaPlaniTopluRaporHome.ekSaha4Tanim.aciklama}" />
 											</f:facet>
@@ -209,16 +209,16 @@
 											<f:facet name="header">
 												<h:outputText value="#{ortakIslemler.yoneticiAciklama()}" />
 											</f:facet>
-											<SPAN style="width: autostretch; white-space: nowrap;"> <ui:fragment rendered="#{ap.yonetici!=null}">
-													<h:outputText value="#{ap.yonetici.adSoyad}" rendered="#{ap.yonetici.id!=null}" />
-													<ui:fragment rendered="#{ap.yonetici.id==null and ap.pdksPersonel.sanalPersonel==false}">
+											<SPAN style="width: autostretch; white-space: nowrap;"> <ui:fragment rendered="#{ap.yonetici != null}">
+													<h:outputText value="#{ap.yonetici.adSoyad}" rendered="#{ap.yonetici.id != null}" />
+													<ui:fragment rendered="#{ap.yonetici.id == null and ap.pdksPersonel.sanalPersonel == false}">
 														<SPAN style="color: red; font-weight: bold; font-size: 12px"> <h:outputText value="#{ap.yonetici.adSoyad}"
 																style="width:autostretch ;white-space: nowrap;" />
 														</SPAN>
 
 													</ui:fragment>
-												</ui:fragment> <ui:fragment rendered="#{ap.yonetici==null or ap.yonetici.id==null}">
-													<ui:fragment rendered="#{ap.pdksPersonel.sanalPersonel==false and vardiyaPlaniTopluRaporHome.yoneticiERP1Kontrol}">
+												</ui:fragment> <ui:fragment rendered="#{ap.yonetici == null or ap.yonetici.id == null}">
+													<ui:fragment rendered="#{ap.pdksPersonel.sanalPersonel == false and vardiyaPlaniTopluRaporHome.yoneticiERP1Kontrol}">
 														<SPAN style="color: red; font-weight: bold; font-size: 12px">#{ortakIslemler.yoneticiAciklama()} tanımsız!</SPAN>
 
 													</ui:fragment>
@@ -234,9 +234,9 @@
 												<h:outputText value="#{ortakIslemler.calismaModeliAciklama()}" />
 											</f:facet>
 											<SPAN style="width: autostretch; white-space: nowrap;"> <ui:fragment
-													rendered="#{ap.personelDenklestirme!=null and ap.personelDenklestirme.calismaModeliAy!=null}">
+													rendered="#{ap.personelDenklestirme != null and ap.personelDenklestirme.calismaModeliAy != null}">
 
-													<ui:fragment rendered="#{ap.pdksPersonel.sanalPersonel==false}">#{ap.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama }</ui:fragment>
+													<ui:fragment rendered="#{ap.pdksPersonel.sanalPersonel == false}">#{ap.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama }</ui:fragment>
 													<ui:fragment rendered="#{ap.pdksPersonel.sanalPersonel}">
 														<SPAN id="calismaModeliAy#{ap.personelDenklestirme.id}" style="color: red; font-weight: bold;"> <U>#{vardiyaPlaniTopluRaporHome.sanalPersonelAciklama}</U>
 														</SPAN>
@@ -252,7 +252,7 @@
 												<f:facet name="header">
 													<h:outputText value="FM Ödeme" />
 												</f:facet>
-												<SPAN> <ui:fragment rendered="#{ap.personelDenklestirme.fazlaMesaiOde==false}">
+												<SPAN> <ui:fragment rendered="#{ap.personelDenklestirme.fazlaMesaiOde == false}">
 														<h:outputText value="#{authenticatedUser.getYesNo(ap.personelDenklestirme.fazlaMesaiOde)}" />
 													</ui:fragment> <ui:fragment rendered="#{ap.personelDenklestirme.fazlaMesaiOde}">
 														<SPAN style="font-weight: bolder;"> <h:outputText value="#{authenticatedUser.getYesNo(ap.personelDenklestirme.fazlaMesaiOde)}" />
@@ -263,7 +263,7 @@
 												<f:facet name="header">
 													<h:outputText value="FM İzin Kullan" />
 												</f:facet>
-												<SPAN> <ui:fragment rendered="#{ap.personelDenklestirme.fazlaMesaiIzinKullan==false}">
+												<SPAN> <ui:fragment rendered="#{ap.personelDenklestirme.fazlaMesaiIzinKullan == false}">
 														<h:outputText value="#{authenticatedUser.getYesNo(ap.personelDenklestirme.fazlaMesaiIzinKullan)}" />
 													</ui:fragment> <ui:fragment rendered="#{ap.personelDenklestirme.fazlaMesaiIzinKullan}">
 														<SPAN style="font-weight: bolder;"> <h:outputText
@@ -278,7 +278,7 @@
 											</f:facet>
 											<SPAN> <ui:fragment rendered="#{ap.personelDenklestirme.onaylandi}">
 													<h:outputText value="#{authenticatedUser.getYesNo(ap.personelDenklestirme.onaylandi)}" />
-												</ui:fragment> <ui:fragment rendered="#{ap.personelDenklestirme.onaylandi==false}">
+												</ui:fragment> <ui:fragment rendered="#{ap.personelDenklestirme.onaylandi == false}">
 													<SPAN style="font-weight: bolder;"> <h:outputText value="#{authenticatedUser.getYesNo(ap.personelDenklestirme.onaylandi)}" />
 													</SPAN>
 												</ui:fragment></SPAN>
@@ -290,7 +290,7 @@
 											<ui:fragment rendered="#{ap.suaDurum}">
 												<b><h:outputText value="#{authenticatedUser.getYesNo(ap.suaDurum)}" /></b>
 											</ui:fragment>
-											<ui:fragment rendered="#{ap.suaDurum==false}">
+											<ui:fragment rendered="#{ap.suaDurum == false}">
 												<h:outputText value="#{authenticatedUser.getYesNo(ap.suaDurum)}" />
 											</ui:fragment>
 										</rich:column>
@@ -301,7 +301,7 @@
 											<ui:fragment rendered="#{ap.gebeDurum}">
 												<b><h:outputText value="#{authenticatedUser.getYesNo(ap.gebeDurum)}" /></b>
 											</ui:fragment>
-											<ui:fragment rendered="#{ap.gebeDurum==false}">
+											<ui:fragment rendered="#{ap.gebeDurum == false}">
 												<h:outputText value="#{authenticatedUser.getYesNo(ap.gebeDurum)}" />
 											</ui:fragment>
 										</rich:column>
@@ -312,7 +312,7 @@
 											<ui:fragment rendered="#{ap.sutIzniDurumu}">
 												<b><h:outputText value="#{authenticatedUser.getYesNo(ap.sutIzniDurumu)}" /></b>
 											</ui:fragment>
-											<ui:fragment rendered="#{ap.sutIzniDurumu==false}">
+											<ui:fragment rendered="#{ap.sutIzniDurumu == false}">
 												<h:outputText value="#{authenticatedUser.getYesNo(ap.sutIzniDurumu)}" />
 											</ui:fragment>
 										</rich:column>
@@ -323,11 +323,11 @@
 											<ui:fragment rendered="#{ap.personelDenklestirme.partTimeDurumu}">
 												<b><h:outputText value="#{authenticatedUser.getYesNo(ap.personelDenklestirme.partTimeDurumu)}" /></b>
 											</ui:fragment>
-											<ui:fragment rendered="#{ap.personelDenklestirme.partTimeDurumu==false}">
+											<ui:fragment rendered="#{ap.personelDenklestirme.partTimeDurumu == false}">
 												<h:outputText value="#{authenticatedUser.getYesNo(ap.personelDenklestirme.partTimeDurumu)}" />
 											</ui:fragment>
 										</rich:column>
-										<c:if test="#{vardiyaPlaniTopluRaporHome.aylikPuantajDefault.vardiyalar!=null }">
+										<c:if test="#{vardiyaPlaniTopluRaporHome.aylikPuantajDefault.vardiyalar != null }">
 											<c:forEach items="#{vardiyaPlaniTopluRaporHome.aylikPuantajDefault.vardiyalar}" var="vg">
 
 												<rich:column headerClass="#{vg.headerClass}" styleClass="#{ap.getVardiya(vg).getAylikClassAdi(ap.trClass)}"
@@ -339,7 +339,7 @@
 																<bR />
 																<h:outputText value="#{authenticatedUser.getTarihFormatla(vg.vardiyaDate, 'EEE')}" />
 															</DIV>
-															<c:if test="#{vg.tatil!=null}">
+															<c:if test="#{vg.tatil != null}">
 																<rich:toolTip for="tatil#{vg.vardiyaDateStr}">
 																	<SPAN style="color: green; font-size: 14px;"><B>#{vg.tatil.ad}</B></SPAN>
 																</rich:toolTip>
@@ -347,20 +347,20 @@
 															</c:if>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.getVardiyaGun(vg)!=null }">
+													<ui:fragment rendered="#{ap.getVardiyaGun(vg) != null }">
 														<DIV id="vardiya#{ap.vardiyaGun.vardiyaKeyStr}" align="center">
-															<ui:fragment rendered="#{ap.vardiyaGun.vardiya==null}">
+															<ui:fragment rendered="#{ap.vardiyaGun.vardiya == null}">
 																<SPAN style="text-align: center;">-</SPAN>
 																<rich:toolTip for="vardiya#{ap.vardiyaGun.vardiyaKeyStr}">
 																	<ui:fragment rendered="#{ap.vardiyaGun.calismayiBirakti}">
 																		<SPAN style="color: black"><B>İSTİFA</B></SPAN>
 																	</ui:fragment>
-																	<ui:fragment rendered="#{ap.vardiyaGun.calismayiBirakti==false}">
+																	<ui:fragment rendered="#{ap.vardiyaGun.calismayiBirakti == false}">
 																		<SPAN style="color: black"> <B>İŞ BAŞI YAPMADI</B></SPAN>
 																	</ui:fragment>
 																</rich:toolTip>
 															</ui:fragment>
-															<ui:fragment rendered="#{ap.vardiyaGun.vardiya!=null}">
+															<ui:fragment rendered="#{ap.vardiyaGun.vardiya != null}">
 																<h:outputText value="#{vardiyaPlaniTopluRaporHome.vardiyaAciklama(ap.vardiyaGun)}" />
 																<ui:fragment rendered="#{ap.vardiyaGun.vardiya.calisma}">
 																	<rich:toolTip for="vardiya#{ap.vardiyaGun.vardiyaKeyStr}">
@@ -383,7 +383,7 @@
 
 											</c:forEach>
 										</c:if>
-										<c:if test="#{vardiyaPlaniTopluRaporHome.toplamSutunGoster or vardiyaPlaniTopluRaporHome.seciliEkSaha3Id!=null}">
+										<c:if test="#{vardiyaPlaniTopluRaporHome.toplamSutunGoster or vardiyaPlaniTopluRaporHome.seciliEkSaha3Id != null}">
 											<rich:column
 												style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;color:black;"
 												styleClass="#{ap.trSonucClass}">
@@ -395,7 +395,7 @@
 														</rich:toolTip>
 													</ui:fragment>
 												</f:facet>
-												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.saatToplami)}" rendered="#{ap.saatToplami!=0}" />
+												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.saatToplami)}" rendered="#{ap.saatToplami != 0}" />
 											</rich:column>
 											<rich:column
 												style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;color:black;"
@@ -410,12 +410,12 @@
 												</f:facet>
 												<ui:fragment>
 													<DIV id="planlananSureAciklama#{ap.personelDenklestirme.id}">
-														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.planlananSure)}" rendered="#{ap.planlananSure!=0}" />
+														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.planlananSure)}" rendered="#{ap.planlananSure != 0}" />
 													</DIV>
-													<ui:fragment rendered="#{false and ap.personelDenklestirme.calismaModeliAy!=null and ap.sutIzniDurum==false }">
+													<ui:fragment rendered="#{false and ap.personelDenklestirme.calismaModeliAy != null and ap.sutIzniDurum == false }">
 														<rich:toolTip for="planlananSureAciklama#{ap.personelDenklestirme.id}">
 																		#{ap.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama} :
-												<ui:fragment rendered="#{ap.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle==false}">
+												<ui:fragment rendered="#{ap.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle == false}">
 																			      #{authenticatedUser.sayiFormatliGoster(ap.personelDenklestirme.calismaModeliAy.sure)}  
 												</ui:fragment>
 															<ui:fragment rendered="#{ap.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle}">
@@ -438,7 +438,7 @@
 														</rich:toolTip>
 													</ui:fragment>
 												</f:facet>
-												<ui:fragment rendered="#{ap.fazlaMesaiHesapla and ap.ucretiOdenenMesaiSure!=0}">
+												<ui:fragment rendered="#{ap.fazlaMesaiHesapla and ap.ucretiOdenenMesaiSure != 0}">
 													<span style="color: red;"> <h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.ucretiOdenenMesaiSure)}" /></span>
 												</ui:fragment>
 											</rich:column>
@@ -456,7 +456,7 @@
 													</ui:fragment>
 												</f:facet>
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.aylikFazlaMesai)}"
-													rendered="#{ap.fazlaMesaiHesapla and ap.aylikFazlaMesai!=0}" />
+													rendered="#{ap.fazlaMesaiHesapla and ap.aylikFazlaMesai != 0}" />
 
 											</rich:column>
 											<rich:column rendered="#{vardiyaPlaniTopluRaporHome.devredenMesaiKod}"
@@ -471,7 +471,7 @@
 													</ui:fragment>
 												</f:facet>
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.getGecenAyFazlaMesai(authenticatedUser))}"
-													rendered="#{ap.getGecenAyFazlaMesai(authenticatedUser)!=0}" />
+													rendered="#{ap.getGecenAyFazlaMesai(authenticatedUser) != 0}" />
 
 											</rich:column>
 											<c:if test="#{vardiyaPlaniTopluRaporHome.fazlaMesaiVar}">
@@ -487,7 +487,7 @@
 														</ui:fragment>
 													</f:facet>
 													<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.fazlaMesaiSure)}"
-														rendered="#{ap.fazlaMesaiHesapla and ap.fazlaMesaiSure!=0}" />
+														rendered="#{ap.fazlaMesaiHesapla and ap.fazlaMesaiSure != 0}" />
 
 												</rich:column>
 
@@ -505,14 +505,14 @@
 														</ui:fragment>
 													</f:facet>
 													<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.eksikCalismaSure)}"
-														rendered="#{ap.fazlaMesaiHesapla and ap.eksikCalismaSure!=0}" />
+														rendered="#{ap.fazlaMesaiHesapla and ap.eksikCalismaSure != 0}" />
 
 												</rich:column>
 
 
 
 											</c:if>
-											<c:if test="#{vardiyaPlaniTopluRaporHome.stajerSirket==false}">
+											<c:if test="#{vardiyaPlaniTopluRaporHome.stajerSirket == false}">
 												<rich:column rendered="#{vardiyaPlaniTopluRaporHome.resmiTatilVar}"
 													style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;color:black;"
 													styleClass="#{ap.trSonucClass}">
@@ -524,8 +524,8 @@
 															</rich:toolTip>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.resmiTatilToplami!=0}">
-														<ui:fragment rendered="#{ap.personelDenklestirme.erpAktarildi==false}">
+													<ui:fragment rendered="#{ap.resmiTatilToplami != 0}">
+														<ui:fragment rendered="#{ap.personelDenklestirme.erpAktarildi == false}">
 															<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.resmiTatilToplami)}" />
 														</ui:fragment>
 														<ui:fragment rendered="#{ap.personelDenklestirme.erpAktarildi}">
@@ -546,8 +546,8 @@
 															</rich:toolTip>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.haftaCalismaSuresi!=0}">
-														<ui:fragment rendered="#{ap.personelDenklestirme.erpAktarildi==false}">
+													<ui:fragment rendered="#{ap.haftaCalismaSuresi != 0}">
+														<ui:fragment rendered="#{ap.personelDenklestirme.erpAktarildi == false}">
 															<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.haftaCalismaSuresi)}" />
 														</ui:fragment>
 														<ui:fragment rendered="#{ap.personelDenklestirme.erpAktarildi}">
@@ -569,7 +569,7 @@
 														</rich:toolTip>
 													</ui:fragment>
 												</f:facet>
-												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.devredenSure)}" rendered="#{ap.fazlaMesaiHesapla and ap.devredenSure!=0}" />
+												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.devredenSure)}" rendered="#{ap.fazlaMesaiHesapla and ap.devredenSure != 0}" />
 
 											</rich:column>
 											<c:if test="#{vardiyaPlaniTopluRaporHome.bordroPuantajEkranindaGoster}">
@@ -583,7 +583,7 @@
 															</rich:toolTip>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.denklestirmeBordro.saatNormal!=0}">
+													<ui:fragment rendered="#{ap.denklestirmeBordro.saatNormal != 0}">
 														<B><ui:fragment rendered="#{ap.denklestirmeBordro.saatNormal gt 0}">
 																<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.denklestirmeBordro.saatNormal)}" />
 															</ui:fragment> <ui:fragment rendered="#{ap.denklestirmeBordro.saatNormal lt 0}">
@@ -601,7 +601,7 @@
 															</rich:toolTip>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.calismaModeli.saatlikOdeme and ap.denklestirmeBordro.saatHaftaTatil!=0}">
+													<ui:fragment rendered="#{ap.calismaModeli.saatlikOdeme and ap.denklestirmeBordro.saatHaftaTatil != 0}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.denklestirmeBordro.saatHaftaTatil)}" />
 													</ui:fragment>
 												</rich:column>
@@ -615,7 +615,7 @@
 															</rich:toolTip>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.calismaModeli.saatlikOdeme and ap.denklestirmeBordro.saatResmiTatil!=0}">
+													<ui:fragment rendered="#{ap.calismaModeli.saatlikOdeme and ap.denklestirmeBordro.saatResmiTatil != 0}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.denklestirmeBordro.saatResmiTatil)}" />
 													</ui:fragment>
 												</rich:column>
@@ -629,7 +629,7 @@
 															</rich:toolTip>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.calismaModeli.saatlikOdeme and ap.denklestirmeBordro.saatIzin!=0}">
+													<ui:fragment rendered="#{ap.calismaModeli.saatlikOdeme and ap.denklestirmeBordro.saatIzin != 0}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.denklestirmeBordro.saatIzin)}" />
 													</ui:fragment>
 												</rich:column>
@@ -643,7 +643,7 @@
 															</rich:toolTip>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.denklestirmeBordro.ucretliIzin!=0}">
+													<ui:fragment rendered="#{ap.denklestirmeBordro.ucretliIzin != 0}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.denklestirmeBordro.ucretliIzin)}" />
 													</ui:fragment>
 												</rich:column>
@@ -657,7 +657,7 @@
 															</rich:toolTip>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.denklestirmeBordro.ucretsizIzin!=0}">
+													<ui:fragment rendered="#{ap.denklestirmeBordro.ucretsizIzin != 0}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.denklestirmeBordro.ucretsizIzin)}" />
 													</ui:fragment>
 												</rich:column>
@@ -671,7 +671,7 @@
 															</rich:toolTip>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.denklestirmeBordro.raporluIzin!=0}">
+													<ui:fragment rendered="#{ap.denklestirmeBordro.raporluIzin != 0}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.denklestirmeBordro.raporluIzin)}" />
 													</ui:fragment>
 												</rich:column>
@@ -685,7 +685,7 @@
 															</rich:toolTip>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.denklestirmeBordro.normalGunAdet!=0}">
+													<ui:fragment rendered="#{ap.denklestirmeBordro.normalGunAdet != 0}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.denklestirmeBordro.normalGunAdet)}" />
 													</ui:fragment>
 												</rich:column>
@@ -699,7 +699,7 @@
 															</rich:toolTip>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.denklestirmeBordro.haftaTatilAdet!=0}">
+													<ui:fragment rendered="#{ap.denklestirmeBordro.haftaTatilAdet != 0}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.denklestirmeBordro.haftaTatilAdet)}" />
 													</ui:fragment>
 												</rich:column>
@@ -713,7 +713,7 @@
 															</rich:toolTip>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.denklestirmeBordro.resmiTatilAdet!=0}">
+													<ui:fragment rendered="#{ap.denklestirmeBordro.resmiTatilAdet != 0}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.denklestirmeBordro.resmiTatilAdet)}" />
 													</ui:fragment>
 												</rich:column>
@@ -727,7 +727,7 @@
 															</rich:toolTip>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.denklestirmeBordro.artikAdet!=0}">
+													<ui:fragment rendered="#{ap.denklestirmeBordro.artikAdet != 0}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.denklestirmeBordro.artikAdet)}" />
 													</ui:fragment>
 												</rich:column>
@@ -741,14 +741,14 @@
 															</rich:toolTip>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.denklestirmeBordro.bordroToplamGunAdet!=0}">
+													<ui:fragment rendered="#{ap.denklestirmeBordro.bordroToplamGunAdet != 0}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.denklestirmeBordro.bordroToplamGunAdet)}" />
 													</ui:fragment>
 												</rich:column>
 
 											</c:if>
 										</c:if>
-										<c:if test="#{vardiyaPlaniTopluRaporHome.tumVardiyaList!=null }">
+										<c:if test="#{vardiyaPlaniTopluRaporHome.tumVardiyaList != null }">
 											<c:forEach items="#{vardiyaPlaniTopluRaporHome.tumVardiyaList}" var="vg1">
 												<rich:column style="text-align:center; width:autostretch;white-space: nowrap;">
 													<f:facet name="header">
@@ -766,7 +766,7 @@
 															</ui:fragment>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{vardiyaPlaniTopluRaporHome.getPersonelVardiyaAdet(vg1.vardiya,ap.pdksPersonel)!=null}">
+													<ui:fragment rendered="#{vardiyaPlaniTopluRaporHome.getPersonelVardiyaAdet(vg1.vardiya,ap.pdksPersonel) != null}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaPlaniTopluRaporHome.vardiyaAdet)}" />
 													</ui:fragment>
 												</rich:column>
@@ -782,7 +782,7 @@
 													</rich:toolTip>
 												</ui:fragment>
 											</f:facet>
-											<ui:fragment rendered="#{ap.personelDenklestirme.onaylandi==false}">
+											<ui:fragment rendered="#{ap.personelDenklestirme.onaylandi == false}">
 												<SPAN style="font-size: 12px; font-weight: normal; color: white;"> Plan onaysız </SPAN>
 
 											</ui:fragment>
@@ -806,13 +806,13 @@
 											</f:facet>
 											<h:outputText value="#{ap.pdksPersonel.tesis.aciklama}" style="width:autostretch ;white-space: nowrap;" />
 										</rich:column>
-										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{vardiyaPlaniTopluRaporHome.seciliEkSaha3Id==null}">
+										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{vardiyaPlaniTopluRaporHome.seciliEkSaha3Id == null}">
 											<f:facet name="header">
 												<h:outputText value="#{vardiyaPlaniTopluRaporHome.bolumAciklama}" />
 											</f:facet>
 											<h:outputText value="#{ap.pdksPersonel.ekSaha3.aciklama}" style="width:autostretch ;white-space: nowrap;" />
 										</rich:column>
-										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{vardiyaPlaniTopluRaporHome.ekSaha4Tanim!=null}">
+										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{vardiyaPlaniTopluRaporHome.ekSaha4Tanim != null}">
 											<f:facet name="header">
 												<h:outputText value="#{vardiyaPlaniTopluRaporHome.ekSaha4Tanim.aciklama}" />
 											</f:facet>
@@ -822,7 +822,7 @@
 											<f:facet name="header">
 												<h:outputText value="#{ortakIslemler.calismaModeliAciklama()}" />
 											</f:facet>
-											<SPAN style="width: autostretch; white-space: nowrap;"> <ui:fragment rendered="#{ap.calismaModeli!=null}">
+											<SPAN style="width: autostretch; white-space: nowrap;"> <ui:fragment rendered="#{ap.calismaModeli != null}">
 
 													#{ap.calismaModeli.aciklama } 
 													 
@@ -840,7 +840,7 @@
 											<f:facet name="header">
 												<h:outputText value="Vardiya" />
 											</f:facet>
-											<ui:fragment rendered="#{ap.calismaModeli!=null}">
+											<ui:fragment rendered="#{ap.calismaModeli != null}">
 												<SPAN style="width: autostretch; white-space: nowrap;" id="vardiyaOzet#{ap.gunSayisi}"> <h:outputText
 														value="#{ap.pdksPersonel.adSoyad}" /></SPAN>
 												<rich:toolTip for="vardiyaOzet#{ap.gunSayisi}">
@@ -854,13 +854,13 @@
 
 
 											</ui:fragment>
-											<ui:fragment rendered="#{ap.calismaModeli==null}">
+											<ui:fragment rendered="#{ap.calismaModeli == null}">
 												<SPAN style="width: autostretch; white-space: nowrap; font-weight: bold;"> <h:outputText value="#{ap.pdksPersonel.adSoyad}" /></SPAN>
 
 											</ui:fragment>
 
 										</rich:column>
-										<c:if test="#{vardiyaPlaniTopluRaporHome.aylikPuantajDefault.vardiyalar!=null }">
+										<c:if test="#{vardiyaPlaniTopluRaporHome.aylikPuantajDefault.vardiyalar != null }">
 											<c:forEach items="#{vardiyaPlaniTopluRaporHome.aylikPuantajDefault.vardiyalar}" var="vg">
 
 												<rich:column headerClass="#{vg.headerClass}" style="text-align:center; width:autostretch;white-space: nowrap;"
@@ -872,7 +872,7 @@
 																<bR />
 																<h:outputText value="#{authenticatedUser.getTarihFormatla(vg.vardiyaDate, 'EEE')}" />
 															</DIV>
-															<c:if test="#{vg.tatil!=null}">
+															<c:if test="#{vg.tatil != null}">
 																<rich:toolTip for="tatil#{vg.vardiyaDateStr}">
 																	<SPAN style="color: green; font-size: 14px;"><B>#{vg.tatil.ad}</B></SPAN>
 																</rich:toolTip>
@@ -880,16 +880,16 @@
 															</c:if>
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{ap.getVardiyaGun(vg)!=null }">
+													<ui:fragment rendered="#{ap.getVardiyaGun(vg) != null }">
 														<DIV id="vardiya#{ap.vardiyaGun.vardiyaKeyStr}" align="center">
 
-															<ui:fragment rendered="#{ap.vardiyaGun.vardiya==null}">
+															<ui:fragment rendered="#{ap.vardiyaGun.vardiya == null}">
 																<ui:fragment rendered="#{ap.vardiyaGun.calismaSuresi gt 0}">
 
 																	<SPAN style="text-align: center; font-weight: bold;">#{authenticatedUser.sayiFormatliGoster(ap.vardiyaGun.calismaSuresi)}</SPAN>
 																</ui:fragment>
 															</ui:fragment>
-															<ui:fragment rendered="#{ap.vardiyaGun.vardiya!=null}">
+															<ui:fragment rendered="#{ap.vardiyaGun.vardiya != null}">
 																<ui:fragment rendered="#{ap.vardiyaGun.calismaSuresi gt 0}">
 
 																	<SPAN style="text-align: center;">#{authenticatedUser.sayiFormatliGoster(ap.vardiyaGun.calismaSuresi)}</SPAN>
@@ -917,7 +917,7 @@
 							</rich:tabPanel>
 						</a4j:outputPanel>
 
-						<ui:fragment rendered="#{not empty vardiyaPlaniTopluRaporHome.aylikPuantajList and (vardiyaPlaniTopluRaporHome.denklestirmeAyDurum==false)}">
+						<ui:fragment rendered="#{not empty vardiyaPlaniTopluRaporHome.aylikPuantajList and (vardiyaPlaniTopluRaporHome.denklestirmeAyDurum == false)}">
 
 
 							<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{vardiyaPlaniTopluRaporHome.fazlaMesaiExcel}" target="blank">

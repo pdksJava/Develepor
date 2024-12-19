@@ -18,7 +18,7 @@
 				<a4j:outputPanel ajaxRendered="true" id="idPersonelKullaniciAramaHome">
 
 					<h:panelGrid columns="1">
-						<h:panelGrid columns="2" rendered="#{personelIzinGirisiHome.visibled==true}" cellpadding="0" cellspacing="0">
+						<h:panelGrid columns="2" rendered="#{personelIzinGirisiHome.visibled == true}" cellpadding="0" cellspacing="0">
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Adı </ui:define>
 								<h:inputText value="#{personelIzinGirisiHome.aramaSecenekleri.ad}" size="35" />
@@ -43,7 +43,7 @@
 
 
 						</h:panelGrid>
-						<ui:fragment rendered="#{personelIzinGirisiHome.visibled==true}">
+						<ui:fragment rendered="#{personelIzinGirisiHome.visibled == true}">
 							<s:decorate template="/layout/edit.xhtml">
 								<a4j:commandButton status="ajaxStatus" action="#{personelIzinGirisiHome.fillPersonelList(null)}" value="Personel Ara"
 									reRender="personelKullaniciAramaList" />
@@ -51,7 +51,7 @@
 							<a4j:commandButton status="ajaxStatus" action="#{personelIzinGirisiHome.kapat}" value="Kapat"
 								reRender="idPersonelKullaniciAramaHome,idPersonelGirisForm" image="/img/close.png" />
 						</ui:fragment>
-						<a4j:outputPanel id="personelKullaniciAramaList" cellpadding="0" cellspacing="0" rendered="#{personelIzinGirisiHome.visibled==true}">
+						<a4j:outputPanel id="personelKullaniciAramaList" cellpadding="0" cellspacing="0" rendered="#{personelIzinGirisiHome.visibled == true}">
 
 							<rich:dataTable rowClasses="acik,koyu" rendered="#{not empty personelIzinGirisiHome.personelList}"
 								value="#{personelIzinGirisiHome.personelList}" var="personelView" rows="20" rowKeyVar="row" id="personelViewTable">
@@ -68,7 +68,7 @@
 									</f:facet>
 									<a4j:commandButton status="ajaxStatus" alt="Personel seç" image="/img/ok.gif" reRender="idPersonelKullaniciAramaHome,idPersonelGirisForm"
 										action="#{personelIzinGirisiHome.tekPersonelSecimIslemi(personelView)}" />
-									<ui:fragment rendered="#{personelIzinGirisiHome.donusAdres!=''}">
+									<ui:fragment rendered="#{personelIzinGirisiHome.donusAdres != ''}">
 										<f:verbatim>#{personelIzinGirisiHome.donusAdres}</f:verbatim>
 									</ui:fragment>
 								</rich:column>
@@ -104,14 +104,14 @@
 								</f:facet>
 							</rich:dataTable>
 							<a4j:commandButton status="ajaxStatus"
-								rendered="#{personelIzinGirisiHome.checkBox and  personelIzinGirisiHome.personelArama and not empty personelIzinGirisiHome.personelList }"
+								rendered="#{personelIzinGirisiHome.checkBox and personelIzinGirisiHome.personelArama and not empty personelIzinGirisiHome.personelList }"
 								action="#{personelIzinGirisiHome.checkBoxSecimDevam(personelIzinGirisiHome.personelList)}" value="Devam Et"
 								reRender="#{personelIzinGirisiHome.reRender}" />
 						</a4j:outputPanel>
 					</h:panelGrid>
 
 					<a4j:commandButton status="ajaxStatus" id="idPersonelAramaForm" value="Personel Seçin"
-						rendered="#{not empty authenticatedUser.yetkiTumPersonelNoList and personelIzinGirisiHome.visibled==false and (authenticatedUser.izinGirebilir or ortakIslemler.getParameterKey('izinERPUpdate')!='1')}"
+						rendered="#{not empty authenticatedUser.yetkiTumPersonelNoList and personelIzinGirisiHome.visibled == false and (authenticatedUser.izinGirebilir or ortakIslemler.getParameterKey('izinERPUpdate') != '1')}"
 						immediate="true" limitToList="true" action="#{personelIzinGirisiHome.personelArama('izinGirisForm')}"
 						reRender="idPersonelKullaniciAramaHome,idPersonelAramaForm,idPersonelGirisForm" />
 
@@ -119,13 +119,13 @@
 			</rich:panel>
 		</h:form>
 		
-		<a4j:outputPanel id="idPersonelGirisForm" rendered="#{authenticatedUser.izinGirebilir or ortakIslemler.getParameterKey('izinERPUpdate')!='1'}">
+		<a4j:outputPanel id="idPersonelGirisForm" rendered="#{authenticatedUser.izinGirebilir or ortakIslemler.getParameterKey('izinERPUpdate') != '1'}">
 			<h:form>
-				<ui:fragment rendered="#{personelIzinGirisiHome.donusAdres!=null}">
+				<ui:fragment rendered="#{personelIzinGirisiHome.donusAdres != null}">
 					<br />
 					<f:verbatim>#{personelIzinGirisiHome.donusAdres}</f:verbatim>
 				</ui:fragment>
-				<h:panelGrid id="izinGirisi" rendered="#{personelIzinGirisiHome.visibled==false and personelIzinGirisiHome.personel!=null}" columns="2">
+				<h:panelGrid id="izinGirisi" rendered="#{personelIzinGirisiHome.visibled == false and personelIzinGirisiHome.personel != null}" columns="2">
 					<s:decorate template="/layout/edit.xhtml">
 						<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
 						<h:outputText value="#{personelIzinGirisiHome.personel.sicilNo}" />
@@ -134,21 +134,21 @@
 						<ui:define name="label">Adı Soyadı</ui:define>
 						<h:outputText value="#{personelIzinGirisiHome.personel.adSoyad}" />
 					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.personel.izinHakEdisTarihi!=null}">
+					<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.personel.izinHakEdisTarihi != null}">
 						<ui:define name="label">izin Hakkediş Tarihi</ui:define>
 						<h:outputText value="#{authenticatedUser.dateFormatla(personelIzinGirisiHome.personel.izinHakEdisTarihi)}" />
 					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.personel.izinHakEdisTarihi!=null}">
+					<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.personel.izinHakEdisTarihi != null}">
 						<ui:define name="label">Kıdemi</ui:define>
 						<h:outputText rendered="#{personelIzinGirisiHome.kidemYil>0}" value="#{personelIzinGirisiHome.kidemYil} Yil " />
 						<h:outputText rendered="#{personelIzinGirisiHome.kidemAy>0}" value="#{personelIzinGirisiHome.kidemAy} Ay " />
 						<h:outputText rendered="#{personelIzinGirisiHome.kidemGun>0}" value="#{personelIzinGirisiHome.kidemGun} Gün " />
 					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.personel.dogumTarihi!=null}">
+					<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.personel.dogumTarihi != null}">
 						<ui:define name="label">Doğum Tarihi</ui:define>
 						<h:outputText value="#{authenticatedUser.dateFormatla(personelIzinGirisiHome.personel.dogumTarihi)}" />
 					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.personel.dogumTarihi!=null}">
+					<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.personel.dogumTarihi != null}">
 						<ui:define name="label">Yaş</ui:define>
 						<h:outputText rendered="#{personelIzinGirisiHome.yasYil>0}" value="#{personelIzinGirisiHome.yasYil} Yil " />
 						<h:outputText rendered="#{personelIzinGirisiHome.yasAy>0}" value="#{personelIzinGirisiHome.yasAy} Ay " />
@@ -163,7 +163,7 @@
 				</h:panelGrid>
 
 				<h:panelGrid columns="1"
-					rendered="#{personelIzinGirisiHome.visibled==false and personelIzinGirisiHome.personel!=null and personelIzinGirisiHome.izinTipiList!=null and personelIzinGirisiHome.izinTipiList.size()>0}">
+					rendered="#{personelIzinGirisiHome.visibled == false and personelIzinGirisiHome.personel != null and personelIzinGirisiHome.izinTipiList != null and personelIzinGirisiHome.izinTipiList.size()>0}">
 
 					<h:panelGrid columns="1" cellpadding="0" cellspacing="0">
 						<h:panelGrid columns="2" id="seciliIzinTipi">
@@ -190,7 +190,7 @@
 							</a4j:outputPanel>
 						</h:panelGrid>
 						<a4j:outputPanel id="radioAlan" cellpadding="0" cellspacing="0">
-							<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.seciliIzinTipi!=null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.seciliIzinTipi != null}">
 								<ui:define name="label">Açıklama</ui:define>
 								<h:inputTextarea value="#{personelIzinGirisiHome.seciliIzinTipi.mesaj}" cols="80" rows="5" disabled="true" />
 							</s:decorate>
@@ -209,7 +209,7 @@
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">İzin Başlangıç Zamanı</ui:define>
 									<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{personelIzinGirisiHome.instance.baslangicZamani}"
-										showWeekDaysBar="false" showWeeksBar="false" disabled="#{personelIzinGirisiHome.seciliIzinTipi==null}">
+										showWeekDaysBar="false" showWeeksBar="false" disabled="#{personelIzinGirisiHome.seciliIzinTipi == null}">
 										<a4j:support event="onchanged" action="#{ortakIslemler.emtpyAjaxFunction()}" ajaxSingle="true" status="ajaxStatus" reRender="izinTipiAlan" />
 									</rich:calendar>
 								</s:decorate>
@@ -227,7 +227,7 @@
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">İşe Başlama Zamanı</ui:define>
 									<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{personelIzinGirisiHome.instance.bitisZamani}" showWeekDaysBar="false"
-										showWeeksBar="false" disabled="#{personelIzinGirisiHome.seciliIzinTipi==null}">
+										showWeeksBar="false" disabled="#{personelIzinGirisiHome.seciliIzinTipi == null}">
 										<a4j:support event="onchanged" action="#{ortakIslemler.emtpyAjaxFunction()}" ajaxSingle="true" status="ajaxStatus" reRender="izinTipiAlan" />
 									</rich:calendar>
 								</s:decorate>
@@ -252,8 +252,8 @@
 							#{messages['pdks.genel.etiket.kalanKarakterSayisi']}: <SPAN id="Counter">#{255 - personelIzinGirisiHome.instance.aciklama.length()}</SPAN>
 								<br />
 								<rich:spacer width="5px;" />
-								<h:inputTextarea value="#{personelIzinGirisiHome.instance.aciklama}" required="#{personelIzinGirisiHome.seciliIzinTipi!=null}"
-									requiredMessage="İzin açıklaması giriniz" rows="4" disabled="#{personelIzinGirisiHome.seciliIzinTipi==null}" cols="80"
+								<h:inputTextarea value="#{personelIzinGirisiHome.instance.aciklama}" required="#{personelIzinGirisiHome.seciliIzinTipi != null}"
+									requiredMessage="İzin açıklaması giriniz" rows="4" disabled="#{personelIzinGirisiHome.seciliIzinTipi == null}" cols="80"
 									onkeypress="return limitText(this,255,'Counter')" onkeyup="return limitText(this,255, 'Counter')" />
 
 							</s:decorate>
@@ -268,7 +268,7 @@
 									<ui:define name="label">Teşhis</ui:define>
 									<h:inputText value="#{personelIzinGirisiHome.istirahat.teshis}" required="true" requiredMessage="Teşhis giriniz!" />
 								</s:decorate>
- 							<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.seciliIzinTipi!=null}">
+ 							<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.seciliIzinTipi != null}">
 									<ui:define name="label">Rapor Kaynağı</ui:define>
 									<h:selectOneMenu value="#{personelIzinGirisiHome.istirahat.raporKaynagi}" required="true" requiredMessage="Rapor kaynağı seçiniz">
 										<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -277,12 +277,12 @@
 									</h:selectOneMenu>
 								</s:decorate>
 								<a4j:outputPanel id="istirahatVeren">
-									<ui:fragment rendered="#{personelIzinGirisiHome.istirahat.raporKaynagi!=null}">
-										<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.istirahat.hastane==false}">
+									<ui:fragment rendered="#{personelIzinGirisiHome.istirahat.raporKaynagi != null}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.istirahat.hastane == false}">
 											<ui:define name="label">Veren Kurum</ui:define>
 											<h:inputText value="#{personelIzinGirisiHome.istirahat.verenKurum}" required="true" requiredMessage="Veren kurum giriniz!" />
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.istirahat.hastane==true}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.istirahat.hastane == true}">
 											<ui:define name="label">Veren Hekim Adı</ui:define>
 											<h:inputText value="#{personelIzinGirisiHome.istirahat.verenHekimAdi}" required="true" requiredMessage="Veren hekim adı giriniz!" />
 										</s:decorate>
@@ -294,7 +294,7 @@
 					</a4j:outputPanel>
 					<a4j:outputPanel id="dosyaPaneli">
 						<rich:panel header="#{personelIzinGirisiHome.seciliIzinTipi.izinTipiTanim.aciklama} Dosya Ekleme"
-							rendered="#{personelIzinGirisiHome.seciliIzinTipi.dosyaEkle==true}">
+							rendered="#{personelIzinGirisiHome.seciliIzinTipi.dosyaEkle == true}">
 							<h:panelGrid columns="1" style="width:700px;">
 								<a4j:outputPanel id="fileUpload">
 									<rich:fileUpload id="dosyaSifirla" fileUploadListener="#{personelIzinGirisiHome.listenerIzinDosya}" listHeight="50px" listWidth="300px"
@@ -306,7 +306,7 @@
 									</rich:fileUpload>
 								</a4j:outputPanel>
 								<a4j:outputPanel id="izinDosya">
-									<ui:fragment rendered="#{personelIzinGirisiHome.izinDosya.dosya.dosyaIcerik!=null}">
+									<ui:fragment rendered="#{personelIzinGirisiHome.izinDosya.dosya.dosyaIcerik != null}">
 										<h:panelGrid columns="2">
 											<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="dosyaPaneli" ajaxSingle="true"
 												action="#{personelIzinGirisiHome.izinDosyaSifirla}" />
@@ -320,7 +320,7 @@
 
 					<s:decorate template="/layout/edit.xhtml" id="izinKaydet">
 						<a4j:commandButton value="İzin Kaydet" status="ajaxStatus" ajaxSingle="true" action="#{personelIzinGirisiHome.kaydetBasla()}"
-							rendered="#{personelIzinGirisiHome.izinliSahibi!=null}" disabled="#{personelIzinGirisiHome.seciliIzinTipi==null}"
+							rendered="#{personelIzinGirisiHome.izinliSahibi != null}" disabled="#{personelIzinGirisiHome.seciliIzinTipi == null}"
 							reRender="idPersonelGirisForm,izinListPanel,bakiyeYetersizPanel" onclick="#{rich:component('wait')}.show()"
 							oncomplete="#{rich:component('wait')}.hide();if (#{personelIzinGirisiHome.bakiyeYetersizGoster}) { #{rich:component('bakiyeYetersizPanel')}.show();}">
 
@@ -365,7 +365,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{ortakIslemler.tesisDurumu and (authenticatedUser.admin or authenticatedUser.IKAdmin)  and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size()==1 and not empty personelIzinGirisiHome.aramaListeSecenekleri.tesisList}">
+						rendered="#{ortakIslemler.tesisDurumu and (authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size() == 1 and not empty personelIzinGirisiHome.aramaListeSecenekleri.tesisList}">
 						<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 						<h:selectOneMenu value="#{personelIzinGirisiHome.aramaListeSecenekleri.tesisId}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -373,7 +373,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size()==1  and personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.containsKey('ekSaha1')}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size() == 1 and personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.containsKey('ekSaha1')}">
 						<ui:define name="label">#{personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.get('ekSaha1').aciklama}</ui:define>
 						<h:selectOneMenu value="#{personelIzinGirisiHome.aramaListeSecenekleri.ekSaha1Id}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -381,7 +381,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size()==1  and personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.containsKey('ekSaha2')}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size() == 1 and personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.containsKey('ekSaha2')}">
 						<ui:define name="label">#{personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.get('ekSaha2').aciklama}</ui:define>
 						<h:selectOneMenu value="#{personelIzinGirisiHome.aramaListeSecenekleri.ekSaha2Id}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -389,7 +389,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size()==1  and personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.containsKey('ekSaha3')}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size() == 1 and personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.containsKey('ekSaha3')}">
 						<ui:define name="label">#{personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.get('ekSaha3').aciklama}</ui:define>
 						<h:selectOneMenu value="#{personelIzinGirisiHome.aramaListeSecenekleri.ekSaha3Id}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -397,7 +397,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size()==1  and personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.containsKey('ekSaha4')}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size() == 1 and personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.containsKey('ekSaha4')}">
 						<ui:define name="label">#{personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.get('ekSaha4').aciklama}</ui:define>
 						<h:selectOneMenu value="#{personelIzinGirisiHome.aramaListeSecenekleri.ekSaha4Id}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -455,7 +455,7 @@
 									</a4j:commandButton>
 
 
-									<a4j:commandButton image="/img/delete.png" title="İptal" rendered="#{izin.girilen==false}" status="ajaxStatus" id="iptalERLink"
+									<a4j:commandButton image="/img/delete.png" title="İptal" rendered="#{izin.girilen == false}" status="ajaxStatus" id="iptalERLink"
 										reRender="deleteERPPanel" action="#{personelIzinGirisiHome.izinKontrol(izin)}"
 										oncomplete="if (#{personelIzinGirisiHome.izinIptalGoster}) #{rich:component('deleteERPPanel')}.show()">
 
@@ -463,12 +463,12 @@
 								</ui:fragment>
 							</rich:column>
 							<rich:column style="text-align:center"
-								rendered="#{personelIzinGirisiHome.izinERPGiris==false and ((ortakIslemler.getParameterKey('izinERPDelete')=='1' and   authenticatedUser.IK ) or authenticatedUser.admin )}">
+								rendered="#{personelIzinGirisiHome.izinERPGiris == false and ((ortakIslemler.getParameterKey('izinERPDelete') == '1' and authenticatedUser.IK ) or authenticatedUser.admin )}">
 								<f:facet name="header">
 				                        İşlemler
 				                </f:facet>
 
-								<ui:fragment rendered="#{izin.girilen==false}">
+								<ui:fragment rendered="#{izin.girilen == false}">
 									<a4j:commandButton image="/img/delete.png" title="İptal" rendered="#{izin.isIptalEdilirmi(authenticatedUser)}" status="ajaxStatus"
 										id="iptalLink" reRender="deleteERPPanel" action="#{personelIzinGirisiHome.izinKontrol(izin)}"
 										oncomplete="if (#{personelIzinGirisiHome.izinIptalGoster}) #{rich:component('deleteERPPanel')}.show()">
@@ -508,14 +508,14 @@
 								<h:outputText value="#{izin.izinSahibi.tesis.aciklama}" />
 							</rich:column>
 							<rich:column
-								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size()==1 and personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.containsKey('ekSaha1') and ortakIslemler.getListEkSahaDurum(personelIzinGirisiHome.personelIzinList,'1') }">
+								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size() == 1 and personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.containsKey('ekSaha1') and ortakIslemler.getListEkSahaDurum(personelIzinGirisiHome.personelIzinList,'1') }">
 								<f:facet name="header">
 									<h:outputText value="#{personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.get('ekSaha1').aciklama}" />
 								</f:facet>
 								<h:outputText value="#{izin.izinSahibi.ekSaha1.aciklama}" />
 							</rich:column>
 							<rich:column
-								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size()==1 and personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.containsKey('ekSaha2') and ortakIslemler.getListEkSahaDurum(personelIzinGirisiHome.personelIzinList,'2') }">
+								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size() == 1 and personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.containsKey('ekSaha2') and ortakIslemler.getListEkSahaDurum(personelIzinGirisiHome.personelIzinList,'2') }">
 								<f:facet name="header">
 									<h:outputText value="#{personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.get('ekSaha2').aciklama}" />
 								</f:facet>
@@ -529,7 +529,7 @@
 								<h:outputText value="#{izin.izinSahibi.ekSaha3.aciklama}" />
 							</rich:column>
 							<rich:column
-								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size()==1 and personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.containsKey('ekSaha4') and ortakIslemler.getListEkSahaDurum(personelIzinGirisiHome.personelIzinList,'4') }">
+								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelIzinGirisiHome.aramaListeSecenekleri.departmanIdList.size() == 1 and personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.containsKey('ekSaha4') and ortakIslemler.getListEkSahaDurum(personelIzinGirisiHome.personelIzinList,'4') }">
 								<f:facet name="header">
 									<h:outputText value="#{personelIzinGirisiHome.aramaListeSecenekleri.ekSahaTanimMap.get('ekSaha4').aciklama}" />
 								</f:facet>
@@ -587,18 +587,18 @@
 								</f:facet>
 								<h:outputText value="#{izin.sonIslemTarihiStr}" id="islemTarihi" />
 								<rich:toolTip for="islemTarihi"
-									rendered="#{izin.olusturmaTarihi!=null and izin.guncellemeTarihi!=null and (authenticatedUser.IK or authenticatedUser.admin)}">
+									rendered="#{izin.olusturmaTarihi != null and izin.guncellemeTarihi != null and (authenticatedUser.IK or authenticatedUser.admin)}">
 									<h:outputText value="Oluşturma tarihi : #{authenticatedUser.dateTimeLongFormatla(izin.olusturmaTarihi)}" />
 								</rich:toolTip>
 							</rich:column>
-							<rich:column rendered="#{authenticatedUser.izinGirebilir or ortakIslemler.getParameterKey('izinERPUpdate')!='1'}">
+							<rich:column rendered="#{authenticatedUser.izinGirebilir or ortakIslemler.getParameterKey('izinERPUpdate') != '1'}">
 								<f:facet name="header">
 									<h:outputText value="İşlem" />
 								</f:facet>
 								<h:panelGrid columns="3" rendered="#{izin.izinTipi.departman.izinGirilebilir}">
 									<a4j:commandButton title="Onay Akışı" image="/img/middle.gif" status="ajaxStatus" ajaxSingle="true"
 										action="#{personelIzinGirisiHome.onayAkisiGoster(izin)}"
-										rendered="#{izin.izinTipi.onaysiz==false and (authenticatedUser.admin or authenticatedUser.IK)}"
+										rendered="#{izin.izinTipi.onaysiz == false and (authenticatedUser.admin or authenticatedUser.IK)}"
 										oncomplete="#{rich:component('onayPanel')}.show()" reRender="onayPanel" />
 									<h:commandButton target="blank" image="/img/down.gif" title="#{izin.dosya.dosyaAdi} indir" ajaxSingle="true"
 										action="#{ortakIslemler.downloadFile(izin.dosya,false)}" rendered="#{authenticatedUser.admin and personelIzinGirisiHome.getIzinDosya(izin)}" />
@@ -622,20 +622,20 @@
 
 
 							<rich:column
-								rendered="#{(authenticatedUser.izinGirebilir or authenticatedUser.admin or authenticatedUser.IK) and ortakIslemler.getParameterKey('izinERPUpdate')!='1'}">
+								rendered="#{(authenticatedUser.izinGirebilir or authenticatedUser.admin or authenticatedUser.IK) and ortakIslemler.getParameterKey('izinERPUpdate') != '1'}">
 								<f:facet name="header">
 				                        İzin Kağıdı 
 				                </f:facet>
-								<h:panelGrid columns="1" rendered="#{izin.izinTipi.departman.izinGirilebilir and izin.pdfMi and izin.izinTipi.izinKagidiGeldi==true}">
+								<h:panelGrid columns="1" rendered="#{izin.izinTipi.departman.izinGirilebilir and izin.pdfMi and izin.izinTipi.izinKagidiGeldi == true}">
 									<a4j:commandLink status="ajaxStatus"
-										rendered="#{izin.izinKagidiGeldi!=true and izin.redmi==false and izin.izinSahibi.sirket.departman.id==authenticatedUser.departman.id}"
+										rendered="#{izin.izinKagidiGeldi != true and izin.redmi == false and izin.izinSahibi.sirket.departman.id == authenticatedUser.departman.id}"
 										title="İzin Kağıdı Gelmedi" ajaxSingle="true" id="izinKagidiLink" oncomplete="#{rich:component('editPanelIzinKagidi')}.show()"
 										reRender="editPanelIzinKagidi">
 										<h:graphicImage value="/img/msgerror.png" style="border:0" />
 										<f:setPropertyActionListener value="#{izin}" target="#{personelIzinGirisiHome.guncellenecekIzin}" />
 
 									</a4j:commandLink>
-									<a4j:commandButton status="ajaxStatus" image="/img/ok.gif" rendered="#{izin.izinKagidiGeldi==true and izin.redmi==false}"
+									<a4j:commandButton status="ajaxStatus" image="/img/ok.gif" rendered="#{izin.izinKagidiGeldi == true and izin.redmi == false}"
 										title="İzin Kağıdı Geldi" />
 								</h:panelGrid>
 							</rich:column>
@@ -743,7 +743,7 @@
 						</h:panelGrid>
 
 						<rich:dataTable rowClasses="acik,koyu" value="#{personelIzinGirisiHome.mailIzin.personelIzinOnayList}"
-							rendered="#{personelIzinGirisiHome.mailIzin!=null}" var="onay" rows="20" rowKeyVar="row">
+							rendered="#{personelIzinGirisiHome.mailIzin != null}" var="onay" rows="20" rowKeyVar="row">
 							<f:facet name="header">
 
 								<h:outputText value="Onaylayanlar" />
@@ -810,7 +810,7 @@
 
 		<rich:modalPanel id="bakiyeYetersizPanel" autosized="true" width="600">
 			<f:facet name="header">
-				<ui:fragment rendered="#{personelIzinGirisiHome.bakiyeYetersiz!=null and personelIzinGirisiHome.bakiyeYetersiz}">
+				<ui:fragment rendered="#{personelIzinGirisiHome.bakiyeYetersiz != null and personelIzinGirisiHome.bakiyeYetersiz}">
 					<h:outputText
 						value="#{personelIzinGirisiHome.instance.izinTipiAciklama}- #{personelIzinGirisiHome.instance.izinSahibi.adSoyad} Bakiye İzin Onaylama" />
 				</ui:fragment>
@@ -874,7 +874,7 @@
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<a4j:commandButton status="ajaxStatus" value="OK" action="#{personelIzinGirisiHome.onaylamaIslemi}" reRender="izinListPanel"
-									oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanelIzinKagidi')}.hide();" />
+									oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanelIzinKagidi')}.hide();" />
 							</s:decorate>
 						</h:panelGrid>
 
@@ -895,7 +895,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" styleClass="hidelink">
 							<a4j:support event="onclick" action="#{personelIzinGirisiHome.guncellenenIzinSifirla}"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" reRender="idPersonelGirisForm,izinListPanel" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" reRender="idPersonelGirisForm,izinListPanel" />
 						</h:graphicImage>
 					</h:form>
 				</h:panelGroup>
@@ -941,7 +941,7 @@
 					</h:panelGrid>
 					<a4j:outputPanel id="radioAlan2" cellpadding="0" cellspacing="0">
 						<h:panelGrid columns="1" cellpadding="0" cellspacing="0">
-							<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.guncellenecekIzin.izinTipi!=null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.guncellenecekIzin.izinTipi != null}">
 								<ui:define name="label">Açıklama</ui:define>
 								<h:inputTextarea value="#{personelIzinGirisiHome.guncellenecekIzin.izinTipi.mesaj}" cols="80" rows="5" disabled="true" />
 							</s:decorate>
@@ -1020,7 +1020,7 @@
 								</s:decorate>
 
 
-								<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.guncellenecekIzin.izinTipi!=null}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.guncellenecekIzin.izinTipi != null}">
 									<ui:define name="label">Rapor Kaynağı</ui:define>
 									<h:selectOneMenu value="#{personelIzinGirisiHome.istirahat.raporKaynagi}" required="true" requiredMessage="Rapor kaynağı seçiniz">
 										<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -1029,8 +1029,8 @@
 									</h:selectOneMenu>
 								</s:decorate>
 								<a4j:outputPanel id="istirahatVeren2">
-									<ui:fragment rendered="#{personelIzinGirisiHome.istirahat.raporKaynagi!=null}">
-										<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.istirahat.hastane==false}">
+									<ui:fragment rendered="#{personelIzinGirisiHome.istirahat.raporKaynagi != null}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.istirahat.hastane == false}">
 											<ui:define name="label">Veren Kurum</ui:define>
 											<h:inputText value="#{personelIzinGirisiHome.istirahat.verenKurum}" required="true" requiredMessage="Veren kurum giriniz!" />
 										</s:decorate>
@@ -1046,7 +1046,7 @@
 					</a4j:outputPanel>
 					<a4j:outputPanel id="dosyaPaneli2">
 						<rich:panel header="#{personelIzinGirisiHome.guncellenecekIzin.izinTipi.izinTipiTanim.aciklama} Dosya Ekleme"
-							rendered="#{personelIzinGirisiHome.guncellenecekIzin.izinTipi.dosyaEkle==true}">
+							rendered="#{personelIzinGirisiHome.guncellenecekIzin.izinTipi.dosyaEkle == true}">
 							<h:panelGrid columns="1" style="width:700px;">
 								<a4j:outputPanel id="fileUpload2">
 									<rich:fileUpload id="dosyaSifirla2" fileUploadListener="#{personelIzinGirisiHome.listenerIzinDosya}" listHeight="50px" listWidth="300px"
@@ -1058,7 +1058,7 @@
 									</rich:fileUpload>
 								</a4j:outputPanel>
 								<a4j:outputPanel id="izinDosya2">
-									<ui:fragment rendered="#{personelIzinGirisiHome.izinDosya.dosya.dosyaIcerik!=null}">
+									<ui:fragment rendered="#{personelIzinGirisiHome.izinDosya.dosya.dosyaIcerik != null}">
 										<h:panelGrid columns="2">
 											<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="dosyaPaneli2" ajaxSingle="true"
 												action="#{personelIzinGirisiHome.izinDosyaSifirla}" />
@@ -1090,7 +1090,7 @@
 				<a4j:outputPanel ajaxRendered="true">
 					<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 				</a4j:outputPanel>
-				<ui:fragment rendered="#{personelIzinGirisiHome.guncellenecekIzin!=null}">
+				<ui:fragment rendered="#{personelIzinGirisiHome.guncellenecekIzin != null}">
 					<h:panelGrid columns="2">
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
@@ -1135,9 +1135,9 @@
 					<tbody>
 						<tr>
 							<td align="center" width="20%"><a4j:commandButton status="ajaxStatus" value="Evet"
-									rendered="#{personelIzinGirisiHome.guncellenecekIzin!=null}"
+									rendered="#{personelIzinGirisiHome.guncellenecekIzin != null}"
 									action="#{personelIzinGirisiHome.izinERPIptal(personelIzinGirisiHome.guncellenecekIzin)}"
-									oncomplete="if (#{personelIzinGirisiHome.izinIptalGoster==false}) #{rich:component('deleteERPPanel')}.hide();"
+									oncomplete="if (#{personelIzinGirisiHome.izinIptalGoster == false}) #{rich:component('deleteERPPanel')}.hide();"
 									reRender="izinListPanel,izinTable,pgrowl" /> <a4j:commandButton status="ajaxStatus" value="Vazgeç"
 									oncomplete="#{rich:component('deleteERPPanel')}.hide();" /></td>
 						</tr>
@@ -1160,7 +1160,7 @@
 				<a4j:outputPanel ajaxRendered="true">
 					<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 				</a4j:outputPanel>
-				<ui:fragment rendered="#{personelIzinGirisiHome.guncellenecekIzin!=null}">
+				<ui:fragment rendered="#{personelIzinGirisiHome.guncellenecekIzin != null}">
 					<h:panelGrid columns="2">
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
@@ -1202,10 +1202,10 @@
 					</h:panelGrid>
 				</ui:fragment>
 
-				<ui:fragment rendered="#{personelIzinGirisiHome.guncellenecekIzin.iptalEdilir==false}">
+				<ui:fragment rendered="#{personelIzinGirisiHome.guncellenecekIzin.iptalEdilir == false}">
 					<h:outputText style="color:red" value="Denkleştirmesi dönemi kapatılmış bir izni iptal edemezsiniz!" />
 				</ui:fragment>
-				<ui:fragment rendered="#{personelIzinGirisiHome.guncellenecekIzin.iptalEdilir==true}">
+				<ui:fragment rendered="#{personelIzinGirisiHome.guncellenecekIzin.iptalEdilir == true}">
 
 					<table width="100%">
 						<tbody>
@@ -1234,7 +1234,7 @@
 							<tr>
 								<td align="center" width="20%"><a4j:commandButton status="ajaxStatus" value="Evet"
 										action="#{personelIzinGirisiHome.izinIptal(personelIzinGirisiHome.guncellenecekIzin)}"
-										oncomplete="if (#{personelIzinGirisiHome.izinIptalGoster==false}) #{rich:component('deletePanel')}.hide();"
+										oncomplete="if (#{personelIzinGirisiHome.izinIptalGoster == false}) #{rich:component('deletePanel')}.hide();"
 										reRender="izinListPanel,izinTable,pgrowl" /> <a4j:commandButton status="ajaxStatus" value="Vazgeç"
 										oncomplete="#{rich:component('deletePanel')}.hide();" /></td>
 							</tr>
@@ -1256,10 +1256,10 @@
 				</h:panelGroup>
 			</f:facet>
 			<h:form>
-				<h:outputText value="İzin tipi seçiniz!" style="color:red" rendered="#{personelIzinGirisiHome.seciliIzinTipi.id==null}" />
+				<h:outputText value="İzin tipi seçiniz!" style="color:red" rendered="#{personelIzinGirisiHome.seciliIzinTipi.id == null}" />
 				<h:inputTextarea value="#{personelIzinGirisiHome.seciliIzinTipi.mesaj} #{personelIzinGirisiHome.instance.aciklama}" readonly="true" rows="5"
 					cols="80" />
-				<ui:fragment rendered="#{personelIzinGirisiHome.seciliIzinTipi.id!=null}">
+				<ui:fragment rendered="#{personelIzinGirisiHome.seciliIzinTipi.id != null}">
 					<table width="100%">
 						<tbody>
 							<tr>

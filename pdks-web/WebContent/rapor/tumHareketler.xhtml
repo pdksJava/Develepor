@@ -155,7 +155,7 @@
 									<h:outputText value="Kapi Tipi" />
 
 								</f:facet>
-								<ui:fragment rendered="#{hareketler.kapiView.kapi!=null }">
+								<ui:fragment rendered="#{hareketler.kapiView.kapi != null }">
 									<h:outputText value="#{hareketler.kapiView.kapi.tipi.aciklama}" />
 								</ui:fragment>
 							</rich:column>
@@ -164,7 +164,7 @@
 									<f:facet name="header">
 										<h:outputText value="Vardiya Tarihi" />
 									</f:facet>
-									<ui:fragment rendered="#{hareketler.vardiyaGun!=null }">
+									<ui:fragment rendered="#{hareketler.vardiyaGun != null }">
  										#{authenticatedUser.dateFormatla(hareketler.vardiyaGun.vardiyaDate )}
  									</ui:fragment>
 								</rich:column>
@@ -172,14 +172,14 @@
 									<f:facet name="header">
 										<h:outputText value="Vardiya Adı" />
 									</f:facet>
-									<ui:fragment rendered="#{hareketler.vardiyaGun!=null}">
+									<ui:fragment rendered="#{hareketler.vardiyaGun != null}">
 	 									#{hareketler.vardiyaGun.vardiya.kisaAdi}</ui:fragment>
 								</rich:column>
 								<rich:column style="text-align:center">
 									<f:facet name="header">
 										<h:outputText value="Vardiya Başlama Zamanı" />
 									</f:facet>
-									<ui:fragment rendered="#{hareketler.vardiyaGun!=null and hareketler.vardiyaGun.vardiya.calisma}">
+									<ui:fragment rendered="#{hareketler.vardiyaGun != null and hareketler.vardiyaGun.vardiya.calisma}">
 										 
 										#{authenticatedUser.timeFormatla(hareketler.vardiyaGun.islemVardiya.vardiyaBasZaman )}
  									</ui:fragment>
@@ -189,7 +189,7 @@
 									<f:facet name="header">
 										<h:outputText value="Vardiya Bitiş Zamanı" />
 									</f:facet>
-									<ui:fragment rendered="#{hareketler.vardiyaGun!=null and hareketler.vardiyaGun.vardiya.calisma}">
+									<ui:fragment rendered="#{hareketler.vardiyaGun != null and hareketler.vardiyaGun.vardiya.calisma}">
  										#{authenticatedUser.timeFormatla(hareketler.vardiyaGun.islemVardiya.vardiyaBitZaman )}
   									</ui:fragment>
 								</rich:column>
@@ -212,7 +212,7 @@
 									<f:facet name="header">
 										<h:outputText value="Orjinal Zamanı " />
 									</f:facet>
-									<ui:fragment rendered="#{hareketler.islem!=null and hareketler.kgsZaman!=null}">
+									<ui:fragment rendered="#{hareketler.islem != null and hareketler.kgsZaman != null}">
 										<h:outputText value="#{authenticatedUser.dateTimeFormatla(hareketler.kgsZaman)}" />
 									</ui:fragment>
 								</rich:column>
@@ -220,7 +220,7 @@
 									<f:facet name="header">
 										<h:outputText value="İşlem Yapan " />
 									</f:facet>
-									<ui:fragment rendered="#{hareketler.islem!=null or hareketler.sirket=='K'}">
+									<ui:fragment rendered="#{hareketler.islem != null or hareketler.sirket == 'K'}">
 										<h:outputText value="#{hareketler.islem.guncelleyenUser.adSoyad}" />
 									</ui:fragment>
 								</rich:column>

@@ -25,7 +25,7 @@
 
 
 					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.aramaSecenekleri.sirketIdList!=null}">
+					<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.aramaSecenekleri.sirketIdList != null}">
 						<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 						<h:selectOneMenu id="sirketSec" value="#{personelFazlaMesaiHome.aramaSecenekleri.sirketId}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -35,7 +35,7 @@
 								ajaxSingle="true" reRender="hareketPanel,girisler" />
 						</h:selectOneMenu>
 					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.bolumDepartmanlari!=null}">
+					<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.bolumDepartmanlari != null}">
 						<ui:define name="label">#{personelFazlaMesaiHome.bolumAciklama}</ui:define>
 						<h:selectOneMenu value="#{personelFazlaMesaiHome.aramaSecenekleri.ekSaha3Id}" required="true"
 							requiredMessage="#{personelFazlaMesaiHome.bolumAciklama} seçiniz!">
@@ -49,7 +49,7 @@
 
 
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{ortakIslemler.tesisDurumu and personelFazlaMesaiHome.aramaSecenekleri.tesisList!=null and not empty personelFazlaMesaiHome.aramaSecenekleri.tesisList}">
+							rendered="#{ortakIslemler.tesisDurumu and personelFazlaMesaiHome.aramaSecenekleri.tesisList != null and not empty personelFazlaMesaiHome.aramaSecenekleri.tesisList}">
 							<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 							<h:selectOneMenu value="#{personelFazlaMesaiHome.aramaSecenekleri.tesisId}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -57,28 +57,28 @@
 							</h:selectOneMenu>
 						</s:decorate>
 
-						<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha1!=null}">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha1 != null}">
 							<ui:define name="label">#{personelFazlaMesaiHome.aramaSecenekleri.ekSaha1.aciklama}</ui:define>
 							<h:selectOneMenu value="#{personelFazlaMesaiHome.aramaSecenekleri.ekSaha1Id}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{personelFazlaMesaiHome.aramaSecenekleri.getSelectEkSahaList('ekSaha1')}" />
 							</h:selectOneMenu>
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha2!=null}">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha2 != null}">
 							<ui:define name="label">#{personelFazlaMesaiHome.aramaSecenekleri.ekSaha2.aciklama}</ui:define>
 							<h:selectOneMenu value="#{personelFazlaMesaiHome.aramaSecenekleri.ekSaha2Id}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{personelFazlaMesaiHome.aramaSecenekleri.getSelectEkSahaList('ekSaha2')}" />
 							</h:selectOneMenu>
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha3!=null}">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha3 != null}">
 							<ui:define name="label">#{personelFazlaMesaiHome.aramaSecenekleri.ekSaha3.aciklama}</ui:define>
 							<h:selectOneMenu value="#{personelFazlaMesaiHome.aramaSecenekleri.ekSaha3Id}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{personelFazlaMesaiHome.aramaSecenekleri.getSelectEkSahaList('ekSaha3')}" />
 							</h:selectOneMenu>
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha4!=null}">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha4 != null}">
 							<ui:define name="label">#{personelFazlaMesaiHome.aramaSecenekleri.ekSaha4.aciklama}</ui:define>
 							<h:selectOneMenu value="#{personelFazlaMesaiHome.aramaSecenekleri.ekSaha4Id}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -105,7 +105,7 @@
 							requiredMessage="Tarih giriniz" />
 					</s:decorate>
 					<a4j:commandButton status="ajaxStatus" value="Listele" action="#{personelFazlaMesaiHome.fillHareketMesaiList()}" reRender="hareketPanel" />
-					<ui:fragment rendered="#{personelFazlaMesaiHome.donusAdres!=null}">
+					<ui:fragment rendered="#{personelFazlaMesaiHome.donusAdres != null}">
 						<br />
 						<f:verbatim>#{linkAdres}</f:verbatim>
 					</ui:fragment>
@@ -115,7 +115,7 @@
 
 			<a4j:outputPanel id="hareketPanel">
 				<rich:panel>
-					<ui:fragment rendered="#{personelFazlaMesaiHome.tatil!=null}">
+					<ui:fragment rendered="#{personelFazlaMesaiHome.tatil != null}">
 						<br />
 						<b><h:outputText
 								value="#{personelFazlaMesaiHome.tatil.ad} #{authenticatedUser.dateTimeFormatla(personelFazlaMesaiHome.tatil.basTarih)} - #{authenticatedUser.dateTimeFormatla(personelFazlaMesaiHome.tatil.bitTarih)}" />
@@ -127,27 +127,27 @@
 						</f:facet>
 						<c:if test="${personelFazlaMesaiHome.departman.admin and (authenticatedUser.admin or authenticatedUser.IKAdmin)}">
 							<rich:column
-								rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha1!=null and ortakIslemler.getListEkSahaDurum(personelFazlaMesaiHome.hareketList,'1')}">
+								rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha1 != null and ortakIslemler.getListEkSahaDurum(personelFazlaMesaiHome.hareketList,'1')}">
 								<f:facet name="header">
 									<h:outputText value="#{personelFazlaMesaiHome.aramaSecenekleri.ekSaha1.aciklama}" />
 								</f:facet>
 								<h:outputText value="#{mesai.personel.pdksPersonel.ekSaha1.aciklama}" />
 							</rich:column>
 							<rich:column
-								rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha2!=null and ortakIslemler.getListEkSahaDurum(personelFazlaMesaiHome.hareketList,'1')}">
+								rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha2 != null and ortakIslemler.getListEkSahaDurum(personelFazlaMesaiHome.hareketList,'1')}">
 								<f:facet name="header">
 									<h:outputText value="#{personelFazlaMesaiHome.aramaSecenekleri.ekSaha2.aciklama}" />
 								</f:facet>
 								<h:outputText value="#{mesai.personel.pdksPersonel.ekSaha2.aciklama}" />
 							</rich:column>
-							<rich:column rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha3!=null}">
+							<rich:column rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha3 != null}">
 								<f:facet name="header">
 									<h:outputText value="#{personelFazlaMesaiHome.aramaSecenekleri.ekSaha3.aciklama}" />
 								</f:facet>
 								<h:outputText value="#{mesai.personel.pdksPersonel.ekSaha3.aciklama}" />
 							</rich:column>
 							<rich:column
-								rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha4!=null and ortakIslemler.getListEkSahaDurum(personelFazlaMesaiHome.hareketList,'1')}">
+								rendered="#{personelFazlaMesaiHome.aramaSecenekleri.ekSahaTanimMap.ekSaha4 != null and ortakIslemler.getListEkSahaDurum(personelFazlaMesaiHome.hareketList,'1')}">
 								<f:facet name="header">
 									<h:outputText value="#{personelFazlaMesaiHome.aramaSecenekleri.ekSaha4.aciklama}" />
 								</f:facet>
@@ -214,14 +214,14 @@
 							<f:facet name="header">
 								<h:outputText value="Kapi" />
 							</f:facet>
-							<ui:fragment rendered="#{mesai.kapiView.kapiKGS!=null}">
+							<ui:fragment rendered="#{mesai.kapiView.kapiKGS != null}">
 								<A href="#" id="hareket#{mesai.id}"> <h:outputText value="#{mesai.kapiView.aciklama}" /></A>
 								<rich:toolTip for="hareket#{mesai.id}">
 									<b>Kapi Şirket : </b>
 									<h:outputText value="#{mesai.kapiView.kapiKGS.kapiSirket.aciklama}" />
 								</rich:toolTip>
 							</ui:fragment>
-							<ui:fragment rendered="#{mesai.kapiView.kapiKGS==null}">
+							<ui:fragment rendered="#{mesai.kapiView.kapiKGS == null}">
 								<h:outputText value="#{mesai.kapiView.aciklama}" />
 							</ui:fragment>
 
@@ -231,7 +231,7 @@
 							<f:facet name="header">
 								<h:outputText value="İzin Durumu" />
 							</f:facet>
-							<ui:fragment rendered="#{mesai.vardiyaGun.izin != null}">
+							<ui:fragment rendered="#{mesai.vardiyaGun.izin  != null}">
 								<h:outputText value="#{mesai.vardiyaGun.izin.izinTipiAciklama} izni var" />
 								<br />
 								<h:outputText value="#{authenticatedUser.dateFormatla( mesai.vardiyaGun.izin.baslangicZamani)}" />
@@ -249,20 +249,20 @@
 							<f:facet name="header">
 								<h:outputText value="İşlem" />
 							</f:facet>
-							<ui:fragment rendered="#{mesai.personelFazlaMesai!=null}">
-								<ui:fragment rendered="#{mesai.personelFazlaMesai.onayDurum==0}">
+							<ui:fragment rendered="#{mesai.personelFazlaMesai != null}">
+								<ui:fragment rendered="#{mesai.personelFazlaMesai.onayDurum == 0}">
 									<h:outputText style="background:#ff3300" title="#{mesai.personelFazlaMesai.olusturanUser.adSoyad} reddetti"
 										value="#{mesai.personelFazlaMesai.onayDurumAciklama}" />
 								</ui:fragment>
 
-								<ui:fragment rendered="#{mesai.personelFazlaMesai.onayDurum==1}">
+								<ui:fragment rendered="#{mesai.personelFazlaMesai.onayDurum == 1}">
 									<span style="background: #66ff66" title="#{mesai.personelFazlaMesai.olusturanUser.adSoyad} onayladı"> <ui:fragment
-											rendered="#{mesai.personelFazlaMesai.tatilDurum==1}">
+											rendered="#{mesai.personelFazlaMesai.tatilDurum == 1}">
 											<b>Resmi Tatil </b>
 										</ui:fragment> <h:outputText value="#{mesai.personelFazlaMesai.fazlaMesaiOnayDurum.aciklama}" /> <br />
 										<DIV style="background: #66ff66">
 											<h:outputText value="Fazla Çalışma Saati : #{authenticatedUser.sayiFormatliGoster(mesai.personelFazlaMesai.fazlaMesaiSaati)}" />
-											<ui:fragment rendered="#{mesai.personelFazlaMesai.fazlaMesaiTalep!=null}">
+											<ui:fragment rendered="#{mesai.personelFazlaMesai.fazlaMesaiTalep != null}">
 												<br />
 												<h:outputText
 													value="Fazla Çalışma Talep Saati : #{authenticatedUser.sayiFormatliGoster(mesai.personelFazlaMesai.fazlaMesaiTalep.mesaiSuresi)}" />
@@ -271,31 +271,31 @@
 									</span>
 								</ui:fragment>
 								<ui:fragment rendered="#{personelFazlaMesaiHome.denklestirmeAyDurum}">
-									<a4j:commandButton status="ajaxStatus" value="Onay Sil" rendered="#{mesai.personelFazlaMesai.id!=null}"
+									<a4j:commandButton status="ajaxStatus" value="Onay Sil" rendered="#{mesai.personelFazlaMesai.id != null}"
 										action="#{personelFazlaMesaiHome.mesaiSec(mesai)}" reRender="hareketSilPanel"
-										oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('hareketSilPanel')}.show();" />
+										oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('hareketSilPanel')}.show();" />
 
 								</ui:fragment>
 							</ui:fragment>
-							<ui:fragment rendered="#{mesai.personelFazlaMesai.id==null}">
+							<ui:fragment rendered="#{mesai.personelFazlaMesai.id == null}">
 
 								<ui:fragment
-									rendered="#{mesai.vardiyaGun.hareketDurum==true and personelFazlaMesaiHome.denklestirmeAy!=null and personelFazlaMesaiHome.denklestirmeAyDurum}">
+									rendered="#{mesai.vardiyaGun.hareketDurum == true and personelFazlaMesaiHome.denklestirmeAy != null and personelFazlaMesaiHome.denklestirmeAyDurum}">
 									<a4j:commandButton status="ajaxStatus" value="Onayla" oncomplete="#{rich:component('editPanel')}.show()"
 										action="#{personelFazlaMesaiHome.ekle(mesai,true)}" reRender="editPanel" />
 
-									<a4j:commandButton status="ajaxStatus" value="Onaylama" rendered="#{mesai.vardiyaGun.hareketler!=null}" reRender="editPanel1"
+									<a4j:commandButton status="ajaxStatus" value="Onaylama" rendered="#{mesai.vardiyaGun.hareketler != null}" reRender="editPanel1"
 										oncomplete="#{rich:component('editPanel1')}.show()" action="#{personelFazlaMesaiHome.ekle(mesai,false)}" />
 									<ui:fragment rendered="#{mesai.tatil}">
 										<b>Resmi Tatil</b>
 									</ui:fragment>
 
 								</ui:fragment>
-								<ui:fragment rendered="#{mesai.vardiyaGun.hareketDurum==false }">
+								<ui:fragment rendered="#{mesai.vardiyaGun.hareketDurum == false }">
 
 									<a4j:commandButton status="ajaxStatus" style="background:#ff3300" value="Hatalı Hareket"
 										action="#{personelFazlaMesaiHome.vardiyaGoster(mesai.vardiyaGun)}" reRender="hareketDetayPanel"
-										oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('hareketDetayPanel')}.show();" />
+										oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('hareketDetayPanel')}.show();" />
 								</ui:fragment>
 
 							</ui:fragment>
@@ -378,9 +378,9 @@
 									<s:convertEntity />
 								</h:selectOneMenu>
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.instance.vardiyaGun.fazlaMesaiTalepler!=null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.instance.vardiyaGun.fazlaMesaiTalepler != null}">
 								<ui:define name="label">Fazla Çalışma Talep</ui:define>
-								<ui:fragment rendered="#{personelFazlaMesaiHome.instance.fazlaMesaiTalep!=null}">
+								<ui:fragment rendered="#{personelFazlaMesaiHome.instance.fazlaMesaiTalep != null}">
 									<TABLE>
 										<TR>
 											<TD valign="top">#{authenticatedUser.dateTimeFormatla(personelFazlaMesaiHome.instance.fazlaMesaiTalep.baslangicZamani)} -
@@ -395,7 +395,7 @@
 								</ui:fragment>
 							</s:decorate>
 							<rich:dataTable rowClasses="acik,koyu" value="#{personelFazlaMesaiHome.instance.vardiyaGun.fazlaMesaiTalepler}" var="fmt" rows="50"
-								rowKeyVar="row" id="fmtTable" rendered="#{personelFazlaMesaiHome.instance.vardiyaGun.fazlaMesaiTalepler!=null}">
+								rowKeyVar="row" id="fmtTable" rendered="#{personelFazlaMesaiHome.instance.vardiyaGun.fazlaMesaiTalepler != null}">
 								<f:facet name="header">
 									<h:outputText value="Fazla Mesai Talep Formları" />
 								</f:facet>
@@ -441,7 +441,7 @@
 										<h:outputText value="Mesai Nedeni" />
 									</f:facet>
 									<h:outputText value="#{fmt.mesaiNeden.aciklama}" id="mnd" />
-									<ui:fragment rendered="#{fmt.aciklama!=null and fmt.aciklama!='' }">
+									<ui:fragment rendered="#{fmt.aciklama != null and fmt.aciklama != '' }">
 										<rich:toolTip for="mnd" value="Açıklama : #{fmt.aciklama}" />
 									</ui:fragment>
 								</rich:column>
@@ -510,9 +510,9 @@
 					</a4j:outputPanel>
 
 
-					<a4j:commandButton status="ajaxStatus" value="Onayla" rendered="#{personelFazlaMesaiHome.instance.durum==true}"
+					<a4j:commandButton status="ajaxStatus" value="Onayla" rendered="#{personelFazlaMesaiHome.instance.durum == true}"
 						action="#{personelFazlaMesaiHome.onayla}" reRender="hareketTable"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
 				</h:panelGrid>
@@ -561,9 +561,9 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:fragment>
 								<a4j:commandButton status="ajaxStatus" value="Evet" action="#{personelFazlaMesaiHome.onaylama}" reRender="hareketTable"
-									oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel1')}.hide();" />
+									oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel1')}.hide();" />
 								<a4j:commandButton status="ajaxStatus" value="Hayır"
-									oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel1')}.hide();" />
+									oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel1')}.hide();" />
 
 							</ui:fragment>
 						</s:decorate>
@@ -639,7 +639,7 @@
 						<ui:define name="label">Bitiş Zaman </ui:define>
 						<h:outputText value=" #{authenticatedUser.dateTimeFormatla(personelFazlaMesaiHome.seciliHareket.personelFazlaMesai.bitZaman)}" size="35" />
 					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.seciliHareket.personelFazlaMesai.fazlaMesaiSaati!=null}">
+					<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.seciliHareket.personelFazlaMesai.fazlaMesaiSaati != null}">
 						<ui:define name="label">Süre </ui:define>
 						<h:outputText value="#{authenticatedUser.sayiFormatliGoster( personelFazlaMesaiHome.seciliHareket.personelFazlaMesai.fazlaMesaiSaati)}" />
 					</s:decorate>
@@ -649,7 +649,7 @@
 					</s:decorate>
 				</h:panelGrid>
 				<a4j:commandButton status="ajaxStatus" value="Onay Sil" action="#{personelFazlaMesaiHome.mesaiSil()}" reRender="hareketPanel"
-					oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('hareketSilPanel')}.hide();" />
+					oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('hareketSilPanel')}.hide();" />
 
 			</h:form>
 

@@ -26,7 +26,7 @@
 				</rich:panel>
 				<a4j:outputPanel id="sss">
 					<a4j:region id="ss">
-						<rich:panel style="width:90%; margin:0 auto;" rendered="#{vardiyaTanimlaHome.denklestirmeAylar != null}" id="vardiyaTable">
+						<rich:panel style="width:90%; margin:0 auto;" rendered="#{vardiyaTanimlaHome.denklestirmeAylar  != null}" id="vardiyaTable">
 							<rich:dataTable rowClasses="acik,koyu" headerClass="headerWrap" columnClasses="columnWrap" value="#{vardiyaTanimlaHome.denklestirmeAylar}"
 								var="vardiyaView" rows="50" rowKeyVar="row">
 
@@ -54,14 +54,14 @@
 									<f:facet name="header">Ay</f:facet>
 									#{vardiyaView.ayAdi}
 								</rich:column>
-								<c:if test="#{vardiyaTanimlaHome.calismaModeliList!=null}">
+								<c:if test="#{vardiyaTanimlaHome.calismaModeliList != null}">
 									<c:forEach items="#{vardiyaTanimlaHome.calismaModeliList}" var="cm">
-										<c:if test="#{(cm.updateCGS==false or authenticatedUser.admin ) and cm.genelModel and cm.haftaTatilSabitDegil==false}">
+										<c:if test="#{(cm.updateCGS == false or authenticatedUser.admin ) and cm.genelModel and cm.haftaTatilSabitDegil == false}">
 											<rich:column style="text-align: center;width: 40px;">
 												<f:facet name="header">#{cm.aciklama} Süre</f:facet>
 											#{authenticatedUser.sayiFormatliGoster( vardiyaTanimlaHome.getCalismaModeliAy(vardiyaView,cm).sure)}
 										</rich:column>
-											<rich:column style="text-align: center;width: 40px;" rendered="#{authenticatedUser.admin and cm.updateCGS==false}">
+											<rich:column style="text-align: center;width: 40px;" rendered="#{authenticatedUser.admin and cm.updateCGS == false}">
 												<f:facet name="header">#{cm.aciklama} Süt İzni</f:facet>
 											#{authenticatedUser.sayiFormatliGoster(vardiyaTanimlaHome.getCalismaModeliAy(vardiyaView,cm).toplamIzinSure)}
 										</rich:column>
@@ -83,7 +83,7 @@
 									#{authenticatedUser.getYesNo(vardiyaView.guncelleIK)}
 								</rich:column>
 								</c:if>
-								<rich:column style="text-align: center;width: 50px;" rendered="#{authenticatedUser.admin and  vardiyaTanimlaHome.denklestirmeKesintiYap}">
+								<rich:column style="text-align: center;width: 50px;" rendered="#{authenticatedUser.admin and vardiyaTanimlaHome.denklestirmeKesintiYap}">
 									<f:facet name="header">Denkleştirme Kesinti Yap</f:facet>
 									#{vardiyaView.kesintiAciklama}
 								</rich:column>
@@ -128,7 +128,7 @@
 				</a4j:outputPanel>
 				<h:panelGrid columns="1" cellpadding="0" cellspacing="0">
 
-					<a4j:outputPanel id="vardiyaTanimlama" rendered="#{vardiyaTanimlaHome.denklestirmeAy!=null}">
+					<a4j:outputPanel id="vardiyaTanimlama" rendered="#{vardiyaTanimlaHome.denklestirmeAy != null}">
 						<h:panelGrid columns="1">
 
 							<s:decorate template="/layout/edit.xhtml">
@@ -144,22 +144,22 @@
 
 							<h:panelGrid columns="#{vardiyaTanimlaHome.girisKolonSayisi}">
 								<c:forEach items="#{vardiyaTanimlaHome.denklestirmeAy.modeller}" var="md">
-									<c:if test="#{(md.calismaModeli.updateCGS==false or authenticatedUser.admin) and md.durum and ( md.calismaModeli.genelModel or md.calismaModeli.fazlaMesaiGoruntulensin) }">
+									<c:if test="#{(md.calismaModeli.updateCGS == false or authenticatedUser.admin) and md.durum and ( md.calismaModeli.genelModel or md.calismaModeli.fazlaMesaiGoruntulensin) }">
 										<s:decorate template="/layout/edit.xhtml">
 											<ui:define name="label">#{md.calismaModeli.aciklama} Süre</ui:define>
 											<h:inputText value="#{md.sure}"
-												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum==false or !(authenticatedUser.admin or authenticatedUser.IKAdmin)}" />
+												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or !(authenticatedUser.admin or authenticatedUser.IKAdmin)}" />
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{md.calismaModeli.updateCGS==false}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{md.calismaModeli.updateCGS == false}">
 											<ui:define name="label">#{md.calismaModeli.aciklama} Süt İzni</ui:define>
 											<h:inputText value="#{md.toplamIzinSure}"
-												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum==false or !(authenticatedUser.admin or authenticatedUser.IKAdmin)}" />
+												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or !(authenticatedUser.admin or authenticatedUser.IKAdmin)}" />
 										</s:decorate>
 
 										<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaTanimlaHome.negatifBakiyeDenkSaat}">
 											<ui:define name="label">#{md.calismaModeli.aciklama} Negatif Bakiye Max (Saati)</ui:define>
 											<h:inputText required="true" value="#{md.negatifBakiyeDenkSaat}"
-												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum==false or ( md.negatifBakiyeDenkSaat ge 0  and md.calismaModeli.negatifBakiyeDenkSaat ge 0)}"
+												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or ( md.negatifBakiyeDenkSaat ge 0 and md.calismaModeli.negatifBakiyeDenkSaat ge 0)}"
 												size="6" validatorMessage="Negatif bakiye saati giriniz">
 												<f:validateDoubleRange maximum="0" />
 											</h:inputText>
@@ -167,14 +167,14 @@
 										<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaTanimlaHome.hareketKaydiVardiyaBul}">
 											<ui:define name="label">#{md.calismaModeli.aciklama} Hareket Kayıtlarından Vardiya Bul</ui:define>
 											<h:selectBooleanCheckbox value="#{md.hareketKaydiVardiyaBul}"
-												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum==false or (md.hareketKaydiVardiyaBulsunmu==false and md.calismaModeli.hareketKaydiVardiyaBulsunmu==false)}">
+												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or (md.hareketKaydiVardiyaBulsunmu == false and md.calismaModeli.hareketKaydiVardiyaBulsunmu == false)}">
 											</h:selectBooleanCheckbox>
 										</s:decorate>
 
 										<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaTanimlaHome.otomatikFazlaCalismaOnaylansinVar}">
 											<ui:define name="label">#{md.calismaModeli.aciklama}Fazla Çalışma Otomatik Onaylansın</ui:define>
 											<h:selectBooleanCheckbox value="#{md.otomatikFazlaCalismaOnaylansin}"
-												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum==false or (md.otomatikFazlaCalismaOnaylansin==false and md.calismaModeli.otomatikFazlaCalismaOnaylansin==false)}">
+												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or (md.otomatikFazlaCalismaOnaylansin == false and md.calismaModeli.otomatikFazlaCalismaOnaylansin == false)}">
 											</h:selectBooleanCheckbox>
 										</s:decorate>
 									</c:if>
@@ -195,11 +195,11 @@
 								<c:if test="#{authenticatedUser.admin}">
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">Gün Fazla Çalışma Max. Saat</ui:define>
-										<h:inputText value="#{vardiyaTanimlaHome.denklestirmeAy.fazlaMesaiMaxSure}" disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum==false}" />
+										<h:inputText value="#{vardiyaTanimlaHome.denklestirmeAy.fazlaMesaiMaxSure}" disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false}" />
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">Yemek Molası Net Çalışma Yüzdesi</ui:define>
-										<h:inputText value="#{vardiyaTanimlaHome.denklestirmeAy.yemekMolasiYuzdesi}" disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum==false}" />
+										<h:inputText value="#{vardiyaTanimlaHome.denklestirmeAy.yemekMolasiYuzdesi}" disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false}" />
 									</s:decorate>
 
 								</c:if>
@@ -215,7 +215,7 @@
 								<s:decorate template="/layout/edit.xhtml" rendered="#{not empty vardiyaTanimlaHome.kesintiTuruList}">
 									<ui:define name="label">Denkleştirme Kesinti Yap</ui:define>
 									<h:selectOneMenu value="#{vardiyaTanimlaHome.denklestirmeAy.denklestirmeKesintiYap}" required="true"
-										requiredMessage="Denkleştirme Kesinti Seçiniz" disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum==false}">
+										requiredMessage="Denkleştirme Kesinti Seçiniz" disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false}">
 										<f:selectItems value="#{vardiyaTanimlaHome.kesintiTuruList}" />
 									</h:selectOneMenu>
 								</s:decorate>
@@ -229,14 +229,14 @@
 
 							<ui:fragment rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin}">
 								<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{vardiyaTanimlaHome.kaydet()}"
-									oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" reRender="vardiyaPanel,vardiyaTable,sss" />
+									oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" reRender="vardiyaPanel,vardiyaTable,sss" />
 							</ui:fragment>
 
 						</h:panelGrid>
 						<a4j:outputPanel id="kismiPanel">
-							<ui:fragment rendered="#{authenticatedUser.admin or ortakIslemler.getParameterKey('kismiOdemeSureGuncelle')=='1'}">
+							<ui:fragment rendered="#{authenticatedUser.admin or ortakIslemler.getParameterKey('kismiOdemeSureGuncelle') == '1'}">
 								<rich:panel header="Kısmi Dosyayla Güncelleme"
-									rendered="#{fazlaMesaiOrtakIslemler.getDurum(vardiyaTanimlaHome.denklestirmeAy,authenticatedUser) and ortakIslemler.getParameterKey('fazlaMesaiIzinKullan')=='1'}">
+									rendered="#{fazlaMesaiOrtakIslemler.getDurum(vardiyaTanimlaHome.denklestirmeAy,authenticatedUser) and ortakIslemler.getParameterKey('fazlaMesaiIzinKullan') == '1'}">
 									<h:panelGrid columns="2" style="width:700px;">
 										<rich:fileUpload id="fileUpload1" fileUploadListener="#{vardiyaTanimlaHome.listenerDevirBakiyeDosya}" listHeight="50px" listWidth="300px"
 											sizeErrorLabel="Dosya boyutu büyük" maxFilesQuantity="1" immediateUpload="true" acceptedTypes="xls,xlsx"
@@ -244,7 +244,7 @@
 											cancelEntryControlLabel="Temizle" allowFlash="false">
 											<a4j:support event="onuploadcomplete" process="fileUpload1" ajaxSingle="true" reRender="kismiPanel" />
 										</rich:fileUpload>
-										<ui:fragment rendered="#{vardiyaTanimlaHome.devredenBakiyeDosya.dosyaIcerik!=null}">
+										<ui:fragment rendered="#{vardiyaTanimlaHome.devredenBakiyeDosya.dosyaIcerik != null}">
 											<h:panelGrid columns="3">
 												<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="kismiPanel" ajaxSingle="true"
 													action="#{vardiyaTanimlaHome.bakiyeDosyaSifirla}" />
@@ -322,7 +322,7 @@
 												<ui:fragment rendered="#{veri.fazlaMesaiIzinKullan}">
 													<h:outputText value="#{authenticatedUser.getYesNo(veri.fazlaMesaiIzinKullan)}" />
 												</ui:fragment>
-												<ui:fragment rendered="#{veri.fazlaMesaiIzinKullan==false}">
+												<ui:fragment rendered="#{veri.fazlaMesaiIzinKullan == false}">
 													<SPAN style="color: red"><h:outputText value="#{authenticatedUser.getYesNo(veri.fazlaMesaiIzinKullan)}" /></SPAN>
 												</ui:fragment>
 											</rich:column>
@@ -338,7 +338,7 @@
 
 						<a4j:outputPanel id="bakiyePanel">
 							<rich:panel header="Bakiye Dosyayla Güncelleme"
-								rendered="#{fazlaMesaiOrtakIslemler.getDurum(vardiyaTanimlaHome.denklestirmeAy,authenticatedUser)==false }">
+								rendered="#{fazlaMesaiOrtakIslemler.getDurum(vardiyaTanimlaHome.denklestirmeAy,authenticatedUser) == false }">
 								<h:panelGrid columns="2" style="width:700px;">
 
 									<rich:fileUpload id="fileUpload" fileUploadListener="#{vardiyaTanimlaHome.listenerDevirBakiyeDosya}" listHeight="50px" listWidth="300px"
@@ -347,7 +347,7 @@
 										uploadControlLabel="Dosya Kaydet" cancelEntryControlLabel="Temizle" allowFlash="false">
 										<a4j:support event="onuploadcomplete" process="fileUpload" ajaxSingle="true" reRender="bakiyePanel" />
 									</rich:fileUpload>
-									<ui:fragment rendered="#{vardiyaTanimlaHome.devredenBakiyeDosya.dosyaIcerik!=null}">
+									<ui:fragment rendered="#{vardiyaTanimlaHome.devredenBakiyeDosya.dosyaIcerik != null}">
 										<h:panelGrid columns="3">
 											<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="bakiyePanel" ajaxSingle="true"
 												action="#{vardiyaTanimlaHome.bakiyeDosyaSifirla}" />

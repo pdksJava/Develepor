@@ -45,7 +45,7 @@
 								<tr class="rich-table-subheader">
 									<th><h:outputText value="Adı Soyadı" /></th>
 									<th style="width: 100px;"><h:outputText value="#{ortakIslemler.personelNoAciklama()}" /></th>
-									<ui:fragment rendered="#{izinAylikRaporHome.sirket==null}">
+									<ui:fragment rendered="#{izinAylikRaporHome.sirket == null}">
 										<th><h:outputText value="#{ortakIslemler.sirketAciklama()}" /></th>
 									</ui:fragment>
 
@@ -57,13 +57,13 @@
 							<tbody>
 								<a4j:repeat value="#{izinAylikRaporHome.pdksPersonelList}" var="personel">
 									<tr class="#{personel.sortAlanAdi}">
-										<td><ui:fragment rendered="#{personel.id==null}">
+										<td><ui:fragment rendered="#{personel.id == null}">
 												<B><h:outputText value="#{personel.ekSaha.aciklama}" /></B>
-											</ui:fragment> <ui:fragment rendered="#{personel.id!=null}">
+											</ui:fragment> <ui:fragment rendered="#{personel.id != null}">
 												<h:outputText value="#{personel.adSoyad}" />
 											</ui:fragment></td>
 										<td style="width: 100px;"><h:outputText value="#{personel.sicilNo}" /></td>
-										<ui:fragment rendered="#{not empty izinAylikRaporHome.getData(personel) and izinAylikRaporHome.sirket==null}">
+										<ui:fragment rendered="#{not empty izinAylikRaporHome.getData(personel) and izinAylikRaporHome.sirket == null}">
 											<td><h:outputText value="#{personel.sirket.ad}" /></td>
 										</ui:fragment>
 

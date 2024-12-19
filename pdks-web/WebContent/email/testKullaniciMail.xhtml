@@ -3,10 +3,10 @@
 	xmlns:jstl="http://java.sun.com/jsp/jstl" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" charset="UTF-8">
 	<m:from name="#{ortakIslemler.getParameterKey('fromName')}" address="#{ortakIslemler.getParameterKey('fromAdres')}" />
 	<m:to name="#{pdksPersonelHome.instance.adSoyad}" address="#{pdksPersonelHome.ePosta}" />
-	<ui:fragment rendered="#{pdksPersonelHome.ePosta!=authenticatedUser.email}">
+	<ui:fragment rendered="#{pdksPersonelHome.ePosta != authenticatedUser.email}">
 		<m:bcc name="#{authenticatedUser.adSoyad}" address="#{authenticatedUser.email}" />
 	</ui:fragment>
-	<ui:fragment rendered="#{ortakIslemler.getParameterKey('bccAdres')!=''}">
+	<ui:fragment rendered="#{ortakIslemler.getParameterKey('bccAdres') != ''}">
 		<m:bcc address="#{ortakIslemler.getParameterKey('bccAdres')}" />
 	</ui:fragment>
 	<m:subject>Test Mesajı</m:subject>

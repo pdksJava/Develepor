@@ -16,10 +16,10 @@
 
 	<m:subject>
 	    #{personelIzinGirisiHome.mailIzin.izinSahibi.adSoyad} 
-		<ui:fragment rendered="#{personelIzinGirisiHome.mailIzin!=null and personelIzinGirisiHome.mailIzin.id!=null}">
+		<ui:fragment rendered="#{personelIzinGirisiHome.mailIzin != null and personelIzinGirisiHome.mailIzin.id != null}">
 		#{personelIzinGirisiHome.mailIzin.izinTipi.izinTipiTanim.aciklama}
 		</ui:fragment>
-		<ui:fragment rendered="#{personelIzinGirisiHome.mailIzin==null or personelIzinGirisiHome.mailIzin.id==null}">
+		<ui:fragment rendered="#{personelIzinGirisiHome.mailIzin == null or personelIzinGirisiHome.mailIzin.id == null}">
 		 #{personelIzinGirisiHome.mailIzin.izinTipi.izinTipiTanim.aciklama}
 		</ui:fragment>
 	</m:subject>

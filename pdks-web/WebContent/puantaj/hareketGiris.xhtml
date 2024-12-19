@@ -66,14 +66,14 @@
 					</h:panelGrid>
 					<a4j:outputPanel id="dosyaPanel">
 						<rich:fileUpload id="fileUpload" fileUploadListener="#{hareketGirisHome.listener}" listHeight="50px" listWidth="300px"
-							rendered="#{hareketGirisHome.tarih!=null or hareketGirisHome.instance.islem.neden!=null}" sizeErrorLabel="Dosya boyutu büyük"
+							rendered="#{hareketGirisHome.tarih != null or hareketGirisHome.instance.islem.neden != null}" sizeErrorLabel="Dosya boyutu büyük"
 							maxFilesQuantity="1" immediateUpload="true" acceptedTypes="xls,xlsx" transferErrorLabel="Dosya  hatalı yüklenmiştir" doneLabel="Bitti"
 							addControlLabel="Dosya Seçin (Excel)" uploadControlLabel="Dosya Kaydet" cancelEntryControlLabel="Temizle" allowFlash="false">
 							<a4j:support event="onuploadcomplete" process="fileUpload" ajaxSingle="true" reRender="dosyaPanel" />
 						</rich:fileUpload>
 
 						<a4j:outputPanel id="personelDosya">
-							<ui:fragment rendered="#{hareketGirisHome.dosya.dosyaIcerik!=null}">
+							<ui:fragment rendered="#{hareketGirisHome.dosya.dosyaIcerik != null}">
 								<h:panelGrid columns="3">
 									<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="dosyaPanel" ajaxSingle="true"
 										action="#{hareketGirisHome.dosyaSifirla}" />
@@ -81,7 +81,7 @@
 								</h:panelGrid>
 
 								<a4j:commandButton id="dosyaOku" value="Dosya Oku" status="ajaxStatus" ajaxSingle="true" action="#{hareketGirisHome.dosyaOku}"
-									rendered="#{hareketGirisHome.dosya.dosyaIcerik!=null and hareketGirisHome.tarih!=null and hareketGirisHome.dosyaTamam==false}"
+									rendered="#{hareketGirisHome.dosya.dosyaIcerik != null and hareketGirisHome.tarih != null and hareketGirisHome.dosyaTamam == false}"
 									reRender="excelPanel,personelDosya"></a4j:commandButton>
 								<a4j:commandButton value="Dosya Aktar" status="ajaxStatus" action="#{hareketGirisHome.save()}" rendered="#{hareketGirisHome.dosyaTamam }"
 									reRender="dosyaPanel,excelPanel" />

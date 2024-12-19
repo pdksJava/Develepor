@@ -44,7 +44,7 @@
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.aramaSecenekleri.sirketIdList.size()>0}">
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
-							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.sirketId}" disabled="#{vardiyaGunHome.aramaSecenekleri.sirketIdList.size()==1}"
+							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.sirketId}" disabled="#{vardiyaGunHome.aramaSecenekleri.sirketIdList.size() == 1}"
 								required="true" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.sirketIdList}" />
@@ -53,10 +53,10 @@
 						</s:decorate>
 
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{ortakIslemler.tesisDurumu and vardiyaGunHome.aramaSecenekleri.tesisList!=null and vardiyaGunHome.aramaSecenekleri.tesisList.size()>0}">
+							rendered="#{ortakIslemler.tesisDurumu and vardiyaGunHome.aramaSecenekleri.tesisList != null and vardiyaGunHome.aramaSecenekleri.tesisList.size()>0}">
 							<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.tesisId}" requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz!" required="true"
-								disabled="#{vardiyaGunHome.aramaSecenekleri.tesisList.size()==1}">
+								disabled="#{vardiyaGunHome.aramaSecenekleri.tesisList.size() == 1}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.tesisList}" />
 								<a4j:support event="onchange" status="ajaxStatus" action="#{vardiyaGunHome.fillBolumDoldur()}" ajaxSingle="true"
@@ -64,9 +64,9 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{vardiyaGunHome.aramaSecenekleri.gorevYeriList!=null and vardiyaGunHome.aramaSecenekleri.gorevYeriList.size()>0}">
+							rendered="#{vardiyaGunHome.aramaSecenekleri.gorevYeriList != null and vardiyaGunHome.aramaSecenekleri.gorevYeriList.size()>0}">
 							<ui:define name="label">#{vardiyaGunHome.bolumAciklama}</ui:define>
-							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.ekSaha3Id}" disabled="#{vardiyaGunHome.aramaSecenekleri.gorevYeriList.size()==1}">
+							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.ekSaha3Id}" disabled="#{vardiyaGunHome.aramaSecenekleri.gorevYeriList.size() == 1}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.gorevYeriList}" />
 								<a4j:support event="onchange" status="ajaxStatus" action="#{vardiyaGunHome.fazlaMesaiTalepler.clear()}" ajaxSingle="true"
@@ -74,7 +74,7 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{vardiyaGunHome.aramaSecenekleri.sirketIdList!=null and vardiyaGunHome.aramaSecenekleri.sirketIdList.size()>0}">
+							rendered="#{vardiyaGunHome.aramaSecenekleri.sirketIdList != null and vardiyaGunHome.aramaSecenekleri.sirketIdList.size()>0}">
 							<ui:define name="label">Onay Durum</ui:define>
 							<h:selectOneMenu value="#{vardiyaGunHome.talepOnayDurum}">
 
@@ -133,7 +133,7 @@
 																<td><h:graphicImage value="/img/delete.png" style="border:0" id="mesaiIptalBilgi">
 																		<a4j:support event="onclick" ajaxSingle="true" status="ajaxStatus" action="#{vardiyaGunHome.mesaiIptalSec(fmt)}"
 																			onclick="#{rich:component('wait')}.show()"
-																			oncomplete="if (#{facesContext.maximumSeverity==null}) {#{rich:component('mesaiIptalPanel')}.show();} #{rich:component('wait')}.hide();"
+																			oncomplete="if (#{facesContext.maximumSeverity == null}) {#{rich:component('mesaiIptalPanel')}.show();} #{rich:component('wait')}.hide();"
 																			reRender="mesaiIptalPanel" />
 																	</h:graphicImage> <rich:toolTip for="mesaiIptalBilgi">
 																		<B>Fazla çalışma talep iptal</B>
@@ -145,7 +145,7 @@
 																			<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" />
 																		</h:selectBooleanCheckbox></td>
 																</ui:fragment>
-																<ui:fragment rendered="#{vardiyaGunHome.ikRole==false or fmt.guncelleyenUser.id != authenticatedUser.id}">
+																<ui:fragment rendered="#{vardiyaGunHome.ikRole == false or fmt.guncelleyenUser.id  != authenticatedUser.id}">
 																	<td><h:selectBooleanCheckbox value="#{fmt.checkBoxDurum}">
 																			<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" />
 																		</h:selectBooleanCheckbox></td>
@@ -182,7 +182,7 @@
 												</f:facet>
 												<h:outputText value="#{fmt.vardiyaGun.personel.tesis.aciklama}" />
 											</rich:column>
-											<rich:column rendered="#{vardiyaGunHome.aramaSecenekleri.ekSaha3Id==null}">
+											<rich:column rendered="#{vardiyaGunHome.aramaSecenekleri.ekSaha3Id == null}">
 												<f:facet name="header">
 													<h:outputText value="#{vardiyaGunHome.bolumAciklama}" />
 												</f:facet>
@@ -211,7 +211,7 @@
 													<h:outputText value="Mesai Nedeni" />
 												</f:facet>
 												<h:outputText value="#{fmt.mesaiNeden.aciklama}" id="mnd" />
-												<ui:fragment rendered="#{fmt.aciklama!=null and fmt.aciklama!='' }">
+												<ui:fragment rendered="#{fmt.aciklama != null and fmt.aciklama != '' }">
 													<rich:toolTip for="mnd" value="Açıklama : #{fmt.aciklama}" />
 												</ui:fragment>
 											</rich:column>
@@ -243,7 +243,7 @@
 														<ui:fragment rendered="#{fmt.guncelleyenUser.id == authenticatedUser.id}">
 															<SPAN style="color: blue; font-weight: bold;"><h:outputText value="#{fmt.guncelleyenUser.adSoyad}" /></SPAN>
 														</ui:fragment>
-														<ui:fragment rendered="#{fmt.guncelleyenUser.id != authenticatedUser.id}">
+														<ui:fragment rendered="#{fmt.guncelleyenUser.id  != authenticatedUser.id}">
 															<h:outputText value="#{fmt.guncelleyenUser.adSoyad}" />
 														</ui:fragment>
 
@@ -254,7 +254,7 @@
 														<ui:fragment rendered="#{fmt.guncelleyenUser.id == authenticatedUser.id}">
 															<h:outputText value="#{fmt.guncelleyenUser.adSoyad}" />
 														</ui:fragment>
-														<ui:fragment rendered="#{fmt.guncelleyenUser.id != authenticatedUser.id}">
+														<ui:fragment rendered="#{fmt.guncelleyenUser.id  != authenticatedUser.id}">
 															<SPAN style="color: red"><h:outputText value="#{fmt.guncelleyenUser.adSoyad}" /></SPAN>
 														</ui:fragment>
 
@@ -296,7 +296,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
 							<a4j:support event="onclick" onclick="#{rich:component('wait')}.show()"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) { #{rich:component('mesaiIptalPanel')}.hide();#{rich:component('wait')}.hide();}"
+								oncomplete="if (#{facesContext.maximumSeverity == null}) { #{rich:component('mesaiIptalPanel')}.hide();#{rich:component('wait')}.hide();}"
 								ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
@@ -316,12 +316,12 @@
 								<h:outputText value="#{vardiyaGunHome.islemFazlaMesaiTalep.vardiyaGun.personel.sirket.ad}" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" style="vertical-align: top;"
-								rendered="#{ortakIslemler.tesisDurumu and vardiyaGunHome.islemFazlaMesaiTalep.vardiyaGun.personel.tesis!=null}">
+								rendered="#{ortakIslemler.tesisDurumu and vardiyaGunHome.islemFazlaMesaiTalep.vardiyaGun.personel.tesis != null}">
 								<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 								<h:outputText value="#{vardiyaGunHome.islemFazlaMesaiTalep.vardiyaGun.personel.tesis.aciklama}" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" style="vertical-align: top;"
-								rendered="#{vardiyaGunHome.islemFazlaMesaiTalep.vardiyaGun.personel.ekSaha3!=null}">
+								rendered="#{vardiyaGunHome.islemFazlaMesaiTalep.vardiyaGun.personel.ekSaha3 != null}">
 								<ui:define name="label">#{vardiyaGunHome.bolumAciklama}</ui:define>
 								<h:outputText value="#{vardiyaGunHome.islemFazlaMesaiTalep.vardiyaGun.personel.ekSaha3.aciklama}" />
 							</s:decorate>
@@ -357,7 +357,7 @@
 							<ui:define name="label">İptal Açıklama</ui:define>
 							<h:inputTextarea value="#{vardiyaGunHome.islemFazlaMesaiTalep.iptalAciklama}" cols="80" rows="3" />
 						</s:decorate>
-						<a4j:commandButton value="İptal Et" action="#{vardiyaGunHome.mesaiIptal}" rendered="#{vardiyaGunHome.mesaiIptalNedenTanimList!=null}"
+						<a4j:commandButton value="İptal Et" action="#{vardiyaGunHome.mesaiIptal}" rendered="#{vardiyaGunHome.mesaiIptalNedenTanimList != null}"
 							onclick="#{rich:component('wait')}.show()" reRender="denklestirmeDonemiTable"
 							oncomplete="#{rich:component('wait')}.hide(); #{rich:component('mesaiIptalPanel')}.hide();" />
 

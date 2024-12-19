@@ -17,7 +17,7 @@
 					</h:selectOneMenu>
 				</s:decorate>
 				<a4j:outputPanel id="girisler" ajaxRendered="true">
-					<ui:fragment rendered="#{noticeHome.homeNotice.name!=''}">
+					<ui:fragment rendered="#{noticeHome.homeNotice.name != ''}">
 						<h:panelGrid columns="1">
 							<a4j:commandButton status="ajaxStatus" action="#{noticeHome.save}" value="Kaydet" reRender="aciklama" id="goruntusu" />
 							<rich:toolTip for="goruntusu">

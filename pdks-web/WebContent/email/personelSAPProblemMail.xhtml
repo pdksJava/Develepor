@@ -5,13 +5,13 @@
 	<ui:repeat value="#{sapPersonelGuncelleme.toList}" var="toUser">
 		<m:to name="#{toUser.adSoyad}" address="#{toUser.email}" />
 	</ui:repeat>
-	<ui:fragment rendered="#{ortakIslemler.getParameterKey('bccAdres')!=''}">
+	<ui:fragment rendered="#{ortakIslemler.getParameterKey('bccAdres') != ''}">
 		<m:bcc address="#{ortakIslemler.getParameterKey('bccAdres')}" />
 	</ui:fragment>
 	<m:subject>Ana veri okuma problemi</m:subject>
 
 	<m:body>
-		<ui:fragment rendered="#{erpPersonelGuncelleme.erpPersonelList!=null and erpPersonelGuncelleme.erpPersonelList.size()>1}">
+		<ui:fragment rendered="#{erpPersonelGuncelleme.erpPersonelList != null and erpPersonelGuncelleme.erpPersonelList.size()>1}">
 
 			<p>Aşağıdaki personellere ait ERP'de tanımlı ve PDKS'de ana verisi yoktur!</p>
 			<BR />
@@ -49,7 +49,7 @@
 			<BR />
 			<BR />
 		</ui:fragment>
-		<ui:fragment rendered="#{sapPersonelGuncelleme.personelList!=null and sapPersonelGuncelleme.personelList.size()>1}">
+		<ui:fragment rendered="#{sapPersonelGuncelleme.personelList != null and sapPersonelGuncelleme.personelList.size()>1}">
 
 			<p>Aşağıdaki personellere ait ERP'den ana veri okunamamıştır!</p>
 			<BR />

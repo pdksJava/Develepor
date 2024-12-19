@@ -36,7 +36,7 @@
 
 										</a4j:commandLink>
 										<rich:toolTip for="editlink" value="Güncelle" />
-										<ui:fragment rendered="#{authenticatedUser.admin and tatil.periyodik==false and tatil.durum}">
+										<ui:fragment rendered="#{authenticatedUser.admin and tatil.periyodik == false and tatil.durum}">
 											<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="copylink" action="#{tatilHome.kayitKopyala(tatil)}"
 												oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
 												<h:graphicImage value="/img/onetomany.gif" style="border:0" />
@@ -153,7 +153,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
 							<a4j:support event="onclick" action="#{tatilHome.instanceRefresh}"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" reRender="tatilData" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" reRender="tatilData" />
 						</h:graphicImage>
 					</h:form>
 				</h:panelGroup>
@@ -173,12 +173,12 @@
 						<a4j:commandButton status="ajaxStatus" id="KopyalaButon" value="Oluştur" action="#{tatilHome.kayitKopyalaDevam()}"
 							reRender="tatilGiris,tatilData" oncomplete="if (#{tatilHome.kopyala}) #{rich:component('editPanel')}.hide();" />
 					</h:panelGrid>
-					<h:panelGrid columns="1" cellpadding="0" cellspacing="0" rendered="#{tatilHome.kopyala==false}">
+					<h:panelGrid columns="1" cellpadding="0" cellspacing="0" rendered="#{tatilHome.kopyala == false}">
 
 
 						<h:panelGrid columns="1" cellpadding="0" cellspacing="0">
 
-							<s:decorate template="/layout/edit.xhtml" rendered="#{tatilHome.instance.id!=null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{tatilHome.instance.id != null}">
 								<ui:define name="label">Tatil Tipi</ui:define>
 								<h:outputText value="#{tatilHome.instance.tatilTipi.aciklama}" />
 							</s:decorate>
@@ -194,21 +194,21 @@
 							<h:panelGrid columns="1" cellpadding="0" cellspacing="0" id="yarimGun">
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Başlangıç Günü Yarım mı? </ui:define>
-									<h:selectBooleanCheckbox value="#{tatilHome.instance.yarimGun}" disabled="#{tatilHome.instance.id!=null and tatilHome.instance.periyodik}">
+									<h:selectBooleanCheckbox value="#{tatilHome.instance.yarimGun}" disabled="#{tatilHome.instance.id != null and tatilHome.instance.periyodik}">
 										<a4j:support event="onclick" action="#{tatilHome.tipDegisti}" reRender="yarimGun" status="ajaxStatus" ajaxSingle="true" />
 									</h:selectBooleanCheckbox>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" rendered="#{tatilHome.instance.yarimGun}">
 									<ui:define name="label">Arife Vardiya Yarım Hesapla</ui:define>
 									<h:selectBooleanCheckbox value="#{tatilHome.instance.arifeVardiyaYarimHesapla}"
-										disabled="#{tatilHome.instance.id!=null and tatilHome.instance.periyodik}">
+										disabled="#{tatilHome.instance.id != null and tatilHome.instance.periyodik}">
 
 									</h:selectBooleanCheckbox>
 								</s:decorate>
 							</h:panelGrid>
 							<a4j:outputPanel cellpadding="0" cellspacing="0" id="tatilTipi">
 								<h:panelGrid columns="1" cellpadding="0" cellspacing="0">
-									<s:decorate template="/layout/edit.xhtml" rendered="#{tatilHome.instance.id==null}">
+									<s:decorate template="/layout/edit.xhtml" rendered="#{tatilHome.instance.id == null}">
 										<ui:define name="label">Tatil Tipi</ui:define>
 										<h:selectOneMenu value="#{tatilHome.instance.tatilTipi}" required="true" requiredMessage="Tatil tipi seçiniz">
 											<s:selectItems value="#{tatilHome.tatilTanimList}" var="tatilTip" label="#{tatilTip.aciklama}" noSelectionLabel="Lütfen seçiniz" />
@@ -242,7 +242,7 @@
 												<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
 													<s:decorate template="/layout/edit.xhtml">
 														<ui:define name="label">Başlangıç Ay</ui:define>
-														<h:selectOneMenu id="basAy" value="#{tatilHome.instance.basAy}" disabled="#{tatilHome.instance.id!=null }" required="true"
+														<h:selectOneMenu id="basAy" value="#{tatilHome.instance.basAy}" disabled="#{tatilHome.instance.id != null }" required="true"
 															requiredMessage="Başlangıç ay seçiniz">
 															<f:selectItem itemLabel="Lütfen seçiniz" />
 															<f:selectItems value="#{tatilHome.ayList}" />
@@ -252,7 +252,7 @@
 
 													<s:decorate template="/layout/edit.xhtml" id="basGun">
 														<ui:define name="label">Başlangıç Gün</ui:define>
-														<h:selectOneMenu id="basGunler" value="#{tatilHome.instance.basGun}" disabled="#{tatilHome.instance.id!=null }" required="true"
+														<h:selectOneMenu id="basGunler" value="#{tatilHome.instance.basGun}" disabled="#{tatilHome.instance.id != null }" required="true"
 															requiredMessage="Lütfen başlangıç gün seçiniz" rendered="#{not empty tatilHome.basGunList}">
 															<f:selectItem itemLabel="Lütfen seçiniz" />
 															<f:selectItems value="#{tatilHome.basGunList}" />
@@ -265,7 +265,7 @@
 												<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
 													<s:decorate template="/layout/edit.xhtml">
 														<ui:define name="label">Bitiş Ay</ui:define>
-														<h:selectOneMenu id="bitAy" value="#{tatilHome.instance.bitAy}" disabled="#{tatilHome.instance.id!=null }" required="true"
+														<h:selectOneMenu id="bitAy" value="#{tatilHome.instance.bitAy}" disabled="#{tatilHome.instance.id != null }" required="true"
 															requiredMessage="Lütfen bitiş ay seçiniz">
 															<f:selectItem itemLabel="Lütfen seçiniz" />
 															<f:selectItems value="#{tatilHome.ayList}" />
@@ -275,7 +275,7 @@
 
 													<s:decorate template="/layout/edit.xhtml" id="bitisGun">
 														<ui:define name="label">Bitiş Gün</ui:define>
-														<h:selectOneMenu id="bitisGunler" value="#{tatilHome.instance.bitGun}" disabled="#{tatilHome.instance.id!=null }" required="true"
+														<h:selectOneMenu id="bitisGunler" value="#{tatilHome.instance.bitGun}" disabled="#{tatilHome.instance.id != null }" required="true"
 															requiredMessage="Lütfen bitiş gün seçiniz" rendered="#{not empty tatilHome.bitisGunList}">
 															<f:selectItem itemLabel="Lütfen seçiniz" />
 															<f:selectItems value="#{tatilHome.bitisGunList}" />
@@ -294,7 +294,7 @@
 							</s:decorate>
 						</h:panelGrid>
 						<a4j:commandButton status="ajaxStatus" id="KaydetButon" value="Kaydet" action="#{tatilHome.save}" reRender="tatilData"
-							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+							oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
 

@@ -50,7 +50,7 @@
 							<s:decorate template="/layout/edit.xhtml" rendered="#{not empty fazlaCalismaRaporHome.pdksSirketList}">
 								<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 
-								<h:selectOneMenu id="sirketSec" value="#{fazlaCalismaRaporHome.sirketId}" disabled="#{fazlaCalismaRaporHome.pdksSirketList.size()==1}"
+								<h:selectOneMenu id="sirketSec" value="#{fazlaCalismaRaporHome.sirketId}" disabled="#{fazlaCalismaRaporHome.pdksSirketList.size() == 1}"
 									required="true" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{fazlaCalismaRaporHome.pdksSirketList}" />
@@ -60,26 +60,26 @@
 							<c:if test="#{not empty fazlaCalismaRaporHome.pdksSirketList}">
 
 								<s:decorate template="/layout/edit.xhtml"
-									rendered="#{ortakIslemler.tesisDurumu and fazlaCalismaRaporHome.tesisList!=null and fazlaCalismaRaporHome.tesisList.size()>0}">
+									rendered="#{ortakIslemler.tesisDurumu and fazlaCalismaRaporHome.tesisList != null and fazlaCalismaRaporHome.tesisList.size()>0}">
 									<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 									<h:selectOneMenu value="#{fazlaCalismaRaporHome.tesisId}" requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz!" required="false"
-										disabled="#{fazlaCalismaRaporHome.tesisList.size()==1}">
+										disabled="#{fazlaCalismaRaporHome.tesisList.size() == 1}">
 										<f:selectItem itemLabel="Lütfen seçiniz" />
 										<f:selectItems value="#{fazlaCalismaRaporHome.tesisList}" />
 										<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaCalismaRaporHome.bolumDoldur()}" ajaxSingle="true" reRender="anaForm" />
 									</h:selectOneMenu>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml"
-									rendered="#{fazlaCalismaRaporHome.gorevYeriList!=null and fazlaCalismaRaporHome.gorevYeriList.size()>0}">
+									rendered="#{fazlaCalismaRaporHome.gorevYeriList != null and fazlaCalismaRaporHome.gorevYeriList.size()>0}">
 									<ui:define name="label">#{fazlaCalismaRaporHome.bolumAciklama}</ui:define>
-									<h:selectOneMenu value="#{fazlaCalismaRaporHome.seciliEkSaha3Id}" disabled="#{fazlaCalismaRaporHome.gorevYeriList.size()==1}"
+									<h:selectOneMenu value="#{fazlaCalismaRaporHome.seciliEkSaha3Id}" disabled="#{fazlaCalismaRaporHome.gorevYeriList.size() == 1}"
 										requiredMessage="#{fazlaCalismaRaporHome.bolumAciklama} giriniz!">
 										<f:selectItem itemLabel="Lütfen seçiniz" />
 										<f:selectItems value="#{fazlaCalismaRaporHome.gorevYeriList}" />
 										<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaCalismaRaporHome.listeTemizle()}" ajaxSingle="true" reRender="anaForm" />
 									</h:selectOneMenu>
 								</s:decorate>
-								<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaCalismaRaporHome.kullaniciPersonel==false}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaCalismaRaporHome.kullaniciPersonel == false}">
 									<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
 									<h:inputText value="#{fazlaCalismaRaporHome.sicilNo}">
 										<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{fazlaCalismaRaporHome.listeTemizle()}" reRender="anaForm" />
@@ -90,7 +90,7 @@
 					</h:panelGrid>
 					<rich:panel style="overflow: auto;">
 						<a4j:outputPanel id="butonlar">
-							<c:if test="#{fazlaCalismaRaporHome.gorevYeriList!=null and fazlaCalismaRaporHome.gorevYeriList.size()>0}">
+							<c:if test="#{fazlaCalismaRaporHome.gorevYeriList != null and fazlaCalismaRaporHome.gorevYeriList.size()>0}">
 								<TABLE width="45%">
 									<TR>
 										<TD width="35%" valign="top"><a4j:commandButton action="#{fazlaCalismaRaporHome.fillPersonelDenklestirmeRaporList()}"
@@ -112,7 +112,7 @@
 						<a4j:outputPanel id="hareketTables">
 							<ui:fragment rendered="#{fazlaCalismaRaporHome.veriDolu()}">
 
-								<ui:fragment rendered="#{fazlaCalismaRaporHome.seciliBolum!=null}">
+								<ui:fragment rendered="#{fazlaCalismaRaporHome.seciliBolum != null}">
 									<DIV style="text-align: center; font-weight: bold; color: blue; font-size: 16px;">#{fazlaCalismaRaporHome.seciliBolum.aciklama}</DIV>
 								</ui:fragment>
 
@@ -143,13 +143,13 @@
 										</f:facet>
 										<h:outputText value="#{fazlaMesai.pdksPersonel.tesis.aciklama}" />
 									</rich:column>
-									<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{fazlaCalismaRaporHome.seciliEkSaha3Id==null}">
+									<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{fazlaCalismaRaporHome.seciliEkSaha3Id == null}">
 										<f:facet name="header">
 											<h:outputText value="#{fazlaCalismaRaporHome.bolumAciklama}" />
 										</f:facet>
 										<h:outputText value="#{fazlaMesai.pdksPersonel.ekSaha3.aciklama}" />
 									</rich:column>
-									<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{fazlaCalismaRaporHome.ekSaha4Tanim!=null}">
+									<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{fazlaCalismaRaporHome.ekSaha4Tanim != null}">
 										<f:facet name="header">
 											<h:outputText value="#{fazlaCalismaRaporHome.ekSaha4Tanim.aciklama}" />
 										</f:facet>
@@ -159,7 +159,7 @@
 										<f:facet name="header">
 											<h:outputText value="#{ortakIslemler.yoneticiAciklama()}" />
 										</f:facet>
-										<ui:fragment rendered="#{fazlaMesai.pdksPersonel.yoneticisi!=null}">
+										<ui:fragment rendered="#{fazlaMesai.pdksPersonel.yoneticisi != null}">
 											<h:outputText value="#{fazlaMesai.pdksPersonel.yoneticisi.adSoyad}" />
 
 										</ui:fragment>
@@ -181,7 +181,7 @@
 											<f:facet name="header">
 												<h:outputText value="#{da.aciklama}" />
 											</f:facet>
-											<ui:fragment rendered="#{fazlaMesai.getPersonelDinamikAlan(da.id)!=null}">
+											<ui:fragment rendered="#{fazlaMesai.getPersonelDinamikAlan(da.id) != null}">
 												<ui:fragment rendered="#{fazlaMesai.personelDinamikAlan.checkBox}">
 													<h:outputText value="#{authenticatedUser.getYesNo(fazlaMesai.personelDinamikAlan.durumSecim)}" />
 												</ui:fragment>
@@ -212,7 +212,7 @@
 
 
 																</DIV>
-																<c:if test="#{vardiya.tatil!=null}">
+																<c:if test="#{vardiya.tatil != null}">
 																	<rich:toolTip for="tatil#{vardiya.vardiyaDateStr}">
 																		<SPAN style="color: green; font-size: 12px;"><B>#{vardiya.tatil.ad}</B></SPAN>
 																	</rich:toolTip>
@@ -221,14 +221,14 @@
 															</ui:fragment>
 														</f:facet>
 
-														<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaBul(fazlaMesai,vardiya)!=null }">
+														<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaBul(fazlaMesai,vardiya) != null }">
 															<DIV id="vardiya#{fazlaCalismaRaporHome.vardiyaGun.id}">
-																<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaGun.vardiyaSaat!=null}">
+																<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaGun.vardiyaSaat != null}">
 																	<span style="#{fazlaCalismaRaporHome.vardiyaGun.tdClass}"> <h:outputText
 																			value="#{authenticatedUser.sayiFormatliGoster(fazlaCalismaRaporHome.vardiyaGun.vardiyaSaat.calismaSuresi)}" />
 																	</span>
 																</ui:fragment>
-																<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaGun.izin!=null}">
+																<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaGun.izin != null}">
 																	<span styleClass="izin"> <h:outputText value="#{fazlaCalismaRaporHome.vardiyaGun.izin.izinTipi.kisaAciklama}" />
 																	</span>
 																</ui:fragment>
@@ -255,7 +255,7 @@
 
 														</ui:fragment>
 													</f:facet>
-													<ui:fragment rendered="#{fazlaCalismaRaporHome.getCalismaSuresi(vardiyaHafta.hafta,fazlaMesai)!=null}">
+													<ui:fragment rendered="#{fazlaCalismaRaporHome.getCalismaSuresi(vardiyaHafta.hafta,fazlaMesai) != null}">
 														<ui:fragment rendered="#{fazlaCalismaRaporHome.haftaCalismaSaat gt fazlaCalismaRaporHome.maxHaftaCalismaSaat}">
 															<span style="font-weight: bold; color: red;"> <h:outputText
 																	value="#{authenticatedUser.sayiFormatliGoster(fazlaCalismaRaporHome.haftaCalismaSaat)}" />
@@ -278,7 +278,7 @@
 														<ui:fragment>
 															<DIV id="gun#{vardiya.vardiyaDateStr}">
 																<c:choose>
-																	<c:when test="#{fazlaCalismaRaporHome.raporSecim=='maxToplamMesai'}">
+																	<c:when test="#{fazlaCalismaRaporHome.raporSecim == 'maxToplamMesai'}">
 																		<h:outputText value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'yyyy')}" />
 																		<bR />
 																		<h:outputText value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'MMM')}" />
@@ -292,7 +292,7 @@
 																</c:choose>
 
 															</DIV>
-															<c:if test="#{vardiya.tatil!=null}">
+															<c:if test="#{vardiya.tatil != null}">
 																<rich:toolTip for="tatil#{vardiya.vardiyaDateStr}">
 																	<SPAN style="color: green; font-size: 12px;"><B>#{vardiya.tatil.ad}</B></SPAN>
 																</rich:toolTip>
@@ -301,26 +301,26 @@
 														</ui:fragment>
 													</f:facet>
 
-													<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaBul(fazlaMesai,vardiya)!=null }">
+													<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaBul(fazlaMesai,vardiya) != null }">
 														<DIV id="vardiya#{fazlaCalismaRaporHome.vardiyaGun.vardiyaKeyStr}">
 
-															<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaGun.vardiyaSaat!=null}">
+															<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaGun.vardiyaSaat != null}">
 																<span style="#{fazlaCalismaRaporHome.vardiyaGun.tdClass}"> <h:outputText
 																		value="#{authenticatedUser.sayiFormatliGoster(fazlaCalismaRaporHome.vardiyaGun.vardiyaSaat.calismaSuresi)}" />
 																</span>
 															</ui:fragment>
-															<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaGun.vardiyaSaat==null and fazlaCalismaRaporHome.vardiyaGun.haftaTatil}">
+															<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaGun.vardiyaSaat == null and fazlaCalismaRaporHome.vardiyaGun.haftaTatil}">
 																<span style="color: green; font-size: 12px;"> <h:outputText value="#{fazlaCalismaRaporHome.vardiyaGun.vardiyaAciklama}" />
 																</span>
 															</ui:fragment>
-															<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaGun.izin!=null}">
+															<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaGun.izin != null}">
 																<span> <h:outputText value="#{fazlaCalismaRaporHome.vardiyaGun.izin.izinTipi.kisaAciklama}" />
 																</span>
 															</ui:fragment>
 														</DIV>
 														<rich:toolTip for="vardiya#{fazlaCalismaRaporHome.vardiyaGun.vardiyaKeyStr}">
 												#{fazlaCalismaRaporHome.vardiyaGun.fazlaMesaiTitle}  
-												<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaGun.vardiyaSaat!=null and not empty fazlaCalismaRaporHome.fazlaMesailer}">
+												<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaGun.vardiyaSaat != null and not empty fazlaCalismaRaporHome.fazlaMesailer}">
 																<br />
 																<rich:dataTable rowClasses="acik,koyu" value="#{fazlaCalismaRaporHome.fazlaMesailer}" var="ms" style="width: 80%;" rows="50"
 																	rowKeyVar="row">
@@ -384,7 +384,7 @@
 										</c:otherwise>
 									</c:choose>
 
-									<c:if test="#{fazlaCalismaRaporHome.raporSecim=='maxToplamMesai' and fazlaCalismaRaporHome.vardiyaGunList.size()>1}">
+									<c:if test="#{fazlaCalismaRaporHome.raporSecim == 'maxToplamMesai' and fazlaCalismaRaporHome.vardiyaGunList.size()>1}">
 										<rich:column style="text-align: center;width: 60px;width:autostretch ;white-space: nowrap;">
 											<f:facet name="header">
 												<h:outputText value="Toplam Fazla Çalışma" />
@@ -398,7 +398,7 @@
 										<f:facet name="header">
 											<h:outputText value="Akşam Gün" />
 										</f:facet>
-										<ui:fragment rendered="#{fazlaMesai.aksamVardiyaSayisi!=0}">
+										<ui:fragment rendered="#{fazlaMesai.aksamVardiyaSayisi != 0}">
 											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(fazlaMesai.aksamVardiyaSayisi)}" />
 										</ui:fragment>
 									</rich:column>
@@ -409,7 +409,7 @@
 										<f:facet name="header">
 											<h:outputText value="Akşam Saat" />
 										</f:facet>
-										<ui:fragment rendered="#{fazlaMesai.aksamVardiyaSaatSayisi!=0}">
+										<ui:fragment rendered="#{fazlaMesai.aksamVardiyaSaatSayisi != 0}">
 											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(fazlaMesai.aksamVardiyaSaatSayisi)}" />
 										</ui:fragment>
 									</rich:column>

@@ -44,7 +44,7 @@
 						<s:decorate template="/layout/edit.xhtml" rendered="#{not empty fazlaMesaiOnayRaporHome.pdksSirketList}">
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 
-							<h:selectOneMenu id="sirketSec" value="#{fazlaMesaiOnayRaporHome.sirketId}" disabled="#{fazlaMesaiOnayRaporHome.pdksSirketList.size()==1}"
+							<h:selectOneMenu id="sirketSec" value="#{fazlaMesaiOnayRaporHome.sirketId}" disabled="#{fazlaMesaiOnayRaporHome.pdksSirketList.size() == 1}"
 								required="true" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{fazlaMesaiOnayRaporHome.pdksSirketList}" />
@@ -55,10 +55,10 @@
 						<c:if test="#{not empty fazlaMesaiOnayRaporHome.pdksSirketList}">
 
 							<s:decorate template="/layout/edit.xhtml"
-								rendered="#{ortakIslemler.tesisDurumu and fazlaMesaiOnayRaporHome.tesisList!=null and fazlaMesaiOnayRaporHome.tesisList.size()>0}">
+								rendered="#{ortakIslemler.tesisDurumu and fazlaMesaiOnayRaporHome.tesisList != null and fazlaMesaiOnayRaporHome.tesisList.size()>0}">
 								<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 								<h:selectOneMenu value="#{fazlaMesaiOnayRaporHome.tesisId}" requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz!" required="true"
-									disabled="#{fazlaMesaiOnayRaporHome.tesisList.size()==1}">
+									disabled="#{fazlaMesaiOnayRaporHome.tesisList.size() == 1}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{fazlaMesaiOnayRaporHome.tesisList}" />
 									<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaMesaiOnayRaporHome.bolumDoldur()}" ajaxSingle="true"
@@ -66,9 +66,9 @@
 								</h:selectOneMenu>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml"
-								rendered="#{fazlaMesaiOnayRaporHome.gorevYeriList!=null and fazlaMesaiOnayRaporHome.gorevYeriList.size()>0}">
+								rendered="#{fazlaMesaiOnayRaporHome.gorevYeriList != null and fazlaMesaiOnayRaporHome.gorevYeriList.size()>0}">
 								<ui:define name="label">#{fazlaMesaiOnayRaporHome.bolumAciklama}</ui:define>
-								<h:selectOneMenu value="#{fazlaMesaiOnayRaporHome.seciliEkSaha3Id}" disabled="#{fazlaMesaiOnayRaporHome.gorevYeriList.size()==1}"
+								<h:selectOneMenu value="#{fazlaMesaiOnayRaporHome.seciliEkSaha3Id}" disabled="#{fazlaMesaiOnayRaporHome.gorevYeriList.size() == 1}"
 									requiredMessage="#{fazlaMesaiOnayRaporHome.bolumAciklama} giriniz!">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{fazlaMesaiOnayRaporHome.gorevYeriList}" />
@@ -76,7 +76,7 @@
 										reRender="denklestirmeDonemiTable,girisler,hareketTables" />
 								</h:selectOneMenu>
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiOnayRaporHome.kullaniciPersonel==false}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiOnayRaporHome.kullaniciPersonel == false}">
 								<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
 								<h:inputText value="#{fazlaMesaiOnayRaporHome.sicilNo}">
 									<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" />
@@ -87,7 +87,7 @@
 					</h:panelGrid>
 					<rich:panel id="denklestirmeDonemiTable" style="overflow: auto;">
 						<a4j:outputPanel id="butonlar">
-							<c:if test="#{fazlaMesaiOnayRaporHome.gorevYeriList!=null and fazlaMesaiOnayRaporHome.gorevYeriList.size()>0}">
+							<c:if test="#{fazlaMesaiOnayRaporHome.gorevYeriList != null and fazlaMesaiOnayRaporHome.gorevYeriList.size()>0}">
 								<TABLE width="45%">
 									<TR>
 										<TD width="35%" valign="top"><a4j:commandButton action="#{fazlaMesaiOnayRaporHome.fillPersonelDenklestirmeRaporList()}"
@@ -139,7 +139,7 @@
 											</f:facet>
 											<h:outputText value="#{fazlaMesai.vardiyaGun.pdksPersonel.adSoyad}" />
 										</rich:column>
-										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{fazlaMesaiOnayRaporHome.seciliEkSaha3Id==null}">
+										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{fazlaMesaiOnayRaporHome.seciliEkSaha3Id == null}">
 											<f:facet name="header">
 												<h:outputText value="#{fazlaMesaiOnayRaporHome.bolumAciklama}" />
 											</f:facet>
@@ -149,7 +149,7 @@
 											<f:facet name="header">
 												<h:outputText value="#{ortakIslemler.yoneticiAciklama()}" />
 											</f:facet>
-											<ui:fragment rendered="#{fazlaMesai.vardiyaGun.pdksPersonel.yoneticisi!=null}">
+											<ui:fragment rendered="#{fazlaMesai.vardiyaGun.pdksPersonel.yoneticisi != null}">
 												<h:outputText value="#{fazlaMesai.vardiyaGun.pdksPersonel.yoneticisi.adSoyad}" />
 
 											</ui:fragment>
@@ -190,7 +190,7 @@
 											</f:facet>
 											<SPAN id="mesai#{fazlaMesai.id}"> <h:panelGrid columns="2">
 													<h:outputText value="#{fazlaMesai.fazlaMesaiOnayDurum.aciklama}" />
-													<ui:fragment rendered="#{fazlaMesai.fazlaMesaiTalep!=null and fazlaMesaiOnayRaporHome.talepGoster}">
+													<ui:fragment rendered="#{fazlaMesai.fazlaMesaiTalep != null and fazlaMesaiOnayRaporHome.talepGoster}">
 														<h:graphicImage value="/img/msginfo.png" style="border:0" height="18" />
 														<rich:toolTip for="mesai#{fazlaMesai.id}">
 															<DIV>
@@ -211,7 +211,7 @@
 																		<TD nowrap="nowrap"><B>Mesai Nedeni</B></TD>
 																		<TD nowrap="nowrap"><B> : </B> <ui:fragment>
 																				<h:outputText value="#{fazlaMesai.fazlaMesaiTalep.mesaiNeden.aciklama}" id="mnd" />
-																				<ui:fragment rendered="#{fazlaMesai.fazlaMesaiTalep.aciklama!=null and fazlaMesai.fazlaMesaiTalep.aciklama!='' }">
+																				<ui:fragment rendered="#{fazlaMesai.fazlaMesaiTalep.aciklama != null and fazlaMesai.fazlaMesaiTalep.aciklama != '' }">
 																 [ #{fazlaMesai.fazlaMesaiTalep.aciklama} ]	</ui:fragment>
 																			</ui:fragment></TD>
 																	</TR>
@@ -228,7 +228,7 @@
 																		<TD nowrap="nowrap"><B> : </B> <ui:fragment rendered="#{fazlaMesai.fazlaMesaiTalep.guncelleyenUser.id == authenticatedUser.id}">
 																				<SPAN style="color: blue; font-weight: bold;"> <h:outputText value="#{fazlaMesai.fazlaMesaiTalep.guncelleyenUser.adSoyad}" />
 																				</SPAN>
-																			</ui:fragment> <ui:fragment rendered="#{fazlaMesai.fazlaMesaiTalep.guncelleyenUser.id != authenticatedUser.id}">
+																			</ui:fragment> <ui:fragment rendered="#{fazlaMesai.fazlaMesaiTalep.guncelleyenUser.id  != authenticatedUser.id}">
 																				<h:outputText value="#{fazlaMesai.fazlaMesaiTalep.guncelleyenUser.adSoyad}" />
 																			</ui:fragment></TD>
 
@@ -291,7 +291,7 @@
 											</f:facet>
 											<h:outputText value="#{fazlaMesai.vardiyaGun.pdksPersonel.adSoyad}" />
 										</rich:column>
-										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{fazlaMesaiOnayRaporHome.seciliEkSaha3Id==null}">
+										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{fazlaMesaiOnayRaporHome.seciliEkSaha3Id == null}">
 											<f:facet name="header">
 												<h:outputText value="#{fazlaMesaiOnayRaporHome.bolumAciklama}" />
 											</f:facet>
@@ -301,7 +301,7 @@
 											<f:facet name="header">
 												<h:outputText value="#{ortakIslemler.yoneticiAciklama()}" />
 											</f:facet>
-											<ui:fragment rendered="#{fazlaMesai.vardiyaGun.pdksPersonel.yoneticisi!=null}">
+											<ui:fragment rendered="#{fazlaMesai.vardiyaGun.pdksPersonel.yoneticisi != null}">
 												<h:outputText value="#{fazlaMesai.vardiyaGun.pdksPersonel.yoneticisi.adSoyad}" />
 
 											</ui:fragment>

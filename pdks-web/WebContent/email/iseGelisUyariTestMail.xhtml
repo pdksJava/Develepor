@@ -49,10 +49,10 @@
 
 					<td align="center" style="border: 1px solid;"><h:outputText
 							value="#{iseGelmemeUyari.userYonetici.getTarihFormatla(vardiya.ilkGiris.orjinalZaman, ortakIslemler.dateTimeFormat)}"
-							rendered="#{vardiya.ilkGiris!=null}" /> <h:outputText value="Kart basılmamıştır" rendered="#{vardiya.ilkGiris==null}" /></td>
+							rendered="#{vardiya.ilkGiris != null}" /> <h:outputText value="Kart basılmamıştır" rendered="#{vardiya.ilkGiris == null}" /></td>
 					<td align="center" style="border: 1px solid;"><h:outputText
 							value="#{iseGelmemeUyari.userYonetici.getTarihFormatla(vardiya.sonCikis.orjinalZaman, ortakIslemler.dateTimeFormat)}"
-							rendered="#{vardiya.sonCikis!=null}" /> <h:outputText value="Kart basılmamıştır" rendered="#{vardiya.sonCikis==null}" /></td>
+							rendered="#{vardiya.sonCikis != null}" /> <h:outputText value="Kart basılmamıştır" rendered="#{vardiya.sonCikis == null}" /></td>
 					<ui:fragment rendered="#{iseGelmemeUyari.hataliHareketVar}">
 						<td align="center" style="border: 1px solid;"><ui:fragment rendered="#{vardiya.hareketHatali}">
 								<TABLE>

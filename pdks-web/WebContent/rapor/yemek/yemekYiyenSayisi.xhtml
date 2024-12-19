@@ -72,7 +72,7 @@
 							<f:facet name="header">
 								<h:outputText value="Geçerli Mükerrer Adet" />
 							</f:facet>
-							<h:outputText value="#{yemek.gecerliYemekAdet}" rendered="#{yemek.gecerliYemekAdet!=0}" />
+							<h:outputText value="#{yemek.gecerliYemekAdet}" rendered="#{yemek.gecerliYemekAdet != 0}" />
 						</rich:column>
 						<rich:column styleClass="#{yemek.style}" width="60">
 							<f:facet name="header">
@@ -104,8 +104,8 @@
 								<h:outputText value="Yemek Zamanı" />
 
 							</f:facet>
-							<h:outputText rendered="#{yemek.zaman!=null}" value="#{authenticatedUser.getTarihFormatla(yemek.zaman, 'd/M/yyyy EEEEE')}" />
-							<h:outputText rendered="#{yemek.zaman==null}" value="Toplam" />
+							<h:outputText rendered="#{yemek.zaman != null}" value="#{authenticatedUser.getTarihFormatla(yemek.zaman, 'd/M/yyyy EEEEE')}" />
+							<h:outputText rendered="#{yemek.zaman == null}" value="Toplam" />
 
 						</rich:column>
 
@@ -146,7 +146,7 @@
 							<f:facet name="header">
 								<h:outputText value="Geçerli Mükerrer Adet" />
 							</f:facet>
-							<h:outputText value="#{yemek.gecerliYemekAdet}" rendered="#{yemek.gecerliYemekAdet!=0}" />
+							<h:outputText value="#{yemek.gecerliYemekAdet}" rendered="#{yemek.gecerliYemekAdet != 0}" />
 						</rich:column>
 						<rich:column styleClass="#{yemek.style}" width="60">
 							<f:facet name="header">

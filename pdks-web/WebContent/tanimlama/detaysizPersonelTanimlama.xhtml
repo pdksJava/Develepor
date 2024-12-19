@@ -119,7 +119,7 @@
 				<h:panelGroup>
 					<h:form>
 						<h:graphicImage value="/img/close.png" styleClass="hidelink">
-							<a4j:support event="onclick" action="#{pdksPersonelHome.instanceRefresh}" reRender="pdksPersonelList" oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
+							<a4j:support event="onclick" action="#{pdksPersonelHome.instanceRefresh}" reRender="pdksPersonelList" oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
 				</h:panelGroup>
@@ -173,7 +173,7 @@
 					</a4j:outputPanel>
 					<!--  -->
 
-					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{pdksPersonelHome.detaysizSave}" reRender="pdksPersonelList" oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{pdksPersonelHome.detaysizSave}" reRender="pdksPersonelList" oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
 

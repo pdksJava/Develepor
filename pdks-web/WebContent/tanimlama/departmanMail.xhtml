@@ -15,7 +15,7 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{departmanMailHome.departmanAciklama}</ui:define>
 
-							<h:selectOneMenu rendered="#{authenticatedUser.admin and departmanMailHome.departmanTanimList!=null}"
+							<h:selectOneMenu rendered="#{authenticatedUser.admin and departmanMailHome.departmanTanimList != null}"
 								value="#{departmanMailHome.departmanTanim}" required="true" requiredMessage="#{departmanMailHome.departmanAciklama} seçiniz">
 								<s:selectItems var="comp" value="#{departmanMailHome.departmanTanimList}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
 								<s:convertEntity />

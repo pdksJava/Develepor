@@ -29,17 +29,17 @@
 							<s:decorate template="/layout/edit.xhtml" rendered="#{calismaSaatleriHome.aramaSecenekleri.sirketIdList.size()>0}">
 								<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 								<h:selectOneMenu value="#{calismaSaatleriHome.aramaSecenekleri.sirketId}"
-									disabled="#{calismaSaatleriHome.aramaSecenekleri.sirketIdList.size()==1}">
+									disabled="#{calismaSaatleriHome.aramaSecenekleri.sirketIdList.size() == 1}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{calismaSaatleriHome.aramaSecenekleri.sirketIdList}" />
 									<a4j:support event="onchange" action="#{calismaSaatleriHome.fillTesisList()}" ajaxSingle="true" reRender="hareketPanel" />
 								</h:selectOneMenu>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml"
-								rendered="#{ortakIslemler.tesisDurumu and calismaSaatleriHome.aramaSecenekleri.tesisList!=null and calismaSaatleriHome.aramaSecenekleri.tesisList.size()>0}">
+								rendered="#{ortakIslemler.tesisDurumu and calismaSaatleriHome.aramaSecenekleri.tesisList != null and calismaSaatleriHome.aramaSecenekleri.tesisList.size()>0}">
 								<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 								<h:selectOneMenu value="#{calismaSaatleriHome.aramaSecenekleri.tesisId}"
-									disabled="#{calismaSaatleriHome.aramaSecenekleri.tesisList.size()==1}">
+									disabled="#{calismaSaatleriHome.aramaSecenekleri.tesisList.size() == 1}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{calismaSaatleriHome.aramaSecenekleri.tesisList}" />
 
@@ -115,11 +115,11 @@
 								<h:outputText value="Çalışma Süresi" />
 							</f:facet>
 							<ui:fragment rendered="#{calismaPlani.calismaSuresi + calismaPlani.fazlaMesaiSure>0}">
-								<ui:fragment rendered="#{calismaPlani.durum==false or calismaPlani.vardiyaSaat==null}">
+								<ui:fragment rendered="#{calismaPlani.durum == false or calismaPlani.vardiyaSaat == null}">
 									<SPAN style="color: red;"> <h:outputText
 											value="#{authenticatedUser.sayiFormatliGoster(calismaPlani.calismaSuresi + calismaPlani.fazlaMesaiSure)} saat" /></SPAN>
 								</ui:fragment>
-								<ui:fragment rendered="#{calismaPlani.durum and calismaPlani.vardiyaSaat!=null}">
+								<ui:fragment rendered="#{calismaPlani.durum and calismaPlani.vardiyaSaat != null}">
 									<SPAN style="font-weight: bold;"> <h:outputText
 											value="#{authenticatedUser.sayiFormatliGoster(calismaPlani.calismaSuresi + calismaPlani.fazlaMesaiSure)} saat" /></SPAN>
 								</ui:fragment>
@@ -155,18 +155,18 @@
 							<f:facet name="header">
 								<h:outputText value="Hareketler ve İzin Durumu" />
 							</f:facet>
-							<h:panelGrid columns="1" rendered="#{calismaPlani.hareketler!=null or calismaPlani.vardiya.calisma==false or calismaPlani.izin!=null}">
-								<a4j:commandButton status="ajaxStatus" value="Hareketler" rendered="#{calismaPlani.hareketler!=null}"
+							<h:panelGrid columns="1" rendered="#{calismaPlani.hareketler != null or calismaPlani.vardiya.calisma == false or calismaPlani.izin != null}">
+								<a4j:commandButton status="ajaxStatus" value="Hareketler" rendered="#{calismaPlani.hareketler != null}"
 									oncomplete="#{rich:component('hareketDetayPanel')}.show()" action="#{calismaSaatleriHome.hareketGoster(calismaPlani)}"
 									reRender="hareketDetayPanel" />
-								<ui:fragment rendered="#{calismaPlani.vardiya.calisma==false or calismaPlani.izin!=null}">
-									<ui:fragment rendered="#{calismaPlani.izin!= null}">
+								<ui:fragment rendered="#{calismaPlani.vardiya.calisma == false or calismaPlani.izin != null}">
+									<ui:fragment rendered="#{calismaPlani.izin  != null}">
 										<h:outputText value="#{calismaPlani.izin.izinTipiAciklama} izni var" />
 										<br />
 										<h:outputText value="#{authenticatedUser.dateFormatla(calismaPlani.izin.baslangicZamani)}" />-
 									<h:outputText value="#{authenticatedUser.dateFormatla(calismaPlani.izin.bitisZamani)}" />
 									</ui:fragment>
-									<ui:fragment rendered="#{calismaPlani.izin==null}">
+									<ui:fragment rendered="#{calismaPlani.izin == null}">
 										<h:outputText value="#{calismaPlani.vardiya.adi} " />
 									</ui:fragment>
 								</ui:fragment>

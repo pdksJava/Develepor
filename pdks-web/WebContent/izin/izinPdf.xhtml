@@ -8,7 +8,7 @@
 			<ui:fragment rendered="#{false and personelIzinGirisiHome.izin.izinSahibi.sirket.departman.admin}" >
 				<p:image value="/img/logo_ASM_Orj.png" alignment="left" height="212" width="300" />
 			</ui:fragment>
-			<ui:fragment rendered="#{personelIzinGirisiHome.izin.izinSahibi.sirket.departman.admin==false}">
+			<ui:fragment rendered="#{personelIzinGirisiHome.izin.izinSahibi.sirket.departman.admin == false}">
 				<p:font name="helvetica" encoding="ISO-8859-9" size="10" style="bold">
 					<p:paragraph>#{personelIzinGirisiHome.izin.izinSahibi.sirket.ad}</p:paragraph>
 				</p:font>
@@ -42,7 +42,7 @@
 				<p:cell>Personelin Adı Soyadı</p:cell>
 				<p:cell>
 
-					<ui:fragment rendered="#{personelIzinGirisiHome.izin.izinSahibi.sirket.departman.admin==false}">
+					<ui:fragment rendered="#{personelIzinGirisiHome.izin.izinSahibi.sirket.departman.admin == false}">
 						<p:font name="helvetica" encoding="ISO-8859-9" size="8">
 							<p:paragraph> #{personelIzinGirisiHome.izin.izinSahibi.adSoyad}</p:paragraph>
 						</p:font>
@@ -198,7 +198,7 @@
 			<ui:fragment rendered="#{personelIzinGirisiHome.izin.izinSahibi.sirket.departman.admin}">
 				<p:image value="/img/logo_ASM_Orj.png" alignment="left" height="212" width="300" />
 			</ui:fragment>
-			<ui:fragment rendered="#{personelIzinGirisiHome.izin.izinSahibi.sirket.departman.admin==false}">
+			<ui:fragment rendered="#{personelIzinGirisiHome.izin.izinSahibi.sirket.departman.admin == false}">
 				<p:font name="helvetica" encoding="ISO-8859-9" size="10" style="bold">
 					<p:paragraph>#{personelIzinGirisiHome.izin.izinSahibi.sirket.ad}</p:paragraph>
 				</p:font>
@@ -232,7 +232,7 @@
 				<p:cell>Personelin Adı Soyadı</p:cell>
 				<p:cell>
 
-					<ui:fragment rendered="#{personelIzinGirisiHome.izin.izinSahibi.sirket.departman.admin==false}">
+					<ui:fragment rendered="#{personelIzinGirisiHome.izin.izinSahibi.sirket.departman.admin == false}">
 						<p:font name="helvetica" encoding="ISO-8859-9" size="8">
 							<p:paragraph> #{personelIzinGirisiHome.izin.izinSahibi.adSoyad}</p:paragraph>
 						</p:font>

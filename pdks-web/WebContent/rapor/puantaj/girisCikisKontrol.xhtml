@@ -27,17 +27,17 @@
 						<s:decorate template="/layout/edit.xhtml" rendered="#{girisCikisKontrolHome.aramaSecenekleri.sirketIdList.size()>0}">
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 							<h:selectOneMenu value="#{girisCikisKontrolHome.aramaSecenekleri.sirketId}"
-								disabled="#{girisCikisKontrolHome.aramaSecenekleri.sirketIdList.size()==1}">
+								disabled="#{girisCikisKontrolHome.aramaSecenekleri.sirketIdList.size() == 1}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{girisCikisKontrolHome.aramaSecenekleri.sirketIdList}" />
 								<a4j:support event="onchange" action="#{girisCikisKontrolHome.fillTesisList()}" ajaxSingle="true" reRender="secimler,hareketPanel" />
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{ortakIslemler.tesisDurumu and girisCikisKontrolHome.aramaSecenekleri.tesisList!=null and girisCikisKontrolHome.aramaSecenekleri.tesisList.size()>0}">
+							rendered="#{ortakIslemler.tesisDurumu and girisCikisKontrolHome.aramaSecenekleri.tesisList != null and girisCikisKontrolHome.aramaSecenekleri.tesisList.size()>0}">
 							<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 							<h:selectOneMenu value="#{girisCikisKontrolHome.aramaSecenekleri.tesisId}"
-								disabled="#{girisCikisKontrolHome.aramaSecenekleri.tesisList.size()==1}">
+								disabled="#{girisCikisKontrolHome.aramaSecenekleri.tesisList.size() == 1}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{girisCikisKontrolHome.aramaSecenekleri.tesisList}" />
 
@@ -132,7 +132,7 @@
 								<h:outputText value="Hareketler" />
 							</f:facet>
 
-							<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="viewlink" rendered="#{calismaPlani.hareketler!=null}"
+							<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="viewlink" rendered="#{calismaPlani.hareketler != null}"
 								oncomplete="#{rich:component('hareketDetayPanel')}.show()" reRender="hareketDetayPanel"
 								action="#{girisCikisKontrolHome.hareketGoster(calismaPlani)}">
 								<h:graphicImage value="/img/onetomany.gif" style="border:0" />

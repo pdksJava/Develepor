@@ -22,7 +22,7 @@
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{yemekHome.bitTarih}" />
 						</s:decorate>
 						<a4j:commandButton value="Girişleri Getir" action="#{yemekHome.fillKartSizYemek}" onclick="#{rich:component('wait')}.show()"
-							oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('wait')}.hide()" reRender="yemekPanel" />
+							oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('wait')}.hide()" reRender="yemekPanel" />
 						<a4j:commandButton status="ajaxStatus" value="Kartsız Giriş Ekle" action="#{yemekHome.kartSizYemekGetir(null)}"
 							oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" />
 
@@ -115,7 +115,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
 							<a4j:support event="onclick" action="#{yemekHome.instanceKartsizRefresh}" reRender="yemekTable"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
 				</h:panelGroup>
@@ -126,32 +126,32 @@
 						<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 						<h:panelGrid columns="1">
 
-							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id!=null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id != null}">
 								<ui:define name="label">Tarihi</ui:define>
 								<h:outputText value="#{authenticatedUser.dateFormatla(yemekHome.yemekKartsiz.tarih)}" />
 
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id!=null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id != null}">
 								<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 								<h:outputText value="#{yemekHome.yemekKartsiz.sirket.ad}" />
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id!=null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id != null}">
 								<ui:define name="label">Yemekhane</ui:define>
 								<h:outputText value="#{yemekHome.yemekKartsiz.yemekkapi.aciklama}" />
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id!=null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id != null}">
 								<ui:define name="label">Yemek Açıklama</ui:define>
 								<h:outputText value="#{yemekHome.yemekKartsiz.yemekOgun.yemekAciklama}" />
 							</s:decorate>
 
-							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id==null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id == null}">
 								<ui:define name="label">Tarihi</ui:define>
 								<rich:calendar value="#{yemekHome.yemekKartsiz.tarih}" datePattern="#{authenticatedUser.dateFormat}" required="true" requiredMessage="Tarihi Seçiniz">
 									<a4j:support event="onchanged" action="#{yemekHome.fillYemekOgunler}" reRender="yemekler" />
 								</rich:calendar>
 
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id==null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id == null}">
 								<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 								<h:selectOneMenu value="#{yemekHome.yemekKartsiz.sirket}">
 									<s:selectItems var="sirket" value="#{yemekHome.sirketList}" label="#{sirket.ad}" noSelectionLabel="Lütfen seçiniz" />
@@ -159,14 +159,14 @@
 								</h:selectOneMenu>
 							</s:decorate>
 
-							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id==null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id == null}">
 								<ui:define name="label">Yemekhane</ui:define>
 								<h:selectOneMenu value="#{yemekHome.yemekKartsiz.yemekKapi}">
 									<s:selectItems var="comp" value="#{yemekHome.yemekHaneList}" label="#{comp.aciklama}" noSelectionLabel="Yemekhane seçiniz" />
 									<s:convertEntity />
 								</h:selectOneMenu>
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id==null}" id="yemekler">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{yemekHome.yemekKartsiz.id == null}" id="yemekler">
 								<ui:define name="label">Yemek Açıklama</ui:define>
 								<h:selectOneMenu value="#{yemekHome.yemekKartsiz.yemekOgun}">
 									<s:selectItems var="comp" value="#{yemekHome.yemekList}" label="#{comp.yemekAciklama}" noSelectionLabel="Yemek açıklama seçiniz" />
@@ -186,7 +186,7 @@
 						</h:panelGrid>
 					</a4j:outputPanel>
 					<a4j:commandButton value="Kaydet" action="#{yemekHome.saveKartSizYemek}" onclick="#{rich:component('wait')}.show()"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) { #{rich:component('editPanel')}.hide()} #{rich:component('wait')}.hide()"
+						oncomplete="if (#{facesContext.maximumSeverity == null}) { #{rich:component('editPanel')}.hide()} #{rich:component('wait')}.hide()"
 						reRender="yemekPanel" />
 
 

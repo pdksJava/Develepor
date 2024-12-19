@@ -121,7 +121,7 @@
 								<rich:column>
 									<a4j:commandButton status="ajaxStatus" action="#{menuItemPermissionTanimlama.deleteAccountPermissionFromModelPanel(permission)}"
 										ajaxSingle="true" id="deleteLink4Modal" image="/img/delete.gif"
-										oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editRolePanel')}.hide();" />
+										oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editRolePanel')}.hide();" />
 
 									<rich:toolTip for="deleteLink4Modal" value="Sil" />
 								</rich:column>

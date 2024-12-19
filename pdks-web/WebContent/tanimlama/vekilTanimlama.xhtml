@@ -34,14 +34,14 @@
 								<ui:define name="label">
 									<h:outputText value="Vekalet Veren Adi" />
 								</ui:define>
-								<h:inputText disabled="#{(authenticatedUser.yonetici==true or authenticatedUser.mudur==true) and authenticatedUser.IK==false}"
+								<h:inputText disabled="#{(authenticatedUser.yonetici == true or authenticatedUser.mudur == true) and authenticatedUser.IK == false}"
 									value="#{userVekaletHome.vekaletVerenAdi}" size="35" />
 							</s:decorate>
 							<s:decorate id="vekaletVerenSoyadi" template="/layout/edit.xhtml">
 								<ui:define name="label">
 									<h:outputText value="Vekalet Veren Soyadi" />
 								</ui:define>
-								<h:inputText disabled="#{(authenticatedUser.yonetici==true or authenticatedUser.mudur==true) and authenticatedUser.IK==false}"
+								<h:inputText disabled="#{(authenticatedUser.yonetici == true or authenticatedUser.mudur == true) and authenticatedUser.IK == false}"
 									value="#{userVekaletHome.vekaletVerenSoyadi}" size="35" />
 							</s:decorate>
 
@@ -49,12 +49,12 @@
 								<ui:define name="label">
 									<h:outputText value="Vekalet Veren #{ortakIslemler.personelNoAciklama()}" />
 								</ui:define>
-								<h:inputText disabled="#{(authenticatedUser.yonetici==true or authenticatedUser.mudur==true) and authenticatedUser.IK==false}"
+								<h:inputText disabled="#{(authenticatedUser.yonetici == true or authenticatedUser.mudur == true) and authenticatedUser.IK == false}"
 									value="#{userVekaletHome.vekaletVerenSicilNo}" size="10" />
 							</s:decorate>
 
 							<a4j:commandLink status="ajaxStatus" value="Vekalet Veren Ara" id="edit2link"
-								rendered="#{(authenticatedUser.yonetici==false and authenticatedUser.mudur==false) || authenticatedUser.IK==true }"
+								rendered="#{(authenticatedUser.yonetici == false and authenticatedUser.mudur == false) || authenticatedUser.IK == true }"
 								action="#{userVekaletHome.fillPdksUserList2}" oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" />
 						</h:panelGrid>
 					</a4j:region>
@@ -89,7 +89,7 @@
 				</h:panelGrid>
 				<a4j:region cellpadding="0" cellspacing="0">
 					<a4j:commandButton status="ajaxStatus" action="#{userVekaletHome.save}" id="btnKaydet" value="Kaydet"
-						disabled="#{userVekaletHome.vekaletVerenUser==null or userVekaletHome.vekilUser==null}" reRender="izinListPanel,personelBilgisi" />
+						disabled="#{userVekaletHome.vekaletVerenUser == null or userVekaletHome.vekilUser == null}" reRender="izinListPanel,personelBilgisi" />
 				</a4j:region>
 			</rich:panel>
 		</h:form>
@@ -124,14 +124,14 @@
                				 </f:facet>
 								<a4j:commandButton status="ajaxStatus" image="/img/edit.gif" ajaxSingle="true" id="editlink"
 									oncomplete="#{rich:component('editPanel2')}.show()"
-									rendered="#{vekalet.modify and (authenticatedUser.IK or authenticatedUser.admin or vekalet.yeniYonetici.id==authenticatedUser.id)}">
+									rendered="#{vekalet.modify and (authenticatedUser.IK or authenticatedUser.admin or vekalet.yeniYonetici.id == authenticatedUser.id)}">
 									<f:setPropertyActionListener value="#{vekalet}" target="#{userVekaletHome.devirUserVekalet}">
 										<s:convertEntity />
 									</f:setPropertyActionListener>
 								</a4j:commandButton>
 								<a4j:commandButton status="ajaxStatus" image="/img/delete.gif" ajaxSingle="true" id="deletelink"
 									oncomplete="#{rich:component('deletePanel')}.show()"
-									rendered="#{vekalet.delete and (authenticatedUser.IK or authenticatedUser.admin or vekalet.vekaletVeren.id==authenticatedUser.id)}">
+									rendered="#{vekalet.delete and (authenticatedUser.IK or authenticatedUser.admin or vekalet.vekaletVeren.id == authenticatedUser.id)}">
 									<f:setPropertyActionListener value="#{vekalet}" target="#{userVekaletHome.instance}">
 										<s:convertEntity />
 									</f:setPropertyActionListener>
@@ -362,7 +362,7 @@
 							</ui:fragment>
 
 							<a4j:commandButton status="ajaxStatus" value="Bitiş Tarihi Kapat" action="#{userVekaletHome.bitisTarihDegistir}"
-								rendered="#{ authenticatedUser.IK or authenticatedUser.admin or vekalet.vekaletVeren.id==authenticatedUser.id}"
+								rendered="#{ authenticatedUser.IK or authenticatedUser.admin or vekalet.vekaletVeren.id == authenticatedUser.id}"
 								oncomplete="#{rich:component('editPanel2')}.hide()" reRender="izinListPanel,devretId" />
 
 						</ui:fragment>

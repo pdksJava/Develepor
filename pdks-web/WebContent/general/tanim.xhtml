@@ -25,12 +25,12 @@
 									</s:decorate>
 									<a4j:outputPanel id="anaTable">
 
-										<rich:dataTable rowClasses="acik,koyu" value="#{tanimHome.tanimList}" rendered="#{tanimHome.genelTanim!=null}" var="tanim" rows="20"
+										<rich:dataTable rowClasses="acik,koyu" value="#{tanimHome.tanimList}" rendered="#{tanimHome.genelTanim != null}" var="tanim" rows="20"
 											rowKeyVar="row" id="table">
 											<f:facet name="header">
 												<h:outputText value="#{tanimHome.genelTanim.aciklama} Tanımları" />
 											</f:facet>
-											<rich:column style="heigth" rendered="#{tanimHome.genelTanim!=null and (tanimHome.genelTanim.guncelle or authenticatedUser.admin)}">
+											<rich:column style="heigth" rendered="#{tanimHome.genelTanim != null and (tanimHome.genelTanim.guncelle or authenticatedUser.admin)}">
 												<f:facet name="header">
                         İşlemler
                				 </f:facet>
@@ -45,7 +45,7 @@
 
 													<a4j:commandLink status="ajaxStatus" id="childTanim" action="#{tanimHome.fillChildTanimList(tanim)}"
 														reRender="childTanimTable,childEkle,childTanimGroup" ajaxSingle="true"
-														rendered="#{tanimHome.genelTanim!=null and tanimHome.genelTanim.childGenelTanim.id!=null}">
+														rendered="#{tanimHome.genelTanim != null and tanimHome.genelTanim.childGenelTanim.id != null}">
 														<h:graphicImage value="/img/select.gif" style="border:0"
 															alt="#{tanim.aciklama} #{tanimHome.genelTanim.childGenelTanim.aciklama}lerini Görüntüle" />
 													</a4j:commandLink>
@@ -100,7 +100,7 @@
 
 
 										<h:panelGrid columns="1" id="ekleTanim">
-											<s:decorate rendered="#{tanimHome.genelTanim!=null and (tanimHome.genelTanim.guncelle or authenticatedUser.admin)}"
+											<s:decorate rendered="#{tanimHome.genelTanim != null and (tanimHome.genelTanim.guncelle or authenticatedUser.admin)}"
 												template="/layout/edit.xhtml">
 												<a4j:commandButton status="ajaxStatus" value="#{tanimHome.genelTanim.aciklama} Ekle" action="#{tanimHome.tanimEkle(null)}"
 													oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" ajaxSingle="true" id="parentEkle">
@@ -117,7 +117,7 @@
 
 							<TD valign="top" width="50%"><a4j:outputPanel id="childTanimGroup">
 									<rich:panel header="#{tanimHome.selectedParentTanim.aciklama}"
-										rendered="#{tanimHome.genelTanim.childGenelTanim!=null and tanimHome.selectedParentTanim.id!=null}">
+										rendered="#{tanimHome.genelTanim.childGenelTanim != null and tanimHome.selectedParentTanim.id != null}">
 										<h:panelGrid columns="1">
 											<rich:dataTable rowClasses="acik,koyu" style="height:150;" value="#{tanimHome.childTanimList}" var="childTanim" rows="20" rowKeyVar="row"
 												id="childTanimTable">
@@ -181,7 +181,7 @@
 
 										</h:panelGrid>
 									</rich:panel>
-									<ui:fragment rendered="#{tanimHome.genelTanim.childGenelTanim!=null and tanimHome.selectedParentTanim.id!=null}">
+									<ui:fragment rendered="#{tanimHome.genelTanim.childGenelTanim != null and tanimHome.selectedParentTanim.id != null}">
 										<a4j:commandButton status="ajaxStatus" id="childEkle" value="#{tanimHome.selectedParentTanim.aciklama} Ekle" reRender="editChildPanel"
 											rendered="#{tanimHome.selectedParentTanim.guncelle or authenticatedUser.admin}" ajaxSingle="true"
 											action="#{tanimHome.tanimEkle(tanimHome.selectedParentTanim)}" oncomplete="#{rich:component('editChildPanel')}.show()">
@@ -226,13 +226,13 @@
 					<h:panelGrid columns="1">
 						<s:decorate id="parametreAdiField1" template="/layout/edit.xhtml">
 							<ui:define name="label">Kodu</ui:define>
-							<h:inputText rendered="#{authenticatedUser.admin==true}" required="true" value="#{tanimHome.instance.kodu}" />
-							<h:outputText rendered="#{authenticatedUser.admin==false}" required="true" value="#{tanimHome.instance.kodu}" />
+							<h:inputText rendered="#{authenticatedUser.admin == true}" required="true" value="#{tanimHome.instance.kodu}" />
+							<h:outputText rendered="#{authenticatedUser.admin == false}" required="true" value="#{tanimHome.instance.kodu}" />
 						</s:decorate>
 						<s:decorate id="parametreAdiField2" template="/layout/edit.xhtml">
 							<ui:define name="label">ERP Kodu</ui:define>
-							<h:inputText rendered="#{authenticatedUser.admin==true}" value="#{tanimHome.instance.erpKodu}" />
-							<h:outputText rendered="#{authenticatedUser.admin==false}" required="true" value="#{tanimHome.instance.erpKodu}" />
+							<h:inputText rendered="#{authenticatedUser.admin == true}" value="#{tanimHome.instance.erpKodu}" />
+							<h:outputText rendered="#{authenticatedUser.admin == false}" required="true" value="#{tanimHome.instance.erpKodu}" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Açiklama(tr)</ui:define>
@@ -242,7 +242,7 @@
 							<ui:define name="label">Açiklama(en)</ui:define>
 							<h:inputText id="id2" required="true" value="#{tanimHome.instance.aciklamaen}" style="width: 500px" maxlength="128" />
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin==true}">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin == true}">
 							<ui:define name="label">Güncelle</ui:define>
 							<h:selectBooleanCheckbox required="true" value="#{tanimHome.instance.guncelle}" />
 						</s:decorate>
@@ -256,7 +256,7 @@
 					<!--  -->
 
 					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{tanimHome.save}" reRender="anaTable"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
 
@@ -281,14 +281,14 @@
 					<h:panelGrid columns="1">
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Kodu</ui:define>
-							<h:inputText rendered="#{authenticatedUser.admin==true}" required="true" value="#{tanimHome.instance.kodu}" />
-							<h:outputText rendered="#{authenticatedUser.admin==false}" required="true" value="#{tanimHome.instance.kodu}" />
+							<h:inputText rendered="#{authenticatedUser.admin == true}" required="true" value="#{tanimHome.instance.kodu}" />
+							<h:outputText rendered="#{authenticatedUser.admin == false}" required="true" value="#{tanimHome.instance.kodu}" />
 
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">ERP Kodu</ui:define>
-							<h:inputText rendered="#{authenticatedUser.admin==true}" value="#{tanimHome.instance.erpKodu}" />
-							<h:outputText rendered="#{authenticatedUser.admin==false}" required="true" value="#{tanimHome.instance.erpKodu}" />
+							<h:inputText rendered="#{authenticatedUser.admin == true}" value="#{tanimHome.instance.erpKodu}" />
+							<h:outputText rendered="#{authenticatedUser.admin == false}" required="true" value="#{tanimHome.instance.erpKodu}" />
 
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
@@ -299,7 +299,7 @@
 							<ui:define name="label">Açiklama(en)</ui:define>
 							<h:inputText required="true" value="#{tanimHome.instance.aciklamaen}" style="width: 500px" maxlength="128" />
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin==true}">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin == true}">
 							<ui:define name="label">Güncelle</ui:define>
 							<h:selectBooleanCheckbox required="true" value="#{tanimHome.instance.guncelle}" />
 						</s:decorate>
@@ -314,7 +314,7 @@
 					<!--  -->
 
 					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{tanimHome.saveChild}" reRender="childTanimTable"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editChildPanel')}.hide();" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editChildPanel')}.hide();" />
 
 
 

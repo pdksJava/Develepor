@@ -110,14 +110,14 @@
 										</f:facet>
 										<h:outputText value="#{izin.personelIzin.sureAciklama}" />
 									</rich:column>
-									<rich:column styleClass="#{izin.kayitDurum}" rendered="#{authenticatedUser.IK==false}">
+									<rich:column styleClass="#{izin.kayitDurum}" rendered="#{authenticatedUser.IK == false}">
 										<f:facet name="header">
 											<h:outputText value="Onay Durum" />
 										</f:facet>
 
-										<h:outputText rendered="#{izin.personelIzin.redmi==false}"
+										<h:outputText rendered="#{izin.personelIzin.redmi == false}"
 											value="#{izin.getOnayDurumAciklama(ortakIslemler,personelIzinGirisiHome.session)}" />
-										<h:outputText rendered="#{izin.personelIzin.redmi==true}" title="#{izin.onaylamamaNeden.aciklama} ( #{izin.onaylamamaNedenAciklama} ) "
+										<h:outputText rendered="#{izin.personelIzin.redmi == true}" title="#{izin.onaylamamaNeden.aciklama} ( #{izin.onaylamamaNedenAciklama} ) "
 											value="#{izin.getOnayDurumAciklama(ortakIslemler,personelIzinGirisiHome.session)}" />
 									</rich:column>
 									<rich:column styleClass="#{izin.kayitDurum}">
@@ -133,7 +133,7 @@
 											<h:outputText value="Onay Sahibi" />
 										</f:facet>
 										<h:outputText value="#{izin.guncelleyenUser.adSoyad}" />
-										<ui:fragment rendered="#{authenticatedUser.IK and izin.yeniOnayPersonel!=null }">
+										<ui:fragment rendered="#{authenticatedUser.IK and izin.yeniOnayPersonel != null }">
 											<br />
 											<h:graphicImage id="bilgiLink" value="/img/msginfo.png" />
 											<rich:toolTip for="bilgiLink">Onaylayacak İzin Sahibi : #{izin.yeniOnayPersonel.pdksSicilNo} #{izin.yeniOnayPersonel.adSoyad} </rich:toolTip>
@@ -151,7 +151,7 @@
 											<h:outputText value="Bakiye Durum" />
 										</f:facet>
 										<a4j:commandButton status="ajaxStatus" value="İzinler"
-											rendered="#{not empty izin.personelIzin.personelIzinler and izin.personelIzin.redmi==false}"
+											rendered="#{not empty izin.personelIzin.personelIzinler and izin.personelIzin.redmi == false}"
 											oncomplete="#{rich:component('izinDetayPanel')}.show()" action="#{personelIzinGirisiHome.izinGoster(izin)}" reRender="izinDetayPanel" />
 
 									</rich:column>
@@ -165,7 +165,7 @@
 
 											<a4j:commandButton title="Onay Akışı" image="/img/middle.gif" status="ajaxStatus" ajaxSingle="true"
 												action="#{personelIzinGirisiHome.onayAkisiGoster(izin.personelIzin)}"
-												rendered="#{izin.personelIzin.izinTipi.onaysiz==false and (authenticatedUser.admin or authenticatedUser.IK)}"
+												rendered="#{izin.personelIzin.izinTipi.onaysiz == false and (authenticatedUser.admin or authenticatedUser.IK)}"
 												oncomplete="#{rich:component('onayPanel')}.show()" reRender="onayPanel" />
 											<h:commandButton target="blank" image="/img/down.gif" title="#{izin.personelIzin.dosya.dosyaAdi} indir" ajaxSingle="true"
 												action="#{ortakIslemler.downloadFile(izin.personelIzin.dosya,false)}"
@@ -428,7 +428,7 @@
 						</h:panelGrid>
 
 						<rich:dataTable rowClasses="acik,koyu" value="#{personelIzinGirisiHome.mailIzin.personelIzinOnayList}"
-							rendered="#{personelIzinGirisiHome.mailIzin!=null}" var="onay" rows="20" rowKeyVar="row">
+							rendered="#{personelIzinGirisiHome.mailIzin != null}" var="onay" rows="20" rowKeyVar="row">
 							<f:facet name="header">
 
 								<h:outputText value="Onaylayanlar" />

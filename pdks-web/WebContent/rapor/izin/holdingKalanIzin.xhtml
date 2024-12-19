@@ -30,7 +30,7 @@
 						<s:decorate template="/layout/edit.xhtml" id="sirketId" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 							<h:selectOneMenu value="#{holdingKalanIzinHome.aramaSecenekleri.sirketId}"
-								required="#{(holdingKalanIzinHome.aramaSecenekleri.sicilNo==null or holdingKalanIzinHome.aramaSecenekleri.sicilNo=='') and not empty holdingKalanIzinHome.aramaSecenekleri.sirketIdList}"
+								required="#{(holdingKalanIzinHome.aramaSecenekleri.sicilNo == null or holdingKalanIzinHome.aramaSecenekleri.sicilNo == '') and not empty holdingKalanIzinHome.aramaSecenekleri.sirketIdList}"
 								requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz!">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{holdingKalanIzinHome.aramaSecenekleri.sirketIdList}" />
@@ -42,7 +42,7 @@
 						</s:decorate>
 
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{ortakIslemler.tesisDurumu and (authenticatedUser.admin or authenticatedUser.IKAdmin) and  holdingKalanIzinHome.aramaSecenekleri.tesisList!=null and not empty holdingKalanIzinHome.aramaSecenekleri.tesisList}">
+							rendered="#{ortakIslemler.tesisDurumu and (authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.tesisList != null and not empty holdingKalanIzinHome.aramaSecenekleri.tesisList}">
 							<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 							<h:selectOneMenu value="#{holdingKalanIzinHome.aramaSecenekleri.tesisId}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -51,7 +51,7 @@
 						</s:decorate>
 
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha1!=null}">
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha1 != null}">
 							<ui:define name="label">#{holdingKalanIzinHome.aramaSecenekleri.ekSaha1.aciklama}</ui:define>
 							<h:selectOneMenu value="#{holdingKalanIzinHome.aramaSecenekleri.ekSaha1Id}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -59,7 +59,7 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha2!=null}">
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha2 != null}">
 							<ui:define name="label">#{holdingKalanIzinHome.aramaSecenekleri.ekSaha2.aciklama}</ui:define>
 							<h:selectOneMenu value="#{holdingKalanIzinHome.aramaSecenekleri.ekSaha2Id}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -67,7 +67,7 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha3!=null}">
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha3 != null}">
 							<ui:define name="label">#{holdingKalanIzinHome.aramaSecenekleri.ekSaha3.aciklama}</ui:define>
 							<h:selectOneMenu value="#{holdingKalanIzinHome.aramaSecenekleri.ekSaha3Id}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -75,7 +75,7 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha4!=null}">
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha4 != null}">
 							<ui:define name="label">#{holdingKalanIzinHome.aramaSecenekleri.ekSaha4.aciklama}</ui:define>
 							<h:selectOneMenu value="#{holdingKalanIzinHome.aramaSecenekleri.ekSaha4Id}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -123,7 +123,7 @@
 							</f:facet>
 
 
-							<rich:column rendered="#{holdingKalanIzinHome.aramaSecenekleri.sirket==null}">
+							<rich:column rendered="#{holdingKalanIzinHome.aramaSecenekleri.sirket == null}">
 								<f:facet name="header">
 									<h:outputText value="#{ortakIslemler.sirketAciklama()}" />
 								</f:facet>
@@ -158,7 +158,7 @@
 								<f:facet name="header">
 									<h:outputText value="İşten Ayrılma Tarihi" />
 								</f:facet>
-								<ui:fragment rendered="#{izinler.personel.isCalisiyorGun(holdingKalanIzinHome.hakedisTarihi)==false}">
+								<ui:fragment rendered="#{izinler.personel.isCalisiyorGun(holdingKalanIzinHome.hakedisTarihi) == false}">
 									<h:outputText value="#{authenticatedUser.dateFormatla(izinler.personel.istenAyrilisTarihi)}" />
 								</ui:fragment>
 							</rich:column>
@@ -179,28 +179,28 @@
 
 
 							<rich:column
-								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha1!=null  and ortakIslemler.getListEkSahaDurum(holdingKalanIzinHome.holdingIzinList,'1')}">
+								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha1 != null and ortakIslemler.getListEkSahaDurum(holdingKalanIzinHome.holdingIzinList,'1')}">
 								<f:facet name="header">
 									<h:outputText value="#{holdingKalanIzinHome.aramaSecenekleri.ekSaha1.aciklama}" />
 								</f:facet>
 								<h:outputText value="#{izinler.personel.ekSaha1.aciklama}" />
 							</rich:column>
 							<rich:column
-								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha2!=null  and ortakIslemler.getListEkSahaDurum(holdingKalanIzinHome.holdingIzinList,'2')}">
+								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha2 != null and ortakIslemler.getListEkSahaDurum(holdingKalanIzinHome.holdingIzinList,'2')}">
 								<f:facet name="header">
 									<h:outputText value="#{holdingKalanIzinHome.aramaSecenekleri.ekSaha2.aciklama}" />
 								</f:facet>
 								<h:outputText value="#{izinler.personel.ekSaha2.aciklama}" />
 							</rich:column>
 							<rich:column
-								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha3!=null  and ortakIslemler.getListEkSahaDurum(holdingKalanIzinHome.holdingIzinList,'4')}">
+								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha3 != null and ortakIslemler.getListEkSahaDurum(holdingKalanIzinHome.holdingIzinList,'4')}">
 								<f:facet name="header">
 									<h:outputText value="#{holdingKalanIzinHome.aramaSecenekleri.ekSaha3.aciklama}" />
 								</f:facet>
 								<h:outputText value="#{izinler.personel.ekSaha3.aciklama}" />
 							</rich:column>
 							<rich:column
-								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha4!=null and holdingKalanIzinHome.aramaSecenekleri.sirket.departman.admin}">
+								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and holdingKalanIzinHome.aramaSecenekleri.ekSahaTanimMap.ekSaha4 != null and holdingKalanIzinHome.aramaSecenekleri.sirket.departman.admin}">
 								<f:facet name="header">
 									<h:outputText value="#{holdingKalanIzinHome.aramaSecenekleri.ekSaha4.aciklama}" />
 								</f:facet>

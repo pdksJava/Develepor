@@ -27,20 +27,20 @@
 						<h:outputText value="#{izin.izinSahibi.adSoyad}" />
 					</rich:column>
 
-					<rich:column rendered="#{ personelIzinGirisiHome.ekSahaTanimMap.ekSaha1!=null and ortakIslemler.getListEkSahaDurum(personelIzinGirisiHome.personelIzinList,'1')}">
+					<rich:column rendered="#{ personelIzinGirisiHome.ekSahaTanimMap.ekSaha1 != null and ortakIslemler.getListEkSahaDurum(personelIzinGirisiHome.personelIzinList,'1')}">
 						<f:facet name="header">
 							<h:outputText value="#{personelIzinGirisiHome.ekSaha1.aciklama}" />
 						</f:facet>
 						<h:outputText value="#{izin.izinSahibi.ekSaha1.aciklama}" />
 					</rich:column>
 					 
-					<rich:column rendered="#{ personelIzinGirisiHome.ekSahaTanimMap.ekSaha3!=null}">
+					<rich:column rendered="#{ personelIzinGirisiHome.ekSahaTanimMap.ekSaha3 != null}">
 						<f:facet name="header">
 							<h:outputText value="#{personelIzinGirisiHome.ekSaha3.aciklama}" />
 						</f:facet>
 						<h:outputText value="#{izin.izinSahibi.ekSaha3.aciklama}" />
 					</rich:column>
-					<rich:column rendered="#{personelIzinGirisiHome.ekSahaTanimMap.ekSaha4!=null and ortakIslemler.getListEkSahaDurum(personelIzinGirisiHome.personelIzinList,'4')}">
+					<rich:column rendered="#{personelIzinGirisiHome.ekSahaTanimMap.ekSaha4 != null and ortakIslemler.getListEkSahaDurum(personelIzinGirisiHome.personelIzinList,'4')}">
 						<f:facet name="header">
 							<h:outputText value="#{personelIzinGirisiHome.ekSaha4.aciklama}" />
 						</f:facet>

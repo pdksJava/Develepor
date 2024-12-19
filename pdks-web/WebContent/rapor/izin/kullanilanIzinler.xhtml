@@ -48,7 +48,7 @@
 
 
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{ortakIslemler.tesisDurumu and (authenticatedUser.admin or authenticatedUser.IKAdmin) and  kullanilanIzinlerHome.aramaSecenekleri.tesisList!=null and not empty kullanilanIzinlerHome.aramaSecenekleri.tesisList}">
+						rendered="#{ortakIslemler.tesisDurumu and (authenticatedUser.admin or authenticatedUser.IKAdmin) and kullanilanIzinlerHome.aramaSecenekleri.tesisList != null and not empty kullanilanIzinlerHome.aramaSecenekleri.tesisList}">
 						<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 						<h:selectOneMenu value="#{kullanilanIzinlerHome.aramaSecenekleri.tesisId}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -96,7 +96,7 @@
 						</h:selectBooleanCheckbox>
 					</s:decorate>
 					<a4j:outputPanel id="izinler">
-						<s:decorate template="/layout/edit.xhtml" rendered="#{kullanilanIzinlerHome.tumIzinler==false}">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{kullanilanIzinlerHome.tumIzinler == false}">
 							<ui:define name="label">İzin Tipi</ui:define>
 							<h:selectOneMenu value="#{kullanilanIzinlerHome.izinTipiId}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -130,7 +130,7 @@
 					<a4j:commandButton value="Excel'den Bakiye Güncelle" onclick="#{rich:component('wait')}.show()"
 						rendered="#{not empty kullanilanIzinlerHome.bakiyeIzinTipiList and ortakIslemler.getParameterKeyHasStringValue('bakiyeIzinGoster')}"
 						action="#{kullanilanIzinlerHome.fileImportDosyaSifirla()}" ajaxSingle="true"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('wait')}.hide();#{rich:component('fileImportPanel')}.show()"
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('wait')}.hide();#{rich:component('fileImportPanel')}.show()"
 						reRender="fileImportPanel" />
 
 
@@ -228,7 +228,7 @@
 						</f:facet>
 						<h:outputText value="#{izin.aciklama}" />
 					</rich:column>
-					<rich:column rendered="#{kullanilanIzinlerHome.islemTipi=='B'}">
+					<rich:column rendered="#{kullanilanIzinlerHome.islemTipi == 'B'}">
 						<f:facet name="header">
 							<h:outputText value="Onay Son Durum" />
 						</f:facet>
@@ -283,7 +283,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" styleClass="hidelink">
 							<a4j:support event="onclick" action="#{kullanilanIzinlerHome.izinDosyaSifirla}"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('dosyaTransferPanel')}.hide();" ajaxSingle="true" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('dosyaTransferPanel')}.hide();" ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
 				</h:panelGroup>
@@ -295,7 +295,7 @@
 				<a4j:outputPanel id="dosyaPanel">
 					<rich:panel header="Dosya Ekleme" rendered="#{authenticatedUser.admin }">
 						<h:panelGrid columns="1" style="width:700px;">
-							<s:decorate template="/layout/edit.xhtml" rendered="#{kullanilanIzinlerHome.izinDosya.dosyaIcerik!=null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{kullanilanIzinlerHome.izinDosya.dosyaIcerik != null}">
 								<ui:define name="label">Referans Otomatik Oluştur</ui:define>
 								<h:selectBooleanCheckbox value="#{kullanilanIzinlerHome.referansOtomatikOlustur}">
 									<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" />
@@ -329,7 +329,7 @@
 
 							</rich:toolTip>
 							<a4j:outputPanel id="izinDosya">
-								<ui:fragment rendered="#{kullanilanIzinlerHome.izinDosya.dosyaIcerik!=null}">
+								<ui:fragment rendered="#{kullanilanIzinlerHome.izinDosya.dosyaIcerik != null}">
 									<h:panelGrid columns="3">
 										<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="dosyaPanel" ajaxSingle="true"
 											action="#{kullanilanIzinlerHome.izinDosyaSifirla}" />
@@ -339,12 +339,12 @@
 									<a4j:commandButton id="dosyaOku" value="Dosya Oku" status="ajaxStatus" ajaxSingle="true" action="#{kullanilanIzinlerHome.izinDosyaOku}"
 										rendered="#{kullanilanIzinlerHome.izinERPList.isEmpty()}" reRender="dosyaPanel"></a4j:commandButton>
 									<a4j:commandButton value="Dosya Aktar" status="ajaxStatus" ajaxSingle="true" action="#{kullanilanIzinlerHome.izinDosyaYaz}"
-										rendered="#{not empty kullanilanIzinlerHome.izinERPList and kullanilanIzinlerHome.servisCalisti==false}" reRender="dosyaPanel" />
+										rendered="#{not empty kullanilanIzinlerHome.izinERPList and kullanilanIzinlerHome.servisCalisti == false}" reRender="dosyaPanel" />
 								</ui:fragment>
 							</a4j:outputPanel>
 						</h:panelGrid>
 
-						<ui:fragment rendered="#{kullanilanIzinlerHome.izinDosya.dosyaIcerik!=null}">
+						<ui:fragment rendered="#{kullanilanIzinlerHome.izinDosya.dosyaIcerik != null}">
 							<rich:dataTable rowClasses="acik,koyu" headerClass="headerWrap" columnClasses="columnWrap" value="#{kullanilanIzinlerHome.izinERPReturnList}"
 								rendered="#{not empty kullanilanIzinlerHome.izinERPReturnList}" var="izinHata" rows="50" rowKeyVar="row" id="izinHataViewTable">
 								<f:facet name="header">
@@ -512,7 +512,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
 							<a4j:support event="onclick" onclick="#{rich:component('wait')}.show()"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) { #{rich:component('fileImportPanel')}.hide();#{rich:component('wait')}.hide();}" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) { #{rich:component('fileImportPanel')}.hide();#{rich:component('wait')}.hide();}" />
 						</h:graphicImage>
 					</h:form>
 				</h:panelGroup>
@@ -531,7 +531,7 @@
 								uploadControlLabel="Dosya Kaydet" cancelEntryControlLabel="Temizle" allowFlash="false">
 								<a4j:support event="onuploadcomplete" process="fileUpload" ajaxSingle="true" reRender="dosyaPaneli" />
 							</rich:fileUpload>
-							<ui:fragment rendered="#{kullanilanIzinlerHome.izinDosya.dosyaIcerik!=null}">
+							<ui:fragment rendered="#{kullanilanIzinlerHome.izinDosya.dosyaIcerik != null}">
 								<h:panelGrid columns="3">
 									<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="dosyaPaneli" ajaxSingle="true"
 										action="#{kullanilanIzinlerHome.fileImportDosyaSifirla}" />

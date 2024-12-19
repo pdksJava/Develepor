@@ -71,7 +71,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
 							<a4j:support event="onclick" action="#{pdksPersonelRoleHome.rolGetir()}"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" reRender="katTable" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" reRender="katTable" />
 						</h:graphicImage>
 					</h:form>
 				</h:panelGroup>
@@ -102,7 +102,7 @@
 				</a4j:outputPanel>
 
 				<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{pdksPersonelRoleHome.rolKaydet()}" reRender="userTable"
-					oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+					oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 			</h:form>
 		</rich:modalPanel>
@@ -116,7 +116,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
 							<a4j:support event="onclick" action="#{pdksPersonelRoleHome.rolGetir()}"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('savePanel')}.hide();" ajaxSingle="true" reRender="katTable" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('savePanel')}.hide();" ajaxSingle="true" reRender="katTable" />
 						</h:graphicImage>
 					</h:form>
 				</h:panelGroup>
@@ -147,7 +147,7 @@
 				</a4j:outputPanel>
 
 				<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{pdksPersonelRoleHome.rolNewKaydet()}" reRender="userTable"
-					oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('savePanel')}.hide();" />
+					oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('savePanel')}.hide();" />
 
 			</h:form>
 		</rich:modalPanel>

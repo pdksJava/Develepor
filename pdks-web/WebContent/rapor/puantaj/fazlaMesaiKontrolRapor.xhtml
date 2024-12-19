@@ -50,7 +50,7 @@
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 
 							<h:selectOneMenu id="sirketSec" value="#{fazlaMesaiKontrolRaporHome.sirketId}"
-								disabled="#{fazlaMesaiKontrolRaporHome.pdksSirketList.size()==1}" required="true" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
+								disabled="#{fazlaMesaiKontrolRaporHome.pdksSirketList.size() == 1}" required="true" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{fazlaMesaiKontrolRaporHome.pdksSirketList}" />
 								<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaMesaiKontrolRaporHome.tesisDoldur(true)}" ajaxSingle="true"
@@ -60,10 +60,10 @@
 						<c:if test="#{not empty fazlaMesaiKontrolRaporHome.pdksSirketList}">
 
 							<s:decorate template="/layout/edit.xhtml"
-								rendered="#{ortakIslemler.tesisDurumu and fazlaMesaiKontrolRaporHome.tesisList!=null and fazlaMesaiKontrolRaporHome.tesisList.size()>0}">
+								rendered="#{ortakIslemler.tesisDurumu and fazlaMesaiKontrolRaporHome.tesisList != null and fazlaMesaiKontrolRaporHome.tesisList.size()>0}">
 								<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 								<h:selectOneMenu value="#{fazlaMesaiKontrolRaporHome.tesisId}" requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz!" required="true"
-									disabled="#{fazlaMesaiKontrolRaporHome.tesisList.size()==1}">
+									disabled="#{fazlaMesaiKontrolRaporHome.tesisList.size() == 1}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{fazlaMesaiKontrolRaporHome.tesisList}" />
 									<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaMesaiKontrolRaporHome.bolumDoldur()}" ajaxSingle="true"
@@ -71,9 +71,9 @@
 								</h:selectOneMenu>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml"
-								rendered="#{  fazlaMesaiKontrolRaporHome.gorevYeriList!=null and fazlaMesaiKontrolRaporHome.gorevYeriList.size()>0}">
+								rendered="#{  fazlaMesaiKontrolRaporHome.gorevYeriList != null and fazlaMesaiKontrolRaporHome.gorevYeriList.size()>0}">
 								<ui:define name="label">#{fazlaMesaiKontrolRaporHome.bolumAciklama}</ui:define>
-								<h:selectOneMenu value="#{fazlaMesaiKontrolRaporHome.seciliEkSaha3Id}" disabled="#{fazlaMesaiKontrolRaporHome.gorevYeriList.size()==1}"
+								<h:selectOneMenu value="#{fazlaMesaiKontrolRaporHome.seciliEkSaha3Id}" disabled="#{fazlaMesaiKontrolRaporHome.gorevYeriList.size() == 1}"
 									requiredMessage="#{fazlaMesaiKontrolRaporHome.bolumAciklama} giriniz!" required="false">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{fazlaMesaiKontrolRaporHome.gorevYeriList}" />
@@ -81,7 +81,7 @@
 										reRender="denklestirmeDonemiTable,girisler" />
 								</h:selectOneMenu>
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiKontrolRaporHome.kullaniciPersonel==false}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiKontrolRaporHome.kullaniciPersonel == false}">
 								<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
 								<h:inputText value="#{fazlaMesaiKontrolRaporHome.sicilNo}">
 									<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" reRender="denklestirmeDonemiTable"
@@ -124,7 +124,7 @@
 						</a4j:outputPanel>
 
 						<a4j:outputPanel id="hareketTables" rendered="#{not empty fazlaMesaiKontrolRaporHome.aylikPuantajList}">
-							<ui:fragment rendered="#{fazlaMesaiKontrolRaporHome.seciliBolum!=null and fazlaMesaiKontrolRaporHome.ikRole}">
+							<ui:fragment rendered="#{fazlaMesaiKontrolRaporHome.seciliBolum != null and fazlaMesaiKontrolRaporHome.ikRole}">
 								<DIV style="text-align: center; font-weight: bold; color: blue; font-size: 16px;">#{fazlaMesaiKontrolRaporHome.seciliBolum.aciklama}</DIV>
 							</ui:fragment>
 							<rich:dataTable rowClasses="acik,koyu" value="#{fazlaMesaiKontrolRaporHome.aylikPuantajList}" var="aylikPuantaj" style="width: 80%;" rows="50"
@@ -156,7 +156,7 @@
 									<h:outputText value="#{aylikPuantaj.pdksPersonel.adSoyad}" style="width:autostretch ;white-space: nowrap;" />
 								</rich:column>
 
-								<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{fazlaMesaiKontrolRaporHome.seciliEkSaha3Id==null}">
+								<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{fazlaMesaiKontrolRaporHome.seciliEkSaha3Id == null}">
 									<f:facet name="header">
 										<h:outputText value="#{fazlaMesaiKontrolRaporHome.bolumAciklama}" />
 									</f:facet>
@@ -166,7 +166,7 @@
 									<f:facet name="header">
 										<h:outputText value="#{ortakIslemler.yoneticiAciklama()}" />
 									</f:facet>
-									<ui:fragment rendered="#{aylikPuantaj.yonetici!=null}">
+									<ui:fragment rendered="#{aylikPuantaj.yonetici != null}">
 										<SPAN style="width: autostretch; white-space: nowrap;"> <h:outputText value="#{aylikPuantaj.yonetici.adSoyad}"
 												style="width:autostretch ;white-space: nowrap;" />
 										</SPAN>
@@ -208,7 +208,7 @@
 
 						</a4j:outputPanel>
 
-						<ui:fragment rendered="#{not empty fazlaMesaiKontrolRaporHome.aylikPuantajList and (fazlaMesaiKontrolRaporHome.denklestirmeAyDurum==false)}">
+						<ui:fragment rendered="#{not empty fazlaMesaiKontrolRaporHome.aylikPuantajList and (fazlaMesaiKontrolRaporHome.denklestirmeAyDurum == false)}">
 
 
 							<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{fazlaMesaiKontrolRaporHome.fazlaMesaiExcel}" target="blank">

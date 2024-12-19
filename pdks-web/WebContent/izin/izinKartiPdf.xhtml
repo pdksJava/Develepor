@@ -10,7 +10,7 @@
 
 
 		<p:font name="helvetica" encoding="ISO-8859-9" size="10" style="bold">
-			<ui:fragment rendered="#{personelKalanIzinHome.suaVar==false}">
+			<ui:fragment rendered="#{personelKalanIzinHome.suaVar == false}">
 				<p:paragraph spacingAfter="10" alignment="center">YILLIK ÜCRETLİ İZİN KARTI</p:paragraph>
 			</ui:fragment>
 			<ui:fragment rendered="#{personelKalanIzinHome.suaVar}">
@@ -164,7 +164,7 @@
 				</p:cell>
 				<p:cell colspan="3" horizontalAlignment="left" padding="0">
 					<p:table columns="3" widths="1 1 1" widthPercentage="100">
-						<ui:fragment rendered="#{ empty bakiyeIzin.harcananDigerIzinler==null || empty bakiyeIzin.harcananDigerIzinler}">
+						<ui:fragment rendered="#{ empty bakiyeIzin.harcananDigerIzinler == null || empty bakiyeIzin.harcananDigerIzinler}">
 							<p:font name="helvetica" encoding="ISO-8859-9" size="8">
 								<p:cell minimumHeight="16">
 									<p:paragraph>

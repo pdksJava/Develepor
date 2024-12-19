@@ -50,7 +50,7 @@
 							<f:facet name="header">
 								<h:outputText value="Grup Adı" />
 							</f:facet>
-							<ui:fragment rendered="#{sirket.sirketGrup!=null}">
+							<ui:fragment rendered="#{sirket.sirketGrup != null}">
 								<h:outputText value="#{sirket.sirketGrup.aciklama}" />
 							</ui:fragment>
 						</rich:column>
@@ -92,7 +92,7 @@
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.getYesNo(sirket.fazlaMesai)}" />
 						</rich:column>
-						<rich:column rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H'}">
+						<rich:column rendered="#{ortakIslemler.getParameterKey('uygulamaTipi') == 'H'}">
 							<f:facet name="header">
 								<h:outputText value="Şua Olabilir" />
 							</f:facet>
@@ -110,13 +110,13 @@
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.getYesNo(sirket.izinKartiVar)}" />
 						</rich:column>
-						<rich:column rendered="#{ortakIslemler.getParameterKey('fazlaMesaiTalepDurum')=='1'}">
+						<rich:column rendered="#{ortakIslemler.getParameterKey('fazlaMesaiTalepDurum') == '1'}">
 							<f:facet name="header">
 								<h:outputText value="Fazla Mesai Talep" />
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.getYesNo(sirket.fazlaMesaiTalepGirilebilir)}" />
 						</rich:column>
-						<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('fazlaMesaiTalepDurum')=='1'}">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('fazlaMesaiTalepDurum') == '1'}">
 							<ui:define name="label">Fazla Mesai Talep</ui:define>
 							<h:selectBooleanCheckbox value="#{departmanHome.instance.fazlaMesaiTalepGirilebilir}" />
 						</s:decorate>
@@ -196,7 +196,7 @@
 							<s:decorate template="/layout/edit.xhtml"
 								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and not empty sirketHome.departmanList}">
 								<ui:define name="label">PDKS Departman</ui:define>
-								<h:selectOneMenu required="true" id="toComp" value="#{sirketHome.seciliSirket.departman}" disabled="#{sirketHome.departmanList.size()==1}"
+								<h:selectOneMenu required="true" id="toComp" value="#{sirketHome.seciliSirket.departman}" disabled="#{sirketHome.departmanList.size() == 1}"
 									requiredMessage="PDKS Departman giriniz">
 									<s:selectItems var="comp" value="#{sirketHome.departmanList}" label="#{comp.departmanTanim.aciklama}" noSelectionLabel="Lütfen seçiniz" />
 									<s:convertEntity />
@@ -251,16 +251,16 @@
 									<ui:define name="label">Fazla Mesai Öde</ui:define>
 									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.fazlaMesaiOde}" />
 								</s:decorate>
-								<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('fazlaMesaiIzinKullan')=='1'}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('fazlaMesaiIzinKullan') == '1'}">
 									<ui:define name="label">Fazla Mesai İzin Kullandır</ui:define>
 									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.fazlaMesaiIzinKullan}" />
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml"
-									rendered="#{ortakIslemler.getParameterKey('fazlaMesaiTalepDurum')=='1' and sirketHome.seciliSirket.departman.fazlaMesaiTalepGirilebilir}">
+									rendered="#{ortakIslemler.getParameterKey('fazlaMesaiTalepDurum') == '1' and sirketHome.seciliSirket.departman.fazlaMesaiTalepGirilebilir}">
 									<ui:define name="label">Fazla Mesai Talep</ui:define>
 									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.fazlaMesaiTalepGirilebilir}" />
 								</s:decorate>
-								<s:decorate template="/layout/edit.xhtml" rendered="#{sirketHome.seciliSirket.izinGirer==false}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{sirketHome.seciliSirket.izinGirer == false}">
 									<ui:define name="label">İzin Kartı Var</ui:define>
 									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.izinKartiVar}" />
 								</s:decorate>
@@ -284,11 +284,11 @@
 					<!--  -->
 
 					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{sirketHome.save}" reRender="sirketTable"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
 					<a4j:outputPanel id="personelListTable">
-						<h:panelGrid columns="3" rendered="#{sirketHome.seciliSirket.id!=null and sirketHome.seciliSirket.pdks}">
+						<h:panelGrid columns="3" rendered="#{sirketHome.seciliSirket.id != null and sirketHome.seciliSirket.pdks}">
 							<a4j:commandButton status="ajaxStatus" value="Personel Getir" action="#{sirketHome.fillPersonelList()}" reRender="personelListTable" />
 							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
 								<ui:define name="label">İşten Ayrılanları Getir</ui:define>
@@ -359,7 +359,7 @@
 										</f:facet>
 										<h:outputText value="#{authenticatedUser.dateFormatla( personelView.pdksPersonel.istenAyrilisTarihi)}" />
 									</rich:column>
-									<rich:column rendered="#{authenticatedUser.IK and authenticatedUser.IKAdmin==false}">
+									<rich:column rendered="#{authenticatedUser.IK and authenticatedUser.IKAdmin == false}">
 										<f:facet name="header">
 											<h:outputText value="#{sirketHome.bolumAciklama}" />
 										</f:facet>

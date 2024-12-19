@@ -62,8 +62,8 @@
 							<f:facet name="header">
 								<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
 							</f:facet>
-							<h:outputText value="#{yemek.sicilNo}" rendered="#{authenticatedUser.admin==false}" />
-							<h:outputText value="#{yemek.sicilNo} - #{yemek.personel.id}" rendered="#{authenticatedUser.admin==true}" />
+							<h:outputText value="#{yemek.sicilNo}" rendered="#{authenticatedUser.admin == false}" />
+							<h:outputText value="#{yemek.sicilNo} - #{yemek.personel.id}" rendered="#{authenticatedUser.admin == true}" />
 						</rich:column>
 
 						<rich:column styleClass="#{yemek.style}">
@@ -112,7 +112,7 @@
 							<h:outputText value="1" rendered="#{yemek.gecerliYemek}" />
 							<h:outputText value="2" rendered="#{yemek.cokluOgun}" />
 						</rich:column>
-						<rich:column styleClass="#{yemek.style}" rendered="#{authenticatedUser.admin==true}">
+						<rich:column styleClass="#{yemek.style}" rendered="#{authenticatedUser.admin == true}">
 							<f:facet name="header">
 								<h:outputText value="ID" />
 							</f:facet>

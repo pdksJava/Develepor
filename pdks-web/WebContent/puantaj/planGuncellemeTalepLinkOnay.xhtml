@@ -14,7 +14,7 @@
 				<a4j:outputPanel ajaxRendered="true">
 					<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 				</a4j:outputPanel>
-				<ui:fragment rendered="#{vardiyaGunHome.calismaPlanKilit!=null}">
+				<ui:fragment rendered="#{vardiyaGunHome.calismaPlanKilit != null}">
 					<h:panelGrid columns="2" style="width:40%;">
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Yıl</ui:define>
@@ -27,10 +27,10 @@
 
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
-							<ui:fragment rendered="#{vardiyaGunHome.calismaPlanKilit.sirket.sirketGrup!=null}">
+							<ui:fragment rendered="#{vardiyaGunHome.calismaPlanKilit.sirket.sirketGrup != null}">
 								<h:outputText value="#{vardiyaGunHome.calismaPlanKilit.sirket.sirketGrup.aciklama}" />
 							</ui:fragment>
-							<ui:fragment rendered="#{vardiyaGunHome.calismaPlanKilit.sirket.sirketGrup==null}">
+							<ui:fragment rendered="#{vardiyaGunHome.calismaPlanKilit.sirket.sirketGrup == null}">
 								<h:outputText value="#{vardiyaGunHome.calismaPlanKilit.sirket.adi}" />
 							</ui:fragment>
 						</s:decorate>

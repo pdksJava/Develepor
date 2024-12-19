@@ -79,7 +79,7 @@
 								</f:facet>
 								<h:outputText value="#{personelView.pdksPersonel.calismaModeli.aciklama}" id="calismaModeli" />
 							</rich:column>
-							<rich:column style="text-align:center" rendered="#{pdksPersonelHome.bakiyeTakipEdiliyor or ortakIslemler.getParameterKey('izinERPUpdate')!='1'}">
+							<rich:column style="text-align:center" rendered="#{pdksPersonelHome.bakiyeTakipEdiliyor or ortakIslemler.getParameterKey('izinERPUpdate') != '1'}">
 								<f:facet name="header">
 									<h:outputText value="#{ortakIslemler.kidemBasTarihiAciklama()}" />
 								</f:facet>
@@ -95,17 +95,17 @@
 								<f:facet name="header">
 									<h:outputText value="İşten Ayrılma Tarihi" />
 								</f:facet>
-								<ui:fragment rendered="#{personelView.pdksPersonel.calisiyor==false}">
+								<ui:fragment rendered="#{personelView.pdksPersonel.calisiyor == false}">
 									<h:outputText value="#{authenticatedUser.dateFormatla(personelView.pdksPersonel.istenAyrilisTarihi)}" />
 								</ui:fragment>
 							</rich:column>
-							<rich:column style="text-align:center" rendered="#{pdksPersonelHome.bakiyeTakipEdiliyor or ortakIslemler.getParameterKey('izinERPUpdate')!='1'}">
+							<rich:column style="text-align:center" rendered="#{pdksPersonelHome.bakiyeTakipEdiliyor or ortakIslemler.getParameterKey('izinERPUpdate') != '1'}">
 								<f:facet name="header">
 									<h:outputText value="Doğum Tarihi" />
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.dateFormatla( personelView.pdksPersonel.dogumTarihi)}" />
 							</rich:column>
-							<rich:column rendered="#{authenticatedUser.IK and authenticatedUser.IKAdmin==false}">
+							<rich:column rendered="#{authenticatedUser.IK and authenticatedUser.IKAdmin == false}">
 								<f:facet name="header">
 									<h:outputText value="#{pdksPersonelHome.bolumAciklama}" />
 								</f:facet>
@@ -150,27 +150,27 @@
 								<h:outputText value="#{personelView.pdksPersonel.tesis.aciklama}" />
 							</rich:column>
 							<rich:column
-								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and pdksPersonelHome.ekSahaTanimMap.ekSaha1!=null and ortakIslemler.getListEkSahaDurum(pdksPersonelHome.personelList,'1')}">
+								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and pdksPersonelHome.ekSahaTanimMap.ekSaha1 != null and ortakIslemler.getListEkSahaDurum(pdksPersonelHome.personelList,'1')}">
 								<f:facet name="header">
 									<h:outputText value="#{pdksPersonelHome.ekSahaTanimMap.ekSaha1.aciklama}" />
 								</f:facet>
 								<h:outputText value="#{personelView.pdksPersonel.ekSaha1.aciklama}" />
 							</rich:column>
 							<rich:column
-								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and pdksPersonelHome.ekSahaTanimMap.ekSaha2!=null and ortakIslemler.getListEkSahaDurum(pdksPersonelHome.personelList,'2')}">
+								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and pdksPersonelHome.ekSahaTanimMap.ekSaha2 != null and ortakIslemler.getListEkSahaDurum(pdksPersonelHome.personelList,'2')}">
 								<f:facet name="header">
 									<h:outputText value="#{pdksPersonelHome.ekSahaTanimMap.ekSaha2.aciklama}" />
 								</f:facet>
 								<h:outputText value="#{personelView.pdksPersonel.ekSaha2.aciklama}" />
 							</rich:column>
-							<rich:column rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and pdksPersonelHome.ekSahaTanimMap.ekSaha3!=null}">
+							<rich:column rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and pdksPersonelHome.ekSahaTanimMap.ekSaha3 != null}">
 								<f:facet name="header">
 									<h:outputText value="#{pdksPersonelHome.ekSahaTanimMap.ekSaha3.aciklama}" />
 								</f:facet>
 								<h:outputText value="#{personelView.pdksPersonel.ekSaha3.aciklama}" />
 							</rich:column>
 							<rich:column
-								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and pdksPersonelHome.ekSahaTanimMap.ekSaha4!=null and ortakIslemler.getListEkSahaDurum(pdksPersonelHome.personelList,'4')}">
+								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and pdksPersonelHome.ekSahaTanimMap.ekSaha4 != null and ortakIslemler.getListEkSahaDurum(pdksPersonelHome.personelList,'4')}">
 								<f:facet name="header">
 									<h:outputText value="#{pdksPersonelHome.ekSahaTanimMap.ekSaha4.aciklama}" />
 								</f:facet>
@@ -247,7 +247,7 @@
 									<f:facet name="header">
 										<h:outputText value="#{alan.aciklama}" />
 									</f:facet>
-									<ui:fragment rendered="#{personelView.pdksPersonel!=null}">
+									<ui:fragment rendered="#{personelView.pdksPersonel != null}">
 										<h:outputText value="#{authenticatedUser.getYesNo(pdksPersonelHome.getPersonelDinamikAlan(alan,personelView.pdksPersonel).durumSecim)}" />
 									</ui:fragment>
 
@@ -258,7 +258,7 @@
 									<f:facet name="header">
 										<h:outputText value="#{alan.aciklama}" />
 									</f:facet>
-									<ui:fragment rendered="#{personelView.pdksPersonel!=null}">
+									<ui:fragment rendered="#{personelView.pdksPersonel != null}">
 										<h:outputText value="#{pdksPersonelHome.getPersonelDinamikAlan(alan,personelView.pdksPersonel).tanimDeger.aciklama}" />
 									</ui:fragment>
 
@@ -269,7 +269,7 @@
 									<f:facet name="header">
 										<h:outputText value="#{alan.aciklama}" />
 									</f:facet>
-									<ui:fragment rendered="#{personelView.pdksPersonel!=null}">
+									<ui:fragment rendered="#{personelView.pdksPersonel != null}">
 										<h:outputText
 											value="#{authenticatedUser.sayiFormatliGoster(pdksPersonelHome.getPersonelDinamikAlan(alan,personelView.pdksPersonel).sayisalDeger)}" />
 									</ui:fragment>
@@ -303,9 +303,9 @@
 							<h:commandLink value="Excel" action="#{pdksPersonelHome.excelAktar(null)}" target="blank">
 								<a4j:support event="oncomplete" status="ajaxStatus" process="hareketTable" reRender="hareketTable" />
 							</h:commandLink>
-							<ui:fragment rendered="#{ortakIslemler.getParameterKey('personelERPOku')!='1'}">
+							<ui:fragment rendered="#{ortakIslemler.getParameterKey('personelERPOku') != '1'}">
 								<h:commandLink title="Excel Servis" action="#{pdksPersonelHome.excelServiceAktar}" target="blank"
-									rendered="#{authenticatedUser.admin or (authenticatedUser.IK and ortakIslemler.getParameterKey('dosyaGuncellemeYetki')=='1')}">
+									rendered="#{authenticatedUser.admin or (authenticatedUser.IK and ortakIslemler.getParameterKey('dosyaGuncellemeYetki') == '1')}">
 									<h:graphicImage value="/img/down.gif" style="border:0" />
 									<a4j:support event="oncomplete" status="ajaxStatus" process="hareketTable" reRender="hareketTable" />
 

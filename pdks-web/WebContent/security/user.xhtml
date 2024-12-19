@@ -144,7 +144,7 @@
 					</h:panelGrid>
 				</a4j:outputPanel>
 
-				<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{userHome.save}" reRender="userTable" oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+				<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{userHome.save}" reRender="userTable" oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 			</h:form>
 		</rich:modalPanel>

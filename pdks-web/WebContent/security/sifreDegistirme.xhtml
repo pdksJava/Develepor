@@ -14,29 +14,29 @@
 		<h:form id="formSifreDegistirme" styleClass="edit">
 			<rich:panel header="#{ortakIslemler.getMenuUserAdi(userHome.session,'sifreDegistirme')}">
 				<f:facet name="header">Şifre Değiştirme Ekranı</f:facet>
-				<ui:fragment rendered="#{userHome.instance.id!=null}">
+				<ui:fragment rendered="#{userHome.instance.id != null}">
 					<h:panelGrid columns="1">
 						<s:decorate id="usernameField" template="/layout/edit.xhtml">
 							<ui:define name="label">Kullanıcı Adı</ui:define>
 							<h:inputText value="#{userHome.instance.username}" />
 						</s:decorate>
 
-						<s:decorate id="eskiSifreField" template="/layout/edit.xhtml" rendered="#{authenticatedUser!=null}">
+						<s:decorate id="eskiSifreField" template="/layout/edit.xhtml" rendered="#{authenticatedUser != null}">
 							<ui:define name="label">Eski Şifre</ui:define>
 							<h:inputSecret value="#{userHome.passwordHash}" />
 						</s:decorate>
 						<s:decorate id="yeniSifreField" template="/layout/edit.xhtml">
 							<ui:define name="label">Yeni Şifre</ui:define>
-							<h:inputSecret value="#{userHome.newPassword1}" required="#{authenticatedUser==null}" requiredMessage="Yeni şifre giriniz!" />
+							<h:inputSecret value="#{userHome.newPassword1}" required="#{authenticatedUser == null}" requiredMessage="Yeni şifre giriniz!" />
 						</s:decorate>
 						<s:decorate id="yeniSifreConfirmField" template="/layout/edit.xhtml">
 							<ui:define name="label">Yeni Şifre Tekrar</ui:define>
-							<h:inputSecret value="#{userHome.newPassword2}" required="#{authenticatedUser==null}" requiredMessage="Yeni şifre tekrar giriniz!" />
+							<h:inputSecret value="#{userHome.newPassword2}" required="#{authenticatedUser == null}" requiredMessage="Yeni şifre tekrar giriniz!" />
 						</s:decorate>
 					</h:panelGrid>
 
 					<div class="actionButtons">
-						<ui:fragment rendered="#{authenticatedUser!=null}">
+						<ui:fragment rendered="#{authenticatedUser != null}">
 							<h:commandButton status="ajaxStatus" value="Kaydet" action="#{userHome.changePassword}" disabled="#{!userHome.wired}"
 								rendered="#{!userHome.managed}">
 								<f:setPropertyActionListener value="#{authenticatedUser}" target="#{userHome.instance}">
@@ -44,7 +44,7 @@
 								</f:setPropertyActionListener>
 							</h:commandButton>
 						</ui:fragment>
-						<ui:fragment rendered="#{authenticatedUser==null}">
+						<ui:fragment rendered="#{authenticatedUser == null}">
 							<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{userHome.changePassword}" />
 
 

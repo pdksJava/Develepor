@@ -21,7 +21,7 @@
 						<h:inputText value="#{personelKullaniciAramaHome.aramaSecenekleri.sicilNo}" size="10" />
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IK) and personelKullaniciAramaHome.aramaSecenekleri.sirketIdList!=null}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IK) and personelKullaniciAramaHome.aramaSecenekleri.sirketIdList != null}">
 						<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 
 						<h:selectOneMenu value="#{personelKullaniciAramaHome.aramaSecenekleri.sirketId}">
@@ -35,7 +35,7 @@
 
 
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{ortakIslemler.tesisDurumu and personelKullaniciAramaHome.aramaSecenekleri.tesisList!=null and not empty personelKullaniciAramaHome.aramaSecenekleri.tesisList}">
+						rendered="#{ortakIslemler.tesisDurumu and personelKullaniciAramaHome.aramaSecenekleri.tesisList != null and not empty personelKullaniciAramaHome.aramaSecenekleri.tesisList}">
 						<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 						<h:selectOneMenu value="#{personelKullaniciAramaHome.aramaSecenekleri.tesisId}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -44,7 +44,7 @@
 					</s:decorate>
 
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.aramaSecenekleri.ekSahaTanimMap.ekSaha1!=null}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.aramaSecenekleri.ekSahaTanimMap.ekSaha1 != null}">
 						<ui:define name="label">#{personelKullaniciAramaHome.aramaSecenekleri.ekSaha1.aciklama}</ui:define>
 						<h:selectOneMenu value="#{personelKullaniciAramaHome.aramaSecenekleri.ekSaha1Id}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -52,7 +52,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.aramaSecenekleri.ekSahaTanimMap.ekSaha2!=null}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.aramaSecenekleri.ekSahaTanimMap.ekSaha2 != null}">
 						<ui:define name="label">#{personelKullaniciAramaHome.aramaSecenekleri.ekSaha2.aciklama}</ui:define>
 						<h:selectOneMenu value="#{personelKullaniciAramaHome.aramaSecenekleri.ekSaha2Id}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -60,7 +60,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.aramaSecenekleri.ekSahaTanimMap.ekSaha3!=null}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.aramaSecenekleri.ekSahaTanimMap.ekSaha3 != null}">
 						<ui:define name="label">#{personelKullaniciAramaHome.aramaSecenekleri.ekSaha3.aciklama}</ui:define>
 						<h:selectOneMenu value="#{personelKullaniciAramaHome.aramaSecenekleri.ekSaha3Id}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -68,7 +68,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.aramaSecenekleri.ekSahaTanimMap.ekSaha4!=null}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.aramaSecenekleri.ekSahaTanimMap.ekSaha4 != null}">
 						<ui:define name="label">#{personelKullaniciAramaHome.aramaSecenekleri.ekSaha4.aciklama}</ui:define>
 						<h:selectOneMenu value="#{personelKullaniciAramaHome.aramaSecenekleri.ekSaha4Id}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -86,14 +86,14 @@
 					<a4j:commandButton status="ajaxStatus" rendered="#{personelKullaniciAramaHome.userArama}"
 						action="#{personelKullaniciAramaHome.fillKullaniciList}" value="Kullanici Ara" reRender="personelKullaniciAramaList,idButtonArama" />
 					<a4j:commandButton status="ajaxStatus"
-						rendered="#{personelKullaniciAramaHome.checkBox and  personelKullaniciAramaHome.personelArama and not empty personelKullaniciAramaHome.personelList }"
+						rendered="#{personelKullaniciAramaHome.checkBox and personelKullaniciAramaHome.personelArama and not empty personelKullaniciAramaHome.personelList }"
 						action="#{personelKullaniciAramaHome.checkBoxSecimDevam(personelKullaniciAramaHome.personelList)}" value="Devam Et"
 						reRender="#{personelKullaniciAramaHome.reRender}" />
 					<a4j:commandButton status="ajaxStatus"
-						rendered="#{personelKullaniciAramaHome.checkBox and  personelKullaniciAramaHome.userArama and not empty personelKullaniciAramaHome.userList }"
+						rendered="#{personelKullaniciAramaHome.checkBox and personelKullaniciAramaHome.userArama and not empty personelKullaniciAramaHome.userList }"
 						action="#{personelKullaniciAramaHome.checkBoxSecimDevam(personelKullaniciAramaHome.userList)}" value="Devam Et"
 						reRender="#{personelKullaniciAramaHome.reRender}" />
-					<a4j:commandButton status="ajaxStatus" rendered="#{personelKullaniciAramaHome.visibled==true}" action="#{personelKullaniciAramaHome.kapat}"
+					<a4j:commandButton status="ajaxStatus" rendered="#{personelKullaniciAramaHome.visibled == true}" action="#{personelKullaniciAramaHome.kapat}"
 						value="Kapat" reRender="personelKullaniciAramaList,idButtonArama" image="/img/close.png" />
 				</s:decorate>
 			</a4j:region>
@@ -107,9 +107,9 @@
 						</f:facet>
 						<rich:column>
 							<f:facet name="header">
-								<s:decorate template="/layout/arama.xhtml" rendered="#{personelHareketHome.islemTipi!='S'}">
+								<s:decorate template="/layout/arama.xhtml" rendered="#{personelHareketHome.islemTipi != 'S'}">
 									<ui:define name="label">İşlemler</ui:define>
-									<h:selectBooleanCheckbox rendered="#{personelKullaniciAramaHome.checkBox==true}" value="#{personelKullaniciAramaHome.checkBoxDurum}">
+									<h:selectBooleanCheckbox rendered="#{personelKullaniciAramaHome.checkBox == true}" value="#{personelKullaniciAramaHome.checkBoxDurum}">
 										<a4j:support event="onclick" action="#{personelKullaniciAramaHome.secimDurumDegistir}" reRender="personelKullaniciAramaList"
 											status="ajaxStatus" />
 
@@ -117,11 +117,11 @@
 								</s:decorate>
 							</f:facet>
 
-							<h:commandButton alt="Kullanıcı seç" rendered="#{personelKullaniciAramaHome.checkBox==false  }" image="/img/ok.gif"
+							<h:commandButton alt="Kullanıcı seç" rendered="#{personelKullaniciAramaHome.checkBox == false  }" image="/img/ok.gif"
 								action="#{personelKullaniciAramaHome.tekKullaniciSecimIslemi(userView)}">
 								<a4j:support event="onclick" status="ajaxStatus" reRender="#{personelKullaniciAramaHome.reRender}" />
 							</h:commandButton>
-							<h:selectBooleanCheckbox rendered="#{personelKullaniciAramaHome.checkBox==true}" value="#{userView.pdksPersonel.checkBoxDurum}" />
+							<h:selectBooleanCheckbox rendered="#{personelKullaniciAramaHome.checkBox == true}" value="#{userView.pdksPersonel.checkBoxDurum}" />
 
 						</rich:column>
 						<rich:column>
@@ -157,27 +157,27 @@
 						</rich:column>
 
 						<rich:column
-							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha1!=null and ortakIslemler.getListEkSahaDurum(personelKullaniciAramaHome.userList,'1') }">
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha1 != null and ortakIslemler.getListEkSahaDurum(personelKullaniciAramaHome.userList,'1') }">
 							<f:facet name="header">
 								<h:outputText value="#{personelKullaniciAramaHome.ekSaha1.aciklama}" />
 							</f:facet>
 							<h:outputText value="#{userView.pdksPersonel.ekSaha1.aciklama}" />
 						</rich:column>
 						<rich:column
-							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha2!=null and ortakIslemler.getListEkSahaDurum(personelKullaniciAramaHome.userList,'2') }">
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha2 != null and ortakIslemler.getListEkSahaDurum(personelKullaniciAramaHome.userList,'2') }">
 							<f:facet name="header">
 								<h:outputText value="#{personelKullaniciAramaHome.ekSaha2.aciklama}" />
 							</f:facet>
 							<h:outputText value="#{userView.pdksPersonel.ekSaha2.aciklama}" />
 						</rich:column>
-						<rich:column rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha3!=null}">
+						<rich:column rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha3 != null}">
 							<f:facet name="header">
 								<h:outputText value="#{personelKullaniciAramaHome.ekSaha3.aciklama}" />
 							</f:facet>
 							<h:outputText value="#{userView.pdksPersonel.ekSaha3.aciklama}" />
 						</rich:column>
 						<rich:column
-							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha4!=null and ortakIslemler.getListEkSahaDurum(personelKullaniciAramaHome.userList,'4') }">
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha4 != null and ortakIslemler.getListEkSahaDurum(personelKullaniciAramaHome.userList,'4') }">
 							<f:facet name="header">
 								<h:outputText value="#{personelKullaniciAramaHome.ekSaha4.aciklama}" />
 							</f:facet>
@@ -205,18 +205,18 @@
 								<s:decorate template="/layout/arama.xhtml">
 
 									<ui:define name="label">İşlemler</ui:define>
-									<h:selectBooleanCheckbox rendered="#{personelKullaniciAramaHome.checkBox==true}" value="#{personelKullaniciAramaHome.checkBoxDurum}">
+									<h:selectBooleanCheckbox rendered="#{personelKullaniciAramaHome.checkBox == true}" value="#{personelKullaniciAramaHome.checkBoxDurum}">
 										<a4j:support event="onclick" action="#{personelKullaniciAramaHome.secimDurumDegistir}" reRender="personelKullaniciAramaList"
 											status="ajaxStatus" />
 
 									</h:selectBooleanCheckbox>
 								</s:decorate>
 							</f:facet>
-							<h:commandButton alt="Personel seç" image="/img/ok.gif" rendered="#{personelKullaniciAramaHome.checkBox==false}"
+							<h:commandButton alt="Personel seç" image="/img/ok.gif" rendered="#{personelKullaniciAramaHome.checkBox == false}"
 								action="#{personelKullaniciAramaHome.tekPersonelSecimIslemi(personelView)}">
 								<a4j:support event="onclick" status="ajaxStatus" reRender="#{personelKullaniciAramaHome.reRender}" />
 							</h:commandButton>
-							<h:selectBooleanCheckbox rendered="#{personelKullaniciAramaHome.checkBox==true}" value="#{personelView.checkBoxDurum}" />
+							<h:selectBooleanCheckbox rendered="#{personelKullaniciAramaHome.checkBox == true}" value="#{personelView.checkBoxDurum}" />
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
@@ -245,27 +245,27 @@
 							<h:outputText value="#{personelView.tesis.aciklama}" />
 						</rich:column>
 						<rich:column
-							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha1!=null and ortakIslemler.getListEkSahaDurum(personelKullaniciAramaHome.personelList,'1') }">
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha1 != null and ortakIslemler.getListEkSahaDurum(personelKullaniciAramaHome.personelList,'1') }">
 							<f:facet name="header">
 								<h:outputText value="#{personelKullaniciAramaHome.ekSahaTanimMap.ekSaha1.aciklama}" />
 							</f:facet>
 							<h:outputText value="#{personelView.ekSaha1.aciklama}" />
 						</rich:column>
 						<rich:column
-							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha2!=null and ortakIslemler.getListEkSahaDurum(personelKullaniciAramaHome.personelList,'2') }">
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha2 != null and ortakIslemler.getListEkSahaDurum(personelKullaniciAramaHome.personelList,'2') }">
 							<f:facet name="header">
 								<h:outputText value="#{personelKullaniciAramaHome.ekSahaTanimMap.ekSaha2.aciklama}" />
 							</f:facet>
 							<h:outputText value="#{personelView.ekSaha2.aciklama}" />
 						</rich:column>
-						<rich:column rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha3!=null}">
+						<rich:column rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha3 != null}">
 							<f:facet name="header">
 								<h:outputText value="#{personelKullaniciAramaHome.ekSahaTanimMap.ekSaha3.aciklama}" />
 							</f:facet>
 							<h:outputText value="#{personelView.ekSaha3.aciklama}" />
 						</rich:column>
 						<rich:column
-							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha4!=null and ortakIslemler.getListEkSahaDurum(personelKullaniciAramaHome.personelList,'4') }">
+							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelKullaniciAramaHome.ekSahaTanimMap.ekSaha4 != null and ortakIslemler.getListEkSahaDurum(personelKullaniciAramaHome.personelList,'4') }">
 							<f:facet name="header">
 								<h:outputText value="#{personelKullaniciAramaHome.ekSahaTanimMap.ekSaha4.aciklama}" />
 							</f:facet>
@@ -282,11 +282,11 @@
 						</f:facet>
 					</rich:dataTable>
 					<a4j:commandButton status="ajaxStatus"
-						rendered="#{personelKullaniciAramaHome.checkBox and  personelKullaniciAramaHome.personelArama and not empty personelKullaniciAramaHome.personelList }"
+						rendered="#{personelKullaniciAramaHome.checkBox and personelKullaniciAramaHome.personelArama and not empty personelKullaniciAramaHome.personelList }"
 						action="#{personelKullaniciAramaHome.checkBoxSecimDevam(personelKullaniciAramaHome.personelList)}" value="Devam Et"
 						reRender="#{personelKullaniciAramaHome.reRender}" />
 					<a4j:commandButton status="ajaxStatus"
-						rendered="#{personelKullaniciAramaHome.checkBox and  personelKullaniciAramaHome.userArama and not empty personelKullaniciAramaHome.userList }"
+						rendered="#{personelKullaniciAramaHome.checkBox and personelKullaniciAramaHome.userArama and not empty personelKullaniciAramaHome.userList }"
 						action="#{personelKullaniciAramaHome.checkBoxSecimDevam(personelKullaniciAramaHome.userList)}" value="Devam Et"
 						reRender="#{personelKullaniciAramaHome.reRender}" />
 

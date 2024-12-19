@@ -29,17 +29,17 @@
 							<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaOzetRaporuHome.aramaSecenekleri.sirketIdList.size()>0}">
 								<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 								<h:selectOneMenu value="#{vardiyaOzetRaporuHome.aramaSecenekleri.sirketId}"
-									disabled="#{vardiyaOzetRaporuHome.aramaSecenekleri.sirketIdList.size()==1}">
+									disabled="#{vardiyaOzetRaporuHome.aramaSecenekleri.sirketIdList.size() == 1}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{vardiyaOzetRaporuHome.aramaSecenekleri.sirketIdList}" />
 									<a4j:support event="onchange" action="#{vardiyaOzetRaporuHome.fillTesisList()}" ajaxSingle="true" reRender="secimler,vardiyaOzetPanel" />
 								</h:selectOneMenu>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml"
-								rendered="#{ortakIslemler.tesisDurumu and vardiyaOzetRaporuHome.aramaSecenekleri.tesisList!=null and vardiyaOzetRaporuHome.aramaSecenekleri.tesisList.size()>0}">
+								rendered="#{ortakIslemler.tesisDurumu and vardiyaOzetRaporuHome.aramaSecenekleri.tesisList != null and vardiyaOzetRaporuHome.aramaSecenekleri.tesisList.size()>0}">
 								<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 								<h:selectOneMenu value="#{vardiyaOzetRaporuHome.aramaSecenekleri.tesisId}"
-									disabled="#{vardiyaOzetRaporuHome.aramaSecenekleri.tesisList.size()==1}">
+									disabled="#{vardiyaOzetRaporuHome.aramaSecenekleri.tesisList.size() == 1}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{vardiyaOzetRaporuHome.aramaSecenekleri.tesisList}" />
 
@@ -91,7 +91,7 @@
 									<th style="width: 40px"><ui:fragment rendered="#{vardiya.calisma}">
 									#{authenticatedUser.timeFormatla(vardiya.basZaman)} :
 										#{authenticatedUser.timeFormatla(vardiya.bitZaman)}
-										</ui:fragment> <ui:fragment rendered="#{vardiya.calisma==false}">
+										</ui:fragment> <ui:fragment rendered="#{vardiya.calisma == false}">
 										#{vardiya.adi}
 										</ui:fragment></th>
 								</ui:repeat>
@@ -103,17 +103,17 @@
 						<tbody>
 							<a4j:repeat value="#{vardiyaOzetRaporuHome.puantajList}" var="aylikPuantaj">
 								<tr>
-									<td class="#{aylikPuantaj.trClass}" style="width: 150px"><b> <ui:fragment rendered="#{aylikPuantaj.pdksPersonel.ekSaha3!=null}">
+									<td class="#{aylikPuantaj.trClass}" style="width: 150px"><b> <ui:fragment rendered="#{aylikPuantaj.pdksPersonel.ekSaha3 != null}">
 									#{aylikPuantaj.pdksPersonel.ekSaha3.aciklama}
 									<ui:fragment
-													rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim!=null and aylikPuantaj.pdksPersonel.ekSaha3.kodu==vardiyaOzetRaporuHome.altBolumGrupGoster and aylikPuantaj.pdksPersonel.ekSaha4!=null}">
+													rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and aylikPuantaj.pdksPersonel.ekSaha3.kodu == vardiyaOzetRaporuHome.altBolumGrupGoster and aylikPuantaj.pdksPersonel.ekSaha4 != null}">
 									   #{aylikPuantaj.pdksPersonel.ekSaha4.aciklama}
 									</ui:fragment>
-											</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.pdksPersonel.ekSaha3==null}">
-												<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.calismaModeli!=null}">
+											</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.pdksPersonel.ekSaha3 == null}">
+												<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.calismaModeli != null}">
 									#{aylikPuantaj.pdksPersonel.calismaModeli.aciklama}
 								</ui:fragment>
-												<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.calismaModeli==null}">
+												<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.calismaModeli == null}">
 									TOPLAM
 								</ui:fragment>
 
@@ -170,7 +170,7 @@
 										<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.tesis.aciklama}</td>
 									</ui:fragment>
 									<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.ekSaha3.aciklama} <ui:fragment
-											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim!=null and vardiyaGun.personel.ekSaha3.kodu==vardiyaOzetRaporuHome.altBolumGrupGoster and vardiyaGun.personel.ekSaha4!=null}">
+											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and vardiyaGun.personel.ekSaha3.kodu == vardiyaOzetRaporuHome.altBolumGrupGoster and vardiyaGun.personel.ekSaha4 != null}">
 									   #{vardiyaGun.personel.ekSaha4.aciklama}
 									</ui:fragment>
 
@@ -178,9 +178,9 @@
 									</td>
 									<td class="#{vardiyaGun.tdClass}" align="center" style="width: 40px">#{authenticatedUser.dateFormatla(vardiyaGun.vardiyaDate)}</td>
 									<td class="#{vardiyaGun.tdClass}" style="width: 40px"></td>
-									<td class="#{vardiyaGun.tdClass}" style="width: 200px"><ui:fragment rendered="#{vardiyaGun.izin.izinTipi!=null}">#{vardiyaGun.izin.izinTipi.izinTipiTanim.aciklama}</ui:fragment>
-										<ui:fragment rendered="#{vardiyaGun.izin.izinTipi==null}">#{vardiyaGun.vardiya.adi}</ui:fragment> <ui:fragment
-											rendered="#{authenticatedUser.admin and vardiyaGun.izin!=null}"> (#{vardiyaGun.vardiya.adi})</ui:fragment></td>
+									<td class="#{vardiyaGun.tdClass}" style="width: 200px"><ui:fragment rendered="#{vardiyaGun.izin.izinTipi != null}">#{vardiyaGun.izin.izinTipi.izinTipiTanim.aciklama}</ui:fragment>
+										<ui:fragment rendered="#{vardiyaGun.izin.izinTipi == null}">#{vardiyaGun.vardiya.adi}</ui:fragment> <ui:fragment
+											rendered="#{authenticatedUser.admin and vardiyaGun.izin != null}"> (#{vardiyaGun.vardiya.adi})</ui:fragment></td>
 								</tr>
 							</a4j:repeat>
 							<a4j:repeat value="#{vardiyaOzetRaporuHome.gecGelenVardiyaGunList}" var="vardiyaGun">
@@ -193,12 +193,12 @@
 										<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.tesis.aciklama}</td>
 									</ui:fragment>
 									<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.ekSaha3.aciklama} <ui:fragment
-											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim!=null and vardiyaGun.personel.ekSaha3.kodu==vardiyaOzetRaporuHome.altBolumGrupGoster and vardiyaGun.personel.ekSaha4!=null}">
+											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and vardiyaGun.personel.ekSaha3.kodu == vardiyaOzetRaporuHome.altBolumGrupGoster and vardiyaGun.personel.ekSaha4 != null}">
 									   #{vardiyaGun.personel.ekSaha4.aciklama}
 									</ui:fragment></td>
 									<td class="#{vardiyaGun.tdClass}" align="center" style="width: 40px">#{authenticatedUser.dateFormatla(vardiyaGun.vardiyaDate)}</td>
 									<td class="#{vardiyaGun.tdClass}" align="center" style="width: 40px">#{authenticatedUser.timeFormatla(vardiyaGun.ilkGiris.zaman)}</td>
-									<td class="#{vardiyaGun.tdClass}" style="width: 200px"><ui:fragment rendered="#{vardiyaGun.ilkGiris!=null}">
+									<td class="#{vardiyaGun.tdClass}" style="width: 200px"><ui:fragment rendered="#{vardiyaGun.ilkGiris != null}">
 									Geç giriş [#{authenticatedUser.dateTimeFormatla(vardiyaGun.islemVardiya.vardiyaBasZaman)}]
 									
 									</ui:fragment></td>
@@ -215,16 +215,16 @@
 										<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.tesis.aciklama}</td>
 									</ui:fragment>
 									<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.ekSaha3.aciklama} <ui:fragment
-											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim!=null and vardiyaGun.personel.ekSaha3.kodu==vardiyaOzetRaporuHome.altBolumGrupGoster and vardiyaGun.personel.ekSaha4!=null}">
+											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and vardiyaGun.personel.ekSaha3.kodu == vardiyaOzetRaporuHome.altBolumGrupGoster and vardiyaGun.personel.ekSaha4 != null}">
 									   #{vardiyaGun.personel.ekSaha4.aciklama}
 									</ui:fragment></td>
 									<td class="#{vardiyaGun.tdClass}" align="center" style="width: 40px">#{authenticatedUser.dateFormatla(vardiyaGun.vardiyaDate)}</td>
 									<td class="#{vardiyaGun.tdClass}" style="width: 40px"></td>
 									<td class="#{vardiyaGun.tdClass}" style="width: 200px"><b> <ui:fragment rendered="#{vardiyaGun.vardiya.FMI}">#{vardiyaGun.vardiya.adi}</ui:fragment>
-											<ui:fragment rendered="#{vardiyaGun.vardiya.FMI==false}">
+											<ui:fragment rendered="#{vardiyaGun.vardiya.FMI == false}">
 												<ui:fragment rendered="#{vardiyaGun.personel.mailTakip}">DEVAMSIZLIK <ui:fragment rendered="#{authenticatedUser.admin}"> (#{vardiyaGun.vardiya.adi})</ui:fragment>
 												</ui:fragment>
-												<ui:fragment rendered="#{vardiyaGun.personel.mailTakip==null or vardiyaGun.personel.mailTakip==false}">
+												<ui:fragment rendered="#{vardiyaGun.personel.mailTakip == null or vardiyaGun.personel.mailTakip == false}">
 													<SPAN style="color: red;">DEVAMSIZLIK</SPAN>
 												</ui:fragment>
 
@@ -272,7 +272,7 @@
 										<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.tesis.aciklama}</td>
 									</ui:fragment>
 									<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.ekSaha3.aciklama} <ui:fragment
-											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim!=null and vardiyaGun.personel.ekSaha3.kodu==vardiyaOzetRaporuHome.altBolumGrupGoster and vardiyaGun.personel.ekSaha4!=null}">
+											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and vardiyaGun.personel.ekSaha3.kodu == vardiyaOzetRaporuHome.altBolumGrupGoster and vardiyaGun.personel.ekSaha4 != null}">
 									   #{vardiyaGun.personel.ekSaha4.aciklama}
 									</ui:fragment></td>
 									<td class="#{vardiyaGun.tdClass}" align="center" style="width: 40px">#{authenticatedUser.dateFormatla(vardiyaGun.vardiyaDate)}</td>

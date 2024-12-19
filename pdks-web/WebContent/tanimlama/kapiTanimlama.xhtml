@@ -28,7 +28,7 @@
 								<s:convertEntity />
 							</h:selectOneMenu>
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml" rendered="#{kapiHome.eskiKayitDurum!=null}">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{kapiHome.eskiKayitDurum != null}">
 							<ui:define name="label">Eski Kapı Bilgileri Göster</ui:define>
 							<h:selectBooleanCheckbox value="#{kapiHome.eskiKayitDurum}" />
 						</s:decorate>
@@ -60,7 +60,7 @@
 								<SPAN id="#{kapi.kapiView.kapiKGS.id}"> <h:outputText value="#{kapi.kapiView.kapiKGSAciklama}" /> <ui:fragment
 										rendered="#{kapiHome.eskiKayitDurum}">
 										<h:outputText value=" - #{kapi.kapiKGS.kapiSirket.aciklama}" />
-									</ui:fragment> <ui:fragment rendered="#{kapiHome.birdenFazlaKGSSirketSQL!=''}">
+									</ui:fragment> <ui:fragment rendered="#{kapiHome.birdenFazlaKGSSirketSQL != ''}">
 										<rich:toolTip for="#{kapi.kapiView.kapiKGS.id}">
 											<B>KGS Uygulama Adı : </B>
 											<h:outputText value="#{kapi.kapiView.kapiKGS.kapiSirket.aciklama} [#{kapi.kapiView.kapiKGS.kgsId}]" />
@@ -145,7 +145,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
 							<a4j:support event="onclick" action="#{kapiHome.instanceRefresh}"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" reRender="kapiTable" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" reRender="kapiTable" />
 						</h:graphicImage>
 					</h:form>
 				</h:panelGroup>
@@ -155,7 +155,7 @@
 					<a4j:outputPanel ajaxRendered="true">
 						<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 						<h:panelGrid columns="1">
-							<s:decorate template="/layout/edit.xhtml" rendered="#{kapiHome.kgsGuncelle==false}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{kapiHome.kgsGuncelle == false}">
 								<ui:define name="label">PDKS Kapı Adı</ui:define>
 								<h:outputText value="#{kapiHome.instance.kapiKGS.aciklamaKGS}" />
 							</s:decorate>
@@ -194,7 +194,7 @@
 					<!--  -->
 
 					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{kapiHome.save}" reRender="kapiTable,kapiEkle"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
 

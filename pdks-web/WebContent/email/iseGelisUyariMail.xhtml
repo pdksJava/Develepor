@@ -5,14 +5,14 @@
 
 	<m:to name="#{iseGelmemeUyari.userYonetici.adSoyad}" address="#{iseGelmemeUyari.userYonetici.email}" />
 	<ui:repeat value="#{iseGelmemeUyari.userIKList}" var="toUser">
-		<ui:fragment rendered="#{iseGelmemeUyari.userYonetici.id!=toUser.id}">
+		<ui:fragment rendered="#{iseGelmemeUyari.userYonetici.id != toUser.id}">
 			<m:cc name="#{toUser.adSoyad}" address="#{toUser.email}" />
 		</ui:fragment>
 	</ui:repeat>
-	<ui:fragment rendered="#{iseGelmemeUyari.userUstYonetici!=null}">
+	<ui:fragment rendered="#{iseGelmemeUyari.userUstYonetici != null}">
 		<m:cc name="#{iseGelmemeUyari.userUstYonetici.adSoyad}" address="#{iseGelmemeUyari.userUstYonetici.email}" />
 	</ui:fragment>
-	<ui:fragment rendered="#{ortakIslemler.getParameterKey('bccAdres')!=''}">
+	<ui:fragment rendered="#{ortakIslemler.getParameterKey('bccAdres') != ''}">
 		<m:bcc address="#{ortakIslemler.getParameterKey('bccAdres')}" />
 	</ui:fragment>
 	<m:subject>Giriş-Çıkış problemli personeller</m:subject>
@@ -59,10 +59,10 @@
 
 					<td align="center" style="border: 1px solid;"><h:outputText
 							value="#{iseGelmemeUyari.userYonetici.getTarihFormatla(vardiya.ilkGiris.orjinalZaman, ortakIslemler.dateTimeFormat)}"
-							rendered="#{vardiya.ilkGiris!=null}" /> <h:outputText value="Kart basılmamıştır" rendered="#{vardiya.ilkGiris==null}" /></td>
+							rendered="#{vardiya.ilkGiris != null}" /> <h:outputText value="Kart basılmamıştır" rendered="#{vardiya.ilkGiris == null}" /></td>
 					<td align="center" style="border: 1px solid;"><h:outputText
 							value="#{iseGelmemeUyari.userYonetici.getTarihFormatla(vardiya.sonCikis.orjinalZaman, ortakIslemler.dateTimeFormat)}"
-							rendered="#{vardiya.sonCikis!=null}" /> <h:outputText value="Kart basılmamıştır" rendered="#{vardiya.sonCikis==null}" /></td>
+							rendered="#{vardiya.sonCikis != null}" /> <h:outputText value="Kart basılmamıştır" rendered="#{vardiya.sonCikis == null}" /></td>
 					<ui:fragment rendered="#{iseGelmemeUyari.hataliHareketVar}">
 						<td align="center" style="border: 1px solid;"><ui:fragment rendered="#{vardiya.hareketHatali}">
 								<TABLE>

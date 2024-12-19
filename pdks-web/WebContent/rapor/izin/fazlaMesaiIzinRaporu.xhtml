@@ -29,17 +29,17 @@
 							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiIzinRaporuHome.aramaSecenekleri.sirketIdList.size()>0}">
 								<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 								<h:selectOneMenu value="#{fazlaMesaiIzinRaporuHome.aramaSecenekleri.sirketId}"
-									disabled="#{fazlaMesaiIzinRaporuHome.aramaSecenekleri.sirketIdList.size()==1}">
+									disabled="#{fazlaMesaiIzinRaporuHome.aramaSecenekleri.sirketIdList.size() == 1}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{fazlaMesaiIzinRaporuHome.aramaSecenekleri.sirketIdList}" />
 									<a4j:support event="onchange" action="#{fazlaMesaiIzinRaporuHome.fillTesisList()}" ajaxSingle="true" reRender="secimler,vardiyaOzetPanel" />
 								</h:selectOneMenu>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml"
-								rendered="#{ortakIslemler.tesisDurumu and fazlaMesaiIzinRaporuHome.aramaSecenekleri.tesisList!=null and fazlaMesaiIzinRaporuHome.aramaSecenekleri.tesisList.size()>0}">
+								rendered="#{ortakIslemler.tesisDurumu and fazlaMesaiIzinRaporuHome.aramaSecenekleri.tesisList != null and fazlaMesaiIzinRaporuHome.aramaSecenekleri.tesisList.size()>0}">
 								<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 								<h:selectOneMenu value="#{fazlaMesaiIzinRaporuHome.aramaSecenekleri.tesisId}"
-									disabled="#{fazlaMesaiIzinRaporuHome.aramaSecenekleri.tesisList.size()==1}">
+									disabled="#{fazlaMesaiIzinRaporuHome.aramaSecenekleri.tesisList.size() == 1}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{fazlaMesaiIzinRaporuHome.aramaSecenekleri.tesisList}" />
 

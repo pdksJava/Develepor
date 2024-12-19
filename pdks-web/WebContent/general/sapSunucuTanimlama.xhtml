@@ -143,7 +143,7 @@
 								<h:inputText value="#{sapServerTanimlamaHome.seciliSAPSunucu.destinationName}" maxlength="5" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml"
-								rendered="#{sapServerTanimlamaHome.seciliSAPSunucu.systemNumber==null or sapServerTanimlamaHome.seciliSAPSunucu.systemNumber==''}">
+								rendered="#{sapServerTanimlamaHome.seciliSAPSunucu.systemNumber == null or sapServerTanimlamaHome.seciliSAPSunucu.systemNumber == ''}">
 								<ui:define name="label">Ms Host Name</ui:define>
 								<h:inputText value="#{sapServerTanimlamaHome.seciliSAPSunucu.msHostName}" maxlength="250" style="width:350px" />
 							</s:decorate>
@@ -157,7 +157,7 @@
 					<!--  -->
 
 					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{sapServerTanimlamaHome.save()}" reRender="anaTable"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
 

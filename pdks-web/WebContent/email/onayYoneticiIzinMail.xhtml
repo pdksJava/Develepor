@@ -18,10 +18,10 @@
 
 	<m:subject>
 	
-		<ui:fragment rendered="#{personelIzinGirisiHome.mailIzin!=null and personelIzinGirisiHome.mailIzin.id!=null}">
+		<ui:fragment rendered="#{personelIzinGirisiHome.mailIzin != null and personelIzinGirisiHome.mailIzin.id != null}">
 	#{personelIzinGirisiHome.mailIzin.izinSahibi.adSoyad} İzin Onayı
 	</ui:fragment>
-		<ui:fragment rendered="#{personelIzinGirisiHome.mailIzin==null or personelIzinGirisiHome.mailIzin.id==null}">
+		<ui:fragment rendered="#{personelIzinGirisiHome.mailIzin == null or personelIzinGirisiHome.mailIzin.id == null}">
 	 İzin Kaydı
 	</ui:fragment>
 	</m:subject>
@@ -29,11 +29,11 @@
 		<p>#{personelIzinGirisiHome.izinMailAciklama}</p>
 		<p>Saygılarımızla,</p>
 		<p>
-			<ui:fragment rendered="#{personelIzinGirisiHome.mailIzin!=null and personelIzinGirisiHome.mailIzin.id!=null}">
+			<ui:fragment rendered="#{personelIzinGirisiHome.mailIzin != null and personelIzinGirisiHome.mailIzin.id != null}">
 				<a href="http://#{personelIzinGirisiHome.adres}/onayimaGelenIzinler?mId=#{personelIzinGirisiHome.mailIzin.id}">#{ortakIslemler.getParameterKey('fromName')} uygulamasına girmek
 					için buraya tıklayınız.</a>
 			</ui:fragment>
-			<ui:fragment rendered="#{personelIzinGirisiHome.mailIzin==null or personelIzinGirisiHome.mailIzin.id==null}">
+			<ui:fragment rendered="#{personelIzinGirisiHome.mailIzin == null or personelIzinGirisiHome.mailIzin.id == null}">
 				<a href="http://#{personelIzinGirisiHome.adres}/onayimaGelenIzinler">#{ortakIslemler.getParameterKey('fromName')} uygulamasına girmek için buraya tıklayınız.</a>
 			</ui:fragment>
 		</p>

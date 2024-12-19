@@ -10,7 +10,7 @@
 		<h:form id="idPersonelAramaForm">
 			<rich:panel header="#{ortakIslemler.getMenuUserAdi(personelGeciciYoneticiHome.session,'personelGeciciYonetici')}">
 				<h:panelGrid columns="1" id="idPersonelKullaniciAramaHome">
-					<h:panelGrid columns="1" rendered="#{personelGeciciYoneticiHome.visibled==true}">
+					<h:panelGrid columns="1" rendered="#{personelGeciciYoneticiHome.visibled == true}">
 
 						<rich:simpleTogglePanel id="personelKullaniciAramaPanel" rendered="#{personelGeciciYoneticiHome.visibled}" switchType="client"
 							label="#{personelGeciciYoneticiHome.aramaTipi}" height="110" opened="true">
@@ -34,7 +34,7 @@
 										<ui:define name="label">Kullanıcı Adı </ui:define>
 										<h:inputText value="#{personelGeciciYoneticiHome.arananUser.username}" size="30" />
 									</s:decorate>
-									<s:decorate template="/layout/edit.xhtml" rendered="#{personelGeciciYoneticiHome.sirketList.size!=1}">
+									<s:decorate template="/layout/edit.xhtml" rendered="#{personelGeciciYoneticiHome.sirketList.size != 1}">
 										<ui:define name="label">#{ortakIslemler.sirketAciklama()} </ui:define>
 										<h:selectOneMenu value="#{personelGeciciYoneticiHome.arananUser.pdksPersonel.sirket}">
 											<s:selectItems var="comp" value="#{personelGeciciYoneticiHome.sirketList}" label="#{comp.ad}" noSelectionLabel="Lutfen seciniz" />
@@ -86,10 +86,10 @@
 									<a4j:commandButton status="ajaxStatus" action="#{personelGeciciYoneticiHome.fillKullaniciList}" value="Kullanici Ara"
 										reRender="personelKullaniciAramaList,idButtonArama" />
 
-									<a4j:commandButton status="ajaxStatus" rendered="#{personelGeciciYoneticiHome.checkBox  and not empty personelGeciciYoneticiHome.userList }"
+									<a4j:commandButton status="ajaxStatus" rendered="#{personelGeciciYoneticiHome.checkBox and not empty personelGeciciYoneticiHome.userList }"
 										action="#{personelGeciciYoneticiHome.checkBoxSecimDevam(personelGeciciYoneticiHome.userList)}" value="Devam Et"
 										reRender="#{personelGeciciYoneticiHome.reRender}" />
-									<a4j:commandButton status="ajaxStatus" rendered="#{personelGeciciYoneticiHome.visibled==true}" action="#{personelGeciciYoneticiHome.kapat}"
+									<a4j:commandButton status="ajaxStatus" rendered="#{personelGeciciYoneticiHome.visibled == true}" action="#{personelGeciciYoneticiHome.kapat}"
 										value="Kapat" reRender="personelKullaniciAramaList,idButtonArama" image="/img/close.png" />
 								</s:decorate>
 							</a4j:region>
@@ -104,9 +104,9 @@
 										</f:facet>
 										<rich:column>
 											<f:facet name="header">
-												<s:decorate template="/layout/arama.xhtml" rendered="#{personelHareketHome.islemTipi!='S'}">
+												<s:decorate template="/layout/arama.xhtml" rendered="#{personelHareketHome.islemTipi != 'S'}">
 													<ui:define name="label">İşlemler</ui:define>
-													<h:selectBooleanCheckbox rendered="#{personelGeciciYoneticiHome.checkBox==true}" value="#{personelGeciciYoneticiHome.checkBoxDurum}">
+													<h:selectBooleanCheckbox rendered="#{personelGeciciYoneticiHome.checkBox == true}" value="#{personelGeciciYoneticiHome.checkBoxDurum}">
 														<a4j:support event="onclick" action="#{personelGeciciYoneticiHome.secimDurumDegistir}" reRender="personelKullaniciAramaList"
 															status="ajaxStatus" />
 
@@ -114,11 +114,11 @@
 												</s:decorate>
 											</f:facet>
 
-											<h:commandButton alt="Kullanıcı seç" rendered="#{personelGeciciYoneticiHome.checkBox==false  }" image="/img/ok.gif"
+											<h:commandButton alt="Kullanıcı seç" rendered="#{personelGeciciYoneticiHome.checkBox == false  }" image="/img/ok.gif"
 												action="#{personelGeciciYoneticiHome.tekKullaniciSecimIslemi(userView)}">
 												<a4j:support event="onclick" status="ajaxStatus" reRender="#{personelGeciciYoneticiHome.reRender}" />
 											</h:commandButton>
-											<h:selectBooleanCheckbox rendered="#{personelGeciciYoneticiHome.checkBox==true}" value="#{userView.pdksPersonel.checkBoxDurum}" />
+											<h:selectBooleanCheckbox rendered="#{personelGeciciYoneticiHome.checkBox == true}" value="#{userView.pdksPersonel.checkBoxDurum}" />
 
 										</rich:column>
 										<rich:column>
@@ -202,18 +202,18 @@
 												<s:decorate template="/layout/arama.xhtml">
 
 													<ui:define name="label">İşlemler</ui:define>
-													<h:selectBooleanCheckbox rendered="#{personelGeciciYoneticiHome.checkBox==true}" value="#{personelGeciciYoneticiHome.checkBoxDurum}">
+													<h:selectBooleanCheckbox rendered="#{personelGeciciYoneticiHome.checkBox == true}" value="#{personelGeciciYoneticiHome.checkBoxDurum}">
 														<a4j:support event="onclick" action="#{personelGeciciYoneticiHome.secimDurumDegistir}" reRender="personelKullaniciAramaList"
 															status="ajaxStatus" />
 
 													</h:selectBooleanCheckbox>
 												</s:decorate>
 											</f:facet>
-											<h:commandButton alt="Personel seç" image="/img/ok.gif" rendered="#{personelGeciciYoneticiHome.checkBox==false}"
+											<h:commandButton alt="Personel seç" image="/img/ok.gif" rendered="#{personelGeciciYoneticiHome.checkBox == false}"
 												action="#{personelGeciciYoneticiHome.tekPersonelSecimIslemi(personelView)}">
 												<a4j:support event="onclick" status="ajaxStatus" reRender="#{personelGeciciYoneticiHome.reRender}" />
 											</h:commandButton>
-											<h:selectBooleanCheckbox rendered="#{personelGeciciYoneticiHome.checkBox==true}" value="#{personelView.checkBoxDurum}" />
+											<h:selectBooleanCheckbox rendered="#{personelGeciciYoneticiHome.checkBox == true}" value="#{personelView.checkBoxDurum}" />
 										</rich:column>
 										<rich:column>
 											<f:facet name="header">
@@ -280,11 +280,11 @@
 										</f:facet>
 									</rich:dataTable>
 									<a4j:commandButton status="ajaxStatus"
-										rendered="#{personelGeciciYoneticiHome.checkBox and  personelGeciciYoneticiHome.personelArama and not empty personelGeciciYoneticiHome.personelList }"
+										rendered="#{personelGeciciYoneticiHome.checkBox and personelGeciciYoneticiHome.personelArama and not empty personelGeciciYoneticiHome.personelList }"
 										action="#{personelGeciciYoneticiHome.checkBoxSecimDevam(personelGeciciYoneticiHome.personelList)}" value="Devam Et"
 										reRender="#{personelGeciciYoneticiHome.reRender}" />
 									<a4j:commandButton status="ajaxStatus"
-										rendered="#{personelGeciciYoneticiHome.checkBox and  personelGeciciYoneticiHome.userArama and not empty personelGeciciYoneticiHome.userList }"
+										rendered="#{personelGeciciYoneticiHome.checkBox and personelGeciciYoneticiHome.userArama and not empty personelGeciciYoneticiHome.userList }"
 										action="#{personelGeciciYoneticiHome.checkBoxSecimDevam(personelGeciciYoneticiHome.userList)}" value="Devam Et"
 										reRender="#{personelGeciciYoneticiHome.reRender}" />
 
@@ -297,13 +297,13 @@
 			</rich:panel>
 
 
-			<a4j:commandButton status="ajaxStatus" rendered="#{personelGeciciYoneticiHome.visibled==false and authenticatedUser.IK}"
+			<a4j:commandButton status="ajaxStatus" rendered="#{personelGeciciYoneticiHome.visibled == false and authenticatedUser.IK}"
 				action="#{personelGeciciYoneticiHome.kullaniciArama('yoneticiyeBagliPersonelList,idPersonelAramaForm,idPersonelGeciciForm',ortakIslemler.yoneticiRoleList)}"
 				value="#{ortakIslemler.yoneticiAciklama()} Seç" reRender="idPersonelKullaniciAramaHome,idPersonelAramaForm,rotasyonTable,rotasyonTable2,yoneticiyeBagliPersonelList" />
 		</h:form>
 		<h:form id="idPersonelGeciciForm">
 			<rich:panel id="yoneticiyeBagliPersonelList" style="vertical-align:top;">
-				<h:panelGrid columns="2" rendered="#{personelGeciciYoneticiHome.visibled==false and not empty personelGeciciYoneticiHome.personelList}">
+				<h:panelGrid columns="2" rendered="#{personelGeciciYoneticiHome.visibled == false and not empty personelGeciciYoneticiHome.personelList}">
 					<h:panelGroup>
 						<div>
 							<rich:dataTable rowClasses="acik,koyu" value="#{personelGeciciYoneticiHome.personelList}" var="personel" rows="20" rowKeyVar="row"
@@ -349,7 +349,7 @@
 						<a4j:outputPanel ajaxRendered="true">
 							<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 						</a4j:outputPanel>
-						<s:decorate template="/layout/edit.xhtml" rendered="#{personelGeciciYoneticiHome.yoneticiler.size!=0}">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{personelGeciciYoneticiHome.yoneticiler.size != 0}">
 							<ui:define name="label">Rotasyon #{ortakIslemler.yoneticiAciklama()}</ui:define>
 							<h:selectOneMenu value="#{personelGeciciYoneticiHome.yeniYoneticiId}" required="true" requiredMessage="Rotasyon #{ortakIslemler.yoneticiAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -372,7 +372,7 @@
 							reRender="rotasyonTable" />
 
 						<rich:dataTable rowClasses="acik,koyu"
-							rendered="#{not empty personelGeciciYoneticiHome.rotasyonList and personelGeciciYoneticiHome.arananKullanici.pdksPersonel !=null}"
+							rendered="#{not empty personelGeciciYoneticiHome.rotasyonList and personelGeciciYoneticiHome.arananKullanici.pdksPersonel != null}"
 							value="#{personelGeciciYoneticiHome.rotasyonList}" var="rotasyon" rows="20" rowKeyVar="row" id="rotasyonTable">
 							<f:facet name="header">
 								<h:outputText value="#{personelGeciciYoneticiHome.arananKullanici.adSoyad} --  Personel Rotasyonları" />
@@ -429,7 +429,7 @@
 
 			</rich:panel>
 			<rich:dataTable rowClasses="acik,koyu"
-				rendered="#{not empty personelGeciciYoneticiHome.rotasyonList and personelGeciciYoneticiHome.arananKullanici.pdksPersonel !=null and personelGeciciYoneticiHome.visibled ==true }"
+				rendered="#{not empty personelGeciciYoneticiHome.rotasyonList and personelGeciciYoneticiHome.arananKullanici.pdksPersonel != null and personelGeciciYoneticiHome.visibled == true }"
 				value="#{personelGeciciYoneticiHome.rotasyonList}" var="rotasyon" rows="20" rowKeyVar="row" id="rotasyonTable2">
 				<f:facet name="header">
 					<h:outputText value="#{personelGeciciYoneticiHome.arananKullanici.adSoyad} --  Personel Rotasyonları" />

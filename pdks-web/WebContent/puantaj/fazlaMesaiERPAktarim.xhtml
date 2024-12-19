@@ -55,7 +55,7 @@
 
 
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiERPAktarimHome.sanalPersonelAciklama!=''}">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiERPAktarimHome.sanalPersonelAciklama != ''}">
 							<ui:define name="label">Liste Durum</ui:define>
 							<h:selectOneMenu id="sirketSec" value="#{fazlaMesaiERPAktarimHome.sanalPersonelDurum}">
 								<f:selectItem itemValue="0" itemLabel="Tüm Personel" />
@@ -79,9 +79,9 @@
 							<a4j:commandButton status="ajaxStatus" action="#{fazlaMesaiERPAktarimHome.fillPersonelDenklestirmeList}" value="Fazla Mesai Getir"
 								reRender="denklestirmeDonemiTable" />
 							<a4j:commandButton status="ajaxStatus"
-								rendered="#{false and fazlaMesaiERPAktarimHome.instance.durum and  fazlaMesaiERPAktarimHome.sirket.erpDurum and authenticatedUser.admin}"
+								rendered="#{false and fazlaMesaiERPAktarimHome.instance.durum and fazlaMesaiERPAktarimHome.sirket.erpDurum and authenticatedUser.admin}"
 								value="Fazla Mesai Aktar" oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" />
-							<ui:fragment rendered="#{fazlaMesaiERPAktarimHome.onaylanmayanDurum!=null}">
+							<ui:fragment rendered="#{fazlaMesaiERPAktarimHome.onaylanmayanDurum != null}">
 								<b>Onaysız Personeller : </b>
 								<h:selectBooleanCheckbox value="#{fazlaMesaiERPAktarimHome.onaylanmayanDurum}">
 									<a4j:support event="onclick" status="ajaxStatus" action="#{fazlaMesaiERPAktarimHome.onaylanmayanPersonelleriGetir()}"
@@ -91,7 +91,7 @@
 							</ui:fragment>
 							<h:commandLink value="#{ortakIslemler.getParameterKey('fazlaMesaiDosyaAktar')}" action="#{fazlaMesaiERPAktarimHome.denklestirmeDosyaAktar}"
 								target="blank"
-								rendered="#{not empty fazlaMesaiERPAktarimHome.personelDenklestirmeList and ortakIslemler.getParameterKey('fazlaMesaiDosyaAktar')!=''}">
+								rendered="#{not empty fazlaMesaiERPAktarimHome.personelDenklestirmeList and ortakIslemler.getParameterKey('fazlaMesaiDosyaAktar') != ''}">
 								<a4j:support event="oncomplete" status="ajaxStatus" process="vardiyaTable" reRender="vardiyaTable" />
 							</h:commandLink>
 							<h:commandLink value="Excel" action="#{fazlaMesaiERPAktarimHome.denklestirmeExcelAktar}" target="blank"
@@ -99,11 +99,11 @@
 								<a4j:support event="oncomplete" status="ajaxStatus" process="vardiyaTable" reRender="vardiyaTable" />
 							</h:commandLink>
 							<ui:fragment
-								rendered="#{ortakIslemler.getParameterKey('fazlaMesaiERPAktar')=='1' and not empty fazlaMesaiERPAktarimHome.personelDenklestirmeList and (fazlaMesaiERPAktarimHome.sirket.erpDurum or fazlaMesaiERPAktarimHome.erpAktarimDurum==false) and fazlaMesaiERPAktarimHome.instance.durum  and  (fazlaMesaiERPAktarimHome.onaylanmayanDurum==null or fazlaMesaiERPAktarimHome.onaylanmayanDurum==false)}">
+								rendered="#{ortakIslemler.getParameterKey('fazlaMesaiERPAktar') == '1' and not empty fazlaMesaiERPAktarimHome.personelDenklestirmeList and (fazlaMesaiERPAktarimHome.sirket.erpDurum or fazlaMesaiERPAktarimHome.erpAktarimDurum == false) and fazlaMesaiERPAktarimHome.instance.durum and (fazlaMesaiERPAktarimHome.onaylanmayanDurum == null or fazlaMesaiERPAktarimHome.onaylanmayanDurum == false)}">
 								<a4j:commandButton status="ajaxStatus" action="#{fazlaMesaiERPAktarimHome.erpAktar}" rendered="#{fazlaMesaiERPAktarimHome.erpAktarimDurum}"
 									value="ERP Aktar" reRender="denklestirmeDonemiTable" />
 								<a4j:commandButton status="ajaxStatus" action="#{fazlaMesaiERPAktarimHome.erpAktar}"
-									rendered="#{fazlaMesaiERPAktarimHome.erpAktarimDurum==false}" value="Kayıt Kapat" reRender="denklestirmeDonemiTable" />
+									rendered="#{fazlaMesaiERPAktarimHome.erpAktarimDurum == false}" value="Kayıt Kapat" reRender="denklestirmeDonemiTable" />
 							</ui:fragment>
 
 						</h:panelGrid>
@@ -112,7 +112,7 @@
 							<DIV class="#{authenticatedUser.scroolClass}" id="#{authenticatedUser.scroolDiv}">
 								<rich:dataTable rowClasses="acik,koyu" value="#{fazlaMesaiERPAktarimHome.onaysizPersonelDenklestirmeList}" var="mesai"
 									id="onaysizVardiyaTable" style="width:80%"
-									rendered="#{fazlaMesaiERPAktarimHome.departman!=null and not empty fazlaMesaiERPAktarimHome.onaysizPersonelDenklestirmeList and fazlaMesaiERPAktarimHome.onaylanmayanDurum}">
+									rendered="#{fazlaMesaiERPAktarimHome.departman != null and not empty fazlaMesaiERPAktarimHome.onaysizPersonelDenklestirmeList and fazlaMesaiERPAktarimHome.onaylanmayanDurum}">
 
 									<f:facet name="header">
 										<h:outputText value="Onaylanmayan Mesailer" />
@@ -153,7 +153,7 @@
 										<f:facet name="header">
 											<h:outputText value="#{ortakIslemler.calismaModeliAciklama()}" />
 										</f:facet>
-										<ui:fragment rendered="#{mesai.calismaModeliAy!=null}">
+										<ui:fragment rendered="#{mesai.calismaModeliAy != null}">
 											<h:outputText value="#{mesai.calismaModeliAy.calismaModeli.aciklama}" style="font-size: 9px;width:autostretch ;white-space: nowrap;" />
 										</ui:fragment>
 									</rich:column>
@@ -163,7 +163,7 @@
 										</f:facet>
 										<h:outputText value="#{mesai.personel.bordroAltAlan.aciklama}" style="font-size: 9px;width:autostretch ;white-space: nowrap;" />
 									</rich:column>
-									<rich:column style="text-align: left;" rendered="#{fazlaMesaiERPAktarimHome.sanalPersonelAciklama!=''}">
+									<rich:column style="text-align: left;" rendered="#{fazlaMesaiERPAktarimHome.sanalPersonelAciklama != ''}">
 										<f:facet name="header">
 											<h:outputText value="#{fazlaMesaiERPAktarimHome.sanalPersonelAciklama}" />
 										</f:facet>
@@ -174,8 +174,8 @@
 										<f:facet name="header">
 											<h:outputText value="Puantaj Durum" />
 										</f:facet>
-										<ui:fragment rendered="#{mesai.id!=null}">Puantaj Onaylanmadı</ui:fragment>
-										<ui:fragment rendered="#{mesai.id==null}">Plan Oluşturulmadı</ui:fragment>
+										<ui:fragment rendered="#{mesai.id != null}">Puantaj Onaylanmadı</ui:fragment>
+										<ui:fragment rendered="#{mesai.id == null}">Plan Oluşturulmadı</ui:fragment>
 									</rich:column>
 
 
@@ -183,7 +183,7 @@
 								</rich:dataTable>
 								<rich:dataTable rowClasses="acik,koyu" value="#{fazlaMesaiERPAktarimHome.personelDenklestirmeList}" var="mesai" id="vardiyaTable"
 									style="width:80%"
-									rendered="#{not empty fazlaMesaiERPAktarimHome.personelDenklestirmeList and (fazlaMesaiERPAktarimHome.onaylanmayanDurum==null or fazlaMesaiERPAktarimHome.onaylanmayanDurum==false)}">
+									rendered="#{not empty fazlaMesaiERPAktarimHome.personelDenklestirmeList and (fazlaMesaiERPAktarimHome.onaylanmayanDurum == null or fazlaMesaiERPAktarimHome.onaylanmayanDurum == false)}">
 
 									<f:facet name="header">
 										<h:outputText value="Fazla Mesailer" />
@@ -195,12 +195,12 @@
 											</h:selectBooleanCheckbox>
 										</f:facet>
 										<h:selectBooleanCheckbox value="#{mesai.checkBoxDurum}"
-											rendered="#{mesai.erpAktarildi==false and (fazlaMesaiERPAktarimHome.erpAktarimDurum ==false or mesai.personel.sirket.erpDurum)}" />
+											rendered="#{mesai.erpAktarildi == false and (fazlaMesaiERPAktarimHome.erpAktarimDurum == false or mesai.personel.sirket.erpDurum)}" />
 										<ui:fragment rendered="#{mesai.erpAktarildi}">
 											<a4j:commandButton status="ajaxStatus" title="ERP aktarım bloke aç" action="#{fazlaMesaiERPAktarimHome.erpAktarSil(mesai)}"
 												render="denklestirmeDonemiTable" image="/img/delete.gif" rendered="#{fazlaMesaiERPAktarimHome.erpAktarimDurum}" />
 											<a4j:commandButton status="ajaxStatus" title="Bloke aç" action="#{fazlaMesaiERPAktarimHome.erpAktarSil(mesai)}"
-												render="denklestirmeDonemiTable" image="/img/delete.gif" rendered="#{fazlaMesaiERPAktarimHome.erpAktarimDurum==false}" />
+												render="denklestirmeDonemiTable" image="/img/delete.gif" rendered="#{fazlaMesaiERPAktarimHome.erpAktarimDurum == false}" />
 										</ui:fragment>
 
 
@@ -239,12 +239,12 @@
 										<f:facet name="header">
 											<h:outputText value="#{ortakIslemler.calismaModeliAciklama()}" />
 										</f:facet>
-										<ui:fragment rendered="#{mesai.calismaModeliAy!=null}">
+										<ui:fragment rendered="#{mesai.calismaModeliAy != null}">
 											<h:outputText value="#{mesai.calismaModeliAy.calismaModeli.aciklama}" style="font-size: 9px;width:autostretch ;white-space: nowrap;" />
 										</ui:fragment>
 									</rich:column>
 
-									<rich:column style="text-align: left;" rendered="#{fazlaMesaiERPAktarimHome.sanalPersonelAciklama!=''}">
+									<rich:column style="text-align: left;" rendered="#{fazlaMesaiERPAktarimHome.sanalPersonelAciklama != ''}">
 										<f:facet name="header">
 											<h:outputText value="#{fazlaMesaiERPAktarimHome.sanalPersonelAciklama}" />
 										</f:facet>
@@ -306,11 +306,11 @@
 											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(fazlaMesaiERPAktarimHome.getVardiyaAdet(mesai.personel,vardiya))}" />
 										</rich:column>
 									</c:forEach>
-									<rich:column rendered="#{fazlaMesaiERPAktarimHome.instance.durum==false}">
+									<rich:column rendered="#{fazlaMesaiERPAktarimHome.instance.durum == false}">
 										<f:facet name="header">
 											<h:outputText value="ERP Aktarım" />
 										</f:facet>
-										<ui:fragment rendered="#{mesai.erpAktarildi==false}">
+										<ui:fragment rendered="#{mesai.erpAktarildi == false}">
 											<h:outputText value="Onaylama Zamanı (#{authenticatedUser.dateTimeFormatla(mesai.guncellemeTarihi)})"
 												title="İşlem Yapan : #{mesai.guncelleyenUser.adSoyad}" />
 
@@ -370,7 +370,7 @@
 								</rich:fileUpload>
 							</a4j:outputPanel>
 							<a4j:outputPanel id="mesaiDosya">
-								<ui:fragment rendered="#{fazlaMesaiERPAktarimHome.fazlaMesaiDosya.dosyaIcerik!=null}">
+								<ui:fragment rendered="#{fazlaMesaiERPAktarimHome.fazlaMesaiDosya.dosyaIcerik != null}">
 									<h:panelGrid columns="3">
 										<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="mesaiPanel" ajaxSingle="true"
 											action="#{fazlaMesaiERPAktarimHome.fazlaMesaiDosyaSifirla}" />

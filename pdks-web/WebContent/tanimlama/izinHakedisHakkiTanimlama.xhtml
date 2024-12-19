@@ -92,7 +92,7 @@
 										</h:selectOneMenu>
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml"
-										rendered="#{izinHakedisHakkiHome.instance.departman.admin and ortakIslemler.getParameterKey('uygulamaTipi')=='H' and ortakIslemler.getParameterKey('suaSenelikKullan')=='1'}">
+										rendered="#{izinHakedisHakkiHome.instance.departman.admin and ortakIslemler.getParameterKey('uygulamaTipi') == 'H' and ortakIslemler.getParameterKey('suaSenelikKullan') == '1'}">
 										<ui:define name="label">Şua</ui:define>
 										<h:selectBooleanCheckbox value="#{izinHakedisHakkiHome.instance.suaDurum}">
 
@@ -120,7 +120,7 @@
 					<!--  -->
 
 					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{izinHakedisHakkiHome.save}" reRender="izinTable"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
 

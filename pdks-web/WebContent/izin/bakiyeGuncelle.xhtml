@@ -109,7 +109,7 @@
 							</f:facet>
 						</rich:dataTable>
 						<ui:fragment rendered="#{not empty personelKalanIzinHome.personelizinList}">
-							<a4j:commandButton status="ajaxStatus" value="#{personelKalanIzinHome.personelizinList.size()} Güncelle" action="#{personelKalanIzinHome.bakiyeGuncelle}" reRender="onayList" rendered="#{personelKalanIzinHome.geciciBakiye==false}" />
+							<a4j:commandButton status="ajaxStatus" value="#{personelKalanIzinHome.personelizinList.size()} Güncelle" action="#{personelKalanIzinHome.bakiyeGuncelle}" reRender="onayList" rendered="#{personelKalanIzinHome.geciciBakiye == false}" />
 							<a4j:commandButton status="ajaxStatus" value="#{personelKalanIzinHome.personelizinList.size()} Geçmiş Güncelle" action="#{personelKalanIzinHome.gecmisbakiyeGuncelle}" reRender="onayList" rendered="#{personelKalanIzinHome.geciciBakiye}" />
 						</ui:fragment>
 					</a4j:outputPanel>

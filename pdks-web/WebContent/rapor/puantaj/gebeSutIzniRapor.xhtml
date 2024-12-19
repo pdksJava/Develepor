@@ -18,25 +18,25 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Başlangıç Tarih</ui:define>
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.basTarih}"
-								required="#{authenticatedUser.admin==false}" requiredMessage="Başlangıç Tarih giriniz" />
+								required="#{authenticatedUser.admin == false}" requiredMessage="Başlangıç Tarih giriniz" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Bitiş Tarih</ui:define>
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.basTarih}"
-								required="#{authenticatedUser.admin==false}" requiredMessage="Bitiş Tarih giriniz" />
+								required="#{authenticatedUser.admin == false}" requiredMessage="Bitiş Tarih giriniz" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
-							<h:selectOneMenu id="sirketSec" value="#{gebeSutIzniRaporHome.sirketId}" disabled="#{gebeSutIzniRaporHome.sirketList.size()==1}">
+							<h:selectOneMenu id="sirketSec" value="#{gebeSutIzniRaporHome.sirketId}" disabled="#{gebeSutIzniRaporHome.sirketList.size() == 1}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{gebeSutIzniRaporHome.sirketList}" />
 								<a4j:support event="onchange" status="ajaxStatus" action="#{gebeSutIzniRaporHome.fillTesisList()}" reRender="personelDurumTable,girisler" />
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
-							rendered="#{gebeSutIzniRaporHome.sirket.tesisDurumu and gebeSutIzniRaporHome.tesisList!=null and gebeSutIzniRaporHome.tesisList.size()>0}">
+							rendered="#{gebeSutIzniRaporHome.sirket.tesisDurumu and gebeSutIzniRaporHome.tesisList != null and gebeSutIzniRaporHome.tesisList.size()>0}">
 							<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
-							<h:selectOneMenu value="#{gebeSutIzniRaporHome.tesisId}" disabled="#{gebeSutIzniRaporHome.tesisList.size()==1}">
+							<h:selectOneMenu value="#{gebeSutIzniRaporHome.tesisId}" disabled="#{gebeSutIzniRaporHome.tesisList.size() == 1}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{gebeSutIzniRaporHome.tesisList}" />
 								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{gebeSutIzniRaporHome.personelDonemDurumList.clear()}"

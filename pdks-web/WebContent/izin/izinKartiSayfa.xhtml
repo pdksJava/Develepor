@@ -4,7 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 	<table border="1" style="border-collapse: collapse;" width="800px">
-		<ui:fragment rendered="#{personelKalanIzinHome.suaVar==false}">
+		<ui:fragment rendered="#{personelKalanIzinHome.suaVar == false}">
 			<caption style="font-weight: bold; font-size: 12pt;">YILLIK ÜCRETLİ İZİN KARTI</caption>
 		</ui:fragment>
 		<ui:fragment rendered="#{personelKalanIzinHome.suaVar}">
@@ -44,13 +44,13 @@
 
 			<ui:repeat value="#{personelKalanIzinHome.updateTempIzin.yillikIzinler}" var="bakiyeIzin">
 				<tr>
-					<td style="font-size: 10pt;" align="center"><ui:fragment rendered="#{bakiyeIzin.devirIzin==false}">
+					<td style="font-size: 10pt;" align="center"><ui:fragment rendered="#{bakiyeIzin.devirIzin == false}">
 					#{authenticatedUser.getTarihFormatla(bakiyeIzin.baslangicZamani, 'yyyy')}</ui:fragment></td>
 					<td style="font-size: 10pt; width: 100px;" align="center">#{authenticatedUser.dateFormatla(bakiyeIzin.birOncekiHakedisTarih)}</td>
 					<td style="font-size: 10pt; width: 100px;" align="center">#{bakiyeIzin.aciklama}</td>
-					<td style="font-size: 10pt; width: 100px;" align="center"><ui:fragment rendered="#{bakiyeIzin.devirIzin==false}">#{authenticatedUser.dateFormatla(bakiyeIzin.bitisZamani)}
+					<td style="font-size: 10pt; width: 100px;" align="center"><ui:fragment rendered="#{bakiyeIzin.devirIzin == false}">#{authenticatedUser.dateFormatla(bakiyeIzin.bitisZamani)}
 					</ui:fragment></td>
-					<td style="font-size: 10pt; width: 80px;" align="center"><ui:fragment rendered="#{bakiyeIzin.izinSuresi!=0}">
+					<td style="font-size: 10pt; width: 80px;" align="center"><ui:fragment rendered="#{bakiyeIzin.izinSuresi != 0}">
 					#{authenticatedUser.sayiFormatliGoster(bakiyeIzin.izinSuresi)}</ui:fragment></td>
 					<td style="font-size: 10pt; width: 280px; padding: 0px; margin: 0px" align="center" colspan="3">
 

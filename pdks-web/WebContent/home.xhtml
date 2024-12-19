@@ -23,9 +23,9 @@
 					<span><b> Versiyon : </b>pdks-ear_20241211_1920.1.0.0.ear</span>
 				</ui:fragment>
 				<ui:fragment>
-					<ui:fragment rendered="#{ortakIslemler.getHelpDeskLastDate()!=null}">
+					<ui:fragment rendered="#{ortakIslemler.getHelpDeskLastDate() != null}">
 						<b> Last Help Desk Date : </b>#{authenticatedUser.dateFormatla(ortakIslemler.getHelpDeskLastDate())}</ui:fragment>
-					<ui:fragment rendered="#{ortakIslemler.sistemDestekVar==false}">
+					<ui:fragment rendered="#{ortakIslemler.sistemDestekVar == false}">
 						<span style="color: red; font-size: 14; font-weight: bold;"> bitmiştir.<br></br></span>
 					</ui:fragment>
 

@@ -6,7 +6,7 @@
 		<m:to address="#{toUser.email}" />
 	</ui:repeat>
 	<m:subject>#{zamanlayici.konu}</m:subject>
-	<ui:fragment rendered="#{zamanlayici.dosya!=null}">
+	<ui:fragment rendered="#{zamanlayici.dosya != null}">
 		<m:attachment fileName="#{zamanlayici.dosya.dosyaAdi}" contentType="#{zamanlayici.dosya.icerikTipi}" value="#{zamanlayici.dosya.dosyaIcerik}" />
 	</ui:fragment>
 	<m:body>

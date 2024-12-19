@@ -20,7 +20,7 @@
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<a4j:commandButton status="ajaxStatus" rendered="#{not empty superVisorDegistirHome.superVisorList}" action="#{superVisorDegistirHome.superVisorSec}" value="Süper Visör Seç" />
-							<a4j:commandButton status="ajaxStatus" rendered="#{authenticatedUser.seciliSuperVisor!=null}" action="#{superVisorDegistirHome.superVisorIptalSec}" value="Süper Visör İptal" />
+							<a4j:commandButton status="ajaxStatus" rendered="#{authenticatedUser.seciliSuperVisor != null}" action="#{superVisorDegistirHome.superVisorIptalSec}" value="Süper Visör İptal" />
 						</s:decorate>
 					</h:panelGrid>
 				</rich:panel>

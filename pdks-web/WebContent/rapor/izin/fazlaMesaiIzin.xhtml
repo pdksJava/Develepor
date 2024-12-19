@@ -44,7 +44,7 @@
 
 
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and  fazlaMesaiIzinHome.ekSahaTanimMap.containsKey('ekSaha1')}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and fazlaMesaiIzinHome.ekSahaTanimMap.containsKey('ekSaha1')}">
 						<ui:define name="label">#{fazlaMesaiIzinHome.ekSahaTanimMap.get('ekSaha1').aciklama}</ui:define>
 						<h:selectOneMenu value="#{fazlaMesaiIzinHome.seciliEkSaha1}">
 							<s:selectItems var="comp" value="#{fazlaMesaiIzinHome.ekSahaListMap.get('ekSaha1')}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
@@ -52,7 +52,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and  fazlaMesaiIzinHome.ekSahaTanimMap.containsKey('ekSaha2')}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and fazlaMesaiIzinHome.ekSahaTanimMap.containsKey('ekSaha2')}">
 						<ui:define name="label">#{fazlaMesaiIzinHome.ekSahaTanimMap.get('ekSaha2').aciklama}</ui:define>
 						<h:selectOneMenu value="#{fazlaMesaiIzinHome.seciliEkSaha1}">
 							<s:selectItems var="comp" value="#{fazlaMesaiIzinHome.ekSahaListMap.get('ekSaha2')}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
@@ -60,7 +60,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and  fazlaMesaiIzinHome.ekSahaTanimMap.containsKey('ekSaha3')}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and fazlaMesaiIzinHome.ekSahaTanimMap.containsKey('ekSaha3')}">
 						<ui:define name="label">#{fazlaMesaiIzinHome.ekSahaTanimMap.get('ekSaha3').aciklama}</ui:define>
 						<h:selectOneMenu value="#{fazlaMesaiIzinHome.seciliEkSaha1}">
 							<s:selectItems var="comp" value="#{fazlaMesaiIzinHome.ekSahaListMap.get('ekSaha3')}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
@@ -68,7 +68,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and  fazlaMesaiIzinHome.ekSahaTanimMap.containsKey('ekSaha4')}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and fazlaMesaiIzinHome.ekSahaTanimMap.containsKey('ekSaha4')}">
 						<ui:define name="label">#{fazlaMesaiIzinHome.ekSahaTanimMap.get('ekSaha4').aciklama}</ui:define>
 						<h:selectOneMenu value="#{fazlaMesaiIzinHome.seciliEkSaha1}">
 							<s:selectItems var="comp" value="#{fazlaMesaiIzinHome.ekSahaListMap.get('ekSaha4')}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
@@ -275,7 +275,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" styleClass="hidelink">
 							<a4j:support event="onclick" action="#{fazlaMesaiIzinHome.instanceRefresh}" reRender="izinDetayPanel"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
 
@@ -314,7 +314,7 @@
 					</s:decorate>
 				</h:panelGrid>
 				<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{fazlaMesaiIzinHome.kaydet}" reRender="izinDetayPanel,izinTable"
-					oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+					oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 			</h:form>
 		</rich:modalPanel>

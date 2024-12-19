@@ -17,7 +17,7 @@
 					<a4j:outputPanel id="anaForm">
 						<h:panelGrid columns="1">
 
-							<s:decorate template="/layout/edit.xhtml" rendered="#{parameterHome.admin and parameterHome.pasifGoster!=null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{parameterHome.admin and parameterHome.pasifGoster != null}">
 								<ui:define name="label">Pasif Göster</ui:define>
 								<h:selectBooleanCheckbox value="#{parameterHome.pasifGoster}">
 									<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" reRender="anaForm" action="#{parameterHome.fillParameterList()}" />
@@ -48,7 +48,7 @@
 									<rich:toolTip for="deletelink" value="Delete" />
 
 								</rich:column>
-								<rich:column rendered="#{authenticatedUser.admin==true}">
+								<rich:column rendered="#{authenticatedUser.admin == true}">
 									<f:facet name="header">
 										<h:outputText value="Id" />
 									</f:facet>
@@ -73,7 +73,7 @@
 									</f:facet>
 									<h:outputText value="#{parameter.value}" id="value" />
 								</rich:column>
-								<rich:column rendered="#{authenticatedUser.admin==true}">
+								<rich:column rendered="#{authenticatedUser.admin == true}">
 									<f:facet name="header">
 										<h:outputText value="Güncellenebilir" />
 									</f:facet>
@@ -129,7 +129,7 @@
 							</h:panelGrid>
 							<rich:toolTip for="addlink" value="Add" />
 							<a4j:commandButton status="ajaxStatus" value="Test Mail" action="#{parameterHome.testMail()}" />
-							<c:if test="#{ortakIslemler.canliDurum==false}">
+							<c:if test="#{ortakIslemler.canliDurum == false}">
 								<a4j:commandButton status="ajaxStatus" value="hakEdisIzinERPDBGuncelle Calistir"
 									rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametreHakEdisIzinERPTableView)}"
 									action="#{ortakIslemler.hakEdisIzinERPDBGuncelle(parameterHome.session)}" />
@@ -166,7 +166,7 @@
 
 				<h:panelGrid columns="1">
 					<a4j:outputPanel ajaxRendered="true" id="ptmEdit">
-						<h:panelGrid columns="1" rendered="#{authenticatedUser.admin==true}">
+						<h:panelGrid columns="1" rendered="#{authenticatedUser.admin == true}">
 							<s:decorate id="parametreAdiField1" template="/layout/edit.xhtml">
 								<ui:define name="label">Adı</ui:define>
 								<h:inputText id="parametreAdi1" required="true" size="40" value="#{parameterHome.instance.name}" />
@@ -186,7 +186,7 @@
 									<a4j:support event="onclick" reRender="ptmEdit" status="ajaxStatus" />
 								</h:selectBooleanCheckbox>
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{parameterHome.instance.helpDesk==false}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{parameterHome.instance.helpDesk == false}">
 								<ui:define name="label">Güncellenebilir</ui:define>
 								<h:selectBooleanCheckbox required="true" value="#{parameterHome.instance.guncelle}" />
 							</s:decorate>
@@ -197,7 +197,7 @@
 							</s:decorate>
 
 						</h:panelGrid>
-						<h:panelGrid columns="1" rendered="#{authenticatedUser.admin==false}">
+						<h:panelGrid columns="1" rendered="#{authenticatedUser.admin == false}">
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Açıklama</ui:define>
 								<h:outputText value="#{parameterHome.instance.description}" />
@@ -217,7 +217,7 @@
 					<!--  -->
 
 					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{parameterHome.save}" reRender="table"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
 

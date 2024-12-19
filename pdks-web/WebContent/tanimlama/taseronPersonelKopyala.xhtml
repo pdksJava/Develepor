@@ -16,7 +16,7 @@
 				<h:panelGrid columns="2" cellpadding="0" cellspacing="0" id="dosyaSec">
 					<s:decorate template="/layout/edit.xhtml">
 						<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
-						<h:selectOneMenu id="sirketSec" value="#{taseronPersonelKopyalaHome.sirketId}" disabled="#{taseronPersonelKopyalaHome.sirketList.size()==1}">
+						<h:selectOneMenu id="sirketSec" value="#{taseronPersonelKopyalaHome.sirketId}" disabled="#{taseronPersonelKopyalaHome.sirketList.size() == 1}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{taseronPersonelKopyalaHome.sirketList}" />
 							<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" />
@@ -48,7 +48,7 @@
 
 					</h:panelGrid>
 
-					<rich:panel rendered="#{taseronPersonelKopyalaHome.file.data!=null}">
+					<rich:panel rendered="#{taseronPersonelKopyalaHome.file.data != null}">
 						<h:panelGrid columns="1">
 							<h:outputText value="Dosya Adı : #{taseronPersonelKopyalaHome.file.name}" />
 
@@ -126,7 +126,7 @@
 								<f:facet name="header">
 									<h:outputText value="Yeni Personel Adı Soyadı" />
 								</f:facet>
-								<ui:fragment rendered="#{personel.personelKGS!=null}">
+								<ui:fragment rendered="#{personel.personelKGS != null}">
 									<h:outputText value="#{personel.personelKGS.adSoyad}" />
 								</ui:fragment>
 							</rich:column>

@@ -61,7 +61,7 @@
 							<f:facet name="header">
 								<h:outputText value="Personeller" />
 							</f:facet>
-							<a4j:commandButton status="ajaxStatus" value="Personeller" rendered="#{iseGelmeyenDisplay.personelList!=null}"
+							<a4j:commandButton status="ajaxStatus" value="Personeller" rendered="#{iseGelmeyenDisplay.personelList != null}"
 								oncomplete="#{rich:component('personelDetayPanel')}.show()" action="#{iseGelmeyenPersonelHome.personelGoster(iseGelmeyenDisplay)}"
 								reRender="personelDetayPanel" />
 

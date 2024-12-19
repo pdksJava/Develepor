@@ -44,7 +44,7 @@
 					</s:decorate>
 
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and  gunlukIzinRaporHome.ekSahaTanimMap.containsKey('ekSaha1')}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and gunlukIzinRaporHome.ekSahaTanimMap.containsKey('ekSaha1')}">
 						<ui:define name="label">#{gunlukIzinRaporHome.ekSahaTanimMap.get('ekSaha1').aciklama}</ui:define>
 						<h:selectOneMenu value="#{gunlukIzinRaporHome.seciliEkSaha1}">
 							<s:selectItems var="comp" value="#{gunlukIzinRaporHome.ekSahaListMap.get('ekSaha1')}" label="#{comp.aciklama}"
@@ -53,7 +53,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and  gunlukIzinRaporHome.ekSahaTanimMap.containsKey('ekSaha2')}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and gunlukIzinRaporHome.ekSahaTanimMap.containsKey('ekSaha2')}">
 						<ui:define name="label">#{gunlukIzinRaporHome.ekSahaTanimMap.get('ekSaha2').aciklama}</ui:define>
 						<h:selectOneMenu value="#{gunlukIzinRaporHome.seciliEkSaha2}">
 							<s:selectItems var="comp" value="#{gunlukIzinRaporHome.ekSahaListMap.get('ekSaha2')}" label="#{comp.aciklama}"
@@ -62,7 +62,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and  gunlukIzinRaporHome.ekSahaTanimMap.containsKey('ekSaha3')}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and gunlukIzinRaporHome.ekSahaTanimMap.containsKey('ekSaha3')}">
 						<ui:define name="label">#{gunlukIzinRaporHome.ekSahaTanimMap.get('ekSaha3').aciklama}</ui:define>
 						<h:selectOneMenu value="#{gunlukIzinRaporHome.seciliEkSaha3}">
 							<s:selectItems var="comp" value="#{gunlukIzinRaporHome.ekSahaListMap.get('ekSaha3')}" label="#{comp.aciklama}"
@@ -71,7 +71,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and  gunlukIzinRaporHome.ekSahaTanimMap.containsKey('ekSaha4')}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and gunlukIzinRaporHome.ekSahaTanimMap.containsKey('ekSaha4')}">
 						<ui:define name="label">#{gunlukIzinRaporHome.ekSahaTanimMap.get('ekSaha4').aciklama}</ui:define>
 						<h:selectOneMenu value="#{gunlukIzinRaporHome.seciliEkSaha4}">
 							<s:selectItems var="comp" value="#{gunlukIzinRaporHome.ekSahaListMap.get('ekSaha4')}" label="#{comp.aciklama}"

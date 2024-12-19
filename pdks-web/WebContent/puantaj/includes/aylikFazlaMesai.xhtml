@@ -7,10 +7,10 @@
 
 	<ui:fragment>
 
-		<ui:fragment rendered="#{fazlaMesaiHesaplaHome.seciliBolum!=null and fazlaMesaiHesaplaHome.ikRole }">
+		<ui:fragment rendered="#{fazlaMesaiHesaplaHome.seciliBolum != null and fazlaMesaiHesaplaHome.ikRole }">
 			<DIV style="text-align: center; font-weight: bold; color: blue; font-size: 16px;">
 				#{fazlaMesaiHesaplaHome.seciliBolum.aciklama}
-				<ui:fragment rendered="#{fazlaMesaiHesaplaHome.seciliAltBolum!=null}">
+				<ui:fragment rendered="#{fazlaMesaiHesaplaHome.seciliAltBolum != null}">
 				- #{fazlaMesaiHesaplaHome.seciliAltBolum.aciklama}
 			</ui:fragment>
 
@@ -22,8 +22,8 @@
 			<table class="rich-table">
 				<thead class="rich-table-thead">
 					<tr class="rich-table-subheader">
-						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and  fazlaMesaiHesaplaHome.hataYok }">
-							<th style="width: 10px"><ui:fragment rendered="#{fazlaMesaiHesaplaHome.kullaniciPersonel==false and fazlaMesaiHesaplaHome.hataYok}">
+						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and fazlaMesaiHesaplaHome.hataYok }">
+							<th style="width: 10px"><ui:fragment rendered="#{fazlaMesaiHesaplaHome.kullaniciPersonel == false and fazlaMesaiHesaplaHome.hataYok}">
 									<h:selectBooleanCheckbox value="#{fazlaMesaiHesaplaHome.kaydetDurum}">
 										<a4j:support event="onclick" status="ajaxStatus" action="#{fazlaMesaiHesaplaHome.kaydetSec()}" reRender="hareketTables" />
 									</h:selectBooleanCheckbox>
@@ -40,7 +40,7 @@
 						<ui:fragment rendered="#{ fazlaMesaiHesaplaHome.seciliEkSaha3Id eq 0}">
 							<th style="width: 30px"><h:outputText value="#{fazlaMesaiHesaplaHome.bolumAciklama}" /></th>
 						</ui:fragment>
-						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ekSaha4Tanim!=null and fazlaMesaiHesaplaHome.seciliEkSaha4Id lt 0}">
+						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ekSaha4Tanim != null and fazlaMesaiHesaplaHome.seciliEkSaha4Id lt 0}">
 							<th style="width: 30px"><h:outputText value="#{fazlaMesaiHesaplaHome.ekSaha4Tanim.aciklama}" /></th>
 						</ui:fragment>
 
@@ -75,7 +75,7 @@
 									<h:outputText value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'd')}" />
 									<bR />
 									<h:outputText value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'EEE')}" />
-								</DIV> <ui:fragment rendered="#{vardiya.tatil!=null}">
+								</DIV> <ui:fragment rendered="#{vardiya.tatil != null}">
 
 									<rich:toolTip for="tatil#{vardiya.vardiyaDateStr}">
 										<SPAN style="color: green; font-size: 12px;"><B>#{vardiya.tatil.ad}</B></SPAN>
@@ -111,7 +111,7 @@
 									</SPAN>
 								</rich:toolTip></th>
 						</ui:fragment>
-						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.stajerSirket==false}">
+						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.stajerSirket == false}">
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.devredenMesaiKod}">
 								<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;"
 									id="baslik#{ortakIslemler.devredenMesaiKod()}"><h:outputText value="#{ortakIslemler.devredenMesaiKod()}" /> <rich:toolTip
@@ -317,27 +317,27 @@
 				<tbody>
 					<a4j:repeat value="#{fazlaMesaiHesaplaHome.aylikPuantajList}" var="aylikPuantaj">
 						<tr>
-							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and  fazlaMesaiHesaplaHome.hataYok }">
+							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and fazlaMesaiHesaplaHome.hataYok }">
 								<td class="#{aylikPuantaj.trClass}" style="width: 10px" align="center"><ui:fragment
-										rendered="#{fazlaMesaiHesaplaHome.hataYok  and aylikPuantaj.personelDenklestirme.erpAktarildi==false and (aylikPuantaj.fazlaMesaiHesapla || aylikPuantaj.personelDenklestirme.denklestirme==false)}">
-										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.denklestirme==false or aylikPuantaj.personelDenklestirme.onaylandi==false}">
+										rendered="#{fazlaMesaiHesaplaHome.hataYok and aylikPuantaj.personelDenklestirme.erpAktarildi == false and (aylikPuantaj.fazlaMesaiHesapla || aylikPuantaj.personelDenklestirme.denklestirme == false)}">
+										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.denklestirme == false or aylikPuantaj.personelDenklestirme.onaylandi == false}">
 											<a4j:commandButton id="onaylandi" image="/img/msgerror.png" />
 											<rich:toolTip for="onaylandi">
-												<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.denklestirme==false}">
+												<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.denklestirme == false}">
 																		Fazla Mesai Tanımsız!<br />
 												</ui:fragment>
-												<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi==false}">
+												<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi == false}">
 																		Aylık plan onaylanmamıştır<br />
 												</ui:fragment>
 
 											</rich:toolTip>
 										</ui:fragment>
 										<ui:fragment
-											rendered="#{aylikPuantaj.personelDenklestirme.onaylandi  and aylikPuantaj.personelDenklestirme.denklestirme and aylikPuantaj.uyariDurum}">
+											rendered="#{aylikPuantaj.personelDenklestirme.onaylandi and aylikPuantaj.personelDenklestirme.denklestirme and aylikPuantaj.uyariDurum}">
 											<ui:fragment rendered="#{aylikPuantaj.donemBitti}">
 												<h:selectBooleanCheckbox value="#{aylikPuantaj.kaydet}" />
 											</ui:fragment>
-											<ui:fragment rendered="#{aylikPuantaj.donemBitti==false}">
+											<ui:fragment rendered="#{aylikPuantaj.donemBitti == false}">
 												<a4j:commandButton id="donemBitti" image="/img/msgerror.png" />
 												<rich:toolTip for="donemBitti">
 																		Ayın son günü vardiyası bitmedi! 
@@ -361,21 +361,21 @@
 							</ui:fragment>
 							<td class="#{aylikPuantaj.trClass}" style="width: 20px" align="center">
 								<DIV id="bolumBordroAltBirimSicil#{aylikPuantaj.pdksPersonel.sicilNo}">
-									<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi==false or aylikPuantaj.personelDenklestirme.denklestirme==false}">
+									<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi == false or aylikPuantaj.personelDenklestirme.denklestirme == false}">
 										<SPAN style="color: red"><h:outputText value="#{aylikPuantaj.pdksPersonel.sicilNo}" /></SPAN>
 									</ui:fragment>
-									<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi  and aylikPuantaj.personelDenklestirme.denklestirme }">
+									<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi and aylikPuantaj.personelDenklestirme.denklestirme }">
 										<SPAN> <h:outputText value="#{aylikPuantaj.pdksPersonel.sicilNo}" />
 										</SPAN>
 									</ui:fragment>
 								</DIV> <rich:toolTip for="bolumBordroAltBirimSicil#{aylikPuantaj.pdksPersonel.sicilNo}">
 								#{aylikPuantaj.bolumBordroAltBirim}<br />
 									<ui:fragment
-										rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and (aylikPuantaj.personelDenklestirme.durum==false or aylikPuantaj.personelDenklestirme.onaylandi==false)}">
-										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.denklestirme==false}">
+										rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and (aylikPuantaj.personelDenklestirme.durum == false or aylikPuantaj.personelDenklestirme.onaylandi == false)}">
+										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.denklestirme == false}">
 																	Fazla Mesai Tanımsız!<br />
 										</ui:fragment>
-										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi==false}">
+										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi == false}">
 																	 Aylık plan onaylanmamıştır!<br />
 										</ui:fragment>
 									</ui:fragment>
@@ -394,14 +394,14 @@
 
 									</ui:fragment>
 								</rich:toolTip></td>
-							<td class="#{aylikPuantaj.trClass}" style="width: 60px"><ui:fragment rendered="#{aylikPuantaj.yonetici!=null}">
-									<h:outputText value="#{aylikPuantaj.yonetici.adSoyad}" rendered="#{aylikPuantaj.yonetici.id!=null}" />
-									<ui:fragment rendered="#{aylikPuantaj.yonetici.id==null and aylikPuantaj.pdksPersonel.sanalPersonel==false}">
+							<td class="#{aylikPuantaj.trClass}" style="width: 60px"><ui:fragment rendered="#{aylikPuantaj.yonetici != null}">
+									<h:outputText value="#{aylikPuantaj.yonetici.adSoyad}" rendered="#{aylikPuantaj.yonetici.id != null}" />
+									<ui:fragment rendered="#{aylikPuantaj.yonetici.id == null and aylikPuantaj.pdksPersonel.sanalPersonel == false}">
 										<SPAN style="color: red; font-weight: bold; font-size: 12px"><h:outputText value="#{aylikPuantaj.yonetici.adSoyad}" /></SPAN>
 
 									</ui:fragment>
-								</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.yonetici==null or aylikPuantaj.yonetici.id==null}">
-									<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.sanalPersonel==false and fazlaMesaiHesaplaHome.yoneticiERP1Kontrol}">
+								</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.yonetici == null or aylikPuantaj.yonetici.id == null}">
+									<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.sanalPersonel == false and fazlaMesaiHesaplaHome.yoneticiERP1Kontrol}">
 										<SPAN style="color: red; font-weight: bold; font-size: 12px">#{ortakIslemler.yoneticiAciklama()} tanımsız!</SPAN>
 
 									</ui:fragment>
@@ -411,20 +411,20 @@
 									</ui:fragment>
 								</ui:fragment></td>
 							<ui:fragment rendered="#{ fazlaMesaiHesaplaHome.seciliEkSaha3Id eq 0}">
-								<td class="#{aylikPuantaj.trClass}" style="width: 20px"><ui:fragment rendered="#{aylikPuantaj.pdksPersonel.ekSaha3!=null}">#{aylikPuantaj.pdksPersonel.ekSaha3.aciklama }</ui:fragment>
+								<td class="#{aylikPuantaj.trClass}" style="width: 20px"><ui:fragment rendered="#{aylikPuantaj.pdksPersonel.ekSaha3 != null}">#{aylikPuantaj.pdksPersonel.ekSaha3.aciklama }</ui:fragment>
 
 								</td>
 							</ui:fragment>
-							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ekSaha4Tanim!=null and fazlaMesaiHesaplaHome.seciliEkSaha4Id lt 0}">
-								<td class="#{aylikPuantaj.trClass}" style="width: 20px"><ui:fragment rendered="#{aylikPuantaj.pdksPersonel.ekSaha4!=null}">#{aylikPuantaj.pdksPersonel.ekSaha4.aciklama }</ui:fragment>
+							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ekSaha4Tanim != null and fazlaMesaiHesaplaHome.seciliEkSaha4Id lt 0}">
+								<td class="#{aylikPuantaj.trClass}" style="width: 20px"><ui:fragment rendered="#{aylikPuantaj.pdksPersonel.ekSaha4 != null}">#{aylikPuantaj.pdksPersonel.ekSaha4.aciklama }</ui:fragment>
 
 								</td>
 							</ui:fragment>
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.modelGoster}">
 								<td class="#{aylikPuantaj.trClass}" style="width: 20px"><ui:fragment
-										rendered="#{aylikPuantaj.personelDenklestirme!=null and aylikPuantaj.personelDenklestirme.calismaModeliAy!=null}">
+										rendered="#{aylikPuantaj.personelDenklestirme != null and aylikPuantaj.personelDenklestirme.calismaModeliAy != null}">
 
-										<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.sanalPersonel==false}">#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama }</ui:fragment>
+										<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.sanalPersonel == false}">#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama }</ui:fragment>
 										<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.sanalPersonel}">
 											<SPAN id="calismaModeliAy#{aylikPuantaj.personelDenklestirme.id}" style="color: red; font-weight: bold;"> <U>#{fazlaMesaiHesaplaHome.sanalPersonelAciklama}</U></SPAN>
 											<rich:toolTip for="calismaModeliAy#{aylikPuantaj.personelDenklestirme.id}">#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama }
@@ -436,7 +436,7 @@
 							</ui:fragment>
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.fazlaMesaiOde}">
 								<td class="#{aylikPuantaj.trClass}" style="width: 60px" align="center"><ui:fragment
-										rendered="#{aylikPuantaj.personelDenklestirme.fazlaMesaiOde==false}">
+										rendered="#{aylikPuantaj.personelDenklestirme.fazlaMesaiOde == false}">
 										<h:outputText value="#{authenticatedUser.getYesNo(aylikPuantaj.personelDenklestirme.fazlaMesaiOde)}" />
 									</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.fazlaMesaiOde}">
 										<SPAN style="font-weight: bolder;"> <h:outputText
@@ -445,7 +445,7 @@
 							</ui:fragment>
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.fazlaMesaiIzinKullan}">
 								<td class="#{aylikPuantaj.trClass}" style="width: 60px" align="center"><ui:fragment
-										rendered="#{aylikPuantaj.personelDenklestirme.fazlaMesaiIzinKullan==false}">
+										rendered="#{aylikPuantaj.personelDenklestirme.fazlaMesaiIzinKullan == false}">
 										<h:outputText value="#{authenticatedUser.getYesNo(aylikPuantaj.personelDenklestirme.fazlaMesaiIzinKullan)}" />
 									</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.fazlaMesaiIzinKullan}">
 										<SPAN style="font-weight: bolder;"> <h:outputText
@@ -458,9 +458,9 @@
 							</ui:fragment>
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.gebeGoster}">
 								<td class="#{aylikPuantaj.trClass}" style="width: 60px" align="center"><ui:fragment
-										rendered="#{aylikPuantaj.personelDenklestirme.gebePersonelDonemselDurum==null}">
+										rendered="#{aylikPuantaj.personelDenklestirme.gebePersonelDonemselDurum == null}">
 										<h:outputText value="#{authenticatedUser.getYesNo(aylikPuantaj.gebeDurum)}" />
-									</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.gebePersonelDonemselDurum!=null}">
+									</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.gebePersonelDonemselDurum != null}">
 										<span id="gebe#{aylikPuantaj.pdksPersonel.id}" style="font-weight: bold;"> <h:outputText
 												value="#{authenticatedUser.getYesNo(aylikPuantaj.gebeDurum)}" /></span>
 										<ui:fragment rendered="#{vardiyaGunHome.ikRole or vardiyaGunHome.adminRole}">
@@ -480,9 +480,9 @@
 							</ui:fragment>
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.sutIzniGoster}">
 								<td class="#{aylikPuantaj.trClass}" style="width: 60px" align="center"><ui:fragment
-										rendered="#{aylikPuantaj.personelDenklestirme.sutIzniPersonelDonemselDurum==null}">
+										rendered="#{aylikPuantaj.personelDenklestirme.sutIzniPersonelDonemselDurum == null}">
 										<h:outputText value="#{authenticatedUser.getYesNo(aylikPuantaj.sutIzniDurumu)}" />
-									</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.sutIzniPersonelDonemselDurum!=null}">
+									</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.sutIzniPersonelDonemselDurum != null}">
 										<span id="sutIzni#{aylikPuantaj.pdksPersonel.id}" style="font-weight: bold;"> <h:outputText
 												value="#{authenticatedUser.getYesNo(aylikPuantaj.sutIzniDurumu)}" /></span>
 										<ui:fragment rendered="#{vardiyaGunHome.ikRole or vardiyaGunHome.adminRole}">
@@ -508,17 +508,17 @@
 								<ui:include src="/puantaj/includes/gunlukVardiyaIslem.xhtml" />
 							</a4j:repeat>
 							<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><h:outputText
-									value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.saatToplami)}" rendered="#{aylikPuantaj.saatToplami!=0}" /></td>
+									value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.saatToplami)}" rendered="#{aylikPuantaj.saatToplami != 0}" /></td>
 							<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center">
 								<DIV id="planlananSureAciklama#{aylikPuantaj.personelDenklestirme.id}">
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.planlananSure)}" rendered="#{aylikPuantaj.planlananSure!=0}" />
+									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.planlananSure)}" rendered="#{aylikPuantaj.planlananSure != 0}" />
 								</DIV> <ui:fragment
-									rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy!=null and aylikPuantaj.gebeDurum==false and aylikPuantaj.sutIzniDurum==false }">
-									<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.haftaTatilSabitDegil==false}">
+									rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy != null and aylikPuantaj.gebeDurum == false and aylikPuantaj.sutIzniDurum == false }">
+									<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.haftaTatilSabitDegil == false}">
 										<rich:toolTip for="planlananSureAciklama#{aylikPuantaj.personelDenklestirme.id}">
 									
 										#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama} :
-										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle==false}">
+										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle == false}">
 											      #{authenticatedUser.sayiFormatliGoster(aylikPuantaj.personelDenklestirme.calismaModeliAy.sure)}  
 										</ui:fragment>
 											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle}">
@@ -531,14 +531,14 @@
 							</td>
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.yasalFazlaCalismaAsanSaat}">
 								<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-										rendered="#{aylikPuantaj.fazlaMesaiHesapla and aylikPuantaj.ucretiOdenenMesaiSure!=0}">
+										rendered="#{aylikPuantaj.fazlaMesaiHesapla and aylikPuantaj.ucretiOdenenMesaiSure != 0}">
 										<span style="color: red;"> <h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.ucretiOdenenMesaiSure)}" /></span>
 									</ui:fragment></td>
 							</ui:fragment>
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.gerceklesenMesaiKod}">
 
 								<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center" id="aylikNetFazlaMesa#{aylikPuantaj.personelDenklestirme.id}"><ui:fragment
-										rendered="#{aylikPuantaj.fazlaMesaiHesapla and aylikPuantaj.aylikNetFazlaMesai!=0 and aylikPuantaj.calismaModeli.fazlaMesaiVar}">
+										rendered="#{aylikPuantaj.fazlaMesaiHesapla and aylikPuantaj.aylikNetFazlaMesai != 0 and aylikPuantaj.calismaModeli.fazlaMesaiVar}">
 										<ui:fragment rendered="#{aylikPuantaj.eksikCalismaVar}">
 											<SPAN style="color: red; font-size: 13px;"> <h:outputText
 													value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.aylikNetFazlaMesai)}" />
@@ -548,21 +548,21 @@
 												<span style="color: black; font-size: 13px;">İzin veya kart girişlerinden kaynaklı eksik çalışma var!</span>
 											</rich:toolTip>
 										</ui:fragment>
-										<ui:fragment rendered="#{aylikPuantaj.eksikCalismaVar==false}">
+										<ui:fragment rendered="#{aylikPuantaj.eksikCalismaVar == false}">
 											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.aylikNetFazlaMesai)}" />
 
 										</ui:fragment>
 									</ui:fragment></td>
 							</ui:fragment>
 
-							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.stajerSirket==false}">
+							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.stajerSirket == false}">
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.devredenMesaiKod}">
 									<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center" id=""><ui:fragment
-											rendered="#{aylikPuantaj.getGecenAyFazlaMesai(authenticatedUser)!=0}">
+											rendered="#{aylikPuantaj.getGecenAyFazlaMesai(authenticatedUser) != 0}">
 
 											<SPAN id="gecenAyFazlaMesai#{aylikPuantaj.personelDenklestirme.id}"><U><h:outputText
 														value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.getGecenAyFazlaMesai(authenticatedUser))}" /></U> </SPAN>
-											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.personelDenklestirmeGecenAy.guncelleyenUser!=null}">
+											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.personelDenklestirmeGecenAy.guncelleyenUser != null}">
 
 												<rich:toolTip for="gecenAyFazlaMesai#{aylikPuantaj.personelDenklestirme.id}">
 													<DIV class="#{aylikPuantaj.trSonucClass}" style="text-align: left;">
@@ -578,22 +578,22 @@
 											<ui:fragment rendered="#{aylikPuantaj.fazlaMesaiSure>0}">
 												<SPAN>#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.personelDenklestirme.kismiOdemeSure)}</SPAN>
 											</ui:fragment>
-											<ui:fragment rendered="#{aylikPuantaj.fazlaMesaiSure==0}">
+											<ui:fragment rendered="#{aylikPuantaj.fazlaMesaiSure == 0}">
 												<SPAN style="color: red;">#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.personelDenklestirme.kismiOdemeSure)}</SPAN>
 											</ui:fragment>
 										</ui:fragment></td>
 								</ui:fragment>
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ucretiOdenenKod}">
 									<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-											rendered="#{aylikPuantaj.fazlaMesaiHesapla and aylikPuantaj.fazlaMesaiSure!=0}">
+											rendered="#{aylikPuantaj.fazlaMesaiHesapla and aylikPuantaj.fazlaMesaiSure != 0}">
 											<SPAN id="fazlaMesaiSure#{aylikPuantaj.personelDenklestirme.id}"><U> <ui:fragment
-														rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi==false}">
+														rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi == false}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.fazlaMesaiSure)}" />
-													</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi==true}">
+													</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi == true}">
 														<B><h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.fazlaMesaiSure)}" /></B>
 													</ui:fragment>
 											</U></SPAN>
-											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.guncelleyenUser!=null}">
+											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.guncelleyenUser != null}">
 												<rich:toolTip for="fazlaMesaiSure#{aylikPuantaj.personelDenklestirme.id}">
 													<DIV class="#{aylikPuantaj.trSonucClass}" style="text-align: left;">
 														<B>Onaylayan : </B>#{aylikPuantaj.personelDenklestirme.guncelleyenUser.adSoyad}<br /> <B>Zaman : </B>#{authenticatedUser.dateTimeFormatla(
@@ -607,8 +607,8 @@
 								</ui:fragment>
 
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.resmiTatilVar}">
-									<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment rendered="#{aylikPuantaj.resmiTatilToplami!=0}">
-											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi==false}">
+									<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment rendered="#{aylikPuantaj.resmiTatilToplami != 0}">
+											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi == false}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.resmiTatilToplami)}" />
 											</ui:fragment>
 											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi}">
@@ -619,8 +619,8 @@
 								</ui:fragment>
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.haftaTatilVar}">
 									<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-											rendered="#{aylikPuantaj.haftaCalismaSuresi!=0}">
-											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi==false}">
+											rendered="#{aylikPuantaj.haftaCalismaSuresi != 0}">
+											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi == false}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.haftaCalismaSuresi)}" />
 											</ui:fragment>
 											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi}">
@@ -632,12 +632,12 @@
 
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.devredenBakiyeKod}">
 									<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-											rendered="#{(aylikPuantaj.fazlaMesaiHesapla or aylikPuantaj.denklestirilmeyenDevredenVar) and aylikPuantaj.devredenSure!=0}">
-											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.guncelleyenUser==null }">
+											rendered="#{(aylikPuantaj.fazlaMesaiHesapla or aylikPuantaj.denklestirilmeyenDevredenVar) and aylikPuantaj.devredenSure != 0}">
+											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.guncelleyenUser == null }">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.devredenSure)}" />
 											</ui:fragment>
-											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.guncelleyenUser!=null}">
-												<ui:fragment rendered="#{aylikPuantaj.denklestirilmeyenDevredenVar==false}">
+											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.guncelleyenUser != null}">
+												<ui:fragment rendered="#{aylikPuantaj.denklestirilmeyenDevredenVar == false}">
 													<SPAN id="devredenSure#{aylikPuantaj.personelDenklestirme.id}"><U> <h:outputText
 																value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.devredenSure)}" />
 													</U></SPAN>
@@ -665,7 +665,7 @@
 								</ui:fragment>
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.kesilenSureGoster}">
 									<td class="#{aylikPuantaj.trSonucClass}" id="devredenBakiye#{aylikPuantaj.pdksPersonel.id}" style="width: 20px" align="center"><ui:fragment
-											rendered="#{aylikPuantaj.kesilenSure!=0}">
+											rendered="#{aylikPuantaj.kesilenSure != 0}">
 											<c:choose>
 												<c:when test="#{fazlaMesaiHesaplaHome.denklestirmeAy.kesintiYok}">
 													<h:graphicImage value="/img/wallet_16.png" height="14" style="border:0" />
@@ -674,7 +674,7 @@
 													</rich:toolTip>
 												</c:when>
 												<c:otherwise>
-													<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi==false}">
+													<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi == false}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.kesilenSure)}" />
 													</ui:fragment>
 													<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi}">
@@ -692,8 +692,8 @@
 
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.aksamGun}">
 									<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-											rendered="#{aylikPuantaj.aksamVardiyaSayisi!=0}">
-											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi==false}">
+											rendered="#{aylikPuantaj.aksamVardiyaSayisi != 0}">
+											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi == false}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.aksamVardiyaSayisi)}" />
 											</ui:fragment>
 											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi}">
@@ -703,8 +703,8 @@
 								</ui:fragment>
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.aksamSaat}">
 									<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-											rendered="#{aylikPuantaj.aksamVardiyaSaatSayisi!=0}">
-											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi==false}">
+											rendered="#{aylikPuantaj.aksamVardiyaSaatSayisi != 0}">
+											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi == false}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.aksamVardiyaSaatSayisi)}" />
 											</ui:fragment>
 											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.erpAktarildi}">
@@ -714,16 +714,16 @@
 								</ui:fragment>
 								<c:forEach items="#{fazlaMesaiHesaplaHome.denklestirmeDinamikAlanlar}" var="da">
 									<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center" id="ap#{aylikPuantaj.pdksPersonel.id}#{da.id}"><ui:fragment
-											rendered="#{aylikPuantaj.getDinamikAlan(da.id)!=null}">
+											rendered="#{aylikPuantaj.getDinamikAlan(da.id) != null}">
 											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirmeDinamikAlan.devamlilikPrimi}">
 												<ui:fragment rendered="#{aylikPuantaj.personelDenklestirmeDinamikAlan.islemDurum}">
 													<SPAN style="font-weight: bold; font-size: 14;">+</SPAN>
 												</ui:fragment>
-												<ui:fragment rendered="#{aylikPuantaj.personelDenklestirmeDinamikAlan.islemDurum==false}">
+												<ui:fragment rendered="#{aylikPuantaj.personelDenklestirmeDinamikAlan.islemDurum == false}">
 													<SPAN style="font-weight: bold; font-size: 14; color: red">-</SPAN>
 												</ui:fragment>
 											</ui:fragment>
-											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirmeDinamikAlan.devamlilikPrimi==false}">
+											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirmeDinamikAlan.devamlilikPrimi == false}">
 												#{authenticatedUser.getYesNo(aylikPuantaj.personelDenklestirmeDinamikAlan.islemDurum)}
 												<ui:fragment
 													rendered="#{aylikPuantaj.personelDenklestirmeDinamikAlan.izinDurum and aylikPuantaj.personelDenklestirmeDinamikAlan.islemDurum}">
@@ -748,7 +748,7 @@
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.bordroPuantajEkranindaGoster}">
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.normalCalismaSaatKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.denklestirmeBordro.saatNormal!=0}">
+												rendered="#{aylikPuantaj.denklestirmeBordro.saatNormal != 0}">
 
 												<B><ui:fragment rendered="#{aylikPuantaj.denklestirmeBordro.saatNormal ge aylikPuantaj.planlananSure}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.saatNormal)}" />
@@ -760,26 +760,26 @@
 									</ui:fragment>
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.haftaTatilCalismaSaatKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.calismaModeli.saatlikOdeme and aylikPuantaj.denklestirmeBordro.saatHaftaTatil!=0}">
+												rendered="#{aylikPuantaj.calismaModeli.saatlikOdeme and aylikPuantaj.denklestirmeBordro.saatHaftaTatil != 0}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.saatHaftaTatil)}" />
 											</ui:fragment></td>
 									</ui:fragment>
 
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.resmiTatilCalismaSaatKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.calismaModeli.saatlikOdeme and aylikPuantaj.denklestirmeBordro.saatResmiTatil!=0}">
+												rendered="#{aylikPuantaj.calismaModeli.saatlikOdeme and aylikPuantaj.denklestirmeBordro.saatResmiTatil != 0}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.saatResmiTatil)}" />
 											</ui:fragment></td>
 									</ui:fragment>
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.izinSureSaatKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.calismaModeli.saatlikOdeme and aylikPuantaj.denklestirmeBordro.saatIzin!=0}">
+												rendered="#{aylikPuantaj.calismaModeli.saatlikOdeme and aylikPuantaj.denklestirmeBordro.saatIzin != 0}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.saatIzin)}" />
 											</ui:fragment></td>
 									</ui:fragment>
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.normalCalismaGunKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.calismaModeli.aylikOdeme and aylikPuantaj.denklestirmeBordro.saatNormal!=0}">
+												rendered="#{aylikPuantaj.calismaModeli.aylikOdeme and aylikPuantaj.denklestirmeBordro.saatNormal != 0}">
 												<B><ui:fragment rendered="#{aylikPuantaj.denklestirmeBordro.saatNormal gt 0}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.saatNormal)}" />
 													</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.denklestirmeBordro.saatNormal lt 0}">
@@ -790,76 +790,76 @@
 									</ui:fragment>
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.haftaTatilCalismaGunKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.calismaModeli.aylikOdeme and aylikPuantaj.denklestirmeBordro.saatHaftaTatil!=0}">
+												rendered="#{aylikPuantaj.calismaModeli.aylikOdeme and aylikPuantaj.denklestirmeBordro.saatHaftaTatil != 0}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.saatHaftaTatil)}" />
 											</ui:fragment></td>
 									</ui:fragment>
 
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.resmiTatilCalismaGunKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.calismaModeli.aylikOdeme and aylikPuantaj.denklestirmeBordro.saatResmiTatil!=0}">
+												rendered="#{aylikPuantaj.calismaModeli.aylikOdeme and aylikPuantaj.denklestirmeBordro.saatResmiTatil != 0}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.saatResmiTatil)}" />
 											</ui:fragment></td>
 									</ui:fragment>
 
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ucretliIzinGunKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.denklestirmeBordro.ucretliIzin!=0}">
+												rendered="#{aylikPuantaj.denklestirmeBordro.ucretliIzin != 0}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.ucretliIzin)}" />
 											</ui:fragment></td>
 									</ui:fragment>
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ucretsizIzinGunKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.denklestirmeBordro.ucretsizIzin!=0}">
+												rendered="#{aylikPuantaj.denklestirmeBordro.ucretsizIzin != 0}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.ucretsizIzin)}" />
 											</ui:fragment></td>
 									</ui:fragment>
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.hastalikIzinGunKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.denklestirmeBordro.raporluIzin!=0}">
+												rendered="#{aylikPuantaj.denklestirmeBordro.raporluIzin != 0}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.raporluIzin)}" />
 											</ui:fragment></td>
 									</ui:fragment>
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.normalGunKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.denklestirmeBordro.normalGunAdet!=0}">
+												rendered="#{aylikPuantaj.denklestirmeBordro.normalGunAdet != 0}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.normalGunAdet)}" />
 											</ui:fragment></td>
 									</ui:fragment>
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.haftaTatilGunKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.denklestirmeBordro.haftaTatilAdet!=0}">
+												rendered="#{aylikPuantaj.denklestirmeBordro.haftaTatilAdet != 0}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.haftaTatilAdet)}" />
 											</ui:fragment></td>
 									</ui:fragment>
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.resmiTatilGunKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.denklestirmeBordro.resmiTatilAdet!=0}">
+												rendered="#{aylikPuantaj.denklestirmeBordro.resmiTatilAdet != 0}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.resmiTatilAdet)}" />
 											</ui:fragment></td>
 									</ui:fragment>
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.artikGunKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.denklestirmeBordro.artikAdet!=0}">
+												rendered="#{aylikPuantaj.denklestirmeBordro.artikAdet != 0}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.artikAdet)}" />
 											</ui:fragment></td>
 									</ui:fragment>
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.bordroToplamGunKod}">
 										<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-												rendered="#{aylikPuantaj.denklestirmeBordro.bordroToplamGunAdet!=0}">
+												rendered="#{aylikPuantaj.denklestirmeBordro.bordroToplamGunAdet != 0}">
 												<B><h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.bordroToplamGunAdet)}" /></B>
 											</ui:fragment></td>
 									</ui:fragment>
 
 								</ui:fragment>
 								<a4j:repeat value="#{aylikPuantaj.izinAdetList}" var="adet">
-									<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment rendered="#{adet!=null}">
+									<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment rendered="#{adet != null}">
 																#{authenticatedUser.sayiFormatliGoster(adet)}</ui:fragment></td>
 								</a4j:repeat>
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.istifaGoster and fazlaMesaiHesaplaHome.ikRole}">
 									<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment rendered="#{aylikPuantaj.calisiyor}">
 											Çalışıyor
-										</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.calisiyor==false}">
+										</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.calisiyor == false}">
 											<SPAN style="color: red">Ayrılmış</SPAN>
 										</ui:fragment></td>
 								</ui:fragment>

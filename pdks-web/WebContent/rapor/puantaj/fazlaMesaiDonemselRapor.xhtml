@@ -107,14 +107,14 @@
 										
 									</rich:toolTip></SPAN>
 								</rich:column>
-								<rich:column style="width: 100px;" rendered="#{fazlaMesaiDonemselRaporHome.sirketId==null}">
+								<rich:column style="width: 100px;" rendered="#{fazlaMesaiDonemselRaporHome.sirketId == null}">
 									<f:facet name="header">
 										<h:outputText value="#{ortakIslemler.sirketAciklama()}" />
 									</f:facet>
 									<h:outputText value="#{pdksPersonel.sirket.ad}" style="width:autostretch ;white-space: nowrap;" />
 								</rich:column>
 								<rich:column style="width: 100px;"
-									rendered="#{fazlaMesaiDonemselRaporHome.tesisId==null and ortakIslemler.getListTesisDurum(fazlaMesaiDonemselRaporHome.personelList)}">
+									rendered="#{fazlaMesaiDonemselRaporHome.tesisId == null and ortakIslemler.getListTesisDurum(fazlaMesaiDonemselRaporHome.personelList)}">
 									<f:facet name="header">
 										<h:outputText value="#{ortakIslemler.tesisAciklama()}" />
 									</f:facet>
@@ -130,8 +130,8 @@
 									<f:facet name="header">
 										<h:outputText value="#{ortakIslemler.yoneticiAciklama()}" />
 									</f:facet>
-									<SPAN style="width: autostretch; white-space: nowrap;"> <ui:fragment rendered="#{pdksPersonel.yoneticisi!=null}">
-											<h:outputText value="#{pdksPersonel.yoneticisi.adSoyad}" rendered="#{pdksPersonel.yoneticisi.id!=null}" />
+									<SPAN style="width: autostretch; white-space: nowrap;"> <ui:fragment rendered="#{pdksPersonel.yoneticisi != null}">
+											<h:outputText value="#{pdksPersonel.yoneticisi.adSoyad}" rendered="#{pdksPersonel.yoneticisi.id != null}" />
 
 										</ui:fragment></SPAN>
 								</rich:column>
@@ -139,7 +139,7 @@
 										<f:facet name="header">
 											<h:outputText value="İşe Giriş Tarihi" />
 										</f:facet>
-										<ui:fragment rendered="#{pdksPersonel.iseBaslamaTarihi.before(fazlaMesaiDonemselRaporHome.basTarih)==false}">
+										<ui:fragment rendered="#{pdksPersonel.iseBaslamaTarihi.before(fazlaMesaiDonemselRaporHome.basTarih) == false}">
 											<h:outputText value="#{authenticatedUser.dateFormatla(pdksPersonel.iseBaslamaTarihi)}" />
 										</ui:fragment>
 									</rich:column>
@@ -147,11 +147,11 @@
 										<f:facet name="header">
 											<h:outputText value="İşten Ayrılma Tarihi" />
 										</f:facet>
-										<ui:fragment rendered="#{pdksPersonel.sskCikisTarihi.after(fazlaMesaiDonemselRaporHome.bitTarih)==false}">
+										<ui:fragment rendered="#{pdksPersonel.sskCikisTarihi.after(fazlaMesaiDonemselRaporHome.bitTarih) == false}">
 											<h:outputText value="#{authenticatedUser.dateFormatla(pdksPersonel.istenAyrilisTarihi)}" />
 										</ui:fragment>
 									</rich:column>
-								<c:if test="#{fazlaMesaiDonemselRaporHome.denklestirmeAyList!=null }">
+								<c:if test="#{fazlaMesaiDonemselRaporHome.denklestirmeAyList != null }">
 									<c:forEach items="#{fazlaMesaiDonemselRaporHome.denklestirmeAyList}" var="dm">
 										<rich:column style="width: 30px;">
 											<f:facet name="header">
@@ -164,9 +164,9 @@
 												</ui:fragment>
 
 											</f:facet>
-											<ui:fragment rendered="#{fazlaMesaiDonemselRaporHome.getPersonelDenklestirme(dm,pdksPersonel)!=null}">
+											<ui:fragment rendered="#{fazlaMesaiDonemselRaporHome.getPersonelDenklestirme(dm,pdksPersonel) != null}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(fazlaMesaiDonemselRaporHome.denklestirme.hesaplananSure)}"
-													rendered="#{fazlaMesaiDonemselRaporHome.denklestirme.hesaplananSure!=0}" />
+													rendered="#{fazlaMesaiDonemselRaporHome.denklestirme.hesaplananSure != 0}" />
 											</ui:fragment>
 										</rich:column>
 										<rich:column style="width: 30px;">
@@ -182,7 +182,7 @@
 											</f:facet>
 
 											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(fazlaMesaiDonemselRaporHome.denklestirme.planlanSure)}"
-												rendered="#{fazlaMesaiDonemselRaporHome.denklestirme.planlanSure!=0}" />
+												rendered="#{fazlaMesaiDonemselRaporHome.denklestirme.planlanSure != 0}" />
 
 										</rich:column>
 										<rich:column style="width: 30px;">
@@ -198,7 +198,7 @@
 											</f:facet>
 
 											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(fazlaMesaiDonemselRaporHome.denklestirme.odenenSure)}"
-												rendered="#{fazlaMesaiDonemselRaporHome.denklestirme.odenenSure!=0}" />
+												rendered="#{fazlaMesaiDonemselRaporHome.denklestirme.odenenSure != 0}" />
 
 										</rich:column>
 										<rich:column style="width: 30px;">
@@ -214,7 +214,7 @@
 											</f:facet>
 
 											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(fazlaMesaiDonemselRaporHome.denklestirme.devredenSure)}"
-												rendered="#{fazlaMesaiDonemselRaporHome.denklestirme.devredenSure!=0}" />
+												rendered="#{fazlaMesaiDonemselRaporHome.denklestirme.devredenSure != 0}" />
 
 										</rich:column>
 									</c:forEach>

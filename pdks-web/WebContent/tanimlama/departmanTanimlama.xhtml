@@ -55,13 +55,13 @@
 								</f:facet>
 								<h:outputText value="#{departman.yasliYasAltSiniri}" />
 							</rich:column>
-							<rich:column rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H'}">
+							<rich:column rendered="#{ortakIslemler.getParameterKey('uygulamaTipi') == 'H'}">
 								<f:facet name="header">
 									<h:outputText value="İcapçı" />
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.getYesNo(departman.icapciOlabilir)}" />
 							</rich:column>
-							<rich:column rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H'}">
+							<rich:column rendered="#{ortakIslemler.getParameterKey('uygulamaTipi') == 'H'}">
 								<f:facet name="header">
 									<h:outputText value="Şua Olabilir" />
 								</f:facet>
@@ -73,7 +73,7 @@
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.getYesNo(departman.fazlaMesaiOde)}" />
 							</rich:column>
-							<rich:column rendered="#{ortakIslemler.getParameterKey('fazlaMesaiTalepDurum')=='1'}">
+							<rich:column rendered="#{ortakIslemler.getParameterKey('fazlaMesaiTalepDurum') == '1'}">
 								<f:facet name="header">
 									<h:outputText value="Fazla Mesai Talep" />
 								</f:facet>
@@ -150,7 +150,7 @@
 					<h:form>
 						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
 							<a4j:support event="onclick" action="#{departmanHome.instanceRefresh}" reRender="departmanTable"
-								oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
 				</h:panelGroup>
@@ -164,12 +164,12 @@
 						<h:panelGrid columns="1">
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Departman</ui:define>
-								<h:selectOneMenu rendered="#{authenticatedUser.admin and departmanHome.instance.id==null}" value="#{departmanHome.instance.departmanTanim}"
+								<h:selectOneMenu rendered="#{authenticatedUser.admin and departmanHome.instance.id == null}" value="#{departmanHome.instance.departmanTanim}"
 									required="true" requiredMessage="Departman seçiniz">
 									<s:selectItems var="comp" value="#{departmanHome.departmanTanimList}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
 									<s:convertEntity />
 								</h:selectOneMenu>
-								<h:outputText rendered="#{departmanHome.instance.id!=null}" value="#{departmanHome.instance.departmanTanim.aciklama}" />
+								<h:outputText rendered="#{departmanHome.instance.id != null}" value="#{departmanHome.instance.departmanTanim.aciklama}" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" id="mailBox">
 								<ui:define name="label">Uyarı Mail Box</ui:define>
@@ -195,11 +195,11 @@
 
 										</h:inputText>
 									</s:decorate>
-									<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H'}">
+									<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('uygulamaTipi') == 'H'}">
 										<ui:define name="label">İcapçı</ui:define>
 										<h:selectBooleanCheckbox value="#{departmanHome.instance.icapciOlabilir}" />
 									</s:decorate>
-									<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('uygulamaTipi')=='H'}">
+									<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('uygulamaTipi') == 'H'}">
 										<ui:define name="label">Şua Olur</ui:define>
 										<h:selectBooleanCheckbox value="#{departmanHome.instance.suaOlabilir}" />
 									</s:decorate>
@@ -207,7 +207,7 @@
 										<ui:define name="label">Fazla Mesai Öde</ui:define>
 										<h:selectBooleanCheckbox value="#{departmanHome.instance.fazlaMesaiOde}" />
 									</s:decorate>
-									<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('fazlaMesaiTalepDurum')=='1'}">
+									<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('fazlaMesaiTalepDurum') == '1'}">
 										<ui:define name="label">Fazla Mesai Talep</ui:define>
 										<h:selectBooleanCheckbox value="#{departmanHome.instance.fazlaMesaiTalepGirilebilir}" />
 									</s:decorate>
@@ -235,7 +235,7 @@
 					<!--  -->
 
 					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{departmanHome.save}" reRender="departmanTable,departmanEkle"
-						oncomplete="if (#{facesContext.maximumSeverity==null}) #{rich:component('editPanel')}.hide();" />
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
 

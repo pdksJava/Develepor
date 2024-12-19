@@ -44,18 +44,18 @@
 												</a4j:commandLink>
 											</f:facet>
 											<h:selectBooleanCheckbox value="#{menuItemTree.selectedIdsFromTree[item.id]}" id="secim" />
-											<ui:fragment rendered="#{item.childMenuItemList!=null and item.childMenuItemList.size()>0}">
+											<ui:fragment rendered="#{item.childMenuItemList != null and item.childMenuItemList.size()>0}">
 												<b><h:outputText value="#{item.description.aciklama}" /></b>
 											</ui:fragment>
-											<ui:fragment rendered="#{item.childMenuItemList==null or item.childMenuItemList.size()==0}">
+											<ui:fragment rendered="#{item.childMenuItemList == null or item.childMenuItemList.size() == 0}">
 												<h:outputLabel value="#{item.description.aciklama}" id="bilgi">
 													<a4j:support event="onclick" status="ajaxStatus" action="#{menuItemTree.userList(item)}" reRender="menuAgaci" />
 												</h:outputLabel>
 											</ui:fragment>
 
-											<rich:toolTip for="secim" rendered="#{item.orderNo!=0}">Sıra No : #{item.orderNo}</rich:toolTip>
+											<rich:toolTip for="secim" rendered="#{item.orderNo != 0}">Sıra No : #{item.orderNo}</rich:toolTip>
 											<rich:toolTip for="bilgi">#{item.name}
-											<ui:fragment rendered="#{item.menuItemTimeList!=null}">
+											<ui:fragment rendered="#{item.menuItemTimeList != null}">
 													<rich:dataTable rowClasses="acik,koyu" value="#{item.menuItemTimeList}" var="menuUser" rows="20" rowKeyVar="row" id="table">
 														<f:facet name="header">
 															<h:outputText value="#{item.description.aciklama} giriş yapanlar" />
