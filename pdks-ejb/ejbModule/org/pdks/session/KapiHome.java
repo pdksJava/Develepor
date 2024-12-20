@@ -112,7 +112,7 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 		try {
 			StringBuffer sb = new StringBuffer();
 			sb.append("select P.* from VIEW_KAPI_SIRKET_KGS_LIST  P ");
-			String str = " inner  join " + Kapi.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on K." + Kapi.COLUMN_NAME_KGS_ID + " = P." + KapiKGS.COLUMN_NAME_ID;
+			String str = " inner join " + Kapi.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on K." + Kapi.COLUMN_NAME_KGS_ID + " = P." + KapiKGS.COLUMN_NAME_ID;
 			if (PdksUtil.hasStringValue(kapiView.getKapiAciklama())) {
 				sb.append(str);
 				sb.append(" and K." + Kapi.COLUMN_NAME_ACIKLAMA + " like :k");

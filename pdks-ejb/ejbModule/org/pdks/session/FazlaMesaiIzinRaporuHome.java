@@ -262,7 +262,7 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 			String fieldName = "p";
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
-			sb.append("select DISTINCT P.* from " + VardiyaGun.TABLE_NAME + " VG " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append("select distinct P.* from " + VardiyaGun.TABLE_NAME + " VG " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on VG." + VardiyaGun.COLUMN_NAME_VARDIYA + " = V." + Vardiya.COLUMN_NAME_ID);
 			sb.append(" and V." + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :vt");
 			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on VG." + VardiyaGun.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID);
@@ -279,7 +279,7 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 
 			fields.clear();
 			sb = new StringBuffer();
-			sb.append("select DISTINCT P.* from " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append("select distinct P.* from " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + IzinTipi.TABLE_NAME + " IT " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " = IT." + IzinTipi.COLUMN_NAME_ID);
 			sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on IT." + IzinTipi.COLUMN_NAME_IZIN_TIPI + " = T." + Tanim.COLUMN_NAME_ID);
 			sb.append(" and T." + Tanim.COLUMN_NAME_KODU + " = :k");

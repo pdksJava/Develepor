@@ -175,7 +175,7 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 		if (sirket != null) {
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
-			sb.append("select DISTINCT Y.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append("select distinct Y.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append("inner join " + Personel.TABLE_NAME + " Y " + PdksEntityController.getJoinLOCK() + " on Y." + Personel.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_YONETICI);
 			sb.append(" where P." + Personel.COLUMN_NAME_SIRKET + " = :s and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
 			sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");

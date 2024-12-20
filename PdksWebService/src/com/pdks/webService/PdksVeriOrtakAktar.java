@@ -4800,7 +4800,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			sb.append(" and P.IKINCI_YONETICI_IZIN_ONAYLA = 0");
 			sb.append(" where U." + User.COLUMN_NAME_DURUM + " = 1 ");
 			sb.append(" ) ");
-			sb.append(" select DISTINCT P.* from VERI P " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
+			sb.append(" select distinct P.* from VERI P " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
 			sb.append(" where P.ID :" + fieldName);
 
 			fields.clear();

@@ -663,7 +663,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (yilDegisti) {
 			basTarih = PdksUtil.convertToJavaDate(((yil * 100) + 1) + "01", "yyyyMMdd");
 			bitTarih = PdksUtil.convertToJavaDate(((yil * 100) + 12) + "31", "yyyyMMdd");
-			sb.append("select DISTINCT MONTH(" + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ") from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append("select distinct MONTH(" + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ") from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " FT " + PdksEntityController.getJoinLOCK() + " on FT." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 			sb.append(" and FT." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1 ");
 			sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :ta1 and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :ta2");
@@ -701,7 +701,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			bitTarih = cal.getTime();
 			sb = new StringBuffer();
 			fields.clear();
-			sb.append("select DISTINCT " + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append("select distinct " + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " FT " + PdksEntityController.getJoinLOCK() + " on FT." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 			sb.append(" and FT." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1 ");
 			sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :ta1 and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :ta2");
@@ -4250,10 +4250,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		int buYil = PdksUtil.getDateField(new Date(), Calendar.YEAR);
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("select DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 		if (fazlaMesaiTalepDurum == false) {
 			if (buYil > yil) {
-				sb.append(" inner  join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
+				sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
 				sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 			}
 		} else {
@@ -8582,7 +8582,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		HashMap map = new HashMap();
 		String fieldName = "pId";
 		StringBuffer sb = new StringBuffer();
-		sb.append("select DISTINCT * from " + VardiyaHafta.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("select distinct * from " + VardiyaHafta.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where " + VardiyaHafta.COLUMN_NAME_BAS_TARIH + " <= :bitTarih and " + VardiyaHafta.COLUMN_NAME_BIT_TARIH + " >= :basTarih and " + VardiyaHafta.COLUMN_NAME_PERSONEL + ":pId ");
 		// map.put(PdksEntityController.MAP_KEY_MAP, "getKeyHafta");
 		map.put(fieldName, idler);
@@ -8825,7 +8825,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			if (manuelVardiyaIzinGir) {
 				sb.append(" union ");
-				sb.append(" select DISTINCT V.* from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append(" select distinct V.* from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" left join " + IzinTipi.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + IzinTipi.COLUMN_NAME_DEPARTMAN + " = V." + Vardiya.COLUMN_NAME_DEPARTMAN + " and I." + IzinTipi.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" and I." + IzinTipi.COLUMN_NAME_GIRIS_TIPI + " = 0 and I." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null");
 				sb.append(" where V." + Vardiya.COLUMN_NAME_DEPARTMAN + " = " + personel.getSirket().getDepartman().getId() + " and V." + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
@@ -8833,7 +8833,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			sb.append(" )   ");
 
-			sb.append(" select DISTINCT D.* from VARDIYA_DATA D ");
+			sb.append(" select distinct D.* from VARDIYA_DATA D ");
 			sb.append(" where " + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
 			sb.append(" and (" + Vardiya.COLUMN_NAME_DEPARTMAN + " is null or " + Vardiya.COLUMN_NAME_DEPARTMAN + " = " + sirket.getDepartman().getId() + ") ");
 			sb.append(" and (" + Vardiya.COLUMN_NAME_SIRKET + " is null or " + Vardiya.COLUMN_NAME_SIRKET + " = " + sirket.getId() + ") ");
@@ -9259,7 +9259,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				String fieldName = "l";
 				StringBuffer sb = new StringBuffer();
 				HashMap fields = new HashMap();
-				sb.append("select DISTINCT " + tip + ".ID from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append("select distinct " + tip + ".ID from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " FT " + PdksEntityController.getJoinLOCK() + " on FT." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 				sb.append(" and FT." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1 and FT." + FazlaMesaiTalep.COLUMN_NAME_ONAY_DURUMU + " not in (" + FazlaMesaiTalep.ONAY_DURUM_RED + ") ");
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);

@@ -3523,7 +3523,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				String fieldName = "p";
 				HashMap fields = new HashMap();
 				StringBuffer sb = new StringBuffer();
-				sb.append("select DISTINCT PD.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append("select distinct PD.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + Personel.TABLE_NAME + " P1 " + PdksEntityController.getJoinLOCK() + " on P1." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 				sb.append(" inner join " + PersonelKGS.TABLE_NAME + " K1 " + PdksEntityController.getJoinLOCK() + " on K1." + PersonelKGS.COLUMN_NAME_ID + " = P1." + Personel.COLUMN_NAME_KGS_PERSONEL + " and COALESCE(K1.TC_KIMLIK_NO,'')<>'' ");
 				sb.append(" inner join " + PersonelKGS.TABLE_NAME + " K2 " + PdksEntityController.getJoinLOCK() + " on K1.TC_KIMLIK_NO=K2.TC_KIMLIK_NO and K1." + PersonelKGS.COLUMN_NAME_ID + " <> K2." + PersonelKGS.COLUMN_NAME_ID);

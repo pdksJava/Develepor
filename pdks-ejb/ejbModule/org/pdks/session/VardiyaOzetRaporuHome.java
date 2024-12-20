@@ -149,7 +149,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		//
 
 		StringBuffer sb = new StringBuffer();
-		sb.append("select DISTINCT S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+		sb.append("select distinct S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
 		sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :b2 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b1 ");
 		sb.append(" where S." + Sirket.COLUMN_NAME_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_PDKS + " = 1 ");
@@ -284,7 +284,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		Date oncekiGun = ortakIslemler.tariheGunEkleCikar(cal, date, -1);
 		HashMap map = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("select DISTINCT P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+		sb.append("select distinct P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
 		sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1");
 		if (aramaSecenekleri.getDepartmanId() != null)

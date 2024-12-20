@@ -155,6 +155,7 @@ public class PersonelERPGuncelleme implements Serializable {
 	 * @param time
 	 * @throws Exception
 	 */
+	@Transactional
 	public void personelERPGuncellemeCalistir(Session session, Date time, Boolean mailGonder) throws Exception {
 		logger.info("personelERPGuncelleme  basladi " + PdksUtil.getCurrentTimeStampStr());
 		if (time == null)
@@ -506,7 +507,7 @@ public class PersonelERPGuncelleme implements Serializable {
 	public String aktifMailAdressGuncelle(Session session) {
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("select DISTINCT P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("select distinct P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 1 and (" + Personel.COLUMN_NAME_MAIL_CC_ID + " is not null or " + Personel.COLUMN_NAME_MAIL_BCC_ID + " is not null or " + Personel.COLUMN_NAME_HAREKET_MAIL_ID + " is not null)");
 		sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=convert(date,GETDATE())   ");
 		if (session != null)

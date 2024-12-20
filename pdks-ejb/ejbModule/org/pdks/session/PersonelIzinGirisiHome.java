@@ -811,7 +811,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		boolean tatilDurum = Boolean.FALSE;
 		HashMap map = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("select DISTINCT * from " + VardiyaHafta.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("select distinct * from " + VardiyaHafta.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where " + VardiyaHafta.COLUMN_NAME_BAS_TARIH + " <= :bitTarih and " + VardiyaHafta.COLUMN_NAME_BIT_TARIH + " >= :basTarih and " + VardiyaHafta.COLUMN_NAME_PERSONEL + " = :personelId ");
 		map.put("personelId", personelIzin.getIzinSahibi().getId());
 		map.put("basTarih", personelIzin.getBaslangicZamani());
@@ -2441,7 +2441,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				if (!personeller.isEmpty()) {
 					paramMap.clear();
 					sb = new StringBuffer();
-					sb.append("select DISTINCT P.* from " + IzinTipi.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append("select distinct P.* from " + IzinTipi.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 					if (isGirisSSK()) {
 						sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = P." + IzinTipi.COLUMN_NAME_IZIN_TIPI);
 						sb.append(" and T." + Tanim.COLUMN_NAME_TIPI + " = :tipi and T." + Tanim.COLUMN_NAME_KODU + " like '%I%'");

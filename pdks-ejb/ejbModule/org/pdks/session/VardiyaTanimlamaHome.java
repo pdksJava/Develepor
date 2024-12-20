@@ -129,7 +129,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		HashMap map = new HashMap();
 		Calendar cal = Calendar.getInstance();
 		StringBuffer sb = new StringBuffer();
-		sb.append("select DISTINCT D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0 ");
 		if (cal.get(Calendar.YEAR) == yil) {
 			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_AY + "<=" + (cal.get(Calendar.MONTH) + 2));
