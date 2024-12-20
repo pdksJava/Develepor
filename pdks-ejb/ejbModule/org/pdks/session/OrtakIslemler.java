@@ -3187,8 +3187,8 @@ public class OrtakIslemler implements Serializable {
 	public DenklestirmeAy getSQLDenklestirmeAy(int yil, int ay, Session session) {
 		StringBuffer sb = new StringBuffer();
 		HashMap fields = new HashMap();
-		sb.append("select P.* from " + DenklestirmeAy.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
-		sb.append(" where P." + DenklestirmeAy.COLUMN_NAME_YIL + " = " + yil + " and P." + DenklestirmeAy.COLUMN_NAME_AY + " = " + ay);
+		sb.append("select * from " + DenklestirmeAy.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+		sb.append(" where " + DenklestirmeAy.COLUMN_NAME_YIL + " = " + yil + " and " + DenklestirmeAy.COLUMN_NAME_AY + " = " + ay);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List list = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
