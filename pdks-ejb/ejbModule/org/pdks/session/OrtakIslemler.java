@@ -15594,6 +15594,7 @@ public class OrtakIslemler implements Serializable {
 		}
 		kodlar = null;
 		izinTipiler = null;
+		List<Long> erpIzinTipiIdList = new ArrayList<Long>();
 		if (!izinTipiIdler.isEmpty()) {
 			parametreMap.clear();
 			sb = new StringBuffer();
@@ -15606,6 +15607,16 @@ public class OrtakIslemler implements Serializable {
 			}
 			parametreMap.put(fieldName, izinTipiIdler);
 			izinTipleri = pdksEntityController.getSQLParamList(izinTipiIdler, sb, fieldName, parametreMap, IzinTipi.class, session);
+			if (izinTipleri != null) {
+				for (IzinTipi izinTipi : izinTipleri) {
+					if (izinTipi.getBakiyeIzinTipi() != null) {
+						IzinTipi bakiyeIzinTipi = izinTipi.getBakiyeIzinTipi();
+						if (bakiyeIzinTipi.getPersonelGirisTipi() != null && bakiyeIzinTipi.getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK))
+							erpIzinTipiIdList.add(bakiyeIzinTipi.getId());
+					}
+
+				}
+			}
 		} else
 			izinTipleri = new ArrayList<IzinTipi>();
 		izinTipiIdler = null;
@@ -15722,7 +15733,7 @@ public class OrtakIslemler implements Serializable {
 			try {
 				// List<PersonelIzin> list = pdksEntityController.getObjectBySQLList(sb, parametreMap, PersonelIzin.class);
 				List<PersonelIzinDetay> list = pdksEntityController.getSQLParamList(hakedisIdList, sb, fieldName, parametreMap, PersonelIzinDetay.class, session);
-
+				HashMap<Long, PersonelIzin> personelIzinMap = new HashMap<Long, PersonelIzin>();
 				for (PersonelIzinDetay personelIzinDetay : list) {
 					Long key = personelIzinDetay.getHakEdisIzin().getId();
 					List<PersonelIzin> izinler = map1.containsKey(key) ? map1.get(key) : new ArrayList<PersonelIzin>();
@@ -15737,8 +15748,18 @@ public class OrtakIslemler implements Serializable {
 
 					if (izinler.isEmpty())
 						map1.put(key, izinler);
+					PersonelIzin personelIzin = personelIzinDetay.getPersonelIzin();
+					if (erpIzinTipiIdList.contains(personelIzin.getIzinTipi().getId()))
+						personelIzinMap.put(personelIzin.getId(), personelIzin);
 					izinler.add(personelIzinDetay.getPersonelIzin());
 				}
+				if (!personelIzinMap.isEmpty()) {
+					List<IzinReferansERP> izinReferansERPList = pdksEntityController.getSQLParamByFieldList(IzinReferansERP.TABLE_NAME, IzinReferansERP.COLUMN_NAME_IZIN_ID, new ArrayList(personelIzinMap.keySet()), IzinReferansERP.class, session);
+					for (IzinReferansERP izinReferansERP : izinReferansERPList)
+						personelIzinMap.get(izinReferansERP.getIzin().getId()).setReferansERP(izinReferansERP.getId());
+					izinReferansERPList = null;
+				}
+				personelIzinMap = null;
 				list = null;
 
 			} catch (Exception e) {
@@ -15748,7 +15769,7 @@ public class OrtakIslemler implements Serializable {
 				logger.error("Pdks hata out : " + e.getMessage());
 			}
 		}
-
+		erpIzinTipiIdList = null;
 		if (!personelKontrol)
 			sicilNoList = authenticatedUser.getYetkiTumPersonelNoList();
 		Calendar cal = Calendar.getInstance();
