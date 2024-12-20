@@ -434,6 +434,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 	public void izinleriBakiyeleriniHesapla(Session userSession, List<String> siciller, Sirket sirket, User user, boolean yeni, boolean gecmisHesapla, boolean manuel, boolean calisanPersonel) {
 		if (userSession == null)
 			userSession = PdksUtil.getSession(entityManager, yeni);
+		logger.info("izinleriBakiyeleriniHesapla in " + PdksUtil.getCurrentTimeStampStr());
 		Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());
 		String parameterName = ortakIslemler.getParametreHakEdisIzinERPTableView();
 		boolean izinTipiGiris = ortakIslemler.isExisStoreProcedure(PersonelIzinDetay.SP_NAME, userSession) == false && !ortakIslemler.getParameterKeyHasStringValue(parameterName);
@@ -479,6 +480,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 
 		if (list.size() > 1)
 			list = PdksUtil.sortListByAlanAdi(list, "iseBaslamaTarihi", false);
+		if (list.size() > 0)
+			logger.info("izinleriBakiyeleriniHesapla " + list.size() + " " + PdksUtil.getCurrentTimeStampStr());
 		String sicilNo = null;
 		HashMap dataMap = new HashMap();
 		int sayac = 0;
@@ -539,6 +542,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			}
 		}
 		userSession.flush();
+		logger.info("izinleriBakiyeleriniHesapla out " + PdksUtil.getCurrentTimeStampStr());
 		if (yeni)
 			logger.info("izinBakiyeGuncelleme tamam");
 
