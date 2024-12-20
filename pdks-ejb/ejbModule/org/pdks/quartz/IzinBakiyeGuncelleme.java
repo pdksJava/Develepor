@@ -115,7 +115,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			String value = (parameter != null) ? parameter.getValue() : null;
 			String izinERPTableViewAdi = ortakIslemler.getParameterKey(ortakIslemler.getParametreIzinERPTableView());
 			boolean izinBakiye = value != null && (manuel || PdksUtil.zamanKontrol(PARAMETER_KEY, value, time));
-			boolean sunucuDurum = PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum();
+			boolean sunucuDurum = manuel || PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum();
 			zamanDurum = sunucuDurum && (manuel || PdksUtil.zamanKontrol(PARAMETER_KEY, value, time));
 			boolean tableERPOku = PdksUtil.hasStringValue(izinERPTableViewAdi);
 			if (!zamanDurum && tableERPOku) {

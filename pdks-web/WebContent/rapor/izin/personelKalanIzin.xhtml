@@ -107,28 +107,25 @@
 							</rich:calendar>
 						</s:decorate>
 
+					</h:panelGrid>
+					<ui:fragment>
+						<ui:fragment rendered="#{!(authenticatedUser.admin or authenticatedUser.IK)}">
+							<a4j:commandButton value="Göster" status="ajaxStatus" action="#{personelKalanIzinHome.fillIzinList(null)}" reRender="izinPanel,izinPersonel" />
 
-						<ui:fragment>
-							<ui:fragment rendered="#{!(authenticatedUser.admin or authenticatedUser.IK)}">
-								<a4j:commandButton value="Göster" status="ajaxStatus" action="#{personelKalanIzinHome.fillIzinList(null)}" reRender="izinPanel,izinPersonel" />
-
-							</ui:fragment>
-							<ui:fragment rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
-								<a4j:commandButton value="Tüm İzinler" status="ajaxStatus" action="#{personelKalanIzinHome.fillIzinList(null)}"
-									reRender="izinPanel,secim,izinPersonel" />
-								<a4j:commandButton value="Tarih Bazlı İzinler" status="ajaxStatus" action="#{personelKalanIzinHome.fillTarihIzinList}"
-									reRender="izinPanel,secim" />
-								<a4j:commandButton value="Güncelle" status="ajaxStatus" rendered="#{authenticatedUser.admin}"
-									action="#{personelKalanIzinHome.izinleriBakiyeleriniHesapla}" reRender="izinPanel,secim,izinPersonel" />
+						</ui:fragment>
+						<ui:fragment rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
+							<a4j:commandButton value="Tüm İzinler" status="ajaxStatus" action="#{personelKalanIzinHome.fillIzinList(null)}"
+								reRender="izinPanel,secim,izinPersonel" />
+							<a4j:commandButton value="Tarih Bazlı İzinler" status="ajaxStatus" action="#{personelKalanIzinHome.fillTarihIzinList}"
+								reRender="izinPanel,secim" />
+							<a4j:commandButton value="Güncelle" status="ajaxStatus" rendered="#{authenticatedUser.admin}"
+								action="#{personelKalanIzinHome.izinleriBakiyeleriniHesapla}" reRender="izinPanel,secim,izinPersonel" />
 
 
-
-							</ui:fragment>
 
 						</ui:fragment>
 
-
-					</h:panelGrid>
+					</ui:fragment>
 
 				</a4j:outputPanel>
 				<rich:panel id="izinPanel">

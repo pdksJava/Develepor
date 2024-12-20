@@ -1039,6 +1039,11 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 			}
 		}
 		izinMap = null;
+		for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
+			TempIzin kalanIzinler = (TempIzin) iterator.next();
+			if (kalanIzinler.getToplamBakiyeIzin() == 0.0d && kalanIzinler.getToplamKalanIzin() == 0.0d)
+				iterator.remove();
+		}
 		setPdksPersonelList(izinList);
 	}
 
