@@ -4170,9 +4170,14 @@ public class OrtakIslemler implements Serializable {
 			if (authenticatedUser.getParametreJSON().indexOf(sayfaAdi) > 0)
 				sb.append(authenticatedUser.getParametreJSON() + "\n");
 		}
-		if (ex != null)
+		if (ex != null) {
 			sb.append(ex);
+		}
+
 		logger.error(sb.toString());
+		if (ex != null) {
+			ex.printStackTrace();
+		}
 		sb = null;
 		if (ex != null)
 			throw new Exception(ex);

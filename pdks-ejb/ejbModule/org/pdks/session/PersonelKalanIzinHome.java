@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.TreeMap;
@@ -1171,6 +1172,8 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İZİN BİTİŞ TARİHİ");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İZİN AÇIKLAMA");
 		boolean renk = true;
+		LinkedHashMap<Long, List<PersonelIzin>> izinMap = new LinkedHashMap<Long, List<PersonelIzin>>();
+
 		for (TempIzin tempIzin : pdksPersonelList) {
 
 			boolean durum = tempIzin.getPersonel().getSirket().getDepartman().isAdminMi();
@@ -1199,9 +1202,9 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 					List<PersonelIzin> harcananlar = null;
 					if (personelIzin.getHarcananIzinler() != null && !personelIzin.getHarcananIzinler().isEmpty()) {
 						harcananlar = new ArrayList<PersonelIzin>();
-						for (PersonelIzinDetay personelIDetay : personelIzin.getHarcananIzinler()) {
-							if (personelIDetay.getPersonelIzin().getIzinDurumu() != PersonelIzin.IZIN_DURUMU_REDEDILDI && personelIDetay.getPersonelIzin().getIzinDurumu() != PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL)
-								harcananlar.add(personelIDetay.getPersonelIzin());
+						for (PersonelIzinDetay personelDetay : personelIzin.getHarcananIzinler()) {
+							if (personelDetay.getPersonelIzin().getIzinDurumu() != PersonelIzin.IZIN_DURUMU_REDEDILDI && personelDetay.getPersonelIzin().getIzinDurumu() != PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL)
+								harcananlar.add(personelDetay.getPersonelIzin());
 						}
 						if (!harcananlar.isEmpty()) {
 							if (harcananlar.size() > 1)
@@ -1213,6 +1216,8 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 
 					if (harcananlar != null) {
 						for (PersonelIzin personelIzinHarcanan : harcananlar) {
+							if (PdksUtil.hasStringValue(personelIzinHarcanan.getReferansERP()) && !izinMap.containsKey(personelIzin.getId()))
+								izinMap.put(personelIzin.getId(), harcananlar);
 							row++;
 							col = izinExcelBakiye(sheet, style, styleCenter, styleDate, row, oncekiHakedisTarihi, personelIzin);
 							ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(personelIzinHarcanan.getIzinSuresi());
@@ -1241,6 +1246,55 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		int[] dizi = new int[] { 1000, 2500, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 2500 };
 		for (int i = 0; i < dizi.length; i++)
 			sheet.setColumnWidth(i, (short) (dizi[i] * katsayi));
+		if (!izinMap.isEmpty()) {
+			Sheet sheetListe = ExcelUtil.createSheet(wb, "Izin Listesi", Boolean.TRUE);
+			row = 0;
+			col = 0;
+			ExcelUtil.getCell(sheetListe, row, col++, header).setCellValue(ortakIslemler.personelNoAciklama());
+			ExcelUtil.getCell(sheetListe, row, col++, header).setCellValue("ADI SOYADI");
+			ExcelUtil.getCell(sheetListe, row, col++, header).setCellValue("SÜRE");
+			ExcelUtil.getCell(sheetListe, row, col++, header).setCellValue("BAŞL. TARİHİ");
+			ExcelUtil.getCell(sheetListe, row, col++, header).setCellValue("BİTİŞ TARİHİ");
+			ExcelUtil.getCell(sheetListe, row, col++, header).setCellValue("AÇIKLAMA");
+			ExcelUtil.getCell(sheetListe, row, col++, header).setCellValue("REFERANS NO");
+			renk = true;
+			for (Long key : izinMap.keySet()) {
+				List<PersonelIzin> izinList = izinMap.get(key);
+				for (PersonelIzin personelIzin : izinList) {
+					++row;
+					col = 0;
+					CellStyle style = null, styleCenter = null, styleDate = null;
+					if (renk) {
+						styleDate = styleOddDate;
+						style = styleOdd;
+						styleCenter = styleOddCenter;
+					} else {
+						styleDate = styleEvenDate;
+						style = styleEven;
+						styleCenter = styleEvenCenter;
+					}
+					renk = !renk;
+
+					Personel personel = personelIzin.getIzinSahibi();
+					ExcelUtil.getCell(sheetListe, row, col++, styleCenter).setCellValue(personel.getPdksSicilNo().trim());
+					ExcelUtil.getCell(sheetListe, row, col++, style).setCellValue(personel.getAdSoyad());
+					ExcelUtil.getCell(sheetListe, row, col++, styleCenter).setCellValue(personelIzin.getIzinSuresi());
+					ExcelUtil.getCell(sheetListe, row, col++, styleDate).setCellValue(personelIzin.getBaslangicZamani());
+					ExcelUtil.getCell(sheetListe, row, col++, styleDate).setCellValue(personelIzin.getBitisZamani());
+					String aciklama = PdksUtil.hasStringValue(personelIzin.getAciklama()) ? personelIzin.getAciklama() : "";
+					String referansERP = PdksUtil.hasStringValue(personelIzin.getReferansERP()) ? personelIzin.getReferansERP() : "";
+					if (aciklama.indexOf(referansERP) > 0 && aciklama.indexOf("(") >= 0)
+						aciklama = aciklama.substring(0, aciklama.indexOf("("));
+					ExcelUtil.getCell(sheetListe, row, col++, style).setCellValue(aciklama);
+					ExcelUtil.getCell(sheetListe, row, col++, style).setCellValue(referansERP);
+
+				}
+			}
+			for (int i = 0; i < col; i++) {
+				sheetListe.autoSizeColumn(i);
+			}
+		}
+		izinMap = null;
 		try {
 			baos = new ByteArrayOutputStream();
 			wb.write(baos);
