@@ -985,6 +985,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @throws Exception
 	 */
+	@Transactional
 	public void kapiGirisGuncelle(Date basTarih, Date bitTarih, Session session) throws Exception {
 		String name = KapiGirisGuncelleme.SP_NAME;
 		boolean durum = false;
