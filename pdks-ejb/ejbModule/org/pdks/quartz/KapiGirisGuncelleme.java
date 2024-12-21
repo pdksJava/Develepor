@@ -144,6 +144,7 @@ public class KapiGirisGuncelleme implements Serializable {
 	 * @param session
 	 * @throws Exception
 	 */
+	@Transactional
 	public void kapiGirisGuncellemeBasla(boolean manuel, Session session) throws Exception {
 		ortakIslemler.kapiGirisGuncelle(PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(new Date(), -61)), null, session);
 	}

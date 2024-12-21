@@ -382,18 +382,18 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			map.put("kotaBakiye>=", 0D);
 			hataKonum = "bakiyeIzinTipleri okunuyor ";
 			TreeMap<Long, Tanim> senelikBakiyeIzinTipiMap = pdksEntityController.getObjectByInnerObjectMapInLogic(map, IzinTipi.class, Boolean.TRUE);
+			boolean flush = false;
 			for (Iterator iterator = senelikBakiyeIzinTipiMap.keySet().iterator(); iterator.hasNext();) {
 				Long key = (Long) iterator.next();
 				String izinTipi = senelikBakiyeIzinTipiMap.get(key).getKodu();
 				if (izinTipi.equals(IzinTipi.SUA_IZNI) || izinTipi.equals(IzinTipi.YILLIK_UCRETLI_IZIN))
 					continue;
 				senelikBakiyeIzinEkle(session, user, null, izinTipi, null, yil);
-
+				flush = true;
 			}
 
-			session.flush();
-
 			izinleriBakiyeleriniHesapla(session, null, null, user, Boolean.TRUE, Boolean.FALSE, manuel, Boolean.TRUE);
+			flush = true;
 			if (ozelKontrol) {
 				Parameter parameter = ortakIslemler.getParameter(session, "suaSenelikKullan");
 				boolean suaSenelikKullanma = parameter == null || parameter.getValue() == null || !parameter.getValue().equals("1");
@@ -404,7 +404,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 				else if (suaSenelikKullanma == false && haftaGun != Calendar.SATURDAY)
 					senelikSuaIzinKontrol(session);
 			}
-
+			if (flush)
+				session.flush();
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();

@@ -25,6 +25,7 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.Startup;
+import org.jboss.seam.annotations.Transactional;
 import org.pdks.entity.BaseObject;
 import org.pdks.entity.BasePDKSObject;
 import org.pdks.entity.HareketKGS;
@@ -655,6 +656,7 @@ public class PdksEntityController implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
+	@Transactional
 	public List execSPList(LinkedHashMap<String, Object> veriMap, StringBuffer sp, Class class1) throws Exception {
 		List sonucList = null;
 		boolean manuelReadUnCommitted = false;
