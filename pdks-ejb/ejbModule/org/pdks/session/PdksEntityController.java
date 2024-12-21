@@ -656,7 +656,6 @@ public class PdksEntityController implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	@Transactional
 	public List execSPList(LinkedHashMap<String, Object> veriMap, StringBuffer sp, Class class1) throws Exception {
 		List sonucList = null;
 		boolean manuelReadUnCommitted = false;
@@ -696,10 +695,11 @@ public class PdksEntityController implements Serializable {
 	 * @param veriMap
 	 * @param sp
 	 */
+	@Transactional
 	public int execSP(LinkedHashMap<String, Object> veriMap, StringBuffer sp) throws Exception {
 		Integer sonuc = null;
 		boolean manuelReadUnCommitted = false;
- 		try {
+		try {
 			if (veriMap.containsKey("readUnCommitted")) {
 				manuelReadUnCommitted = true;
 				veriMap.remove("readUnCommitted");
@@ -863,7 +863,7 @@ public class PdksEntityController implements Serializable {
 		StringBuffer sp = new StringBuffer("SP_HAREKET_GUNCELLE_SIRKET");
 		veriMap.put("kgsId", kgsId);
 		veriMap.put("pdksId", pdksId);
- 		veriMap.put("zaman", zaman);
+		veriMap.put("zaman", zaman);
 		veriMap.put("guncelleyen", guncelleyen.getId());
 		veriMap.put("nedenId", nedenId);
 		veriMap.put("aciklama", aciklama);
