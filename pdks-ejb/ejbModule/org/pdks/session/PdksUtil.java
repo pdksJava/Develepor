@@ -2902,8 +2902,42 @@ public class PdksUtil implements Serializable {
 						String parca[] = str.split(":");
 						if (parca.length != 2)
 							continue;
-						List<String> saatList = getStringTokenizer(parca[0]);
-						List<String> dakikaList = getStringTokenizer(parca[1]);
+						List<String> saatParseList = getStringTokenizer(parca[0]), saatList = new ArrayList<String>();
+						for (Iterator iterator = saatParseList.iterator(); iterator.hasNext();) {
+							String string = (String) iterator.next();
+							boolean ekle = true;
+							if (string.indexOf("-") >= 0) {
+								String saat[] = string.split("-");
+								if (saat.length == 2) {
+									ekle = false;
+									for (int i = Integer.parseInt(saat[0]); i <= Integer.parseInt(saat[1]); i++) {
+										saatList.add(String.valueOf(i));
+									}
+
+								}
+
+							}
+							if (ekle)
+								saatList.add(string);
+						}
+						List<String> dakikaParseList = getStringTokenizer(parca[1]), dakikaList = new ArrayList<String>();
+						for (Iterator iterator = dakikaParseList.iterator(); iterator.hasNext();) {
+							String string = (String) iterator.next();
+							boolean ekle = true;
+							if (string.indexOf("-") >= 0) {
+								String dakika[] = string.split("-");
+								if (dakika.length == 2) {
+									ekle = false;
+									for (int i = Integer.parseInt(dakika[0]); i <= Integer.parseInt(dakika[1]); i = i + 5) {
+										dakikaList.add(String.valueOf(i));
+									}
+
+								}
+
+							}
+							if (ekle)
+								dakikaList.add(string);
+						}
 						for (String saat : saatList) {
 							for (String dakika : dakikaList) {
 								zamaniGeldi = zamaniGeldimi(simdikiSaat, simdikiDakika, saat + ":" + dakika);
@@ -2913,6 +2947,8 @@ public class PdksUtil implements Serializable {
 							if (zamaniGeldi)
 								break;
 						}
+						saatParseList = null;
+						dakikaParseList = null;
 						parca = null;
 						saatList = null;
 						dakikaList = null;
