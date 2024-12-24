@@ -1171,6 +1171,29 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İZİN BAŞL. TARİHİ");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İZİN BİTİŞ TARİHİ");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İZİN AÇIKLAMA");
+		boolean referansVar = false;
+		for (TempIzin tempIzin : pdksPersonelList) {
+			if (tempIzin.getYillikIzinler() == null)
+				continue;
+			for (PersonelIzin personelIzin : tempIzin.getYillikIzinler()) {
+				if (personelIzin.getHarcananIzinler() == null)
+					continue;
+				for (PersonelIzinDetay personelDetay : personelIzin.getHarcananIzinler()) {
+					if (PdksUtil.hasStringValue(personelDetay.getPersonelIzin().getReferansERP())) {
+						referansVar = true;
+						break;
+					}
+
+				}
+				if (referansVar)
+					break;
+
+			}
+			if (referansVar)
+				break;
+		}
+		if (referansVar)
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("REFERANS");
 		boolean renk = true;
 		LinkedHashMap<Long, List<PersonelIzin>> izinMap = new LinkedHashMap<Long, List<PersonelIzin>>();
 
@@ -1223,7 +1246,9 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 							ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(personelIzinHarcanan.getIzinSuresi());
 							ExcelUtil.getCell(sheet, row, col++, styleDateTime).setCellValue(PdksUtil.getDate(personelIzinHarcanan.getBaslangicZamani()));
 							ExcelUtil.getCell(sheet, row, col++, styleDateTime).setCellValue(PdksUtil.getDate(personelIzinHarcanan.getBitisZamani()));
-							ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personelIzinHarcanan.getAciklama());
+							ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personelIzinHarcanan.getAciklamaByReferans());
+							if (referansVar)
+								ExcelUtil.getCell(sheet, row, col++, style).setCellValue(PdksUtil.hasStringValue(personelIzinHarcanan.getReferansERP()) ? personelIzinHarcanan.getReferansERP() : "");
 							col = 0;
 						}
 
@@ -1234,6 +1259,8 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 						ExcelUtil.getCell(sheet, row, col++, styleCenter);
 						ExcelUtil.getCell(sheet, row, col++, styleCenter);
 						ExcelUtil.getCell(sheet, row, col++, styleCenter);
+						if (referansVar)
+							ExcelUtil.getCell(sheet, row, col++, styleCenter);
 
 					}
 					oncekiHakedisTarihi = (Date) personelIzin.getBitisZamani().clone();
@@ -1281,10 +1308,8 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 					ExcelUtil.getCell(sheetListe, row, col++, styleCenter).setCellValue(personelIzin.getIzinSuresi());
 					ExcelUtil.getCell(sheetListe, row, col++, styleDate).setCellValue(personelIzin.getBaslangicZamani());
 					ExcelUtil.getCell(sheetListe, row, col++, styleDate).setCellValue(personelIzin.getBitisZamani());
-					String aciklama = PdksUtil.hasStringValue(personelIzin.getAciklama()) ? personelIzin.getAciklama() : "";
 					String referansERP = PdksUtil.hasStringValue(personelIzin.getReferansERP()) ? personelIzin.getReferansERP() : "";
-					if (aciklama.indexOf(referansERP) > 0 && aciklama.indexOf("(") >= 0)
-						aciklama = aciklama.substring(0, aciklama.indexOf("("));
+					String aciklama = referansERP != "" ? personelIzin.getAciklamaByReferans() : personelIzin.getAciklama();
 					ExcelUtil.getCell(sheetListe, row, col++, style).setCellValue(aciklama);
 					ExcelUtil.getCell(sheetListe, row, col++, style).setCellValue(referansERP);
 
@@ -1429,6 +1454,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 				int COL_IZIN_BAS_TARIH = 13;
 				int COL_IZIN_BIT_TARIH = 14;
 				int COL_IZIN_ACIKLAMA = 15;
+				int COL_IZIN_REFERANS = 16;
 				boolean listeEkle = false;
 				String perSicilNo = null;
 				TreeMap<String, HashMap<Integer, org.apache.poi.ss.usermodel.Cell>> hucreMap = new TreeMap<String, HashMap<Integer, org.apache.poi.ss.usermodel.Cell>>();
@@ -1481,13 +1507,12 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 							personel.setGrubaGirisTarihi(grubaGirisTarihi);
 							personel.setIseBaslamaTarihi(iseBaslamaTarihi);
 							personel.setDogumTarihi(dogumTarihi);
-
 							personel.setIzinHakEdisTarihi(izinHakEdisTarihi);
 							bosPersonelMap.put(perSicilNo, personel);
 							continue;
 						}
 						HashMap<Integer, org.apache.poi.ss.usermodel.Cell> veriMap = new HashMap<Integer, org.apache.poi.ss.usermodel.Cell>();
-						for (Integer col = 0; col <= COL_IZIN_ACIKLAMA; col++) {
+						for (Integer col = 0; col <= COL_IZIN_REFERANS; col++) {
 							org.apache.poi.ss.usermodel.Cell cell = ExcelUtil.getCell(sheet, row, col);
 							veriMap.put(col, cell);
 						}
@@ -1792,6 +1817,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 								} catch (Exception e) {
 									aciklama = "";
 								}
+
 								if (baslangicZamani != null && bitisZamani != null) {
 									PersonelIzin personelKullanilanIzin = new PersonelIzin();
 									personelKullanilanIzin.setBaslangicZamani(baslangicZamani);
@@ -1802,6 +1828,19 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 									personelKullanilanIzin.setOlusturanUser(sistemAdminUser);
 									personelKullanilanIzin.setIzinSuresi(kullanilanIzinSuresi);
 									personelKullanilanIzin.setAciklama(aciklama);
+									String referansERP = "";
+									try {
+										if (izinTipiKullanilan.getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK)) {
+											referansERP = ExcelUtil.getSheetStringValue((org.apache.poi.ss.usermodel.Cell) veriMap.get(COL_IZIN_REFERANS));
+											if (PdksUtil.hasStringValue(referansERP) == false)
+												referansERP = PersonelIzin.IZIN_MANUEL_EK + "_" + personelKullanilanIzin.getIzinSahibi().getPdksSicilNo() + PdksUtil.replaceAll(PdksUtil.convertToDateString(baslangicZamani, PersonelIzin.pattern).substring(0, 10), "-", "");
+											else
+												referansERP = referansERP + "_" + PersonelIzin.IZIN_MANUEL_EK;
+										}
+									} catch (Exception e) {
+										referansERP = "";
+									}
+									personelKullanilanIzin.setReferansERP(referansERP);
 									harcananDigerIzinler.add(personelKullanilanIzin);
 								}
 

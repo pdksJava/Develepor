@@ -33,7 +33,6 @@ import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.Dosya;
 import org.pdks.entity.IzinIstirahat;
-import org.pdks.entity.IzinReferansERP;
 import org.pdks.entity.IzinTipi;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
@@ -895,7 +894,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 							Cell cellReferansNoERP = ExcelUtil.getCell(sheet, row, col++);
 							String referansNoERP = cellReferansNoERP != null ? cellReferansNoERP.getStringCellValue() : null;
 							if (referansOtomatikOlustur || PdksUtil.hasStringValue(referansNoERP) == false)
-								referansNoERP = IzinReferansERP.PDKS_REFERANS_START + izinERP.getPersonelNo() + PdksUtil.replaceAll(izinERP.getBasZaman().substring(0, 10), "-", "");
+								referansNoERP = PersonelIzin.IZIN_MANUEL_EK + "_"+ izinERP.getPersonelNo() + PdksUtil.replaceAll(izinERP.getBasZaman().substring(0, 10), "-", "");
 							izinERP.setReferansNoERP(referansNoERP);
 
 							Cell cellIzinTipi = ExcelUtil.getCell(sheet, row, col++);
