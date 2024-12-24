@@ -99,14 +99,13 @@ public class PersonelERPGuncelleme implements Serializable {
 				// sunucuDurum = true;
 				if (sunucuDurum) {
 					guncellemeDBDurum = Boolean.FALSE;
-					Parameter parameter = ortakIslemler.getParameter(session, "kgsMasterUpdate");
-					if (parameter != null && parameter.getValue().equals("1"))
-						ortakIslemler.kgsMasterUpdate(session);
+					// Parameter parameter = ortakIslemler.getParameter(session, "kgsMasterUpdate");
+					// if (parameter != null && parameter.getValue().equals("1"))
+					// ortakIslemler.kgsMasterUpdate(session);
 					hataKonum = "Paramatre okunuyor ";
-					parameter = ortakIslemler.getParameter(session, PARAMETER_KEY);
+					Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_KEY);
 					String value = (parameter != null) ? parameter.getValue() : null;
 					hataKonum = "Paramatre okundu ";
-
 					String personelERPTableViewAdi = ortakIslemler.getParameterKey(ortakIslemler.getParametrePersonelERPTableView());
 					boolean tableERPOku = PdksUtil.hasStringValue(personelERPTableViewAdi);
 					if (value != null || tableERPOku) {
