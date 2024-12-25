@@ -81,7 +81,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	private boolean kaydet, calisiyor = true, gorevYeriSec = false, yoneticiZorunlu = true, secili, onayDurum, vardiyaOlustu = Boolean.FALSE, vardiyaDegisti = Boolean.FALSE, fiiliHesapla = Boolean.FALSE;
 
-	private boolean donemBitti = Boolean.TRUE, ayrikHareketVar = Boolean.FALSE, fazlaMesaiIzinKontrol = Boolean.TRUE, gebeDurum = Boolean.FALSE, sutIzniDurumu = Boolean.FALSE;
+	private boolean donemBitti = Boolean.TRUE, ayrikHareketVar = Boolean.FALSE, fazlaMesaiIzinKontrol = Boolean.TRUE, gebeDurum = Boolean.FALSE,  sutIzniDurumu = Boolean.FALSE;
 
 	private Double saatToplami = 0d, resmiTatilToplami = 0d, haftaCalismaSuresi = 0d, ucretiOdenenMesaiSure = 0d, fazlaMesaiSure = 0d, odenenSure = 0d, planlananSure = 0d, offSure = 0.0d;
 
@@ -90,6 +90,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	private boolean fazlaMesaiHesapla = Boolean.FALSE, vardiyaSua = Boolean.FALSE, eksikGunVar = Boolean.FALSE, denklestirilmeyenDevredenVar = Boolean.FALSE;
 
 	private boolean suaDurum = Boolean.FALSE;
+	private Boolean isAramaDurum = Boolean.FALSE;
 
 	private CalismaModeli calismaModeli;
 
@@ -1443,5 +1444,15 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	public void setYoneticiZorunlu(boolean yoneticiZorunlu) {
 		this.yoneticiZorunlu = yoneticiZorunlu;
 	}
+
+	public Boolean getIsAramaDurum() {
+		return isAramaDurum;
+	}
+
+	public void setIsAramaDurum(Boolean isAramaDurum) {
+		this.isAramaDurum = isAramaDurum;
+	}
+
+	 
 
 }
