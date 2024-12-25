@@ -1432,7 +1432,7 @@ public class Vardiya extends BaseObject {
 	}
 
 	public void setVardiyaFazlaMesaiBasZaman(Date date) {
-		if (date != null && vardiyaDateStr.endsWith("0909"))
+		if (date != null && vardiyaDateStr.endsWith("1221"))
 			logger.debug(PdksUtil.convertToDateString(date, PdksUtil.getDateTimeFormat()));
 
 		this.vardiyaFazlaMesaiBasZaman = date;

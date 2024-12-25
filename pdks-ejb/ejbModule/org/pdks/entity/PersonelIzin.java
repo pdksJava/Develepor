@@ -868,7 +868,7 @@ public class PersonelIzin extends BaseObject {
 
 		izinERP.setAciklama(this.getAciklamaByReferans());
 
-		String referansNoERP = PersonelIzin.IZIN_MANUEL_EK + "_" + izinERP.getPersonelNo() + PdksUtil.replaceAll(izinERP.getBasZaman().substring(0, 10), "-", "");
+		String referansNoERP = PdksUtil.hasStringValue(referansERP) ? referansERP : PersonelIzin.IZIN_MANUEL_EK + "_" + izinERP.getPersonelNo() + PdksUtil.replaceAll(izinERP.getBasZaman().substring(0, 10), "-", "");
 
 		izinERP.setReferansNoERP(referansNoERP);
 

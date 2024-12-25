@@ -197,8 +197,8 @@ public class TempIzin implements Serializable {
 		this.sayfaNo = sayfaNo;
 	}
 
-	public Long getSicilNo() {
-		Long sicilNo = personel != null ? Long.parseLong(personel.getPdksSicilNo()) : 0L;
+	public String getSicilNo() {
+		String sicilNo = personel != null ? personel.getPdksSicilNo() : "";
 		return sicilNo;
 	}
 
