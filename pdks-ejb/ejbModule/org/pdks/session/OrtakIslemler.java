@@ -12823,8 +12823,6 @@ public class OrtakIslemler implements Serializable {
 					if (vardiyaSonraki.isCalisma() == false && offHtGeceGunSonu && islemVardiya.getBasDonem() >= islemVardiya.getBitDonem()) {
 						int basDakika = Math.abs(islemVardiya.isHaftaTatil() ? Vardiya.getIntHaftaTatiliFazlaMesaiBasDakika() : Vardiya.getIntOffFazlaMesaiBasDakika());
 						Date tarih = addTarih(cal, PdksUtil.tariheGunEkleCikar(sonrakiVardiyaGun.getVardiyaDate(), 1), Calendar.MINUTE, -basDakika);
-						if (key.endsWith("1220"))
-							logger.debug(islemVardiya.getBitDonem());
 						if (islemVardiya.getBitDonem() <= basDakika)
 							tarih = addTarih(cal, sonrakiVardiyaGun.getVardiyaDate(), Calendar.MINUTE, basDakika);
 						vardiyaSonraki.setVardiyaFazlaMesaiBasZaman(tarih);

@@ -1783,8 +1783,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 		HashMap<String, Integer> referansNoMap = new HashMap<String, Integer>();
 		TreeMap<Integer, IzinERP> referansSiraMap = new TreeMap<Integer, IzinERP>();
 		Date olusturmaTarihi = null;
+		HashMap<String, String> bakiyeMap = new HashMap<String, String>();
 		for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
 			IzinERP izinERP = (IzinERP) iterator.next();
+			String referansNoERP = izinERP.getReferansNoERP();
+			if (referansNoERP.endsWith(PersonelIzin.IZIN_MANUEL_EK)) {
+				referansNoERP = referansNoERP.substring(0, referansNoERP.indexOf(PersonelIzin.IZIN_MANUEL_EK) - 1);
+				bakiyeMap.put(izinERP.getReferansNoERP(), referansNoERP);
+			}
 			if (izinCok) {
 				String personelNo = izinERP.getPersonelNo();
 				if (PdksUtil.hasStringValue(personelNo)) {
@@ -1796,7 +1802,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						size = referansNoMap.get(key);
 					}
 					referansSiraMap.put(size, izinERP);
-					String referansNoERP = izinERP.getReferansNoERP();
+
 					if (PdksUtil.hasStringValue(referansNoERP)) {
 						List<String> list = izinPersonelERPMap.containsKey(personelNo) ? izinPersonelERPMap.get(personelNo) : new ArrayList<String>();
 						if (list.isEmpty())
@@ -1863,9 +1869,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 				String perNo = PdksUtil.textBaslangicinaKarakterEkle(izinERP.getPersonelNo(), '0', sicilNoUzunluk);
 				izinERP.setPersonelNo(perNo);
 			}
+			String referansNoERP = bakiyeMap.containsKey(izinERP.getReferansNoERP()) ? bakiyeMap.get(izinERP.getReferansNoERP()) : izinERP.getReferansNoERP();
 			veriIsle("personel", izinERP.getPersonelNo(), veriSorguMap);
 			veriIsle("izinTipi", izinERP.getIzinTipi(), veriSorguMap);
-			veriIsle("personelIzin", izinERP.getReferansNoERP(), veriSorguMap);
+			veriIsle("personelIzin", referansNoERP, veriSorguMap);
 		}
 
 		List<Personel> personelList = getSQLObjectListFromDataList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, veriSorguMap.get("personel"), Personel.class);
@@ -1981,7 +1988,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
 			IzinERP izinERP = (IzinERP) iterator.next();
 			boolean tamam = false;
-			String referansNoERP = izinERP.getReferansNoERP();
+			String referansNoERP = bakiyeMap.containsKey(izinERP.getReferansNoERP()) ? bakiyeMap.get(izinERP.getReferansNoERP()) : izinERP.getReferansNoERP();
 			String personelNo = izinERP.getPersonelNo();
 			Date islemZamani = new Date();
 			kidemHataList.clear();
@@ -2134,7 +2141,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						long gecerliDonem = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(new Date(), -10), "yyyyMM"));
 						long basDonem = Long.parseLong(PdksUtil.convertToDateString(baslangicZamani, "yyyyMM"));
 						if (personelIzin.getId() != null || izinDurum) {
-							if (kapaliDonemOku && gecerliDonem > basDonem)
+							if (kapaliDonemOku && gecerliDonem > basDonem && izinERP.getReferansNoERP().indexOf(PersonelIzin.IZIN_MANUEL_EK) < 0)
 								kapaliDenklestirmeler = getDenklestirmeList(izinSahibi != null ? izinSahibi.getPdksSicilNo() : null, baslangicZamani, bitisZamani, false);
 						}
 
