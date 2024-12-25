@@ -97,6 +97,11 @@ public class PersonelDonemselDurum extends BaseObject {
 	public boolean isSutIzni() {
 		return personelDurumTipiId != null && PersonelDurumTipi.SUT_IZNI.value().equals(personelDurumTipiId);
 	}
+	
+	@Transient
+	public Boolean getIsAramaIzni() {
+		return personelDurumTipiId != null && PersonelDurumTipi.IS_ARAMA_IZNI.value().equals(personelDurumTipiId);
+	}
 
 	@Transient
 	public static String getPersonelDurumTipiAciklama(Integer value) {
@@ -106,6 +111,8 @@ public class PersonelDonemselDurum extends BaseObject {
 				aciklama = "Gebe";
 			else if (value.equals(PersonelDurumTipi.SUT_IZNI.value()))
 				aciklama = "Süt İzni";
+			else if (value.equals(PersonelDurumTipi.IS_ARAMA_IZNI.value()))
+				aciklama = "İş Arama İzni";
 		}
 		return aciklama;
 	}

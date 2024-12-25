@@ -6769,8 +6769,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					TreeMap<String, CalismaModeliAy> cmaMap = new TreeMap<String, CalismaModeliAy>();
 
 					List<Long> plansizList = new ArrayList<Long>(), perIdList = new ArrayList<Long>();
+					boolean isAramaIzni = false;
+					String isAramaIzniStr = ortakIslemler.getParameterKey("isAramaIzni");
+					if (PdksUtil.hasStringValue(isAramaIzniStr)) {
+						int gun = Integer.parseInt(isAramaIzniStr);
+						isAramaIzni = gun > 0;
+					}
 					for (Personel personel : personelList) {
-						if (personel.isGebelikSutIzinVar())
+						if (isAramaIzni || personel.isGebelikSutIzinVar())
 							perIdList.add(personel.getId());
 					}
 					if (!perIdList.isEmpty()) {
@@ -6863,7 +6869,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									else if (pdd.isSutIzni()) {
 										personelDenklestirme.setSutIzniPersonelDonemselDurum(pdd);
 
-									}
+									} else if (pdd.getIsAramaIzni())
+										personelDenklestirme.setIsAramaPersonelDonemselDurum(pdd);
 								}
 
 							}
@@ -7593,17 +7600,22 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								for (PersonelDonemselDurum pdd : pddList) {
 									boolean donemIci = vGun.getVardiyaDate().getTime() <= pdd.getBitTarih().getTime() && vGun.getVardiyaDate().getTime() >= pdd.getBasTarih().getTime();
 									if (donemIci) {
-										if (pdd.isSutIzni())
-											vGun.setSutIzniPersonelDonemselDurum(pdd);
-										else if (pdd.isGebe())
-											vGun.setGebePersonelDonemselDurum(pdd);
-										if (aylikPuantaj.isGebeDurum() == false && (vGun.isGebeMi() || vGun.isGebePersonelDonemselDurum())) {
-											gebeGoster = true;
-											aylikPuantaj.setGebeDurum(true);
-										}
-										if (aylikPuantaj.isSuaDurum() == false && (vGun.isSutIzniVar() || vGun.isSutIzniPersonelDonemselDurum())) {
-											sutIzniGoster = true;
-											aylikPuantaj.setSutIzniDurumu(true);
+										if (pdd.getIsAramaIzni())
+											vGun.setIsAramaPersonelDonemselDurum(pdd);
+										else {
+											if (pdd.isSutIzni())
+												vGun.setSutIzniPersonelDonemselDurum(pdd);
+											else if (pdd.isGebe())
+												vGun.setGebePersonelDonemselDurum(pdd);
+
+											if (aylikPuantaj.isGebeDurum() == false && (vGun.isGebeMi() || vGun.isGebePersonelDonemselDurum())) {
+												gebeGoster = true;
+												aylikPuantaj.setGebeDurum(true);
+											}
+											if (aylikPuantaj.isSuaDurum() == false && (vGun.isSutIzniVar() || vGun.isSutIzniPersonelDonemselDurum())) {
+												sutIzniGoster = true;
+												aylikPuantaj.setSutIzniDurumu(true);
+											}
 										}
 									}
 

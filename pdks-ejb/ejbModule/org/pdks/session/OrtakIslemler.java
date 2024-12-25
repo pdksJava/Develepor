@@ -12952,8 +12952,8 @@ public class OrtakIslemler implements Serializable {
 				Date vardiyaTarihi = vardiyaGun.getVardiyaDate();
 				Long perId = personel.getId();
 				String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMM") + "_" + perId;
-				boolean gebeMi = false, sutIzniVar = false;
-				PersonelDonemselDurum sutIzniPersonelDonemselDurum = null, gebePersonelDonemselDurum = null;
+				boolean gebeMi = false, sutIzniVar = false, isAramaIzniVar = false;
+				PersonelDonemselDurum sutIzniPersonelDonemselDurum = null, gebePersonelDonemselDurum = null, isAramaPersonelDonemselDurum = null;
 				if (personelDurumMap.containsKey(perId)) {
 					List<PersonelDonemselDurum> list = personelDurumMap.get(perId);
 					for (PersonelDonemselDurum personelDonemselDurum : list) {
@@ -12969,11 +12969,18 @@ public class OrtakIslemler implements Serializable {
 								sutIzniVar = true;
 							}
 
+						}else if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.IS_ARAMA_IZNI)) {  
+						 	isAramaPersonelDonemselDurum = personelDonemselDurum;
+							if (donemTamam) {
+								isAramaIzniVar = true;
+							}
+
 						}
 					}
 				}
 				vardiyaGun.setSutIzniPersonelDonemselDurum(sutIzniVar ? sutIzniPersonelDonemselDurum : null);
 				vardiyaGun.setGebePersonelDonemselDurum(gebeMi ? gebePersonelDonemselDurum : null);
+				vardiyaGun.setIsAramaPersonelDonemselDurum(isAramaIzniVar ? isAramaPersonelDonemselDurum : null);
 				if (denkMap.containsKey(key)) {
 
 					PersonelDenklestirme denklestirme = denkMap.get(key);
@@ -12983,7 +12990,9 @@ public class OrtakIslemler implements Serializable {
 					if (denklestirme.getGebePersonelDonemselDurum() == null) {
 						denklestirme.setGebePersonelDonemselDurum(gebePersonelDonemselDurum);
 					}
-
+					if (denklestirme.getIsAramaPersonelDonemselDurum() == null) {
+						denklestirme.setIsAramaPersonelDonemselDurum(isAramaPersonelDonemselDurum);
+					}
 					if (sutIzniPersonelDonemselDurum == null)
 						sutIzniVar = denklestirme.isSutIzniVar();
 					if (gebePersonelDonemselDurum == null)

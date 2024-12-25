@@ -69,7 +69,7 @@ public class PersonelDenklestirme extends BaseObject {
 
 	private VardiyaGun izinVardiyaGun;
 
-	private PersonelDonemselDurum sutIzniPersonelDonemselDurum, gebePersonelDonemselDurum;
+	private PersonelDonemselDurum sutIzniPersonelDonemselDurum, gebePersonelDonemselDurum, isAramaPersonelDonemselDurum;
 
 	private Double planlanSure = 0d, eksikCalismaSure = 0d, hesaplananSure = 0d, resmiTatilSure = 0d, haftaCalismaSuresi = 0d, fazlaMesaiSure = 0d, odenenSure = 0d;
 
@@ -537,7 +537,7 @@ public class PersonelDenklestirme extends BaseObject {
 		double aylikSutSure = calismaModeliAy != null && calismaModeliAy.getToplamIzinSure() > 0.0d ? calismaModeliAy.getToplamIzinSure() : denklestirmeAy.getToplamIzinSure();
 		if (calismaModeliAy != null && cm.getToplamGunGuncelle() && sutIzniSaatSayisi > 0)
 			aylikSure = sutIzniSaatSayisi;
-		else if (cm.isHaftaTatilSabitDegil() || sutIzniPersonelDonemselDurum != null || gebePersonelDonemselDurum != null) {
+		else if (cm.isHaftaTatilSabitDegil() || sutIzniPersonelDonemselDurum != null || gebePersonelDonemselDurum != null || isAramaPersonelDonemselDurum != null) {
 			aylikSure = getPlananSureHesapla(cm, vardiyalar);
 			if (sutIzniPersonelDonemselDurum != null)
 				aylikSutSure = aylikSure;
@@ -555,7 +555,27 @@ public class PersonelDenklestirme extends BaseObject {
 
 		double sutIzniSure = sutIzniSaatSayisi != null && sutIzniSaatSayisi.doubleValue() > 0.0d && sutIzniSaatSayisi.doubleValue() != aylikSutSure ? sutIzniSaatSayisi.doubleValue() : aylikSutSure;
 		double maxSure = sutIzniDurum == null || sutIzniDurum.equals(Boolean.FALSE) || planlanSure == 0 ? aylikSure : sutIzniSure;
+		if (isAramaPersonelDonemselDurum != null) {
+			double isAramaSure = 0.0d;
+			for (VardiyaGun vg : vardiyalar) {
+				Vardiya vardiya = vg.getVardiya();
+				if (vg.isAyinGunu() && vardiya != null && vardiya.getId() != null) {
+					if (vg.getVardiyaDateStr().endsWith("1209"))
+						logger.debug("");
+					if (vg.getIsAramaIzmiPersonelDonemselDurum()) {
+						double sure = 0.0d;
+						Tatil tatil = vg.getTatil();
+						boolean hesapla = !(vg.isIzinli() || vardiya.isHaftaTatil() || tatil != null || vardiya.isOff());
+						if (hesapla) {
+							sure = 2;
+						}
+						isAramaSure += sure;
+					}
 
+				}
+			}
+			maxSure -= isAramaSure;
+		}
 		return maxSure;
 	}
 
@@ -761,6 +781,15 @@ public class PersonelDenklestirme extends BaseObject {
 
 	public void setGebePersonelDonemselDurum(PersonelDonemselDurum gebePersonelDonemselDurum) {
 		this.gebePersonelDonemselDurum = gebePersonelDonemselDurum;
+	}
+
+	@Transient
+	public PersonelDonemselDurum getIsAramaPersonelDonemselDurum() {
+		return isAramaPersonelDonemselDurum;
+	}
+
+	public void setIsAramaPersonelDonemselDurum(PersonelDonemselDurum isAramaPersonelDonemselDurum) {
+		this.isAramaPersonelDonemselDurum = isAramaPersonelDonemselDurum;
 	}
 
 }

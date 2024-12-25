@@ -260,13 +260,79 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		dataDenkMap.put("sistemUser", ortakIslemler.getSistemAdminUser(session));
 		dataDenkMap.put("vardiyaNetCalismaSuresiMap", vardiyaNetCalismaSuresiMap);
 		TreeMap<String, VardiyaGun> vardiyaGunMap = new TreeMap<String, VardiyaGun>();
+		boolean isAramaIzni = false;
+		String isAramaIzniStr = ortakIslemler.getParameterKey("isAramaIzni");
+		List<Long> perIdList = new ArrayList<Long>();
+		if (PdksUtil.hasStringValue(isAramaIzniStr)) {
+			int gun = Integer.parseInt(isAramaIzniStr);
+			isAramaIzni = gun > 0;
+		}
+		HashMap<Long, List<PersonelDonemselDurum>> pddMap = new HashMap<Long, List<PersonelDonemselDurum>>();
+
 		for (AylikPuantaj ap : puantajList) {
+
+			Personel personel = ap.getPdksPersonel();
+			if (isAramaIzni || personel.isGebelikSutIzinVar())
+				perIdList.add(personel.getId());
 			for (VardiyaGun vg : ap.getVardiyalar()) {
 				if (vg.isGuncellendi())
 					logger.debug(vg.getVardiyaDateStr());
 				vardiyaGunMap.put(vg.getVardiyaKeyStr(), vg);
 			}
 		}
+		if (!perIdList.isEmpty()) {
+			List<PersonelDonemselDurum> list = pdksEntityController.getSQLParamByAktifFieldList(PersonelDonemselDurum.TABLE_NAME, PersonelDonemselDurum.COLUMN_NAME_PERSONEL, perIdList, PersonelDonemselDurum.class, session);
+			for (PersonelDonemselDurum personelDonemselDurum : list) {
+				Long perId = personelDonemselDurum.getPersonel().getId();
+				List<PersonelDonemselDurum> pddList = pddMap.containsKey(perId) ? pddMap.get(perId) : new ArrayList<PersonelDonemselDurum>();
+				if (pddList.isEmpty())
+					pddMap.put(perId, pddList);
+				pddList.add(personelDonemselDurum);
+			}
+			for (AylikPuantaj aylikPuantaj : puantajList) {
+				Personel personel = aylikPuantaj.getPdksPersonel();
+				if (pddMap.containsKey(personel.getId())) {
+					PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
+					List<PersonelDonemselDurum> pddList = pddMap.get(personel.getId());
+					for (VardiyaGun vGun : aylikPuantaj.getVardiyalar()) {
+						if (vGun.isAyinGunu() && vGun.getVardiya() != null) {
+							for (PersonelDonemselDurum pdd : pddList) {
+								boolean donemIci = vGun.getVardiyaDate().getTime() <= pdd.getBitTarih().getTime() && vGun.getVardiyaDate().getTime() >= pdd.getBasTarih().getTime();
+								if (donemIci) {
+									if (pdd.getIsAramaIzni()) {
+										vGun.setIsAramaPersonelDonemselDurum(pdd);
+										pd.setIsAramaPersonelDonemselDurum(pdd);
+									} else {
+										if (pdd.isSutIzni()) {
+											pd.setSutIzniPersonelDonemselDurum(pdd);
+											vGun.setSutIzniPersonelDonemselDurum(pdd);
+										}
+
+										else if (pdd.isGebe()) {
+											pd.setGebePersonelDonemselDurum(pdd);
+											vGun.setGebePersonelDonemselDurum(pdd);
+										}
+										if (aylikPuantaj.isGebeDurum() == false && (vGun.isGebeMi() || vGun.isGebePersonelDonemselDurum())) {
+											aylikPuantaj.setGebeDurum(true);
+										}
+										if (aylikPuantaj.isSuaDurum() == false && (vGun.isSutIzniVar() || vGun.isSutIzniPersonelDonemselDurum())) {
+
+											aylikPuantaj.setSutIzniDurumu(true);
+										}
+									}
+								}
+
+							}
+
+						}
+
+					}
+				}
+			}
+			list = null;
+		}
+		pddMap = null;
+		perIdList = null;
 		ortakIslemler.fazlaMesaiSaatiAyarla(vardiyaGunMap);
 		boolean haftaTatilDurum = ortakIslemler.getParameterKey("haftaTatilDurum").equals("1");
 		vardiyaGunMap = null;
@@ -2139,8 +2205,6 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		return selectList;
 	}
 
-
-
 	/**
 	 * @param sirket
 	 * @param aylikPuantaj
@@ -2980,7 +3044,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		}
 
 		TreeMap<String, Tatil> tatilGunleriMap = ortakIslemler.getTatilGunleri(null, denklestirmeDonemi.getBaslangicTarih(), denklestirmeDonemi.getBitisTarih(), session);
-		for (Iterator iterator = aylikPuantaj.getVardiyalar().iterator(); iterator.hasNext();) {
+		List<VardiyaGun> vardiyaGunList = aylikPuantaj.getVardiyalar();
+		for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 			VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 			vardiyaGun.setTatil(tatilGunleriMap.containsKey(vardiyaGun.getVardiyaDateStr()) ? tatilGunleriMap.get(vardiyaGun.getVardiyaDateStr()) : null);
 		}

@@ -174,7 +174,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private Boolean emailCCDurum = Boolean.FALSE, emailBCCDurum = Boolean.FALSE, taseronKulaniciTanimla = Boolean.FALSE, manuelTanimla = Boolean.FALSE, ikinciYoneticiManuelTanimla = Boolean.FALSE;
 	private Boolean onaysizIzinKullanilir = Boolean.FALSE, departmanGoster = Boolean.FALSE, kartNoGoster = Boolean.FALSE, ikinciYoneticiIzinOnayla = Boolean.FALSE, izinGirisiVar = Boolean.FALSE, dosyaGuncellemeYetki = Boolean.FALSE;
 	private Boolean ekSaha1Disable, ekSaha2Disable, ekSaha4Disable, transferAciklamaCiftKontrol, bakiyeIzinGoster = Boolean.FALSE, gebeSecim = Boolean.FALSE, personelTipiGoster = Boolean.FALSE;
-	public Boolean disableAdviseNodeOpened, organizasyonSemasiGoster = Boolean.FALSE, bakiyeTakipEdiliyor = Boolean.FALSE;
+	public Boolean disableAdviseNodeOpened, organizasyonSemasiGoster = Boolean.FALSE, bakiyeTakipEdiliyor = Boolean.FALSE, isAramaIzni = Boolean.FALSE;
 	private PersonelExtra personelExtra;
 	private TreeMap<Long, PersonelKGS> personelKGSMap;
 	private int COL_SICIL_NO, COL_ADI, COL_SOYADI, COL_SIRKET_KODU, COL_SIRKET_ADI, COL_TESIS_KODU, COL_TESIS_ADI, COL_GOREV_KODU, COL_GOREVI, COL_BOLUM_KODU, COL_BOLUM_ADI;
@@ -283,9 +283,13 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 			}
 			List<Integer> list = new ArrayList<Integer>();
-			if (secGebe(personel))
-				list.add(PersonelDurumTipi.GEBE.value());
-			list.add(PersonelDurumTipi.SUT_IZNI.value());
+			if (personel.getCinsiyetBayan()) {
+				if (secGebe(personel))
+					list.add(PersonelDurumTipi.GEBE.value());
+				list.add(PersonelDurumTipi.SUT_IZNI.value());
+			}
+			if (isAramaIzni)
+				list.add(PersonelDurumTipi.IS_ARAMA_IZNI.value());
 			for (Integer tipi : list)
 				personelDurumTipiList.add(new SelectItem(tipi, PersonelDonemselDurum.getPersonelDurumTipiAciklama(tipi)));
 			list = null;
@@ -1522,6 +1526,16 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			personel = getInstance();
 		Sirket sirket = personel.getSirket();
 		boolean secim = personel.isSutIzniKullan() || (personel.getCinsiyetBayan() && sirket != null && sirket.isGebelikSutIzinVar());
+		return secim;
+	}
+
+	/**
+	 * @param personel
+	 * @return
+	 */
+	public Boolean secIsAramaIzni(Personel personel) {
+
+		boolean secim = ortakIslemler.getParameterKey("isAramaIzni").equals("1");
 		return secim;
 	}
 
@@ -2998,6 +3012,17 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				tanimsizPersonelList.addAll(eskiList);
 			eskiList = null;
 		}
+		try {
+			isAramaIzni = false;
+			String isAramaIzniStr = ortakIslemler.getParameterKey("isAramaIzni");
+			if (PdksUtil.hasStringValue(isAramaIzniStr)) {
+				int gun = Integer.parseInt(isAramaIzniStr);
+				isAramaIzni = gun > 0;
+			}
+		} catch (Exception e) {
+			isAramaIzni = false;
+		}
+
 		if (tanimsizPersonelList.isEmpty()) {
 			gebeIcapSuaDurumMap = new HashMap<Long, List<String>>();
 		} else
@@ -5864,6 +5889,14 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 	public void setBakiyeTakipEdiliyor(Boolean bakiyeTakipEdiliyor) {
 		this.bakiyeTakipEdiliyor = bakiyeTakipEdiliyor;
+	}
+
+	public Boolean getIsAramaIzni() {
+		return isAramaIzni;
+	}
+
+	public void setIsAramaIzni(Boolean isAramaIzni) {
+		this.isAramaIzni = isAramaIzni;
 	}
 
 }

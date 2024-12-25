@@ -2717,7 +2717,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		if (mailBosGonder && mailStatu == null && (getTestSunucuDurum() || erpVeriOku == false))
 			mailBosGonder("saveIzinler", "izin", izinList);
 		hataList = null;
-
+		bakiyeMap = null;
 		saveFonksiyonVeri(null, izinList);
 
 		mesajInfoYaz("saveIzinler --> " + mesaj + " out " + PdksUtil.getCurrentTimeStampStr());

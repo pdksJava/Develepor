@@ -5,7 +5,7 @@ package org.pdks.entity;
 
 public enum PersonelDurumTipi {
 
-	GEBE(1), SUT_IZNI(2);
+	GEBE(1), SUT_IZNI(2), IS_ARAMA_IZNI(3);
 
 	private final Integer value;
 
