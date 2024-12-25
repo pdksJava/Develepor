@@ -2005,7 +2005,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 							PersonelIzinDetay izinDetay = new PersonelIzinDetay();
 							izinDetay.setPersonelIzin(personelIzin);
 							izinDetay.setHakEdisIzin(hakEdisIzin);
-							izinDetay.setIzinMiktari(personelIzin.getIzinSuresi());
+//							izinDetay.setIzinMiktari(personelIzin.getIzinSuresi());
 							pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
 							pdksEntityController.saveOrUpdate(session, entityManager, izinDetay);
 						}

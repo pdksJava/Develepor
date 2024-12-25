@@ -3678,7 +3678,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 								izinDetay.setPersonelIzin(personelIzin);
 							}
 							izinDetay.setHakEdisIzin(hakEdisIzin != null ? hakEdisIzin : tempBakiye);
-							izinDetay.setIzinMiktari(izinSuresiGunSaat);
+//							izinDetay.setIzinMiktari(izinSuresiGunSaat);
 							izinDetayList.add(izinDetay);
 							izinSuresiGunSaat = 0;
 							break;

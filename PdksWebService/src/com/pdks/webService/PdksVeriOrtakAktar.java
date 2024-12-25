@@ -1571,13 +1571,13 @@ public class PdksVeriOrtakAktar implements Serializable {
 									PersonelIzinDetay personelIzinDetay = new PersonelIzinDetay();
 									personelIzinDetay.setPersonelIzin(personelIzin);
 									personelIzinDetay.setHakEdisIzin(hakedisPersonelIzin);
-									personelIzinDetay.setIzinMiktari(izinERP.getIzinSuresi());
+//									personelIzinDetay.setIzinMiktari(izinERP.getIzinSuresi());
 									saveList.add(personelIzinDetay);
 								} else {
 									PersonelIzinDetay personelIzinDetay = izinDetayMap.get(personelIzin.getId());
 									personelIzinDetay.setHakEdisIzin(hakedisPersonelIzin);
 									if (personelIzinDetay.getIzinMiktari() != izinERP.getIzinSuresi().doubleValue()) {
-										personelIzinDetay.setIzinMiktari(izinERP.getIzinSuresi());
+//										personelIzinDetay.setIzinMiktari(izinERP.getIzinSuresi());
 										saveList.add(personelIzinDetay);
 									}
 

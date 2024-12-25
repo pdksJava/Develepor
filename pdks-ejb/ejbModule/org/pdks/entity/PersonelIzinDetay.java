@@ -3,7 +3,6 @@ package org.pdks.entity;
 import java.io.Serializable;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -37,7 +36,7 @@ public class PersonelIzinDetay extends BasePDKSObject implements Serializable, C
 
 	private PersonelIzin personelIzin;
 
-	private double izinMiktari;
+	// private double izinMiktari;
 
 	public PersonelIzinDetay() {
 		super();
@@ -48,7 +47,7 @@ public class PersonelIzinDetay extends BasePDKSObject implements Serializable, C
 		super();
 		this.hakEdisIzin = hakEdisIzin;
 		this.personelIzin = personelIzin;
-		this.izinMiktari = izinMiktari;
+		// this.izinMiktari = izinMiktari;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -73,13 +72,18 @@ public class PersonelIzinDetay extends BasePDKSObject implements Serializable, C
 		this.personelIzin = personelIzin;
 	}
 
-	@Column(name = "IZIN_MIKTARI", precision = 2, scale = 2)
-	public double getIzinMiktari() {
-		return izinMiktari;
-	}
+	// @Column(name = "IZIN_MIKTARI", precision = 2, scale = 2)
+	// public double getIzinMiktari() {
+	// return izinMiktari;
+	// }
+	//
+	// public void setIzinMiktari(double izinMiktari) {
+	// this.izinMiktari = izinMiktari;
+	// }
 
-	public void setIzinMiktari(double izinMiktari) {
-		this.izinMiktari = izinMiktari;
+	@Transient
+	public double getIzinMiktari() {
+		return personelIzin != null && personelIzin.getIzinSuresi() != null ? personelIzin.getIzinSuresi() : 0.0d;
 	}
 
 	@Transient
@@ -94,6 +98,7 @@ public class PersonelIzinDetay extends BasePDKSObject implements Serializable, C
 
 	@Transient
 	public String getIzinSuresiAciklama() {
+		double izinMiktari = getIzinMiktari();
 		long izinSuresi = new Double(izinMiktari).longValue();
 		String aciklama = "";
 		try {
@@ -117,7 +122,6 @@ public class PersonelIzinDetay extends BasePDKSObject implements Serializable, C
 	}
 
 	public void entityRefresh() {
-		
 
 	}
 
