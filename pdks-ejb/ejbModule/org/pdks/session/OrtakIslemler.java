@@ -12969,8 +12969,8 @@ public class OrtakIslemler implements Serializable {
 								sutIzniVar = true;
 							}
 
-						}else if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.IS_ARAMA_IZNI)) {  
-						 	isAramaPersonelDonemselDurum = personelDonemselDurum;
+						} else if (personelDonemselDurum.getPersonelDurumTipi().equals(PersonelDurumTipi.IS_ARAMA_IZNI)) {
+							isAramaPersonelDonemselDurum = personelDonemselDurum;
 							if (donemTamam) {
 								isAramaIzniVar = true;
 							}
@@ -19475,7 +19475,7 @@ public class OrtakIslemler implements Serializable {
 			giris.setKapiView(girisKapi);
 			boolean eklendi = bugun.before(zaman) && vardiyaGun.addHareket(giris, Boolean.FALSE);
 			if (!eklendi) {
-				PdksUtil.addMessageAvailableWarn(vardiyaGun.getPersonel().getPdksSicilNo() + " " + vardiyaGun.getPersonel().getAdSoyad() + " " + PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "d MMMMM") + " giriş eklenemedi!");
+				// PdksUtil.addMessageAvailableWarn(vardiyaGun.getPersonel().getPdksSicilNo() + " " + vardiyaGun.getPersonel().getAdSoyad() + " " + PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "d MMMMM") + " giriş eklenemedi!");
 				vardiyaGun.hareketKontrolZamansiz(giris, Boolean.FALSE);
 			}
 
@@ -19494,7 +19494,7 @@ public class OrtakIslemler implements Serializable {
 			boolean eklendi = bugun.before(zaman) && vardiyaGun.addHareket(cikis, Boolean.FALSE);
 			if (!eklendi) {
 				if (vardiyaGun.getVardiyaDate().before(bugun)) {
-					PdksUtil.addMessageAvailableWarn(vardiyaGun.getPersonel().getPdksSicilNo() + " " + vardiyaGun.getPersonel().getAdSoyad() + " " + PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "d MMMMM") + " çıkış eklenemedi!");
+					// PdksUtil.addMessageAvailableWarn(vardiyaGun.getPersonel().getPdksSicilNo() + " " + vardiyaGun.getPersonel().getAdSoyad() + " " + PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "d MMMMM") + " çıkış eklenemedi!");
 				}
 				vardiyaGun.hareketKontrolZamansiz(cikis, Boolean.FALSE);
 			}
