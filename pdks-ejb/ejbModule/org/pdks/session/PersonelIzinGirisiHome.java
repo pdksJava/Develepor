@@ -321,8 +321,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 										saveList.add(izinOnay1);
 										saveList.add(izinOnay2);
 									}
-									PersonelIzinDetay izinDetay1 = new PersonelIzinDetay(hakedesIzin1, izin1, sure1);
-									PersonelIzinDetay izinDetay2 = new PersonelIzinDetay(hakedesIzin2, izin2, sure2);
+									PersonelIzinDetay izinDetay1 = new PersonelIzinDetay(hakedesIzin1, izin1);
+									PersonelIzinDetay izinDetay2 = new PersonelIzinDetay(hakedesIzin2, izin2);
 									User sistemAdminUser = ortakIslemler.getSistemAdminUser(session);
 									yilBasiIzin.setGuncelleyenUser(sistemAdminUser);
 									yilBasiIzin.setGuncellemeTarihi((Date) guncellemeTarihi.clone());
@@ -3678,7 +3678,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 								izinDetay.setPersonelIzin(personelIzin);
 							}
 							izinDetay.setHakEdisIzin(hakEdisIzin != null ? hakEdisIzin : tempBakiye);
-//							izinDetay.setIzinMiktari(izinSuresiGunSaat);
+							// izinDetay.setIzinMiktari(izinSuresiGunSaat);
 							izinDetayList.add(izinDetay);
 							izinSuresiGunSaat = 0;
 							break;

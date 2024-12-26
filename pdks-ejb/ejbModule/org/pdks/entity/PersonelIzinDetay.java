@@ -43,7 +43,7 @@ public class PersonelIzinDetay extends BasePDKSObject implements Serializable, C
 
 	}
 
-	public PersonelIzinDetay(PersonelIzin hakEdisIzin, PersonelIzin personelIzin, double izinMiktari) {
+	public PersonelIzinDetay(PersonelIzin hakEdisIzin, PersonelIzin personelIzin) {
 		super();
 		this.hakEdisIzin = hakEdisIzin;
 		this.personelIzin = personelIzin;
