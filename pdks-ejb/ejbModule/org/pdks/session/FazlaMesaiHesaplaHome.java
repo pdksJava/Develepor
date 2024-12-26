@@ -158,7 +158,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private Boolean aksamGun = Boolean.FALSE, aksamSaat = Boolean.FALSE, hataliPuantajGoster = Boolean.FALSE, stajerSirket, departmanBolumAyni = Boolean.FALSE;
 	private Boolean modelGoster = Boolean.FALSE, kullaniciPersonel = Boolean.FALSE, denklestirmeAyDurum = Boolean.FALSE, gecenAyDurum = Boolean.FALSE, izinGoster = Boolean.FALSE, yoneticiRolVarmi = Boolean.FALSE;
 	private boolean adminRole, hareketIptalEt = false, ikRole, personelHareketDurum, personelFazlaMesaiDurum, vardiyaPlaniDurum, personelIzinGirisiDurum, fazlaMesaiTalepOnayliDurum = Boolean.FALSE;
-	private Boolean izinCalismayanMailGonder = Boolean.FALSE, hatalariAyikla = Boolean.FALSE, kismiOdemeGoster = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE;
+	private Boolean izinCalismayanMailGonder = Boolean.FALSE, isAramaGoster = Boolean.FALSE, hatalariAyikla = Boolean.FALSE, kismiOdemeGoster = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE;
 	private boolean topluGuncelle = false, yarimYuvarla = true, istifaGoster = false, sadeceFazlaMesai = true, saatlikCalismaGoster = false, izinBordoroGoster = false, bordroPuantajEkranindaGoster = false, planOnayDurum, eksikCalismaGoster, eksikMaasGoster = false;
 	private int ay, yil, maxYil, sonDonem, pageSize;
 	private String manuelGirisGoster = "", kapiGirisSistemAdi = "", birdenFazlaKGSSirketSQL = "";
@@ -357,6 +357,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			stajerSirket = Boolean.FALSE;
 			sutIzniGoster = Boolean.FALSE;
 			gebeGoster = Boolean.FALSE;
+			isAramaGoster = Boolean.FALSE;
 			partTimeGoster = Boolean.FALSE;
 			suaGoster = Boolean.FALSE;
 			mailGonder = Boolean.FALSE;
@@ -1204,6 +1205,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			denklestirmeDinamikAlanlar.clear();
 		sutIzniGoster = Boolean.FALSE;
 		gebeGoster = Boolean.FALSE;
+		isAramaGoster = Boolean.FALSE;
 		yasalFazlaCalismaAsanSaat = Boolean.FALSE;
 		partTimeGoster = Boolean.FALSE;
 		suaGoster = Boolean.FALSE;
@@ -1550,6 +1552,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				List<AylikPuantaj> puantajDenklestirmeList = new ArrayList<AylikPuantaj>();
 				aylikPuantajSablon.setGebeDurum(false);
 				aylikPuantajSablon.setSuaDurum(false);
+				aylikPuantajSablon.setIsAramaDurum(false);
 				for (Iterator iterator1 = list.iterator(); iterator1.hasNext();) {
 					PersonelDenklestirmeTasiyici denklestirmeTasiyici = (PersonelDenklestirmeTasiyici) iterator1.next();
 					AylikPuantaj puantaj = (AylikPuantaj) aylikPuantajSablon.clone();
@@ -2130,6 +2133,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						yasalFazlaCalismaAsanSaat = calismaModeli.isFazlaMesaiVarMi() && ucretiOdenenMesaiSure > 0.0d;
 					if (!sutIzniGoster)
 						sutIzniGoster = personelDenklestirme != null && (personelDenklestirme.getSutIzniDurum() != null && personelDenklestirme.getSutIzniDurum());
+					if (!isAramaGoster)
+						isAramaGoster = personelDenklestirme != null && (personelDenklestirme.getIsAramaPersonelDonemselDurum() != null && personelDenklestirme.getIsAramaPersonelDonemselDurum().getIsAramaIzni());
+
 					if (!partTimeGoster)
 						partTimeGoster = personelDenklestirme != null && personelDenklestirme.isPartTimeDurumu();
 					if (!suaGoster)
@@ -7524,6 +7530,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	public void setHataliSicilNo(String hataliSicilNo) {
 		this.hataliSicilNo = hataliSicilNo;
+	}
+
+	public Boolean getIsAramaGoster() {
+		return isAramaGoster;
+	}
+
+	public void setIsAramaGoster(Boolean isAramaGoster) {
+		this.isAramaGoster = isAramaGoster;
 	}
 
 }

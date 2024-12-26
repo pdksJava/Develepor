@@ -382,6 +382,31 @@
 										<h:outputText value="#{authenticatedUser.getYesNo(ap.sutIzniDurumu)}" />
 									</ui:fragment>
 								</rich:column>
+								<rich:column rendered="#{fazlaMesaiOzetRaporHome.isAramaDurum}" style="text-align: center;width: 60px;">
+									<f:facet name="header">
+										<h:outputText value="İş Arama İzni" title="İş Arama İzni Kullanıyor" />
+									</f:facet>
+									<ui:fragment rendered="#{ap.personelDenklestirme.isAramaPersonelDonemselDurum == null}">
+										<h:outputText value="#{authenticatedUser.getYesNo(ap.isAramaDurum)}" />
+									</ui:fragment>
+									<ui:fragment rendered="#{ap.personelDenklestirme.isAramaPersonelDonemselDurum != null}">
+										<span id="sutIzni#{ap.pdksPersonel.id}" style="font-weight: bold;"> <h:outputText
+												value="#{authenticatedUser.getYesNo(ap.isAramaDurum)}" /></span>
+										<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ikRole or fazlaMesaiHesaplaHome.adminRole}">
+											<rich:toolTip for="sutIzni#{ap.pdksPersonel.id}">
+												<h:panelGrid columns="1">
+													<ui:fragment>
+														<B>#{ap.personelDenklestirme.isAramaPersonelDonemselDurum.personelDurumTipiAciklama} Dönemi :</B>
+													</ui:fragment>
+													<h:outputText
+														value="#{authenticatedUser.dateFormatla(ap.personelDenklestirme.isAramaPersonelDonemselDurum.basTarih)}   -
+													 #{authenticatedUser.dateFormatla(ap.personelDenklestirme.isAramaPersonelDonemselDurum.bitTarih)}" />
+
+												</h:panelGrid>
+											</rich:toolTip>
+										</ui:fragment>
+									</ui:fragment>
+								</rich:column>
 								<rich:column rendered="#{fazlaMesaiOzetRaporHome.partTime}" style="text-align: center;width: 60px;">
 									<f:facet name="header">
 										<h:outputText value="Part Time" />
@@ -578,7 +603,8 @@
 												</rich:toolTip>
 											</ui:fragment>
 										</f:facet>
-										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.fazlaMesaiSure)}" rendered="#{ap.fazlaMesaiHesapla and ap.fazlaMesaiSure != 0}" />
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.fazlaMesaiSure)}"
+											rendered="#{ap.fazlaMesaiHesapla and ap.fazlaMesaiSure != 0}" />
 
 									</rich:column>
 

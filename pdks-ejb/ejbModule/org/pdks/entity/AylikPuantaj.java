@@ -81,7 +81,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	private boolean kaydet, calisiyor = true, gorevYeriSec = false, yoneticiZorunlu = true, secili, onayDurum, vardiyaOlustu = Boolean.FALSE, vardiyaDegisti = Boolean.FALSE, fiiliHesapla = Boolean.FALSE;
 
-	private boolean donemBitti = Boolean.TRUE, ayrikHareketVar = Boolean.FALSE, fazlaMesaiIzinKontrol = Boolean.TRUE, gebeDurum = Boolean.FALSE,  sutIzniDurumu = Boolean.FALSE;
+	private boolean donemBitti = Boolean.TRUE, ayrikHareketVar = Boolean.FALSE, fazlaMesaiIzinKontrol = Boolean.TRUE, gebeDurum = Boolean.FALSE, sutIzniDurumu = Boolean.FALSE;
 
 	private Double saatToplami = 0d, resmiTatilToplami = 0d, haftaCalismaSuresi = 0d, ucretiOdenenMesaiSure = 0d, fazlaMesaiSure = 0d, odenenSure = 0d, planlananSure = 0d, offSure = 0.0d;
 
@@ -464,7 +464,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 		boolean suaDurum = personelDenklestirme.isSuaDurumu();
 		CalismaModeli calismaModeli = personelDenklestirme.getCalismaModeliAy() != null ? personelDenklestirme.getCalismaModeli() : null;
-
+		this.setIsAramaDurum(personelDenklestirme.getIsAramaPersonelDonemselDurum() != null && personelDenklestirme.getIsAramaPersonelDonemselDurum().getIsAramaIzni());
 		for (VardiyaGun vg : vardiyalar) {
 			Vardiya vardiya = vg.getVardiya();
 			if (vg.isAyinGunu() && vardiya != null && vardiya.getId() != null) {
@@ -1452,7 +1452,5 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	public void setIsAramaDurum(Boolean isAramaDurum) {
 		this.isAramaDurum = isAramaDurum;
 	}
-
-	 
 
 }

@@ -134,7 +134,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	private Boolean kimlikGoster = Boolean.FALSE, aksamGun = Boolean.FALSE, maasKesintiGoster = Boolean.FALSE, aksamSaat = Boolean.FALSE, hataliPuantajGoster = Boolean.FALSE, stajerSirket, departmanBolumAyni = Boolean.FALSE;
 	private Boolean modelGoster = Boolean.FALSE, kullaniciPersonel = Boolean.FALSE, sirketGoster = Boolean.FALSE, denklestirmeAyDurum = Boolean.FALSE, yoneticiERP1Kontrol = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE;
 	private boolean adminRole, ikRole, bordroPuantajEkranindaGoster = false, fazlaMesaiVar = false, saatlikMesaiVar = false, aylikMesaiVar = false;
-	private Boolean gerceklesenMesaiKod = Boolean.FALSE, devredenBakiyeKod = Boolean.FALSE, normalCalismaSaatKod = Boolean.FALSE, haftaTatilCalismaSaatKod = Boolean.FALSE, resmiTatilCalismaSaatKod = Boolean.FALSE, izinSureSaatKod = Boolean.FALSE;
+	private Boolean gerceklesenMesaiKod = Boolean.FALSE, isAramaDurum = Boolean.FALSE, devredenBakiyeKod = Boolean.FALSE, normalCalismaSaatKod = Boolean.FALSE, haftaTatilCalismaSaatKod = Boolean.FALSE, resmiTatilCalismaSaatKod = Boolean.FALSE, izinSureSaatKod = Boolean.FALSE;
 	private Boolean normalCalismaGunKod = Boolean.FALSE, haftaTatilCalismaGunKod = Boolean.FALSE, resmiTatilCalismaGunKod = Boolean.FALSE, izinSureGunKod = Boolean.FALSE, ucretliIzinGunKod = Boolean.FALSE, ucretsizIzinGunKod = Boolean.FALSE, hastalikIzinGunKod = Boolean.FALSE;
 	private Boolean normalGunKod = Boolean.FALSE, haftaTatilGunKod = Boolean.FALSE, resmiTatilGunKod = Boolean.FALSE, artikGunKod = Boolean.FALSE, bordroToplamGunKod = Boolean.FALSE, devredenMesaiKod = Boolean.FALSE, ucretiOdenenKod = Boolean.FALSE;
 	private Boolean suaDurum = Boolean.FALSE, sutIzniDurum = Boolean.FALSE, gebeDurum = Boolean.FALSE, partTime = Boolean.FALSE;
@@ -253,7 +253,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			suaDurum = false;
 			sutIzniDurum = Boolean.FALSE;
 			partTime = Boolean.FALSE;
-			gebeDurum = false;
+			gebeDurum = Boolean.FALSE;
+			isAramaDurum = Boolean.FALSE;
 			modelGoster = Boolean.FALSE;
 			departmanBolumAyni = Boolean.FALSE;
 			bakiyeGuncelle = null;
@@ -806,10 +807,11 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		hataliPuantajVar = Boolean.FALSE;
 		fazlaMesaiOde = Boolean.FALSE;
 		sirketIzinGirisDurum = Boolean.FALSE;
-		suaDurum = false;
+		suaDurum = Boolean.FALSE;
 		sutIzniDurum = Boolean.FALSE;
 		partTime = Boolean.FALSE;
-		gebeDurum = false;
+		gebeDurum = Boolean.FALSE;
+		isAramaDurum = Boolean.FALSE;
 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
 		if (fmtMap == null)
 			fmtMap = new TreeMap<Long, List<FazlaMesaiTalep>>();
@@ -1069,6 +1071,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				HashMap<String, String> vardiyaZamanMap = new HashMap<String, String>();
 				aylikPuantajSablon.setGebeDurum(false);
 				aylikPuantajSablon.setSuaDurum(false);
+				aylikPuantajSablon.setIsAramaDurum(false);
 				for (Iterator iterator1 = list.iterator(); iterator1.hasNext();) {
 					PersonelDenklestirmeTasiyici denklestirmeTasiyici = (PersonelDenklestirmeTasiyici) iterator1.next();
 					Personel personel = denklestirmeTasiyici.getPersonel();
@@ -1434,6 +1437,9 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							ayBitti = bugun.after(vardiyaGunSon.getIslemVardiya().getVardiyaTelorans1BitZaman());
 
 					}
+					if (!isAramaDurum)
+						isAramaDurum = personelDenklestirme != null && (personelDenklestirme.getIsAramaPersonelDonemselDurum() != null && personelDenklestirme.getIsAramaPersonelDonemselDurum().getIsAramaIzni());
+
 					if (sayac == 0) {
 						iterator1.remove();
 						continue;
@@ -3908,5 +3914,13 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	public void setPersonelDinamikAlanMap(TreeMap<String, PersonelDinamikAlan> personelDinamikAlanMap) {
 		this.personelDinamikAlanMap = personelDinamikAlanMap;
+	}
+
+	public Boolean getIsAramaDurum() {
+		return isAramaDurum;
+	}
+
+	public void setIsAramaDurum(Boolean isAramaDurum) {
+		this.isAramaDurum = isAramaDurum;
 	}
 }

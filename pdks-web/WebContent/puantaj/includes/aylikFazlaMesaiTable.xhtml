@@ -221,7 +221,7 @@
 			</rich:column>
 			<rich:column class="#{aylikPuantaj.trSonucClass}" rendered="#{fazlaMesaiHesaplaHome.sutIzniGoster}" style="width: 60px">
 				<f:facet name="header">
-					<h:outputText value="Süt İzni" />
+					<h:outputText value="Süt İzni" title="Süt İzni Kullanıyor" />
 				</f:facet>
 				<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.sutIzniPersonelDonemselDurum == null}">
 					<h:outputText value="#{authenticatedUser.getYesNo(aylikPuantaj.sutIzniDurumu)}" />
@@ -244,7 +244,31 @@
 					</ui:fragment>
 				</ui:fragment>
 			</rich:column>
+			<rich:column class="#{aylikPuantaj.trSonucClass}" rendered="#{fazlaMesaiHesaplaHome.isAramaGoster}" style="width: 60px">
+				<f:facet name="header">
+					<h:outputText value="İş Arama İzni" title="İş Arama İzni Kullanıyor" />
+				</f:facet>
+				<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.isAramaPersonelDonemselDurum == null}">
+					<h:outputText value="#{authenticatedUser.getYesNo(aylikPuantaj.isAramaDurum)}" />
+				</ui:fragment>
+				<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.isAramaPersonelDonemselDurum != null}">
+					<span id="sutIzni#{aylikPuantaj.pdksPersonel.id}" style="font-weight: bold;"> <h:outputText
+							value="#{authenticatedUser.getYesNo(aylikPuantaj.isAramaDurum)}" /></span>
+					<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ikRole or fazlaMesaiHesaplaHome.adminRole}">
+						<rich:toolTip for="sutIzni#{aylikPuantaj.pdksPersonel.id}">
+							<h:panelGrid columns="1">
+								<ui:fragment>
+									<B>#{aylikPuantaj.personelDenklestirme.isAramaPersonelDonemselDurum.personelDurumTipiAciklama} Dönemi :</B>
+								</ui:fragment>
+								<h:outputText
+									value="#{authenticatedUser.dateFormatla(aylikPuantaj.personelDenklestirme.isAramaPersonelDonemselDurum.basTarih)}   -
+													 #{authenticatedUser.dateFormatla(aylikPuantaj.personelDenklestirme.isAramaPersonelDonemselDurum.bitTarih)}" />
 
+							</h:panelGrid>
+						</rich:toolTip>
+					</ui:fragment>
+				</ui:fragment>
+			</rich:column>
 			<rich:column class="#{aylikPuantaj.trSonucClass}" rendered="#{fazlaMesaiHesaplaHome.partTimeGoster}" style="width: 60px">
 				<f:facet name="header">
 					<h:outputText value="Part Time" />
