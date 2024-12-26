@@ -2,6 +2,7 @@ package org.pdks.entity;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -53,7 +54,7 @@ public class PersonelDenklestirme extends BaseObject {
 	public static final String COLUMN_NAME_EKSIK_CALISMA_SURE = "EKSIK_CALISMA_SURE";
 	public static final String COLUMN_NAME_GECEN_AY_DENKLESTIRME = "GECEN_AY_DENKLESTIRME_ID";
 
-	public static double calismaSaatiSua = 7.0d, calismaSaatiPartTime = 4.5d;
+	public static double calismaSaatiSua = 7.0d, calismaSaatiPartTime = 4.5d, isAramaIzniSaat = 2.0d;;
 
 	private Integer version = 0;
 
@@ -69,7 +70,7 @@ public class PersonelDenklestirme extends BaseObject {
 
 	private VardiyaGun izinVardiyaGun;
 
-	private PersonelDonemselDurum sutIzniPersonelDonemselDurum, gebePersonelDonemselDurum, isAramaPersonelDonemselDurum;
+	// private PersonelDonemselDurum sutIzniPersonelDonemselDurum, gebePersonelDonemselDurum, isAramaPersonelDonemselDurum;
 
 	private Double planlanSure = 0d, eksikCalismaSure = 0d, hesaplananSure = 0d, resmiTatilSure = 0d, haftaCalismaSuresi = 0d, fazlaMesaiSure = 0d, odenenSure = 0d;
 
@@ -80,6 +81,8 @@ public class PersonelDenklestirme extends BaseObject {
 	private Boolean suaDurum, fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiOde, sutIzniDurum, partTime;
 
 	private boolean erpAktarildi = Boolean.FALSE, onaylandi = Boolean.FALSE, denklestirme;
+
+	private HashMap<PersonelDurumTipi, PersonelDonemselDurum> donemselDurumMap = new HashMap<PersonelDurumTipi, PersonelDonemselDurum>();
 
 	private String mesaj;
 
@@ -479,10 +482,11 @@ public class PersonelDenklestirme extends BaseObject {
 
 	/**
 	 * @param cm
+	 * @param gebePersonelDonemselDurum
 	 * @param vardiyalar
 	 * @return
 	 */
-	private double getPlananSureHesapla(CalismaModeli cm, List<VardiyaGun> vardiyalar) {
+	private double getPlananSureHesapla(CalismaModeli cm, PersonelDonemselDurum gebePersonelDonemselDurum, List<VardiyaGun> vardiyalar) {
 		double sure = 0.0d, gun = cm.getHaftaIci();
 		Double sutIzniSabitSaat = null;
 		if (cm.getSutIzniSabitSaat() != null && cm.getSutIzniSabitSaat().doubleValue() > 0.0d)
@@ -533,12 +537,17 @@ public class PersonelDenklestirme extends BaseObject {
 	@Transient
 	public Double getMaksimumSure(double izinSure, double arifeToplamSure, List<VardiyaGun> vardiyalar) {
 		CalismaModeli cm = calismaModeliAy != null ? calismaModeliAy.getCalismaModeli() : personel.getCalismaModeli();
+		PersonelDonemselDurum gebePersonelDonemselDurum = donemselDurumMap.containsKey(PersonelDurumTipi.GEBE) ? donemselDurumMap.get(PersonelDurumTipi.GEBE) : null;
+		PersonelDonemselDurum sutIzniPersonelDonemselDurum = donemselDurumMap.containsKey(PersonelDurumTipi.SUT_IZNI) ? donemselDurumMap.get(PersonelDurumTipi.SUT_IZNI) : null;
+		PersonelDonemselDurum isAramaPersonelDonemselDurum = donemselDurumMap.containsKey(PersonelDurumTipi.IS_ARAMA_IZNI) ? donemselDurumMap.get(PersonelDurumTipi.IS_ARAMA_IZNI) : null;
+
 		double aylikSure = calismaModeliAy != null ? calismaModeliAy.getSure() : denklestirmeAy.getSure();
+
 		double aylikSutSure = calismaModeliAy != null && calismaModeliAy.getToplamIzinSure() > 0.0d ? calismaModeliAy.getToplamIzinSure() : denklestirmeAy.getToplamIzinSure();
 		if (calismaModeliAy != null && cm.getToplamGunGuncelle() && sutIzniSaatSayisi > 0)
 			aylikSure = sutIzniSaatSayisi;
 		else if (cm.isHaftaTatilSabitDegil() || sutIzniPersonelDonemselDurum != null || gebePersonelDonemselDurum != null || isAramaPersonelDonemselDurum != null) {
-			aylikSure = getPlananSureHesapla(cm, vardiyalar);
+			aylikSure = getPlananSureHesapla(cm, gebePersonelDonemselDurum, vardiyalar);
 			if (sutIzniPersonelDonemselDurum != null)
 				aylikSutSure = aylikSure;
 		}
@@ -555,20 +564,19 @@ public class PersonelDenklestirme extends BaseObject {
 
 		double sutIzniSure = sutIzniSaatSayisi != null && sutIzniSaatSayisi.doubleValue() > 0.0d && sutIzniSaatSayisi.doubleValue() != aylikSutSure ? sutIzniSaatSayisi.doubleValue() : aylikSutSure;
 		double maxSure = sutIzniDurum == null || sutIzniDurum.equals(Boolean.FALSE) || planlanSure == 0 ? aylikSure : sutIzniSure;
-		if (isAramaPersonelDonemselDurum != null) {
+		if (isAramaPersonelDonemselDurum != null && isAramaIzniSaat > 0.0d) {
 			double isAramaSure = 0.0d;
 			for (VardiyaGun vg : vardiyalar) {
 				Vardiya vardiya = vg.getVardiya();
 				if (vg.isAyinGunu() && vardiya != null && vardiya.getId() != null) {
-					if (vg.getVardiyaDateStr().endsWith("1209"))
-						logger.debug("");
+					// if (vg.getVardiyaDateStr().endsWith("1209"))
+					// logger.debug("");
 					if (vg.getIsAramaIzmiPersonelDonemselDurum()) {
 						double sure = 0.0d;
 						Tatil tatil = vg.getTatil();
 						boolean hesapla = !(vg.isIzinli() || vardiya.isHaftaTatil() || tatil != null || vardiya.isOff());
-						if (hesapla) {
-							sure = 2;
-						}
+						if (hesapla)
+							sure = isAramaIzniSaat;
 						isAramaSure += sure;
 					}
 
@@ -767,29 +775,49 @@ public class PersonelDenklestirme extends BaseObject {
 
 	@Transient
 	public PersonelDonemselDurum getSutIzniPersonelDonemselDurum() {
+		PersonelDonemselDurum sutIzniPersonelDonemselDurum = donemselDurumMap.containsKey(PersonelDurumTipi.SUT_IZNI) ? donemselDurumMap.get(PersonelDurumTipi.SUT_IZNI) : null;
 		return sutIzniPersonelDonemselDurum;
-	}
-
-	public void setSutIzniPersonelDonemselDurum(PersonelDonemselDurum sutIzniPersonelDonemselDurum) {
-		this.sutIzniPersonelDonemselDurum = sutIzniPersonelDonemselDurum;
 	}
 
 	@Transient
 	public PersonelDonemselDurum getGebePersonelDonemselDurum() {
+		PersonelDonemselDurum gebePersonelDonemselDurum = donemselDurumMap.containsKey(PersonelDurumTipi.GEBE) ? donemselDurumMap.get(PersonelDurumTipi.GEBE) : null;
 		return gebePersonelDonemselDurum;
-	}
-
-	public void setGebePersonelDonemselDurum(PersonelDonemselDurum gebePersonelDonemselDurum) {
-		this.gebePersonelDonemselDurum = gebePersonelDonemselDurum;
 	}
 
 	@Transient
 	public PersonelDonemselDurum getIsAramaPersonelDonemselDurum() {
+		PersonelDonemselDurum isAramaPersonelDonemselDurum = donemselDurumMap.containsKey(PersonelDurumTipi.IS_ARAMA_IZNI) ? donemselDurumMap.get(PersonelDurumTipi.IS_ARAMA_IZNI) : null;
 		return isAramaPersonelDonemselDurum;
 	}
 
-	public void setIsAramaPersonelDonemselDurum(PersonelDonemselDurum isAramaPersonelDonemselDurum) {
-		this.isAramaPersonelDonemselDurum = isAramaPersonelDonemselDurum;
+	public void setSutIzniPersonelDonemselDurum(PersonelDonemselDurum value) {
+		donemselDurumMap.put(PersonelDurumTipi.SUT_IZNI, value);
+	}
+
+	public void setGebePersonelDonemselDurum(PersonelDonemselDurum value) {
+		donemselDurumMap.put(PersonelDurumTipi.GEBE, value);
+	}
+
+	public void setIsAramaPersonelDonemselDurum(PersonelDonemselDurum value) {
+		donemselDurumMap.put(PersonelDurumTipi.IS_ARAMA_IZNI, value);
+	}
+
+	@Transient
+	public HashMap<PersonelDurumTipi, PersonelDonemselDurum> getDonemselDurumMap() {
+		return donemselDurumMap;
+	}
+
+	public void setDonemselDurumMap(HashMap<PersonelDurumTipi, PersonelDonemselDurum> donemselDurumMap) {
+		this.donemselDurumMap = donemselDurumMap;
+	}
+
+	public static double getIsAramaIzniSaat() {
+		return isAramaIzniSaat;
+	}
+
+	public static void setIsAramaIzniSaat(double isAramaIzniSaat) {
+		PersonelDenklestirme.isAramaIzniSaat = isAramaIzniSaat;
 	}
 
 }

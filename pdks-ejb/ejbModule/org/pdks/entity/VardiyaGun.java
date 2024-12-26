@@ -86,11 +86,13 @@ public class VardiyaGun extends BaseObject {
 	private List<String> linkAdresler;
 	private HashMap<String, Personel> gorevliPersonelMap;
 	private CalismaModeli calismaModeli = null;
-	private PersonelDonemselDurum sutIzniPersonelDonemselDurum, gebePersonelDonemselDurum, isAramaPersonelDonemselDurum;
 	private Boolean fazlaMesaiOnayla;
 	private Integer version = 0;
 	private List<FazlaMesaiTalep> fazlaMesaiTalepler;
 	private List<YemekIzin> yemekList;
+	private HashMap<PersonelDurumTipi, PersonelDonemselDurum> donemselDurumMap = new HashMap<PersonelDurumTipi, PersonelDonemselDurum>();
+
+	// private PersonelDonemselDurum sutIzniPersonelDonemselDurum, gebePersonelDonemselDurum, isAramaPersonelDonemselDurum;
 
 	public VardiyaGun() {
 		super();
@@ -2336,50 +2338,64 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public PersonelDonemselDurum getSutIzniPersonelDonemselDurum() {
+		PersonelDonemselDurum sutIzniPersonelDonemselDurum = donemselDurumMap.containsKey(PersonelDurumTipi.SUT_IZNI) ? donemselDurumMap.get(PersonelDurumTipi.SUT_IZNI) : null;
 		return sutIzniPersonelDonemselDurum;
 	}
 
-	public void setSutIzniPersonelDonemselDurum(PersonelDonemselDurum sutIzniPersonelDonemselDurum) {
-		this.sutIzniPersonelDonemselDurum = sutIzniPersonelDonemselDurum;
+	public void setSutIzniPersonelDonemselDurum(PersonelDonemselDurum value) {
+		donemselDurumMap.put(PersonelDurumTipi.SUT_IZNI, value);
 	}
 
 	@Transient
 	public boolean isSutIzniPersonelDonemselDurum() {
+		PersonelDonemselDurum sutIzniPersonelDonemselDurum = donemselDurumMap.containsKey(PersonelDurumTipi.SUT_IZNI) ? donemselDurumMap.get(PersonelDurumTipi.SUT_IZNI) : null;
 		return sutIzniPersonelDonemselDurum != null && sutIzniPersonelDonemselDurum.isSutIzni();
 	}
 
 	@Transient
 	public Boolean getIsAramaIzmiPersonelDonemselDurum() {
+		PersonelDonemselDurum isAramaPersonelDonemselDurum = donemselDurumMap.containsKey(PersonelDurumTipi.IS_ARAMA_IZNI) ? donemselDurumMap.get(PersonelDurumTipi.IS_ARAMA_IZNI) : null;
 		return isAramaPersonelDonemselDurum != null && isAramaPersonelDonemselDurum.getIsAramaIzni();
 	}
 
 	@Transient
 	public PersonelDonemselDurum getGebePersonelDonemselDurum() {
+		PersonelDonemselDurum gebePersonelDonemselDurum = donemselDurumMap.containsKey(PersonelDurumTipi.GEBE) ? donemselDurumMap.get(PersonelDurumTipi.GEBE) : null;
 		return gebePersonelDonemselDurum;
 	}
 
-	public void setGebePersonelDonemselDurum(PersonelDonemselDurum gebePersonelDonemselDurum) {
-		this.gebePersonelDonemselDurum = gebePersonelDonemselDurum;
+	public void setGebePersonelDonemselDurum(PersonelDonemselDurum value) {
+		donemselDurumMap.put(PersonelDurumTipi.GEBE, value);
 	}
 
 	@Transient
 	public PersonelDonemselDurum getIsAramaPersonelDonemselDurum() {
+		PersonelDonemselDurum isAramaPersonelDonemselDurum = donemselDurumMap.containsKey(PersonelDurumTipi.IS_ARAMA_IZNI) ? donemselDurumMap.get(PersonelDurumTipi.IS_ARAMA_IZNI) : null;
 		return isAramaPersonelDonemselDurum;
 	}
 
 	public void setIsAramaPersonelDonemselDurum(PersonelDonemselDurum value) {
 		if (this.getVardiyaDateStr().endsWith("1231") && value != null)
 			logger.debug(value);
-		this.isAramaPersonelDonemselDurum = value;
+		donemselDurumMap.put(PersonelDurumTipi.IS_ARAMA_IZNI, value);
 	}
 
 	@Transient
 	public boolean isGebePersonelDonemselDurum() {
+		PersonelDonemselDurum gebePersonelDonemselDurum = donemselDurumMap.containsKey(PersonelDurumTipi.GEBE) ? donemselDurumMap.get(PersonelDurumTipi.GEBE) : null;
 		return gebePersonelDonemselDurum != null && gebePersonelDonemselDurum.isGebe();
+	}
+
+	@Transient
+	public HashMap<PersonelDurumTipi, PersonelDonemselDurum> getDonemselDurumMap() {
+		return donemselDurumMap;
+	}
+
+	public void setDonemselDurumMap(HashMap<PersonelDurumTipi, PersonelDonemselDurum> donemselDurumMap) {
+		this.donemselDurumMap = donemselDurumMap;
 	}
 
 	public void entityRefresh() {
 
 	}
-
 }

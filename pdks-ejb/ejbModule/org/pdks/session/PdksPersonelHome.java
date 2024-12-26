@@ -48,6 +48,7 @@ import org.pdks.entity.NoteTipi;
 import org.pdks.entity.Notice;
 import org.pdks.entity.PdksPersonelView;
 import org.pdks.entity.Personel;
+import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDinamikAlan;
 import org.pdks.entity.PersonelDonemselDurum;
 import org.pdks.entity.PersonelDurumTipi;
@@ -1541,16 +1542,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * @param personel
 	 * @return
 	 */
-	public Boolean secIsAramaIzni(Personel personel) {
-
-		boolean secim = ortakIslemler.getParameterKey("isAramaIzni").equals("1");
-		return secim;
-	}
-
-	/**
-	 * @param personel
-	 * @return
-	 */
 	public Boolean secGebe(Personel personel) {
 		if (personel == null)
 			personel = getInstance();
@@ -3020,16 +3011,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				tanimsizPersonelList.addAll(eskiList);
 			eskiList = null;
 		}
-		try {
-			isAramaIzni = false;
-			String isAramaIzniStr = ortakIslemler.getParameterKey("isAramaIzni");
-			if (PdksUtil.hasStringValue(isAramaIzniStr)) {
-				int gun = Integer.parseInt(isAramaIzniStr);
-				isAramaIzni = gun > 0;
-			}
-		} catch (Exception e) {
-			isAramaIzni = false;
-		}
+
+		isAramaIzni = PersonelDenklestirme.getIsAramaIzniSaat() > 0.0d;
 
 		if (tanimsizPersonelList.isEmpty()) {
 			gebeIcapSuaDurumMap = new HashMap<Long, List<String>>();

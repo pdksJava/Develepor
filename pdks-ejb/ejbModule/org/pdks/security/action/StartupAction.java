@@ -745,6 +745,7 @@ public class StartupAction implements Serializable {
 				PdksUtil.setOdenenFazlaMesaiSaati(parameterMap.containsKey("odenenFazlaMesaiSaati") ? Double.parseDouble(parameterMap.get("odenenFazlaMesaiSaati")) : 0d);
 				PersonelDenklestirme.setCalismaSaatiSua(parameterMap.containsKey("calismaSaatiSua") ? Double.parseDouble(parameterMap.get("calismaSaatiSua")) : 7.0d);
 				PersonelDenklestirme.setCalismaSaatiPartTime(parameterMap.containsKey("calismaSaatiPartTime") ? Double.parseDouble(parameterMap.get("calismaSaatiPartTime")) : 6.0d);
+				PersonelDenklestirme.setIsAramaIzniSaat(parameterMap.containsKey("isAramaIzni") ? Double.parseDouble(parameterMap.get("isAramaIzni")) : 0.0d);
 				PdksUtil.setUrl(parameterMap.containsKey("uygulamaURL") ? parameterMap.get("uygulamaURL") : null);
 				Tanim.setMultiLanguage(parameterMap.containsKey("multiLanguage"));
 				setLDAPUserList(session);
