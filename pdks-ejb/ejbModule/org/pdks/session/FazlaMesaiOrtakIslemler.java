@@ -300,16 +300,19 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 								boolean donemIci = vGun.getVardiyaDate().getTime() <= pdd.getBitTarih().getTime() && vGun.getVardiyaDate().getTime() >= pdd.getBasTarih().getTime();
 								if (donemIci) {
 									if (pdd.getIsAramaIzni()) {
+										if (pd.getIsAramaPersonelDonemselDurum() == null)
+											pd.setIsAramaPersonelDonemselDurum(pdd);
 										vGun.setIsAramaPersonelDonemselDurum(pdd);
-										pd.setIsAramaPersonelDonemselDurum(pdd);
 									} else {
 										if (pdd.isSutIzni()) {
-											pd.setSutIzniPersonelDonemselDurum(pdd);
+											if (pd.getSutIzniPersonelDonemselDurum() == null)
+												pd.setSutIzniPersonelDonemselDurum(pdd);
 											vGun.setSutIzniPersonelDonemselDurum(pdd);
 										}
 
 										else if (pdd.isGebe()) {
-											pd.setGebePersonelDonemselDurum(pdd);
+											if (pd.getGebePersonelDonemselDurum() == null)
+												pd.setGebePersonelDonemselDurum(pdd);
 											vGun.setGebePersonelDonemselDurum(pdd);
 										}
 										if (aylikPuantaj.isGebeDurum() == false && (vGun.isGebeMi() || vGun.isGebePersonelDonemselDurum())) {

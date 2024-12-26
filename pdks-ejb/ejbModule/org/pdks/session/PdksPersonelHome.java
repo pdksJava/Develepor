@@ -283,10 +283,12 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 			}
 			List<Integer> list = new ArrayList<Integer>();
-			if (personel.getCinsiyetBayan()) {
-				if (secGebe(personel))
-					list.add(PersonelDurumTipi.GEBE.value());
-				list.add(PersonelDurumTipi.SUT_IZNI.value());
+			if (personel.getSirket().isGebelikSutIzinVar()) {
+				if (personel.getCinsiyetBayan()) {
+					if (secGebe(personel))
+						list.add(PersonelDurumTipi.GEBE.value());
+					list.add(PersonelDurumTipi.SUT_IZNI.value());
+				}
 			}
 			if (isAramaIzni)
 				list.add(PersonelDurumTipi.IS_ARAMA_IZNI.value());
@@ -347,6 +349,12 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				fields.put("basTarih<=", donemselDurum.getBitTarih());
 				if (donemselDurum.getId() != null)
 					fields.put("id<>", donemselDurum.getId());
+				if (isAramaIzni) {
+					if (donemselDurum.getIsAramaIzni())
+						fields.put("personelDurumTipiId=", donemselDurum.getPersonelDurumTipiId());
+					else
+						fields.put("personelDurumTipiId<>", donemselDurum.getPersonelDurumTipiId());
+				}
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				list = pdksEntityController.getObjectByInnerObjectListInLogic(fields, PersonelDonemselDurum.class);

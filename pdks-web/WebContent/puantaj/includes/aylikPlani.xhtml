@@ -66,6 +66,9 @@
 						<ui:fragment rendered="#{vardiyaGunHome.sutIzniGoster}">
 							<th style="width: 30px"><h:outputText value="Süt İzni" title="Süt İzni Kullanıyor" /></th>
 						</ui:fragment>
+						<ui:fragment rendered="#{vardiyaGunHome.isAramaGoster}">
+							<th style="width: 30px"><h:outputText value="İş Arama İzni" title="İş Arama İzni Kullanıyor" /></th>
+						</ui:fragment>
 						<ui:fragment rendered="#{vardiyaGunHome.partTimeGoster}">
 							<th style="width: 30px"><h:outputText value="Part Time" title="Part Time Çalışıyor" /></th>
 						</ui:fragment>
@@ -452,6 +455,28 @@
 										</ui:fragment>
 									</ui:fragment></td>
 							</ui:fragment>
+							<ui:fragment rendered="#{vardiyaGunHome.isAramaGoster}">
+								<td class="#{aylikPuantaj.trClass}" align="center" style="width: 20px"><ui:fragment
+										rendered="#{aylikPuantaj.personelDenklestirme.isAramaPersonelDonemselDurum == null}">
+										<h:outputText value="#{authenticatedUser.getYesNo(aylikPuantaj.isAramaDurum)}" />
+									</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.isAramaPersonelDonemselDurum != null}">
+										<span id="sutIzni#{aylikPuantaj.pdksPersonel.id}" style="font-weight: bold;"> <h:outputText
+												value="#{authenticatedUser.getYesNo(aylikPuantaj.isAramaDurum)}" /></span>
+										<ui:fragment rendered="#{vardiyaGunHome.ikRole or vardiyaGunHome.adminRole}">
+											<rich:toolTip for="sutIzni#{aylikPuantaj.pdksPersonel.id}">
+												<h:panelGrid columns="1">
+													<ui:fragment>
+														<B>#{aylikPuantaj.personelDenklestirme.isAramaPersonelDonemselDurum.personelDurumTipiAciklama} Dönemi :</B>
+													</ui:fragment>
+													<h:outputText
+														value="#{authenticatedUser.dateFormatla(aylikPuantaj.personelDenklestirme.isAramaPersonelDonemselDurum.basTarih)}   -
+													 #{authenticatedUser.dateFormatla(aylikPuantaj.personelDenklestirme.isAramaPersonelDonemselDurum.bitTarih)}" />
+
+												</h:panelGrid>
+											</rich:toolTip>
+										</ui:fragment>
+									</ui:fragment></td>
+							</ui:fragment>
 							<ui:fragment rendered="#{vardiyaGunHome.partTimeGoster}">
 								<td class="#{aylikPuantaj.trClass}" align="center" style="width: 20px"><h:outputText
 										value="#{authenticatedUser.getYesNo(aylikPuantaj.personelDenklestirme.partTime)}" /></td>
@@ -746,6 +771,9 @@
 						<ui:fragment rendered="#{vardiyaGunHome.sutIzniGoster}">
 							<td></td>
 						</ui:fragment>
+						<ui:fragment rendered="#{vardiyaGunHome.isAramaGoster}">
+							<td></td>
+						</ui:fragment>
 						<ui:fragment rendered="#{vardiyaGunHome.partTimeGoster}">
 							<td></td>
 						</ui:fragment>
@@ -797,6 +825,9 @@
 								<td></td>
 							</ui:fragment>
 							<ui:fragment rendered="#{vardiyaGunHome.sutIzniGoster}">
+								<td></td>
+							</ui:fragment>
+							<ui:fragment rendered="#{vardiyaGunHome.isAramaGoster}">
 								<td></td>
 							</ui:fragment>
 							<ui:fragment rendered="#{vardiyaGunHome.partTimeGoster}">

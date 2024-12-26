@@ -2367,8 +2367,10 @@ public class VardiyaGun extends BaseObject {
 		return isAramaPersonelDonemselDurum;
 	}
 
-	public void setIsAramaPersonelDonemselDurum(PersonelDonemselDurum isAramaPersonelDonemselDurum) {
-		this.isAramaPersonelDonemselDurum = isAramaPersonelDonemselDurum;
+	public void setIsAramaPersonelDonemselDurum(PersonelDonemselDurum value) {
+		if (this.getVardiyaDateStr().endsWith("1231") && value != null)
+			logger.debug(value);
+		this.isAramaPersonelDonemselDurum = value;
 	}
 
 	@Transient

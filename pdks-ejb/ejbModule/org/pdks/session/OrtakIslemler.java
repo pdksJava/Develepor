@@ -9027,8 +9027,11 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String getMenuAdi(String menuAdi) {
-		String menuTanimAdi = menuAdi.equals("anaSayfa") ? "Ana Sayfa" : menuItemMap.get(menuAdi).getDescription().getAciklama();
-
+		String menuTanimAdi = "";
+		if (menuAdi.equalsIgnoreCase("anaSayfa"))
+			menuTanimAdi = "Ana Sayfa";
+		else if (menuItemMap.containsKey(menuAdi))
+			menuTanimAdi = menuItemMap.get(menuAdi).getDescription().getAciklama();
 		return menuTanimAdi;
 	}
 
@@ -12984,13 +12987,13 @@ public class OrtakIslemler implements Serializable {
 				if (denkMap.containsKey(key)) {
 
 					PersonelDenklestirme denklestirme = denkMap.get(key);
-					if (denklestirme.getSutIzniPersonelDonemselDurum() == null) {
+					if (denklestirme.getSutIzniPersonelDonemselDurum() == null && sutIzniPersonelDonemselDurum != null) {
 						denklestirme.setSutIzniPersonelDonemselDurum(sutIzniPersonelDonemselDurum);
 					}
-					if (denklestirme.getGebePersonelDonemselDurum() == null) {
+					if (denklestirme.getGebePersonelDonemselDurum() == null && gebePersonelDonemselDurum != null) {
 						denklestirme.setGebePersonelDonemselDurum(gebePersonelDonemselDurum);
 					}
-					if (denklestirme.getIsAramaPersonelDonemselDurum() == null) {
+					if (denklestirme.getIsAramaPersonelDonemselDurum() == null && isAramaPersonelDonemselDurum != null) {
 						denklestirme.setIsAramaPersonelDonemselDurum(isAramaPersonelDonemselDurum);
 					}
 					if (sutIzniPersonelDonemselDurum == null)
