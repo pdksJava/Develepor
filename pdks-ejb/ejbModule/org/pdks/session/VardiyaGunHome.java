@@ -6769,33 +6769,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					TreeMap<String, CalismaModeliAy> cmaMap = new TreeMap<String, CalismaModeliAy>();
 
 					List<Long> plansizList = new ArrayList<Long>();
-					// List<Long> perIdList = new ArrayList<Long>();
-					// boolean isAramaIzni = false;
-					// String isAramaIzniStr = ortakIslemler.getParameterKey("isAramaIzni");
-					// if (PdksUtil.hasStringValue(isAramaIzniStr)) {
-					// int gun = Integer.parseInt(isAramaIzniStr);
-					// isAramaIzni = gun > 0;
-					// }
-					// for (Personel personel : personelList) {
-					// if (isAramaIzni || personel.isGebelikSutIzinVar())
-					// perIdList.add(personel.getId());
-					// }
-					// if (!perIdList.isEmpty()) {
-					// List<PersonelDonemselDurum> list = pdksEntityController.getSQLParamByAktifFieldList(PersonelDonemselDurum.TABLE_NAME, PersonelDonemselDurum.COLUMN_NAME_PERSONEL, perIdList, PersonelDonemselDurum.class, session);
-					// for (PersonelDonemselDurum personelDonemselDurum : list) {
-					// Long perId = personelDonemselDurum.getPersonel().getId();
-					// List<PersonelDonemselDurum> pddList = pddMap.containsKey(perId) ? pddMap.get(perId) : new ArrayList<PersonelDonemselDurum>();
-					// if (pddList.isEmpty())
-					// pddMap.put(perId, pddList);
-					// pddList.add(personelDonemselDurum);
-					// }
-					// list = null;
-					// }
-					// perIdList = null;
-					// Date donemBas = PdksUtil.convertToJavaDate(denklestirmeAy.getDonem() + "01", "yyyyMMdd");
-					// cal.setTime(donemBas);
-					// cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
-					// Date donemBit = cal.getTime();
 					for (Personel personel : personelList) {
 
 						boolean pdks = false;
