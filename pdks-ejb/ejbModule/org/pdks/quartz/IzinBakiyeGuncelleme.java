@@ -134,7 +134,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			if (zamanDurum || guncellemeDBDurum) {
 				if (ortakIslemler.getGuncellemeDurum(PersonelIzin.TABLE_NAME, session)) {
 					hataKonum = "İzin durum kontrolu yapılıyor ";
-					if (tableERPOku) {
+					if (tableERPOku && sunucuDurum) {
 						String uygulamaBordro = ortakIslemler.getParameterKey("uygulamaBordro");
 						logger.info(uygulamaBordro + " izin bilgileri güncelleniyor in " + PdksUtil.getCurrentTimeStampStr());
 						try {
