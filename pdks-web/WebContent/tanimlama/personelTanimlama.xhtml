@@ -1922,11 +1922,17 @@
 							<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.personelDurumTipiList.size()>0}">
 								<ui:define name="label">Durum Tipi</ui:define>
 								<h:selectOneRadio value="#{pdksPersonelHome.donemselDurum.personelDurumTipiId}"
-									disabled="#{pdksPersonelHome.personelDurumTipiList.size() == 1}" required="true" requiredMessage="Durum tipi seçiniz">
+									rendered="#{pdksPersonelHome.personelDurumTipiList.size() lt 3}" disabled="#{pdksPersonelHome.personelDurumTipiList.size() == 1}"
+									required="true" requiredMessage="Durum tipi seçiniz">
 									<f:selectItems value="#{pdksPersonelHome.personelDurumTipiList}" />
 									<a4j:support event="onchange" action="#{pdksPersonelHome.gebeSutIzniTarihDegisti()}" ajaxSingle="true" reRender="seciliOzelDurum" />
 								</h:selectOneRadio>
-
+								<h:selectOneMenu value="#{pdksPersonelHome.donemselDurum.personelDurumTipiId}"
+									rendered="#{pdksPersonelHome.personelDurumTipiList.size() gt 2}" required="true" requiredMessage="Durum tipi seçiniz">
+									<f:selectItem itemLabel="Lütfen seçiniz" />
+									<f:selectItems value="#{pdksPersonelHome.personelDurumTipiList}" />
+									<a4j:support event="onchange" action="#{pdksPersonelHome.gebeSutIzniTarihDegisti()}" ajaxSingle="true" reRender="seciliOzelDurum" />
+								</h:selectOneMenu>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Başlangıç Zamanı</ui:define>
@@ -1956,7 +1962,11 @@
 							reRender="seciliOzelDurum" />
 					</ui:fragment>
 					<ui:fragment rendered="#{empty pdksPersonelHome.donemselDurumList and pdksPersonelHome.instance.calisiyor == false}">
-						<SPAN style="color: red; font-size: 18px; font-weight: bold;"> İşten ayrılan personele ait Gebe/Süt izni bulunmamaktadır. </SPAN>
+						<SPAN style="color: red; font-size: 18px; font-weight: bold;"> İşten ayrılan personele ait <a4j:repeat
+								value="#{pdksPersonelHome.personelDurumTipiList}" var="durum">
+								<h:outputText value=" #{durum.label} " />
+							</a4j:repeat> bulunmamaktadır.
+						</SPAN>
 					</ui:fragment>
 					<rich:dataTable rowClasses="acik,koyu" value="#{pdksPersonelHome.donemselDurumList}" var="ozelDurum" rows="50" rowKeyVar="row"
 						rendered="#{not empty pdksPersonelHome.donemselDurumList}" id="ozelDurumTable">

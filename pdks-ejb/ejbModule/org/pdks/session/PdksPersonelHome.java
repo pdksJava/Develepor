@@ -3016,8 +3016,30 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 		if (tanimsizPersonelList.isEmpty()) {
 			gebeIcapSuaDurumMap = new HashMap<Long, List<String>>();
-		} else
+		} else {
 			gebeSuaIcapGuncelle();
+			List<PersonelView> eskiList = new ArrayList<PersonelView>(), calismayanList = new ArrayList<PersonelView>();
+			for (Iterator iterator = tanimsizPersonelList.iterator(); iterator.hasNext();) {
+				PersonelView pw = (PersonelView) iterator.next();
+				boolean sil = true;
+				if (pw.getPdksPersonel() != null && pw.getPdksPersonel().getId() != null) {
+					if (pw.getPdksPersonel().isCalisiyor() == false)
+						eskiList.add(pw);
+					else
+						sil = false;
+				} else
+					calismayanList.add(pw);
+				if (sil)
+					iterator.remove();
+			}
+			if (!calismayanList.isEmpty())
+				tanimsizPersonelList.addAll(calismayanList);
+			if (!eskiList.isEmpty())
+				tanimsizPersonelList.addAll(eskiList);
+			eskiList = null;
+			calismayanList = null;
+		}
+
 		return "";
 	}
 
