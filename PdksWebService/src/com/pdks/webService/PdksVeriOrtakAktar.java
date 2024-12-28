@@ -1571,13 +1571,13 @@ public class PdksVeriOrtakAktar implements Serializable {
 									PersonelIzinDetay personelIzinDetay = new PersonelIzinDetay();
 									personelIzinDetay.setPersonelIzin(personelIzin);
 									personelIzinDetay.setHakEdisIzin(hakedisPersonelIzin);
-//									personelIzinDetay.setIzinMiktari(izinERP.getIzinSuresi());
+									// personelIzinDetay.setIzinMiktari(izinERP.getIzinSuresi());
 									saveList.add(personelIzinDetay);
 								} else {
 									PersonelIzinDetay personelIzinDetay = izinDetayMap.get(personelIzin.getId());
 									personelIzinDetay.setHakEdisIzin(hakedisPersonelIzin);
 									if (personelIzinDetay.getIzinMiktari() != izinERP.getIzinSuresi().doubleValue()) {
-//										personelIzinDetay.setIzinMiktari(izinERP.getIzinSuresi());
+										// personelIzinDetay.setIzinMiktari(izinERP.getIzinSuresi());
 										saveList.add(personelIzinDetay);
 									}
 
@@ -3298,6 +3298,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 							if (departman != null) {
 								sirket = new Sirket();
 								sirket.setDepartman(departman);
+								if (departman != null)
+									sirket.setIsAramaGunlukSaat(departman.getIsAramaGunlukSaat());
 								sirket.setFazlaMesaiTalepGirilebilir(departman.getFazlaMesaiTalepGirilebilir());
 								sirket.setErpKodu(personelERP.getSirketKodu());
 								if (mailMap.containsKey("gebeSutIzniDurum")) {

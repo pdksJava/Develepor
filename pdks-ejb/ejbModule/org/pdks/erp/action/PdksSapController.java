@@ -476,6 +476,8 @@ public class PdksSapController implements ERPController, Serializable {
 												sirket.setAciklama(sirketAdi);
 												sirket.setAd(sirketAdi.toUpperCase(Constants.TR_LOCALE));
 												sirket.setDepartman(departman);
+												if (departman != null)
+													sirket.setIsAramaGunlukSaat(departman.getIsAramaGunlukSaat());
 												sirket.setErpDurum(Boolean.TRUE);
 												sirket.setDurum(Boolean.TRUE);
 												sirket.setPdks(Boolean.TRUE);

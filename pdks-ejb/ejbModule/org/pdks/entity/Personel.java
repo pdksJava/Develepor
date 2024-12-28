@@ -1164,6 +1164,14 @@ public class Personel extends BaseObject {
 	}
 
 	@Transient
+	public double getIsAramaGunlukSaat() {
+		double isAramaIzniSaat = 0.0d;
+		if (this.getSirket().getIsAramaGunlukSaat() != null && this.getSirket().getIsAramaGunlukSaat().doubleValue() > 0.0d)
+			isAramaIzniSaat = this.getSirket().getIsAramaGunlukSaat().doubleValue();
+		return isAramaIzniSaat;
+	}
+
+	@Transient
 	public PersonelExtra getPersonelExtra() {
 		return personelExtra;
 	}

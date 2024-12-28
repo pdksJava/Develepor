@@ -101,9 +101,9 @@
 													for="editKapiGiris">Personel Değiştir</rich:toolTip></TD>
 										</ui:fragment>
 										<ui:fragment
-											rendered="#{personelView.pdksPersonel != null and (pdksPersonelHome.isAramaIzni or (personelView.pdksPersonel.cinsiyetBayan and pdksPersonelHome.gebeSutIzniDurumList.contains(personelView.pdksPersonel.id)))}">
+											rendered="#{personelView.pdksPersonel != null and (pdksPersonelHome.getIsAramaIzinDurum(personelView.pdksPersonel) or (personelView.pdksPersonel.cinsiyetBayan and pdksPersonelHome.gebeSutIzniDurumList.contains(personelView.pdksPersonel.id)))}">
 											<ui:fragment
-												rendered="#{pdksPersonelHome.secGebe(personelView.pdksPersonel) or pdksPersonelHome.secSutIzni(personelView.pdksPersonel) or pdksPersonelHome.isAramaIzni}"></ui:fragment>
+												rendered="#{pdksPersonelHome.secGebe(personelView.pdksPersonel) or pdksPersonelHome.secSutIzni(personelView.pdksPersonel) or pdksPersonelHome.getIsAramaIzinDurum(personelView.pdksPersonel)}"></ui:fragment>
 											<TD><a4j:commandLink status="ajaxStatus" id="editGebeGiris" action="#{pdksPersonelHome.gebeSutIzniSecimi(personelView.pdksPersonel)}"
 													oncomplete="if (#{pdksPersonelHome.donemselDurumList != null}) #{rich:component('editWomanPanel')}.show()" reRender="editWomanPanel"
 													ajaxSingle="true">
@@ -114,7 +114,7 @@
 														<h:graphicImage value="/img/personMen.png" style="border:0" alt="Edit" height="14px" />
 													</ui:fragment>
 												</a4j:commandLink> <rich:toolTip for="editGebeGiris">
-													<ui:fragment rendered="#{pdksPersonelHome.isAramaIzni}">
+													<ui:fragment rendered="#{pdksPersonelHome.getIsAramaIzinDurum(personelView.pdksPersonel)}">
 												İş Arama İzin<br></br>
 													</ui:fragment>
 													<ui:fragment rendered="#{personelView.pdksPersonel.cinsiyetBayan}">

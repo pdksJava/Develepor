@@ -17,7 +17,6 @@ import org.hibernate.validator.Min;
 @Entity(name = Departman.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { Departman.COLUMN_NAME_DEPARTMAN }) })
 public class Departman extends BaseObject {
-	 
 
 	/**
 	 * 
@@ -36,6 +35,7 @@ public class Departman extends BaseObject {
 	public static final String COLUMN_NAME_HAFTA_ICI_SUT_IZNI_SURE = "HAFTA_ICI_SUT_IZNI_SURE";
 	public static final String COLUMN_NAME_CUMARTESI_SUT_IZNI_SURE = "CUMARTESI_SUT_IZNI_SURE";
 	public static final String COLUMN_NAME_PAZAR_SUT_IZNI_SURE = "PAZAR_SUT_IZNI_SURE";
+	public static final String COLUMN_NAME_IS_ARAMA_GUNLUK_SAAT = "IS_ARAMA_GUNLUK_SAAT";
 
 	private Integer version = 0;
 
@@ -47,7 +47,7 @@ public class Departman extends BaseObject {
 
 	private Boolean icapciOlabilir, admin, suaOlabilir = Boolean.FALSE, sirketEklenebilir = Boolean.FALSE, izinGirilebilir = Boolean.FALSE, fazlaMesaiTalepGirilebilir = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE;
 
-	private Double haftaIciSutIzniSure = 7.5d, cumartesiSutIzniSure = 0.0d, pazarSutIzniSure = 0.0d;
+	private Double haftaIciSutIzniSure = 7.5d, cumartesiSutIzniSure = 0.0d, pazarSutIzniSure = 0.0d, isAramaGunlukSaat = 0.0d;
 
 	private String mailBox;
 
@@ -195,6 +195,15 @@ public class Departman extends BaseObject {
 		this.pazarSutIzniSure = pazarSutIzniSure;
 	}
 
+	@Column(name = COLUMN_NAME_IS_ARAMA_GUNLUK_SAAT)
+	public Double getIsAramaGunlukSaat() {
+		return isAramaGunlukSaat;
+	}
+
+	public void setIsAramaGunlukSaat(Double isAramaGunlukSaat) {
+		this.isAramaGunlukSaat = isAramaGunlukSaat;
+	}
+
 	@Transient
 	public String getAciklama() {
 		return departmanTanim != null ? departmanTanim.getAciklama() : "";
@@ -209,8 +218,8 @@ public class Departman extends BaseObject {
 	public boolean isIzinGirer() {
 		return izinGirilebilir != null && izinGirilebilir.booleanValue();
 	}
+
 	public void entityRefresh() {
-		
 
 	}
 

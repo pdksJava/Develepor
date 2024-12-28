@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.model.SelectItem;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -68,6 +69,8 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	private UserMenuItemTime menuItemTime;
 
 	private List<Role> yetkiliRollerim, yetkiliRoller, bagliRoller;
+
+	private HashMap<String, List<SelectItem>> selectItemMap = null;
 
 	private List<Tanim> yetkiliTesisler;
 
@@ -1126,6 +1129,15 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	public void setMenuYetkiMap(HashMap<String, Boolean> menuYetkiMap) {
 		this.menuYetkiMap = menuYetkiMap;
+	}
+
+	@Transient
+	public HashMap<String, List<SelectItem>> getSelectItemMap() {
+		return selectItemMap;
+	}
+
+	public void setSelectItemMap(HashMap<String, List<SelectItem>> selectItemMap) {
+		this.selectItemMap = selectItemMap;
 	}
 
 	public void entityRefresh() {

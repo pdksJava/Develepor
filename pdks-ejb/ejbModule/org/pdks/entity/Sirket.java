@@ -35,18 +35,20 @@ public class Sirket extends BaseObject {
 	public static final String COLUMN_NAME_ERP_DURUM = "ERP_DURUM";
 	public static final String COLUMN_NAME_IZIN_KARTI_VAR = "IZIN_KARTI_VAR";
 	public static final String SIRKET_ERP_KODU = "3030";
+	public static final String COLUMN_NAME_IS_ARAMA_GUNLUK_SAAT = "IS_ARAMA_GUNLUK_SAAT";
+	
 	private Long sirketGrupId;
 	private String ad, aciklama, erpKodu = "", lpdapOnEk = "";
 	private Boolean erpDurum = Boolean.FALSE, ldapDurum = Boolean.FALSE, pdks = Boolean.FALSE, suaOlabilir = Boolean.FALSE, tesisDurum = Boolean.FALSE;
 	private Boolean fazlaMesaiOde = Boolean.FALSE, fazlaMesai = Boolean.FALSE, istenAyrilmaTarihindeCalisiyor = Boolean.FALSE;
 	private Boolean fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiTalepGirilebilir = Boolean.FALSE, izinKartiVar = Boolean.FALSE, gebelikSutIzin = Boolean.FALSE;
 	private Tanim sirketGrup;
+	private Double isAramaGunlukSaat = 0.0d;
 	private Departman departman;
 	private Integer version = 0;
 
 	public Sirket() {
 		super();
-
 	}
 
 	public Sirket(Long id) {
@@ -237,6 +239,15 @@ public class Sirket extends BaseObject {
 		this.izinKartiVar = izinKartiVar;
 	}
 
+	@Column(name = COLUMN_NAME_IS_ARAMA_GUNLUK_SAAT)
+	public Double getIsAramaGunlukSaat() {
+		return isAramaGunlukSaat;
+	}
+
+	public void setIsAramaGunlukSaat(Double isAramaGunlukSaat) {
+		this.isAramaGunlukSaat = isAramaGunlukSaat;
+	}
+
 	@Column(name = "GEBELIK_SUT_IZIN")
 	public Boolean getGebelikSutIzin() {
 		return gebelikSutIzin;
@@ -282,7 +293,6 @@ public class Sirket extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
 
 	}
 

@@ -327,15 +327,14 @@ public class PdksSap3Controller implements ERPController, Serializable {
 								else {
 									try {
 										boolean durumUpdate = sirketKodu.length() < 4;
- 										if (!durumUpdate) {
- 
+										if (!durumUpdate) {
+
 											sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ERP_KODU, sirketKodu, Sirket.class, session);
 											durumUpdate = sirket != null;
 											if (sirket == null) {
 												if (departman == null) {
-													 
-													departman = (Departman)pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, 1L, Departman.class, session);
 
+													departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, 1L, Departman.class, session);
 
 												}
 												if (olusturanUser == null)
@@ -346,6 +345,8 @@ public class PdksSap3Controller implements ERPController, Serializable {
 												sirket.setAciklama(sirketAdi);
 												sirket.setAd(sirketAdi.toUpperCase(Constants.TR_LOCALE));
 												sirket.setDepartman(departman);
+												if (departman != null)
+													sirket.setIsAramaGunlukSaat(departman.getIsAramaGunlukSaat());
 												sirket.setErpDurum(Boolean.TRUE);
 												sirket.setDurum(Boolean.TRUE);
 												sirket.setPdks(Boolean.TRUE);
@@ -894,7 +895,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 	}
 
 	public List<PersonelERP> topluHaldePersonelBilgisiNoSapDBGetir(Session session, List<String> personelList, Date baslangicZamani, Date bitisZamani) throws Exception {
-		
+
 		return null;
 	}
 }

@@ -55,7 +55,9 @@ public class PersonelDenklestirme extends BaseObject {
 	public static final String COLUMN_NAME_EKSIK_CALISMA_SURE = "EKSIK_CALISMA_SURE";
 	public static final String COLUMN_NAME_GECEN_AY_DENKLESTIRME = "GECEN_AY_DENKLESTIRME_ID";
 
-	public static double calismaSaatiSua = 7.0d, calismaSaatiPartTime = 4.5d, isAramaIzniSaat = 2.0d;;
+	public static double calismaSaatiSua = 7.0d, calismaSaatiPartTime = 4.5d;
+
+	public double isAramaIzniSaat;
 
 	private Integer version = 0;
 
@@ -539,7 +541,9 @@ public class PersonelDenklestirme extends BaseObject {
 	public Double getMaksimumSure(double izinSure, double arifeToplamSure, List<VardiyaGun> vardiyalar) {
 		CalismaModeli cm = calismaModeliAy != null ? calismaModeliAy.getCalismaModeli() : personel.getCalismaModeli();
 		PersonelDonemselDurum gebePersonelDonemselDurum = getGebePersonelDonemselDurum(), sutIzniPersonelDonemselDurum = getSutIzniPersonelDonemselDurum();
-
+		isAramaIzniSaat = 0.0d;
+		if (personel != null && personel.getIsAramaGunlukSaat() > 0.0d)
+			isAramaIzniSaat = personel.getIsAramaGunlukSaat();
 		double aylikSure = calismaModeliAy != null ? calismaModeliAy.getSure() : denklestirmeAy.getSure();
 
 		double aylikSutSure = calismaModeliAy != null && calismaModeliAy.getToplamIzinSure() > 0.0d ? calismaModeliAy.getToplamIzinSure() : denklestirmeAy.getToplamIzinSure();
@@ -686,14 +690,6 @@ public class PersonelDenklestirme extends BaseObject {
 		return key;
 	}
 
-	public static double getCalismaSaatiPartTime() {
-		return calismaSaatiPartTime;
-	}
-
-	public static void setCalismaSaatiPartTime(double calismaSaatiPartTime) {
-		PersonelDenklestirme.calismaSaatiPartTime = calismaSaatiPartTime;
-	}
-
 	@Transient
 	public String getKontratliSortKey() {
 		String str = personel != null ? personel.getKontratliSortKey() : (id != null ? id.toString() : "");
@@ -744,14 +740,6 @@ public class PersonelDenklestirme extends BaseObject {
 
 	public void setCalismaSuaSaati(Double calismaSuaSaati) {
 		this.calismaSuaSaati = calismaSuaSaati;
-	}
-
-	public static double getCalismaSaatiSua() {
-		return calismaSaatiSua;
-	}
-
-	public static void setCalismaSaatiSua(double calismaSaatiSua) {
-		PersonelDenklestirme.calismaSaatiSua = calismaSaatiSua;
 	}
 
 	public void entityRefresh() {
@@ -867,14 +855,6 @@ public class PersonelDenklestirme extends BaseObject {
 		return str;
 	}
 
-	public static double getIsAramaIzniSaat() {
-		return isAramaIzniSaat;
-	}
-
-	public static void setIsAramaIzniSaat(double isAramaIzniSaat) {
-		PersonelDenklestirme.isAramaIzniSaat = isAramaIzniSaat;
-	}
-
 	@Transient
 	public HashMap<PersonelDurumTipi, List<PersonelDonemselDurum>> getDonemselDurumlarMap() {
 		return donemselDurumlarMap;
@@ -882,6 +862,31 @@ public class PersonelDenklestirme extends BaseObject {
 
 	public void setDonemselDurumlarMap(HashMap<PersonelDurumTipi, List<PersonelDonemselDurum>> donemselDurumlarMap) {
 		this.donemselDurumlarMap = donemselDurumlarMap;
+	}
+
+	public static double getCalismaSaatiSua() {
+		return calismaSaatiSua;
+	}
+
+	public static void setCalismaSaatiSua(double calismaSaatiSua) {
+		PersonelDenklestirme.calismaSaatiSua = calismaSaatiSua;
+	}
+
+	public static double getCalismaSaatiPartTime() {
+		return calismaSaatiPartTime;
+	}
+
+	public static void setCalismaSaatiPartTime(double calismaSaatiPartTime) {
+		PersonelDenklestirme.calismaSaatiPartTime = calismaSaatiPartTime;
+	}
+
+	@Transient
+	public double getIsAramaIzniSaat() {
+		return isAramaIzniSaat;
+	}
+
+	public void setIsAramaIzniSaat(double isAramaIzniSaat) {
+		this.isAramaIzniSaat = isAramaIzniSaat;
 	}
 
 }

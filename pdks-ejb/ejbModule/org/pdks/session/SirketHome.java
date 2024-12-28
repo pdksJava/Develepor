@@ -118,8 +118,8 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 			Departman departman = sirket.getDepartman();
 			if (departman != null) {
 				sirket.setFazlaMesaiTalepGirilebilir(departman.isFazlaMesaiTalepGirer());
+				sirket.setIsAramaGunlukSaat(departman.getIsAramaGunlukSaat());
 			}
-
 		}
 		if (personelList != null)
 			personelList.clear();
@@ -134,9 +134,9 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 		Sirket sirket = seciliSirket;
 
 		try {
-			if (sirket.getId() == null)
+			if (sirket.getId() == null) {
 				sirket.setOlusturanUser(authenticatedUser);
-			else {
+			} else {
 				sirket.setGuncelleyenUser(authenticatedUser);
 				sirket.setGuncellemeTarihi(new Date());
 			}
@@ -145,6 +145,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 			if (!sirket.getFazlaMesai()) {
 				sirket.setFazlaMesaiOde(Boolean.FALSE);
 			}
+
 			pdksEntityController.saveOrUpdate(session, entityManager, sirket);
 			session.flush();
 			fillsirketList();

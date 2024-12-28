@@ -4299,6 +4299,35 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param key
+	 * @param loginUser
+	 * @return
+	 */
+	public List<SelectItem> getSelectItemList(String key, User loginUser) {
+		List<SelectItem> list = null;
+		if (loginUser == null && authenticatedUser != null)
+			loginUser = authenticatedUser;
+		if (loginUser != null && PdksUtil.hasStringValue(key)) {
+			HashMap<String, List<SelectItem>> selectItemMap = loginUser.getSelectItemMap();
+			if (selectItemMap == null) {
+				selectItemMap = new HashMap<String, List<SelectItem>>();
+				loginUser.setSelectItemMap(selectItemMap);
+			}
+			if (selectItemMap.containsKey(key))
+				list = selectItemMap.get(key);
+			if (list == null) {
+				list = new ArrayList<SelectItem>();
+				selectItemMap.put(key, list);
+			} else
+				list.clear();
+
+		}
+		if (list == null)
+			list = new ArrayList<SelectItem>();
+		return list;
+	}
+
+	/**
 	 * @param tesisList
 	 * @param sirket
 	 * @param sirketId
@@ -4332,7 +4361,9 @@ public class OrtakIslemler implements Serializable {
 			paramsMap.put("fieldName", Tanim.COLUMN_NAME_ID);
 			list = getFazlaMesaiList(paramsMap, session);
 		}
-		List selectList = null;
+
+		List selectList = getSelectItemList("tesis", loginUser);
+
 		if (selectItemDurum) {
 			selectList = new ArrayList<SelectItem>();
 			if (list != null && !list.isEmpty()) {
