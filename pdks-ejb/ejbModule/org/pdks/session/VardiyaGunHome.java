@@ -9978,7 +9978,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	private void aylikPuantajListClear() {
 		if (loginUser == null)
 			loginUser = authenticatedUser;
-		aylikPuantajList = ortakIslemler.getSelectItemList("aylikPuantaj", loginUser);
+		if (aylikPuantajList != null)
+			aylikPuantajList.clear();
+		else
+			aylikPuantajList = ortakIslemler.getSelectItemList("aylikPuantaj", loginUser);
 	}
 
 	/**

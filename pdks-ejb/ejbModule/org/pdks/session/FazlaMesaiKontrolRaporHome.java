@@ -190,11 +190,19 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 		ikRole = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIK();
 	}
 
+	private void aylikPuantajListClear() {
+		if (aylikPuantajList != null)
+			aylikPuantajList.clear();
+		else
+			aylikPuantajList = ortakIslemler.getSelectItemList("aylikPuantaj", authenticatedUser);
+	}
+
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		aylikPuantajListClear();
 		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals(sayfaURL);
 		if (!ayniSayfa)
 			authenticatedUser.setCalistigiSayfa(sayfaURL);
@@ -226,7 +234,6 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 			ay = cal.get(Calendar.MONTH) + 1;
 			yil = cal.get(Calendar.YEAR);
 			maxYil = yil + 1;
-			aylikPuantajList = new ArrayList<AylikPuantaj>();
 
 			// setSirket(null);
 
@@ -419,8 +426,8 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 	 * 
 	 */
 	private void setSeciliDenklestirmeAy() {
-		if (aylikPuantajList != null)
-			aylikPuantajList.clear();
+
+		aylikPuantajList.clear();
 		if (denklestirmeAy == null && ay > 0) {
 			HashMap fields = new HashMap();
 			denklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
@@ -557,10 +564,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 			setSirket(authenticatedUser.getPdksPersonel().getSirket());
 		}
 
-		if (aylikPuantajList == null)
-			aylikPuantajList = new ArrayList<AylikPuantaj>();
-		else
-			aylikPuantajList.clear();
+		aylikPuantajList.clear();
 		setPersonelDenklestirmeList(new ArrayList<PersonelDenklestirme>());
 
 	}
@@ -1146,9 +1150,9 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 								iterator.remove();
 								continue;
 							}
-//							String key = vardiyaGun.getVardiyaDateStr();
-//							if (key.equals("20211110"))
-//								logger.debug(vardiyaGun.getVardiyaKeyStr());
+							// String key = vardiyaGun.getVardiyaDateStr();
+							// if (key.equals("20211110"))
+							// logger.debug(vardiyaGun.getVardiyaKeyStr());
 							if (vardiyaGun.getId() != null) {
 								if (puantaj.isGebeDurum() == false && (vardiyaGun.isGebeMi() || vardiyaGun.isGebePersonelDonemselDurum())) {
 									gebemi = true;
@@ -1749,10 +1753,8 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 				hastaneSuperVisor = Boolean.FALSE;
 			setGorevYeriList(null);
 			bolumDepartmanlari = null;
-			if (aylikPuantajList == null)
-				aylikPuantajList = new ArrayList<AylikPuantaj>();
-			else
-				aylikPuantajList.clear();
+
+			aylikPuantajList.clear();
 			Sirket sirket = null;
 			if (sirketId != null) {
 

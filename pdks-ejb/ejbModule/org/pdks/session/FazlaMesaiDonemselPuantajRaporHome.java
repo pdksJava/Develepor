@@ -123,11 +123,19 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	private AylikPuantaj gunAylikPuantaj;
 	private Session session;
 
+	private void aylikPuantajListClear() {
+		if (puantajList != null)
+			puantajList.clear();
+		else
+			puantajList = ortakIslemler.getSelectItemList("aylikPuantaj", authenticatedUser);
+	}
+
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		aylikPuantajListClear();
 		ekSaha4Tanim = null;
 		if (baslikMap == null)
 			baslikMap = new TreeMap<String, Boolean>();
@@ -143,13 +151,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 
 		bolumler = ortakIslemler.getSelectItemList("bolum", authenticatedUser);
 
-		if (puantajList == null)
-			puantajList = new ArrayList<AylikPuantaj>();
-		else
-			puantajList.clear();
+		
 
-		if (personelList == null)
-			personelList = new ArrayList<Personel>();
+		personelList = ortakIslemler.getSelectItemList("personel", authenticatedUser);
 		if (denklestirmeAyList == null)
 			denklestirmeAyList = new ArrayList<DenklestirmeAy>();
 		if (perDenkMap == null)

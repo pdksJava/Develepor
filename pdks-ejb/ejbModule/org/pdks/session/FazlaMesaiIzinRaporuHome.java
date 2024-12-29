@@ -72,7 +72,7 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 
 	List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 	private List<VardiyaGun> izinVardiyaGunList = new ArrayList<VardiyaGun>();
-	private List<AylikPuantaj> puantajList = new ArrayList<AylikPuantaj>();
+	private List<AylikPuantaj> puantajList;
 	private AramaSecenekleri aramaSecenekleri = null;
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>();
 	private HashMap<String, List<Tanim>> ekSahaListMap;
@@ -99,11 +99,19 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 		super.create();
 	}
 
+	private void aylikPuantajListClear() {
+		if (puantajList != null)
+			puantajList.clear();
+		else
+			puantajList = ortakIslemler.getSelectItemList("aylikPuantaj", authenticatedUser);
+	}
+
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		clearVardiyaList();
 		if (aramaSecenekleri == null)
 			aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
 		fillEkSahaTanim();
@@ -118,9 +126,8 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 	}
 
 	private void clearVardiyaList() {
+		aylikPuantajListClear();
 		izinVardiyaGunList.clear();
-
-		puantajList.clear();
 		vardiyaList.clear();
 	}
 

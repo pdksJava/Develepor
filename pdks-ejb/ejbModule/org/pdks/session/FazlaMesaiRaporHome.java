@@ -189,6 +189,13 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 			session.refresh(getInstance());
 	}
 
+	private void aylikPuantajListClear() {
+		if (aylikPuantajList != null)
+			aylikPuantajList.clear();
+		else
+			aylikPuantajList = ortakIslemler.getSelectItemList("aylikPuantaj", authenticatedUser);
+	}
+
 	/**
 	 * 
 	 */
@@ -202,6 +209,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		aylikPuantajListClear();
 		fazlaMesaiSayfa = false;
 		yasalFazlaCalismaAsanSaat = Boolean.FALSE;
 		sirketGoster = Boolean.FALSE;
@@ -260,7 +268,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 			ay = cal.get(Calendar.MONTH) + 1;
 			yil = cal.get(Calendar.YEAR);
 			maxYil = yil + 1;
-			aylikPuantajList = new ArrayList<AylikPuantaj>();
+			
 
 			setInstance(new DepartmanDenklestirmeDonemi());
 			// setSirket(null);
@@ -576,10 +584,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 			setSirket(authenticatedUser.getPdksPersonel().getSirket());
 		}
 
-		if (aylikPuantajList == null)
-			aylikPuantajList = new ArrayList<AylikPuantaj>();
-		else
-			aylikPuantajList.clear();
+		aylikPuantajList.clear();
 		setPersonelDenklestirmeList(new ArrayList<PersonelDenklestirme>());
 
 	}
@@ -1652,10 +1657,8 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 
 			setGorevYeriList(null);
 			bolumDepartmanlari = null;
-			if (aylikPuantajList == null)
-				aylikPuantajList = new ArrayList<AylikPuantaj>();
-			else
-				aylikPuantajList.clear();
+
+			aylikPuantajList.clear();
 			Sirket sirket = null;
 			if (sirketId != null) {
 				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);

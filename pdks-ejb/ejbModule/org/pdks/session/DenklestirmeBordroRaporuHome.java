@@ -281,10 +281,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					else
 						iterator.remove();
 				}
-				if (personelDenklestirmeList == null)
-					personelDenklestirmeList = new ArrayList<AylikPuantaj>();
-				else
-					personelDenklestirmeList.clear();
+
+				personelDenklestirmeList.clear();
 				if (denklestirme) {
 					session.clear();
 					fillPersonelDenklestirmeList();
@@ -445,7 +443,10 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	}
 
 	private void aylikPuantajListClear() {
-		personelDenklestirmeList = ortakIslemler.getSelectItemList("aylikPuantaj", authenticatedUser);
+		if (personelDenklestirmeList != null)
+			personelDenklestirmeList.clear();
+		else
+			personelDenklestirmeList = ortakIslemler.getSelectItemList("aylikPuantaj", authenticatedUser);
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
@@ -454,13 +455,14 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			if (session == null)
 				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+			aylikPuantajListClear();
 			adminRoleDurum();
 			fazlaMesaiHesaplaMenuAdi = "";
 			String str = ortakIslemler.getParameterKey("bordroVeriOlustur");
 			boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals(sayfaURL);
 			if (!ayniSayfa)
 				authenticatedUser.setCalistigiSayfa(sayfaURL);
-			aylikPuantajListClear();
+
 			Calendar cal = Calendar.getInstance();
 
 			ortakIslemler.gunCikar(cal, 2);
@@ -578,7 +580,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 	public String personelNoDegisti() throws Exception {
 
-		aylikPuantajListClear();
+		personelDenklestirmeList.clear();
 		if (PdksUtil.hasStringValue(sicilNo))
 			fillPersonelDenklestirmeList();
 		return "";
@@ -630,7 +632,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	}
 
 	public void fillTesisList() {
-		aylikPuantajListClear();
+		personelDenklestirmeList.clear();
 		List<SelectItem> selectItems = ortakIslemler.getSelectItemList("tesis", authenticatedUser);
 		Long onceki = null;
 		if (sirketId != null) {
@@ -676,7 +678,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	}
 
 	public void fillSirketList() {
-		aylikPuantajListClear();
+		personelDenklestirmeList.clear();
 
 		if (departmanId != null)
 			departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
@@ -764,7 +766,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		izinSaatDurum = Boolean.FALSE;
 
 		ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
-		aylikPuantajListClear();
+		personelDenklestirmeList.clear();
 		denklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
 		denklestirmeAyDurum = fazlaMesaiOrtakIslemler.getDurum(denklestirmeAy);
 		if (denklestirmeAyDurum.equals(Boolean.FALSE)) {
@@ -781,7 +783,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		onaylanmayanDurum = null;
 		personelERP = Boolean.FALSE;
 
-		aylikPuantajListClear();
+		personelDenklestirmeList.clear();
 
 		baslikMap.clear();
 		if (denklestirmeAy != null) {

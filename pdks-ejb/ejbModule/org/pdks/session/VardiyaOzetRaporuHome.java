@@ -75,7 +75,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 	private List<VardiyaGun> izinVardiyaGunList = new ArrayList<VardiyaGun>(), calismayanVardiyaGunList = new ArrayList<VardiyaGun>();
 	private List<VardiyaGun> gecGelenVardiyaGunList = new ArrayList<VardiyaGun>(), erkenCikanVardiyaGunList = new ArrayList<VardiyaGun>(), gelmeyenVardiyaGunList = new ArrayList<VardiyaGun>();
-	private List<AylikPuantaj> puantajList = new ArrayList<AylikPuantaj>();
+	private List<AylikPuantaj> puantajList;
 	private AramaSecenekleri aramaSecenekleri = null;
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>();
 	private HashMap<String, List<Tanim>> ekSahaListMap;
@@ -104,11 +104,19 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		super.create();
 	}
 
+	private void aylikPuantajListClear() {
+		if (puantajList != null)
+			puantajList.clear();
+		else
+			puantajList = ortakIslemler.getSelectItemList("aylikPuantaj", authenticatedUser);
+	}
+
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		aylikPuantajListClear();
 		if (aramaSecenekleri == null)
 			aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
 		fillEkSahaTanim();

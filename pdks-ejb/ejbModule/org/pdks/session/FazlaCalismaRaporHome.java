@@ -190,11 +190,19 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 		return gun;
 	}
 
+	private void aylikPuantajListClear() {
+		if (aylikPuantajList != null)
+			aylikPuantajList.clear();
+		else
+			aylikPuantajList = ortakIslemler.getSelectItemList("aylikPuantaj", authenticatedUser);
+	}
+
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		aylikPuantajListClear();
 		fazlaMesaiSayfa = false;
 		aksamAdetGoster = false;
 		aksamSaatGoster = false;
@@ -499,10 +507,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	public String listeTemizle() {
 		raporAdi = "";
-		if (aylikPuantajList == null)
-			aylikPuantajList = new ArrayList<AylikPuantaj>();
-		else
-			aylikPuantajList.clear();
+		aylikPuantajList.clear();
 
 		if (vardiyaGunList == null)
 			vardiyaGunList = new ArrayList<VardiyaGun>();
