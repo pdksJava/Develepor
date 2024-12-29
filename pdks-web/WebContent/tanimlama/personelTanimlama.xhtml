@@ -269,7 +269,8 @@
 								<f:facet name="header">
 									<h:outputText value="İzin Kartı Var" />
 								</f:facet>
-								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.izinKartiVardir)}" />
+								<h:outputText value="#{authenticatedUser.getYesNo(personelView.pdksPersonel.izinKartiVardir)}"
+									rendered="#{personelView.pdksPersonel.id != null}" />
 							</rich:column>
 							<rich:column style="text-align:center" rendered="#{pdksPersonelHome.personelDurumMap.get('onaysizIzinKullanilir')}">
 								<f:facet name="header">
