@@ -4308,9 +4308,9 @@ public class OrtakIslemler implements Serializable {
 		if (loginUser == null && authenticatedUser != null)
 			loginUser = authenticatedUser;
 		if (loginUser != null && PdksUtil.hasStringValue(key)) {
-			HashMap<String, List<SelectItem>> selectItemMap = loginUser.getSelectItemMap();
+			HashMap<String, List> selectItemMap = loginUser.getSelectItemMap();
 			if (selectItemMap == null) {
-				selectItemMap = new HashMap<String, List<SelectItem>>();
+				selectItemMap = new HashMap<String, List>();
 				loginUser.setSelectItemMap(selectItemMap);
 			}
 			if (selectItemMap.containsKey(key))
@@ -8954,6 +8954,14 @@ public class OrtakIslemler implements Serializable {
 				session.setFlushMode(FlushMode.MANUAL);
 				session.clear();
 				if (authenticatedUser != null) {
+					HashMap<String, List> selectItemMap = authenticatedUser.getSelectItemMap();
+					if (selectItemMap != null) {
+						for (String key : selectItemMap.keySet()) {
+							List list = selectItemMap.get(key);
+							if (list != null)
+								list.clear();
+						}
+					}
 					if (PdksUtil.isStrDegisti(authenticatedUser.getCalistigiSayfa(), menuAdi)) {
 						if (authenticatedUser.isIK() || authenticatedUser.isAdmin()) {
 							String mesaj = authenticatedUser.getAdSoyad() + " Sayfa : " + getMenuAdi(menuAdi) + " " + PdksUtil.getCurrentTimeStampStr();
