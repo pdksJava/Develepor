@@ -139,7 +139,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private List<PersonelERP> personelERPList;
 	private List<VardiyaSablonu> sablonlar = new ArrayList<VardiyaSablonu>();
 	private List<PersonelKGS> personelKGSList = new ArrayList<PersonelKGS>();
-	private List<PersonelView> tanimsizPersonelList = new ArrayList<PersonelView>();
+	private List<PersonelView> tanimsizPersonelList;
 	private List<Personel> pdksPersonelList = new ArrayList<Personel>(), yoneticiList, yonetici2List, ikinciYoneticiHataliList;
 	private List<Sirket> sirketList = new ArrayList<Sirket>();
 	private List<UserMenuItemTime> menuItemTimeList;
@@ -2993,7 +2993,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				viewMap = null;
 			}
 		}
-		setTanimsizPersonelList(list);
+		tanimsizPersonelList = ortakIslemler.getSelectItemList("personel", authenticatedUser);
+		if (list != null && !list.isEmpty())
+			tanimsizPersonelList.addAll(list);
 
 		List<String> yeniList = yeniPersonelOlustur(false);
 		if (yeniList != null && !tanimsizPersonelList.isEmpty()) {
@@ -3436,6 +3438,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		tanimsizPersonelList = ortakIslemler.getSelectItemList("personel", authenticatedUser);
 		fazlaMesaiIzinKullan = Boolean.FALSE;
 		yeniPersonelGuncelle = Boolean.FALSE;
 		bakiyeIzinGoster = Boolean.FALSE;
