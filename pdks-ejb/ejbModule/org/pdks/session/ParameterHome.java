@@ -202,10 +202,9 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 
 		List<Tanim> skinTanimlar = ortakIslemler.getTanimList(Tanim.TIPI_SKIN, session);
 		skinKodu = SkinBean.getSkinKodu();
-		if (skinList == null)
-			skinList = new ArrayList<SelectItem>();
-		else
-			skinList.clear();
+
+		skinList = ortakIslemler.getSelectItemList("skin", authenticatedUser);
+
 		for (Tanim skin : skinTanimlar) {
 			skinList.add(new SelectItem(skin.getKodu(), skin.getAciklama()));
 			if (skinKodu == null && skin.getAciklama().equals(SkinBean.getSkinAdi()))

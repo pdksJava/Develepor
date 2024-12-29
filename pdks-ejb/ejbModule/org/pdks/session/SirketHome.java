@@ -102,7 +102,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 
 	public String guncelle(Sirket sirket) {
 		fillBagliOlduguDepartmanTanimList();
-		sirketGrupList = ortakIslemler.getTanimSelectItem(ortakIslemler.getTanimList(Tanim.TIPI_SIRKET_GRUP, session));
+		sirketGrupList = ortakIslemler.getTanimSelectItem("sirketGrup", ortakIslemler.getTanimList(Tanim.TIPI_SIRKET_GRUP, session));
 		if (sirket == null) {
 			for (Iterator iterator = departmanList.iterator(); iterator.hasNext();) {
 				Departman departman = (Departman) iterator.next();

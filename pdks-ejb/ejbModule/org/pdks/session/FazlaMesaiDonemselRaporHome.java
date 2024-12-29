@@ -90,14 +90,13 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
-		if (donemler == null)
-			donemler = new ArrayList<SelectItem>();
-		if (sirketler == null)
-			sirketler = new ArrayList<SelectItem>();
 
-		if (tesisler == null)
-			tesisler = new ArrayList<SelectItem>();
-		tesisler.clear();
+		donemler = ortakIslemler.getSelectItemList("ay", authenticatedUser);
+
+		sirketler = ortakIslemler.getSelectItemList("sirket", authenticatedUser);
+
+		tesisler = ortakIslemler.getSelectItemList("tesis", authenticatedUser);
+
 		if (personelList == null)
 			personelList = new ArrayList<Personel>();
 		if (denklestirmeAyList == null)
@@ -270,7 +269,7 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 				sb.append(" order by S." + Sirket.COLUMN_NAME_ID);
 				fields.put(fieldName, idList);
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
- 				List<Sirket> sirketList = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, Sirket.class, session);
+				List<Sirket> sirketList = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, Sirket.class, session);
 				if (!sirketList.isEmpty()) {
 					if (sirketList.size() == 1) {
 						sirketId = sirketList.get(0).getId();

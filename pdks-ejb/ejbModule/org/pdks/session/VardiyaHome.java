@@ -63,7 +63,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	private List<String> saatList = new ArrayList<String>();
 	private List<String> dakikaList = new ArrayList<String>();
 	private List<String> toleransDakikaList = new ArrayList<String>();
-	private List<SelectItem> vardiyaTipiList = new ArrayList<SelectItem>();
+	private List<SelectItem> vardiyaTipiList;
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), izinCalismaVardiyaList = new ArrayList<Vardiya>();
 	private List<VardiyaSablonu> sablonList = new ArrayList<VardiyaSablonu>();
 	private List<Departman> departmanList = new ArrayList<Departman>();
@@ -682,7 +682,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	 * @param vardiya
 	 */
 	public void fillVardiyaTipiList(Vardiya vardiya) {
-		List<SelectItem> list = new ArrayList<SelectItem>();
+		List<SelectItem> list = ortakIslemler.getSelectItemList("vardiyaTipi", authenticatedUser);
 		list.add(new SelectItem(String.valueOf(Vardiya.TIPI_CALISMA), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_CALISMA, null)));
 		list.add(new SelectItem(String.valueOf(Vardiya.TIPI_HAFTA_TATIL), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_HAFTA_TATIL, "HT")));
 		list.add(new SelectItem(String.valueOf(Vardiya.TIPI_OFF), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_OFF, "OFF")));

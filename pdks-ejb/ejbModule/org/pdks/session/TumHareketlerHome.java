@@ -118,7 +118,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 
 	@Transactional
 	public void filDepartmanList() {
-		List<SelectItem> departmanListe = new ArrayList<SelectItem>();
+		List<SelectItem> departmanListe = ortakIslemler.getSelectItemList("departman", authenticatedUser);
 		List<Departman> list = ortakIslemler.fillDepartmanTanimList(session);
 		if (list.size() == 1) {
 			departman = list.get(0);
@@ -272,7 +272,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 
 			}
 		}
-		List<SelectItem> sirketListe = new ArrayList<SelectItem>();
+		List<SelectItem> sirketListe = ortakIslemler.getSelectItemList("sirket", authenticatedUser);
 		for (Sirket sirket : list)
 			sirketListe.add(new SelectItem(sirket.getId(), sirket.getAd()));
 		list.clear();

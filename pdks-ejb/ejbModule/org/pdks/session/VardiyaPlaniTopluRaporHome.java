@@ -237,10 +237,9 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 			authenticatedUser.setCalistigiSayfa(sayfaURL);
 
 		toplamSutunGoster = false;
-		if (gosterimTipleri == null)
-			gosterimTipleri = new ArrayList<SelectItem>();
-		else
-			gosterimTipleri.clear();
+
+		gosterimTipleri = ortakIslemler.getSelectItemList("gosterimTip", authenticatedUser);
+
 		gosterimTipleri.add(new SelectItem("S", "Saat Aralığı"));
 		gosterimTipleri.add(new SelectItem("K", "Kısa Açıklama"));
 		gosterimTipi = "S";
@@ -532,8 +531,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 	}
 
 	private void yilDegisti() {
-		if (aylar == null)
-			aylar = new ArrayList<SelectItem>();
+		aylar = ortakIslemler.getSelectItemList("ay", authenticatedUser);
 		ay = fazlaMesaiOrtakIslemler.aylariDoldur(yil, ay, aylar, session);
 	}
 

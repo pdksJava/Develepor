@@ -121,7 +121,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 
 	private List<Tanim> departmanList = new ArrayList<Tanim>();
 
-	private List<SelectItem> sirketItemList = new ArrayList<SelectItem>();
+	private List<SelectItem> sirketItemList;
 	private List<Sirket> sirketList = new ArrayList<Sirket>();
 
 	private List<User> userList = new ArrayList<User>();
@@ -163,7 +163,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 
 	private IzinIstirahat istirahat;
 	private TreeMap<Long, User> vekilYoneticiMap;
-	private List<SelectItem> istirahatKaynakList = new ArrayList<SelectItem>();
+	private List<SelectItem> istirahatKaynakList;
 	private List<Personel> personelList = new ArrayList<Personel>();
 
 	public List<User> toList = new ArrayList<User>(), ccList = new ArrayList<User>(), bccList = new ArrayList<User>();
@@ -1257,7 +1257,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		istirahatAta(personelIzin);
 		fillIzinTipiList();
 		setGorevTipiList(ortakIslemler.getTanimList(Tanim.TIPI_IZIN_GOREV_TIPI, session));
-		istirahatKaynakList = ortakIslemler.getTanimSelectItemByKodu(ortakIslemler.getTanimList(Tanim.TIPI_ISTIRAHAT_KAYNAGI, session));
+		istirahatKaynakList = ortakIslemler.getTanimSelectItemByKodu(Tanim.TIPI_ISTIRAHAT_KAYNAGI, session);
 		if (!ortakIslemler.getParameterKey("uygulamaTipi").equalsIgnoreCase("H")) {
 			for (Iterator iterator = istirahatKaynakList.iterator(); iterator.hasNext();) {
 				SelectItem selectItem = (SelectItem) iterator.next();

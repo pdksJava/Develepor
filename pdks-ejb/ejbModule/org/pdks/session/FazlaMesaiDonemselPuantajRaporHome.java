@@ -133,20 +133,16 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			baslikMap = new TreeMap<String, Boolean>();
 		else
 			baslikMap.clear();
-		if (donemBas == null)
-			donemBas = new ArrayList<SelectItem>();
-		if (donemBit == null)
-			donemBit = new ArrayList<SelectItem>();
-		if (sirketler == null)
-			sirketler = new ArrayList<SelectItem>();
 
-		if (tesisler == null)
-			tesisler = new ArrayList<SelectItem>();
-		tesisler.clear();
-		if (bolumler == null)
-			bolumler = new ArrayList<SelectItem>();
-		else
-			bolumler.clear();
+		donemBas = ortakIslemler.getSelectItemList("donemBas", authenticatedUser);
+		donemBit = ortakIslemler.getSelectItemList("donemBit", authenticatedUser);
+
+		sirketler = ortakIslemler.getSelectItemList("sirket", authenticatedUser);
+
+		tesisler = ortakIslemler.getSelectItemList("tesis", authenticatedUser);
+
+		bolumler = ortakIslemler.getSelectItemList("bolum", authenticatedUser);
+
 		if (puantajList == null)
 			puantajList = new ArrayList<AylikPuantaj>();
 		else
@@ -418,10 +414,8 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				if (oncekiEkSaha3Id == null) {
 					altBolumList = null;
 				}
-				if (altBolumList == null)
-					altBolumList = new ArrayList<SelectItem>();
-				else
-					altBolumList.clear();
+
+				altBolumList = ortakIslemler.getSelectItemList("altBolum", authenticatedUser);
 
 				if (bolumId != null) {
 					altBolumDoldur();
@@ -470,10 +464,8 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			List<Tanim> list = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
 			if (list.size() > 1)
 				list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
-			if (altBolumList != null)
-				altBolumList.clear();
-			else
-				altBolumList = new ArrayList<SelectItem>();
+
+			altBolumList = ortakIslemler.getSelectItemList("altBolum", authenticatedUser);
 			for (Tanim tanim : list) {
 				altBolumList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
 			}
@@ -610,10 +602,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	 * @return
 	 */
 	public String ayDoldur(int yil, List<SelectItem> donemler, boolean donemDoldur) {
-		if (donemler == null)
-			donemler = new ArrayList<SelectItem>();
-		else
-			donemler.clear();
+
+		donemler = ortakIslemler.getSelectItemList("ay", authenticatedUser);
+
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
 		sb.append("select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");

@@ -263,13 +263,12 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		setBasTarih(cal.getTime());
 		fillEkSahaTanim();
 		fillIzinTanimList();
+		islemTipleri = ortakIslemler.getSelectItemList("islemTip", authenticatedUser);
 
-		if (islemTipleri == null) {
-			islemTipleri = new ArrayList<SelectItem>();
-			islemTipleri.add(new SelectItem("K", "Onaylanan izinler"));
-			if (authenticatedUser.isIzinGirebilir())
-				islemTipleri.add(new SelectItem("B", "Onay bekleyen izinler"));
-		}
+		islemTipleri.add(new SelectItem("K", "Onaylanan izinler"));
+		if (authenticatedUser.isIzinGirebilir())
+			islemTipleri.add(new SelectItem("B", "Onay bekleyen izinler"));
+
 		setIslemTipi((String) islemTipleri.get(0).getValue());
 		if (!authenticatedUser.isIK() && !authenticatedUser.isAdmin()) {
 			istenAyrilanEkle = Boolean.FALSE;
@@ -298,10 +297,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		List<Tanim> list = new ArrayList<Tanim>(izinTipiTanimMap.values());
 		if (list.size() > 1)
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
-		if (izinTanimIdList == null)
-			izinTanimIdList = new ArrayList<SelectItem>();
-		else
-			izinTanimIdList.clear();
+		izinTanimIdList = ortakIslemler.getSelectItemList("izinTanim", authenticatedUser);
 		for (Tanim tanim : list) {
 			izinTanimIdList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
 		}
@@ -894,7 +890,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 							Cell cellReferansNoERP = ExcelUtil.getCell(sheet, row, col++);
 							String referansNoERP = cellReferansNoERP != null ? cellReferansNoERP.getStringCellValue() : null;
 							if (referansOtomatikOlustur || PdksUtil.hasStringValue(referansNoERP) == false)
-								referansNoERP = PersonelIzin.IZIN_MANUEL_EK + "_"+ izinERP.getPersonelNo() + PdksUtil.replaceAll(izinERP.getBasZaman().substring(0, 10), "-", "");
+								referansNoERP = PersonelIzin.IZIN_MANUEL_EK + "_" + izinERP.getPersonelNo() + PdksUtil.replaceAll(izinERP.getBasZaman().substring(0, 10), "-", "");
 							izinERP.setReferansNoERP(referansNoERP);
 
 							Cell cellIzinTipi = ExcelUtil.getCell(sheet, row, col++);

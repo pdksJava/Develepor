@@ -2450,13 +2450,16 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		paramsMap.put("denklestirme", denklestirme);
 		paramsMap.put("tipi", "P");
 		paramsMap.put("fieldName", Personel.COLUMN_NAME_ID);
+		List<Personel> perList = ortakIslemler.getSelectItemList("personel", loginUser);
 		List<Personel> list = ortakIslemler.getFazlaMesaiList(paramsMap, session);
-		// List<Personel> list = ortakIslemler.getFazlaMesaiList(loginUser, null, sirket, tesisId, bolumId, altBolumId, aylikPuantaj, "P", denklestirme, session);
-		if (!list.isEmpty())
-			list = PdksUtil.sortObjectStringAlanList(list, "getAdSoyad", null);
+		if (list != null) {
+			if (!list.isEmpty())
+				list = PdksUtil.sortObjectStringAlanList(list, "getAdSoyad", null);
+			perList.addAll(list);
+			list = null;
+		}
 		paramsMap = null;
-
-		return list;
+		return perList;
 	}
 
 	/**
@@ -2472,7 +2475,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (loginUser == null)
 			loginUser = authenticatedUser;
 		List<Sirket> list = ortakIslemler.getFazlaMesaiMudurList(loginUser, departmanId, null, null, null, aylikPuantaj, "S", denklestirme, fazlaMesaiTalepDurum, session);
-		List<SelectItem> selectList = new ArrayList<SelectItem>();
+		List<SelectItem> selectList = ortakIslemler.getSelectItemList("mudurSirket", loginUser);
 		if (!list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -2496,7 +2499,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (loginUser == null)
 			loginUser = authenticatedUser;
 		List<Tanim> list = ortakIslemler.getFazlaMesaiMudurList(loginUser, null, sirket, null, null, aylikPuantaj, "T", denklestirme, fazlaMesaiTalepDurum, session);
-		List<SelectItem> selectList = new ArrayList<SelectItem>();
+		List<SelectItem> selectList = ortakIslemler.getSelectItemList("mudurTesis", loginUser);
 		if (!list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -2522,7 +2525,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (loginUser == null)
 			loginUser = authenticatedUser;
 		List<Tanim> list = ortakIslemler.getFazlaMesaiMudurList(loginUser, null, sirket, tesisId, null, aylikPuantaj, "B", denklestirme, fazlaMesaiTalepDurum, session);
-		List<SelectItem> selectList = new ArrayList<SelectItem>();
+		List<SelectItem> selectList = ortakIslemler.getSelectItemList("mudurBolum", loginUser);
 		if (!list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -2797,7 +2800,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		TreeMap<Long, Sirket> sirketMap = pdksEntityController.getObjectByInnerObjectMapInLogic(fields, Personel.class, false);
-		List<SelectItem> list = new ArrayList<SelectItem>();
+		List<SelectItem> list = ortakIslemler.getSelectItemList("sirket", authenticatedUser);
 		if (!sirketMap.isEmpty()) {
 			List<Sirket> sirketList = PdksUtil.sortObjectStringAlanList(new ArrayList(sirketMap.values()), "getAd", null);
 			for (Sirket sirket : sirketList) {
@@ -2968,7 +2971,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 			tanimlar = null;
 			tanimlar = PdksUtil.sortObjectStringAlanList(new ArrayList<Tanim>(tanimMap.values()), "getAciklama", null);
-			gorevTipiList = ortakIslemler.getTanimSelectItem(tanimlar);
+			gorevTipiList = ortakIslemler.getTanimSelectItem("gorevTipi", tanimlar);
 			tanimMap = null;
 
 		}
@@ -3117,7 +3120,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				bolumler = ortakIslemler.getTanimList(Tanim.TIPI_BOLUM_DEPARTMAN + departmanId, session);
 		}
 		if (bolumler == null || bolumler.isEmpty())
-			bolumDepartmanlari = new ArrayList<SelectItem>();
+			bolumDepartmanlari = ortakIslemler.getSelectItemList("bolumDepartman", authenticatedUser);
 		else {
 			if (fazlaMesai) {
 
@@ -3159,7 +3162,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			}
 			if (bolumler.size() > 1)
 				bolumler = PdksUtil.sortObjectStringAlanList(bolumler, "getAciklama", null);
-			bolumDepartmanlari = ortakIslemler.getTanimSelectItem(bolumler);
+			bolumDepartmanlari = ortakIslemler.getTanimSelectItem("bolumDepartman", bolumler);
 		}
 		bolumler = null;
 		return bolumDepartmanlari;

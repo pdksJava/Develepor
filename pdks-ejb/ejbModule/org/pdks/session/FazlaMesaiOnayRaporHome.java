@@ -217,7 +217,7 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			sirketId = null;
 			setTesisId(null);
 			setTesisList(null);
-			aylar = PdksUtil.getAyListesi(Boolean.TRUE);
+			aylar = ortakIslemler.getAyListesi(Boolean.TRUE);
 			seciliEkSaha3Id = null;
 			cal = Calendar.getInstance();
 			ortakIslemler.gunCikar(cal, 2);

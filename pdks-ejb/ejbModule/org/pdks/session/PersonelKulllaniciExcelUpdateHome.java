@@ -65,16 +65,14 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 	HashMap parameterMap;
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
-	
+
 	public static String sayfaURL = "personelKullaniciExcelGuncelle";
 
 	private List<PersonelView> personelList = new ArrayList<PersonelView>();
-	private List<SelectItem> islemList = new ArrayList<SelectItem>();
+	private List<SelectItem> islemList;
 	private String islemTipi, mailAdres, ekleSil;
 	private FileUpload file;
 	private Session session;
-
-	
 
 	@Override
 	public Object getId() {
@@ -547,10 +545,9 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 		islemTipi = "";
 		mailAdres = "";
 		ekleSil = "";
-		if (islemList == null)
-			islemList = new ArrayList<SelectItem>();
-		else
-			islemList.clear();
+
+		islemList = ortakIslemler.getSelectItemList("islem", authenticatedUser);
+
 		islemList.add(new SelectItem("Y1", ortakIslemler.yoneticiAciklama() + " güncelle"));
 		islemList.add(new SelectItem("Y2", ortakIslemler.yonetici2Aciklama() + " güncelle"));
 		islemList.add(new SelectItem(MailGrubu.TIPI_CC, "CC Mail"));
@@ -606,6 +603,7 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 	public void setEkleSil(String ekleSil) {
 		this.ekleSil = ekleSil;
 	}
+
 	public Session getSession() {
 		return session;
 	}

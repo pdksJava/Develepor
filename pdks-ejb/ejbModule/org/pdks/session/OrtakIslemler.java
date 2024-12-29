@@ -2418,7 +2418,8 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public List<SelectItem> getIzinSirketItemList(List<Sirket> sirketList) {
-		List<SelectItem> sirketItemList = new ArrayList<SelectItem>();
+		List<SelectItem> sirketItemList = getSelectItemList("izinSirket", authenticatedUser);
+		;
 		if (sirketList != null) {
 			for (Sirket sirket : sirketList) {
 				if ((sirket.isIzinGirer() || PersonelIzinDetay.isIzinHakedisGuncelle()) && sirket.getFazlaMesai()) {
@@ -3867,9 +3868,10 @@ public class OrtakIslemler implements Serializable {
 			if (bolumler != null && !bolumler.isEmpty()) {
 				if (bolumler.size() > 1)
 					bolumler = PdksUtil.sortObjectStringAlanList(bolumler, "getAciklama", null);
-				bolumDepartmanlari = getTanimSelectItem(bolumler);
+				bolumDepartmanlari = getTanimSelectItem("bolumDepartman", bolumler);
 			} else
-				bolumDepartmanlari = new ArrayList<SelectItem>();
+				bolumDepartmanlari = getSelectItemList("bolumDepartman", authenticatedUser);
+
 			bolumler = null;
 		}
 
@@ -4303,8 +4305,8 @@ public class OrtakIslemler implements Serializable {
 	 * @param loginUser
 	 * @return
 	 */
-	public List<SelectItem> getSelectItemList(String key, User loginUser) {
-		List<SelectItem> list = null;
+	public List getSelectItemList(String key, User loginUser) {
+		List list = null;
 		if (loginUser == null && authenticatedUser != null)
 			loginUser = authenticatedUser;
 		if (loginUser != null && PdksUtil.hasStringValue(key)) {
@@ -4316,14 +4318,14 @@ public class OrtakIslemler implements Serializable {
 			if (selectItemMap.containsKey(key))
 				list = selectItemMap.get(key);
 			if (list == null) {
-				list = new ArrayList<SelectItem>();
+				list = new ArrayList();
 				selectItemMap.put(key, list);
 			} else
 				list.clear();
 
 		}
 		if (list == null)
-			list = new ArrayList<SelectItem>();
+			list = new ArrayList();
 		return list;
 	}
 
@@ -4365,7 +4367,7 @@ public class OrtakIslemler implements Serializable {
 		List selectList = getSelectItemList("tesis", loginUser);
 
 		if (selectItemDurum) {
-			selectList = new ArrayList<SelectItem>();
+			selectList = getSelectItemList("tesis", authenticatedUser);
 			if (list != null && !list.isEmpty()) {
 				list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
 				for (Tanim veri : list)
@@ -4374,7 +4376,7 @@ public class OrtakIslemler implements Serializable {
 		} else
 			selectList = list;
 		if (tesisList == null)
-			tesisList = selectList != null ? selectList : new ArrayList();
+			tesisList = selectList != null ? selectList : getSelectItemList("tesis", authenticatedUser);
 		else {
 			tesisList.clear();
 			if (!selectList.isEmpty())
@@ -5225,14 +5227,14 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param tanimlar
+	 * @param tipi
 	 * @return
 	 */
-	public List<SelectItem> getTanimSelectItemByKodu(List<Tanim> tanimlar) {
-
+	public List<SelectItem> getTanimSelectItemByKodu(String tipi, Session session) {
+		List<Tanim> tanimlar = getTanimList(tipi, session);
 		List<SelectItem> items = null;
 		if (tanimlar != null) {
-			items = new ArrayList<SelectItem>();
+			items = getSelectItemList(tipi, authenticatedUser);
 			for (Tanim tanim : tanimlar)
 				if (tanim.getDurum())
 					items.add(new SelectItem(tanim.getKodu(), tanim.getAciklama()));
@@ -5244,11 +5246,11 @@ public class OrtakIslemler implements Serializable {
 	 * @param tanimlar
 	 * @return
 	 */
-	public List<SelectItem> getTanimSelectItem(List<Tanim> tanimlar) {
+	public List<SelectItem> getTanimSelectItem(String tipi, List<Tanim> tanimlar) {
 
 		List<SelectItem> items = null;
 		if (tanimlar != null) {
-			items = new ArrayList<SelectItem>();
+			items = getSelectItemList(tipi, authenticatedUser);
 			for (Tanim tanim : tanimlar)
 				if (tanim.getDurum())
 					items.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
@@ -5348,7 +5350,7 @@ public class OrtakIslemler implements Serializable {
 
 			tanimlar = null;
 			tanimlar = PdksUtil.sortObjectStringAlanList(new ArrayList<Tanim>(tanimMap.values()), "getAciklama", null);
-			gorevTipiList = getTanimSelectItem(tanimlar);
+			gorevTipiList = getTanimSelectItem("gorevTipi", tanimlar);
 			tanimMap = null;
 
 		}
@@ -5415,7 +5417,7 @@ public class OrtakIslemler implements Serializable {
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<Tanim> tesisTanimList = getTesisDurumu() ? pdksEntityController.getObjectBySQLList(sb, map, Tanim.class) : null;
 		if (tesisTanimList != null && !tesisTanimList.isEmpty()) {
-			List<SelectItem> tesisSelectList = new ArrayList<SelectItem>();
+			List<SelectItem> tesisSelectList = getSelectItemList("tesis", authenticatedUser);
 			for (Tanim tanim : tesisTanimList)
 				tesisSelectList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
 			sonucMap.put("tesisSelectList", tesisSelectList);
@@ -5432,7 +5434,7 @@ public class OrtakIslemler implements Serializable {
 			Tanim tanim = (Tanim) iterator.next();
 			if (tanim != null && tanim.getParentTanim() != null) {
 				String key = tanim.getParentTanim().getKodu();
-				List<SelectItem> ekSahaSelectList = islemEkSahaSelectListMap.containsKey(key) ? islemEkSahaSelectListMap.get(key) : new ArrayList<SelectItem>();
+				List<SelectItem> ekSahaSelectList = islemEkSahaSelectListMap.containsKey(key) ? islemEkSahaSelectListMap.get(key) : getSelectItemList(key, authenticatedUser);
 				if (ekSahaSelectList.isEmpty())
 					islemEkSahaSelectListMap.put(key, ekSahaSelectList);
 				ekSahaSelectList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
@@ -5452,7 +5454,7 @@ public class OrtakIslemler implements Serializable {
 		}
 		if (sirketEkle == null || sirketEkle) {
 
-			List<SelectItem> sirketIdList = new ArrayList<SelectItem>();
+			List<SelectItem> sirketIdList = getSelectItemList("sirket", authenticatedUser);
 			List<Sirket> sirketList = fillSirketList(session, Boolean.TRUE, kendisiBul);
 			for (Sirket sirket : sirketList)
 				sirketIdList.add(new SelectItem(sirket.getId(), sirket.getAd()));
@@ -5478,7 +5480,7 @@ public class OrtakIslemler implements Serializable {
 		TreeMap<String, Tanim> ekSahaTanimMap = null;
 		if (sonucMap != null && !sonucMap.isEmpty()) {
 			if (authenticatedUser != null && (authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin())) {
-				List<SelectItem> departmanIdList = new ArrayList<SelectItem>();
+				List<SelectItem> departmanIdList = getSelectItemList("departman", authenticatedUser);
 				List<Departman> departmanList = fillDepartmanTanimList(session);
 				for (Departman pdksDepartman : departmanList)
 					departmanIdList.add(new SelectItem(pdksDepartman.getId(), pdksDepartman.getDepartmanTanim().getAciklama()));
@@ -5565,7 +5567,7 @@ public class OrtakIslemler implements Serializable {
 							for (String key : list) {
 								if (ekSahaListMap.containsKey(key)) {
 									List<Tanim> tanimList = ekSahaListMap.get(key);
-									List<SelectItem> selectItemList = new ArrayList<SelectItem>();
+									List<SelectItem> selectItemList = getSelectItemList(key, authenticatedUser);
 									for (Tanim tanim : tanimList) {
 										selectItemList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
 									}
@@ -8943,6 +8945,24 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param sayisal
+	 * @return
+	 */
+	public List<SelectItem> getAyListesi(boolean sayisal) {
+		List<SelectItem> list = getSelectItemList("ay", authenticatedUser);
+		Calendar cal = Calendar.getInstance();
+		cal.set(cal.get(Calendar.YEAR), Calendar.JANUARY, 1);
+		for (int i = 0; i < 12; i++) {
+			if (sayisal)
+				list.add(new SelectItem(i + 1, PdksUtil.convertToDateString(cal.getTime(), "MMMMM")));
+			else
+				list.add(new SelectItem(String.valueOf(i), PdksUtil.convertToDateString(cal.getTime(), "MMMMM")));
+			cal.add(Calendar.MONTH, 1);
+		}
+		return list;
+	}
+
+	/**
 	 * @param session
 	 * @param menuAdi
 	 * @return
@@ -8958,8 +8978,11 @@ public class OrtakIslemler implements Serializable {
 					if (selectItemMap != null) {
 						for (String key : selectItemMap.keySet()) {
 							List list = selectItemMap.get(key);
-							if (list != null)
+							if (list != null && !list.isEmpty()) {
+								for (int i = 0; i < list.size(); i++)
+									list.set(i, null);
 								list.clear();
+							}
 						}
 					}
 					if (PdksUtil.isStrDegisti(authenticatedUser.getCalistigiSayfa(), menuAdi)) {

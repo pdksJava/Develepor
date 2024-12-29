@@ -65,8 +65,8 @@ public class IzinAylikRaporHome extends EntityHome<PersonelIzin> implements Seri
 	private int yil, maxYil, gunSayisi;
 	private String izinAciklama, style, ay;
 
-	private List<SelectItem> ayList = new ArrayList<SelectItem>();
-	private List<SelectItem> dataList = new ArrayList<SelectItem>();
+	private List<SelectItem> ayList;
+	private List<SelectItem> dataList;
 	private List<Integer> gunList = new ArrayList<Integer>();
 	private HashMap<String, IzinTipi> izinTipiMap = new HashMap<String, IzinTipi>();
 	private List<Personel> pdksPersonelList = new ArrayList<Personel>();
@@ -148,7 +148,7 @@ public class IzinAylikRaporHome extends EntityHome<PersonelIzin> implements Seri
 		setMaxYil(cal.get(Calendar.YEAR) + 1);
 
 		setAy(String.valueOf(cal.get(Calendar.MONTH)));
-		List<SelectItem> list = PdksUtil.getAyListesi(Boolean.FALSE);
+		List<SelectItem> list = ortakIslemler.getAyListesi(Boolean.FALSE);
 		setAyList(list);
 	}
 
@@ -158,7 +158,7 @@ public class IzinAylikRaporHome extends EntityHome<PersonelIzin> implements Seri
 	 */
 	public List<SelectItem> getData(Personel personel) {
 
-		dataList.clear();
+		dataList = ortakIslemler.getSelectItemList("data", authenticatedUser);
 		for (Iterator iterator = gunList.iterator(); iterator.hasNext();) {
 			Integer gun = (Integer) iterator.next();
 			dataList.add(getSelectItem(gun, personel));
@@ -339,7 +339,7 @@ public class IzinAylikRaporHome extends EntityHome<PersonelIzin> implements Seri
 		cal.setTime(basDate);
 		Date tarih = PdksUtil.getDate((Date) cal.getTime().clone());
 		Integer gunSayisi = 0;
-		gunList = new ArrayList<Integer>();
+		gunList = ortakIslemler.getSelectItemList("gun", authenticatedUser);
 		while (tarih.getTime() < bitDate.getTime()) {
 			gunler.put(++gunSayisi, PdksUtil.convertToDateString(tarih, "yyyyMMdd"));
 			gunList.add(gunSayisi);

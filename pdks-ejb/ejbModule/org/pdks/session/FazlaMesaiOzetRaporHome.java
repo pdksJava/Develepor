@@ -228,10 +228,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			baslikMap = new TreeMap<String, Boolean>();
 		else
 			baslikMap.clear();
-		if (duzeltTipleri == null)
-			duzeltTipleri = new ArrayList<SelectItem>();
-		else
-			duzeltTipleri.clear();
+		duzeltTipleri = ortakIslemler.getSelectItemList("duzeltTip", authenticatedUser);
 		duzeltTipleri.add(new SelectItem("T", "Tam çalışmış"));
 		duzeltTipleri.add(new SelectItem("S", "Süre sayma"));
 		duzeltTipi = (String) duzeltTipleri.get(0).getValue();
@@ -528,8 +525,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	}
 
 	private void yilDegisti() {
-		if (aylar == null)
-			aylar = new ArrayList<SelectItem>();
+
+		aylar = ortakIslemler.getSelectItemList("ay", authenticatedUser);
 		ay = fazlaMesaiOrtakIslemler.aylariDoldur(yil, ay, aylar, session);
 	}
 

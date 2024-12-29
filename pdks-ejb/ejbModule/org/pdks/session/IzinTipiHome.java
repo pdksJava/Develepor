@@ -59,10 +59,10 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 	private List<Tanim> izinTipiTanimList = new ArrayList<Tanim>();
 	private List<Tanim> bakiyeIzinTipiTanimList = new ArrayList<Tanim>();
 	private List<Tanim> bilgiTipiList = new ArrayList<Tanim>();
-	private List<SelectItem> personelGirisTipiList = new ArrayList<SelectItem>(), bakiyeDevirTipiList = new ArrayList<SelectItem>(), mailTipiList;
-	private List<SelectItem> onaylayanTipiList = new ArrayList<SelectItem>();
+	private List<SelectItem> personelGirisTipiList, bakiyeDevirTipiList, mailTipiList;
+	private List<SelectItem> onaylayanTipiList;
 	private List<Tanim> cinsiyetList = new ArrayList<Tanim>();
-	private List<SelectItem> hesapTipiList = null, durumCGSList = new ArrayList<SelectItem>(), mailGonderimDurumlari;
+	private List<SelectItem> hesapTipiList = null, durumCGSList , mailGonderimDurumlari;
 	private IzinTipi bakiyeIzinTipi;
 	public Tanim selectedDepartman, bilgiTipi;
 	private List<IzinTipiMailAdres> mailCCAdresList, mailBCCAdresList;
@@ -85,7 +85,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 	}
 
 	public void fillHesapTipiList() {
-		hesapTipiList = new ArrayList<SelectItem>();
+		hesapTipiList = ortakIslemler.getSelectItemList("hesapTipi", authenticatedUser);
 		hesapTipiList.add(new SelectItem(0, PdksUtil.getMessageBundleMessage("izin.etiket.hesapTipi0")));
 		hesapTipiList.add(new SelectItem(PersonelIzin.HESAP_TIPI_GUN, PdksUtil.getMessageBundleMessage("izin.etiket.hesapTipi" + PersonelIzin.HESAP_TIPI_GUN)));
 		hesapTipiList.add(new SelectItem(PersonelIzin.HESAP_TIPI_SAAT, PdksUtil.getMessageBundleMessage("izin.etiket.hesapTipi" + PersonelIzin.HESAP_TIPI_SAAT)));
@@ -184,18 +184,15 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 
 		fillCinsiyetList();
 		fillBilgiTipiList();
-		if (mailGonderimDurumlari == null)
-			mailGonderimDurumlari = new ArrayList<SelectItem>();
-		else
-			mailGonderimDurumlari.clear();
+
+		mailGonderimDurumlari = ortakIslemler.getSelectItemList("mailGonderimDurum", authenticatedUser);
+
 		mailGonderimDurumlari.add(new SelectItem(IzinTipi.MAIL_GONDERIM_DURUMU_ILK_ONAY, IzinTipi.getMailGonderimDurumAciklama(IzinTipi.MAIL_GONDERIM_DURUMU_ILK_ONAY)));
 		mailGonderimDurumlari.add(new SelectItem(IzinTipi.MAIL_GONDERIM_DURUMU_IK_ONAY, IzinTipi.getMailGonderimDurumAciklama(IzinTipi.MAIL_GONDERIM_DURUMU_IK_ONAY)));
 		mailGonderimDurumlari.add(new SelectItem(IzinTipi.MAIL_GONDERIM_DURUMU_ONAYSIZ, IzinTipi.getMailGonderimDurumAciklama(IzinTipi.MAIL_GONDERIM_DURUMU_ONAYSIZ)));
 
-		if (mailTipiList == null)
-			mailTipiList = new ArrayList<SelectItem>();
-		else
-			mailTipiList.clear();
+		mailTipiList = ortakIslemler.getSelectItemList("mailTipi", authenticatedUser);
+
 		mailTipiList.add(new SelectItem(IzinTipiMailAdres.TIPI_CC, "CC"));
 		mailTipiList.add(new SelectItem(IzinTipiMailAdres.TIPI_BCC, "BCC"));
 		if (izinTipi.getId() != 0) {
@@ -424,7 +421,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 	}
 
 	public void fillPersonelGirisTipiList(IzinTipi izinTipi) {
-		List<SelectItem> list = new ArrayList<SelectItem>();
+		List<SelectItem> list = ortakIslemler.getSelectItemList("personelGirisTipi", authenticatedUser);
 		for (int i = 0; i <= 3; i++) {
 			izinTipi.setPersonelGirisTipi(String.valueOf(i));
 			list.add(new SelectItem(izinTipi.getPersonelGirisTipi(), izinTipi.getPersonelGirisTipiAciklama()));
@@ -433,7 +430,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 	}
 
 	public void fillOnaylayanTipiList(IzinTipi izinTipi) {
-		List<SelectItem> list = new ArrayList<SelectItem>();
+		List<SelectItem> list = ortakIslemler.getSelectItemList("onaylayanTipi", authenticatedUser);
 		for (int i = 0; i <= 3; i++) {
 			izinTipi.setOnaylayanTipi(String.valueOf(i));
 			list.add(new SelectItem(izinTipi.getOnaylayanTipi(), izinTipi.getOnaylayanTipiAciklama()));
@@ -442,7 +439,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 	}
 
 	public void fillBakiyeDevirTipiList(IzinTipi izinTipi) {
-		List<SelectItem> list = new ArrayList<SelectItem>();
+		List<SelectItem> list = ortakIslemler.getSelectItemList("bakiyeDevirTipi", authenticatedUser);
 		for (int i = 0; i <= 2; i++) {
 			izinTipi.setBakiyeDevirTipi(String.valueOf(i));
 			list.add(new SelectItem(izinTipi.getBakiyeDevirTipi(), izinTipi.getBakiyeDevirTipiAciklama()));
@@ -595,7 +592,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
-		durumCGSList.clear();
+		durumCGSList = ortakIslemler.getSelectItemList("durumCGS", authenticatedUser);
 		durumCGSList.add(new SelectItem(IzinTipi.CGS_DURUM_YOK, IzinTipi.getDurumCGSAciklama(IzinTipi.CGS_DURUM_YOK)));
 		durumCGSList.add(new SelectItem(IzinTipi.CGS_DURUM_CIKAR, IzinTipi.getDurumCGSAciklama(IzinTipi.CGS_DURUM_CIKAR)));
 		durumCGSList.add(new SelectItem(IzinTipi.CGS_DURUM_EKLE, IzinTipi.getDurumCGSAciklama(IzinTipi.CGS_DURUM_EKLE)));

@@ -235,7 +235,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		donemselDurum = new PersonelDonemselDurum();
 		donemselDurum.setPersonel(personel);
 		donemselDurumList = null;
-		personelDurumTipiList = new ArrayList<SelectItem>();
+		personelDurumTipiList = ortakIslemler.getSelectItemList("personelDurumTipi", authenticatedUser);
 		if (personel != null) {
 			session.clear();
 			donemselDurumList = pdksEntityController.getSQLParamByFieldList(PersonelDonemselDurum.TABLE_NAME, PersonelDonemselDurum.COLUMN_NAME_PERSONEL, personel.getId(), PersonelDonemselDurum.class, session);

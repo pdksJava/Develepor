@@ -85,8 +85,8 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 	@In(required = false)
 	FacesMessages facesMessages;
 
-	List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
-	List<SelectItem> kapiList = new ArrayList<SelectItem>();
+	private List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
+	private List<SelectItem> kapiList;
 	private List<Personel> personelList;
 	private LinkedHashMap<String, HareketKGS> manuelHareketMap;
 	private List<SelectItem> manuelHareketList;
@@ -157,7 +157,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 
 	private void fillEkSahaTanim() {
 		ortakIslemler.fillEkSahaTanimAramaSecenekAta(session, Boolean.FALSE, null, aramaSecenekleri);
- 		if (aramaSecenekleriPer != null && aramaSecenekleri != null && aramaSecenekleri.getSirketIdList() != null && aramaSecenekleri.getSirketIdList().size() == 1) {
+		if (aramaSecenekleriPer != null && aramaSecenekleri != null && aramaSecenekleri.getSirketIdList() != null && aramaSecenekleri.getSirketIdList().size() == 1) {
 			aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
 			ortakIslemler.getTesisList(aramaSecenekleri.getTesisList(), null, aramaSecenekleri.getSirketId(), true, session);
 			if (aramaSecenekleri.getTesisList() != null && aramaSecenekleri.getTesisList().size() == 1)
@@ -222,7 +222,8 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 			kapiList.add(manuelGiris);
 			kapiList.add(manuelCikis);
 		}
-		List<SelectItem> kapiKGSList = new ArrayList<SelectItem>();
+		List<SelectItem> kapiKGSList = ortakIslemler.getSelectItemList("kapiKGS", authenticatedUser);
+		;
 		if (!kapiList.isEmpty()) {
 			for (KapiView kapiKGS : kapiList) {
 				kapiKGSList.add(new SelectItem(kapiKGS.getId(), kapiKGS.getKapiAciklama()));
@@ -1154,7 +1155,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 				manuelHareketMap.put("OM", cikisMesai);
 			}
 		}
-		manuelHareketList = new ArrayList<SelectItem>();
+		manuelHareketList = ortakIslemler.getSelectItemList("manuelHareket", authenticatedUser);
 		// if (!PdksUtil.isSistemDestekVar())
 		// manuelHareketMap.clear();
 		if (!manuelHareketMap.isEmpty()) {

@@ -3260,24 +3260,6 @@ public class PdksUtil implements Serializable {
 	}
 
 	/**
-	 * @param sayisal
-	 * @return
-	 */
-	public static List<SelectItem> getAyListesi(boolean sayisal) {
-		List<SelectItem> list = new ArrayList<SelectItem>();
-		Calendar cal = Calendar.getInstance();
-		cal.set(cal.get(Calendar.YEAR), Calendar.JANUARY, 1);
-		for (int i = 0; i < 12; i++) {
-			if (sayisal)
-				list.add(new SelectItem(i + 1, convertToDateString(cal.getTime(), "MMMMM")));
-			else
-				list.add(new SelectItem(String.valueOf(i), convertToDateString(cal.getTime(), "MMMMM")));
-			cal.add(Calendar.MONTH, 1);
-		}
-		return list;
-	}
-
-	/**
 	 * @param submittedValue
 	 * @param locale
 	 * @return

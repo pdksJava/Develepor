@@ -219,7 +219,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 			sirketId = null;
 			setTesisId(null);
 			setTesisList(null);
-			aylar = PdksUtil.getAyListesi(Boolean.TRUE);
+			aylar = ortakIslemler.getAyListesi(Boolean.TRUE);
 			seciliEkSaha3Id = null;
 			Calendar cal = Calendar.getInstance();
 			ortakIslemler.gunCikar(cal, 2);

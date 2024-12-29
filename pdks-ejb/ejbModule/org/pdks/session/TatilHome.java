@@ -63,9 +63,8 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	private List<String> mesajList = new ArrayList<String>();
 	private List<Tanim> tatilTanimList = new ArrayList<Tanim>();
 	private List<Tatil> tatilList = new ArrayList<Tatil>();
-	private List<SelectItem> ayList = new ArrayList<SelectItem>();
-	private List<SelectItem> basGunList = new ArrayList<SelectItem>();
-	private List<SelectItem> bitisGunList = new ArrayList<SelectItem>();
+	private List<SelectItem> ayList;
+	private List<SelectItem> basGunList, bitisGunList;
 	private List<User> userList = new ArrayList<User>();
 	private ArrayList<PersonelIzin> izinListesi;
 	private Date tarih = Calendar.getInstance().getTime();
@@ -468,7 +467,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	}
 
 	public void fillAyList() {
-		List<SelectItem> list = PdksUtil.getAyListesi(Boolean.FALSE);
+		List<SelectItem> list = ortakIslemler.getAyListesi(Boolean.FALSE);
 		setAyList(list);
 	}
 
@@ -476,7 +475,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 		Tatil pdksTatil = getInstance();
 		try {
 			String ay = (String) pdksTatil.getBasAy();
-			setBasGunList(fillGunList(new Integer(ay)));
+			setBasGunList(fillGunList("basGun", new Integer(ay)));
 
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
@@ -490,7 +489,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 		Tatil pdksTatil = getInstance();
 		try {
 			String ay = (String) pdksTatil.getBitAy();
-			setBitisGunList(fillGunList(new Integer(ay)));
+			setBitisGunList(fillGunList("bitGun", new Integer(ay)));
 
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
@@ -500,8 +499,8 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 		}
 	}
 
-	public List<SelectItem> fillGunList(Integer deger) {
-		List<SelectItem> list = new ArrayList<SelectItem>();
+	public List<SelectItem> fillGunList(String key, Integer deger) {
+		List<SelectItem> list = ortakIslemler.getSelectItemList(key, authenticatedUser);
 		if (deger != null) {
 			int bitis = 31;
 			int ay = deger.intValue() + 1;

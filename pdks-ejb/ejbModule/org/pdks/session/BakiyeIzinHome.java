@@ -245,10 +245,9 @@ public class BakiyeIzinHome extends EntityHome<PersonelIzin> {
 		}
 		if (list.size() > 1)
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
-		if (izinTanimIdList == null)
-			izinTanimIdList = new ArrayList<SelectItem>();
-		else
-			izinTanimIdList.clear();
+
+		izinTanimIdList = ortakIslemler.getSelectItemList("izinTanim", authenticatedUser);
+
 		for (Tanim tanim : list) {
 			izinTanimIdList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
 		}

@@ -134,7 +134,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
-		aylar = PdksUtil.getAyListesi(Boolean.TRUE);
+		aylar = ortakIslemler.getAyListesi(Boolean.TRUE);
 		String sapControllerStr = ortakIslemler.getParameterKey("sapController");
 		erpAktarimDurum = sapControllerStr.equals("2") || sapControllerStr.equals("3");
 		Calendar cal = Calendar.getInstance();
@@ -394,7 +394,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 	}
 
 	public void filDepartmanList() {
-		List<SelectItem> departmanListe = new ArrayList<SelectItem>();
+		List<SelectItem> departmanListe = ortakIslemler.getSelectItemList("departman", authenticatedUser);
 		List<Departman> list = ortakIslemler.fillDepartmanTanimList(session);
 		if (list.size() == 1) {
 			departmanId = list.get(0).getId();
@@ -435,7 +435,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 			if (list.size() > 1)
 				list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);
 			if (!list.isEmpty()) {
-				List<SelectItem> sirketler = new ArrayList<SelectItem>();
+				List<SelectItem> sirketler = ortakIslemler.getSelectItemList("sirket", authenticatedUser);
 				for (Sirket sirket : list) {
 					sirketler.add(new SelectItem(sirket.getId(), sirket.getAd()));
 				}

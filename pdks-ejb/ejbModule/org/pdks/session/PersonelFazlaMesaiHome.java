@@ -311,7 +311,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 	public void filDepartmanList() {
 
-		List<SelectItem> departmanListe = new ArrayList<SelectItem>();
+		List<SelectItem> departmanListe = ortakIslemler.getSelectItemList("departman", authenticatedUser);
 
 		List<Departman> list = ortakIslemler.fillDepartmanTanimList(session);
 		if (list.size() == 1) {
@@ -361,7 +361,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 				list = new ArrayList<Sirket>(sirketMap.values());
 			if (list.size() > 1)
 				list = ortakIslemler.getStajerOlmayanSirketler(PdksUtil.sortObjectStringAlanList(list, "getAd", null));
-			List<SelectItem> sirketler = new ArrayList<SelectItem>();
+			List<SelectItem> sirketler = ortakIslemler.getSelectItemList("sirket", authenticatedUser);
 			if (!list.isEmpty()) {
 
 				for (Sirket pdksSirket : list) {

@@ -103,14 +103,8 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 		if (!(authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin()))
 			departman = authenticatedUser.getDepartman();
 		List<Sirket> pdksSirketList = ortakIslemler.getDepartmanPDKSSirketList(departman, session);
-		if (sirketList == null)
-			sirketList = new ArrayList<SelectItem>();
-		else
-			sirketList.clear();
-		if (tesisList == null)
-			tesisList = new ArrayList<SelectItem>();
-		else
-			tesisList.clear();
+		sirketList = ortakIslemler.getSelectItemList("sirket", authenticatedUser);
+		tesisList = ortakIslemler.getSelectItemList("tesis", authenticatedUser);
 		if (personelDonemDurumList == null)
 			personelDonemDurumList = new ArrayList<PersonelDonemselDurum>();
 		else

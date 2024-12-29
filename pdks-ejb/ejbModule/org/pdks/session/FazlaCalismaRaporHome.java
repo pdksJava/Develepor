@@ -264,7 +264,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 			sirketId = null;
 			setTesisId(null);
 			setTesisList(null);
-			aylar = PdksUtil.getAyListesi(Boolean.TRUE);
+			aylar = ortakIslemler.getAyListesi(Boolean.TRUE);
 			seciliEkSaha3Id = null;
 			cal = Calendar.getInstance();
 			ortakIslemler.gunCikar(cal, 2);
@@ -958,7 +958,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 				if (ortakIslemler.getParameterKeyHasStringValue("minGunCalismaSaat"))
 					saat = Double.parseDouble(ortakIslemler.getParameterKey("minGunCalismaSaat"));
 			} catch (Exception e) {
-				
+
 			}
 			if (saat == null || saat.doubleValue() < 0.0d)
 				saat = 0.5d;

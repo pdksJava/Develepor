@@ -439,7 +439,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		try {
 			ortakIslemler.saveLastParameter(lastMap, session);
 		} catch (Exception e) {
- 		}
+		}
 
 		return sayfa;
 	}
@@ -494,10 +494,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			sirket = null;
 			sirketId = null;
 			sirketler = null;
-			if (tesisList != null)
-				tesisList.clear();
-			else
-				tesisList = new ArrayList<SelectItem>();
+			tesisList = ortakIslemler.getSelectItemList("tesis", authenticatedUser);
 			if (authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin())
 				filDepartmanList();
 			if (departmanList.size() == 1)
@@ -612,12 +609,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		try {
 			ortakIslemler.saveLastParameter(lastMap, session);
 		} catch (Exception e) {
- 		}
+		}
 
 	}
 
 	public void filDepartmanList() {
-		List<SelectItem> departmanListe = new ArrayList<SelectItem>();
+		List<SelectItem> departmanListe = ortakIslemler.getSelectItemList("departman", authenticatedUser);
 		List<Departman> list = ortakIslemler.fillDepartmanTanimList(session);
 		if (list.size() == 1) {
 			departmanId = list.get(0).getId();
@@ -633,7 +630,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 	public void fillTesisList() {
 		personelDenklestirmeList.clear();
-		List<SelectItem> selectItems = new ArrayList<SelectItem>();
+		List<SelectItem> selectItems = ortakIslemler.getSelectItemList("tesis", authenticatedUser);
 		Long onceki = null;
 		if (sirketId != null) {
 			onceki = tesisId;
@@ -669,8 +666,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 	public void yilDegisti() {
 		if (yil > 0) {
-			if (aylar == null)
-				aylar = new ArrayList<SelectItem>();
+			aylar = ortakIslemler.getSelectItemList("ay", authenticatedUser);
 			ay = fazlaMesaiOrtakIslemler.aylariDoldur(yil, ay, aylar, session);
 			if (!aylar.isEmpty())
 				fillSirketList();

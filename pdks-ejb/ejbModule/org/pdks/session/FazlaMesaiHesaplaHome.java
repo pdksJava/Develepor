@@ -311,8 +311,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * 
 	 */
 	public void aylariDoldur() {
-		if (aylar == null)
-			aylar = new ArrayList<SelectItem>();
+		aylar = ortakIslemler.getSelectItemList("ay", authenticatedUser);
 		ay = fazlaMesaiOrtakIslemler.aylariDoldur(yil, ay, aylar, session);
 	}
 
@@ -366,7 +365,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			sirketId = null;
 			setTesisId(null);
 			setTesisList(null);
-			aylar = PdksUtil.getAyListesi(Boolean.TRUE);
+			aylar = ortakIslemler.getAyListesi(Boolean.TRUE);
 			seciliEkSaha3Id = null;
 			seciliEkSaha4Id = null;
 			Calendar cal = Calendar.getInstance();
@@ -618,10 +617,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	}
 
 	public void aylikPuantajListClear() {
-		if (aylikPuantajList == null)
-			aylikPuantajList = new ArrayList<AylikPuantaj>();
-		else
-			aylikPuantajList.clear();
+		if (userLogin == null)
+			userLogin = authenticatedUser;
+		aylikPuantajList = ortakIslemler.getSelectItemList("aylikPuantaj", userLogin);
 	}
 
 	/**
@@ -1027,7 +1025,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			perIdList = null;
 			donemPerList = null;
 			if (!list.isEmpty()) {
-				hataliPersoneller = new ArrayList<SelectItem>();
+				hataliPersoneller = ortakIslemler.getSelectItemList("hataliPersonel", authenticatedUser);
 				boolean kayitVar = false;
 				if (hataliSicilNo == null)
 					hataliSicilNo = "";
@@ -1215,7 +1213,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		suaGoster = Boolean.FALSE;
 		aylikPuantajSablon.getVardiyalar();
 		setAylikPuantajDefault(aylikPuantajSablon);
-		 
+
 		kaydetDurum = Boolean.FALSE;
 		String aksamBordroBasZamani = ortakIslemler.getParameterKey("aksamBordroBasZamani"), aksamBordroBitZamani = ortakIslemler.getParameterKey("aksamBordroBitZamani");
 		Integer[] basZaman = ortakIslemler.getSaatDakika(aksamBordroBasZamani), bitZaman = ortakIslemler.getSaatDakika(aksamBordroBitZamani);
@@ -2818,8 +2816,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 		if (denklestirmeAyDurum) {
 			boolean tekSicil = PdksUtil.hasStringValue(sicilNo);
-			if (hataliPersoneller == null)
-				hataliPersoneller = new ArrayList<SelectItem>();
+
+			hataliPersoneller = ortakIslemler.getSelectItemList("hataliPersonel", authenticatedUser);
 			if (tekSicil == false)
 				if (hataliPersoneller != null)
 					hataliPersoneller.clear();
@@ -2843,7 +2841,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				hataliPersoneller = null;
 		} else
 			hataliPersoneller = null;
-	 
+
 		linkAdres = null;
 		if (denklestirmeAyDurum)
 			linkAdres = getLinkAdresBilgi(inputPersonelNo, true);
@@ -5768,7 +5766,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								List<Personel> tumBolumList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(sirket, departman.isAdminMi() && sirket.isTesisDurumu() && tesisId != null ? String.valueOf(tesisId) : null, null, null, denklestirmeAy != null ? aylikPuantaj : null, sadeceFazlaMesai,
 										session);
 								if (tumBolumList.size() <= tumBolumSayisi) {
-									List<SelectItem> bolumlist = new ArrayList<SelectItem>();
+									List<SelectItem> bolumlist = ortakIslemler.getSelectItemList("fmBolum", authenticatedUser);
 									String aciklama = "";
 									if (sirket.isTesisDurumu() && tesisId != null)
 										aciklama = ortakIslemler.getSelectItemText(tesisId, tesisList);
@@ -5811,10 +5809,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		}
 
 		if (ekSaha4Tanim != null) {
-			if (altBolumList == null)
-				altBolumList = new ArrayList<SelectItem>();
-			else
-				altBolumList.clear();
+			altBolumList = ortakIslemler.getSelectItemList("altBolum", authenticatedUser);
 			if (oncekiEkSaha3Id != null)
 				altBolumDoldur();
 			else {
@@ -5856,7 +5851,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		if (ekSaha4Tanim != null) {
 			boolean hepsiEkle = true;
 			List<SelectItem> list = fazlaMesaiOrtakIslemler.getFazlaMesaiAltBolumList(sirket, tesisId != null ? String.valueOf(tesisId) : null, seciliEkSaha3Id, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, sadeceFazlaMesai, session);
-			altBolumList = new ArrayList<SelectItem>();
+			altBolumList = ortakIslemler.getSelectItemList("altBolum", authenticatedUser);
 			if (list.size() > 1) {
 				List<Personel> donemPerList = null;
 				try {

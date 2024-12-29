@@ -136,10 +136,9 @@ public class SapServerTanimlamaHome extends EntityHome<SAPSunucu> implements Ser
 	}
 
 	private void fillSAPSunucuTipleri() {
-		if (sunucuTipleri == null)
-			sunucuTipleri = new ArrayList<SelectItem>();
-		else
-			sunucuTipleri.clear();
+
+		sunucuTipleri = ortakIslemler.getSelectItemList("sunucuTip", authenticatedUser);
+
 		for (int i = 0; i <= SAPSunucu.SUNUCU_TIPI_BW_TEST; i++) {
 			String aciklama = SAPSunucu.getSunucuTipiAciklama(i);
 			if (PdksUtil.hasStringValue(aciklama))

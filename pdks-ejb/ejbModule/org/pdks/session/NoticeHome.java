@@ -1,6 +1,5 @@
 package org.pdks.session;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -84,10 +83,9 @@ public class NoticeHome extends EntityHome<Notice> {
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		session.clear();
 		List<Tanim> list = ortakIslemler.getTanimList(Tanim.TIPI_DUYURU, session);
-		if (duyuruTipleri == null)
-			duyuruTipleri = new ArrayList<SelectItem>();
-		else
-			duyuruTipleri.clear();
+
+		duyuruTipleri = ortakIslemler.getSelectItemList("duyuruTip", authenticatedUser);
+
 		duyuruTip = null;
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			Tanim duyuru = (Tanim) iterator.next();

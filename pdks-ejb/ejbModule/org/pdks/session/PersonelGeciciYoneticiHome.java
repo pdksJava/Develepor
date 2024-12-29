@@ -82,7 +82,7 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 	private TreeMap<String, Tanim> ekSahaTanimMap;
 	private List<Tanim> departmanList = new ArrayList<Tanim>();
 
-	private List<SelectItem> sirketItemList = new ArrayList<SelectItem>(), yoneticiler;
+	private List<SelectItem> sirketItemList, yoneticiler;
 	private List<Sirket> sirketList = new ArrayList<Sirket>();
 
 	private List<User> userList = new ArrayList<User>();
@@ -160,23 +160,6 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 	public void setPersonelList(List<Personel> personelList) {
 		this.personelList = personelList;
 	}
-
-	// public List<SelectItem> getRotasyonYoneticiList() {
-	// if (yoneticiler == null)
-	// yoneticiler = new ArrayList<SelectItem>();
-	// else
-	// yoneticiler.clear();
-	// List<User> list = new ArrayList<User>(rotasyonYoneticiList);
-	// if (seciliUser != null)
-	// for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-	// User user = (User) iterator.next();
-	// if (user.getId().equals(seciliUser.getId()))
-	// iterator.remove();
-	// else
-	// yoneticiler.add(new SelectItem(user.getId(), user.getAdSoyad()));
-	// }
-	// return yoneticiler;
-	// }
 
 	public void setRotasyonYoneticiList(List<User> rotasyonYoneticiList) {
 		this.rotasyonYoneticiList = rotasyonYoneticiList;
@@ -316,8 +299,8 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 				eklenecekPersonelIdList.add(pdksPersonel.getId());
 			}
 		}
- 
-		yeniYonetici = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID,yeniYoneticiId, User.class, session);
+
+		yeniYonetici = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, yeniYoneticiId, User.class, session);
 
 		HashMap param = new HashMap();
 		param.put("bagliYonetici.id", seciliUser.getId());
@@ -616,7 +599,7 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 		setEkSahaListMap((HashMap<String, List<Tanim>>) sonucMap.get("ekSahaList"));
 		setEkSahaTanimMap((TreeMap<String, Tanim>) sonucMap.get("ekSahaTanimMap"));
 		setSirketList((List<Sirket>) sonucMap.get("sirketList"));
-		setSirketItemList((List<SelectItem>) sonucMap.get("sirketList"));
+		setSirketItemList((List<SelectItem>) sonucMap.get("sirketIdList"));
 
 		User user = new User();
 		user.setPdksPersonel(new Personel());
@@ -931,10 +914,8 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 
 	public List<SelectItem> getYoneticiler() {
 
-		if (yoneticiler == null)
-			yoneticiler = new ArrayList<SelectItem>();
-		else
-			yoneticiler.clear();
+		yoneticiler = ortakIslemler.getSelectItemList("yonetici", authenticatedUser);
+
 		List<User> list = new ArrayList<User>(rotasyonYoneticiList);
 		if (seciliUser != null)
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {

@@ -69,7 +69,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 	private Date tarih;
 	private int saat;
 	private int dakika;
-	private List<SelectItem> kapiList = new ArrayList<SelectItem>();
+	private List<SelectItem> kapiList;
 	private List<Tanim> hareketIslemList = new ArrayList<Tanim>();
 	private ArrayList<FileUpload> files = new ArrayList<FileUpload>();
 	private ArrayList<String> sicilNoList;
@@ -92,7 +92,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 	}
 
 	public void fillKapiList() {
-		kapiList.clear();
+		kapiList = ortakIslemler.getSelectItemList("kapi", authenticatedUser);
 		List<KapiView> kapiViewList = new ArrayList<KapiView>();
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("kapi.durum", Boolean.TRUE);

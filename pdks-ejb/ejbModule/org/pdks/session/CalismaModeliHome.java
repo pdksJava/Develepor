@@ -392,8 +392,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	}
 
 	public void fillCalismaModeliList() {
-		if (haftaTatilGunleri == null)
-			haftaTatilGunleri = new ArrayList<SelectItem>();
+
+		haftaTatilGunleri = ortakIslemler.getSelectItemList("haftaTatilGun", authenticatedUser);
 
 		izinGoster = false;
 		hareketKaydiVardiyaBul = ortakIslemler.getParameterKey("hareketKaydiVardiyaBul").equals("1");

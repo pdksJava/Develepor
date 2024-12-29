@@ -47,7 +47,7 @@ public class IzinHakedisHakkiHome extends EntityHome<IzinHakedisHakki> implement
 	public static String sayfaURL = "izinHakedisHakkiTanimlama";
 	private List<IzinHakedisHakki> izinHakedisHakkiList = new ArrayList<IzinHakedisHakki>();
 	private List<Departman> departmanList = new ArrayList<Departman>();
-	private List<SelectItem> yasTipiList = new ArrayList<SelectItem>();
+	private List<SelectItem> yasTipiList  ;
 
 	private int basYil;
 	private int izinSure;
@@ -177,8 +177,8 @@ public class IzinHakedisHakkiHome extends EntityHome<IzinHakedisHakki> implement
 
 	public void fillYasTipiList() {
 		IzinHakedisHakki hakedisHakki = getInstance();
-		List<SelectItem> list = new ArrayList<SelectItem>();
-		list.add(new SelectItem(String.valueOf(IzinHakedisHakki.YAS_TIPI_COCUK), IzinHakedisHakki.getYasTipiStr(IzinHakedisHakki.YAS_TIPI_COCUK, hakedisHakki.getDepartman(), hakedisHakki.isSuaDurum())));
+		List<SelectItem> list = ortakIslemler.getSelectItemList("yasTipi", authenticatedUser);
+ 		list.add(new SelectItem(String.valueOf(IzinHakedisHakki.YAS_TIPI_COCUK), IzinHakedisHakki.getYasTipiStr(IzinHakedisHakki.YAS_TIPI_COCUK, hakedisHakki.getDepartman(), hakedisHakki.isSuaDurum())));
 		list.add(new SelectItem(String.valueOf(IzinHakedisHakki.YAS_TIPI_GENC), IzinHakedisHakki.getYasTipiStr(IzinHakedisHakki.YAS_TIPI_GENC, hakedisHakki.getDepartman(), hakedisHakki.isSuaDurum())));
 		list.add(new SelectItem(String.valueOf(IzinHakedisHakki.YAS_TIPI_YASLI), IzinHakedisHakki.getYasTipiStr(IzinHakedisHakki.YAS_TIPI_YASLI, hakedisHakki.getDepartman(), hakedisHakki.isSuaDurum())));
 		setYasTipiList(list);

@@ -64,7 +64,7 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 
 	public static String sayfaURL = "taseronPersonelKopyala";
 	private List<PersonelView> personelList = new ArrayList<PersonelView>();
-	private List<SelectItem> sirketList = new ArrayList<SelectItem>();
+	private List<SelectItem> sirketList = ortakIslemler.getSelectItemList("sirket", authenticatedUser);
 
 	private Long sirketId;
 	private Date basSirketTarih;
@@ -112,10 +112,9 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
-		if (sirketList == null)
-			sirketList = new ArrayList<SelectItem>();
-		else
-			sirketList.clear();
+
+		sirketList = ortakIslemler.getSelectItemList("sirket", authenticatedUser);
+
 		HashMap fields = new HashMap();
 		fields.put("durum", Boolean.TRUE);
 		fields.put("pdks", Boolean.TRUE);

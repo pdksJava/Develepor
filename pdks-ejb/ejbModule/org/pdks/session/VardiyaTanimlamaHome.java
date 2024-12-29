@@ -80,7 +80,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	boolean guncelle = Boolean.FALSE, denklestirmeKesintiYap = Boolean.FALSE, disabled = false;
 	private TreeMap<String, PersonelDenklestirme> bakiySonrakiMap;
 	private List<CalismaModeli> calismaModeliList = new ArrayList<CalismaModeli>();
-	private List<SelectItem> kesintiTuruList = new ArrayList<SelectItem>();
+	private List<SelectItem> kesintiTuruList;
 	private Boolean hareketKaydiVardiyaBul = Boolean.FALSE, negatifBakiyeDenkSaat = Boolean.FALSE, otomatikFazlaCalismaOnaylansinVar = Boolean.FALSE;
 	private Session session;
 
@@ -729,7 +729,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		fillCalismaModeller(xSession);
 
 		try {
-			kesintiTuruList.clear();
+			kesintiTuruList = ortakIslemler.getSelectItemList("kesintiTuru", authenticatedUser);
 			denklestirmeKesintiYap = ortakIslemler.yilAyKontrol(yil, null, xSession);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -753,7 +753,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		disabled = seciliDonem > donem;
 
 		int adet = getGirisKolonSayisi();
-		kesintiTuruList.clear();
+		kesintiTuruList = ortakIslemler.getSelectItemList("kesintiTuru", authenticatedUser);
 		if (authenticatedUser.isAdmin() && adet > 2 && (!denklestirmeAy.isKesintiYok() || denklestirmeKesintiYap)) {
 			kesintiTuruList.add(new SelectItem(KesintiTipi.KESINTI_YOK.value(), DenklestirmeAy.getKesintiAciklama(KesintiTipi.KESINTI_YOK.value())));
 			kesintiTuruList.add(new SelectItem(KesintiTipi.SAAT.value(), DenklestirmeAy.getKesintiAciklama(KesintiTipi.SAAT.value())));
