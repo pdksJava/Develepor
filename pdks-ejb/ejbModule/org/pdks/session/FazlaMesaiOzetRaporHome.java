@@ -210,6 +210,10 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		ikRole = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIK();
 	}
 
+	private void aylikPuantajListClear() {
+		aylikPuantajList = ortakIslemler.getSelectItemList("aylikPuantaj", authenticatedUser);
+	}
+
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
 		if (session == null)
@@ -273,7 +277,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			ay = cal.get(Calendar.MONTH) + 1;
 			yil = cal.get(Calendar.YEAR);
 			maxYil = yil + 1;
-			aylikPuantajList = new ArrayList<AylikPuantaj>();
+			aylikPuantajListClear();
 
 			setInstance(new DepartmanDenklestirmeDonemi());
 			// setSirket(null);
@@ -478,8 +482,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	 * 
 	 */
 	private void setSeciliDenklestirmeAy() {
-		if (aylikPuantajList != null)
-			aylikPuantajList.clear();
+		aylikPuantajListClear();
 		if (denklestirmeAy == null && ay > 0) {
 			HashMap fields = new HashMap();
 
@@ -577,7 +580,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				if (tesisId != null || seciliEkSaha3Id != null || (sirket != null && sirket.isTesisDurumu() == false))
 					bolumDoldur();
 		}
-		aylikPuantajList.clear();
+		aylikPuantajListClear();
 		return "";
 	}
 
@@ -634,17 +637,14 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		}
 		ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
 
-		if (aylikPuantajList == null)
-			aylikPuantajList = new ArrayList<AylikPuantaj>();
-		else
-			aylikPuantajList.clear();
+		aylikPuantajListClear();
 		setPersonelDenklestirmeList(new ArrayList<PersonelDenklestirme>());
 
 	}
 
 	public String fillPersonelSicilDenklestirmeList() {
 		if (!PdksUtil.hasStringValue(sicilNo))
-			aylikPuantajList.clear();
+			aylikPuantajListClear();
 		else {
 			sicilNo = ortakIslemler.getSicilNo(sicilNo);
 			fillFazlaMesaiOzetRaporList();
@@ -2775,7 +2775,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			if (denklestirmeAyDurum == false)
 				hataliPuantajGoster = Boolean.FALSE;
 		}
-		aylikPuantajList.clear();
+		aylikPuantajListClear();
 	}
 
 	public String bolumDoldur() {
@@ -2801,11 +2801,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 			} else
 				hastaneSuperVisor = Boolean.FALSE;
-			if (aylikPuantajList == null)
-				aylikPuantajList = new ArrayList<AylikPuantaj>();
-			else
-				aylikPuantajList.clear();
-			Sirket sirket = null;
+ 			Sirket sirket = null;
 			if (sirketId != null) {
 				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 			}
@@ -2826,7 +2822,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			}
 		}
 
-		aylikPuantajList.clear();
+		aylikPuantajListClear();
 
 		return "";
 	}

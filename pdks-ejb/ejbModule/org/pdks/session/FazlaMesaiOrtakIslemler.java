@@ -591,7 +591,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		String sicilNo = aramaSecenekleri.getSicilNo();
 		String str = ortakIslemler.getParameterKey("bordroVeriOlustur");
 		boolean sicilDolu = PdksUtil.hasStringValue(sicilNo);
-		List<AylikPuantaj> personelDenklestirmeList = new ArrayList<AylikPuantaj>();
+		List<AylikPuantaj> personelDenklestirmeList = ortakIslemler.getSelectItemList("aylikPuantaj", authenticatedUser);
 		TreeMap<Long, AylikPuantaj> eksikCalismaMap = new TreeMap<Long, AylikPuantaj>();
 		if (yil * 100 + ay >= Integer.parseInt(str)) {
 			Long tesisId = aramaSecenekleri.getTesisId();

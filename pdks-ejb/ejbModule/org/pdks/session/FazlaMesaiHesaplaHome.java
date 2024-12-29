@@ -616,7 +616,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		return "";
 	}
 
-	public void aylikPuantajListClear() {
+	private void aylikPuantajListClear() {
 		if (userLogin == null)
 			userLogin = authenticatedUser;
 		aylikPuantajList = ortakIslemler.getSelectItemList("aylikPuantaj", userLogin);
