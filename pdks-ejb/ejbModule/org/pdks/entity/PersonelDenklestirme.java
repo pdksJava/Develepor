@@ -542,7 +542,7 @@ public class PersonelDenklestirme extends BaseObject {
 		CalismaModeli cm = calismaModeliAy != null ? calismaModeliAy.getCalismaModeli() : personel.getCalismaModeli();
 		PersonelDonemselDurum gebePersonelDonemselDurum = getGebePersonelDonemselDurum(), sutIzniPersonelDonemselDurum = getSutIzniPersonelDonemselDurum();
 		isAramaIzniSaat = 0.0d;
-		if (personel != null && personel.getIsAramaGunlukSaat() > 0.0d)
+		if (donemselDurumlarMap.containsKey(PersonelDurumTipi.IS_ARAMA_IZNI) && personel != null && personel.getIsAramaGunlukSaat() > 0.0d)
 			isAramaIzniSaat = personel.getIsAramaGunlukSaat();
 		double aylikSure = calismaModeliAy != null ? calismaModeliAy.getSure() : denklestirmeAy.getSure();
 
@@ -565,7 +565,7 @@ public class PersonelDenklestirme extends BaseObject {
 
 		double sutIzniSure = sutIzniSaatSayisi != null && sutIzniSaatSayisi.doubleValue() > 0.0d && sutIzniSaatSayisi.doubleValue() != aylikSutSure ? sutIzniSaatSayisi.doubleValue() : aylikSutSure;
 		double maxSure = sutIzniDurum == null || sutIzniDurum.equals(Boolean.FALSE) || planlanSure == 0 ? aylikSure : sutIzniSure;
-		if (isAramaIzniSaat > 0.0d && donemselDurumlarMap.containsKey(PersonelDurumTipi.IS_ARAMA_IZNI)) {
+		if (isAramaIzniSaat > 0.0d) {
 			double isAramaSure = getIsAramaSure(vardiyalar);
 			maxSure -= isAramaSure;
 		}
