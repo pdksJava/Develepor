@@ -6297,12 +6297,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				gorevliPersonelMap = new HashMap<String, Personel>();
 
 			ArrayList<Long> perIdler = new ArrayList<Long>();
-			List<Personel> personelList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(aramaSecenekleri.getSirket(), aramaSecenekleri.getTesisId() != null ? String.valueOf(aramaSecenekleri.getTesisId()) : null, aramaSecenekleri.getEkSaha3Id(), aramaSecenekleri.getEkSaha4Id(),
-					denklestirmeAy != null ? aylikPuantajDonem : null, getDenklestirmeDurum(), session);
-
 			List<Personel> personelFMList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(aramaSecenekleri.getSirket(), aramaSecenekleri.getTesisId() != null ? String.valueOf(aramaSecenekleri.getTesisId()) : null, aramaSecenekleri.getEkSaha3Id(), aramaSecenekleri.getEkSaha4Id(),
 					denklestirmeAy != null ? aylikPuantajDonem : null, true, session);
-
+			List<Personel> personelList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(aramaSecenekleri.getSirket(), aramaSecenekleri.getTesisId() != null ? String.valueOf(aramaSecenekleri.getTesisId()) : null, aramaSecenekleri.getEkSaha3Id(), aramaSecenekleri.getEkSaha4Id(),
+					denklestirmeAy != null ? aylikPuantajDonem : null, getDenklestirmeDurum(), session);
 			for (Personel personelFm : personelFMList) {
 				boolean ekle = true;
 				for (Personel personelPlan : personelList) {
