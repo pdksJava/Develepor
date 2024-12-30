@@ -586,7 +586,7 @@ public class PersonelDenklestirme extends BaseObject {
 				if (vg.getIsAramaIzmiPersonelDonemselDurum()) {
 					double sure = 0.0d;
 					Tatil tatil = vg.getTatil();
-					boolean hesapla = !(vg.isIzinli() || vardiya.isHaftaTatil() || tatil != null || vardiya.isOff());
+					boolean hesapla = !(vg.isIzinli() || vardiya.isHaftaTatil() || tatil != null);
 					if (hesapla)
 						sure = isAramaIzniSaat;
 					isAramaSure += sure;
