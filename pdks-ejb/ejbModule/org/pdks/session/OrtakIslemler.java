@@ -12969,6 +12969,7 @@ public class OrtakIslemler implements Serializable {
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<PersonelDenklestirme> personelDenkList = getDataByIdList(sb, map, PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.class);
 		if (!personelDenkList.isEmpty()) {
+			boolean isAramaIzniOffDahil = getParameterKey("isAramaIzniOffDahil").equals("1");
 			TreeMap<String, PersonelDenklestirme> denkMap = new TreeMap<String, PersonelDenklestirme>();
 			TreeMap<Long, CalismaModeli> cmMap = new TreeMap<Long, CalismaModeli>();
 			TreeMap<Long, List<CalismaModeliGun>> cmGunMap = new TreeMap<Long, List<CalismaModeliGun>>();
@@ -13010,8 +13011,7 @@ public class OrtakIslemler implements Serializable {
 			map.put(keyField, new ArrayList(cmMap.keySet()));
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-
-			List<CalismaModeliGun> calismaModeliGunList = pdksEntityController.getSQLParamList(new ArrayList(cmMap.keySet()), sb, keyField, map, CalismaModeliGun.class, session);
+ 			List<CalismaModeliGun> calismaModeliGunList = pdksEntityController.getSQLParamList(new ArrayList(cmMap.keySet()), sb, keyField, map, CalismaModeliGun.class, session);
 			for (CalismaModeliGun calismaModeliGun : calismaModeliGunList) {
 				cmGunMap.get(calismaModeliGun.getCalismaModeli().getId()).add(calismaModeliGun);
 			}
@@ -13056,7 +13056,7 @@ public class OrtakIslemler implements Serializable {
 				}
 				vardiyaGun.setSutIzniPersonelDonemselDurum(sutIzniVar ? sutIzniPersonelDonemselDurum : null);
 				vardiyaGun.setGebePersonelDonemselDurum(gebeMi ? gebePersonelDonemselDurum : null);
-				vardiyaGun.setIsAramaPersonelDonemselDurum(isAramaIzniVar ? isAramaPersonelDonemselDurum : null);
+				vardiyaGun.setIsAramaPersonelDonemselDurum(isAramaIzniVar && (isAramaIzniOffDahil || vardiya.isOff() == false) ? isAramaPersonelDonemselDurum : null);
 				if (denkMap.containsKey(key)) {
 
 					PersonelDenklestirme denklestirme = denkMap.get(key);

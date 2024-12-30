@@ -260,19 +260,16 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		dataDenkMap.put("sistemUser", ortakIslemler.getSistemAdminUser(session));
 		dataDenkMap.put("vardiyaNetCalismaSuresiMap", vardiyaNetCalismaSuresiMap);
 		TreeMap<String, VardiyaGun> vardiyaGunMap = new TreeMap<String, VardiyaGun>();
-		boolean isAramaIzni = false;
-		String isAramaIzniStr = ortakIslemler.getParameterKey("isAramaIzni");
+		boolean isAramaIzniOffDahil = ortakIslemler.getParameterKey("isAramaIzniOffDahil").equals("1");
+
 		List<Long> perIdList = new ArrayList<Long>();
-		if (PdksUtil.hasStringValue(isAramaIzniStr)) {
-			int gun = Integer.parseInt(isAramaIzniStr);
-			isAramaIzni = gun > 0;
-		}
+
 		HashMap<Long, List<PersonelDonemselDurum>> pddMap = new HashMap<Long, List<PersonelDonemselDurum>>();
 
 		for (AylikPuantaj ap : puantajList) {
 
 			Personel personel = ap.getPdksPersonel();
-			if (isAramaIzni || personel.isGebelikSutIzinVar())
+			if (personel.getIsAramaGunlukSaat() > 0.0d || personel.isGebelikSutIzinVar())
 				perIdList.add(personel.getId());
 			for (VardiyaGun vg : ap.getVardiyalar()) {
 				if (vg.isGuncellendi())
@@ -300,9 +297,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 								boolean donemIci = vGun.getVardiyaDate().getTime() <= pdd.getBitTarih().getTime() && vGun.getVardiyaDate().getTime() >= pdd.getBasTarih().getTime();
 								if (donemIci) {
 									if (pdd.getIsAramaIzni()) {
-										if (pd.getIsAramaPersonelDonemselDurum() == null)
-											pd.setIsAramaPersonelDonemselDurum(pdd);
-										vGun.setIsAramaPersonelDonemselDurum(pdd);
+										if (isAramaIzniOffDahil || vGun.getVardiya().isOff() == false) {
+											if (pd.getIsAramaPersonelDonemselDurum() == null)
+												pd.setIsAramaPersonelDonemselDurum(pdd);
+											vGun.setIsAramaPersonelDonemselDurum(pdd);
+										}
 									} else {
 										if (pdd.isSutIzni()) {
 											if (pd.getSutIzniPersonelDonemselDurum() == null)
