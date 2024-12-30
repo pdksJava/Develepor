@@ -1139,6 +1139,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	@Transactional
 	public List<AylikPuantaj> fillPersonelDenklestirmeDevam(String inputPersonelNo, AylikPuantaj aylikPuantajSablon, DepartmanDenklestirmeDonemi denklestirmeDonemi) {
 		boolean kullaniciCalistir = authenticatedUser != null && userHome != null;
+		aylikPuantajListClear();
 		User loginUser = aylikPuantajSablon.getLoginUser();
 		if (loginUser == null && kullaniciCalistir)
 			loginUser = authenticatedUser;
