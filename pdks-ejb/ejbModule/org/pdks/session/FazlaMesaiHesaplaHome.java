@@ -376,7 +376,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (ortakIslemler.getCanliDurum() == false && authenticatedUser.isAdmin() && ay == 12)
 				++maxYil;
 			sonDonem = (maxYil * 100) + cal.get(Calendar.MONTH) + 1;
- 			setInstance(new DepartmanDenklestirmeDonemi());
+			setInstance(new DepartmanDenklestirmeDonemi());
 
 			if (userLogin.isSuperVisor() || userLogin.isProjeMuduru()) {
 				setSirket(userLogin.getPdksPersonel().getSirket());
@@ -1346,7 +1346,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (!perList.isEmpty()) {
 				if (sirket != null && denklestirmeAyDurum && personelIzinGirisiDurum) {
 					map.clear();
-
 					StringBuffer sb = new StringBuffer();
 					sb.append("select * from " + IzinTipi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
 					sb.append(" where " + IzinTipi.COLUMN_NAME_DURUM + " = 1 and " + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + "  is null ");
@@ -1384,10 +1383,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					sabahVardiya = null;
 				setInstance(denklestirmeDonemi);
 				map.clear();
-				// String fieldName = "pdksSicilNo";
-				// map.put(fieldName, perList);
-				// if (session != null)
-				// map.put(PdksEntityController.MAP_KEY_SESSION, session);
 
 				List<Personel> perListesi = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, perList, Personel.class, session);
 
@@ -3538,15 +3533,15 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				sb.append(" inner join " + Personel.TABLE_NAME + " P1 " + PdksEntityController.getJoinLOCK() + " on P1." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 				sb.append(" inner join " + PersonelKGS.TABLE_NAME + " K1 " + PdksEntityController.getJoinLOCK() + " on K1." + PersonelKGS.COLUMN_NAME_ID + " = P1." + Personel.COLUMN_NAME_KGS_PERSONEL + " and COALESCE(K1.TC_KIMLIK_NO,'')<>'' ");
 				sb.append(" inner join " + PersonelKGS.TABLE_NAME + " K2 " + PdksEntityController.getJoinLOCK() + " on K1.TC_KIMLIK_NO=K2.TC_KIMLIK_NO and K1." + PersonelKGS.COLUMN_NAME_ID + " <> K2." + PersonelKGS.COLUMN_NAME_ID);
-				sb.append(" inner join " + Personel.TABLE_NAME + " P2 " + PdksEntityController.getJoinLOCK() + " on P2." + Personel.COLUMN_NAME_KGS_PERSONEL + " = K2." + PersonelKGS.COLUMN_NAME_ID + " and P2." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ">P1." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
-				sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PY " + PdksEntityController.getJoinLOCK() + " on PY.PERSONEL_ID=P2." + Personel.COLUMN_NAME_ID + " and PY." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = PD." + PersonelDenklestirme.COLUMN_NAME_DONEM
-						+ " and PY.FAZLA_MESAI_IZIN_KULLAN=1 ");
+				sb.append(" inner join " + Personel.TABLE_NAME + " P2 " + PdksEntityController.getJoinLOCK() + " on P2." + Personel.COLUMN_NAME_KGS_PERSONEL + " = K2." + PersonelKGS.COLUMN_NAME_ID + " and P2." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " > P1."
+						+ Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
+				sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PY " + PdksEntityController.getJoinLOCK() + " on PY.PERSONEL_ID = P2." + Personel.COLUMN_NAME_ID + " and PY." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = PD." + PersonelDenklestirme.COLUMN_NAME_DONEM
+						+ " and PY.FAZLA_MESAI_IZIN_KULLAN = 1 ");
 				sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_ID + " :" + fieldName);
 				fields.put(fieldName, tempList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				try {
-					// List<PersonelDenklestirme> denkList = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDenklestirme.class);
 					List<PersonelDenklestirme> denkList = pdksEntityController.getSQLParamList(tempList, sb, fieldName, fields, PersonelDenklestirme.class, session);
 					for (PersonelDenklestirme personelDenklestirme : denkList) {
 						personelDurumMap.put(personelDenklestirme.getId(), Boolean.FALSE);
@@ -4431,6 +4426,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private List<PersonelDenklestirme> getPdksPersonelDenklestirmeler(List<Long> perIdList) {
 		List<PersonelDenklestirme> list = fazlaMesaiOrtakIslemler.getPdksPersonelDenklestirmeler(perIdList, denklestirmeAy, session);
 		boolean hgDurum = denklestirmeAyDurum && hataliPuantajGoster != null && hataliPuantajGoster && PdksUtil.hasStringValue(sicilNo) == false;
+		List<PersonelDenklestirme> listOrj = new ArrayList<PersonelDenklestirme>();
+		if (hgDurum)
+			listOrj.addAll(list);
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			PersonelDenklestirme personelDenklestirme = (PersonelDenklestirme) iterator.next();
 			if (sadeceFazlaMesai && !personelDenklestirme.isDenklestirmeDurum())
@@ -4438,6 +4436,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			else if (hgDurum && personelDenklestirme.getDurum())
 				iterator.remove();
 		}
+		if (list.isEmpty() && hgDurum && listOrj.isEmpty() == false)
+			list.addAll(listOrj);
+		listOrj = null;
 		return list;
 	}
 
