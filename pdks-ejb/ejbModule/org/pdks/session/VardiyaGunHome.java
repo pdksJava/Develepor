@@ -6178,7 +6178,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (loginUser == null)
 			loginUser = authenticatedUser;
 		Personel per = loginUser.getPdksPersonel();
-
+		aylikPuantajListClear();
 		// HashMap<Long, List<PersonelDonemselDurum>> pddMap = new HashMap<Long, List<PersonelDonemselDurum>>();
 		Boolean mudurAltSeviye = ortakIslemler.getMudurAltSeviyeDurum(per, session);
 		if (per != null)
@@ -9959,6 +9959,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			baslikMap.clear();
 	}
 
+	private void aylikPuantajListClear() {
+		if (loginUser == null)
+			loginUser = authenticatedUser;
+		if (aylikPuantajList != null)
+			aylikPuantajList.clear();
+		else
+			aylikPuantajList = ortakIslemler.getSelectItemList("aylikPuantaj", loginUser);
+	}
+
 	/**
 	 * @throws Exception
 	 */
@@ -9967,21 +9976,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		aylikPuantajListClear();
 		componentState.setSeciliTab("");
 		tumBolumPersonelleri = null;
 		bordroPuantajEkranindaGoster = false;
 		linkBordroAdres = null;
 		aylikVardiyaPlanGiris(sayfaURL, true);
 
-	}
-
-	private void aylikPuantajListClear() {
-		if (loginUser == null)
-			loginUser = authenticatedUser;
-		if (aylikPuantajList != null)
-			aylikPuantajList.clear();
-		else
-			aylikPuantajList = ortakIslemler.getSelectItemList("aylikPuantaj", loginUser);
 	}
 
 	/**
@@ -10035,7 +10036,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 		}
 
-		aylikPuantajListClear();
+		aylikPuantajList.clear();
 		fazlaMesaiTalepler.clear();
 
 	}
@@ -10114,7 +10115,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @return
 	 */
 	public String altBolumDoldur() {
-		aylikPuantajListClear();
+		aylikPuantajList.clear();
 		List<SelectItem> altBolumIdList = null;
 		seciliEkSaha4Id = aramaSecenekleri.getEkSaha4Id();
 		if (ekSaha4Tanim != null) {
@@ -10262,7 +10263,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				planDepartman = null;
 
 			aylar = ortakIslemler.getAyListesi(Boolean.TRUE);
-			aylikPuantajListClear();
+			aylikPuantajList.clear();
 
 			sonDonem = (maxYil * 100) + cal.get(Calendar.MONTH) + 1;
 			if (basTarih == null) {
