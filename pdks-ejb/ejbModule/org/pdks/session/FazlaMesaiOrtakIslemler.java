@@ -2379,7 +2379,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		paramsMap.put("tipi", "AB");
 		paramsMap.put("fieldName", Tanim.COLUMN_NAME_ID);
 		List<Tanim> list = ortakIslemler.getFazlaMesaiList(paramsMap, session);
-		List<SelectItem> selectList = ortakIslemler.getSelectItemList("altBolum", loginUser);
+		List<SelectItem> selectList = ortakIslemler.getSelectItemList("altBolumler", loginUser);
 		if (!list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
