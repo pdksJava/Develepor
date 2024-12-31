@@ -6299,6 +6299,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			ArrayList<Long> perIdler = new ArrayList<Long>();
 			List<Personel> personelFMList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(aramaSecenekleri.getSirket(), aramaSecenekleri.getTesisId() != null ? String.valueOf(aramaSecenekleri.getTesisId()) : null, aramaSecenekleri.getEkSaha3Id(), aramaSecenekleri.getEkSaha4Id(),
 					denklestirmeAy != null ? aylikPuantajDonem : null, true, session);
+
 			List<Personel> personelList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(aramaSecenekleri.getSirket(), aramaSecenekleri.getTesisId() != null ? String.valueOf(aramaSecenekleri.getTesisId()) : null, aramaSecenekleri.getEkSaha3Id(), aramaSecenekleri.getEkSaha4Id(),
 					denklestirmeAy != null ? aylikPuantajDonem : null, getDenklestirmeDurum(), session);
 			for (Personel personelFm : personelFMList) {
@@ -7360,7 +7361,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					veriGuncellendi = Boolean.TRUE;
 				}
 				if (tekrarOku || gunSaatGuncelle) {
-					tekrarOku = gunSaatGuncelle || (ikRole == false && adminRole == false) && denklestirmeAyDurum && !aylikPuantajList.isEmpty();
+					tekrarOku = gunSaatGuncelle || (ikRole == false && adminRole == false) && denklestirmeAyDurum && aylikPuantajList.size() < personelList.size();
 					if (tekrarOku) {
 						aylikPuantajListClear();
 						talepGunList.clear();
