@@ -323,7 +323,7 @@
 								<ui:define name="label">Ekran Sıra</ui:define>
 								<rich:inputNumberSpinner minValue="0" maxValue="9995" step="5" inputSize="5" value="#{vardiyaHome.instance.ekranSira}" />
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{not empty vardiyaHome.vardiyaTipiList}">
 								<ui:define name="label">Vardiya Tipi</ui:define>
 								<h:selectOneMenu required="true" value="#{vardiyaHome.instance.tipi}" rendered="#{authenticatedUser.admin == true}"
 									requiredMessage="Vardiya tipini seçiniz">
