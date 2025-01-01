@@ -1140,6 +1140,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	public List<AylikPuantaj> fillPersonelDenklestirmeDevam(String inputPersonelNo, AylikPuantaj aylikPuantajSablon, DepartmanDenklestirmeDonemi denklestirmeDonemi) {
 		boolean kullaniciCalistir = authenticatedUser != null && userHome != null;
 		aylikPuantajListClear();
+		boolean sonHafta = false;
 		User loginUser = aylikPuantajSablon.getLoginUser();
 		if (loginUser == null && kullaniciCalistir)
 			loginUser = authenticatedUser;
@@ -1422,6 +1423,26 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 				List<VardiyaHafta> vardiyaHaftaList = new ArrayList<VardiyaHafta>();
 				fazlaMesaiOrtakIslemler.haftalikVardiyaOlustur(vardiyaHaftaList, aylikPuantajSablon, denklestirmeDonemi, tatilGunleriMap, null);
+				if (denklestirmeAyDurum && vardiyaHaftaList != null && vardiyaHaftaList.size() > 4) {
+					Date bugun = PdksUtil.getDate(new Date());
+					String donem = String.valueOf(denklestirmeAy.getDonem());
+					for (VardiyaHafta sonVardiyaHafta : vardiyaHaftaList) {
+						if (bugun.after(sonVardiyaHafta.getBasTarih()) && bugun.before(sonVardiyaHafta.getBitTarih())) {
+							if (sonVardiyaHafta.getVardiyaGunler() != null) {
+								boolean haftaIci = false;
+								for (VardiyaGun vg : sonVardiyaHafta.getVardiyaGunler()) {
+									if (haftaIci) {
+										if (!vg.getVardiyaDateStr().startsWith(donem))
+											sonHafta = true;
+									} else if (vg.getVardiyaDate().getTime() == bugun.getTime())
+										haftaIci = true;
+								}
+							}
+							if (sonHafta)
+								break;
+						}
+					}
+				}
 				resmiTatilVar = Boolean.FALSE;
 				haftaTatilVar = Boolean.FALSE;
 				TreeMap<String, PersonelDenklestirmeTasiyici> perMap = new TreeMap<String, PersonelDenklestirmeTasiyici>();
@@ -2715,7 +2736,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			boolean baslangicDurum = false;
 			if (denklestirmeAy.getOtomatikOnayIKBaslangicTarih() != null)
 				baslangicDurum = toDay.after(denklestirmeAy.getOtomatikOnayIKBaslangicTarih());
-			boolean tarihGeldi = (toDay.after(tarih) && toDay.before(otomatikOnayIKTarih)) || baslangicDurum;
+			boolean tarihGeldi = (toDay.after(tarih) && toDay.before(otomatikOnayIKTarih)) || baslangicDurum || sonHafta;
+
 			onayla = Boolean.FALSE;
 			for (AylikPuantaj puantaj : aylikPuantajList) {
 				PersonelDenklestirme pd = puantaj.getPersonelDenklestirme();
