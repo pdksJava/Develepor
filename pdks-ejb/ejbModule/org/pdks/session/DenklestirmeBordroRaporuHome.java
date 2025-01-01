@@ -464,12 +464,11 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 				authenticatedUser.setCalistigiSayfa(sayfaURL);
 
 			Calendar cal = Calendar.getInstance();
-
+			maxYil = cal.get(Calendar.YEAR);
 			ortakIslemler.gunCikar(cal, 2);
 			modelGoster = Boolean.FALSE;
 			ay = cal.get(Calendar.MONTH) + 1;
 			yil = cal.get(Calendar.YEAR);
-			maxYil = yil;
 			try {
 				minYil = maxYil;
 				if (str.length() > 5) {
