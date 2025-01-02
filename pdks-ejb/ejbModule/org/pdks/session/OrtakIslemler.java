@@ -12885,12 +12885,12 @@ public class OrtakIslemler implements Serializable {
 
 				}
 				if (vardiyaSonraki != null) {
-					// if (key.endsWith("1130"))
-					// logger.debug(key);
+					if (key.endsWith("1203"))
+						logger.debug(key);
 					// else if (key.endsWith("1201") || key.endsWith("1202"))
 					// logger.debug(key);
 					if (vardiyaSonraki.isCalisma() == false && offHtGeceGunSonu && islemVardiya.getBasDonem() >= islemVardiya.getBitDonem()) {
-						int basDakika = Math.abs(islemVardiya.isHaftaTatil() ? Vardiya.getIntHaftaTatiliFazlaMesaiBasDakika() : Vardiya.getIntOffFazlaMesaiBasDakika());
+						int basDakika = 300;
 						if (islemVardiya.isCalisma() && islemVardiya.getCikisGecikmeToleransDakika() > basDakika)
 							basDakika = islemVardiya.getCikisGecikmeToleransDakika() + 5;
 						Date tarih = addTarih(cal, islemVardiya.getVardiyaTelorans2BitZaman(), Calendar.MINUTE, basDakika);
@@ -13011,7 +13011,7 @@ public class OrtakIslemler implements Serializable {
 			map.put(keyField, new ArrayList(cmMap.keySet()));
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
- 			List<CalismaModeliGun> calismaModeliGunList = pdksEntityController.getSQLParamList(new ArrayList(cmMap.keySet()), sb, keyField, map, CalismaModeliGun.class, session);
+			List<CalismaModeliGun> calismaModeliGunList = pdksEntityController.getSQLParamList(new ArrayList(cmMap.keySet()), sb, keyField, map, CalismaModeliGun.class, session);
 			for (CalismaModeliGun calismaModeliGun : calismaModeliGunList) {
 				cmGunMap.get(calismaModeliGun.getCalismaModeli().getId()).add(calismaModeliGun);
 			}
