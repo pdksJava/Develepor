@@ -3724,12 +3724,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			cikisHareketleri = new ArrayList(vGun.getCikisHareketleri());
 		hareketler = vGun.getHareketler();
 		boolean goster = false;
+		List<String> idList = new ArrayList<String>();
 		if (PdksUtil.hasStringValue(manuelGirisGoster)) {
 			if (hareketler != null) {
 				for (HareketKGS hareketKGS : hareketler) {
 					String islemYapan = "";
 					if (hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET))
 						continue;
+
+					if (hareketKGS.getId() != null)
+						idList.add(hareketKGS.getId());
 					if (hareketKGS.getKapiView() != null) {
 						try {
 							if (hareketKGS.isManuelGiris()) {
@@ -3763,16 +3767,23 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 		boolean fazlaMesaiOnaylaDurum = vGun.isAyrikHareketVar() == false && girisHareketleri != null && cikisHareketleri != null && girisHareketleri.size() == cikisHareketleri.size();
 		if (fazlaMesaiOnaylaDurum || (vGun.isAyrikHareketVar() && vGun.getVardiya().isCalisma())) {
+
 			for (Iterator iterator = girisHareketleri.iterator(); iterator.hasNext();) {
 				HareketKGS hareketKGS = (HareketKGS) iterator.next();
-				if (hareketKGS.getId() == null || hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET) || hareketKGS.getId().startsWith(HareketKGS.AYRIK_HAREKET))
+				if (hareketKGS.getId() == null || hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET) || hareketKGS.getId().startsWith(HareketKGS.AYRIK_HAREKET) || !idList.contains(hareketKGS.getId()))
 					iterator.remove();
+
 			}
 			for (Iterator iterator = cikisHareketleri.iterator(); iterator.hasNext();) {
 				HareketKGS hareketKGS = (HareketKGS) iterator.next();
-				if (hareketKGS.getId() == null || hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET) || hareketKGS.getId().startsWith(HareketKGS.AYRIK_HAREKET))
+				if (hareketKGS.getId() == null || hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET) || hareketKGS.getId().startsWith(HareketKGS.AYRIK_HAREKET) || !idList.contains(hareketKGS.getId()))
 					iterator.remove();
+
 			}
+ 			vGun.setCikisHareketleri((ArrayList<HareketKGS>) cikisHareketleri);
+			vGun.setGirisHareketleri((ArrayList<HareketKGS>) girisHareketleri);
+
+			idList = null;
 			boolean cikis = false;
 			int adet = 0;
 			if (hareketler != null) {
