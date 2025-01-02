@@ -281,7 +281,6 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			ay = cal.get(Calendar.MONTH) + 1;
 			yil = cal.get(Calendar.YEAR);
 			maxYil = yil + 1;
-		
 
 			setInstance(new DepartmanDenklestirmeDonemi());
 			// setSirket(null);
@@ -2209,10 +2208,10 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			ExcelUtil.baslikCell(cell, anchor, helper, drawing, ortakIslemler.devredenMesaiKod(), "Devreden Mesai: Çalisanin önceki listelerden devreden eksi/fazla mesaisi");
 
 		}
-		if (fazlaMesaiVar) {
-			cell = ExcelUtil.getCell(sheet, row, col++, header);
-			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "ÜÖM", "Çalışanın bu listenin sonunda ücret olarak ödediğimiz fazla mesai saati");
-		}
+
+		cell = ExcelUtil.getCell(sheet, row, col++, header);
+		ExcelUtil.baslikCell(cell, anchor, helper, drawing, "ÜÖM", "Çalışanın bu listenin sonunda ücret olarak ödediğimiz fazla mesai saati");
+
 		if (kismiOdemeGoster) {
 			cell = ExcelUtil.getCell(sheet, row, col++, header);
 			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "KÖM", "Çalışanın bu listenin sonunda ücret olarak kısmi ödediğimiz fazla mesai saati ");
@@ -2524,18 +2523,18 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					}
 					boolean olustur = false;
 					Comment commentGuncelleyen = null;
-					if (fazlaMesaiVar) {
-						if (aylikPuantaj.isFazlaMesaiHesapla()) {
-							Cell fazlaMesaiSureCell = setCell(sheet, row, col++, styleTutar, aylikPuantaj.getFazlaMesaiSure());
-							if (aylikPuantaj.getFazlaMesaiSure() != 0.0d) {
-								if (personelDenklestirme.getGuncelleyenUser() != null && personelDenklestirme.getGuncellemeTarihi() != null)
-									commentGuncelleyen = fazlaMesaiOrtakIslemler.getCommentGuncelleyen(anchor, helper, drawing, personelDenklestirme);
-								fazlaMesaiSureCell.setCellComment(commentGuncelleyen);
-								olustur = true;
-							}
-						} else
-							ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
-					}
+
+					if (aylikPuantaj.isFazlaMesaiHesapla()) {
+						Cell fazlaMesaiSureCell = setCell(sheet, row, col++, styleTutar, aylikPuantaj.getFazlaMesaiSure());
+						if (aylikPuantaj.getFazlaMesaiSure() != 0.0d) {
+							if (personelDenklestirme.getGuncelleyenUser() != null && personelDenklestirme.getGuncellemeTarihi() != null)
+								commentGuncelleyen = fazlaMesaiOrtakIslemler.getCommentGuncelleyen(anchor, helper, drawing, personelDenklestirme);
+							fazlaMesaiSureCell.setCellComment(commentGuncelleyen);
+							olustur = true;
+						}
+					} else
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+
 					if (kismiOdemeGoster) {
 						if (personelDenklestirme.getKismiOdemeSure() != null && personelDenklestirme.getKismiOdemeSure().doubleValue() > 0.0d)
 							setCell(sheet, row, col++, styleTutar, personelDenklestirme.getKismiOdemeSure());
