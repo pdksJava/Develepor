@@ -677,7 +677,7 @@ public class OrtakIslemler implements Serializable {
 			vg.setHareketler(null);
 			vg.setGirisHareketleri(null);
 			vg.setCikisHareketleri(null);
-
+			vg.setGecersizHareketler(null);
 			vg.addHareket(girisHareket, false);
 			vg.addHareket(cikisHareket, false);
 			// if (vg.getTatil() == null) {
@@ -12353,6 +12353,7 @@ public class OrtakIslemler implements Serializable {
 				vardiyaGun.setYemekHareketleri(null);
 				vardiyaGun.setGirisHareketleri(null);
 				vardiyaGun.setCikisHareketleri(null);
+				vardiyaGun.setGecersizHareketler(null);
 				vardiyaGun.setZamanGuncelle(zamanGuncelle);
 				vardiyaGun.setTatil(tatillerMap.get(vardiyaGun.getVardiyaDateStr()));
 				String key = vardiyaGun.getVardiyaKeyStr();
@@ -19293,6 +19294,7 @@ public class OrtakIslemler implements Serializable {
 				vardiyaGun.setYemekHareketleri(null);
 				vardiyaGun.setGirisHareketleri(null);
 				vardiyaGun.setCikisHareketleri(null);
+				vardiyaGun.setGecersizHareketler(null);
 				vardiyaGun.setOncekiVardiyaGun(oncekiVardiya);
 				Vardiya sonrakiVardiya = vardiyaGun.getSonrakiVardiya();
 
@@ -19397,6 +19399,7 @@ public class OrtakIslemler implements Serializable {
 								vardiyaGun.setYemekHareketleri(null);
 								vardiyaGun.setGirisHareketleri(null);
 								vardiyaGun.setCikisHareketleri(null);
+								vardiyaGun.setGecersizHareketler(null);
 								for (Iterator iterator2 = hareketList.iterator(); iterator2.hasNext();) {
 									HareketKGS hareket = (HareketKGS) iterator2.next();
 									vardiyaGun.addHareket(hareket, Boolean.TRUE);

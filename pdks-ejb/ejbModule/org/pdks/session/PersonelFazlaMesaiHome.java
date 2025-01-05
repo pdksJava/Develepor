@@ -785,6 +785,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						pdksVardiyaGun.setHareketler(null);
 						pdksVardiyaGun.setGirisHareketleri(null);
 						pdksVardiyaGun.setCikisHareketleri(null);
+						pdksVardiyaGun.setGecersizHareketler(null);
 						Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya();
 						if ((tarih1 == null && tarih3 == null) || islemVardiya.getVardiyaBasZaman().getTime() < tarih3.getTime()) {
 							tarih3 = islemVardiya.getVardiyaBasZaman();

@@ -463,6 +463,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 						vardiyaGun.setHareketler(null);
 						vardiyaGun.setGirisHareketleri(null);
 						vardiyaGun.setCikisHareketleri(null);
+						vardiyaGun.setGecersizHareketler(null);
 						Long id = vardiyaGun.getPersonel().getId();
 						if (hareketMap.containsKey(id)) {
 							List<HareketKGS> list = hareketMap.get(id);

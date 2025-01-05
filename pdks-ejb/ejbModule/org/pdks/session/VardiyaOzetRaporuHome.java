@@ -465,6 +465,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							vardiyaGun.setHareketler(null);
 							vardiyaGun.setGirisHareketleri(null);
 							vardiyaGun.setCikisHareketleri(null);
+							vardiyaGun.setGecersizHareketler(null);
 							vardiyaGun.setIlkGiris(null);
 							vardiyaGun.setSonCikis(null);
 

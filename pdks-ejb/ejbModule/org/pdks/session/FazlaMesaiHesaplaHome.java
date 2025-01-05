@@ -56,6 +56,7 @@ import org.pdks.entity.HareketKGS;
 import org.pdks.entity.IzinTipi;
 import org.pdks.entity.Kapi;
 import org.pdks.entity.KapiView;
+import org.pdks.entity.PdksLog;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDenklestirmeBordro;
@@ -1692,6 +1693,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				boolean yoneticiZorunluDegil = ortakIslemler.getParameterKey("yoneticiZorunluDegil").equals("1");
 				istifaGoster = false;
 				aylikPuantajList.clear();
+				List<HareketKGS> gecersizHareketler = new ArrayList<HareketKGS>();
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					puantaj.setFazlaMesaiHesapla(true);
@@ -1856,6 +1858,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								vardiyaGun.setFazlaMesaiTalepOnayliDurum(Boolean.FALSE);
 
 								vardiyaGunKontrol(puantaj, vardiyaGun, paramsMap);
+								if (vardiyaGun.getGecersizHareketler() != null)
+									gecersizHareketler.addAll(vardiyaGun.getGecersizHareketler());
 								if (izinCalismaUyariDurum.equals("1") && vardiyaGun.getIzin() != null) {
 									PersonelIzin izin = vardiyaGun.getIzin();
 									IzinTipi it = izin.getIzinTipi();
@@ -2567,6 +2571,24 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					}
 
 				}
+
+				if (gecersizHareketler.isEmpty() == false) {
+					List<Long> idler = new ArrayList<Long>();
+					for (HareketKGS hareketKGS : gecersizHareketler)
+						idler.add(hareketKGS.getHareketTableId());
+					List<PdksLog> logList = pdksEntityController.getSQLParamByFieldList(PdksLog.TABLE_NAME, PdksLog.COLUMN_NAME_ID, idler, PdksLog.class, session);
+					Date guncellemeZamani = new Date();
+					for (Iterator iterator = logList.iterator(); iterator.hasNext();) {
+						PdksLog pdksLog = (PdksLog) iterator.next();
+						pdksLog.setDurum(Boolean.FALSE);
+						pdksLog.setGuncellemeZamani(guncellemeZamani);
+						pdksEntityController.saveOrUpdate(session, entityManager, pdksLog);
+					}
+					flush = true;
+					logList = null;
+					idler = null;
+				}
+				gecersizHareketler = null;
 
 				if (!(authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()) && yasalFazlaCalismaAsanSaat)
 					yasalFazlaCalismaAsanSaat = ortakIslemler.getParameterKey("yasalFazlaCalismaAsanSaat").equals("1");
@@ -3679,6 +3701,24 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		Date aksamVardiyaBitisZamani = null, aksamVardiyaBaslangicZamani = null;
 		Vardiya vardiya = vGun.getVardiya();
 		String key1 = vGun.getVardiyaDateStr(), vardiyaKey = vGun.getVardiyaKeyStr();
+		if (denklestirmeAyDurum && vGun.getGecersizHareketler() != null) {
+			if (vGun.getFazlaMesailer() != null) {
+				for (Iterator iterator = vGun.getGecersizHareketler().iterator(); iterator.hasNext();) {
+					HareketKGS hareketKGS = (HareketKGS) iterator.next();
+					for (PersonelFazlaMesai pfm : vGun.getFazlaMesailer()) {
+						if (pfm.getHareketId().equals(hareketKGS.getId())) {
+							iterator.remove();
+							break;
+						}
+
+					}
+				}
+				if (vGun.getGecersizHareketler().isEmpty())
+					vGun.setGecersizHareketler(null);
+
+			}
+			logger.debug("");
+		}
 
 		if (islemPuantaj.isGebeDurum() == false && (vGun.isGebeMi() || vGun.isGebePersonelDonemselDurum())) {
 			gebeGoster = true;
