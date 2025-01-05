@@ -57,7 +57,7 @@
 								<th style="width: 30px"><h:outputText value="FM.Öde" title="Fazla Mesai Öde" /></th>
 							</ui:fragment>
 							<ui:fragment rendered="#{vardiyaGunHome.fazlaMesaiIzinKullan}">
-								<th style="width: 30px"><h:outputText value="FM İzin Kullan" /></th>
+								<th style="width: 30px"><h:outputText value="#{ortakIslemler.fmIzinKullanAciklama()}" /></th>
 							</ui:fragment>
 						</ui:fragment>
 						<ui:fragment rendered="#{vardiyaGunHome.gebeGoster}">

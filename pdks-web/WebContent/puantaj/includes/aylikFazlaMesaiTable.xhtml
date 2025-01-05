@@ -177,7 +177,7 @@
 			<c:if test="#{fazlaMesaiHesaplaHome.fazlaMesaiIzinKullan}">
 				<rich:column class="#{aylikPuantaj.trSonucClass}" style="width: 30px">
 					<f:facet name="header">
-						<h:outputText value="FM İzin Kullan" />
+						<h:outputText value="#{ortakIslemler.fmIzinKullanAciklama()}" />
 					</f:facet>
 					<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.fazlaMesaiIzinKullan == false}">
 						<h:outputText value="#{authenticatedUser.getYesNo(aylikPuantaj.personelDenklestirme.fazlaMesaiIzinKullan)}" />

@@ -7211,7 +7211,13 @@ public class OrtakIslemler implements Serializable {
 		String sirketAciklama = getBaslikAciklama("sirketAciklama", "Şirket");
 		return sirketAciklama;
 	}
+	public String fmIzinKullanAciklama() {
+		String aciklama = getBaslikAciklama("fmIzinKullanAciklama", "FM İzin Kullan");
+		return aciklama;
+	}
 
+	
+	
 	/**
 	 * @return
 	 */

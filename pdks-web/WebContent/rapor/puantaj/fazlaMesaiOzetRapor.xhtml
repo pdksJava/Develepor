@@ -338,7 +338,7 @@
 									</rich:column>
 									<rich:column rendered="#{fazlaMesaiOzetRaporHome.fazlaMesaiIzinKullan}" style="text-align: center;width: 60px;">
 										<f:facet name="header">
-											<h:outputText value="FM İzin Kullan" />
+											<h:outputText value="#{ortakIslemler.fmIzinKullanAciklama()}" />
 										</f:facet>
 										<SPAN> <ui:fragment rendered="#{ap.personelDenklestirme.fazlaMesaiIzinKullan == false}">
 												<h:outputText value="#{authenticatedUser.getYesNo(ap.personelDenklestirme.fazlaMesaiIzinKullan)}" />

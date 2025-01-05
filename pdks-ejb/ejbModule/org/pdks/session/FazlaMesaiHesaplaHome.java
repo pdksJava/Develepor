@@ -1687,7 +1687,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 				}
 				double fazlaMesaiMaxSure = ortakIslemler.getFazlaMesaiMaxSure(denklestirmeAy);
-				boolean sirketFazlaMesaiIzinKullan = sirket.getFazlaMesaiIzinKullan() != null && sirket.getFazlaMesaiIzinKullan();
 				boolean sirketFazlaMesaiOde = sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde();
 				Date yeniDonem = PdksUtil.tariheAyEkleCikar(PdksUtil.convertToJavaDate((yil * 100 + ay) + "01", "yyyyMMdd"), 1);
 				boolean yoneticiZorunluDegil = ortakIslemler.getParameterKey("yoneticiZorunluDegil").equals("1");
@@ -2084,7 +2083,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					if (sirketFazlaMesaiIzinKullan && !fazlaMesaiIzinKullan)
+					if (!fazlaMesaiIzinKullan)
 						fazlaMesaiIzinKullan = personelDenklestirme.getFazlaMesaiIzinKullan() != null && personelDenklestirme.getFazlaMesaiIzinKullan();
 					if (!fazlaMesaiOde && personelDenklestirme != null)
 						fazlaMesaiOde = personelDenklestirme.getFazlaMesaiOde() != null && !personelDenklestirme.getFazlaMesaiOde().equals(sirketFazlaMesaiOde);

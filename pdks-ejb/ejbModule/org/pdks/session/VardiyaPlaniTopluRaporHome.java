@@ -296,7 +296,6 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 			yil = cal.get(Calendar.YEAR);
 			maxYil = yil + 1;
 
-			 
 			setInstance(new DepartmanDenklestirmeDonemi());
 			// setSirket(null);
 
@@ -1159,7 +1158,6 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 				if (denklestirmeYap)
 					calismaPlaniDenklestir(denklestirmeDonemi, puantajDenklestirmeList);
 				Date sonPersonelCikisZamani = null;
-				boolean sirketFazlaMesaiIzinKullan = sirket.getFazlaMesaiIzinKullan() != null && sirket.getFazlaMesaiIzinKullan();
 				boolean sirketFazlaMesaiOde = sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde();
 
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
@@ -1269,7 +1267,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 
 					if (!hataliPuantajVar)
 						hataliPuantajVar = personelDenklestirme.isOnaylandi() == false;
-					if (sirketFazlaMesaiIzinKullan && !fazlaMesaiIzinKullan)
+					if (!fazlaMesaiIzinKullan)
 						fazlaMesaiIzinKullan = personelDenklestirme.getFazlaMesaiIzinKullan() != null && personelDenklestirme.getFazlaMesaiIzinKullan();
 					if (!fazlaMesaiOde)
 						fazlaMesaiOde = personelDenklestirme.getFazlaMesaiOde() != null && !personelDenklestirme.getFazlaMesaiOde().equals(sirketFazlaMesaiOde);

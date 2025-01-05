@@ -1229,7 +1229,6 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				if (aksamCalismaSaati == null)
 					aksamCalismaSaati = 4.0d;
 				double fazlaMesaiMaxSure = ortakIslemler.getFazlaMesaiMaxSure(denklestirmeAy);
-				boolean sirketFazlaMesaiIzinKullan = sirket.getFazlaMesaiIzinKullan() != null && sirket.getFazlaMesaiIzinKullan();
 				boolean sirketFazlaMesaiOde = sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde();
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
@@ -1535,7 +1534,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					if (sirketFazlaMesaiIzinKullan && !fazlaMesaiIzinKullan)
+					if (!fazlaMesaiIzinKullan)
 						fazlaMesaiIzinKullan = personelDenklestirme.getFazlaMesaiIzinKullan() != null && personelDenklestirme.getFazlaMesaiIzinKullan();
 					if (!fazlaMesaiOde)
 						fazlaMesaiOde = personelDenklestirme.getFazlaMesaiOde() != null && !personelDenklestirme.getFazlaMesaiOde().equals(sirketFazlaMesaiOde);
