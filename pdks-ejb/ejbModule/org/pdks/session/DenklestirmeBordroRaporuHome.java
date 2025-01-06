@@ -632,13 +632,11 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 	public void fillTesisList() {
 		personelDenklestirmeList.clear();
-		List<SelectItem> selectItems = ortakIslemler.getSelectItemList("tesis", authenticatedUser);
+		List<SelectItem> selectItems = null;
 		Long onceki = null;
 		if (sirketId != null) {
 			onceki = tesisId;
-
 			sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
-
 			if (sirket != null) {
 				if (sirket.isTesisDurumu()) {
 

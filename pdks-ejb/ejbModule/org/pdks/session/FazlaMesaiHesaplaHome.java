@@ -602,7 +602,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				hataliPuantajGoster = denklestirmeAyDurum;
 			if (!ayniSayfa)
 				userLogin.setCalistigiSayfa("");
-		
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1858,8 +1858,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								vardiyaGun.setFazlaMesaiTalepOnayliDurum(Boolean.FALSE);
 
 								vardiyaGunKontrol(puantaj, vardiyaGun, paramsMap);
-								if (vardiyaGun.getGecersizHareketler() != null)
+								if (vardiyaGun.getGecersizHareketler() != null) {
 									gecersizHareketler.addAll(vardiyaGun.getGecersizHareketler());
+									vardiyaGun.setGecersizHareketler(null);
+								}
+
 								if (izinCalismaUyariDurum.equals("1") && vardiyaGun.getIzin() != null) {
 									PersonelIzin izin = vardiyaGun.getIzin();
 									IzinTipi it = izin.getIzinTipi();
@@ -2572,7 +2575,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 				}
 
-				if (gecersizHareketler.isEmpty() == false) {
+				if (ortakIslemler.getParameterKey("mukerrerHareketIptal").equals("1") && gecersizHareketler.isEmpty() == false) {
 					List<Long> idler = new ArrayList<Long>();
 					for (HareketKGS hareketKGS : gecersizHareketler)
 						idler.add(hareketKGS.getHareketTableId());

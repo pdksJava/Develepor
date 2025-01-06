@@ -1772,7 +1772,7 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setGecenAyResmiTatilSure(double value) {
-		if (value > 0.0d)
+		if (value != 0.0d || vardiyaDateStr.endsWith("0101"))
 			logger.debug(value);
 		this.gecenAyResmiTatilSure = value;
 	}
@@ -2417,7 +2417,7 @@ public class VardiyaGun extends BaseObject {
 				gecersizHareketler = new ArrayList<HareketKGS>();
 			hareketKGS.setDurum(HareketKGS.DURUM_BLOKE);
 			gecersizHareketler.add(hareketKGS);
-//			logger.info(this.getVardiyaDateStr() + " " + gecersizHareketler.size());
+			logger.debug(this.getVardiyaKeyStr() + " " + gecersizHareketler.size());
 		}
 
 	}
