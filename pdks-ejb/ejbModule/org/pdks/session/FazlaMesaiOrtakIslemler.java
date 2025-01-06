@@ -2224,17 +2224,16 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			loginUser = authenticatedUser;
 		List<Tanim> list = null;
 		LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
-
+		Long tesisId = null;
 		if (sirket != null && (sirket.isTesisDurumu() || loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis())) {
-			String tesisId = null;
 			if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
 				Personel personel = loginUser.getPdksPersonel();
 				if (personel.getTesis() != null)
-					tesisId = String.valueOf(personel.getTesis().getId());
+					tesisId = personel.getTesis().getId();
 			}
 			paramsMap.put("loginUser", loginUser);
 			paramsMap.put("sirket", sirket);
-			paramsMap.put("tesisId", tesisId);
+			paramsMap.put("tesisId", tesisId != null ? String.valueOf(tesisId) : null);
 			paramsMap.put("aylikPuantaj", aylikPuantaj);
 			paramsMap.put("denklestirme", denklestirme);
 			paramsMap.put("tipi", "T");
@@ -2245,8 +2244,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		List<SelectItem> selectList = ortakIslemler.getSelectItemList("tesis", loginUser);
 		if (list != null && !list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
-			for (Tanim veri : list)
-				selectList.add(new SelectItem(veri.getId(), veri.getAciklama()));
+			for (Tanim veri : list) {
+				if (tesisId == null || tesisId.equals(veri.getId()))
+					selectList.add(new SelectItem(veri.getId(), veri.getAciklama()));
+			}
+
 		}
 		list = null;
 		paramsMap = null;

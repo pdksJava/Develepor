@@ -377,7 +377,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				++maxYil;
 			sonDonem = (maxYil * 100) + cal.get(Calendar.MONTH) + 1;
 			setInstance(new DepartmanDenklestirmeDonemi());
-
+			fillEkSahaTanim();
 			if (userLogin.isSuperVisor() || userLogin.isProjeMuduru()) {
 				setSirket(userLogin.getPdksPersonel().getSirket());
 				bolumDoldur();
@@ -601,7 +601,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				hataliPuantajGoster = denklestirmeAyDurum;
 			if (!ayniSayfa)
 				userLogin.setCalistigiSayfa("");
-			fillEkSahaTanim();
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -6611,8 +6611,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		return tesisList;
 	}
 
-	public void setTesisList(List<SelectItem> tesisList) {
-		this.tesisList = tesisList;
+	public void setTesisList(List<SelectItem> value) {
+		this.tesisList = value;
 	}
 
 	public Long getTesisId() {

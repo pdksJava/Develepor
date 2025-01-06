@@ -4345,18 +4345,17 @@ public class OrtakIslemler implements Serializable {
 		List<Tanim> list = null;
 		if (sirketId != null)
 			sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
-
+		Long tesisId = null;
 		if (sirket != null && (sirket.isTesisDurumu() || loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis())) {
-			String tesisId = null;
-			if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
+ 			if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
 				Personel personel = loginUser.getPdksPersonel();
 				if (personel.getTesis() != null)
-					tesisId = String.valueOf(personel.getTesis().getId());
+					tesisId = personel.getTesis().getId();
 			}
 			LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
 			paramsMap.put("loginUser", loginUser);
 			paramsMap.put("sirket", sirket);
-			paramsMap.put("tesisId", tesisId);
+			paramsMap.put("tesisId", tesisId != null ? String.valueOf(tesisId) : null);
 			paramsMap.put("aylikPuantaj", aylikPuantaj);
 			paramsMap.put("denklestirme", false);
 			paramsMap.put("tipi", "T");
@@ -4371,7 +4370,8 @@ public class OrtakIslemler implements Serializable {
 			if (list != null && !list.isEmpty()) {
 				list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
 				for (Tanim veri : list)
-					selectList.add(new SelectItem(veri.getId(), veri.getAciklama()));
+					if (tesisId == null || tesisId.equals(veri.getId()))
+						selectList.add(new SelectItem(veri.getId(), veri.getAciklama()));
 			}
 		} else
 			selectList = list;
@@ -7211,13 +7211,12 @@ public class OrtakIslemler implements Serializable {
 		String sirketAciklama = getBaslikAciklama("sirketAciklama", "Şirket");
 		return sirketAciklama;
 	}
+
 	public String fmIzinKullanAciklama() {
 		String aciklama = getBaslikAciklama("fmIzinKullanAciklama", "FM İzin Kullan");
 		return aciklama;
 	}
 
-	
-	
 	/**
 	 * @return
 	 */
