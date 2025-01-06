@@ -5449,6 +5449,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								if (islemVardiya != null) {
 									seciliVardiyaGun.setHareketler(null);
 									seciliVardiyaGun.setCikisHareketleri(null);
+									seciliVardiyaGun.setGecersizHareketler(null);
 									seciliVardiyaGun.setGirisHareketleri(null);
 									HareketKGS girisYeniHareket = new HareketKGS();
 									girisYeniHareket.setKapiView(manuelGiris);

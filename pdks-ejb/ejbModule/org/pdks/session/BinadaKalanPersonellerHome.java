@@ -307,6 +307,7 @@ public class BinadaKalanPersonellerHome extends EntityHome<VardiyaGun> implement
 				vardiyaGun.setHareketler(null);
 				vardiyaGun.setGirisHareketleri(null);
 				vardiyaGun.setCikisHareketleri(null);
+				vardiyaGun.setGecersizHareketler(null);
 				Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
 
 				for (Iterator iterator1 = kgsList.iterator(); iterator1.hasNext();) {

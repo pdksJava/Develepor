@@ -61,7 +61,7 @@ public class VardiyaGun extends BaseObject {
 	private Date vardiyaDate;
 	private VardiyaGorev vardiyaGorev;
 	private VardiyaSaat vardiyaSaat, vardiyaSaatDB;
-	private ArrayList<HareketKGS> hareketler, girisHareketleri, cikisHareketleri, yemekHareketleri;
+	private ArrayList<HareketKGS> hareketler, girisHareketleri, cikisHareketleri, yemekHareketleri, gecersizHareketler;
 	private ArrayList<PersonelIzin> izinler;
 	private ArrayList<PersonelFazlaMesai> fazlaMesailer;
 	private ArrayList<Vardiya> vardiyalar;
@@ -547,10 +547,7 @@ public class VardiyaGun extends BaseObject {
 			kapi = null;
 		}
 		boolean durum = Boolean.TRUE;
-		// if (this.getVardiyaDateStr().equals("20160409")) {
-		// if (hareket.getId().equals("A10823"))
-		// logger.info(hareket.getId() + " " + this.getVardiyaDateStr() + " " + hareket.getZaman() + " " + this.getIslemVardiya().getVardiyaFazlaMesaiBasZaman() + " " + this.getIslemVardiya().getVardiyaFazlaMesaiBitZaman());
-		// }
+
 		if (kapi != null && hareket != null && (kapi.isGirisKapi() || kapi.isCikisKapi())) {
 			if (hareketler == null) {
 				hareketler = new ArrayList<HareketKGS>();
@@ -565,19 +562,21 @@ public class VardiyaGun extends BaseObject {
 				HareketKGS oncekiHareket = hareketler.get(indexSon);
 				Double fark = PdksUtil.getDakikaFarki(hareket.getZaman(), oncekiHareket.getZaman());
 				if (kapi.isGirisKapi()) {
-					if (oncekiHareket.getKapiView().getKapi().isGirisKapi() && fark < beklemeSuresi) {
-						boolean duzelt = false;
-						KapiSirket oncekiKapiSirket = oncekiHareket.getKapiView().getKapiKGS() != null ? oncekiHareket.getKapiView().getKapiKGS().getKapiSirket() : null;
-						if (oncekiKapiSirket != null && kapiSirket != null) {
-							duzelt = oncekiKapiSirket.getId().equals(kapiSirket.getId()) || hareket.getZaman().getTime() <= kapiSirket.getBitTarih().getTime();
-						} else
-							duzelt = true;
+					if (oncekiHareket.getKapiView().getKapi().isGirisKapi()) {
+						if (fark < beklemeSuresi) {
+							boolean duzelt = false;
+							KapiSirket oncekiKapiSirket = oncekiHareket.getKapiView().getKapiKGS() != null ? oncekiHareket.getKapiView().getKapiKGS().getKapiSirket() : null;
+							if (oncekiKapiSirket != null && kapiSirket != null) {
+								duzelt = oncekiKapiSirket.getId().equals(kapiSirket.getId()) || hareket.getZaman().getTime() <= kapiSirket.getBitTarih().getTime();
+							} else
+								duzelt = true;
 
-						if (duzelt) {
-							hareketler.set(indexSon, hareket);
-
+							if (duzelt) {
+								hareketler.set(indexSon, hareket);
+								addGecersizHareketler(oncekiHareket);
+							}
+							ekle = Boolean.FALSE;
 						}
-						ekle = Boolean.FALSE;
 					}
 
 				} else if (oncekiHareket.getKapiView().getKapi().isCikisKapi()) {
@@ -602,8 +601,12 @@ public class VardiyaGun extends BaseObject {
 							indexSon = cikisHareketleri.size() - 1;
 							cikisHareketleri.set(indexSon, yeniHareket);
 							indexSon = hareketler.size() - 1;
+							addGecersizHareketler(oncekiHareket);
 							hareketler.set(indexSon, yeniHareket);
 						}
+
+					} else {
+						hareket.setDurum(HareketKGS.DURUM_BLOKE);
 
 					}
 
@@ -2396,6 +2399,26 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void entityRefresh() {
+
+	}
+
+	@Transient
+	public ArrayList<HareketKGS> getGecersizHareketler() {
+		return gecersizHareketler;
+	}
+
+	public void setGecersizHareketler(ArrayList<HareketKGS> gecersizHareketler) {
+		this.gecersizHareketler = gecersizHareketler;
+	}
+
+	public void addGecersizHareketler(HareketKGS hareketKGS) {
+		if (hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS)) {
+			if (gecersizHareketler == null)
+				gecersizHareketler = new ArrayList<HareketKGS>();
+			hareketKGS.setDurum(HareketKGS.DURUM_BLOKE);
+			gecersizHareketler.add(hareketKGS);
+//			logger.info(this.getVardiyaDateStr() + " " + gecersizHareketler.size());
+		}
 
 	}
 }

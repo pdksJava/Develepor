@@ -417,6 +417,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 				vardiyaGun.setHareketler(null);
 				vardiyaGun.setGirisHareketleri(null);
 				vardiyaGun.setCikisHareketleri(null);
+				vardiyaGun.setGecersizHareketler(null);
 				Vardiya vardiya = vardiyaGun.getVardiya();
 				if (hareketMap.containsKey(personelId)) {
 					List<HareketKGS> list = hareketMap.get(personelId);

@@ -647,6 +647,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 						vg.setHareketler(null);
 						vg.setGirisHareketleri(null);
 						vg.setCikisHareketleri(null);
+						vg.setGecersizHareketler(null);
 						Long key = vg.getPdksPersonel().getId();
 						if (hareketMap.containsKey(key)) {
 							List<HareketKGS> list2 = hareketMap.get(key);
