@@ -2575,7 +2575,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 				}
 
-				if (ortakIslemler.getParameterKey("mukerrerHareketIptal").equals("1") && gecersizHareketler.isEmpty() == false) {
+				if (gecersizHareketler.isEmpty() == false && ortakIslemler.getParameterKey("mukerrerHareketIptal").equals("1")) {
 					List<Long> idler = new ArrayList<Long>();
 					for (HareketKGS hareketKGS : gecersizHareketler)
 						idler.add(hareketKGS.getHareketTableId());
