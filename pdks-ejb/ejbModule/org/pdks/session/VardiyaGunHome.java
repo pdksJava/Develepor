@@ -3960,7 +3960,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					personelDenklestirme.setFazlaMesaiOde(fazlaMesaiDurum == 2);
 					personelDenklestirme.setFazlaMesaiIzinKullan(fazlaMesaiDurum == 3);
 				}
-
+				personelDenklestirme.setDurum(Boolean.FALSE);
 				savePersonelDenklestirme(personelDenklestirme);
 				if (personelDenklestirme.getCalismaModeliAy() != null && personelDenklestirme.getCalismaModeliAy().getDurum().booleanValue() == false) {
 					CalismaModeliAy cma = personelDenklestirme.getCalismaModeliAy();
