@@ -3954,12 +3954,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						personelDenklestirme.setSutIzniSaatSayisi(0.0d);
 				}
 
-				if (personelDenklestirme.getFazlaMesaiIzinKullan())
-					personelDenklestirme.setFazlaMesaiOde(Boolean.FALSE);
 				if (fazlaMesaiDurum != null) {
 					personelDenklestirme.setFazlaMesaiOde(fazlaMesaiDurum == 2);
 					personelDenklestirme.setFazlaMesaiIzinKullan(fazlaMesaiDurum == 3);
-				}
+				} else if (personelDenklestirme.getFazlaMesaiIzinKullan())
+					personelDenklestirme.setFazlaMesaiOde(Boolean.FALSE);
 				personelDenklestirme.setDurum(Boolean.FALSE);
 				savePersonelDenklestirme(personelDenklestirme);
 				if (personelDenklestirme.getCalismaModeliAy() != null && personelDenklestirme.getCalismaModeliAy().getDurum().booleanValue() == false) {

@@ -258,8 +258,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						paramMap.put("seciliTesisId", tesisId);
 						denklestirme = bolumFazlaMesai(paramMap);
 					} else {
-						List<SelectItem> tesisList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirketSecili, aylikPuantaj, authenticatedUser.isAdmin() == false, session);
-						for (SelectItem selectItem3 : tesisList) {
+						List<SelectItem> tesisDetayList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirketSecili, aylikPuantaj, authenticatedUser.isAdmin() == false, session);
+						for (SelectItem selectItem3 : tesisDetayList) {
 							Long tesis1Id = (Long) selectItem3.getValue();
 							paramMap.put("seciliTesisId", tesis1Id);
 							denklestirme = bolumFazlaMesai(paramMap);
@@ -469,6 +469,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			modelGoster = Boolean.FALSE;
 			ay = cal.get(Calendar.MONTH) + 1;
 			yil = cal.get(Calendar.YEAR);
+			fillEkSahaTanim();
 			try {
 				minYil = PdksUtil.getSistemBaslangicYili();
 				if (str.length() > 5) {
@@ -496,7 +497,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			sirket = null;
 			sirketId = null;
 			sirketler = null;
-			tesisList = ortakIslemler.getSelectItemList("tesis", authenticatedUser);
 			if (authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin())
 				filDepartmanList();
 			if (departmanList.size() == 1)
@@ -559,7 +559,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 				yilDegisti();
 
 			// return ortakIslemler.yetkiIKAdmin(Boolean.FALSE);
-			fillEkSahaTanim();
+			
 			if (hataliVeriGetirStr != null)
 				hataliVeriGetir = new Boolean(hataliVeriGetirStr);
 			if (eksikCalisanVeriGetirStr != null)
@@ -639,7 +639,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 			if (sirket != null) {
 				if (sirket.isTesisDurumu()) {
-
 					DenklestirmeAy denklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
 					denklestirmeAyDurum = fazlaMesaiOrtakIslemler.getDurum(denklestirmeAy);
 					selectItems = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, authenticatedUser.isAdmin() == false, session);
