@@ -648,7 +648,8 @@
 						<c:if test="#{vardiyaGunHome.fazlaMesaiDurum!=null}">
 							<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.fazlaMesaiDurumList!=null}">
 								<ui:define name="label">Fazla Mesai Ödeme Durum</ui:define>
-								<h:selectOneMenu value="#{vardiyaGunHome.fazlaMesaiDurum}" required="true" requiredMessage="Fazla Mesai Ödeme Durum seçiniz">
+								<h:selectOneMenu value="#{vardiyaGunHome.fazlaMesaiDurum}" required="true" requiredMessage="Fazla Mesai Ödeme Durum seçiniz"
+									disabled="#{vardiyaGunHome.denklestirmeAyDurum == false}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{vardiyaGunHome.fazlaMesaiDurumList}" />
 									<a4j:support event="onchange" status="ajaxStatus" action="#{vardiyaGunHome.personelDenklestirme.setGuncellendi(true)}" ajaxSingle="true"

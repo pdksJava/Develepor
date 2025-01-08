@@ -75,6 +75,7 @@ import org.pdks.security.entity.UserVekalet;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
+import com.pdks.webservice.IzinERP;
 import com.pdks.webservice.MailObject;
 import com.pdks.webservice.MailPersonel;
 import com.pdks.webservice.MailStatu;
@@ -2280,9 +2281,33 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	 * @throws Exception
 	 */
 	public String izinERPDBGuncelle() throws Exception {
+		List<Long> idList = new ArrayList<Long>();
+		if (personelIzinList == null)
+			personelIzinList = new ArrayList<PersonelIzin>();
+		else
+			personelIzinList.clear();
 		try {
-			ortakIslemler.izinERPDBGuncelle(true, session);
-			izinListele(null, null);
+			List<IzinERP> izinERPReturnList = ortakIslemler.izinERPDBGuncelle(true, session);
+			if (izinERPReturnList != null) {
+				for (IzinERP izinERP : izinERPReturnList) {
+					if (izinERP != null && izinERP.getId() != null && izinERP.getDurum() != null && izinERP.getDurum().booleanValue()) {
+						idList.add(izinERP.getId());
+					}
+				}
+			}
+			if (idList.isEmpty() == false) {
+				List<PersonelIzin> list = pdksEntityController.getSQLParamByFieldList(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, idList, PersonelIzin.class, session);
+				if (!list.isEmpty()) {
+					list = PdksUtil.sortListByAlanAdi(list, "olusturmaTarihi", Boolean.TRUE);
+					personelIzinList.addAll(list);
+				} else
+					idList.clear();
+				list = null;
+			}
+
+			if (idList == null || idList.isEmpty())
+				PdksUtil.addMessageAvailableWarn("Güncelleme yapılacak kayıt yoktur!");
+
 		} catch (Exception ex) {
 			try {
 				ortakIslemler.loggerErrorYaz(authenticatedUser.getCalistigiSayfa(), ex);
@@ -2290,7 +2315,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				PdksUtil.addMessageWarn(e.getLocalizedMessage());
 			}
 		}
-
+		idList = null;
 		return "";
 	}
 
