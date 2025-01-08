@@ -6235,7 +6235,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			manuelVardiyaIzinGir = ortakIslemler.getVardiyaIzinGir(session, loginUser.getDepartman());
 			gorevYeriGirisDurum = ortakIslemler.getParameterKey("uygulamaTipi").equals("H") && ortakIslemler.getParameterKey("gorevYeriGiris").equals("1");
 			departmanBolumAyni = Boolean.FALSE;
-			fazlaMesaiTalepVar = planGirisi && aramaSecenekleri.getSirket() != null && aramaSecenekleri.getSirket().isFazlaMesaiTalepGirer() && aramaSecenekleri.getSirket().getDepartman().isFazlaMesaiTalepGirer();
+			setFazlaMesaiTalepVar(planGirisi && aramaSecenekleri.getSirket() != null && aramaSecenekleri.getSirket().isFazlaMesaiTalepGirer() && aramaSecenekleri.getSirket().getDepartman().isFazlaMesaiTalepGirer());
 			modelGoster = Boolean.FALSE;
 			sanalPersonelAciklama = ortakIslemler.sanalPersonelAciklama();
 			String aksamBordroBasZamani = ortakIslemler.getParameterKey("aksamBordroBasZamani"), aksamBordroBitZamani = ortakIslemler.getParameterKey("aksamBordroBitZamani");
@@ -6637,12 +6637,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (!vardiyaGunList.isEmpty()) {
 						List<YemekIzin> yemekGenelList = ortakIslemler.getYemekList(basTarih, bitTarih, session);
 						ortakIslemler.setVardiyaYemekList(vardiyaGunList, yemekGenelList);
-						fazlaMesaiTalepVar = false;
+						setFazlaMesaiTalepVar(false);
 						List<Long> vardiyaIdList = new ArrayList<Long>();
 						for (VardiyaGun vardiyaGun : vardiyaGunList) {
 							if (vardiyaGun.getId() != null) {
 								if (vardiyaGun.isFazlaMesaiTalepDurum() && vardiyaGun.isAyinGunu()) {
-									fazlaMesaiTalepVar = true;
+									setFazlaMesaiTalepVar(true);
 									if (!talepGunList.contains(vardiyaGun.getVardiyaDateStr()))
 										talepGunList.add(vardiyaGun.getVardiyaDateStr());
 									vardiyaIdList.add(vardiyaGun.getId());
@@ -7501,13 +7501,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						for (Iterator iterator2 = puantaj.getVardiyalar().iterator(); iterator2.hasNext();) {
 							VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator2.next();
 							if (pdksVardiyaGun.isFazlaMesaiTalepDurum())
-								fazlaMesaiTalepVar = Boolean.TRUE;
+								setFazlaMesaiTalepVar(Boolean.TRUE);
 							pdksVardiyaGun.setAyinGunu(list.contains(pdksVardiyaGun.getVardiyaDateStr()));
 						}
 
 					}
 					if (!fazlaMesaiTalepVar && planGirisi)
-						fazlaMesaiTalepVar = puantaj.isFazlaMesaiTalepVar();
+						setFazlaMesaiTalepVar(puantaj.isFazlaMesaiTalepVar());
 					if (!puantaj.getTrClass().equals("help")) {
 						puantaj.setTrClass(devam ? VardiyaGun.STYLE_CLASS_ODD : VardiyaGun.STYLE_CLASS_EVEN);
 						devam = !devam;
@@ -7625,11 +7625,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	private Sirket basliklariGuncelle(HashMap<Long, AylikPuantaj> pdIdMap) {
 		Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
 		topluFazlaCalismaTalep = false;
-		fazlaMesaiTalepVar = false;
 		fazlaMesaiIzinKullan = false;
 		partTimeGoster = false;
 		sutIzniGoster = false;
 		isAramaGoster = false;
+		fazlaMesaiTalepVar = false;
 
 		boolean sirketFazlaMesaiOde = sirket != null && sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde();
 		for (Iterator iterator = aylikPuantajList.iterator(); iterator.hasNext();) {
@@ -7644,6 +7644,18 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				gebeGoster = true;
 				aylikPuantaj.setGebeDurum(true);
 			}
+			if (!fazlaMesaiTalepVar && aylikPuantaj.getVardiyalar() != null) {
+				for (VardiyaGun vardiyaGun : aylikPuantaj.getVardiyalar()) {
+					if (vardiyaGun.getId() != null) {
+						if (vardiyaGun.isFazlaMesaiTalepDurum() && vardiyaGun.isAyinGunu()) {
+							setFazlaMesaiTalepVar(true);
+							break;
+						}
+
+					}
+
+				}
+			}
 			if (aylikPuantaj.getIsAramaDurum().booleanValue() == false && pd.getIsAramaPersonelDonemselDurum() != null) {
 				isAramaGoster = true;
 				aylikPuantaj.setIsAramaDurum(true);
@@ -7656,7 +7668,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (topluFazlaCalismaTalep)
 				topluFazlaCalismaTalep = pd.getPersonel().getSirket().isFazlaMesaiTalepGirer();
 			if (fazlaMesaiTalepVar)
-				fazlaMesaiTalepVar = pd.getPersonel().getSirket().isFazlaMesaiTalepGirer();
+				setFazlaMesaiTalepVar(pd.getPersonel().getSirket().isFazlaMesaiTalepGirer());
 			if (!sutIzniGoster)
 				sutIzniGoster = (pd.getSutIzniDurum() != null && pd.getSutIzniDurum());
 			if (!partTimeGoster)
