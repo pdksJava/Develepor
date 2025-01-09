@@ -106,6 +106,18 @@ public class UserDigerOrganizasyon extends BasePDKSObject implements Serializabl
 	}
 
 	@Transient
+	public UserTesis getUserTesis() {
+		UserTesis userTesis = new UserTesis(user, organizasyon);
+		return userTesis;
+	}
+
+	@Transient
+	public UserBolum getUserBolum() {
+		UserBolum userBolum = new UserBolum(user, organizasyon);
+		return userBolum;
+	}
+
+	@Transient
 	public boolean isBolum() {
 		return tipi != null && tipi.equals(OrganizasyonTipi.BOLUM.value());
 	}
