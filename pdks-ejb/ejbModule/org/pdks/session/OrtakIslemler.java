@@ -5151,7 +5151,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public List<Sirket> fillSirketList(Session session, Boolean pdks, Boolean kendisiBul) {
-		List<Sirket> pdksSirketList = new ArrayList<Sirket>();
+		List<Sirket> sirketList = getSelectItemList("sirketTanim", authenticatedUser);
 		HashMap parametreMap = new HashMap();
 		StringBuffer sb = new StringBuffer();
 		sb.append("select * from " + Sirket.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
@@ -5163,14 +5163,13 @@ public class OrtakIslemler implements Serializable {
 			parametreMap.put("d", authenticatedUser.getDepartman().getId());
 			sb.append(" and " + Sirket.COLUMN_NAME_DEPARTMAN + " = :d");
 		}
-
 		if (authenticatedUser != null && (authenticatedUser.isIK_Tesis() || authenticatedUser.isIKSirket()) && authenticatedUser.getPdksPersonel() != null) {
 			parametreMap.put("s", authenticatedUser.getPdksPersonel().getSirket().getId());
 			sb.append(" and " + Sirket.COLUMN_NAME_ID + " = :s");
 		}
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		pdksSirketList = pdksEntityController.getObjectBySQLList(sb, parametreMap, Sirket.class);
+		List<Sirket> pdksSirketList = pdksEntityController.getObjectBySQLList(sb, parametreMap, Sirket.class);
 		if (authenticatedUser != null && !authenticatedUser.isAdmin() && !authenticatedUser.isIKAdmin() && authenticatedUser.getDepartman().isAdminMi()) {
 			for (Iterator iterator = pdksSirketList.iterator(); iterator.hasNext();) {
 				Sirket sirket = (Sirket) iterator.next();
@@ -5181,10 +5180,13 @@ public class OrtakIslemler implements Serializable {
 		}
 		if (authenticatedUser != null)
 			digerIKSirketBul(pdksSirketList, kendisiBul, session);
-
-		if (pdksSirketList.size() > 1)
-			pdksSirketList = PdksUtil.sortObjectStringAlanList(pdksSirketList, "getAd", null);
-		return pdksSirketList;
+		if (!pdksSirketList.isEmpty()) {
+			if (pdksSirketList.size() > 1)
+				pdksSirketList = PdksUtil.sortObjectStringAlanList(pdksSirketList, "getAd", null);
+			sirketList.addAll(pdksSirketList);
+		}
+		pdksSirketList = null;
+		return sirketList;
 	}
 
 	/**
@@ -5417,7 +5419,7 @@ public class OrtakIslemler implements Serializable {
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<Tanim> tesisTanimList = getTesisDurumu() ? pdksEntityController.getObjectBySQLList(sb, map, Tanim.class) : null;
 		if (tesisTanimList != null && !tesisTanimList.isEmpty()) {
-			List<SelectItem> tesisSelectList = getSelectItemList("tesis", authenticatedUser);
+			List<SelectItem> tesisSelectList = getSelectItemList("tesisSelectItemTanim", authenticatedUser);
 			for (Tanim tanim : tesisTanimList)
 				tesisSelectList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
 			sonucMap.put("tesisSelectList", tesisSelectList);
@@ -5438,8 +5440,7 @@ public class OrtakIslemler implements Serializable {
 				if (ekSahaSelectList.isEmpty())
 					islemEkSahaSelectListMap.put(key, ekSahaSelectList);
 				ekSahaSelectList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
-
-				List<Tanim> ekSahaList = ekSahaListMap.containsKey(key) ? ekSahaListMap.get(key) : new ArrayList<Tanim>();
+				List<Tanim> ekSahaList = ekSahaListMap.containsKey(key) ? ekSahaListMap.get(key) : getSelectItemList(key + "Tanim", authenticatedUser);
 				if (ekSahaList.isEmpty())
 					ekSahaListMap.put(key, ekSahaList);
 				ekSahaList.add(tanim);
@@ -5454,7 +5455,7 @@ public class OrtakIslemler implements Serializable {
 		}
 		if (sirketEkle == null || sirketEkle) {
 
-			List<SelectItem> sirketIdList = getSelectItemList("sirket", authenticatedUser);
+			List<SelectItem> sirketIdList = getSelectItemList("sirketSelectItemTanim", authenticatedUser);
 			List<Sirket> sirketList = fillSirketList(session, Boolean.TRUE, kendisiBul);
 			for (Sirket sirket : sirketList)
 				sirketIdList.add(new SelectItem(sirket.getId(), sirket.getAd()));
