@@ -4329,9 +4329,12 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				}
 			}
 		}
+		if (allRoles.size() > 1)
+			allRoles = PdksUtil.sortObjectStringAlanList(allRoles, "getAciklama", null);
 
 		if (personel != null) {
 			User seciliKullanici = personel.getKullanici();
+			seciliKullanici.setYetkiliRollerim(null);
 			ortakIslemler.setUserRoller(seciliKullanici, session);
 			if (seciliKullanici.getYetkiliRollerim() != null) {
 				for (Iterator iterator = seciliKullanici.getYetkiliRollerim().iterator(); iterator.hasNext();) {

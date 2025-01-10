@@ -10309,6 +10309,8 @@ public class OrtakIslemler implements Serializable {
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
 				yetkiliRoller = pdksEntityController.getObjectBySQLList(sb, map, Role.class);
+				if (yetkiliRoller.size() > 1)
+					yetkiliRoller = PdksUtil.sortObjectStringAlanList(yetkiliRoller, "getAciklama", null);
 				user.setYetkiliRollerim(yetkiliRoller);
 			} catch (Exception e) {
 				logger.error("Pdks hata in : \n");
