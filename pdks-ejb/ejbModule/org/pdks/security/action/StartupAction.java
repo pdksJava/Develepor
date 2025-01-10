@@ -761,7 +761,7 @@ public class StartupAction implements Serializable {
 				try {
 					List<String> strList = PdksUtil.getListByString(parameterMap.get("serverTimeUpdateFromDB"), "|");
 					StringBuffer sb = new StringBuffer();
-					sb.append("select " + strList.get(0));
+					sb.append(strList.get(0));
 					fields.clear();
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);

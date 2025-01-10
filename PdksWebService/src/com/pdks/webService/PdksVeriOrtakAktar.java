@@ -766,7 +766,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				try {
 					List<String> strList = PdksUtil.getListByString((String) mailMap.get("serverTimeUpdateFromDB"), "|");
 					StringBuffer sb = new StringBuffer();
-					sb.append("select " + strList.get(0));
+					sb.append(strList.get(0));
 					fields.clear();
 					List list = pdksDAO.getNativeSQLList(fields, sb, null);
 					if (!list.isEmpty()) {
