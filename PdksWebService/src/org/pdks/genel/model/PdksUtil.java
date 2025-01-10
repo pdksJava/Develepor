@@ -1,5 +1,6 @@
 package org.pdks.genel.model;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -8,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -110,18 +112,23 @@ public class PdksUtil implements Serializable {
 	 * @param bekle
 	 * @return
 	 */
-	public static Process executeCommand(String cmd, boolean bekle) {
+	public static List<String> executeCommand(String cmd, boolean bekle) {
 		Process p = null;
+		List<String> temps = new ArrayList<String>();
 		if (bekle)
 			System.out.println(cmd);
 		try {
 			p = Runtime.getRuntime().exec(cmd);
 			if (bekle)
 				p.waitFor();
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String s = "";
+			while ((s = stdInput.readLine()) != null)
+				temps.add(s);
 		} catch (Exception e) {
 			logger.error(e);
 		}
-		return p;
+		return temps;
 	}
 
 	/**

@@ -139,19 +139,24 @@ public class PdksUtil implements Serializable {
 	 * @param cmd
 	 * @param bekle
 	 * @return
- 	 */
-	public static Process executeCommand(String cmd, boolean bekle) {
+	 */
+	public static List<String> executeCommand(String cmd, boolean bekle) {
 		Process p = null;
+		List<String> temps = new ArrayList<String>();
 		if (bekle)
 			System.out.println(cmd);
 		try {
 			p = Runtime.getRuntime().exec(cmd);
 			if (bekle)
 				p.waitFor();
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String s = "";
+			while ((s = stdInput.readLine()) != null)
+				temps.add(s);
 		} catch (Exception e) {
 			logger.error(e);
 		}
-		return p;
+		return temps;
 	}
 
 	/**
