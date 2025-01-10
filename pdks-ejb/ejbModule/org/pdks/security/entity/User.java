@@ -71,7 +71,7 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	private HashMap<String, List> selectItemMap = null;
 
-	private List<Tanim> yetkiliTesisler;
+	private List<Tanim> yetkiliTesisler, yetkiliBolumler;
 
 	private Personel pdksPersonel;
 
@@ -1137,6 +1137,15 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	public void setSelectItemMap(HashMap<String, List> selectItemMap) {
 		this.selectItemMap = selectItemMap;
+	}
+
+	@Transient
+	public List<Tanim> getYetkiliBolumler() {
+		return yetkiliBolumler;
+	}
+
+	public void setYetkiliBolumler(List<Tanim> yetkiliBolumler) {
+		this.yetkiliBolumler = yetkiliBolumler;
 	}
 
 	public void entityRefresh() {

@@ -152,11 +152,12 @@ import org.pdks.pdf.action.PDFITextUtils;
 import org.pdks.pdf.action.PDFUtils;
 import org.pdks.quartz.KapiGirisGuncelleme;
 import org.pdks.security.entity.MenuItemConstant;
+import org.pdks.security.entity.OrganizasyonTipi;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
+import org.pdks.security.entity.UserDigerOrganizasyon;
 import org.pdks.security.entity.UserMenuItemTime;
 import org.pdks.security.entity.UserRoles;
-import org.pdks.security.entity.UserTesis;
 import org.pdks.security.entity.UserVekalet;
 
 import com.google.gson.Gson;
@@ -291,21 +292,44 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public List<Tanim> filUserTesisList(User user, Session session) {
-		List<Tanim> tesisTanimList = null;
+		List<Tanim> tesisTanimList = filUserOrganizasyonList(user, OrganizasyonTipi.TESIS, session);
+		return tesisTanimList;
+	}
+
+	/**
+	 * @param user
+	 * @param session
+	 * @return
+	 */
+	public List<Tanim> filUserBolumList(User user, Session session) {
+		List<Tanim> bolumTanimList = filUserOrganizasyonList(user, OrganizasyonTipi.BOLUM, session);
+		return bolumTanimList;
+	}
+
+	/**
+	 * @param user
+	 * @param tipi
+	 * @param session
+	 * @return
+	 */
+	private List<Tanim> filUserOrganizasyonList(User user, OrganizasyonTipi tipi, Session session) {
+		List<Tanim> tanimList = null;
 		if (user != null) {
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
-			sb.append("select T.* from " + UserTesis.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
-			sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = P." + UserTesis.COLUMN_NAME_TESIS);
-			sb.append(" where P." + UserTesis.COLUMN_NAME_USER + " = :s ");
+			sb.append("select T.* from " + UserDigerOrganizasyon.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+			sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = P." + UserDigerOrganizasyon.COLUMN_NAME_ORGANIZASYON);
+			sb.append(" where P." + UserDigerOrganizasyon.COLUMN_NAME_USER + " = :s and P." + UserDigerOrganizasyon.COLUMN_NAME_TIPI + " = :t ");
 			fields.put("s", user.getId());
-			tesisTanimList = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
-			if (tesisTanimList.size() > 1)
-				tesisTanimList = PdksUtil.sortTanimList(null, tesisTanimList);
+			fields.put("t", tipi.value());
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			tanimList = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
+			if (tanimList.size() > 1)
+				tanimList = PdksUtil.sortTanimList(null, tanimList);
 		} else
-			tesisTanimList = new ArrayList<Tanim>();
-
-		return tesisTanimList;
+			tanimList = new ArrayList<Tanim>();
+		return tanimList;
 	}
 
 	/**
@@ -9226,6 +9250,41 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param kodu
+	 * @param session
+	 * @return
+	 */
+	public List<Tanim> getPersonelEkSahaList(String kodu, Session session) {
+		List<Tanim> tanimList = null;
+		HashMap parametreMap = new HashMap();
+		try {
+			StringBuffer sb = new StringBuffer();
+			sb.append("select distinct T.* from " + Tanim.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_TIPI + " = :t");
+			sb.append(" and T." + Tanim.COLUMN_NAME_PARENT_ID + " = V." + Tanim.COLUMN_NAME_ID + " and T." + Tanim.COLUMN_NAME_DURUM + " = 1 ");
+			sb.append(" where V." + Tanim.COLUMN_NAME_TIPI + " = :p and V." + Tanim.COLUMN_NAME_KODU + " = :k");
+			sb.append(" and V." + Tanim.COLUMN_NAME_DURUM + " = 1 ");
+			parametreMap.put("t", Tanim.TIPI_PERSONEL_EK_SAHA_ACIKLAMA);
+			parametreMap.put("p", Tanim.TIPI_PERSONEL_EK_SAHA);
+			parametreMap.put("k", kodu);
+			if (session != null)
+				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+			tanimList = pdksEntityController.getObjectBySQLList(sb, parametreMap, Tanim.class);
+			if (tanimList.size() > 1) {
+
+				tanimList = PdksUtil.sortObjectStringAlanList(Constants.TR_LOCALE, tanimList, "getAciklama", null);
+
+			}
+		} catch (Exception e) {
+			logger.error("Pdks hata in : \n");
+			e.printStackTrace();
+			logger.error("Pdks hata out : " + e.getMessage());
+
+		}
+		return tanimList;
+	}
+
+	/**
 	 * @param tipi
 	 * @param session
 	 * @return
@@ -10274,21 +10333,21 @@ public class OrtakIslemler implements Serializable {
 		List<Tanim> yetkiliTesisler = null;
 		Boolean tesisYetki = getParameterKey("tesisYetki").equals("1");
 		if (tesisYetki && user != null && user.getId() != null && (user.getYetkiliTesisler() == null || user.getYetkiliTesisler().isEmpty())) {
-			HashMap map = new HashMap();
-			map.put("user.id", user.getId());
-			map.put(PdksEntityController.MAP_KEY_SELECT, "tesis");
-			if (session != null)
-				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			try {
-				yetkiliTesisler = pdksEntityController.getObjectByInnerObjectList(map, UserTesis.class);
-				user.setYetkiliTesisler(yetkiliTesisler);
-			} catch (Exception e) {
-				logger.error("Pdks hata in : \n");
-				e.printStackTrace();
-				logger.error("Pdks hata out : " + e.getMessage());
-			}
+			yetkiliTesisler = filUserTesisList(user, session);
+			user.setYetkiliTesisler(yetkiliTesisler);
+		}
+	}
 
-			map = null;
+	/**
+	 * @param user
+	 * @param session
+	 */
+	public void setUserBolumler(User user, Session session) {
+		List<Tanim> yetkiliBolumler = null;
+		Boolean bolumYetki = getParameterKey("bolumYetki").equals("1");
+		if (bolumYetki && user != null && user.getId() != null && (user.getYetkiliBolumler() == null || user.getYetkiliBolumler().isEmpty())) {
+			yetkiliBolumler = filUserBolumList(user, session);
+			user.setYetkiliBolumler(yetkiliBolumler);
 		}
 	}
 

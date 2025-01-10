@@ -69,8 +69,8 @@ import org.pdks.erp.entity.SAPSunucu;
 import org.pdks.security.entity.KullaniciSession;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
+import org.pdks.security.entity.UserDigerOrganizasyon;
 import org.pdks.security.entity.UserRoles;
-import org.pdks.security.entity.UserTesis;
 import org.pdks.session.ExcelUtil;
 import org.pdks.session.LDAPUserManager;
 import org.pdks.session.OrtakIslemler;
@@ -263,7 +263,7 @@ public class StartupAction implements Serializable {
 			list.add(SAPSunucu.class);
 			list.add(Tatil.class);
 			list.add(UserRoles.class);
-			list.add(UserTesis.class);
+			list.add(UserDigerOrganizasyon.class);
 			list.add(VardiyaGorev.class);
 			list.add(VardiyaHafta.class);
 			// list.add(VardiyaIzin.class);

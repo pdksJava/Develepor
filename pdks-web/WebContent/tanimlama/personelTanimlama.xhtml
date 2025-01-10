@@ -1602,7 +1602,7 @@
 													</s:decorate>
 
 												</rich:simpleTogglePanel>
-												<c:if test="#{ortakIslemler.tesisDurumu and pdksPersonelHome.tesisYetki}">
+												<c:if test="#{pdksPersonelHome.tesisYetki}">
 													<rich:simpleTogglePanel rendered="#{pdksPersonelHome.instance.kullanici.IK or pdksPersonelHome.instance.kullanici.direktorSuperVisor}"
 														label="#{ortakIslemler.tesisAciklama()}" height="110" switchType="client" opened="true">
 														<s:decorate>
@@ -1615,6 +1615,25 @@
 																requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz">
 																<h:column>
 																	<h:outputText value="#{tesis.aciklama}" />
+																</h:column>
+																<s:convertEntity />
+															</rich:listShuttle>
+														</s:decorate>
+													</rich:simpleTogglePanel>
+												</c:if>
+												<c:if test="#{pdksPersonelHome.bolumYetki}">
+													<rich:simpleTogglePanel rendered="#{(pdksPersonelHome.instance.kullanici.IK or pdksPersonelHome.instance.kullanici.direktorSuperVisor)==false}"
+														label="#{ortakIslemler.bolumAciklama()}" height="110" switchType="client" opened="true">
+														<s:decorate>
+															<rich:listShuttle id="shuttle" sourceValue="#{pdksPersonelHome.distinctBolumList}" fastOrderControlsVisible="false"
+																orderControlsVisible="false" targetValue="#{pdksPersonelHome.instance.kullanici.yetkiliBolumler}" var="bolum"
+																copyControlLabel="#{messages['listShuttle.etiket.copyControlLabel']}"
+																removeControlLabel="#{messages['listShuttle.etiket.removeControlLabel']}"
+																copyAllControlLabel="#{messages['listShuttle.etiket.copyAllControlLabel']}"
+																removeAllControlLabel="#{messages['listShuttle.etiket.removeAllControlLabel']}" required="true"
+																requiredMessage="#{ortakIslemler.bolumAciklama()} seçiniz">
+																<h:column>
+																	<h:outputText value="#{bolum.aciklama}" />
 																</h:column>
 																<s:convertEntity />
 															</rich:listShuttle>

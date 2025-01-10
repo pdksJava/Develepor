@@ -24,7 +24,9 @@ public class UserDigerOrganizasyon extends BasePDKSObject implements Serializabl
 	 * 
 	 */
 	private static final long serialVersionUID = 5565458340913573315L;
+	public static final String FN_NAME = "FN_GET_USER_ORGANIZASYON";
 	public static final String TABLE_NAME = "USER_DIGER_ORGANIZASYON";
+
 	public static final String COLUMN_NAME_USER = "USER_ID";
 	public static final String COLUMN_NAME_TIPI = "TIPI";
 	public static final String COLUMN_NAME_ORGANIZASYON = "ORGANIZASYON_ID";
@@ -36,10 +38,11 @@ public class UserDigerOrganizasyon extends BasePDKSObject implements Serializabl
 
 	}
 
-	public UserDigerOrganizasyon(User user, Integer tipi, Tanim organizasyon) {
+	public UserDigerOrganizasyon(User user, OrganizasyonTipi organizasyonTipi, Tanim organizasyon) {
 		super();
 		this.user = user;
-		this.tipi = tipi;
+		this.organizasyonTipi = organizasyonTipi;
+		this.tipi = organizasyonTipi != null ? organizasyonTipi.value() : null;
 		this.organizasyon = organizasyon;
 	}
 
@@ -71,8 +74,10 @@ public class UserDigerOrganizasyon extends BasePDKSObject implements Serializabl
 		this.organizasyon = organizasyon;
 	}
 
-	@Column(name = COLUMN_NAME_TIPI)
+	@Transient
 	public OrganizasyonTipi getOrganizasyonTipi() {
+		if (organizasyonTipi == null && tipi != null)
+			this.organizasyonTipi = OrganizasyonTipi.fromValue(tipi);
 		return organizasyonTipi;
 	}
 
@@ -80,12 +85,14 @@ public class UserDigerOrganizasyon extends BasePDKSObject implements Serializabl
 		this.organizasyonTipi = organizasyonTipi;
 	}
 
-	@Column(name = COLUMN_NAME_TIPI, insertable = false, updatable = false)
+	@Column(name = COLUMN_NAME_TIPI)
 	public Integer getTipi() {
 		return tipi;
 	}
 
 	public void setTipi(Integer tipi) {
+		if (tipi != null)
+			this.organizasyonTipi = OrganizasyonTipi.fromValue(tipi);
 		this.tipi = tipi;
 	}
 
@@ -103,18 +110,6 @@ public class UserDigerOrganizasyon extends BasePDKSObject implements Serializabl
 	@Transient
 	public boolean isTesis() {
 		return tipi != null && tipi.equals(OrganizasyonTipi.TESIS.value());
-	}
-
-	@Transient
-	public UserTesis getUserTesis() {
-		UserTesis userTesis = new UserTesis(user, organizasyon);
-		return userTesis;
-	}
-
-	@Transient
-	public UserBolum getUserBolum() {
-		UserBolum userBolum = new UserBolum(user, organizasyon);
-		return userBolum;
 	}
 
 	@Transient
