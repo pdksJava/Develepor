@@ -2,6 +2,7 @@ package com.pdks.webService;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -760,6 +761,30 @@ public class PdksVeriOrtakAktar implements Serializable {
 				}
 			}
 			helpDeskList = null;
+
+			if (PdksUtil.getTestSunucuDurum() || PdksUtil.getCanliSunucuDurum()) {
+				try {
+					List<String> strList = PdksUtil.getListByString((String) mailMap.get("serverTimeUpdateFromDB"), "|");
+					StringBuffer sb = new StringBuffer();
+					sb.append("select " + strList.get(0));
+					fields.clear();
+					List list = pdksDAO.getNativeSQLList(fields, sb, null);
+					if (!list.isEmpty()) {
+						Timestamp tarih = (Timestamp) list.get(0);
+						String replace = PdksUtil.convertToDateString(new Date(tarih.getTime()), "yyyy-MM-dd HH:mm:ss");
+						String cmd = strList.size() == 2 ? PdksUtil.replaceAllManuel(strList.get(1), "$tarih", replace) : "date -s '" + replace + "'";
+						List<String> cmdList = PdksUtil.executeCommand(cmd, true);
+						for (String string : cmdList) {
+							logger.info(string);
+						}
+					}
+					list = null;
+					strList = null;
+				} catch (Exception e) {
+				}
+
+			}
+
 			PdksUtil.setSistemBaslangicYili(mailMap.containsKey("sistemBaslangicYili") ? Integer.parseInt((String) mailMap.get("sistemBaslangicYili")) : 2010);
 			PdksUtil.setSistemDestekVar(sistemDestekVar);
 

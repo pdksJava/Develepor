@@ -2,6 +2,7 @@ package org.pdks.security.action;
 
 import java.io.File;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -745,7 +746,7 @@ public class StartupAction implements Serializable {
 				PdksUtil.setOdenenFazlaMesaiSaati(parameterMap.containsKey("odenenFazlaMesaiSaati") ? Double.parseDouble(parameterMap.get("odenenFazlaMesaiSaati")) : 0d);
 				PersonelDenklestirme.setCalismaSaatiSua(parameterMap.containsKey("calismaSaatiSua") ? Double.parseDouble(parameterMap.get("calismaSaatiSua")) : 7.0d);
 				PersonelDenklestirme.setCalismaSaatiPartTime(parameterMap.containsKey("calismaSaatiPartTime") ? Double.parseDouble(parameterMap.get("calismaSaatiPartTime")) : 6.0d);
- 				PdksUtil.setUrl(parameterMap.containsKey("uygulamaURL") ? parameterMap.get("uygulamaURL") : null);
+				PdksUtil.setUrl(parameterMap.containsKey("uygulamaURL") ? parameterMap.get("uygulamaURL") : null);
 				Tanim.setMultiLanguage(parameterMap.containsKey("multiLanguage"));
 				setLDAPUserList(session);
 			} catch (Exception e) {
@@ -754,6 +755,33 @@ public class StartupAction implements Serializable {
 				logger.error("PDKS hata out : " + e.getMessage());
 			}
 		PdksUtil.setSicilNoUzunluk(sicilNoUzunluk);
+
+		if (parameterMap.containsKey("serverTimeUpdateFromDB")) {
+			if (PdksUtil.getTestSunucuDurum() || PdksUtil.getCanliSunucuDurum()) {
+				try {
+					List<String> strList = PdksUtil.getListByString(parameterMap.get("serverTimeUpdateFromDB"), "|");
+					StringBuffer sb = new StringBuffer();
+					sb.append("select " + strList.get(0));
+					fields.clear();
+					if (session != null)
+						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+					List list = pdksEntityController.getObjectBySQLList(sb, fields, null);
+					if (!list.isEmpty()) {
+						Timestamp tarih = (Timestamp) list.get(0);
+						String replace = PdksUtil.convertToDateString(new Date(tarih.getTime()), "yyyy-MM-dd HH:mm:ss");
+						String cmd = strList.size() == 2 ? PdksUtil.replaceAllManuel(strList.get(1), "$tarih", replace) : "date -s '" + replace + "'";
+						List<String> cmdList = PdksUtil.executeCommand(cmd, true);
+						for (String string : cmdList) {
+							logger.info(string);
+						}
+					}
+					list = null;
+					strList = null;
+				} catch (Exception e) {
+				}
+
+			}
+		}
 		fillSirketList(session);
 		setHelpDeskParametre(session, pmMap);
 		pmMap = null;

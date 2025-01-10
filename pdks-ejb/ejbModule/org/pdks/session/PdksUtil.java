@@ -146,6 +146,7 @@ public class PdksUtil implements Serializable {
 		if (bekle)
 			System.out.println(cmd);
 		try {
+			logger.info(cmd);
 			p = Runtime.getRuntime().exec(cmd);
 			if (bekle)
 				p.waitFor();
@@ -154,7 +155,9 @@ public class PdksUtil implements Serializable {
 			while ((s = stdInput.readLine()) != null)
 				temps.add(s);
 		} catch (Exception e) {
-			logger.error(e);
+			if (e.getLocalizedMessage() != null)
+				temps.add(e.getLocalizedMessage());
+
 		}
 		return temps;
 	}
