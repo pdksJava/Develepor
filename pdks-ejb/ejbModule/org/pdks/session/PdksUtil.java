@@ -136,6 +136,25 @@ public class PdksUtil implements Serializable {
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
 
 	/**
+	 * @param cmd
+	 * @param bekle
+	 * @return
+ 	 */
+	public static Process executeCommand(String cmd, boolean bekle) {
+		Process p = null;
+		if (bekle)
+			System.out.println(cmd);
+		try {
+			p = Runtime.getRuntime().exec(cmd);
+			if (bekle)
+				p.waitFor();
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		return p;
+	}
+
+	/**
 	 * @param list
 	 */
 	public static List getAktifList(List list) {
