@@ -4437,6 +4437,15 @@ public class OrtakIslemler implements Serializable {
 			tipi = paramsMap.containsKey("tipi") ? (String) paramsMap.get("tipi") : null;
 			fieldName = paramsMap.containsKey("fieldName") ? (String) paramsMap.get("fieldName") : null;
 			denklestirme = paramsMap.containsKey("denklestirme") ? (Boolean) paramsMap.get("denklestirme") : null;
+			if (loginUser != null && loginUser.getYetkiliBolumler() != null && loginUser.getYetkiliBolumler().isEmpty() == false) {
+				Personel personel = loginUser.getPdksPersonel();
+				if (sirket == null)
+					sirket = personel.getSirket();
+				if (sirket.getSirketGrup() != null)
+					sirket = null;
+				if (sirket != null && sirket.isTesisDurumu() && personel.getTesis() != null)
+					tesisId = String.valueOf(personel.getTesis().getTipi());
+			}
 		}
 		boolean tumAlanlar = fieldName == null || fieldName.equals("*");
 		if (aylikPuantaj != null) {
@@ -4615,7 +4624,7 @@ public class OrtakIslemler implements Serializable {
 								list = new ArrayList();
 							bigDecimalList = null;
 						}
-
+						logger.info(spAdi + " " + tipi + " " + list.size() + "\n" + gson.toJson(map));
 						if ((tipi.endsWith("P") || tipi.indexOf("+") >= 0) && loginUser.isAdmin())
 							logger.debug(spAdi + " " + tipi + " " + list.size() + "\n" + gson.toJson(map));
 					} catch (Exception e) {
