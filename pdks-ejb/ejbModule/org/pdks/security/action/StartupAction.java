@@ -43,6 +43,7 @@ import org.pdks.entity.DepartmanMailGrubu;
 import org.pdks.entity.IzinHakedisHakki;
 import org.pdks.entity.IzinTipiBirlesikHaric;
 import org.pdks.entity.IzinTipiMailAdres;
+import org.pdks.entity.KatSayi;
 import org.pdks.entity.LDAPDomain;
 import org.pdks.entity.MailUser;
 import org.pdks.entity.MenuIliski;
@@ -52,6 +53,7 @@ import org.pdks.entity.Notice;
 import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
+import org.pdks.entity.PersonelDinamikAlan;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.PersonelIzinDetay;
 import org.pdks.entity.ServiceData;
@@ -250,27 +252,29 @@ public class StartupAction implements Serializable {
 		long toplamAdet = 0L;
 		try {
 			list.add(AccountPermission.class);
-			list.add(CalismaModeliGun.class);
 			list.add(ArifeVardiyaDonem.class);
+			list.add(CalismaModeliGun.class);
 			list.add(CalismaModeliVardiya.class);
 			list.add(DepartmanMailGrubu.class);
-			list.add(IzinTipiBirlesikHaric.class);
 			list.add(IzinHakedisHakki.class);
+			list.add(IzinTipiBirlesikHaric.class);
 			list.add(IzinTipiMailAdres.class);
+			list.add(KatSayi.class);
 			list.add(MailUser.class);
 			list.add(MenuIliski.class);
 			list.add(Notice.class);
 			list.add(Parameter.class);
+			list.add(PersonelDinamikAlan.class);
 			list.add(SAPSunucu.class);
+			list.add(ServiceData.class);
 			list.add(Tatil.class);
-			list.add(UserRoles.class);
 			list.add(UserDigerOrganizasyon.class);
+			list.add(UserRoles.class);
 			list.add(VardiyaGorev.class);
 			list.add(VardiyaHafta.class);
-			// list.add(VardiyaIzin.class);
 			list.add(VardiyaYemekIzin.class);
 			list.add(YemekKartsiz.class);
-			list.add(ServiceData.class);
+
 			// pdksEntityController.savePrepareTableID(ServisData.class, entityManager, session);
 
 			for (Class class1 : list) {

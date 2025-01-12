@@ -816,7 +816,31 @@
 								<td></td>
 							</ui:fragment>
 
-							<td colspan="2"><b> #{vardiyaGun.personel.planGrup2.aciklama}</b></td>
+							<td colspan="2"><SPAN id="gorev#{vardiyaGun.personel.planGrup2.id}_#{vardiyaGun.vardiya.id}"><b>#{vardiyaGun.personel.planGrup2.aciklama}</b></SPAN>
+
+								<rich:toolTip for="gorev#{vardiyaGun.personel.planGrup2.id}_#{vardiyaGun.vardiya.id}">
+									<rich:dataTable rowClasses="acik,koyu" value="#{vardiyaGunHome.getGorevPersonelList(vardiyaGun.personel.planGrup2)}" var="personel" rows="50"
+										rowKeyVar="row" id="sirketTable">
+										<f:facet name="header">
+											<h:outputText value="#{vardiyaGun.personel.planGrup2.aciklama} Personeller" />
+										</f:facet>
+										<rich:column style="text-align:center">
+											<f:facet name="header">
+												<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
+											</f:facet>
+											<h:outputText value="#{personel.pdksSicilNo}" />
+										</rich:column>
+										<rich:column style="text-align:left">
+											<f:facet name="header">
+												<h:outputText value="Adı Soyadı" />
+											</f:facet>
+											<h:outputText value="#{personel.adSoyad}" />
+										</rich:column>
+										<f:facet name="footer">
+											<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+										</f:facet>
+									</rich:dataTable>
+								</rich:toolTip></td>
 							<td title="#{vardiyaGun.vardiya.vardiyaAciklama}"><b> #{vardiyaGun.vardiya.kisaAciklama}</b></td>
 							<a4j:repeat value="#{vardiyaGun.vardiya.gunlukList}" var="gun">
 								<td align="center" style="border-left: 0px !important; border: 1px solid #dedede; background-color: yellow;"><h:outputText value="#{gun}"
