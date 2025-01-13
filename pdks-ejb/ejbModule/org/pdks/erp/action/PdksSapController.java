@@ -13,12 +13,17 @@ import java.util.TreeMap;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.jboss.seam.Component;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.international.StatusMessage.Severity;
 import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.Departman;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDenklestirmeTasiyici;
-import org.pdks.entity.PersonelExtra;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
@@ -27,12 +32,6 @@ import org.pdks.session.Constants;
 import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
-import org.hibernate.Session;
-import org.jboss.seam.Component;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
 
 import com.pdks.webservice.PersonelERP;
 import com.sap.mw.jco.IFunctionTemplate;
@@ -443,14 +442,7 @@ public class PdksSapController implements ERPController, Serializable {
 							Sirket sirket = null;
 							do {
 								personel = ((Personel) personelMap.get(sonucResultTable.getString("PERNR")));
-								PersonelExtra personelExtra = personel.getPersonelExtra();
-								if (personelExtra == null) {
-									personelExtra = new PersonelExtra();
-									personelExtra.setPersonel(personel);
-									personel.setPersonelExtra(personelExtra);
-								}
-								personelExtra.setCepTelefon(PdksUtil.replaceAll(sonucResultTable.getString("GSMTL"), " ", ""));
-								personelExtra.setIlce(sonucResultTable.getString("ORT02"));
+
 								personel.setErpSicilNo(sonucResultTable.getString("PERNR"));
 								String sirketKodu = sonucResultTable.getString("BUKRS").trim();
 								if (!personel.getDurum())
@@ -460,12 +452,12 @@ public class PdksSapController implements ERPController, Serializable {
 								else {
 									try {
 										boolean durumUpdate = sirketKodu.length() < 4;
- 										if (!durumUpdate) {
+										if (!durumUpdate) {
 											sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ERP_KODU, sirketKodu, Sirket.class, session);
 											durumUpdate = sirket != null;
 											if (sirket == null) {
 												if (departman == null) {
-													departman = (Departman)pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, 1L, Departman.class, session);
+													departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, 1L, Departman.class, session);
 
 												}
 												if (olusturanUser == null)
@@ -967,7 +959,7 @@ public class PdksSapController implements ERPController, Serializable {
 	}
 
 	public List<PersonelERP> topluHaldePersonelBilgisiNoSapDBGetir(Session session, List<String> personelList, Date baslangicZamani, Date bitisZamani) throws Exception {
-		
+
 		return null;
 	}
 }

@@ -13,12 +13,14 @@ import java.util.TreeMap;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Name;
 import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.Departman;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDenklestirmeTasiyici;
-import org.pdks.entity.PersonelExtra;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
@@ -27,9 +29,6 @@ import org.pdks.session.Constants;
 import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
-import org.hibernate.Session;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
 
 import com.pdks.webservice.PersonelERP;
 import com.sap.conn.jco.JCoDestination;
@@ -310,16 +309,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 							Sirket sirket = null;
 							do {
 								personel = ((Personel) personelMap.get(sonucResultTable.getString("PERNR")));
-								PersonelExtra personelExtra = personel.getPersonelExtra();
-								if (personelExtra == null) {
-									personelExtra = new PersonelExtra();
-									personelExtra.setPersonel(personel);
-									personel.setPersonelExtra(personelExtra);
-								}
-								personelExtra.setCepTelefon(PdksUtil.replaceAll(sonucResultTable.getString("GSMTL"), " ", ""));
-								personelExtra.setIlce(sonucResultTable.getString("ORT02"));
-								personel.setErpSicilNo(sonucResultTable.getString("PERNR"));
-								String sirketKodu = sonucResultTable.getString("BUKRS").trim();
+ 								String sirketKodu = sonucResultTable.getString("BUKRS").trim();
 								if (!personel.getDurum())
 									personel.setDurum(Boolean.TRUE);
 								if (sirketMap.containsKey(sirketKodu))

@@ -51,7 +51,6 @@ import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDinamikAlan;
 import org.pdks.entity.PersonelDonemselDurum;
 import org.pdks.entity.PersonelDurumTipi;
-import org.pdks.entity.PersonelExtra;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.PersonelIzinDetay;
 import org.pdks.entity.PersonelKGS;
@@ -176,8 +175,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private Boolean onaysizIzinKullanilir = Boolean.FALSE, departmanGoster = Boolean.FALSE, kartNoGoster = Boolean.FALSE, ikinciYoneticiIzinOnayla = Boolean.FALSE, izinGirisiVar = Boolean.FALSE, dosyaGuncellemeYetki = Boolean.FALSE;
 	private Boolean ekSaha1Disable, ekSaha2Disable, ekSaha4Disable, transferAciklamaCiftKontrol, bakiyeIzinGoster = Boolean.FALSE, gebeSecim = Boolean.FALSE, personelTipiGoster = Boolean.FALSE;
 	public Boolean disableAdviseNodeOpened, organizasyonSemasiGoster = Boolean.FALSE, bakiyeTakipEdiliyor = Boolean.FALSE;
-	private PersonelExtra personelExtra;
-	private TreeMap<Long, PersonelKGS> personelKGSMap;
+ 	private TreeMap<Long, PersonelKGS> personelKGSMap;
 	private int COL_SICIL_NO, COL_ADI, COL_SOYADI, COL_SIRKET_KODU, COL_SIRKET_ADI, COL_TESIS_KODU, COL_TESIS_ADI, COL_GOREV_KODU, COL_GOREVI, COL_BOLUM_KODU, COL_BOLUM_ADI;
 	private int COL_ISE_BASLAMA_TARIHI, COL_KIDEM_TARIHI, COL_GRUBA_GIRIS_TARIHI, COL_ISTEN_AYRILMA_TARIHI, COL_DOGUM_TARIHI, COL_CINSIYET_KODU, COL_CINSIYET, COL_YONETICI_KODU, COL_YONETICI2_KODU;
 	private int COL_DEPARTMAN_KODU, COL_DEPARTMAN_ADI, COL_MASRAF_YERI_KODU, COL_MASRAF_YERI_ADI, COL_BORDRO_ALT_ALAN_KODU, COL_BORDRO_ALT_ALAN_ADI, COL_BORDRO_SANAL_PERSONEL;
@@ -1083,8 +1081,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 						}
 
-						if (personelExtra != null)
-							pdksEntityController.saveOrUpdate(session, entityManager, personelExtra);
+						 
 					}
 				} catch (Exception e) {
 					logger.error("PDKS hata in : \n");
@@ -1753,7 +1750,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				kullanicilar = null;
 			}
 		}
-		personelExtra = null;
+		 
 		// List<IzinTipi> izinTipiList = getOnaysizIzinDurum(sirket);
 		TreeMap<String, Boolean> map1 = getOnaysizIzinDurumMap(sirket);
 		onaysizIzinKullanilir = map1.containsKey("onaysizIzinDurum");
@@ -1765,14 +1762,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			else if (!ortakIslemler.getParameterKey("yonetici2ERPKontrol").equals("1"))
 				ikinciYoneticiManuelTanimla = ikinciYoneticiIzinOnayla || sirket.getDepartman().isFazlaMesaiTalepGirer();
 
-			if (sirket.getDepartman().isAdminMi()) {
-				personelExtra = (PersonelExtra) pdksEntityController.getSQLParamByFieldObject(PersonelExtra.TABLE_NAME, PersonelExtra.COLUMN_NAME_PERSONEL, pdksPersonel.getId(), PersonelExtra.class, session);
-
-				if (personelExtra == null) {
-					personelExtra = new PersonelExtra();
-					personelExtra.setPersonel(pdksPersonel);
-				}
-			}
+			 
 		}
 
 		setOldSirket(sirket);
@@ -5043,13 +5033,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		this.vardiyaGirisTipiTanimList = vardiyaGirisTipiTanimList;
 	}
 
-	public PersonelExtra getPersonelExtra() {
-		return personelExtra;
-	}
-
-	public void setPersonelExtra(PersonelExtra personelExtra) {
-		this.personelExtra = personelExtra;
-	}
+	 
 
 	public List<Tanim> getBolumDepartmanlari() {
 		return bolumDepartmanlari;

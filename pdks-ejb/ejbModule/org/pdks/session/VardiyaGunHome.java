@@ -82,7 +82,6 @@ import org.pdks.entity.PersonelDenklestirmeDinamikAlan;
 import org.pdks.entity.PersonelDenklestirmeTasiyici;
 import org.pdks.entity.PersonelDonemselDurum;
 import org.pdks.entity.PersonelDurumTipi;
-import org.pdks.entity.PersonelExtra;
 import org.pdks.entity.PersonelFazlaMesai;
 import org.pdks.entity.PersonelHareket;
 import org.pdks.entity.PersonelIzin;
@@ -2274,17 +2273,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				Cell personelCell = ExcelUtil.getCell(sheet, row, col++, styleGenelLeft);
 				personelCell.setCellValue(personel.getAdSoyad());
 				String titlePersonel = null;
-				if (personel.getPersonelExtra() != null && personel.getPersonelExtra().getId() != null) {
-					PersonelExtra personelExtra = personel.getPersonelExtra();
-					titlePersonel = personelExtra.getCepTelefon() + " " + personelExtra.getIlce() + " " + personelExtra.getOzelNot();
-				}
 				if (koyuRenkli) {
 					PersonelDenklestirme denklestirme = aylikPuantaj.getPersonelDenklestirme();
-					if (titlePersonel != null)
-						titlePersonel += "\n";
-					else
-						titlePersonel = "";
-					titlePersonel += authenticatedUser.getAdSoyad() + " planı " + authenticatedUser.dateTimeFormatla(denklestirme.getGuncellemeTarihi()) + " onaylandı.";
+					titlePersonel = authenticatedUser.getAdSoyad() + " planı " + authenticatedUser.dateTimeFormatla(denklestirme.getGuncellemeTarihi()) + " onaylandı.";
 				}
 				if (titlePersonel != null) {
 					Comment comment1 = drawing.createCellComment(anchor);
@@ -6608,7 +6599,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 					perKeyMap = null;
 					fields.clear();
-					TreeMap<Long, PersonelExtra> extraMap = pdksEntityController.getSQLParamByFieldMap(PersonelExtra.TABLE_NAME, PersonelExtra.COLUMN_NAME_PERSONEL, (List) perIdler.clone(), PersonelExtra.class, "getPersonelId", false, session);
 
 					fields.clear();
 
@@ -6830,7 +6820,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						} catch (Exception e) {
 							pdks = false;
 						}
-						personel.setPersonelExtra(extraMap.containsKey(personel.getId()) ? extraMap.get(personel.getId()) : new PersonelExtra());
 						boolean vardiyaCalisiyor = Boolean.FALSE;
 						long iseBasTarih = Long.parseLong(PdksUtil.convertToDateString(personel.getIseGirisTarihi(), "yyyyMMdd"));
 						long istenAyrilmaTarih = Long.parseLong(PdksUtil.convertToDateString(personel.getSonCalismaTarihi(), "yyyyMMdd"));
