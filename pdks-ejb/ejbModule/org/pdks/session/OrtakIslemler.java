@@ -114,7 +114,6 @@ import org.pdks.entity.PersonelDenklestirmeTasiyici;
 import org.pdks.entity.PersonelDinamikAlan;
 import org.pdks.entity.PersonelDonemselDurum;
 import org.pdks.entity.PersonelDurumTipi;
-import org.pdks.entity.PersonelExtra;
 import org.pdks.entity.PersonelFazlaMesai;
 import org.pdks.entity.PersonelGeciciYonetici;
 import org.pdks.entity.PersonelHareket;
@@ -6210,7 +6209,7 @@ public class OrtakIslemler implements Serializable {
 			}
 			sb.append(" from " + izinERPTableViewAdi + " " + PdksEntityController.getSelectLOCK() + " ");
 			if (perList == null) {
-			 
+
 				if (tarih != null) {
 					if (guncellemeDurum == false)
 						tarih = PdksUtil.tariheAyEkleCikar(PdksUtil.getDate(tarih), -5);
@@ -7569,19 +7568,7 @@ public class OrtakIslemler implements Serializable {
 		Boolean guncellendi = Boolean.FALSE;
 		if (session == null)
 			session = PdksUtil.getSession(entityManager, yeni);
-		PersonelExtra personelExtra = personel.getPersonelExtra();
-		if (personelExtra == null) {
-			if (personel.getId() != null) {
 
-				personelExtra = (PersonelExtra) pdksEntityController.getSQLParamByFieldObject(PersonelExtra.TABLE_NAME, PersonelExtra.COLUMN_NAME_PERSONEL, personel.getId(), PersonelExtra.class, session);
-
-			}
-			if (personelExtra == null) {
-				personelExtra = new PersonelExtra();
-				personelExtra.setPersonel(personel);
-			}
-			personel.setPersonelExtra(personelExtra);
-		}
 		if (personelBilgisiGetir == null)
 			personelBilgisiGetir = new LinkedHashMap<String, Personel>();
 
@@ -7642,11 +7629,6 @@ public class OrtakIslemler implements Serializable {
 				if (yeni)
 					session.clear();
 				pdksEntityController.saveOrUpdate(session, entityManager, personel);
-				if (personelSap.getPersonelExtra() != null) {
-					personelExtra.setCepTelefon(personelSap.getPersonelExtra().getCepTelefon());
-					personelExtra.setIlce(personelSap.getPersonelExtra().getIlce());
-					pdksEntityController.saveOrUpdate(session, entityManager, personelExtra);
-				}
 			}
 			guncellendi = Boolean.TRUE;
 
