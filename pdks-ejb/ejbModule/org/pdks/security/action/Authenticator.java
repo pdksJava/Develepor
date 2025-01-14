@@ -244,6 +244,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 						boolean browserIE = PdksUtil.isInternetExplorer((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 						ortakIslemler.setUserRoller(authenticatedUser, session);
 						ortakIslemler.setUserTesisler(authenticatedUser, session);
+						ortakIslemler.setUserBolumler(authenticatedUser, session);
 						authenticatedUser.setBrowserIE(browserIE);
 						if (authenticatedUser.getYetkiliRollerim() != null) {
 							for (Role role : authenticatedUser.getYetkiliRollerim())

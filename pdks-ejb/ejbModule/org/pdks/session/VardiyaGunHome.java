@@ -82,7 +82,6 @@ import org.pdks.entity.PersonelDenklestirmeDinamikAlan;
 import org.pdks.entity.PersonelDenklestirmeTasiyici;
 import org.pdks.entity.PersonelDonemselDurum;
 import org.pdks.entity.PersonelDurumTipi;
-import org.pdks.entity.PersonelExtra;
 import org.pdks.entity.PersonelFazlaMesai;
 import org.pdks.entity.PersonelHareket;
 import org.pdks.entity.PersonelIzin;
@@ -154,6 +153,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	private Integer aksamVardiyaBasSaat, aksamVardiyaBitSaat, aksamVardiyaBasDakika, aksamVardiyaBitDakika;
 
 	private List<VardiyaPlan> vardiyaPlanList = new ArrayList<VardiyaPlan>();
+
+	private HashMap<Long, List<Personel>> gorevPersonelMap;
 
 	private List<PersonelDenklestirmeDinamikAlan> personelDenklestirmeDinamikAlanList;
 
@@ -336,6 +337,24 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	}
 
 	/**
+	 * @param tanim
+	 * @return
+	 */
+	public List<Personel> getGorevPersonelList(Object object) {
+		List<Personel> list = null;
+		Tanim tanim = null;
+		Long key = null;
+		if (object != null && object instanceof Tanim) {
+			tanim = (Tanim) object;
+			key = tanim != null && tanim.getId() != null ? tanim.getId() : null;
+		}
+		if (gorevPersonelMap != null && key != null && gorevPersonelMap.containsKey(key))
+			list = gorevPersonelMap.get(key);
+
+		return list;
+	}
+
+	/**
 	 * @param object
 	 */
 	@Transactional
@@ -370,6 +389,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			aylikVardiyaOzetList.clear();
 		else
 			aylikVardiyaOzetList = new ArrayList<VardiyaGun>();
+		if (gorevPersonelMap != null)
+			gorevPersonelMap.clear();
+		else
+			gorevPersonelMap = new HashMap<Long, List<Personel>>();
+
 		gorevYeriGirisDurum = false;
 	}
 
@@ -2249,17 +2273,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				Cell personelCell = ExcelUtil.getCell(sheet, row, col++, styleGenelLeft);
 				personelCell.setCellValue(personel.getAdSoyad());
 				String titlePersonel = null;
-				if (personel.getPersonelExtra() != null && personel.getPersonelExtra().getId() != null) {
-					PersonelExtra personelExtra = personel.getPersonelExtra();
-					titlePersonel = personelExtra.getCepTelefon() + " " + personelExtra.getIlce() + " " + personelExtra.getOzelNot();
-				}
 				if (koyuRenkli) {
 					PersonelDenklestirme denklestirme = aylikPuantaj.getPersonelDenklestirme();
-					if (titlePersonel != null)
-						titlePersonel += "\n";
-					else
-						titlePersonel = "";
-					titlePersonel += authenticatedUser.getAdSoyad() + " planı " + authenticatedUser.dateTimeFormatla(denklestirme.getGuncellemeTarihi()) + " onaylandı.";
+					titlePersonel = authenticatedUser.getAdSoyad() + " planı " + authenticatedUser.dateTimeFormatla(denklestirme.getGuncellemeTarihi()) + " onaylandı.";
 				}
 				if (titlePersonel != null) {
 					Comment comment1 = drawing.createCellComment(anchor);
@@ -2476,11 +2492,28 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				renk = !renk;
 				String bolumAdi = "";
 				Personel personel = vardiyaGun.getPersonel();
-				if (personel != null)
+				StringBuffer sb = null;
+				if (personel != null) {
+					List<Personel> list = getGorevPersonelList(personel.getPlanGrup2());
+					if (list != null) {
+						sb = new StringBuffer();
+						for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+							Personel personel2 = (Personel) iterator.next();
+							sb.append(personel2.getPdksSicilNo() + " " + personel2.getAdSoyad());
+							if (iterator.hasNext())
+								sb.append("\n");
+						}
+					}
 					bolumAdi = personel.getPlanGrup2() != null ? personel.getPlanGrup2().getAciklama() : "Tanımsız";
+				}
+
 				col = 0;
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
-				ExcelUtil.getCell(sheet, row, col++, styleGenelLeft).setCellValue(bolumAdi);
+				Cell cellGorev = ExcelUtil.getCell(sheet, row, col++, styleGenelLeft);
+				cellGorev.setCellValue(bolumAdi);
+				if (sb != null)
+					ExcelUtil.setCellComment(cellGorev, anchor, helper, drawing, sb.toString());
+
 				Cell cellBaslik = ExcelUtil.getCell(sheet, row, col++, styleGenelCenter);
 				String title = vardiya.getVardiyaAciklama();
 				if (title != null) {
@@ -3278,6 +3311,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			aylikVardiyaOzetList = new ArrayList<VardiyaGun>();
 		else
 			aylikVardiyaOzetList.clear();
+		if (gorevPersonelMap != null)
+			gorevPersonelMap.clear();
+		else
+			gorevPersonelMap = new HashMap<Long, List<Personel>>();
 		AylikPuantaj aylikPuantajToplam = new AylikPuantaj();
 		TreeMap<String, VardiyaGun> vardiyaMap = new TreeMap<String, VardiyaGun>();
 		VardiyaGun toplamVardiyaGun = new VardiyaGun();
@@ -3285,7 +3322,18 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		toplamVardiya.setKisaAdi("Toplam");
 		toplamVardiya.setId(0L);
 		toplamVardiyaGun.setVardiya(toplamVardiya);
+		boolean gorevAciklama = aylikPuantajList != null && aylikPuantajList.size() > 1;
 		for (AylikPuantaj aylikPuantaj : aylikPuantajList) {
+			if (gorevAciklama) {
+				Personel personel = aylikPuantaj.getPdksPersonel();
+				Tanim gorevTipi = personel != null ? personel.getGorevTipi() : null;
+				if (gorevTipi != null) {
+					List<Personel> list = gorevPersonelMap.containsKey(gorevTipi.getId()) ? gorevPersonelMap.get(gorevTipi.getId()) : new ArrayList<Personel>();
+					if (list.isEmpty())
+						gorevPersonelMap.put(gorevTipi.getId(), list);
+					list.add(personel);
+				}
+			}
 			aylikPuantaj.setDenklestirmeAy(denklestirmeAy);
 			aylikPuantaj.setOnayDurum(aylikPuantaj.getPersonelDenklestirme() == null || aylikPuantaj.getPersonelDenklestirme().isOnaylandi() == false);
 			puantajYetkilendir(vardiyaMap, aylikPuantaj, aylikPuantajToplam, toplamVardiyaGun);
@@ -6551,7 +6599,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 					perKeyMap = null;
 					fields.clear();
-					TreeMap<Long, PersonelExtra> extraMap = pdksEntityController.getSQLParamByFieldMap(PersonelExtra.TABLE_NAME, PersonelExtra.COLUMN_NAME_PERSONEL, (List) perIdler.clone(), PersonelExtra.class, "getPersonelId", false, session);
 
 					fields.clear();
 
@@ -6773,7 +6820,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						} catch (Exception e) {
 							pdks = false;
 						}
-						personel.setPersonelExtra(extraMap.containsKey(personel.getId()) ? extraMap.get(personel.getId()) : new PersonelExtra());
 						boolean vardiyaCalisiyor = Boolean.FALSE;
 						long iseBasTarih = Long.parseLong(PdksUtil.convertToDateString(personel.getIseGirisTarihi(), "yyyyMMdd"));
 						long istenAyrilmaTarih = Long.parseLong(PdksUtil.convertToDateString(personel.getSonCalismaTarihi(), "yyyyMMdd"));

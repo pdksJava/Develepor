@@ -31,7 +31,6 @@ import org.pdks.entity.BasePDKSObject;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.KapiView;
 import org.pdks.entity.Liste;
-import org.pdks.entity.PersonelExtra;
 import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.PersonelView;
 import org.pdks.security.entity.User;
@@ -1443,7 +1442,7 @@ public class PdksEntityController implements Serializable {
 
 			}
 			object = list != null && !list.isEmpty() ? list.get(0) : null;
-			if (object == null && class1 != null && !class1.getName().equals(PersonelExtra.class.getName())) {
+			if (object == null && class1 != null ) {
 				StringBuffer sb1 = new StringBuffer();
 				if (authenticatedUser != null && PdksUtil.hasStringValue(authenticatedUser.getCalistigiSayfa())) {
 					sb1.append(authenticatedUser.getCalistigiSayfa() + "\n");
