@@ -2287,7 +2287,12 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		else
 			personelIzinList.clear();
 		try {
-			List<IzinERP> izinERPReturnList = ortakIslemler.izinERPDBGuncelle(true, session);
+			List<String> perNoList = null;
+			if (PdksUtil.hasStringValue(sicilNo)) {
+				perNoList = new ArrayList<String>();
+				perNoList.add(sicilNo);
+			}
+			List<IzinERP> izinERPReturnList = ortakIslemler.izinERPDBGuncelle(true, perNoList, session);
 			if (izinERPReturnList != null) {
 				for (IzinERP izinERP : izinERPReturnList) {
 					if (izinERP != null && izinERP.getId() != null && izinERP.getDurum() != null && izinERP.getDurum().booleanValue()) {

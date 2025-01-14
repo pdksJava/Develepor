@@ -6075,16 +6075,17 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param guncellemeDurum
+	 * @param perList
 	 * @param session
 	 * @return
 	 * @throws Exception
 	 */
-	public List<IzinERP> izinERPDBGuncelle(boolean guncellemeDurum, Session session) throws Exception {
+	public List<IzinERP> izinERPDBGuncelle(boolean guncellemeDurum, List<String> perList, Session session) throws Exception {
 		List<IzinERP> izinERPReturnList = null;
 		String parameterName = getParametreIzinERPTableView();
 		if (getParameterKeyHasStringValue(parameterName)) {
 			HashMap<String, Date> updateMap = new HashMap<String, Date>();
-			List<IzinERPDB> izinList = getIzinERPDBList(guncellemeDurum, parameterName, session);
+			List<IzinERPDB> izinList = getIzinERPDBList(guncellemeDurum, perList, parameterName, session);
 			if (izinList != null && !izinList.isEmpty()) {
 				List<IzinERP> izinERPList = new ArrayList<IzinERP>();
 				for (IzinERPDB izinERPDB : izinList) {
@@ -6126,7 +6127,7 @@ public class OrtakIslemler implements Serializable {
 
 						}
 					}
-					if (update && changeDate != null) {
+					if (update && changeDate != null && perList == null) {
 						Parameter parameter = getParameter(session, parameterName);
 						if (parameter != null) {
 							parameter.setChangeDate(changeDate);
@@ -6160,12 +6161,13 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param guncellemeDurum
+	 * @param perList
 	 * @param parameterName
 	 * @param session
 	 * @return
 	 * @throws Exception
 	 */
-	private List<IzinERPDB> getIzinERPDBList(boolean guncellemeDurum, String parameterName, Session session) throws Exception {
+	private List<IzinERPDB> getIzinERPDBList(boolean guncellemeDurum, List<String> perList, String parameterName, Session session) throws Exception {
 		String izinERPTableViewAdi = getParameterKey(parameterName);
 		List<Tanim> list = isExisView(izinERPTableViewAdi, session) ? getTanimList(Tanim.TIPI_ERP_IZIN_DB, session) : null;
 		List<IzinERPDB> izinList = null;
@@ -6207,28 +6209,36 @@ public class OrtakIslemler implements Serializable {
 					sb.append(", ");
 			}
 			sb.append(" from " + izinERPTableViewAdi + " " + PdksEntityController.getSelectLOCK() + " ");
+			if (perList == null) {
+			 
+				if (tarih != null) {
+					if (guncellemeDurum == false)
+						tarih = PdksUtil.tariheAyEkleCikar(PdksUtil.getDate(tarih), -5);
+					else {
+						tarih = getERPManuelTarih(tarih, null);
+					}
+					if (guncellemeDurum == false)
+						sb.append(" where " + IzinERPDB.COLUMN_NAME_BIT_TARIHI + " >= :t or ");
+					else
+						sb.append(" where " + IzinERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " >= :t or ");
+					parametreMap.put("t", PdksUtil.getDate(tarih));
+				} else
+					sb.append(" where ");
 
-			if (tarih != null) {
-				if (guncellemeDurum == false)
-					tarih = PdksUtil.tariheAyEkleCikar(PdksUtil.getDate(tarih), -5);
-				else {
-					tarih = getERPManuelTarih(tarih, null);
-				}
-				if (guncellemeDurum == false)
-					sb.append(" where " + IzinERPDB.COLUMN_NAME_BIT_TARIHI + " >= :t or ");
-				else
-					sb.append(" where " + IzinERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " >= :t or ");
-				parametreMap.put("t", PdksUtil.getDate(tarih));
-			} else
-				sb.append(" where ");
-			sb.append(" ( DURUM = 1 and REFERANS_ID not in ( select " + IzinReferansERP.COLUMN_NAME_ID + " from " + IzinReferansERP.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ) )");
+				sb.append(" ( DURUM = 1 and REFERANS_ID not in ( select " + IzinReferansERP.COLUMN_NAME_ID + " from " + IzinReferansERP.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ))");
+			}
 			String str = sb.toString();
 			sb = new StringBuffer("with DATA as (" + str + " ) ");
 			sb.append("select distinct D.* from DATA D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + PersonelERPDB.VIEW_NAME + " P  " + PdksEntityController.getJoinLOCK() + " on P." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " = D." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
+			if (perList != null) {
+				sb.append(" and P." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " :d  ");
+				parametreMap.put("d", perList);
+			}
 			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ERP_KODU + " = P.SIRKET_KODU and S." + Sirket.COLUMN_NAME_DURUM + " = 1");
 			sb.append(" left join " + IzinReferansERP.TABLE_NAME + " IR " + PdksEntityController.getJoinLOCK() + " on IR." + IzinReferansERP.COLUMN_NAME_ID + " = D." + IzinERPDB.COLUMN_NAME_REFERANS_NO);
 			sb.append(" where IR." + IzinReferansERP.COLUMN_NAME_IZIN_ID + " is not null or ( D." + IzinERPDB.COLUMN_NAME_DURUM + " = 1 and D." + IzinERPDB.COLUMN_NAME_IZIN_SURESI + " > 0 )");
+
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			sb.append(" order by  D." + IzinERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + ", D." + IzinERPDB.COLUMN_NAME_BAS_TARIHI);
