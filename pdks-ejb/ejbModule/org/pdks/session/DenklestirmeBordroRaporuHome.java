@@ -559,7 +559,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 				yilDegisti();
 
 			// return ortakIslemler.yetkiIKAdmin(Boolean.FALSE);
-			
+
 			if (hataliVeriGetirStr != null)
 				hataliVeriGetir = new Boolean(hataliVeriGetirStr);
 			if (eksikCalisanVeriGetirStr != null)
@@ -893,9 +893,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								personelDinamikAlanlar.clear();
 								for (String key : personelDinamikAlanMap.keySet()) {
 									PersonelDinamikAlan personelDinamikAlan = personelDinamikAlanMap.get(key);
-									Tanim alan = personelDinamikAlan.getAlan();
-									if (baslikMap.containsKey(alan.getKodu()) && !tanimMap.containsKey(alan.getId()))
-										tanimMap.put(alan.getId(), alan);
+									if (personelDinamikAlan.getId() != null) {
+										Tanim alan = personelDinamikAlan.getAlan();
+										if (baslikMap.containsKey(alan.getKodu()) && !tanimMap.containsKey(alan.getId()))
+											tanimMap.put(alan.getId(), alan);
+
+									}
 								}
 								if (!tanimMap.isEmpty()) {
 									personelDinamikAlanlar.addAll(PdksUtil.sortTanimList(null, new ArrayList(tanimMap.values())));
