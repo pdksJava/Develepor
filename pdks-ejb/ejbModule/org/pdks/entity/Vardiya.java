@@ -33,13 +33,14 @@ public class Vardiya extends BaseObject {
 	public static final String COLUMN_NAME_ADI = "ADI";
 
 	public static final String COLUMN_NAME_SUA = "SUA";
- 	public static final String COLUMN_NAME_GEBELIK = "GEBELIK";
+	public static final String COLUMN_NAME_GEBELIK = "GEBELIK";
 	public static final String COLUMN_NAME_ICAP = "ICAP_VARDIYA";
 	public static final String COLUMN_NAME_KISA_ADI = "KISA_ADI";
 	public static final String COLUMN_NAME_GENEL = "GENEL";
 	public static final String COLUMN_NAME_DEPARTMAN = "DEPARTMAN_ID";
 	public static final String COLUMN_NAME_SIRKET = "SIRKET_ID";
 	public static final String COLUMN_NAME_EKRAN_SIRA = "EKRAN_SIRA";
+	public static final String COLUMN_NAME_FCS_HARIC = "FCS_HARIC";
 
 	public static final char TIPI_CALISMA = ' ';
 	public static final char TIPI_HAFTA_TATIL = 'H';
@@ -64,7 +65,7 @@ public class Vardiya extends BaseObject {
 	private Integer yemekSuresi, cikisMolaSaat = 0;
 	private Departman departman;
 	private List<Integer> gunlukList;
-	private Boolean aksamVardiya = Boolean.FALSE, icapVardiya = Boolean.FALSE, gebelik = Boolean.FALSE, kopya = Boolean.FALSE, genel = Boolean.FALSE, isKur = Boolean.FALSE;
+	private Boolean aksamVardiya = Boolean.FALSE, fcsHaric = Boolean.FALSE, icapVardiya = Boolean.FALSE, gebelik = Boolean.FALSE, kopya = Boolean.FALSE, genel = Boolean.FALSE, isKur = Boolean.FALSE;
 	private String tipi;
 	private VardiyaGun islemVardiyaGun;
 	private char vardiyaTipi;
@@ -147,7 +148,6 @@ public class Vardiya extends BaseObject {
 		this.styleClass = styleClass;
 	}
 
- 
 	@Column(name = COLUMN_NAME_GEBELIK)
 	public Boolean getGebelik() {
 		return gebelik;
@@ -232,6 +232,15 @@ public class Vardiya extends BaseObject {
 
 	public void setGenel(Boolean genel) {
 		this.genel = genel;
+	}
+
+	@Column(name = COLUMN_NAME_FCS_HARIC)
+	public Boolean getFcsHaric() {
+		return fcsHaric;
+	}
+
+	public void setFcsHaric(Boolean fcsHaric) {
+		this.fcsHaric = fcsHaric;
 	}
 
 	@Column(name = "CIKIS_MOLA_DAKIKA")
@@ -436,14 +445,15 @@ public class Vardiya extends BaseObject {
 	public boolean isRadyasyonIzni() {
 		return vardiyaTipi == TIPI_RADYASYON_IZNI;
 	}
+
 	@Transient
 	public boolean isIzinVardiya() {
-		return vardiyaTipi == TIPI_IZIN ;
+		return vardiyaTipi == TIPI_IZIN;
 	}
 
 	@Transient
 	public boolean isIzin() {
-		return isIzinVardiya()|| isHastalikRapor();
+		return isIzinVardiya() || isHastalikRapor();
 	}
 
 	@Transient
@@ -1755,6 +1765,11 @@ public class Vardiya extends BaseObject {
 		this.islemAdet = islemAdet;
 	}
 
+	@Transient
+	public boolean isFcsDahil() {
+		return fcsHaric == null || fcsHaric.booleanValue() == false;
+	}
+
 	public static Integer getIntOffFazlaMesaiBasDakika() {
 		return intOffFazlaMesaiBasDakika;
 	}
@@ -1873,7 +1888,7 @@ public class Vardiya extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
 
 	}
+
 }

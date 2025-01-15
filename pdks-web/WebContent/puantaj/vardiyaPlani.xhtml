@@ -219,7 +219,7 @@
 										</f:facet>
 									</rich:dataTable>
 								</rich:tab>
-								<rich:tab label="Vardiya Planı Listesi" name="tab1">
+								<rich:tab label="#{ortakIslemler.vardiyaAciklama()} Planı Listesi" name="tab1">
 									<ui:fragment rendered="#{not empty vardiyaGunHome.aylikPuantajList}">
 										<ui:include src="/puantaj/includes/aylikPlani.xhtml" />
 									</ui:fragment>
@@ -258,7 +258,7 @@
 
 							<rich:fileUpload id="fileUpload" fileUploadListener="#{vardiyaGunHome.listenerFileImportDosya}" listHeight="50px" listWidth="300px"
 								sizeErrorLabel="Dosya boyutu büyük" maxFilesQuantity="1" immediateUpload="true" acceptedTypes="xls,xlsx"
-								transferErrorLabel="Vardiya planı dosyası hatalı yüklenmiştir" doneLabel="Bitti" addControlLabel="Dosya Seçin (Excel)"
+								transferErrorLabel="#{ortakIslemler.vardiyaAciklama()} planı dosyası hatalı yüklenmiştir" doneLabel="Bitti" addControlLabel="Dosya Seçin (Excel)"
 								uploadControlLabel="Dosya Kaydet" cancelEntryControlLabel="Temizle" allowFlash="false">
 								<a4j:support event="onuploadcomplete" process="fileUpload" ajaxSingle="true" reRender="dosyaPaneli" />
 							</rich:fileUpload>
@@ -434,7 +434,7 @@
 											<th><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'EEEEE')}" /></th>
 										</a4j:repeat>
 										<ui:fragment rendered="#{vardiyaGunHome.sablonGuncelle}">
-											<th width="100px">Vardiya</th>
+											<th width="100px">#{ortakIslemler.vardiyaAciklama()}</th>
 										</ui:fragment>
 									</tr>
 								</thead>
@@ -590,7 +590,7 @@
 											</f:facet>
 											<rich:column>
 												<f:facet name="header">
-													<h:outputText value="Vardiya" />
+													<h:outputText value="#{ortakIslemler.vardiyaAciklama()}" />
 												</f:facet>
 												<h:outputText value="#{vardiya.vardiyaAdi}" />
 											</rich:column>
@@ -796,7 +796,7 @@
 						<a4j:commandButton value="Kaydet" action="#{vardiyaGunHome.aylikKaydet}" reRender="vardiyaPanel" onclick="#{rich:component('wait')}.show()"
 							oncomplete="if (#{facesContext.maximumSeverity == null}) { #{rich:component('editAylikPanel')}.hide();}#{rich:component('wait')}.hide();" />
 						<ui:fragment rendered="#{vardiyaGunHome.kartBasmayanPersonel}">
-							<a4j:commandButton value="Şablon Vardiyalarını Güncelle" id="sablonlar" action="#{vardiyaGunHome.saveSablonGuncelle()}"
+							<a4j:commandButton value="Şablon #{ortakIslemler.vardiyaAciklama()}larını Güncelle" id="sablonlar" action="#{vardiyaGunHome.saveSablonGuncelle()}"
 								reRender="secimler,butonlar" ajaxSingle="true" />
 							<rich:toolTip for="sablonlar">
 								<h:panelGrid columns="1">
@@ -825,7 +825,7 @@
 									<rich:dataTable rowClasses="acik,koyu" value="#{vardiyaGunHome.personelAylikPuantaj.pdksPersonel.sablon.haftaList}" var="hs" rows="10"
 										rowKeyVar="row">
 										<f:facet name="header">
-											<h:outputText value="Haftalık Sabit Vardiya Plan" />
+											<h:outputText value="Haftalık Sabit #{ortakIslemler.vardiyaAciklama()} Plan" />
 										</f:facet>
 										<rich:column>
 											<f:facet name="header">
@@ -835,7 +835,7 @@
 										</rich:column>
 										<rich:column style="text-align:center;">
 											<f:facet name="header">
-												<h:outputText value="Vardiya" />
+												<h:outputText value="#{ortakIslemler.vardiyaAciklama()}" />
 											</f:facet>
 											<h:outputText value="#{hs.value}" />
 										</rich:column>
@@ -1178,7 +1178,7 @@
 											<th><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'EEEEE')}" /></th>
 										</a4j:repeat>
 										<ui:fragment rendered="#{vardiyaGunHome.sablonGuncelle}">
-											<th width="100px">Vardiya</th>
+											<th width="100px">#{ortakIslemler.vardiyaAciklama()}</th>
 										</ui:fragment>
 									</tr>
 								</thead>
@@ -1602,7 +1602,7 @@
 
 		<rich:modalPanel id="vardiyaKilitPanel" autosized="true" width="900">
 			<f:facet name="header">
-				<h:outputText value="Vardiya Plan Açılma Talebi" />
+				<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Plan Açılma Talebi" />
 			</f:facet>
 			<f:facet name="controls">
 				<h:panelGroup>

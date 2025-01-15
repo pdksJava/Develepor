@@ -2606,7 +2606,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					++row;
 					col = 0;
 					if (authenticatedUser.isAdmin())
-						ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Vardiya Id");
+						ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue(ortakIslemler.vardiyaAciklama() + " Id");
 					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Saat Aralığı");
 					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Kısa Adı");
 					ExcelUtil.getCell(sheetModel, row, col++, header).setCellValue("Toplam Çalışma (Saat)");
@@ -4008,6 +4008,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				} else if (personelDenklestirme.getFazlaMesaiIzinKullan())
 					personelDenklestirme.setFazlaMesaiOde(Boolean.FALSE);
 				personelDenklestirme.setDurum(Boolean.FALSE);
+				personelAylikPuantaj.setPersonelDenklestirme(personelDenklestirme);
 				savePersonelDenklestirme(personelDenklestirme);
 				if (personelDenklestirme.getCalismaModeliAy() != null && personelDenklestirme.getCalismaModeliAy().getDurum().booleanValue() == false) {
 					CalismaModeliAy cma = personelDenklestirme.getCalismaModeliAy();
@@ -9941,7 +9942,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumAciklama);
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tarihi");
-			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.vardiyaAciklama());
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Mesai Başlangıç Zamanı");
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Mesai Bitiş Zamanı");
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Mesai Süresi (Saat)");

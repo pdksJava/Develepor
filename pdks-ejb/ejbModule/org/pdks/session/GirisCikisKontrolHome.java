@@ -467,7 +467,7 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 			if (tesisDurum)
 				ExcelUtil.getCell(sheet, rowHareket, colHareket++, header).setCellValue(ortakIslemler.tesisAciklama());
 			ExcelUtil.getCell(sheet, rowHareket, colHareket++, header).setCellValue(bolumAciklama);
-			ExcelUtil.getCell(sheet, rowHareket, colHareket++, header).setCellValue("Vardiya");
+			ExcelUtil.getCell(sheet, rowHareket, colHareket++, header).setCellValue(ortakIslemler.vardiyaAciklama());
 			ExcelUtil.getCell(sheet, rowHareket, colHareket++, header).setCellValue("Giriş");
 			ExcelUtil.getCell(sheet, rowHareket, colHareket++, header).setCellValue("Çıkış");
 			boolean renk = true;

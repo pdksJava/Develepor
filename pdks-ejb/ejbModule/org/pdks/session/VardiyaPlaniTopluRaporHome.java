@@ -1228,7 +1228,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 								gebemi = vardiyaGun.getVardiya().isGebelikMi();
 							if (calisiyor) {
 								Double sure = vardiyaGun.getCalismaSuresi();
-								ucretiOdenenMesaiSure += sure != null && sure.doubleValue() > fazlaMesaiMaxSure + vardiyaGun.getResmiTatilSure() ? sure.doubleValue() - fazlaMesaiMaxSure - vardiyaGun.getResmiTatilSure() : 0.0d;
+								ucretiOdenenMesaiSure += vardiyaGun.getVardiya().isFcsDahil() && sure != null && sure.doubleValue() > fazlaMesaiMaxSure + vardiyaGun.getResmiTatilSure() ? sure.doubleValue() - fazlaMesaiMaxSure - vardiyaGun.getResmiTatilSure() : 0.0d;
 								if (vardiyaGun.getHaftaCalismaSuresi() > 0) {
 									if (!haftaTatilVar)
 										haftaTatilVar = Boolean.TRUE;
@@ -2387,7 +2387,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 		if (modelGoster)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.calismaModeliAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Görev Tipi");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.vardiyaAciklama());
 
 		drawing = sheet.createDrawingPatriarch();
 		vardiyaList = aylikPuantajDefault.getVardiyalar();

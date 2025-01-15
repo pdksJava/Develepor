@@ -2112,7 +2112,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								gebemi = vardiyaGun.getVardiya().isGebelikMi();
 							if (calisiyor) {
 								Double sure = vardiyaGun.getCalismaSuresi();
-								if (gunMaxCalismaOdenir)
+								if (gunMaxCalismaOdenir && vardiyaGun.getVardiya().isFcsDahil())
 									ucretiOdenenMesaiSure += sure != null && sure.doubleValue() > fazlaMesaiMaxSure + (vardiyaGun.getHaftaCalismaSuresi() + vardiyaGun.getResmiTatilSure()) ? sure.doubleValue() - fazlaMesaiMaxSure
 											- (vardiyaGun.getHaftaCalismaSuresi() + vardiyaGun.getResmiTatilSure()) : 0.0d;
 
@@ -4880,7 +4880,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Adı Soyadı");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.personelNoAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tarihi");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.vardiyaAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Kapi");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Zaman");
 		if (ikRole)

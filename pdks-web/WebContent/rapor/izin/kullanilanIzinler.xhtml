@@ -527,7 +527,7 @@
 
 							<rich:fileUpload id="fileUpload" fileUploadListener="#{kullanilanIzinlerHome.listenerFileImportDosya}" listHeight="50px" listWidth="300px"
 								sizeErrorLabel="Dosya boyutu büyük" maxFilesQuantity="1" immediateUpload="true" acceptedTypes="xls,xlsx"
-								transferErrorLabel="Vardiya planı dosyası hatalı yüklenmiştir" doneLabel="Bitti" addControlLabel="Dosya Seçin (Excel)"
+								transferErrorLabel="#{ortakIslemler.vardiyaAciklama()} planı dosyası hatalı yüklenmiştir" doneLabel="Bitti" addControlLabel="Dosya Seçin (Excel)"
 								uploadControlLabel="Dosya Kaydet" cancelEntryControlLabel="Temizle" allowFlash="false">
 								<a4j:support event="onuploadcomplete" process="fileUpload" ajaxSingle="true" reRender="dosyaPaneli" />
 							</rich:fileUpload>

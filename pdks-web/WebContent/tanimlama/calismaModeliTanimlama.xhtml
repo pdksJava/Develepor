@@ -133,7 +133,7 @@
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
-										<h:outputText value="Bağlı Vardiya Şablonu" />
+										<h:outputText value="Bağlı #{ortakIslemler.vardiyaAciklama()} Şablonu" />
 									</f:facet>
 									<h:outputText value="#{calismaModeli.bagliVardiyaSablonu.adi}" />
 								</rich:column>
@@ -176,13 +176,13 @@
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
-										<h:outputText value="Vardiya Kontrol Edilmez" />
+										<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Kontrol Edilmez" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.ortakVardiya)}" />
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
-										<h:outputText value="Tüm Vardiyalar" />
+										<h:outputText value="Tüm #{ortakIslemler.vardiyaAciklama()}lar" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.genelVardiya and calismaModeli.ortakVardiya == false)}" />
 								</rich:column>
@@ -196,7 +196,7 @@
 
 								<rich:column rendered="#{calismaModeliHome.hareketKaydiVardiyaBul}">
 									<f:facet name="header">
-										<h:outputText value="Hareket Kayıtlarından Vardiya Bul" />
+										<h:outputText value="Hareket Kayıtlarından #{ortakIslemler.vardiyaAciklama()} Bul" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.hareketKaydiVardiyaBul)}" />
 								</rich:column>
@@ -214,7 +214,7 @@
 								</rich:column>
 								<rich:column rendered="#{ortakIslemler.getParameterKey('haftaTatilDurum') == '1'}">
 									<f:facet name="header">
-										<h:outputText value="Gece Vardiya Hafta Sonu Fazla Mesai Parçala" />
+										<h:outputText value="Gece #{ortakIslemler.vardiyaAciklama()} Hafta Sonu Fazla Mesai Parçala" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.geceHaftaTatilMesaiParcala)}" />
 								</rich:column>
@@ -286,7 +286,7 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" cellpadding="0" cellspacing="0" style="text-align : left">
-							<ui:define name="label">Bağlı Vardiya Şablonu</ui:define>
+							<ui:define name="label">Bağlı #{ortakIslemler.vardiyaAciklama()} Şablonu</ui:define>
 							<h:selectOneMenu value="#{calismaModeliHome.calismaModeli.bagliVardiyaSablonu}" disabled="#{authenticatedUser.admin == false}"
 								style="text-align : left">
 								<s:selectItems var="sablon" value="#{calismaModeliHome.sablonList}" label="#{sablon.adi}" noSelectionLabel="Lütfen seçiniz" />
@@ -447,7 +447,7 @@
 							</h:selectBooleanCheckbox>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Vardiya Kontrol Edilmez</ui:define>
+							<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} Kontrol Edilmez</ui:define>
 							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.ortakVardiya}" disabled="#{authenticatedUser.admin == false}">
 								<a4j:support event="onclick" reRender="vardiyalar" status="ajaxStatus" ajaxSingle="true" />
 							</h:selectBooleanCheckbox>
@@ -461,7 +461,7 @@
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
 							rendered="#{calismaModeliHome.otomatikFazlaCalismaOnaylansinVar or calismaModeliHome.calismaModeli.otomatikFazlaCalismaOnaylansin}">
-							<ui:define name="label">Hareket Kayıtlarından Vardiya Bul</ui:define>
+							<ui:define name="label">Hareket Kayıtlarından #{ortakIslemler.vardiyaAciklama()} Bul</ui:define>
 							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.hareketKaydiVardiyaBul}" disabled="#{authenticatedUser.admin == false}">
 
 							</h:selectBooleanCheckbox>
@@ -480,14 +480,14 @@
 							</h:selectBooleanCheckbox>
 						</s:decorate>
 						<s:decorate id="geceHaftaTatilMesaiParcala" template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('haftaTatilDurum') == '1'}">
-							<ui:define name="label">Gece Vardiya Hafta Sonu Fazla Mesai Parçala</ui:define>
+							<ui:define name="label">Gece #{ortakIslemler.vardiyaAciklama()} Hafta Sonu Fazla Mesai Parçala</ui:define>
 							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.geceHaftaTatilMesaiParcala}"
 								disabled="#{calismaModeliHome.calismaModeli.haftaTatilMesaiOde == false or authenticatedUser.admin == false}">
 
 							</h:selectBooleanCheckbox>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Genel Vardiya</ui:define>
+							<ui:define name="label">Genel #{ortakIslemler.vardiyaAciklama()}</ui:define>
 							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.genelVardiya}" disabled="#{authenticatedUser.admin == false}">
 								<a4j:support event="onclick" reRender="vardiyalar" status="ajaxStatus" ajaxSingle="true" />
 							</h:selectBooleanCheckbox>
@@ -514,7 +514,7 @@
 									copyControlLabel="#{messages['listShuttle.etiket.copyControlLabel']}"
 									removeControlLabel="#{messages['listShuttle.etiket.removeControlLabel']}"
 									copyAllControlLabel="#{messages['listShuttle.etiket.copyAllControlLabel']}"
-									removeAllControlLabel="#{messages['listShuttle.etiket.removeAllControlLabel']}" required="true" requiredMessage="Vardiya seçiniz">
+									removeAllControlLabel="#{messages['listShuttle.etiket.removeAllControlLabel']}" required="true" requiredMessage="#{ortakIslemler.vardiyaAciklama()} seçiniz">
 									<h:column>
 
 										<div style="overflow: hidden; width: 200px; word-wrap: break-word;">

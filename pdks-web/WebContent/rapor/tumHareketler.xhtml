@@ -78,7 +78,7 @@
 							<ui:fragment rendered="#{authenticatedUser.admin or tumHareketlerHome.ikRole or authenticatedUser.sistemYoneticisi}">
 								<s:decorate template="/layout/edit.xhtml"
 									rendered="#{authenticatedUser.admin or ortakIslemler.getParameterKeyHasStringValue('hareketVardiyaOku')}">
-									<ui:define name="label">Vardiya Bilgisi Oku</ui:define>
+									<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} Bilgisi Oku</ui:define>
 									<h:selectBooleanCheckbox value="#{tumHareketlerHome.vardiyaOkuDurum}" />
 								</s:decorate>
 							</ui:fragment>
@@ -162,7 +162,7 @@
 							<c:if test="#{tumHareketlerHome.vardiyaOku}">
 								<rich:column style="text-align:center">
 									<f:facet name="header">
-										<h:outputText value="Vardiya Tarihi" />
+										<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Tarihi" />
 									</f:facet>
 									<ui:fragment rendered="#{hareketler.vardiyaGun != null }">
  										#{authenticatedUser.dateFormatla(hareketler.vardiyaGun.vardiyaDate )}
@@ -170,14 +170,14 @@
 								</rich:column>
 								<rich:column style="text-align:center">
 									<f:facet name="header">
-										<h:outputText value="Vardiya Adı" />
+										<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Adı" />
 									</f:facet>
 									<ui:fragment rendered="#{hareketler.vardiyaGun != null}">
 	 									#{hareketler.vardiyaGun.vardiya.kisaAdi}</ui:fragment>
 								</rich:column>
 								<rich:column style="text-align:center">
 									<f:facet name="header">
-										<h:outputText value="Vardiya Başlama Zamanı" />
+										<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Başlama Zamanı" />
 									</f:facet>
 									<ui:fragment rendered="#{hareketler.vardiyaGun != null and hareketler.vardiyaGun.vardiya.calisma}">
 										 
@@ -187,7 +187,7 @@
 
 								<rich:column style="text-align:center">
 									<f:facet name="header">
-										<h:outputText value="Vardiya Bitiş Zamanı" />
+										<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Bitiş Zamanı" />
 									</f:facet>
 									<ui:fragment rendered="#{hareketler.vardiyaGun != null and hareketler.vardiyaGun.vardiya.calisma}">
  										#{authenticatedUser.timeFormatla(hareketler.vardiyaGun.islemVardiya.vardiyaBitZaman )}

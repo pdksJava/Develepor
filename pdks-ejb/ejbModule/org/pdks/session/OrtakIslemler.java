@@ -1491,7 +1491,7 @@ public class OrtakIslemler implements Serializable {
 			ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue(tesisAciklama());
 		ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue(bolumAciklama);
 
-		ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue("Vardiya");
+		ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue(vardiyaAciklama());
 		ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue("Kapı");
 		ExcelUtil.getCell(sheetHareket, row, col++, header).setCellValue("Zaman");
 
@@ -7244,6 +7244,14 @@ public class OrtakIslemler implements Serializable {
 	public String sirketAciklama() {
 		String sirketAciklama = getBaslikAciklama("sirketAciklama", "Şirket");
 		return sirketAciklama;
+	}
+
+	/**
+	 * @return
+	 */
+	public String vardiyaAciklama() {
+		String vardiyaAciklama = getBaslikAciklama("vardiyaAciklama", "Vardiya");
+		return vardiyaAciklama;
 	}
 
 	public String fmIzinKullanAciklama() {
@@ -14620,7 +14628,7 @@ public class OrtakIslemler implements Serializable {
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(yoneticiAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(yonetici2Aciklama() + " " + personelNoAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(yonetici2Aciklama());
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya Şablon");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(vardiyaAciklama() + " Şablon");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(calismaModeliAciklama());
 		if (personelTipiGoster)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(personelTipiAciklama());
@@ -14708,7 +14716,7 @@ public class OrtakIslemler implements Serializable {
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(tanim.getAciklama());
 		}
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Kullanici Adı");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya Düzelt Yetki");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(vardiyaAciklama() + " Düzelt Yetki");
 		if (admin && ldap) {
 			if (emailCCDurum)
 				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("E-Posta CC");
@@ -16935,7 +16943,7 @@ public class OrtakIslemler implements Serializable {
 								}
 								if (pdksVardiyaGun.getCalismaSuresi() > 0) {
 									double normalSure = pdksVardiyaGun.getCalismaSuresi() - (pdksVardiyaGun.getHaftaCalismaSuresi() + pdksVardiyaGun.getResmiTatilSure());
-									if (normalSure > mesaiMaxSure && maxSureDurum) {
+									if (pdksVardiyaGun.getVardiya().isFcsDahil() && normalSure > mesaiMaxSure && maxSureDurum) {
 										ucretiOdenenMesaiSure += normalSure - mesaiMaxSure;
 										// pdksVardiyaGun.addCalismaSuresi(fazlaMesaiMaxSure - normalSure);
 									}

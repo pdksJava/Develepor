@@ -162,13 +162,13 @@
 						<ui:fragment rendered="#{vardiyaGunHome.aksamGunVar}">
 							<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikA"><h:outputText
 									value="A" /> <rich:toolTip for="baslikA">
-									<SPAN style="font-size: 12px; font-weight: normal;"><B>Akşam Vardiyası: </B>Gün Adet</SPAN>
+									<SPAN style="font-size: 12px; font-weight: normal;"><B>Akşam #{ortakIslemler.vardiyaAciklama()}: </B>Gün Adet</SPAN>
 								</rich:toolTip></th>
 						</ui:fragment>
 						<ui:fragment rendered="#{vardiyaGunHome.aksamSaatVar}">
 							<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikAS"><h:outputText
 									value="AS" /> <rich:toolTip for="baslikAS">
-									<SPAN style="font-size: 12px; font-weight: normal;"><B>Akşam Vardiyası: </B>Saat Toplamı</SPAN>
+									<SPAN style="font-size: 12px; font-weight: normal;"><B>Akşam #{ortakIslemler.vardiyaAciklama()}: </B>Saat Toplamı</SPAN>
 								</rich:toolTip></th>
 						</ui:fragment>
 						<ui:fragment rendered="#{vardiyaGunHome.veriGoster('suaDurum', vardiyaGunHome.aylikPuantajList)}">

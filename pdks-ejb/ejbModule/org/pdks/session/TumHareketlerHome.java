@@ -1026,10 +1026,10 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Kapi");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Kapi Tipi");
 		if (vardiyaOku) {
-			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya Tarihi");
-			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya Adı");
-			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya Başlama Zamanı");
-			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya Bitiş Zamanı");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.vardiyaAciklama() + " Tarihi");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.vardiyaAciklama() + " Adı");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.vardiyaAciklama() + " Başlama Zamanı");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.vardiyaAciklama() + " Bitiş Zamanı");
 		}
 		if (yonetici)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("KGS Şirket");

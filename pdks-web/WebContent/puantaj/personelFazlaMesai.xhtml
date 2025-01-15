@@ -177,7 +177,7 @@
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
-								<h:outputText value="Vardiya" />
+								<h:outputText value="#{ortakIslemler.vardiyaAciklama()}" />
 
 							</f:facet>
 							<h:outputText value="#{mesai.vardiyaGun.vardiya.aciklama}" id="vardiyaAciklama" />
@@ -340,12 +340,12 @@
 							</s:decorate>
 
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Vardiya</ui:define>
+								<ui:define name="label">#{ortakIslemler.vardiyaAciklama()}</ui:define>
 								<h:outputText value="#{personelFazlaMesaiHome.instance.hareket.vardiyaGun.vardiya.aciklama}" />
 							</s:decorate>
 
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">VardiyaTarihi</ui:define>
+								<ui:define name="label">#{ortakIslemler.vardiyaAciklama()}Tarihi</ui:define>
 								<h:outputText value="#{authenticatedUser.getTarihFormatla(personelFazlaMesaiHome.instance.hareket.vardiyaGun.vardiyaDate,'d MMMMM - EEEEE')}" />
 							</s:decorate>
 
@@ -542,12 +542,12 @@
 						</s:decorate>
 
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Vardiya</ui:define>
+							<ui:define name="label">#{ortakIslemler.vardiyaAciklama()}</ui:define>
 							<h:outputText value="#{personelFazlaMesaiHome.instance.hareket.vardiyaGun.vardiya.aciklama}" />
 						</s:decorate>
 
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">VardiyaTarihi</ui:define>
+							<ui:define name="label">#{ortakIslemler.vardiyaAciklama()}Tarihi</ui:define>
 							<h:outputText value="#{authenticatedUser.getTarihFormatla(personelFazlaMesaiHome.instance.hareket.vardiyaGun.vardiyaDate,'d MMMMM - EEEEE')}" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">

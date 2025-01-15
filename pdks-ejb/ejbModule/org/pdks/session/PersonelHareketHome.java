@@ -1122,7 +1122,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 				HareketKGS giris = new HareketKGS();
 				giris.setKapiView(manuelGiris);
 				giris.setZaman(PdksUtil.getDateTime(islemVardiya.getVardiyaBasZaman()));
-				giris.setId("Vardiya Giriş");
+				giris.setId(ortakIslemler.vardiyaAciklama() + " Giriş");
 				manuelHareketMap.put("I", giris);
 			}
 			if (cikisEkle && bugun.after(islemVardiya.getVardiyaBitZaman())) {
@@ -1132,7 +1132,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 				if (islemVardiya.isCalisma())
 					zaman = PdksUtil.addTarih(zaman, Calendar.SECOND, -1);
 				cikis.setZaman(zaman);
-				cikis.setId("Vardiya Çıkış");
+				cikis.setId(ortakIslemler.vardiyaAciklama() + " Çıkış");
 				manuelHareketMap.put("O", cikis);
 			}
 			if (girisMesaiEkle && bugun.after(islemVardiya.getVardiyaFazlaMesaiBasZaman())) {

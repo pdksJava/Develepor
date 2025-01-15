@@ -518,7 +518,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 	public ByteArrayOutputStream calismaSaatleriExcelDevam() {
 		ByteArrayOutputStream baos = null;
 		Workbook wb = new XSSFWorkbook();
-		Sheet sheet = ExcelUtil.createSheet(wb, "Vardiya Listesi", false);
+		Sheet sheet = ExcelUtil.createSheet(wb, ortakIslemler.vardiyaAciklama() + " Listesi", false);
 		// Sheet sheetHareket = ExcelUtil.createSheet(wb, "Hareket  Listesi", false);
 		CellStyle header = ExcelUtil.getStyleHeader(wb);
 		CellStyle styleOdd = ExcelUtil.getStyleOdd(null, wb);
@@ -562,7 +562,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Eksik Çalışma Süre");
 		}
 
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.vardiyaAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İlk Giriş");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Son Çıkış");
 		if (izinDurum)

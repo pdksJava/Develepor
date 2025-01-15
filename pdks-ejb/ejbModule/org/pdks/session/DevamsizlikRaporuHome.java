@@ -166,7 +166,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Adı Soyadı");
 		if (tekTarih == false)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tarih");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.vardiyaAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Giriş");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Çıkış");
 		if (aciklamaGoster)

@@ -156,13 +156,13 @@
 										</rich:column>
 										<rich:column style="text-align:center">
 											<f:facet name="header">
-												<h:outputText value="Vardiya Tarihi" />
+												<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Tarihi" />
 											</f:facet>
 											<h:outputText value="#{authenticatedUser.dateFormatla(fazlaMesai.vardiyaGun.vardiyaDate)}" />
 										</rich:column>
 										<rich:column style="width:autostretch ;white-space:nowrap;text-align:center; ">
 											<f:facet name="header">
-												<h:outputText value="Vardiya" />
+												<h:outputText value="#{ortakIslemler.vardiyaAciklama()}" />
 											</f:facet>
 										#{fazlaMesai.vardiyaGun.manuelGirisHTML} 
  									</rich:column>
@@ -308,13 +308,13 @@
 										</rich:column>
 										<rich:column style="text-align:center">
 											<f:facet name="header">
-												<h:outputText value="Vardiya Tarihi" />
+												<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Tarihi" />
 											</f:facet>
 											<h:outputText value="#{authenticatedUser.dateFormatla(fazlaMesai.vardiyaGun.vardiyaDate)}" />
 										</rich:column>
 										<rich:column style="width:autostretch ;white-space:nowrap;text-align:center; ">
 											<f:facet name="header">
-												<h:outputText value="Vardiya" />
+												<h:outputText value="#{ortakIslemler.vardiyaAciklama()}" />
 											</f:facet>
 										#{fazlaMesai.vardiyaGun.manuelGirisHTML} 
  									</rich:column>

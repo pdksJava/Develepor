@@ -111,7 +111,7 @@
 		<rich:modalPanel id="editPanel" autosized="true" width="#{vardiyaTanimlaHome.girisKolonSayisi*100+600}">
 
 			<f:facet name="header">
-				<h:outputText value="Vardiya Planı Tanımlama/Güncelleme" />
+				<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Planı Tanımlama/Güncelleme" />
 			</f:facet>
 			<f:facet name="controls">
 				<h:panelGroup>
@@ -165,7 +165,7 @@
 											</h:inputText>
 										</s:decorate>
 										<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaTanimlaHome.hareketKaydiVardiyaBul}">
-											<ui:define name="label">#{md.calismaModeli.aciklama} Hareket Kayıtlarından Vardiya Bul</ui:define>
+											<ui:define name="label">#{md.calismaModeli.aciklama} Hareket Kayıtlarından #{ortakIslemler.vardiyaAciklama()} Bul</ui:define>
 											<h:selectBooleanCheckbox value="#{md.hareketKaydiVardiyaBul}"
 												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or (md.hareketKaydiVardiyaBulsunmu == false and md.calismaModeli.hareketKaydiVardiyaBulsunmu == false)}">
 											</h:selectBooleanCheckbox>

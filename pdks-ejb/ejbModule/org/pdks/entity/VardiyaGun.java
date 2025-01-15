@@ -2310,7 +2310,8 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setYasalMaxSure(double yasalMaxSure) {
-		this.yasalMaxSure = yasalMaxSure;
+		if (vardiya.isFcsDahil())
+			this.yasalMaxSure = yasalMaxSure;
 	}
 
 	@Transient

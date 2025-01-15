@@ -426,7 +426,7 @@
 						#{fazlaMesaiRaporHome.vardiyaGun.personel.pdksSicilNo} #{fazlaMesaiRaporHome.vardiyaGun.personel.adSoyad}
 						#{fazlaMesaiRaporHome.vardiyaGun.title}</DIV>
 					<rich:toolTip for="vardiyaAciklama" rendered="#{authenticatedUser.admin}">
-						<span style="color: black;"> <h:outputText value="Vardiya Id : #{fazlaMesaiRaporHome.vardiyaGun.vardiya.id}"
+						<span style="color: black;"> <h:outputText value="#{ortakIslemler.vardiyaAciklama()} Id : #{fazlaMesaiRaporHome.vardiyaGun.vardiya.id}"
 								rendered="#{fazlaMesaiRaporHome.vardiyaGun.vardiya != null}" /></span>
 					</rich:toolTip>
 				</ui:fragment>
@@ -445,7 +445,7 @@
 								<ui:fragment>
 									<h:outputText value="Giriş Çıkış Hareketleri" id="vardiyaPlanAciklama" />
 									<rich:toolTip for="vardiyaPlanAciklama" rendered="#{authenticatedUser.admin}">
-										<span style="color: black;"> <h:outputText value="Vardiya Plan Id : #{fazlaMesaiRaporHome.vardiyaGun.id}"
+										<span style="color: black;"> <h:outputText value="#{ortakIslemler.vardiyaAciklama()} Plan Id : #{fazlaMesaiRaporHome.vardiyaGun.id}"
 												rendered="#{fazlaMesaiRaporHome.vardiyaGun != null}" /></span>
 									</rich:toolTip>
 								</ui:fragment>

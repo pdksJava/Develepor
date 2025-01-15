@@ -1410,7 +1410,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							if (vardiyaGun.getIzin() == null && vardiyaGun.isZamanGelmedi()) {
 								toplamSure = vardiyaGun.getCalismaSuresi();
 							}
-							if (toplamSure - vardiyaGun.getResmiTatilSure() > fazlaMesaiMaxSure)
+							if (vardiyaGun.getVardiya().isFcsDahil() && toplamSure - vardiyaGun.getResmiTatilSure() > fazlaMesaiMaxSure)
 								puantajUcretiOdenenSure += toplamSure - fazlaMesaiMaxSure - vardiyaGun.getResmiTatilSure();
 							puantajSaatToplami += toplamSure;
 							puantajResmiTatil += vardiyaGun.getResmiTatilSure();
@@ -2443,7 +2443,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						Vardiya vardiya = vardiyaGun.getVardiya();
 						String styleText = vardiyaGun.getAylikClassAdi(aylikPuantaj.getTrClass());
 						Double sure = vardiyaGun.getCalismaSuresi();
-						boolean maxSureGecti = sure != null && sure.doubleValue() > maxSure;
+						boolean maxSureGecti = vardiyaGun.getVardiya().isFcsDahil() && sure != null && sure.doubleValue() > maxSure;
 						styleDay = styleStrDay;
 						if (maxSureGecti)
 							styleDay = row % 2 != 0 ? styleCenterOddDayRed : styleCenterEvenDayRed;

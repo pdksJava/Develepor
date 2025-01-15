@@ -53,19 +53,19 @@
 
 								<rich:column rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin}">
 									<f:facet name="header">
-										<h:outputText value="Vardiya Id" />
+										<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Id" />
 									</f:facet>
 									<h:outputText value="#{vardiya.id}" />
 								</rich:column>
 								<rich:column filterBy="#{vardiya.adi}" filterEvent="onkeyup">
 									<f:facet name="header">
-										<h:outputText value="Vardiya Adı" />
+										<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Adı" />
 									</f:facet>
 									<h:outputText value="#{vardiya.adi}" id="vardiyaAdi" />
 								</rich:column>
 								<rich:column filterBy="#{vardiya.kisaAdi}" filterEvent="onkeyup">
 									<f:facet name="header">
-										<h:outputText value="Vardiya Kısa Adı" />
+										<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Kısa Adı" />
 									</f:facet>
 									<h:outputText value="#{vardiya.kisaAdi}" />
 								</rich:column>
@@ -83,7 +83,7 @@
 								</rich:column>
 								<rich:column rendered="#{authenticatedUser.admin}">
 									<f:facet name="header">
-										<h:outputText value="Vardiya Sınıf Adı" />
+										<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Sınıf Adı" />
 									</f:facet>
 									<h:outputText value="#{vardiya.styleClass}" />
 								</rich:column>
@@ -95,7 +95,7 @@
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
-										<h:outputText value="Vardiya Tipi" />
+										<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Tipi" />
 									</f:facet>
 									<h:outputText value="#{vardiya.vardiyaTipiAciklama}" id="vardiyaTipiAciklama" />
 								</rich:column>
@@ -205,7 +205,7 @@
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
-										<h:outputText value="Akşam Vardiyası" />
+										<h:outputText value="Akşam #{ortakIslemler.vardiyaAciklama()}" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.aksamVardiya)}" />
 								</rich:column>
@@ -217,13 +217,13 @@
 								</rich:column>
 								<rich:column rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin}">
 									<f:facet name="header">
-										<h:outputText value="İcap Vardiyası" />
+										<h:outputText value="İcap #{ortakIslemler.vardiyaAciklama()}" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.icapVardiya)}" />
 								</rich:column>
 								<rich:column rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin}">
 									<f:facet name="header">
-										<h:outputText value="Şua Vardiyası" />
+										<h:outputText value="Şua #{ortakIslemler.vardiyaAciklama()}" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.sua)}" />
 								</rich:column>
@@ -268,7 +268,7 @@
 									<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 								</f:facet>
 							</rich:dataTable>
-							<a4j:commandButton status="ajaxStatus" value="Vardiya Ekle" action="#{vardiyaHome.kayitGuncelle(null)}"
+							<a4j:commandButton status="ajaxStatus" value="#{ortakIslemler.vardiyaAciklama()} Ekle" action="#{vardiyaHome.kayitGuncelle(null)}"
 								oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
 								<f:setPropertyActionListener value="#{vardiya}" target="#{vardiyaHome.instance}">
 									<s:convertEntity />
@@ -307,15 +307,15 @@
 					<a4j:outputPanel id="vardiyaEdit">
 						<h:panelGrid columns="1" width="800">
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Vardiya adı</ui:define>
-								<h:inputText required="true" value="#{vardiyaHome.instance.adi}" size="35" requiredMessage="Vardiya adını giriniz" />
+								<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} adı</ui:define>
+								<h:inputText required="true" value="#{vardiyaHome.instance.adi}" size="35" requiredMessage="#{ortakIslemler.vardiyaAciklama()} adını giriniz" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Vardiya kısa adı</ui:define>
+								<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} kısa adı</ui:define>
 								<h:inputText value="#{vardiyaHome.instance.kisaAdi}" size="4" maxlength="16" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
-								<ui:define name="label">Vardiya sınıf adı</ui:define>
+								<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} sınıf adı</ui:define>
 								<h:inputText value="#{vardiyaHome.instance.styleClass}" size="8" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
@@ -324,9 +324,9 @@
 								<rich:inputNumberSpinner minValue="0" maxValue="9995" step="5" inputSize="5" value="#{vardiyaHome.instance.ekranSira}" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" rendered="#{not empty vardiyaHome.vardiyaTipiList}">
-								<ui:define name="label">Vardiya Tipi</ui:define>
+								<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} Tipi</ui:define>
 								<h:selectOneMenu required="true" value="#{vardiyaHome.instance.tipi}" rendered="#{authenticatedUser.admin == true}"
-									requiredMessage="Vardiya tipini seçiniz">
+									requiredMessage="#{ortakIslemler.vardiyaAciklama()} tipini seçiniz">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{vardiyaHome.vardiyaTipiList}" />
 									<a4j:support event="onchange" reRender="saatler" status="ajaxStatus" ajaxSingle="true" />
@@ -408,7 +408,7 @@
 											</s:decorate>
 
 											<s:decorate template="/layout/edit.xhtml">
-												<ui:define name="label">Akşam Vardiya Mı?</ui:define>
+												<ui:define name="label">Akşam #{ortakIslemler.vardiyaAciklama()} Mı?</ui:define>
 												<h:selectBooleanCheckbox value="#{vardiyaHome.instance.aksamVardiya}" />
 											</s:decorate>
 
@@ -447,11 +447,11 @@
 
 											<c:if test="#{vardiyaHome.instance.genel == false}">
 												<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.instance.departman.admin}">
-													<ui:define name="label">İcap Vardiya Mı?</ui:define>
+													<ui:define name="label">İcap #{ortakIslemler.vardiyaAciklama()} Mı?</ui:define>
 													<h:selectBooleanCheckbox value="#{vardiyaHome.instance.icapVardiya}" />
 												</s:decorate>
 												<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.instance.departman.admin}">
-													<ui:define name="label">Şua Vardiya Mı?</ui:define>
+													<ui:define name="label">Şua #{ortakIslemler.vardiyaAciklama()} Mı?</ui:define>
 													<h:selectBooleanCheckbox value="#{vardiyaHome.instance.sua}" />
 												</s:decorate>
 

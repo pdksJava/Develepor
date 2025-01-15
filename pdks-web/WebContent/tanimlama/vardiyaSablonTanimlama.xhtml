@@ -48,7 +48,7 @@
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
-										<h:outputText value="Vardiya Adı" />
+										<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Şablon Adı" />
 									</f:facet>
 									<h:outputText value="#{vardiyaSablon.adi}" id="vardiyaAdi" />
 								</rich:column>
@@ -153,7 +153,7 @@
 
 
 					</h:panelGrid>
-					<a4j:commandButton status="ajaxStatus" value="Vardiya Sablon Ekle" action="#{vardiyaSablonuHome.kayitGuncelle(null)}"
+					<a4j:commandButton status="ajaxStatus" value="#{ortakIslemler.vardiyaAciklama()} Sablon Ekle" action="#{vardiyaSablonuHome.kayitGuncelle(null)}"
 						rendered="#{authenticatedUser.admin}" oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
 
 					</a4j:commandButton>
@@ -164,7 +164,7 @@
 
 		<rich:modalPanel id="editPanel" autosized="true" width="650">
 			<f:facet name="header">
-				<h:outputText value="Vardiya Şablon Güncelle" />
+				<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Şablon Güncelle" />
 			</f:facet>
 			<f:facet name="controls">
 				<h:panelGroup>
@@ -183,7 +183,7 @@
 				<h:panelGrid columns="1">
 
 					<s:decorate template="/layout/edit.xhtml">
-						<ui:define name="label">Şablon adı</ui:define>
+						<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} Şablon adı</ui:define>
 						<h:inputText required="true" value="#{vardiyaSablonuHome.instance.adi}" disabled="#{authenticatedUser.admin == false}" size="35"
 							requiredMessage="Şablon Adı giriniz" />
 					</s:decorate>
@@ -196,7 +196,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaSablonuHome.instance.id != null}">
-						<ui:define name="label">Toplam Vardiya Saati</ui:define>
+						<ui:define name="label">Toplam #{ortakIslemler.vardiyaAciklama()} Saati</ui:define>
 						<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaSablonuHome.instance.toplamSaat)}" />
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaSablonuHome.instance.id != null}">
@@ -205,7 +205,7 @@
 					</s:decorate>
 
 					<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaSablonuHome.instance.id == null}">
-						<ui:define name="label">Toplam Vardiya Saati</ui:define>
+						<ui:define name="label">Toplam #{ortakIslemler.vardiyaAciklama()} Saati</ui:define>
 						<h:inputText required="true" value="#{vardiyaSablonuHome.instance.toplamSaat}" disabled="#{authenticatedUser.admin == false}" size="6"
 							validatorMessage="Toplam vardiya saati giriniz">
 							<f:validateDoubleRange minimum="15" maximum="72" />

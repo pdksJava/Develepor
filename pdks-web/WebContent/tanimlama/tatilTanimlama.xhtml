@@ -98,7 +98,7 @@
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
-										<h:outputText value="Arife Vardiya Yarım Hesapla" />
+										<h:outputText value="Arife #{ortakIslemler.vardiyaAciklama()} Yarım Hesapla" />
 									</f:facet>
 									<ui:fragment rendered="#{tatil.yarimGunMu}">
 										<h:outputText value="#{authenticatedUser.getYesNo(tatil.arifeVardiyaYarimHesapla)}" />
@@ -199,7 +199,7 @@
 									</h:selectBooleanCheckbox>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" rendered="#{tatilHome.instance.yarimGun}">
-									<ui:define name="label">Arife Vardiya Yarım Hesapla</ui:define>
+									<ui:define name="label">Arife #{ortakIslemler.vardiyaAciklama()} Yarım Hesapla</ui:define>
 									<h:selectBooleanCheckbox value="#{tatilHome.instance.arifeVardiyaYarimHesapla}"
 										disabled="#{tatilHome.instance.id != null and tatilHome.instance.periyodik}">
 

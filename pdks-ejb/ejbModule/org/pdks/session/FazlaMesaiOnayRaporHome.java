@@ -925,8 +925,8 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		if (seciliEkSaha3Id == null)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumAciklama);
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.yoneticiAciklama());
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya Tarihi");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Vardiya");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.vardiyaAciklama() + " Tarihi");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.vardiyaAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Başlangıç Zamanı");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Bitiş Zamanı");
 		if (onayDurum)

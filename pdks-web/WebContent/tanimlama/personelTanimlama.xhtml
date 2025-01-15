@@ -213,7 +213,7 @@
 							</rich:column>
 							<rich:column>
 								<f:facet name="header">
-									<h:outputText value="Vardiya Şablon" />
+									<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Şablon" />
 								</f:facet>
 								<h:outputText value="#{personelView.pdksPersonel.sablon.adi}" id="vardiya" />
 							</rich:column>
@@ -944,7 +944,7 @@
 										</s:decorate>
 
 										<s:decorate template="/layout/edit.xhtml" id="sablonlar">
-											<ui:define name="label">Vardiya Şablonu</ui:define>
+											<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} Şablonu</ui:define>
 											<h:selectOneMenu id="toComp" value="#{pdksPersonelHome.instance.sablon}" required="true" requiredMessage="Şablon seçiniz"
 												disabled="#{pdksPersonelHome.sablonlar.size() == 1 and pdksPersonelHome.instance.sablon != null}">
 												<s:selectItems var="comp" value="#{pdksPersonelHome.sablonlar}" label="#{comp.adi}" noSelectionLabel="Lütfen seçiniz" />
@@ -978,7 +978,7 @@
 
 														<rich:dataTable rowClasses="acik,koyu" value="#{pdksPersonelHome.instance.sablon.haftaList}" var="hs" rows="10" rowKeyVar="row">
 															<f:facet name="header">
-																<h:outputText value="Haftalık Sabit Vardiya Plan" />
+																<h:outputText value="Haftalık Sabit #{ortakIslemler.vardiyaAciklama()} Plan" />
 															</f:facet>
 															<rich:column>
 																<f:facet name="header">
@@ -988,7 +988,7 @@
 															</rich:column>
 															<rich:column style="text-align:center;">
 																<f:facet name="header">
-																	<h:outputText value="Vardiya" />
+																	<h:outputText value="#{ortakIslemler.vardiyaAciklama()}" />
 																</f:facet>
 																<h:outputText value="#{hs.value}" />
 															</rich:column>
@@ -1029,7 +1029,7 @@
 															</f:facet>
 															<rich:column>
 																<f:facet name="header">
-																	<h:outputText value="Vardiya" />
+																	<h:outputText value="#{ortakIslemler.vardiyaAciklama()}" />
 																</f:facet>
 																<h:outputText value="#{vardiya.vardiyaAdi}" />
 															</rich:column>
