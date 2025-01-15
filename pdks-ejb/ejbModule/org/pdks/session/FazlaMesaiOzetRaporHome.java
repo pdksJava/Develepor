@@ -785,7 +785,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		else
 			vardiyaZamanMap.clear();
 		vardiyaAdetMap = null;
-		if (seciliEkSaha3Id != null || ortakIslemler.getParameterKey("vardiyaPlanTopluAdet").equals("1"))
+		if ((sirket.isErp() && seciliEkSaha3Id != null) || ortakIslemler.getParameterKey("vardiyaPlanTopluAdet").equals("1"))
 			vardiyaAdetMap = new HashMap<String, Long>();
 
 		bordroPuantajEkranindaGoster = ortakIslemler.getParameterKey("bordroPuantajEkranindaGoster").equals("1");
