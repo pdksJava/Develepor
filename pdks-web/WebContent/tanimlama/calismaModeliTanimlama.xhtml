@@ -507,7 +507,7 @@
 
 						<rich:simpleTogglePanel
 							rendered="#{calismaModeliHome.calismaModeli.genelVardiya == false and calismaModeliHome.calismaModeli.ortakVardiya == false}" switchType="client"
-							label="Vardiyalar" height="110" opened="true">
+							label="#{ortakIslemler.vardiyaAciklama()}" height="110" opened="true">
 							<s:decorate>
 								<rich:listShuttle style="width:550px; white-space:normal!important" id="shuttle" sourceValue="#{calismaModeliHome.vardiyaList}"
 									fastOrderControlsVisible="false" orderControlsVisible="false" targetValue="#{calismaModeliHome.kayitliVardiyaList}" var="vardiya"

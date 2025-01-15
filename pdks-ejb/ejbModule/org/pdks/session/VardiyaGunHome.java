@@ -4018,6 +4018,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 				logger.debug("Denklestirme " + personelDenklestirme.getPersonel().getPdksSicilNo());
 				basliklariGuncelle(null);
+				tekrarOku = true;
 
 			}
 			logger.debug("Veri tabanına kayıt ediliyor");
