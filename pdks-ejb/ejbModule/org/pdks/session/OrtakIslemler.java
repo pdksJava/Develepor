@@ -16943,7 +16943,7 @@ public class OrtakIslemler implements Serializable {
 								}
 								if (pdksVardiyaGun.getCalismaSuresi() > 0) {
 									double normalSure = pdksVardiyaGun.getCalismaSuresi() - (pdksVardiyaGun.getHaftaCalismaSuresi() + pdksVardiyaGun.getResmiTatilSure());
-									if (pdksVardiyaGun.getVardiya().isFcsDahil() && normalSure > mesaiMaxSure && maxSureDurum) {
+									if (pdksVardiyaGun.isFcsDahil() && normalSure > mesaiMaxSure && maxSureDurum) {
 										ucretiOdenenMesaiSure += normalSure - mesaiMaxSure;
 										// pdksVardiyaGun.addCalismaSuresi(fazlaMesaiMaxSure - normalSure);
 									}

@@ -1457,7 +1457,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 							if (vardiyaGun.getVardiyaSaatDB() != null) {
 								VardiyaSaat vardiyaSaatDB = vardiyaGun.getVardiyaSaatDB();
 								if (fazlaMesaiOdenir) {
-									if (vardiyaGun.getVardiya().isFcsDahil() && vardiyaGun.getCalismaNetSuresi() > fazlaMesaiMaxSure && gunMaxCalismaOdenir)
+									if (vardiyaGun.isFcsDahil() && vardiyaGun.getCalismaNetSuresi() > fazlaMesaiMaxSure && gunMaxCalismaOdenir)
 										ucretiOdenenMesaiSure += vardiyaGun.getCalismaNetSuresi() - fazlaMesaiMaxSure;
 
 								}
@@ -1535,7 +1535,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 							if (vg.isAyinGunu() && vg.getVardiya() != null) {
 								Vardiya vardiya = vg.getIslemVardiya();
 								double normalSure = vg.getCalismaSuresi() - (vg.getResmiTatilSure() + vg.getHaftaCalismaSuresi());
-								if (vg.getVardiya().isFcsDahil() && normalSure > fazlaMesaiMaxSure) {
+								if (vg.isFcsDahil() && normalSure > fazlaMesaiMaxSure) {
 									ucretiOdenenMesaiSure += normalSure - fazlaMesaiMaxSure;
 									yasalFazlaCalismaAsanSaat = true;
 								}

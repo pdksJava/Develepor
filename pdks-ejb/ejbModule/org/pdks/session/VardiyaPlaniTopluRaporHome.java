@@ -1228,7 +1228,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 								gebemi = vardiyaGun.getVardiya().isGebelikMi();
 							if (calisiyor) {
 								Double sure = vardiyaGun.getCalismaSuresi();
-								ucretiOdenenMesaiSure += vardiyaGun.getVardiya().isFcsDahil() && sure != null && sure.doubleValue() > fazlaMesaiMaxSure + vardiyaGun.getResmiTatilSure() ? sure.doubleValue() - fazlaMesaiMaxSure - vardiyaGun.getResmiTatilSure() : 0.0d;
+								ucretiOdenenMesaiSure += vardiyaGun.isFcsDahil() && sure != null && sure.doubleValue() > fazlaMesaiMaxSure + vardiyaGun.getResmiTatilSure() ? sure.doubleValue() - fazlaMesaiMaxSure - vardiyaGun.getResmiTatilSure() : 0.0d;
 								if (vardiyaGun.getHaftaCalismaSuresi() > 0) {
 									if (!haftaTatilVar)
 										haftaTatilVar = Boolean.TRUE;
