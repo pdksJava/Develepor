@@ -921,7 +921,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			personelDinamikAlanlar.clear();
 			for (String key : personelDinamikAlanMap.keySet()) {
 				PersonelDinamikAlan personelDinamikAlan = personelDinamikAlanMap.get(key);
-				if (!tanimMap.containsKey(personelDinamikAlan.getAlan().getId()))
+				if (personelDinamikAlan.getId() != null && !tanimMap.containsKey(personelDinamikAlan.getAlan().getId()))
 					tanimMap.put(personelDinamikAlan.getAlan().getId(), personelDinamikAlan.getAlan());
 			}
 			if (!tanimMap.isEmpty()) {
