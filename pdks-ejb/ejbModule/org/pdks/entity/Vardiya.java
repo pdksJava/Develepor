@@ -1767,7 +1767,8 @@ public class Vardiya extends BaseObject {
 
 	@Transient
 	public boolean isFcsDahil() {
-		return fcsHaric == null || fcsHaric.booleanValue() == false;
+		boolean fcsDahil = fcsHaric == null || fcsHaric.booleanValue() == false;
+		return fcsDahil;
 	}
 
 	public static Integer getIntOffFazlaMesaiBasDakika() {
