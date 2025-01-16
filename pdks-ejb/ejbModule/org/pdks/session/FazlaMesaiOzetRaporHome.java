@@ -133,7 +133,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	private Boolean onayla, hastaneSuperVisor = Boolean.FALSE, sirketIzinGirisDurum = Boolean.FALSE, hataliPuantajVar = Boolean.FALSE;
 	private Boolean kimlikGoster = Boolean.FALSE, aksamGun = Boolean.FALSE, maasKesintiGoster = Boolean.FALSE, aksamSaat = Boolean.FALSE, hataliPuantajGoster = Boolean.FALSE, stajerSirket, departmanBolumAyni = Boolean.FALSE;
 	private Boolean modelGoster = Boolean.FALSE, kullaniciPersonel = Boolean.FALSE, sirketGoster = Boolean.FALSE, denklestirmeAyDurum = Boolean.FALSE, yoneticiERP1Kontrol = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE;
-	private boolean adminRole, ikRole, bordroPuantajEkranindaGoster = false, fazlaMesaiVar = false, saatlikMesaiVar = false, aylikMesaiVar = false;
+	private boolean adminRole, ikRole, bordroPuantajEkranindaGoster = false, vardiyaPlanTopluAdet = false, fazlaMesaiVar = false, saatlikMesaiVar = false, aylikMesaiVar = false;
 	private Boolean gerceklesenMesaiKod = Boolean.FALSE, isAramaDurum = Boolean.FALSE, devredenBakiyeKod = Boolean.FALSE, normalCalismaSaatKod = Boolean.FALSE, haftaTatilCalismaSaatKod = Boolean.FALSE, resmiTatilCalismaSaatKod = Boolean.FALSE, izinSureSaatKod = Boolean.FALSE;
 	private Boolean normalCalismaGunKod = Boolean.FALSE, haftaTatilCalismaGunKod = Boolean.FALSE, resmiTatilCalismaGunKod = Boolean.FALSE, izinSureGunKod = Boolean.FALSE, ucretliIzinGunKod = Boolean.FALSE, ucretsizIzinGunKod = Boolean.FALSE, hastalikIzinGunKod = Boolean.FALSE;
 	private Boolean normalGunKod = Boolean.FALSE, haftaTatilGunKod = Boolean.FALSE, resmiTatilGunKod = Boolean.FALSE, artikGunKod = Boolean.FALSE, bordroToplamGunKod = Boolean.FALSE, devredenMesaiKod = Boolean.FALSE, ucretiOdenenKod = Boolean.FALSE;
@@ -785,7 +785,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		else
 			vardiyaZamanMap.clear();
 		vardiyaAdetMap = null;
-		if (seciliEkSaha3Id != null || ortakIslemler.getParameterKey("vardiyaPlanTopluAdet").equals("1"))
+		if (seciliEkSaha3Id != null && vardiyaPlanTopluAdet)
 			vardiyaAdetMap = new HashMap<String, Long>();
 
 		bordroPuantajEkranindaGoster = ortakIslemler.getParameterKey("bordroPuantajEkranindaGoster").equals("1");
@@ -921,7 +921,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			personelDinamikAlanlar.clear();
 			for (String key : personelDinamikAlanMap.keySet()) {
 				PersonelDinamikAlan personelDinamikAlan = personelDinamikAlanMap.get(key);
-				if (!tanimMap.containsKey(personelDinamikAlan.getAlan().getId()))
+				if (personelDinamikAlan.getId() != null && !tanimMap.containsKey(personelDinamikAlan.getAlan().getId()))
 					tanimMap.put(personelDinamikAlan.getAlan().getId(), personelDinamikAlan.getAlan());
 			}
 			if (!tanimMap.isEmpty()) {
@@ -3917,5 +3917,13 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	public void setIsAramaDurum(Boolean isAramaDurum) {
 		this.isAramaDurum = isAramaDurum;
+	}
+
+	public boolean isVardiyaPlanTopluAdet() {
+		return vardiyaPlanTopluAdet;
+	}
+
+	public void setVardiyaPlanTopluAdet(boolean vardiyaPlanTopluAdet) {
+		this.vardiyaPlanTopluAdet = vardiyaPlanTopluAdet;
 	}
 }

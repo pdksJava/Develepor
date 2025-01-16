@@ -88,6 +88,12 @@
 								</h:inputText>
 							</s:decorate>
 						</c:if>
+						<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('vardiyaPlanTopluAdet') == '1'}">
+							<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} Plan Toplu Adet Göster</ui:define>
+							<h:selectBooleanCheckbox value="#{fazlaMesaiOzetRaporHome.vardiyaPlanTopluAdet}">
+								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" reRender="denklestirmeDonemiTable" />
+							</h:selectBooleanCheckbox>
+						</s:decorate>
 
 					</h:panelGrid>
 					<rich:panel id="denklestirmeDonemiTable" style="overflow: auto;">

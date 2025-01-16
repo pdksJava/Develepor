@@ -344,8 +344,13 @@ public class OrtakIslemler implements Serializable {
 				alanList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_PERSONEL_DINAMIK_TANIM, Tanim.class, session);
 
 			List<Long> personelIdList = new ArrayList<Long>(), alanIdList = new ArrayList<Long>();
-			for (Personel personel : personelList)
+			PersonelDinamikAlan bosMap = new PersonelDinamikAlan();
+			for (Personel personel : personelList) {
 				personelIdList.add(personel.getId());
+				for (Tanim alan : alanList) {
+					map.put(PersonelDinamikAlan.getKey(personel, alan), bosMap);
+				}
+			}
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
 			String fieldName = "p";
