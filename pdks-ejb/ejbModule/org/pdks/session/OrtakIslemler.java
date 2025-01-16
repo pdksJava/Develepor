@@ -13705,8 +13705,11 @@ public class OrtakIslemler implements Serializable {
 									sb.append(" and I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = " + personel.getId() + " and I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " = D." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
 									if (islemYap)
 										sb.append(" where I." + PersonelIzin.COLUMN_NAME_ID + " is null or I." + PersonelIzin.COLUMN_NAME_IZIN_SURESI + " <= 0");
-									else
+									else {
 										sb.append(" where 1 = 2");
+										gecmis = false;
+									}
+
 									sb.append(" order by D." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " desc");
 									if (session != null)
 										fields.put(PdksEntityController.MAP_KEY_SESSION, session);
