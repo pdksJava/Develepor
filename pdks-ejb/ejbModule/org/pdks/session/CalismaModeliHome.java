@@ -335,6 +335,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 					calismaModeli.setHaftaTatilMesaiOde(Boolean.FALSE);
 				if (calismaModeli.getHaftaTatilMesaiOde().equals(Boolean.FALSE))
 					calismaModeli.setGeceHaftaTatilMesaiParcala(Boolean.FALSE);
+				if (calismaModeli.getSirket() != null)
+					calismaModeli.setDepartman(calismaModeli.getSirket().getDepartman());
 				pdksEntityController.saveOrUpdate(session, entityManager, calismaModeli);
 				if (calismaModeli.getGenelVardiya() || calismaModeli.isOrtakVardiyadir())
 					kayitliVardiyaList.clear();
