@@ -360,6 +360,9 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					pdksVardiya.setSua(Boolean.FALSE);
 					pdksVardiya.setGebelik(Boolean.FALSE);
 				}
+				if (pdksVardiya.getSirket() != null)
+					pdksVardiya.setDepartman(pdksVardiya.getSirket().getDepartman());
+
 				pdksEntityController.saveOrUpdate(session, entityManager, pdksVardiya);
 				if (calismaModeliList.size() + calismaModeliKayitliList.size() > 0) {
 					parametreMap.clear();

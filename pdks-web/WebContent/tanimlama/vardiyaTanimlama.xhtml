@@ -488,7 +488,7 @@
 
 									</s:decorate>
 									<a4j:outputPanel id="modeller">
-										<rich:simpleTogglePanel rendered="#{vardiyaHome.calismaModeliList.size()+vardiyaHome.calismaModeliKayitliList.size()>1}" switchType="client"
+										<rich:simpleTogglePanel rendered="#{vardiyaHome.calismaModeliList.size()+vardiyaHome.calismaModeliKayitliList.size()>0}" switchType="client"
 											label="Çalışma Modelleri" height="110" opened="true">
 
 											<rich:listShuttle sourceValue="#{vardiyaHome.calismaModeliList}" fastOrderControlsVisible="false" orderControlsVisible="false"
