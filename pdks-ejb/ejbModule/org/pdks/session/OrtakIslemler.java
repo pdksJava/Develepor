@@ -6181,9 +6181,9 @@ public class OrtakIslemler implements Serializable {
 				sb = new StringBuffer("select I.* from " + deleteIzinViewName + " D " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on D." + DeleteIzinERPView.COLUMN_NAME_IZIN + " = I." + PersonelIzin.COLUMN_NAME_ID);
 				sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " = :d");
-				sb.append("  where D." + DeleteIzinERPView.COLUMN_NAME_GUNCELLEME_ZAMANI + " >= :g");
-				fields.put("g", PdksUtil.tariheAyEkleCikar(tarih, -1));
 				fields.put("d", PersonelIzin.IZIN_DURUMU_ONAYLANDI);
+				// sb.append("  where D." + DeleteIzinERPView.COLUMN_NAME_GUNCELLEME_ZAMANI + " >= :g");
+				// fields.put("g", PdksUtil.tariheAyEkleCikar(tarih, -1));
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				List<PersonelIzin> personelIzinList = pdksEntityController.getObjectBySQLList(sb, fields, PersonelIzin.class);
