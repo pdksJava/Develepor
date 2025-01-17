@@ -1630,16 +1630,21 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 			}
 		}
-		StringBuffer izinSonrasiOffDurum = new StringBuffer();
 		VardiyaGun oncekiVardiyaGun = null;
-		StringBuffer haftaTatilSb = new StringBuffer();
+		StringBuffer izinSonrasiOffDurum = new StringBuffer(), haftaTatilSb = new StringBuffer(), cakisanVardiyaSb = new StringBuffer();
+		Vardiya vardiyaGunOnceki = null;
 		for (Iterator<String> iterator = vardiyaGunMap.keySet().iterator(); iterator.hasNext();) {
 			String key = iterator.next();
 			VardiyaGun vardiyaGun = vardiyaGunMap.get(key);
 			String str = vardiyaGun.getVardiyaDateStr();
 			vardiyaGun.setAyinGunu(str.startsWith(donem));
 			if (vardiyaGun.getVardiya() != null) {
-				Vardiya vardiya = vardiyaGun.getVardiya();
+				Vardiya vardiya = vardiyaGun.getVardiya(), islemVardiya = vardiyaGun.getIslemVardiya();
+				if (vardiyaGunOnceki != null && islemVardiya != null && islemVardiya.isCalisma() && vardiyaGunOnceki.getVardiyaBitZaman().after(islemVardiya.getVardiyaBasZaman())) {
+					if (cakisanVardiyaSb.length() > 0)
+						cakisanVardiyaSb.append(", ");
+					cakisanVardiyaSb.append(PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), PdksUtil.getDateFormat() + " EEEEE") + "  önceki gün bitiş " + ortakIslemler.vardiyaAciklama());
+				}
 				if (vardiya.isCalisma() == false && vardiyaGun.isAyinGunu() && oncekiVardiyaGun != null && oncekiVardiyaGun.getIzin() != null) {
 					IzinTipi izinTipi = oncekiVardiyaGun.getIzin().getIzinTipi();
 					if (izinTipi.isBaslamaZamaniCalismadir() && (vardiyaGun.getTatil() == null || vardiyaGun.getTatil().isYarimGunMu())) {
@@ -1743,12 +1748,16 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					haftaTatil = Boolean.TRUE;
 				} else
 					haftaTatil = Boolean.FALSE;
+				vardiyaGunOnceki = vardiya.isCalisma() ? islemVardiya : null;
 			} else {
+				vardiyaGunOnceki = null;
 				geceVardiyaAdetSaat = 0;
 				haftaTatil = Boolean.FALSE;
 			}
 			oncekiVardiyaGun = vardiyaGun;
 		}
+		if (cakisanVardiyaSb.length() > 0)
+			sb.append(cakisanVardiyaSb.toString() + " çakışmaktadır!");
 		if (geceVardiyaAdetMaxSaatStr != null)
 			sb.append(geceVardiyaAdetMaxSaatStr);
 		if (haftaTatilCalismaGunAdetMaxSaatStr != null)
@@ -5025,6 +5034,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		List<Long> eskiOnayList = new ArrayList<Long>();
 		TreeMap<Long, TreeMap<Long, Vardiya>> calismaModeliMap = getCalismaModeliMap(aylikPuantajList, null);
 		boolean onayliVar = false;
+		boolean usetYonetici = authenticatedUser.getPdksPersonel().getUstYonetici();
 		for (Iterator iter = aylikPuantajList.iterator(); iter.hasNext();) {
 			AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
 			aylikPuantaj.setSecili(false);
@@ -5038,7 +5048,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			Personel personel = aylikPuantaj.getPdksPersonel();
 			if (denklestirmeAy.isDurumu() && !(authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi())) {
 				if (personel.isSanalPersonelMi() == false && (yoneticiTanimsiz == false && (aylikPuantaj.getYonetici() == null || aylikPuantaj.getYonetici().getId() == null))) {
-					aylikPuantaj.setOnayDurum(false);
+					aylikPuantaj.setOnayDurum(usetYonetici || false);
 				}
 			}
 			boolean onayDurum = aylikPuantaj.isOnayDurum();
