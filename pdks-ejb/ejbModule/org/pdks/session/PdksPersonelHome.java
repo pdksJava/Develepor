@@ -175,7 +175,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private Boolean onaysizIzinKullanilir = Boolean.FALSE, departmanGoster = Boolean.FALSE, kartNoGoster = Boolean.FALSE, ikinciYoneticiIzinOnayla = Boolean.FALSE, izinGirisiVar = Boolean.FALSE, dosyaGuncellemeYetki = Boolean.FALSE;
 	private Boolean ekSaha1Disable, ekSaha2Disable, ekSaha4Disable, transferAciklamaCiftKontrol, bakiyeIzinGoster = Boolean.FALSE, gebeSecim = Boolean.FALSE, personelTipiGoster = Boolean.FALSE;
 	public Boolean disableAdviseNodeOpened, organizasyonSemasiGoster = Boolean.FALSE, bakiyeTakipEdiliyor = Boolean.FALSE;
- 	private TreeMap<Long, PersonelKGS> personelKGSMap;
+	private TreeMap<Long, PersonelKGS> personelKGSMap;
 	private int COL_SICIL_NO, COL_ADI, COL_SOYADI, COL_SIRKET_KODU, COL_SIRKET_ADI, COL_TESIS_KODU, COL_TESIS_ADI, COL_GOREV_KODU, COL_GOREVI, COL_BOLUM_KODU, COL_BOLUM_ADI;
 	private int COL_ISE_BASLAMA_TARIHI, COL_KIDEM_TARIHI, COL_GRUBA_GIRIS_TARIHI, COL_ISTEN_AYRILMA_TARIHI, COL_DOGUM_TARIHI, COL_CINSIYET_KODU, COL_CINSIYET, COL_YONETICI_KODU, COL_YONETICI2_KODU;
 	private int COL_DEPARTMAN_KODU, COL_DEPARTMAN_ADI, COL_MASRAF_YERI_KODU, COL_MASRAF_YERI_ADI, COL_BORDRO_ALT_ALAN_KODU, COL_BORDRO_ALT_ALAN_ADI, COL_BORDRO_SANAL_PERSONEL;
@@ -1081,7 +1081,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 						}
 
-						 
 					}
 				} catch (Exception e) {
 					logger.error("PDKS hata in : \n");
@@ -1109,16 +1108,17 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						HashMap<Long, UserRoles> roller = new HashMap<Long, UserRoles>();
 
 						List<UserRoles> yetkiliRoller = pdksEntityController.getSQLParamByFieldList(UserRoles.TABLE_NAME, UserRoles.COLUMN_NAME_USER, kullanici.getId(), UserRoles.class, session);
-
-						for (Iterator iterator = yetkiliRoller.iterator(); iterator.hasNext();) {
-							UserRoles userRoles = (UserRoles) iterator.next();
-							boolean ekle = authenticatedUser.isAdmin() || userRoles.getRole().isAdminRoleMu() == false;
-							if (ekle) {
-								if (authenticatedUser.isIK_Tesis() || authenticatedUser.isIKSirket())
-									ekle = userRoles.getRole().isIK() == false;
+						if (yetkiliRoller != null) {
+							for (Iterator iterator = yetkiliRoller.iterator(); iterator.hasNext();) {
+								UserRoles userRoles = (UserRoles) iterator.next();
+								boolean ekle = authenticatedUser.isAdmin() || (userRoles.getRole() != null && userRoles.getRole().isAdminRoleMu() == false);
+								if (ekle) {
+									if (authenticatedUser.isIK_Tesis() || authenticatedUser.isIKSirket())
+										ekle = userRoles.getRole().isIK() == false;
+								}
+								if (ekle)
+									roller.put(userRoles.getRole().getId(), userRoles);
 							}
-							if (ekle)
-								roller.put(userRoles.getRole().getId(), userRoles);
 						}
 
 						List<UserDigerOrganizasyon> yetkiliUserDigerOrganizasyonlar = pdksEntityController.getSQLParamByFieldList(UserDigerOrganizasyon.TABLE_NAME, UserDigerOrganizasyon.COLUMN_NAME_USER, kullanici.getId(), UserDigerOrganizasyon.class, session);
@@ -1750,7 +1750,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				kullanicilar = null;
 			}
 		}
-		 
+
 		// List<IzinTipi> izinTipiList = getOnaysizIzinDurum(sirket);
 		TreeMap<String, Boolean> map1 = getOnaysizIzinDurumMap(sirket);
 		onaysizIzinKullanilir = map1.containsKey("onaysizIzinDurum");
@@ -1762,7 +1762,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			else if (!ortakIslemler.getParameterKey("yonetici2ERPKontrol").equals("1"))
 				ikinciYoneticiManuelTanimla = ikinciYoneticiIzinOnayla || sirket.getDepartman().isFazlaMesaiTalepGirer();
 
-			 
 		}
 
 		setOldSirket(sirket);
@@ -5032,8 +5031,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public void setVardiyaGirisTipiTanimList(List<Tanim> vardiyaGirisTipiTanimList) {
 		this.vardiyaGirisTipiTanimList = vardiyaGirisTipiTanimList;
 	}
-
-	 
 
 	public List<Tanim> getBolumDepartmanlari() {
 		return bolumDepartmanlari;
