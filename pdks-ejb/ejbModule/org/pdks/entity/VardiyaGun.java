@@ -1288,7 +1288,7 @@ public class VardiyaGun extends BaseObject {
 			if (PdksUtil.hasStringValue(anaClasss) && (personel == null || personel.isCalisiyorGun(vardiyaDate) == false))
 				classAd = STYLE_CLASS_OFF;
 		}
-		if (ayinGunu && version < 0 && this.isIzinli() == false && fiiliHesapla == false)
+		if (ayinGunu && this.isIzinli() == false && fiiliHesapla == false && (version < 0 || hataliDurum))
 			classAd = STYLE_CLASS_HATA;
 		return classAd;
 
