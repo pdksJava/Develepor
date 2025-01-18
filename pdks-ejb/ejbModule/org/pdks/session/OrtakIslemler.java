@@ -12955,7 +12955,7 @@ public class OrtakIslemler implements Serializable {
 						islemVardiya.setVardiyaTelorans2BitZaman(vardiyaTelorans2BitZaman);
 
 					Date vardiyaBitZaman = addTarih(cal, islemVardiya.getVardiyaFazlaMesaiBitZaman(), Calendar.MILLISECOND, -40);
-					if (islemVardiya.getVardiyaBitZaman().after(vardiyaBitZaman))
+					if (islemVardiya.getVardiyaBitZaman().after(vardiyaBitZaman) && (islemVardiya.isCalisma() == false || islemVardiya.getBitDonem() > islemVardiya.getBasDonem()))
 						islemVardiya.setVardiyaBitZaman(vardiyaBitZaman);
 
 				}

@@ -484,6 +484,15 @@
 																<SPAN style="font-size: 12px; font-weight: normal;">Güncelleme : #{vardiyaGun.guncelleyenUser.adSoyad} -->
 																	#{authenticatedUser.dateTimeFormatla(vardiyaGun.guncellemeTarihi)} </SPAN>
 															</ui:fragment>
+															<ui:fragment rendered="#{vardiyaGun.manuelGirisHTML != null}">
+																<h:panelGrid columns="1">
+																	<s:formattedText>
+																		<SPAN style="font-size: 14px; font-weight: normal; color: red;">#{vardiyaGun.manuelGirisHTML}</SPAN>
+																	</s:formattedText>
+																</h:panelGrid>
+
+															</ui:fragment>
+
 														</rich:toolTip></TD>
 													<ui:fragment rendered="#{vardiyaGunHome.vardiyaFazlaMesaiTalepGoster and vardiyaGunHome.isVardiyaFazlaMesailer(vardiyaGun)  }">
 														<TD id="fmt#{vardiyaGun.vardiyaKeyStr}"><a4j:commandLink action="#{vardiyaGunHome.getVardiyaFazlaMesailer(vardiyaGun)}"

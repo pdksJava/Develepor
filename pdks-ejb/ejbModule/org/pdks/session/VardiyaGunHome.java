@@ -1639,11 +1639,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			String str = vardiyaGun.getVardiyaDateStr();
 			vardiyaGun.setAyinGunu(str.startsWith(donem));
 			if (vardiyaGun.getVardiya() != null) {
+				StringBuffer manuelGirisHTML = new StringBuffer();
 				Vardiya vardiya = vardiyaGun.getVardiya(), islemVardiya = vardiyaGun.getIslemVardiya();
 				if (vardiyaGunOnceki != null && islemVardiya != null && islemVardiya.isCalisma() && vardiyaGunOnceki.getVardiyaBitZaman().after(islemVardiya.getVardiyaBasZaman())) {
 					if (cakisanVardiyaSb.length() > 0)
 						cakisanVardiyaSb.append(", ");
-					cakisanVardiyaSb.append(PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), PdksUtil.getDateFormat() + " EEEEE") + "  önceki gün bitiş " + ortakIslemler.vardiyaAciklama());
+					String mesajStr = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), PdksUtil.getDateFormat() + " EEEEE") + " başlangıç saati önceki gün bitiş saati";
+					cakisanVardiyaSb.append(mesajStr);
+					manuelGirisHTML.append((manuelGirisHTML.length() > 0 ? "<br></br>" : "") + mesajStr + " çakışmaktadır.");
 				}
 				if (vardiya.isCalisma() == false && vardiyaGun.isAyinGunu() && oncekiVardiyaGun != null && oncekiVardiyaGun.getIzin() != null) {
 					IzinTipi izinTipi = oncekiVardiyaGun.getIzin().getIzinTipi();
@@ -1653,7 +1656,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							yaz = false;
 							if (izinSonrasiOffDurum.length() > 0)
 								izinSonrasiOffDurum.append(", ");
-							izinSonrasiOffDurum.append(PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), PdksUtil.getDateFormat() + " EEEEE") + " günü " + vardiya.getAdi());
+							String mesajStr = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), PdksUtil.getDateFormat() + " EEEEE") + " günü " + vardiya.getAdi();
+							izinSonrasiOffDurum.append(mesajStr);
+							manuelGirisHTML.append((manuelGirisHTML.length() > 0 ? "<br></br>" : "") + mesajStr);
 						}
 
 					}
@@ -1665,7 +1670,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							yaz = ikRole;
 							if (!ikMesaj)
 								ikMesaj = ikRole;
-							haftaTatilCalismaGunAdetMaxSaatStr = haftaTatilCalismaGunAdetMaxSaat + " günden fazla ardışık çalışma olamaz! ";
+							String mesajStr = haftaTatilCalismaGunAdetMaxSaat + " günden fazla ardışık çalışma olamaz! ";
+							haftaTatilCalismaGunAdetMaxSaatStr = mesajStr;
+							manuelGirisHTML.append((manuelGirisHTML.length() > 0 ? "<br></br>" : "") + mesajStr);
 							haftaTatilCalismaGunAdetMaxSaat = null;
 						}
 						if (calismaPlanDenetimTarihKontrol)
@@ -1681,7 +1688,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								yaz = ikRole;
 								if (!ikMesaj)
 									ikMesaj = ikRole;
-								geceVardiyaAdetMaxSaatStr = geceVardiyaAdetMaxSaat + " günden fazla ardışık akşam çalışma olamaz! ";
+								String mesajStr = geceVardiyaAdetMaxSaat + " günden fazla ardışık akşam çalışma olamaz! ";
+								geceVardiyaAdetMaxSaatStr = mesajStr;
+								manuelGirisHTML.append((manuelGirisHTML.length() > 0 ? "<br></br>" : "") + mesajStr);
 								geceVardiyaAdetMaxSaat = null;
 							}
 							geceVardiyaAdetSaat = 0;
@@ -1702,7 +1711,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							yaz = ikRole;
 							if (!ikMesaj)
 								ikMesaj = ikRole;
-							sb.append(PdksUtil.convertToDateString(bitSaat, "d MMMMMM EEEEE HH:ss") + " kısa çalışma olamaz! ");
+							String mesajStr = PdksUtil.convertToDateString(bitSaat, "d MMMMMM EEEEE HH:ss") + " kısa çalışma olamaz! ";
+							sb.append(mesajStr);
+							manuelGirisHTML.append((manuelGirisHTML.length() > 0 ? "<br></br>" : "") + mesajStr);
 						}
 					}
 					if (calismaPlanDenetimTarihKontrol)
@@ -1714,7 +1725,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						if (cm.isOrtakVardiyadir() == false && vardiyaMap != null && !vardiyaMap.containsKey(vardiya.getId())) {
 							if (sbCalismaModeliUyumsuz.length() > 0)
 								sbCalismaModeliUyumsuz.append(", ");
-							sbCalismaModeliUyumsuz.append(PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "d MMMMMM ") + " " + vardiya.getAciklama() + (admin ? " [ " + vardiya.getKisaAciklama() + " ] " : ""));
+							String mesajStr = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "d MMMMMM ") + " " + vardiya.getAciklama() + (admin ? " [ " + vardiya.getKisaAciklama() + " ] " : "");
+							sbCalismaModeliUyumsuz.append(mesajStr);
+							manuelGirisHTML.append((manuelGirisHTML.length() > 0 ? "<br></br>" : "") + mesajStr);
 							yaz = Boolean.FALSE;
 
 						}
@@ -1730,7 +1743,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						if (ozel && !vardiyaMap.containsKey(vardiya.getId())) {
 							if (sbCalismaModeliUyumsuz.length() > 0)
 								sbCalismaModeliUyumsuz.append(", ");
-							sbCalismaModeliUyumsuz.append(PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "d MMMMMM ") + " " + vardiya.getAciklama() + (admin ? " [ " + vardiya.getKisaAciklama() + " ] " : ""));
+							String mesajStr = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "d MMMMMM ") + " " + vardiya.getAciklama() + (admin ? " [ " + vardiya.getKisaAciklama() + " ] " : "");
+							sbCalismaModeliUyumsuz.append(mesajStr);
+							manuelGirisHTML.append((manuelGirisHTML.length() > 0 ? "<br></br>" : "") + mesajStr);
 							yaz = Boolean.FALSE;
 						}
 					}
@@ -1743,12 +1758,17 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (haftaTatil) {
 						if (authenticatedUser.isIK() == false)
 							yaz = Boolean.FALSE;
-						sb.append("Arka arkaya hafta tatili olamaz! [ " + authenticatedUser.dateFormatla(vardiyaGun.getVardiyaDate()) + " ] ");
+						String mesajStr = "Arka arkaya hafta tatili olamaz! [ " + authenticatedUser.dateFormatla(vardiyaGun.getVardiyaDate()) + " ] ";
+						sb.append(mesajStr);
+						manuelGirisHTML.append((manuelGirisHTML.length() > 0 ? "<br></br>" : "") + mesajStr);
 					}
 					haftaTatil = Boolean.TRUE;
 				} else
 					haftaTatil = Boolean.FALSE;
 				vardiyaGunOnceki = vardiya.isCalisma() ? islemVardiya : null;
+				if (manuelGirisHTML.length() > 0)
+					vardiyaGun.setManuelGirisHTML(manuelGirisHTML.toString());
+				manuelGirisHTML = null;
 			} else {
 				vardiyaGunOnceki = null;
 				geceVardiyaAdetSaat = 0;
@@ -1756,8 +1776,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			oncekiVardiyaGun = vardiyaGun;
 		}
-		if (cakisanVardiyaSb.length() > 0)
+		if (cakisanVardiyaSb.length() > 0) {
 			sb.append(cakisanVardiyaSb.toString() + " çakışmaktadır!");
+			yaz = false;
+		}
+
 		if (geceVardiyaAdetMaxSaatStr != null)
 			sb.append(geceVardiyaAdetMaxSaatStr);
 		if (haftaTatilCalismaGunAdetMaxSaatStr != null)
