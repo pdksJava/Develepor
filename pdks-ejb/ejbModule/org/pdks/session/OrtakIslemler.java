@@ -16689,7 +16689,7 @@ public class OrtakIslemler implements Serializable {
 							Double islemVardiyaSuresi = null;
 							boolean gebeMi = Boolean.FALSE, suaMi = suaVar;
 							Tatil tatil2 = pdksVardiyaGun.getTatil();
-							if (vardiyaIzin != null && (vardiyaIzin.isOffGun() || vardiyaIzin.isFMI()) && pdksVardiyaGun.getIzin() == null) {
+							if (pdksVardiyaGun.isAyinGunu() && vardiyaIzin != null && (vardiyaIzin.isOffGun() || vardiyaIzin.isFMI()) && pdksVardiyaGun.getIzin() == null) {
 								if (tatil2 == null || tatil2.isYarimGunMu())
 									++offGunSayisi;
 							}
