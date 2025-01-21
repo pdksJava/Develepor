@@ -19610,6 +19610,11 @@ public class OrtakIslemler implements Serializable {
 		}
 	}
 
+	public Date getBugun() {
+		Date bugun = new Date();
+		return bugun;
+	}
+
 	/**
 	 * @param girisKapi
 	 * @param cikisKapi
