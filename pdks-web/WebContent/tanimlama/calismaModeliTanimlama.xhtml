@@ -220,6 +220,12 @@
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
+										<h:outputText value="Şua" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.suaDurum)}" />
+								</rich:column>
+								<rich:column>
+									<f:facet name="header">
 										<h:outputText value="Aktif" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.durum)}" id="durum" />
@@ -390,17 +396,17 @@
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Süt İzin #{ortakIslemler.getGunAdi(7,null)} (Saati)</ui:define>
-							<h:inputText required="true" value="#{calismaModeliHome.calismaModeli.pazarSutIzniSure}" disabled="#{authenticatedUser.admin == false}" size="6"
-								validatorMessage="İzin günü saati giriniz">
+							<h:inputText required="true" value="#{calismaModeliHome.calismaModeli.pazarSutIzniSure}" disabled="#{authenticatedUser.admin == false}"
+								size="6" validatorMessage="İzin günü saati giriniz">
 								<f:validateDoubleRange minimum="0" maximum="12" />
 							</h:inputText>
 						</s:decorate>
 
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Süt İzin Sabit (Saati)</ui:define>
-							<h:inputText value="#{calismaModeliHome.calismaModeli.sutIzniSabitSaat}" disabled="#{authenticatedUser.admin == false}" size="6"/>
+							<h:inputText value="#{calismaModeliHome.calismaModeli.sutIzniSabitSaat}" disabled="#{authenticatedUser.admin == false}" size="6" />
 
-							 
+
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Arife Günü (Saati)</ui:define>
@@ -469,7 +475,8 @@
 						<s:decorate template="/layout/edit.xhtml"
 							rendered="#{calismaModeliHome.otomatikFazlaCalismaOnaylansinVar or calismaModeliHome.calismaModeli.otomatikFazlaCalismaOnaylansin}">
 							<ui:define name="label">Fazla Çalışma Otomatik Onaylansın</ui:define>
-							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.otomatikFazlaCalismaOnaylansin}" disabled="#{authenticatedUser.admin == false}">
+							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.otomatikFazlaCalismaOnaylansin}"
+								disabled="#{authenticatedUser.admin == false}">
 
 							</h:selectBooleanCheckbox>
 						</s:decorate>
@@ -483,6 +490,12 @@
 							<ui:define name="label">Gece #{ortakIslemler.vardiyaAciklama()} Hafta Sonu Fazla Mesai Parçala</ui:define>
 							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.geceHaftaTatilMesaiParcala}"
 								disabled="#{calismaModeliHome.calismaModeli.haftaTatilMesaiOde == false or authenticatedUser.admin == false}">
+
+							</h:selectBooleanCheckbox>
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml" rendered="#{calismaModeliHome.calismaModeli.departman.suaOlabilir}">
+							<ui:define name="label">Şua</ui:define>
+							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.suaDurum}" disabled="#{authenticatedUser.admin == false}">
 
 							</h:selectBooleanCheckbox>
 						</s:decorate>
@@ -506,15 +519,16 @@
 					<a4j:outputPanel id="vardiyalar">
 
 						<rich:simpleTogglePanel
-							rendered="#{calismaModeliHome.calismaModeli.genelVardiya == false and calismaModeliHome.calismaModeli.ortakVardiya == false}" switchType="client"
-							label="#{ortakIslemler.vardiyaAciklama()}" height="110" opened="true">
+							rendered="#{calismaModeliHome.calismaModeli.genelVardiya == false and calismaModeliHome.calismaModeli.ortakVardiya == false}"
+							switchType="client" label="#{ortakIslemler.vardiyaAciklama()}" height="110" opened="true">
 							<s:decorate>
 								<rich:listShuttle style="width:550px; white-space:normal!important" id="shuttle" sourceValue="#{calismaModeliHome.vardiyaList}"
 									fastOrderControlsVisible="false" orderControlsVisible="false" targetValue="#{calismaModeliHome.kayitliVardiyaList}" var="vardiya"
 									copyControlLabel="#{messages['listShuttle.etiket.copyControlLabel']}"
 									removeControlLabel="#{messages['listShuttle.etiket.removeControlLabel']}"
 									copyAllControlLabel="#{messages['listShuttle.etiket.copyAllControlLabel']}"
-									removeAllControlLabel="#{messages['listShuttle.etiket.removeAllControlLabel']}" required="true" requiredMessage="#{ortakIslemler.vardiyaAciklama()} seçiniz">
+									removeAllControlLabel="#{messages['listShuttle.etiket.removeAllControlLabel']}" required="true"
+									requiredMessage="#{ortakIslemler.vardiyaAciklama()} seçiniz">
 									<h:column>
 
 										<div style="overflow: hidden; width: 200px; word-wrap: break-word;">

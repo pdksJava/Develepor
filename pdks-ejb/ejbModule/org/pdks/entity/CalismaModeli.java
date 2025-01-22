@@ -58,6 +58,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_HAFTA_TATIL = "HT_GUN";
 	public static final String COLUMN_NAME_GENEL_MODEL = "GENEL_MODEL";
 	public static final String COLUMN_NAME_IDARI_MODEL = "IDARI_MODEL";
+	public static final String COLUMN_NAME_SUA_DURUM = "SUA_DURUM";
 	public static final String COLUMN_NAME_HAFTA_ICI_SUT_IZNI_SURE = "HAFTA_ICI_SUT_IZNI_SURE";
 	public static final String COLUMN_NAME_CUMARTESI_SUT_IZNI_SURE = "CUMARTESI_SUT_IZNI_SURE";
 	public static final String COLUMN_NAME_CUMARTESI_SAAT = "CUMARTESI_SAAT";
@@ -73,11 +74,11 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	private String aciklama = "";
 	private double haftaIci = 0.0d, arife = 0.0d, negatifBakiyeDenkSaat = 0.0d;
 	private Double haftaIciSutIzniSure = 7.5d, cumartesiSaat = 0.0d, izin = 0.0d, cumartesiIzinSaat = 0.0d, cumartesiSutIzniSure = 0.0d, sutIzniSabitSaat;
- 	private Double pazarSaat = 0.0d, pazarIzinSaat = 0.0d, pazarSutIzniSure = 0.0d;
+	private Double pazarSaat = 0.0d, pazarIzinSaat = 0.0d, pazarSutIzniSure = 0.0d;
 	private Boolean fazlaMesaiVar = Boolean.TRUE, toplamGunGuncelle = Boolean.FALSE, durum = Boolean.TRUE, genelVardiya = Boolean.TRUE, hareketKaydiVardiyaBul = Boolean.FALSE;
 	private Boolean haftaTatilMesaiOde = Boolean.FALSE, geceHaftaTatilMesaiParcala = Boolean.FALSE, geceCalismaOdemeVar = Boolean.FALSE, otomatikFazlaCalismaOnaylansin = Boolean.FALSE;
 	private Boolean ortakVardiya = Boolean.FALSE, fazlaMesaiGoruntulensin = Boolean.TRUE, ilkPlanOnayliDurum = Boolean.FALSE, gunMaxCalismaOdemeDurum = Boolean.TRUE;
-	private Boolean genelModel = Boolean.TRUE, idariModel = Boolean.FALSE;
+	private Boolean genelModel = Boolean.TRUE, idariModel = Boolean.FALSE, suaDurum = Boolean.FALSE;
 	private Integer haftaTatilGun = Calendar.SUNDAY;
 	private VardiyaSablonu bagliVardiyaSablonu;
 	private Departman departman;
@@ -208,6 +209,15 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	public void setIdariModel(Boolean idariModel) {
 		this.idariModel = idariModel;
+	}
+
+	@Column(name = COLUMN_NAME_SUA_DURUM)
+	public Boolean getSuaDurum() {
+		return suaDurum;
+	}
+
+	public void setSuaDurum(Boolean suaDurum) {
+		this.suaDurum = suaDurum;
 	}
 
 	@Column(name = COLUMN_NAME_HAFTA_TATIL_MESAI_ODE)
@@ -404,7 +414,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public void setPazarSutIzniSure(Double pazarSutIzniSure) {
 		this.pazarSutIzniSure = pazarSutIzniSure;
 	}
-	
+
 	@Column(name = COLUMN_NAME_SUT_IZNI_SABIT)
 	public Double getSutIzniSabitSaat() {
 		return sutIzniSabitSaat;
@@ -759,9 +769,13 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 		return idariModel != null && idariModel;
 	}
 
+	@Transient
+	public Boolean isSua() {
+		return suaDurum != null && suaDurum.booleanValue();
+	}
+
 	public void entityRefresh() {
 
 	}
-	
 
 }
