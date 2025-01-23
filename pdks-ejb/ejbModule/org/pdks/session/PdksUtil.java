@@ -2045,13 +2045,14 @@ public class PdksUtil implements Serializable {
 	 * @param object
 	 * @param method
 	 * @param parametre
+	 * @param bos
 	 */
-	public static void runMethodObject(Object object, String method, Object[] parametre) {
+	public static void runMethodObjectNull(Object object, String method, Object[] parametre, Class[] bos) {
 		Class[] classes = null;
 		if (parametre != null) {
 			classes = new Class[parametre.length];
 			for (int i = 0; i < classes.length; i++)
-				classes[i] = parametre[i].getClass();
+				classes[i] = parametre[i] != null ? parametre[i].getClass() : bos[i];
 		}
 		try {
 			Method run = object.getClass().getMethod(method, classes);
@@ -2062,6 +2063,16 @@ public class PdksUtil implements Serializable {
 			logger.error("PDKS hata out : " + e.getMessage());
 
 		}
+	}
+
+	/**
+	 * @param object
+	 * @param method
+	 * @param parametre
+	 */
+	public static void runMethodObject(Object object, String method, Object[] parametre) {
+		Class[] bos = null;
+		runMethodObjectNull(object, method, parametre, bos);
 	}
 
 	/**
