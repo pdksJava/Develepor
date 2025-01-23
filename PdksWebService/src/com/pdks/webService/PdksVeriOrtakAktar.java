@@ -3281,7 +3281,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					String aciklama = (String) PdksUtil.getMethodObject(personelERP, "getDiger" + key, null);
 					String kodu = (String) PdksUtil.getMethodObject(personelERP, "getDiger" + key + "Kodu", null);
 					if (PdksUtil.hasStringValue(kodu))
-						personelListeMap.put("diger" + key, new Liste(kodu, aciklama));
+						personelListeMap.put("diger" + key, new Liste(kodu, PdksUtil.hasStringValue(aciklama) ? aciklama : "Tanımsız"));
 
 				}
 				String yoneticiNo = personelERP.getYoneticiPerNo() != null ? personelERP.getYoneticiPerNo().trim() : "";
@@ -3547,13 +3547,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 					} else if (personelDigerMap.containsKey(personelNo)) {
 						personel = personelDigerMap.get(personelNo);
-
 						personel.setPersonelKGS(personelKGS);
 						personel.setPdksSicilNo(personelNo);
 					}
 
 					if (personel == null) {
-
 						if (personelKGS.getDurum().booleanValue() == false) {
 							continue;
 						}
@@ -4672,9 +4670,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 		fields.clear();
 		sb = new StringBuffer();
-		sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
-		sb.append(" inner join " + PersonelDinamikAlan.TABLE_NAME + " K " + PdksVeriOrtakAktar.getJoinLOCK() + " on K." + PersonelDinamikAlan.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_KGS_PERSONEL);
-		sb.append(" where p." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
+		sb.append("select K.* from " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
+		sb.append(" inner join " + PersonelDinamikAlan.TABLE_NAME + " K " + PdksVeriOrtakAktar.getJoinLOCK() + " on K." + PersonelDinamikAlan.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID);
+		sb.append(" where P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
 
 		fields.put(fieldName, personelNoList);
 		List<PersonelDinamikAlan> personelDinamikAlanList = getNativeSQLParamList(personelNoList, sb, fieldName, fields, PersonelDinamikAlan.class);
@@ -4811,6 +4809,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			personelERP.setYoneticiPerNo(null);
 			personelERP.setYonetici2PerNo(null);
 			personelERP.setGrubaGirisTarihi(null);
+			digerAlanlarBosalt(personelERP);
 
 		}
 		if (personelList.size() > 1)
@@ -4962,6 +4961,25 @@ public class PdksVeriOrtakAktar implements Serializable {
 		hataList = null;
 
 		mesajInfoYaz("savePersoneller --> " + mesaj + " out " + PdksUtil.getCurrentTimeStampStr());
+	}
+
+	/**
+	 * @param personelERP
+	 */
+	private void digerAlanlarBosalt(PersonelERP personelERP) {
+		String veri = null;
+		Object[] deger = new Object[] { veri };
+		Class[] bos = new Class[] { String.class };
+		for (int i = 1; i <= 10; i++) {
+			String kod = (i < 10 ? "0" : "") + i;
+			try {
+				PdksUtil.runMethodObjectNull(personelERP, "setDigerTanimAlan" + kod, deger, bos);
+				PdksUtil.runMethodObjectNull(personelERP, "setDigerTanimAlan" + kod + "Kodu", deger, bos);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+
+		}
 	}
 
 	/**
