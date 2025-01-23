@@ -81,7 +81,7 @@ public class PersonelDenklestirme extends BaseObject {
 
 	private Integer egitimSuresiAksamGunSayisi;
 
-	private Boolean suaDurum, fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiOde, sutIzniDurum, partTime;
+	private Boolean suaDurum, fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiOde, sutIzniDurum, partTime, bakiyeSifirlaDurum = Boolean.FALSE;
 
 	private boolean erpAktarildi = Boolean.FALSE, onaylandi = Boolean.FALSE, denklestirme;
 
@@ -95,16 +95,22 @@ public class PersonelDenklestirme extends BaseObject {
 		this.setGuncellendi(null);
 	}
 
-	public PersonelDenklestirme(Personel pdksPersonel, DenklestirmeAy denklestirmeAy, CalismaModeliAy cmAy) {
+	public PersonelDenklestirme(Personel pdksPersonel, DenklestirmeAy da, CalismaModeliAy cmAy) {
 		super();
 		this.setPersonel(pdksPersonel);
-		this.denklestirmeAy = denklestirmeAy;
+		if (da == null && cmAy != null)
+			da = cmAy.getDenklestirmeAy();
+		this.denklestirmeAy = da;
 		this.calismaModeliAy = cmAy;
 		if (cmAy != null) {
 			CalismaModeli cm = cmAy.getCalismaModeli();
 			this.onaylandi = cm.isIlkPlanOnaylidir() || cm.isFazlaMesaiVarMi() == false;
 			if (cm.isFazlaMesaiVarMi() == false)
 				this.fazlaMesaiOde = false;
+		}
+		if (da != null && (da.getDenklestirmeDevret() == null || da.getDenklestirmeDevret().booleanValue() == false)) {
+			this.fazlaMesaiOde = false;
+			this.fazlaMesaiIzinKullan = true;
 		}
 
 		this.setGuncellendi(Boolean.FALSE);
@@ -890,6 +896,15 @@ public class PersonelDenklestirme extends BaseObject {
 
 	public void setIsAramaIzniSaat(double isAramaIzniSaat) {
 		this.isAramaIzniSaat = isAramaIzniSaat;
+	}
+
+	@Transient
+	public Boolean getBakiyeSifirlaDurum() {
+		return bakiyeSifirlaDurum;
+	}
+
+	public void setBakiyeSifirlaDurum(Boolean bakiyeSifirlaDurum) {
+		this.bakiyeSifirlaDurum = bakiyeSifirlaDurum;
 	}
 
 }

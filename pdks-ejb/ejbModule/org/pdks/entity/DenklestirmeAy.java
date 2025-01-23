@@ -30,10 +30,11 @@ public class DenklestirmeAy extends BaseObject {
 	public static final String COLUMN_NAME_AY = "AY";
 	public static final String COLUMN_NAME_IK_OTOMATIK_ONAY_TARIHI = "IK_OTOMATIK_ONAY_TARIHI";
 	public static final String COLUMN_NAME_IK_OTOMATIK_ONAY_BASLANGIC_TARIHI = "IK_OTOMATIK_ONAY_BASLANGIC_TARIHI";
-
 	public static final String COLUMN_NAME_FAZLA_MESAI_ONAY_DURUM = "FAZLA_MESAI_ONAY_DURUM";
 	public static final String COLUMN_NAME_DENKLESTIRME_KESINTI_YAP = "DENKLESTIRME_KESINTI_YAP";
 	public static final String COLUMN_NAME_GUN_MAX_CALISMA_SURESI = "GUN_MAX_CALISMA_SURESI";
+	public static final String COLUMN_NAME_BAKIYE_SIFIRLA = "BAKIYE_SIFIRLA";
+	public static final String COLUMN_NAME_DENKLESTIRME_DEVRET = "DENKLESTIRME_DEVRET";
 
 	private int ay, yil;
 	private double sure = 0, toplamIzinSure = 0;
@@ -43,7 +44,7 @@ public class DenklestirmeAy extends BaseObject {
 	private String ayAdi = "", trClass;
 	private List<CalismaModeliAy> modeller;
 	private TreeMap<Long, CalismaModeliAy> modelMap;
-	private Boolean fazlaMesaiOnayDurum = Boolean.TRUE;
+	private Boolean fazlaMesaiOnayDurum = Boolean.TRUE, bakiyeSifirlaDurum = Boolean.FALSE, denklestirmeDevret = Boolean.FALSE;
 	private Integer denklestirmeKesintiYap = KesintiTipi.KESINTI_YOK.value();
 
 	private Boolean guncelleIK = Boolean.FALSE;
@@ -147,6 +148,24 @@ public class DenklestirmeAy extends BaseObject {
 
 	public void setFazlaMesaiOnayDurum(Boolean fazlaMesaiOnayDurum) {
 		this.fazlaMesaiOnayDurum = fazlaMesaiOnayDurum;
+	}
+
+	@Column(name = COLUMN_NAME_BAKIYE_SIFIRLA)
+	public Boolean getBakiyeSifirlaDurum() {
+		return bakiyeSifirlaDurum;
+	}
+
+	public void setBakiyeSifirlaDurum(Boolean bakiyeSifirlaDurum) {
+		this.bakiyeSifirlaDurum = bakiyeSifirlaDurum;
+	}
+
+	@Column(name = COLUMN_NAME_DENKLESTIRME_DEVRET)
+	public Boolean getDenklestirmeDevret() {
+		return denklestirmeDevret;
+	}
+
+	public void setDenklestirmeDevret(Boolean denklestirmeDevret) {
+		this.denklestirmeDevret = denklestirmeDevret;
 	}
 
 	@Column(name = COLUMN_NAME_DENKLESTIRME_KESINTI_YAP)
@@ -325,7 +344,6 @@ public class DenklestirmeAy extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
 
 	}
 

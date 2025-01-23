@@ -32,6 +32,8 @@ import org.pdks.entity.Dosya;
 import org.pdks.entity.KesintiTipi;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
+import org.pdks.entity.PersonelDenklestirmeDinamikAlan;
+import org.pdks.entity.Tanim;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.security.entity.User;
 import org.richfaces.event.UploadEvent;
@@ -81,7 +83,8 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	private TreeMap<String, PersonelDenklestirme> bakiySonrakiMap;
 	private List<CalismaModeli> calismaModeliList = new ArrayList<CalismaModeli>();
 	private List<SelectItem> kesintiTuruList;
-	private Boolean hareketKaydiVardiyaBul = Boolean.FALSE, negatifBakiyeDenkSaat = Boolean.FALSE, otomatikFazlaCalismaOnaylansinVar = Boolean.FALSE;
+
+	private Boolean hareketKaydiVardiyaBul = Boolean.FALSE, denklestirmeDevredilenAylar = Boolean.FALSE, bakiyeSifirlaDurum = Boolean.FALSE, negatifBakiyeDenkSaat = Boolean.FALSE, otomatikFazlaCalismaOnaylansinVar = Boolean.FALSE;
 	private Session session;
 
 	public int getGirisKolonSayisi() {
@@ -736,6 +739,19 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		}
 
 		fillPdksYoneticiDenklestirme(xSession);
+		denklestirmeDevredilenAylar = ortakIslemler.getParameterKeyHasStringValue("denklestirmeDevredilenAylar");
+		Tanim bakiyeSifirla = ortakIslemler.getSQLTanimAktifByTipKodu(Tanim.TIPI_PERSONEL_DINAMIK_DURUM, PersonelDenklestirmeDinamikAlan.TIPI_BAKIYE_SIFIRLA, session);
+		if (bakiyeSifirla != null && bakiyeSifirla.getDurum())
+			bakiyeSifirla = ortakIslemler.getSQLTanimAktifByTipKodu(Tanim.TIPI_PERSONEL_DENKLESTIRME_DINAMIK_DURUM, PersonelDenklestirmeDinamikAlan.TIPI_BAKIYE_SIFIRLA, session);
+		bakiyeSifirlaDurum = bakiyeSifirla != null && bakiyeSifirla.getDurum();
+		if (denklestirmeAylar != null && (denklestirmeDevredilenAylar == false || bakiyeSifirlaDurum == false)) {
+			for (DenklestirmeAy dm : denklestirmeAylar) {
+				if (!denklestirmeDevredilenAylar)
+					denklestirmeDevredilenAylar = dm.getDenklestirmeDevret() != null && dm.getDenklestirmeDevret();
+				if (!bakiyeSifirlaDurum)
+					bakiyeSifirlaDurum = dm.getBakiyeSifirlaDurum() != null && dm.getBakiyeSifirlaDurum();
+			}
+		}
 		return "";
 	}
 
@@ -977,6 +993,22 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 
 	public static void setSayfaURL(String sayfaURL) {
 		VardiyaTanimlamaHome.sayfaURL = sayfaURL;
+	}
+
+	public Boolean getDenklestirmeDevredilenAylar() {
+		return denklestirmeDevredilenAylar;
+	}
+
+	public void setDenklestirmeDevredilenAylar(Boolean denklestirmeDevredilenAylar) {
+		this.denklestirmeDevredilenAylar = denklestirmeDevredilenAylar;
+	}
+
+	public Boolean getBakiyeSifirlaDurum() {
+		return bakiyeSifirlaDurum;
+	}
+
+	public void setBakiyeSifirlaDurum(Boolean bakiyeSifirlaDurum) {
+		this.bakiyeSifirlaDurum = bakiyeSifirlaDurum;
 	}
 
 }
