@@ -75,18 +75,25 @@
 							</h:inputText>
 						</s:decorate>
 					</h:panelGrid>
-					<h:panelGrid columns="2" style="width: 80%;"
+					<h:panelGrid columns="2" style="width: 80%;" id="ozelDurum"
 						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin or denklestirmeBordroRaporuHome.denklestirmeAy.durum) and ortakIslemler.hasStringValue(denklestirmeBordroRaporuHome.sicilNo) == false}">
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Hatalı Personel Göster</ui:define>
 							<h:selectBooleanCheckbox value="#{denklestirmeBordroRaporuHome.hataliVeriGetir}">
 								<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" action="#{denklestirmeBordroRaporuHome.personelDenklestirmeList.clear()}"
-									reRender="denklestirmeDonemiTable" />
+									reRender="denklestirmeDonemiTable,ozelDurum" />
 							</h:selectBooleanCheckbox>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Eksik Çalışan Personel Göster</ui:define>
 							<h:selectBooleanCheckbox value="#{denklestirmeBordroRaporuHome.eksikCalisanVeriGetir}">
+								<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" action="#{denklestirmeBordroRaporuHome.personelDenklestirmeList.clear()}"
+									reRender="denklestirmeDonemiTable,ozelDurum" />
+							</h:selectBooleanCheckbox>
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml" rendered="#{denklestirmeBordroRaporuHome.hataliVeriGetir or denklestirmeBordroRaporuHome.eksikCalisanVeriGetir}">
+							<ui:define name="label">Hatasız Personel Gösterme</ui:define>
+							<h:selectBooleanCheckbox value="#{denklestirmeBordroRaporuHome.sadeceHataliGetir}">
 								<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" action="#{denklestirmeBordroRaporuHome.personelDenklestirmeList.clear()}"
 									reRender="denklestirmeDonemiTable" />
 							</h:selectBooleanCheckbox>
@@ -99,7 +106,7 @@
 						<h:panelGrid columns="4">
 							<a4j:commandButton status="ajaxStatus" action="#{denklestirmeBordroRaporuHome.fillPersonelDenklestirmeList}" value="Getir"
 								reRender="denklestirmeDonemiTable,anaForm" />
-							<ui:fragment rendered="#{denklestirmeBordroRaporuHome.adminRole or ortakIslemler.getParameterKeyHasStringValue('sirketFazlaMesaiGuncelleme') }">
+							<ui:fragment rendered="#{denklestirmeBordroRaporuHome.fazlaMesaiHesaplaDurum}">
 								<ui:fragment rendered="#{denklestirmeBordroRaporuHome.sirket.tesisDurum == false or denklestirmeBordroRaporuHome.tesisId gt 0 }">
 									<ui:fragment rendered="#{denklestirmeBordroRaporuHome.denklestirmeAy.durum}">
 										<a4j:commandButton status="ajaxStatus" value="#{denklestirmeBordroRaporuHome.fazlaMesaiGuncellemeAciklama} Fazla Mesai Hesapla"
@@ -319,7 +326,8 @@
 											<h:outputText value="#{alan.aciklama}" />
 										</f:facet>
 										<ui:fragment rendered="#{puantaj.pdksPersonel != null}">
-											<h:outputText value="#{ortakIslemler.getTanimDeger(puantaj.pdksPersonel,alan,denklestirmeBordroRaporuHome.personelDinamikAlanMap).aciklama}" />
+											<h:outputText
+												value="#{ortakIslemler.getTanimDeger(puantaj.pdksPersonel,alan,denklestirmeBordroRaporuHome.personelDinamikAlanMap).aciklama}" />
 										</ui:fragment>
 
 									</rich:column>

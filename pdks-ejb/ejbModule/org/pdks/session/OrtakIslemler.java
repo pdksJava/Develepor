@@ -4007,17 +4007,31 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public List<Role> yetkiRolleriGetir(Session session) {
-		List<Role> allRoles = pdksEntityController.getSQLParamByAktifFieldList(Role.TABLE_NAME, !authenticatedUser.isAdmin() ? Role.COLUMN_NAME_ADMIN_ROLE : null, Boolean.FALSE, Role.class, session);
+		HashMap fields = new HashMap();
+		StringBuffer sb = new StringBuffer();
+		sb.append("select * from " + Role.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 		if (!authenticatedUser.isAdmin()) {
-			Long departmanId = authenticatedUser.getDepartman().getId();
+			sb.append(" where " + Role.COLUMN_NAME_STATUS + " = 1 ");
+			if (!authenticatedUser.isSistemYoneticisi()) {
+				sb.append(" and coalesce(" + Role.COLUMN_NAME_ADMIN_ROLE + ",0) = 0");
+			}
+
+		}
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<Role> allRoles = pdksEntityController.getObjectBySQLList(sb, fields, Role.class);
+
+		allRoles = pdksEntityController.getSQLParamByAktifFieldList(Role.TABLE_NAME, !authenticatedUser.isAdmin() ? Role.COLUMN_NAME_ADMIN_ROLE : null, Boolean.FALSE, Role.class, session);
+		if (!authenticatedUser.isAdmin()) {
+			Long departmanId = authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIKAdmin() ? null : authenticatedUser.getDepartman().getId();
 			for (Iterator iterator = allRoles.iterator(); iterator.hasNext();) {
 				Role roleSis = (Role) iterator.next();
-				boolean sil = false;
+				boolean sil = roleSis.getRolename().equals(Role.TIPI_ADMIN);
 				if (authenticatedUser.isIK_Tesis() || authenticatedUser.isIKSirket()) {
 					sil = roleSis.isIK();
 
 				}
-				if (roleSis.getDepartman() != null && !roleSis.getDepartman().getId().equals(departmanId))
+				if (departmanId != null && (roleSis.getDepartman() != null && !roleSis.getDepartman().getId().equals(departmanId)))
 					sil = true;
 				if (sil)
 					iterator.remove();

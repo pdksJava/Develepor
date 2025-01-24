@@ -3129,24 +3129,24 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				dinamikDurumList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_DURUM, session);
 				dinamikSayisalList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_SAYISAL, session);
 
-//				if (personelDinamikMap.isEmpty() == false) {
-//					dinamikTanimList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, session);
-//					dinamikDurumList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_DURUM, session);
-//					dinamikSayisalList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_SAYISAL, session);
-//				} else {
-//					if (dinamikTanimList == null)
-//						dinamikTanimList = new ArrayList<Tanim>();
-//					else
-//						dinamikTanimList.clear();
-//					if (dinamikDurumList == null)
-//						dinamikDurumList = new ArrayList<Tanim>();
-//					else
-//						dinamikDurumList.clear();
-//					if (dinamikSayisalList == null)
-//						dinamikSayisalList = new ArrayList<Tanim>();
-//					else
-//						dinamikSayisalList.clear();
-//				}
+				// if (personelDinamikMap.isEmpty() == false) {
+				// dinamikTanimList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, session);
+				// dinamikDurumList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_DURUM, session);
+				// dinamikSayisalList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_SAYISAL, session);
+				// } else {
+				// if (dinamikTanimList == null)
+				// dinamikTanimList = new ArrayList<Tanim>();
+				// else
+				// dinamikTanimList.clear();
+				// if (dinamikDurumList == null)
+				// dinamikDurumList = new ArrayList<Tanim>();
+				// else
+				// dinamikDurumList.clear();
+				// if (dinamikSayisalList == null)
+				// dinamikSayisalList = new ArrayList<Tanim>();
+				// else
+				// dinamikSayisalList.clear();
+				// }
 			}
 		} catch (Exception ex) {
 			logger.error(ex);
@@ -4317,7 +4317,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		Personel personel = getInstance();
 		List<String> yoneticiOlmayanRoller = getPersonelYoneticiolmayanRoller(personel);
 		List<Role> allRoles = ortakIslemler.yetkiRolleriGetir(session);
-		if (authenticatedUser.isAdmin() == false) {
+		if (authenticatedUser.isAdmin() == false && authenticatedUser.isSistemYoneticisi() == false) {
 			for (Iterator iterator = allRoles.iterator(); iterator.hasNext();) {
 				Role role = (Role) iterator.next();
 				if (role.getStatus().booleanValue() == false)
