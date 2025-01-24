@@ -8173,9 +8173,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (object.length == 4 && object[3] != null) {
 						Integer durumSecim = (Integer) object[3];
 						durum = durumSecim == 1;
+						secimDurumMap.put(((BigDecimal) object[2]).longValue(), durum);
 					}
-
-					secimDurumMap.put(((BigDecimal) object[2]).longValue(), durum);
 				}
 				if (object[1] != null)
 					tanimIdList.add(((BigDecimal) object[1]).longValue());
@@ -8204,6 +8203,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				sessionFlush();
 
 		}
+		secimDurumMap = null;
 		list = null;
 
 		tanimIdList = null;
