@@ -8164,9 +8164,19 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		pdIdSb = null;
 		sb = null;
 		List<Long> tanimIdList = new ArrayList<Long>();
+		HashMap<Long, Boolean> secimDurumMap = new HashMap<Long, Boolean>();
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			Object[] object = (Object[]) iterator.next();
 			if (object != null) {
+				if (object[2] != null) {
+					boolean durum = false;
+					if (object.length == 4 && object[3] != null) {
+						Integer durumSecim = (Integer) object[3];
+						durum = durumSecim == 1;
+					}
+
+					secimDurumMap.put(((BigDecimal) object[2]).longValue(), durum);
+				}
 				if (object[1] != null)
 					tanimIdList.add(((BigDecimal) object[1]).longValue());
 
@@ -8183,6 +8193,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					Tanim tanim = tanimMap.get(alanId);
 					PersonelDenklestirme personelDenklestirme = map.get(pdId);
 					PersonelDenklestirmeDinamikAlan pdda = new PersonelDenklestirmeDinamikAlan(personelDenklestirme, tanim);
+					if (secimDurumMap.containsKey(personelDenklestirme.getId()))
+						pdda.setIslemDurum(secimDurumMap.get(personelDenklestirme.getId()));
 					pdda.setDurum(Boolean.TRUE);
 					saveOrUpdate(pdda);
 					flush = true;

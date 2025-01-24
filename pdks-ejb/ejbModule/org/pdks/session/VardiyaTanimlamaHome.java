@@ -740,9 +740,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 
 		fillPdksYoneticiDenklestirme(xSession);
 		denklestirmeDevredilenAylar = ortakIslemler.getParameterKeyHasStringValue("denklestirmeDevredilenAylar");
-		Tanim bakiyeSifirla = ortakIslemler.getSQLTanimAktifByTipKodu(Tanim.TIPI_PERSONEL_DINAMIK_DURUM, PersonelDenklestirmeDinamikAlan.TIPI_BAKIYE_SIFIRLA, session);
-		if (bakiyeSifirla != null && bakiyeSifirla.getDurum())
-			bakiyeSifirla = ortakIslemler.getSQLTanimAktifByTipKodu(Tanim.TIPI_PERSONEL_DENKLESTIRME_DINAMIK_DURUM, PersonelDenklestirmeDinamikAlan.TIPI_BAKIYE_SIFIRLA, session);
+		Tanim bakiyeSifirla = ortakIslemler.getSQLTanimAktifByTipKodu(Tanim.TIPI_PERSONEL_DENKLESTIRME_DINAMIK_DURUM, PersonelDenklestirmeDinamikAlan.TIPI_BAKIYE_SIFIRLA, session);
 		bakiyeSifirlaDurum = bakiyeSifirla != null && bakiyeSifirla.getDurum();
 		if (denklestirmeAylar != null && (denklestirmeDevredilenAylar == false || bakiyeSifirlaDurum == false)) {
 			for (DenklestirmeAy dm : denklestirmeAylar) {
