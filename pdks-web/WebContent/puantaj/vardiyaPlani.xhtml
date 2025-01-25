@@ -302,7 +302,7 @@
 												<ui:fragment rendered="#{vardiya.tatil == null}">
 													<th style="width: 20px"><h:outputText value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'd')}" /><bR /> <h:outputText
 															value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'EEE')}" /> <ui:fragment
-															rendered="#{vardiyaGunHome.denklestirmeAyDurum and vardiyaGunHome.planGirisi and authenticatedUser.departman.admin}">
+															rendered="#{vardiyaGunHome.denklestirmeAyDurum and authenticatedUser.departman.admin}">
 															<bR />
 
 															<h:selectBooleanCheckbox value="#{vardiya.checkBoxDurum}" action="#{ortakIslemler.emtpyAjaxFunction()}" status="ajaxStatus" />
@@ -314,7 +314,7 @@
 														style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;"><h:outputText
 															value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'd')}" /><bR /> <h:outputText
 															value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'EEE')}" /> <ui:fragment
-															rendered="#{vardiyaGunHome.denklestirmeAyDurum and vardiyaGunHome.planGirisi and authenticatedUser.departman.admin}">
+															rendered="#{vardiyaGunHome.denklestirmeAyDurum and authenticatedUser.departman.admin}">
 															<bR />
 															<h:selectBooleanCheckbox value="#{vardiya.checkBoxDurum}" action="#{ortakIslemler.emtpyAjaxFunction()}" status="ajaxStatus" />
 														</ui:fragment></td>
@@ -324,7 +324,7 @@
 														style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;"><h:outputText
 															value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'd')}" /><bR /> <h:outputText
 															value="#{authenticatedUser.getTarihFormatla(vardiya.vardiyaDate, 'EEE')}" /> <ui:fragment
-															rendered="#{vardiyaGunHome.denklestirmeAyDurum and vardiyaGunHome.planGirisi and authenticatedUser.departman.admin}">
+															rendered="#{vardiyaGunHome.denklestirmeAyDurum and authenticatedUser.departman.admin}">
 															<bR />
 															<h:selectBooleanCheckbox value="#{vardiya.checkBoxDurum}" action="#{ortakIslemler.emtpyAjaxFunction()}" status="ajaxStatus" />
 														</ui:fragment></td>
@@ -692,13 +692,13 @@
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">#{pdda.alan.aciklama}</ui:define>
 									<h:selectBooleanCheckbox value="#{pdda.islemDurum}" disabled="#{vardiyaGunHome.denklestirmeAyDurum == false}">
-										<a4j:support event="onclick" reRender="digerIslemler" action="#{vardiyaGunHome.personelDenklestirme.setGuncellendi(true)}" />
+										<a4j:support event="onclick" reRender="digerIslemler" action="#{vardiyaGunHome.setPersonelDenklestirmeDinamikAlan(pdda)}" />
 									</h:selectBooleanCheckbox>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" rendered="#{pdda.islemDurum and pdda.izinDurum}">
 									<ui:define name="label">#{pdda.alan.aciklama} (Süre)</ui:define>
 									<h:inputText value="#{pdda.sayisalDeger}">
-										<a4j:support event="onchange" action="#{vardiyaGunHome.personelDenklestirme.setGuncellendi(true)}" />
+										<a4j:support event="onchange" action="#{vardiyaGunHome.setPersonelDenklestirmeDinamikAlan(pdda)}" />
 									</h:inputText>
 								</s:decorate>
 							</c:if>
