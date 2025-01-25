@@ -3341,7 +3341,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					personelDenklestirme.setBakiyeSifirlaDurum(pda.getIslemDurum() != null && pda.getIslemDurum());
 				}
 				if (pda.isGuncellendi()) {
-					if (pda.getId() != null || pda.getIslemDurum()) {
+					if (pda.getId() != null || pda.getIslemDurum() || pda.getSayisalDeger() != null) {
 
 						flush = true;
 					}
