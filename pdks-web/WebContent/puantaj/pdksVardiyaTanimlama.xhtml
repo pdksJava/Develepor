@@ -83,20 +83,20 @@
 									#{authenticatedUser.getYesNo(vardiyaView.guncelleIK)}
 								</rich:column>
 								</c:if>
-								<c:if test="#{authenticatedUser.admin or authenticatedUser.sistemYoneticisi}">
-									<c:if test="#{vardiyaTanimlaHome.bakiyeSifirlaDurum}">
-										<rich:column style="text-align: center;width: 50px;">
-											<f:facet name="header">Bakiye Sıfırla</f:facet>
+
+								<c:if test="#{vardiyaTanimlaHome.bakiyeSifirlaDurum}">
+									<rich:column style="text-align: center;width: 50px;">
+										<f:facet name="header">Bakiye Sıfırla</f:facet>
 									#{authenticatedUser.getYesNo(vardiyaView.bakiyeSifirlaDurum)}
 									</rich:column>
-									</c:if>
-									<c:if test="#{vardiyaTanimlaHome.denklestirmeDevredilenAylar}">
-										<rich:column style="text-align: center;width: 50px;">
-											<f:facet name="header">Denkleştirme Devret</f:facet>
+								</c:if>
+								<c:if test="#{vardiyaTanimlaHome.denklestirmeDevredilenAylar}">
+									<rich:column style="text-align: center;width: 50px;">
+										<f:facet name="header">Denkleştirme Devret</f:facet>
 									#{authenticatedUser.getYesNo(vardiyaView.denklestirmeDevret)}
 									</rich:column>
-									</c:if>
 								</c:if>
+
 								<rich:column style="text-align: center;width: 50px;" rendered="#{authenticatedUser.admin and vardiyaTanimlaHome.denklestirmeKesintiYap}">
 									<f:facet name="header">Denkleştirme Kesinti Yap</f:facet>
 									#{vardiyaView.kesintiAciklama}
@@ -234,28 +234,26 @@
 										<f:selectItems value="#{vardiyaTanimlaHome.kesintiTuruList}" />
 									</h:selectOneMenu>
 								</s:decorate>
-								<c:if test="#{authenticatedUser.admin or authenticatedUser.sistemYoneticisi}">
-									<c:if test="#{vardiyaTanimlaHome.bakiyeSifirlaDurum}">
-										<s:decorate template="/layout/edit.xhtml">
-											<ui:define name="label">Bakiye Sıfırla</ui:define>
-											<h:selectBooleanCheckbox value="#{vardiyaTanimlaHome.denklestirmeAy.bakiyeSifirlaDurum}"
-												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum==false}">
-												<a4j:support event="onclick" reRender="vardiyaTanimlama" ajaxSingle="true" />
-											</h:selectBooleanCheckbox>
-										</s:decorate>
-									</c:if>
-									<c:if test="#{vardiyaTanimlaHome.denklestirmeDevredilenAylar}">
-										<s:decorate template="/layout/edit.xhtml">
-											<ui:define name="label">Denkleştirme Devret</ui:define>
-											<h:selectBooleanCheckbox value="#{vardiyaTanimlaHome.denklestirmeAy.denklestirmeDevret}"
-												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum==false}">
-												<a4j:support event="onclick" reRender="vardiyaTanimlama" ajaxSingle="true" />
-											</h:selectBooleanCheckbox>
-										</s:decorate>
-									</c:if>
+
+								<c:if test="#{vardiyaTanimlaHome.bakiyeSifirlaDurum}">
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">Bakiye Sıfırla</ui:define>
+										<h:selectBooleanCheckbox value="#{vardiyaTanimlaHome.denklestirmeAy.bakiyeSifirlaDurum}"
+											disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum==false}">
+											<a4j:support event="onclick" reRender="vardiyaTanimlama" ajaxSingle="true" />
+										</h:selectBooleanCheckbox>
+									</s:decorate>
 								</c:if>
-
-
+								<c:if test="#{vardiyaTanimlaHome.denklestirmeDevredilenAylar}">
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">Denkleştirme Devret</ui:define>
+										<h:selectBooleanCheckbox value="#{vardiyaTanimlaHome.denklestirmeAy.denklestirmeDevret}"
+											disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum==false}">
+											<a4j:support event="onclick" reRender="vardiyaTanimlama" ajaxSingle="true" />
+										</h:selectBooleanCheckbox>
+									</s:decorate>
+								</c:if>
+ 
 							</h:panelGrid>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Aktif</ui:define>
