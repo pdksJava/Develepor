@@ -111,7 +111,7 @@ public class PersonelERPGuncelleme implements Serializable {
 					if (value != null || tableERPOku) {
 						hataGonder = Boolean.TRUE;
 						hataKonum = "Zaman kontrolu yapılıyor ";
-						Date tarih = zamanlayici.getDbTime(session);
+						Date tarih = ortakIslemler.getBugun();
 						zamanDurum = value != null && PdksUtil.zamanKontrol(PARAMETER_KEY, value, tarih);
 						if (!zamanDurum & tableERPOku) {
 							String parameterUpdateKey = PARAMETER_KEY + "Update";
@@ -158,7 +158,7 @@ public class PersonelERPGuncelleme implements Serializable {
 	public void personelERPGuncellemeCalistir(Session session, Date time, Boolean mailGonder) throws Exception {
 		logger.info("personelERPGuncelleme  basladi " + PdksUtil.getCurrentTimeStampStr());
 		if (time == null)
-			time = zamanlayici.getDbTime(session);
+			time = ortakIslemler.getBugun();
 		ozelKontrol = zamanlayici.getOzelKontrol(session);
 		boolean sapDurum = false;
 		try {

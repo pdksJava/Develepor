@@ -54,7 +54,7 @@
 									</f:facet>
 									<h:outputText value="#{parameter.id}" />
 								</rich:column>
-								<rich:column  filterBy="#{parameter.name}" filterEvent="onkeyup">
+								<rich:column filterBy="#{parameter.name}" filterEvent="onkeyup">
 									<f:facet name="header">
 										<h:outputText value="Adı" />
 									</f:facet>
@@ -144,7 +144,9 @@
 									action="#{ortakIslemler.kapiGirisGuncelle(null,null,parameterHome.session)}" />
 								<a4j:commandButton status="ajaxStatus" value="izinGunceleme Calistir"
 									rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametreIzinERPTableView)}"
-									action="#{izinBakiyeGuncelleme.izinGuncelemeCalistir(true,parameterHome.session)}" />	
+									action="#{izinBakiyeGuncelleme.izinGuncelemeCalistir(true,parameterHome.session)}" />
+								<a4j:commandButton status="ajaxStatus" value="fazlaMesaiUpdate Calistir"
+									action="#{fazlaMesaiUpdate.fazlaMesaiUpdateBul(parameterHome.session)}" />
 							</c:if>
 						</ui:fragment>
 					</a4j:outputPanel>

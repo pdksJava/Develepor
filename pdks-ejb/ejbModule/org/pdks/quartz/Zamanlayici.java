@@ -247,17 +247,7 @@ public class Zamanlayici implements Serializable {
 		this.aciklama = aciklama;
 	}
 
-	/**
-	 * @param session
-	 * @return
-	 * @throws Exception
-	 */
-	public Date getDbTime(Session session) throws Exception {
-		Calendar cal = Calendar.getInstance();
-		Date time = cal.getTime();
 
-		return time;
-	}
 	// http://www.quartz-scheduler.org/docs/tutorials/crontrigger.html
 
 	// Expression Meaning

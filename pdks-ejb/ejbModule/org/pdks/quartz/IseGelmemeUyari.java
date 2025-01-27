@@ -1819,7 +1819,7 @@ public class IseGelmemeUyari implements Serializable {
 					if (value != null) {
 						hataGonder = Boolean.TRUE;
 						hataKonum = "Zaman kontrolu yapılıyor ";
-						Date time = zamanlayici.getDbTime(session);
+						Date time = ortakIslemler.getBugun();
 						boolean zamanDurum = PdksUtil.getTestDurum() == false && PdksUtil.zamanKontrol(PARAMETER_KEY, value, time) && ortakIslemler.getGuncellemeDurum(PdksLog.TABLE_NAME, session);
 						// if (!zamanDurum)
 						// zamanDurum = PdksUtil.getTestDurum();

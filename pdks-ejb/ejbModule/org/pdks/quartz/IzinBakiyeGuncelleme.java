@@ -108,7 +108,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		try {
 			if (session == null)
 				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-			Date time = zamanlayici.getDbTime(session);
+			Date time = ortakIslemler.getBugun();
 			hataGonder = Boolean.TRUE;
 			hataKonum = "Paramatre okunuyor ";
 			Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_KEY);
