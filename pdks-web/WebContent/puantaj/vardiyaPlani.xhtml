@@ -662,7 +662,7 @@
 							<c:if
 								test="#{authenticatedUser.IK and (vardiyaGunHome.personelDenklestirme.fazlaMesaiIzinKullan or  vardiyaGunHome.personelDenklestirme.personel.fazlaMesaiIzinKullan)}">
 								<s:decorate template="/layout/edit.xhtml">
-									<ui:define name="label">Fazla Mesai İzin Kullandır</ui:define>
+									<ui:define name="label">#{ortakIslemler.fmIzinKullanAciklama()}</ui:define>
 									<h:selectBooleanCheckbox value="#{vardiyaGunHome.personelDenklestirme.fazlaMesaiIzinKullan}"
 										disabled="#{vardiyaGunHome.denklestirmeAyDurum == false}">
 										<a4j:support event="onclick" action="#{vardiyaGunHome.personelDenklestirme.setGuncellendi(true)}" ajaxSingle="true" reRender="secimler" />
