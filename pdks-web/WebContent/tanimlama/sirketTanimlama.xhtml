@@ -261,8 +261,8 @@
 									<ui:define name="label">Fazla Mesai Öde</ui:define>
 									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.fazlaMesaiOde}" />
 								</s:decorate>
-								<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('fazlaMesaiIzinKullan') == '1'}">
-									<ui:define name="label">Fazla Mesai İzin Kullandır</ui:define>
+								<s:decorate template="/layout/edit.xhtml" rendered="#{sirketHome.seciliSirket.fazlaMesaiIzinKullan or ortakIslemler.getParameterKey('fazlaMesaiIzinKullan') == '1'}">
+									<ui:define name="label">#{ortakIslemler.fmIzinKullanAciklama()}</ui:define>
 									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.fazlaMesaiIzinKullan}" />
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml"
