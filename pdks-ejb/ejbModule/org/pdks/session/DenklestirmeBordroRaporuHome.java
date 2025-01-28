@@ -858,6 +858,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								boolean aksamSaatBaslik = PdksUtil.hasStringValue(getBaslikAciklama(COL_AKSAM_SAAT_MESAI));
 								boolean eksikCalismaBaslik = PdksUtil.hasStringValue(getBaslikAciklama(COL_EKSIK_CALISMA));
 								boolean devamlikDurumBaslik = PdksUtil.hasStringValue(getBaslikAciklama(COL_DEVAMLILIK_PRIMI));
+								Date bugun = ortakIslemler.getBugun();
 								for (AylikPuantaj ap : personelDenklestirmeList) {
 									PersonelDenklestirme pd = ap.getPersonelDenklestirme();
 									donemPerList.add(pd.getPdksPersonel());
@@ -866,6 +867,21 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 										personelDenklestirmeBordro = new PersonelDenklestirmeBordro();
 										personelDenklestirmeBordro.setDetayMap(new HashMap<BordroDetayTipi, PersonelDenklestirmeBordroDetay>());
 										ap.setDenklestirmeBordro(personelDenklestirmeBordro);
+									}
+									if (pd.isOnaylandi() && pd.getDurum().booleanValue() == false && ap.getVardiyalar() != null) {
+										List<VardiyaGun> vardiyalar = ap.getVardiyalar();
+										int adet = vardiyalar.size();
+										for (Iterator iterator = vardiyalar.iterator(); iterator.hasNext();) {
+											VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
+											if (vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().isCalisma()) {
+												Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
+												if (adet > 1 && islemVardiya.getVardiyaTelorans2BitZaman().after(bugun))
+													iterator.remove();
+											}
+ 											if (vardiyalar.isEmpty())
+												ap.setVardiyalar(null);
+										}
+
 									}
 									if (saatlikCalismaVar) {
 										if (!normalGunSaatDurum)
