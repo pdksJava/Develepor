@@ -14850,7 +14850,7 @@ public class OrtakIslemler implements Serializable {
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(kartNo);
 				}
 				Personel yonetici1 = personel.getPdksYonetici(), yonetici2 = personel.getYonetici2();
-				boolean yonetici1Durum = yonetici1 != null && yonetici1.isCalisiyor(), yonetici2Durum = yonetici2 != null && yonetici2.isCalisiyor();
+				boolean yonetici1Durum = yonetici1 != null && yonetici1.isCalisiyor(), yonetici2Durum = yonetici2 == null || yonetici2.isCalisiyor();
 
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(yonetici1 != null ? yonetici1.getSicilNo() : "");
 				Cell yonetici1Cell = ExcelUtil.getCell(sheet, row, col++, yonetici1Durum ? style : styleRed);
@@ -14860,7 +14860,7 @@ public class OrtakIslemler implements Serializable {
 
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(yonetici2 != null ? yonetici2.getSicilNo() : "");
 				Cell yonetici2Cell = ExcelUtil.getCell(sheet, row, col++, yonetici2Durum ? style : styleRed);
-				yonetici2Cell.setCellValue(yonetici2 != null ? yonetici2.getAdSoyad() : "Tanımsız");
+				yonetici2Cell.setCellValue(yonetici2 != null ? yonetici2.getAdSoyad() : "");
 				if (yonetici2Durum == false && yonetici2 != null)
 					ExcelUtil.setCellComment(yonetici2Cell, anchor, helper, drawing, yonetici2.getPdksSicilNo() + " " + yonetici2.getAdSoyad() + "\nİşten ayrılma tarihi : " + authenticatedUser.dateFormatla(yonetici2.getSskCikisTarihi()));
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getYonetici2() != null ? personel.getYonetici2().getAdSoyad() : "");
