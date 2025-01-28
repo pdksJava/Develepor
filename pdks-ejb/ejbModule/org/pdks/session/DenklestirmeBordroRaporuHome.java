@@ -312,7 +312,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		DepartmanDenklestirmeDonemi denklestirmeDonemi = (DepartmanDenklestirmeDonemi) paramMap.get("denklestirmeDonemi");
 
 		AylikPuantaj aylikPuantaj = (AylikPuantaj) paramMap.get("aylikPuantaj");
-		User loginUser=(User) paramMap.get("loginUser");
+		User loginUser = (User) paramMap.get("loginUser");
 		Sirket seciliSirket = (Sirket) paramMap.get("seciliSirket");
 		Long seciliTesisId = paramMap.containsKey("seciliTesisId") ? (Long) paramMap.get("seciliTesisId") : null;
 		List<SelectItem> bolumList = fazlaMesaiOrtakIslemler.getFazlaMesaiBolumList(seciliSirket, seciliTesisId != null ? String.valueOf(seciliTesisId) : "", aylikPuantaj, loginUser.isAdmin() == false, session);
@@ -326,7 +326,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		}
 		String baslik = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " " + (seciliSirket.getSirketGrup() == null ? seciliSirket.getAd() : seciliSirket.getSirketGrup().getAciklama()) + (tesis != null ? " " + tesis.getAciklama() : "");
 		boolean hataYok = true;
-		 
 
 		AramaSecenekleri as = new AramaSecenekleri();
 		if (loginUser.isAdmin()) {
@@ -772,6 +771,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		haftaTatilSaatDurum = Boolean.FALSE;
 		resmiTatilSaatDurum = Boolean.FALSE;
 		izinSaatDurum = Boolean.FALSE;
+		if (sadeceHataliGetir)
+			eksikCalisanVeriGetir = sadeceHataliGetir;
 
 		ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
 		personelDenklestirmeList.clear();
