@@ -27,6 +27,7 @@ import org.pdks.entity.AylikPuantaj;
 import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.Parameter;
 import org.pdks.entity.Sirket;
+import org.pdks.security.action.PdksApplicationContext;
 import org.pdks.session.DenklestirmeBordroRaporuHome;
 import org.pdks.session.FazlaMesaiOrtakIslemler;
 import org.pdks.session.OrtakIslemler;
@@ -59,7 +60,7 @@ public class FazlaMesaiUpdate implements Serializable {
 	EntityManager entityManager;
 	@In(required = false, create = true)
 	FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemler;
- 	@In(required = false, create = true)
+	@In(required = false, create = true)
 	DenklestirmeBordroRaporuHome denklestirmeBordroRaporuHome;
 
 	private static boolean calisiyor = Boolean.FALSE;
@@ -137,6 +138,15 @@ public class FazlaMesaiUpdate implements Serializable {
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<DenklestirmeAy> list = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
+		try {
+			if (fazlaMesaiOrtakIslemler == null)
+				fazlaMesaiOrtakIslemler = (FazlaMesaiOrtakIslemler) PdksApplicationContext.getBean("fazlaMesaiOrtakIslemler");
+			if (denklestirmeBordroRaporuHome == null)
+				denklestirmeBordroRaporuHome = (DenklestirmeBordroRaporuHome) PdksApplicationContext.getBean("denklestirmeBordroRaporuHome");
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
 		if (fazlaMesaiOrtakIslemler != null && denklestirmeBordroRaporuHome != null) {
 			denklestirmeBordroRaporuHome.setSession(session);
 			List<Long> grupSirketList = new ArrayList<Long>();
