@@ -14660,11 +14660,19 @@ public class OrtakIslemler implements Serializable {
 				izinERPUpdate = false;
 		}
 		Sheet sheet = ExcelUtil.createSheet(wb, "Personel Listesi", false);
+		Drawing drawing = sheet.createDrawingPatriarch();
+		CreationHelper helper = wb.getCreationHelper();
+		ClientAnchor anchor = helper.createClientAnchor();
 		CellStyle header = ExcelUtil.getStyleHeader(wb);
 		CellStyle styleOdd = ExcelUtil.getStyleOdd(null, wb);
+		CellStyle styleOddRed = ExcelUtil.getStyleOdd(null, wb);
+		ExcelUtil.setFontColor(styleOddRed, Color.RED);
 		CellStyle styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
 		CellStyle styleOddDate = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATE, wb);
 		CellStyle styleEven = ExcelUtil.getStyleEven(null, wb);
+		CellStyle styleEvenRed = ExcelUtil.getStyleOdd(null, wb);
+		ExcelUtil.setFontColor(styleEvenRed, Color.RED);
+
 		CellStyle styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
 		CellStyle styleEvenDate = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATE, wb);
 		List<Tanim> dinamikAciklamaList = getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, session);
@@ -14803,15 +14811,17 @@ public class OrtakIslemler implements Serializable {
 			Sirket sirket = personel.getSirket();
 			if (!sirket.getPdks())
 				continue;
-			CellStyle style = null, styleCenter = null, cellStyleDate = null;
+			CellStyle style = null, styleCenter = null, cellStyleDate = null, styleRed;
 			if (renk) {
 				cellStyleDate = styleOddDate;
 				style = styleOdd;
 				styleCenter = styleOddCenter;
+				styleRed = styleOddRed;
 			} else {
 				cellStyleDate = styleEvenDate;
 				style = styleEven;
 				styleCenter = styleEvenCenter;
+				styleRed = styleEvenRed;
 			}
 			renk = !renk;
 			PersonelKGS personelKGS = personel.getPersonelKGS();
@@ -14839,10 +14849,22 @@ public class OrtakIslemler implements Serializable {
 						kartNo = personelKGS.getKartNo();
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(kartNo);
 				}
-				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(personel.getPdksYonetici() != null ? personel.getPdksYonetici().getSicilNo() : "");
-				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getPdksYonetici() != null ? personel.getPdksYonetici().getAdSoyad() : "");
-				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(personel.getYonetici2() != null ? personel.getYonetici2().getSicilNo() : "");
+				Personel yonetici1 = personel.getPdksYonetici(), yonetici2 = personel.getYonetici2();
+				boolean yonetici1Durum = yonetici1 != null && yonetici1.isCalisiyor(), yonetici2Durum = yonetici2 != null && yonetici2.isCalisiyor();
+
+				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(yonetici1 != null ? yonetici1.getSicilNo() : "");
+				Cell yonetici1Cell = ExcelUtil.getCell(sheet, row, col++, yonetici1Durum ? style : styleRed);
+				yonetici1Cell.setCellValue(yonetici1 != null ? yonetici1.getAdSoyad() : "Tanımsız");
+				if (yonetici1Durum == false && yonetici1 != null)
+					ExcelUtil.setCellComment(yonetici1Cell, anchor, helper, drawing, yonetici1.getPdksSicilNo() + " " + yonetici1.getAdSoyad() + "\nİşten ayrılma tarihi : " + authenticatedUser.dateFormatla(yonetici1.getSskCikisTarihi()));
+
+				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(yonetici2 != null ? yonetici2.getSicilNo() : "");
+				Cell yonetici2Cell = ExcelUtil.getCell(sheet, row, col++, yonetici2Durum ? style : styleRed);
+				yonetici2Cell.setCellValue(yonetici2 != null ? yonetici2.getAdSoyad() : "Tanımsız");
+				if (yonetici2Durum == false && yonetici2 != null)
+					ExcelUtil.setCellComment(yonetici2Cell, anchor, helper, drawing, yonetici2.getPdksSicilNo() + " " + yonetici2.getAdSoyad() + "\nİşten ayrılma tarihi : " + authenticatedUser.dateFormatla(yonetici2.getSskCikisTarihi()));
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getYonetici2() != null ? personel.getYonetici2().getAdSoyad() : "");
+
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getSablon() != null ? personel.getSablon().getAdi() : "");
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getCalismaModeli() != null ? personel.getCalismaModeli().getAciklama() : "");
 				if (personelTipiGoster)
