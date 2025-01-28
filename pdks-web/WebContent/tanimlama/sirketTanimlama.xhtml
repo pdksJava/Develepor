@@ -132,7 +132,7 @@
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.sayiFormatliGoster(sirket.isAramaGunlukSaat)}" />
 						</rich:column>
-						
+
 						<rich:column rendered="#{ortakIslemler.tesisDurumu and authenticatedUser.admin}">
 							<f:facet name="header">
 								<h:outputText value="#{ortakIslemler.tesisAciklama()} Durumu" />
@@ -261,7 +261,8 @@
 									<ui:define name="label">Fazla Mesai Öde</ui:define>
 									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.fazlaMesaiOde}" />
 								</s:decorate>
-								<s:decorate template="/layout/edit.xhtml" rendered="#{sirketHome.seciliSirket.fazlaMesaiIzinKullan or ortakIslemler.getParameterKey('fazlaMesaiIzinKullan') == '1'}">
+								<s:decorate template="/layout/edit.xhtml"
+									rendered="#{sirketHome.seciliSirket.fazlaMesaiIzinKullan or ortakIslemler.getParameterKey('fazlaMesaiIzinKullan') == '1'}">
 									<ui:define name="label">#{ortakIslemler.fmIzinKullanAciklama()}</ui:define>
 									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.fazlaMesaiIzinKullan}" />
 								</s:decorate>
@@ -331,13 +332,46 @@
 										<f:facet name="header">
 											<h:outputText value="#{ortakIslemler.yoneticiAciklama()}" />
 										</f:facet>
-										<h:outputText value="#{personelView.pdksPersonel.pdksYonetici.adSoyad}" title="#{personelView.pdksPersonel.asilYonetici1.adSoyad}" />
+										<ui:fragment rendered="#{personelView.pdksPersonel.pdksYonetici!=null}">
+											<DIV title="#{personelView.pdksPersonel.asilYonetici1.adSoyad}">
+												<ui:fragment rendered="#{personelView.pdksPersonel.pdksYonetici.calisiyor}">
+													<h:outputText value="#{personelView.pdksPersonel.pdksYonetici.adSoyad}" />
+												</ui:fragment>
+												<ui:fragment rendered="#{personelView.pdksPersonel.pdksYonetici.calisiyor==false}">
+													<span id="yonetici1#{personelView.pdksPersonel.id}" style="color: red"><h:outputText
+															value="#{personelView.pdksPersonel.pdksYonetici.adSoyad}" /></span>
+
+													<rich:toolTip for="yonetici1#{personelView.pdksPersonel.id}">
+										#{personelView.pdksPersonel.pdksYonetici.pdksSicilNo} - #{personelView.pdksPersonel.pdksYonetici.adSoyad}<br></br>
+
+														<b>İşten Ayrılma Tarihi : </b>
+											 #{authenticatedUser.dateFormatla(personelView.pdksPersonel.pdksYonetici.istenAyrilisTarihi)} 
+										</rich:toolTip>
+												</ui:fragment>
+											</DIV>
+										</ui:fragment>
 									</rich:column>
 									<rich:column>
 										<f:facet name="header">
 											<h:outputText value="#{ortakIslemler.yonetici2Aciklama()}" />
 										</f:facet>
+										<ui:fragment rendered="#{personelView.pdksPersonel.yonetici2!=null}">
+									<ui:fragment rendered="#{personelView.pdksPersonel.yonetici2.calisiyor}">
 										<h:outputText value="#{personelView.pdksPersonel.yonetici2.adSoyad}" />
+									</ui:fragment>
+									<ui:fragment rendered="#{personelView.pdksPersonel.yonetici2.calisiyor==false}">
+										<span id="yonetici2#{personelView.pdksPersonel.id}" style="color: red"><h:outputText
+												value="#{personelView.pdksPersonel.yonetici2.adSoyad}" /></span>
+
+										<rich:toolTip for="yonetici2#{personelView.pdksPersonel.id}">
+										#{personelView.pdksPersonel.yonetici2.pdksSicilNo} - #{personelView.pdksPersonel.yonetici2.adSoyad}<br></br>
+
+											<b>İşten Ayrılma Tarihi : </b>
+											 #{authenticatedUser.dateFormatla(personelView.pdksPersonel.yonetici2.istenAyrilisTarihi)} 
+										</rich:toolTip>
+									</ui:fragment>
+
+								</ui:fragment>
 									</rich:column>
 									<rich:column>
 										<f:facet name="header">
