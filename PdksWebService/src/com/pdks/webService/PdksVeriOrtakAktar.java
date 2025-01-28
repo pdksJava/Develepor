@@ -3564,7 +3564,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 							personel.setMailTakip(Boolean.TRUE);
 						personel.setPdks(Boolean.TRUE);
 						personel.setPersonelKGS(personelKGS);
-						personel.setFazlaMesaiIzinKullan(Boolean.FALSE);
 						personelPDKSMap.put(personelNo, personel);
 
 					} else {
@@ -3621,6 +3620,13 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 					personel.setSirket(sirket);
 					if (personel.getId() == null) {
+						boolean fazlaMesaiIzinKullan = false;
+						if (mailMap.containsKey("fazlaMesaiIzinKullan")) {
+							String str = (String) mailMap.get("fazlaMesaiIzinKullan");
+							if (PdksUtil.hasStringValue(str) && sirket != null && sirket.getFazlaMesaiIzinKullan() != null)
+								fazlaMesaiIzinKullan = str.equals("1") && sirket.getFazlaMesaiIzinKullan();
+						}
+						personel.setFazlaMesaiIzinKullan(fazlaMesaiIzinKullan);
 						if (personel.getCalismaModeli() == null) {
 							CalismaModeli cm = null;
 							if (sirket != null)
