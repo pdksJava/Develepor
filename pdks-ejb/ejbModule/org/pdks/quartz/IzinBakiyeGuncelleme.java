@@ -136,11 +136,12 @@ public class IzinBakiyeGuncelleme implements Serializable {
 					hataKonum = "İzin durum kontrolu yapılıyor ";
 					if (tableERPOku && sunucuDurum) {
 						String uygulamaBordro = ortakIslemler.getParameterKey("uygulamaBordro");
-						logger.info(uygulamaBordro + " izin bilgileri güncelleniyor in " + PdksUtil.getCurrentTimeStampStr());
-						try {
-							if (manuel == false)
-								ortakIslemler.izinERPDBGuncelle(guncellemeDBDurum, null, session);
-							logger.info(uygulamaBordro + " izin bilgileri güncelleniyor out " + PdksUtil.getCurrentTimeStampStr());
+ 						try {
+							if (manuel == false) {
+								logger.info(uygulamaBordro + " izin bilgileri güncelleniyor in " + PdksUtil.getCurrentTimeStampStr());
+ 								ortakIslemler.izinERPDBGuncelle(guncellemeDBDurum, null, session);
+								logger.info(uygulamaBordro + " izin bilgileri güncelleniyor out " + PdksUtil.getCurrentTimeStampStr());
+							}
 						} catch (Exception e) {
 						}
 
