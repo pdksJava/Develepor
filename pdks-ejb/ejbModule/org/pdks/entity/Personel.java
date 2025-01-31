@@ -97,7 +97,7 @@ public class Personel extends BaseObject {
 	private Date izinHakEdisTarihi, iseBaslamaTarihi, grubaGirisTarihi, istenAyrilisTarihi = PdksUtil.getSonSistemTarih(), sskCikisTarihi, dogumTarihi;
 	private VardiyaSablonu workSablon;
 	private PersonelIzin personelIzin;
- 
+
 	private PersonelView personelView;
 	private MailGrubu mailGrubuCC, mailGrubuBCC, hareketMailGrubu;
 	private String emailCC = "", emailBCC = "", hareketMail = "";
@@ -872,9 +872,9 @@ public class Personel extends BaseObject {
 	@Transient
 	public String getPersonelExtraAciklama() {
 		StringBuffer sb = new StringBuffer();
-		 
+
 		String str = sb.toString();
-	 
+
 		return str;
 	}
 
@@ -1158,12 +1158,13 @@ public class Personel extends BaseObject {
 	@Transient
 	public double getIsAramaGunlukSaat() {
 		double isAramaIzniSaat = 0.0d;
-		if (this.getSirket().getIsAramaGunlukSaat() != null && this.getSirket().getIsAramaGunlukSaat().doubleValue() > 0.0d)
+
+		if (this.getSirket() != null && this.getSirket().getIsAramaGunlukSaat() != null && this.getSirket().getIsAramaGunlukSaat().doubleValue() > 0.0d)
 			isAramaIzniSaat = this.getSirket().getIsAramaGunlukSaat().doubleValue();
+
 		return isAramaIzniSaat;
 	}
 
-	 
 	public void setTmpYonetici(Personel tmpYonetici) {
 		this.tmpYonetici = tmpYonetici;
 	}
