@@ -98,7 +98,7 @@ public class IseGelmemeUyari implements Serializable {
 	private String hataKonum, personelNoAciklama, tesisAciklama, bolumAciklama, altBolumAciklama, yoneticiAciklama, calismaModeliBaslikAciklama;
 
 	private boolean statuGoster = Boolean.FALSE, hariciPersonelVar, yoneticiTanimsiz = Boolean.FALSE, yoneticiMailGonderme = Boolean.FALSE, izinVar = Boolean.FALSE, tesisVar = Boolean.FALSE, hataliHareketVar = Boolean.FALSE;
-	private boolean izinDahil = true;
+	private boolean izinDahil = false;
 	private Tanim ekSaha1, ekSaha2, ekSaha3, ekSaha4;
 	private CellStyle header = null;
 	private CellStyle styleOdd = null;
@@ -537,6 +537,9 @@ public class IseGelmemeUyari implements Serializable {
 									}
 									hareketler = null;
 								}
+								if (ekle && izinDahil == false)
+									ekle = pdksVardiyaGun.getIzin() == null || pdksVardiyaGun.getHareketler() != null;
+
 								if (yoneticisi != null && ekle) {
 									if (!calisma)
 										logger.debug(pdksVardiyaGun.getVardiyaKeyStr() + " " + pdksPersonel.getAdSoyad());
@@ -1142,10 +1145,6 @@ public class IseGelmemeUyari implements Serializable {
 			if (vardiyaGunList != null && !vardiyaGunList.isEmpty()) {
 
 				for (VardiyaGun vardiyaGun : vardiyaGunList) {
-					if (vardiyaGun.getIzin() != null) {
-						if (izinDahil == false)
-							continue;
-					}
 
 					Personel personel = vardiyaGun.getPersonel();
 					if (map1 != null) {
@@ -1476,10 +1475,9 @@ public class IseGelmemeUyari implements Serializable {
 					izinList = null;
 					mesajGonder = true;
 				}
-			} else {
-				if (hareketExcelEkle)
-					sb.append("<p><SPAN style='color:blue;'> Personel giriş çıkışlarında problem yoktur.</SPAN></p>");
-			}
+			} else if (hareketExcelEkle)
+				sb.append("<p><SPAN style='color:blue;'> Personel giriş çıkışlarında problem yoktur.</SPAN></p>");
+
 			if (hareketExcelEkle && !yoneticiPerIdList.isEmpty()) {
 				TreeMap<String, Liste> listeMap = new TreeMap<String, Liste>();
 				List<Long> sirketIdList = new ArrayList<Long>(), tesisIdList = new ArrayList<Long>(), altBolumIdList = new ArrayList<Long>(), calismaModeliIdList = new ArrayList<Long>();
