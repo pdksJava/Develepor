@@ -98,7 +98,7 @@ public class IseGelmemeUyari implements Serializable {
 	private String hataKonum, personelNoAciklama, tesisAciklama, bolumAciklama, altBolumAciklama, yoneticiAciklama, calismaModeliBaslikAciklama;
 
 	private boolean statuGoster = Boolean.FALSE, hariciPersonelVar, yoneticiTanimsiz = Boolean.FALSE, yoneticiMailGonderme = Boolean.FALSE, izinVar = Boolean.FALSE, tesisVar = Boolean.FALSE, hataliHareketVar = Boolean.FALSE;
-
+	private boolean izinDahil = true;
 	private Tanim ekSaha1, ekSaha2, ekSaha3, ekSaha4;
 	private CellStyle header = null;
 	private CellStyle styleOdd = null;
@@ -1142,6 +1142,11 @@ public class IseGelmemeUyari implements Serializable {
 			if (vardiyaGunList != null && !vardiyaGunList.isEmpty()) {
 
 				for (VardiyaGun vardiyaGun : vardiyaGunList) {
+					if (vardiyaGun.getIzin() != null) {
+						if (izinDahil == false)
+							continue;
+					}
+
 					Personel personel = vardiyaGun.getPersonel();
 					if (map1 != null) {
 						String vardiyaKey = user.getId() + "_" + vardiyaGun.getVardiyaKeyStr();
@@ -1810,10 +1815,16 @@ public class IseGelmemeUyari implements Serializable {
 				boolean zamanTamam = PdksUtil.zamanKontrolDurum();
 				// zamanTamam = true;
 				if (zamanTamam && PdksUtil.getCanliSunucuDurum()) {
+					izinDahil = true;
 					// logger.error("Ise gelme durumu " + PdksUtil.getCurrentTimeStampStr());
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 					hataKonum = "Paramatre okunuyor ";
 					Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_KEY);
+					if (parameter == null) {
+						parameter = ortakIslemler.getParameter(session, PARAMETER_KEY + "IzinHaric");
+						izinDahil = parameter == null;
+					}
+
 					String value = (parameter != null) ? parameter.getValue() : null;
 					hataKonum = "Paramatre okundu ";
 					if (value != null) {
