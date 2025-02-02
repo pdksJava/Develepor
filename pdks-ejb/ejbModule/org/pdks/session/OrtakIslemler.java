@@ -14850,12 +14850,12 @@ public class OrtakIslemler implements Serializable {
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(kartNo);
 				}
 				Personel yonetici1 = personel.getPdksYonetici(), yonetici2 = personel.getYonetici2();
-				boolean yonetici1Durum = yonetici1 != null && yonetici1.isCalisiyor(), yonetici2Durum = yonetici2 == null || yonetici2.isCalisiyor();
+				boolean yonetici1Durum = personel.isCalisiyor() == false || (yonetici1 != null && yonetici1.isCalisiyor()), yonetici2Durum = yonetici2 == null || yonetici2.isCalisiyor();
 
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(yonetici1 != null ? yonetici1.getSicilNo() : "");
 				Cell yonetici1Cell = ExcelUtil.getCell(sheet, row, col++, yonetici1Durum ? style : styleRed);
 				yonetici1Cell.setCellValue(yonetici1 != null ? yonetici1.getAdSoyad() : "Tanımsız");
-				if (yonetici1Durum == false && yonetici1 != null)
+				if (personel.isCalisiyor() && yonetici1Durum == false && yonetici1 != null)
 					ExcelUtil.setCellComment(yonetici1Cell, anchor, helper, drawing, yonetici1.getPdksSicilNo() + " " + yonetici1.getAdSoyad() + "\nİşten ayrılma tarihi : " + authenticatedUser.dateFormatla(yonetici1.getSskCikisTarihi()));
 
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(yonetici2 != null ? yonetici2.getSicilNo() : "");
@@ -20469,6 +20469,47 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
+	public List<User> getPasifMailUser(String mailAdress, Session session) {
+		List<User> userList = null;
+		if (mailAdress != null && mailAdress.indexOf("@") > 1) {
+			Calendar cal = Calendar.getInstance();
+			List<String> mailList = PdksUtil.getListByString(mailAdress, null);
+			if (mailList.size() > 1) {
+				TreeMap<String, String> map1 = new TreeMap<String, String>();
+				for (String string : mailList) {
+					map1.put(string, string);
+				}
+				mailList = new ArrayList<String>(map1.values());
+				map1 = null;
+			}
+			Date istenAyrilmaTarihi = PdksUtil.getDate(tariheGunEkleCikar(cal, new Date(), -14));
+			String fieldName = "e";
+			HashMap fields = new HashMap();
+			StringBuffer sb = new StringBuffer();
+			sb.append("select distinct U.* from " + User.TABLE_NAME + " U " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " and (P." + Personel.COLUMN_NAME_DURUM + " = 0 ");
+			sb.append(" or U." + User.COLUMN_NAME_DURUM + " = 0 or P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " < :t) ");
+			sb.append(" where U." + User.COLUMN_NAME_EMAIL + " :" + fieldName);
+			sb.append(" order by  U." + User.COLUMN_NAME_EMAIL);
+			fields.put(fieldName, mailList);
+			fields.put("t", istenAyrilmaTarihi);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			// userList = pdksEntityController.getObjectBySQLList(sb, fields, User.class);
+			userList = pdksEntityController.getSQLParamList(mailList, sb, fieldName, fields, User.class, session);
+			sb = null;
+		}
+		if (userList == null)
+			userList = new ArrayList<User>();
+		return userList;
+
+	}
+
+	/**
+	 * @param mailAdress
+	 * @param session
+	 * @return
+	 */
 	public List<User> getAktifMailUser(String mailAdress, Session session) {
 		List<User> userList = null;
 		if (mailAdress != null && mailAdress.indexOf("@") > 1) {
@@ -20487,9 +20528,9 @@ public class OrtakIslemler implements Serializable {
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
 			sb.append("select distinct U.* from " + User.TABLE_NAME + " U " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " and (P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
-			sb.append(" or U." + User.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :t) ");
-			sb.append(" where U." + User.COLUMN_NAME_EMAIL + " :" + fieldName);
+			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL);
+			sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :t");
+			sb.append(" where U." + User.COLUMN_NAME_EMAIL + " :" + fieldName + " and U." + User.COLUMN_NAME_DURUM + " = 1");
 			sb.append(" order by  U." + User.COLUMN_NAME_EMAIL);
 			fields.put(fieldName, mailList);
 			fields.put("t", istenAyrilmaTarihi);

@@ -439,6 +439,13 @@ public class IseGelmemeUyari implements Serializable {
 						}
 
 					}
+					if (izinDahil == false) {
+						for (Iterator iterator2 = vardiyaList.iterator(); iterator2.hasNext();) {
+							VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator2.next();
+							if (pdksVardiyaGun.getIzin() != null && (pdksVardiyaGun.getHareketler() == null || pdksVardiyaGun.getHareketler().isEmpty()))
+								iterator2.remove();
+						}
+					}
 					if (!vardiyaList.isEmpty()) {
 						TreeMap<String, Object> dataMap = new TreeMap<String, Object>();
 						try {
@@ -452,10 +459,6 @@ public class IseGelmemeUyari implements Serializable {
 							dataMap.remove("hareketPersonelMap");
 						TreeMap<String, List<VardiyaGun>> hareketHataliMap = new TreeMap<String, List<VardiyaGun>>();
 						TreeMap<String, List<String>> mailPersonelMap = (TreeMap<String, List<String>>) dataMap.get("mailPersonelMap");
-						map.clear();
-						map.put(PdksEntityController.MAP_KEY_SESSION, session);
-						map.put("name", "ikUyariCC");
-						map.put("active", Boolean.TRUE);
 
 						map.clear();
 						map.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -537,9 +540,6 @@ public class IseGelmemeUyari implements Serializable {
 									}
 									hareketler = null;
 								}
-								if (ekle && izinDahil == false)
-									ekle = pdksVardiyaGun.getIzin() == null || pdksVardiyaGun.getHareketler() != null;
-
 								if (yoneticisi != null && ekle) {
 									if (!calisma)
 										logger.debug(pdksVardiyaGun.getVardiyaKeyStr() + " " + pdksPersonel.getAdSoyad());
@@ -837,19 +837,19 @@ public class IseGelmemeUyari implements Serializable {
 										break;
 									}
 								}
-								if (vList.isEmpty())
-									hareketHataliMap.put(sicilNo, vList);
-
-								if (ekle)
+								if (ekle) {
+									if (vList.isEmpty())
+										hareketHataliMap.put(sicilNo, vList);
 									vList.add(pdksVardiyaGun);
-								for (Iterator iterator2 = yoneticiList.iterator(); iterator2.hasNext();) {
-									User user2 = (User) iterator2.next();
-									String mailIK = user2.getEmail();
-									List<String> list = mailPersonelMap.containsKey(mailIK) ? mailPersonelMap.get(mailIK) : new ArrayList<String>();
-									if (list.isEmpty())
-										mailPersonelMap.put(mailIK, list);
-									if (!list.contains(sicilNo))
-										list.add(sicilNo);
+									for (Iterator iterator2 = yoneticiList.iterator(); iterator2.hasNext();) {
+										User user2 = (User) iterator2.next();
+										String mailIK = user2.getEmail();
+										List<String> list = mailPersonelMap.containsKey(mailIK) ? mailPersonelMap.get(mailIK) : new ArrayList<String>();
+										if (list.isEmpty())
+											mailPersonelMap.put(mailIK, list);
+										if (!list.contains(sicilNo))
+											list.add(sicilNo);
+									}
 								}
 							}
 
@@ -1869,7 +1869,6 @@ public class IseGelmemeUyari implements Serializable {
 	 */
 	public String iseGelmemeDurumuCalistir(Date tarih, Session session, User islemYapan, boolean manuel, boolean mailGonder) throws Exception {
 		uyariNot = null;
-
 		if (userYoneticiList == null)
 			userYoneticiList = new ArrayList<User>();
 		else
