@@ -1156,6 +1156,12 @@ public class Personel extends BaseObject {
 	}
 
 	@Transient
+	public boolean isGenelMudur() {
+		boolean gm = gorevTipi != null && gorevTipi.getKodu() != null && gorevTipi.getKodu().equalsIgnoreCase(Tanim.GOREV_TIPI_GENEL_MUDUR);
+		return gm;
+	}
+
+	@Transient
 	public double getIsAramaGunlukSaat() {
 		double isAramaIzniSaat = 0.0d;
 

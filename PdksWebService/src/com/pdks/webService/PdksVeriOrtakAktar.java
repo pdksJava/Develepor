@@ -3273,6 +3273,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		for (String personelNo : personelList) {
 			kidemHataList.clear();
 			boolean calisiyor = false;
+			Personel personel = null;
 			if (personelERPMap.containsKey(personelNo)) {
 				PersonelERP personelERP = personelERPMap.get(personelNo);
 				LinkedHashMap<String, Liste> personelListeMap = new LinkedHashMap<String, Liste>();
@@ -3515,7 +3516,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 				if (personelERP.getHataList().isEmpty() && personelKGSMap.containsKey(personelNo)) {
 					PersonelKGS personelKGS = personelKGSMap.get(personelNo);
-					Personel personel = personelPDKSMap.containsKey(personelNo) ? personelPDKSMap.get(personelNo) : null;
+					personel = personelPDKSMap.containsKey(personelNo) ? personelPDKSMap.get(personelNo) : null;
 					if (personel != null) {
 						personel.setPersonelTipi(personelTipi);
 						sablonList.clear();
@@ -3821,6 +3822,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 					boolean yoneticiKoduVar = PdksUtil.hasStringValue(yoneticiNo);
 
 					Personel yoneticisi = yoneticiNo.equals(personelNo) && personel.getId() == null ? personel : null;
+					if (personel != null && personel.isGenelMudur() && yoneticisi == null && personel.getId() != null) {
+						yoneticisi = personel;
+						personel.setYoneticisiAta(personel);
+ 					}
 					if (yoneticisi == null) {
 						if (yoneticiKoduVar) {
 							if (personelPDKSMap.containsKey(yoneticiNo)) {
@@ -3854,6 +3859,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 											personel.setGuncellemeTarihi(new Date());
 											personel.setGuncelleyenUser(islemYapan);
 											try {
+
 												saveList.add(personel);
 												listeKaydet(personelNo, saveList, null);
 											} catch (Exception e) {
@@ -3870,7 +3876,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 										}
 									}
 								}
-							} else {
+							} else if (personel.isGenelMudur() == false) {
 								personel.setAsilYonetici1(null);
 								personel.setYoneticisi(null);
 							}
@@ -3981,10 +3987,21 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 
 				}
+				if (personel != null && personel.isGenelMudur() && personel.getYoneticisi() == null && personel.getId() != null) {
+					personel.setYoneticisi(personel);
+					saveList.add(personel);
+				}
 
 				if (!saveList.isEmpty()) {
 					try {
 						if (listeKaydet(personelNo, saveList, null)) {
+							if (personel != null && personel.isGenelMudur() && personel.getYoneticisi() == null && personel.getId() != null) {
+								personel.setYoneticisi(personel);
+								saveList.clear();
+								saveList.add(personel);
+								listeKaydet(personelNo, saveList, null);
+							}
+
 							if (yoneticiIdList != null && personelSecili != null && personelSecili.getYoneticisi() != null && personelSecili.getId() != null) {
 								if (!yoneticiIdList.contains(personelSecili.getId()))
 									yoneticiIdList.add(personelSecili.getId());
