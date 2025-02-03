@@ -715,10 +715,8 @@ public class IseGelmemeUyari implements Serializable {
 
 			for (Iterator iterator = yoneticiler.iterator(); iterator.hasNext();) {
 				Personel personelYonetici = (Personel) iterator.next();
-				if (!personelYonetici.isCalisiyor()) {
-					iterator.remove();
-					continue;
-				}
+				boolean yoneticiCalisiyor = personelYonetici.isCalisiyor();
+
 				List<Long> depMailList = new ArrayList<Long>();
 				String eposta = null;
 				try {
@@ -733,7 +731,7 @@ public class IseGelmemeUyari implements Serializable {
 						yonetici = (User) user.clone();
 						yonetici.setYetkiliRollerim(yetkiliRollerim);
 					} else
-						continue;
+						yoneticiCalisiyor = false;
 
 					eposta = yonetici != null ? yonetici.getEmail() : "";
 					List<VardiyaGun> personelVardiyalari = personelYonetici.getPersonelVardiyalari();
@@ -798,6 +796,10 @@ public class IseGelmemeUyari implements Serializable {
 											if (!ikMailList.contains(mail) && mail.indexOf("@") > 0)
 												ikMailList.add(mail);
 										}
+										List<User> pasifUserList = ortakIslemler.getPasifMailUser(mailBox, session);
+										if (!pasifUserList.isEmpty()) {
+
+										}
 										if (!mailList.isEmpty()) {
 											List<User> aktifUserList = ortakIslemler.getAktifMailUser(mailBox, session);
 											for (User userYonetici : aktifUserList) {
@@ -805,6 +807,7 @@ public class IseGelmemeUyari implements Serializable {
 												list.add(userYonetici);
 											}
 										}
+
 										TreeMap<String, User> userYoneticilerMap = null;
 										if (!mailList.isEmpty()) {
 											userYoneticilerMap = ortakIslemler.getUserRoller(islemTarihi, mailList, session);
@@ -824,6 +827,11 @@ public class IseGelmemeUyari implements Serializable {
 									}
 								}
 
+							} else {
+								if (yoneticiCalisiyor == false) {
+									iterator.remove();
+									continue;
+								}
 							}
 							if (depMail.containsKey(departmanId)) {
 								List<User> yoneticiList = depMail.get(departmanId);
@@ -854,6 +862,11 @@ public class IseGelmemeUyari implements Serializable {
 							}
 
 						}
+						if (yoneticiCalisiyor == false) {
+							if (personelYonetici != null)
+								logger.info(personelYonetici.getPdksSicilNo() + " " + personelYonetici.getAdSoyad());
+							continue;
+						}
 						User user = yonetici != null ? (User) yonetici.clone() : null;
 						if (user == null || !user.isDurum() || !user.getPdksPersonel().isCalisiyor()) {
 							if (personelYonetici != null && user != null)
@@ -879,9 +892,10 @@ public class IseGelmemeUyari implements Serializable {
 						statuGoster = Boolean.FALSE;
 						ekSahaAlanAdi = "ekSaha" + ekSahaAlanNo;
 						MailStatu mailSatu = null;
+
 						try {
 
-							if (mailGonder && !mailPersonelMap.containsKey(yonetici.getEmail())) {
+							if (yoneticiCalisiyor && mailGonder && !mailPersonelMap.containsKey(yonetici.getEmail())) {
 								baslikAyarla(userYonetici.getPdksPersonel());
 
 								mailSatu = mailGonder(renderAdres, false, session);
