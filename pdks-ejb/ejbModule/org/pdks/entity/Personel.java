@@ -838,6 +838,8 @@ public class Personel extends BaseObject {
 			if (pdksYonetici != null && !pdksYonetici.isCalisiyor() && asilYonetici1 != null && asilYonetici1.isCalisiyor())
 				pdksYonetici = asilYonetici1;
 		}
+		if (pdksYonetici == null && this.isGenelMudur())
+			pdksYonetici = this;
 		return pdksYonetici;
 	}
 
