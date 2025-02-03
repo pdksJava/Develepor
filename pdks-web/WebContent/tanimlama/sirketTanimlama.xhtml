@@ -334,10 +334,10 @@
 										</f:facet>
 										<ui:fragment rendered="#{personelView.pdksPersonel.pdksYonetici!=null}">
 											<DIV title="#{personelView.pdksPersonel.asilYonetici1.adSoyad}">
-												<ui:fragment rendered="#{personelView.pdksPersonel.pdksYonetici.calisiyor}">
+												<ui:fragment rendered="#{personelView.pdksPersonel.calisiyor==false or personelView.pdksPersonel.pdksYonetici.calisiyor}">
 													<h:outputText value="#{personelView.pdksPersonel.pdksYonetici.adSoyad}" />
 												</ui:fragment>
-												<ui:fragment rendered="#{personelView.pdksPersonel.pdksYonetici.calisiyor==false}">
+												<ui:fragment rendered="#{personelView.pdksPersonel.calisiyor and personelView.pdksPersonel.pdksYonetici.calisiyor==false}">
 													<span id="yonetici1#{personelView.pdksPersonel.id}" style="color: red"><h:outputText
 															value="#{personelView.pdksPersonel.pdksYonetici.adSoyad}" /></span>
 

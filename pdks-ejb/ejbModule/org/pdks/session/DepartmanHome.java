@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.TreeMap;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -214,32 +213,11 @@ public class DepartmanHome extends EntityHome<Departman> implements Serializable
 
 	public String adresGuncelle() {
 		Departman departman = getInstance();
-		String sb = adresDuzelt(adresler);
+		String sb = ortakIslemler.adresDuzelt(adresler);
 		departman.setMailBox(sb.indexOf("@") > 0 ? sb : null);
 		mailAdres = "";
 		return "";
 
-	}
-
-	private String adresDuzelt(List<String> adresList) {
-		StringBuilder sb = new StringBuilder();
-		if (adresList.size() > 1) {
-			TreeMap<String, String> map1 = new TreeMap<String, String>();
-			for (String adres : adresList)
-				map1.put(adres, adres);
-			List<String> adresler = new ArrayList<String>(map1.values());
-			adresList.clear();
-			adresList.addAll(adresler);
-			adresler = null;
-			map1 = null;
-		}
-		for (Iterator iterator = adresList.iterator(); iterator.hasNext();) {
-			String adres = (String) iterator.next();
-			sb.append(adres.trim() + (iterator.hasNext() ? PdksUtil.SEPARATOR_MAIL : ""));
-		}
-		String str = sb.length() > 0 ? sb.toString() : "";
-		sb = null;
-		return str;
 	}
 
 	public void fillDepartmanTanimList() {
