@@ -33,6 +33,7 @@ import org.jboss.seam.annotations.async.IntervalCron;
 import org.jboss.seam.async.QuartzTriggerHandle;
 import org.jboss.seam.faces.Renderer;
 import org.pdks.entity.CalismaModeli;
+import org.pdks.entity.Departman;
 import org.pdks.entity.Dosya;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.Kapi;
@@ -716,7 +717,6 @@ public class IseGelmemeUyari implements Serializable {
 			for (Iterator iterator = yoneticiler.iterator(); iterator.hasNext();) {
 				Personel personelYonetici = (Personel) iterator.next();
 				boolean yoneticiCalisiyor = personelYonetici.isCalisiyor();
-
 				List<Long> depMailList = new ArrayList<Long>();
 				String eposta = null;
 				try {
@@ -778,10 +778,11 @@ public class IseGelmemeUyari implements Serializable {
 							}
 						}
 						Personel yoneticisi = (Personel) yoneticiMap.get(yoneticisiId).clone();
-
+						HashMap<Long, String> map = new HashMap<Long, String>();
 						for (VardiyaGun pdksVardiyaGun : personelVardiyalari) {
-							Long departmanId = pdksVardiyaGun.getPersonel().getSirket().getDepartman().getId();
-							String mailBoxStr = pdksVardiyaGun.getPersonel().getSirket().getDepartman().getMailBox();
+							Departman departman = pdksVardiyaGun.getPersonel().getSirket().getDepartman();
+							Long departmanId = departman.getId();
+							String mailBoxStr = map.containsKey(departmanId) ? map.get(departmanId) : departman.getMailBox();
 							if (mailBoxStr != null && mailBoxStr.indexOf("@") > 0) {
 								if (!depMailList.contains(departmanId)) {
 									depMailList.add(departmanId);
@@ -796,10 +797,15 @@ public class IseGelmemeUyari implements Serializable {
 											if (!ikMailList.contains(mail) && mail.indexOf("@") > 0)
 												ikMailList.add(mail);
 										}
-										List<User> pasifUserList = ortakIslemler.getPasifMailUser(mailBox, session);
-										if (!pasifUserList.isEmpty()) {
-
+										String sb = ortakIslemler.adresDuzelt(mailList);
+										mailBox = sb.indexOf("@") > 0 ? sb : null;
+										if (mailBox == null || !mailBox.equalsIgnoreCase(mailBoxStr)) {
+											mailBoxStr = mailBox;
+											departman.setMailBox(mailBoxStr);
+											session.saveOrUpdate(departman);
+											session.flush();
 										}
+										map.put(departmanId, mailBoxStr);
 										if (!mailList.isEmpty()) {
 											List<User> aktifUserList = ortakIslemler.getAktifMailUser(mailBox, session);
 											for (User userYonetici : aktifUserList) {

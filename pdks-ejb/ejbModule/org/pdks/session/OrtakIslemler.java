@@ -14589,6 +14589,33 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param adresList
+	 * @return
+	 */
+	public String adresDuzelt(List<String> adresList) {
+		StringBuilder sb = new StringBuilder();
+		if (adresList != null) {
+			if (adresList.size() > 1) {
+				TreeMap<String, String> map1 = new TreeMap<String, String>();
+				for (String adres : adresList)
+					map1.put(adres, adres);
+				List<String> adresler = new ArrayList<String>(map1.values());
+				adresList.clear();
+				adresList.addAll(adresler);
+				adresler = null;
+				map1 = null;
+			}
+			for (Iterator iterator = adresList.iterator(); iterator.hasNext();) {
+				String adres = (String) iterator.next();
+				sb.append(adres.trim() + (iterator.hasNext() ? PdksUtil.SEPARATOR_MAIL : ""));
+			}
+		}
+		String str = sb.length() > 0 ? sb.toString() : "";
+		sb = null;
+		return str;
+	}
+
+	/**
 	 * @param session
 	 * @return
 	 */

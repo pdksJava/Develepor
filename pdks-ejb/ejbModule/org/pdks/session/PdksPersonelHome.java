@@ -438,13 +438,13 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		Personel personel = getInstance();
 		if (adresTipi != null) {
 			if (adresTipi.equals(MAIL_CC)) {
-				String sb = adresDuzelt(ccAdresList);
+				String sb = ortakIslemler.adresDuzelt(ccAdresList);
 				personel.setEmailCC(sb);
 			} else if (adresTipi.equals(MAIL_BCC)) {
-				String sb = adresDuzelt(bccAdresList);
+				String sb = ortakIslemler.adresDuzelt(bccAdresList);
 				personel.setEmailBCC(sb);
 			} else if (adresTipi.equals(MAIL_HAREKET)) {
-				String sb = adresDuzelt(hareketAdresList);
+				String sb = ortakIslemler.adresDuzelt(hareketAdresList);
 				personel.setHareketMail(sb);
 			}
 		}
@@ -504,31 +504,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		}
 		fillCalismaModeliVardiyaList();
 		return "";
-	}
-
-	/**
-	 * @param adresList
-	 * @return
-	 */
-	private String adresDuzelt(List<String> adresList) {
-		StringBuilder sb = new StringBuilder();
-		if (adresList.size() > 1) {
-			TreeMap<String, String> map1 = new TreeMap<String, String>();
-			for (String adres : adresList)
-				map1.put(adres, adres);
-			List<String> adresler = new ArrayList<String>(map1.values());
-			adresList.clear();
-			adresList.addAll(adresler);
-			adresler = null;
-			map1 = null;
-		}
-		for (Iterator iterator = adresList.iterator(); iterator.hasNext();) {
-			String adres = (String) iterator.next();
-			sb.append(adres.trim() + (iterator.hasNext() ? PdksUtil.SEPARATOR_MAIL : ""));
-		}
-		String str = sb.length() > 0 ? sb.toString() : "";
-		sb = null;
-		return str;
 	}
 
 	/**
@@ -1828,7 +1803,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (PdksUtil.hasStringValue(emailCC)) {
 			pdksPersonel.setEmailCC(emailCC);
 			adresAyarla(null, MAIL_CC);
-			String yeniAdres = adresDuzelt(ccAdresList);
+			String yeniAdres = ortakIslemler.adresDuzelt(ccAdresList);
 			if (!yeniAdres.equals(emailCC)) {
 				pdksPersonel.setEmailCC(yeniAdres);
 			}
@@ -1836,7 +1811,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (PdksUtil.hasStringValue(emailBCC)) {
 			pdksPersonel.setEmailBCC(emailBCC);
 			adresAyarla(null, MAIL_BCC);
-			String yeniAdres = adresDuzelt(bccAdresList);
+			String yeniAdres = ortakIslemler.adresDuzelt(bccAdresList);
 			if (!yeniAdres.equals(emailBCC)) {
 				pdksPersonel.setEmailBCC(yeniAdres);
 			}
@@ -1844,7 +1819,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (PdksUtil.hasStringValue(hareketMail)) {
 			pdksPersonel.setHareketMail(hareketMail);
 			adresAyarla(null, MAIL_HAREKET);
-			String yeniAdres = adresDuzelt(hareketAdresList);
+			String yeniAdres = ortakIslemler.adresDuzelt(hareketAdresList);
 			if (!yeniAdres.equals(hareketMail)) {
 				pdksPersonel.setHareketMail(yeniAdres);
 			}
