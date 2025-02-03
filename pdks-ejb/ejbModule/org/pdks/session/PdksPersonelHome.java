@@ -3122,31 +3122,28 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					if (personelView.getPdksPersonel() != null && personelView.getPdksPersonel().getId() != null)
 						perIdList.add(personelView.getPdksPersonel().getId());
 				}
-				if (!perIdList.isEmpty()) {
+				if (!perIdList.isEmpty())
 					getPersonelDinamikMap(perIdList);
-				}
-				dinamikTanimList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, session);
-				dinamikDurumList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_DURUM, session);
-				dinamikSayisalList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_SAYISAL, session);
 
-				// if (personelDinamikMap.isEmpty() == false) {
-				// dinamikTanimList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, session);
-				// dinamikDurumList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_DURUM, session);
-				// dinamikSayisalList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_SAYISAL, session);
-				// } else {
-				// if (dinamikTanimList == null)
-				// dinamikTanimList = new ArrayList<Tanim>();
-				// else
-				// dinamikTanimList.clear();
-				// if (dinamikDurumList == null)
-				// dinamikDurumList = new ArrayList<Tanim>();
-				// else
-				// dinamikDurumList.clear();
-				// if (dinamikSayisalList == null)
-				// dinamikSayisalList = new ArrayList<Tanim>();
-				// else
-				// dinamikSayisalList.clear();
-				// }
+				if (!personelDinamikMap.isEmpty()) {
+					dinamikTanimList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, session);
+					dinamikDurumList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_DURUM, session);
+					dinamikSayisalList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_SAYISAL, session);
+				} else {
+					if (dinamikTanimList == null)
+						dinamikTanimList = new ArrayList<Tanim>();
+					else
+						dinamikTanimList.clear();
+					if (dinamikDurumList == null)
+						dinamikDurumList = new ArrayList<Tanim>();
+					else
+						dinamikDurumList.clear();
+					if (dinamikSayisalList == null)
+						dinamikSayisalList = new ArrayList<Tanim>();
+					else
+						dinamikSayisalList.clear();
+				}
+
 			}
 		} catch (Exception ex) {
 			logger.error(ex);
