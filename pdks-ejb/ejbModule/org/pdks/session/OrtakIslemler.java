@@ -18565,12 +18565,12 @@ public class OrtakIslemler implements Serializable {
 								}
 
 						}
-						if (calismaModeli.isFazlaMesaiVarMi() && resmiTatilSure > 0) {
+						if (resmiTatilSure > 0) {
 							// TODO Resmi tatil çalışma saatinden düşüyor
 							// if (vardiyaGun.getCalismaSuresi() >= resmiTatilSure)
 							// vardiyaGun.addCalismaSuresi(-resmiTatilSure);
 							vardiyaGun.setResmiTatilSure(PdksUtil.setSureDoubleTypeRounded(resmiTatilSure, vardiyaGun.getYarimYuvarla()));
-							if (vardiyaGun.getResmiTatilSure() > vardiyaGun.getCalismaSuresi() + vardiyaGun.getGecenAyResmiTatilSure())
+							if (calismaModeli.isFazlaMesaiVarMi() && vardiyaGun.getResmiTatilSure() > vardiyaGun.getCalismaSuresi() + vardiyaGun.getGecenAyResmiTatilSure())
 								vardiyaGun.addCalismaSuresi(vardiyaGun.getResmiTatilSure() - vardiyaGun.getCalismaSuresi() - vardiyaGun.getGecenAyResmiTatilSure());
 						}
 

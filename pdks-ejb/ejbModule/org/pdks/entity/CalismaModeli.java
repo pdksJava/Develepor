@@ -522,7 +522,8 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	@Transient
 	public boolean isFazlaMesaiVarMi() {
-		return fazlaMesaiVar != null && fazlaMesaiVar.booleanValue();
+		boolean fm = fazlaMesaiVar != null && fazlaMesaiVar.booleanValue();
+		return fm;
 	}
 
 	@Transient
