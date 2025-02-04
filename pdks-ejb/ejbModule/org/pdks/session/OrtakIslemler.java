@@ -13009,8 +13009,9 @@ public class OrtakIslemler implements Serializable {
 
 				if (sonrakiVardiyaGun == null || islemVardiya.getVardiyaBitZaman().after(islemVardiya.getVardiyaFazlaMesaiBitZaman()) || islemVardiya.getVardiyaTelorans2BitZaman() == null) {
 					Date vardiyaTelorans2BitZaman = addTarih(cal, islemVardiya.getVardiyaFazlaMesaiBitZaman(), Calendar.MILLISECOND, -20);
-					if (vardiyaTelorans2BitZaman.after(islemVardiya.getVardiyaBitZaman()))
-						islemVardiya.setVardiyaTelorans2BitZaman(vardiyaTelorans2BitZaman);
+					if (sonrakiVardiyaGun != null)
+						if (vardiyaTelorans2BitZaman.after(islemVardiya.getVardiyaBitZaman()))
+							islemVardiya.setVardiyaTelorans2BitZaman(vardiyaTelorans2BitZaman);
 
 					Date vardiyaBitZaman = addTarih(cal, islemVardiya.getVardiyaFazlaMesaiBitZaman(), Calendar.MILLISECOND, -40);
 					if (islemVardiya.getVardiyaBitZaman().after(vardiyaBitZaman) && (islemVardiya.isCalisma() == false || islemVardiya.getBitDonem() > islemVardiya.getBasDonem()))
