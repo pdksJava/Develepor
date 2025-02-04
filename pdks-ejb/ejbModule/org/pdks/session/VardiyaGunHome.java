@@ -1643,7 +1643,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (vardiyaGun.getVardiya() != null) {
 				StringBuffer manuelGirisHTML = new StringBuffer();
 				Vardiya vardiya = vardiyaGun.getVardiya(), islemVardiya = vardiyaGun.getIslemVardiya();
-				if (vardiyaGunOnceki != null && islemVardiya != null && islemVardiya.isCalisma() && vardiyaGunOnceki.getVardiyaBitZaman().after(islemVardiya.getVardiyaBasZaman())) {
+				if (vardiyaGun.getIzin() == null && vardiyaGunOnceki != null && islemVardiya != null && islemVardiya.isCalisma() && vardiyaGunOnceki.getVardiyaBitZaman().after(islemVardiya.getVardiyaBasZaman())) {
 					if (cakisanVardiyaSb.length() > 0)
 						cakisanVardiyaSb.append(", ");
 					String mesajStr = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), PdksUtil.getDateFormat() + " EEEEE") + " başlangıç saati önceki gün bitiş saati";
