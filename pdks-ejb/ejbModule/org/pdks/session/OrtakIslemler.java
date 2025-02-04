@@ -14891,7 +14891,6 @@ public class OrtakIslemler implements Serializable {
 				yonetici2Cell.setCellValue(yonetici2 != null ? yonetici2.getAdSoyad() : "");
 				if (yonetici2Durum == false && yonetici2 != null)
 					ExcelUtil.setCellComment(yonetici2Cell, anchor, helper, drawing, yonetici2.getPdksSicilNo() + " " + yonetici2.getAdSoyad() + "\nİşten ayrılma tarihi : " + authenticatedUser.dateFormatla(yonetici2.getSskCikisTarihi()));
-				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getYonetici2() != null ? personel.getYonetici2().getAdSoyad() : "");
 
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getSablon() != null ? personel.getSablon().getAdi() : "");
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getCalismaModeli() != null ? personel.getCalismaModeli().getAciklama() : "");
