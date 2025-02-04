@@ -96,7 +96,6 @@ public class Personel extends BaseObject {
 	private Date izinHakEdisTarihi, iseBaslamaTarihi, grubaGirisTarihi, istenAyrilisTarihi = PdksUtil.getSonSistemTarih(), sskCikisTarihi, dogumTarihi;
 	private VardiyaSablonu workSablon;
 	private PersonelIzin personelIzin;
-	private PersonelExtra personelExtra;
 	private PersonelView personelView;
 	private MailGrubu mailGrubuCC, mailGrubuBCC, hareketMailGrubu;
 	private String emailCC = "", emailBCC = "", hareketMail = "";
@@ -871,14 +870,7 @@ public class Personel extends BaseObject {
 	@Transient
 	public String getPersonelExtraAciklama() {
 		StringBuffer sb = new StringBuffer();
-		if (personelExtra != null) {
-			if (PdksUtil.hasStringValue(personelExtra.getIlce()))
-				sb.append(personelExtra.getIlce().trim() + " ");
-			if (PdksUtil.hasStringValue(personelExtra.getCepTelefon()))
-				sb.append(personelExtra.getCepTelefon().trim() + " ");
-			if (PdksUtil.hasStringValue(personelExtra.getOzelNot()))
-				sb.append(personelExtra.getOzelNot().trim() + " ");
-		}
+
 		String str = sb.toString();
 		sb = null;
 		return str;
@@ -1166,12 +1158,9 @@ public class Personel extends BaseObject {
 	}
 
 	@Transient
-	public PersonelExtra getPersonelExtra() {
-		return personelExtra;
-	}
-
-	public void setPersonelExtra(PersonelExtra personelExtra) {
-		this.personelExtra = personelExtra;
+	public boolean isGenelMudur() {
+		boolean gm = gorevTipi != null && gorevTipi.getKodu() != null && gorevTipi.getKodu().equalsIgnoreCase(Tanim.GOREV_TIPI_GENEL_MUDUR);
+		return gm;
 	}
 
 	public void entityRefresh() {

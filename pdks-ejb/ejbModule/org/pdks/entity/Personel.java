@@ -838,6 +838,8 @@ public class Personel extends BaseObject {
 			if (pdksYonetici != null && !pdksYonetici.isCalisiyor() && asilYonetici1 != null && asilYonetici1.isCalisiyor())
 				pdksYonetici = asilYonetici1;
 		}
+		if (pdksYonetici == null && this.isGenelMudur())
+			pdksYonetici = this;
 		return pdksYonetici;
 	}
 
@@ -1153,6 +1155,12 @@ public class Personel extends BaseObject {
 	@Transient
 	public Personel getTmpYonetici() {
 		return tmpYonetici;
+	}
+
+	@Transient
+	public boolean isGenelMudur() {
+		boolean gm = gorevTipi != null && gorevTipi.getKodu() != null && gorevTipi.getKodu().equalsIgnoreCase(Tanim.GOREV_TIPI_GENEL_MUDUR);
+		return gm;
 	}
 
 	@Transient

@@ -63,7 +63,6 @@
 				<value>org.pdks.entity.KapiSirket</value>
 				<value>org.pdks.entity.KapiKGS</value>
  				<value>org.pdks.entity.Personel</value>
-				<value>org.pdks.entity.PersonelExtra</value>
 				<value>org.pdks.entity.PersonelDenklestirme</value>
 				<value>org.pdks.entity.PersonelMesai</value>
 				<value>org.pdks.entity.PersonelIzin</value>

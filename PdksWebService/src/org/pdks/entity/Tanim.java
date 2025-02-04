@@ -101,6 +101,7 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	public static final String GOREV_TIPI_PERSONEL = "01";
 	public static final String GOREV_TIPI_PROJE_MUDURU = "02";
 	public static final String GOREV_TIPI_SUPERVISOR = "03";
+	public static final String GOREV_TIPI_GENEL_MUDUR = "GM";
 
 	public static final String DEFAULT_DOVIZ_KODU = "TL";
 	public static final String IKINCI_YONETICI_ONAYLAMAZ = "ikinciYoneticiOlmaz";
