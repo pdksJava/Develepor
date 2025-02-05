@@ -245,6 +245,71 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param personelIdList
+	 * @param session
+	 * @return
+	 */
+	public HashMap<String, HashMap<String, List<User>>> getIKRollerUser(List<Long> personelIdList, Session session) {
+		HashMap<String, HashMap<String, List<User>>> map = new HashMap<String, HashMap<String, List<User>>>();
+		if (session != null) {
+			if (personelIdList == null)
+				personelIdList = new ArrayList<Long>();
+			List<String> roller = new ArrayList<String>();
+			roller.add(Role.TIPI_IK);
+			roller.add(Role.TIPI_IK_SIRKET);
+			roller.add(Role.TIPI_IK_Tesis);
+			List<UserRoles> pdkRoles = pdksEntityController.getSQLParamByFieldList(UserRoles.TABLE_NAME, UserRoles.COLUMN_NAME_ROLE, roller, UserRoles.class, session);
+
+			for (Iterator iterator = pdkRoles.iterator(); iterator.hasNext();) {
+				UserRoles userRoles = (UserRoles) iterator.next();
+				User user = userRoles.getUser();
+				String roleAdi = userRoles.getRole().getRolename();
+				boolean sil = roleAdi.equals(Role.TIPI_IK);
+				if (user != null) {
+					Personel personel = user.getPdksPersonel();
+					if (!personelIdList.contains(personel.getId())) {
+						if (sil) {
+							if (user.isDurum() && user.getPdksPersonel().isCalisiyor()) {
+								HashMap<String, List<User>> map1 = map.containsKey(roleAdi) ? map.get(roleAdi) : new HashMap<String, List<User>>();
+								if (map1.isEmpty())
+									map.put(roleAdi, map1);
+								List<User> list = map1.containsKey(roleAdi) ? map1.get(roleAdi) : new ArrayList<User>();
+								if (list.isEmpty())
+									map1.put(roleAdi, list);
+								list.add(user);
+							}
+						}
+					} else
+						sil = true;
+
+				} else
+					sil = true;
+				if (sil)
+					iterator.remove();
+
+			}
+			for (UserRoles userRoles : pdkRoles) {
+				User user = userRoles.getUser();
+				String roleAdi = userRoles.getRole().getRolename();
+				Personel personel = user.getPdksPersonel();
+				if (roleAdi.equals(Role.TIPI_IK_Tesis) && personel.getTesis() == null)
+					continue;
+				String key = (roleAdi.equals(Role.TIPI_IK_Tesis) ? personel.getTesis().getId() : personel.getSirket().getId()) + "_" + personel.getAd();
+				HashMap<String, List<User>> map1 = map.containsKey(roleAdi) ? map.get(roleAdi) : new HashMap<String, List<User>>();
+				if (map1.isEmpty())
+					map.put(roleAdi, map1);
+				List<User> list = map1.containsKey(key) ? map1.get(key) : new ArrayList<User>();
+				if (list.isEmpty())
+					map1.put(key, list);
+				list.add(user);
+
+			}
+		}
+
+		return map;
+	}
+
+	/**
 	 * @param personelDenklestirmeList
 	 * @param session
 	 */
