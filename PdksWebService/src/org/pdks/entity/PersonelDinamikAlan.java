@@ -13,6 +13,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.genel.model.PdksUtil;
 
 @Entity(name = PersonelDinamikAlan.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PersonelDinamikAlan.COLUMN_NAME_PERSONEL, PersonelDinamikAlan.COLUMN_NAME_ALAN }) })
@@ -94,8 +95,10 @@ public class PersonelDinamikAlan extends BasePDKSObject implements Serializable 
 		return tanimDeger;
 	}
 
-	public void setTanimDeger(Tanim tanimDeger) {
-		this.tanimDeger = tanimDeger;
+	public void setTanimDeger(Tanim value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isTanimDegisti(tanimDeger, value));
+		this.tanimDeger = value;
 	}
 
 	@Column(name = COLUMN_NAME_DURUM_SECIM)
@@ -108,12 +111,16 @@ public class PersonelDinamikAlan extends BasePDKSObject implements Serializable 
 		return sayisalDeger;
 	}
 
-	public void setSayisalDeger(Double sayisalDeger) {
-		this.sayisalDeger = sayisalDeger;
+	public void setSayisalDeger(Double value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isDoubleDegisti(sayisalDeger, value));
+		this.sayisalDeger = value;
 	}
 
-	public void setDurumSecim(Boolean durumSecim) {
-		this.durumSecim = durumSecim;
+	public void setDurumSecim(Boolean value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isBooleanDegisti(durumSecim, value));
+		this.durumSecim = value;
 	}
 
 	@Transient
