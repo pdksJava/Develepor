@@ -331,10 +331,14 @@ public class MailManager implements Serializable {
 			if (port != 25 && smtpSSLDurum) {
 				props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 				props.setProperty("mail.smtp.socketFactory.fallback", "false");
-				MailSSLSocketFactory sf = new MailSSLSocketFactory();
-				sf.setTrustAllHosts(true);
-				props.put("mail.imap.ssl.trust", "*");
-				props.put("mail.imap.ssl.socketFactory", sf);
+				if (port == 587) {
+					MailSSLSocketFactory sf = new MailSSLSocketFactory();
+					sf.setTrustAllHosts(true);
+					props.put("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+					props.put("mail.imap.ssl.trust", "*");
+					props.put("mail.imap.host", smtpHostIp);
+					props.put("mail.imap.port", "993");
+				}
 			}
 
 			javax.mail.Session session = null;

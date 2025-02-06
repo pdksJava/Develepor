@@ -311,7 +311,7 @@ public class MailManager implements Serializable {
 				props.put("mail.smtp.starttls.enable", smtpTLSDurum);
 				props.put("mail.debug", smtpServerDebug);
 				props.setProperty("mail.transport.protocol", "smtp");
- 				if (port != 25)
+				if (port != 25)
 					props.put("mail.smtp.socketFactory.port", port);
 				if (smtpTLSDurum) {
 					if (smtpTLSProtokol != null) {
@@ -325,13 +325,14 @@ public class MailManager implements Serializable {
 				if (port != 25 && smtpSSLDurum) {
 					props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 					props.put("mail.smtp.socketFactory.fallback", String.valueOf(port == 25));
-					MailSSLSocketFactory sf = new MailSSLSocketFactory();
-					sf.setTrustAllHosts(true);
-					props.put("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-					props.put("mail.imap.ssl.trust", "*");
-					props.put("mail.imap.host", smtpHostIp);
-					props.put("mail.imap.port", "993");
-
+					if (port == 587) {
+						MailSSLSocketFactory sf = new MailSSLSocketFactory();
+						sf.setTrustAllHosts(true);
+						props.put("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+						props.put("mail.imap.ssl.trust", "*");
+						props.put("mail.imap.host", smtpHostIp);
+						props.put("mail.imap.port", "993");
+					}
 				}
 
 				javax.mail.Session session = null;
@@ -350,14 +351,15 @@ public class MailManager implements Serializable {
 						session = javax.mail.Session.getInstance(props, new GMailAuthenticator(username, password));
 				if (session != null)
 					session.setDebug(smtpServerDebug);
+				Transport transport = session.getTransport("smtp");
+				transport.connect(smtpHostIp, username, password);
 				MimeMessage message = new MimeMessage(session);
 				List<String> mailList = new ArrayList<String>();
 				message.setRecipients(Message.RecipientType.TO, adresleriDuzenle(mailObject.getToList(), mailList));
 				message.setRecipients(Message.RecipientType.CC, adresleriDuzenle(mailObject.getCcList(), mailList));
 				message.setRecipients(Message.RecipientType.BCC, adresleriDuzenle(mailObject.getBccList(), mailList));
 				if (!mailList.isEmpty()) {
-					Transport transport = session.getTransport("smtp");
-					transport.connect(smtpHostIp, username, password);
+
 					InternetAddress from = new InternetAddress();
 					from.setAddress(username);
 					if (parameterMap.containsKey("fromAdres"))
