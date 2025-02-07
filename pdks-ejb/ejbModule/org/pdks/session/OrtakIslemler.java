@@ -268,19 +268,19 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" inner join " + Role.TABLE_NAME + " R " + PdksEntityController.getJoinLOCK() + " on R." + Role.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_ROLE + " and R." + Role.COLUMN_NAME_ROLE_NAME + " :" + fieldName);
 			sb.append(" where UR." + UserRoles.COLUMN_NAME_USER + " is not null");
 			List<UserRoles> pdkRoles = pdksEntityController.getSQLParamList(roller, sb, fieldName, fields, UserRoles.class, session);
-			for (Iterator iterator = pdkRoles.iterator(); iterator.hasNext();) {
+ 			for (Iterator iterator = pdkRoles.iterator(); iterator.hasNext();) {
 				UserRoles userRoles = (UserRoles) iterator.next();
 				User user = userRoles.getUser();
-
 				String roleAdi = userRoles.getRole().getRolename();
 				boolean sil = roleAdi.equals(Role.TIPI_IK);
 				if (departmanId != null && user != null && !user.getDepartman().getId().equals(departmanId))
 					user = null;
 				if (user != null) {
 					Personel personel = user.getPdksPersonel();
-					if (!personelIdList.contains(personel.getId())) {
+					boolean aktif = user.isDurum() && personel.isCalisiyor();
+ 					if (!personelIdList.contains(personel.getId())) {
 						if (sil) {
-							if (user.isDurum() && user.getPdksPersonel().isCalisiyor()) {
+							if (aktif) {
 								HashMap<String, List<User>> map1 = map.containsKey(roleAdi) ? map.get(roleAdi) : new HashMap<String, List<User>>();
 								if (map1.isEmpty())
 									map.put(roleAdi, map1);
@@ -315,6 +315,7 @@ public class OrtakIslemler implements Serializable {
 				list.add(user);
 
 			}
+		 
 			roller = null;
 			pdkRoles = null;
 		}
