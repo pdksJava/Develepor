@@ -14,6 +14,7 @@ import javax.persistence.UniqueConstraint;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.security.entity.User;
 
 @Entity(name = PersonelDenklestirmeDinamikAlan.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PersonelDenklestirmeDinamikAlan.COLUMN_NAME_PERSONEL_DENKLESTIRME, PersonelDenklestirmeDinamikAlan.COLUMN_NAME_DENKLESTIRME_ALAN_DURUM }) })
@@ -192,9 +193,27 @@ public class PersonelDenklestirmeDinamikAlan extends BasePDKSObject implements S
 		return tip;
 	}
 
+	@Transient
+	public String getPersonelDenklestirmeDinamikAlanStr(User user) {
+		String alanStr = "";
+		if (this.isDevamlilikPrimi())
+			alanStr = this.getIslemDurum() ? "+" : "-";
+		else {
+			String str = user.getYesNo(this.getIslemDurum());
+			if (this.getSayisalDeger() != null && this.getSayisalDeger().doubleValue() > 0.0d) {
+				String deger = user.sayiFormatliGoster(this.getSayisalDeger());
+				if (this.isIzinDurum())
+					str += "\nSüre : " + deger;
+				else
+					str += "\n " + deger;
+			}
+			alanStr = str;
+		}
+		return alanStr;
+	}
+
 	public void entityRefresh() {
-		
-		
+
 	}
 
 }

@@ -1138,7 +1138,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 					boolean ayBitti = false;
 					double puantajSaatToplami = 0.0d, puantajResmiTatil = 0.0d, puantajHaftaTatil = 0.0d, puantajUcretiOdenenSure = 0.0d;
 					boolean puantajFazlaMesaiHesapla = true;
-					boolean gunMaxCalismaOdenir = puantaj.getCalismaModeli().isFazlaMesaiVarMi() && puantaj.getPersonelDenklestirme().getCalismaModeliAy().isGunMaxCalismaOdenir();
+					boolean gunMaxCalismaOdenir = puantaj.getCalismaModeli().isFazlaMesaiVarMi() && puantaj.getPersonelDenklestirme().getCalismaModeliAy().isGunMaxCalismaOdenir()&& puantaj.getPersonelDenklestirme().isFazlaMesaiIzinKullanacak() == false;
 
 					if (puantaj.getVardiyalar() != null) {
 						VardiyaGun vardiyaGunSon = null;
