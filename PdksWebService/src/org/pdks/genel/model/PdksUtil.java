@@ -62,6 +62,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.json.XML;
 import org.pdks.entity.Tanim;
+import org.pdks.entity.User;
 import org.w3c.dom.Node;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
@@ -106,6 +107,13 @@ public class PdksUtil implements Serializable {
 	private static boolean sistemDestekVar = false;
 
 	private static String sqlDateFormat = "yyyy-MM-dd", dateFormat = "dd/MM/yyyy", saatFormat = "H:mm", dateTimeFormat;
+
+	/**
+	 * @param user
+	 */
+	public static void setUserYetki(User user) {
+
+	}
 
 	/**
 	 * @param cmd
