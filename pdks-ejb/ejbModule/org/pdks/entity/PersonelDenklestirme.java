@@ -513,7 +513,7 @@ public class PersonelDenklestirme extends BaseObject {
 			} else if (vg.isGebePersonelDonemselDurum()) {
  				sutIzniSure = gunPlanSure > 7.5d ? 7.5d : gunPlanSure;
 				gunPlanSure = sutIzniSure;
-				logger.info(vg.getVardiyaDateStr() + " Gebe " + gunPlanSure + " ");
+				logger.debug(vg.getVardiyaDateStr() + " Gebe " + gunPlanSure + " ");
 			} else if (isSuaDurumu()) {
  				sutIzniSure = gunPlanSure > 7.5d ? 7.5d : gunPlanSure;
 				gunPlanSure = AylikPuantaj.getGunlukCalismaSuresi();
