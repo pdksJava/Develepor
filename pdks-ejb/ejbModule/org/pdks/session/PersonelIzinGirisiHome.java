@@ -2303,6 +2303,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			}
 			if (perNoList != null) {
 				izinListele(false, null);
+				if (personelIzinList == null || personelIzinList.isEmpty())
+					perNoList = null;
 			} else if (idList.isEmpty() == false) {
 				List<PersonelIzin> list = pdksEntityController.getSQLParamByFieldList(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, idList, PersonelIzin.class, session);
 				if (!list.isEmpty()) {
