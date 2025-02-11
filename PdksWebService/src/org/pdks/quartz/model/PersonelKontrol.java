@@ -165,7 +165,7 @@ public final class PersonelKontrol extends QuartzJobBean {
 			try {
 				PdksVeriOrtakAktar ortakAktar = new PdksVeriOrtakAktar();
 				// mailMap.put("ikMailIptal", "");
-				ortakAktar.kullaniciIKYukle(mailMap, pdksDAO);
+				ortakAktar.kullaniciIKYukle(null, mailMap, pdksDAO);
 				MailManager.ePostaGonder(mailMap);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -223,7 +223,7 @@ public final class PersonelKontrol extends QuartzJobBean {
 				// mailMap.put("bccTestMailAdres", "hasansayar58@gmail.com");
 				try {
 					PdksVeriOrtakAktar ortakAktar = new PdksVeriOrtakAktar();
-					ortakAktar.kullaniciIKYukle(mailMap, pdksDAO);
+					ortakAktar.kullaniciIKYukle(null, mailMap, pdksDAO);
 					MailManager.ePostaGonder(mailMap);
 				} catch (Exception e) {
 

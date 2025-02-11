@@ -507,17 +507,17 @@ public class PersonelDenklestirme extends BaseObject {
 			Vardiya vardiya = vg.getVardiya();
 			double gunPlanSure = gebePersonelDonemselDurum == null ? gun : cm.getSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK)), sutIzniSure = 0.0d;
 			if (vg.isSutIzniVar()) {
-				logger.debug("Sut İzni");
-				sutIzniSure = gunPlanSure <= 9.0d ? sureGunlukSut : 7.5d;
+ 				sutIzniSure = gunPlanSure <= 9.0d ? sureGunlukSut : 7.5d;
 				gunPlanSure = sutIzniSure;
+				logger.debug(vg.getVardiyaDateStr() + " Sut İzni " + gunPlanSure + " ");
 			} else if (vg.isGebePersonelDonemselDurum()) {
-				logger.debug("Gebe");
-				sutIzniSure = gunPlanSure > 7.5d ? 7.5d : gunPlanSure;
+ 				sutIzniSure = gunPlanSure > 7.5d ? 7.5d : gunPlanSure;
 				gunPlanSure = sutIzniSure;
+				logger.info(vg.getVardiyaDateStr() + " Gebe " + gunPlanSure + " ");
 			} else if (isSuaDurumu()) {
-				logger.debug("Şua");
-				sutIzniSure = gunPlanSure > 7.5d ? 7.5d : gunPlanSure;
+ 				sutIzniSure = gunPlanSure > 7.5d ? 7.5d : gunPlanSure;
 				gunPlanSure = AylikPuantaj.getGunlukCalismaSuresi();
+				logger.debug(vg.getVardiyaDateStr() + " Şua " + gunPlanSure + " ");
 			}
 			if (vg.isAyinGunu() && vardiya != null && vardiya.getId() != null) {
 				boolean hesapla = !(vg.isIzinli() || vardiya.isHaftaTatil() || tatil != null || (isSuaDurumu() && vardiya.isOff()));
