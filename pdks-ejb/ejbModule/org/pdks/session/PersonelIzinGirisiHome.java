@@ -2282,12 +2282,13 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	 */
 	public String izinERPDBGuncelle() throws Exception {
 		List<Long> idList = new ArrayList<Long>();
+		List<String> perNoList = null;
 		if (personelIzinList == null)
 			personelIzinList = new ArrayList<PersonelIzin>();
 		else
 			personelIzinList.clear();
 		try {
-			List<String> perNoList = null;
+
 			if (PdksUtil.hasStringValue(sicilNo)) {
 				perNoList = new ArrayList<String>();
 				perNoList.add(sicilNo);
@@ -2300,7 +2301,9 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					}
 				}
 			}
-			if (idList.isEmpty() == false) {
+			if (perNoList != null) {
+				izinListele(false, null);
+			} else if (idList.isEmpty() == false) {
 				List<PersonelIzin> list = pdksEntityController.getSQLParamByFieldList(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, idList, PersonelIzin.class, session);
 				if (!list.isEmpty()) {
 					list = PdksUtil.sortListByAlanAdi(list, "olusturmaTarihi", Boolean.TRUE);
@@ -2310,7 +2313,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				list = null;
 			}
 
-			if (idList == null || idList.isEmpty())
+			if (perNoList == null && (idList == null || idList.isEmpty()))
 				PdksUtil.addMessageAvailableWarn("Güncelleme yapılacak kayıt yoktur!");
 
 		} catch (Exception ex) {
@@ -3178,7 +3181,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 
 					}
 					if (!devam) {
-						PdksUtil.addMessageWarn("İzin başlangıç zamanı çalışma olmalıdır! " + (pdksVardiyaGun1.getVardiya() != null ? ortakIslemler.vardiyaAciklama() + " Adı :" + pdksVardiyaGun1.getVardiya().getAdi() + " " + PdksUtil.convertToDateString(pdksVardiyaGun1.getVardiyaDate(), PdksUtil.getDateFormat()) : ""));
+						PdksUtil.addMessageWarn("İzin başlangıç zamanı çalışma olmalıdır! "
+								+ (pdksVardiyaGun1.getVardiya() != null ? ortakIslemler.vardiyaAciklama() + " Adı :" + pdksVardiyaGun1.getVardiya().getAdi() + " " + PdksUtil.convertToDateString(pdksVardiyaGun1.getVardiyaDate(), PdksUtil.getDateFormat()) : ""));
 						durum = "";
 					} else {
 						if (pdksVardiyaGun1.getIslemVardiya() == null)
@@ -3255,7 +3259,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 						}
 
 						if (offGunBasla) {
-							PdksUtil.addMessageWarn("İzin bitiş zamanı çalışma olmalıdır! " + (pdksVardiyaGun2.getVardiya() != null ? ortakIslemler.vardiyaAciklama() + " Adı :" + pdksVardiyaGun2.getVardiya().getAdi() + " " + PdksUtil.convertToDateString(pdksVardiyaGun2.getVardiyaDate(), PdksUtil.getDateFormat()) : ""));
+							PdksUtil.addMessageWarn("İzin bitiş zamanı çalışma olmalıdır! "
+									+ (pdksVardiyaGun2.getVardiya() != null ? ortakIslemler.vardiyaAciklama() + " Adı :" + pdksVardiyaGun2.getVardiya().getAdi() + " " + PdksUtil.convertToDateString(pdksVardiyaGun2.getVardiyaDate(), PdksUtil.getDateFormat()) : ""));
 							durum = "";
 						}
 
