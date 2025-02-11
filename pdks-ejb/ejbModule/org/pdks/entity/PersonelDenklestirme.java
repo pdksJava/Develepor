@@ -814,12 +814,21 @@ public class PersonelDenklestirme extends BaseObject {
 		addPersonelDonemselDurum(PersonelDurumTipi.IS_ARAMA_IZNI, value);
 	}
 
+	/**
+	 * @param key
+	 * @param value
+	 */
 	public void addPersonelDonemselDurum(PersonelDurumTipi key, PersonelDonemselDurum value) {
-		if (key != null && value != null) {
-			List<PersonelDonemselDurum> list = donemselDurumlarMap.containsKey(key) ? donemselDurumlarMap.get(key) : new ArrayList<PersonelDonemselDurum>();
-			if (list.isEmpty())
-				donemselDurumlarMap.put(key, list);
-			list.add(value);
+		if (key != null) {
+			if (value != null) {
+				List<PersonelDonemselDurum> list = donemselDurumlarMap.containsKey(key) ? donemselDurumlarMap.get(key) : new ArrayList<PersonelDonemselDurum>();
+				if (list.isEmpty())
+					donemselDurumlarMap.put(key, list);
+				list.add(value);
+			} else {
+				if (donemselDurumlarMap.containsKey(key))
+					donemselDurumlarMap.remove(key);
+			}
 		}
 	}
 

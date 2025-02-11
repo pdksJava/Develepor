@@ -307,9 +307,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 											if (pd.getSutIzniPersonelDonemselDurum() == null)
 												pd.setSutIzniPersonelDonemselDurum(pdd);
 											vGun.setSutIzniPersonelDonemselDurum(pdd);
-										}
-
-										else if (pdd.isGebe()) {
+										} else if (pdd.isGebe()) {
 											if (pd.getGebePersonelDonemselDurum() == null)
 												pd.setGebePersonelDonemselDurum(pdd);
 											vGun.setGebePersonelDonemselDurum(pdd);
