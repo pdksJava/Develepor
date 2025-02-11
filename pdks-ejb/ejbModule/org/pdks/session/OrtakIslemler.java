@@ -268,7 +268,7 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" inner join " + Role.TABLE_NAME + " R " + PdksEntityController.getJoinLOCK() + " on R." + Role.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_ROLE + " and R." + Role.COLUMN_NAME_ROLE_NAME + " :" + fieldName);
 			sb.append(" where UR." + UserRoles.COLUMN_NAME_USER + " is not null");
 			List<UserRoles> pdkRoles = pdksEntityController.getSQLParamList(roller, sb, fieldName, fields, UserRoles.class, session);
- 			for (Iterator iterator = pdkRoles.iterator(); iterator.hasNext();) {
+			for (Iterator iterator = pdkRoles.iterator(); iterator.hasNext();) {
 				UserRoles userRoles = (UserRoles) iterator.next();
 				User user = userRoles.getUser();
 				String roleAdi = userRoles.getRole().getRolename();
@@ -278,7 +278,7 @@ public class OrtakIslemler implements Serializable {
 				if (user != null) {
 					Personel personel = user.getPdksPersonel();
 					boolean aktif = user.isDurum() && personel.isCalisiyor();
- 					if (!personelIdList.contains(personel.getId())) {
+					if (!personelIdList.contains(personel.getId())) {
 						if (sil) {
 							if (aktif) {
 								HashMap<String, List<User>> map1 = map.containsKey(roleAdi) ? map.get(roleAdi) : new HashMap<String, List<User>>();
@@ -315,7 +315,7 @@ public class OrtakIslemler implements Serializable {
 				list.add(user);
 
 			}
-		 
+
 			roller = null;
 			pdkRoles = null;
 		}
@@ -13187,6 +13187,7 @@ public class OrtakIslemler implements Serializable {
 			TreeMap<Long, CalismaModeli> cmMap = new TreeMap<Long, CalismaModeli>();
 			TreeMap<Long, List<CalismaModeliGun>> cmGunMap = new TreeMap<Long, List<CalismaModeliGun>>();
 			for (PersonelDenklestirme personelDenklestirme : personelDenkList) {
+				personelDenklestirme.setDonemselDurumlarMap(new HashMap<PersonelDurumTipi, List<PersonelDonemselDurum>>());
 				personelDenklestirme.setSutIzniPersonelDonemselDurum(null);
 				DenklestirmeAy denklestirmeAy = personelDenklestirme.getDenklestirmeAy();
 				CalismaModeli cm = personelDenklestirme.getCalismaModeliAy() != null ? personelDenklestirme.getCalismaModeliAy().getCalismaModeli() : personelDenklestirme.getPdksPersonel().getCalismaModeli();
@@ -13273,13 +13274,13 @@ public class OrtakIslemler implements Serializable {
 				if (denkMap.containsKey(key)) {
 
 					PersonelDenklestirme denklestirme = denkMap.get(key);
-					if (denklestirme.getSutIzniPersonelDonemselDurum() == null && sutIzniPersonelDonemselDurum != null) {
+					if (denklestirme.getSutIzniPersonelDonemselDurum() == null && sutIzniVar && sutIzniPersonelDonemselDurum != null) {
 						denklestirme.setSutIzniPersonelDonemselDurum(sutIzniPersonelDonemselDurum);
 					}
-					if (denklestirme.getGebePersonelDonemselDurum() == null && gebePersonelDonemselDurum != null) {
+					if (denklestirme.getGebePersonelDonemselDurum() == null && gebeMi && gebePersonelDonemselDurum != null) {
 						denklestirme.setGebePersonelDonemselDurum(gebePersonelDonemselDurum);
 					}
-					if (denklestirme.getIsAramaPersonelDonemselDurum() == null && isAramaPersonelDonemselDurum != null) {
+					if (denklestirme.getIsAramaPersonelDonemselDurum() == null && isAramaIzniVar && isAramaPersonelDonemselDurum != null) {
 						denklestirme.setIsAramaPersonelDonemselDurum(isAramaPersonelDonemselDurum);
 					}
 					if (sutIzniPersonelDonemselDurum == null)
