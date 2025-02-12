@@ -95,6 +95,11 @@ public class PersonelDenklestirme extends BaseObject {
 		this.setGuncellendi(null);
 	}
 
+	/**
+	 * @param pdksPersonel
+	 * @param da
+	 * @param cmAy
+	 */
 	public PersonelDenklestirme(Personel pdksPersonel, DenklestirmeAy da, CalismaModeliAy cmAy) {
 		super();
 		this.setPersonel(pdksPersonel);
