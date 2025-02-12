@@ -89,7 +89,7 @@
 								</h:selectOneMenu>
 							</s:decorate>
 
-							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiHesaplaHome.kullaniciPersonel == false}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiHesaplaHome.kullaniciPersonel == false or fazlaMesaiHesaplaHome.ikRole or fazlaMesaiHesaplaHome.adminRole}">
 								<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
 								<h:inputText value="#{fazlaMesaiHesaplaHome.sicilNo}">
 									<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" reRender="denklestirmeDonemiTable,hataliPuantajGoster"
