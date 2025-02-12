@@ -113,7 +113,7 @@ public class PersonelDenklestirme extends BaseObject {
 			if (cm.isFazlaMesaiVarMi() == false)
 				this.fazlaMesaiOde = false;
 		}
-		if (da != null && pdksPersonel.getFazlaMesaiOde() == false && (da.getDenklestirmeDevret() == null || da.getDenklestirmeDevret().booleanValue() == false)) {
+		if (da != null && pdksPersonel.getFazlaMesaiOde() == false && (da.getDenklestirmeDevret() == null || da.getDenklestirmeDevret().booleanValue())) {
 			this.fazlaMesaiOde = false;
 			this.fazlaMesaiIzinKullan = true;
 		}
