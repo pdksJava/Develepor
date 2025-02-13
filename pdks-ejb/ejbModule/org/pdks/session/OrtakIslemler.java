@@ -60,6 +60,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.FlushMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -6227,6 +6228,7 @@ public class OrtakIslemler implements Serializable {
 		if (getParameterKeyHasStringValue(parameterName)) {
 			HashMap<String, Date> updateMap = new HashMap<String, Date>();
 			List<IzinERPDB> izinList = getIzinERPDBList(guncellemeDurum, perList, parameterName, session);
+
 			if (izinList != null && !izinList.isEmpty()) {
 				List<IzinERP> izinERPList = new ArrayList<IzinERP>();
 				for (IzinERPDB izinERPDB : izinList) {
@@ -6296,6 +6298,29 @@ public class OrtakIslemler implements Serializable {
 			}
 			izinList = null;
 			updateMap = null;
+			if (perList == null) {
+				Date tarih = PdksUtil.tariheAyEkleCikar(new Date(), -2);
+				HashMap fields = new HashMap();
+				String izinERPTableViewAdi = getParameterKey(parameterName);
+				StringBuffer sb = new StringBuffer();
+				sb.append("select distinct V." + IzinERPDB.COLUMN_NAME_PERSONEL_NO + " from " + izinERPTableViewAdi + " V " + PdksEntityController.getSelectLOCK());
+				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = V." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
+				sb.append(" where V." + IzinERPDB.COLUMN_NAME_REFERANS_NO + " not in (");
+				sb.append(" select " + IzinReferansERP.COLUMN_NAME_ID + " from " + IzinReferansERP.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " )");
+				sb.append(" and V." + IzinERPDB.COLUMN_NAME_BIT_TARIHI + " >= :t and V." + IzinERPDB.COLUMN_NAME_DURUM + " = 1");
+				fields.put("t", tarih);
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List<String> perList2 = pdksEntityController.getObjectBySQLList(sb, fields, null);
+				if (perList2 != null && !perList2.isEmpty()) {
+					FacesMessages facesMessages = (FacesMessages) Component.getInstance("facesMessages");
+					if (facesMessages != null)
+						facesMessages.clear();
+					izinERPDBGuncelle(guncellemeDurum, perList2, session);
+
+				}
+				perList2 = null;
+			}
 		}
 		return izinERPReturnList;
 	}

@@ -1911,8 +1911,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 		HashMap<String, List<String>> izinPersonelERPMap = new HashMap<String, List<String>>();
 		HashMap<String, Integer> referansNoMap = new HashMap<String, Integer>();
 		TreeMap<Integer, IzinERP> referansSiraMap = new TreeMap<Integer, IzinERP>();
-		Date olusturmaTarihi = null;
 		HashMap<String, String> bakiyeMap = new HashMap<String, String>();
+		Date olusturmaTarihi = null;
 		for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
 			IzinERP izinERP = (IzinERP) iterator.next();
 			String referansNoERP = izinERP.getReferansNoERP();
@@ -1981,8 +1981,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 		cal.set(Calendar.DATE, 1);
 		cal.add(Calendar.MONTH, -izinBitisTarihiAySayisi);
 		Date gecmisTarihi = PdksUtil.getDate(cal.getTime());
+
 		Date tarih1 = null, tarih2 = null;
 		for (IzinERP izinERP : izinList) {
+
 			Date baslangicZamani = getTarih(izinERP.getBasZaman(), FORMAT_DATE_TIME);
 			Date bitisZamani = getTarih(izinERP.getBitZaman(), FORMAT_DATE_TIME);
 			if (baslangicZamani != null)
@@ -2113,9 +2115,15 @@ public class PdksVeriOrtakAktar implements Serializable {
 		String kapaliDonemOkuma = mailMap.containsKey("kapaliDonemOkuma") ? (String) mailMap.get("kapaliDonemOkuma") : "";
 		boolean kapaliDonemOku = kapaliDonemOkuma.equals("1") == false;
 		List<String> kayitIzinList = new ArrayList<String>();
+//		List<String> list2 = Arrays.asList(new String[] { "1127", "1109", "1115", "1052", "1124", "535", "1111", "1099" });
+//		long adet = izinList.size();
 		Date izinlerBasTarih = null, izinlerBitTarih = null;
 		for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
 			IzinERP izinERP = (IzinERP) iterator.next();
+//			String referansNo = izinERP.getReferansNoERP();
+//			logger.info(String.valueOf(adet--) + " " + referansNo);
+//			if (list2.contains(referansNo))
+//				logger.debug(referansNo);
 			boolean tamam = false;
 			String referansNoERP = bakiyeMap.containsKey(izinERP.getReferansNoERP()) ? bakiyeMap.get(izinERP.getReferansNoERP()) : izinERP.getReferansNoERP();
 			String personelNo = izinERP.getPersonelNo();
@@ -2262,9 +2270,15 @@ public class PdksVeriOrtakAktar implements Serializable {
 				boolean izinDurum = personelIzin.getIzinDurumu() == PersonelIzin.IZIN_DURUMU_ONAYLANDI;
 				if (izinERP.getHataList().isEmpty()) {
 					if (!mailEkle && personelIzin.getId() != null) {
-						izinDegisti = !izinSahibi.getId().equals(personelIzin.getIzinSahibi().getId()) || !izinTipi.getId().equals(personelIzin.getIzinTipi().getId()) || izinDurum != izinERP.getDurum().booleanValue() || baslangicZamani.getTime() != personelIzin.getBaslangicZamani().getTime()
-								|| bitisZamani.getTime() != personelIzin.getBitisZamani().getTime();
-						mailEkle = izinDegisti && doktor;
+						try {
+							izinDegisti = !izinSahibi.getId().equals(personelIzin.getIzinSahibi().getId()) || !izinTipi.getId().equals(personelIzin.getIzinTipi().getId()) || izinDurum != izinERP.getDurum().booleanValue() || baslangicZamani.getTime() != personelIzin.getBaslangicZamani().getTime()
+									|| bitisZamani.getTime() != personelIzin.getBitisZamani().getTime();
+							mailEkle = izinDegisti && doktor;
+						} catch (Exception e) {
+							logger.error(e);
+							e.printStackTrace();
+						}
+
 					}
 					if (izinDegisti) {
 						long gecerliDonem = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(new Date(), -10), "yyyyMM"));
@@ -4828,7 +4842,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				pdksDAO.saveObjectList(yoneticiList);
 		}
 		List<PersonelERP> hataList = new ArrayList<PersonelERP>();
-
+		boolean testDurum = !PdksUtil.getCanliSunucuDurum();
 		for (PersonelERP personelERP : personelList) {
 			if (personelERP.getPersonelNo() != null && personelPDKSMap.containsKey(personelERP.getPersonelNo())) {
 				Personel personel = personelPDKSMap.get(personelERP.getPersonelNo());
@@ -4904,6 +4918,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				pdksDAO.execSP(map);
 			}
 		}
+		if (testDurum)
+			hataList.clear();
 		if (!hataList.isEmpty()) {
 			if (ikUserServisMap != null && !ikUserServisMap.isEmpty())
 				mailMap.put(KEY_IK_MAIL_IPTAL, Boolean.TRUE);
