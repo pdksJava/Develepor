@@ -6266,8 +6266,11 @@ public class OrtakIslemler implements Serializable {
 					}
 				}
 				try {
-					PdksSoapVeriAktar service = getPdksSoapVeriAktar();
-					izinERPReturnList = service.saveIzinler(izinERPList);
+					if (!izinERPList.isEmpty()) {
+						PdksSoapVeriAktar service = getPdksSoapVeriAktar();
+						izinERPReturnList = service.saveIzinler(izinERPList);
+					}
+
 					Date changeDate = null;
 					boolean update = false;
 					if (izinERPReturnList != null) {
@@ -6310,7 +6313,7 @@ public class OrtakIslemler implements Serializable {
 				} catch (Exception ex) {
 					loggerErrorYaz(null, ex);
 				}
-				if (authenticatedUser != null) {
+ 				if (authenticatedUser != null) {
 					if (izinERPReturnList != null) {
 						for (Iterator iterator = izinERPReturnList.iterator(); iterator.hasNext();) {
 							IzinERP izinERP = (IzinERP) iterator.next();
