@@ -2282,18 +2282,20 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	 */
 	public String izinERPDBGuncelle() throws Exception {
 		List<Long> idList = new ArrayList<Long>();
+		HashMap<String, List<String>> veriMap = null;
 		List<String> perNoList = null;
 		if (personelIzinList == null)
 			personelIzinList = new ArrayList<PersonelIzin>();
 		else
 			personelIzinList.clear();
 		try {
-
 			if (PdksUtil.hasStringValue(sicilNo)) {
+				veriMap = new HashMap<String, List<String>>();
 				perNoList = new ArrayList<String>();
 				perNoList.add(sicilNo);
+				veriMap.put("P", perNoList);
 			}
-			List<IzinERP> izinERPReturnList = ortakIslemler.izinERPDBGuncelle(true, perNoList, session);
+			List<IzinERP> izinERPReturnList = ortakIslemler.izinERPDBGuncelle(true, veriMap, session);
 			if (izinERPReturnList != null) {
 				for (IzinERP izinERP : izinERPReturnList) {
 					if (izinERP != null && izinERP.getId() != null && izinERP.getDurum() != null && izinERP.getDurum().booleanValue()) {
