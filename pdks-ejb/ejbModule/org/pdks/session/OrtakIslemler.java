@@ -6252,17 +6252,18 @@ public class OrtakIslemler implements Serializable {
 						facesMessages.clear();
 					veriMap1 = null;
 				}
-				referansNoList = null;
+
 			}
 			List<IzinERPDB> izinList = getIzinERPDBList(guncellemeDurum, veriMap, parameterName, session);
-
 			if (izinList != null && !izinList.isEmpty()) {
 				List<IzinERP> izinERPList = new ArrayList<IzinERP>();
 				for (IzinERPDB izinERPDB : izinList) {
 					IzinERP izinERP = izinERPDB.getIzinERP();
-					if (izinERPDB.getGuncellemeTarihi() != null)
-						updateMap.put(izinERPDB.getReferansNoERP(), izinERPDB.getGuncellemeTarihi());
-					izinERPList.add(izinERP);
+					if (referansNoList == null || referansNoList.contains(izinERPDB.getReferansNoERP()) == false) {
+						if (izinERPDB.getGuncellemeTarihi() != null)
+							updateMap.put(izinERPDB.getReferansNoERP(), izinERPDB.getGuncellemeTarihi());
+						izinERPList.add(izinERP);
+					}
 				}
 				try {
 					PdksSoapVeriAktar service = getPdksSoapVeriAktar();
