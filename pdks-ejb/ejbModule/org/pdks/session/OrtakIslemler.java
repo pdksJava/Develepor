@@ -60,7 +60,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.FlushMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -6247,9 +6246,6 @@ public class OrtakIslemler implements Serializable {
 					HashMap<String, List<String>> veriMap1 = new HashMap<String, List<String>>();
 					veriMap1.put("R", referansNoList);
 					izinERPDBGuncelle(guncellemeDurum, veriMap1, session);
-					FacesMessages facesMessages = (FacesMessages) Component.getInstance("facesMessages");
-					if (facesMessages != null)
-						facesMessages.clear();
 					veriMap1 = null;
 				}
 
