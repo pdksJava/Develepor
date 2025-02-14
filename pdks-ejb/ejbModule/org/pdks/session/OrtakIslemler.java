@@ -6226,6 +6226,7 @@ public class OrtakIslemler implements Serializable {
 		String parameterName = getParametreIzinERPTableView();
 		List<String> perList = veriMap != null && veriMap.containsKey("P") ? veriMap.get("P") : null;
 		List<String> referansNoList = veriMap != null && veriMap.containsKey("R") ? veriMap.get("R") : null;
+		List<String> referansNoStartList = null;
 		if (getParameterKeyHasStringValue(parameterName)) {
 			HashMap<String, Date> updateMap = new HashMap<String, Date>();
 			if (perList == null && referansNoList == null) {
@@ -6241,10 +6242,10 @@ public class OrtakIslemler implements Serializable {
 				fields.put("t", tarih);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				referansNoList = pdksEntityController.getObjectBySQLList(sb, fields, null);
-				if (referansNoList != null && !referansNoList.isEmpty()) {
+				referansNoStartList = pdksEntityController.getObjectBySQLList(sb, fields, null);
+				if (referansNoStartList != null && !referansNoStartList.isEmpty()) {
 					HashMap<String, List<String>> veriMap1 = new HashMap<String, List<String>>();
-					veriMap1.put("R", referansNoList);
+					veriMap1.put("R", referansNoStartList);
 					izinERPDBGuncelle(guncellemeDurum, veriMap1, session);
 					veriMap1 = null;
 				}
@@ -6255,7 +6256,7 @@ public class OrtakIslemler implements Serializable {
 				List<IzinERP> izinERPList = new ArrayList<IzinERP>();
 				for (IzinERPDB izinERPDB : izinList) {
 					IzinERP izinERP = izinERPDB.getIzinERP();
-					if (referansNoList == null || referansNoList.contains(izinERPDB.getReferansNoERP()) == false) {
+					if (referansNoStartList == null || referansNoStartList.contains(izinERPDB.getReferansNoERP()) == false) {
 						if (izinERPDB.getGuncellemeTarihi() != null)
 							updateMap.put(izinERPDB.getReferansNoERP(), izinERPDB.getGuncellemeTarihi());
 						izinERPList.add(izinERP);
@@ -6309,7 +6310,7 @@ public class OrtakIslemler implements Serializable {
 				} catch (Exception ex) {
 					loggerErrorYaz(null, ex);
 				}
- 				if (authenticatedUser != null) {
+				if (authenticatedUser != null) {
 					if (izinERPReturnList != null) {
 						for (Iterator iterator = izinERPReturnList.iterator(); iterator.hasNext();) {
 							IzinERP izinERP = (IzinERP) iterator.next();
