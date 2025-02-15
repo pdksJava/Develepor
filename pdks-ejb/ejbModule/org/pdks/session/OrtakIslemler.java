@@ -6227,6 +6227,7 @@ public class OrtakIslemler implements Serializable {
 		List<String> perList = veriMap != null && veriMap.containsKey("P") ? veriMap.get("P") : null;
 		List<String> referansNoList = veriMap != null && veriMap.containsKey("R") ? veriMap.get("R") : null;
 		List<String> referansNoStartList = null;
+		List<IzinERP> yeniler = null;
 		if (getParameterKeyHasStringValue(parameterName)) {
 			HashMap<String, Date> updateMap = new HashMap<String, Date>();
 			if (perList == null && referansNoList == null) {
@@ -6243,11 +6244,22 @@ public class OrtakIslemler implements Serializable {
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				referansNoStartList = pdksEntityController.getObjectBySQLList(sb, fields, null);
-				if (referansNoStartList != null && !referansNoStartList.isEmpty()) {
-					HashMap<String, List<String>> veriMap1 = new HashMap<String, List<String>>();
-					veriMap1.put("R", referansNoStartList);
-					izinERPDBGuncelle(guncellemeDurum, veriMap1, session);
-					veriMap1 = null;
+				if (referansNoStartList != null) {
+					if (!referansNoStartList.isEmpty()) {
+						HashMap<String, List<String>> veriMap1 = new HashMap<String, List<String>>();
+						veriMap1.put("R", referansNoStartList);
+						yeniler = izinERPDBGuncelle(guncellemeDurum, veriMap1, session);
+						if (yeniler != null) {
+							for (Iterator iterator = yeniler.iterator(); iterator.hasNext();) {
+								IzinERP izinERP = (IzinERP) iterator.next();
+								if (izinERP.getYazildi() == null || izinERP.getYazildi().booleanValue() == false)
+									iterator.remove();
+
+							}
+						}
+						veriMap1 = null;
+					} else
+						referansNoStartList = null;
 				}
 
 			}
@@ -6326,6 +6338,25 @@ public class OrtakIslemler implements Serializable {
 			}
 			izinList = null;
 			updateMap = null;
+		}
+		if (yeniler != null && !yeniler.isEmpty()) {
+			if (izinERPReturnList == null || izinERPReturnList.isEmpty())
+				izinERPReturnList = yeniler;
+			else {
+				for (IzinERP izinERP : yeniler) {
+					boolean ekle = true;
+					for (IzinERP izinERP2 : izinERPReturnList) {
+						if (izinERP2.getReferansNoERP().trim().equals(izinERP.getReferansNoERP().trim())) {
+							ekle = false;
+							break;
+						}
+
+					}
+					if (ekle)
+						izinERPReturnList.add(izinERP);
+				}
+
+			}
 		}
 		return izinERPReturnList;
 	}
