@@ -152,7 +152,7 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 		if (!authenticatedUser.isAdmin()) {
 			sb.append(" and S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d");
 			map.put("d", authenticatedUser.getDepartman().getId());
-			if (authenticatedUser.isIKSirket())
+			if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis())
 				sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
 		}
 

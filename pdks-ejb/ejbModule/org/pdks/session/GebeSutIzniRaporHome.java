@@ -98,7 +98,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 		Departman departman = null;
 		sirketId = null;
 		tesisDurum = false;
-		if (authenticatedUser.isIKSirket())
+		if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis())
 			sirketId = authenticatedUser.getPdksPersonel().getSirket().getId();
 		if (!(authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin()))
 			departman = authenticatedUser.getDepartman();

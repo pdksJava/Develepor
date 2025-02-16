@@ -343,7 +343,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			sb.append("select distinct S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
 			sb.append(" where S." + Sirket.COLUMN_NAME_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1 ");
-			if (authenticatedUser.isIKSirket())
+			if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis())
 				sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
 			sb.append(" and S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d ");
 

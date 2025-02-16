@@ -570,7 +570,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 			personelSQLBagla(sb, fields);
 			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
-			if (authenticatedUser.isIKSirket())
+			if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis())
 				sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
 			donemSQLKontrol(sb);
 			sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ")<=" + sonDonem);
@@ -663,7 +663,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				sb.append("select distinct S.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 				sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
-				if (authenticatedUser.isIKSirket())
+				if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis())
 					sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
 				sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " :" + fieldName);
 				sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");

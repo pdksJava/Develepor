@@ -2601,7 +2601,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Tanim.COLUMN_NAME_ID + " = " + Personel.COLUMN_NAME_SIRKET);
 			sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
 			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
-			if (authenticatedUser.isIKSirket())
+			if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis())
 				sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
 			sb.append(" order by S." + Sirket.COLUMN_NAME_AD);
 			fields.put(fieldName, idler);

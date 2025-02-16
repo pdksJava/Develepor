@@ -123,7 +123,7 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 		HashMap map = new HashMap();
 		map.put(PdksEntityController.MAP_KEY_MAP, "getId");
 		map.put(PdksEntityController.MAP_KEY_SELECT, "sirket");
-		if (authenticatedUser.isIKSirket())
+		if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis())
 			map.put("sirket.id=", authenticatedUser.getPdksPersonel().getSirket().getId());
 		map.put("pdks=", Boolean.TRUE);
 		map.put("durum=", Boolean.TRUE);
