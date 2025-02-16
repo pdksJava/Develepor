@@ -137,6 +137,8 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 		HashMap map = new HashMap();
 		map.put(PdksEntityController.MAP_KEY_MAP, "getId");
 		map.put(PdksEntityController.MAP_KEY_SELECT, "sirket");
+		if (authenticatedUser.isIKSirket())
+			map.put("sirket.id=", authenticatedUser.getPdksPersonel().getSirket().getId());
 		map.put("pdks=", Boolean.TRUE);
 		map.put("durum=", Boolean.TRUE);
 		map.put("sskCikisTarihi>=", bugun);
@@ -160,7 +162,8 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 
 					aramaSecenekleri.getSirketIdList().add(new SelectItem(sirket.getId(), sirket.getAd()));
 				}
-
+				if (aramaSecenekleri.getSirketIdList().size() == 1)
+					sirketId = (Long) aramaSecenekleri.getSirketIdList().get(0).getValue();
 			}
 			aramaSecenekleri.setSirketId(sirketId);
 			fillTesisList();

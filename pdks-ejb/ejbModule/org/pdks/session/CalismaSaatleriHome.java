@@ -131,6 +131,8 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 		HashMap map = new HashMap();
 		map.put(PdksEntityController.MAP_KEY_MAP, "getId");
 		map.put(PdksEntityController.MAP_KEY_SELECT, "sirket");
+		if (authenticatedUser.isIKSirket())
+			map.put("sirket.id=", authenticatedUser.getPdksPersonel().getSirket().getId());
 		map.put("pdks=", Boolean.TRUE);
 		map.put("durum=", Boolean.TRUE);
 		map.put("sskCikisTarihi>=", bugun);
