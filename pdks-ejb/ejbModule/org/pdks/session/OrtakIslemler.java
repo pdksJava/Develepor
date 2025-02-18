@@ -6228,6 +6228,7 @@ public class OrtakIslemler implements Serializable {
 			aramaSecenekleri.setEkSahaSelectListMap(new HashMap<String, List<SelectItem>>());
 		String alanKodu = "ekSaha" + kodu;
 		Long alanId = null;
+		int indis=Integer.parseInt(kodu);
 		List<SelectItem> alanList = aramaSecenekleri.getEkSahaSelectListMap().containsKey(alanKodu) ? aramaSecenekleri.getEkSahaSelectListMap().get(alanKodu) : null;
 		if (alanList == null) {
 			alanList = new ArrayList<SelectItem>();
@@ -6240,7 +6241,7 @@ public class OrtakIslemler implements Serializable {
 			HashMap map = new HashMap();
 			Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
 			List<Tanim> tanimList = null;
-			switch (Integer.parseInt(kodu)) {
+			switch (indis) {
 			case 1:
 				eskiId = aramaSecenekleri.getEkSaha1Id();
 				break;
@@ -6257,7 +6258,7 @@ public class OrtakIslemler implements Serializable {
 			default:
 				break;
 			}
-			if (sirket.isErp()) {
+			if (sirket.isErp() || indis==3) {
 				StringBuffer sb = new StringBuffer();
 				String columnName = "EK_SAHA" + kodu + "_ID";
 				sb.append("with DATA as ( ");
@@ -6300,7 +6301,7 @@ public class OrtakIslemler implements Serializable {
 			}
 
 		}
-		switch (Integer.parseInt(kodu)) {
+		switch (indis) {
 		case 1:
 			aramaSecenekleri.setEkSaha1Id(alanId);
 			break;
