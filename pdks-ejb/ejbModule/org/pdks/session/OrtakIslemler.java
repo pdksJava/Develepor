@@ -6222,20 +6222,11 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 */
 	private List<SelectItem> setAramaSecenekEkSahaData(AramaSecenekleri aramaSecenekleri, String kodu, Date basTarih, Date bitTarih, Session session) {
-		if (aramaSecenekleri == null)
-			aramaSecenekleri = new AramaSecenekleri();
-		if (aramaSecenekleri.getEkSahaSelectListMap() == null)
-			aramaSecenekleri.setEkSahaSelectListMap(new HashMap<String, List<SelectItem>>());
-		String alanKodu = "ekSaha" + kodu;
+ 	String alanKodu = "ekSaha" + kodu;
 		Long alanId = null;
 		int indis = Integer.parseInt(kodu);
-		List<SelectItem> alanList = aramaSecenekleri.getEkSahaSelectListMap().containsKey(alanKodu) ? aramaSecenekleri.getEkSahaSelectListMap().get(alanKodu) : null;
-		if (alanList == null) {
-			alanList = new ArrayList<SelectItem>();
-			aramaSecenekleri.getEkSahaSelectListMap().put(alanKodu, alanList);
-		} else
-			alanList.clear();
-		Long eskiId = null;
+		List<SelectItem> alanList = aramaSecenekleri.getEkSahaSelectListMap().get(alanKodu);
+ 		Long eskiId = null;
 		if (aramaSecenekleri.getSirketId() != null) {
 			List<Tanim> list = null;
 			HashMap map = new HashMap();
@@ -6294,9 +6285,9 @@ public class OrtakIslemler implements Serializable {
 					for (Tanim alan : list) {
 						if (eskiId != null && alan.getId().equals(eskiId))
 							alanId = alan.getId();
-						alanList.add(new SelectItem(alan.getId(), alan.getAciklama()));
+						SelectItem st = new SelectItem(alan.getId(), alan.getAciklama());
+						alanList.add(st);
 					}
-
 				}
 			}
 
@@ -6318,6 +6309,7 @@ public class OrtakIslemler implements Serializable {
 		default:
 			break;
 		}
+		
 		return alanList;
 	}
 
@@ -6353,6 +6345,15 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" where P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " >= :b1 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b2 ");
 				sb.append(" and P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1 and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s ");
+				if (authenticatedUser.isIK_Tesis()) {
+					Tanim tesis = authenticatedUser.getPdksPersonel().getTesis();
+					if (tesis != null) {
+						sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t ");
+						map.put("t", tesis.getId());
+					} else
+						sb.append(" and 1 = 2 ");
+
+				}
 				map.put("s", sirket.getId());
 				sb.append(" ) ");
 				sb.append(" select V.* from DATA P " + PdksEntityController.getSelectLOCK());
@@ -6385,15 +6386,16 @@ public class OrtakIslemler implements Serializable {
 	 * @param bitTarih
 	 * @param session
 	 */
-	public void setAramaSecenekEkDataDoldur(AramaSecenekleri aramaSecenekleri, Date basTarih, Date bitTarih, Session session) {
+	public void setAramaSecenekEkDataDoldur(AramaSecenekleri as, Date basTarih, Date bitTarih, Session session) {
 		if (basTarih == null)
 			basTarih = PdksUtil.getDate(new Date());
 		if (bitTarih == null)
 			bitTarih = PdksUtil.getDate(new Date());
-		if (aramaSecenekleri.getEkSahaSelectListMap() != null) {
-			for (String key : aramaSecenekleri.getEkSahaSelectListMap().keySet()) {
+		if (as.getEkSahaSelectListMap() != null) {
+			for (String key : as.getEkSahaSelectListMap().keySet()) {
 				String kod = key.substring(key.length() - 1);
-				setAramaSecenekEkSahaData(aramaSecenekleri, kod, basTarih, bitTarih, session);
+				as.getEkSahaSelectListMap().put(key, new ArrayList<SelectItem>());
+				setAramaSecenekEkSahaData(as, kod, basTarih, bitTarih, session);
 			}
 
 		}

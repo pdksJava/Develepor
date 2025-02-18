@@ -894,6 +894,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
 		}
 		// fillTesisList(aramaSecenekleri);
+		aramaListeSecenekleri.setTesisList(null);
 		fillTesisList(aramaListeSecenekleri);
 	}
 
