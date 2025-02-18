@@ -6274,7 +6274,7 @@ public class OrtakIslemler implements Serializable {
 						sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t ");
 						map.put("t", aramaSecenekleri.getTesisId());
 					} else
-						sb.append(" and 1= 2 ");
+						sb.append(" and 1 = 2 ");
 				}
 				sb.append(" ) ");
 				sb.append(" select distinct V.* from DATA P " + PdksEntityController.getSelectLOCK());
