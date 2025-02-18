@@ -6228,7 +6228,7 @@ public class OrtakIslemler implements Serializable {
 			aramaSecenekleri.setEkSahaSelectListMap(new HashMap<String, List<SelectItem>>());
 		String alanKodu = "ekSaha" + kodu;
 		Long alanId = null;
-		int indis=Integer.parseInt(kodu);
+		int indis = Integer.parseInt(kodu);
 		List<SelectItem> alanList = aramaSecenekleri.getEkSahaSelectListMap().containsKey(alanKodu) ? aramaSecenekleri.getEkSahaSelectListMap().get(alanKodu) : null;
 		if (alanList == null) {
 			alanList = new ArrayList<SelectItem>();
@@ -6258,7 +6258,7 @@ public class OrtakIslemler implements Serializable {
 			default:
 				break;
 			}
-			if (sirket.isErp() || indis==3) {
+			if (sirket.isErp() || indis == 3) {
 				StringBuffer sb = new StringBuffer();
 				String columnName = "EK_SAHA" + kodu + "_ID";
 				sb.append("with DATA as ( ");
