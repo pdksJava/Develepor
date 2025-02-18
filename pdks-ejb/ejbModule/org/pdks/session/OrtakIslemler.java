@@ -6245,10 +6245,10 @@ public class OrtakIslemler implements Serializable {
 			sb.append("select distinct P." + columnName + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 			sb.append(" where P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " >= :b1 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b2 ");
 			sb.append(" and P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1 and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
-			if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis()) {
-				sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s ");
-				map.put("s", sirket.getId());
-			}
+
+			sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s ");
+			map.put("s", sirket.getId());
+
 			if (sirket.getTesisDurum()) {
 				if (aramaSecenekleri.getTesisId() != null) {
 					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t ");
@@ -6344,10 +6344,8 @@ public class OrtakIslemler implements Serializable {
 				sb.append("select distinct P." + Personel.COLUMN_NAME_TESIS + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 				sb.append(" where P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " >= :b1 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b2 ");
 				sb.append(" and P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1 and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
-				if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis()) {
-					sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s ");
-					map.put("s", sirket.getId());
-				}
+				sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s ");
+				map.put("s", sirket.getId());
 				sb.append(" ) ");
 				sb.append(" select V.* from DATA P " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + Tanim.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_TESIS);

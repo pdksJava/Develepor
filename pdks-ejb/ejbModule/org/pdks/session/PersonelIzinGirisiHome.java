@@ -882,10 +882,10 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
 		ortakIslemler.fillEkSahaTanimAramaSecenekAta(session, Boolean.FALSE, null, aramaSecenekleri);
 		ortakIslemler.fillEkSahaTanimAramaSecenekAta(session, Boolean.FALSE, null, aramaListeSecenekleri);
-		if (aramaListeSecenekleri.getTesisList() != null)
-			aramaListeSecenekleri.setTesisList(new ArrayList<SelectItem>(aramaListeSecenekleri.getTesisList()));
-		if (aramaListeSecenekleri.getSirketIdList() != null)
-			aramaListeSecenekleri.setSirketIdList(new ArrayList<SelectItem>(aramaListeSecenekleri.getSirketIdList()));
+//		if (aramaListeSecenekleri.getTesisList() != null)
+//			aramaListeSecenekleri.setTesisList(new ArrayList<SelectItem>(aramaListeSecenekleri.getTesisList()));
+//		if (aramaListeSecenekleri.getSirketIdList() != null)
+//			aramaListeSecenekleri.setSirketIdList(new ArrayList<SelectItem>(aramaListeSecenekleri.getSirketIdList()));
 		if (aramaListeSecenekleri.getSirketIdList().size() == 1)
 			aramaListeSecenekleri.setSirketId((Long) aramaListeSecenekleri.getSirketIdList().get(0).getValue());
 		if (aramaSecenekleri.getSirketList() != null) {
