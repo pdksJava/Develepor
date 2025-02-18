@@ -326,7 +326,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	}
 
 	public void fillSirketList() {
-		List<Sirket> list = null;
+ 
 		if (departmanId != null) {
 
 			departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
@@ -336,50 +336,8 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		if (departman == null || departman.isAdminMi())
 			fillEkSahaTanim();
 		if (authenticatedUser.isAdmin() || authenticatedUser.isIK()) {
-
-			HashMap map = new HashMap();
-
-			StringBuffer sb = new StringBuffer();
-			sb.append("select distinct S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
-			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
-			sb.append(" where S." + Sirket.COLUMN_NAME_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1 ");
-			if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis())
-				sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
-			sb.append(" and S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d ");
-
-			if (!authenticatedUser.isAdmin() && !authenticatedUser.isIKAdmin())
-				map.put("d", authenticatedUser.getDepartman().getId());
-			else if (departman != null)
-				map.put("d", departman.getId());
-			map.put(PdksEntityController.MAP_KEY_MAP, "getId");
-			if (session != null)
-				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			TreeMap sirketMap = pdksEntityController.getObjectBySQLMap(sb, map, Sirket.class, Boolean.FALSE);
-
-			setSirketList(null);
-			if (!sirketMap.isEmpty())
-				list = new ArrayList<Sirket>(sirketMap.values());
-			if (list.size() > 1)
-				list = ortakIslemler.getStajerOlmayanSirketler(PdksUtil.sortObjectStringAlanList(list, "getAd", null));
-			List<SelectItem> sirketler = ortakIslemler.getSelectItemList("sirket", authenticatedUser);
-			if (!list.isEmpty()) {
-
-				for (Sirket pdksSirket : list) {
-					sirketler.add(new SelectItem(pdksSirket.getId(), pdksSirket.getAd()));
-				}
-				setPdksSirketList(sirketler);
-				if (list.size() == 1) {
-					setSirket(list.get(0));
-					sirketId = list.get(0).getId();
-					list.clear();
-
-				}
-
-			}
-			aramaSecenekleri.setSirketIdList(sirketler);
-			if (sirketler.size() == 1)
-				aramaSecenekleri.setSirketId((Long) sirketler.get(0).getValue());
-			sirketMap = null;
+			Date bugun = PdksUtil.getDate(date);
+			ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, bugun, bugun, true, session);
 		} else {
 			setSirket(authenticatedUser.getPdksPersonel().getSirket());
 		}
@@ -389,10 +347,22 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		if (departmanId != null) {
 
 			departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
-			;
+			 
 
 		}
 		bolumDepartmanlari = departman != null && !departman.isAdminMi() ? ortakIslemler.getBolumDepartmanSelectItems(departman.getId(), session) : null;
+	}
+	
+	public String fillTesisList() {
+		Date bugun = PdksUtil.getDate(new Date());
+		ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, bugun, bugun, true, session);
+		return "";
+	}
+
+	public String fillEkSahaList() {
+		Date bugun = PdksUtil.getDate(new Date());
+		ortakIslemler.setAramaSecenekEkDataDoldur(aramaSecenekleri, bugun, bugun, session);
+		return "";
 	}
 
 	public String mesaiSec(FazlaMesaiTalep fmt) {

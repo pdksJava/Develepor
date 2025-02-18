@@ -30,9 +30,7 @@
 						<h:selectOneMenu id="sirketSec" value="#{personelFazlaMesaiHome.aramaSecenekleri.sirketId}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{personelFazlaMesaiHome.aramaSecenekleri.sirketIdList}" />
-							<a4j:support event="onchange"
-								action="#{ortakIslemler.getTesisList(personelFazlaMesaiHome.aramaSecenekleri.tesisList,null,personelFazlaMesaiHome.aramaSecenekleri.sirketId,true,personelFazlaMesaiHome.session)}"
-								ajaxSingle="true" reRender="hareketPanel,girisler" />
+							<a4j:support event="onchange" action="#{personelFazlaMesaiHome.fillTesisList()}" ajaxSingle="true" reRender="hareketPanel,girisler" />
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.bolumDepartmanlari != null}">
@@ -54,6 +52,7 @@
 							<h:selectOneMenu value="#{personelFazlaMesaiHome.aramaSecenekleri.tesisId}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{personelFazlaMesaiHome.aramaSecenekleri.tesisList}" />
+								<a4j:support event="onchange" action="#{personelFazlaMesaiHome.fillEkSahaList()}" ajaxSingle="true" reRender="hareketPanel,girisler" />
 							</h:selectOneMenu>
 						</s:decorate>
 

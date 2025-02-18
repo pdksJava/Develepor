@@ -34,10 +34,7 @@
 								requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz!">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{holdingKalanIzinHome.aramaSecenekleri.sirketIdList}" />
-								 
-								<a4j:support event="onchange"
-								action="#{ortakIslemler.getTesisList(holdingKalanIzinHome.aramaSecenekleri.tesisList,null,holdingKalanIzinHome.aramaSecenekleri.sirketId,true,holdingKalanIzinHome.session)}"
-								ajaxSingle="true" reRender="secim" />
+ 								<a4j:support event="onchange" action="#{holdingKalanIzinHome.fillTesisList()}" ajaxSingle="true" reRender="secim" />
 							</h:selectOneMenu>
 						</s:decorate>
 
@@ -47,6 +44,7 @@
 							<h:selectOneMenu value="#{holdingKalanIzinHome.aramaSecenekleri.tesisId}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{holdingKalanIzinHome.aramaSecenekleri.tesisList}" />
+								<a4j:support event="onchange" action="#{holdingKalanIzinHome.fillEkSahaList()}" ajaxSingle="true" reRender="secim" />
 							</h:selectOneMenu>
 						</s:decorate>
 

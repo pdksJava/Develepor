@@ -259,7 +259,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 						ArrayList durumList = new ArrayList();
 						durumList.add(PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
 						durumList.add(PersonelIzin.IZIN_DURUMU_REDEDILDI);
-						durumList.add(PersonelIzin.IZIN_DURUMU_SAP_GONDERILDI);
+						durumList.add(PersonelIzin.IZIN_DURUMU_ERP_GONDERILDI);
 						parametreMap.put("izinDurumu not", durumList);
 						parametreMap.put("izinTipi.personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
 						parametreMap.put("izinTipi.takvimGunumu<>", Boolean.TRUE);

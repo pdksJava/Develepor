@@ -96,12 +96,9 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 		bolumAciklama = (String) sonucMap.get("bolumAciklama");
 		if (aramaSecenekleri.getSirketIdList().size() == 1) {
 			aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
-			ortakIslemler.getTesisList(aramaSecenekleri.getTesisList(), null, aramaSecenekleri.getSirketId(), true, session);
-			if (aramaSecenekleri.getTesisList() != null && aramaSecenekleri.getTesisList().size() == 1)
-				aramaSecenekleri.setTesisId((Long) aramaSecenekleri.getTesisList().get(0).getValue());
-		} else if (aramaSecenekleri.getTesisList() != null)
-			aramaSecenekleri.getTesisList().clear();
 
+		}
+		fillTesisList();
 	}
 
 	public void instanceRefresh() {
@@ -142,6 +139,18 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 		}
 		if (authenticatedUser.isIK() || authenticatedUser.isAdmin())
 			setHoldingIzinList(new ArrayList<HoldingIzin>());
+	}
+
+	public String fillTesisList() {
+		Date bugun = PdksUtil.getDate(new Date());
+		ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, bugun, bugun, true, session);
+		return "";
+	}
+
+	public String fillEkSahaList() {
+		Date bugun = PdksUtil.getDate(new Date());
+		ortakIslemler.setAramaSecenekEkDataDoldur(aramaSecenekleri, bugun, bugun, session);
+		return "";
 	}
 
 	public String fillIzinList() {

@@ -857,6 +857,21 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		return tatilAciklama;
 	}
 
+	public String fillSirketList(AramaSecenekleri as) {
+		ortakIslemler.setAramaSecenekSirketVeTesisData(as, filtreBaslangicZamani, filtreBitisZamani, true, session);
+		return "";
+	}
+
+	public String fillTesisList(AramaSecenekleri as) {
+		ortakIslemler.setAramaSecenekTesisData(as, filtreBaslangicZamani, filtreBitisZamani, true, session);
+		return "";
+	}
+
+	public String fillEkSahaList(AramaSecenekleri as) {
+		ortakIslemler.setAramaSecenekEkDataDoldur(as, filtreBaslangicZamani, filtreBitisZamani, session);
+		return "";
+	}
+
 	/**
 	 * 
 	 */
@@ -867,6 +882,10 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
 		ortakIslemler.fillEkSahaTanimAramaSecenekAta(session, Boolean.FALSE, null, aramaSecenekleri);
 		ortakIslemler.fillEkSahaTanimAramaSecenekAta(session, Boolean.FALSE, null, aramaListeSecenekleri);
+		if (aramaListeSecenekleri.getTesisList() != null)
+			aramaListeSecenekleri.setTesisList(new ArrayList<SelectItem>(aramaListeSecenekleri.getTesisList()));
+		if (aramaListeSecenekleri.getSirketIdList() != null)
+			aramaListeSecenekleri.setSirketIdList(new ArrayList<SelectItem>(aramaListeSecenekleri.getSirketIdList()));
 		if (aramaListeSecenekleri.getSirketIdList().size() == 1)
 			aramaListeSecenekleri.setSirketId((Long) aramaListeSecenekleri.getSirketIdList().get(0).getValue());
 		if (aramaSecenekleri.getSirketList() != null) {
@@ -877,11 +896,9 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		bolumAciklama = (ekSaha3 != null ? ekSaha3.getAciklama() : ortakIslemler.bolumAciklama()).toLowerCase(PdksUtil.TR_LOCALE);
 		if (aramaSecenekleri.getSirketIdList().size() == 1) {
 			aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
-			ortakIslemler.getTesisList(aramaListeSecenekleri.getTesisList(), null, aramaListeSecenekleri.getSirketId(), true, session);
-			if (aramaListeSecenekleri.getTesisList() != null && aramaListeSecenekleri.getTesisList().size() == 1)
-				aramaListeSecenekleri.setTesisId((Long) aramaListeSecenekleri.getTesisList().get(0).getValue());
-		} else if (aramaListeSecenekleri.getTesisList() != null)
-			aramaListeSecenekleri.getTesisList().clear();
+		}
+		// fillTesisList(aramaSecenekleri);
+		fillTesisList(aramaListeSecenekleri);
 	}
 
 	/**
@@ -4466,7 +4483,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			List<Integer> izinDurum = new ArrayList<Integer>();
 			izinDurum.add(PersonelIzin.IZIN_DURUMU_IK_ONAYINDA);
 			izinDurum.add(PersonelIzin.IZIN_DURUMU_ONAYLANDI);
-			izinDurum.add(PersonelIzin.IZIN_DURUMU_SAP_GONDERILDI);
+			izinDurum.add(PersonelIzin.IZIN_DURUMU_ERP_GONDERILDI);
 			HashMap paramMap = new HashMap();
 			paramMap.put("izinTipi.bakiyeIzinTipi=", null);
 			paramMap.put("izinTipi.onaylayanTipi<>", IzinTipi.ONAYLAYAN_TIPI_YOK);

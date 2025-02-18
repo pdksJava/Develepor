@@ -6215,6 +6215,236 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param aramaSecenekleri
+	 * @param kodu
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param session
+	 */
+	private List<SelectItem> setAramaSecenekEkSahaData(AramaSecenekleri aramaSecenekleri, String kodu, Date basTarih, Date bitTarih, Session session) {
+		if (aramaSecenekleri == null)
+			aramaSecenekleri = new AramaSecenekleri();
+		if (aramaSecenekleri.getEkSahaSelectListMap() == null)
+			aramaSecenekleri.setEkSahaSelectListMap(new HashMap<String, List<SelectItem>>());
+		String alanKodu = "ekSaha" + kodu;
+		Long alanId = null;
+		List<SelectItem> alanList = aramaSecenekleri.getEkSahaSelectListMap().containsKey(alanKodu) ? aramaSecenekleri.getEkSahaSelectListMap().get(alanKodu) : null;
+		if (alanList == null) {
+			alanList = new ArrayList<SelectItem>();
+			aramaSecenekleri.getEkSahaSelectListMap().put(alanKodu, alanList);
+		} else
+			alanList.clear();
+		Long eskiId = null;
+		if (aramaSecenekleri.getSirketId() != null) {
+			List<Tanim> list = null;
+			HashMap map = new HashMap();
+			Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
+			StringBuffer sb = new StringBuffer();
+			String columnName = "EK_SAHA" + kodu + "_ID";
+			sb.append("with DATA as ( ");
+			sb.append("select distinct P." + columnName + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+			sb.append(" where P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " >= :b1 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b2 ");
+			sb.append(" and P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1 and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
+			if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis()) {
+				sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s ");
+				map.put("s", sirket.getId());
+			}
+			if (sirket.getTesisDurum()) {
+				if (aramaSecenekleri.getTesisId() != null) {
+					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t ");
+					map.put("t", aramaSecenekleri.getTesisId());
+				} else
+					sb.append(" and 1= 2 ");
+			}
+			sb.append(" ) ");
+			sb.append(" select V.* from DATA P " + PdksEntityController.getSelectLOCK());
+			sb.append(" inner join " + Tanim.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + Tanim.COLUMN_NAME_ID + " = P." + columnName);
+			map.put("b1", basTarih);
+			map.put("b2", bitTarih);
+			if (session != null)
+				map.put(PdksEntityController.MAP_KEY_SESSION, session);
+			List<Tanim> tanimList = pdksEntityController.getObjectBySQLList(sb, map, Tanim.class);
+
+			switch (Integer.parseInt(kodu)) {
+			case 1:
+				eskiId = aramaSecenekleri.getEkSaha1Id();
+				break;
+			case 2:
+				eskiId = aramaSecenekleri.getEkSaha2Id();
+				break;
+			case 3:
+				eskiId = aramaSecenekleri.getEkSaha3Id();
+				break;
+			case 4:
+				eskiId = aramaSecenekleri.getEkSaha4Id();
+				break;
+
+			default:
+				break;
+			}
+			if (!tanimList.isEmpty()) {
+				list = PdksUtil.sortObjectStringAlanList(new ArrayList(tanimList), "getAciklama", null);
+				for (Tanim alan : list) {
+					if (eskiId != null && alan.getId().equals(eskiId))
+						alanId = alan.getId();
+					alanList.add(new SelectItem(alan.getId(), alan.getAciklama()));
+				}
+
+			}
+
+		}
+		switch (Integer.parseInt(kodu)) {
+		case 1:
+			aramaSecenekleri.setEkSaha1Id(alanId);
+			break;
+		case 2:
+			aramaSecenekleri.setEkSaha2Id(alanId);
+			break;
+		case 3:
+			aramaSecenekleri.setEkSaha3Id(alanId);
+			break;
+		case 4:
+			aramaSecenekleri.setEkSaha4Id(alanId);
+			break;
+
+		default:
+			break;
+		}
+		return alanList;
+	}
+
+	/**
+	 * @param aramaSecenekleri
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param ekAlanlar
+	 * @param session
+	 * @return
+	 */
+	public List<SelectItem> setAramaSecenekTesisData(AramaSecenekleri aramaSecenekleri, Date basTarih, Date bitTarih, boolean ekAlanlar, Session session) {
+		if (basTarih == null)
+			basTarih = PdksUtil.getDate(new Date());
+		if (bitTarih == null)
+			bitTarih = PdksUtil.getDate(new Date());
+		if (aramaSecenekleri == null)
+			aramaSecenekleri = new AramaSecenekleri();
+		if (aramaSecenekleri.getTesisList() != null)
+			aramaSecenekleri.getTesisList().clear();
+		else
+			aramaSecenekleri.setTesisList(new ArrayList<SelectItem>());
+		Long tesisId = null;
+		List<SelectItem> tesisList = aramaSecenekleri.getTesisList();
+		if (aramaSecenekleri.getSirketId() != null) {
+			List<Tanim> list = null;
+			Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
+			if (sirket.isTesisDurumu()) {
+				HashMap map = new HashMap();
+				StringBuffer sb = new StringBuffer();
+				sb.append("with DATA as ( ");
+				sb.append("select distinct P." + Personel.COLUMN_NAME_TESIS + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+				sb.append(" where P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " >= :b1 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b2 ");
+				sb.append(" and P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1 and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
+				if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis()) {
+					sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s ");
+					map.put("s", sirket.getId());
+				}
+				sb.append(" ) ");
+				sb.append(" select V.* from DATA P " + PdksEntityController.getSelectLOCK());
+				sb.append(" inner join " + Tanim.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_TESIS);
+				map.put("b1", basTarih);
+				map.put("b2", bitTarih);
+				if (session != null)
+					map.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List<Tanim> tanimList = pdksEntityController.getObjectBySQLList(sb, map, Tanim.class);
+				if (!tanimList.isEmpty()) {
+					list = PdksUtil.sortObjectStringAlanList(new ArrayList(tanimList), "getAciklama", null);
+					for (Tanim tesis : list) {
+						if (list.size() == 1)
+							tesisId = tesis.getId();
+						tesisList.add(new SelectItem(tesis.getId(), tesis.getAciklama()));
+					}
+
+				}
+			}
+		}
+		aramaSecenekleri.setTesisId(tesisId);
+		if (ekAlanlar)
+			setAramaSecenekEkDataDoldur(aramaSecenekleri, basTarih, bitTarih, session);
+		return tesisList;
+	}
+
+	/**
+	 * @param aramaSecenekleri
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param session
+	 */
+	public void setAramaSecenekEkDataDoldur(AramaSecenekleri aramaSecenekleri, Date basTarih, Date bitTarih, Session session) {
+		if (basTarih == null)
+			basTarih = PdksUtil.getDate(new Date());
+		if (bitTarih == null)
+			bitTarih = PdksUtil.getDate(new Date());
+		if (aramaSecenekleri.getEkSahaSelectListMap() != null) {
+			for (String key : aramaSecenekleri.getEkSahaSelectListMap().keySet()) {
+				String kod = key.substring(key.length() - 1);
+				setAramaSecenekEkSahaData(aramaSecenekleri, kod, basTarih, bitTarih, session);
+			}
+
+		}
+	}
+
+	/**
+	 * @param aramaSecenekleri
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param session
+	 */
+	public List<SelectItem> setAramaSecenekSirketVeTesisData(AramaSecenekleri aramaSecenekleri, Date basTarih, Date bitTarih, boolean ekAlanlar, Session session) {
+		if (basTarih == null)
+			basTarih = PdksUtil.getDate(new Date());
+		if (bitTarih == null)
+			bitTarih = PdksUtil.getDate(new Date());
+		List<Sirket> list = null;
+		HashMap map = new HashMap();
+		StringBuffer sb = new StringBuffer();
+		sb.append("with DATA as ( ");
+		sb.append("select distinct P." + Personel.COLUMN_NAME_SIRKET + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+		sb.append(" where P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " >= :b1 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b2 ");
+		sb.append(" and P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1 and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
+		if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis()) {
+			sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s ");
+			map.put("s", authenticatedUser.getPdksPersonel().getSirket().getId());
+		}
+		sb.append(" ) ");
+		sb.append(" select V.* from DATA P " + PdksEntityController.getSelectLOCK());
+		sb.append(" inner join " + Sirket.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
+		map.put("b1", basTarih);
+		map.put("b2", bitTarih);
+		if (session != null)
+			map.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<Sirket> sirketList = pdksEntityController.getObjectBySQLList(sb, map, Sirket.class);
+		if (aramaSecenekleri.getSirketIdList() != null)
+			aramaSecenekleri.getSirketIdList().clear();
+		else
+			aramaSecenekleri.setSirketIdList(new ArrayList<SelectItem>());
+		Long sirketId = null;
+		List<SelectItem> sirketIdList = aramaSecenekleri.getSirketIdList();
+		if (!sirketList.isEmpty()) {
+			list = PdksUtil.sortObjectStringAlanList(new ArrayList<Sirket>(sirketList), "getAd", null);
+			for (Sirket sirket : list)
+				if (sirket.getDurum() && sirket.getFazlaMesai())
+					sirketIdList.add(new SelectItem(sirket.getId(), sirket.getAd()));
+
+		}
+		sirketList = null;
+		if (sirketIdList.size() == 1)
+			sirketId = (Long) sirketIdList.get(0).getValue();
+		aramaSecenekleri.setSirketId(sirketId);
+		setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, ekAlanlar, session);
+		return sirketIdList;
+	}
+
+	/**
 	 * @param guncellemeDurum
 	 * @param veriMap
 	 * @param session
@@ -8073,7 +8303,7 @@ public class OrtakIslemler implements Serializable {
 		izinDurumuList.add(PersonelIzin.IZIN_DURUMU_IKINCI_YONETICI_ONAYINDA);
 		izinDurumuList.add(PersonelIzin.IZIN_DURUMU_IK_ONAYINDA);
 		izinDurumuList.add(PersonelIzin.IZIN_DURUMU_ONAYLANDI);
-		izinDurumuList.add(PersonelIzin.IZIN_DURUMU_SAP_GONDERILDI);
+		izinDurumuList.add(PersonelIzin.IZIN_DURUMU_ERP_GONDERILDI);
 		return izinDurumuList;
 	}
 

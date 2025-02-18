@@ -125,11 +125,21 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		}
 		if (aramaSecenekleri.getSirketIdList().size() == 1) {
 			aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
-			ortakIslemler.getTesisList(aramaSecenekleri.getTesisList(), null, aramaSecenekleri.getSirketId(), true, session);
-			if (aramaSecenekleri.getTesisList() != null && aramaSecenekleri.getTesisList().size() == 1)
-				aramaSecenekleri.setTesisId((Long) aramaSecenekleri.getTesisList().get(0).getValue());
-		} else if (aramaSecenekleri.getTesisList() != null)
-			aramaSecenekleri.getTesisList().clear();
+
+		}
+		fillTesisList();
+	}
+
+	public String fillTesisList() {
+		Date bugun = PdksUtil.getDate(new Date());
+		ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, bugun, bugun, true, session);
+		return "";
+	}
+
+	public String fillEkSahaList() {
+		Date bugun = PdksUtil.getDate(new Date());
+		ortakIslemler.setAramaSecenekEkDataDoldur(aramaSecenekleri, bugun, bugun, session);
+		return "";
 	}
 
 	public String excelAktar() {
@@ -552,7 +562,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 			List<Integer> izinDurumuList = new ArrayList<Integer>();
 			if (islemTipi.equals("K")) {
 				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_ONAYLANDI);
-				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_SAP_GONDERILDI);
+				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_ERP_GONDERILDI);
 			} else if (islemTipi.equals("B")) {
 				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_BIRINCI_YONETICI_ONAYINDA);
 				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_IKINCI_YONETICI_ONAYINDA);
@@ -753,7 +763,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_IKINCI_YONETICI_ONAYINDA);
 				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_IK_ONAYINDA);
 				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_ONAYLANDI);
-				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_SAP_GONDERILDI);
+				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_ERP_GONDERILDI);
 
 				// parametreMap.put("izinDurumu", izinDurumuList);
 				if (session != null)

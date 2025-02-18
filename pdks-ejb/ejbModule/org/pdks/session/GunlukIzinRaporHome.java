@@ -312,7 +312,7 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 				List<PersonelIzin> izinList = new ArrayList<PersonelIzin>();
 				List<Integer> izinDurumuList = new ArrayList<Integer>();
 				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_ONAYLANDI);
-				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_SAP_GONDERILDI);
+				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_ERP_GONDERILDI);
 				parametreMap.clear();
 				parametreMap.put("izinSahibi.id", idList);
 				parametreMap.put("baslangicZamani<=", ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 1));

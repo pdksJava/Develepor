@@ -159,10 +159,9 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 		ortakIslemler.fillEkSahaTanimAramaSecenekAta(session, Boolean.FALSE, null, aramaSecenekleri);
 		if (aramaSecenekleriPer != null && aramaSecenekleri != null && aramaSecenekleri.getSirketIdList() != null && aramaSecenekleri.getSirketIdList().size() == 1) {
 			aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
-			ortakIslemler.getTesisList(aramaSecenekleri.getTesisList(), null, aramaSecenekleri.getSirketId(), true, session);
-			if (aramaSecenekleri.getTesisList() != null && aramaSecenekleri.getTesisList().size() == 1)
-				aramaSecenekleri.setTesisId((Long) aramaSecenekleri.getTesisList().get(0).getValue());
+
 		}
+		fillTesisList();
 	}
 
 	/**
@@ -377,7 +376,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 		donusAdres = "";
 		if (authenticatedUser.isIK() || authenticatedUser.isAdmin()) {
 			fillEkSahaTanim();
-			fillSirketList();
+
 		} else
 			aramaSecenekleri.setSirket(authenticatedUser.getPdksPersonel().getSirket());
 		if (dateStr != null) {
@@ -510,14 +509,16 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 		return "";
 	}
 
-	public void fillSirketList() {
-		HashMap map = new HashMap();
-		map.put("durum", Boolean.TRUE);
-		map.put("pdks", Boolean.TRUE);
-		if (!(authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin()))
-			map.put("departman", authenticatedUser.getDepartman());
+	public String fillTesisList() {
+		Date bugun = PdksUtil.getDate(tarih);
+		ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, bugun, bugun, true, session);
+		return "";
+	}
 
-		map.put(PdksEntityController.MAP_KEY_SESSION, session);
+	public String fillEkSahaList() {
+		Date bugun = PdksUtil.getDate(tarih);
+		ortakIslemler.setAramaSecenekEkDataDoldur(aramaSecenekleri, bugun, bugun, session);
+		return "";
 	}
 
 	public void ekle(Personel pdksPersonel) {
@@ -809,7 +810,6 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 		fillHareketIslemList();
 		if (authenticatedUser.isIK() || authenticatedUser.isAdmin()) {
 			fillEkSahaTanim();
-			fillSirketList();
 
 		}
 		DenklestirmeAy denklestirmeAy = null;

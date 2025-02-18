@@ -1,3 +1,4 @@
+
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -118,7 +119,7 @@
 				</a4j:outputPanel>
 			</rich:panel>
 		</h:form>
-		
+
 		<a4j:outputPanel id="idPersonelGirisForm" rendered="#{authenticatedUser.izinGirebilir or ortakIslemler.getParameterKey('izinERPUpdate') != '1'}">
 			<h:form>
 				<ui:fragment rendered="#{personelIzinGirisiHome.donusAdres != null}">
@@ -259,7 +260,7 @@
 							</s:decorate>
 						</a4j:outputPanel>
 					</h:panelGrid>
- 
+
 					<a4j:outputPanel id="istirahat">
 						<rich:panel header="SSK İstirahat Bilgileri" rendered="#{personelIzinGirisiHome.seciliIzinTipi.SSKIstirahat}">
 							<h:panelGrid columns="1">
@@ -268,7 +269,7 @@
 									<ui:define name="label">Teşhis</ui:define>
 									<h:inputText value="#{personelIzinGirisiHome.istirahat.teshis}" required="true" requiredMessage="Teşhis giriniz!" />
 								</s:decorate>
- 							<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.seciliIzinTipi != null}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{personelIzinGirisiHome.seciliIzinTipi != null}">
 									<ui:define name="label">Rapor Kaynağı</ui:define>
 									<h:selectOneMenu value="#{personelIzinGirisiHome.istirahat.raporKaynagi}" required="true" requiredMessage="Rapor kaynağı seçiniz">
 										<f:selectItem itemLabel="Lütfen seçiniz" />
@@ -357,11 +358,10 @@
 						<h:selectOneMenu value="#{personelIzinGirisiHome.aramaListeSecenekleri.sirketId}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{personelIzinGirisiHome.aramaListeSecenekleri.sirketIdList}" />
-							<a4j:support event="onchange" 
-								action="#{ortakIslemler.getTesisList(personelIzinGirisiHome.aramaListeSecenekleri.tesisList,null,personelIzinGirisiHome.aramaListeSecenekleri.sirketId,true,personelIzinGirisiHome.session)}" 
-								ajaxSingle="true" reRender="secim" />
-							
-							
+							<a4j:support event="onchange" action="#{personelIzinGirisiHome.fillTesisList(personelIzinGirisiHome.aramaListeSecenekleri)}" ajaxSingle="true"
+								reRender="secim" />
+
+
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"
@@ -370,6 +370,8 @@
 						<h:selectOneMenu value="#{personelIzinGirisiHome.aramaListeSecenekleri.tesisId}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{personelIzinGirisiHome.aramaListeSecenekleri.tesisList}" />
+							<a4j:support event="onchange" action="#{personelIzinGirisiHome.fillEkSahaList(personelIzinGirisiHome.aramaListeSecenekleri)}" ajaxSingle="true"
+								reRender="secim" />
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml"

@@ -804,6 +804,18 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 
 	}
 
+	public String fillTesisList() {
+		Date bugun = PdksUtil.getDate(new Date());
+		ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, bugun, bugun, true, session);
+		return "";
+	}
+
+	public String fillEkSahaList() {
+		Date bugun = PdksUtil.getDate(new Date());
+		ortakIslemler.setAramaSecenekEkDataDoldur(aramaSecenekleri, bugun, bugun, session);
+		return "";
+	}
+
 	private void fillEkSahaTanim() {
 
 		ortakIslemler.fillEkSahaTanimAramaSecenekAta(session, Boolean.FALSE, null, aramaSecenekleri);
@@ -814,11 +826,13 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 			aramaSecenekleri.setSirketIdList(sirketIdList);
 			if (aramaSecenekleri.getSirketIdList().size() == 1) {
 				aramaSecenekleri.setSirketId((Long) aramaSecenekleri.getSirketIdList().get(0).getValue());
-				ortakIslemler.getTesisList(aramaSecenekleri.getTesisList(), null, aramaSecenekleri.getSirketId(), true, session);
-				if (aramaSecenekleri.getTesisList() != null && aramaSecenekleri.getTesisList().size() == 1)
-					aramaSecenekleri.setTesisId((Long) aramaSecenekleri.getTesisList().get(0).getValue());
+				// ortakIslemler.getTesisList(aramaSecenekleri.getTesisList(), null, aramaSecenekleri.getSirketId(), true, session);
+				// if (aramaSecenekleri.getTesisList() != null && aramaSecenekleri.getTesisList().size() == 1)
+				// aramaSecenekleri.setTesisId((Long) aramaSecenekleri.getTesisList().get(0).getValue());
 			}
+
 		}
+		fillTesisList();
 
 	}
 
@@ -2005,7 +2019,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 							PersonelIzinDetay izinDetay = new PersonelIzinDetay();
 							izinDetay.setPersonelIzin(personelIzin);
 							izinDetay.setHakEdisIzin(hakEdisIzin);
-//							izinDetay.setIzinMiktari(personelIzin.getIzinSuresi());
+							// izinDetay.setIzinMiktari(personelIzin.getIzinSuresi());
 							pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
 							pdksEntityController.saveOrUpdate(session, entityManager, izinDetay);
 						}

@@ -352,7 +352,7 @@ public class IzinAylikRaporHome extends EntityHome<PersonelIzin> implements Seri
 		durum.add(PersonelIzin.IZIN_DURUMU_IKINCI_YONETICI_ONAYINDA);
 		durum.add(PersonelIzin.IZIN_DURUMU_IK_ONAYINDA);
 		durum.add(PersonelIzin.IZIN_DURUMU_ONAYLANDI);
-		durum.add(PersonelIzin.IZIN_DURUMU_SAP_GONDERILDI);
+		durum.add(PersonelIzin.IZIN_DURUMU_ERP_GONDERILDI);
 
 		hesapTipi.add(PersonelIzin.HESAP_TIPI_GUN);
 		hesapTipi.add(PersonelIzin.HESAP_TIPI_SAAT_GUN_SECILDI);

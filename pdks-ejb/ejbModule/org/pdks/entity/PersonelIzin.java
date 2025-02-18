@@ -54,7 +54,7 @@ public class PersonelIzin extends BaseObject {
 	public static final int IZIN_DURUMU_IKINCI_YONETICI_ONAYINDA = 2;
 	public static final int IZIN_DURUMU_IK_ONAYINDA = 3;
 	public static final int IZIN_DURUMU_ONAYLANDI = 4;
-	public static final int IZIN_DURUMU_SAP_GONDERILDI = 5;
+	public static final int IZIN_DURUMU_ERP_GONDERILDI = 5;
 	public static final int IZIN_DURUMU_SISTEM_IPTAL = 8;
 	public static final int IZIN_DURUMU_REDEDILDI = 9;
 	public static final int HESAP_TIPI_GUN = 1;
@@ -68,7 +68,7 @@ public class PersonelIzin extends BaseObject {
 	public static final String IZIN_DURUMU_ACIKLAMA_GENEL_MUDUR_ONAYINDA = "Genel Müdür Onayında";
 	public static final String IZIN_DURUMU_ACIKLAMA_IK_ONAYINDA = "IK Onayında";
 	public static final String IZIN_DURUMU_ACIKLAMA_ONAYLANDI = "Onaylandı";
-	public static final String IZIN_DURUMU_ACIKLAMA_SAP_GONDERILDI = "SAP Gönderildi";
+	public static final String IZIN_DURUMU_ACIKLAMA_ERP_GONDERILDI = "ERP Gönderildi";
 	public static final String IZIN_DURUMU_ACIKLAMA_REDEDILDI = "Reddedildi";
 	public static final String IZIN_DURUMU_ACIKLAMA_IPTAL_EDILDI = "İptal Edildi";
 	public static final String IZIN_DURUMU_ACIKLAMA_SISTEM_IPTAL = "Sistem Güncelleme İptali";
@@ -246,8 +246,8 @@ public class PersonelIzin extends BaseObject {
 			aciklama = IZIN_DURUMU_ACIKLAMA_IKINCI_YONETICI_ONAYINDA;
 		else if (izinDurumu == IZIN_DURUMU_ONAYLANDI)
 			aciklama = IZIN_DURUMU_ACIKLAMA_ONAYLANDI;
-		else if (izinDurumu == IZIN_DURUMU_SAP_GONDERILDI)
-			aciklama = IZIN_DURUMU_ACIKLAMA_SAP_GONDERILDI;
+		else if (izinDurumu == IZIN_DURUMU_ERP_GONDERILDI)
+			aciklama = IZIN_DURUMU_ACIKLAMA_ERP_GONDERILDI;
 		else if (izinDurumu == IZIN_DURUMU_SISTEM_IPTAL)
 			aciklama = IZIN_DURUMU_ACIKLAMA_SISTEM_IPTAL;
 		else if (izinDurumu == IZIN_DURUMU_REDEDILDI) {
@@ -454,7 +454,7 @@ public class PersonelIzin extends BaseObject {
 
 	@Transient
 	public boolean isPdfMi() {
-		return izinTipi.getDokumAlmaDurum() && (izinDurumu == IZIN_DURUMU_IK_ONAYINDA || izinDurumu == IZIN_DURUMU_ONAYLANDI || izinDurumu == IZIN_DURUMU_SAP_GONDERILDI);
+		return izinTipi.getDokumAlmaDurum() && (izinDurumu == IZIN_DURUMU_IK_ONAYINDA || izinDurumu == IZIN_DURUMU_ONAYLANDI || izinDurumu == IZIN_DURUMU_ERP_GONDERILDI);
 	}
 
 	@Transient

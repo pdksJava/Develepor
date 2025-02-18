@@ -66,7 +66,7 @@ public class RequestEncodingFilter implements Filter, Serializable {
 		try {
 			myProvider = new MyDestinationDataProvider();
 			Environment.registerDestinationDataProvider(myProvider);
-			logger.info("SAP Pool olustu. " + PdksUtil.getCurrentTimeStampStr());
+			logger.info("ERP Pool olustu. " + PdksUtil.getCurrentTimeStampStr());
 		} catch (Exception e) {
 			logger.error(e);
 			myProvider = null;

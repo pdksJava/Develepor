@@ -43,7 +43,9 @@ public class Personel extends BaseObject {
 	public static final String COLUMN_NAME_KGS_PERSONEL = "KGS_PERSONEL_ID";
 	public static final String COLUMN_NAME_PDKS_SICIL_NO = "PDKS_SICIL_NO";
 	public static final String COLUMN_NAME_SIRKET = "SIRKET_ID";
+	public static final String COLUMN_NAME_PDKS_DURUM = "PDKS";
 	public static final String COLUMN_NAME_TESIS = "TESIS_ID";
+
 	public static final String COLUMN_NAME_YONETICI = "YONETICI_ID";
 	public static final String COLUMN_NAME_ISE_BASLAMA_TARIHI = "ISE_BASLAMA_TARIHI";
 	public static final String COLUMN_NAME_ISTEN_AYRILIS_TARIHI = "ISTEN_AYRILIS_TARIHI";
@@ -389,7 +391,7 @@ public class Personel extends BaseObject {
 		this.sablon = value;
 	}
 
-	@Column(name = "PDKS")
+	@Column(name = COLUMN_NAME_PDKS_DURUM)
 	public Boolean getPdks() {
 		return pdks;
 	}

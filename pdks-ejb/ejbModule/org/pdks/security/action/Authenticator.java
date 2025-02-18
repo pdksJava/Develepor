@@ -255,7 +255,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 							List<SAPSunucu> sapSunucular = pdksEntityController.getSQLParamByFieldList(SAPSunucu.TABLE_NAME, SAPSunucu.COLUMN_NAME_DURUM, SAPSunucu.DURUM_AKTIF, SAPSunucu.class, session);
 
 							if (!sapSunucular.isEmpty())
-								logger.info("SAP sunucuları okundu.");
+								logger.info("ERP sunucuları okundu.");
 
 							SapRfcManager.setSapSunucular(sapSunucular);
 

@@ -355,7 +355,7 @@ public class PdksSapController implements ERPController, Serializable {
 			}
 		} else {
 
-			mesaj = "SAP bağlantısı kurulamadı.";
+			mesaj = "ERP bağlantısı kurulamadı.";
 		}
 
 		return mesaj;

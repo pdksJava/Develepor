@@ -142,7 +142,7 @@ public class SapRfcManager implements Serializable {
 			}
 			sapSunucuList = null;
 			if (jcoClient == null)
-				throw new Exception("SAP JCO Client Alınamadı");
+				throw new Exception("ERP JCO Client Alınamadı");
 		}
 		return jcoClient;
 	}
