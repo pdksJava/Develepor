@@ -6245,7 +6245,6 @@ public class OrtakIslemler implements Serializable {
 			sb.append("select distinct P." + columnName + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 			sb.append(" where P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " >= :b1 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b2 ");
 			sb.append(" and P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1 and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
-
 			sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s ");
 			map.put("s", sirket.getId());
 
@@ -6416,6 +6415,10 @@ public class OrtakIslemler implements Serializable {
 		sb.append(" ) ");
 		sb.append(" select V.* from DATA P " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + Sirket.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
+		if (aramaSecenekleri.getDepartmanId() != null) {
+			sb.append(" and V." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d");
+			map.put("d", aramaSecenekleri.getDepartmanId());
+		}
 		map.put("b1", basTarih);
 		map.put("b2", bitTarih);
 		if (session != null)
