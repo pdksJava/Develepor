@@ -754,7 +754,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 				if (userIKList.size() == 1 && mailIcerik.length() > 1)
 					mailIcerik = "Sayın <b>" + user.getAdSoyad() + "</b><br></br><br></br>" + mailIcerik;
 				mailPersonel.setAdiSoyadi(user.getAdSoyad());
-				mailPersonel.setePosta(testDurum == false ? user.getEmail() : testMailAdres);
+				String eposta = user.getEmail();
+				if (testDurum && eposta.indexOf("@") > 1)
+					eposta = testMailAdres;
+				// eposta = PdksUtil.replaceAll(eposta, "@", "xyz@");
+				mailPersonel.setePosta(eposta);
 				mailService.getToList().add(mailPersonel);
 			}
 		}
@@ -2785,9 +2789,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 				mailStatu = izinHataliMailGonder(userList, hataList, personelMap, izinCok);
 			}
 			if (hataIKMap != null) {
-				mailMap.put(KEY_IK_MAIL_IPTAL, Boolean.TRUE);
 				for (String key : hataIKMap.keySet()) {
 					HashMap<String, List> dataHataMap = hataIKMap.get(key);
+					mailMap.put(KEY_IK_MAIL_IPTAL, Boolean.TRUE);
 					userList = dataHataMap.get("userList");
 					hataList = dataHataMap.get("hataList");
 					if (!userList.isEmpty())
@@ -5022,8 +5026,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				mailStatu = personelHataMailGonder(userIKList, personelList, hataList, personelERPHataliMap, sirketMap, mailBosGonder);
 			}
 			if (hataIKMap != null) {
-				mailMap.put(KEY_IK_MAIL_IPTAL, Boolean.TRUE);
 				for (String key : hataIKMap.keySet()) {
+					mailMap.put(KEY_IK_MAIL_IPTAL, Boolean.TRUE);
 					HashMap<String, List> dataHataMap = hataIKMap.get(key);
 					List<User> userList = dataHataMap.get("userList");
 					hataList = dataHataMap.get("hataList");
@@ -5051,6 +5055,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @return
 	 */
 	private MailStatu izinHataliMailGonder(List<User> list, List<IzinERP> hataList, TreeMap<String, Personel> personelMap, boolean izinCok) {
+		HashMap<String, Object> mailMapOld = mailMap != null ? (HashMap<String, Object>) mailMap.clone() : new HashMap<String, Object>();
 		MailStatu mailStatu = null;
 		List<String> verilist = new ArrayList<String>();
 		for (Iterator iterator = hataList.iterator(); iterator.hasNext();) {
@@ -5158,6 +5163,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				em.printStackTrace();
 			}
 		}
+		mailMap = mailMapOld;
 		return mailStatu;
 
 	}
@@ -5172,6 +5178,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @return
 	 */
 	private MailStatu personelHataMailGonder(List<User> userList, List<PersonelERP> personelList, List<PersonelERP> hataList, TreeMap<String, ERPPersonel> personelERPHataliMap, TreeMap<String, Sirket> sirketMap, boolean mailBosGonder) {
+		HashMap<String, Object> mailMapOld = mailMap != null ? (HashMap<String, Object>) mailMap.clone() : new HashMap<String, Object>();
 		MailStatu mailStatu = null;
 		if (!hataList.isEmpty()) {
 			if (mailBosGonder)
@@ -5282,6 +5289,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				ex.printStackTrace();
 			}
 		}
+		mailMap = mailMapOld;
 		return mailStatu;
 	}
 
