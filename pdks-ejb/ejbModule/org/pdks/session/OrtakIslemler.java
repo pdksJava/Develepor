@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Clob;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -4451,6 +4452,26 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
+	public boolean isExisFunction(String name, Session session) {
+		boolean durum = false;
+		StringBuffer sb = new StringBuffer();
+		sb.append("select name, object_id from sys.objects " + PdksEntityController.getJoinLOCK());
+		sb.append(" where name = :k and type = :t");
+		HashMap fields = new HashMap();
+		fields.put("k", name);
+		fields.put("t", "FN");
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List list = pdksEntityController.getObjectBySQLList(sb, fields, null);
+		durum = list != null && list.size() == 1;
+		return durum;
+	}
+
+	/**
+	 * @param name
+	 * @param session
+	 * @return
+	 */
 	public boolean isExisView(String name, Session session) {
 		boolean durum = false;
 		StringBuffer sb = new StringBuffer();
@@ -4746,15 +4767,46 @@ public class OrtakIslemler implements Serializable {
 					Gson gson = new Gson();
 					try {
 						StringBuffer sp = new StringBuffer(spAdi);
-						if (alanStr == null || alanStr.equals("*"))
-							list = pdksEntityController.execSPList(map, sp, class1);
-						else {
-							List bigDecimalList = pdksEntityController.execSPList(map, sp, null);
-							if (bigDecimalList != null && bigDecimalList.isEmpty() == false)
-								list = pdksEntityController.getSQLParamByFieldList(tableName, fieldName, bigDecimalList, class1, session);
-							else
-								list = new ArrayList();
-							bigDecimalList = null;
+						String fnName = "FN_GET_FAZLA_MESAI_DATA_ALAN";
+						if (isExisFunction(fnName, session)) {
+							try {
+								List strlist = pdksEntityController.execFNList(map, new StringBuffer(fnName));
+								if (strlist != null && !strlist.isEmpty()) {
+									Clob blob = (Clob) strlist.get(0);
+									String blobAsBytes = PdksUtil.StringToByInputStream(blob.getAsciiStream());
+									if (blobAsBytes != null) {
+										StringBuffer sb = new StringBuffer(blobAsBytes);
+										HashMap fields = new HashMap();
+										fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+										if (alanStr == null || alanStr.equals("*")) {
+											list = pdksEntityController.getObjectBySQLList(sb, fields, class1);
+										} else {
+											List bigDecimalList = pdksEntityController.getObjectBySQLList(sb, fields, null);
+											if (bigDecimalList != null && bigDecimalList.isEmpty() == false)
+												list = pdksEntityController.getSQLParamByFieldList(tableName, fieldName, bigDecimalList, class1, session);
+											else
+												list = new ArrayList();
+											bigDecimalList = null;
+										}
+									}
+
+								}
+							} catch (Exception e) {
+								list = null;
+							}
+
+						}
+						if (list == null) {
+							if (alanStr == null || alanStr.equals("*")) {
+								list = pdksEntityController.execSPList(map, sp, class1);
+							} else {
+								List bigDecimalList = pdksEntityController.execSPList(map, sp, null);
+								if (bigDecimalList != null && bigDecimalList.isEmpty() == false)
+									list = pdksEntityController.getSQLParamByFieldList(tableName, fieldName, bigDecimalList, class1, session);
+								else
+									list = new ArrayList();
+								bigDecimalList = null;
+							}
 						}
 
 						if ((tipi.endsWith("P") || tipi.indexOf("+") >= 0) && loginUser.isAdmin())
@@ -6222,11 +6274,11 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 */
 	private List<SelectItem> setAramaSecenekEkSahaData(AramaSecenekleri aramaSecenekleri, String kodu, Date basTarih, Date bitTarih, Session session) {
- 	String alanKodu = "ekSaha" + kodu;
+		String alanKodu = "ekSaha" + kodu;
 		Long alanId = null;
 		int indis = Integer.parseInt(kodu);
 		List<SelectItem> alanList = aramaSecenekleri.getEkSahaSelectListMap().get(alanKodu);
- 		Long eskiId = null;
+		Long eskiId = null;
 		if (aramaSecenekleri.getSirketId() != null) {
 			List<Tanim> list = null;
 			HashMap map = new HashMap();
@@ -6309,7 +6361,7 @@ public class OrtakIslemler implements Serializable {
 		default:
 			break;
 		}
-		
+
 		return alanList;
 	}
 
