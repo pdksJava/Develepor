@@ -710,7 +710,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @return
 	 */
 	public MailObject kullaniciIKYukle(List<User> userIKList, HashMap<String, Object> mailDataMap, PdksDAO dao) {
-		MailObject mailObject = new MailObject();
+		MailObject mailService = new MailObject();
 		List<User> userList = null;
 		StringBuffer sb = new StringBuffer();
 		if (mailMap == null)
@@ -719,7 +719,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		String testMailAdres = mailDataMap.containsKey("testMailAdres") ? (String) mailDataMap.get("testMailAdres") : "pdkssayar@gmail.com";
 		if (!mailDataMap.containsKey(KEY_IK_MAIL_IPTAL)) {
 			if (PdksUtil.getCanliSunucuDurum()) {
-				List<String> ikYetkiliRoller = Arrays.asList(new String[] { Role.TIPI_IK, Role.TIPI_IK_Tesis, Role.TIPI_IK_SIRKET });
+				List<String> ikYetkiliRoller = Arrays.asList(new String[] { Role.TIPI_IK, Role.TIPI_IK_SIRKET, Role.TIPI_IK_Tesis });
 				HashMap fields = new HashMap();
 				sb.append("select U.* from " + Role.TABLE_NAME + " R " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
 				sb.append(" inner join " + UserRoles.TABLE_NAME + " UR " + PdksVeriOrtakAktar.getJoinLOCK() + " on UR." + UserRoles.COLUMN_NAME_ROLE + " = R." + Role.COLUMN_NAME_ID);
@@ -729,17 +729,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				sb.append(" where R." + Role.COLUMN_NAME_ROLE_NAME + " :r ");
 				fields.put("r", ikYetkiliRoller);
 				userList = dao.getNativeSQLList(fields, sb, User.class);
-				if (userList != null && !userList.isEmpty()) {
-					userList = PdksUtil.sortObjectStringAlanList(userList, "getAdSoyad", null);
-					for (Iterator iterator = userList.iterator(); iterator.hasNext();) {
-						User user = (User) iterator.next();
-						MailPersonel mailPersonel = new MailPersonel();
-						mailPersonel.setAdiSoyadi(user.getAdSoyad());
 
-						mailPersonel.setePosta(testDurum == false ? user.getEmail() : testMailAdres);
-						mailObject.getToList().add(mailPersonel);
-					}
-				}
 			}
 		}
 		String mailIcerik = "";
@@ -747,19 +737,30 @@ public class PdksVeriOrtakAktar implements Serializable {
 			mailIcerik = (String) mailDataMap.get("mailIcerik");
 
 		if (userIKList != null) {
-			for (Iterator iterator = userIKList.iterator(); iterator.hasNext();) {
+			if (userList == null)
+				userList = new ArrayList<User>();
+			userList.addAll(userIKList);
+		}
+
+		if (userList != null) {
+			userList = PdksUtil.sortObjectStringAlanList(userList, "getAdSoyad", null);
+			List<String> list = new ArrayList<String>();
+			for (Iterator iterator = userList.iterator(); iterator.hasNext();) {
 				User user = (User) iterator.next();
+				if (list.contains(user.getEmail()))
+					continue;
+				list.add(user.getEmail());
 				MailPersonel mailPersonel = new MailPersonel();
 				if (userIKList.size() == 1 && mailIcerik.length() > 1)
 					mailIcerik = "Sayın <b>" + user.getAdSoyad() + "</b><br></br><br></br>" + mailIcerik;
 				mailPersonel.setAdiSoyadi(user.getAdSoyad());
 				mailPersonel.setePosta(testDurum == false ? user.getEmail() : testMailAdres);
-				mailObject.getToList().add(mailPersonel);
+				mailService.getToList().add(mailPersonel);
 			}
 		}
-		mailObject.setBody(mailIcerik);
+		mailService.setBody(mailIcerik);
 		if (mailDataMap.containsKey("konu"))
-			mailObject.setSubject((String) mailDataMap.get("konu"));
+			mailService.setSubject((String) mailDataMap.get("konu"));
 
 		if (mailDataMap.containsKey("fileMap")) {
 			LinkedHashMap<String, Object> fileMap = (LinkedHashMap<String, Object>) mailDataMap.get("fileMap");
@@ -768,7 +769,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				mailFile.setDisplayName(fileName);
 				String str = (String) fileMap.get(fileName);
 				mailFile.setIcerik(PdksUtil.getBytesUTF8(str));
-				mailObject.getAttachmentFiles().add(mailFile);
+				mailService.getAttachmentFiles().add(mailFile);
 			}
 		}
 		sb = new StringBuffer();
@@ -779,8 +780,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 		// }
 		sb = null;
 
-		mailDataMap.put("mailObject", mailObject);
-		return mailObject;
+		mailDataMap.put("mailObject", mailService);
+		return mailService;
 	}
 
 	private boolean getTestDurum() {
@@ -2099,33 +2100,36 @@ public class PdksVeriOrtakAktar implements Serializable {
 			HashMap<String, Sirket> sirketMap = new HashMap<String, Sirket>();
 			HashMap<String, Tanim> tesisMap = new HashMap<String, Tanim>();
 			for (PersonelERPDB personelERPDB : personelERPDBList) {
-				String erpKodu = personelERPDB.getSirketKodu();
-				Sirket sirket = sirketMap.containsKey(erpKodu) ? sirketMap.get(erpKodu) : null;
-				if (sirket == null) {
-					sirket = new Sirket();
-					sirket.setErpKodu(erpKodu);
-					sirket.setAd(personelERPDB.getSirketAdi());
-					sirketMap.put(erpKodu, sirket);
-				}
+				String erpKodu = personelERPDB.getSirketKodu(), tesisKodu = personelERPDB.getTesisKodu();
+				if (PdksUtil.hasStringValue(erpKodu)) {
+					Sirket sirket = sirketMap.containsKey(erpKodu) ? sirketMap.get(erpKodu) : null;
+					if (sirket == null) {
+						sirket = new Sirket();
+						sirket.setErpKodu(erpKodu);
+						sirket.setAd(personelERPDB.getSirketAdi());
+						sirketMap.put(erpKodu, sirket);
+					}
+					Tanim tesis = null;
+					if (PdksUtil.hasStringValue(tesisKodu)) {
+						tesis = tesisMap.containsKey(tesisKodu) ? tesisMap.get(tesisKodu) : null;
+						if (tesis == null) {
+							tesis = new Tanim();
+							tesis.setKodu(tesisKodu);
+							tesis.setErpKodu(tesisKodu);
+							tesis.setAciklamatr(personelERPDB.getTesisAdi());
+							tesis.setAciklamaen(personelERPDB.getTesisAdi());
+							tesisMap.put(tesisKodu, tesis);
+						}
+					}
 
-				String tesisKodu = personelERPDB.getTesisKodu();
-				Tanim tesis = tesisMap.containsKey(tesisKodu) ? tesisMap.get(tesisKodu) : null;
-				if (tesis == null) {
-					tesis = new Tanim();
-					tesis.setKodu(tesisKodu);
-					tesis.setErpKodu(tesisKodu);
-					tesis.setAciklamatr(personelERPDB.getTesisAdi());
-					tesis.setAciklamaen(personelERPDB.getTesisAdi());
-					tesisMap.put(tesisKodu, tesis);
+					Personel personel = new Personel();
+					personel.setSirket(sirket);
+					personel.setTesis(tesis);
+					personel.setPdksSicilNo(personelERPDB.getPersonelNo());
+					personel.setAd(personelERPDB.getAdi());
+					personel.setSoyad(personelERPDB.getSoyadi());
+					personelERPDBMap.put(personelERPDB.getPersonelNo(), personel);
 				}
-
-				Personel personel = new Personel();
-				personel.setSirket(sirket);
-				personel.setTesis(tesis);
-				personel.setPdksSicilNo(personelERPDB.getPersonelNo());
-				personel.setAd(personelERPDB.getAdi());
-				personel.setSoyad(personelERPDB.getSoyadi());
-				personelERPDBMap.put(personelERPDB.getPersonelNo(), personel);
 			}
 			tesisMap = null;
 			sirketMap = null;
@@ -2772,7 +2776,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		if (hataList != null && !hataList.isEmpty()) {
 			if (!hataIKMap.containsKey(TIPI_IK_ADMIN) && ikUserMap.containsKey(Role.TIPI_IK)) {
 				HashMap<String, List<User>> map1 = ikUserMap.get(Role.TIPI_IK);
-				if (map1.containsKey(TIPI_IK_ADMIN)) 
+				if (map1.containsKey(TIPI_IK_ADMIN))
 					userList = map1.get(TIPI_IK_ADMIN);
 			}
 			if (userList != null || !mailMap.containsKey(KEY_IK_MAIL_IPTAL)) {
@@ -5145,7 +5149,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 						mailMap.put("fileMap", fileMap);
 					}
 					mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
-
 					kullaniciIKYukle(list, mailMap, pdksDAO);
 					mailStatu = MailManager.ePostaGonder(mailMap);
 
