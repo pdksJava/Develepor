@@ -14,15 +14,13 @@
 
 
 	<!-- Transaction manager -->
-	<bean id="transactionManagerPDKS"
-		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+	<bean id="transactionManagerPDKS" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory">
 			<ref local="PDKSSessionFactory" />
 		</property>
 	</bean>
 	<!-- Transaction Interceptor For Manager Classes -->
-	<bean id="managerTransactionInterceptorPDKS"
-		class="org.springframework.transaction.interceptor.TransactionInterceptor">
+	<bean id="managerTransactionInterceptorPDKS" class="org.springframework.transaction.interceptor.TransactionInterceptor">
 		<property name="transactionManager">
 			<ref bean="transactionManagerPDKS" />
 		</property>
@@ -37,8 +35,7 @@
 	</bean>
 
 
-	<bean id="PDKSSessionFactory"
-		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+	<bean id="PDKSSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="dataSource">
 			<ref local="PDKS_DS" />
 		</property>
@@ -48,7 +45,7 @@
 		</property>
 		<property name="annotatedClasses">
 			<list>
-			
+
 				<value>org.pdks.entity.CalismaModeli</value>
 				<value>org.pdks.entity.CalismaModeliAy</value>
 				<value>org.pdks.entity.CalismaModeliGun</value>
@@ -56,13 +53,13 @@
 				<value>org.pdks.entity.Departman</value>
 				<value>org.pdks.entity.IzinReferansERP</value>
 				<value>org.pdks.entity.IzinTipi</value>
- 				<value>org.pdks.entity.MailGrubu</value>
+				<value>org.pdks.entity.MailGrubu</value>
 				<value>org.pdks.entity.Parameter</value>
 				<value>org.pdks.entity.PdksPersonelView</value>
 				<value>org.pdks.entity.Kapi</value>
 				<value>org.pdks.entity.KapiSirket</value>
 				<value>org.pdks.entity.KapiKGS</value>
- 				<value>org.pdks.entity.Personel</value>
+				<value>org.pdks.entity.Personel</value>
 				<value>org.pdks.entity.PersonelDenklestirme</value>
 				<value>org.pdks.entity.PersonelMesai</value>
 				<value>org.pdks.entity.PersonelIzin</value>
@@ -82,7 +79,7 @@
 				<value>org.pdks.entity.VardiyaSablonu</value>
 				<value>org.pdks.entity.HataliPersonel</value>
 				<value>org.pdks.entity.PersonelDinamikAlan</value>
-
+				<value>org.pdks.erp.entity.PersonelERPDB</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">
