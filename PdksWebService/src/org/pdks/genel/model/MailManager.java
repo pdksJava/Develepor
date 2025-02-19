@@ -36,6 +36,8 @@ import org.pdks.mail.model.MailFile;
 import org.pdks.mail.model.MailObject;
 import org.pdks.mail.model.MailPersonel;
 import org.pdks.mail.model.MailStatu;
+
+import com.pdks.webService.PdksVeriOrtakAktar;
 import com.sun.mail.util.MailSSLSocketFactory;
 
 /**
@@ -471,7 +473,8 @@ public class MailManager implements Serializable {
 
 			}
 			mailList = null;
-			saveLog(mailObject, parameterMap);
+			if (!parameterMap.containsKey(PdksVeriOrtakAktar.KEY_IK_MAIL_IPTAL))
+				saveLog(mailObject, parameterMap);
 			for (File file : dosyalar) {
 				if (file.exists())
 					file.delete();
