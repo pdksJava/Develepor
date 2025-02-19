@@ -4434,12 +4434,24 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public boolean isExisStoreProcedure(String name, Session session) {
+		boolean durum = isExisObject(name, "P", session);
+		return durum;
+	}
+
+	/**
+	 * @param name
+	 * @param type
+	 * @param session
+	 * @return
+	 */
+	private boolean isExisObject(String name, String type, Session session) {
 		boolean durum = false;
 		StringBuffer sb = new StringBuffer();
-		sb.append("select name, object_id from sys.procedures " + PdksEntityController.getJoinLOCK());
-		sb.append(" where name = :k");
+		sb.append("select name, object_id from sys.objects " + PdksEntityController.getJoinLOCK());
+		sb.append(" where name = :k and type = :t");
 		HashMap fields = new HashMap();
 		fields.put("k", name);
+		fields.put("t", type);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List list = pdksEntityController.getObjectBySQLList(sb, fields, null);
@@ -4453,17 +4465,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public boolean isExisFunction(String name, Session session) {
-		boolean durum = false;
-		StringBuffer sb = new StringBuffer();
-		sb.append("select name, object_id from sys.objects " + PdksEntityController.getJoinLOCK());
-		sb.append(" where name = :k and type = :t");
-		HashMap fields = new HashMap();
-		fields.put("k", name);
-		fields.put("t", "FN");
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List list = pdksEntityController.getObjectBySQLList(sb, fields, null);
-		durum = list != null && list.size() == 1;
+		boolean durum = isExisObject(name, "FN", session);
 		return durum;
 	}
 
@@ -4473,16 +4475,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public boolean isExisView(String name, Session session) {
-		boolean durum = false;
-		StringBuffer sb = new StringBuffer();
-		sb.append("select name, object_id from sys.views " + PdksEntityController.getJoinLOCK());
-		sb.append(" where name = :k");
-		HashMap fields = new HashMap();
-		fields.put("k", name);
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List list = pdksEntityController.getObjectBySQLList(sb, fields, null);
-		durum = list != null && list.size() == 1;
+		boolean durum = isExisObject(name, "V", session);
 		return durum;
 	}
 
@@ -4769,11 +4762,12 @@ public class OrtakIslemler implements Serializable {
 						StringBuffer sp = new StringBuffer(spAdi);
 						String fnName = "FN_GET_FAZLA_MESAI_DATA_ALAN";
 						if (isExisFunction(fnName, session)) {
+							String blobAsBytes = null;
 							try {
 								List strlist = pdksEntityController.execFNList(map, new StringBuffer(fnName));
 								if (strlist != null && !strlist.isEmpty()) {
 									Clob blob = (Clob) strlist.get(0);
-									String blobAsBytes = PdksUtil.StringToByInputStream(blob.getAsciiStream());
+									blobAsBytes = PdksUtil.StringToByInputStream(blob.getAsciiStream());
 									if (blobAsBytes != null) {
 										StringBuffer sb = new StringBuffer(blobAsBytes);
 										HashMap fields = new HashMap();
@@ -4792,6 +4786,8 @@ public class OrtakIslemler implements Serializable {
 
 								}
 							} catch (Exception e) {
+								if (blobAsBytes != null)
+									logger.error(blobAsBytes);
 								list = null;
 							}
 
