@@ -2776,7 +2776,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 		if (hataList != null && !hataList.isEmpty()) {
 			List<User> userIKList = null;
-			HashMap<String, Object> mailMapOld = mailMap != null ? (HashMap<String, Object>) mailMap.clone() : new HashMap<String, Object>();
 			if (hataIKMap != null) {
 				for (String key : hataIKMap.keySet()) {
 					HashMap<String, List> dataHataMap = hataIKMap.get(key);
@@ -2785,7 +2784,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 					hataList = dataHataMap.get("hataList");
 					if (!userList.isEmpty())
 						izinHataliMailGonder(userList, hataList, personelMap, izinCok);
-					mailMap = mailMapOld;
 				}
 				if (!hataIKMap.containsKey(TIPI_IK_ADMIN) && ikUserMap.containsKey(Role.TIPI_IK)) {
 					HashMap<String, List<User>> map1 = ikUserMap.get(Role.TIPI_IK);
@@ -2794,13 +2792,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 				}
 			}
 			if (userIKList != null || !mailMap.containsKey(KEY_IK_MAIL_IPTAL)) {
-				if (userIKList != null)
-					mailMap.put(KEY_IK_MAIL_IPTAL, Boolean.TRUE);
 				mailStatu = izinHataliMailGonder(userIKList, hataList, personelMap, izinCok);
 				if (mailStatu != null && mailStatu.isDurum())
 					logger.info("saveIzinler hata gonderildi. " + PdksUtil.getCurrentTimeStampStr());
 			}
-			mailMap = mailMapOld;
 		}
 		if (!izinMap.isEmpty()) {
 			List<Long> personelIdList = new ArrayList<Long>();
@@ -5015,7 +5010,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 		if (hataList != null && !hataList.isEmpty()) {
 			List<User> userIKList = null;
 			MailStatu statu = null;
-			HashMap<String, Object> mailMapOld = mailMap != null ? (HashMap<String, Object>) mailMap.clone() : new HashMap<String, Object>();
 			if (hataIKMap != null) {
 				for (String key : hataIKMap.keySet()) {
 					mailMap.put(KEY_IK_MAIL_IPTAL, Boolean.TRUE);
@@ -5024,7 +5018,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 					hataList = dataHataMap.get("hataList");
 					if (!userList.isEmpty())
 						personelHataMailGonder(userList, personelList, hataList, personelERPHataliMap, sirketMap, false);
-					mailMap = mailMapOld;
 				}
 				if (!hataIKMap.containsKey(TIPI_IK_ADMIN) && ikUserMap.containsKey(Role.TIPI_IK)) {
 					HashMap<String, List<User>> map1 = ikUserMap.get(Role.TIPI_IK);
@@ -5033,13 +5026,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 				}
 			}
 			if (userIKList != null || !mailMap.containsKey(KEY_IK_MAIL_IPTAL)) {
-				if (userIKList != null)
-					mailMap.put(KEY_IK_MAIL_IPTAL, Boolean.TRUE);
 				statu = personelHataMailGonder(userIKList, personelList, hataList, personelERPHataliMap, sirketMap, mailBosGonder);
 				if (statu != null && statu.isDurum())
 					logger.info("savePersoneller hata gonderildi. " + PdksUtil.getCurrentTimeStampStr());
 			}
-			mailMap = mailMapOld;
 		}
 		if (mailBosGonder && mailStatu == null && (getTestSunucuDurum() || erpVeriOku == false))
 			mailBosGonder("savePersoneller", "personel", personelList);
@@ -5053,13 +5043,13 @@ public class PdksVeriOrtakAktar implements Serializable {
 	}
 
 	/**
-	 * @param list
+	 * @param userList
 	 * @param hataList
 	 * @param personelMap
 	 * @param izinCok
 	 * @return
 	 */
-	private MailStatu izinHataliMailGonder(List<User> list, List<IzinERP> hataList, TreeMap<String, Personel> personelMap, boolean izinCok) {
+	private MailStatu izinHataliMailGonder(List<User> userList, List<IzinERP> hataList, TreeMap<String, Personel> personelMap, boolean izinCok) {
 		MailStatu mailStatu = null;
 		List<String> verilist = new ArrayList<String>();
 		for (Iterator iterator = hataList.iterator(); iterator.hasNext();) {
@@ -5068,7 +5058,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 				iterator.remove();
 			else
 				verilist.add(izinERP.getReferansNoERP());
-
 		}
 		verilist = null;
 		for (Iterator iterator = hataList.iterator(); iterator.hasNext();) {
@@ -5158,7 +5147,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						mailMap.put("fileMap", fileMap);
 					}
 					mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
-					kullaniciIKYukle(list, mailMap, pdksDAO);
+					kullaniciIKYukle(userList, mailMap, pdksDAO);
 					mailStatu = MailManager.ePostaGonder(mailMap);
 
 				}
@@ -5167,7 +5156,18 @@ public class PdksVeriOrtakAktar implements Serializable {
 				em.printStackTrace();
 			}
 		}
-
+		if (mailStatu != null && mailStatu.isDurum() == false && userList != null && userList.size() > 1) {
+			List<User> list = new ArrayList<User>();
+			for (User user : userList) {
+				list.add(user);
+				try {
+					izinHataliMailGonder(list, hataList, personelMap, izinCok);
+				} catch (Exception e) {
+				}
+				list.clear();
+			}
+			list = null;
+		}
 		return mailStatu;
 
 	}
@@ -5182,7 +5182,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @return
 	 */
 	private MailStatu personelHataMailGonder(List<User> userList, List<PersonelERP> personelList, List<PersonelERP> hataList, TreeMap<String, ERPPersonel> personelERPHataliMap, TreeMap<String, Sirket> sirketMap, boolean mailBosGonder) {
-		HashMap<String, Object> mailMapOld = mailMap != null ? (HashMap<String, Object>) mailMap.clone() : new HashMap<String, Object>();
 		MailStatu mailStatu = null;
 		if (!hataList.isEmpty()) {
 			if (mailBosGonder)
@@ -5293,7 +5292,18 @@ public class PdksVeriOrtakAktar implements Serializable {
 				ex.printStackTrace();
 			}
 		}
-		mailMap = mailMapOld;
+		if (mailStatu != null && mailStatu.isDurum() == false && userList != null && userList.size() > 1) {
+			List<User> list = new ArrayList<User>();
+			for (User user : userList) {
+				list.add(user);
+				try {
+					personelHataMailGonder(list, personelList, hataList, personelERPHataliMap, sirketMap, mailBosGonder);
+				} catch (Exception e) {
+				}
+				list.clear();
+			}
+			list = null;
+		}
 		return mailStatu;
 	}
 
