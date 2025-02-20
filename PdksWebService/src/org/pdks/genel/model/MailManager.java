@@ -27,16 +27,15 @@ import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-
-import com.google.gson.Gson;
 import org.pdks.entity.ServiceData;
 import org.pdks.entity.User;
 import org.pdks.mail.model.MailFile;
 import org.pdks.mail.model.MailObject;
 import org.pdks.mail.model.MailPersonel;
 import org.pdks.mail.model.MailStatu;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
+import com.google.gson.Gson;
 import com.pdks.webService.PdksVeriOrtakAktar;
 import com.sun.mail.util.MailSSLSocketFactory;
 
@@ -457,11 +456,15 @@ public class MailManager implements Serializable {
 					if (e.toString() != null)
 						mailStatu.setHataMesai(PdksUtil.replaceAll(e.toString(), "\n", ""));
 					if (e instanceof javax.mail.SendFailedException) {
+
 						javax.mail.SendFailedException se = (javax.mail.SendFailedException) e;
 						if (se.getInvalidAddresses() != null) {
 							javax.mail.Address[] address = se.getInvalidAddresses();
+							List<String> addresList = new ArrayList<String>();
+							parameterMap.put("invalidAddresses", addresList);
 							for (int i = 0; i < address.length; i++) {
 								InternetAddress iad = (InternetAddress) address[i];
+								addresList.add(iad.getAddress());
 								logger.error(konu + " " + iad.getAddress());
 							}
 							hata = null;
