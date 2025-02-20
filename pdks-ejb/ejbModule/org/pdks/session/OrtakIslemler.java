@@ -6194,67 +6194,93 @@ public class OrtakIslemler implements Serializable {
 	public List<PersonelERP> personelERPDBGuncelle(boolean guncellemeDurum, List<String> perNoList, Session session) throws Exception {
 		List<PersonelERP> personelERPReturnList = null;
 		String parameterName = getParametrePersonelERPTableView();
-		if (getParameterKeyHasStringValue(parameterName)) {
+		String personelERPTableViewAdi = getParameterKey(parameterName);
+		if (PdksUtil.hasStringValue(personelERPTableViewAdi)) {
+			List<String> yeniNoList = null;
 			HashMap<String, Date> updateMap = new HashMap<String, Date>();
+			if (perNoList == null) {
+				HashMap fields = new HashMap();
+				StringBuffer sb = new StringBuffer();
+				sb.append(" select V." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " from " + personelERPTableViewAdi + " V " + PdksEntityController.getSelectLOCK());
+				sb.append(" inner join " + KapiSirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + KapiSirket.COLUMN_NAME_DURUM + " = 1");
+				sb.append(" and S." + KapiSirket.COLUMN_NAME_ID + " > 0 and getdate() between S." + KapiSirket.COLUMN_NAME_BAS_TARIH + " and S." + KapiSirket.COLUMN_NAME_BIT_TARIH);
+				sb.append(" inner join " + PersonelKGS.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on K." + PersonelKGS.COLUMN_NAME_SICIL_NO + " = V." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " and K." + PersonelKGS.COLUMN_NAME_KGS_SIRKET + " = S." + KapiSirket.COLUMN_NAME_ID);
+				sb.append(" where K." + PersonelKGS.COLUMN_NAME_PERSONEL_ID + " is null and V." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " not in  ( select " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " )");
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				yeniNoList = pdksEntityController.getObjectBySQLList(sb, fields, null);
+				if (yeniNoList != null) {
+					if (yeniNoList.isEmpty() == false)
+						personelERPDBGuncelle(true, yeniNoList, session);
+					else
+						yeniNoList = null;
+				}
+			}
 			List<PersonelERPDB> personelList = getPersonelERPDBList(guncellemeDurum, perNoList, parameterName, session);
-			if (personelList != null && !personelList.isEmpty()) {
+			if (personelList != null) {
 				List<PersonelERP> personelERPList = new ArrayList<PersonelERP>();
-				for (PersonelERPDB personelERPDB : personelList) {
+				for (Iterator iterator = personelList.iterator(); iterator.hasNext();) {
+					PersonelERPDB personelERPDB = (PersonelERPDB) iterator.next();
+					if (yeniNoList != null && yeniNoList.contains(personelERPDB.getPersonelNo())) {
+						iterator.remove();
+						continue;
+					}
 					personelERPList.add(personelERPDB.getPersonelERP());
 					if (personelERPDB.getGuncellemeTarihi() != null)
 						updateMap.put(personelERPDB.getPersonelNo(), personelERPDB.getGuncellemeTarihi());
 				}
+				if (!personelList.isEmpty()) {
+					try {
+						PdksSoapVeriAktar service = getPdksSoapVeriAktar();
+						personelERPReturnList = service.savePersoneller(personelERPList);
+						Date changeDate = null;
+						boolean update = false;
+						if (personelERPReturnList != null) {
+							changeDate = new Date();
+							for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
+								PersonelERP personelERP = (PersonelERP) iterator.next();
+								if (personelERP.getYazildi() == null || personelERP.getYazildi().booleanValue() == false) {
+									if (updateMap.containsKey(personelERP.getPersonelNo())) {
+										Date tarih = updateMap.get(personelERP.getPersonelNo());
+										if (tarih.before(changeDate))
+											changeDate = tarih;
+									}
 
-				try {
-					PdksSoapVeriAktar service = getPdksSoapVeriAktar();
-					personelERPReturnList = service.savePersoneller(personelERPList);
-					Date changeDate = null;
-					boolean update = false;
-					if (personelERPReturnList != null) {
-						changeDate = new Date();
-						for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
-							PersonelERP personelERP = (PersonelERP) iterator.next();
-							if (personelERP.getYazildi() == null || personelERP.getYazildi().booleanValue() == false) {
-								if (updateMap.containsKey(personelERP.getPersonelNo())) {
-									Date tarih = updateMap.get(personelERP.getPersonelNo());
-									if (tarih.before(changeDate))
-										changeDate = tarih;
+								} else {
+									update = true;
+									iterator.remove();
 								}
-
-							} else {
-								update = true;
-								iterator.remove();
 							}
 						}
-					}
-					if (guncellemeDurum && update && changeDate != null) {
-						Parameter parameter = getParameter(session, parameterName);
-						if (parameter != null) {
-							parameter.setChangeDate(changeDate);
-							pdksEntityController.saveOrUpdate(session, entityManager, parameter);
-							session.flush();
+						if (guncellemeDurum && update && changeDate != null) {
+							Parameter parameter = getParameter(session, parameterName);
+							if (parameter != null) {
+								parameter.setChangeDate(changeDate);
+								pdksEntityController.saveOrUpdate(session, entityManager, parameter);
+								session.flush();
+							}
 						}
-					}
 
-				} catch (Exception ex) {
-					loggerErrorYaz(null, ex);
+					} catch (Exception ex) {
+						loggerErrorYaz(null, ex);
+					}
+					if (authenticatedUser != null) {
+						if (personelERPReturnList != null) {
+							for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
+								PersonelERP personelERP = (PersonelERP) iterator.next();
+								if (personelERP.getYazildi() != null && personelERP.getYazildi().booleanValue())
+									iterator.remove();
+								else if (perNoList == null) {
+									for (String message : personelERP.getHataList()) {
+										PdksUtil.addMessageWarn(message);
+									}
+								}
+							}
+						}
+					} else
+						personelERPReturnList = null;
+					personelERPList = null;
 				}
-				if (authenticatedUser != null) {
-					if (personelERPReturnList != null) {
-						for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
-							PersonelERP personelERP = (PersonelERP) iterator.next();
-							if (personelERP.getYazildi() != null && personelERP.getYazildi().booleanValue())
-								iterator.remove();
-							else if (perNoList == null) {
-								for (String message : personelERP.getHataList()) {
-									PdksUtil.addMessageWarn(message);
-								}
-							}
-						}
-					}
-				} else
-					personelERPReturnList = null;
-				personelERPList = null;
 			}
 			personelList = null;
 			updateMap = null;
