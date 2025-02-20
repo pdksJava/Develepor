@@ -2069,9 +2069,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 			veriIsle("izinTipi", izinERP.getIzinTipi(), veriSorguMap);
 			veriIsle("personelIzin", referansNoERP, veriSorguMap);
 		}
-
-		List<Personel> personelList = getSQLObjectListFromDataList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, veriSorguMap.get("personel"), Personel.class);
 		List<String> personelNoList = veriSorguMap.get("personel");
+		List<Personel> personelList = getSQLObjectListFromDataList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, personelNoList, Personel.class);
+		TreeMap<String, ERPPersonel> personelERPHataliMap = veriSorguMap.containsKey("personel") ? getSQLParamListMap(ERPPersonel.TABLE_NAME, "getSicilNo", ERPPersonel.COLUMN_NAME_SICIL_NO, veriSorguMap.get("personel"), ERPPersonel.class, false) : new TreeMap<String, ERPPersonel>();
+		TreeMap<String, IzinReferansERP> izinERPMap = veriSorguMap.containsKey("personelIzin") ? getSQLParamListMap(IzinReferansERP.TABLE_NAME, "getId", IzinReferansERP.COLUMN_NAME_ID, veriSorguMap.get("personelIzin"), IzinReferansERP.class, false) : new TreeMap<String, IzinReferansERP>();
+	
 		if (personelList.size() > 1)
 			personelList = PdksUtil.sortListByAlanAdi(personelList, "iseBaslamaTarihi", Boolean.FALSE);
 		TreeMap<String, Personel> personelMap = new TreeMap<String, Personel>();
@@ -2136,15 +2138,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 			sirketMap = null;
 			personelERPDBList = null;
 		}
-		personelNoList = null;
-		personelList = null;
+	
 		// TreeMap<String, Personel> personelMap = veriSorguMap.containsKey("personel") ? pdksDAO.getObjectByInnerObjectMap("getPdksSicilNo", "pdksSicilNo", veriSorguMap.get("personel"), Personel.class, false) : new TreeMap<String, Personel>();
-		TreeMap<String, ERPPersonel> personelERPHataliMap = veriSorguMap.containsKey("personel") ? getSQLParamListMap(ERPPersonel.TABLE_NAME, "getSicilNo", ERPPersonel.COLUMN_NAME_SICIL_NO, veriSorguMap.get("personel"), ERPPersonel.class, false) : new TreeMap<String, ERPPersonel>();
-		TreeMap<String, IzinReferansERP> izinERPMap = veriSorguMap.containsKey("personelIzin") ? getSQLParamListMap(IzinReferansERP.TABLE_NAME, "getId", IzinReferansERP.COLUMN_NAME_ID, veriSorguMap.get("personelIzin"), IzinReferansERP.class, false) : new TreeMap<String, IzinReferansERP>();
 		TreeMap<String, IzinTipi> izinTipiMap = null;
 		String erpIzinTipiOlusturStr = sistemDestekVar && mailMap.containsKey("erpIzinTipiOlustur") ? (String) mailMap.get("erpIzinTipiOlustur") : "";
 		boolean erpIzinTipiOlustur = erpIzinTipiOlusturStr.equals("1");
 		Departman departman = null;
+		personelNoList = null;
+		personelList = null;
 		if (veriSorguMap.containsKey("izinTipi")) {
 			List list = veriSorguMap.get("izinTipi");
 			String fieldName = "erpKodu";
