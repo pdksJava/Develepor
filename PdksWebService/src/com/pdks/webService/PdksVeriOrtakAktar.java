@@ -2793,9 +2793,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 						userList.addAll(userIKList);
 						devam = false;
 					}
-					hataList = dataHataMap.get("hataList");
+					List hataIKList = dataHataMap.get("hataList");
 					if (!userList.isEmpty())
-						izinHataliMailGonder(userList, hataList, personelMap, izinCok);
+						izinHataliMailGonder(userList, hataIKList, personelMap, izinCok);
 				}
 
 			}
@@ -5022,14 +5022,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 			if (hataIKMap != null) {
 				if (!hataIKMap.containsKey(TIPI_IK_ADMIN) && ikUserMap.containsKey(Role.TIPI_IK)) {
 					HashMap<String, List<User>> map1 = ikUserMap.get(Role.TIPI_IK);
-					if (map1.containsKey(TIPI_IK_ADMIN)) {
+					if (map1.containsKey(TIPI_IK_ADMIN))  
 						userIKList = map1.get(TIPI_IK_ADMIN);
-						// map1.remove(TIPI_IK_ADMIN);
-						// if (map1.isEmpty())
-						// ikUserMap.remove(TIPI_IK_ADMIN);
-					}
-
-				}
+ 				}
 				for (String key : hataIKMap.keySet()) {
 					mailMap.put(KEY_IK_MAIL_IPTAL, Boolean.TRUE);
 					HashMap<String, List> dataHataMap = hataIKMap.get(key);
@@ -5038,9 +5033,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 						userList.addAll(userIKList);
 						devam = false;
 					}
-					hataList = dataHataMap.get("hataList");
+					List hataIKList = dataHataMap.get("hataList");
 					if (!userList.isEmpty())
-						personelHataMailGonder(userList, personelList, hataList, personelERPHataliMap, sirketMap, false);
+						personelHataMailGonder(userList, personelList, hataIKList, personelERPHataliMap, sirketMap, false);
 				}
 
 			}

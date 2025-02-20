@@ -451,7 +451,7 @@ public class MailManager implements Serializable {
 
 			} catch (Exception e) {
 				hata = e;
-
+				mailStatu.setDurum(false);
 				try {
 					if (e.toString() != null)
 						mailStatu.setHataMesai(PdksUtil.replaceAll(e.toString(), "\n", ""));
