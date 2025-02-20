@@ -6196,6 +6196,7 @@ public class OrtakIslemler implements Serializable {
 		String parameterName = getParametrePersonelERPTableView();
 		String personelERPTableViewAdi = getParameterKey(parameterName);
 		if (PdksUtil.hasStringValue(personelERPTableViewAdi)) {
+			List<PersonelERP> personelERPList = new ArrayList<PersonelERP>();
 			List<String> yeniNoList = null;
 			HashMap<String, Date> updateMap = new HashMap<String, Date>();
 			if (perNoList == null) {
@@ -6210,16 +6211,21 @@ public class OrtakIslemler implements Serializable {
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				yeniNoList = pdksEntityController.getObjectBySQLList(sb, fields, null);
 				if (yeniNoList != null) {
-					if (yeniNoList.isEmpty() == false)
-						personelERPDBGuncelle(true, yeniNoList, session);
-					else
+					if (yeniNoList.isEmpty() == false) {
+						List<PersonelERPDB> personelYeniList = getPersonelERPDBList(guncellemeDurum, perNoList, parameterName, session);
+						for (Iterator iterator = personelYeniList.iterator(); iterator.hasNext();) {
+							PersonelERPDB personelERPDB = (PersonelERPDB) iterator.next();
+							personelERPList.add(personelERPDB.getPersonelERP());
+							if (personelERPDB.getGuncellemeTarihi() != null)
+								updateMap.put(personelERPDB.getPersonelNo(), personelERPDB.getGuncellemeTarihi());
+						}
+					} else
 						yeniNoList = null;
 				}
 			}
 			List<PersonelERPDB> personelList = getPersonelERPDBList(guncellemeDurum, perNoList, parameterName, session);
 			if (personelList != null) {
-				List<PersonelERP> personelERPList = new ArrayList<PersonelERP>();
-				for (Iterator iterator = personelList.iterator(); iterator.hasNext();) {
+ 				for (Iterator iterator = personelList.iterator(); iterator.hasNext();) {
 					PersonelERPDB personelERPDB = (PersonelERPDB) iterator.next();
 					if (yeniNoList != null && yeniNoList.contains(personelERPDB.getPersonelNo())) {
 						iterator.remove();
