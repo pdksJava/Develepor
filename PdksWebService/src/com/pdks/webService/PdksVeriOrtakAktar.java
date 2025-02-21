@@ -4091,7 +4091,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 
 					if (personelERP.getHataList().isEmpty()) {
-
 						if (personel.isDegisti()) {
 							if (personel.getId() != null) {
 								personel.setGuncellemeTarihi(new Date());
@@ -4111,9 +4110,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 									} else if (kodu.equalsIgnoreCase(IzinTipi.SUA_IZNI)) {
 										if (sirket != null && sirket.getSuaOlabilir() != null && sirket.getSuaOlabilir())
 											personel.setSuaOlabilir(Boolean.TRUE);
-
 									}
-
 								}
 							}
 							if (personel.getSablon() == null)

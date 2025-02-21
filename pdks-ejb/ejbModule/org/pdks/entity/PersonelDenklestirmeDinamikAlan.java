@@ -17,7 +17,7 @@ import org.hibernate.annotations.FetchMode;
 import org.pdks.security.entity.User;
 
 @Entity(name = PersonelDenklestirmeDinamikAlan.TABLE_NAME)
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PersonelDenklestirmeDinamikAlan.COLUMN_NAME_PERSONEL_DENKLESTIRME, PersonelDenklestirmeDinamikAlan.COLUMN_NAME_DENKLESTIRME_ALAN_DURUM }) })
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PersonelDenklestirmeDinamikAlan.COLUMN_NAME_PERSONEL_DENKLESTIRME, PersonelDenklestirmeDinamikAlan.COLUMN_NAME_ALAN }) })
 public class PersonelDenklestirmeDinamikAlan extends BasePDKSObject implements Serializable {
 
 	/**
