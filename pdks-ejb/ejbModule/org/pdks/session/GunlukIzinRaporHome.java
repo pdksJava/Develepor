@@ -138,21 +138,22 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 
 	public void fillSirketList() {
 		HashMap map = new HashMap();
-		// map.put("durum", Boolean.TRUE);
-		// map.put("pdks", Boolean.TRUE);
-		// if (!authenticatedUser.isAdmin())
-		// map.put("departman", authenticatedUser.getDepartman());
-		//
-		// map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		// List<Sirket> list = pdksEntityController.getObjectByInnerObjectList(map, Sirket.class);
-
 		StringBuffer sb = new StringBuffer();
-		sb.append("select S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("select distinct S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
+		List<Long> tesisIdList = null;
+		if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+			tesisIdList = new ArrayList<Long>();
+			for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
+				tesisIdList.add(tesis.getId());
+			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
+			sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t ");
+			map.put("t", tesisIdList);
+		}
 		sb.append(" where S." + Sirket.COLUMN_NAME_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_PDKS + " = 1");
 		if (!authenticatedUser.isAdmin()) {
 			sb.append(" and S." + Sirket.COLUMN_NAME_DEPARTMAN + " = :d");
 			map.put("d", authenticatedUser.getDepartman().getId());
-			if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis())
+			if (tesisIdList == null && (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis()))
 				sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
 		}
 

@@ -2167,9 +2167,12 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			loginUser = authenticatedUser;
 		Sirket sirketPersonel = null;
 		if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis() || loginUser.isIKSirket() || loginUser.isSirketSuperVisor() || loginUser.isProjeMuduru()) {
-			Personel personel = loginUser.getPdksPersonel();
-			sirketPersonel = personel.getSirket();
-			departmanId = sirketPersonel.getDepartman().getId();
+			if (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty()) {
+				Personel personel = loginUser.getPdksPersonel();
+				sirketPersonel = personel.getSirket();
+				departmanId = sirketPersonel.getDepartman().getId();
+			}
+
 		}
 		LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
 		paramsMap.put("loginUser", loginUser);
@@ -2181,18 +2184,20 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		paramsMap.put("fieldName", Sirket.COLUMN_NAME_ID);
 		List<Sirket> list = ortakIslemler.getFazlaMesaiList(paramsMap, session);
 		if (loginUser != null && loginUser.isIKSirket()) {
-			try {
-				list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);
-				Sirket sirketUser = list != null && loginUser.getPdksPersonel() != null ? loginUser.getPdksPersonel().getSirket() : null;
-				if (sirketUser != null) {
-					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-						Sirket sirket = (Sirket) iterator.next();
-						if (!sirket.getId().equals(sirketUser.getId()))
-							iterator.remove();
+			if (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty()) {
+				try {
+					list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);
+					Sirket sirketUser = list != null && loginUser.getPdksPersonel() != null ? loginUser.getPdksPersonel().getSirket() : null;
+					if (sirketUser != null) {
+						for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+							Sirket sirket = (Sirket) iterator.next();
+							if (!sirket.getId().equals(sirketUser.getId()))
+								iterator.remove();
+						}
 					}
-				}
-			} catch (Exception e) {
+				} catch (Exception e) {
 
+				}
 			}
 		}
 
@@ -2224,10 +2229,12 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
 		Long tesisId = null;
 		if (sirket != null && (sirket.isTesisDurumu() || loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis())) {
-			if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
-				Personel personel = loginUser.getPdksPersonel();
-				if (personel.getTesis() != null)
-					tesisId = personel.getTesis().getId();
+			if (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty()) {
+				if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
+					Personel personel = loginUser.getPdksPersonel();
+					if (personel.getTesis() != null)
+						tesisId = personel.getTesis().getId();
+				}
 			}
 			paramsMap.put("loginUser", loginUser);
 			paramsMap.put("sirket", sirket);
@@ -2598,11 +2605,10 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :a2 ");
 				fields.put("a2", basTarih);
 			}
-			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Tanim.COLUMN_NAME_ID + " = " + Personel.COLUMN_NAME_SIRKET);
+			ortakIslemler.addIKSirketTesisKriterleri(fields, sb);
 			sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
 			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
-			if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis())
-				sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
+
 			sb.append(" order by S." + Sirket.COLUMN_NAME_AD);
 			fields.put(fieldName, idler);
 			if (session != null)
@@ -2904,8 +2910,17 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 		if (departmanId == null && loginUser.isDirektorSuperVisor())
 			departmanId = loginUser.getPdksPersonel().getEkSaha1().getId();
-		else if (loginUser.isIK_Tesis() && loginUser.getPdksPersonel().getTesis() != null)
-			fields.put("tesis.id=", loginUser.getPdksPersonel().getTesis().getId());
+		else {
+			List<Long> tesisIdList = null;
+			if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+				tesisIdList = new ArrayList<Long>();
+				for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
+					tesisIdList.add(tesis.getId());
+				fields.put("tesis.id ", tesisIdList);
+			}
+			if (tesisIdList == null && loginUser.isIK_Tesis() && loginUser.getPdksPersonel().getTesis() != null)
+				fields.put("tesis.id=", loginUser.getPdksPersonel().getTesis().getId());
+		}
 
 		if (departmanId != null)
 			fields.put("ekSaha1.id=", departmanId);

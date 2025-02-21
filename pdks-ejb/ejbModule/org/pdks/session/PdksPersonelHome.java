@@ -1098,13 +1098,15 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 						List<UserDigerOrganizasyon> yetkiliUserDigerOrganizasyonlar = pdksEntityController.getSQLParamByFieldList(UserDigerOrganizasyon.TABLE_NAME, UserDigerOrganizasyon.COLUMN_NAME_USER, kullanici.getId(), UserDigerOrganizasyon.class, session);
 						HashMap<Long, UserDigerOrganizasyon> tesisler = new HashMap<Long, UserDigerOrganizasyon>(), bolumler = new HashMap<Long, UserDigerOrganizasyon>();
+
 						for (UserDigerOrganizasyon userDigerOrganizasyon : yetkiliUserDigerOrganizasyonlar) {
 							if (userDigerOrganizasyon.isTesis())
 								tesisler.put(userDigerOrganizasyon.getOrganizasyon().getId(), userDigerOrganizasyon);
 							else if (userDigerOrganizasyon.isBolum())
 								bolumler.put(userDigerOrganizasyon.getOrganizasyon().getId(), userDigerOrganizasyon);
 						}
-
+						if (pdksPersonel.getTesis() != null && !tesisler.containsKey(pdksPersonel.getTesis().getId()))
+							tesisler.put(pdksPersonel.getTesis().getId(), new UserDigerOrganizasyon(kullanici, OrganizasyonTipi.TESIS, pdksPersonel.getTesis()));
 						if (yeniRoller != null) {
 							for (Iterator iterator = yeniRoller.iterator(); iterator.hasNext();) {
 								Role role = (Role) iterator.next();
@@ -1122,6 +1124,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							yeniRoller = null;
 						}
 						if (yeniTesisler != null) {
+							if (kullanici.getYetkiliTesisler() != null && kullanici.getYetkiliTesisler().isEmpty() == false)
+								yeniTesisler.addAll(kullanici.getYetkiliTesisler());
 							for (Iterator iterator = yeniTesisler.iterator(); iterator.hasNext();) {
 								Tanim tesis = (Tanim) iterator.next();
 								if (tesisler.containsKey(tesis.getId())) {
@@ -2351,6 +2355,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		StringBuffer sb = new StringBuffer();
 		sb.append("select V.* from " + PdksPersonelView.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PdksPersonelView.COLUMN_NAME_PERSONEL);
+		ortakIslemler.addIKSirketTesisKriterleri(parametreMap, sb);
 		if (!authenticatedUser.isAdmin()) {
 			sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_ID + " :d");
 			for (Personel personel : tumPersoneller) {
@@ -2764,13 +2769,22 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			sb.append(str + " (V." + PersonelKGS.COLUMN_NAME_SICIL_NO + " " + eqStr + " :sicilNo1 or Y." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " " + eqStr + " :sicilNo2 )");
 			str = " and ";
 		}
-		Long userTesisId = null;
+
 		boolean bos = fields.isEmpty();
 		Date bugun = PdksUtil.getDate(new Date());
 		if (bos)
 			sb.append(str + " V." + PersonelKGS.COLUMN_NAME_DURUM + " = 1 and V." + PersonelKGS.COLUMN_NAME_PERSONEL_ID + " is null");
-		if (authenticatedUser.isIK_Tesis() && authenticatedUser.getPdksPersonel().getTesis() != null)
-			userTesisId = authenticatedUser.getPdksPersonel().getTesis().getId();
+		List<Long> tesisIdList = null;
+		if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+			tesisIdList = new ArrayList<Long>();
+			for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
+				tesisIdList.add(tesis.getId());
+
+		}
+		if (authenticatedUser.isIK_Tesis() && authenticatedUser.getPdksPersonel().getTesis() != null) {
+			tesisIdList = new ArrayList<Long>();
+			tesisIdList.add(authenticatedUser.getPdksPersonel().getTesis().getId());
+		}
 
 		boolean eksahaGoster = Boolean.FALSE;
 		try {
@@ -2804,8 +2818,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					if (pdksPersonel == null && !personelKGS.getDurum()) {
 						iterator.remove();
 					} else {
-						if (userTesisId != null) {
-							if (pdksPersonel.getTesis() == null || !pdksPersonel.getTesis().getId().equals(userTesisId)) {
+						if (tesisIdList != null) {
+							if (pdksPersonel.getTesis() == null || tesisIdList.contains(pdksPersonel.getTesis().getId()) == false) {
 								iterator.remove();
 								continue;
 							}
@@ -2824,6 +2838,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			}
 			if (!list.isEmpty()) {
 				Sirket sirketUser = authenticatedUser.isIKSirket() && authenticatedUser.getPdksPersonel() != null ? authenticatedUser.getPdksPersonel().getSirket() : null;
+				if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false)
+					sirketUser = null;
 				if (authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin() || sirketUser != null) {
 					for (Iterator<PersonelView> iterator = list.iterator(); iterator.hasNext();) {
 						PersonelView personelView = iterator.next();
@@ -2846,8 +2862,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							iterator.remove();
 						} else {
 							Personel ppdksPersonel = personelView.getPdksPersonel();
-							if (userTesisId != null) {
-								if (ppdksPersonel.getTesis() == null || !ppdksPersonel.getTesis().getId().equals(userTesisId)) {
+							if (tesisIdList != null) {
+								if (ppdksPersonel.getTesis() == null || tesisIdList.contains(ppdksPersonel.getTesis().getId()) == false) {
 									iterator.remove();
 									continue;
 								}
@@ -3568,7 +3584,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (dosyaGuncellemeYetki == false) {
 			String dosyaGuncellemeYetkiStr = ortakIslemler.getParameterKey("dosyaGuncellemeYetki").trim();
 			dosyaGuncellemeYetki = dosyaGuncellemeYetkiStr.equals("1");
- 		}
+		}
 	}
 
 	/**

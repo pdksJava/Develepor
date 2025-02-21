@@ -412,6 +412,21 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public List<Tanim> filUserTesisList(User user, Session session) {
 		List<Tanim> tesisTanimList = filUserOrganizasyonList(user, OrganizasyonTipi.TESIS, session);
+		Tanim tesis = user.getPdksPersonel().getTesis();
+		if (tesis != null) {
+			if (tesisTanimList != null && tesisTanimList.isEmpty() == false) {
+				boolean ekle = true;
+				for (Tanim tanim : tesisTanimList) {
+					if (tanim.getId().equals(tesis.getId()))
+						ekle = false;
+
+				}
+				if (ekle) {
+					tesisTanimList.add(tesis);
+					tesisTanimList = PdksUtil.sortTanimList(null, tesisTanimList);
+				}
+			}
+		}
 		return tesisTanimList;
 	}
 
@@ -2428,6 +2443,41 @@ public class OrtakIslemler implements Serializable {
 			}
 		}
 		listeler = null;
+	}
+
+	/**
+	 * @param fields
+	 */
+	public void addIKSirketTesisKriterleri(HashMap fields) {
+		List<Long> tesisIdList = null;
+		if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+			tesisIdList = new ArrayList<Long>();
+			for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
+				tesisIdList.add(tesis.getId());
+			if (fields != null)
+				fields.put("tesis.id ", tesisIdList);
+		}
+		if (tesisIdList == null && (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis()))
+			fields.put("sirket.id=", authenticatedUser.getPdksPersonel().getSirket().getId());
+	}
+
+	/**
+	 * @param fields
+	 * @param sb
+	 */
+	public void addIKSirketTesisKriterleri(HashMap fields, StringBuffer sb) {
+		List<Long> tesisIdList = null;
+		if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+			tesisIdList = new ArrayList<Long>();
+			for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
+				tesisIdList.add(tesis.getId());
+			sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t ");
+			if (fields != null)
+				fields.put("t", tesisIdList);
+		}
+		sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
+		if (tesisIdList == null && (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis()))
+			sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());
 	}
 
 	/**
@@ -4526,10 +4576,12 @@ public class OrtakIslemler implements Serializable {
 			sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 		Long tesisId = null;
 		if (sirket != null && (sirket.isTesisDurumu() || loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis())) {
-			if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
-				Personel personel = loginUser.getPdksPersonel();
-				if (personel.getTesis() != null)
-					tesisId = personel.getTesis().getId();
+			if (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty()) {
+				if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
+					Personel personel = loginUser.getPdksPersonel();
+					if (personel.getTesis() != null)
+						tesisId = personel.getTesis().getId();
+				}
 			}
 			LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
 			paramsMap.put("loginUser", loginUser);
@@ -4620,9 +4672,14 @@ public class OrtakIslemler implements Serializable {
 				boolean tesisYetki = getParameterKey("tesisYetki").equals("1");
 				Departman departman = null;
 				String order = null;
-				if (tesisYetki && loginUser.getId() != null && (loginUser.isIK() || loginUser.isDirektorSuperVisor()) && (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty())) {
-					setUserTesisler(loginUser, session);
+				boolean tesisEkle = false;
+				if (tipi.equalsIgnoreCase("D") || tipi.equalsIgnoreCase("S") || tipi.equalsIgnoreCase("T")) {
+					tesisEkle = true;
+					if (tesisYetki && loginUser.getId() != null && (loginUser.isIK() || loginUser.isDirektorSuperVisor()) && (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty())) {
+						setUserTesisler(loginUser, session);
+					}
 				}
+
 				if (tipi.equalsIgnoreCase("S")) {
 					class1 = Sirket.class;
 					tableName = Sirket.TABLE_NAME;
@@ -4670,7 +4727,7 @@ public class OrtakIslemler implements Serializable {
 						direktorId = personel.getEkSaha1().getId();
 					if (sirket != null)
 						departmanId = null;
-					if (tesisYetki) {
+					if (tesisYetki && tesisEkle) {
 						if ((loginUser.isDirektorSuperVisor() || departman == null || departman.isAdminMi()) && loginUser.getYetkiliTesisler() != null && !loginUser.getYetkiliTesisler().isEmpty()) {
 							tesisId = "";
 							for (Iterator iterator = loginUser.getYetkiliTesisler().iterator(); iterator.hasNext();) {
@@ -5367,8 +5424,17 @@ public class OrtakIslemler implements Serializable {
 		List<Sirket> sirketList = getSelectItemList("sirketTanim", authenticatedUser);
 		HashMap parametreMap = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("select * from " + Sirket.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" where " + Sirket.COLUMN_NAME_DURUM + " = 1 ");
+		sb.append("select distinct S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
+		List<Long> tesisIdList = null;
+		if (authenticatedUser != null && authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+			tesisIdList = new ArrayList<Long>();
+			for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
+				tesisIdList.add(tesis.getId());
+			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
+			sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t ");
+			parametreMap.put("t", tesisIdList);
+		}
+		sb.append(" where S." + Sirket.COLUMN_NAME_DURUM + " = 1 ");
 		if (pdks != null)
 			sb.append(" and " + Sirket.COLUMN_NAME_PDKS + " = 1 ");
 
@@ -5376,7 +5442,7 @@ public class OrtakIslemler implements Serializable {
 			parametreMap.put("d", authenticatedUser.getDepartman().getId());
 			sb.append(" and " + Sirket.COLUMN_NAME_DEPARTMAN + " = :d");
 		}
-		if (authenticatedUser != null && (authenticatedUser.isIK_Tesis() || authenticatedUser.isIKSirket()) && authenticatedUser.getPdksPersonel() != null) {
+		if (authenticatedUser != null && tesisIdList == null && (authenticatedUser.isIK_Tesis() || authenticatedUser.isIKSirket()) && authenticatedUser.getPdksPersonel() != null) {
 			parametreMap.put("s", authenticatedUser.getPdksPersonel().getSirket().getId());
 			sb.append(" and " + Sirket.COLUMN_NAME_ID + " = :s");
 		}
@@ -5543,9 +5609,18 @@ public class OrtakIslemler implements Serializable {
 
 		if (departmanId == null && authenticatedUser.isDirektorSuperVisor())
 			departmanId = authenticatedUser.getPdksPersonel().getEkSaha1().getId();
-		else if (authenticatedUser.isIK_Tesis() && authenticatedUser.getPdksPersonel().getTesis() != null)
-			fields.put("tesis.id=", authenticatedUser.getPdksPersonel().getTesis().getId());
-
+		else {
+			List<Long> tesisIdList = null;
+			if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+				tesisIdList = new ArrayList<Long>();
+				for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
+					tesisIdList.add(tesis.getId());
+				if (fields != null)
+					fields.put("tesis.id ", tesisIdList);
+			}
+			if (tesisIdList == null && authenticatedUser.isIK_Tesis() && authenticatedUser.getPdksPersonel().getTesis() != null)
+				fields.put("tesis.id=", authenticatedUser.getPdksPersonel().getTesis().getId());
+		}
 		if (departmanId != null)
 			fields.put("ekSaha1.id=", departmanId);
 		else if (authenticatedUser.isYonetici() && !(authenticatedUser.isIK() || authenticatedUser.isAdmin()))
@@ -6225,7 +6300,7 @@ public class OrtakIslemler implements Serializable {
 			}
 			List<PersonelERPDB> personelList = getPersonelERPDBList(guncellemeDurum, perNoList, parameterName, session);
 			if (personelList != null) {
- 				for (Iterator iterator = personelList.iterator(); iterator.hasNext();) {
+				for (Iterator iterator = personelList.iterator(); iterator.hasNext();) {
 					PersonelERPDB personelERPDB = (PersonelERPDB) iterator.next();
 					if (yeniNoList != null && yeniNoList.contains(personelERPDB.getPersonelNo())) {
 						iterator.remove();
@@ -6425,7 +6500,15 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" where P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " >= :b1 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b2 ");
 				sb.append(" and P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1 and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s ");
-				if (authenticatedUser.isIK_Tesis()) {
+				List<Long> tesisIdList = null;
+				if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+					tesisIdList = new ArrayList<Long>();
+					for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
+						tesisIdList.add(tesis.getId());
+					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t ");
+					map.put("t", tesisIdList);
+				}
+				if (tesisIdList == null && authenticatedUser.isIK_Tesis()) {
 					Tanim tesis = authenticatedUser.getPdksPersonel().getTesis();
 					if (tesis != null) {
 						sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t ");
@@ -6499,7 +6582,15 @@ public class OrtakIslemler implements Serializable {
 		sb.append("select distinct P." + Personel.COLUMN_NAME_SIRKET + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 		sb.append(" where P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " >= :b1 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b2 ");
 		sb.append(" and P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1 and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
-		if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis()) {
+		List<Long> tesisIdList = null;
+		if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+			tesisIdList = new ArrayList<Long>();
+			for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
+				tesisIdList.add(tesis.getId());
+			sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t ");
+			map.put("t", tesisIdList);
+		}
+		if (tesisIdList == null && (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis())) {
 			sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s ");
 			map.put("s", authenticatedUser.getPdksPersonel().getSirket().getId());
 		}
@@ -7914,6 +8005,7 @@ public class OrtakIslemler implements Serializable {
 		} else if (PdksUtil.hasStringValue(sicilNo) || PdksUtil.hasStringValue(ad) || PdksUtil.hasStringValue(soyad) || gelenSirket != null || sirket != null || tesis != null || ekSaha1 != null || ekSaha2 != null || ekSaha3 != null || ekSaha4 != null) {
 			HashMap parametreMap = new HashMap();
 			parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "pdksSicilNo");
+
 			if (!authenticatedUser.isYoneticiKontratli() && sirket != null)
 				parametreMap.put("sirket.id=", sirket.getId());
 			else if (gelenSirket != null)
@@ -7927,8 +8019,16 @@ public class OrtakIslemler implements Serializable {
 				parametreMap.put("ekSaha3.id=", ekSaha3.getId());
 			if (ekSaha4 != null && (departman == null || departman.isAdminMi()) && (departman == null || departman.isAdminMi()))
 				parametreMap.put("ekSaha4.id=", ekSaha4.getId());
-			if (tesis != null && ((sirket == null && tesisDurum) || (sirket != null && (sirket.getId() != null || sirket.isTesisDurumu()))))
+			if (tesis != null && ((sirket == null && tesisDurum) || (sirket != null && (sirket.getId() != null || sirket.isTesisDurumu())))) {
+
 				parametreMap.put("tesis.id=", tesis.getId());
+			} else if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+				List<Long> tesisIdList = new ArrayList<Long>();
+				for (Tanim tesisUser : authenticatedUser.getYetkiliTesisler())
+					tesisIdList.add(tesisUser.getId());
+ 				parametreMap.put("tesis.id ", tesisIdList);
+			}
+
 			if (PdksUtil.hasStringValue(ad))
 				parametreMap.put("ad like", ad.trim() + "%");
 			if (PdksUtil.hasStringValue(soyad))
@@ -10342,10 +10442,17 @@ public class OrtakIslemler implements Serializable {
 		fields.put("bitTarih", bitTarih);
 		fields.put("s", userPersonel.getSirket().getId());
 		Long tesisId = null;
-		if (user.isTesisSuperVisor() || user.isIK_Tesis()) {
+		List<Long> tesisIdList = null;
+		if (user.getYetkiliTesisler() != null && user.getYetkiliTesisler().isEmpty() == false) {
+			tesisIdList = new ArrayList<Long>();
+			for (Tanim tesis : user.getYetkiliTesisler())
+				tesisIdList.add(tesis.getId());
+			sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t ");
+			fields.put("t", tesisIdList);
+		}
+		if (tesisIdList == null && (user.isTesisSuperVisor() || user.isIK_Tesis())) {
 			tesisId = userPersonel.getTesis() != null ? userPersonel.getTesis().getId() : null;
-			// sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t");
-			// fields.put("t", userPersonel.getTesis() != null ? userPersonel.getTesis().getId() : 0L);
+
 		}
 		sb.append(" order by P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
 		if (session != null)
@@ -10604,7 +10711,16 @@ public class OrtakIslemler implements Serializable {
 		sb.append(" where P." + Personel.COLUMN_NAME_SIRKET + " :" + fieldName);
 		sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
 		if (user.isIK_Tesis()) {
-			if (user.getPdksPersonel().getTesis() != null) {
+			List<Long> tesisIdList = null;
+			if (user.getYetkiliTesisler() != null && user.getYetkiliTesisler().isEmpty() == false) {
+				tesisIdList = new ArrayList<Long>();
+				for (Tanim tesis : user.getYetkiliTesisler())
+					tesisIdList.add(tesis.getId());
+				sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t ");
+				if (fields != null)
+					fields.put("t", tesisIdList);
+			}
+			if (tesisIdList == null && user.getPdksPersonel().getTesis() != null) {
 				sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t ");
 				fields.put("t", user.getPdksPersonel().getTesis().getId());
 			}

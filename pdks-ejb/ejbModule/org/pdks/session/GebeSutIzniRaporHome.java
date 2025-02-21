@@ -98,13 +98,27 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 		Departman departman = null;
 		sirketId = null;
 		tesisDurum = false;
-		if (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis())
+		List<Long> tesisIdList = null;
+		if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+			tesisIdList = new ArrayList<Long>();
+			for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
+				tesisIdList.add(tesis.getId());
+
+		}
+		if (tesisIdList == null && (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis()))
 			sirketId = authenticatedUser.getPdksPersonel().getSirket().getId();
 		if (!(authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin()))
 			departman = authenticatedUser.getDepartman();
 		List<Sirket> pdksSirketList = ortakIslemler.getDepartmanPDKSSirketList(departman, session);
 		sirketList = ortakIslemler.getSelectItemList("sirket", authenticatedUser);
 		tesisList = ortakIslemler.getSelectItemList("tesis", authenticatedUser);
+		if (tesisIdList != null) {
+			for (Iterator iterator = tesisList.iterator(); iterator.hasNext();) {
+				SelectItem tesis = (SelectItem) iterator.next();
+				if (!tesisIdList.contains(tesis.getValue()))
+					iterator.remove();
+			}
+		}
 		if (personelDonemDurumList == null)
 			personelDonemDurumList = new ArrayList<PersonelDonemselDurum>();
 		else
@@ -155,7 +169,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 				if (tesisTanimList == null)
 					tesisTanimList = ortakIslemler.filUserTesisList(authenticatedUser, session);
 				if (!tesisTanimList.isEmpty()) {
-					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t");
+					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t");
 					list = new ArrayList<Long>();
 					for (Tanim tesis : tesisTanimList) {
 						list.add(tesis.getId());
@@ -203,12 +217,11 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 			}
 		}
 		if (tesisId != null) {
-			sb.append(" AND P." + Personel.COLUMN_NAME_TESIS + " = :t");
+			sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t");
 			fields.put("t", tesisId);
 		} else if (tesisTanimList != null && !tesisTanimList.isEmpty()) {
-			for (Tanim tesis : tesisTanimList) {
+			for (Tanim tesis : tesisTanimList)
 				list.add(tesis.getId());
-			}
 			sb.append(" AND P." + Personel.COLUMN_NAME_TESIS + " :t");
 			fields.put("t", list);
 		}
