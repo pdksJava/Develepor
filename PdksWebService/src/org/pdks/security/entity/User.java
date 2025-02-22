@@ -1,4 +1,4 @@
-package org.pdks.entity;
+package org.pdks.security.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,6 +27,10 @@ import org.hibernate.Session;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.Email;
+import org.pdks.entity.BasePDKSObject;
+import org.pdks.entity.Departman;
+import org.pdks.entity.Personel;
+import org.pdks.entity.Tanim;
 import org.pdks.genel.model.PdksUtil;
 
 @Entity(name = User.TABLE_NAME)

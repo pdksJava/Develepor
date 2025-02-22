@@ -34,13 +34,10 @@ import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.PersonelIzinDetay;
 import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.PersonelMesai;
-import org.pdks.entity.Role;
 import org.pdks.entity.ServiceData;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
-import org.pdks.entity.User;
-import org.pdks.entity.UserRoles;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaSablonu;
@@ -53,6 +50,11 @@ import org.pdks.mail.model.MailFile;
 import org.pdks.mail.model.MailObject;
 import org.pdks.mail.model.MailPersonel;
 import org.pdks.mail.model.MailStatu;
+import org.pdks.security.entity.OrganizasyonTipi;
+import org.pdks.security.entity.Role;
+import org.pdks.security.entity.User;
+import org.pdks.security.entity.UserDigerOrganizasyon;
+import org.pdks.security.entity.UserRoles;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
@@ -176,12 +178,36 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 			List<UserRoles> pdksRoles = pdksDAO.getNativeSQLList(rolMap, sb, UserRoles.class);
 			if (!pdksRoles.isEmpty()) {
+				List<Long> userIdList = new ArrayList<Long>();
+				for (UserRoles userRoles : pdksRoles) {
+					User user = userRoles.getUser();
+					if (!userIdList.contains(user.getId()))
+						userIdList.add(user.getId());
+				}
+				rolMap.clear();
+				sb = new StringBuffer();
+				sb.append("select UR.* from " + UserDigerOrganizasyon.TABLE_NAME + " UR " + PdksVeriOrtakAktar.getSelectLOCK());
+				sb.append(" where " + UserDigerOrganizasyon.COLUMN_NAME_USER + " :u and " + UserDigerOrganizasyon.COLUMN_NAME_TIPI + " = " + OrganizasyonTipi.TESIS.value());
+				rolMap.put("u", userIdList);
+				List<UserDigerOrganizasyon> digerOrganizasyonsList = pdksDAO.getNativeSQLList(rolMap, sb, UserDigerOrganizasyon.class);
+				HashMap<Long, List<Tanim>> userTesisMap = new HashMap<Long, List<Tanim>>();
+				for (UserDigerOrganizasyon userDigerOrganizasyon : digerOrganizasyonsList) {
+					Long key = userDigerOrganizasyon.getUser().getId();
+					List<Tanim> tesisList = userTesisMap.containsKey(key) ? userTesisMap.get(key) : new ArrayList<Tanim>();
+					if (tesisList.isEmpty())
+						userTesisMap.put(key, tesisList);
+					tesisList.add(userDigerOrganizasyon.getOrganizasyon());
+				}
+				userIdList = null;
+				digerOrganizasyonsList = null;
 				HashMap<String, List<UserRoles>> araMap = new HashMap<String, List<UserRoles>>();
 				for (UserRoles userRoles : pdksRoles) {
 					User user = userRoles.getUser();
 					if (user != null && user.isDurum() && user.getPdksPersonel().isCalisiyor()) {
 						String roleAdi = userRoles.getRole().getRolename();
-						if (roleAdi.equals(Role.TIPI_IK) && user.getDepartman().isAdminMi())
+						if (userTesisMap.containsKey(user.getId()))
+							roleAdi = Role.TIPI_IK_Tesis;
+						else if (roleAdi.equals(Role.TIPI_IK) && user.getDepartman().isAdminMi())
 							roleAdi = TIPI_IK_ADMIN;
 						List<UserRoles> dataList = araMap.containsKey(roleAdi) ? araMap.get(roleAdi) : new ArrayList<UserRoles>();
 						if (dataList.isEmpty())
@@ -228,11 +254,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 								map.put(Role.TIPI_IK, map1);
 								dataList = null;
 							} else if (roleAdi.equals(Role.TIPI_IK)) {
-
 								for (Iterator iterator = dataList.iterator(); iterator.hasNext();) {
 									UserRoles userRoles = (UserRoles) iterator.next();
 									User user = userRoles.getUser();
-
 									user.setIK(true);
 									String roleAdiDep = roleAdi + (user.getDepartman() != null ? "_" + user.getDepartman().getId() : "");
 									HashMap<String, List<User>> map1 = map.containsKey(roleAdi) ? map.get(roleAdi) : new HashMap<String, List<User>>();
@@ -264,14 +288,38 @@ public class PdksVeriOrtakAktar implements Serializable {
 						Personel personel = user.getPdksPersonel();
 						if (roleAdi.equals(Role.TIPI_IK_Tesis) && personel.getTesis() == null)
 							continue;
-						String key = "" + (roleAdi.equals(Role.TIPI_IK_Tesis) ? personel.getTesis().getErpKodu() : personel.getSirket().getErpKodu());
-						HashMap<String, List<User>> map1 = map.containsKey(roleAdi) ? map.get(roleAdi) : new HashMap<String, List<User>>();
-						if (map1.isEmpty())
-							map.put(roleAdi, map1);
-						List<User> list = map1.containsKey(key) ? map1.get(key) : new ArrayList<User>();
-						if (list.isEmpty())
-							map1.put(key, list);
-						list.add(user);
+						if (userTesisMap.containsKey(user.getId())) {
+							List<Tanim> tesisList = userTesisMap.get(user.getId());
+							Tanim tesis = personel.getTesis();
+							if (tesis != null)
+								tesisList.add(tesis);
+							List<Long> idList = new ArrayList<Long>();
+							for (Tanim tanim : tesisList) {
+								if (!idList.contains(tanim.getId())) {
+									idList.add(tanim.getId());
+									roleAdi = Role.TIPI_IK_Tesis;
+									String key = tanim.getErpKodu();
+									HashMap<String, List<User>> map1 = map.containsKey(roleAdi) ? map.get(roleAdi) : new HashMap<String, List<User>>();
+									if (map1.isEmpty())
+										map.put(roleAdi, map1);
+									List<User> list = map1.containsKey(key) ? map1.get(key) : new ArrayList<User>();
+									if (list.isEmpty())
+										map1.put(key, list);
+									list.add(user);
+								}
+
+							}
+						} else {
+							String key = "" + (roleAdi.equals(Role.TIPI_IK_Tesis) ? personel.getTesis().getErpKodu() : personel.getSirket().getErpKodu());
+							HashMap<String, List<User>> map1 = map.containsKey(roleAdi) ? map.get(roleAdi) : new HashMap<String, List<User>>();
+							if (map1.isEmpty())
+								map.put(roleAdi, map1);
+							List<User> list = map1.containsKey(key) ? map1.get(key) : new ArrayList<User>();
+							if (list.isEmpty())
+								map1.put(key, list);
+							list.add(user);
+						}
+
 					}
 				}
 				araMap = null;
@@ -5262,7 +5310,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 		}
 		if (!hataList.isEmpty() && (mailBosGonder == false || PdksUtil.isPazar() == false)) {
 			try {
-
 				Gson gson = new Gson();
 				String jsonStr = PdksUtil.toPrettyFormat(gson.toJson(hataList));
 				String konu = uygulamaBordro + " savePersoneller problem";

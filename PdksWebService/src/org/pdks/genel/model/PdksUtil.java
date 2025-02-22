@@ -62,7 +62,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.json.XML;
 import org.pdks.entity.Tanim;
-import org.pdks.entity.User;
+import org.pdks.security.entity.User;
 import org.w3c.dom.Node;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;

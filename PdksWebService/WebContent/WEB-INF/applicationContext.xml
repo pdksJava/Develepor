@@ -67,18 +67,19 @@
 				<value>org.pdks.entity.ERPPersonel</value>
 				<value>org.pdks.entity.PersonelKGS</value>
 				<value>org.pdks.entity.PersonelView</value>
-				<value>org.pdks.entity.Role</value>
 				<value>org.pdks.entity.Sirket</value>
 				<value>org.pdks.entity.ServiceData</value>
 				<value>org.pdks.entity.Tanim</value>
 				<value>org.pdks.entity.Tatil</value>
-				<value>org.pdks.entity.User</value>
-				<value>org.pdks.entity.UserRoles</value>
 				<value>org.pdks.entity.Vardiya</value>
 				<value>org.pdks.entity.VardiyaGun</value>
 				<value>org.pdks.entity.VardiyaSablonu</value>
 				<value>org.pdks.entity.HataliPersonel</value>
 				<value>org.pdks.entity.PersonelDinamikAlan</value>
+				<value>org.pdks.security.entity.Role</value>
+				<value>org.pdks.security.entity.User</value>
+				<value>org.pdks.security.entity.UserDigerOrganizasyon</value>
+				<value>org.pdks.security.entity.UserRoles</value>
 				<value>org.pdks.erp.entity.PersonelERPDB</value>
 			</list>
 		</property>

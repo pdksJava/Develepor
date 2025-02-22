@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.pdks.genel.model.PdksUtil;
+import org.pdks.security.entity.User;
 
 @Entity(name = PersonelIzin.TABLE_NAME)
 public class PersonelIzin extends BaseObject {

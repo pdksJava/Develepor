@@ -1,4 +1,4 @@
-package org.pdks.entity;
+package org.pdks.security.entity;
 
 import java.io.Serializable;
 
@@ -13,6 +13,8 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.entity.BasePDKSObject;
+import org.pdks.entity.Departman;
 import org.pdks.genel.model.PdksUtil;
 
 @Entity(name = Role.TABLE_NAME)

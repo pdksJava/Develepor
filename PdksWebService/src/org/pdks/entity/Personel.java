@@ -24,6 +24,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.pdks.genel.model.PdksUtil;
+import org.pdks.security.entity.User;
 
 @Entity(name = Personel.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { Personel.COLUMN_NAME_KGS_PERSONEL }) })

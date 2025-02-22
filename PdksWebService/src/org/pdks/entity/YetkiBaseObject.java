@@ -15,6 +15,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import org.pdks.genel.model.PdksUtil;
+import org.pdks.security.entity.User;
 
 @MappedSuperclass
 public class YetkiBaseObject extends BaseObject {

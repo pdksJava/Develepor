@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Immutable;
+import org.pdks.security.entity.User;
 
 @Entity(name = PdksPersonelView.TABLE_NAME)
 @Immutable

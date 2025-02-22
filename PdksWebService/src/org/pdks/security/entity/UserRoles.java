@@ -1,4 +1,4 @@
-package org.pdks.entity;
+package org.pdks.security.entity;
 
 import java.io.Serializable;
 
@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.entity.BasePDKSObject;
 
 @Entity(name = UserRoles.TABLE_NAME)
 public class UserRoles extends BasePDKSObject implements Serializable {

@@ -28,11 +28,11 @@ import javax.mail.internet.MimeUtility;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.pdks.entity.ServiceData;
-import org.pdks.entity.User;
 import org.pdks.mail.model.MailFile;
 import org.pdks.mail.model.MailObject;
 import org.pdks.mail.model.MailPersonel;
 import org.pdks.mail.model.MailStatu;
+import org.pdks.security.entity.User;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import com.google.gson.Gson;

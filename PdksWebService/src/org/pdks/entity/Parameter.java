@@ -19,6 +19,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import org.pdks.genel.model.PdksUtil;
+import org.pdks.security.entity.User;
 
 @Entity(name = Parameter.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { Parameter.COLUMN_NAME_ADI }) })

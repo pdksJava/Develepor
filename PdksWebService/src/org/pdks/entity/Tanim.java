@@ -20,6 +20,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.Length;
 import org.pdks.genel.model.Constants;
 import org.pdks.genel.model.PdksUtil;
+import org.pdks.security.entity.User;
 
 @Entity(name = Tanim.TABLE_NAME)
 public class Tanim extends BasePDKSObject implements Serializable, Cloneable {

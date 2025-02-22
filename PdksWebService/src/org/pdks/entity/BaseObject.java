@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.pdks.genel.model.PdksUtil;
+import org.pdks.security.entity.User;
 
 @MappedSuperclass
 public abstract class BaseObject extends BasePDKSObject implements Serializable, Cloneable {
