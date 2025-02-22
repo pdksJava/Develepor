@@ -37,6 +37,7 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.framework.EntityHome;
+import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.CalismaModeli;
 import org.pdks.entity.Departman;
 import org.pdks.entity.Dosya;
@@ -1137,6 +1138,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 								}
 
 							}
+
 							yeniTesisler = null;
 						}
 						if (yeniBolumler != null) {
@@ -1228,6 +1230,10 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						saveIkinciYoneticiOlmazList();
 
 						session.flush();
+						if (tesisYetki && kullanici.getId() != null && authenticatedUser.getId() != null) {
+							authenticatedUser.setYetkiliTesisler(null);
+							ortakIslemler.setUserTesisler(authenticatedUser, session);
+						}
 						try {
 							session.refresh(personelView);
 						} catch (Exception e) {
@@ -1833,12 +1839,16 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (pdksPersonel.getKullanici() != null && pdksPersonel.getKullanici().getId() == null && departmanKullaniciList != null && departmanKullaniciList.size() == 1)
 			pdksPersonel.getKullanici().setDepartman(departmanTanimList.get(0));
 		tesisYetki = ortakIslemler.getParameterKey("tesisYetki").equals("1");
+		if (tesisYetki && authenticatedUser.isIK_Tesis())
+			tesisYetki = authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false;
 		bolumYetki = ortakIslemler.getParameterKey("bolumYetki").equals("1");
 		fillDistinctRoleList();
 		if (tesisYetki)
 			fillDistinctTesisList();
 		if (bolumYetki)
 			fillDistinctBolumList();
+		if (pdksPersonel.getKullanici() != null)
+			PdksUtil.setUserYetki(pdksPersonel.getKullanici());
 
 		dinamikPersonelDurumList.clear();
 		dinamikPersonelSayisalList.clear();
@@ -4393,6 +4403,38 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 */
 	public void fillDistinctTesisList() {
 		List<Tanim> allTesis = ortakIslemler.getTesisDurumu() ? ortakIslemler.getTanimList(Tanim.TIPI_TESIS, session) : new ArrayList<Tanim>();
+		if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+			for (Iterator iterator = allTesis.iterator(); iterator.hasNext();) {
+				Tanim tanim = (Tanim) iterator.next();
+				boolean sil = true;
+				for (Tanim tesis : authenticatedUser.getYetkiliTesisler()) {
+					if (tesis.getId().equals(tanim.getId())) {
+						sil = false;
+						break;
+					}
+				}
+				if (sil)
+					iterator.remove();
+			}
+		} else if (authenticatedUser.isIKSirket()) {
+			AramaSecenekleri as = new AramaSecenekleri();
+			Date bugun = PdksUtil.getDate(new Date());
+			as.setSirket(authenticatedUser.getPdksPersonel().getSirket());
+			as.setSirketId(authenticatedUser.getPdksPersonel().getSirket().getId());
+			ortakIslemler.setAramaSecenekTesisData(as, bugun, bugun, false, session);
+			for (Iterator iterator = allTesis.iterator(); iterator.hasNext();) {
+				Tanim tanim = (Tanim) iterator.next();
+				boolean sil = true;
+				for (SelectItem tesis : as.getTesisList()) {
+					if (tesis.getValue().equals(tanim.getId())) {
+						sil = false;
+						break;
+					}
+				}
+				if (sil)
+					iterator.remove();
+			}
+		}
 		Personel seciliPersonel = getInstance();
 		if (seciliPersonel != null) {
 			User seciliKullanici = seciliPersonel.getKullanici();
