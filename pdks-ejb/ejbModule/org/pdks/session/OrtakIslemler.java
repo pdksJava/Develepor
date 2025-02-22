@@ -16223,7 +16223,7 @@ public class OrtakIslemler implements Serializable {
 	 * @throws Exception
 	 */
 	public ByteArrayOutputStream izinBakiyeTopluITextPDF(int baslangicYil, List<TempIzin> bakiyeList, boolean zipDosya, boolean bolumKlasorEkle) throws Exception {
-		Document document = new Document(PageSize.A4.rotate());
+		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		List<LinkedHashMap<String, Object>> list = null;
 		try {
@@ -16254,6 +16254,7 @@ public class OrtakIslemler implements Serializable {
 				zos.close();
 
 			} else {// Create writer for the outputStream
+				Document document = new Document(PageSize.A4.rotate());
 				PdfCopy copy = new PdfCopy(document, outputStream);
 				// Open document. PdfCopy copy = new PdfCopy(document, outputStream);
 				document.open();
