@@ -5008,13 +5008,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 				pdksDAO.saveObjectList(yoneticiList);
 		}
 		List<PersonelERP> hataList = new ArrayList<PersonelERP>();
-
+		HashMap<String, PersonelERP> orjPersonelERPMap = new HashMap<String, PersonelERP>();
 		for (PersonelERP personelERP : personelList) {
 			if (personelERP.getPersonelNo() != null && personelPDKSMap.containsKey(personelERP.getPersonelNo())) {
 				Personel personel = personelPDKSMap.get(personelERP.getPersonelNo());
 				if (personel != null)
 					personelERP.setId(personel.getId());
 			}
+			orjPersonelERPMap.put(personelERP.getPersonelNo(), (PersonelERP) personelERP.clone());
 			PersonelERP hataPersonelERP = null;
 			if (personelERP.getHataList() != null && !personelERP.getHataList().isEmpty()) {
 				personelERP.setId(null);
@@ -5117,14 +5118,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 							devam = false;
 						}
 						List hataIKList = dataHataMap.get("hataList");
-						personelHataMailGonder(userList, personelList, hataIKList, personelERPHataliMap, sirketMap, false);
+						personelHataMailGonder(userList, personelList, orjPersonelERPMap, hataIKList, personelERPHataliMap, sirketMap, false);
 
 					}
 				}
 				userIdList = null;
 			}
 			if (devam && (userIKList != null || !mailMap.containsKey(KEY_IK_MAIL_IPTAL))) {
-				statu = personelHataMailGonder(userIKList, personelList, hataList, personelERPHataliMap, sirketMap, mailBosGonder);
+				statu = personelHataMailGonder(userIKList, personelList, orjPersonelERPMap, hataList, personelERPHataliMap, sirketMap, mailBosGonder);
 				if (statu != null && statu.isDurum())
 					logger.info("savePersoneller hata gonderildi. " + PdksUtil.getCurrentTimeStampStr());
 			}
@@ -5273,13 +5274,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 	/**
 	 * @param userList
 	 * @param personelList
+	 * @param orjPersonelERPMap
 	 * @param hataList
 	 * @param personelERPHataliMap
 	 * @param sirketMap
 	 * @param mailBosGonder
 	 * @return
 	 */
-	private MailStatu personelHataMailGonder(List<User> userList, List<PersonelERP> personelList, List<PersonelERP> hataList, TreeMap<String, ERPPersonel> personelERPHataliMap, TreeMap<String, Sirket> sirketMap, boolean mailBosGonder) {
+	private MailStatu personelHataMailGonder(List<User> userList, List<PersonelERP> personelList, HashMap<String, PersonelERP> orjPersonelERPMap, List<PersonelERP> hataList, TreeMap<String, ERPPersonel> personelERPHataliMap, TreeMap<String, Sirket> sirketMap, boolean mailBosGonder) {
 		MailStatu mailStatu = null;
 		if (!hataList.isEmpty()) {
 			if (mailBosGonder)
@@ -5314,7 +5316,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				String jsonStr = PdksUtil.toPrettyFormat(gson.toJson(hataList));
 				String konu = uygulamaBordro + " savePersoneller problem";
 				if (hataList.size() == 1) {
-					PersonelERP personelERP = hataList.get(0);
+					PersonelERP personelERPData = hataList.get(0);
+					PersonelERP personelERP = orjPersonelERPMap.containsKey(personelERPData.getPersonelNo()) ? orjPersonelERPMap.get(personelERPData.getPersonelNo()) : personelERPData;
 					if (personelERP != null) {
 						String adSoyad = (PdksUtil.hasStringValue(personelERP.getAdi()) ? personelERP.getAdi().trim() + " " : "") + (PdksUtil.hasStringValue(personelERP.getSoyadi()) ? personelERP.getSoyadi() : " ");
 						if (PdksUtil.hasStringValue(adSoyad))
@@ -5331,7 +5334,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 					parentBordroTanimKoduStr = "";
 
 				for (Iterator iterator = hataList.iterator(); iterator.hasNext();) {
-					PersonelERP personelERP = (PersonelERP) iterator.next();
+					PersonelERP personelERPData = (PersonelERP) iterator.next();
+					PersonelERP personelERP = orjPersonelERPMap.containsKey(personelERPData.getPersonelNo()) ? orjPersonelERPMap.get(personelERPData.getPersonelNo()) : personelERPData;
+
 					String adSoyad = (personelERP.getAdi() != null ? personelERP.getAdi().trim() + " " : "") + (personelERP.getSoyadi() != null ? personelERP.getSoyadi() : " ");
 					String sirketBilgi = "";
 					boolean altBolumVar = altBolumDurum && personelERP.getBordroAltAlanAdi() != null;
@@ -5399,7 +5404,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 			invalidAddresses = null;
 			if (!userList.isEmpty())
-				personelHataMailGonder(userList, personelList, hataList, personelERPHataliMap, sirketMap, mailBosGonder);
+				personelHataMailGonder(userList, personelList, orjPersonelERPMap, hataList, personelERPHataliMap, sirketMap, mailBosGonder);
 		}
 		return mailStatu;
 	}
