@@ -676,8 +676,9 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						pageContentByte.addTemplate(page, 0, 0);
 						copy.addPage(page);
 					}
-					document.close();
+
 				}
+				document.close();
 			}
 			outputStream.flush();
 			outputStream.close();
@@ -688,7 +689,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
 			response.setContentType(contentType);
 			response.setCharacterEncoding(characterEncoding);
-			String dosyaAdi = fileName.substring(0, fileName.lastIndexOf(".")) + (veriMap.size() > 1 ? ".zip" : ".pdf");
+			String dosyaAdi = fileName.substring(0, fileName.lastIndexOf(".")) + (zip ? ".zip" : ".pdf");
 			String fileNameURL = PdksUtil.encoderURL(dosyaAdi, characterEncoding);
 			response.setHeader("Content-Disposition", disposition + ";filename=" + fileNameURL);
 			PdksUtil.writeByteArrayOutputStream(response, outputStream);

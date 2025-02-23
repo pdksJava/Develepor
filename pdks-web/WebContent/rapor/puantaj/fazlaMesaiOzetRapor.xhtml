@@ -959,7 +959,7 @@
 			</f:facet>
 			<h:form>
 				<DIV class="#{authenticatedUser.scroolClass}" id="#{authenticatedUser.scroolDiv}">
-					<h:panelGrid columns="2">
+					<h:panelGrid columns="3">
 						<h:commandLink title="PDF Aktar" action="#{fazlaMesaiOzetRaporHome.pdfTopluAktar(false)}" target="popupWindow">
 							<h:graphicImage value="/img/pdf.jpg" height="24px" />
 						</h:commandLink>
@@ -968,6 +968,7 @@
 								<h:graphicImage value="/img/zip.png" height="24px" />
 							</h:commandLink>
 						</ui:fragment>
+						<a4j:commandButton value="Vazgeç" onclick="#{rich:component('denklestirmeTopluPanel')}.hide()" />
 					</h:panelGrid>
 
 					<table class="rich-table" cellpadding="1" cellspacing="1" id="denklestirmeTopluTable">
