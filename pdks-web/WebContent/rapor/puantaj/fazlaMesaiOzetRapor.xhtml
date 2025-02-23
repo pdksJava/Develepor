@@ -141,12 +141,15 @@
 											value="Fazla Mesai Getir" rendered="#{not empty fazlaMesaiOzetRaporHome.pdksSirketList}" reRender="denklestirmeDonemiTable"
 											onclick="#{rich:component('wait')}.show()" oncomplete="#{rich:component('wait')}.hide()" /></TD>
 
-									<ui:fragment rendered="#{not empty fazlaMesaiOzetRaporHome.aylikPuantajList }">
-
-
+									<ui:fragment rendered="#{not empty fazlaMesaiOzetRaporHome.aylikPuantajList}">
 										<td nowrap="nowrap">
 											<TABLE width="85%">
 												<TR>
+													<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.pdfTopluAktarDurum}">
+														<td><a4j:commandButton action="#{fazlaMesaiOzetRaporHome.pdfKontrol()}" value="Denkleştirme Anlaşma"
+																onclick="#{rich:component('wait')}.show()" reRender="denklestirmeTopluPanel"
+																oncomplete="#{rich:component('wait')}.hide();if (#{not empty fazlaMesaiOzetRaporHome.onayList}) #{rich:component('denklestirmeTopluPanel')}.show();" /></td>
+													</ui:fragment>
 													<TD nowrap="nowrap"><SPAN style="font-size: 14;"><h:commandLink value="#{messages['ortak.etiket.excelAktar']}"
 																action="#{fazlaMesaiOzetRaporHome.fazlaMesaiExcel}" target="blank">
 																<a4j:support event="oncomplete" status="ajaxStatus" />
@@ -175,6 +178,16 @@
 								<f:facet name="header">
 									<h:outputText value="Fazla Mesai Toplu Raporu" />
 								</f:facet>
+								<c:if test="#{fazlaMesaiOzetRaporHome.pdfTopluAktarDurum}">
+									<rich:column style="text-align: center;width: 30px;" rendered="#{authenticatedUser.IK or authenticatedUser.admin}">
+										<f:facet name="header">
+											<h:selectBooleanCheckbox value="#{fazlaMesaiOzetRaporHome.secimDurum}">
+												<a4j:support event="onclick" action="#{fazlaMesaiOzetRaporHome.topluSec()}" reRender="hareketTables" status="ajaxStatus" ajaxSingle="true" />
+											</h:selectBooleanCheckbox>
+										</f:facet>
+										<h:selectBooleanCheckbox value="#{ap.secili}" />
+									</rich:column>
+								</c:if>
 								<rich:column style="text-align: center;width: 30px;" rendered="#{authenticatedUser.IK or authenticatedUser.admin}">
 									<f:facet name="header">
 
@@ -922,8 +935,6 @@
 						</a4j:outputPanel>
 
 						<ui:fragment rendered="#{not empty fazlaMesaiOzetRaporHome.aylikPuantajList and (fazlaMesaiOzetRaporHome.denklestirmeAyDurum == false)}">
-
-
 							<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{fazlaMesaiOzetRaporHome.fazlaMesaiExcel}" target="blank">
 								<a4j:support event="oncomplete" onclick="#{rich:component('wait')}.show()" oncomplete=" #{rich:component('wait')}.hide()" />
 							</h:commandLink>
@@ -934,6 +945,67 @@
 
 			</rich:panel>
 		</h:form>
+
+		<rich:modalPanel id="denklestirmeTopluPanel" autosized="true" width="550">
+			<f:facet name="header">
+				<h:outputText value="PDF Dosya oluşturma" />
+			</f:facet>
+			<f:facet name="controls">
+
+				<h:panelGroup>
+					<h:graphicImage value="/img/close.png" id="kartYillikHidelink" styleClass="hidelink" />
+					<rich:componentControl for="denklestirmeTopluPanel" attachTo="kartYillikHidelink" operation="hide" event="onclick" />
+				</h:panelGroup>
+			</f:facet>
+			<h:form>
+				<DIV class="#{authenticatedUser.scroolClass}" id="#{authenticatedUser.scroolDiv}">
+					<h:panelGrid columns="2">
+						<h:commandLink title="PDF Aktar" action="#{fazlaMesaiOzetRaporHome.pdfTopluAktar(false)}" target="popupWindow">
+							<h:graphicImage value="/img/pdf.jpg" height="24px" />
+						</h:commandLink>
+						<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.onayList.size()> 1}">
+							<h:commandLink title="Zip Aktar" action="#{fazlaMesaiOzetRaporHome.pdfTopluAktar(false)}" target="popupWindow">
+								<h:graphicImage value="/img/zip.png" height="24px" />
+							</h:commandLink>
+						</ui:fragment>
+					</h:panelGrid>
+
+					<table class="rich-table" cellpadding="1" cellspacing="1" id="denklestirmeTopluTable">
+						<thead class="rich-table-thead">
+							<tr class="rich-table-subheader">
+								<th><h:outputText value="#{ortakIslemler.personelNoAciklama()}" /></th>
+								<th><h:outputText value="Adı Soyadı" /></th>
+								<th><h:outputText value="#{fazlaMesaiOzetRaporHome.bolumAciklama }" /></th>
+								<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.kimlikGoster}">
+									<th><h:outputText value="#{ortakIslemler.kimlikNoAciklama()}" /></th>
+								</ui:fragment>
+							</tr>
+						</thead>
+						<tbody>
+							<a4j:repeat value="#{fazlaMesaiOzetRaporHome.onayList}" var="ap">
+								<tr class="#{ap.trClass}">
+									<td><h:outputText value="#{ap.pdksPersonel.sicilNo}" /></td>
+									<td><h:outputText value="#{ap.pdksPersonel.adSoyad}" style="width:autostretch ;white-space: nowrap;" /></td>
+									<td><h:outputText value="#{ap.pdksPersonel.ekSaha3.aciklama}" style="width:autostretch ;white-space: nowrap;" /></td>
+									<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.kimlikGoster}">
+										<td><h:outputText value="#{ap.pdksPersonel.personelKGS.kimlikNo}" /></td>
+									</ui:fragment>
+								</tr>
+							</a4j:repeat>
+
+						</tbody>
+					</table>
+				</DIV>
+
+
+				<ui:fragment>
+					<SCRIPT>
+							tableScroll("#{authenticatedUser.scroolDiv}",300);
+	 				</SCRIPT>
+				</ui:fragment>
+
+			</h:form>
+		</rich:modalPanel>
 
 
 

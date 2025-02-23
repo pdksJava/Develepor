@@ -2,7 +2,10 @@ package org.pdks.session;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -11,13 +14,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -51,6 +58,7 @@ import org.pdks.entity.DepartmanDenklestirmeDonemi;
 import org.pdks.entity.FazlaMesaiTalep;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.IzinTipi;
+import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDenklestirmeBordro;
@@ -67,9 +75,25 @@ import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaHafta;
 import org.pdks.entity.VardiyaSaat;
 import org.pdks.entity.YemekIzin;
+import org.pdks.pdf.action.PDFITextUtils;
 import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
+
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfCopy;
+import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfWriter;
 
 @Name("fazlaMesaiOzetRaporHome")
 public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDonemi> implements Serializable {
@@ -110,7 +134,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	private List<SelectItem> bolumDepartmanlari, gorevYeriList, tesisList;
 
-	private List<AylikPuantaj> aylikPuantajList;
+	private List<AylikPuantaj> aylikPuantajList, onayList;
 
 	private List<DepartmanDenklestirmeDonemi> denklestirmeDonemiList;
 
@@ -130,14 +154,14 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	private TreeMap<String, PersonelDinamikAlan> personelDinamikAlanMap;
 
 	private Boolean hataYok, fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, yetkili = Boolean.FALSE, resmiTatilVar = Boolean.FALSE, haftaTatilVar = Boolean.FALSE, kaydetDurum = Boolean.FALSE;
-	private Boolean onayla, hastaneSuperVisor = Boolean.FALSE, sirketIzinGirisDurum = Boolean.FALSE, hataliPuantajVar = Boolean.FALSE;
+	private Boolean onayla, hastaneSuperVisor = Boolean.FALSE, sirketIzinGirisDurum = Boolean.FALSE, hataliPuantajVar = Boolean.FALSE, secimDurum;
 	private Boolean kimlikGoster = Boolean.FALSE, aksamGun = Boolean.FALSE, maasKesintiGoster = Boolean.FALSE, aksamSaat = Boolean.FALSE, hataliPuantajGoster = Boolean.FALSE, stajerSirket, departmanBolumAyni = Boolean.FALSE;
 	private Boolean modelGoster = Boolean.FALSE, kullaniciPersonel = Boolean.FALSE, sirketGoster = Boolean.FALSE, denklestirmeAyDurum = Boolean.FALSE, yoneticiERP1Kontrol = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE;
 	private boolean adminRole, ikRole, bordroPuantajEkranindaGoster = false, vardiyaPlanTopluAdet = false, fazlaMesaiVar = false, saatlikMesaiVar = false, aylikMesaiVar = false;
 	private Boolean gerceklesenMesaiKod = Boolean.FALSE, isAramaDurum = Boolean.FALSE, devredenBakiyeKod = Boolean.FALSE, normalCalismaSaatKod = Boolean.FALSE, haftaTatilCalismaSaatKod = Boolean.FALSE, resmiTatilCalismaSaatKod = Boolean.FALSE, izinSureSaatKod = Boolean.FALSE;
 	private Boolean normalCalismaGunKod = Boolean.FALSE, haftaTatilCalismaGunKod = Boolean.FALSE, resmiTatilCalismaGunKod = Boolean.FALSE, izinSureGunKod = Boolean.FALSE, ucretliIzinGunKod = Boolean.FALSE, ucretsizIzinGunKod = Boolean.FALSE, hastalikIzinGunKod = Boolean.FALSE;
 	private Boolean normalGunKod = Boolean.FALSE, haftaTatilGunKod = Boolean.FALSE, resmiTatilGunKod = Boolean.FALSE, artikGunKod = Boolean.FALSE, bordroToplamGunKod = Boolean.FALSE, devredenMesaiKod = Boolean.FALSE, ucretiOdenenKod = Boolean.FALSE;
-	private Boolean suaDurum = Boolean.FALSE, sutIzniDurum = Boolean.FALSE, gebeDurum = Boolean.FALSE, partTime = Boolean.FALSE;
+	private Boolean suaDurum = Boolean.FALSE, sutIzniDurum = Boolean.FALSE, gebeDurum = Boolean.FALSE, partTime = Boolean.FALSE, pdfTopluAktarDurum = Boolean.FALSE;
 	private Long vardiyaAdet;
 	private List<VardiyaGun> tumVardiyaList;
 
@@ -476,9 +500,208 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		fillEkSahaTanim();
 		yilDegisti();
 		linkAdresKey = (String) req.getParameter("linkAdresKey");
+		pdfTopluAktarDurum = false;
 		if (linkAdresKey != null)
 			fillFazlaMesaiOzetRaporList();
 		return "";
+	}
+
+	/**
+	 * @param veriMap
+	 * @param icerikList
+	 * @return
+	 * @throws Exception
+	 */
+	private LinkedHashMap<Long, byte[]> getOnayPdf(HashMap<Long, AylikPuantaj> veriMap, List<String> icerikList) throws Exception {
+		LinkedHashMap<Long, byte[]> map = null;
+		BaseFont baseFont = BaseFont.createFont("ARIAL.TTF", BaseFont.IDENTITY_H, true);
+		Font fontH = new Font(baseFont, 10f, Font.BOLD, BaseColor.BLACK);
+		Font fontBaslik = new Font(baseFont, 14f, Font.BOLD, BaseColor.BLACK);
+		Font font = new Font(baseFont, 10f, Font.NORMAL, BaseColor.BLACK);
+		Image image = ortakIslemler.getProjeImage();
+		PdfPTable tableImage = null;
+		if (image != null) {
+			tableImage = new PdfPTable(1);
+			com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
+			cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+			tableImage.addCell(cellImage);
+		}
+		Parameter pm = ortakIslemler.getParameter(session, "mesaiDenklestirmeBelge");
+
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		NumberFormat nf = DecimalFormat.getNumberInstance(locale);
+		Date bugun = new Date();
+		for (Long key : veriMap.keySet()) {
+			AylikPuantaj ap = veriMap.get(key);
+			ByteArrayOutputStream baosPDF = new ByteArrayOutputStream();
+			Document doc = new Document(PageSize.A4.rotate(), 60, 60, 100, 60);
+			PdfWriter.getInstance(doc, baosPDF);
+			doc.open();
+			Personel personel = ap.getPdksPersonel();
+			try {
+				if (map == null)
+					map = new LinkedHashMap<Long, byte[]>();
+
+				if (tableImage != null)
+					doc.add(tableImage);
+				Sirket sirket = personel.getSirket();
+				Tanim tesis = sirket.getTesisDurum() ? personel.getTesis() : null;
+				doc.add(PDFITextUtils.getParagraph(pm.getDescription(), fontBaslik, Element.ALIGN_CENTER));
+				Paragraph bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
+				bos.setSpacingAfter(10);
+				doc.add(bos);
+				doc.add(bos);
+				doc.add(bos);
+				for (String string : icerikList) {
+					if (string.equals("$tarih$")) {
+						doc.add(PDFITextUtils.getParagraph(authenticatedUser.dateFormatla(bugun), font, Element.ALIGN_RIGHT));
+					} else if (string.equals("$sirket$"))
+						doc.add(PDFITextUtils.getParagraph(sirket.getAd(), fontH, Element.ALIGN_CENTER));
+					else if (string.equals("$tesis$") && tesis != null)
+						doc.add(PDFITextUtils.getParagraph(tesis.getAciklama(), fontH, Element.ALIGN_CENTER));
+					else {
+						if (string.indexOf("$adSoyad$") >= 0)
+							string = PdksUtil.replaceAllManuel(string, "$adSoyad$", personel.getAdSoyad());
+						if (string.indexOf("$mesai$") >= 0)
+							string = PdksUtil.replaceAllManuel(string, "$mesai$", nf.format(ap.getAylikFazlaMesai()));
+						if (PdksUtil.hasStringValue(string))
+							doc.add(PDFITextUtils.getParagraph(string, font, Element.ALIGN_LEFT));
+						else
+							doc.add(bos);
+					}
+
+				}
+				doc.newPage();
+			} catch (Exception e) {
+				logger.error("Pdks hata in : \n");
+				e.printStackTrace();
+				logger.error("Pdks hata out : " + e.getMessage());
+
+			}
+			doc.close();
+			baosPDF.close();
+			if (map != null)
+				map.put(key, baosPDF.toByteArray());
+		}
+
+		return map;
+
+	}
+
+	public String topluSec() {
+		for (AylikPuantaj ap : aylikPuantajList) {
+			ap.setSecili(secimDurum);
+		}
+		return "";
+	}
+
+	public String pdfKontrol() {
+		boolean islemYap = false;
+		String fileName = ortakIslemler.getParameterKey("mesaiDenklestirmeBelge");
+		File file = null;
+		if (onayList == null)
+			onayList = new ArrayList<AylikPuantaj>();
+		else
+			onayList.clear();
+		if (PdksUtil.hasStringValue(fileName)) {
+			file = new File("/opt/pdks/" + fileName);
+			if (file.exists()) {
+				boolean renk = true;
+				for (AylikPuantaj ap : aylikPuantajList)
+					if (ap.isSecili()) {
+						ap.setTrClass(renk ? VardiyaGun.STYLE_CLASS_ODD : VardiyaGun.STYLE_CLASS_EVEN);
+						onayList.add(ap);
+						renk = !renk;
+					}
+				islemYap = onayList.isEmpty() == false;
+				if (islemYap == false)
+					PdksUtil.addMessageWarn("İşlem yapılacak seçili kayıt yok!");
+			} else if (islemYap == false)
+				PdksUtil.addMessageWarn("İşlem yapılacak dosya örneği yok!");
+		}
+
+		return "";
+	}
+
+	/**
+	 * @param tempIzin
+	 * @return
+	 * @throws Exception
+	 */
+	public String pdfTopluAktar(boolean zip) throws Exception {
+		String sayfa = "";
+		HashMap<Long, AylikPuantaj> veriMap = new HashMap<Long, AylikPuantaj>();
+		for (AylikPuantaj ap : onayList) {
+			veriMap.put(ap.getPdksPersonel().getId(), ap);
+		}
+		String fileName = ortakIslemler.getParameterKey("mesaiDenklestirmeBelge");
+		File file = null;
+		if (PdksUtil.hasStringValue(fileName))
+			file = new File("/opt/pdks/" + fileName);
+		if (!veriMap.isEmpty()) {
+			List<String> list = PdksUtil.getStringListFromFile(file);
+			LinkedHashMap<Long, byte[]> map1 = getOnayPdf(veriMap, new ArrayList<String>(list));
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			if (zip) {
+				String path = "/tmp/";
+				File tmp = new File(path);
+				if (!tmp.exists())
+					tmp.mkdir();
+				ZipOutputStream zos = new ZipOutputStream(outputStream);
+				for (Long key : map1.keySet()) {
+					byte[] bytes = map1.get(key);
+					Personel personel = veriMap.get(key).getPdksPersonel();
+					String zipDosyaAdi = (personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() + "/" : "") + personel.getAdSoyad() + "_" + personel.getPdksSicilNo() + ".pdf";
+					ZipEntry zipEntry = new ZipEntry(zipDosyaAdi);
+					zos.putNextEntry(zipEntry);
+					int length = bytes.length;
+					zos.write(bytes, 0, length);
+					zos.closeEntry();
+				}
+				zos.close();
+
+			} else {
+				Document document = new Document(PageSize.A4.rotate());
+				PdfCopy copy = new PdfCopy(document, outputStream);
+				document.open();
+				PdfContentByte pageContentByte = copy.getDirectContent();
+				for (Long key : map1.keySet()) {
+
+					byte[] data = map1.get(key);
+					PdfReader reader = new PdfReader(data);
+					for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+						document.newPage();
+						// import the page from source pdf
+						PdfImportedPage page = copy.getImportedPage(reader, i);
+						pageContentByte.addTemplate(page, 0, 0);
+						copy.addPage(page);
+					}
+					document.close();
+				}
+			}
+			outputStream.flush();
+			outputStream.close();
+
+			String characterEncoding = "ISO-8859-9";
+			String contentType = "application/" + (zip ? "zip" : "pdf") + ";charset=" + characterEncoding;
+			String disposition = zip || map1.size() > 1 ? "attachment" : "inline";
+			HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+			response.setContentType(contentType);
+			response.setCharacterEncoding(characterEncoding);
+			String dosyaAdi = fileName.substring(0, fileName.lastIndexOf(".")) + (veriMap.size() > 1 ? ".zip" : ".pdf");
+			String fileNameURL = PdksUtil.encoderURL(dosyaAdi, characterEncoding);
+			response.setHeader("Content-Disposition", disposition + ";filename=" + fileNameURL);
+			PdksUtil.writeByteArrayOutputStream(response, outputStream);
+			file = new File(dosyaAdi);
+			if (file != null && file.exists())
+				file.delete();
+			sayfa = null;
+			map1 = null;
+			list = null;
+		} else
+			PdksUtil.addMessageWarn("İşlem yapılacak seçili kayıt yok!");
+		veriMap = null;
+		return sayfa;
 	}
 
 	/**
@@ -706,6 +929,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	@Transactional
 	public String fillFazlaMesaiOzetRaporList() {
+		pdfTopluAktarDurum = false;
+
 		bordroAdres = null;
 		aksamGun = Boolean.FALSE;
 		aksamSaat = Boolean.FALSE;
@@ -1688,6 +1913,13 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		denklestirmeDinamikAlanlar = ortakIslemler.setDenklestirmeDinamikDurum(puantajList, session);
 		ortakIslemler.sortAylikPuantajList(puantajList, true);
 		setAylikPuantajList(puantajList);
+		if (puantajList.isEmpty() == false) {
+			String fileName = ortakIslemler.getParameterKey("mesaiDenklestirmeBelge");
+			if (PdksUtil.hasStringValue(fileName) && (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi())) {
+				File file = new File("/opt/pdks/" + fileName);
+				pdfTopluAktarDurum = file.exists();
+			}
+		}
 		if (gecenAy != null && gecenAy.getDurum().equals(Boolean.TRUE) && (authenticatedUser.isAdmin() || authenticatedUser.isIK())) {
 			hataYok = false;
 			PdksUtil.addMessageAvailableError(gecenAy.getAyAdi() + " " + gecenAy.getYil() + " dönemi açıktır!");
@@ -2564,7 +2796,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						for (Tanim alan : denklestirmeDinamikAlanlar) {
 							PersonelDenklestirmeDinamikAlan denklestirmeDinamikAlan = aylikPuantaj.getDinamikAlan(alan.getId());
 							String alanStr = denklestirmeDinamikAlan == null ? "" : denklestirmeDinamikAlan.getPersonelDenklestirmeDinamikAlanStr(authenticatedUser);
- 							ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(alanStr);
+							ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(alanStr);
 						}
 					}
 					if (bordroPuantajEkranindaGoster) {
@@ -3908,5 +4140,29 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	public void setVardiyaPlanTopluAdet(boolean vardiyaPlanTopluAdet) {
 		this.vardiyaPlanTopluAdet = vardiyaPlanTopluAdet;
+	}
+
+	public Boolean getPdfTopluAktarDurum() {
+		return pdfTopluAktarDurum;
+	}
+
+	public void setPdfTopluAktarDurum(Boolean pdfTopluAktarDurum) {
+		this.pdfTopluAktarDurum = pdfTopluAktarDurum;
+	}
+
+	public Boolean getSecimDurum() {
+		return secimDurum;
+	}
+
+	public void setSecimDurum(Boolean secimDurum) {
+		this.secimDurum = secimDurum;
+	}
+
+	public List<AylikPuantaj> getOnayList() {
+		return onayList;
+	}
+
+	public void setOnayList(List<AylikPuantaj> onayList) {
+		this.onayList = onayList;
 	}
 }
