@@ -527,8 +527,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			tableImage.addCell(cellImage);
 		}
 		Parameter pm = ortakIslemler.getParameter(session, "mesaiDenklestirmeBelge");
-
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+ 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		NumberFormat nf = DecimalFormat.getNumberInstance(locale);
 		Date bugun = new Date();
 		for (Long key : veriMap.keySet()) {
@@ -541,8 +540,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			try {
 				if (map == null)
 					map = new LinkedHashMap<Long, byte[]>();
-
-				if (tableImage != null)
+ 				if (tableImage != null)
 					doc.add(tableImage);
 				Sirket sirket = personel.getSirket();
 				Tanim tesis = sirket.getTesisDurum() ? personel.getTesis() : null;
@@ -564,6 +562,9 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							string = PdksUtil.replaceAllManuel(string, "$adSoyad$", personel.getAdSoyad());
 						if (string.indexOf("$mesai$") >= 0)
 							string = PdksUtil.replaceAllManuel(string, "$mesai$", nf.format(ap.getAylikFazlaMesai()));
+						if (string.indexOf("$kimlikNo$") >= 0 && PdksUtil.hasStringValue(personel.getPersonelKGS().getKimlikNo()))
+							string = PdksUtil.replaceAllManuel(string, "$kimlikNo$", personel.getPersonelKGS().getKimlikNo());
+
 						if (PdksUtil.hasStringValue(string))
 							doc.add(PDFITextUtils.getParagraph(string, font, Element.ALIGN_LEFT));
 						else
@@ -631,76 +632,67 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	public String pdfTopluAktar(boolean zip) throws Exception {
 		String sayfa = "";
 		HashMap<Long, AylikPuantaj> veriMap = new HashMap<Long, AylikPuantaj>();
-		for (AylikPuantaj ap : onayList) {
+		for (AylikPuantaj ap : onayList)
 			veriMap.put(ap.getPdksPersonel().getId(), ap);
-		}
 		String fileName = ortakIslemler.getParameterKey("mesaiDenklestirmeBelge");
-		File file = null;
-		if (PdksUtil.hasStringValue(fileName))
-			file = new File("/opt/pdks/" + fileName);
-		if (!veriMap.isEmpty()) {
-			List<String> list = PdksUtil.getStringListFromFile(file);
-			LinkedHashMap<Long, byte[]> map1 = getOnayPdf(veriMap, new ArrayList<String>(list));
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			if (zip) {
-				String path = "/tmp/";
-				File tmp = new File(path);
-				if (!tmp.exists())
-					tmp.mkdir();
-				ZipOutputStream zos = new ZipOutputStream(outputStream);
-				for (Long key : map1.keySet()) {
-					byte[] bytes = map1.get(key);
-					Personel personel = veriMap.get(key).getPdksPersonel();
-					String zipDosyaAdi = (personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() + "/" : "") + personel.getAdSoyad() + "_" + personel.getPdksSicilNo() + ".pdf";
-					ZipEntry zipEntry = new ZipEntry(zipDosyaAdi);
-					zos.putNextEntry(zipEntry);
-					int length = bytes.length;
-					zos.write(bytes, 0, length);
-					zos.closeEntry();
-				}
-				zos.close();
-
-			} else {
-				Document document = new Document(PageSize.A4.rotate());
-				PdfCopy copy = new PdfCopy(document, outputStream);
-				document.open();
-				PdfContentByte pageContentByte = copy.getDirectContent();
-				for (Long key : map1.keySet()) {
-
-					byte[] data = map1.get(key);
-					PdfReader reader = new PdfReader(data);
-					for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-						document.newPage();
-						// import the page from source pdf
-						PdfImportedPage page = copy.getImportedPage(reader, i);
-						pageContentByte.addTemplate(page, 0, 0);
-						copy.addPage(page);
-					}
-
-				}
-				document.close();
+		File file = new File("/opt/pdks/" + fileName);
+		List<String> list = PdksUtil.getStringListFromFile(file);
+		LinkedHashMap<Long, byte[]> map1 = getOnayPdf(veriMap, new ArrayList<String>(list));
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		if (zip) {
+			String path = "/tmp/";
+			File tmp = new File(path);
+			if (!tmp.exists())
+				tmp.mkdir();
+			ZipOutputStream zos = new ZipOutputStream(outputStream);
+			for (Long key : map1.keySet()) {
+				byte[] bytes = map1.get(key);
+				Personel personel = veriMap.get(key).getPdksPersonel();
+				String zipDosyaAdi = (personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() + "/" : "") + personel.getAdSoyad() + "_" + personel.getPdksSicilNo() + ".pdf";
+				ZipEntry zipEntry = new ZipEntry(zipDosyaAdi);
+				zos.putNextEntry(zipEntry);
+				int length = bytes.length;
+				zos.write(bytes, 0, length);
+				zos.closeEntry();
 			}
-			outputStream.flush();
-			outputStream.close();
+			zos.close();
+		} else {
+			Document document = new Document(PageSize.A4.rotate());
+			PdfCopy copy = new PdfCopy(document, outputStream);
+			document.open();
+			PdfContentByte pageContentByte = copy.getDirectContent();
+			for (Long key : map1.keySet()) {
+				byte[] data = map1.get(key);
+				PdfReader reader = new PdfReader(data);
+				for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+					document.newPage();
+					// import the page from source pdf
+					PdfImportedPage page = copy.getImportedPage(reader, i);
+					pageContentByte.addTemplate(page, 0, 0);
+					copy.addPage(page);
+				}
 
-			String characterEncoding = "ISO-8859-9";
-			String contentType = "application/" + (zip ? "zip" : "pdf") + ";charset=" + characterEncoding;
-			String disposition = zip || map1.size() > 1 ? "attachment" : "inline";
-			HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-			response.setContentType(contentType);
-			response.setCharacterEncoding(characterEncoding);
-			String dosyaAdi = fileName.substring(0, fileName.lastIndexOf(".")) + (zip ? ".zip" : ".pdf");
-			String fileNameURL = PdksUtil.encoderURL(dosyaAdi, characterEncoding);
-			response.setHeader("Content-Disposition", disposition + ";filename=" + fileNameURL);
-			PdksUtil.writeByteArrayOutputStream(response, outputStream);
-			file = new File(dosyaAdi);
-			if (file != null && file.exists())
-				file.delete();
-			sayfa = null;
-			map1 = null;
-			list = null;
-		} else
-			PdksUtil.addMessageWarn("İşlem yapılacak seçili kayıt yok!");
+			}
+			document.close();
+		}
+		outputStream.flush();
+		outputStream.close();
+		String characterEncoding = "ISO-8859-9";
+		String contentType = "application/" + (zip ? "zip" : "pdf") + ";charset=" + characterEncoding;
+		String disposition = zip || map1.size() > 1 ? "attachment" : "inline";
+		HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+		response.setContentType(contentType);
+		response.setCharacterEncoding(characterEncoding);
+		String dosyaAdi = fileName.substring(0, fileName.lastIndexOf(".")) + (zip ? ".zip" : ".pdf");
+		String fileNameURL = PdksUtil.encoderURL(dosyaAdi, characterEncoding);
+		response.setHeader("Content-Disposition", disposition + ";filename=" + fileNameURL);
+		PdksUtil.writeByteArrayOutputStream(response, outputStream);
+		file = new File(dosyaAdi);
+		if (file != null && file.exists())
+			file.delete();
+		sayfa = null;
+		map1 = null;
+		list = null;
 		veriMap = null;
 		return sayfa;
 	}

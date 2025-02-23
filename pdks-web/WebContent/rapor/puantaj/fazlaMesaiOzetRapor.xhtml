@@ -146,7 +146,7 @@
 											<TABLE width="85%">
 												<TR>
 													<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.pdfTopluAktarDurum}">
-														<td><a4j:commandButton action="#{fazlaMesaiOzetRaporHome.pdfKontrol()}" value="Denkleştirme Anlaşma"
+														<td><a4j:commandButton action="#{fazlaMesaiOzetRaporHome.pdfKontrol()}" value="Denkleştirme Mesai PDF"
 																onclick="#{rich:component('wait')}.show()" reRender="denklestirmeTopluPanel"
 																oncomplete="#{rich:component('wait')}.hide();if (#{not empty fazlaMesaiOzetRaporHome.onayList}) #{rich:component('denklestirmeTopluPanel')}.show();" /></td>
 													</ui:fragment>
