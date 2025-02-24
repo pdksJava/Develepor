@@ -1127,6 +1127,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						if (yeniTesisler != null) {
 							if (kullanici.getYetkiliTesisler() != null && kullanici.getYetkiliTesisler().isEmpty() == false)
 								yeniTesisler.addAll(kullanici.getYetkiliTesisler());
+							if (tesisGoster() == false)
+								yeniTesisler.clear();
 							for (Iterator iterator = yeniTesisler.iterator(); iterator.hasNext();) {
 								Tanim tesis = (Tanim) iterator.next();
 								if (tesisler.containsKey(tesis.getId())) {
@@ -2153,6 +2155,34 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					iterator.remove();
 			}
 		}
+	}
+
+	public boolean tesisGoster() {
+		boolean goster = false;
+		if (tesisYetki) {
+			Personel personel = getInstance();
+			if (personel.getKullanici() != null) {
+				List<Role> rolList = personel.getKullanici().getYetkiliRollerim();
+				if (rolList != null && rolList.isEmpty() == false) {
+					List<String> rolNameList = null;
+					String tesisYetkiliRoller = ortakIslemler.getParameterKey("tesisYetkiliRoller");
+
+					if (PdksUtil.hasStringValue(tesisYetkiliRoller))
+						rolNameList = PdksUtil.getListStringTokenizer(tesisYetkiliRoller, null);
+					else
+						rolNameList = Arrays.asList(new String[] { Role.TIPI_IK, Role.TIPI_IK_SIRKET, Role.TIPI_IK_Tesis, Role.TIPI_TESIS_SUPER_VISOR });
+					for (Role role : rolList) {
+						if (rolNameList.contains(role.getRolename())) {
+							goster = true;
+							break;
+						}
+
+					}
+				}
+			}
+		}
+		return goster;
+
 	}
 
 	/**

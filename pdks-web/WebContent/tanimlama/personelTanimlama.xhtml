@@ -1636,23 +1636,26 @@
 
 												</rich:simpleTogglePanel>
 												<c:if test="#{pdksPersonelHome.tesisYetki}">
-													<rich:simpleTogglePanel rendered="#{pdksPersonelHome.instance.kullanici.yetkiliTesisler.size() + pdksPersonelHome.distinctTesisList.size() > 0}"
-														label="#{ortakIslemler.tesisAciklama()}" height="110" switchType="client" opened="true">
-														<s:decorate>
-															<rich:listShuttle id="shuttle" sourceValue="#{pdksPersonelHome.distinctTesisList}" fastOrderControlsVisible="false"
-																orderControlsVisible="false" targetValue="#{pdksPersonelHome.instance.kullanici.yetkiliTesisler}" var="tesis"
-																copyControlLabel="#{messages['listShuttle.etiket.copyControlLabel']}"
-																removeControlLabel="#{messages['listShuttle.etiket.removeControlLabel']}"
-																copyAllControlLabel="#{messages['listShuttle.etiket.copyAllControlLabel']}"
-																removeAllControlLabel="#{messages['listShuttle.etiket.removeAllControlLabel']}" required="true"
-																requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz">
-																<h:column>
-																	<h:outputText value="#{tesis.aciklama}" />
-																</h:column>
-																<s:convertEntity />
-															</rich:listShuttle>
-														</s:decorate>
-													</rich:simpleTogglePanel>
+													<ui:fragment rendered="#{pdksPersonelHome.tesisGoster()}">
+														<rich:simpleTogglePanel
+															rendered="#{pdksPersonelHome.instance.kullanici.yetkiliTesisler.size() + pdksPersonelHome.distinctTesisList.size() > 0}"
+															label="#{ortakIslemler.tesisAciklama()}" height="110" switchType="client" opened="true">
+															<s:decorate>
+																<rich:listShuttle id="shuttle" sourceValue="#{pdksPersonelHome.distinctTesisList}" fastOrderControlsVisible="false"
+																	orderControlsVisible="false" targetValue="#{pdksPersonelHome.instance.kullanici.yetkiliTesisler}" var="tesis"
+																	copyControlLabel="#{messages['listShuttle.etiket.copyControlLabel']}"
+																	removeControlLabel="#{messages['listShuttle.etiket.removeControlLabel']}"
+																	copyAllControlLabel="#{messages['listShuttle.etiket.copyAllControlLabel']}"
+																	removeAllControlLabel="#{messages['listShuttle.etiket.removeAllControlLabel']}" required="true"
+																	requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz">
+																	<h:column>
+																		<h:outputText value="#{tesis.aciklama}" />
+																	</h:column>
+																	<s:convertEntity />
+																</rich:listShuttle>
+															</s:decorate>
+														</rich:simpleTogglePanel>
+													</ui:fragment>
 												</c:if>
 												<c:if test="#{pdksPersonelHome.bolumYetki}">
 													<rich:simpleTogglePanel
