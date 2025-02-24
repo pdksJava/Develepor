@@ -6091,7 +6091,6 @@ public class OrtakIslemler implements Serializable {
 					HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 					String sessionId = mySession != null ? mySession.getId() : null;
 					if (PdksUtil.isStrDegisti(parametreJSON, menuItemTime.getParametreJSON())) {
-						boolean flush = false;
 						if (PdksUtil.isStrDegisti(mySession != null ? mySession.getId() : "", menuItemTime.getSessionId()) || PdksUtil.isStrDegisti(parametreJSON, menuItemTime.getParametreJSON())) {
 							String spName = "SP_UPDATE_USER_MENUITEM_TIME_IPTAL";
 							if (menuItemTime.getId() == null || isExisStoreProcedure(spName, session) == false) {
@@ -6100,7 +6099,7 @@ public class OrtakIslemler implements Serializable {
 									menuItemTime.setSessionId(sessionId);
 								menuItemTime.setLastTime(new Date());
 								pdksEntityController.saveOrUpdate(session, entityManager, menuItemTime);
-								flush = true;
+								session.flush();
 							} else {
 								StringBuffer sp = new StringBuffer(spName);
 								LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
@@ -6110,11 +6109,9 @@ public class OrtakIslemler implements Serializable {
 								veriMap.put("mt", menuItemTime.getId());
 								veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 								pdksEntityController.execSP(veriMap, sp);
-								flush = true;
+								session.flush();
 							}
 						}
-						if (flush)
-							session.flush();
 
 					}
 					if (authenticatedUser != null && parametreJSON != null)
@@ -8026,7 +8023,7 @@ public class OrtakIslemler implements Serializable {
 				List<Long> tesisIdList = new ArrayList<Long>();
 				for (Tanim tesisUser : authenticatedUser.getYetkiliTesisler())
 					tesisIdList.add(tesisUser.getId());
- 				parametreMap.put("tesis.id ", tesisIdList);
+				parametreMap.put("tesis.id ", tesisIdList);
 			}
 
 			if (PdksUtil.hasStringValue(ad))
@@ -16223,7 +16220,7 @@ public class OrtakIslemler implements Serializable {
 	 * @throws Exception
 	 */
 	public ByteArrayOutputStream izinBakiyeTopluITextPDF(int baslangicYil, List<TempIzin> bakiyeList, boolean zipDosya, boolean bolumKlasorEkle) throws Exception {
-		
+
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		List<LinkedHashMap<String, Object>> list = null;
 		try {
