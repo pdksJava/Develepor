@@ -252,7 +252,7 @@ public class IseGelmemeUyari implements Serializable {
 		String yoneticiTanimsizStr = ortakIslemler.getParameterKey("yoneticiTanimsiz");
 		yoneticiTanimsiz = PdksUtil.hasStringValue(yoneticiTanimsizStr);
 		boolean devam = tarih == null;
-
+		userTesisMap = null;
 		if (tarih == null)
 			tarih = (Date) bugun.clone();
 		else
