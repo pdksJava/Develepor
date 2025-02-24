@@ -527,7 +527,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			tableImage.addCell(cellImage);
 		}
 		Parameter pm = ortakIslemler.getParameter(session, "mesaiDenklestirmeBelge");
- 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		NumberFormat nf = DecimalFormat.getNumberInstance(locale);
 		Date bugun = new Date();
 		for (Long key : veriMap.keySet()) {
@@ -540,7 +540,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			try {
 				if (map == null)
 					map = new LinkedHashMap<Long, byte[]>();
- 				if (tableImage != null)
+				if (tableImage != null)
 					doc.add(tableImage);
 				Sirket sirket = personel.getSirket();
 				Tanim tesis = sirket.getTesisDurum() ? personel.getTesis() : null;
@@ -1908,7 +1908,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		setAylikPuantajList(puantajList);
 		if (puantajList.isEmpty() == false) {
 			String fileName = ortakIslemler.getParameterKey("mesaiDenklestirmeBelge");
-			if (PdksUtil.hasStringValue(fileName) && (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi())) {
+			if (PdksUtil.hasStringValue(fileName)) {
 				File file = new File("/opt/pdks/" + fileName);
 				pdfTopluAktarDurum = file.exists();
 			}
