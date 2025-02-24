@@ -644,6 +644,8 @@ public class IseGelmemeUyari implements Serializable {
 								fillEkSahaTanim(session);
 								hareketPersonelMap = null;
 								dataMap.put("hareketHataliMap", hareketHataliMap);
+								if (mailPersonelMap != null && !dataMap.containsKey("mailPersonelMap"))
+									dataMap.put("mailPersonelMap", mailPersonelMap);
 								yoneticiyeMailGonder(islemYapan, userMap, yoneticiMap, dataMap, manuel, session, mailGonder);
 							}
 
