@@ -53,8 +53,10 @@ import org.pdks.entity.Tatil;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.security.entity.DefaultPasswordGenerator;
+import org.pdks.security.entity.OrganizasyonTipi;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
+import org.pdks.security.entity.UserDigerOrganizasyon;
 import org.pdks.security.entity.UserVekalet;
 import org.pdks.session.ExcelUtil;
 import org.pdks.session.OrtakIslemler;
@@ -121,6 +123,7 @@ public class IseGelmemeUyari implements Serializable {
 	private HashMap<Long, List<Long>> yoneticiPerListMap;
 	private HashMap<Long, List<HareketKGS>> perHareketListMap;
 	private TreeMap<Long, User> userYoneticiMap;
+	private HashMap<Long, List<Long>> userTesisMap;
 
 	/**
 	 * @param sessionx
@@ -249,7 +252,7 @@ public class IseGelmemeUyari implements Serializable {
 		String yoneticiTanimsizStr = ortakIslemler.getParameterKey("yoneticiTanimsiz");
 		yoneticiTanimsiz = PdksUtil.hasStringValue(yoneticiTanimsizStr);
 		boolean devam = tarih == null;
-
+		userTesisMap = null;
 		if (tarih == null)
 			tarih = (Date) bugun.clone();
 		else
@@ -644,6 +647,8 @@ public class IseGelmemeUyari implements Serializable {
 								fillEkSahaTanim(session);
 								hareketPersonelMap = null;
 								dataMap.put("hareketHataliMap", hareketHataliMap);
+								if (mailPersonelMap != null && !dataMap.containsKey("mailPersonelMap"))
+									dataMap.put("mailPersonelMap", mailPersonelMap);
 								yoneticiyeMailGonder(islemYapan, userMap, yoneticiMap, dataMap, manuel, session, mailGonder);
 							}
 
@@ -716,6 +721,30 @@ public class IseGelmemeUyari implements Serializable {
 			List<User> mailIKList = new ArrayList<User>();
 			yoneticiMailGonderme = ortakIslemler.getParameterKey("yoneticiMailGonderme").equals("1");
 			boolean ikMailGonderme = ortakIslemler.getParameterKey("ikMailGonderme").equals("1");
+			if (ikMailGonderme && userTesisMap == null) {
+				HashMap fields = new HashMap();
+				StringBuffer sb = new StringBuffer();
+				sb.append("select UR.* from " + UserDigerOrganizasyon.TABLE_NAME + " UR " + PdksEntityController.getSelectLOCK());
+				sb.append(" where " + UserDigerOrganizasyon.COLUMN_NAME_TIPI + " = " + OrganizasyonTipi.TESIS.value());
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List<UserDigerOrganizasyon> digerOrganizasyonsList = pdksEntityController.getObjectBySQLList(sb, fields, UserDigerOrganizasyon.class);
+				userTesisMap = new HashMap<Long, List<Long>>();
+				for (UserDigerOrganizasyon userDigerOrganizasyon : digerOrganizasyonsList) {
+					User user = userDigerOrganizasyon.getUser();
+					if (user == null || user.isDurum() == false || user.getPdksPersonel().isCalisiyor() == false)
+						continue;
+					Long key = user.getId();
+					List<Long> tesisList = userTesisMap.containsKey(key) ? userTesisMap.get(key) : new ArrayList<Long>();
+					if (tesisList.isEmpty()) {
+						if (user.getPdksPersonel().getTesis() != null)
+							tesisList.add(user.getPdksPersonel().getTesis().getId());
+						userTesisMap.put(key, tesisList);
+					}
+					if (!tesisList.contains(userDigerOrganizasyon.getOrganizasyon().getId()))
+						tesisList.add(userDigerOrganizasyon.getOrganizasyon().getId());
+				}
+			}
 			HashMap<Long, List<User>> depMail = new HashMap<Long, List<User>>();
 
 			for (Iterator iterator = yoneticiler.iterator(); iterator.hasNext();) {
@@ -1575,7 +1604,7 @@ public class IseGelmemeUyari implements Serializable {
 				Sirket sirket = null;
 				Tanim tesis = null, bolum = null, altBolum = null;
 				boolean hariciPersonelPlandaVar = false;
-
+				List<Long> userTesisIdList = userTesisMap != null && userTesisMap.containsKey(user.getId()) ? userTesisMap.get(user.getId()) : null;
 				for (Long perNoId : yoneticiPerIdList) {
 					if (perHareketListMap.containsKey(perNoId)) {
 						List<HareketKGS> hareketList = perHareketListMap.get(perNoId);
@@ -1591,7 +1620,10 @@ public class IseGelmemeUyari implements Serializable {
 										if (vg != null) {
 											Personel personel = vg.getPdksPersonel();
 											if (personel != null) {
-												if (user.isIK_Tesis()) {
+												if (userTesisIdList != null) {
+													if (personel.getTesis() == null || !userTesisIdList.contains(personel.getTesis().getId()))
+														sil = true;
+												} else if (user.isIK_Tesis()) {
 													if (personel.getTesis() == null || !tesisId.equals(personel.getTesis().getId()))
 														sil = true;
 												} else if (user.isIKSirket()) {
