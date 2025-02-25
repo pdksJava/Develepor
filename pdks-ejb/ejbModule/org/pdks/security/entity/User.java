@@ -1002,9 +1002,6 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	@Transient
 	public List<Tanim> getYetkiliTesisler() {
-		if (yetkiliTesisler != null) {
-			logger.debug(yetkiliTesisler.size() + "");
-		}
 		return yetkiliTesisler;
 	}
 

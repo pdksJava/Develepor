@@ -570,11 +570,15 @@ public class PersonelDenklestirme extends BaseObject {
 			else {
 				double sanalIzin = 0.0d;
 				for (VardiyaGun vg : vardiyalar) {
-					Vardiya vardiya = vg.getVardiya();
-					if (vardiya != null && vardiya.isIzinVardiya()) {
-						sanalIzin += cm.getSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK));
-					}
+					if (vg.isAyinGunu()) {
+						Vardiya vardiya = vg.getVardiya();
+						if (vardiya != null && vardiya.isIzinVardiya()) {
+							double sure = cm.getSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK));
+							if (sure != 0.0d)
+								sanalIzin += sure;
+						}
 
+					}
 				}
 				if (sanalIzin > 0) {
 					aylikSure -= sanalIzin;
