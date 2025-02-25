@@ -564,9 +564,23 @@ public class PersonelDenklestirme extends BaseObject {
 			aylikSure = getPlananSureHesapla(cm, gebePersonelDonemselDurum, vardiyalar);
 			if (sutIzniPersonelDonemselDurum != null)
 				aylikSutSure = aylikSure;
-		} else if (izinSure > 0.0d)
-			aylikSure -= izinSure;
+		} else {
+			if (izinSure > 0.0d)
+				aylikSure -= izinSure;
+			else {
+				double sanalIzin = 0.0d;
+				for (VardiyaGun vg : vardiyalar) {
+					Vardiya vardiya = vg.getVardiya();
+					if (vardiya != null && vardiya.isIzinVardiya()) {
+						sanalIzin += cm.getSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK));
+					}
 
+				}
+				if (sanalIzin > 0) {
+					aylikSure -= sanalIzin;
+				}
+			}
+		}
 		Double gunlukCalismaSuresi = calismaModeliAy != null ? AylikPuantaj.getGunlukCalismaSuresi() : null;
 		if (isSuaDurumu() || (cm != null && cm.isSua())) {
 			aylikSure = aylikSureHesapla(aylikSure - arifeToplamSure, calismaSuaSaati, gunlukCalismaSuresi) + arifeToplamSure;
