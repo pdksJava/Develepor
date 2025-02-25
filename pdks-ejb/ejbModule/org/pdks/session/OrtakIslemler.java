@@ -4414,8 +4414,6 @@ public class OrtakIslemler implements Serializable {
 			User userYetki = (User) user.clone();
 			if (userYetki.getYetkiliRollerim() != null)
 				userYetki.getYetkiliRollerim().clear();
-			if (userYetki.getYetkiliTesisler() != null)
-				userYetki.getYetkiliTesisler().clear();
 			PdksUtil.setUserYetki(userYetki);
 			ikinciYoneticiPersoneller = getFazlaMesaiMudurList(userYetki, null, null, "", null, new AylikPuantaj(tarih, tarih), "P", false, false, session);
 		} catch (Exception e) {
@@ -4675,7 +4673,7 @@ public class OrtakIslemler implements Serializable {
 				boolean tesisEkle = false;
 				if (tipi.equalsIgnoreCase("D") || tipi.equalsIgnoreCase("S") || tipi.equalsIgnoreCase("T")) {
 					tesisEkle = true;
-					if (tesisYetki && loginUser.getId() != null && (loginUser.isIK() || loginUser.isDirektorSuperVisor()) && (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty())) {
+					if (tesisYetki && loginUser.getId() != null && (loginUser.isIK() || loginUser.isTesisSuperVisor()) && (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty())) {
 						setUserTesisler(loginUser, session);
 					}
 				}
@@ -10434,10 +10432,8 @@ public class OrtakIslemler implements Serializable {
 		sb.append("select P." + Personel.COLUMN_NAME_ID + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
 		sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :bitTarih ");
-		sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s");
 		fields.put("basTarih", basTarih);
 		fields.put("bitTarih", bitTarih);
-		fields.put("s", userPersonel.getSirket().getId());
 		Long tesisId = null;
 		List<Long> tesisIdList = null;
 		if (user.getYetkiliTesisler() != null && user.getYetkiliTesisler().isEmpty() == false) {
@@ -10446,6 +10442,9 @@ public class OrtakIslemler implements Serializable {
 				tesisIdList.add(tesis.getId());
 			sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t ");
 			fields.put("t", tesisIdList);
+		} else {
+			sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s");
+			fields.put("s", userPersonel.getSirket().getId());
 		}
 		if (tesisIdList == null && (user.isTesisSuperVisor() || user.isIK_Tesis())) {
 			tesisId = userPersonel.getTesis() != null ? userPersonel.getTesis().getId() : null;
