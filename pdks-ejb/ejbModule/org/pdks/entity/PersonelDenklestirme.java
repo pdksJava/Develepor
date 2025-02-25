@@ -580,9 +580,8 @@ public class PersonelDenklestirme extends BaseObject {
 
 					}
 				}
-				if (sanalIzin > 0) {
+				if (sanalIzin > 0)
 					aylikSure -= sanalIzin;
-				}
 			}
 		}
 		Double gunlukCalismaSuresi = calismaModeliAy != null ? AylikPuantaj.getGunlukCalismaSuresi() : null;
