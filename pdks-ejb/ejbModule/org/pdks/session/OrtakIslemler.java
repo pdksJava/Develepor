@@ -17342,7 +17342,7 @@ public class OrtakIslemler implements Serializable {
 								pdksVardiyaGun.setCalismaModeli(personelDenklestirme.getCalismaModeliAy().getCalismaModeli());
 								CalismaModeli calismaModeliAy = pdksVardiyaGun.getCalismaModeli() != null ? pdksVardiyaGun.getCalismaModeli() : personelDenklestirme.getCalismaModeli();
 								izinSaat = pdksVardiyaGun.isIzinli() ? calismaModeliAy.getIzinSaat(pdksVardiyaGun) : 0.0d;
-								if (pdksVardiyaGun.isIzinli() && personelDenklestirme != null && calismaModeli.isHaftaTatilSabitDegil()) {
+								if (pdksVardiyaGun.isIzinli() && calismaModeli.isHaftaTatilSabitDegil()) {
 									Vardiya vardiya = pdksVardiyaGun.getVardiya();
 									if (izinSaat == 0 || vardiya.isHaftaTatil()) {
 										if (vardiya.isHaftaTatil()) {
@@ -17354,7 +17354,6 @@ public class OrtakIslemler implements Serializable {
 											izinSaat = calismaModeli.getSaat(haftaGun);
 										}
 									}
-
 								}
 								if (pdksVardiyaGun.getIzin() != null && pdksVardiyaGun.getIzin().getIzinTipi().isIslemYokCGS()) {
 									izinSaat = 0.0d;
@@ -17616,7 +17615,7 @@ public class OrtakIslemler implements Serializable {
 													pdksVardiyaGun.setTatil(tatilGunleriMap.get(pdksVardiyaGun.getVardiyaDateStr()));
 													kontrolSure = getVardiyaIzinSuresi(izinTarihKontrolTarihi == null ? sure : 0.0d, pdksVardiyaGun, personelDenklestirme, izinTarihKontrolTarihi);
 													pdksVardiyaGun.setTatil(tatilIzin);
-													if (pdksVardiyaGun.isIzinli() && izinSaat != null && kontrolSure > izinSaat)
+													if (pdksVardiyaGun.isIzinli() && izinSaat != null && (pdksVardiyaGun.getVardiya().isIzinVardiya() || kontrolSure > izinSaat))
 														kontrolSure = izinSaat;
 													izinSuresi += kontrolSure;
 
