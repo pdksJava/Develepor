@@ -530,6 +530,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		NumberFormat nf = DecimalFormat.getNumberInstance(locale);
 		Date bugun = new Date();
+		LinkedHashMap<String, String> changeMap = new LinkedHashMap<String, String>();
 		for (Long key : veriMap.keySet()) {
 			AylikPuantaj ap = veriMap.get(key);
 			ByteArrayOutputStream baosPDF = new ByteArrayOutputStream();
@@ -550,6 +551,11 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				doc.add(bos);
 				doc.add(bos);
 				doc.add(bos);
+				changeMap.clear();
+				changeMap.put("$adSoyad$", personel.getAdSoyad());
+				changeMap.put("$mesai$", nf.format(ap.getAylikFazlaMesai()));
+				if (PdksUtil.hasStringValue(personel.getPersonelKGS().getKimlikNo()))
+					changeMap.put("$kimlikNo$", personel.getPersonelKGS().getKimlikNo());
 				for (String string : icerikList) {
 					if (string.equals("$tarih$")) {
 						doc.add(PDFITextUtils.getParagraph(authenticatedUser.dateFormatla(bugun), font, Element.ALIGN_RIGHT));
@@ -558,13 +564,10 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					else if (string.equals("$tesis$") && tesis != null)
 						doc.add(PDFITextUtils.getParagraph(tesis.getAciklama(), fontH, Element.ALIGN_CENTER));
 					else {
-						if (string.indexOf("$adSoyad$") >= 0)
-							string = PdksUtil.replaceAllManuel(string, "$adSoyad$", personel.getAdSoyad());
-						if (string.indexOf("$mesai$") >= 0)
-							string = PdksUtil.replaceAllManuel(string, "$mesai$", nf.format(ap.getAylikFazlaMesai()));
-						if (string.indexOf("$kimlikNo$") >= 0 && PdksUtil.hasStringValue(personel.getPersonelKGS().getKimlikNo()))
-							string = PdksUtil.replaceAllManuel(string, "$kimlikNo$", personel.getPersonelKGS().getKimlikNo());
-
+						for (String oldStr : changeMap.keySet()) {
+							if (string.indexOf(oldStr) >= 0)
+								string = PdksUtil.replaceAllManuel(string, oldStr, changeMap.get(oldStr));
+						}
 						if (PdksUtil.hasStringValue(string))
 							doc.add(PDFITextUtils.getParagraph(string, font, Element.ALIGN_LEFT));
 						else
@@ -572,6 +575,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					}
 
 				}
+				
 				doc.newPage();
 			} catch (Exception e) {
 				logger.error("Pdks hata in : \n");
@@ -584,7 +588,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			if (map != null)
 				map.put(key, baosPDF.toByteArray());
 		}
-
+		changeMap = null;
 		return map;
 
 	}
