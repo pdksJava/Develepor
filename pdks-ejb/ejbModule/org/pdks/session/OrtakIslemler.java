@@ -4414,8 +4414,6 @@ public class OrtakIslemler implements Serializable {
 			User userYetki = (User) user.clone();
 			if (userYetki.getYetkiliRollerim() != null)
 				userYetki.getYetkiliRollerim().clear();
-			if (userYetki.getYetkiliTesisler() != null)
-				userYetki.getYetkiliTesisler().clear();
 			PdksUtil.setUserYetki(userYetki);
 			ikinciYoneticiPersoneller = getFazlaMesaiMudurList(userYetki, null, null, "", null, new AylikPuantaj(tarih, tarih), "P", false, false, session);
 		} catch (Exception e) {
@@ -4675,7 +4673,7 @@ public class OrtakIslemler implements Serializable {
 				boolean tesisEkle = false;
 				if (tipi.equalsIgnoreCase("D") || tipi.equalsIgnoreCase("S") || tipi.equalsIgnoreCase("T")) {
 					tesisEkle = true;
-					if (tesisYetki && loginUser.getId() != null && (loginUser.isIK() || loginUser.isDirektorSuperVisor()) && (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty())) {
+					if (tesisYetki && loginUser.getId() != null && (loginUser.isIK() || loginUser.isTesisSuperVisor()) && (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty())) {
 						setUserTesisler(loginUser, session);
 					}
 				}
@@ -10434,10 +10432,8 @@ public class OrtakIslemler implements Serializable {
 		sb.append("select P." + Personel.COLUMN_NAME_ID + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
 		sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :bitTarih ");
-		sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s");
 		fields.put("basTarih", basTarih);
 		fields.put("bitTarih", bitTarih);
-		fields.put("s", userPersonel.getSirket().getId());
 		Long tesisId = null;
 		List<Long> tesisIdList = null;
 		if (user.getYetkiliTesisler() != null && user.getYetkiliTesisler().isEmpty() == false) {
@@ -10446,6 +10442,9 @@ public class OrtakIslemler implements Serializable {
 				tesisIdList.add(tesis.getId());
 			sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t ");
 			fields.put("t", tesisIdList);
+		} else {
+			sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = :s");
+			fields.put("s", userPersonel.getSirket().getId());
 		}
 		if (tesisIdList == null && (user.isTesisSuperVisor() || user.isIK_Tesis())) {
 			tesisId = userPersonel.getTesis() != null ? userPersonel.getTesis().getId() : null;
@@ -17343,7 +17342,7 @@ public class OrtakIslemler implements Serializable {
 								pdksVardiyaGun.setCalismaModeli(personelDenklestirme.getCalismaModeliAy().getCalismaModeli());
 								CalismaModeli calismaModeliAy = pdksVardiyaGun.getCalismaModeli() != null ? pdksVardiyaGun.getCalismaModeli() : personelDenklestirme.getCalismaModeli();
 								izinSaat = pdksVardiyaGun.isIzinli() ? calismaModeliAy.getIzinSaat(pdksVardiyaGun) : 0.0d;
-								if (pdksVardiyaGun.isIzinli() && personelDenklestirme != null && calismaModeli.isHaftaTatilSabitDegil()) {
+								if (pdksVardiyaGun.isIzinli() && calismaModeli.isHaftaTatilSabitDegil()) {
 									Vardiya vardiya = pdksVardiyaGun.getVardiya();
 									if (izinSaat == 0 || vardiya.isHaftaTatil()) {
 										if (vardiya.isHaftaTatil()) {
@@ -17355,7 +17354,6 @@ public class OrtakIslemler implements Serializable {
 											izinSaat = calismaModeli.getSaat(haftaGun);
 										}
 									}
-
 								}
 								if (pdksVardiyaGun.getIzin() != null && pdksVardiyaGun.getIzin().getIzinTipi().isIslemYokCGS()) {
 									izinSaat = 0.0d;
@@ -17617,7 +17615,7 @@ public class OrtakIslemler implements Serializable {
 													pdksVardiyaGun.setTatil(tatilGunleriMap.get(pdksVardiyaGun.getVardiyaDateStr()));
 													kontrolSure = getVardiyaIzinSuresi(izinTarihKontrolTarihi == null ? sure : 0.0d, pdksVardiyaGun, personelDenklestirme, izinTarihKontrolTarihi);
 													pdksVardiyaGun.setTatil(tatilIzin);
-													if (pdksVardiyaGun.isIzinli() && izinSaat != null && kontrolSure > izinSaat)
+													if (pdksVardiyaGun.isIzinli() && izinSaat != null && (pdksVardiyaGun.getVardiya().isIzinVardiya() || kontrolSure > izinSaat))
 														kontrolSure = izinSaat;
 													izinSuresi += kontrolSure;
 

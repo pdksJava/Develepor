@@ -795,7 +795,7 @@ public class VardiyaGun extends BaseObject {
 	public boolean isIzinli() {
 		boolean izinli = izin != null;
 		if (!izinli)
-			izinli = vardiya != null && vardiya.isIzin();
+			izinli = vardiya != null && vardiya.isIzinVardiya();
 		return izinli;
 	}
 

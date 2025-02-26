@@ -1608,7 +1608,7 @@ public class IseGelmemeUyari implements Serializable {
 				for (Long perNoId : yoneticiPerIdList) {
 					if (perHareketListMap.containsKey(perNoId)) {
 						List<HareketKGS> hareketList = perHareketListMap.get(perNoId);
-						if (user.isIK_Tesis() || user.isIKSirket()) {
+						if (user.isIK_Tesis() || user.isIKSirket() || userTesisIdList != null) {
 							if (user.getPdksPersonel() != null) {
 								Long tesisId = user.getPdksPersonel().getTesis() != null ? user.getPdksPersonel().getTesis().getId() : 0L;
 								Long sirketId = user.getPdksPersonel().getSirket() != null ? user.getPdksPersonel().getSirket().getId() : 0L;

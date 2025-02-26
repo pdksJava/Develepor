@@ -564,9 +564,10 @@ public class PersonelDenklestirme extends BaseObject {
 			aylikSure = getPlananSureHesapla(cm, gebePersonelDonemselDurum, vardiyalar);
 			if (sutIzniPersonelDonemselDurum != null)
 				aylikSutSure = aylikSure;
-		} else if (izinSure > 0.0d)
-			aylikSure -= izinSure;
-
+		} else {
+			if (izinSure > 0.0d && aylikSure <= izinSure)
+				aylikSure -= izinSure;
+		}
 		Double gunlukCalismaSuresi = calismaModeliAy != null ? AylikPuantaj.getGunlukCalismaSuresi() : null;
 		if (isSuaDurumu() || (cm != null && cm.isSua())) {
 			aylikSure = aylikSureHesapla(aylikSure - arifeToplamSure, calismaSuaSaati, gunlukCalismaSuresi) + arifeToplamSure;
