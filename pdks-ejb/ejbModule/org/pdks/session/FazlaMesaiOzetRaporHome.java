@@ -554,8 +554,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				changeMap.clear();
 				changeMap.put("$adSoyad$", personel.getAdSoyad());
 				changeMap.put("$mesai$", nf.format(ap.getAylikFazlaMesai()));
-				if (PdksUtil.hasStringValue(personel.getPersonelKGS().getKimlikNo()))
-					changeMap.put("$kimlikNo$", personel.getPersonelKGS().getKimlikNo());
+				changeMap.put("$kimlikNo$", PdksUtil.hasStringValue(personel.getPersonelKGS().getKimlikNo()) ? personel.getPersonelKGS().getKimlikNo() : "");
 				for (String string : icerikList) {
 					if (string.equals("$tarih$")) {
 						doc.add(PDFITextUtils.getParagraph(authenticatedUser.dateFormatla(bugun), font, Element.ALIGN_RIGHT));
@@ -575,7 +574,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					}
 
 				}
-				
+
 				doc.newPage();
 			} catch (Exception e) {
 				logger.error("Pdks hata in : \n");
