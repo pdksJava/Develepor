@@ -531,7 +531,6 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		NumberFormat nf = DecimalFormat.getNumberInstance(locale);
 		String tarih = authenticatedUser.dateFormatla(new Date());
 		LinkedHashMap<String, String> changeMap = new LinkedHashMap<String, String>();
-		Paragraph bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
 		for (Long key : veriMap.keySet()) {
 			AylikPuantaj ap = veriMap.get(key);
 			ByteArrayOutputStream baosPDF = new ByteArrayOutputStream();
@@ -548,6 +547,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				Tanim tesis = sirket.getTesisDurum() ? personel.getTesis() : null;
 				String kimlikNo = personel.getPersonelKGS() != null ? personel.getPersonelKGS().getKimlikNo() : null;
 				doc.add(PDFITextUtils.getParagraph(pm.getDescription(), fontBaslik, Element.ALIGN_CENTER));
+				Paragraph bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
 				bos.setSpacingAfter(10);
 				doc.add(bos);
 				doc.add(bos);
@@ -571,8 +571,12 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						}
 						if (PdksUtil.hasStringValue(string))
 							doc.add(PDFITextUtils.getParagraph(string, font, Element.ALIGN_LEFT));
-						else
+						else {
+							bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
+							bos.setSpacingAfter(20);
 							doc.add(bos);
+						}
+
 					}
 
 				}
