@@ -554,7 +554,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				changeMap.clear();
 				changeMap.put("$adSoyad$", personel.getAdSoyad());
 				changeMap.put("$mesai$", nf.format(ap.getAylikFazlaMesai()));
-				changeMap.put("$kimlikNo$", PdksUtil.hasStringValue(personel.getPersonelKGS().getKimlikNo()) ? personel.getPersonelKGS().getKimlikNo() : "");
+				String kimlikNo = personel.getPersonelKGS() != null ? personel.getPersonelKGS().getKimlikNo() : null;
+				changeMap.put("$kimlikNo$", PdksUtil.hasStringValue(kimlikNo) ? kimlikNo : "");
 				for (String string : icerikList) {
 					if (string.equals("$tarih$")) {
 						doc.add(PDFITextUtils.getParagraph(authenticatedUser.dateFormatla(bugun), font, Element.ALIGN_RIGHT));
