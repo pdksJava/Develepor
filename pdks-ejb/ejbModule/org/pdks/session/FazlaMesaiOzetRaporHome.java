@@ -529,8 +529,9 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		Parameter pm = ortakIslemler.getParameter(session, "mesaiDenklestirmeBelge");
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		NumberFormat nf = DecimalFormat.getNumberInstance(locale);
-		Date bugun = new Date();
+		String tarih = authenticatedUser.dateFormatla(new Date());
 		LinkedHashMap<String, String> changeMap = new LinkedHashMap<String, String>();
+		Paragraph bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
 		for (Long key : veriMap.keySet()) {
 			AylikPuantaj ap = veriMap.get(key);
 			ByteArrayOutputStream baosPDF = new ByteArrayOutputStream();
@@ -545,8 +546,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					doc.add(tableImage);
 				Sirket sirket = personel.getSirket();
 				Tanim tesis = sirket.getTesisDurum() ? personel.getTesis() : null;
+				String kimlikNo = personel.getPersonelKGS() != null ? personel.getPersonelKGS().getKimlikNo() : null;
 				doc.add(PDFITextUtils.getParagraph(pm.getDescription(), fontBaslik, Element.ALIGN_CENTER));
-				Paragraph bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
 				bos.setSpacingAfter(10);
 				doc.add(bos);
 				doc.add(bos);
@@ -554,11 +555,11 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				changeMap.clear();
 				changeMap.put("$adSoyad$", personel.getAdSoyad());
 				changeMap.put("$mesai$", nf.format(ap.getAylikFazlaMesai()));
-				String kimlikNo = personel.getPersonelKGS() != null ? personel.getPersonelKGS().getKimlikNo() : null;
 				changeMap.put("$kimlikNo$", PdksUtil.hasStringValue(kimlikNo) ? kimlikNo : "");
+
 				for (String string : icerikList) {
 					if (string.equals("$tarih$")) {
-						doc.add(PDFITextUtils.getParagraph(authenticatedUser.dateFormatla(bugun), font, Element.ALIGN_RIGHT));
+						doc.add(PDFITextUtils.getParagraph(tarih, font, Element.ALIGN_RIGHT));
 					} else if (string.equals("$sirket$"))
 						doc.add(PDFITextUtils.getParagraph(sirket.getAd(), fontH, Element.ALIGN_CENTER));
 					else if (string.equals("$tesis$") && tesis != null)
