@@ -476,7 +476,7 @@ public class MailManager implements Serializable {
 
 			}
 			mailList = null;
-			if (!parameterMap.containsKey(PdksVeriOrtakAktar.KEY_IK_MAIL_IPTAL))
+			if (PdksUtil.getCanliSunucuDurum() || !parameterMap.containsKey(PdksVeriOrtakAktar.KEY_IK_MAIL_IPTAL))
 				saveLog(mailObject, parameterMap);
 			for (File file : dosyalar) {
 				if (file.exists())
