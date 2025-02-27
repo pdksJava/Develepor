@@ -6621,6 +6621,7 @@ public class OrtakIslemler implements Serializable {
 		if (sirketIdList.size() == 1)
 			sirketId = (Long) sirketIdList.get(0).getValue();
 		aramaSecenekleri.setSirketId(sirketId);
+		aramaSecenekleri.setSirketIdList(sirketIdList);
 		setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, ekAlanlar, session);
 		return sirketIdList;
 	}

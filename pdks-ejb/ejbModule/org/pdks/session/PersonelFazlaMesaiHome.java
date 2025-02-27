@@ -216,7 +216,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			filDepartmanList();
 		if (departmanList != null && departmanList.size() == 1)
 			setDepartmanId((Long) departmanList.get(0).getValue());
-		if (authenticatedUser.isIK())
+		if (departmanId != null)
 			fillSirketList();
 
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
@@ -291,13 +291,12 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			}
 
 		} else {
+			if (aramaSecenekleri.getSirketId() != null)
+				fillTesisList();
 			aramaSecenekleri.setSicilNo("");
 			aramaSecenekleri.setAd("");
 			aramaSecenekleri.setSoyad("");
 		}
-		if (!fazlaMesaiGirisDurum)
-			aramaSecenekleri = new AramaSecenekleri();
-
 		if (!ayniSayfa)
 			authenticatedUser.setCalistigiSayfa("");
 		Boolean kullaniciPersonel = ortakIslemler.getKullaniciPersonel(authenticatedUser);
@@ -326,9 +325,13 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 	public void fillSirketList() {
 		Date bugun = PdksUtil.getDate(date);
-		ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, bugun, bugun, false, session);
+		try {
+			aramaSecenekleri.setDepartmanId(departmanId);
+			ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, bugun, bugun, true, session);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		bolumDepartmanlari = aramaSecenekleri.getEkSahaSelectListMap().get("ekSaha3");
 	}
 
 	public String fillTesisList() {
