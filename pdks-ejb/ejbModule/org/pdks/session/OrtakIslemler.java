@@ -12852,9 +12852,8 @@ public class OrtakIslemler implements Serializable {
 			StringBuffer sb = new StringBuffer();
 			sb.append("select I.* from " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + IzinTipi.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " and T." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null");
-			sb.append(" where I." + PersonelIzin.COLUMN_NAME_PERSONEL + " :" + fieldName);
-			sb.append(" and I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= :basTarih and I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :bitTarih");
-			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (" + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + "," + PersonelIzin.IZIN_DURUMU_REDEDILDI + ")");
+			sb.append(" where I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= :basTarih and I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :bitTarih");
+			sb.append(" and I." + PersonelIzin.COLUMN_NAME_PERSONEL + " :" + fieldName + " and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (" + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + "," + PersonelIzin.IZIN_DURUMU_REDEDILDI + ")");
 			sb.append(" order by I." + PersonelIzin.COLUMN_NAME_PERSONEL + ", I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
 			fields.put("bitTarih", bitisTarih);
 			fields.put("basTarih", baslamaTarih);
