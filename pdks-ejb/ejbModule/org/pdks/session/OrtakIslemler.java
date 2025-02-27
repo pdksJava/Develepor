@@ -6482,7 +6482,7 @@ public class OrtakIslemler implements Serializable {
 			aramaSecenekleri.getTesisList().clear();
 		else
 			aramaSecenekleri.setTesisList(new ArrayList<SelectItem>());
-		Long tesisId = null;
+		Long tesisId = null, oldTesisId = aramaSecenekleri.getTesisId();
 		List<SelectItem> tesisList = aramaSecenekleri.getTesisList();
 		if (aramaSecenekleri.getSirketId() != null) {
 			List<Tanim> list = null;
@@ -6524,7 +6524,7 @@ public class OrtakIslemler implements Serializable {
 				if (!tanimList.isEmpty()) {
 					list = PdksUtil.sortObjectStringAlanList(new ArrayList(tanimList), "getAciklama", null);
 					for (Tanim tesis : list) {
-						if (list.size() == 1)
+						if (list.size() == 1 || (oldTesisId != null && tesis.getId().equals(oldTesisId)))
 							tesisId = tesis.getId();
 						tesisList.add(new SelectItem(tesis.getId(), tesis.getAciklama()));
 					}
@@ -6605,13 +6605,16 @@ public class OrtakIslemler implements Serializable {
 			aramaSecenekleri.getSirketIdList().clear();
 		else
 			aramaSecenekleri.setSirketIdList(new ArrayList<SelectItem>());
-		Long sirketId = null;
+		Long sirketId = null, oldSirketId = aramaSecenekleri.getSirketId();
 		List<SelectItem> sirketIdList = aramaSecenekleri.getSirketIdList();
 		if (!sirketList.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(new ArrayList<Sirket>(sirketList), "getAd", null);
 			for (Sirket sirket : list)
-				if (sirket.getDurum() && sirket.getFazlaMesai())
+				if (sirket.getDurum() && sirket.getFazlaMesai()) {
+					if (oldSirketId != null && sirket.getId().equals(oldSirketId))
+						sirketId = sirket.getId();
 					sirketIdList.add(new SelectItem(sirket.getId(), sirket.getAd()));
+				}
 
 		}
 		sirketList = null;
@@ -12851,7 +12854,7 @@ public class OrtakIslemler implements Serializable {
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
 			sb.append("select I.* from " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append(" inner join " + IzinTipi.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " and T." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null");
+			// sb.append(" inner join " + IzinTipi.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " and T." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null");
 			sb.append(" where I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= :basTarih and I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :bitTarih");
 			sb.append(" and I." + PersonelIzin.COLUMN_NAME_PERSONEL + " :" + fieldName + " and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (" + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + "," + PersonelIzin.IZIN_DURUMU_REDEDILDI + ")");
 			sb.append(" order by I." + PersonelIzin.COLUMN_NAME_PERSONEL + ", I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
@@ -12861,13 +12864,16 @@ public class OrtakIslemler implements Serializable {
 			List<PersonelIzin> izinList = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, fields, PersonelIzin.class, session);
 			if (izinList != null) {
 				for (PersonelIzin izin : izinList) {
-					Long id = izin.getIzinSahibi().getId();
-					List<PersonelIzin> list = izinMap.containsKey(id) ? izinMap.get(id) : new ArrayList<PersonelIzin>();
-					if (list.isEmpty()) {
-						logger.debug(id);
-						izinMap.put(id, list);
+					IzinTipi izinTipi = izin.getIzinTipi();
+					if (izinTipi != null && izinTipi.getBakiyeIzinTipi() == null) {
+						Long id = izin.getIzinSahibi().getId();
+						List<PersonelIzin> list = izinMap.containsKey(id) ? izinMap.get(id) : new ArrayList<PersonelIzin>();
+						if (list.isEmpty()) {
+							logger.debug(id);
+							izinMap.put(id, list);
+						}
+						list.add(izin);
 					}
-					list.add(izin);
 				}
 				izinList = null;
 			}

@@ -394,16 +394,19 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 				if (fazlaMesaiPersonel != null) {
 					Personel pdksPersonel = fazlaMesaiPersonel;
 					Sirket pdksSirket = pdksPersonel.getSirket();
+					if (pdksPersonel.getTesis() != null) {
+						aramaSecenekleri.setTesisId(pdksPersonel.getTesis().getId());
+					}
 					if (pdksSirket != null) {
+						aramaSecenekleri.setDepartmanId(pdksSirket.getDepartman().getId());
 						aramaSecenekleri.setSirket(pdksSirket);
 						aramaSecenekleri.setSirketId(pdksSirket.getId());
-
+						Date bugun = PdksUtil.getDate(tarih);
+						ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, bugun, bugun, true, session);
+						aramaSecenekleri.setSirketId(pdksSirket.getId());
 					}
 					if (pdksPersonel.getEkSaha3() != null) {
 						aramaSecenekleri.setEkSaha3Id(pdksPersonel.getEkSaha3().getId());
-					}
-					if (pdksPersonel.getTesis() != null) {
-						aramaSecenekleri.setTesisId(pdksPersonel.getTesis().getId());
 					}
 					if (pdksPersonel.getEkSaha1() != null) {
 						aramaSecenekleri.setEkSaha1Id(pdksPersonel.getEkSaha1().getId());
@@ -424,14 +427,12 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 
 		}
 		donemBul(tarih);
-
 		if (ikRole)
 			aramaSecenekleriPer = (AramaSecenekleri) aramaSecenekleri.clone();
 		else
 			aramaSecenekleriPer = new AramaSecenekleri();
 		if (fazlaMesaiGiris)
 			aramaSecenekleri = new AramaSecenekleri();
-
 		if (!ayniSayfa)
 			authenticatedUser.setCalistigiSayfa("");
 		Boolean kullaniciPersonel = ortakIslemler.getKullaniciPersonel(authenticatedUser);
