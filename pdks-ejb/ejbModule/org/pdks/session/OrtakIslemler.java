@@ -6433,7 +6433,7 @@ public class OrtakIslemler implements Serializable {
 				if (tanimList != null && !tanimList.isEmpty()) {
 					list = PdksUtil.sortObjectStringAlanList(new ArrayList(tanimList), "getAciklama", null);
 					for (Tanim alan : list) {
-						if (eskiId != null && alan.getId().equals(eskiId))
+						if (list.size() == 1 || (eskiId != null && alan.getId().equals(eskiId)))
 							alanId = alan.getId();
 						SelectItem st = new SelectItem(alan.getId(), alan.getAciklama());
 						alanList.add(st);
