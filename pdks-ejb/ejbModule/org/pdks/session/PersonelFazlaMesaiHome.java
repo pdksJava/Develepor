@@ -254,7 +254,14 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 				if (personelView != null && personelView.getPdksPersonel() != null) {
 					Personel pdksPersonel = personelView.getPdksPersonel();
 					Sirket pdksSirket = pdksPersonel.getSirket();
-
+					if (pdksSirket != null) {
+						departmanId = pdksSirket.getDepartman().getId();
+						sirketId = pdksSirket.getId();
+						aramaSecenekleri.setSirketId(sirketId);
+						if (authenticatedUser.isIKAdmin() || authenticatedUser.isAdmin())
+							fillSirketList();
+						aramaSecenekleri.setSirketId(sirketId);
+					}
 					if (pdksPersonel.getEkSaha1() != null) {
 						aramaSecenekleri.setEkSaha1Id(pdksPersonel.getEkSaha1().getId());
 					}
@@ -273,14 +280,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					if (pdksPersonel.getTesis() != null)
 						aramaSecenekleri.setTesisId(pdksPersonel.getTesis().getId());
 
-					if (pdksSirket != null) {
-						departmanId = pdksSirket.getDepartman().getId();
-						sirketId = pdksSirket.getId();
-						aramaSecenekleri.setSirketId(sirketId);
-						if (authenticatedUser.isIKAdmin() || authenticatedUser.isAdmin())
-							fillSirketList();
-
-					}
+					
 
 					if (pdksSirket != null)
 						sirket = pdksSirket;
