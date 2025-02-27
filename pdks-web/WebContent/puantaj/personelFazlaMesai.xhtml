@@ -33,16 +33,7 @@
 							<a4j:support event="onchange" action="#{personelFazlaMesaiHome.fillTesisList()}" ajaxSingle="true" reRender="hareketPanel,girisler" />
 						</h:selectOneMenu>
 					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.bolumDepartmanlari != null}">
-						<ui:define name="label">#{personelFazlaMesaiHome.bolumAciklama}</ui:define>
-						<h:selectOneMenu value="#{personelFazlaMesaiHome.aramaSecenekleri.ekSaha3Id}" required="true"
-							requiredMessage="#{personelFazlaMesaiHome.bolumAciklama} seçiniz!">
-							<f:selectItem itemLabel="Lütfen seçiniz" />
-							<f:selectItems value="#{personelFazlaMesaiHome.bolumDepartmanlari}" />
-							<a4j:support event="onchange" status="ajaxStatus" action="#{personelFazlaMesaiHome.hareketList.clear()}" ajaxSingle="true"
-								reRender="hareketPanel,girisler" />
-						</h:selectOneMenu>
-					</s:decorate>
+
 					<c:if test="${personelFazlaMesaiHome.departman.admin and (authenticatedUser.admin or authenticatedUser.IKAdmin)}">
 
 
