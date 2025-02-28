@@ -791,7 +791,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		durumERP = Boolean.FALSE;
 		onaylanmayanDurum = null;
 		personelERP = Boolean.FALSE;
-
+		boolean tekSicilGiris = PdksUtil.hasStringValue(sicilNo);
 		personelDenklestirmeList.clear();
 
 		baslikMap.clear();
@@ -809,9 +809,10 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					try {
 						if (denklestirmeAyDurum == false)
 							denklestirmeAyDurum = authenticatedUser.isAdmin() == false && authenticatedUser.isIK() == false;
-						personelDenklestirmeList = fazlaMesaiOrtakIslemler.getBordoDenklestirmeList(denklestirmeAy, as, denklestirmeAyDurum == false || (hataliVeriGetir != null && hataliVeriGetir), denklestirmeAyDurum == false || (eksikCalisanVeriGetir != null && eksikCalisanVeriGetir), session);
+						personelDenklestirmeList = fazlaMesaiOrtakIslemler.getBordoDenklestirmeList(denklestirmeAy, as, tekSicilGiris == false && (denklestirmeAyDurum == false || (hataliVeriGetir != null && hataliVeriGetir)), tekSicilGiris == false
+								&& (denklestirmeAyDurum == false || (eksikCalisanVeriGetir != null && eksikCalisanVeriGetir)), session);
 						if (personelDenklestirmeList != null) {
-							if (sadeceHataliGetir) {
+							if (tekSicilGiris == false && sadeceHataliGetir) {
 								for (Iterator iterator = personelDenklestirmeList.iterator(); iterator.hasNext();) {
 									AylikPuantaj ap = (AylikPuantaj) iterator.next();
 									PersonelDenklestirme pd = ap.getPersonelDenklestirme();
@@ -878,7 +879,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 												if (adet > 1 && islemVardiya.getVardiyaTelorans2BitZaman().after(bugun))
 													iterator.remove();
 											}
- 											if (vardiyalar.isEmpty())
+											if (vardiyalar.isEmpty())
 												ap.setVardiyalar(null);
 										}
 
