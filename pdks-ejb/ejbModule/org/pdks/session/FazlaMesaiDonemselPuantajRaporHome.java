@@ -599,12 +599,10 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	 * @param yil
 	 * @param donemler
 	 * @param donemDoldur
+	 * @param bitis
 	 * @return
 	 */
 	public String ayDoldur(int yil, List<SelectItem> donemler, boolean donemDoldur) {
-
-		// donemler = ortakIslemler.getSelectItemList("ay", authenticatedUser);
-
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
 		sb.append("select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
@@ -618,6 +616,8 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<DenklestirmeAy> denkList = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
+		if (donemler != null)
+			donemler.clear();
 		for (DenklestirmeAy da : denkList)
 			donemler.add(new SelectItem(da.getAy(), da.getAyAdi()));
 		denkList = null;

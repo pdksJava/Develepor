@@ -60,7 +60,7 @@
 
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
-							<h:selectOneMenu value="#{fazlaMesaiDonemselPuantajRaporHome.sirketId}">
+							<h:selectOneMenu value="#{fazlaMesaiDonemselPuantajRaporHome.sirketId}" disabled="#{fazlaMesaiDonemselPuantajRaporHome.sirketler.size() lt 2}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{fazlaMesaiDonemselPuantajRaporHome.sirketler}" />
 								<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaMesaiDonemselPuantajRaporHome.tesisDoldur()}"
