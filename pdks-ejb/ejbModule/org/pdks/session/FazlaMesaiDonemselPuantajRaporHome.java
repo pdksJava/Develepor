@@ -109,7 +109,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	private Boolean gerceklesenMesaiKod = Boolean.FALSE, devredenBakiyeKod = Boolean.FALSE, normalCalismaSaatKod = Boolean.FALSE, haftaTatilCalismaSaatKod = Boolean.FALSE, resmiTatilCalismaSaatKod = Boolean.FALSE, izinSureSaatKod = Boolean.FALSE;
 	private Boolean normalCalismaGunKod = Boolean.FALSE, haftaTatilCalismaGunKod = Boolean.FALSE, resmiTatilCalismaGunKod = Boolean.FALSE, izinSureGunKod = Boolean.FALSE, ucretliIzinGunKod = Boolean.FALSE, ucretsizIzinGunKod = Boolean.FALSE, hastalikIzinGunKod = Boolean.FALSE;
 	private Boolean normalGunKod = Boolean.FALSE, haftaTatilGunKod = Boolean.FALSE, resmiTatilGunKod = Boolean.FALSE, artikGunKod = Boolean.FALSE, bordroToplamGunKod = Boolean.FALSE, devredenMesaiKod = Boolean.FALSE, ucretiOdenenKod = Boolean.FALSE;
-	private Boolean suaDurum = Boolean.FALSE, sutIzniDurum = Boolean.FALSE, gebeDurum = Boolean.FALSE, partTime = Boolean.FALSE;
+	private Boolean suaDurum = Boolean.FALSE, sutIzniDurum = Boolean.FALSE, gebeDurum = Boolean.FALSE, partTime = Boolean.FALSE, vardiyaAdiEkle = false;
 	private List<Tanim> denklestirmeDinamikAlanlar;
 	private HashMap<String, List<Tanim>> ekSahaListMap;
 	private TreeMap<String, Boolean> baslikMap;
@@ -753,7 +753,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		ExcelUtil.setFillForegroundColor(styleOff, 13, 12, 89);
 		ExcelUtil.setFontColor(styleOff, 256, 256, 256);
 
-		int row = 0, col = 0;
+		int row = 0, col = 0,sonCol=0;
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(donemOrj);
 		++row;
 		col = 0;
@@ -927,6 +927,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		}
 		int ayAdet = 0;
 		String pattern = PdksUtil.getDateFormat() + " EEEEE";
+		HashMap<Long, String> vMap = new HashMap<Long, String>();
 		for (Iterator iter = puantajList.iterator(); iter.hasNext();) {
 			AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
 			PersonelDenklestirme personelDenklestirme = aylikPuantaj.getPersonelDenklestirme();
@@ -1094,9 +1095,12 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 							styleDay = styleEgitim;
 						else if (styleText.equals(VardiyaGun.STYLE_CLASS_OFF))
 							styleDay = styleOff;
-						cell = ExcelUtil.getCell(sheet, row, col++, styleDay);
+						boolean calisan = calisan(vardiyaGun);
+						cell = ExcelUtil.getCell(sheet, row, col++, calisan ? styleDay : styleOff);
 						String aciklama = "", title = null;
-						if (calisan(vardiyaGun)) {
+
+						if (calisan) {
+
 							if (vardiyaGun.getIzin() == null)
 								aciklama = vardiyaGun.getFazlaMesaiOzelAciklama(Boolean.TRUE, authenticatedUser.sayiFormatliGoster(vardiyaGun.getCalismaSuresi()));
 							else
@@ -1239,10 +1243,72 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(alanStr);
 					}
 				}
+				sonCol=col;
+				if (vardiyaAdiEkle) {
+					row++;
+					col = 0;
+
+					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue("");
+					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+					if (fazlaMesaiOde)
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+					if (fazlaMesaiIzinKullan)
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+					if (suaDurum)
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+					if (gebeDurum)
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+					if (sutIzniDurum)
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+					if (partTime)
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+					for (VardiyaGun vardiyaGun : vardiyaList) {
+						if (vardiyaGun.isAyinGunu() && vardiyaGun.getDurum()) {
+							String styleText = vardiyaGun.getAylikClassAdi(aylikPuantaj.getTrClass());
+							styleDay = styleStrDay;
+							if (styleText.equals(VardiyaGun.STYLE_CLASS_HAFTA_TATIL))
+								styleDay = styleTatil;
+							else if (styleText.equals(VardiyaGun.STYLE_CLASS_IZIN))
+								styleDay = styleIzin;
+							else if (styleText.equals(VardiyaGun.STYLE_CLASS_OZEL_ISTEK))
+								styleDay = styleIstek;
+							else if (styleText.equals(VardiyaGun.STYLE_CLASS_EGITIM))
+								styleDay = styleEgitim;
+							else if (styleText.equals(VardiyaGun.STYLE_CLASS_OFF))
+								styleDay = styleOff;
+							boolean calisan = calisan(vardiyaGun);
+							cell = ExcelUtil.getCell(sheet, row, col++, calisan ? styleDay : styleOff);
+							String aciklama = "";
+							Vardiya islemVardiya = vardiyaGun.getVardiya();
+							if (calisan) {
+								if (vardiyaAdiEkle) {
+									String str = null;
+									if (islemVardiya != null && vardiyaGun.getIzin() == null && islemVardiya.isCalisma()) {
+										if (vMap.containsKey(islemVardiya.getId()))
+											str = vMap.get(islemVardiya.getId());
+										else {
+											str = authenticatedUser.timeFormatla(islemVardiya.getBasZaman()) + " - " + authenticatedUser.timeFormatla(islemVardiya.getBitZaman());
+											vMap.put(islemVardiya.getId(), str);
+										}
+									}
+									if (str != null)
+										aciklama = str;
+
+								}
+							}
+
+							cell.setCellValue(aciklama);
+
+						} else
+							ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+
+					}
+				}
+
 			}
 			styleGenel = null;
 		}
-		for (int i = 0; i <= col; i++)
+		for (int i = 0; i <= sonCol; i++)
 			sheet.autoSizeColumn(i);
 		baos = new ByteArrayOutputStream();
 		try {
@@ -2308,6 +2374,14 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 
 	public static void setSayfaURL(String sayfaURL) {
 		FazlaMesaiDonemselPuantajRaporHome.sayfaURL = sayfaURL;
+	}
+
+	public Boolean getVardiyaAdiEkle() {
+		return vardiyaAdiEkle;
+	}
+
+	public void setVardiyaAdiEkle(Boolean vardiyaAdiEkle) {
+		this.vardiyaAdiEkle = vardiyaAdiEkle;
 	}
 
 }

@@ -213,9 +213,18 @@
 									</p>
 								</DIV>
 								<br></br>
-								<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{fazlaMesaiDonemselPuantajRaporHome.fazlaMesaiExcel}" target="blank">
-									<a4j:support event="oncomplete" onclick="#{rich:component('wait')}.show()" oncomplete=" #{rich:component('wait')}.hide()" />
-								</h:commandLink>
+								<h:panelGrid columns="2">
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">Çalışma Saatlerini Göster</ui:define>
+										<h:selectBooleanCheckbox value="#{fazlaMesaiDonemselPuantajRaporHome.vardiyaAdiEkle}">
+
+										</h:selectBooleanCheckbox>
+									</s:decorate>
+
+									<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{fazlaMesaiDonemselPuantajRaporHome.fazlaMesaiExcel}" target="blank">
+										<a4j:support event="oncomplete" onclick="#{rich:component('wait')}.show()" oncomplete=" #{rich:component('wait')}.hide()" />
+									</h:commandLink>
+								</h:panelGrid>
 								<br></br> <br></br>
 								<table class="rich-table">
 									<thead class="rich-table-thead">
@@ -904,7 +913,8 @@
 															</ui:fragment></td>
 													</ui:fragment>
 													<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.ucretsizIzinGunKod}">
-														<td class="#{ap.trSonucClass}" style="width: 20px" align="center"><ui:fragment rendered="#{ap.denklestirmeBordro.ucretsizIzin != 0}">
+														<td class="#{ap.trSonucClass}" style="width: 20px" align="center"><ui:fragment
+																rendered="#{ap.denklestirmeBordro.ucretsizIzin != 0}">
 																<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.denklestirmeBordro.ucretsizIzin)}" />
 															</ui:fragment></td>
 													</ui:fragment>
@@ -914,7 +924,8 @@
 															</ui:fragment></td>
 													</ui:fragment>
 													<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.normalGunKod}">
-														<td class="#{ap.trSonucClass}" style="width: 20px" align="center"><ui:fragment rendered="#{ap.denklestirmeBordro.normalGunAdet != 0}">
+														<td class="#{ap.trSonucClass}" style="width: 20px" align="center"><ui:fragment
+																rendered="#{ap.denklestirmeBordro.normalGunAdet != 0}">
 																<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.denklestirmeBordro.normalGunAdet)}" />
 															</ui:fragment></td>
 													</ui:fragment>
