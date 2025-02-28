@@ -2894,6 +2894,18 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	}
 
 	/**
+	 * @return
+	 */
+	public Boolean fazlaMesaiOnayDurumu() {
+		boolean onayDurum = false;
+		if (fazlaMesaiOnayDurum && kullaniciPersonel == false && hataYok && denklestirmeAyDurum)
+			onayDurum = ikRole || PdksUtil.hasStringValue(sicilNo) == false || denklestirmeAy.getGuncelleIK();
+
+		return onayDurum;
+
+	}
+
+	/**
 	 * @param inputPersonelNo
 	 * @return
 	 */

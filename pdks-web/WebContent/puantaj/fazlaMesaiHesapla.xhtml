@@ -139,9 +139,9 @@
 												<ui:fragment rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and fazlaMesaiHesaplaHome.gecenAyDurum == false}">
 
 													<ui:fragment
-														rendered="#{(fazlaMesaiHesaplaHome.denklestirmeAyDurum or fazlaMesaiHesaplaHome.ikRole) and fazlaMesaiHesaplaHome.kullaniciPersonel == false and fazlaMesaiHesaplaHome.hataYok and (fazlaMesaiHesaplaHome.denklestirmeAy.guncelleIK or fazlaMesaiHesaplaHome.sicilNo == null or fazlaMesaiHesaplaHome.sicilNo == '')}">
+														rendered="#{fazlaMesaiHesaplaHome.fazlaMesaiOnayDurumu()}">
 														<a4j:commandButton value="Fazla Mesai Onayla" action="#{fazlaMesaiHesaplaHome.fazlaMesaiOnayKontrol()}"
-															onclick="#{rich:component('wait')}.show()" reRender="onayPanel" rendered="#{fazlaMesaiHesaplaHome.fazlaMesaiOnayDurum}"
+															onclick="#{rich:component('wait')}.show()" reRender="onayPanel" 
 															oncomplete="#{rich:component('wait')}.hide();if (#{fazlaMesaiHesaplaHome.onayla}) #{rich:component('onayPanel')}.show() ; " />
 													</ui:fragment>
 													<ui:fragment rendered="#{fazlaMesaiHesaplaHome.kullaniciPersonel == false and fazlaMesaiHesaplaHome.ayrikHareketVar}">
