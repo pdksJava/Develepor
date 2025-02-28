@@ -564,7 +564,7 @@
 						</rich:column>
 						<rich:column style="text-align:center">
 							<f:facet name="header">
-								<h:outputText value="İşe Başlama Zamanı" />
+								<h:outputText value="#{ortakIslemler.bitisZamaniAciklama()}" />
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.dateTimeFormatla(harcananIzin.personelIzin.bitisZamani)}" />
 
@@ -616,7 +616,7 @@
 								<h:inputText readonly="true" value="#{authenticatedUser.dateTimeFormatla(personelKalanIzinHome.manuelIzin.baslangicZamani)}" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">İşe Başlama Zamanı</ui:define>
+								<ui:define name="label">#{ortakIslemler.bitisZamaniAciklama()}</ui:define>
 								<h:inputText readonly="true" value="#{authenticatedUser.dateTimeFormatla(personelKalanIzinHome.manuelIzin.bitisZamani)}" />
 							</s:decorate>
 

@@ -7834,6 +7834,16 @@ public class OrtakIslemler implements Serializable {
 		String tesisAciklama = getBaslikAciklama("tesisAciklama", "Tesis");
 		return tesisAciklama;
 	}
+	
+	/**
+	 * @return
+	 */
+	public String bitisZamaniAciklama() {
+		String bitisZamaniAciklama = getBaslikAciklama("bitisZamaniAciklama", "İşe Başlama Zamanı");
+		return bitisZamaniAciklama;
+	}
+	
+	
 
 	/**
 	 * @return

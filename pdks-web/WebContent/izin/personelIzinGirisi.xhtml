@@ -226,7 +226,7 @@
 									</ui:fragment>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
-									<ui:define name="label">İşe Başlama Zamanı</ui:define>
+									<ui:define name="label">#{ortakIslemler.bi}</ui:define>
 									<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{personelIzinGirisiHome.instance.bitisZamani}" showWeekDaysBar="false"
 										showWeeksBar="false" disabled="#{personelIzinGirisiHome.seciliIzinTipi == null}">
 										<a4j:support event="onchanged" action="#{ortakIslemler.emtpyAjaxFunction()}" ajaxSingle="true" status="ajaxStatus" reRender="izinTipiAlan" />
@@ -553,7 +553,7 @@
 							</rich:column>
 							<rich:column style="text-align:center">
 								<f:facet name="header">
-									<h:outputText value="İşe Başlama Zamanı" />
+									<h:outputText value="#{ortakIslemler.bitisZamaniAciklama()}" />
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.dateTimeFormatla(izin.bitisZamani)}" />
 
@@ -719,7 +719,7 @@
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">
-									<h:outputText value="İşe Başlama Zamanı" />
+									<h:outputText value="#{ortakIslemler.bitisZamaniAciklama()}" />
 								</ui:define>
 								<h:outputText value="#{authenticatedUser.dateTimeFormatla(personelIzinGirisiHome.mailIzin.bitisZamani)}" />
 
@@ -980,7 +980,7 @@
 							</s:decorate>
 
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">İşe Başlama Zamanı</ui:define>
+								<ui:define name="label">#{ortakIslemler.bitisZamaniAciklama()}</ui:define>
 								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{personelIzinGirisiHome.guncellenecekIzin.bitisZamani}"
 									showWeekDaysBar="false" showWeeksBar="false">
 									<a4j:support event="onchanged" action="#{ortakIslemler.isStringEqual('','')}" ajaxSingle="true" status="ajaxStatus" reRender="izinTipiAlan2" />
@@ -1115,7 +1115,7 @@
 							<h:inputText readonly="true" value="#{authenticatedUser.dateTimeFormatla(personelIzinGirisiHome.guncellenecekIzin.baslangicZamani)}" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">İşe Başlama Zamanı</ui:define>
+							<ui:define name="label">#{ortakIslemler.bitisZamaniAciklama()}</ui:define>
 							<h:inputText readonly="true" value="#{authenticatedUser.dateTimeFormatla(personelIzinGirisiHome.guncellenecekIzin.bitisZamani)}" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
@@ -1185,7 +1185,7 @@
 							<h:inputText readonly="true" value="#{authenticatedUser.dateTimeFormatla(personelIzinGirisiHome.guncellenecekIzin.baslangicZamani)}" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">İşe Başlama Zamanı</ui:define>
+							<ui:define name="label">#{ortakIslemler.bitisZamaniAciklama()}</ui:define>
 							<h:inputText readonly="true" value="#{authenticatedUser.dateTimeFormatla(personelIzinGirisiHome.guncellenecekIzin.bitisZamani)}" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">

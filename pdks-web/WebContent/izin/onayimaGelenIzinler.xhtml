@@ -100,7 +100,7 @@
 									</rich:column>
 									<rich:column styleClass="#{izin.kayitDurum}" style="text-align:center;">
 										<f:facet name="header">
-											<h:outputText value="İşe Başlama Zamanı" />
+											<h:outputText value="#{ortakIslemler.bitisZamaniAciklama()}" />
 										</f:facet>
 										<h:outputText value="#{authenticatedUser.dateTimeFormatla(izin.personelIzin.bitisZamani)}" />
 									</rich:column>
@@ -404,7 +404,7 @@
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">
-									<h:outputText value="İşe Başlama Zamanı" />
+									<h:outputText value="#{ortakIslemler.bitisZamaniAciklama()}" />
 								</ui:define>
 								<h:outputText value="#{authenticatedUser.dateTimeFormatla(personelIzinGirisiHome.mailIzin.bitisZamani)}" />
 

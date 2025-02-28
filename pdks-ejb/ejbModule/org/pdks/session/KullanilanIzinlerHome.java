@@ -189,7 +189,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(aramaSecenekleri.getEkSahaTanimMap().get("ekSaha4").getAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İzin Tipi");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İzin Başlangıç Zamanı");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İşe Başlama Zamanı");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.bitisZamaniAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Süresi");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Açıklama");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Son İşlem Yapan");
@@ -646,7 +646,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		if (ekSaha4)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(aramaSecenekleri.getEkSahaTanimMap().get("ekSaha4").getAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İzin Başlangıç Zamanı");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İşe Başlama Zamanı");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.bitisZamaniAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Süresi");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Teşhis");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Rapor Kaynağı");

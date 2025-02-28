@@ -202,7 +202,7 @@
 								</ui:fragment>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">İşe Başlama Zamanı</ui:define>
+								<ui:define name="label">#{ortakIslemler.bitisZamaniAciklama()}</ui:define>
 								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{personelIzinGirisiHome.instance.bitisZamani}" showWeekDaysBar="false"
 									showWeeksBar="false" />
 							</s:decorate>
@@ -386,7 +386,7 @@
 							</rich:column>
 							<rich:column>
 								<f:facet name="header">
-									<h:outputText value="İşe Başlama Zamanı" />
+									<h:outputText value="#{ortakIslemler.bitisZamaniAciklama()}" />
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.dateTimeFormatla(izin.bitisZamani)}" />
 
@@ -590,7 +590,7 @@
 							</s:decorate>
 
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">İşe Başlama Zamanı</ui:define>
+								<ui:define name="label">#{ortakIslemler.bitisZamaniAciklama()}</ui:define>
 								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{personelIzinGirisiHome.guncellenecekIzin.bitisZamani}"
 									showWeekDaysBar="false" showWeeksBar="false" />
 							</s:decorate>
