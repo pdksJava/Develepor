@@ -606,6 +606,8 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
 		sb.append("select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " ON D." + DenklestirmeAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_DONEM);
+		sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1");
 		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y");
 		sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ D." + DenklestirmeAy.COLUMN_NAME_AY + ") <= :s");
 		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0");
@@ -753,7 +755,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		ExcelUtil.setFillForegroundColor(styleOff, 13, 12, 89);
 		ExcelUtil.setFontColor(styleOff, 256, 256, 256);
 
-		int row = 0, col = 0,sonCol=0;
+		int row = 0, col = 0, sonCol = 0;
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(donemOrj);
 		++row;
 		col = 0;
@@ -1243,7 +1245,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(alanStr);
 					}
 				}
-				sonCol=col;
+				sonCol = col;
 				if (vardiyaAdiEkle) {
 					row++;
 					col = 0;
