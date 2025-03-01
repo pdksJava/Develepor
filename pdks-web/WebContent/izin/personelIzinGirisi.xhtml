@@ -226,7 +226,7 @@
 									</ui:fragment>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
-									<ui:define name="label">#{ortakIslemler.bi}</ui:define>
+									<ui:define name="label">#{ortakIslemler.bitisZamaniAciklama()}</ui:define>
 									<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{personelIzinGirisiHome.instance.bitisZamani}" showWeekDaysBar="false"
 										showWeeksBar="false" disabled="#{personelIzinGirisiHome.seciliIzinTipi == null}">
 										<a4j:support event="onchanged" action="#{ortakIslemler.emtpyAjaxFunction()}" ajaxSingle="true" status="ajaxStatus" reRender="izinTipiAlan" />
