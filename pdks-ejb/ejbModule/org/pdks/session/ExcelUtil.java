@@ -376,13 +376,15 @@ public class ExcelUtil implements Serializable {
 	 * @return
 	 */
 	public static CellStyle getStyleOdd(String formatStr, Workbook wb) {
-		CellStyle style = formatOddEven(formatStr, wb);
+		CellStyle style = formatOddEven(null, wb);
 		HashMap<String, Integer[]> styleMap = setStyleColor(ODD_COLOR, style);
 		if (!styleMap.containsKey(BACKGROUND_COLOR)) {
 			style.setFillPattern(CellStyle.SOLID_FOREGROUND);
 			XSSFCellStyle styleOdd = (XSSFCellStyle) style;
 			setFillForegroundColor(styleOdd, 219, 248, 219);
 		}
+		formatCellStyle(formatStr, wb, style);
+		styleMap = null;
 		styleMap = null;
 		return style;
 	}
@@ -393,7 +395,7 @@ public class ExcelUtil implements Serializable {
 	 * @return
 	 */
 	public static CellStyle getStyleEven(String formatStr, Workbook wb) {
-		CellStyle style = formatOddEven(formatStr, wb);
+		CellStyle style = formatOddEven(null, wb);
 		HashMap<String, Integer[]> styleMap = setStyleColor(EVEN_COLOR, style);
 		if (!styleMap.containsKey(BACKGROUND_COLOR)) {
 			style.setFillPattern(CellStyle.SOLID_FOREGROUND);
@@ -401,7 +403,7 @@ public class ExcelUtil implements Serializable {
 			setFillForegroundColor(styleEven, 213, 228, 251);
 
 		}
-
+		formatCellStyle(formatStr, wb, style);
 		styleMap = null;
 		return style;
 	}
@@ -414,7 +416,22 @@ public class ExcelUtil implements Serializable {
 	private static CellStyle formatOddEven(String formatStr, Workbook wb) {
 		CellStyle style = getStyleData(wb);
 		if (formatStr != null) {
-			String str = null;
+			formatCellStyle(formatStr, wb, style);
+
+		}
+		return style;
+	}
+
+	/**
+	 * @param formatStr
+	 * @param wb
+	 * @param style
+	 * @return
+	 */
+	private static CellStyle formatCellStyle(String formatStr, Workbook wb, CellStyle style) {
+		String str = null;
+		if (formatStr != null) {
+
 			if (formatStr.equals(FORMAT_NUMBER)) {
 				style.setAlignment(CellStyle.ALIGN_RIGHT);
 				str = FORMAT_DATA_NUMBER;
@@ -437,17 +454,16 @@ public class ExcelUtil implements Serializable {
 				style.setAlignment(CellStyle.ALIGN_RIGHT);
 				str = "";
 			}
-			if (str != null) {
-				if (PdksUtil.hasStringValue(str)) {
-					Integer formatType = getDataFormat(str, wb);
-					if (formatType != null) {
-						style.setDataFormat(formatType.shortValue());
-					}
-				}
-			} else
-				style.setAlignment(CellStyle.ALIGN_LEFT);
-
 		}
+		if (str != null) {
+			if (PdksUtil.hasStringValue(str)) {
+				Integer formatType = getDataFormat(str, wb);
+				if (formatType != null) {
+					style.setDataFormat(formatType.shortValue());
+				}
+			}
+		} else
+			style.setAlignment(CellStyle.ALIGN_LEFT);
 		return style;
 	}
 
