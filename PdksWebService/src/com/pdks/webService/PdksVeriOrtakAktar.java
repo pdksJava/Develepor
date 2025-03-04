@@ -2411,7 +2411,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					bitTarih = PdksUtil.tariheGunEkleCikar(bitTarih, -izinBitisEksiGun);
 				if (bitisZamani.before(baslangicZamani))
 					addHatalist(izinERP, izinSahibi, "İzin başlama zamanı bitiş tarihinden sonra olamaz!");
-				if (baslangicZamani.before(izinSahibi.getIseBaslamaTarihi()))
+				if (baslangicZamani.before(izinSahibi.getIseBaslamaTarihi()) && baslangicZamani.before(izinSahibi.getIzinHakEdisTarihi()))
 					addHatalist(izinERP, izinSahibi, "İzin başlangıç zamanı işe giriş tarihi " + PdksUtil.convertToDateString(izinSahibi.getIseBaslamaTarihi(), FORMAT_DATE) + " den önce olamaz! [ " + izinSahibi.getAdSoyad() + " ]");
 				if (PdksUtil.tarihKarsilastirNumeric(bitTarih, sonCalismaTarihi) > 1)
 					addHatalist(izinERP, izinSahibi, "İzin bitiş zamanı işten ayrılma tarihi " + PdksUtil.convertToDateString(sonCalismaTarihi, FORMAT_DATE) + " den sonra olamaz! [ " + izinSahibi.getAdSoyad() + " ]");
@@ -2526,8 +2526,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 						izinERP.setYazildi(true);
 					}
 					if (izinERP.getDurum().booleanValue() || personelIzin.getId() != null) {
-						if (!izinSahibi.isCalisiyorGun(bitTarih) && personelIzin.getId() == null)
-							addHatalist(izinERP, izinSahibi, PdksUtil.convertToDateString(personelIzin.getBitisZamani(), FORMAT_DATE_TIME) + " tarihinde çalışmıyor!!");
+						if (personelIzin.getId() == null) {
+ 							if (!(bitTarih.getTime() <= izinSahibi.getSskCikisTarihi().getTime() && (bitTarih.getTime() >= izinSahibi.getIseBaslamaTarihi().getTime() || bitTarih.getTime() >= izinSahibi.getIzinHakEdisTarihi().getTime())))
+								addHatalist(izinERP, izinSahibi, PdksUtil.convertToDateString(personelIzin.getBitisZamani(), FORMAT_DATE_TIME) + " tarihinde çalışmıyor!!");
+						}
+						
 						if (izinERP.getDurum().booleanValue() || donemKapali) {
 							fields.clear();
 							StringBuffer sb = new StringBuffer();
