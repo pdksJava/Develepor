@@ -2137,12 +2137,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 			izinBitisEksiGun = 0;
 
 		for (Personel personel : personelList) {
-
 			if ((tarih1 == null || personel.getSskCikisTarihi().getTime() >= PdksUtil.getDate(tarih1).getTime()) && (tarih2 == null || personel.getIseBaslamaTarihi().getTime() <= PdksUtil.getDate(tarih2).getTime())) {
 				if (personelNoList.contains(personel.getPdksSicilNo()))
 					personelNoList.remove(personel.getPdksSicilNo());
-				personelMap.put(personel.getPdksSicilNo(), personel);
 			}
+			personelMap.put(personel.getPdksSicilNo(), personel);
 		}
 		HashMap<String, Personel> personelERPDBMap = new HashMap<String, Personel>();
 		if (!personelNoList.isEmpty() && mailMap.containsKey(getParametrePersonelERPTableView())) {
