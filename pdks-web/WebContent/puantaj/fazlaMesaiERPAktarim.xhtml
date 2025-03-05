@@ -32,8 +32,8 @@
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
 							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and fazlaMesaiERPAktarimHome.departmanList.size()>1}">
-							<ui:define name="label">PDKS Departman</ui:define>
-							<h:selectOneMenu value="#{fazlaMesaiERPAktarimHome.departmanId}" required="true" requiredMessage="PDKS Departman seçiniz">
+							<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
+							<h:selectOneMenu value="#{fazlaMesaiERPAktarimHome.departmanId}" required="true" requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{fazlaMesaiERPAktarimHome.departmanList}" />
 								<a4j:support event="onchange" action="#{fazlaMesaiERPAktarimHome.fillSirketList()}" ajaxSingle="true"

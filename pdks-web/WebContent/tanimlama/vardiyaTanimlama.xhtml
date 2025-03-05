@@ -89,7 +89,7 @@
 								</rich:column>
 								<rich:column rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin}">
 									<f:facet name="header">
-										<h:outputText value="PDKS Departman" />
+										<h:outputText value="#{ortakIslemler.firmaKaynagiAciklama()}" />
 									</f:facet>
 									<h:outputText value="#{vardiya.departman.departmanTanim.aciklama}" />
 								</rich:column>
@@ -530,7 +530,7 @@
 						<c:if test="#{vardiyaHome.instance.calisma or vardiyaHome.instance.izinVardiya or vardiyaHome.instance.FMI}">
 
 							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaHome.departmanList.size()>1}">
-								<ui:define name="label">PDKS Departman</ui:define>
+								<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
 								<h:selectOneMenu value="#{vardiyaHome.instance.departman}">
 									<s:selectItems var="comp" value="#{vardiyaHome.departmanList}" label="#{comp.departmanTanim.aciklama}" noSelectionLabel="Lütfen seçiniz" />
 									<s:convertEntity />

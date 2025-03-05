@@ -57,7 +57,7 @@
 
 						<rich:column rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin}">
 							<f:facet name="header">
-								<h:outputText value="PDKS Departman" />
+								<h:outputText value="#{ortakIslemler.firmaKaynagiAciklama()}" />
 							</f:facet>
 							<h:outputText value="#{sirket.departman.departmanTanim.aciklama}" />
 						</rich:column>
@@ -202,9 +202,9 @@
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml"
 								rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and not empty sirketHome.departmanList}">
-								<ui:define name="label">PDKS Departman</ui:define>
+								<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
 								<h:selectOneMenu required="true" id="toComp" value="#{sirketHome.seciliSirket.departman}" disabled="#{sirketHome.departmanList.size() == 1}"
-									requiredMessage="PDKS Departman giriniz">
+									requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} giriniz">
 									<s:selectItems var="comp" value="#{sirketHome.departmanList}" label="#{comp.departmanTanim.aciklama}" noSelectionLabel="Lütfen seçiniz" />
 									<s:convertEntity />
 								</h:selectOneMenu>

@@ -128,7 +128,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 		}
 
 		for (Departman pdksDepartman : list)
-			departmanListe.add(new SelectItem(pdksDepartman.getId(), pdksDepartman.getDepartmanTanim().getAciklama()));
+			departmanListe.add(new SelectItem(pdksDepartman.getId(), pdksDepartman.getAciklama()));
 		if (list.size() == 1)
 			list.clear();
 

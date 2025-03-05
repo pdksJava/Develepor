@@ -39,7 +39,7 @@
 							</rich:column>
 							<rich:column rendered="#{pdksPersonelHome.departmanGoster}">
 								<f:facet name="header">
-									<h:outputText value="PDKS Departman" />
+									<h:outputText value="#{ortakIslemler.firmaKaynagiAciklama()}" />
 								</f:facet>
 								<h:outputText value="#{personelView.pdksPersonel.sirket.departman.departmanTanim.aciklama}" />
 							</rich:column>

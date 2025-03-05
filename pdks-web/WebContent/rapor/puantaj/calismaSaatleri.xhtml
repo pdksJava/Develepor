@@ -16,8 +16,8 @@
 					<a4j:outputPanel id="secimler">
 						<s:decorate template="/layout/edit.xhtml"
 							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and calismaSaatleriHome.aramaSecenekleri.departmanIdList.size()>1}">
-							<ui:define name="label">PDKS Departman</ui:define>
-							<h:selectOneMenu value="#{calismaSaatleriHome.aramaSecenekleri.departmanId}" required="true" requiredMessage="PDKS Departman seçiniz">
+							<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
+							<h:selectOneMenu value="#{calismaSaatleriHome.aramaSecenekleri.departmanId}" required="true" requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{calismaSaatleriHome.aramaSecenekleri.departmanIdList}" />
 								<a4j:support event="onchange" action="#{calismaSaatleriHome.fillSirketList()}" ajaxSingle="true" reRender="secimler,vardiyaOzetPanel" />

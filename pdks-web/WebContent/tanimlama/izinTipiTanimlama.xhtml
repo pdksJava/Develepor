@@ -49,7 +49,7 @@
 
 						<rich:column rendered="#{authenticatedUser.admin}">
 							<f:facet name="header">
-								<h:outputText value="PDKS Departman" />
+								<h:outputText value="#{ortakIslemler.firmaKaynagiAciklama()}" />
 							</f:facet>
 							<h:outputText value="#{izinTipi.departman.departmanTanim.aciklama}" id="departman" />
 						</rich:column>
@@ -265,7 +265,7 @@
 
 					<h:panelGrid columns="2">
 						<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and izinTipiHome.departmanList.size()>1}">
-							<ui:define name="label">PDKS Departman</ui:define>
+							<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
 							<h:selectOneMenu value="#{izinTipiHome.instance.departman}">
 								<s:selectItems var="comp" value="#{izinTipiHome.departmanList}" label="#{comp.departmanTanim.aciklama}" noSelectionLabel="Lütfen seçiniz" />
 								<a4j:support event="onchange" action="#{izinTipiHome.fillIzinTipiTanimList}" reRender="izinTipi" status="ajaxStatus" ajaxSingle="true" />

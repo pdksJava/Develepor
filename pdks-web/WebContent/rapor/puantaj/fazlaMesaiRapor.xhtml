@@ -31,8 +31,8 @@
 							</rich:calendar>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiRaporHome.adminRole and fazlaMesaiRaporHome.departmanList.size()>1}">
-							<ui:define name="label">PDKS Departman</ui:define>
-							<h:selectOneMenu value="#{fazlaMesaiRaporHome.departmanId}" required="true" requiredMessage="PDKS Departman seçiniz">
+							<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
+							<h:selectOneMenu value="#{fazlaMesaiRaporHome.departmanId}" required="true" requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{fazlaMesaiRaporHome.departmanList}" />
 								<a4j:support event="onchange" action="#{fazlaMesaiRaporHome.departmanDegisti()}" ajaxSingle="true" reRender="denklestirmeDonemiTable,girisler" />

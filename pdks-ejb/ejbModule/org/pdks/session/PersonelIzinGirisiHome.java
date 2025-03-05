@@ -2158,7 +2158,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 								+ " onayınıza gönderilmiş bulunmaktadır.";
 					else
 						izinMailAciklama = mailPersonelAciklama + " ait izin başlangıç tarihi " + authenticatedUser.dateTimeFormatla(mailIzin.getBaslangicZamani()) + " işe başlama tarihi " + authenticatedUser.dateTimeFormatla(mailIzin.getBitisZamani()) + " " + mailPersonelAciklama
-								+ " yönetici tarafından onaylanmış olup " + mailIzin.getIzinSahibi().getSirket().getDepartman().getDepartmanTanim().getAciklama() + " kayıtları için gönderilmiştir.";
+								+ " yönetici tarafından onaylanmış olup " + mailIzin.getIzinSahibi().getSirket().getDepartman().getAciklama() + " kayıtları için gönderilmiştir.";
 
 				}
 				ccIlebccMailKarsilastir();
@@ -4239,7 +4239,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			String aciklama = "";
 			if (personelIzin.getIzinDurumu() == PersonelIzin.IZIN_DURUMU_IK_ONAYINDA) {
 				aciklama = mailPersonelAciklama + " ait izin başlangıç tarihi " + authenticatedUser.dateTimeFormatla(mailIzin.getBaslangicZamani()) + " işe başlama tarihi " + authenticatedUser.dateTimeFormatla(mailIzin.getBitisZamani()) + " " + mailIzin.getIzinTipiAciklama()
-						+ " yönetici tarafından onaylanmış olup " + mailIzin.getIzinSahibi().getSirket().getDepartman().getDepartmanTanim().getAciklama() + " onayınıza gönderilmiş bulunmaktadır.";
+						+ " yönetici tarafından onaylanmış olup " + mailIzin.getIzinSahibi().getSirket().getDepartman().getAciklama() + " onayınıza gönderilmiş bulunmaktadır.";
 			} else if (personelIzin.getIzinDurumu() == PersonelIzin.IZIN_DURUMU_BIRINCI_YONETICI_ONAYINDA)
 				aciklama = mailPersonelAciklama + " ait izni onayınıza gönderilmiş bulunmaktadır.";
 

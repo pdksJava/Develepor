@@ -1553,9 +1553,9 @@
 
 												<h:panelGrid columns="1" cellpadding="0" cellspacing="0">
 													<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.departmanKullaniciList.size()>1}">
-														<ui:define name="label">PDKS Departman</ui:define>
+														<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
 														<h:selectOneMenu id="toComp" value="#{pdksPersonelHome.instance.kullanici.departman}" required="true"
-															requiredMessage="PDKS departmanı seçiniz">
+															requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()}ı seçiniz">
 															<s:selectItems var="comp" value="#{pdksPersonelHome.departmanKullaniciList}" label="#{comp.departmanTanim.aciklama}"
 																noSelectionLabel="Lütfen seçiniz" />
 															<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" />

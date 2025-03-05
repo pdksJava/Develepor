@@ -16,8 +16,8 @@
 
 					<s:decorate template="/layout/edit.xhtml"
 						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and personelFazlaMesaiHome.departmanList.size()>1}">
-						<ui:define name="label">PDKS Departman</ui:define>
-						<h:selectOneMenu value="#{personelFazlaMesaiHome.departmanId}" required="true" requiredMessage="PDKS Departman seçiniz">
+						<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
+						<h:selectOneMenu value="#{personelFazlaMesaiHome.departmanId}" required="true" requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{personelFazlaMesaiHome.departmanList}" />
 							<a4j:support event="onchange" action="#{personelFazlaMesaiHome.fillSirketList()}" ajaxSingle="true" reRender="girisler" />

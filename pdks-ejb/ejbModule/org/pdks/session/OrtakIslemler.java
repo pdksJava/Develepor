@@ -5770,7 +5770,7 @@ public class OrtakIslemler implements Serializable {
 				List<SelectItem> departmanIdList = getSelectItemList("departman", authenticatedUser);
 				List<Departman> departmanList = fillDepartmanTanimList(session);
 				for (Departman pdksDepartman : departmanList)
-					departmanIdList.add(new SelectItem(pdksDepartman.getId(), pdksDepartman.getDepartmanTanim().getAciklama()));
+					departmanIdList.add(new SelectItem(pdksDepartman.getId(), pdksDepartman.getAciklama()));
 				aramaSecenekleri.setDepartmanIdList(departmanIdList);
 				aramaSecenekleri.setEkSahaListMap((HashMap<String, List<Tanim>>) sonucMap.get("ekSahaList"));
 				ekSahaTanimMap = (TreeMap<String, Tanim>) sonucMap.get("ekSahaTanimMap");
@@ -7833,6 +7833,14 @@ public class OrtakIslemler implements Serializable {
 	public String tesisAciklama() {
 		String tesisAciklama = getBaslikAciklama("tesisAciklama", "Tesis");
 		return tesisAciklama;
+	}
+	
+	/**
+	 * @return
+	 */
+	public String firmaKaynagiAciklama() {
+		String firmaKaynagiAciklama = getBaslikAciklama("firmaKaynagiAciklama", "PDKS Departman");
+		return firmaKaynagiAciklama;
 	}
 	
 	/**
@@ -15458,7 +15466,7 @@ public class OrtakIslemler implements Serializable {
 				if (personel.getSirket() != null) {
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getSirket().getAd());
 					if (departmanGoster)
-						ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getSirket().getDepartman().getDepartmanTanim().getAciklama());
+						ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getSirket().getDepartman().getAciklama());
 
 				}
 				if (kimlikNoGoster) {

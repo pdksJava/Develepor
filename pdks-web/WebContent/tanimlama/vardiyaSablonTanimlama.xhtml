@@ -54,7 +54,7 @@
 								</rich:column>
 								<rich:column rendered="#{authenticatedUser.admin}">
 									<f:facet name="header">
-										<h:outputText value="PDKS Departman" />
+										<h:outputText value="#{ortakIslemler.firmaKaynagiAciklama()}" />
 									</f:facet>
 									<h:outputText value="#{vardiyaSablon.departman.departmanTanim.aciklama}" />
 								</rich:column>
@@ -188,7 +188,7 @@
 							requiredMessage="Şablon Adı giriniz" />
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaSablonuHome.departmanList.size()>1}">
-						<ui:define name="label">PDKS Departman</ui:define>
+						<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
 						<h:selectOneMenu value="#{vardiyaSablonuHome.instance.departman}" disabled="#{authenticatedUser.admin == false}">
 							<s:selectItems var="comp" value="#{vardiyaSablonuHome.departmanList}" label="#{comp.departmanTanim.aciklama}" noSelectionLabel="Lütfen seçiniz" />
 							<a4j:support event="onchange" action="#{vardiyaSablonuHome.fillPdksVardiyaList}" reRender="vardiyalar" status="ajaxStatus" ajaxSingle="true" />

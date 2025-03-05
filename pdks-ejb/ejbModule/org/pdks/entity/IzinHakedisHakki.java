@@ -151,7 +151,7 @@ public class IzinHakedisHakki extends BaseObject {
 
 	@Transient
 	public String getSort() {
-		String sira = departman.getDepartmanTanim().getAciklama() + departman.getId() + "_" + this.isSuaDurum() + (((yasTipi + 1) * 100) + izinSuresi);
+		String sira = departman.getAciklama() + departman.getId() + "_" + this.isSuaDurum() + (((yasTipi + 1) * 100) + izinSuresi);
 		return sira;
 	}
 

@@ -403,7 +403,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 		}
 
 		for (Departman pdksDepartman : list)
-			departmanListe.add(new SelectItem(pdksDepartman.getId(), pdksDepartman.getDepartmanTanim().getAciklama()));
+			departmanListe.add(new SelectItem(pdksDepartman.getId(), pdksDepartman.getAciklama()));
 
 		setDepartmanList(departmanListe);
 	}

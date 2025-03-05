@@ -2081,7 +2081,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			}
 			if (sb.length() > 0) {
 				String hataliRol = sb.toString();
-				sb = new StringBuffer(hataliRol + " " + seciliKullanici.getDepartman().getDepartmanTanim().getAciklama() + " ait rol" + (hataliRol.indexOf(",") > 0 ? "ler" : "") + " değildir!");
+				sb = new StringBuffer(hataliRol + " " + seciliKullanici.getDepartman().getAciklama() + " ait rol" + (hataliRol.indexOf(",") > 0 ? "ler" : "") + " değildir!");
 				if (!kayit)
 					PdksUtil.addMessageError(sb.toString());
 			} else

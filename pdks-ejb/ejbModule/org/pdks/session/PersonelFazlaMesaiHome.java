@@ -318,7 +318,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		}
 
 		for (Departman pdksDepartman : list)
-			departmanListe.add(new SelectItem(pdksDepartman.getId(), pdksDepartman.getDepartmanTanim().getAciklama()));
+			departmanListe.add(new SelectItem(pdksDepartman.getId(), pdksDepartman.getAciklama()));
 
 		setDepartmanList(departmanListe);
 	}

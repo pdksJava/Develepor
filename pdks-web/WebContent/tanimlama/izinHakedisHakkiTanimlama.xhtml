@@ -19,7 +19,7 @@
 
 						<rich:column style="width:100" rendered="#{authenticatedUser.admin}">
 							<f:facet name="header">
-								<h:outputText value="PDKS Departman" />
+								<h:outputText value="#{ortakIslemler.firmaKaynagiAciklama()}" />
 							</f:facet>
 							<h:outputText value="#{izinHakedisHakki.departman.departmanTanim.aciklama}" />
 							<ui:fragment rendered="#{izinHakedisHakki.suaDurum}"> (ŞUA)</ui:fragment>
@@ -75,7 +75,7 @@
 							<a4j:region renderRegionOnly="true" cellpadding="0" cellspacing="0">
 								<h:panelGrid columns="1" id="yasTipi">
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and izinHakedisHakkiHome.departmanList.size()>1}">
-										<ui:define name="label">PDKS Departman</ui:define>
+										<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
 										<h:selectOneMenu value="#{izinHakedisHakkiHome.instance.departman}">
 											<s:selectItems var="comp" value="#{izinHakedisHakkiHome.departmanList}" label="#{comp.departmanTanim.aciklama}"
 												noSelectionLabel="Lütfen seçiniz" />

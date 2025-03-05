@@ -632,11 +632,9 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		if (list.size() == 1) {
 			departmanId = list.get(0).getId();
 			yilDegisti();
-
-		}
-
-		for (Departman pdksDepartman : list)
-			departmanListe.add(new SelectItem(pdksDepartman.getId(), pdksDepartman.getDepartmanTanim().getAciklama()));
+ 		}
+ 		for (Departman pdksDepartman : list)
+			departmanListe.add(new SelectItem(pdksDepartman.getId(), pdksDepartman.getAciklama()));
 
 		setDepartmanList(departmanListe);
 	}

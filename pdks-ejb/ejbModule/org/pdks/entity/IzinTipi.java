@@ -588,7 +588,7 @@ public class IzinTipi extends BaseObject {
 	@Transient
 	public String getSira() {
 		int sira = listeSira == null || listeSira <= 0 ? 100000 : listeSira;
-		String siraStr = departman.getDepartmanTanim().getAciklama() + PdksUtil.textBaslangicinaKarakterEkle(String.valueOf(sira), '0', 8) + izinTipiTanim.getAciklama();
+		String siraStr = departman.getAciklama() + PdksUtil.textBaslangicinaKarakterEkle(String.valueOf(sira), '0', 8) + izinTipiTanim.getAciklama();
 		return siraStr;
 	}
 

@@ -14,8 +14,8 @@
 				<h:panelGrid columns="1" id="secimler">
 					<s:decorate template="/layout/edit.xhtml"
 						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and girisCikisKontrolHome.aramaSecenekleri.departmanIdList.size()>1}">
-						<ui:define name="label">PDKS Departman</ui:define>
-						<h:selectOneMenu value="#{girisCikisKontrolHome.aramaSecenekleri.departmanId}" required="true" requiredMessage="PDKS Departman seçiniz">
+						<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
+						<h:selectOneMenu value="#{girisCikisKontrolHome.aramaSecenekleri.departmanId}" required="true" requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{girisCikisKontrolHome.aramaSecenekleri.departmanIdList}" />
 							<a4j:support event="onchange" action="#{girisCikisKontrolHome.fillSirketList()}" ajaxSingle="true" reRender="secimler,hareketPanel" />

@@ -31,8 +31,8 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.adminRole and vardiyaGunHome.aramaSecenekleri.departmanIdList.size()>1}">
-							<ui:define name="label">PDKS Departman</ui:define>
-							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.departmanId}" required="true" requiredMessage="PDKS Departman seçiniz">
+							<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
+							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.departmanId}" required="true" requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.departmanIdList}" />
 								<a4j:support event="onchange" action="#{vardiyaGunHome.fillSirketList()}" ajaxSingle="true" reRender="girisler,vardiyaPanel" />
