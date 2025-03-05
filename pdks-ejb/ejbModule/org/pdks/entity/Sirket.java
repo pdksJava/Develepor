@@ -34,11 +34,15 @@ public class Sirket extends BaseObject {
 	public static final String COLUMN_NAME_ERP_KODU = "ERP_KODU";
 	public static final String COLUMN_NAME_ERP_DURUM = "ERP_DURUM";
 	public static final String COLUMN_NAME_IZIN_KARTI_VAR = "IZIN_KARTI_VAR";
-	public static final String SIRKET_ERP_KODU = "3030";
 	public static final String COLUMN_NAME_IS_ARAMA_GUNLUK_SAAT = "IS_ARAMA_GUNLUK_SAAT";
-	
+	public static final String COLUMN_NAME_ERP_DATABASE_ADI = "ERP_DATABASE_ADI";
+	public static final String COLUMN_NAME_ERP_DATABASE_KODU = "ERP_DATABASE_KODU";
+	public static final String SP_NAME_SP_ERP_VIEW_ALTER_CREATE = "SP_ERP_VIEW_ALTER_CREATE";
+
+	public static final String SIRKET_ERP_KODU = "3030";
+
 	private Long sirketGrupId;
-	private String ad, aciklama, erpKodu = "", lpdapOnEk = "";
+	private String ad, aciklama, erpKodu = "", lpdapOnEk = "", databaseAdiERP, databaseKoduERP;
 	private Boolean erpDurum = Boolean.FALSE, ldapDurum = Boolean.FALSE, pdks = Boolean.FALSE, suaOlabilir = Boolean.FALSE, tesisDurum = Boolean.FALSE;
 	private Boolean fazlaMesaiOde = Boolean.FALSE, fazlaMesai = Boolean.FALSE, istenAyrilmaTarihindeCalisiyor = Boolean.FALSE;
 	private Boolean fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiTalepGirilebilir = Boolean.FALSE, izinKartiVar = Boolean.FALSE, gebelikSutIzin = Boolean.FALSE;
@@ -246,6 +250,28 @@ public class Sirket extends BaseObject {
 
 	public void setIsAramaGunlukSaat(Double isAramaGunlukSaat) {
 		this.isAramaGunlukSaat = isAramaGunlukSaat;
+	}
+
+	@Column(name = COLUMN_NAME_ERP_DATABASE_ADI)
+	public String getDatabaseAdiERP() {
+		return databaseAdiERP;
+	}
+
+	public void setDatabaseAdiERP(String value) {
+		if (!degisti)
+			degisti = PdksUtil.isStrDegisti(value, databaseAdiERP);
+		this.databaseAdiERP = value;
+	}
+
+	@Column(name = COLUMN_NAME_ERP_DATABASE_KODU)
+	public String getDatabaseKoduERP() {
+		return databaseKoduERP;
+	}
+
+	public void setDatabaseKoduERP(String value) {
+		if (!degisti)
+			degisti = PdksUtil.isStrDegisti(value, databaseKoduERP);
+		this.databaseKoduERP = value;
 	}
 
 	@Column(name = "GEBELIK_SUT_IZIN")

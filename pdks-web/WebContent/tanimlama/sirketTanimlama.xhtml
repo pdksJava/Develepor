@@ -132,6 +132,20 @@
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.sayiFormatliGoster(sirket.isAramaGunlukSaat)}" />
 						</rich:column>
+						<c:if test="#{sirketHome.erpDatabaseDurum and authenticatedUser.admin}">
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="ERP Database Adı" />
+								</f:facet>
+								<h:outputText value="#{sirket.databaseAdiERP}" />
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="ERP Database Koud" />
+								</f:facet>
+								<h:outputText value="#{sirket.databaseKoduERP}" />
+							</rich:column>
+						</c:if>
 
 						<rich:column rendered="#{ortakIslemler.tesisDurumu and authenticatedUser.admin}">
 							<f:facet name="header">
@@ -229,6 +243,17 @@
 											<a4j:support event="onchange" status="ajaxStatus" />
 										</h:selectOneMenu>
 									</s:decorate>
+									<c:if test="#{sirketHome.erpDatabaseDurum and authenticatedUser.admin}">
+										<s:decorate template="/layout/edit.xhtml">
+											<ui:define name="label">ERP Database Adı</ui:define>
+											<h:inputText value="#{sirketHome.seciliSirket.databaseAdiERP}" size="15" maxlength="128" />
+										</s:decorate>
+										<s:decorate template="/layout/edit.xhtml">
+											<ui:define name="label">ERP Database Kodu</ui:define>
+											<h:inputText value="#{sirketHome.seciliSirket.databaseKoduERP}" size="15" maxlength="32" />
+										</s:decorate>
+
+									</c:if>
 								</c:if>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">LDAP</ui:define>
@@ -356,22 +381,22 @@
 											<h:outputText value="#{ortakIslemler.yonetici2Aciklama()}" />
 										</f:facet>
 										<ui:fragment rendered="#{personelView.pdksPersonel.yonetici2!=null}">
-									<ui:fragment rendered="#{personelView.pdksPersonel.yonetici2.calisiyor}">
-										<h:outputText value="#{personelView.pdksPersonel.yonetici2.adSoyad}" />
-									</ui:fragment>
-									<ui:fragment rendered="#{personelView.pdksPersonel.yonetici2.calisiyor==false}">
-										<span id="yonetici2#{personelView.pdksPersonel.id}" style="color: red"><h:outputText
-												value="#{personelView.pdksPersonel.yonetici2.adSoyad}" /></span>
+											<ui:fragment rendered="#{personelView.pdksPersonel.yonetici2.calisiyor}">
+												<h:outputText value="#{personelView.pdksPersonel.yonetici2.adSoyad}" />
+											</ui:fragment>
+											<ui:fragment rendered="#{personelView.pdksPersonel.yonetici2.calisiyor==false}">
+												<span id="yonetici2#{personelView.pdksPersonel.id}" style="color: red"><h:outputText
+														value="#{personelView.pdksPersonel.yonetici2.adSoyad}" /></span>
 
-										<rich:toolTip for="yonetici2#{personelView.pdksPersonel.id}">
+												<rich:toolTip for="yonetici2#{personelView.pdksPersonel.id}">
 										#{personelView.pdksPersonel.yonetici2.pdksSicilNo} - #{personelView.pdksPersonel.yonetici2.adSoyad}<br></br>
 
-											<b>İşten Ayrılma Tarihi : </b>
+													<b>İşten Ayrılma Tarihi : </b>
 											 #{authenticatedUser.dateFormatla(personelView.pdksPersonel.yonetici2.istenAyrilisTarihi)} 
 										</rich:toolTip>
-									</ui:fragment>
+											</ui:fragment>
 
-								</ui:fragment>
+										</ui:fragment>
 									</rich:column>
 									<rich:column>
 										<f:facet name="header">
