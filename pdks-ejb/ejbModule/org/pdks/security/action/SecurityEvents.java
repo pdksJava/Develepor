@@ -1,10 +1,14 @@
 package org.pdks.security.action;
 
+import java.util.List;
+
+import javax.faces.application.FacesMessage;
 import javax.security.auth.login.LoginException;
 
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Observer;
+import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.security.FacesSecurityEvents;
@@ -54,6 +58,11 @@ public class SecurityEvents extends FacesSecurityEvents {
 			StatusMessages.instance().clearGlobalMessages();
 			StatusMessages.instance().addFromResourceBundleOrDefault(Severity.ERROR, key, PdksUtil.getMessageBundleMessage(key), "");
 		} else {
+			FacesMessages facesMessages = FacesMessages.instance();
+			List<FacesMessage> list = facesMessages.getCurrentGlobalMessages();
+			if (list.size() > 1) {
+
+			}
 		}
 
 	}
