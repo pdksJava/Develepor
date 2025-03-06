@@ -4,5 +4,8 @@ import javax.ejb.Local;
 
 @Local
 public interface IAuthenticator {
+
 	boolean authenticate();
+
+	String getAciklamaIslem();
 }

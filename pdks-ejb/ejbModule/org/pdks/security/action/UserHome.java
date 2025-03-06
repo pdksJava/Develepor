@@ -37,9 +37,6 @@ import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
 
 import com.Ostermiller.util.RandPass;
-import com.pdks.webservice.MailObject;
-import com.pdks.webservice.MailPersonel;
-import com.pdks.webservice.MailStatu;
 
 @Name("userHome")
 public class UserHome extends EntityHome<User> implements Serializable {
@@ -217,59 +214,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 		String str = MenuItemConstant.login;
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String username = (String) req.getParameter("username");
-		if (PdksUtil.hasStringValue(username)) {
-
-			if (username.indexOf("@") > 1)
-				username = PdksUtil.getInternetAdres(username);
-			User user = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_USERNAME, username, User.class, session);
-			if (user != null) {
-				if (user.isDurum()) {
-					if (user.getPdksPersonel().isCalisiyor()) {
-
-						MailObject mailObject = new MailObject();
-						MailPersonel mp = new MailPersonel();
-						mp.setAdiSoyadi(user.getAdSoyad());
-						mp.setEPosta(user.getEmail());
-						mailObject.setSubject("Şifre güncelleme");
-						mailObject.getToList().add(mp);
-						MailStatu ms = null;
-						Exception ex = null;
-						StringBuffer body = new StringBuffer();
-						Map<String, String> map = null;
-						try {
-							map = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
-
-						} catch (Exception e) {
-						}
-						String id = ortakIslemler.getEncodeStringByBase64("&userId=" + user.getId() + "&tarih=" + new Date().getTime());
-						String donusAdres = map.containsKey("host") ? map.get("host") : "";
-						body.append("<p><TABLE style=\"width: 270px;\"><TR>");
-						body.append("<td width=\"90px\"><a style=\"font-size: 16px;\" href=\"http://" + donusAdres + "/sifreDegistirme?id=" + id + "\"><b>Şifre güncellemek için tıklayınız.</b></a></td>");
-						body.append("</TR></TABLE></p>");
-						mailObject.setBody(body.toString());
-						try {
-							ms = ortakIslemler.mailSoapServisGonder(true, mailObject, null, "/email/fazlaMesaiTalepMail.xhtml", session);
-
-						} catch (Exception e) {
-							ex = e;
-						}
-						if (ms != null) {
-							if (ms.getDurum())
-								PdksUtil.addMessageAvailableInfo("Şifre güncellemek için " + user.getEmail() + " mail kutunuzu kontrol ediniz.");
-							else
-								PdksUtil.addMessageAvailableError(ms.getHataMesai());
-						} else if (ex != null)
-							PdksUtil.addMessageAvailableError(ex.getMessage());
-
-					} else
-						PdksUtil.addMessageAvailableWarn("Kullanıcı çalışmıyor!");
-				} else
-					PdksUtil.addMessageAvailableWarn("Kullanıcı aktif değildir!");
-
-			} else
-				PdksUtil.addMessageAvailableWarn("Hatalı kullanıcı adı giriniz!");
-		} else
-			PdksUtil.addMessageAvailableError("Kullanıcı adı giriniz!");
+		str = ortakIslemler.sifremiUnuttum(username, session);
 		return str;
 	}
 
