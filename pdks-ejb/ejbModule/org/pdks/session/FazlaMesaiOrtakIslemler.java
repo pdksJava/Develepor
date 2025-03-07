@@ -1239,15 +1239,33 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	 * @param donemAy
 	 * @param aylar
 	 * @param session
+	 * @return
 	 */
 	public int aylariDoldur(int donemYil, int donemAy, List<SelectItem> aylar, Session session) {
+		donemAy = aylariDoldurDurum(donemYil, donemAy, aylar, true, session);
+
+		return donemAy;
+
+	}
+
+	/**
+	 * @param donemYil
+	 * @param donemAy
+	 * @param aylar
+	 * @param donemDurum
+	 * @param session
+	 * @return
+	 */
+	public int aylariDoldurDurum(int donemYil, int donemAy, List<SelectItem> aylar, boolean donemDurum, Session session) {
+		if (donemDurum == false)
+			ortakIslemler.yilAyKontrol(donemYil, null, session);
 		Calendar cal = Calendar.getInstance();
 		int maxYil = cal.get(Calendar.YEAR);
 		int sonDonem = (maxYil * 100) + cal.get(Calendar.MONTH) + 1;
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
 		sb.append("select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
+		sb.append(" " + (donemDurum ? "inner" : "left") + " join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
 		sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0 ");
 		if (donemYil == maxYil) {
