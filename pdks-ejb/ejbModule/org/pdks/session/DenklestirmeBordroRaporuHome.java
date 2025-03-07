@@ -977,8 +977,13 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 		}
 
-		if (personelDenklestirmeList.isEmpty())
-			PdksUtil.addMessageWarn("İlgili döneme ait fazla mesai bulunamadı!");
+		if (personelDenklestirmeList.isEmpty()) {
+			if (fazlaMesaiHesaplaDurum == false)
+				PdksUtil.addMessageWarn("İlgili döneme ait fazla mesai bulunamadı!");
+			else
+				PdksUtil.addMessageWarn((tesisId != null ? ortakIslemler.tesisAciklama() : ortakIslemler.sirketAciklama()) + " Fazla Mesai Hesapla çalıştırın.");
+		}
+
 		else
 			fazlaMesaiHesaplaMenuAdi = ortakIslemler.getMenuAdi("fazlaMesaiHesapla");
 
