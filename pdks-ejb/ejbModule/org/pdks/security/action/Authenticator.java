@@ -372,7 +372,6 @@ public class Authenticator implements IAuthenticator, Serializable {
 				} else
 					addMessageAvailableError(credentials.getUsername().trim() + " kullanıcı adı Zaman Yönetimi-PDKS Sistemi'nde kayıtlı değildir!");
 
-				return sonuc;
 			} catch (Exception ex) {
 				logger.debug("Hata : " + ex.getMessage());
 
@@ -393,6 +392,8 @@ public class Authenticator implements IAuthenticator, Serializable {
 				logger.debug("authenticating " + username);
 			}
 		}
+		if (sonuc == false)
+			authenticatedUser = null;
 		return sonuc;
 
 	}
