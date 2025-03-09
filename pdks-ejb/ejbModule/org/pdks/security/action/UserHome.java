@@ -214,7 +214,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 		String str = MenuItemConstant.login;
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String username = (String) req.getParameter("username");
-		str = ortakIslemler.sifremiUnuttum(username, session);
+		str = ortakIslemler.sifremiUnuttum(null, username, session);
 		return str;
 	}
 

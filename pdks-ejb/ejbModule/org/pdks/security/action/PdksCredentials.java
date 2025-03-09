@@ -1,4 +1,4 @@
-package org.jboss.seam.security;
+package org.pdks.security.action;
 
 import static org.jboss.seam.ScopeType.SESSION;
 

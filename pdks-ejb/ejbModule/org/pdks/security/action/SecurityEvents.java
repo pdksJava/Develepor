@@ -2,24 +2,27 @@ package org.pdks.security.action;
 
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
 import javax.security.auth.login.LoginException;
 
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.security.FacesSecurityEvents;
 import org.jboss.seam.security.Identity;
+import org.pdks.entity.Liste;
 import org.pdks.security.entity.User;
 import org.pdks.session.PdksUtil;
 
 @Name("securityEvents")
 public class SecurityEvents extends FacesSecurityEvents {
+
 	@In(required = false)
 	User authenticatedUser;
+
+	@In(required = false)
+	List<Liste> mesajList;
 
 	private static boolean sifreUnuttum = false;
 
@@ -53,17 +56,17 @@ public class SecurityEvents extends FacesSecurityEvents {
 	@Observer(Identity.EVENT_LOGIN_FAILED)
 	public void addLoginFailedMessage(LoginException ex) {
 		String key = "org.jboss.seam.loginFailed";
-		StatusMessages statusMessages = StatusMessages.instance();
-		if (statusMessages == null || sifreUnuttum == false) {
+		boolean mesajYaz = true;
+		if (mesajList != null && mesajList.isEmpty() == false) {
 			StatusMessages.instance().clearGlobalMessages();
-			StatusMessages.instance().addFromResourceBundleOrDefault(Severity.ERROR, key, PdksUtil.getMessageBundleMessage(key), "");
-		} else {
-			FacesMessages facesMessages = FacesMessages.instance();
-			List<FacesMessage> list = facesMessages.getCurrentGlobalMessages();
-			if (list.size() > 1) {
-
+			if (mesajList.size() == 1) {
+				Liste liste = mesajList.get(0);
+				String id = liste.getId() != null ? (String) liste.getId() : null;
+				mesajYaz = PdksUtil.hasStringValue(id) == false || !id.equalsIgnoreCase("INFO");
 			}
 		}
+		if (mesajYaz)
+			StatusMessages.instance().addFromResourceBundleOrDefault(Severity.ERROR, key, PdksUtil.getMessageBundleMessage(key), "");
 
 	}
 

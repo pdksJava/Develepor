@@ -151,6 +151,7 @@ import org.pdks.pdf.action.HeaderLowagie;
 import org.pdks.pdf.action.PDFITextUtils;
 import org.pdks.pdf.action.PDFUtils;
 import org.pdks.quartz.KapiGirisGuncelleme;
+import org.pdks.security.action.Authenticator;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.OrganizasyonTipi;
 import org.pdks.security.entity.Role;
@@ -329,7 +330,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	public String sifremiUnuttum(String username, Session session) {
+	public String sifremiUnuttum(List<Liste> list, String username, Session session) {
 		String str = MenuItemConstant.login;
 		if (PdksUtil.hasStringValue(username)) {
 			if (username.indexOf("@") > 1)
@@ -367,21 +368,21 @@ public class OrtakIslemler implements Serializable {
 						}
 						if (ms != null) {
 							if (ms.getDurum())
-								PdksUtil.addMessageAvailableInfo("Şifre güncellemek için " + user.getEmail() + " mail kutunuzu kontrol ediniz.");
+								Authenticator.addMessageAvailableInfo(list, "Şifre güncellemek için " + user.getEmail() + " mail kutunuzu kontrol ediniz.");
 							else
-								PdksUtil.addMessageAvailableError(ms.getHataMesai());
+								Authenticator.addMessageAvailableError(list, ms.getHataMesai());
 						} else if (ex != null)
-							PdksUtil.addMessageAvailableError(ex.getMessage());
+							Authenticator.addMessageAvailableError(list, ex.getMessage());
 
 					} else
-						PdksUtil.addMessageAvailableWarn("Kullanıcı çalışmıyor!");
+						Authenticator.addMessageAvailableWarn(list, "Kullanıcı çalışmıyor!");
 				} else
-					PdksUtil.addMessageAvailableWarn("Kullanıcı aktif değildir!");
+					Authenticator.addMessageAvailableWarn(list, "Kullanıcı aktif değildir!");
 
 			} else
-				PdksUtil.addMessageAvailableWarn("Hatalı kullanıcı adı giriniz!");
+				Authenticator.addMessageAvailableWarn(list, "Hatalı kullanıcı adı giriniz!");
 		} else
-			PdksUtil.addMessageAvailableError("Kullanıcı adı giriniz!");
+			Authenticator.addMessageAvailableError(list, "Kullanıcı adı giriniz!");
 		return str;
 
 	}

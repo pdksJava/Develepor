@@ -44,12 +44,25 @@
 								</a4j:commandLink>
 							</ui:fragment>
 						</h:panelGrid>
+
 					</a4j:outputPanel>
 
-					<a4j:commandButton status="ajaxStatus" value="#{authenticator.aciklamaIslem}" action="#{identity.login}" reRender="login,sifre">
+					<a4j:commandButton status="ajaxStatus" value="#{authenticator.aciklamaIslem}" action="#{identity.login}" reRender="login,sifre,durum">
 						<s:defaultAction />
 					</a4j:commandButton>
+					<a4j:outputPanel id="durum">
+						<ui:fragment rendered="#{mesajList!=null}">
+							<a4j:repeat value="#{mesajList}" var="msg">
+								<table>
+									<tr>
+										<td align="right" width="30%"><h:graphicImage height="24" value="/img/#{msg.checked}" /></td>
+										<td width="70%" style="font-size:14px; color:#{msg.selected};">#{msg.value}</td>
+									</tr>
+								</table>
+							</a4j:repeat>
 
+						</ui:fragment>
+					</a4j:outputPanel>
 				</div>
 
 

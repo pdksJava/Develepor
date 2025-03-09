@@ -1,6 +1,7 @@
 package org.pdks.security.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,11 +19,12 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Transactional;
+import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.security.Credentials;
 import org.jboss.seam.security.Identity;
-import org.jboss.seam.security.PdksCredentials;
 import org.jboss.seam.security.management.IdentityManager;
 import org.jboss.seam.security.permission.PermissionManager;
+import org.pdks.entity.Liste;
 import org.pdks.entity.Personel;
 import org.pdks.erp.action.SapRfcManager;
 import org.pdks.erp.entity.SAPSunucu;
@@ -43,8 +45,6 @@ public class Authenticator implements IAuthenticator, Serializable {
 	 */
 	private static final long serialVersionUID = -5011682752102859161L;
 	static Logger logger = Logger.getLogger(Authenticator.class);
-	
-	
 
 	@In
 	Identity identity;
@@ -75,6 +75,9 @@ public class Authenticator implements IAuthenticator, Serializable {
 	@Out(scope = ScopeType.SESSION, required = false)
 	String kisaKullaniciAdi;
 
+	@Out(scope = ScopeType.SESSION, required = false)
+	List<Liste> mesajList;
+
 	@In(create = true)
 	PdksEntityController pdksEntityController;
 
@@ -82,16 +85,76 @@ public class Authenticator implements IAuthenticator, Serializable {
 
 	private Session session;
 
+	/**
+	 * @param list
+	 * @param str
+	 */
+	public static void addMessageAvailableInfo(List<Liste> list, String str) {
+		if (list != null) {
+			Liste liste = new Liste(Severity.INFO.name(), str);
+			liste.setSelected("blue");
+			liste.setChecked("msginfo.png");
+			list.add(liste);
+		}
+		PdksUtil.addMessageAvailableInfo(str);
+	}
+
+	/**
+	 * @param list
+	 * @param str
+	 */
+	public static void addMessageAvailableError(List<Liste> list, String str) {
+		if (list != null) {
+			Liste liste = new Liste(Severity.ERROR.name(), str);
+			liste.setSelected("red");
+			liste.setChecked("msgerror.png");
+			list.add(liste);
+		}
+		PdksUtil.addMessageAvailableError(str);
+	}
+
+	/**
+	 * @param list
+	 * @param str
+	 */
+	public static void addMessageAvailableWarn(List<Liste> list, String str) {
+		if (list != null) {
+			Liste liste = new Liste(Severity.WARN.name(), str);
+			liste.setSelected("black");
+			liste.setChecked("msgwarn.png");
+			list.add(liste);
+		}
+		PdksUtil.addMessageAvailableWarn(str);
+	}
+
+	/**
+	 * @param str
+	 */
+	private void addMessageAvailableWarn(String str) {
+		addMessageAvailableWarn(mesajList, str);
+	}
+
+	/**
+	 * @param str
+	 */
+	private void addMessageAvailableError(String str) {
+		addMessageAvailableError(mesajList, str);
+	}
+
 	@Transactional
 	public boolean authenticate() {
 		session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		session.clear();
+		if (mesajList == null)
+			mesajList = new ArrayList<Liste>();
+		else
+			mesajList.clear();
 		String username = credentials.getUsername();
 		String userName = username.trim();
 		boolean sonuc = Boolean.FALSE;
 		if (pdksCredentials.isForgetPassword()) {
 			pdksCredentials.setForgetPassword(false);
-			ortakIslemler.sifremiUnuttum(userName, session);
+			ortakIslemler.sifremiUnuttum(mesajList, userName, session);
 		} else {
 			String password = credentials.getPassword();
 			Map<String, String> map = null;
@@ -195,7 +258,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 
 					authenticatedUser.setDurum(authenticatedUser.getPdksPersonel().isCalisiyor());
 					if (!authenticatedUser.isDurum())
-						PdksUtil.addMessageAvailableWarn(authenticatedUser.getAdSoyad() + " ait işe giriş çıkış tarihinde uyumsuz");
+						addMessageAvailableWarn(authenticatedUser.getAdSoyad() + " ait işe giriş çıkış tarihinde uyumsuz");
 					else {
 						if (authenticatedUser.isLdapUse() || sonuc) {
 							// ldap kullanıyorsa
@@ -307,7 +370,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 						}
 					}
 				} else
-					PdksUtil.addMessageAvailableError(credentials.getUsername().trim() + " kullanıcı adı Zaman Yönetimi-PDKS Sistemi'nde kayıtlı değildir!");
+					addMessageAvailableError(credentials.getUsername().trim() + " kullanıcı adı Zaman Yönetimi-PDKS Sistemi'nde kayıtlı değildir!");
 
 				return sonuc;
 			} catch (Exception ex) {
