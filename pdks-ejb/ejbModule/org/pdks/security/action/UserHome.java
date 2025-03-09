@@ -265,7 +265,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 					dakika = 5;
 				if (tarih == null || PdksUtil.addTarih(tarih, Calendar.MINUTE, dakika).before(new Date())) {
 					PdksUtil.addMessageAvailableWarn("Link geçersizdir");
-					sayfa = MenuItemConstant.login;
+					// sayfa = MenuItemConstant.login;
 				} else if (param.containsKey("userId")) {
 					user = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, new Long(param.get("userId")), User.class, session);
 				}
