@@ -55,19 +55,19 @@ public class SecurityEvents extends FacesSecurityEvents {
 	@Override
 	@Observer(Identity.EVENT_LOGIN_FAILED)
 	public void addLoginFailedMessage(LoginException ex) {
-		String key = "org.jboss.seam.loginFailed";
 		boolean mesajYaz = true;
+		StatusMessages.instance().clearGlobalMessages();
 		if (mesajList != null && mesajList.isEmpty() == false) {
-			StatusMessages.instance().clearGlobalMessages();
 			if (mesajList.size() == 1) {
 				Liste liste = mesajList.get(0);
 				mesajYaz = false;
 				PdksUtil.addMessage((String) liste.getValue(), (Severity) liste.getId(), false);
 			}
 		}
-		if (mesajYaz)
+		if (mesajYaz) {
+			String key = "org.jboss.seam.loginFailed";
 			StatusMessages.instance().addFromResourceBundleOrDefault(Severity.ERROR, key, PdksUtil.getMessageBundleMessage(key), "");
-
+		}
 	}
 
 	public static boolean isSifreUnuttum() {

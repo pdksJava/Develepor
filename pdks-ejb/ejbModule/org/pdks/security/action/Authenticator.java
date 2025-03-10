@@ -232,7 +232,6 @@ public class Authenticator implements IAuthenticator, Serializable {
 					if (session != null)
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 					authenticatedUser = (User) pdksEntityController.getObjectBySQL(sb, parametreMap, User.class);
-
 					if (authenticatedUser != null) {
 						logger.info(authenticatedUser.getUsername() + " kullanıcı bilgisi okundu.");
 						authenticatedUser.setUsername(ldapUser.getUsername());
@@ -290,6 +289,9 @@ public class Authenticator implements IAuthenticator, Serializable {
 						} else {
 
 							sonuc = (authenticatedUser.getPasswordHash().equals(encodePassword));
+							if (sonuc == false) {
+								addMessageAvailableError(credentials.getUsername().trim() + " kullanıcısının şifre hatalıdır!");
+							}
 						}
 						if (sonuc) {
 							username = authenticatedUser.getUsername();
@@ -370,7 +372,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 						}
 					}
 				} else if (mesajList.isEmpty())
-					addMessageAvailableError(credentials.getUsername().trim() + " kullanıcı adı Zaman Yönetimi-PDKS Sistemi'nde kayıtlı değildir!");
+					addMessageAvailableError(credentials.getUsername().trim() + " kullanıcı adı sistemde kayıtlı değildir!");
 
 			} catch (Exception ex) {
 				logger.debug("Hata : " + ex.getMessage());
