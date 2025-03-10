@@ -6704,12 +6704,33 @@ public class OrtakIslemler implements Serializable {
 		List<String> referansNoStartList = null;
 		List<IzinERP> yeniler = null;
 		if (getParameterKeyHasStringValue(parameterName)) {
+			String izinERPTableViewAdi = getParameterKey(parameterName);
 			HashMap<String, Date> updateMap = new HashMap<String, Date>();
 			if (perList == null && referansNoList == null) {
-				Date tarih = PdksUtil.tariheAyEkleCikar(new Date(), -2);
 				HashMap fields = new HashMap();
-				String izinERPTableViewAdi = getParameterKey(parameterName);
 				StringBuffer sb = new StringBuffer();
+				sb.append(" select P.* from " + IzinReferansERP.TABLE_NAME + " E " + PdksEntityController.getSelectLOCK());
+				sb.append(" inner join " + PersonelIzin.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + PersonelIzin.COLUMN_NAME_ID + " = E." + IzinReferansERP.COLUMN_NAME_IZIN_ID);
+				sb.append(" and P." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (" + PersonelIzin.IZIN_DURUMU_REDEDILDI + "," + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + ")");
+				sb.append(" where E." + IzinReferansERP.COLUMN_NAME_ID + " not in (select " + IzinERPDB.COLUMN_NAME_REFERANS_NO + " from " + izinERPTableViewAdi + " " + PdksEntityController.getSelectLOCK() + ")");
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List<PersonelIzin> izinList = pdksEntityController.getObjectBySQLList(sb, fields, PersonelIzin.class);
+				if (!izinList.isEmpty()) {
+					for (PersonelIzin personelIzin : izinList) {
+						personelIzin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
+						personelIzin.setGuncellemeTarihi(new Date());
+						pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
+
+					}
+					session.flush();
+				}
+				izinList = null;
+
+				Date tarih = PdksUtil.tariheAyEkleCikar(new Date(), -2);
+				fields.clear();
+
+				sb = new StringBuffer();
 				sb.append("select distinct V." + IzinERPDB.COLUMN_NAME_REFERANS_NO + " from " + izinERPTableViewAdi + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = V." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
 				sb.append(" where V." + IzinERPDB.COLUMN_NAME_REFERANS_NO + " not in (");

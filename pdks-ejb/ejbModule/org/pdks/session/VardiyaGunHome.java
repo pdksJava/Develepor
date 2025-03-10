@@ -4663,12 +4663,19 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
 
 					ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, null, session);
+
 				}
 
 				aramaSecenekleri.setSirketIdList(sirketler);
 
 			}
 			aramaSecenekleri.setSirket(sirket);
+			if (sirket != null && sirketler.size() == 1) {
+				if (sirket.isTesisDurumu())
+					fillTesisDoldur(true);
+				else
+					bolumDoldur();
+			}
 		}
 
 		gorevTipiId = null;
