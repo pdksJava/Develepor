@@ -96,7 +96,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 			liste.setChecked("msginfo.png");
 			list.add(liste);
 		}
-		PdksUtil.addMessageAvailableInfo(str);
+		// PdksUtil.addMessageAvailableInfo(str);
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 			liste.setChecked("msgerror.png");
 			list.add(liste);
 		}
-		PdksUtil.addMessageAvailableError(str);
+		// PdksUtil.addMessageAvailableError(str);
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 			liste.setChecked("msgwarn.png");
 			list.add(liste);
 		}
-		PdksUtil.addMessageAvailableWarn(str);
+		// PdksUtil.addMessageAvailableWarn(str);
 	}
 
 	/**
