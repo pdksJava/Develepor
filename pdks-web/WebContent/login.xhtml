@@ -35,16 +35,10 @@
 							<ui:fragment rendered="#{ortakIslemler.getParameterKeyHasStringValue('sifreUnuttum')}">
 								<h:outputLabel for="forgetPassword">Şifre Unuttum</h:outputLabel>
 								<h:selectBooleanCheckbox id="forgetPassword" value="#{pdksCredentials.forgetPassword}">
-									<a4j:support event="onclick" reRender="login" status="ajaxStatus" ajaxSingle="true" />
-
+									<a4j:support event="onclick" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="login,password" status="ajaxStatus" ajaxSingle="true" />
 								</h:selectBooleanCheckbox>
-								<a4j:commandLink action="#{userHome.sifreUnuttumAction()}" rendered="false" value="Şifre Unuttum" status="ajaxStatus" ajaxSingle="true"
-									reRender="login,sifre">
-									<f:param name="username" value="#{credentials.username}" />
-								</a4j:commandLink>
 							</ui:fragment>
 						</h:panelGrid>
-
 					</a4j:outputPanel>
 
 					<a4j:commandButton status="ajaxStatus" value="#{authenticator.aciklamaIslem}" action="#{identity.login}" reRender="login,sifre,durum">
@@ -55,8 +49,8 @@
 							<table>
 								<a4j:repeat value="#{mesajList}" var="msg">
 									<tr>
-										<td align="right" width="30%"><h:graphicImage height="24" value="/img/#{msg.checked}" /></td>
-										<td width="70%" style="font-size:14px; color:#{msg.selected};">#{msg.value}</td>
+										<td width="15%" align="right"><h:graphicImage height="24" value="/img/#{msg.checked}" /></td>
+										<td width="85%" style="font-size:12px; color:#{msg.selected};">#{msg.value}</td>
 									</tr>
 								</a4j:repeat>
 							</table>
