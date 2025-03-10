@@ -279,7 +279,8 @@ public class Authenticator implements IAuthenticator, Serializable {
 									if (ldapHataDonusKodu != null) {
 										String mesaj = PdksUtil.getMessageBundleMessage(LDAPUserManager.LDAP_HATA_KODU_KEY_ON_EK + ldapHataDonusKodu);
 										logger.info(mesaj + " ( " + userName + " )");
-									}
+										addMessageAvailableError(mesaj + " ( " + userName + " )");
+ 									}
 
 								} catch (Exception e2) {
 									logger.error(e2.getLocalizedMessage());
@@ -287,12 +288,10 @@ public class Authenticator implements IAuthenticator, Serializable {
 							}
 
 						} else {
-
-							sonuc = (authenticatedUser.getPasswordHash().equals(encodePassword));
-							if (sonuc == false) {
+ 							sonuc = (authenticatedUser.getPasswordHash().equals(encodePassword));
+							if (sonuc == false)  
 								addMessageAvailableError(credentials.getUsername().trim() + " kullanıcısının şifre hatalıdır!");
-							}
-						}
+ 						}
 						if (sonuc) {
 							username = authenticatedUser.getUsername();
 							FacesContext context = FacesContext.getCurrentInstance();
@@ -327,16 +326,12 @@ public class Authenticator implements IAuthenticator, Serializable {
 							try {
 
 								List<SAPSunucu> sapSunucular = pdksEntityController.getSQLParamByFieldList(SAPSunucu.TABLE_NAME, SAPSunucu.COLUMN_NAME_DURUM, SAPSunucu.DURUM_AKTIF, SAPSunucu.class, session);
-
-								if (!sapSunucular.isEmpty())
+ 								if (!sapSunucular.isEmpty())
 									logger.info("ERP sunucuları okundu.");
-
-								SapRfcManager.setSapSunucular(sapSunucular);
-
-								if (authenticatedUser.getYetkiliRollerim().isEmpty())
+ 								SapRfcManager.setSapSunucular(sapSunucular);
+ 								if (authenticatedUser.getYetkiliRollerim().isEmpty())
 									authenticatedUser = ortakIslemler.personelPdksRolAta(authenticatedUser, Boolean.TRUE, session);
 								if (PdksUtil.getBundleName() == null) {
-
 									try {
 										PdksUtil.setBundleName(context.getApplication().getMessageBundle());
 
