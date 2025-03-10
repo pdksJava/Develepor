@@ -369,7 +369,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 							authenticatedUser.setLogin(Boolean.TRUE);
 						}
 					}
-				} else
+				} else if (mesajList.isEmpty())
 					addMessageAvailableError(credentials.getUsername().trim() + " kullanıcı adı Zaman Yönetimi-PDKS Sistemi'nde kayıtlı değildir!");
 
 			} catch (Exception ex) {
@@ -421,8 +421,20 @@ public class Authenticator implements IAuthenticator, Serializable {
 			authenticated = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, fieldName, userName, User.class, session);
 
 		if (authenticated != null) {
-			if (authenticated.isDurum() == false || authenticated.getDepartman() == null || authenticated.getPdksPersonel().getDurum().equals(Boolean.FALSE) || authenticated.getPdksPersonel().isCalisiyor() == false)
+			Personel personel = authenticated.getPdksPersonel();
+			if (authenticated.isDurum() == false || authenticated.getDepartman() == null || personel == null || personel.getDurum().equals(Boolean.FALSE) || personel.isCalisiyor() == false) {
+				if (authenticated.isDurum() == false) {
+					addMessageAvailableError(authenticated.getUsername() + " kullanıcısı aktif değildir!");
+				} else if (authenticated.getDepartman() == null)
+					addMessageAvailableError(authenticated.getUsername() + " kullanıcısı departmanı tanımlı değildir!");
+				else if (personel != null) {
+					if (personel.isCalisiyor() == false)
+						addMessageAvailableError(personel.getAdSoyad() + " personel işten ayrılmıştır!");
+					else if (personel.getDurum().booleanValue() == false)
+						addMessageAvailableError(personel.getAdSoyad() + " personel aktif değildir!");
+				}
 				authenticated = null;
+			}
 
 		}
 		return authenticated;

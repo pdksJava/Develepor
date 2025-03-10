@@ -52,15 +52,14 @@
 					</a4j:commandButton>
 					<a4j:outputPanel id="durum">
 						<ui:fragment rendered="#{mesajList.size() gt 1}">
-							<a4j:repeat value="#{mesajList}" var="msg">
-								<table>
+							<table>
+								<a4j:repeat value="#{mesajList}" var="msg">
 									<tr>
 										<td align="right" width="30%"><h:graphicImage height="24" value="/img/#{msg.checked}" /></td>
 										<td width="70%" style="font-size:14px; color:#{msg.selected};">#{msg.value}</td>
 									</tr>
-								</table>
-							</a4j:repeat>
-
+								</a4j:repeat>
+							</table>
 						</ui:fragment>
 					</a4j:outputPanel>
 				</div>
