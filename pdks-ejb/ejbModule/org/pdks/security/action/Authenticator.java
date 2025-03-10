@@ -91,7 +91,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 	 */
 	public static void addMessageAvailableInfo(List<Liste> list, String str) {
 		if (list != null) {
-			Liste liste = new Liste(Severity.INFO.name(), str);
+			Liste liste = new Liste(Severity.INFO, str);
 			liste.setSelected("blue");
 			liste.setChecked("msginfo.png");
 			list.add(liste);
@@ -105,7 +105,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 	 */
 	public static void addMessageAvailableError(List<Liste> list, String str) {
 		if (list != null) {
-			Liste liste = new Liste(Severity.ERROR.name(), str);
+			Liste liste = new Liste(Severity.ERROR, str);
 			liste.setSelected("red");
 			liste.setChecked("msgerror.png");
 			list.add(liste);
@@ -119,7 +119,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 	 */
 	public static void addMessageAvailableWarn(List<Liste> list, String str) {
 		if (list != null) {
-			Liste liste = new Liste(Severity.WARN.name(), str);
+			Liste liste = new Liste(Severity.WARN, str);
 			liste.setSelected("black");
 			liste.setChecked("msgwarn.png");
 			list.add(liste);

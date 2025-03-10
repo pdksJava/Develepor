@@ -51,7 +51,7 @@
 						<s:defaultAction />
 					</a4j:commandButton>
 					<a4j:outputPanel id="durum">
-						<ui:fragment rendered="#{mesajList!=null}">
+						<ui:fragment rendered="#{mesajList.size() gt 1}">
 							<a4j:repeat value="#{mesajList}" var="msg">
 								<table>
 									<tr>

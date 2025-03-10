@@ -2383,7 +2383,7 @@ public class PdksUtil implements Serializable {
 	 * @param severity
 	 * @param yeni
 	 */
-	private static void addMessage(String message, Severity severity, Boolean yeni) {
+	public static void addMessage(String message, Severity severity, Boolean yeni) {
 		Object object = Component.getInstance("facesMessages");
 		if (object != null) {
 			FacesMessages facesMessages = (FacesMessages) object;

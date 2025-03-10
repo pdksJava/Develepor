@@ -61,8 +61,8 @@ public class SecurityEvents extends FacesSecurityEvents {
 			StatusMessages.instance().clearGlobalMessages();
 			if (mesajList.size() == 1) {
 				Liste liste = mesajList.get(0);
-				String id = liste.getId() != null ? (String) liste.getId() : null;
-				mesajYaz = PdksUtil.hasStringValue(id) == false || !id.equalsIgnoreCase("INFO");
+				mesajYaz = false;
+				PdksUtil.addMessage((String) liste.getValue(), (Severity) liste.getId(), false);
 			}
 		}
 		if (mesajYaz)
