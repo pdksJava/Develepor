@@ -6707,27 +6707,35 @@ public class OrtakIslemler implements Serializable {
 			String izinERPTableViewAdi = getParameterKey(parameterName);
 			HashMap<String, Date> updateMap = new HashMap<String, Date>();
 			if (perList == null && referansNoList == null) {
+				Calendar cal = Calendar.getInstance();
+				Date tarih = PdksUtil.tariheAyEkleCikar(cal.getTime(), -2);
 				HashMap fields = new HashMap();
 				StringBuffer sb = new StringBuffer();
-				sb.append(" select P.* from " + IzinReferansERP.TABLE_NAME + " E " + PdksEntityController.getSelectLOCK());
-				sb.append(" inner join " + PersonelIzin.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + PersonelIzin.COLUMN_NAME_ID + " = E." + IzinReferansERP.COLUMN_NAME_IZIN_ID);
-				sb.append(" and P." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (" + PersonelIzin.IZIN_DURUMU_REDEDILDI + "," + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + ")");
-				sb.append(" where E." + IzinReferansERP.COLUMN_NAME_ID + " not in (select " + IzinERPDB.COLUMN_NAME_REFERANS_NO + " from " + izinERPTableViewAdi + " " + PdksEntityController.getSelectLOCK() + ")");
-				if (session != null)
-					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<PersonelIzin> izinList = pdksEntityController.getObjectBySQLList(sb, fields, PersonelIzin.class);
-				if (!izinList.isEmpty()) {
-					for (PersonelIzin personelIzin : izinList) {
-						personelIzin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
-						personelIzin.setGuncellemeTarihi(new Date());
-						pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
-
-					}
-					session.flush();
+				boolean iptalDevam = authenticatedUser != null && (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi());
+				if (!iptalDevam) {
+					int saat = cal.get(Calendar.HOUR_OF_DAY), dakika = cal.get(Calendar.MINUTE);
+					iptalDevam = (saat < 8 || saat > 18) && dakika == 0;
 				}
-				izinList = null;
+				if (iptalDevam) {
+					sb.append(" select P.* from " + IzinReferansERP.TABLE_NAME + " E " + PdksEntityController.getSelectLOCK());
+					sb.append(" inner join " + PersonelIzin.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + PersonelIzin.COLUMN_NAME_ID + " = E." + IzinReferansERP.COLUMN_NAME_IZIN_ID);
+					sb.append(" and P." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (" + PersonelIzin.IZIN_DURUMU_REDEDILDI + "," + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + ")");
+					sb.append(" where E." + IzinReferansERP.COLUMN_NAME_ID + " not in (select " + IzinERPDB.COLUMN_NAME_REFERANS_NO + " from " + izinERPTableViewAdi + " " + PdksEntityController.getSelectLOCK() + ")");
+					if (session != null)
+						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+					List<PersonelIzin> izinList = pdksEntityController.getObjectBySQLList(sb, fields, PersonelIzin.class);
+					if (!izinList.isEmpty()) {
+						for (PersonelIzin personelIzin : izinList) {
+							personelIzin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
+							personelIzin.setGuncellemeTarihi(new Date());
+							pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
 
-				Date tarih = PdksUtil.tariheAyEkleCikar(new Date(), -2);
+						}
+						session.flush();
+					}
+					izinList = null;
+				}
+
 				fields.clear();
 
 				sb = new StringBuffer();
