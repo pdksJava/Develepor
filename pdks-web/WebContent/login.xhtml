@@ -9,14 +9,14 @@
 	<ui:define name="body">
 
 		<h:form id="login">
-			<ui:fragment rendered="#{ortakIslemler.getParameterKeyHasStringValue('sifreUnuttum')}">
-				<a4j:outputPanel ajaxRendered="true">
-					<h:messages id="messages" styleClass="message" globalOnly="true" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
-				</a4j:outputPanel>
-			</ui:fragment>
+
+
 			<rich:panel>
 
 				<f:facet name="header">Giriş</f:facet>
+				<a4j:outputPanel ajaxRendered="true">
+					<h:messages id="messages" styleClass="message" globalOnly="true" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+				</a4j:outputPanel>
 
 
 				<div class="dialog" style="height: 400px">
