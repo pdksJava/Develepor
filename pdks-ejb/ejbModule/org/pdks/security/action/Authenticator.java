@@ -153,8 +153,11 @@ public class Authenticator implements IAuthenticator, Serializable {
 		String userName = username.trim();
 		boolean sonuc = Boolean.FALSE;
 		if (pdksCredentials.isForgetPassword()) {
-			pdksCredentials.setForgetPassword(false);
-			ortakIslemler.sifremiUnuttum(mesajList, userName, session);
+			User user = getKullanici(username, User.COLUMN_NAME_USERNAME);
+			if (user != null) {
+				pdksCredentials.setForgetPassword(false);
+				ortakIslemler.sifremiUnuttum(mesajList, user.getUsername(), session);
+			}
 		} else {
 			String password = credentials.getPassword();
 			Map<String, String> map = null;
@@ -280,7 +283,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 										String mesaj = PdksUtil.getMessageBundleMessage(LDAPUserManager.LDAP_HATA_KODU_KEY_ON_EK + ldapHataDonusKodu);
 										logger.info(mesaj + " ( " + userName + " )");
 										addMessageAvailableError(mesaj + " ( " + userName + " )");
- 									}
+									}
 
 								} catch (Exception e2) {
 									logger.error(e2.getLocalizedMessage());
@@ -288,10 +291,10 @@ public class Authenticator implements IAuthenticator, Serializable {
 							}
 
 						} else {
- 							sonuc = (authenticatedUser.getPasswordHash().equals(encodePassword));
-							if (sonuc == false)  
+							sonuc = (authenticatedUser.getPasswordHash().equals(encodePassword));
+							if (sonuc == false)
 								addMessageAvailableError(credentials.getUsername().trim() + " kullanıcısının şifre hatalıdır!");
- 						}
+						}
 						if (sonuc) {
 							username = authenticatedUser.getUsername();
 							FacesContext context = FacesContext.getCurrentInstance();
@@ -326,10 +329,10 @@ public class Authenticator implements IAuthenticator, Serializable {
 							try {
 
 								List<SAPSunucu> sapSunucular = pdksEntityController.getSQLParamByFieldList(SAPSunucu.TABLE_NAME, SAPSunucu.COLUMN_NAME_DURUM, SAPSunucu.DURUM_AKTIF, SAPSunucu.class, session);
- 								if (!sapSunucular.isEmpty())
+								if (!sapSunucular.isEmpty())
 									logger.info("ERP sunucuları okundu.");
- 								SapRfcManager.setSapSunucular(sapSunucular);
- 								if (authenticatedUser.getYetkiliRollerim().isEmpty())
+								SapRfcManager.setSapSunucular(sapSunucular);
+								if (authenticatedUser.getYetkiliRollerim().isEmpty())
 									authenticatedUser = ortakIslemler.personelPdksRolAta(authenticatedUser, Boolean.TRUE, session);
 								if (PdksUtil.getBundleName() == null) {
 									try {
@@ -421,14 +424,14 @@ public class Authenticator implements IAuthenticator, Serializable {
 			Personel personel = authenticated.getPdksPersonel();
 			if (authenticated.isDurum() == false || authenticated.getDepartman() == null || personel == null || personel.getDurum().equals(Boolean.FALSE) || personel.isCalisiyor() == false) {
 				if (authenticated.isDurum() == false) {
-					addMessageAvailableError(authenticated.getUsername() + " kullanıcısı aktif değildir!");
+					addMessageAvailableError((personel != null ? personel.getAdSoyad() + " personelin " : "") + authenticated.getUsername() + " kullanıcısı aktif değildir!");
 				} else if (authenticated.getDepartman() == null)
-					addMessageAvailableError(authenticated.getUsername() + " kullanıcısı departmanı tanımlı değildir!");
+					addMessageAvailableWarn((personel != null ? personel.getAdSoyad() + " personelin " : "") + authenticated.getUsername() + " kullanıcısı departmanı tanımlı değildir!");
 				else if (personel != null) {
 					if (personel.isCalisiyor() == false)
 						addMessageAvailableError(personel.getAdSoyad() + " personel işten ayrılmıştır!");
 					else if (personel.getDurum().booleanValue() == false)
-						addMessageAvailableError(personel.getAdSoyad() + " personel aktif değildir!");
+						addMessageAvailableWarn(personel.getAdSoyad() + " personel aktif değildir!");
 				}
 				authenticated = null;
 			}
