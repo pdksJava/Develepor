@@ -423,19 +423,17 @@ public class Authenticator implements IAuthenticator, Serializable {
 		if (authenticated != null) {
 			Personel personel = authenticated.getPdksPersonel();
 			if (authenticated.isDurum() == false || authenticated.getDepartman() == null || personel == null || personel.getDurum().equals(Boolean.FALSE) || personel.isCalisiyor() == false) {
-				if (authenticated.isDurum() == false) {
+				if (personel.isCalisiyor() == false)
+					addMessageAvailableError(personel.getAdSoyad() + " personel işten ayrılmıştır!");
+				else if (personel.getDurum().booleanValue() == false)
+					addMessageAvailableWarn(personel.getAdSoyad() + " personel aktif değildir!");
+				else if (authenticated.isDurum() == false) {
 					addMessageAvailableError((personel != null ? personel.getAdSoyad() + " personelin " : "") + authenticated.getUsername() + " kullanıcısı aktif değildir!");
 				} else if (authenticated.getDepartman() == null)
 					addMessageAvailableWarn((personel != null ? personel.getAdSoyad() + " personelin " : "") + authenticated.getUsername() + " kullanıcısı departmanı tanımlı değildir!");
-				else if (personel != null) {
-					if (personel.isCalisiyor() == false)
-						addMessageAvailableError(personel.getAdSoyad() + " personel işten ayrılmıştır!");
-					else if (personel.getDurum().booleanValue() == false)
-						addMessageAvailableWarn(personel.getAdSoyad() + " personel aktif değildir!");
-				}
+
 				authenticated = null;
 			}
-
 		}
 		return authenticated;
 	}
