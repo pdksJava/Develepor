@@ -29,16 +29,17 @@
 
 					</h:panelGrid>
 					<a4j:outputPanel id="login">
-						<h:panelGrid columns="3" width="300px">
-							<h:outputLabel for="rememberMe">Beni hatırla</h:outputLabel>
-							<h:selectBooleanCheckbox id="rememberMe" value="#{identity.rememberMe}" />
-							<ui:fragment rendered="#{ortakIslemler.getParameterKeyHasStringValue('sifreUnuttum')}">
-								<h:outputLabel for="forgetPassword">Şifre Unuttum</h:outputLabel>
-								<h:selectBooleanCheckbox id="forgetPassword" value="#{pdksCredentials.forgetPassword}">
-									<a4j:support event="onclick" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="login,password" status="ajaxStatus" ajaxSingle="true" />
-								</h:selectBooleanCheckbox>
-							</ui:fragment>
-						</h:panelGrid>
+						<table width="300px">
+							<tr>
+								<td width="50%"><h:outputLabel for="rememberMe">Beni hatırla</h:outputLabel> <h:selectBooleanCheckbox id="rememberMe" value="#{identity.rememberMe}" /></td>
+								<ui:fragment rendered="#{ortakIslemler.getParameterKeyHasStringValue('sifreUnuttum')}">
+									<td width="50%"><h:outputLabel for="forgetPassword">Şifre Unuttum</h:outputLabel> <h:selectBooleanCheckbox id="forgetPassword"
+											value="#{pdksCredentials.forgetPassword}">
+											<a4j:support event="onclick" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="login,password" status="ajaxStatus" ajaxSingle="true" />
+										</h:selectBooleanCheckbox></td>
+								</ui:fragment>
+							</tr>
+						</table>
 					</a4j:outputPanel>
 
 					<a4j:commandButton status="ajaxStatus" value="#{authenticator.aciklamaIslem}" action="#{identity.login}" reRender="login,sifre,durum">
