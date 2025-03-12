@@ -766,18 +766,18 @@ public class PdksVeriOrtakAktar implements Serializable {
 		boolean testDurum = getTestDurum();
 		String testMailAdres = mailDataMap.containsKey("testMailAdres") ? (String) mailDataMap.get("testMailAdres") : "pdkssayar@gmail.com";
 		if (!mailDataMap.containsKey(KEY_IK_MAIL_IPTAL)) {
-			if (PdksUtil.getCanliSunucuDurum()) {
-				List<String> ikYetkiliRoller = Arrays.asList(new String[] { Role.TIPI_IK, Role.TIPI_IK_SIRKET, Role.TIPI_IK_Tesis });
-				HashMap fields = new HashMap();
-				sb.append("select U.* from " + Role.TABLE_NAME + " R " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
-				sb.append(" inner join " + UserRoles.TABLE_NAME + " UR " + PdksVeriOrtakAktar.getJoinLOCK() + " on UR." + UserRoles.COLUMN_NAME_ROLE + " = R." + Role.COLUMN_NAME_ID);
-				sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER + " and U." + User.COLUMN_NAME_DURUM + " = 1 ");
-				sb.append(" inner join " + Departman.TABLE_NAME + " D " + PdksVeriOrtakAktar.getJoinLOCK() + " on D." + Departman.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_DEPARTMAN + " and D." + Departman.COLUMN_NAME_ADMIN_DURUM + " = 1 and D." + Departman.COLUMN_NAME_DURUM + " = 1 ");
-				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " > GETDATE() ");
-				sb.append(" where R." + Role.COLUMN_NAME_ROLE_NAME + " :r ");
-				fields.put("r", ikYetkiliRoller);
-				userList = dao.getNativeSQLList(fields, sb, User.class);
-			}
+
+			List<String> ikYetkiliRoller = Arrays.asList(new String[] { Role.TIPI_IK, Role.TIPI_IK_SIRKET, Role.TIPI_IK_Tesis });
+			HashMap fields = new HashMap();
+			sb.append("select U.* from " + Role.TABLE_NAME + " R " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
+			sb.append(" inner join " + UserRoles.TABLE_NAME + " UR " + PdksVeriOrtakAktar.getJoinLOCK() + " on UR." + UserRoles.COLUMN_NAME_ROLE + " = R." + Role.COLUMN_NAME_ID);
+			sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER + " and U." + User.COLUMN_NAME_DURUM + " = 1 ");
+			sb.append(" inner join " + Departman.TABLE_NAME + " D " + PdksVeriOrtakAktar.getJoinLOCK() + " on D." + Departman.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_DEPARTMAN + " and D." + Departman.COLUMN_NAME_ADMIN_DURUM + " = 1 and D." + Departman.COLUMN_NAME_DURUM + " = 1 ");
+			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " > GETDATE() ");
+			sb.append(" where R." + Role.COLUMN_NAME_ROLE_NAME + " :r ");
+			fields.put("r", ikYetkiliRoller);
+			userList = dao.getNativeSQLList(fields, sb, User.class);
+
 		}
 		String mailIcerik = "";
 		if (mailDataMap.containsKey("mailIcerik"))
@@ -797,7 +797,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					continue;
 				list.add(user.getEmail());
 				MailPersonel mailPersonel = new MailPersonel();
-				if (userIKList.size() == 1 && mailIcerik.length() > 1)
+				if (userList != null && userList.size() == 1 && mailIcerik.length() > 1)
 					mailIcerik = "Sayın <b>" + user.getAdSoyad() + "</b><br></br><br></br>" + mailIcerik;
 				mailPersonel.setAdiSoyadi(user.getAdSoyad());
 				String eposta = user.getEmail();
@@ -2527,10 +2527,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 					if (izinERP.getDurum().booleanValue() || personelIzin.getId() != null) {
 						if (personelIzin.getId() == null) {
- 							if (!(bitTarih.getTime() <= izinSahibi.getSskCikisTarihi().getTime() && (bitTarih.getTime() >= izinSahibi.getIseBaslamaTarihi().getTime() || bitTarih.getTime() >= izinSahibi.getIzinHakEdisTarihi().getTime())))
+							if (!(bitTarih.getTime() <= izinSahibi.getSskCikisTarihi().getTime() && (bitTarih.getTime() >= izinSahibi.getIseBaslamaTarihi().getTime() || bitTarih.getTime() >= izinSahibi.getIzinHakEdisTarihi().getTime())))
 								addHatalist(izinERP, izinSahibi, PdksUtil.convertToDateString(personelIzin.getBitisZamani(), FORMAT_DATE_TIME) + " tarihinde çalışmıyor!!");
 						}
-						
+
 						if (izinERP.getDurum().booleanValue() || donemKapali) {
 							fields.clear();
 							StringBuffer sb = new StringBuffer();
@@ -2824,7 +2824,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			map = null;
 		}
 		kayitIzinList = null;
-		if (hataList != null && !hataList.isEmpty()) {
+		if (hataList != null && !hataList.isEmpty() || (hataIKMap != null && !hataIKMap.isEmpty())) {
 			List<String> perNoList = new ArrayList<String>();
 			for (IzinERP izinERP : hataList) {
 				if (PdksUtil.hasStringValue(izinERP.getPersonelNo()) && !perNoList.contains(izinERP.getPersonelNo().trim()))
