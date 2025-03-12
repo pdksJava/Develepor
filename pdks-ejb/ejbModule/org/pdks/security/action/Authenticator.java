@@ -96,7 +96,6 @@ public class Authenticator implements IAuthenticator, Serializable {
 			liste.setChecked("msginfo.png");
 			list.add(liste);
 		}
-		// PdksUtil.addMessageAvailableInfo(str);
 	}
 
 	/**
@@ -110,7 +109,6 @@ public class Authenticator implements IAuthenticator, Serializable {
 			liste.setChecked("msgerror.png");
 			list.add(liste);
 		}
-		// PdksUtil.addMessageAvailableError(str);
 	}
 
 	/**
@@ -124,7 +122,6 @@ public class Authenticator implements IAuthenticator, Serializable {
 			liste.setChecked("msgwarn.png");
 			list.add(liste);
 		}
-		// PdksUtil.addMessageAvailableWarn(str);
 	}
 
 	/**
@@ -269,7 +266,6 @@ public class Authenticator implements IAuthenticator, Serializable {
 									if (ldapUser != null)
 										kisaKullaniciAdi = ldapUser.getStaffId();
 								}
-
 							} catch (Exception e) {
 								logger.error("PDKS hata in : \n");
 								e.printStackTrace();
@@ -281,12 +277,10 @@ public class Authenticator implements IAuthenticator, Serializable {
 										logger.info(mesaj + " ( " + userName + " )");
 										addMessageAvailableError(mesaj + " ( " + userName + " )");
 									}
-
 								} catch (Exception e2) {
 									logger.error(e2.getLocalizedMessage());
 								}
 							}
-
 						} else {
 							sonuc = (loginUser.getPasswordHash().equals(encodePassword));
 							if (sonuc == false)
@@ -305,12 +299,10 @@ public class Authenticator implements IAuthenticator, Serializable {
 										session.flush();
 									}
 								}
-
 							} catch (Exception e) {
 								logger.error("PDKS hata in : \n");
 								e.printStackTrace();
 								logger.error("PDKS hata out : " + e.getMessage());
-
 							}
 							credentials.setUsername(userName);
 							boolean browserIE = PdksUtil.isInternetExplorer((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
@@ -324,7 +316,6 @@ public class Authenticator implements IAuthenticator, Serializable {
 									identity.addRole(role.getRolename());
 							}
 							try {
-
 								List<SAPSunucu> sapSunucular = pdksEntityController.getSQLParamByFieldList(SAPSunucu.TABLE_NAME, SAPSunucu.COLUMN_NAME_DURUM, SAPSunucu.DURUM_AKTIF, SAPSunucu.class, session);
 								if (!sapSunucular.isEmpty())
 									logger.info("ERP sunucuları okundu.");
@@ -334,18 +325,15 @@ public class Authenticator implements IAuthenticator, Serializable {
 								if (PdksUtil.getBundleName() == null) {
 									try {
 										PdksUtil.setBundleName(context.getApplication().getMessageBundle());
-
 									} catch (Exception e) {
 										logger.error("PDKS hata in : \n");
 										e.printStackTrace();
 										logger.error("PDKS hata out : " + e.getMessage());
 										PdksUtil.setBundleName(null);
-
 									}
 								}
 								loginUser.setTestLogin(test);
 								loginUser.setCalistigiSayfa("anasayfa");
-
 								ortakIslemler.sistemeGirisIslemleri(loginUser, Boolean.TRUE, null, null, session);
 								logger.info(loginUser.getUsername() + " " + loginUser.getAdSoyad() + " " + (loginUser.getEmail() != null && !loginUser.getEmail().equals(loginUser.getUsername()) ? loginUser.getEmail() + " E-postali" : "") + " kullanıcısı PDKS sistemine login oldu. "
 										+ PdksUtil.getCurrentTimeStampStr());
@@ -374,13 +362,10 @@ public class Authenticator implements IAuthenticator, Serializable {
 				logger.debug("Hata : " + ex.getMessage());
 
 				try {
-
 					List perList = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_ID, 1L, Personel.class, session);
 					logger.info(loginUser.getUsername() + " kullanıcı bilgisi okundu.");
-
 					if (!perList.isEmpty())
 						logger.error(perList.size() + " " + PdksUtil.getCurrentTimeStampStr());
-
 				} catch (Exception e) {
 					logger.error("PDKS hata in : \n");
 					e.printStackTrace();
@@ -407,9 +392,6 @@ public class Authenticator implements IAuthenticator, Serializable {
 		if (userName.indexOf("%") > 0) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("select S.* from " + User.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
-			// sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = S." + User.COLUMN_NAME_PERSONEL);
-			// sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= convert(date,GETDATE()) and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
-			// if (userName.indexOf("%") > 0)
 			sb.append(" where S." + fieldName + " like :userName");
 			HashMap fields = new HashMap();
 			fields.put("userName", userName);
@@ -430,7 +412,6 @@ public class Authenticator implements IAuthenticator, Serializable {
 					addMessageAvailableError((personel != null ? personel.getAdSoyad() + " personelin " : "") + user.getUsername() + " kullanıcısı aktif değildir!");
 				} else if (user.getDepartman() == null)
 					addMessageAvailableWarn((personel != null ? personel.getAdSoyad() + " personelin " : "") + user.getUsername() + " kullanıcısı departmanı tanımlı değildir!");
-
 				user = null;
 			}
 		}
