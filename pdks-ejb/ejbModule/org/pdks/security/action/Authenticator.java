@@ -154,8 +154,11 @@ public class Authenticator implements IAuthenticator, Serializable {
 		if (pdksCredentials.isForgetPassword()) {
 			User user = getKullanici(username, User.COLUMN_NAME_USERNAME);
 			if (user != null) {
-				pdksCredentials.setForgetPassword(false);
-				ortakIslemler.sifremiUnuttum(mesajList, user.getUsername(), session);
+				if (user.getPdksPersonel().getSirket().isLdap() == false) {
+					pdksCredentials.setForgetPassword(false);
+					ortakIslemler.sifremiUnuttum(mesajList, user.getUsername(), session);
+				} else
+					addMessageAvailableWarn("Bu işlem " + user.getUsername() + " kullanıcısı için geçersizdir!");
 			}
 		} else {
 			String password = credentials.getPassword();
