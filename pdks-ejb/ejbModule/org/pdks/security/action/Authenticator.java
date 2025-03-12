@@ -360,7 +360,8 @@ public class Authenticator implements IAuthenticator, Serializable {
 					}
 				} else if (mesajList.isEmpty())
 					addMessageAvailableError(credentials.getUsername().trim() + " kullanıcı adı sistemde kayıtlı değildir!");
-
+				sonuc = getSonDurum(sonuc, loginUser);
+				return sonuc;
 			} catch (Exception ex) {
 				logger.debug("Hata : " + ex.getMessage());
 
@@ -378,11 +379,21 @@ public class Authenticator implements IAuthenticator, Serializable {
 				logger.debug("authenticating " + username);
 			}
 		}
+		sonuc = getSonDurum(sonuc, loginUser);
+		return sonuc;
+
+	}
+
+	/**
+	 * @param sonuc
+	 * @param loginUser
+	 * @return
+	 */
+	private boolean getSonDurum(boolean sonuc, User loginUser) {
 		if (loginUser == null || loginUser.getId() == null)
 			sonuc = false;
 		authenticatedUser = sonuc ? loginUser : null;
 		return sonuc;
-
 	}
 
 	/**
