@@ -2371,20 +2371,25 @@ public class PdksVeriOrtakAktar implements Serializable {
 				IzinTipi izinTipi = izinTipiMap.get(izinERP.getIzinTipi());
 				Tanim izinTipiTanim = izinTipi.getIzinTipiTanim();
 				String aciklama = izinERP.getIzinTipiAciklama();
-				if (!PdksUtil.setTurkishStr(izinTipiTanim.getAciklamatr().toLowerCase(Constants.TR_LOCALE)).equals(PdksUtil.setTurkishStr(aciklama.toLowerCase(Constants.TR_LOCALE)))) {
-					String kisaAciklama = getIzinKisaAciklama(aciklama);
-					izinTipiTanim.setAciklamatr(aciklama);
-					izinTipiTanim.setAciklamaen(aciklama);
-					if (!(izinTipi.isSenelikIzin() || izinTipi.isSutIzin()))
-						izinTipiTanim.setKodu(kisaAciklama);
-					izinTipiTanim.setIslemYapan(islemYapan);
-					izinTipiTanim.setIslemTarihi(islemZamani);
-					izinTipi.setMesaj(aciklama);
-					izinTipi.setGuncelleyenUser(islemYapan);
-					izinTipi.setGuncellemeTarihi(islemZamani);
-					saveList.add(izinTipiTanim);
-					saveList.add(izinTipi);
+				try {
+					if (!PdksUtil.setTurkishStr(izinTipiTanim.getAciklamatr().toLowerCase(Constants.TR_LOCALE)).equals(PdksUtil.setTurkishStr(aciklama.toLowerCase(Constants.TR_LOCALE)))) {
+						String kisaAciklama = getIzinKisaAciklama(aciklama);
+						izinTipiTanim.setAciklamatr(aciklama);
+						izinTipiTanim.setAciklamaen(aciklama);
+						if (!(izinTipi.isSenelikIzin() || izinTipi.isSutIzin()))
+							izinTipiTanim.setKodu(kisaAciklama);
+						izinTipiTanim.setIslemYapan(islemYapan);
+						izinTipiTanim.setIslemTarihi(islemZamani);
+						izinTipi.setMesaj(aciklama);
+						izinTipi.setGuncelleyenUser(islemYapan);
+						izinTipi.setGuncellemeTarihi(islemZamani);
+						saveList.add(izinTipiTanim);
+						saveList.add(izinTipi);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+
 			}
 			if (baslangicZamani == null) {
 				if (notEmptyStr(izinERP.getBasZaman()) == false)
