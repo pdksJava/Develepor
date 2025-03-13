@@ -80,6 +80,7 @@ import org.json.JSONObject;
 import org.json.XML;
 import org.pdks.entity.BaseObject;
 import org.pdks.entity.Dosya;
+import org.pdks.entity.Liste;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.Tanim;
@@ -134,6 +135,46 @@ public class PdksUtil implements Serializable {
 	private static Integer yarimYuvarlaLast = 1, sicilNoUzunluk = null;
 
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
+	
+	/**
+	 * @param list
+	 * @param str
+	 */
+	public static void addMessageAvailableInfo(List<Liste> list, String str) {
+		if (list != null) {
+			Liste liste = new Liste(Severity.INFO, str);
+			liste.setSelected("blue");
+			liste.setChecked("msginfo.png");
+			list.add(liste);
+		}
+	}
+
+	/**
+	 * @param list
+	 * @param str
+	 */
+	public static void addMessageAvailableError(List<Liste> list, String str) {
+		if (list != null) {
+			Liste liste = new Liste(Severity.ERROR, str);
+			liste.setSelected("red");
+			liste.setChecked("msgerror.png");
+			list.add(liste);
+		}
+	}
+
+	/**
+	 * @param list
+	 * @param str
+	 */
+	public static void addMessageAvailableWarn(List<Liste> list, String str) {
+		if (list != null) {
+			Liste liste = new Liste(Severity.WARN, str);
+			liste.setSelected("black");
+			liste.setChecked("msgwarn.png");
+			list.add(liste);
+		}
+	}
+
 
 	/**
 	 * @param cmd

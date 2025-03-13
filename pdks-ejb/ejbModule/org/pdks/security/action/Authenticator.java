@@ -19,7 +19,6 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Transactional;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.jboss.seam.security.Credentials;
 import org.jboss.seam.security.Identity;
 import org.jboss.seam.security.management.IdentityManager;
@@ -49,8 +48,6 @@ public class Authenticator implements IAuthenticator, Serializable {
 	@In
 	Identity identity;
 	@In
-	PdksCredentials pdksCredentials;
-	@In
 	Credentials credentials;
 	@In
 	EntityManager entityManager;
@@ -65,77 +62,35 @@ public class Authenticator implements IAuthenticator, Serializable {
 	@In(required = false, create = true)
 	HashMap<String, String> parameterMap;
 
+	@Out(scope = ScopeType.SESSION, required = false)
+	List<Liste> mesajList;
+
 	/*
 	 * @In LDAPUserManager ldapUserManager;
 	 */
-
 	@Out(scope = ScopeType.SESSION, required = false)
 	User authenticatedUser;
-
 	@Out(scope = ScopeType.SESSION, required = false)
 	String kisaKullaniciAdi;
-
-	@Out(scope = ScopeType.SESSION, required = false)
-	List<Liste> mesajList;
 
 	@In(create = true)
 	PdksEntityController pdksEntityController;
 
 	private String adres;
-
 	private Session session;
-
-	/**
-	 * @param list
-	 * @param str
-	 */
-	public static void addMessageAvailableInfo(List<Liste> list, String str) {
-		if (list != null) {
-			Liste liste = new Liste(Severity.INFO, str);
-			liste.setSelected("blue");
-			liste.setChecked("msginfo.png");
-			list.add(liste);
-		}
-	}
-
-	/**
-	 * @param list
-	 * @param str
-	 */
-	public static void addMessageAvailableError(List<Liste> list, String str) {
-		if (list != null) {
-			Liste liste = new Liste(Severity.ERROR, str);
-			liste.setSelected("red");
-			liste.setChecked("msgerror.png");
-			list.add(liste);
-		}
-	}
-
-	/**
-	 * @param list
-	 * @param str
-	 */
-	public static void addMessageAvailableWarn(List<Liste> list, String str) {
-		if (list != null) {
-			Liste liste = new Liste(Severity.WARN, str);
-			liste.setSelected("black");
-			liste.setChecked("msgwarn.png");
-			list.add(liste);
-		}
-	}
 
 	/**
 	 * @param str
 	 */
 	private void addMessageAvailableWarn(String str) {
-		addMessageAvailableWarn(mesajList, str);
+		PdksUtil.addMessageAvailableWarn(mesajList, str);
 	}
 
 	/**
 	 * @param str
 	 */
 	private void addMessageAvailableError(String str) {
-		addMessageAvailableError(mesajList, str);
+		PdksUtil.addMessageAvailableError(mesajList, str);
 	}
 
 	@Transactional
@@ -151,233 +106,224 @@ public class Authenticator implements IAuthenticator, Serializable {
 		String userName = username.trim();
 		boolean sonuc = Boolean.FALSE;
 		User loginUser = null;
-		if (pdksCredentials.isForgetPassword()) {
-			User user = getKullanici(username, User.COLUMN_NAME_USERNAME);
-			if (user != null) {
-				if (user.getPdksPersonel().getSirket().isLdap() == false) {
-					pdksCredentials.setForgetPassword(false);
-					ortakIslemler.sifremiUnuttum(mesajList, user.getUsername(), session);
-				} else
-					addMessageAvailableWarn("Bu işlem " + user.getUsername() + " kullanıcısı için geçersizdir!");
+
+		String password = credentials.getPassword();
+		Map<String, String> map = null;
+		try {
+			map = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
+		} catch (Exception e) {
+			logger.error("PDKS hata in : \n");
+			e.printStackTrace();
+			logger.error("PDKS hata out : " + e.getMessage());
+			loginUser = new User();
+			loginUser.setUsername(userName);
+			loginUser.setPasswordHash(password);
+			return false;
+		}
+		User ldapUser = null;
+		adres = map.containsKey("host") ? map.get("host") : "";
+		boolean test = adres.indexOf("localhost:8080") >= 0;
+		if (!test)
+			test = ortakIslemler.testDurum(password);
+
+		kisaKullaniciAdi = "";
+		if (userName.indexOf("@") < 0)
+			ldapUser = ortakIslemler.kullaniciBul(userName, LDAPUserManager.USER_ATTRIBUTES_SAM_ACCOUNT_NAME);
+		else {
+			ldapUser = ortakIslemler.kullaniciBul(userName, LDAPUserManager.USER_ATTRIBUTES_PRINCIPAL_NAME);
+			if (ldapUser == null)
+				ldapUser = ortakIslemler.kullaniciBul(userName, LDAPUserManager.USER_ATTRIBUTES_MAIL);
+		}
+		if (ldapUser != null && !ldapUser.isDurum())
+			ldapUser = null;
+		if (ldapUser != null) {
+			kisaKullaniciAdi = ldapUser.getStaffId();
+			userName = ldapUser.getUsername();
+		}
+
+		try {
+			loginUser = getKullanici(userName, User.COLUMN_NAME_USERNAME);
+			List<String> adminIPList = PdksUtil.getListByString(ortakIslemler.getParameterKey("adminIP"), null);
+			String remoteAddr = PdksUtil.getRemoteAddr();
+			if (!test)
+				test = adminIPList.contains(remoteAddr);
+			if (loginUser == null) {
+				if (ldapUser != null) {
+					loginUser = getKullanici(ldapUser.getShortUsername(), User.COLUMN_NAME_SHORT_USER_NAME);
+					if (loginUser != null) {
+						loginUser.setUsername(ldapUser.getUsername());
+						if (!parameterMap.containsKey("emailBozuk"))
+							loginUser.setEmail(ldapUser.getEmail());
+						pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
+						session.flush();
+						userName = ldapUser.getUsername();
+					}
+				}
+			} else if (ldapUser != null && loginUser != null) {
+				if (loginUser.getShortUsername() == null || !loginUser.getShortUsername().equals(ldapUser.getShortUsername())) {
+					loginUser.setShortUsername(ldapUser.getShortUsername());
+					pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
+					session.flush();
+				}
 			}
-		} else {
-			String password = credentials.getPassword();
-			Map<String, String> map = null;
+
+			if (loginUser == null && ldapUser != null) {
+				String sicilNo = "900" + ldapUser.getStaffId().substring(3).trim();
+				HashMap parametreMap = new HashMap();
+				StringBuffer sb = new StringBuffer();
+				sb.append("select U.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+				sb.append("inner join " + User.TABLE_NAME + " U " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " and U." + User.COLUMN_NAME_DURUM + " = 1 and U." + User.COLUMN_NAME_DEPARTMAN + " is not null ");
+				sb.append(" where P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :sicilNo and P." + Personel.COLUMN_NAME_DURUM + " = 1  ");
+				sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= convert(date,GETDATE()) and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
+				sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
+				parametreMap.put("sicilNo", sicilNo);
+				if (session != null)
+					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+				loginUser = (User) pdksEntityController.getObjectBySQL(sb, parametreMap, User.class);
+				if (loginUser != null) {
+					logger.info(loginUser.getUsername() + " kullanıcı bilgisi okundu.");
+					loginUser.setUsername(ldapUser.getUsername());
+					if (!parametreMap.containsKey("emailBozuk"))
+						loginUser.setEmail(ldapUser.getEmail());
+					pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
+					session.flush();
+				}
+			}
+			if (!test && parameterMap != null && parameterMap.containsKey("sifreKontrol"))
+				test = !parameterMap.get("sifreKontrol").equals("1");
+			sonuc = loginUser != null && test;
+			String encodePassword = PdksUtil.encodePassword(password);
+			if (loginUser != null) {
+				loginUser.setLogin(Boolean.FALSE);
+				userName = loginUser.getUsername();
+				if (!PdksUtil.hasStringValue(kisaKullaniciAdi))
+					kisaKullaniciAdi = loginUser.getUsername();
+				else
+					kisaKullaniciAdi = kisaKullaniciAdi + " <---> " + loginUser.getUsername();
+
+				loginUser.setDurum(loginUser.getPdksPersonel().isCalisiyor());
+				if (!loginUser.isDurum())
+					addMessageAvailableWarn(loginUser.getAdSoyad() + " ait işe giriş çıkış tarihinde uyumsuz");
+				else {
+					if (loginUser.isLdapUse() || sonuc) {
+						// ldap kullanıyorsa
+						try {
+							if (!sonuc)
+								sonuc = LDAPUserManager.authenticate(userName, password);
+							if (!PdksUtil.hasStringValue(kisaKullaniciAdi)) {
+								ldapUser = LDAPUserManager.getLDAPUserAttributes(userName);
+								if (ldapUser != null)
+									kisaKullaniciAdi = ldapUser.getStaffId();
+							}
+						} catch (Exception e) {
+							logger.error("PDKS hata in : \n");
+							e.printStackTrace();
+							logger.error("PDKS hata out : " + e.getMessage());
+							try {
+								String ldapHataDonusKodu = LDAPUserManager.ldapHatasininDetayAciklamasiniGetir(e);
+								if (ldapHataDonusKodu != null) {
+									String mesaj = PdksUtil.getMessageBundleMessage(LDAPUserManager.LDAP_HATA_KODU_KEY_ON_EK + ldapHataDonusKodu);
+									logger.info(mesaj + " ( " + userName + " )");
+									addMessageAvailableError(mesaj + " ( " + userName + " )");
+								}
+							} catch (Exception e2) {
+								logger.error(e2.getLocalizedMessage());
+							}
+						}
+					} else {
+						sonuc = (loginUser.getPasswordHash().equals(encodePassword));
+						if (sonuc == false)
+							addMessageAvailableError(credentials.getUsername().trim() + " kullanıcısının şifre hatalıdır!");
+					}
+					if (sonuc) {
+						username = loginUser.getUsername();
+						FacesContext context = FacesContext.getCurrentInstance();
+						try {
+							if (loginUser.getPdksPersonel().getSirket() != null && loginUser.getPdksPersonel().getSirket().isLdap()) {
+								String email = PdksUtil.getMailAdres(userName);
+								if (email != null && (loginUser.getEmail() == null || !email.equals(loginUser.getEmail()))) {
+									if (!parameterMap.containsKey("emailBozuk"))
+										loginUser.setEmail(email);
+									pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
+									session.flush();
+								}
+							}
+						} catch (Exception e) {
+							logger.error("PDKS hata in : \n");
+							e.printStackTrace();
+							logger.error("PDKS hata out : " + e.getMessage());
+						}
+						credentials.setUsername(userName);
+						boolean browserIE = PdksUtil.isInternetExplorer((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+						authenticatedUser = loginUser;
+						ortakIslemler.setUserRoller(loginUser, session);
+						ortakIslemler.setUserTesisler(loginUser, session);
+						ortakIslemler.setUserBolumler(loginUser, session);
+						loginUser.setBrowserIE(browserIE);
+						if (loginUser.getYetkiliRollerim() != null) {
+							for (Role role : loginUser.getYetkiliRollerim())
+								identity.addRole(role.getRolename());
+						}
+						try {
+							List<SAPSunucu> sapSunucular = pdksEntityController.getSQLParamByFieldList(SAPSunucu.TABLE_NAME, SAPSunucu.COLUMN_NAME_DURUM, SAPSunucu.DURUM_AKTIF, SAPSunucu.class, session);
+							if (!sapSunucular.isEmpty())
+								logger.info("ERP sunucuları okundu.");
+							SapRfcManager.setSapSunucular(sapSunucular);
+							if (loginUser.getYetkiliRollerim().isEmpty())
+								loginUser = ortakIslemler.personelPdksRolAta(loginUser, Boolean.TRUE, session);
+							if (PdksUtil.getBundleName() == null) {
+								try {
+									PdksUtil.setBundleName(context.getApplication().getMessageBundle());
+								} catch (Exception e) {
+									logger.error("PDKS hata in : \n");
+									e.printStackTrace();
+									logger.error("PDKS hata out : " + e.getMessage());
+									PdksUtil.setBundleName(null);
+								}
+							}
+							loginUser.setTestLogin(test);
+							loginUser.setCalistigiSayfa("anasayfa");
+							ortakIslemler.sistemeGirisIslemleri(loginUser, Boolean.TRUE, null, null, session);
+							logger.info(loginUser.getUsername() + " " + loginUser.getAdSoyad() + " " + (loginUser.getEmail() != null && !loginUser.getEmail().equals(loginUser.getUsername()) ? loginUser.getEmail() + " E-postali" : "") + " kullanıcısı PDKS sistemine login oldu. "
+									+ PdksUtil.getCurrentTimeStampStr());
+							loginUser.setSessionSQL(session);
+						} catch (Exception e) {
+							logger.error("PDKS hata in : \n");
+							e.printStackTrace();
+							logger.error("PDKS hata out : " + e.getMessage());
+							logger.debug("Hata : " + e.getMessage());
+						}
+						if (!test || adres.startsWith("surum")) {
+							try {
+								loginUser.setLastLogin(new Date());
+								pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
+								session.flush();
+							} catch (Exception e) {
+							}
+						}
+						loginUser.setLogin(Boolean.TRUE);
+					}
+				}
+			} else if (mesajList.isEmpty())
+				addMessageAvailableError(credentials.getUsername().trim() + " kullanıcı adı sistemde kayıtlı değildir!");
+			sonuc = getSonDurum(sonuc, loginUser);
+			return sonuc;
+		} catch (Exception ex) {
+			logger.debug("Hata : " + ex.getMessage());
+
 			try {
-				map = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
+				List perList = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_ID, 1L, Personel.class, session);
+				logger.info(loginUser.getUsername() + " kullanıcı bilgisi okundu.");
+				if (!perList.isEmpty())
+					logger.error(perList.size() + " " + PdksUtil.getCurrentTimeStampStr());
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n");
 				e.printStackTrace();
 				logger.error("PDKS hata out : " + e.getMessage());
-				loginUser = new User();
-				loginUser.setUsername(userName);
-				loginUser.setPasswordHash(password);
-				return false;
+				logger.debug("Hata : " + e.getMessage());
 			}
-			User ldapUser = null;
-			adres = map.containsKey("host") ? map.get("host") : "";
-			boolean test = adres.indexOf("localhost:8080") >= 0;
-			if (!test)
-				test = ortakIslemler.testDurum(password);
+			logger.debug("authenticating " + username);
 
-			kisaKullaniciAdi = "";
-			if (userName.indexOf("@") < 0)
-				ldapUser = ortakIslemler.kullaniciBul(userName, LDAPUserManager.USER_ATTRIBUTES_SAM_ACCOUNT_NAME);
-			else {
-				ldapUser = ortakIslemler.kullaniciBul(userName, LDAPUserManager.USER_ATTRIBUTES_PRINCIPAL_NAME);
-				if (ldapUser == null)
-					ldapUser = ortakIslemler.kullaniciBul(userName, LDAPUserManager.USER_ATTRIBUTES_MAIL);
-			}
-			if (ldapUser != null && !ldapUser.isDurum())
-				ldapUser = null;
-			if (ldapUser != null) {
-				kisaKullaniciAdi = ldapUser.getStaffId();
-				userName = ldapUser.getUsername();
-			}
-
-			try {
-				loginUser = getKullanici(userName, User.COLUMN_NAME_USERNAME);
-				List<String> adminIPList = PdksUtil.getListByString(ortakIslemler.getParameterKey("adminIP"), null);
-				String remoteAddr = PdksUtil.getRemoteAddr();
-				if (!test)
-					test = adminIPList.contains(remoteAddr);
-				if (loginUser == null) {
-					if (ldapUser != null) {
-						loginUser = getKullanici(ldapUser.getShortUsername(), User.COLUMN_NAME_SHORT_USER_NAME);
-						if (loginUser != null) {
-							loginUser.setUsername(ldapUser.getUsername());
-							if (!parameterMap.containsKey("emailBozuk"))
-								loginUser.setEmail(ldapUser.getEmail());
-							pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
-							session.flush();
-							userName = ldapUser.getUsername();
-						}
-					}
-				} else if (ldapUser != null && loginUser != null) {
-					if (loginUser.getShortUsername() == null || !loginUser.getShortUsername().equals(ldapUser.getShortUsername())) {
-						loginUser.setShortUsername(ldapUser.getShortUsername());
-						pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
-						session.flush();
-					}
-				}
-
-				if (loginUser == null && ldapUser != null) {
-					String sicilNo = "900" + ldapUser.getStaffId().substring(3).trim();
-					HashMap parametreMap = new HashMap();
-					StringBuffer sb = new StringBuffer();
-					sb.append("select U.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
-					sb.append("inner join " + User.TABLE_NAME + " U " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " and U." + User.COLUMN_NAME_DURUM + " = 1 and U." + User.COLUMN_NAME_DEPARTMAN + " is not null ");
-					sb.append(" where P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :sicilNo and P." + Personel.COLUMN_NAME_DURUM + " = 1  ");
-					sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= convert(date,GETDATE()) and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
-					sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
-					parametreMap.put("sicilNo", sicilNo);
-					if (session != null)
-						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-					loginUser = (User) pdksEntityController.getObjectBySQL(sb, parametreMap, User.class);
-					if (loginUser != null) {
-						logger.info(loginUser.getUsername() + " kullanıcı bilgisi okundu.");
-						loginUser.setUsername(ldapUser.getUsername());
-						if (!parametreMap.containsKey("emailBozuk"))
-							loginUser.setEmail(ldapUser.getEmail());
-						pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
-						session.flush();
-					}
-				}
-				if (!test && parameterMap != null && parameterMap.containsKey("sifreKontrol"))
-					test = !parameterMap.get("sifreKontrol").equals("1");
-				sonuc = loginUser != null && test;
-				String encodePassword = PdksUtil.encodePassword(password);
-				if (loginUser != null) {
-					loginUser.setLogin(Boolean.FALSE);
-					userName = loginUser.getUsername();
-					if (!PdksUtil.hasStringValue(kisaKullaniciAdi))
-						kisaKullaniciAdi = loginUser.getUsername();
-					else
-						kisaKullaniciAdi = kisaKullaniciAdi + " <---> " + loginUser.getUsername();
-
-					loginUser.setDurum(loginUser.getPdksPersonel().isCalisiyor());
-					if (!loginUser.isDurum())
-						addMessageAvailableWarn(loginUser.getAdSoyad() + " ait işe giriş çıkış tarihinde uyumsuz");
-					else {
-						if (loginUser.isLdapUse() || sonuc) {
-							// ldap kullanıyorsa
-							try {
-								if (!sonuc)
-									sonuc = LDAPUserManager.authenticate(userName, password);
-								if (!PdksUtil.hasStringValue(kisaKullaniciAdi)) {
-									ldapUser = LDAPUserManager.getLDAPUserAttributes(userName);
-									if (ldapUser != null)
-										kisaKullaniciAdi = ldapUser.getStaffId();
-								}
-							} catch (Exception e) {
-								logger.error("PDKS hata in : \n");
-								e.printStackTrace();
-								logger.error("PDKS hata out : " + e.getMessage());
-								try {
-									String ldapHataDonusKodu = LDAPUserManager.ldapHatasininDetayAciklamasiniGetir(e);
-									if (ldapHataDonusKodu != null) {
-										String mesaj = PdksUtil.getMessageBundleMessage(LDAPUserManager.LDAP_HATA_KODU_KEY_ON_EK + ldapHataDonusKodu);
-										logger.info(mesaj + " ( " + userName + " )");
-										addMessageAvailableError(mesaj + " ( " + userName + " )");
-									}
-								} catch (Exception e2) {
-									logger.error(e2.getLocalizedMessage());
-								}
-							}
-						} else {
-							sonuc = (loginUser.getPasswordHash().equals(encodePassword));
-							if (sonuc == false)
-								addMessageAvailableError(credentials.getUsername().trim() + " kullanıcısının şifre hatalıdır!");
-						}
-						if (sonuc) {
-							username = loginUser.getUsername();
-							FacesContext context = FacesContext.getCurrentInstance();
-							try {
-								if (loginUser.getPdksPersonel().getSirket() != null && loginUser.getPdksPersonel().getSirket().isLdap()) {
-									String email = PdksUtil.getMailAdres(userName);
-									if (email != null && (loginUser.getEmail() == null || !email.equals(loginUser.getEmail()))) {
-										if (!parameterMap.containsKey("emailBozuk"))
-											loginUser.setEmail(email);
-										pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
-										session.flush();
-									}
-								}
-							} catch (Exception e) {
-								logger.error("PDKS hata in : \n");
-								e.printStackTrace();
-								logger.error("PDKS hata out : " + e.getMessage());
-							}
-							credentials.setUsername(userName);
-							boolean browserIE = PdksUtil.isInternetExplorer((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
-							authenticatedUser = loginUser;
-							ortakIslemler.setUserRoller(loginUser, session);
-							ortakIslemler.setUserTesisler(loginUser, session);
-							ortakIslemler.setUserBolumler(loginUser, session);
-							loginUser.setBrowserIE(browserIE);
-							if (loginUser.getYetkiliRollerim() != null) {
-								for (Role role : loginUser.getYetkiliRollerim())
-									identity.addRole(role.getRolename());
-							}
-							try {
-								List<SAPSunucu> sapSunucular = pdksEntityController.getSQLParamByFieldList(SAPSunucu.TABLE_NAME, SAPSunucu.COLUMN_NAME_DURUM, SAPSunucu.DURUM_AKTIF, SAPSunucu.class, session);
-								if (!sapSunucular.isEmpty())
-									logger.info("ERP sunucuları okundu.");
-								SapRfcManager.setSapSunucular(sapSunucular);
-								if (loginUser.getYetkiliRollerim().isEmpty())
-									loginUser = ortakIslemler.personelPdksRolAta(loginUser, Boolean.TRUE, session);
-								if (PdksUtil.getBundleName() == null) {
-									try {
-										PdksUtil.setBundleName(context.getApplication().getMessageBundle());
-									} catch (Exception e) {
-										logger.error("PDKS hata in : \n");
-										e.printStackTrace();
-										logger.error("PDKS hata out : " + e.getMessage());
-										PdksUtil.setBundleName(null);
-									}
-								}
-								loginUser.setTestLogin(test);
-								loginUser.setCalistigiSayfa("anasayfa");
-								ortakIslemler.sistemeGirisIslemleri(loginUser, Boolean.TRUE, null, null, session);
-								logger.info(loginUser.getUsername() + " " + loginUser.getAdSoyad() + " " + (loginUser.getEmail() != null && !loginUser.getEmail().equals(loginUser.getUsername()) ? loginUser.getEmail() + " E-postali" : "") + " kullanıcısı PDKS sistemine login oldu. "
-										+ PdksUtil.getCurrentTimeStampStr());
-								loginUser.setSessionSQL(session);
-							} catch (Exception e) {
-								logger.error("PDKS hata in : \n");
-								e.printStackTrace();
-								logger.error("PDKS hata out : " + e.getMessage());
-								logger.debug("Hata : " + e.getMessage());
-							}
-							if (!test || adres.startsWith("surum")) {
-								try {
-									loginUser.setLastLogin(new Date());
-									pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
-									session.flush();
-								} catch (Exception e) {
-								}
-							}
-							loginUser.setLogin(Boolean.TRUE);
-						}
-					}
-				} else if (mesajList.isEmpty())
-					addMessageAvailableError(credentials.getUsername().trim() + " kullanıcı adı sistemde kayıtlı değildir!");
-				sonuc = getSonDurum(sonuc, loginUser);
-				return sonuc;
-			} catch (Exception ex) {
-				logger.debug("Hata : " + ex.getMessage());
-
-				try {
-					List perList = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_ID, 1L, Personel.class, session);
-					logger.info(loginUser.getUsername() + " kullanıcı bilgisi okundu.");
-					if (!perList.isEmpty())
-						logger.error(perList.size() + " " + PdksUtil.getCurrentTimeStampStr());
-				} catch (Exception e) {
-					logger.error("PDKS hata in : \n");
-					e.printStackTrace();
-					logger.error("PDKS hata out : " + e.getMessage());
-					logger.debug("Hata : " + e.getMessage());
-				}
-				logger.debug("authenticating " + username);
-			}
 		}
 		sonuc = getSonDurum(sonuc, loginUser);
 		return sonuc;
@@ -454,8 +400,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 	}
 
 	public String getAciklamaIslem() {
-		String str = pdksCredentials.isForgetPassword() == false ? "Sisteme Giriş" : "Yeni Şifre Gönder";
+		String str = "Sisteme Giriş";
 		return str;
 	}
-
 }

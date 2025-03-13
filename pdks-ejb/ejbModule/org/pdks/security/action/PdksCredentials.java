@@ -1,14 +1,13 @@
 package org.pdks.security.action;
 
-import static org.jboss.seam.ScopeType.SESSION;
-
 import java.io.Serializable;
 
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
 @Name("pdksCredentials")
-@Scope(SESSION)
+@Scope(ScopeType.PAGE)
 public class PdksCredentials implements Serializable {
 
 	/**

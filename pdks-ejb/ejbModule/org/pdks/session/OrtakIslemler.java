@@ -151,7 +151,6 @@ import org.pdks.pdf.action.HeaderLowagie;
 import org.pdks.pdf.action.PDFITextUtils;
 import org.pdks.pdf.action.PDFUtils;
 import org.pdks.quartz.KapiGirisGuncelleme;
-import org.pdks.security.action.Authenticator;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.OrganizasyonTipi;
 import org.pdks.security.entity.Role;
@@ -368,21 +367,21 @@ public class OrtakIslemler implements Serializable {
 						}
 						if (ms != null) {
 							if (ms.getDurum())
-								Authenticator.addMessageAvailableInfo(list, "Şifre güncellemek için " + user.getEmail() + " mail kutunuzu kontrol ediniz.");
+								PdksUtil.addMessageAvailableInfo(list, "Şifre güncellemek için " + user.getEmail() + " mail kutunuzu kontrol ediniz.");
 							else
-								Authenticator.addMessageAvailableError(list, ms.getHataMesai());
+								PdksUtil.addMessageAvailableError(list, ms.getHataMesai());
 						} else if (ex != null)
-							Authenticator.addMessageAvailableError(list, ex.getMessage());
+							PdksUtil.addMessageAvailableError(list, ex.getMessage());
 
 					} else
-						Authenticator.addMessageAvailableWarn(list, "Kullanıcı çalışmıyor!");
+						PdksUtil.addMessageAvailableWarn(list, "Kullanıcı çalışmıyor!");
 				} else
-					Authenticator.addMessageAvailableWarn(list, "Kullanıcı aktif değildir!");
+					PdksUtil.addMessageAvailableWarn(list, "Kullanıcı aktif değildir!");
 
 			} else
-				Authenticator.addMessageAvailableWarn(list, "Hatalı kullanıcı adı giriniz!");
+				PdksUtil.addMessageAvailableWarn(list, "Hatalı kullanıcı adı giriniz!");
 		} else
-			Authenticator.addMessageAvailableError(list, "Kullanıcı adı giriniz!");
+			PdksUtil.addMessageAvailableError(list, "Kullanıcı adı giriniz!");
 		return str;
 
 	}
