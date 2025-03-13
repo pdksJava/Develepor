@@ -9700,7 +9700,15 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public boolean getCanliDurum() {
-		boolean test = PdksUtil.getCanliSunucuDurum();
+		boolean canli = PdksUtil.getCanliSunucuDurum();
+		return canli;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean getTestSunucuDurum() {
+		boolean test = PdksUtil.getTestSunucuDurum();
 		return test;
 	}
 
