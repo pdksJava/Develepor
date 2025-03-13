@@ -29,22 +29,12 @@
 
 					</h:panelGrid>
 					<a4j:outputPanel id="login">
-						<table width="400px">
-							<tr>
-								<td width="50%"><s:decorate template="/layout/edit.xhtml">
-										<ui:define name="label">Beni hatırla</ui:define>
-										<h:selectBooleanCheckbox id="rememberMe" value="#{identity.rememberMe}" />
-									</s:decorate></td>
-								<ui:fragment rendered="#{false and ortakIslemler.getParameterKeyHasStringValue('sifreUnuttum')}">
-									<td width="50%"><s:decorate template="/layout/edit.xhtml">
-											<ui:define name="label">Şifre Unuttum</ui:define>
-											<h:selectBooleanCheckbox id="forgetPassword" value="#{pdksCredentials.forgetPassword}">
-												<a4j:support event="onclick" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="login,password" status="ajaxStatus" ajaxSingle="true" />
-											</h:selectBooleanCheckbox>
-										</s:decorate></td>
-								</ui:fragment>
-							</tr>
-						</table>
+						<h:panelGrid columns="3" width="300px">
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Beni hatırla</ui:define>
+								<h:selectBooleanCheckbox id="rememberMe" value="#{identity.rememberMe}" />
+							</s:decorate>
+						</h:panelGrid>
 					</a4j:outputPanel>
 
 					<a4j:commandButton status="ajaxStatus" value="#{authenticator.aciklamaIslem}" action="#{identity.login}" reRender="login,sifre,durum">
