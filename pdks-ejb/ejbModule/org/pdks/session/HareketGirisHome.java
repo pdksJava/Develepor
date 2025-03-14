@@ -178,6 +178,9 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 		LinkedHashMap<Long, HashMap<Integer, Object>> dataMap = new LinkedHashMap<Long, HashMap<Integer, Object>>();
 		if (wb != null) {
 			Sheet sheet = wb.getSheetAt(0);
+			String dateStr = PdksUtil.convertToDateString(tarih, "yyyy-MM-dd") + " " + PdksUtil.textBaslangicinaKarakterEkle(String.valueOf(saat), '0', 2) + ":" + PdksUtil.textBaslangicinaKarakterEkle(String.valueOf(dakika), '0', 2);
+			Date islemZamani = PdksUtil.convertToJavaDate(dateStr, "yyyy-MM-dd HH:mm");
+			Double kapiDeger = new Double(kapiId != null ? kapiId : 0L);
 			try {
 				long adet = 0;
 				long sira = 0;
@@ -209,7 +212,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 					try {
 						zaman = ExcelUtil.getSheetDateValueTry(sheet, j, 2, "HH:mm:ss");
 					} catch (Exception e) {
-
+						zaman = islemZamani;
 					}
 					if (sicilNo.length() > 0)
 						sicilNo = ortakIslemler.getSicilNo(sicilNo);
@@ -252,6 +255,12 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 										map.put(i, cell.getDateCellValue());
 									break;
 								}
+
+							} else {
+								if (i == 2)
+									map.put(i, islemZamani);
+								else if (i == 3)
+									map.put(i, kapiDeger);
 
 							}
 						} catch (Exception e) {
@@ -310,17 +319,12 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 					personel.setPdksSicilNo(pdksSicilNo);
 					list.add(personel);
 				} else {
-					Date tarih = map.containsKey(2) ? (Date) map.get(2) : null, zaman = map.containsKey(-1) ? (Date) map.get(-1) : null, vardiyaDate = null;
+					Date tarih = map.containsKey(2) ? (Date) map.get(2) : null, vardiyaDate = null;
 					if (tarih == null) {
 						vardiyaDate = zamanGuncelle();
 					} else {
-						if (zaman == null) {
-							vardiyaDate = PdksUtil.setTarih(tarih, Calendar.HOUR_OF_DAY, PdksUtil.getDateField(zaman, Calendar.HOUR_OF_DAY));
-							vardiyaDate = PdksUtil.setTarih(vardiyaDate, Calendar.MINUTE, PdksUtil.getDateField(zaman, Calendar.MINUTE));
-							vardiyaDate = PdksUtil.setTarih(vardiyaDate, Calendar.SECOND, 0);
-							vardiyaDate = PdksUtil.setTarih(vardiyaDate, Calendar.MILLISECOND, 0);
-						} else
-							vardiyaDate = tarih;
+
+						vardiyaDate = tarih;
 
 					}
 					VardiyaGun vg = new VardiyaGun(personel, null, vardiyaDate);
@@ -438,20 +442,19 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 			list.add(hareketKGS);
 		}
 		Date bugun = Calendar.getInstance().getTime();
-		boolean hareketTarihKontrol = ortakIslemler.getParameterKeyHasStringValue("hareketTarihKontrol") == false;
+		boolean hareketTarihKontrol = ortakIslemler.getParameterKeyHasStringValue("hareketTarihKontrol");
 		String formatStr = "yyyy-MM-dd HH:mm";
 		personelId = null;
 		kapiId = null;
-
 		for (Iterator iterator1 = vardiyaGunleri.iterator(); iterator1.hasNext();) {
 			VardiyaGun vg = (VardiyaGun) iterator1.next();
 			HareketKGS hareketKGS = vg.getIlkGiris();
 			Date zaman = hareketKGS.getZaman();
 			String zamanStr = PdksUtil.convertToDateString(zaman, formatStr);
-			if ((hareketTarihKontrol && bugun.after(tarih)) == false)
+			if ((hareketTarihKontrol && bugun.after(zaman)))
 				continue;
 			PersonelKGS personel = vg.getPersonel().getPersonelKGS();
-			Boolean yaz = bugun.after(zaman) || authenticatedUser.isIK();
+			Boolean yaz = true;
 			List<HareketKGS> list = hMap.containsKey(personel.getId()) ? hMap.get(personel.getId()) : new ArrayList<HareketKGS>();
 			for (Iterator iterator2 = list.iterator(); iterator2.hasNext();) {
 				HareketKGS kgs = (HareketKGS) iterator2.next();
