@@ -2,7 +2,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j" xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich" template="layout/template.xhtml">
+	xmlns:rich="http://richfaces.org/rich" xmlns:c="http://java.sun.com/jstl/core" template="layout/template.xhtml">
 	<ui:define name="title">
 		<h:outputText value="Login" />
 	</ui:define>
@@ -29,11 +29,20 @@
 
 					</h:panelGrid>
 					<a4j:outputPanel id="login">
-						<h:panelGrid columns="3" width="300px">
+						<h:panelGrid columns="2" width="350px">
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Beni hatırla</ui:define>
 								<h:selectBooleanCheckbox id="rememberMe" value="#{identity.rememberMe}" />
 							</s:decorate>
+							<c:if test="#{ortakIslemler.canliDurum==false}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKeyHasStringValue('sifreUnuttum')}">
+									<ui:define name="label">Şifre Unuttum</ui:define>
+									<h:selectBooleanCheckbox value="#{pdksCredentials.forgetPassword}">
+										<a4j:support event="onclick" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="login,password" status="ajaxStatus" ajaxSingle="true" />
+
+									</h:selectBooleanCheckbox>
+								</s:decorate>
+							</c:if>
 						</h:panelGrid>
 					</a4j:outputPanel>
 
