@@ -32,8 +32,7 @@ public class SecurityEvents extends FacesSecurityEvents {
 		String key = "org.jboss.seam.loginSuccessful";
 		StatusMessages.instance().clearGlobalMessages();
 		StatusMessages.instance().addFromResourceBundleOrDefault(Severity.INFO, key, PdksUtil.getMessageBundleMessage(key), authenticatedUser.getAdSoyad());
-
-	}
+ 	}
 
 	@Override
 	@Observer(Identity.EVENT_NOT_LOGGED_IN)
@@ -49,8 +48,7 @@ public class SecurityEvents extends FacesSecurityEvents {
 		String key = "org.jboss.seam.AlreadyLoggedIn";
 		StatusMessages.instance().clearGlobalMessages();
 		StatusMessages.instance().addFromResourceBundleOrDefault(Severity.WARN, key, PdksUtil.getMessageBundleMessage(key), "");
-
-	}
+ 	}
 
 	@Override
 	@Observer(Identity.EVENT_LOGIN_FAILED)
