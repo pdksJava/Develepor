@@ -123,7 +123,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 				value = ortakIslemler.getParameterKey(parameterUpdateKey);
 				if (PdksUtil.hasStringValue(value)) {
 					guncellemeDBDurum = PdksUtil.zamanKontrol(parameterUpdateKey, value, time);
-					if (guncellemeDBDurum == false) {
+					if (guncellemeDBDurum == false && PdksUtil.isSistemDestekVar()) {
 						Calendar cal = Calendar.getInstance();
 						int gun = cal.get(Calendar.DATE), saat = cal.get(Calendar.HOUR_OF_DAY), dayOffWeek = cal.get(Calendar.DAY_OF_WEEK);
 						guncellemeDBDurum = dayOffWeek != Calendar.SATURDAY && dayOffWeek != Calendar.SUNDAY && (gun > 25 || gun < 6) && (saat > 7 && saat < 20);
@@ -136,10 +136,10 @@ public class IzinBakiyeGuncelleme implements Serializable {
 					hataKonum = "İzin durum kontrolu yapılıyor ";
 					if (tableERPOku && sunucuDurum) {
 						String uygulamaBordro = ortakIslemler.getParameterKey("uygulamaBordro");
- 						try {
+						try {
 							if (manuel == false) {
 								logger.info(uygulamaBordro + " izin bilgileri güncelleniyor in " + PdksUtil.getCurrentTimeStampStr());
- 								ortakIslemler.izinERPDBGuncelle(guncellemeDBDurum, null, session);
+								ortakIslemler.izinERPDBGuncelle(guncellemeDBDurum, null, session);
 								logger.info(uygulamaBordro + " izin bilgileri güncelleniyor out " + PdksUtil.getCurrentTimeStampStr());
 							}
 						} catch (Exception e) {

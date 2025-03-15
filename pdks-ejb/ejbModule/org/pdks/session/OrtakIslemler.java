@@ -15844,10 +15844,6 @@ public class OrtakIslemler implements Serializable {
 			}
 		}
 		try {
-			// double katsayi = 3.43;
-			// int[] dizi = new int[] { 1575, 1056, 2011, 2056, 1575, 3722,
-			// 1575, 2078, 2600, 2056, 3722, 2078, 2600, 2056, 3722, 2078, 2600,
-			// 2056, 3722, 2078, 2600, 3722, 2078, 2600, 3722, 2078, 2600 };
 			for (int i = 0; i < col; i++)
 				sheet.autoSizeColumn(i);
 			baos = new ByteArrayOutputStream();
