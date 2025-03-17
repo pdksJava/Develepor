@@ -179,13 +179,13 @@ public class PdksVeriOrtakAktar implements Serializable {
 				String fieldName = "rn";
 				sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER + " and U." + User.COLUMN_NAME_DURUM + " = 1 ");
 				if (!userNameList.isEmpty()) {
-					sb.append(" and " + User.COLUMN_NAME_USERNAME + " :" + fieldName);
+					sb.append(" and U." + User.COLUMN_NAME_USERNAME + " :" + fieldName);
 					rolMap.put(fieldName, userNameList);
 					roller.add(Role.TIPI_IK);
 					roller.add(Role.TIPI_IK_SIRKET);
 					roller.add(Role.TIPI_IK_Tesis);
 				}
-				sb.append(" inner join " + Role.TABLE_NAME + " R " + PdksVeriOrtakAktar.getJoinLOCK() + " on R." + Role.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_ROLE + " and R." + Role.COLUMN_NAME_ROLE_NAME + " :" + fieldName);
+				sb.append(" inner join " + Role.TABLE_NAME + " R " + PdksVeriOrtakAktar.getJoinLOCK() + " on R." + Role.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_ROLE);
 				sb.append(" and R." + Role.COLUMN_NAME_STATUS + " = 1");
 				if (userNameList.isEmpty())
 					sb.append(" where 1 = 2");
