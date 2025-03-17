@@ -451,7 +451,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 			HareketKGS hareketKGS = vg.getIlkGiris();
 			Date zaman = hareketKGS.getZaman();
 			String zamanStr = PdksUtil.convertToDateString(zaman, formatStr);
-			if ((hareketTarihKontrol && bugun.after(zaman)))
+			if ((hareketTarihKontrol && zaman.after(bugun)))
 				continue;
 			PersonelKGS personel = vg.getPersonel().getPersonelKGS();
 			Boolean yaz = true;
