@@ -167,21 +167,36 @@ public class PdksVeriOrtakAktar implements Serializable {
 			if (ikMailGonder == false)
 				sb.append(" where 1 = 2");
 			else {
-				roller.add(Role.TIPI_IK);
-				roller.add(Role.TIPI_IK_SIRKET);
-				roller.add(Role.TIPI_IK_Tesis);
+				List<String> userNameList = null;
+				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_IK_USERNAME_LIST");
+				veriMap.put("alanAdi", User.COLUMN_NAME_USERNAME);
+				try {
+					userNameList = pdksDAO.execSPList(veriMap, null);
+				} catch (Exception e) {
+					userNameList = new ArrayList<String>();
+				}
 				String fieldName = "rn";
-				rolMap.put(fieldName, roller);
 				sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER + " and U." + User.COLUMN_NAME_DURUM + " = 1 ");
+				if (!userNameList.isEmpty()) {
+					sb.append(" and " + User.COLUMN_NAME_USERNAME + " :" + fieldName);
+					rolMap.put(fieldName, userNameList);
+					roller.add(Role.TIPI_IK);
+					roller.add(Role.TIPI_IK_SIRKET);
+					roller.add(Role.TIPI_IK_Tesis);
+				}
 				sb.append(" inner join " + Role.TABLE_NAME + " R " + PdksVeriOrtakAktar.getJoinLOCK() + " on R." + Role.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_ROLE + " and R." + Role.COLUMN_NAME_ROLE_NAME + " :" + fieldName);
 				sb.append(" and R." + Role.COLUMN_NAME_STATUS + " = 1");
+				if (userNameList.isEmpty())
+					sb.append(" where 1 = 2");
 			}
 			List<UserRoles> pdksRoles = pdksDAO.getNativeSQLList(rolMap, sb, UserRoles.class);
 			if (!pdksRoles.isEmpty()) {
+
 				List<Long> userIdList = new ArrayList<Long>();
 				for (UserRoles userRoles : pdksRoles) {
 					User user = userRoles.getUser();
-					if (!userIdList.contains(user.getId()))
+					if (roller.contains(userRoles.getRole().getRolename()) && !userIdList.contains(user.getId()))
 						userIdList.add(user.getId());
 				}
 				rolMap.clear();
@@ -766,17 +781,23 @@ public class PdksVeriOrtakAktar implements Serializable {
 		boolean testDurum = getTestDurum();
 		String testMailAdres = mailDataMap.containsKey("testMailAdres") ? (String) mailDataMap.get("testMailAdres") : "pdkssayar@gmail.com";
 		if (!mailDataMap.containsKey(KEY_IK_MAIL_IPTAL)) {
-
-			List<String> ikYetkiliRoller = Arrays.asList(new String[] { Role.TIPI_IK, Role.TIPI_IK_SIRKET, Role.TIPI_IK_Tesis });
-			HashMap fields = new HashMap();
-			sb.append("select U.* from " + Role.TABLE_NAME + " R " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
-			sb.append(" inner join " + UserRoles.TABLE_NAME + " UR " + PdksVeriOrtakAktar.getJoinLOCK() + " on UR." + UserRoles.COLUMN_NAME_ROLE + " = R." + Role.COLUMN_NAME_ID);
-			sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER + " and U." + User.COLUMN_NAME_DURUM + " = 1 ");
-			sb.append(" inner join " + Departman.TABLE_NAME + " D " + PdksVeriOrtakAktar.getJoinLOCK() + " on D." + Departman.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_DEPARTMAN + " and D." + Departman.COLUMN_NAME_ADMIN_DURUM + " = 1 and D." + Departman.COLUMN_NAME_DURUM + " = 1 ");
-			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " > GETDATE() ");
-			sb.append(" where R." + Role.COLUMN_NAME_ROLE_NAME + " :r ");
-			fields.put("r", ikYetkiliRoller);
-			userList = dao.getNativeSQLList(fields, sb, User.class);
+			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+			veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_IK_USERNAME_LIST");
+			veriMap.put("alanAdi", "*");
+			try {
+				userList = dao.execSPList(veriMap, User.class);
+			} catch (Exception e) {
+				List<String> ikYetkiliRoller = Arrays.asList(new String[] { Role.TIPI_IK, Role.TIPI_IK_SIRKET, Role.TIPI_IK_Tesis });
+				HashMap fields = new HashMap();
+				sb.append("select U.* from " + Role.TABLE_NAME + " R " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
+				sb.append(" inner join " + UserRoles.TABLE_NAME + " UR " + PdksVeriOrtakAktar.getJoinLOCK() + " on UR." + UserRoles.COLUMN_NAME_ROLE + " = R." + Role.COLUMN_NAME_ID);
+				sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER + " and U." + User.COLUMN_NAME_DURUM + " = 1 ");
+				sb.append(" inner join " + Departman.TABLE_NAME + " D " + PdksVeriOrtakAktar.getJoinLOCK() + " on D." + Departman.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_DEPARTMAN + " and D." + Departman.COLUMN_NAME_ADMIN_DURUM + " = 1 and D." + Departman.COLUMN_NAME_DURUM + " = 1 ");
+				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " > GETDATE() ");
+				sb.append(" where R." + Role.COLUMN_NAME_ROLE_NAME + " :r ");
+				fields.put("r", ikYetkiliRoller);
+				userList = dao.getNativeSQLList(fields, sb, User.class);
+			}
 
 		}
 		String mailIcerik = "";
@@ -2876,6 +2897,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 				}
 				perNoList = null;
 				userIdList = null;
+
+			} else {
+				userIKList = new ArrayList<User>();
+				if (mailMap.containsKey(KEY_IK_MAIL_IPTAL))
+					mailMap.remove(KEY_IK_MAIL_IPTAL);
 
 			}
 			if (devam && (userIKList != null || !mailMap.containsKey(KEY_IK_MAIL_IPTAL))) {
@@ -5092,7 +5118,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				pdksDAO.execSP(map);
 			}
 		}
-		if (hataList != null && !hataList.isEmpty()) {
+		if (hataList != null && !hataList.isEmpty() || (hataIKMap != null && !hataIKMap.isEmpty())) {
 			List<User> userIKList = null;
 			MailStatu statu = null;
 			boolean devam = true;
@@ -5130,8 +5156,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 				}
 				userIdList = null;
+			} else {
+				userIKList = new ArrayList<User>();
+				if (mailMap.containsKey(KEY_IK_MAIL_IPTAL))
+					mailMap.remove(KEY_IK_MAIL_IPTAL);
 			}
+
 			if (devam && (userIKList != null || !mailMap.containsKey(KEY_IK_MAIL_IPTAL))) {
+
 				statu = personelHataMailGonder(userIKList, personelList, orjPersonelERPMap, hataList, personelERPHataliMap, sirketMap, mailBosGonder);
 				if (statu != null && statu.isDurum())
 					logger.info("savePersoneller hata gonderildi. " + PdksUtil.getCurrentTimeStampStr());

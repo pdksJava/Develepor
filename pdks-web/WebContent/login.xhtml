@@ -22,10 +22,9 @@
 				<div class="dialog" style="height: 350px">
 					<h:panelGrid id="sifre" columns="2" rowClasses="prop" columnClasses="name,value">
 						<h:outputLabel for="username">Kullanıcı adı</h:outputLabel>
-						<h:inputText id="username" value="#{credentials.username}" size="128" required="true" requiredMessage="Kullancı adı giriniz" />
+						<h:inputText id="username" value="#{credentials.username}" size="128" required="true" requiredMessage="Kullanıcı adı giriniz" />
 						<h:outputLabel for="password">Şifre</h:outputLabel>
-						<h:inputSecret id="password" value="#{credentials.password}" size="64" required="true" disabled="#{pdksCredentials.forgetPassword}"
-							requiredMessage="Şifre giriniz" />
+						<h:inputSecret id="password" value="#{credentials.password}" size="64" required="true" requiredMessage="Şifre giriniz" />
 
 					</h:panelGrid>
 					<a4j:outputPanel id="login">
