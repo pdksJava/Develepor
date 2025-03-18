@@ -2739,7 +2739,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public String yeniPersonelleriGuncelle() throws Exception {
 		List<PersonelView> list = null;
 		try {
-			list = ortakIslemler.yeniPersonelleriOlustur(session);
+			list = ortakIslemler.yeniPersonelleriOlustur(null, session);
 			session.clear();
 			if (list != null && !list.isEmpty())
 				fillPersonelTablolar(true);
