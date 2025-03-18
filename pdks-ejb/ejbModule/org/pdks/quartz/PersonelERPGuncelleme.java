@@ -171,8 +171,11 @@ public class PersonelERPGuncelleme implements Serializable {
 				List<PersonelERP> list = ortakIslemler.personelERPDBGuncelle(guncellemeDBDurum, null, session);
 				if (list != null) {
 					perList = new ArrayList<String>();
-					for (PersonelERP personelERP : list)
-						perList.add(personelERP.getPersonelNo());
+					for (PersonelERP personelERP : list) {
+						if (personelERP.getYazildi() == null || personelERP.getYazildi().booleanValue() == false)
+							perList.add(personelERP.getPersonelNo());
+					}
+
 				}
 				ortakIslemler.yeniPersonelleriOlustur(perList, session);
 				logger.info(uygulamaBordro + " personel bilgileri güncelleniyor out " + PdksUtil.getCurrentTimeStampStr());
