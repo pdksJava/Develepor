@@ -19188,11 +19188,12 @@ public class OrtakIslemler implements Serializable {
 									else if (toplamParcalanmisSure > 7.5d)
 										kanuniMolaSure = 1.0d;
 									if (vardiyaYemekSuresi < kanuniMolaSure) {
-										logger.debug(vardiyaGun.getVardiyaKeyStr() + " " + kanuniMolaSure + " " + toplamYemekSuresi);
 										kanuniMolaSure = vardiyaYemekSuresi;
 									}
-									if (toplamYemekSuresi < kanuniMolaSure && vardiyaGun.isAyinGunu())
+									if (toplamYemekSuresi < kanuniMolaSure && vardiyaYemekSuresi >= kanuniMolaSure) {
+										logger.debug(vardiyaGun.getVardiyaKeyStr() + " " + kanuniMolaSure + " " + toplamYemekSuresi);
 										toplamYemekSuresi = kanuniMolaSure;
+									}
 								}
 								boolean tatilYemekHesabiSureEkle = vardiyaGun.isYemekHesabiSureEkle();
 								double fark = toplamYemekSuresi - vardiyaYemekSuresi;
