@@ -43,6 +43,8 @@ import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
 
+import com.pdks.webservice.PersonelERP;
+
 @Name("personelERPGuncelleme")
 @AutoCreate
 @Scope(ScopeType.APPLICATION)
@@ -99,9 +101,6 @@ public class PersonelERPGuncelleme implements Serializable {
 				// sunucuDurum = true;
 				if (sunucuDurum) {
 					guncellemeDBDurum = Boolean.FALSE;
-					// Parameter parameter = ortakIslemler.getParameter(session, "kgsMasterUpdate");
-					// if (parameter != null && parameter.getValue().equals("1"))
-					// ortakIslemler.kgsMasterUpdate(session);
 					hataKonum = "Paramatre okunuyor ";
 					Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_KEY);
 					String value = (parameter != null) ? parameter.getValue() : null;
@@ -117,6 +116,7 @@ public class PersonelERPGuncelleme implements Serializable {
 							String parameterUpdateKey = PARAMETER_KEY + "Update";
 							value = ortakIslemler.getParameterKey(PARAMETER_KEY + "Update");
 							guncellemeDBDurum = PdksUtil.zamanKontrol(parameterUpdateKey, value, tarih);
+							// guncellemeDBDurum = true;
 						}
 						if (zamanDurum || guncellemeDBDurum) {
 							if (ortakIslemler.getGuncellemeDurum(Personel.TABLE_NAME, session))
@@ -161,14 +161,23 @@ public class PersonelERPGuncelleme implements Serializable {
 			time = ortakIslemler.getBugun();
 		ozelKontrol = zamanlayici.getOzelKontrol(session);
 		boolean sapDurum = false;
+		List<String> perList = null;
 		try {
 			User sistemAdminUser = ortakIslemler.getSistemAdminUser(session);
 			if (ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametrePersonelERPTableView())) {
 				mailGonder = false;
 				String uygulamaBordro = ortakIslemler.getParameterKey("uygulamaBordro");
 				logger.info(uygulamaBordro + " personel bilgileri güncelleniyor in " + PdksUtil.getCurrentTimeStampStr());
-				ortakIslemler.personelERPDBGuncelle(guncellemeDBDurum, null, session);
-				ortakIslemler.yeniPersonelleriOlustur(session);
+				List<PersonelERP> list = ortakIslemler.personelERPDBGuncelle(guncellemeDBDurum, null, session);
+				if (list != null) {
+					perList = new ArrayList<String>();
+					for (PersonelERP personelERP : list) {
+						if (personelERP.getYazildi() == null || personelERP.getYazildi().booleanValue() == false)
+							perList.add(personelERP.getPersonelNo());
+					}
+
+				}
+				ortakIslemler.yeniPersonelleriOlustur(perList, session);
 				logger.info(uygulamaBordro + " personel bilgileri güncelleniyor out " + PdksUtil.getCurrentTimeStampStr());
 			} else if (guncellemeDBDurum == false) {
 
@@ -212,7 +221,7 @@ public class PersonelERPGuncelleme implements Serializable {
 				logger.info("ozel islemler in " + PdksUtil.getCurrentTimeStampStr());
 				kullaniciGuncelle(session, null);
 				if (sapDurum) {
-					ortakIslemler.yeniPersonelleriOlustur(session);
+					ortakIslemler.yeniPersonelleriOlustur(perList, session);
 					if (ozelKontrol)
 						hataliVeriPersonelBul(session, null);
 				}

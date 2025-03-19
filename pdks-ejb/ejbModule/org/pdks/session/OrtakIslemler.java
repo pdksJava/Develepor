@@ -5149,13 +5149,15 @@ public class OrtakIslemler implements Serializable {
 		return bakiyeIzin;
 	}
 
+	
 	/**
+	 * @param perNoInputList
 	 * @param session
 	 * @return
 	 * @throws Exception
 	 */
 	@Transactional
-	public List<PersonelView> yeniPersonelleriOlustur(Session session) throws Exception {
+	public List<PersonelView> yeniPersonelleriOlustur(List<String> perNoInputList, Session session) throws Exception {
 		List<PersonelView> list = new ArrayList<PersonelView>();
 		if (session == null)
 			session = PdksUtil.getSession(entityManager, true);
@@ -5169,12 +5171,20 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" left join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_KGS_PERSONEL + " = PS." + PersonelKGS.COLUMN_NAME_ID);
 			sb.append(" left join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ERP_KODU + " = D." + PersonelERPDB.COLUMN_NAME_SIRKET_KODU);
 			sb.append(" where P." + Personel.COLUMN_NAME_ID + " is null and COALESCE(S." + Sirket.COLUMN_NAME_DURUM + ",1) = 1 ");
-			sb.append("AND PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " not in ( select " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + ")");
+			sb.append(" and PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " not in ( select " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + ")");
 
 			HashMap fields = new HashMap();
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<String> perNoList = pdksEntityController.getObjectBySQLList(sb, fields, null);
+			if (perNoInputList != null) {
+				for (Iterator iterator = perNoList.iterator(); iterator.hasNext();) {
+					String string = (String) iterator.next();
+					if (perNoInputList.contains(string))
+						iterator.remove();
+
+				}
+			}
 			if (!perNoList.isEmpty()) {
 				List<PersonelERPDB> personelERPDBList = getPersonelERPDBList(false, perNoList, parametreKey, session);
 				if (!personelERPDBList.isEmpty()) {
@@ -6416,7 +6426,7 @@ public class OrtakIslemler implements Serializable {
 								}
 							}
 						}
-					} else
+					} else if (guncellemeDurum==false)
 						personelERPReturnList = null;
 					personelERPList = null;
 				}

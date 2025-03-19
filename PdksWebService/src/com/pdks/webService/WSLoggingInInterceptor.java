@@ -218,7 +218,7 @@ public class WSLoggingInInterceptor extends AbstractSoapInterceptor {
 	 * @param soapAction
 	 * @return
 	 */
-	public String getParseKey(String xmlString, String soapAction) {
+	private String getParseKey(String xmlString, String soapAction) {
 		String parseKey = "";
 		Document document = null;
 		Element root = null;
