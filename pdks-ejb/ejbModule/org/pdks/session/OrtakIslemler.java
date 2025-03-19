@@ -127,6 +127,7 @@ import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
+import org.pdks.entity.TatilGunView;
 import org.pdks.entity.TempIzin;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGorev;
@@ -11779,23 +11780,19 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param perList
+	 * @param tatilMap
 	 * @param basTarih
 	 * @param bitTarih
 	 * @param session
 	 * @return
 	 */
-	@Transactional
-	public TreeMap<String, Tatil> getTatilGunleri(List<Personel> perList, Date basTarih, Date bitTarih, Session session) {
-		TreeMap<String, Tatil> tatilMap = new TreeMap<String, Tatil>();
-		String pattern = PdksUtil.getDateTimeFormat();
+	private String setTatilMap(TreeMap<String, Tatil> tatilMap, Date basTarih, Date bitTarih, Session session) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(basTarih);
 		int basYil = cal.get(Calendar.YEAR);
 		cal.setTime(bitTarih);
 		int bitYil = cal.get(Calendar.YEAR);
 		List<Tatil> pdksTatilList = new ArrayList<Tatil>(), tatilList = new ArrayList<Tatil>();
-
 		String formatStr = "yyyy-MM-dd";
 		StringBuffer sb = new StringBuffer();
 		sb.append("SP_GET_TATIL");
@@ -11974,8 +11971,103 @@ public class OrtakIslemler implements Serializable {
 
 			}
 		}
+		return arifeTatilBasZaman;
+	}
+
+	/**
+	 * @param tatilMap
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param session
+	 * @return
+	 * @throws Exception 
+	 */
+	private String setTatilGunleriMap(TreeMap<String, Tatil> tatilMap, Date basTarih, Date bitTarih, Session session) throws Exception {
+		String arifeTatilBasZaman = getParameterKey("arifeTatilBasZaman");
+		StringBuffer sb = new StringBuffer();
+		sb.append(TatilGunView.SP_NAME);
+		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+		map.put("basTarih", basTarih);
+		map.put("bitTarih", bitTarih);
+		if (session != null)
+			map.put(PdksEntityController.MAP_KEY_SESSION, session);
+	 
+			List<TatilGunView> list = pdksEntityController.execSPList(map, sb, TatilGunView.class);
+			if (!list.isEmpty()) {
+				String yarimGunStr = (parameterMap != null && parameterMap.containsKey("yarimGunSaati") ? (String) parameterMap.get("yarimGunSaati") : "");
+				if (PdksUtil.hasStringValue(arifeTatilBasZaman))
+					yarimGunStr = arifeTatilBasZaman;
+				int saat = 13, dakika = 0;
+				if (yarimGunStr.indexOf(":") > 0) {
+					StringTokenizer st = new StringTokenizer(yarimGunStr, ":");
+					if (st.countTokens() >= 2) {
+						try {
+							saat = Integer.parseInt(st.nextToken().trim());
+						} catch (Exception e) {
+							logger.error("Pdks hata in : \n");
+							e.printStackTrace();
+							logger.error("Pdks hata out : " + e.getMessage());
+							saat = 13;
+						}
+						try {
+							dakika = Integer.parseInt(st.nextToken().trim());
+						} catch (Exception e) {
+							logger.error("Pdks hata in : \n");
+							e.printStackTrace();
+							logger.error("Pdks hata out : " + e.getMessage());
+							saat = 13;
+							dakika = 0;
+						}
+					}
+				}
+				Calendar cal = Calendar.getInstance();
+				for (TatilGunView tatilGunView : list) {
+					String key = String.valueOf(tatilGunView.getId());
+					Tatil tatilOrj = tatilGunView.getTatil();
+					Tatil tatil = (Tatil) tatilOrj.clone();
+					tatil.setOrjTatil(tatilGunView.getTatil());
+					tatil.setYarimGun(tatilGunView.getYarimGun());
+					tatil.setBasTarih(PdksUtil.getDate(tatilGunView.getTarih()));
+					tatil.setBitGun(tariheGunEkleCikar(cal, PdksUtil.getDate(tatil.getBasTarih()), 1));
+					tatil.setBitTarih(tatilOrj.getBitTarih());
+					if (tatil.getYarimGun()) {
+						tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.HOUR_OF_DAY, saat));
+						tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.MINUTE, dakika));
+					}
+					tatil.setBasGun(tatil.getBasTarih());
+					tatilMap.put(key, tatil);
+				}
+			}
+
+		 
+
+		return arifeTatilBasZaman;
+	}
+
+	/**
+	 * @param perList
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param session
+	 * @return
+	 */
+	@Transactional
+	public TreeMap<String, Tatil> getTatilGunleri(List<Personel> perList, Date basTarih, Date bitTarih, Session session) {
+		TreeMap<String, Tatil> tatilMap = new TreeMap<String, Tatil>();
+		String pattern = PdksUtil.getDateTimeFormat();
+		Calendar cal = Calendar.getInstance();
+		HashMap map = new HashMap();
+		StringBuffer sb = new StringBuffer();
+		String arifeTatilBasZaman = null;
+		if (isExisStoreProcedure(TatilGunView.SP_NAME, session) == false)
+			arifeTatilBasZaman = setTatilMap(tatilMap, basTarih, bitTarih, session);
+		else
+			try {
+				arifeTatilBasZaman = setTatilGunleriMap(tatilMap, basTarih, bitTarih, session);
+			} catch (Exception e1) {
+				arifeTatilBasZaman = setTatilMap(tatilMap, basTarih, bitTarih, session);
+			}
 		if (perList != null && tatilMap != null && !tatilMap.isEmpty()) {
-			cal = Calendar.getInstance();
 			List<Long> perIdList = new ArrayList<Long>();
 			try {
 				if (perList != null)
