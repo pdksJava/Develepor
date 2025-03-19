@@ -5149,7 +5149,6 @@ public class OrtakIslemler implements Serializable {
 		return bakiyeIzin;
 	}
 
-	
 	/**
 	 * @param perNoInputList
 	 * @param session
@@ -6426,7 +6425,7 @@ public class OrtakIslemler implements Serializable {
 								}
 							}
 						}
-					} else if (guncellemeDurum==false)
+					} else if (guncellemeDurum == false)
 						personelERPReturnList = null;
 					personelERPList = null;
 				}
@@ -11990,7 +11989,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param bitTarih
 	 * @param session
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private String setTatilGunleriMap(TreeMap<String, Tatil> tatilMap, Date basTarih, Date bitTarih, Session session) throws Exception {
 		String arifeTatilBasZaman = getParameterKey("arifeTatilBasZaman");
@@ -12001,55 +12000,53 @@ public class OrtakIslemler implements Serializable {
 		map.put("bitTarih", bitTarih);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-	 
-			List<TatilGunView> list = pdksEntityController.execSPList(map, sb, TatilGunView.class);
-			if (!list.isEmpty()) {
-				String yarimGunStr = (parameterMap != null && parameterMap.containsKey("yarimGunSaati") ? (String) parameterMap.get("yarimGunSaati") : "");
-				if (PdksUtil.hasStringValue(arifeTatilBasZaman))
-					yarimGunStr = arifeTatilBasZaman;
-				int saat = 13, dakika = 0;
-				if (yarimGunStr.indexOf(":") > 0) {
-					StringTokenizer st = new StringTokenizer(yarimGunStr, ":");
-					if (st.countTokens() >= 2) {
-						try {
-							saat = Integer.parseInt(st.nextToken().trim());
-						} catch (Exception e) {
-							logger.error("Pdks hata in : \n");
-							e.printStackTrace();
-							logger.error("Pdks hata out : " + e.getMessage());
-							saat = 13;
-						}
-						try {
-							dakika = Integer.parseInt(st.nextToken().trim());
-						} catch (Exception e) {
-							logger.error("Pdks hata in : \n");
-							e.printStackTrace();
-							logger.error("Pdks hata out : " + e.getMessage());
-							saat = 13;
-							dakika = 0;
-						}
+
+		List<TatilGunView> list = pdksEntityController.execSPList(map, sb, TatilGunView.class);
+		if (!list.isEmpty()) {
+			String yarimGunStr = (parameterMap != null && parameterMap.containsKey("yarimGunSaati") ? (String) parameterMap.get("yarimGunSaati") : "");
+			if (PdksUtil.hasStringValue(arifeTatilBasZaman))
+				yarimGunStr = arifeTatilBasZaman;
+			int saat = 13, dakika = 0;
+			if (yarimGunStr.indexOf(":") > 0) {
+				StringTokenizer st = new StringTokenizer(yarimGunStr, ":");
+				if (st.countTokens() >= 2) {
+					try {
+						saat = Integer.parseInt(st.nextToken().trim());
+					} catch (Exception e) {
+						logger.error("Pdks hata in : \n");
+						e.printStackTrace();
+						logger.error("Pdks hata out : " + e.getMessage());
+						saat = 13;
 					}
-				}
-				Calendar cal = Calendar.getInstance();
-				for (TatilGunView tatilGunView : list) {
-					String key = String.valueOf(tatilGunView.getId());
-					Tatil tatilOrj = tatilGunView.getTatil();
-					Tatil tatil = (Tatil) tatilOrj.clone();
-					tatil.setOrjTatil(tatilGunView.getTatil());
-					tatil.setYarimGun(tatilGunView.getYarimGun());
-					tatil.setBasTarih(PdksUtil.getDate(tatilGunView.getTarih()));
-					tatil.setBitGun(tariheGunEkleCikar(cal, PdksUtil.getDate(tatil.getBasTarih()), 1));
-					tatil.setBitTarih(tatilOrj.getBitTarih());
-					if (tatil.getYarimGun()) {
-						tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.HOUR_OF_DAY, saat));
-						tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.MINUTE, dakika));
+					try {
+						dakika = Integer.parseInt(st.nextToken().trim());
+					} catch (Exception e) {
+						logger.error("Pdks hata in : \n");
+						e.printStackTrace();
+						logger.error("Pdks hata out : " + e.getMessage());
+						saat = 13;
+						dakika = 0;
 					}
-					tatil.setBasGun(tatil.getBasTarih());
-					tatilMap.put(key, tatil);
 				}
 			}
-
-		 
+			Calendar cal = Calendar.getInstance();
+			for (TatilGunView tatilGunView : list) {
+				String key = String.valueOf(tatilGunView.getId());
+				Tatil tatilOrj = tatilGunView.getTatil();
+				Tatil tatil = (Tatil) tatilOrj.clone();
+				tatil.setOrjTatil(tatilGunView.getTatil());
+				tatil.setYarimGun(tatilGunView.getYarimGun());
+				tatil.setBasTarih(PdksUtil.getDate(tatilGunView.getTarih()));
+				tatil.setBitGun(tariheGunEkleCikar(cal, PdksUtil.getDate(tatil.getBasTarih()), 1));
+				tatil.setBitTarih(tatilOrj.getBitTarih());
+				if (tatil.getYarimGun()) {
+					tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.HOUR_OF_DAY, saat));
+					tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.MINUTE, dakika));
+				}
+				tatil.setBasGun(tatil.getBasTarih());
+				tatilMap.put(key, tatil);
+			}
+		}
 
 		return arifeTatilBasZaman;
 	}
@@ -19181,9 +19178,25 @@ public class OrtakIslemler implements Serializable {
 							}
 
 							if (sureHesapla && gunlukSaat > 0) {
-
+								double kanuniMolaSure = vardiyaYemekSuresi;
+								if (vardiyaYemekSuresi > 0.0d && toplamParcalanmisSure > 0.0d) {
+									kanuniMolaSure = 0.0d;
+									if (toplamParcalanmisSure > 2.0d && toplamParcalanmisSure <= 4.0d)
+										kanuniMolaSure = 0.25d;
+									else if (toplamParcalanmisSure <= 7.5d)
+										kanuniMolaSure = 0.5d;
+									else if (toplamParcalanmisSure > 7.5d)
+										kanuniMolaSure = 1.0d;
+									if (vardiyaYemekSuresi < kanuniMolaSure) {
+										logger.debug(vardiyaGun.getVardiyaKeyStr() + " " + kanuniMolaSure + " " + toplamYemekSuresi);
+										kanuniMolaSure = vardiyaYemekSuresi;
+									}
+									if (toplamYemekSuresi < kanuniMolaSure && vardiyaGun.isAyinGunu())
+										toplamYemekSuresi = kanuniMolaSure;
+								}
 								boolean tatilYemekHesabiSureEkle = vardiyaGun.isYemekHesabiSureEkle();
 								double fark = toplamYemekSuresi - vardiyaYemekSuresi;
+
 								if (yemekList.isEmpty()) {
 									double eksikSure = netSure + vardiyaYemekSuresi - calSure;
 									if (eksikSure <= 0) {
@@ -19199,8 +19212,12 @@ public class OrtakIslemler implements Serializable {
 										double yemekFark = (calSure - PdksUtil.setSureDoubleTypeRounded((pay * netSure) / payda, vardiyaGun.getYarimYuvarla()));
 										if (tatilYemekHesabiSureEkle == false)
 											calSure -= yemekFark;
-										else
+										else {
+											if (kanuniMolaSure > 0) {
+												logger.debug(kanuniMolaSure);
+											}
 											calSure -= fark;
+										}
 									}
 
 								} else {
@@ -19213,6 +19230,8 @@ public class OrtakIslemler implements Serializable {
 										if (resmiTatilSure > 0.0d) {
 											if (resmiTatilSure == calSure && toplamParcalanmisSure == netSure + vardiyaYemekSuresi) {
 												logger.debug(gun);
+												if (toplamParcalanmisSure == calSure)
+													fark = -vardiyaYemekSuresi;
 												calSure += fark;
 												resmiTatilSure += fark;
 
