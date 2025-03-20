@@ -759,7 +759,6 @@ public class StartupAction implements Serializable {
 				logger.error("PDKS hata out : " + e.getMessage());
 			}
 		PdksUtil.setSicilNoUzunluk(sicilNoUzunluk);
-		SecurityEvents.setSifreUnuttum(parameterMap.containsKey("sifreUnuttum"));
 		if (parameterMap.containsKey("serverTimeUpdateFromDB")) {
 			if (PdksUtil.getTestSunucuDurum() || PdksUtil.getCanliSunucuDurum()) {
 				try {

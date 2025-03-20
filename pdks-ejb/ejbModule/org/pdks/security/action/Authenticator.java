@@ -47,13 +47,16 @@ public class Authenticator implements IAuthenticator, Serializable {
 
 	@In
 	Identity identity;
+
 	@In
 	Credentials credentials;
 
 	@In
 	EntityManager entityManager;
+
 	@In
 	IdentityManager identityManager;
+
 	@In
 	PermissionManager permissionManager;
 
@@ -64,13 +67,8 @@ public class Authenticator implements IAuthenticator, Serializable {
 	HashMap<String, String> parameterMap;
 
 	@Out(scope = ScopeType.SESSION, required = false)
-	List<Liste> mesajList = new ArrayList<Liste>();
-
-	/*
-	 * @In LDAPUserManager ldapUserManager;
-	 */
-	@Out(scope = ScopeType.SESSION, required = false)
 	User authenticatedUser;
+
 	@Out(scope = ScopeType.SESSION, required = false)
 	String kisaKullaniciAdi;
 
@@ -78,6 +76,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 	PdksEntityController pdksEntityController;
 
 	private String adres;
+	private List<Liste> mesajList = null;
 	private Session session;
 
 	/**
@@ -98,6 +97,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 	public boolean authenticate() {
 		session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		session.clear();
+
 		if (mesajList == null)
 			mesajList = new ArrayList<Liste>();
 		else
@@ -308,7 +308,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 				}
 			} else if (mesajList.isEmpty())
 				addMessageAvailableError(credentials.getUsername().trim() + " kullanıcı adı sistemde kayıtlı değildir!");
-			sonuc = getSonDurum(sonuc, loginUser);
+			sonuc = getSonDurum(sonuc, userName, loginUser);
 			return sonuc;
 		} catch (Exception ex) {
 			logger.debug("Hata : " + ex.getMessage());
@@ -327,21 +327,28 @@ public class Authenticator implements IAuthenticator, Serializable {
 			logger.debug("authenticating " + username);
 
 		}
-
-		sonuc = getSonDurum(sonuc, loginUser);
+		sonuc = getSonDurum(sonuc, userName, loginUser);
 		return sonuc;
 
 	}
 
 	/**
 	 * @param sonuc
+	 * @param userName
 	 * @param loginUser
 	 * @return
 	 */
-	private boolean getSonDurum(boolean sonuc, User loginUser) {
+	private boolean getSonDurum(boolean sonuc, String userName, User loginUser) {
 		if (loginUser == null || loginUser.getId() == null)
 			sonuc = false;
 		authenticatedUser = sonuc ? loginUser : null;
+		if (sonuc == false && mesajList.isEmpty() == false) {
+			authenticatedUser = new User();
+			authenticatedUser.setUsername(userName);
+			List list = ortakIslemler.getSelectItemList("hataMesajList", authenticatedUser);
+			list.clear();
+			list.addAll(mesajList);
+		}
 		return sonuc;
 	}
 

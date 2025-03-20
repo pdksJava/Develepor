@@ -1,5 +1,6 @@
 package org.pdks.security.action;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.security.auth.login.LoginException;
@@ -21,18 +22,13 @@ public class SecurityEvents extends FacesSecurityEvents {
 	@In(required = false)
 	User authenticatedUser;
 
-	@In(required = false)
-	List<Liste> mesajList;
-
-	private static boolean sifreUnuttum = false;
-
 	@Override
 	@Observer(Identity.EVENT_LOGIN_SUCCESSFUL)
 	public void addLoginSuccessfulMessage() {
 		String key = "org.jboss.seam.loginSuccessful";
 		StatusMessages.instance().clearGlobalMessages();
 		StatusMessages.instance().addFromResourceBundleOrDefault(Severity.INFO, key, PdksUtil.getMessageBundleMessage(key), authenticatedUser.getAdSoyad());
- 	}
+	}
 
 	@Override
 	@Observer(Identity.EVENT_NOT_LOGGED_IN)
@@ -48,31 +44,29 @@ public class SecurityEvents extends FacesSecurityEvents {
 		String key = "org.jboss.seam.AlreadyLoggedIn";
 		StatusMessages.instance().clearGlobalMessages();
 		StatusMessages.instance().addFromResourceBundleOrDefault(Severity.WARN, key, PdksUtil.getMessageBundleMessage(key), "");
- 	}
+	}
 
 	@Override
 	@Observer(Identity.EVENT_LOGIN_FAILED)
 	public void addLoginFailedMessage(LoginException ex) {
 		boolean mesajYaz = true;
 		StatusMessages.instance().clearGlobalMessages();
-		if (mesajList != null && mesajList.isEmpty() == false) {
-			if (mesajList.size() == 1) {
-				Liste liste = mesajList.get(0);
-				mesajYaz = false;
-				PdksUtil.addMessage((String) liste.getValue(), (Severity) liste.getId(), false);
+		if (authenticatedUser != null) {
+			HashMap<String, List> selectItemMap = authenticatedUser.getSelectItemMap();
+			List<Liste> mesajList = selectItemMap != null && selectItemMap.containsKey("hataMesajList") ? (List<Liste>) selectItemMap.get("hataMesajList") : null;
+			if (mesajList != null && mesajList.isEmpty() == false) {
+				if (mesajList.size() == 1) {
+					Liste liste = mesajList.get(0);
+					mesajYaz = false;
+					PdksUtil.addMessage((String) liste.getValue(), (Severity) liste.getId(), false);
+				}
 			}
 		}
+
 		if (mesajYaz) {
 			String key = "org.jboss.seam.loginFailed";
 			StatusMessages.instance().addFromResourceBundleOrDefault(Severity.ERROR, key, PdksUtil.getMessageBundleMessage(key), "");
 		}
 	}
 
-	public static boolean isSifreUnuttum() {
-		return sifreUnuttum;
-	}
-
-	public static void setSifreUnuttum(boolean sifreUnuttum) {
-		SecurityEvents.sifreUnuttum = sifreUnuttum;
-	}
 }
