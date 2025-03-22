@@ -18,8 +18,7 @@ import org.pdks.session.PdksUtil;
 
 @Name("securityEvents")
 public class SecurityEvents extends FacesSecurityEvents {
-
-	@In(required = false)
+ 	@In(required = false)
 	User authenticatedUser;
 
 	@Override
@@ -54,19 +53,15 @@ public class SecurityEvents extends FacesSecurityEvents {
 		if (authenticatedUser != null) {
 			HashMap<String, List> selectItemMap = authenticatedUser.getSelectItemMap();
 			List<Liste> mesajList = selectItemMap != null && selectItemMap.containsKey("hataMesajList") ? (List<Liste>) selectItemMap.get("hataMesajList") : null;
-			if (mesajList != null && mesajList.isEmpty() == false) {
-				if (mesajList.size() == 1) {
-					Liste liste = mesajList.get(0);
-					mesajYaz = false;
-					PdksUtil.addMessage((String) liste.getValue(), (Severity) liste.getId(), false);
-				}
+			if (mesajList != null && mesajList.size() == 1) {
+				Liste liste = mesajList.get(0);
+				mesajYaz = false;
+				PdksUtil.addMessage((String) liste.getValue(), (Severity) liste.getId(), false);
 			}
 		}
-
 		if (mesajYaz) {
 			String key = "org.jboss.seam.loginFailed";
 			StatusMessages.instance().addFromResourceBundleOrDefault(Severity.ERROR, key, PdksUtil.getMessageBundleMessage(key), "");
 		}
 	}
-
 }

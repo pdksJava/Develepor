@@ -189,7 +189,7 @@
 		<ejb-ref-name>pdks/Authenticator</ejb-ref-name>
 		<ejb-ref-type>Session</ejb-ref-type>
 		<local-home></local-home>
-		<local>org.pdks.session.IAuthenticator</local>
+		<local>org.pdks.security.action.IAuthenticator</local>
 	</ejb-local-ref>
 	<ejb-local-ref>
 		<ejb-ref-name>pdks/EjbSynchronizations</ejb-ref-name>

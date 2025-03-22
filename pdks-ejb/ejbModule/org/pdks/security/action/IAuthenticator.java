@@ -1,4 +1,4 @@
-package org.pdks.session;
+package org.pdks.security.action;
 
 import javax.ejb.Local;
 
@@ -7,5 +7,4 @@ public interface IAuthenticator {
 
 	boolean authenticate();
 
-	String getAciklamaIslem();
 }

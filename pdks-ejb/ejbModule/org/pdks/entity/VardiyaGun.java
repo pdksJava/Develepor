@@ -954,6 +954,9 @@ public class VardiyaGun extends BaseObject {
 		this.vardiyalar = value;
 	}
 
+	/**
+	 * @param value
+	 */
 	public void setKontrolVardiyalar(ArrayList<Vardiya> value) {
 		this.vardiyalar = value;
 		if (value != null && vardiya != null && (vardiya.isFMI() || vardiya.getDurum().equals(Boolean.FALSE)) && vardiya.getId() != null) {
