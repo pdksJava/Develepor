@@ -4742,7 +4742,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (aylikPuantaj != null) {
 			ArrayList<Vardiya> vardiyalar = fillAylikVardiyaList(aylikPuantaj, null);
 			TreeMap<Long, Vardiya> vardiyaMap = new TreeMap<Long, Vardiya>(), vardiyaGebeOzelMap = new TreeMap<Long, Vardiya>();
-			for (Vardiya vardiya : vardiyalar) {
+			for (Iterator iterator = vardiyalar.iterator(); iterator.hasNext();) {
+				Vardiya vardiya = (Vardiya) iterator.next();
+				if (ikRole == false && (vardiya.isFMI() || vardiya.isIcapVardiyasi())) {
+					iterator.remove();
+					continue;
+				}
 				if (personelGebeDurum != null) {
 					if (!vardiya.isGebelikMi())
 						vardiyaGebeOzelMap.put(vardiya.getId(), vardiya);

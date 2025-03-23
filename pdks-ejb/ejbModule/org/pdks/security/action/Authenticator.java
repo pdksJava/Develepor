@@ -29,7 +29,6 @@ import org.pdks.erp.action.SapRfcManager;
 import org.pdks.erp.entity.SAPSunucu;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
-import org.pdks.session.IAuthenticator;
 import org.pdks.session.LDAPUserManager;
 import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
@@ -42,21 +41,17 @@ public class Authenticator implements IAuthenticator, Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5011682752102859161L;
-	static Logger logger = Logger.getLogger(Authenticator.class);
+	private static final long serialVersionUID = -8380953982616334438L;
 
+	static Logger logger = Logger.getLogger(Authenticator.class);
 	@In
 	Identity identity;
-
 	@In
 	Credentials credentials;
-
 	@In
 	EntityManager entityManager;
-
 	@In
 	IdentityManager identityManager;
-
 	@In
 	PermissionManager permissionManager;
 
@@ -66,9 +61,11 @@ public class Authenticator implements IAuthenticator, Serializable {
 	@In(required = false, create = true)
 	HashMap<String, String> parameterMap;
 
+	/*
+	 * @In LDAPUserManager ldapUserManager;
+	 */
 	@Out(scope = ScopeType.SESSION, required = false)
 	User authenticatedUser;
-
 	@Out(scope = ScopeType.SESSION, required = false)
 	String kisaKullaniciAdi;
 
@@ -97,7 +94,6 @@ public class Authenticator implements IAuthenticator, Serializable {
 	public boolean authenticate() {
 		session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		session.clear();
-
 		if (mesajList == null)
 			mesajList = new ArrayList<Liste>();
 		else
@@ -107,8 +103,8 @@ public class Authenticator implements IAuthenticator, Serializable {
 		String userName = username.trim();
 		boolean sonuc = Boolean.FALSE;
 		User loginUser = null;
-
 		String password = credentials.getPassword();
+
 		Map<String, String> map = null;
 		try {
 			map = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
@@ -285,7 +281,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 							loginUser.setTestLogin(test);
 							loginUser.setCalistigiSayfa("anasayfa");
 							ortakIslemler.sistemeGirisIslemleri(loginUser, Boolean.TRUE, null, null, session);
-							logger.info(loginUser.getUsername() + " " + loginUser.getAdSoyad() + " " + (loginUser.getEmail() != null && !loginUser.getEmail().equals(loginUser.getUsername()) ? loginUser.getEmail() + " E-postali" : "") + " kullanıcısı PDKS sistemine login oldu. "
+							logger.info(loginUser.getUsername() + " " + loginUser.getAdSoyad() + " " + (loginUser.getEmail() != null && !loginUser.getEmail().equals(loginUser.getUsername()) ? loginUser.getEmail() + " e-postalı" : "") + " kullanıcısı PDKS sistemine login oldu. "
 									+ PdksUtil.getCurrentTimeStampStr());
 							loginUser.setSessionSQL(session);
 							loginUser.setLogin(Boolean.TRUE);
@@ -409,8 +405,4 @@ public class Authenticator implements IAuthenticator, Serializable {
 		this.session = session;
 	}
 
-	public String getAciklamaIslem() {
-		String str = "Sisteme Giriş";
-		return str;
-	}
 }

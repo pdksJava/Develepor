@@ -1,5 +1,6 @@
 package org.pdks.security.action;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,12 @@ import org.apache.log4j.Logger;
 import org.pdks.security.entity.User;
 import org.pdks.session.PdksUtil;
 
-public class SessionListener implements HttpSessionListener {
+public class SessionListener implements HttpSessionListener, Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6192060615247592440L;
 
 	static final String LIST_NAME = "pdksSession";
 	static Logger logger = Logger.getLogger(SessionListener.class);
@@ -36,25 +42,26 @@ public class SessionListener implements HttpSessionListener {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpSessionListener#sessionCreated(javax.servlet.http.HttpSessionEvent)
+	 */
 	public void sessionCreated(HttpSessionEvent se) {
 		HttpSession session = se.getSession();
 		session.setMaxInactiveInterval(1200);
-		// Date now = new Date();
-		// StringBuffer sb = new StringBuffer();
-		// String id = session.getId();
-		// sb.append(now.toString()).append("\nID: ").append(id);
-		List<HttpSession> sessionList = getSessionList(session.getServletContext());
+		User authenticatedUser = (User) session.getAttribute(SESSION_USER_NAME);
+		List<HttpSession> sessionList = null;
+		if (authenticatedUser == null)
+			sessionList = getSessionList(session.getServletContext());
 		synchronized (this) {
-			sessionList.add(session);
+			if (sessionList != null)
+				sessionList.add(session);
 		}
-		// sb.append("\n").append("PDKS are now : " + sessionList.size());
-		// String message = sb.toString();
-		// logger.info(message);
-		// message = null;
-		// sb = null;
 
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpSessionListener#sessionDestroyed(javax.servlet.http.HttpSessionEvent)
+	 */
 	public void sessionDestroyed(HttpSessionEvent se) {
 		HttpSession session = se.getSession();
 		StringBuffer sb = new StringBuffer();
