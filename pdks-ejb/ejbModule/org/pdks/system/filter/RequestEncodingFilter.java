@@ -14,11 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.pdks.session.PdksUtil;
-
 import org.pdks.erp.action.ConnectionMan;
 import org.pdks.erp.action.MyDestinationDataProvider;
 import org.pdks.erp.action.SapRfcManager;
+import org.pdks.session.PdksUtil;
+
 import com.sap.conn.jco.ext.Environment;
 
 public class RequestEncodingFilter implements Filter, Serializable {
@@ -28,6 +28,8 @@ public class RequestEncodingFilter implements Filter, Serializable {
 	 */
 	private static final long serialVersionUID = -7249210497478717720L;
 	static Logger logger = Logger.getLogger(RequestEncodingFilter.class);
+
+	private static Boolean ipControl;
 
 	/*
 	 * (non-Javadoc)
@@ -94,6 +96,14 @@ public class RequestEncodingFilter implements Filter, Serializable {
 			logger.error("PDKS hata out : " + e.getMessage());
 			logger.error("Filter hata : " + e.getMessage());
 		}
+	}
+
+	public static Boolean getIpControl() {
+		return ipControl;
+	}
+
+	public static void setIpControl(Boolean value) {
+		RequestEncodingFilter.ipControl = value;
 	}
 
 }

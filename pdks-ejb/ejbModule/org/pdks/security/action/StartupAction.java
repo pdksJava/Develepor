@@ -80,6 +80,7 @@ import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
 import org.pdks.session.SSLImport;
+import org.pdks.system.filter.RequestEncodingFilter;
 
 import com.google.gson.Gson;
 import com.pdks.mail.model.MailManager;
@@ -751,6 +752,7 @@ public class StartupAction implements Serializable {
 				PersonelDenklestirme.setCalismaSaatiSua(parameterMap.containsKey("calismaSaatiSua") ? Double.parseDouble(parameterMap.get("calismaSaatiSua")) : 7.0d);
 				PersonelDenklestirme.setCalismaSaatiPartTime(parameterMap.containsKey("calismaSaatiPartTime") ? Double.parseDouble(parameterMap.get("calismaSaatiPartTime")) : 6.0d);
 				PdksUtil.setUrl(parameterMap.containsKey("uygulamaURL") ? parameterMap.get("uygulamaURL") : null);
+				RequestEncodingFilter.setIpControl(parameterMap.containsKey("ipControl") && parameterMap.get("ipControl").equals("1"));
 				Tanim.setMultiLanguage(parameterMap.containsKey("multiLanguage"));
 				setLDAPUserList(session);
 			} catch (Exception e) {

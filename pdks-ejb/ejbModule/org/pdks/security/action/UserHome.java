@@ -35,6 +35,7 @@ import org.pdks.security.entity.User;
 import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
+import org.pdks.system.filter.RequestEncodingFilter;
 
 import com.Ostermiller.util.RandPass;
 
@@ -311,21 +312,12 @@ public class UserHome extends EntityHome<User> implements Serializable {
 		boolean sonuc = Boolean.FALSE;
 		boolean ipControlYok = authenticatedUser != null;
 		try {
-			if (ipControlYok && ortakIslemler.getParameterKey("ipControl").equals("1")) {
+			if (ipControlYok && RequestEncodingFilter.getIpControl()) {
 				String remoteAddr = PdksUtil.getRemoteAddr();
 				ipControlYok = remoteAddr.equals(authenticatedUser.getRemoteAddr());
-				PdksUtil.addMessageError("Bir sorun ile karşılaştık, internet uygulamasını kapatıp tekrar açınız!");
-				// StatusMessages.instance().clearGlobalMessages();
-				// PdksUtil.addMessageAvailableError("Bir sorun ile karşılaştık, internet uygulamasını kapatıp tekrar açınız!");
-				// HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-				// String sessionId = mySession != null ? mySession.getId() : null;
-				// if (sessionId != null) {
-				// List<HttpSession> list = SessionListener.getSessionList(mySession.getServletContext());
-				// if (list != null && list.size() > 1) {
-				// }
-				// }
+				if (ipControlYok == false)
+					PdksUtil.addMessageError("Bir sorun ile karşılaştık, internet uygulamasını kapatıp tekrar açınız!");
 			}
-
 			if (ipControlYok && identity != null && identity.isLoggedIn()) {
 				HashMap<String, Boolean> menuYetkiMap = authenticatedUser.getMenuYetkiMap();
 				if (menuYetkiMap == null) {
