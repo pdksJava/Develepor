@@ -17,7 +17,7 @@
 						<f:facet name="header">
 							<h:outputText value="Dinamik Raporlar" />
 						</f:facet>
-						<rich:column>
+						<rich:column style="text-align:center">
 							<f:facet name="header">
                         İşlemler
               		  </f:facet>
@@ -27,6 +27,18 @@
 
 							</a4j:commandLink>
 							<rich:toolTip for="editlink" value="Güncelle" />
+							<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="paramlink" action="#{dinamikRaporTanimlamaHome.dinamikRaporGuncelle(rapor)}"
+								oncomplete="#{rich:component('editParametrePanel')}.show()" reRender="editParametrePanel">
+								<h:graphicImage value="/img/wallet_16.png" style="border:0" />
+
+							</a4j:commandLink>
+							<rich:toolTip for="paramlink" value="#{rapor.pdksDinamikRaporTipiAciklama} Parametreleri" />
+							<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="alanlink" action="#{dinamikRaporTanimlamaHome.dinamikRaporGuncelle(rapor)}"
+								oncomplete="#{rich:component('editAlanPanel')}.show()" reRender="editAlanPanel">
+								<h:graphicImage value="/img/select.gif" style="border:0" />
+
+							</a4j:commandLink>
+							<rich:toolTip for="alanlink" value="#{rapor.pdksDinamikRaporTipiAciklama} Alanları" />
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
@@ -46,13 +58,13 @@
               		 	 </f:facet>
 							<h:outputText value="#{rapor.pdksDinamikRaporTipiAciklama}" />
 						</rich:column>
-						<rich:column>
+						<rich:column style="text-align:center">
 							<f:facet name="header">
                       		Görüntülensin
               		 	 </f:facet>
 							<h:outputText value="#{authenticatedUser.getYesNo(rapor.goruntulemeDurum)}" />
 						</rich:column>
-						<rich:column>
+						<rich:column style="text-align:center">
 							<f:facet name="header">
                       		Durum
               		 	 </f:facet>
@@ -74,6 +86,54 @@
 			</rich:panel>
 
 		</h:form>
+		
+		<rich:modalPanel id="editParametrePanel" autosized="true" width="800">
+			<f:facet name="header">
+				<h:outputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.aciklama} Parametre Güncelle" />
+			</f:facet>
+			<f:facet name="controls">
+				<h:panelGroup>
+					<h:form>
+						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
+							<a4j:support event="onclick" reRender="raporTable"
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editParametrePanel')}.hide();" ajaxSingle="true" />
+						</h:graphicImage>
+					</h:form>
+				</h:panelGroup>
+			</f:facet>
+			<h:form id="raporParametreForm">
+				<h:panelGrid columns="1">
+					<a4j:outputPanel ajaxRendered="true">
+						<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+					</a4j:outputPanel>
+					<a4j:outputPanel id="raporParametreBilgi"></a4j:outputPanel>
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
+		
+		<rich:modalPanel id="editAlanPanel" autosized="true" width="800">
+			<f:facet name="header">
+				<h:outputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.aciklama} Alan Güncelle" />
+			</f:facet>
+			<f:facet name="controls">
+				<h:panelGroup>
+					<h:form>
+						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
+							<a4j:support event="onclick" reRender="raporTable"
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editAlanPanel')}.hide();" ajaxSingle="true" />
+						</h:graphicImage>
+					</h:form>
+				</h:panelGroup>
+			</f:facet>
+			<h:form id="raporAlanForm">
+				<h:panelGrid columns="1">
+					<a4j:outputPanel ajaxRendered="true">
+						<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+					</a4j:outputPanel>
+					<a4j:outputPanel id="raporAlanBilgi"></a4j:outputPanel>
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
 
 		<rich:modalPanel id="editPanel" autosized="true" width="800">
 			<f:facet name="header">
@@ -113,7 +173,7 @@
 									requiredMessage="Database Rapor Tipini seçiniz">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{dinamikRaporTanimlamaHome.raporTipiList}" />
- 								</h:selectOneMenu>
+								</h:selectOneMenu>
 
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">

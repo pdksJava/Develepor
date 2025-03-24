@@ -123,6 +123,8 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 			dinamikRaporAlanList.clear();
 			dinamikRaporParametreList.clear();
 		}
+		seciliPdksDinamikRaporAlan = null;
+		seciliPdksDinamikRaporParametre = null;
 		seciliPdksDinamikRapor = dinamikRapor;
 		return "";
 
