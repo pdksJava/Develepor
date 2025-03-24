@@ -96,6 +96,7 @@ public class MenuItemConstant implements Serializable {
 	public static String vardiyaOzetRaporu = "/rapor/puantaj/vardiyaOzetRaporu.xhtml";
 	public static String vardiyaPlaniTopluRapor = "/rapor/puantaj/vardiyaPlaniTopluRapor.xhtml";
 
+	public static String dinamikRaporTanimlama = "/rapor/tanimlama/dinamikRaporTanimlama.xhtml";
 	public static String yemekYiyenler = "/rapor/yemek/yemekYiyenler.xhtml";
 	public static String yemekYiyenSayisi = "/rapor/yemek/yemekYiyenSayisi.xhtml";
 	public static String yemekSirketTanimsiz = "/rapor/yemek/yemekSirketTanimsiz.xhtml";
@@ -1007,6 +1008,14 @@ public class MenuItemConstant implements Serializable {
 
 	public static void setGebeSutIzniRapor(String gebeSutIzniRapor) {
 		MenuItemConstant.gebeSutIzniRapor = gebeSutIzniRapor;
+	}
+
+	public static String getDinamikRaporTanimlama() {
+		return dinamikRaporTanimlama;
+	}
+
+	public static void setDinamikRaporTanimlama(String dinamikRaporTanimlama) {
+		MenuItemConstant.dinamikRaporTanimlama = dinamikRaporTanimlama;
 	}
 
 }
