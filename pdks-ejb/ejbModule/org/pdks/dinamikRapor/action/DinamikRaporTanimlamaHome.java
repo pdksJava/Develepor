@@ -25,6 +25,7 @@ import org.pdks.dinamikRapor.entity.PdksDinamikRaporTipi;
 import org.pdks.dinamikRapor.entity.PdksRaporAlanHizalaTipi;
 import org.pdks.dinamikRapor.entity.PdksRaporAlanTipi;
 import org.pdks.security.entity.User;
+import org.pdks.session.ComponentState;
 import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
@@ -47,6 +48,8 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	User authenticatedUser;
 	@In(required = true, create = true)
 	OrtakIslemler ortakIslemler;
+	@In(required = false, create = true)
+	ComponentState componentState;
 
 	public static String sayfaURL = "dinamikRaporTanimlama";
 	private List<PdksDinamikRapor> dinamikRaporList;
@@ -131,11 +134,15 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		seciliPdksDinamikRapor = dinamikRapor;
 		seciliPdksDinamikRaporAlan = null;
 		seciliPdksDinamikRaporParametre = null;
+		componentState.setSeciliTab("");
 		if (dinamikRapor.getId() != null) {
 			fillDinamikRaporAlanList();
 			filllDinamikRaporParametreList();
+			if (!dinamikRaporParametreList.isEmpty())
+				componentState.setSeciliTab("parametreTab");
+			else if (!dinamikRaporAlanList.isEmpty())
+				componentState.setSeciliTab("alanTab");
 		} else {
-
 			dinamikRaporAlanList.clear();
 			dinamikRaporParametreList.clear();
 		}

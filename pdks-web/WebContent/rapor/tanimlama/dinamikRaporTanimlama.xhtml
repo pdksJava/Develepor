@@ -74,6 +74,7 @@
 							<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 						</f:facet>
 					</rich:dataTable>
+
 				</a4j:outputPanel>
 				<h:panelGrid columns="1" id="ekle" rendered="#{authenticatedUser.admin}">
 					<a4j:commandButton status="ajaxStatus" value="Rapor Ekle" action="#{dinamikRaporTanimlamaHome.dinamikRaporGuncelle(null,null)}"
@@ -159,8 +160,8 @@
 
 								</a4j:commandLink>
 								<rich:toolTip for="editParametrelink" value="Güncelle" />
-<a4j:commandLink status="ajaxStatus" action="#{dinamikRaporTanimlamaHome.deleteDinamikRaporParametre(parametre)}" ajaxSingle="true" id="deleteAlanlink"
-									reRender="raporParametreBilgi">
+								<a4j:commandLink status="ajaxStatus" action="#{dinamikRaporTanimlamaHome.deleteDinamikRaporParametre(parametre)}" ajaxSingle="true"
+									id="deleteAlanlink" reRender="raporParametreBilgi">
 									<h:graphicImage value="/img/delete.gif" style="border:0" alt="Delete" />
 								</a4j:commandLink>
 								<rich:toolTip for="editParametrelink" value="Sil" />
@@ -404,6 +405,113 @@
 					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{dinamikRaporTanimlamaHome.savePdksDinamikRapor()}" reRender="raporTable"
 						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 				</h:panelGrid>
+				<c:if test="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.id!=null}">
+					<ui:fragment
+						rendered="#{not empty dinamikRaporTanimlamaHome.dinamikRaporAlanList or not empty dinamikRaporTanimlamaHome.dinamikRaporParametreList}">
+						<a4j:region>
+							<rich:tabPanel binding="#{componentState.someTabPanel}" width="100%" headerAlignment="left" switchType="ajax">
+								<rich:tab label="Parametreler" name="parametreTab" rendered="#{not empty dinamikRaporTanimlamaHome.dinamikRaporParametreList}">
+									<rich:dataTable rowClasses="acik,koyu" value="#{dinamikRaporTanimlamaHome.dinamikRaporParametreList}" var="parametre" rows="20"
+										rowKeyVar="row">
+										<f:facet name="header">
+											<h:outputText value="Dinamik Raporlar" />
+										</f:facet>
+
+										<rich:column>
+											<f:facet name="header">
+                     	   Rapor Başlık
+              		 	 </f:facet>
+											<h:outputText value="#{parametre.aciklama}" />
+										</rich:column>
+										<rich:column>
+											<f:facet name="header">
+                      		 Database Tanımı
+              		 	 </f:facet>
+											<h:outputText value="#{parametre.dbTanim}" />
+										</rich:column>
+										<rich:column>
+											<f:facet name="header">
+                      		 Sıra
+              		 	 </f:facet>
+											<h:outputText value="#{parametre.sira}" />
+										</rich:column>
+										<rich:column>
+											<f:facet name="header">
+                      		 Parametre Alan Tipi
+              		 	 </f:facet>
+											<h:outputText value="#{parametre.pdksRaporAlanTipiAciklama}" />
+										</rich:column>
+										<rich:column style="text-align:center">
+											<f:facet name="header">
+                      		Zorunlu
+              		 	 </f:facet>
+											<h:outputText value="#{authenticatedUser.getYesNo( parametre.zorunlu)}" />
+										</rich:column>
+										<rich:column style="text-align:center">
+											<f:facet name="header">
+                      		Durum
+              		 	 </f:facet>
+											<h:outputText value="#{authenticatedUser.getYesNo( parametre.durum)}" />
+										</rich:column>
+										<f:facet name="footer">
+											<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+										</f:facet>
+									</rich:dataTable>
+								</rich:tab>
+								<rich:tab label="Alanlar" name="alanTab" rendered="#{not empty dinamikRaporTanimlamaHome.dinamikRaporAlanList}">
+									<rich:dataTable rowClasses="acik,koyu" value="#{dinamikRaporTanimlamaHome.dinamikRaporAlanList}" var="alan" rows="20" rowKeyVar="row">
+										<f:facet name="header">
+											<h:outputText value="Dinamik Raporlar" />
+										</f:facet>
+
+										<rich:column>
+											<f:facet name="header">
+                     	   Rapor Başlık
+              		 	 </f:facet>
+											<h:outputText value="#{alan.aciklama}" />
+										</rich:column>
+										<rich:column>
+											<f:facet name="header">
+                      		 Database Tanımı
+              		 	 </f:facet>
+											<h:outputText value="#{alan.dbTanim}" />
+										</rich:column>
+										<rich:column>
+											<f:facet name="header">
+                      		 Sıra
+              		 	 </f:facet>
+											<h:outputText value="#{alan.sira}" />
+										</rich:column>
+										<rich:column>
+											<f:facet name="header">
+                      		Alan Tipi
+              		 	 </f:facet>
+											<h:outputText value="#{alan.pdksRaporAlanTipiAciklama}" />
+										</rich:column>
+										<rich:column style="text-align:center">
+											<f:facet name="header">
+                      		Hizalama Tipi
+              		 	 </f:facet>
+											<h:outputText value="#{alan.pdksDinamikRaporAlanhHizalaAciklama}" />
+										</rich:column>
+										<rich:column style="text-align:center">
+											<f:facet name="header">
+                      		Durum
+              		 	 </f:facet>
+											<h:outputText value="#{authenticatedUser.getYesNo( alan.durum)}" />
+										</rich:column>
+										<f:facet name="footer">
+											<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+										</f:facet>
+									</rich:dataTable>
+								</rich:tab>
+
+							</rich:tabPanel>
+						</a4j:region>
+					</ui:fragment>
+
+
+				</c:if>
 			</h:form>
 		</rich:modalPanel>
 	</ui:define>

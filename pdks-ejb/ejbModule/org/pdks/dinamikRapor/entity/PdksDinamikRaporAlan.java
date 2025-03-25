@@ -139,6 +139,21 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 	public String getPdksDinamikRaporAlanhHizalaAciklama() {
 		return PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(hizala);
 	}
+	
+	@Transient
+	public  String getPdksDinamikRaporAlanHizala() {
+		String str = "";
+		if (hizala != null) {
+			if (hizala.equals(PdksRaporAlanHizalaTipi.SAGA.value()))
+				str = "right";
+			else if (hizala.equals(PdksRaporAlanHizalaTipi.SOLA.value()))
+				str = "left";
+			else if (hizala.equals(PdksRaporAlanHizalaTipi.ORTALA.value()))
+				str = "center";
+
+		}
+		return str;
+	}
 
 	@Transient
 	public String getPdksRaporAlanTipiAciklama() {

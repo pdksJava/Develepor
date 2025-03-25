@@ -105,6 +105,7 @@ public class MenuItemConstant implements Serializable {
 	public static String tumHareketler = "/rapor/tumHareketler.xhtml";
 	public static String organizasyonSemasi = "/rapor/organizasyonSemasi.xhtml";
 	public static String personelListesi = "/rapor/personelListesi.xhtml";
+	public static String dinamikRapor = "/rapor/dinamikRapor.xhtml";
 
 	public static String menuItemPermissionTanimlama = "/security/menuItemPermissionTanimlama.xhtml";
 	public static String menuItemTanimlama = "/security/menuItemTanimlama.xhtml";
@@ -1016,6 +1017,14 @@ public class MenuItemConstant implements Serializable {
 
 	public static void setDinamikRaporTanimlama(String dinamikRaporTanimlama) {
 		MenuItemConstant.dinamikRaporTanimlama = dinamikRaporTanimlama;
+	}
+
+	public static String getDinamikRapor() {
+		return dinamikRapor;
+	}
+
+	public static void setDinamikRapor(String dinamikRapor) {
+		MenuItemConstant.dinamikRapor = dinamikRapor;
 	}
 
 }
