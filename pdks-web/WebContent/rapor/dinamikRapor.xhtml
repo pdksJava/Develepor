@@ -19,8 +19,8 @@
 						<f:facet name="header">
                         İşlemler
               		  </f:facet>
-						<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink" action="#{dinamikRaporHome.dinamikRaporGuncelle(rapor,null)}"
-							oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
+						<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink" action="#{dinamikRaporHome.dinamikRaporGuncelle(rapor)}"
+							reRender="raporParametreTable">
 							<h:graphicImage value="/img/edit.gif" style="border:0" />
 
 						</a4j:commandLink>
@@ -59,11 +59,13 @@
 						<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 					</f:facet>
 				</rich:dataTable>
-				<a4j:outputPanel id="raporTable">
+				<a4j:outputPanel id="raporParametreTable">
 					<c:if test="#{dinamikRaporHome.seciliPdksDinamikRapor!=null}">
-						<span><p>#{dinamikRaporHome.seciliPdksDinamikRapor.aciklama}</p></span>
+						<DIV align="center">
+							<span><H1>#{dinamikRaporHome.seciliPdksDinamikRapor.aciklama}</H1></span>
+						</DIV>
 						<h:panelGrid columns="2">
-							<a4j:repeat value="#{dinamikRaporHome.dinamikRaporParametreList}" var="parametre">
+							<c:forEach items="#{dinamikRaporHome.dinamikRaporParametreList}" var="parametre">
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">#{parametre.aciklama}</ui:define>
 									<ui:fragment rendered="#{parametre.karakter}">
@@ -76,19 +78,26 @@
 									</ui:fragment>
 									<ui:fragment rendered="#{parametre.tarih}">
 										<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{parametre.tarihDeger}" showWeekDaysBar="false" showWeeksBar="false"
-											required="#{parametre.zorunlu}" requiredMessage="#{parametre.aciklama} seçiniz"></rich:calendar>
+											required="#{parametre.zorunlu}" requiredMessage="#{parametre.aciklama} seçiniz">
+											<a4j:support event="onchanged" action="#{dinamikRaporHome.dinamikRaporAlanMapList.clear()}" ajaxSingle="true" status="ajaxStatus"
+												reRender="raporTable" />
+										</rich:calendar>
 									</ui:fragment>
 								</s:decorate>
 
-							</a4j:repeat>
+							</c:forEach>
 						</h:panelGrid>
+
 						<a4j:outputPanel id="raporTable">
 							<ui:fragment rendered="#{not empty dinamikRaporHome.dinamikRaporAlanList}">
 								<a4j:commandButton status="ajaxStatus" value="Rapor Getir" action="#{dinamikRaporHome.fillDinamikRaporList()}" reRender="raporTable" />
 							</ui:fragment>
 							<ui:fragment rendered="#{not empty dinamikRaporHome.dinamikRaporAlanMapList}">
-								<rich:dataTable rowClasses="acik,koyu" value="#{dinamikRaporHome.dinamikRaporAlanMapList}" var="veri" rows="20" rowKeyVar="row">
-									<a4j:repeat items="#{dinamikRaporHome.dinamikRaporAlanList}" var="raporAlan">
+								<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{dinamikRaporHome.excelDinamikRaporList()}" target="blank"></h:commandLink>
+								<a4j:support event="oncomplete" status="ajaxStatus" />
+								<rich:dataTable rowClasses="acik,koyu" value="#{dinamikRaporHome.dinamikRaporAlanMapList}" var="veri" rows="50" rowKeyVar="row">
+								
+									<c:forEach items="#{dinamikRaporHome.dinamikRaporAlanList}" var="raporAlan">
 										<rich:column style="text-align :#{raporAlan.pdksDinamikRaporAlanHizala}">
 											<f:facet name="header">
 												<h:outputText value="#{raporAlan.aciklama}" />
@@ -106,13 +115,17 @@
 												<h:outputText value="#{authenticatedUser.saatFormatla(dinamikRaporHome.getDinamikRaporAlan(veri,raporAlan.sira))}" />
 											</ui:fragment>
 											<ui:fragment rendered="#{raporAlan.tarihSaat}">
-												<h:outputText value="#{authenticatedUser.dateSaatFormatla(dinamikRaporHome.getDinamikRaporAlan(veri,raporAlan.sira))}" />
+												<h:outputText value="#{authenticatedUser.dateTimeFormatla(dinamikRaporHome.getDinamikRaporAlan(veri,raporAlan.sira))}" />
 											</ui:fragment>
 
 										</rich:column>
-									</a4j:repeat>
-
+									</c:forEach>
+									<f:facet name="footer">
+										<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+									</f:facet>
 								</rich:dataTable>
+								<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{dinamikRaporHome.excelDinamikRaporList()}" target="blank"></h:commandLink>
+								<a4j:support event="oncomplete" status="ajaxStatus" />
 							</ui:fragment>
 						</a4j:outputPanel>
 

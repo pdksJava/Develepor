@@ -2,8 +2,10 @@ package org.pdks.dinamikRapor.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -103,6 +105,77 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	}
 
 	public String fillDinamikRaporList() {
+		StringBuffer sb = new StringBuffer();
+		if (seciliPdksDinamikRapor.isStoreProcedure()) {
+			sb.append(seciliPdksDinamikRapor.getDbTanim());
+			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+			for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
+				PdksDinamikRaporParametre rp = (PdksDinamikRaporParametre) iterator.next();
+				String adi = "p" + rp.getSira();
+				if (rp.isKarakter())
+					veriMap.put(adi, rp.getKarakterDeger());
+				else if (rp.isSayisal())
+					veriMap.put(adi, rp.getDoubleDeger());
+				else if (rp.isTarih())
+					veriMap.put(adi, rp.getTarihDeger());
+			}
+			if (session != null)
+				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+			try {
+				dinamikRaporAlanMapList = pdksEntityController.execSPList(veriMap, sb, null);
+			} catch (Exception e) {
+				dinamikRaporAlanMapList = new ArrayList<Object[]>();
+			}
+		} else {
+			HashMap fields = new HashMap();
+			sb.append("select ");
+			for (Iterator iterator = dinamikRaporAlanList.iterator(); iterator.hasNext();) {
+				PdksDinamikRaporAlan ra = (PdksDinamikRaporAlan) iterator.next();
+				sb.append(ra.getDbTanim() + (iterator.hasNext() ? ", " : ""));
+			}
+			if (seciliPdksDinamikRapor.isFunction()) {
+				sb.append(" from " + seciliPdksDinamikRapor.getDbTanim() + "(");
+				for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
+					PdksDinamikRaporParametre rp = (PdksDinamikRaporParametre) iterator.next();
+					String adi = "p" + rp.getSira();
+					sb.append(" :" + adi + (iterator.hasNext() ? ", " : ""));
+					if (rp.isKarakter())
+						fields.put(adi, rp.getKarakterDeger());
+					else if (rp.isSayisal())
+						fields.put(adi, rp.getDoubleDeger());
+					else if (rp.isTarih())
+						fields.put(adi, rp.getTarihDeger());
+				}
+				sb.append(" )");
+			} else if (seciliPdksDinamikRapor.isView()) {
+				sb.append(" from " + seciliPdksDinamikRapor.getDbTanim() + " " + PdksEntityController.getSelectLOCK());
+				String str = " where ";
+
+				for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
+					PdksDinamikRaporParametre rp = (PdksDinamikRaporParametre) iterator.next();
+					String adi = "p" + rp.getSira();
+					Object veri = null;
+					if (rp.isKarakter()) {
+						veri = rp.getKarakterDeger();
+						if (PdksUtil.hasStringValue(rp.getKarakterDeger()) == false && rp.getZorunlu().booleanValue() == false)
+							veri = null;
+					} else if (rp.isSayisal())
+						veri = rp.getDoubleDeger();
+					else if (rp.isTarih())
+						veri = rp.getTarihDeger();
+					if (veri != null || rp.getZorunlu()) {
+						sb.append(str + rp.getDbTanim() + " = :" + adi);
+						fields.put(adi, veri);
+						str = " and ";
+					}
+
+				}
+
+			}
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			dinamikRaporAlanMapList = pdksEntityController.getObjectBySQLList(sb, fields, null);
+		}
 		return "";
 	}
 
@@ -110,9 +183,14 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		return "";
 	}
 
+	/**
+	 * @param veri
+	 * @param index
+	 * @return
+	 */
 	public Object getDinamikRaporAlan(Object[] veri, Integer index) {
 		Object object = null;
-		if (veri != null && veri != null && veri.length <= index)
+		if (veri != null && index != null && veri.length >= index)
 			object = veri[index];
 		return object;
 	}
@@ -144,6 +222,14 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		dinamikRaporParametreList = pdksEntityController.getSQLParamByAktifFieldList(PdksDinamikRaporParametre.TABLE_NAME, PdksDinamikRaporParametre.COLUMN_NAME_DINAMIK_RAPOR, seciliPdksDinamikRapor.getId(), PdksDinamikRaporParametre.class, session);
 		if (dinamikRaporParametreList.size() > 1)
 			dinamikRaporParametreList = PdksUtil.sortListByAlanAdi(dinamikRaporParametreList, "sira", Boolean.FALSE);
+		Date tarihDeger = null;
+		for (PdksDinamikRaporParametre pr : dinamikRaporParametreList) {
+			if (pr.isTarih()) {
+				if (tarihDeger == null)
+					tarihDeger = ortakIslemler.getBugun();
+				pr.setTarihDeger(tarihDeger);
+			}
+		}
 
 	}
 
