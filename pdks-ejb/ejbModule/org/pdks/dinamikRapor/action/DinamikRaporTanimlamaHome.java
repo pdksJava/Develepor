@@ -3,6 +3,7 @@ package org.pdks.dinamikRapor.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
@@ -21,6 +22,7 @@ import org.pdks.dinamikRapor.entity.PdksDinamikRapor;
 import org.pdks.dinamikRapor.entity.PdksDinamikRaporAlan;
 import org.pdks.dinamikRapor.entity.PdksDinamikRaporParametre;
 import org.pdks.dinamikRapor.entity.PdksDinamikRaporTipi;
+import org.pdks.dinamikRapor.entity.PdksRaporAlanHizalaTipi;
 import org.pdks.dinamikRapor.entity.PdksRaporAlanTipi;
 import org.pdks.security.entity.User;
 import org.pdks.session.OrtakIslemler;
@@ -53,7 +55,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	private PdksDinamikRaporParametre seciliPdksDinamikRaporParametre;
 	private List<PdksDinamikRaporAlan> dinamikRaporAlanList;
 	private List<PdksDinamikRaporParametre> dinamikRaporParametreList;
-	private List<SelectItem> parametreList, alanAdiList, raporTipiList;
+	private List<SelectItem> parametreList, alanAdiList, raporTipiList, alanHizalamaList;
 	private Session session;
 
 	@Override
@@ -84,6 +86,15 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		raporTipiList.add(new SelectItem(PdksDinamikRaporTipi.VIEW.value(), PdksDinamikRapor.getPdksDinamikRaporTipiAciklama(PdksDinamikRaporTipi.VIEW.value())));
 		raporTipiList.add(new SelectItem(PdksDinamikRaporTipi.FUNCTION.value(), PdksDinamikRapor.getPdksDinamikRaporTipiAciklama(PdksDinamikRaporTipi.FUNCTION.value())));
 		raporTipiList.add(new SelectItem(PdksDinamikRaporTipi.STORE_PROCEDURE.value(), PdksDinamikRapor.getPdksDinamikRaporTipiAciklama(PdksDinamikRaporTipi.STORE_PROCEDURE.value())));
+
+		if (alanHizalamaList == null)
+			alanHizalamaList = new ArrayList<SelectItem>();
+		else
+			alanHizalamaList.clear();
+		alanHizalamaList.add(new SelectItem(PdksRaporAlanHizalaTipi.SOLA.value(), PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(PdksRaporAlanHizalaTipi.SOLA.value())));
+		alanHizalamaList.add(new SelectItem(PdksRaporAlanHizalaTipi.ORTALA.value(), PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(PdksRaporAlanHizalaTipi.ORTALA.value())));
+		alanHizalamaList.add(new SelectItem(PdksRaporAlanHizalaTipi.SAGA.value(), PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(PdksRaporAlanHizalaTipi.SAGA.value())));
+
 		if (alanAdiList == null)
 			alanAdiList = new ArrayList<SelectItem>();
 		else
@@ -106,9 +117,10 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 
 	/**
 	 * @param dinamikRapor
+	 * @param tip
 	 * @return
 	 */
-	public String dinamikRaporGuncelle(PdksDinamikRapor dinamikRapor) {
+	public String dinamikRaporGuncelle(PdksDinamikRapor dinamikRapor, String tip) {
 		if (dinamikRapor == null) {
 			dinamikRapor = new PdksDinamikRapor();
 			if (dinamikRaporAlanList == null)
@@ -116,16 +128,23 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 			if (dinamikRaporParametreList == null)
 				dinamikRaporParametreList = new ArrayList<PdksDinamikRaporParametre>();
 		}
+		seciliPdksDinamikRapor = dinamikRapor;
+		seciliPdksDinamikRaporAlan = null;
+		seciliPdksDinamikRaporParametre = null;
 		if (dinamikRapor.getId() != null) {
-			dinamikRaporAlanList = pdksEntityController.getSQLParamByFieldList(PdksDinamikRaporAlan.TABLE_NAME, PdksDinamikRaporAlan.COLUMN_NAME_DINAMIK_RAPOR, dinamikRapor.getId(), PdksDinamikRaporAlan.class, session);
-			dinamikRaporParametreList = pdksEntityController.getSQLParamByFieldList(PdksDinamikRaporParametre.TABLE_NAME, PdksDinamikRaporParametre.COLUMN_NAME_DINAMIK_RAPOR, dinamikRapor.getId(), PdksDinamikRaporParametre.class, session);
+			fillDinamikRaporAlanList();
+			filllDinamikRaporParametreList();
 		} else {
+
 			dinamikRaporAlanList.clear();
 			dinamikRaporParametreList.clear();
 		}
-		seciliPdksDinamikRaporAlan = null;
-		seciliPdksDinamikRaporParametre = null;
-		seciliPdksDinamikRapor = dinamikRapor;
+		if (tip != null) {
+			if (tip.equals("A"))
+				dinamikRaporAlanGuncelle(null);
+			else if (tip.equals("P"))
+				dinamikRaporParametreGuncelle(null);
+		}
 		return "";
 
 	}
@@ -139,6 +158,12 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	public String dinamikRaporAlanGuncelle(PdksDinamikRaporAlan alan) {
 		if (alan == null) {
 			alan = new PdksDinamikRaporAlan();
+			alan.setPdksDinamikRapor(seciliPdksDinamikRapor);
+			int sonSira = -1;
+			for (PdksDinamikRaporAlan pr : dinamikRaporAlanList) {
+				sonSira = pr.getSira();
+			}
+			alan.setSira(sonSira + 1);
 		}
 		seciliPdksDinamikRaporAlan = alan;
 		return "";
@@ -148,6 +173,12 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	public String dinamikRaporParametreGuncelle(PdksDinamikRaporParametre parametre) {
 		if (parametre == null) {
 			parametre = new PdksDinamikRaporParametre();
+			parametre.setPdksDinamikRapor(seciliPdksDinamikRapor);
+			int sonSira = -1;
+			for (PdksDinamikRaporParametre pr : dinamikRaporParametreList) {
+				sonSira = pr.getSira();
+			}
+			parametre.setSira(sonSira + 1);
 		}
 		seciliPdksDinamikRaporParametre = parametre;
 		return "";
@@ -155,6 +186,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	}
 
 	private void fillPdksDinamikRaporList() {
+		session.clear();
 		HashMap fields = new HashMap();
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -173,13 +205,149 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	}
 
 	@Transactional
-	public String saveDinamikRaporAlan() {
+	public String updateDinamikRaporAlanSira() {
+		Integer sonSira = 0;
+		boolean flush = false;
+		for (PdksDinamikRaporAlan pr : dinamikRaporAlanList) {
+			if (pr.getDurum()) {
+				if (!sonSira.equals(pr.getSira())) {
+					pr.setSira(sonSira);
+					pdksEntityController.saveOrUpdate(session, entityManager, pr);
+					flush = true;
+				}
+				++sonSira;
+			}
+
+		}
+		if (flush)
+			session.flush();
 		return "";
 
 	}
 
 	@Transactional
+	public String updateDinamikRaporParametreSira() {
+		Integer sonSira = 0;
+		boolean flush = false;
+		for (PdksDinamikRaporParametre pr : dinamikRaporParametreList) {
+			if (pr.getDurum()) {
+				if (!sonSira.equals(pr.getSira())) {
+					pr.setSira(sonSira);
+					pdksEntityController.saveOrUpdate(session, entityManager, pr);
+					flush = true;
+				}
+				++sonSira;
+			}
+		}
+		if (flush)
+			session.flush();
+		return "";
+
+	}
+
+	@Transactional
+	public String saveDinamikRaporAlan() {
+		try {
+			pdksEntityController.saveOrUpdate(session, entityManager, seciliPdksDinamikRaporAlan);
+			session.flush();
+			fillDinamikRaporAlanList();
+			if (dinamikRaporAlanList.isEmpty() == false)
+				updateDinamikRaporAlanSira();
+			dinamikRaporAlanGuncelle(null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "";
+
+	}
+
+	private void fillDinamikRaporAlanList() {
+		dinamikRaporAlanList = pdksEntityController.getSQLParamByFieldList(PdksDinamikRaporAlan.TABLE_NAME, PdksDinamikRaporAlan.COLUMN_NAME_DINAMIK_RAPOR, seciliPdksDinamikRapor.getId(), PdksDinamikRaporAlan.class, session);
+		if (dinamikRaporAlanList.size() > 1)
+			dinamikRaporAlanList = PdksUtil.sortListByAlanAdi(dinamikRaporAlanList, "sira", Boolean.FALSE);
+		List<PdksDinamikRaporAlan> list = new ArrayList<PdksDinamikRaporAlan>();
+		for (Iterator iterator = dinamikRaporAlanList.iterator(); iterator.hasNext();) {
+			PdksDinamikRaporAlan dr = (PdksDinamikRaporAlan) iterator.next();
+			if (dr.getDurum().booleanValue() == false) {
+				list.add(dr);
+				iterator.remove();
+			}
+
+		}
+		if (!list.isEmpty())
+			dinamikRaporAlanList.addAll(list);
+		list = null;
+		seciliPdksDinamikRaporAlan = null;
+
+	}
+
+	@Transactional
+	public String deleteDinamikRaporParametre(PdksDinamikRaporParametre deleteValue) {
+		session.delete(deleteValue);
+		session.flush();
+		try {
+			pdksEntityController.savePrepareTableID(PdksDinamikRaporParametre.class, entityManager, session);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		session.flush();
+		filllDinamikRaporParametreList();
+		if (dinamikRaporParametreList.isEmpty() == false)
+			updateDinamikRaporParametreSira();
+		dinamikRaporParametreGuncelle(null);
+		return "";
+	}
+
+	@Transactional
+	public String deleteDinamikRaporAlan(PdksDinamikRaporAlan deleteValue) {
+		session.delete(deleteValue);
+		session.flush();
+		try {
+			pdksEntityController.savePrepareTableID(PdksDinamikRaporAlan.class, entityManager, session);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		session.flush();
+		fillDinamikRaporAlanList();
+		if (dinamikRaporAlanList.isEmpty() == false)
+			updateDinamikRaporAlanSira();
+		dinamikRaporAlanGuncelle(null);
+		return "";
+
+	}
+
+	private void filllDinamikRaporParametreList() {
+		dinamikRaporParametreList = pdksEntityController.getSQLParamByFieldList(PdksDinamikRaporParametre.TABLE_NAME, PdksDinamikRaporParametre.COLUMN_NAME_DINAMIK_RAPOR, seciliPdksDinamikRapor.getId(), PdksDinamikRaporParametre.class, session);
+		if (dinamikRaporParametreList.size() > 1)
+			dinamikRaporParametreList = PdksUtil.sortListByAlanAdi(dinamikRaporParametreList, "sira", Boolean.FALSE);
+		List<PdksDinamikRaporParametre> list = new ArrayList<PdksDinamikRaporParametre>();
+		for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
+			PdksDinamikRaporParametre dr = (PdksDinamikRaporParametre) iterator.next();
+			if (dr.getDurum().booleanValue() == false) {
+				list.add(dr);
+				iterator.remove();
+			}
+		}
+		if (!list.isEmpty())
+			dinamikRaporParametreList.addAll(list);
+		list = null;
+		seciliPdksDinamikRaporParametre = null;
+	}
+
+	@Transactional
 	public String saveDinamikRaporParametre() {
+		try {
+			pdksEntityController.saveOrUpdate(session, entityManager, seciliPdksDinamikRaporParametre);
+			session.flush();
+			filllDinamikRaporParametreList();
+			if (dinamikRaporParametreList.isEmpty() == false)
+				updateDinamikRaporParametreSira();
+			dinamikRaporParametreGuncelle(null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return "";
 
 	}
@@ -270,5 +438,13 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 
 	public void setSeciliPdksDinamikRaporParametre(PdksDinamikRaporParametre seciliPdksDinamikRaporParametre) {
 		this.seciliPdksDinamikRaporParametre = seciliPdksDinamikRaporParametre;
+	}
+
+	public List<SelectItem> getAlanHizalamaList() {
+		return alanHizalamaList;
+	}
+
+	public void setAlanHizalamaList(List<SelectItem> alanHizalamaList) {
+		this.alanHizalamaList = alanHizalamaList;
 	}
 }

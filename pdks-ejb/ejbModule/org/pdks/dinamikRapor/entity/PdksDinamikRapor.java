@@ -30,7 +30,7 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 
 	private Integer raporTipiId;
 
-	private Boolean durum, goruntulemeDurum;
+	private Boolean durum = Boolean.TRUE, goruntulemeDurum = Boolean.FALSE;
 
 	@Column(name = COLUMN_NAME_ACIKLAMA)
 	public String getAciklama() {
@@ -103,6 +103,21 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 				str = "Saat";
 			else if (key.equals(PdksRaporAlanTipi.TARIH_SAAT.value()))
 				str = "Tarih Saat";
+		}
+		return str;
+	}
+
+	@Transient
+	public static String getPdksDinamikRaporAlanhHizalaAciklama(Integer key) {
+		String str = "";
+		if (key != null) {
+			if (key.equals(PdksRaporAlanHizalaTipi.SAGA.value()))
+				str = "Sağa";
+			else if (key.equals(PdksRaporAlanHizalaTipi.SOLA.value()))
+				str = "Sola";
+			else if (key.equals(PdksRaporAlanHizalaTipi.ORTALA.value()))
+				str = "Ortala";
+
 		}
 		return str;
 	}

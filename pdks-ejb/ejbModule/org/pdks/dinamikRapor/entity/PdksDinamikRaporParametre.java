@@ -1,6 +1,8 @@
 package org.pdks.dinamikRapor.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,12 +27,12 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	private static final long serialVersionUID = 7408349167376237472L;
 
 	public static final String TABLE_NAME = "PDKS_DINAMIK_RAPOR_PARAMETRE";
-
 	public static final String COLUMN_NAME_DINAMIK_RAPOR = "DINAMIK_RAPOR_ID";
 	public static final String COLUMN_NAME_DB_TANIM = "DB_TANIM";
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final String COLUMN_NAME_SIRA = "SIRA";
 	public static final String COLUMN_NAME_ALAN_TIPI = "ALAN_TIPI";
+	public static final String COLUMN_NAME_ZORUNLU = "ZORUNLU";
 	public static final String COLUMN_NAME_DURUM = "DURUM";
 
 	private PdksDinamikRapor pdksDinamikRapor;
@@ -41,7 +43,16 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	private Integer alanTipiId, sira;
 
-	private Boolean durum;
+	private Boolean durum = Boolean.TRUE;
+
+	private Date tarihDeger;
+
+	private String karakterDeger;
+
+	private BigDecimal decimalDeger;
+
+	private Double doubleDeger;
+	private Boolean zorunlu = Boolean.TRUE;
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_DINAMIK_RAPOR, nullable = false)
@@ -93,6 +104,15 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 		this.alanTipiId = value;
 	}
 
+	@Column(name = COLUMN_NAME_ZORUNLU)
+	public Boolean getZorunlu() {
+		return zorunlu;
+	}
+
+	public void setZorunlu(Boolean zorunlu) {
+		this.zorunlu = zorunlu;
+	}
+
 	@Column(name = COLUMN_NAME_DURUM)
 	public Boolean getDurum() {
 		return durum;
@@ -100,6 +120,11 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	public void setDurum(Boolean durum) {
 		this.durum = durum;
+	}
+
+	@Transient
+	public String getPdksRaporAlanTipiAciklama() {
+		return PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(alanTipiId);
 	}
 
 	@Transient
@@ -118,16 +143,6 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	}
 
 	@Transient
-	public boolean isSaat() {
-		return alanTipiId != null && alanTipiId.equals(PdksRaporAlanTipi.SAAT.value());
-	}
-
-	@Transient
-	public boolean isTarihSaat() {
-		return alanTipiId != null && alanTipiId.equals(PdksRaporAlanTipi.TARIH_SAAT.value());
-	}
-
-	@Transient
 	public PdksRaporAlanTipi getRaporAlanTipi() {
 		return raporAlanTipi;
 	}
@@ -136,9 +151,57 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 		this.raporAlanTipi = raporAlanTipi;
 	}
 
+	@Transient
+	public Date getTarihDeger() {
+		return tarihDeger;
+	}
+
+	public void setTarihDeger(Date tarihDeger) {
+		this.tarihDeger = tarihDeger;
+	}
+
+	@Transient
+	public String getKarakterDeger() {
+		return karakterDeger;
+	}
+
+	public void setKarakterDeger(String karakterDeger) {
+		this.karakterDeger = karakterDeger;
+	}
+
+	@Transient
+	public BigDecimal getDecimalDeger() {
+		return decimalDeger;
+	}
+
+	public void setDecimalDeger(BigDecimal decimalDeger) {
+		this.decimalDeger = decimalDeger;
+	}
+
+	@Transient
+	public Double getDoubleDeger() {
+		return doubleDeger;
+	}
+
+	public void setDoubleDeger(Double doubleDeger) {
+		this.doubleDeger = doubleDeger;
+	}
+
 	public void entityRefresh() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Transient
+	public Object clone() {
+		BasePDKSObject object = null;
+		try {
+			object = (BasePDKSObject) super.clone();
+			object.setId(null);
+		} catch (CloneNotSupportedException e) {
+
+		}
+		return object;
 	}
 
 }
