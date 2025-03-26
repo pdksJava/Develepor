@@ -1,8 +1,6 @@
 package org.pdks.dinamikRapor.entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -46,14 +44,6 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 	private Integer alanTipiId, sira;
 
 	private Boolean durum = Boolean.TRUE;
-
-	private Date tarihDeger;
-
-	private String karakterDeger;
-
-	private BigDecimal decimalDeger;
-
-	private Double doubleDeger;
 
 	private Integer hizala = PdksRaporAlanHizalaTipi.SOLA.value();
 	private PdksRaporAlanHizalaTipi alanHizalaTipi = PdksRaporAlanHizalaTipi.SOLA;
@@ -204,42 +194,6 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 	}
 
 	@Transient
-	public Date getTarihDeger() {
-		return tarihDeger;
-	}
-
-	public void setTarihDeger(Date tarihDeger) {
-		this.tarihDeger = tarihDeger;
-	}
-
-	@Transient
-	public String getKarakterDeger() {
-		return karakterDeger;
-	}
-
-	public void setKarakterDeger(String karakterDeger) {
-		this.karakterDeger = karakterDeger;
-	}
-
-	@Transient
-	public BigDecimal getDecimalDeger() {
-		return decimalDeger;
-	}
-
-	public void setDecimalDeger(BigDecimal decimalDeger) {
-		this.decimalDeger = decimalDeger;
-	}
-
-	@Transient
-	public Double getDoubleDeger() {
-		return doubleDeger;
-	}
-
-	public void setDoubleDeger(Double doubleDeger) {
-		this.doubleDeger = doubleDeger;
-	}
-
-	@Transient
 	public PdksRaporAlanHizalaTipi getAlanHizalaTipi() {
 		return alanHizalaTipi;
 	}
@@ -249,7 +203,6 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 	}
 
 	public void entityRefresh() {
-		// TODO Auto-generated method stub
 
 	}
 

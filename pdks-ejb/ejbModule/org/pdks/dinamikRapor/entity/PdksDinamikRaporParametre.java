@@ -52,9 +52,6 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	private String karakterDeger;
 
-	private BigDecimal decimalDeger;
-
-	// private Double doubleDeger;
 	private Boolean zorunlu = Boolean.TRUE;
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -191,20 +188,11 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	}
 
 	@Transient
-	public BigDecimal getDecimalDeger() {
-		return decimalDeger;
-	}
-
-	public void setDecimalDeger(BigDecimal decimalDeger) {
-		this.decimalDeger = decimalDeger;
-	}
-
-	@Transient
 	public Object getSayisalDeger() {
 		Object deger = null;
 		try {
 			if (PdksUtil.hasStringValue(karakterDeger)) {
-				decimalDeger = new BigDecimal(karakterDeger);
+				BigDecimal decimalDeger = new BigDecimal(karakterDeger);
 				if (decimalDeger.doubleValue() == decimalDeger.longValue()) {
 					deger = decimalDeger.longValue();
 				} else
@@ -216,12 +204,7 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 		return deger;
 	}
 
-	// public void setDoubleDeger(Double doubleDeger) {
-	// this.doubleDeger = doubleDeger;
-	// }
-
 	public void entityRefresh() {
-		// TODO Auto-generated method stub
 
 	}
 
