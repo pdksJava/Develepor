@@ -180,6 +180,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 							veri = rp.getTarihDeger();
 						if (veri != null || rp.getZorunlu()) {
 							String esitlik = PdksUtil.hasStringValue(rp.getEsitlik()) ? rp.getEsitlik().trim() : "=";
+							if (esitlik.equalsIgnoreCase("like"))
+								veri = "%" + veri + "%";
 							sb.append(str + rp.getDbTanim() + " " + esitlik + " :" + adi);
 							fields.put(adi, veri);
 							str = " and ";
@@ -203,6 +205,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 						veri = rp.getTarihDeger();
 					if (veri != null || rp.getZorunlu()) {
 						String esitlik = PdksUtil.hasStringValue(rp.getEsitlik()) ? rp.getEsitlik().trim() : "=";
+						if (esitlik.equalsIgnoreCase("like"))
+							veri = "%" + veri + "%";
 						sb.append(str + rp.getDbTanim() + " " + esitlik + " :" + adi);
 						fields.put(adi, veri);
 						str = " and ";

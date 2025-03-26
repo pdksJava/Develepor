@@ -146,7 +146,7 @@
 									</h:selectOneMenu>
 
 								</s:decorate>
-								<s:decorate template="/layout/edit.xhtml" rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.view}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.storeProcedure==false}">
 									<ui:define name="label">Eşitlik</ui:define>
 									<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.esitlik}" size="2" maxlength="5" />
 								</s:decorate>

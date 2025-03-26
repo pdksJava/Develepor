@@ -2,6 +2,7 @@ package org.pdks.dinamikRapor.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -356,15 +357,18 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	public String saveDinamikRaporParametre() {
 		try {
 			if (seciliPdksDinamikRapor.isView()) {
-				if (PdksUtil.hasStringValue(seciliPdksDinamikRaporParametre.getEsitlik())) {
-					if (seciliPdksDinamikRaporParametre.getEsitlik().equals("=") == false && seciliPdksDinamikRaporParametre.getEsitlik().equals(">=") == false && seciliPdksDinamikRaporParametre.getEsitlik().equals("<=") == false)
-						seciliPdksDinamikRaporParametre.setEsitlik("");
-				}
 				seciliPdksDinamikRaporParametre.setParametreDurum(Boolean.TRUE);
 			} else {
 				if (seciliPdksDinamikRapor.isStoreProcedure())
 					seciliPdksDinamikRaporParametre.setParametreDurum(Boolean.TRUE);
 				seciliPdksDinamikRaporParametre.setEsitlik("");
+			}
+			if (seciliPdksDinamikRapor.isStoreProcedure() == false) {
+				if (PdksUtil.hasStringValue(seciliPdksDinamikRaporParametre.getEsitlik())) {
+					List<String> veriler = Arrays.asList(new String[] { "=", "<=", ">=", "like" });
+					if (!veriler.contains(seciliPdksDinamikRaporParametre.getEsitlik()))
+						seciliPdksDinamikRaporParametre.setEsitlik("");
+				}
 			}
 
 			pdksEntityController.saveOrUpdate(session, entityManager, seciliPdksDinamikRaporParametre);
