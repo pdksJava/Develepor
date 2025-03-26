@@ -34,6 +34,8 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.security.Identity;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.pdks.dinamikRapor.entity.PdksDinamikRaporAlan;
+import org.pdks.dinamikRapor.entity.PdksDinamikRaporParametre;
 import org.pdks.entity.AccountPermission;
 import org.pdks.entity.ArifeVardiyaDonem;
 import org.pdks.entity.AylikPuantaj;
@@ -257,6 +259,8 @@ public class StartupAction implements Serializable {
 			list.add(CalismaModeliGun.class);
 			list.add(CalismaModeliVardiya.class);
 			list.add(DepartmanMailGrubu.class);
+			list.add(PdksDinamikRaporAlan.class);
+			list.add(PdksDinamikRaporParametre.class);
 			list.add(IzinHakedisHakki.class);
 			list.add(IzinTipiBirlesikHaric.class);
 			list.add(IzinTipiMailAdres.class);

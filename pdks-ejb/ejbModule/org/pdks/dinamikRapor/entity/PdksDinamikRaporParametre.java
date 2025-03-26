@@ -18,7 +18,7 @@ import org.hibernate.annotations.FetchMode;
 import org.pdks.entity.BasePDKSObject;
 
 @Entity(name = PdksDinamikRaporParametre.TABLE_NAME)
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PdksDinamikRaporParametre.COLUMN_NAME_DINAMIK_RAPOR, PdksDinamikRaporParametre.COLUMN_NAME_DB_TANIM }) })
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PdksDinamikRaporParametre.COLUMN_NAME_DINAMIK_RAPOR, PdksDinamikRaporParametre.COLUMN_NAME_ACIKLAMA }) })
 public class PdksDinamikRaporParametre extends BasePDKSObject implements Serializable {
 
 	/**
@@ -33,11 +33,12 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	public static final String COLUMN_NAME_SIRA = "SIRA";
 	public static final String COLUMN_NAME_ALAN_TIPI = "ALAN_TIPI";
 	public static final String COLUMN_NAME_ZORUNLU = "ZORUNLU";
+	public static final String COLUMN_NAME_ESITLIK = "ESITLIK";
 	public static final String COLUMN_NAME_DURUM = "DURUM";
 
 	private PdksDinamikRapor pdksDinamikRapor;
 
-	private String aciklama, dbTanim;
+	private String aciklama, dbTanim, esitlik = "";
 
 	private PdksRaporAlanTipi raporAlanTipi;
 
@@ -90,6 +91,15 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	public void setDbTanim(String dbTanim) {
 		this.dbTanim = dbTanim;
+	}
+
+	@Column(name = COLUMN_NAME_ESITLIK)
+	public String getEsitlik() {
+		return esitlik;
+	}
+
+	public void setEsitlik(String esitlik) {
+		this.esitlik = esitlik;
 	}
 
 	@Column(name = COLUMN_NAME_ALAN_TIPI)

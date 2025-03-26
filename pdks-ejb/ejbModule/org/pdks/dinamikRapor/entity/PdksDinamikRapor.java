@@ -22,9 +22,11 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_DB_TANIM = "DB_TANIM";
 	public static final String COLUMN_NAME_RAPOR_TIPI = "RAPOR_TIPI";
 	public static final String COLUMN_NAME_GORUNTULENSIN = "GORUNTULENSIN";
+	public static final String COLUMN_NAME_WHERE_SQL = "WHERE_SQL";
+	public static final String COLUMN_NAME_ORDER_SQL = "ORDER_SQL";
 	public static final String COLUMN_NAME_DURUM = "DURUM";
 
-	private String aciklama, dbTanim;
+	private String aciklama, dbTanim, whereSQL = "", orderSQL = "";
 
 	private PdksDinamikRaporTipi raporTipi;
 
@@ -62,15 +64,6 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 		this.raporTipiId = value;
 	}
 
-	@Column(name = COLUMN_NAME_DURUM)
-	public Boolean getDurum() {
-		return durum;
-	}
-
-	public void setDurum(Boolean durum) {
-		this.durum = durum;
-	}
-
 	@Column(name = COLUMN_NAME_GORUNTULENSIN)
 	public Boolean getGoruntulemeDurum() {
 		return goruntulemeDurum;
@@ -78,6 +71,33 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 
 	public void setGoruntulemeDurum(Boolean goruntulemeDurum) {
 		this.goruntulemeDurum = goruntulemeDurum;
+	}
+
+	@Column(name = COLUMN_NAME_WHERE_SQL)
+	public String getWhereSQL() {
+		return whereSQL;
+	}
+
+	public void setWhereSQL(String whereSQL) {
+		this.whereSQL = whereSQL;
+	}
+
+	@Column(name = COLUMN_NAME_ORDER_SQL)
+	public String getOrderSQL() {
+		return orderSQL;
+	}
+
+	public void setOrderSQL(String orderSQL) {
+		this.orderSQL = orderSQL;
+	}
+
+	@Column(name = COLUMN_NAME_DURUM)
+	public Boolean getDurum() {
+		return durum;
+	}
+
+	public void setDurum(Boolean durum) {
+		this.durum = durum;
 	}
 
 	@Transient
@@ -161,4 +181,5 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 		// TODO Auto-generated method stub
 
 	}
+
 }

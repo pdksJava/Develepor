@@ -64,6 +64,18 @@
               		 	 </f:facet>
 							<h:outputText value="#{authenticatedUser.getYesNo(rapor.goruntulemeDurum)}" />
 						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+                      		 SQL Koşul
+              		 	 </f:facet>
+							<h:outputText value="#{rapor.whereSQL}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+                      		 SQL Sıralama
+              		 	 </f:facet>
+							<h:outputText value="#{rapor.orderSQL}" />
+						</rich:column>
 						<rich:column style="text-align:center">
 							<f:facet name="header">
                       		Durum
@@ -134,6 +146,11 @@
 									</h:selectOneMenu>
 
 								</s:decorate>
+								<s:decorate template="/layout/edit.xhtml" rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.view}">
+									<ui:define name="label">Eşitlik</ui:define>
+									<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.esitlik}" size="2" maxlength="5" />
+								</s:decorate>
+
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Zorunlu</ui:define>
 									<h:selectBooleanCheckbox value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.zorunlu}" />
@@ -189,6 +206,12 @@
                       		 Parametre Alan Tipi
               		 	 </f:facet>
 								<h:outputText value="#{parametre.pdksRaporAlanTipiAciklama}" />
+							</rich:column>
+							<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.view}">
+								<f:facet name="header">
+                      		 Eşitlikk
+              		 	 </f:facet>
+								<h:outputText value="#{parametre.esitlik}" />
 							</rich:column>
 							<rich:column style="text-align:center">
 								<f:facet name="header">
@@ -371,7 +394,7 @@
 						<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 					</a4j:outputPanel>
 					<a4j:outputPanel id="raporBilgi">
-						<h:panelGrid columns="2">
+						<h:panelGrid columns="2" id="raporData">
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Rapor Başlık</ui:define>
 								<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.aciklama}" size="2" maxlength="255" required="true"
@@ -389,13 +412,25 @@
 									requiredMessage="Database Rapor Tipini seçiniz">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{dinamikRaporTanimlamaHome.raporTipiList}" />
+									<a4j:support event="onchange" ajaxSingle="true" reRender="raporData" />
 								</h:selectOneMenu>
 
 							</s:decorate>
+
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Rapor Görüntülensin</ui:define>
 								<h:selectBooleanCheckbox value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.goruntulemeDurum}" />
 							</s:decorate>
+							<c:if test="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.storeProcedure==false}">
+								<s:decorate template="/layout/edit.xhtml">
+									<ui:define name="label">SQL Koşul</ui:define>
+									<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.whereSQL}" size="2" maxlength="255" />
+								</s:decorate>
+								<s:decorate template="/layout/edit.xhtml">
+									<ui:define name="label">SQL Sıralama</ui:define>
+									<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.orderSQL}" size="2" maxlength="255" />
+								</s:decorate>
+							</c:if>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Aktif</ui:define>
 								<h:selectBooleanCheckbox value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.durum}" />
@@ -440,6 +475,12 @@
                       		 Parametre Alan Tipi
               		 	 </f:facet>
 											<h:outputText value="#{parametre.pdksRaporAlanTipiAciklama}" />
+										</rich:column>
+										<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.view}">
+											<f:facet name="header">
+                      		 Eşitlikk
+              		 	 </f:facet>
+											<h:outputText value="#{parametre.esitlik}" />
 										</rich:column>
 										<rich:column style="text-align:center">
 											<f:facet name="header">

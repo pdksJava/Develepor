@@ -56,6 +56,7 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 	private Double doubleDeger;
 
 	private Integer hizala = PdksRaporAlanHizalaTipi.SOLA.value();
+	private PdksRaporAlanHizalaTipi alanHizalaTipi = PdksRaporAlanHizalaTipi.SOLA;
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_DINAMIK_RAPOR, nullable = false)
@@ -112,8 +113,11 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 		return hizala;
 	}
 
-	public void setHizala(Integer hizala) {
-		this.hizala = hizala;
+	public void setHizala(Integer value) {
+		this.alanHizalaTipi = null;
+		if (value != null)
+			alanHizalaTipi = PdksRaporAlanHizalaTipi.fromValue(value);
+		this.hizala = value;
 	}
 
 	@Column(name = COLUMN_NAME_DURUM)
@@ -139,9 +143,9 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 	public String getPdksDinamikRaporAlanhHizalaAciklama() {
 		return PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(hizala);
 	}
-	
+
 	@Transient
-	public  String getPdksDinamikRaporAlanHizala() {
+	public String getPdksDinamikRaporAlanHizala() {
 		String str = "";
 		if (hizala != null) {
 			if (hizala.equals(PdksRaporAlanHizalaTipi.SAGA.value()))
@@ -218,6 +222,15 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 
 	public void setDoubleDeger(Double doubleDeger) {
 		this.doubleDeger = doubleDeger;
+	}
+
+	@Transient
+	public PdksRaporAlanHizalaTipi getAlanHizalaTipi() {
+		return alanHizalaTipi;
+	}
+
+	public void setAlanHizalaTipi(PdksRaporAlanHizalaTipi alanHizalaTipi) {
+		this.alanHizalaTipi = alanHizalaTipi;
 	}
 
 	public void entityRefresh() {

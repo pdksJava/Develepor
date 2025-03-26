@@ -204,6 +204,10 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 
 	@Transactional
 	public String savePdksDinamikRapor() {
+		if (seciliPdksDinamikRapor.isStoreProcedure()) {
+			seciliPdksDinamikRapor.setWhereSQL("");
+			seciliPdksDinamikRapor.setOrderSQL("");
+		}
 		pdksEntityController.saveOrUpdate(session, entityManager, seciliPdksDinamikRapor);
 		session.flush();
 		fillPdksDinamikRaporList();
@@ -255,6 +259,12 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	@Transactional
 	public String saveDinamikRaporAlan() {
 		try {
+			if (seciliPdksDinamikRaporAlan.isKarakter() == false) {
+				if (seciliPdksDinamikRaporAlan.isSayisal())
+					seciliPdksDinamikRaporAlan.setHizala(PdksRaporAlanHizalaTipi.SAGA.value());
+				else
+					seciliPdksDinamikRaporAlan.setHizala(PdksRaporAlanHizalaTipi.ORTALA.value());
+			}
 			pdksEntityController.saveOrUpdate(session, entityManager, seciliPdksDinamikRaporAlan);
 			session.flush();
 			fillDinamikRaporAlanList();
@@ -345,6 +355,13 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	@Transactional
 	public String saveDinamikRaporParametre() {
 		try {
+			if (seciliPdksDinamikRapor.isView()) {
+				if (PdksUtil.hasStringValue(seciliPdksDinamikRaporParametre.getEsitlik())) {
+					if (seciliPdksDinamikRaporParametre.getEsitlik().equals("=") == false && seciliPdksDinamikRaporParametre.getEsitlik().equals(">=") == false && seciliPdksDinamikRaporParametre.getEsitlik().equals("<=") == false)
+						seciliPdksDinamikRaporParametre.setEsitlik("");
+				}
+			} else
+				seciliPdksDinamikRaporParametre.setEsitlik("");
 			pdksEntityController.saveOrUpdate(session, entityManager, seciliPdksDinamikRaporParametre);
 			session.flush();
 			filllDinamikRaporParametreList();
