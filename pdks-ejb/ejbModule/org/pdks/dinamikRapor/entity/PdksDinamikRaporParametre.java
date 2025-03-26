@@ -34,6 +34,7 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	public static final String COLUMN_NAME_ALAN_TIPI = "ALAN_TIPI";
 	public static final String COLUMN_NAME_ZORUNLU = "ZORUNLU";
 	public static final String COLUMN_NAME_ESITLIK = "ESITLIK";
+	public static final String COLUMN_NAME_PARAMETRE_DURUM = "PARAMETRE_DURUM";
 	public static final String COLUMN_NAME_DURUM = "DURUM";
 
 	private PdksDinamikRapor pdksDinamikRapor;
@@ -44,7 +45,7 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	private Integer alanTipiId, sira;
 
-	private Boolean durum = Boolean.TRUE;
+	private Boolean parametreDurum = Boolean.TRUE, durum = Boolean.TRUE;
 
 	private Date tarihDeger;
 
@@ -121,6 +122,15 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	public void setZorunlu(Boolean zorunlu) {
 		this.zorunlu = zorunlu;
+	}
+
+	@Column(name = COLUMN_NAME_PARAMETRE_DURUM)
+	public Boolean getParametreDurum() {
+		return parametreDurum;
+	}
+
+	public void setParametreDurum(Boolean parametreDurum) {
+		this.parametreDurum = parametreDurum;
 	}
 
 	@Column(name = COLUMN_NAME_DURUM)

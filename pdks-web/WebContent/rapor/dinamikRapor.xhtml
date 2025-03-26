@@ -81,7 +81,7 @@
 									<ui:fragment rendered="#{parametre.tarih}">
 										<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{parametre.tarihDeger}" showWeekDaysBar="false" showWeeksBar="false"
 											required="#{parametre.zorunlu}" requiredMessage="#{parametre.aciklama} seçiniz">
-											<a4j:support event="onchanged" action="#{dinamikRaporHome.dinamikRaporAlanMapList.clear()}" ajaxSingle="true" status="ajaxStatus"
+											<a4j:support event="onchanged" action="#{dinamikRaporHome.dinamikRaporDataList.clear()}" ajaxSingle="true" status="ajaxStatus"
 												reRender="raporTable" />
 										</rich:calendar>
 									</ui:fragment>
@@ -94,10 +94,10 @@
 							<ui:fragment rendered="#{not empty dinamikRaporHome.dinamikRaporAlanList}">
 								<a4j:commandButton status="ajaxStatus" value="Rapor Getir" action="#{dinamikRaporHome.fillDinamikRaporList()}" reRender="raporTable" />
 							</ui:fragment>
-							<ui:fragment rendered="#{not empty dinamikRaporHome.dinamikRaporAlanMapList}">
+							<ui:fragment rendered="#{not empty dinamikRaporHome.dinamikRaporDataList}">
 								<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{dinamikRaporHome.excelDinamikRaporList()}" target="blank"></h:commandLink>
 								<a4j:support event="oncomplete" status="ajaxStatus" />
-								<rich:dataTable rowClasses="acik,koyu" value="#{dinamikRaporHome.dinamikRaporAlanMapList}" var="veri" rows="50" rowKeyVar="row">
+								<rich:dataTable rowClasses="acik,koyu" value="#{dinamikRaporHome.dinamikRaporDataList}" var="veri" rows="50" rowKeyVar="row">
 
 									<c:forEach items="#{dinamikRaporHome.dinamikRaporAlanList}" var="raporAlan">
 										<rich:column style="text-align :#{raporAlan.pdksDinamikRaporAlanHizala}">

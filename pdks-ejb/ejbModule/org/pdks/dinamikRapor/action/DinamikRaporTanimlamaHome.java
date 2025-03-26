@@ -360,8 +360,13 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 					if (seciliPdksDinamikRaporParametre.getEsitlik().equals("=") == false && seciliPdksDinamikRaporParametre.getEsitlik().equals(">=") == false && seciliPdksDinamikRaporParametre.getEsitlik().equals("<=") == false)
 						seciliPdksDinamikRaporParametre.setEsitlik("");
 				}
-			} else
+				seciliPdksDinamikRaporParametre.setParametreDurum(Boolean.TRUE);
+			} else {
+				if (seciliPdksDinamikRapor.isStoreProcedure())
+					seciliPdksDinamikRaporParametre.setParametreDurum(Boolean.TRUE);
 				seciliPdksDinamikRaporParametre.setEsitlik("");
+			}
+
 			pdksEntityController.saveOrUpdate(session, entityManager, seciliPdksDinamikRaporParametre);
 			session.flush();
 			filllDinamikRaporParametreList();

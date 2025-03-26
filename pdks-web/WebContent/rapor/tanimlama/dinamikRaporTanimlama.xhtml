@@ -150,6 +150,10 @@
 									<ui:define name="label">Eşitlik</ui:define>
 									<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.esitlik}" size="2" maxlength="5" />
 								</s:decorate>
+								<s:decorate template="/layout/edit.xhtml" rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.function}">
+									<ui:define name="label">Parametre</ui:define>
+									<h:selectBooleanCheckbox value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.parametreDurum}"  />
+								</s:decorate>
 
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Zorunlu</ui:define>
@@ -209,9 +213,15 @@
 							</rich:column>
 							<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.view}">
 								<f:facet name="header">
-                      		 Eşitlikk
+                      		 Eşitlik
               		 	 </f:facet>
 								<h:outputText value="#{parametre.esitlik}" />
+							</rich:column>
+							<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.function}">
+								<f:facet name="header">
+                      		 Parametre
+              		 	 </f:facet>
+								<h:outputText value="#{authenticatedUser.getYesNo( parametre.parametreDurum)}" />
 							</rich:column>
 							<rich:column style="text-align:center">
 								<f:facet name="header">
@@ -481,6 +491,13 @@
                       		 Eşitlikk
               		 	 </f:facet>
 											<h:outputText value="#{parametre.esitlik}" />
+										</rich:column>
+
+										<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.function}">
+											<f:facet name="header">
+                      		 Parametre
+              		 	 </f:facet>
+											<h:outputText value="#{authenticatedUser.getYesNo( parametre.parametreDurum)}" />
 										</rich:column>
 										<rich:column style="text-align:center">
 											<f:facet name="header">

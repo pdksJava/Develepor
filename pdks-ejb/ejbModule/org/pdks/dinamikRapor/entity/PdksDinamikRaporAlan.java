@@ -130,6 +130,21 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 	}
 
 	@Transient
+	public boolean isHizalaSola() {
+		return hizala != null && hizala.equals(PdksRaporAlanHizalaTipi.SOLA.value());
+	}
+
+	@Transient
+	public boolean isHizalaOrtala() {
+		return hizala != null && hizala.equals(PdksRaporAlanHizalaTipi.ORTALA.value());
+	}
+
+	@Transient
+	public boolean isHizalaSaga() {
+		return hizala != null && hizala.equals(PdksRaporAlanHizalaTipi.SAGA.value());
+	}
+
+	@Transient
 	public boolean isSaat() {
 		return alanTipiId != null && alanTipiId.equals(PdksRaporAlanTipi.SAAT.value());
 	}
