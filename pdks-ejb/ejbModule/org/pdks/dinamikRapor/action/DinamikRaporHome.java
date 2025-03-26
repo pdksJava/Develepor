@@ -126,7 +126,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				if (rp.isKarakter())
 					veriMap.put(adi, rp.getKarakterDeger());
 				else if (rp.isSayisal())
-					veriMap.put(adi, rp.getDoubleDeger());
+					veriMap.put(adi, rp.getSayisalDeger());
 				else if (rp.isTarih())
 					veriMap.put(adi, rp.getTarihDeger());
 			}
@@ -158,7 +158,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 						if (rp.isKarakter())
 							fields.put(adi, rp.getKarakterDeger());
 						else if (rp.isSayisal())
-							fields.put(adi, rp.getDoubleDeger());
+							fields.put(adi, rp.getSayisalDeger());
 						else if (rp.isTarih())
 							fields.put(adi, rp.getTarihDeger());
 					}
@@ -175,7 +175,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 							if (PdksUtil.hasStringValue(rp.getKarakterDeger()) == false && rp.getZorunlu().booleanValue() == false)
 								veri = null;
 						} else if (rp.isSayisal())
-							veri = rp.getDoubleDeger();
+							veri = rp.getSayisalDeger();
 						else if (rp.isTarih())
 							veri = rp.getTarihDeger();
 						if (veri != null || rp.getZorunlu()) {
@@ -198,7 +198,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 						if (PdksUtil.hasStringValue(rp.getKarakterDeger()) == false && rp.getZorunlu().booleanValue() == false)
 							veri = null;
 					} else if (rp.isSayisal())
-						veri = rp.getDoubleDeger();
+						veri = rp.getSayisalDeger();
 					else if (rp.isTarih())
 						veri = rp.getTarihDeger();
 					if (veri != null || rp.getZorunlu()) {

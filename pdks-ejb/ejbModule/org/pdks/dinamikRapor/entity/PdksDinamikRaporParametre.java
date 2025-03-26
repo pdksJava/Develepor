@@ -16,6 +16,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.pdks.entity.BasePDKSObject;
+import org.pdks.session.PdksUtil;
 
 @Entity(name = PdksDinamikRaporParametre.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PdksDinamikRaporParametre.COLUMN_NAME_DINAMIK_RAPOR, PdksDinamikRaporParametre.COLUMN_NAME_ACIKLAMA }) })
@@ -53,7 +54,7 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	private BigDecimal decimalDeger;
 
-	private Double doubleDeger;
+	// private Double doubleDeger;
 	private Boolean zorunlu = Boolean.TRUE;
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -199,13 +200,25 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	}
 
 	@Transient
-	public Double getDoubleDeger() {
-		return doubleDeger;
+	public Object getSayisalDeger() {
+		Object deger = null;
+		try {
+			if (PdksUtil.hasStringValue(karakterDeger)) {
+				decimalDeger = new BigDecimal(karakterDeger);
+				if (decimalDeger.doubleValue() == decimalDeger.longValue()) {
+					deger = decimalDeger.longValue();
+				} else
+					deger = decimalDeger.doubleValue();
+			}
+
+		} catch (Exception e) {
+		}
+		return deger;
 	}
 
-	public void setDoubleDeger(Double doubleDeger) {
-		this.doubleDeger = doubleDeger;
-	}
+	// public void setDoubleDeger(Double doubleDeger) {
+	// this.doubleDeger = doubleDeger;
+	// }
 
 	public void entityRefresh() {
 		// TODO Auto-generated method stub

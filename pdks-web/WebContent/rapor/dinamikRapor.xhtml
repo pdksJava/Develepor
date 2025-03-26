@@ -81,11 +81,11 @@
 								<c:forEach items="#{dinamikRaporHome.dinamikRaporParametreList}" var="parametre">
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">#{parametre.aciklama}</ui:define>
-										<ui:fragment rendered="#{parametre.karakter}">
+										<ui:fragment rendered="#{parametre.karakter or parametre.sayisal}">
 											<h:inputText value="#{parametre.karakterDeger}" size="2" maxlength="255" required="#{parametre.zorunlu}"
 												requiredMessage="#{parametre.aciklama} giriniz" />
 										</ui:fragment>
-										<ui:fragment rendered="#{parametre.sayisal}">
+										<ui:fragment rendered="#{parametre.sayisal and false}">
 											<h:inputText value="#{parametre.doubleDeger}" size="2" maxlength="25" required="#{parametre.zorunlu}"
 												requiredMessage="#{parametre.aciklama} giriniz" />
 										</ui:fragment>
