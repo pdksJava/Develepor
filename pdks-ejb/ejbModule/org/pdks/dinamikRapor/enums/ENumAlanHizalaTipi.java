@@ -18,12 +18,13 @@ public enum ENumAlanHizalaTipi {
 	}
 
 	public static ENumAlanHizalaTipi fromValue(Integer v) {
+ 		ENumAlanHizalaTipi deger = null;
 		for (ENumAlanHizalaTipi c : ENumAlanHizalaTipi.values()) {
 			if (c.value.equals(v)) {
-				return c;
+				deger = c;
 			}
 		}
-		throw new IllegalArgumentException();
+		return deger;
 	}
 
 }

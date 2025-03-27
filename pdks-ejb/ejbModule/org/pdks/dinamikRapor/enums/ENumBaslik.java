@@ -18,12 +18,14 @@ public enum ENumBaslik {
 	}
 
 	public static ENumBaslik fromValue(String v) {
+		ENumBaslik deger = null;
 		for (ENumBaslik c : ENumBaslik.values()) {
 			if (c.value.equals(v)) {
-				return c;
+				deger = c;
 			}
 		}
-		throw new IllegalArgumentException();
+		return deger;
+
 	}
 
 }

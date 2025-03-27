@@ -18,12 +18,13 @@ public enum ENumDinamikRaporTipi {
 	}
 
 	public static ENumDinamikRaporTipi fromValue(Integer v) {
+		ENumDinamikRaporTipi deger = null;
 		for (ENumDinamikRaporTipi c : ENumDinamikRaporTipi.values()) {
 			if (c.value.equals(v)) {
-				return c;
+				deger = c;
 			}
 		}
-		throw new IllegalArgumentException();
+		return deger;
 	}
 
 }

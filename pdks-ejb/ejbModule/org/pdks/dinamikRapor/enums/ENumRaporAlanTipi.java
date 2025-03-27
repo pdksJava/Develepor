@@ -18,12 +18,13 @@ public enum ENumRaporAlanTipi {
 	}
 
 	public static ENumRaporAlanTipi fromValue(Integer v) {
+ 		ENumRaporAlanTipi deger = null;
 		for (ENumRaporAlanTipi c : ENumRaporAlanTipi.values()) {
 			if (c.value.equals(v)) {
-				return c;
+				deger = c;
 			}
 		}
-		throw new IllegalArgumentException();
+		return deger;
 	}
 
 }

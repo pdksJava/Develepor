@@ -18,12 +18,13 @@ public enum ENumEsitlik {
 	}
 
 	public static ENumEsitlik fromValue(String v) {
+ 		ENumEsitlik deger = null;
 		for (ENumEsitlik c : ENumEsitlik.values()) {
 			if (c.value.equals(v)) {
-				return c;
+				deger = c;
 			}
 		}
-		throw new IllegalArgumentException();
+		return deger;
 	}
 
 }

@@ -116,7 +116,7 @@
 										<c:forEach items="#{dinamikRaporHome.dinamikRaporAlanList}" var="raporAlan">
 											<rich:column style="text-align :#{raporAlan.pdksDinamikRaporAlanHizala}">
 												<f:facet name="header">
-													<h:outputText value="#{raporAlan.aciklama}" />
+													<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(raporAlan.aciklama)}" />
 												</f:facet>
 												<ui:fragment rendered="#{raporAlan.karakter}">
 													<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(veri,raporAlan.sira)}" />
