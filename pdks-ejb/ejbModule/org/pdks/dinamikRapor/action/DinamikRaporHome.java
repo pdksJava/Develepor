@@ -263,7 +263,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 
 		int col = 0, row = 0;
 		for (PdksDinamikRaporAlan ra : dinamikRaporAlanList) {
-			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ra.getAciklama());
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.getDinamikRaporAlanAciklama(ra.getAciklama()));
 		}
 		boolean renk = true;
 		for (Object[] veri : dinamikRaporDataList) {

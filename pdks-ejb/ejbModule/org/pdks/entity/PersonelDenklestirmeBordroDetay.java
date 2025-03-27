@@ -14,6 +14,7 @@ import javax.persistence.UniqueConstraint;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.enums.BordroDetayTipi;
 
 @Entity(name = PersonelDenklestirmeBordroDetay.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PersonelDenklestirmeBordroDetay.COLUMN_NAME_PERSONEL_DENKLESTIRME_BORDRO, PersonelDenklestirmeBordroDetay.COLUMN_NAME_TIPI }) })

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.pdks.entity;
+package org.pdks.enums;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;

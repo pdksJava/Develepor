@@ -13,6 +13,8 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.dinamikRapor.enums.ENumAlanHizalaTipi;
+import org.pdks.dinamikRapor.enums.ENumRaporAlanTipi;
 import org.pdks.entity.BasePDKSObject;
 
 @Entity(name = PdksDinamikRaporAlan.TABLE_NAME)

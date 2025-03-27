@@ -15,6 +15,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.pdks.entity.BasePDKSObject;
 import org.pdks.entity.Tanim;
+import org.pdks.enums.OrganizasyonTipi;
 
 @Entity(name = UserDigerOrganizasyon.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { UserDigerOrganizasyon.COLUMN_NAME_USER, UserDigerOrganizasyon.COLUMN_NAME_TIPI, UserDigerOrganizasyon.COLUMN_NAME_ORGANIZASYON }) })

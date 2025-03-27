@@ -11,6 +11,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.log4j.Logger;
+import org.pdks.enums.KatSayiTipi;
 
 @Entity
 @Table(name = KatSayi.TABLE_NAME)

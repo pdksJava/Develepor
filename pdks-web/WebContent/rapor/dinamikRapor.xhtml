@@ -80,7 +80,7 @@
 							<h:panelGrid columns="2">
 								<c:forEach items="#{dinamikRaporHome.dinamikRaporParametreList}" var="parametre">
 									<s:decorate template="/layout/edit.xhtml">
-										<ui:define name="label">#{parametre.aciklama}</ui:define>
+										<ui:define name="label">#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)}</ui:define>
 										<ui:fragment rendered="#{parametre.karakter or parametre.sayisal}">
 											<h:inputText value="#{parametre.karakterDeger}" size="2" maxlength="255" required="#{parametre.zorunlu}"
 												requiredMessage="#{parametre.aciklama} giriniz" />

@@ -14,9 +14,9 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.framework.EntityHome;
-import org.pdks.entity.NoteTipi;
 import org.pdks.entity.Notice;
 import org.pdks.entity.Tanim;
+import org.pdks.enums.NoteTipi;
 import org.pdks.security.action.StartupAction;
 import org.pdks.security.entity.User;
 

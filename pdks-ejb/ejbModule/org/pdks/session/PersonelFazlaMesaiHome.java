@@ -33,7 +33,6 @@ import org.pdks.entity.FazlaMesaiTalep;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.Kapi;
 import org.pdks.entity.KapiView;
-import org.pdks.entity.KatSayiTipi;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelFazlaMesai;
 import org.pdks.entity.PersonelHareketIslem;
@@ -46,6 +45,7 @@ import org.pdks.entity.Tatil;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.YemekIzin;
+import org.pdks.enums.KatSayiTipi;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 

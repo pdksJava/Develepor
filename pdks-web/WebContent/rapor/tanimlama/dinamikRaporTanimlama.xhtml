@@ -161,10 +161,15 @@
 
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.storeProcedure==false}">
-									<ui:define name="label">Eşitlik</ui:define>
-									<h:inputText id="esitlik" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.esitlik}" size="2" maxlength="5">
+									<ui:define name="label">Eşitlikten Farklı</ui:define>
+									 
+									<h:selectOneMenu id="esitlik" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.esitlik}">
+										<f:selectItem itemValue="" itemLabel="Lütfen seçiniz" />
+										<f:selectItems value="#{dinamikRaporTanimlamaHome.esitlikList}" />
 										<a4j:support event="onchange" reRender="esitlik" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
-									</h:inputText>
+									</h:selectOneMenu>
+
+
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.function}">
 									<ui:define name="label">Parametre</ui:define>
@@ -241,9 +246,9 @@
 							</rich:column>
 							<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.storeProcedure==false}">
 								<f:facet name="header">
-                      		 Eşitlik
+                      		 Eşitlikten Farklı
               		 	 </f:facet>
-								<h:outputText value="#{parametre.esitlik}" />
+								<h:outputText value="#{parametre.esitlikAciklama}" />
 							</rich:column>
 							<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.function}">
 								<f:facet name="header">
@@ -499,7 +504,7 @@
 							</c:if>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Aktif</ui:define>
-								<h:selectBooleanCheckbox  id="durum1" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.durum}">
+								<h:selectBooleanCheckbox id="durum1" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.durum}">
 									<a4j:support event="onclick" reRender="durum1" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 								</h:selectBooleanCheckbox>
 							</s:decorate>
@@ -552,9 +557,9 @@
 										</rich:column>
 										<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.storeProcedure==false}">
 											<f:facet name="header">
-                      		 Eşitlik 
+                      		 Eşitlikten Farklı 
               		 	 </f:facet>
-											<h:outputText value="#{parametre.esitlik}" />
+											<h:outputText value="#{parametre.esitlikAciklama}" />
 										</rich:column>
 
 										<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.function}">

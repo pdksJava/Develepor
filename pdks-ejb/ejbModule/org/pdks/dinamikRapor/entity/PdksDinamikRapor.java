@@ -6,7 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import org.pdks.dinamikRapor.enums.ENumAlanHizalaTipi;
+import org.pdks.dinamikRapor.enums.ENumDinamikRaporTipi;
+import org.pdks.dinamikRapor.enums.ENumEsitlik;
+import org.pdks.dinamikRapor.enums.ENumRaporAlanTipi;
 import org.pdks.entity.BasePDKSObject;
+import org.pdks.session.PdksUtil;
 
 @Entity(name = PdksDinamikRapor.TABLE_NAME)
 public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
@@ -154,6 +159,24 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 				str = "Store Procedure";
 		}
 
+		return str;
+	}
+
+	@Transient
+	public static String getEsitlikAciklama(String value) {
+		String str = "";
+		if (PdksUtil.hasStringValue(value)) {
+			if (value.equalsIgnoreCase(ENumEsitlik.BUYUK.value()))
+				str = "Büyük";
+			else if (value.equalsIgnoreCase(ENumEsitlik.BUYUKESIT.value()))
+				str = "Büyük Eşit";
+			else if (value.equalsIgnoreCase(ENumEsitlik.KUCUK.value()))
+				str = "Küçük";
+			else if (value.equalsIgnoreCase(ENumEsitlik.KUCUKESIT.value()))
+				str = "Küçük Eşit";
+			else if (value.equalsIgnoreCase(ENumEsitlik.ICEREN.value()))
+				str = "İçeren";
+		}
 		return str;
 	}
 

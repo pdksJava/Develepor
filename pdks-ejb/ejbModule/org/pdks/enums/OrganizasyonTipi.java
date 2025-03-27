@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.pdks.security.entity;
+package org.pdks.enums;
 
 public enum OrganizasyonTipi {
 

@@ -23,9 +23,10 @@ import org.jboss.seam.framework.EntityHome;
 import org.pdks.dinamikRapor.entity.PdksDinamikRapor;
 import org.pdks.dinamikRapor.entity.PdksDinamikRaporAlan;
 import org.pdks.dinamikRapor.entity.PdksDinamikRaporParametre;
-import org.pdks.dinamikRapor.entity.ENumDinamikRaporTipi;
-import org.pdks.dinamikRapor.entity.ENumAlanHizalaTipi;
-import org.pdks.dinamikRapor.entity.ENumRaporAlanTipi;
+import org.pdks.dinamikRapor.enums.ENumAlanHizalaTipi;
+import org.pdks.dinamikRapor.enums.ENumDinamikRaporTipi;
+import org.pdks.dinamikRapor.enums.ENumEsitlik;
+import org.pdks.dinamikRapor.enums.ENumRaporAlanTipi;
 import org.pdks.security.entity.User;
 import org.pdks.session.ComponentState;
 import org.pdks.session.OrtakIslemler;
@@ -60,7 +61,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	private PdksDinamikRaporParametre seciliPdksDinamikRaporParametre;
 	private List<PdksDinamikRaporAlan> dinamikRaporAlanList;
 	private List<PdksDinamikRaporParametre> dinamikRaporParametreList;
-	private List<SelectItem> parametreList, alanAdiList, raporTipiList, alanHizalamaList;
+	private List<SelectItem> parametreList, alanAdiList, raporTipiList, alanHizalamaList, esitlikList;
 	private Session session;
 
 	@Override
@@ -87,36 +88,38 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 			raporTipiList = new ArrayList<SelectItem>();
 		else
 			raporTipiList.clear();
-
-		raporTipiList.add(new SelectItem(ENumDinamikRaporTipi.VIEW.value(), PdksDinamikRapor.getPdksDinamikRaporTipiAciklama(ENumDinamikRaporTipi.VIEW.value())));
-		raporTipiList.add(new SelectItem(ENumDinamikRaporTipi.FUNCTION.value(), PdksDinamikRapor.getPdksDinamikRaporTipiAciklama(ENumDinamikRaporTipi.FUNCTION.value())));
-		raporTipiList.add(new SelectItem(ENumDinamikRaporTipi.STORE_PROCEDURE.value(), PdksDinamikRapor.getPdksDinamikRaporTipiAciklama(ENumDinamikRaporTipi.STORE_PROCEDURE.value())));
+		for (ENumDinamikRaporTipi c : ENumDinamikRaporTipi.values())
+			raporTipiList.add(new SelectItem(c.value(), PdksDinamikRapor.getPdksDinamikRaporTipiAciklama(c.value())));
 
 		if (alanHizalamaList == null)
 			alanHizalamaList = new ArrayList<SelectItem>();
 		else
 			alanHizalamaList.clear();
-		alanHizalamaList.add(new SelectItem(ENumAlanHizalaTipi.SOLA.value(), PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(ENumAlanHizalaTipi.SOLA.value())));
-		alanHizalamaList.add(new SelectItem(ENumAlanHizalaTipi.ORTALA.value(), PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(ENumAlanHizalaTipi.ORTALA.value())));
-		alanHizalamaList.add(new SelectItem(ENumAlanHizalaTipi.SAGA.value(), PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(ENumAlanHizalaTipi.SAGA.value())));
+		for (ENumAlanHizalaTipi c : ENumAlanHizalaTipi.values())
+			alanHizalamaList.add(new SelectItem(c.value(), PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(c.value())));
 
 		if (alanAdiList == null)
 			alanAdiList = new ArrayList<SelectItem>();
 		else
 			alanAdiList.clear();
-		alanAdiList.add(new SelectItem(ENumRaporAlanTipi.KARAKTER.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.KARAKTER.value())));
-		alanAdiList.add(new SelectItem(ENumRaporAlanTipi.SAYISAL.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.SAYISAL.value())));
-		alanAdiList.add(new SelectItem(ENumRaporAlanTipi.TARIH.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.TARIH.value())));
-		alanAdiList.add(new SelectItem(ENumRaporAlanTipi.TARIH_SAAT.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.TARIH_SAAT.value())));
-		alanAdiList.add(new SelectItem(ENumRaporAlanTipi.SAAT.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.SAAT.value())));
+		for (ENumRaporAlanTipi c : ENumRaporAlanTipi.values())
+			alanAdiList.add(new SelectItem(c.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(c.value())));
 
 		if (parametreList == null)
 			parametreList = new ArrayList<SelectItem>();
 		else
 			parametreList.clear();
-		parametreList.add(new SelectItem(ENumRaporAlanTipi.KARAKTER.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.KARAKTER.value())));
-		parametreList.add(new SelectItem(ENumRaporAlanTipi.SAYISAL.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.SAYISAL.value())));
-		parametreList.add(new SelectItem(ENumRaporAlanTipi.TARIH.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.TARIH.value())));
+		for (ENumRaporAlanTipi c : ENumRaporAlanTipi.values())
+			if (c.equals(ENumRaporAlanTipi.SAAT) == false || c.equals(ENumRaporAlanTipi.TARIH_SAAT) == false)
+				parametreList.add(new SelectItem(c.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(c.value())));
+
+		if (esitlikList == null)
+			esitlikList = new ArrayList<SelectItem>();
+		else
+			esitlikList.clear();
+		for (ENumEsitlik c : ENumEsitlik.values())
+			esitlikList.add(new SelectItem(c.value(), PdksDinamikRapor.getEsitlikAciklama(c.value())));
+
 		fillPdksDinamikRaporList();
 	}
 
@@ -483,5 +486,13 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 
 	public void setAlanHizalamaList(List<SelectItem> alanHizalamaList) {
 		this.alanHizalamaList = alanHizalamaList;
+	}
+
+	public List<SelectItem> getEsitlikList() {
+		return esitlikList;
+	}
+
+	public void setEsitlikList(List<SelectItem> esitlikList) {
+		this.esitlikList = esitlikList;
 	}
 }

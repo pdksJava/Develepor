@@ -71,13 +71,13 @@ import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.pdks.dinamikRapor.enums.ENumBaslik;
 import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.ArifeVardiyaDonem;
 import org.pdks.entity.AylikPuantaj;
 import org.pdks.entity.BaseObject;
 import org.pdks.entity.BasePDKSObject;
 import org.pdks.entity.BasitHareket;
-import org.pdks.entity.BordroDetayTipi;
 import org.pdks.entity.CalismaModeli;
 import org.pdks.entity.CalismaModeliAy;
 import org.pdks.entity.CalismaModeliGun;
@@ -99,8 +99,6 @@ import org.pdks.entity.KapiKGS;
 import org.pdks.entity.KapiSirket;
 import org.pdks.entity.KapiView;
 import org.pdks.entity.KatSayi;
-import org.pdks.entity.KatSayiTipi;
-import org.pdks.entity.KesintiTipi;
 import org.pdks.entity.Liste;
 import org.pdks.entity.MailGrubu;
 import org.pdks.entity.MenuItem;
@@ -114,7 +112,6 @@ import org.pdks.entity.PersonelDenklestirmeDinamikAlan;
 import org.pdks.entity.PersonelDenklestirmeTasiyici;
 import org.pdks.entity.PersonelDinamikAlan;
 import org.pdks.entity.PersonelDonemselDurum;
-import org.pdks.entity.PersonelDurumTipi;
 import org.pdks.entity.PersonelFazlaMesai;
 import org.pdks.entity.PersonelGeciciYonetici;
 import org.pdks.entity.PersonelHareket;
@@ -139,6 +136,11 @@ import org.pdks.entity.VardiyaSablonu;
 import org.pdks.entity.VardiyaYemekIzin;
 import org.pdks.entity.YemekIzin;
 import org.pdks.entity.YemekOgun;
+import org.pdks.enums.BordroDetayTipi;
+import org.pdks.enums.KatSayiTipi;
+import org.pdks.enums.KesintiTipi;
+import org.pdks.enums.OrganizasyonTipi;
+import org.pdks.enums.PersonelDurumTipi;
 import org.pdks.erp.action.ERPController;
 import org.pdks.erp.action.PdksNoSapController;
 import org.pdks.erp.action.PdksSap3Controller;
@@ -153,7 +155,6 @@ import org.pdks.pdf.action.PDFITextUtils;
 import org.pdks.pdf.action.PDFUtils;
 import org.pdks.quartz.KapiGirisGuncelleme;
 import org.pdks.security.entity.MenuItemConstant;
-import org.pdks.security.entity.OrganizasyonTipi;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
 import org.pdks.security.entity.UserDigerOrganizasyon;
@@ -244,6 +245,23 @@ public class OrtakIslemler implements Serializable {
 		}
 		return tanimDeger;
 
+	}
+
+	/**
+	 * @param baslik
+	 * @return
+	 */
+	public String getDinamikRaporAlanAciklama(String baslik) {
+		String str = baslik;
+		if (PdksUtil.hasStringValue(baslik)) {
+			ENumBaslik eb = ENumBaslik.fromValue(baslik);
+			if (eb != null) {
+				String baslikAdi = (String) PdksUtil.getMethodObject(this, eb.value(), null);
+				if (PdksUtil.hasStringValue(baslik))
+					str = baslikAdi;
+			}
+		}
+		return str;
 	}
 
 	/**

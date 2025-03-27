@@ -1,11 +1,11 @@
 /**
  * 
  */
-package org.pdks.dinamikRapor.entity;
+package org.pdks.dinamikRapor.enums;
 
 public enum ENumEsitlik {
 
-	BUYUK(">"), BUYUKESIT(">="), ESIT("="), KUCUK("<"), KUCUKESIT("<="), ICEREN("like");
+	BUYUK(">"), BUYUKESIT(">="), KUCUK("<"), KUCUKESIT("<="), ICEREN("like");
 
 	private final String value;
 

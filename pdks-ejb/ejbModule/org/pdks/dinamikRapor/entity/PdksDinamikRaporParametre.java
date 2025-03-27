@@ -15,6 +15,8 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.dinamikRapor.enums.ENumEsitlik;
+import org.pdks.dinamikRapor.enums.ENumRaporAlanTipi;
 import org.pdks.entity.BasePDKSObject;
 import org.pdks.session.PdksUtil;
 
@@ -53,6 +55,8 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	private String karakterDeger;
 
 	private Boolean zorunlu = Boolean.TRUE;
+
+	private ENumEsitlik eNumEsitlik;
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_DINAMIK_RAPOR, nullable = false)
@@ -97,8 +101,11 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 		return esitlik;
 	}
 
-	public void setEsitlik(String esitlik) {
-		this.esitlik = esitlik;
+	public void setEsitlik(String value) {
+		eNumEsitlik = null;
+		if (value != null)
+			eNumEsitlik = ENumEsitlik.fromValue(value);
+		this.esitlik = value;
 	}
 
 	@Column(name = COLUMN_NAME_ALAN_TIPI)
@@ -202,6 +209,21 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 		} catch (Exception e) {
 		}
 		return deger;
+	}
+
+	@Transient
+	public String getEsitlikAciklama() {
+		String str = PdksDinamikRapor.getEsitlikAciklama(eNumEsitlik != null ? eNumEsitlik.value() : "");
+		return str;
+	}
+
+	@Transient
+	public ENumEsitlik geteNumEsitlik() {
+		return eNumEsitlik;
+	}
+
+	public void seteNumEsitlik(ENumEsitlik eNumEsitlik) {
+		this.eNumEsitlik = eNumEsitlik;
 	}
 
 	public void entityRefresh() {

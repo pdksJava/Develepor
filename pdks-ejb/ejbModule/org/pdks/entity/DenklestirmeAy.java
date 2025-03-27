@@ -13,6 +13,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.pdks.enums.KesintiTipi;
 import org.pdks.security.entity.User;
 import org.pdks.session.PdksUtil;
 

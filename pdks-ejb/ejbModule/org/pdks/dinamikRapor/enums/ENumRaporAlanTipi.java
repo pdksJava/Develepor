@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.pdks.dinamikRapor.entity;
+package org.pdks.dinamikRapor.enums;
 
 public enum ENumRaporAlanTipi {
 

@@ -1,4 +1,4 @@
-package org.pdks.entity;
+package org.pdks.enums;
 
 public enum KesintiTipi {
 
