@@ -42,6 +42,12 @@
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
+                     	   					Id
+              		 	 					</f:facet>
+							<h:outputText value="#{rapor.id}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
                      	   Rapor Başlık
               		 	 </f:facet>
 							<h:outputText value="#{rapor.aciklama}" />
@@ -152,7 +158,7 @@
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.function}">
 									<ui:define name="label">Parametre</ui:define>
-									<h:selectBooleanCheckbox value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.parametreDurum}"  />
+									<h:selectBooleanCheckbox value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.parametreDurum}" />
 								</s:decorate>
 
 								<s:decorate template="/layout/edit.xhtml">
@@ -189,6 +195,12 @@
 							</rich:column>
 							<rich:column>
 								<f:facet name="header">
+                     	   					Id
+              		 	 					</f:facet>
+								<h:outputText value="#{parametre.id}" />
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
                      	   Rapor Başlık
               		 	 </f:facet>
 								<h:outputText value="#{parametre.aciklama}" />
@@ -211,7 +223,7 @@
               		 	 </f:facet>
 								<h:outputText value="#{parametre.pdksRaporAlanTipiAciklama}" />
 							</rich:column>
-							<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.view}">
+							<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.storeProcedure==false}">
 								<f:facet name="header">
                       		 Eşitlik
               		 	 </f:facet>
@@ -332,6 +344,12 @@
 									<h:graphicImage value="/img/delete.gif" style="border:0" alt="Delete" />
 								</a4j:commandLink>
 								<rich:toolTip for="deleteAlanlink" value="Sil" />
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+                     	   					Id
+              		 	 					</f:facet>
+								<h:outputText value="#{alan.id}" />
 							</rich:column>
 							<rich:column>
 								<f:facet name="header">
@@ -464,6 +482,12 @@
 
 										<rich:column>
 											<f:facet name="header">
+                     	   					Id
+              		 	 					</f:facet>
+											<h:outputText value="#{parametre.id}" />
+										</rich:column>
+										<rich:column>
+											<f:facet name="header">
                      	   Rapor Başlık
               		 	 </f:facet>
 											<h:outputText value="#{parametre.aciklama}" />
@@ -486,9 +510,9 @@
               		 	 </f:facet>
 											<h:outputText value="#{parametre.pdksRaporAlanTipiAciklama}" />
 										</rich:column>
-										<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.view}">
+										<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.storeProcedure==false}">
 											<f:facet name="header">
-                      		 Eşitlikk
+                      		 Eşitlik 
               		 	 </f:facet>
 											<h:outputText value="#{parametre.esitlik}" />
 										</rich:column>
@@ -521,7 +545,12 @@
 										<f:facet name="header">
 											<h:outputText value="Dinamik Raporlar" />
 										</f:facet>
-
+										<rich:column>
+											<f:facet name="header">
+                     	   					Id
+              		 	 					</f:facet>
+											<h:outputText value="#{alan.id}" />
+										</rich:column>
 										<rich:column>
 											<f:facet name="header">
                      	   Rapor Başlık
