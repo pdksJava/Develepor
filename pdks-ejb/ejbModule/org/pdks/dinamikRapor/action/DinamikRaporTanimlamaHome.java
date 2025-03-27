@@ -110,7 +110,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		else
 			parametreList.clear();
 		for (ENumRaporAlanTipi c : ENumRaporAlanTipi.values())
-			if (c.equals(ENumRaporAlanTipi.SAAT) == false || c.equals(ENumRaporAlanTipi.TARIH_SAAT) == false)
+			if (c.equals(ENumRaporAlanTipi.SAAT) == false && c.equals(ENumRaporAlanTipi.TARIH_SAAT) == false)
 				parametreList.add(new SelectItem(c.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(c.value())));
 
 		if (esitlikList == null)
