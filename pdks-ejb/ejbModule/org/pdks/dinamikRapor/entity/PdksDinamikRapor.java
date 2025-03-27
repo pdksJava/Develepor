@@ -176,6 +176,8 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 				str = "Küçük Eşit";
 			else if (value.equalsIgnoreCase(ENumEsitlik.ICEREN.value()))
 				str = "İçeren";
+			else if (value.equalsIgnoreCase(ENumEsitlik.ESIT.value()))
+				str = "Eşit";
 		}
 		return str;
 	}

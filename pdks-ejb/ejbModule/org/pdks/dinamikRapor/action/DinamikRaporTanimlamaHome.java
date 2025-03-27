@@ -118,7 +118,8 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		else
 			esitlikList.clear();
 		for (ENumEsitlik c : ENumEsitlik.values())
-			esitlikList.add(new SelectItem(c.value(), PdksDinamikRapor.getEsitlikAciklama(c.value())));
+			if (c.equals(ENumEsitlik.ESIT) == false)
+				esitlikList.add(new SelectItem(c.value(), PdksDinamikRapor.getEsitlikAciklama(c.value())));
 
 		fillPdksDinamikRaporList();
 	}
