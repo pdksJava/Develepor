@@ -126,53 +126,69 @@
 						<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 					</a4j:outputPanel>
 					<a4j:outputPanel id="raporParametreBilgi">
-						<c:if test="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre!=null}">
+						<ui:fragment rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre!=null}">
+
 							<h:panelGrid columns="2">
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Parametre Başlık</ui:define>
-									<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.aciklama}" size="2" maxlength="255" required="true"
-										requiredMessage="Parametre başlık giriniz" />
+									<h:inputText id="aciklama2" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.aciklama}" size="2" maxlength="255"
+										required="true" requiredMessage="Parametre başlık giriniz">
+										<a4j:support event="onchange" reRender="aciklama2" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:inputText>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Parametre DB Adi</ui:define>
-									<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.dbTanim}" size="2" maxlength="255" required="true"
-										requiredMessage="Parametre başlık giriniz" />
+									<h:inputText id="dbTanim2" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.dbTanim}" size="2" maxlength="255"
+										required="true" requiredMessage="Parametre başlık giriniz">
+										<a4j:support event="onchange" reRender="dbTanim2" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:inputText>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Parametre Sıra</ui:define>
-									<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.sira}" size="2" maxlength="5" required="true"
-										requiredMessage="Parametre başlık giriniz" />
+									<h:inputText id="sira2" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.sira}" size="2" maxlength="5" required="true"
+										requiredMessage="Parametre başlık giriniz">
+										<a4j:support event="onchange" reRender="sira2" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:inputText>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Alan Tipi</ui:define>
-									<h:selectOneMenu required="true" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.alanTipiId}"
+									<h:selectOneMenu id="alanTipiId2" required="true" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.alanTipiId}"
 										requiredMessage="Alan Tipini seçiniz">
 										<f:selectItem itemLabel="Lütfen seçiniz" />
 										<f:selectItems value="#{dinamikRaporTanimlamaHome.parametreList}" />
+										<a4j:support event="onchange" reRender="alanTipiId2" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 									</h:selectOneMenu>
 
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.storeProcedure==false}">
 									<ui:define name="label">Eşitlik</ui:define>
-									<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.esitlik}" size="2" maxlength="5" />
+									<h:inputText id="esitlik" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.esitlik}" size="2" maxlength="5">
+										<a4j:support event="onchange" reRender="esitlik" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:inputText>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.function}">
 									<ui:define name="label">Parametre</ui:define>
-									<h:selectBooleanCheckbox value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.parametreDurum}" />
+									<h:selectBooleanCheckbox id="parametreDurum" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.parametreDurum}">
+										<a4j:support event="onclick" reRender="parametreDurum" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:selectBooleanCheckbox>
 								</s:decorate>
 
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Zorunlu</ui:define>
-									<h:selectBooleanCheckbox value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.zorunlu}" />
+									<h:selectBooleanCheckbox id="zorunlu" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.zorunlu}">
+										<a4j:support event="onclick" reRender="zorunlu" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:selectBooleanCheckbox>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
-									<ui:define name="label">Durum</ui:define>
-									<h:selectBooleanCheckbox value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.durum}" />
+									<ui:define name="label">Aktif</ui:define>
+									<h:selectBooleanCheckbox id="durum2" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.durum}">
+										<a4j:support event="onclick" reRender="durum2" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:selectBooleanCheckbox>
 								</s:decorate>
 							</h:panelGrid>
 							<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{dinamikRaporTanimlamaHome.saveDinamikRaporParametre()}"
 								reRender="raporParametreBilgi" />
-						</c:if>
+						</ui:fragment>
 						<rich:dataTable rowClasses="acik,koyu" value="#{dinamikRaporTanimlamaHome.dinamikRaporParametreList}" var="parametre" rows="20" rowKeyVar="row">
 							<f:facet name="header">
 								<h:outputText value="Dinamik Raporlar" />
@@ -286,40 +302,52 @@
 							<h:panelGrid columns="2">
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Alan Başlık</ui:define>
-									<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.aciklama}" size="2" maxlength="255" required="true"
-										requiredMessage="Alan başlık giriniz" />
+									<h:inputText id="aciklama3" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.aciklama}" size="2" maxlength="255" required="true"
+										requiredMessage="Alan başlık giriniz">
+										<a4j:support event="onchange" reRender="aciklama3" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:inputText>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Alan DB Adi</ui:define>
-									<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.dbTanim}" size="2" maxlength="255" required="true"
-										requiredMessage="Alan başlık giriniz" />
+									<h:inputText id="dbTanim3" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.dbTanim}" size="2" maxlength="255" required="true"
+										requiredMessage="Alan başlık giriniz">
+										<a4j:support event="onchange" reRender="dbTanim3" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:inputText>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Alan Sıra</ui:define>
-									<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.sira}" size="2" maxlength="5" required="true"
-										requiredMessage="Alan başlık giriniz" />
+									<h:inputText id="sira3" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.sira}" size="2" maxlength="5" required="true"
+										requiredMessage="Alan başlık giriniz">
+										<a4j:support event="onchange" reRender="sira3" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:inputText>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Alan Tipi</ui:define>
-									<h:selectOneMenu required="true" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.alanTipiId}"
+									<h:selectOneMenu id="alanTipiId3" required="true" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.alanTipiId}"
 										requiredMessage="Alan Tipini seçiniz">
 										<f:selectItem itemLabel="Lütfen seçiniz" />
 										<f:selectItems value="#{dinamikRaporTanimlamaHome.alanAdiList}" />
+										<a4j:support event="onchange" reRender="alanTipiId3" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+
 									</h:selectOneMenu>
 
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Hizalama Tipi</ui:define>
-									<h:selectOneMenu required="true" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.hizala}"
+									<h:selectOneMenu id="hizala" required="true" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.hizala}"
 										requiredMessage="Hizalama Tipini seçiniz">
 										<f:selectItem itemLabel="Lütfen seçiniz" />
 										<f:selectItems value="#{dinamikRaporTanimlamaHome.alanHizalamaList}" />
+										<a4j:support event="onchange" reRender="hizala" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+
 									</h:selectOneMenu>
 
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
-									<ui:define name="label">Durum</ui:define>
-									<h:selectBooleanCheckbox value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.durum}" />
+									<ui:define name="label">Aktif</ui:define>
+									<h:selectBooleanCheckbox id="durum3" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.durum}">
+										<a4j:support event="onclick" reRender="durum3" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:selectBooleanCheckbox>
 								</s:decorate>
 							</h:panelGrid>
 							<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{dinamikRaporTanimlamaHome.saveDinamikRaporAlan()}" reRender="raporAlanBilgi" />
@@ -425,13 +453,17 @@
 						<h:panelGrid columns="2" id="raporData">
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Rapor Başlık</ui:define>
-								<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.aciklama}" size="2" maxlength="255" required="true"
-									requiredMessage="Rapor başlık giriniz" />
+								<h:inputText id="aciklama1" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.aciklama}" size="2" maxlength="255" required="true"
+									requiredMessage="Rapor başlık giriniz">
+									<a4j:support event="onchange" reRender="aciklama1" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+								</h:inputText>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Database Tanımı</ui:define>
-								<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.dbTanim}" size="2" maxlength="255" required="true"
-									requiredMessage="Database tanımı giriniz" />
+								<h:inputText id="dbTanim1" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.dbTanim}" size="2" maxlength="255" required="true"
+									requiredMessage="Database tanımı giriniz">
+									<a4j:support event="onchange" reRender="dbTanim1" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+								</h:inputText>
 							</s:decorate>
 
 							<s:decorate template="/layout/edit.xhtml">
@@ -440,28 +472,36 @@
 									requiredMessage="Database Rapor Tipini seçiniz">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{dinamikRaporTanimlamaHome.raporTipiList}" />
-									<a4j:support event="onchange" ajaxSingle="true" reRender="raporData" />
+									<a4j:support event="onchange" reRender="raporData" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 								</h:selectOneMenu>
 
 							</s:decorate>
 
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Rapor Görüntülensin</ui:define>
-								<h:selectBooleanCheckbox value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.goruntulemeDurum}" />
+								<h:selectBooleanCheckbox id="goruntulemeDurum" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.goruntulemeDurum}">
+									<a4j:support event="onclick" reRender="goruntulemeDurum" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+								</h:selectBooleanCheckbox>
 							</s:decorate>
 							<c:if test="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.storeProcedure==false}">
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">SQL Koşul</ui:define>
-									<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.whereSQL}" size="2" maxlength="255" />
+									<h:inputText id="whereSQL" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.whereSQL}" size="2" maxlength="255">
+										<a4j:support event="onchange" reRender="whereSQL" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:inputText>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">SQL Sıralama</ui:define>
-									<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.orderSQL}" size="2" maxlength="255" />
+									<h:inputText id="orderSQL" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.orderSQL}" size="2" maxlength="255">
+										<a4j:support event="onchange" reRender="orderSQL" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:inputText>
 								</s:decorate>
 							</c:if>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Aktif</ui:define>
-								<h:selectBooleanCheckbox value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.durum}" />
+								<h:selectBooleanCheckbox  id="durum1" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.durum}">
+									<a4j:support event="onclick" reRender="durum1" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+								</h:selectBooleanCheckbox>
 							</s:decorate>
 						</h:panelGrid>
 					</a4j:outputPanel>

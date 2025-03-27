@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
@@ -365,12 +366,15 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 			}
 			if (seciliPdksDinamikRapor.isStoreProcedure() == false) {
 				if (PdksUtil.hasStringValue(seciliPdksDinamikRaporParametre.getEsitlik())) {
-					List<String> veriler = Arrays.asList(new String[] { "=", "<=", ">=", "like" });
-					if (!veriler.contains(seciliPdksDinamikRaporParametre.getEsitlik()))
+					String esitlik = seciliPdksDinamikRaporParametre.getEsitlik().trim().toLowerCase(Locale.ENGLISH);
+					List<String> veriler = Arrays.asList(new String[] { "<=", ">=", "like" });
+					if (!veriler.contains(esitlik))
 						seciliPdksDinamikRaporParametre.setEsitlik("");
+					else
+						seciliPdksDinamikRaporParametre.setEsitlik(esitlik);
+					veriler = null;
 				}
 			}
-
 			pdksEntityController.saveOrUpdate(session, entityManager, seciliPdksDinamikRaporParametre);
 			session.flush();
 			filllDinamikRaporParametreList();

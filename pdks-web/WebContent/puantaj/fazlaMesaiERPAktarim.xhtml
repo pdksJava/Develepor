@@ -65,7 +65,7 @@
 						<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
 							<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
 							<h:inputText value="#{fazlaMesaiERPAktarimHome.sicilNo}" maxlength="11">
-								<a4j:support event="oncchange" reRender="secimler" status="ajaxStatus" />
+								<a4j:support event="onchange" reRender="secimler" status="ajaxStatus" />
 
 							</h:inputText>
 						</s:decorate>
