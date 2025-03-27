@@ -5,7 +5,7 @@ package org.pdks.dinamikRapor.entity;
 
 public enum ENumEsitlik {
 
-	BUYUK(">"), BUYUKESIT(">="), KUCUK("<"), KUCUKESIT("<="), ICEREN("like");
+	BUYUK(">"), BUYUKESIT(">="), ESIT("="), KUCUK("<"), KUCUKESIT("<="), ICEREN("like");
 
 	private final String value;
 
