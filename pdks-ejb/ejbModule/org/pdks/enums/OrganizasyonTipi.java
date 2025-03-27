@@ -18,12 +18,13 @@ public enum OrganizasyonTipi {
 	}
 
 	public static OrganizasyonTipi fromValue(Integer v) {
+		OrganizasyonTipi deger = null;
 		for (OrganizasyonTipi c : OrganizasyonTipi.values()) {
 			if (c.value.equals(v)) {
-				return c;
+				deger = c;
 			}
 		}
-		throw new IllegalArgumentException();
+		return deger;
 	}
 
 }

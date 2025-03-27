@@ -3,6 +3,7 @@
  */
 package org.pdks.enums;
 
+
 public enum KatSayiTipi {
 
 	HAREKET_BEKLEME_SURESI(1), SUA_GUNLUK_SAAT_SURESI(2), YUVARLAMA_TIPI(3), OFF_FAZLA_MESAI_TIPI(4), HT_FAZLA_MESAI_TIPI(5), ERKEN_GIRIS_TIPI(6), GEC_CIKIS_TIPI(7), FMT_DURUM(8), IZIN_HAFTA_TATIL_DURUM(9), YEMEK_SURE_EKLE_DURUM(10), SAAT_CALISAN_GUN(90), SAAT_CALISAN_NORMAL_GUN(91), SAAT_CALISAN_IZIN_GUN(
@@ -19,12 +20,13 @@ public enum KatSayiTipi {
 	}
 
 	public static KatSayiTipi fromValue(Integer v) {
+		KatSayiTipi deger = null;
 		for (KatSayiTipi c : KatSayiTipi.values()) {
 			if (c.value.equals(v)) {
-				return c;
+				deger = c;
 			}
 		}
-		throw new IllegalArgumentException();
-	}
+		return deger;
+ 	}
 
 }
