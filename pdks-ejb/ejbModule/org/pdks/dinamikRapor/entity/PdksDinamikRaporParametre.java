@@ -42,7 +42,7 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	private String aciklama, dbTanim, esitlik = "";
 
-	private PdksRaporAlanTipi raporAlanTipi;
+	private ENumRaporAlanTipi raporAlanTipi;
 
 	private Integer alanTipiId, sira;
 
@@ -109,7 +109,7 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	public void setAlanTipiId(Integer value) {
 		this.raporAlanTipi = null;
 		if (value != null)
-			this.raporAlanTipi = PdksRaporAlanTipi.fromValue(value);
+			this.raporAlanTipi = ENumRaporAlanTipi.fromValue(value);
 		this.alanTipiId = value;
 	}
 
@@ -147,25 +147,25 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	@Transient
 	public boolean isKarakter() {
-		return alanTipiId != null && alanTipiId.equals(PdksRaporAlanTipi.KARAKTER.value());
+		return alanTipiId != null && alanTipiId.equals(ENumRaporAlanTipi.KARAKTER.value());
 	}
 
 	@Transient
 	public boolean isSayisal() {
-		return alanTipiId != null && alanTipiId.equals(PdksRaporAlanTipi.SAYISAL.value());
+		return alanTipiId != null && alanTipiId.equals(ENumRaporAlanTipi.SAYISAL.value());
 	}
 
 	@Transient
 	public boolean isTarih() {
-		return alanTipiId != null && alanTipiId.equals(PdksRaporAlanTipi.TARIH.value());
+		return alanTipiId != null && alanTipiId.equals(ENumRaporAlanTipi.TARIH.value());
 	}
 
 	@Transient
-	public PdksRaporAlanTipi getRaporAlanTipi() {
+	public ENumRaporAlanTipi getRaporAlanTipi() {
 		return raporAlanTipi;
 	}
 
-	public void setRaporAlanTipi(PdksRaporAlanTipi raporAlanTipi) {
+	public void setRaporAlanTipi(ENumRaporAlanTipi raporAlanTipi) {
 		this.raporAlanTipi = raporAlanTipi;
 	}
 

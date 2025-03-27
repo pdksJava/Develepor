@@ -28,7 +28,7 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 
 	private String aciklama, dbTanim, whereSQL = "", orderSQL = "";
 
-	private PdksDinamikRaporTipi raporTipi;
+	private ENumDinamikRaporTipi raporTipi;
 
 	private Integer raporTipiId;
 
@@ -60,7 +60,7 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 	public void setRaporTipiId(Integer value) {
 		this.raporTipi = null;
 		if (value != null)
-			this.raporTipi = PdksDinamikRaporTipi.fromValue(value);
+			this.raporTipi = ENumDinamikRaporTipi.fromValue(value);
 		this.raporTipiId = value;
 	}
 
@@ -101,11 +101,11 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 	}
 
 	@Transient
-	public PdksDinamikRaporTipi getRaporTipi() {
+	public ENumDinamikRaporTipi getRaporTipi() {
 		return raporTipi;
 	}
 
-	public void setRaporTipi(PdksDinamikRaporTipi raporTipi) {
+	public void setRaporTipi(ENumDinamikRaporTipi raporTipi) {
 		this.raporTipi = raporTipi;
 	}
 
@@ -113,15 +113,15 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 	public static String getPdksDinamikRaporAlanAciklama(Integer key) {
 		String str = "";
 		if (key != null) {
-			if (key.equals(PdksRaporAlanTipi.KARAKTER.value()))
+			if (key.equals(ENumRaporAlanTipi.KARAKTER.value()))
 				str = "Karakter";
-			else if (key.equals(PdksRaporAlanTipi.SAYISAL.value()))
+			else if (key.equals(ENumRaporAlanTipi.SAYISAL.value()))
 				str = "Sayısal";
-			else if (key.equals(PdksRaporAlanTipi.TARIH.value()))
+			else if (key.equals(ENumRaporAlanTipi.TARIH.value()))
 				str = "Tarih";
-			else if (key.equals(PdksRaporAlanTipi.SAAT.value()))
+			else if (key.equals(ENumRaporAlanTipi.SAAT.value()))
 				str = "Saat";
-			else if (key.equals(PdksRaporAlanTipi.TARIH_SAAT.value()))
+			else if (key.equals(ENumRaporAlanTipi.TARIH_SAAT.value()))
 				str = "Tarih Saat";
 		}
 		return str;
@@ -131,11 +131,11 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 	public static String getPdksDinamikRaporAlanhHizalaAciklama(Integer key) {
 		String str = "";
 		if (key != null) {
-			if (key.equals(PdksRaporAlanHizalaTipi.SAGA.value()))
+			if (key.equals(ENumAlanHizalaTipi.SAGA.value()))
 				str = "Sağa";
-			else if (key.equals(PdksRaporAlanHizalaTipi.SOLA.value()))
+			else if (key.equals(ENumAlanHizalaTipi.SOLA.value()))
 				str = "Sola";
-			else if (key.equals(PdksRaporAlanHizalaTipi.ORTALA.value()))
+			else if (key.equals(ENumAlanHizalaTipi.ORTALA.value()))
 				str = "Ortala";
 
 		}
@@ -146,11 +146,11 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 	public static String getPdksDinamikRaporTipiAciklama(Integer key) {
 		String str = "";
 		if (key != null) {
-			if (key.equals(PdksDinamikRaporTipi.VIEW.value()))
+			if (key.equals(ENumDinamikRaporTipi.VIEW.value()))
 				str = "View";
-			else if (key.equals(PdksDinamikRaporTipi.FUNCTION.value()))
+			else if (key.equals(ENumDinamikRaporTipi.FUNCTION.value()))
 				str = "Function";
-			else if (key.equals(PdksDinamikRaporTipi.STORE_PROCEDURE.value()))
+			else if (key.equals(ENumDinamikRaporTipi.STORE_PROCEDURE.value()))
 				str = "Store Procedure";
 		}
 
@@ -164,17 +164,17 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 
 	@Transient
 	public boolean isView() {
-		return raporTipiId != null && raporTipiId.equals(PdksDinamikRaporTipi.VIEW.value());
+		return raporTipiId != null && raporTipiId.equals(ENumDinamikRaporTipi.VIEW.value());
 	}
 
 	@Transient
 	public boolean isFunction() {
-		return raporTipiId != null && raporTipiId.equals(PdksDinamikRaporTipi.FUNCTION.value());
+		return raporTipiId != null && raporTipiId.equals(ENumDinamikRaporTipi.FUNCTION.value());
 	}
 
 	@Transient
 	public boolean isStoreProcedure() {
-		return raporTipiId != null && raporTipiId.equals(PdksDinamikRaporTipi.STORE_PROCEDURE.value());
+		return raporTipiId != null && raporTipiId.equals(ENumDinamikRaporTipi.STORE_PROCEDURE.value());
 	}
 
 	public void entityRefresh() {

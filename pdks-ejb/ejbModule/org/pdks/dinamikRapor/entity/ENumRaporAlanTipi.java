@@ -3,13 +3,13 @@
  */
 package org.pdks.dinamikRapor.entity;
 
-public enum PdksRaporAlanTipi {
+public enum ENumRaporAlanTipi {
 
 	SAYISAL(1), KARAKTER(2), TARIH(3), SAAT(4), TARIH_SAAT(5);
 
 	private final Integer value;
 
-	PdksRaporAlanTipi(Integer v) {
+	ENumRaporAlanTipi(Integer v) {
 		value = v;
 	}
 
@@ -17,8 +17,8 @@ public enum PdksRaporAlanTipi {
 		return value;
 	}
 
-	public static PdksRaporAlanTipi fromValue(Integer v) {
-		for (PdksRaporAlanTipi c : PdksRaporAlanTipi.values()) {
+	public static ENumRaporAlanTipi fromValue(Integer v) {
+		for (ENumRaporAlanTipi c : ENumRaporAlanTipi.values()) {
 			if (c.value.equals(v)) {
 				return c;
 			}

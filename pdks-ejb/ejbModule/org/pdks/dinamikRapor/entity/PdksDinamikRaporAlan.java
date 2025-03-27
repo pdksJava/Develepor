@@ -39,14 +39,14 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 
 	private String aciklama, dbTanim;
 
-	private PdksRaporAlanTipi raporAlanTipi;
+	private ENumRaporAlanTipi raporAlanTipi;
 
 	private Integer alanTipiId, sira;
 
 	private Boolean durum = Boolean.TRUE;
 
-	private Integer hizala = PdksRaporAlanHizalaTipi.SOLA.value();
-	private PdksRaporAlanHizalaTipi alanHizalaTipi = PdksRaporAlanHizalaTipi.SOLA;
+	private Integer hizala = ENumAlanHizalaTipi.SOLA.value();
+	private ENumAlanHizalaTipi alanHizalaTipi = ENumAlanHizalaTipi.SOLA;
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_DINAMIK_RAPOR, nullable = false)
@@ -94,7 +94,7 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 	public void setAlanTipiId(Integer value) {
 		this.raporAlanTipi = null;
 		if (value != null)
-			this.raporAlanTipi = PdksRaporAlanTipi.fromValue(value);
+			this.raporAlanTipi = ENumRaporAlanTipi.fromValue(value);
 		this.alanTipiId = value;
 	}
 
@@ -106,7 +106,7 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 	public void setHizala(Integer value) {
 		this.alanHizalaTipi = null;
 		if (value != null)
-			alanHizalaTipi = PdksRaporAlanHizalaTipi.fromValue(value);
+			alanHizalaTipi = ENumAlanHizalaTipi.fromValue(value);
 		this.hizala = value;
 	}
 
@@ -121,27 +121,27 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 
 	@Transient
 	public boolean isHizalaSola() {
-		return hizala != null && hizala.equals(PdksRaporAlanHizalaTipi.SOLA.value());
+		return hizala != null && hizala.equals(ENumAlanHizalaTipi.SOLA.value());
 	}
 
 	@Transient
 	public boolean isHizalaOrtala() {
-		return hizala != null && hizala.equals(PdksRaporAlanHizalaTipi.ORTALA.value());
+		return hizala != null && hizala.equals(ENumAlanHizalaTipi.ORTALA.value());
 	}
 
 	@Transient
 	public boolean isHizalaSaga() {
-		return hizala != null && hizala.equals(PdksRaporAlanHizalaTipi.SAGA.value());
+		return hizala != null && hizala.equals(ENumAlanHizalaTipi.SAGA.value());
 	}
 
 	@Transient
 	public boolean isSaat() {
-		return alanTipiId != null && alanTipiId.equals(PdksRaporAlanTipi.SAAT.value());
+		return alanTipiId != null && alanTipiId.equals(ENumRaporAlanTipi.SAAT.value());
 	}
 
 	@Transient
 	public boolean isTarihSaat() {
-		return alanTipiId != null && alanTipiId.equals(PdksRaporAlanTipi.TARIH_SAAT.value());
+		return alanTipiId != null && alanTipiId.equals(ENumRaporAlanTipi.TARIH_SAAT.value());
 	}
 
 	@Transient
@@ -153,11 +153,11 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 	public String getPdksDinamikRaporAlanHizala() {
 		String str = "";
 		if (hizala != null) {
-			if (hizala.equals(PdksRaporAlanHizalaTipi.SAGA.value()))
+			if (hizala.equals(ENumAlanHizalaTipi.SAGA.value()))
 				str = "right";
-			else if (hizala.equals(PdksRaporAlanHizalaTipi.SOLA.value()))
+			else if (hizala.equals(ENumAlanHizalaTipi.SOLA.value()))
 				str = "left";
-			else if (hizala.equals(PdksRaporAlanHizalaTipi.ORTALA.value()))
+			else if (hizala.equals(ENumAlanHizalaTipi.ORTALA.value()))
 				str = "center";
 
 		}
@@ -171,34 +171,34 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 
 	@Transient
 	public boolean isKarakter() {
-		return alanTipiId != null && alanTipiId.equals(PdksRaporAlanTipi.KARAKTER.value());
+		return alanTipiId != null && alanTipiId.equals(ENumRaporAlanTipi.KARAKTER.value());
 	}
 
 	@Transient
 	public boolean isSayisal() {
-		return alanTipiId != null && alanTipiId.equals(PdksRaporAlanTipi.SAYISAL.value());
+		return alanTipiId != null && alanTipiId.equals(ENumRaporAlanTipi.SAYISAL.value());
 	}
 
 	@Transient
 	public boolean isTarih() {
-		return alanTipiId != null && alanTipiId.equals(PdksRaporAlanTipi.TARIH.value());
+		return alanTipiId != null && alanTipiId.equals(ENumRaporAlanTipi.TARIH.value());
 	}
 
 	@Transient
-	public PdksRaporAlanTipi getRaporAlanTipi() {
+	public ENumRaporAlanTipi getRaporAlanTipi() {
 		return raporAlanTipi;
 	}
 
-	public void setRaporAlanTipi(PdksRaporAlanTipi raporAlanTipi) {
+	public void setRaporAlanTipi(ENumRaporAlanTipi raporAlanTipi) {
 		this.raporAlanTipi = raporAlanTipi;
 	}
 
 	@Transient
-	public PdksRaporAlanHizalaTipi getAlanHizalaTipi() {
+	public ENumAlanHizalaTipi getAlanHizalaTipi() {
 		return alanHizalaTipi;
 	}
 
-	public void setAlanHizalaTipi(PdksRaporAlanHizalaTipi alanHizalaTipi) {
+	public void setAlanHizalaTipi(ENumAlanHizalaTipi alanHizalaTipi) {
 		this.alanHizalaTipi = alanHizalaTipi;
 	}
 

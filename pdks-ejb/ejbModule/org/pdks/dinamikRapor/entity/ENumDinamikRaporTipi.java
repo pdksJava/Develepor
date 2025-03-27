@@ -3,13 +3,13 @@
  */
 package org.pdks.dinamikRapor.entity;
 
-public enum PdksDinamikRaporTipi {
+public enum ENumDinamikRaporTipi {
 
 	VIEW(1), FUNCTION(2), STORE_PROCEDURE(3);
 
 	private final Integer value;
 
-	PdksDinamikRaporTipi(Integer v) {
+	ENumDinamikRaporTipi(Integer v) {
 		value = v;
 	}
 
@@ -17,8 +17,8 @@ public enum PdksDinamikRaporTipi {
 		return value;
 	}
 
-	public static PdksDinamikRaporTipi fromValue(Integer v) {
-		for (PdksDinamikRaporTipi c : PdksDinamikRaporTipi.values()) {
+	public static ENumDinamikRaporTipi fromValue(Integer v) {
+		for (ENumDinamikRaporTipi c : ENumDinamikRaporTipi.values()) {
 			if (c.value.equals(v)) {
 				return c;
 			}

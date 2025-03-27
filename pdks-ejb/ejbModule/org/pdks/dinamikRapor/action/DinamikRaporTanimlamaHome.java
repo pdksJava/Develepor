@@ -23,9 +23,9 @@ import org.jboss.seam.framework.EntityHome;
 import org.pdks.dinamikRapor.entity.PdksDinamikRapor;
 import org.pdks.dinamikRapor.entity.PdksDinamikRaporAlan;
 import org.pdks.dinamikRapor.entity.PdksDinamikRaporParametre;
-import org.pdks.dinamikRapor.entity.PdksDinamikRaporTipi;
-import org.pdks.dinamikRapor.entity.PdksRaporAlanHizalaTipi;
-import org.pdks.dinamikRapor.entity.PdksRaporAlanTipi;
+import org.pdks.dinamikRapor.entity.ENumDinamikRaporTipi;
+import org.pdks.dinamikRapor.entity.ENumAlanHizalaTipi;
+import org.pdks.dinamikRapor.entity.ENumRaporAlanTipi;
 import org.pdks.security.entity.User;
 import org.pdks.session.ComponentState;
 import org.pdks.session.OrtakIslemler;
@@ -88,35 +88,35 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		else
 			raporTipiList.clear();
 
-		raporTipiList.add(new SelectItem(PdksDinamikRaporTipi.VIEW.value(), PdksDinamikRapor.getPdksDinamikRaporTipiAciklama(PdksDinamikRaporTipi.VIEW.value())));
-		raporTipiList.add(new SelectItem(PdksDinamikRaporTipi.FUNCTION.value(), PdksDinamikRapor.getPdksDinamikRaporTipiAciklama(PdksDinamikRaporTipi.FUNCTION.value())));
-		raporTipiList.add(new SelectItem(PdksDinamikRaporTipi.STORE_PROCEDURE.value(), PdksDinamikRapor.getPdksDinamikRaporTipiAciklama(PdksDinamikRaporTipi.STORE_PROCEDURE.value())));
+		raporTipiList.add(new SelectItem(ENumDinamikRaporTipi.VIEW.value(), PdksDinamikRapor.getPdksDinamikRaporTipiAciklama(ENumDinamikRaporTipi.VIEW.value())));
+		raporTipiList.add(new SelectItem(ENumDinamikRaporTipi.FUNCTION.value(), PdksDinamikRapor.getPdksDinamikRaporTipiAciklama(ENumDinamikRaporTipi.FUNCTION.value())));
+		raporTipiList.add(new SelectItem(ENumDinamikRaporTipi.STORE_PROCEDURE.value(), PdksDinamikRapor.getPdksDinamikRaporTipiAciklama(ENumDinamikRaporTipi.STORE_PROCEDURE.value())));
 
 		if (alanHizalamaList == null)
 			alanHizalamaList = new ArrayList<SelectItem>();
 		else
 			alanHizalamaList.clear();
-		alanHizalamaList.add(new SelectItem(PdksRaporAlanHizalaTipi.SOLA.value(), PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(PdksRaporAlanHizalaTipi.SOLA.value())));
-		alanHizalamaList.add(new SelectItem(PdksRaporAlanHizalaTipi.ORTALA.value(), PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(PdksRaporAlanHizalaTipi.ORTALA.value())));
-		alanHizalamaList.add(new SelectItem(PdksRaporAlanHizalaTipi.SAGA.value(), PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(PdksRaporAlanHizalaTipi.SAGA.value())));
+		alanHizalamaList.add(new SelectItem(ENumAlanHizalaTipi.SOLA.value(), PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(ENumAlanHizalaTipi.SOLA.value())));
+		alanHizalamaList.add(new SelectItem(ENumAlanHizalaTipi.ORTALA.value(), PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(ENumAlanHizalaTipi.ORTALA.value())));
+		alanHizalamaList.add(new SelectItem(ENumAlanHizalaTipi.SAGA.value(), PdksDinamikRapor.getPdksDinamikRaporAlanhHizalaAciklama(ENumAlanHizalaTipi.SAGA.value())));
 
 		if (alanAdiList == null)
 			alanAdiList = new ArrayList<SelectItem>();
 		else
 			alanAdiList.clear();
-		alanAdiList.add(new SelectItem(PdksRaporAlanTipi.KARAKTER.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(PdksRaporAlanTipi.KARAKTER.value())));
-		alanAdiList.add(new SelectItem(PdksRaporAlanTipi.SAYISAL.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(PdksRaporAlanTipi.SAYISAL.value())));
-		alanAdiList.add(new SelectItem(PdksRaporAlanTipi.TARIH.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(PdksRaporAlanTipi.TARIH.value())));
-		alanAdiList.add(new SelectItem(PdksRaporAlanTipi.TARIH_SAAT.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(PdksRaporAlanTipi.TARIH_SAAT.value())));
-		alanAdiList.add(new SelectItem(PdksRaporAlanTipi.SAAT.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(PdksRaporAlanTipi.SAAT.value())));
+		alanAdiList.add(new SelectItem(ENumRaporAlanTipi.KARAKTER.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.KARAKTER.value())));
+		alanAdiList.add(new SelectItem(ENumRaporAlanTipi.SAYISAL.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.SAYISAL.value())));
+		alanAdiList.add(new SelectItem(ENumRaporAlanTipi.TARIH.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.TARIH.value())));
+		alanAdiList.add(new SelectItem(ENumRaporAlanTipi.TARIH_SAAT.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.TARIH_SAAT.value())));
+		alanAdiList.add(new SelectItem(ENumRaporAlanTipi.SAAT.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.SAAT.value())));
 
 		if (parametreList == null)
 			parametreList = new ArrayList<SelectItem>();
 		else
 			parametreList.clear();
-		parametreList.add(new SelectItem(PdksRaporAlanTipi.KARAKTER.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(PdksRaporAlanTipi.KARAKTER.value())));
-		parametreList.add(new SelectItem(PdksRaporAlanTipi.SAYISAL.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(PdksRaporAlanTipi.SAYISAL.value())));
-		parametreList.add(new SelectItem(PdksRaporAlanTipi.TARIH.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(PdksRaporAlanTipi.TARIH.value())));
+		parametreList.add(new SelectItem(ENumRaporAlanTipi.KARAKTER.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.KARAKTER.value())));
+		parametreList.add(new SelectItem(ENumRaporAlanTipi.SAYISAL.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.SAYISAL.value())));
+		parametreList.add(new SelectItem(ENumRaporAlanTipi.TARIH.value(), PdksDinamikRapor.getPdksDinamikRaporAlanAciklama(ENumRaporAlanTipi.TARIH.value())));
 		fillPdksDinamikRaporList();
 	}
 
@@ -263,9 +263,9 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		try {
 			if (seciliPdksDinamikRaporAlan.isKarakter() == false) {
 				if (seciliPdksDinamikRaporAlan.isSayisal())
-					seciliPdksDinamikRaporAlan.setHizala(PdksRaporAlanHizalaTipi.SAGA.value());
+					seciliPdksDinamikRaporAlan.setHizala(ENumAlanHizalaTipi.SAGA.value());
 				else
-					seciliPdksDinamikRaporAlan.setHizala(PdksRaporAlanHizalaTipi.ORTALA.value());
+					seciliPdksDinamikRaporAlan.setHizala(ENumAlanHizalaTipi.ORTALA.value());
 			}
 			pdksEntityController.saveOrUpdate(session, entityManager, seciliPdksDinamikRaporAlan);
 			session.flush();
