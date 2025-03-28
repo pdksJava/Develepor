@@ -61,7 +61,7 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	private ENumEsitlik eNumEsitlik;
 
 	private Object value;
-	
+
 	private List<SelectItem> secimList;
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -230,6 +230,24 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	public void seteNumEsitlik(ENumEsitlik eNumEsitlik) {
 		this.eNumEsitlik = eNumEsitlik;
+	}
+
+	@Transient
+	public Object getValue() {
+		return value;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
+	}
+
+	@Transient
+	public List<SelectItem> getSecimList() {
+		return secimList;
+	}
+
+	public void setSecimList(List<SelectItem> secimList) {
+		this.secimList = secimList;
 	}
 
 	public void entityRefresh() {
