@@ -125,8 +125,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 					guncellemeDBDurum = PdksUtil.zamanKontrol(parameterUpdateKey, value, time);
 					if (guncellemeDBDurum == false && PdksUtil.isSistemDestekVar()) {
 						Calendar cal = Calendar.getInstance();
-						int gun = cal.get(Calendar.DATE), saat = cal.get(Calendar.HOUR_OF_DAY), dayOffWeek = cal.get(Calendar.DAY_OF_WEEK);
-						guncellemeDBDurum = dayOffWeek != Calendar.SATURDAY && dayOffWeek != Calendar.SUNDAY && (gun > 25 || gun < 6) && (saat > 7 && saat < 20);
+						int gun = cal.get(Calendar.DATE), dakika = cal.get(Calendar.MINUTE), saat = cal.get(Calendar.HOUR_OF_DAY), dayOffWeek = cal.get(Calendar.DAY_OF_WEEK);
+						guncellemeDBDurum = dayOffWeek != Calendar.SATURDAY && dayOffWeek != Calendar.SUNDAY && (gun > 25 || gun < 6) && (saat > 7 && saat < 20) && dakika % 15 == 0;
 					}
 				}
 			}
