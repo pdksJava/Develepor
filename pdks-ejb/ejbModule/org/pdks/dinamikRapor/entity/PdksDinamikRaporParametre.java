@@ -3,7 +3,9 @@ package org.pdks.dinamikRapor.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import javax.faces.model.SelectItem;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -57,6 +59,10 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	private Boolean zorunlu = Boolean.TRUE;
 
 	private ENumEsitlik eNumEsitlik;
+
+	private Object value;
+	
+	private List<SelectItem> secimList;
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_DINAMIK_RAPOR, nullable = false)
