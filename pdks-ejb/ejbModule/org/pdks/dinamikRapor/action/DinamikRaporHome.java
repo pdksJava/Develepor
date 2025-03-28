@@ -416,12 +416,13 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				ENumBaslik baslik = ENumBaslik.fromValue(pr.getAciklama());
 				if (baslik != null && baslik.equals(ENumBaslik.SIRKET)) {
 					AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
-					List<SelectItem> list = ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, new Date(), new Date(), false, session);
+					List<SelectItem> list = ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, PdksUtil.convertToJavaDate(PdksUtil.getSistemBaslangicYili() + "0101", "yyyyMMdd"), new Date(), false, session);
 					if (!list.isEmpty()) {
 						if (list.size() == 1)
 							pr.setKarakterDeger(new String(list.get(0).toString()));
 						pr.setSecimList(list);
-					}
+					} else
+						iterator.remove();
 				}
 			}
 		}
