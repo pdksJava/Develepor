@@ -139,7 +139,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 						try {
 							if (manuel == false) {
 								logger.info(uygulamaBordro + " izin bilgileri güncelleniyor in " + PdksUtil.getCurrentTimeStampStr());
-								ortakIslemler.izinERPDBGuncelle(guncellemeDBDurum, null, session);
+								ortakIslemler.izinERPDBGuncelle(true, null, session);
 								logger.info(uygulamaBordro + " izin bilgileri güncelleniyor out " + PdksUtil.getCurrentTimeStampStr());
 							}
 						} catch (Exception e) {

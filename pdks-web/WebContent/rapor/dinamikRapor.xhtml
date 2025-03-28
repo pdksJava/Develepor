@@ -81,20 +81,30 @@
 								<c:forEach items="#{dinamikRaporHome.dinamikRaporParametreList}" var="parametre">
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)}</ui:define>
-										<ui:fragment rendered="#{parametre.karakter or parametre.sayisal}">
-											<h:inputText value="#{parametre.karakterDeger}" size="2" maxlength="255" required="#{parametre.zorunlu}"
-												requiredMessage="#{parametre.aciklama} giriniz" />
+										<ui:fragment rendered="#{parametre.secimList.size()>1}">
+											<h:selectOneMenu value="#{parametre.value}" required="#{parametre.zorunlu}"
+												requiredMessage="#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)} seçiniz!">
+												<f:selectItem itemLabel="Lütfen seçiniz" />
+												<f:selectItems value="#{parametre.secimList}" />
+												<a4j:support event="onchange" ajaxSingle="true" />
+											</h:selectOneMenu>
 										</ui:fragment>
-										<ui:fragment rendered="#{parametre.sayisal and false}">
-											<h:inputText value="#{parametre.doubleDeger}" size="2" maxlength="25" required="#{parametre.zorunlu}"
-												requiredMessage="#{parametre.aciklama} giriniz" />
-										</ui:fragment>
-										<ui:fragment rendered="#{parametre.tarih}">
-											<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{parametre.tarihDeger}" showWeekDaysBar="false" showWeeksBar="false"
-												required="#{parametre.zorunlu}" requiredMessage="#{parametre.aciklama} seçiniz">
-												<a4j:support event="onchanged" action="#{dinamikRaporHome.dinamikRaporDataList.clear()}" ajaxSingle="true" status="ajaxStatus"
-													reRender="raporTable" />
-											</rich:calendar>
+										<ui:fragment rendered="#{parametre.secimList==null}">
+											<ui:fragment rendered="#{parametre.karakter or parametre.sayisal}">
+												<h:inputText value="#{parametre.karakterDeger}" size="2" maxlength="255" required="#{parametre.zorunlu}"
+													requiredMessage="#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)} giriniz" />
+											</ui:fragment>
+											<ui:fragment rendered="#{parametre.sayisal and false}">
+												<h:inputText value="#{parametre.doubleDeger}" size="2" maxlength="25" required="#{parametre.zorunlu}"
+													requiredMessage="#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)} giriniz" />
+											</ui:fragment>
+											<ui:fragment rendered="#{parametre.tarih}">
+												<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{parametre.tarihDeger}" showWeekDaysBar="false" showWeeksBar="false"
+													required="#{parametre.zorunlu}" requiredMessage="#{parametre.aciklama} seçiniz">
+													<a4j:support event="onchanged" action="#{dinamikRaporHome.dinamikRaporDataList.clear()}" ajaxSingle="true" status="ajaxStatus"
+														reRender="raporTable" />
+												</rich:calendar>
+											</ui:fragment>
 										</ui:fragment>
 									</s:decorate>
 

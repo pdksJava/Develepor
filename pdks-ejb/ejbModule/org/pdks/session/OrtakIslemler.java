@@ -6779,7 +6779,7 @@ public class OrtakIslemler implements Serializable {
 					if (!referansNoStartList.isEmpty()) {
 						HashMap<String, List<String>> veriMap1 = new HashMap<String, List<String>>();
 						veriMap1.put("R", referansNoStartList);
-						yeniler = izinERPDBGuncelle(guncellemeDurum, veriMap1, session);
+						yeniler = izinERPDBGuncelle(false, veriMap1, session);
 						if (yeniler != null) {
 							for (Iterator iterator = yeniler.iterator(); iterator.hasNext();) {
 								IzinERP izinERP = (IzinERP) iterator.next();

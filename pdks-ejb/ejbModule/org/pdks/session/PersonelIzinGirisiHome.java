@@ -2309,7 +2309,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				perNoList.add(sicilNo);
 				veriMap.put("P", perNoList);
 			}
-			List<IzinERP> izinERPReturnList = ortakIslemler.izinERPDBGuncelle(true, veriMap, session);
+			List<IzinERP> izinERPReturnList = ortakIslemler.izinERPDBGuncelle(veriMap == null, veriMap, session);
 			if (izinERPReturnList != null) {
 				for (IzinERP izinERP : izinERPReturnList) {
 					if (izinERP != null && izinERP.getId() != null && izinERP.getDurum() != null && izinERP.getDurum().booleanValue()) {

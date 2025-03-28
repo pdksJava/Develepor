@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
@@ -29,6 +30,8 @@ import org.jboss.seam.framework.EntityHome;
 import org.pdks.dinamikRapor.entity.PdksDinamikRapor;
 import org.pdks.dinamikRapor.entity.PdksDinamikRaporAlan;
 import org.pdks.dinamikRapor.entity.PdksDinamikRaporParametre;
+import org.pdks.dinamikRapor.enums.ENumBaslik;
+import org.pdks.entity.AramaSecenekleri;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 import org.pdks.session.ExcelUtil;
@@ -155,7 +158,9 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 						if (strFunction.length() > 0)
 							strFunction += ", ";
 						strFunction += " :" + adi;
-						if (rp.isKarakter())
+						if (rp.getSecimList() != null)
+							fields.put(adi, rp.getValue());
+						else if (rp.isKarakter())
 							fields.put(adi, rp.getKarakterDeger());
 						else if (rp.isSayisal())
 							fields.put(adi, rp.getSayisalDeger());
@@ -170,7 +175,9 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 					if (rp.getParametreDurum().booleanValue() == false) {
 						String adi = "p" + rp.getSira();
 						Object veri = null;
-						if (rp.isKarakter()) {
+						if (rp.getSecimList() != null)
+							veri = rp.getValue();
+						else if (rp.isKarakter()) {
 							veri = rp.getKarakterDeger();
 							if (PdksUtil.hasStringValue(rp.getKarakterDeger()) == false && rp.getZorunlu().booleanValue() == false)
 								veri = null;
@@ -195,7 +202,9 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 					PdksDinamikRaporParametre rp = (PdksDinamikRaporParametre) iterator.next();
 					String adi = "p" + rp.getSira();
 					Object veri = null;
-					if (rp.isKarakter()) {
+					if (rp.getSecimList() != null)
+						veri = rp.getValue();
+					else if (rp.isKarakter()) {
 						veri = rp.getKarakterDeger();
 						if (PdksUtil.hasStringValue(rp.getKarakterDeger()) == false && rp.getZorunlu().booleanValue() == false)
 							veri = null;
@@ -397,11 +406,23 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		if (dinamikRaporParametreList.size() > 1)
 			dinamikRaporParametreList = PdksUtil.sortListByAlanAdi(dinamikRaporParametreList, "sira", Boolean.FALSE);
 		Date tarihDeger = null;
-		for (PdksDinamikRaporParametre pr : dinamikRaporParametreList) {
+		for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
+			PdksDinamikRaporParametre pr = (PdksDinamikRaporParametre) iterator.next();
 			if (pr.isTarih()) {
 				if (tarihDeger == null)
 					tarihDeger = ortakIslemler.getBugun();
 				pr.setTarihDeger(tarihDeger);
+			} else {
+				ENumBaslik baslik = ENumBaslik.fromValue(pr.getAciklama());
+				if (baslik != null && baslik.equals(ENumBaslik.SIRKET)) {
+					AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
+					List<SelectItem> list = ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, new Date(), new Date(), false, session);
+					if (!list.isEmpty()) {
+						if (list.size() == 1)
+							pr.setKarakterDeger(new String(list.get(0).toString()));
+						pr.setSecimList(list);
+					}
+				}
 			}
 		}
 
