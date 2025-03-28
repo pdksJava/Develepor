@@ -405,7 +405,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		dinamikRaporParametreList = pdksEntityController.getSQLParamByAktifFieldList(PdksDinamikRaporParametre.TABLE_NAME, PdksDinamikRaporParametre.COLUMN_NAME_DINAMIK_RAPOR, seciliPdksDinamikRapor.getId(), PdksDinamikRaporParametre.class, session);
 		if (dinamikRaporParametreList.size() > 1)
 			dinamikRaporParametreList = PdksUtil.sortListByAlanAdi(dinamikRaporParametreList, "sira", Boolean.FALSE);
-		Date tarihDeger = null;
+		Date tarihDeger = null, basTarih = PdksUtil.convertToJavaDate(PdksUtil.getSistemBaslangicYili() + "0101", "yyyyMMdd"), bitTarih = new Date();
+		Long sirketId = null;
 		for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
 			PdksDinamikRaporParametre pr = (PdksDinamikRaporParametre) iterator.next();
 			if (pr.isTarih()) {
@@ -414,15 +415,28 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				pr.setTarihDeger(tarihDeger);
 			} else {
 				ENumBaslik baslik = ENumBaslik.fromValue(pr.getAciklama());
-				if (baslik != null && baslik.equals(ENumBaslik.SIRKET)) {
-					AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
-					List<SelectItem> list = ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, PdksUtil.convertToJavaDate(PdksUtil.getSistemBaslangicYili() + "0101", "yyyyMMdd"), new Date(), false, session);
-					if (!list.isEmpty()) {
-						if (list.size() == 1)
-							pr.setKarakterDeger(new String(list.get(0).toString()));
-						pr.setSecimList(list);
-					} else
-						iterator.remove();
+				if (baslik != null) {
+					List<SelectItem> list = null;
+					if (baslik.equals(ENumBaslik.SIRKET)) {
+						AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
+						list = ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
+					} else if (baslik.equals(ENumBaslik.TESIS)) {
+						AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
+						aramaSecenekleri.setSirketId(sirketId);
+						list = ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
+					}
+					if (list != null) {
+						if (!list.isEmpty()) {
+							if (list.size() == 1) {
+								pr.setValue(list.get(0).getValue());
+								if (baslik.equals(ENumBaslik.SIRKET))
+									sirketId = (Long) pr.getValue();
+							}
+							pr.setSecimList(list);
+						} else
+							iterator.remove();
+					}
+
 				}
 			}
 		}
