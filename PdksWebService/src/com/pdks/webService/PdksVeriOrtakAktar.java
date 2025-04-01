@@ -135,7 +135,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		}
 	}
 
-	private boolean isTatil(PdksDAO dao) {
+	private boolean isTatil() {
 		boolean tatil = false;
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		Date bugun = PdksUtil.getDate(new Date());
@@ -143,7 +143,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		veriMap.put("bitTarih", bugun);
 		veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, TatilGunView.SP_NAME);
 		try {
-			List<TatilGunView> list = dao.execSPList(veriMap, TatilGunView.class);
+			List<TatilGunView> list = pdksDAO.execSPList(veriMap, TatilGunView.class);
 			if (list != null && list.size() == 1) {
 				TatilGunView gunView = list.get(0);
 				tatil = gunView != null && gunView.getYarimGun().booleanValue() == false;
@@ -2870,11 +2870,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 			map = null;
 		}
 		kayitIzinList = null;
-		if (izinList.size() > 0 && isTatil(pdksDAO)) {
-			hataList = null;
-			hataIKMap = null;
-		}
+		boolean hataVar = false;
 		if (hataList != null && !hataList.isEmpty() || (hataIKMap != null && !hataIKMap.isEmpty())) {
+			hataVar = isTatil() == false;
+
+		}
+		if (hataVar) {
 			List<String> perNoList = new ArrayList<String>();
 			for (IzinERP izinERP : hataList) {
 				if (PdksUtil.hasStringValue(izinERP.getPersonelNo()) && !perNoList.contains(izinERP.getPersonelNo().trim()))
@@ -5145,11 +5146,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 				pdksDAO.execSP(map);
 			}
 		}
-		if (personelList.size() > 0 && isTatil(pdksDAO)) {
-			hataList = null;
-			hataIKMap = null;
-		}
+		boolean hataVar = false;
 		if (hataList != null && !hataList.isEmpty() || (hataIKMap != null && !hataIKMap.isEmpty())) {
+			hataVar = isTatil() == false;
+
+		}
+		if (hataVar) {
 			List<User> userIKList = null;
 			MailStatu statu = null;
 			boolean devam = true;
