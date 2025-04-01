@@ -38,6 +38,7 @@ import org.pdks.entity.ServiceData;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
+import org.pdks.entity.TatilGunView;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaSablonu;
@@ -132,6 +133,25 @@ public class PdksVeriOrtakAktar implements Serializable {
 			fields = new HashMap();
 			serviceData = null;
 		}
+	}
+
+	private boolean isTatil(PdksDAO dao) {
+		boolean tatil = false;
+		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+		Date bugun = PdksUtil.getDate(new Date());
+		veriMap.put("basTarih", bugun);
+		veriMap.put("bitTarih", bugun);
+		veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, TatilGunView.SP_NAME);
+		try {
+			List<TatilGunView> list = dao.execSPList(veriMap, TatilGunView.class);
+			if (list != null && list.size() == 1) {
+				TatilGunView gunView = list.get(0);
+				tatil = gunView != null && gunView.getYarimGun().booleanValue() == false;
+			}
+		} catch (Exception e) {
+		}
+
+		return tatil;
 	}
 
 	/**
@@ -2850,6 +2870,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 			map = null;
 		}
 		kayitIzinList = null;
+		if (izinList.size() > 0 && isTatil(pdksDAO)) {
+			hataList = null;
+			hataIKMap = null;
+		}
 		if (hataList != null && !hataList.isEmpty() || (hataIKMap != null && !hataIKMap.isEmpty())) {
 			List<String> perNoList = new ArrayList<String>();
 			for (IzinERP izinERP : hataList) {
@@ -5120,6 +5144,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 				map.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_GET_IKINCI_BIRINCI_YONETICI_UPDATE");
 				pdksDAO.execSP(map);
 			}
+		}
+		if (personelList.size() > 0 && isTatil(pdksDAO)) {
+			hataList = null;
+			hataIKMap = null;
 		}
 		if (hataList != null && !hataList.isEmpty() || (hataIKMap != null && !hataIKMap.isEmpty())) {
 			List<User> userIKList = null;

@@ -71,6 +71,7 @@
 				<value>org.pdks.entity.ServiceData</value>
 				<value>org.pdks.entity.Tanim</value>
 				<value>org.pdks.entity.Tatil</value>
+				<value>org.pdks.entity.TatilGunView</value>
 				<value>org.pdks.entity.Vardiya</value>
 				<value>org.pdks.entity.VardiyaGun</value>
 				<value>org.pdks.entity.VardiyaSablonu</value>
