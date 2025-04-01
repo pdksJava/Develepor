@@ -20,23 +20,36 @@
 
 
 				<div class="dialog" style="height: 350px">
-					<h:panelGrid id="sifre" columns="2" rowClasses="prop" columnClasses="name,value">
-						<h:outputLabel for="username">Kullanıcı adı</h:outputLabel>
-						<h:inputText id="username" value="#{credentials.username}" size="128" required="true" requiredMessage="Kullanıcı adı giriniz" />
-						<h:outputLabel for="password">Şifre</h:outputLabel>
-						<h:inputSecret id="password" value="#{credentials.password}" size="64" required="true" requiredMessage="Şifre giriniz" />
-
-					</h:panelGrid>
 					<a4j:outputPanel id="login">
+						<h:panelGrid id="sifre" columns="2" rowClasses="prop" columnClasses="name,value">
+							<h:outputLabel for="username">Kullanıcı adı</h:outputLabel>
+							<h:inputText id="username" value="#{credentials.username}" size="128" required="true" requiredMessage="Kullanıcı adı giriniz" />
+							<h:outputLabel for="password">Şifre</h:outputLabel>
+							<h:inputSecret id="password" value="#{credentials.password}" size="64" disabled="#{passwordSecurity.forgot}"
+								required="#{passwordSecurity.forgot==false}" requiredMessage="Şifre giriniz" />
+
+						</h:panelGrid>
+
 						<h:panelGrid columns="2" width="350px">
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Beni hatırla</ui:define>
 								<h:selectBooleanCheckbox id="rememberMe" value="#{identity.rememberMe}" />
 							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('sifremiUnuttum')=='1'}">
+								<ui:define name="label">Şifremi Unuttum</ui:define>
+								<h:selectBooleanCheckbox id="forgotPassword" value="#{passwordSecurity.forgot}">
+									<a4j:support event="onclick" reRender="login" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+								</h:selectBooleanCheckbox>
+							</s:decorate>
 						</h:panelGrid>
 					</a4j:outputPanel>
 
-					<a4j:commandButton status="ajaxStatus" value="Sisteme Giriş" action="#{identity.login}" reRender="login,sifre,durum">
+					<a4j:commandButton status="ajaxStatus" value="Şifremi Unuttum" action="#{identity.login}" rendered="#{passwordSecurity.forgot}"
+						reRender="login,sifre,durum">
+						<s:defaultAction />
+					</a4j:commandButton>
+					<a4j:commandButton status="ajaxStatus" value="Sisteme Giriş" action="#{identity.login}" rendered="#{passwordSecurity.forgot==false}"
+						reRender="login,sifre,durum">
 						<s:defaultAction />
 					</a4j:commandButton>
 					<a4j:outputPanel id="durum">
