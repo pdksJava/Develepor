@@ -35,7 +35,7 @@
 								<ui:define name="label">Beni hatırla</ui:define>
 								<h:selectBooleanCheckbox id="rememberMe" value="#{identity.rememberMe}" />
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('sifremiUnuttum')=='1'}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKeyHasStringValue('sifremiUnuttum')}">
 								<ui:define name="label">Şifremi Unuttum</ui:define>
 								<h:selectBooleanCheckbox id="forgotPassword" value="#{passwordSecurity.forgot}">
 									<a4j:support event="onclick" reRender="login" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
