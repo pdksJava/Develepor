@@ -418,6 +418,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				Sirket sirket = null;
 				Long sirketId = parametre.getValue() != null ? Long.parseLong((String) parametre.getValue()) : null;
 				tesisIdList.clear();
+				Long oncekiId = tesisParametre.getValue() != null ? Long.parseLong(tesisParametre.getValue().toString()) : null;
 				tesisParametre.setValue(null);
 				if (sirketId != null) {
 					sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
@@ -427,6 +428,12 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 						List<SelectItem> list = ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
 						if (list.size() == 1)
 							tesisParametre.setValue("" + list.get(0).getValue());
+						else if (oncekiId != null) {
+							for (SelectItem selectItem : list) {
+								if (oncekiId.equals(selectItem.getValue()))
+									tesisParametre.setValue("" + selectItem.getValue());
+							}
+						}
 						tesisIdList.addAll(list);
 					}
 
@@ -434,10 +441,18 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			} else if (parametre.isTesisBilgisi() == false && sirketParametre != null) {
 				AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
 				List<SelectItem> secimList = ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
+				Long oncekiId = sirketParametre.getValue() != null ? Long.parseLong(sirketParametre.getValue().toString()) : null;
 				sirketParametre.setSecimList(secimList);
+				if (secimList.size() == 1)
+					sirketParametre.setValue("" + secimList.get(0).getValue());
+				else if (oncekiId != null) {
+					for (SelectItem selectItem : secimList) {
+						if (oncekiId.equals(selectItem.getValue()))
+							sirketParametre.setValue("" + selectItem.getValue());
+					}
+				}
 				if (tesisParametre != null) {
-					if (secimList.size() == 1)
-						sirketParametre.setValue("" + secimList.get(0).getValue());
+
 					tesisDoldur(sirketParametre);
 				}
 
