@@ -7960,6 +7960,22 @@ public class OrtakIslemler implements Serializable {
 	/**
 	 * @return
 	 */
+	public String basTarihAciklama() {
+		String basTarihAciklama = getBaslikAciklama("basTarihAciklama", "Başlangıç Tarih");
+		return basTarihAciklama;
+	}
+
+	/**
+	 * @return
+	 */
+	public String bitTarihAciklama() {
+		String bitTarihAciklama = getBaslikAciklama("bitTarihAciklama", "Bitiş Tarih");
+		return bitTarihAciklama;
+	}
+
+	/**
+	 * @return
+	 */
 	public String firmaKaynagiAciklama() {
 		String firmaKaynagiAciklama = getBaslikAciklama("firmaKaynagiAciklama", "PDKS Departman");
 		return firmaKaynagiAciklama;
@@ -18903,7 +18919,7 @@ public class OrtakIslemler implements Serializable {
 								// tatil = vardiyaGun.getTatil().getOrjTatil().isPeriyodik() ? vardiyaGun.getTatil() : vardiyaGun.getTatil().getOrjTatil();
 
 							}
-							
+
 							Tatil orjTatil = tatil != null ? vardiyaGun.getTatil().getOrjTatil() : null;
 							String arifeAyGun = orjTatil != null && orjTatil.getBasTarih() != null ? PdksUtil.convertToDateString(orjTatil.getBasTarih(), "MMdd") : "";
 							boolean arifeGunu = orjTatil != null && arifeAyGun.equals(vGun.substring(4)) && orjTatil.isYarimGunMu();

@@ -81,14 +81,14 @@
 								<c:forEach items="#{dinamikRaporHome.dinamikRaporParametreList}" var="parametre">
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)}</ui:define>
-										<ui:fragment rendered="#{parametre.secimList.size()>0}">
+										<ui:fragment rendered="#{parametre.secimList!=null}">
 											<h:selectOneMenu value="#{parametre.value}" required="#{parametre.zorunlu}" disabled="#{parametre.secimList.size() lt 2}"
 												requiredMessage="#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)} seçiniz!">
 												<f:selectItem itemLabel="Lütfen seçiniz" />
 												<f:selectItems value="#{parametre.secimList}" />
 
 												<a4j:support event="onchange" status="ajaxStatus" action="#{dinamikRaporHome.tesisDoldur(parametre)}" ajaxSingle="true"
-													reRender="girisler" />
+													reRender="girisler,raporTable" />
 
 
 											</h:selectOneMenu>
@@ -105,8 +105,7 @@
 											<ui:fragment rendered="#{parametre.tarih}">
 												<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{parametre.tarihDeger}" showWeekDaysBar="false" showWeeksBar="false"
 													required="#{parametre.zorunlu}" requiredMessage="#{parametre.aciklama} seçiniz">
-													<a4j:support event="onchanged" action="#{dinamikRaporHome.dinamikRaporDataList.clear()}" ajaxSingle="true" status="ajaxStatus"
-														reRender="raporTable" />
+													<a4j:support event="onchanged" action="#{dinamikRaporHome.tesisDoldur(parametre)}" status="ajaxStatus" reRender="raporTable,girisler" />
 												</rich:calendar>
 											</ui:fragment>
 										</ui:fragment>
