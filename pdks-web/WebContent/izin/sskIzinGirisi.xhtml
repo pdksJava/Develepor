@@ -302,12 +302,12 @@
 
 				<h:panelGrid columns="2">
 					<s:decorate id="baslangicField" template="/layout/edit.xhtml">
-						<ui:define name="label">Başlangıç Tarihi</ui:define>
+						<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
 						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{personelIzinGirisiHome.filtreBaslangicZamani}" required="true"
 							requiredMessage="Tarih giriniz" />
 					</s:decorate>
 					<s:decorate id="bitisField" template="/layout/edit.xhtml">
-						<ui:define name="label">Bitiş Tarihi</ui:define>
+						<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
 						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{personelIzinGirisiHome.filtreBitisZamani}" required="true"
 							requiredMessage="Tarih giriniz" />
 					</s:decorate>

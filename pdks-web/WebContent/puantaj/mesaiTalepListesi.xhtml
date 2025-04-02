@@ -40,7 +40,7 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Bitiş Tarihi</ui:define>
+							<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
 							<h:selectOneMenu id="basAy" value="#{vardiyaGunHome.bitTarihStr}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaGunHome.gunler}" />

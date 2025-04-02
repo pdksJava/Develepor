@@ -13,12 +13,12 @@
 			<rich:panel header="#{ortakIslemler.getMenuUserAdi(fazlaMesaiIzinHome.session,'fazlaMesaiIzin')}">
 				<h:panelGrid columns="2">
 					<s:decorate template="/layout/edit.xhtml">
-						<ui:define name="label">Başlangıç Tarihi</ui:define>
+						<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
 						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{fazlaMesaiIzinHome.basTarih}" required="true"
 							requiredMessage="Tarih giriniz" />
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml">
-						<ui:define name="label">Bitiş Tarihi</ui:define>
+						<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
 						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{fazlaMesaiIzinHome.bitTarih}" required="true"
 							requiredMessage="Tarih giriniz" />
 					</s:decorate>
@@ -218,7 +218,7 @@
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
-								<h:outputText value="Bitiş Tarihi" />
+								<h:outputText value="#{ortakIslemler.bitTarihAciklama()}" />
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.dateFormatla(kalanIzinler.bitisZamani)}" />
 

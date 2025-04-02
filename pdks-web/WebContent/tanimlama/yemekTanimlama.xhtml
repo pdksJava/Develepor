@@ -50,13 +50,13 @@
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
-								<h:outputText value="Geçerlilik Başlangıç Tarihi" />
+								<h:outputText value="Geçerlilik #{ortakIslemler.basTarihAciklama()}" />
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.dateFormatla(yemek.basTarih)}" />
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
-								<h:outputText value="Geçerlilik Bitiş Tarihi" />
+								<h:outputText value="Geçerlilik #{ortakIslemler.bitTarihAciklama()}" />
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.dateFormatla(yemek.bitTarih)}" />
 						</rich:column>
@@ -141,12 +141,12 @@
 								</TABLE>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Geçerlilik Başlangıç Tarihi</ui:define>
+								<ui:define name="label">Geçerlilik #{ortakIslemler.basTarihAciklama()}</ui:define>
 								<rich:calendar value="#{yemekHome.instance.basTarih}" datePattern="#{authenticatedUser.dateFormat}" required="true"
 									requiredMessage="İşe Başlama Tarihi Seçiniz" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" id="istenAyrilisTarihi">
-								<ui:define name="label">Geçerlilik Bitiş Tarihi</ui:define>
+								<ui:define name="label">Geçerlilik #{ortakIslemler.bitTarihAciklama()}</ui:define>
 								<h:panelGrid columns="2">
 									<rich:calendar value="#{yemekHome.instance.bitTarih}" datePattern="#{authenticatedUser.dateFormat}" />
 									<a4j:commandButton image="/img/plus.gif" title="Tarih sınırsız yap" ajaxSingle="true" reRender="istenAyrilisTarihi">

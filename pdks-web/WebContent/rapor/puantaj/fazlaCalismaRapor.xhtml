@@ -24,14 +24,14 @@
 						</s:decorate>
 						<h:panelGrid columns="2" width="50%">
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Başlangıç Tarih</ui:define>
+								<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
 								<rich:calendar value="#{fazlaCalismaRaporHome.basTarih}" datePattern="#{authenticatedUser.dateFormat}">
 									<a4j:support event="onchanged" ajaxSingle="true" status="ajaxStatus" action="#{fazlaCalismaRaporHome.tarihDegisti('B')}" reRender="anaForm" />
 
 								</rich:calendar>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Bitiş Tarih</ui:define>
+								<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
 								<rich:calendar value="#{fazlaCalismaRaporHome.bitTarih}" datePattern="#{authenticatedUser.dateFormat}">
 									<a4j:support event="onchanged" ajaxSingle="true" status="ajaxStatus" action="#{fazlaCalismaRaporHome.tarihDegisti('S')}" reRender="anaForm" />
 

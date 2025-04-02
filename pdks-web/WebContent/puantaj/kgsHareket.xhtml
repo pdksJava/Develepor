@@ -12,12 +12,12 @@
 			<rich:panel header="#{ortakIslemler.getMenuUserAdi(kgsHareketHome.session,'kgsHareket')}">
 				<h:panelGrid columns="2">
 					<s:decorate template="/layout/edit.xhtml">
-						<ui:define name="label">Başlangıç Tarih</ui:define>
-						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{kgsHareketHome.basTarih}" required="true" requiredMessage="Başlangıç Tarih giriniz" />
+						<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
+						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{kgsHareketHome.basTarih}" required="true" requiredMessage="#{ortakIslemler.basTarihAciklama()} giriniz" />
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml">
-						<ui:define name="label">Bitiş Tarih</ui:define>
-						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{kgsHareketHome.bitTarih}" required="true" requiredMessage="Başlangıç Tarih giriniz" />
+						<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
+						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{kgsHareketHome.bitTarih}" required="true" requiredMessage="#{ortakIslemler.basTarihAciklama()} giriniz" />
 					</s:decorate>
 
 					<s:decorate template="/layout/edit.xhtml">

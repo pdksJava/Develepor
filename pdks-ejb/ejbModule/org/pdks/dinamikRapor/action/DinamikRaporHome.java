@@ -32,6 +32,7 @@ import org.pdks.dinamikRapor.entity.PdksDinamikRaporAlan;
 import org.pdks.dinamikRapor.entity.PdksDinamikRaporParametre;
 import org.pdks.dinamikRapor.enums.ENumBaslik;
 import org.pdks.entity.AramaSecenekleri;
+import org.pdks.entity.Sirket;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 import org.pdks.session.ExcelUtil;
@@ -63,7 +64,10 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	private List<PdksDinamikRapor> dinamikRaporList;
 	private List<PdksDinamikRaporAlan> dinamikRaporAlanList;
 	private List<PdksDinamikRaporParametre> dinamikRaporParametreList;
+	private List<SelectItem> tesisIdList;
+	private List<Long> tesisId;
 	private List<Object[]> dinamikRaporDataList;
+	private PdksDinamikRaporParametre sirketParametre, tesisParametre, basTarihParametre, bitTarihParametre;
 
 	private Session session;
 
@@ -401,15 +405,83 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			dinamikRaporAlanList = PdksUtil.sortListByAlanAdi(dinamikRaporAlanList, "sira", Boolean.FALSE);
 	}
 
+	/**
+	 * @param parametre
+	 * @return
+	 */
+	public String tesisDoldur(PdksDinamikRaporParametre parametre) {
+		dinamikRaporDataList.clear();
+		if ((sirketParametre != null || tesisParametre != null) && parametre != null) {
+			Date basTarih = basTarihParametre != null ? basTarihParametre.getTarihDeger() : PdksUtil.convertToJavaDate(PdksUtil.getSistemBaslangicYili() + "0101", "yyyyMMdd");
+			Date bitTarih = bitTarihParametre != null ? bitTarihParametre.getTarihDeger() : new Date();
+			if (parametre.isSirketBilgisi()) {
+				Sirket sirket = null;
+				Long sirketId = parametre.getValue() != null ? Long.parseLong((String) parametre.getValue()) : null;
+				tesisIdList.clear();
+				Long oncekiId = tesisParametre.getValue() != null ? Long.parseLong(tesisParametre.getValue().toString()) : null;
+				tesisParametre.setValue(null);
+				if (sirketId != null) {
+					sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
+					if (sirket.isTesisDurumu()) {
+						AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
+						aramaSecenekleri.setSirketId(sirketId);
+						List<SelectItem> list = ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
+						if (list.size() == 1)
+							tesisParametre.setValue("" + list.get(0).getValue());
+						else if (oncekiId != null) {
+							for (SelectItem selectItem : list) {
+								if (oncekiId.equals(selectItem.getValue()))
+									tesisParametre.setValue("" + selectItem.getValue());
+							}
+						}
+						tesisIdList.addAll(list);
+					}
+
+				}
+			} else if (parametre.isTesisBilgisi() == false && sirketParametre != null) {
+				AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
+				List<SelectItem> secimList = ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
+				Long oncekiId = sirketParametre.getValue() != null ? Long.parseLong(sirketParametre.getValue().toString()) : null;
+				sirketParametre.setSecimList(secimList);
+				if (secimList.size() == 1)
+					sirketParametre.setValue("" + secimList.get(0).getValue());
+				else if (oncekiId != null) {
+					for (SelectItem selectItem : secimList) {
+						if (oncekiId.equals(selectItem.getValue()))
+							sirketParametre.setValue("" + selectItem.getValue());
+					}
+				}
+				if (tesisParametre != null) {
+
+					tesisDoldur(sirketParametre);
+				}
+
+			}
+
+		}
+
+		return "";
+	}
+
 	private void filllDinamikRaporParametreList() {
 		dinamikRaporParametreList = pdksEntityController.getSQLParamByAktifFieldList(PdksDinamikRaporParametre.TABLE_NAME, PdksDinamikRaporParametre.COLUMN_NAME_DINAMIK_RAPOR, seciliPdksDinamikRapor.getId(), PdksDinamikRaporParametre.class, session);
 		if (dinamikRaporParametreList.size() > 1)
 			dinamikRaporParametreList = PdksUtil.sortListByAlanAdi(dinamikRaporParametreList, "sira", Boolean.FALSE);
 		Date tarihDeger = null, basTarih = PdksUtil.convertToJavaDate(PdksUtil.getSistemBaslangicYili() + "0101", "yyyyMMdd"), bitTarih = new Date();
 		Long sirketId = null;
+		int adet = 0;
+		tesisParametre = null;
 		for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
 			PdksDinamikRaporParametre pr = (PdksDinamikRaporParametre) iterator.next();
 			if (pr.isTarih()) {
+				ENumBaslik baslik = ENumBaslik.fromValue(pr.getAciklama());
+				if (baslik != null) {
+					if (baslik.value().equals(ENumBaslik.BAS_TARIH.value()))
+						basTarihParametre = pr;
+					else if (baslik.value().equals(ENumBaslik.BIT_TARIH.value()))
+						bitTarihParametre = pr;
+				}
+
 				if (tarihDeger == null)
 					tarihDeger = ortakIslemler.getBugun();
 				pr.setTarihDeger(tarihDeger);
@@ -418,12 +490,17 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				if (baslik != null) {
 					List<SelectItem> list = null;
 					if (baslik.equals(ENumBaslik.SIRKET)) {
+						sirketParametre = pr;
+						++adet;
 						AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
 						list = ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
 					} else if (baslik.equals(ENumBaslik.TESIS)) {
+						++adet;
+						tesisParametre = pr;
 						AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
 						aramaSecenekleri.setSirketId(sirketId);
 						list = ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
+						tesisIdList = list;
 					}
 					if (list != null) {
 						if (!list.isEmpty()) {
@@ -440,6 +517,14 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				}
 			}
 		}
+
+		if (adet == 2) {
+			if (tesisIdList != null && tesisIdList.size() > 1) {
+				if (sirketId == null)
+					tesisIdList.clear();
+			}
+		} else
+			tesisParametre = null;
 
 	}
 
@@ -497,6 +582,22 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 
 	public void setDinamikRaporDataList(List<Object[]> dinamikRaporDataList) {
 		this.dinamikRaporDataList = dinamikRaporDataList;
+	}
+
+	public List<SelectItem> getTesisIdList() {
+		return tesisIdList;
+	}
+
+	public void setTesisIdList(List<SelectItem> tesisIdList) {
+		this.tesisIdList = tesisIdList;
+	}
+
+	public List<Long> getTesisId() {
+		return tesisId;
+	}
+
+	public void setTesisId(List<Long> tesisId) {
+		this.tesisId = tesisId;
 	}
 
 }
