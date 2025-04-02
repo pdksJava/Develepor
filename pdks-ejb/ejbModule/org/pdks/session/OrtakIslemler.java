@@ -18823,6 +18823,7 @@ public class OrtakIslemler implements Serializable {
 									if (vardiyaGun.getCikisHareketleri() != null)
 										hareketList.addAll(vardiyaGun.getCikisHareketleri());
 									hareketList = PdksUtil.sortListByAlanAdi(hareketList, "zaman", Boolean.FALSE);
+
 									if (!hareketList.isEmpty()) {
 										Date tatilBasTarih = tatil.getBasTarih(), tatilBitTarih = orjTatil1.isYarimGunMu() ? PdksUtil.getDate(tariheGunEkleCikar(cal, tatil.getBitTarih(), 1)) : tatil.getBitTarih();
 
@@ -18902,6 +18903,7 @@ public class OrtakIslemler implements Serializable {
 								// tatil = vardiyaGun.getTatil().getOrjTatil().isPeriyodik() ? vardiyaGun.getTatil() : vardiyaGun.getTatil().getOrjTatil();
 
 							}
+							
 							Tatil orjTatil = tatil != null ? vardiyaGun.getTatil().getOrjTatil() : null;
 							String arifeAyGun = orjTatil != null && orjTatil.getBasTarih() != null ? PdksUtil.convertToDateString(orjTatil.getBasTarih(), "MMdd") : "";
 							boolean arifeGunu = orjTatil != null && arifeAyGun.equals(vGun.substring(4)) && orjTatil.isYarimGunMu();
@@ -19305,8 +19307,8 @@ public class OrtakIslemler implements Serializable {
 								}
 
 								if (calSure > netSure) {
-									// if (resmiTatilSure + netSure - calSure > 0.0d)
-									// resmiTatilSure += netSure - calSure;
+									if (resmiTatilSure == calSure && vardiyaGun.getGecenAyResmiTatilSure() == 0.0d)
+										resmiTatilSure += netSure - calSure;
 									calSure = netSure;
 
 								}
