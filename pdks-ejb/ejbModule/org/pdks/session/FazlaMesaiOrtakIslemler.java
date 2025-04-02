@@ -256,6 +256,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		dataDenkMap.put("yemekList", yemekList);
 		dataDenkMap.put("tatilGunleriMap", tatilGunleriMap);
 		dataDenkMap.put("girisView", manuelGiris);
+		dataDenkMap.put("cikisView", manuelCikis);
 		dataDenkMap.put("loginUser", authenticatedUser);
 		dataDenkMap.put("sistemUser", ortakIslemler.getSistemAdminUser(session));
 		dataDenkMap.put("vardiyaNetCalismaSuresiMap", vardiyaNetCalismaSuresiMap);
