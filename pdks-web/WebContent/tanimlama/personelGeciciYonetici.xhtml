@@ -358,13 +358,13 @@
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate id="baslangicField" template="/layout/edit.xhtml">
-							<ui:define name="label">Başlangıç Tarihi</ui:define>
+							<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
 							<rich:calendar id="startDate" value="#{personelGeciciYoneticiHome.instance.basTarih}" required="true"
 								requiredMessage="Başlangıç tarihi giriniz" popup="#{personelGeciciYoneticiHome.instance.calendarPopup}" datePattern="#{authenticatedUser.dateFormat}"
 								cellWidth="24px" cellHeight="22px" style="width:200px" />
 						</s:decorate>
 						<s:decorate id="bitisField" template="/layout/edit.xhtml">
-							<ui:define name="label">Bitiş Tarihi</ui:define>
+							<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
 							<rich:calendar id="startDate" value="#{personelGeciciYoneticiHome.instance.bitTarih}" required="true" requiredMessage="Bitiş tarihi giriniz"
 								popup="#{personelGeciciYoneticiHome.instance.calendarPopup}" datePattern="#{authenticatedUser.dateFormat}" cellWidth="24px" cellHeight="22px" style="width:200px" />
 						</s:decorate>
@@ -403,13 +403,13 @@
 							</rich:column>
 							<rich:column style="font-size: 9x;padding-left: 1px;padding-right: 1px;">
 								<f:facet name="header">
-									<h:outputText value="Başlangıç Tarihi" />
+									<h:outputText value="#{ortakIslemler.basTarihAciklama()}" />
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.dateFormatla(rotasyon.basTarih)}" />
 							</rich:column>
 							<rich:column style="font-size: 9x;padding-left: 1px;padding-right: 1px;">
 								<f:facet name="header">
-									<h:outputText value="Bitiş Tarihi" />
+									<h:outputText value="#{ortakIslemler.bitTarihAciklama()}" />
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.dateFormatla(rotasyon.bitTarih)}" />
 							</rich:column>
@@ -449,13 +449,13 @@
 				</rich:column>
 				<rich:column>
 					<f:facet name="header">
-						<h:outputText value="Rotasyon Başlangıç Tarihi" />
+						<h:outputText value="Rotasyon #{ortakIslemler.basTarihAciklama()}" />
 					</f:facet>
 					<h:outputText value="#{authenticatedUser.dateFormatla(rotasyon.basTarih)}" />
 				</rich:column>
 				<rich:column>
 					<f:facet name="header">
-						<h:outputText value="Rotasyon Bitiş Tarihi" />
+						<h:outputText value="Rotasyon #{ortakIslemler.bitTarihAciklama()}" />
 					</f:facet>
 					<h:outputText value="#{authenticatedUser.dateFormatla(rotasyon.bitTarih)}" />
 				</rich:column>

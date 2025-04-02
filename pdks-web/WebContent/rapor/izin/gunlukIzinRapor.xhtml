@@ -13,12 +13,12 @@
 			<rich:panel header="#{ortakIslemler.getMenuUserAdi(gunlukIzinRaporHome.session,'gunlukIzinRapor')}">
 				<h:panelGrid columns="2">
 					<s:decorate id="baslangicField" template="/layout/edit.xhtml">
-						<ui:define name="label">Başlangıç Tarihi</ui:define>
+						<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
 						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gunlukIzinRaporHome.basTarih}" required="true"
 							requiredMessage="Başlangıç tarih giriniz" />
 					</s:decorate>
 					<s:decorate id="bitisField" template="/layout/edit.xhtml">
-						<ui:define name="label">Bitiş Tarihi</ui:define>
+						<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
 						<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gunlukIzinRaporHome.bitTarih}" required="true"
 							requiredMessage="Bitiş tarih giriniz" />
 					</s:decorate>

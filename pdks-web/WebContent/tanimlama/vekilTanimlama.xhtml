@@ -12,12 +12,12 @@
 			<rich:panel header="#{ortakIslemler.getMenuUserAdi(userVekaletHome.session,'vekilTanimlama')}">
 				<h:panelGrid columns="1" cellpadding="0" cellspacing="0" id="personelBilgisi" width="1000">
 					<s:decorate id="baslangicField" template="/layout/edit.xhtml">
-						<ui:define name="label">Başlangıç Tarihi</ui:define>
+						<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
 						<rich:calendar id="startDate" value="#{userVekaletHome.instance.basTarih}" required="true" requiredMessage="Başlangıç tarihi giriniz"
 							popup="#{userVekaletHome.instance.calendarPopup}" datePattern="#{authenticatedUser.dateFormat}" cellWidth="24px" cellHeight="22px" />
 					</s:decorate>
 					<s:decorate id="bitisField" template="/layout/edit.xhtml">
-						<ui:define name="label">Bitiş Tarihi</ui:define>
+						<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
 						<rich:calendar id="endDate" value="#{userVekaletHome.instance.bitTarih}" required="true" requiredMessage="Bitiş tarihi giriniz"
 							popup="#{userVekaletHome.instance.calendarPopup}" datePattern="#{authenticatedUser.dateFormat}" cellWidth="24px" cellHeight="22px">
 
@@ -98,11 +98,11 @@
 				<h:panelGrid columns="1">
 					<h:panelGrid columns="1">
 						<s:decorate id="baslangicField" template="/layout/edit.xhtml">
-							<ui:define name="label">Başlangıç Tarihi</ui:define>
+							<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{userVekaletHome.basDate}" required="true" requiredMessage="Tarih giriniz" />
 						</s:decorate>
 						<s:decorate id="bitisField" template="/layout/edit.xhtml">
-							<ui:define name="label">Bitiş Tarihi</ui:define>
+							<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{userVekaletHome.bitDate}" required="true" requiredMessage="Tarih giriniz" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
@@ -165,14 +165,14 @@
 							</rich:column>
 							<rich:column>
 								<f:facet name="header">
-									<h:outputText value="Başlangıç Tarihi" />
+									<h:outputText value="#{ortakIslemler.basTarihAciklama()}" />
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.dateFormatla(vekalet.basTarih)}" />
 							</rich:column>
 
 							<rich:column>
 								<f:facet name="header">
-									<h:outputText value="Bitiş Tarihi" />
+									<h:outputText value="#{ortakIslemler.bitTarihAciklama()}" />
 								</f:facet>
 								<h:outputText value="#{authenticatedUser.dateFormatla(vekalet.bitTarih)}" />
 							</rich:column>
@@ -319,12 +319,12 @@
 				<rich:panel>
 					<h:panelGrid columns="1" cellpadding="0" cellspacing="0" id="vekilPersonelBilgisi">
 						<s:decorate id="baslangicField2" template="/layout/edit.xhtml">
-							<ui:define name="label">Vekalet Başlangıç Tarihi</ui:define>
+							<ui:define name="label">Vekalet #{ortakIslemler.basTarihAciklama()}</ui:define>
 							<rich:calendar id="startDate2" value="#{userVekaletHome.devirUserVekalet.devirBasTarih}" datePattern="#{authenticatedUser.dateFormat}"
 								cellWidth="24px" cellHeight="22px" style="width:200px" />
 						</s:decorate>
 						<s:decorate id="bitisField2" template="/layout/edit.xhtml">
-							<ui:define name="label">VekaletBitiş Tarihi</ui:define>
+							<ui:define name="label">Vekalet#{ortakIslemler.bitTarihAciklama()}</ui:define>
 							<rich:calendar id="endDate2" value="#{userVekaletHome.devirUserVekalet.devirBitTarih}" datePattern="#{authenticatedUser.dateFormat}"
 								cellWidth="24px" cellHeight="22px" style="width:200px" />
 						</s:decorate>
@@ -361,7 +361,7 @@
 									oncomplete="#{rich:component('editPanel2')}.hide()" />
 							</ui:fragment>
 
-							<a4j:commandButton status="ajaxStatus" value="Bitiş Tarihi Kapat" action="#{userVekaletHome.bitisTarihDegistir}"
+							<a4j:commandButton status="ajaxStatus" value="#{ortakIslemler.bitTarihAciklama()} Kapat" action="#{userVekaletHome.bitisTarihDegistir}"
 								rendered="#{ authenticatedUser.IK or authenticatedUser.admin or vekalet.vekaletVeren.id == authenticatedUser.id}"
 								oncomplete="#{rich:component('editPanel2')}.hide()" reRender="izinListPanel,devretId" />
 

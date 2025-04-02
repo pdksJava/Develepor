@@ -7961,7 +7961,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String basTarihAciklama() {
-		String basTarihAciklama = getBaslikAciklama("basTarihAciklama", "Başlangıç Tarih");
+		String basTarihAciklama = getBaslikAciklama("basTarihAciklama", "Başlangıç Tarihi");
 		return basTarihAciklama;
 	}
 
@@ -7969,7 +7969,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String bitTarihAciklama() {
-		String bitTarihAciklama = getBaslikAciklama("bitTarihAciklama", "Bitiş Tarih");
+		String bitTarihAciklama = getBaslikAciklama("bitTarihAciklama", "Bitiş Tarihi");
 		return bitTarihAciklama;
 	}
 

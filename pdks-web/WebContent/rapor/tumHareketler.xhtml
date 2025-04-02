@@ -16,12 +16,12 @@
 						<h:panelGrid columns="2">
 
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Başlangıç Tarihi</ui:define>
+								<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
 								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{tumHareketlerHome.basTarih}" required="true"
 									requiredMessage="Tarih giriniz" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Bitiş Tarihi</ui:define>
+								<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
 								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{tumHareketlerHome.bitTarih}" required="true"
 									requiredMessage="Tarih giriniz" />
 							</s:decorate>

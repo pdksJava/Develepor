@@ -40,7 +40,7 @@
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
-								<h:outputText value="Valid Bitiş Tarih" />
+								<h:outputText value="Valid #{ortakIslemler.bitTarihAciklama()}" />
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.dateTimeLongFormatla(cer.notAfter)}" />
 						</rich:column>
@@ -58,7 +58,7 @@
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
-								<h:outputText value="Valid Başlangıç Tarih" />
+								<h:outputText value="Valid #{ortakIslemler.basTarihAciklama()}" />
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.dateTimeLongFormatla(cer.notBefore)}" />
 						</rich:column>

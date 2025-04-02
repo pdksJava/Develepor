@@ -73,7 +73,7 @@
 									#{authenticatedUser.dateFormatla(vardiyaView.otomatikOnayIKTarih)}
 								</rich:column>
 								<rich:column style="text-align: center;width: 60px;">
-									<f:facet name="header">Otomatik Onay Başlangıç Tarihi</f:facet>
+									<f:facet name="header">Otomatik Onay #{ortakIslemler.basTarihAciklama()}</f:facet>
 									#{authenticatedUser.dateFormatla(vardiyaView.otomatikOnayIKBaslangicTarih)}
 								</rich:column>
 
@@ -203,7 +203,7 @@
 										requiredMessage="Otomatik Son Onay Tarihi Giriniz" />
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
-									<ui:define name="label">Otomatik Onay Başlangıç Tarihi</ui:define>
+									<ui:define name="label">Otomatik Onay #{ortakIslemler.basTarihAciklama()}</ui:define>
 									<rich:calendar value="#{vardiyaTanimlaHome.denklestirmeAy.otomatikOnayIKBaslangicTarih}" datePattern="#{authenticatedUser.dateFormat}"
 										required="false" requiredMessage="Otomatik İlk Onay Tarihi Giriniz" />
 								</s:decorate>

@@ -13,12 +13,12 @@
 				<rich:panel header="#{ortakIslemler.getMenuUserAdi(yemekHome.session,'yemekKartsizTanimlama')}">
 					<h:panelGrid columns="2">
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Başlangıç Tarihi</ui:define>
+							<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{yemekHome.basTarih}" required="true" requiredMessage="Başlangıç tarihi seçiniz" />
 						</s:decorate>
 
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Bitiş Tarihi</ui:define>
+							<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{yemekHome.bitTarih}" />
 						</s:decorate>
 						<a4j:commandButton value="Girişleri Getir" action="#{yemekHome.fillKartSizYemek}" onclick="#{rich:component('wait')}.show()"

@@ -23,7 +23,7 @@
 						</h:selectOneMenu>
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml">
-						<ui:define name="label">İşe Başlangıç Tarih</ui:define>
+						<ui:define name="label">İşe #{ortakIslemler.basTarihAciklama()}</ui:define>
 						<rich:calendar value="#{taseronPersonelKopyalaHome.basSirketTarih}" datePattern="#{authenticatedUser.dateFormat}">
 							<a4j:support event="onchanged" ajaxSingle="true" status="ajaxStatus" />
 

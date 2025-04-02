@@ -14,11 +14,11 @@
 				<rich:panel header="#{ortakIslemler.getMenuUserAdi(personelIzinGirisiHome.session,'onayimaGelenIzinler')}">
 					<h:panelGrid columns="1">
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Başlangıç Tarihi</ui:define>
+							<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{personelIzinGirisiHome.basDate}" firstWeekDay="1" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Bitiş Tarihi</ui:define>
+							<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{personelIzinGirisiHome.bitDate}" firstWeekDay="1" />
 						</s:decorate>
 
@@ -94,7 +94,7 @@
 									</rich:column>
 									<rich:column styleClass="#{izin.kayitDurum}" sortBy="#{izin.personelIzin.baslangicZamani}" style="text-align:center;">
 										<f:facet name="header">
-											<h:outputText value="İzin Başlangıç Tarihi" />
+											<h:outputText value="İzin #{ortakIslemler.basTarihAciklama()}" />
 										</f:facet>
 										<h:outputText value="#{authenticatedUser.dateTimeFormatla(izin.personelIzin.baslangicZamani)}" />
 									</rich:column>

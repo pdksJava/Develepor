@@ -16,14 +16,14 @@
 					<h:panelGrid columns="2">
 
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Başlangıç Tarih</ui:define>
+							<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.basTarih}"
-								required="#{authenticatedUser.admin == false}" requiredMessage="Başlangıç Tarih giriniz" />
+								required="#{authenticatedUser.admin == false}" requiredMessage="#{ortakIslemler.basTarihAciklama()} giriniz" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Bitiş Tarih</ui:define>
+							<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.basTarih}"
-								required="#{authenticatedUser.admin == false}" requiredMessage="Bitiş Tarih giriniz" />
+								required="#{authenticatedUser.admin == false}" requiredMessage="#{ortakIslemler.bitTarihAciklama()} giriniz" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
@@ -110,14 +110,14 @@
 
 						<rich:column width="60" style="text-align:center">
 							<f:facet name="header">
-								<h:outputText value="Başlangıç Tarihi" />
+								<h:outputText value="#{ortakIslemler.basTarihAciklama()}" />
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.dateFormatla(personelDurum.basTarih)}" />
 						</rich:column>
 
 						<rich:column width="60" style="text-align:center">
 							<f:facet name="header">
-								<h:outputText value="Bitiş Tarihi" />
+								<h:outputText value="#{ortakIslemler.bitTarihAciklama()}" />
 							</f:facet>
 							<h:outputText value="#{authenticatedUser.dateFormatla(personelDurum.bitTarih)}" />
 						</rich:column>
