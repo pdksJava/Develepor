@@ -77,16 +77,20 @@
 					<c:if test="#{dinamikRaporHome.seciliPdksDinamikRapor!=null}">
 						<rich:panel>
 
-							<h:panelGrid columns="2">
+							<h:panelGrid columns="2" id="girisler">
 								<c:forEach items="#{dinamikRaporHome.dinamikRaporParametreList}" var="parametre">
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)}</ui:define>
-										<ui:fragment rendered="#{parametre.secimList.size()>1}">
-											<h:selectOneMenu value="#{parametre.value}" required="#{parametre.zorunlu}"
+										<ui:fragment rendered="#{parametre.secimList.size()>0}">
+											<h:selectOneMenu value="#{parametre.value}" required="#{parametre.zorunlu}" disabled="#{parametre.secimList.size() lt 2}"
 												requiredMessage="#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)} seçiniz!">
 												<f:selectItem itemLabel="Lütfen seçiniz" />
 												<f:selectItems value="#{parametre.secimList}" />
-												<a4j:support event="onchange" ajaxSingle="true" />
+
+												<a4j:support event="onchange" status="ajaxStatus" action="#{dinamikRaporHome.tesisDoldur(parametre)}" ajaxSingle="true"
+													reRender="girisler" />
+
+
 											</h:selectOneMenu>
 										</ui:fragment>
 										<ui:fragment rendered="#{parametre.secimList==null}">

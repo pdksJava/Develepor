@@ -299,8 +299,8 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolum != null ? bolum.getAciklama() : ortakIslemler.bolumAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tipi");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Başlangıç Tarih");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Bitiş Tarih");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.basTarihAciklama());
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.bitTarihAciklama());
 		;
 		boolean renk = true;
 		for (PersonelDonemselDurum vg : personelDonemDurumList) {

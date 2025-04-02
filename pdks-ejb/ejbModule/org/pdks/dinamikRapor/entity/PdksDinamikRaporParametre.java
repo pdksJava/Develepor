@@ -17,6 +17,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.dinamikRapor.enums.ENumBaslik;
 import org.pdks.dinamikRapor.enums.ENumEsitlik;
 import org.pdks.dinamikRapor.enums.ENumRaporAlanTipi;
 import org.pdks.entity.BasePDKSObject;
@@ -248,6 +249,34 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	public void setSecimList(List<SelectItem> secimList) {
 		this.secimList = secimList;
+	}
+
+	@Transient
+	public boolean isSirketBilgisi() {
+		boolean baslikDurum = false;
+		try {
+			ENumBaslik baslik = ENumBaslik.fromValue(this.getAciklama());
+			if (baslik != null)
+				baslikDurum = baslik.value().equals(ENumBaslik.SIRKET.value());
+		} catch (Exception e) {
+			 
+		}
+
+		return baslikDurum;
+	}
+
+	@Transient
+	public boolean isTesisBilgisi() {
+		boolean baslikDurum = false;
+		try {
+			ENumBaslik baslik = ENumBaslik.fromValue(this.getAciklama());
+			if (baslik != null)
+				baslikDurum = baslik.value().equals(ENumBaslik.TESIS.value());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return baslikDurum;
 	}
 
 	public void entityRefresh() {
