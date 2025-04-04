@@ -3810,7 +3810,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 			}
 		}
-
 		if (goster)
 			vGun.setManuelGirisHTML(manuelGirisGoster);
 		islemPuantaj.setAyrikHareketVar(true);
@@ -3902,13 +3901,37 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			try {
 
 				if ((izinli || !vGun.getVardiya().isCalisma() || vGun.getVardiya().isHaftaTatil()) && vGun.getHareketler() != null && !vGun.getHareketler().isEmpty()) {
-					PersonelFazlaMesai personelFazlaMesaiGiris = null;
+					PersonelFazlaMesai personelFazlaMesaiGiris = null, personelFazlaMesaiCikis = null;
+					if (vGun.getFazlaMesailer() != null && vGun.getHareketler() != null) {
+						for (PersonelFazlaMesai fm : vGun.getFazlaMesailer()) {
+							if (fm.getDurum() && fm.isOnaylandi()) {
+								for (HareketKGS hareketKGS : vGun.getHareketler()) {
+									try {
+										if (hareketKGS.getPersonelFazlaMesai() == null && hareketKGS.getId() != null && hareketKGS.getId().equals(fm.getHareketId())) {
+											hareketKGS.setPersonelFazlaMesai(fm);
+											break;
+										}
+									} catch (Exception e) {
+									}
+								}
+							}
+						}
+					}
+
 					if (vGun.getGirisHareketleri() != null && !vGun.getGirisHareketleri().isEmpty()) {
-						for (HareketKGS hareket : vGun.getGirisHareketleri()) {
-							if (hareket.getId() == null)
+						int i = 0;
+						for (HareketKGS hareketGiris : vGun.getGirisHareketleri()) {
+							HareketKGS hareketCikis = null;
+							try {
+								hareketCikis = vGun.getCikisHareketleri().get(i++);
+							} catch (Exception e) {
+								// TODO: handle exception
+							}
+							if (hareketGiris.getId() == null || hareketCikis == null || hareketCikis.getId() == null)
 								continue;
-							personelFazlaMesaiGiris = hareket.getPersonelFazlaMesai();
-							if (personelFazlaMesaiGiris == null) {
+							personelFazlaMesaiGiris = hareketGiris.getPersonelFazlaMesai();
+							personelFazlaMesaiCikis = hareketCikis.getPersonelFazlaMesai();
+							if (personelFazlaMesaiGiris == null && personelFazlaMesaiCikis == null) {
 								fazlaMesaiHesapla = Boolean.FALSE;
 								vGun.setOnayli(Boolean.FALSE);
 								break;
@@ -3917,7 +3940,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 					}
 
-					if (personelFazlaMesaiGiris == null) {
+					if (personelFazlaMesaiGiris == null && personelFazlaMesaiCikis == null) {
 						vGun.setHareketHatali(Boolean.TRUE);
 						kapiGirisGetir(vGun, vardiyaPlanKey);
 						if (personelIzin != null && !izinERPUpdateStr.equals("1"))
