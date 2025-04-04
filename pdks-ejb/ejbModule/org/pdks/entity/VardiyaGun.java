@@ -63,7 +63,7 @@ public class VardiyaGun extends BaseObject {
 	private Date vardiyaDate;
 	private VardiyaGorev vardiyaGorev;
 	private VardiyaSaat vardiyaSaat, vardiyaSaatDB;
-	private ArrayList<HareketKGS> hareketler, girisHareketleri, cikisHareketleri, yemekHareketleri, gecersizHareketler;
+	private ArrayList<HareketKGS> hareketler, girisHareketleri, cikisHareketleri, yemekHareketleri, gecersizHareketler, sonrakiGunHareketler;
 	private ArrayList<PersonelIzin> izinler;
 	private ArrayList<PersonelFazlaMesai> fazlaMesailer;
 	private ArrayList<Vardiya> vardiyalar;
@@ -2436,5 +2436,14 @@ public class VardiyaGun extends BaseObject {
 			logger.debug(this.getVardiyaKeyStr() + " " + hareketKGS.getId() + " " + gecersizHareketler.size());
 		}
 
+	}
+
+	@Transient
+	public ArrayList<HareketKGS> getSonrakiGunHareketler() {
+		return sonrakiGunHareketler;
+	}
+
+	public void setSonrakiGunHareketler(ArrayList<HareketKGS> sonrakiGunHareketler) {
+		this.sonrakiGunHareketler = sonrakiGunHareketler;
 	}
 }
