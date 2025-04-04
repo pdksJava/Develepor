@@ -137,6 +137,31 @@ public class PdksUtil implements Serializable {
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
 	
 	/**
+	 * @param vardiyaYemekSuresi
+	 * @param toplamYemekSuresi
+	 * @param sure
+	 * @return
+	 */
+	public static double getToplamYemekSuresi(double vardiyaYemekSuresi, double toplamYemekSuresi, double sure) {
+		double kanuniMolaSure = vardiyaYemekSuresi;
+		if (vardiyaYemekSuresi > 0.0d && sure > 0.0d) {
+			kanuniMolaSure = 0.0d;
+			if (sure > 2.0d && sure <= 4.0d)
+				kanuniMolaSure = 0.25d;
+			else if (sure <= 7.5d)
+				kanuniMolaSure = 0.5d;
+			else if (sure > 7.5d)
+				kanuniMolaSure = 1.0d;
+			if (vardiyaYemekSuresi < kanuniMolaSure)
+				kanuniMolaSure = vardiyaYemekSuresi;
+			if (toplamYemekSuresi < kanuniMolaSure && vardiyaYemekSuresi >= kanuniMolaSure)
+				toplamYemekSuresi = kanuniMolaSure;
+
+		}
+		return toplamYemekSuresi;
+	}
+	
+	/**
 	 * @param list
 	 * @param str
 	 */
