@@ -322,7 +322,7 @@
 				<h:panelGrid columns="1">
 					<a4j:outputPanel id="fazlaMesaiOnay">
 						<s:formattedText value="#{fazlaMesaiOrtakIslemler.getFazlaMesaiSaatleri(personelFazlaMesaiHome.instance.hareket.vardiyaGun,authenticatedUser)}"></s:formattedText>
-						<h:panelGrid columns="1">
+						<h:panelGrid columns="1"  width="650">
 
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Personel Adi</ui:define>
@@ -354,9 +354,14 @@
 								<h:outputText value="#{personelFazlaMesaiHome.instance.hareket.kapiView.aciklama}" />
 							</s:decorate>
 
-							<s:decorate template="/layout/edit.xhtml">
+							<s:decorate template="/layout/edit.xhtml" >
 								<ui:define name="label">Mesai Saati</ui:define>
-								<h:inputText size="10" value="#{personelFazlaMesaiHome.instance.hareket.fazlaMesai}" />
+								<ui:fragment>
+									<h:inputText size="10" value="#{personelFazlaMesaiHome.instance.hareket.fazlaMesai}" />
+									<ui:fragment rendered="#{personelFazlaMesaiHome.instance.hareket.yemekMolasi gt 0}">
+								Kanuni Minumum Mola : #{authenticatedUser.sayiFormatliGoster(personelFazlaMesaiHome.instance.hareket.yemekMolasi)}
+								</ui:fragment>
+								</ui:fragment>
 
 							</s:decorate>
 

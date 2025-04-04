@@ -1193,10 +1193,19 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					giris = Boolean.FALSE;
 					HashMap<Long, Personel> perMap = new HashMap<Long, Personel>();
 					for (HareketKGS kgsHareket : kgsList1) {
-						if (kgsHareket.getVardiyaGun() != null && kgsHareket.getVardiyaGun().getId() == null) {
-							giris = Boolean.TRUE;
-							yaz = Boolean.TRUE;
-
+						VardiyaGun vg = kgsHareket.getVardiyaGun();
+						if (vg != null) {
+							if (kgsHareket.getPersonelFazlaMesai() == null && vg.getVardiya() != null) {
+								Vardiya vardiya = vg.getVardiya();
+								double yemekVardiyaSuresi = vardiya.isCalisma() ? vardiya.getYemekSuresi().doubleValue() / 60.0d : 1.0d, yemekMolasi = 0;
+								if (yemekVardiyaSuresi > 0 && kgsHareket.getFazlaMesai() > 2.0d)
+									yemekMolasi = ortakIslemler.getToplamYemekSuresi(yemekVardiyaSuresi, 0.0d, kgsHareket.getFazlaMesai());
+								kgsHareket.setYemekMolasi(yemekMolasi);
+							}
+							if (vg.getId() == null) {
+								giris = Boolean.TRUE;
+								yaz = Boolean.TRUE;
+							}
 						}
 						perMap.put(kgsHareket.getPersonelId(), kgsHareket.getPersonel().getPdksPersonel());
 

@@ -63,7 +63,7 @@ public class HareketKGS implements Serializable, Cloneable {
 	private KapiKGS kapiKGS;
 	private KapiView kapiView, terminalKapi;
 	private Date zaman, olusturmaZamani, orjinalZaman, kgsZaman, girisZaman, cikisZaman, girisOrjinalZaman, cikisOrjinalZaman, yemekTeloreansZamani, oncekiYemekZamani;
-	private Double fazlaMesai;
+	private Double fazlaMesai,yemekMolasi;
 	private PersonelHareketIslem islem;
 	private PersonelFazlaMesai personelFazlaMesai;
 	private VardiyaGun vardiyaGun;
@@ -651,6 +651,14 @@ public class HareketKGS implements Serializable, Cloneable {
 
 	public void setOncekiGun(Boolean oncekiGun) {
 		this.oncekiGun = oncekiGun;
+	}
+	@Transient
+	public Double getYemekMolasi() {
+		return yemekMolasi;
+	}
+
+	public void setYemekMolasi(Double yemekMolasi) {
+		this.yemekMolasi = yemekMolasi;
 	}
 
 }

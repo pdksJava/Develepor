@@ -814,8 +814,7 @@ public class OrtakIslemler implements Serializable {
 		return list;
 	}
 
-	// TODO
-	/**
+ 	/**
 	 * @param vardiyaGun
 	 * @param veriMap
 	 */
@@ -19211,6 +19210,7 @@ public class OrtakIslemler implements Serializable {
 								}
 								oncekiCikisZaman = (Date) cikisZaman.clone();
 							}
+							// TODO Hareketler okuması bitti
 							if (oncekiGunNormalSure + oncekiGunTatilSure > 0.0d) {
 								Vardiya vardiya2 = oncekiVardiyaGun.getIslemVardiya();
 								// todo xxx
@@ -19239,23 +19239,7 @@ public class OrtakIslemler implements Serializable {
 
 							if (sureHesapla && gunlukSaat > 0) {
 								toplamYemekSuresi = getToplamYemekSuresi(vardiyaYemekSuresi, toplamYemekSuresi, toplamParcalanmisSure);
-								// double kanuniMolaSure = vardiyaYemekSuresi;
-								// if (vardiyaYemekSuresi > 0.0d && toplamParcalanmisSure > 0.0d) {
-								// kanuniMolaSure = 0.0d;
-								// if (toplamParcalanmisSure > 2.0d && toplamParcalanmisSure <= 4.0d)
-								// kanuniMolaSure = 0.25d;
-								// else if (toplamParcalanmisSure <= 7.5d)
-								// kanuniMolaSure = 0.5d;
-								// else if (toplamParcalanmisSure > 7.5d)
-								// kanuniMolaSure = 1.0d;
-								// if (vardiyaYemekSuresi < kanuniMolaSure) {
-								// kanuniMolaSure = vardiyaYemekSuresi;
-								// }
-								// if (toplamYemekSuresi < kanuniMolaSure && vardiyaYemekSuresi >= kanuniMolaSure) {
-								// logger.debug(vardiyaGun.getVardiyaKeyStr() + " " + kanuniMolaSure + " " + toplamYemekSuresi);
-								// toplamYemekSuresi = kanuniMolaSure;
-								// }
-								// }
+							 
 								boolean tatilYemekHesabiSureEkle = vardiyaGun.isYemekHesabiSureEkle();
 								double fark = toplamYemekSuresi - vardiyaYemekSuresi;
 

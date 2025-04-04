@@ -135,7 +135,7 @@ public class PdksUtil implements Serializable {
 	private static Integer yarimYuvarlaLast = 1, sicilNoUzunluk = null;
 
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
-	
+
 	/**
 	 * @param vardiyaYemekSuresi
 	 * @param toplamYemekSuresi
@@ -148,7 +148,7 @@ public class PdksUtil implements Serializable {
 			kanuniMolaSure = 0.0d;
 			if (sure > 2.0d && sure <= 4.0d)
 				kanuniMolaSure = 0.25d;
-			else if (sure <= 7.5d)
+			else if (sure > 4 && sure <= 7.5d)
 				kanuniMolaSure = 0.5d;
 			else if (sure > 7.5d)
 				kanuniMolaSure = 1.0d;
@@ -160,7 +160,7 @@ public class PdksUtil implements Serializable {
 		}
 		return toplamYemekSuresi;
 	}
-	
+
 	/**
 	 * @param list
 	 * @param str
@@ -199,7 +199,6 @@ public class PdksUtil implements Serializable {
 			list.add(liste);
 		}
 	}
-
 
 	/**
 	 * @param cmd
