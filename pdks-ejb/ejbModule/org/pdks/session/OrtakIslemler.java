@@ -838,6 +838,9 @@ public class OrtakIslemler implements Serializable {
 					yemekNormal = sureNormal - (yemekSure - molaSure);
 				} else {
 					double molaSure = PdksUtil.setSureDoubleTypeRounded(sureNormal * yemekSure / toplamSure, vardiyaGun.getYarimYuvarla());
+					if (vardiyaGun.isBayramAyir())  
+						molaSure = getToplamYemekSuresi(yemekSure, molaSure, sureNormal);
+					 
 					yemekNormal = sureNormal - molaSure;
 					yemekArife = sureArife - (yemekSure - molaSure);
 				}
