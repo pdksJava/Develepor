@@ -4129,7 +4129,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						}
 						if (index >= 0) {
 							session.flush();
-							ortakIslemler.aylikPlanSureHesapla(false, normalCalismaVardiya, true, personelAylikPuantaj, false, tatilGunleriMap, session);
+							HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(null, session);
+							KapiView manuelGiris = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS);
+							KapiView manuelCikis = manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS);
+							ortakIslemler.aylikPlanSureHesapla(manuelGiris, manuelCikis, false, normalCalismaVardiya, true, personelAylikPuantaj, false, tatilGunleriMap, session);
 							aylikVardiyaOzetOlustur();
 
 							sicilNo = orjSicilNo;

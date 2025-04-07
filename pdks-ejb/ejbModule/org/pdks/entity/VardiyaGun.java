@@ -63,7 +63,7 @@ public class VardiyaGun extends BaseObject {
 	private Date vardiyaDate;
 	private VardiyaGorev vardiyaGorev;
 	private VardiyaSaat vardiyaSaat, vardiyaSaatDB;
-	private ArrayList<HareketKGS> hareketler, girisHareketleri, cikisHareketleri, yemekHareketleri, gecersizHareketler, sonrakiGunHareketler;
+	private ArrayList<HareketKGS> hareketler, gecerliHareketler, girisHareketleri, cikisHareketleri, yemekHareketleri, gecersizHareketler, sonrakiGunHareketler;
 	private ArrayList<PersonelIzin> izinler;
 	private ArrayList<PersonelFazlaMesai> fazlaMesailer;
 	private ArrayList<Vardiya> vardiyalar;
@@ -72,7 +72,7 @@ public class VardiyaGun extends BaseObject {
 	private Double calismaSuaSaati = PersonelDenklestirme.getCalismaSaatiSua();
 	private Boolean izinHaftaTatilDurum;
 	private boolean hareketHatali = Boolean.FALSE, planHareketEkle = Boolean.TRUE, kullaniciYetkili = Boolean.TRUE, zamanGuncelle = Boolean.TRUE, zamanGelmedi = Boolean.FALSE;
-	private boolean fazlaMesaiTalepOnayliDurum = Boolean.FALSE, fazlaMesaiTalepDurum = Boolean.FALSE, ayarlamaBitti = false;
+	private boolean fazlaMesaiTalepOnayliDurum = Boolean.FALSE, fazlaMesaiTalepDurum = Boolean.FALSE, ayarlamaBitti = false, bayramAyir = false;
 	private double calismaSuresi = 0, normalSure = 0, resmiTatilSure = 0, haftaTatilDigerSure = 0, gecenAyResmiTatilSure = 0, aksamKatSayisi = 0d, aksamVardiyaSaatSayisi = 0d;
 	private double calisilmayanAksamSure = 0, fazlaMesaiSure = 0, bayramCalismaSuresi = 0, haftaCalismaSuresi = 0d, yasalMaxSure = 11.0d;
 	private Integer basSaat, basDakika, bitSaat, bitDakika;
@@ -2445,5 +2445,23 @@ public class VardiyaGun extends BaseObject {
 
 	public void setSonrakiGunHareketler(ArrayList<HareketKGS> sonrakiGunHareketler) {
 		this.sonrakiGunHareketler = sonrakiGunHareketler;
+	}
+
+	@Transient
+	public boolean isBayramAyir() {
+		return bayramAyir;
+	}
+
+	public void setBayramAyir(boolean bayramAyir) {
+		this.bayramAyir = bayramAyir;
+	}
+
+	@Transient
+	public ArrayList<HareketKGS> getGecerliHareketler() {
+		return gecerliHareketler;
+	}
+
+	public void setGecerliHareketler(ArrayList<HareketKGS> gecerliHareketler) {
+		this.gecerliHareketler = gecerliHareketler;
 	}
 }

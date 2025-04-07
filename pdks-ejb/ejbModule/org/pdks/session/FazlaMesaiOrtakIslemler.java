@@ -359,6 +359,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				Vardiya vardiya = vg.getVardiya();
 				if (vardiya == null)
 					continue;
+
 				if (sutIzniDurum) {
 					boolean sutIzniDonemTamam = sutIzniPersonelDonemselDurum.getBasTarih().getTime() <= vg.getVardiyaDate().getTime() && sutIzniPersonelDonemselDurum.getBitTarih().getTime() >= vg.getVardiyaDate().getTime();
 					vg.setSutIzniVar(sutIzniDonemTamam);
@@ -412,7 +413,9 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					}
 					vg.addCalismaSuresi(netSure);
 				}
+
 			}
+			ortakIslemler.bayramGecisleriAyir(manuelGiris, manuelCikis, tatilGunleriMap, ap.getVardiyalar(), personelView);
 			try {
 
 				for (VardiyaHafta vh : ap.getVardiyaHaftaList()) {
@@ -426,7 +429,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 				}
 				ap.setFazlaMesaiHesapla(false);
-				ortakIslemler.aylikPlanSureHesapla(false, normalCalismaVardiya, true, ap, false, tatilGunleriMap, session);
+				ortakIslemler.aylikPlanSureHesapla(manuelGiris, manuelCikis, false, normalCalismaVardiya, true, ap, false, tatilGunleriMap, session);
 
 			} catch (Exception exy) {
 				logger.error(exy);

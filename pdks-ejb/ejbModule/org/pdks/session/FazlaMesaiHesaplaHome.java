@@ -1694,6 +1694,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				istifaGoster = false;
 				aylikPuantajList.clear();
 				List<HareketKGS> gecersizHareketler = new ArrayList<HareketKGS>();
+				HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(null, session);
+				KapiView manuelGiris = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS);
+				KapiView manuelCikis = manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS);
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					puantaj.setFazlaMesaiHesapla(true);
@@ -2084,7 +2087,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							puantaj.setLoginUser(loginUser);
 							Boolean hesapla = puantaj.isFazlaMesaiHesapla();
 							puantaj.setFazlaMesaiHesapla(true);
-							personelDenklestirme = ortakIslemler.aylikPlanSureHesapla(true, normalCalismaVardiya, true, puantaj, !personelDenklestirme.isKapandi(loginUser), tatilGunleriMap, session);
+
+							personelDenklestirme = ortakIslemler.aylikPlanSureHesapla(manuelGiris, manuelCikis, true, normalCalismaVardiya, true, puantaj, !personelDenklestirme.isKapandi(loginUser), tatilGunleriMap, session);
 							puantaj.setFazlaMesaiHesapla(hesapla);
 						}
 					} catch (Exception e) {
