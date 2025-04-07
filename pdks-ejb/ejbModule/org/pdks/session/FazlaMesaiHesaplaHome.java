@@ -3776,12 +3776,25 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 		List<HareketKGS> girisHareketleri = null, cikisHareketleri = null, hareketler = null;
 		vGun.setFazlaMesaiOnayla(null);
+		if (vGun.getGecerliHareketler() != null) {
+			hareketleriDuzenle(vGun, vGun.getGecerliHareketler());
+		} else if (vGun.getHareketler() != null) {
+			int adet = vGun.getHareketler().size();
+			for (Iterator iterator = vGun.getHareketler().iterator(); iterator.hasNext();) {
+				HareketKGS hareket = (HareketKGS) iterator.next();
+				if (hareket.getOncekiGun() != null && hareket.getOncekiGun().booleanValue())
+					iterator.remove();
+			}
+			if (adet != vGun.getHareketler().size())
+				hareketleriDuzenle(vGun, vGun.getHareketler());
+		}
+
 		boolean hareketsiz = vGun.getVardiya() != null && vGun.getHareketler() == null && vGun.getIzin() == null;
+		hareketler = vGun.getHareketler();
 		if (vGun.getGirisHareketleri() != null)
 			girisHareketleri = new ArrayList(vGun.getGirisHareketleri());
 		if (vGun.getCikisHareketleri() != null)
 			cikisHareketleri = new ArrayList(vGun.getCikisHareketleri());
-		hareketler = vGun.getHareketler();
 		boolean goster = false;
 		List<String> idList = null;
 		boolean ilkGunTatil = vGun.getTatil() != null && key1.endsWith("01");
@@ -4392,6 +4405,26 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		paramsMap.put("resmiTatilSuresi", resmiTatilSuresi);
 		vGun.setFazlaMesaiTalepOnayliDurum(fazlaMesaiTalepVardiyaOnayliDurum);
 
+	}
+
+	/**
+	 * @param vGun
+	 * @param hareketler
+	 */
+	private void hareketleriDuzenle(VardiyaGun vGun, List<HareketKGS> hareketler) {
+		List<HareketKGS> list = new ArrayList<HareketKGS>();
+		if (hareketler != null && !hareketler.isEmpty())
+			list.addAll(hareketler);
+		vGun.setHareketler(null);
+		vGun.setYemekHareketleri(null);
+		vGun.setGirisHareketleri(null);
+		vGun.setCikisHareketleri(null);
+		vGun.setGecersizHareketler(null);
+
+		for (HareketKGS hareket : list) {
+			vGun.addHareket(hareket, Boolean.TRUE);
+		}
+		list = null;
 	}
 
 	/**

@@ -7404,7 +7404,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								denklestirmeAy.setGuncelleyenUser(sistemUser);
 								saveOrUpdate(denklestirmeAy);
 								aylikPuantaj.setFazlaMesaiHesapla(false);
-								calismaPlaniDenklestir(departmanDenklestirmeDonemi, null, aylikPuantaj);
+//								calismaPlaniDenklestir(departmanDenklestirmeDonemi, null, aylikPuantaj);
 								flush = true;
 							}
 							if (!denklestirmeAyDurum) {

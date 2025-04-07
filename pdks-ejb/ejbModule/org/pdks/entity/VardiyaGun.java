@@ -311,7 +311,8 @@ public class VardiyaGun extends BaseObject {
 		ArrayList<HareketKGS> orjinalHareketler = null;
 		if (hareketler != null) {
 			orjinalHareketler = new ArrayList<HareketKGS>();
-			for (HareketKGS kgsHareket : hareketler) {
+			List<HareketKGS> hareketList = gecerliHareketler == null ? hareketler : gecerliHareketler;
+			for (HareketKGS kgsHareket : hareketList) {
 				try {
 					if (kgsHareket.getId() != null)
 						if (kgsHareket.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS) || kgsHareket.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS))
