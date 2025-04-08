@@ -3777,7 +3777,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		List<HareketKGS> girisHareketleri = null, cikisHareketleri = null, hareketler = null;
 		vGun.setFazlaMesaiOnayla(null);
 		if (vGun.getGecerliHareketler() != null) {
-			hareketleriDuzenle(vGun, vGun.getGecerliHareketler());
+			ortakIslemler.hareketleriDuzenle(vGun, vGun.getGecerliHareketler(), Boolean.TRUE);
 		} else if (vGun.getHareketler() != null) {
 			int adet = vGun.getHareketler().size();
 			for (Iterator iterator = vGun.getHareketler().iterator(); iterator.hasNext();) {
@@ -3786,7 +3786,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					iterator.remove();
 			}
 			if (adet != vGun.getHareketler().size())
-				hareketleriDuzenle(vGun, vGun.getHareketler());
+				ortakIslemler.hareketleriDuzenle(vGun, vGun.getHareketler(), Boolean.TRUE);
 		}
 
 		boolean hareketsiz = vGun.getVardiya() != null && vGun.getHareketler() == null && vGun.getIzin() == null;
@@ -4405,26 +4405,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		paramsMap.put("resmiTatilSuresi", resmiTatilSuresi);
 		vGun.setFazlaMesaiTalepOnayliDurum(fazlaMesaiTalepVardiyaOnayliDurum);
 
-	}
-
-	/**
-	 * @param vGun
-	 * @param hareketler
-	 */
-	private void hareketleriDuzenle(VardiyaGun vGun, List<HareketKGS> hareketler) {
-		List<HareketKGS> list = new ArrayList<HareketKGS>();
-		if (hareketler != null && !hareketler.isEmpty())
-			list.addAll(hareketler);
-		vGun.setHareketler(null);
-		vGun.setYemekHareketleri(null);
-		vGun.setGirisHareketleri(null);
-		vGun.setCikisHareketleri(null);
-		vGun.setGecersizHareketler(null);
-
-		for (HareketKGS hareket : list) {
-			vGun.addHareket(hareket, Boolean.TRUE);
-		}
-		list = null;
 	}
 
 	/**

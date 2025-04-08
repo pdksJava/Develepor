@@ -17896,8 +17896,6 @@ public class OrtakIslemler implements Serializable {
 												// double sure = getSaatToplami(puantajData, gun, yemekList, session) ;
 												if (izinSaat == null) {
 													try {
-														if (pdksVardiyaGun != null)
-															logger.info(pdksVardiyaGun.getVardiyaKeyStr() + " " + authenticatedUser.getAdSoyad() + "\n" + authenticatedUser.getParametreJSON());
 														if (calismaModeli != null)
 															try {
 																izinSaat = calismaModeli.getIzinSaat(pdksVardiyaGun);
@@ -18279,7 +18277,6 @@ public class OrtakIslemler implements Serializable {
 				boolean hareketVar = vg.getHareketler() != null && vg.getHareketler().isEmpty() == false;
 				if (hareketVar)
 					hareketler.addAll(vg.getHareketler());
-				// vg.setBayramAyir(oncekiHareketler.isEmpty() == false);
 				oncekiHareketler.clear();
 				if (hareketler.isEmpty()) {
 					str = vg.getVardiyaDateStr();
@@ -18289,7 +18286,6 @@ public class OrtakIslemler implements Serializable {
 				}
 				ArrayList<HareketKGS> girisHareketList = new ArrayList<HareketKGS>(), cikisHareketList = new ArrayList<HareketKGS>();
 				Date zaman = PdksUtil.tariheGunEkleCikar(vg.getVardiyaDate(), 1);
-
 				vg.setBayramAyir(true);
 				for (Iterator iterator = hareketler.iterator(); iterator.hasNext();) {
 					HareketKGS hareketKGS = (HareketKGS) iterator.next();
@@ -18315,14 +18311,11 @@ public class OrtakIslemler implements Serializable {
 						else if (kapi.isCikisKapi())
 							cikisHareketList.add(hareketKGS);
 						yeniHareketler.add(hareketKGS);
-
 					}
-
 				}
 				vg.setGirisHareketleri(girisHareketList);
 				vg.setCikisHareketleri(cikisHareketList);
 				vg.setGecerliHareketler(hareketVar ? new ArrayList<HareketKGS>(vg.getHareketler()) : null);
-
 				if (!yeniHareketler.isEmpty()) {
 					vg.setHareketler(yeniHareketler);
 					if (islemVardiya.isCalisma() == false) {
@@ -18332,9 +18325,32 @@ public class OrtakIslemler implements Serializable {
 					// if (islemVardiya.isCalisma() == false)
 					// logger.info(vg.getVardiyaKeyStr() + " " + yeniHareketler.size() + " " + vg.isBayramAyir());
 				}
-
 			}
 		}
+	}
+
+	/**
+	 * @param vGun
+	 * @param hareketler
+	 * @param hareketDuzelt
+	 */
+	public void hareketleriDuzenle(VardiyaGun vGun, List<HareketKGS> hareketler, boolean hareketDuzelt) {
+		List<HareketKGS> list = new ArrayList<HareketKGS>();
+		if (hareketler != null && !hareketler.isEmpty())
+			list.addAll(hareketler);
+		vGun.setHareketler(null);
+		vGun.setYemekHareketleri(null);
+		vGun.setGirisHareketleri(null);
+		vGun.setCikisHareketleri(null);
+		vGun.setGecersizHareketler(null);
+		for (HareketKGS hareket : list)
+			try {
+				vGun.addHareket(hareket, hareketDuzelt);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		list = null;
 	}
 
 	/**
