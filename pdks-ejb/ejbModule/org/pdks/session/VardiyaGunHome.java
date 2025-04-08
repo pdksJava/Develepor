@@ -3013,9 +3013,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					for (Iterator iterator = pdList.iterator(); iterator.hasNext();) {
 						PersonelDenklestirmeDinamikAlan pdda = (PersonelDenklestirmeDinamikAlan) iterator.next();
 						if (denklestirmeAy.getBakiyeSifirlaDurum().booleanValue() == false) {
-							if (pdda.getAlan().getKodu().equals(PersonelDenklestirmeDinamikAlan.TIPI_BAKIYE_SIFIRLA))
+							if (pdda.getAlan().getKodu().equals(PersonelDenklestirmeDinamikAlan.TIPI_BAKIYE_SIFIRLA)) {
 								iterator.remove();
-							continue;
+								continue;
+							}
+
 						}
 						map.put(pdda.getAlan().getId(), pdda);
 						pdda.setGuncellendi(Boolean.FALSE);
@@ -7404,7 +7406,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								denklestirmeAy.setGuncelleyenUser(sistemUser);
 								saveOrUpdate(denklestirmeAy);
 								aylikPuantaj.setFazlaMesaiHesapla(false);
-//								calismaPlaniDenklestir(departmanDenklestirmeDonemi, null, aylikPuantaj);
+								// calismaPlaniDenklestir(departmanDenklestirmeDonemi, null, aylikPuantaj);
 								flush = true;
 							}
 							if (!denklestirmeAyDurum) {
