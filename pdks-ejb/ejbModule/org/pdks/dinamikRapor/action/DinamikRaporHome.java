@@ -417,26 +417,31 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			if (parametre.isSirketBilgisi()) {
 				Sirket sirket = null;
 				Long sirketId = parametre.getValue() != null ? Long.parseLong((String) parametre.getValue()) : null;
-				tesisIdList.clear();
-				Long oncekiId = tesisParametre.getValue() != null ? Long.parseLong(tesisParametre.getValue().toString()) : null;
-				tesisParametre.setValue(null);
-				if (sirketId != null) {
-					sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
-					if (sirket.isTesisDurumu()) {
-						AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
-						aramaSecenekleri.setSirketId(sirketId);
-						List<SelectItem> list = ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
-						if (list.size() == 1)
-							tesisParametre.setValue("" + list.get(0).getValue());
-						else if (oncekiId != null) {
-							for (SelectItem selectItem : list) {
-								if (oncekiId.equals(selectItem.getValue()))
-									tesisParametre.setValue("" + selectItem.getValue());
-							}
-						}
-						tesisIdList.addAll(list);
-					}
+				if (tesisParametre != null) {
 
+					if (tesisIdList == null)
+						tesisIdList = new ArrayList<SelectItem>();
+					else
+						tesisIdList.clear();
+					Long oncekiId = tesisParametre.getValue() != null ? Long.parseLong(tesisParametre.getValue().toString()) : null;
+					tesisParametre.setValue(null);
+					if (sirketId != null) {
+						sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
+						if (sirket.isTesisDurumu()) {
+							AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
+							aramaSecenekleri.setSirketId(sirketId);
+							List<SelectItem> list = ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
+							if (list.size() == 1)
+								tesisParametre.setValue("" + list.get(0).getValue());
+							else if (oncekiId != null) {
+								for (SelectItem selectItem : list) {
+									if (oncekiId.equals(selectItem.getValue()))
+										tesisParametre.setValue("" + selectItem.getValue());
+								}
+							}
+							tesisIdList.addAll(list);
+						}
+					}
 				}
 			} else if (parametre.isTesisBilgisi() == false && sirketParametre != null) {
 				AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
