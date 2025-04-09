@@ -130,7 +130,9 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
 				PdksDinamikRaporParametre rp = (PdksDinamikRaporParametre) iterator.next();
 				String adi = "p" + rp.getSira();
-				if (rp.isKarakter())
+				if (rp.getSecimList() != null)
+					veriMap.put(adi, rp.getValue());
+				else if (rp.isKarakter())
 					veriMap.put(adi, rp.getKarakterDeger());
 				else if (rp.isSayisal())
 					veriMap.put(adi, rp.getSayisalDeger());
