@@ -1,20 +1,29 @@
 package org.pdks.security.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.el.MethodExpression;
 import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
+import javax.persistence.EntityManager;
 
+import org.hibernate.Session;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.security.Identity;
+import org.pdks.dinamikRapor.entity.PdksDinamikRapor;
 import org.pdks.entity.AccountPermission;
 import org.pdks.entity.MenuItem;
 import org.pdks.security.entity.MenuItemConstant;
+import org.pdks.security.entity.User;
+import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
 import org.richfaces.component.html.HtmlDropDownMenu;
@@ -43,6 +52,15 @@ public class MenuLoaderActionBean implements Serializable {
 	UserHome userHome;
 	@In(required = false)
 	List<MenuItem> menuItemList;
+	@In(required = true, create = true)
+	OrtakIslemler ortakIslemler;
+	@In(required = false, create = true)
+	EntityManager entityManager;
+	@In(required = false, create = true)
+	User authenticatedUser;
+
+	private Session session;
+
 	private HtmlDropDownMenu adminMenu;
 	private HtmlDropDownMenu guestMenu;
 	private HtmlDropDownMenu kullaniciIslemleri;
@@ -85,6 +103,58 @@ public class MenuLoaderActionBean implements Serializable {
 
 	public HtmlDropDownMenu getRaporIslemleri() {
 		raporIslemleri = createMenu(MenuItemConstant.raporIslemleri);
+		String menuAdi = "dinamikRapor";
+		if (raporIslemleri != null && authenticatedUser != null && userHome != null && userHome.hasPermission(menuAdi, "view")) {
+			if (session == null)
+				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			StringBuffer sb = new StringBuffer();
+			sb.append("select * from " + PdksDinamikRapor.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+			sb.append(" where " + PdksDinamikRapor.COLUMN_NAME_DURUM + " = 1 ");
+			if (authenticatedUser.isAdmin() == false)
+				sb.append(" and " + PdksDinamikRapor.COLUMN_NAME_GORUNTULENSIN + " = 1 ");
+			HashMap fields = new HashMap();
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			List<PdksDinamikRapor> raporlar = pdksEntityController.getObjectBySQLList(sb, fields, PdksDinamikRapor.class);
+			if (!raporlar.isEmpty() && raporIslemleri.getChildren() != null) {
+				for (Iterator iterator = raporIslemleri.getChildren().iterator(); iterator.hasNext();) {
+					Object object = (Object) iterator.next();
+					if (object instanceof HtmlMenuGroup) {
+						HtmlMenuGroup raporGrup = (HtmlMenuGroup) object;
+						if (raporGrup.getId().equals(menuAdi)) {
+							iterator.remove();
+						}
+
+					}
+
+				}
+				HtmlMenuGroup raporGrup = new HtmlMenuGroup();
+				raporGrup.setId(menuAdi);
+				raporGrup.setValue("Dinamik Raporlar");
+				MenuItem subMenu = new MenuItem();
+				subMenu.setName(menuAdi);
+				for (PdksDinamikRapor pdksDinamikRapor : raporlar) {
+					HtmlMenuItem rapor = new HtmlMenuItem();
+					subMenu.setParametre("id=" + PdksUtil.getEncodeStringByBase64("id=" + pdksDinamikRapor.getId() + "&userId=" + authenticatedUser.getId() + "&time=" + new Date().getTime()));
+					rapor.setValue(pdksDinamikRapor.getAciklama());
+					rapor.setId(menuAdi + pdksDinamikRapor.getId());
+					MethodExpression me = startAction(subMenu);
+					if (me != null) {
+						rapor.setActionExpression(me);
+						raporGrup.getChildren().add(rapor);
+					}
+				}
+				if (raporGrup.getChildren().isEmpty() == false) {
+					List list = new ArrayList(raporIslemleri.getChildren());
+					raporIslemleri.getChildren().clear();
+					raporIslemleri.getChildren().add(raporGrup);
+					raporIslemleri.getChildren().addAll(list);
+					list = null;
+				} else
+					raporGrup = null;
+
+			}
+		}
 		return raporIslemleri;
 	}
 
@@ -119,10 +189,10 @@ public class MenuLoaderActionBean implements Serializable {
 		HtmlDropDownMenu menu = null;
 		if (topMenu != null) {
 			Application app = FacesContext.getCurrentInstance().getApplication();
-
 			menu = (HtmlDropDownMenu) app.createComponent(HtmlDropDownMenu.COMPONENT_TYPE);
 			menu.setRendered(Boolean.TRUE);
 			menu.setValue(topMenu.getDescription().getAciklama());
+			menu.setId(topMenu.getName());
 			menu.getChildren().add(menu);
 			HtmlMenuItem hmiHomePage;
 			HtmlMenuGroup htmlMenuGroup = new HtmlMenuGroup();
@@ -133,7 +203,7 @@ public class MenuLoaderActionBean implements Serializable {
 						if (subMenu.getStatus() && userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW)) {// gormeye yetkisi yoksa menüyü yaratmasın
 							hmiHomePage = new HtmlMenuItem();
 							hmiHomePage.setValue(subMenu.getDescription().getAciklama());
-
+							hmiHomePage.setId(subMenu.getName());
 							hmiHomePage.setActionExpression(this.startAction(subMenu));
 							// hmiHomePage.setRendered(userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW));
 							if (hmiHomePage.getActionExpression() != null)
@@ -146,6 +216,7 @@ public class MenuLoaderActionBean implements Serializable {
 						if (userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW)) {// gormeye yetkisi yoksa menüyü yaratmasın
 							htmlMenuGroup = new HtmlMenuGroup();
 							htmlMenuGroup.setValue(subMenu.getDescription().getAciklama());
+							htmlMenuGroup.setId(subMenu.getName());
 							// htmlMenuGroup.setRendered(userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW));
 							menu.getChildren().add(htmlMenuGroup);
 							addChildNodes(subMenu, htmlMenuGroup);// sub menüleri doldur
@@ -206,6 +277,8 @@ public class MenuLoaderActionBean implements Serializable {
 			return null;
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		Application app = ctx.getApplication();
+		if (PdksUtil.hasStringValue(menuItem.getParametre()))
+			action = action + "?" + menuItem.getParametre();
 		Class[] params = {};
 		MethodExpression actionExpression = app.getExpressionFactory().createMethodExpression(ctx.getELContext(), action, String.class, params);
 		return actionExpression;

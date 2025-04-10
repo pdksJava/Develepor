@@ -75,7 +75,7 @@
 
 				<a4j:outputPanel id="raporParametreTable">
 					<c:if test="#{dinamikRaporHome.seciliPdksDinamikRapor!=null}">
-						<rich:panel>
+						<rich:panel header="#{dinamikRaporHome.seciliPdksDinamikRapor.aciklama}">
 
 							<h:panelGrid columns="2" id="girisler">
 								<c:forEach items="#{dinamikRaporHome.dinamikRaporParametreList}" var="parametre">

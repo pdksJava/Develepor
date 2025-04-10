@@ -11,8 +11,10 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -54,10 +56,10 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	EntityManager entityManager;
 	@In(required = false, create = true)
 	PdksEntityController pdksEntityController;
-	@In(required = false, create = true)
-	User authenticatedUser;
 	@In(required = true, create = true)
 	OrtakIslemler ortakIslemler;
+	@In(required = false, create = true)
+	User authenticatedUser;
 
 	public static String sayfaURL = "dinamikRapor";
 	private PdksDinamikRapor seciliPdksDinamikRapor;
@@ -385,6 +387,30 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	}
 
 	private void fillPdksDinamikRaporList() {
+		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		String paramStr = (String) req.getParameter("id");
+		Long id = null;
+		if (paramStr != null) {
+			String str = PdksUtil.getDecodeStringByBase64(paramStr);
+			HashMap<String, String> map = new HashMap();
+			List<String> list = PdksUtil.getListStringTokenizer(str, "&");
+			for (String string : list) {
+				if (string.indexOf("=") > 0) {
+					String[] strings = string.split("=");
+					if (strings.length == 2)
+						map.put(strings[0], strings[1]);
+				}
+
+			}
+			if (map.containsKey("id"))
+				try {
+					id = Long.parseLong(map.get("id"));
+				} catch (Exception e) {
+				}
+			map = null;
+			list = null;
+		}
+
 		session.clear();
 		HashMap fields = new HashMap();
 		if (session != null)
@@ -392,13 +418,15 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		StringBuffer sb = new StringBuffer();
 		sb.append("select * from " + PdksDinamikRapor.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 		dinamikRaporList = pdksEntityController.getSQLParamByFieldList(PdksDinamikRapor.TABLE_NAME, PdksDinamikRapor.COLUMN_NAME_DURUM, Boolean.TRUE, PdksDinamikRapor.class, session);
-		if (authenticatedUser.isAdmin() == false) {
-			for (Iterator iterator = dinamikRaporList.iterator(); iterator.hasNext();) {
-				PdksDinamikRapor pr = (PdksDinamikRapor) iterator.next();
-				if (pr.getGoruntulemeDurum().booleanValue() == false)
-					iterator.remove();
-			}
+
+		for (Iterator iterator = dinamikRaporList.iterator(); iterator.hasNext();) {
+			PdksDinamikRapor pr = (PdksDinamikRapor) iterator.next();
+			if (authenticatedUser.isAdmin() == false && pr.getGoruntulemeDurum().booleanValue() == false)
+				iterator.remove();
+			else if (id != null && pr.getId().equals(id) == false)
+				iterator.remove();
 		}
+
 	}
 
 	private void fillDinamikRaporAlanList() {
