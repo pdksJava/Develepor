@@ -131,11 +131,14 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	 */
 	public String dinamikRaporGuncelle(PdksDinamikRapor dinamikRapor, String tip) {
 		if (dinamikRapor == null) {
+			if (dinamikRaporList == null)
+				dinamikRaporList = new ArrayList<PdksDinamikRapor>();
 			dinamikRapor = new PdksDinamikRapor();
 			if (dinamikRaporAlanList == null)
 				dinamikRaporAlanList = new ArrayList<PdksDinamikRaporAlan>();
 			if (dinamikRaporParametreList == null)
 				dinamikRaporParametreList = new ArrayList<PdksDinamikRaporParametre>();
+			dinamikRapor.setSira((dinamikRaporList.size() + 1) * 100);
 		}
 		seciliPdksDinamikRapor = dinamikRapor;
 		seciliPdksDinamikRaporAlan = null;

@@ -9,7 +9,7 @@
 	<ui:define name="body">
 
 		<h:form id="formOrganizasyon">
-			<rich:panel style="vardiyaGun" header="#{ortakIslemler.getMenuUserAdi(dinamikRaporHome.session,'dinamikRapor')}">
+			<rich:panel header="#{dinamikRaporHome.seciliPdksDinamikRapor.aciklama}">
 
 				<h:panelGrid columns="1" rendered="#{dinamikRaporHome.dinamikRaporList.size()>1}">
 					<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin==false}">
@@ -75,7 +75,7 @@
 
 				<a4j:outputPanel id="raporParametreTable">
 					<c:if test="#{dinamikRaporHome.seciliPdksDinamikRapor!=null}">
-						<rich:panel header="#{dinamikRaporHome.seciliPdksDinamikRapor.aciklama}">
+						<rich:panel>
 
 							<h:panelGrid columns="2" id="girisler">
 								<c:forEach items="#{dinamikRaporHome.dinamikRaporParametreList}" var="parametre">

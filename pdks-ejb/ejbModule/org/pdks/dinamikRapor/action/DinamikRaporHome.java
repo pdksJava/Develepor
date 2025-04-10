@@ -418,7 +418,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		StringBuffer sb = new StringBuffer();
 		sb.append("select * from " + PdksDinamikRapor.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 		dinamikRaporList = pdksEntityController.getSQLParamByFieldList(PdksDinamikRapor.TABLE_NAME, PdksDinamikRapor.COLUMN_NAME_DURUM, Boolean.TRUE, PdksDinamikRapor.class, session);
-
+		if (authenticatedUser.isAdmin() == false && id == null)
+			id = -1L;
 		for (Iterator iterator = dinamikRaporList.iterator(); iterator.hasNext();) {
 			PdksDinamikRapor pr = (PdksDinamikRapor) iterator.next();
 			if (authenticatedUser.isAdmin() == false && pr.getGoruntulemeDurum().booleanValue() == false)

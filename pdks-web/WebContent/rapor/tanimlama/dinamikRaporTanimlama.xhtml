@@ -82,6 +82,13 @@
               		 	 </f:facet>
 							<h:outputText value="#{rapor.orderSQL}" />
 						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+                      		 Menu Sıra
+              		 	 </f:facet>
+							<h:outputText value="#{rapor.sira}" />
+						</rich:column>
 						<rich:column style="text-align:center">
 							<f:facet name="header">
                       		Aktif
@@ -162,7 +169,7 @@
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.storeProcedure==false}">
 									<ui:define name="label">Eşitlikten Farklı</ui:define>
-									 
+
 									<h:selectOneMenu id="esitlik" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.esitlik}">
 										<f:selectItem itemValue="" itemLabel="Lütfen seçiniz" />
 										<f:selectItems value="#{dinamikRaporTanimlamaHome.esitlikList}" />
@@ -502,6 +509,13 @@
 									</h:inputText>
 								</s:decorate>
 							</c:if>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Menu Sıra</ui:define>
+								<h:inputText id="sira2" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.sira}" size="2" maxlength="5" required="true"
+									requiredMessage="Menü sıra giriniz">
+									<a4j:support event="onchange" reRender="sira" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+								</h:inputText>
+							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Aktif</ui:define>
 								<h:selectBooleanCheckbox id="durum1" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.durum}">

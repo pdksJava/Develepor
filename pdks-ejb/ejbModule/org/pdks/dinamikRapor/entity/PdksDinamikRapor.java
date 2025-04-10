@@ -29,15 +29,21 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_GORUNTULENSIN = "GORUNTULENSIN";
 	public static final String COLUMN_NAME_WHERE_SQL = "WHERE_SQL";
 	public static final String COLUMN_NAME_ORDER_SQL = "ORDER_SQL";
+	public static final String COLUMN_NAME_SIRA = "SIRA";
+
 	public static final String COLUMN_NAME_DURUM = "DURUM";
 
 	private String aciklama, dbTanim, whereSQL = "", orderSQL = "";
 
 	private ENumDinamikRaporTipi raporTipi;
 
-	private Integer raporTipiId;
+	private Integer sira, raporTipiId;
 
 	private Boolean durum = Boolean.TRUE, goruntulemeDurum = Boolean.FALSE;
+
+	public PdksDinamikRapor() {
+		super();
+	}
 
 	@Column(name = COLUMN_NAME_ACIKLAMA)
 	public String getAciklama() {
@@ -55,6 +61,15 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 
 	public void setDbTanim(String dbTanim) {
 		this.dbTanim = dbTanim;
+	}
+
+	@Column(name = COLUMN_NAME_SIRA)
+	public Integer getSira() {
+		return sira;
+	}
+
+	public void setSira(Integer sira) {
+		this.sira = sira;
 	}
 
 	@Column(name = COLUMN_NAME_RAPOR_TIPI)
