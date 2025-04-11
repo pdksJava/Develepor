@@ -69,7 +69,8 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 	private Date tarih;
 	private int saat;
 	private int dakika;
-	private List<SelectItem> kapiList;
+	private List<SelectItem> kapiList, nedenList;
+
 	private List<Tanim> hareketIslemList = new ArrayList<Tanim>();
 	private ArrayList<FileUpload> files = new ArrayList<FileUpload>();
 	private ArrayList<String> sicilNoList;
@@ -79,7 +80,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 	private TreeMap<String, Tanim> ekSahaTanimMap;
 	private AramaSecenekleri aramaSecenekleri = null;
 	private boolean dosyaTamam = false;
-	private Long kapiId;
+	private Long kapiId, nedenId;
 	private Dosya dosya;
 	private Session session;
 
@@ -123,6 +124,14 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 
 	public void fillHareketIslemList() {
 		List<Tanim> islemList = ortakIslemler.getTanimList(Tanim.TIPI_HAREKET_NEDEN, session);
+		if (nedenList == null)
+			nedenList = new ArrayList<SelectItem>();
+		else
+			nedenList.clear();
+		for (Iterator iterator = islemList.iterator(); iterator.hasNext();) {
+			Tanim tanim = (Tanim) iterator.next();
+			nedenList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
+		}
 		setHareketIslemList(islemList);
 	}
 
@@ -212,8 +221,10 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 					try {
 						zaman = ExcelUtil.getSheetDateValueTry(sheet, j, 2, "HH:mm:ss");
 					} catch (Exception e) {
-						zaman = islemZamani;
+
 					}
+					if (zaman == null)
+						zaman = islemZamani;
 					if (sicilNo.length() > 0)
 						sicilNo = ortakIslemler.getSicilNo(sicilNo);
 					else {
@@ -243,7 +254,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 									if (i == 2 && cell.getDateCellValue() != null)
 										map.put(i, cell.getDateCellValue());
 									else
-										map.put(i, cell.getNumericCellValue());
+										map.put(i, map.get(-1));
 									break;
 								case Cell.CELL_TYPE_BOOLEAN:
 
@@ -345,7 +356,8 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 						} catch (Exception e) {
 
 						}
-					} else
+					}
+					if (kapi == null)
 						kapi = kapiId;
 					if (kapi != null && map1.containsKey(kapi)) {
 						HareketKGS hareketKGS = new HareketKGS();
@@ -420,7 +432,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 	}
 
 	@Transactional
-	public String save() throws Exception {
+	public String dosyaKaydet() throws Exception {
 		HareketKGS hareketler = this.getInstance();
 		KapiView kapiView = new KapiView();
 		kapiView.setId(kapiId);
@@ -446,6 +458,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 		String formatStr = "yyyy-MM-dd HH:mm";
 		personelId = null;
 		kapiId = null;
+		Tanim neden = nedenId != null ? new Tanim(nedenId) : null;
 		for (Iterator iterator1 = vardiyaGunleri.iterator(); iterator1.hasNext();) {
 			VardiyaGun vg = (VardiyaGun) iterator1.next();
 			HareketKGS hareketKGS = vg.getIlkGiris();
@@ -469,7 +482,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 
 				KapiView kv = hareketKGS.getKapiView();
 
-				pdksEntityController.hareketEkle(kv, personel.getPersonelView(), hareketKGS.getZaman(), authenticatedUser, hareketler.getIslem().getNeden().getId(), nedenAciklama, session);
+				pdksEntityController.hareketEkle(kv, personel.getPersonelView(), hareketKGS.getZaman(), authenticatedUser, neden.getId(), nedenAciklama, session);
 
 			}
 
@@ -648,6 +661,22 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 
 	public static void setSayfaURL(String sayfaURL) {
 		HareketGirisHome.sayfaURL = sayfaURL;
+	}
+
+	public Long getNedenId() {
+		return nedenId;
+	}
+
+	public void setNedenId(Long nedenId) {
+		this.nedenId = nedenId;
+	}
+
+	public List<SelectItem> getNedenList() {
+		return nedenList;
+	}
+
+	public void setNedenList(List<SelectItem> nedenList) {
+		this.nedenList = nedenList;
 	}
 
 }

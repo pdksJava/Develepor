@@ -26,9 +26,10 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Kapı</ui:define>
 
-							<h:selectOneMenu value="#{hareketGirisHome.kapiId}" requiredMessage="Kapi seçiniz">
+							<h:selectOneMenu value="#{hareketGirisHome.kapiId}" id="kapiId" requiredMessage="Kapi seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{hareketGirisHome.kapiList}" />
+								<a4j:support event="onchange" reRender="kapiId" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 
 							</h:selectOneMenu>
 
@@ -36,23 +37,27 @@
 						</s:decorate>
 
 
-						<s:decorate template="/layout/edit.xhtml">
+						<s:decorate template="/layout/edit.xhtml" id="zaman">
 							<ui:define name="label">Zaman</ui:define>
 							<TABLE>
 								<TR>
-									<TD><rich:inputNumberSpinner minValue="0" maxValue="23" inputSize="2" value="#{hareketGirisHome.saat}" /></TD>
+									<TD><rich:inputNumberSpinner minValue="0" maxValue="23" inputSize="2" value="#{hareketGirisHome.saat}">
+											<a4j:support event="onchange" reRender="zaman" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+										</rich:inputNumberSpinner></TD>
 									<TD>:</TD>
-									<TD><rich:inputNumberSpinner minValue="0" maxValue="59" inputSize="2" value="#{hareketGirisHome.dakika}" /></TD>
+									<TD><rich:inputNumberSpinner minValue="0" maxValue="59" inputSize="2" value="#{hareketGirisHome.dakika}">
+											<a4j:support event="onchange" reRender="zaman" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+										</rich:inputNumberSpinner></TD>
 								</TR>
 							</TABLE>
 
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">İşlem</ui:define>
-							<h:selectOneMenu value="#{hareketGirisHome.instance.islem.neden}" required="true" requiredMessage="Islem seciniz">
-								<s:selectItems var="comp" value="#{hareketGirisHome.hareketIslemList}" label="#{comp.aciklama}" noSelectionLabel="Lutfen Seciniz" />
-								<s:convertEntity />
-								<a4j:support event="onchanged" ajaxSingle="true" status="ajaxStatus" reRender="dosyaPanel" />
+							<h:selectOneMenu value="#{hareketGirisHome.nedenId}" required="true" requiredMessage="Islem seciniz">
+								<f:selectItem itemLabel="Lütfen seçiniz" />
+								<f:selectItems value="#{hareketGirisHome.nedenList}" />
+								<a4j:support event="onchange" ajaxSingle="true" status="ajaxStatus" reRender="dosyaPanel" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 							</h:selectOneMenu>
 						</s:decorate>
 
@@ -83,8 +88,8 @@
 								<a4j:commandButton id="dosyaOku" value="Dosya Oku" status="ajaxStatus" ajaxSingle="true" action="#{hareketGirisHome.dosyaOku}"
 									rendered="#{hareketGirisHome.dosya.dosyaIcerik != null and hareketGirisHome.tarih != null and hareketGirisHome.dosyaTamam == false}"
 									reRender="excelPanel,personelDosya"></a4j:commandButton>
-								<a4j:commandButton value="Dosya Aktar" status="ajaxStatus" action="#{hareketGirisHome.save()}" rendered="#{hareketGirisHome.dosyaTamam }"
-									reRender="dosyaPanel,excelPanel" />
+								<a4j:commandButton value="Dosya Aktar" status="ajaxStatus" ajaxSingle="true" action="#{hareketGirisHome.dosyaKaydet()}"
+									rendered="#{hareketGirisHome.dosyaTamam}" reRender="dosyaPanel,excelPanel" />
 							</ui:fragment>
 						</a4j:outputPanel>
 					</a4j:outputPanel>
