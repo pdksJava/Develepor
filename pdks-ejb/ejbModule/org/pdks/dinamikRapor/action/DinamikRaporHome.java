@@ -514,29 +514,33 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 							AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
 							aramaSecenekleri.setSirketId(sirketId);
 							List<SelectItem> list = ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
-							if (list.size() == 1)
-								tesisParametre.setValue("" + list.get(0).getValue());
-							else if (oncekiId != null) {
-								for (SelectItem selectItem : list) {
-									if (oncekiId.equals(selectItem.getValue()))
-										tesisParametre.setValue("" + selectItem.getValue());
+							if (list != null) {
+								if (list.size() == 1)
+									tesisParametre.setValue("" + list.get(0).getValue());
+								else if (oncekiId != null) {
+									for (SelectItem selectItem : list) {
+										if (oncekiId.equals(selectItem.getValue()))
+											tesisParametre.setValue("" + selectItem.getValue());
+									}
 								}
+								tesisIdList.addAll(list);
 							}
-							tesisIdList.addAll(list);
 						}
 					}
 				}
 			} else if (parametre.isTesisBilgisi() == false && sirketParametre != null) {
 				AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
 				List<SelectItem> secimList = ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
-				Long oncekiId = sirketParametre.getValue() != null ? Long.parseLong(sirketParametre.getValue().toString()) : null;
-				sirketParametre.setSecimList(secimList);
-				if (secimList.size() == 1)
-					sirketParametre.setValue("" + secimList.get(0).getValue());
-				else if (oncekiId != null) {
-					for (SelectItem selectItem : secimList) {
-						if (oncekiId.equals(selectItem.getValue()))
-							sirketParametre.setValue("" + selectItem.getValue());
+				if (secimList != null) {
+					Long oncekiId = sirketParametre.getValue() != null ? Long.parseLong(sirketParametre.getValue().toString()) : null;
+					sirketParametre.setSecimList(secimList);
+					if (secimList.size() == 1)
+						sirketParametre.setValue("" + secimList.get(0).getValue());
+					else if (oncekiId != null) {
+						for (SelectItem selectItem : secimList) {
+							if (oncekiId.equals(selectItem.getValue()))
+								sirketParametre.setValue("" + selectItem.getValue());
+						}
 					}
 				}
 				if (tesisParametre != null) {
@@ -559,7 +563,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		Long sirketId = null;
 		int adet = 0;
 		tesisParametre = null;
-		UserMenuItemTime menuItemTime = (UserMenuItemTime) pdksEntityController.getSQLParamByFieldObject(UserMenuItemTime.TABLE_NAME, UserMenuItemTime.COLUMN_NAME_ID, authenticatedUser.getMenuItemTime().getId(), UserMenuItemTime.class, session);
+		Long menuId = authenticatedUser.getMenuItemTime() != null ? authenticatedUser.getMenuItemTime().getId() : null;
+		UserMenuItemTime menuItemTime = menuId != null ? (UserMenuItemTime) pdksEntityController.getSQLParamByFieldObject(UserMenuItemTime.TABLE_NAME, UserMenuItemTime.COLUMN_NAME_ID, authenticatedUser.getMenuItemTime().getId(), UserMenuItemTime.class, session) : null;
 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
 		if (menuItemTime != null) {
 			Gson gson = new Gson();
@@ -618,7 +623,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 							cal.set(Calendar.MONTH, i);
 							list.add(new SelectItem(i + 1, PdksUtil.convertToDateString(cal.getTime(), "MMMMM")));
 						}
-					} else if (baslik.equals(ENumBaslik.SIRKET)) {
+					} else if (pr.isSirketBilgisi()) {
 						sirketParametre = pr;
 						++adet;
 						AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
@@ -627,14 +632,17 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 						}
 						aramaSecenekleri.setSirketId(sirketId);
 						list = ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
-					} else if (baslik.equals(ENumBaslik.TESIS)) {
+						if (list == null && pr.getZorunlu())
+							list = new ArrayList<SelectItem>();
+					} else if (pr.isTesisBilgisi()) {
 						++adet;
 						tesisParametre = pr;
 						AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
 						aramaSecenekleri.setSirketId(sirketId);
 						list = ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
+						if (list == null && pr.getZorunlu())
+							list = new ArrayList<SelectItem>();
 						tesisIdList = list;
-
 					}
 					if (paramValue != null)
 						pr.setValue(Long.parseLong("" + paramValue));
@@ -642,7 +650,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 						if (!list.isEmpty()) {
 							if (list.size() == 1) {
 								pr.setValue(list.get(0).getValue());
-								if (baslik.equals(ENumBaslik.SIRKET))
+								if (pr.isSirketBilgisi())
 									sirketId = (Long) pr.getValue();
 							}
 
