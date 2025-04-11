@@ -2754,6 +2754,8 @@ public class PdksUtil implements Serializable {
 			bagliRoller = new ArrayList<Role>();
 		user.setBagliRoller(bagliRoller);
 		user.setYetkiSet(Boolean.TRUE);
+		if (user.isSirketSuperVisor())
+			logger.debug("");
 		return bagliRoller;
 	}
 

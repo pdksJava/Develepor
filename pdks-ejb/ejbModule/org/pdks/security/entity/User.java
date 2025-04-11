@@ -1099,8 +1099,10 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 		return sirketSuperVisor;
 	}
 
-	public void setSirketSuperVisor(boolean sirketSuperVisor) {
-		this.sirketSuperVisor = sirketSuperVisor;
+	public void setSirketSuperVisor(boolean value) {
+		if (value == false)
+			logger.debug("");
+		this.sirketSuperVisor = value;
 	}
 
 	@Transient
