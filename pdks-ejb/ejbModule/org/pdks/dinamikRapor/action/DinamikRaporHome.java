@@ -120,7 +120,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	@Transactional
 	private void saveLastParameter() {
 		LinkedHashMap<String, Object> dataMap = null;
-		UserMenuItemTime menuItemTime = (UserMenuItemTime) pdksEntityController.getSQLParamByFieldObject(UserMenuItemTime.TABLE_NAME, UserMenuItemTime.COLUMN_NAME_ID, authenticatedUser.getMenuItemTime().getId(), UserMenuItemTime.class, session);
+		Long menuId = authenticatedUser.getMenuItemTime() != null ? authenticatedUser.getMenuItemTime().getId() : null;
+		UserMenuItemTime menuItemTime = menuId != null ? (UserMenuItemTime) pdksEntityController.getSQLParamByFieldObject(UserMenuItemTime.TABLE_NAME, UserMenuItemTime.COLUMN_NAME_ID, menuId, UserMenuItemTime.class, session) : null;
 		if (menuItemTime != null) {
 			dataMap = new LinkedHashMap<String, Object>();
 			if (menuItemTime.getParametreJSON() != null) {
