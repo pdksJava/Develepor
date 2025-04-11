@@ -27,6 +27,7 @@ import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.framework.EntityHome;
 import org.pdks.dinamikRapor.entity.PdksDinamikRapor;
@@ -37,10 +38,14 @@ import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.Sirket;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
+import org.pdks.security.entity.UserMenuItemTime;
 import org.pdks.session.ExcelUtil;
 import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
+
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 
 @Name("dinamikRaporHome")
 public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Serializable {
@@ -108,6 +113,44 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			dinamikRaporGuncelle(dinamikRapor);
 		}
 		return sayfa;
+	}
+
+	@Transactional
+	private void saveLastParameter() {
+		LinkedHashMap<String, Object> dataMap = null;
+		UserMenuItemTime menuItemTime = (UserMenuItemTime) pdksEntityController.getSQLParamByFieldObject(UserMenuItemTime.TABLE_NAME, UserMenuItemTime.COLUMN_NAME_ID, authenticatedUser.getMenuItemTime().getId(), UserMenuItemTime.class, session);
+		if (menuItemTime != null) {
+			dataMap = new LinkedHashMap<String, Object>();
+			if (menuItemTime.getParametreJSON() != null) {
+				Gson gson = new Gson();
+				LinkedHashMap<String, Object> map = gson.fromJson(menuItemTime.getParametreJSON(), LinkedHashMap.class);
+				if (map != null && map.containsKey("sayfaURL"))
+					dataMap = map;
+
+			}
+		}
+		if (dataMap == null)
+			dataMap = new LinkedHashMap<String, Object>();
+		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
+		lastMap.put("raporAdi", seciliPdksDinamikRapor.getAciklama());
+		for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
+			PdksDinamikRaporParametre rp = (PdksDinamikRaporParametre) iterator.next();
+			String adi = rp.getAciklama();
+			if (rp.getSecimList() != null)
+				lastMap.put(adi, rp.getValue());
+			else if (rp.isKarakter())
+				lastMap.put(adi, rp.getKarakterDeger());
+			else if (rp.isSayisal())
+				lastMap.put(adi, rp.getSayisalDeger());
+			else if (rp.isTarih())
+				lastMap.put(adi, PdksUtil.convertToDateString(rp.getTarihDeger(), "yyyyMMdd"));
+		}
+		dataMap.put("data_" + seciliPdksDinamikRapor.getId(), lastMap);
+		dataMap.put("sayfaURL", sayfaURL);
+		try {
+			ortakIslemler.saveLastParameter(dataMap, session);
+		} catch (Exception e) {
+		}
 	}
 
 	/**
@@ -240,6 +283,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			dinamikRaporDataList = pdksEntityController.getObjectBySQLList(sb, fields, null);
 		}
+		saveLastParameter();
 		return "";
 	}
 
@@ -507,17 +551,39 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		Long sirketId = null;
 		int adet = 0;
 		tesisParametre = null;
+		UserMenuItemTime menuItemTime = (UserMenuItemTime) pdksEntityController.getSQLParamByFieldObject(UserMenuItemTime.TABLE_NAME, UserMenuItemTime.COLUMN_NAME_ID, authenticatedUser.getMenuItemTime().getId(), UserMenuItemTime.class, session);
+		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
+		if (menuItemTime != null) {
+			Gson gson = new Gson();
+			LinkedHashMap<String, Object> map = gson.fromJson(menuItemTime.getParametreJSON(), LinkedHashMap.class);
+			if (map != null) {
+				String key = "data_" + seciliPdksDinamikRapor.getId();
+				if (map.containsKey(key)) {
+					try {
+						LinkedTreeMap data = (LinkedTreeMap) map.get(key);
+						lastMap.putAll(data);
+					} catch (Exception e) {
+					}
+
+				}
+			}
+		}
+
 		for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
 			PdksDinamikRaporParametre pr = (PdksDinamikRaporParametre) iterator.next();
+			Object paramValue = lastMap.containsKey(pr.getAciklama()) ? lastMap.get(pr.getAciklama()) : null;
 			if (pr.isTarih()) {
 				ENumBaslik baslik = ENumBaslik.fromValue(pr.getAciklama());
 				if (baslik != null) {
 					if (baslik.value().equals(ENumBaslik.BAS_TARIH.value()))
 						basTarihParametre = pr;
-					else if (baslik.value().equals(ENumBaslik.BIT_TARIH.value()))
-						bitTarihParametre = pr;
-				}
+					else if (baslik.value().equals(ENumBaslik.BIT_TARIH.value())) {
 
+						bitTarihParametre = pr;
+					}
+				}
+				if (paramValue != null)
+					tarihDeger = PdksUtil.convertToJavaDate((String) paramValue, "yyyyMMdd");
 				if (tarihDeger == null)
 					tarihDeger = ortakIslemler.getBugun();
 				pr.setTarihDeger(tarihDeger);
@@ -529,6 +595,10 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 						sirketParametre = pr;
 						++adet;
 						AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
+						if (paramValue != null) {
+							sirketId = Long.parseLong("" + paramValue);
+						}
+						aramaSecenekleri.setSirketId(sirketId);
 						list = ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
 					} else if (baslik.equals(ENumBaslik.TESIS)) {
 						++adet;
@@ -537,7 +607,10 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 						aramaSecenekleri.setSirketId(sirketId);
 						list = ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
 						tesisIdList = list;
+
 					}
+					if (paramValue != null)
+						pr.setValue(Long.parseLong("" + paramValue));
 					if (list != null) {
 						if (!list.isEmpty()) {
 							if (list.size() == 1) {
@@ -550,8 +623,15 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 						pr.setSecimList(list);
 
 					}
+					;
 
+				} else if (paramValue != null) {
+					if (pr.isKarakter())
+						pr.setKarakterDeger((String) paramValue);
+					else if (pr.isSayisal())
+						pr.setKarakterDeger("" + paramValue);
 				}
+
 			}
 		}
 
