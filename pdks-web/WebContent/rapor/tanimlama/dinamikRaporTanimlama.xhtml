@@ -143,7 +143,7 @@
 										<a4j:support event="onchange" reRender="aciklama2" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 									</h:inputText>
 								</s:decorate>
-								<s:decorate template="/layout/edit.xhtml">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.storeProcedure==false}">
 									<ui:define name="label">Parametre DB Adi</ui:define>
 									<h:inputText id="dbTanim2" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.dbTanim}" size="2" maxlength="255"
 										required="true" requiredMessage="Parametre başlık giriniz">
@@ -233,7 +233,7 @@
               		 	 </f:facet>
 								<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)}" />
 							</rich:column>
-							<rich:column>
+							<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.storeProcedure==false}">
 								<f:facet name="header">
                       		 Database Tanımı
               		 	 </f:facet>
@@ -551,7 +551,7 @@
               		 	 </f:facet>
 											<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)}" />
 										</rich:column>
-										<rich:column>
+										<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.storeProcedure==false}">
 											<f:facet name="header">
                       		 Database Tanımı
               		 	 </f:facet>

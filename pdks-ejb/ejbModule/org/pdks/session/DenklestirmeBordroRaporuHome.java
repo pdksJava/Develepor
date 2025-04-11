@@ -1072,8 +1072,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		int sira = 0;
 		Tanim ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
 		bordroAlanlari.add(getBordroAlani(++sira, COL_SIRA, "Sıra"));
-		bordroAlanlari.add(getBordroAlani(++sira, COL_YIL, "Yıl"));
-		bordroAlanlari.add(getBordroAlani(++sira, COL_AY, "Ay"));
+		bordroAlanlari.add(getBordroAlani(++sira, COL_YIL, ortakIslemler.yilAciklama()));
+		bordroAlanlari.add(getBordroAlani(++sira, COL_AY, ortakIslemler.aylarAciklama()));
 		bordroAlanlari.add(getBordroAlani(++sira, COL_PERSONEL_NO, ortakIslemler.personelNoAciklama()));
 		bordroAlanlari.add(getBordroAlani(++sira, COL_AD_SOYAD, "Personel"));
 		bordroAlanlari.add(getBordroAlani(++sira, COL_SIRKET + "Kodu", ortakIslemler.sirketAciklama() + " Kodu"));

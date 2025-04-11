@@ -17,11 +17,11 @@
 				<ui:fragment rendered="#{vardiyaGunHome.calismaPlanKilit != null}">
 					<h:panelGrid columns="2" style="width:40%;">
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Yıl</ui:define>
+							<ui:define name="label">#{ortakIslemler.yilAciklama()}</ui:define>
 							<h:outputText value="#{vardiyaGunHome.denklestirmeAy.yil}" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Ay</ui:define>
+							<ui:define name="label">#{ortakIslemler.aylarAciklama()}</ui:define>
 							<h:outputText value="#{vardiyaGunHome.denklestirmeAy.ayAdi}" />
 						</s:decorate>
 

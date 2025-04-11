@@ -15,7 +15,7 @@
 					header="#{ortakIslemler.getMenuUserAdi(vardiyaTanimlaHome.session,'pdksVardiyaTanimlama')}">
 					<h:panelGrid columns="2" id="girisler">
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Yıl</ui:define>
+							<ui:define name="label">#{ortakIslemler.yilAciklama()}</ui:define>
 							<rich:inputNumberSpinner id="yil" styleClass="size10" inputStyle="width:20px"
 								minValue="#{ortakIslemler.getParameterKey('sistemBaslangicYili')}" maxValue="#{vardiyaTanimlaHome.maxYil}" inputSize="1"
 								value="#{vardiyaTanimlaHome.yil}">
@@ -47,11 +47,11 @@
 									<h:outputText value="#{vardiyaView.id}" />
 								</rich:column>
 								<rich:column style="text-align: center;width: 30px;">
-									<f:facet name="header">Yıl</f:facet>
+									<f:facet name="header">#{ortakIslemler.yilAciklama()}</f:facet>
 									#{vardiyaView.yil}
 								</rich:column>
 								<rich:column style="text-align: center;width: 30px;">
-									<f:facet name="header">Ay</f:facet>
+									<f:facet name="header">#{ortakIslemler.aylarAciklama()}</f:facet>
 									#{vardiyaView.ayAdi}
 								</rich:column>
 								<c:if test="#{vardiyaTanimlaHome.calismaModeliList != null}">
@@ -146,13 +146,13 @@
 						<h:panelGrid columns="1">
 
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Yıl</ui:define>
+								<ui:define name="label">#{ortakIslemler.yilAciklama()}</ui:define>
 								<h:outputText value="#{vardiyaTanimlaHome.denklestirmeAy.yil}" id="yil" />
 							</s:decorate>
 
 
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Ay</ui:define>
+								<ui:define name="label">#{ortakIslemler.aylarAciklama()}</ui:define>
 								<h:outputText value="#{vardiyaTanimlaHome.denklestirmeAy.ayAdi}" id="ay" />
 							</s:decorate>
 

@@ -15,7 +15,7 @@
 				<a4j:outputPanel id="anaForm">
 					<h:panelGrid columns="2" width="50%" id="girisler">
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Yıl</ui:define>
+							<ui:define name="label">#{ortakIslemler.yilAciklama()}</ui:define>
 							<rich:inputNumberSpinner styleClass="size10" inputStyle="width:20px" minValue="#{ortakIslemler.getParameterKey('sistemBaslangicYili')}"
 								maxValue="#{fazlaMesaiHesaplaHome.maxYil}" inputSize="1" value="#{fazlaMesaiHesaplaHome.yil}">
 								<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaMesaiHesaplaHome.yilAyDegisti(true)}" ajaxSingle="true"
@@ -25,7 +25,7 @@
 
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Ay</ui:define>
+							<ui:define name="label">#{ortakIslemler.aylarAciklama()}</ui:define>
 							<h:selectOneMenu id="basAy" value="#{fazlaMesaiHesaplaHome.ay}" required="true" requiredMessage="Başlangıç ay seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{fazlaMesaiHesaplaHome.aylar}" />

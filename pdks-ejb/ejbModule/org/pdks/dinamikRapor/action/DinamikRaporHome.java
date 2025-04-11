@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -162,7 +163,12 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	public String dinamikRaporGuncelle(PdksDinamikRapor dinamikRapor) {
 		seciliPdksDinamikRapor = dinamikRapor;
 		fillDinamikRaporAlanList();
-		filllDinamikRaporParametreList();
+		try {
+			filllDinamikRaporParametreList();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		dinamikRaporDataList.clear();
 		return "";
 
@@ -569,7 +575,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				}
 			}
 		}
-
+		Calendar cal = Calendar.getInstance();
 		for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
 			PdksDinamikRaporParametre pr = (PdksDinamikRaporParametre) iterator.next();
 			Object paramValue = lastMap.containsKey(pr.getAciklama()) ? lastMap.get(pr.getAciklama()) : null;
@@ -592,7 +598,24 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				ENumBaslik baslik = ENumBaslik.fromValue(pr.getAciklama());
 				if (baslik != null) {
 					List<SelectItem> list = null;
-					if (baslik.equals(ENumBaslik.SIRKET)) {
+					if (baslik.equals(ENumBaslik.YIL)) {
+						if (paramValue == null)
+							paramValue = cal.get(Calendar.YEAR);
+						else {
+							BigDecimal bd = new BigDecimal("" + paramValue);
+							paramValue = bd.intValue();
+						}
+						pr.setKarakterDeger("" + paramValue);
+					} else if (baslik.equals(ENumBaslik.AY)) {
+						list = new ArrayList<SelectItem>();
+						if (paramValue == null)
+							paramValue = cal.get(Calendar.MONTH) + 1;
+						cal.set(Calendar.DATE, 1);
+						for (int i = 0; i < 12; i++) {
+							cal.set(Calendar.MONTH, i);
+							list.add(new SelectItem(i + 1, PdksUtil.convertToDateString(cal.getTime(), "MMMMM")));
+						}
+					} else if (baslik.equals(ENumBaslik.SIRKET)) {
 						sirketParametre = pr;
 						++adet;
 						AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();

@@ -7976,6 +7976,23 @@ public class OrtakIslemler implements Serializable {
 	/**
 	 * @return
 	 */
+	public String aylarAciklama() {
+		String aylarAciklama = getBaslikAciklama("aylarAciklama", "Ay");
+		return aylarAciklama;
+	}
+	
+	/**
+	 * @return
+	 */
+	public String yilAciklama() {
+		String yilAciklama = getBaslikAciklama("yilAciklama", "Yıl");
+		return yilAciklama;
+	}
+
+
+	/**
+	 * @return
+	 */
 	public String basTarihAciklama() {
 		String basTarihAciklama = getBaslikAciklama("basTarihAciklama", "Başlangıç Tarihi");
 		return basTarihAciklama;
@@ -19637,7 +19654,7 @@ public class OrtakIslemler implements Serializable {
 									}
 								}
 							}
-							
+
 							if (resmiTatilSure > 0.0d)
 								resmiTatilMesai += resmiTatilSure;
 						}

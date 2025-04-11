@@ -17,14 +17,14 @@
 				<a4j:outputPanel id="anaForm">
 					<h:panelGrid columns="2" width="50%" id="secimler">
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Yıl</ui:define>
+							<ui:define name="label">#{ortakIslemler.yilAciklama()}</ui:define>
 							<rich:inputNumberSpinner styleClass="size10" inputStyle="width:20px" minValue="#{ortakIslemler.getParameterKey('sistemBaslangicYili')}"
 								maxValue="#{fazlaMesaiERPAktarimHome.maxYil}" inputSize="1" value="#{fazlaMesaiERPAktarimHome.yil}" />
 
 
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Ay</ui:define>
+							<ui:define name="label">#{ortakIslemler.aylarAciklama()}</ui:define>
 							<h:selectOneMenu value="#{fazlaMesaiERPAktarimHome.ay}" required="true" requiredMessage="Başlangıç ay seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{fazlaMesaiERPAktarimHome.aylar}" />

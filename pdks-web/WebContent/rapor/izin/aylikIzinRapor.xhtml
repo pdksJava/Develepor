@@ -13,12 +13,12 @@
 			<rich:panel header="#{ortakIslemler.getMenuUserAdi(izinAylikRaporHome.session,'aylikIzinRapor')}">
 				<h:panelGrid columns="2">
 					<s:decorate id="yil" template="/layout/edit.xhtml">
-						<ui:define name="label">Yıl</ui:define>
+						<ui:define name="label">#{ortakIslemler.yilAciklama()}</ui:define>
 						<rich:inputNumberSpinner styleClass="size10" inputStyle="width:20px" minValue="#{ortakIslemler.getParameterKey('sistemBaslangicYili')}"
 							maxValue="#{izinAylikRaporHome.maxYil}" inputSize="1" value="#{izinAylikRaporHome.yil}" />
 					</s:decorate>
 					<s:decorate id="ay" template="/layout/edit.xhtml">
-						<ui:define name="label">Ay</ui:define>
+						<ui:define name="label">#{ortakIslemler.aylarAciklama()}</ui:define>
 						<h:selectOneMenu id="basAy" value="#{izinAylikRaporHome.ay}" required="true" requiredMessage="Ay seçiniz">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{izinAylikRaporHome.ayList}" />

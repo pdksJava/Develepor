@@ -15,14 +15,14 @@
 
 					<h:panelGrid columns="2" id="girisler">
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Yıl</ui:define>
+							<ui:define name="label">#{ortakIslemler.yilAciklama()}</ui:define>
 							<rich:inputNumberSpinner styleClass="size10" inputStyle="width:20px" minValue="#{ortakIslemler.getParameterKey('sistemBaslangicYili')}"
 								maxValue="#{vardiyaGunHome.maxYil}" inputSize="1" value="#{vardiyaGunHome.yil}">
 								<a4j:support event="onchange" action="#{vardiyaGunHome.yilAyDegisti(true)}" ajaxSingle="true" reRender="vardiyaPanel,girisler" />
 							</rich:inputNumberSpinner>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Ay</ui:define>
+							<ui:define name="label">#{ortakIslemler.aylarAciklama()}</ui:define>
 							<h:selectOneMenu id="basAy" value="#{vardiyaGunHome.ay}" required="true" requiredMessage="Başlangıç ay seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaGunHome.aylar}" />
