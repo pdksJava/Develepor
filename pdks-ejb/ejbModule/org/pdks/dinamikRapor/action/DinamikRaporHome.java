@@ -545,9 +545,10 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 								if (baslik.equals(ENumBaslik.SIRKET))
 									sirketId = (Long) pr.getValue();
 							}
-							pr.setSecimList(list);
-						} else
-							iterator.remove();
+
+						}
+						pr.setSecimList(list);
+
 					}
 
 				}
