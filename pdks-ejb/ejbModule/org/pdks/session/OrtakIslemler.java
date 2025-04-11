@@ -19637,8 +19637,7 @@ public class OrtakIslemler implements Serializable {
 									}
 								}
 							}
-							if (resmiTatilSure == 0.0d)
-								resmiTatilSure = vardiyaGun.getGecenAyResmiTatilSure();
+							
 							if (resmiTatilSure > 0.0d)
 								resmiTatilMesai += resmiTatilSure;
 						}
@@ -19718,6 +19717,8 @@ public class OrtakIslemler implements Serializable {
 								}
 
 						}
+						if (resmiTatilSure == 0.0d)
+							resmiTatilSure = vardiyaGun.getGecenAyResmiTatilSure();
 						if (resmiTatilSure > 0) {
 							// TODO Resmi tatil çalışma saatinden düşüyor
 							// if (vardiyaGun.getCalismaSuresi() >= resmiTatilSure)
