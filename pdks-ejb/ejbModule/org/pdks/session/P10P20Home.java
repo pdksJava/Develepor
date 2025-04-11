@@ -236,7 +236,7 @@ public class P10P20Home extends EntityHome<HareketKGS> implements Serializable {
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.personelNoAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Kapı");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Hareket Tipi");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tarih");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tarihAciklama());
 		boolean renk = true;
 		for (Iterator iterator = hareketList.iterator(); iterator.hasNext();) {
 			HareketKGS hareket = (HareketKGS) iterator.next();

@@ -13,7 +13,7 @@
 				<rich:panel header="#{ortakIslemler.getMenuUserAdi(tatilHome.session,'tatilTanimlama')}">
 					<h:panelGrid columns="1">
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Tarih</ui:define>
+							<ui:define name="label">#{ortakIslemler.tarihAciklama()}</ui:define>
 							<rich:calendar value="#{tatilHome.tarih}" datePattern="#{authenticatedUser.dateFormat}">
 								<a4j:support event="onchanged" ajaxSingle="true" status="ajaxStatus" action="#{tatilHome.fillPdksTatilList}" reRender="tatilData" />
 							</rich:calendar>

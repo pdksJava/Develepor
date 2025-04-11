@@ -994,7 +994,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					if (tesisDurumu)
 						ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
 					ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumAciklama);
-					ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tarih");
+					ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tarihAciklama());
 					ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Giriş Saati");
 					ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Açıklama");
 					tip = "I";
@@ -1073,7 +1073,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					if (tesisDurumu)
 						ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
 					ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumAciklama);
-					ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tarih");
+					ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tarihAciklama());
 					ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Çıkış Saati");
 					ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Açıklama");
 					tip = "E";

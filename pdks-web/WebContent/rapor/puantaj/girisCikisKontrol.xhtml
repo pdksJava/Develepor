@@ -52,7 +52,7 @@
 							</h:inputText>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Tarih</ui:define>
+							<ui:define name="label">#{ortakIslemler.tarihAciklama()}</ui:define>
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{girisCikisKontrolHome.date}" required="true"
 								requiredMessage="Tarih giriniz" />
 						</s:decorate>

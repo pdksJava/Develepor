@@ -1018,7 +1018,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 		boolean yonetici = admin || ikRole;
 		if (admin)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Id");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tarih");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tarihAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Saat");
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.sirketAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.personelNoAciklama());

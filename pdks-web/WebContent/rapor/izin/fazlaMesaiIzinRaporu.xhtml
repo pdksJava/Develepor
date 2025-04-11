@@ -46,7 +46,7 @@
 								</h:selectOneMenu>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Tarih</ui:define>
+								<ui:define name="label">#{ortakIslemler.tarihAciklama()}</ui:define>
 								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{fazlaMesaiIzinRaporuHome.date}" id="dateFilter">
 									<a4j:support event="onchanged" action="#{fazlaMesaiIzinRaporuHome.fillTesisList()}" onclick="#{rich:component('wait')}.show()"
 										oncomplete="#{rich:component('wait')}.hide();" ajaxSingle="true" reRender="secimler,vardiyaOzetPanel" />

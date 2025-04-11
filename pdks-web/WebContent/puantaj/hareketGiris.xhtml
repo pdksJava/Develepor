@@ -18,7 +18,7 @@
 
 					<h:panelGrid columns="1" width="800" id="hareketForm">
 						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Tarih</ui:define>
+							<ui:define name="label">#{ortakIslemler.tarihAciklama()}</ui:define>
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{hareketGirisHome.tarih}" requiredMessage="Tarih giriniz">
 								<a4j:support event="onchanged" ajaxSingle="true" status="ajaxStatus" reRender="dosyaPanel" />
 							</rich:calendar>

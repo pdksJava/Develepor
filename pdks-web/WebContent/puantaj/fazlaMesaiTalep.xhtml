@@ -88,7 +88,7 @@
 							<h:inputText value="#{vardiyaGunHome.sicilNo}" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
-							<ui:define name="label">Tarih</ui:define>
+							<ui:define name="label">#{ortakIslemler.tarihAciklama()}</ui:define>
 							<rich:calendar enableManualInput="#{authenticatedUser.admin}" value="#{vardiyaGunHome.basTarih}" datePattern="#{authenticatedUser.dateFormat}" />
 						</s:decorate>
 					</h:panelGrid>

@@ -278,7 +278,7 @@
 										</h:panelGrid>
 										<h:panelGrid columns="1">
 											<s:decorate template="/layout/edit.xhtml">
-												<ui:define name="label">Tarih</ui:define>
+												<ui:define name="label">#{ortakIslemler.tarihAciklama()}</ui:define>
 												<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{personelHareketHome.tarih}" id="tarih">
 													<a4j:support event="onchanged" action="#{personelHareketHome.manuelHareketDuzenle(true)}" onchanged="#{rich:component('wait')}.show()"
 														oncomplete="#{rich:component('wait')}.hide();" reRender="hareketGirisForm" />
@@ -529,7 +529,7 @@
 										<h:outputText value="#{personelHareketHome.instance.personel.pdksPersonel.adSoyad}" />
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml">
-										<ui:define name="label">Tarih</ui:define>
+										<ui:define name="label">#{ortakIslemler.tarihAciklama()}</ui:define>
 										<h:outputText value="#{authenticatedUser.dateFormatla(personelHareketHome.tarih)}" />
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml" id="inputKapi" rendered="#{personelHareketHome.islemTipi == 'E'}">

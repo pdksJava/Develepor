@@ -54,7 +54,7 @@
 								</h:inputText>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Tarih</ui:define>
+								<ui:define name="label">#{ortakIslemler.tarihAciklama()}</ui:define>
 								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{vardiyaOzetRaporuHome.date}" id="dateFilter">
 									<a4j:support event="onchanged" action="#{vardiyaOzetRaporuHome.fillTesisList()}" onclick="#{rich:component('wait')}.show()"
 										oncomplete="#{rich:component('wait')}.hide();" ajaxSingle="true" reRender="secimler,vardiyaOzetPanel" />
@@ -153,7 +153,7 @@
 									<th style="width: 100px">#{ortakIslemler.tesisAciklama()}</th>
 								</ui:fragment>
 								<th style="width: 100px">#{vardiyaOzetRaporuHome.bolumAciklama}</th>
-								<th style="width: 40px">Tarih</th>
+								<th style="width: 40px">#{ortakIslemler.tarihAciklama()}</th>
 								<th style="width: 40px">Giriş Saati</th>
 								<th style="width: 200px">Açıklama</th>
 
@@ -253,7 +253,7 @@
 									<th style="width: 100px">#{ortakIslemler.tesisAciklama()}</th>
 								</ui:fragment>
 								<th style="width: 100px">#{vardiyaOzetRaporuHome.bolumAciklama}</th>
-								<th style="width: 40px">Tarih</th>
+								<th style="width: 40px">#{ortakIslemler.tarihAciklama()}</th>
 								<th style="width: 40px">Çıkış Saati</th>
 								<th style="width: 200px">Açıklama</th>
 
