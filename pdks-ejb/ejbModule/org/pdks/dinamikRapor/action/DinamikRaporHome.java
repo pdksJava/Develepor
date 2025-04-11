@@ -138,9 +138,10 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			String adi = rp.getAciklama();
 			if (rp.getSecimList() != null)
 				lastMap.put(adi, rp.getValue());
-			else if (rp.isKarakter())
-				lastMap.put(adi, rp.getKarakterDeger());
-			else if (rp.isSayisal())
+			else if (rp.isKarakter()) {
+				if (PdksUtil.hasStringValue(rp.getKarakterDeger()))
+					lastMap.put(adi, rp.getKarakterDeger());
+			} else if (rp.isSayisal())
 				lastMap.put(adi, rp.getSayisalDeger());
 			else if (rp.isTarih())
 				lastMap.put(adi, PdksUtil.convertToDateString(rp.getTarihDeger(), "yyyyMMdd"));
