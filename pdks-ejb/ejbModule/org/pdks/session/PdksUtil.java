@@ -2754,7 +2754,7 @@ public class PdksUtil implements Serializable {
 			bagliRoller = new ArrayList<Role>();
 		user.setBagliRoller(bagliRoller);
 		user.setYetkiSet(Boolean.TRUE);
-		return bagliRoller;
+ 		return bagliRoller;
 	}
 
 	/**
