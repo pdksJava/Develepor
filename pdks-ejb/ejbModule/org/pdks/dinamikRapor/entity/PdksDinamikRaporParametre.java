@@ -259,7 +259,7 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 			if (baslik != null)
 				baslikDurum = baslik.value().equals(ENumBaslik.SIRKET.value());
 		} catch (Exception e) {
-			 
+
 		}
 
 		return baslikDurum;
@@ -272,6 +272,26 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 			ENumBaslik baslik = ENumBaslik.fromValue(this.getAciklama());
 			if (baslik != null)
 				baslikDurum = baslik.value().equals(ENumBaslik.TESIS.value());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return baslikDurum;
+	}
+
+	@Transient
+	public boolean isObjectValue() {
+		boolean objectValue = secimList != null || isYilSpinner();
+		return objectValue;
+	}
+
+	@Transient
+	public boolean isYilSpinner() {
+		boolean baslikDurum = false;
+		try {
+			ENumBaslik baslik = ENumBaslik.fromValue(this.getAciklama());
+			if (baslik != null)
+				baslikDurum = baslik.value().equals(ENumBaslik.YIL.value());
 		} catch (Exception e) {
 			// TODO: handle exception
 		}

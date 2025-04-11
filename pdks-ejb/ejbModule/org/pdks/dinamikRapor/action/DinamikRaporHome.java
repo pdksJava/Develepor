@@ -76,6 +76,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	private List<Long> tesisId;
 	private List<Object[]> dinamikRaporDataList;
 	private PdksDinamikRaporParametre sirketParametre, tesisParametre, basTarihParametre, bitTarihParametre;
+	private int maxYil;
 
 	private Session session;
 
@@ -137,7 +138,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
 			PdksDinamikRaporParametre rp = (PdksDinamikRaporParametre) iterator.next();
 			String adi = rp.getAciklama();
-			if (rp.getSecimList() != null)
+			if (rp.isObjectValue())
 				lastMap.put(adi, rp.getValue());
 			else if (rp.isKarakter()) {
 				if (PdksUtil.hasStringValue(rp.getKarakterDeger()))
@@ -182,7 +183,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
 				PdksDinamikRaporParametre rp = (PdksDinamikRaporParametre) iterator.next();
 				String adi = "p" + rp.getSira();
-				if (rp.getSecimList() != null)
+				if (rp.isObjectValue())
 					veriMap.put(adi, rp.getValue());
 				else if (rp.isKarakter())
 					veriMap.put(adi, rp.getKarakterDeger());
@@ -576,6 +577,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			}
 		}
 		Calendar cal = Calendar.getInstance();
+		maxYil = cal.get(Calendar.YEAR) + 1;
+
 		for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
 			PdksDinamikRaporParametre pr = (PdksDinamikRaporParametre) iterator.next();
 			Object paramValue = lastMap.containsKey(pr.getAciklama()) ? lastMap.get(pr.getAciklama()) : null;
@@ -605,7 +608,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 							BigDecimal bd = new BigDecimal("" + paramValue);
 							paramValue = bd.intValue();
 						}
-						pr.setKarakterDeger("" + paramValue);
+						pr.setValue(paramValue);
 					} else if (baslik.equals(ENumBaslik.AY)) {
 						list = new ArrayList<SelectItem>();
 						if (paramValue == null)
@@ -739,6 +742,14 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 
 	public void setTesisId(List<Long> tesisId) {
 		this.tesisId = tesisId;
+	}
+
+	public int getMaxYil() {
+		return maxYil;
+	}
+
+	public void setMaxYil(int maxYil) {
+		this.maxYil = maxYil;
 	}
 
 }

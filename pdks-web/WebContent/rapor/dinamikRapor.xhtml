@@ -95,13 +95,17 @@
 										</ui:fragment>
 										<ui:fragment rendered="#{parametre.secimList==null}">
 											<ui:fragment rendered="#{parametre.karakter or parametre.sayisal}">
-												<h:inputText value="#{parametre.karakterDeger}" size="2" maxlength="255" required="#{parametre.zorunlu}"
-													requiredMessage="#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)} giriniz" />
+												<ui:fragment rendered="#{parametre.yilSpinner}">
+													<rich:inputNumberSpinner styleClass="size10" inputStyle="width:20px" minValue="#{ortakIslemler.getParameterKey('sistemBaslangicYili')}"
+														maxValue="#{dinamikRaporHome.maxYil}" inputSize="1" value="#{parametre.value}">
+														<a4j:support event="onchange" status="ajaxStatus" action="#{dinamikRaporHome.dinamikRaporDataList.clear()}" ajaxSingle="true"
+															reRender="raporTable" />
+													</rich:inputNumberSpinner>
+												</ui:fragment>
+												<h:inputText value="#{parametre.karakterDeger}" rendered="#{parametre.yilSpinner==false}" size="2" maxlength="255"
+													required="#{parametre.zorunlu}" requiredMessage="#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)} giriniz" />
 											</ui:fragment>
-											<ui:fragment rendered="#{parametre.sayisal and false}">
-												<h:inputText value="#{parametre.doubleDeger}" size="2" maxlength="25" required="#{parametre.zorunlu}"
-													requiredMessage="#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)} giriniz" />
-											</ui:fragment>
+
 											<ui:fragment rendered="#{parametre.tarih}">
 												<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{parametre.tarihDeger}" showWeekDaysBar="false" showWeeksBar="false"
 													required="#{parametre.zorunlu}" requiredMessage="#{parametre.aciklama} seçiniz">
