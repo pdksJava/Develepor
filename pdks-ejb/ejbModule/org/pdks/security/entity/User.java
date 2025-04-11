@@ -1100,8 +1100,6 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	}
 
 	public void setSirketSuperVisor(boolean value) {
-		if (value == false)
-			logger.debug("");
 		this.sirketSuperVisor = value;
 	}
 
