@@ -106,7 +106,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		else
 			dinamikRaporDataList.clear();
 		fillPdksDinamikRaporList();
- 		seciliPdksDinamikRapor = null;
+		seciliPdksDinamikRapor = null;
 		if (dinamikRaporList.isEmpty()) {
 			PdksUtil.addMessageAvailableWarn("Rapor alınacak tanımlanmış veri yoktur!");
 			sayfa = MenuItemConstant.home;
@@ -442,19 +442,20 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	 * @return
 	 */
 	public Object getDinamikRaporAlan(Object[] veri, PdksDinamikRaporAlan alan) {
-
 		Object value = getDinamikRaporAlanVeri(veri, alan.getSira());
 		if (value != null) {
-			if (alan.isSayisal())
-				value = authenticatedUser.sayiFormatliGoster(value);
-			else if (alan.isTarih())
-				value = authenticatedUser.dateFormatla((Date) value);
-			else if (alan.isTarihSaat())
-				value = authenticatedUser.timeFormatla((Date) value);
-			else if (alan.isSaat())
-				value = authenticatedUser.dateTimeFormatla((Date) value);
+			try {
+				if (alan.isSayisal())
+					value = authenticatedUser.sayiFormatliGoster(value);
+				else if (alan.isTarih())
+					value = authenticatedUser.dateFormatla((Date) value);
+				else if (alan.isTarihSaat())
+					value = authenticatedUser.timeFormatla((Date) value);
+				else if (alan.isSaat())
+					value = authenticatedUser.dateTimeFormatla((Date) value);
+			} catch (Exception e) {
+			}
 		}
-
 		return value;
 	}
 
