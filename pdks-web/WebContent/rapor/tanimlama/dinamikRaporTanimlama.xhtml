@@ -85,7 +85,7 @@
 
 						<rich:column>
 							<f:facet name="header">
-                      		 Menu Sıra
+                      		 Menü Sıra
               		 	 </f:facet>
 							<h:outputText value="#{rapor.sira}" />
 						</rich:column>
@@ -356,6 +356,12 @@
 
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
+									<ui:define name="label">Filtre</ui:define>
+									<h:selectBooleanCheckbox id="filter" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.filter}">
+										<a4j:support event="onclick" reRender="filter" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:selectBooleanCheckbox>
+								</s:decorate>
+								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Aktif</ui:define>
 									<h:selectBooleanCheckbox id="durum3" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.durum}">
 										<a4j:support event="onclick" reRender="durum3" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
@@ -421,6 +427,12 @@
               		 	 </f:facet>
 								<h:outputText value="#{alan.pdksDinamikRaporAlanhHizalaAciklama}" />
 							</rich:column>
+							<rich:column style="text-align:center">
+											<f:facet name="header">
+                      		Filtre
+              		 	 </f:facet>
+											<h:outputText value="#{authenticatedUser.getYesNo(alan.filter)}" />
+										</rich:column>
 							<rich:column style="text-align:center">
 								<f:facet name="header">
                       		Aktif
@@ -510,7 +522,7 @@
 								</s:decorate>
 							</c:if>
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Menu Sıra</ui:define>
+								<ui:define name="label">Menü Sıra</ui:define>
 								<h:inputText id="sira2" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.sira}" size="2" maxlength="5" required="true"
 									requiredMessage="Menü sıra giriniz">
 									<a4j:support event="onchange" reRender="sira" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
@@ -639,6 +651,12 @@
                       		Hizalama Tipi
               		 	 </f:facet>
 											<h:outputText value="#{alan.pdksDinamikRaporAlanhHizalaAciklama}" />
+										</rich:column>
+										<rich:column style="text-align:center">
+											<f:facet name="header">
+                      		Filtre
+              		 	 </f:facet>
+											<h:outputText value="#{authenticatedUser.getYesNo(alan.filter)}" />
 										</rich:column>
 										<rich:column style="text-align:center">
 											<f:facet name="header">

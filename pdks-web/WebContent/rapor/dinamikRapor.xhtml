@@ -131,27 +131,25 @@
 											<h:outputText value="#{dinamikRaporHome.seciliPdksDinamikRapor.aciklama}" />
 										</f:facet>
 										<c:forEach items="#{dinamikRaporHome.dinamikRaporAlanList}" var="raporAlan">
-											<rich:column style="text-align :#{raporAlan.pdksDinamikRaporAlanHizala}">
-												<f:facet name="header">
-													<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(raporAlan.aciklama)}" />
-												</f:facet>
-												<ui:fragment rendered="#{raporAlan.karakter}">
-													<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(veri,raporAlan.sira)}" />
-												</ui:fragment>
-												<ui:fragment rendered="#{raporAlan.sayisal}">
-													<h:outputText value="#{authenticatedUser.sayiFormatliGoster(dinamikRaporHome.getDinamikRaporAlan(veri,raporAlan.sira))}" />
-												</ui:fragment>
-												<ui:fragment rendered="#{raporAlan.tarih}">
-													<h:outputText value="#{authenticatedUser.dateFormatla(dinamikRaporHome.getDinamikRaporAlan(veri,raporAlan.sira))}" />
-												</ui:fragment>
-												<ui:fragment rendered="#{raporAlan.saat}">
-													<h:outputText value="#{authenticatedUser.saatFormatla(dinamikRaporHome.getDinamikRaporAlan(veri,raporAlan.sira))}" />
-												</ui:fragment>
-												<ui:fragment rendered="#{raporAlan.tarihSaat}">
-													<h:outputText value="#{authenticatedUser.dateTimeFormatla(dinamikRaporHome.getDinamikRaporAlan(veri,raporAlan.sira))}" />
-												</ui:fragment>
+											<c:if test="#{dinamikRaporHome.getFilterAlan(raporAlan)}">
+												<rich:column style="text-align :#{raporAlan.pdksDinamikRaporAlanHizala}"
+													filterBy="#{dinamikRaporHome.getDinamikRaporAlan(veri,raporAlan)}" filterEvent="onkeyup">
+													<f:facet name="header">
+														<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(raporAlan.aciklama)}" />
+													</f:facet>
+													<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(veri,raporAlan)}" />
 
-											</rich:column>
+												</rich:column>
+											</c:if>
+											<c:if test="#{dinamikRaporHome.getFilterAlan(raporAlan)==false}">
+												<rich:column style="text-align :#{raporAlan.pdksDinamikRaporAlanHizala}">
+													<f:facet name="header">
+														<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(raporAlan.aciklama)}" />
+													</f:facet>
+													<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(veri,raporAlan)}" />
+
+												</rich:column>
+											</c:if>
 										</c:forEach>
 										<f:facet name="footer">
 											<rich:datascroller renderIfSinglePage="false" maxPages="5" />

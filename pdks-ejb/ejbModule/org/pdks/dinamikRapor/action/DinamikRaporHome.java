@@ -101,12 +101,12 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		String sayfa = "";
-		fillPdksDinamikRaporList();
 		if (dinamikRaporDataList == null)
 			dinamikRaporDataList = new ArrayList<Object[]>();
 		else
 			dinamikRaporDataList.clear();
-		seciliPdksDinamikRapor = null;
+		fillPdksDinamikRaporList();
+ 		seciliPdksDinamikRapor = null;
 		if (dinamikRaporList.isEmpty()) {
 			PdksUtil.addMessageAvailableWarn("Rapor alınacak tanımlanmış veri yoktur!");
 			sayfa = MenuItemConstant.home;
@@ -367,7 +367,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			}
 
 			for (PdksDinamikRaporAlan ra : dinamikRaporAlanList) {
-				Object data = getDinamikRaporAlan(veri, ra.getSira());
+				Object data = getDinamikRaporAlanVeri(veri, ra.getSira());
 				if (data != null) {
 					if (ra.isKarakter()) {
 						String str = (String) data;
@@ -428,11 +428,42 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	}
 
 	/**
+	 * @param alan
+	 * @return
+	 */
+	public Boolean getFilterAlan(PdksDinamikRaporAlan alan) {
+		boolean filterDurum = dinamikRaporDataList.isEmpty() == false && alan != null && alan.getFilter();
+		return filterDurum;
+	}
+
+	/**
+	 * @param veri
+	 * @param alan
+	 * @return
+	 */
+	public Object getDinamikRaporAlan(Object[] veri, PdksDinamikRaporAlan alan) {
+
+		Object value = getDinamikRaporAlanVeri(veri, alan.getSira());
+		if (value != null) {
+			if (alan.isSayisal())
+				value = authenticatedUser.sayiFormatliGoster(value);
+			else if (alan.isTarih())
+				value = authenticatedUser.dateFormatla((Date) value);
+			else if (alan.isTarihSaat())
+				value = authenticatedUser.timeFormatla((Date) value);
+			else if (alan.isSaat())
+				value = authenticatedUser.dateTimeFormatla((Date) value);
+		}
+
+		return value;
+	}
+
+	/**
 	 * @param veri
 	 * @param index
 	 * @return
 	 */
-	public Object getDinamikRaporAlan(Object[] veri, Integer index) {
+	private Object getDinamikRaporAlanVeri(Object[] veri, Integer index) {
 		Object object = null;
 		if (veri != null && index != null && veri.length >= index)
 			object = veri[index];
