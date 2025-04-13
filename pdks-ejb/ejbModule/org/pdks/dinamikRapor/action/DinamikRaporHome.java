@@ -466,8 +466,11 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	 */
 	private Object getDinamikRaporAlanVeri(Object[] veri, Integer index) {
 		Object object = null;
-		if (veri != null && index != null && veri.length >= index)
-			object = veri[index];
+		try {
+			if (veri != null && index != null && veri.length >= index)
+				object = veri[index];
+		} catch (Exception e) {
+		}
 		return object;
 	}
 
