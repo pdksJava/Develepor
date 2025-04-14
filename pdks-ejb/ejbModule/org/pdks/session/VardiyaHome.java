@@ -63,17 +63,15 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	private List<String> saatList = new ArrayList<String>();
 	private List<String> dakikaList = new ArrayList<String>();
 	private List<String> toleransDakikaList = new ArrayList<String>();
-	private List<SelectItem> vardiyaTipiList, departmanIdList, calismaSekliIdList, sirketIdList;
+	private List<SelectItem> vardiyaTipiList, departmanIdList, calismaSekliIdList, sirketIdList, pdksSirketIdList;
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), izinCalismaVardiyaList = new ArrayList<Vardiya>();
 	private List<VardiyaSablonu> sablonList = new ArrayList<VardiyaSablonu>();
-	// private List<Departman> departmanList = new ArrayList<Departman>();
+
 	private List<CalismaModeli> calismaModeliList = new ArrayList<CalismaModeli>(), calismaModeliKayitliList = new ArrayList<CalismaModeli>();
 	private List<YemekIzin> yemekIzinList = new ArrayList<YemekIzin>(), yemekIzinKayitliList = new ArrayList<YemekIzin>();
-	// private List<CalismaSekli> calismaSekliList;
-	private List<Sirket> pdksSirketList;
 
 	private List<YemekIzin> yemekList;
-	private Sirket seciliSirket;
+	private Long seciliSirketId;
 	private int saat = 13, dakika = 0;
 
 	private boolean pasifGoster = Boolean.FALSE, manuelVardiyaIzinGir = false;
@@ -305,9 +303,10 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	public void kayitGuncelle(Vardiya pdksVardiya) {
 		if (pdksVardiya == null) {
 			pdksVardiya = new Vardiya();
-			if (seciliSirket != null) {
-				pdksVardiya.setSirket(seciliSirket);
-				pdksVardiya.setDepartman(seciliSirket.getDepartman());
+			if (seciliSirketId != null) {
+				pdksVardiya.setSirketId(seciliSirketId);
+				Sirket seciliSirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, seciliSirketId, Sirket.class, session);
+				pdksVardiya.setDepartmanId(seciliSirket.getDepartman().getId());
 			}
 
 			pdksVardiya.setTipi(String.valueOf(Vardiya.TIPI_CALISMA));
@@ -328,6 +327,10 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	 */
 	private void vardiyaAlanlariDoldur(Vardiya pdksVardiya) {
 		setInstance(pdksVardiya);
+		fillSaatler();
+		fillSablonlar();
+		if (authenticatedUser.isAdmin())
+			fillBagliOlduguDepartmanTanimList();
 		fillYemekList(pdksVardiya);
 		fillCalismaModeliList(pdksVardiya);
 		pdksVardiya.setTipi(String.valueOf(pdksVardiya.getVardiyaTipi()));
@@ -479,7 +482,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		try {
 			manuelVardiyaIzinGir = ortakIslemler.getVardiyaIzinGir(session, authenticatedUser.getDepartman());
 			List<Vardiya> vardiyalar = pdksEntityController.getSQLParamByFieldList(Vardiya.TABLE_NAME, pasifGoster == false ? Vardiya.COLUMN_NAME_DURUM : null, Boolean.TRUE, Vardiya.class, session);
-			if (seciliSirket != null) {
+			if (seciliSirketId != null) {
+				Sirket seciliSirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, seciliSirketId, Sirket.class, session);
 				Departman seciliDepartman = seciliSirket.getDepartman();
 				for (Iterator iterator = vardiyalar.iterator(); iterator.hasNext();) {
 					Vardiya vardiya = (Vardiya) iterator.next();
@@ -706,12 +710,17 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		pasifGoster = false;
-		fillSaatler();
+		List<Sirket> pdksSirketList = ortakIslemler.getDepartmanPDKSSirketList(null, session);
+		if (pdksSirketIdList == null)
+			pdksSirketIdList = new ArrayList<SelectItem>();
+		else
+			pdksSirketIdList.clear();
+
+		for (Sirket sirket : pdksSirketList) {
+			pdksSirketIdList.add(new SelectItem(sirket.getId(), sirket.getAd()));
+		}
 		fillVardiyalar();
-		fillSablonlar();
-		pdksSirketList = ortakIslemler.getDepartmanPDKSSirketList(null, session);
-		if (authenticatedUser.isAdmin())
-			fillBagliOlduguDepartmanTanimList();
+
 	}
 
 	/**
@@ -888,22 +897,6 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		this.pasifGoster = pasifGoster;
 	}
 
-	public List<Sirket> getPdksSirketList() {
-		return pdksSirketList;
-	}
-
-	public void setPdksSirketList(List<Sirket> pdksSirketList) {
-		this.pdksSirketList = pdksSirketList;
-	}
-
-	public Sirket getSeciliSirket() {
-		return seciliSirket;
-	}
-
-	public void setSeciliSirket(Sirket seciliSirket) {
-		this.seciliSirket = seciliSirket;
-	}
-
 	public List<SelectItem> getDepartmanIdList() {
 		return departmanIdList;
 	}
@@ -926,5 +919,21 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 	public void setSirketIdList(List<SelectItem> sirketIdList) {
 		this.sirketIdList = sirketIdList;
+	}
+
+	public List<SelectItem> getPdksSirketIdList() {
+		return pdksSirketIdList;
+	}
+
+	public void setPdksSirketIdList(List<SelectItem> pdksSirketIdList) {
+		this.pdksSirketIdList = pdksSirketIdList;
+	}
+
+	public Long getSeciliSirketId() {
+		return seciliSirketId;
+	}
+
+	public void setSeciliSirketId(Long seciliSirketId) {
+		this.seciliSirketId = seciliSirketId;
 	}
 }

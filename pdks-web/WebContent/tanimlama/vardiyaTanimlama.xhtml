@@ -14,11 +14,11 @@
 					<a4j:outputPanel id="anaForm">
 						<h:panelGrid columns="1">
 							<c:if test="#{authenticatedUser.admin}">
-								<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.pdksSirketList.size() gt 0}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.pdksSirketIdList.size() gt 0}">
 									<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
-									<h:selectOneMenu value="#{vardiyaHome.seciliSirket}">
-										<s:selectItems var="comp" value="#{vardiyaHome.pdksSirketList}" label="#{comp.ad}" noSelectionLabel="Lütfen seçiniz" />
-										<s:convertEntity />
+									<h:selectOneMenu value="#{vardiyaHome.seciliSirketId}">
+											<f:selectItem itemLabel="Lütfen seçiniz" />
+											<f:selectItems value="#{vardiyaHome.pdksSirketIdList}" />
 										<a4j:support event="onchange" reRender="anaForm" status="ajaxStatus" ajaxSingle="true" action="#{vardiyaHome.fillVardiyalar()}" />
 									</h:selectOneMenu>
 								</s:decorate>
