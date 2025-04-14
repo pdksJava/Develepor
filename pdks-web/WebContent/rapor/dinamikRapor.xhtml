@@ -121,7 +121,7 @@
 							<a4j:outputPanel id="raporTable">
 								<ui:fragment rendered="#{not empty dinamikRaporHome.dinamikRaporAlanList}">
 									<a4j:commandButton status="ajaxStatus" value="Rapor Getir" action="#{dinamikRaporHome.fillDinamikRaporList()}" reRender="raporTable" />
- 
+
 									<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{dinamikRaporHome.excelDinamikRaporList()}" target="blank"
 										rendered="#{not empty dinamikRaporHome.dinamikRaporDataList}" />
 
@@ -131,25 +131,27 @@
 											<h:outputText value="#{dinamikRaporHome.seciliPdksDinamikRapor.aciklama}" rendered="#{not empty dinamikRaporHome.dinamikRaporDataList}" />
 										</f:facet>
 										<c:forEach items="#{dinamikRaporHome.dinamikRaporAlanList}" var="dinamikAlan">
-											<c:choose>
-												<c:when test="#{dinamikRaporHome.getFilterAlan(dinamikAlan)}">
-													<rich:column style="text-align :#{dinamikAlan.pdksDinamikRaporAlanHizala}"
-														filterBy="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" filterEvent="onkeyup">
-														<f:facet name="header">
-															<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(dinamikAlan.aciklama)}" />
-														</f:facet>
-														<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" />
-													</rich:column>
-												</c:when>
-												<c:otherwise>
-													<rich:column style="text-align :#{dinamikAlan.pdksDinamikRaporAlanHizala}">
-														<f:facet name="header">
-															<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(dinamikAlan.aciklama)}" />
-														</f:facet>
-														<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" />
-													</rich:column>
-												</c:otherwise>
-											</c:choose>
+
+											<c:if test="#{dinamikRaporHome.getFilterAlan(dinamikAlan)}">
+
+												<rich:column style="text-align :#{dinamikAlan.pdksDinamikRaporAlanHizala}"
+													filterBy="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" filterEvent="onkeyup">
+													<f:facet name="header">
+														<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(dinamikAlan.aciklama)}" />
+													</f:facet>
+													<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" />
+												</rich:column>
+											</c:if>
+
+											<rich:column style="text-align :#{dinamikAlan.pdksDinamikRaporAlanHizala}" rendered="#{dinamikRaporHome.getFilterAlan(dinamikAlan)==false}">
+												<f:facet name="header">
+													<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(dinamikAlan.aciklama)}" />
+												</f:facet>
+												<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" />
+											</rich:column>
+
+
+
 										</c:forEach>
 										<f:facet name="footer">
 											<rich:datascroller renderIfSinglePage="false" maxPages="5" />
