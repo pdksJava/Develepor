@@ -63,14 +63,15 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	private List<String> saatList = new ArrayList<String>();
 	private List<String> dakikaList = new ArrayList<String>();
 	private List<String> toleransDakikaList = new ArrayList<String>();
-	private List<SelectItem> vardiyaTipiList;
+	private List<SelectItem> vardiyaTipiList, departmanIdList, calismaSekliIdList, sirketIdList;
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), izinCalismaVardiyaList = new ArrayList<Vardiya>();
 	private List<VardiyaSablonu> sablonList = new ArrayList<VardiyaSablonu>();
-	private List<Departman> departmanList = new ArrayList<Departman>();
+	// private List<Departman> departmanList = new ArrayList<Departman>();
 	private List<CalismaModeli> calismaModeliList = new ArrayList<CalismaModeli>(), calismaModeliKayitliList = new ArrayList<CalismaModeli>();
 	private List<YemekIzin> yemekIzinList = new ArrayList<YemekIzin>(), yemekIzinKayitliList = new ArrayList<YemekIzin>();
-	private List<CalismaSekli> calismaSekliList;
-	private List<Sirket> sirketList, pdksSirketList;
+	// private List<CalismaSekli> calismaSekliList;
+	private List<Sirket> pdksSirketList;
+
 	private List<YemekIzin> yemekList;
 	private Sirket seciliSirket;
 	private int saat = 13, dakika = 0;
@@ -138,8 +139,9 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	 */
 	public void fillCalismaModeliList(Vardiya pdksVardiya) {
 		if (pdksVardiya.getId() == null || pdksVardiya.isCalisma()) {
-			Long pdksDepartmanId = pdksVardiya.getDepartman() != null ? pdksVardiya.getDepartman().getId() : null;
-			calismaModeliList = ortakIslemler.getCalismaModeliList(pdksVardiya.getSirket(), pdksDepartmanId, false, session);
+			Long pdksDepartmanId = pdksVardiya.getDepartmanId() != null ? pdksVardiya.getDepartmanId() : null;
+			Sirket sirket = pdksVardiya.getSirketId() != null ? new Sirket(pdksVardiya.getSirketId()) : null;
+			calismaModeliList = ortakIslemler.getCalismaModeliList(sirket, pdksDepartmanId, false, session);
 
 			if (pdksDepartmanId != null) {
 				for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
@@ -173,14 +175,20 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	}
 
 	public void fillBagliOlduguDepartmanTanimList() {
-		List tanimList = null;
+		List<Departman> tanimList = null;
+		if (departmanIdList == null)
+			departmanIdList = new ArrayList<SelectItem>();
+		else
+			departmanIdList.clear();
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("durum", Boolean.TRUE);
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
 			tanimList = ortakIslemler.fillDepartmanTanimList(session);
-
+			for (Departman departman : tanimList) {
+				departmanIdList.add(new SelectItem(departman.getId(), departman.getAciklama()));
+			}
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
@@ -190,7 +198,6 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			parametreMap = null;
 		}
 
-		setDepartmanList(tanimList);
 	}
 
 	/**
@@ -313,7 +320,14 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		pdksVardiya.setTipi(String.valueOf(pdksVardiya.getVardiyaTipi()));
 		fillCalismaSekilleri();
 		fillVardiyaTipiList(pdksVardiya);
-		sirketList = ortakIslemler.getDepartmanPDKSSirketList(pdksVardiya.getDepartman(), session);
+		if (sirketIdList == null)
+			sirketIdList = new ArrayList<SelectItem>();
+		else
+			sirketIdList.clear();
+		List<Sirket> sirketList = ortakIslemler.getDepartmanPDKSSirketList(pdksVardiya.getDepartman(), session);
+		for (Sirket sirket : sirketList) {
+			sirketIdList.add(new SelectItem(sirket.getId(), sirket.getAd()));
+		}
 	}
 
 	@Transactional
@@ -617,12 +631,19 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 	public void fillCalismaSekilleri() {
 		HashMap parametreMap = new HashMap();
+		if (calismaSekliIdList == null)
+			calismaSekliIdList = new ArrayList<SelectItem>();
+		else
+			calismaSekliIdList.clear();
 		try {
 			parametreMap.put("durum", Boolean.TRUE);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<CalismaSekli> list = pdksEntityController.getObjectByInnerObjectList(parametreMap, CalismaSekli.class);
-			setCalismaSekliList(list);
+			for (CalismaSekli calismaSekli : list) {
+				calismaSekliIdList.add(new SelectItem(calismaSekli.getId(), calismaSekli.getAdi()));
+			}
+
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
@@ -718,14 +739,6 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		this.vardiyaTipiList = vardiyaTipiList;
 	}
 
-	public List<Departman> getDepartmanList() {
-		return departmanList;
-	}
-
-	public void setDepartmanList(List<Departman> departmanList) {
-		this.departmanList = departmanList;
-	}
-
 	public Session getSession() {
 		return session;
 	}
@@ -772,14 +785,6 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 	public void setVardiyaList(List<Vardiya> vardiyaList) {
 		this.vardiyaList = vardiyaList;
-	}
-
-	public List<CalismaSekli> getCalismaSekliList() {
-		return calismaSekliList;
-	}
-
-	public void setCalismaSekliList(List<CalismaSekli> calismaSekliList) {
-		this.calismaSekliList = calismaSekliList;
 	}
 
 	public List<CalismaModeli> getCalismaModeliList() {
@@ -870,14 +875,6 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		this.pasifGoster = pasifGoster;
 	}
 
-	public List<Sirket> getSirketList() {
-		return sirketList;
-	}
-
-	public void setSirketList(List<Sirket> sirketList) {
-		this.sirketList = sirketList;
-	}
-
 	public List<Sirket> getPdksSirketList() {
 		return pdksSirketList;
 	}
@@ -892,5 +889,29 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 	public void setSeciliSirket(Sirket seciliSirket) {
 		this.seciliSirket = seciliSirket;
+	}
+
+	public List<SelectItem> getDepartmanIdList() {
+		return departmanIdList;
+	}
+
+	public void setDepartmanIdList(List<SelectItem> departmanIdList) {
+		this.departmanIdList = departmanIdList;
+	}
+
+	public List<SelectItem> getCalismaSekliIdList() {
+		return calismaSekliIdList;
+	}
+
+	public void setCalismaSekliIdList(List<SelectItem> calismaSekliIdList) {
+		this.calismaSekliIdList = calismaSekliIdList;
+	}
+
+	public List<SelectItem> getSirketIdList() {
+		return sirketIdList;
+	}
+
+	public void setSirketIdList(List<SelectItem> sirketIdList) {
+		this.sirketIdList = sirketIdList;
 	}
 }

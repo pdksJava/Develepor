@@ -42,6 +42,7 @@ public class Vardiya extends BaseObject {
 	public static final String COLUMN_NAME_SIRKET = "SIRKET_ID";
 	public static final String COLUMN_NAME_EKRAN_SIRA = "EKRAN_SIRA";
 	public static final String COLUMN_NAME_FCS_HARIC = "FCS_HARIC";
+	public static final String COLUMN_NAME_CALISMA_SEKLI = "CALISMA_SEKLI";
 
 	public static final char TIPI_CALISMA = ' ';
 	public static final char TIPI_HAFTA_TATIL = 'H';
@@ -54,6 +55,7 @@ public class Vardiya extends BaseObject {
 	public static final String GEBE_KEY = "g", SUA_KEY = "s", ICAP_KEY = "i", FMI_KEY = "f";
 
 	public static Date vardiyaKontrolTarih, vardiyaKontrolTarih2, vardiyaKontrolTarih3, vardiyaAySonuKontrolTarih;
+	private Long sirketId, calismaSekliId, departmanId;
 	private Sirket sirket;
 	private static Integer fazlaMesaiBasSaati = 2, intOffFazlaMesaiBasDakika = -60, intHaftaTatiliFazlaMesaiBasDakika = -60;
 	private Integer offFazlaMesaiBasDakika, haftaTatiliFazlaMesaiBasDakika;
@@ -110,7 +112,7 @@ public class Vardiya extends BaseObject {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JoinColumn(name = "CALISMA_SEKLI")
+	@JoinColumn(name = COLUMN_NAME_CALISMA_SEKLI, insertable = false, updatable = false)
 	@Fetch(FetchMode.JOIN)
 	public CalismaSekli getCalismaSekli() {
 		return calismaSekli;
@@ -120,11 +122,29 @@ public class Vardiya extends BaseObject {
 		this.calismaSekli = calismaSekli;
 	}
 
+	@Column(name = COLUMN_NAME_CALISMA_SEKLI)
+	public Long getCalismaSekliId() {
+		return calismaSekliId;
+	}
+
+	public void setCalismaSekliId(Long calismaSekliId) {
+		this.calismaSekliId = calismaSekliId;
+	}
+
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = COLUMN_NAME_SIRKET)
+	@JoinColumn(name = COLUMN_NAME_SIRKET, insertable = false, updatable = false)
 	@Fetch(FetchMode.JOIN)
 	public Sirket getSirket() {
 		return sirket;
+	}
+
+	@Column(name = COLUMN_NAME_SIRKET)
+	public Long getSirketId() {
+		return sirketId;
+	}
+
+	public void setSirketId(Long sirketId) {
+		this.sirketId = sirketId;
 	}
 
 	public void setSirket(Sirket sirket) {
@@ -168,7 +188,7 @@ public class Vardiya extends BaseObject {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = COLUMN_NAME_DEPARTMAN)
+	@JoinColumn(name = COLUMN_NAME_DEPARTMAN, insertable = false, updatable = false)
 	@Fetch(FetchMode.JOIN)
 	public Departman getDepartman() {
 		return departman;
@@ -176,6 +196,15 @@ public class Vardiya extends BaseObject {
 
 	public void setDepartman(Departman departman) {
 		this.departman = departman;
+	}
+
+	@Column(name = COLUMN_NAME_DEPARTMAN)
+	public Long getDepartmanId() {
+		return departmanId;
+	}
+
+	public void setDepartmanId(Long departmanId) {
+		this.departmanId = departmanId;
 	}
 
 	@Column(name = "YEMEK_SURESI")
