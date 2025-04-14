@@ -87,7 +87,7 @@
 												<f:selectItem itemLabel="Lütfen seçiniz" />
 												<f:selectItems value="#{parametre.secimList}" />
 
-												<a4j:support event="onchange" status="ajaxStatus" action="#{dinamikRaporHome.tesisDoldur(parametre)}" ajaxSingle="true"
+												<a4j:support event="onchange" status="ajaxStatus" action="#{dinamikRaporHome.yilAyDoldur(parametre)}" ajaxSingle="true"
 													reRender="girisler,raporTable" />
 
 
@@ -98,7 +98,7 @@
 												<ui:fragment rendered="#{parametre.yilSpinner}">
 													<rich:inputNumberSpinner styleClass="size10" inputStyle="width:20px" minValue="#{ortakIslemler.getParameterKey('sistemBaslangicYili')}"
 														maxValue="#{dinamikRaporHome.maxYil}" inputSize="1" value="#{parametre.value}">
-														<a4j:support event="onchange" status="ajaxStatus" action="#{dinamikRaporHome.dinamikRaporDataList.clear()}" ajaxSingle="true"
+														<a4j:support event="onchange" status="ajaxStatus" action="#{dinamikRaporHome.yilAyDoldur(parametre)}" ajaxSingle="true"
 															reRender="raporTable" />
 													</rich:inputNumberSpinner>
 												</ui:fragment>

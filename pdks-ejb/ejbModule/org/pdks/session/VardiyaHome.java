@@ -95,6 +95,19 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	}
 
 	public String izinVardiyalariGetir(Vardiya pdksVardiya) {
+		if (sirketIdList == null)
+			sirketIdList = new ArrayList<SelectItem>();
+		else
+			sirketIdList.clear();
+		Departman departman = null;
+		if (pdksVardiya.getDepartmanId() != null) {
+			departman = new Departman();
+			departman.setId(pdksVardiya.getDepartmanId());
+		}
+		List<Sirket> sirketList = ortakIslemler.getDepartmanPDKSSirketList(departman, session);
+		for (Sirket sirket : sirketList) {
+			sirketIdList.add(new SelectItem(sirket.getId(), sirket.getAd()));
+		}
 		fillCalismaModeliList(pdksVardiya);
 		return "";
 	}
