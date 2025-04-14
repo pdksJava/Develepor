@@ -235,7 +235,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 					pdksEntityController.saveOrUpdate(session, entityManager, pr);
 					flush = true;
 				}
-				++sonSira;
+				sonSira += 1;
 			}
 
 		}
@@ -256,7 +256,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 					pdksEntityController.saveOrUpdate(session, entityManager, pr);
 					flush = true;
 				}
-				++sonSira;
+				sonSira += 10;
 			}
 		}
 		if (flush)

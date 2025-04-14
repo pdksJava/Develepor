@@ -171,7 +171,6 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 				str = "left";
 			else if (hizala.equals(ENumAlanHizalaTipi.ORTALA.value()))
 				str = "center";
-
 		}
 		return str;
 	}
