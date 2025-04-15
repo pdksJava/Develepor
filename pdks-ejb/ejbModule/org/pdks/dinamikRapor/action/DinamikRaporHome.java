@@ -537,8 +537,10 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	 */
 	public String yilAyDoldur(PdksDinamikRaporParametre parametre) {
 		if (ayParametre != null && yilParametre != null && sirketParametre != null && parametre != null) {
-			if (parametre.getId().equals(ayParametre.getId()) || parametre.getId().equals(ayParametre.getId()))
-				dm = ortakIslemler.getSQLDenklestirmeAy((Integer) yilParametre.getValue(), (Integer) ayParametre.getValue(), session);
+			if (parametre.getId().equals(ayParametre.getId()) || parametre.getId().equals(ayParametre.getId())) {
+				int yil = Integer.parseInt("" + yilParametre.getValue()), ay = Integer.parseInt("" + ayParametre.getValue());
+				dm = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
+			}
 		}
 		if (sirketParametre != null || tesisParametre != null)
 			tesisDoldur(sirketParametre);
@@ -699,7 +701,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 						sirketParametre = pr;
 						++adet;
 						if (yilParametre != null && ayParametre != null) {
-							dm = ortakIslemler.getSQLDenklestirmeAy((Integer) yilParametre.getValue(), (Integer) ayParametre.getValue(), session);
+							int yil = Integer.parseInt("" + yilParametre.getValue()), ay = Integer.parseInt("" + ayParametre.getValue());
+							dm = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
 							List<SelectItem> sirketler = fazlaMesaiOrtakIslemler.getFazlaMesaiMudurSirketList(null, dm != null ? new AylikPuantaj(dm) : null, false, false, session);
 							if (sirketler != null && sirketler.isEmpty() == false)
 								list = sirketler;
@@ -731,8 +734,15 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 							list = new ArrayList<SelectItem>();
 						tesisIdList = list;
 					}
-					if (paramValue != null)
-						pr.setValue(Long.parseLong("" + paramValue));
+					if (paramValue != null) {
+						try {
+							pr.setValue(new BigDecimal("" + paramValue).longValue());
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+
+					}
+
 					if (list != null) {
 						if (!list.isEmpty()) {
 							if (list.size() == 1) {
