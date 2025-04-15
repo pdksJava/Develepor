@@ -564,13 +564,13 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			}
 			if (parametre.isSirketBilgisi()) {
 				Sirket sirket = null;
-				Long sirketId = parametre.getValue() != null ? Long.parseLong((String) parametre.getValue()) : null;
+				Long sirketId = parametre.getValue() != null ? new BigDecimal("" + parametre.getValue()).longValue() : null;
 				if (tesisParametre != null) {
 					if (tesisIdList == null)
 						tesisIdList = new ArrayList<SelectItem>();
 					else
 						tesisIdList.clear();
-					Long oncekiId = tesisParametre.getValue() != null ? Long.parseLong(tesisParametre.getValue().toString()) : null;
+					Long oncekiId = tesisParametre.getValue() != null ? new BigDecimal("" + tesisParametre.getValue()).longValue() : null;
 					tesisParametre.setValue(null);
 					if (sirketId != null) {
 						sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
@@ -613,7 +613,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 					secimList = ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
 				}
 				if (secimList != null) {
-					Long oncekiId = sirketParametre.getValue() != null ? Long.parseLong(sirketParametre.getValue().toString()) : null;
+					Long oncekiId = sirketParametre.getValue() != null ? new BigDecimal("" + sirketParametre.getValue()).longValue() : null;
 					sirketParametre.setSecimList(secimList);
 					if (secimList.size() == 1)
 						sirketParametre.setValue("" + secimList.get(0).getValue());
@@ -714,7 +714,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 						if (list == null) {
 							AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
 							if (paramValue != null)
-								sirketId = Long.parseLong("" + paramValue);
+								sirketId = new BigDecimal("" + paramValue).longValue();
 							aramaSecenekleri.setSirketId(sirketId);
 							list = ortakIslemler.setAramaSecenekSirketVeTesisData(aramaSecenekleri, basTarih, bitTarih, false, session);
 						}
