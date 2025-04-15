@@ -558,6 +558,10 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		if ((sirketParametre != null || tesisParametre != null) && parametre != null) {
 			Date basTarih = basTarihParametre != null ? basTarihParametre.getTarihDeger() : PdksUtil.convertToJavaDate(PdksUtil.getSistemBaslangicYili() + "0101", "yyyyMMdd");
 			Date bitTarih = bitTarihParametre != null ? bitTarihParametre.getTarihDeger() : new Date();
+			if (yilParametre != null && ayParametre != null && dm == null) {
+				basTarih = PdksUtil.convertToJavaDate(String.valueOf(new BigDecimal("" + yilParametre.getValue()).intValue() * 100 + new BigDecimal("" + ayParametre.getValue()).intValue()) + "01", "yyyyMMdd");
+				bitTarih = PdksUtil.tariheGunEkleCikar(PdksUtil.tariheAyEkleCikar(basTarih, 1), -1);
+			}
 			if (parametre.isSirketBilgisi()) {
 				Sirket sirket = null;
 				Long sirketId = parametre.getValue() != null ? Long.parseLong((String) parametre.getValue()) : null;
