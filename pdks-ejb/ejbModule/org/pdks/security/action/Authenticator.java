@@ -109,9 +109,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 			ortakIslemler.sifremiUnuttum(mesajList, userName, session);
 
 		} else {
-
 			String password = credentials.getPassword();
-
 			Map<String, String> map = null;
 			try {
 				map = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
@@ -315,21 +313,9 @@ public class Authenticator implements IAuthenticator, Serializable {
 				// sonuc = getSonDurum(sonuc, userName, loginUser);
 				// return sonuc;
 			} catch (Exception ex) {
-				logger.debug("Hata : " + ex.getMessage());
-
-				try {
-					List perList = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_ID, 1L, Personel.class, session);
-					logger.info(loginUser.getUsername() + " kullanıcı bilgisi okundu.");
-					if (!perList.isEmpty())
-						logger.error(perList.size() + " " + PdksUtil.getCurrentTimeStampStr());
-				} catch (Exception e) {
-					logger.error("PDKS hata in : \n");
-					e.printStackTrace();
-					logger.error("PDKS hata out : " + e.getMessage());
-					logger.debug("Hata : " + e.getMessage());
-				}
-				logger.debug("authenticating " + username);
-
+				mesajList.clear();
+				String str = ex.getMessage() != null ? ex.getMessage() : " Hata oluştu! " + ex.getClass().getName();
+				addMessageAvailableError(str + " [ " + userName + " ]");
 			}
 		}
 		sonuc = getSonDurum(sonuc, userName, loginUser);
