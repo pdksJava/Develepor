@@ -194,7 +194,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 			for (PdksDinamikRaporParametre pr : dinamikRaporParametreList) {
 				sonSira = pr.getSira();
 			}
-			parametre.setSira(sonSira + 1);
+			parametre.setSira(sonSira + 10);
 		}
 		seciliPdksDinamikRaporParametre = parametre;
 		return "";
