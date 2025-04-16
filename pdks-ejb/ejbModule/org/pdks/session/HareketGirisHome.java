@@ -254,7 +254,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 									if (i == 2 && cell.getDateCellValue() != null)
 										map.put(i, cell.getDateCellValue());
 									else
-										map.put(i, map.get(-1));
+										map.put(i, cell.getNumericCellValue());
 									break;
 								case Cell.CELL_TYPE_BOOLEAN:
 
@@ -338,7 +338,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 						vardiyaDate = tarih;
 
 					}
-					VardiyaGun vg = new VardiyaGun(personel, null, vardiyaDate);
+					VardiyaGun vg = new VardiyaGun(personel, null, PdksUtil.getDate(vardiyaDate));
 					Long kapi = null;
 					if (map.containsKey(3)) {
 						try {
