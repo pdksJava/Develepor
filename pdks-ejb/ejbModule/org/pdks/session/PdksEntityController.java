@@ -655,7 +655,7 @@ public class PdksEntityController implements Serializable {
 	 * @throws Exception
 	 */
 	public List execFNList(LinkedHashMap<String, Object> veriMap, StringBuffer sp) throws Exception {
- 		List sonucList = null;
+		List sonucList = null;
 		boolean manuelReadUnCommitted = false;
 		try {
 			if (veriMap.containsKey("readUnCommitted")) {
@@ -669,7 +669,7 @@ public class PdksEntityController implements Serializable {
 				queryReadUnCommitted.executeUpdate();
 			}
 			SQLQuery query = prepareFunction(veriMap, sp);
- 			sonucList = query.list();
+			sonucList = query.list();
 			if (queryReadUnCommitted != null) {
 				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
 				queryReadUnCommitted.executeUpdate();
@@ -1497,43 +1497,33 @@ public class PdksEntityController implements Serializable {
 	 * @return
 	 */
 	public Object getSQLParamByFieldObject(String tableName, String fieldName, Object value, Class class1, Session session) {
-		Object object = null;
-		try {
-			HashMap parametreMap = new HashMap();
-			StringBuffer sb = new StringBuffer();
-			sb.append("select TOP 1 * from " + tableName + " " + selectLOCK);
-			if (value != null) {
-				sb.append(" where " + fieldName + " = :u");
-				parametreMap.put("u", value);
-			} else
-				sb.append(" where " + fieldName + "  is null");
+		HashMap parametreMap = new HashMap();
+		StringBuffer sb = new StringBuffer();
+		sb.append("select TOP 1 * from " + tableName + " " + selectLOCK);
+		if (value != null) {
+			sb.append(" where " + fieldName + " = :u");
+			parametreMap.put("u", value);
+		} else
+			sb.append(" where " + fieldName + "  is null");
 
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List list = null;
-			try {
-				list = getObjectBySQLList(sb, parametreMap, class1);
-			} catch (Exception e) {
+		if (session != null)
+			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List list = getObjectBySQLList(sb, parametreMap, class1);
 
+		Object object = list != null && !list.isEmpty() ? list.get(0) : null;
+		if (object == null && class1 != null) {
+			StringBuffer sb1 = new StringBuffer();
+			if (authenticatedUser != null && PdksUtil.hasStringValue(authenticatedUser.getCalistigiSayfa())) {
+				sb1.append(authenticatedUser.getCalistigiSayfa() + "\n");
 			}
-			object = list != null && !list.isEmpty() ? list.get(0) : null;
-			if (object == null && class1 != null) {
-				StringBuffer sb1 = new StringBuffer();
-				if (authenticatedUser != null && PdksUtil.hasStringValue(authenticatedUser.getCalistigiSayfa())) {
-					sb1.append(authenticatedUser.getCalistigiSayfa() + "\n");
-				}
-				sb1.append(sb.toString() + " --> " + value + " " + class1.getName());
-				if (value != null)
-					logger.debug(sb1.toString());
-				sb1 = null;
-			}
-			sb = null;
-			list = null;
-			parametreMap = null;
-
-		} catch (Exception e) {
-			logger.error(tableName + " --> " + fieldName + " : " + value + " " + class1.getName() + "\n" + e.getMessage());
+			sb1.append(sb.toString() + " --> " + value + " " + class1.getName());
+			if (value != null)
+				logger.debug(sb1.toString());
+			sb1 = null;
 		}
+		sb = null;
+		list = null;
+		parametreMap = null;
 
 		return object;
 	}
