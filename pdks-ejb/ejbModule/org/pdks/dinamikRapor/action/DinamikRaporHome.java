@@ -570,7 +570,6 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				bitTarih = PdksUtil.tariheGunEkleCikar(PdksUtil.tariheAyEkleCikar(basTarih, 1), -1);
 			}
 			Long oncekiTesisId = tesisParametre.getValue() != null ? new BigDecimal("" + tesisParametre.getValue()).longValue() : null;
-			Long oncekiBolumId = bolumParametre != null && bolumParametre.getValue() != null ? new BigDecimal("" + bolumParametre.getValue()).longValue() : null;
 			if (parametre.isSirketBilgisi()) {
 				Sirket sirket = null;
 				Long sirketId = parametre.getValue() != null ? new BigDecimal("" + parametre.getValue()).longValue() : null;
@@ -606,11 +605,11 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 											tesisParametre.setValue("" + oncekiTesisId);
 									}
 								}
- 								tesisParametre.setSecimList(list);
+								tesisParametre.setSecimList(list);
 							}
 						}
 						if (bolumParametre != null && (sirket.getTesisDurum().booleanValue() == false || tesisParametre.getValue() != null))
-							bolumDoldur(basTarih, bitTarih, oncekiBolumId, sirket);
+							bolumDoldur(basTarih, bitTarih, sirket);
 
 					}
 				}
@@ -648,10 +647,10 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	/**
 	 * @param basTarih
 	 * @param bitTarih
-	 * @param oncekiBolumId
 	 * @param sirket
 	 */
-	private void bolumDoldur(Date basTarih, Date bitTarih, Long oncekiBolumId, Sirket sirket) {
+	private void bolumDoldur(Date basTarih, Date bitTarih, Sirket sirket) {
+		Long oncekiBolumId = bolumParametre != null && bolumParametre.getValue() != null ? new BigDecimal("" + bolumParametre.getValue()).longValue() : null;
 		Long sirketId = sirket != null ? sirket.getId() : null;
 		List<SelectItem> bolumList = null;
 		if (dm != null && sirketId != null) {
