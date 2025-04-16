@@ -10565,7 +10565,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 				}
 			}
-
+			Personel personel = null;
 			if (dateStr != null && perIdStr != null) {
 				setDonusAdres(planGirisiDurum ? linkAdres : "");
 				if (linkBordroAdres != null)
@@ -10579,7 +10579,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				islemYapiliyor = false;
 				if (personelView != null && personelView.getPdksPersonel() != null) {
 					doldurStr = "F";
-					Personel personel = personelView.getPdksPersonel();
+					personel = personelView.getPdksPersonel();
 					if (personel.getEkSaha4() != null) {
 						ekSaha4Id = personel.getEkSaha4().getId();
 						aramaSecenekleri.setEkSaha4Id(ekSaha4Id);
@@ -10612,9 +10612,20 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				fillSirketList();
 				if (sirketId != null && (aramaSecenekleri.getSirketIdList() == null || aramaSecenekleri.getSirketIdList().size() != 1))
 					aramaSecenekleri.setSirketId(sirketId);
+				if (personel != null && personel.getTesis() != null)
+					aramaSecenekleri.setTesisId(personel.getTesis().getId());
 				tesisDoldur(false);
+				if (personel != null && personel.getEkSaha3() != null)
+					aramaSecenekleri.setEkSaha3Id(personel.getEkSaha3().getId());
+				if (personel != null && personel.getEkSaha4() != null) {
+					ekSaha4Id = personel.getEkSaha4().getId();
+					aramaSecenekleri.setEkSaha4Id(ekSaha4Id);
+				}
 				bolumDoldur();
+				if (personel != null)
+					sicilNo = personel.getPdksSicilNo();
 				if (doldurStr.equals("F")) {
+
 					planGirisiDurum = planGirisiDurum && aramaSecenekleri.getEkSaha3Id() != null;
 					if (planGirisiDurum)
 						fillStartAylikVardiyaPlanList();
