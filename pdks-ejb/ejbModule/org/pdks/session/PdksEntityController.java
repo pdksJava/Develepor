@@ -1516,7 +1516,7 @@ public class PdksEntityController implements Serializable {
 	public Object getSQLParamByFieldObject(String tableName, String fieldName, Object value, Class class1, Session session) {
 		HashMap parametreMap = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("select TOP 1 * from " + tableName + " " + selectLOCK);
+		sb.append("select top 1 * from " + tableName + " " + selectLOCK);
 		if (value != null) {
 			sb.append(" where " + fieldName + " = :u");
 			parametreMap.put("u", value);
