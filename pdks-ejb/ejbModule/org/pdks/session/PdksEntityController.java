@@ -1425,12 +1425,9 @@ public class PdksEntityController implements Serializable {
 
 				if (showSQL)
 					logger.info(sql + " in " + PdksUtil.convertToDateString(new Date(), PdksUtil.getDateFormat() + " H:mm:ss"));
-				try {
-					list = query.list();
-				} catch (Exception e) {
-					logger.error(sql);
-					list = null;
-				}
+
+				list = query.list();
+
 				if (queryReadUnCommitted != null) {
 					queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
 					queryReadUnCommitted.executeUpdate();

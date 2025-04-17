@@ -314,8 +314,9 @@ public class Authenticator implements IAuthenticator, Serializable {
 				// return sonuc;
 			} catch (Exception ex) {
 				mesajList.clear();
-				String str = ex.getMessage() != null ? ex.getMessage() : " Hata oluştu! " + ex.getClass().getName();
+				String str = (ex.getMessage() != null ? ex.getMessage() : "Hata oluştu! ") + " " + ex.getClass().getName();
 				addMessageAvailableError(str + " [ " + userName + " ]");
+				sonuc = false;
 			}
 		}
 		sonuc = getSonDurum(sonuc, userName, loginUser);
@@ -350,17 +351,24 @@ public class Authenticator implements IAuthenticator, Serializable {
 	 */
 	private User getKullanici(String userName, String fieldName) {
 		User user = null;
-		if (userName.indexOf("%") > 0) {
-			StringBuffer sb = new StringBuffer();
-			sb.append("select S.* from " + User.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
-			sb.append(" where S." + fieldName + " like :userName");
-			HashMap fields = new HashMap();
-			fields.put("userName", userName);
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			user = (User) pdksEntityController.getObjectBySQL(sb, fields, User.class);
-		} else
-			user = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, fieldName, userName, User.class, session);
+		try {
+			if (userName.indexOf("%") > 0) {
+				StringBuffer sb = new StringBuffer();
+				sb.append("select S.* from " + User.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+				sb.append(" where S." + fieldName + " like :userName");
+				HashMap fields = new HashMap();
+				fields.put("userName", userName);
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				user = (User) pdksEntityController.getObjectBySQL(sb, fields, User.class);
+			} else
+				user = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, fieldName, userName, User.class, session);
+
+		} catch (Exception ex) {
+			mesajList.clear();
+			String str = (ex.getMessage() != null ? ex.getMessage() : "Hata oluştu! ") + " " + ex.getClass().getName();
+			addMessageAvailableError(str + " [ " + userName + " ]");
+		}
 
 		if (user != null) {
 			Personel personel = user.getPdksPersonel();
