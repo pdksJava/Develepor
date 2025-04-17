@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
@@ -1122,8 +1123,24 @@ public class PdksEntityController implements Serializable {
 	 * @return
 	 */
 	public Object getObjectBySQL(StringBuffer sb, HashMap fields, Class class1) {
+		StringBuffer sbOrj = new StringBuffer(sb.toString());
+		HashMap fieldsOrj = new HashMap();
+		fieldsOrj.putAll(fields);
+		try {
+			String str = sb.toString().toLowerCase(Locale.ENGLISH);
+			if (str.indexOf(" top ") < 1 && str.startsWith("select ")) {
+				str = sb.toString();
+				String str1 = str.substring(0, 7) + "top 1 ", str2 = str.substring(7);
+				sb = new StringBuffer(str1 + "" + str2);
+			}
+		} catch (Exception e) {
+		}
 		List list = getObjectBySQLList(sb, fields, class1);
+		if (list == null)
+			list = getObjectBySQLList(sbOrj, fieldsOrj, class1);
 		Object object = list != null && !list.isEmpty() ? list.get(0) : null;
+		fieldsOrj = null;
+		sb = new StringBuffer(sbOrj.toString());
 		return object;
 	}
 
