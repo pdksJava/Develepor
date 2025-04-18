@@ -94,7 +94,7 @@
 												<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 											</f:facet>
 										</rich:dataTable>
-										<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{tanimHome.tanimExcel('P',tanimHome.genelTanim.aciklama)}"
+										<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" rendered="#{not empty tanimHome.tanimList}" action="#{tanimHome.tanimExcel('P',tanimHome.genelTanim.aciklama)}"
 											target="blank">
 											<a4j:support event="oncomplete" status="ajaxStatus" process="table" reRender="table" />
 										</h:commandLink>
