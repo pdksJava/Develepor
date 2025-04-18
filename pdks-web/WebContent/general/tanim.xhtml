@@ -27,7 +27,7 @@
 									</s:decorate>
 									<a4j:outputPanel id="anaTable">
 
-										<rich:dataTable rowClasses="acik,koyu" value="#{tanimHome.tanimList}" rendered="#{tanimHome.genelTanimId!= null}" var="tanim" rows="20"
+										<rich:dataTable rowClasses="acik,koyu" value="#{tanimHome.tanimList}" rendered="#{tanimHome.genelTanim!= null}" var="tanim" rows="20"
 											rowKeyVar="row" id="table">
 											<f:facet name="header">
 												<h:outputText value="#{tanimHome.genelTanim.aciklama} Tanımları" />
@@ -102,7 +102,7 @@
 
 
 										<h:panelGrid columns="1" id="ekleTanim">
-											<s:decorate rendered="#{tanimHome.genelTanim != null and (tanimHome.genelTanim.guncelle or authenticatedUser.admin)}"
+											<s:decorate rendered="#{tanimHome.genelTanimId != null and (tanimHome.genelTanim.guncelle or authenticatedUser.admin)}"
 												template="/layout/edit.xhtml">
 												<a4j:commandButton status="ajaxStatus" value="#{tanimHome.genelTanim.aciklama} Ekle" action="#{tanimHome.tanimEkle(null)}"
 													oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" ajaxSingle="true" id="parentEkle">

@@ -76,6 +76,7 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		genelTanim = new Tanim();
+		genelTanimId = null;
 		setSelectedParentTanim(new Tanim());
 		setTanimList(new ArrayList<Tanim>());
 		setChildTanimList(new ArrayList<Tanim>());
@@ -184,7 +185,8 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 		if (genelTanimId != null) {
 			genelTanim = ortakIslemler.getTanimById(genelTanimId, session);
 			Tanim childGenelTanim = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_PARENT_ID, genelTanimId, Tanim.class, session);
-			genelTanim.setChildGenelTanim(childGenelTanim);
+			if (childGenelTanim != null && childGenelTanim.getTipi().equals(genelTanim.getTipi()))
+				genelTanim.setChildGenelTanim(childGenelTanim);
 			if (genelTanim.getKodu() != null) {
 				HashMap fields = new HashMap();
 				fields.put("tipi", genelTanim.getKodu());
