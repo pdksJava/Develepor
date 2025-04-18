@@ -11,21 +11,23 @@
 		<h:form>
 
 			<rich:panel header="#{ortakIslemler.getMenuUserAdi(tanimHome.session,'tanim')}">
-				<a4j:outputPanel ajaxRendered="true" id="anaForm">
+				<a4j:outputPanel id="anaForm">
 					<TABLE style="vertical-align: top;" width="90%">
 						<TR>
 							<TD valign="top" width="50%"><h:panelGrid columns="1" style="vertical-align: top;">
 									<s:decorate template="/layout/edit.xhtml" style="vertical-align: top;">
 										<ui:define name="label">Tanım Tipi</ui:define>
-										<h:selectOneMenu id="genelTanim" value="#{tanimHome.genelTanim}">
-											<s:selectItems var="tanim" value="#{tanimHome.genelTanimList}" label="#{tanim.aciklama}" noSelectionLabel="Lütfen seçiniz" />
-											<a4j:support event="onchange" reRender="anaTable,childTanimGroup" status="ajaxStatus" ajaxSingle="true" />
-											<s:convertEntity />
+										<h:selectOneMenu id="genelTanim" value="#{tanimHome.genelTanimId}">
+											<f:selectItem itemLabel="Lütfen seçiniz" />
+											<f:selectItems value="#{tanimHome.genelTanimIdList}" />
+											<a4j:support event="onchange" reRender="anaTable,childTanimGroup" action="#{tanimHome.fillTanimList()}" status="ajaxStatus"
+												ajaxSingle="true" />
+
 										</h:selectOneMenu>
 									</s:decorate>
 									<a4j:outputPanel id="anaTable">
 
-										<rich:dataTable rowClasses="acik,koyu" value="#{tanimHome.tanimList}" rendered="#{tanimHome.genelTanim != null}" var="tanim" rows="20"
+										<rich:dataTable rowClasses="acik,koyu" value="#{tanimHome.tanimList}" rendered="#{tanimHome.genelTanimId!= null}" var="tanim" rows="20"
 											rowKeyVar="row" id="table">
 											<f:facet name="header">
 												<h:outputText value="#{tanimHome.genelTanim.aciklama} Tanımları" />

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
@@ -47,11 +48,11 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 	OrtakIslemler ortakIslemler;
 
 	public static String sayfaURL = "tanim";
-	private Tanim genelTanim = new Tanim();
-	private List<Tanim> genelTanimList = new ArrayList<Tanim>();
+	private Long genelTanimId;
+	private List<SelectItem> genelTanimIdList = new ArrayList<SelectItem>();
 	private List<Tanim> tanimList = new ArrayList<Tanim>();
 	private List<Tanim> childTanimList = new ArrayList<Tanim>();
-	private Tanim selectedParentTanim = new Tanim();
+	private Tanim selectedParentTanim = new Tanim(), genelTanim;
 	private Session session;
 
 	@Override
@@ -69,32 +70,25 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 		super.create();
 	}
 
-	public Tanim getGenelTanim() {
-		/*
-		 * HashMap parametreMap = new HashMap(); parametreMap.put("id",new Long("4")); List<Tanim> genelTanimList = pdksEntityController.getObjectByInnerObjectList( parametreMap, Tanim.class, ""); genelTanim=genelTanimList.get(0);
-		 */
-		return genelTanim;
-	}
-
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
-		setGenelTanim(new Tanim());
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		genelTanim = new Tanim();
 		setSelectedParentTanim(new Tanim());
 		setTanimList(new ArrayList<Tanim>());
 		setChildTanimList(new ArrayList<Tanim>());
 		fiilGenelTanimList();
 	}
 
-	public void setGenelTanim(Tanim genelTanim) {
-		this.genelTanim = genelTanim;
-
-		if (genelTanim != null)
-			getTanimByGenelTanim(genelTanim);
+	public String fillTanimList() {
+		if (genelTanimId != null)
+			getTanimByGenelTanim();
 		else
+
 			setTanimList(new ArrayList<Tanim>());
+		return "";
 	}
 
 	/**
@@ -183,26 +177,47 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 		return baos;
 	}
 
-	private void getTanimByGenelTanim(Tanim genelTanim) {
+	/**
+	 * @param genelTanim
+	 */
+	private void getTanimByGenelTanim() {
+		if (genelTanimId != null) {
+			genelTanim = ortakIslemler.getTanimById(genelTanimId, session);
+			Tanim childGenelTanim = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_PARENT_ID, genelTanimId, Tanim.class, session);
+			genelTanim.setChildGenelTanim(childGenelTanim);
+			if (genelTanim.getKodu() != null) {
+				HashMap fields = new HashMap();
+				fields.put("tipi", genelTanim.getKodu());
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				try {
+					tanimList = pdksEntityController.getObjectByInnerObjectList(fields, Tanim.class);
+					if (tanimList.size() > 1)
+						tanimList = PdksUtil.sortObjectStringAlanList(tanimList, "getKodu", null);
 
-		if (genelTanim.getKodu() != null) {
-			HashMap fields = new HashMap();
-			fields.put("tipi", genelTanim.getKodu());
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			try {
-				tanimList = pdksEntityController.getObjectByInnerObjectList(fields, Tanim.class);
-				if (tanimList.size() > 1)
-					tanimList = PdksUtil.sortObjectStringAlanList(tanimList, "getKodu", null);
-			} catch (Exception e) {
-				logger.error("PDKS hata in : \n");
-				e.printStackTrace();
-				logger.error("PDKS hata out : " + e.getMessage());
+					List<Tanim> pasifList = new ArrayList<Tanim>();
+					for (Iterator iterator = tanimList.iterator(); iterator.hasNext();) {
+						Tanim tanim = (Tanim) iterator.next();
+						if (tanim.getDurum().booleanValue() == false) {
+							pasifList.add(tanim);
+							iterator.remove();
+						}
 
+					}
+					if (!pasifList.isEmpty())
+						tanimList.addAll(pasifList);
+					pasifList = null;
+				} catch (Exception e) {
+					logger.error("PDKS hata in : \n");
+					e.printStackTrace();
+					logger.error("PDKS hata out : " + e.getMessage());
+
+				}
+
+				fields = null;
 			}
-
-			fields = null;
-		}
+		} else
+			genelTanim = new Tanim();
 		fillChildTanimList(null);
 	}
 
@@ -237,7 +252,7 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 	public String save() {
 		Tanim tanim = getInstance();
 		tanimKaydet(tanim);
-		getTanimByGenelTanim(genelTanim);
+		getTanimByGenelTanim();
 		return "";
 
 	}
@@ -293,13 +308,17 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 				bagliOlmayanGenelTanimMap.get(childGenelTanim.getParentTanim().getId()).setChildGenelTanim(childGenelTanim);
 		}
 		list = PdksUtil.sortObjectStringAlanList(new ArrayList<Tanim>(bagliOlmayanGenelTanimMap.values()), "getAciklama", null);
+		if (genelTanimIdList == null)
+			genelTanimIdList = new ArrayList<SelectItem>();
+		else
+			genelTanimIdList.clear();
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			Tanim tanim = (Tanim) iterator.next();
-			if (tanim.getDurum().equals(Boolean.FALSE)) {
-				iterator.remove();
+			if (tanim.getDurum().equals(Boolean.TRUE)) {
+				genelTanimIdList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
 			}
 		}
-		setGenelTanimList(list);
+
 	}
 
 	public List<Tanim> getTanimList() {
@@ -342,15 +361,6 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 		logger.debug(id.getAciklama());
 	}
 
-	public void setGenelTanimList(List<Tanim> genelTanimList) {
-		this.genelTanimList = genelTanimList;
-	}
-
-	public List<Tanim> getGenelTanimList() {
-
-		return genelTanimList;
-	}
-
 	public void setTanimList(List<Tanim> tanimList) {
 		this.tanimList = tanimList;
 	}
@@ -377,5 +387,29 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 
 	public static void setSayfaURL(String sayfaURL) {
 		TanimHome.sayfaURL = sayfaURL;
+	}
+
+	public List<SelectItem> getGenelTanimIdList() {
+		return genelTanimIdList;
+	}
+
+	public void setGenelTanimIdList(List<SelectItem> genelTanimIdList) {
+		this.genelTanimIdList = genelTanimIdList;
+	}
+
+	public Long getGenelTanimId() {
+		return genelTanimId;
+	}
+
+	public void setGenelTanimId(Long genelTanimId) {
+		this.genelTanimId = genelTanimId;
+	}
+
+	public Tanim getGenelTanim() {
+		return genelTanim;
+	}
+
+	public void setGenelTanim(Tanim genelTanim) {
+		this.genelTanim = genelTanim;
 	}
 }
