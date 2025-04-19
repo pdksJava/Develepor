@@ -2888,6 +2888,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			List<User> userIKList = null;
 			boolean devam = true;
 			if (hataIKMap != null) {
+				int hataIKMapSize = hataIKMap.size();
 				List<Long> userIdList = new ArrayList<Long>();
 				if (!hataIKMap.containsKey(TIPI_IK_ADMIN) && ikUserMap.containsKey(Role.TIPI_IK)) {
 					HashMap<String, List<User>> map1 = ikUserMap.get(Role.TIPI_IK);
@@ -2911,8 +2912,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 						}
 					}
 					if (!userList.isEmpty()) {
-						if (perNoList.size() == 1 && userIdList.isEmpty() == false) {
+						if ((perNoList.size() == 1 || hataIKMapSize == 1) && userIdList.isEmpty() == false) {
 							userList.addAll(userIKList);
+							userIKList.clear();
 							devam = false;
 						}
 						List hataIKList = dataHataMap.get("hataList");
@@ -5156,6 +5158,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			MailStatu statu = null;
 			boolean devam = true;
 			if (hataIKMap != null) {
+				int hataIKMapSize = hataIKMap.size();
 				List<Long> userIdList = new ArrayList<Long>();
 				if (!hataIKMap.containsKey(TIPI_IK_ADMIN) && ikUserMap.containsKey(Role.TIPI_IK)) {
 					HashMap<String, List<User>> map1 = ikUserMap.get(Role.TIPI_IK);
@@ -5176,11 +5179,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 							User user = (User) iterator.next();
 							if (userIdList.contains(user.getId()))
 								iterator.remove();
+							else
+								logger.debug(key + " " + user.getUsername());
 						}
 					}
 					if (!userList.isEmpty()) {
-						if (hataList.size() == 1 && userIdList.isEmpty() == false) {
+						if ((hataList.size() == 1 || hataIKMapSize == 1) && userIdList.isEmpty() == false) {
 							userList.addAll(userIKList);
+							userIKList.clear();
 							devam = false;
 						}
 						List hataIKList = dataHataMap.get("hataList");
@@ -5356,6 +5362,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 */
 	private MailStatu personelHataMailGonder(List<User> userList, List<PersonelERP> personelList, HashMap<String, PersonelERP> orjPersonelERPMap, List<PersonelERP> hataList, TreeMap<String, ERPPersonel> personelERPHataliMap, TreeMap<String, Sirket> sirketMap, boolean mailBosGonder) {
 		MailStatu mailStatu = null;
+		// boolean testDurum = getTestDurum();
+		// if (testDurum)
+		// hataList.clear();
 		if (!hataList.isEmpty()) {
 			if (mailBosGonder)
 				logger.info("Hata kontrol ediliyor!");
