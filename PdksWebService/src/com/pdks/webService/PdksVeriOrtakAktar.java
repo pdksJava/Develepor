@@ -2913,9 +2913,13 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 					if (!userList.isEmpty()) {
 						if ((perNoList.size() == 1 || hataIKMapSize == 1) && userIdList.isEmpty() == false) {
-							userList.addAll(userIKList);
-							userIKList.clear();
-							devam = false;
+							if (userIKList != null) {
+								if (!userIKList.isEmpty())
+									userList.addAll(userIKList);
+								userIKList.clear();
+								devam = false;
+							}
+
 						}
 						List hataIKList = dataHataMap.get("hataList");
 						izinHataliMailGonder(userList, hataIKList, personelMap, izinCok);
@@ -5185,9 +5189,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 					if (!userList.isEmpty()) {
 						if ((hataList.size() == 1 || hataIKMapSize == 1) && userIdList.isEmpty() == false) {
-							userList.addAll(userIKList);
-							userIKList.clear();
-							devam = false;
+							if (userIKList != null) {
+								if (!userIKList.isEmpty())
+									userList.addAll(userIKList);
+								userIKList.clear();
+								devam = false;
+							}
 						}
 						List hataIKList = dataHataMap.get("hataList");
 						personelHataMailGonder(userList, personelList, orjPersonelERPMap, hataIKList, personelERPHataliMap, sirketMap, false);
