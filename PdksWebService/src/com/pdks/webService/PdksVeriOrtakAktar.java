@@ -3551,6 +3551,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 		List<CalismaModeli> modelList = new ArrayList<CalismaModeli>();
 		List<VardiyaSablonu> sablonList = new ArrayList<VardiyaSablonu>();
 		String tumPersonelDenklestirme = mailMap.containsKey("tumPersonelDenklestirme") ? (String) mailMap.get("tumPersonelDenklestirme") : "";
+		String uygulamaBordro = mailMap.containsKey("uygulamaBordro") ? (String) mailMap.get("uygulamaBordro") : "Bordro Uygulaması ";
+
 		for (String personelNo : personelList) {
 			kidemHataList.clear();
 			boolean calisiyor = false;
@@ -4050,16 +4052,16 @@ public class PdksVeriOrtakAktar implements Serializable {
 					if (departman == null) {
 						departman = bosDepartman;
 						if (bosDepartman != null && calisiyor)
-							kidemHataList.add(parentDepartman.getAciklamatr() + " bilgisi boş olamaz!");
+							kidemHataList.add(uygulamaBordro + " " + parentDepartman.getAciklamatr() + " bilgisi boş olamaz!");
 					}
 					if (istenAyrilisTarihi != null && istenAyrilisTarihi.after(bugun) && istenAyrilisTarihi.getTime() == lastDate.getTime()) {
 						if (departmanYoneticiRolVar && departman == null && parentDepartman != null && departmanYoneticiRolVar)
-							addHatalist(hataList, personelERP, null, parentDepartman.getAciklamatr() + " bilgisi boş olamaz!");
+							addHatalist(hataList, personelERP, null, uygulamaBordro + " " + parentDepartman.getAciklamatr() + " bilgisi boş olamaz!");
 						if (bolum == null && parentBolum != null)
-							addHatalist(hataList, personelERP, null, parentBolum.getAciklamatr() + " bilgisi boş olamaz!");
+							addHatalist(hataList, personelERP, null, uygulamaBordro + " " + parentBolum.getAciklamatr() + " bilgisi boş olamaz!");
 						if (bordroAltAlan == null && parentBordroTanim != null) {
 							if (durumParentBordroTanimKodu)
-								addHatalist(hataList, personelERP, null, parentBordroTanim.getAciklamatr() + " bilgisi boş olamaz!");
+								addHatalist(hataList, personelERP, null, uygulamaBordro + " " + parentBordroTanim.getAciklamatr() + " bilgisi boş olamaz!");
 
 						}
 
@@ -4155,7 +4157,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 										}
 										if (yoneticiRolVarmi && yoneticiERP1Kontrol && bolumYok == false) {
 											if (yoneticisi == null)
-												kidemHataList.add(yoneticiAciklama + " bilgisi boş olamaz!" + (personelERP.getGorevKodu() != null && personelERP.getGorevi() != null ? "[ " + personelERP.getGorevKodu() + " - " + personelERP.getGorevi() + " ]" : ""));
+												kidemHataList.add(uygulamaBordro + " " + yoneticiAciklama + " bilgisi boş olamaz!" + (personelERP.getGorevKodu() != null && personelERP.getGorevi() != null ? "[ " + personelERP.getGorevKodu() + " - " + personelERP.getGorevi() + " ]" : ""));
 											// else if (yoneticisi != null)
 											// kidemHataList.add(yoneticisi.getPdksSicilNo() + " " + yoneticisi.getAdSoyad() + " yönetici çalışmıyor!");
 										}

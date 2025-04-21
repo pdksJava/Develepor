@@ -3682,6 +3682,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
+	@Transactional
 	public List getHareketBilgileri(List<Long> kapiIdIList, List<Long> personelIdInputList, Date basTarih, Date bitTarih, Class class1, Session session) throws Exception {
 		List<Long> personelIdList = new ArrayList<Long>();
 		if (personelIdInputList != null)

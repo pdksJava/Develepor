@@ -116,7 +116,10 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			String izinERPTableViewAdi = ortakIslemler.getParameterKey(ortakIslemler.getParametreIzinERPTableView());
 			boolean izinBakiye = value != null && (manuel || PdksUtil.zamanKontrol(PARAMETER_KEY, value, time));
 			boolean sunucuDurum = manuel || PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum();
+
 			zamanDurum = sunucuDurum && (manuel || PdksUtil.zamanKontrol(PARAMETER_KEY, value, time));
+//			zamanDurum = true;
+//			sunucuDurum = true;
 			boolean tableERPOku = PdksUtil.hasStringValue(izinERPTableViewAdi);
 			if (!zamanDurum && tableERPOku) {
 				String parameterUpdateKey = PARAMETER_KEY + "Update";
@@ -143,6 +146,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 								logger.info(uygulamaBordro + " izin bilgileri güncelleniyor out " + PdksUtil.getCurrentTimeStampStr());
 							}
 						} catch (Exception e) {
+							logger.error(e);
+							e.printStackTrace();
 						}
 
 						String parameterName = ortakIslemler.getParametreHakEdisIzinERPTableView();
