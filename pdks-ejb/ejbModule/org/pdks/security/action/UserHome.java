@@ -394,12 +394,13 @@ public class UserHome extends EntityHome<User> implements Serializable {
 		boolean sonuc = Boolean.TRUE;
 		if (target != null) {
 			boolean sistemYoneticisi = authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin() || authenticatedUser.isSistemYoneticisi();
+			boolean izinGirebilir = authenticatedUser != null && authenticatedUser.isIzinGirebilir();
 			if (izinRaporlari.contains(target) || izinIslemler.contains(target)) {
-				sonuc = authenticatedUser.isIzinGirebilir();
+				sonuc = izinGirebilir;
 				if (target.equals("personelKalanIzin") || target.equals("izinRaporlari")) {
-					sonuc = authenticatedUser.isIzinGirebilir() || ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametreIzinERPTableView());
+					sonuc = izinGirebilir || ortakIslemler.getParameterKey("izinHakedisGuncelle").equals("1");
 				} else if (target.equals("holdingKalanIzin") || target.equals("izinRaporlari")) {
-					sonuc = authenticatedUser.isIzinGirebilir() || PersonelIzinDetay.isIzinHakedisGuncelle();
+					sonuc = izinGirebilir || PersonelIzinDetay.isIzinHakedisGuncelle();
 				} else if (target.equals("onayimaGelenIzinler") || target.equals("izinIslemleri"))
 					sonuc = authenticatedUser.isIzinOnaylayabilir() || (target.equals("izinIslemleri") && sistemYoneticisi);
 				else {
@@ -410,7 +411,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 				}
 
 			} else if (target.equals("izinRaporlari") || target.equals("sskIstirahatIzinleri")) {
-				sonuc = authenticatedUser.isIzinGirebilir() || !ortakIslemler.getParameterKey("izinERPUpdate").equals("1");
+				sonuc = izinGirebilir || !ortakIslemler.getParameterKey("izinERPUpdate").equals("1");
 				if (sonuc == false && target.equals("izinRaporlari") && sistemYoneticisi) {
 					sonuc = true;
 				}

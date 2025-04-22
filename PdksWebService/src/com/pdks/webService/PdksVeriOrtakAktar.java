@@ -4215,7 +4215,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 								personel.setOlusturmaTarihi(new Date());
 								personel.setOlusturanUser(islemYapan);
 								personel.setPdksSicilNo(personelNo);
-								personel.setIzinKartiVar(dogumTarihi != null && izinHakEdisTarihi != null);
 								if (bolum != null && bolum.getKodu() != null) {
 									String kodu = bolum.getKodu();
 									if (kodu.equalsIgnoreCase("YOK")) {
@@ -4231,7 +4230,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 							}
 							if (personel.getSablon() == null)
 								personel.setSablon(vardiyaSablonu);
-
+							personel.setIzinKartiVar(dogumTarihi != null && izinHakEdisTarihi != null);
 							saveList.add(personel);
 						} else {
 							personelERP.setYazildi(Boolean.TRUE);
