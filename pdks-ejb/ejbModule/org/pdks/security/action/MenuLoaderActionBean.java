@@ -108,69 +108,78 @@ public class MenuLoaderActionBean implements Serializable {
 			if (session == null)
 				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			session.clear();
-			HashMap fields = new HashMap();
-
-			MenuItem dinamikRaporMenu = new MenuItem();
-			dinamikRaporMenu.setName(menuAdi);
-
-			String menuBaslik = ortakIslemler.getMenuAdi(menuAdi);
-			if (PdksUtil.hasStringValue(menuBaslik) == false)
-				menuBaslik = "Dinamik Raporlar";
-
-			StringBuffer sb = new StringBuffer();
-			sb.append("select * from " + PdksDinamikRapor.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
-			sb.append(" where " + PdksDinamikRapor.COLUMN_NAME_DURUM + " = 1 ");
-			if (authenticatedUser.isAdmin() == false)
-				sb.append(" and " + PdksDinamikRapor.COLUMN_NAME_GORUNTULENSIN + " = 1 ");
-			sb.append(" order by " + PdksDinamikRapor.COLUMN_NAME_SIRA);
-			fields.clear();
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<PdksDinamikRapor> raporlar = pdksEntityController.getObjectBySQLList(sb, fields, PdksDinamikRapor.class);
-			if (!raporlar.isEmpty() && raporIslemleri.getChildren() != null) {
-				List list = new ArrayList();
-				for (Iterator iterator = raporIslemleri.getChildren().iterator(); iterator.hasNext();) {
-					Object object = (Object) iterator.next();
-					boolean ekle = true;
-					if (object instanceof HtmlMenuGroup) {
-						HtmlMenuGroup raporGrup = (HtmlMenuGroup) object;
-						if (raporGrup.getId().equals(menuAdi))
-							ekle = false;
-
-					} else if (object instanceof HtmlMenuItem) {
-						HtmlMenuItem rapor = (HtmlMenuItem) object;
-						if (rapor.getId().equals(menuAdi))
-							ekle = false;
-
-					}
-					if (ekle)
-						list.add(object);
-				}
-				HtmlMenuGroup raporGrup = new HtmlMenuGroup();
-				raporGrup.setId(menuAdi);
-				raporGrup.setValue(menuBaslik);
-				for (PdksDinamikRapor pdksDinamikRapor : raporlar) {
-					HtmlMenuItem rapor = new HtmlMenuItem();
-					dinamikRaporMenu.setParametre("id=" + PdksUtil.getEncodeStringByBase64("id=" + pdksDinamikRapor.getId() + "&userId=" + authenticatedUser.getId() + "&time=" + new Date().getTime()));
-					rapor.setValue(pdksDinamikRapor.getAciklama());
-					rapor.setId(menuAdi + pdksDinamikRapor.getId());
-					MethodExpression me = startAction(dinamikRaporMenu);
-					if (me != null) {
-						rapor.setActionExpression(me);
-						raporGrup.getChildren().add(rapor);
-					}
-				}
-				if (raporGrup.getChildren().isEmpty() == false) {
-					raporIslemleri.getChildren().clear();
-					raporIslemleri.getChildren().add(raporGrup);
-					raporIslemleri.getChildren().addAll(list);
-					list = null;
-				} else
-					raporGrup = null;
-			}
-
-		}
+			try {
+				dinamikRaporUpdate(menuAdi);
+			} catch (Exception e) {
+ 			}
+ 		}
 		return raporIslemleri;
+	}
+
+	/**
+	 * @param menuAdi
+	 */
+	private void dinamikRaporUpdate(String menuAdi) {
+		HashMap fields = new HashMap();
+
+		MenuItem dinamikRaporMenu = new MenuItem();
+		dinamikRaporMenu.setName(menuAdi);
+
+		String menuBaslik = ortakIslemler.getMenuAdi(menuAdi);
+		if (PdksUtil.hasStringValue(menuBaslik) == false)
+			menuBaslik = "Dinamik Raporlar";
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("select * from " + PdksDinamikRapor.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+		sb.append(" where " + PdksDinamikRapor.COLUMN_NAME_DURUM + " = 1 ");
+		if (authenticatedUser.isAdmin() == false)
+			sb.append(" and " + PdksDinamikRapor.COLUMN_NAME_GORUNTULENSIN + " = 1 ");
+		sb.append(" order by " + PdksDinamikRapor.COLUMN_NAME_SIRA);
+		fields.clear();
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<PdksDinamikRapor> raporlar = pdksEntityController.getObjectBySQLList(sb, fields, PdksDinamikRapor.class);
+		if (!raporlar.isEmpty() && raporIslemleri.getChildren() != null) {
+			List list = new ArrayList();
+			for (Iterator iterator = raporIslemleri.getChildren().iterator(); iterator.hasNext();) {
+				Object object = (Object) iterator.next();
+				boolean ekle = true;
+				if (object instanceof HtmlMenuGroup) {
+					HtmlMenuGroup raporGrup = (HtmlMenuGroup) object;
+					if (raporGrup.getId().equals(menuAdi))
+						ekle = false;
+
+				} else if (object instanceof HtmlMenuItem) {
+					HtmlMenuItem rapor = (HtmlMenuItem) object;
+					if (rapor.getId().equals(menuAdi))
+						ekle = false;
+
+				}
+				if (ekle)
+					list.add(object);
+			}
+			HtmlMenuGroup raporGrup = new HtmlMenuGroup();
+			raporGrup.setId(menuAdi);
+			raporGrup.setValue(menuBaslik);
+			for (PdksDinamikRapor pdksDinamikRapor : raporlar) {
+				HtmlMenuItem rapor = new HtmlMenuItem();
+				dinamikRaporMenu.setParametre("id=" + PdksUtil.getEncodeStringByBase64("id=" + pdksDinamikRapor.getId() + "&userId=" + authenticatedUser.getId() + "&time=" + new Date().getTime()));
+				rapor.setValue(pdksDinamikRapor.getAciklama());
+				rapor.setId(menuAdi + pdksDinamikRapor.getId());
+				MethodExpression me = startAction(dinamikRaporMenu);
+				if (me != null) {
+					rapor.setActionExpression(me);
+					raporGrup.getChildren().add(rapor);
+				}
+			}
+			if (raporGrup.getChildren().isEmpty() == false) {
+				raporIslemleri.getChildren().clear();
+				raporIslemleri.getChildren().add(raporGrup);
+				raporIslemleri.getChildren().addAll(list);
+				list = null;
+			} else
+				raporGrup = null;
+		}
 	}
 
 	public void setPuantajIslemleri(HtmlDropDownMenu puantajIslemleri) {

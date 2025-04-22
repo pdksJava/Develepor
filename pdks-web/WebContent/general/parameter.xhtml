@@ -143,7 +143,7 @@
 									rendered="#{ortakIslemler.getParameterKeyHasStringValue('cihazGecisIdSon')}"
 									action="#{ortakIslemler.kapiGirisGuncelle(null,null,parameterHome.session)}" />
 								<a4j:commandButton status="ajaxStatus" value="izinGunceleme Calistir"
-									rendered="#{ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.parametreIzinERPTableView)}"
+									rendered="#{userHome.hasPermission('personelKalanIzin','view')}"
 									action="#{izinBakiyeGuncelleme.izinGuncelemeCalistir(true,parameterHome.session)}" />
 
 							</c:if>
