@@ -406,7 +406,9 @@
 									<f:facet name="header">
 										<h:outputText value="İşten Ayrılma Tarihi" />
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.dateFormatla(pdksUtil.tariheGunEkleCikar(izinler.personel.sskCikisTarihi,1) )}" />
+									<ui:fragment rendered="#{izinler.personel.calisiyor==false}">
+										<h:outputText value="#{authenticatedUser.dateFormatla(izinler.personel.sskCikisTarihi)}" />
+									</ui:fragment>
 								</rich:column>
 
 
