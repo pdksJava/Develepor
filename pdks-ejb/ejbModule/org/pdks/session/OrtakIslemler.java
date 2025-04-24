@@ -10145,21 +10145,19 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public List<Tanim> getTanimAlanList(String tipi, String method, String tip, Session session) {
 		List<Tanim> tanimList = null;
-		HashMap parametreMap = new HashMap();
 		try {
-			StringBuffer sb = new StringBuffer();
-			sb.append("select distinct V.* from " + Tanim.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append(" where " + Tanim.COLUMN_NAME_TIPI + " = :tipi and " + Tanim.COLUMN_NAME_DURUM + " = 1 ");
-			parametreMap.put("tipi", tipi);
-			if (session != null)
-				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			tanimList = pdksEntityController.getObjectBySQLList(sb, parametreMap, Tanim.class);
+			tanimList = pdksEntityController.getSQLParamByFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, tipi, Tanim.class, session);
+			for (Iterator iterator = tanimList.iterator(); iterator.hasNext();) {
+				Tanim tanim = (Tanim) iterator.next();
+				if (tanim.getDurum().booleanValue() == false)
+					iterator.remove();
+
+			}
 			if (tanimList.size() > 1) {
 				if (tip.equals("S"))
 					tanimList = PdksUtil.sortObjectStringAlanList(Constants.TR_LOCALE, tanimList, method, null);
 				else
 					tanimList = PdksUtil.sortListByAlanAdi(tanimList, method, Boolean.FALSE);
-
 			}
 		} catch (Exception e) {
 			logger.error("Pdks hata in : \n");
