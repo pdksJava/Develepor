@@ -6,7 +6,7 @@
 	<ui:define name="title">
 		<h:outputText value="#{ortakIslemler.getMenuAdi('kullanilanIzinler')}" />
 	</ui:define>
-	<ui:define name="body">Hatalı İzinler
+	<ui:define name="body">
 
 		<h:form id="formKullanilanIzinler">
 
@@ -309,13 +309,12 @@
 									<thead class="rich-table-thead">
 										<tr class="rich-table-subheader">
 											<th>Personel No</th>
-											<th>Adı</th>
-											<th>Soyado</th>
-											<th>İzin Süresi</th>
+											<th>Adı Soyadı</th>
+ 											<th>İzin Süresi</th>
 											<th>Başlangıç Zaman</th>
 											<th>Bitiş Zaman</th>
-											<th>Açıklama</th>
 											<th>Referans ERP No</th>
+											<th>Açıklama</th>
 											<th>Durum</th>
 											<th>İzin Tipi</th>
 											<th>İzin Tipi Açıklama</th>
