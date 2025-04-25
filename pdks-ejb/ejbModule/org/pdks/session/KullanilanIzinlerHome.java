@@ -314,7 +314,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		if (bakiyeIzinTipiList == null)
 			bakiyeIzinTipiList = new ArrayList<IzinTipi>();
 
-		if (authenticatedUser.isAdmin() && ortakIslemler.getParameterKeyHasStringValue("dosyaIzinGuncellemeYetki")) {
+		if (authenticatedUser.isAdmin() || ortakIslemler.getParameterKeyHasStringValue("dosyaIzinGuncellemeYetki")) {
 			bakiyeIzinTipiList = ortakIslemler.getYillikIzinBakiyeListesi(session);
 		} else
 			bakiyeIzinTipiList.clear();
