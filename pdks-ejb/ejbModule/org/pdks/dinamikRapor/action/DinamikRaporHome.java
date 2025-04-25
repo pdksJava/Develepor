@@ -453,9 +453,9 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				else if (alan.isTarih())
 					value = authenticatedUser.dateFormatla((Date) value);
 				else if (alan.isTarihSaat())
-					value = authenticatedUser.timeFormatla((Date) value);
-				else if (alan.isSaat())
 					value = authenticatedUser.dateTimeFormatla((Date) value);
+				else if (alan.isSaat())
+					value = authenticatedUser.timeFormatla((Date) value);
 			} catch (Exception e) {
 			}
 		}
