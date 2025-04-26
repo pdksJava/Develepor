@@ -37,6 +37,7 @@ import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.PersonelIzinDetay;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
+import org.pdks.entity.ThreadAgent;
 import org.pdks.security.action.StartupAction;
 import org.pdks.security.entity.User;
 import org.pdks.session.OrtakIslemler;
@@ -96,6 +97,18 @@ public class IzinBakiyeGuncelleme implements Serializable {
 	}
 
 	/**
+	 * @param session
+	 * @return
+	 */
+	public String agentCalistir(Session session) {
+		if (session != null) {
+			ThreadAgent agent = new ThreadAgent(null, pdksEntityController, session);
+			agent.start();
+		}
+		return "";
+	}
+
+	/**
 	 * @param manuel
 	 * @param session
 	 */
@@ -108,6 +121,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		try {
 			if (session == null)
 				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+			// agentCalistir( session);
 			Date time = ortakIslemler.getBugun();
 			hataGonder = Boolean.TRUE;
 			hataKonum = "Paramatre okunuyor ";
@@ -118,8 +132,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			boolean sunucuDurum = manuel || PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum();
 
 			zamanDurum = sunucuDurum && (manuel || PdksUtil.zamanKontrol(PARAMETER_KEY, value, time));
-//			zamanDurum = true;
-//			sunucuDurum = true;
+			// zamanDurum = true;
+			// sunucuDurum = true;
 			boolean tableERPOku = PdksUtil.hasStringValue(izinERPTableViewAdi);
 			if (!zamanDurum && tableERPOku) {
 				String parameterUpdateKey = PARAMETER_KEY + "Update";
