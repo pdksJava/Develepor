@@ -4,13 +4,10 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.apache.log4j.Logger;
 
 @Entity(name = PdksAgent.TABLE_NAME)
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PdksAgent.COLUMN_NAME_SP }) })
 public class PdksAgent extends BasePDKSObject implements Serializable, Cloneable {
 
 	/**
@@ -23,17 +20,18 @@ public class PdksAgent extends BasePDKSObject implements Serializable, Cloneable
 	public static final String TABLE_NAME = "PDKS_AGENT";
 
 	public static final String COLUMN_NAME_SP = "STORE_PROCEDURE";
+	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final String COLUMN_NAME_DAKIKA = "DAKIKA";
 	public static final String COLUMN_NAME_SAAT = "SAAT";
 	public static final String COLUMN_NAME_GUN = "GUN";
 	public static final String COLUMN_NAME_HAFTA = "HAFTA";
 	public static final String COLUMN_NAME_DURUM = "DURUM";
 
-	private String storeProcedureAdi;
+	private String storeProcedureAdi, aciklama;
 
 	private String dakikaBilgi, saatBilgi, gunBilgi, haftaBilgi;
 
-	private Boolean durum;
+	private Boolean durum = Boolean.TRUE;
 
 	@Column(name = COLUMN_NAME_SP)
 	public String getStoreProcedureAdi() {
@@ -78,6 +76,15 @@ public class PdksAgent extends BasePDKSObject implements Serializable, Cloneable
 
 	public void setHaftaBilgi(String haftaBilgi) {
 		this.haftaBilgi = haftaBilgi;
+	}
+
+	@Column(name = COLUMN_NAME_ACIKLAMA)
+	public String getAciklama() {
+		return aciklama;
+	}
+
+	public void setAciklama(String aciklama) {
+		this.aciklama = aciklama;
 	}
 
 	@Column(name = COLUMN_NAME_DURUM)
