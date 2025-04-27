@@ -105,8 +105,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 	public String agentCalistir(Session session) {
 		if (entityManager != null)
 			getAgentCalistirTime(session);
-
-		return "";
+ 		return "";
 	}
 
 	/**
