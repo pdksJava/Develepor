@@ -105,7 +105,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 	public String agentCalistir(Session session) {
 		if (entityManager != null)
 			getAgentCalistirTime(session);
- 		return "";
+		return "";
 	}
 
 	/**
@@ -118,6 +118,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		HashMap fields = new HashMap();
 		StringBuffer sp = new StringBuffer();
 		sp.append("select * from " + PdksAgent.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+		sp.append(" where 1 = 2 ");
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<PdksAgent> list = pdksEntityController.getObjectBySQLList(sp, fields, PdksAgent.class);
 		if (!list.isEmpty()) {
@@ -157,7 +158,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 							} else {
 								gunCalistir = gun == sonGun;
 							}
- 						} else
+						} else
 							gunCalistir = ThreadAgent.kontrol(gun, gunStr);
 					}
 
@@ -192,8 +193,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		try {
 			if (session == null)
 				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-			// agentCalistir();
-			Calendar cal = getAgentCalistirTime(session);
+//			Calendar cal = getAgentCalistirTime(session);
+			Calendar cal = Calendar.getInstance();
 			Date time = cal.getTime();
 			hataGonder = Boolean.TRUE;
 			hataKonum = "Paramatre okunuyor ";
@@ -213,7 +214,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 				if (PdksUtil.hasStringValue(value)) {
 					guncellemeDBDurum = PdksUtil.zamanKontrol(parameterUpdateKey, value, time);
 					if (guncellemeDBDurum == false && PdksUtil.isSistemDestekVar()) {
-//						Calendar cal = Calendar.getInstance();
+						// Calendar cal = Calendar.getInstance();
 						int gun = cal.get(Calendar.DATE), dakika = cal.get(Calendar.MINUTE), saat = cal.get(Calendar.HOUR_OF_DAY), dayOffWeek = cal.get(Calendar.DAY_OF_WEEK);
 						guncellemeDBDurum = dayOffWeek != Calendar.SATURDAY && dayOffWeek != Calendar.SUNDAY && (gun > 25 || gun < 6) && (saat > 7 && saat < 20) && dakika % 15 == 0;
 					}
