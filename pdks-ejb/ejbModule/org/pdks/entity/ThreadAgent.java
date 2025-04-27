@@ -1,12 +1,8 @@
 package org.pdks.entity;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
 
 import javax.persistence.EntityManager;
 
@@ -37,7 +33,7 @@ public class ThreadAgent extends Thread implements Serializable {
 		this.agent = agent;
 		this.pdksEntityController = pdksEntityController;
 		this.entityManager = entityManager;
-
+		this.session = sessionx;
 		try {
 			if (sessionx == null && entityManager != null)
 				this.session = PdksUtil.getSession(entityManager, Boolean.TRUE);
@@ -67,76 +63,81 @@ public class ThreadAgent extends Thread implements Serializable {
 				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 				sp.append(agent.getStoreProcedureAdi());
 				try {
+					veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 					pdksEntityController.execSP(veriMap, sp);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else {
-				HashMap fields = new HashMap();
-				sp.append("select * from " + PdksAgent.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<PdksAgent> list = pdksEntityController.getObjectBySQLList(sp, fields, PdksAgent.class);
-				if (!list.isEmpty()) {
-					Calendar cal = Calendar.getInstance();
-					int dakika = cal.get(Calendar.MINUTE);
-					int saat = cal.get(Calendar.HOUR_OF_DAY);
-					int gun = cal.get(Calendar.DATE);
-					int hafta = cal.get(Calendar.DAY_OF_WEEK);
-					for (PdksAgent pa : list) {
-						if (pa.getDurum() != null && pa.getDurum() && PdksUtil.hasStringValue(pa.getStoreProcedureAdi())) {
-							boolean dakikaCalistir = true, saatCalistir = true, gunCalistir = true, haftaCalistir = true;
-							String dakikaStr = PdksUtil.hasStringValue(pa.getDakikaBilgi()) ? pa.getDakikaBilgi() : "*";
-							String saatStr = PdksUtil.hasStringValue(pa.getSaatBilgi()) ? pa.getSaatBilgi() : "*";
-							String gunStr = PdksUtil.hasStringValue(pa.getGunBilgi()) ? pa.getGunBilgi() : "*";
-							String haftaStr = PdksUtil.hasStringValue(pa.getHaftaBilgi()) ? pa.getHaftaBilgi() : "*";
-							if (!dakikaStr.equals("*"))
-								dakikaCalistir = kontrol(dakika, dakikaStr);
-
-							if (!saatStr.equals("*"))
-								saatCalistir = kontrol(saat, saatStr);
-
-							if (!gunStr.equals("*")) {
-								gunStr = gunStr.toUpperCase(Locale.ENGLISH);
-								if (gunStr.indexOf("L") >= 0) {
-									int sonGun = cal.getActualMaximum(Calendar.DATE);
-									if (gunStr.indexOf(",") > 0) {
-										String[] str = gunStr.split(",");
-										for (int i = 0; i < str.length; i++) {
-											String str1 = str[i];
-											if (str1.equals("L"))
-												gunCalistir = gun == sonGun;
-											else
-												gunCalistir = kontrol(saat, str1);
-											if (gunCalistir)
-												break;
-										}
-
-									} else {
-
-										gunCalistir = gun == sonGun;
-									}
-
-								} else
-									gunCalistir = kontrol(gun, gunStr);
-							}
-
-							if (!haftaStr.equals("*"))
-								haftaCalistir = kontrol(hafta, haftaStr);
-
-							if (dakikaCalistir && saatCalistir && gunCalistir && haftaCalistir) {
-								ThreadAgent agent = new ThreadAgent(pa, pdksEntityController, entityManager, null);
-								agent.start();
-							}
-						}
-					}
-				}
-				list = null;
+				// } else {
+				// HashMap fields = new HashMap();
+				// sp.append("select * from " + PdksAgent.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+				// fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				// List<PdksAgent> list = pdksEntityController.getObjectBySQLList(sp, fields, PdksAgent.class);
+				// if (!list.isEmpty()) {
+				// Calendar cal = Calendar.getInstance();
+				// int dakika = cal.get(Calendar.MINUTE);
+				// int saat = cal.get(Calendar.HOUR_OF_DAY);
+				// int gun = cal.get(Calendar.DATE);
+				// int hafta = cal.get(Calendar.DAY_OF_WEEK);
+				// for (PdksAgent pa : list) {
+				// if (pa.getDurum() != null && pa.getDurum() && PdksUtil.hasStringValue(pa.getStoreProcedureAdi())) {
+				// boolean dakikaCalistir = true, saatCalistir = true, gunCalistir = true, haftaCalistir = true;
+				// String dakikaStr = PdksUtil.hasStringValue(pa.getDakikaBilgi()) ? pa.getDakikaBilgi() : "*";
+				// String saatStr = PdksUtil.hasStringValue(pa.getSaatBilgi()) ? pa.getSaatBilgi() : "*";
+				// String gunStr = PdksUtil.hasStringValue(pa.getGunBilgi()) ? pa.getGunBilgi() : "*";
+				// String haftaStr = PdksUtil.hasStringValue(pa.getHaftaBilgi()) ? pa.getHaftaBilgi() : "*";
+				// if (!dakikaStr.equals("*"))
+				// dakikaCalistir = kontrol(dakika, dakikaStr);
+				//
+				// if (!saatStr.equals("*"))
+				// saatCalistir = kontrol(saat, saatStr);
+				//
+				// if (!gunStr.equals("*")) {
+				// gunStr = gunStr.toUpperCase(Locale.ENGLISH);
+				// if (gunStr.indexOf("L") >= 0) {
+				// int sonGun = cal.getActualMaximum(Calendar.DATE);
+				// if (gunStr.indexOf(",") > 0) {
+				// String[] str = gunStr.split(",");
+				// for (int i = 0; i < str.length; i++) {
+				// String str1 = str[i];
+				// if (str1.equals("L"))
+				// gunCalistir = gun == sonGun;
+				// else
+				// gunCalistir = kontrol(saat, str1);
+				// if (gunCalistir)
+				// break;
+				// }
+				//
+				// } else {
+				//
+				// gunCalistir = gun == sonGun;
+				// }
+				//
+				// } else
+				// gunCalistir = kontrol(gun, gunStr);
+				// }
+				//
+				// if (!haftaStr.equals("*"))
+				// haftaCalistir = kontrol(hafta, haftaStr);
+				//
+				// if (dakikaCalistir && saatCalistir && gunCalistir && haftaCalistir) {
+				// try {
+				// ThreadAgent ta = new ThreadAgent(pa, pdksEntityController, entityManager, null);
+				// ta.start();
+				// } catch (Exception e) {
+				// logger.error(e);
+				// }
+				// }
+				// }
+				// }
+				// }
+				// list = null;
 			}
 
 		}
 
-		// }
-		remove();
+		if (agent != null)
+			remove();
 
 	}
 
@@ -145,7 +146,7 @@ public class ThreadAgent extends Thread implements Serializable {
 	 * @param inputStr
 	 * @return
 	 */
-	private boolean kontrol(int sayi, String inputStr) {
+	public static boolean kontrol(int sayi, String inputStr) {
 		boolean calistir = false;
 		if (PdksUtil.hasStringValue(inputStr)) {
 			if (inputStr.indexOf(",") >= 0) {

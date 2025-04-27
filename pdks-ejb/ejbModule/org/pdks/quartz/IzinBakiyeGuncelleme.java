@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
@@ -32,6 +33,7 @@ import org.pdks.entity.Departman;
 import org.pdks.entity.IzinHakedisHakki;
 import org.pdks.entity.IzinTipi;
 import org.pdks.entity.Parameter;
+import org.pdks.entity.PdksAgent;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.PersonelIzinDetay;
@@ -101,11 +103,81 @@ public class IzinBakiyeGuncelleme implements Serializable {
 	 * @return
 	 */
 	public String agentCalistir(Session session) {
-		if (session != null) {
-			ThreadAgent agent = new ThreadAgent(null, pdksEntityController, session);
-			agent.start();
-		}
+		if (entityManager != null)
+			getAgentCalistirTime(session);
+
 		return "";
+	}
+
+	/**
+	 * @param session
+	 * @return
+	 */
+	private Calendar getAgentCalistirTime(Session session) {
+		session.clear();
+		Calendar cal = Calendar.getInstance();
+		HashMap fields = new HashMap();
+		StringBuffer sp = new StringBuffer();
+		sp.append("select * from " + PdksAgent.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<PdksAgent> list = pdksEntityController.getObjectBySQLList(sp, fields, PdksAgent.class);
+		if (!list.isEmpty()) {
+			int dakika = cal.get(Calendar.MINUTE);
+			int saat = cal.get(Calendar.HOUR_OF_DAY);
+			int gun = cal.get(Calendar.DATE);
+			int hafta = cal.get(Calendar.DAY_OF_WEEK);
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				PdksAgent pa = (PdksAgent) iterator.next();
+				if (pa.getDurum() != null && pa.getDurum() && PdksUtil.hasStringValue(pa.getStoreProcedureAdi())) {
+					boolean dakikaCalistir = true, saatCalistir = true, gunCalistir = true, haftaCalistir = true;
+					String dakikaStr = PdksUtil.hasStringValue(pa.getDakikaBilgi()) ? pa.getDakikaBilgi() : "*";
+					String saatStr = PdksUtil.hasStringValue(pa.getSaatBilgi()) ? pa.getSaatBilgi() : "*";
+					String gunStr = PdksUtil.hasStringValue(pa.getGunBilgi()) ? pa.getGunBilgi() : "*";
+					String haftaStr = PdksUtil.hasStringValue(pa.getHaftaBilgi()) ? pa.getHaftaBilgi() : "*";
+					if (!dakikaStr.equals("*"))
+						dakikaCalistir = ThreadAgent.kontrol(dakika, dakikaStr);
+
+					if (!saatStr.equals("*"))
+						saatCalistir = ThreadAgent.kontrol(saat, saatStr);
+
+					if (!gunStr.equals("*")) {
+						gunStr = gunStr.toUpperCase(Locale.ENGLISH);
+						if (gunStr.indexOf("L") >= 0) {
+							int sonGun = cal.getActualMaximum(Calendar.DATE);
+							if (gunStr.indexOf(",") > 0) {
+								String[] str = gunStr.split(",");
+								for (int i = 0; i < str.length; i++) {
+									String str1 = str[i];
+									if (str1.equals("L"))
+										gunCalistir = gun == sonGun;
+									else
+										gunCalistir = ThreadAgent.kontrol(saat, str1);
+									if (gunCalistir)
+										break;
+								}
+							} else {
+								gunCalistir = gun == sonGun;
+							}
+ 						} else
+							gunCalistir = ThreadAgent.kontrol(gun, gunStr);
+					}
+
+					if (!haftaStr.equals("*"))
+						haftaCalistir = ThreadAgent.kontrol(hafta, haftaStr);
+
+					if (dakikaCalistir && saatCalistir && gunCalistir && haftaCalistir) {
+						try {
+							ThreadAgent ta = new ThreadAgent(pa, pdksEntityController, entityManager, null);
+							ta.start();
+						} catch (Exception e) {
+							logger.error(e);
+						}
+					}
+				}
+			}
+		}
+		list = null;
+		return cal;
 	}
 
 	/**
@@ -121,8 +193,9 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		try {
 			if (session == null)
 				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-			// agentCalistir( session);
-			Date time = ortakIslemler.getBugun();
+			// agentCalistir();
+			Calendar cal = getAgentCalistirTime(session);
+			Date time = cal.getTime();
 			hataGonder = Boolean.TRUE;
 			hataKonum = "Paramatre okunuyor ";
 			Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_KEY);
@@ -141,7 +214,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 				if (PdksUtil.hasStringValue(value)) {
 					guncellemeDBDurum = PdksUtil.zamanKontrol(parameterUpdateKey, value, time);
 					if (guncellemeDBDurum == false && PdksUtil.isSistemDestekVar()) {
-						Calendar cal = Calendar.getInstance();
+//						Calendar cal = Calendar.getInstance();
 						int gun = cal.get(Calendar.DATE), dakika = cal.get(Calendar.MINUTE), saat = cal.get(Calendar.HOUR_OF_DAY), dayOffWeek = cal.get(Calendar.DAY_OF_WEEK);
 						guncellemeDBDurum = dayOffWeek != Calendar.SATURDAY && dayOffWeek != Calendar.SUNDAY && (gun > 25 || gun < 6) && (saat > 7 && saat < 20) && dakika % 15 == 0;
 					}
