@@ -17,8 +17,8 @@
 			<ref bean="personelKontrol" />
 		</property>
 		<property name="cronExpression">
-		<!-- <value>0 0/5 * ? * MON-FRI</value> -->
- 			<value>0 0 7 ? * MON-FRI</value>
+		<value>0 0/5 * ? * *</value> 
+ 			<!-- <value>0 0 7 ? * MON-FRI</value>-->
  			
  		</property>
 	</bean>

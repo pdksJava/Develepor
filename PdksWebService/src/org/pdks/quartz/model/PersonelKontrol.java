@@ -6,19 +6,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
-import org.springframework.scheduling.quartz.QuartzJobBean;
-
 import org.pdks.dao.PdksDAO;
 import org.pdks.dao.impl.BaseDAOHibernate;
 import org.pdks.entity.HataliPersonel;
 import org.pdks.entity.Parameter;
+import org.pdks.entity.PdksAgent;
 import org.pdks.entity.Personel;
 import org.pdks.entity.Sirket;
 import org.pdks.genel.model.Constants;
 import org.pdks.genel.model.MailManager;
 import org.pdks.genel.model.PdksUtil;
+import org.pdks.genel.model.ThreadAgent;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import com.pdks.webService.PdksVeriOrtakAktar;
 
@@ -43,13 +45,13 @@ public final class PersonelKontrol extends QuartzJobBean {
 						personelKontrol();
 				}
 
-				Calendar cal = Calendar.getInstance();
-				int gun = cal.get(Calendar.DAY_OF_WEEK);
-				boolean haftaIci = gun != Calendar.SATURDAY && gun != Calendar.SUNDAY;
+				runAgentService(pdksDAO);
+				// int gun = cal.get(Calendar.DAY_OF_WEEK);
+				// boolean haftaIci = gun != Calendar.SATURDAY && gun != Calendar.SUNDAY;
 				if (PdksUtil.isSistemDestekVar()) {
-					topluUpdate(pdksDAO, "SP_SISTEM_ALL_UPDATE");
-					if (haftaIci == false)
-						topluUpdate(pdksDAO, "SP_INDEX_REORGANIZE_REBUILD");
+					// topluUpdate(pdksDAO, "SP_SISTEM_ALL_UPDATE");
+					// if (haftaIci == false)
+					// topluUpdate(pdksDAO, "SP_INDEX_REORGANIZE_REBUILD");
 				}
 
 			} catch (Exception e) {
@@ -60,6 +62,73 @@ public final class PersonelKontrol extends QuartzJobBean {
 
 		}
 
+	}
+
+	/**
+	 * @param dAO
+	 */
+	private void runAgentService(PdksDAO dAO) {
+		Calendar cal = Calendar.getInstance();
+		HashMap fields = new HashMap();
+		StringBuffer sp = new StringBuffer();
+		sp.append("select * from " + PdksAgent.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
+		List<PdksAgent> list = dAO.getNativeSQLList(fields, sp, PdksAgent.class);
+		if (!list.isEmpty()) {
+			int dakika = cal.get(Calendar.MINUTE);
+			int saat = cal.get(Calendar.HOUR_OF_DAY);
+			int gun = cal.get(Calendar.DATE);
+			int hafta = cal.get(Calendar.DAY_OF_WEEK);
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				PdksAgent pa = (PdksAgent) iterator.next();
+				if (pa.getDurum() != null && pa.getDurum() && PdksUtil.hasStringValue(pa.getStoreProcedureAdi())) {
+					boolean dakikaCalistir = true, saatCalistir = true, gunCalistir = true, haftaCalistir = true;
+					String dakikaStr = PdksUtil.hasStringValue(pa.getDakikaBilgi()) ? pa.getDakikaBilgi() : "*";
+					String saatStr = PdksUtil.hasStringValue(pa.getSaatBilgi()) ? pa.getSaatBilgi() : "*";
+					String gunStr = PdksUtil.hasStringValue(pa.getGunBilgi()) ? pa.getGunBilgi() : "*";
+					String haftaStr = PdksUtil.hasStringValue(pa.getHaftaBilgi()) ? pa.getHaftaBilgi() : "*";
+					if (!dakikaStr.equals("*"))
+						dakikaCalistir = ThreadAgent.kontrol(dakika, dakikaStr);
+
+					if (!saatStr.equals("*"))
+						saatCalistir = ThreadAgent.kontrol(saat, saatStr);
+
+					if (!gunStr.equals("*")) {
+						gunStr = gunStr.toUpperCase(Locale.ENGLISH);
+						if (gunStr.indexOf("L") >= 0) {
+							int sonGun = cal.getActualMaximum(Calendar.DATE);
+							if (gunStr.indexOf(",") > 0) {
+								String[] str = gunStr.split(",");
+								for (int i = 0; i < str.length; i++) {
+									String str1 = str[i];
+									if (str1.equals("L"))
+										gunCalistir = gun == sonGun;
+									else
+										gunCalistir = ThreadAgent.kontrol(saat, str1);
+									if (gunCalistir)
+										break;
+								}
+							} else {
+								gunCalistir = gun == sonGun;
+							}
+						} else
+							gunCalistir = ThreadAgent.kontrol(gun, gunStr);
+					}
+
+					if (!haftaStr.equals("*"))
+						haftaCalistir = ThreadAgent.kontrol(hafta, haftaStr);
+
+					if (dakikaCalistir && saatCalistir && gunCalistir && haftaCalistir) {
+						try {
+							ThreadAgent ta = new ThreadAgent(pa, dAO);
+							ta.start();
+						} catch (Exception e) {
+							logger.error(e);
+						}
+					}
+				}
+			}
+		}
+		list = null;
 	}
 
 	/**
@@ -102,7 +171,7 @@ public final class PersonelKontrol extends QuartzJobBean {
 	 * @param pdksDAO
 	 * @param spName
 	 */
-	private void topluUpdate(PdksDAO pdksDAO, String spName) {
+	protected void topluUpdate(PdksDAO pdksDAO, String spName) {
 		logger.info(spName + " in " + PdksUtil.getCurrentTimeStampStr());
 		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 		map.put(BaseDAOHibernate.MAP_KEY_SELECT, spName);

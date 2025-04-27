@@ -65,6 +65,7 @@
 				<value>org.pdks.entity.PersonelIzin</value>
 				<value>org.pdks.entity.PersonelIzinDetay</value>
 				<value>org.pdks.entity.ERPPersonel</value>
+				<value>org.pdks.entity.PdksAgent</value>
 				<value>org.pdks.entity.PersonelKGS</value>
 				<value>org.pdks.entity.PersonelView</value>
 				<value>org.pdks.entity.Sirket</value>
