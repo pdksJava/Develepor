@@ -2,9 +2,9 @@
 <!DOCTYPE beans SYSTEM "dtd/spring-beans.dtd">
 
 <beans>
-	<bean name="personelKontrol" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean name="agentKontrol" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass">
-			<value>org.pdks.quartz.model.PersonelKontrol</value>
+			<value>org.pdks.quartz.model.AgentKontrol</value>
 		</property>
 		<property name="jobDataAsMap">
 			<map>
@@ -12,9 +12,9 @@
 			</map>
 		</property>
  	</bean>
- 	<bean id="personelKontrolTask" class="org.springframework.scheduling.quartz.CronTriggerBean">
+ 	<bean id="agentKontrolTask" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail">
-			<ref bean="personelKontrol" />
+			<ref bean="agentKontrol" />
 		</property>
 		<property name="cronExpression">
 		<value>0 0/5 * ? * *</value> 
@@ -60,7 +60,7 @@
 			<list>
 				<ref local="logRefreshTaskHaftaIci" />
 				<ref local="logRefreshTaskHaftaSonu" />
-				<ref local="personelKontrolTask" />
+				<ref local="agentKontrolTask" />
 				
 			</list>
 
