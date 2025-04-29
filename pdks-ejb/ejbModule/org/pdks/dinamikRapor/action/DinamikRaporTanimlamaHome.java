@@ -235,7 +235,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 					pdksEntityController.saveOrUpdate(session, entityManager, pr);
 					flush = true;
 				}
-				sonSira += (seciliPdksDinamikRapor.isStoreProcedure() ? 1 : 10);
+				sonSira += 1;
 			}
  		}
 		if (flush)

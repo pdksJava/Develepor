@@ -342,8 +342,14 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		CellStyle styleEvenDateTime = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATETIME, wb);
 		CellStyle styleEvenTime = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_TIME, wb);
 		int col = 0, row = 0;
-		for (PdksDinamikRaporAlan ra : dinamikRaporAlanList)
-			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.getDinamikRaporAlanAciklama(ra.getAciklama()));
+		List<PdksDinamikRaporAlan> list = new ArrayList<PdksDinamikRaporAlan>(dinamikRaporAlanList);
+		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+			PdksDinamikRaporAlan ra = (PdksDinamikRaporAlan) iterator.next();
+			if (ra.getGoster() || authenticatedUser.isAdmin())
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.getDinamikRaporAlanAciklama(ra.getAciklama()));
+			else
+				iterator.remove();
+		}
 
 		boolean renk = true;
 		for (Object[] veri : dinamikRaporDataList) {
@@ -375,7 +381,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				styleTime = styleEvenTime;
 			}
 
-			for (PdksDinamikRaporAlan ra : dinamikRaporAlanList) {
+			for (PdksDinamikRaporAlan ra : list) {
 				Object data = getDinamikRaporAlanVeri(veri, ra.getSira());
 				if (data != null) {
 					if (ra.isKarakter()) {
@@ -416,6 +422,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			}
 			renk = !renk;
 		}
+		list = null;
 		try {
 			for (int i = 0; i <= col; i++)
 				sheet.autoSizeColumn(i);
