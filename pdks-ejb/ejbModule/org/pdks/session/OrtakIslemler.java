@@ -19523,7 +19523,7 @@ public class OrtakIslemler implements Serializable {
 								}
 								oncekiCikisZaman = (Date) cikisZaman.clone();
 							}
-							if (vGun.endsWith("0430") || vGun.endsWith("0501"))
+							if (vGun.endsWith("0428") || vGun.endsWith("0501"))
 								logger.debug("");
 							// TODO Hareketler okuması bitti
 							if (oncekiGunNormalSure + oncekiGunTatilSure > 0.0d) {
@@ -19551,8 +19551,12 @@ public class OrtakIslemler implements Serializable {
 								vardiyaGun.addGecenAyResmiTatilSure(PdksUtil.setSureDoubleTypeRounded(oncekiGunTatilSure, vardiyaGun.getYarimYuvarla()));
 
 							}
-
+							double eksikCalismaSure = 0;
 							if (sureHesapla && (gunlukSaat > 0 || vardiyaGun.getGecenAyResmiTatilSure() > 0.0d)) {
+								if (vGun.endsWith("0428"))
+									logger.debug("");
+								if (resmiTatilSure == 0.0d && toplamParcalanmisSure < vardiyaYemekSuresi + netSure)
+									eksikCalismaSure = toplamParcalanmisSure - (vardiyaYemekSuresi + netSure);
 								toplamYemekSuresi = getToplamYemekSuresi(vardiyaYemekSuresi, toplamYemekSuresi, toplamParcalanmisSure);
 
 								boolean tatilYemekHesabiSureEkle = vardiyaGun.isYemekHesabiSureEkle();
@@ -19613,6 +19617,7 @@ public class OrtakIslemler implements Serializable {
 												vardiyaGun.addBayramCalismaSuresi(yemekFark);
 											}
 										} else {
+
 											String vkey = vardiyaGun != null ? vardiyaGun.getVardiya().getId() + "_" + vardiyaGun.getYarimYuvarla() : "";
 											if (vardiyaGun.getSonrakiVardiyaGun() == null || vardiyaGun.getTatil() == null || vardiyaGun.getSonrakiVardiyaGun().getVardiyaDateStr().startsWith(donemStr))
 												vkey = "";
@@ -19648,6 +19653,7 @@ public class OrtakIslemler implements Serializable {
 									calSure = netSure;
 
 								}
+
 								if (arifeTatilBasZamanVar == false && arifeSureMap.containsKey("T_B") && arifeSureMap.containsKey("A_N")) {
 									// todo kontrol ekle
 									Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
@@ -19662,7 +19668,7 @@ public class OrtakIslemler implements Serializable {
 									}
 								}
 							}
-
+							calSure += eksikCalismaSure;
 							if (resmiTatilSure > 0.0d)
 								resmiTatilMesai += resmiTatilSure;
 						}
