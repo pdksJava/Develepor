@@ -362,6 +362,12 @@
 									</h:selectBooleanCheckbox>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
+									<ui:define name="label">Göster</ui:define>
+									<h:selectBooleanCheckbox id="goster" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.goster}">
+										<a4j:support event="onclick" reRender="goster" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									</h:selectBooleanCheckbox>
+								</s:decorate>
+								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Aktif</ui:define>
 									<h:selectBooleanCheckbox id="durum3" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan.durum}">
 										<a4j:support event="onclick" reRender="durum3" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
@@ -428,11 +434,17 @@
 								<h:outputText value="#{alan.pdksDinamikRaporAlanhHizalaAciklama}" />
 							</rich:column>
 							<rich:column style="text-align:center">
-											<f:facet name="header">
+								<f:facet name="header">
                       		Filtre
               		 	 </f:facet>
-											<h:outputText value="#{authenticatedUser.getYesNo(alan.filter)}" />
-										</rich:column>
+								<h:outputText value="#{authenticatedUser.getYesNo(alan.filter)}" />
+							</rich:column>
+							<rich:column style="text-align:center">
+								<f:facet name="header">
+                      		Göster
+              		 	 </f:facet>
+								<h:outputText value="#{authenticatedUser.getYesNo(alan.goster)}" />
+							</rich:column>
 							<rich:column style="text-align:center">
 								<f:facet name="header">
                       		Aktif
@@ -657,6 +669,12 @@
                       		Filtre
               		 	 </f:facet>
 											<h:outputText value="#{authenticatedUser.getYesNo(alan.filter)}" />
+										</rich:column>
+										<rich:column style="text-align:center">
+											<f:facet name="header">
+                      		Göster
+              		 	 </f:facet>
+											<h:outputText value="#{authenticatedUser.getYesNo(alan.goster)}" />
 										</rich:column>
 										<rich:column style="text-align:center">
 											<f:facet name="header">

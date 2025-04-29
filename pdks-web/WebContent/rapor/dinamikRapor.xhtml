@@ -131,28 +131,26 @@
 											<h:outputText value="#{dinamikRaporHome.seciliPdksDinamikRapor.aciklama}" rendered="#{not empty dinamikRaporHome.dinamikRaporDataList}" />
 										</f:facet>
 										<c:forEach items="#{dinamikRaporHome.dinamikRaporAlanList}" var="dinamikAlan">
-
-											<c:if test="#{dinamikRaporHome.getFilterAlan(dinamikAlan)}">
+											<c:if test="#{authenticatedUser.adSoyad or dinamikAlan.goster}">
+												<c:if test="#{dinamikRaporHome.getFilterAlan(dinamikAlan)}">
+ 													<rich:column style="text-align :#{dinamikAlan.pdksDinamikRaporAlanHizala}"
+														filterBy="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" filterEvent="onkeyup">
+														<f:facet name="header">
+															<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(dinamikAlan.aciklama)}" />
+														</f:facet>
+														<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" />
+													</rich:column>
+												</c:if>
 
 												<rich:column style="text-align :#{dinamikAlan.pdksDinamikRaporAlanHizala}"
-													filterBy="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" filterEvent="onkeyup">
+													rendered="#{dinamikRaporHome.getFilterAlan(dinamikAlan)==false}">
 													<f:facet name="header">
 														<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(dinamikAlan.aciklama)}" />
 													</f:facet>
 													<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" />
 												</rich:column>
 											</c:if>
-
-											<rich:column style="text-align :#{dinamikAlan.pdksDinamikRaporAlanHizala}" rendered="#{dinamikRaporHome.getFilterAlan(dinamikAlan)==false}">
-												<f:facet name="header">
-													<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(dinamikAlan.aciklama)}" />
-												</f:facet>
-												<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" />
-											</rich:column>
-
-
-
-										</c:forEach>
+ 										</c:forEach>
 										<f:facet name="footer">
 											<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 										</f:facet>
