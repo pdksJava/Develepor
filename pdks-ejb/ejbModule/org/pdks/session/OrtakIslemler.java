@@ -18796,6 +18796,15 @@ public class OrtakIslemler implements Serializable {
 		String donemStr = String.valueOf(denklestirmeAy.getDonem());
 		Date ilkGun = PdksUtil.convertToJavaDate(donemStr + "01", "yyyyMMdd");
 		boolean arifeTatilBasZamanVar = getParameterKeyHasStringValue("arifeTatilBasZaman");
+		Long eksikCalismaGun = null;
+		try {
+			if (getParameterKeyHasStringValue("eksikCalismaGun"))
+				eksikCalismaGun = Long.parseLong(getParameterKey("eksikCalismaGun"));
+		} catch (Exception e) {
+			eksikCalismaGun = null;
+		}
+		if (eksikCalismaGun == null)
+			eksikCalismaGun = 20250401L;
 		if (denklestirmeTasiyici.getVardiyalar() != null) {
 			List<VardiyaGun> vardiyalar = denklestirmeTasiyici.getVardiyalar();
 			if (vardiyalar != null)
@@ -19553,10 +19562,11 @@ public class OrtakIslemler implements Serializable {
 							}
 							double eksikCalismaSure = 0;
 							if (sureHesapla && (gunlukSaat > 0 || vardiyaGun.getGecenAyResmiTatilSure() > 0.0d)) {
-								if (vGun.endsWith("0428"))
-									logger.debug("");
-								if (resmiTatilSure == 0.0d && toplamParcalanmisSure < vardiyaYemekSuresi + netSure)
+								if (Long.parseLong(vGun) >= eksikCalismaGun && resmiTatilSure == 0.0d && toplamParcalanmisSure > 0.0d && toplamParcalanmisSure < vardiyaYemekSuresi + netSure) {
 									eksikCalismaSure = toplamParcalanmisSure - (vardiyaYemekSuresi + netSure);
+
+								}
+
 								toplamYemekSuresi = getToplamYemekSuresi(vardiyaYemekSuresi, toplamYemekSuresi, toplamParcalanmisSure);
 
 								boolean tatilYemekHesabiSureEkle = vardiyaGun.isYemekHesabiSureEkle();
@@ -19651,7 +19661,10 @@ public class OrtakIslemler implements Serializable {
 									if (resmiTatilSure == calSure && vardiyaGun.getGecenAyResmiTatilSure() == 0.0d)
 										resmiTatilSure += netSure - calSure;
 									calSure = netSure;
-
+								}
+								if (calSure == netSure && eksikCalismaSure != 0.0d) {
+									calSure += eksikCalismaSure;
+									logger.debug(vGun + " " + toplamParcalanmisSure);
 								}
 
 								if (arifeTatilBasZamanVar == false && arifeSureMap.containsKey("T_B") && arifeSureMap.containsKey("A_N")) {
@@ -19668,7 +19681,7 @@ public class OrtakIslemler implements Serializable {
 									}
 								}
 							}
-							calSure += eksikCalismaSure;
+
 							if (resmiTatilSure > 0.0d)
 								resmiTatilMesai += resmiTatilSure;
 						}
