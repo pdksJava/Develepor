@@ -19105,6 +19105,8 @@ public class OrtakIslemler implements Serializable {
 							vardiyaGun.setNormalSure(gunlukSaat);
 							Tatil tatil = null;
 							boolean arifeGunu = false;
+							if (vGun.endsWith("0422"))
+								logger.debug("");
 							if (tatilOncesiKontrol || (vardiyaGun.getCikisHareketleri() != null && !vardiyaGun.getCikisHareketleri().isEmpty() && vardiyaGun.getHareketDurum())) {
 								if (tatilOncesiKontrol || (vardiyaGun.isAyinGunu() && vardiyaGun.getTatil() != null && vardiyaGun.getHareketler() != null && !vardiyaGun.getHareketler().isEmpty())) {
 									Tatil orjTatil1 = vardiyaGun.getTatil() != null ? (Tatil) vardiyaGun.getTatil().getOrjTatil().clone() : null;
@@ -19183,36 +19185,41 @@ public class OrtakIslemler implements Serializable {
 										}
 										if (vGun.endsWith("0430"))
 											logger.debug("");
+										boolean sanalYok = true;
 										for (HareketKGS hareketKGS : hareketList) {
 											zaman = Long.parseLong(PdksUtil.convertToDateString(hareketKGS.getZaman(), "yyyyMMddHHmm"));
 
 											Kapi kapi = hareketKGS.getKapiView().getKapi();
-											if (zaman > basZaman && zaman <= bitZaman) {
-												if (girisKapi != null && !bayramBasladi && kapi.isCikisKapi()) {
-													HareketKGS cikisHareket = ((HareketKGS) hareketKGS.clone()).getYeniHareket(tatil.getBasTarih(), null);
-													cikisHareketleri.add(cikisHareket);
-													cikisHareket.setVardiyaGun(vardiyaGun);
-													if (tatilSonrakiGun != null && hareketKGS.getZaman().after(tatilSonrakiGun)) {
-														continue;
+											if (hareketKGS.getId() != null && sanalYok) {
+
+												if (zaman > basZaman && zaman <= bitZaman) {
+													if (girisKapi != null && !bayramBasladi && kapi.isCikisKapi()) {
+														HareketKGS cikisHareket = ((HareketKGS) hareketKGS.clone()).getYeniHareket(tatil.getBasTarih(), null);
+														cikisHareketleri.add(cikisHareket);
+														cikisHareket.setVardiyaGun(vardiyaGun);
+														if (tatilSonrakiGun != null && hareketKGS.getZaman().after(tatilSonrakiGun)) {
+															continue;
+														}
+
+														HareketKGS girisHareket = ((HareketKGS) cikisHareket.clone()).getYeniHareket(null, girisKapi);
+														girisHareket.setTatil(Boolean.TRUE);
+														girisHareket.setPersonelFazlaMesai(null);
+														girisHareketleri.add(girisHareket);
 													}
-
+													hareketKGS.setTatil(Boolean.TRUE);
+													bayramBasladi = Boolean.TRUE;
+												} else if (girisKapi != null && zaman >= bitZaman && !bayramBitti && kapi.isCikisKapi()) {
+													HareketKGS cikisHareket = ((HareketKGS) hareketKGS.clone()).getYeniHareket((Date) tatil.getBitGun(), null);
+													cikisHareket.setTatil(Boolean.TRUE);
+													cikisHareketleri.add(cikisHareket);
 													HareketKGS girisHareket = ((HareketKGS) cikisHareket.clone()).getYeniHareket(null, girisKapi);
-													girisHareket.setTatil(Boolean.TRUE);
-													girisHareket.setPersonelFazlaMesai(null);
+													girisHareket.setTatil(Boolean.FALSE);
 													girisHareketleri.add(girisHareket);
-												}
-												hareketKGS.setTatil(Boolean.TRUE);
-												bayramBasladi = Boolean.TRUE;
-											} else if (girisKapi != null && zaman >= bitZaman && !bayramBitti && kapi.isCikisKapi()) {
-												HareketKGS cikisHareket = ((HareketKGS) hareketKGS.clone()).getYeniHareket((Date) tatil.getBitGun(), null);
-												cikisHareket.setTatil(Boolean.TRUE);
-												cikisHareketleri.add(cikisHareket);
-												HareketKGS girisHareket = ((HareketKGS) cikisHareket.clone()).getYeniHareket(null, girisKapi);
-												girisHareket.setTatil(Boolean.FALSE);
-												girisHareketleri.add(girisHareket);
-												bayramBitti = Boolean.TRUE;
+													bayramBitti = Boolean.TRUE;
 
-											}
+												}
+											} else
+												sanalYok = false;
 
 											if (kapi.isGirisKapi())
 												girisHareketleri.add(hareketKGS);
@@ -19660,11 +19667,10 @@ public class OrtakIslemler implements Serializable {
 									calSure = netSure;
 								}
 								if (calSure == netSure) {
-
 									if (Long.parseLong(vGun) >= eksikCalismaGun && resmiTatilSure == 0.0d && toplamParcalanmisSure > 0.0d && toplamParcalanmisSure < vardiyaYemekSuresi + netSure) {
 										eksikCalismaSure = toplamParcalanmisSure - (vardiyaYemekSuresi + netSure);
 										calSure += eksikCalismaSure;
-										logger.info(vGun + " " + toplamParcalanmisSure);
+										logger.debug(vGun + " " + toplamParcalanmisSure);
 									}
 
 								}
@@ -21027,6 +21033,8 @@ public class OrtakIslemler implements Serializable {
 			String bayramEkle = getParameterKey("bayramEkle");
 			ekleDurum = bayramEkle != null && bayramEkle.equals("+");
 		}
+		if (vg.getVardiyaDateStr().endsWith("0422"))
+			logger.debug("");
 		// Arife günü hareketleri güncelleniyor
 		Tatil tatil = vg.getTatil();
 		if (tatil.isYarimGunMu() && ekleDurum) {
@@ -21067,12 +21075,17 @@ public class OrtakIslemler implements Serializable {
 				List<HareketKGS> cikisHareketleri = vg.getCikisHareketleri();
 				if (cikisHareketleri != null && !cikisHareketleri.isEmpty())
 					sonCikis = (HareketKGS) cikisHareketleri.get(cikisHareketleri.size() - 1).clone();
-				Date bayramBitis = tatil.getOrjTatil().getBasTarih();
+				Date bayramBitis = tatil.getBasTarih();
 				List<HareketKGS> hareketler = new ArrayList<HareketKGS>();
 				HareketKGS bayramBitisCikisHareket = null;
 				hareketler.addAll(vg.getHareketler());
-				vg.getGirisHareketleri().clear();
-				vg.getCikisHareketleri().clear();
+				if (vg.getGirisHareketleri() == null)
+					vg.setGirisHareketleri(new ArrayList<HareketKGS>());
+				if (vg.getCikisHareketleri() == null)
+					vg.setCikisHareketleri(new ArrayList<HareketKGS>());
+				List<HareketKGS> girisList = vg.getGirisHareketleri(), cikisList = vg.getCikisHareketleri();
+				girisList.clear();
+				cikisList.clear();
 				vg.getHareketler().clear();
 				for (Iterator iterator2 = hareketler.iterator(); iterator2.hasNext();) {
 					HareketKGS hareketKGS = (HareketKGS) iterator2.next();
