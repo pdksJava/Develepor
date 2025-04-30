@@ -18917,6 +18917,36 @@ public class OrtakIslemler implements Serializable {
 					double oncekiGunNormalSure = 0.0d, oncekiGunTatilSure = 0.0d;
 					cal.setTime(vardiyaGun.getVardiyaDate());
 					String gun = vGun.substring(6);
+					if (vGun.endsWith("0403"))
+						logger.debug("");
+					if (vardiyaGun.getFazlaMesailer() != null && (denklestirmeAy.getDurum() || denklestirmeAy.getGuncelleIK())) {
+						List<HareketKGS> list = vardiyaGun.getHareketler();
+						for (Iterator iterator = vardiyaGun.getFazlaMesailer().iterator(); iterator.hasNext();) {
+							PersonelFazlaMesai fm = (PersonelFazlaMesai) iterator.next();
+							if (fm.getDurum()) {
+								boolean hataVar = fm.getHareketId() != null;
+								if (list != null && hataVar) {
+									for (HareketKGS hareketKGS : list) {
+										if (hareketKGS.getId() != null && hareketKGS.getId().equals(fm.getHareketId())) {
+											hataVar = false;
+											break;
+
+										}
+
+									}
+								}
+								if (hataVar) {
+									fm.setGuncellemeTarihi(new Date());
+									fm.setDurum(Boolean.FALSE);
+									session.saveOrUpdate(fm);
+									session.flush();
+									iterator.remove();
+									logger.info(vardiyaGun.getVardiyaKeyStr() + " " + fm.getHareketId());
+								}
+							}
+
+						}
+					}
 					boolean sonGunMu = cal.getActualMaximum(Calendar.DATE) == cal.get(Calendar.DATE);
 					List<YemekIzin> yemekList = vardiyaGun.getYemekList();
 					cal.setTime(vardiyaGun.getVardiyaDate());
