@@ -131,7 +131,7 @@
 											<h:outputText value="#{dinamikRaporHome.seciliPdksDinamikRapor.aciklama}" rendered="#{not empty dinamikRaporHome.dinamikRaporDataList}" />
 										</f:facet>
 										<c:forEach items="#{dinamikRaporHome.dinamikRaporAlanList}" var="dinamikAlan">
-											<c:if test="#{authenticatedUser.adSoyad or dinamikAlan.goster}">
+											<c:if test="#{authenticatedUser.admin or dinamikAlan.goster}">
 												<c:if test="#{dinamikRaporHome.getFilterAlan(dinamikAlan)}">
  													<rich:column style="text-align :#{dinamikAlan.pdksDinamikRaporAlanHizala}"
 														filterBy="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" filterEvent="onkeyup">
