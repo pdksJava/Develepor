@@ -18045,7 +18045,7 @@ public class OrtakIslemler implements Serializable {
 							}
 
 							if (ayinGunu && pdksVardiyaGun.getCalismaSuresi() > 0.0d || toplamSure > 0.0d)
-								logger.debug(key + " " + toplamSure + " " + pdksVardiyaGun.getCalismaSuresi());
+								logger.debug(key + " " + toplamSure + " " + pdksVardiyaGun.getCalismaSuresi() + " " + (planlanSure + toplamSure));
 						}
 
 						if (resmiTatilDepartmanlari == null || (departmanKodu != null && resmiTatilDepartmanlari.contains(departmanKodu)))
