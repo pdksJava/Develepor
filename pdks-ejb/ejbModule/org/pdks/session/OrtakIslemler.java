@@ -18915,8 +18915,9 @@ public class OrtakIslemler implements Serializable {
 					}
 
 					double oncekiGunNormalSure = 0.0d, oncekiGunTatilSure = 0.0d;
-
+					cal.setTime(vardiyaGun.getVardiyaDate());
 					String gun = vGun.substring(6);
+					boolean sonGunMu = cal.getActualMaximum(Calendar.DATE) == cal.get(Calendar.DATE);
 					List<YemekIzin> yemekList = vardiyaGun.getYemekList();
 					cal.setTime(vardiyaGun.getVardiyaDate());
 					int ayinSonGunu = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -19183,8 +19184,6 @@ public class OrtakIslemler implements Serializable {
 												tatilSonrakiGun = sonrakiGun;
 											}
 										}
-										if (vGun.endsWith("0430"))
-											logger.debug("");
 										boolean sanalYok = true;
 										for (HareketKGS hareketKGS : hareketList) {
 											zaman = Long.parseLong(PdksUtil.convertToDateString(hareketKGS.getZaman(), "yyyyMMddHHmm"));
@@ -19274,6 +19273,10 @@ public class OrtakIslemler implements Serializable {
 							boolean parcalanmisSureVar = false;
 							if (vGun.endsWith("0430"))
 								logger.debug("");
+							Date gunParca = null;
+							if (sonGunMu && tatil != null && tatilGunleriMap.containsKey(vGun) == false)
+								gunParca = PdksUtil.tariheGunEkleCikar(vardiyaGun.getVardiyaDate(), 1);
+
 							for (int i = 0; i < tatilCikisHareketleri.size(); i++) {
 								HareketKGS cikisHareket = tatilCikisHareketleri.get(i);
 								HareketKGS girisHareket = null;
@@ -19295,6 +19298,8 @@ public class OrtakIslemler implements Serializable {
 								}
 								Date girisZaman = girisHareket != null ? girisHareket.getZaman() : null;
 								Date cikisZaman = cikisHareket != null ? cikisHareket.getZaman() : null;
+								if (gunParca != null && cikisZaman.after(gunParca))
+									continue;
 								if (cikisZaman != null && girisZaman != null && cikisZaman.getTime() <= girisZaman.getTime())
 									continue;
 
@@ -19666,7 +19671,7 @@ public class OrtakIslemler implements Serializable {
 										resmiTatilSure += netSure - calSure;
 									calSure = netSure;
 								}
-								if (calSure == netSure) {
+								if (calSure == netSure && vardiyaGun.getTatil() == null) {
 									if (Long.parseLong(vGun) >= eksikCalismaGun && resmiTatilSure == 0.0d && toplamParcalanmisSure > 0.0d && toplamParcalanmisSure < vardiyaYemekSuresi + netSure) {
 										eksikCalismaSure = toplamParcalanmisSure - (vardiyaYemekSuresi + netSure);
 										calSure += eksikCalismaSure;
