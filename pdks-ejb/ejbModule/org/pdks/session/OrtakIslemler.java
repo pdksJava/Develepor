@@ -19532,8 +19532,7 @@ public class OrtakIslemler implements Serializable {
 								}
 								oncekiCikisZaman = (Date) cikisZaman.clone();
 							}
-							if (vGun.endsWith("0428") || vGun.endsWith("0501"))
-								logger.debug("");
+
 							// TODO Hareketler okuması bitti
 							if (oncekiGunNormalSure + oncekiGunTatilSure > 0.0d) {
 								Vardiya vardiya2 = oncekiVardiyaGun.getIslemVardiya();
@@ -19562,10 +19561,6 @@ public class OrtakIslemler implements Serializable {
 							}
 							double eksikCalismaSure = 0;
 							if (sureHesapla && (gunlukSaat > 0 || vardiyaGun.getGecenAyResmiTatilSure() > 0.0d)) {
-								if (Long.parseLong(vGun) >= eksikCalismaGun && resmiTatilSure == 0.0d && toplamParcalanmisSure > 0.0d && toplamParcalanmisSure < vardiyaYemekSuresi + netSure) {
-									eksikCalismaSure = toplamParcalanmisSure - (vardiyaYemekSuresi + netSure);
-
-								}
 
 								toplamYemekSuresi = getToplamYemekSuresi(vardiyaYemekSuresi, toplamYemekSuresi, toplamParcalanmisSure);
 
@@ -19655,6 +19650,8 @@ public class OrtakIslemler implements Serializable {
 
 									}
 								}
+								if (vGun.endsWith("0427") || vGun.endsWith("0501"))
+									logger.debug("");
 								if (calSure == 0.0d && toplamParcalanmisSure > calSure)
 									calSure = toplamParcalanmisSure;
 								if (calSure > netSure) {
@@ -19662,9 +19659,14 @@ public class OrtakIslemler implements Serializable {
 										resmiTatilSure += netSure - calSure;
 									calSure = netSure;
 								}
-								if (calSure == netSure && eksikCalismaSure != 0.0d) {
-									calSure += eksikCalismaSure;
-									logger.debug(vGun + " " + toplamParcalanmisSure);
+								if (calSure == netSure) {
+
+									if (Long.parseLong(vGun) >= eksikCalismaGun && resmiTatilSure == 0.0d && toplamParcalanmisSure > 0.0d && toplamParcalanmisSure < vardiyaYemekSuresi + netSure) {
+										eksikCalismaSure = toplamParcalanmisSure - (vardiyaYemekSuresi + netSure);
+										calSure += eksikCalismaSure;
+										logger.info(vGun + " " + toplamParcalanmisSure);
+									}
+
 								}
 
 								if (arifeTatilBasZamanVar == false && arifeSureMap.containsKey("T_B") && arifeSureMap.containsKey("A_N")) {
