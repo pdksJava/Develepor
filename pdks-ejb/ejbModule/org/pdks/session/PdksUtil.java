@@ -795,6 +795,7 @@ public class PdksUtil implements Serializable {
 		String value = null;
 		if (cl != null) {
 			try {
+				// value = IOUtils.toString(cl.getAsciiStream(), StandardCharsets.UTF_8);
 				value = StringToByInputStream((BufferedReader) cl.getCharacterStream());
 			} catch (Exception e) {
 				value = null;

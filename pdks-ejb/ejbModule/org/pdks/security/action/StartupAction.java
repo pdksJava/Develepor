@@ -2,6 +2,7 @@ package org.pdks.security.action;
 
 import java.io.File;
 import java.io.Serializable;
+import java.sql.Clob;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,10 +20,8 @@ import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.lob.SerializableClob;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
@@ -319,8 +318,8 @@ public class StartupAction implements Serializable {
 			veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List hatalar = pdksEntityController.execSPList(veriMap, new StringBuffer("SP_PDKS_VIEW_REFRESH"), null);
 			if (hatalar != null && !hatalar.isEmpty()) {
-				SerializableClob clobComment = (SerializableClob) hatalar.get(0);
-				String aciklama = PdksUtil.replaceAllManuel(IOUtils.toString(clobComment.getAsciiStream(), "UTF-8"), "|", "\n");
+				Clob clobComment = (Clob) hatalar.get(0);
+				String aciklama = PdksUtil.replaceAllManuel(PdksUtil.StringToByClob(clobComment), "|", "\n");
 				if (PdksUtil.hasStringValue(aciklama))
 					throw new Exception("\n" + aciklama);
 			}
