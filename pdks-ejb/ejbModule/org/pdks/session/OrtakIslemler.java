@@ -21081,6 +21081,7 @@ public class OrtakIslemler implements Serializable {
 			logger.debug("");
 		// Arife günü hareketleri güncelleniyor
 		Tatil tatil = vg.getTatil();
+		Date bayramBaslama = tatil.getOrjTatil().getBasTarih();
 		if (tatil.isYarimGunMu() && ekleDurum) {
 			if (vg.getIslemVardiya().getVardiyaBasZaman().getTime() < bayramBaslama.getTime()) {
 				HareketKGS ilkGiris = (HareketKGS) vg.getGirisHareketleri().get(0).clone(), sonCikis = null;
