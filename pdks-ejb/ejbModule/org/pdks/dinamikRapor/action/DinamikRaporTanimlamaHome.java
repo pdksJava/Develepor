@@ -190,7 +190,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		if (parametre == null) {
 			parametre = new PdksDinamikRaporParametre();
 			parametre.setPdksDinamikRapor(seciliPdksDinamikRapor);
-			int sonSira = -1;
+			int sonSira = -10;
 			for (PdksDinamikRaporParametre pr : dinamikRaporParametreList) {
 				sonSira = pr.getSira();
 			}

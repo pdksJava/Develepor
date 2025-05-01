@@ -804,6 +804,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				}
 			}
 		}
+
 		if (yilParametre != null && ayParametre != null) {
 			cal = Calendar.getInstance();
 			if (yilParametre.getValue() == null)
@@ -817,6 +818,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				bitTarih = PdksUtil.tariheGunEkleCikar(PdksUtil.tariheAyEkleCikar(basTarih, 1), -1);
 			}
 		}
+
 		Sirket sirket = null;
 		for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
 			PdksDinamikRaporParametre pr = (PdksDinamikRaporParametre) iterator.next();
@@ -953,6 +955,10 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			}
 		} else
 			tesisParametre = null;
+		if (sirketParametre != null && tesisParametre != null) {
+			if (tesisParametre.getSecimList() == null)
+				tesisParametre.setSecimList(new ArrayList<SelectItem>());
+		}
 	}
 
 	public Session getSession() {
