@@ -21082,7 +21082,7 @@ public class OrtakIslemler implements Serializable {
 		// Arife günü hareketleri güncelleniyor
 		Tatil tatil = vg.getTatil();
 		if (tatil.isYarimGunMu() && ekleDurum) {
-			if (vg.getIslemVardiya().getVardiyaBasZaman().getTime() < tatil.getBasTarih().getTime()) {
+			if (vg.getIslemVardiya().getVardiyaBasZaman().getTime() < bayramBaslama.getTime()) {
 				HareketKGS ilkGiris = (HareketKGS) vg.getGirisHareketleri().get(0).clone(), sonCikis = null;
 				List<HareketKGS> cikisHareketleri = vg.getCikisHareketleri();
 				if (cikisHareketleri != null && !cikisHareketleri.isEmpty())
@@ -21095,10 +21095,10 @@ public class OrtakIslemler implements Serializable {
 					HareketKGS arifeGirisHareket = new HareketKGS();
 					arifeGirisHareket.setPersonel(ilkGiris.getPersonel());
 					arifeGirisHareket.setKapiView(ilkGiris.getKapiView());
-					if (sonCikis.getZaman().getTime() > tatil.getBasTarih().getTime())
+					if (sonCikis.getZaman().getTime() > bayramBaslama.getTime())
 						arifeGirisHareket.setZaman(sonCikis.getZaman());
 					else
-						arifeGirisHareket.setZaman(tatil.getBasTarih());
+						arifeGirisHareket.setZaman(bayramBaslama);
 					for (YemekIzin yemekIzin : yemekList) {
 						if (cikisZamani >= Long.parseLong(yemekIzin.getBasKey()) && cikisZamani <= Long.parseLong(yemekIzin.getBitKey())) {
 							arifeGirisHareket.setZaman(sonCikis.getZaman());
@@ -21119,7 +21119,7 @@ public class OrtakIslemler implements Serializable {
 				List<HareketKGS> cikisHareketleri = vg.getCikisHareketleri();
 				if (cikisHareketleri != null && !cikisHareketleri.isEmpty())
 					sonCikis = (HareketKGS) cikisHareketleri.get(cikisHareketleri.size() - 1).clone();
-				Date bayramBitis = tatil.getBasTarih();
+				 
 				List<HareketKGS> hareketler = new ArrayList<HareketKGS>();
 				HareketKGS bayramBitisCikisHareket = null;
 				hareketler.addAll(vg.getHareketler());
@@ -21133,18 +21133,18 @@ public class OrtakIslemler implements Serializable {
 				vg.getHareketler().clear();
 				for (Iterator iterator2 = hareketler.iterator(); iterator2.hasNext();) {
 					HareketKGS hareketKGS = (HareketKGS) iterator2.next();
-					if (hareketKGS.getKapiView().getKapi().isCikisKapi() && bayramBitisCikisHareket == null || hareketKGS.getZaman().getTime() >= bayramBitis.getTime()) {
+					if (hareketKGS.getKapiView().getKapi().isCikisKapi() && bayramBitisCikisHareket == null || hareketKGS.getZaman().getTime() >= bayramBaslama.getTime()) {
 						if (sonCikis != null && vg.getHareketler() != null && !vg.getHareketler().isEmpty()) {
 							bayramBitisCikisHareket = new HareketKGS();
 							bayramBitisCikisHareket.setPersonel(ilkGiris.getPersonel());
 							bayramBitisCikisHareket.setKapiView(sonCikis.getKapiView());
-							bayramBitisCikisHareket.setZaman(bayramBitis);
+							bayramBitisCikisHareket.setZaman(bayramBaslama);
 							bayramBitisCikisHareket.setTatil(Boolean.FALSE);
 							vg.addHareket(bayramBitisCikisHareket, Boolean.TRUE);
 							HareketKGS bayramBitisGirisHareket = new HareketKGS();
 							bayramBitisGirisHareket.setPersonel(ilkGiris.getPersonel());
 							bayramBitisGirisHareket.setKapiView(ilkGiris.getKapiView());
-							bayramBitisGirisHareket.setZaman(bayramBitis);
+							bayramBitisGirisHareket.setZaman(bayramBaslama);
 							bayramBitisGirisHareket.setTatil(Boolean.TRUE);
 							vg.addHareket(bayramBitisGirisHareket, Boolean.TRUE);
 						}
