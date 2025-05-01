@@ -794,14 +794,16 @@ public class PdksUtil implements Serializable {
 	public static String StringToByClob(Clob cl) {
 		String value = null;
 		if (cl != null) {
- 			try {
+			try {
 				value = StringToByInputStream((BufferedReader) cl.getCharacterStream());
 			} catch (Exception e) {
-				try {
+				value = null;
+			}
+			try {
+				if (value == null)
 					value = StringToByInputStream(cl.getAsciiStream());
-				} catch (Exception e2) {
-					value = "";
-				}
+			} catch (Exception e2) {
+				value = "";
 			}
 		}
 		return value;
