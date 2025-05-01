@@ -955,8 +955,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			}
 		} else
 			tesisParametre = null;
-		if (sirketParametre != null && tesisParametre != null) {
-			if (tesisParametre.getSecimList() == null)
+		if (sirketParametre != null) {
+			if (tesisParametre != null && tesisParametre.getSecimList() == null)
 				tesisParametre.setSecimList(new ArrayList<SelectItem>());
 			if (bolumParametre != null && bolumParametre.getSecimList() == null)
 				bolumParametre.setSecimList(new ArrayList<SelectItem>());
