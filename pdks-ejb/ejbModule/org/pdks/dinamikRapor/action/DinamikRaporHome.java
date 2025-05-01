@@ -402,7 +402,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			}
 
 			for (PdksDinamikRaporAlan ra : list) {
- 				Object data = getDinamikRaporAlanVeri(veri, ra.getSira());
+				Object data = getDinamikRaporAlanVeri(veri, ra.getSira());
 				if (data != null) {
 					boolean clob = data instanceof Clob;
 					if (clob == false) {
@@ -438,7 +438,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 							ExcelUtil.getCell(sheet, row, col, style).setCellValue(db);
 						}
 					} else {
- 						Cell clobCell = ExcelUtil.getCell(sheet, row, col, styleCenter);
+						Cell clobCell = ExcelUtil.getCell(sheet, row, col, styleCenter);
 						String str = PdksUtil.StringToByClob((Clob) data);
 						clobCell.setCellValue("");
 						ExcelUtil.setCellComment(clobCell, anchor, helper, drawing, str);
@@ -564,17 +564,12 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			list = null;
 		}
 		session.clear();
-		HashMap fields = new HashMap();
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		StringBuffer sb = new StringBuffer();
-		sb.append("select * from " + PdksDinamikRapor.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 		dinamikRaporList = pdksEntityController.getSQLParamByFieldList(PdksDinamikRapor.TABLE_NAME, PdksDinamikRapor.COLUMN_NAME_DURUM, Boolean.TRUE, PdksDinamikRapor.class, session);
 		if (authenticatedUser.isAdmin() == false && id == null)
 			id = -1L;
 		for (Iterator iterator = dinamikRaporList.iterator(); iterator.hasNext();) {
 			PdksDinamikRapor pr = (PdksDinamikRapor) iterator.next();
-			if (authenticatedUser.isAdmin() == false && pr.getGoruntulemeDurum().booleanValue() == false)
+			if (id == null && authenticatedUser.isAdmin() == false && pr.getGoruntulemeDurum().booleanValue() == false)
 				iterator.remove();
 			else if (id != null && pr.getId().equals(id) == false)
 				iterator.remove();
@@ -810,6 +805,11 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			}
 		}
 		if (yilParametre != null && ayParametre != null) {
+			cal = Calendar.getInstance();
+			if (yilParametre.getValue() == null)
+				yilParametre.setValue(cal.get(Calendar.YEAR));
+			if (ayParametre.getValue() == null)
+				ayParametre.setValue(cal.get(Calendar.MONTH) + 1);
 			int yil = Integer.parseInt("" + yilParametre.getValue()), ay = Integer.parseInt("" + ayParametre.getValue());
 			dm = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
 			if (dm == null) {
