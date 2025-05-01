@@ -977,9 +977,8 @@ public class PdksUtil implements Serializable {
 	public static List<String> getStringListFromFile(File file) throws Exception {
 		List<String> list = null;
 		if (file != null && file.exists()) {
-			BufferedReader reader;
 			InputStream in = new FileInputStream(file);
-			reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 			String line = reader.readLine();
 			list = new ArrayList<String>();
 			while (line != null) {
@@ -2754,7 +2753,7 @@ public class PdksUtil implements Serializable {
 			bagliRoller = new ArrayList<Role>();
 		user.setBagliRoller(bagliRoller);
 		user.setYetkiSet(Boolean.TRUE);
- 		return bagliRoller;
+		return bagliRoller;
 	}
 
 	/**
