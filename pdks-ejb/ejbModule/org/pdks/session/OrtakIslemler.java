@@ -12110,20 +12110,29 @@ public class OrtakIslemler implements Serializable {
 				String key = String.valueOf(tatilGunView.getId());
 				Tatil tatilOrj = (Tatil) tatilGunView.getTatil().clone();
 				Tatil tatil = (Tatil) tatilOrj.clone();
-				tatil.setOrjTatil(tatilGunView.getTatil());
+				int yil = PdksUtil.getDateField(tatilGunView.getTarih(), Calendar.YEAR);
+				if (tatilOrj.isPeriyodik()) {
+ 					cal.setTime(tatilOrj.getBasTarih());
+					cal.set(Calendar.YEAR, yil);
+					tatilOrj.setBasTarih(cal.getTime());
+					cal.setTime(tatilOrj.getBitTarih());
+					cal.set(Calendar.YEAR, yil);
+					tatilOrj.setBitTarih(cal.getTime());
+				}
+				tatil.setOrjTatil(tatilOrj);
 				tatil.setYarimGun(tatilGunView.getYarimGun());
 				tatil.setBasGun(tatilGunView.getTarih());
 				tatil.setBitGun(tariheGunEkleCikar(cal, PdksUtil.getDate(tatilGunView.getTarih()), 1));
 				tatil.setBasTarih(tatilOrj.getBasTarih());
 				cal.setTime(tatilOrj.getBasTarih());
 				if (tatilOrj.isPeriyodik())
-					cal.set(Calendar.YEAR, PdksUtil.getDateField(tatilGunView.getTarih(), Calendar.YEAR));
+					cal.set(Calendar.YEAR, yil);
 				tatil.setBasTarih(cal.getTime());
 				cal.setTime(tatilOrj.getBitTarih());
 				if (tatilOrj.isPeriyodik())
-					cal.set(Calendar.YEAR, PdksUtil.getDateField(tatilGunView.getTarih(), Calendar.YEAR));
+					cal.set(Calendar.YEAR, yil);
 				tatil.setBitTarih(cal.getTime());
-				if (tatil.getYarimGun()) {
+				if (tatilGunView.getYarimGun()) {
 					tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.HOUR_OF_DAY, saat));
 					tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.MINUTE, dakika));
 				}
