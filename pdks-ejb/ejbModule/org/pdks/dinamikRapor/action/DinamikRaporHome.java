@@ -19,7 +19,11 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -39,6 +43,7 @@ import org.pdks.dinamikRapor.enums.ENumBaslik;
 import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.AylikPuantaj;
 import org.pdks.entity.DenklestirmeAy;
+import org.pdks.entity.Liste;
 import org.pdks.entity.Sirket;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
@@ -80,7 +85,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	private List<PdksDinamikRaporParametre> dinamikRaporParametreList;
 	private List<SelectItem> tesisIdList;
 
-	private List<Object[]> dinamikRaporDataList;
+	private List<Liste> dinamikRaporDataList;
 	private PdksDinamikRaporParametre sirketParametre, tesisParametre, basTarihParametre, bitTarihParametre, bolumParametre, yilParametre, ayParametre;
 	private DenklestirmeAy dm;
 	private int maxYil;
@@ -109,7 +114,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		String sayfa = "";
 		if (dinamikRaporDataList == null)
-			dinamikRaporDataList = new ArrayList<Object[]>();
+			dinamikRaporDataList = new ArrayList<Liste>();
 		else
 			dinamikRaporDataList.clear();
 		fillPdksDinamikRaporList();
@@ -186,6 +191,11 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	 */
 	public String fillDinamikRaporList() {
 		StringBuffer sb = new StringBuffer();
+		List<Object[]> list = null;
+		if (dinamikRaporDataList == null)
+			dinamikRaporDataList = new ArrayList<Liste>();
+		else
+			dinamikRaporDataList.clear();
 		if (seciliPdksDinamikRapor.isStoreProcedure()) {
 			sb.append(seciliPdksDinamikRapor.getDbTanim());
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
@@ -204,9 +214,9 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			if (session != null)
 				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
-				dinamikRaporDataList = pdksEntityController.execSPList(veriMap, sb, null);
+				list = pdksEntityController.execSPList(veriMap, sb, null);
 			} catch (Exception e) {
-				dinamikRaporDataList = new ArrayList<Object[]>();
+
 			}
 		} else {
 			HashMap fields = new HashMap();
@@ -294,11 +304,16 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				sb.append(" order by " + seciliPdksDinamikRapor.getOrderSQL());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			dinamikRaporDataList = pdksEntityController.getObjectBySQLList(sb, fields, null);
+			list = pdksEntityController.getObjectBySQLList(sb, fields, null);
 		}
 		saveLastParameter();
-		if (dinamikRaporDataList != null && dinamikRaporDataList.isEmpty() == false)
+		if (list != null && list.isEmpty() == false) {
+			long sira = 0;
+			for (Object[] objects : list)
+				dinamikRaporDataList.add(new Liste(++sira, objects));
 			fillDinamikRaporAlanList();
+		}
+		list = null;
 		return "";
 	}
 
@@ -327,6 +342,9 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		ByteArrayOutputStream baos = null;
 		Workbook wb = new XSSFWorkbook();
 		Sheet sheet = ExcelUtil.createSheet(wb, "Rapor", Boolean.TRUE);
+		Drawing drawing = sheet.createDrawingPatriarch();
+		CreationHelper helper = wb.getCreationHelper();
+		ClientAnchor anchor = helper.createClientAnchor();
 		XSSFCellStyle header = (XSSFCellStyle) ExcelUtil.getStyleHeader(9, wb);
 		CellStyle styleOdd = ExcelUtil.getStyleOdd(null, wb);
 		CellStyle styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
@@ -353,7 +371,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		}
 
 		boolean renk = true;
-		for (Object[] veri : dinamikRaporDataList) {
+		for (Liste liste : dinamikRaporDataList) {
+			Object[] veri = (Object[]) liste.getValue();
 			col = 0;
 			++row;
 			CellStyle style = null;
@@ -383,39 +402,48 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			}
 
 			for (PdksDinamikRaporAlan ra : list) {
-				Object data = getDinamikRaporAlanVeri(veri, ra.getSira());
+ 				Object data = getDinamikRaporAlanVeri(veri, ra.getSira());
 				if (data != null) {
-					if (ra.isKarakter()) {
-						String str = (String) data;
-						style = styleGenel;
-						if (ra.isHizalaOrtala())
-							style = styleCenter;
-						else if (ra.isHizalaSaga())
-							style = styleRight;
-						ExcelUtil.getCell(sheet, row, col, style).setCellValue(str);
-					} else if (ra.isSayisal() == false) {
-						Date tarih = (Date) data;
-						style = styleDate;
-						if (ra.isTarihSaat())
-							style = styleDateTime;
-						else if (ra.isSaat())
-							style = styleTime;
-						ExcelUtil.getCell(sheet, row, col, style).setCellValue(tarih);
+					boolean clob = data instanceof Clob;
+					if (clob == false) {
+						if (ra.isKarakter()) {
+							String str = (String) data;
+							style = styleGenel;
+							if (ra.isHizalaOrtala())
+								style = styleCenter;
+							else if (ra.isHizalaSaga())
+								style = styleRight;
+							ExcelUtil.getCell(sheet, row, col, style).setCellValue(str);
+						} else if (ra.isSayisal() == false) {
+							Date tarih = (Date) data;
+							style = styleDate;
+							if (ra.isTarihSaat())
+								style = styleDateTime;
+							else if (ra.isSaat())
+								style = styleTime;
+							ExcelUtil.getCell(sheet, row, col, style).setCellValue(tarih);
+						} else {
+							Double db = null;
+							style = styleNumber;
+							if (data instanceof BigDecimal)
+								db = ((BigDecimal) data).doubleValue();
+							else if (data instanceof BigInteger)
+								db = ((BigInteger) data).doubleValue();
+							else if (data instanceof Double)
+								db = ((Double) data).doubleValue();
+							else if (data instanceof Integer)
+								db = ((Integer) data).doubleValue();
+							else
+								db = new Double(data.toString());
+							ExcelUtil.getCell(sheet, row, col, style).setCellValue(db);
+						}
 					} else {
-						Double db = null;
-						style = styleNumber;
-						if (data instanceof BigDecimal)
-							db = ((BigDecimal) data).doubleValue();
-						else if (data instanceof BigInteger)
-							db = ((BigInteger) data).doubleValue();
-						else if (data instanceof Double)
-							db = ((Double) data).doubleValue();
-						else if (data instanceof Integer)
-							db = ((Integer) data).doubleValue();
-						else
-							db = new Double(data.toString());
-						ExcelUtil.getCell(sheet, row, col, style).setCellValue(db);
+ 						Cell clobCell = ExcelUtil.getCell(sheet, row, col, styleCenter);
+						String str = PdksUtil.StringToByClob((Clob) data);
+						clobCell.setCellValue("");
+						ExcelUtil.setCellComment(clobCell, anchor, helper, drawing, str);
 					}
+
 				} else {
 					ExcelUtil.getCell(sheet, row, col, styleGenel).setCellValue("");
 				}
@@ -467,14 +495,30 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				else {
 					if (value instanceof Clob) {
 						Clob c = (Clob) value;
-						value = PdksUtil.StringToByInputStream(c.getAsciiStream());
-						logger.debug(value.getClass().getName());
+						value = PdksUtil.StringToByClob(c);
+
 					}
 				}
 			} catch (Exception e) {
 			}
 		}
 		return value;
+	}
+
+	/**
+	 * @param veri
+	 * @param index
+	 * @return
+	 */
+	public boolean isClob(Object[] veri, Integer index) {
+		boolean durum = false;
+		Object value = getDinamikRaporAlanVeri(veri, index);
+		if (value != null) {
+			if (value instanceof Clob) {
+				durum = true;
+			}
+		}
+		return durum;
 	}
 
 	/**
@@ -959,11 +1003,11 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		this.seciliPdksDinamikRapor = seciliPdksDinamikRapor;
 	}
 
-	public List<Object[]> getDinamikRaporDataList() {
+	public List<Liste> getDinamikRaporDataList() {
 		return dinamikRaporDataList;
 	}
 
-	public void setDinamikRaporDataList(List<Object[]> dinamikRaporDataList) {
+	public void setDinamikRaporDataList(List<Liste> dinamikRaporDataList) {
 		this.dinamikRaporDataList = dinamikRaporDataList;
 	}
 

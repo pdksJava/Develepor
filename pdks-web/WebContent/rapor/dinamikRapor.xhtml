@@ -147,7 +147,22 @@
 												<f:facet name="header">
 													<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(dinamikAlan.aciklama)}" />
 												</f:facet>
-												<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" />
+												<ui:fragment rendered="#{dinamikRaporHome.isClob(dinamikVeri.value,dinamikAlan.sira)==false}">
+													<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri.value,dinamikAlan)}" />
+												</ui:fragment>
+												<ui:fragment rendered="#{dinamikRaporHome.isClob(dinamikVeri.value,dinamikAlan.sira)}">
+													<DIV id="denk#{dinamikVeri.id}">
+														<h:graphicImage value="/img/msginfo.png" style="border:0" height="20" width="20" />
+														<rich:toolTip for="denk#{dinamikVeri.id}">
+															<DIV id="data#{dinamikVeri.id}" style="text-align: left;">
+																<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri.value,dinamikAlan)}" />
+															</DIV>
+														</rich:toolTip>
+													</DIV>
+
+												</ui:fragment>
+
+
 											</rich:column>
 
 										</c:forEach>

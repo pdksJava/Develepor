@@ -4920,7 +4920,7 @@ public class OrtakIslemler implements Serializable {
 								List strlist = pdksEntityController.execFNList(map, new StringBuffer(fnName));
 								if (strlist != null && !strlist.isEmpty()) {
 									Clob blob = (Clob) strlist.get(0);
-									blobAsBytes = PdksUtil.StringToByInputStream(blob.getAsciiStream());
+									blobAsBytes = PdksUtil.StringToByClob(blob);
 									if (blobAsBytes != null) {
 										StringBuffer sb = new StringBuffer(blobAsBytes);
 										HashMap fields = new HashMap();
@@ -12112,7 +12112,7 @@ public class OrtakIslemler implements Serializable {
 				Tatil tatil = (Tatil) tatilOrj.clone();
 				int yil = PdksUtil.getDateField(tatilGunView.getTarih(), Calendar.YEAR);
 				if (tatilOrj.isPeriyodik()) {
- 					cal.setTime(tatilOrj.getBasTarih());
+					cal.setTime(tatilOrj.getBasTarih());
 					cal.set(Calendar.YEAR, yil);
 					tatilOrj.setBasTarih(cal.getTime());
 					cal.setTime(tatilOrj.getBitTarih());

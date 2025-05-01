@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Clob;
 import java.sql.Timestamp;
 import java.text.Collator;
 import java.text.DecimalFormat;
@@ -784,6 +785,48 @@ public class PdksUtil implements Serializable {
 
 		return deger;
 
+	}
+
+	/**
+	 * @param cl
+	 * @return
+	 */
+	public static String StringToByClob(Clob cl) {
+		String value = null;
+		if (cl != null) {
+ 			try {
+				value = StringToByInputStream((BufferedReader) cl.getCharacterStream());
+			} catch (Exception e) {
+				try {
+					value = StringToByInputStream(cl.getAsciiStream());
+				} catch (Exception e2) {
+					value = "";
+				}
+			}
+		}
+		return value;
+
+	}
+
+	/**
+	 * @param br
+	 * @return
+	 */
+	public static String StringToByInputStream(BufferedReader br) {
+		String read = null;
+		if (br != null) {
+			StringBuilder sb = new StringBuilder();
+			try {
+				while ((read = br.readLine()) != null) {
+					sb.append(read);
+				}
+				br.close();
+			} catch (Exception e) {
+			}
+			read = sb.toString();
+			sb = null;
+		}
+		return read;
 	}
 
 	/**
