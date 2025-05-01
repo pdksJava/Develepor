@@ -18268,7 +18268,7 @@ public class OrtakIslemler implements Serializable {
 									hareketler.add(giris);
 									girisHareketList.add(giris);
 								}
-								hareket.setOncekiGun(Boolean.TRUE);
+								hareket.setOncekiGun(vg.isAyinGunu());
 								hareket.setTatil(true);
 								if (kapi.isGirisKapi())
 									girisHareketList.add(hareket);

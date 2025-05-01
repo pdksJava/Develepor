@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Clob;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -463,6 +464,13 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 					value = authenticatedUser.dateTimeFormatla((Date) value);
 				else if (alan.isSaat())
 					value = authenticatedUser.timeFormatla((Date) value);
+				else {
+					if (value instanceof Clob) {
+						Clob c = (Clob) value;
+						value = PdksUtil.StringToByInputStream(c.getAsciiStream());
+						logger.debug(value.getClass().getName());
+					}
+				}
 			} catch (Exception e) {
 			}
 		}
