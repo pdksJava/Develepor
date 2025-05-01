@@ -133,12 +133,26 @@
 										<c:forEach items="#{dinamikRaporHome.dinamikRaporAlanList}" var="dinamikAlan">
 
 											<c:if test="#{dinamikRaporHome.getFilterAlan(dinamikAlan)}">
-												<rich:column style="text-align :#{dinamikAlan.pdksDinamikRaporAlanHizala}" rendered="#{authenticatedUser.admin or dinamikAlan.goster)}">
-														filterBy="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" filterEvent="onkeyup">
-														<f:facet name="header">
+												<rich:column style="text-align :#{dinamikAlan.pdksDinamikRaporAlanHizala}"
+													filterBy="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri.value,dinamikAlan)}" filterEvent="onkeyup"
+													rendered="#{authenticatedUser.admin or dinamikAlan.goster}">
+													<f:facet name="header">
 														<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(dinamikAlan.aciklama)}" />
 													</f:facet>
-													<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri,dinamikAlan)}" />
+													<ui:fragment rendered="#{dinamikRaporHome.isClob(dinamikVeri.value,dinamikAlan.sira)==false}">
+														<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri.value,dinamikAlan)}" />
+													</ui:fragment>
+													<ui:fragment rendered="#{dinamikRaporHome.isClob(dinamikVeri.value,dinamikAlan.sira)}">
+														<DIV id="denkf#{dinamikVeri.id}">
+															<h:graphicImage value="/img/msginfo.png" style="border:0" height="20" width="20" />
+															<rich:toolTip for="denkf#{dinamikVeri.id}">
+																<DIV id="dataf#{dinamikVeri.id}" style="text-align: left;">
+																	<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri.value,dinamikAlan)}" />
+																</DIV>
+															</rich:toolTip>
+														</DIV>
+
+													</ui:fragment>
 												</rich:column>
 											</c:if>
 
