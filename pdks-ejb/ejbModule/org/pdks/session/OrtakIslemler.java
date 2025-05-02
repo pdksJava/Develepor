@@ -19310,7 +19310,7 @@ public class OrtakIslemler implements Serializable {
 							double yemekSure = (double) vardiyaGun.getVardiya().getYemekSuresi() / 60.0d, netSure = vardiyaGun.getVardiya().getNetCalismaSuresi();
 							double toplamParcalanmisSure = 0.0d;
 							boolean parcalanmisSureVar = false;
-							if (vGun.endsWith("0430"))
+							if (vGun.endsWith("0501"))
 								logger.debug("");
 							Date gunParca = null;
 							if (sonGunMu && tatil != null && tatilGunleriMap.containsKey(vGun) == false)
@@ -19647,6 +19647,9 @@ public class OrtakIslemler implements Serializable {
 									} else if (vardiyaYemekSuresi > toplamYemekSuresi && (netSure + vardiyaYemekSuresi) * yemekMolasiYuzdesi <= toplamParcalanmisSure) {
 										double resmiCalisma = resmiTatilSure;
 										if (resmiTatilSure > 0.0d) {
+											if (vGun.endsWith("0501"))
+												logger.debug("");
+					
 											if (resmiTatilSure == calSure && toplamParcalanmisSure == netSure + vardiyaYemekSuresi) {
 												logger.debug(gun);
 												if (toplamParcalanmisSure == calSure)
@@ -19670,6 +19673,7 @@ public class OrtakIslemler implements Serializable {
 												}
 												vardiyaYemekSuresi += yemekFark;
 												resmiTatilSure += yemekFark;
+												vardiyaGun.addCalismaSuresi(yemekFark);
 												vardiyaGun.addBayramCalismaSuresi(yemekFark);
 											}
 										} else {

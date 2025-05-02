@@ -84,7 +84,6 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	private List<PdksDinamikRaporAlan> dinamikRaporAlanList;
 	private List<PdksDinamikRaporParametre> dinamikRaporParametreList;
 	private List<SelectItem> tesisIdList;
-
 	private List<Liste> dinamikRaporDataList;
 	private PdksDinamikRaporParametre sirketParametre, tesisParametre, basTarihParametre, bitTarihParametre, bolumParametre, yilParametre, ayParametre;
 	private DenklestirmeAy dm;
