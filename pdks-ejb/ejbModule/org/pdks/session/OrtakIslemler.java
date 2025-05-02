@@ -19676,7 +19676,7 @@ public class OrtakIslemler implements Serializable {
 											}
 										} else {
 
-											String vkey = vardiyaGun != null ? vardiyaGun.getVardiya().getId() + "_" + vardiyaGun.getYarimYuvarla() + "_" + (oncekiVardiyaGun.isBayramAyir() ? "0" : "1") : "";
+											String vkey = vardiyaGun != null ? vardiyaGun.getVardiya().getId() + "_" + vardiyaGun.getYarimYuvarla() + "_" + (oncekiVardiyaGun == null || oncekiVardiyaGun.isBayramAyir() ? "0" : "1") : "";
 											if (vardiyaGun.getSonrakiVardiyaGun() == null || vardiyaGun.getTatil() == null || vardiyaGun.getSonrakiVardiyaGun().getVardiyaDateStr().startsWith(donemStr))
 												vkey = "";
 											if (veriMap.containsKey(vkey)) {
