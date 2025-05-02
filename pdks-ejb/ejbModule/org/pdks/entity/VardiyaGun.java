@@ -394,7 +394,7 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setCalismaSuresi(double value) {
-		if (this.getVardiyaDateStr().endsWith("1231") && value != 0.0d)
+		if (this.getVardiyaDateStr().endsWith("0501") && value != 0.0d)
 			logger.debug(value);
 		this.calismaSuresi = value;
 	}
@@ -402,7 +402,7 @@ public class VardiyaGun extends BaseObject {
 	@Transient
 	public void addCalismaSuresi(double value) {
 		if (value != 0.0d) {
-			if (this.getVardiyaDateStr().endsWith("1231"))
+			if (this.getVardiyaDateStr().endsWith("0501"))
 				logger.debug(value);
 		}
 
@@ -550,7 +550,6 @@ public class VardiyaGun extends BaseObject {
 			kapi = null;
 		}
 		boolean durum = Boolean.TRUE;
-
 		if (kapi != null && hareket != null && (kapi.isGirisKapi() || kapi.isCikisKapi())) {
 			if (hareketler == null) {
 				hareketler = new ArrayList<HareketKGS>();
@@ -1183,15 +1182,19 @@ public class VardiyaGun extends BaseObject {
 		return resmiTatilSure;
 	}
 
-	public void setResmiTatilSure(double resmiTatilSure) {
-		if (resmiTatilSure > 0.0d)
-			logger.debug(resmiTatilSure);
-		this.resmiTatilSure = resmiTatilSure;
+	public void setResmiTatilSure(double value) {
+		if (value != 0.0d) {
+			if (this.getVardiyaDateStr().endsWith("0501"))
+				logger.debug(value);
+		}
+		this.resmiTatilSure = value;
 	}
 
 	public void addResmiTatilSure(double value) {
-		if (value > 0.0d)
-			logger.debug(value);
+		if (value != 0.0d) {
+			if (this.getVardiyaDateStr().endsWith("0501"))
+				logger.debug(value);
+		}
 		this.resmiTatilSure += value;
 	}
 
