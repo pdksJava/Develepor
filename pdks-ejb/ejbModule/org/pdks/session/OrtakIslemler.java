@@ -832,8 +832,8 @@ public class OrtakIslemler implements Serializable {
 						molaSure = getToplamYemekSuresi(molaSure, yemekSure, sureArife);
 					}
 					yemekArife = sureArife - molaSure;
- 					yemekNormal = sureNormal - (yemekSure - molaSure);
- 				} else {
+					yemekNormal = sureNormal - (yemekSure - molaSure);
+				} else {
 					double molaSure = PdksUtil.setSureDoubleTypeRounded(sureNormal * yemekSure / toplamSure, vardiyaGun.getYarimYuvarla());
 					if (vardiyaGun.isBayramAyir())
 						molaSure = getToplamYemekSuresi(yemekSure, molaSure, sureNormal);
@@ -19585,7 +19585,7 @@ public class OrtakIslemler implements Serializable {
 							if (oncekiGunNormalSure + oncekiGunTatilSure > 0.0d) {
 								Vardiya vardiya2 = oncekiVardiyaGun.getIslemVardiya();
 								// todo xxx
-								String vkey = vardiya2.getId() + "_" + oncekiVardiyaGun.getYarimYuvarla() + "_" + (oncekiVardiyaGun.isBayramAyir() ? "1" : "0");
+								String vkey = vardiya2.getId() + "_" + oncekiVardiyaGun.getYarimYuvarla() + "_" + (oncekiVardiyaGun.isBayramAyir() ? "0" : "1");
 								if (veriMap.containsKey(vkey)) {
 									HashMap<String, HashMap<String, Double>> vardiyaMap = veriMap.get(vkey);
 									HashMap<String, Double> normalMap = vardiyaMap.get("A");
@@ -19608,6 +19608,8 @@ public class OrtakIslemler implements Serializable {
 
 							}
 							double eksikCalismaSure = 0;
+							if (vGun.endsWith("0518"))
+								logger.debug("");
 							if (sureHesapla && (gunlukSaat > 0 || vardiyaGun.getGecenAyResmiTatilSure() > 0.0d)) {
 
 								toplamYemekSuresi = getToplamYemekSuresi(vardiyaYemekSuresi, toplamYemekSuresi, toplamParcalanmisSure);
@@ -19644,8 +19646,6 @@ public class OrtakIslemler implements Serializable {
 									} else if (vardiyaYemekSuresi > toplamYemekSuresi && (netSure + vardiyaYemekSuresi) * yemekMolasiYuzdesi <= toplamParcalanmisSure) {
 										double resmiCalisma = resmiTatilSure;
 										if (resmiTatilSure > 0.0d) {
-											if (vGun.endsWith("0501"))
-												logger.debug("");
 
 											if (resmiTatilSure == calSure && toplamParcalanmisSure == netSure + vardiyaYemekSuresi) {
 												logger.debug(gun);
@@ -19670,12 +19670,13 @@ public class OrtakIslemler implements Serializable {
 												}
 												vardiyaYemekSuresi += yemekFark;
 												resmiTatilSure += yemekFark;
-												vardiyaGun.addCalismaSuresi(yemekFark);
+												if (vardiya.getBasDonem() < vardiya.getBitDonem())
+													vardiyaGun.addCalismaSuresi(yemekFark);
 												vardiyaGun.addBayramCalismaSuresi(yemekFark);
 											}
 										} else {
 
-											String vkey = vardiyaGun != null ? vardiyaGun.getVardiya().getId() + "_" + vardiyaGun.getYarimYuvarla() : "";
+											String vkey = vardiyaGun != null ? vardiyaGun.getVardiya().getId() + "_" + vardiyaGun.getYarimYuvarla() + "_" + (oncekiVardiyaGun.isBayramAyir() ? "0" : "1") : "";
 											if (vardiyaGun.getSonrakiVardiyaGun() == null || vardiyaGun.getTatil() == null || vardiyaGun.getSonrakiVardiyaGun().getVardiyaDateStr().startsWith(donemStr))
 												vkey = "";
 											if (veriMap.containsKey(vkey)) {
@@ -19701,7 +19702,7 @@ public class OrtakIslemler implements Serializable {
 											double yemekFark = PdksUtil.setSureDoubleTypeRounded(toplamYemekSuresi - (vardiyaYemekSuresi * calSure / toplamParcalanmisSure), vardiyaGun.getYarimYuvarla());
 											calSure += yemekFark;
 										} else if (sonGunMu && vardiyaGun.getTatil() != null && tatilGunleriMap.containsKey(vGun) == false) {
-											String vkey = vardiyaGun != null ? vardiyaGun.getVardiya().getId() + "_" + vardiyaGun.getYarimYuvarla() + "_0" : "";
+											String vkey = vardiyaGun != null ? vardiyaGun.getVardiya().getId() + "_" + vardiyaGun.getYarimYuvarla() + "_" + (oncekiVardiyaGun.isBayramAyir() ? "1" : "0") : "";
 											if (vardiyaGun.getSonrakiVardiyaGun() == null || vardiyaGun.getTatil() == null || vardiyaGun.getSonrakiVardiyaGun().getVardiyaDateStr().startsWith(donemStr))
 												vkey = "";
 											if (veriMap.containsKey(vkey)) {
