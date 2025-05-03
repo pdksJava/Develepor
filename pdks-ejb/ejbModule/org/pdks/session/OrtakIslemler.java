@@ -71,6 +71,8 @@ import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.international.StatusMessage.Severity;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.pdks.dinamikRapor.entity.PdksDinamikRapor;
+import org.pdks.dinamikRapor.entity.PdksDinamikRaporRole;
 import org.pdks.dinamikRapor.enums.ENumBaslik;
 import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.ArifeVardiyaDonem;
@@ -221,6 +223,10 @@ public class OrtakIslemler implements Serializable {
 	PdksSap3Controller pdksSap3Controller;
 	@In(required = false, create = true)
 	HashMap<String, String> parameterMap;
+
+	@In(required = false, create = true)
+	HashMap<String, Long> raporRoleMap = new HashMap<String, Long>();
+
 	@In(required = false, create = true)
 	List<Sirket> pdksSirketleri;
 
@@ -240,6 +246,32 @@ public class OrtakIslemler implements Serializable {
 	public double getToplamYemekSuresi(double vardiyaYemekSuresi, double toplamYemekSuresi, double sure) {
 		toplamYemekSuresi = PdksUtil.getToplamYemekSuresi(vardiyaYemekSuresi, toplamYemekSuresi, sure);
 		return toplamYemekSuresi;
+	}
+
+	/**
+	 * @param rapor
+	 * @return
+	 */
+	public boolean isRaporYetkili(PdksDinamikRapor rapor) {
+		boolean yetki = false;
+		if (authenticatedUser != null && rapor != null) {
+			if (authenticatedUser.isAdmin() == false && authenticatedUser.isSistemYoneticisi() == false) {
+ 				if (raporRoleMap != null && authenticatedUser.getYetkiliRollerim() != null) {
+					for (Role role : authenticatedUser.getYetkiliRollerim()) {
+						String rolAdi = role.getRolename();
+						if (rolAdi.equals(Role.TIPI_IK_DIREKTOR) || rolAdi.equals(Role.TIPI_IK_SIRKET) || rolAdi.equals(Role.TIPI_IK_Tesis))
+							rolAdi = Role.TIPI_IK;
+						if (raporRoleMap.containsKey(PdksDinamikRaporRole.getKey(rapor, rolAdi))) {
+							yetki = true;
+							break;
+						}
+					}
+
+				}
+			} else
+				yetki = true;
+		}
+		return yetki;
 	}
 
 	/**

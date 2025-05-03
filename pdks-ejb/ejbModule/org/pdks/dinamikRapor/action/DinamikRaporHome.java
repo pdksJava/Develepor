@@ -563,15 +563,20 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			list = null;
 		}
 		session.clear();
-		dinamikRaporList = pdksEntityController.getSQLParamByFieldList(PdksDinamikRapor.TABLE_NAME, PdksDinamikRapor.COLUMN_NAME_DURUM, Boolean.TRUE, PdksDinamikRapor.class, session);
+		if (id != null)
+			dinamikRaporList = pdksEntityController.getSQLParamByFieldList(PdksDinamikRapor.TABLE_NAME, PdksDinamikRapor.COLUMN_NAME_ID, id, PdksDinamikRapor.class, session);
+		else
+			dinamikRaporList = pdksEntityController.getSQLParamByFieldList(PdksDinamikRapor.TABLE_NAME, PdksDinamikRapor.COLUMN_NAME_DURUM, Boolean.TRUE, PdksDinamikRapor.class, session);
 		if (authenticatedUser.isAdmin() == false && id == null)
 			id = -1L;
-		for (Iterator iterator = dinamikRaporList.iterator(); iterator.hasNext();) {
-			PdksDinamikRapor pr = (PdksDinamikRapor) iterator.next();
-			if (id == null && authenticatedUser.isAdmin() == false && pr.getGoruntulemeDurum().booleanValue() == false)
-				iterator.remove();
-			else if (id != null && pr.getId().equals(id) == false)
-				iterator.remove();
+		if (authenticatedUser.isAdmin() == false) {
+			if (dinamikRaporList.size() > 1)
+				dinamikRaporList.clear();
+			for (Iterator iterator = dinamikRaporList.iterator(); iterator.hasNext();) {
+				PdksDinamikRapor pr = (PdksDinamikRapor) iterator.next();
+				if (pr.getGoruntulemeDurum().booleanValue() == false || ortakIslemler.isRaporYetkili(pr) == false)
+					iterator.remove();
+			}
 		}
 	}
 

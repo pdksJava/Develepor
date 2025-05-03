@@ -71,7 +71,7 @@ public class PdksDinamikRaporRole extends BasePDKSObject implements Serializable
 
 	@Transient
 	public String getKey() {
-		String str = getKey(pdksDinamikRapor, role);
+		String str = getKey(pdksDinamikRapor, role != null ? role.getRolename() : "");
 		return str;
 	}
 
@@ -82,8 +82,8 @@ public class PdksDinamikRaporRole extends BasePDKSObject implements Serializable
 	}
 
 	@Transient
-	public static String getKey(PdksDinamikRapor rapor, Role role) {
-		String str = (rapor != null ? rapor.getId() : 0L) + "_" + (role != null ? role.getRolename() : "");
+	public static String getKey(PdksDinamikRapor rapor, String roleName) {
+		String str = (rapor != null ? rapor.getId() : 0L) + "_" + (roleName != null ? roleName : "");
 		return str;
 	}
 
