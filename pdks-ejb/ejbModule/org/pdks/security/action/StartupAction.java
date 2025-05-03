@@ -35,6 +35,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.pdks.dinamikRapor.entity.PdksDinamikRaporAlan;
 import org.pdks.dinamikRapor.entity.PdksDinamikRaporParametre;
+import org.pdks.dinamikRapor.entity.PdksDinamikRaporRole;
 import org.pdks.entity.AccountPermission;
 import org.pdks.entity.ArifeVardiyaDonem;
 import org.pdks.entity.AylikPuantaj;
@@ -118,6 +119,9 @@ public class StartupAction implements Serializable {
 
 	@Out(scope = ScopeType.APPLICATION, required = false)
 	HashMap<String, MenuItem> menuItemMap = new HashMap<String, MenuItem>();
+
+	@Out(scope = ScopeType.APPLICATION, required = false)
+	HashMap<String, Long> raporRoleMap = new HashMap<String, Long>();
 
 	@Out(scope = ScopeType.APPLICATION, required = false)
 	List<Sirket> pdksSirketleri = new ArrayList<Sirket>();
@@ -260,7 +264,8 @@ public class StartupAction implements Serializable {
 			list.add(DepartmanMailGrubu.class);
 			list.add(PdksDinamikRaporAlan.class);
 			list.add(PdksDinamikRaporParametre.class);
-			list.add(IzinHakedisHakki.class);
+			list.add(PdksDinamikRaporRole.class);
+ 			list.add(IzinHakedisHakki.class);
 			list.add(IzinTipiBirlesikHaric.class);
 			list.add(IzinTipiMailAdres.class);
 			list.add(KatSayi.class);
@@ -408,6 +413,27 @@ public class StartupAction implements Serializable {
 			pdksSirketleri.addAll(list);
 		list = null;
 
+	}
+
+	/**
+	 * @param session
+	 */
+	public void fillRaporRole(Session session) {
+		raporRoleMap.clear();
+		HashMap fields = new HashMap();
+		List<PdksDinamikRaporRole> list = null;
+		try {
+			StringBuffer sb = new StringBuffer();
+			sb.append("select * from " + PdksDinamikRaporRole.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			list = pdksEntityController.getObjectBySQLList(sb, fields, PdksDinamikRaporRole.class);
+			for (PdksDinamikRaporRole raporRole : list) {
+				raporRoleMap.put(raporRole.getKey(), raporRole.getId());
+			}
+			list = null;
+		} catch (Exception e) {
+		}
 	}
 
 	public void fillParameter(Session session, boolean lockVar) {
@@ -792,6 +818,7 @@ public class StartupAction implements Serializable {
 		}
 		fillSirketList(session);
 		setHelpDeskParametre(session, pmMap);
+		fillRaporRole(session);
 		pmMap = null;
 	}
 

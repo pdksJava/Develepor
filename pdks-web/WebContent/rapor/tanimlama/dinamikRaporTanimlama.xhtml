@@ -548,7 +548,28 @@
 							</s:decorate>
 						</h:panelGrid>
 					</a4j:outputPanel>
-					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{dinamikRaporTanimlamaHome.savePdksDinamikRapor()}" reRender="raporTable"
+					<a4j:outputPanel id="roller">
+
+						<rich:simpleTogglePanel switchType="client" label="Roller" height="110" opened="true">
+							<s:decorate>
+								<rich:listShuttle id="shuttle" sourceValue="#{dinamikRaporTanimlamaHome.roleList}" fastOrderControlsVisible="false"
+									orderControlsVisible="false" targetValue="#{dinamikRaporTanimlamaHome.raporRoleList}" var="rol"
+									copyControlLabel="#{messages['listShuttle.etiket.copyControlLabel']}"
+									removeControlLabel="#{messages['listShuttle.etiket.removeControlLabel']}"
+									copyAllControlLabel="#{messages['listShuttle.etiket.copyAllControlLabel']}"
+									removeAllControlLabel="#{messages['listShuttle.etiket.removeAllControlLabel']}" required="true" requiredMessage="Rol seçiniz">
+									<h:column>
+										<h:outputText value="#{rol.aciklama}" />
+									</h:column>
+									<a4j:support event="onlistchanged" reRender="roller" ajaxSingle="true" />
+									<s:convertEntity />
+
+								</rich:listShuttle>
+							</s:decorate>
+
+						</rich:simpleTogglePanel>
+					</a4j:outputPanel>
+					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{dinamikRaporTanimlamaHome.saveDinamikRapor()}" reRender="raporTable"
 						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 				</h:panelGrid>
 				<c:if test="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.id!=null}">

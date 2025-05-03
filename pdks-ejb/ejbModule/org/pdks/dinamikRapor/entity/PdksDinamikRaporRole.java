@@ -15,6 +15,10 @@ import org.hibernate.annotations.FetchMode;
 import org.pdks.entity.BasePDKSObject;
 import org.pdks.security.entity.Role;
 
+/**
+ * @author hasansayar
+ * 
+ */
 @Entity(name = PdksDinamikRaporRole.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PdksDinamikRaporRole.COLUMN_NAME_DINAMIK_RAPOR, PdksDinamikRaporRole.COLUMN_NAME_ROLE }) })
 public class PdksDinamikRaporRole extends BasePDKSObject implements Serializable {
@@ -32,6 +36,16 @@ public class PdksDinamikRaporRole extends BasePDKSObject implements Serializable
 	private PdksDinamikRapor pdksDinamikRapor;
 
 	private Role role;
+
+	public PdksDinamikRaporRole(PdksDinamikRapor pdksDinamikRapor, Role role) {
+		super();
+		this.pdksDinamikRapor = pdksDinamikRapor;
+		this.role = role;
+	}
+
+	public PdksDinamikRaporRole() {
+		super();
+	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_DINAMIK_RAPOR, nullable = false)
@@ -58,6 +72,12 @@ public class PdksDinamikRaporRole extends BasePDKSObject implements Serializable
 	@Transient
 	public String getKey() {
 		String str = getKey(pdksDinamikRapor, role);
+		return str;
+	}
+
+	@Transient
+	public String getRoleAdi() {
+		String str = role != null && role.getAciklama() != null ? role.getAciklama().trim() : "";
 		return str;
 	}
 
