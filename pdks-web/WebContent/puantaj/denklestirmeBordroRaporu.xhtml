@@ -76,7 +76,7 @@
 						</s:decorate>
 					</h:panelGrid>
 					<h:panelGrid columns="2" style="width: 80%;" id="ozelDurum"
-						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin or denklestirmeBordroRaporuHome.denklestirmeAy.durum) and ortakIslemler.hasStringValue(denklestirmeBordroRaporuHome.sicilNo) == false}">
+						rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin or denklestirmeBordroRaporuHome.denklestirmeAyDurum) and ortakIslemler.hasStringValue(denklestirmeBordroRaporuHome.sicilNo) == false}">
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Hatalı Personel Göster</ui:define>
 							<h:selectBooleanCheckbox value="#{denklestirmeBordroRaporuHome.hataliVeriGetir}">
@@ -108,11 +108,11 @@
 								reRender="denklestirmeDonemiTable,anaForm" />
 							<ui:fragment rendered="#{denklestirmeBordroRaporuHome.fazlaMesaiHesaplaDurum}">
 								<ui:fragment rendered="#{denklestirmeBordroRaporuHome.sirket.tesisDurum == false or denklestirmeBordroRaporuHome.tesisId gt 0 }">
-									<ui:fragment rendered="#{denklestirmeBordroRaporuHome.denklestirmeAy.durum}">
+									<ui:fragment rendered="#{denklestirmeBordroRaporuHome.denklestirmeAyDurum}">
 										<a4j:commandButton status="ajaxStatus" value="#{denklestirmeBordroRaporuHome.fazlaMesaiGuncellemeAciklama} Fazla Mesai Hesapla"
 											action="#{denklestirmeBordroRaporuHome.sirketFazlaMesaiGuncelleme()}" reRender="denklestirmeDonemiTable,anaForm" />
 									</ui:fragment>
-									<ui:fragment rendered="#{denklestirmeBordroRaporuHome.denklestirmeAy.durum == false and denklestirmeBordroRaporuHome.adminRole}">
+									<ui:fragment rendered="#{denklestirmeBordroRaporuHome.denklestirmeAyDurum == false and denklestirmeBordroRaporuHome.adminRole}">
 										<a4j:commandButton id="donemKapali#{denklestirmeBordroRaporuHome.denklestirmeAy.id}" status="ajaxStatus"
 											value="#{denklestirmeBordroRaporuHome.fazlaMesaiGuncellemeAciklama} Fazla Mesai Hesapla"
 											oncomplete="#{rich:component('onayFazlaMesaiHesapPanel')}.show()" reRender="onayFazlaMesaiHesapPanel">
