@@ -256,7 +256,7 @@ public class OrtakIslemler implements Serializable {
 		boolean yetki = false;
 		if (authenticatedUser != null && rapor != null) {
 			if (authenticatedUser.isAdmin() == false && authenticatedUser.isSistemYoneticisi() == false) {
- 				if (raporRoleMap != null && authenticatedUser.getYetkiliRollerim() != null) {
+				if (raporRoleMap != null && authenticatedUser.getYetkiliRollerim() != null) {
 					for (Role role : authenticatedUser.getYetkiliRollerim()) {
 						String rolAdi = role.getRolename();
 						if (rolAdi.equals(Role.TIPI_IK_DIREKTOR) || rolAdi.equals(Role.TIPI_IK_SIRKET) || rolAdi.equals(Role.TIPI_IK_Tesis))
@@ -19198,6 +19198,8 @@ public class OrtakIslemler implements Serializable {
 									vardiyaGun.setTatil(tatil);
 									List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 									if (tatilOncesiKontrol && vardiyaGun.isAyinGunu() && vardiyaGun.getOncekiVardiyaGun().getTatil() == null && offTatilBayramAyirList == null) {
+										if (oncekiVardiya == null)
+											oncekiVardiya = vardiyaGun.getOncekiVardiyaGun().getIslemVardiya();
 										Date bitZaman = (Date) oncekiVardiya.getVardiyaBitZaman().clone(), basZaman = (Date) oncekiVardiya.getVardiyaBasZaman().clone();
 										oncekiVardiyaGun.setCalismaSuresi(0d);
 										ArrayList<HareketKGS> list = oncekiVardiyaGun.getHareketler();
