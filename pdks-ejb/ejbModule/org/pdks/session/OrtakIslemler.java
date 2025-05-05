@@ -6791,7 +6791,7 @@ public class OrtakIslemler implements Serializable {
 			}
 			HashMap fields = new HashMap();
 			StringBuffer sb = new StringBuffer();
-			if (referansNoList == null && (iptalDevam || (perList != null))) {
+			if (referansNoList == null && (guncellemeDurum || iptalDevam || perList != null)) {
 				String perNo = perList != null && perList.isEmpty() == false ? perList.get(0) : null;
 				sb.append(" select I.* from " + IzinReferansERP.TABLE_NAME + " E " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_ID + " = E." + IzinReferansERP.COLUMN_NAME_IZIN_ID);
@@ -6823,8 +6823,8 @@ public class OrtakIslemler implements Serializable {
 			}
 
 			if (perList == null && referansNoList == null) {
- 				fields.clear();
- 				sb = new StringBuffer();
+				fields.clear();
+				sb = new StringBuffer();
 				sb.append("select distinct V." + IzinERPDB.COLUMN_NAME_REFERANS_NO + " from " + izinERPTableViewAdi + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = V." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
 				sb.append(" where V." + IzinERPDB.COLUMN_NAME_REFERANS_NO + " not in (");
