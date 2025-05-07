@@ -14496,12 +14496,13 @@ public class OrtakIslemler implements Serializable {
 	private Date getBayramAyirGun() {
 		String bayramAyirGunStr = getParameterKey("bayramAyirGun");
 		Date bayramAyirGun = null;
-		if (PdksUtil.hasStringValue(bayramAyirGunStr) && (authenticatedUser.isAdmin()))
-			try {
-				bayramAyirGun = PdksUtil.getDateFromString(bayramAyirGunStr);
-			} catch (Exception e) {
-				bayramAyirGun = null;
-			}
+		if (PdksUtil.hasStringValue(bayramAyirGunStr) == false)
+			bayramAyirGunStr = "20250501";
+		try {
+			bayramAyirGun = PdksUtil.getDateFromString(bayramAyirGunStr);
+		} catch (Exception e) {
+			bayramAyirGun = null;
+		}
 
 		return bayramAyirGun;
 	}
@@ -19245,7 +19246,7 @@ public class OrtakIslemler implements Serializable {
 										if (oncekiVardiya == null)
 											oncekiVardiya = vardiyaGun.getOncekiVardiyaGun().getIslemVardiya();
 										Date bitZaman = (Date) oncekiVardiya.getVardiyaBitZaman().clone(), basZaman = (Date) oncekiVardiya.getVardiyaBasZaman().clone();
-										if (vardiyaGun.getVardiya().isCalisma())
+										if (vardiyaGun.isBayramAyir() == false && oncekiVardiyaGun.isAyinGunu() == false)
 											oncekiVardiyaGun.setCalismaSuresi(0d);
 										ArrayList<HareketKGS> list = oncekiVardiyaGun.getHareketler();
 										if (vardiyaGun.getTatil() != null && oncekiVardiya.getVardiyaBitZaman().after(bugun) && vardiyaGun.getTatil().isYarimGunMu() == false) {
