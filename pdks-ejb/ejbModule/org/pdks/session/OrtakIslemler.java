@@ -19002,9 +19002,10 @@ public class OrtakIslemler implements Serializable {
 					String gun = vGun.substring(6);
 					if (vGun.endsWith("0403"))
 						logger.debug("");
-					if (vardiyaGun.isAyinGunu() && vardiyaGun.getFazlaMesailer() != null && (denklestirmeAy.getDurum() || denklestirmeAy.getGuncelleIK())) {
+					List<PersonelFazlaMesai> fazlaMesailer = vardiyaGun.getFazlaMesailer();
+					if (vardiyaGun.isAyinGunu() && fazlaMesailer != null && (denklestirmeAy.getDurum() || denklestirmeAy.getGuncelleIK())) {
 						List<HareketKGS> list = vardiyaGun.getHareketler();
-						for (Iterator iterator = vardiyaGun.getFazlaMesailer().iterator(); iterator.hasNext();) {
+						for (Iterator iterator = fazlaMesailer.iterator(); iterator.hasNext();) {
 							PersonelFazlaMesai fm = (PersonelFazlaMesai) iterator.next();
 							if (fm.getDurum()) {
 								boolean hataVar = fm.getHareketId() != null;
