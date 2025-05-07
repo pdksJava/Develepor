@@ -16912,22 +16912,34 @@ public class OrtakIslemler implements Serializable {
 		}
 		Date tarihKontrol = xDonemSonu != null ? xDonemSonu : PdksUtil.getDate(new Date());
 		List<Long> hakEdilmeyenTarihList = new ArrayList<Long>();
-		List<PersonelIzin> hakedilmeyenIzinler = new ArrayList<PersonelIzin>();
+		List<PersonelIzin> hakedilmeyenIzinler = new ArrayList<PersonelIzin>(), bosIzinler = new ArrayList<PersonelIzin>();
 		List<Long> hakedisIdList = new ArrayList<Long>();
 		for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
 			PersonelIzin personelIzin = (PersonelIzin) iterator.next();
 			Date bitisZamani = personelIzin.getBitisZamani();
 			if (xDonemSonu != null && bitisZamani.after(xDonemSonu)) {
+				boolean sil = true;
+				double kullanilanIzin = personelIzin.getHarcananIzin();
+				try {
+					if (personelIzin.getAciklama() != null && personelIzin.getAciklama().equals("1"))
+						sil = kullanilanIzin > 0.0d;
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
 				if (tarihBazli) {
-					double kullanilanIzin = personelIzin.getHarcananIzin();
-					if (kullanilanIzin != 0.0d) {
+
+					if (kullanilanIzin != 0.0d || sil == false) {
 						PersonelIzin izin = (PersonelIzin) personelIzin.clone();
 						izin.setIzinSuresi(0.0d);
-						hakedilmeyenIzinler.add(izin);
-						izin.setDevirIzin(Boolean.TRUE);
+						if (sil)
+							hakedilmeyenIzinler.add(izin);
+						else
+							bosIzinler.add(izin);
+						izin.setDevirIzin(sil);
 					}
 
 				}
+
 				iterator.remove();
 			} else {
 				if (bitisZamani.after(tarihKontrol)) {
@@ -17018,7 +17030,9 @@ public class OrtakIslemler implements Serializable {
 		int yil = cal.get(Calendar.YEAR);
 		cal.set(yil, 0, 1);
 		cal.set(yil - 1, 0, 1);
-
+		if (!bosIzinler.isEmpty())
+			izinList.addAll(bosIzinler);
+		bosIzinler = null;
 		for (PersonelIzin personelIzin : izinList) {
 			if (personelKontrol && !sicilNoList.contains(personelIzin.getIzinSahibi().getSicilNo()))
 				continue;
