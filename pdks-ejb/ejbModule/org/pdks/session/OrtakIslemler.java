@@ -14496,12 +14496,11 @@ public class OrtakIslemler implements Serializable {
 	private Date getBayramAyirGun() {
 		String bayramAyirGunStr = getParameterKey("bayramAyirGun");
 		Date bayramAyirGun = null;
-		if (PdksUtil.hasStringValue(bayramAyirGunStr) == false)
-			bayramAyirGunStr = "202500430";
 		try {
-			bayramAyirGun = PdksUtil.getDateFromString(bayramAyirGunStr);
+			if (PdksUtil.hasStringValue(bayramAyirGunStr))
+				bayramAyirGun = PdksUtil.getDateFromString(bayramAyirGunStr);
 		} catch (Exception e) {
-			bayramAyirGun = null;
+			bayramAyirGun = PdksUtil.getDateFromString("202500430");
 		}
 
 		return bayramAyirGun;
@@ -18491,7 +18490,12 @@ public class OrtakIslemler implements Serializable {
 		vGun.setGecersizHareketler(null);
 		for (HareketKGS hareket : list)
 			try {
-				vGun.addHareket(hareket, hareketDuzelt);
+				if (hareket.getId() != null) {
+					if (hareket.getOrjinalZaman() != null)
+						hareket.setZaman(hareket.getOrjinalZaman());
+					vGun.addHareket(hareket, hareketDuzelt);
+				}
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -18871,6 +18875,9 @@ public class OrtakIslemler implements Serializable {
 		PersonelDenklestirmeTasiyici denklestirmeTasiyici = dataDenkMap.containsKey("personelDenklestirme") ? (PersonelDenklestirmeTasiyici) dataDenkMap.get("personelDenklestirme") : null;
 		Boolean updateSatus = dataDenkMap.containsKey("updateSatus") ? (Boolean) dataDenkMap.get("updateSatus") : Boolean.FALSE;
 		Boolean fiiliHesapla = dataDenkMap.containsKey("fiiliHesapla") ? (Boolean) dataDenkMap.get("updateSatus") : Boolean.TRUE;
+		Date bayramAyirGun = dataDenkMap.containsKey("bayramAyirGun") ? (Date) dataDenkMap.get("bayramAyirGun") : null;
+		if (bayramAyirGun == null)
+			bayramAyirGun = getBayramAyirGun();
 		double resmiTatilMesai = 0;
 		VardiyaGun sonVardiyaGun = denklestirmeTasiyici.getSonVardiyaGun();
 		Double yemekMolasiYuzdesi = getYemekMolasiYuzdesi(denklestirmeTasiyici.getDenklestirmeAy(), session);
@@ -18879,7 +18886,7 @@ public class OrtakIslemler implements Serializable {
 		Date ilkGun = PdksUtil.convertToJavaDate(donemStr + "01", "yyyyMMdd");
 		boolean arifeTatilBasZamanVar = getParameterKeyHasStringValue("arifeTatilBasZaman");
 		Long eksikCalismaGun = null;
-		Date bayramAyirGun = getBayramAyirGun();
+		
 		try {
 			if (getParameterKeyHasStringValue("eksikCalismaGun"))
 				eksikCalismaGun = Long.parseLong(getParameterKey("eksikCalismaGun"));
@@ -19000,11 +19007,11 @@ public class OrtakIslemler implements Serializable {
 					double oncekiGunNormalSure = 0.0d, oncekiGunTatilSure = 0.0d;
 					cal.setTime(vardiyaGun.getVardiyaDate());
 					String gun = vGun.substring(6);
-					if (vGun.endsWith("0403"))
+					if (vGun.endsWith("0430"))
 						logger.debug("");
 					List<PersonelFazlaMesai> fazlaMesailer = vardiyaGun.getFazlaMesailer();
 					if (vardiyaGun.isAyinGunu() && fazlaMesailer != null && (denklestirmeAy.getDurum() || denklestirmeAy.getGuncelleIK())) {
-						List<HareketKGS> list = vardiyaGun.getHareketler();
+						List<HareketKGS> list = vardiyaGun.getGecerliHareketler() == null ? vardiyaGun.getHareketler() : vardiyaGun.getGecerliHareketler();
 						for (Iterator iterator = fazlaMesailer.iterator(); iterator.hasNext();) {
 							PersonelFazlaMesai fm = (PersonelFazlaMesai) iterator.next();
 							if (fm.getDurum()) {
