@@ -724,6 +724,8 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 	 */
 	private void calismaPlaniDenklestir(DepartmanDenklestirmeDonemi denklestirmeDonemi, List<AylikPuantaj> puantajList) {
 		LinkedHashMap<String, Object> dataMap = new LinkedHashMap<String, Object>();
+		if (ortakIslemler.getParameterKeyHasStringValue("bayramAyirGun"))
+			dataMap.put("bayramAyirGun", ortakIslemler.getBayramAyirGun());
 		dataMap.put("aylikPuantajList", puantajList);
 		dataMap.put("basTarih", denklestirmeDonemi.getBaslangicTarih());
 		dataMap.put("bitTarih", denklestirmeDonemi.getBitisTarih());
