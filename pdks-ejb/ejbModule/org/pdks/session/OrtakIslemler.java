@@ -18334,6 +18334,7 @@ public class OrtakIslemler implements Serializable {
 			ArrayList<HareketKGS> girisHareketList = new ArrayList<HareketKGS>(), cikisHareketList = new ArrayList<HareketKGS>();
 
 			String str = vg.getVardiyaDateStr();
+
 			if (vg.getVardiya() != null && vg.isBayramAyir()) {
 				int girisAdet = vg.getGirisHareketleri() != null ? vg.getGirisHareketleri().size() : 0;
 				int cikisAdet = vg.getCikisHareketleri() != null ? vg.getCikisHareketleri().size() : 0;
@@ -18436,10 +18437,17 @@ public class OrtakIslemler implements Serializable {
 					}
 					Date zaman = PdksUtil.tariheGunEkleCikar(vg.getVardiyaDate(), 1);
 					vg.setBayramAyir(true);
+					boolean tatilBasladi = false;
 					for (Iterator iterator = hareketler.iterator(); iterator.hasNext();) {
 						HareketKGS hareketKGS = (HareketKGS) iterator.next();
+						if (hareketKGS.getId() == null) {
+							iterator.remove();
+							continue;
+						}
 						boolean tatilDurum = hareketKGS.getZaman().getTime() >= tatilBas.getTime() && hareketKGS.getZaman().getTime() <= tatilBit.getTime();
 						hareketKGS.setTatil(tatilDurum);
+						if (tatilBasladi == false)
+							tatilBasladi = tatilDurum;
 						if (tatilDurum && hareketKGS.getZaman().after(gunBit) && hareketKGS.isCheckBoxDurum() == false) {
 							if (oncekiHareketler.isEmpty()) {
 								HareketKGS cikis = new HareketKGS(personelView, cikisKapiView, zaman);
@@ -18454,6 +18462,18 @@ public class OrtakIslemler implements Serializable {
 							hareketKGS.setCheckBoxDurum(true);
 							oncekiHareketler.add(hareketKGS);
 						} else {
+							if (tatilBasladi && tatilDurum == false) {
+								HareketKGS cikis = new HareketKGS(personelView, cikisKapiView, tatilBit);
+								cikis.setTatil(true);
+								cikisHareketList.add(cikis);
+								yeniHareketler.add(cikis);
+								HareketKGS giris = new HareketKGS(personelView, girisKapiView, PdksUtil.tariheGunEkleCikar(vg.getVardiyaDate(), 1));
+								giris.setCheckBoxDurum(true);
+								giris.setTatil(false);
+								girisHareketList.add(giris);
+								yeniHareketler.add(giris);
+
+							}
 							Kapi kapi = hareketKGS.getKapiView().getKapi();
 							if (kapi.isGirisKapi())
 								girisHareketList.add(hareketKGS);
@@ -18475,6 +18495,7 @@ public class OrtakIslemler implements Serializable {
 						// logger.info(vg.getVardiyaKeyStr() + " " + yeniHareketler.size() + " " + vg.isBayramAyir());
 					}
 				}
+
 			}
 			oncekiGun = vg.getVardiya() != null ? vg : null;
 		}
@@ -19234,8 +19255,7 @@ public class OrtakIslemler implements Serializable {
 							vardiyaGun.setNormalSure(gunlukSaat);
 							Tatil tatil = null;
 							boolean arifeGunu = false;
-							if (vGun.endsWith("0501") || vGun.endsWith("0423"))
-								logger.debug("");
+
 							if (tatilOncesiKontrol || (vardiyaGun.getCikisHareketleri() != null && !vardiyaGun.getCikisHareketleri().isEmpty() && vardiyaGun.getHareketDurum())) {
 								if (tatilOncesiKontrol || (vardiyaGun.isAyinGunu() && vardiyaGun.getTatil() != null && vardiyaGun.getHareketler() != null && !vardiyaGun.getHareketler().isEmpty())) {
 									Tatil orjTatil1 = vardiyaGun.getTatil() != null ? (Tatil) vardiyaGun.getTatil().getOrjTatil().clone() : null;
@@ -19289,14 +19309,25 @@ public class OrtakIslemler implements Serializable {
 											}
 										}
 									}
-
 									if (vardiyaGun.getGirisHareketleri() != null)
 										hareketList.addAll(vardiyaGun.getGirisHareketleri());
 									if (vardiyaGun.getCikisHareketleri() != null)
 										hareketList.addAll(vardiyaGun.getCikisHareketleri());
-									hareketList = PdksUtil.sortListByAlanAdi(hareketList, "zaman", Boolean.FALSE);
 									if (vGun.endsWith("0501"))
 										logger.debug("");
+
+									hareketList = PdksUtil.sortListByAlanAdi(hareketList, "zaman", Boolean.FALSE);
+									// int gAdet = vardiyaGun.getGirisHareketleri() != null ? vardiyaGun.getGirisHareketleri().size() : -1;
+									// int cAdet = vardiyaGun.getGirisHareketleri() != null ? vardiyaGun.getCikisHareketleri().size() : -2;
+									// if (vardiyaGun.isBayramAyir() && gAdet == cAdet) {
+									// hareketList.clear();
+									// List<HareketKGS> girisHareketList = vardiyaGun.getGirisHareketleri(), cikisHareketList = vardiyaGun.getCikisHareketleri();
+									// for (int i = 0; i < gAdet; i++) {
+									// hareketList.add(girisHareketList.get(i));
+									// hareketList.add(cikisHareketList.get(i));
+									// }
+									// }
+
 									if (!hareketList.isEmpty() && tatil != null) {
 
 										Date tatilBasTarih = tatil.getBasTarih(), tatilBitTarih = tatil.getBitTarih();
@@ -19317,7 +19348,9 @@ public class OrtakIslemler implements Serializable {
 											}
 										}
 										boolean sanalYok = true;
+
 										for (HareketKGS hareketKGS : hareketList) {
+
 											if (hareketKGS.getId() != null) {
 												Date hareketZaman = hareketKGS.getZaman();
 												if (hareketZaman.getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime())
@@ -19328,31 +19361,37 @@ public class OrtakIslemler implements Serializable {
 											zaman = Long.parseLong(PdksUtil.convertToDateString(hareketKGS.getZaman(), "yyyyMMddHHmm"));
 
 											Kapi kapi = hareketKGS.getKapiView().getKapi();
+											boolean sanalHareket = hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET);
 											if (hareketKGS.getId() != null && sanalYok) {
-
 												if (zaman > basZaman && zaman <= bitZaman) {
-													if (girisKapi != null && !bayramBasladi && kapi.isCikisKapi()) {
-														HareketKGS cikisHareket = ((HareketKGS) hareketKGS.clone()).getYeniHareket(tatil.getBasTarih(), null);
-														cikisHareketleri.add(cikisHareket);
-														cikisHareket.setVardiyaGun(vardiyaGun);
-														if (tatilSonrakiGun != null && hareketKGS.getZaman().after(tatilSonrakiGun)) {
-															continue;
-														}
+													if (sanalHareket == false && bayramBasladi == false) {
+														if (girisKapi != null && !bayramBasladi && kapi.isCikisKapi()) {
 
-														HareketKGS girisHareket = ((HareketKGS) cikisHareket.clone()).getYeniHareket(null, girisKapi);
-														girisHareket.setTatil(Boolean.TRUE);
-														girisHareket.setPersonelFazlaMesai(null);
-														girisHareketleri.add(girisHareket);
+															HareketKGS cikisHareket = ((HareketKGS) hareketKGS.clone()).getYeniHareket(tatil.getBasTarih(), null);
+															cikisHareketleri.add(cikisHareket);
+															cikisHareket.setVardiyaGun(vardiyaGun);
+															if (tatilSonrakiGun != null && hareketKGS.getZaman().after(tatilSonrakiGun)) {
+																continue;
+															}
+
+															HareketKGS girisHareket = ((HareketKGS) cikisHareket.clone()).getYeniHareket(null, girisKapi);
+															girisHareket.setTatil(Boolean.TRUE);
+															girisHareket.setPersonelFazlaMesai(null);
+															girisHareketleri.add(girisHareket);
+														}
+														hareketKGS.setTatil(Boolean.TRUE);
 													}
-													hareketKGS.setTatil(Boolean.TRUE);
 													bayramBasladi = Boolean.TRUE;
 												} else if (girisKapi != null && zaman >= bitZaman && !bayramBitti && kapi.isCikisKapi()) {
-													HareketKGS cikisHareket = ((HareketKGS) hareketKGS.clone()).getYeniHareket((Date) tatil.getBitGun(), null);
-													cikisHareket.setTatil(Boolean.TRUE);
-													cikisHareketleri.add(cikisHareket);
-													HareketKGS girisHareket = ((HareketKGS) cikisHareket.clone()).getYeniHareket(null, girisKapi);
-													girisHareket.setTatil(Boolean.FALSE);
-													girisHareketleri.add(girisHareket);
+													if (sanalHareket == false && bayramBitti == false) {
+														HareketKGS cikisHareket = ((HareketKGS) hareketKGS.clone()).getYeniHareket((Date) tatil.getBitGun(), null);
+														cikisHareket.setTatil(Boolean.TRUE);
+														cikisHareketleri.add(cikisHareket);
+														HareketKGS girisHareket = ((HareketKGS) cikisHareket.clone()).getYeniHareket(null, girisKapi);
+														girisHareket.setTatil(Boolean.FALSE);
+														girisHareketleri.add(girisHareket);
+													}
+
 													bayramBitti = Boolean.TRUE;
 
 												}
@@ -19414,8 +19453,7 @@ public class OrtakIslemler implements Serializable {
 							Date gunParca = null;
 							if (sonGunMu && tatil != null && tatilGunleriMap.containsKey(vGun) == false)
 								gunParca = PdksUtil.tariheGunEkleCikar(vardiyaGun.getVardiyaDate(), 1);
-							if (vGun.endsWith("0501"))
-								logger.debug("");
+
 							for (int i = 0; i < tatilCikisHareketleri.size(); i++) {
 								HareketKGS cikisHareket = tatilCikisHareketleri.get(i);
 								HareketKGS girisHareket = null;
@@ -20056,11 +20094,14 @@ public class OrtakIslemler implements Serializable {
 					}
 
 					oncekiVardiyaGun = vardiyaGun;
-					if (vardiyaGun.getGecenAyResmiTatilSure() > 0 && vardiyaGun.getResmiTatilSure() == 0.0d && vardiyaGun.getCalismaSuresi() == 0.0d) {
-						vardiyaGun.setCalismaSuresi(vardiyaGun.getGecenAyResmiTatilSure());
+					if (vGun.endsWith("0501"))
+						logger.debug("");
+					if (vardiyaGun.getGecenAyResmiTatilSure() > 0 && vardiyaGun.getResmiTatilSure() == 0.0d) {
+						vardiyaGun.addCalismaSuresi(vardiyaGun.getGecenAyResmiTatilSure());
 						vardiyaGun.setResmiTatilSure(vardiyaGun.getGecenAyResmiTatilSure());
 						vardiyaGun.setGecenAyResmiTatilSure(0.0d);
 					}
+
 					if (bayramAyirGun != null && vardiyaGun.getResmiTatilSure() > 0.0d) {
 						double minBayramSure = 7.5d;
 						if (vardiyaGun.getVardiyaDate().getTime() >= bayramAyirGun.getTime() && vardiyaGun.getResmiTatilSure() < minBayramSure) {
@@ -21014,7 +21055,7 @@ public class OrtakIslemler implements Serializable {
 							sanalHareketEkle(girisKapi, cikisKapi, bugun, vardiyaGun);
 						}
 
-						if (vardiyaGun.getVardiya().isCalisma() && vardiyaGun.getHareketDurum() && vardiyaGun.getTatil() != null) {
+						if (vardiyaGun.isBayramAyir() == false && vardiyaGun.getVardiya().isCalisma() && vardiyaGun.getHareketDurum() && vardiyaGun.getTatil() != null) {
 							bayramSanalHareketiEkle(vardiyaGun, yemekAraliklari, bayramEkleDurum);
 
 						}
@@ -21237,13 +21278,14 @@ public class OrtakIslemler implements Serializable {
 					cal.setTime((Date) sonCikis.getZaman().clone());
 					cal.add(Calendar.MINUTE, vg.getVardiya().getCikisGecikmeToleransDakika());
 					long cikisZamani = Long.parseLong(PdksUtil.convertToDateString(cal.getTime(), "HHmm"));
-					HareketKGS arifeGirisHareket = new HareketKGS();
-					arifeGirisHareket.setPersonel(ilkGiris.getPersonel());
-					arifeGirisHareket.setKapiView(ilkGiris.getKapiView());
-					if (sonCikis.getZaman().getTime() > bayramBaslama.getTime())
-						arifeGirisHareket.setZaman(sonCikis.getZaman());
-					else
-						arifeGirisHareket.setZaman(bayramBaslama);
+					Date girisZaman = sonCikis.getZaman().getTime() > bayramBaslama.getTime() ? sonCikis.getZaman() : bayramBaslama;
+					HareketKGS arifeGirisHareket = new HareketKGS(ilkGiris.getPersonel(), ilkGiris.getKapiView(), girisZaman);
+					// arifeGirisHareket.setPersonel(ilkGiris.getPersonel());
+					// arifeGirisHareket.setKapiView(ilkGiris.getKapiView());
+					// if (sonCikis.getZaman().getTime() > bayramBaslama.getTime())
+					// arifeGirisHareket.setZaman(sonCikis.getZaman());
+					// else
+					// arifeGirisHareket.setZaman(bayramBaslama);
 					for (YemekIzin yemekIzin : yemekList) {
 						if (cikisZamani >= Long.parseLong(yemekIzin.getBasKey()) && cikisZamani <= Long.parseLong(yemekIzin.getBitKey())) {
 							arifeGirisHareket.setZaman(sonCikis.getZaman());
@@ -21251,10 +21293,10 @@ public class OrtakIslemler implements Serializable {
 						}
 					}
 					vg.addHareket(arifeGirisHareket, Boolean.TRUE);
-					HareketKGS arifeCikisHareket = new HareketKGS();
-					arifeCikisHareket.setPersonel(sonCikis.getPersonel());
-					arifeCikisHareket.setKapiView(sonCikis.getKapiView());
-					arifeCikisHareket.setZaman(vg.getIslemVardiya().getVardiyaBitZaman());
+					HareketKGS arifeCikisHareket = new HareketKGS(sonCikis.getPersonel(), sonCikis.getKapiView(), vg.getIslemVardiya().getVardiyaBitZaman());
+					// arifeCikisHareket.setPersonel(sonCikis.getPersonel());
+					// arifeCikisHareket.setKapiView(sonCikis.getKapiView());
+					// arifeCikisHareket.setZaman(vg.getIslemVardiya().getVardiyaBitZaman());
 					vg.addHareket(arifeCikisHareket, Boolean.TRUE);
 				}
 			}
@@ -21280,16 +21322,16 @@ public class OrtakIslemler implements Serializable {
 					HareketKGS hareketKGS = (HareketKGS) iterator2.next();
 					if (hareketKGS.getKapiView().getKapi().isCikisKapi() && bayramBitisCikisHareket == null || hareketKGS.getZaman().getTime() >= bayramBaslama.getTime()) {
 						if (sonCikis != null && vg.getHareketler() != null && !vg.getHareketler().isEmpty()) {
-							bayramBitisCikisHareket = new HareketKGS();
-							bayramBitisCikisHareket.setPersonel(ilkGiris.getPersonel());
-							bayramBitisCikisHareket.setKapiView(sonCikis.getKapiView());
-							bayramBitisCikisHareket.setZaman(bayramBaslama);
+							bayramBitisCikisHareket = new HareketKGS(ilkGiris.getPersonel(), sonCikis.getKapiView(), bayramBaslama);
+							// bayramBitisCikisHareket.setPersonel(ilkGiris.getPersonel());
+							// bayramBitisCikisHareket.setKapiView(sonCikis.getKapiView());
+							// bayramBitisCikisHareket.setZaman(bayramBaslama);
 							bayramBitisCikisHareket.setTatil(Boolean.FALSE);
 							vg.addHareket(bayramBitisCikisHareket, Boolean.TRUE);
-							HareketKGS bayramBitisGirisHareket = new HareketKGS();
-							bayramBitisGirisHareket.setPersonel(ilkGiris.getPersonel());
-							bayramBitisGirisHareket.setKapiView(ilkGiris.getKapiView());
-							bayramBitisGirisHareket.setZaman(bayramBaslama);
+							HareketKGS bayramBitisGirisHareket = new HareketKGS(ilkGiris.getPersonel(), ilkGiris.getKapiView(), bayramBaslama);
+							// bayramBitisGirisHareket.setPersonel(ilkGiris.getPersonel());
+							// bayramBitisGirisHareket.setKapiView(ilkGiris.getKapiView());
+							// bayramBitisGirisHareket.setZaman(bayramBaslama);
 							bayramBitisGirisHareket.setTatil(Boolean.TRUE);
 							vg.addHareket(bayramBitisGirisHareket, Boolean.TRUE);
 						}
