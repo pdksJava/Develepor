@@ -235,6 +235,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		List<AylikPuantaj> puantajList = dataMap.containsKey("aylikPuantajList") ? (List<AylikPuantaj>) dataMap.get("aylikPuantajList") : new ArrayList<AylikPuantaj>();
 		KapiView manuelGiris = dataMap.containsKey("manuelGirisKapi") ? (KapiView) dataMap.get("manuelGirisKapi") : null;
 		KapiView manuelCikis = dataMap.containsKey("manuelCikisKapi") ? (KapiView) dataMap.get("manuelCikisKapi") : null;
+		Date bayramAyirGun = dataMap.containsKey("bayramAyirGun") ? (Date) dataMap.get("bayramAyirGun") : null;
 		if (manuelGiris == null && manuelCikis == null) {
 			HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(null, session);
 			manuelGiris = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS);
@@ -251,8 +252,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		LinkedHashMap<String, Object> dataDenkMap = new LinkedHashMap<String, Object>();
 		HashMap<Long, Double> vardiyaNetCalismaSuresiMap = new HashMap<Long, Double>();
 		Calendar cal = Calendar.getInstance();
-		if (ortakIslemler.getParameterKeyHasStringValue("bayramAyirGun"))
-			dataMap.put("bayramAyirGun", ortakIslemler.getBayramAyirGun());
+
+		if (bayramAyirGun == null)
+			bayramAyirGun = ortakIslemler.getBayramAyirGun();
+		if (bayramAyirGun != null)
+			dataDenkMap.put("bayramAyirGun", bayramAyirGun);
 		dataDenkMap.put("fiiliHesapla", Boolean.FALSE);
 		dataDenkMap.put("updateSatus", Boolean.FALSE);
 		dataDenkMap.put("yemekList", yemekList);

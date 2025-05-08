@@ -989,6 +989,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		String idariVardiyaKisaAdi = ortakIslemler.getParameterKey("idariVardiyaKisaAdi");
 		Vardiya normalCalismaVardiya = ortakIslemler.getNormalCalismaVardiya(idariVardiyaKisaAdi, session);
 		LinkedHashMap<String, Object> dataMap = new LinkedHashMap<String, Object>();
+		if (ortakIslemler.getParameterKeyHasStringValue("bayramAyirGun"))
+			dataMap.put("bayramAyirGun", ortakIslemler.getBayramAyirGun());
 		dataMap.put("aylikPuantajList", puantajList);
 		dataMap.put("basTarih", denklestirmeDonemi.getBaslangicTarih());
 		dataMap.put("bitTarih", denklestirmeDonemi.getBitisTarih());
