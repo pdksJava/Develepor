@@ -9212,7 +9212,9 @@ public class OrtakIslemler implements Serializable {
 					HashMap<String, KapiView> manuelKapiMap = getManuelKapiMap(null, session);
 					KapiView girisView = manuelKapiMap != null ? manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS) : null;
 					KapiView cikisView = manuelKapiMap != null ? manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS) : null;
-
+					Date bayramAyirGun = null;
+					if (getParameterKeyHasStringValue("bayramAyirGun"))
+						bayramAyirGun = getBayramAyirGun();
 					if (girisView == null)
 						girisView = getKapiView(map);
 					Tanim neden = null;
@@ -9254,6 +9256,10 @@ public class OrtakIslemler implements Serializable {
 						// Denklestirme islemleri yapiliyor
 						List<PersonelIzin> izinler = izinMap.containsKey(perNoId) ? izinMap.get(perNoId) : null;
 						LinkedHashMap<String, Object> denklestirmeOlusturMap = new LinkedHashMap<String, Object>();
+
+						if (bayramAyirGun != null)
+							denklestirmeOlusturMap.put("bayramAyirGun", bayramAyirGun);
+
 						denklestirmeOlusturMap.put("neden", neden);
 						denklestirmeOlusturMap.put("sistemUser", sistemUser);
 						denklestirmeOlusturMap.put("loginUser", loginUser);
@@ -14493,14 +14499,14 @@ public class OrtakIslemler implements Serializable {
 	/**
 	 * @return
 	 */
-	private Date getBayramAyirGun() {
+	public Date getBayramAyirGun() {
 		String bayramAyirGunStr = getParameterKey("bayramAyirGun");
 		Date bayramAyirGun = null;
 		try {
 			if (PdksUtil.hasStringValue(bayramAyirGunStr))
 				bayramAyirGun = PdksUtil.getDateFromString(bayramAyirGunStr);
 		} catch (Exception e) {
-			bayramAyirGun = PdksUtil.getDateFromString("202500430");
+			bayramAyirGun = PdksUtil.getDateFromString("20250430");
 		}
 
 		return bayramAyirGun;
@@ -18886,7 +18892,7 @@ public class OrtakIslemler implements Serializable {
 		Date ilkGun = PdksUtil.convertToJavaDate(donemStr + "01", "yyyyMMdd");
 		boolean arifeTatilBasZamanVar = getParameterKeyHasStringValue("arifeTatilBasZaman");
 		Long eksikCalismaGun = null;
-		
+
 		try {
 			if (getParameterKeyHasStringValue("eksikCalismaGun"))
 				eksikCalismaGun = Long.parseLong(getParameterKey("eksikCalismaGun"));
@@ -20763,6 +20769,7 @@ public class OrtakIslemler implements Serializable {
 		HashMap<Long, ArrayList<VardiyaGun>> calismaPlaniMap = denklestirmeMap.containsKey("calismaPlaniMap") ? (HashMap<Long, ArrayList<VardiyaGun>>) denklestirmeMap.get("calismaPlaniMap") : null;
 		List<HareketKGS> perHareketList = denklestirmeMap.containsKey("perHareketList") ? (List<HareketKGS>) denklestirmeMap.get("perHareketList") : null;
 		Long perNoId = denklestirmeMap.containsKey("perNoId") ? (Long) denklestirmeMap.get("perNoId") : null;
+		Date bayramAyirGun = denklestirmeMap.containsKey("bayramAyirGun") ? (Date) denklestirmeMap.get("bayramAyirGun") : null;
 		List<YemekIzin> yemekList = denklestirmeMap.containsKey("yemekList") ? (List<YemekIzin>) denklestirmeMap.get("yemekList") : null;
 		boolean testDurum = PdksUtil.getTestDurum() && false;
 		boolean hareketKopyala = getParameterKey("kapiGirisHareketKopyala").equals("1");
@@ -21095,6 +21102,9 @@ public class OrtakIslemler implements Serializable {
 				dataMap.put("manuelKapiMap", manuelKapiMap);
 				dataMap.put("updateSatus", Boolean.TRUE);
 				dataMap.put("fiiliHesapla", Boolean.TRUE);
+				if (bayramAyirGun != null)
+					dataMap.put("bayramAyirGun", bayramAyirGun);
+
 				sonVardiyaGun = personelVardiyaDenklestir(mapBosVeriSil(dataMap, "personelVardiyaDenklestir"), session);
 				oncekiVardiyaGun = denklestirme.getOncekiVardiyaGun();
 				normalFazlaMesai += denklestirme.getNormalFazlaMesai();

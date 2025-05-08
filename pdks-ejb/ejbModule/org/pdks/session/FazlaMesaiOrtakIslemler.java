@@ -251,6 +251,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		LinkedHashMap<String, Object> dataDenkMap = new LinkedHashMap<String, Object>();
 		HashMap<Long, Double> vardiyaNetCalismaSuresiMap = new HashMap<Long, Double>();
 		Calendar cal = Calendar.getInstance();
+		if (ortakIslemler.getParameterKeyHasStringValue("bayramAyirGun"))
+			dataMap.put("bayramAyirGun", ortakIslemler.getBayramAyirGun());
 		dataDenkMap.put("fiiliHesapla", Boolean.FALSE);
 		dataDenkMap.put("updateSatus", Boolean.FALSE);
 		dataDenkMap.put("yemekList", yemekList);
