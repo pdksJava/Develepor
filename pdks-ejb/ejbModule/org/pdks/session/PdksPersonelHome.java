@@ -1971,7 +1971,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					ortakIslemler.addObjectList(ekSaha, ekSahaList, Boolean.FALSE);
 
 			}
-		}
+		} else if (pdksPersonel.getSirket() != null)
+			pdksPersonel.setIzinKartiVar(pdksPersonel.getSirket().getIzinKartiVar());
 	}
 
 	/**
