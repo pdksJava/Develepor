@@ -3777,7 +3777,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		vGun.setFazlaMesaiOnayla(null);
 		if (vGun.getGecerliHareketler() != null || vGun.getTatil() != null)
 			ortakIslemler.hareketleriDuzenle(vGun, vGun.getGecerliHareketler() == null ? vGun.getHareketler() : vGun.getGecerliHareketler(), Boolean.TRUE);
-		if (vGun.getHareketler() != null) {
+		else if (vGun.getHareketler() != null) {
 			int adet = vGun.getHareketler().size();
 			for (Iterator iterator = vGun.getHareketler().iterator(); iterator.hasNext();) {
 				HareketKGS hareket = (HareketKGS) iterator.next();
