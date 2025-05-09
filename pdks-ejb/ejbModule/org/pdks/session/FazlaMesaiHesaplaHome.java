@@ -3773,12 +3773,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				aksamVardiyaBaslangicZamani = cal.getTime();
 			}
 		}
-
 		List<HareketKGS> girisHareketleri = null, cikisHareketleri = null, hareketler = null;
 		vGun.setFazlaMesaiOnayla(null);
-		if (vGun.getGecerliHareketler() != null) {
+		if (vGun.getGecerliHareketler() != null)
 			ortakIslemler.hareketleriDuzenle(vGun, vGun.getGecerliHareketler(), Boolean.TRUE);
-		} else if (vGun.getHareketler() != null) {
+		if (vGun.getHareketler() != null) {
 			int adet = vGun.getHareketler().size();
 			for (Iterator iterator = vGun.getHareketler().iterator(); iterator.hasNext();) {
 				HareketKGS hareket = (HareketKGS) iterator.next();

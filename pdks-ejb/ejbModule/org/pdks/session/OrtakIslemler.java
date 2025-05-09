@@ -14279,7 +14279,6 @@ public class OrtakIslemler implements Serializable {
 			TreeMap<String, BigDecimal> sureMap = planKatSayiOku && allMap.containsKey(KatSayiTipi.HAREKET_BEKLEME_SURESI) ? allMap.get(KatSayiTipi.HAREKET_BEKLEME_SURESI) : null;
 			TreeMap<String, BigDecimal> sureSuaMap = suaKatSayiOku && allMap.containsKey(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI) ? allMap.get(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI) : null;
 			TreeMap<String, BigDecimal> yuvarlamaMap = yuvarlamaKatSayiOku && allMap.containsKey(KatSayiTipi.YUVARLAMA_TIPI) ? allMap.get(KatSayiTipi.YUVARLAMA_TIPI) : null;
-			TreeMap<String, BigDecimal> bayramAyirMap = allMap.containsKey(KatSayiTipi.BAYRAM_AYIR) ? allMap.get(KatSayiTipi.BAYRAM_AYIR) : null;
 			TreeMap<String, BigDecimal> haftaTatilFazlaMesaiMap = haftaTatilFazlaMesaiKatSayiOku && allMap.containsKey(KatSayiTipi.HT_FAZLA_MESAI_TIPI) ? allMap.get(KatSayiTipi.HT_FAZLA_MESAI_TIPI) : null;
 			TreeMap<String, BigDecimal> offFazlaMesaiMap = offFazlaMesaiKatSayiOku && allMap.containsKey(KatSayiTipi.OFF_FAZLA_MESAI_TIPI) ? allMap.get(KatSayiTipi.OFF_FAZLA_MESAI_TIPI) : null;
 			TreeMap<String, BigDecimal> erkenGirisMap = allMap.containsKey(KatSayiTipi.ERKEN_GIRIS_TIPI) ? allMap.get(KatSayiTipi.ERKEN_GIRIS_TIPI) : null;
@@ -14318,16 +14317,19 @@ public class OrtakIslemler implements Serializable {
 			}
 			Calendar cal = Calendar.getInstance();
 			for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
-				VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-				Vardiya vardiya = vardiyaGun.getVardiya();
+				VardiyaGun vg = (VardiyaGun) iterator.next();
+				Vardiya vardiya = vg.getIslemVardiya();
+
 				if (vardiya != null && vardiya.getId() != null) {
+					cal.setTime(vg.getVardiyaDate());
 					HashMap<Integer, BigDecimal> katSayiMap = new HashMap<Integer, BigDecimal>();
-					String str = vardiyaGun.getVardiyaDateStr();
-					Tatil tatil = tatilKontrolEt ? tatilMap.get(str) : null, tatil2 = null;
+					String str = vg.getVardiyaDateStr();
+					Tatil tatil = tatilKontrolEt ? tatilMap.get(str) : null, tatil2 = null, tatil3 = null;
 					if (tatil == null && tatilMap.isEmpty() == false) {
-						String str2 = PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(vardiyaGun.getVardiyaDate(), 1), "yyyyMMdd");
+						String str2 = PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(vg.getVardiyaDate(), 1), "yyyyMMdd");
 						if (tatilMap.containsKey(str2)) {
 							tatil2 = tatilMap.get(str2);
+							tatil3 = tatilMap.get(str2);
 							if (tatil2.isYarimGunMu())
 								tatil2 = null;
 						}
@@ -14335,7 +14337,7 @@ public class OrtakIslemler implements Serializable {
 					}
 					if (tatilYemekHesabiSureEkleDurumKontrolEt && tatil == null) {
 						if (str.endsWith("01")) {
-							VardiyaGun gun = new VardiyaGun(vardiyaGun.getPdksPersonel(), null, tariheGunEkleCikar(cal, vardiyaGun.getVardiyaDate(), -1));
+							VardiyaGun gun = new VardiyaGun(vg.getPdksPersonel(), null, tariheGunEkleCikar(cal, vg.getVardiyaDate(), -1));
 							String oncekiStr = gun.getVardiyaKeyStr();
 							if (vardiyaMap.containsKey(oncekiStr)) {
 								VardiyaGun oncekiVardiyaGun = vardiyaMap.get(gun.getVardiyaKeyStr());
@@ -14346,7 +14348,7 @@ public class OrtakIslemler implements Serializable {
 							}
 							gun = null;
 						} else if (vardiya.getBasDonem() > vardiya.getBitDonem()) {
-							VardiyaGun gun = new VardiyaGun(vardiyaGun.getPdksPersonel(), null, tariheGunEkleCikar(cal, vardiyaGun.getVardiyaDate(), 1));
+							VardiyaGun gun = new VardiyaGun(vg.getPdksPersonel(), null, tariheGunEkleCikar(cal, vg.getVardiyaDate(), 1));
 							String sonrakiStr = gun.getVardiyaDateStr();
 							if (sonrakiStr.endsWith("01") && vardiyaMap.containsKey(gun.getVardiyaKeyStr()) && tatilMap.containsKey(sonrakiStr))
 								tatil = tatilMap.get(sonrakiStr);
@@ -14355,7 +14357,7 @@ public class OrtakIslemler implements Serializable {
 					}
 					if (saatCalisanNormalGunKontrolEt && saatCalisanNormalGunMap.containsKey(str))
 						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_NORMAL_GUN.value(), saatCalisanNormalGunMap.get(str));
-					if (vardiyaGun.isIzinli() && saatCalisanIzinGunKontrolEt && saatCalisanIzinGunMap.containsKey(str))
+					if (vg.isIzinli() && saatCalisanIzinGunKontrolEt && saatCalisanIzinGunMap.containsKey(str))
 						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_IZIN_GUN.value(), saatCalisanIzinGunMap.get(str));
 					if (saatCalisanHaftaTatilKontrolEt && saatCalisanHaftaTatilMap.containsKey(str))
 						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_HAFTA_TATIL.value(), saatCalisanHaftaTatilMap.get(str));
@@ -14364,16 +14366,20 @@ public class OrtakIslemler implements Serializable {
 							katSayiMap.put(KatSayiTipi.YEMEK_SURE_EKLE_DURUM.value(), tatilYemekHesabiSureEkleDurumMap.get(str));
 						}
 					}
-					if (tatil != null || tatil2 != null) {
-						BigDecimal deger = bayramAyirMap != null && bayramAyirMap.containsKey(str) ? bayramAyirMap.get(str) : null;
-						if (deger != null || bayramAyirGun != null) {
-							if (deger == null)
-								deger = new BigDecimal("0");
-							if (deger != null) {
-								katSayiMap.put(KatSayiTipi.BAYRAM_AYIR.value(), deger);
-								vardiyaGun.setBayramAyir(deger.intValue() == 1 || (bayramAyirGun != null && vardiyaGun.getVardiyaDate().getTime() >= bayramAyirGun.getTime()));
-							}
+					if (tatil != null || tatil3 != null) {
+						vg.setBayramAyir(false);
+						if (bayramAyirGun != null && vg.getVardiyaDate().getTime() >= bayramAyirGun.getTime())
+							vg.setBayramAyir(true);
+						else if (tatil3 != null && vardiya.isCalisma() && vardiya.getBasDonem() >= vardiya.getBitDonem()) {
+							vg.setBayramAyir(cal.get(Calendar.DATE) == cal.getActualMaximum(Calendar.DATE));
 						}
+						// else if (vardiya.getBasDonem() > vardiya.getBitDonem()) {
+						// if (tatil == null)
+						// vardiyaGun.setBayramAyir(true);
+						// else if (PdksUtil.convertToDateString(tatil.getBitTarih(), "yyyyMMdd").equals(str))
+						// vardiyaGun.setBayramAyir(true);
+						// }
+
 						if (tatil != null) {
 							if (!tatil.isYarimGunMu()) {
 								if (saatCalisanResmiTatilKontrolEt && saatCalisanResmiTatilMap.containsKey(str))
@@ -14390,10 +14396,10 @@ public class OrtakIslemler implements Serializable {
 
 					if (izinHaftaTatilDurumKontrolEt && izinHaftaTatilDurumMap.containsKey(str)) {
 						if (vardiya.isHaftaTatil())
-							vardiyaGun.setIzinHaftaTatilDurum(Boolean.FALSE);
+							vg.setIzinHaftaTatilDurum(Boolean.FALSE);
 
-					} else if (vardiyaGun.isPazar())
-						vardiyaGun.setIzinHaftaTatilDurum(Boolean.TRUE);
+					} else if (vg.isPazar())
+						vg.setIzinHaftaTatilDurum(Boolean.TRUE);
 					if (fmtDurumKontrolEt && fmtDurumMap.containsKey(str)) {
 						BigDecimal deger = fmtDurumMap.get(str);
 						if (deger != null)
@@ -14417,14 +14423,14 @@ public class OrtakIslemler implements Serializable {
 						BigDecimal deger = offFazlaMesaiMap.get(str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.OFF_FAZLA_MESAI_TIPI.value(), deger);
-							vardiyaGun.setOffFazlaMesaiBasDakika(deger.intValue());
+							vg.setOffFazlaMesaiBasDakika(deger.intValue());
 						}
 					}
 					if (haftaTatilFazlaMesaiKontrolEt && haftaTatilFazlaMesaiMap.containsKey(str)) {
 						BigDecimal deger = haftaTatilFazlaMesaiMap.get(str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.HT_FAZLA_MESAI_TIPI.value(), deger);
-							vardiyaGun.setHaftaTatiliFazlaMesaiBasDakika(deger.intValue());
+							vg.setHaftaTatiliFazlaMesaiBasDakika(deger.intValue());
 						}
 					}
 
@@ -14432,14 +14438,14 @@ public class OrtakIslemler implements Serializable {
 						BigDecimal deger = yuvarlamaMap.get(str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.YUVARLAMA_TIPI.value(), deger);
-							vardiyaGun.setYarimYuvarla(deger.intValue());
+							vg.setYarimYuvarla(deger.intValue());
 						}
 					}
 					if (suaKatSayiOku && sureSuaMap.containsKey(str)) {
 						BigDecimal deger = sureSuaMap.get(str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI.value(), deger);
-							vardiyaGun.setCalismaSuaSaati(deger.doubleValue());
+							vg.setCalismaSuaSaati(deger.doubleValue());
 						}
 					}
 
@@ -14447,31 +14453,31 @@ public class OrtakIslemler implements Serializable {
 						BigDecimal deger = sureMap.get(str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.HAREKET_BEKLEME_SURESI.value(), deger);
-							vardiyaGun.setBeklemeSuresi(deger.intValue());
+							vg.setBeklemeSuresi(deger.intValue());
 						}
 					}
 					Date tarih1 = null, tarih2 = null;
-					Long key = vardiyaGun.getPersonel().getId();
+					Long key = vg.getPersonel().getId();
 					if (tarih1Map.containsKey(key))
 						tarih1 = tarih1Map.get(key);
 					else {
-						tarih1 = vardiyaGun.getPersonel().getIseGirisTarihi();
+						tarih1 = vg.getPersonel().getIseGirisTarihi();
 						tarih1Map.put(key, tarih1);
 					}
 					if (tarih2Map.containsKey(key))
 						tarih2 = tarih2Map.get(key);
 					else {
-						tarih2 = vardiyaGun.getPersonel().getSonCalismaTarihi();
+						tarih2 = vg.getPersonel().getSonCalismaTarihi();
 						tarih2Map.put(key, tarih2);
 					}
-					if (tarih1 == null || tarih2 == null || vardiyaGun.getVardiyaDate().after(tarih2) || vardiyaGun.getVardiyaDate().before(tarih1)) {
+					if (tarih1 == null || tarih2 == null || vg.getVardiyaDate().after(tarih2) || vg.getVardiyaDate().before(tarih1)) {
 						if (hepsi == null || hepsi.booleanValue() == false) {
 							iterator.remove();
 						}
 					}
 					if (!katSayiMap.isEmpty()) {
-						vardiya.setIslemVardiyaGun(vardiyaGun);
-						vardiyaGun.setKatSayiMap(katSayiMap);
+						vardiya.setIslemVardiyaGun(vg);
+						vg.setKatSayiMap(katSayiMap);
 					} else
 						katSayiMap = null;
 				}
@@ -18517,7 +18523,7 @@ public class OrtakIslemler implements Serializable {
 		vGun.setGecersizHareketler(null);
 		for (HareketKGS hareket : list)
 			try {
-				if (hareket.getId() != null) {
+				if (hareket.getId() != null && hareket.getId().startsWith(HareketKGS.SANAL_HAREKET) == false) {
 					if (hareket.getOrjinalZaman() != null)
 						hareket.setZaman(hareket.getOrjinalZaman());
 					vGun.addHareket(hareket, hareketDuzelt);
