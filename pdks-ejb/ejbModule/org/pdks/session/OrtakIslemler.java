@@ -18524,6 +18524,7 @@ public class OrtakIslemler implements Serializable {
 		for (HareketKGS hareket : list)
 			try {
 				if (hareket.getId() != null && hareket.getId().startsWith(HareketKGS.SANAL_HAREKET) == false) {
+					hareket.setOncekiGun(Boolean.FALSE);
 					if (hareket.getOrjinalZaman() != null)
 						hareket.setZaman(hareket.getOrjinalZaman());
 					vGun.addHareket(hareket, hareketDuzelt);
