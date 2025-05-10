@@ -18338,7 +18338,6 @@ public class OrtakIslemler implements Serializable {
 		for (VardiyaGun vg : bayramAyirList) {
 			boolean devam = false;
 			ArrayList<HareketKGS> girisHareketList = new ArrayList<HareketKGS>(), cikisHareketList = new ArrayList<HareketKGS>();
-
 			String str = vg.getVardiyaDateStr();
 			if (str.endsWith("01"))
 				logger.debug("");
@@ -18351,8 +18350,9 @@ public class OrtakIslemler implements Serializable {
 				if (tatilGunleriMap.containsKey(oncekiGun.getVardiyaDateStr()) == false) {
 
 					if (oncekiGun.getHareketler() != null) {
+						List<HareketKGS> oncekiGunHareketler = oncekiGun.getGecerliHareketler() == null ? oncekiGun.getHareketler() : oncekiGun.getGecerliHareketler();
 						ArrayList<HareketKGS> hareketler = new ArrayList<HareketKGS>();
-						for (HareketKGS hareket : oncekiGun.getHareketler()) {
+						for (HareketKGS hareket : oncekiGunHareketler) {
 							if (hareket.getZaman().getTime() >= vg.getVardiyaDate().getTime()) {
 								Kapi kapi = hareket.getKapiView().getKapi();
 								if (hareketler.isEmpty()) {
