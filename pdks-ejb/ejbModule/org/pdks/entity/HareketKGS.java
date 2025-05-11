@@ -16,10 +16,10 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
-import org.pdks.session.PdksUtil;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Immutable;
+import org.pdks.session.PdksUtil;
 
 @Entity
 @Table(name = HareketKGS.TABLE_NAME)
@@ -63,7 +63,7 @@ public class HareketKGS implements Serializable, Cloneable {
 	private KapiKGS kapiKGS;
 	private KapiView kapiView, terminalKapi;
 	private Date zaman, olusturmaZamani, orjinalZaman, kgsZaman, girisZaman, cikisZaman, girisOrjinalZaman, cikisOrjinalZaman, yemekTeloreansZamani, oncekiYemekZamani;
-	private Double fazlaMesai,yemekMolasi;
+	private Double fazlaMesai, yemekMolasi;
 	private PersonelHareketIslem islem;
 	private PersonelFazlaMesai personelFazlaMesai;
 	private VardiyaGun vardiyaGun;
@@ -455,19 +455,21 @@ public class HareketKGS implements Serializable, Cloneable {
 		return sicilNo;
 	}
 
-	@Transient
-	public HareketKGS getYeniHareket(Date yeniZaman, KapiView yeniYapiView) {
-		HareketKGS hareket = new HareketKGS();
-		Date zamanGiris = yeniZaman != null ? yeniZaman : this.zaman;
-		hareket.setZaman(zamanGiris);
-		hareket.setKapiView(yeniYapiView != null ? yeniYapiView : this.kapiView);
-		hareket.setKapiId(hareket.getKapiView().getId());
-		hareket.setPersonel(this.personel);
-		hareket.setPersonelId(this.personelId);
-		hareket.setDurum(this.durum);
-		hareket.setOlusturmaZamani(zamanGiris);
-		return hareket;
-	}
+//	@Transient
+//	public HareketKGS getYeniHareket(Date yeniZaman, KapiView yeniYapiView) {
+//		HareketKGS hareket = new HareketKGS(personel, yeniYapiView, yeniZaman);
+//		Date zamanGiris = yeniZaman != null ? yeniZaman : this.zaman;
+//		if (yeniZaman == null)
+//			hareket.setZaman(zaman);
+//		if (yeniYapiView == null)
+//			hareket.setKapiView(this.kapiView);
+//		if (hareket.getKapiView() != null)
+//			hareket.setKapiId(hareket.getKapiView().getId());
+//		hareket.setPersonelId(this.personelId);
+//		hareket.setDurum(this.durum);
+//		hareket.setOlusturmaZamani(zamanGiris);
+//		return hareket;
+//	}
 
 	@Transient
 	public String getAdSoyad() {
@@ -652,6 +654,7 @@ public class HareketKGS implements Serializable, Cloneable {
 	public void setOncekiGun(Boolean oncekiGun) {
 		this.oncekiGun = oncekiGun;
 	}
+
 	@Transient
 	public Double getYemekMolasi() {
 		return yemekMolasi;
