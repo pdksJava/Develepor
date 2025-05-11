@@ -19395,14 +19395,14 @@ public class OrtakIslemler implements Serializable {
 												if (zaman > basZaman && zaman <= bitZaman) {
 													if (sanalHareket == false && bayramBasladi == false) {
 														if (girisKapi != null && !bayramBasladi && kapi.isCikisKapi()) {
-															HareketKGS cikisHareket = ((HareketKGS) hareketKGS.clone()).getYeniHareket(tatil.getBasTarih(), null);
+															HareketKGS cikisHareket = new HareketKGS(hareketKGS.getPersonel(), cikisKapi, tatil.getBasTarih());
 															cikisHareketleri.add(cikisHareket);
 															cikisHareket.setVardiyaGun(vardiyaGun);
 															if (tatilSonrakiGun != null && hareketKGS.getZaman().after(tatilSonrakiGun)) {
 																continue;
 															}
 
-															HareketKGS girisHareket = ((HareketKGS) cikisHareket.clone()).getYeniHareket(null, girisKapi);
+															HareketKGS girisHareket = new HareketKGS(hareketKGS.getPersonel(), girisKapi, tatil.getBasTarih());
 															girisHareket.setTatil(Boolean.TRUE);
 															girisHareket.setPersonelFazlaMesai(null);
 															girisHareketleri.add(girisHareket);
