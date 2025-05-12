@@ -864,44 +864,43 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param vardiyaGun
+	 * @param vg
 	 * @param islemVardiya
 	 * @return
 	 */
-	private HashMap<String, HashMap<String, Double>> getBayramParcaliVardiyaMap(VardiyaGun vardiyaGun, Vardiya islemVardiya) {
-		if (islemVardiya == null)
-			islemVardiya = vardiyaGun.getIslemVardiya();
-		Date araTarih = PdksUtil.getDate(islemVardiya.getVardiyaBitZaman());
-		double yemekSure = islemVardiya.getYemekSuresi().doubleValue() / 60.0d, netSure = islemVardiya.getNetCalismaSuresi();
-		double toplamSure = netSure + yemekSure;
-		double yemekNormal = 0.0d, yemekArife = 0.0d;
-		double sureNormal = PdksUtil.getSaatFarki(araTarih, islemVardiya.getVardiyaBasZaman()).doubleValue();
-		double sureArife = PdksUtil.getSaatFarki(islemVardiya.getVardiyaBitZaman(), araTarih).doubleValue();
-		if (sureArife > sureNormal) {
-			double molaSure = PdksUtil.setSureDoubleTypeRounded(sureArife * yemekSure / toplamSure, vardiyaGun.getYarimYuvarla());
-			if (vardiyaGun.isBayramAyir()) {
-				molaSure = getToplamYemekSuresi(yemekSure, molaSure, sureArife);
-			}
-			yemekArife = sureArife - molaSure;
-			yemekNormal = sureNormal - (yemekSure - molaSure);
-		} else {
-			double molaSure = PdksUtil.setSureDoubleTypeRounded(sureNormal * yemekSure / toplamSure, vardiyaGun.getYarimYuvarla());
-			if (vardiyaGun.isBayramAyir())
-				molaSure = getToplamYemekSuresi(yemekSure, molaSure, sureNormal);
-
-			yemekNormal = sureNormal - molaSure;
-			yemekArife = sureArife - (yemekSure - molaSure);
-		}
+	private HashMap<String, HashMap<String, Double>> getBayramParcaliVardiyaMap(VardiyaGun vg, Vardiya islemVardiya) {
 		HashMap<String, HashMap<String, Double>> vardiyaMap = new HashMap<String, HashMap<String, Double>>();
-		HashMap<String, Double> arifeMap = new HashMap<String, Double>(), normalMap = new HashMap<String, Double>();
-		vardiyaMap.put("A", arifeMap);
-		vardiyaMap.put("N", normalMap);
-		arifeMap.put("T", sureArife);
-		arifeMap.put("Y", yemekArife);
-		normalMap.put("T", sureNormal);
-		normalMap.put("Y", yemekNormal);
-		logger.debug(islemVardiya.getKisaAdi() + " " + islemVardiya.getAdi() + " " + sureArife + " " + sureNormal + " " + islemVardiya.getNetCalismaSuresi() + " " + (yemekSure + islemVardiya.getNetCalismaSuresi()));
-
+		if (vg != null) {
+ 			if (islemVardiya == null)
+				islemVardiya = vg.getIslemVardiya();
+			Date araTarih = PdksUtil.getDate(islemVardiya.getVardiyaBitZaman());
+			double yemekSure = islemVardiya.getYemekSuresi().doubleValue() / 60.0d, netSure = islemVardiya.getNetCalismaSuresi();
+			double toplamSure = netSure + yemekSure;
+			double yemekNormal = 0.0d, yemekArife = 0.0d;
+			double sureNormal = PdksUtil.getSaatFarki(araTarih, islemVardiya.getVardiyaBasZaman()).doubleValue();
+			double sureArife = PdksUtil.getSaatFarki(islemVardiya.getVardiyaBitZaman(), araTarih).doubleValue();
+			if (sureArife > sureNormal) {
+				double molaSure = PdksUtil.setSureDoubleTypeRounded(sureArife * yemekSure / toplamSure, vg.getYarimYuvarla());
+				if (vg.isBayramAyir())
+					molaSure = getToplamYemekSuresi(yemekSure, molaSure, sureArife);
+				yemekArife = sureArife - molaSure;
+				yemekNormal = sureNormal - (yemekSure - molaSure);
+			} else {
+				double molaSure = PdksUtil.setSureDoubleTypeRounded(sureNormal * yemekSure / toplamSure, vg.getYarimYuvarla());
+				if (vg.isBayramAyir())
+					molaSure = getToplamYemekSuresi(yemekSure, molaSure, sureNormal);
+				yemekNormal = sureNormal - molaSure;
+				yemekArife = sureArife - (yemekSure - molaSure);
+			}
+			HashMap<String, Double> arifeMap = new HashMap<String, Double>(), normalMap = new HashMap<String, Double>();
+			arifeMap.put("T", sureArife);
+			arifeMap.put("Y", yemekArife);
+			normalMap.put("T", sureNormal);
+			normalMap.put("Y", yemekNormal);
+			vardiyaMap.put("A", arifeMap);
+			vardiyaMap.put("N", normalMap);
+			logger.debug(islemVardiya.getKisaAdi() + " " + islemVardiya.getAdi() + " " + sureArife + " " + sureNormal + " " + islemVardiya.getNetCalismaSuresi() + " " + (yemekSure + islemVardiya.getNetCalismaSuresi()));
+		}
 		return vardiyaMap;
 	}
 
