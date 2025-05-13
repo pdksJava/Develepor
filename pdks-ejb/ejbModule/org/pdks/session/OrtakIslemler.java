@@ -20143,7 +20143,7 @@ public class OrtakIslemler implements Serializable {
 							if (fark == toplamSureParcali) {
 								fark = yemekSureParcali - toplamSureParcali;
 								// fark = 0.0;
-//								vardiyaGun.addCalismaSuresi(fark);
+								// vardiyaGun.addCalismaSuresi(fark);
 								vardiyaGun.addResmiTatilSure(fark);
 							}
 
@@ -20155,11 +20155,11 @@ public class OrtakIslemler implements Serializable {
 						vardiyaGun.setResmiTatilSure(vardiyaGun.getGecenAyResmiTatilSure());
 						vardiyaGun.setGecenAyResmiTatilSure(0.0d);
 					}
-
-					if (bayramAyirGun != null && vardiyaGun.getResmiTatilSure() > 0.0d) {
+					toplamTatilSure = vardiyaGun.getResmiTatilSure() + vardiyaGun.getGecenAyResmiTatilSure();
+					if (bayramAyirGun != null && toplamTatilSure > 0.0d) {
 						double minBayramSure = 7.5d;
 						if (vardiyaGun.getVardiyaDate().getTime() >= bayramAyirGun.getTime() && toplamTatilSure < minBayramSure) {
-							double fark = minBayramSure - vardiyaGun.getResmiTatilSure();
+							double fark = minBayramSure - toplamTatilSure;
 							vardiyaGun.addCalismaSuresi(fark);
 							vardiyaGun.setResmiTatilSure(minBayramSure);
 
