@@ -9225,6 +9225,18 @@ public class OrtakIslemler implements Serializable {
 					personelVardiyaBulMap = null;
 					List<YemekIzin> yemekList = getYemekList(tarih2, tarih2, session);
 					List<PersonelFazlaMesai> fazlaMesailer = denklestirmeFazlaMesaileriGetir(loginUser, denklestirmeDonemi != null ? denklestirmeDonemi.getDenklestirmeAy() : null, vardiyalar, session);
+					HashMap<Long, List<PersonelFazlaMesai>> fmMap = null;
+					if (fazlaMesailer != null) {
+						fmMap = new HashMap<Long, List<PersonelFazlaMesai>>();
+						for (PersonelFazlaMesai fm : fazlaMesailer) {
+							Long key = fm.getVardiyaGun().getId();
+							List<PersonelFazlaMesai> list = fmMap.containsKey(key) ? fmMap.get(key) : new ArrayList<PersonelFazlaMesai>();
+							if (list.isEmpty())
+								fmMap.put(key, list);
+							list.add(fm);
+
+						}
+					}
 					HashMap<String, KapiView> manuelKapiMap = getManuelKapiMap(null, session);
 					KapiView girisView = manuelKapiMap != null ? manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS) : null;
 					KapiView cikisView = manuelKapiMap != null ? manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS) : null;
@@ -9290,7 +9302,8 @@ public class OrtakIslemler implements Serializable {
 						denklestirmeOlusturMap.put("personelDenklestirmeMap", personelDenklestirmeMap);
 						denklestirmeOlusturMap.put("vardiyaNetCalismaSuresiMap", vardiyaNetCalismaSuresiMap);
 						denklestirmeOlusturMap.put("izinler", izinler);
-						denklestirmeOlusturMap.put("fazlaMesailer", fazlaMesailer);
+						if (fmMap != null)
+							denklestirmeOlusturMap.put("fazlaMesaiMap", fmMap);
 						denklestirmeOlusturMap.put("calismaPlaniMap", calismaPlaniMap);
 						denklestirmeOlusturMap.put("perHareketList", perHareketList);
 						denklestirmeOlusturMap.put("perNoId", perNoId);
@@ -18918,6 +18931,8 @@ public class OrtakIslemler implements Serializable {
 		User loginUser = dataDenkMap.containsKey("loginUser") ? (User) dataDenkMap.get("loginUser") : authenticatedUser;
 		User sistemUser = dataDenkMap.containsKey("sistemUser") ? (User) dataDenkMap.get("sistemUser") : null;
 		TreeMap<String, Boolean> gunMap = dataDenkMap.containsKey("gunMap") ? (TreeMap<String, Boolean>) dataDenkMap.get("gunMap") : null;
+		HashMap<Long, List<PersonelFazlaMesai>> fmMap = dataDenkMap.containsKey("fazlaMesaiMap") ? (HashMap<Long, List<PersonelFazlaMesai>>) dataDenkMap.get("fazlaMesaiMap") : null;
+
 		KapiView girisKapi = dataDenkMap.containsKey("girisView") ? (KapiView) dataDenkMap.get("girisView") : null;
 		KapiView cikisKapi = dataDenkMap.containsKey("cikisView") ? (KapiView) dataDenkMap.get("cikisView") : null;
 		HashMap<Long, Double> vardiyaNetCalismaSuresiMap = dataDenkMap.containsKey("vardiyaNetCalismaSuresiMap") ? (HashMap<Long, Double>) dataDenkMap.get("vardiyaNetCalismaSuresiMap") : null;
@@ -19067,7 +19082,7 @@ public class OrtakIslemler implements Serializable {
 						List<HareketKGS> list = vardiyaGun.getGecerliHareketler() == null ? vardiyaGun.getHareketler() : vardiyaGun.getGecerliHareketler();
 						for (Iterator iterator = fazlaMesailer.iterator(); iterator.hasNext();) {
 							PersonelFazlaMesai fm = (PersonelFazlaMesai) iterator.next();
-							if (fm.getDurum()) {
+							if (fm.getDurum() && fm.getVardiyaGun().getId().equals(vardiyaGun.getId())) {
 								boolean hataVar = fm.getHareketId() != null;
 								if (list != null && hataVar) {
 									for (HareketKGS hareketKGS : list) {
@@ -19146,8 +19161,9 @@ public class OrtakIslemler implements Serializable {
 						double resmiTatilSure = 0, toplamYemekSuresi = 0, vardiyaYemekSuresi = 0, calSure = 0d;
 						if (gun.equals("01")) {
 							if (vardiyaGun.getTatil() != null && vardiyaGun.getVardiya() != null && sonVardiyaGun != null) {
-								if (sonVardiyaGun.getFazlaMesailer() != null && sonVardiyaGun.getVardiya() != null && !tatilGunleriMap.containsKey(sonVardiyaGun.getVardiyaDateStr())) {
-									for (PersonelFazlaMesai personelFazlaMesai : sonVardiyaGun.getFazlaMesailer()) {
+								if (fmMap != null && sonVardiyaGun.getVardiya() != null && fmMap.containsKey(sonVardiyaGun.getId()) && !tatilGunleriMap.containsKey(sonVardiyaGun.getVardiyaDateStr())) {
+									List<PersonelFazlaMesai> list = fmMap.get(sonVardiyaGun.getId());
+									for (PersonelFazlaMesai personelFazlaMesai : list) {
 										if (personelFazlaMesai.isOnaylandi() && personelFazlaMesai.getTatilDurum() != null && personelFazlaMesai.getTatilDurum() == 1) {
 											vardiyaGun.addGecenAyResmiTatilSure(personelFazlaMesai.getFazlaMesaiSaati());
 											resmiTatilSure += personelFazlaMesai.getFazlaMesaiSaati();
@@ -20860,7 +20876,7 @@ public class OrtakIslemler implements Serializable {
 		TreeMap<Long, PersonelDenklestirmeTasiyici> personelDenklestirmeMap = denklestirmeMap.containsKey("personelDenklestirmeMap") ? (TreeMap<Long, PersonelDenklestirmeTasiyici>) denklestirmeMap.get("personelDenklestirmeMap") : null;
 		HashMap<Long, Double> vardiyaNetCalismaSuresiMap = denklestirmeMap.containsKey("vardiyaNetCalismaSuresiMap") ? (HashMap<Long, Double>) denklestirmeMap.get("vardiyaNetCalismaSuresiMap") : null;
 		List<PersonelIzin> izinler = denklestirmeMap.containsKey("izinler") ? (List<PersonelIzin>) denklestirmeMap.get("izinler") : null;
-		List<PersonelFazlaMesai> fazlaMesailer = denklestirmeMap.containsKey("fazlaMesailer") ? (List<PersonelFazlaMesai>) denklestirmeMap.get("fazlaMesailer") : null;
+		HashMap<Long, List<PersonelFazlaMesai>> fmMap = denklestirmeMap.containsKey("fazlaMesaiMap") ? (HashMap<Long, List<PersonelFazlaMesai>>) denklestirmeMap.get("fazlaMesaiMap") : null;
 		HashMap<Long, ArrayList<VardiyaGun>> calismaPlaniMap = denklestirmeMap.containsKey("calismaPlaniMap") ? (HashMap<Long, ArrayList<VardiyaGun>>) denklestirmeMap.get("calismaPlaniMap") : null;
 		List<HareketKGS> perHareketList = denklestirmeMap.containsKey("perHareketList") ? (List<HareketKGS>) denklestirmeMap.get("perHareketList") : null;
 		Long perNoId = denklestirmeMap.containsKey("perNoId") ? (Long) denklestirmeMap.get("perNoId") : null;
@@ -20878,6 +20894,7 @@ public class OrtakIslemler implements Serializable {
 
 			}
 		}
+
 		denklestirmeMap = null;
 		if (testDurum)
 			logger.info(perNoId + " denklestirmeOlustur 0100 " + getCurrentTimeStampStr());
@@ -20947,14 +20964,12 @@ public class OrtakIslemler implements Serializable {
 					vardiyaGun.setAyinGunu(key.startsWith(donem));
 				boolean otomatikOnayKontrol = otomatikFazlaCalismaOnaylansin && vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().isCalisma();
 				HashMap<String, PersonelFazlaMesai> mesaiMap = new HashMap<String, PersonelFazlaMesai>();
-				for (Iterator<PersonelFazlaMesai> iterator4 = fazlaMesailer.iterator(); iterator4.hasNext();) {
-					PersonelFazlaMesai personelFazlaMesai = iterator4.next();
-					if (personelFazlaMesai.getVardiyaGun() != null && personelFazlaMesai.getVardiyaGun().getId().equals(vardiyaGun.getId())) {
+				if (fmMap != null && fmMap.containsKey(vardiyaGun.getId())) {
+					List<PersonelFazlaMesai> list = fmMap.get(vardiyaGun.getId());
+					for (PersonelFazlaMesai personelFazlaMesai : list) {
 						vardiyaGun.addPersonelFazlaMesai(personelFazlaMesai);
 						mesaiMap.put(personelFazlaMesai.getHareketId(), personelFazlaMesai);
-						// iterator4.remove();
 					}
-
 				}
 
 				vardiyaGun.setCalismaSuresi(0);
@@ -21183,6 +21198,8 @@ public class OrtakIslemler implements Serializable {
 				denklestirme.setVardiyalar(new ArrayList(vardiyaMap.values()));
 				// Haftalik denklestirme verileri yapiliyor
 				denklestirme.setDenklestirmeAy(personelDenklestirmeTasiyici.getDenklestirmeAy());
+				if (fmMap != null)
+					dataMap.put("fazlaMesaiMap", fmMap);
 				dataMap.put("manuelKapiMap", manuelKapiMap);
 				dataMap.put("neden", neden);
 				dataMap.put("sistemUser", sistemUser);
