@@ -19791,7 +19791,8 @@ public class OrtakIslemler implements Serializable {
 									if (toplamSureParcali * yemekMolasiYuzdesi < oncekiGunTatilSure)
 										oncekiGunTatilSure = yemekSureParcali;
 									else if (toplamSureParcali > 0) {
-										oncekiGunTatilSure = yemekSureParcali * oncekiGunTatilSure / toplamSureParcali;
+										oncekiGunTatilSure = PdksUtil.setSureDoubleTypeRounded(yemekSureParcali * oncekiGunTatilSure / toplamSureParcali, vardiyaGun.getYarimYuvarla());
+
 									}
 								} else {
 									oncekiGunNormalSure = PdksUtil.setSureDoubleTypeRounded(oncekiGunNormalSure, oncekiVardiyaGun.getYarimYuvarla());
@@ -19800,9 +19801,9 @@ public class OrtakIslemler implements Serializable {
 									farkOncekiGun = (oncekiGunNormalSure - farkOncekiGun) - yemekSureOnceki;
 									if (yemekSureOnceki + netSureOnceki != 0.0d)
 										oncekiGunTatilSure += farkOncekiGun * (oncekiGunNormalSure + oncekiGunTatilSure) / (yemekSureOnceki + netSureOnceki);
-
+									oncekiGunTatilSure = PdksUtil.setSureDoubleTypeRounded(oncekiGunTatilSure, vardiyaGun.getYarimYuvarla());
 								}
-								vardiyaGun.addGecenAyResmiTatilSure(PdksUtil.setSureDoubleTypeRounded(oncekiGunTatilSure, vardiyaGun.getYarimYuvarla()));
+								vardiyaGun.addGecenAyResmiTatilSure(oncekiGunTatilSure);
 
 							}
 							double eksikCalismaSure = 0;

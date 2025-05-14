@@ -1782,7 +1782,7 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setGecenAyResmiTatilSure(double value) {
-		if (value != 0.0d || vardiyaDateStr.endsWith("0101"))
+		if (value != 0.0d && vardiyaDateStr.endsWith("01"))
 			logger.debug(value);
 		this.gecenAyResmiTatilSure = value;
 	}
@@ -1868,6 +1868,8 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void addGecenAyResmiTatilSure(double value) {
+		if (value != 0.0d && vardiyaDateStr.endsWith("01"))
+			logger.debug(value);
 		this.gecenAyResmiTatilSure += value;
 	}
 
