@@ -65,7 +65,7 @@ public class VardiyaGun extends BaseObject {
 	private VardiyaSaat vardiyaSaat, vardiyaSaatDB;
 	private ArrayList<HareketKGS> hareketler, gecerliHareketler, girisHareketleri, cikisHareketleri, yemekHareketleri, gecersizHareketler, sonrakiGunHareketler;
 	private ArrayList<PersonelIzin> izinler;
-	private ArrayList<PersonelFazlaMesai> fazlaMesailer;
+	private List<PersonelFazlaMesai> fazlaMesailer;
 	private ArrayList<Vardiya> vardiyalar;
 	private VardiyaGun oncekiVardiyaGun, sonrakiVardiyaGun;
 	private int beklemeSuresi = 6;
@@ -374,13 +374,13 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	@Transient
-	public ArrayList<PersonelFazlaMesai> getFazlaMesailer() {
+	public List<PersonelFazlaMesai> getFazlaMesailer() {
 		if (fazlaMesailer != null)
 			logger.debug(this.getVardiyaKeyStr() + " " + fazlaMesailer.size());
 		return fazlaMesailer;
 	}
 
-	public void setFazlaMesailer(ArrayList<PersonelFazlaMesai> value) {
+	public void setFazlaMesailer(List<PersonelFazlaMesai> value) {
 		if (value != null)
 			logger.debug(this.getVardiyaKeyStr() + " " + value.size());
 		this.fazlaMesailer = value;

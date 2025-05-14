@@ -64,7 +64,8 @@
 										reRender="denklestirmeDonemiTable,girisler" />
 								</h:selectOneMenu>
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiRaporHome.gorevYeriList != null and fazlaMesaiRaporHome.gorevYeriList.size()>0}">
+							<s:decorate template="/layout/edit.xhtml"
+								rendered="#{fazlaMesaiRaporHome.gorevYeriList != null and fazlaMesaiRaporHome.gorevYeriList.size()>0}">
 								<ui:define name="label">#{fazlaMesaiRaporHome.bolumAciklama}</ui:define>
 								<h:selectOneMenu value="#{fazlaMesaiRaporHome.seciliEkSaha3Id}" disabled="#{fazlaMesaiRaporHome.gorevYeriList.size() == 1}"
 									requiredMessage="#{fazlaMesaiRaporHome.bolumAciklama} giriniz!" required="#{authenticatedUser.admin == false}">
@@ -133,8 +134,8 @@
 										<f:facet name="header">
 											<h:outputText value="Adı Soyadı" />
 										</f:facet>
-										<SPAN> <SPAN id="perBilgi#{aylikPuantaj.personelDenklestirme.id}"> <h:outputText
-													value="#{aylikPuantaj.pdksPersonel.adSoyad}" /></SPAN> <rich:toolTip for="perBilgi#{aylikPuantaj.personelDenklestirme.id}">
+										<SPAN> <SPAN id="perBilgi#{aylikPuantaj.personelDenklestirme.id}"> <h:outputText value="#{aylikPuantaj.pdksPersonel.adSoyad}" /></SPAN>
+											<rich:toolTip for="perBilgi#{aylikPuantaj.personelDenklestirme.id}">
 														#{aylikPuantaj.pdksPersonel.sirket.ad}
 										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.fazlaMesaiIzinKullan}">
 													<br />
@@ -263,7 +264,8 @@
 																	</ui:fragment>
 
 																</ui:fragment>
-																<ui:fragment rendered="#{fazlaMesaiRaporHome.ikRole and aylikPuantaj.vardiyaGun.izin != null and aylikPuantaj.vardiyaGun.vardiya != null}">
+																<ui:fragment
+																	rendered="#{fazlaMesaiRaporHome.ikRole and aylikPuantaj.vardiyaGun.izin != null and aylikPuantaj.vardiyaGun.vardiya != null}">
 																	<br />[#{aylikPuantaj.vardiyaGun.vardiya.kisaAdi}]</ui:fragment>
 															</ui:fragment>
 
@@ -299,7 +301,18 @@
 												</rich:toolTip>
 											</ui:fragment>
 										</f:facet>
-										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.saatToplami)}" rendered="#{aylikPuantaj.saatToplami != 0}" />
+										<ui:fragment rendered="#{aylikPuantaj.saatToplami != 0}">
+											<ui:fragment
+												rendered="#{aylikPuantaj.saatToplami ge aylikPuantaj.planlananSure or aylikPuantaj.calismaModeli.fazlaMesaiVar or aylikPuantaj.personelDenklestirme.durum==false}">
+												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.saatToplami)}" />
+											</ui:fragment>
+											<ui:fragment
+												rendered="#{aylikPuantaj.saatToplami lt aylikPuantaj.planlananSure and aylikPuantaj.calismaModeli.fazlaMesaiVar==false and aylikPuantaj.personelDenklestirme.durum}">
+												<SPAN style="color: red; font-weight: bold;"> <h:outputText
+														value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.saatToplami)}" />
+												</SPAN>
+											</ui:fragment>
+										</ui:fragment>
 									</rich:column>
 									<rich:column
 										style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;color:black;"

@@ -8941,6 +8941,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 			}
 			Sirket sirket = personel.getSirket();
+			manuelVardiyaIzinGir = ortakIslemler.getVardiyaIzinGir(session, sirket.getDepartman());
+			if (manuelVardiyaIzinGir == false)
+				manuelVardiyaIzinGir = sirket.getDepartman().getIzinGirilebilir() == false;
 			VardiyaSablonu vardiyaSablonu = personel.getSablon();
 			sb.append(" where V." + Vardiya.COLUMN_NAME_GENEL + " = 1 and V." + Vardiya.COLUMN_NAME_GEBELIK + " = 0   ");
 			sb.append(" and V." + Vardiya.COLUMN_NAME_GEBELIK + " = 0 and V." + Vardiya.COLUMN_NAME_ICAP + " = 0 and V." + Vardiya.COLUMN_NAME_SUA + " = 0 ");
@@ -8969,14 +8972,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (calismaOlmayanVardiyalar) {
 				sb.append(" union ");
 				sb.append(" select * from " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
-				sb.append(" where " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'' and " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'I'  ");
+				sb.append(" where " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'' and " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <> 'I'  ");
 			}
 			if (manuelVardiyaIzinGir) {
 				sb.append(" union ");
 				sb.append(" select distinct V.* from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" left join " + IzinTipi.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + IzinTipi.COLUMN_NAME_DEPARTMAN + " = V." + Vardiya.COLUMN_NAME_DEPARTMAN + " and I." + IzinTipi.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" and I." + IzinTipi.COLUMN_NAME_GIRIS_TIPI + " = 0 and I." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null");
-				sb.append(" where V." + Vardiya.COLUMN_NAME_DEPARTMAN + " = " + personel.getSirket().getDepartman().getId() + " and V." + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
+				sb.append(" where COALESCE( V." + Vardiya.COLUMN_NAME_DEPARTMAN + ", " + personel.getSirket().getDepartman().getId() + " )  = " + personel.getSirket().getDepartman().getId() + " and V." + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" and V." + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " IN ('" + Vardiya.TIPI_IZIN + "','" + Vardiya.TIPI_HASTALIK_RAPOR + "') and I." + IzinTipi.COLUMN_NAME_ID + " is null ");
 			}
 			sb.append(" )   ");

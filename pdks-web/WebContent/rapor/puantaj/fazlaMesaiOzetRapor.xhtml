@@ -36,7 +36,8 @@
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiOzetRaporHome.adminRole and fazlaMesaiOzetRaporHome.departmanList.size()>1}">
 							<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
-							<h:selectOneMenu value="#{fazlaMesaiOzetRaporHome.departmanId}" required="true" requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
+							<h:selectOneMenu value="#{fazlaMesaiOzetRaporHome.departmanId}" required="true"
+								requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{fazlaMesaiOzetRaporHome.departmanList}" />
 								<a4j:support event="onchange" action="#{fazlaMesaiOzetRaporHome.departmanDegisti(true)}" ajaxSingle="true"
@@ -527,7 +528,16 @@
 											</rich:toolTip>
 										</ui:fragment>
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.saatToplami)}" rendered="#{ap.saatToplami != 0}" />
+									<ui:fragment rendered="#{ap.saatToplami != 0}">
+										<ui:fragment rendered="#{ap.saatToplami ge ap.planlananSure or ap.calismaModeli.fazlaMesaiVar or ap.personelDenklestirme.durum==false}">
+											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.saatToplami)}" />
+										</ui:fragment>
+										<ui:fragment rendered="#{ap.saatToplami lt ap.planlananSure and ap.calismaModeli.fazlaMesaiVar==false and ap.personelDenklestirme.durum}">
+											<SPAN style="color: red; font-weight: bold;"> <h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.saatToplami)}" />
+											</SPAN>
+										</ui:fragment>
+									</ui:fragment>
+
 								</rich:column>
 								<rich:column style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;color:black;"
 									styleClass="#{ap.trSonucClass}">

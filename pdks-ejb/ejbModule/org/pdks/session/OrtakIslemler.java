@@ -19071,6 +19071,8 @@ public class OrtakIslemler implements Serializable {
 							oncekiVardiyaGun = vardiyaGun;
 						continue;
 					}
+					if (fmMap != null && vardiyaGun.getFazlaMesailer() == null && fmMap.containsKey(vardiyaGun.getId()))
+						vardiyaGun.setFazlaMesailer(fmMap.get(vardiyaGun.getId()));
 					Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
 					double oncekiGunNormalSure = 0.0d, oncekiGunTatilSure = 0.0d, oncekiGunTatilSureBrut = 0.0d, toplamTatilSure = 0.0d;
 					cal.setTime(vardiyaGun.getVardiyaDate());
@@ -19212,7 +19214,7 @@ public class OrtakIslemler implements Serializable {
 							}
 
 						}
-						ArrayList<PersonelFazlaMesai> vardiyaFazlaMesailer = vardiyaGun.getFazlaMesailer();
+						List<PersonelFazlaMesai> vardiyaFazlaMesailer = vardiyaGun.getFazlaMesailer();
 
 						if (vardiyaGun.isBayramAyir() && vardiyaFazlaMesailer != null && vardiyaGun.getGecerliHareketler() != null) {
 							for (Iterator iterator = vardiyaFazlaMesailer.iterator(); iterator.hasNext();) {

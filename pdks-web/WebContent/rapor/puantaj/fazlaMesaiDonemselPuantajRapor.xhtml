@@ -101,8 +101,9 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">İşten Ayrılan Göster</ui:define>
 							<h:selectBooleanCheckbox value="#{fazlaMesaiDonemselPuantajRaporHome.istenAyrilanGoster}">
-								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{fazlaMesaiDonemselPuantajRaporHome.ayDoldur(fazlaMesaiDonemselPuantajRaporHome.basYil,fazlaMesaiDonemselPuantajRaporHome.donemBas,true)}"
-									reRender="denklestirmeDonemiTable,girisler"/>
+								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true"
+									action="#{fazlaMesaiDonemselPuantajRaporHome.ayDoldur(fazlaMesaiDonemselPuantajRaporHome.basYil,fazlaMesaiDonemselPuantajRaporHome.donemBas,true)}"
+									reRender="denklestirmeDonemiTable,girisler" />
 							</h:selectBooleanCheckbox>
 						</s:decorate>
 
@@ -706,8 +707,16 @@
 														</td>
 													</ui:fragment>
 												</a4j:repeat>
-												<td class="#{ap.trSonucClass}" style="width: 20px" align="center"><h:outputText
-														value="#{authenticatedUser.sayiFormatliGoster(ap.saatToplami)}" rendered="#{ap.saatToplami != 0}" /></td>
+												<td class="#{ap.trSonucClass}" style="width: 20px" align="center"><ui:fragment rendered="#{ap.saatToplami != 0}">
+														<ui:fragment rendered="#{ap.saatToplami ge ap.planlananSure or ap.calismaModeli.fazlaMesaiVar or ap.personelDenklestirme.durum==false}">
+															<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.saatToplami)}" />
+														</ui:fragment>
+														<ui:fragment
+															rendered="#{ap.saatToplami lt ap.planlananSure and ap.calismaModeli.fazlaMesaiVar==false and ap.personelDenklestirme.durum}">
+															<SPAN style="color: red; font-weight: bold;"> <h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.saatToplami)}" />
+															</SPAN>
+														</ui:fragment>
+													</ui:fragment></td>
 												<td class="#{ap.trSonucClass}" style="width: 20px" align="center">
 													<DIV id="planlananSureAciklama#{ap.personelDenklestirme.id}">
 														<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.planlananSure)}" rendered="#{ap.planlananSure != 0}" />

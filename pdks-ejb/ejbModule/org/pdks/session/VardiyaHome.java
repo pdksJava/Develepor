@@ -740,7 +740,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 				if (ortakIslemler.getParameterKey("fazlaMesaiIzinKullan").equals("1") || vardiyaTipi.equals(String.valueOf(Vardiya.TIPI_FMI)))
 					list.add(new SelectItem(String.valueOf(Vardiya.TIPI_FMI), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_FMI, "Fazla Mesai İzin")));
 				boolean izinGiris = manuelVardiyaIzinGir || PdksUtil.getCanliSunucuDurum() == false;
-				if (izinGiris || vardiyaTipi.equals(String.valueOf(Vardiya.TIPI_IZIN)) || vardiyaTipi.equals(String.valueOf(Vardiya.TIPI_HASTALIK_RAPOR))) {
+				if (izinGiris || (vardiyaTipi.equals("") && vardiya.getId() == null) || vardiyaTipi.equals(String.valueOf(Vardiya.TIPI_IZIN)) || vardiyaTipi.equals(String.valueOf(Vardiya.TIPI_HASTALIK_RAPOR))) {
 					if (izinGiris || vardiyaTipi.equals(String.valueOf(Vardiya.TIPI_IZIN)))
 						list.add(new SelectItem(String.valueOf(Vardiya.TIPI_IZIN), Vardiya.getVardiyaTipiAciklama(Vardiya.TIPI_IZIN, "İzin Tatil Hariç")));
 					if (izinGiris || vardiyaTipi.equals(String.valueOf(Vardiya.TIPI_HASTALIK_RAPOR)))

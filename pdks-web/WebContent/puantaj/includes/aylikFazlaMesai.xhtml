@@ -514,8 +514,14 @@
 							<a4j:repeat value="#{aylikPuantaj.vardiyalar}" var="vardiyaGun">
 								<ui:include src="/puantaj/includes/gunlukVardiyaIslem.xhtml" />
 							</a4j:repeat>
-							<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><h:outputText
-									value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.saatToplami)}" rendered="#{aylikPuantaj.saatToplami != 0}" /></td>
+							<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment rendered="#{aylikPuantaj.saatToplami != 0}">
+									<ui:fragment rendered="#{aylikPuantaj.saatToplami ge aylikPuantaj.planlananSure or aylikPuantaj.calismaModeli.fazlaMesaiVar or aylikPuantaj.personelDenklestirme.durum==false}">
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.saatToplami)}" />
+									</ui:fragment>
+									<ui:fragment rendered="#{aylikPuantaj.saatToplami lt aylikPuantaj.planlananSure and aylikPuantaj.calismaModeli.fazlaMesaiVar==false and aylikPuantaj.personelDenklestirme.durum}">
+										<SPAN style="color: red;font-weight: bold;"><h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.saatToplami)}" /></SPAN>
+									</ui:fragment>
+								</ui:fragment></td>
 							<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center">
 								<DIV id="planlananSureAciklama#{aylikPuantaj.personelDenklestirme.id}">
 									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.planlananSure)}" rendered="#{aylikPuantaj.planlananSure != 0}" />
