@@ -33,6 +33,7 @@ import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaSablonu;
 import org.pdks.entity.VardiyaYemekIzin;
 import org.pdks.entity.YemekIzin;
+import org.pdks.enums.BordroDetayTipi;
 import org.pdks.security.entity.User;
 
 @Name("vardiyaHome")
@@ -63,7 +64,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	private List<String> saatList = new ArrayList<String>();
 	private List<String> dakikaList = new ArrayList<String>();
 	private List<String> toleransDakikaList = new ArrayList<String>();
-	private List<SelectItem> vardiyaTipiList, departmanIdList, calismaSekliIdList, sirketIdList, pdksSirketIdList;
+	private List<SelectItem> vardiyaTipiList, departmanIdList, calismaSekliIdList, sirketIdList, pdksSirketIdList, izinTipiList;
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), izinCalismaVardiyaList = new ArrayList<Vardiya>();
 	private List<VardiyaSablonu> sablonList = new ArrayList<VardiyaSablonu>();
 
@@ -750,6 +751,14 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			}
 
 		}
+		if (izinTipiList == null)
+			izinTipiList = new ArrayList<SelectItem>();
+		izinTipiList.clear();
+		if (vardiya.getId() == null || vardiya.isIzin()) {
+			izinTipiList.add(new SelectItem(BordroDetayTipi.UCRETLI_IZIN.value(), "Ücretli İzin"));
+			izinTipiList.add(new SelectItem(BordroDetayTipi.UCRETSIZ_IZIN.value(), "Ücretsiz İzin"));
+			izinTipiList.add(new SelectItem(BordroDetayTipi.RAPORLU_IZIN.value(), "Raporlu İzin"));
+		}
 		setVardiyaTipiList(list);
 	}
 
@@ -935,5 +944,13 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 	public void setSeciliSirketId(Long seciliSirketId) {
 		this.seciliSirketId = seciliSirketId;
+	}
+
+	public List<SelectItem> getIzinTipiList() {
+		return izinTipiList;
+	}
+
+	public void setIzinTipiList(List<SelectItem> izinTipiList) {
+		this.izinTipiList = izinTipiList;
 	}
 }

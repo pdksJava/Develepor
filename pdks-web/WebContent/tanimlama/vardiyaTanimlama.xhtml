@@ -17,8 +17,8 @@
 								<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.pdksSirketIdList.size() gt 0}">
 									<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 									<h:selectOneMenu value="#{vardiyaHome.seciliSirketId}">
-											<f:selectItem itemLabel="Lütfen seçiniz" />
-											<f:selectItems value="#{vardiyaHome.pdksSirketIdList}" />
+										<f:selectItem itemLabel="Lütfen seçiniz" />
+										<f:selectItems value="#{vardiyaHome.pdksSirketIdList}" />
 										<a4j:support event="onchange" reRender="anaForm" status="ajaxStatus" ajaxSingle="true" action="#{vardiyaHome.fillVardiyalar()}" />
 									</h:selectOneMenu>
 								</s:decorate>
@@ -326,13 +326,22 @@
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" rendered="#{not empty vardiyaHome.vardiyaTipiList}">
 								<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} Tipi</ui:define>
-								<h:selectOneMenu required="true" value="#{vardiyaHome.instance.tipi}" rendered="#{authenticatedUser.admin == true}"
-									requiredMessage="#{ortakIslemler.vardiyaAciklama()} tipini seçiniz">
+								<h:selectOneMenu value="#{vardiyaHome.instance.tipi}" rendered="#{authenticatedUser.admin == false}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{vardiyaHome.vardiyaTipiList}" />
-									<a4j:support event="onchange" reRender="saatler" status="ajaxStatus" ajaxSingle="true" />
+									<a4j:support event="onchange" reRender="saatler,vardiyaEdit" status="ajaxStatus" ajaxSingle="true" />
 								</h:selectOneMenu>
 								<h:outputText value="#{vardiyaHome.instance.vardiyaTipiAciklama}" rendered="#{authenticatedUser.admin == false}" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.instance.izin}">
+								<ui:define name="label">İzin Tipi</ui:define>
+								<h:selectOneMenu required="true" value="#{vardiyaHome.instance.styleClass}" disabled="#{authenticatedUser.admin == true}"
+									requiredMessage="İzin tipini seçiniz">
+									<f:selectItem itemLabel="Lütfen seçiniz" />
+									<f:selectItems value="#{vardiyaHome.izinTipiList}" />
+									<a4j:support event="onchange" reRender="saatler" status="ajaxStatus" ajaxSingle="true" />
+								</h:selectOneMenu>
+
 							</s:decorate>
 							<a4j:outputPanel id="saatler">
 
@@ -493,13 +502,13 @@
 											<f:selectItems value="#{vardiyaHome.sirketIdList}" />
 											<a4j:support event="onchange" action="#{vardiyaHome.fillCalismaModeliList(vardiyaHome.instance)}" reRender="modeller" status="ajaxStatus"
 												ajaxSingle="true" />
-											 
+
 										</h:selectOneMenu>
 
 									</s:decorate>
 									<a4j:outputPanel id="modeller">
-										<rich:simpleTogglePanel rendered="#{vardiyaHome.calismaModeliList.size()+vardiyaHome.calismaModeliKayitliList.size()>0}"
-											switchType="client" label="Çalışma Modelleri" height="110" opened="true">
+										<rich:simpleTogglePanel rendered="#{vardiyaHome.calismaModeliList.size()+vardiyaHome.calismaModeliKayitliList.size()>0}" switchType="client"
+											label="Çalışma Modelleri" height="110" opened="true">
 
 											<rich:listShuttle sourceValue="#{vardiyaHome.calismaModeliList}" fastOrderControlsVisible="false" orderControlsVisible="false"
 												targetValue="#{vardiyaHome.calismaModeliKayitliList}" var="calismaModeli"
@@ -543,7 +552,7 @@
 								<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
 								<h:selectOneMenu value="#{vardiyaHome.instance.departmanId}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
-											<f:selectItems value="#{vardiyaHome.departmanIdList}" />
+									<f:selectItems value="#{vardiyaHome.departmanIdList}" />
 									<a4j:support event="onchange" reRender="saatler" status="ajaxStatus" ajaxSingle="true"
 										action="#{vardiyaHome.izinVardiyalariGetir(vardiyaHome.instance)}" />
 								</h:selectOneMenu>
