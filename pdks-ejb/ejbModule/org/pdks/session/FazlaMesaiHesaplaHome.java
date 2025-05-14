@@ -3841,18 +3841,23 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		boolean fazlaMesaiOnaylaDurum = vGun.isAyrikHareketVar() == false && girisHareketleri != null && cikisHareketleri != null && girisHareketleri.size() == cikisHareketleri.size();
 		if (fazlaMesaiOnaylaDurum || (vGun.isAyrikHareketVar() && vGun.getVardiya().isCalisma())) {
 
-			for (Iterator iterator = girisHareketleri.iterator(); iterator.hasNext();) {
-				HareketKGS hareketKGS = (HareketKGS) iterator.next();
-				if (hareketKGS.getId() == null || hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET) || hareketKGS.getId().startsWith(HareketKGS.AYRIK_HAREKET) || (ilkGunTatil && !idList.contains(hareketKGS.getId())))
-					iterator.remove();
-
+			int gAdet = girisHareketleri != null ? girisHareketleri.size() : -1, cAdet = cikisHareketleri != null ? cikisHareketleri.size() : -1;
+			if (girisHareketleri != null) {
+				for (Iterator iterator = girisHareketleri.iterator(); iterator.hasNext();) {
+					HareketKGS hareketKGS = (HareketKGS) iterator.next();
+					if (hareketKGS.getId() == null || hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET) || hareketKGS.getId().startsWith(HareketKGS.AYRIK_HAREKET) || (ilkGunTatil && !idList.contains(hareketKGS.getId())))
+						iterator.remove();
+				}
 			}
-			for (Iterator iterator = cikisHareketleri.iterator(); iterator.hasNext();) {
-				HareketKGS hareketKGS = (HareketKGS) iterator.next();
-				if (hareketKGS.getId() == null || hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET) || hareketKGS.getId().startsWith(HareketKGS.AYRIK_HAREKET) || (ilkGunTatil && !idList.contains(hareketKGS.getId())))
-					iterator.remove();
+			if (cikisHareketleri != null) {
+				for (Iterator iterator = cikisHareketleri.iterator(); iterator.hasNext();) {
+					HareketKGS hareketKGS = (HareketKGS) iterator.next();
+					if (hareketKGS.getId() == null || hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET) || hareketKGS.getId().startsWith(HareketKGS.AYRIK_HAREKET) || (ilkGunTatil && !idList.contains(hareketKGS.getId())))
+						iterator.remove();
 
+				}
 			}
+
 			vGun.setCikisHareketleri((ArrayList<HareketKGS>) cikisHareketleri);
 			vGun.setGirisHareketleri((ArrayList<HareketKGS>) girisHareketleri);
 
@@ -3868,12 +3873,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					cikis = !cikis;
 				}
 			}
-			if (adet > 0 && adet == cikisHareketleri.size()) {
+			if (adet > 0 && adet == cAdet) {
 				fazlaMesaiOnaylaDurum = true;
 				vGun.setFazlaMesaiOnayla(true);
 			}
 			if (vGun.isAyrikHareketVar())
-				vGun.setHareketHatali(girisHareketleri.size() != cikisHareketleri.size());
+				vGun.setHareketHatali(gAdet != cAdet);
 
 		}
 
