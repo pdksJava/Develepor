@@ -18366,15 +18366,24 @@ public class OrtakIslemler implements Serializable {
 		VardiyaGun oncekiGun = null;
 		for (VardiyaGun vg : bayramAyirList) {
 			boolean devam = false;
+			vg.setGecmisHataliDurum(false);
 			ArrayList<HareketKGS> girisHareketList = new ArrayList<HareketKGS>(), cikisHareketList = new ArrayList<HareketKGS>();
 			String str = vg.getVardiyaDateStr();
-			if (str.endsWith("01"))
+			if (str.endsWith("01")) {
 				logger.debug("");
+				if (vg.isAyinGunu() && oncekiHareketler == null)
+					vg.setGecmisHataliDurum(true);
+
+			}
+			if (oncekiHareketler == null)
+				oncekiHareketler = new ArrayList<HareketKGS>();
+
 			if (vg.getVardiya() != null && vg.isBayramAyir()) {
 				int girisAdet = vg.getGirisHareketleri() != null ? vg.getGirisHareketleri().size() : 0;
 				int cikisAdet = vg.getCikisHareketleri() != null ? vg.getCikisHareketleri().size() : 0;
 				devam = girisAdet == cikisAdet;
-
+				if (devam == false)
+					oncekiHareketler = null;
 			} else if (str.endsWith("01") && vg.getTatil() != null && oncekiGun != null) {
 				if (tatilGunleriMap.containsKey(oncekiGun.getVardiyaDateStr()) == false) {
 

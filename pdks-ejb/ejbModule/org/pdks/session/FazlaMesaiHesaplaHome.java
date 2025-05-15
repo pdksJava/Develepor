@@ -4400,6 +4400,23 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		} catch (Exception e) {
 
 		}
+		if (vGun.isGecmisHataliDurum()) {
+			if (vGun.getOncekiVardiyaGun() != null) {
+				Personel izinSahibi = vGun.getPdksPersonel();
+				String hataStr = izinSahibi.getPdksSicilNo() + " " + ortakIslemler.personelNoAciklama() + " " + izinSahibi.getAdSoyad() + " ait  ";
+
+				hataStr += PdksUtil.convertToDateString(vGun.getOncekiVardiyaGun().getVardiyaDate(), "d MMM yyyy EEEEE") + " gününde hatalı girişi vardır!";
+
+				PdksUtil.addMessageAvailableError(hataStr);
+
+			}
+			vGun.setHareketHatali(true);
+			vGun.setHataliDurum(false);
+			vGun.setOnayli(false);
+			vGun.setDurum(false);
+			islemPuantaj.setFiiliHesapla(false);
+			fazlaMesaiHesapla = false;
+		}
 
 		paramsMap.put("fazlaMesaiHesapla", fazlaMesaiHesapla);
 		paramsMap.put("aksamVardiyaSayisi", aksamVardiyaSayisi);

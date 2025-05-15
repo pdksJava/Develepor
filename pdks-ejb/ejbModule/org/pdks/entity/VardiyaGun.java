@@ -84,7 +84,7 @@ public class VardiyaGun extends BaseObject {
 	private boolean bitmemisGun = Boolean.TRUE, islendi = Boolean.FALSE, ayrikHareketVar = Boolean.FALSE, gebeMi = false, sutIzniVar = false;
 	private int yarimYuvarla = PdksUtil.getYarimYuvarlaLast();
 	private HareketKGS ilkGiris, sonCikis;
-	private boolean ayinGunu = Boolean.TRUE, onayli = Boolean.TRUE, fiiliHesapla = Boolean.FALSE, hataliDurum = Boolean.FALSE, donemAcik = Boolean.TRUE;
+	private boolean ayinGunu = Boolean.TRUE, onayli = Boolean.TRUE, fiiliHesapla = Boolean.FALSE, gecmisHataliDurum = Boolean.FALSE, hataliDurum = Boolean.FALSE, donemAcik = Boolean.TRUE;
 	private List<String> linkAdresler;
 	private HashMap<String, Personel> gorevliPersonelMap;
 	private CalismaModeli calismaModeli = null;
@@ -729,6 +729,8 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public Boolean getHareketDurum() {
+		if (vardiyaDateStr.endsWith("01"))
+			logger.debug("");
 		boolean hareketDurum = (hareketler == null || !hareketHatali);
 		if (hareketDurum && hareketler != null)
 			hareketDurum = girisHareketleri != null && cikisHareketleri != null && girisHareketleri.size() == cikisHareketleri.size();
@@ -2469,5 +2471,14 @@ public class VardiyaGun extends BaseObject {
 
 	public void setGecerliHareketler(ArrayList<HareketKGS> gecerliHareketler) {
 		this.gecerliHareketler = gecerliHareketler;
+	}
+
+	@Transient
+	public boolean isGecmisHataliDurum() {
+		return gecmisHataliDurum;
+	}
+
+	public void setGecmisHataliDurum(boolean gecmisHataliDurum) {
+		this.gecmisHataliDurum = gecmisHataliDurum;
 	}
 }
