@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 
@@ -31,7 +32,7 @@ public class PdksAgent extends BasePDKSObject implements Serializable, Cloneable
 
 	private String dakikaBilgi, saatBilgi, gunBilgi, haftaBilgi;
 
-	private Boolean durum = Boolean.TRUE;
+	private Boolean durum = Boolean.TRUE, start = false;
 
 	@Column(name = COLUMN_NAME_SP)
 	public String getStoreProcedureAdi() {
@@ -94,6 +95,15 @@ public class PdksAgent extends BasePDKSObject implements Serializable, Cloneable
 
 	public void setDurum(Boolean durum) {
 		this.durum = durum;
+	}
+
+	@Transient
+	public Boolean getStart() {
+		return start;
+	}
+
+	public void setStart(Boolean start) {
+		this.start = start;
 	}
 
 	public void entityRefresh() {

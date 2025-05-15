@@ -39,7 +39,6 @@ import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.PersonelIzinDetay;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
-import org.pdks.entity.ThreadAgent;
 import org.pdks.security.action.StartupAction;
 import org.pdks.security.entity.User;
 import org.pdks.session.OrtakIslemler;
@@ -167,8 +166,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 
 					if (dakikaCalistir && saatCalistir && gunCalistir && haftaCalistir) {
 						try {
-							ThreadAgent ta = new ThreadAgent(pa, pdksEntityController, entityManager, null);
-							ta.start();
+							ThreadAgent threadAgent = new ThreadAgent(pa, pdksEntityController, session);
+							threadAgent.start();
 						} catch (Exception e) {
 							logger.error(e);
 						}

@@ -19,6 +19,7 @@ import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.PdksAgent;
+import org.pdks.quartz.ThreadAgent;
 import org.pdks.security.entity.User;
 
 @Name("pdksAgentTanimlamaHome")
@@ -74,6 +75,17 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		admin = authenticatedUser.isAdmin();
 		fillPdksAgentList();
+	}
+
+	public String agentRun(PdksAgent agent) {
+		if (agent.getStart().booleanValue() == false) {
+			ThreadAgent threadAgent = new ThreadAgent(agent, pdksEntityController, session);
+			threadAgent.start();
+			PdksUtil.addMessageAvailableInfo(agent.getAciklama() + " çalışmaya başladı.");
+		} else
+			PdksUtil.addMessageAvailableWarn(agent.getAciklama() + " çalışıyor!");
+
+		return "";
 	}
 
 	public String guncelle(PdksAgent agent) {

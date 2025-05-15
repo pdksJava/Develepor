@@ -27,13 +27,22 @@
 									<f:facet name="header">
                         İşlemler
             	    </f:facet>
+									<ui:fragment>
+										<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink" oncomplete="#{rich:component('editPanel')}.show()"
+											action="#{pdksAgentTanimlamaHome.guncelle(pdksAgentTanimlama)}" reRender="editPanel">
+											<h:graphicImage value="/img/edit.gif" style="border:0" alt="Edit" />
 
-									<a4j:commandLink status="ajaxStatus" rendered="#{authenticatedUser.admin or pdksAgentTanimlama.guncelle}" ajaxSingle="true" id="editlink"
-										oncomplete="#{rich:component('editPanel')}.show()" action="#{pdksAgentTanimlamaHome.guncelle(pdksAgentTanimlama)}" reRender="editPanel">
-										<h:graphicImage value="/img/edit.gif" style="border:0" alt="Edit" />
+										</a4j:commandLink>
+										<rich:toolTip for="editlink" value="Güncelle" />
+										<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="runLink" action="#{pdksAgentTanimlamaHome.agentRun(pdksAgentTanimlama)}">
+											<h:graphicImage value="/img/calculator.png" height="20" style="border:0" />
 
-									</a4j:commandLink>
-									<rich:toolTip for="editlink" value="Güncelle" />
+										</a4j:commandLink>
+										<rich:toolTip for="runLink" value="#{pdksAgentTanimlama.aciklama} Çalıştır" />
+									</ui:fragment>
+
+
+
 
 
 								</rich:column>
@@ -127,11 +136,13 @@
 
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">İşlem Adı</ui:define>
-							<h:inputText style="width: 500px" requiredMessage="İşlem adı giriniz" required="true" size="255" value="#{pdksAgentTanimlamaHome.currentAgent.storeProcedureAdi}" />
+							<h:inputText style="width: 500px" requiredMessage="İşlem adı giriniz" required="true" size="255"
+								value="#{pdksAgentTanimlamaHome.currentAgent.storeProcedureAdi}" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Açıklama</ui:define>
-							<h:inputText style="width: 500px" requiredMessage="Açıklama giriniz"  required="true" maxlength="255" value="#{pdksAgentTanimlamaHome.currentAgent.aciklama}" />
+							<h:inputText style="width: 500px" requiredMessage="Açıklama giriniz" required="true" maxlength="255"
+								value="#{pdksAgentTanimlamaHome.currentAgent.aciklama}" />
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Gün Değeri</ui:define>
@@ -156,9 +167,9 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Aktif</ui:define>
 							<h:selectBooleanCheckbox required="true" value="#{pdksAgentTanimlamaHome.currentAgent.durum}" />
- 						</s:decorate>
+						</s:decorate>
 
- 					</a4j:outputPanel>
+					</a4j:outputPanel>
 					<!--  -->
 
 					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{pdksAgentTanimlamaHome.kaydet()}" reRender="table"
