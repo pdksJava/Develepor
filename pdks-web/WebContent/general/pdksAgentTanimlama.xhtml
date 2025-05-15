@@ -114,7 +114,7 @@
 				<h:panelGroup>
 					<h:form>
 						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
-							<a4j:support event="onclick" action="#{pdksAgentTanimlamaHome.currentAgentRefresh}" reRender="sablonTable"
+							<a4j:support event="onclick" action="#{pdksAgentTanimlamaHome.instanceRefresh}" reRender="sablonTable"
 								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
