@@ -46,7 +46,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	OrtakIslemler ortakIslemler;
 
 	public static String sayfaURL = "pdksAgentTanimlama";
-	private PdksAgent currentParameter;
+	private PdksAgent currentAgent;
 	private List<PdksAgent> pdksAgentList;
 
 	private Session session;
@@ -77,19 +77,17 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	}
 
 	public String guncelle(PdksAgent agent) {
-		if (agent == null) {
+		if (agent == null)
 			agent = new PdksAgent();
 
-		}
-
+		currentAgent = agent;
 		setInstance(agent);
 		return "";
 	}
 
 	@Transactional
-	public String save() {
+	public String kaydet() {
 		PdksAgent agent = getInstance();
-
 		pdksEntityController.saveOrUpdate(session, entityManager, agent);
 		session.flush();
 		session.clear();
@@ -98,60 +96,45 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 	}
 
+	public void instanceRefresh() {
+		if (currentAgent.getId() != null)
+			session.refresh(currentAgent);
+	}
+
 	public String fillPdksAgentList() {
 
 		HashMap parametreMap = new HashMap();
-		// if (!authenticatedUser.isAdmin()) {
-		// parametreMap.put("guncelle", Boolean.TRUE);
-		// parametreMap.put("helpDesk", Boolean.FALSE);
-		// }
-		//
-
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 
 		helpDesk = false;
-		// List<Parameter> list = pdksEntityController.getObjectByInnerObjectList(parametreMap, Parameter.class);
-		//
 		StringBuffer sb = new StringBuffer();
 		sb.append("select T.* from " + PdksAgent.TABLE_NAME + " T " + PdksEntityController.getSelectLOCK() + " ");
-
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<PdksAgent> list = pdksEntityController.getObjectBySQLList(sb, parametreMap, PdksAgent.class);
 
 		list = PdksUtil.sortListByAlanAdi(list, "id", admin);
-		if (authenticatedUser.isAdmin()) {
-			List<PdksAgent> aktifList = new ArrayList<PdksAgent>(), pasifList = new ArrayList<PdksAgent>();
-			try {
-				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-					PdksAgent parameter = (PdksAgent) iterator.next();
-					;
-					if (parameter.getDurum().equals(Boolean.FALSE)) {
-						pasifList.add(parameter);
-						iterator.remove();
-					} else {
-						aktifList.add(parameter);
-						iterator.remove();
-					}
+
+		List<PdksAgent> pasifList = new ArrayList<PdksAgent>();
+		try {
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				PdksAgent parameter = (PdksAgent) iterator.next();
+				if (parameter.getDurum().equals(Boolean.FALSE)) {
+					pasifList.add(parameter);
+					iterator.remove();
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
-
-			if (!aktifList.isEmpty())
-				list.addAll(aktifList);
-			if (!pasifList.isEmpty()) {
-				if (pasifGoster == null)
-					pasifGoster = Boolean.FALSE;
-				else if (pasifGoster)
-					list.addAll(pasifList);
-			}
-
-			aktifList = null;
-			pasifList = null;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
+		if (!pasifList.isEmpty())
+			list.addAll(pasifList);
+
+		pasifList = null;
+
+		setPdksAgentList(list);
 		return "";
 	}
 
@@ -200,20 +183,20 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		PdksAgentTanimlamaHome.sayfaURL = sayfaURL;
 	}
 
-	public PdksAgent getCurrentParameter() {
-		return currentParameter;
-	}
-
-	public void setCurrentParameter(PdksAgent currentParameter) {
-		this.currentParameter = currentParameter;
-	}
-
 	public List<PdksAgent> getPdksAgentList() {
 		return pdksAgentList;
 	}
 
 	public void setPdksAgentList(List<PdksAgent> pdksAgentList) {
 		this.pdksAgentList = pdksAgentList;
+	}
+
+	public PdksAgent getCurrentAgent() {
+		return currentAgent;
+	}
+
+	public void setCurrentAgent(PdksAgent currentAgent) {
+		this.currentAgent = currentAgent;
 	}
 
 }

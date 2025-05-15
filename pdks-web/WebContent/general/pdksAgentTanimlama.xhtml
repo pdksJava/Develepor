@@ -17,9 +17,9 @@
 					<a4j:outputPanel id="anaForm">
 						<h:panelGrid columns="1">
 
-							 
-							<rich:dataTable rowClasses="acik,koyu" value="#{pdksAgentTanimlamaHome.pdksAgentTanimlamaList}" var="pdksAgentTanimlama" rows="25"
-								rowKeyVar="row" id="table">
+
+							<rich:dataTable rowClasses="acik,koyu" value="#{pdksAgentTanimlamaHome.pdksAgentList}" var="pdksAgentTanimlama" rows="25" rowKeyVar="row"
+								id="table">
 								<f:facet name="header">
 									<h:outputText value="Zamanlanmış Görevler" />
 								</f:facet>
@@ -45,7 +45,7 @@
 								</rich:column>
 								<rich:column filterBy="#{pdksAgentTanimlama.storeProcedureAdi}" filterEvent="onkeyup">
 									<f:facet name="header">
-										<h:outputText value="Adı" />
+										<h:outputText value="İşlem Adı" />
 									</f:facet>
 									<h:outputText value="#{pdksAgentTanimlama.storeProcedureAdi}" id="storeProcedureAdi" />
 								</rich:column>
@@ -86,7 +86,7 @@
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo( pdksAgentTanimlama.durum)}" id="active" />
 								</rich:column>
-								 
+
 
 								<f:facet name="footer">
 									<rich:datascroller renderIfSinglePage="false" maxPages="5" />
@@ -97,9 +97,9 @@
 							<a4j:commandButton status="ajaxStatus" value="Ekle" action="#{pdksAgentTanimlamaHome.guncelle(null)}"
 								oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
 							</a4j:commandButton>
-							 
+
 							<rich:toolTip for="addlink" value="Ekle" />
-							 
+
 						</ui:fragment>
 					</a4j:outputPanel>
 				</rich:panel>
@@ -112,56 +112,56 @@
 			</f:facet>
 			<f:facet name="controls">
 				<h:panelGroup>
-					<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink" />
-					<rich:componentControl for="editPanel" attachTo="hidelink" operation="hide" event="onclick" />
+					<h:form>
+						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
+							<a4j:support event="onclick" action="#{pdksAgentTanimlamaHome.currentAgentRefresh}" reRender="sablonTable"
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
+						</h:graphicImage>
+					</h:form>
 				</h:panelGroup>
 			</f:facet>
 			<h:form>
 
 				<h:panelGrid columns="1">
 					<a4j:outputPanel ajaxRendered="true" id="ptmEdit">
-						<h:panelGrid columns="1" rendered="#{authenticatedUser.admin == true}">
-							<s:decorate  template="/layout/edit.xhtml">
-								<ui:define name="label">Adı</ui:define>
-								<h:inputText   required="true" size="40" value="#{pdksAgentTanimlamaHome.instance.name}" />
-							</s:decorate>
-							<s:decorate  template="/layout/edit.xhtml">
-								<ui:define name="label">Değeri</ui:define>
-								<h:inputText   style="width: 500px" required="true" maxlength="255" value="#{pdksAgentTanimlamaHome.instance.value}" />
-							</s:decorate>
-							<s:decorate id="parametreAdiField3" template="/layout/edit.xhtml">
-								<ui:define name="label">Açıklama</ui:define>
-								<h:inputText id="parametreAdi3" style="width: 500px" maxlength="1024" value="#{pdksAgentTanimlamaHome.instance.description}">
-								</h:inputText>
-							</s:decorate>
-							 
-							<s:decorate   template="/layout/edit.xhtml">
-								<ui:define name="label">Aktif</ui:define>
-								<h:selectBooleanCheckbox  required="true" value="#{pdksAgentTanimlamaHome.instance.durum}" />
 
-							</s:decorate>
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">İşlem Adı</ui:define>
+							<h:inputText style="width: 500px" requiredMessage="İşlem adı giriniz" required="true" size="255" value="#{pdksAgentTanimlamaHome.currentAgent.storeProcedureAdi}" />
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Açıklama</ui:define>
+							<h:inputText style="width: 500px" requiredMessage="Açıklama giriniz"  required="true" maxlength="255" value="#{pdksAgentTanimlamaHome.currentAgent.aciklama}" />
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Gün Değeri</ui:define>
+							<h:inputText style="width: 500px" maxlength="255" value="#{pdksAgentTanimlamaHome.currentAgent.gunBilgi}">
+							</h:inputText>
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Hafta  Değeri</ui:define>
+							<h:inputText style="width: 500px" maxlength="255" value="#{pdksAgentTanimlamaHome.currentAgent.haftaBilgi}">
+							</h:inputText>
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Saat Değeri</ui:define>
+							<h:inputText style="width: 500px" maxlength="255" value="#{pdksAgentTanimlamaHome.currentAgent.saatBilgi}">
+							</h:inputText>
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Dakika Değeri</ui:define>
+							<h:inputText style="width: 500px" maxlength="255" value="#{pdksAgentTanimlamaHome.currentAgent.dakikaBilgi}">
+							</h:inputText>
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Aktif</ui:define>
+							<h:selectBooleanCheckbox required="true" value="#{pdksAgentTanimlamaHome.currentAgent.durum}" />
+ 						</s:decorate>
 
-						</h:panelGrid>
-						<h:panelGrid columns="1" rendered="#{authenticatedUser.admin == false}">
-							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Açıklama</ui:define>
-								<h:outputText value="#{pdksAgentTanimlamaHome.instance.description}" />
-							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Değeri</ui:define>
-								<h:inputText id="parametreAdi2" required="true" value="#{pdksAgentTanimlamaHome.instance.value}" />
-							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Aktif</ui:define>
-								<h:selectBooleanCheckbox id="parametreAdi4" required="true" value="#{pdksAgentTanimlamaHome.instance.active}" />
-
-							</s:decorate>
-						</h:panelGrid>
-
-					</a4j:outputPanel>
+ 					</a4j:outputPanel>
 					<!--  -->
 
-					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{pdksAgentTanimlamaHome.save}" reRender="table"
+					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{pdksAgentTanimlamaHome.kaydet()}" reRender="table"
 						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 
