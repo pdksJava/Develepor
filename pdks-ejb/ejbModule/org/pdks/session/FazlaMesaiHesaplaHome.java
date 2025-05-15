@@ -3841,7 +3841,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		boolean fazlaMesaiOnaylaDurum = vGun.isAyrikHareketVar() == false && girisHareketleri != null && cikisHareketleri != null && girisHareketleri.size() == cikisHareketleri.size();
 		if (fazlaMesaiOnaylaDurum || (vGun.isAyrikHareketVar() && vGun.getVardiya().isCalisma())) {
 
-			int gAdet = girisHareketleri != null ? girisHareketleri.size() : -1, cAdet = cikisHareketleri != null ? cikisHareketleri.size() : -1;
+			int gAdet = girisHareketleri != null ? girisHareketleri.size() : -1, cAdet = cikisHareketleri != null ? cikisHareketleri.size() : -2;
 			if (girisHareketleri != null) {
 				for (Iterator iterator = girisHareketleri.iterator(); iterator.hasNext();) {
 					HareketKGS hareketKGS = (HareketKGS) iterator.next();
@@ -4403,16 +4403,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		if (vGun.isGecmisHataliDurum()) {
 			if (vGun.getOncekiVardiyaGun() != null) {
 				Personel izinSahibi = vGun.getPdksPersonel();
-				String hataStr = izinSahibi.getPdksSicilNo() + " " + ortakIslemler.personelNoAciklama() + " " + izinSahibi.getAdSoyad() + " ait  ";
-
+				String hataStr = "";
+				if (PdksUtil.hasStringValue(sicilNo) == false)
+					hataStr += izinSahibi.getPdksSicilNo() + " " + ortakIslemler.personelNoAciklama() + " " + izinSahibi.getAdSoyad() + " ait  ";
 				hataStr += PdksUtil.convertToDateString(vGun.getOncekiVardiyaGun().getVardiyaDate(), "d MMM yyyy EEEEE") + " gününde hatalı girişi vardır!";
-
 				PdksUtil.addMessageAvailableError(hataStr);
 
 			}
-			vGun.setHareketHatali(true);
-			vGun.setHataliDurum(false);
-			vGun.setOnayli(false);
+			// vGun.setHareketHatali(true);
+			// vGun.setHataliDurum(false);
+			// vGun.setOnayli(false);
 			vGun.setDurum(false);
 			islemPuantaj.setFiiliHesapla(false);
 			fazlaMesaiHesapla = false;
