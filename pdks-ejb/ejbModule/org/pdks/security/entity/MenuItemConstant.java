@@ -35,6 +35,7 @@ public class MenuItemConstant implements Serializable {
 	public static String importSSL = "/general/importSSL.xhtml";
 	public static String notice = "/general/notice.xhtml";
 	public static String parameter = "/general/parameter.xhtml";
+	public static String pdksAgentTanimlama = "/general/pdksAgentTanimlama.xhtml";
 	public static String tanim = "/general/tanim.xhtml";
 	public static String sapSunucuTanimlama = "/general/sapSunucuTanimlama.xhtml";
 	public static String uygulamaVersiyon = "/general/uygulamaVersiyon.xhtml";
@@ -1025,6 +1026,14 @@ public class MenuItemConstant implements Serializable {
 
 	public static void setDinamikRapor(String dinamikRapor) {
 		MenuItemConstant.dinamikRapor = dinamikRapor;
+	}
+
+	public static String getPdksAgentTanimlama() {
+		return pdksAgentTanimlama;
+	}
+
+	public static void setPdksAgentTanimlama(String pdksAgentTanimlama) {
+		MenuItemConstant.pdksAgentTanimlama = pdksAgentTanimlama;
 	}
 
 }
