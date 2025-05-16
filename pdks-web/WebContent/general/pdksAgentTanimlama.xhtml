@@ -28,23 +28,28 @@
                         İşlemler
             	    </f:facet>
 									<ui:fragment>
-										<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink" oncomplete="#{rich:component('editPanel')}.show()"
+										<a4j:commandLink status="ajaxStatus" id="editlink" oncomplete="#{rich:component('editPanel')}.show()" ajaxSingle="true"
 											action="#{pdksAgentTanimlamaHome.guncelle(pdksAgentTanimlama)}" reRender="editPanel">
 											<h:graphicImage value="/img/edit.gif" style="border:0" alt="Edit" />
 
 										</a4j:commandLink>
 										<rich:toolTip for="editlink" value="Güncelle" />
-										<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="runLink" action="#{pdksAgentTanimlamaHome.agentRun(pdksAgentTanimlama)}">
-											<h:graphicImage value="/img/calculator.png" height="20" style="border:0" />
-
-										</a4j:commandLink>
-										<rich:toolTip for="runLink" value="#{pdksAgentTanimlama.aciklama} Çalıştır" />
-										<a4j:commandLink status="ajaxStatus" rendered="#{authenticatedUser.admin }" action="#{pdksAgentTanimlamaHome.guncelle(pdksAgentTanimlama)}"
-											ajaxSingle="true" id="deletelink" oncomplete="#{rich:component('deletePanel')}.show()">
+										<a4j:commandLink status="ajaxStatus" rendered="#{authenticatedUser.admin }" reRender="deletePanel" ajaxSingle="true"
+											action="#{pdksAgentTanimlamaHome.guncelle(pdksAgentTanimlama)}" id="deletelink" oncomplete="#{rich:component('deletePanel')}.show()">
 											<h:graphicImage value="/img/delete.gif" style="border:0" alt="Delete" />
 
 										</a4j:commandLink>
 										<rich:toolTip for="deletelink" value="Delete" />
+										<ui:fragment rendered="#{pdksAgentTanimlama.durum}">
+											<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="runLink" action="#{pdksAgentTanimlamaHome.agentRun(pdksAgentTanimlama)}">
+												<h:graphicImage value="/img/calculator.png" height="20" style="border:0" />
+
+											</a4j:commandLink>
+
+											<rich:toolTip for="runLink" value="#{pdksAgentTanimlama.aciklama} Çalıştır" />
+										</ui:fragment>
+
+
 									</ui:fragment>
 
 

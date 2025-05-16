@@ -993,13 +993,14 @@ public class PdksEntityController implements Serializable {
 	}
 
 	/**
+	 * @param single
 	 * @param class1
 	 * @param em1
 	 * @param session
 	 * @return
 	 * @throws Exception
 	 */
-	public Long savePrepareTableID(Class class1, EntityManager em1, Session session) throws Exception {
+	public Long savePrepareTableID(boolean single, Class class1, EntityManager em1, Session session) throws Exception {
 		HashMap fields = new HashMap();
 		if (session != null)
 			fields.put(MAP_KEY_SESSION, session);
@@ -1057,8 +1058,19 @@ public class PdksEntityController implements Serializable {
 					}
 					session.flush();
 				}
-			} else
+			} else {
+				if (single) {
+					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+					if (session != null)
+						veriMap.put(MAP_KEY_SESSION, session);
+					StringBuffer sp = new StringBuffer("SP_CHECKIDENT_VIEW");
+					execSP(veriMap, sp);
+					session.flush();
+				}
+
 				kayitAdet = 0L;
+			}
+
 		}
 		list = null;
 		if (kayitAdet > 0)

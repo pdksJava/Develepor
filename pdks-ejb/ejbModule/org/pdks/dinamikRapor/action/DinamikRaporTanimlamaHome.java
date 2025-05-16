@@ -388,7 +388,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		session.delete(deleteValue);
 		session.flush();
 		try {
-			pdksEntityController.savePrepareTableID(PdksDinamikRaporParametre.class, entityManager, session);
+			pdksEntityController.savePrepareTableID(true, PdksDinamikRaporParametre.class, entityManager, session);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -405,7 +405,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		session.delete(deleteValue);
 		session.flush();
 		try {
-			pdksEntityController.savePrepareTableID(PdksDinamikRaporAlan.class, entityManager, session);
+			pdksEntityController.savePrepareTableID(true, PdksDinamikRaporAlan.class, entityManager, session);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

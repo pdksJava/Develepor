@@ -41,7 +41,7 @@
 									</a4j:commandLink>
 									<rich:toolTip for="editlink" value="Güncelle" />
 									<a4j:commandLink status="ajaxStatus" rendered="#{authenticatedUser.admin }" action="#{parameterHome.guncelle(parameter)}" ajaxSingle="true"
-										id="deletelink" oncomplete="#{rich:component('deletePanel')}.show()">
+										reRender="deletePanel" id="deletelink" oncomplete="#{rich:component('deletePanel')}.show()">
 										<h:graphicImage value="/img/delete.gif" style="border:0" alt="Delete" />
 
 									</a4j:commandLink>
@@ -142,8 +142,7 @@
 								<a4j:commandButton status="ajaxStatus" value="kapiGirisGuncelle Calistir"
 									rendered="#{ortakIslemler.getParameterKeyHasStringValue('cihazGecisIdSon')}"
 									action="#{ortakIslemler.kapiGirisGuncelle(null,null,parameterHome.session)}" />
-								<a4j:commandButton status="ajaxStatus" value="izinGunceleme Calistir"
-									rendered="#{userHome.hasPermission('personelKalanIzin','view')}"
+								<a4j:commandButton status="ajaxStatus" value="izinGunceleme Calistir" rendered="#{userHome.hasPermission('personelKalanIzin','view')}"
 									action="#{izinBakiyeGuncelleme.izinGuncelemeCalistir(true,parameterHome.session)}" />
 
 							</c:if>
@@ -236,7 +235,7 @@
 				</h:panelGroup>
 			</f:facet>
 			<h:form>
-			<a4j:outputPanel ajaxRendered="true">
+				<a4j:outputPanel ajaxRendered="true">
 					<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 				</a4j:outputPanel>
 				<table width="100%">

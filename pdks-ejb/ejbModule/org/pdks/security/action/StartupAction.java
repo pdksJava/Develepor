@@ -265,7 +265,7 @@ public class StartupAction implements Serializable {
 			list.add(PdksDinamikRaporAlan.class);
 			list.add(PdksDinamikRaporParametre.class);
 			list.add(PdksDinamikRaporRole.class);
- 			list.add(IzinHakedisHakki.class);
+			list.add(IzinHakedisHakki.class);
 			list.add(IzinTipiBirlesikHaric.class);
 			list.add(IzinTipiMailAdres.class);
 			list.add(KatSayi.class);
@@ -283,11 +283,8 @@ public class StartupAction implements Serializable {
 			list.add(VardiyaHafta.class);
 			list.add(VardiyaYemekIzin.class);
 			list.add(YemekKartsiz.class);
-
-			// pdksEntityController.savePrepareTableID(ServisData.class, entityManager, session);
-
-			for (Class class1 : list) {
-				long adet = pdksEntityController.savePrepareTableID(class1, entityManager, session);
+ 			for (Class class1 : list) {
+				long adet = pdksEntityController.savePrepareTableID(false, class1, entityManager, session);
 				toplamAdet += adet;
 				if (adet > 0)
 					session.flush();

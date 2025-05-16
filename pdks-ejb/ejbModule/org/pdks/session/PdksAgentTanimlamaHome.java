@@ -82,11 +82,13 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		PdksAgent agent = getInstance();
 		pdksEntityController.deleteObject(session, entityManager, agent);
 		session.flush();
-		session.clear();
 		try {
-			pdksEntityController.savePrepareTableID(PdksAgent.class, entityManager, session);
+			pdksEntityController.savePrepareTableID(true, PdksAgent.class, entityManager, session);
 		} catch (Exception e) {
 		}
+		session.flush();
+		session.clear();
+
 		fillPdksAgentList();
 
 		return "";
