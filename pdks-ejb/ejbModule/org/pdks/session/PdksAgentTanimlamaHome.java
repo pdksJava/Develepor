@@ -77,6 +77,21 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		fillPdksAgentList();
 	}
 
+	@Transactional
+	public String deleteAgent() {
+		PdksAgent agent = getInstance();
+		pdksEntityController.deleteObject(session, entityManager, agent);
+		session.flush();
+		session.clear();
+		try {
+			pdksEntityController.savePrepareTableID(PdksAgent.class, entityManager, session);
+		} catch (Exception e) {
+		}
+		fillPdksAgentList();
+
+		return "";
+	}
+
 	public String agentRun(PdksAgent agent) {
 		if (agent.getStart().booleanValue() == false) {
 			ThreadAgent threadAgent = new ThreadAgent(agent, pdksEntityController, session);

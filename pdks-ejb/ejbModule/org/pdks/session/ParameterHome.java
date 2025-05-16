@@ -96,7 +96,11 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 
 		session.flush();
 		session.clear();
-		fillParameterList();
+		try {
+			pdksEntityController.savePrepareTableID(Parameter.class, entityManager, session);
+		} catch (Exception e) {
+ 		}
+ 		fillParameterList();
 		startupAction.fillStartMethod(authenticatedUser, true, session);
 		return "persisted";
 	}
