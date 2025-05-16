@@ -39,6 +39,12 @@
 
 										</a4j:commandLink>
 										<rich:toolTip for="runLink" value="#{pdksAgentTanimlama.aciklama} Çalıştır" />
+										<a4j:commandLink status="ajaxStatus" rendered="#{authenticatedUser.admin }" action="#{pdksAgentTanimlamaHome.guncelle(pdksAgentTanimlama)}"
+											ajaxSingle="true" id="deletelink" oncomplete="#{rich:component('deletePanel')}.show()">
+											<h:graphicImage value="/img/delete.gif" style="border:0" alt="Delete" />
+
+										</a4j:commandLink>
+										<rich:toolTip for="deletelink" value="Delete" />
 									</ui:fragment>
 
 
@@ -180,9 +186,10 @@
 				</h:panelGrid>
 			</h:form>
 		</rich:modalPanel>
+
 		<rich:modalPanel id="deletePanel" autosized="true" width="200">
 			<f:facet name="header">
-				<h:outputText value="Parametre silinsin mi?" style="padding-right:15px;" />
+				<h:outputText value="#{pdksAgentTanimlamaHome.currentAgent.aciklama}  silinsin mi?" style="padding-right:15px;" />
 			</f:facet>
 			<f:facet name="controls">
 				<h:panelGroup>
@@ -191,11 +198,14 @@
 				</h:panelGroup>
 			</f:facet>
 			<h:form>
+				<a4j:outputPanel ajaxRendered="true">
+					<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+				</a4j:outputPanel>
 				<table width="100%">
 					<tbody>
 						<tr>
 							<td align="center" width="50%"><a4j:commandButton status="ajaxStatus" value="Evet" ajaxSingle="true"
-									action="#{pdksAgentTanimlamaHome.delete()}" oncomplete="#{rich:component('deletePanel')}.hide();" reRender="table" /></td>
+									action="#{pdksAgentTanimlamaHome.deleteAgent()}" oncomplete="#{rich:component('deletePanel')}.hide();" reRender="table" /></td>
 							<td align="center" width="50%"><a4j:commandButton status="ajaxStatus" value="Hayır" oncomplete="#{rich:component('deletePanel')}.hide();" /></td>
 						</tr>
 					</tbody>
