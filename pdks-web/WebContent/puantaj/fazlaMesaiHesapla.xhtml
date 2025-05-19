@@ -89,7 +89,8 @@
 								</h:selectOneMenu>
 							</s:decorate>
 
-							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiHesaplaHome.kullaniciPersonel == false or fazlaMesaiHesaplaHome.ikRole or fazlaMesaiHesaplaHome.adminRole}">
+							<s:decorate template="/layout/edit.xhtml"
+								rendered="#{fazlaMesaiHesaplaHome.kullaniciPersonel == false or fazlaMesaiHesaplaHome.ikRole or fazlaMesaiHesaplaHome.adminRole}">
 								<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
 								<h:inputText value="#{fazlaMesaiHesaplaHome.sicilNo}">
 									<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" reRender="denklestirmeDonemiTable,hataliPuantajGoster"
@@ -138,10 +139,9 @@
 										<TD width="35%" valign="top"><ui:fragment rendered="#{not empty fazlaMesaiHesaplaHome.aylikPuantajList}">
 												<ui:fragment rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and fazlaMesaiHesaplaHome.gecenAyDurum == false}">
 
-													<ui:fragment
-														rendered="#{fazlaMesaiHesaplaHome.fazlaMesaiOnayDurumu()}">
+													<ui:fragment rendered="#{fazlaMesaiHesaplaHome.fazlaMesaiOnayDurumu()}">
 														<a4j:commandButton value="Fazla Mesai Onayla" action="#{fazlaMesaiHesaplaHome.fazlaMesaiOnayKontrol()}"
-															onclick="#{rich:component('wait')}.show()" reRender="onayPanel" 
+															onclick="#{rich:component('wait')}.show()" reRender="onayPanel"
 															oncomplete="#{rich:component('wait')}.hide();if (#{fazlaMesaiHesaplaHome.onayla}) #{rich:component('onayPanel')}.show() ; " />
 													</ui:fragment>
 													<ui:fragment rendered="#{fazlaMesaiHesaplaHome.kullaniciPersonel == false and fazlaMesaiHesaplaHome.ayrikHareketVar}">
@@ -420,6 +420,12 @@
 
 
 						</rich:column>
+						<rich:column style="text-align:center;">
+							<f:facet name="header">
+								<h:outputText value="Zamanı" />
+							</f:facet>
+							<h:outputText value="#{authenticatedUser.dateTimeFormatla(hareket.orjinalZaman)}" />
+						</rich:column>
 						<rich:column>
 							<f:facet name="header">
 								<h:outputText value="Kapı" />
@@ -483,6 +489,7 @@
 							</f:facet>
 							<h:outputText value="#{hareket.kapiView.kapi.tipi.aciklama}" />
 						</rich:column>
+						
 						<rich:column style="text-align:center;" rendered="#{fazlaMesaiHesaplaHome.ikRole and fazlaMesaiHesaplaHome.birdenFazlaKGSSirketSQL != ''}">
 							<f:facet name="header">
 								<h:outputText value="KGS Şirket" />
@@ -491,12 +498,8 @@
 								<h:outputText value="#{hareket.kapiSirket.aciklama}" />
 							</ui:fragment>
 						</rich:column>
-						<rich:column style="text-align:center;">
-							<f:facet name="header">
-								<h:outputText value="Zamanı" />
-							</f:facet>
-							<h:outputText value="#{authenticatedUser.dateTimeFormatla(hareket.orjinalZaman)}" />
-						</rich:column>
+						
+						
 						<rich:column rendered="#{fazlaMesaiHesaplaHome.toplamFazlamMesai != 0}" style="text-align:center;">
 							<f:facet name="header">
 								<h:outputText value="Fazla Çalışma (Saat)" />
@@ -537,6 +540,14 @@
 							</ui:fragment>
 
 						</rich:column>
+						<c:if test="#{authenticatedUser.admin or authenticatedUser.sistemYoneticisi}">
+							<rich:column style="text-align:center;">
+								<f:facet name="header">
+									<h:outputText value="Oluşturulma Zamanı" />
+								</f:facet>
+								<h:outputText value="#{authenticatedUser.dateTimeFormatla(hareket.olusturmaZamani)}" />
+							</rich:column>
+						</c:if>
 						<f:facet name="footer">
 							<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 						</f:facet>
@@ -680,7 +691,8 @@
 				</h:panelGrid>
 
 				<rich:toolTip for="vardiyaPlanAciklama" rendered="#{authenticatedUser.admin}">
-					<span style="color: black;"> <h:outputText value="#{ortakIslemler.vardiyaAciklama()} Plan Id : #{fazlaMesaiHesaplaHome.seciliVardiyaGun.id}"
+					<span style="color: black;"> <h:outputText
+							value="#{ortakIslemler.vardiyaAciklama()} Plan Id : #{fazlaMesaiHesaplaHome.seciliVardiyaGun.id}"
 							rendered="#{fazlaMesaiHesaplaHome.seciliVardiyaGun != null}" /></span>
 				</rich:toolTip>
 				<a4j:outputPanel id="hareketSilPanel">
