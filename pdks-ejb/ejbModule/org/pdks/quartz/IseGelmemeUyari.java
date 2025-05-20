@@ -270,17 +270,33 @@ public class IseGelmemeUyari implements Serializable {
 			cal.setTime(tarihAralik);
 			cal.add(Calendar.DATE, -1);
 			Date oncekiGun = cal.getTime();
-			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			map.put("iseBaslamaTarihi<=", tarihAralik);
-			map.put("sskCikisTarihi>=", tarihAralik);
-			map.put("durum=", Boolean.TRUE);
-			if (yoneticiTanimsiz == false)
-				map.put("yoneticisi<>", null);
-			map.put("mailTakip=", Boolean.TRUE);
+
+			StringBuffer sb = new StringBuffer();
+			sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
+			sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1  and S." + Sirket.COLUMN_NAME_DURUM + " = 1");
 			if (islemYapan != null && !islemYapan.isAdmin())
-				map.put("sirket.departman.id=", islemYapan.getDepartman().getId());
-			List<Personel> personeller = pdksEntityController.getObjectByInnerObjectListInLogic(map, Personel.class);
-			if (!personeller.isEmpty()) {
+				sb.append(" and S." + Sirket.COLUMN_NAME_DEPARTMAN + " = " + islemYapan.getDepartman().getId());
+			sb.append(" where P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :t1 " + " and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :t2 ");
+			sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_MAIL_TAKIP + " = 1");
+			if (yoneticiTanimsiz == false)
+				sb.append(" and P." + Personel.COLUMN_NAME_YONETICI + " is not null");
+			sb.append(" order by P." + Personel.COLUMN_NAME_YONETICI);
+			map.put("t1", tarihAralik);
+			map.put("t2", tarihAralik);
+			map.put(PdksEntityController.MAP_KEY_SESSION, session);
+			// if (islemYapan != null && !islemYapan.isAdmin())
+			// map.put("sirket.departman.id=", islemYapan.getDepartman().getId());
+			// map.put("iseBaslamaTarihi<=", tarihAralik);
+			// map.put("sskCikisTarihi>=", tarihAralik);
+			// map.put("durum=", Boolean.TRUE);
+			// if (yoneticiTanimsiz == false)
+			// map.put("yoneticisi<>", null);
+			// map.put("mailTakip=", Boolean.TRUE);
+			// List<Personel> personeller = pdksEntityController.getObjectByInnerObjectListInLogic(map, Personel.class);
+
+			List<Personel> personeller = pdksEntityController.getObjectBySQLList(sb, map, Personel.class);
+			if (personeller != null && !personeller.isEmpty()) {
 				HashMap<Long, Long> yoneticiler = new HashMap<Long, Long>();
 				HashMap<Long, Personel> kgsPerMap = new HashMap<Long, Personel>();
 				if (yoneticiTanimsiz) {
