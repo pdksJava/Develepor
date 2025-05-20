@@ -28,11 +28,11 @@ public final class AgentKontrol extends QuartzJobBean {
 			try {
 				calisiyor = true;
 				PdksDAO pdksDAO = Constants.pdksDAO;
-
-				runAgentService(pdksDAO);
-
+				if (pdksDAO != null)
+					runAgentService(pdksDAO);
 			} catch (Exception e) {
 				logger.error(e);
+				e.printStackTrace();
 			} finally {
 				calisiyor = false;
 			}
