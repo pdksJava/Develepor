@@ -1211,7 +1211,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 */
 	public MailStatu sendMail(MailObject mailObject) throws Exception {
 		MailStatu mailStatu = new MailStatu();
-		if (mailObject != null) {
+		if (pdksDAO != null && mailObject != null) {
 			String subject = mailObject.getSubject() != null ? PdksUtil.setTurkishStr(mailObject.getSubject()) : null;
 			if (subject != null)
 				logger.info(subject + " in " + PdksUtil.getCurrentTimeStampStr());
@@ -1522,7 +1522,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		sistemVerileriniYukle(pdksDAO, true);
 		boolean servisDurum = !PdksUtil.getCanliSunucuDurum() || !(mailMap.containsKey("getMesaiPDKSDurum") && mailMap.get("getMesaiPDKSDurum").equals("0"));
 		List<MesaiPDKS> list = null;
-		if (servisDurum) {
+		if (servisDurum && pdksDAO != null) {
 			LinkedHashMap<String, Object> inputMap = new LinkedHashMap<String, Object>();
 			if (sirketKodu != null)
 				inputMap.put("sirketKodu", sirketKodu);
@@ -1672,7 +1672,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 */
 	public void saveHakedisIzinler(List<IzinHakedis> izinHakedisList) throws Exception {
 		mesaj = "";
-		if (izinHakedisList != null && !izinHakedisList.isEmpty()) {
+		if (pdksDAO != null && izinHakedisList != null && !izinHakedisList.isEmpty()) {
 			bugun = PdksUtil.getDate(new Date());
 			if (izinHakedisList.size() == 1)
 				mesaj = izinHakedisList.get(0).getPersonelNo();
@@ -2009,7 +2009,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @throws Exception
 	 */
 	public boolean helpDeskStatus() throws Exception {
-		sistemVerileriniYukle(pdksDAO, true);
+		if (pdksDAO != null)
+			sistemVerileriniYukle(pdksDAO, true);
 		return sistemDestekVar;
 	}
 
@@ -2019,7 +2020,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 */
 	public String helpDeskDate() throws Exception {
 		String helpDeskLastDateStr = "";
-		sistemVerileriniYukle(pdksDAO, true);
+		if (pdksDAO != null)
+			sistemVerileriniYukle(pdksDAO, true);
 		if (mailMap.containsKey("helpDeskLastDate"))
 			helpDeskLastDateStr = (String) mailMap.get("helpDeskLastDate");
 		return helpDeskLastDateStr;
