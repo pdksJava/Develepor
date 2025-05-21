@@ -19087,7 +19087,7 @@ public class OrtakIslemler implements Serializable {
 					double oncekiGunNormalSure = 0.0d, oncekiGunTatilSure = 0.0d, oncekiGunTatilSureBrut = 0.0d, toplamTatilSure = 0.0d;
 					cal.setTime(vardiyaGun.getVardiyaDate());
 					String gun = vGun.substring(6);
-					if (vGun.endsWith("0430"))
+					if (vGun.endsWith("0517"))
 						logger.debug("");
 					List<PersonelFazlaMesai> fazlaMesailer = vardiyaGun.getFazlaMesailer();
 					if (vardiyaGun.isAyinGunu() && fazlaMesailer != null && (denklestirmeAy.getDurum() || denklestirmeAy.getGuncelleIK())) {
@@ -19357,7 +19357,7 @@ public class OrtakIslemler implements Serializable {
 													hareketKGS.setZaman(basZaman);
 												else if (hareketKGS.getZaman().after(bitZaman))
 													hareketKGS.setZaman(bitZaman);
-												hareketKGS.setOncekiGun(Boolean.TRUE);
+												hareketKGS.setOncekiGun(tatilGunleriMap.containsKey(vGun));
 												hareketList.add(hareketKGS);
 
 											}
