@@ -82,7 +82,7 @@ public class ThreadAgent extends Thread implements Serializable {
 						mod = Integer.parseInt(str[1]);
 					} catch (Exception e) {
 					}
-					if (bas == 0 && mod > 0 && sayi >= mod) {
+					if (bas == 0 && mod > 0 && (sayi == 0 || sayi >= mod)) {
 						calistir = sayi % mod == 0;
 					}
 				}
