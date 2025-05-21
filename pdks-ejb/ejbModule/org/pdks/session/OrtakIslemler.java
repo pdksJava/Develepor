@@ -19087,7 +19087,7 @@ public class OrtakIslemler implements Serializable {
 					double oncekiGunNormalSure = 0.0d, oncekiGunTatilSure = 0.0d, oncekiGunTatilSureBrut = 0.0d, toplamTatilSure = 0.0d;
 					cal.setTime(vardiyaGun.getVardiyaDate());
 					String gun = vGun.substring(6);
-					if (vGun.endsWith("0517"))
+					if (vGun.endsWith("0422"))
 						logger.debug("");
 					List<PersonelFazlaMesai> fazlaMesailer = vardiyaGun.getFazlaMesailer();
 					if (vardiyaGun.isAyinGunu() && fazlaMesailer != null && (denklestirmeAy.getDurum() || denklestirmeAy.getGuncelleIK())) {
@@ -19824,8 +19824,7 @@ public class OrtakIslemler implements Serializable {
 
 								boolean tatilYemekHesabiSureEkle = vardiyaGun.isYemekHesabiSureEkle();
 								double fark = toplamYemekSuresi - vardiyaYemekSuresi;
-								if (vGun.endsWith("0501"))
-									logger.debug("");
+
 								if (yemekList.isEmpty()) {
 									double eksikSure = netSure + vardiyaYemekSuresi - calSure;
 									if (eksikSure <= 0) {
@@ -19883,6 +19882,15 @@ public class OrtakIslemler implements Serializable {
 													if (vardiya.getBasDonem() < vardiya.getBitDonem())
 														vardiyaGun.addCalismaSuresi(yemekFark);
 													vardiyaGun.addBayramCalismaSuresi(yemekFark);
+												}
+											} else {
+												String vkey = vardiyaGun != null ? vardiyaGun.getVardiya().getId() + "_" + vardiyaGun.getYarimYuvarla() + "_" + (vardiyaGun.isBayramAyir() ? 1 : 0) : "";
+												if (veriMap.containsKey(vkey)) {
+													HashMap<String, HashMap<String, Double>> vardiyaMap = veriMap.get(vkey);
+													HashMap<String, Double> normalMap = vardiyaMap.get(tatilGunleriMap.containsKey(vGun) ? "N" : "A");
+													double toplamSureParcali = normalMap.get("T"), yemekSureParcali = normalMap.get("Y");
+													resmiTatilSure += yemekSureParcali - toplamSureParcali;
+
 												}
 											}
 										} else {
