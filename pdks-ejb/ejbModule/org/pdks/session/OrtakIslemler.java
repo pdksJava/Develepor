@@ -21497,7 +21497,7 @@ public class OrtakIslemler implements Serializable {
 						LinkedHashMap map = new LinkedHashMap();
 						if (session != null)
 							map.put(PdksEntityController.MAP_KEY_SESSION, session);
-						map.put("eklenenId", pdksLog.getKgsId());
+						map.put("eklenenId", pdksLog.getId());
 						map.put("pdks", 1);
 						try {
 							pdksEntityController.execSP(map, sp);
