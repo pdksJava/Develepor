@@ -3239,7 +3239,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 					tanim.setDurum(Boolean.TRUE);
 					tanim.setGuncellendi(Boolean.TRUE);
-					if (ekle)
+					if (ekle && saveList != null)
 						saveList.add(tanim);
 				}
 				if (tanim.getParentTanim() == null && genelTanimMap != null) {
@@ -3249,7 +3249,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						tanim.setGuncelle(Boolean.FALSE);
 						tanim.setIslemYapan(islemYapan);
 						tanim.setIslemTarihi(new Date());
-						if (!ekle)
+						if (!ekle && saveList != null)
 							saveList.add(tanim);
 					}
 				}
@@ -3562,6 +3562,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 			if (personelERPMap.containsKey(personelNo)) {
 				PersonelERP personelERP = personelERPMap.get(personelNo);
+				Tanim bolum = null;
 				Sirket sirket = null;
 				personelSirket = PdksUtil.hasStringValue(personelERP.getSirketKodu()) && sirketMap.containsKey(personelERP.getSirketKodu()) ? sirketMap.get(personelERP.getSirketKodu()) : null;
 				LinkedHashMap<String, Liste> personelListeMap = new LinkedHashMap<String, Liste>();
@@ -3693,6 +3694,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 							String mesaj = adSoyadERP + " personel'in " + kapiGiris + " " + personelNo + " personel no bilgisi bulunamadı!"
 									+ (iseBaslamaTarihi != null ? " [ İşe giriş tarihi : " + PdksUtil.convertToDateString(iseBaslamaTarihi, PdksUtil.getDateFormat()) + (goreviStr.equals("") ? "" : " - " + goreviStr) + " ]" : (goreviStr.equals("") ? "" : " [ " + goreviStr + " ]"));
 							String ek = "";
+
 							if (istenAyrilisTarihi != null && istenAyrilisTarihi.before(bugun))
 								ek = " (İşten ayrılma tarihi : " + personelERP.getIstenAyrilmaTarihi();
 
@@ -3709,6 +3711,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 							mesaj += ek;
 
 							addHatalist(hataList, personelERP, null, mesaj);
+							bolum = getTanim(null, "ekSaha3", personelERP.getBolumKodu(), personelERP.getBolumAdi(), dataMap, null);
+							if (bolum == null && parentBolum != null)
+								addHatalist(hataList, personelERP, null, uygulamaBordro + " " + parentBolum.getAciklamatr() + " bilgisi boş olamaz!");
 							if (!personelERPHataliMap.containsKey(personelNo)) {
 								erpPersonel = new ERPPersonel();
 								erpPersonel.setSicilNo(personelNo);
@@ -3954,7 +3959,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 
 					setPersonel(personel, personelERP, FORMAT_DATE);
-					Tanim bolum = getTanim(null, "ekSaha3", personelERP.getBolumKodu(), personelERP.getBolumAdi(), dataMap, saveList);
+					if (bolum == null)
+						bolum = getTanim(null, "ekSaha3", personelERP.getBolumKodu(), personelERP.getBolumAdi(), dataMap, saveList);
 
 					boolean bolumYok = bolum != null && bolum.getKodu().equalsIgnoreCase("yok");
 					Tanim bordroAltAlan = getTanim(null, parentBordroTanimKoduStr, personelERP.getBordroAltAlanKodu(), personelERP.getBordroAltAlanAdi(), dataMap, saveList);
