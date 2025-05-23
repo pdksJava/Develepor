@@ -640,12 +640,13 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						e.printStackTrace();
 					}
 					boolean yuvarlamaKatSayiOku = ortakIslemler.getParameterKey("yuvarlamaKatSayiOku").equals("1");
-					TreeMap<String, BigDecimal> yuvarlamaMap = null;
+					TreeMap<String, BigDecimal> yuvarlamaMap = null, fazlaMesaiYuvarlamaMap = null;
 					if (yuvarlamaKatSayiOku) {
 						List<Long> perIdList = new ArrayList<Long>();
 						for (Personel personel : personeller)
 							perIdList.add(personel.getId());
 						yuvarlamaMap = ortakIslemler.getPlanKatSayiMap(perIdList, basTarih, bitTarih, KatSayiTipi.YUVARLAMA_TIPI, session);
+						fazlaMesaiYuvarlamaMap = ortakIslemler.getPlanKatSayiMap(perIdList, basTarih, bitTarih, KatSayiTipi.FAZLA_MESA_YUVARLAMA, session);
 						perIdList = null;
 					}
 					vardiyaList = new ArrayList<VardiyaGun>(vardiyaMap.values());
@@ -660,6 +661,11 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 								BigDecimal deger = yuvarlamaMap.get(str);
 								if (deger != null)
 									vardiyaGun.setYarimYuvarla(deger.intValue());
+							}
+							if (fazlaMesaiYuvarlamaMap.containsKey(str)) {
+								BigDecimal deger = fazlaMesaiYuvarlamaMap.get(str);
+								if (deger != null)
+									vardiyaGun.setFazlaMesaiYuvarla(deger.intValue());
 							}
 						}
 						if (vardiyaGun.getVardiya() == null)
@@ -830,7 +836,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 							if (vardiyaGun.getHareketler() == null)
 								continue;
 							List<YemekIzin> yemekList = vardiyaGun.getYemekList();
-							yuvarmaTipi = vardiyaGun.getYarimYuvarla();
+							yuvarmaTipi = vardiyaGun.getFazlaMesaiYuvarla();
 							List<HareketKGS> girisHareketleri = vardiyaGun.getGirisHareketleri(), cikisHareketleri = vardiyaGun.getCikisHareketleri();
 							if (girisHareketleri == null || cikisHareketleri == null || cikisHareketleri.size() != girisHareketleri.size())
 								continue;
@@ -877,7 +883,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 														if (girisZaman.getTime() <= cikisZaman.getTime()) {
 															if (molaSaat > saat)
 																molaSaat = saat;
-															kgsHareketCikis.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat - molaSaat, vardiyaGun.getYarimYuvarla()));
+															kgsHareketCikis.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat - molaSaat, vardiyaGun.getFazlaMesaiYuvarla()));
 															kgsHareketCikis.setCikisZaman(cikisZaman);
 															molaSaat = 0;
 
@@ -912,7 +918,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 														saat += ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session);
 														if (girisZaman.getTime() <= cikisZaman.getTime()) {
 															kgsHareketGiris.setCikisZaman(cikisZaman);
-															kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getYarimYuvarla()));
+															kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getFazlaMesaiYuvarla()));
 															kgsHareketGiris.setVardiyaGun(vardiyaGun);
 															kgsHareketGiris.setGirisZaman(girisZaman);
 															fazlaMesaiEkle(kgsList1, kgsHareketGiris);
@@ -942,7 +948,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 											kgsHareketGiris.setGirisZaman(girisDate);
 											double saat = ortakIslemler.getSaatSure(girisDate, cikisDate, yemekList, vardiyaGun, session);
 											if (girisDate.getTime() <= cikisDate.getTime()) {
-												kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getYarimYuvarla()));
+												kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getFazlaMesaiYuvarla()));
 												fazlaMesaiEkle(kgsList1, kgsHareketGiris);
 											}
 										}
@@ -973,7 +979,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 													Date kgsCikisDate = kgsHareketGiris.getCikisZaman();
 													double saat = ortakIslemler.getSaatSure(kgsGirisDate, kgsCikisDate, yemekList, vardiyaGun, session);
 													if (kgsGirisDate.getTime() <= kgsCikisDate.getTime()) {
-														kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getYarimYuvarla()));
+														kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getFazlaMesaiYuvarla()));
 														fazlaMesaiEkle(kgsList1, kgsHareketGiris);
 													}
 												}
@@ -987,7 +993,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 													if (tatil.getBasTarih().getTime() <= kgsCikisDate.getTime()) {
 														if (molaSaat > saat)
 															molaSaat = saat;
-														kgsHareketCikis.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat - molaSaat, vardiyaGun.getYarimYuvarla()));
+														kgsHareketCikis.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat - molaSaat, vardiyaGun.getFazlaMesaiYuvarla()));
 														molaSaat = 0;
 														fazlaMesaiEkle(kgsList1, kgsHareketCikis);
 													}
@@ -1006,7 +1012,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 													kgsHareketGiris.setCikisZaman(cikisDate);
 													double saat = ortakIslemler.getSaatSure(girisDate, cikisDate, yemekList, vardiyaGun, session);
 													if (girisDate.getTime() <= cikisDate.getTime()) {
-														kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getYarimYuvarla()));
+														kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getFazlaMesaiYuvarla()));
 														fazlaMesaiEkle(kgsList1, kgsHareketGiris);
 													}
 
@@ -1051,7 +1057,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 															if (girisZaman.getTime() <= cikisZaman.getTime()) {
 																if (molaSaat > saat)
 																	molaSaat = saat;
-																kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getYarimYuvarla()));
+																kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getFazlaMesaiYuvarla()));
 																kgsHareketGiris.setCikisZaman(cikisZaman);
 																molaSaat = 0;
 																kgsHareketGiris.setCikisHareket(kgsHareketCikis);
@@ -1078,7 +1084,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 																saat += ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session);
 																if (girisZaman.getTime() <= cikisZaman.getTime()) {
-																	kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getYarimYuvarla()));
+																	kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getFazlaMesaiYuvarla()));
 																	fazlaMesaiEkle(kgsList1, kgsHareketGiris);
 																}
 															}
@@ -1096,7 +1102,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 												kgsHareketGiris.setCikisZaman(cikisZaman);
 												kgsHareketGiris.setGirisZaman(girisZaman);
 												double saat = ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session);
-												kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getYarimYuvarla()));
+												kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getFazlaMesaiYuvarla()));
 												fazlaMesaiEkle(kgsList1, kgsHareketGiris);
 
 											}

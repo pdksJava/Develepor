@@ -604,7 +604,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					}
 				}
 			}
-			int yarimYuvarla = seciliVardiyaGun != null ? seciliVardiyaGun.getYarimYuvarla() : PdksUtil.getYarimYuvarlaLast();
+			int yarimYuvarla = seciliVardiyaGun != null ? seciliVardiyaGun.getFazlaMesaiYuvarla() : PdksUtil.getYarimYuvarlaLast();
 			Vardiya islemVardiya = seciliVardiyaGun.getIslemVardiya();
 			if (islemVardiya != null && islemVardiya.isCalisma()) {
 				if (bitisZamani.getTime() >= islemVardiya.getVardiyaTelorans1BasZaman().getTime() && bitisZamani.getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime())
@@ -6192,7 +6192,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (!personelIdler.isEmpty()) {
 				List<VardiyaGun> vardiyaGunler = ortakIslemler.getAllPersonelIdVardiyalar(personelIdler, seciliVardiyaGun.getVardiyaDate(), seciliVardiyaGun.getVardiyaDate(), false, session);
 				for (VardiyaGun vardiyaGun : vardiyaGunler) {
-					seciliVardiyaGun.setYarimYuvarla(vardiyaGun.getYarimYuvarla());
+					seciliVardiyaGun.setYarimYuvarla(vardiyaGun.getFazlaMesaiYuvarla());
 					break;
 				}
 				vardiyaGunler = null;

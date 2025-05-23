@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 import org.pdks.enums.KatSayiTipi;
@@ -29,15 +30,17 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 	static Logger logger = Logger.getLogger(KatSayi.class);
 
 	public static final String TABLE_NAME = "KAT_SAYI";
- 	public static final String COLUMN_NAME_DURUM = "DURUM";
+	public static final String COLUMN_NAME_DURUM = "DURUM";
 	public static final String COLUMN_NAME_TIPI = "TIPI";
 	public static final String COLUMN_NAME_BAS_TARIH = "BAS_TARIH";
 	public static final String COLUMN_NAME_BIT_TARIH = "BIT_TARIH";
 	public static final String COLUMN_NAME_DEGER = "DEGER";
+	public static final String COLUMN_NAME_VARDIYA = "VARDIYA_ID";
 
 	private Date basTarih, bitTarih;
 	private KatSayiTipi tipi;
 	private BigDecimal deger;
+	private Vardiya vardiya;
 	private Boolean durum;
 
 	public KatSayi() {
@@ -82,6 +85,19 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 		this.deger = deger;
 	}
 
+//	@ManyToOne(cascade = CascadeType.REFRESH)
+//	@JoinColumn(name = COLUMN_NAME_VARDIYA)
+//	@Fetch(FetchMode.JOIN)
+	@Transient
+	public Vardiya getVardiya() {
+		return vardiya;
+	}
+
+	public void setVardiya(Vardiya value) {
+
+		this.vardiya = value;
+	}
+
 	@Column(name = COLUMN_NAME_DURUM)
 	public Boolean getDurum() {
 		return durum;
@@ -92,8 +108,7 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		
-		
+
 	}
 
 }

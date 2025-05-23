@@ -1553,7 +1553,8 @@ public class Vardiya extends BaseObject {
 
 	@Column(name = "GIRISGECIKMETOLERANSDAKIKA")
 	public short getGirisGecikmeToleransDakika() {
-		return girisGecikmeToleransDakika;
+		BigDecimal value = getKatSayi(KatSayiTipi.GEC_GIRIS_TIPI.value());
+		return value != null ? value.shortValue() : girisGecikmeToleransDakika;
 	}
 
 	public void setGirisGecikmeToleransDakika(short girisGecikmeToleransDakika) {
@@ -1562,7 +1563,8 @@ public class Vardiya extends BaseObject {
 
 	@Column(name = "CIKISERKENTOLERANSDAKIKA")
 	public short getCikisErkenToleransDakika() {
-		return cikisErkenToleransDakika;
+		BigDecimal value = getKatSayi(KatSayiTipi.ERKEN_GIRIS_TIPI.value());
+		return value != null ? value.shortValue() : cikisErkenToleransDakika;
 	}
 
 	public void setCikisErkenToleransDakika(short cikisErkenToleransDakika) {

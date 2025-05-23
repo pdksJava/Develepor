@@ -82,7 +82,7 @@ public class VardiyaGun extends BaseObject {
 	private VardiyaSablonu vardiyaSablonu;
 	private HashMap<Integer, BigDecimal> katSayiMap;
 	private boolean bitmemisGun = Boolean.TRUE, islendi = Boolean.FALSE, ayrikHareketVar = Boolean.FALSE, gebeMi = false, sutIzniVar = false;
-	private int yarimYuvarla = PdksUtil.getYarimYuvarlaLast();
+	private int yarimYuvarla = PdksUtil.getYarimYuvarlaLast(), fazlaMesaiYuvarla = PdksUtil.getYarimYuvarlaLast();
 	private HareketKGS ilkGiris, sonCikis;
 	private boolean ayinGunu = Boolean.TRUE, onayli = Boolean.TRUE, fiiliHesapla = Boolean.FALSE, gecmisHataliDurum = Boolean.FALSE, hataliDurum = Boolean.FALSE, donemAcik = Boolean.TRUE;
 	private List<String> linkAdresler;
@@ -2108,6 +2108,7 @@ public class VardiyaGun extends BaseObject {
 
 	public void setYarimYuvarla(int yarimYuvarla) {
 		this.yarimYuvarla = yarimYuvarla;
+		this.setFazlaMesaiYuvarla(yarimYuvarla);
 	}
 
 	@Transient
@@ -2480,5 +2481,13 @@ public class VardiyaGun extends BaseObject {
 
 	public void setGecmisHataliDurum(boolean gecmisHataliDurum) {
 		this.gecmisHataliDurum = gecmisHataliDurum;
+	}
+	@Transient
+	public int getFazlaMesaiYuvarla() {
+		return fazlaMesaiYuvarla;
+	}
+
+	public void setFazlaMesaiYuvarla(int fazlaMesaiYuvarla) {
+		this.fazlaMesaiYuvarla = fazlaMesaiYuvarla;
 	}
 }

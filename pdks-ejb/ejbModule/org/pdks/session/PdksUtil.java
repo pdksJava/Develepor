@@ -2948,7 +2948,18 @@ public class PdksUtil implements Serializable {
 					}
 					yuvarlanmisDeger = doubleValue.longValue() + arti;
 					break;
+					
+				case 3:
+					yuvarlanmisDeger = doubleValue.doubleValue();
+					fark = yuvarlanmisDeger.doubleValue() - yuvarlanmisDeger.longValue();
+					if (fark > 0) {
+						if (fark > 0.5)
+							yuvarlanmisDeger = yuvarlanmisDeger.longValue() + (1.0d);
+						else
+							yuvarlanmisDeger = yuvarlanmisDeger.longValue() + (0.5d);
+					}
 
+					break;
 				default:
 					yuvarlanmisDeger = doubleValue;
 					break;
