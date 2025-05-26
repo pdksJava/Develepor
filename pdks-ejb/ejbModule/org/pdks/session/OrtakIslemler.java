@@ -19648,7 +19648,7 @@ public class OrtakIslemler implements Serializable {
 											personelFazlaMesai.setBitZaman(bitZaman);
 											List yemekler = arifeGunu && arifeYemekEkle && oncekiCikisZaman != null && oncekiCikisZaman.getTime() == girisZaman.getTime() ? new ArrayList<YemekIzin>() : yemekList;
 											double fazlaMesaiSaati = getSaatSure(basZaman, bitZaman, yemekler, vardiyaGun, session);
-											fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesaiSaati, vardiyaGun.getYarimYuvarla());
+											fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesaiSaati, vardiyaGun.getFazlaMesaiYuvarla());
 											personelFazlaMesai.setFazlaMesaiSaati(fazlaMesaiSaati);
 											personelFazlaMesai.setOlusturanUser(sistemUser != null ? sistemUser : loginUser);
 											if (cikisHareket.isTatil())

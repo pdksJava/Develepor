@@ -196,7 +196,8 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		mesai.setHareketId(hareket.getId());
 		// mesai.setHareket(hareket);
 		mesai.setVardiyaGun(hareket.getVardiyaGun());
-		mesai.setFazlaMesaiSaati(hareket.getFazlaMesai());
+		double fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(hareket.getFazlaMesai(), hareket.getVardiyaGun().getFazlaMesaiYuvarla());
+		mesai.setFazlaMesaiSaati(fazlaMesaiSaati);
 		hareket.setPersonelFazlaMesai(mesai);
 		setDate(new Date());
 		setInstance(new PersonelFazlaMesai());
@@ -399,8 +400,9 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 		fazlaMesai.setHareket(hareket);
 		fazlaMesai.setHareketId(hareket.getId());
-		// fazlaMesai.setHareket(hareket);
-		fazlaMesai.setFazlaMesaiSaati(hareket.getFazlaMesai());
+		double fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(hareket.getFazlaMesai(), vg.getFazlaMesaiYuvarla());
+
+		fazlaMesai.setFazlaMesaiSaati(fazlaMesaiSaati);
 
 		hareket.setPersonelFazlaMesai(fazlaMesai);
 
@@ -412,9 +414,9 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		boolean yeni = fazlaMesai.getId() == null;
 		try {
 			List<HareketKGS> list = ortakIslemler.getHareketIdBilgileri(null, fazlaMesai.getHareket(), date, date, session);
-			VardiyaGun pdksVardiyaGun = getVardiyaPlan(fazlaMesai);
+			VardiyaGun vg = getVardiyaPlan(fazlaMesai);
 			boolean tatil = fazlaMesai.getHareket().isTatil();
-			Double fazlaMesaiSaati = fazlaMesai.getHareket().getFazlaMesai();
+ 			double fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesai.getHareket().getFazlaMesai(), vg.getFazlaMesaiYuvarla());
 
 			HareketKGS hareket = !list.isEmpty() ? list.get(0) : null;
 			if (hareket == null && fazlaMesai.getHareketId() != null) {
@@ -424,7 +426,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			fazlaMesai.setHareketId(hareket.getId());
 			fazlaMesai.setHareket(hareket);
 			// fazlaMesai.setHareket(hareket);
-			fazlaMesai.setVardiyaGun(pdksVardiyaGun);
+			fazlaMesai.setVardiyaGun(vg);
 			fazlaMesai.setFazlaMesaiSaati(fazlaMesaiSaati);
 			if (!tatil)
 				fazlaMesai.setTatilDurum(null);
