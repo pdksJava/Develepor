@@ -2911,24 +2911,24 @@ public class PdksUtil implements Serializable {
 		Double yuvarlanmisDeger = null;
 		if (doubleValue != null) {
 			double d = doubleValue.doubleValue();
-			long l = doubleValue.longValue();
-			if (d != 0.0d && d != l) {
+			long tamDeger = doubleValue.longValue();
+			if (d != 0.0d && d != tamDeger) {
 				double fark = 0.0d;
 				switch (yarimYuvarla) {
 				case 1:
 					yuvarlanmisDeger = doubleValue.doubleValue() * 2;
-					fark = yuvarlanmisDeger.doubleValue() - yuvarlanmisDeger.longValue();
+					fark = yuvarlanmisDeger.doubleValue() - tamDeger;
 					if (fark > 0) {
 						if (fark > 0.5)
-							yuvarlanmisDeger = yuvarlanmisDeger.longValue() + (1.0d);
+							yuvarlanmisDeger = tamDeger + (1.0d);
 						else
-							yuvarlanmisDeger = yuvarlanmisDeger.longValue() + (0.5d);
+							yuvarlanmisDeger = tamDeger + (0.5d);
 					}
 					yuvarlanmisDeger = yuvarlanmisDeger / 2;
 					break;
 
 				case 2:
-					fark = doubleValue.doubleValue() - doubleValue.longValue();
+					fark = doubleValue.doubleValue() - tamDeger;
 					double arti = 0;
 					if (fark > 0.0d) {
 						for (int i = 3; i >= 0; i--) {
@@ -2946,20 +2946,20 @@ public class PdksUtil implements Serializable {
 
 						}
 					}
-					yuvarlanmisDeger = doubleValue.longValue() + arti;
+					yuvarlanmisDeger = tamDeger + arti;
 					break;
-					
+
 				case 3:
 					yuvarlanmisDeger = doubleValue.doubleValue();
-					fark = yuvarlanmisDeger.doubleValue() - yuvarlanmisDeger.longValue();
+ 					fark = yuvarlanmisDeger.doubleValue() - tamDeger;
 					if (fark > 0) {
 						if (fark > 0.5)
-							yuvarlanmisDeger = yuvarlanmisDeger.longValue() + (1.0d);
+							yuvarlanmisDeger = tamDeger + (1.0d);
 						else
-							yuvarlanmisDeger = yuvarlanmisDeger.longValue() + (0.5d);
+							yuvarlanmisDeger = tamDeger + (0.5d);
 					}
-
-					break;
+ 					break;
+ 					
 				default:
 					yuvarlanmisDeger = doubleValue;
 					break;
