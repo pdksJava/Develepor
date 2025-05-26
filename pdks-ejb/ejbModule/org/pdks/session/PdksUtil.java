@@ -2910,53 +2910,52 @@ public class PdksUtil implements Serializable {
 	public static double setSureDoubleTypeRounded(Double doubleValue, int yarimYuvarla) {
 		Double yuvarlanmisDeger = null;
 		if (doubleValue != null) {
-			double d = doubleValue.doubleValue();
-			long tamDeger = doubleValue.longValue();
-			if (d != 0.0d && d != tamDeger) {
-				double fark = 0.0d;
+  			long longDeger = doubleValue.longValue();
+			if (doubleValue != 0.0d && doubleValue != longDeger) {
+				double ondalikFark = 0.0d;
 				switch (yarimYuvarla) {
 				case 1:
 					yuvarlanmisDeger = doubleValue.doubleValue() * 2;
-					fark = yuvarlanmisDeger.doubleValue() - tamDeger;
-					if (fark > 0) {
-						if (fark > 0.5)
-							yuvarlanmisDeger = tamDeger + (1.0d);
+					ondalikFark = yuvarlanmisDeger.doubleValue() - longDeger;
+					if (ondalikFark > 0) {
+						if (ondalikFark > 0.5)
+							yuvarlanmisDeger = longDeger + (1.0d);
 						else
-							yuvarlanmisDeger = tamDeger + (0.5d);
+							yuvarlanmisDeger = longDeger + (0.5d);
 					}
 					yuvarlanmisDeger = yuvarlanmisDeger / 2;
 					break;
 
 				case 2:
-					fark = doubleValue.doubleValue() - tamDeger;
+					ondalikFark = doubleValue.doubleValue() - longDeger;
 					double arti = 0;
-					if (fark > 0.0d) {
+					if (ondalikFark > 0.0d) {
 						for (int i = 3; i >= 0; i--) {
 							arti = i * 0.25;
-							if (fark >= arti)
+							if (ondalikFark >= arti)
 								break;
 						}
-					} else if (fark < 0.0d) {
+					} else if (ondalikFark < 0.0d) {
 						for (int i = 3; i >= 0; i--) {
 							arti = -i * 0.25;
-							if (fark < arti) {
+							if (ondalikFark < arti) {
 								arti -= 0.25;
 								break;
 							}
 
 						}
 					}
-					yuvarlanmisDeger = tamDeger + arti;
+					yuvarlanmisDeger = longDeger + arti;
 					break;
 
 				case 3:
 					yuvarlanmisDeger = doubleValue.doubleValue();
- 					fark = yuvarlanmisDeger.doubleValue() - tamDeger;
-					if (fark > 0) {
-						if (fark > 0.5)
-							yuvarlanmisDeger = tamDeger + (1.0d);
+ 					ondalikFark = yuvarlanmisDeger.doubleValue() - longDeger;
+					if (ondalikFark > 0) {
+						if (ondalikFark > 0.5)
+							yuvarlanmisDeger = longDeger + (1.0d);
 						else
-							yuvarlanmisDeger = tamDeger + (0.5d);
+							yuvarlanmisDeger = longDeger + (0.5d);
 					}
  					break;
  					

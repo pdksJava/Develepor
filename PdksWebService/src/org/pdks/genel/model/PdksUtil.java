@@ -1989,6 +1989,82 @@ public class PdksUtil implements Serializable {
 		return date;
 	}
 
+	/**
+	 * @param doubleValue
+	 * @param yarimYuvarla
+	 * @return
+	 */
+	public static double setSureDoubleTypeRounded(Double doubleValue, int yarimYuvarla) {
+		Double yuvarlanmisDeger = null;
+		if (doubleValue != null) {
+			long longDeger = doubleValue.longValue();
+			if (doubleValue != 0.0d && doubleValue != longDeger) {
+				double ondalikFark = 0.0d;
+				switch (yarimYuvarla) {
+				case 1:
+					yuvarlanmisDeger = doubleValue.doubleValue() * 2;
+					ondalikFark = yuvarlanmisDeger.doubleValue() - longDeger;
+					if (ondalikFark > 0) {
+						if (ondalikFark > 0.5)
+							yuvarlanmisDeger = longDeger + (1.0d);
+						else
+							yuvarlanmisDeger = longDeger + (0.5d);
+					}
+					yuvarlanmisDeger = yuvarlanmisDeger / 2;
+					break;
+
+				case 2:
+					ondalikFark = doubleValue.doubleValue() - longDeger;
+					double arti = 0;
+					if (ondalikFark > 0.0d) {
+						for (int i = 3; i >= 0; i--) {
+							arti = i * 0.25;
+							if (ondalikFark >= arti)
+								break;
+						}
+					} else if (ondalikFark < 0.0d) {
+						for (int i = 3; i >= 0; i--) {
+							arti = -i * 0.25;
+							if (ondalikFark < arti) {
+								arti -= 0.25;
+								break;
+							}
+
+						}
+					}
+					yuvarlanmisDeger = longDeger + arti;
+					break;
+
+				case 3:
+					yuvarlanmisDeger = doubleValue.doubleValue();
+					ondalikFark = yuvarlanmisDeger.doubleValue() - longDeger;
+					if (ondalikFark > 0) {
+						if (ondalikFark > 0.5)
+							yuvarlanmisDeger = longDeger + (1.0d);
+						else
+							yuvarlanmisDeger = longDeger + (0.5d);
+					}
+					break;
+
+				default:
+					yuvarlanmisDeger = doubleValue;
+					break;
+				}
+
+			} else
+				yuvarlanmisDeger = doubleValue;
+		}
+
+		return yuvarlanmisDeger;
+
+	}
+
+	/**
+	 * @param deger
+	 * @param digit
+	 * @param yuvarmaTipi
+	 * @return
+	 */
 	public static double setDoubleRounded(double deger, int digit, int yuvarmaTipi) {
 		double yuvarlanmisDeger = deger;
 		if (deger != 0)
