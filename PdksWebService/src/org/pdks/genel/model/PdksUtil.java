@@ -2003,6 +2003,7 @@ public class PdksUtil implements Serializable {
 				switch (yarimYuvarla) {
 				case 1:
 					yuvarlanmisDeger = doubleValue.doubleValue() * 2;
+					longDeger = yuvarlanmisDeger.longValue();
 					ondalikFark = yuvarlanmisDeger.doubleValue() - longDeger;
 					if (ondalikFark > 0) {
 						if (ondalikFark > 0.5)
