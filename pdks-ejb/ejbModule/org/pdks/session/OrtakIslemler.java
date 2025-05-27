@@ -852,7 +852,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	private void setArifeYemekSure(VardiyaGun vardiyaGun, HashMap<String, HashMap<String, HashMap<String, Double>>> veriMap) {
 		Vardiya islemVardiya = vardiyaGun != null && vardiyaGun.getVardiya() != null ? vardiyaGun.getIslemVardiya() : null;
-		if (islemVardiya != null && veriMap != null && islemVardiya.isCalisma() && islemVardiya.getBasDonem() >= islemVardiya.getBitDonem()) {
+		if (islemVardiya != null && veriMap != null && islemVardiya.isCalisma() && islemVardiya.getBitDonem() > 0 && islemVardiya.getBasDonem() >= islemVardiya.getBitDonem()) {
 			String key = islemVardiya.getId() + "_" + vardiyaGun.getYarimYuvarla() + "_" + (vardiyaGun.isBayramAyir() ? "1" : "0");
 			if (!veriMap.containsKey(key)) {
 				HashMap<String, HashMap<String, Double>> vardiyaMap = getBayramParcaliVardiyaMap(vardiyaGun, islemVardiya);
@@ -18411,11 +18411,15 @@ public class OrtakIslemler implements Serializable {
 			} else if (str.endsWith("01") && vg.getTatil() != null && oncekiGun != null) {
 				if (tatilGunleriMap.containsKey(oncekiGun.getVardiyaDateStr()) == false) {
 
-					if (oncekiGun.getHareketler() != null) {
+					if (oncekiGun.getHareketler() != null && islemVardiya.getBasDonem() > 0) {
+						Vardiya oncekiVardiya = oncekiGun.getIslemVardiya();
 						List<HareketKGS> oncekiGunHareketler = oncekiGun.getGecerliHareketler() == null ? oncekiGun.getHareketler() : oncekiGun.getGecerliHareketler();
 						ArrayList<HareketKGS> hareketler = new ArrayList<HareketKGS>();
 						for (HareketKGS hareket : oncekiGunHareketler) {
-							if (hareket.getZaman().getTime() >= vg.getVardiyaDate().getTime()) {
+							Date zaman = hareket.getZaman();
+							if (zaman.after(oncekiVardiya.getVardiyaBitZaman()))
+								zaman = oncekiVardiya.getVardiyaBitZaman();
+							if (zaman.getTime() > vg.getVardiyaDate().getTime()) {
 								Kapi kapi = hareket.getKapiView().getKapi();
 								if (hareketler.isEmpty()) {
 									HareketKGS giris = new HareketKGS(personelView, girisKapiView, vg.getVardiyaDate());

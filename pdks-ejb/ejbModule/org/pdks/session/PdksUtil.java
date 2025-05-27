@@ -2910,12 +2910,13 @@ public class PdksUtil implements Serializable {
 	public static double setSureDoubleTypeRounded(Double doubleValue, int yarimYuvarla) {
 		Double yuvarlanmisDeger = null;
 		if (doubleValue != null) {
-  			long longDeger = doubleValue.longValue();
+			long longDeger = doubleValue.longValue();
 			if (doubleValue != 0.0d && doubleValue != longDeger) {
 				double ondalikFark = 0.0d;
 				switch (yarimYuvarla) {
 				case 1:
 					yuvarlanmisDeger = doubleValue.doubleValue() * 2;
+					longDeger = yuvarlanmisDeger.longValue();
 					ondalikFark = yuvarlanmisDeger.doubleValue() - longDeger;
 					if (ondalikFark > 0) {
 						if (ondalikFark > 0.5)
@@ -2950,15 +2951,15 @@ public class PdksUtil implements Serializable {
 
 				case 3:
 					yuvarlanmisDeger = doubleValue.doubleValue();
- 					ondalikFark = yuvarlanmisDeger.doubleValue() - longDeger;
+					ondalikFark = yuvarlanmisDeger.doubleValue() - longDeger;
 					if (ondalikFark > 0) {
 						if (ondalikFark > 0.5)
 							yuvarlanmisDeger = longDeger + (1.0d);
 						else
 							yuvarlanmisDeger = longDeger + (0.5d);
 					}
- 					break;
- 					
+					break;
+
 				default:
 					yuvarlanmisDeger = doubleValue;
 					break;
