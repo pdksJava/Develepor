@@ -9,6 +9,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
 import org.pdks.security.entity.User;
+import org.pdks.session.PdksUtil;
 
 @MappedSuperclass
 public abstract class BasePDKSObject implements Serializable, Cloneable, PdksInterface {
@@ -60,6 +61,19 @@ public abstract class BasePDKSObject implements Serializable, Cloneable, PdksInt
 	public void setGuncellendi(Boolean value) {
 
 		this.guncellendi = value;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		boolean esit = false;
+		if (object != null && this.getId() != null) {
+			if (object instanceof BasePDKSObject) {
+				BasePDKSObject basePDKSObject = (BasePDKSObject) object;
+				if (object.getClass().getName().equals(this.getClass().getName()))
+					esit = basePDKSObject.getId() != null && this.getId().equals(basePDKSObject.getId());
+			}
+		}
+		return esit;
 	}
 
 	@Transient
