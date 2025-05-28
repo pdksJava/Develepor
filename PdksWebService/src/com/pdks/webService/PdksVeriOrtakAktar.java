@@ -2575,7 +2575,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 					if (izinERP.getDurum().booleanValue() || personelIzin.getId() != null) {
 						if (personelIzin.getId() == null) {
-							if (!(bitTarih.getTime() <= izinSahibi.getSskCikisTarihi().getTime() && (bitTarih.getTime() >= izinSahibi.getIseBaslamaTarihi().getTime() || bitTarih.getTime() >= izinSahibi.getIzinHakEdisTarihi().getTime())))
+							if (!(PdksUtil.getDate(izinlerBasTarih).getTime() <= izinSahibi.getSskCikisTarihi().getTime() && (PdksUtil.getDate(izinlerBitTarih).getTime() >= izinSahibi.getIseBaslamaTarihi().getTime() || bitTarih.getTime() >= izinSahibi.getIzinHakEdisTarihi().getTime())))
 								addHatalist(hataList, izinERP, izinSahibi, PdksUtil.convertToDateString(personelIzin.getBitisZamani(), FORMAT_DATE_TIME) + " tarihinde çalışmıyor!!");
 						}
 
