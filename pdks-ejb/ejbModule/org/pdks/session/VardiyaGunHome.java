@@ -4761,7 +4761,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 				vardiyaMap.put(vardiya.getId(), vardiya);
 			}
-		
+
 			for (VardiyaGun pdksVardiyaGun : aylikPuantaj.getVardiyalar()) {
 				if (pdksVardiyaGun.getVardiya() != null) {
 					List<Vardiya> list = pdksVardiyaGun.getIzin() == null || (pdksVardiyaGun.getVardiya().isFMI() && fazlaMesaiIzinRaporuDurum) ? vardiyalar : null;
@@ -4791,18 +4791,19 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		TreeMap<String, VardiyaGun> vardiyaGunMap = new TreeMap<String, VardiyaGun>();
 		if (aylikPuantaj.getVardiyalar() != null) {
 			for (VardiyaGun pdksVardiyaGun : aylikPuantaj.getVardiyalar()) {
-				if (pdksVardiyaGun.getId() != null) {
+				if (pdksVardiyaGun.getId() != null)
 					idlist.add(pdksVardiyaGun.getId());
-				}
 				vardiyaGunMap.put(pdksVardiyaGun.getVardiyaKeyStr(), pdksVardiyaGun);
 			}
 			if (!idlist.isEmpty()) {
+				String donem = String.valueOf(yil * 100 + ay);
 				List<VardiyaGun> vGunList = pdksEntityController.getSQLParamByFieldList(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, idlist, VardiyaGun.class, session);
 				TreeMap<Long, VardiyaGun> vGunMap = new TreeMap<Long, VardiyaGun>();
-				for (VardiyaGun vg : vGunList)
+				for (VardiyaGun vg : vGunList) {
+					vg.setAyinGunu(vg.getVardiyaDateStr().startsWith(donem));
 					vGunMap.put(vg.getId(), vg);
+				}
 				List<VardiyaGun> vardiyaList = aylikPuantaj.getVardiyalar();
-
 				for (int i = 0; i < vardiyaList.size(); i++) {
 					VardiyaGun pdksVardiyaGun = vardiyaList.get(i);
 					if (pdksVardiyaGun.getVardiya() != null && vGunMap.containsKey(pdksVardiyaGun.getId()))
