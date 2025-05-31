@@ -62,18 +62,18 @@ public abstract class BasePDKSObject implements Serializable, Cloneable, PdksInt
 		this.guncellendi = value;
 	}
 
-	@Override
-	public boolean equals(Object object) {
-		boolean esit = false;
-		if (object != null && this.getId() != null) {
-			if (object instanceof BasePDKSObject) {
-				BasePDKSObject basePDKSObject = (BasePDKSObject) object;
-				if (object.getClass().equals(this.getClass()))
-					esit = basePDKSObject.getId() != null && this.getId().equals(basePDKSObject.getId());
-			}
-		}
-		return esit;
-	}
+//	@Override
+//	public boolean equals(Object object) {
+//		boolean esit = false;
+//		if (object != null && this.getId() != null) {
+//			if (object instanceof BasePDKSObject) {
+//				BasePDKSObject basePDKSObject = (BasePDKSObject) object;
+//				if (object.getClass().equals(this.getClass()))
+//					esit = basePDKSObject.getId() != null && this.getId().equals(basePDKSObject.getId());
+//			}
+//		}
+//		return esit;
+//	}
 
 	@Transient
 	public Boolean isGuncellendi() {

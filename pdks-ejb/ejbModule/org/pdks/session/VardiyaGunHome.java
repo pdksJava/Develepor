@@ -2884,6 +2884,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		personelGebeDurum = null;
 		personelSutIzniDurum = null;
 		Personel personel = aylikPuantaj.getPdksPersonel();
+		setPuantajVardiyaGunler(aylikPuantaj);
 		if (tipi.equalsIgnoreCase("P")) {
 			Sirket sirket = personel.getSirket();
 			HashMap fields = new HashMap();
@@ -3151,7 +3152,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 
 		}
-
 		vardiyalarSec(aylikPuantaj);
 		fazlaMesaiTalep = null;
 		if (tipi.equals("M")) {
@@ -4761,6 +4761,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 				vardiyaMap.put(vardiya.getId(), vardiya);
 			}
+		
 			for (VardiyaGun pdksVardiyaGun : aylikPuantaj.getVardiyalar()) {
 				if (pdksVardiyaGun.getVardiya() != null) {
 					List<Vardiya> list = pdksVardiyaGun.getIzin() == null || (pdksVardiyaGun.getVardiya().isFMI() && fazlaMesaiIzinRaporuDurum) ? vardiyalar : null;
@@ -4780,6 +4781,51 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			vardiyaMap = null;
 			vardiyaGebeOzelMap = null;
 		}
+	}
+
+	/**
+	 * @param aylikPuantaj
+	 */
+	private void setPuantajVardiyaGunler(AylikPuantaj aylikPuantaj) {
+		List<Long> idlist = new ArrayList<Long>();
+		TreeMap<String, VardiyaGun> vardiyaGunMap = new TreeMap<String, VardiyaGun>();
+		if (aylikPuantaj.getVardiyalar() != null) {
+			for (VardiyaGun pdksVardiyaGun : aylikPuantaj.getVardiyalar()) {
+				if (pdksVardiyaGun.getId() != null) {
+					idlist.add(pdksVardiyaGun.getId());
+				}
+				vardiyaGunMap.put(pdksVardiyaGun.getVardiyaKeyStr(), pdksVardiyaGun);
+			}
+			if (!idlist.isEmpty()) {
+				List<VardiyaGun> vGunList = pdksEntityController.getSQLParamByFieldList(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, idlist, VardiyaGun.class, session);
+				TreeMap<Long, VardiyaGun> vGunMap = new TreeMap<Long, VardiyaGun>();
+				for (VardiyaGun vg : vGunList)
+					vGunMap.put(vg.getId(), vg);
+				List<VardiyaGun> vardiyaList = aylikPuantaj.getVardiyalar();
+
+				for (int i = 0; i < vardiyaList.size(); i++) {
+					VardiyaGun pdksVardiyaGun = vardiyaList.get(i);
+					if (pdksVardiyaGun.getVardiya() != null && vGunMap.containsKey(pdksVardiyaGun.getId()))
+						vardiyaList.set(i, vGunMap.get(pdksVardiyaGun.getId()));
+					vardiyaGunMap.put(pdksVardiyaGun.getVardiyaKeyStr(), pdksVardiyaGun);
+
+				}
+				ortakIslemler.fazlaMesaiSaatiAyarla(vardiyaGunMap);
+				for (VardiyaHafta vh : aylikPuantaj.getVardiyaHaftaList()) {
+					vardiyaList = vh.getVardiyaGunler();
+					for (int i = 0; i < vardiyaList.size(); i++) {
+						VardiyaGun pdksVardiyaGun = vardiyaList.get(i);
+						if (pdksVardiyaGun.getVardiya() != null && vardiyaGunMap.containsKey(pdksVardiyaGun.getVardiyaKeyStr()))
+							vardiyaList.set(i, vardiyaGunMap.get(pdksVardiyaGun.getVardiyaKeyStr()));
+					}
+				}
+
+				vGunMap = null;
+				vGunList = null;
+			}
+		}
+		vardiyaGunMap = null;
+		idlist = null;
 	}
 
 	/**
