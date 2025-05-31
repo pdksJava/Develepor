@@ -327,7 +327,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		List<PersonelDonemselDurum> list = null;
 		boolean devam = true;
 		if (donemselDurum.getPersonelDurumTipiId() == null) {
-			PdksUtil.addMessageWarn("Tipi seçiniz!!");
+			PdksUtil.addMessageWarn("Tipi seçiniz!");
 			devam = false;
 		}
 		if (donemselDurum.getBasTarih() == null) {

@@ -455,7 +455,7 @@ public class MailManager implements Serializable {
 				mailStatu.setHataMesai(PdksUtil.replaceAll(e.toString(), "\n", ""));
 		}
 		if (mailStatu.getDurum() == false && mailStatu.getHataMesai() == null)
-			mailStatu.setHataMesai("Hata oluştu!!");
+			mailStatu.setHataMesai("Hata oluştu!");
 		return mailStatu;
 	}
 

@@ -205,7 +205,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 							sicilNo = numara.longValue() + "";
 
 						} catch (Exception e2) {
-							sicilNo = "!!!!";
+							sicilNo = "!!";
 						}
 					}
 					try {
@@ -215,7 +215,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 							adSoyad = "";
 
 						} catch (Exception e2) {
-							sicilNo = "!!!!";
+							sicilNo = "!!";
 						}
 					}
 					try {

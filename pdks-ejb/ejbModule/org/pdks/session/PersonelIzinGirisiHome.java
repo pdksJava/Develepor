@@ -976,7 +976,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 							sicilNo = numara.longValue() + "";
 
 						} catch (Exception e2) {
-							sicilNo = "!!!!";
+							sicilNo = "!!";
 						}
 					}
 					if (ortakIslemler.getYetkiTumPersonelNoList().contains(sicilNo))
@@ -1101,7 +1101,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			boolean tableERPOku = ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametreIzinERPTableView());
 			updateValue = false;
 			if (tableERPOku && (authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()))
-				updateValue = (authenticatedUser.isIK() == false && PdksUtil.getTestSunucuDurum()) || ortakIslemler.getParameterKeyHasStringValue(IzinBakiyeGuncelleme.PARAMETER_KEY + "Update");
+				updateValue = (authenticatedUser.isIK() == false && PdksUtil.getTestSunucuDurum()) || authenticatedUser.isAdmin() || ortakIslemler.getParameterKeyHasStringValue(IzinBakiyeGuncelleme.PARAMETER_KEY + "Update");
 			if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null || aramaListeSecenekleri == null) {
 				aramaListeSecenekleri = new AramaSecenekleri(authenticatedUser);
 				aramaSecenekleri = new AramaSecenekleri(authenticatedUser);

@@ -124,7 +124,7 @@ public class DepartmanMailHome extends EntityHome<DepartmanMailGrubu> implements
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
 			logger.error("PDKS hata out : " + e.getMessage());
-			facesMessages.add(eMail + " yanlış bir email adresi girdiniz. Lütfen geçerli bir email adresi giriniz!!", "");
+			facesMessages.add(eMail + " yanlış bir email adresi girdiniz. Lütfen geçerli bir email adresi giriniz!", "");
 			return "";
 		}
 
@@ -135,9 +135,9 @@ public class DepartmanMailHome extends EntityHome<DepartmanMailGrubu> implements
 		}
 		if (ekle) {
 			mailList.add(eMail);
-			facesMessages.add(eMail + " adresi başarılı bir şekilde eklendi!!", "");
+			facesMessages.add(eMail + " adresi başarılı bir şekilde eklendi!", "");
 		} else {
-			facesMessages.add(eMail + " adresi listede mevcut Tekrar kontrol ediniz!!", "");
+			facesMessages.add(eMail + " adresi listede mevcut Tekrar kontrol ediniz!", "");
 		}
 		return "";
 	}

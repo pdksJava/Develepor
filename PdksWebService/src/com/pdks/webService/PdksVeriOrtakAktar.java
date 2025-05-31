@@ -2576,7 +2576,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					if (izinERP.getDurum().booleanValue() || personelIzin.getId() != null) {
 						if (personelIzin.getId() == null) {
 							if (!(PdksUtil.getDate(izinlerBasTarih).getTime() <= izinSahibi.getSskCikisTarihi().getTime() && (PdksUtil.getDate(izinlerBitTarih).getTime() >= izinSahibi.getIseBaslamaTarihi().getTime() || bitTarih.getTime() >= izinSahibi.getIzinHakEdisTarihi().getTime())))
-								addHatalist(hataList, izinERP, izinSahibi, PdksUtil.convertToDateString(personelIzin.getBitisZamani(), FORMAT_DATE_TIME) + " tarihinde çalışmıyor!!");
+								addHatalist(hataList, izinERP, izinSahibi, PdksUtil.convertToDateString(personelIzin.getBitisZamani(), FORMAT_DATE_TIME) + " tarihinde çalışmıyor!");
 						}
 
 						if (izinERP.getDurum().booleanValue() || donemKapali) {
@@ -2606,9 +2606,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 									logger.debug(personelNo + " " + referansNoERP + " [ " + izinERP.getBasZaman() + " - " + izinERP.getBitZaman() + " ]");
 									String basStr = PdksUtil.convertToDateString(digerIzin.getBaslangicZamani(), FORMAT_DATE_TIME), bitStr = PdksUtil.convertToDateString(digerIzin.getBitisZamani(), FORMAT_DATE_TIME);
 									if (!basStr.equals(izinERP.getBitZaman()) && !bitStr.equals(izinERP.getBasZaman())) {
-										boolean hataVar = !(izinERP.getBasZaman().compareTo(basStr) != 1 && izinERP.getBitZaman().compareTo(bitStr) != -1) || !izinPersonelERPMap.containsKey(personelNo);
+										boolean hataVar = !(izinERP.getBasZaman().compareTo(bitStr) != 1 && izinERP.getBitZaman().compareTo(basStr) != -1) || !izinPersonelERPMap.containsKey(personelNo);
 										if (hataVar)
-											addHatalist(hataList, izinERP, izinSahibi, basStr + " - " + bitStr + " kayıtlı izin vardır!!");
+											addHatalist(hataList, izinERP, izinSahibi, basStr + " - " + bitStr + " kayıtlı izin vardır!");
 										else {
 											personelIzin = digerIzin;
 											izinDegisti = true;
