@@ -5632,7 +5632,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				if (!ikUserMap.isEmpty())
 					addUserHataList(object, sirketKodu, tesisKodu);
 			}
-			if (hataList != null)
+			if (hataList != null && !ikUserMap.isEmpty())
 				hataList.add(object);
 		}
 
