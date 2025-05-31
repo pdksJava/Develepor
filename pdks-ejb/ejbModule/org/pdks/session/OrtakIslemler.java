@@ -7041,9 +7041,10 @@ public class OrtakIslemler implements Serializable {
 			String str = sb.toString();
 			sb = new StringBuffer("with DATA as (" + str + " ) ");
 			sb.append("select distinct D.* from DATA D " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append(" inner join " + PersonelERPDB.VIEW_NAME + " P  " + PdksEntityController.getJoinLOCK() + " on P." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " = D." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
-			
-			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ERP_KODU + " = P.SIRKET_KODU and S." + Sirket.COLUMN_NAME_DURUM + " = 1");
+			sb.append(" inner join " + Personel.TABLE_NAME
+					+ " P  " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = D." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
+
+			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P.SIRKET_ID and S." + Sirket.COLUMN_NAME_ERP_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_DURUM + " = 1");
 			sb.append(" left join " + IzinReferansERP.TABLE_NAME + " IR " + PdksEntityController.getJoinLOCK() + " on IR." + IzinReferansERP.COLUMN_NAME_ID + " = D." + IzinERPDB.COLUMN_NAME_REFERANS_NO);
 			if (referansList != null) {
 				sb.append(" where D." + IzinERPDB.COLUMN_NAME_REFERANS_NO + " :d  ");
@@ -7069,6 +7070,7 @@ public class OrtakIslemler implements Serializable {
 				izinList = pdksEntityController.getObjectBySQLList(sb, parametreMap, IzinERPDB.class);
 
 			} catch (Exception ex1) {
+				logger.error(sb.toString() + "\n" + ex1);
 				loggerErrorYaz(null, ex1);
 			}
 			if (!iptalMap.isEmpty()) {
