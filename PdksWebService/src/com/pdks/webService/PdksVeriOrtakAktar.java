@@ -95,7 +95,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 	private VardiyaSablonu vardiyaSablonu = null;
 
-	private boolean erpVeriOku = false;
+	private boolean erpVeriOku = false, testDurum = false;
 
 	private KapiSirket kapiSirket = null;
 
@@ -798,7 +798,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		StringBuffer sb = new StringBuffer();
 		if (mailMap == null)
 			mailMap = mailDataMap;
-		boolean testDurum = getTestDurum();
+
 		String testMailAdres = mailDataMap.containsKey("testMailAdres") ? (String) mailDataMap.get("testMailAdres") : "pdkssayar@gmail.com";
 		if (!mailDataMap.containsKey(KEY_IK_MAIL_IPTAL)) {
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
@@ -1050,6 +1050,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			pmMap = null;
 
 		}
+		testDurum = getTestDurum();
 		return mailMap;
 
 	}
@@ -2121,7 +2122,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 		// String canliSunucu = "srvglf";
 		// if (mailMap != null && mailMap.containsKey("canliSunucu"))
 		// canliSunucu = (String) mailMap.get("canliSunucu");
-		boolean testDurum = getTestDurum();
 		Integer izinBitisTarihiAySayisi = null;
 		if (mailMap.containsKey("izinBitisTarihiAySayisi"))
 			try {
@@ -5632,7 +5632,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				if (!ikUserMap.isEmpty())
 					addUserHataList(object, sirketKodu, tesisKodu);
 			}
-			if (hataList != null && !ikUserMap.isEmpty())
+			if (hataList != null && (testDurum || !ikUserMap.isEmpty()))
 				hataList.add(object);
 		}
 
