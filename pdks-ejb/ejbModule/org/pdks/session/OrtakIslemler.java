@@ -18481,7 +18481,7 @@ public class OrtakIslemler implements Serializable {
 				islemVardiya = vg.getIslemVardiya();
 				vg.setGecerliHareketler(null);
 				Tatil tatil = vg.getTatil();
-				HashMap<Long, Vardiya> vardiyaMap = null;
+				// HashMap<Long, Vardiya> vardiyaMap = null;
 				if (tatil == null) {
 					str = PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(vg.getVardiyaDate(), 1), "yyyyMMdd");
 					if (tatilGunleriMap.containsKey(str))
@@ -18494,8 +18494,8 @@ public class OrtakIslemler implements Serializable {
 
 				}
 				if (tatil != null) {
-					if (tatil.isYarimGunMu())
-						vardiyaMap = tatil.getVardiyaMap();
+					// if (tatil.isYarimGunMu())
+					// vardiyaMap = tatil.getVardiyaMap();
 					Date tatilBas = tatil.getBasTarih(), tatilBit = tatil.getBitTarih(), gunBit = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(vg.getVardiyaDate(), "yyyyMMdd") + " 23:59:59", "yyyyMMdd HH:mm:ss");
 					if (islemVardiya.isCalisma() && islemVardiya.getVardiyaBitZaman().after(tatilBit))
 						gunBit = islemVardiya.getVardiyaBitZaman();
@@ -18559,14 +18559,14 @@ public class OrtakIslemler implements Serializable {
 							if (kapi.isGirisKapi())
 								girisHareketList.add(hareketKGS);
 							else if (kapi.isCikisKapi()) {
-								if (vardiyaMap != null && hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET)) {
-									Vardiya tatilVardiya = vardiyaMap.containsKey(islemVardiya.getId()) ? vardiyaMap.get(islemVardiya.getId()) : null;
-									if (tatilVardiya != null && tatilVardiya.getArifeBaslangicTarihi() != null && hareketKGS.getZaman().after(tatilVardiya.getArifeBaslangicTarihi())) {
-										hareketKGS.setZaman(tatilVardiya.getArifeBaslangicTarihi());
-										hareketKGS.setOrjinalZaman(tatilVardiya.getArifeBaslangicTarihi());
-									}
-
-								}
+								// if (vardiyaMap != null && hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET)) {
+								// Vardiya tatilVardiya = vardiyaMap.containsKey(islemVardiya.getId()) ? vardiyaMap.get(islemVardiya.getId()) : null;
+								// if (tatilVardiya != null && tatilVardiya.getArifeBaslangicTarihi() != null && hareketKGS.getZaman().after(tatilVardiya.getArifeBaslangicTarihi())) {
+								// hareketKGS.setZaman(tatilVardiya.getArifeBaslangicTarihi());
+								// hareketKGS.setOrjinalZaman(tatilVardiya.getArifeBaslangicTarihi());
+								// }
+								//
+								// }
 								cikisHareketList.add(hareketKGS);
 							}
 
