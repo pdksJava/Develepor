@@ -7041,8 +7041,7 @@ public class OrtakIslemler implements Serializable {
 			String str = sb.toString();
 			sb = new StringBuffer("with DATA as (" + str + " ) ");
 			sb.append("select distinct D.* from DATA D " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append(" inner join " + Personel.TABLE_NAME
-					+ " P  " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = D." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
+			sb.append(" inner join " + Personel.TABLE_NAME + " P  " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = D." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
 
 			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P.SIRKET_ID and S." + Sirket.COLUMN_NAME_ERP_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_DURUM + " = 1");
 			sb.append(" left join " + IzinReferansERP.TABLE_NAME + " IR " + PdksEntityController.getJoinLOCK() + " on IR." + IzinReferansERP.COLUMN_NAME_ID + " = D." + IzinERPDB.COLUMN_NAME_REFERANS_NO);
@@ -18410,7 +18409,6 @@ public class OrtakIslemler implements Serializable {
 			}
 			if (oncekiHareketler == null)
 				oncekiHareketler = new ArrayList<HareketKGS>();
-
 			if (islemVardiya != null && vg.isBayramAyir()) {
 				int girisAdet = vg.getGirisHareketleri() != null ? vg.getGirisHareketleri().size() : 0;
 				int cikisAdet = vg.getCikisHareketleri() != null ? vg.getCikisHareketleri().size() : 0;
@@ -18480,11 +18478,10 @@ public class OrtakIslemler implements Serializable {
 			vg.setBayramAyir(false);
 
 			if (devam) {
-
 				islemVardiya = vg.getIslemVardiya();
 				vg.setGecerliHareketler(null);
 				Tatil tatil = vg.getTatil();
-
+				HashMap<Long, Vardiya> vardiyaMap = null;
 				if (tatil == null) {
 					str = PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(vg.getVardiyaDate(), 1), "yyyyMMdd");
 					if (tatilGunleriMap.containsKey(str))
@@ -18497,6 +18494,8 @@ public class OrtakIslemler implements Serializable {
 
 				}
 				if (tatil != null) {
+					if (tatil.isYarimGunMu())
+						vardiyaMap = tatil.getVardiyaMap();
 					Date tatilBas = tatil.getBasTarih(), tatilBit = tatil.getBitTarih(), gunBit = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(vg.getVardiyaDate(), "yyyyMMdd") + " 23:59:59", "yyyyMMdd HH:mm:ss");
 					if (islemVardiya.isCalisma() && islemVardiya.getVardiyaBitZaman().after(tatilBit))
 						gunBit = islemVardiya.getVardiyaBitZaman();
@@ -18559,8 +18558,18 @@ public class OrtakIslemler implements Serializable {
 							Kapi kapi = hareketKGS.getKapiView().getKapi();
 							if (kapi.isGirisKapi())
 								girisHareketList.add(hareketKGS);
-							else if (kapi.isCikisKapi())
+							else if (kapi.isCikisKapi()) {
+								if (vardiyaMap != null && hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET)) {
+									Vardiya tatilVardiya = vardiyaMap.containsKey(islemVardiya.getId()) ? vardiyaMap.get(islemVardiya.getId()) : null;
+									if (tatilVardiya != null && tatilVardiya.getArifeBaslangicTarihi() != null && hareketKGS.getZaman().after(tatilVardiya.getArifeBaslangicTarihi())) {
+										hareketKGS.setZaman(tatilVardiya.getArifeBaslangicTarihi());
+										hareketKGS.setOrjinalZaman(tatilVardiya.getArifeBaslangicTarihi());
+									}
+
+								}
 								cikisHareketList.add(hareketKGS);
+							}
+
 							yeniHareketler.add(hareketKGS);
 						}
 					}
