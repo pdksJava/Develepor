@@ -24,15 +24,16 @@ public class ArifeVardiyaDonem extends BaseObject {
 	public static final String COLUMN_NAME_VARDIYA = "VARDIYA_ID";
 	public static final String COLUMN_NAME_BAS_TARIHI = "BAS_TARIHI";
 	public static final String COLUMN_NAME_BIT_TARIHI = "BIT_TARIHI";
-	public static final String COLUMN_NAME_TATIL_BAS_TIME = "TATIL_BAS_TIME"; 
+	public static final String COLUMN_NAME_TATIL_BAS_TIME = "TATIL_BAS_TIME";
 	public static final String COLUMN_NAME_ARIFE_VARDIYA_HESAPLA = "ARIFE_VARDIYA_HESAPLA";
 	public static final String COLUMN_NAME_ARIFE_SONRA_CAL_VAR_DENK_YOK = "ARIFE_SONRA_CAL_VAR_DENK_YOK";
 	public static final String COLUMN_NAME_ARIFE_SONRA_CAL_YOK_CGS_DUS = "ARIFE_SONRA_CAL_YOK_CGS_DUS";
 	public static final String COLUMN_NAME_VARDIYA_ACIKLAMA = "VARDIYA_ACIKLAMA";
+	public static final String COLUMN_NAME_ARIFE_YARIM_GUN = "ARIFE_YARIM_GUN";
 
 	private Date basTarih, bitTarih;
 	private String tatilBasZaman, vardiyaKisaAciklama;
-	private Boolean arifeVardiyaHesapla = Boolean.FALSE;
+	private Boolean arifeVardiyaHesapla = Boolean.FALSE, arifeYarimGun = Boolean.FALSE;
 	private Boolean arifeSonraVardiyaDenklestirmeVar = Boolean.FALSE, arifeCalismaSaatYokCGSDus = Boolean.FALSE;
 	private Vardiya vardiya;
 	private Integer version = 0;
@@ -108,6 +109,7 @@ public class ArifeVardiyaDonem extends BaseObject {
 	public void setArifeSonraVardiyaDenklestirmeVar(Boolean arifeSonraVardiyaDenklestirmeVar) {
 		this.arifeSonraVardiyaDenklestirmeVar = arifeSonraVardiyaDenklestirmeVar;
 	}
+
 	@Column(name = COLUMN_NAME_ARIFE_SONRA_CAL_YOK_CGS_DUS)
 	public Boolean getArifeCalismaSaatYokCGSDus() {
 		return arifeCalismaSaatYokCGSDus;
@@ -116,7 +118,16 @@ public class ArifeVardiyaDonem extends BaseObject {
 	public void setArifeCalismaSaatYokCGSDus(Boolean arifeCalismaSaatYokCGSDus) {
 		this.arifeCalismaSaatYokCGSDus = arifeCalismaSaatYokCGSDus;
 	}
-	
+
+	@Column(name = COLUMN_NAME_ARIFE_YARIM_GUN)
+	public Boolean getArifeYarimGun() {
+		return arifeYarimGun;
+	}
+
+	public void setArifeYarimGun(Boolean arifeYarimGun) {
+		this.arifeYarimGun = arifeYarimGun;
+	}
+
 	@Column(name = COLUMN_NAME_VARDIYA_ACIKLAMA, insertable = false, updatable = false)
 	public String getVardiyaKisaAciklama() {
 		return vardiyaKisaAciklama;
@@ -127,9 +138,7 @@ public class ArifeVardiyaDonem extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
-		
-	}
 
+	}
 
 }
