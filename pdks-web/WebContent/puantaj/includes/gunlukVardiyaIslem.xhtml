@@ -50,7 +50,7 @@
 					<ui:fragment rendered="#{vardiyaGun.hareketDurum == true}">
 						<ui:fragment rendered="#{vardiyaGun.hataliDurum}">
 							<ui:fragment rendered="#{vardiyaGun.vardiya.icapVardiyasi == false}">
-								<ui:fragment rendered="#{vardiyaGun.zamanGelmedi==false}">
+								 
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla == false or aylikPuantaj.fazlaMesaiHesapla == false}">
 										<a4j:commandLink action="#{fazlaMesaiHesaplaHome.vardiyaGoster(vardiyaGun)}" ajaxSingle="true"
 											oncomplete="#{rich:component('hareketDetayPanel')}.show()" reRender="hareketDetayPanel">
@@ -60,7 +60,7 @@
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla and aylikPuantaj.fazlaMesaiHesapla}">
 										<h:graphicImage value="/img/msgwarn.png" height="18" style="border:0" reRender="editPanel" />
 									</ui:fragment>
-								</ui:fragment>
+								 
 
 								<ui:fragment rendered="#{vardiyaGun.calismaSuresi>0}">
 

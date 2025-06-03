@@ -7041,8 +7041,7 @@ public class OrtakIslemler implements Serializable {
 			String str = sb.toString();
 			sb = new StringBuffer("with DATA as (" + str + " ) ");
 			sb.append("select distinct D.* from DATA D " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append(" inner join " + Personel.TABLE_NAME
-					+ " P  " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = D." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
+			sb.append(" inner join " + Personel.TABLE_NAME + " P  " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = D." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
 
 			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P.SIRKET_ID and S." + Sirket.COLUMN_NAME_ERP_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_DURUM + " = 1");
 			sb.append(" left join " + IzinReferansERP.TABLE_NAME + " IR " + PdksEntityController.getJoinLOCK() + " on IR." + IzinReferansERP.COLUMN_NAME_ID + " = D." + IzinERPDB.COLUMN_NAME_REFERANS_NO);
@@ -18396,6 +18395,7 @@ public class OrtakIslemler implements Serializable {
 	public void bayramGecisleriAyir(KapiView girisKapiView, KapiView cikisKapiView, TreeMap<String, Tatil> tatilGunleriMap, List<VardiyaGun> bayramAyirList, PersonelView personelView) {
 		ArrayList<HareketKGS> oncekiHareketler = new ArrayList<HareketKGS>();
 		VardiyaGun oncekiGun = null;
+		boolean arifeGunCalisiyor = getParameterKey("arifeGunCalisiyor").equals("1");
 		for (VardiyaGun vg : bayramAyirList) {
 			boolean devam = false;
 			vg.setGecmisHataliDurum(false);
@@ -18480,11 +18480,9 @@ public class OrtakIslemler implements Serializable {
 			vg.setBayramAyir(false);
 
 			if (devam) {
-
 				islemVardiya = vg.getIslemVardiya();
 				vg.setGecerliHareketler(null);
 				Tatil tatil = vg.getTatil();
-
 				if (tatil == null) {
 					str = PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(vg.getVardiyaDate(), 1), "yyyyMMdd");
 					if (tatilGunleriMap.containsKey(str))
@@ -18496,7 +18494,10 @@ public class OrtakIslemler implements Serializable {
 					}
 
 				}
+				HashMap<Long, Vardiya> vardiyaMap = null;
 				if (tatil != null) {
+					if (arifeGunCalisiyor)
+						vardiyaMap = tatil.getVardiyaMap();
 					Date tatilBas = tatil.getBasTarih(), tatilBit = tatil.getBitTarih(), gunBit = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(vg.getVardiyaDate(), "yyyyMMdd") + " 23:59:59", "yyyyMMdd HH:mm:ss");
 					if (islemVardiya.isCalisma() && islemVardiya.getVardiyaBitZaman().after(tatilBit))
 						gunBit = islemVardiya.getVardiyaBitZaman();
@@ -18559,8 +18560,18 @@ public class OrtakIslemler implements Serializable {
 							Kapi kapi = hareketKGS.getKapiView().getKapi();
 							if (kapi.isGirisKapi())
 								girisHareketList.add(hareketKGS);
-							else if (kapi.isCikisKapi())
+							else if (kapi.isCikisKapi()) {
+								if (vardiyaMap != null && hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET)) {
+									Vardiya tatilVardiya = vardiyaMap.containsKey(islemVardiya.getId()) ? vardiyaMap.get(islemVardiya.getId()) : null;
+									if (tatilVardiya != null && tatilVardiya.getArifeBaslangicTarihi() != null && hareketKGS.getZaman().after(tatilVardiya.getArifeBaslangicTarihi())) {
+										hareketKGS.setZaman(tatilVardiya.getArifeBaslangicTarihi());
+										hareketKGS.setOrjinalZaman(tatilVardiya.getArifeBaslangicTarihi());
+									}
+
+								}
 								cikisHareketList.add(hareketKGS);
+							}
+
 							yeniHareketler.add(hareketKGS);
 						}
 					}
@@ -19583,7 +19594,7 @@ public class OrtakIslemler implements Serializable {
 								double saatFarki = PdksUtil.getSaatFarki(cikisZaman, girisZaman);
 								if (cikisHareket.isTatil())
 									toplamTatilSure += saatFarki;
-								if (vGun.endsWith("0519"))
+								if (vGun.endsWith("0605"))
 									logger.debug(PdksUtil.convertToDateString(girisZaman, "yyyyMMdd HH:mm") + " " + PdksUtil.convertToDateString(cikisZaman, "yyyyMMdd HH:mm") + " " + saatFarki);
 								if (girisHareket.getOncekiGun() || cikisHareket.getOncekiGun()) {
 									if (girisHareket.getZaman().before(vardiyaGun.getVardiyaDate()))
@@ -19692,9 +19703,7 @@ public class OrtakIslemler implements Serializable {
 											tatilFazlaMesaiMap.put(personelFazlaMesai.getId(), personelFazlaMesai);
 										}
 										continue;
-
 									}
-
 								}
 								// ozel durum
 								// aybasindan onceki gun icin duzenleme. diger gunler icinde calismali ( ay basi baslayan tatil)
@@ -19727,6 +19736,7 @@ public class OrtakIslemler implements Serializable {
 									List yemekler = toplamYemekSuresi > 0 && arifeGunu && arifeYemekEkle && oncekiCikisZaman != null && oncekiCikisZaman.getTime() == girisZaman.getTime() ? new ArrayList<YemekIzin>() : yemekList;
 									if (arifeGunu)
 										yemekler = yemekList;
+									vardiyaYemekSuresi = vardiya != null && vardiya.getYemekSuresi() != null ? vardiya.getYemekSuresi().doubleValue() / 60d : 0d;
 									if (cikisHareket.getVardiyaGun() == null || cikisHareket.getVardiyaGun().getId().equals(vardiyaGun.getId())) {
 										sureHesapla = Boolean.TRUE;
 										double sure = PdksUtil.getSaatFarki(cikisZaman, girisZaman);
@@ -19736,6 +19746,7 @@ public class OrtakIslemler implements Serializable {
 										toplamYemekSuresi += sure - yemeksizSure;
 										if (toplamYemekSuresi > yemekSure)
 											yemeksizSure += toplamYemekSuresi - yemekSure;
+
 										if (tatilMesaiMap.containsKey(girisId) || tatilMesaiMap.containsKey(cikisId)) {
 											yemeksizSure = tatilMesaiMap.containsKey(girisId) ? tatilMesaiMap.get(girisId) : tatilMesaiMap.get(cikisId);
 											resmiTatilCalisma = true;
@@ -19750,8 +19761,6 @@ public class OrtakIslemler implements Serializable {
 											arifeCalismaToplami(arifeSureMap, yemeksizSure, sure, key1, key2);
 										}
 									}
-
-									vardiyaYemekSuresi = vardiya != null && vardiya.getYemekSuresi() != null ? vardiya.getYemekSuresi().doubleValue() / 60d : 0d;
 
 									if (yemeksizSure > 0 || resmiTatilCalisma) {
 										if (resmiTatilCalisma || (vardiyaGun.getTatil() != null && cikisHareket.isTatil())) {
