@@ -1961,7 +1961,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										vardiyaSaat.setResmiTatilSure(vardiyaGun.getResmiTatilSure());
 										vardiyaSaat.setAksamVardiyaSaatSayisi(vardiyaGun.getAksamKatSayisi());
 									}
-									if (hareketDurum.equals(Boolean.TRUE) && vardiyaGun.isZamanGelmedi() == false && (vardiyaGun.getResmiTatilSure() > 0.0 || vardiyaGun.getHareketler() != null)) {
+									if (hareketDurum.equals(Boolean.TRUE) && vardiyaGun.isZamanGelmedi() == false && (vardiyaGun.getHareketler() != null || vardiyaGun.getResmiTatilSure() > 0.0)) {
 										double calSure = vardiyaGun.getCalismaSuresi();
 										if (calSure == 0.0 && vardiyaGun.getResmiTatilSure() > 0.0)
 											calSure = vardiyaGun.getResmiTatilSure();
