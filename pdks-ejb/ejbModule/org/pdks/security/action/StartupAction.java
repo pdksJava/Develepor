@@ -1201,7 +1201,7 @@ public class StartupAction implements Serializable {
 				sessionList = null;
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			 
 		}
 
 	}

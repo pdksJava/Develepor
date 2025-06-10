@@ -18,6 +18,7 @@ import java.util.TreeMap;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.pdks.dao.BaseDAO;
+import org.pdks.entity.BasePDKSObject;
 import org.pdks.genel.model.Liste;
 import org.pdks.genel.model.PdksUtil;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -816,6 +817,89 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 			}
 		}
 		return query;
+	}
+
+	/**
+	 * @param single
+	 * @param class1
+	 * @return
+	 * @throws Exception
+	 */
+	public Long savePrepareTableID(boolean single, Class class1) throws Exception {
+		HashMap fields = new HashMap();
+		Session session = getHibernateCurrentSession();
+		List list = getObjectByInnerObjectList(fields, class1);
+		long kayitAdet = list.size();
+		if (kayitAdet > 0) {
+			if (kayitAdet > 1)
+				list = PdksUtil.sortListByAlanAdi(list, "id", true);
+			Long id = (Long) PdksUtil.getMethodObject(list.get(0), "getId", null);
+			if (id.longValue() != kayitAdet) {
+				kayitAdet = 0;
+				list = PdksUtil.sortListByAlanAdi(list, "id", false);
+				List saveList = new ArrayList(), removeList = new ArrayList();
+				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+					Object object = (Object) iterator.next();
+					kayitAdet++;
+					id = (Long) PdksUtil.getMethodObject(object, "getId", null);
+					if (id.longValue() != kayitAdet) {
+						removeList.add(object);
+						BasePDKSObject basePDKSObject = (BasePDKSObject) PdksUtil.getMethodObject(object, "cloneEmpty", null);
+						if (basePDKSObject != null)
+							saveList.add(basePDKSObject);
+					}
+				}
+				if (!saveList.isEmpty() && removeList.size() == saveList.size()) {
+					kayitAdet = saveList.size();
+					for (Object object : removeList) {
+						if (object != null) {
+							id = (Long) PdksUtil.getMethodObject(object, "getId", null);
+							if (id != null) {
+								deleteObject(object);
+							} else {
+								saveList.clear();
+							}
+						}
+
+					}
+					session.flush();
+					session.clear();
+					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+					if (session != null)
+						veriMap.put(MAP_KEY_SESSION, session);
+
+					veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_CHECKIDENT_VIEW");
+					execSP(veriMap);
+					session.flush();
+					session.clear();
+					for (Object object : saveList) {
+						if (object != null) {
+							id = (Long) PdksUtil.getMethodObject(object, "getId", null);
+							if (id == null) {
+								saveObject(object);
+							}
+						}
+
+					}
+					session.flush();
+				}
+			} else {
+				if (single) {
+					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+					if (session != null)
+						veriMap.put(MAP_KEY_SESSION, session);
+					veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_CHECKIDENT_VIEW");
+					session.flush();
+				}
+
+				kayitAdet = 0L;
+			}
+
+		}
+		list = null;
+		if (kayitAdet > 0)
+			logger.info(kayitAdet + " " + class1.getName() + " düzenlendi.");
+		return kayitAdet;
 	}
 
 	/**

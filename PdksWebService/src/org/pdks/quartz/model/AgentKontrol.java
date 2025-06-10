@@ -1,5 +1,6 @@
 package org.pdks.quartz.model;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,12 +8,21 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.pdks.dao.PdksDAO;
+import org.pdks.entity.CalismaModeliGun;
+import org.pdks.entity.Parameter;
 import org.pdks.entity.PdksAgent;
+import org.pdks.entity.PersonelDinamikAlan;
+import org.pdks.entity.ServiceData;
+import org.pdks.entity.Tatil;
 import org.pdks.genel.model.Constants;
 import org.pdks.genel.model.PdksUtil;
 import org.pdks.genel.model.ThreadAgent;
+import org.pdks.security.entity.UserDigerOrganizasyon;
+import org.pdks.security.entity.UserRoles;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.pdks.webService.PdksVeriOrtakAktar;
 
@@ -21,6 +31,30 @@ public final class AgentKontrol extends QuartzJobBean {
 	private Logger logger = Logger.getLogger(AgentKontrol.class);
 
 	private static boolean calisiyor = false;
+
+	@Transactional
+	public void savePrepareAllTableID(PdksDAO pdksDAO) {
+		List<Class> list = new ArrayList<Class>();
+		long toplamAdet = 0L;
+		try {
+			list.add(CalismaModeliGun.class);
+			list.add(Parameter.class);
+			list.add(PersonelDinamikAlan.class);
+			list.add(ServiceData.class);
+			list.add(Tatil.class);
+			list.add(UserDigerOrganizasyon.class);
+			list.add(UserRoles.class);
+			for (Class class1 : list)
+				pdksDAO.savePrepareTableID(false, class1);
+
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		if (toplamAdet > 0)
+			logger.info(toplamAdet + " adet kayıt id güncellendi.");
+
+		list = null;
+	}
 
 	// ERROR //
 	protected void executeInternal(org.quartz.JobExecutionContext ctx) throws org.quartz.JobExecutionException {

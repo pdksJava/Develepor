@@ -22,6 +22,14 @@ import org.pdks.genel.model.DAO;
  *         Window - Preferences - Java - Code Style - Code Templates
  */
 public interface BaseDAO extends DAO {
+	
+	/**
+	 * @param single
+	 * @param class1
+	 * @return
+	 * @throws Exception
+	 */
+	public Long savePrepareTableID(boolean single, Class class1) throws Exception;
 
 	/**
 	 * @return
