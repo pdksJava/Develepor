@@ -2116,6 +2116,13 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			fillPdksVardiyaSablonList();
 		}
 		List<Sirket> list = ortakIslemler.fillSirketList(session, pdksDurum, Boolean.TRUE);
+		if (pdksPersonel == null || pdksPersonel.getId() == null) {
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				Sirket sirket = (Sirket) iterator.next();
+				if (sirket.isErp() && (PdksUtil.hasStringValue(sirket.getErpKodu()) == false || sirket.getErpKodu().startsWith(Sirket.SIRKET_PDKS_ON_EK) == false))
+					iterator.remove();
+			}
+		}
 		if (!personelERPGuncelleme.equalsIgnoreCase("M") && (pdksPersonel == null || pdksPersonel.getId() == null))
 			erpSirketleriAyikla(list);
 
