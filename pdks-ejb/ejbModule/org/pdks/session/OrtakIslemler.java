@@ -5461,10 +5461,12 @@ public class OrtakIslemler implements Serializable {
 		double sure = 0, toplamYemekSure = 0.0d;
 		if (vardiyaGun.getFazlaMesaiYuvarla() == 3) {
 			String pattern = PdksUtil.getDateTimeFormat();
-			basTarih = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(basTarih, pattern), pattern);
-			bitTarih = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(bitTarih, pattern), pattern);
+			if (basTarih != null)
+				basTarih = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(basTarih, pattern), pattern);
+			if (bitTarih != null)
+				bitTarih = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(bitTarih, pattern), pattern);
 		}
- 		double yemekVardiyaSuresi = vardiyaGun != null && vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().getYemekSuresi() != null ? vardiyaGun.getVardiya().getYemekSuresi() / 60.0d : 0.0d;
+		double yemekVardiyaSuresi = vardiyaGun != null && vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().getYemekSuresi() != null ? vardiyaGun.getVardiya().getYemekSuresi() / 60.0d : 0.0d;
 		if (bitTarih.getTime() > basTarih.getTime()) {
 			sure = PdksUtil.getSaatFarki(bitTarih, basTarih).doubleValue();
 			boolean yarimdenFazla = sure > 10;
