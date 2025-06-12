@@ -379,9 +379,11 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		}
 		List<Tanim> list = ortakIslemler.getTanimAlanList(tipi, sort, "S", session);
 		PersonelFazlaMesai fazlaMesai = getInstance();
-		fazlaMesai.setBasZaman(hareket.getGirisZaman());
-		fazlaMesai.setBitZaman(hareket.getCikisZaman());
 		VardiyaGun vg = hareket.getVardiyaGun();
+		Date basZaman = ortakIslemler.getSaniyeSifirla(hareket.getGirisZaman(), vg);
+		Date bitZaman = ortakIslemler.getSaniyeSifirla(hareket.getCikisZaman(), vg);
+		fazlaMesai.setBasZaman(basZaman);
+		fazlaMesai.setBitZaman(bitZaman);
 		vg.setFazlaMesaiTalepler(null);
 		fazlaMesai.setFazlaMesaiTalep(null);
 		fazlaMesai.setVardiyaGun(vg);

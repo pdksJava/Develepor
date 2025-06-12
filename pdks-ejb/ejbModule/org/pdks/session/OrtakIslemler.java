@@ -5450,6 +5450,30 @@ public class OrtakIslemler implements Serializable {
 		}
 	}
 
+	 
+	/**
+	 * @param zaman
+	 * @param vg
+	 * @return
+	 */
+	public Date getSaniyeSifirla(Date zaman, VardiyaGun vg) {
+		Date islemZaman = null;
+		if (zaman != null) {
+			boolean sifirla = false;
+			if (VardiyaGun.getSaniyeYuvarlaZaman() != null)
+				sifirla = zaman.getTime() >= VardiyaGun.getSaniyeYuvarlaZaman().getTime();
+			if (sifirla) {
+				String pattern = PdksUtil.getDateTimeFormat();
+				islemZaman = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(zaman, pattern), pattern);
+			} else
+				islemZaman = zaman;
+//			if (islemZaman.getTime() != zaman.getTime())
+//				logger.debug("");
+
+		}
+		return islemZaman;
+	}
+
 	/**
 	 * @param basTarih
 	 * @param bitTarih
@@ -5459,13 +5483,11 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public double getSaatSure(Date basTarih, Date bitTarih, List<YemekIzin> yemekList, VardiyaGun vardiyaGun, Session session) {
 		double sure = 0, toplamYemekSure = 0.0d;
-		if (vardiyaGun.getFazlaMesaiYuvarla() == 3) {
-			String pattern = PdksUtil.getDateTimeFormat();
-			if (basTarih != null)
-				basTarih = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(basTarih, pattern), pattern);
-			if (bitTarih != null)
-				bitTarih = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(bitTarih, pattern), pattern);
-		}
+		if (basTarih != null)
+			basTarih = getSaniyeSifirla(basTarih, vardiyaGun);
+		if (bitTarih != null)
+			bitTarih = getSaniyeSifirla(bitTarih, vardiyaGun);
+
 		double yemekVardiyaSuresi = vardiyaGun != null && vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().getYemekSuresi() != null ? vardiyaGun.getVardiya().getYemekSuresi() / 60.0d : 0.0d;
 		if (bitTarih.getTime() > basTarih.getTime()) {
 			sure = PdksUtil.getSaatFarki(bitTarih, basTarih).doubleValue();
@@ -19693,9 +19715,8 @@ public class OrtakIslemler implements Serializable {
 													}
 												}
 											}
-
-											personelFazlaMesai.setBasZaman(basZaman);
-											personelFazlaMesai.setBitZaman(bitZaman);
+											personelFazlaMesai.setBasZaman(getSaniyeSifirla(basZaman, vardiyaGun));
+											personelFazlaMesai.setBitZaman(getSaniyeSifirla(bitZaman, vardiyaGun));
 											List yemekler = arifeGunu && arifeYemekEkle && oncekiCikisZaman != null && oncekiCikisZaman.getTime() == girisZaman.getTime() ? new ArrayList<YemekIzin>() : yemekList;
 											double fazlaMesaiSaati = getSaatSure(basZaman, bitZaman, yemekler, vardiyaGun, session);
 											fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesaiSaati, vardiyaGun.getFazlaMesaiYuvarla());

@@ -283,7 +283,7 @@ public class StartupAction implements Serializable {
 			list.add(VardiyaHafta.class);
 			list.add(VardiyaYemekIzin.class);
 			list.add(YemekKartsiz.class);
- 			for (Class class1 : list) {
+			for (Class class1 : list) {
 				long adet = pdksEntityController.savePrepareTableID(false, class1, entityManager, session);
 				toplamAdet += adet;
 				if (adet > 0)
@@ -545,6 +545,17 @@ public class StartupAction implements Serializable {
 				MailManager.setHeaderRenk(deger);
 		}
 		String fontSize = "22px";
+		Date saniyeYuvarlaZaman = null;
+		if (parameterMap.containsKey("saniyeYuvarlaZaman")) {
+			String deger = (String) parameterMap.get("saniyeYuvarlaZaman");
+			try {
+				saniyeYuvarlaZaman = PdksUtil.getDateFromString(deger);
+			} catch (Exception e) {
+				saniyeYuvarlaZaman = null;
+			}
+			
+		}
+		VardiyaGun.setSaniyeYuvarlaZaman(saniyeYuvarlaZaman);
 		boolean izinHakedisGuncelle = false;
 		if (parameterMap.containsKey("izinHakedisGuncelle"))
 			izinHakedisGuncelle = parameterMap.get("izinHakedisGuncelle").equals("1");
@@ -1201,7 +1212,7 @@ public class StartupAction implements Serializable {
 				sessionList = null;
 			}
 		} catch (Exception e) {
-			 
+
 		}
 
 	}

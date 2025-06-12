@@ -56,6 +56,7 @@ public class VardiyaGun extends BaseObject {
 	public static final String STYLE_CLASS_EVEN = "koyu";
 	public static final String STYLE_CLASS_HATA = "hata";
 	public static boolean haftaTatilDurum;
+	private static Date saniyeYuvarlaZaman;
 
 	private Personel personel;
 	private Vardiya vardiya, islemVardiya, oncekiVardiya, sonrakiVardiya, yeniVardiya, eskiVardiya;
@@ -2489,5 +2490,13 @@ public class VardiyaGun extends BaseObject {
 
 	public void setFazlaMesaiYuvarla(int fazlaMesaiYuvarla) {
 		this.fazlaMesaiYuvarla = fazlaMesaiYuvarla;
+	}
+
+	public static Date getSaniyeYuvarlaZaman() {
+		return saniyeYuvarlaZaman;
+	}
+
+	public static void setSaniyeYuvarlaZaman(Date saniyeYuvarlaZaman) {
+		VardiyaGun.saniyeYuvarlaZaman = saniyeYuvarlaZaman;
 	}
 }
