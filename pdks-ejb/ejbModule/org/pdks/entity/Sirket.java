@@ -40,6 +40,7 @@ public class Sirket extends BaseObject {
 	public static final String SP_NAME_SP_ERP_VIEW_ALTER_CREATE = "SP_ERP_VIEW_ALTER_CREATE";
 
 	public static final String SIRKET_ERP_KODU = "3030";
+	public static final String SIRKET_PDKS_ON_EK = "NP";
 
 	private Long sirketGrupId;
 	private String ad, aciklama, erpKodu = "", lpdapOnEk = "", databaseAdiERP, databaseKoduERP;

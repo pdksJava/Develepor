@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
 import org.pdks.dao.PdksDAO;
 import org.pdks.entity.CalismaModeliGun;
 import org.pdks.entity.Parameter;

@@ -12354,9 +12354,7 @@ public class OrtakIslemler implements Serializable {
 								if (vardiyaTatil.getArifeNormalCalismaDakika() != null && vardiyaTatil.getArifeNormalCalismaDakika() != 0.0d) {
 									sureTanimli = true;
 									arifeNormalCalismaDakika = vardiyaTatil.getArifeNormalCalismaDakika();
-								}
-
-								else if (arifeNormalCalismaDakika == null || arifeNormalCalismaDakika.doubleValue() == 0.0d)
+								} else if (arifeNormalCalismaDakika == null || arifeNormalCalismaDakika.doubleValue() == 0.0d)
 									arifeNormalCalismaDakika = null;
 								if (arifeNormalCalismaDakika == null)
 									arifeNormalCalismaDakika = (netSure * 60.0d + vardiyaTatil.getYemekSuresi()) * 0.5d;
@@ -12405,26 +12403,26 @@ public class OrtakIslemler implements Serializable {
 									}
 
 									list = null;
-									if (arifeVardiyaDonemDB == null && !idMap.containsKey(vardiyaTatil.getId())) {
-										basArifeTarih = PdksUtil.getDate(tarihi);
-										arifeVardiyaDonemDB = new ArifeVardiyaDonem();
-										arifeVardiyaDonemDB.setVardiya(vardiyaTatil);
-										arifeVardiyaDonemDB.setBasTarih(basArifeTarih);
-										arifeVardiyaDonemDB.setBitTarih(bitArifeTarih);
-										arifeVardiyaDonemDB.setTatilBasZaman(PdksUtil.convertToDateString(arifeBaslangicTarihi, "HH:mm:ss"));
-										if (sistemUser == null)
-											sistemUser = getSistemAdminUser(session);
-										arifeVardiyaDonemDB.setOlusturanUser(sistemUser);
-										arifeVardiyaDonemDB.setOlusturmaTarihi(new Date());
-										arifeVardiyaDonemDB.setVersion(0);
-										arifeVardiyaDonemDB.setDurum(Boolean.TRUE);
-										arifeVardiyaDonemDB.setArifeYarimGun(arifeYarimGun);
-										saveList.add(arifeVardiyaDonemDB);
-									}
+								
 								}
 
 							}
-
+							if (arifeVardiyaDonemDB == null && !idMap.containsKey(vardiyaTatil.getId())) {
+								basArifeTarih = PdksUtil.getDate(tarihi);
+								arifeVardiyaDonemDB = new ArifeVardiyaDonem();
+								arifeVardiyaDonemDB.setVardiya(vardiyaTatil);
+								arifeVardiyaDonemDB.setBasTarih(basArifeTarih);
+								arifeVardiyaDonemDB.setBitTarih(bitArifeTarih);
+								arifeVardiyaDonemDB.setTatilBasZaman(PdksUtil.convertToDateString(arifeBaslangicTarihi, "HH:mm:ss"));
+								if (sistemUser == null)
+									sistemUser = getSistemAdminUser(session);
+								arifeVardiyaDonemDB.setOlusturanUser(sistemUser);
+								arifeVardiyaDonemDB.setOlusturmaTarihi(new Date());
+								arifeVardiyaDonemDB.setVersion(0);
+								arifeVardiyaDonemDB.setDurum(Boolean.TRUE);
+								arifeVardiyaDonemDB.setArifeYarimGun(arifeYarimGun);
+								saveList.add(arifeVardiyaDonemDB);
+							}
 							if (arifeVardiyaHesapla) {
 								arifeCalismaSure = 0.0d;
 								if (arifeBaslangicTarihi.after(islemVardiya.getVardiyaBasZaman())) {
