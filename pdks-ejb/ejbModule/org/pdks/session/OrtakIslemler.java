@@ -2802,9 +2802,8 @@ public class OrtakIslemler implements Serializable {
 	 * @throws Exception
 	 */
 	private PdksSoapVeriAktar getServis(String servisURL) throws Exception {
-		PdksSoapVeriAktar service;
-		PdksSoapVeriAktarService jaxws = new PdksSoapVeriAktarService();
-		service = jaxws.getPdksSoapVeriAktarPort();
+ 		PdksSoapVeriAktarService jaxws = new PdksSoapVeriAktarService();
+		PdksSoapVeriAktar service = jaxws.getPdksSoapVeriAktarPort();
 		BindingProvider bindingProvider = (BindingProvider) service;
 		bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, servisURL + "/services/PdksSoapVeriAktarPort");
 		return service;
