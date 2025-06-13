@@ -138,6 +138,23 @@ public class PdksUtil implements Serializable {
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
 
 	/**
+	 * @param zaman
+	 * @return
+	 */
+	public static Date saniyeSifirla(Date zaman) {
+		Date islemZaman = null;
+		if (zaman != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(zaman);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			islemZaman = cal.getTime();
+		}
+
+		return islemZaman;
+	}
+
+	/**
 	 * @param vardiyaYemekSuresi
 	 * @param toplamYemekSuresi
 	 * @param sure
