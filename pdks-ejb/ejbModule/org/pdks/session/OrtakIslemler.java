@@ -2778,21 +2778,35 @@ public class OrtakIslemler implements Serializable {
 	/**
 	 * @return
 	 */
-	public PdksSoapVeriAktar getPdksSoapVeriAktar() {
+	public PdksSoapVeriAktar getPdksSoapVeriAktar() throws Exception {
 		PdksSoapVeriAktar service = null;
 		String servisAdres = null;
-		if (getParameterKeyHasStringValue("pdksWebServiceLocal"))
+		if (getParameterKeyHasStringValue("pdksWebServiceLocal")) {
 			servisAdres = getParameterKey("pdksWebServiceLocal");
-		else
+			try {
+				service = getServis(servisAdres);
+			} catch (Exception e) {
+				logger.error(e);
+			}
+		}
+		if (servisAdres == null) {
 			servisAdres = getParameterKey("pdksWebService");
-		if (!PdksUtil.hasStringValue(servisAdres))
-			servisAdres = "http://localhost:9080/PdksWebService";
-		if (!servisAdres.startsWith("http"))
-			servisAdres = "http://" + servisAdres;
+			service = getServis(servisAdres);
+		}
+		return service;
+	}
+
+	/**
+	 * @param servisURL
+	 * @return
+	 * @throws Exception
+	 */
+	private PdksSoapVeriAktar getServis(String servisURL) throws Exception {
+		PdksSoapVeriAktar service;
 		PdksSoapVeriAktarService jaxws = new PdksSoapVeriAktarService();
 		service = jaxws.getPdksSoapVeriAktarPort();
 		BindingProvider bindingProvider = (BindingProvider) service;
-		bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, servisAdres + "/services/PdksSoapVeriAktarPort");
+		bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, servisURL + "/services/PdksSoapVeriAktarPort");
 		return service;
 	}
 
@@ -5472,9 +5486,9 @@ public class OrtakIslemler implements Serializable {
 				// String pattern = PdksUtil.getDateTimeFormat();
 				// islemZaman = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(zaman, pattern), pattern);
 				islemZaman = PdksUtil.saniyeSifirla(zaman);
-//				if (islemZaman.getTime() != zaman.getTime()) {
-//					logger.debug("");
-//				}
+				// if (islemZaman.getTime() != zaman.getTime()) {
+				// logger.debug("");
+				// }
 			} else
 				islemZaman = zaman;
 		}
