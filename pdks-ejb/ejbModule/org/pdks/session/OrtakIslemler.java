@@ -5470,8 +5470,8 @@ public class OrtakIslemler implements Serializable {
 				islemZaman = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(zaman, pattern), pattern);
 			} else
 				islemZaman = zaman;
-			// if (islemZaman.getTime() != zaman.getTime())
-			// logger.debug("");
+//			if (islemZaman.getTime() != zaman.getTime())
+//				logger.debug("");
 
 		}
 		return islemZaman;
