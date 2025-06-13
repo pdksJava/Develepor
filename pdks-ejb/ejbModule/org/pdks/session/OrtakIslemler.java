@@ -5450,7 +5450,6 @@ public class OrtakIslemler implements Serializable {
 		}
 	}
 
-	 
 	/**
 	 * @param zaman
 	 * @param vg
@@ -5460,15 +5459,19 @@ public class OrtakIslemler implements Serializable {
 		Date islemZaman = null;
 		if (zaman != null) {
 			boolean sifirla = false;
-			if (VardiyaGun.getSaniyeYuvarlaZaman() != null)
-				sifirla = zaman.getTime() >= VardiyaGun.getSaniyeYuvarlaZaman().getTime();
+			Date tarih = null;
+			if (vg != null && vg.isCihazZamanSaniyeSifirla() && vg.getId() != null)
+				tarih = vg.getVardiyaDate();
+			if (tarih == null && VardiyaGun.getSaniyeYuvarlaZaman() != null)
+				tarih = VardiyaGun.getSaniyeYuvarlaZaman();
+			sifirla = tarih != null && zaman.getTime() >= tarih.getTime();
 			if (sifirla) {
 				String pattern = PdksUtil.getDateTimeFormat();
 				islemZaman = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(zaman, pattern), pattern);
 			} else
 				islemZaman = zaman;
-//			if (islemZaman.getTime() != zaman.getTime())
-//				logger.debug("");
+			// if (islemZaman.getTime() != zaman.getTime())
+			// logger.debug("");
 
 		}
 		return islemZaman;
@@ -14348,6 +14351,7 @@ public class OrtakIslemler implements Serializable {
 			TreeMap<String, BigDecimal> sureMap = planKatSayiOku && allMap.containsKey(KatSayiTipi.HAREKET_BEKLEME_SURESI) ? allMap.get(KatSayiTipi.HAREKET_BEKLEME_SURESI) : null;
 			TreeMap<String, BigDecimal> sureSuaMap = suaKatSayiOku && allMap.containsKey(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI) ? allMap.get(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI) : null;
 			TreeMap<String, BigDecimal> yuvarlamaMap = yuvarlamaKatSayiOku && allMap.containsKey(KatSayiTipi.YUVARLAMA_TIPI) ? allMap.get(KatSayiTipi.YUVARLAMA_TIPI) : null;
+			TreeMap<String, BigDecimal> cihazZamanSaniyeSifirlaMap = allMap.containsKey(KatSayiTipi.CIHAZ_ZAMAN_SANIYE_SIFIRLA) ? allMap.get(KatSayiTipi.CIHAZ_ZAMAN_SANIYE_SIFIRLA) : null;
 			TreeMap<String, BigDecimal> fazlaMesaiYuvarlamaMap = allMap.containsKey(KatSayiTipi.FAZLA_MESA_YUVARLAMA) ? allMap.get(KatSayiTipi.FAZLA_MESA_YUVARLAMA) : null;
 			TreeMap<String, BigDecimal> bayramAyirMap = allMap.containsKey(KatSayiTipi.BAYRAM_AYIR) ? allMap.get(KatSayiTipi.BAYRAM_AYIR) : null;
 			TreeMap<String, BigDecimal> haftaTatilFazlaMesaiMap = haftaTatilFazlaMesaiKatSayiOku && allMap.containsKey(KatSayiTipi.HT_FAZLA_MESAI_TIPI) ? allMap.get(KatSayiTipi.HT_FAZLA_MESAI_TIPI) : null;
@@ -14369,6 +14373,7 @@ public class OrtakIslemler implements Serializable {
 			boolean erkenCikisKontrolEt = erkenCikisMap != null && !erkenCikisMap.isEmpty();
 			boolean gecCikisKontrolEt = gecCikisMap != null && !gecCikisMap.isEmpty();
 			boolean gecGirisKontrolEt = gecGirisMap != null && !gecGirisMap.isEmpty();
+			boolean cihazZamanSaniyeSifirlaKontrolEt = cihazZamanSaniyeSifirlaMap != null && !cihazZamanSaniyeSifirlaMap.isEmpty();
 			boolean offFazlaMesaiKontrolEt = offFazlaMesaiMap != null && !offFazlaMesaiMap.isEmpty();
 			boolean haftaTatilFazlaMesaiKontrolEt = haftaTatilFazlaMesaiMap != null && !haftaTatilFazlaMesaiMap.isEmpty();
 			boolean fmtDurumKontrolEt = fmtDurumMap != null && !fmtDurumMap.isEmpty();
@@ -14485,10 +14490,23 @@ public class OrtakIslemler implements Serializable {
 						vg.setIzinHaftaTatilDurum(Boolean.TRUE);
 					if (fmtDurumKontrolEt && fmtDurumMap.containsKey(str)) {
 						BigDecimal deger = fmtDurumMap.get(str);
-						if (deger != null)
+						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.FMT_DURUM.value(), deger);
+						}
 					}
-
+					vg.setCihazZamanSaniyeSifirla(Boolean.FALSE);
+					if (cihazZamanSaniyeSifirlaKontrolEt && cihazZamanSaniyeSifirlaMap.containsKey(str)) {
+						BigDecimal deger = cihazZamanSaniyeSifirlaMap.get(str);
+						if (deger != null) {
+							vg.setCihazZamanSaniyeSifirla(deger.intValue() == 1);
+							katSayiMap.put(KatSayiTipi.CIHAZ_ZAMAN_SANIYE_SIFIRLA.value(), deger);
+						}
+					}
+					if (erkenGirisKontrolEt && erkenGirisMap.containsKey(str)) {
+						BigDecimal deger = erkenGirisMap.get(str);
+						if (deger != null)
+							katSayiMap.put(KatSayiTipi.ERKEN_GIRIS_TIPI.value(), deger);
+					}
 					if (vardiya.isCalisma()) {
 						if (erkenGirisKontrolEt && erkenGirisMap.containsKey(str)) {
 							BigDecimal deger = erkenGirisMap.get(str);
