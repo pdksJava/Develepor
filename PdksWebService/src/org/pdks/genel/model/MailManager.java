@@ -230,6 +230,27 @@ public class MailManager implements Serializable {
 			}
 		}
 	}
+	/**
+	 * @param mailObject
+	 * @param ccAdresName
+	 * @param mailMap
+	 */
+	public static void addMailAdresCC(MailObject mailObject, String ccAdresName, HashMap<String, Object> mailMap) {
+		if (mailObject != null && mailMap.containsKey(ccAdresName)) {
+			String ccAdres = (String) mailMap.get(ccAdresName);
+			if (ccAdres.indexOf("@") > 1) {
+				List<String> list = PdksUtil.getListByString(ccAdres, null);
+				for (String email : list) {
+					if (email.indexOf("@") > 1 && PdksUtil.isValidEmail(email)) {
+						MailPersonel mailPersonel = new MailPersonel();
+						mailPersonel.setePosta(email);
+						mailObject.getCcList().add(mailPersonel);
+					}
+
+				}
+			}
+		}
+	}
 
 	/**
 	 * @param parameterMap
@@ -382,9 +403,14 @@ public class MailManager implements Serializable {
 				mailMap.put("cc", mailObject.getCcList());
 			}
 			if (PdksUtil.isSistemDestekVar()) {
+				addMailAdresCC(mailObject, "ccAdres", parameterMap);
+				addMailAdresCC(mailObject, "ccEntegrasyonAdres", parameterMap);
+			}
+			if (PdksUtil.isSistemDestekVar()) {
 				addMailAdresBCC(mailObject, "bccAdres", parameterMap);
 				addMailAdresBCC(mailObject, "bccEntegrasyonAdres", parameterMap);
 			}
+			
 			mailMap.put("bcc", mailObject.getBccList());
 			for (String key : mailMap.keySet()) {
 				List<MailPersonel> mailList = mailMap.get(key);
