@@ -2780,7 +2780,11 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public PdksSoapVeriAktar getPdksSoapVeriAktar() {
 		PdksSoapVeriAktar service = null;
-		String servisAdres = getParameterKey("pdksWebService");
+		String servisAdres = null;
+		if (getParameterKeyHasStringValue("pdksWebServiceLocal"))
+			servisAdres = getParameterKey("pdksWebServiceLocal");
+		else
+			servisAdres = getParameterKey("pdksWebService");
 		if (!PdksUtil.hasStringValue(servisAdres))
 			servisAdres = "http://localhost:9080/PdksWebService";
 		if (!servisAdres.startsWith("http"))
