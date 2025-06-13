@@ -5458,23 +5458,21 @@ public class OrtakIslemler implements Serializable {
 	public Date getSaniyeSifirla(Date zaman, VardiyaGun vg) {
 		Date islemZaman = null;
 		if (zaman != null) {
-			boolean sifirla = false;
+			boolean sifirla = vg != null && vg.getId() != null && vg.isCihazZamanSaniyeSifirla();
 			Date tarih = null;
-			if (vg != null && vg.getId() != null)
-				sifirla = vg.isCihazZamanSaniyeSifirla();
-			if (sifirla == false) {
-				if (VardiyaGun.getSaniyeYuvarlaZaman() != null)
-					tarih = VardiyaGun.getSaniyeYuvarlaZaman();
+			if (sifirla == false && VardiyaGun.getSaniyeYuvarlaZaman() != null) {
+				tarih = VardiyaGun.getSaniyeYuvarlaZaman();
 				sifirla = tarih != null && zaman.getTime() >= tarih.getTime();
 			}
 			if (sifirla) {
-				String pattern = PdksUtil.getDateTimeFormat();
-				islemZaman = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(zaman, pattern), pattern);
+				// String pattern = PdksUtil.getDateTimeFormat();
+				// islemZaman = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(zaman, pattern), pattern);
+				islemZaman = PdksUtil.saniyeSifirla(zaman);
+//				if (islemZaman.getTime() != zaman.getTime()) {
+//					logger.debug("");
+//				}
 			} else
 				islemZaman = zaman;
-			// if (islemZaman.getTime() != zaman.getTime())
-			// logger.debug("");
-
 		}
 		return islemZaman;
 	}
