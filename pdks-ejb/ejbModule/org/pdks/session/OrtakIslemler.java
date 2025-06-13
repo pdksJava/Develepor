@@ -5460,18 +5460,20 @@ public class OrtakIslemler implements Serializable {
 		if (zaman != null) {
 			boolean sifirla = false;
 			Date tarih = null;
-			if (vg != null && vg.isCihazZamanSaniyeSifirla() && vg.getId() != null)
-				tarih = vg.getVardiyaDate();
-			if (tarih == null && VardiyaGun.getSaniyeYuvarlaZaman() != null)
-				tarih = VardiyaGun.getSaniyeYuvarlaZaman();
-			sifirla = tarih != null && zaman.getTime() >= tarih.getTime();
+			if (vg != null && vg.getId() != null)
+				sifirla = vg.isCihazZamanSaniyeSifirla();
+			if (sifirla == false) {
+				if (VardiyaGun.getSaniyeYuvarlaZaman() != null)
+					tarih = VardiyaGun.getSaniyeYuvarlaZaman();
+				sifirla = tarih != null && zaman.getTime() >= tarih.getTime();
+			}
 			if (sifirla) {
 				String pattern = PdksUtil.getDateTimeFormat();
 				islemZaman = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(zaman, pattern), pattern);
 			} else
 				islemZaman = zaman;
-//			if (islemZaman.getTime() != zaman.getTime())
-//				logger.debug("");
+			// if (islemZaman.getTime() != zaman.getTime())
+			// logger.debug("");
 
 		}
 		return islemZaman;
@@ -14498,7 +14500,7 @@ public class OrtakIslemler implements Serializable {
 					if (cihazZamanSaniyeSifirlaKontrolEt && cihazZamanSaniyeSifirlaMap.containsKey(str)) {
 						BigDecimal deger = cihazZamanSaniyeSifirlaMap.get(str);
 						if (deger != null) {
-							vg.setCihazZamanSaniyeSifirla(deger.intValue() == 1);
+							vg.setCihazZamanSaniyeSifirla(Long.parseLong(str) >= deger.longValue());
 							katSayiMap.put(KatSayiTipi.CIHAZ_ZAMAN_SANIYE_SIFIRLA.value(), deger);
 						}
 					}
