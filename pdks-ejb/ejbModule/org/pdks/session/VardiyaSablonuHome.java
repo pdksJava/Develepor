@@ -50,8 +50,8 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 
 	public static String sayfaURL = "vardiyaSablonTanimlama";
 	private List<VardiyaSablonu> vardiyaSablonList = new ArrayList<VardiyaSablonu>();
-	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), vardiyaCalisanList = new ArrayList<Vardiya>(), isKurVardiyaList = new ArrayList<Vardiya>();
-	private boolean vardiyaVar = Boolean.FALSE, isKur = Boolean.FALSE, isKurGoster = Boolean.FALSE;
+	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), vardiyaCalisanList = new ArrayList<Vardiya>(), arifeVardiyaList = new ArrayList<Vardiya>();
+	private boolean vardiyaVar = Boolean.FALSE;
 	private Vardiya lastVardiya;
 	private List<Sirket> sirketList, pdksSirketList;
 	private List<Departman> departmanList = new ArrayList<Departman>();
@@ -192,7 +192,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 				}
 			}
 			vardiyaSablonList.clear();
-			isKurGoster = Boolean.FALSE;
+
 			if (seciliSirket != null) {
 				Departman seciliDepartman = seciliSirket.getDepartman();
 				for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
@@ -271,31 +271,27 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 
 			if (pdksList.size() > 1)
 				pdksList = PdksUtil.sortListByAlanAdi(pdksList, "vardiyaNumeric", false);
-			if (isKurVardiyaList == null)
-				isKurVardiyaList = new ArrayList<Vardiya>();
+			if (arifeVardiyaList == null)
+				arifeVardiyaList = new ArrayList<Vardiya>();
 			else
-				isKurVardiyaList.clear();
+				arifeVardiyaList.clear();
 			if (vardiyaCalisanList == null)
 				vardiyaCalisanList = new ArrayList<Vardiya>();
 			else
 				vardiyaCalisanList.clear();
 
-			isKur = Boolean.FALSE;
 			for (Iterator iterator = pdksList.iterator(); iterator.hasNext();) {
 				Vardiya pdksVardiya = (Vardiya) iterator.next();
 				if (pdksVardiyaSablonu.getDepartman() != null && pdksVardiya.getDepartman() != null && !pdksVardiya.getDepartman().getId().equals(pdksVardiyaSablonu.getDepartman().getId())) {
 					iterator.remove();
 					continue;
 				}
-				if (pdksVardiya.isIsKurMu()) {
-					isKur = Boolean.TRUE;
-					isKurVardiyaList.add(pdksVardiya);
-					iterator.remove();
-				} else if (pdksVardiya.isCalisma()) {
+				if (pdksVardiya.isCalisma()) {
 					if (pdksVardiya.getCalismaSaati() != pdksVardiyaSablonu.getToplamSaat() || pdksVardiya.getCalismaGun() != pdksVardiyaSablonu.getCalismaGunSayisi())
 						iterator.remove();
-				} else
-					isKurVardiyaList.add(pdksVardiya);
+					else if (pdksVardiya.getDurum() && pdksVardiya.getNetCalismaSuresi() <= 4.5d)
+						arifeVardiyaList.add(pdksVardiya);
+				}
 
 			}
 			if (!pdksList.isEmpty())
@@ -379,30 +375,6 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 		this.modelList = modelList;
 	}
 
-	public List<Vardiya> getIsKurVardiyaList() {
-		return isKurVardiyaList;
-	}
-
-	public void setIsKurVardiyaList(List<Vardiya> isKurVardiyaList) {
-		this.isKurVardiyaList = isKurVardiyaList;
-	}
-
-	public boolean isKur() {
-		return isKur;
-	}
-
-	public void setKur(boolean isKur) {
-		this.isKur = isKur;
-	}
-
-	public boolean isKurGoster() {
-		return isKurGoster;
-	}
-
-	public void setKurGoster(boolean isKurGoster) {
-		this.isKurGoster = isKurGoster;
-	}
-
 	public List<Vardiya> getVardiyaCalisanList() {
 		return vardiyaCalisanList;
 	}
@@ -449,5 +421,13 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 
 	public void setSeciliSirket(Sirket seciliSirket) {
 		this.seciliSirket = seciliSirket;
+	}
+
+	public List<Vardiya> getArifeVardiyaList() {
+		return arifeVardiyaList;
+	}
+
+	public void setArifeVardiyaList(List<Vardiya> arifeVardiyaList) {
+		this.arifeVardiyaList = arifeVardiyaList;
 	}
 }

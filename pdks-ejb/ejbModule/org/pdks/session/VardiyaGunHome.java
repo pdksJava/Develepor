@@ -7182,13 +7182,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 										break;
 									}
 									pdksVardiyaGun.setOlusturanUser(loginUser);
+									CalismaModeli cm = calismaModeliAy != null ? calismaModeliAy.getCalismaModeli() : pdksVardiyaGun.getPdksPersonel().getCalismaModeli();
 									if (yeniKayit && pdksVardiyaGun.getTatil() != null && pdksVardiyaGun.getVardiya().isCalisma()) {
 										Tatil tatil = pdksVardiyaGun.getTatil();
+										Vardiya vardiyaArife = sablonu.getVardiyaArife();
 										if (!tatil.isYarimGunMu())
 											pdksVardiyaGun.setVardiya(offVardiya);
-										else if (sablonu.getVardiyaArife() != null) {
-											if (sablonu.getVardiyaArife().getNetCalismaSuresi() < pdksVardiyaGun.getVardiya().getNetCalismaSuresi())
-												pdksVardiyaGun.setVardiya(sablonu.getVardiyaArife());
+										else if (vardiyaArife != null && cm != null) {
+											if (vardiyaArife.getNetCalismaSuresi() < pdksVardiyaGun.getVardiya().getNetCalismaSuresi() && cm.isIlkPlanOnaylidir())
+												pdksVardiyaGun.setVardiya(vardiyaArife);
 										}
 
 									}
