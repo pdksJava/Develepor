@@ -116,6 +116,15 @@
 									</s:decorate>
 
 								</c:forEach>
+
+								<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
+									<ui:define name="label">Tablo Göster</ui:define>
+									<h:selectBooleanCheckbox value="#{dinamikRaporHome.goster}">
+										<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" reRender="raporTable" />
+									</h:selectBooleanCheckbox>
+								</s:decorate>
+
+
 							</h:panelGrid>
 
 							<a4j:outputPanel id="raporTable">
@@ -125,17 +134,40 @@
 									<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{dinamikRaporHome.excelDinamikRaporList()}" target="blank"
 										rendered="#{not empty dinamikRaporHome.dinamikRaporDataList}" />
 
-									<rich:dataTable rowClasses="acik,koyu" value="#{dinamikRaporHome.dinamikRaporDataList}" style="width: 98%;" var="dinamikVeri" rows="50"
-										rowKeyVar="row">
-										<f:facet name="header">
-											<h:outputText value="#{dinamikRaporHome.seciliPdksDinamikRapor.aciklama}" rendered="#{not empty dinamikRaporHome.dinamikRaporDataList}" />
-										</f:facet>
-										<c:forEach items="#{dinamikRaporHome.dinamikRaporAlanList}" var="dinamikAlan">
+									<ui:fragment rendered="#{dinamikRaporHome.goster}">
+										<rich:dataTable rowClasses="acik,koyu" value="#{dinamikRaporHome.dinamikRaporDataList}" style="width: 98%;" var="dinamikVeri" rows="50"
+											rowKeyVar="row">
+											<f:facet name="header">
+												<h:outputText value="#{dinamikRaporHome.seciliPdksDinamikRapor.aciklama}" rendered="#{not empty dinamikRaporHome.dinamikRaporDataList}" />
+											</f:facet>
+											<c:forEach items="#{dinamikRaporHome.dinamikRaporAlanList}" var="dinamikAlan">
 
-											<c:if test="#{dinamikRaporHome.getFilterAlan(dinamikAlan)}">
+												<c:if test="#{dinamikRaporHome.getFilterAlan(dinamikAlan)}">
+													<rich:column style="text-align :#{dinamikAlan.pdksDinamikRaporAlanHizala}"
+														filterBy="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri.value,dinamikAlan)}" filterEvent="onkeyup"
+														rendered="#{authenticatedUser.admin or dinamikAlan.goster}">
+														<f:facet name="header">
+															<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(dinamikAlan.aciklama)}" />
+														</f:facet>
+														<ui:fragment rendered="#{dinamikRaporHome.isClob(dinamikVeri.value,dinamikAlan.sira)==false}">
+															<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri.value,dinamikAlan)}" />
+														</ui:fragment>
+														<ui:fragment rendered="#{dinamikRaporHome.isClob(dinamikVeri.value,dinamikAlan.sira)}">
+															<DIV id="denkf#{dinamikVeri.id}">
+																<h:graphicImage value="/img/msginfo.png" style="border:0" height="20" width="20" />
+																<rich:toolTip for="denkf#{dinamikVeri.id}">
+																	<DIV id="dataf#{dinamikVeri.id}" style="text-align: left;">
+																		<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri.value,dinamikAlan)}" />
+																	</DIV>
+																</rich:toolTip>
+															</DIV>
+
+														</ui:fragment>
+													</rich:column>
+												</c:if>
+
 												<rich:column style="text-align :#{dinamikAlan.pdksDinamikRaporAlanHizala}"
-													filterBy="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri.value,dinamikAlan)}" filterEvent="onkeyup"
-													rendered="#{authenticatedUser.admin or dinamikAlan.goster}">
+													rendered="#{dinamikRaporHome.getFilterAlan(dinamikAlan)==false and (authenticatedUser.admin or dinamikAlan.goster)}">
 													<f:facet name="header">
 														<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(dinamikAlan.aciklama)}" />
 													</f:facet>
@@ -143,47 +175,26 @@
 														<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri.value,dinamikAlan)}" />
 													</ui:fragment>
 													<ui:fragment rendered="#{dinamikRaporHome.isClob(dinamikVeri.value,dinamikAlan.sira)}">
-														<DIV id="denkf#{dinamikVeri.id}">
+														<DIV id="denk#{dinamikVeri.id}">
 															<h:graphicImage value="/img/msginfo.png" style="border:0" height="20" width="20" />
-															<rich:toolTip for="denkf#{dinamikVeri.id}">
-																<DIV id="dataf#{dinamikVeri.id}" style="text-align: left;">
+															<rich:toolTip for="denk#{dinamikVeri.id}">
+																<DIV id="data#{dinamikVeri.id}" style="text-align: left;">
 																	<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri.value,dinamikAlan)}" />
 																</DIV>
 															</rich:toolTip>
 														</DIV>
 
 													</ui:fragment>
+
+
 												</rich:column>
-											</c:if>
 
-											<rich:column style="text-align :#{dinamikAlan.pdksDinamikRaporAlanHizala}"
-												rendered="#{dinamikRaporHome.getFilterAlan(dinamikAlan)==false and (authenticatedUser.admin or dinamikAlan.goster)}">
-												<f:facet name="header">
-													<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(dinamikAlan.aciklama)}" />
-												</f:facet>
-												<ui:fragment rendered="#{dinamikRaporHome.isClob(dinamikVeri.value,dinamikAlan.sira)==false}">
-													<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri.value,dinamikAlan)}" />
-												</ui:fragment>
-												<ui:fragment rendered="#{dinamikRaporHome.isClob(dinamikVeri.value,dinamikAlan.sira)}">
-													<DIV id="denk#{dinamikVeri.id}">
-														<h:graphicImage value="/img/msginfo.png" style="border:0" height="20" width="20" />
-														<rich:toolTip for="denk#{dinamikVeri.id}">
-															<DIV id="data#{dinamikVeri.id}" style="text-align: left;">
-																<h:outputText value="#{dinamikRaporHome.getDinamikRaporAlan(dinamikVeri.value,dinamikAlan)}" />
-															</DIV>
-														</rich:toolTip>
-													</DIV>
-
-												</ui:fragment>
-
-
-											</rich:column>
-
-										</c:forEach>
-										<f:facet name="footer">
-											<rich:datascroller renderIfSinglePage="false" maxPages="5" />
-										</f:facet>
-									</rich:dataTable>
+											</c:forEach>
+											<f:facet name="footer">
+												<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+											</f:facet>
+										</rich:dataTable>
+									</ui:fragment>
 									<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" action="#{dinamikRaporHome.excelDinamikRaporList()}" target="blank"
 										rendered="#{not empty dinamikRaporHome.dinamikRaporDataList}" />
 

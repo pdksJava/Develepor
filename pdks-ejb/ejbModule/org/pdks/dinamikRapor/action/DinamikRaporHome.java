@@ -87,6 +87,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	private List<Liste> dinamikRaporDataList;
 	private PdksDinamikRaporParametre sirketParametre, tesisParametre, basTarihParametre, bitTarihParametre, bolumParametre, yilParametre, ayParametre;
 	private DenklestirmeAy dm;
+	private boolean goster = true;
 	private int maxYil;
 
 	private Session session;
@@ -159,6 +160,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			else if (rp.isTarih())
 				lastMap.put(adi, PdksUtil.convertToDateString(rp.getTarihDeger(), "yyyyMMdd"));
 		}
+		lastMap.put("goster", String.valueOf(goster));
 		dataMap.put("data_" + seciliPdksDinamikRapor.getId(), lastMap);
 		dataMap.put("sayfaURL", sayfaURL);
 		try {
@@ -311,6 +313,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			for (Object[] objects : list)
 				dinamikRaporDataList.add(new Liste(++sira, objects));
 			fillDinamikRaporAlanList();
+			if (goster == false)
+				PdksUtil.addMessageAvailableInfo(list.size() + " adet bilgi okundu.");
 		}
 		list = null;
 		return "";
@@ -778,6 +782,15 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		Calendar cal = Calendar.getInstance();
 		maxYil = cal.get(Calendar.YEAR) + 1;
 		dm = null;
+		if (lastMap.containsKey("goster")) {
+			String str = (String) lastMap.get("goster");
+			try {
+				goster = new Boolean(str);
+			} catch (Exception e) {
+				goster = true;
+			}
+		} else
+			goster = true;
 		for (PdksDinamikRaporParametre pr : dinamikRaporParametreList) {
 			ENumBaslik baslik = ENumBaslik.fromValue(pr.getAciklama());
 			Object paramValue = lastMap.containsKey(pr.getAciklama()) ? lastMap.get(pr.getAciklama()) : null;
@@ -1046,6 +1059,14 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 
 	public void setDm(DenklestirmeAy dm) {
 		this.dm = dm;
+	}
+
+	public boolean isGoster() {
+		return goster;
+	}
+
+	public void setGoster(boolean goster) {
+		this.goster = goster;
 	}
 
 }
