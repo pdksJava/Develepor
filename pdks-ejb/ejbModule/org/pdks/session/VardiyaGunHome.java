@@ -2884,7 +2884,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		personelGebeDurum = null;
 		personelSutIzniDurum = null;
 		Personel personel = aylikPuantaj.getPdksPersonel();
-//		setPuantajVardiyaGunler(aylikPuantaj);
+		// setPuantajVardiyaGunler(aylikPuantaj);
 		if (tipi.equalsIgnoreCase("P")) {
 			Sirket sirket = personel.getSirket();
 			HashMap fields = new HashMap();
@@ -7186,6 +7186,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 										Tatil tatil = pdksVardiyaGun.getTatil();
 										if (!tatil.isYarimGunMu())
 											pdksVardiyaGun.setVardiya(offVardiya);
+										else if (sablonu.getVardiyaArife() != null) {
+											if (sablonu.getVardiyaArife().getNetCalismaSuresi() < pdksVardiyaGun.getVardiya().getNetCalismaSuresi())
+												pdksVardiyaGun.setVardiya(sablonu.getVardiyaArife());
+										}
+
 									}
 
 									try {

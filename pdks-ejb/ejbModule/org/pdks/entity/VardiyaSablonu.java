@@ -33,7 +33,7 @@ public class VardiyaSablonu extends BaseObject {
 
 	private String adi;
 	private Sirket sirket;
-	private Vardiya vardiya1, vardiya2, vardiya3, vardiya4, vardiya5, vardiya6, vardiya7;
+	private Vardiya vardiya1, vardiya2, vardiya3, vardiya4, vardiya5, vardiya6, vardiya7, vardiyaArife;
 	private CalismaModeli calismaModeli;
 	private double toplamSaat = 0;
 	private int calismaGunSayisi = 0;
@@ -175,6 +175,17 @@ public class VardiyaSablonu extends BaseObject {
 
 	public void setVardiya7(Vardiya vardiya7) {
 		this.vardiya7 = vardiya7;
+	}
+
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = "VARDIYA_ARIFE_ID")
+	@Fetch(FetchMode.JOIN)
+	public Vardiya getVardiyaArife() {
+		return vardiyaArife;
+	}
+
+	public void setVardiyaArife(Vardiya vardiyaArife) {
+		this.vardiyaArife = vardiyaArife;
 	}
 
 	@Column(name = COLUMN_NAME_BEYAZ_YAKA)
@@ -450,7 +461,7 @@ public class VardiyaSablonu extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
 
 	}
+
 }
