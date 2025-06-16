@@ -14051,8 +14051,7 @@ public class OrtakIslemler implements Serializable {
 						islemVardiya.setVardiyaBitZaman(vardiyaBitZaman);
 
 				}
-				if (key.endsWith("0430") || key.endsWith("0501"))
-					logger.debug(key);
+
 				if (vardiyaSonraki != null) {
 
 					if (vardiyaSonraki.isCalisma() == false && offHtGeceGunSonu && islemVardiya.getBasDonem() >= islemVardiya.getBitDonem()) {
@@ -14061,7 +14060,13 @@ public class OrtakIslemler implements Serializable {
 							basDakika = islemVardiya.getCikisGecikmeToleransDakika() + 5;
 						Date tarih = addTarih(cal, islemVardiya.getVardiyaTelorans2BitZaman(), Calendar.MINUTE, basDakika);
 						if (islemVardiya.isCalisma() == false) {
-							tarih = addTarih(cal, PdksUtil.tariheGunEkleCikar(islemVardiya.isCalisma() ? sonrakiVardiyaGun.getVardiyaDate() : vardiyaGun.getVardiyaDate(), 1), Calendar.MINUTE, -basDakika);
+							if (key.endsWith("0608") || key.endsWith("0607"))
+								logger.debug(key);
+							if (vardiyaSonraki.isCalisma() == false)
+								tarih = sonrakiVardiyaGun.getVardiyaDate();
+							else
+								tarih = addTarih(cal, PdksUtil.tariheGunEkleCikar(islemVardiya.isCalisma() ? sonrakiVardiyaGun.getVardiyaDate() : vardiyaGun.getVardiyaDate(), 1), Calendar.MINUTE, -basDakika);
+
 							if (islemVardiya.isCalisma() && islemVardiya.getBitDonem() <= basDakika)
 								tarih = addTarih(cal, sonrakiVardiyaGun.getVardiyaDate(), Calendar.MINUTE, basDakika);
 						}
