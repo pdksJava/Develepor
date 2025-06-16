@@ -2803,7 +2803,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	private PdksSoapVeriAktar getServis(String servisURL) throws Exception {
 		PdksSoapVeriAktar service = null;
-		String adres = PdksUtil.replaceAllManuel(servisURL + "/services/PdksSoapVeriAktarPort", "//", "/");
+		String adres = servisURL + "/services/PdksSoapVeriAktarPort";
 		try {
 			PdksSoapVeriAktarService jaxws = new PdksSoapVeriAktarService();
 			service = jaxws.getPdksSoapVeriAktarPort();
