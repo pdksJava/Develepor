@@ -994,7 +994,8 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		try {
 			izinERPReturnList = null;
 			PdksSoapVeriAktar service = ortakIslemler.getPdksSoapVeriAktar();
-			izinERPReturnList = service.saveIzinler(izinERPList);
+			if (service != null)
+				izinERPReturnList = service.saveIzinler(izinERPList);
 			if (izinERPReturnList != null) {
 				izinERPList.clear();
 				for (Iterator iterator = izinERPReturnList.iterator(); iterator.hasNext();) {

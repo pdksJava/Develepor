@@ -2786,10 +2786,10 @@ public class OrtakIslemler implements Serializable {
 			try {
 				service = getServis(servisAdres);
 			} catch (Exception e) {
-				logger.error(e);
+
 			}
 		}
-		if (servisAdres == null) {
+		if (service == null) {
 			servisAdres = getParameterKey("pdksWebService");
 			service = getServis(servisAdres);
 		}
@@ -2802,11 +2802,18 @@ public class OrtakIslemler implements Serializable {
 	 * @throws Exception
 	 */
 	private PdksSoapVeriAktar getServis(String servisURL) throws Exception {
-		PdksSoapVeriAktarService jaxws = new PdksSoapVeriAktarService();
-		PdksSoapVeriAktar service = jaxws.getPdksSoapVeriAktarPort();
-		BindingProvider bindingProvider = (BindingProvider) service;
+		PdksSoapVeriAktar service = null;
 		String adres = PdksUtil.replaceAllManuel(servisURL + "/services/PdksSoapVeriAktarPort", "//", "/");
-		bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, adres);
+		try {
+			PdksSoapVeriAktarService jaxws = new PdksSoapVeriAktarService();
+			service = jaxws.getPdksSoapVeriAktarPort();
+			BindingProvider bindingProvider = (BindingProvider) service;
+			bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, adres);
+		} catch (Exception e) {
+			logger.error(adres + "\n" + e);
+			service = null;
+		}
+
 		return service;
 	}
 
@@ -6510,7 +6517,8 @@ public class OrtakIslemler implements Serializable {
 				if (!personelList.isEmpty()) {
 					try {
 						PdksSoapVeriAktar service = getPdksSoapVeriAktar();
-						personelERPReturnList = service.savePersoneller(personelERPList);
+						if (service != null)
+							personelERPReturnList = service.savePersoneller(personelERPList);
 						Date changeDate = null;
 						boolean update = false;
 						if (personelERPReturnList != null) {

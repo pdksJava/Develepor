@@ -3667,7 +3667,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		try {
 			personelERPReturnList = null;
 			PdksSoapVeriAktar service = ortakIslemler.getPdksSoapVeriAktar();
-			personelERPReturnList = service.savePersoneller(personelERPList);
+			if (service != null)
+				personelERPReturnList = service.savePersoneller(personelERPList);
 			if (personelERPReturnList != null) {
 				List<PersonelERP> personelERPHatasizList = new ArrayList<PersonelERP>();
 				for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {

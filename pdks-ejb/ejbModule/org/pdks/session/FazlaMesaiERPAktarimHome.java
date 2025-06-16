@@ -510,9 +510,10 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				erpMesaiList.add(denklestirme.getId());
 		}
 		if (!erpMesaiList.isEmpty()) {
-			
-			try {PdksSoapVeriAktar service = ortakIslemler.getPdksSoapVeriAktar();
-				GetFazlaMesaiListResponse.Return rtn = service.getFazlaMesaiList(erpMesaiList);
+
+			try {
+				PdksSoapVeriAktar service = ortakIslemler.getPdksSoapVeriAktar();
+				GetFazlaMesaiListResponse.Return rtn = service != null ? service.getFazlaMesaiList(erpMesaiList) : null;
 				if (rtn != null && rtn.getEntry().size() == 3) {
 					TreeMap<String, Object> map = new TreeMap<String, Object>();
 					List<GetFazlaMesaiListResponse.Return.Entry> list = rtn.getEntry();

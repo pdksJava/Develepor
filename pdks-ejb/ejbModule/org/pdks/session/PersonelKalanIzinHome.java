@@ -1056,11 +1056,11 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 			}
 		}
 		izinMap = null;
-//		for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
-//			TempIzin kalanIzinler = (TempIzin) iterator.next();
-//			if (kalanIzinler.getToplamBakiyeIzin() == 0.0d && kalanIzinler.getToplamKalanIzin() == 0.0d)
-//				iterator.remove();
-//		}
+		// for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
+		// TempIzin kalanIzinler = (TempIzin) iterator.next();
+		// if (kalanIzinler.getToplamBakiyeIzin() == 0.0d && kalanIzinler.getToplamKalanIzin() == 0.0d)
+		// iterator.remove();
+		// }
 		setPdksPersonelList(izinList);
 	}
 
@@ -2030,7 +2030,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 				if (!izinERPList.isEmpty()) {
 					try {
 						PdksSoapVeriAktar service = ortakIslemler.getPdksSoapVeriAktar();
-						List<IzinERP> izinERPReturnList = service.saveIzinler(izinERPList);
+						List<IzinERP> izinERPReturnList = service != null ? service.saveIzinler(izinERPList) : null;
 						if (izinERPReturnList != null) {
 
 						}
