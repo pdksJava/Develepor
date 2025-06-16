@@ -26,12 +26,13 @@ public class PdksAgent extends BasePDKSObject implements Serializable, Cloneable
 	public static final String COLUMN_NAME_GUN = "GUN";
 	public static final String COLUMN_NAME_HAFTA = "HAFTA";
 	public static final String COLUMN_NAME_DURUM = "DURUM";
+	public static final String COLUMN_NAME_UPDATE_SP = "UPDATE_SP";
 
 	private String storeProcedureAdi, aciklama;
 
 	private String dakikaBilgi, saatBilgi, gunBilgi, haftaBilgi;
 
-	private Boolean durum = Boolean.TRUE;
+	private Boolean durum = Boolean.TRUE, updateSP = Boolean.TRUE;
 
 	@Column(name = COLUMN_NAME_SP)
 	public String getStoreProcedureAdi() {
@@ -85,6 +86,15 @@ public class PdksAgent extends BasePDKSObject implements Serializable, Cloneable
 
 	public void setAciklama(String aciklama) {
 		this.aciklama = aciklama;
+	}
+
+	@Column(name = COLUMN_NAME_UPDATE_SP)
+	public Boolean getUpdateSP() {
+		return updateSP;
+	}
+
+	public void setUpdateSP(Boolean updateSP) {
+		this.updateSP = updateSP;
 	}
 
 	@Column(name = COLUMN_NAME_DURUM)

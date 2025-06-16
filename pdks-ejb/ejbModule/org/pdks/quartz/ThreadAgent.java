@@ -12,8 +12,6 @@ import org.pdks.session.PdksUtil;
 
 public class ThreadAgent extends Thread implements Serializable {
 
-	 
-
 	/**
 	 * 
 	 */
@@ -45,7 +43,10 @@ public class ThreadAgent extends Thread implements Serializable {
 					try {
 						veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 						StringBuffer sb = new StringBuffer(agent.getStoreProcedureAdi());
-						pdksEntityController.execSP(veriMap, sb);
+						if (agent.getUpdateSP())
+							pdksEntityController.execSP(veriMap, sb);
+						else
+							pdksEntityController.execSPList(veriMap, sb, null);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

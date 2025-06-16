@@ -102,6 +102,12 @@
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
+										<h:outputText value="Update İşlemi" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.getYesNo( pdksAgentTanimlama.updateSP)}" />
+								</rich:column>
+								<rich:column>
+									<f:facet name="header">
 										<h:outputText value="Aktif" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo( pdksAgentTanimlama.durum)}" id="active" />
@@ -175,6 +181,11 @@
 							<h:inputText style="width: 500px" maxlength="255" value="#{pdksAgentTanimlamaHome.currentAgent.dakikaBilgi}">
 							</h:inputText>
 						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Update İşlemi</ui:define>
+							<h:selectBooleanCheckbox required="true" value="#{pdksAgentTanimlamaHome.currentAgent.updateSP}" />
+						</s:decorate>
+
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Aktif</ui:define>
 							<h:selectBooleanCheckbox required="true" value="#{pdksAgentTanimlamaHome.currentAgent.durum}" />
