@@ -540,7 +540,7 @@
 							</ui:fragment>
 
 						</rich:column>
-						<c:if test="#{authenticatedUser.admin or authenticatedUser.sistemYoneticisi}">
+						<c:if test="#{authenticatedUser.admin or authenticatedUser.sistemYoneticisi or authenticatedUser.IK }">
 							<rich:column style="text-align:center;">
 								<f:facet name="header">
 									<h:outputText value="Oluşturulma Zamanı" />
