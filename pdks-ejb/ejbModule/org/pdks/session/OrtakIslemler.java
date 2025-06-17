@@ -9289,7 +9289,7 @@ public class OrtakIslemler implements Serializable {
 					}
 
 					personelVardiyaBulMap = null;
-					List<YemekIzin> yemekList = getYemekList(tarih2, tarih2, session);
+					List<YemekIzin> yemekList = getYemekList(tarih1, tarih2, session);
 					List<PersonelFazlaMesai> fazlaMesailer = denklestirmeFazlaMesaileriGetir(loginUser, denklestirmeDonemi != null ? denklestirmeDonemi.getDenklestirmeAy() : null, vardiyalar, session);
 					HashMap<Long, List<PersonelFazlaMesai>> fmMap = null;
 					if (fazlaMesailer != null) {
@@ -19687,8 +19687,7 @@ public class OrtakIslemler implements Serializable {
 								if (!parcalanmisSureVar)
 									parcalanmisSureVar = PdksUtil.hasStringValue(girisId) == false || PdksUtil.hasStringValue(cikisId) == false;
 								double saatFarki = PdksUtil.getSaatFarki(cikisZaman, girisZaman);
-								if (vGun.endsWith("0606"))
-									logger.debug("");
+								
 								if (cikisHareket.isTatil())
 									toplamTatilSure += saatFarki;
 
@@ -19873,6 +19872,8 @@ public class OrtakIslemler implements Serializable {
 													tatilBitZaman = vardiyaGun.getIslemVardiya().getVardiyaBitZaman();
 												if (hareketYilAy.equals(yilAy) && tatilBasZaman.before(tatilBitZaman)) {
 													Double yemekSuresi = 0.0d;
+													if (vGun.endsWith("0519"))
+														logger.debug("");
 
 													double bayramCalisma = getSaatSure(tatilBasZaman, tatilBitZaman, yemekler, vardiyaGun, session) - (yemekSuresi / 60.0d);
 													String bayramKey = PdksUtil.convertToDateString(tatilBasZaman, "yyyyMMddHHmm");
@@ -19927,7 +19928,7 @@ public class OrtakIslemler implements Serializable {
 								}
 								oncekiCikisZaman = (Date) cikisZaman.clone();
 							}
-
+							
 							// TODO Hareketler okuması bitti
 							if (oncekiGunNormalSure + oncekiGunTatilSure > 0.0d) {
 								Vardiya vardiya2 = oncekiVardiyaGun.getIslemVardiya();
