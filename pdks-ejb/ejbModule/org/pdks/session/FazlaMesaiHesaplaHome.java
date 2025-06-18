@@ -2627,35 +2627,31 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							boolean devam = denklestirmeAyDurum && fmList.isEmpty();
 							for (Iterator iterator = fmList.iterator(); iterator.hasNext();) {
 								PersonelFazlaMesai fm = (PersonelFazlaMesai) iterator.next();
-								if (fm.getHareketId().equals(hId) || fm.getHareketId().equals(mukerrerHareket.getId())) {
-									if (fm.getVardiyaGun() != null) {
+								String hareketId = fm.getHareketId() != null ? fm.getHareketId() : "";
+								if (hareketId.equals(hId) || hareketId.equals(mukerrerHareket.getId())) {
+									VardiyaGun vg = fm.getVardiyaGun();
+									if (vg != null && vardiyaGun != null) {
 										Long vgId = vardiyaGun.getId();
-										VardiyaGun vg = fm.getVardiyaGun();
 										devam = denklestirmeAyDurum && vg.getId().equals(vgId);
 										if (devam) {
-											if (fm.getHareketId().equals(hId)) {
+											if (hareketId.equals(hId)) {
 												fm.setHareketId(mukerrerHareket.getId());
 												fm.setGuncellemeTarihi(guncellemeZamani);
 												pdksEntityController.saveOrUpdate(session, entityManager, fm);
 												flush = true;
 											}
-
 										}
-
 									}
 									iterator.remove();
 								}
 							}
-
 							if (devam) {
 								logger.debug(vardiyaGun.getVardiyaKeyStr() + " : " + hId + " " + mukerrerHareket.getId());
 								pdksLog.setDurum(Boolean.FALSE);
 								pdksLog.setGuncellemeZamani(guncellemeZamani);
 								pdksEntityController.saveOrUpdate(session, entityManager, pdksLog);
 								flush = true;
-
 							}
-
 						}
 						fmList = null;
 						logList = null;
