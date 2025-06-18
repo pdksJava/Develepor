@@ -19237,16 +19237,21 @@ public class OrtakIslemler implements Serializable {
 										if (hareketKGS.getId() != null && hareketKGS.getId().equals(fm.getHareketId())) {
 											hataVar = false;
 											break;
+										} else if (hareketKGS.getMukerrerHareket() != null) {
+											if (hareketKGS.getMukerrerHareket().getId().equals(fm.getHareketId())) {
+												hataVar = false;
+												break;
+											}
 
 										}
 
 									}
 								}
 								if (hataVar) {
-									fm.setGuncellemeTarihi(new Date());
-									fm.setDurum(Boolean.FALSE);
-									session.saveOrUpdate(fm);
-									session.flush();
+//									fm.setGuncellemeTarihi(new Date());
+//									fm.setDurum(Boolean.FALSE);
+//									session.saveOrUpdate(fm);
+//									session.flush();
 									iterator.remove();
 									logger.info(vardiyaGun.getVardiyaKeyStr() + " " + fm.getHareketId());
 								}
@@ -19687,7 +19692,7 @@ public class OrtakIslemler implements Serializable {
 								if (!parcalanmisSureVar)
 									parcalanmisSureVar = PdksUtil.hasStringValue(girisId) == false || PdksUtil.hasStringValue(cikisId) == false;
 								double saatFarki = PdksUtil.getSaatFarki(cikisZaman, girisZaman);
-								
+
 								if (cikisHareket.isTatil())
 									toplamTatilSure += saatFarki;
 
@@ -19928,7 +19933,7 @@ public class OrtakIslemler implements Serializable {
 								}
 								oncekiCikisZaman = (Date) cikisZaman.clone();
 							}
-							
+
 							// TODO Hareketler okuması bitti
 							if (oncekiGunNormalSure + oncekiGunTatilSure > 0.0d) {
 								Vardiya vardiya2 = oncekiVardiyaGun.getIslemVardiya();

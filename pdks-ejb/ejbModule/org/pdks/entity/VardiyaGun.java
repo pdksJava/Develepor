@@ -551,7 +551,11 @@ public class VardiyaGun extends BaseObject {
 			kapi = null;
 		}
 		boolean durum = Boolean.TRUE;
+		if (hareketDuzelt && vardiyaDateStr.endsWith("0507"))
+			logger.debug(hareket.getId());
 		if (kapi != null && hareket != null && (kapi.isGirisKapi() || kapi.isCikisKapi())) {
+			HareketKGS yeniHareket = (HareketKGS) hareket.clone();
+			yeniHareket.setOrjinalZaman((Date) hareket.getZaman().clone());
 			if (hareketler == null) {
 				hareketler = new ArrayList<HareketKGS>();
 				setHareketHatali(kapi.isCikisKapi());
@@ -559,7 +563,7 @@ public class VardiyaGun extends BaseObject {
 
 			boolean ekle = Boolean.TRUE;
 			KapiSirket kapiSirket = hareket.getKapiView().getKapiKGS() != null ? hareket.getKapiView().getKapiKGS().getKapiSirket() : null;
-
+			
 			if (!hareketler.isEmpty()) {
 				int indexSon = hareketler.size() - 1;
 				HareketKGS oncekiHareket = hareketler.get(indexSon);
@@ -589,7 +593,7 @@ public class VardiyaGun extends BaseObject {
 					if (fark < beklemeSuresi) {
 						ekle = Boolean.FALSE;
 						KapiSirket oncekiKapiSirket = oncekiHareket.getKapiView().getKapiKGS() != null ? oncekiHareket.getKapiView().getKapiKGS().getKapiSirket() : null;
-						HareketKGS yeniHareket = (HareketKGS) hareket.clone();
+						 
 						boolean duzelt = false;
 						if (oncekiKapiSirket != null && kapiSirket != null) {
 							duzelt = oncekiKapiSirket.getId().equals(kapiSirket.getId()) || yeniHareket.getZaman().getTime() <= kapiSirket.getBitTarih().getTime();
@@ -597,10 +601,10 @@ public class VardiyaGun extends BaseObject {
 							duzelt = true;
 						if (duzelt) {
 							if (hareketDuzelt) {
-								yeniHareket.setOrjinalZaman((Date) yeniHareket.getZaman().clone());
-								if (yeniHareket.getZaman().getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime())
+								
+								if (yeniHareket.getZaman().getTime() >= islemVardiya.getVardiyaTelorans1BasZaman().getTime() && yeniHareket.getZaman().getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime())
 									yeniHareket.setZaman(islemVardiya.getVardiyaBasZaman());
-								else if (yeniHareket.getZaman().getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime())
+								else if (yeniHareket.getZaman().getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime() && yeniHareket.getZaman().getTime() <= islemVardiya.getVardiyaTelorans2BitZaman().getTime())
 									yeniHareket.setZaman(islemVardiya.getVardiyaBitZaman());
 
 							}
@@ -632,12 +636,10 @@ public class VardiyaGun extends BaseObject {
 					setHareketHatali(hh);
 				}
 				hareketler.add(hareket);
-				HareketKGS yeniHareket = (HareketKGS) hareket.clone();
-				yeniHareket.setOrjinalZaman((Date) yeniHareket.getZaman().clone());
-				if (hareketDuzelt) {
-					if (yeniHareket.getZaman().getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime())
+ 				if (hareketDuzelt) {
+					if (yeniHareket.getZaman().getTime() >= islemVardiya.getVardiyaTelorans1BasZaman().getTime() && yeniHareket.getZaman().getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime())
 						yeniHareket.setZaman(islemVardiya.getVardiyaBasZaman());
-					else if (yeniHareket.getZaman().getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime())
+					else if (yeniHareket.getZaman().getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime() && yeniHareket.getZaman().getTime() <= islemVardiya.getVardiyaTelorans2BitZaman().getTime())
 						yeniHareket.setZaman(islemVardiya.getVardiyaBitZaman());
 					if (izinler != null) {
 						for (Iterator iterator = izinler.iterator(); iterator.hasNext();) {
