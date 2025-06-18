@@ -577,6 +577,8 @@ public class VardiyaGun extends BaseObject {
 							if (duzelt) {
 								// String pattern = PdksUtil.getDateTimeLongFormat();
 								// logger.info(hareket.getId() + " " + PdksUtil.convertToDateString(hareket.getOrjinalZaman(), pattern) + "\n" + oncekiHareket.getId() + " " + PdksUtil.convertToDateString(oncekiHareket.getOrjinalZaman(), pattern));
+								hareket.setMukerrerHareket(oncekiHareket);
+								oncekiHareket.setMukerrerHareket(hareket);
 								addGecersizHareketler(hareket);
 							}
 							ekle = Boolean.FALSE;
@@ -605,6 +607,8 @@ public class VardiyaGun extends BaseObject {
 							indexSon = cikisHareketleri.size() - 1;
 							cikisHareketleri.set(indexSon, yeniHareket);
 							indexSon = hareketler.size() - 1;
+							oncekiHareket.setMukerrerHareket(hareket);
+							hareket.setMukerrerHareket(oncekiHareket);
 							addGecersizHareketler(oncekiHareket);
 							hareketler.set(indexSon, yeniHareket);
 						}

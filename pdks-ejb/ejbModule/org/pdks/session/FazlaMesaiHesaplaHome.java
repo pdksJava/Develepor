@@ -1694,7 +1694,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				istifaGoster = false;
 				aylikPuantajList.clear();
 				List<HareketKGS> gecersizHareketler = new ArrayList<HareketKGS>();
-				HashMap<String, Long> gecersizHareketMap = new HashMap<String, Long>();
+				HashMap<String, HareketKGS> gecersizHareketMap = new HashMap<String, HareketKGS>();
 				HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(null, session);
 				KapiView manuelGiris = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS);
 				KapiView manuelCikis = manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS);
@@ -1868,7 +1868,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									for (Iterator iterator2 = vardiyaGun.getGecersizHareketler().iterator(); iterator2.hasNext();) {
 										HareketKGS hareketKGS = (HareketKGS) iterator2.next();
 										if (hareketKGS.getId() != null)
-											gecersizHareketMap.put(hareketKGS.getId(), vardiyaGun.getId());
+											gecersizHareketMap.put(hareketKGS.getId(), hareketKGS);
+										HareketKGS mukerrerHareket = hareketKGS.getMukerrerHareket();
+										if (mukerrerHareket != null) {
+											mukerrerHareket.setVardiyaGun(vardiyaGun);
+											gecersizHareketMap.put(mukerrerHareket.getId(), mukerrerHareket);
+										}
+										hareketKGS.setVardiyaGun(vardiyaGun);
 										gecersizHareketler.add(hareketKGS);
 
 									}
@@ -2613,31 +2619,45 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							fmList = new ArrayList<PersonelFazlaMesai>();
 						List<PdksLog> logList = pdksEntityController.getSQLParamByFieldList(PdksLog.TABLE_NAME, PdksLog.COLUMN_NAME_ID, idler, PdksLog.class, session);
 						Date guncellemeZamani = new Date();
-						for (Iterator iterator = logList.iterator(); iterator.hasNext();) {
-							PdksLog pdksLog = (PdksLog) iterator.next();
-							boolean devam = true;
+						for (PdksLog pdksLog : logList) {
 							String hId = HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS + pdksLog.getKgsId();
-							for (Iterator iterator2 = fmList.iterator(); iterator2.hasNext();) {
-								PersonelFazlaMesai fm = (PersonelFazlaMesai) iterator2.next();
-								if (fm.getHareketId().equals(hId)) {
+							HareketKGS hareket = gecersizHareketMap.get(hId);
+							HareketKGS mukerrerHareket = hareket.getMukerrerHareket();
+							VardiyaGun vardiyaGun = hareket.getVardiyaGun();
+							boolean devam = denklestirmeAyDurum && fmList.isEmpty();
+							for (Iterator iterator = fmList.iterator(); iterator.hasNext();) {
+								PersonelFazlaMesai fm = (PersonelFazlaMesai) iterator.next();
+								if (fm.getHareketId().equals(hId) || fm.getHareketId().equals(mukerrerHareket.getId())) {
 									if (fm.getVardiyaGun() != null) {
-										Long vgId = gecersizHareketMap.get(hId);
+										Long vgId = vardiyaGun.getId();
 										VardiyaGun vg = fm.getVardiyaGun();
-										devam = vg.getId().equals(vgId) == false;
-									}
+										devam = denklestirmeAyDurum && vg.getId().equals(vgId);
+										if (devam) {
+											if (fm.getHareketId().equals(hId)) {
+												fm.setHareketId(mukerrerHareket.getId());
+												fm.setGuncellemeTarihi(guncellemeZamani);
+												pdksEntityController.saveOrUpdate(session, entityManager, fm);
+												flush = true;
+											}
 
-									iterator2.remove();
+										}
+
+									}
+									iterator.remove();
 								}
 							}
-							if (devam) {
 
+							if (devam) {
+								logger.debug(vardiyaGun.getVardiyaKeyStr() + " : " + hId + " " + mukerrerHareket.getId());
 								pdksLog.setDurum(Boolean.FALSE);
 								pdksLog.setGuncellemeZamani(guncellemeZamani);
 								pdksEntityController.saveOrUpdate(session, entityManager, pdksLog);
 								flush = true;
 
 							}
+
 						}
+						fmList = null;
 						logList = null;
 						idler = null;
 					}

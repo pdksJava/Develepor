@@ -57,6 +57,7 @@ public class HareketKGS implements Serializable, Cloneable {
 	private String id;
 	private String sirket;
 	private Long hareketTableId, islemId, kgsSirketId;
+	private HareketKGS mukerrerHareket;
 	private PersonelView personel;
 	private PersonelKGS personelKGS;
 	private KapiSirket kapiSirket;
@@ -662,6 +663,14 @@ public class HareketKGS implements Serializable, Cloneable {
 
 	public void setYemekMolasi(Double yemekMolasi) {
 		this.yemekMolasi = yemekMolasi;
+	}
+	@Transient
+	public HareketKGS getMukerrerHareket() {
+		return mukerrerHareket;
+	}
+
+	public void setMukerrerHareket(HareketKGS mukerrerHareket) {
+		this.mukerrerHareket = mukerrerHareket;
 	}
 
 }
