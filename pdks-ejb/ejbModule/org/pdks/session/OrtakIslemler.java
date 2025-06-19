@@ -19650,7 +19650,6 @@ public class OrtakIslemler implements Serializable {
 							Date gunParca = null;
 							if (sonGunMu && tatil != null && tatilGunleriMap.containsKey(vGun) == false)
 								gunParca = PdksUtil.tariheGunEkleCikar(vardiyaGun.getVardiyaDate(), 1);
-
 							for (int i = 0; i < tatilCikisHareketleri.size(); i++) {
 								HareketKGS cikisHareket = tatilCikisHareketleri.get(i);
 								HareketKGS girisHareket = null;
@@ -19684,9 +19683,9 @@ public class OrtakIslemler implements Serializable {
 								if (girisZaman.before(ilkGun) && PdksUtil.hasStringValue(cikisId) == false && girisHareket.getOncekiGun().booleanValue() == false)
 									continue;
 								if (islemVardiya.isCalisma()) {
-									if (girisZaman.getTime() >= islemVardiya.getVardiyaTelorans1BasZaman().getTime() && girisZaman.getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime())
+									if (girisZaman.getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime())
 										girisZaman = islemVardiya.getVardiyaBasZaman();
-									if (cikisZaman.getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime() && cikisZaman.getTime() <= islemVardiya.getVardiyaTelorans2BitZaman().getTime())
+									if (cikisZaman.getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime())
 										cikisZaman = islemVardiya.getVardiyaBitZaman();
 								}
 								if (!parcalanmisSureVar)
