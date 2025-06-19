@@ -4529,8 +4529,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			LinkedHashMap<String, HareketKGS> ayiklaMap = new LinkedHashMap<String, HareketKGS>();
 			for (HareketKGS hareketKGS : hareketler) {
 				hareketKGS.setVardiyaGun(vg);
-				boolean ekle = true;
-				if (hareketOnceki != null) {
+				boolean ekle = denklestirmeAyDurum;
+				if (ekle && hareketOnceki != null) {
 					String ek1 = hareketOnceki.getId().substring(0, 1), ek2 = hareketKGS.getId().substring(0, 1);
 					if (hareketOnceki.getZaman().getTime() == hareketKGS.getZaman().getTime() && ek1.equals(ek2) == false) {
 						logger.debug(hareketOnceki.getId());
