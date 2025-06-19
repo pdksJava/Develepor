@@ -19248,10 +19248,10 @@ public class OrtakIslemler implements Serializable {
 									}
 								}
 								if (hataVar) {
-//									fm.setGuncellemeTarihi(new Date());
-//									fm.setDurum(Boolean.FALSE);
-//									session.saveOrUpdate(fm);
-//									session.flush();
+									fm.setGuncellemeTarihi(new Date());
+									fm.setDurum(Boolean.FALSE);
+									session.saveOrUpdate(fm);
+									session.flush();
 									iterator.remove();
 									logger.info(vardiyaGun.getVardiyaKeyStr() + " " + fm.getHareketId());
 								}
