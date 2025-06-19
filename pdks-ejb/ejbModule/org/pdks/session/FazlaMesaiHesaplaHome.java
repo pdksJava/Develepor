@@ -2867,7 +2867,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (onayla) {
 				mailGonder = Boolean.FALSE;
 				try {
-					if (!loginUser.isAdmin() || loginUser.getLogin().booleanValue() == false) {
+					if (!loginUser.isAdmin() || loginUser.getLogin().booleanValue() == false || denklestirmeAyDurum) {
 						fazlaMesaiOnaylaDevam(aylikPuantajList, Boolean.TRUE, Boolean.TRUE);
 					}
 				} catch (Exception eo) {
@@ -4794,11 +4794,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			LinkedHashMap<Long, Personel> yoneticiMap = new LinkedHashMap<Long, Personel>();
 			boolean mailGonderildi = false;
 			List<Long> sirketIdList = new ArrayList<Long>();
+
 			for (AylikPuantaj puantajAylik : puantajList) {
 				if (puantajAylik.isKaydet()) {
 					PersonelDenklestirme personelDenklestirmeAy = puantajAylik.getPersonelDenklestirme();
 					personelDenklestirmeAy.setGuncellendi(guncellendi);
-					if (personelDenklestirmeAy != null && personelDenklestirmeAy.getDurum()) {
+					if (personelDenklestirmeAy != null && denklestirmeAyDurum) {
 						Personel calisan = personelDenklestirmeAy.getPersonel();
 						if (!personelDenklestirmeAy.isKapandi(userLogin)) {
 							personelDenklestirmeAy.setAksamVardiyaSaatSayisi(puantajAylik.getAksamVardiyaSaatSayisi());
