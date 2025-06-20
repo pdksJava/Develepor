@@ -421,7 +421,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				}
 
 			}
-			ortakIslemler.bayramGecisleriAyir(manuelGiris, manuelCikis, tatilGunleriMap, ap.getVardiyalar(), personelView);
+			ortakIslemler.bayramGecisleriAyir(manuelGiris, manuelCikis, tatilGunleriMap, ap.getVardiyalar(), personelView, session);
 			try {
 
 				for (VardiyaHafta vh : ap.getVardiyaHaftaList()) {

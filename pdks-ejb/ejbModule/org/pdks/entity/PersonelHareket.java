@@ -30,12 +30,13 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_PER_NO = "PER_NO";
 	public static final String COLUMN_NAME_PERSONEL = "PERSONEL";
 	public static final String COLUMN_NAME_KGS_ID = "KGS_ID";
+	public static final String COLUMN_NAME_GUNCELLEME_ZAMANI = "GUNCELLEME_ZAMANI";
 
 	private PersonelView personel;
 	private PersonelKGS personelKGS;
 	private KapiView kapiView;
 	private KapiKGS kapiKGS;
-	private Date zaman;
+	private Date zaman,guncellemeZamani;
 	private PersonelHareketIslem islem;
 	private String personelNo;
 
@@ -115,7 +116,15 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	public Long getKgsHareket() {
 		return kgsHareket;
 	}
+	@Temporal(value = TemporalType.TIMESTAMP)
+	@Column(name = COLUMN_NAME_GUNCELLEME_ZAMANI)
+	public Date getGuncellemeZamani() {
+		return guncellemeZamani;
+	}
 
+	public void setGuncellemeZamani(Date guncellemeZamani) {
+		this.guncellemeZamani = guncellemeZamani;
+	}
 	public void setKgsHareket(Long value) {
 		this.kgsHareket = value;
 	}
