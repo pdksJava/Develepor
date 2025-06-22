@@ -3,7 +3,6 @@ package org.pdks.security.action;
 import java.io.File;
 import java.io.Serializable;
 import java.sql.Clob;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -553,7 +552,7 @@ public class StartupAction implements Serializable {
 			} catch (Exception e) {
 				saniyeYuvarlaZaman = null;
 			}
-			
+
 		}
 		VardiyaGun.setSaniyeYuvarlaZaman(saniyeYuvarlaZaman);
 		boolean izinHakedisGuncelle = false;
@@ -799,30 +798,9 @@ public class StartupAction implements Serializable {
 			}
 		PdksUtil.setSicilNoUzunluk(sicilNoUzunluk);
 		if (parameterMap.containsKey("serverTimeUpdateFromDB")) {
-			if (PdksUtil.getTestSunucuDurum() || PdksUtil.getCanliSunucuDurum()) {
-				try {
-					List<String> strList = PdksUtil.getListByString(parameterMap.get("serverTimeUpdateFromDB"), "|");
-					StringBuffer sb = new StringBuffer();
-					sb.append(strList.get(0));
-					fields.clear();
-					if (session != null)
-						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List list = pdksEntityController.getObjectBySQLList(sb, fields, null);
-					if (!list.isEmpty()) {
-						Timestamp tarih = (Timestamp) list.get(0);
-						String replace = PdksUtil.convertToDateString(new Date(tarih.getTime()), "yyyy-MM-dd HH:mm:ss");
-						String cmd = strList.size() == 2 ? PdksUtil.replaceAllManuel(strList.get(1), "$tarih", replace) : "date -s '" + replace + "'";
-						List<String> cmdList = PdksUtil.executeCommand(cmd, true);
-						for (String string : cmdList) {
-							logger.info(string);
-						}
-					}
-					list = null;
-					strList = null;
-				} catch (Exception e) {
-				}
-
-			}
+			OrtakIslemler ortakIslemler = new OrtakIslemler();
+			ortakIslemler.sistemSaatiGuncelle(pdksEntityController, session);
+			ortakIslemler = null;
 		}
 		fillSirketList(session);
 		setHelpDeskParametre(session, pmMap);

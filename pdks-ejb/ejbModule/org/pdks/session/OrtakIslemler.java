@@ -291,6 +291,43 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param session
+	 */
+	public void sistemSaatiGuncelle(PdksEntityController entityController, Session session) {
+		if (PdksUtil.getTestSunucuDurum() || PdksUtil.getCanliSunucuDurum()) {
+			if (entityController == null)
+				entityController = pdksEntityController;
+			HashMap fields = new HashMap();
+			try {
+				List<String> strList = PdksUtil.getListByString(parameterMap.get("serverTimeUpdateFromDB"), "|");
+				StringBuffer sb = new StringBuffer();
+				sb.append(strList.get(0));
+				fields.clear();
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List list = entityController != null ? entityController.getObjectBySQLList(sb, fields, null) : null;
+				if (list != null && !list.isEmpty()) {
+					Timestamp tarih = (Timestamp) list.get(0);
+					String replace = PdksUtil.convertToDateString(new Date(tarih.getTime()), "yyyy-MM-dd HH:mm:ss");
+					String cmd = strList.size() == 2 ? PdksUtil.replaceAllManuel(strList.get(1), "$tarih", replace) : "date -s '" + replace + "'";
+					List<String> cmdList = PdksUtil.executeCommand(cmd, true);
+					for (String string : cmdList) {
+						logger.info(string);
+						if (authenticatedUser != null) {
+							PdksUtil.addMessageAvailableInfo(string);
+						}
+					}
+
+				}
+				list = null;
+				strList = null;
+			} catch (Exception e) {
+			}
+
+		}
+	}
+
+	/**
 	 * @param baslik
 	 * @return
 	 */

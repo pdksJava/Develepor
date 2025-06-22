@@ -146,6 +146,9 @@
 									action="#{izinBakiyeGuncelleme.izinGuncelemeCalistir(true,parameterHome.session)}" />
 
 							</c:if>
+							<a4j:commandButton status="ajaxStatus" value="Sistem Saati Güncelle Calistir"
+								rendered="#{ortakIslemler.getParameterKeyHasStringValue('serverTimeUpdateFromDB')}"
+								action="#{ortakIslemler.sistemSaatiGuncelle(null,parameterHome.session)}" />
 						</ui:fragment>
 					</a4j:outputPanel>
 				</rich:panel>
