@@ -2654,9 +2654,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							if (devam) {
 								try {
 									logger.info(vardiyaGun.getVardiyaKeyStr() + " : " + hId + " " + mukerrerHareket.getId());
-									// pdksLog.setDurum(Boolean.FALSE);
-									// pdksLog.setGuncellemeZamani(guncellemeZamani);
-									// pdksEntityController.saveOrUpdate(session, entityManager, pdksLog);
 									Long id = pdksEntityController.hareketSil(pdksLog.getKgsId(), 0, guncelleyen, onaylamamaNeden.getId(), mukerrerHareket.getId().substring(1) + " " + mukerrerHareket.getKapiKGS().getKapi().getAciklama() + "  geçiş iptal", pdksLog.getKgsSirketId(), session);
  									if (id != null && pdksLog.getKgsId().equals(id))
 										flush = true;
