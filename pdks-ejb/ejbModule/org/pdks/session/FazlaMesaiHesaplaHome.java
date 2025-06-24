@@ -1698,9 +1698,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(null, session);
 				KapiView manuelGiris = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS);
 				KapiView manuelCikis = manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS);
-				Tanim onaylamamaNeden = denklestirmeAyDurum ? ortakIslemler.getOnaylamamaNeden(session) : null;
+				Tanim mukerrerHareketIptalNeden = denklestirmeAyDurum ? ortakIslemler.getMukerrerHareketIptalNeden(session) : null;
 				User guncelleyen = null;
-				if (onaylamamaNeden != null)
+				if (mukerrerHareketIptalNeden != null)
 					guncelleyen = ortakIslemler.getSistemAdminUser(session);
 
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
@@ -2608,7 +2608,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					}
 
 				}
-				if (gecersizHareketler.isEmpty() == false && onaylamamaNeden != null) {
+				if (gecersizHareketler.isEmpty() == false && mukerrerHareketIptalNeden != null) {
 					List<Long> idler = new ArrayList<Long>();
 					for (HareketKGS hareketKGS : gecersizHareketler) {
 						if (hareketKGS.getOncekiGun() == false)
@@ -2654,7 +2654,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						if (devam) {
 							try {
 								logger.info(vardiyaGun.getVardiyaKeyStr() + " : " + hId + " " + mukerrerHareket.getId());
-								Long id = pdksEntityController.hareketSil(pdksLog.getKgsId(), 0, guncelleyen, onaylamamaNeden.getId(), mukerrerHareket.getId().substring(1) + " " + mukerrerHareket.getKapiKGS().getKapi().getAciklama() + "  geçiş iptal", pdksLog.getKgsSirketId(), session);
+								Long id = pdksEntityController.hareketSil(pdksLog.getKgsId(), 0, guncelleyen, mukerrerHareketIptalNeden.getId(), mukerrerHareket.getId().substring(1) + " " + mukerrerHareket.getKapiKGS().getKapi().getAciklama() + "  geçiş iptal", pdksLog.getKgsSirketId(), session);
 								if (id != null && pdksLog.getKgsId().equals(id))
 									flush = true;
 							} catch (Exception e) {

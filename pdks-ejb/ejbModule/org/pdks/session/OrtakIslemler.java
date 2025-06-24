@@ -18823,18 +18823,17 @@ public class OrtakIslemler implements Serializable {
 				map.remove(key);
 			}
 			if (pdksIdList.size() + kgsIdList.size() > 0) {
-				Tanim onaylamamaNeden = getOnaylamamaNeden(session);
-				if (onaylamamaNeden != null) {
+				Tanim mukerrerHareketIptalNeden = getMukerrerHareketIptalNeden(session);
+				if (mukerrerHareketIptalNeden != null) {
 					boolean flush = false;
 					User guncelleyen = getSistemAdminUser(session);
 					if (kgsIdList.isEmpty() == false) {
-
-						List<PdksLog> list = pdksEntityController.getSQLParamByFieldList(PdksLog.TABLE_NAME, PdksLog.COLUMN_NAME_ID, kgsIdList, PdksLog.class, session);
+ 						List<PdksLog> list = pdksEntityController.getSQLParamByFieldList(PdksLog.TABLE_NAME, PdksLog.COLUMN_NAME_ID, kgsIdList, PdksLog.class, session);
 						for (PdksLog pdksLog : list) {
 							// pdksLog.setDurum(false);
 							// pdksLog.setGuncellemeZamani(guncellemeZamani);
 							// session.saveOrUpdate(pdksLog);
-							Long id = pdksEntityController.hareketSil(pdksLog.getKgsId(), 0, guncelleyen, onaylamamaNeden.getId(), "Mükerrer geçiş iptal", pdksLog.getKgsSirketId(), session);
+							Long id = pdksEntityController.hareketSil(pdksLog.getKgsId(), 0, guncelleyen, mukerrerHareketIptalNeden.getId(), "Mükerrer geçiş iptal", pdksLog.getKgsSirketId(), session);
 							if (id != null && pdksLog.getKgsId().equals(id))
 								flush = true;
 						}
@@ -18842,7 +18841,7 @@ public class OrtakIslemler implements Serializable {
 					if (pdksIdList.isEmpty() == false) {
 						List<PersonelHareket> list = pdksEntityController.getSQLParamByFieldList(PersonelHareket.TABLE_NAME, PersonelHareket.COLUMN_NAME_ID, pdksIdList, PersonelHareket.class, session);
 						for (PersonelHareket hareket : list) {
-							Long id = pdksEntityController.hareketSil(0l, hareket.getId(), guncelleyen, onaylamamaNeden.getId(), "Mükerrer geçiş iptal", 0L, session);
+							Long id = pdksEntityController.hareketSil(0l, hareket.getId(), guncelleyen, mukerrerHareketIptalNeden.getId(), "Mükerrer geçiş iptal", 0L, session);
 							if (id != null && hareket.getId().equals(id))
 								flush = true;
 
@@ -18864,12 +18863,12 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	public Tanim getOnaylamamaNeden(Session session) {
+	public Tanim getMukerrerHareketIptalNeden(Session session) {
 		String mukerrerHareketIptalKod = getParameterKey("mukerrerHareketIptal");
-		Tanim onaylamamaNeden = PdksUtil.hasStringValue(mukerrerHareketIptalKod) ? getSQLTanimByTipKodu(Tanim.TIPI_HAREKET_NEDEN, mukerrerHareketIptalKod, session) : null;
-		if (onaylamamaNeden != null && onaylamamaNeden.getDurum())
-			onaylamamaNeden = null;
-		return onaylamamaNeden;
+		Tanim mukerrerHareketIptalNeden = PdksUtil.hasStringValue(mukerrerHareketIptalKod) ? getSQLTanimByTipKodu(Tanim.TIPI_HAREKET_NEDEN, mukerrerHareketIptalKod, session) : null;
+		if (mukerrerHareketIptalNeden != null && mukerrerHareketIptalNeden.getDurum())
+			mukerrerHareketIptalNeden = null;
+		return mukerrerHareketIptalNeden;
 	}
 
 	/**

@@ -975,7 +975,7 @@ public class PdksEntityController implements Serializable {
 		StringBuffer sp = new StringBuffer("SP_HAREKET_SIL_SIRKET");
 		veriMap.put("kgsId", kgsId);
 		veriMap.put("pdksId", pdksId);
-		veriMap.put("guncelleyenId", guncelleyen.getId());
+		veriMap.put("guncelleyenId", guncelleyen != null ? guncelleyen.getId() : null);
 		veriMap.put("nedenId", nedenId);
 		veriMap.put("aciklama", aciklama);
 		veriMap.put("sirketId", sirketId);
