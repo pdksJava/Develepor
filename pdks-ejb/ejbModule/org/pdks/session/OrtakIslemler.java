@@ -8243,6 +8243,14 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @return
+	 */
+	public String grubaTarihiAciklama() {
+		String grubaTarihiAciklama = getBaslikAciklama("grubaTarihiAciklama", "Grup'ta Başlama Tarihi");
+		return grubaTarihiAciklama;
+	}
+
+	/**
 	 * @param sicilNo
 	 * @return
 	 */

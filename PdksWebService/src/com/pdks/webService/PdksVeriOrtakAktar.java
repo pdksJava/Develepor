@@ -122,6 +122,22 @@ public class PdksVeriOrtakAktar implements Serializable {
 	private LinkedHashMap<String, HashMap<String, List<User>>> ikUserMap;
 	private LinkedHashMap<String, HashMap<String, List>> hataIKMap;
 	private Sirket personelSirket;
+	
+	/**
+	 * @return
+	 */
+	public String kidemBasTarihiAciklama() {
+		String kidemBasTarihiAciklama = getBaslikAciklama("kidemBasTarihiAciklama", "Kıdem Başlangıç Tarihi");
+		return kidemBasTarihiAciklama;
+	}
+	
+	/**
+	 * @return
+	 */
+	public String grubaTarihiAciklama() {
+		String grubaTarihiAciklama = getBaslikAciklama("grubaTarihiAciklama", "Grup'ta Başlama Tarihi");
+		return grubaTarihiAciklama;
+	}
 
 	public PdksVeriOrtakAktar() {
 		super();
