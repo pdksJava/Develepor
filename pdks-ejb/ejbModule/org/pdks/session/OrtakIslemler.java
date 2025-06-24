@@ -18770,12 +18770,16 @@ public class OrtakIslemler implements Serializable {
 					if (orjinalOncekiZaman == null)
 						orjinalOncekiZaman = hareketOnceki.getZaman();
 					boolean durum1 = false, durum2 = false;
-					if ((orjinalZaman.getTime() >= vardiya.getVardiyaTelorans1BitZaman().getTime() && orjinalZaman.getTime() <= vardiya.getVardiyaTelorans2BitZaman().getTime())
-							|| (orjinalZaman.getTime() >= vardiya.getVardiyaTelorans1BasZaman().getTime() && orjinalZaman.getTime() <= vardiya.getVardiyaTelorans2BasZaman().getTime()))
-						durum1 = true;
-					if ((orjinalOncekiZaman.getTime() >= vardiya.getVardiyaTelorans1BitZaman().getTime() && orjinalOncekiZaman.getTime() <= vardiya.getVardiyaTelorans2BitZaman().getTime())
-							|| (orjinalOncekiZaman.getTime() >= vardiya.getVardiyaTelorans1BasZaman().getTime() && orjinalOncekiZaman.getTime() <= vardiya.getVardiyaTelorans2BasZaman().getTime()))
-						durum2 = true;
+					try {
+						if ((orjinalZaman.getTime() >= vardiya.getVardiyaTelorans1BitZaman().getTime() && orjinalZaman.getTime() <= vardiya.getVardiyaTelorans2BitZaman().getTime())
+								|| (orjinalZaman.getTime() >= vardiya.getVardiyaTelorans1BasZaman().getTime() && orjinalZaman.getTime() <= vardiya.getVardiyaTelorans2BasZaman().getTime()))
+							durum1 = true;
+						if ((orjinalOncekiZaman.getTime() >= vardiya.getVardiyaTelorans1BitZaman().getTime() && orjinalOncekiZaman.getTime() <= vardiya.getVardiyaTelorans2BitZaman().getTime())
+								|| (orjinalOncekiZaman.getTime() >= vardiya.getVardiyaTelorans1BasZaman().getTime() && orjinalOncekiZaman.getTime() <= vardiya.getVardiyaTelorans2BasZaman().getTime()))
+							durum2 = true;
+					} catch (Exception e) {
+					}
+
 					if (durum1 && durum2) {
 						map.put(hareketOnceki.getId(), hareketOnceki);
 						map.put(hareketKGS.getId(), hareketKGS);
@@ -18828,7 +18832,7 @@ public class OrtakIslemler implements Serializable {
 					boolean flush = false;
 					User guncelleyen = getSistemAdminUser(session);
 					if (kgsIdList.isEmpty() == false) {
- 						List<PdksLog> list = pdksEntityController.getSQLParamByFieldList(PdksLog.TABLE_NAME, PdksLog.COLUMN_NAME_ID, kgsIdList, PdksLog.class, session);
+						List<PdksLog> list = pdksEntityController.getSQLParamByFieldList(PdksLog.TABLE_NAME, PdksLog.COLUMN_NAME_ID, kgsIdList, PdksLog.class, session);
 						for (PdksLog pdksLog : list) {
 							// pdksLog.setDurum(false);
 							// pdksLog.setGuncellemeZamani(guncellemeZamani);
