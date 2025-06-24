@@ -19896,7 +19896,8 @@ public class OrtakIslemler implements Serializable {
 								if (!parcalanmisSureVar)
 									parcalanmisSureVar = PdksUtil.hasStringValue(girisId) == false || PdksUtil.hasStringValue(cikisId) == false;
 								double saatFarki = PdksUtil.getSaatFarki(cikisZaman, girisZaman);
-
+								if (saatFarki >= netSure + yemekSure)
+									saatFarki = netSure + yemekSure;
 								if (cikisHareket.isTatil())
 									toplamTatilSure += saatFarki;
 
@@ -20085,6 +20086,8 @@ public class OrtakIslemler implements Serializable {
 														logger.debug("");
 
 													double bayramCalisma = getSaatSure(tatilBasZaman, tatilBitZaman, yemekler, vardiyaGun, session) - (yemekSuresi / 60.0d);
+													if (bayramCalisma > netSure)
+														bayramCalisma = netSure;
 													String bayramKey = PdksUtil.convertToDateString(tatilBasZaman, "yyyyMMddHHmm");
 													if (yemekFarkMap.containsKey(bayramKey)) {
 														bayramCalisma += yemekFarkMap.get(bayramKey);

@@ -949,11 +949,11 @@
 									</s:decorate>
 									<c:if test="#{pdksPersonelHome.instance.sirket.fazlaMesai}">
 
-										<s:decorate template="/layout/edit.xhtml">
-											<ui:define name="label">Grup'ta Başlama Tarihi</ui:define>
+										<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.grubaTarihiAciklama()!=ortakIslemler.kidemBasTarihiAciklama()}">
+											<ui:define name="label">#{ortakIslemler.grubaTarihiAciklama()}</ui:define>
 											<rich:calendar enableManualInput="#{authenticatedUser.admin}" value="#{pdksPersonelHome.instance.grubaGirisTarihi}"
 												datePattern="#{authenticatedUser.dateFormat}" disabled="#{authenticatedUser.admin and pdksPersonelHome.instance.id != null}"
-												required="#{pdksPersonelHome.instance.sirket.erp}" requiredMessage="Grup'ta Başlama Tarihi Seçiniz" />
+												required="#{pdksPersonelHome.instance.sirket.erp}" requiredMessage="#{ortakIslemler.grubaTarihiAciklama()} Seçiniz" />
 										</s:decorate>
 										<s:decorate template="/layout/edit.xhtml">
 											<ui:define name="label">Doğum Tarihi</ui:define>
