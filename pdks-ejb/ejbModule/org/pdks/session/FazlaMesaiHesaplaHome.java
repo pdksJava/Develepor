@@ -1698,6 +1698,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(null, session);
 				KapiView manuelGiris = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS);
 				KapiView manuelCikis = manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS);
+				Tanim onaylamamaNeden = denklestirmeAyDurum ? ortakIslemler.getOnaylamamaNeden(session) : null;
+				User guncelleyen = null;
+				if (onaylamamaNeden != null)
+					guncelleyen = ortakIslemler.getSistemAdminUser(session);
+
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					puantaj.setFazlaMesaiHesapla(true);
@@ -2603,70 +2608,65 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					}
 
 				}
-				if (gecersizHareketler.isEmpty() == false) {
-					String mukerrerHareketIptalKod = ortakIslemler.getParameterKey("mukerrerHareketIptal");
-					Tanim onaylamamaNeden = ortakIslemler.getSQLTanimByTipKodu(Tanim.TIPI_ONAYLAMAMA_NEDEN, mukerrerHareketIptalKod, session);
-					boolean gecersizHareketlerDurum = onaylamamaNeden != null && onaylamamaNeden.getDurum().booleanValue() == false;
-					if (gecersizHareketlerDurum) {
-						User guncelleyen = ortakIslemler.getSistemAdminUser(session);
-						List<Long> idler = new ArrayList<Long>();
-						for (HareketKGS hareketKGS : gecersizHareketler) {
-							if (hareketKGS.getOncekiGun() == false)
-								idler.add(hareketKGS.getHareketTableId());
-						}
-						List<PersonelFazlaMesai> fmList = null;
-						if (gecersizHareketMap.isEmpty() == false)
-							fmList = pdksEntityController.getSQLParamByAktifFieldList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, new ArrayList(gecersizHareketMap.keySet()), PersonelFazlaMesai.class, session);
-						else
-							fmList = new ArrayList<PersonelFazlaMesai>();
-						List<PdksLog> logList = pdksEntityController.getSQLParamByFieldList(PdksLog.TABLE_NAME, PdksLog.COLUMN_NAME_ID, idler, PdksLog.class, session);
-						Date guncellemeZamani = new Date();
-						for (PdksLog pdksLog : logList) {
-							String hId = HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS + pdksLog.getKgsId();
-							HareketKGS hareket = gecersizHareketMap.get(hId);
-							HareketKGS mukerrerHareket = hareket.getMukerrerHareket();
-							VardiyaGun vardiyaGun = hareket.getVardiyaGun();
-							boolean devam = denklestirmeAyDurum && fmList.isEmpty();
-							if (mukerrerHareket != null) {
-								for (Iterator iterator = fmList.iterator(); iterator.hasNext();) {
-									PersonelFazlaMesai fm = (PersonelFazlaMesai) iterator.next();
-									String hareketId = fm.getHareketId() != null ? fm.getHareketId() : "";
-									if (hareketId.equals(hId) || hareketId.equals(mukerrerHareket.getId())) {
-										VardiyaGun vg = fm.getVardiyaGun();
-										if (vg != null && vardiyaGun != null) {
-											Long vgId = vardiyaGun.getId();
-											devam = denklestirmeAyDurum && vg.getId().equals(vgId);
-											if (devam) {
-												if (hareketId.equals(hId)) {
-													fm.setHareketId(mukerrerHareket.getId());
-													fm.setGuncellemeTarihi(guncellemeZamani);
-													pdksEntityController.saveOrUpdate(session, entityManager, fm);
-													flush = true;
-												}
+				if (gecersizHareketler.isEmpty() == false && onaylamamaNeden != null) {
+					List<Long> idler = new ArrayList<Long>();
+					for (HareketKGS hareketKGS : gecersizHareketler) {
+						if (hareketKGS.getOncekiGun() == false)
+							idler.add(hareketKGS.getHareketTableId());
+					}
+					List<PersonelFazlaMesai> fmList = null;
+					if (gecersizHareketMap.isEmpty() == false)
+						fmList = pdksEntityController.getSQLParamByAktifFieldList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, new ArrayList(gecersizHareketMap.keySet()), PersonelFazlaMesai.class, session);
+					else
+						fmList = new ArrayList<PersonelFazlaMesai>();
+					List<PdksLog> logList = pdksEntityController.getSQLParamByFieldList(PdksLog.TABLE_NAME, PdksLog.COLUMN_NAME_ID, idler, PdksLog.class, session);
+					Date guncellemeZamani = new Date();
+					for (PdksLog pdksLog : logList) {
+						String hId = HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS + pdksLog.getKgsId();
+						HareketKGS hareket = gecersizHareketMap.get(hId);
+						HareketKGS mukerrerHareket = hareket.getMukerrerHareket();
+						VardiyaGun vardiyaGun = hareket.getVardiyaGun();
+						boolean devam = denklestirmeAyDurum && fmList.isEmpty();
+						if (mukerrerHareket != null) {
+							for (Iterator iterator = fmList.iterator(); iterator.hasNext();) {
+								PersonelFazlaMesai fm = (PersonelFazlaMesai) iterator.next();
+								String hareketId = fm.getHareketId() != null ? fm.getHareketId() : "";
+								if (hareketId.equals(hId) || hareketId.equals(mukerrerHareket.getId())) {
+									VardiyaGun vg = fm.getVardiyaGun();
+									if (vg != null && vardiyaGun != null) {
+										Long vgId = vardiyaGun.getId();
+										devam = denklestirmeAyDurum && vg.getId().equals(vgId);
+										if (devam) {
+											if (hareketId.equals(hId)) {
+												fm.setHareketId(mukerrerHareket.getId());
+												fm.setGuncellemeTarihi(guncellemeZamani);
+												pdksEntityController.saveOrUpdate(session, entityManager, fm);
+												flush = true;
 											}
 										}
-										iterator.remove();
 									}
+									iterator.remove();
 								}
-							} else
-								devam = false;
-
-							if (devam) {
-								try {
-									logger.info(vardiyaGun.getVardiyaKeyStr() + " : " + hId + " " + mukerrerHareket.getId());
-									Long id = pdksEntityController.hareketSil(pdksLog.getKgsId(), 0, guncelleyen, onaylamamaNeden.getId(), mukerrerHareket.getId().substring(1) + " " + mukerrerHareket.getKapiKGS().getKapi().getAciklama() + "  geçiş iptal", pdksLog.getKgsSirketId(), session);
- 									if (id != null && pdksLog.getKgsId().equals(id))
-										flush = true;
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-
 							}
+						} else
+							devam = false;
+
+						if (devam) {
+							try {
+								logger.info(vardiyaGun.getVardiyaKeyStr() + " : " + hId + " " + mukerrerHareket.getId());
+								Long id = pdksEntityController.hareketSil(pdksLog.getKgsId(), 0, guncelleyen, onaylamamaNeden.getId(), mukerrerHareket.getId().substring(1) + " " + mukerrerHareket.getKapiKGS().getKapi().getAciklama() + "  geçiş iptal", pdksLog.getKgsSirketId(), session);
+								if (id != null && pdksLog.getKgsId().equals(id))
+									flush = true;
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+
 						}
-						fmList = null;
-						logList = null;
-						idler = null;
 					}
+					fmList = null;
+					logList = null;
+					idler = null;
+
 				}
 				gecersizHareketler = null;
 				gecersizHareketMap = null;

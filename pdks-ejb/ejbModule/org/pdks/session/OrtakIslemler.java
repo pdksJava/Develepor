@@ -18550,11 +18550,11 @@ public class OrtakIslemler implements Serializable {
 				devam = girisAdet == cikisAdet;
 				if (devam == false) {
 					if (girisAdet > 1) {
-						ciftGirisKontrol(true, vg.getGirisHareketleri(), session);
+						ciftGirisKontrol(true, islemVardiya, vg.getGirisHareketleri(), session);
 						girisAdet = vg.getGirisHareketleri().size();
 					}
 					if (cikisAdet > 1) {
-						ciftGirisKontrol(false, vg.getCikisHareketleri(), session);
+						ciftGirisKontrol(false, islemVardiya, vg.getCikisHareketleri(), session);
 						cikisAdet = vg.getCikisHareketleri().size();
 					}
 
@@ -18746,10 +18746,11 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param giris
+	 * @param vardiya
 	 * @param hareketler
 	 * @param session
 	 */
-	private void ciftGirisKontrol(boolean giris, List<HareketKGS> hareketler, Session session) {
+	private void ciftGirisKontrol(boolean giris, Vardiya vardiya, List<HareketKGS> hareketler, Session session) {
 		HareketKGS hareketOnceki = null;
 		LinkedHashMap<String, HareketKGS> map = new LinkedHashMap<String, HareketKGS>(), ciftHareketMap = new LinkedHashMap<String, HareketKGS>();
 		List<HareketKGS> siraliList = null;
@@ -18760,20 +18761,33 @@ public class OrtakIslemler implements Serializable {
 		}
 		for (Iterator iterator = siraliList.iterator(); iterator.hasNext();) {
 			HareketKGS hareketKGS = (HareketKGS) iterator.next();
-
 			map.put(hareketKGS.getId(), hareketKGS);
 			if (hareketOnceki != null) {
 				if (hareketKGS.getZaman().getTime() == hareketOnceki.getZaman().getTime()) {
-					map.put(hareketOnceki.getId(), hareketOnceki);
-					map.put(hareketKGS.getId(), hareketKGS);
-					hareketOnceki.setMukerrerHareket(hareketKGS);
-					hareketKGS.setMukerrerHareket(hareketOnceki);
-					HareketKGS ciftHareket = giris ? hareketOnceki : hareketKGS;
-					ciftHareketMap.put(ciftHareket.getId(), ciftHareket);
+					Date orjinalZaman = hareketKGS.getOrjinalZaman(), orjinalOncekiZaman = hareketOnceki.getOrjinalZaman();
+					if (orjinalZaman == null)
+						orjinalZaman = hareketKGS.getZaman();
+					if (orjinalOncekiZaman == null)
+						orjinalOncekiZaman = hareketOnceki.getZaman();
+					boolean durum1 = false, durum2 = false;
+					if ((orjinalZaman.getTime() >= vardiya.getVardiyaTelorans1BitZaman().getTime() && orjinalZaman.getTime() <= vardiya.getVardiyaTelorans2BitZaman().getTime())
+							|| (orjinalZaman.getTime() >= vardiya.getVardiyaTelorans1BasZaman().getTime() && orjinalZaman.getTime() <= vardiya.getVardiyaTelorans2BasZaman().getTime()))
+						durum1 = true;
+					if ((orjinalOncekiZaman.getTime() >= vardiya.getVardiyaTelorans1BitZaman().getTime() && orjinalOncekiZaman.getTime() <= vardiya.getVardiyaTelorans2BitZaman().getTime())
+							|| (orjinalOncekiZaman.getTime() >= vardiya.getVardiyaTelorans1BasZaman().getTime() && orjinalOncekiZaman.getTime() <= vardiya.getVardiyaTelorans2BasZaman().getTime()))
+						durum2 = true;
+					if (durum1 && durum2) {
+						map.put(hareketOnceki.getId(), hareketOnceki);
+						map.put(hareketKGS.getId(), hareketKGS);
+						hareketOnceki.setMukerrerHareket(hareketKGS);
+						hareketKGS.setMukerrerHareket(hareketOnceki);
+						HareketKGS ciftHareket = giris ? hareketOnceki : hareketKGS;
+						ciftHareketMap.put(ciftHareket.getId(), ciftHareket);
+					}
 				}
 			}
 			if (iterator.hasNext()) {
-				if (hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET) == false)
+				if (hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET) == false && vardiya != null)
 					hareketOnceki = hareketKGS;
 				else
 					hareketOnceki = null;
@@ -18809,27 +18823,34 @@ public class OrtakIslemler implements Serializable {
 				map.remove(key);
 			}
 			if (pdksIdList.size() + kgsIdList.size() > 0) {
-				boolean flush = false;
-				Date guncellemeZamani = new Date();
-				if (kgsIdList.isEmpty() == false) {
-					List<PdksLog> list = pdksEntityController.getSQLParamByFieldList(PdksLog.TABLE_NAME, PdksLog.COLUMN_NAME_ID, kgsIdList, PdksLog.class, session);
-					for (PdksLog pdksLog : list) {
-						pdksLog.setDurum(false);
-						pdksLog.setGuncellemeZamani(guncellemeZamani);
-						session.saveOrUpdate(pdksLog);
-						flush = true;
-					}
-				}
-				if (pdksIdList.isEmpty() == false) {
-					List<PersonelHareket> list = pdksEntityController.getSQLParamByFieldList(PersonelHareket.TABLE_NAME, PersonelHareket.COLUMN_NAME_ID, pdksIdList, PersonelHareket.class, session);
-					for (PersonelHareket hareket : list) {
-						hareket.setDurum(0);
-						hareket.setGuncellemeZamani(guncellemeZamani);
+				Tanim onaylamamaNeden = getOnaylamamaNeden(session);
+				if (onaylamamaNeden != null) {
+					boolean flush = false;
+					User guncelleyen = getSistemAdminUser(session);
+					if (kgsIdList.isEmpty() == false) {
 
+						List<PdksLog> list = pdksEntityController.getSQLParamByFieldList(PdksLog.TABLE_NAME, PdksLog.COLUMN_NAME_ID, kgsIdList, PdksLog.class, session);
+						for (PdksLog pdksLog : list) {
+							// pdksLog.setDurum(false);
+							// pdksLog.setGuncellemeZamani(guncellemeZamani);
+							// session.saveOrUpdate(pdksLog);
+							Long id = pdksEntityController.hareketSil(pdksLog.getKgsId(), 0, guncelleyen, onaylamamaNeden.getId(), "Mükerrer geçiş iptal", pdksLog.getKgsSirketId(), session);
+							if (id != null && pdksLog.getKgsId().equals(id))
+								flush = true;
+						}
 					}
+					if (pdksIdList.isEmpty() == false) {
+						List<PersonelHareket> list = pdksEntityController.getSQLParamByFieldList(PersonelHareket.TABLE_NAME, PersonelHareket.COLUMN_NAME_ID, pdksIdList, PersonelHareket.class, session);
+						for (PersonelHareket hareket : list) {
+							Long id = pdksEntityController.hareketSil(0l, hareket.getId(), guncelleyen, onaylamamaNeden.getId(), "Mükerrer geçiş iptal", 0L, session);
+							if (id != null && hareket.getId().equals(id))
+								flush = true;
+
+						}
+					}
+					if (flush)
+						session.flush();
 				}
-				if (flush)
-					session.flush();
 			}
 
 			hareketler.clear();
@@ -18837,6 +18858,18 @@ public class OrtakIslemler implements Serializable {
 		}
 		map = null;
 		ciftHareketMap = null;
+	}
+
+	/**
+	 * @param session
+	 * @return
+	 */
+	public Tanim getOnaylamamaNeden(Session session) {
+		String mukerrerHareketIptalKod = getParameterKey("mukerrerHareketIptal");
+		Tanim onaylamamaNeden = PdksUtil.hasStringValue(mukerrerHareketIptalKod) ? getSQLTanimByTipKodu(Tanim.TIPI_HAREKET_NEDEN, mukerrerHareketIptalKod, session) : null;
+		if (onaylamamaNeden != null && onaylamamaNeden.getDurum())
+			onaylamamaNeden = null;
+		return onaylamamaNeden;
 	}
 
 	/**
