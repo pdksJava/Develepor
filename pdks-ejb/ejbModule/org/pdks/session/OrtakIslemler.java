@@ -21767,7 +21767,7 @@ public class OrtakIslemler implements Serializable {
 					vg.addHareket(arifeCikisHareket, Boolean.TRUE);
 				}
 			}
-		} else if (tatil.getId() != null && vg.getId() == -tatil.getId() && !vg.isHareketHatali() && vg.getGirisHareketleri() != null) {
+		} else if (tatil.getId() != null && vg.getId() != null && vg.getId() == -tatil.getId() && !vg.isHareketHatali() && vg.getGirisHareketleri() != null) {
 			try {
 				HareketKGS ilkGiris = (HareketKGS) vg.getGirisHareketleri().get(0).clone(), sonCikis = null;
 				List<HareketKGS> cikisHareketleri = vg.getCikisHareketleri();
