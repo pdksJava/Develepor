@@ -1679,6 +1679,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			fillEkSahaTanim();
 		}
 		tanimOku = false;
+		setInstance(pdksPersonel);
 		fillPersonelTablolar(pdksDurum);
 
 		if (PdksUtil.hasStringValue(bosDepartmanKodu)) {
