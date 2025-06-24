@@ -14524,7 +14524,7 @@ public class OrtakIslemler implements Serializable {
 							katSayiMap.put(KatSayiTipi.YEMEK_SURE_EKLE_DURUM.value(), tatilYemekHesabiSureEkleDurumMap.get(str));
 						}
 					}
-					if (str.endsWith("0430"))
+					if (str.endsWith("0608"))
 						logger.debug("");
 					if (tatil != null || tatil3 != null) {
 						vg.setBayramAyir(false);
@@ -18548,7 +18548,7 @@ public class OrtakIslemler implements Serializable {
 			}
 			if (oncekiHareketler == null)
 				oncekiHareketler = new ArrayList<HareketKGS>();
-			if (str.endsWith("0430")) {
+			if (str.endsWith("0608")) {
 				logger.debug("");
 
 			}
@@ -19423,7 +19423,7 @@ public class OrtakIslemler implements Serializable {
 					double oncekiGunNormalSure = 0.0d, oncekiGunTatilSure = 0.0d, oncekiGunTatilSureBrut = 0.0d, toplamTatilSure = 0.0d;
 					cal.setTime(vardiyaGun.getVardiyaDate());
 					String gun = vGun.substring(6);
-					if (vGun.endsWith("0430"))
+					if (vGun.endsWith("0608"))
 						logger.debug("");
 					List<PersonelFazlaMesai> fazlaMesailer = vardiyaGun.getFazlaMesailer();
 					if (vardiyaGun.isAyinGunu() && fazlaMesailer != null && (denklestirmeAy.getDurum() || denklestirmeAy.getGuncelleIK())) {
@@ -19896,7 +19896,7 @@ public class OrtakIslemler implements Serializable {
 								if (!parcalanmisSureVar)
 									parcalanmisSureVar = PdksUtil.hasStringValue(girisId) == false || PdksUtil.hasStringValue(cikisId) == false;
 								double saatFarki = PdksUtil.getSaatFarki(cikisZaman, girisZaman);
-								if (saatFarki >= netSure + yemekSure)
+								if (islemVardiya.isCalisma() && saatFarki >= netSure + yemekSure)
 									saatFarki = netSure + yemekSure;
 								if (cikisHareket.isTatil())
 									toplamTatilSure += saatFarki;
