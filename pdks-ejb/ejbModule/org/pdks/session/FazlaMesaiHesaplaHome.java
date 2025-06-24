@@ -2604,8 +2604,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 				}
 				if (gecersizHareketler.isEmpty() == false) {
-					boolean gecersizHareketlerDurum = ortakIslemler.getParameterKey("mukerrerHareketIptal").equals("1");
+					String mukerrerHareketIptalKod = ortakIslemler.getParameterKey("mukerrerHareketIptal");
+					Tanim onaylamamaNeden = ortakIslemler.getSQLTanimByTipKodu(Tanim.TIPI_ONAYLAMAMA_NEDEN, mukerrerHareketIptalKod, session);
+					boolean gecersizHareketlerDurum = onaylamamaNeden != null && onaylamamaNeden.getDurum().booleanValue() == false;
 					if (gecersizHareketlerDurum) {
+						User guncelleyen = ortakIslemler.getSistemAdminUser(session);
 						List<Long> idler = new ArrayList<Long>();
 						for (HareketKGS hareketKGS : gecersizHareketler) {
 							if (hareketKGS.getOncekiGun() == false)
@@ -2650,11 +2653,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 							if (devam) {
 								try {
-									logger.debug(vardiyaGun.getVardiyaKeyStr() + " : " + hId + " " + mukerrerHareket.getId());
-									pdksLog.setDurum(Boolean.FALSE);
-									pdksLog.setGuncellemeZamani(guncellemeZamani);
-									pdksEntityController.saveOrUpdate(session, entityManager, pdksLog);
-									flush = true;
+									logger.info(vardiyaGun.getVardiyaKeyStr() + " : " + hId + " " + mukerrerHareket.getId());
+									// pdksLog.setDurum(Boolean.FALSE);
+									// pdksLog.setGuncellemeZamani(guncellemeZamani);
+									// pdksEntityController.saveOrUpdate(session, entityManager, pdksLog);
+									Long id = pdksEntityController.hareketSil(pdksLog.getKgsId(), 0, guncelleyen, onaylamamaNeden.getId(), mukerrerHareket.getId().substring(1) + " " + mukerrerHareket.getKapiKGS().getKapi().getAciklama() + "  geçiş iptal", pdksLog.getKgsSirketId(), session);
+ 									if (id != null && pdksLog.getKgsId().equals(id))
+										flush = true;
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
