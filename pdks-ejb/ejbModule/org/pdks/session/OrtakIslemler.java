@@ -20086,7 +20086,7 @@ public class OrtakIslemler implements Serializable {
 														logger.debug("");
 
 													double bayramCalisma = getSaatSure(tatilBasZaman, tatilBitZaman, yemekler, vardiyaGun, session) - (yemekSuresi / 60.0d);
-													if (bayramCalisma > netSure)
+													if (islemVardiya.isCalisma() && bayramCalisma > netSure)
 														bayramCalisma = netSure;
 													String bayramKey = PdksUtil.convertToDateString(tatilBasZaman, "yyyyMMddHHmm");
 													if (yemekFarkMap.containsKey(bayramKey)) {
