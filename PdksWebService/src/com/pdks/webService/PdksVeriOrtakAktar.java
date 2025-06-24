@@ -122,7 +122,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	private LinkedHashMap<String, HashMap<String, List<User>>> ikUserMap;
 	private LinkedHashMap<String, HashMap<String, List>> hataIKMap;
 	private Sirket personelSirket;
-	
+
 	/**
 	 * @return
 	 */
@@ -130,7 +130,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		String kidemBasTarihiAciklama = getBaslikAciklama("kidemBasTarihiAciklama", "Kıdem Başlangıç Tarihi");
 		return kidemBasTarihiAciklama;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -4133,11 +4133,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 					} else {
 						if (iseBaslamaTarihi != null && iseBaslamaTarihi.before(grubaGirisTarihi))
-							addHatalist(hataList, personelERP, null, "İşe giriş tarihi grubu giriş tarihinden önce olamaz!");
+							addHatalist(hataList, personelERP, null, "İşe Giriş Tarihi " + grubaTarihiAciklama() + "nden önce olamaz!");
 						if (izinHakEdisTarihi != null && izinHakEdisTarihi.before(grubaGirisTarihi))
-							addHatalist(hataList, personelERP, null, "Kıdem tarihi grubu giriş tarihinden önce olamaz!");
+							addHatalist(hataList, personelERP, null, kidemBasTarihiAciklama() + " " + grubaTarihiAciklama() + "nden önce olamaz!");
 						if (istenAyrilisTarihi != null && istenAyrilisTarihi.before(grubaGirisTarihi))
-							addHatalist(hataList, personelERP, null, "İşten ayrılma tarihi grubu giriş tarihinden önce olamaz!");
+							addHatalist(hataList, personelERP, null, "İşten Ayrılma Tarihi " + grubaTarihiAciklama() + "nden önce olamaz!");
 						personel.setGrubaGirisTarihi(grubaGirisTarihi);
 					}
 
