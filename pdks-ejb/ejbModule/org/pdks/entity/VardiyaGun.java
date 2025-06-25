@@ -395,15 +395,17 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setCalismaSuresi(double value) {
-		if (this.getVardiyaDateStr().endsWith("0506"))
-			logger.debug(value);
+		if (value != 0.0d) {
+			if (this.getVardiyaDateStr().endsWith("0606"))
+				logger.debug(value);
+		}
 		this.calismaSuresi = value;
 	}
 
 	@Transient
 	public void addCalismaSuresi(double value) {
 		if (value != 0.0d) {
-			if (this.getVardiyaDateStr().endsWith("0506"))
+			if (this.getVardiyaDateStr().endsWith("0606"))
 				logger.debug(value);
 		}
 
@@ -1701,7 +1703,10 @@ public class VardiyaGun extends BaseObject {
 		return hataliDurum;
 	}
 
-	public void setHataliDurum(boolean hataliDurum) {
+	public void setHataliDurum(boolean hataliDurum) { 
+		if (this.getVardiyaDateStr().endsWith("0606")) {
+			logger.debug(hataliDurum);
+		}
 		this.hataliDurum = hataliDurum;
 	}
 
@@ -1792,8 +1797,11 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setGecenAyResmiTatilSure(double value) {
-		if (value != 0.0d && vardiyaDateStr.endsWith("01"))
-			logger.debug(value);
+		if (value != 0.0d) {
+			if (vardiyaDateStr.endsWith("0609"))
+				logger.debug(value);
+		}
+
 		this.gecenAyResmiTatilSure = value;
 	}
 
@@ -1878,8 +1886,11 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void addGecenAyResmiTatilSure(double value) {
-		if (value != 0.0d && vardiyaDateStr.endsWith("01"))
-			logger.debug(value);
+		if (value != 0.0d) {
+			if (vardiyaDateStr.endsWith("0609"))
+				logger.debug(value);
+		}
+
 		this.gecenAyResmiTatilSure += value;
 	}
 

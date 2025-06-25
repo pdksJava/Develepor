@@ -2028,6 +2028,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								if (vardiyaGun.getVardiya() != null && tatilOncesiEksik == false) {
 									Double netSure = vardiyaGun.getVardiya().getNetCalismaSuresi();
 									if (vardiyaGun.getHareketDurum() && vardiyaGun.isIzinli() == false && netSure > 0.0d) {
+										if (vardiyaGun.getVardiyaDateStr().endsWith("0606"))
+											logger.debug("");
 										if ((calismaSuresi(vardiyaGun) * 100) / netSure < denklestirmeAy.getYemekMolasiYuzdesi()) {
 											eksikCalismaDurum = denklestirmeAyDurum && eksikCalismaGoster;
 											if (!vardiyaGun.isHataliDurum())
