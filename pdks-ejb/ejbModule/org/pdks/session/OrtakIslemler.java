@@ -18548,7 +18548,7 @@ public class OrtakIslemler implements Serializable {
 			}
 			if (oncekiHareketler == null)
 				oncekiHareketler = new ArrayList<HareketKGS>();
-			if (str.endsWith("0608")) {
+			if (str.endsWith("0605")) {
 				logger.debug("");
 
 			}
@@ -19423,7 +19423,7 @@ public class OrtakIslemler implements Serializable {
 					double oncekiGunNormalSure = 0.0d, oncekiGunTatilSure = 0.0d, oncekiGunTatilSureBrut = 0.0d, toplamTatilSure = 0.0d;
 					cal.setTime(vardiyaGun.getVardiyaDate());
 					String gun = vGun.substring(6);
-					if (vGun.endsWith("0608"))
+					if (vGun.endsWith("0605"))
 						logger.debug("");
 					List<PersonelFazlaMesai> fazlaMesailer = vardiyaGun.getFazlaMesailer();
 					if (vardiyaGun.isAyinGunu() && fazlaMesailer != null && (denklestirmeAy.getDurum() || denklestirmeAy.getGuncelleIK())) {
@@ -20332,8 +20332,17 @@ public class OrtakIslemler implements Serializable {
 									}
 
 								}
+								boolean arifeYarimGunMu = false;
+								if (tatil != null && tatil.isYarimGunMu() && islemVardiya.isCalisma()) {
 
-								if (arifeTatilBasZamanVar == false && arifeSureMap.containsKey("T_B") && arifeSureMap.containsKey("A_N")) {
+									if (tatil.getVardiyaMap() != null && tatil.getVardiyaMap().containsKey(islemVardiya.getId())) {
+										arifeYarimGunMu = tatil.getVardiyaMap().get(islemVardiya.getId()).isArifeYarimGun();
+									}
+
+								}
+								islemVardiya.setArifeYarimGun(arifeYarimGunMu);
+
+								if (arifeTatilBasZamanVar == false && arifeSureMap.containsKey("T_B") && arifeSureMap.containsKey("A_N") && arifeYarimGunMu) {
 									// todo kontrol ekle
 
 									double toplamBrutSure = arifeSureMap.get("T_B");
