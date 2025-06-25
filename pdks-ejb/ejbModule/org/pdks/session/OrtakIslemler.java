@@ -18896,6 +18896,7 @@ public class OrtakIslemler implements Serializable {
 		vGun.setYemekHareketleri(null);
 		vGun.setGirisHareketleri(null);
 		vGun.setCikisHareketleri(null);
+		List<HareketKGS> gecersizHareketler = vGun.getGecersizHareketler() != null ? new ArrayList<HareketKGS>(vGun.getGecersizHareketler()) : null;
 		vGun.setGecersizHareketler(null);
 		for (HareketKGS hareket : list)
 			try {
@@ -18909,7 +18910,8 @@ public class OrtakIslemler implements Serializable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
+		if (gecersizHareketler != null)
+			vGun.setGecersizHareketler((ArrayList<HareketKGS>) gecersizHareketler);
 		list = null;
 	}
 
