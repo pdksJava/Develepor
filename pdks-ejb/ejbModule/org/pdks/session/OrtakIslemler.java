@@ -19835,7 +19835,8 @@ public class OrtakIslemler implements Serializable {
 						boolean sureHesapla = tatilSonrakiGun != null || offTatilBayramAyirList != null;
 						TreeMap<String, Double> yemekFarkMap = new TreeMap<String, Double>();
 						LinkedHashMap<String, Double> arifeSureMap = new LinkedHashMap<String, Double>();
-						if (!tatilCikisHareketleri.isEmpty() && tatilCikisHareketleri.size() == tatilGirisHareketleri.size()) {
+
+						if (tatilCikisHareketleri != null && tatilGirisHareketleri != null && !tatilCikisHareketleri.isEmpty() && tatilCikisHareketleri.size() == tatilGirisHareketleri.size()) {
 							Tatil tatil = null;
 							if (vardiyaGun.getTatil() != null) {
 								tatil = vardiyaGun.getTatil();
@@ -19849,7 +19850,7 @@ public class OrtakIslemler implements Serializable {
 							if (offTatilBayramAyirList != null)
 								arifeGunu = true;
 							Date oncekiCikisZaman = null;
-							double yemekSure = (double) vardiyaGun.getVardiya().getYemekSuresi() / 60.0d, netSure = vardiyaGun.getVardiya().getNetCalismaSuresi();
+							double yemekSure = (double) islemVardiya.getYemekSuresi() / 60.0d, netSure = islemVardiya.getNetCalismaSuresi();
 							double toplamParcalanmisSure = 0.0d;
 							boolean parcalanmisSureVar = false;
 
@@ -20375,6 +20376,7 @@ public class OrtakIslemler implements Serializable {
 							if (resmiTatilSure > 0.0d)
 								resmiTatilMesai += resmiTatilSure;
 						}
+
 						if (fazlaMesaiOnayla)
 							calSure = 0;
 						if (!vardiyaGun.getVardiya().isIcapVardiyasi())

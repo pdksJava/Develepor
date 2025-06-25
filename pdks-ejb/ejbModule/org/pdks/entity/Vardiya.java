@@ -75,7 +75,7 @@ public class Vardiya extends BaseObject {
 	private Date vardiyaBasZaman, vardiyaBitZaman, vardiyaTarih, arifeBaslangicTarihi;
 	private Date vardiyaTelorans1BasZaman, vardiyaTelorans2BasZaman, vardiyaTelorans1BitZaman, vardiyaTelorans2BitZaman;
 	private Date vardiyaFazlaMesaiBasZaman, vardiyaFazlaMesaiBitZaman;
-	private boolean farkliGun = Boolean.FALSE, ayinSonGunDurum = Boolean.FALSE,  arifeYarimGun = Boolean.FALSE;
+	private boolean farkliGun = Boolean.FALSE, ayinSonGunDurum = Boolean.FALSE, arifeYarimGun = Boolean.FALSE;
 
 	private Boolean mesaiOde, sua = Boolean.FALSE, arifeCalismaSaatYokCGSDus;
 	private Vardiya sonrakiVardiya, oncekiVardiya;
@@ -210,6 +210,8 @@ public class Vardiya extends BaseObject {
 	@Column(name = "YEMEK_SURESI")
 	@Min(value = 0, message = "Sıfırdan küçük değer giremezsiniz!")
 	public Integer getYemekSuresi() {
+		if (yemekSuresi == null)
+			yemekSuresi = 0;
 		return yemekSuresi;
 	}
 
@@ -1919,6 +1921,7 @@ public class Vardiya extends BaseObject {
 	public boolean isArifeCalismaSaatYokCGSDussun() {
 		return arifeCalismaSaatYokCGSDus != null && arifeCalismaSaatYokCGSDus;
 	}
+
 	@Transient
 	public boolean isArifeYarimGun() {
 		return arifeYarimGun;
@@ -1927,9 +1930,9 @@ public class Vardiya extends BaseObject {
 	public void setArifeYarimGun(boolean arifeYarimGun) {
 		this.arifeYarimGun = arifeYarimGun;
 	}
+
 	public void entityRefresh() {
 
 	}
-	
 
 }
