@@ -18055,7 +18055,7 @@ public class OrtakIslemler implements Serializable {
 										ozelDurumSaat = personelDenklestirme.getCalismaSuaSaati();
 
 								}
-
+								Vardiya vardiyaTatil = null;
 								if (!pdksVardiyaGun.isHaftaTatil() && (pdksVardiyaGun.getTatil() == null || pdksVardiyaGun.getTatil().isYarimGunMu())) {
 									VardiyaGun gun = new VardiyaGun();
 									gun.setDurum(!pdksVardiyaGun.isFiiliHesapla());
@@ -18069,7 +18069,7 @@ public class OrtakIslemler implements Serializable {
 									gun.setTatil(tatilArife);
 									Vardiya vardiya = pdksVardiyaGun.getVardiya();
 									if (tatilArife != null && tatilArife.isYarimGunMu() && tatilArife.getVardiyaMap() != null && tatilArife.getVardiyaMap().containsKey(vardiya.getId())) {
-										Vardiya vardiyaTatil = tatilArife.getVardiyaMap().get(vardiya.getId());
+										vardiyaTatil = tatilArife.getVardiyaMap().get(vardiya.getId());
 										vardiya.setArifeBaslangicTarihi(vardiyaTatil.getArifeBaslangicTarihi());
 									}
 									if (islemVardiyaSuresi != null && normalCalismaSuresi > islemVardiya.getNetCalismaSuresi())
@@ -19419,7 +19419,8 @@ public class OrtakIslemler implements Serializable {
 					}
 					if (fmMap != null && vardiyaGun.getFazlaMesailer() == null && fmMap.containsKey(vardiyaGun.getId()))
 						vardiyaGun.setFazlaMesailer(fmMap.get(vardiyaGun.getId()));
-					Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
+					Vardiya islemVardiya = vardiyaGun.getIslemVardiya(), vardiyaTatil = null;
+
 					double oncekiGunNormalSure = 0.0d, oncekiGunTatilSure = 0.0d, oncekiGunTatilSureBrut = 0.0d, toplamTatilSure = 0.0d;
 					cal.setTime(vardiyaGun.getVardiyaDate());
 					String gun = vGun.substring(6);
@@ -19671,6 +19672,10 @@ public class OrtakIslemler implements Serializable {
 
 									}
 									vardiyaGun.setTatil(tatil);
+									if (tatil != null && tatil.isYarimGunMu() && tatil.getVardiyaMap() != null && tatil.getVardiyaMap().containsKey(islemVardiya.getId())) {
+										vardiyaTatil = tatil.getVardiyaMap().get(islemVardiya.getId());
+										islemVardiya.setArifeBaslangicTarihi(vardiyaTatil.getArifeBaslangicTarihi());
+									}
 									List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 									if (tatilOncesiKontrol && vardiyaGun.isAyinGunu() && vardiyaGun.getOncekiVardiyaGun().getTatil() == null && offTatilBayramAyirList == null) {
 										if (oncekiVardiya == null)
@@ -20333,12 +20338,9 @@ public class OrtakIslemler implements Serializable {
 
 								}
 								boolean arifeYarimGunMu = false;
-								if (tatil != null && tatil.isYarimGunMu() && islemVardiya.isCalisma()) {
-
-									if (tatil.getVardiyaMap() != null && tatil.getVardiyaMap().containsKey(islemVardiya.getId())) {
+								if (tatil != null && tatil.isYarimGunMu() && islemVardiya.isCalisma() && vardiyaTatil != null) {
+									if (tatil.getVardiyaMap() != null && tatil.getVardiyaMap().containsKey(islemVardiya.getId()))
 										arifeYarimGunMu = tatil.getVardiyaMap().get(islemVardiya.getId()).isArifeYarimGun();
-									}
-
 								}
 								islemVardiya.setArifeYarimGun(arifeYarimGunMu);
 
