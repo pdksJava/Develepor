@@ -4545,19 +4545,20 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				hareketKGS.setVardiyaGun(vg);
 				boolean ekle = denklestirmeAyDurum;
 				if (ekle && hareketOnceki != null) {
-					String ek1 = hareketOnceki.getId().substring(0, 1), ek2 = hareketKGS.getId().substring(0, 1);
-					if (hareketOnceki.getZaman().getTime() == hareketKGS.getZaman().getTime() && ek1.equals(ek2) == false) {
-						logger.debug(hareketOnceki.getId());
-						hareketOnceki.setMukerrerHareket(hareketKGS);
-						hareketKGS.setMukerrerHareket(hareketOnceki);
-						if (ek1.equals(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS)) {
+					Vardiya vardiya = vg.getIslemVardiya();
+					if (vardiya.isCalisma()) {
+						Date hareketOncekiZaman = ortakIslemler.getVardiyaOrjinalZamanDuzenle(hareketOnceki, vardiya);
+						Date hareketZaman = ortakIslemler.getVardiyaOrjinalZamanDuzenle(hareketKGS, vardiya);
+						if (hareketOncekiZaman.getTime() == hareketZaman.getTime()) {
+							logger.debug(hareketOnceki.getId());
+							hareketOnceki.setMukerrerHareket(hareketKGS);
+							hareketKGS.setMukerrerHareket(hareketOnceki);
+
 							ciftHareketMap.put(hareketOnceki.getId(), hareketKGS);
 							ayiklaMap.remove(hareketOnceki.getId());
-						} else {
-							ciftHareketMap.put(hareketKGS.getId(), hareketOnceki);
+
 							ekle = false;
 						}
-
 					}
 				}
 				if (ekle)

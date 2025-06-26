@@ -18916,6 +18916,27 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param hareket
+	 * @param vardiya
+	 * @return
+	 */
+	public Date getVardiyaOrjinalZamanDuzenle(HareketKGS hareket, Vardiya vardiya) {
+		Date zaman = hareket.getOrjinalZaman() != null ? hareket.getOrjinalZaman() : hareket.getZaman();
+		if (vardiya != null && vardiya.isCalisma()) {
+			try {
+				if (zaman.getTime() >= vardiya.getVardiyaTelorans1BasZaman().getTime() && zaman.getTime() <= vardiya.getVardiyaTelorans2BasZaman().getTime())
+					zaman = vardiya.getVardiyaBasZaman();
+				if (zaman.getTime() >= vardiya.getVardiyaTelorans1BitZaman().getTime() && zaman.getTime() <= vardiya.getVardiyaTelorans2BitZaman().getTime())
+					zaman = vardiya.getVardiyaBitZaman();
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+
+		}
+		return zaman;
+	}
+
+	/**
 	 * @param session
 	 * @return
 	 */
