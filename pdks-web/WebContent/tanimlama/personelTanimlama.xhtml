@@ -87,7 +87,7 @@
                       			  İşlemler
               		 			 </f:facet>
 								<TABLE>
-									<TR>
+									<TR> 
 										<ui:fragment rendered="#{personelView.isGuncelle(authenticatedUser)}">
 											<TD><a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink" action="#{pdksPersonelHome.kayitGuncelle(personelView,true)}"
 													rendered="#{pdksPersonelHome.personelERPGuncelleme == 'M' or pdksPersonelHome.manuelTanimla or personelView.pdksPersonel.id != null  }"
@@ -896,7 +896,7 @@
 									disabled="#{pdksPersonelHome.sirketList.size() == 1 or ( pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme != '1' and pdksPersonelHome.personelERPGuncelleme != 'M')}"
 									rendered="#{pdksPersonelHome.sirketList != null}">
 									<s:selectItems var="comp" value="#{pdksPersonelHome.sirketList}" label="#{comp.ad}" noSelectionLabel="Lütfen seçiniz" />
-									<a4j:support event="onchange" action="#{pdksPersonelHome.fillPdksPersonelList}" reRender="sirketDegisti,butonlar" status="ajaxStatus"
+									<a4j:support event="onchange" action="#{pdksPersonelHome.fillPdksPersonelList(false)}" reRender="sirketDegisti,butonlar" status="ajaxStatus"
 										ajaxSingle="true" />
 									<s:convertEntity />
 								</h:selectOneMenu>
