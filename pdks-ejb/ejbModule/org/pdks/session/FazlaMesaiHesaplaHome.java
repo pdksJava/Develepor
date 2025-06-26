@@ -2630,15 +2630,20 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						VardiyaGun vardiyaGun = hareket.getVardiyaGun();
 						boolean devam = denklestirmeAyDurum && fmList.isEmpty();
 						if (mukerrerHareket != null) {
+							Boolean fmKayitVar = null;
+							devam = true;
 							for (Iterator iterator = fmList.iterator(); iterator.hasNext();) {
 								PersonelFazlaMesai fm = (PersonelFazlaMesai) iterator.next();
-								String hareketId = fm.getHareketId() != null ? fm.getHareketId() : "";
-								if (hareketId.equals(hId) || hareketId.equals(mukerrerHareket.getId())) {
-									VardiyaGun vg = fm.getVardiyaGun();
-									if (vg != null && vardiyaGun != null) {
-										Long vgId = vardiyaGun.getId();
+								VardiyaGun vg = fm.getVardiyaGun();
+								if (vg != null && vardiyaGun != null) {
+									Long vgId = vardiyaGun.getId();
+									if (denklestirmeAyDurum && !vg.getId().equals(vgId))
+										fmKayitVar = Boolean.FALSE;
+									String hareketId = fm.getHareketId() != null ? fm.getHareketId() : "";
+									if (hareketId.equals(hId) || hareketId.equals(mukerrerHareket.getId())) {
 										devam = denklestirmeAyDurum && vg.getId().equals(vgId);
 										if (devam) {
+											fmKayitVar = null;
 											if (hareketId.equals(hId)) {
 												fm.setHareketId(mukerrerHareket.getId());
 												fm.setGuncellemeTarihi(guncellemeZamani);
@@ -2646,17 +2651,21 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 												flush = true;
 											}
 										}
+										iterator.remove();
 									}
-									iterator.remove();
+
 								}
 							}
+							if (fmKayitVar != null)
+								devam = true;
 						} else
 							devam = false;
 
-						if (devam) {
+						if (devam) { 
 							try {
 								logger.info(vardiyaGun.getVardiyaKeyStr() + " : " + hId + " " + mukerrerHareket.getId());
-								Long id = pdksEntityController.hareketSil(pdksLog.getKgsId(), 0, guncelleyen, mukerrerHareketIptalNeden.getId(), mukerrerHareket.getId().substring(1) + " " + mukerrerHareket.getKapiKGS().getKapi().getAciklama() + "  geçiş iptal", pdksLog.getKgsSirketId(), session);
+								String aciklama = mukerrerHareket.getId().substring(1) + " " + mukerrerHareket.getKapiKGS().getKapi().getAciklama() + " geçiş iptal";
+								Long id = pdksEntityController.hareketSil(pdksLog.getKgsId(), 0, guncelleyen, mukerrerHareketIptalNeden.getId(), aciklama, pdksLog.getKgsSirketId(), session);
 								if (id != null && pdksLog.getKgsId().equals(id))
 									flush = true;
 							} catch (Exception e) {
