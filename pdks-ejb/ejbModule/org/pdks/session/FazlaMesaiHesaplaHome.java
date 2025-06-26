@@ -3896,9 +3896,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			for (Iterator iterator = hareketler.iterator(); iterator.hasNext();) {
 				HareketKGS hareketKGS = (HareketKGS) iterator.next();
 				String islemYapan = "";
-				if (hareketKGS.getId() != null)
+				if (hareketKGS.getId() == null)
 					continue;
-				if (hareketKGS.getId() != null && hareketIdList.contains(hareketKGS.getId()) == false && ciftHareketMap.containsKey(hareketKGS.getId())) {
+				if (hareketIdList.contains(hareketKGS.getId()) == false && ciftHareketMap.containsKey(hareketKGS.getId())) {
 					HareketKGS mukerrerHareket = ciftHareketMap.get(hareketKGS.getId());
 					mukerrerHareket.setMukerrerHareket(hareketKGS);
 					hareketKGS.setMukerrerHareket(mukerrerHareket);
@@ -4550,14 +4550,15 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						Date hareketOncekiZaman = ortakIslemler.getVardiyaOrjinalZamanDuzenle(hareketOnceki, vardiya);
 						Date hareketZaman = ortakIslemler.getVardiyaOrjinalZamanDuzenle(hareketKGS, vardiya);
 						if (hareketOncekiZaman.getTime() == hareketZaman.getTime()) {
-							logger.debug(hareketOnceki.getId());
+							Kapi kapi = hareketKGS.getKapiKGS().getKapi();
+							logger.debug(vg.getVardiyaKeyStr() + " " + hareketOnceki.getId());
 							hareketOnceki.setMukerrerHareket(hareketKGS);
 							hareketKGS.setMukerrerHareket(hareketOnceki);
-
 							ciftHareketMap.put(hareketOnceki.getId(), hareketKGS);
-							ayiklaMap.remove(hareketOnceki.getId());
-
-							ekle = false;
+							if (kapi.isCikisKapi())
+								ayiklaMap.remove(hareketOnceki.getId());
+							else
+								ekle = false;
 						}
 					}
 				}
