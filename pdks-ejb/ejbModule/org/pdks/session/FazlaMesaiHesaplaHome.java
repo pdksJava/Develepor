@@ -2678,7 +2678,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					logList = null;
 					idler = null;
 
-				} 
+				}
 				gecersizHareketler = null;
 				gecersizHareketMap = null;
 				if (!(authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()) && yasalFazlaCalismaAsanSaat)
@@ -3896,13 +3896,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			for (Iterator iterator = hareketler.iterator(); iterator.hasNext();) {
 				HareketKGS hareketKGS = (HareketKGS) iterator.next();
 				String islemYapan = "";
-				if (hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET))
+				if (hareketKGS.getId() != null)
 					continue;
 				if (hareketKGS.getId() != null && hareketIdList.contains(hareketKGS.getId()) == false && ciftHareketMap.containsKey(hareketKGS.getId())) {
 					HareketKGS mukerrerHareket = ciftHareketMap.get(hareketKGS.getId());
 					mukerrerHareket.setMukerrerHareket(hareketKGS);
 					hareketKGS.setMukerrerHareket(mukerrerHareket);
-					vGun.addGecersizHareketler(hareketKGS);
+					if (mukerrerHareket.getId().startsWith(HareketKGS.AYRIK_HAREKET) == false)
+						vGun.addGecersizHareketler(hareketKGS);
 					iterator.remove();
 					continue;
 				}

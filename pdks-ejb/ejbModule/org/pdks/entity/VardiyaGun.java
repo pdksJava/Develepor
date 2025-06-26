@@ -585,7 +585,8 @@ public class VardiyaGun extends BaseObject {
 								// logger.info(hareket.getId() + " " + PdksUtil.convertToDateString(hareket.getOrjinalZaman(), pattern) + "\n" + oncekiHareket.getId() + " " + PdksUtil.convertToDateString(oncekiHareket.getOrjinalZaman(), pattern));
 								hareket.setMukerrerHareket(oncekiHareket);
 								oncekiHareket.setMukerrerHareket(hareket);
-								addGecersizHareketler(hareket);
+								if (oncekiHareket.getId().startsWith(HareketKGS.AYRIK_HAREKET) == false)
+									addGecersizHareketler(hareket);
 							}
 							ekle = Boolean.FALSE;
 						}
@@ -614,7 +615,8 @@ public class VardiyaGun extends BaseObject {
 							indexSon = hareketler.size() - 1;
 							oncekiHareket.setMukerrerHareket(hareket);
 							hareket.setMukerrerHareket(oncekiHareket);
-							addGecersizHareketler(oncekiHareket);
+							if (oncekiHareket.getId().startsWith(HareketKGS.AYRIK_HAREKET) == false)
+								addGecersizHareketler(oncekiHareket);
 							hareketler.set(indexSon, yeniHareket);
 						}
 
@@ -1703,7 +1705,7 @@ public class VardiyaGun extends BaseObject {
 		return hataliDurum;
 	}
 
-	public void setHataliDurum(boolean hataliDurum) { 
+	public void setHataliDurum(boolean hataliDurum) {
 		if (this.getVardiyaDateStr().endsWith("0606")) {
 			logger.debug(hataliDurum);
 		}
@@ -2452,7 +2454,7 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void addGecersizHareketler(HareketKGS hareketKGS) {
-		if (ayinGunu && hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS)) {
+		if (ayinGunu && hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.AYRIK_HAREKET) == false && hareketKGS.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS)) {
 			if (gecersizHareketler == null)
 				gecersizHareketler = new ArrayList<HareketKGS>();
 			hareketKGS.setDurum(HareketKGS.DURUM_BLOKE);
