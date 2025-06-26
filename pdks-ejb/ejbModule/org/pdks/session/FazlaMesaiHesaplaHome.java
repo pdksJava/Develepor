@@ -4555,10 +4555,15 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							hareketOnceki.setMukerrerHareket(hareketKGS);
 							hareketKGS.setMukerrerHareket(hareketOnceki);
 							ciftHareketMap.put(hareketOnceki.getId(), hareketKGS);
-							if (kapi.isCikisKapi())
+							if (kapi.isCikisKapi()) {
 								ayiklaMap.remove(hareketOnceki.getId());
-							else
+							}
+
+							else {
+								ciftHareketMap.put(hareketKGS.getId(), hareketOnceki);
 								ekle = false;
+							}
+
 						}
 					}
 				}
