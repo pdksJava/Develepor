@@ -3,13 +3,18 @@ package org.pdks.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity(name = PdksLog.TABLE_NAME)
 public class PdksLog extends BasePDKSObject implements Serializable, Cloneable {
@@ -37,11 +42,13 @@ public class PdksLog extends BasePDKSObject implements Serializable, Cloneable {
 
 	public static final String COLUMN_NAME_KGS_ID = "KGS_ID";
 
-	private Long islemId, kgsSirketId, kgsId;
+	private Long kgsSirketId, kgsId;
 
 	private Date zaman, olusturmaZamani, guncellemeZamani;
 
 	private Boolean durum;
+
+	private PersonelHareketIslem islem;
 
 	private Long kapiId;
 	private Long personelId;
@@ -104,13 +111,15 @@ public class PdksLog extends BasePDKSObject implements Serializable, Cloneable {
 		this.guncellemeZamani = guncellemeZamani;
 	}
 
-	@Column(name = COLUMN_NAME_ISLEM)
-	public Long getIslemId() {
-		return islemId;
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_ISLEM)
+	@Fetch(FetchMode.JOIN)
+	public PersonelHareketIslem getIslem() {
+		return islem;
 	}
 
-	public void setIslemId(Long islemId) {
-		this.islemId = islemId;
+	public void setIslem(PersonelHareketIslem islem) {
+		this.islem = islem;
 	}
 
 	@Column(name = COLUMN_NAME_KGS_ID)
@@ -146,8 +155,7 @@ public class PdksLog extends BasePDKSObject implements Serializable, Cloneable {
 	}
 
 	public void entityRefresh() {
-		
-		
+
 	}
 
 }

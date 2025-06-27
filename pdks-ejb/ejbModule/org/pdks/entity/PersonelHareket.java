@@ -36,7 +36,7 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	private PersonelKGS personelKGS;
 	private KapiView kapiView;
 	private KapiKGS kapiKGS;
-	private Date zaman,guncellemeZamani;
+	private Date zaman, guncellemeZamani;
 	private PersonelHareketIslem islem;
 	private String personelNo;
 
@@ -93,7 +93,7 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "ISLEM_ID", nullable = false)
+	@JoinColumn(name = "ISLEM_ID")
 	@Fetch(FetchMode.JOIN)
 	public PersonelHareketIslem getIslem() {
 		return islem;
@@ -116,6 +116,7 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	public Long getKgsHareket() {
 		return kgsHareket;
 	}
+
 	@Temporal(value = TemporalType.TIMESTAMP)
 	@Column(name = COLUMN_NAME_GUNCELLEME_ZAMANI)
 	public Date getGuncellemeZamani() {
@@ -125,6 +126,7 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	public void setGuncellemeZamani(Date guncellemeZamani) {
 		this.guncellemeZamani = guncellemeZamani;
 	}
+
 	public void setKgsHareket(Long value) {
 		this.kgsHareket = value;
 	}

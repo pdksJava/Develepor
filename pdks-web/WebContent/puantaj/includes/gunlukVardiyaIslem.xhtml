@@ -216,7 +216,7 @@
 								</f:facet>
 								<ui:fragment rendered="#{hareket.islem != null and hareket.islem.neden.durum}">
 									<SPAN style="font-size: 8px"> <h:outputText value="#{hareket.islem.neden.aciklama}" /> -
-										#{authenticatedUser.dateTimeFormatla(hareket.islem.olusturmaTarihi)}
+										#{authenticatedUser.dateTimeFormatla(hareket.islem.olusturmaZamani)}
 									</SPAN>
 
 								</ui:fragment>

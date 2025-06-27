@@ -556,8 +556,8 @@ public class OrtakIslemler implements Serializable {
 					Long id = ((BigDecimal) objects[0]).longValue();
 					Date zaman = new Date(((Timestamp) objects[2]).getTime());
 					HareketKGS hareketKGS = updateKGSHareketMap.get(id);
-					PersonelHareketIslem islem = hareketKGS.getIslem();
-					islem.setOrjinalId(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS + objects[1]);
+					// PersonelHareketIslem islem = hareketKGS.getIslem();
+					// islem.setOrjinalId(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS + objects[1]);
 					hareketKGS.setOrjinalZaman(zaman);
 				}
 				list = null;
@@ -1918,8 +1918,8 @@ public class OrtakIslemler implements Serializable {
 							if (islem != null) {
 								manuelGiris = true;
 								ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, style).setCellValue(islem.getOnaylayanUser() != null ? islem.getOnaylayanUser().getAdSoyad() : "");
-								if (islem.getOlusturmaTarihi() != null)
-									ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, cellStyleDateTime).setCellValue(islem.getOlusturmaTarihi());
+								if (islem.getOlusturmaZamani() != null)
+									ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, cellStyleDateTime).setCellValue(islem.getOlusturmaZamani());
 								else
 									ExcelUtil.getCell(sheetHareket, rowHareket, colHareket++, style).setCellValue("");
 							} else {
@@ -20133,7 +20133,7 @@ public class OrtakIslemler implements Serializable {
 											if (arifeSureMap.containsKey("N_N") && arifeSureMap.containsKey("A_N")) {
 												key1 = "A_N";
 												arifeSureMap.put(key1, netSure - arifeSureMap.get("N_N"));
-											
+
 											}
 										}
 									}
@@ -22019,14 +22019,14 @@ public class OrtakIslemler implements Serializable {
 									PersonelHareketIslem islem = new PersonelHareketIslem();
 									islem.setAciklama(pdksLog2.getKgsId() + " " + kapiKGS.getKapi().getAciklama() + " olarak güncellendi. [ " + pdksLog2.getId() + " ]");
 									islem.setOnayDurum(PersonelHareketIslem.ONAY_DURUM_ONAYLANDI);
-									islem.setOlusturmaTarihi(guncellemeZamani);
+									islem.setOlusturmaZamani(guncellemeZamani);
 									islem.setGuncelleyenUser(onaylayanUser);
 									islem.setOnaylayanUser(loginUser);
 									islem.setZaman(pdksLog.getZaman());
 									islem.setIslemTipi("U");
 									islem.setNeden(islemNeden);
 									session.saveOrUpdate(islem);
-									pdksLog.setIslemId(islem.getId());
+									pdksLog.setIslem(islem);
 								}
 								pdksLog.setGuncellemeZamani(guncellemeZamani);
 								pdksLog.setDurum(Boolean.FALSE);
