@@ -20129,10 +20129,11 @@ public class OrtakIslemler implements Serializable {
 											key1 = "T_B";
 											key2 = "T_N";
 											arifeCalismaToplami(arifeSureMap, yemeksizSure, sure, key1, key2);
-											if (tatilKey.equals("A")) {
+											arifeSureMap.put(key2, netSure);
+											if (arifeSureMap.containsKey("N_N") && arifeSureMap.containsKey("A_N")) {
 												key1 = "A_N";
 												arifeSureMap.put(key1, netSure - arifeSureMap.get("N_N"));
-												arifeSureMap.put(key2, netSure);
+											
 											}
 										}
 									}
