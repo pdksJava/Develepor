@@ -18650,7 +18650,7 @@ public class OrtakIslemler implements Serializable {
 					Date tatilBas = tatil.getBasTarih(), tatilBit = tatil.getBitTarih(), gunBit = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(vg.getVardiyaDate(), "yyyyMMdd") + " 23:59:59", "yyyyMMdd HH:mm:ss");
 					if (tatil.isYarimGunMu() && islemVardiya.isCalisma()) {
 						vardiyaMap = tatil.getVardiyaMap();
-						if (vardiyaMap.containsKey(islemVardiya.getId())) {
+						if (vardiyaMap != null && vardiyaMap.containsKey(islemVardiya.getId())) {
 							Date arifeBaslangicTarihi = vardiyaMap.get(islemVardiya.getId()).getArifeBaslangicTarihi();
 							if (arifeBaslangicTarihi != null)
 								tatilBas = arifeBaslangicTarihi;
@@ -20129,6 +20129,11 @@ public class OrtakIslemler implements Serializable {
 											key1 = "T_B";
 											key2 = "T_N";
 											arifeCalismaToplami(arifeSureMap, yemeksizSure, sure, key1, key2);
+											if (tatilKey.equals("A")) {
+												key1 = "A_N";
+												arifeSureMap.put(key1, netSure - arifeSureMap.get("N_N"));
+												arifeSureMap.put(key2, netSure);
+											}
 										}
 									}
 
@@ -20333,7 +20338,7 @@ public class OrtakIslemler implements Serializable {
 																calSure = netSure;
 																double rtb = arifeSureMap.get("A_B");
 																if (rtb == resmiTatilSure)
-																	resmiTatilSure = netSure - arifeSureMap.get("N_N");
+																	resmiTatilSure = arifeSureMap.get("A_N");
 
 															}
 														}
