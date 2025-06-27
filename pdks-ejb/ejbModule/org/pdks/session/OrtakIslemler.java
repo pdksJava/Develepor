@@ -20334,7 +20334,12 @@ public class OrtakIslemler implements Serializable {
 
 															}
 														} else {
-															double toplamSureParcali = arifeSureMap.get("T_B"), toplamSureNormalParcali = arifeSureMap.get("N_B");
+
+															Double toplamSureParcali = arifeSureMap.get("T_B"), toplamSureNormalParcali = arifeSureMap.get("N_B");
+															if (toplamSureParcali == null)
+																toplamSureParcali = 0.0d;
+															if (toplamSureNormalParcali == null)
+																toplamSureNormalParcali = 0.0d;
 															if (toplamSureParcali == toplamParcalanmisSure && toplamSureNormalParcali == toplamNormalParcalanmisSure) {
 																calSure = netSure;
 																double rtb = arifeSureMap.get("A_B");
@@ -20342,6 +20347,7 @@ public class OrtakIslemler implements Serializable {
 																	resmiTatilSure = arifeSureMap.get("A_N");
 
 															}
+
 														}
 
 													} else {
