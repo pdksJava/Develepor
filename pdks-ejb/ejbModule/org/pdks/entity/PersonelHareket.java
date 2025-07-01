@@ -117,8 +117,9 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 		return kgsHareket;
 	}
 
-	@Temporal(value = TemporalType.TIMESTAMP)
-	@Column(name = COLUMN_NAME_GUNCELLEME_ZAMANI)
+	// @Temporal(value = TemporalType.TIMESTAMP)
+	// @Column(name = COLUMN_NAME_GUNCELLEME_ZAMANI)
+	@Transient
 	public Date getGuncellemeZamani() {
 		return guncellemeZamani;
 	}

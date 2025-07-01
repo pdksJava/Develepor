@@ -38,7 +38,8 @@
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.adminRole and vardiyaGunHome.aramaSecenekleri.departmanIdList.size()>1}">
 							<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
-							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.departmanId}" required="true" requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
+							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.departmanId}" required="true"
+								requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.departmanIdList}" />
 								<a4j:support event="onchange" action="#{vardiyaGunHome.fillSirketList()}" ajaxSingle="true" reRender="girisler,vardiyaPanel" />
@@ -258,8 +259,8 @@
 
 							<rich:fileUpload id="fileUpload" fileUploadListener="#{vardiyaGunHome.listenerFileImportDosya}" listHeight="50px" listWidth="300px"
 								sizeErrorLabel="Dosya boyutu büyük" maxFilesQuantity="1" immediateUpload="true" acceptedTypes="xls,xlsx"
-								transferErrorLabel="#{ortakIslemler.vardiyaAciklama()} planı dosyası hatalı yüklenmiştir" doneLabel="Bitti" addControlLabel="Dosya Seçin (Excel)"
-								uploadControlLabel="Dosya Kaydet" cancelEntryControlLabel="Temizle" allowFlash="false">
+								transferErrorLabel="#{ortakIslemler.vardiyaAciklama()} planı dosyası hatalı yüklenmiştir" doneLabel="Bitti"
+								addControlLabel="Dosya Seçin (Excel)" uploadControlLabel="Dosya Kaydet" cancelEntryControlLabel="Temizle" allowFlash="false">
 								<a4j:support event="onuploadcomplete" process="fileUpload" ajaxSingle="true" reRender="dosyaPaneli" />
 							</rich:fileUpload>
 							<ui:fragment rendered="#{vardiyaGunHome.vardiyaPlanDosya.dosyaIcerik != null}">
@@ -796,8 +797,8 @@
 						<a4j:commandButton value="Kaydet" action="#{vardiyaGunHome.aylikKaydet}" reRender="vardiyaPanel" onclick="#{rich:component('wait')}.show()"
 							oncomplete="if (#{facesContext.maximumSeverity == null}) { #{rich:component('editAylikPanel')}.hide();}#{rich:component('wait')}.hide();" />
 						<ui:fragment rendered="#{vardiyaGunHome.kartBasmayanPersonel}">
-							<a4j:commandButton value="Şablon #{ortakIslemler.vardiyaAciklama()}larını Güncelle" id="sablonlar" action="#{vardiyaGunHome.saveSablonGuncelle()}"
-								reRender="secimler,butonlar" ajaxSingle="true" />
+							<a4j:commandButton value="Şablon #{ortakIslemler.vardiyaAciklama()}larını Güncelle" id="sablonlar"
+								action="#{vardiyaGunHome.saveSablonGuncelle()}" reRender="secimler,butonlar" ajaxSingle="true" />
 							<rich:toolTip for="sablonlar">
 								<h:panelGrid columns="1">
 									<s:decorate template="/layout/edit.xhtml">
@@ -1441,6 +1442,15 @@
 													</h:graphicImage> <rich:toolTip for="mesaiIptalBilgi">
 														<B>Fazla çalışma talep iptal</B>
 													</rich:toolTip></td>
+
+												<ui:fragment rendered="#{empty vardiyaGunHome.hareketPdksList or vardiyaGunHome.ikRole}">
+													<td><h:graphicImage value="/img/clock_16.png" style="border:0" id="mesaiSaatEkle">
+															<a4j:support event="onclick" ajaxSingle="true" status="ajaxStatus" action="#{vardiyaGunHome.talepGirisCikisHareketEkle(fmt,true)}"
+																onclick="#{rich:component('wait')}.show()" oncomplete=" #{rich:component('wait')}.hide();" reRender="indirimOnay" />
+														</h:graphicImage> <rich:toolTip for="mesaiSaatEkle">
+															<B>Otomatik Saat Ekle</B>
+														</rich:toolTip></td>
+												</ui:fragment>
 											</ui:fragment>
 										</tr>
 									</TABLE>
