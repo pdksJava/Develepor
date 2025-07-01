@@ -10260,7 +10260,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		bordroPuantajEkranindaGoster = false;
 		linkBordroAdres = null;
 		aylikVardiyaPlanGiris(sayfaURL, true);
- 
 	}
 
 	protected void fmtOlustur() {
@@ -10271,6 +10270,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		sb.append("select T.* FROM " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " ON T." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :t1 and  V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " < :t2 ");
+		sb.append(" and  V." + VardiyaGun.COLUMN_NAME_DURUM + " = 1 ");
 		fields.put("t1", basGun);
 		fields.put("t2", bitGun);
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -10279,7 +10279,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			List<FazlaMesaiTalep> fmtList = pdksEntityController.getObjectBySQLList(sb, fields, FazlaMesaiTalep.class);
 			for (FazlaMesaiTalep fmt : fmtList) {
 				VardiyaGun vg = fmt.getVardiyaGun();
-				if (fmt.isIptalEdilebilir() && vg.getVardiya().isCalisma() == false) {
+				if (fmt.isIptalEdilebilir() && vg.getVardiya().isCalisma()) {
 					Long personelKGSId = vg.getPersonel().getPersonelKGS().getId();
 					Date tarih1 = fmt.getBaslangicZamani(), tarih2 = fmt.getBitisZamani();
 					String referans = "TRef:" + fmt.getId();
@@ -10294,6 +10294,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					List<PersonelHareket> hareketList = pdksEntityController.getObjectByInnerObjectListInLogic(fields, PersonelHareket.class);
 					if (hareketList.isEmpty()) {
 						talepGirisCikisHareketEkle(fmt, true);
+						vg.setDurum(Boolean.FALSE);
+						pdksEntityController.saveOrUpdate(session, entityManager, vg);
 						session.flush();
 						logger.info(vg.getVardiyaKeyStr());
 					}
