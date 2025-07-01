@@ -164,8 +164,10 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		for (String key : modelMap.keySet()) {
 			CalismaModeliAy cma = modelMap.get(key);
 			CalismaModeli cm = modelMap.get(key).getCalismaModeli();
-			if (cma.getDurum() && !cmMap.containsKey(cm.getId()))
+
+			if (cm != null && cma.getDurum() && !cmMap.containsKey(cm.getId()))
 				cmMap.put(cm.getId(), cm);
+
 		}
 
 		if (personelDenklestirmeler != null)
@@ -242,6 +244,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		Calendar calendar = Calendar.getInstance();
 		yil = calendar.get(Calendar.YEAR);
