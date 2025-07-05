@@ -50,8 +50,7 @@ public class HareketKGS implements Serializable, Cloneable {
 	public static final int DURUM_BLOKE = 2;
 	public static final int DURUM_AKTIF = 1;
 	public static final int DURUM_PASIF = 0;
-	public static final int DURUM_TASLAK = -1;
-	public static final String GIRIS_ISLEM_YAPAN_SIRKET_KGS = "K";
+ 	public static final String GIRIS_ISLEM_YAPAN_SIRKET_KGS = "K";
 	public static final String GIRIS_ISLEM_YAPAN_SIRKET_PDKS = "A";
 
 	private String id;
@@ -283,6 +282,18 @@ public class HareketKGS implements Serializable, Cloneable {
 	}
 
 	@Transient
+	public boolean getAktif() {
+		boolean d = durum == DURUM_AKTIF;
+		return d;
+	}
+
+	@Transient
+	public boolean getBloke() {
+		boolean d = durum == DURUM_BLOKE;
+		return d;
+	}
+
+	@Transient
 	public VardiyaGun getVardiyaGun() {
 		return this.vardiyaGun;
 	}
@@ -456,21 +467,21 @@ public class HareketKGS implements Serializable, Cloneable {
 		return sicilNo;
 	}
 
-//	@Transient
-//	public HareketKGS getYeniHareket(Date yeniZaman, KapiView yeniYapiView) {
-//		HareketKGS hareket = new HareketKGS(personel, yeniYapiView, yeniZaman);
-//		Date zamanGiris = yeniZaman != null ? yeniZaman : this.zaman;
-//		if (yeniZaman == null)
-//			hareket.setZaman(zaman);
-//		if (yeniYapiView == null)
-//			hareket.setKapiView(this.kapiView);
-//		if (hareket.getKapiView() != null)
-//			hareket.setKapiId(hareket.getKapiView().getId());
-//		hareket.setPersonelId(this.personelId);
-//		hareket.setDurum(this.durum);
-//		hareket.setOlusturmaZamani(zamanGiris);
-//		return hareket;
-//	}
+	// @Transient
+	// public HareketKGS getYeniHareket(Date yeniZaman, KapiView yeniYapiView) {
+	// HareketKGS hareket = new HareketKGS(personel, yeniYapiView, yeniZaman);
+	// Date zamanGiris = yeniZaman != null ? yeniZaman : this.zaman;
+	// if (yeniZaman == null)
+	// hareket.setZaman(zaman);
+	// if (yeniYapiView == null)
+	// hareket.setKapiView(this.kapiView);
+	// if (hareket.getKapiView() != null)
+	// hareket.setKapiId(hareket.getKapiView().getId());
+	// hareket.setPersonelId(this.personelId);
+	// hareket.setDurum(this.durum);
+	// hareket.setOlusturmaZamani(zamanGiris);
+	// return hareket;
+	// }
 
 	@Transient
 	public String getAdSoyad() {
@@ -664,6 +675,7 @@ public class HareketKGS implements Serializable, Cloneable {
 	public void setYemekMolasi(Double yemekMolasi) {
 		this.yemekMolasi = yemekMolasi;
 	}
+
 	@Transient
 	public HareketKGS getMukerrerHareket() {
 		return mukerrerHareket;

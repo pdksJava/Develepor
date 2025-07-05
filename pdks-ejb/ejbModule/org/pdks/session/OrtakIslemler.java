@@ -20103,7 +20103,7 @@ public class OrtakIslemler implements Serializable {
 									if (arifeGunu)
 										yemekler = yemekList;
 									vardiyaYemekSuresi = vardiya != null && vardiya.getYemekSuresi() != null ? vardiya.getYemekSuresi().doubleValue() / 60d : 0d;
-									if (cikisHareket.getVardiyaGun() == null || cikisHareket.getVardiyaGun().getId().equals(vardiyaGun.getId())) {
+									if (cikisHareket.getVardiyaGun() == null || (vardiyaGun.getId() != null && cikisHareket.getVardiyaGun().getId().equals(vardiyaGun.getId()))) {
 										sureHesapla = Boolean.TRUE;
 										double sure = PdksUtil.getSaatFarki(cikisZaman, girisZaman);
 										yemeksizSure = getSaatSure(girisZaman, cikisZaman, yemekler, vardiyaGun, session);

@@ -14,10 +14,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Immutable;
 
 @Entity(name = PersonelHareket.TABLE_NAME)
-@Immutable
 public class PersonelHareket extends BasePDKSObject implements Serializable {
 
 	/**
@@ -40,7 +38,7 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	private PersonelHareketIslem islem;
 	private String personelNo;
 
-	private Integer durum = 1;
+	private Boolean durum = Boolean.TRUE;
 	private Long kgsHareket;
 
 	public PersonelHareket() {
@@ -103,12 +101,12 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 		this.islem = islem;
 	}
 
-	@Column(name = "DURUM", columnDefinition = "default '1'")
-	public int getDurum() {
+	@Column(name = "DURUM")
+	public Boolean getDurum() {
 		return durum;
 	}
 
-	public void setDurum(int durum) {
+	public void setDurum(Boolean durum) {
 		this.durum = durum;
 	}
 
