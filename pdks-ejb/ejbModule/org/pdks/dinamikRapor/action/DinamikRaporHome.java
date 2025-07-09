@@ -211,6 +211,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 					veriMap.put(adi, rp.getSayisalDeger());
 				else if (rp.isTarih())
 					veriMap.put(adi, rp.getTarihDeger());
+				else if (rp.isMantiksal())
+					veriMap.put(adi, rp.getMantiksalDurum() != null && rp.getMantiksalDurum() ? 1 : 0);
 			}
 			if (session != null)
 				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -245,6 +247,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 							fields.put(adi, rp.getSayisalDeger());
 						else if (rp.isTarih())
 							fields.put(adi, rp.getTarihDeger());
+
 					}
 				}
 				sb.append(strFunction + " )");
@@ -263,6 +266,10 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 							veri = rp.getSayisalDeger();
 						else if (rp.isTarih())
 							veri = rp.getTarihDeger();
+						else if (rp.isMantiksal()) {
+							if (rp.getMantiksalDurum() != null)
+								veri = rp.getMantiksalDurum() ? 1 : 0;
+						}
 						if (veri != null || rp.getZorunlu()) {
 							String esitlik = PdksUtil.hasStringValue(rp.getEsitlik()) ? rp.getEsitlik().trim() : "=";
 							if (esitlik.equalsIgnoreCase("like"))

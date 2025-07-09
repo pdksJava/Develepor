@@ -5,7 +5,7 @@ package org.pdks.dinamikRapor.enums;
 
 public enum ENumRaporAlanTipi {
 
-	SAYISAL(1), KARAKTER(2), TARIH(3), SAAT(4), TARIH_SAAT(5);
+	SAYISAL(1), KARAKTER(2), TARIH(3), SAAT(4), TARIH_SAAT(5), MANTIKSAL(6);
 
 	private final Integer value;
 

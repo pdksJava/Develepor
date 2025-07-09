@@ -122,6 +122,7 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 	public void setFilter(Boolean filter) {
 		this.filter = filter;
 	}
+
 	@Column(name = COLUMN_NAME_GOSTER)
 	public Boolean getGoster() {
 		return goster;
@@ -163,6 +164,11 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 	@Transient
 	public boolean isTarihSaat() {
 		return alanTipiId != null && alanTipiId.equals(ENumRaporAlanTipi.TARIH_SAAT.value());
+	}
+
+	@Transient
+	public boolean isMantiksal() {
+		return alanTipiId != null && alanTipiId.equals(ENumRaporAlanTipi.MANTIKSAL.value());
 	}
 
 	@Transient
@@ -237,7 +243,5 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 		}
 		return object;
 	}
-
-
 
 }

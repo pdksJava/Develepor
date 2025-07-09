@@ -51,7 +51,7 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	private Integer alanTipiId, sira;
 
-	private Boolean parametreDurum = Boolean.TRUE, durum = Boolean.TRUE;
+	private Boolean parametreDurum = Boolean.TRUE, durum = Boolean.TRUE, mantiksalDurum;
 
 	private Date tarihDeger;
 
@@ -167,6 +167,11 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	@Transient
 	public boolean isSayisal() {
 		return alanTipiId != null && alanTipiId.equals(ENumRaporAlanTipi.SAYISAL.value());
+	}
+
+	@Transient
+	public boolean isMantiksal() {
+		return alanTipiId != null && alanTipiId.equals(ENumRaporAlanTipi.MANTIKSAL.value());
 	}
 
 	@Transient
@@ -297,6 +302,15 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 		}
 
 		return baslikDurum;
+	}
+
+	@Transient
+	public Boolean getMantiksalDurum() {
+		return mantiksalDurum;
+	}
+
+	public void setMantiksalDurum(Boolean mantiksalDurum) {
+		this.mantiksalDurum = mantiksalDurum;
 	}
 
 	public void entityRefresh() {

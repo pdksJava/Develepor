@@ -143,6 +143,8 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 				str = "Saat";
 			else if (key.equals(ENumRaporAlanTipi.TARIH_SAAT.value()))
 				str = "Tarih Saat";
+			else if (key.equals(ENumRaporAlanTipi.MANTIKSAL.value()))
+				str = "Mantıksal";
 		}
 		return str;
 	}

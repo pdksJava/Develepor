@@ -112,6 +112,12 @@
 													<a4j:support event="onchanged" action="#{dinamikRaporHome.tesisDoldur(parametre)}" status="ajaxStatus" reRender="raporTable,girisler" />
 												</rich:calendar>
 											</ui:fragment>
+											<ui:fragment rendered="#{parametre.mantiksal}">
+												<h:selectBooleanCheckbox value="#{parametre.mantiksalDurum}" required="#{parametre.zorunlu}"
+													requiredMessage="#{parametre.aciklama} seçiniz">
+													<a4j:support event="onclick" status="ajaxStatus" reRender="raporTable,girisler" />
+												</h:selectBooleanCheckbox> 
+											</ui:fragment>
 										</ui:fragment>
 									</s:decorate>
 
