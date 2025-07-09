@@ -113,10 +113,15 @@
 												</rich:calendar>
 											</ui:fragment>
 											<ui:fragment rendered="#{parametre.mantiksal}">
-												<h:selectBooleanCheckbox value="#{parametre.mantiksalDurum}" required="#{parametre.zorunlu}"
-													requiredMessage="#{parametre.aciklama} seçiniz">
-													<a4j:support event="onclick" status="ajaxStatus" reRender="raporTable,girisler" />
-												</h:selectBooleanCheckbox>
+												<h:selectOneMenu value="#{parametre.mantiksalDurum}">
+													<f:selectItem itemLabel="Hepsi" />
+													<f:selectItem itemValue="true" itemLabel="#{authenticatedUser.getYesNo(true)}" />
+													<f:selectItem itemValue="false" itemLabel="#{authenticatedUser.getYesNo(false)}" />
+													<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" reRender="girisler,raporTable" />
+
+												</h:selectOneMenu>
+
+
 											</ui:fragment>
 										</ui:fragment>
 									</s:decorate>
