@@ -8,7 +8,7 @@
 	</ui:define>
 	<ui:define name="body">
 
-		<h:form id="formOrganizasyon">
+		<h:form>
 			<rich:panel header="#{dinamikRaporHome.seciliPdksDinamikRapor.aciklama}">
 
 				<h:panelGrid columns="1" rendered="#{dinamikRaporHome.dinamikRaporList.size()>1}">
@@ -116,7 +116,7 @@
 												<h:selectBooleanCheckbox value="#{parametre.mantiksalDurum}" required="#{parametre.zorunlu}"
 													requiredMessage="#{parametre.aciklama} seçiniz">
 													<a4j:support event="onclick" status="ajaxStatus" reRender="raporTable,girisler" />
-												</h:selectBooleanCheckbox> 
+												</h:selectBooleanCheckbox>
 											</ui:fragment>
 										</ui:fragment>
 									</s:decorate>

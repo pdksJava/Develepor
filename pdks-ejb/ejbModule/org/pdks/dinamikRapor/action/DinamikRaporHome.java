@@ -159,6 +159,11 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				lastMap.put(adi, rp.getSayisalDeger());
 			else if (rp.isTarih())
 				lastMap.put(adi, PdksUtil.convertToDateString(rp.getTarihDeger(), "yyyyMMdd"));
+			else if (rp.isMantiksal()) {
+				if (rp.getMantiksalDurum() != null)
+					lastMap.put(adi, String.valueOf(rp.getMantiksalDurum()));
+			}
+
 		}
 		lastMap.put("goster", String.valueOf(goster));
 		dataMap.put("data_" + seciliPdksDinamikRapor.getId(), lastMap);
@@ -847,7 +852,10 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 		for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
 			PdksDinamikRaporParametre pr = (PdksDinamikRaporParametre) iterator.next();
 			Object paramValue = lastMap.containsKey(pr.getAciklama()) ? lastMap.get(pr.getAciklama()) : null;
-			if (pr.isTarih()) {
+			if (pr.isMantiksal()) {
+				if (paramValue != null)
+					pr.setMantiksalDurum(new Boolean(paramValue.toString()));
+			} else if (pr.isTarih()) {
 				if (paramValue != null)
 					tarihDeger = PdksUtil.convertToJavaDate((String) paramValue, "yyyyMMdd");
 				if (tarihDeger == null)
@@ -947,7 +955,11 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 					}
 					if (paramValue != null) {
 						try {
-							pr.setValue(new BigDecimal("" + paramValue).longValue());
+							if (pr.isKarakter() == false)
+								pr.setValue(new BigDecimal("" + paramValue).longValue());
+							else
+
+								pr.setKarakterDeger(paramValue.toString());
 						} catch (Exception e) {
 							// TODO: handle exception
 						}
