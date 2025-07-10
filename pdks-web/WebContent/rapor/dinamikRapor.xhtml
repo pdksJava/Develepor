@@ -103,7 +103,10 @@
 													</rich:inputNumberSpinner>
 												</ui:fragment>
 												<h:inputText value="#{parametre.karakterDeger}" rendered="#{parametre.yilSpinner==false}" size="2" maxlength="255"
-													required="#{parametre.zorunlu}" requiredMessage="#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)} giriniz" />
+													required="#{parametre.zorunlu}" requiredMessage="#{ortakIslemler.getDinamikRaporAlanAciklama(parametre.aciklama)} giriniz">
+													<a4j:support event="onchange" action="#{dinamikRaporHome.dinamikRaporDataList.clear()}" status="ajaxStatus" ajaxSingle="true"
+														reRender="girisler,raporTable" />
+												</h:inputText>
 											</ui:fragment>
 
 											<ui:fragment rendered="#{parametre.tarih}">
@@ -117,11 +120,10 @@
 													<f:selectItem itemLabel="Hepsi" />
 													<f:selectItem itemValue="true" itemLabel="#{authenticatedUser.getYesNo(true)}" />
 													<f:selectItem itemValue="false" itemLabel="#{authenticatedUser.getYesNo(false)}" />
-													<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" reRender="girisler,raporTable" />
+													<a4j:support event="onchange" action="#{dinamikRaporHome.dinamikRaporDataList.clear()}" status="ajaxStatus" ajaxSingle="true"
+														reRender="girisler,raporTable" />
 
 												</h:selectOneMenu>
-
-
 											</ui:fragment>
 										</ui:fragment>
 									</s:decorate>
