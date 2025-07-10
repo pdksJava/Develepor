@@ -86,6 +86,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	private List<SelectItem> tesisIdList;
 	private List<Liste> dinamikRaporDataList;
 	private PdksDinamikRaporParametre sirketParametre, tesisParametre, basTarihParametre, bitTarihParametre, bolumParametre, yilParametre, ayParametre;
+	private PdksDinamikRaporAlan tesisAlan;
 	private DenklestirmeAy dm;
 	private boolean goster = true;
 	private int maxYil;
@@ -600,9 +601,23 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	 * 
 	 */
 	private void fillDinamikRaporAlanList() {
-		dinamikRaporAlanList = pdksEntityController.getSQLParamByAktifFieldList(PdksDinamikRaporAlan.TABLE_NAME, PdksDinamikRaporAlan.COLUMN_NAME_DINAMIK_RAPOR, seciliPdksDinamikRapor.getId(), PdksDinamikRaporAlan.class, session);
+		tesisAlan = null;
+		if (dinamikRaporAlanList == null)
+			dinamikRaporAlanList = new ArrayList<PdksDinamikRaporAlan>();
+		dinamikRaporAlanList.clear();
+		List<PdksDinamikRaporAlan> list = pdksEntityController.getSQLParamByAktifFieldList(PdksDinamikRaporAlan.TABLE_NAME, PdksDinamikRaporAlan.COLUMN_NAME_DINAMIK_RAPOR, seciliPdksDinamikRapor.getId(), PdksDinamikRaporAlan.class, session);
+		for (PdksDinamikRaporAlan pdra : list) {
+			PdksDinamikRaporAlan dinamikRaporAlan = (PdksDinamikRaporAlan) pdra.clone();
+			ENumBaslik baslik = ENumBaslik.fromValue(dinamikRaporAlan.getAciklama());
+			if (baslik != null && baslik.equals(ENumBaslik.TESIS))
+				tesisAlan = dinamikRaporAlan;
+			dinamikRaporAlanList.add(dinamikRaporAlan);
+		}
+
+		list = null;
 		if (dinamikRaporAlanList.size() > 1)
 			dinamikRaporAlanList = PdksUtil.sortListByAlanAdi(dinamikRaporAlanList, "sira", Boolean.FALSE);
+
 	}
 
 	/**
@@ -656,6 +671,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 						bolumParametre.setValue(null);
 					tesisParametre.setValue(null);
 					List<SelectItem> list = null;
+					if (tesisAlan != null)
+						tesisAlan.setDurum(Boolean.TRUE);
 					if (sirketId != null) {
 						sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 						if (sirket.isTesisDurumu()) {
@@ -683,6 +700,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 								tesisParametre.setSecimList(list);
 							}
 						} else if (tesisParametre != null) {
+							if (tesisAlan != null)
+								tesisAlan.setDurum(Boolean.FALSE);
 							tesisParametre.setValue(null);
 							tesisParametre.setSecimList(new ArrayList<SelectItem>());
 						}
@@ -1090,6 +1109,14 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 
 	public void setGoster(boolean goster) {
 		this.goster = goster;
+	}
+
+	public PdksDinamikRaporAlan getTesisAlan() {
+		return tesisAlan;
+	}
+
+	public void setTesisAlan(PdksDinamikRaporAlan tesisAlan) {
+		this.tesisAlan = tesisAlan;
 	}
 
 }
