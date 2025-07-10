@@ -655,10 +655,11 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 					if (bolumParametre != null)
 						bolumParametre.setValue(null);
 					tesisParametre.setValue(null);
+					List<SelectItem> list = null;
 					if (sirketId != null) {
 						sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 						if (sirket.isTesisDurumu()) {
-							List<SelectItem> list = null;
+
 							if (dm != null) {
 								List<SelectItem> tesisList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, dm != null ? new AylikPuantaj(dm) : null, false, session);
 								if (tesisList != null && !tesisList.isEmpty()) {
@@ -681,6 +682,9 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 								}
 								tesisParametre.setSecimList(list);
 							}
+						} else if (tesisParametre != null) {
+							tesisParametre.setValue(null);
+							tesisParametre.setSecimList(new ArrayList<SelectItem>());
 						}
 						if (bolumParametre != null && (sirket.getTesisDurum().booleanValue() == false || tesisParametre.getValue() != null))
 							bolumDoldur(basTarih, bitTarih, sirket);
