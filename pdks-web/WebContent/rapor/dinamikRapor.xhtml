@@ -180,7 +180,7 @@
 												</c:if>
 
 												<rich:column style="text-align :#{dinamikAlan.pdksDinamikRaporAlanHizala}"
-													rendered="#{dinamikRaporHome.getFilterAlan(dinamikAlan)==false and (authenticatedUser.admin or dinamikAlan.goster)}">
+													rendered="#{dinamikAlan.durum and dinamikRaporHome.getFilterAlan(dinamikAlan)==false and (authenticatedUser.admin or dinamikAlan.goster)}">
 													<f:facet name="header">
 														<h:outputText value="#{ortakIslemler.getDinamikRaporAlanAciklama(dinamikAlan.aciklama)}" />
 													</f:facet>
