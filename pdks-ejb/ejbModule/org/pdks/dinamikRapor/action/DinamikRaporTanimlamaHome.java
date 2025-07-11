@@ -64,7 +64,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	private PdksDinamikRapor seciliPdksDinamikRapor;
 	private PdksDinamikRaporAlan seciliPdksDinamikRaporAlan;
 	private PdksDinamikRaporParametre seciliPdksDinamikRaporParametre;
-	private List<PdksDinamikRaporAlan> dinamikRaporAlanList;
+	private List<PdksDinamikRaporAlan> dinamikRaporAlanList, dinamikRaporBagliAlanList;
 	private List<Role> raporRoleList, roleList;
 	private List<PdksDinamikRaporParametre> dinamikRaporParametreList;
 	private List<SelectItem> parametreList, alanAdiList, raporTipiList, alanHizalamaList, esitlikList;
@@ -203,6 +203,9 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	}
 
 	public String dinamikRaporParametreGuncelle(PdksDinamikRaporParametre parametre) {
+		dinamikRaporBagliAlanList = seciliPdksDinamikRapor.getId() != null ? pdksEntityController.getSQLParamByFieldList(PdksDinamikRaporAlan.TABLE_NAME, PdksDinamikRaporAlan.COLUMN_NAME_DINAMIK_RAPOR, seciliPdksDinamikRapor.getId(), PdksDinamikRaporAlan.class, session)
+				: new ArrayList<PdksDinamikRaporAlan>();
+		// boolean ekle = parametre == null && parametre.getBagliDinamikAlan() != null;
 		if (parametre == null) {
 			parametre = new PdksDinamikRaporParametre();
 			parametre.setPdksDinamikRapor(seciliPdksDinamikRapor);
@@ -211,7 +214,24 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 				sonSira = pr.getSira();
 			}
 			parametre.setSira(sonSira + 10);
+
 		}
+		PdksDinamikRaporAlan bagliDinamikAlan = parametre.getBagliDinamikAlan();
+		for (Iterator iterator = dinamikRaporBagliAlanList.iterator(); iterator.hasNext();) {
+			PdksDinamikRaporAlan dra = (PdksDinamikRaporAlan) iterator.next();
+			if (dra.isKarakter() == false || dra.getBaslik() != null)
+				iterator.remove();
+			else if (bagliDinamikAlan != null) {
+				if (bagliDinamikAlan.getId().equals(dra.getId()))
+					bagliDinamikAlan = null;
+			}
+
+		}
+		if (bagliDinamikAlan != null && bagliDinamikAlan.isKarakter())
+			dinamikRaporBagliAlanList.add(bagliDinamikAlan);
+		if (dinamikRaporBagliAlanList.size() > 1)
+			dinamikRaporBagliAlanList = PdksUtil.sortListByAlanAdi(dinamikRaporBagliAlanList, "sira", Boolean.FALSE);
+
 		seciliPdksDinamikRaporParametre = parametre;
 		return "";
 
@@ -590,5 +610,13 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 
 	public void setRoleList(List<Role> roleList) {
 		this.roleList = roleList;
+	}
+
+	public List<PdksDinamikRaporAlan> getDinamikRaporBagliAlanList() {
+		return dinamikRaporBagliAlanList;
+	}
+
+	public void setDinamikRaporBagliAlanList(List<PdksDinamikRaporAlan> dinamikRaporBagliAlanList) {
+		this.dinamikRaporBagliAlanList = dinamikRaporBagliAlanList;
 	}
 }

@@ -81,7 +81,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	public static String sayfaURL = "dinamikRapor";
 	private PdksDinamikRapor seciliPdksDinamikRapor;
 	private List<PdksDinamikRapor> dinamikRaporList;
-	private List<PdksDinamikRaporAlan> dinamikRaporAlanList;
+	private List<PdksDinamikRaporAlan> dinamikRaporAlanList, dinamikRaporBagliAlanList;
 	private List<PdksDinamikRaporParametre> dinamikRaporParametreList;
 	private List<SelectItem> tesisIdList;
 	private List<Liste> dinamikRaporDataList;
@@ -120,15 +120,21 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			dinamikRaporDataList = new ArrayList<Liste>();
 		else
 			dinamikRaporDataList.clear();
-		fillPdksDinamikRaporList();
-		seciliPdksDinamikRapor = null;
-		if (dinamikRaporList.isEmpty()) {
-			PdksUtil.addMessageAvailableWarn("Rapor alınacak tanımlanmış veri yoktur!");
-			sayfa = MenuItemConstant.home;
-		} else if (dinamikRaporList.size() == 1) {
-			PdksDinamikRapor dinamikRapor = dinamikRaporList.get(0);
-			dinamikRaporGuncelle(dinamikRapor);
+		try {
+			fillPdksDinamikRaporList();
+			seciliPdksDinamikRapor = null;
+			if (dinamikRaporList.isEmpty()) {
+				PdksUtil.addMessageAvailableWarn("Rapor alınacak tanımlanmış veri yoktur!");
+				sayfa = MenuItemConstant.home;
+			} else if (dinamikRaporList.size() == 1) {
+				PdksDinamikRapor dinamikRapor = dinamikRaporList.get(0);
+				dinamikRaporGuncelle(dinamikRapor);
+			}
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
 		}
+
 		return sayfa;
 	}
 
@@ -321,7 +327,14 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				sb.append(" order by " + seciliPdksDinamikRapor.getOrderSQL());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			list = pdksEntityController.getObjectBySQLList(sb, fields, null);
+			try {
+				list = pdksEntityController.getObjectBySQLList(sb, fields, null);
+			} catch (Exception e) {
+				list = null;
+				logger.error(e);
+				e.printStackTrace();
+			}
+
 		}
 		saveLastParameter();
 		if (list != null && list.isEmpty() == false) {
@@ -683,8 +696,14 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	private void basliklariGuncelle() {
 		for (PdksDinamikRaporAlan pdra : dinamikRaporAlanList) {
 			pdra.setDurum(Boolean.TRUE);
+			String alanAdi = pdra.getBaslik() == null ? pdra.getAciklama() : "";
 			if (pdra.getBaslik() != null) {
 				for (PdksDinamikRaporParametre pdrp : dinamikRaporParametreList) {
+					if (pdrp.getBagliDinamikAlan() != null && alanAdi.equals(pdrp.getBagliDinamikAlan().getAciklama())) {
+						if (PdksUtil.hasStringValue(pdrp.getKarakterDeger()) || pdrp.getMantiksalDurum() != null)
+							pdra.setDurum(Boolean.FALSE);
+						break;
+					}
 					if (pdrp.getBaslik() != null && pdrp.getBaslik().equals(pdra.getBaslik())) {
 						if (pdrp.getSecimList() != null)
 							pdra.setDurum(pdrp.getValue() == null);
@@ -696,6 +715,11 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				}
 			} else {
 				for (PdksDinamikRaporParametre pdrp : dinamikRaporParametreList) {
+					if (pdrp.getBagliDinamikAlan() != null && alanAdi.equals(pdrp.getBagliDinamikAlan().getAciklama())) {
+						if (PdksUtil.hasStringValue(pdrp.getKarakterDeger()) || pdrp.getMantiksalDurum() != null)
+							pdra.setDurum(Boolean.FALSE);
+						break;
+					}
 					if (pdrp.getAciklama().equals(pdra.getAciklama())) {
 						if (pdrp.isMantiksal())
 							pdra.setDurum(pdrp.getMantiksalDurum() == null);
@@ -1214,6 +1238,14 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 
 	public void setTesisAlan(PdksDinamikRaporAlan tesisAlan) {
 		this.tesisAlan = tesisAlan;
+	}
+
+	public List<PdksDinamikRaporAlan> getDinamikRaporBagliAlanList() {
+		return dinamikRaporBagliAlanList;
+	}
+
+	public void setDinamikRaporBagliAlanList(List<PdksDinamikRaporAlan> dinamikRaporBagliAlanList) {
+		this.dinamikRaporBagliAlanList = dinamikRaporBagliAlanList;
 	}
 
 }

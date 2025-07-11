@@ -34,6 +34,7 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	public static final String TABLE_NAME = "PDKS_DINAMIK_RAPOR_PARAMETRE";
 	public static final String COLUMN_NAME_DINAMIK_RAPOR = "DINAMIK_RAPOR_ID";
+	public static final String COLUMN_NAME_DINAMIK_BAGLI_ALAN = "DINAMIK_BAGLI_ALAN_ID";
 	public static final String COLUMN_NAME_DB_TANIM = "DB_TANIM";
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final String COLUMN_NAME_SIRA = "SIRA";
@@ -44,6 +45,8 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	public static final String COLUMN_NAME_DURUM = "DURUM";
 
 	private PdksDinamikRapor pdksDinamikRapor;
+
+	private PdksDinamikRaporAlan bagliDinamikAlan;
 
 	private String aciklama, dbTanim, esitlik = "";
 
@@ -76,6 +79,17 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	public void setPdksDinamikRapor(PdksDinamikRapor pdksDinamikRapor) {
 		this.pdksDinamikRapor = pdksDinamikRapor;
+	}
+
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_DINAMIK_BAGLI_ALAN)
+	@Fetch(FetchMode.JOIN)
+	public PdksDinamikRaporAlan getBagliDinamikAlan() {
+		return bagliDinamikAlan;
+	}
+
+	public void setBagliDinamikAlan(PdksDinamikRaporAlan bagliDinamikAlan) {
+		this.bagliDinamikAlan = bagliDinamikAlan;
 	}
 
 	@Column(name = COLUMN_NAME_SIRA)

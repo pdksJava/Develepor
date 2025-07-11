@@ -7,10 +7,7 @@
 		<h:outputText value="#{ortakIslemler.getMenuAdi('dinamikRaporTanimlama')}" />
 	</ui:define>
 	<ui:define name="body">
-
 		<h:form id="formOrganizasyon">
-
-
 			<rich:panel style="vardiyaGun" header="#{ortakIslemler.getMenuUserAdi(dinamikRaporTanimlamaHome.session,'dinamikRaporTanimlama')}">
 				<a4j:outputPanel id="raporTable">
 					<rich:dataTable rowClasses="acik,koyu" value="#{dinamikRaporTanimlamaHome.dinamikRaporList}" var="rapor" rows="20" rowKeyVar="row">
@@ -24,19 +21,16 @@
 							<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink" action="#{dinamikRaporTanimlamaHome.dinamikRaporGuncelle(rapor,null)}"
 								oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
 								<h:graphicImage value="/img/edit.gif" style="border:0" />
-
 							</a4j:commandLink>
 							<rich:toolTip for="editlink" value="Güncelle" />
 							<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="paramlink" action="#{dinamikRaporTanimlamaHome.dinamikRaporGuncelle(rapor,'P')}"
 								oncomplete="#{rich:component('editParametrePanel')}.show()" reRender="editParametrePanel">
 								<h:graphicImage value="/img/wallet_16.png" style="border:0" />
-
 							</a4j:commandLink>
 							<rich:toolTip for="paramlink" value="#{rapor.pdksDinamikRaporTipiAciklama} Parametreleri" />
 							<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="alanlink" action="#{dinamikRaporTanimlamaHome.dinamikRaporGuncelle(rapor,'A')}"
 								oncomplete="#{rich:component('editAlanPanel')}.show()" reRender="editAlanPanel">
 								<h:graphicImage value="/img/select.gif" style="border:0" />
-
 							</a4j:commandLink>
 							<rich:toolTip for="alanlink" value="#{rapor.pdksDinamikRaporTipiAciklama} Alanları" />
 						</rich:column>
@@ -82,7 +76,6 @@
               		 	 </f:facet>
 							<h:outputText value="#{rapor.orderSQL}" />
 						</rich:column>
-
 						<rich:column>
 							<f:facet name="header">
                       		 Menü Sıra
@@ -99,7 +92,6 @@
 							<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 						</f:facet>
 					</rich:dataTable>
-
 				</a4j:outputPanel>
 				<h:panelGrid columns="1" id="ekle" rendered="#{authenticatedUser.admin}">
 					<a4j:commandButton status="ajaxStatus" value="Rapor Ekle" action="#{dinamikRaporTanimlamaHome.dinamikRaporGuncelle(null,null)}"
@@ -108,11 +100,8 @@
 					</a4j:commandButton>
 					<rich:toolTip for="addlink" value="Add" />
 				</h:panelGrid>
-
 			</rich:panel>
-
 		</h:form>
-
 		<rich:modalPanel id="editParametrePanel" autosized="true" width="800">
 			<f:facet name="header">
 				<h:outputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.aciklama} Parametre Güncelle" />
@@ -134,7 +123,6 @@
 					</a4j:outputPanel>
 					<a4j:outputPanel id="raporParametreBilgi">
 						<ui:fragment rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre!=null}">
-
 							<h:panelGrid columns="2">
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Parametre Başlık</ui:define>
@@ -165,18 +153,22 @@
 										<f:selectItems value="#{dinamikRaporTanimlamaHome.parametreList}" />
 										<a4j:support event="onchange" reRender="alanTipiId2" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 									</h:selectOneMenu>
-
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.storeProcedure==false}">
 									<ui:define name="label">Eşitlikten Farklı</ui:define>
-
 									<h:selectOneMenu id="esitlik" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.esitlik}">
 										<f:selectItem itemValue="" itemLabel="Lütfen seçiniz" />
 										<f:selectItems value="#{dinamikRaporTanimlamaHome.esitlikList}" />
 										<a4j:support event="onchange" reRender="esitlik" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 									</h:selectOneMenu>
-
-
+								</s:decorate>
+								<s:decorate template="/layout/edit.xhtml" rendered="#{not empty dinamikRaporTanimlamaHome.dinamikRaporBagliAlanList}">
+									<ui:define name="label">Bağlı Rapor Alan</ui:define>
+									<h:selectOneMenu value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.bagliDinamikAlan}" required="false" requiredMessage="Bağlı Rapor Alan seçiniz">
+										<s:selectItems var="comp" value="#{dinamikRaporTanimlamaHome.dinamikRaporBagliAlanList}" label="#{comp.aciklama}"
+											noSelectionLabel="Lütfen seçiniz" />
+										<s:convertEntity />
+									</h:selectOneMenu>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.function}">
 									<ui:define name="label">Parametre</ui:define>
@@ -184,7 +176,6 @@
 										<a4j:support event="onclick" reRender="parametreDurum" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 									</h:selectBooleanCheckbox>
 								</s:decorate>
-
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Zorunlu</ui:define>
 									<h:selectBooleanCheckbox id="zorunlu" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.zorunlu}">
@@ -212,7 +203,6 @@
 								<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editParametrelink"
 									action="#{dinamikRaporTanimlamaHome.dinamikRaporParametreGuncelle(parametre)}" reRender="raporParametreBilgi">
 									<h:graphicImage value="/img/edit.gif" style="border:0" />
-
 								</a4j:commandLink>
 								<rich:toolTip for="editParametrelink" value="Güncelle" />
 								<a4j:commandLink status="ajaxStatus" action="#{dinamikRaporTanimlamaHome.deleteDinamikRaporParametre(parametre)}" ajaxSingle="true"
@@ -257,6 +247,14 @@
               		 	 </f:facet>
 								<h:outputText value="#{parametre.esitlikAciklama}" />
 							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+                      		 Bağlı Rapor Alan
+              		 	 </f:facet>
+								<ui:fragment rendered="#{parametre.bagliDinamikAlan!=null}">
+									<h:outputText value="#{parametre.bagliDinamikAlan.aciklama}" />
+								</ui:fragment>
+							</rich:column>
 							<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.function}">
 								<f:facet name="header">
                       		 Parametre
@@ -288,7 +286,6 @@
 				</h:panelGrid>
 			</h:form>
 		</rich:modalPanel>
-
 		<rich:modalPanel id="editAlanPanel" autosized="true" width="800">
 			<f:facet name="header">
 				<h:outputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.aciklama} Alan Güncelle" />
@@ -308,7 +305,6 @@
 					<a4j:outputPanel ajaxRendered="true">
 						<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 					</a4j:outputPanel>
-
 					<a4j:outputPanel id="raporAlanBilgi">
 						<c:if test="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporAlan!=null}">
 							<h:panelGrid columns="2">
@@ -340,9 +336,7 @@
 										<f:selectItem itemLabel="Lütfen seçiniz" />
 										<f:selectItems value="#{dinamikRaporTanimlamaHome.alanAdiList}" />
 										<a4j:support event="onchange" reRender="alanTipiId3" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
-
 									</h:selectOneMenu>
-
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Hizalama Tipi</ui:define>
@@ -351,9 +345,7 @@
 										<f:selectItem itemLabel="Lütfen seçiniz" />
 										<f:selectItems value="#{dinamikRaporTanimlamaHome.alanHizalamaList}" />
 										<a4j:support event="onchange" reRender="hizala" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
-
 									</h:selectOneMenu>
-
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Filtre</ui:define>
@@ -387,10 +379,8 @@
 								<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editAlanlink" action="#{dinamikRaporTanimlamaHome.dinamikRaporAlanGuncelle(alan)}"
 									reRender="raporAlanBilgi">
 									<h:graphicImage value="/img/edit.gif" style="border:0" />
-
 								</a4j:commandLink>
 								<rich:toolTip for="editAlanlink" value="Güncelle" />
-
 								<a4j:commandLink status="ajaxStatus" action="#{dinamikRaporTanimlamaHome.deleteDinamikRaporAlan(alan)}" ajaxSingle="true" id="deleteAlanlink"
 									reRender="raporAlanBilgi">
 									<h:graphicImage value="/img/delete.gif" style="border:0" alt="Delete" />
@@ -461,11 +451,9 @@
 
 					</a4j:commandButton>
 					<rich:toolTip for="addlink" value="Add" />
-
 				</h:panelGrid>
 			</h:form>
 		</rich:modalPanel>
-
 		<rich:modalPanel id="editPanel" autosized="true" width="800">
 			<f:facet name="header">
 				<h:outputText value="Dinamik Rapor Güncelle" />
@@ -501,7 +489,6 @@
 									<a4j:support event="onchange" reRender="dbTanim1" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 								</h:inputText>
 							</s:decorate>
-
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Database Rapor Tipi</ui:define>
 								<h:selectOneMenu required="true" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.raporTipiId}"
@@ -510,9 +497,7 @@
 									<f:selectItems value="#{dinamikRaporTanimlamaHome.raporTipiList}" />
 									<a4j:support event="onchange" reRender="raporData" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 								</h:selectOneMenu>
-
 							</s:decorate>
-
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Rapor Görüntülensin</ui:define>
 								<h:selectBooleanCheckbox id="goruntulemeDurum" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.goruntulemeDurum}">
@@ -549,7 +534,6 @@
 						</h:panelGrid>
 					</a4j:outputPanel>
 					<a4j:outputPanel id="roller">
-
 						<rich:simpleTogglePanel switchType="client" label="Roller" height="110" opened="true">
 							<s:decorate>
 								<rich:listShuttle id="shuttle" sourceValue="#{dinamikRaporTanimlamaHome.roleList}" fastOrderControlsVisible="false"
@@ -563,10 +547,8 @@
 									</h:column>
 									<a4j:support event="onlistchanged" reRender="roller" ajaxSingle="true" />
 									<s:convertEntity />
-
 								</rich:listShuttle>
 							</s:decorate>
-
 						</rich:simpleTogglePanel>
 					</a4j:outputPanel>
 					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{dinamikRaporTanimlamaHome.saveDinamikRapor()}" reRender="raporTable"
@@ -583,7 +565,6 @@
 										<f:facet name="header">
 											<h:outputText value="Dinamik Raporlar" />
 										</f:facet>
-
 										<rich:column>
 											<f:facet name="header">
                      	   					Id
@@ -620,7 +601,14 @@
               		 	 </f:facet>
 											<h:outputText value="#{parametre.esitlikAciklama}" />
 										</rich:column>
-
+										<rich:column>
+											<f:facet name="header">
+                      		 Bağlı Rapor Alan
+              		 	 </f:facet>
+											<ui:fragment rendered="#{parametre.bagliDinamikAlan!=null}">
+												<h:outputText value="#{parametre.bagliDinamikAlan.aciklama}" />
+											</ui:fragment>
+										</rich:column>
 										<rich:column rendered="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.function}">
 											<f:facet name="header">
                       		 Parametre
@@ -708,12 +696,9 @@
 										</f:facet>
 									</rich:dataTable>
 								</rich:tab>
-
 							</rich:tabPanel>
 						</a4j:region>
 					</ui:fragment>
-
-
 				</c:if>
 			</h:form>
 		</rich:modalPanel>
