@@ -61,6 +61,8 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	private ENumEsitlik eNumEsitlik;
 
+	private ENumBaslik baslik;
+
 	private Object value;
 
 	private List<SelectItem> secimList;
@@ -90,8 +92,10 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 		return aciklama;
 	}
 
-	public void setAciklama(String aciklama) {
-		this.aciklama = aciklama;
+	public void setAciklama(String value) {
+		if (PdksUtil.hasStringValue(value))
+			baslik = ENumBaslik.fromValue(value);
+		this.aciklama = value;
 	}
 
 	@Column(name = COLUMN_NAME_DB_TANIM)
@@ -260,7 +264,7 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	public boolean isSirketBilgisi() {
 		boolean baslikDurum = false;
 		try {
-			ENumBaslik baslik = ENumBaslik.fromValue(this.getAciklama());
+
 			if (baslik != null)
 				baslikDurum = baslik.value().equals(ENumBaslik.SIRKET.value());
 		} catch (Exception e) {
@@ -274,7 +278,6 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	public boolean isTesisBilgisi() {
 		boolean baslikDurum = false;
 		try {
-			ENumBaslik baslik = ENumBaslik.fromValue(this.getAciklama());
 			if (baslik != null)
 				baslikDurum = baslik.value().equals(ENumBaslik.TESIS.value());
 		} catch (Exception e) {
@@ -294,7 +297,6 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	public boolean isYilSpinner() {
 		boolean baslikDurum = false;
 		try {
-			ENumBaslik baslik = ENumBaslik.fromValue(this.getAciklama());
 			if (baslik != null)
 				baslikDurum = baslik.value().equals(ENumBaslik.YIL.value());
 		} catch (Exception e) {
@@ -311,6 +313,15 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 
 	public void setMantiksalDurum(Boolean mantiksalDurum) {
 		this.mantiksalDurum = mantiksalDurum;
+	}
+
+	@Transient
+	public ENumBaslik getBaslik() {
+		return baslik;
+	}
+
+	public void setBaslik(ENumBaslik baslik) {
+		this.baslik = baslik;
 	}
 
 	public void entityRefresh() {

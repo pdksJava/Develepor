@@ -14,8 +14,10 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.pdks.dinamikRapor.enums.ENumAlanHizalaTipi;
+import org.pdks.dinamikRapor.enums.ENumBaslik;
 import org.pdks.dinamikRapor.enums.ENumRaporAlanTipi;
 import org.pdks.entity.BasePDKSObject;
+import org.pdks.session.PdksUtil;
 
 @Entity(name = PdksDinamikRaporAlan.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PdksDinamikRaporAlan.COLUMN_NAME_DINAMIK_RAPOR, PdksDinamikRaporAlan.COLUMN_NAME_DB_TANIM }) })
@@ -51,6 +53,7 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 
 	private Integer hizala = ENumAlanHizalaTipi.SOLA.value();
 	private ENumAlanHizalaTipi alanHizalaTipi = ENumAlanHizalaTipi.SOLA;
+	private ENumBaslik baslik;
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_DINAMIK_RAPOR, nullable = false)
@@ -77,8 +80,10 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 		return aciklama;
 	}
 
-	public void setAciklama(String aciklama) {
-		this.aciklama = aciklama;
+	public void setAciklama(String value) {
+		if (PdksUtil.hasStringValue(value))
+			baslik = ENumBaslik.fromValue(value);
+		this.aciklama = value;
 	}
 
 	@Column(name = COLUMN_NAME_DB_TANIM)
@@ -226,6 +231,15 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 
 	public void setAlanHizalaTipi(ENumAlanHizalaTipi alanHizalaTipi) {
 		this.alanHizalaTipi = alanHizalaTipi;
+	}
+
+	@Transient
+	public ENumBaslik getBaslik() {
+		return baslik;
+	}
+
+	public void setBaslik(ENumBaslik baslik) {
+		this.baslik = baslik;
 	}
 
 	public void entityRefresh() {

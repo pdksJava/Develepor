@@ -8064,7 +8064,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String personelNoAciklama() {
-		String personelNoAciklama = getBaslikAciklama("personelNoAciklama", "Personel No");
+		String personelNoAciklama = getBaslikAciklama(ENumBaslik.PERSONEL_NO.value(), "Personel No");
 		return personelNoAciklama;
 	}
 
@@ -8072,7 +8072,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String calismaModeliAciklama() {
-		String calismaModeliAciklama = getBaslikAciklama("calismaModeliAciklama", "Çalışma Modeli");
+		String calismaModeliAciklama = getBaslikAciklama(ENumBaslik.CALISMA_MODELI.value(), "Çalışma Modeli");
 		return calismaModeliAciklama;
 	}
 
@@ -8096,7 +8096,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String kimlikNoAciklama() {
-		String kimlikNoAciklama = getBaslikAciklama("kimlikNoAciklama", "Kimlik No");
+		String kimlikNoAciklama = getBaslikAciklama(ENumBaslik.KIMLIK_NO.value(), "Kimlik No");
 		return kimlikNoAciklama;
 	}
 
@@ -8112,7 +8112,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String yoneticiAciklama() {
-		String yoneticiAciklama = getBaslikAciklama("yoneticiAciklama", "Yönetici");
+		String yoneticiAciklama = getBaslikAciklama(ENumBaslik.YONETICI.value(), "Yönetici");
 		return yoneticiAciklama;
 	}
 
@@ -8128,7 +8128,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String tesisAciklama() {
-		String tesisAciklama = getBaslikAciklama("tesisAciklama", "Tesis");
+		String tesisAciklama = getBaslikAciklama(ENumBaslik.TESIS.value(), "Tesis");
 		return tesisAciklama;
 	}
 
@@ -8152,7 +8152,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String basTarihAciklama() {
-		String basTarihAciklama = getBaslikAciklama("basTarihAciklama", "Başlangıç Tarihi");
+		String basTarihAciklama = getBaslikAciklama(ENumBaslik.BAS_TARIH.value(), "Başlangıç Tarihi");
 		return basTarihAciklama;
 	}
 
@@ -8160,7 +8160,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String tarihAciklama() {
-		String tarihAciklama = getBaslikAciklama("tarihAciklama", "Tarih");
+		String tarihAciklama = getBaslikAciklama(ENumBaslik.TARIH.value(), "Tarih");
 		return tarihAciklama;
 	}
 
@@ -8168,7 +8168,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String bitTarihAciklama() {
-		String bitTarihAciklama = getBaslikAciklama("bitTarihAciklama", "Bitiş Tarihi");
+		String bitTarihAciklama = getBaslikAciklama(ENumBaslik.BIT_TARIH.value(), "Bitiş Tarihi");
 		return bitTarihAciklama;
 	}
 
@@ -8192,7 +8192,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String bolumAciklama() {
-		String bolumAciklama = getBaslikAciklama("bolumAciklama", "Bölüm");
+		String bolumAciklama = getBaslikAciklama(ENumBaslik.BOLUM.value(), "Bölüm");
 		return bolumAciklama;
 	}
 
@@ -8217,7 +8217,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String sirketAciklama() {
-		String sirketAciklama = getBaslikAciklama("sirketAciklama", "Şirket");
+		String sirketAciklama = getBaslikAciklama(ENumBaslik.SIRKET.value(), "Şirket");
 		return sirketAciklama;
 	}
 
@@ -8225,7 +8225,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String vardiyaAciklama() {
-		String vardiyaAciklama = getBaslikAciklama("vardiyaAciklama", "Vardiya");
+		String vardiyaAciklama = getBaslikAciklama(ENumBaslik.VARDIYA.value(), "Vardiya");
 		return vardiyaAciklama;
 	}
 
