@@ -882,13 +882,17 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			AramaSecenekleri aramaSecenekleri = new AramaSecenekleri();
 			aramaSecenekleri.setSirketId(sirketId);
 			aramaSecenekleri.setTesisId(tesisId);
-			ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, true, session);
-			if (aramaSecenekleri.getEkSahaSelectListMap() != null)
-				bolumList = aramaSecenekleri.getEkSahaSelectListMap().get("ekSaha3");
+			HashMap<String, List<SelectItem>> ekSahaSelectListMap = new HashMap<String, List<SelectItem>>();
+			aramaSecenekleri.setEkSahaSelectListMap(ekSahaSelectListMap);
+			ekSahaSelectListMap.put("ekSaha3", null);
+			ortakIslemler.setAramaSecenekEkDataDoldur(aramaSecenekleri, basTarih, bitTarih, session);
+			if (ekSahaSelectListMap.get("ekSaha3") != null)
+				bolumList = ekSahaSelectListMap.get("ekSaha3");
 		}
-		if (bolumList == null && bolumParametre.getZorunlu())
-			bolumList = new ArrayList<SelectItem>();
+
 		bolumParametre.setValue(null);
+		if (bolumList == null)
+			bolumList = new ArrayList<SelectItem>();
 		if (bolumList.isEmpty() == false) {
 			if (bolumList.size() == 1)
 				bolumParametre.setValue("" + bolumList.get(0).getValue());
