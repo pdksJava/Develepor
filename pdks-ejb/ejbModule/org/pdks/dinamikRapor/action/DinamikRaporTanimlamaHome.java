@@ -187,6 +187,10 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		return "";
 	}
 
+	/**
+	 * @param alan
+	 * @return
+	 */
 	public String dinamikRaporAlanGuncelle(PdksDinamikRaporAlan alan) {
 		if (alan == null) {
 			alan = new PdksDinamikRaporAlan();
@@ -202,9 +206,29 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 
 	}
 
+	/**
+	 * @param parametre
+	 * @return
+	 */
 	public String dinamikRaporParametreGuncelle(PdksDinamikRaporParametre parametre) {
-		dinamikRaporBagliAlanList = seciliPdksDinamikRapor.getId() != null ? pdksEntityController.getSQLParamByFieldList(PdksDinamikRaporAlan.TABLE_NAME, PdksDinamikRaporAlan.COLUMN_NAME_DINAMIK_RAPOR, seciliPdksDinamikRapor.getId(), PdksDinamikRaporAlan.class, session)
-				: new ArrayList<PdksDinamikRaporAlan>();
+		if (seciliPdksDinamikRapor.getId() == null)
+			dinamikRaporBagliAlanList = new ArrayList<PdksDinamikRaporAlan>();
+		else {
+			HashMap fields = new HashMap();
+			StringBuffer sb = new StringBuffer();
+			sb.append("select * from " + PdksDinamikRaporAlan.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+			sb.append(" where " + PdksDinamikRaporAlan.COLUMN_NAME_DINAMIK_RAPOR + " = :a and " + PdksDinamikRaporAlan.COLUMN_NAME_DURUM + " = 1");
+			sb.append(" and " + PdksDinamikRaporAlan.COLUMN_NAME_ID + " not in  (");
+			sb.append("select " + PdksDinamikRaporParametre.COLUMN_NAME_DINAMIK_BAGLI_ALAN + " from " + PdksDinamikRaporParametre.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+			sb.append(" where " + PdksDinamikRaporParametre.COLUMN_NAME_DINAMIK_RAPOR + " = :p and " + PdksDinamikRaporParametre.COLUMN_NAME_DINAMIK_BAGLI_ALAN + " is not null)");
+			sb.append(" and " + PdksDinamikRaporAlan.COLUMN_NAME_ALAN_TIPI + " = " + ENumRaporAlanTipi.KARAKTER.value());
+			fields.put("a", seciliPdksDinamikRapor.getId());
+			fields.put("p", seciliPdksDinamikRapor.getId());
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			dinamikRaporBagliAlanList = pdksEntityController.getObjectBySQLList(sb, fields, PdksDinamikRaporAlan.class);
+			// dinamikRaporBagliAlanList = pdksEntityController.getSQLParamByFieldList(PdksDinamikRaporAlan.TABLE_NAME, PdksDinamikRaporAlan.COLUMN_NAME_DINAMIK_RAPOR, seciliPdksDinamikRapor.getId(), PdksDinamikRaporAlan.class, session);
+		}
 		// boolean ekle = parametre == null && parametre.getBagliDinamikAlan() != null;
 		if (parametre == null) {
 			parametre = new PdksDinamikRaporParametre();
