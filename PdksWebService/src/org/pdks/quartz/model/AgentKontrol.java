@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.pdks.dao.PdksDAO;
@@ -16,13 +18,20 @@ import org.pdks.entity.PersonelDinamikAlan;
 import org.pdks.entity.ServiceData;
 import org.pdks.entity.Tatil;
 import org.pdks.genel.model.Constants;
+import org.pdks.genel.model.MailManager;
 import org.pdks.genel.model.PdksUtil;
 import org.pdks.genel.model.ThreadAgent;
+import org.pdks.mail.model.MailObject;
+import org.pdks.mail.model.MailPersonel;
+import org.pdks.mail.model.MailStatu;
+import org.pdks.security.entity.User;
 import org.pdks.security.entity.UserDigerOrganizasyon;
 import org.pdks.security.entity.UserRoles;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.pdks.webService.PdksVeriOrtakAktar;
 
 public final class AgentKontrol extends QuartzJobBean {
@@ -139,6 +148,131 @@ public final class AgentKontrol extends QuartzJobBean {
 			}
 		}
 		list = null;
+		try {
+			dbEPostaGonder(dAO);
+		} catch (Exception e) {
+
+		}
+
+	}
+
+	/**
+	 * @param dAO
+	 */
+	private void dbEPostaGonder(PdksDAO dAO) {
+		String paramName = "dbEPosta";
+		PdksVeriOrtakAktar pdksVeriOrtakAktar = new PdksVeriOrtakAktar();
+		HashMap<String, Object> mailMap = pdksVeriOrtakAktar.sistemVerileriniYukle(dAO, false);
+		if (mailMap != null && mailMap.containsKey(paramName) && mailMap.get(paramName).toString().equals("1")) {
+			HashMap fields = new HashMap();
+			StringBuffer sp = new StringBuffer();
+			sp.append("select * from " + ServiceData.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
+			sp.append(" where " + ServiceData.COLUMN_NAME_FONKSIYON_ADI + " = :f ");
+			fields.put("f", paramName);
+			List<ServiceData> mailDataList = dAO != null ? dAO.getNativeSQLList(fields, sp, ServiceData.class) : null;
+			if (mailDataList != null) {
+				if (!mailDataList.isEmpty()) {
+					MailStatu mailStatu = null;
+					Gson gson = new Gson();
+					List<String> mailStrList = new ArrayList<String>(), pasifList = new ArrayList<String>();
+					List<ServiceData> mailDataDeleteList = new ArrayList<ServiceData>();
+					for (ServiceData serviceData : mailDataList) {
+						if (mailMap.containsKey("mailObject"))
+							mailMap.remove("mailObject");
+						MailObject mailObject = new MailObject();
+						LinkedTreeMap<String, Object> dataMap = null;
+						LinkedHashMap<String, Object> map = null;
+						String jsonStr = serviceData.getOutputData();
+						try {
+							map = gson.fromJson(jsonStr, LinkedHashMap.class);
+							if (map.containsKey("mail")) {
+								List list = (List) map.get("mail");
+								dataMap = (LinkedTreeMap<String, Object>) list.get(0);
+								if (dataMap != null) {
+									setMailList("toAdres", mailStrList, mailObject.getToList(), dataMap);
+									setMailList("ccAdres", mailStrList, mailObject.getCcList(), dataMap);
+									setMailList("bccAdres", mailStrList, mailObject.getBccList(), dataMap);
+								}
+								List<User> userList = null;
+								TreeMap<String, User> userMap = new TreeMap<String, User>();
+								if (mailStrList.isEmpty() == false) {
+									fields.clear();
+									fields.put("email", mailStrList.size() > 1 ? mailStrList : mailStrList.get(0));
+									userList = dAO.getObjectByInnerObjectList(fields, User.class);
+									for (User user : userList) {
+										if (user.isDurum() && user.getPdksPersonel().isCalisiyor())
+											userMap.put(user.getEmail(), user);
+										else {
+											mailStrList.remove(user.getEmail());
+											pasifList.add(user.getEmail());
+										}
+									}
+								}
+								if (!userMap.isEmpty()) {
+									PdksVeriOrtakAktar.mailUserListKontrol(mailObject.getToList(), userMap, pasifList);
+									PdksVeriOrtakAktar.mailUserListKontrol(mailObject.getCcList(), userMap, pasifList);
+									PdksVeriOrtakAktar.mailUserListKontrol(mailObject.getBccList(), userMap, pasifList);
+								}
+								userList = null;
+								if (mailStrList.isEmpty() == false) {
+									if (dataMap.containsKey("body"))
+										mailObject.setBody((String) dataMap.get("body"));
+									if (mailObject.getBody() != null) {
+										// mailObject.getToList().clear();
+										// MailPersonel mailPersonel = new MailPersonel();
+										// mailPersonel.setePosta("hasansayar58@gmail.com");
+										// mailObject.getToList().add(mailPersonel);
+										mailObject.setSubject(serviceData.getInputData());
+										mailMap.put("mailObject", mailObject);
+										mailStatu = MailManager.ePostaGonder(mailMap);
+									}
+									if (mailStatu != null && mailStatu.isDurum())
+										mailDataDeleteList.add(serviceData);
+								}
+							}
+						} catch (Exception e) {
+							logger.error(e);
+							e.printStackTrace();
+						}
+						mailObject = null;
+						mailStrList.clear();
+						pasifList.clear();
+					}
+					if (mailDataDeleteList.isEmpty() == false)
+						dAO.deleteObjectList(mailDataDeleteList);
+					pasifList = null;
+					mailStrList = null;
+					mailDataDeleteList = null;
+				}
+				mailDataList = null;
+			}
+		}
+	}
+
+	/**
+	 * @param key
+	 * @param mailStrList
+	 * @param mailList
+	 * @param dataMap
+	 */
+	private void setMailList(String key, List<String> mailStrList, List<MailPersonel> mailList, LinkedTreeMap<String, Object> dataMap) {
+		if (dataMap.containsKey(key)) {
+			List<String> list = PdksUtil.getListFromString((String) dataMap.get(key), null);
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				String ePosta = (String) iterator.next();
+				if (mailStrList.contains(ePosta)) {
+					iterator.remove();
+				} else {
+					MailPersonel mailPersonel = new MailPersonel();
+					mailPersonel.setePosta(ePosta);
+					mailList.add(mailPersonel);
+					mailStrList.add(ePosta);
+				}
+
+			}
+			list = null;
+		}
+
 	}
 
 }

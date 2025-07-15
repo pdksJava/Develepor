@@ -1192,14 +1192,19 @@ public class PdksVeriOrtakAktar implements Serializable {
 	/**
 	 * @param list
 	 * @param userMap
+	 * @param pasifList
 	 * @throws Exception
 	 */
-	private void mailUserListKontrol(List<MailPersonel> list, TreeMap<String, User> userMap) throws Exception {
+	public static void mailUserListKontrol(List<MailPersonel> list, TreeMap<String, User> userMap, List<String> pasifList) throws Exception {
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			MailPersonel mailPersonel = (MailPersonel) iterator.next();
-			if (userMap.containsKey(mailPersonel.getePosta()))
-				mailPersonel.setAdiSoyadi(userMap.get(mailPersonel.getePosta()).getAdSoyad());
-
+			String ePosta = mailPersonel.getePosta();
+			if (userMap.containsKey(ePosta))
+				mailPersonel.setAdiSoyadi(userMap.get(ePosta).getAdSoyad());
+			else if (pasifList != null && pasifList.contains(ePosta)) {
+				pasifList.remove(ePosta);
+				iterator.remove();
+			}
 		}
 	}
 
@@ -1209,7 +1214,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @param sb
 	 * @throws Exception
 	 */
-	private void pasifListKontrol(List<MailPersonel> list, List<String> pasifList, StringBuffer sb) throws Exception {
+	public static void pasifListKontrol(List<MailPersonel> list, List<String> pasifList, StringBuffer sb) throws Exception {
 		if (sb != null && list != null && pasifList != null) {
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				MailPersonel mailPersonel = (MailPersonel) iterator.next();
@@ -1345,9 +1350,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 					pasifList.add(user.getEmail());
 			}
 			if (!userMap.isEmpty()) {
-				mailUserListKontrol(mailObject.getToList(), userMap);
-				mailUserListKontrol(mailObject.getCcList(), userMap);
-				mailUserListKontrol(mailObject.getBccList(), userMap);
+				mailUserListKontrol(mailObject.getToList(), userMap, pasifList);
+				mailUserListKontrol(mailObject.getCcList(), userMap, pasifList);
+				mailUserListKontrol(mailObject.getBccList(), userMap, pasifList);
 			}
 			if (!pasifList.isEmpty()) {
 				pasifListKontrol(mailObject.getToList(), pasifList, pasifPersonelSB);
