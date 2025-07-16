@@ -161,91 +161,92 @@ public final class AgentKontrol extends QuartzJobBean {
 	 */
 	private void dbEPostaGonder(PdksDAO dAO) {
 		String paramName = "dbEPosta";
-		PdksVeriOrtakAktar pdksVeriOrtakAktar = new PdksVeriOrtakAktar();
-		HashMap<String, Object> mailMap = pdksVeriOrtakAktar.sistemVerileriniYukle(dAO, false);
-		if (mailMap != null && mailMap.containsKey(paramName) && mailMap.get(paramName).toString().equals("1")) {
-			HashMap fields = new HashMap();
-			StringBuffer sp = new StringBuffer();
-			sp.append("select * from " + ServiceData.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
-			sp.append(" where " + ServiceData.COLUMN_NAME_FONKSIYON_ADI + " = :f ");
-			fields.put("f", paramName);
-			List<ServiceData> mailDataList = dAO != null ? dAO.getNativeSQLList(fields, sp, ServiceData.class) : null;
-			if (mailDataList != null) {
-				if (!mailDataList.isEmpty()) {
-					MailStatu mailStatu = null;
-					Gson gson = new Gson();
-					List<String> mailStrList = new ArrayList<String>(), pasifList = new ArrayList<String>();
-					List<ServiceData> mailDataDeleteList = new ArrayList<ServiceData>();
-					for (ServiceData serviceData : mailDataList) {
-						if (mailMap.containsKey("mailObject"))
-							mailMap.remove("mailObject");
-						MailObject mailObject = new MailObject();
-						LinkedTreeMap<String, Object> dataMap = null;
-						LinkedHashMap<String, Object> map = null;
-						String jsonStr = serviceData.getOutputData();
-						try {
-							map = gson.fromJson(jsonStr, LinkedHashMap.class);
-							if (map.containsKey("mail")) {
-								List list = (List) map.get("mail");
-								dataMap = (LinkedTreeMap<String, Object>) list.get(0);
-								if (dataMap != null) {
-									setMailList("toAdres", mailStrList, mailObject.getToList(), dataMap);
-									setMailList("ccAdres", mailStrList, mailObject.getCcList(), dataMap);
-									setMailList("bccAdres", mailStrList, mailObject.getBccList(), dataMap);
-								}
-								List<User> userList = null;
-								TreeMap<String, User> userMap = new TreeMap<String, User>();
-								if (mailStrList.isEmpty() == false) {
-									fields.clear();
-									fields.put("email", mailStrList.size() > 1 ? mailStrList : mailStrList.get(0));
-									userList = dAO.getObjectByInnerObjectList(fields, User.class);
-									for (User user : userList) {
-										if (user.isDurum() && user.getPdksPersonel().isCalisiyor())
-											userMap.put(user.getEmail(), user);
-										else {
-											mailStrList.remove(user.getEmail());
-											pasifList.add(user.getEmail());
-										}
+		HashMap fields = new HashMap();
+		StringBuffer sp = new StringBuffer();
+		sp.append("select S.* from " + Parameter.TABLE_NAME + " P " + PdksVeriOrtakAktar.getSelectLOCK());
+		sp.append(" inner join " + ServiceData.TABLE_NAME + " S " + PdksVeriOrtakAktar.getJoinLOCK() + " on S." + ServiceData.COLUMN_NAME_FONKSIYON_ADI + " = P." + Parameter.COLUMN_NAME_ADI);
+		sp.append(" where P." + Parameter.COLUMN_NAME_ADI + " = :f and P." + Parameter.COLUMN_NAME_DURUM + " = 1 and P." + Parameter.COLUMN_NAME_DEGER + " = '1'");
+		sp.append(" order by S." + ServiceData.COLUMN_NAME_ID);
+		fields.put("f", paramName);
+		List<ServiceData> mailDataList = dAO != null ? dAO.getNativeSQLList(fields, sp, ServiceData.class) : null;
+		if (mailDataList != null) {
+			if (!mailDataList.isEmpty()) {
+				PdksVeriOrtakAktar pdksVeriOrtakAktar = new PdksVeriOrtakAktar();
+				HashMap<String, Object> mailMap = pdksVeriOrtakAktar.sistemVerileriniYukle(dAO, false);
+				MailStatu mailStatu = null;
+				Gson gson = new Gson();
+				List<String> mailStrList = new ArrayList<String>(), pasifList = new ArrayList<String>();
+				List<ServiceData> mailDataDeleteList = new ArrayList<ServiceData>();
+				for (ServiceData serviceData : mailDataList) {
+					if (mailMap.containsKey("mailObject"))
+						mailMap.remove("mailObject");
+					MailObject mailObject = new MailObject();
+					LinkedTreeMap<String, Object> dataMap = null;
+					LinkedHashMap<String, Object> map = null;
+					String jsonStr = serviceData.getOutputData();
+					try {
+						map = gson.fromJson(jsonStr, LinkedHashMap.class);
+						if (map.containsKey("mail")) {
+							List list = (List) map.get("mail");
+							dataMap = (LinkedTreeMap<String, Object>) list.get(0);
+							if (dataMap != null) {
+								setMailList("toAdres", mailStrList, mailObject.getToList(), dataMap);
+								setMailList("ccAdres", mailStrList, mailObject.getCcList(), dataMap);
+								setMailList("bccAdres", mailStrList, mailObject.getBccList(), dataMap);
+							}
+							List<User> userList = null;
+							TreeMap<String, User> userMap = new TreeMap<String, User>();
+							if (mailStrList.isEmpty() == false) {
+								fields.clear();
+								fields.put("email", mailStrList.size() > 1 ? mailStrList : mailStrList.get(0));
+								userList = dAO.getObjectByInnerObjectList(fields, User.class);
+								for (User user : userList) {
+									if (user.isDurum() && user.getPdksPersonel().isCalisiyor())
+										userMap.put(user.getEmail(), user);
+									else {
+										mailStrList.remove(user.getEmail());
+										pasifList.add(user.getEmail());
 									}
-								}
-								if (!userMap.isEmpty()) {
-									PdksVeriOrtakAktar.mailUserListKontrol(mailObject.getToList(), userMap, pasifList);
-									PdksVeriOrtakAktar.mailUserListKontrol(mailObject.getCcList(), userMap, pasifList);
-									PdksVeriOrtakAktar.mailUserListKontrol(mailObject.getBccList(), userMap, pasifList);
-								}
-								userList = null;
-								if (mailStrList.isEmpty() == false) {
-									if (dataMap.containsKey("body"))
-										mailObject.setBody((String) dataMap.get("body"));
-									if (mailObject.getBody() != null) {
-										// mailObject.getToList().clear();
-										// MailPersonel mailPersonel = new MailPersonel();
-										// mailPersonel.setePosta("hasansayar58@gmail.com");
-										// mailObject.getToList().add(mailPersonel);
-										mailObject.setSubject(serviceData.getInputData());
-										mailMap.put("mailObject", mailObject);
-										mailStatu = MailManager.ePostaGonder(mailMap);
-									}
-									if (mailStatu != null && mailStatu.isDurum())
-										mailDataDeleteList.add(serviceData);
 								}
 							}
-						} catch (Exception e) {
-							logger.error(e);
-							e.printStackTrace();
+							if (!userMap.isEmpty()) {
+								PdksVeriOrtakAktar.mailUserListKontrol(mailObject.getToList(), userMap, pasifList);
+								PdksVeriOrtakAktar.mailUserListKontrol(mailObject.getCcList(), userMap, pasifList);
+								PdksVeriOrtakAktar.mailUserListKontrol(mailObject.getBccList(), userMap, pasifList);
+							}
+							userList = null;
+							if (mailStrList.isEmpty() == false) {
+								if (dataMap.containsKey("body"))
+									mailObject.setBody((String) dataMap.get("body"));
+								if (mailObject.getBody() != null) {
+									// mailObject.getToList().clear();
+									// MailPersonel mailPersonel = new MailPersonel();
+									// mailPersonel.setePosta("hasansayar58@gmail.com");
+									// mailObject.getToList().add(mailPersonel);
+									mailObject.setSubject(serviceData.getInputData());
+									mailMap.put("mailObject", mailObject);
+									mailStatu = MailManager.ePostaGonder(mailMap);
+								}
+								if (mailStatu != null && mailStatu.isDurum())
+									mailDataDeleteList.add(serviceData);
+							}
 						}
-						mailObject = null;
-						mailStrList.clear();
-						pasifList.clear();
+					} catch (Exception e) {
+						logger.error(e);
+						e.printStackTrace();
 					}
-					if (mailDataDeleteList.isEmpty() == false)
-						dAO.deleteObjectList(mailDataDeleteList);
-					pasifList = null;
-					mailStrList = null;
-					mailDataDeleteList = null;
+					mailObject = null;
+					mailStrList.clear();
+					pasifList.clear();
 				}
-				mailDataList = null;
+				if (mailDataDeleteList.isEmpty() == false)
+					dAO.deleteObjectList(mailDataDeleteList);
+				pasifList = null;
+				mailStrList = null;
+				mailDataDeleteList = null;
 			}
+			mailDataList = null;
+
 		}
 	}
 
