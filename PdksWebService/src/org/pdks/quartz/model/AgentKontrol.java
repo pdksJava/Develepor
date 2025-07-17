@@ -163,9 +163,9 @@ public final class AgentKontrol extends QuartzJobBean {
 		String paramName = "dbEPosta";
 		HashMap fields = new HashMap();
 		StringBuffer sp = new StringBuffer();
-		sp.append("select S.* from " + Parameter.TABLE_NAME + " P " + PdksVeriOrtakAktar.getSelectLOCK());
-		sp.append(" inner join " + ServiceData.TABLE_NAME + " S " + PdksVeriOrtakAktar.getJoinLOCK() + " on S." + ServiceData.COLUMN_NAME_FONKSIYON_ADI + " = P." + Parameter.COLUMN_NAME_ADI);
-		sp.append(" where P." + Parameter.COLUMN_NAME_ADI + " = :f");
+		sp.append("select S.* from " + ServiceData.TABLE_NAME + " S " + PdksVeriOrtakAktar.getSelectLOCK());
+//		sp.append(" inner join " + ServiceData.TABLE_NAME + " S " + PdksVeriOrtakAktar.getJoinLOCK() + " on S." + ServiceData.COLUMN_NAME_FONKSIYON_ADI + " = P." + Parameter.COLUMN_NAME_ADI);
+		sp.append(" where S." + ServiceData.COLUMN_NAME_FONKSIYON_ADI + " = :f");
 		// sp.append(" and P." + Parameter.COLUMN_NAME_DURUM + " = 1 and P." + Parameter.COLUMN_NAME_DEGER + " = '1'");
 		sp.append(" order by S." + ServiceData.COLUMN_NAME_ID);
 		fields.put("f", paramName);
