@@ -5249,7 +5249,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					mailMap.remove(KEY_IK_MAIL_IPTAL);
 			}
 
-			if (devam && (userIKList != null || !mailMap.containsKey(KEY_IK_MAIL_IPTAL))) {
+			if (devam && (userIKList != null && userIKList.isEmpty() == false && !mailMap.containsKey(KEY_IK_MAIL_IPTAL))) {
 
 				statu = personelHataMailGonder(userIKList, personelList, orjPersonelERPMap, hataList, personelERPHataliMap, sirketMap, mailBosGonder);
 				if (statu != null && statu.isDurum())
