@@ -35,6 +35,7 @@ import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
+import org.pdks.entity.Tatil;
 import org.pdks.erp.action.ERPController;
 import org.pdks.security.action.StartupAction;
 import org.pdks.security.entity.User;
@@ -144,18 +145,24 @@ public class PersonelERPGuncelleme implements Serializable {
 				String smtpYedekHost = parameterMap.get("smtpYedekHost");
 				String smtpYedekUserName = parameterMap.get("smtpYedekUserName");
 				if (smtpUserName.equals(smtpYedekUserName) == false || smtpHost.equals(smtpYedekHost) == false) {
-					MailObject mailObject = new MailObject();
-					mailObject.setSubject("Mail Server Hata Kontrol");
-					mailObject.setBody("");
-					HashMap<String, String> mailMap = new HashMap<String, String>();
-					mailMap.putAll(parameterMap);
-					MailManager.addMailAdresBCC(mailObject, "bccAdres", mailMap);
-					try {
-						mailManager.ePostaKontrol(mailObject, mailMap, sessionDB);
-					} catch (Exception e) {
+					Date basTarih = new Date();
+					Date bitTarih = PdksUtil.tariheGunEkleCikar(basTarih, 1);
+					TreeMap<String, Tatil> tatilMap = ortakIslemler.getTatilGunleri(null, basTarih, bitTarih, sessionDB);
+					String key = tatilMap.isEmpty() ? "" : PdksUtil.convertToDateString(basTarih, "yyyyMMdd");
+					if (tatilMap.containsKey(key)) {
+						MailObject mailObject = new MailObject();
+						mailObject.setSubject("Mail Server Hata Kontrol");
+						mailObject.setBody("");
+						HashMap<String, String> mailMap = new HashMap<String, String>();
+						mailMap.putAll(parameterMap);
+						MailManager.addMailAdresBCC(mailObject, "bccAdres", mailMap);
+						try {
+							mailManager.ePostaKontrol(mailObject, mailMap, sessionDB);
+						} catch (Exception e) {
+						}
+						mailMap = null;
+						mailObject = null;
 					}
-					mailMap = null;
-					mailObject = null;
 				}
 			}
 		}
