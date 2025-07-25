@@ -43,6 +43,8 @@ import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
 
+import com.pdks.mail.model.MailManager;
+import com.pdks.webservice.MailObject;
 import com.pdks.webservice.PersonelERP;
 
 @Name("personelERPGuncelleme")
@@ -71,6 +73,9 @@ public class PersonelERPGuncelleme implements Serializable {
 	Renderer renderer;
 	@In(required = false, create = true)
 	StartupAction startupAction;
+	@In(required = false, create = true)
+	MailManager mailManager;
+
 	private static boolean calisiyor = Boolean.FALSE;
 
 	public static final String PARAMETER_KEY = "personelERPZamani";
@@ -81,7 +86,7 @@ public class PersonelERPGuncelleme implements Serializable {
 	private List<Personel> personelList, personelERPList;
 	private static boolean ozelKontrol = Boolean.FALSE;
 	private User islemUser = new User();
-	private boolean guncellemeDBDurum = Boolean.FALSE, zamanDurum = Boolean.FALSE;
+	private boolean guncellemeDBDurum = Boolean.FALSE, zamanDurum = Boolean.FALSE, hataGonder = Boolean.FALSE;
 
 	@Asynchronous
 	@SuppressWarnings("unchecked")
@@ -92,37 +97,14 @@ public class PersonelERPGuncelleme implements Serializable {
 		if (pdksEntityController != null && !isCalisiyor()) {
 			ozelKontrol = Boolean.FALSE;
 			setCalisiyor(Boolean.TRUE);
-			boolean hataGonder = Boolean.FALSE;
 			Session session = null;
 			zamanDurum = Boolean.FALSE;
 			try {
-				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-				boolean sunucuDurum = PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum();
-				// sunucuDurum = true;
-				if (sunucuDurum) {
-					guncellemeDBDurum = Boolean.FALSE;
-					hataKonum = "Paramatre okunuyor ";
-					Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_KEY);
-					String value = (parameter != null) ? parameter.getValue() : null;
-					hataKonum = "Paramatre okundu ";
-					String personelERPTableViewAdi = ortakIslemler.getParameterKey(ortakIslemler.getParametrePersonelERPTableView());
-					boolean tableERPOku = PdksUtil.hasStringValue(personelERPTableViewAdi);
-					if (value != null || tableERPOku) {
-						hataGonder = Boolean.TRUE;
-						hataKonum = "Zaman kontrolu yapılıyor ";
-						Date tarih = ortakIslemler.getBugun();
-						zamanDurum = value != null && PdksUtil.zamanKontrol(PARAMETER_KEY, value, tarih);
-						if (!zamanDurum & tableERPOku) {
-							String parameterUpdateKey = PARAMETER_KEY + "Update";
-							value = ortakIslemler.getParameterKey(PARAMETER_KEY + "Update");
-							guncellemeDBDurum = PdksUtil.zamanKontrol(parameterUpdateKey, value, tarih);
-							// guncellemeDBDurum = true;
-						}
-						if (zamanDurum || guncellemeDBDurum) {
-							if (ortakIslemler.getGuncellemeDurum(Personel.TABLE_NAME, session))
-								personelERPGuncellemeCalistir(session, tarih, true);
-						}
-					}
+				Date time = new Date();
+				session = startGuncelleme();
+				if (session != null) {
+					if (PdksUtil.getDateField(time, Calendar.MINUTE) == 0)
+						mailSatusKontrol(session);
 				}
 
 			} catch (Exception e) {
@@ -147,6 +129,83 @@ public class PersonelERPGuncelleme implements Serializable {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param sessionDB
+	 * @return
+	 */
+	public String mailSatusKontrol(Session sessionDB) {
+		String smtpHost = parameterMap.containsKey("smtpHost") ? parameterMap.get("smtpHost") : "";
+		String smtpUserName = parameterMap.containsKey("smtpUserName") ? parameterMap.get("smtpUserName") : "";
+		if (PdksUtil.hasStringValue(smtpHost) && PdksUtil.hasStringValue(smtpUserName)) {
+			if (parameterMap.containsKey("smtpYedekHost") && parameterMap.containsKey("smtpYedekUserName")) {
+				String smtpYedekHost = parameterMap.get("smtpYedekHost");
+				String smtpYedekUserName = parameterMap.get("smtpYedekUserName");
+				if (smtpUserName.equals(smtpYedekUserName) == false || smtpHost.equals(smtpYedekHost) == false) {
+					MailObject mailObject = new MailObject();
+					mailObject.setSubject("Mail Server Hata Kontrol");
+					mailObject.setBody("");
+					HashMap<String, String> mailMap = new HashMap<String, String>();
+					mailMap.putAll(parameterMap);
+					 
+					if (PdksUtil.isSistemDestekVar()) {
+						MailManager.addMailAdresBCC(mailObject, "bccAdres", mailMap);
+					 
+					}
+					try {
+						mailManager.ePostaKontrol(mailObject, mailMap, sessionDB);
+					} catch (Exception e) {
+					}
+					mailMap = null;
+					mailObject = null;
+				}
+			}
+		}
+
+		return "";
+	}
+
+	/**
+	 * @return
+	 */
+	private Session startGuncelleme() {
+		Session session = null;
+		try {
+			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+			boolean sunucuDurum = PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum();
+			// sunucuDurum = true;
+			if (sunucuDurum) {
+				guncellemeDBDurum = Boolean.FALSE;
+				hataKonum = "Paramatre okunuyor ";
+				Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_KEY);
+				String value = (parameter != null) ? parameter.getValue() : null;
+				hataKonum = "Paramatre okundu ";
+				String personelERPTableViewAdi = ortakIslemler.getParameterKey(ortakIslemler.getParametrePersonelERPTableView());
+				boolean tableERPOku = PdksUtil.hasStringValue(personelERPTableViewAdi);
+				if (value != null || tableERPOku) {
+					hataGonder = Boolean.TRUE;
+					hataKonum = "Zaman kontrolu yapılıyor ";
+					Date tarih = ortakIslemler.getBugun();
+					zamanDurum = value != null && PdksUtil.zamanKontrol(PARAMETER_KEY, value, tarih);
+					if (!zamanDurum & tableERPOku) {
+						String parameterUpdateKey = PARAMETER_KEY + "Update";
+						value = ortakIslemler.getParameterKey(PARAMETER_KEY + "Update");
+						guncellemeDBDurum = PdksUtil.zamanKontrol(parameterUpdateKey, value, tarih);
+						// guncellemeDBDurum = true;
+					}
+					if (zamanDurum || guncellemeDBDurum) {
+						if (ortakIslemler.getGuncellemeDurum(Personel.TABLE_NAME, session))
+							personelERPGuncellemeCalistir(session, tarih, true);
+					}
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return session;
+
 	}
 
 	/**

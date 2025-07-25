@@ -3959,35 +3959,45 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									personelDenklestirme.setOnaylandi(Boolean.FALSE);
 							}
 							flush = Boolean.TRUE;
-							if (!pdksVardiyaGun.getVardiya().isCalisma())
-								pdksVardiyaGorev.setYeniGorevYeri(null);
-							if (gorevli) {
-								if (pdksVardiyaGorev.getYeniGorevYeri() == null) {
-									pdksVardiyaGorev.setBolumKat(null);
-									tekrarOku = Boolean.TRUE;
-								} else if (!gorevYerileri.contains(pdksVardiyaGorev.getYeniGorevYeri().getId())) {
-									pdksVardiyaGorev.setBolumKat(null);
-									tekrarOku = Boolean.TRUE;
+							try {
+								if (pdksVardiyaGorev != null) {
+
+									if (!pdksVardiyaGun.getVardiya().isCalisma())
+										pdksVardiyaGorev.setYeniGorevYeri(null);
+									if (gorevli) {
+										if (pdksVardiyaGorev.getYeniGorevYeri() == null) {
+											pdksVardiyaGorev.setBolumKat(null);
+											tekrarOku = Boolean.TRUE;
+										} else if (!gorevYerileri.contains(pdksVardiyaGorev.getYeniGorevYeri().getId())) {
+											pdksVardiyaGorev.setBolumKat(null);
+											tekrarOku = Boolean.TRUE;
+										}
+
+									}
+
+									if (pdksVardiyaGorev.isShiftGorevli() || !pdksVardiyaGorev.isOzelDurumYok() || pdksVardiyaGorev.getYeniGorevYeri() != null || pdksVardiyaGorev.getBolumKat() != null) {
+										if (pdksVardiyaGun.getId() == null)
+											tekrarOku = true;
+										if (gorevYeriGirisDurum)
+											saveOrUpdate(pdksVardiyaGorev);
+										logger.debug("Gorev " + pdksVardiyaGun.getVardiyaKeyStr());
+										flush = Boolean.TRUE;
+									}
+
+									else if (pdksVardiyaGorev.getId() != null) {
+
+										pdksEntityController.deleteObject(session, entityManager, pdksVardiyaGorev);
+
+										pdksVardiyaGorev.setId(null);
+										flush = Boolean.TRUE;
+									}
+
 								}
-
+							} catch (Exception ee1) {
+								logger.error(ee1);
+								ee1.printStackTrace();
 							}
 
-							if (pdksVardiyaGorev.isShiftGorevli() || !pdksVardiyaGorev.isOzelDurumYok() || pdksVardiyaGorev.getYeniGorevYeri() != null || pdksVardiyaGorev.getBolumKat() != null) {
-								if (pdksVardiyaGun.getId() == null)
-									tekrarOku = true;
-								if (gorevYeriGirisDurum)
-									saveOrUpdate(pdksVardiyaGorev);
-								logger.debug("Gorev " + pdksVardiyaGun.getVardiyaKeyStr());
-								flush = Boolean.TRUE;
-							}
-
-							else if (pdksVardiyaGorev.getId() != null) {
-
-								pdksEntityController.deleteObject(session, entityManager, pdksVardiyaGorev);
-
-								pdksVardiyaGorev.setId(null);
-								flush = Boolean.TRUE;
-							}
 							if (pdksVardiyaGun.isAyinGunu()) {
 								personelDenklestirme.setGuncellendi(Boolean.TRUE);
 
