@@ -219,6 +219,8 @@ public final class AgentKontrol extends QuartzJobBean {
 							if (mailStrList.isEmpty() == false) {
 								if (dataMap.containsKey("body"))
 									mailObject.setBody((String) dataMap.get("body"));
+								if (dataMap.containsKey("subject"))
+									mailObject.setSubject((String) dataMap.get("subject"));
 								if (mailObject.getBody() != null) {
 									// mailObject.getToList().clear();
 									// MailPersonel mailPersonel = new MailPersonel();
