@@ -100,10 +100,10 @@ public class PersonelERPGuncelleme implements Serializable {
 			Session session = null;
 			zamanDurum = Boolean.FALSE;
 			try {
-				Date time = new Date();
+				int dakika = PdksUtil.getDateField(new Date(), Calendar.MINUTE);
 				session = startGuncelleme();
 				if (session != null) {
-					if (PdksUtil.getDateField(time, Calendar.MINUTE) == 0)
+					if (dakika == 0 || dakika == 30)
 						mailSatusKontrol(session);
 				}
 
@@ -148,10 +148,10 @@ public class PersonelERPGuncelleme implements Serializable {
 					mailObject.setBody("");
 					HashMap<String, String> mailMap = new HashMap<String, String>();
 					mailMap.putAll(parameterMap);
-					 
+
 					if (PdksUtil.isSistemDestekVar()) {
 						MailManager.addMailAdresBCC(mailObject, "bccAdres", mailMap);
-					 
+
 					}
 					try {
 						mailManager.ePostaKontrol(mailObject, mailMap, sessionDB);
