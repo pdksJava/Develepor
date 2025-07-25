@@ -250,6 +250,255 @@ public class MailManager implements Serializable {
 
 	/**
 	 * @param mailObject
+	 * @param bccAdresName
+	 * @param mailMap
+	 */
+	public static void addMailAdresBCC(MailObject mailObject, String bccAdresName, HashMap<String, String> mailMap) {
+		if (mailObject != null && mailMap.containsKey(bccAdresName)) {
+			String bccAdres = (String) mailMap.get(bccAdresName);
+			if (bccAdres.indexOf("@") > 1) {
+				List<String> list = PdksUtil.getListByString(bccAdres, null);
+				for (String email : list) {
+					if (email.indexOf("@") > 1 && PdksUtil.isValidEmail(email)) {
+						MailPersonel mailPersonel = new MailPersonel();
+						mailPersonel.setEPosta(email);
+						mailObject.getBccList().add(mailPersonel);
+					}
+
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param mailObject
+	 * @param mailMap
+	 * @param sessionDB
+	 * @return
+	 * @throws Exception
+	 */
+	public MailStatu ePostaKontrol(MailObject mailObject, HashMap<String, String> mailMap, Session sessionDB) throws Exception {
+		MailStatu mailStatu = new MailStatu();
+		Properties props = null;
+		boolean smtpTLSDurum = false, smtpSSLDurum = false, smtpServerDebug = false;
+		try {
+			if (mailObject != null) {
+				if (mailMap.containsKey("smtpServerDebug"))
+					smtpServerDebug = ((String) mailMap.get("smtpServerDebug")).equals("1");
+				if (smtpServerDebug)
+					logger.info("ePostaGonder in " + PdksUtil.getCurrentTimeStampStr());
+				props = new Properties();
+				String konu = mailObject.getSubject();
+				String mailIcerik = mailObject.getBody(), mailAdresFROM = null;
+				if (konu != null && konu.indexOf("  ") >= 0)
+					konu = PdksUtil.replaceAllManuel(konu, "  ", " ");
+				if (mailIcerik != null && mailIcerik.indexOf("  ") >= 0)
+					mailIcerik = PdksUtil.replaceAllManuel(mailIcerik, "  ", " ");
+				int port = 587;
+				String username = mailObject.getSmtpUser(), password = mailObject.getSmtpPassword(), smtpHostIp = null, smtpTLSProtokol = null;
+				if (mailMap.containsKey("smtpTLSProtokol"))
+					smtpTLSProtokol = (String) mailMap.get("smtpTLSProtokol");
+				if (mailMap.containsKey("smtpHost"))
+					smtpHostIp = (String) mailMap.get("smtpHost");
+				if (mailMap.containsKey("smtpHostPort"))
+					port = Integer.parseInt((String) mailMap.get("smtpHostPort"));
+				if (username == null) {
+					if (mailMap.containsKey("fromAdres")) {
+						mailAdresFROM = (String) mailMap.get("fromAdres");
+						username = mailAdresFROM;
+					}
+				} else
+					mailAdresFROM = username;
+				if (password == null && mailMap.containsKey("smtpPassword"))
+					password = mailMap.get("smtpPassword");
+
+				if (mailObject.getSmtpUser() == null && mailMap.containsKey("smtpUserName"))
+					username = mailMap.get("smtpUserName");
+
+				if (mailAdresFROM != null && mailMap.containsKey("fromName"))
+					mailAdresFROM = "\"" + mailMap.get("fromName") + "\" <" + mailAdresFROM + ">";
+				JavaMailSenderImpl sender = new JavaMailSenderImpl();
+				sender.setDefaultEncoding("utf-8");
+				sender.setHost(smtpHostIp);
+				sender.setPort(port);
+				if (username != null)
+					sender.setUsername(username);
+				if (password != null)
+					sender.setPassword(password);
+
+				if (mailMap.containsKey("smtpTLSDurum"))
+					smtpTLSDurum = ((String) mailMap.get("smtpTLSDurum")).equals("1");
+				if (mailMap.containsKey("smtpSSLDurum"))
+					smtpSSLDurum = ((String) mailMap.get("smtpSSLDurum")).equals("1");
+				props.setProperty("mail.smtp.host", smtpHostIp);
+				props.put("mail.smtp.port", port);
+				if (username != null) {
+					props.setProperty("mail.smtp.user", username);
+					props.put("mail.smtp.auth", Boolean.TRUE);
+				}
+				props.put("mail.smtp.starttls.enable", smtpTLSDurum);
+				props.put("mail.debug", smtpServerDebug);
+				props.setProperty("mail.transport.protocol", "smtp");
+				if (port != 25)
+					props.put("mail.smtp.socketFactory.port", port);
+				if (smtpTLSDurum) {
+					if (smtpTLSProtokol != null) {
+						props.put("mail.smtp.ssl.protocols", smtpTLSProtokol);
+					}
+					if (mailMap.containsKey("smtpSslTrust")) {
+						// props.put("mail.smtp.ssl.trust", smtpHostIp);
+						props.put("mail.smtp.ssl.trust", mailMap.get("smtpSslTrust"));
+					}
+				}
+				if (port != 25 && smtpSSLDurum) {
+					props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+					props.put("mail.smtp.socketFactory.fallback", String.valueOf(port == 25));
+					if (port == 587) {
+						MailSSLSocketFactory sf = new MailSSLSocketFactory();
+						sf.setTrustAllHosts(true);
+						props.put("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+						props.put("mail.imap.ssl.trust", "*");
+						props.put("mail.imap.host", smtpHostIp);
+						props.put("mail.imap.port", "993");
+					}
+				}
+
+				javax.mail.Session session = null;
+				try {
+					if (smtpSSLDurum) {
+						if (username != null && password != null)
+							session = javax.mail.Session.getDefaultInstance(props, new GMailAuthenticator(username, password));
+						else
+							session = javax.mail.Session.getInstance(props);
+					}
+				} catch (Exception ee) {
+
+				}
+				if (session == null)
+					if (username != null && password != null)
+						session = javax.mail.Session.getInstance(props, new GMailAuthenticator(username, password));
+				if (session != null)
+					session.setDebug(smtpServerDebug);
+				Transport transport = session.getTransport("smtp");
+				transport.connect(smtpHostIp, username, password);
+				MimeMessage message = new MimeMessage(session);
+				List<String> mailList = new ArrayList<String>();
+				message.setRecipients(Message.RecipientType.TO, adresleriDuzenle(mailObject.getToList(), mailList));
+				message.setRecipients(Message.RecipientType.CC, adresleriDuzenle(mailObject.getCcList(), mailList));
+				message.setRecipients(Message.RecipientType.BCC, adresleriDuzenle(mailObject.getBccList(), mailList));
+				if (!mailList.isEmpty()) {
+					InternetAddress from = new InternetAddress();
+					from.setAddress(username);
+					if (mailMap.containsKey("fromAdres"))
+						from.setAddress((String) mailMap.get("fromAdres"));
+					if (mailMap.containsKey("fromName"))
+						from.setPersonal((String) mailMap.get("fromName"), "UTF-8");
+					message.setFrom(from);
+					Multipart mp = new MimeMultipart();
+					BodyPart messageBodyPart = new MimeBodyPart();
+					messageBodyPart.setContent(getHmtlString(mailIcerik), "text/html; charset=utf-8");
+					// messageBodyPart.setText(mailIcerik);
+					mp.addBodyPart(messageBodyPart);
+					message.setSubject(konu, "UTF-8");
+					message.setContent(mp);
+
+					Exception hata = null;
+					try {
+						String mesajAlan = null;
+						if (mailObject.getToList() != null && mailObject.getToList().size() == 1) {
+							MailPersonel mailPersonel = mailObject.getToList().get(0);
+							mesajAlan = mailPersonel.getAdiSoyadi();
+							if (mesajAlan != null && PdksUtil.hasStringValue(mesajAlan) == false)
+								mesajAlan = null;
+
+						}
+						String aciklama = ((authenticatedUser != null ? authenticatedUser.getAdSoyad() + " " : "") + "\"" + konu + "\" konulu mail " + (mesajAlan != null ? mesajAlan + " " : "")).trim();
+						logger.info(aciklama + " gönderiliyor.");
+						if (PdksUtil.hasStringValue(mailObject.getBody()))
+							Transport.send(message);
+						mailStatu.setDurum(true);
+						mailStatu.setHataMesai("");
+						logger.info(aciklama + " gönderildi.");
+					} catch (Exception e) {
+						hata = e;
+						try {
+							if (e instanceof javax.mail.SendFailedException) {
+								javax.mail.SendFailedException se = (javax.mail.SendFailedException) e;
+								if (se.getInvalidAddresses() != null) {
+									javax.mail.Address[] address = se.getInvalidAddresses();
+									for (int i = 0; i < address.length; i++) {
+										InternetAddress iad = (InternetAddress) address[i];
+										logger.error(konu + " " + iad.getAddress());
+									}
+									hata = null;
+								}
+
+							}
+						} catch (Exception e2) {
+						}
+					}
+					if (PdksUtil.hasStringValue(mailObject.getBody()))
+						saveLog(mailObject, mailMap, sessionDB);
+
+					if (hata != null) {
+						logger.error(konu + " " + hata);
+						throw hata;
+					}
+				} else
+					mailStatu.setHataMesai("Mail gönderilecek e-posta yok!");
+				mailDurumKontrol(mailObject, mailMap, sessionDB, mailStatu);
+
+				mailList = null;
+
+			}
+		} catch (Exception e) {
+			if (smtpServerDebug)
+				logger.error("ePostaGonder error " + e.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());
+			Gson gson = new Gson();
+			logger.error(e + "\n" + gson.toJson(props));
+			e.printStackTrace();
+			if (e.toString() != null)
+				mailStatu.setHataMesai(PdksUtil.replaceAll(e.toString(), "\n", ""));
+			mailDurumKontrol(mailObject, mailMap, sessionDB, mailStatu);
+		}
+		if (mailStatu.getDurum() == false && mailStatu.getHataMesai() == null)
+			mailStatu.setHataMesai("Hata oluştu!");
+
+		return mailStatu;
+
+	}
+
+	/**
+	 * @param mailObject
+	 * @param mailMap
+	 * @param sessionDB
+	 * @param mailStatu
+	 * @throws Exception
+	 */
+	private void mailDurumKontrol(MailObject mailObject, HashMap<String, String> mailMap, Session sessionDB, MailStatu mailStatu) throws Exception {
+		if (mailMap.containsKey("smtpYedekUserName") && PdksUtil.hasStringValue(mailObject.getBody()) == false) {
+			StringBuffer sb = new StringBuffer();
+			sb.append("<TABLE><TBODY><TR><TD><B>Host Name</B></TD><TD><B>:</B>" + mailMap.get("smtpHost") + " </TD></TR>");
+			sb.append("<TR><TD><B>User Name</B></TD><TD><B>:</B>" + mailMap.get("smtpUserName") + " </TD></TR>");
+			sb.append("<TR><TD><B>Hata </B></TD><TD><B>:</B>" + (PdksUtil.hasStringValue(mailStatu.getHataMesai()) ? mailStatu.getHataMesai() : "Hata oluştu!") + " </TD></TR></TBODY></TABLE>");
+			mailObject.setBody(sb.toString());
+			sb = null;
+			List<String> keyList = new ArrayList<String>(mailMap.keySet());
+			for (String key : keyList) {
+				if (key.startsWith("smtpYedek")) {
+					String value = mailMap.get(key);
+					mailMap.remove(key);
+					String newKey = PdksUtil.replaceAllManuel(key, "smtpYedek", "smtp");
+					mailMap.put(newKey, value);
+				}
+
+			}
+			ePostaKontrol(mailObject, mailMap, sessionDB);
+		}
+	}
+
+	/**
+	 * @param mailObject
 	 * @return
 	 * @throws Exception
 	 */
