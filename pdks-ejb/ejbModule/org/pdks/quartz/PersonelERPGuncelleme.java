@@ -101,8 +101,9 @@ public class PersonelERPGuncelleme implements Serializable {
 			zamanDurum = Boolean.FALSE;
 			try {
 				int dakika = PdksUtil.isSistemDestekVar() ? PdksUtil.getDateField(new Date(), Calendar.MINUTE) : -1;
+				int saat = PdksUtil.getDateField(new Date(), Calendar.HOUR_OF_DAY), haftaGun = PdksUtil.getDateField(new Date(), Calendar.DAY_OF_WEEK);
 				session = startGuncelleme();
-				if (session != null) {
+				if (session != null && saat > 7 && saat < 19 && haftaGun != Calendar.SUNDAY) {
 					if (dakika == 0 || dakika == 30)
 						mailSatusKontrol(session);
 				}
