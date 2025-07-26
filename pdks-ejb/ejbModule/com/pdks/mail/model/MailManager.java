@@ -412,13 +412,10 @@ public class MailManager implements Serializable {
 								mesajAlan = null;
 
 						}
-						String aciklama = ((authenticatedUser != null ? authenticatedUser.getAdSoyad() + " " : "") + "\"" + konu + "\" konulu mail " + (mesajAlan != null ? mesajAlan + " " : "")).trim();
-						logger.info(aciklama + " gönderiliyor.");
 						if (PdksUtil.hasStringValue(mailObject.getBody()))
 							Transport.send(message);
 						mailStatu.setDurum(true);
 						mailStatu.setHataMesai("");
-						logger.info(aciklama + " gönderildi.");
 					} catch (Exception e) {
 						hata = e;
 						try {

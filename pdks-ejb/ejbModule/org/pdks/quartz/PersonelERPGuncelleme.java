@@ -46,6 +46,7 @@ import org.pdks.session.PdksUtil;
 
 import com.pdks.mail.model.MailManager;
 import com.pdks.webservice.MailObject;
+import com.pdks.webservice.MailStatu;
 import com.pdks.webservice.PersonelERP;
 
 @Name("personelERPGuncelleme")
@@ -150,17 +151,20 @@ public class PersonelERPGuncelleme implements Serializable {
 					Date bitTarih = PdksUtil.tariheGunEkleCikar(basTarih, 1);
 					TreeMap<String, Tatil> tatilMap = ortakIslemler.getTatilGunleri(null, basTarih, bitTarih, sessionDB);
 					String key = tatilMap.isEmpty() ? "" : PdksUtil.convertToDateString(basTarih, "yyyyMMdd");
-					if (tatilMap.containsKey(key)) {
+					if (tatilMap.containsKey(key) == false) {
 						MailObject mailObject = new MailObject();
 						mailObject.setSubject("Mail Server Hata Kontrol");
 						mailObject.setBody("");
 						HashMap<String, String> mailMap = new HashMap<String, String>();
 						mailMap.putAll(parameterMap);
 						MailManager.addMailAdresBCC(mailObject, "bccAdres", mailMap);
+						MailStatu mailStatu = null;
 						try {
-							mailManager.ePostaKontrol(mailObject, mailMap, sessionDB);
+							mailStatu = mailManager.ePostaKontrol(mailObject, mailMap, sessionDB);
 						} catch (Exception e) {
 						}
+						if (mailStatu != null && PdksUtil.hasStringValue(mailStatu.getHataMesai()))
+							logger.error(mailStatu.getHataMesai());
 						mailMap = null;
 						mailObject = null;
 					}
