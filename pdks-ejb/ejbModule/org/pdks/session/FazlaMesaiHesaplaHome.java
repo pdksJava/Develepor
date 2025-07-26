@@ -2751,6 +2751,25 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 				else {
 					ortakIslemler.sortAylikPuantajList(aylikPuantajList, true);
+					if (yoneticiZorunluDegil == false && denklestirmeAyDurum) {
+						StringBuffer yoneticiSb = new StringBuffer();
+						for (AylikPuantaj ap : aylikPuantajList) {
+							PersonelDenklestirme pd = ap.getPersonelDenklestirme();
+							if (pd != null && pd.getDurum().booleanValue() == false && (ap.getYonetici() == null || ap.getYonetici().isCalisiyorGun(sonGun) == false)) {
+								Personel personel = pd.getPdksPersonel();
+								if (yoneticiSb.length() > 0)
+									yoneticiSb.append(", ");
+								yoneticiSb.append(personel.getSicilNo() + " " + personel.getAdSoyad());
+							}
+
+						}
+						if (yoneticiSb.length() > 0) {
+							String strYonetici = yoneticiSb.toString(), uygulamaBordro = ortakIslemler.getParameterKey("uygulamaBordro");
+							PdksUtil.addMessageAvailableWarn(strYonetici + (strYonetici.indexOf(",") > 0 ? " personellerin" : " personelin") + " " + (PdksUtil.hasStringValue(uygulamaBordro) ? uygulamaBordro + " " : "")
+									+ (ortakIslemler.yoneticiAciklama().toLowerCase(Constants.TR_LOCALE) + " tanımsızdır!"));
+						}
+						yoneticiSb = null;
+					}
 					msgwarnImg = ortakIslemler.getParameterKey("girisCikisResimYok");
 					if (PdksUtil.hasStringValue(msgwarnImg) == false || msgwarnImg.indexOf(".") < 1)
 						msgwarnImg = "msgwarn.png";
