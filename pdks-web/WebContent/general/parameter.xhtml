@@ -144,6 +144,9 @@
 									action="#{ortakIslemler.kapiGirisGuncelle(null,null,parameterHome.session)}" />
 								<a4j:commandButton status="ajaxStatus" value="izinGunceleme Calistir" rendered="#{userHome.hasPermission('personelKalanIzin','view')}"
 									action="#{izinBakiyeGuncelleme.izinGuncelemeCalistir(true,parameterHome.session)}" />
+								<a4j:commandButton status="ajaxStatus" value="MailSatusKontrol Calistir"
+									rendered="#{ortakIslemler.getParameterKeyHasStringValue('smtpYedekUserNameaa')}"
+									action="#{personelERPGuncelleme.mailSatusKontrol(parameterHome.session)}" />
 
 							</c:if>
 							<a4j:commandButton status="ajaxStatus" value="Sistem Saati Güncelle Calistir"

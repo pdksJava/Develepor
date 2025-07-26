@@ -443,7 +443,8 @@ public class MailManager implements Serializable {
 					}
 				} else
 					mailStatu.setHataMesai("Mail gönderilecek e-posta yok!");
-				mailDurumKontrol(mailObject, mailMap, sessionDB, mailStatu);
+				if (PdksUtil.hasStringValue(mailStatu.getHataMesai()))
+					mailDurumKontrol(mailObject, mailMap, sessionDB, mailStatu);
 
 				mailList = null;
 
