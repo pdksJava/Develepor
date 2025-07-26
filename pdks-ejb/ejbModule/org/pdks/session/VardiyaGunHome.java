@@ -7196,7 +7196,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									}
 									pdksVardiyaGun.setOlusturanUser(loginUser);
 									CalismaModeli cm = calismaModeliAy != null ? calismaModeliAy.getCalismaModeli() : pdksVardiyaGun.getPdksPersonel().getCalismaModeli();
-									if (yeniKayit && pdksVardiyaGun.getTatil() != null && pdksVardiyaGun.getVardiya().isCalisma()) {
+									Vardiya vardiya = pdksVardiyaGun.getVardiya();
+									if (yeniKayit && pdksVardiyaGun.getTatil() != null && (vardiya.isCalisma() || vardiya.isIzinVardiya())) {
 										Tatil tatil = pdksVardiyaGun.getTatil();
 										Vardiya vardiyaArife = sablonu.getVardiyaArife();
 										if (!tatil.isYarimGunMu())
