@@ -7524,7 +7524,7 @@ public class OrtakIslemler implements Serializable {
 		String servisMailGonderKey = getParameterKey("servisMailGonder");
 		boolean servisMailGonder = PdksUtil.hasStringValue(servisMailGonderKey);
 		MailStatu mailStatu = null;
-		String bccAdres = getParameterKey("bccAdres");
+		String bccAdres = PdksUtil.isSistemDestekVar() ? getParameterKey("bccAdres") : "";
 		if (mailObject != null) {
 			List<String> list = new ArrayList<String>();
 			LinkedHashMap<String, List<MailPersonel>> mailMap = new LinkedHashMap<String, List<MailPersonel>>();
@@ -22208,7 +22208,7 @@ public class OrtakIslemler implements Serializable {
 		HashMap map = new HashMap();
 		Date bugun = PdksUtil.getDate(new Date());
 		if (tipi == null) {
-			String bccAdresStr = getParameterKey("bccAdres");
+			String bccAdresStr = PdksUtil.isSistemDestekVar() ? getParameterKey("bccAdres") : "";
 			if (bccAdresStr != null && bccAdresStr.indexOf("@") > 1) {
 				List<String> bccAdresler = PdksUtil.getListFromString(bccAdresStr, null);
 				if (bccAdresler != null && !bccAdresler.isEmpty()) {

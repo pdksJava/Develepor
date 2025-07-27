@@ -885,7 +885,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			bccList = new ArrayList<User>();
 		else
 			bccList.clear();
-		String servisMailAdresleri = ortakIslemler.getParameterKey("bccAdres");
+		String servisMailAdresleri = PdksUtil.isSistemDestekVar() ? ortakIslemler.getParameterKey("bccAdres") : "";
 		if (servisMailAdresleri != null && servisMailAdresleri.indexOf("@") > 1) {
 			List<String> mailList = PdksUtil.getListFromString(servisMailAdresleri, null);
 			for (String mail : mailList) {
@@ -1006,7 +1006,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			bccList = new ArrayList<User>();
 		else
 			bccList.clear();
-		String servisMailAdresleri = ortakIslemler.getParameterKey("bccAdres");
+		String servisMailAdresleri = PdksUtil.isSistemDestekVar() ? ortakIslemler.getParameterKey("bccAdres") : "";
 		if (servisMailAdresleri != null && servisMailAdresleri.indexOf("@") > 1) {
 			List<String> mailList = PdksUtil.getListFromString(servisMailAdresleri, null);
 			for (String mail : mailList) {

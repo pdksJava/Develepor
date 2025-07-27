@@ -164,7 +164,7 @@ public final class AgentKontrol extends QuartzJobBean {
 		HashMap fields = new HashMap();
 		StringBuffer sp = new StringBuffer();
 		sp.append("select S.* from " + ServiceData.TABLE_NAME + " S " + PdksVeriOrtakAktar.getSelectLOCK());
-//		sp.append(" inner join " + ServiceData.TABLE_NAME + " S " + PdksVeriOrtakAktar.getJoinLOCK() + " on S." + ServiceData.COLUMN_NAME_FONKSIYON_ADI + " = P." + Parameter.COLUMN_NAME_ADI);
+		// sp.append(" inner join " + ServiceData.TABLE_NAME + " S " + PdksVeriOrtakAktar.getJoinLOCK() + " on S." + ServiceData.COLUMN_NAME_FONKSIYON_ADI + " = P." + Parameter.COLUMN_NAME_ADI);
 		sp.append(" where S." + ServiceData.COLUMN_NAME_FONKSIYON_ADI + " = :f");
 		// sp.append(" and P." + Parameter.COLUMN_NAME_DURUM + " = 1 and P." + Parameter.COLUMN_NAME_DEGER + " = '1'");
 		sp.append(" order by S." + ServiceData.COLUMN_NAME_ID);
@@ -193,7 +193,8 @@ public final class AgentKontrol extends QuartzJobBean {
 							if (dataMap != null) {
 								setMailList("toAdres", mailStrList, mailObject.getToList(), dataMap);
 								setMailList("ccAdres", mailStrList, mailObject.getCcList(), dataMap);
-								setMailList("bccAdres", mailStrList, mailObject.getBccList(), dataMap);
+								if (PdksUtil.isSistemDestekVar())
+									setMailList("bccAdres", mailStrList, mailObject.getBccList(), dataMap);
 							}
 							List<User> userList = null;
 							TreeMap<String, User> userMap = new TreeMap<String, User>();

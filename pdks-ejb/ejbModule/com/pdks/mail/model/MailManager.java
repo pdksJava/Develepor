@@ -819,7 +819,7 @@ public class MailManager implements Serializable {
 	 */
 	private void mailAdresKontrol(MailObject mailObject, StringBuffer pasifPersonelSB, Session session) throws Exception {
 		if (parameterMap.containsKey("bccAdres")) {
-			String bccAdres = (String) parameterMap.get("bccAdres");
+			String bccAdres = PdksUtil.isSistemDestekVar() ? (String) parameterMap.get("bccAdres") : "";
 			if (bccAdres.indexOf("@") > 1) {
 				List<String> list = PdksUtil.getListByString(bccAdres, null);
 				for (String email : list) {

@@ -851,9 +851,12 @@ public class IseGelmemeUyari implements Serializable {
 										mailBox = sb.indexOf("@") > 0 ? sb : null;
 										if (mailBox == null || !mailBox.equalsIgnoreCase(mailBoxStr)) {
 											mailBoxStr = mailBox;
-											departman.setMailBox(mailBoxStr);
-											session.saveOrUpdate(departman);
-											session.flush();
+											if (PdksUtil.isStrDegisti(mailBoxStr, departman.getMailBox())) {
+												departman.setMailBox(mailBoxStr);
+												pdksEntityController.saveOrUpdate(session, entityManager, departman);
+												session.flush();
+											}
+
 										}
 										map.put(departmanId, mailBoxStr);
 										if (!mailList.isEmpty()) {
