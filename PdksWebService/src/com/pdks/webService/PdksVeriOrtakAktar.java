@@ -3878,7 +3878,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 
 					if (personel == null) {
-						if (personelKGS.getDurum().booleanValue() == false) {
+						if (personelKGS.getDurum().booleanValue() == false && (istenAyrilisTarihi == null || istenAyrilisTarihi.before(PdksUtil.tariheAyEkleCikar(new Date(), -1)))) {
+							personelERP.getHataList().add(kapiSirket.getAciklama() + " personel pasif olmuştur!");
 							continue;
 						}
 						personel = new Personel();

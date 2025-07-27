@@ -2818,7 +2818,7 @@ public class OrtakIslemler implements Serializable {
 	public PdksSoapVeriAktar getPdksSoapVeriAktar() throws Exception {
 		PdksSoapVeriAktar service = null;
 		String servisAdres = null;
-		if (getParameterKeyHasStringValue("pdksWebServiceLocal") && getCanliDurum() == false) {
+		if (getParameterKeyHasStringValue("pdksWebServiceLocal") && getCanliDurum() == false && getTestSunucuDurum() == false) {
 			servisAdres = getParameterKey("pdksWebServiceLocal");
 			try {
 				service = getServis(servisAdres);
