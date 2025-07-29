@@ -17878,7 +17878,7 @@ public class OrtakIslemler implements Serializable {
 				// if (denklestirmeAy == null && puantajData.getPersonelDenklestirme() != null)
 				// denklestirmeAy = puantajData.getPersonelDenklestirme().getDenklestirmeAy();
 				String donemKodu = String.valueOf(denklestirmeAy.getDonem());
-				double planlanSure = 0, izinSuresi = 0d, ucretiOdenenMesaiSure = 0d, fazlaMesaiMaxSure = getFazlaMesaiMaxSure(denklestirmeAy), resmiTatilSure = 0d;
+				double planlanSure = 0, izinSuresi = 0d, ucretiOdenenMesaiSure = 0d, tatilSuresi = 0d, fazlaMesaiMaxSure = getFazlaMesaiMaxSure(denklestirmeAy), resmiTatilSure = 0d;
 				boolean resmiTatilVardiyaEkle = false;
 
 				AylikPuantaj sablonAylikPuantaj = puantajData.getSablonAylikPuantaj();
@@ -18331,8 +18331,11 @@ public class OrtakIslemler implements Serializable {
 								boolean ekle = ayinGunu;
 								if (ekle == false && pdksVardiyaGun.getSonrakiVardiyaGun() != null)
 									ekle = pdksVardiyaGun.getSonrakiVardiyaGun().getVardiyaDateStr().endsWith("01");
-								if (ekle)
+								if (ekle) {
+
+									tatilSuresi += pdksVardiyaGun.getResmiTatilSure();
 									toplamSure += pdksVardiyaGun.getCalismaSuresi() - (pdksVardiyaGun.getResmiTatilSure() - pdksVardiyaGun.getGecenAyResmiTatilSure());
+								}
 							}
 
 							if (ayinGunu && pdksVardiyaGun.getCalismaSuresi() > 0.0d || toplamSure > 0.0d)
@@ -18391,8 +18394,11 @@ public class OrtakIslemler implements Serializable {
 					if (filliHesapla == false) {
 						if (puantajData.getResmiTatilToplami() > 0)
 							resmiTatilSure = puantajData.getResmiTatilToplami();
-						else
+						else {
+							if (resmiTatilSure == 0 && personelDenklestirme != null && personelDenklestirme.getDurum().booleanValue())
+								resmiTatilSure = tatilSuresi;
 							puantajData.setResmiTatilToplami(resmiTatilSure);
+						}
 					}
 
 					double saatToplami = planlanSure + haftaTatilDigerSure - puantajData.getHaftaCalismaSuresi() + (resmiTatilEkle || resmiTatilVardiyaEkle ? resmiTatilSure - gecenAyResmiTatilSure : 0.0d);
