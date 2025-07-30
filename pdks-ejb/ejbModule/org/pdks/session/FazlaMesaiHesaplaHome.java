@@ -3621,7 +3621,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 
 			}
-			if (!strList.isEmpty()) {
+			if (!strList.isEmpty() && PdksUtil.isSistemDestekVar()) {
 				if (bolumAciklama == null)
 					fillEkSahaTanim();
 				MailObject mail = new MailObject();
