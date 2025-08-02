@@ -3728,7 +3728,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 							String ek = "";
 
 							if (istenAyrilisTarihi != null && istenAyrilisTarihi.before(bugun))
-								ek = " (İşten ayrılma tarihi : " + personelERP.getIstenAyrilmaTarihi();
+								ek = " (İşten ayrılma tarihi : " +PdksUtil.convertToDateString(istenAyrilisTarihi, PdksUtil.getDateFormat());
 
 							if (personelKGSBos != null && PdksUtil.hasStringValue(personelKGSBos.getSicilNo())) {
 								if (!PdksUtil.hasStringValue(ek))
