@@ -1986,7 +1986,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 						izinMap.remove(bakiyeYil + hakEdisIzin.getIzinKodu());
 					hakEdisIzin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_ONAYLANDI);
 					if (hakEdisIzin.getDevirIzin())
-						hakEdisIzin.setAciklama("Devir Bakiye");
+						hakEdisIzin.setAciklama("Devir İzin");
 					hakEdisIzin.setIzinSuresi(hakEdisIzin.getBakiyeSuresi());
 					if (hakEdisIzin.getBakiyeSuresi().doubleValue() == 0.0d)
 						hakEdisIzin.setIzinKagidiGeldi(Boolean.FALSE);

@@ -1214,7 +1214,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 									cal.set(Calendar.YEAR, yil);
 									Date bitisZamani = cal.getTime();
 									bakiyeIzin.setBitisZamani(bitisZamani);
-									bakiyeIzin.setAciklama("Devir Bakiye");
+									bakiyeIzin.setAciklama("Devir İzin");
 									bakiyeIzin.setIzinSuresi(bakiyeIzinSuresi);
 									bakiyeIzin.setOlusturanUser(authenticatedUser);
 									bakiyeIzin.setOlusturmaTarihi(new Date());
