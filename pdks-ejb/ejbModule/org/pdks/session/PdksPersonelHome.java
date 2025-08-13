@@ -1989,18 +1989,22 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * @return
 	 */
 	public String bakiyeDurumKontrolEt(Personel pdksPersonel) {
-		String bakiyeIzinSoDonemStr = ortakIslemler.getParameterKey("bakiyeIzinSonDonem");
-		try {
-			bakiyeIzinGoster = pdksPersonel.getIzinKartiVar() && PdksUtil.hasStringValue(bakiyeIzinSoDonemStr);
-			if (bakiyeIzinGoster) {
-				long donemBitis = Long.parseLong(bakiyeIzinSoDonemStr);
-				bakiyeIzinGoster = pdksPersonel.getIzinHakEdisTarihi() == null || Long.parseLong(PdksUtil.convertToDateString(pdksPersonel.getIzinHakEdisTarihi(), "yyyyMM")) < donemBitis;
-			} else if (bakiyeIzinGoster == false) {
-				if (ortakIslemler.getParameterKey("bakiyeIzinGoster").equals("1") && pdksPersonel.getIseGirisTarihi() != null)
+
+		bakiyeIzinGoster = false;
+		if (pdksPersonel.getIseGirisTarihi() != null && pdksPersonel.getIzinKartiVar()) {
+			try {
+				String bakiyeIzinSoDonemStr = ortakIslemler.getParameterKey("bakiyeIzinSonDonem");
+				if (PdksUtil.hasStringValue(bakiyeIzinSoDonemStr)) {
+					long donemBitis = Long.parseLong(bakiyeIzinSoDonemStr);
+					bakiyeIzinGoster = pdksPersonel.getIzinHakEdisTarihi() == null || Long.parseLong(PdksUtil.convertToDateString(pdksPersonel.getIzinHakEdisTarihi(), "yyyyMM")) < donemBitis;
+				}
+			} catch (Exception e) {
+				bakiyeIzinGoster = false;
+			}
+			if (bakiyeIzinGoster == false) {
+				if (ortakIslemler.getParameterKey("bakiyeIzinGoster").equals("1"))
 					bakiyeIzinGoster = (pdksPersonel.getGrubaGirisTarihi() != null && pdksPersonel.getGrubaGirisTarihi().before(pdksPersonel.getIseGirisTarihi())) || (pdksPersonel.getIzinHakEdisTarihi() != null && pdksPersonel.getIzinHakEdisTarihi().after(pdksPersonel.getIseGirisTarihi()));
 			}
-		} catch (Exception e) {
-			bakiyeIzinGoster = false;
 		}
 
 		return "";
