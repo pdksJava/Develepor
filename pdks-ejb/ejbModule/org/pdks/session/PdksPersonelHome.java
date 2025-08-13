@@ -1995,6 +1995,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			if (bakiyeIzinGoster) {
 				long donemBitis = Long.parseLong(bakiyeIzinSoDonemStr);
 				bakiyeIzinGoster = pdksPersonel.getIzinHakEdisTarihi() == null || Long.parseLong(PdksUtil.convertToDateString(pdksPersonel.getIzinHakEdisTarihi(), "yyyyMM")) < donemBitis;
+			} else if (bakiyeIzinGoster == false) {
+				if (ortakIslemler.getParameterKey("bakiyeIzinGoster").equals("1") && pdksPersonel.getIseGirisTarihi() != null)
+					bakiyeIzinGoster = (pdksPersonel.getGrubaGirisTarihi() != null && pdksPersonel.getGrubaGirisTarihi().before(pdksPersonel.getIseGirisTarihi())) || (pdksPersonel.getIzinHakEdisTarihi() != null && pdksPersonel.getIzinHakEdisTarihi().after(pdksPersonel.getIseGirisTarihi()));
 			}
 		} catch (Exception e) {
 			bakiyeIzinGoster = false;
