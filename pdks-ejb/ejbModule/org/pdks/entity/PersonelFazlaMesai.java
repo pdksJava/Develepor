@@ -26,7 +26,6 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	public static final String COLUMN_NAME_VARDIYA_GUN = "VARDIYA_GUN";
 	public static final String COLUMN_NAME_HAREKET = "HAREKET_ID";
 	public static final String COLUMN_NAME_FAZLA_MESAI_SAATI = "FAZLA_MESAI_SAATI";
-	
 
 	public static final int DURUM_ONAYLANMADI = 0;
 	public static final int DURUM_ONAYLANDI = 1;
@@ -42,7 +41,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 
 	private Tanim fazlaMesaiOnayDurum;
 
-	private Double fazlaMesaiSaati = 0.0d;
+	private Double fazlaMesaiSaati = 0.0d, fazlaMesaiMaxSaati;
 
 	private Date basZaman, bitZaman;
 
@@ -187,9 +186,16 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 		return tatilDurum != null && tatilDurum == BAYRAM;
 	}
 
-	public void entityRefresh() {
-		
-		
+	@Transient
+	public Double getFazlaMesaiMaxSaati() {
+		return fazlaMesaiMaxSaati;
 	}
 
+	public void setFazlaMesaiMaxSaati(Double fazlaMesaiMaxSaati) {
+		this.fazlaMesaiMaxSaati = fazlaMesaiMaxSaati;
+	}
+
+	public void entityRefresh() {
+
+	}
 }

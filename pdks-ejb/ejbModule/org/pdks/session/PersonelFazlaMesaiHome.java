@@ -379,6 +379,15 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		}
 		List<Tanim> list = ortakIslemler.getTanimAlanList(tipi, sort, "S", session);
 		PersonelFazlaMesai fazlaMesai = getInstance();
+		if (onayDurum) {
+			Double fazlaMesaiMaxSaati = null;
+			if (ortakIslemler.getParameterKey("").equals("1")) {
+				fazlaMesaiMaxSaati = fazlaMesai.getFazlaMesaiSaati().longValue() + 0.0d;
+				if (fazlaMesai.getFazlaMesaiSaati().doubleValue() > fazlaMesaiMaxSaati.doubleValue())
+					fazlaMesaiMaxSaati += 1.0d;
+			}
+			fazlaMesai.setFazlaMesaiMaxSaati(fazlaMesaiMaxSaati);
+		}
 		VardiyaGun vg = hareket.getVardiyaGun();
 		Date basZaman = ortakIslemler.getSaniyeSifirla(hareket.getGirisZaman(), vg);
 		Date bitZaman = ortakIslemler.getSaniyeSifirla(hareket.getCikisZaman(), vg);
@@ -423,59 +432,63 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	@Transactional
 	public String onayla() {
 		PersonelFazlaMesai fazlaMesai = getInstance();
-		boolean yeni = fazlaMesai.getId() == null;
-		try {
-			List<HareketKGS> list = ortakIslemler.getHareketIdBilgileri(null, fazlaMesai.getHareket(), date, date, session);
-			VardiyaGun vg = getVardiyaPlan(fazlaMesai);
-			boolean tatil = fazlaMesai.getHareket().isTatil();
-			double fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesai.getHareket().getFazlaMesai(), vg.getFazlaMesaiYuvarla());
+		if (fazlaMesai.getFazlaMesaiMaxSaati() != null && fazlaMesai.getFazlaMesaiMaxSaati().doubleValue() < fazlaMesai.getFazlaMesaiSaati().doubleValue()) {
+			PdksUtil.addMessageWarn("Fazla çalışma saati " + fazlaMesai.getFazlaMesaiMaxSaati().longValue() + " büyük olamaz!");
+		} else {
 
-			HareketKGS hareket = !list.isEmpty() ? list.get(0) : null;
-			if (hareket == null && fazlaMesai.getHareketId() != null) {
-				hareket = new HareketKGS();
-				hareket.setId(fazlaMesai.getHareketId());
-			}
-			fazlaMesai.setHareketId(hareket.getId());
-			fazlaMesai.setHareket(hareket);
-			// fazlaMesai.setHareket(hareket);
-			fazlaMesai.setVardiyaGun(vg);
-			fazlaMesai.setFazlaMesaiSaati(fazlaMesaiSaati);
-			if (!tatil)
-				fazlaMesai.setTatilDurum(null);
-			else
-				fazlaMesai.setTatilDurum(PersonelFazlaMesai.BAYRAM);
-			fazlaMesai.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANDI);
-			if (yeni) {
-				fazlaMesai.setOlusturanUser(authenticatedUser);
-
-			} else {
-				fazlaMesai.setGuncelleyenUser(authenticatedUser);
-				fazlaMesai.setGuncellemeTarihi(new Date());
-			}
-
+			boolean yeni = fazlaMesai.getId() == null;
 			try {
-				saveOrUpdate(fazlaMesai);
-				sessionFlush();
+				List<HareketKGS> list = ortakIslemler.getHareketIdBilgileri(null, fazlaMesai.getHareket(), date, date, session);
+				VardiyaGun vg = getVardiyaPlan(fazlaMesai);
+				boolean tatil = fazlaMesai.getHareket().isTatil();
+				double fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesai.getHareket().getFazlaMesai(), vg.getFazlaMesaiYuvarla());
+
+				HareketKGS hareket = !list.isEmpty() ? list.get(0) : null;
+				if (hareket == null && fazlaMesai.getHareketId() != null) {
+					hareket = new HareketKGS();
+					hareket.setId(fazlaMesai.getHareketId());
+				}
+				fazlaMesai.setHareketId(hareket.getId());
+				fazlaMesai.setHareket(hareket);
+				// fazlaMesai.setHareket(hareket);
+				fazlaMesai.setVardiyaGun(vg);
+				fazlaMesai.setFazlaMesaiSaati(fazlaMesaiSaati);
+				if (!tatil)
+					fazlaMesai.setTatilDurum(null);
+				else
+					fazlaMesai.setTatilDurum(PersonelFazlaMesai.BAYRAM);
+				fazlaMesai.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANDI);
+				if (yeni) {
+					fazlaMesai.setOlusturanUser(authenticatedUser);
+
+				} else {
+					fazlaMesai.setGuncelleyenUser(authenticatedUser);
+					fazlaMesai.setGuncellemeTarihi(new Date());
+				}
+
+				try {
+					saveOrUpdate(fazlaMesai);
+					sessionFlush();
+				} catch (Exception e) {
+					logger.error("Pdks hata in : \n");
+					e.printStackTrace();
+					logger.error("Pdks hata out : " + e.getMessage());
+
+				}
+
+				setInstance(new PersonelFazlaMesai());
+
+				// session.refresh(this.getInstance());
+				fillHareketMesaiList();
+
 			} catch (Exception e) {
 				logger.error("Pdks hata in : \n");
 				e.printStackTrace();
 				logger.error("Pdks hata out : " + e.getMessage());
 
 			}
-
-			setInstance(new PersonelFazlaMesai());
-
-			// session.refresh(this.getInstance());
-			fillHareketMesaiList();
-
-		} catch (Exception e) {
-			logger.error("Pdks hata in : \n");
-			e.printStackTrace();
-			logger.error("Pdks hata out : " + e.getMessage());
-
 		}
-
-		return "persisted";
+		return "";
 	}
 
 	private VardiyaGun getVardiyaPlan(PersonelFazlaMesai fazlaMesai) throws Exception {
