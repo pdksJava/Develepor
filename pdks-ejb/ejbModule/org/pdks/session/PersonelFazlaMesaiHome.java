@@ -381,7 +381,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		PersonelFazlaMesai fazlaMesai = getInstance();
 		if (onayDurum) {
 			Double fazlaMesaiMaxSaati = null;
-			if (ortakIslemler.getParameterKey("").equals("1")) {
+			if (ortakIslemler.getParameterKey("fazlaMesaiMaxSaatiDurum").equals("1")) {
 				fazlaMesaiMaxSaati = fazlaMesai.getFazlaMesaiSaati().longValue() + 0.0d;
 				if (fazlaMesai.getFazlaMesaiSaati().doubleValue() > fazlaMesaiMaxSaati.doubleValue())
 					fazlaMesaiMaxSaati += 1.0d;
@@ -435,7 +435,6 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		if (fazlaMesai.getFazlaMesaiMaxSaati() != null && fazlaMesai.getFazlaMesaiMaxSaati().doubleValue() < fazlaMesai.getFazlaMesaiSaati().doubleValue()) {
 			PdksUtil.addMessageWarn("Fazla çalışma saati " + fazlaMesai.getFazlaMesaiMaxSaati().longValue() + " büyük olamaz!");
 		} else {
-
 			boolean yeni = fazlaMesai.getId() == null;
 			try {
 				List<HareketKGS> list = ortakIslemler.getHareketIdBilgileri(null, fazlaMesai.getHareket(), date, date, session);
