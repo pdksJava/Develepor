@@ -382,8 +382,9 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		if (onayDurum) {
 			Double fazlaMesaiMaxSaati = null;
 			if (ortakIslemler.getParameterKey("fazlaMesaiMaxSaatiDurum").equals("1")) {
-				fazlaMesaiMaxSaati = fazlaMesai.getFazlaMesaiSaati().longValue() + 0.0d;
-				if (fazlaMesai.getFazlaMesaiSaati().doubleValue() > fazlaMesaiMaxSaati.doubleValue())
+				Double sure = PdksUtil.getSaatFarki(fazlaMesai.getBitZaman(), fazlaMesai.getBasZaman()).doubleValue();
+				fazlaMesaiMaxSaati = sure.longValue() + 0.0d;
+				if (sure.doubleValue() > fazlaMesaiMaxSaati.doubleValue())
 					fazlaMesaiMaxSaati += 1.0d;
 			}
 			fazlaMesai.setFazlaMesaiMaxSaati(fazlaMesaiMaxSaati);
