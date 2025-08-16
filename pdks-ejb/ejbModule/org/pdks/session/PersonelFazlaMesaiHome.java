@@ -379,16 +379,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		}
 		List<Tanim> list = ortakIslemler.getTanimAlanList(tipi, sort, "S", session);
 		PersonelFazlaMesai fazlaMesai = getInstance();
-		if (onayDurum) {
-			Double fazlaMesaiMaxSaati = null;
-			if (ortakIslemler.getParameterKey("fazlaMesaiMaxSaatiDurum").equals("1")) {
-				Double sure = PdksUtil.getSaatFarki(fazlaMesai.getBitZaman(), fazlaMesai.getBasZaman()).doubleValue();
-				fazlaMesaiMaxSaati = sure.longValue() + 0.0d;
-				if (sure.doubleValue() > fazlaMesaiMaxSaati.doubleValue())
-					fazlaMesaiMaxSaati += 1.0d;
-			}
-			fazlaMesai.setFazlaMesaiMaxSaati(fazlaMesaiMaxSaati);
-		}
+
 		VardiyaGun vg = hareket.getVardiyaGun();
 		Date basZaman = ortakIslemler.getSaniyeSifirla(hareket.getGirisZaman(), vg);
 		Date bitZaman = ortakIslemler.getSaniyeSifirla(hareket.getCikisZaman(), vg);
@@ -397,6 +388,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		vg.setFazlaMesaiTalepler(null);
 		fazlaMesai.setFazlaMesaiTalep(null);
 		fazlaMesai.setVardiyaGun(vg);
+		Double fazlaMesaiMaxSaati = null;
 		if (onayDurum) {
 			HashMap fields = new HashMap();
 			fields.put("vardiyaGun.id=", vg.getId());
@@ -417,9 +409,24 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 				vg.setFazlaMesaiTalepler(fazlaMesaiTalepler);
 			}
 			setFazlaMesaiList(list);
+			Long fazlaMesaiMaxSaatiDurum = null;
+			try {
+				String fazlaMesaiMaxSaatiDurumStr = ortakIslemler.getParameterKey("fazlaMesaiMaxSaatiDurum");
+				if (PdksUtil.hasStringValue(fazlaMesaiMaxSaatiDurumStr))
+					fazlaMesaiMaxSaatiDurum = Long.parseLong(fazlaMesaiMaxSaatiDurumStr);
+			} catch (Exception e) {
+				fazlaMesaiMaxSaatiDurum = null;
+			}
+			if (fazlaMesaiMaxSaatiDurum != null && fazlaMesaiMaxSaatiDurum.longValue() > 0L) {
+				Double sure = PdksUtil.getSaatFarki(fazlaMesai.getBitZaman(), fazlaMesai.getBasZaman()).doubleValue();
+				fazlaMesaiMaxSaati = sure.longValue() + 0.0d;
+				if (sure.doubleValue() > fazlaMesaiMaxSaati.doubleValue())
+					fazlaMesaiMaxSaati += fazlaMesaiMaxSaatiDurum.longValue();
+			}
+
 		} else
 			setOnaylamamaNedeniList(list);
-
+		fazlaMesai.setFazlaMesaiMaxSaati(fazlaMesaiMaxSaati);
 		fazlaMesai.setHareket(hareket);
 		fazlaMesai.setHareketId(hareket.getId());
 		double fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(hareket.getFazlaMesai(), vg.getFazlaMesaiYuvarla());
@@ -433,15 +440,21 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	@Transactional
 	public String onayla() {
 		PersonelFazlaMesai fazlaMesai = getInstance();
-		if (fazlaMesai.getFazlaMesaiMaxSaati() != null && fazlaMesai.getFazlaMesaiMaxSaati().doubleValue() < fazlaMesai.getFazlaMesaiSaati().doubleValue()) {
-			PdksUtil.addMessageWarn("Fazla çalışma saati " + fazlaMesai.getFazlaMesaiMaxSaati().longValue() + " büyük olamaz!");
+		VardiyaGun vg = null;
+		try {
+			vg = getVardiyaPlan(fazlaMesai);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		double fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesai.getHareket().getFazlaMesai(), vg.getFazlaMesaiYuvarla());
+		if (fazlaMesai.getFazlaMesaiMaxSaati() != null && fazlaMesai.getFazlaMesaiMaxSaati().doubleValue() < fazlaMesaiSaati) {
+			PdksUtil.addMessageWarn("Mesai saati " + fazlaMesai.getFazlaMesaiMaxSaati().longValue() + " büyük olamaz!");
 		} else {
 			boolean yeni = fazlaMesai.getId() == null;
 			try {
 				List<HareketKGS> list = ortakIslemler.getHareketIdBilgileri(null, fazlaMesai.getHareket(), date, date, session);
-				VardiyaGun vg = getVardiyaPlan(fazlaMesai);
 				boolean tatil = fazlaMesai.getHareket().isTatil();
-				double fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesai.getHareket().getFazlaMesai(), vg.getFazlaMesaiYuvarla());
 
 				HareketKGS hareket = !list.isEmpty() ? list.get(0) : null;
 				if (hareket == null && fazlaMesai.getHareketId() != null) {
@@ -491,6 +504,11 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		return "";
 	}
 
+	/**
+	 * @param fazlaMesai
+	 * @return
+	 * @throws Exception
+	 */
 	private VardiyaGun getVardiyaPlan(PersonelFazlaMesai fazlaMesai) throws Exception {
 		VardiyaGun pdksVardiyaGun = null;
 		if (fazlaMesai.getVardiyaGun() != null) {
