@@ -239,7 +239,7 @@
 							<f:facet name="header">
 								<h:outputText value="İşlem" />
 							</f:facet>
-							<ui:fragment rendered="#{mesai.personelFazlaMesai != null}">
+							<ui:fragment rendered="#{mesai.personelFazlaMesai != null and mesai.personelFazlaMesai.id != null}">
 								<ui:fragment rendered="#{mesai.personelFazlaMesai.onayDurum == 0}">
 									<h:outputText style="background:#ff3300" title="#{mesai.personelFazlaMesai.olusturanUser.adSoyad} reddetti"
 										value="#{mesai.personelFazlaMesai.onayDurumAciklama}" />

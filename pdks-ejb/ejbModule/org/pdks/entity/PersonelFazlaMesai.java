@@ -47,9 +47,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 
 	private FazlaMesaiTalep fazlaMesaiTalep;
 
-	private int onayDurum = DURUM_ONAYLANDI;
-
-	private Integer tatilDurum;
+	private Integer onayDurum = DURUM_ONAYLANDI, tatilDurum;
 
 	@Column(name = COLUMN_NAME_HAREKET)
 	public String getHareketId() {
@@ -127,11 +125,11 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	}
 
 	@Column(name = "ONAY_DURUM")
-	public int getOnayDurum() {
+	public Integer getOnayDurum() {
 		return onayDurum;
 	}
 
-	public void setOnayDurum(int onayDurum) {
+	public void setOnayDurum(Integer onayDurum) {
 		this.onayDurum = onayDurum;
 	}
 
@@ -158,11 +156,13 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 		String onayladimi = "";
 		String mesaiSaati = "";
 		try {
-			if (onayDurum == DURUM_ONAYLANDI) {
-				onayladimi = getFazlaMesaiOnayDurum().getAciklama();
-				mesaiSaati = " FazlaMesai Saati : " + getFazlaMesaiSaati();
-			} else if (onayDurum == DURUM_ONAYLANMADI) {
-				onayladimi = getFazlaMesaiOnayDurum().getAciklama();
+			if (onayDurum != null) {
+				if (onayDurum == DURUM_ONAYLANDI) {
+					onayladimi = getFazlaMesaiOnayDurum().getAciklama();
+					mesaiSaati = " FazlaMesai Saati : " + getFazlaMesaiSaati();
+				} else if (onayDurum == DURUM_ONAYLANMADI) {
+					onayladimi = getFazlaMesaiOnayDurum().getAciklama();
+				}
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -173,7 +173,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 
 	@Transient
 	public boolean isOnaylandi() {
-		return onayDurum == DURUM_ONAYLANDI;
+		return onayDurum != null && onayDurum == DURUM_ONAYLANDI;
 	}
 
 	@Transient

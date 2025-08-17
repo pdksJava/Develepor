@@ -379,7 +379,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		}
 		List<Tanim> list = ortakIslemler.getTanimAlanList(tipi, sort, "S", session);
 		PersonelFazlaMesai fazlaMesai = getInstance();
-
+		fazlaMesai.setId(null);
 		VardiyaGun vg = hareket.getVardiyaGun();
 		Date basZaman = ortakIslemler.getSaniyeSifirla(hareket.getGirisZaman(), vg);
 		Date bitZaman = ortakIslemler.getSaniyeSifirla(hareket.getCikisZaman(), vg);
@@ -449,8 +449,10 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		}
 		double fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesai.getHareket().getFazlaMesai(), vg.getFazlaMesaiYuvarla());
 		if (fazlaMesai.getFazlaMesaiMaxSaati() != null && fazlaMesai.getFazlaMesaiMaxSaati().doubleValue() < fazlaMesaiSaati) {
+			fazlaMesai.setOnayDurum(null);
 			PdksUtil.addMessageWarn("Mesai saati " + fazlaMesai.getFazlaMesaiMaxSaati().longValue() + " büyük olamaz!");
 		} else {
+			fazlaMesai.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANMADI);
 			boolean yeni = fazlaMesai.getId() == null;
 			try {
 				List<HareketKGS> list = ortakIslemler.getHareketIdBilgileri(null, fazlaMesai.getHareket(), date, date, session);
