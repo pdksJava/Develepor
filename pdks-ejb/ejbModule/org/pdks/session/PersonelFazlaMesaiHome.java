@@ -537,6 +537,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	public String onaylama() {
 		PersonelFazlaMesai fazlaMesai = getInstance();
 		String islem = "";
+		fazlaMesai.setOnayDurum(null);
 		if (fazlaMesai.getFazlaMesaiOnayDurum() != null) {
 			boolean yeni = fazlaMesai.getId() == null;
 			try {
