@@ -1367,9 +1367,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			if (!bordroMap.isEmpty()) {
 				for (Long key : bordroMap.keySet())
 					idList.add(bordroMap.get(key).getId());
-				bordroDetayMap = pdksEntityController.getSQLParamByFieldMap(PersonelDenklestirmeBordroDetay.TABLE_NAME, PersonelDenklestirmeBordroDetay.COLUMN_NAME_PERSONEL_DENKLESTIRME_BORDRO, idList, PersonelDenklestirmeBordroDetay.class, "getDetayKey", false, session);
+				if (idList != null && idList.isEmpty() == false)
+					bordroDetayMap = pdksEntityController.getSQLParamByFieldMap(PersonelDenklestirmeBordroDetay.TABLE_NAME, PersonelDenklestirmeBordroDetay.COLUMN_NAME_PERSONEL_DENKLESTIRME_BORDRO, idList, PersonelDenklestirmeBordroDetay.class, "getDetayKey", false, session);
 
-			} else
+			}
+			if (bordroDetayMap == null)
 				bordroDetayMap = new TreeMap<String, PersonelDenklestirmeBordroDetay>();
 
 			for (AylikPuantaj ap : puantajList) {
