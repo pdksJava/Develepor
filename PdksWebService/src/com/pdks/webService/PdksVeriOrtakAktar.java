@@ -208,27 +208,28 @@ public class PdksVeriOrtakAktar implements Serializable {
 			if (ikMailGonder == false)
 				sb.append(" where 1 = 2");
 			else {
-				List<String> userNameList = null;
+				String alanAdi = User.COLUMN_NAME_ID;
+				List userFieldList = null;
 				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_IK_USERNAME_LIST");
-				veriMap.put("alanAdi", User.COLUMN_NAME_USERNAME);
+				veriMap.put("alanAdi", alanAdi);
 				try {
-					userNameList = pdksDAO.execSPList(veriMap, null);
+					userFieldList = pdksDAO.execSPList(veriMap, null);
 				} catch (Exception e) {
-					userNameList = new ArrayList<String>();
+					userFieldList = new ArrayList<String>();
 				}
 				String fieldName = "rn";
 				sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER + " and U." + User.COLUMN_NAME_DURUM + " = 1 ");
-				if (!userNameList.isEmpty()) {
-					sb.append(" and U." + User.COLUMN_NAME_USERNAME + " :" + fieldName);
-					rolMap.put(fieldName, userNameList);
+				if (!userFieldList.isEmpty()) {
+					sb.append(" and U." + alanAdi + " :" + fieldName);
+					rolMap.put(fieldName, userFieldList);
 					roller.add(Role.TIPI_IK);
 					roller.add(Role.TIPI_IK_SIRKET);
 					roller.add(Role.TIPI_IK_Tesis);
 				}
 				sb.append(" inner join " + Role.TABLE_NAME + " R " + PdksVeriOrtakAktar.getJoinLOCK() + " on R." + Role.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_ROLE);
 				sb.append(" and R." + Role.COLUMN_NAME_STATUS + " = 1");
-				if (userNameList.isEmpty())
+				if (userFieldList.isEmpty())
 					sb.append(" where 1 = 2");
 			}
 			List<UserRoles> pdksRoles = pdksDAO.getNativeSQLList(rolMap, sb, UserRoles.class);
@@ -2935,10 +2936,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					HashMap<String, List<User>> map1 = ikUserMap.get(Role.TIPI_IK);
 					if (map1.containsKey(TIPI_IK_ADMIN)) {
 						userIKList = map1.get(TIPI_IK_ADMIN);
-						if (userIKList != null) {
-							for (User user : userIKList)
-								userIdList.add(user.getId());
-						}
+
 					}
 				}
 				for (String key : hataIKMap.keySet()) {
@@ -2950,10 +2948,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 							User user = (User) iterator.next();
 							if (userIdList.contains(user.getId()))
 								iterator.remove();
+							else {
+								userIdList.add(user.getId());
+								logger.debug(key + " " + user.getUsername());
+							}
 						}
 					}
 					if (!userList.isEmpty()) {
-						if ((perNoList.size() == 1 || hataIKMapSize == 1) && userIdList.isEmpty() == false) {
+						if ((perNoList.size() == 1 || hataIKMapSize == 1) && userList.isEmpty() == false) {
 							if (userIKList != null) {
 								if (!userIKList.isEmpty())
 									userList.addAll(userIKList);
@@ -5223,27 +5225,25 @@ public class PdksVeriOrtakAktar implements Serializable {
 					HashMap<String, List<User>> map1 = ikUserMap.get(Role.TIPI_IK);
 					if (map1.containsKey(TIPI_IK_ADMIN)) {
 						userIKList = map1.get(TIPI_IK_ADMIN);
-						if (userIKList != null) {
-							for (User user : userIKList)
-								userIdList.add(user.getId());
-						}
 					}
 				}
 				for (String key : hataIKMap.keySet()) {
 					mailMap.put(KEY_IK_MAIL_IPTAL, Boolean.TRUE);
 					HashMap<String, List> dataHataMap = hataIKMap.get(key);
 					List<User> userList = dataHataMap.get("userList");
-					if (userIdList.isEmpty() == false) {
+					if (userList.isEmpty() == false) {
 						for (Iterator iterator = userList.iterator(); iterator.hasNext();) {
 							User user = (User) iterator.next();
 							if (userIdList.contains(user.getId()))
 								iterator.remove();
-							else
+							else {
+								userIdList.add(user.getId());
 								logger.debug(key + " " + user.getUsername());
-						}
+							}
+ 						}
 					}
 					if (!userList.isEmpty()) {
-						if ((hataList.size() == 1 || hataIKMapSize == 1) && userIdList.isEmpty() == false) {
+						if ((hataList.size() == 1 || hataIKMapSize == 1) && userList.isEmpty() == false) {
 							if (userIKList != null) {
 								if (!userIKList.isEmpty())
 									userList.addAll(userIKList);
