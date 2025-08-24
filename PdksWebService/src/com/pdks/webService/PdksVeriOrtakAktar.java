@@ -2965,7 +2965,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 						}
 						List hataIKList = dataHataMap.get("hataList");
-						if (hataIKList.size() > 1)
+						if (hataIKList.size() > 1 && key.equals(TIPI_IK_ADMIN) == false)
 							hataIKList = PdksUtil.sortObjectStringAlanList(hataIKList, "getPersonelNo", null);
 						izinHataliMailGonder(userList, hataIKList, personelMap, izinCok);
 
@@ -5240,7 +5240,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 								userIdList.add(user.getId());
 								logger.debug(key + " " + user.getUsername());
 							}
- 						}
+						}
 					}
 					if (!userList.isEmpty()) {
 						if ((hataList.size() == 1 || hataIKMapSize == 1) && userList.isEmpty() == false) {
@@ -5252,7 +5252,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 							}
 						}
 						List hataIKList = dataHataMap.get("hataList");
-						if (hataIKList.size() > 1)
+						if (hataIKList.size() > 1 && key.equals(TIPI_IK_ADMIN) == false)
 							hataIKList = PdksUtil.sortObjectStringAlanList(hataIKList, "getPersonelNo", null);
 						personelHataMailGonder(userList, personelList, orjPersonelERPMap, hataIKList, personelERPHataliMap, sirketMap, false);
 
