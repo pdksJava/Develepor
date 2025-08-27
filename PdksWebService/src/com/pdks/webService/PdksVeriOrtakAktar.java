@@ -5287,6 +5287,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * 
 	 */
 	private void adminIKHatalari() {
+		if (ikUserMap.containsKey(Role.TIPI_IK)) {
+			HashMap<String, List<User>> map1 = ikUserMap.get(Role.TIPI_IK);
+			if (map1.containsKey(TIPI_IK_ADMIN) && hataIKMap.containsKey(TIPI_IK_ADMIN) == false) {
+				HashMap<String, List> map2 = new HashMap<String, List>();
+				map2.put("userList", map1.get(TIPI_IK_ADMIN));
+				hataIKMap.put(TIPI_IK_ADMIN, map2);
+			}
+		}
 		if (hataIKMap.containsKey(TIPI_IK_ADMIN) && hataListesi.isEmpty() == false) {
 			if (hataListesi.size() > 1)
 				hataListesi = PdksUtil.sortObjectStringAlanList(hataListesi, "getKey", null);
