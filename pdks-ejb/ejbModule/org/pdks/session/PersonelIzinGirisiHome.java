@@ -2303,7 +2303,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		else
 			personelIzinList.clear();
 		try {
-			if (PdksUtil.isSistemDestekVar() && PdksUtil.hasStringValue(sicilNo)) {
+			if (PdksUtil.hasStringValue(sicilNo)) {
 				veriMap = new HashMap<String, List<String>>();
 				perNoList = new ArrayList<String>();
 				perNoList.add(sicilNo);

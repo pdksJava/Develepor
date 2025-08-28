@@ -6606,10 +6606,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 				if (!personelList.isEmpty()) {
 					if (denklestirmeGecenAy == null || denklestirmeGelecekAy == null) {
-						if (aramaSecenekleri.getEkSaha3Id() != null && PdksUtil.isSistemDestekVar()) {
+						if (aramaSecenekleri.getEkSaha3Id() != null) {
 							seciliBolum = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, aramaSecenekleri.getEkSaha3Id(), Tanim.class, session);
 						}
-						if (aramaSecenekleri.getEkSaha4Id() != null && PdksUtil.isSistemDestekVar()) {
+						if (aramaSecenekleri.getEkSaha4Id() != null) {
 							seciliAltBolum = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, aramaSecenekleri.getEkSaha4Id(), Tanim.class, session);
 						}
 

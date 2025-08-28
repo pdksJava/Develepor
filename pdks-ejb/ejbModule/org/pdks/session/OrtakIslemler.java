@@ -9358,11 +9358,10 @@ public class OrtakIslemler implements Serializable {
 						girisView = getKapiView(map);
 					Tanim neden = null;
 					User sistemUser = null;
-					if (PdksUtil.isSistemDestekVar()) {
-						neden = getOtomatikKapGirisiNeden(session);
-						if (neden != null)
-							sistemUser = getSistemAdminUser(session);
-					}
+
+					neden = getOtomatikKapGirisiNeden(session);
+					if (neden != null)
+						sistemUser = getSistemAdminUser(session);
 
 					Long perNoId = null;
 					for (Iterator<Long> iterator2 = personelDenklestirmeMap.keySet().iterator(); iterator2.hasNext();) {
@@ -14347,7 +14346,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public List<VardiyaGun> getPersonelIdVardiyalar(List<Long> personelIdler, Date basTarih, Date bitTarih, Boolean hepsi, Session session) {
 		Calendar cal = Calendar.getInstance();
-		if (hepsi == null && PdksUtil.isSistemDestekVar() && bitTarih.before(tariheAyEkleCikar(cal, new Date(), -1)))
+		if (hepsi == null && bitTarih.before(tariheAyEkleCikar(cal, new Date(), -1)))
 			hepsi = Boolean.TRUE;
 		List vardiyaGunList = getAllPersonelIdVardiyalar(personelIdler, basTarih, bitTarih, hepsi, session);
 		return vardiyaGunList;
@@ -21021,11 +21020,11 @@ public class OrtakIslemler implements Serializable {
 		VardiyaGun oncekiVardiyaGun = dataGirisCikisMap.containsKey("oncekiVardiyaGun") ? (VardiyaGun) dataGirisCikisMap.get("oncekiVardiyaGun") : null;
 		dataGirisCikisMap = null;
 		if (neden == null || sistemUser == null) {
-			if (PdksUtil.isSistemDestekVar()) {
-				neden = getOtomatikKapGirisiNeden(session);
-				if (neden != null)
-					sistemUser = getSistemAdminUser(session);
-			}
+
+			neden = getOtomatikKapGirisiNeden(session);
+			if (neden != null)
+				sistemUser = getSistemAdminUser(session);
+
 		}
 		if (sistemUser != null && neden != null) {
 			if (manuelKapiMap == null)

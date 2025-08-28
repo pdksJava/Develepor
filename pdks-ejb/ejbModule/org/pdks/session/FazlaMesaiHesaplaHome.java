@@ -1337,12 +1337,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			Date sonCikisZamani = null;
 			Date gunBas = PdksUtil.getDate(bugun);
 			Calendar cal = Calendar.getInstance();
-			if (seciliEkSaha3Id != null && PdksUtil.isSistemDestekVar()) {
+			if (seciliEkSaha3Id != null) {
 
 				seciliBolum = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha3Id, Tanim.class, session);
 
 			}
-			if (seciliEkSaha4Id != null && PdksUtil.isSistemDestekVar()) {
+			if (seciliEkSaha4Id != null) {
 				seciliAltBolum = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha4Id, Tanim.class, session);
 
 			}
@@ -3621,7 +3621,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 
 			}
-			if (!strList.isEmpty() && PdksUtil.isSistemDestekVar()) {
+			if (!strList.isEmpty()) {
 				if (bolumAciklama == null)
 					fillEkSahaTanim();
 				MailObject mail = new MailObject();
@@ -3745,11 +3745,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(null, session);
 		Tanim neden = null;
 		User sistemUser = null;
-		if (PdksUtil.isSistemDestekVar()) {
-			neden = ortakIslemler.getOtomatikKapGirisiNeden(session);
-			if (neden != null)
-				sistemUser = ortakIslemler.getSistemAdminUser(session);
-		}
+
+		neden = ortakIslemler.getOtomatikKapGirisiNeden(session);
+		if (neden != null)
+			sistemUser = ortakIslemler.getSistemAdminUser(session);
+
 		List<AylikPuantaj> list = new ArrayList<AylikPuantaj>(aylikPuantajList);
 		boolean devam = false;
 		List<VardiyaGun> vardiyaList = new ArrayList<VardiyaGun>();
