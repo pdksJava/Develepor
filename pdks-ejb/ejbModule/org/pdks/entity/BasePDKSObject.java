@@ -25,6 +25,7 @@ public abstract class BasePDKSObject implements Serializable, Cloneable, PdksInt
 	protected User loginUser;
 
 	protected Boolean guncellendi;
+	protected boolean degisti = Boolean.FALSE;
 
 	@Id
 	@GeneratedValue
@@ -78,6 +79,15 @@ public abstract class BasePDKSObject implements Serializable, Cloneable, PdksInt
 	@Transient
 	public Boolean isGuncellendi() {
 		return guncellendi != null && guncellendi.booleanValue();
+	}
+
+	@Transient
+	public boolean isDegisti() {
+		return degisti;
+	}
+
+	public void setDegisti(boolean degisti) {
+		this.degisti = degisti;
 	}
 
 	@Transient

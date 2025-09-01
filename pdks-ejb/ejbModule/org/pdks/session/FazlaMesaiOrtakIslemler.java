@@ -55,6 +55,8 @@ import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDenklestirmeBordro;
 import org.pdks.entity.PersonelDenklestirmeBordroDetay;
 import org.pdks.entity.PersonelDenklestirmeDinamikAlan;
+import org.pdks.entity.PersonelDenklestirmeOrganizasyon;
+import org.pdks.entity.PersonelDenklestirmeOrganizasyonDetay;
 import org.pdks.entity.PersonelDenklestirmeTasiyici;
 import org.pdks.entity.PersonelDinamikAlan;
 import org.pdks.entity.PersonelDonemselDurum;
@@ -1352,13 +1354,55 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		cal.setTime(tarih);
 		int ayGunSayisi = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 		TreeMap<Long, AylikPuantaj> puantajMap = new TreeMap<Long, AylikPuantaj>();
+		List<Personel> donemPerList = new ArrayList<Personel>();
+		DenklestirmeAy dm = null;
 		for (AylikPuantaj ap : puantajList) {
 			PersonelDenklestirme personelDenklestirme = ap.getPersonelDenklestirme();
-			if (personelDenklestirme.getId() != null)
+			if (personelDenklestirme.getId() != null) {
 				puantajMap.put(personelDenklestirme.getId(), ap);
+				if (dm == null)
+					dm = personelDenklestirme.getDenklestirmeAy();
+				donemPerList.add(personelDenklestirme.getPersonel());
+			}
+
 		}
 		if (!puantajMap.isEmpty()) {
 			List dataIdList = new ArrayList(puantajMap.keySet());
+			TreeMap<Long, PersonelDenklestirmeOrganizasyon> orgMap = null;
+			List<Tanim> personelDinamikAlanlar = null;
+			TreeMap<String, PersonelDinamikAlan> personelDinamikAlanMap = null;
+			TreeMap<String, PersonelDenklestirmeOrganizasyonDetay> orgDetayMap = null;
+			String denklestirmeOrgDonemKoduStr = ortakIslemler.getParameterKey("denklestirmeOrgDonemKodu");
+			if (PdksUtil.hasStringValue(denklestirmeOrgDonemKoduStr) && dm != null && dm.getDurum()) {
+				cal = Calendar.getInstance();
+				cal.add(Calendar.DATE, -10);
+				String str = PdksUtil.convertToDateString(cal.getTime(), "yyyyMM");
+				Long donem = null, denklestirmeOrgDonemKodu = null;
+				try {
+					donem = Long.parseLong(donemStr);
+					denklestirmeOrgDonemKodu = Long.parseLong(denklestirmeOrgDonemKoduStr);
+				} catch (Exception e) {
+
+				}
+				if (denklestirmeOrgDonemKodu != null && donem.longValue() >= denklestirmeOrgDonemKodu.longValue() && Long.parseLong(str) <= donem.longValue()) {
+					personelDinamikAlanlar = PdksUtil.getAktifList(ortakIslemler.getSQLTanimListByTipKodu(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, null, session));
+					personelDinamikAlanMap = ortakIslemler.getPersonelDinamikAlanMap(donemPerList, personelDinamikAlanlar, session);
+					orgMap = pdksEntityController.getSQLParamByFieldMap(PersonelDenklestirmeOrganizasyon.TABLE_NAME, PersonelDenklestirmeOrganizasyon.COLUMN_NAME_PERSONEL_DENKLESTIRME, dataIdList, PersonelDenklestirmeOrganizasyon.class, "getPersonelDenklestirmeId", false, session);
+					List idList = new ArrayList();
+					orgDetayMap = new TreeMap<String, PersonelDenklestirmeOrganizasyonDetay>();
+					for (Long key : orgMap.keySet())
+						idList.add(orgMap.get(key).getId());
+					if (!idList.isEmpty()) {
+						List<PersonelDenklestirmeOrganizasyonDetay> organizasyonDetayList = pdksEntityController.getSQLParamByFieldList(PersonelDenklestirmeOrganizasyonDetay.TABLE_NAME, PersonelDenklestirmeOrganizasyonDetay.COLUMN_NAME_PERSONEL_DENKLESTIRME_ORGANIZASYON, idList,
+								PersonelDenklestirmeOrganizasyonDetay.class, session);
+						for (PersonelDenklestirmeOrganizasyonDetay organizasyonDetay : organizasyonDetayList)
+							orgDetayMap.put(organizasyonDetay.getKey(), organizasyonDetay);
+						organizasyonDetayList = null;
+					}
+					idList = null;
+				}
+
+			}
 			TreeMap<Long, PersonelDenklestirmeBordro> bordroMap = pdksEntityController
 					.getSQLParamByFieldMap(PersonelDenklestirmeBordro.TABLE_NAME, PersonelDenklestirmeBordro.COLUMN_NAME_PERSONEL_DENKLESTIRME, dataIdList, PersonelDenklestirmeBordro.class, "getPersonelDenklestirmeId", false, session);
 
@@ -1678,7 +1722,48 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					}
 
 				}
+				if (orgMap != null) {
+					Personel personel = personelDenklestirme.getPersonel();
+					PersonelDenklestirmeOrganizasyon denklestirmeOrganizasyon = null;
+					if (orgMap.containsKey(personelDenklestirme.getId())) {
+						denklestirmeOrganizasyon = orgMap.get(personelDenklestirme.getId());
+						denklestirmeOrganizasyon.setDegisti(false);
+						if (personelDenklestirme.getPersonel() != null) {
+							denklestirmeOrganizasyon.setTesis(personel.getSirket().getTesisDurum() ? personel.getTesis() : null);
+							denklestirmeOrganizasyon.setDirektor(personel.getEkSaha1());
+							denklestirmeOrganizasyon.setBolum(personel.getEkSaha3());
+							denklestirmeOrganizasyon.setGorevTipi(personel.getGorevTipi());
+						}
+					} else
+						denklestirmeOrganizasyon = new PersonelDenklestirmeOrganizasyon(personelDenklestirme);
+					if (denklestirmeOrganizasyon.getId() == null || denklestirmeOrganizasyon.isDegisti()) {
+						pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeOrganizasyon);
+						flush = true;
 
+					}
+					if (orgMap.containsKey(personelDenklestirme.getId()))
+						orgMap.remove(personelDenklestirme.getId());
+					for (Tanim alan : personelDinamikAlanlar) {
+						String key = PersonelDinamikAlan.getKey(personel, alan);
+						if (personelDinamikAlanMap.containsKey(key)) {
+							PersonelDinamikAlan dinamikAlan = personelDinamikAlanMap.get(key);
+							PersonelDenklestirmeOrganizasyonDetay organizasyonDetay = null;
+							key = PersonelDenklestirmeOrganizasyonDetay.getKey(denklestirmeOrganizasyon, alan);
+							if (orgDetayMap.containsKey(key)) {
+								organizasyonDetay = orgDetayMap.get(key);
+								organizasyonDetay.setDegisti(false);
+							} else
+								organizasyonDetay = new PersonelDenklestirmeOrganizasyonDetay(denklestirmeOrganizasyon, alan);
+							organizasyonDetay.setDeger(dinamikAlan.getTanimDeger());
+							if (organizasyonDetay.getId() == null || organizasyonDetay.isDegisti()) {
+								pdksEntityController.saveOrUpdate(session, entityManager, organizasyonDetay);
+								flush = true;
+							}
+							if (orgDetayMap.containsKey(key))
+								orgDetayMap.remove(key);
+						}
+					}
+				}
 				detayMap = null;
 				if (flush)
 					session.flush();
@@ -1702,6 +1787,12 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				}
 
 			}
+			if (orgDetayMap != null && orgDetayMap.isEmpty() == false) {
+				for (String key : orgDetayMap.keySet()) {
+					session.delete(orgDetayMap.get(key));
+				}
+				session.flush();
+			}
 			if (kaydet && !bordroDetayMap.isEmpty()) {
 				for (String key : bordroDetayMap.keySet()) {
 					session.delete(bordroDetayMap.get(key));
@@ -1710,6 +1801,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			}
 			bordroDetayMap = null;
 			bordroMap = null;
+			dataIdList = null;
+			orgMap = null;
+			personelDinamikAlanlar = null;
+			personelDinamikAlanMap = null;
+			orgDetayMap = null;
 		}
 		return baslikMap;
 	}

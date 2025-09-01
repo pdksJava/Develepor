@@ -1923,6 +1923,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				File file = new File("/opt/pdks/" + fileName);
 				pdfTopluAktarDurum = file.exists();
 			}
+			ortakIslemler.setPersonelDenklestirmeOrganizasyon(puantajList, personelDinamikAlanMap, session);
 		}
 		if (gecenAy != null && gecenAy.getDurum().equals(Boolean.TRUE) && (authenticatedUser.isAdmin() || authenticatedUser.isIK())) {
 			hataYok = false;
