@@ -1368,12 +1368,13 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		}
 		if (!puantajMap.isEmpty()) {
 			List dataIdList = new ArrayList(puantajMap.keySet());
+			boolean denklestirmeAyDurum = dm != null && getDurum(dm);
 			TreeMap<Long, PersonelDenklestirmeOrganizasyon> orgMap = null;
 			List<Tanim> personelDinamikAlanlar = null;
 			TreeMap<String, PersonelDinamikAlan> personelDinamikAlanMap = null;
 			TreeMap<String, PersonelDenklestirmeOrganizasyonDetay> orgDetayMap = null;
 			String denklestirmeOrgDonemKoduStr = ortakIslemler.getParameterKey("denklestirmeOrgDonemKodu");
-			if (PdksUtil.hasStringValue(denklestirmeOrgDonemKoduStr) && dm != null && dm.getDurum()) {
+			if (PdksUtil.hasStringValue(denklestirmeOrgDonemKoduStr) && denklestirmeAyDurum) {
 				cal = Calendar.getInstance();
 				cal.add(Calendar.DATE, -10);
 				String str = PdksUtil.convertToDateString(cal.getTime(), "yyyyMM");
