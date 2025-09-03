@@ -73,9 +73,9 @@
 									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaGun.calismaSuresi)}" />
 								</ui:fragment>
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla == false or aylikPuantaj.fazlaMesaiHesapla == false}">
-									<a4j:commandLink action="#{fazlaMesaiHesaplaHome.vardiyaGoster(vg)}" ajaxSingle="true"
+									<a4j:commandLink action="#{fazlaMesaiHesaplaHome.vardiyaGoster(vardiyaGun)}" ajaxSingle="true"
 										oncomplete="#{rich:component('hareketDetayPanel')}.show()" reRender="hareketDetayPanel">
-										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vg.calismaSuresi)}" />
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaGun.calismaSuresi)}" />
 									</a4j:commandLink>
 								</ui:fragment>
 							</ui:fragment>
@@ -132,9 +132,9 @@
 												rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla and aylikPuantaj.fazlaMesaiHesapla}">
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaGun.calismaSuresi)}" />
 											</ui:fragment> <ui:fragment rendered="#{fazlaMesaiHesaplaHome.hatalariAyikla == false or aylikPuantaj.fazlaMesaiHesapla == false}">
-												<a4j:commandLink action="#{fazlaMesaiHesaplaHome.vardiyaGoster(vg)}" ajaxSingle="true"
+												<a4j:commandLink action="#{fazlaMesaiHesaplaHome.vardiyaGoster(vardiyaGun)}" ajaxSingle="true"
 													oncomplete="#{rich:component('hareketDetayPanel')}.show()" reRender="hareketDetayPanel">
-													<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vg.calismaSuresi)}" />
+													<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiyaGun.calismaSuresi)}" />
 												</a4j:commandLink>
 											</ui:fragment>
 
