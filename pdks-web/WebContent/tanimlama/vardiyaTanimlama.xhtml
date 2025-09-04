@@ -249,6 +249,12 @@
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
+										<h:outputText value="Süt İzni İçin" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.sutIzni)}" />
+								</rich:column>
+								<rich:column>
+									<f:facet name="header">
 										<h:outputText value="Aktif" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.durum)}" />
@@ -481,6 +487,10 @@
 												<s:decorate template="/layout/edit.xhtml">
 													<ui:define name="label">Gebeler İçin</ui:define>
 													<h:selectBooleanCheckbox value="#{vardiyaHome.instance.gebelik}" />
+												</s:decorate>
+													<s:decorate template="/layout/edit.xhtml">
+													<ui:define name="label">Süt İzni İçin</ui:define>
+													<h:selectBooleanCheckbox value="#{vardiyaHome.instance.sutIzni}" />
 												</s:decorate>
 											</c:if>
 											<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('isKurCalismaPlani') != '1'}">

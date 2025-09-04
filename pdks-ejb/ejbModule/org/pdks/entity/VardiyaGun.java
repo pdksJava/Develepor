@@ -1366,6 +1366,9 @@ public class VardiyaGun extends BaseObject {
 					String pattern = PdksUtil.getSaatFormat();
 					Vardiya tmpVardiya = tmp.getIslemVardiya();
 					String ek = "";
+					if (tmpVardiya.isSutIzniMi())
+						ek = " - Süt İzni";
+					else 
 					if (tmpVardiya.isSuaMi())
 						ek = " - Şua";
 					else if (tmpVardiya.isGebelikMi())
@@ -2424,8 +2427,6 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setIsAramaPersonelDonemselDurum(PersonelDonemselDurum value) {
-		if (this.getVardiyaDateStr().endsWith("1231") && value != null)
-			logger.debug(value);
 		donemselDurumMap.put(PersonelDurumTipi.IS_ARAMA_IZNI, value);
 	}
 

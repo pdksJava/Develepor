@@ -35,6 +35,7 @@ public class Vardiya extends BaseObject {
 
 	public static final String COLUMN_NAME_SUA = "SUA";
 	public static final String COLUMN_NAME_GEBELIK = "GEBELIK";
+	public static final String COLUMN_NAME_SUT_IZNI = "SUT_IZNI";
 	public static final String COLUMN_NAME_ICAP = "ICAP_VARDIYA";
 	public static final String COLUMN_NAME_KISA_ADI = "KISA_ADI";
 	public static final String COLUMN_NAME_GENEL = "GENEL";
@@ -52,7 +53,7 @@ public class Vardiya extends BaseObject {
 	public static final char TIPI_IZIN = 'I';
 	public static final char TIPI_HASTALIK_RAPOR = 'S';
 
-	public static final String GEBE_KEY = "g", SUA_KEY = "s", ICAP_KEY = "i", FMI_KEY = "f";
+	public static final String GEBE_KEY = "g", SUA_KEY = "s", ICAP_KEY = "i", SUT_IZNI_KEY = "e", FMI_KEY = "f";
 
 	public static Date vardiyaKontrolTarih, vardiyaKontrolTarih2, vardiyaKontrolTarih3, vardiyaAySonuKontrolTarih;
 	private Long sirketId, calismaSekliId, departmanId;
@@ -68,7 +69,7 @@ public class Vardiya extends BaseObject {
 	private Integer yemekSuresi, cikisMolaSaat = 0;
 	private Departman departman;
 	private List<Integer> gunlukList;
-	private Boolean aksamVardiya = Boolean.FALSE, fcsHaric = Boolean.FALSE, icapVardiya = Boolean.FALSE, gebelik = Boolean.FALSE, kopya = Boolean.FALSE, genel = Boolean.FALSE, isKur = Boolean.FALSE;
+	private Boolean aksamVardiya = Boolean.FALSE, fcsHaric = Boolean.FALSE, icapVardiya = Boolean.FALSE, sutIzni = Boolean.FALSE, gebelik = Boolean.FALSE, kopya = Boolean.FALSE, genel = Boolean.FALSE, isKur = Boolean.FALSE;
 	private String tipi;
 	private VardiyaGun islemVardiyaGun;
 	private char vardiyaTipi;
@@ -176,6 +177,15 @@ public class Vardiya extends BaseObject {
 
 	public void setGebelik(Boolean gebelik) {
 		this.gebelik = gebelik;
+	}
+
+	@Column(name = COLUMN_NAME_SUT_IZNI)
+	public Boolean getSutIzni() {
+		return sutIzni;
+	}
+
+	public void setSutIzni(Boolean sutIzni) {
+		this.sutIzni = sutIzni;
 	}
 
 	@Column(name = COLUMN_NAME_SUA)
@@ -1645,7 +1655,9 @@ public class Vardiya extends BaseObject {
 				String pattern = PdksUtil.getSaatFormat();
 				Vardiya tmpVardiya = tmp.getIslemVardiya();
 				String ek = "";
-				if (tmpVardiya.isSuaMi())
+				if (tmpVardiya.isSutIzniMi())
+					ek = " - Süt İzni";
+				else if (tmpVardiya.isSuaMi())
 					ek = " - Şua";
 				else if (tmpVardiya.isGebelikMi())
 					ek = " - Gebe";
@@ -1666,6 +1678,11 @@ public class Vardiya extends BaseObject {
 	@Transient
 	public boolean isGebelikMi() {
 		return gebelik != null && gebelik.booleanValue();
+	}
+
+	@Transient
+	public boolean isSutIzniMi() {
+		return sutIzni != null && sutIzni.booleanValue();
 	}
 
 	@Transient
