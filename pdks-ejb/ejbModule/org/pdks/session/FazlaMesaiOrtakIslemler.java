@@ -1468,6 +1468,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				LinkedHashMap<BordroDetayTipi, Double> detayMap = new LinkedHashMap<BordroDetayTipi, Double>();
 				boolean saatlikCalisma = calismaModeli.isSaatlikOdeme();
 				Double gunlukKatsayi = null;
+				PersonelIzin vardiyalIzin = null;
 				for (VardiyaGun vardiyaGun : ap.getVardiyalar()) {
 					if (vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null) {
 						if (gunlukKatsayi == null) {
@@ -1481,11 +1482,33 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						Tatil tatil = vardiyaGun.getTatil();
 						boolean resmiTatil = tatil != null;
 						double calismaGun = 1.0d;
+						Double izinSuresi = 0.0d, izinTatilAdet = 0.0d;
 						BordroDetayTipi izinBordroDetayTipi = null;
+
+						// Date izinBasTarih = null, izinBitTarih = null;
+						if (vardiyaGun.getIzin() != null && vardiyaGun.getVardiya() != null) {
+							if (vardiyalIzin == null || vardiyalIzin.getId().equals(vardiyaGun.getIzin().getOrjIzin().getId()) == false)
+								vardiyalIzin = vardiyaGun.getIzin().getOrjIzin();
+							izinSuresi = vardiyalIzin.getIzinSuresi();
+							for (VardiyaGun vg : ap.getVardiyalar()) {
+								if (vg.getVardiya() != null && vg.getIzin() != null && vg.getIzin().getId().equals(vardiyalIzin.getId())) {
+									if (vg.isAyinGunu() && vg.getTatil() != null)
+										izinTatilAdet += 1;
+								}
+							}
+						} else
+							vardiyalIzin = null;
+
 						if (vardiyaGun.isIzinli()) {
 
 							// calisiyor = true;
 							String izinKodu = null;
+							if (vardiyalIzin != null) {
+								Long gunFark = PdksUtil.tarihFarki(vardiyalIzin.getBaslangicZamani(), vardiyalIzin.getBitisZamani());
+								if (gunFark.longValue() == izinSuresi.longValue())
+									izinSuresi = gunFark.doubleValue();
+
+							}
 							double artiGun = 1.0d;
 							// if (saatlikCalisma)
 							// artiGun = vardiyaGun.getSaatCalisanIzinGunKatsayisi();
@@ -1548,7 +1571,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 								if (haftaTatil && izinBordroDetayTipi != null) {
 									haftaTatil = (izinTipi != null && izinTipi.isHTDahil() == false) || izinBordroDetayTipi.value().equals(BordroDetayTipi.UCRETLI_IZIN.value());
-									if (izinBordroDetayTipi.value().equals(BordroDetayTipi.RAPORLU_IZIN.value()) && vardiya.isHaftaTatil()) {
+									if (izinBordroDetayTipi.value().equals(BordroDetayTipi.RAPORLU_IZIN.value()) && vardiya.isHaftaTatil() && izinSuresi.doubleValue() < 2.0) {
 										artiGun = 0;
 									} else
 
@@ -1680,7 +1703,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						if (devamPrim != null) {
 							detayMap.put(BordroDetayTipi.DEVAMSIZLIK_PRIMI, devamPrim.getIslemDurum() != null && devamPrim.getIslemDurum() ? 1.0d : 0.0d);
 						}
- 						if (!detayMap.isEmpty()) {
+						if (!detayMap.isEmpty()) {
 							for (BordroDetayTipi bordroDetayTipi : detayMap.keySet()) {
 								PersonelDenklestirmeBordroDetay bordroDetay = null;
 								String detayKey = PersonelDenklestirmeBordroDetay.getDetayKey(denklestirmeBordro, bordroDetayTipi.value());
