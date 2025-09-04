@@ -4624,7 +4624,9 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		IzinTipi izinTipi = personelIzin.getIzinTipi();
 		boolean tatilSay = izinTipi.isTatilSayilir();
 		double izinSuresiSaatGun = 0;
-
+		BordroDetayTipi izinBordroDetayTipi = null;
+		TreeMap<String, String> izinGrupMap = ortakIslemler.getIzinGrupMap(session);
+		izinBordroDetayTipi = ortakIslemler.getBordroDetayTipi(izinTipi, izinGrupMap);
 		Double eklenecekGun = 1.0;
 		String tatilGunuKey = "";
 		Calendar basCal = Calendar.getInstance();
@@ -4636,8 +4638,10 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		} catch (Exception e) {
 			hekim = Boolean.FALSE;
 		}
+		long gunFark = PdksUtil.tarihFarki(personelIzin.getBaslangicZamani(), personelIzin.getBitisZamani());
+		if (gunFark > 0L)
+			logger.debug(gunFark);
 		double artikIzinGun = izinTipi.getArtikIzinGun() != null && !hekim ? izinTipi.getArtikIzinGun() : 0D;
-
 		// iznin ilk haftasi- ilk gun icin vardiya var mi diye bakilir
 		if (!izinTipi.getTakvimGunumu() || hesapTipiMethod == PersonelIzin.HESAP_TIPI_SAAT) {
 			Date vardiyaDate = (Date) personelIzin.getBaslangicZamani().clone();
@@ -4674,9 +4678,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					if (oncekiGun.getIzin() != null) {
 						PersonelIzin izin = oncekiGun.getIzin();
 						if (izin.getIzinTipi().isSenelikIzin() == false) {
-							TreeMap<String, String> izinGrupMap = ortakIslemler.getIzinGrupMap(session);
-							BordroDetayTipi izinDetayTipi = ortakIslemler.getBordroDetayTipi(izinTipi, izinGrupMap);
-							if (izinDetayTipi != null && !izinDetayTipi.equals(BordroDetayTipi.UCRETLI_IZIN)) {
+							if (izinBordroDetayTipi != null && !izinBordroDetayTipi.equals(BordroDetayTipi.UCRETLI_IZIN)) {
 								BordroDetayTipi oncekiIzinDetayTipi = ortakIslemler.getBordroDetayTipi(izin.getIzinTipi(), izinGrupMap);
 								if (oncekiIzinDetayTipi != null && !oncekiIzinDetayTipi.equals(BordroDetayTipi.UCRETLI_IZIN)) {
 									cumaBasla = false;
@@ -4791,6 +4793,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 							if (izinTipi != null && izinTipi.isSenelikIzin())
 								throw new Exception("Arife gününü içeren izin girilemez!");
 						}
+					} else if (tempVardiya.isHaftaTatil() && gunFark > 2L && izinBordroDetayTipi != null && izinBordroDetayTipi.equals(BordroDetayTipi.RAPORLU_IZIN) == false) {
+						izinSuresiSaatGun += eklenecekGun;
 					}
 
 				}
