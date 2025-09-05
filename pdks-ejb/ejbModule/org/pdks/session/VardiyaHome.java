@@ -390,6 +390,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					pdksVardiya.setIcapVardiya(Boolean.FALSE);
 					pdksVardiya.setSua(Boolean.FALSE);
 					pdksVardiya.setGebelik(Boolean.FALSE);
+					pdksVardiya.setSutIzni(Boolean.FALSE);
 				}
 				if (pdksVardiya.getSirket() != null)
 					pdksVardiya.setDepartman(pdksVardiya.getSirket().getDepartman());
