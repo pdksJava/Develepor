@@ -616,7 +616,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 				if (!vardiyalar.isEmpty())
 					vardiyaList.addAll(vardiyalar);
 			}
-			for (Iterator iterator = vardiyalar.iterator(); iterator.hasNext();) {
+			for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 				Vardiya vardiya = (Vardiya) iterator.next();
 				if (icapVardiyaGoster.booleanValue() == false)
 					icapVardiyaGoster = vardiya.isIcapVardiyasi();
