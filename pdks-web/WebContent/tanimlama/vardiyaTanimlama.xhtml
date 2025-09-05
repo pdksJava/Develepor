@@ -215,19 +215,32 @@
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.genel)}" />
 								</rich:column>
-								<rich:column rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin}">
+								<rich:column rendered="#{vardiyaHome.icapVardiyaGoster and (authenticatedUser.admin or authenticatedUser.IKAdmin)}">
 									<f:facet name="header">
 										<h:outputText value="İcap #{ortakIslemler.vardiyaAciklama()}" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.icapVardiya)}" />
 								</rich:column>
-								<rich:column rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin}">
+								<rich:column rendered="#{vardiyaHome.suaGoster and (authenticatedUser.admin or authenticatedUser.IKAdmin)}">
 									<f:facet name="header">
 										<h:outputText value="Şua #{ortakIslemler.vardiyaAciklama()}" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.sua)}" />
 								</rich:column>
 
+
+								<rich:column rendered="#{vardiyaHome.gebelikGoster and (authenticatedUser.admin or authenticatedUser.IKAdmin)}">
+									<f:facet name="header">
+										<h:outputText value="Gebeler İçin" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.gebelik)}" />
+								</rich:column>
+								<rich:column rendered="#{vardiyaHome.sutIzniGoster and (authenticatedUser.admin or authenticatedUser.IKAdmin)}">
+									<f:facet name="header">
+										<h:outputText value="Süt İzni İçin" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.sutIzni)}" />
+								</rich:column>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="FÇS Ödenir" />
@@ -240,18 +253,6 @@
 										<h:outputText value="Mesai Ödenir" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.mesaiOdenir)}" />
-								</rich:column>
-								<rich:column>
-									<f:facet name="header">
-										<h:outputText value="Gebeler İçin" />
-									</f:facet>
-									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.gebelik)}" />
-								</rich:column>
-								<rich:column>
-									<f:facet name="header">
-										<h:outputText value="Süt İzni İçin" />
-									</f:facet>
-									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.sutIzni)}" />
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
@@ -488,7 +489,7 @@
 													<ui:define name="label">Gebeler İçin</ui:define>
 													<h:selectBooleanCheckbox value="#{vardiyaHome.instance.gebelik}" />
 												</s:decorate>
-													<s:decorate template="/layout/edit.xhtml">
+												<s:decorate template="/layout/edit.xhtml">
 													<ui:define name="label">Süt İzni İçin</ui:define>
 													<h:selectBooleanCheckbox value="#{vardiyaHome.instance.sutIzni}" />
 												</s:decorate>

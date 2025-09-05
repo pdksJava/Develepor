@@ -74,6 +74,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	private List<YemekIzin> yemekList;
 	private Long seciliSirketId;
 	private int saat = 13, dakika = 0;
+	private Boolean icapVardiyaGoster = Boolean.FALSE, sutIzniGoster = Boolean.FALSE, gebelikGoster = Boolean.FALSE, suaGoster = Boolean.FALSE;
 
 	private boolean pasifGoster = Boolean.FALSE, manuelVardiyaIzinGir = false;
 	private Session session;
@@ -479,7 +480,10 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	}
 
 	public void fillVardiyalar() {
-
+		icapVardiyaGoster = Boolean.FALSE;
+		sutIzniGoster = Boolean.FALSE;
+		gebelikGoster = Boolean.FALSE;
+		suaGoster = Boolean.FALSE;
 		HashMap parametreMap = new HashMap();
 		try {
 			manuelVardiyaIzinGir = ortakIslemler.getVardiyaIzinGir(session, authenticatedUser.getDepartman());
@@ -591,6 +595,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 						iterator.remove();
 						continue;
 					}
+
 					if (vardiya.getDurum()) {
 						if (!vardiya.isCalisma() && vardiya.getDepartman() == null) {
 							vardiyaList.add(vardiya);
@@ -610,6 +615,17 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 				if (!vardiyalar.isEmpty())
 					vardiyaList.addAll(vardiyalar);
+			}
+			for (Iterator iterator = vardiyalar.iterator(); iterator.hasNext();) {
+				Vardiya vardiya = (Vardiya) iterator.next();
+				if (icapVardiyaGoster.booleanValue() == false)
+					icapVardiyaGoster = vardiya.isIcapVardiyasi();
+				if (sutIzniGoster.booleanValue() == false)
+					sutIzniGoster = vardiya.isSutIzniMi();
+				if (gebelikGoster.booleanValue() == false)
+					gebelikGoster = vardiya.isGebelikMi();
+				if (suaGoster.booleanValue() == false)
+					suaGoster = vardiya.isSuaMi();
 			}
 
 			saat = 13;
@@ -953,5 +969,37 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 	public void setIzinTipiList(List<SelectItem> izinTipiList) {
 		this.izinTipiList = izinTipiList;
+	}
+
+	public Boolean getIcapVardiyaGoster() {
+		return icapVardiyaGoster;
+	}
+
+	public void setIcapVardiyaGoster(Boolean icapVardiyaGoster) {
+		this.icapVardiyaGoster = icapVardiyaGoster;
+	}
+
+	public Boolean getSutIzniGoster() {
+		return sutIzniGoster;
+	}
+
+	public void setSutIzniGoster(Boolean sutIzniGoster) {
+		this.sutIzniGoster = sutIzniGoster;
+	}
+
+	public Boolean getGebelikGoster() {
+		return gebelikGoster;
+	}
+
+	public void setGebelikGoster(Boolean gebelikGoster) {
+		this.gebelikGoster = gebelikGoster;
+	}
+
+	public Boolean getSuaGoster() {
+		return suaGoster;
+	}
+
+	public void setSuaGoster(Boolean suaGoster) {
+		this.suaGoster = suaGoster;
 	}
 }
