@@ -31,6 +31,12 @@
 
 								</s:decorate>
 							</c:if>
+							<ui:fragment rendered="#{not empty vardiyaHome.vardiyaList}">
+								<h:commandLink value="Excel" action="#{vardiyaHome.excelAktar()}" target="blank">
+									<a4j:support event="oncomplete" status="ajaxStatus" process="vardiyaTable" reRender="vardiyaTable" />
+								</h:commandLink>
+
+							</ui:fragment>
 							<rich:dataTable rowClasses="acik,koyu" value="#{vardiyaHome.vardiyaList}" var="vardiya" rows="25" rowKeyVar="row" id="vardiyaTable">
 								<f:facet name="header">
 									<h:outputText value="Vardiyalar" />
@@ -69,7 +75,7 @@
 									</f:facet>
 									<h:outputText value="#{vardiya.kisaAdi}" />
 								</rich:column>
-								<rich:column>
+								<rich:column rendered="#{vardiyaHome.sirketGoster}">
 									<f:facet name="header">
 										<h:outputText value="#{ortakIslemler.sirketAciklama()}" />
 									</f:facet>
@@ -197,12 +203,7 @@
 									</f:facet>
 									<h:outputText rendered="#{vardiya.calisma}" value="#{authenticatedUser.sayiFormatliGoster(vardiya.cikisMolaSaat)}" />
 								</rich:column>
-								<rich:column>
-									<f:facet name="header">
-										<h:outputText value="Departman" />
-									</f:facet>
-									<h:outputText value="#{vardiya.departman.departmanTanim.aciklama}" />
-								</rich:column>
+								
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="Akşam #{ortakIslemler.vardiyaAciklama()}" />

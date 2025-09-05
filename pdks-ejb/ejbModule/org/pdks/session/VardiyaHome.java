@@ -1,5 +1,7 @@
 package org.pdks.session;
 
+import java.awt.Color;
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,6 +16,10 @@ import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -74,7 +80,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	private List<YemekIzin> yemekList;
 	private Long seciliSirketId;
 	private int saat = 13, dakika = 0;
-	private Boolean icapVardiyaGoster = Boolean.FALSE, sutIzniGoster = Boolean.FALSE, gebelikGoster = Boolean.FALSE, suaGoster = Boolean.FALSE;
+	private Boolean sirketGoster = Boolean.FALSE, icapVardiyaGoster = Boolean.FALSE, sutIzniGoster = Boolean.FALSE, gebelikGoster = Boolean.FALSE, suaGoster = Boolean.FALSE;
 
 	private boolean pasifGoster = Boolean.FALSE, manuelVardiyaIzinGir = false;
 	private Session session;
@@ -484,6 +490,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		sutIzniGoster = Boolean.FALSE;
 		gebelikGoster = Boolean.FALSE;
 		suaGoster = Boolean.FALSE;
+		sirketGoster = Boolean.FALSE;
 		HashMap parametreMap = new HashMap();
 		try {
 			manuelVardiyaIzinGir = ortakIslemler.getVardiyaIzinGir(session, authenticatedUser.getDepartman());
@@ -626,6 +633,9 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					gebelikGoster = vardiya.isGebelikMi();
 				if (suaGoster.booleanValue() == false)
 					suaGoster = vardiya.isSuaMi();
+				if (sirketGoster.booleanValue() == false)
+					sirketGoster = vardiya.getSirket() != null;
+
 			}
 
 			saat = 13;
@@ -662,6 +672,206 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			parametreMap = null;
 		}
 
+	}
+
+	public String excelAktar() {
+		try {
+
+			ByteArrayOutputStream baosDosya = excelDevam();
+			if (baosDosya != null)
+				PdksUtil.setExcelHttpServletResponse(baosDosya, ortakIslemler.vardiyaAciklama() + "Listesi.xlsx");
+
+		} catch (Exception e) {
+			logger.error("PDKS hata in : \n");
+			e.printStackTrace();
+			logger.error("PDKS hata out : " + e.getMessage());
+
+		}
+
+		return "";
+	}
+
+	private ByteArrayOutputStream excelDevam() {
+		ByteArrayOutputStream baos = null;
+		Workbook wb = new XSSFWorkbook();
+		String vardiyaAciklama = ortakIslemler.vardiyaAciklama();
+		try {
+
+			Sheet sheet = ExcelUtil.createSheet(wb, vardiyaAciklama + " Listesi", false);
+			// Drawing drawing = sheet.createDrawingPatriarch();
+			// CreationHelper helper = wb.getCreationHelper();
+			// ClientAnchor anchor = helper.createClientAnchor();
+			CellStyle header = ExcelUtil.getStyleHeader(wb);
+			CellStyle styleOdd = ExcelUtil.getStyleOdd(null, wb);
+			CellStyle styleOddRed = ExcelUtil.getStyleOdd(null, wb);
+			ExcelUtil.setFontColor(styleOddRed, Color.RED);
+			CellStyle styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
+			CellStyle styleOddSayi = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATA_NUMBER, wb);
+			CellStyle styleOddTutar = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATA_TUTAR, wb);
+			CellStyle styleEven = ExcelUtil.getStyleEven(null, wb);
+			CellStyle styleEvenRed = ExcelUtil.getStyleOdd(null, wb);
+			ExcelUtil.setFontColor(styleEvenRed, Color.RED);
+			CellStyle styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
+			CellStyle styleEvenSayi = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATA_NUMBER, wb);
+			CellStyle styleEvenTutar = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATA_TUTAR, wb);
+			int row = 0;
+			int col = 0;
+			boolean admin = authenticatedUser.isAdmin();
+			boolean ikAdmin = admin || authenticatedUser.isIKAdmin() || authenticatedUser.isSistemYoneticisi();
+			// boolean hastane = getParameterKey("uygulamaTipi").equalsIgnoreCase("H");
+			if (admin)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(vardiyaAciklama + " Id");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(vardiyaAciklama + " Adı");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(vardiyaAciklama + " Kısa Adı");
+			if (sirketGoster)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.sirketAciklama());
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Ekran Sıra");
+
+			if (admin)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(vardiyaAciklama + " Sınıf Adı");
+			if (ikAdmin)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.firmaKaynagiAciklama());
+
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(vardiyaAciklama + " Tipi");
+			if (ikAdmin)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Net Çalışma Süresi");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Toplam Saat");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Çalışma Şekli");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Arife Normal Çalışma Süresi");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Gün Sayısı");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Çalışma Aralığı");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Yemek Süresi (Dakika)");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tolerans erken giriş dakikası");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tolerans gecikme giriş dakikası");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tolerans erken çıkış dakikası");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tolerans gecikme çıkış dakikası");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Çıkış Mola Süresi(Dakika)");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Akşam " + vardiyaAciklama);
+			if (ikAdmin)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Genel");
+			if (ikAdmin && icapVardiyaGoster)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("İcap " + vardiyaAciklama);
+			if (ikAdmin && suaGoster)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Şua " + vardiyaAciklama);
+			if (ikAdmin && gebelikGoster)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Gebe " + vardiyaAciklama);
+			if (ikAdmin && sutIzniGoster)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Süt İzini " + vardiyaAciklama);
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("FÇS Ödenir");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Mesai Ödenir");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Aktif");
+			boolean renk = true;
+			for (Vardiya vardiya : vardiyaList) {
+				col = 0;
+				row++;
+				CellStyle style = null, styleCenter = null, cellStyleTutar = null, cellStyleSayi = null;
+				if (renk) {
+					cellStyleTutar = styleOddTutar;
+					cellStyleSayi = styleOddSayi;
+					style = styleOdd;
+					styleCenter = styleOddCenter;
+
+				} else {
+					cellStyleTutar = styleEvenTutar;
+					cellStyleSayi = styleEvenSayi;
+					style = styleEven;
+					styleCenter = styleEvenCenter;
+
+				}
+				if (admin)
+					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getId());
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiya.getAdi());
+				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(vardiya.getKisaAdi());
+				if (sirketGoster)
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiya.getSirket() != null ? vardiya.getSirket().getAd() : "");
+				ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getEkranSira());
+
+				if (admin)
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiya.getStyleClass() != null ? vardiya.getStyleClass().trim() : "");
+				if (ikAdmin)
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiya.getDepartman() != null ? vardiya.getDepartman().getDepartmanTanim().getAciklama() : "");
+
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiya.getVardiyaTipiAciklama());
+				if (ikAdmin) {
+					if (vardiya.isCalisma())
+						ExcelUtil.getCell(sheet, row, col++, cellStyleTutar).setCellValue(vardiya.getNetCalismaSuresi());
+					else
+						ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
+
+				}
+				if (vardiya.isCalisma())
+					ExcelUtil.getCell(sheet, row, col++, cellStyleTutar).setCellValue(vardiya.getCalismaSaati());
+				else
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiya.getCalismaSekli() != null ? vardiya.getCalismaSekli().getAdi() : "");
+				if (vardiya.isCalisma() && vardiya.getArifeNormalCalismaDakika() != null && vardiya.getArifeNormalCalismaDakika().doubleValue() > 0.0d)
+					ExcelUtil.getCell(sheet, row, col++, cellStyleTutar).setCellValue(vardiya.getArifeNormalCalismaDakika());
+				else
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
+				if (vardiya.isCalisma())
+					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getCalismaGun());
+				else
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
+
+				if (vardiya.isCalisma())
+					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.timeFormatla(vardiya.getBasZaman()) + " - " + authenticatedUser.timeFormatla(vardiya.getBitZaman()));
+				else
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
+
+				if (vardiya.isCalisma())
+					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getYemekSuresi());
+				else
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
+
+				if (vardiya.isCalisma())
+					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getGirisErkenToleransDakika());
+				else
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
+				if (vardiya.isCalisma())
+					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getGirisGecikmeToleransDakika());
+				else
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
+				if (vardiya.isCalisma())
+					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getCikisErkenToleransDakika());
+				else
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
+				if (vardiya.isCalisma())
+					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getCikisGecikmeToleransDakika());
+				else
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
+				if (vardiya.isCalisma())
+					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getCikisMolaSaat());
+				else
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
+
+				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.getAksamVardiya()));
+				if (ikAdmin)
+					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.getGenel()));
+				if (ikAdmin && icapVardiyaGoster)
+					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.isIcapVardiyasi()));
+
+				if (ikAdmin && suaGoster)
+					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.isSuaMi()));
+
+				if (ikAdmin && gebelikGoster)
+					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.isGebelikMi()));
+
+				if (ikAdmin && sutIzniGoster)
+					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.isSutIzniMi()));
+				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.isFcsDahil()));
+				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.isMesaiOdenir()));
+				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.getDurum()));
+
+				renk = !renk;
+			}
+			for (int i = 0; i < col; i++)
+				sheet.autoSizeColumn(i);
+			baos = new ByteArrayOutputStream();
+			wb.write(baos);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return baos;
 	}
 
 	public void fillCalismaSekilleri() {
@@ -1001,5 +1211,13 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 	public void setSuaGoster(Boolean suaGoster) {
 		this.suaGoster = suaGoster;
+	}
+
+	public Boolean getSirketGoster() {
+		return sirketGoster;
+	}
+
+	public void setSirketGoster(Boolean sirketGoster) {
+		this.sirketGoster = sirketGoster;
 	}
 }
