@@ -33,6 +33,7 @@ import org.pdks.entity.CalismaModeli;
 import org.pdks.entity.CalismaModeliVardiya;
 import org.pdks.entity.CalismaSekli;
 import org.pdks.entity.Departman;
+import org.pdks.entity.Liste;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
@@ -759,9 +760,47 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Süt İzini " + vardiyaAciklama);
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("FÇS Ödenir");
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Mesai Ödenir");
+			TreeMap<Long, List<CalismaModeli>> cMap = new TreeMap<Long, List<CalismaModeli>>();
+			if (admin) {
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.calismaModeliAciklama());
+				List<Long> idList = new ArrayList<Long>();
+				for (Vardiya vardiya : vardiyaList) {
+					if (vardiya.isCalisma() && vardiya.getGenel())
+						idList.add(vardiya.getId());
+
+				}
+				if (idList.isEmpty() == false) {
+					List<CalismaModeliVardiya> list = pdksEntityController.getSQLParamByFieldList(CalismaModeliVardiya.TABLE_NAME, CalismaModeliVardiya.COLUMN_NAME_VARDIYA, idList, CalismaModeliVardiya.class, session);
+					if (list.isEmpty() == false) {
+						List<Liste> list2 = new ArrayList<Liste>();
+						for (CalismaModeliVardiya cmv : list) {
+							CalismaModeli calismaModeli = cmv.getCalismaModeli();
+							if (calismaModeli != null && calismaModeli.getDurum()) {
+								list2.add(new Liste(cmv.getVardiya().getId() + "_" + calismaModeli.getAciklama(), cmv));
+							}
+
+						}
+						if (list2.isEmpty() == false) {
+							list2 = PdksUtil.sortObjectStringAlanList(list2, "getId", null);
+							for (Liste liste : list2) {
+								CalismaModeliVardiya cmv = (CalismaModeliVardiya) liste.getValue();
+								Long key = cmv.getVardiya().getId();
+								List<CalismaModeli> calismaModeliList = cMap.containsKey(key) ? cMap.get(key) : new ArrayList<CalismaModeli>();
+								if (calismaModeliList.isEmpty())
+									cMap.put(key, calismaModeliList);
+								calismaModeliList.add(cmv.getCalismaModeli());
+							}
+						}
+						list2 = null;
+					}
+					list = null;
+				}
+				idList = null;
+			}
 			if (pasifGoster)
 				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Aktif");
 			boolean renk = true;
+
 			for (Vardiya vardiya : vardiyaList) {
 				col = 0;
 				row++;
@@ -780,6 +819,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 				}
 				renk = !renk;
+				boolean calisma = vardiya.isCalisma();
 				if (admin)
 					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getId());
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiya.getAdi());
@@ -795,53 +835,53 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiya.getVardiyaTipiAciklama());
 				if (ikAdmin) {
-					if (vardiya.isCalisma())
+					if (calisma)
 						ExcelUtil.getCell(sheet, row, col++, cellStyleTutar).setCellValue(vardiya.getNetCalismaSuresi());
 					else
 						ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
 
 				}
-				if (vardiya.isCalisma())
+				if (calisma)
 					ExcelUtil.getCell(sheet, row, col++, cellStyleTutar).setCellValue(vardiya.getCalismaSaati());
 				else
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiya.getCalismaSekli() != null ? vardiya.getCalismaSekli().getAdi() : "");
-				if (vardiya.isCalisma() && vardiya.getArifeNormalCalismaDakika() != null && vardiya.getArifeNormalCalismaDakika().doubleValue() > 0.0d)
+				if (calisma && vardiya.getArifeNormalCalismaDakika() != null && vardiya.getArifeNormalCalismaDakika().doubleValue() > 0.0d)
 					ExcelUtil.getCell(sheet, row, col++, cellStyleTutar).setCellValue(vardiya.getArifeNormalCalismaDakika());
 				else
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
-				if (vardiya.isCalisma())
+				if (calisma)
 					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getCalismaGun());
 				else
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
 
-				if (vardiya.isCalisma())
+				if (calisma)
 					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.timeFormatla(vardiya.getBasZaman()) + " - " + authenticatedUser.timeFormatla(vardiya.getBitZaman()));
 				else
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
 
-				if (vardiya.isCalisma())
+				if (calisma)
 					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getYemekSuresi());
 				else
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
 
-				if (vardiya.isCalisma())
+				if (calisma)
 					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getGirisErkenToleransDakika());
 				else
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
-				if (vardiya.isCalisma())
+				if (calisma)
 					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getGirisGecikmeToleransDakika());
 				else
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
-				if (vardiya.isCalisma())
+				if (calisma)
 					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getCikisErkenToleransDakika());
 				else
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
-				if (vardiya.isCalisma())
+				if (calisma)
 					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getCikisGecikmeToleransDakika());
 				else
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
-				if (vardiya.isCalisma())
+				if (calisma)
 					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getCikisMolaSaat());
 				else
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
@@ -862,6 +902,22 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.isSutIzniMi()));
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.isFcsDahil()));
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.isMesaiOdenir()));
+
+				if (admin) {
+					StringBuffer cmAciklama = new StringBuffer();
+					if (calisma && cMap.containsKey(vardiya.getId())) {
+						List<CalismaModeli> list = cMap.get(vardiya.getId());
+						for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+							CalismaModeli cm = (CalismaModeli) iterator.next();
+							cmAciklama.append(cm.getAciklama());
+							if (iterator.hasNext())
+								cmAciklama.append(", ");
+						}
+						list = null;
+					}
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(cmAciklama.toString());
+					cmAciklama = null;
+				}
 				if (pasifGoster)
 					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.getDurum()));
 			}
