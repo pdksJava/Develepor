@@ -224,7 +224,7 @@
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.suaDurum)}" />
 								</rich:column>
-								<rich:column>
+								<rich:column rendered="#{calismaModeliHome.pasifGoster}">
 									<f:facet name="header">
 										<h:outputText value="Aktif" />
 									</f:facet>
