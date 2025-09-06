@@ -679,7 +679,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 			ByteArrayOutputStream baosDosya = excelDevam();
 			if (baosDosya != null)
-				PdksUtil.setExcelHttpServletResponse(baosDosya, ortakIslemler.vardiyaAciklama() + "Listesi.xlsx");
+				PdksUtil.setExcelHttpServletResponse(baosDosya, ortakIslemler.vardiyaAciklama() + (pasifGoster == false ? "Aktif" : "") + "Listesi.xlsx");
 
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
@@ -697,7 +697,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		String vardiyaAciklama = ortakIslemler.vardiyaAciklama();
 		try {
 
-			Sheet sheet = ExcelUtil.createSheet(wb, vardiyaAciklama + " Listesi", false);
+			Sheet sheet = ExcelUtil.createSheet(wb, vardiyaAciklama + (pasifGoster == false ? "Aktif" : "") + " Listesi", false);
 			// Drawing drawing = sheet.createDrawingPatriarch();
 			// CreationHelper helper = wb.getCreationHelper();
 			// ClientAnchor anchor = helper.createClientAnchor();
@@ -759,7 +759,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Süt İzini " + vardiyaAciklama);
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("FÇS Ödenir");
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Mesai Ödenir");
-			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Aktif");
+			if (pasifGoster)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Aktif");
 			boolean renk = true;
 			for (Vardiya vardiya : vardiyaList) {
 				col = 0;
@@ -778,6 +779,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					styleCenter = styleEvenCenter;
 
 				}
+				renk = !renk;
 				if (admin)
 					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getId());
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiya.getAdi());
@@ -860,9 +862,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.isSutIzniMi()));
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.isFcsDahil()));
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.isMesaiOdenir()));
-				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.getDurum()));
-
-				renk = !renk;
+				if (pasifGoster)
+					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.getDurum()));
 			}
 			for (int i = 0; i < col; i++)
 				sheet.autoSizeColumn(i);
