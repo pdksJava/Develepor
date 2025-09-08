@@ -188,7 +188,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 
 			ByteArrayOutputStream baosDosya = excelDevam();
 			if (baosDosya != null)
-				PdksUtil.setExcelHttpServletResponse(baosDosya, ortakIslemler.vardiyaAciklama() + "ŞablonListesi.xlsx");
+				PdksUtil.setExcelHttpServletResponse(baosDosya, ortakIslemler.vardiyaAciklama() + "Şablon Listesi.xlsx");
 
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
@@ -205,7 +205,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 		Workbook wb = new XSSFWorkbook();
 		String vardiyaAciklama = ortakIslemler.vardiyaAciklama();
 		try {
-			Sheet sheet = ExcelUtil.createSheet(wb, vardiyaAciklama + " ŞablonListesi", false);
+			Sheet sheet = ExcelUtil.createSheet(wb, vardiyaAciklama + "ŞablonListesi", false);
 			// Drawing drawing = sheet.createDrawingPatriarch();
 			// CreationHelper helper = wb.getCreationHelper();
 			// ClientAnchor anchor = helper.createClientAnchor();
