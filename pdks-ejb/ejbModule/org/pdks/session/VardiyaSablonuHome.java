@@ -1,5 +1,7 @@
 package org.pdks.session;
 
+import java.awt.Color;
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,6 +12,10 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -51,7 +57,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 	public static String sayfaURL = "vardiyaSablonTanimlama";
 	private List<VardiyaSablonu> vardiyaSablonList = new ArrayList<VardiyaSablonu>();
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), vardiyaCalisanList = new ArrayList<Vardiya>(), arifeVardiyaList = new ArrayList<Vardiya>();
-	private boolean vardiyaVar = Boolean.FALSE;
+	private boolean sirketGoster = Boolean.FALSE, calismaModeliGoster = Boolean.FALSE, vardiyaVar = Boolean.FALSE, vardiyaArifeGoster = Boolean.FALSE;
 	private Vardiya lastVardiya;
 	private List<Sirket> sirketList, pdksSirketList;
 	private List<Departman> departmanList = new ArrayList<Departman>();
@@ -177,8 +183,124 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 
 	}
 
+	public String excelAktar() {
+		try {
+
+			ByteArrayOutputStream baosDosya = excelDevam();
+			if (baosDosya != null)
+				PdksUtil.setExcelHttpServletResponse(baosDosya, ortakIslemler.vardiyaAciklama() + "ŞablonListesi.xlsx");
+
+		} catch (Exception e) {
+			logger.error("PDKS hata in : \n");
+			e.printStackTrace();
+			logger.error("PDKS hata out : " + e.getMessage());
+
+		}
+
+		return "";
+	}
+
+	private ByteArrayOutputStream excelDevam() {
+		ByteArrayOutputStream baos = null;
+		Workbook wb = new XSSFWorkbook();
+		String vardiyaAciklama = ortakIslemler.vardiyaAciklama();
+		try {
+			Sheet sheet = ExcelUtil.createSheet(wb, vardiyaAciklama + " ŞablonListesi", false);
+			// Drawing drawing = sheet.createDrawingPatriarch();
+			// CreationHelper helper = wb.getCreationHelper();
+			// ClientAnchor anchor = helper.createClientAnchor();
+			CellStyle header = ExcelUtil.getStyleHeader(wb);
+			CellStyle styleOdd = ExcelUtil.getStyleOdd(null, wb);
+			CellStyle styleOddRed = ExcelUtil.getStyleOdd(null, wb);
+			ExcelUtil.setFontColor(styleOddRed, Color.RED);
+			CellStyle styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
+			CellStyle styleOddSayi = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATA_NUMBER, wb);
+			CellStyle styleOddTutar = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATA_TUTAR, wb);
+			CellStyle styleEven = ExcelUtil.getStyleEven(null, wb);
+			CellStyle styleEvenRed = ExcelUtil.getStyleOdd(null, wb);
+			ExcelUtil.setFontColor(styleEvenRed, Color.RED);
+			CellStyle styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
+			CellStyle styleEvenSayi = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATA_NUMBER, wb);
+			CellStyle styleEvenTutar = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATA_TUTAR, wb);
+			int row = 0;
+			int col = 0;
+			boolean admin = authenticatedUser.isAdmin();
+			boolean ikAdmin = admin || authenticatedUser.isIKAdmin() || authenticatedUser.isSistemYoneticisi();
+			if (admin)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(vardiyaAciklama + " Şablon Id");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(vardiyaAciklama + " Şablon Adı");
+			if (ikAdmin)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.firmaKaynagiAciklama());
+			if (sirketGoster)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.sirketAciklama());
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Gün Sayısı");
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Toplam Saat");
+			for (int i = 0; i < 7; i++)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.getGunAdi(i + 1, "EEE"));
+			if (vardiyaArifeGoster)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Arife Özel Vardiya");
+			if (calismaModeliGoster)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.calismaModeliAciklama());
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Aktif");
+			boolean renk = true;
+			for (VardiyaSablonu vardiyaSablon : vardiyaSablonList) {
+				++row;
+				col = 0;
+				CellStyle style = null, styleCenter = null, cellStyleTutar = null, cellStyleSayi = null;
+				if (renk) {
+					cellStyleTutar = styleOddTutar;
+					cellStyleSayi = styleOddSayi;
+					style = styleOdd;
+					styleCenter = styleOddCenter;
+
+				} else {
+					cellStyleTutar = styleEvenTutar;
+					cellStyleSayi = styleEvenSayi;
+					style = styleEven;
+					styleCenter = styleEvenCenter;
+
+				}
+				renk = !renk;
+				if (admin)
+					ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiyaSablon.getId());
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getAdi());
+				if (ikAdmin)
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getDepartman() != null ? vardiyaSablon.getDepartman().getDepartmanTanim().getAciklama() : "");
+				if (sirketGoster)
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getSirket() != null ? vardiyaSablon.getSirket().getAd() : "");
+				ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiyaSablon.getCalismaGunSayisi());
+				ExcelUtil.getCell(sheet, row, col++, cellStyleTutar).setCellValue(vardiyaSablon.getToplamSaat());
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getVardiya1() != null ? vardiyaSablon.getVardiya1().getOzelAdi() : "");
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getVardiya2() != null ? vardiyaSablon.getVardiya2().getOzelAdi() : "");
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getVardiya3() != null ? vardiyaSablon.getVardiya3().getOzelAdi() : "");
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getVardiya4() != null ? vardiyaSablon.getVardiya4().getOzelAdi() : "");
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getVardiya5() != null ? vardiyaSablon.getVardiya5().getOzelAdi() : "");
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getVardiya6() != null ? vardiyaSablon.getVardiya6().getOzelAdi() : "");
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getVardiya7() != null ? vardiyaSablon.getVardiya7().getOzelAdi() : "");
+				if (vardiyaArifeGoster)
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getVardiyaArife() != null ? vardiyaSablon.getVardiyaArife().getOzelAdi() : "");
+				if (calismaModeliGoster)
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getCalismaModeli() != null ? vardiyaSablon.getCalismaModeli().getAciklama() : "");
+				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiyaSablon.getDurum()));
+			}
+
+			for (int i = 0; i < col; i++)
+				sheet.autoSizeColumn(i);
+			baos = new ByteArrayOutputStream();
+			wb.write(baos);
+		} catch (Exception e) {
+			logger.error(e); 
+			e.printStackTrace();
+			 
+		}
+		return baos;
+	}
+
 	public void fillPdksVardiyaSablonList() {
 		List<VardiyaSablonu> sablonList = new ArrayList<VardiyaSablonu>();
+		sirketGoster = Boolean.FALSE;
+		vardiyaArifeGoster = Boolean.FALSE;
+		calismaModeliGoster = Boolean.FALSE;
 		try {
 			HashMap parametreMap = new HashMap();
 			if (session != null)
@@ -213,6 +335,12 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 				sablonList = PdksUtil.sortListByAlanAdi(sablonList, "sonIslemTarihi", Boolean.TRUE);
 				for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
 					VardiyaSablonu pdksVardiyaSablonu = (VardiyaSablonu) iterator.next();
+					if (sirketGoster == false)
+						sirketGoster = pdksVardiyaSablonu.getSirket() != null;
+					if (calismaModeliGoster == false)
+						calismaModeliGoster = pdksVardiyaSablonu.getCalismaModeli() != null;
+					if (vardiyaArifeGoster)
+						vardiyaArifeGoster = pdksVardiyaSablonu.getVardiyaArife() != null;
 					if (pdksVardiyaSablonu.getDurum()) {
 
 						vardiyaSablonList.add(pdksVardiyaSablonu);
@@ -429,5 +557,29 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 
 	public void setArifeVardiyaList(List<Vardiya> arifeVardiyaList) {
 		this.arifeVardiyaList = arifeVardiyaList;
+	}
+
+	public boolean isSirketGoster() {
+		return sirketGoster;
+	}
+
+	public void setSirketGoster(boolean sirketGoster) {
+		this.sirketGoster = sirketGoster;
+	}
+
+	public boolean isCalismaModeliGoster() {
+		return calismaModeliGoster;
+	}
+
+	public void setCalismaModeliGoster(boolean calismaModeliGoster) {
+		this.calismaModeliGoster = calismaModeliGoster;
+	}
+
+	public boolean isVardiyaArifeGoster() {
+		return vardiyaArifeGoster;
+	}
+
+	public void setVardiyaArifeGoster(boolean vardiyaArifeGoster) {
+		this.vardiyaArifeGoster = vardiyaArifeGoster;
 	}
 }
