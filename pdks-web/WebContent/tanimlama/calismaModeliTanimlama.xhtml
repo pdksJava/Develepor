@@ -196,7 +196,7 @@
 								<rich:column
 									rendered="#{ortakIslemler.getParameterKey('aksamBordroBasZamani') != '' and ortakIslemler.getParameterKey('aksamBordroBitZamani') != ''}">
 									<f:facet name="header">
-										<h:outputText value="Gece Çalışması Ode" />
+										<h:outputText value="Gece Çalışması Öde" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.geceCalismaOdemeVar)}" />
 								</rich:column>
@@ -215,7 +215,7 @@
 								</rich:column>
 								<rich:column rendered="#{ortakIslemler.getParameterKey('haftaTatilDurum') == '1'}">
 									<f:facet name="header">
-										<h:outputText value="Hafta Sonu Fazla Mesai Ode" />
+										<h:outputText value="Hafta Sonu Fazla Mesai Öde" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.haftaTatilMesaiOde)}" />
 								</rich:column>
