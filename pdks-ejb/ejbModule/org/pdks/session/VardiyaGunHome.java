@@ -4793,7 +4793,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (personelSutIzniDurum != null) {
 						if (pdksVardiyaGun.getVardiyaDate().getTime() < personelSutIzniDurum.getBasTarih().getTime() || pdksVardiyaGun.getVardiyaDate().getTime() > personelSutIzniDurum.getBitTarih().getTime()) {
 							vardiyaDataMap = vardiyaSutIzniOzelMap;
-							list = new ArrayList<Vardiya>(vardiyaGebeOzelMap.values());
+							list = new ArrayList<Vardiya>(vardiyaSutIzniOzelMap.values());
 						}
 
 					}
