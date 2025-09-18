@@ -5287,15 +5287,28 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * 
 	 */
 	private void adminIKHatalari() {
-		if (ikUserMap.containsKey(Role.TIPI_IK)) {
-			HashMap<String, List<User>> map1 = ikUserMap.get(Role.TIPI_IK);
-			if (map1.containsKey(TIPI_IK_ADMIN) && hataIKMap.containsKey(TIPI_IK_ADMIN) == false) {
-				HashMap<String, List> map2 = new HashMap<String, List>();
-				map2.put("userList", map1.get(TIPI_IK_ADMIN));
-				hataIKMap.put(TIPI_IK_ADMIN, map2);
+		if (hataIKMap.containsKey(TIPI_IK_ADMIN) == false && hataListesi.isEmpty() == false && ikUserMap.containsKey(Role.TIPI_IK)) {
+			HashMap<String, List<User>> map = ikUserMap.get(Role.TIPI_IK);
+			if (map.containsKey(TIPI_IK_ADMIN)) {
+				List<User> adminIKList = map.get(TIPI_IK_ADMIN);
+				if (hataIKMap.size() > 1) {
+					HashMap<String, List> map2 = new HashMap<String, List>();
+					map2.put("userList", adminIKList);
+					hataIKMap.put(TIPI_IK_ADMIN, map2);
+				} else {
+					for (String key : hataIKMap.keySet()) {
+						HashMap<String, List> map2 = hataIKMap.get(key);
+						if (hataListesi.size() > 1) {
+							hataListesi = PdksUtil.sortObjectStringAlanList(hataListesi, "getKey", null);
+							map2.put("hataList", hataListesi);
+						}
+ 						List<User> list = map2.get("userList");
+						list.addAll(adminIKList);
+					}
+				}
 			}
 		}
-		if (hataIKMap.containsKey(TIPI_IK_ADMIN) && hataListesi.isEmpty() == false) {
+ 		if (hataIKMap.containsKey(TIPI_IK_ADMIN) && hataListesi.isEmpty() == false) {
 			if (hataListesi.size() > 1)
 				hataListesi = PdksUtil.sortObjectStringAlanList(hataListesi, "getKey", null);
 			HashMap<String, List> map1 = hataIKMap.get(TIPI_IK_ADMIN);
