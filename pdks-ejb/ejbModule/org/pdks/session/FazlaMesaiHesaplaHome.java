@@ -1702,7 +1702,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				User guncelleyen = null;
 				if (mukerrerHareketIptalNeden != null)
 					guncelleyen = ortakIslemler.getSistemAdminUser(session);
-
+				ortakIslemler.calismaModeliGunListGuncelle(puantajDenklestirmeList,null, session);
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					puantaj.setFazlaMesaiHesapla(true);

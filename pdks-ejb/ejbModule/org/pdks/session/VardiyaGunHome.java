@@ -4148,6 +4148,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(null, session);
 							KapiView manuelGiris = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS);
 							KapiView manuelCikis = manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS);
+							ortakIslemler.calismaModeliGunListGuncelle(null,personelAylikPuantaj, session);
 							ortakIslemler.aylikPlanSureHesapla(manuelGiris, manuelCikis, false, normalCalismaVardiya, true, personelAylikPuantaj, false, tatilGunleriMap, session);
 							aylikVardiyaOzetOlustur();
 

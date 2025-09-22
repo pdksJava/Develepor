@@ -389,6 +389,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		boolean haftaTatilDurum = ortakIslemler.getParameterKey("haftaTatilDurum").equals("1");
 		vardiyaGunMap = null;
 		HashMap<Long, Double> netSureMap = new HashMap<Long, Double>();
+		ortakIslemler.calismaModeliGunListGuncelle(puantajList,null, session);
 		for (AylikPuantaj ap : puantajList) {
 			PersonelDenklestirme pd = ap.getPersonelDenklestirme();
 			Personel personel = pd.getPdksPersonel();

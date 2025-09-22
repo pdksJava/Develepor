@@ -666,13 +666,13 @@ public class OrtakIslemler implements Serializable {
 						Personel personel = organizasyonDetay.getPersonelDenklestirmeOrganizasyon().getPersonelDenklestirme().getPdksPersonel();
 						String key = PersonelDinamikAlan.getKey(personel, organizasyonDetay.getAlan());
 						if (personelDinamikAlanMap.containsKey(key)) {
-							PersonelDinamikAlan personelDinamikAlan =  personelDinamikAlanMap.get(key);
+							PersonelDinamikAlan personelDinamikAlan = personelDinamikAlanMap.get(key);
 							if (PdksUtil.isTanimDegisti(personelDinamikAlan.getTanimDeger(), organizasyonDetay.getDeger())) {
 								PersonelDinamikAlan personelDinamikAlanNew = (PersonelDinamikAlan) personelDinamikAlanMap.get(key).cloneEmpty();
 								personelDinamikAlanNew.setTanimDeger(organizasyonDetay.getDeger());
 								personelDinamikAlanMap.put(key, personelDinamikAlanNew);
 							}
-							
+
 						}
 					}
 					organizasyonDetayList = null;
@@ -14207,6 +14207,101 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param puantajList
+	 * @param ap
+	 * @param session
+	 */
+	public void calismaModeliGunListGuncelle(List<AylikPuantaj> puantajList, AylikPuantaj ap, Session session) {
+		if (puantajList == null && ap != null) {
+			puantajList = new ArrayList<AylikPuantaj>();
+			puantajList.add(ap);
+		}
+		if (puantajList != null && session != null) {
+			HashMap<Long, CalismaModeli> puantajModelMap = new HashMap<Long, CalismaModeli>();
+			HashMap<Long, CalismaModeli> cmMap = new HashMap<Long, CalismaModeli>();
+			for (AylikPuantaj aylikPuantaj : puantajList) {
+				PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
+				pd.setCalismaModeliGunler(null);
+				CalismaModeli cm = pd != null ? aylikPuantaj.getCalismaModeli() : null;
+				if (cm != null) {
+					puantajModelMap.put(pd.getId(), cm);
+					if (!cmMap.containsKey(cm.getId())) {
+						cmMap.put(cm.getId(), cm);
+						cm.setCalismaModeliGunler(null);
+
+					}
+				}
+
+			}
+			if (!cmMap.isEmpty()) {
+				HashMap map = new HashMap();
+				StringBuffer sb = new StringBuffer();
+				sb.append("select distinct P.* from " + CalismaModeliGun.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+				String keyField = "p";
+				sb.append(" where P." + CalismaModeliGun.COLUMN_NAME_CALISMA_MODELI + " :" + keyField);
+				sb.append(" order by P." + CalismaModeliGun.COLUMN_NAME_CALISMA_MODELI + ", P." + CalismaModeliGun.COLUMN_NAME_HAFTA_GUN);
+				map.put(keyField, new ArrayList(cmMap.keySet()));
+				if (session != null)
+					map.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List<CalismaModeliGun> calismaModeliGunList = pdksEntityController.getSQLParamList(new ArrayList(cmMap.keySet()), sb, keyField, map, CalismaModeliGun.class, session);
+				if (calismaModeliGunList.isEmpty() == false) {
+					for (CalismaModeliGun calismaModeliGun : calismaModeliGunList) {
+						CalismaModeli cm = cmMap.get(calismaModeliGun.getCalismaModeli().getId());
+						if (cm.getCalismaModeliGunler() == null)
+							cm.setCalismaModeliGunler(new ArrayList<CalismaModeliGun>());
+						cm.getCalismaModeliGunler().add(calismaModeliGun);
+
+					}
+					for (AylikPuantaj aylikPuantaj : puantajList) {
+						PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
+						CalismaModeli cm = puantajModelMap.get(pd.getId());
+						Long cmId = cm.getId();
+						if (cmMap.containsKey(cmId)) {
+							CalismaModeli cmIslem = cmMap.get(cmId);
+							List<CalismaModeliGun> list = cmIslem.getCalismaModeliGunler(), gunList = new ArrayList<CalismaModeliGun>();
+							for (int gunTipi = CalismaModeliGun.GUN_SAAT; gunTipi <= CalismaModeliGun.GUN_IZIN; gunTipi++) {
+								for (int haftaGun = Calendar.MONDAY; haftaGun < Calendar.SATURDAY; haftaGun++) {
+									CalismaModeliGun cmGun = null;
+									for (Iterator iterator2 = list.iterator(); iterator2.hasNext();) {
+										CalismaModeliGun calismaModeliGun = (CalismaModeliGun) iterator2.next();
+										if (calismaModeliGun.getGunTipi() == gunTipi) {
+											if (calismaModeliGun.getHaftaGun() == haftaGun) {
+												cmGun = calismaModeliGun;
+											}
+										}
+
+									}
+									if (cmGun == null) {
+										cmGun = new CalismaModeliGun(cm, gunTipi, haftaGun);
+										cmGun.setSure(gunTipi == CalismaModeliGun.GUN_SAAT ? cm.getHaftaIci() : cm.getHaftaIciSutIzniSure());
+									}
+									if (gunTipi == CalismaModeliGun.GUN_SAAT)
+										gunList.add(cmGun);
+									else if (gunTipi == CalismaModeliGun.GUN_IZIN)
+										gunList.add(cmGun);
+								}
+
+							}
+
+							if (gunList.isEmpty())
+								gunList = null;
+							else
+								cmIslem.setCalismaModeliGunler(gunList);
+
+							pd.setCalismaModeliGunler(gunList);
+						}
+
+					}
+
+				}
+				calismaModeliGunList = null;
+
+			}
+
+		}
+	}
+
+	/**
 	 * @param vardiyaGunList
 	 * @param session
 	 */
@@ -18003,6 +18098,7 @@ public class OrtakIslemler implements Serializable {
 							if (personelDenklestirme != null && personelDenklestirme.getCalismaModeliAy() != null) {
 								pdksVardiyaGun.setCalismaModeli(personelDenklestirme.getCalismaModeliAy().getCalismaModeli());
 								CalismaModeli calismaModeliAy = pdksVardiyaGun.getCalismaModeli() != null ? pdksVardiyaGun.getCalismaModeli() : personelDenklestirme.getCalismaModeli();
+								calismaModeliAy.setCalismaModeliGunler(personelDenklestirme.getCalismaModeliGunler());
 								izinSaat = pdksVardiyaGun.isIzinli() ? calismaModeliAy.getIzinSaat(pdksVardiyaGun) : 0.0d;
 								if (pdksVardiyaGun.isIzinli() && calismaModeli.isHaftaTatilSabitDegil()) {
 									Vardiya vardiya = pdksVardiyaGun.getVardiya();
