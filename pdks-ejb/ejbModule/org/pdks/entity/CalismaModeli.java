@@ -617,6 +617,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 				sutIzinSure = gunSure;
 			break;
 		}
+		
 		if (sutIzinSure == null) {
 			if (this.getDepartman() != null) {
 				Departman dm = this.getDepartman();
@@ -635,8 +636,9 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 					break;
 				}
 			}
-			if (sutIzinSure == null)
+			if ((this.getHaftaTatilGun() != null && dayOfWeek == this.getHaftaTatilGun().intValue()) || sutIzinSure == null)
 				sutIzinSure = 0.0d;
+			 
 		}
 
 		if (sutIzinSure > 0.0d)
@@ -694,7 +696,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 				gunSure = this.getHaftaIci();
 			break;
 		}
-		if (gunSure == null)
+		if ((this.getHaftaTatilGun() != null && dayOfWeek == this.getHaftaTatilGun().intValue()) || gunSure == null)
 			gunSure = 0.0d;
 		if (gunSure > 0.0d)
 			logger.debug(dayOfWeek + " : " + gunSure);

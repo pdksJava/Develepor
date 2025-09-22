@@ -179,9 +179,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				double sure = 0.0d, toplamIzinSure = 0.0d;
 
 				if (cm.isHaftaTatilSabitDegil() == false) {
-					if (cm.getId().longValue() == 72L)
-						logger.debug("");
-					List<CalismaModeliGun> gunList = null;
+ 					List<CalismaModeliGun> gunList = null;
 					if (cm.getCalismaModeliGunler() == null) {
 						List<CalismaModeliGun> calismaModeliGunList = pdksEntityController.getSQLParamByFieldList(CalismaModeliGun.TABLE_NAME, CalismaModeliGun.COLUMN_NAME_CALISMA_MODELI, cm.getId(), CalismaModeliGun.class, session);
 						if (!calismaModeliGunList.isEmpty()) {
