@@ -687,7 +687,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 		default:
 			gunSure = this.getGunSure(CalismaModeliGun.GUN_SAAT, dayOfWeek);
-			if (gunSure == null)
+			if (gunSure == null && this.getHaftaTatilGun() == null)
 				gunSure = this.getHaftaIci();
 			break;
 		}

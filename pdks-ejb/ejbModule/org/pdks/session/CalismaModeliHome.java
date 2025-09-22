@@ -166,7 +166,15 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			} else
 				map = new TreeMap<String, CalismaModeliGun>();
 			list = new ArrayList<CalismaModeliGun>();
-			Double sure = gunTipi == CalismaModeliGun.GUN_SAAT ? calismaModeli.getHaftaIci() : calismaModeli.getHaftaIciSutIzniSure();
+			Double sure = null;
+			try {
+				sure = gunTipi == CalismaModeliGun.GUN_SAAT ? calismaModeli.getHaftaIci() : calismaModeli.getHaftaIciSutIzniSure();
+			} catch (Exception e) {
+				sure = 0.0d;
+				logger.error(e);
+				e.printStackTrace();
+
+			}
 			for (int i = Calendar.MONDAY; i < Calendar.SATURDAY; i++) {
 				String key = CalismaModeliGun.getKey(calismaModeli, gunTipi, i);
 				if (!map.containsKey(key)) {
@@ -502,7 +510,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			int row = 0;
 			int col = 0;
 			boolean admin = authenticatedUser.isAdmin();
- 			boolean geceCalismaOde = ortakIslemler.getParameterKey("aksamBordroBasZamani").equals("") == false && ortakIslemler.getParameterKey("aksamBordroBitZamani").equals("");
+			boolean geceCalismaOde = ortakIslemler.getParameterKey("aksamBordroBasZamani").equals("") == false && ortakIslemler.getParameterKey("aksamBordroBitZamani").equals("");
 			boolean haftaTatilDurum = ortakIslemler.getParameterKey("haftaTatilDurum").equals("1");
 			if (admin)
 				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(aciklama + " Id");
