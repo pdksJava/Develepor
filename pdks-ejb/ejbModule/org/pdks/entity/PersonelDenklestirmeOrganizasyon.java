@@ -32,10 +32,13 @@ public class PersonelDenklestirmeOrganizasyon extends BasePDKSObject {
 	public static final String COLUMN_NAME_DIREKTOR = "DIREKTOR_ID";
 	public static final String COLUMN_NAME_BOLUM = "BOLUM_ID";
 	public static final String COLUMN_NAME_GOREV = "GOREV_ID";
+	public static final String COLUMN_NAME_YONETICI = "YONETICI_ID";
 
 	private PersonelDenklestirme personelDenklestirme;
 
 	private Tanim tesis, bolum, direktor, gorevTipi;
+
+	private Personel yonetici;
 
 	public PersonelDenklestirmeOrganizasyon() {
 		super();
@@ -51,6 +54,7 @@ public class PersonelDenklestirmeOrganizasyon extends BasePDKSObject {
 			this.direktor = personel.getEkSaha1();
 			this.bolum = personel.getEkSaha3();
 			this.gorevTipi = personel.getGorevTipi();
+			this.yonetici = personel.getYoneticisi();
 		}
 
 	}
@@ -64,6 +68,19 @@ public class PersonelDenklestirmeOrganizasyon extends BasePDKSObject {
 
 	public void setPersonelDenklestirme(PersonelDenklestirme personelDenklestirme) {
 		this.personelDenklestirme = personelDenklestirme;
+	}
+
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@JoinColumn(name = COLUMN_NAME_YONETICI)
+	@Fetch(FetchMode.JOIN)
+	public Personel getYonetici() {
+		return yonetici;
+	}
+
+	public void setYonetici(Personel value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isLongDegisti(yonetici != null ? yonetici.getId() : null, value != null ? value.getId() : null));
+		this.yonetici = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)

@@ -653,6 +653,7 @@ public class OrtakIslemler implements Serializable {
 					AylikPuantaj ap = treeMap.get(key);
 					Personel personel = (Personel) ap.getPersonelDenklestirme().getPdksPersonel().clone();
 					personel.setTesis(organizasyon.getTesis());
+					personel.setYoneticisi(organizasyon.getYonetici());
 					personel.setEkSaha1(organizasyon.getDirektor());
 					personel.setEkSaha3(organizasyon.getBolum());
 					personel.setGorevTipi(organizasyon.getGorevTipi());
