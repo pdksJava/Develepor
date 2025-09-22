@@ -41,6 +41,7 @@ import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.AylikPuantaj;
 import org.pdks.entity.CalismaModeli;
 import org.pdks.entity.CalismaModeliAy;
+import org.pdks.entity.CalismaModeliGun;
 import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.Departman;
 import org.pdks.entity.DepartmanDenklestirmeDonemi;
@@ -176,7 +177,49 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 			if (calismaModeliAy.getSure() == 0.0d || calismaModeliAy.getToplamIzinSure() == 0.0d || ((dm.getSure() == 0.0d || dm.getToplamIzinSure() == 0.0d) && cm.getHaftaIci() == 9.0d)) {
 				double sure = 0.0d, toplamIzinSure = 0.0d;
+
 				if (cm.isHaftaTatilSabitDegil() == false) {
+					if (cm.getId().longValue() == 72L)
+						logger.debug("");
+					List<CalismaModeliGun> gunList = null;
+					if (cm.getCalismaModeliGunler() == null) {
+						List<CalismaModeliGun> calismaModeliGunList = pdksEntityController.getSQLParamByFieldList(CalismaModeliGun.TABLE_NAME, CalismaModeliGun.COLUMN_NAME_CALISMA_MODELI, cm.getId(), CalismaModeliGun.class, session);
+						if (!calismaModeliGunList.isEmpty()) {
+							gunList = new ArrayList<CalismaModeliGun>();
+
+							for (int gunTipi = CalismaModeliGun.GUN_SAAT; gunTipi <= CalismaModeliGun.GUN_IZIN; gunTipi++) {
+								for (int haftaGun = Calendar.MONDAY; haftaGun < Calendar.SATURDAY; haftaGun++) {
+									CalismaModeliGun cmGun = null;
+									for (Iterator iterator2 = calismaModeliGunList.iterator(); iterator2.hasNext();) {
+										CalismaModeliGun calismaModeliGun = (CalismaModeliGun) iterator2.next();
+										if (calismaModeliGun.getGunTipi() == gunTipi) {
+											if (calismaModeliGun.getHaftaGun() == haftaGun) {
+												cmGun = calismaModeliGun;
+												iterator2.remove();
+											}
+
+										}
+
+									}
+									if (cmGun == null) {
+										cmGun = new CalismaModeliGun(cm, gunTipi, haftaGun);
+										cmGun.setSure(gunTipi == CalismaModeliGun.GUN_SAAT ? cm.getHaftaIci() : cm.getHaftaIciSutIzniSure());
+									}
+									if (gunTipi == CalismaModeliGun.GUN_SAAT)
+										gunList.add(cmGun);
+									else if (gunTipi == CalismaModeliGun.GUN_IZIN)
+										gunList.add(cmGun);
+								}
+
+							}
+							if (gunList.isEmpty())
+								gunList = null;
+							else
+								cm.setCalismaModeliGunler(gunList);
+
+						}
+						calismaModeliGunList = null;
+					}
 					Calendar cal = Calendar.getInstance();
 					for (VardiyaGun vg : vardiyaGunList) {
 						if (vg.isAyinGunu()) {

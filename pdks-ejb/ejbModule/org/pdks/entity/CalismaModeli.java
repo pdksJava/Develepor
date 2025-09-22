@@ -612,6 +612,9 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 		default:
 			sutIzinSure = this.getHaftaIciSutIzniSure();
+			Double gunSure = this.getGunSure(CalismaModeliGun.GUN_IZIN, dayOfWeek);
+			if (gunSure != null)
+				sutIzinSure = gunSure;
 			break;
 		}
 		if (sutIzinSure == null) {
