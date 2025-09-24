@@ -1410,7 +1410,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		}
 		if (!puantajMap.isEmpty()) {
 			List dataIdList = new ArrayList(puantajMap.keySet());
-			boolean denklestirmeAyDurum = dm != null && getDurum(dm);
+			boolean denklestirmeAyDurum = dm != null && dm.getDurum();
 			TreeMap<Long, PersonelDenklestirmeOrganizasyon> orgMap = null;
 			List<Tanim> personelDinamikAlanlar = null;
 			TreeMap<String, PersonelDinamikAlan> personelDinamikAlanMap = null;
