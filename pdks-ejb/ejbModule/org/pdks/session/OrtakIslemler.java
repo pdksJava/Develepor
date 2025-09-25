@@ -14256,10 +14256,16 @@ public class OrtakIslemler implements Serializable {
 					for (AylikPuantaj aylikPuantaj : puantajList) {
 						PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
 						CalismaModeli cm = puantajModelMap.get(pd.getId());
+						Double haftaIciSutIzniSure = cm.getHaftaIciSutIzniSure(), haftaIciSure = cm.getHaftaIci();
+						if (haftaIciSutIzniSure == null)
+							haftaIciSutIzniSure = haftaIciSure > 7.5 ? 6.0d : haftaIciSure - 1.5;
 						Long cmId = cm.getId();
 						if (cmMap.containsKey(cmId)) {
 							CalismaModeli cmIslem = cmMap.get(cmId);
+							if (cmIslem.getCalismaModeliGunler() == null)
+								cmIslem.setCalismaModeliGunler(new ArrayList<CalismaModeliGun>());
 							List<CalismaModeliGun> list = cmIslem.getCalismaModeliGunler(), gunList = new ArrayList<CalismaModeliGun>();
+
 							for (int gunTipi = CalismaModeliGun.GUN_SAAT; gunTipi <= CalismaModeliGun.GUN_IZIN; gunTipi++) {
 								for (int haftaGun = Calendar.MONDAY; haftaGun < Calendar.SATURDAY; haftaGun++) {
 									CalismaModeliGun cmGun = null;
@@ -14274,7 +14280,12 @@ public class OrtakIslemler implements Serializable {
 									}
 									if (cmGun == null) {
 										cmGun = new CalismaModeliGun(cm, gunTipi, haftaGun);
-										cmGun.setSure(gunTipi == CalismaModeliGun.GUN_SAAT ? cm.getHaftaIci() : cm.getHaftaIciSutIzniSure());
+										try {
+
+											cmGun.setSure(gunTipi == CalismaModeliGun.GUN_SAAT ? haftaIciSure : haftaIciSutIzniSure);
+										} catch (Exception e) {
+											logger.error(e);
+										}
 									}
 									if (gunTipi == CalismaModeliGun.GUN_SAAT)
 										gunList.add(cmGun);
