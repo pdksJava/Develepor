@@ -680,6 +680,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				List<PersonelDenklestirme> pdlist = pdksEntityController.getSQLParamList(perList, sb, fieldName, fields, PersonelDenklestirme.class, session);
 				perList.clear();
+				ortakIslemler.setPersonelDenklestirmeDevir(null, pdlist, session);
+			
 				for (PersonelDenklestirme pd : pdlist) {
 					boolean ekle = true;
 
@@ -3202,7 +3204,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, fields, PersonelDenklestirme.class, session);
-
+		ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 		fields = null;
 		sb = null;
 		return list;

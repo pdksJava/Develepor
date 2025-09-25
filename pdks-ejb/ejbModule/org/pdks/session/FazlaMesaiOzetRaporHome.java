@@ -409,6 +409,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					PersonelDenklestirme pd = (PersonelDenklestirme) pdksEntityController.getSQLParamByFieldObject(PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.COLUMN_NAME_ID, Long.parseLong(linkAdresKey), PersonelDenklestirme.class, session);
 
 					if (pd != null) {
+						ortakIslemler.setPersonelDenklestirmeDevir(pd, null, session);
+
 						DenklestirmeAy da = pd.getDenklestirmeAy();
 						yilStr = String.valueOf(da.getYil());
 						ayStr = String.valueOf(da.getAy());
@@ -2195,6 +2197,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		// List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDenklestirme.class);
 		List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, PersonelDenklestirme.class, session);
+		ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			PersonelDenklestirme personelDenklestirme = (PersonelDenklestirme) iterator.next();
 			if (!personelDenklestirme.isDenklestirmeDurum())

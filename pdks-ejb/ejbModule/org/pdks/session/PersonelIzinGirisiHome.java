@@ -2702,6 +2702,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDenklestirme.class);
 		if (!list.isEmpty()) {
+			ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 			donemKontrol = authenticatedUser.isAdmin();
 			StringBuffer donemStr = new StringBuffer();
 			for (Iterator iterator2 = list.iterator(); iterator2.hasNext();) {

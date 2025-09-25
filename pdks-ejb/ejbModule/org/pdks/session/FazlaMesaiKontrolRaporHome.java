@@ -1486,6 +1486,8 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		// List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDenklestirme.class);
 		List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(siciller, sb, fieldName, fields, PersonelDenklestirme.class, session);
+		ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
+
 		fields = null;
 		sb = null;
 		return list;

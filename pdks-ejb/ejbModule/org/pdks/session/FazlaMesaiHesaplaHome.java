@@ -3709,6 +3709,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				try {
 					List<PersonelDenklestirme> denkList = pdksEntityController.getSQLParamList(tempList, sb, fieldName, fields, PersonelDenklestirme.class, session);
+					ortakIslemler.setPersonelDenklestirmeDevir(null, denkList, session);
+
 					for (PersonelDenklestirme personelDenklestirme : denkList) {
 						personelDurumMap.put(personelDenklestirme.getId(), Boolean.FALSE);
 					}

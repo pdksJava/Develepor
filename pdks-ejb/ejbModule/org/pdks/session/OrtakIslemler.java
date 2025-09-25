@@ -294,19 +294,32 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param personelDenklestirme
 	 * @param list
 	 * @param session
 	 */
-	public void setPersonelDenklestirmeDevir(List<PersonelDenklestirme> list, Session session) {
-		if (list != null && list.isEmpty() == false && session != null) {
-			HashMap<Long, PersonelDenklestirme> pdMap = new HashMap<Long, PersonelDenklestirme>();
-			for (PersonelDenklestirme pd : list)
-				pdMap.put(pd.getId(), pd);
-			List<PersonelDenklestirmeDevir> devirList = pdksEntityController.getSQLParamByFieldList(PersonelDenklestirmeDevir.TABLE_NAME, PersonelDenklestirmeDevir.COLUMN_NAME_PERSONEL_DENKLESTIRME, new ArrayList(pdMap.keySet()), PersonelDenklestirmeDevir.class, session);
-			for (PersonelDenklestirmeDevir pdd : devirList)
-				pdMap.get(pdd.getPersonelDenklestirmeId()).setPersonelDenklestirmeDevir(pdd);
-			devirList = null;
-			pdMap = null;
+	public void setPersonelDenklestirmeDevir(PersonelDenklestirme personelDenklestirme, List<PersonelDenklestirme> list, Session session) {
+		if (session != null) {
+			if (personelDenklestirme != null || (list != null && list.isEmpty() == false)) {
+				List<PersonelDenklestirme> denklestirmeList = new ArrayList<PersonelDenklestirme>();
+				if (personelDenklestirme != null)
+					denklestirmeList.add(personelDenklestirme);
+				if (list != null && list.isEmpty() == false)
+					denklestirmeList.addAll(list);
+				HashMap<Long, PersonelDenklestirme> pdMap = new HashMap<Long, PersonelDenklestirme>();
+				for (PersonelDenklestirme pd : denklestirmeList) {
+					if (pd != null && pd.getId() != null)
+						pdMap.put(pd.getId(), pd);
+				}
+				if (pdMap.isEmpty() == false) {
+					List<PersonelDenklestirmeDevir> devirList = pdksEntityController.getSQLParamByFieldList(PersonelDenklestirmeDevir.TABLE_NAME, PersonelDenklestirmeDevir.COLUMN_NAME_PERSONEL_DENKLESTIRME, new ArrayList(pdMap.keySet()), PersonelDenklestirmeDevir.class, session);
+					for (PersonelDenklestirmeDevir pdd : devirList)
+						pdMap.get(pdd.getPersonelDenklestirmeId()).setPersonelDenklestirmeDevir(pdd);
+					devirList = null;
+				}
+				pdMap = null;
+				denklestirmeList = null;
+			}
 		}
 
 	}
@@ -1373,6 +1386,7 @@ public class OrtakIslemler implements Serializable {
 								map.put(PdksEntityController.MAP_KEY_SESSION, session);
 							// List<PersonelDenklestirme> veriList = pdksEntityController.getObjectBySQLList(sb, map, PersonelDenklestirme.class);
 							List<PersonelDenklestirme> veriList = pdksEntityController.getSQLParamList(list, sb, fieldName, map, PersonelDenklestirme.class, session);
+							setPersonelDenklestirmeDevir(null, veriList, session);
 							for (PersonelDenklestirme personelDenklestirme : veriList)
 								donemPerDenkMap.put(key + "_" + personelDenklestirme.getPersonelId(), personelDenklestirme);
 							veriList = null;
@@ -9668,6 +9682,8 @@ public class OrtakIslemler implements Serializable {
 			if (session != null)
 				map1.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<PersonelDenklestirme> personelDenklestirmeList = getParamList(false, idList, fieldName, fields, PersonelDenklestirme.class, session);
+			setPersonelDenklestirmeDevir(null, personelDenklestirmeList, session);
+
 			if (!denkMap.isEmpty() || !personelDenklestirmeList.isEmpty()) {
 				for (PersonelDenklestirme personelDenklestirme : personelDenklestirmeList) {
 					Personel personel = personelDenklestirme.getPdksPersonel();
@@ -14365,6 +14381,7 @@ public class OrtakIslemler implements Serializable {
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<PersonelDenklestirme> personelDenkList = getDataByIdList(sb, map, PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.class);
 		if (!personelDenkList.isEmpty()) {
+			setPersonelDenklestirmeDevir(null, personelDenkList, session);
 			boolean isAramaIzniOffDahil = getParameterKey("isAramaIzniOffDahil").equals("1");
 			TreeMap<String, PersonelDenklestirme> denkMap = new TreeMap<String, PersonelDenklestirme>();
 			TreeMap<Long, CalismaModeli> cmMap = new TreeMap<Long, CalismaModeli>();
@@ -18681,6 +18698,7 @@ public class OrtakIslemler implements Serializable {
 								logger.error(ex);
 							}
 							if (personelDenklestirme != null && kaydet) {
+								setPersonelDenklestirmeDevir(personelDenklestirme, null, session);
 								personelDenklestirme.setGuncellendi(Boolean.FALSE);
 								if (personelDenklestirme.getCalismaModeliAy() == null || personelDenklestirme.getCalismaModeli().getToplamGunGuncelle().equals(Boolean.FALSE))
 									personelDenklestirme.setPlanlanSure(planlanSure);

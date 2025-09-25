@@ -553,6 +553,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 			if (session != null)
 				map1.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<PersonelDenklestirme> denklestirmeOnayList = pdksEntityController.getObjectByInnerObjectListInLogic(map1, PersonelDenklestirme.class);
+			ortakIslemler.setPersonelDenklestirmeDevir(null, denklestirmeOnayList, session);
 			devam = denklestirmeOnayList.isEmpty();
 			denklestirmeOnayList = null;
 			map1 = null;
@@ -904,6 +905,8 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 						if (session != null)
 							map1.put(PdksEntityController.MAP_KEY_SESSION, session);
 						denklestirmeOnayMap = pdksEntityController.getObjectByInnerObjectMapInLogic(map1, PersonelDenklestirme.class, Boolean.FALSE);
+						if (denklestirmeOnayMap != null && denklestirmeOnayMap.isEmpty() == false)
+							ortakIslemler.setPersonelDenklestirmeDevir(null, new ArrayList<PersonelDenklestirme>(denklestirmeOnayMap.values()), session);
 
 					}
 

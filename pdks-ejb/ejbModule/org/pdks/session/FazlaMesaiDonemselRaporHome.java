@@ -192,7 +192,7 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 			ortakIslemler.addIKSirketTesisKriterleri(fields, sb);
- 			sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0 ");
+			sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0 ");
 			sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ") <= :s");
 			if (basAy != null) {
 				sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_AY + " >= :d1");
@@ -540,6 +540,7 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 		List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDenklestirme.class);
 
 		if (!list.isEmpty()) {
+			ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 			basTarih = PdksUtil.convertToJavaDate(String.valueOf(yil * 100 + (basAy != null ? basAy : 1)) + "01", "yyyyMMdd");
 			bitTarih = PdksUtil.tariheGunEkleCikar(PdksUtil.convertToJavaDate(String.valueOf(yil * 100 + (bitAy != null ? bitAy : 12)) + "01", "yyyyMMdd"), 1);
 

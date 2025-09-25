@@ -204,9 +204,11 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			personelDoldur();
 
 			PersonelDenklestirme pd = (PersonelDenklestirme) pdksEntityController.getSQLParamByFieldObject(PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.COLUMN_NAME_ID, Long.parseLong(linkAdresKey), PersonelDenklestirme.class, session);
-
-			if (pd != null)
+			if (pd != null) {
+				ortakIslemler.setPersonelDenklestirmeDevir(pd, null, session);
 				fillBilgileriDoldur(pd.getPdksPersonel());
+			}
+
 		}
 
 	}
@@ -1401,6 +1403,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDenklestirme.class);
 		boolean sirketFazlaMesaiOde = sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde();
 		if (!list.isEmpty()) {
+			ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 			fields.clear();
 			sb = new StringBuffer();
 			sb.append("select sum(COALESCE(PD." + PersonelDenklestirme.COLUMN_NAME_RESMI_TATIL_SURE + ",0)) " + PersonelDenklestirme.COLUMN_NAME_RESMI_TATIL_SURE + ", ");

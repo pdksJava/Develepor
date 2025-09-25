@@ -17,7 +17,7 @@ import org.hibernate.annotations.FetchMode;
 
 @Entity(name = PersonelDenklestirmeDevir.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PersonelDenklestirmeDevir.COLUMN_NAME_PERSONEL_DENKLESTIRME }) })
-public class PersonelDenklestirmeDevir extends BasePDKSObject implements Serializable {
+public class PersonelDenklestirmeDevir extends BaseObject implements Serializable {
 
 	/**
 	 * 

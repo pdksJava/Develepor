@@ -277,6 +277,8 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 						// fields.put("denklestirmeAy", denklestirmeAy.getId());
 						fields.put("pId", personelIdler);
 						TreeMap<String, PersonelDenklestirme> bakiyeMap = ortakIslemler.getDataByIdMap(sb, fields, PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.class);
+						ortakIslemler.setPersonelDenklestirmeDevir(null, new ArrayList<PersonelDenklestirme>(bakiyeMap.values()), session);
+
 						List<HashMap<Integer, org.apache.poi.ss.usermodel.Cell>> hucreler = new ArrayList<HashMap<Integer, org.apache.poi.ss.usermodel.Cell>>(hucreMap.values());
 						for (Iterator iterator = hucreler.iterator(); iterator.hasNext();) {
 							HashMap<Integer, org.apache.poi.ss.usermodel.Cell> veriMap = (HashMap<Integer, org.apache.poi.ss.usermodel.Cell>) iterator.next();
@@ -1112,9 +1114,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			personelDenklestirmeList = ortakIslemler.getDataByIdList(sb, fields, PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.class);
-			// if (!ikSirket)
-			// personelDenklestirmeList = (ArrayList<pdksPersonelDenklestirme>) pdksUtil.sortObjectStringAlanList(personelDenklestirmeList, "getKontratliSortKey", null);
-
+ 			ortakIslemler.setPersonelDenklestirmeDevir(null, personelDenklestirmeList, session);
 			sb = null;
 			if (denklestirmeAyDurum) {
 				String fieldName = "p";

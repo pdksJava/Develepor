@@ -8531,6 +8531,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		TreeMap<Long, PersonelDenklestirme> denklestirmeMap = new TreeMap<Long, PersonelDenklestirme>();
 		List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(idler, sb, fieldName, fields, PersonelDenklestirme.class, session);
+		ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 		for (PersonelDenklestirme pd : list) {
 			pd.setGuncellendi(Boolean.FALSE);
 			denklestirmeMap.put(pd.getPersonelId(), pd);
@@ -11200,6 +11201,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				// List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDenklestirme.class);
 				List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, fields, PersonelDenklestirme.class, session);
 				flush = false;
+				ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 				for (PersonelDenklestirme personelDenklestirme : list) {
 					savePersonelDenklestirme(personelDenklestirme);
 					flush = true;
@@ -11519,7 +11521,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							if (session != null)
 								fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 							List<PersonelDenklestirme> personelDenklestirmeList = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, PersonelDenklestirme.class, session);
-
+							ortakIslemler.setPersonelDenklestirmeDevir(null, personelDenklestirmeList, session);
 							TreeMap<String, PersonelDenklestirme> personelDenklestirmeMap = new TreeMap<String, PersonelDenklestirme>();
 
 							List<Long> modelIdList = new ArrayList<Long>();

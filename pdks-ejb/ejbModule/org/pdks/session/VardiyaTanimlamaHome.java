@@ -401,6 +401,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 						TreeMap<String, PersonelDenklestirme> bakiyeMap = new TreeMap<String, PersonelDenklestirme>();
 						List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, fields, PersonelDenklestirme.class, session);
+						ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 						for (PersonelDenklestirme pd : list)
 							bakiyeMap.put(pd.getSicilNo(), pd);
 						bakiySonrakiMap = new TreeMap<String, PersonelDenklestirme>();
@@ -412,6 +413,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 							if (session != null)
 								fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 							list = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, fields, PersonelDenklestirme.class, session);
+							ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 							for (PersonelDenklestirme pd : list)
 								bakiySonrakiMap.put(pd.getSicilNo(), pd);
 						}
@@ -574,7 +576,8 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 						if (session != null)
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 						TreeMap<String, PersonelDenklestirme> bakiyeMap = ortakIslemler.getDataByIdMap(sb, fields, PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.class);
-
+						if (bakiyeMap != null && bakiyeMap.isEmpty() == false)
+							ortakIslemler.setPersonelDenklestirmeDevir(null, new ArrayList<PersonelDenklestirme>(bakiyeMap.values()), session);
 						List<HashMap<Integer, org.apache.poi.ss.usermodel.Cell>> hucreler = new ArrayList<HashMap<Integer, org.apache.poi.ss.usermodel.Cell>>(hucreMap.values());
 						boolean flush = false;
 						for (Iterator iterator = hucreler.iterator(); iterator.hasNext();) {
