@@ -689,24 +689,22 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	}
 
 	public Double getGecenAyFazlaMesai(User user) {
-		Double gecenAyFazlaMesai = null;
+		Double kalanSure = null;
 		PersonelDenklestirme personelDenklestirmeGecenAy = null;
 		if (personelDenklestirme != null) {
 			if (personelDenklestirme.getPersonelDenklestirmeDevir() != null)
-				gecenAyFazlaMesai = personelDenklestirme.getPersonelDenklestirmeDevir().getGecenAyDevirSaat();
-
-			if (gecenAyFazlaMesai == null && personelDenklestirme.getPersonelDenklestirmeGecenAy() != null) {
+				kalanSure = personelDenklestirme.getPersonelDenklestirmeDevir().getGecenAyDevirSaat();
+			if (kalanSure == null && personelDenklestirme.getPersonelDenklestirmeGecenAy() != null) {
 				personelDenklestirmeGecenAy = personelDenklestirme.getPersonelDenklestirmeGecenAy();
-				if (personelDenklestirmeGecenAy != null && personelDenklestirmeGecenAy.getDurum() && personelDenklestirmeGecenAy.isOnaylandi()) {
+				if (personelDenklestirmeGecenAy.getDurum() && personelDenklestirmeGecenAy.isOnaylandi()) {
 					if (personelDenklestirmeGecenAy.getDevredenSure() != null)
-						gecenAyFazlaMesai = personelDenklestirmeGecenAy.getKalanSure();
+						kalanSure = personelDenklestirmeGecenAy.getKalanSure();
 				}
 			}
 		}
-
-		if (gecenAyFazlaMesai == null)
-			gecenAyFazlaMesai = 0d;
-		return gecenAyFazlaMesai;
+ 		if (kalanSure == null)
+ 			kalanSure = 0d;
+		return kalanSure;
 
 	}
 

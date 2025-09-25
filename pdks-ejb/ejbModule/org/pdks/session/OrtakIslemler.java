@@ -313,8 +313,11 @@ public class OrtakIslemler implements Serializable {
 				}
 				if (pdMap.isEmpty() == false) {
 					List<PersonelDenklestirmeDevir> devirList = pdksEntityController.getSQLParamByFieldList(PersonelDenklestirmeDevir.TABLE_NAME, PersonelDenklestirmeDevir.COLUMN_NAME_PERSONEL_DENKLESTIRME, new ArrayList(pdMap.keySet()), PersonelDenklestirmeDevir.class, session);
-					for (PersonelDenklestirmeDevir pdd : devirList)
-						pdMap.get(pdd.getPersonelDenklestirmeId()).setPersonelDenklestirmeDevir(pdd);
+					if (devirList.isEmpty() == false) {
+						for (PersonelDenklestirmeDevir pdd : devirList)
+							if (pdd.getDurum())
+								pdMap.get(pdd.getPersonelDenklestirmeId()).setPersonelDenklestirmeDevir(pdd);
+					}
 					devirList = null;
 				}
 				pdMap = null;
