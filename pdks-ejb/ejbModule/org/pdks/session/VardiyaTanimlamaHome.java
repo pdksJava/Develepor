@@ -680,11 +680,9 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 			String sicilNo = personelDenklestirme.getSicilNo();
 			PersonelDenklestirme personelDenklestirmeDB = personelDenklestirme.getPersonelDenklestirmeDB() != null ? personelDenklestirme.getPersonelDenklestirmeDB() : personelDenklestirme;
 			if (personelDenklestirmeDB.isOnaylandi() == false || personelDenklestirmeDB.getDurum().equals(Boolean.FALSE) || personelDenklestirmeDB.getDevredenSure() == null || !personelDenklestirmeDB.getDevredenSure().equals(personelDenklestirme.getDevredenSure())) {
-				Personel pdksPersonel = personelDenklestirmeDB.getPersonel();
-				personelDenklestirmeDB.setDevredenSure(personelDenklestirme.getDevredenSure());
+ 				personelDenklestirmeDB.setDevredenSure(personelDenklestirme.getDevredenSure());
 				personelDenklestirmeDB.setOnaylandi(Boolean.TRUE);
 				personelDenklestirmeDB.setDenklestirme(Boolean.TRUE);
-				personelDenklestirmeDB.setDenklestirme(pdksPersonel.getGebeMi() == null || !pdksPersonel.getGebeMi().booleanValue());
 				personelDenklestirmeDB.setDurum(Boolean.TRUE);
 				if (personelDenklestirmeDB.getId() != null) {
 					personelDenklestirmeDB.setGuncellemeTarihi(new Date());

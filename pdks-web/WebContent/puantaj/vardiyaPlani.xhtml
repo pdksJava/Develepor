@@ -641,8 +641,8 @@
 									<a4j:support event="onchange" action="#{vardiyaGunHome.personelDenklestirme.setGuncellendi(true)}" />
 								</h:inputText>
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Denk.Var</ui:define>
+							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.sistemYoneticisi or ortakIslemler.getParameterKey('fazlaMesaiHesaplaKisitliPersonel')=='1'}">
+								<ui:define name="label">Denkleştime Var</ui:define>
 								<h:selectBooleanCheckbox value="#{vardiyaGunHome.personelDenklestirme.denklestirme}" disabled="#{vardiyaGunHome.denklestirmeAyDurum == false}">
 									<a4j:support event="onclick" action="#{vardiyaGunHome.personelDenklestirme.setGuncellendi(true)}" />
 								</h:selectBooleanCheckbox>
