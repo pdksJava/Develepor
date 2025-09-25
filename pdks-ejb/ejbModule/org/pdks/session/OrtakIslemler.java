@@ -110,6 +110,7 @@ import org.pdks.entity.PdksLog;
 import org.pdks.entity.PdksPersonelView;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
+import org.pdks.entity.PersonelDenklestirmeDevir;
 import org.pdks.entity.PersonelDenklestirmeDinamikAlan;
 import org.pdks.entity.PersonelDenklestirmeOrganizasyon;
 import org.pdks.entity.PersonelDenklestirmeOrganizasyonDetay;
@@ -289,6 +290,24 @@ public class OrtakIslemler implements Serializable {
 			tanimDeger = map.containsKey(key) ? map.get(key).getTanimDeger() : null;
 		}
 		return tanimDeger;
+
+	}
+
+	/**
+	 * @param list
+	 * @param session
+	 */
+	public void setPersonelDenklestirmeDevir(List<PersonelDenklestirme> list, Session session) {
+		if (list != null && list.isEmpty() == false && session != null) {
+			HashMap<Long, PersonelDenklestirme> pdMap = new HashMap<Long, PersonelDenklestirme>();
+			for (PersonelDenklestirme pd : list)
+				pdMap.put(pd.getId(), pd);
+			List<PersonelDenklestirmeDevir> devirList = pdksEntityController.getSQLParamByFieldList(PersonelDenklestirmeDevir.TABLE_NAME, PersonelDenklestirmeDevir.COLUMN_NAME_PERSONEL_DENKLESTIRME, new ArrayList(pdMap.keySet()), PersonelDenklestirmeDevir.class, session);
+			for (PersonelDenklestirmeDevir pdd : devirList)
+				pdMap.get(pdd.getPersonelDenklestirmeId()).setPersonelDenklestirmeDevir(pdd);
+			devirList = null;
+			pdMap = null;
+		}
 
 	}
 

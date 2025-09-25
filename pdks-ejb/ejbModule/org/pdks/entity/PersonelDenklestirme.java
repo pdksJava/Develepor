@@ -72,6 +72,8 @@ public class PersonelDenklestirme extends BaseObject {
 
 	private PersonelDenklestirme personelDenklestirmeGecenAy, personelDenklestirmeDB;
 
+	private PersonelDenklestirmeDevir personelDenklestirmeDevir;
+
 	private VardiyaGun izinVardiyaGun;
 
 	// private PersonelDonemselDurum sutIzniPersonelDonemselDurum, gebePersonelDonemselDurum, isAramaPersonelDonemselDurum;
@@ -88,7 +90,7 @@ public class PersonelDenklestirme extends BaseObject {
 
 	// private HashMap<PersonelDurumTipi, PersonelDonemselDurum> donemselDurumMap = new HashMap<PersonelDurumTipi, PersonelDonemselDurum>();
 	private HashMap<PersonelDurumTipi, List<PersonelDonemselDurum>> donemselDurumlarMap = new HashMap<PersonelDurumTipi, List<PersonelDonemselDurum>>();
-	
+
 	private List<CalismaModeliGun> calismaModeliGunler;
 
 	private String mesaj;
@@ -924,6 +926,7 @@ public class PersonelDenklestirme extends BaseObject {
 	public void setBakiyeSifirlaDurum(Boolean bakiyeSifirlaDurum) {
 		this.bakiyeSifirlaDurum = bakiyeSifirlaDurum;
 	}
+
 	@Transient
 	public List<CalismaModeliGun> getCalismaModeliGunler() {
 		return calismaModeliGunler;
@@ -931,6 +934,15 @@ public class PersonelDenklestirme extends BaseObject {
 
 	public void setCalismaModeliGunler(List<CalismaModeliGun> calismaModeliGunler) {
 		this.calismaModeliGunler = calismaModeliGunler;
+	}
+
+	@Transient
+	public PersonelDenklestirmeDevir getPersonelDenklestirmeDevir() {
+		return personelDenklestirmeDevir;
+	}
+
+	public void setPersonelDenklestirmeDevir(PersonelDenklestirmeDevir personelDenklestirmeDevir) {
+		this.personelDenklestirmeDevir = personelDenklestirmeDevir;
 	}
 
 }
