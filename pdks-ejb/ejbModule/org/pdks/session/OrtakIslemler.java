@@ -9654,6 +9654,8 @@ public class OrtakIslemler implements Serializable {
 		for (CalismaModeliAy calismaModeliAy : cmaList)
 			cmaMap.put(calismaModeliAy.getCalismaModeli().getId(), calismaModeliAy);
 		cmaList = null;
+		boolean fazlaMesaiHesaplaTumPersonel = getParameterKey("fazlaMesaiHesaplaKisitliPersonel").equals("1") == false;
+
 		for (Iterator iterator = vardiyaGunIslemList.iterator(); iterator.hasNext();) {
 			VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 			if (vardiyaGun.getVardiya() == null || vardiyaGun.getVardiya().isCalisma() == false || vardiyaGun.getVersion() >= 0L)
@@ -9667,7 +9669,9 @@ public class OrtakIslemler implements Serializable {
 					if (cmId != null && cmaMap.containsKey(cmId)) {
 						CalismaModeliAy calismaModeliAy = cmaMap.get(cmId);
 						PersonelDenklestirme personelDenklestirme = new PersonelDenklestirme(personel, calismaModeliAy.getDenklestirmeAy(), cmaMap.get(cmId));
-						denkMap.put(personel.getId(), personelDenklestirme);
+						if (fazlaMesaiHesaplaTumPersonel)
+							personelDenklestirme.setDenklestirme(Boolean.TRUE);
+ 						denkMap.put(personel.getId(), personelDenklestirme);
 					}
 				}
 				list.add(vardiyaGun);

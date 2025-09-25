@@ -6962,7 +6962,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					}
 					TreeMap<String, CalismaModeliAy> cmaMap = new TreeMap<String, CalismaModeliAy>();
 					boolean fazlaMesaiHesaplaTumPersonel = ortakIslemler.getParameterKey("fazlaMesaiHesaplaKisitliPersonel").equals("1") == false;
- 					List<Long> plansizList = new ArrayList<Long>();
+					List<Long> plansizList = new ArrayList<Long>();
 					for (Personel personel : personelList) {
 
 						boolean pdks = false;
@@ -7001,7 +7001,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							}
 
 							personelDenklestirme = new PersonelDenklestirme(personel, denklestirmeAy, cma);
-
+							if (fazlaMesaiHesaplaTumPersonel)
+								personelDenklestirme.setDenklestirme(Boolean.TRUE);
 							saveOrUpdate(personelDenklestirme);
 							if (plansiz)
 								plansizList.add(personel.getId());
