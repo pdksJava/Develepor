@@ -715,12 +715,17 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	private double getGecenAyDenklestirmeHesapla(User user) {
 		Double fark = null;
 		PersonelDenklestirme personelDenklestirmeGecenAy = null;
-		if (personelDenklestirme != null && personelDenklestirme.getPersonelDenklestirmeGecenAy() != null) {
-			personelDenklestirmeGecenAy = personelDenklestirme.getPersonelDenklestirmeGecenAy();
-			if (personelDenklestirmeGecenAy != null && personelDenklestirmeGecenAy.getDurum() && personelDenklestirmeGecenAy.isOnaylandi()) {
-				// if ((!personelDenklestirmeGecenAy.getDenklestirmeAy().isDurum(user) || personelDenklestirmeGecenAy.isErpAktarildi()) && personelDenklestirmeGecenAy.getDevredenSure() != null)
-				if (personelDenklestirmeGecenAy.getDevredenSure() != null)
-					fark = personelDenklestirmeGecenAy.getKalanSure();
+		if (personelDenklestirme != null) {
+			if (personelDenklestirme.getPersonelDenklestirmeDevir() != null) {
+				fark = personelDenklestirme.getPersonelDenklestirmeDevir().getGecenAyDevirSaat();
+			}
+			if (fark == null && personelDenklestirme.getPersonelDenklestirmeGecenAy() != null) {
+				personelDenklestirmeGecenAy = personelDenklestirme.getPersonelDenklestirmeGecenAy();
+				if (personelDenklestirmeGecenAy != null && personelDenklestirmeGecenAy.getDurum() && personelDenklestirmeGecenAy.isOnaylandi()) {
+					// if ((!personelDenklestirmeGecenAy.getDenklestirmeAy().isDurum(user) || personelDenklestirmeGecenAy.isErpAktarildi()) && personelDenklestirmeGecenAy.getDevredenSure() != null)
+					if (personelDenklestirmeGecenAy.getDevredenSure() != null)
+						fark = personelDenklestirmeGecenAy.getKalanSure();
+				}
 			}
 		}
 
