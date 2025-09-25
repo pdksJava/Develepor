@@ -683,55 +683,31 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		this.gecenAylikPuantaj = gecenAylikPuantaj;
 	}
 
-	private double getGecenAyDenklestirmeHesapla() {
-		Double fark = null;
-		PersonelDenklestirme pdksPersonelDenklestirmeGecenAy = null;
-		if (personelDenklestirme != null && personelDenklestirme.getPersonelDenklestirmeGecenAy() != null) {
-			pdksPersonelDenklestirmeGecenAy = personelDenklestirme.getPersonelDenklestirmeGecenAy();
-			if (pdksPersonelDenklestirmeGecenAy != null)
-				if ((pdksPersonelDenklestirmeGecenAy.getDurum() || pdksPersonelDenklestirmeGecenAy.isErpAktarildi()) && pdksPersonelDenklestirmeGecenAy.getDevredenSure() != null)
-					fark = pdksPersonelDenklestirmeGecenAy.getKalanSure();
-		}
-
-		if (fark == null)
-			fark = 0d;
-		return fark;
-	}
-
 	public Double getGecenAyFazlaMesai() {
-		// if (gecenAyFazlaMesai == null)
-		double deger = getGecenAyDenklestirmeHesapla();
-		gecenAyFazlaMesai = deger;
+		gecenAyFazlaMesai = getGecenAyFazlaMesai(null);
 		return gecenAyFazlaMesai;
 	}
 
 	public Double getGecenAyFazlaMesai(User user) {
-		// if (gecenAyFazlaMesai == null)
-		double deger = getGecenAyDenklestirmeHesapla(user);
-		gecenAyFazlaMesai = deger;
-		return gecenAyFazlaMesai;
-	}
-
-	private double getGecenAyDenklestirmeHesapla(User user) {
-		Double fark = null;
+		Double gecenAyFazlaMesai = null;
 		PersonelDenklestirme personelDenklestirmeGecenAy = null;
 		if (personelDenklestirme != null) {
-			if (personelDenklestirme.getPersonelDenklestirmeDevir() != null) {
-				fark = personelDenklestirme.getPersonelDenklestirmeDevir().getGecenAyDevirSaat();
-			}
-			if (fark == null && personelDenklestirme.getPersonelDenklestirmeGecenAy() != null) {
+			if (personelDenklestirme.getPersonelDenklestirmeDevir() != null)
+				gecenAyFazlaMesai = personelDenklestirme.getPersonelDenklestirmeDevir().getGecenAyDevirSaat();
+
+			if (gecenAyFazlaMesai == null && personelDenklestirme.getPersonelDenklestirmeGecenAy() != null) {
 				personelDenklestirmeGecenAy = personelDenklestirme.getPersonelDenklestirmeGecenAy();
 				if (personelDenklestirmeGecenAy != null && personelDenklestirmeGecenAy.getDurum() && personelDenklestirmeGecenAy.isOnaylandi()) {
-					// if ((!personelDenklestirmeGecenAy.getDenklestirmeAy().isDurum(user) || personelDenklestirmeGecenAy.isErpAktarildi()) && personelDenklestirmeGecenAy.getDevredenSure() != null)
 					if (personelDenklestirmeGecenAy.getDevredenSure() != null)
-						fark = personelDenklestirmeGecenAy.getKalanSure();
+						gecenAyFazlaMesai = personelDenklestirmeGecenAy.getKalanSure();
 				}
 			}
 		}
 
-		if (fark == null)
-			fark = 0d;
-		return fark;
+		if (gecenAyFazlaMesai == null)
+			gecenAyFazlaMesai = 0d;
+		return gecenAyFazlaMesai;
+
 	}
 
 	public void setGecenAyFazlaMesai(Double gecenAyFazlaMesai) {
