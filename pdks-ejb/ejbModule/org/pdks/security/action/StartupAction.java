@@ -569,6 +569,8 @@ public class StartupAction implements Serializable {
 		projePowerURL = null;
 		projeFooterBackgroundColor = "white";
 		if (parameterMap.containsKey("projePowerBy")) {
+			if (parameterMap.containsKey("projeFooterPowerBy"))
+				projeFooterPowerBy = parameterMap.get("projeFooterPowerBy");
 			projePowerBy = parameterMap.get("projePowerBy");
 			if (parameterMap.containsKey("projePowerURL"))
 				projePowerURL = parameterMap.get("projePowerURL");
@@ -714,8 +716,7 @@ public class StartupAction implements Serializable {
 					projeFooterImageHeight = map.get("height");
 			}
 		}
-		if (parameterMap.containsKey("projeFooterPowerBy"))
-			projeFooterPowerBy = parameterMap.get("projeFooterPowerBy");
+
 		if (parameterMap.containsKey("projeHeaderSize")) {
 			String deger = parameterMap.get("projeHeaderSize");
 			LinkedHashMap<String, String> map = PdksUtil.parametreAyikla(deger);

@@ -160,7 +160,7 @@ if (typeof window.event == 'undefined'){
 	<div class="footer">
 
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-			<tr style="background-color: #{startupAction.projeFooterBackgroundColor};">
+			<tr style="#{startupAction.projeFooterBackgroundColor}">
 				<td width="120" height="83"><ui:fragment rendered="#{startupAction.projeFooterImage != null}">
 						<ui:fragment rendered="#{startupAction.projePowerURL != null}">
 							<a href="#" id="imageFooterURL" title="#{startupAction.projePowerURL}" style="font-weight: bold;" onclick="createPop('#{startupAction.projePowerURL}',this.id);return false;"> <s:graphicImage
