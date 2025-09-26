@@ -179,6 +179,9 @@ public class StartupAction implements Serializable {
 	@Out(scope = ScopeType.APPLICATION, required = false)
 	public String projeFooterImageHeight = "83";
 
+	@Out(scope = ScopeType.APPLICATION, required = false)
+	public String projeFooterPowerBy = "font-size: 12px; font-family: sans-serif;";
+
 	private int smtpHostPort;
 
 	public SkinBean skinBean = new SkinBean();
@@ -711,7 +714,8 @@ public class StartupAction implements Serializable {
 					projeFooterImageHeight = map.get("height");
 			}
 		}
-
+		if (parameterMap.containsKey("projeFooterPowerBy"))
+			projeFooterPowerBy = parameterMap.get("projeFooterPowerBy");
 		if (parameterMap.containsKey("projeHeaderSize")) {
 			String deger = parameterMap.get("projeHeaderSize");
 			LinkedHashMap<String, String> map = PdksUtil.parametreAyikla(deger);
@@ -1371,5 +1375,13 @@ public class StartupAction implements Serializable {
 
 	public void setProjeURL(String projeURL) {
 		this.projeURL = projeURL;
+	}
+
+	public String getProjeFooterPowerBy() {
+		return projeFooterPowerBy;
+	}
+
+	public void setProjeFooterPowerBy(String projeFooterPowerBy) {
+		this.projeFooterPowerBy = projeFooterPowerBy;
 	}
 }
