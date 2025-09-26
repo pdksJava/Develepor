@@ -897,7 +897,7 @@
 
 				</h:panelGrid>
 
-				<a4j:commandButton status="ajaxStatus" value="Kaydet" rendered="#{personelKalanIzinHome.updateIzin.izinKagidiGeldi==null}"
+				<a4j:commandButton status="ajaxStatus" value="Kaydet" rendered="#{personelKalanIzinHome.updateIzin.izinKagidiGeldi==null or personelKalanIzinHome.updateIzin.izinSuresi ne 0}"
 					action="#{personelKalanIzinHome.kaydet(true)}" reRender="izinDetayPanel,izinPanel"
 					oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 				<a4j:commandButton status="ajaxStatus" value="Geri Al"
