@@ -550,6 +550,13 @@
 							<h:outputText
 								value="#{authenticatedUser.getTarihFormatla(personelKalanIzinHome.updateIzin.baslangicZamani,'yyyy')} İzin Hakediş Yılı Kullanılan İzinler" />
 						</f:facet>
+						<rich:column style="text-align:center" rendered="#{personelKalanIzinHome.bakiyeIzinList.size() gt 0}">
+							<f:facet name="header">
+								<h:outputText value="İşlem" />
+							</f:facet>
+							<h:selectBooleanCheckbox value="#{harcananIzin.checkBoxDurum}" />
+
+						</rich:column>
 						<rich:column style="text-align:center" rendered="#{personelKalanIzinHome.manuelIzinGuncelle}">
 							<f:facet name="header"></f:facet>
 							<a4j:commandButton image="/img/edit.gif" title="Güncelle" status="ajaxStatus"
@@ -609,6 +616,21 @@
 					</rich:dataTable>
 
 				</h:panelGrid>
+				<ui:fragment rendered="#{personelKalanIzinHome.bakiyeIzinList.size() gt 0}">
+					<s:decorate template="/layout/edit.xhtml" id="bakiyeIzin">
+						<ui:define name="label">Aktarılacak Yıl</ui:define>
+						<h:selectOneMenu value="#{personelKalanIzinHome.bakiyeIzin}">
+							<s:selectItems var="comp" value="#{personelKalanIzinHome.bakiyeIzinList}" label="#{comp.hakEdisDonem}" noSelectionLabel="Lütfen seçiniz" />
+							<a4j:support event="onchange" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="bakiyeIzin" status="ajaxStatus" ajaxSingle="true" />
+							<s:convertEntity />
+						</h:selectOneMenu>
+						<a4j:commandButton status="ajaxStatus" action="#{personelKalanIzinHome.harcananIzinlerAktar()}"
+							rendered="#{personelKalanIzinHome.bakiyeIzin!=null}" value="İzin Aktar"
+							oncomplete="if (#{facesContext.maximumSeverity == null}) {#{rich:component('izinHarcamaPanel')}.hide();#{rich:component('izinDetayPanel')}.hide();}" reRender="izinPersonel,secim" />
+					</s:decorate>
+
+				</ui:fragment>
+
 				<a4j:outputPanel id="harcananIzinUpdate">
 					<ui:fragment rendered="#{personelKalanIzinHome.manuelIzin != null}">
 						<h:panelGrid columns="2">
@@ -700,7 +722,7 @@
 							</f:facet>
 							<TABLE>
 								<TR>
- 									<ui:fragment rendered="#{kalanIzinler.devirIzin == false and ( authenticatedUser.admin or authenticatedUser.IK)}">
+									<ui:fragment rendered="#{kalanIzinler.devirIzin == false and ( authenticatedUser.admin or authenticatedUser.IK)}">
 
 										<TD nowrap="nowrap"><ui:fragment>
 												<a4j:commandButton image="/img/edit.gif" title="Hakediş Güncelle" status="ajaxStatus" render="#{authenticatedUser.IK}"
@@ -875,9 +897,13 @@
 
 				</h:panelGrid>
 
-				<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{personelKalanIzinHome.kaydet(true)}" reRender="izinDetayPanel,izinPanel"
+				<a4j:commandButton status="ajaxStatus" value="Kaydet" rendered="#{personelKalanIzinHome.updateIzin.izinKagidiGeldi==null}"
+					action="#{personelKalanIzinHome.kaydet(true)}" reRender="izinDetayPanel,izinPanel"
 					oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
-
+				<a4j:commandButton status="ajaxStatus" value="Geri Al"
+					rendered="#{personelKalanIzinHome.updateIzin.izinKagidiGeldi!=null and personelKalanIzinHome.updateIzin.izinSuresi==0}"
+					action="#{personelKalanIzinHome.kaydet(false)}" reRender="izinDetayPanel,izinPanel"
+					oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
 			</h:form>
 		</rich:modalPanel>

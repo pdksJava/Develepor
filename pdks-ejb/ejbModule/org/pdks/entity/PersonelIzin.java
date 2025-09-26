@@ -854,6 +854,15 @@ public class PersonelIzin extends BaseObject {
 	}
 
 	@Transient
+	public String getHakEdisDonem() {
+		String aciklama = "";
+		if (this.getBaslangicZamani() != null)
+			aciklama = PdksUtil.convertToDateString(this.getBaslangicZamani(), "yyyy");
+
+		return aciklama;
+	}
+
+	@Transient
 	public IzinERP getIzinERP() {
 
 		IzinERP izinERP = new IzinERP();

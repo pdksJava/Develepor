@@ -770,7 +770,6 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 		if (degisti) {
 			setSeciliDenklestirmeAy();
-			sirketId = null;
 			if (tesisList != null)
 				tesisList.clear();
 			if (gorevYeriList != null)
@@ -820,6 +819,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	}
 
 	public void fillSirketList() {
+		Long oncekiSirketId = sirketId;
 		if (adminRole)
 			fillDepartmanList();
 		List<SelectItem> sirketler = null;
@@ -840,20 +840,22 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 		if (gorevYeriList != null)
 			gorevYeriList.clear();
+
 		if (ikRole || authenticatedUser.isYonetici()) {
 			Long depId = departman != null ? departman.getId() : null;
+
 			sirketler = fazlaMesaiOrtakIslemler.getFazlaMesaiSirketList(depId, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, true, session);
 			sirket = null;
 			if (!sirketler.isEmpty()) {
-				Long onceki = sirketId;
+
 				if (sirketler.size() == 1) {
 					sirketId = (Long) sirketler.get(0).getValue();
-				} else if (onceki != null) {
+				} else if (oncekiSirketId != null) {
 					if (ikRole)
 						sirketId = null;
 					for (SelectItem st : sirketler) {
-						if (st.getValue().equals(onceki))
-							sirketId = onceki;
+						if (st.getValue().equals(oncekiSirketId))
+							sirketId = oncekiSirketId;
 					}
 				}
 				if (sirketId != null) {

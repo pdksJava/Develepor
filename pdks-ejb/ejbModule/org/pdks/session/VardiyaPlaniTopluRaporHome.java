@@ -552,7 +552,6 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 
 		if (degisti) {
 			setSeciliDenklestirmeAy();
-			sirketId = null;
 			if (tesisList != null)
 				tesisList.clear();
 			if (gorevYeriList != null)
@@ -602,6 +601,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 	}
 
 	public void fillSirketList() {
+		Long onceki = sirketId;
 		if (adminRole)
 			fillDepartmanList();
 		List<SelectItem> sirketler = null;
@@ -627,7 +627,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 			sirketler = fazlaMesaiOrtakIslemler.getFazlaMesaiSirketList(depId, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, true, session);
 			sirket = null;
 			if (!sirketler.isEmpty()) {
-				Long onceki = sirketId;
+
 				if (sirketler.size() == 1) {
 					sirketId = (Long) sirketler.get(0).getValue();
 				} else if (onceki != null) {

@@ -109,8 +109,8 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 
 	private List<IzinTipi> izinTipiList;
 	private TempIzin updateTempIzin;
-	private PersonelIzin updateIzin, manuelIzin;
-	private List<PersonelIzin> personelizinList = new ArrayList<PersonelIzin>();
+	private PersonelIzin updateIzin, manuelIzin, bakiyeIzin;
+	private List<PersonelIzin> personelizinList = new ArrayList<PersonelIzin>(), bakiyeIzinList = new ArrayList<PersonelIzin>();
 	private List<TempIzin> pdksPersonelList = new ArrayList<TempIzin>(), personelBakiyeIzinList = new ArrayList<TempIzin>();
 
 	private String kidemYili, bolumAciklama;
@@ -211,6 +211,35 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		return "";
 	}
 
+	public String harcananIzinlerAktar() {
+
+		List<PersonelIzinDetay> list = new ArrayList<PersonelIzinDetay>();
+		for (PersonelIzinDetay pid : harcananIzinler) {
+			if (pid.isCheckBoxDurum())
+				list.add(pid);
+		}
+		if (list.isEmpty())
+			PdksUtil.addMessageWarn("Aktarılacak izin seçiniz!");
+		else {
+			try {
+				for (PersonelIzinDetay personelIzinDetay : list) {
+					personelIzinDetay.setHakEdisIzin(bakiyeIzin);
+					pdksEntityController.saveOrUpdate(session, entityManager, personelIzinDetay);
+				}
+				session.flush();
+				if (bakiyeIzin.getPersonelNo() != null)
+					aramaSecenekleri.setSicilNo(bakiyeIzin.getPersonelNo());
+				setPdksPersonelList(new ArrayList<TempIzin>());
+			} catch (Exception e) {
+				PdksUtil.addMessageWarn(e.getMessage());
+			}
+
+		}
+		list = null;
+
+		return "";
+	}
+
 	/**
 	 * @param izin
 	 * @return
@@ -219,7 +248,26 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		manuelIzinGuncelle = false;
 		updateIzin = izin;
 		manuelIzin = null;
+		if (bakiyeIzinList == null)
+			bakiyeIzinList = new ArrayList<PersonelIzin>();
+		else
+			bakiyeIzinList.clear();
+		if (bakiyeIzin != null && (izin.getPdksPersonel().getId().equals(bakiyeIzin.getPdksPersonel().getId()) == false || izin.getId().equals(bakiyeIzin.getId())))
+			bakiyeIzin = null;
+		if (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()) {
+			for (PersonelIzin personelIzin : personelizinList) {
+				if (personelIzin.getDevirIzin() == null || personelIzin.getDevirIzin().booleanValue() == false) {
+					if (izin.getId().equals(personelIzin.getId()) == false) {
+						bakiyeIzinList.add(personelIzin);
+					}
+
+				}
+
+			}
+		}
+
 		if (authenticatedUser.isAdmin()) {
+
 			harcananIzinler = new ArrayList<PersonelIzinDetay>();
 			HashMap<Long, PersonelIzin> map = new HashMap<Long, PersonelIzin>();
 			for (PersonelIzinDetay personelIzinDetay : izin.getHakEdisIzinler()) {
@@ -2475,6 +2523,22 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 
 	public void setManuelIzinGuncelle(boolean manuelIzinGuncelle) {
 		this.manuelIzinGuncelle = manuelIzinGuncelle;
+	}
+
+	public List<PersonelIzin> getBakiyeIzinList() {
+		return bakiyeIzinList;
+	}
+
+	public void setBakiyeIzinList(List<PersonelIzin> bakiyeIzinList) {
+		this.bakiyeIzinList = bakiyeIzinList;
+	}
+
+	public PersonelIzin getBakiyeIzin() {
+		return bakiyeIzin;
+	}
+
+	public void setBakiyeIzin(PersonelIzin bakiyeIzin) {
+		this.bakiyeIzin = bakiyeIzin;
 	}
 
 }
