@@ -1612,7 +1612,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		sb.append("	WHEN " + Vardiya.COLUMN_NAME_SUT_IZNI + " = 1 THEN '" + Vardiya.SUT_IZNI_KEY + "' ");
 		sb.append("	WHEN " + Vardiya.COLUMN_NAME_ICAP + " = 1 THEN '" + Vardiya.ICAP_KEY + "' END SONUC from " + Vardiya.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where P." + PersonelKGS.COLUMN_NAME_DURUM + " = 1 ");
-		sb.append(" and (" + Vardiya.COLUMN_NAME_GEBELIK+ " + " + Vardiya.COLUMN_NAME_SUT_IZNI+ " + " + Vardiya.COLUMN_NAME_SUA + " + " + Vardiya.COLUMN_NAME_ICAP + " = 1 or " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :fm2 ) ");
+		sb.append(" and (" + Vardiya.COLUMN_NAME_GEBELIK + " + " + Vardiya.COLUMN_NAME_SUT_IZNI + " + " + Vardiya.COLUMN_NAME_SUA + " + " + Vardiya.COLUMN_NAME_ICAP + " = 1 or " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :fm2 ) ");
 		fields.put("fm1", Vardiya.TIPI_FMI);
 		fields.put("fm2", Vardiya.TIPI_FMI);
 		if (session != null)
@@ -1667,6 +1667,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		}
 		Sirket sirket = pdksPersonel != null && pdksPersonel.getId() != null ? pdksPersonel.getSirket() : null;
 		boolean tanimOku = true;
+		setInstance(pdksPersonel);
 		if (pdksPersonel != null && sirket != null && !pdksPersonel.getSirket().isErp()) {
 			try {
 				fillPdksPersonelList(tanimOku);
@@ -1680,7 +1681,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			fillEkSahaTanim();
 		}
 		tanimOku = false;
-		setInstance(pdksPersonel);
+
 		fillPersonelTablolar(pdksDurum);
 
 		if (PdksUtil.hasStringValue(bosDepartmanKodu)) {
