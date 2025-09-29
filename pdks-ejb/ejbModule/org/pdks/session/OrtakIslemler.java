@@ -12368,9 +12368,16 @@ public class OrtakIslemler implements Serializable {
 		map.put("bitTarih", bitTarih);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<TatilGunView> list = null;
+		try {
+			list = pdksEntityController.execSPList(map, sb, TatilGunView.class);
+		} catch (Exception e) {
+			logger.equals(e);
+			e.printStackTrace();
 
-		List<TatilGunView> list = pdksEntityController.execSPList(map, sb, TatilGunView.class);
-		if (!list.isEmpty()) {
+		}
+
+		if (list != null && !list.isEmpty()) {
 			String yarimGunStr = (parameterMap != null && parameterMap.containsKey("yarimGunSaati") ? (String) parameterMap.get("yarimGunSaati") : "");
 			if (PdksUtil.hasStringValue(arifeTatilBasZaman))
 				yarimGunStr = arifeTatilBasZaman;
