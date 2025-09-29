@@ -405,14 +405,24 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" inner join " + Role.TABLE_NAME + " R " + PdksEntityController.getJoinLOCK() + " on R." + Role.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_ROLE + " and R." + Role.COLUMN_NAME_ROLE_NAME + " :" + fieldName);
 			sb.append(" where UR." + UserRoles.COLUMN_NAME_USER + " is not null");
 			List<UserRoles> pdkRoles = pdksEntityController.getSQLParamList(roller, sb, fieldName, fields, UserRoles.class, session);
+			HashMap<Long, User> userMap = new HashMap<Long, User>();
 			for (Iterator iterator = pdkRoles.iterator(); iterator.hasNext();) {
 				UserRoles userRoles = (UserRoles) iterator.next();
-				User user = userRoles.getUser();
+				Long userId = userRoles.getUser().getId();
+				User user = null;
+				if (userMap.containsKey(userId)) {
+					user = userMap.get(userId);
+				} else {
+					user = userRoles.getUser();
+					user.setYetkiliRollerim(new ArrayList<Role>());
+				}
+				user.getYetkiliRollerim().add(userRoles.getRole());
 				String roleAdi = userRoles.getRole().getRolename();
 				boolean sil = roleAdi.equals(Role.TIPI_IK);
 				if (departmanId != null && user != null && !user.getDepartman().getId().equals(departmanId))
 					user = null;
 				if (user != null) {
+
 					Personel personel = user.getPdksPersonel();
 					boolean aktif = user.isDurum() && personel.isCalisiyor();
 					if (!personelIdList.contains(personel.getId())) {
@@ -9671,7 +9681,7 @@ public class OrtakIslemler implements Serializable {
 						PersonelDenklestirme personelDenklestirme = new PersonelDenklestirme(personel, calismaModeliAy.getDenklestirmeAy(), cmaMap.get(cmId));
 						if (fazlaMesaiHesaplaTumPersonel)
 							personelDenklestirme.setDenklestirme(Boolean.TRUE);
- 						denkMap.put(personel.getId(), personelDenklestirme);
+						denkMap.put(personel.getId(), personelDenklestirme);
 					}
 				}
 				list.add(vardiyaGun);
