@@ -568,15 +568,14 @@ public class StartupAction implements Serializable {
 		}
 		projePowerURL = null;
 		projeFooterBackgroundColor = "white";
+		if (parameterMap.containsKey("projeFooterBackgroundColor"))
+			projeFooterBackgroundColor = parameterMap.get("projeFooterBackgroundColor");
 		if (parameterMap.containsKey("projePowerBy")) {
 			if (parameterMap.containsKey("projeFooterPowerBy"))
 				projeFooterPowerBy = parameterMap.get("projeFooterPowerBy");
 			projePowerBy = parameterMap.get("projePowerBy");
 			if (parameterMap.containsKey("projePowerURL"))
 				projePowerURL = parameterMap.get("projePowerURL");
-			if (parameterMap.containsKey("projeFooterBackgroundColor"))
-				projeFooterBackgroundColor = parameterMap.get("projeFooterBackgroundColor");
-
 		}
 		if (parameterMap.containsKey("projeHeaderRenk")) {
 			String deger = parameterMap.get("projeHeaderRenk");
