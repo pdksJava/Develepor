@@ -3009,7 +3009,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			onayDurum = ikRole || PdksUtil.hasStringValue(sicilNo) == false || denklestirmeAy.getGuncelleIK();
 			if (onayDurum && ikRole && denklestirmeAy.getOtomatikOnayIKTarih() != null) {
 				Date bugun = PdksUtil.getDate(new Date());
-				onayDurum = bugun.after(denklestirmeAy.getOtomatikOnayIKTarih()) || bugun.getTime() <= denklestirmeAy.getBitTarih().getTime();
+				onayDurum = bugun.after(denklestirmeAy.getOtomatikOnayIKTarih()) || (denklestirmeAy.getBitTarih() != null && bugun.getTime() <= denklestirmeAy.getBitTarih().getTime());
 			}
 		}
 
