@@ -1702,7 +1702,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				User guncelleyen = null;
 				if (mukerrerHareketIptalNeden != null)
 					guncelleyen = ortakIslemler.getSistemAdminUser(session);
-				ortakIslemler.calismaModeliGunListGuncelle(puantajDenklestirmeList,null, session);
+				ortakIslemler.calismaModeliGunListGuncelle(puantajDenklestirmeList, null, session);
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					puantaj.setFazlaMesaiHesapla(true);
@@ -3005,8 +3005,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	public Boolean fazlaMesaiOnayDurumu() {
 		boolean onayDurum = false;
-		if (fazlaMesaiOnayDurum && kullaniciPersonel == false && hataYok && denklestirmeAyDurum)
+		if (fazlaMesaiOnayDurum && kullaniciPersonel == false && hataYok && denklestirmeAyDurum) {
 			onayDurum = ikRole || PdksUtil.hasStringValue(sicilNo) == false || denklestirmeAy.getGuncelleIK();
+			if (onayDurum && ikRole && denklestirmeAy.getOtomatikOnayIKTarih() != null) {
+				Date bugun = PdksUtil.getDate(new Date());
+				onayDurum = bugun.after(denklestirmeAy.getOtomatikOnayIKTarih()) || bugun.getTime() <= denklestirmeAy.getBitTarih().getTime();
+			}
+		}
 
 		return onayDurum;
 
