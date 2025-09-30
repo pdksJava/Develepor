@@ -7936,7 +7936,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			dataMap.put("normalCalismaVardiya", getNormalCalismaVardiya());
 			dataMap.put("denklestirmeAyDurum", denklestirmeAyDurum);
 			dataMap.put("tatilGunleriMap", tatilGunleriMap);
-			fazlaMesaiOrtakIslemler.calismaPlaniDenklestir(dataMap, session);
+			try {
+				fazlaMesaiOrtakIslemler.calismaPlaniDenklestir(dataMap, session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
+			
 		}
 
 	}
