@@ -137,9 +137,8 @@
 												oncomplete="#{rich:component('wait')}.hide()" /></TD>
 
 										<TD width="35%" valign="top"><ui:fragment rendered="#{not empty fazlaMesaiHesaplaHome.aylikPuantajList}">
-												<ui:fragment rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and fazlaMesaiHesaplaHome.gecenAyDurum == false}">
-
-													<ui:fragment rendered="#{fazlaMesaiHesaplaHome.fazlaMesaiOnayDurumu()}">
+												<ui:fragment rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum }">
+													<ui:fragment rendered="#{fazlaMesaiHesaplaHome.gecenAyDurum == false and fazlaMesaiHesaplaHome.fazlaMesaiOnayDurumu()}">
 														<a4j:commandButton value="Fazla Mesai Onayla" action="#{fazlaMesaiHesaplaHome.fazlaMesaiOnayKontrol()}"
 															onclick="#{rich:component('wait')}.show()" reRender="onayPanel"
 															oncomplete="#{rich:component('wait')}.hide();if (#{fazlaMesaiHesaplaHome.onayla}) #{rich:component('onayPanel')}.show() ; " />
