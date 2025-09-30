@@ -47,6 +47,7 @@ public class ThreadAgent extends Thread implements Serializable {
 					else
 						pdksDAO.execSPList(veriMap, null);
 				} catch (Exception e) {
+					logger.error(agent.getStoreProcedureAdi() + " " + e);
 					e.printStackTrace();
 				}
 			}
