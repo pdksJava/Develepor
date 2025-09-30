@@ -3600,7 +3600,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (pdksVardiyaGun.getVardiya() != null) {
 
 				if (pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getIzin() == null) {
-					Tanim yeniGoreviYeri = pdksVardiyaGun.getVardiyaGorev().getYeniGorevYeri();
+					Tanim yeniGoreviYeri = pdksVardiyaGun.getVardiyaGorev() != null ? pdksVardiyaGun.getVardiyaGorev().getYeniGorevYeri() : null;
 					if (!gorevli)
 						kullaniciYetkili = yeniGoreviYeri == null || gorevYerileri.isEmpty();
 					else
