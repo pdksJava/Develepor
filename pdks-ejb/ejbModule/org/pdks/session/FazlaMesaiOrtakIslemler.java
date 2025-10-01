@@ -179,7 +179,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				double sure = 0.0d, toplamIzinSure = 0.0d;
 
 				if (cm.isHaftaTatilSabitDegil() == false) {
- 					List<CalismaModeliGun> gunList = null;
+					List<CalismaModeliGun> gunList = null;
 					if (cm.getCalismaModeliGunler() == null) {
 						List<CalismaModeliGun> calismaModeliGunList = pdksEntityController.getSQLParamByFieldList(CalismaModeliGun.TABLE_NAME, CalismaModeliGun.COLUMN_NAME_CALISMA_MODELI, cm.getId(), CalismaModeliGun.class, session);
 						if (!calismaModeliGunList.isEmpty()) {
@@ -387,7 +387,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		boolean haftaTatilDurum = ortakIslemler.getParameterKey("haftaTatilDurum").equals("1");
 		vardiyaGunMap = null;
 		HashMap<Long, Double> netSureMap = new HashMap<Long, Double>();
-		ortakIslemler.calismaModeliGunListGuncelle(puantajList,null, session);
+		ortakIslemler.calismaModeliGunListGuncelle(puantajList, null, session);
 		for (AylikPuantaj ap : puantajList) {
 			PersonelDenklestirme pd = ap.getPersonelDenklestirme();
 			Personel personel = pd.getPdksPersonel();
@@ -681,7 +681,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				List<PersonelDenklestirme> pdlist = pdksEntityController.getSQLParamList(perList, sb, fieldName, fields, PersonelDenklestirme.class, session);
 				perList.clear();
 				ortakIslemler.setPersonelDenklestirmeDevir(null, pdlist, session);
-			
+
 				for (PersonelDenklestirme pd : pdlist) {
 					boolean ekle = true;
 
@@ -2677,6 +2677,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (loginUser == null)
 			loginUser = authenticatedUser;
 		List<Sirket> list = ortakIslemler.getFazlaMesaiMudurList(loginUser, departmanId, null, null, null, aylikPuantaj, "S", denklestirme, fazlaMesaiTalepDurum, session);
+
 		List<SelectItem> selectList = ortakIslemler.getSelectItemList("mudurSirket", loginUser);
 		if (!list.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);
@@ -2685,6 +2686,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				selectList.add(new SelectItem(veri.getId(), veri.getAd()));
 			}
 		}
+		if (selectList.isEmpty()) {
+			DenklestirmeAy dm = aylikPuantaj != null ? aylikPuantaj.getDenklestirmeAy() : null;
+			selectList = getFazlaMesaiSirketList(null, dm != null ? aylikPuantaj : null, denklestirme, session);
+		}
+
 		return selectList;
 	}
 
