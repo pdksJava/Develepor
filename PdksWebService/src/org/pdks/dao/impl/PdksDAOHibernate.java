@@ -7,6 +7,8 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.pdks.dao.PdksDAO;
 
+import com.pdks.webService.PdksVeriOrtakAktar;
+
 /**
  * @author Hasan Sayar Genel objelerin veritabani islemleri.
  */
@@ -17,7 +19,7 @@ public class PdksDAOHibernate extends BaseDAOHibernate implements PdksDAO {
 		Session session = getHibernateCurrentSession();
 		boolean durum = false;
 		StringBuffer sb = new StringBuffer();
-		sb.append("select name, object_id from sys.objects with(nolock)");
+		sb.append("select name, object_id from sys.objects " + PdksVeriOrtakAktar.getSelectLOCK());
 		sb.append(" where name = :k and type = :t");
 		HashMap fields = new HashMap();
 		fields.put("k", name);

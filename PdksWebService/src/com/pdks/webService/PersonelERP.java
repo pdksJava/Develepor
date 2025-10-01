@@ -36,6 +36,7 @@ public class PersonelERP extends BaseERPObject {
 	private Boolean sanalPersonel;
 	private String grubaGirisTarihi;
 	private String yonetici2PerNo;
+	private String kimlikNo;
 	protected String digerTanimAlan01;
 	protected String digerTanimAlan01Kodu;
 	protected String digerTanimAlan02;
@@ -287,6 +288,14 @@ public class PersonelERP extends BaseERPObject {
 
 	public void setYonetici2PerNo(String yonetici2PerNo) {
 		this.yonetici2PerNo = yonetici2PerNo;
+	}
+
+	public String getKimlikNo() {
+		return kimlikNo;
+	}
+
+	public void setKimlikNo(String kimlikNo) {
+		this.kimlikNo = kimlikNo;
 	}
 
 	public String getDigerTanimAlan01() {
