@@ -5,4 +5,11 @@ package org.pdks.dao;
  */
 public interface PdksDAO extends BaseDAO {
 
+	/**
+	 * @param name
+	 * @param type
+	throws Exception * @return
+	 */
+	public boolean isExisObject(String name, String type) throws Exception;
+
 }
