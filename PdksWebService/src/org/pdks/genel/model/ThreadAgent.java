@@ -38,7 +38,8 @@ public class ThreadAgent extends Thread implements Serializable {
 	public void run() {
 		if (pdksDAO != null) {
 			if (agent != null && PdksUtil.hasStringValue(agent.getStoreProcedureAdi())) {
-				logger.info(agent.getAciklama() + " --> " + agent.getStoreProcedureAdi() + " : " + PdksUtil.convertToDateString(new Date(), "HH:mm"));
+				String str = agent.getAciklama() + " --> " + agent.getStoreProcedureAdi() + " : " + PdksUtil.convertToDateString(new Date(), "HH:mm");
+				logger.info(str);
 				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 				try {
 					veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, agent.getStoreProcedureAdi());
@@ -47,7 +48,7 @@ public class ThreadAgent extends Thread implements Serializable {
 					else
 						pdksDAO.execSPList(veriMap, null);
 				} catch (Exception e) {
-					logger.error(agent.getStoreProcedureAdi() + " " + e);
+					logger.error(str + "\nHata : " + e);
 					e.printStackTrace();
 				}
 			}
