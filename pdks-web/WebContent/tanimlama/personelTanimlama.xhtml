@@ -87,7 +87,7 @@
                       			  İşlemler
               		 			 </f:facet>
 								<TABLE>
-									<TR> 
+									<TR>
 										<ui:fragment rendered="#{personelView.isGuncelle(authenticatedUser)}">
 											<TD><a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink" action="#{pdksPersonelHome.kayitGuncelle(personelView,true)}"
 													rendered="#{pdksPersonelHome.personelERPGuncelleme == 'M' or pdksPersonelHome.manuelTanimla or personelView.pdksPersonel.id != null  }"
@@ -869,10 +869,12 @@
 									<h:outputText value="#{pdksPersonelHome.instance.personelKGS.kimlikNo}" />
 
 								</s:decorate>
-								<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.kartNoAciklama != ''}">
+								<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.kartNoAciklama != '' or pdksPersonelHome.kgsPersonelSPAdi!=null}">
 									<ui:define name="label">#{pdksPersonelHome.kartNoAciklama}</ui:define>
-									<h:outputText value="#{pdksPersonelHome.instance.personelKGS.kartNo}" />
-
+									<ui:fragment>
+										<h:outputText value="#{pdksPersonelHome.instance.personelKGS.kartNo}" rendered="#{pdksPersonelHome.kgsPersonelSPAdi==null}" />
+										<h:inputText value="#{pdksPersonelHome.kartNo}" size="35" rendered="#{pdksPersonelHome.kgsPersonelSPAdi!=null}" />
+									</ui:fragment>
 								</s:decorate>
 							</h:panelGrid>
 							<s:decorate template="/layout/edit.xhtml">

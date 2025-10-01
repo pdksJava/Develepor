@@ -133,6 +133,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private List<SelectItem> personelDurumTipiList;
 	private List<Vardiya> calismaModeliVardiyaList;
 	private List<PersonelDonemselDurum> donemselDurumList;
+	private LinkedHashMap<String, String> kgsPersonelSPMap;
 	private TreeMap<String, PersonelDinamikAlan> personelDinamikMap;
 	private PersonelView personelView;
 	private List<Departman> departmanTanimList = new ArrayList<Departman>(), departmanKullaniciList = new ArrayList<Departman>();
@@ -162,7 +163,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private User user, eskiKullanici;
 	private Date tarih;
 	private Tanim bosDepartman, parentDepartman, parentBordroTanim;
-	private String oldUserName, bosDepartmanKodu;
+	private String oldUserName, bosDepartmanKodu, kgsPersonelSPAdi, kartNo;
 
 	private PersonelIzin bakiyeIzin;
 	private Double bakiyeIzinSuresi;
@@ -197,6 +198,54 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	@Begin(join = true)
 	public void create() {
 		super.create();
+	}
+
+	/**
+	 * @param personelERP
+	 * @throws Exception
+	 */
+	private PersonelKGS kgsPersonelVeriOlustur(Personel personelERP) throws Exception {
+		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+		StringBuffer sb = new StringBuffer(kgsPersonelSPAdi);
+		PersonelKGS personelKGS = null;
+		for (Iterator iterator = kgsPersonelSPMap.keySet().iterator(); iterator.hasNext();) {
+			String key = (String) iterator.next();
+			Object value = null;
+			if (personelERP != null) {
+				String alanAdi = kgsPersonelSPMap.get(key);
+				if (alanAdi.equalsIgnoreCase("ID"))
+					value = personelERP.getPersonelKGS().getKgsId();
+				else if (alanAdi.equalsIgnoreCase("ADI"))
+					value = personelERP.getAd();
+				else if (alanAdi.equalsIgnoreCase("SOYADI"))
+					value = personelERP.getSoyad();
+				else if (alanAdi.equalsIgnoreCase("PERSONEL_NO"))
+					value = personelERP.getPdksSicilNo();
+				else if (alanAdi.equalsIgnoreCase("KIMLIK_NO"))
+					value = personelERP.getPersonelKGS().getKimlikNo();
+				else if (alanAdi.equalsIgnoreCase("ISE_GIRIS_TARIHI"))
+					value = personelERP.getIseGirisTarihi();
+				else if (alanAdi.equalsIgnoreCase("CINSIYET"))
+					value = personelERP.getCinsiyet() != null ? personelERP.getCinsiyet().getErpKodu() : null;
+				else if (alanAdi.equalsIgnoreCase("ISTEN_AYRILMA_TARIHI"))
+					value = personelERP.getIstenAyrilisTarihi();
+				else if (alanAdi.equalsIgnoreCase("DOGUM_TARIHI"))
+					value = personelERP.getDogumTarihi();
+				else if (alanAdi.equalsIgnoreCase("KART_NO"))
+					value = kartNo;
+			}
+			veriMap.put(key, value);
+
+		}
+
+		List<PersonelKGS> list = pdksEntityController.execSPList(veriMap, sb, PersonelKGS.class);
+		if (list != null) {
+			if (list.size() == 1)
+				personelKGS = list.get(0);
+			list = null;
+		}
+
+		return personelKGS;
 	}
 
 	/**
@@ -1230,6 +1279,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						}
 
 						saveIkinciYoneticiOlmazList();
+						if (kgsPersonelSPAdi != null)
+							kgsPersonelVeriOlustur(pdksPersonel);
 
 						session.flush();
 						if (tesisYetki && kullanici.getId() != null && authenticatedUser.getId() != null) {
@@ -1638,6 +1689,40 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	}
 
 	/**
+	 * @throws Exception
+	 */
+	private void kgsPersonelEntegrasyonVeriOlustur() throws Exception {
+
+		List<Tanim> list = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_KGS_ENTEGRASYON_ALAN, Tanim.class, session);
+		if (list.isEmpty() == false) {
+			list = PdksUtil.sortObjectStringAlanList(list, "getKodu", null);
+			Tanim spTanim = null;
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				Tanim tanim = (Tanim) iterator.next();
+				if (tanim.getDurum()) {
+					if (tanim.getKodu().equalsIgnoreCase("sp")) {
+						spTanim = tanim;
+						iterator.remove();
+					}
+				} else
+					iterator.remove();
+
+			}
+			if (spTanim != null && list.isEmpty() == false) {
+				if (ortakIslemler.isExisStoreProcedure(spTanim.getErpKodu(), session)) {
+					kgsPersonelSPAdi = spTanim.getErpKodu();
+					kgsPersonelSPMap = new LinkedHashMap<String, String>();
+					for (Tanim tanim : list)
+						kgsPersonelSPMap.put(tanim.getKodu(), tanim.getErpKodu());
+				}
+			}
+
+		}
+		list = null;
+
+	}
+
+	/**
 	 * @param personelView
 	 * @param pdksDurum
 	 */
@@ -1659,13 +1744,21 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		bosDepartman = null;
 		bosDepartmanKodu = ortakIslemler.getParameterKey("bosDepartmanKodu");
 		Personel pdksPersonel = personelView.getPdksPersonel();
+		kgsPersonelSPAdi = null;
+		kgsPersonelSPMap = null;
+		Sirket sirket = pdksPersonel != null && pdksPersonel.getId() != null ? pdksPersonel.getSirket() : null;
 		if (pdksPersonel == null) {
 			pdksPersonel = new Personel();
 			if (!tumPersonelDenklestirme.equals(""))
 				pdksPersonel.setPdks(tumPersonelDenklestirme.equals("1"));
 			personelView.setPdksPersonel(pdksPersonel);
 		}
-		Sirket sirket = pdksPersonel != null && pdksPersonel.getId() != null ? pdksPersonel.getSirket() : null;
+		if (sirket != null && sirket.isPdksMi() && sirket.isErp()) {
+			try {
+				kgsPersonelEntegrasyonVeriOlustur();
+			} catch (Exception e) {
+			}
+		}
 		boolean tanimOku = true;
 		setInstance(pdksPersonel);
 		if (pdksPersonel != null && sirket != null && !pdksPersonel.getSirket().isErp()) {
@@ -6104,6 +6197,22 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 	public void setDistinctBolumList(List<Tanim> distinctBolumList) {
 		this.distinctBolumList = distinctBolumList;
+	}
+
+	public String getKgsPersonelSPAdi() {
+		return kgsPersonelSPAdi;
+	}
+
+	public void setKgsPersonelSPAdi(String kgsPersonelSPAdi) {
+		this.kgsPersonelSPAdi = kgsPersonelSPAdi;
+	}
+
+	public String getKartNo() {
+		return kartNo;
+	}
+
+	public void setKartNo(String kartNo) {
+		this.kartNo = kartNo;
 	}
 
 }

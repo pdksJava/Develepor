@@ -4528,7 +4528,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 					value = personelERP.getCinsiyetKodu();
 				else if (alanAdi.equalsIgnoreCase("ISTEN_AYRILMA_TARIHI"))
 					value = getTarih(personelERP.getIstenAyrilmaTarihi(), FORMAT_DATE);
-
+				else if (alanAdi.equalsIgnoreCase("DOGUM_TARIHI"))
+					value = getTarih(personelERP.getDogumTarihi(), FORMAT_DATE);
 			}
 			veriMap.put(key, value);
 
