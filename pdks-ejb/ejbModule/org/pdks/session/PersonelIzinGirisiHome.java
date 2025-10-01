@@ -4794,7 +4794,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 							if (izinTipi != null && izinTipi.isSenelikIzin())
 								throw new Exception("Arife gününü içeren izin girilemez!");
 						}
-					} else if (tempVardiya.isHaftaTatil() && gunFark > 2L && izinBordroDetayTipi != null && izinBordroDetayTipi.equals(BordroDetayTipi.RAPORLU_IZIN) == false) {
+					} else if (tempVardiya.isHaftaTatil() && senelikIzin == false && gunFark > 2L && izinBordroDetayTipi != null && izinBordroDetayTipi.equals(BordroDetayTipi.RAPORLU_IZIN) == false) {
 						izinSuresiSaatGun += eklenecekGun;
 					}
 
