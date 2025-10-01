@@ -9793,9 +9793,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (basTarih != null)
 			lastMap.put("tarih", PdksUtil.convertToDateString(basTarih, "yyyy-MM-dd"));
 		try {
+			lastMap.put("sayfaURL", "fazlaMesaiTalep");
 			ortakIslemler.saveLastParameter(lastMap, session);
 		} catch (Exception e) {
-
+			logger.error(e);
+			e.printStackTrace();
 		}
 		Sirket sirket = null;
 		if (sirketId != null && sirketId > 0) {
