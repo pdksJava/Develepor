@@ -3741,9 +3741,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 								e.printStackTrace();
 								personelKGSData = null;
 							}
-							if (personelKGSData != null)  
+							if (personelKGSData != null)
 								personelKGSMap.put(personelERP.getPersonelNo(), personelKGSData);
- 						}
+						}
 						if (gecmisTarih != null && iseBaslamaTarihi != null && iseBaslamaTarihi.before(gecmisTarih))
 							kayitYok = false;
 
@@ -3795,60 +3795,61 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 						String erpAdSoyad = PdksUtil.setTurkishStr(PdksUtil.getAdSoyad(personelERP.getAdi(), personelERP.getSoyadi()));
 						String kgsAdSoyad = PdksUtil.setTurkishStr(PdksUtil.getAdSoyad(personelKGSData.getAd(), personelKGSData.getSoyad()));
-
-						if (!kgsAdSoyad.equalsIgnoreCase(erpAdSoyad)) {
-							if (personelERP.getAdi() == null || personelERP.getSoyadi() == null) {
-								String mesaj = "adı ve soyadı";
-								if (personelERP.getAdi() != null) {
-									mesaj = "soyadı";
-									bayanSoyad = personelTest.getCinsiyetBayan();
-									if (bayanSoyad)
-										personelERP.setSoyadi(personelKGSData.getSoyad());
-
-								}
-
-								else if (personelERP.getSoyadi() != null)
-									mesaj = "adı";
-
-								mesaj = personelNo + " personel " + mesaj + " girilmemiş!  ";
-								addHatalist(bayanSoyad == false ? personelERP.getHataList() : kidemHataList, PdksUtil.replaceAllManuel(mesaj, "  ", " "));
-
-							} else {
-								PersonelKGS personelKGS = personelKGSMap.get(personelNo);
-								String kgsAd = personelKGS.getAd();
-								if (sistemDestekVar && ad != null && kgsAd != null && !ad.equals(kgsAd)) {
-									if (ad.indexOf(" ") > 0 || kgsAd.indexOf(" ") > 0) {
-										if (ad.indexOf(" ") > 0)
-											ad = PdksUtil.replaceAllManuel(ad, " ", "");
-										if (kgsAd.indexOf(" ") > 0)
-											kgsAd = PdksUtil.replaceAllManuel(kgsAd, " ", "");
-									}
-								}
-								boolean adiUyumlu = isBenzer(ad, kgsAd);
-								boolean soyadiUyumlu = isBenzer(personelKGS.getSoyad(), soyad);
-								if (!adiUyumlu || !soyadiUyumlu) {
-									String mesaj = "";
-									if (!adiUyumlu && !soyadiUyumlu)
-										mesaj = "adı ve soyadı";
-									if (!adiUyumlu) {
-										mesaj = "adı";
-									} else if (!soyadiUyumlu) {
-										mesaj = "soyadi";
+						if (kgsPersonelSPAdi == null) {
+							if (!kgsAdSoyad.equalsIgnoreCase(erpAdSoyad)) {
+								if (personelERP.getAdi() == null || personelERP.getSoyadi() == null) {
+									String mesaj = "adı ve soyadı";
+									if (personelERP.getAdi() != null) {
+										mesaj = "soyadı";
 										bayanSoyad = personelTest.getCinsiyetBayan();
 										if (bayanSoyad)
-											personelERP.setSoyadi(personelKGS.getSoyad());
+											personelERP.setSoyadi(personelKGSData.getSoyad());
 
 									}
-									mesaj = personelNo + " personel " + mesaj + " uyumsuz! ( " + adSoyadERP + " farklı " + personelKGS.getAdSoyad() + (personelKGS.getKapiSirket() != null ? " [ " + personelKGS.getKapiSirket().getAciklama() + " ] " : "") + " ) ";
+
+									else if (personelERP.getSoyadi() != null)
+										mesaj = "adı";
+
+									mesaj = personelNo + " personel " + mesaj + " girilmemiş!  ";
 									addHatalist(bayanSoyad == false ? personelERP.getHataList() : kidemHataList, PdksUtil.replaceAllManuel(mesaj, "  ", " "));
 
+								} else {
+									PersonelKGS personelKGS = personelKGSMap.get(personelNo);
+									String kgsAd = personelKGS.getAd();
+									if (sistemDestekVar && ad != null && kgsAd != null && !ad.equals(kgsAd)) {
+										if (ad.indexOf(" ") > 0 || kgsAd.indexOf(" ") > 0) {
+											if (ad.indexOf(" ") > 0)
+												ad = PdksUtil.replaceAllManuel(ad, " ", "");
+											if (kgsAd.indexOf(" ") > 0)
+												kgsAd = PdksUtil.replaceAllManuel(kgsAd, " ", "");
+										}
+									}
+									boolean adiUyumlu = isBenzer(ad, kgsAd);
+									boolean soyadiUyumlu = isBenzer(personelKGS.getSoyad(), soyad);
+									if (kgsPersonelSPAdi == null && (!adiUyumlu || !soyadiUyumlu)) {
+										String mesaj = "";
+										if (!adiUyumlu && !soyadiUyumlu)
+											mesaj = "adı ve soyadı";
+										if (!adiUyumlu) {
+											mesaj = "adı";
+										} else if (!soyadiUyumlu) {
+											mesaj = "soyadi";
+											bayanSoyad = personelTest.getCinsiyetBayan();
+											if (bayanSoyad)
+												personelERP.setSoyadi(personelKGS.getSoyad());
+
+										}
+										mesaj = personelNo + " personel " + mesaj + " uyumsuz! ( " + adSoyadERP + " farklı " + personelKGS.getAdSoyad() + (personelKGS.getKapiSirket() != null ? " [ " + personelKGS.getKapiSirket().getAciklama() + " ] " : "") + " ) ";
+										addHatalist(bayanSoyad == false ? personelERP.getHataList() : kidemHataList, PdksUtil.replaceAllManuel(mesaj, "  ", " "));
+
+									}
 								}
+							} else {
+								if (personelERP.getAdi() == null)
+									personelERP.setAdi("");
+								if (personelERP.getSoyadi() == null)
+									personelERP.setSoyadi("");
 							}
-						} else {
-							if (personelERP.getAdi() == null)
-								personelERP.setAdi("");
-							if (personelERP.getSoyadi() == null)
-								personelERP.setSoyadi("");
 						}
 
 					}
@@ -3876,10 +3877,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 								logger.error(e);
 								e.printStackTrace();
 							}
- 							if (personelKGS != null)  
+							if (personelKGS != null)
 								personelKGSMap.put(personelERP.getPersonelNo(), personelKGS);
 
-							 
 						}
 						personel.setPersonelTipi(personelTipi);
 						sablonList.clear();
@@ -4528,7 +4528,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				String alanAdi = kgsPersonelSPMap.get(key);
 				if (alanAdi.equalsIgnoreCase("ID")) {
 					if (personelKGS != null)
-						value = personelKGS.getId();
+						value = personelKGS.getKgsId();
 				} else if (alanAdi.equalsIgnoreCase("ADI"))
 					value = personelERP.getAdi();
 				else if (alanAdi.equalsIgnoreCase("SOYADI"))
