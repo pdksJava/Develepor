@@ -3870,7 +3870,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					PersonelKGS personelKGS = personelKGSMap.get(personelNo);
 					personel = personelPDKSMap.containsKey(personelNo) ? personelPDKSMap.get(personelNo) : null;
 					if (personel != null) {
-						if (personel.getId() != null && kgsPersonelSPAdi != null)
+						if (kgsPersonelSPAdi != null && personel.getId() != null)
 							try {
 								personelKGS = kgsPersonelVeriOlustur(personelERP, personelKGS);
 							} catch (Exception e) {
