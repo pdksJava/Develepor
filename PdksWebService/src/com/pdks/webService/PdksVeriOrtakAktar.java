@@ -3735,7 +3735,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					else {
 						if (kgsPersonelSPAdi != null) {
 							try {
-								personelKGSData = kgsPersonelVeriOlustur(personelERP);
+								personelKGSData = kgsPersonelVeriOlustur(personelERP, null);
 							} catch (Exception e) {
 								logger.error(e);
 								e.printStackTrace();
@@ -3870,6 +3870,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 					PersonelKGS personelKGS = personelKGSMap.get(personelNo);
 					personel = personelPDKSMap.containsKey(personelNo) ? personelPDKSMap.get(personelNo) : null;
 					if (personel != null) {
+						if (kgsPersonelSPAdi != null)
+							try {
+								personelKGS = kgsPersonelVeriOlustur(personelERP, personelKGS);
+							} catch (Exception e) {
+							}
+
 						personel.setPersonelTipi(personelTipi);
 						sablonList.clear();
 						modelList.clear();
@@ -4503,26 +4509,32 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 	/**
 	 * @param personelERP
+	 * @param personelKGS
+	 * @return
 	 * @throws Exception
 	 */
-	private PersonelKGS kgsPersonelVeriOlustur(PersonelERP personelERP) throws Exception {
+	private PersonelKGS kgsPersonelVeriOlustur(PersonelERP personelERP, PersonelKGS personelKGS) throws Exception {
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, kgsPersonelSPAdi);
-		PersonelKGS personelKGS = null;
 		for (Iterator iterator = kgsPersonelSPMap.keySet().iterator(); iterator.hasNext();) {
 			String key = (String) iterator.next();
 			Object value = null;
 			if (personelERP != null) {
 				String alanAdi = kgsPersonelSPMap.get(key);
-				if (alanAdi.equalsIgnoreCase("ADI"))
+				if (alanAdi.equalsIgnoreCase("ID")) {
+					if (personelKGS != null)
+						value = personelKGS.getId();
+				} else if (alanAdi.equalsIgnoreCase("ADI"))
 					value = personelERP.getAdi();
 				else if (alanAdi.equalsIgnoreCase("SOYADI"))
 					value = personelERP.getSoyadi();
 				else if (alanAdi.equalsIgnoreCase("PERSONEL_NO"))
 					value = personelERP.getPersonelNo();
-				else if (alanAdi.equalsIgnoreCase("KIMLIK_NO"))
+				else if (alanAdi.equalsIgnoreCase("KIMLIK_NO")) {
 					value = personelERP.getKimlikNo();
-				else if (alanAdi.equalsIgnoreCase("ISE_GIRIS_TARIHI"))
+					if (value == null && personelKGS != null)
+						value = personelKGS.getKimlikNo();
+				} else if (alanAdi.equalsIgnoreCase("ISE_GIRIS_TARIHI"))
 					value = getTarih(personelERP.getIseGirisTarihi(), FORMAT_DATE);
 				else if (alanAdi.equalsIgnoreCase("CINSIYET"))
 					value = personelERP.getCinsiyetKodu();
@@ -4530,11 +4542,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 					value = getTarih(personelERP.getIstenAyrilmaTarihi(), FORMAT_DATE);
 				else if (alanAdi.equalsIgnoreCase("DOGUM_TARIHI"))
 					value = getTarih(personelERP.getDogumTarihi(), FORMAT_DATE);
+				else if (alanAdi.equalsIgnoreCase("KART_NO"))
+					value = personelKGS != null ? personelKGS.getKartNo() : null;
 			}
 			veriMap.put(key, value);
 
 		}
-
 		List<PersonelKGS> list = pdksDAO.execSPList(veriMap, PersonelKGS.class);
 		if (list != null) {
 			if (list.size() == 1)
