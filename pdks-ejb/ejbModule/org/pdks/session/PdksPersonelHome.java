@@ -1746,6 +1746,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		Personel pdksPersonel = personelView.getPdksPersonel();
 		kgsPersonelSPAdi = null;
 		kgsPersonelSPMap = null;
+		kartNo = null;
 		Sirket sirket = pdksPersonel != null && pdksPersonel.getId() != null ? pdksPersonel.getSirket() : null;
 		if (pdksPersonel == null) {
 			pdksPersonel = new Personel();
@@ -1756,6 +1757,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (sirket != null && sirket.isPdksMi() && sirket.isErp()) {
 			try {
 				kgsPersonelEntegrasyonVeriOlustur();
+				if (kgsPersonelSPAdi != null)
+					kartNo = pdksPersonel.getPersonelKGS() != null ? pdksPersonel.getPersonelKGS().getKartNo() : null;
 			} catch (Exception e) {
 			}
 		}
