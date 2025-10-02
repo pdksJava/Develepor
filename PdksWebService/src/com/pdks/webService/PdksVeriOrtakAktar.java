@@ -3741,10 +3741,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 								e.printStackTrace();
 								personelKGSData = null;
 							}
-							if (personelKGSData != null) {
+							if (personelKGSData != null)  
 								personelKGSMap.put(personelERP.getPersonelNo(), personelKGSData);
-							}
-						}
+ 						}
 						if (gecmisTarih != null && iseBaslamaTarihi != null && iseBaslamaTarihi.before(gecmisTarih))
 							kayitYok = false;
 
@@ -3870,12 +3869,18 @@ public class PdksVeriOrtakAktar implements Serializable {
 					PersonelKGS personelKGS = personelKGSMap.get(personelNo);
 					personel = personelPDKSMap.containsKey(personelNo) ? personelPDKSMap.get(personelNo) : null;
 					if (personel != null) {
-						if (kgsPersonelSPAdi != null && personel.getId() != null)
+						if (kgsPersonelSPAdi != null && personel.getId() != null) {
 							try {
 								personelKGS = kgsPersonelVeriOlustur(personelERP, personelKGS);
 							} catch (Exception e) {
+								logger.error(e);
+								e.printStackTrace();
 							}
+ 							if (personelKGS != null)  
+								personelKGSMap.put(personelERP.getPersonelNo(), personelKGS);
 
+							 
+						}
 						personel.setPersonelTipi(personelTipi);
 						sablonList.clear();
 						modelList.clear();
