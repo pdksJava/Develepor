@@ -77,9 +77,9 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "personelERP", propOrder = { "adi", "bolumAdi", "bolumKodu", "bordroAltAlanAdi", "bordroAltAlanKodu", "cinsiyetKodu", "cinsiyeti", "departmanAdi", "departmanKodu", "dogumTarihi", "gorevKodu", "gorevi", "iseGirisTarihi", "istenAyrilmaTarihi", "kidemTarihi", "masrafYeriAdi",
-		"masrafYeriKodu", "personelNo", "personelTipi", "personelTipiKodu", "sanalPersonel", "sirketAdi", "sirketKodu", "soyadi", "tesisAdi", "tesisKodu", "yoneticiPerNo", "grubaGirisTarihi", "yonetici2PerNo", "digerTanimAlan01", "digerTanimAlan01Kodu", "digerTanimAlan02", "digerTanimAlan02Kodu",
-		"digerTanimAlan03", "digerTanimAlan03Kodu", "digerTanimAlan04", "digerTanimAlan04Kodu", "digerTanimAlan05", "digerTanimAlan05Kodu", "digerTanimAlan06", "digerTanimAlan06Kodu", "digerTanimAlan07", "digerTanimAlan07Kodu", "digerTanimAlan08", "digerTanimAlan08Kodu", "digerTanimAlan09",
-		"digerTanimAlan09Kodu", "digerTanimAlan10", "digerTanimAlan10Kodu" })
+		"masrafYeriKodu", "personelNo", "personelTipi", "personelTipiKodu", "sanalPersonel", "sirketAdi", "sirketKodu", "soyadi", "tesisAdi", "tesisKodu", "yoneticiPerNo", "grubaGirisTarihi", "yonetici2PerNo", "kimlikNo", "digerTanimAlan01", "digerTanimAlan01Kodu", "digerTanimAlan02",
+		"digerTanimAlan02Kodu", "digerTanimAlan03", "digerTanimAlan03Kodu", "digerTanimAlan04", "digerTanimAlan04Kodu", "digerTanimAlan05", "digerTanimAlan05Kodu", "digerTanimAlan06", "digerTanimAlan06Kodu", "digerTanimAlan07", "digerTanimAlan07Kodu", "digerTanimAlan08", "digerTanimAlan08Kodu",
+		"digerTanimAlan09", "digerTanimAlan09Kodu", "digerTanimAlan10", "digerTanimAlan10Kodu" })
 public class PersonelERP extends BaseERPObject {
 
 	protected String adi;
@@ -111,6 +111,7 @@ public class PersonelERP extends BaseERPObject {
 	protected String yoneticiPerNo;
 	protected String grubaGirisTarihi;
 	protected String yonetici2PerNo;
+	protected String kimlikNo;
 	protected String digerTanimAlan01;
 	protected String digerTanimAlan01Kodu;
 	protected String digerTanimAlan02;
@@ -899,6 +900,14 @@ public class PersonelERP extends BaseERPObject {
 
 	public void setDigerTanimAlan10Kodu(String digerTanimAlan10Kodu) {
 		this.digerTanimAlan10Kodu = digerTanimAlan10Kodu;
+	}
+
+	public String getKimlikNo() {
+		return kimlikNo;
+	}
+
+	public void setKimlikNo(String kimlikNo) {
+		this.kimlikNo = kimlikNo;
 	}
 
 }

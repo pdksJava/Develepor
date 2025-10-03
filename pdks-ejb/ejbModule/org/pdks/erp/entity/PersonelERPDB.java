@@ -26,7 +26,7 @@ public class PersonelERPDB implements Serializable, Cloneable {
 	private static final long serialVersionUID = 6726325986460092413L;
 
 	public static final String VIEW_NAME = "PERSONEL_ERP_VIEW";
- 	public static final String FORMAT_DATE = "yyyy-MM-dd";
+	public static final String FORMAT_DATE = "yyyy-MM-dd";
 	public static final String COLUMN_NAME_ISTEN_AYRILMA_TARIHI = "ISTEN_AYRILMA_TARIHI";
 	public static final String COLUMN_NAME_GUNCELLEME_TARIHI = "GUNCELLEME_TARIHI";
 	public static final String COLUMN_NAME_PERSONEL_NO = "PERSONEL_NO";
@@ -63,6 +63,8 @@ public class PersonelERPDB implements Serializable, Cloneable {
 	private String yoneticiPerNo;
 	private Date grubaGirisTarihi;
 	private String yonetici2PerNo;
+	private String kimlikNo;
+
 	private Date guncellemeTarihi;
 
 	public PersonelERPDB() {
@@ -336,6 +338,15 @@ public class PersonelERPDB implements Serializable, Cloneable {
 		this.yonetici2PerNo = yonetici2PerNo;
 	}
 
+	@Column(name = "KIMLIK_NO")
+	public String getKimlikNo() {
+		return kimlikNo;
+	}
+
+	public void setKimlikNo(String kimlikNo) {
+		this.kimlikNo = kimlikNo;
+	}
+
 	@Column(name = COLUMN_NAME_GUNCELLEME_TARIHI)
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getGuncellemeTarihi() {
@@ -379,6 +390,7 @@ public class PersonelERPDB implements Serializable, Cloneable {
 		p.setYoneticiPerNo(this.yoneticiPerNo);
 		p.setGrubaGirisTarihi(PdksUtil.convertToDateString(this.grubaGirisTarihi, pattern));
 		p.setYonetici2PerNo(this.yonetici2PerNo);
+		p.setKimlikNo(this.kimlikNo);
 		return p;
 	}
 
