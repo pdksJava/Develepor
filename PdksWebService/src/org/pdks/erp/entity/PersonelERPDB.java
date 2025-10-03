@@ -60,6 +60,7 @@ public class PersonelERPDB implements Serializable, Cloneable {
 	private String yoneticiPerNo;
 	private Date grubaGirisTarihi;
 	private String yonetici2PerNo;
+	private String kimlikNo;
 	private Date guncellemeTarihi;
 
 	public PersonelERPDB() {
@@ -331,6 +332,15 @@ public class PersonelERPDB implements Serializable, Cloneable {
 
 	public void setYonetici2PerNo(String yonetici2PerNo) {
 		this.yonetici2PerNo = yonetici2PerNo;
+	}
+
+	@Column(name = "KIMLIK_NO")
+	public String getKimlikNo() {
+		return kimlikNo;
+	}
+
+	public void setKimlikNo(String kimlikNo) {
+		this.kimlikNo = kimlikNo;
 	}
 
 	@Column(name = COLUMN_NAME_GUNCELLEME_TARIHI)
