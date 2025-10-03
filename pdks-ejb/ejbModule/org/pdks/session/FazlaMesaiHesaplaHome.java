@@ -1900,7 +1900,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 										}
 									} else if (vardiyaTatil == null && vardiyaGun.getVardiya().isOffGun() && it.isRaporIzin() == false) {
-										if (it.getTakvimGunumu() == null || it.getTakvimGunumu().equals(Boolean.FALSE)) {
+										if (it.getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK) == false && (it.getTakvimGunumu() == null || it.getTakvimGunumu().equals(Boolean.FALSE))) {
 											if (vardiyaGun.isHaftaIci() || cumartesiCalisiyor) {
 												vardiyaGun.setStyle("color:red;");
 												offIzinliGunler.add(vardiyaGun);
@@ -3006,11 +3006,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	public Boolean fazlaMesaiOnayDurumu() {
 		boolean onayDurum = false;
 		if (fazlaMesaiOnayDurum && kullaniciPersonel == false && hataYok && denklestirmeAyDurum) {
-			onayDurum = ikRole || PdksUtil.hasStringValue(sicilNo) == false || denklestirmeAy.getGuncelleIK();
-			if (onayDurum && ikRole && denklestirmeAy.getOtomatikOnayIKTarih() != null) {
+			boolean ikDurum = authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi();
+			onayDurum = ikDurum || PdksUtil.hasStringValue(sicilNo) == false || denklestirmeAy.getGuncelleIK();
+			if (onayDurum && ikDurum && ortakIslemler.getParameterKey("fazlaMesaiIKOnay").equals("1") == false && denklestirmeAy.getOtomatikOnayIKTarih() != null) {
 				Date bugun = PdksUtil.getDate(new Date());
 				onayDurum = bugun.after(denklestirmeAy.getOtomatikOnayIKTarih()) || (denklestirmeAy.getBitTarih() != null && bugun.getTime() <= denklestirmeAy.getBitTarih().getTime());
 			}
+
 		}
 
 		return onayDurum;

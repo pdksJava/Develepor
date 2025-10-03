@@ -19,43 +19,46 @@
 
 				</ui:fragment>
 			</f:facet>
-			<rich:column class="#{aylikPuantaj.trSonucClass}" style="width: 20px"
-				rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and fazlaMesaiHesaplaHome.hataYok }">
-				<f:facet name="header">
-					<ui:fragment rendered="#{fazlaMesaiHesaplaHome.kullaniciPersonel == false and fazlaMesaiHesaplaHome.hataYok}">
-						<h:selectBooleanCheckbox value="#{fazlaMesaiHesaplaHome.kaydetDurum}">
-							<a4j:support event="onclick" status="ajaxStatus" action="#{fazlaMesaiHesaplaHome.kaydetSec()}" reRender="hareketTables" />
-						</h:selectBooleanCheckbox>
-					</ui:fragment>
-				</f:facet>
-				<ui:fragment
-					rendered="#{fazlaMesaiHesaplaHome.hataYok and aylikPuantaj.personelDenklestirme.erpAktarildi == false and (aylikPuantaj.fazlaMesaiHesapla || aylikPuantaj.personelDenklestirme.denklestirme == false)}">
-					<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.denklestirme == false or aylikPuantaj.personelDenklestirme.onaylandi == false}">
-						<a4j:commandButton id="onaylandi" image="/img/msgerror.png" />
-						<rich:toolTip for="onaylandi">
-							<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.denklestirme == false}">
-																		Fazla Mesai Tanımsız!<br />
-							</ui:fragment>
-							<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi == false}">
-																		Aylık plan onaylanmamıştır<br />
-							</ui:fragment>
 
-						</rich:toolTip>
-					</ui:fragment>
-					<ui:fragment
-						rendered="#{aylikPuantaj.personelDenklestirme.onaylandi and aylikPuantaj.personelDenklestirme.denklestirme and aylikPuantaj.uyariDurum}">
-						<ui:fragment rendered="#{aylikPuantaj.donemBitti}">
-							<h:selectBooleanCheckbox value="#{aylikPuantaj.kaydet}" />
+			<c:if test="#{fazlaMesaiHesaplaHome.gecenAyDurum == false and fazlaMesaiHesaplaHome.fazlaMesaiOnayDurumu()}">
+				<rich:column class="#{aylikPuantaj.trSonucClass}" style="width: 20px"
+					rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum and fazlaMesaiHesaplaHome.hataYok }">
+					<f:facet name="header">
+						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.kullaniciPersonel == false and fazlaMesaiHesaplaHome.hataYok}">
+							<h:selectBooleanCheckbox value="#{fazlaMesaiHesaplaHome.kaydetDurum}">
+								<a4j:support event="onclick" status="ajaxStatus" action="#{fazlaMesaiHesaplaHome.kaydetSec()}" reRender="hareketTables" />
+							</h:selectBooleanCheckbox>
 						</ui:fragment>
-						<ui:fragment rendered="#{aylikPuantaj.donemBitti == false}">
-							<a4j:commandButton id="donemBitti" image="/img/msgerror.png" />
-							<rich:toolTip for="donemBitti">
+					</f:facet>
+					<ui:fragment
+						rendered="#{fazlaMesaiHesaplaHome.hataYok and aylikPuantaj.personelDenklestirme.erpAktarildi == false and (aylikPuantaj.fazlaMesaiHesapla || aylikPuantaj.personelDenklestirme.denklestirme == false)}">
+						<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.denklestirme == false or aylikPuantaj.personelDenklestirme.onaylandi == false}">
+							<a4j:commandButton id="onaylandi" image="/img/msgerror.png" />
+							<rich:toolTip for="onaylandi">
+								<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.denklestirme == false}">
+																		Fazla Mesai Tanımsız!<br />
+								</ui:fragment>
+								<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi == false}">
+																		Aylık plan onaylanmamıştır<br />
+								</ui:fragment>
+
+							</rich:toolTip>
+						</ui:fragment>
+						<ui:fragment
+							rendered="#{aylikPuantaj.personelDenklestirme.onaylandi and aylikPuantaj.personelDenklestirme.denklestirme and aylikPuantaj.uyariDurum}">
+							<ui:fragment rendered="#{aylikPuantaj.donemBitti}">
+								<h:selectBooleanCheckbox value="#{aylikPuantaj.kaydet}" />
+							</ui:fragment>
+							<ui:fragment rendered="#{aylikPuantaj.donemBitti == false}">
+								<a4j:commandButton id="donemBitti" image="/img/msgerror.png" />
+								<rich:toolTip for="donemBitti">
 																		Ayın son günü vardiyası bitmedi! 
 																	</rich:toolTip>
+							</ui:fragment>
 						</ui:fragment>
 					</ui:fragment>
-				</ui:fragment>
-			</rich:column>
+				</rich:column>
+			</c:if>
 			<rich:column class="#{aylikPuantaj.trSonucClass}" style="width: 20px">
 				<f:facet name="header">
 					<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
