@@ -5285,6 +5285,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 			personelERP.setYoneticiPerNo(null);
 			personelERP.setYonetici2PerNo(null);
 			personelERP.setGrubaGirisTarihi(null);
+			personelERP.setKimlikNo(null);
+			personelERP.setPersonelTipi(null);
+			personelERP.setPersonelTipiKodu(null);
 			digerAlanlarBosalt(personelERP);
 
 		}
