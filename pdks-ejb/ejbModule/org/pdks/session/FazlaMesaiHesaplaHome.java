@@ -181,7 +181,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private String sicilNo = "", sicilYeniNo = "", excelDosyaAdi, mailKonu, mailIcerik, msgwarnImg = "";
 	private List<YemekIzin> yemekAraliklari;
 	private CalismaModeli perCalismaModeli;
-	private Long seciliEkSaha3Id, sirketId = null, departmanId, gorevTipiId, tesisId, seciliEkSaha4Id, planTanimsizBolumId;
+	private Long seciliEkSaha3Id, sirketId = null, departmanId, gorevTipiId, tesisId, seciliEkSaha4Id, seciliYoneticiId, planTanimsizBolumId;
 	private Tanim gorevYeri, seciliBolum, seciliAltBolum, ekSaha4Tanim;
 	private Double toplamFazlamMesai = 0D;
 	private Double aksamCalismaSaati = null, aksamCalismaSaatiYuzde = null;
@@ -193,7 +193,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private Boolean gerceklesenMesaiKod = Boolean.FALSE, devredenBakiyeKod = Boolean.FALSE, normalCalismaSaatKod = Boolean.FALSE, haftaTatilCalismaSaatKod = Boolean.FALSE, resmiTatilCalismaSaatKod = Boolean.FALSE, izinSureSaatKod = Boolean.FALSE;
 	private Boolean normalCalismaGunKod = Boolean.FALSE, haftaTatilCalismaGunKod = Boolean.FALSE, resmiTatilCalismaGunKod = Boolean.FALSE, izinSureGunKod = Boolean.FALSE, ucretliIzinGunKod = Boolean.FALSE, ucretsizIzinGunKod = Boolean.FALSE, hastalikIzinGunKod = Boolean.FALSE;
 	private Boolean normalGunKod = Boolean.FALSE, haftaTatilGunKod = Boolean.FALSE, resmiTatilGunKod = Boolean.FALSE, artikGunKod = Boolean.FALSE, bordroToplamGunKod = Boolean.FALSE, devredenMesaiKod = Boolean.FALSE, ucretiOdenenKod = Boolean.FALSE;
-	private List<SelectItem> pdksSirketList, departmanList;
+	private List<SelectItem> pdksSirketList, departmanList, yoneticiList;
 	private Departman departman;
 	private String adres, personelIzinGirisiStr, personelHareketStr, personelFazlaMesaiOrjStr, personelFazlaMesaiStr, vardiyaPlaniStr;
 	private List<String> sabahVardiyalar, devamlilikPrimIzinTipleri;
@@ -409,7 +409,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			String yilStr = (String) req.getParameter("yil");
 			String linkAdresKey = (String) req.getParameter("linkAdresKey");
 
-			String gorevYeriIdStr = null, sirketIdStr = null, tesisIdStr = null, altBolumIdStr = null;
+			String gorevYeriIdStr = null, sirketIdStr = null, tesisIdStr = null, altBolumIdStr = null, yoneticiIdStr = null;
 			LinkedHashMap<String, Object> veriLastMap = null;
 			if (linkAdresKey == null) {
 				calistir = true;
@@ -428,6 +428,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						gorevYeriIdStr = (String) veriLastMap.get("bolumId");
 					if (veriLastMap.containsKey("altBolumId"))
 						altBolumIdStr = (String) veriLastMap.get("altBolumId");
+					if (veriLastMap.containsKey("yoneticiId"))
+						yoneticiIdStr = (String) veriLastMap.get("yoneticiId");
 					if (veriLastMap.containsKey("inputPersonelNo"))
 						inputPersonelNo = (String) veriLastMap.get("inputPersonelNo");
 
@@ -478,8 +480,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						gorevYeriIdStr = veriMap.get("gorevYeriId");
 					if (veriMap.containsKey("altBolumId"))
 						altBolumIdStr = veriMap.get("altBolumId");
+					if (veriMap.containsKey("yoneticiId"))
+						yoneticiIdStr = veriMap.get("yoneticiId");
 					veriMap = null;
 				} else if (veriLastMap == null || veriLastMap.isEmpty()) {
+					yoneticiIdStr = (String) req.getParameter("yoneticiId");
 					altBolumIdStr = (String) req.getParameter("altBolumId");
 					gorevYeriIdStr = (String) req.getParameter("gorevYeriId");
 					tesisIdStr = (String) req.getParameter("tesisId");
@@ -494,6 +499,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						seciliEkSaha3Id = Long.parseLong(gorevYeriIdStr);
 					if (altBolumIdStr != null)
 						seciliEkSaha4Id = Long.parseLong(altBolumIdStr);
+					if (yoneticiIdStr != null)
+						seciliYoneticiId = Long.parseLong(yoneticiIdStr);
 					if (tesisIdStr != null)
 						tesisId = Long.parseLong(tesisIdStr);
 					if (sirketIdStr != null) {
@@ -515,10 +522,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							tesisDoldur(false);
 						if (altBolumIdStr != null)
 							seciliEkSaha4Id = Long.parseLong(altBolumIdStr);
+						if (yoneticiIdStr != null)
+							seciliYoneticiId = Long.parseLong(yoneticiIdStr);
 						if (tesisId != null || sirket.isTesisDurumu() == false || seciliEkSaha3Id != null)
 							bolumDoldur();
 						if (altBolumIdStr != null)
 							seciliEkSaha4Id = Long.parseLong(altBolumIdStr);
+						if (yoneticiIdStr != null)
+							seciliYoneticiId = Long.parseLong(yoneticiIdStr);
 						if (sirket == null) {
 
 							sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, oncekiId, Sirket.class, session);
@@ -789,6 +800,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					bolumDoldur();
 				if (seciliEkSaha3Id != null && ekSaha4Tanim != null)
 					altBolumDoldur();
+				else {
+					seciliYoneticiId = null;
+					yoneticiList = null;
+				}
 			}
 
 		}
@@ -841,7 +856,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					}
 				}
 				if (sirketId != null) {
-
 					sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 					ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
 				}
@@ -994,6 +1008,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (ekSaha4Tanim != null && secPersonel.getEkSaha4() != null) {
 				seciliEkSaha4Id = secPersonel.getEkSaha4().getId();
 				altBolumDoldur();
+			} else {
+				seciliYoneticiId = null;
+				yoneticiList = null;
 			}
 			fillPersonelDenklestirmeList(null);
 		}
@@ -1241,6 +1258,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				logger.info("fillPersonelDenklestirmeDevam 1000 " + basTarih);
 			List<Long> perIdList = new ArrayList<Long>();
 			for (Personel personel : donemPerList) {
+				if (seciliYoneticiId != null) {
+					if (personel.getYoneticisi() == null || personel.getYoneticisi().getId().equals(seciliYoneticiId) == false)
+						continue;
+				}
 				if (PdksUtil.hasStringValue(sicilNo) == false || ortakIslemler.isStringEqual(sicilYeniNo, personel.getPdksSicilNo())) {
 					if (PdksUtil.hasStringValue(sicilNo) && personel.getPdksSicilNo().endsWith(sicilYeniNo))
 						setSicilNo(personel.getPdksSicilNo());
@@ -3492,7 +3513,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			lastMap.put("altBolumId", "" + seciliEkSaha4Id);
 			lastMap.put("altBolum", ortakIslemler.getSelectItemText(seciliEkSaha4Id, altBolumList));
 		}
-
+		if (seciliYoneticiId != null) {
+			lastMap.put("yoneticiId", "" + seciliYoneticiId);
+			lastMap.put("yonetici", ortakIslemler.getSelectItemText(seciliYoneticiId, yoneticiList));
+		}
 		if (hataliPuantajGoster != null)
 			lastMap.put("hataliPuantajGoster", "" + hataliPuantajGoster);
 		if (inputPersonelNo != null)
@@ -6150,6 +6174,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			else {
 				seciliEkSaha4Id = null;
 				altBolumList = null;
+				seciliYoneticiId = null;
+				yoneticiList = null;
 			}
 		} else {
 
@@ -6179,10 +6205,69 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	/**
 	 * @return
 	 */
+	public String yoneticiDoldur(Integer perBolumAdet) {
+		Long eskiYonetici = seciliYoneticiId;
+		yoneticiList = null;
+		aylikPuantajListClear();
+		if (perBolumAdet == null)
+			perBolumAdet = 0;
+		if (ortakIslemler.getParameterKey("yoneticiBol").equals("1") && seciliEkSaha4Id != null && (perBolumAdet < 1 || perBolumAdet > 50)) {
+			List<Personel> donemPerList = null;
+			if (perBolumAdet < 1) {
+				try {
+					donemPerList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(sirket, tesisId != null ? String.valueOf(tesisId) : null, seciliEkSaha3Id, seciliEkSaha4Id, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, sadeceFazlaMesai, session);
+				} catch (Exception e) {
+					logger.error(e);
+				}
+				perBolumAdet = donemPerList.size();
+			}
+			if (perBolumAdet > 50) {
+
+				try {
+					if (donemPerList == null)
+						donemPerList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(sirket, tesisId != null ? String.valueOf(tesisId) : null, seciliEkSaha3Id, seciliEkSaha4Id, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, sadeceFazlaMesai, session);
+				} catch (Exception e) {
+					logger.error(e);
+				}
+				HashMap<Long, Personel> perMap = new HashMap<Long, Personel>();
+				for (Personel personel : donemPerList) {
+					if (personel.getYoneticisi() != null) {
+						Personel yonetici = personel.getYoneticisi();
+						if (yonetici.getId() != null && perMap.containsKey(yonetici.getId()) == false)
+							perMap.put(yonetici.getId(), yonetici);
+					}
+				}
+				if (perMap.size() > 1) {
+					yoneticiList = new ArrayList<SelectItem>();
+					List<Personel> perYoneticiList = PdksUtil.sortObjectStringAlanList(new ArrayList<Personel>(perMap.values()), "getAdSoyad", null);
+					for (Personel personel : perYoneticiList)
+						yoneticiList.add(new SelectItem(personel.getId(), personel.getAdSoyad()));
+
+				}
+				perMap = null;
+			}
+		}
+		aylikPuantajList.clear();
+		seciliYoneticiId = null;
+		if (yoneticiList != null && eskiYonetici != null) {
+			for (SelectItem st : yoneticiList) {
+				if (st.getValue().equals(eskiYonetici))
+					seciliYoneticiId = eskiYonetici;
+
+			}
+		}
+		return "";
+	}
+
+	/**
+	 * @return
+	 */
 	public String altBolumDoldur() {
 
 		aylikPuantajList.clear();
 		hataliPersoneller = null;
+		yoneticiList = null;
+		Integer perBolumAdet = 0;
 		if (ekSaha4Tanim != null) {
 			boolean hepsiEkle = true;
 			List<SelectItem> list = fazlaMesaiOrtakIslemler.getFazlaMesaiAltBolumList(sirket, tesisId != null ? String.valueOf(tesisId) : null, seciliEkSaha3Id, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, sadeceFazlaMesai, session);
@@ -6194,7 +6279,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				} catch (Exception e) {
 					logger.error(e);
 				}
-				hepsiEkle = donemPerList == null || donemPerList.size() < 100;
+				perBolumAdet = donemPerList.size();
+				hepsiEkle = donemPerList == null || perBolumAdet < 100;
 				if (hepsiEkle == false)
 					altBolumList.add(new SelectItem(null, "Seçiniz"));
 
@@ -6233,9 +6319,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 			altBolumList = null;
 			seciliEkSaha4Id = null;
+
 		}
-		if (seciliEkSaha4Id != null)
+		if (seciliEkSaha4Id != null) {
 			fillHataliPersonelleriGuncelle();
+			if (authenticatedUser.isAdmin() && seciliEkSaha3Id != null)
+				yoneticiDoldur(perBolumAdet);
+		} else {
+			seciliYoneticiId = null;
+			yoneticiList = null;
+		}
 
 		return "";
 	}
@@ -7879,6 +7972,22 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	public void setBakiyeSifirlaDurum(Boolean bakiyeSifirlaDurum) {
 		this.bakiyeSifirlaDurum = bakiyeSifirlaDurum;
+	}
+
+	public Long getSeciliYoneticiId() {
+		return seciliYoneticiId;
+	}
+
+	public void setSeciliYoneticiId(Long seciliYoneticiId) {
+		this.seciliYoneticiId = seciliYoneticiId;
+	}
+
+	public List<SelectItem> getYoneticiList() {
+		return yoneticiList;
+	}
+
+	public void setYoneticiList(List<SelectItem> yoneticiList) {
+		this.yoneticiList = yoneticiList;
 	}
 
 }

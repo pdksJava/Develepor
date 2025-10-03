@@ -84,6 +84,15 @@
 								<h:selectOneMenu value="#{fazlaMesaiHesaplaHome.seciliEkSaha4Id}" requiredMessage="#{fazlaMesaiHesaplaHome.ekSaha4Tanim.aciklama} giriniz!"
 									required="#{fazlaMesaiHesaplaHome.altBolumList.size()>1}">
 									<f:selectItems value="#{fazlaMesaiHesaplaHome.altBolumList}" />
+									<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaMesaiHesaplaHome.yoneticiDoldur(null)}" ajaxSingle="true"
+										reRender="denklestirmeDonemiTable,girisler" />
+								</h:selectOneMenu>
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiHesaplaHome.yoneticiList.size()>0}">
+								<ui:define name="label">#{ortakIslemler.yoneticiAciklama()}</ui:define>
+								<f:selectItem itemLabel="Lütfen seçiniz" />
+								<h:selectOneMenu value="#{fazlaMesaiHesaplaHome.seciliYoneticiId}">
+									<f:selectItems value="#{fazlaMesaiHesaplaHome.yoneticiList}" />
 									<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaMesaiHesaplaHome.aylikPuantajList.clear()}" ajaxSingle="true"
 										reRender="denklestirmeDonemiTable,girisler" />
 								</h:selectOneMenu>
@@ -488,7 +497,7 @@
 							</f:facet>
 							<h:outputText value="#{hareket.kapiView.kapi.tipi.aciklama}" />
 						</rich:column>
-						
+
 						<rich:column style="text-align:center;" rendered="#{fazlaMesaiHesaplaHome.ikRole and fazlaMesaiHesaplaHome.birdenFazlaKGSSirketSQL != ''}">
 							<f:facet name="header">
 								<h:outputText value="KGS Şirket" />
@@ -497,8 +506,8 @@
 								<h:outputText value="#{hareket.kapiSirket.aciklama}" />
 							</ui:fragment>
 						</rich:column>
-						
-						
+
+
 						<rich:column rendered="#{fazlaMesaiHesaplaHome.toplamFazlamMesai != 0}" style="text-align:center;">
 							<f:facet name="header">
 								<h:outputText value="Fazla Çalışma (Saat)" />
