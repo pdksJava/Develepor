@@ -14984,7 +14984,7 @@ public class OrtakIslemler implements Serializable {
 						allMap.put(key, degerMap);
 					Date date = new Date(((java.sql.Timestamp) objects[1]).getTime());
 					BigDecimal deger = new BigDecimal((Double) objects[2]);
-					String dKey = (objects[3] == null ? "" : objects[3].toString()) + PdksUtil.convertToDateString(date, "yyyyMMdd");
+					String dKey = (objects[3] == null ? "" : "S" + objects[3].toString()) + PdksUtil.convertToDateString(date, "yyyyMMdd");
 					degerMap.put(dKey, deger);
 				}
 			} catch (Exception e) {
