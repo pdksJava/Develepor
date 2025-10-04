@@ -14582,6 +14582,44 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param map
+	 * @param str
+	 * @param sirketId
+	 * @return
+	 */
+	public boolean veriVar(TreeMap<String, BigDecimal> map, Long sirketId, String str) {
+		boolean veriDurum = false;
+		if (map != null && str != null) {
+			if (map.containsKey(str))
+				veriDurum = true;
+			else if (sirketId != null) {
+				String key2 = "S" + sirketId + "_" + str;
+				veriDurum = map.containsKey(key2);
+			}
+		}
+		return veriDurum;
+	}
+
+	/**
+	 * @param map
+	 * @param str
+	 * @param sirketId
+	 * @return
+	 */
+	public BigDecimal getVeriMap(TreeMap<String, BigDecimal> map, Long sirketId, String str) {
+		BigDecimal decimal = null;
+		if (map != null && str != null) {
+			String key2 = "S" + sirketId+ "_" + str;
+			if (map.containsKey(key2))
+				decimal = map.get(key2);
+			else if (map.containsKey(str)) {
+				decimal = map.get(str);
+			}
+		}
+		return decimal;
+	}
+
+	/**
 	 * @param personelIdler
 	 * @param basTarih
 	 * @param bitTarih
@@ -14705,6 +14743,12 @@ public class OrtakIslemler implements Serializable {
 			for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 				VardiyaGun vg = (VardiyaGun) iterator.next();
 				Vardiya vardiya = vg.getIslemVardiya();
+				Long sirketId = null;
+				try {
+					sirketId = vg.getPdksPersonel().getSirket().getId();
+				} catch (Exception e) {
+					sirketId = null;
+				}
 
 				if (vardiya != null && vardiya.getId() != null) {
 					cal.setTime(vg.getVardiyaDate());
@@ -14741,15 +14785,15 @@ public class OrtakIslemler implements Serializable {
 							gun = null;
 						}
 					}
-					if (saatCalisanNormalGunKontrolEt && saatCalisanNormalGunMap.containsKey(str))
-						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_NORMAL_GUN.value(), saatCalisanNormalGunMap.get(str));
-					if (vg.isIzinli() && saatCalisanIzinGunKontrolEt && saatCalisanIzinGunMap.containsKey(str))
-						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_IZIN_GUN.value(), saatCalisanIzinGunMap.get(str));
-					if (saatCalisanHaftaTatilKontrolEt && saatCalisanHaftaTatilMap.containsKey(str))
-						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_HAFTA_TATIL.value(), saatCalisanHaftaTatilMap.get(str));
+					if (saatCalisanNormalGunKontrolEt && veriVar(saatCalisanNormalGunMap, sirketId, str))
+						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_NORMAL_GUN.value(), getVeriMap(saatCalisanNormalGunMap, sirketId, str));
+					if (vg.isIzinli() && saatCalisanIzinGunKontrolEt && veriVar(saatCalisanIzinGunMap, sirketId, str))
+						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_IZIN_GUN.value(), getVeriMap(saatCalisanIzinGunMap, sirketId, str));
+					if (saatCalisanHaftaTatilKontrolEt && veriVar(saatCalisanHaftaTatilMap, sirketId, str))
+						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_HAFTA_TATIL.value(), getVeriMap(saatCalisanHaftaTatilMap, sirketId, str));
 					if (tatilYemekHesabiSureEkleDurumKontrolEt) {
-						if (tatilYemekHesabiSureEkleDurumMap.containsKey(str)) {
-							katSayiMap.put(KatSayiTipi.YEMEK_SURE_EKLE_DURUM.value(), tatilYemekHesabiSureEkleDurumMap.get(str));
+						if (veriVar(tatilYemekHesabiSureEkleDurumMap, sirketId, str)) {
+							katSayiMap.put(KatSayiTipi.YEMEK_SURE_EKLE_DURUM.value(), getVeriMap(tatilYemekHesabiSureEkleDurumMap, sirketId, str));
 						}
 					}
 					if (str.endsWith("0608"))
@@ -14758,8 +14802,8 @@ public class OrtakIslemler implements Serializable {
 						vg.setBayramAyir(false);
 						BigDecimal ba = null;
 						if (bayramAyirKontrolEt) {
-							if (bayramAyirMap.containsKey(str)) {
-								ba = bayramAyirMap.get(str);
+							if (veriVar(bayramAyirMap, sirketId, str)) {
+								ba = getVeriMap(bayramAyirMap, sirketId, str);
 								vg.setBayramAyir(ba.intValue() == 1);
 
 							}
@@ -14778,105 +14822,105 @@ public class OrtakIslemler implements Serializable {
 
 						if (tatil != null) {
 							if (!tatil.isYarimGunMu()) {
-								if (saatCalisanResmiTatilKontrolEt && saatCalisanResmiTatilMap.containsKey(str))
-									katSayiMap.put(KatSayiTipi.SAAT_CALISAN_RESMI_TATIL.value(), saatCalisanResmiTatilMap.get(str));
+								if (saatCalisanResmiTatilKontrolEt && veriVar(saatCalisanResmiTatilMap, sirketId, str))
+									katSayiMap.put(KatSayiTipi.SAAT_CALISAN_RESMI_TATIL.value(), getVeriMap(saatCalisanResmiTatilMap, sirketId, str));
 							} else {
-								if (saatCalisanArifeTatilKontrolEt && saatCalisanArifeTatilMap.containsKey(str))
-									katSayiMap.put(KatSayiTipi.SAAT_CALISAN_ARIFE_TATIL_SAAT.value(), saatCalisanArifeTatilMap.get(str));
-								if (saatCalisanArifeNormalKontrolEt && saatCalisanArifeNormalMap.containsKey(str))
-									katSayiMap.put(KatSayiTipi.SAAT_CALISAN_ARIFE_NORMAL_SAAT.value(), saatCalisanArifeNormalMap.get(str));
+								if (saatCalisanArifeTatilKontrolEt && veriVar(saatCalisanArifeTatilMap, sirketId, str))
+									katSayiMap.put(KatSayiTipi.SAAT_CALISAN_ARIFE_TATIL_SAAT.value(), getVeriMap(saatCalisanArifeTatilMap, sirketId, str));
+								if (saatCalisanArifeNormalKontrolEt && veriVar(saatCalisanArifeNormalMap, sirketId, str))
+									katSayiMap.put(KatSayiTipi.SAAT_CALISAN_ARIFE_NORMAL_SAAT.value(), getVeriMap(saatCalisanArifeNormalMap, sirketId, str));
 							}
 						}
 
 					}
 
-					if (izinHaftaTatilDurumKontrolEt && izinHaftaTatilDurumMap.containsKey(str)) {
+					if (izinHaftaTatilDurumKontrolEt && veriVar(izinHaftaTatilDurumMap, sirketId, str)) {
 						if (vardiya.isHaftaTatil())
 							vg.setIzinHaftaTatilDurum(Boolean.FALSE);
 
 					} else if (vg.isPazar())
 						vg.setIzinHaftaTatilDurum(Boolean.TRUE);
-					if (fmtDurumKontrolEt && fmtDurumMap.containsKey(str)) {
-						BigDecimal deger = fmtDurumMap.get(str);
+					if (fmtDurumKontrolEt && veriVar(fmtDurumMap, sirketId, str)) {
+						BigDecimal deger = getVeriMap(fmtDurumMap, sirketId, str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.FMT_DURUM.value(), deger);
 						}
 					}
 					vg.setCihazZamanSaniyeSifirla(Boolean.FALSE);
-					if (cihazZamanSaniyeSifirlaKontrolEt && cihazZamanSaniyeSifirlaMap.containsKey(str)) {
-						BigDecimal deger = cihazZamanSaniyeSifirlaMap.get(str);
+					if (cihazZamanSaniyeSifirlaKontrolEt && veriVar(cihazZamanSaniyeSifirlaMap, sirketId, str)) {
+						BigDecimal deger = getVeriMap(cihazZamanSaniyeSifirlaMap, sirketId, str);
 						if (deger != null) {
 							vg.setCihazZamanSaniyeSifirla(Long.parseLong(str) >= deger.longValue());
 							katSayiMap.put(KatSayiTipi.CIHAZ_ZAMAN_SANIYE_SIFIRLA.value(), deger);
 						}
 					}
-					if (erkenGirisKontrolEt && erkenGirisMap.containsKey(str)) {
-						BigDecimal deger = erkenGirisMap.get(str);
+					if (erkenGirisKontrolEt && veriVar(erkenGirisMap, sirketId, str)) {
+						BigDecimal deger = getVeriMap(erkenGirisMap, sirketId, str);
 						if (deger != null)
 							katSayiMap.put(KatSayiTipi.ERKEN_GIRIS_TIPI.value(), deger);
 					}
 					if (vardiya.isCalisma()) {
-						if (erkenGirisKontrolEt && erkenGirisMap.containsKey(str)) {
-							BigDecimal deger = erkenGirisMap.get(str);
+						if (erkenGirisKontrolEt && veriVar(erkenGirisMap, sirketId, str)) {
+							BigDecimal deger = getVeriMap(erkenGirisMap, sirketId, str);
 							if (deger != null)
 								katSayiMap.put(KatSayiTipi.ERKEN_GIRIS_TIPI.value(), deger);
 						}
-						if (erkenCikisKontrolEt && erkenCikisMap.containsKey(str)) {
-							BigDecimal deger = erkenCikisMap.get(str);
+						if (erkenCikisKontrolEt && veriVar(erkenCikisMap, sirketId, str)) {
+							BigDecimal deger = getVeriMap(erkenCikisMap, sirketId, str);
 							if (deger != null)
 								katSayiMap.put(KatSayiTipi.ERKEN_CIKIS_TIPI.value(), deger);
 						}
-						if (gecGirisKontrolEt && gecGirisMap.containsKey(str)) {
-							BigDecimal deger = gecGirisMap.get(str);
+						if (gecGirisKontrolEt && veriVar(gecGirisMap, sirketId, str)) {
+							BigDecimal deger = getVeriMap(gecGirisMap, sirketId, str);
 							if (deger != null)
 								katSayiMap.put(KatSayiTipi.GEC_GIRIS_TIPI.value(), deger);
 						}
-						if (gecCikisKontrolEt && gecCikisMap.containsKey(str)) {
-							BigDecimal deger = gecCikisMap.get(str);
+						if (gecCikisKontrolEt && veriVar(gecCikisMap, sirketId, str)) {
+							BigDecimal deger = getVeriMap(gecCikisMap, sirketId, str);
 							if (deger != null)
 								katSayiMap.put(KatSayiTipi.GEC_CIKIS_TIPI.value(), deger);
 						}
 					}
 
-					if (offFazlaMesaiKontrolEt && offFazlaMesaiMap.containsKey(str)) {
-						BigDecimal deger = offFazlaMesaiMap.get(str);
+					if (offFazlaMesaiKontrolEt && veriVar(offFazlaMesaiMap, sirketId, str)) {
+						BigDecimal deger = getVeriMap(offFazlaMesaiMap, sirketId, str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.OFF_FAZLA_MESAI_TIPI.value(), deger);
 							vg.setOffFazlaMesaiBasDakika(deger.intValue());
 						}
 					}
-					if (haftaTatilFazlaMesaiKontrolEt && haftaTatilFazlaMesaiMap.containsKey(str)) {
-						BigDecimal deger = haftaTatilFazlaMesaiMap.get(str);
+					if (haftaTatilFazlaMesaiKontrolEt && veriVar(haftaTatilFazlaMesaiMap, sirketId, str)) {
+						BigDecimal deger = getVeriMap(haftaTatilFazlaMesaiMap, sirketId, str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.HT_FAZLA_MESAI_TIPI.value(), deger);
 							vg.setHaftaTatiliFazlaMesaiBasDakika(deger.intValue());
 						}
 					}
 
-					if (yuvarlamaKatSayiOku && yuvarlamaMap.containsKey(str)) {
-						BigDecimal deger = yuvarlamaMap.get(str);
+					if (yuvarlamaKatSayiOku && veriVar(yuvarlamaMap, sirketId, str)) {
+						BigDecimal deger = getVeriMap(yuvarlamaMap, sirketId, str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.YUVARLAMA_TIPI.value(), deger);
 							vg.setYarimYuvarla(deger.intValue());
 						}
 					}
-					if (fazlaMesaiYuvarlamaKontrolEt && fazlaMesaiYuvarlamaMap.containsKey(str)) {
-						BigDecimal deger = fazlaMesaiYuvarlamaMap.get(str);
+					if (fazlaMesaiYuvarlamaKontrolEt && veriVar(fazlaMesaiYuvarlamaMap, sirketId, str)) {
+						BigDecimal deger = getVeriMap(fazlaMesaiYuvarlamaMap, sirketId, str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.FAZLA_MESA_YUVARLAMA.value(), deger);
 							vg.setFazlaMesaiYuvarla(deger.intValue());
 						}
 					}
-					if (suaKatSayiOku && sureSuaMap.containsKey(str)) {
-						BigDecimal deger = sureSuaMap.get(str);
+					if (suaKatSayiOku && veriVar(sureSuaMap, sirketId, str)) {
+						BigDecimal deger = getVeriMap(sureSuaMap, sirketId, str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI.value(), deger);
 							vg.setCalismaSuaSaati(deger.doubleValue());
 						}
 					}
 
-					if (planKatSayiOku && sureMap.containsKey(str)) {
-						BigDecimal deger = sureMap.get(str);
+					if (planKatSayiOku && veriVar(sureMap, sirketId, str)) {
+						BigDecimal deger = getVeriMap(sureMap, sirketId, str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.HAREKET_BEKLEME_SURESI.value(), deger);
 							vg.setBeklemeSuresi(deger.intValue());
@@ -14984,7 +15028,7 @@ public class OrtakIslemler implements Serializable {
 						allMap.put(key, degerMap);
 					Date date = new Date(((java.sql.Timestamp) objects[1]).getTime());
 					BigDecimal deger = new BigDecimal((Double) objects[2]);
-					String dKey = (objects[3] == null ? "" : "S" + objects[3].toString()) + PdksUtil.convertToDateString(date, "yyyyMMdd");
+					String dKey = (objects[3] == null ? "" : "S" + objects[3].toString() + "_") + PdksUtil.convertToDateString(date, "yyyyMMdd");
 					degerMap.put(dKey, deger);
 				}
 			} catch (Exception e) {
