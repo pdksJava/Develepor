@@ -4,14 +4,19 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.pdks.enums.KatSayiTipi;
 
 @Entity
@@ -36,9 +41,11 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_BIT_TARIH = "BIT_TARIH";
 	public static final String COLUMN_NAME_DEGER = "DEGER";
 	public static final String COLUMN_NAME_VARDIYA = "VARDIYA_ID";
+	public static final String COLUMN_NAME_SIRKET = "SIRKET_ID";
 
 	private Date basTarih, bitTarih;
 	private KatSayiTipi tipi;
+	private Sirket sirket;
 	private BigDecimal deger;
 	private Vardiya vardiya;
 	private Boolean durum;
@@ -85,9 +92,20 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 		this.deger = deger;
 	}
 
-//	@ManyToOne(cascade = CascadeType.REFRESH)
-//	@JoinColumn(name = COLUMN_NAME_VARDIYA)
-//	@Fetch(FetchMode.JOIN)
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_SIRKET)
+	@Fetch(FetchMode.JOIN)
+	public Sirket getSirket() {
+		return sirket;
+	}
+
+	public void setSirket(Sirket sirket) {
+		this.sirket = sirket;
+	}
+
+	// @ManyToOne(cascade = CascadeType.REFRESH)
+	// @JoinColumn(name = COLUMN_NAME_VARDIYA)
+	// @Fetch(FetchMode.JOIN)
 	@Transient
 	public Vardiya getVardiya() {
 		return vardiya;

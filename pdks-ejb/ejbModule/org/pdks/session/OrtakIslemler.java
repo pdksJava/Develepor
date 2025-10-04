@@ -14956,14 +14956,14 @@ public class OrtakIslemler implements Serializable {
 		String fieldName = "pId";
 		HashMap map = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, B." + KatSayi.COLUMN_NAME_SIRKET + " from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + KatSayi.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " on B." + KatSayi.COLUMN_NAME_BAS_TARIH + " <= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		sb.append(" and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
 		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :bitTarih and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
-		sb.append(" group by B." + KatSayi.COLUMN_NAME_TIPI + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
+		sb.append(" group by B." + KatSayi.COLUMN_NAME_TIPI + ", B." + KatSayi.COLUMN_NAME_SIRKET + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		map.put(fieldName, personelIdler);
 		map.put("basTarih", basTarih);
 		map.put("bitTarih", bitTarih);
@@ -14984,7 +14984,8 @@ public class OrtakIslemler implements Serializable {
 						allMap.put(key, degerMap);
 					Date date = new Date(((java.sql.Timestamp) objects[1]).getTime());
 					BigDecimal deger = new BigDecimal((Double) objects[2]);
-					degerMap.put(PdksUtil.convertToDateString(date, "yyyyMMdd"), deger);
+					String dKey = (objects[3] == null ? "" : objects[3].toString()) + PdksUtil.convertToDateString(date, "yyyyMMdd");
+					degerMap.put(dKey, deger);
 				}
 			} catch (Exception e) {
 
