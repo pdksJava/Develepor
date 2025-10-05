@@ -14593,13 +14593,15 @@ public class OrtakIslemler implements Serializable {
 		if (map != null && str != null) {
 			if (map.containsKey(str))
 				veriDurum = true;
-			else if (sirketId != null && vardiyaId != null) {
+			if (veriDurum == false && sirketId != null && vardiyaId != null) {
 				String key2 = "S" + sirketId + "_" + "V" + vardiyaId + "_" + str;
 				veriDurum = map.containsKey(key2);
-			} else if (sirketId != null) {
+			}
+			if (veriDurum == false && sirketId != null) {
 				String key2 = "S" + sirketId + "_" + str;
 				veriDurum = map.containsKey(key2);
-			} else if (vardiyaId != null) {
+			}
+			if (veriDurum == false && vardiyaId != null) {
 				String key2 = "V" + vardiyaId + "_" + str;
 				veriDurum = map.containsKey(key2);
 			}
