@@ -12,7 +12,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
@@ -46,8 +45,8 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 	private Date basTarih, bitTarih;
 	private KatSayiTipi tipi;
 	private Sirket sirket;
-	private BigDecimal deger;
 	private Vardiya vardiya;
+	private BigDecimal deger;
 	private Boolean durum;
 
 	public KatSayi() {
@@ -103,10 +102,10 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 		this.sirket = sirket;
 	}
 
-	// @ManyToOne(cascade = CascadeType.REFRESH)
-	// @JoinColumn(name = COLUMN_NAME_VARDIYA)
-	// @Fetch(FetchMode.JOIN)
-	@Transient
+	 @ManyToOne(cascade = CascadeType.REFRESH)
+	 @JoinColumn(name = COLUMN_NAME_VARDIYA)
+	 @Fetch(FetchMode.JOIN)
+	
 	public Vardiya getVardiya() {
 		return vardiya;
 	}

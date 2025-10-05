@@ -14588,12 +14588,15 @@ public class OrtakIslemler implements Serializable {
 	 * @param str
 	 * @return
 	 */
-	private boolean veriVar(TreeMap<String, BigDecimal> map, Long sirketId, Long vardiyaId, String str) {
+	public boolean veriVar(TreeMap<String, BigDecimal> map, Long sirketId, Long vardiyaId, String str) {
 		boolean veriDurum = false;
 		if (map != null && str != null) {
 			if (map.containsKey(str))
 				veriDurum = true;
-			else if (sirketId != null) {
+			else if (sirketId != null && vardiyaId != null) {
+				String key2 = "S" + sirketId + "_" + "V" + vardiyaId + "_" + str;
+				veriDurum = map.containsKey(key2);
+			} else if (sirketId != null) {
 				String key2 = "S" + sirketId + "_" + str;
 				veriDurum = map.containsKey(key2);
 			} else if (vardiyaId != null) {
@@ -14611,12 +14614,15 @@ public class OrtakIslemler implements Serializable {
 	 * @param str
 	 * @return
 	 */
-	private BigDecimal getVeriMap(TreeMap<String, BigDecimal> map, Long sirketId, Long vardiyaId, String str) {
+	public BigDecimal getVeriMap(TreeMap<String, BigDecimal> map, Long sirketId, Long vardiyaId, String str) {
 		BigDecimal decimal = null;
 		if (map != null && str != null) {
 			String key1 = "V" + vardiyaId + "_" + str;
+			String key = "S" + sirketId + "_" + key1;
 			String key2 = "S" + sirketId + "_" + str;
-			if (map.containsKey(key1))
+			if (map.containsKey(key))
+				decimal = map.get(key);
+			else if (map.containsKey(key1))
 				decimal = map.get(key1);
 			else if (map.containsKey(key2))
 				decimal = map.get(key2);
@@ -15012,14 +15018,15 @@ public class OrtakIslemler implements Serializable {
 		String fieldName = "pId";
 		HashMap map = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, B." + KatSayi.COLUMN_NAME_SIRKET + " from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from " + VardiyaGun.TABLE_NAME + " V "
+				+ PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + KatSayi.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " on B." + KatSayi.COLUMN_NAME_BAS_TARIH + " <= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		sb.append(" and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
 		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :bitTarih and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
-		sb.append(" group by B." + KatSayi.COLUMN_NAME_TIPI + ", B." + KatSayi.COLUMN_NAME_SIRKET + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
+		sb.append(" group by B." + KatSayi.COLUMN_NAME_TIPI + ", B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_VARDIYA + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		map.put(fieldName, personelIdler);
 		map.put("basTarih", basTarih);
 		map.put("bitTarih", bitTarih);
@@ -15040,7 +15047,7 @@ public class OrtakIslemler implements Serializable {
 						allMap.put(key, degerMap);
 					Date date = new Date(((java.sql.Timestamp) objects[1]).getTime());
 					BigDecimal deger = new BigDecimal((Double) objects[2]);
-					String dKey = (objects[3] == null ? "" : "S" + objects[3].toString() + "_") + PdksUtil.convertToDateString(date, "yyyyMMdd");
+					String dKey = (objects[3] == null ? "" : "S" + objects[3].toString() + "_") + (objects[4] == null ? "" : "V" + objects[4].toString() + "_") + PdksUtil.convertToDateString(date, "yyyyMMdd");
 					degerMap.put(dKey, deger);
 				}
 			} catch (Exception e) {
@@ -15065,7 +15072,7 @@ public class OrtakIslemler implements Serializable {
 		HashMap map = new HashMap();
 		TreeMap<String, BigDecimal> degerMap = new TreeMap<String, BigDecimal>();
 		StringBuffer sb = new StringBuffer();
-		sb.append("select V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("select V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + KatSayi.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " on B." + KatSayi.COLUMN_NAME_BAS_TARIH + " <= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		sb.append(" and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
 		sb.append(" and B." + KatSayi.COLUMN_NAME_TIPI + " = :k");
@@ -15073,7 +15080,7 @@ public class OrtakIslemler implements Serializable {
 		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
 		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :bitTarih and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :pId ");
-		sb.append(" group by V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
+		sb.append(" group by  B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_VARDIYA + ", V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		map.put("pId", personelIdler);
 		map.put("basTarih", basTarih);
 		map.put("bitTarih", bitTarih);
@@ -15087,7 +15094,8 @@ public class OrtakIslemler implements Serializable {
 					continue;
 				Date date = new Date(((java.sql.Timestamp) objects[0]).getTime());
 				BigDecimal deger = new BigDecimal((Double) objects[1]);
-				degerMap.put(PdksUtil.convertToDateString(date, "yyyyMMdd"), deger);
+				String dKey = (objects[2] == null ? "" : "S" + objects[2].toString() + "_") + (objects[3] == null ? "" : "V" + objects[3].toString() + "_") + PdksUtil.convertToDateString(date, "yyyyMMdd");
+				degerMap.put(dKey, deger);
 			}
 		} catch (Exception e) {
 			logger.error(e);

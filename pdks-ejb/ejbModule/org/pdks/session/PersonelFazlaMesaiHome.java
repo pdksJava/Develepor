@@ -701,17 +701,30 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					ortakIslemler.setVardiyaYemekList(vardiyaList, yemekGenelList);
 					Date bugun = Calendar.getInstance().getTime();
 					TreeMap<String, List<VardiyaGun>> perVardiyaMap = new TreeMap<String, List<VardiyaGun>>();
-					for (VardiyaGun vardiyaGun : vardiyaList) {
+					for (VardiyaGun vg : vardiyaList) {
+
+						Vardiya vardiya = vg.getVardiya();
+						Long sirketId = null, vardiyaId = null;
+						try {
+							sirketId = vg.getPdksPersonel().getSirket().getId();
+						} catch (Exception e) {
+							sirketId = null;
+						}
+						try {
+							vardiyaId = vardiya != null ? vardiya.getId() : null;
+						} catch (Exception e) {
+							vardiyaId = null;
+						}
 						String key = vardiyaGun.getPersonel().getPdksSicilNo();
 						if (yuvarlamaMap != null) {
 							String str = vardiyaGun.getVardiyaDateStr();
-							if (yuvarlamaMap.containsKey(str)) {
-								BigDecimal deger = yuvarlamaMap.get(str);
+							if (ortakIslemler.veriVar(yuvarlamaMap, sirketId, vardiyaId, str)) {
+								BigDecimal deger = ortakIslemler.getVeriMap(yuvarlamaMap, sirketId, vardiyaId, str);
 								if (deger != null)
 									vardiyaGun.setYarimYuvarla(deger.intValue());
 							}
-							if (fazlaMesaiYuvarlamaMap.containsKey(str)) {
-								BigDecimal deger = fazlaMesaiYuvarlamaMap.get(str);
+							if (ortakIslemler.veriVar(fazlaMesaiYuvarlamaMap, sirketId, vardiyaId, str)) {
+								BigDecimal deger = ortakIslemler.getVeriMap(fazlaMesaiYuvarlamaMap, sirketId, vardiyaId, str);
 								if (deger != null)
 									vardiyaGun.setFazlaMesaiYuvarla(deger.intValue());
 							}
