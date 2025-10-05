@@ -14619,15 +14619,15 @@ public class OrtakIslemler implements Serializable {
 	public BigDecimal getVeriMap(TreeMap<String, BigDecimal> map, Long sirketId, Long vardiyaId, String str) {
 		BigDecimal decimal = null;
 		if (map != null && str != null) {
-			String key1 = "V" + vardiyaId + "_" + str;
-			String key = "S" + sirketId + "_" + key1;
-			String key2 = "S" + sirketId + "_" + str;
+			String keyVardiya = "V" + vardiyaId + "_" + str;
+			String key = "S" + sirketId + "_" + keyVardiya;
+			String keySirket = "S" + sirketId + "_" + str;
 			if (map.containsKey(key))
 				decimal = map.get(key);
-			else if (map.containsKey(key1))
-				decimal = map.get(key1);
-			else if (map.containsKey(key2))
-				decimal = map.get(key2);
+			else if (map.containsKey(keyVardiya))
+				decimal = map.get(keyVardiya);
+			else if (map.containsKey(keySirket))
+				decimal = map.get(keySirket);
 			else if (map.containsKey(str)) {
 				decimal = map.get(str);
 			}
