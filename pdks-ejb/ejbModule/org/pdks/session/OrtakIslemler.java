@@ -14582,29 +14582,67 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param sirketId
+	 * @param tesisId
+	 * @param vardiyaId
+	 * @param str
+	 * @param list
+	 */
+	private List<String> getKatsayiKeyList(Long sirketId, Long tesisId, Long vardiyaId, String str, List<String> list) {
+		if (list == null)
+			list = new ArrayList<String>();
+		String sirketKey = sirketId != null ? "S" + sirketId : "";
+		String tesisKey = tesisId != null ? "T" + tesisId : "";
+		String vardiyaKey = vardiyaId != null ? "T" + vardiyaId : "";
+		String[] dizi = new String[] { sirketKey + tesisKey + vardiyaKey, sirketKey + tesisKey, sirketKey + vardiyaKey, tesisKey + vardiyaKey, sirketKey, tesisKey, vardiyaKey };
+		for (int i = 0; i < dizi.length; i++) {
+			if (dizi[i].equals("") == false) {
+				String key = dizi[i] + str;
+				if (list.contains(key) == false)
+					list.add(key);
+			}
+		}
+		return list;
+	}
+
+	/**
 	 * @param map
 	 * @param sirketId
+	 * @param tesisId
 	 * @param vardiyaId
 	 * @param str
 	 * @return
 	 */
-	public boolean veriVar(TreeMap<String, BigDecimal> map, Long sirketId, Long vardiyaId, String str) {
+	public boolean veriVar(TreeMap<String, BigDecimal> map, Long sirketId, Long tesisId, Long vardiyaId, String str) {
 		boolean veriDurum = false;
 		if (map != null && str != null) {
-			if (map.containsKey(str))
-				veriDurum = true;
-			if (veriDurum == false && sirketId != null && vardiyaId != null) {
-				String key2 = "S" + sirketId + "_" + "V" + vardiyaId + "_" + str;
-				veriDurum = map.containsKey(key2);
+			List<String> list = new ArrayList<String>();
+			list.add(str);
+			List<String> list2 = getKatsayiKeyList(sirketId, tesisId, vardiyaId, str, list);
+			Collections.reverse(list2);
+			list.addAll(list2);
+			for (String key : list) {
+				if (map.containsKey(key)) {
+					veriDurum = true;
+					break;
+				}
 			}
-			if (veriDurum == false && sirketId != null) {
-				String key2 = "S" + sirketId + "_" + str;
-				veriDurum = map.containsKey(key2);
-			}
-			if (veriDurum == false && vardiyaId != null) {
-				String key2 = "V" + vardiyaId + "_" + str;
-				veriDurum = map.containsKey(key2);
-			}
+			list = null;
+			list2 = null;
+			// if (map.containsKey(str))
+			// veriDurum = true;
+			// if (veriDurum == false && sirketId != null && vardiyaId != null) {
+			// String key2 = "S" + sirketId + "_" + "V" + vardiyaId + "_" + str;
+			// veriDurum = map.containsKey(key2);
+			// }
+			// if (veriDurum == false && sirketId != null) {
+			// String key2 = "S" + sirketId + "_" + str;
+			// veriDurum = map.containsKey(key2);
+			// }
+			// if (veriDurum == false && vardiyaId != null) {
+			// String key2 = "V" + vardiyaId + "_" + str;
+			// veriDurum = map.containsKey(key2);
+			// }
 		}
 		return veriDurum;
 	}
@@ -14612,25 +14650,36 @@ public class OrtakIslemler implements Serializable {
 	/**
 	 * @param map
 	 * @param sirketId
+	 * @param tesisId
 	 * @param vardiyaId
 	 * @param str
 	 * @return
 	 */
-	public BigDecimal getVeriMap(TreeMap<String, BigDecimal> map, Long sirketId, Long vardiyaId, String str) {
+	public BigDecimal getVeriMap(TreeMap<String, BigDecimal> map, Long sirketId, Long tesisId, Long vardiyaId, String str) {
 		BigDecimal decimal = null;
 		if (map != null && str != null) {
-			String keyVardiya = "V" + vardiyaId + "_" + str;
-			String key = "S" + sirketId + "_" + keyVardiya;
-			String keySirket = "S" + sirketId + "_" + str;
-			if (map.containsKey(key))
-				decimal = map.get(key);
-			else if (map.containsKey(keyVardiya))
-				decimal = map.get(keyVardiya);
-			else if (map.containsKey(keySirket))
-				decimal = map.get(keySirket);
-			else if (map.containsKey(str)) {
-				decimal = map.get(str);
+			List<String> list = getKatsayiKeyList(sirketId, tesisId, vardiyaId, str, null);
+			list.add(str);
+			for (String key : list) {
+				if (map.containsKey(key)) {
+					decimal = map.get(key);
+					break;
+				}
+
 			}
+			list = null;
+			// String keyVardiya = "V" + vardiyaId + "_" + str;
+			// String key = "S" + sirketId + "_" + keyVardiya;
+			// String keySirket = "S" + sirketId + "_" + str;
+			// if (map.containsKey(key))
+			// decimal = map.get(key);
+			// else if (map.containsKey(keyVardiya))
+			// decimal = map.get(keyVardiya);
+			// else if (map.containsKey(keySirket))
+			// decimal = map.get(keySirket);
+			// else if (map.containsKey(str)) {
+			// decimal = map.get(str);
+			// }
 		}
 		return decimal;
 	}
@@ -14759,9 +14808,16 @@ public class OrtakIslemler implements Serializable {
 			for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 				VardiyaGun vg = (VardiyaGun) iterator.next();
 				Vardiya vardiya = vg.getIslemVardiya();
-				Long sirketId = null, vardiyaId = null;
+				Long sirketId = null, vardiyaId = null, tesisId = null;
 				try {
-					sirketId = vg.getPdksPersonel().getSirket().getId();
+					if (vg.getPdksPersonel() != null) {
+						Sirket sirket = vg.getPdksPersonel().getSirket();
+						if (sirket != null) {
+							if (sirket.getTesisDurum())
+								tesisId = vg.getPdksPersonel().getTesis() != null ? vg.getPdksPersonel().getTesis().getId() : null;
+							sirketId = sirket.getId();
+						}
+					}
 				} catch (Exception e) {
 					sirketId = null;
 				}
@@ -14805,15 +14861,15 @@ public class OrtakIslemler implements Serializable {
 							gun = null;
 						}
 					}
-					if (saatCalisanNormalGunKontrolEt && veriVar(saatCalisanNormalGunMap, sirketId, vardiyaId, str))
-						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_NORMAL_GUN.value(), getVeriMap(saatCalisanNormalGunMap, sirketId, vardiyaId, str));
-					if (vg.isIzinli() && saatCalisanIzinGunKontrolEt && veriVar(saatCalisanIzinGunMap, sirketId, vardiyaId, str))
-						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_IZIN_GUN.value(), getVeriMap(saatCalisanIzinGunMap, sirketId, vardiyaId, str));
-					if (saatCalisanHaftaTatilKontrolEt && veriVar(saatCalisanHaftaTatilMap, sirketId, vardiyaId, str))
-						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_HAFTA_TATIL.value(), getVeriMap(saatCalisanHaftaTatilMap, sirketId, vardiyaId, str));
+					if (saatCalisanNormalGunKontrolEt && veriVar(saatCalisanNormalGunMap, sirketId, tesisId, vardiyaId, str))
+						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_NORMAL_GUN.value(), getVeriMap(saatCalisanNormalGunMap, sirketId, tesisId, vardiyaId, str));
+					if (vg.isIzinli() && saatCalisanIzinGunKontrolEt && veriVar(saatCalisanIzinGunMap, sirketId, tesisId, vardiyaId, str))
+						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_IZIN_GUN.value(), getVeriMap(saatCalisanIzinGunMap, sirketId, tesisId, vardiyaId, str));
+					if (saatCalisanHaftaTatilKontrolEt && veriVar(saatCalisanHaftaTatilMap, sirketId, tesisId, vardiyaId, str))
+						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_HAFTA_TATIL.value(), getVeriMap(saatCalisanHaftaTatilMap, sirketId, tesisId, vardiyaId, str));
 					if (tatilYemekHesabiSureEkleDurumKontrolEt) {
-						if (veriVar(tatilYemekHesabiSureEkleDurumMap, sirketId, vardiyaId, str)) {
-							katSayiMap.put(KatSayiTipi.YEMEK_SURE_EKLE_DURUM.value(), getVeriMap(tatilYemekHesabiSureEkleDurumMap, sirketId, vardiyaId, str));
+						if (veriVar(tatilYemekHesabiSureEkleDurumMap, sirketId, tesisId, vardiyaId, str)) {
+							katSayiMap.put(KatSayiTipi.YEMEK_SURE_EKLE_DURUM.value(), getVeriMap(tatilYemekHesabiSureEkleDurumMap, sirketId, tesisId, vardiyaId, str));
 						}
 					}
 					if (str.endsWith("0608"))
@@ -14822,8 +14878,8 @@ public class OrtakIslemler implements Serializable {
 						vg.setBayramAyir(false);
 						BigDecimal ba = null;
 						if (bayramAyirKontrolEt) {
-							if (veriVar(bayramAyirMap, sirketId, vardiyaId, str)) {
-								ba = getVeriMap(bayramAyirMap, sirketId, vardiyaId, str);
+							if (veriVar(bayramAyirMap, sirketId, tesisId, vardiyaId, str)) {
+								ba = getVeriMap(bayramAyirMap, sirketId, tesisId, vardiyaId, str);
 								vg.setBayramAyir(ba.intValue() == 1);
 
 							}
@@ -14842,105 +14898,105 @@ public class OrtakIslemler implements Serializable {
 
 						if (tatil != null) {
 							if (!tatil.isYarimGunMu()) {
-								if (saatCalisanResmiTatilKontrolEt && veriVar(saatCalisanResmiTatilMap, sirketId, vardiyaId, str))
-									katSayiMap.put(KatSayiTipi.SAAT_CALISAN_RESMI_TATIL.value(), getVeriMap(saatCalisanResmiTatilMap, sirketId, vardiyaId, str));
+								if (saatCalisanResmiTatilKontrolEt && veriVar(saatCalisanResmiTatilMap, sirketId, tesisId, vardiyaId, str))
+									katSayiMap.put(KatSayiTipi.SAAT_CALISAN_RESMI_TATIL.value(), getVeriMap(saatCalisanResmiTatilMap, sirketId, tesisId, vardiyaId, str));
 							} else {
-								if (saatCalisanArifeTatilKontrolEt && veriVar(saatCalisanArifeTatilMap, sirketId, vardiyaId, str))
-									katSayiMap.put(KatSayiTipi.SAAT_CALISAN_ARIFE_TATIL_SAAT.value(), getVeriMap(saatCalisanArifeTatilMap, sirketId, vardiyaId, str));
-								if (saatCalisanArifeNormalKontrolEt && veriVar(saatCalisanArifeNormalMap, sirketId, vardiyaId, str))
-									katSayiMap.put(KatSayiTipi.SAAT_CALISAN_ARIFE_NORMAL_SAAT.value(), getVeriMap(saatCalisanArifeNormalMap, sirketId, vardiyaId, str));
+								if (saatCalisanArifeTatilKontrolEt && veriVar(saatCalisanArifeTatilMap, sirketId, tesisId, vardiyaId, str))
+									katSayiMap.put(KatSayiTipi.SAAT_CALISAN_ARIFE_TATIL_SAAT.value(), getVeriMap(saatCalisanArifeTatilMap, sirketId, tesisId, vardiyaId, str));
+								if (saatCalisanArifeNormalKontrolEt && veriVar(saatCalisanArifeNormalMap, sirketId, tesisId, vardiyaId, str))
+									katSayiMap.put(KatSayiTipi.SAAT_CALISAN_ARIFE_NORMAL_SAAT.value(), getVeriMap(saatCalisanArifeNormalMap, sirketId, tesisId, vardiyaId, str));
 							}
 						}
 
 					}
 
-					if (izinHaftaTatilDurumKontrolEt && veriVar(izinHaftaTatilDurumMap, sirketId, vardiyaId, str)) {
+					if (izinHaftaTatilDurumKontrolEt && veriVar(izinHaftaTatilDurumMap, sirketId, tesisId, vardiyaId, str)) {
 						if (vardiya.isHaftaTatil())
 							vg.setIzinHaftaTatilDurum(Boolean.FALSE);
 
 					} else if (vg.isPazar())
 						vg.setIzinHaftaTatilDurum(Boolean.TRUE);
-					if (fmtDurumKontrolEt && veriVar(fmtDurumMap, sirketId, vardiyaId, str)) {
-						BigDecimal deger = getVeriMap(fmtDurumMap, sirketId, vardiyaId, str);
+					if (fmtDurumKontrolEt && veriVar(fmtDurumMap, sirketId, tesisId, vardiyaId, str)) {
+						BigDecimal deger = getVeriMap(fmtDurumMap, sirketId, tesisId, vardiyaId, str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.FMT_DURUM.value(), deger);
 						}
 					}
 					vg.setCihazZamanSaniyeSifirla(Boolean.FALSE);
-					if (cihazZamanSaniyeSifirlaKontrolEt && veriVar(cihazZamanSaniyeSifirlaMap, sirketId, vardiyaId, str)) {
-						BigDecimal deger = getVeriMap(cihazZamanSaniyeSifirlaMap, sirketId, vardiyaId, str);
+					if (cihazZamanSaniyeSifirlaKontrolEt && veriVar(cihazZamanSaniyeSifirlaMap, sirketId, tesisId, vardiyaId, str)) {
+						BigDecimal deger = getVeriMap(cihazZamanSaniyeSifirlaMap, sirketId, tesisId, vardiyaId, str);
 						if (deger != null) {
 							vg.setCihazZamanSaniyeSifirla(Long.parseLong(str) >= deger.longValue());
 							katSayiMap.put(KatSayiTipi.CIHAZ_ZAMAN_SANIYE_SIFIRLA.value(), deger);
 						}
 					}
-					if (erkenGirisKontrolEt && veriVar(erkenGirisMap, sirketId, vardiyaId, str)) {
-						BigDecimal deger = getVeriMap(erkenGirisMap, sirketId, vardiyaId, str);
+					if (erkenGirisKontrolEt && veriVar(erkenGirisMap, sirketId, tesisId, vardiyaId, str)) {
+						BigDecimal deger = getVeriMap(erkenGirisMap, sirketId, tesisId, vardiyaId, str);
 						if (deger != null)
 							katSayiMap.put(KatSayiTipi.ERKEN_GIRIS_TIPI.value(), deger);
 					}
 					if (vardiya.isCalisma()) {
-						if (erkenGirisKontrolEt && veriVar(erkenGirisMap, sirketId, vardiyaId, str)) {
-							BigDecimal deger = getVeriMap(erkenGirisMap, sirketId, vardiyaId, str);
+						if (erkenGirisKontrolEt && veriVar(erkenGirisMap, sirketId, tesisId, vardiyaId, str)) {
+							BigDecimal deger = getVeriMap(erkenGirisMap, sirketId, tesisId, vardiyaId, str);
 							if (deger != null)
 								katSayiMap.put(KatSayiTipi.ERKEN_GIRIS_TIPI.value(), deger);
 						}
-						if (erkenCikisKontrolEt && veriVar(erkenCikisMap, sirketId, vardiyaId, str)) {
-							BigDecimal deger = getVeriMap(erkenCikisMap, sirketId, vardiyaId, str);
+						if (erkenCikisKontrolEt && veriVar(erkenCikisMap, sirketId, tesisId, vardiyaId, str)) {
+							BigDecimal deger = getVeriMap(erkenCikisMap, sirketId, tesisId, vardiyaId, str);
 							if (deger != null)
 								katSayiMap.put(KatSayiTipi.ERKEN_CIKIS_TIPI.value(), deger);
 						}
-						if (gecGirisKontrolEt && veriVar(gecGirisMap, sirketId, vardiyaId, str)) {
-							BigDecimal deger = getVeriMap(gecGirisMap, sirketId, vardiyaId, str);
+						if (gecGirisKontrolEt && veriVar(gecGirisMap, sirketId, tesisId, vardiyaId, str)) {
+							BigDecimal deger = getVeriMap(gecGirisMap, sirketId, tesisId, vardiyaId, str);
 							if (deger != null)
 								katSayiMap.put(KatSayiTipi.GEC_GIRIS_TIPI.value(), deger);
 						}
-						if (gecCikisKontrolEt && veriVar(gecCikisMap, sirketId, vardiyaId, str)) {
-							BigDecimal deger = getVeriMap(gecCikisMap, sirketId, vardiyaId, str);
+						if (gecCikisKontrolEt && veriVar(gecCikisMap, sirketId, tesisId, vardiyaId, str)) {
+							BigDecimal deger = getVeriMap(gecCikisMap, sirketId, tesisId, vardiyaId, str);
 							if (deger != null)
 								katSayiMap.put(KatSayiTipi.GEC_CIKIS_TIPI.value(), deger);
 						}
 					}
 
-					if (offFazlaMesaiKontrolEt && veriVar(offFazlaMesaiMap, sirketId, vardiyaId, str)) {
-						BigDecimal deger = getVeriMap(offFazlaMesaiMap, sirketId, vardiyaId, str);
+					if (offFazlaMesaiKontrolEt && veriVar(offFazlaMesaiMap, sirketId, tesisId, vardiyaId, str)) {
+						BigDecimal deger = getVeriMap(offFazlaMesaiMap, sirketId, tesisId, vardiyaId, str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.OFF_FAZLA_MESAI_TIPI.value(), deger);
 							vg.setOffFazlaMesaiBasDakika(deger.intValue());
 						}
 					}
-					if (haftaTatilFazlaMesaiKontrolEt && veriVar(haftaTatilFazlaMesaiMap, sirketId, vardiyaId, str)) {
-						BigDecimal deger = getVeriMap(haftaTatilFazlaMesaiMap, sirketId, vardiyaId, str);
+					if (haftaTatilFazlaMesaiKontrolEt && veriVar(haftaTatilFazlaMesaiMap, sirketId, tesisId, vardiyaId, str)) {
+						BigDecimal deger = getVeriMap(haftaTatilFazlaMesaiMap, sirketId, tesisId, vardiyaId, str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.HT_FAZLA_MESAI_TIPI.value(), deger);
 							vg.setHaftaTatiliFazlaMesaiBasDakika(deger.intValue());
 						}
 					}
 
-					if (yuvarlamaKatSayiOku && veriVar(yuvarlamaMap, sirketId, vardiyaId, str)) {
-						BigDecimal deger = getVeriMap(yuvarlamaMap, sirketId, vardiyaId, str);
+					if (yuvarlamaKatSayiOku && veriVar(yuvarlamaMap, sirketId, tesisId, vardiyaId, str)) {
+						BigDecimal deger = getVeriMap(yuvarlamaMap, sirketId, tesisId, vardiyaId, str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.YUVARLAMA_TIPI.value(), deger);
 							vg.setYarimYuvarla(deger.intValue());
 						}
 					}
-					if (fazlaMesaiYuvarlamaKontrolEt && veriVar(fazlaMesaiYuvarlamaMap, sirketId, vardiyaId, str)) {
-						BigDecimal deger = getVeriMap(fazlaMesaiYuvarlamaMap, sirketId, vardiyaId, str);
+					if (fazlaMesaiYuvarlamaKontrolEt && veriVar(fazlaMesaiYuvarlamaMap, sirketId, tesisId, vardiyaId, str)) {
+						BigDecimal deger = getVeriMap(fazlaMesaiYuvarlamaMap, sirketId, tesisId, vardiyaId, str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.FAZLA_MESA_YUVARLAMA.value(), deger);
 							vg.setFazlaMesaiYuvarla(deger.intValue());
 						}
 					}
-					if (suaKatSayiOku && veriVar(sureSuaMap, sirketId, vardiyaId, str)) {
-						BigDecimal deger = getVeriMap(sureSuaMap, sirketId, vardiyaId, str);
+					if (suaKatSayiOku && veriVar(sureSuaMap, sirketId, tesisId, vardiyaId, str)) {
+						BigDecimal deger = getVeriMap(sureSuaMap, sirketId, tesisId, vardiyaId, str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI.value(), deger);
 							vg.setCalismaSuaSaati(deger.doubleValue());
 						}
 					}
 
-					if (planKatSayiOku && veriVar(sureMap, sirketId, vardiyaId, str)) {
-						BigDecimal deger = getVeriMap(sureMap, sirketId, vardiyaId, str);
+					if (planKatSayiOku && veriVar(sureMap, sirketId, tesisId, vardiyaId, str)) {
+						BigDecimal deger = getVeriMap(sureMap, sirketId, tesisId, vardiyaId, str);
 						if (deger != null) {
 							katSayiMap.put(KatSayiTipi.HAREKET_BEKLEME_SURESI.value(), deger);
 							vg.setBeklemeSuresi(deger.intValue());
@@ -15020,15 +15076,15 @@ public class OrtakIslemler implements Serializable {
 		String fieldName = "pId";
 		HashMap map = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from " + VardiyaGun.TABLE_NAME + " V "
-				+ PdksEntityController.getSelectLOCK() + " ");
+		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from "
+				+ VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + KatSayi.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " on B." + KatSayi.COLUMN_NAME_BAS_TARIH + " <= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		sb.append(" and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
 		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :bitTarih and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
-		sb.append(" group by B." + KatSayi.COLUMN_NAME_TIPI + ", B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_VARDIYA + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
+		sb.append(" group by B." + KatSayi.COLUMN_NAME_TIPI + ", B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		map.put(fieldName, personelIdler);
 		map.put("basTarih", basTarih);
 		map.put("bitTarih", bitTarih);
@@ -15049,7 +15105,10 @@ public class OrtakIslemler implements Serializable {
 						allMap.put(key, degerMap);
 					Date date = new Date(((java.sql.Timestamp) objects[1]).getTime());
 					BigDecimal deger = new BigDecimal((Double) objects[2]);
-					String dKey = (objects[3] == null ? "" : "S" + objects[3].toString() + "_") + (objects[4] == null ? "" : "V" + objects[4].toString() + "_") + PdksUtil.convertToDateString(date, "yyyyMMdd");
+					String dKey = (objects[3] == null ? "" : "S" + objects[3].toString() + "_");
+					dKey += (objects[4] == null ? "" : "T" + objects[4].toString() + "_");
+					dKey += (objects[5] == null ? "" : "V" + objects[5].toString() + "_");
+					dKey += PdksUtil.convertToDateString(date, "yyyyMMdd");
 					degerMap.put(dKey, deger);
 				}
 			} catch (Exception e) {
@@ -15074,7 +15133,8 @@ public class OrtakIslemler implements Serializable {
 		HashMap map = new HashMap();
 		TreeMap<String, BigDecimal> degerMap = new TreeMap<String, BigDecimal>();
 		StringBuffer sb = new StringBuffer();
-		sb.append("select V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("select V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from " + VardiyaGun.TABLE_NAME + " V "
+				+ PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + KatSayi.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " on B." + KatSayi.COLUMN_NAME_BAS_TARIH + " <= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		sb.append(" and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
 		sb.append(" and B." + KatSayi.COLUMN_NAME_TIPI + " = :k");
@@ -15082,7 +15142,7 @@ public class OrtakIslemler implements Serializable {
 		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
 		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :bitTarih and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :pId ");
-		sb.append(" group by  B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_VARDIYA + ", V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
+		sb.append(" group by  B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + ", V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		map.put("pId", personelIdler);
 		map.put("basTarih", basTarih);
 		map.put("bitTarih", bitTarih);
@@ -15096,7 +15156,7 @@ public class OrtakIslemler implements Serializable {
 					continue;
 				Date date = new Date(((java.sql.Timestamp) objects[0]).getTime());
 				BigDecimal deger = new BigDecimal((Double) objects[1]);
-				String dKey = (objects[2] == null ? "" : "S" + objects[2].toString() + "_") + (objects[3] == null ? "" : "V" + objects[3].toString() + "_") + PdksUtil.convertToDateString(date, "yyyyMMdd");
+				String dKey = (objects[2] == null ? "" : "S" + objects[2].toString() + "_") + (objects[3] == null ? "" : "T" + objects[3].toString() + "_") + (objects[4] == null ? "" : "V" + objects[4].toString() + "_") + PdksUtil.convertToDateString(date, "yyyyMMdd");
 				degerMap.put(dKey, deger);
 			}
 		} catch (Exception e) {

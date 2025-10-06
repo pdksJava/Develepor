@@ -705,10 +705,17 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						if (vg.getVardiya() == null)
 							continue;
 						Vardiya vardiya = vg.getVardiya();
-						Long sirketId = null, vardiyaId = null;
+						Long sirketId = null, tesisId = null, vardiyaId = null;
 						try {
-							sirketId = vg.getPdksPersonel().getSirket().getId();
-						} catch (Exception e) {
+							if (vg.getPdksPersonel() != null) {
+								Sirket sirket = vg.getPdksPersonel().getSirket();
+								if (sirket != null) {
+									if (sirket.getTesisDurum())
+										tesisId = vg.getPdksPersonel().getTesis() != null ? vg.getPdksPersonel().getTesis().getId() : null;
+									sirketId = sirket.getId();
+								}
+							}
+ 						} catch (Exception e) {
 							sirketId = null;
 						}
 						try {
@@ -719,13 +726,13 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						String key = vg.getPersonel().getPdksSicilNo();
 						if (yuvarlamaMap != null) {
 							String str = vg.getVardiyaDateStr();
-							if (ortakIslemler.veriVar(yuvarlamaMap, sirketId, vardiyaId, str)) {
-								BigDecimal deger = ortakIslemler.getVeriMap(yuvarlamaMap, sirketId, vardiyaId, str);
+							if (ortakIslemler.veriVar(yuvarlamaMap, sirketId, tesisId, vardiyaId, str)) {
+								BigDecimal deger = ortakIslemler.getVeriMap(yuvarlamaMap, sirketId, tesisId, vardiyaId, str);
 								if (deger != null)
 									vg.setYarimYuvarla(deger.intValue());
 							}
-							if (ortakIslemler.veriVar(fazlaMesaiYuvarlamaMap, sirketId, vardiyaId, str)) {
-								BigDecimal deger = ortakIslemler.getVeriMap(fazlaMesaiYuvarlamaMap, sirketId, vardiyaId, str);
+							if (ortakIslemler.veriVar(fazlaMesaiYuvarlamaMap, sirketId, tesisId, vardiyaId, str)) {
+								BigDecimal deger = ortakIslemler.getVeriMap(fazlaMesaiYuvarlamaMap, sirketId, tesisId, vardiyaId, str);
 								if (deger != null)
 									vg.setFazlaMesaiYuvarla(deger.intValue());
 							}
