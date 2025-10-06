@@ -726,13 +726,13 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						String key = vg.getPersonel().getPdksSicilNo();
 						if (yuvarlamaMap != null) {
 							String str = vg.getVardiyaDateStr();
-							if (ortakIslemler.veriVar(yuvarlamaMap, sirketId, tesisId, vardiyaId, str)) {
-								BigDecimal deger = ortakIslemler.getVeriMap(yuvarlamaMap, sirketId, tesisId, vardiyaId, str);
+							if (ortakIslemler.veriKatSayiVar(yuvarlamaMap, sirketId, tesisId, vardiyaId, str)) {
+								BigDecimal deger = ortakIslemler.getKatSayiVeriMap(yuvarlamaMap, sirketId, tesisId, vardiyaId, str);
 								if (deger != null)
 									vg.setYarimYuvarla(deger.intValue());
 							}
-							if (ortakIslemler.veriVar(fazlaMesaiYuvarlamaMap, sirketId, tesisId, vardiyaId, str)) {
-								BigDecimal deger = ortakIslemler.getVeriMap(fazlaMesaiYuvarlamaMap, sirketId, tesisId, vardiyaId, str);
+							if (ortakIslemler.veriKatSayiVar(fazlaMesaiYuvarlamaMap, sirketId, tesisId, vardiyaId, str)) {
+								BigDecimal deger = ortakIslemler.getKatSayiVeriMap(fazlaMesaiYuvarlamaMap, sirketId, tesisId, vardiyaId, str);
 								if (deger != null)
 									vg.setFazlaMesaiYuvarla(deger.intValue());
 							}
