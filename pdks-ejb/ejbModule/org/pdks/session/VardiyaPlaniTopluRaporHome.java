@@ -433,7 +433,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 							tesisDoldur(false);
 						}
 
-					}
+					} 
 					if (sirket != null) {
 						departmanId = sirket.getDepartman().getId();
 						setDepartman(sirket.getDepartman());
@@ -446,7 +446,8 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 
 				}
 
-			}
+			} else if (sirketId == null)
+				departmanDegisti(true);
 			linkAdres = null;
 			if (!authenticatedUser.isAdmin() && !authenticatedUser.isIK() && !authenticatedUser.isYoneticiKontratli()) {
 				sirket = authenticatedUser.getPdksPersonel().getSirket();

@@ -468,8 +468,9 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				sirket = authenticatedUser.getPdksPersonel().getSirket();
 				sirketId = sirket.getId();
 			}
-
 			setDepartman(departmanId != null ? (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session) : null);
+			if (sirketId == null)
+				fillSirketList();
 			if (tesisIdStr != null) {
 				if (!tesisList.isEmpty())
 					setTesisId(Long.parseLong(tesisIdStr));
