@@ -14589,12 +14589,12 @@ public class OrtakIslemler implements Serializable {
 	 * @param list
 	 */
 	private List<String> getKatsayiKeyList(Long sirketId, Long tesisId, Long vardiyaId, String str, List<String> list) {
-		if (list == null)
-			list = new ArrayList<String>();
 		String sirketKey = sirketId != null ? "S" + sirketId : "";
 		String tesisKey = tesisId != null ? "T" + tesisId : "";
 		String vardiyaKey = vardiyaId != null ? "T" + vardiyaId : "";
 		String[] dizi = new String[] { sirketKey + tesisKey + vardiyaKey, sirketKey + tesisKey, sirketKey + vardiyaKey, tesisKey + vardiyaKey, sirketKey, tesisKey, vardiyaKey };
+		if (list == null)
+			list = new ArrayList<String>();
 		for (int i = 0; i < dizi.length; i++) {
 			if (dizi[i].equals("") == false) {
 				String key = dizi[i] + str;
