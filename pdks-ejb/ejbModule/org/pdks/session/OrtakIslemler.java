@@ -14622,7 +14622,7 @@ public class OrtakIslemler implements Serializable {
 			List<String> list = new ArrayList<String>();
 			list.add(str);
 			List<String> list2 = getKatSayiKeyList(sirketId, tesisId, vardiyaId, str, true);
- 			list.addAll(list2);
+			list.addAll(list2);
 			for (String key : list) {
 				if (map.containsKey(key)) {
 					veriDurum = true;
@@ -14658,6 +14658,56 @@ public class OrtakIslemler implements Serializable {
 			list = null;
 		}
 		return decimal;
+	}
+
+	/**
+	 * @param puantajList
+	 * @param session
+	 */
+	public void odemeYuvarlamaGuncelle(List<AylikPuantaj> puantajList, Session session) {
+		if (puantajList != null && puantajList.isEmpty() == false) {
+			Calendar cal = Calendar.getInstance();
+			DenklestirmeAy da = puantajList.get(0).getDenklestirmeAy();
+			if (da != null) {
+				Date tarih1 = PdksUtil.convertToJavaDate(String.valueOf(da.getDonem()) + "01", "yyyyMMdd");
+				cal.setTime(tarih1);
+				cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+				Date tarih2 = cal.getTime();
+				TreeMap<String, BigDecimal> ucmYuvarlamaMap = getYuvarlamaKatSayiMap(tarih1, tarih2, KatSayiTipi.UOM_YUVARLAMA, session);
+				TreeMap<String, BigDecimal> rtYuvarlamaMap = getYuvarlamaKatSayiMap(tarih1, tarih2, KatSayiTipi.RT_YUVARLAMA, session);
+				if (ucmYuvarlamaMap.isEmpty() == false || rtYuvarlamaMap.isEmpty()) {
+					for (AylikPuantaj ap : puantajList) {
+						Personel personel = ap.getPersonelDenklestirme().getPdksPersonel();
+						Long sirketId = null, tesisId = null;
+						if (personel != null) {
+							Sirket sirket = personel.getSirket();
+							if (sirket != null) {
+								sirketId = sirket.getId();
+								if (sirket.isTesisDurumu() && personel.getTesis() != null)
+									tesisId = personel.getTesis().getId();
+							}
+						}
+						HashMap<Integer, BigDecimal> katSayiMap = new HashMap<Integer, BigDecimal>();
+						if (veriKatSayiVar(ucmYuvarlamaMap, sirketId, tesisId, null, "")) {
+							BigDecimal deger = getKatSayiVeriMap(ucmYuvarlamaMap, sirketId, tesisId, null, "");
+							if (deger != null)
+								katSayiMap.put(KatSayiTipi.UOM_YUVARLAMA.value(), deger);
+						}
+						if (veriKatSayiVar(rtYuvarlamaMap, sirketId, tesisId, null, "")) {
+							BigDecimal deger = getKatSayiVeriMap(rtYuvarlamaMap, sirketId, tesisId, null, "");
+							if (deger != null)
+								katSayiMap.put(KatSayiTipi.RT_YUVARLAMA.value(), deger);
+						}
+						if (katSayiMap.isEmpty() == false)
+							ap.setKatSayiMap(katSayiMap);
+						else
+							katSayiMap = null;
+					}
+				}
+				ucmYuvarlamaMap = null;
+				rtYuvarlamaMap = null;
+			}
+		}
 	}
 
 	/**
@@ -14735,7 +14785,7 @@ public class OrtakIslemler implements Serializable {
 			TreeMap<String, BigDecimal> sureSuaMap = suaKatSayiOku && allMap.containsKey(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI) ? allMap.get(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI) : null;
 			TreeMap<String, BigDecimal> yuvarlamaMap = yuvarlamaKatSayiOku && allMap.containsKey(KatSayiTipi.YUVARLAMA_TIPI) ? allMap.get(KatSayiTipi.YUVARLAMA_TIPI) : null;
 			TreeMap<String, BigDecimal> cihazZamanSaniyeSifirlaMap = allMap.containsKey(KatSayiTipi.CIHAZ_ZAMAN_SANIYE_SIFIRLA) ? allMap.get(KatSayiTipi.CIHAZ_ZAMAN_SANIYE_SIFIRLA) : null;
-			TreeMap<String, BigDecimal> fazlaMesaiYuvarlamaMap = allMap.containsKey(KatSayiTipi.FAZLA_MESA_YUVARLAMA) ? allMap.get(KatSayiTipi.FAZLA_MESA_YUVARLAMA) : null;
+			TreeMap<String, BigDecimal> fazlaMesaiYuvarlamaMap = allMap.containsKey(KatSayiTipi.FAZLA_MESAI_YUVARLAMA) ? allMap.get(KatSayiTipi.FAZLA_MESAI_YUVARLAMA) : null;
 			TreeMap<String, BigDecimal> bayramAyirMap = allMap.containsKey(KatSayiTipi.BAYRAM_AYIR) ? allMap.get(KatSayiTipi.BAYRAM_AYIR) : null;
 			TreeMap<String, BigDecimal> haftaTatilFazlaMesaiMap = haftaTatilFazlaMesaiKatSayiOku && allMap.containsKey(KatSayiTipi.HT_FAZLA_MESAI_TIPI) ? allMap.get(KatSayiTipi.HT_FAZLA_MESAI_TIPI) : null;
 			TreeMap<String, BigDecimal> offFazlaMesaiMap = offFazlaMesaiKatSayiOku && allMap.containsKey(KatSayiTipi.OFF_FAZLA_MESAI_TIPI) ? allMap.get(KatSayiTipi.OFF_FAZLA_MESAI_TIPI) : null;
@@ -14959,7 +15009,7 @@ public class OrtakIslemler implements Serializable {
 					if (fazlaMesaiYuvarlamaKontrolEt && veriKatSayiVar(fazlaMesaiYuvarlamaMap, sirketId, tesisId, vardiyaId, str)) {
 						BigDecimal deger = getKatSayiVeriMap(fazlaMesaiYuvarlamaMap, sirketId, tesisId, vardiyaId, str);
 						if (deger != null) {
-							katSayiMap.put(KatSayiTipi.FAZLA_MESA_YUVARLAMA.value(), deger);
+							katSayiMap.put(KatSayiTipi.FAZLA_MESAI_YUVARLAMA.value(), deger);
 							vg.setFazlaMesaiYuvarla(deger.intValue());
 						}
 					}
@@ -15041,6 +15091,83 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param bugun
+	 * @param session
+	 * @return
+	 */
+	public HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> getVardiyaKatSayiAllMap(Date bugun, Session session) {
+		if (bugun == null)
+			bugun = PdksUtil.buGun();
+		HashMap map = new HashMap();
+		StringBuffer sb = new StringBuffer();
+		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ", GETDATE()  " + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, ");
+		sb.append("B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from " + KatSayi.TABLE_NAME + " B " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" where (:bugun between B." + KatSayi.COLUMN_NAME_BAS_TARIH + " and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " )");
+		sb.append("  and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
+		sb.append(" group by B." + KatSayi.COLUMN_NAME_TIPI + ", B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA);
+		map.put("bugun", bugun);
+		if (session != null)
+			map.put(PdksEntityController.MAP_KEY_SESSION, session);
+		// List<Object[]> list = pdksEntityController.getObjectBySQLList(sb, map, null);
+		List<Object[]> list = pdksEntityController.getObjectBySQLList(sb, map, null);
+		map = null;
+		HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> allMap = setKatSayiMap(list);
+
+		return allMap;
+	}
+
+	/**
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param session
+	 * @return
+	 */
+	public TreeMap<String, BigDecimal> getYuvarlamaKatSayiMap(Date basTarih, Date bitTarih, KatSayiTipi tipi, Session session) {
+		TreeMap<String, BigDecimal> degerMap = new TreeMap<String, BigDecimal>();
+		HashMap map = new HashMap();
+		StringBuffer sb = new StringBuffer();
+		sb.append("select max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, ");
+		sb.append("B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from " + KatSayi.TABLE_NAME + " B " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" where  B." + KatSayi.COLUMN_NAME_BAS_TARIH + "<= :bitTarih and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= :basTarih");
+		sb.append("  and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 and B." + KatSayi.COLUMN_NAME_TIPI + " = :tipi ");
+		sb.append(" group by B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA);
+		map.put("tipi", tipi.value());
+		map.put("basTarih", basTarih);
+		map.put("bitTarih", bitTarih);
+		if (session != null)
+			map.put(PdksEntityController.MAP_KEY_SESSION, session);
+		// List<Object[]> list = pdksEntityController.getObjectBySQLList(sb, map, null);
+		try {
+
+			List<Object[]> list = pdksEntityController.getObjectBySQLList(sb, map, null);
+
+			if (session != null)
+				map.put(PdksEntityController.MAP_KEY_SESSION, session);
+			String[] dizi = new String[] { "S", "T", "V" };
+
+			for (Object[] objects : list) {
+				if (objects[0] == null)
+					continue;
+
+				BigDecimal deger = new BigDecimal((Double) objects[0]);
+				String dKey = "";
+				for (int i = 0; i < dizi.length; i++) {
+					Object object = objects[i + 1];
+					dKey += (object == null ? "" : dizi[i] + object.toString() + "_");
+				}
+
+				degerMap.put(dKey, deger);
+			}
+			list = null;
+			dizi = null;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return degerMap;
+	}
+
+	/**
 	 * @param personelIdler
 	 * @param basTarih
 	 * @param bitTarih
@@ -15048,12 +15175,11 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> getPlanKatSayiAllMap(List<Long> personelIdler, Date basTarih, Date bitTarih, Session session) {
-		HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> allMap = new HashMap<KatSayiTipi, TreeMap<String, BigDecimal>>();
 		String fieldName = "pId";
 		HashMap map = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from "
-				+ VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ", V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, ");
+		sb.append("B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + KatSayi.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " on B." + KatSayi.COLUMN_NAME_BAS_TARIH + " <= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		sb.append(" and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
@@ -15068,32 +15194,49 @@ public class OrtakIslemler implements Serializable {
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		// List<Object[]> list = pdksEntityController.getObjectBySQLList(sb, map, null);
 		List<Object[]> list = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, map, null, session);
-
-		for (Object[] objects : list) {
-			if (objects[0] == null || objects[1] == null)
-				continue;
-			try {
-				Integer kaySayi = (Integer) objects[0];
-				KatSayiTipi key = KatSayiTipi.fromValue(kaySayi);
-				if (key != null) {
-					TreeMap<String, BigDecimal> degerMap = allMap.containsKey(key) ? allMap.get(key) : new TreeMap<String, BigDecimal>();
-					if (degerMap.isEmpty())
-						allMap.put(key, degerMap);
-					Date date = new Date(((java.sql.Timestamp) objects[1]).getTime());
-					BigDecimal deger = new BigDecimal((Double) objects[2]);
-					String dKey = (objects[3] == null ? "" : "S" + objects[3].toString() + "_");
-					dKey += (objects[4] == null ? "" : "T" + objects[4].toString() + "_");
-					dKey += (objects[5] == null ? "" : "V" + objects[5].toString() + "_");
-					dKey += PdksUtil.convertToDateString(date, "yyyyMMdd");
-					degerMap.put(dKey, deger);
-				}
-			} catch (Exception e) {
-
-			}
-
-		}
-
 		map = null;
+		HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> allMap = setKatSayiMap(list);
+
+		return allMap;
+	}
+
+	/**
+	 * @param list
+	 * @return
+	 */
+	private HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> setKatSayiMap(List<Object[]> list) {
+		HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> allMap = new HashMap<KatSayiTipi, TreeMap<String, BigDecimal>>();
+		if (list != null) {
+			String[] dizi = new String[] { "S", "T", "V" };
+			for (Object[] objects : list) {
+				if (objects[0] == null || objects[1] == null)
+					continue;
+				try {
+					Integer kaySayi = (Integer) objects[0];
+					KatSayiTipi key = KatSayiTipi.fromValue(kaySayi);
+					if (key != null) {
+						TreeMap<String, BigDecimal> degerMap = allMap.containsKey(key) ? allMap.get(key) : new TreeMap<String, BigDecimal>();
+						if (degerMap.isEmpty())
+							allMap.put(key, degerMap);
+						Date date = objects[1] != null ? new Date(((java.sql.Timestamp) objects[1]).getTime()) : null;
+						BigDecimal deger = new BigDecimal((Double) objects[2]);
+						String dKey = "";
+						for (int i = 0; i < dizi.length; i++) {
+							Object object = objects[i + 3];
+							dKey += (object == null ? "" : dizi[i] + object.toString() + "_");
+						}
+						if (date != null)
+							dKey += PdksUtil.convertToDateString(date, "yyyyMMdd");
+						degerMap.put(dKey, deger);
+					}
+				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
+				}
+			}
+			list = null;
+			dizi = null;
+		}
 		return allMap;
 	}
 
@@ -15125,6 +15268,7 @@ public class OrtakIslemler implements Serializable {
 		map.put("k", tipi.value());
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
+		String[] dizi = new String[] { "S", "T", "V" };
 		try {
 			List<Object[]> list = pdksEntityController.getObjectBySQLList(sb, map, null);
 			for (Object[] objects : list) {
@@ -15132,13 +15276,20 @@ public class OrtakIslemler implements Serializable {
 					continue;
 				Date date = new Date(((java.sql.Timestamp) objects[0]).getTime());
 				BigDecimal deger = new BigDecimal((Double) objects[1]);
-				String dKey = (objects[2] == null ? "" : "S" + objects[2].toString() + "_") + (objects[3] == null ? "" : "T" + objects[3].toString() + "_") + (objects[4] == null ? "" : "V" + objects[4].toString() + "_") + PdksUtil.convertToDateString(date, "yyyyMMdd");
+				String dKey = "";
+				for (int i = 0; i < dizi.length; i++) {
+					Object object = objects[i + 2];
+					dKey += (object == null ? "" : dizi[i] + object.toString() + "_");
+				}
+				dKey += PdksUtil.convertToDateString(date, "yyyyMMdd");
 				degerMap.put(dKey, deger);
 			}
+			list = null;
 		} catch (Exception e) {
 			logger.error(e);
 			e.printStackTrace();
 		}
+		dizi = null;
 		return degerMap;
 	}
 
@@ -18155,8 +18306,7 @@ public class OrtakIslemler implements Serializable {
 		PersonelDenklestirme personelDenklestirme = null;
 		try {
 			DenklestirmeAy dm = puantajData.getDenklestirmeAy();
-
-			Date sonGun = PdksUtil.tariheAyEkleCikar(PdksUtil.convertToJavaDate(String.valueOf(dm.getYil() * 100 + dm.getAy()) + "01", "yyyyMMdd"), 1);
+ 			Date sonGun = PdksUtil.tariheAyEkleCikar(PdksUtil.convertToJavaDate(String.valueOf(dm.getYil() * 100 + dm.getAy()) + "01", "yyyyMMdd"), 1);
 			boolean personelCalisiyor = puantajData.getPdksPersonel().isCalisiyorGun(sonGun);
 			User loginUser = puantajData.getLoginUser() != null ? puantajData.getLoginUser() : authenticatedUser;
 			List<YemekIzin> yemekBosList = yemekHesapla ? null : new ArrayList<YemekIzin>();
@@ -18723,13 +18873,20 @@ public class OrtakIslemler implements Serializable {
 					if (haftaTatiliFark != 0)
 						izinSuresi += calismaModeli.getHaftaIci();
 					puantajData.setIzinSuresi(izinSuresi);
+					int yarimYuvarla = puantajData.getYarimYuvarla(), ucmYuvarla = puantajData.getYarimYuvarla(), rtYuvarla = puantajData.getYarimYuvarla();
+					if (puantajData.getKatSayiMap() != null) {
+						if (puantajData.getKatSayiMap().containsKey(KatSayiTipi.UOM_YUVARLAMA.value()))
+							ucmYuvarla = puantajData.getKatSayiMap().get(KatSayiTipi.UOM_YUVARLAMA.value()).intValue();
+						if (puantajData.getKatSayiMap().containsKey(KatSayiTipi.RT_YUVARLAMA.value()))
+							rtYuvarla = puantajData.getKatSayiMap().get(KatSayiTipi.RT_YUVARLAMA.value()).intValue();
+					}
 					if (filliHesapla == false) {
 						if (puantajData.getResmiTatilToplami() > 0)
 							resmiTatilSure = puantajData.getResmiTatilToplami();
 						else {
 							if (resmiTatilSure == 0 && personelDenklestirme != null && personelDenklestirme.getDurum().booleanValue())
 								resmiTatilSure = tatilSuresi;
-							puantajData.setResmiTatilToplami(resmiTatilSure);
+							puantajData.setResmiTatilToplami(PdksUtil.setSureDoubleTypeRounded(resmiTatilSure, rtYuvarla));
 						}
 					}
 
@@ -18739,7 +18896,6 @@ public class OrtakIslemler implements Serializable {
 					puantajData.setUcretiOdenenMesaiSure(ucretiOdenenMesaiSure);
 					puantajData.planSureHesapla(tatilGunleriMap);
 
-					int yarimYuvarla = puantajData.getYarimYuvarla();
 					if (toplamCalismaGunSayisi + offGunSayisi == 0 && puantajData.getSaatToplami() == 0.0d) {
 						if (puantajData.getPlanlananSure() != 0.0d) {
 							puantajData.setPlanlananSure(0.0d);
@@ -18763,7 +18919,8 @@ public class OrtakIslemler implements Serializable {
 					boolean bakiyeSifirlaDurum = personelDenklestirme != null && personelDenklestirme.getBakiyeSifirlaDurum() != null && personelDenklestirme.getBakiyeSifirlaDurum().booleanValue();
 					boolean mesaiDevret = personelDenklestirme.getFazlaMesaiIzinKullan() && personel.isCalisiyorGun(puantajData.getSonGun());
 					PersonelDenklestirme hesaplananDenklestirme = puantajData.getPersonelDenklestirme(fazlaMesaiOde, hesaplananBuAySure, gecenAydevredenSure);
-					puantajData.setFazlaMesaiSure(PdksUtil.setSureDoubleTypeRounded((hesaplananDenklestirme.getOdenenSure() > 0 ? hesaplananDenklestirme.getOdenenSure() : 0) + (bakiyeSifirlaDurum == false || mesaiDevret == false ? ucretiOdenenMesaiSure : 0), yarimYuvarla));
+
+					puantajData.setFazlaMesaiSure(PdksUtil.setSureDoubleTypeRounded((hesaplananDenklestirme.getOdenenSure() > 0 ? hesaplananDenklestirme.getOdenenSure() : 0) + (bakiyeSifirlaDurum == false || mesaiDevret == false ? ucretiOdenenMesaiSure : 0), ucmYuvarla));
 					puantajData.setHesaplananSure(hesaplananDenklestirme.getHesaplananSure());
 
 					puantajData.setEksikCalismaSure(0.0d);

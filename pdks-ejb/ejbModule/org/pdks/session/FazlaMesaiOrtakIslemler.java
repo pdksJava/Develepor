@@ -315,6 +315,10 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		List<Long> perIdList = new ArrayList<Long>();
 
 		HashMap<Long, List<PersonelDonemselDurum>> pddMap = new HashMap<Long, List<PersonelDonemselDurum>>();
+		if (puantajList.isEmpty() == false)
+			ortakIslemler.odemeYuvarlamaGuncelle(puantajList, session);
+
+		cal = Calendar.getInstance();
 
 		for (AylikPuantaj ap : puantajList) {
 

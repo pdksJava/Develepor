@@ -1724,6 +1724,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				if (mukerrerHareketIptalNeden != null)
 					guncelleyen = ortakIslemler.getSistemAdminUser(session);
 				ortakIslemler.calismaModeliGunListGuncelle(puantajDenklestirmeList, null, session);
+				if (puantajDenklestirmeList.isEmpty() == false)
+					ortakIslemler.odemeYuvarlamaGuncelle(puantajDenklestirmeList, session);
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					puantaj.setFazlaMesaiHesapla(true);
@@ -2140,7 +2142,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							puantaj.setLoginUser(loginUser);
 							Boolean hesapla = puantaj.isFazlaMesaiHesapla();
 							puantaj.setFazlaMesaiHesapla(true);
-
 							personelDenklestirme = ortakIslemler.aylikPlanSureHesapla(manuelGiris, manuelCikis, true, normalCalismaVardiya, true, puantaj, !personelDenklestirme.isKapandi(loginUser), tatilGunleriMap, session);
 							puantaj.setFazlaMesaiHesapla(hesapla);
 						}

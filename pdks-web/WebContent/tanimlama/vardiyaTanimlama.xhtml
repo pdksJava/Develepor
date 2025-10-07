@@ -203,7 +203,7 @@
 									</f:facet>
 									<h:outputText rendered="#{vardiya.calisma}" value="#{authenticatedUser.sayiFormatliGoster(vardiya.cikisMolaSaat)}" />
 								</rich:column>
-								
+
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="Akşam #{ortakIslemler.vardiyaAciklama()}" />
@@ -400,21 +400,25 @@
 
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Tolerans erken giriş dakikası</ui:define>
-												<rich:inputNumberSpinner minValue="0" maxValue="120" inputSize="2" value="#{vardiyaHome.instance.girisErkenToleransDakika}" />
+												<rich:inputNumberSpinner minValue="0" maxValue="120" inputSize="2" value="#{vardiyaHome.instance.girisErkenToleransDakika}"
+													disabled="#{vardiyaHome.instance.erkenGirisKontrolEt}" />
 
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Tolerans gecikme giriş dakikası</ui:define>
-												<rich:inputNumberSpinner minValue="0" maxValue="60" inputSize="2" value="#{vardiyaHome.instance.girisGecikmeToleransDakika}" />
+												<rich:inputNumberSpinner minValue="0" maxValue="60" inputSize="2" value="#{vardiyaHome.instance.girisGecikmeToleransDakika}"
+													disabled="#{vardiyaHome.instance.gecGirisKontrolEt}" />
 
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Tolerans erken çıkış dakikası</ui:define>
-												<rich:inputNumberSpinner minValue="0" maxValue="60" inputSize="2" value="#{vardiyaHome.instance.cikisErkenToleransDakika}" />
+												<rich:inputNumberSpinner minValue="0" maxValue="60" inputSize="2" value="#{vardiyaHome.instance.cikisErkenToleransDakika}"
+													disabled="#{vardiyaHome.instance.erkenCikisKontrolEt}" />
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Tolerans gecikme çıkış dakikası</ui:define>
-												<rich:inputNumberSpinner minValue="0" maxValue="60" inputSize="2" value="#{vardiyaHome.instance.cikisGecikmeToleransDakika}" />
+												<rich:inputNumberSpinner minValue="0" maxValue="60" inputSize="2" value="#{vardiyaHome.instance.cikisGecikmeToleransDakika}"
+													disabled="#{vardiyaHome.instance.gecCikisKontrolEt}" />
 											</s:decorate>
 
 											<s:decorate template="/layout/edit.xhtml">

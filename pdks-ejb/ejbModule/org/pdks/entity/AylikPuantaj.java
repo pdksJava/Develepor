@@ -1,6 +1,7 @@
 package org.pdks.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -105,6 +106,9 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	private PersonelDenklestirmeDinamikAlan personelDenklestirmeDinamikAlan;
 
 	private PersonelDinamikAlan personelDinamikAlan;
+	
+	 
+	private HashMap<Integer, BigDecimal> katSayiMap;
 
 	private User loginUser;
 
@@ -1430,6 +1434,14 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public void setIsAramaDurum(Boolean isAramaDurum) {
 		this.isAramaDurum = isAramaDurum;
+	}
+
+	public HashMap<Integer, BigDecimal> getKatSayiMap() {
+		return katSayiMap;
+	}
+
+	public void setKatSayiMap(HashMap<Integer, BigDecimal> katSayiMap) {
+		this.katSayiMap = katSayiMap;
 	}
 
 }

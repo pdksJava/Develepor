@@ -3,6 +3,7 @@ package org.pdks.entity;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -77,7 +78,7 @@ public class Vardiya extends BaseObject {
 	private Date vardiyaTelorans1BasZaman, vardiyaTelorans2BasZaman, vardiyaTelorans1BitZaman, vardiyaTelorans2BitZaman;
 	private Date vardiyaFazlaMesaiBasZaman, vardiyaFazlaMesaiBitZaman;
 	private boolean farkliGun = Boolean.FALSE, ayinSonGunDurum = Boolean.FALSE, arifeYarimGun = Boolean.FALSE;
-
+	private HashMap<Integer, BigDecimal> katSayiMap;
 	private Boolean mesaiOde, sua = Boolean.FALSE, arifeCalismaSaatYokCGSDus;
 	private Vardiya sonrakiVardiya, oncekiVardiya;
 	private CalismaSekli calismaSekli;
@@ -1948,8 +1949,40 @@ public class Vardiya extends BaseObject {
 		this.arifeYarimGun = arifeYarimGun;
 	}
 
+	@Transient
+	public HashMap<Integer, BigDecimal> getKatSayiMap() {
+		return katSayiMap;
+	}
+
+	public void setKatSayiMap(HashMap<Integer, BigDecimal> katSayiMap) {
+		this.katSayiMap = katSayiMap;
+	}
+
+	@Transient
+	public boolean isErkenGirisKontrolEt() {
+		boolean kontrolDurum = this.isCalisma() && katSayiMap != null;
+		return kontrolDurum;
+	}
+
+	@Transient
+	public boolean isErkenCikisKontrolEt() {
+		boolean kontrolDurum = this.isCalisma() && katSayiMap != null;
+		return kontrolDurum;
+	}
+
+	@Transient
+	public boolean isGecCikisKontrolEt() {
+		boolean kontrolDurum = this.isCalisma() && katSayiMap != null;
+		return kontrolDurum;
+	}
+
+	@Transient
+	public boolean isGecGirisKontrolEt() {
+		boolean kontrolDurum = this.isCalisma() && katSayiMap != null;
+		return kontrolDurum;
+	}
+
 	public void entityRefresh() {
 
 	}
-
 }

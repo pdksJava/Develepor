@@ -3,6 +3,7 @@ package org.pdks.session;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -41,6 +42,7 @@ import org.pdks.entity.VardiyaSablonu;
 import org.pdks.entity.VardiyaYemekIzin;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.BordroDetayTipi;
+import org.pdks.enums.KatSayiTipi;
 import org.pdks.security.entity.User;
 
 @Name("vardiyaHome")
@@ -84,6 +86,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	private Boolean sirketGoster = Boolean.FALSE, icapVardiyaGoster = Boolean.FALSE, sutIzniGoster = Boolean.FALSE, gebelikGoster = Boolean.FALSE, suaGoster = Boolean.FALSE;
 
 	private boolean pasifGoster = Boolean.FALSE, manuelVardiyaIzinGir = false;
+
+	private boolean erkenGirisKontrolEt = false, erkenCikisKontrolEt = false, gecCikisKontrolEt = false, gecGirisKontrolEt = false;
 	private Session session;
 
 	@Override
@@ -513,6 +517,59 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 						iterator.remove();
 				}
 
+			}
+			erkenGirisKontrolEt = false;
+			erkenCikisKontrolEt = false;
+			gecCikisKontrolEt = false;
+			gecGirisKontrolEt = false;
+			if (vardiyalar.isEmpty() == false) {
+				Date bugun = PdksUtil.buGun();
+				HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> allMap = ortakIslemler.getVardiyaKatSayiAllMap(bugun, session);
+				TreeMap<String, BigDecimal> erkenGirisMap = allMap.containsKey(KatSayiTipi.ERKEN_GIRIS_TIPI) ? allMap.get(KatSayiTipi.ERKEN_GIRIS_TIPI) : null;
+				TreeMap<String, BigDecimal> erkenCikisMap = allMap.containsKey(KatSayiTipi.ERKEN_CIKIS_TIPI) ? allMap.get(KatSayiTipi.ERKEN_CIKIS_TIPI) : null;
+				TreeMap<String, BigDecimal> gecGirisMap = allMap.containsKey(KatSayiTipi.GEC_GIRIS_TIPI) ? allMap.get(KatSayiTipi.GEC_GIRIS_TIPI) : null;
+				TreeMap<String, BigDecimal> gecCikisMap = allMap.containsKey(KatSayiTipi.GEC_CIKIS_TIPI) ? allMap.get(KatSayiTipi.GEC_CIKIS_TIPI) : null;
+				erkenGirisKontrolEt = erkenGirisMap != null && !erkenGirisMap.isEmpty();
+				erkenCikisKontrolEt = erkenCikisMap != null && !erkenCikisMap.isEmpty();
+				gecCikisKontrolEt = gecCikisMap != null && !gecCikisMap.isEmpty();
+				gecGirisKontrolEt = gecGirisMap != null && !gecGirisMap.isEmpty();
+				String str = PdksUtil.convertToDateString(bugun, "yyyyMMdd");
+				for (Vardiya vardiya : vardiyalar) {
+					HashMap<Integer, BigDecimal> katSayiMap = null;
+					if (vardiya.isCalisma()) {
+						katSayiMap = new HashMap<Integer, BigDecimal>();
+						Long sirketId = vardiya.getSirket() != null ? vardiya.getSirket().getId() : null, tesisId = null, vardiyaId = vardiya.getId();
+						if (erkenGirisKontrolEt && ortakIslemler.veriKatSayiVar(erkenGirisMap, sirketId, tesisId, vardiyaId, str)) {
+							BigDecimal deger = ortakIslemler.getKatSayiVeriMap(erkenGirisMap, sirketId, tesisId, vardiyaId, str);
+							if (deger != null)
+								katSayiMap.put(KatSayiTipi.ERKEN_GIRIS_TIPI.value(), deger);
+						}
+						if (erkenCikisKontrolEt && ortakIslemler.veriKatSayiVar(erkenCikisMap, sirketId, tesisId, vardiyaId, str)) {
+							BigDecimal deger = ortakIslemler.getKatSayiVeriMap(erkenCikisMap, sirketId, tesisId, vardiyaId, str);
+							if (deger != null)
+								katSayiMap.put(KatSayiTipi.ERKEN_CIKIS_TIPI.value(), deger);
+						}
+						if (gecGirisKontrolEt && ortakIslemler.veriKatSayiVar(gecGirisMap, sirketId, tesisId, vardiyaId, str)) {
+							BigDecimal deger = ortakIslemler.getKatSayiVeriMap(gecGirisMap, sirketId, tesisId, vardiyaId, str);
+							if (deger != null)
+								katSayiMap.put(KatSayiTipi.GEC_GIRIS_TIPI.value(), deger);
+						}
+						if (gecCikisKontrolEt && ortakIslemler.veriKatSayiVar(gecCikisMap, sirketId, tesisId, vardiyaId, str)) {
+							BigDecimal deger = ortakIslemler.getKatSayiVeriMap(gecCikisMap, sirketId, tesisId, vardiyaId, str);
+							if (deger != null)
+								katSayiMap.put(KatSayiTipi.GEC_CIKIS_TIPI.value(), deger);
+						}
+						if (katSayiMap.isEmpty() == false)
+							vardiya.setKatSayiMap(katSayiMap);
+						else {
+							katSayiMap = null;
+						}
+
+					}
+					if (katSayiMap == null)
+						logger.info(vardiya.getAdi() + " " + vardiya.getKisaAdi());
+
+				}
 			}
 			yemekList = ortakIslemler.getYemekList(new Date(), null, session);
 			HashMap<Long, Vardiya> vardiyaMap = new HashMap<Long, Vardiya>();
@@ -1276,5 +1333,37 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 	public void setSirketGoster(Boolean sirketGoster) {
 		this.sirketGoster = sirketGoster;
+	}
+
+	public boolean isErkenGirisKontrolEt() {
+		return erkenGirisKontrolEt;
+	}
+
+	public void setErkenGirisKontrolEt(boolean erkenGirisKontrolEt) {
+		this.erkenGirisKontrolEt = erkenGirisKontrolEt;
+	}
+
+	public boolean isErkenCikisKontrolEt() {
+		return erkenCikisKontrolEt;
+	}
+
+	public void setErkenCikisKontrolEt(boolean erkenCikisKontrolEt) {
+		this.erkenCikisKontrolEt = erkenCikisKontrolEt;
+	}
+
+	public boolean isGecCikisKontrolEt() {
+		return gecCikisKontrolEt;
+	}
+
+	public void setGecCikisKontrolEt(boolean gecCikisKontrolEt) {
+		this.gecCikisKontrolEt = gecCikisKontrolEt;
+	}
+
+	public boolean isGecGirisKontrolEt() {
+		return gecGirisKontrolEt;
+	}
+
+	public void setGecGirisKontrolEt(boolean gecGirisKontrolEt) {
+		this.gecGirisKontrolEt = gecGirisKontrolEt;
 	}
 }
