@@ -77,6 +77,7 @@ import org.pdks.entity.VardiyaHafta;
 import org.pdks.entity.VardiyaSaat;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.BordroDetayTipi;
+import org.pdks.enums.KatSayiTipi;
 import org.pdks.security.action.StartupAction;
 import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.MenuItemConstant;
@@ -1729,6 +1730,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					puantaj.setFazlaMesaiHesapla(true);
+					HashMap<Integer, BigDecimal> katSayiMap = puantaj.getKatSayiMap();
 					puantaj.setYoneticiZorunlu(true);
 					if (denklestirmeAyDurum == false || yoneticiZorunluDegil)
 						puantaj.setYoneticiZorunlu(false);
@@ -2078,6 +2080,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								}
 							}
 						}
+						if (haftaCalismaSuresi > 0 && katSayiMap != null && katSayiMap.containsKey(KatSayiTipi.HT_YUVARLAMA)) {
+							int htYuvarla = katSayiMap.get(KatSayiTipi.HT_YUVARLAMA.value()).intValue();
+							haftaCalismaSuresi = PdksUtil.setSureDoubleTypeRounded(haftaCalismaSuresi, htYuvarla);
+						}
+
 						if (!offIzinliGunler.isEmpty()) {
 							Personel izinSahibi = puantaj.getPdksPersonel();
 							String izinStr = izinSahibi.getPdksSicilNo() + " " + ortakIslemler.personelNoAciklama() + " " + izinSahibi.getAdSoyad() + " ait izinde ";
