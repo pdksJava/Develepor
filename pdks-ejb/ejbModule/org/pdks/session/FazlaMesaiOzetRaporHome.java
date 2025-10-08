@@ -533,7 +533,34 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		NumberFormat nf = DecimalFormat.getNumberInstance(locale);
 		String tarih = authenticatedUser.dateFormatla(new Date());
+		LinkedHashMap<String, String> changeMasterMap = new LinkedHashMap<String, String>();
+
 		LinkedHashMap<String, String> changeMap = new LinkedHashMap<String, String>();
+		Date tarih1 = null, tarih2 = null, oncekiTarih1 = null, oncekiTarih2 = null, sonrakiTarih1 = null, sonrakiTarih2 = null;
+		if (denklestirmeAy != null) {
+			Calendar cal = Calendar.getInstance();
+			tarih1 = PdksUtil.convertToJavaDate(String.valueOf(denklestirmeAy.getDonem()) + "01", "yyyyMMdd");
+
+			cal.setTime(tarih1);
+			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+			tarih2 = cal.getTime();
+
+			oncekiTarih2 = PdksUtil.tariheGunEkleCikar(tarih1, -1);
+			sonrakiTarih1 = PdksUtil.tariheGunEkleCikar(tarih2, 1);
+
+			cal.setTime(oncekiTarih2);
+			cal.set(Calendar.DATE, 1);
+			oncekiTarih1 = cal.getTime();
+			cal.setTime(sonrakiTarih1);
+			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+			sonrakiTarih2 = cal.getTime();
+		}
+		changeMasterMap.put("$oncekiTarih1$", oncekiTarih1 != null ? authenticatedUser.dateFormatla(oncekiTarih1) : "");
+		changeMasterMap.put("$oncekiTarih2$", oncekiTarih2 != null ? authenticatedUser.dateFormatla(oncekiTarih2) : "");
+		changeMasterMap.put("$tarih1$", tarih1 != null ? authenticatedUser.dateFormatla(tarih1) : "");
+		changeMasterMap.put("$tarih2$", tarih2 != null ? authenticatedUser.dateFormatla(tarih2) : "");
+		changeMasterMap.put("$sonrakiTarih1$", sonrakiTarih1 != null ? authenticatedUser.dateFormatla(sonrakiTarih1) : "");
+		changeMasterMap.put("$sonrakiTarih2$", sonrakiTarih2 != null ? authenticatedUser.dateFormatla(sonrakiTarih2) : "");
 		for (Long key : veriMap.keySet()) {
 			AylikPuantaj ap = veriMap.get(key);
 			ByteArrayOutputStream baosPDF = new ByteArrayOutputStream();
@@ -549,41 +576,47 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				Sirket sirket = personel.getSirket();
 				Tanim tesis = sirket.getTesisDurum() ? personel.getTesis() : null;
 				String kimlikNo = personel.getPersonelKGS() != null ? personel.getPersonelKGS().getKimlikNo() : null;
-				doc.add(PDFITextUtils.getParagraph(pm.getDescription(), fontBaslik, Element.ALIGN_CENTER));
-				Paragraph bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
+ 				Paragraph bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
 				bos.setSpacingAfter(10);
-				doc.add(bos);
-				doc.add(bos);
-				doc.add(bos);
-				changeMap.clear();
+
 				changeMap.put("$adSoyad$", personel.getAdSoyad());
 				changeMap.put("$mesai$", nf.format(ap.getAylikFazlaMesai()));
+				changeMap.put("$bakiye$", ap.getDevredenSure() != null ? nf.format(ap.getDevredenSure()) : "");
+				Double devredenSure = ap.getGecenAyFazlaMesai(authenticatedUser);
+				changeMap.put("$devredenSure$", devredenSure != null ? nf.format(devredenSure) : "");
 				changeMap.put("$kimlikNo$", PdksUtil.hasStringValue(kimlikNo) ? kimlikNo : "");
-
-				for (String string : icerikList) {
-					if (string.equals("$tarih$")) {
-						doc.add(PDFITextUtils.getParagraph(tarih, font, Element.ALIGN_RIGHT));
-					} else if (string.equals("$sirket$"))
-						doc.add(PDFITextUtils.getParagraph(sirket.getAd(), fontH, Element.ALIGN_CENTER));
-					else if (string.equals("$tesis$") && tesis != null)
-						doc.add(PDFITextUtils.getParagraph(tesis.getAciklama(), fontH, Element.ALIGN_CENTER));
-					else {
-						for (String oldStr : changeMap.keySet()) {
-							if (string.indexOf(oldStr) >= 0)
-								string = PdksUtil.replaceAllManuel(string, oldStr, changeMap.get(oldStr));
-						}
-						if (PdksUtil.hasStringValue(string))
-							doc.add(PDFITextUtils.getParagraph(string, font, Element.ALIGN_LEFT));
+				changeMap.putAll(changeMasterMap);
+				doc.add(bos);
+				doc.add(bos);
+				doc.add(bos);
+				for (String str : icerikList) {
+					String string = str != null ? new String(str) : "";
+					if (PdksUtil.hasStringValue(string)) {
+						if (string.equals("$tarih$"))
+							doc.add(PDFITextUtils.getParagraph(tarih, font, Element.ALIGN_RIGHT));
+						else if (string.equals("$sirket$"))
+							doc.add(PDFITextUtils.getParagraph(sirket.getAd(), fontH, Element.ALIGN_CENTER));
+						else if (string.equals("$baslik$"))
+							doc.add(PDFITextUtils.getParagraph(pm.getDescription(), fontBaslik, Element.ALIGN_CENTER));
+						else if (string.equals("$tesis$") && tesis != null)
+							doc.add(PDFITextUtils.getParagraph(tesis.getAciklama(), fontH, Element.ALIGN_CENTER));
 						else {
-							bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
-							bos.setSpacingAfter(20);
-							doc.add(bos);
-						}
+							for (String oldStr : changeMap.keySet()) {
+								if (string.indexOf(oldStr) >= 0)
+									string = PdksUtil.replaceAllManuel(string, oldStr, changeMap.get(oldStr));
+							}
+							if (PdksUtil.hasStringValue(string))
+								doc.add(PDFITextUtils.getParagraph(string, font, Element.ALIGN_LEFT));
 
+						}
+					} else {
+						bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
+						bos.setSpacingAfter(20);
+						doc.add(bos);
 					}
 
 				}
-
+				changeMap.clear();
 				doc.newPage();
 			} catch (Exception e) {
 				logger.error("Pdks hata in : \n");
@@ -596,6 +629,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			if (map != null)
 				map.put(key, baosPDF.toByteArray());
 		}
+		changeMasterMap = null;
 		changeMap = null;
 		return map;
 
@@ -647,6 +681,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		for (AylikPuantaj ap : onayList)
 			veriMap.put(ap.getPdksPersonel().getId(), ap);
 		String fileName = ortakIslemler.getParameterKey("mesaiDenklestirmeBelge");
+
 		File file = new File("/opt/pdks/" + fileName);
 		List<String> list = PdksUtil.getStringListFromFile(file);
 		LinkedHashMap<Long, byte[]> map1 = getOnayPdf(veriMap, new ArrayList<String>(list));

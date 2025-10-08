@@ -2,6 +2,7 @@ package org.pdks.pdf.action;
 
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
 import org.pdks.session.PdksUtil;
 
 import com.itextpdf.text.BaseColor;
@@ -18,6 +19,7 @@ public class PDFITextUtils implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 4897717487256528074L;
+	static Logger logger = Logger.getLogger(PDFITextUtils.class);
 
 	/**
 	 * @param str
@@ -25,10 +27,13 @@ public class PDFITextUtils implements Serializable {
 	 * @return
 	 */
 	public static Paragraph getParagraph(String str, Font font, int alignment) {
+		if (str == null)
+			str = "";
 		Paragraph paragraph = font != null ? new Paragraph(str, font) : new Paragraph(PdksUtil.setTurkishStr(str));
 		if (alignment < 1)
 			alignment = Element.ALIGN_LEFT;
 		paragraph.setAlignment(alignment);
+		logger.debug(str + " " + alignment);
 		return paragraph;
 	}
 
@@ -63,7 +68,7 @@ public class PDFITextUtils implements Serializable {
 			}
 
 		} catch (Exception e) {
-			 
+
 		}
 
 		return font;
