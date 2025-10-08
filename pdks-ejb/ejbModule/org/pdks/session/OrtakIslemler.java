@@ -18306,7 +18306,7 @@ public class OrtakIslemler implements Serializable {
 		PersonelDenklestirme personelDenklestirme = null;
 		try {
 			DenklestirmeAy dm = puantajData.getDenklestirmeAy();
- 			Date sonGun = PdksUtil.tariheAyEkleCikar(PdksUtil.convertToJavaDate(String.valueOf(dm.getYil() * 100 + dm.getAy()) + "01", "yyyyMMdd"), 1);
+			Date sonGun = PdksUtil.tariheAyEkleCikar(PdksUtil.convertToJavaDate(String.valueOf(dm.getYil() * 100 + dm.getAy()) + "01", "yyyyMMdd"), 1);
 			boolean personelCalisiyor = puantajData.getPdksPersonel().isCalisiyorGun(sonGun);
 			User loginUser = puantajData.getLoginUser() != null ? puantajData.getLoginUser() : authenticatedUser;
 			List<YemekIzin> yemekBosList = yemekHesapla ? null : new ArrayList<YemekIzin>();
@@ -18873,7 +18873,8 @@ public class OrtakIslemler implements Serializable {
 					if (haftaTatiliFark != 0)
 						izinSuresi += calismaModeli.getHaftaIci();
 					puantajData.setIzinSuresi(izinSuresi);
-					int yarimYuvarla = puantajData.getYarimYuvarla(), ucmYuvarla = puantajData.getYarimYuvarla(), rtYuvarla = puantajData.getYarimYuvarla();
+					int yarimYuvarla = puantajData.getYarimYuvarla(); ;
+					Integer rtYuvarla = null,ucmYuvarla = puantajData.getYarimYuvarla();
 					if (puantajData.getKatSayiMap() != null) {
 						if (puantajData.getKatSayiMap().containsKey(KatSayiTipi.UOM_YUVARLAMA.value()))
 							ucmYuvarla = puantajData.getKatSayiMap().get(KatSayiTipi.UOM_YUVARLAMA.value()).intValue();
@@ -18886,7 +18887,9 @@ public class OrtakIslemler implements Serializable {
 						else {
 							if (resmiTatilSure == 0 && personelDenklestirme != null && personelDenklestirme.getDurum().booleanValue())
 								resmiTatilSure = tatilSuresi;
-							puantajData.setResmiTatilToplami(PdksUtil.setSureDoubleTypeRounded(resmiTatilSure, rtYuvarla));
+							if (rtYuvarla != null)
+								resmiTatilSure = PdksUtil.setSureDoubleTypeRounded(resmiTatilSure, rtYuvarla);
+							puantajData.setResmiTatilToplami(resmiTatilSure);
 						}
 					}
 
@@ -18919,8 +18922,7 @@ public class OrtakIslemler implements Serializable {
 					boolean bakiyeSifirlaDurum = personelDenklestirme != null && personelDenklestirme.getBakiyeSifirlaDurum() != null && personelDenklestirme.getBakiyeSifirlaDurum().booleanValue();
 					boolean mesaiDevret = personelDenklestirme.getFazlaMesaiIzinKullan() && personel.isCalisiyorGun(puantajData.getSonGun());
 					PersonelDenklestirme hesaplananDenklestirme = puantajData.getPersonelDenklestirme(fazlaMesaiOde, hesaplananBuAySure, gecenAydevredenSure);
-
-					puantajData.setFazlaMesaiSure(PdksUtil.setSureDoubleTypeRounded((hesaplananDenklestirme.getOdenenSure() > 0 ? hesaplananDenklestirme.getOdenenSure() : 0) + (bakiyeSifirlaDurum == false || mesaiDevret == false ? ucretiOdenenMesaiSure : 0), ucmYuvarla));
+ 					puantajData.setFazlaMesaiSure(PdksUtil.setSureDoubleTypeRounded((hesaplananDenklestirme.getOdenenSure() > 0 ? hesaplananDenklestirme.getOdenenSure() : 0) + (bakiyeSifirlaDurum == false || mesaiDevret == false ? ucretiOdenenMesaiSure : 0), ucmYuvarla));
 					puantajData.setHesaplananSure(hesaplananDenklestirme.getHesaplananSure());
 
 					puantajData.setEksikCalismaSure(0.0d);
