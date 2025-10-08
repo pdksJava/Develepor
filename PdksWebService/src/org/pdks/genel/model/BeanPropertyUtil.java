@@ -64,9 +64,9 @@ public class BeanPropertyUtil implements Serializable {
 				throw new IllegalArgumentException("Cannot find instance with property '" + name + "'");
 			property = read.invoke(instance, params);
 		} catch (Exception e) {
-			System.out.println("Medula Hata in  : ");
+			System.out.println("Medula Hata in : ");
 			e.printStackTrace();
-			logger.error("Medula Hata out  : " + e.getMessage());
+			logger.error("Medula Hata out : " + e.getMessage());
 			throw new IllegalArgumentException("Problem accessing property '" + name + "': " + e.getMessage());
 		}
 		return property;

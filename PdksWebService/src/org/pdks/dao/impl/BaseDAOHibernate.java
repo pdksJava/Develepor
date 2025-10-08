@@ -255,9 +255,9 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 					if (uzerineYaz || !treeMap.containsKey(key))
 						treeMap.put(key, object);
 			} catch (Exception e) {
-				logger.error("Medula Hata in  : ");
+				logger.error("Medula Hata in : ");
 				e.printStackTrace();
-				logger.error("Medula Hata out  : " + e.getMessage());
+				logger.error("Medula Hata out : " + e.getMessage());
 
 			}
 		}

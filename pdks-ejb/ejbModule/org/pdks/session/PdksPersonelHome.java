@@ -1343,7 +1343,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			MailObject mailObject = new MailObject();
 			mailObject.setSubject("Şifre Gönderme");
 			String body = "<p>Sayın " + kullanici.getMailPersonel().getAdiSoyadi() + ",</p><p>Kullanıcı şifreniz aşağıda belirtildiği şekilde " + (kullanici.getId() == null ? "tanımlanmıştır" : "değiştirilmiştir.") + " İlk kullanımda değiştirmenizi öneririz.</p>";
-			body += "<p>Kullanıcı Adı : " + kullanici.getUsername() + " --->   Şifre   : " + encodePassword + "</p>";
+			body += "<p>Kullanıcı Adı : " + kullanici.getUsername() + " --->   Şifre  : " + encodePassword + "</p>";
 			body += "<p>Saygılarımla,</p>";
 			Map<String, String> map = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
 			String donusAdres = map.containsKey("host") ? map.get("host") : "";
@@ -1990,7 +1990,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			StringBuffer sb = new StringBuffer();
 			sb.append("select * from " + Tanim.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 			sb.append(" where " + Tanim.COLUMN_NAME_DURUM + " = 1 and " + Tanim.COLUMN_NAME_TIPI + " = :t ");
-			sb.append(" and " + Tanim.COLUMN_NAME_PARENT_ID + "  :" + fieldName);
+			sb.append(" and " + Tanim.COLUMN_NAME_PARENT_ID + " :" + fieldName);
 			map.put(fieldName, idList);
 			map.put("t", Tanim.TIPI_PERSONEL_DINAMIK_LISTE_TANIM);
 			if (session != null)

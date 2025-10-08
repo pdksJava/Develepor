@@ -897,9 +897,9 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					logger.debug(authenticatedUser.getAdSoyad() + " Hareket zip dosyası mail olarak gönderildi.");
 
 				} catch (Exception e) {
-					logger.error("Onay Akis Hata in  : ");
+					logger.error("Onay Akis Hata in : ");
 					e.printStackTrace();
-					logger.error("Onay Akis Hata out  : " + e.getMessage());
+					logger.error("Onay Akis Hata out : " + e.getMessage());
 
 				}
 				if (mailSatu != null && mailSatu.getDurum())

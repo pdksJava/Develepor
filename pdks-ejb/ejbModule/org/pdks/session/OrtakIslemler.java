@@ -9600,7 +9600,7 @@ public class OrtakIslemler implements Serializable {
 				sb = new StringBuffer();
 				sb.append("select C.* from " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + CalismaModeli.TABLE_NAME + " C " + PdksEntityController.getJoinLOCK() + " on C." + CalismaModeli.COLUMN_NAME_ID + " = CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI);
-				sb.append(" where CA." + CalismaModeliAy.COLUMN_NAME_DONEM + "  :d and CA." + CalismaModeliAy.COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL + " = 1");
+				sb.append(" where CA." + CalismaModeliAy.COLUMN_NAME_DONEM + " :d and CA." + CalismaModeliAy.COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL + " = 1");
 				fields.put("d", donemIdList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -15139,8 +15139,8 @@ public class OrtakIslemler implements Serializable {
 		StringBuffer sb = new StringBuffer();
 		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ", max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, ");
 		sb.append("B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from " + KatSayi.TABLE_NAME + " B " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" where  B." + KatSayi.COLUMN_NAME_BAS_TARIH + "<= :bitTarih and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= :basTarih");
-		sb.append("  and B." + KatSayi.COLUMN_NAME_TIPI + " :tipi and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
+		sb.append(" where B." + KatSayi.COLUMN_NAME_BAS_TARIH + "<= :bitTarih and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= :basTarih");
+		sb.append(" and B." + KatSayi.COLUMN_NAME_TIPI + " :tipi and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
 		sb.append(" group by B." + KatSayi.COLUMN_NAME_TIPI + ", B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA);
 		map.put("tipi", tipiList);
 		map.put("basTarih", basTarih);
@@ -15277,7 +15277,7 @@ public class OrtakIslemler implements Serializable {
 		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
 		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :bitTarih and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :pId ");
-		sb.append(" group by  B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + ", V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
+		sb.append(" group by B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + ", V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		map.put("pId", personelIdler);
 		map.put("basTarih", basTarih);
 		map.put("bitTarih", bitTarih);
@@ -16063,9 +16063,9 @@ public class OrtakIslemler implements Serializable {
 				fos.flush();
 
 			} catch (Exception e) {
-				logger.error("Pdks Hata in  : ");
+				logger.error("Pdks Hata in : ");
 				e.printStackTrace();
-				logger.error("Pdks Hata out  : " + e.getMessage());
+				logger.error("Pdks Hata out : " + e.getMessage());
 				e.printStackTrace();
 			}
 
