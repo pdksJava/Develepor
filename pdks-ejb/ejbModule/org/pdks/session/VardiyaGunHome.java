@@ -642,7 +642,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						farkSure = 0.0d;
 				}
 			}
-			double mesaiSuresi = PdksUtil.setSureDoubleTypeRounded(toplamSure - farkSure, seciliVardiyaGun.getFazlaMesaiYuvarla());
+			double mesaiSuresi = PdksUtil.setSureDoubleTypeRounded(toplamSure - farkSure, seciliVardiyaGun.getYarimYuvarla());
 
 			fazlaMesaiTalep.setMesaiSuresi(mesaiSuresi);
 			if (kendiGirisYapiyor) {
