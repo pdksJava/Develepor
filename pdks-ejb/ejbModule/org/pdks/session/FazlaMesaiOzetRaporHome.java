@@ -524,30 +524,28 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		Image image = ortakIslemler.getProjeImage();
 		PdfPTable tableImage = null;
 		if (image != null) {
+			image.scaleToFit(image.getHeight() * 3, image.getWidth() * 3);
 			tableImage = new PdfPTable(1);
 			com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
 			cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
 			tableImage.addCell(cellImage);
 		}
 		Parameter pm = ortakIslemler.getParameter(session, "mesaiDenklestirmeBelge");
+		String baslik = pm != null ? pm.getDescription().toUpperCase(Constants.TR_LOCALE) : "";
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		NumberFormat nf = DecimalFormat.getNumberInstance(locale);
 		String tarih = authenticatedUser.dateFormatla(new Date());
 		LinkedHashMap<String, String> changeMasterMap = new LinkedHashMap<String, String>();
-
 		LinkedHashMap<String, String> changeMap = new LinkedHashMap<String, String>();
 		Date tarih1 = null, tarih2 = null, oncekiTarih1 = null, oncekiTarih2 = null, sonrakiTarih1 = null, sonrakiTarih2 = null;
 		if (denklestirmeAy != null) {
 			Calendar cal = Calendar.getInstance();
 			tarih1 = PdksUtil.convertToJavaDate(String.valueOf(denklestirmeAy.getDonem()) + "01", "yyyyMMdd");
-
 			cal.setTime(tarih1);
 			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
 			tarih2 = cal.getTime();
-
 			oncekiTarih2 = PdksUtil.tariheGunEkleCikar(tarih1, -1);
 			sonrakiTarih1 = PdksUtil.tariheGunEkleCikar(tarih2, 1);
-
 			cal.setTime(oncekiTarih2);
 			cal.set(Calendar.DATE, 1);
 			oncekiTarih1 = cal.getTime();
@@ -571,14 +569,12 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			try {
 				if (map == null)
 					map = new LinkedHashMap<Long, byte[]>();
-				if (tableImage != null)
-					doc.add(tableImage);
+
 				Sirket sirket = personel.getSirket();
 				Tanim tesis = sirket.getTesisDurum() ? personel.getTesis() : null;
 				String kimlikNo = personel.getPersonelKGS() != null ? personel.getPersonelKGS().getKimlikNo() : null;
- 				Paragraph bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
+				Paragraph bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
 				bos.setSpacingAfter(10);
-
 				changeMap.put("$adSoyad$", personel.getAdSoyad());
 				changeMap.put("$mesai$", nf.format(ap.getAylikFazlaMesai()));
 				changeMap.put("$bakiye$", ap.getDevredenSure() != null ? nf.format(ap.getDevredenSure()) : "");
@@ -592,12 +588,15 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				for (String str : icerikList) {
 					String string = str != null ? new String(str) : "";
 					if (PdksUtil.hasStringValue(string)) {
-						if (string.equals("$tarih$"))
+						if (string.equals("$image$")) {
+							if (tableImage != null)
+								doc.add(tableImage);
+						} else if (string.equals("$tarih$"))
 							doc.add(PDFITextUtils.getParagraph(tarih, font, Element.ALIGN_RIGHT));
 						else if (string.equals("$sirket$"))
 							doc.add(PDFITextUtils.getParagraph(sirket.getAd(), fontH, Element.ALIGN_CENTER));
 						else if (string.equals("$baslik$"))
-							doc.add(PDFITextUtils.getParagraph(pm.getDescription(), fontBaslik, Element.ALIGN_CENTER));
+							doc.add(PDFITextUtils.getParagraph(baslik, fontBaslik, Element.ALIGN_CENTER));
 						else if (string.equals("$tesis$") && tesis != null)
 							doc.add(PDFITextUtils.getParagraph(tesis.getAciklama(), fontH, Element.ALIGN_CENTER));
 						else {
