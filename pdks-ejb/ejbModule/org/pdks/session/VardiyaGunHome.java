@@ -188,7 +188,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	private List<Vardiya> calismaModeliVardiyaList;
 
-	private boolean fileImport = Boolean.FALSE, fazlaMesaiTalepVar = Boolean.FALSE, fazlaMesaiOde, fazlaMesaiIzinKullan, modelGoster = Boolean.FALSE, gebeGoster = Boolean.FALSE;
+	private boolean fileImport = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE, fazlaMesaiTalepVar = Boolean.FALSE, fazlaMesaiOde, fazlaMesaiIzinKullan, modelGoster = Boolean.FALSE, gebeGoster = Boolean.FALSE;
 
 	private Boolean manuelHareketEkle, vardiyaFazlaMesaiTalepGoster = Boolean.FALSE, bakiyeSifirlaDurum = Boolean.FALSE, isAramaGoster = Boolean.FALSE, yoneticiERP1Kontrol = Boolean.FALSE, bordroPuantajEkranindaGoster = Boolean.FALSE;
 
@@ -2139,7 +2139,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "TÇS", "Toplam Çalışma Saati: Çalışanın bu listedeki toplam çalışma saati");
 			cell = ExcelUtil.getCell(sheet, row, col++, header);
 			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "ÇGS", "Çalışılması Gereken Saat: Çalışanın bu listede çalışması gereken saat");
+			if (yasalFazlaCalismaAsanSaat) {
+				cell = ExcelUtil.getCell(sheet, row, col++, header);
+				ExcelUtil.baslikCell(cell, anchor, helper, drawing, "FÇA", "Yasal Çalışmayı Aşan Mesai Toplam Miktarı");
+
+			}
 			cell = ExcelUtil.getCell(sheet, row, col++, header);
+
 			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "GM", "Gerçekleşen Mesai : Çalışanın bu listedeki eksi/fazla çalışma saati");
 			if (devredenMesaiKod) {
 				cell = ExcelUtil.getCell(sheet, row, col++, header);
@@ -2376,6 +2382,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						RichTextString str1 = helper.createRichTextString(title);
 						comment1.setString(str1);
 						planlananCell.setCellComment(comment1);
+					}
+					if (yasalFazlaCalismaAsanSaat) {
+						setCell(sheet, row, col++, styleGenel, aylikPuantaj.getUcretiOdenenMesaiSure());
 					}
 					setCell(sheet, row, col++, styleGenel, aylikPuantaj.getAylikNetFazlaMesai());
 					if (devredenMesaiKod)
@@ -3444,7 +3453,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		lastMap.put("yil", "" + yil);
 		lastMap.put("ay", "" + ay);
 		ortakIslemler.saveAramaSecenekleri(aramaSecenekleri, lastMap);
- 		if (PdksUtil.hasStringValue(sicilNo))
+		if (PdksUtil.hasStringValue(sicilNo))
 			lastMap.put("sicilNo", sicilNo.trim());
 		try {
 			ortakIslemler.saveLastParameter(lastMap, session);
@@ -6399,6 +6408,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (per != null)
 			per.setMudurAltSeviye(mudurAltSeviye);
 		componentState.setSeciliTab("tab1");
+		yasalFazlaCalismaAsanSaat = false;
 		fazlaMesaiOde = false;
 		fazlaMesaiIzinKullan = false;
 		seciliBolum = null;
@@ -7674,7 +7684,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				haftaTatilVar = Boolean.FALSE;
 				eksikMaasGoster = Boolean.FALSE;
 				cal = Calendar.getInstance();
-
+				yasalFazlaCalismaAsanSaat = false;
 				for (Iterator iterator = aylikPuantajList.iterator(); iterator.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator.next();
 
@@ -7689,6 +7699,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							resmiTatilVar = puantaj.getResmiTatilToplami() > 0d;
 						if (!eksikMaasGoster)
 							eksikMaasGoster = puantaj.getEksikCalismaSure() != 0d;
+						if (!yasalFazlaCalismaAsanSaat)
+							yasalFazlaCalismaAsanSaat = puantaj.getUcretiOdenenMesaiSure() != 0d;
 					} catch (Exception e) {
 						logger.info(e);
 					}
@@ -10296,6 +10308,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		componentState.setSeciliTab("");
 		tumBolumPersonelleri = null;
 		bordroPuantajEkranindaGoster = false;
+		yasalFazlaCalismaAsanSaat = Boolean.FALSE;
 		linkBordroAdres = null;
 		aylikVardiyaPlanGiris(sayfaURL, true);
 	}
@@ -13400,6 +13413,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	public void setBakiyeSifirlaDurum(Boolean bakiyeSifirlaDurum) {
 		this.bakiyeSifirlaDurum = bakiyeSifirlaDurum;
+	}
+
+	public boolean isYasalFazlaCalismaAsanSaat() {
+		return yasalFazlaCalismaAsanSaat;
+	}
+
+	public void setYasalFazlaCalismaAsanSaat(boolean yasalFazlaCalismaAsanSaat) {
+		this.yasalFazlaCalismaAsanSaat = yasalFazlaCalismaAsanSaat;
 	}
 
 }
