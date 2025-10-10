@@ -17398,26 +17398,31 @@ public class OrtakIslemler implements Serializable {
 							list.add(string);
 							for (String oldStr : changeMap.keySet()) {
 								int adet = list.size();
-								logger.info(oldStr + " " + adet);
+								logger.debug(oldStr + " " + adet);
 								List parcaList = new ArrayList();
 								for (int i = 0; i < adet; i++) {
 									Object object = list.get(i);
 									if (object instanceof String) {
 										String str1 = (String) object;
 										int index = str1.indexOf(oldStr);
+										if (index < 0)
+											index = str1.indexOf(oldStr.toUpperCase(Locale.ENGLISH));
 										while (index >= 0) {
 											String b1 = index > 0 ? str1.substring(0, index) : "";
 											if (b1.length() > 0)
 												parcaList.add(b1);
 											int endIndex = index + oldStr.length();
 											String b2 = str1.substring(index, endIndex);
-											Liste c = new Liste(changeMap.get(oldStr), oldStr.equals(b2) ? font : fontH);
+											String deger = changeMap.get(oldStr);
+											Liste c = new Liste(deger, oldStr.equals(b2) ? font : fontH);
 											parcaList.add(c);
 											str1 = str1.substring(endIndex);
 											index = str1.indexOf(oldStr);
+											if (index < 0)
+												index = str1.indexOf(oldStr.toUpperCase(Locale.ENGLISH));
 										}
-
-										parcaList.add(str1);
+										if (str1.trim().length() > 0)
+											parcaList.add(str1);
 									} else
 										parcaList.add(object);
 
@@ -17433,24 +17438,29 @@ public class OrtakIslemler implements Serializable {
 							if (list.size() == 1)
 								doc.add(PDFITextUtils.getParagraph(string, font, Element.ALIGN_LEFT));
 							else {
-								Paragraph para = new Paragraph();
+								Chunk cNEWLINE = null;
 								for (Object object : list) {
 									Chunk c = null;
 									if (object instanceof String) {
 										String str1 = (String) object;
-										c = new Chunk(str1, font);
+										Font fontStr = font;
+										if (list.size() == 2) {
+											if (str1.indexOf(":") > 0)
+												fontStr = fontH;
+										}
+										c = new Chunk(str1, fontStr);
 									} else if (object instanceof Liste) {
 										Liste l = (Liste) object;
 										c = new Chunk((String) l.getId(), (Font) l.getValue());
 									}
 									if (c != null) {
-										Phrase pr = new Phrase(c);
-										para.add(pr);
+										doc.add(c);
+										cNEWLINE = Chunk.NEWLINE;
 									}
 								}
+								if (cNEWLINE != null)
+									doc.add(cNEWLINE);
 
-								para.setAlignment(Element.ALIGN_LEFT);
-								doc.add(para);
 							}
 							list = null;
 
@@ -19089,7 +19099,7 @@ public class OrtakIslemler implements Serializable {
 										else
 											pdksVardiyaGun.getKatSayiMap().remove(KatSayiTipi.RADYOLOJI_SAAT_MAX.value());
 									}
- 									double normalSure = pdksVardiyaGun.getCalismaSuresi() - (pdksVardiyaGun.getHaftaCalismaSuresi() + pdksVardiyaGun.getResmiTatilSure());
+									double normalSure = pdksVardiyaGun.getCalismaSuresi() - (pdksVardiyaGun.getHaftaCalismaSuresi() + pdksVardiyaGun.getResmiTatilSure());
 									if (pdksVardiyaGun.isFcsDahil() && normalSure > mesaiMaxSure && maxSureDurum) {
 										ucretiOdenenMesaiSure += normalSure - mesaiMaxSure;
 										// pdksVardiyaGun.addCalismaSuresi(fazlaMesaiMaxSure - normalSure);
