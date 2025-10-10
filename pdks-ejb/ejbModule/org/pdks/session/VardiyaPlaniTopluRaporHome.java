@@ -433,7 +433,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 							tesisDoldur(false);
 						}
 
-					} 
+					}
 					if (sirket != null) {
 						departmanId = sirket.getDepartman().getId();
 						setDepartman(sirket.getDepartman());
@@ -1165,7 +1165,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
-
+					double mesaiMaxSure = fazlaMesaiMaxSure;
 					PersonelDenklestirme personelDenklestirme = puantaj.getPersonelDenklestirme();
 
 					puantaj.setDonemBitti(Boolean.TRUE);
@@ -1230,8 +1230,11 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 							if (!gebemi && vardiyaGun.getVardiya() != null)
 								gebemi = vardiyaGun.getVardiya().isGebelikMi();
 							if (calisiyor) {
+								Double d = personelDenklestirme.isSuaDurumu() ? vardiyaGun.getRadyolojiMaxCalismaSaat() : null;
+								if (d != null)
+									mesaiMaxSure = d.doubleValue();
 								Double sure = vardiyaGun.getCalismaSuresi();
-								ucretiOdenenMesaiSure += vardiyaGun.isFcsDahil() && sure != null && sure.doubleValue() > fazlaMesaiMaxSure + vardiyaGun.getResmiTatilSure() ? sure.doubleValue() - fazlaMesaiMaxSure - vardiyaGun.getResmiTatilSure() : 0.0d;
+								ucretiOdenenMesaiSure += vardiyaGun.isFcsDahil() && sure != null && sure.doubleValue() > mesaiMaxSure + vardiyaGun.getResmiTatilSure() ? sure.doubleValue() - mesaiMaxSure - vardiyaGun.getResmiTatilSure() : 0.0d;
 								if (vardiyaGun.getHaftaCalismaSuresi() > 0) {
 									if (!haftaTatilVar)
 										haftaTatilVar = Boolean.TRUE;
