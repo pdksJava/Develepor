@@ -19596,43 +19596,45 @@ public class OrtakIslemler implements Serializable {
 	 * @param lastMap
 	 */
 	public void saveAramaSecenekleri(AramaSecenekleri aramaSecenekleri, LinkedHashMap<String, Object> lastMap) {
-		if (aramaSecenekleri.getDepartmanId() != null) {
-			lastMap.put("departmanId", "" + aramaSecenekleri.getDepartmanId());
-			lastMap.put("departman", getSelectItemText(aramaSecenekleri.getDepartmanId(), aramaSecenekleri.getDepartmanIdList()));
-		}
-		if (aramaSecenekleri.getSirketId() != null) {
-			lastMap.put("sirketId", "" + aramaSecenekleri.getSirketId());
-			lastMap.put("sirket", getSelectItemText(aramaSecenekleri.getSirketId(), aramaSecenekleri.getSirketIdList()));
-		}
-		if (aramaSecenekleri.getTesisId() != null) {
-			lastMap.put("tesisId", "" + aramaSecenekleri.getTesisId());
-			lastMap.put("tesis", getSelectItemText(aramaSecenekleri.getTesisId(), aramaSecenekleri.getTesisList()));
-		}
-		if (aramaSecenekleri.getEkSahaSelectListMap() != null) {
-			HashMap<String, List<SelectItem>> ekSahaSelectListMap = aramaSecenekleri.getEkSahaSelectListMap();
-			if (aramaSecenekleri.getEkSaha1Id() != null) {
-				lastMap.put("ekSaha1Id", "" + aramaSecenekleri.getEkSaha1Id());
-				lastMap.put("ekSaha1", getSelectItemText(aramaSecenekleri.getEkSaha1Id(), ekSahaSelectListMap.get("ekSaha1")));
+		if (aramaSecenekleri != null && lastMap != null) {
+			if (aramaSecenekleri.getDepartmanId() != null) {
+				lastMap.put("departmanId", "" + aramaSecenekleri.getDepartmanId());
+				lastMap.put("departman", getSelectItemText(aramaSecenekleri.getDepartmanId(), aramaSecenekleri.getDepartmanIdList()));
 			}
-			if (aramaSecenekleri.getEkSaha2Id() != null) {
-				lastMap.put("ekSaha2Id", "" + aramaSecenekleri.getEkSaha2Id());
-				lastMap.put("ekSaha2", getSelectItemText(aramaSecenekleri.getEkSaha2Id(), ekSahaSelectListMap.get("ekSaha2")));
+			if (aramaSecenekleri.getSirketId() != null) {
+				lastMap.put("sirketId", "" + aramaSecenekleri.getSirketId());
+				lastMap.put("sirket", getSelectItemText(aramaSecenekleri.getSirketId(), aramaSecenekleri.getSirketIdList()));
 			}
-			if (aramaSecenekleri.getEkSaha3Id() != null) {
-				lastMap.put("ekSaha3Id", "" + aramaSecenekleri.getEkSaha3Id());
-				lastMap.put("ekSaha3", getSelectItemText(aramaSecenekleri.getEkSaha3Id(), ekSahaSelectListMap.get("ekSaha3")));
+			if (aramaSecenekleri.getTesisId() != null) {
+				lastMap.put("tesisId", "" + aramaSecenekleri.getTesisId());
+				lastMap.put("tesis", getSelectItemText(aramaSecenekleri.getTesisId(), aramaSecenekleri.getTesisList()));
 			}
-			if (aramaSecenekleri.getEkSaha4Id() != null) {
-				lastMap.put("ekSaha4Id", "" + aramaSecenekleri.getEkSaha4Id());
-				lastMap.put("ekSaha4", getSelectItemText(aramaSecenekleri.getEkSaha4Id(), ekSahaSelectListMap.get("ekSaha4")));
+			if (aramaSecenekleri.getEkSahaSelectListMap() != null) {
+				HashMap<String, List<SelectItem>> ekSahaSelectListMap = aramaSecenekleri.getEkSahaSelectListMap();
+				if (aramaSecenekleri.getEkSaha1Id() != null) {
+					lastMap.put("ekSaha1Id", "" + aramaSecenekleri.getEkSaha1Id());
+					lastMap.put("ekSaha1", getSelectItemText(aramaSecenekleri.getEkSaha1Id(), ekSahaSelectListMap.get("ekSaha1")));
+				}
+				if (aramaSecenekleri.getEkSaha2Id() != null) {
+					lastMap.put("ekSaha2Id", "" + aramaSecenekleri.getEkSaha2Id());
+					lastMap.put("ekSaha2", getSelectItemText(aramaSecenekleri.getEkSaha2Id(), ekSahaSelectListMap.get("ekSaha2")));
+				}
+				if (aramaSecenekleri.getEkSaha3Id() != null) {
+					lastMap.put("ekSaha3Id", "" + aramaSecenekleri.getEkSaha3Id());
+					lastMap.put("ekSaha3", getSelectItemText(aramaSecenekleri.getEkSaha3Id(), ekSahaSelectListMap.get("ekSaha3")));
+				}
+				if (aramaSecenekleri.getEkSaha4Id() != null) {
+					lastMap.put("ekSaha4Id", "" + aramaSecenekleri.getEkSaha4Id());
+					lastMap.put("ekSaha4", getSelectItemText(aramaSecenekleri.getEkSaha4Id(), ekSahaSelectListMap.get("ekSaha4")));
+				}
 			}
+			if (PdksUtil.hasStringValue(aramaSecenekleri.getSicilNo()))
+				lastMap.put("sicilNo", "" + aramaSecenekleri.getSicilNo().trim());
+			if (PdksUtil.hasStringValue(aramaSecenekleri.getAd()))
+				lastMap.put("ad", "" + aramaSecenekleri.getAd().trim());
+			if (PdksUtil.hasStringValue(aramaSecenekleri.getSoyad()))
+				lastMap.put("soyad", "" + aramaSecenekleri.getSoyad().trim());
 		}
-		if (PdksUtil.hasStringValue(aramaSecenekleri.getSicilNo()))
-			lastMap.put("sicilNo", "" + aramaSecenekleri.getSicilNo().trim());
-		if (PdksUtil.hasStringValue(aramaSecenekleri.getAd()))
-			lastMap.put("ad", "" + aramaSecenekleri.getAd().trim());
-		if (PdksUtil.hasStringValue(aramaSecenekleri.getSoyad()))
-			lastMap.put("soyad", "" + aramaSecenekleri.getSoyad().trim());
 	}
 
 	/**
