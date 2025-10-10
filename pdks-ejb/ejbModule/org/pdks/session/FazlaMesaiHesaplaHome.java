@@ -1098,6 +1098,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		haftaTatilVar = Boolean.FALSE;
 		mailGonder = !(ikRole);
 		linkAdres = null;
+		if (userLogin == null)
+			userLogin = authenticatedUser;
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, userLogin);
 		sessionClear();
