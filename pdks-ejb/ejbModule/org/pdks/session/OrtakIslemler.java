@@ -6449,13 +6449,12 @@ public class OrtakIslemler implements Serializable {
 							} else {
 								StringBuffer sp = new StringBuffer(spName);
 								LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-								// veriMap.put("readUnCommitted", Boolean.TRUE);
 								veriMap.put("j", parametreJSON);
 								veriMap.put("s", sessionId != null ? sessionId : menuItemTime.getSessionId());
 								veriMap.put("mt", menuItemTime.getId());
 								veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 								pdksEntityController.execSP(veriMap, sp);
-								session.flush();
+//								session.flush();
 							}
 						}
 
