@@ -99,9 +99,10 @@ public class Role extends BasePDKSObject implements Serializable {
 		this.departman = departman;
 	}
 
-	@RoleGroups
-	@ManyToMany(targetEntity = Role.class)
-	@JoinTable(name = "ROLEGROUPS", joinColumns = @JoinColumn(name = "ROLEID"), inverseJoinColumns = @JoinColumn(name = "GROUPID"))
+	// @RoleGroups
+	// @ManyToMany(targetEntity = Role.class)
+	// @JoinTable(name = "ROLEGROUPS", joinColumns = @JoinColumn(name = "ROLEID"), inverseJoinColumns = @JoinColumn(name = "GROUPID"))
+	@Transient
 	public Set<Role> getGroups() {
 		return groups;
 	}
