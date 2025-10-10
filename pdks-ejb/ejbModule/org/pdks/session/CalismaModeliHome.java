@@ -699,7 +699,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			baos = new ByteArrayOutputStream();
 			wb.write(baos);
 		} catch (Exception e) {
-			// TODO: handle exception
+			logger.error(e);
+			e.printStackTrace();
 		}
 		return baos;
 	}

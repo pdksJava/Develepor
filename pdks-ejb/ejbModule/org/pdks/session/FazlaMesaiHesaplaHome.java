@@ -4108,7 +4108,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							try {
 								hareketCikis = vGun.getCikisHareketleri().get(i++);
 							} catch (Exception e) {
-								// TODO: handle exception
+								logger.error(e);
+								e.printStackTrace();
 							}
 							if (hareketGiris.getId() == null || hareketCikis == null || hareketCikis.getId() == null)
 								continue;

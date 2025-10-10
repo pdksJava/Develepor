@@ -986,26 +986,8 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 	@Transactional
 	private void saveLastParameter() {
 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
-		if (aramaSecenekleri.getDepartmanId() != null)
-			lastMap.put("departmanId", "" + aramaSecenekleri.getDepartmanId());
-		if (aramaSecenekleri.getSirketId() != null)
-			lastMap.put("sirketId", "" + aramaSecenekleri.getSirketId());
-		if (aramaSecenekleri.getTesisId() != null)
-			lastMap.put("tesisId", "" + aramaSecenekleri.getTesisId());
-		if (aramaSecenekleri.getEkSaha1Id() != null)
-			lastMap.put("ekSaha1Id", "" + aramaSecenekleri.getEkSaha1Id());
-		if (aramaSecenekleri.getEkSaha2Id() != null)
-			lastMap.put("ekSaha2Id", "" + aramaSecenekleri.getEkSaha2Id());
-		if (aramaSecenekleri.getEkSaha3Id() != null)
-			lastMap.put("ekSaha3Id", "" + aramaSecenekleri.getEkSaha3Id());
-		if (aramaSecenekleri.getEkSaha4Id() != null)
-			lastMap.put("ekSaha4Id", "" + aramaSecenekleri.getEkSaha4Id());
-		if (PdksUtil.hasStringValue(aramaSecenekleri.getSicilNo()))
-			lastMap.put("sicilNo", "" + aramaSecenekleri.getSicilNo().trim());
-		if (PdksUtil.hasStringValue(aramaSecenekleri.getAd()))
-			lastMap.put("ad", "" + aramaSecenekleri.getAd().trim());
-		if (PdksUtil.hasStringValue(aramaSecenekleri.getSoyad()))
-			lastMap.put("soyad", "" + aramaSecenekleri.getSoyad().trim());
+		ortakIslemler.saveAramaSecenekleri(aramaSecenekleri, lastMap);
+
 		if (tarih != null)
 			lastMap.put("tarih", PdksUtil.convertToDateString(tarih, "yyyy-MM-dd"));
 

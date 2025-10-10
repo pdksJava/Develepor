@@ -210,7 +210,8 @@ public class PersonelERPGuncelleme implements Serializable {
 				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			logger.error(e);
+			e.printStackTrace();
 		}
 
 		return session;

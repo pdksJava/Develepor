@@ -220,7 +220,7 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		// TODO Auto-generated method stub
+		// TODO entityRefresh
 
 	}
 

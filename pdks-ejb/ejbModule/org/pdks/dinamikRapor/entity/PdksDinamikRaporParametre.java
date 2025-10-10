@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.pdks.dinamikRapor.enums.ENumBaslik;
@@ -31,6 +32,7 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 	 * 
 	 */
 	private static final long serialVersionUID = 7408349167376237472L;
+	static Logger logger = Logger.getLogger(PdksDinamikRaporParametre.class);
 
 	public static final String TABLE_NAME = "PDKS_DINAMIK_RAPOR_PARAMETRE";
 	public static final String COLUMN_NAME_DINAMIK_RAPOR = "DINAMIK_RAPOR_ID";
@@ -295,7 +297,8 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 			if (baslik != null)
 				baslikDurum = baslik.value().equals(ENumBaslik.TESIS.value());
 		} catch (Exception e) {
-			// TODO: handle exception
+			logger.error(e);
+			e.printStackTrace();
 		}
 
 		return baslikDurum;
@@ -314,7 +317,8 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 			if (baslik != null)
 				baslikDurum = baslik.value().equals(ENumBaslik.YIL.value());
 		} catch (Exception e) {
-			// TODO: handle exception
+			logger.error(e);
+			e.printStackTrace();
 		}
 
 		return baslikDurum;

@@ -2084,7 +2084,8 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 						}
 
 					} catch (Exception e) {
-						// TODO: handle exception
+						logger.error(e);
+						e.printStackTrace();
 					}
 
 				} else if (!izinMap.isEmpty()) {

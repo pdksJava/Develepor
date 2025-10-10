@@ -1106,7 +1106,8 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 
 								pr.setKarakterDeger(paramValue.toString());
 						} catch (Exception e) {
-							// TODO: handle exception
+							logger.error(e);
+							e.printStackTrace();
 						}
 
 					}

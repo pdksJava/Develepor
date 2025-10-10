@@ -5722,7 +5722,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				PdksUtil.runMethodObjectNull(personelERP, "setDigerTanimAlan" + kod, deger, bos);
 				PdksUtil.runMethodObjectNull(personelERP, "setDigerTanimAlan" + kod + "Kodu", deger, bos);
 			} catch (Exception e) {
-				// TODO: handle exception
+				logger.error(e);
+				e.printStackTrace();
 			}
 
 		}
