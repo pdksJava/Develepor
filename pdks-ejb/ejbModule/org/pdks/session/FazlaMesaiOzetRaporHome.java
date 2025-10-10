@@ -1366,6 +1366,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					int yarimYuvarla = puantaj.getYarimYuvarla();
+					double maxCalismaSure = fazlaMesaiMaxSure;
 					TreeMap<String, VardiyaGun> vgMap = new TreeMap<String, VardiyaGun>();
 					PersonelDenklestirme personelDenklestirme = puantaj.getPersonelDenklestirme();
 					if (!sutIzniDurum)
@@ -1420,6 +1421,9 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							VardiyaGun vardiyaGun = (VardiyaGun) vg.clone();
 							vardiyaGunList.add(vardiyaGun);
 
+							Double d = personelDenklestirme.isSuaDurumu() ? vardiyaGun.getRadyolojiMaxCalismaSaat() : null;
+							if (d != null)
+								maxCalismaSure = d.doubleValue();
 							if (vardiyaGun.getDurum() == false && vardiyaGun.getVardiya() != null) {
 								if (vardiyaGun.getVardiyaDate().after(toDay))
 									vardiyaGun.setDurum(vardiyaGun.getVardiyaDate().after(toDay));
@@ -1543,8 +1547,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							if (vardiyaGun.getIzin() == null && vardiyaGun.isZamanGelmedi()) {
 								toplamSure = vardiyaGun.getCalismaSuresi();
 							}
-							if (vardiyaGun.isFcsDahil() && toplamSure - vardiyaGun.getResmiTatilSure() > fazlaMesaiMaxSure)
-								puantajUcretiOdenenSure += toplamSure - fazlaMesaiMaxSure - vardiyaGun.getResmiTatilSure();
+							if (vardiyaGun.isFcsDahil() && toplamSure - vardiyaGun.getResmiTatilSure() > maxCalismaSure)
+								puantajUcretiOdenenSure += toplamSure - maxCalismaSure - vardiyaGun.getResmiTatilSure();
 							puantajSaatToplami += toplamSure;
 							puantajResmiTatil += vardiyaGun.getResmiTatilSure();
 							if (toplamSure > 0.0d)
@@ -1622,7 +1626,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							if (calisiyor) {
 								Double sure = vardiyaGun.getCalismaNetSuresi();
 								if (gunMaxCalismaOdenir)
-									ucretiOdenenMesaiSure += sure != null && sure.doubleValue() > fazlaMesaiMaxSure ? sure.doubleValue() - fazlaMesaiMaxSure : 0.0d;
+									ucretiOdenenMesaiSure += sure != null && sure.doubleValue() > maxCalismaSure ? sure.doubleValue() - maxCalismaSure : 0.0d;
 								if (vardiyaGun.getHaftaCalismaSuresi() > 0) {
 									if (!haftaTatilVar)
 										haftaTatilVar = Boolean.TRUE;

@@ -2179,9 +2179,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								gebemi = vardiyaGun.getVardiya().isGebelikMi();
 							if (calisiyor) {
 								Double sure = vardiyaGun.getCalismaSuresi();
+								double maxCalismaSure = fazlaMesaiMaxSure;
+								Double d = personelDenklestirme.isSuaDurumu() ? vardiyaGun.getRadyolojiMaxCalismaSaat() : null;
+								if (d != null)
+									maxCalismaSure = d.doubleValue();
 								if (gunMaxCalismaOdenir && vardiyaGun.isFcsDahil())
-									ucretiOdenenMesaiSure += sure != null && sure.doubleValue() > fazlaMesaiMaxSure + (vardiyaGun.getHaftaCalismaSuresi() + vardiyaGun.getResmiTatilSure()) ? sure.doubleValue() - fazlaMesaiMaxSure
-											- (vardiyaGun.getHaftaCalismaSuresi() + vardiyaGun.getResmiTatilSure()) : 0.0d;
+									ucretiOdenenMesaiSure += sure != null && sure.doubleValue() > maxCalismaSure + (vardiyaGun.getHaftaCalismaSuresi() + vardiyaGun.getResmiTatilSure()) ? sure.doubleValue() - maxCalismaSure - (vardiyaGun.getHaftaCalismaSuresi() + vardiyaGun.getResmiTatilSure())
+											: 0.0d;
 
 								if (vardiyaGun.getIzin() == null)
 									++izinsizGun;

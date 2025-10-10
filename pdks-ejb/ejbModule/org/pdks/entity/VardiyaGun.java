@@ -1368,8 +1368,7 @@ public class VardiyaGun extends BaseObject {
 					String ek = "";
 					if (tmpVardiya.isSutIzniMi())
 						ek = " - Süt İzni";
-					else 
-					if (tmpVardiya.isSuaMi())
+					else if (tmpVardiya.isSuaMi())
 						ek = " - Şua";
 					else if (tmpVardiya.isGebelikMi())
 						ek = " - Gebe";
@@ -2243,6 +2242,17 @@ public class VardiyaGun extends BaseObject {
 		if (ayinGunu) {
 			BigDecimal decimal = getKatSayi(KatSayiTipi.SAAT_CALISAN_RESMI_TATIL.value());
 			katSayi = decimal != null ? decimal.doubleValue() : 7.5d;
+		}
+		return katSayi;
+	}
+
+	@Transient
+	public Double getRadyolojiMaxCalismaSaat() {
+		Double katSayi = null;
+		if (ayinGunu) {
+			BigDecimal decimal = getKatSayi(KatSayiTipi.RADYOLOJI_SAAT_MAX.value());
+			if (decimal != null)
+				katSayi = decimal.doubleValue();
 		}
 		return katSayi;
 	}

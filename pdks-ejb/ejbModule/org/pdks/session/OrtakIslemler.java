@@ -14792,6 +14792,7 @@ public class OrtakIslemler implements Serializable {
 			boolean offFazlaMesaiKatSayiOku = getParameterKey("offFazlaMesaiKatSayiOku").equals("1");
 			boolean yuvarlamaKatSayiOku = getParameterKey("yuvarlamaKatSayiOku").equals("1");
 			HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> allMap = getPlanKatSayiAllMap(personelIdler, basTarih, bitTarih, session);
+			TreeMap<String, BigDecimal> radyolojiFCSMap = allMap.containsKey(KatSayiTipi.RADYOLOJI_SAAT_MAX) ? allMap.get(KatSayiTipi.RADYOLOJI_SAAT_MAX) : null;
 			TreeMap<String, BigDecimal> sureMap = planKatSayiOku && allMap.containsKey(KatSayiTipi.HAREKET_BEKLEME_SURESI) ? allMap.get(KatSayiTipi.HAREKET_BEKLEME_SURESI) : null;
 			TreeMap<String, BigDecimal> sureSuaMap = suaKatSayiOku && allMap.containsKey(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI) ? allMap.get(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI) : null;
 			TreeMap<String, BigDecimal> yuvarlamaMap = yuvarlamaKatSayiOku && allMap.containsKey(KatSayiTipi.YUVARLAMA_TIPI) ? allMap.get(KatSayiTipi.YUVARLAMA_TIPI) : null;
@@ -14813,6 +14814,7 @@ public class OrtakIslemler implements Serializable {
 			TreeMap<String, BigDecimal> saatCalisanResmiTatilMap = allMap.containsKey(KatSayiTipi.SAAT_CALISAN_RESMI_TATIL) ? allMap.get(KatSayiTipi.SAAT_CALISAN_RESMI_TATIL) : null;
 			TreeMap<String, BigDecimal> saatCalisanArifeTatilMap = allMap.containsKey(KatSayiTipi.SAAT_CALISAN_ARIFE_TATIL_SAAT) ? allMap.get(KatSayiTipi.SAAT_CALISAN_ARIFE_TATIL_SAAT) : null;
 			TreeMap<String, BigDecimal> saatCalisanArifeNormalMap = allMap.containsKey(KatSayiTipi.SAAT_CALISAN_ARIFE_NORMAL_SAAT) ? allMap.get(KatSayiTipi.SAAT_CALISAN_ARIFE_NORMAL_SAAT) : null;
+			boolean radyolojiFCSKontrolEt = radyolojiFCSMap != null && !radyolojiFCSMap.isEmpty();
 			boolean erkenGirisKontrolEt = erkenGirisMap != null && !erkenGirisMap.isEmpty();
 			boolean erkenCikisKontrolEt = erkenCikisMap != null && !erkenCikisMap.isEmpty();
 			boolean gecCikisKontrolEt = gecCikisMap != null && !gecCikisMap.isEmpty();
@@ -14898,6 +14900,10 @@ public class OrtakIslemler implements Serializable {
 							gun = null;
 						}
 					}
+
+					if (radyolojiFCSKontrolEt && veriKatSayiVar(radyolojiFCSMap, sirketId, tesisId, vardiyaId, str))
+						katSayiMap.put(KatSayiTipi.RADYOLOJI_SAAT_MAX.value(), getKatSayiVeriMap(radyolojiFCSMap, sirketId, tesisId, vardiyaId, str));
+
 					if (saatCalisanNormalGunKontrolEt && veriKatSayiVar(saatCalisanNormalGunMap, sirketId, tesisId, vardiyaId, str))
 						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_NORMAL_GUN.value(), getKatSayiVeriMap(saatCalisanNormalGunMap, sirketId, tesisId, vardiyaId, str));
 					if (vg.isIzinli() && saatCalisanIzinGunKontrolEt && veriKatSayiVar(saatCalisanIzinGunMap, sirketId, tesisId, vardiyaId, str))
@@ -17429,7 +17435,7 @@ public class OrtakIslemler implements Serializable {
 							else {
 								Paragraph para = new Paragraph();
 								for (Object object : list) {
- 									Chunk c = null;
+									Chunk c = null;
 									if (object instanceof String) {
 										String str1 = (String) object;
 										c = new Chunk(str1, font);
@@ -17441,7 +17447,7 @@ public class OrtakIslemler implements Serializable {
 										Phrase pr = new Phrase(c);
 										para.add(pr);
 									}
- 								}
+								}
 
 								para.setAlignment(Element.ALIGN_LEFT);
 								doc.add(para);
@@ -18807,7 +18813,7 @@ public class OrtakIslemler implements Serializable {
 							}
 
 							double normalCalismaSuresi = izinSaat != null ? izinSaat : normalCalismaVardiya.getNetCalismaSuresi();
-							Double mesaiMaxSure = fazlaMesaiMaxSure;
+							double mesaiMaxSure = fazlaMesaiMaxSure;
 							boolean raporIzni = getVardiyaIzniEkle(pdksVardiyaGun);
 							gecenAyResmiTatilSure += pdksVardiyaGun.getGecenAyResmiTatilSure();
 							Tatil tatil = null;
@@ -19076,7 +19082,14 @@ public class OrtakIslemler implements Serializable {
 									}
 								}
 								if (pdksVardiyaGun.getCalismaSuresi() > 0) {
-									double normalSure = pdksVardiyaGun.getCalismaSuresi() - (pdksVardiyaGun.getHaftaCalismaSuresi() + pdksVardiyaGun.getResmiTatilSure());
+									Double d = pdksVardiyaGun.getRadyolojiMaxCalismaSaat();
+									if (d != null) {
+										if (personelDenklestirme.isSuaDurumu())
+											mesaiMaxSure = d;
+										else
+											pdksVardiyaGun.getKatSayiMap().remove(KatSayiTipi.RADYOLOJI_SAAT_MAX.value());
+									}
+ 									double normalSure = pdksVardiyaGun.getCalismaSuresi() - (pdksVardiyaGun.getHaftaCalismaSuresi() + pdksVardiyaGun.getResmiTatilSure());
 									if (pdksVardiyaGun.isFcsDahil() && normalSure > mesaiMaxSure && maxSureDurum) {
 										ucretiOdenenMesaiSure += normalSure - mesaiMaxSure;
 										// pdksVardiyaGun.addCalismaSuresi(fazlaMesaiMaxSure - normalSure);
