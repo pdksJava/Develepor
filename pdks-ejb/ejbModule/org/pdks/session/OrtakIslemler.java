@@ -17292,6 +17292,198 @@ public class OrtakIslemler implements Serializable {
 	 * @throws Exception
 	 */
 	public LinkedHashMap<Long, byte[]> getOnayPdf(DenklestirmeAy denklestirmeAy, HashMap<Long, AylikPuantaj> veriMap, List<String> icerikList, Session session) throws Exception {
+		if (denklestirmeAy == null && veriMap != null) {
+			for (Long key : veriMap.keySet()) {
+				AylikPuantaj ap = veriMap.get(key);
+				denklestirmeAy = ap.getDenklestirmeAy();
+				break;
+			}
+		}
+		LinkedHashMap<Long, byte[]> map = null;
+		BaseFont baseFont = BaseFont.createFont("ARIAL.TTF", BaseFont.IDENTITY_H, true);
+		Font fontH = new Font(baseFont, 10f, Font.BOLD, BaseColor.BLACK);
+		Font fontBaslik = new Font(baseFont, 14f, Font.BOLD, BaseColor.BLACK);
+		Font font = new Font(baseFont, 10f, Font.NORMAL, BaseColor.BLACK);
+		Image image = getProjeImage();
+		PdfPTable tableImage = null;
+		if (image != null) {
+			image.scaleToFit(image.getHeight() * 3, image.getWidth() * 3);
+			tableImage = new PdfPTable(1);
+			com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
+			cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+			tableImage.addCell(cellImage);
+		}
+		Parameter pm = getParameter(session, "mesaiDenklestirmeBelge");
+		String baslik = pm != null ? pm.getDescription().toUpperCase(Constants.TR_LOCALE) : "";
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		NumberFormat nf = DecimalFormat.getNumberInstance(locale);
+		String tarih = authenticatedUser.dateFormatla(new Date());
+		LinkedHashMap<String, String> changeMasterMap = new LinkedHashMap<String, String>();
+		LinkedHashMap<String, String> changeMap = new LinkedHashMap<String, String>();
+		Date tarih1 = null, tarih2 = null, oncekiTarih1 = null, oncekiTarih2 = null, sonrakiTarih1 = null, sonrakiTarih2 = null;
+		if (denklestirmeAy != null) {
+			Calendar cal = Calendar.getInstance();
+			tarih1 = PdksUtil.convertToJavaDate(String.valueOf(denklestirmeAy.getDonem()) + "01", "yyyyMMdd");
+			cal.setTime(tarih1);
+			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+			tarih2 = cal.getTime();
+			oncekiTarih2 = PdksUtil.tariheGunEkleCikar(tarih1, -1);
+			sonrakiTarih1 = PdksUtil.tariheGunEkleCikar(tarih2, 1);
+			cal.setTime(oncekiTarih2);
+			cal.set(Calendar.DATE, 1);
+			oncekiTarih1 = cal.getTime();
+			cal.setTime(sonrakiTarih1);
+			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+			sonrakiTarih2 = cal.getTime();
+		}
+		changeMasterMap.put("$oncekiTarih1$", oncekiTarih1 != null ? authenticatedUser.dateFormatla(oncekiTarih1) : "");
+		changeMasterMap.put("$oncekiTarih2$", oncekiTarih2 != null ? authenticatedUser.dateFormatla(oncekiTarih2) : "");
+		changeMasterMap.put("$tarih1$", tarih1 != null ? authenticatedUser.dateFormatla(tarih1) : "");
+		changeMasterMap.put("$tarih2$", tarih2 != null ? authenticatedUser.dateFormatla(tarih2) : "");
+		changeMasterMap.put("$sonrakiTarih1$", sonrakiTarih1 != null ? authenticatedUser.dateFormatla(sonrakiTarih1) : "");
+		changeMasterMap.put("$sonrakiTarih2$", sonrakiTarih2 != null ? authenticatedUser.dateFormatla(sonrakiTarih2) : "");
+		for (Long key : veriMap.keySet()) {
+			AylikPuantaj ap = veriMap.get(key);
+			ByteArrayOutputStream baosPDF = new ByteArrayOutputStream();
+			Document doc = new Document(PageSize.A4.rotate(), 100, 100, 100, 100);
+			PdfWriter.getInstance(doc, baosPDF);
+			doc.open();
+			Personel personel = ap.getPdksPersonel();
+			try {
+				if (map == null)
+					map = new LinkedHashMap<Long, byte[]>();
+
+				Sirket sirket = personel.getSirket();
+				Tanim tesis = sirket.getTesisDurum() ? personel.getTesis() : null;
+				String kimlikNo = personel.getPersonelKGS() != null ? personel.getPersonelKGS().getKimlikNo() : null;
+				Paragraph bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
+				bos.setSpacingAfter(10);
+				changeMap.put("$sirket$", sirket.getAd());
+				if (tesis != null)
+					changeMap.put("$tesis$", tesis.getAciklama());
+				changeMap.put("$adSoyad$", personel.getAdSoyad());
+				changeMap.put("$mesai$", nf.format(ap.getAylikFazlaMesai()));
+				changeMap.put("$bakiye$", ap.getDevredenSure() != null ? nf.format(ap.getDevredenSure()) : "");
+				Double devredenSure = ap.getGecenAyFazlaMesai(authenticatedUser);
+				changeMap.put("$devredenSure$", devredenSure != null ? nf.format(devredenSure) : "");
+				changeMap.put("$kimlikNo$", PdksUtil.hasStringValue(kimlikNo) ? kimlikNo : "");
+				changeMap.putAll(changeMasterMap);
+				doc.add(bos);
+				doc.add(bos);
+				doc.add(bos);
+				for (String str : icerikList) {
+					String string = str != null ? new String(str) : "";
+					if (PdksUtil.hasStringValue(string)) {
+						if (string.equalsIgnoreCase("$image$")) {
+							if (tableImage != null)
+								doc.add(tableImage);
+						} else if (string.equalsIgnoreCase("$tarihBos$"))
+							doc.add(PDFITextUtils.getParagraph(" .. / .. / .... ", font, Element.ALIGN_RIGHT));
+						else if (string.equalsIgnoreCase("$tarih$"))
+							doc.add(PDFITextUtils.getParagraph(tarih, font, Element.ALIGN_RIGHT));
+						else if (string.equalsIgnoreCase("$sirket$"))
+							doc.add(PDFITextUtils.getParagraph(sirket.getAd(), fontH, Element.ALIGN_CENTER));
+						else if (string.equalsIgnoreCase("$baslik$"))
+							doc.add(PDFITextUtils.getParagraph(baslik, fontBaslik, Element.ALIGN_CENTER));
+						else if (string.equalsIgnoreCase("$tesis$") && tesis != null)
+							doc.add(PDFITextUtils.getParagraph(tesis.getAciklama(), fontH, Element.ALIGN_CENTER));
+						else {
+							List list = new ArrayList();
+							list.add(string);
+							for (String oldStr : changeMap.keySet()) {
+								int adet = list.size();
+								logger.info(oldStr + " " + adet);
+								List parcaList = new ArrayList();
+								for (int i = 0; i < adet; i++) {
+									Object object = list.get(i);
+									if (object instanceof String) {
+										String str1 = (String) object;
+										int index = str1.indexOf(oldStr);
+										while (index >= 0) {
+											String b1 = index > 0 ? str1.substring(0, index) : "";
+											if (b1.length() > 0)
+												parcaList.add(b1);
+											int endIndex = index + oldStr.length();
+											String b2 = str1.substring(index, endIndex);
+											Liste c = new Liste(changeMap.get(oldStr), oldStr.equals(b2) ? font : fontH);
+											parcaList.add(c);
+											str1 = str1.substring(endIndex);
+											index = str1.indexOf(oldStr);
+										}
+
+										parcaList.add(str1);
+									} else
+										parcaList.add(object);
+
+								}
+								if (parcaList.size() > list.size()) {
+									list.clear();
+									list.addAll(parcaList);
+									adet = parcaList.size();
+
+								}
+								parcaList = null;
+							}
+							if (list.size() == 1)
+								doc.add(PDFITextUtils.getParagraph(string, font, Element.ALIGN_LEFT));
+							else {
+								Paragraph para = new Paragraph();
+								for (Object object : list) {
+ 									Chunk c = null;
+									if (object instanceof String) {
+										String str1 = (String) object;
+										c = new Chunk(str1, font);
+									} else if (object instanceof Liste) {
+										Liste l = (Liste) object;
+										c = new Chunk((String) l.getId(), (Font) l.getValue());
+									}
+									if (c != null) {
+										Phrase pr = new Phrase(c);
+										para.add(pr);
+									}
+ 								}
+
+								para.setAlignment(Element.ALIGN_LEFT);
+								doc.add(para);
+							}
+							list = null;
+
+						}
+					} else {
+						bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
+						bos.setSpacingAfter(20);
+						doc.add(bos);
+					}
+
+				}
+				changeMap.clear();
+				doc.newPage();
+			} catch (Exception e) {
+				logger.error("Pdks hata in : \n");
+				e.printStackTrace();
+				logger.error("Pdks hata out : " + e.getMessage());
+
+			}
+			doc.close();
+			baosPDF.close();
+			if (map != null)
+				map.put(key, baosPDF.toByteArray());
+		}
+		changeMasterMap = null;
+		changeMap = null;
+		return map;
+
+	}
+
+	/**
+	 * @param denklestirmeAy
+	 * @param veriMap
+	 * @param icerikList
+	 * @param session
+	 * @return
+	 * @throws Exception
+	 */
+	public LinkedHashMap<Long, byte[]> getOnayCanliPdf(DenklestirmeAy denklestirmeAy, HashMap<Long, AylikPuantaj> veriMap, List<String> icerikList, Session session) throws Exception {
 
 		if (denklestirmeAy == null && veriMap != null) {
 			for (Long key : veriMap.keySet()) {

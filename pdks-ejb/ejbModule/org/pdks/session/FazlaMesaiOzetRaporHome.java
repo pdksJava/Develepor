@@ -542,9 +542,13 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		for (AylikPuantaj ap : onayList)
 			veriMap.put(ap.getPdksPersonel().getId(), ap);
 		String fileName = ortakIslemler.getParameterKey("mesaiDenklestirmeBelge");
- 		File file = new File("/opt/pdks/" + fileName);
+		File file = new File("/opt/pdks/" + fileName);
 		List<String> list = PdksUtil.getStringListFromFile(file);
-		LinkedHashMap<Long, byte[]> map1 = ortakIslemler.getOnayPdf(denklestirmeAy, veriMap, new ArrayList<String>(list), session);
+		LinkedHashMap<Long, byte[]> map1 = null;
+		// if (PdksUtil.getCanliSunucuDurum()==false)
+		// map1 = ortakIslemler.getOnayPdf(denklestirmeAy, veriMap, new ArrayList<String>(list), session);
+		// else
+		map1 = ortakIslemler.getOnayCanliPdf(denklestirmeAy, veriMap, new ArrayList<String>(list), session);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		if (zip) {
 			String path = "/tmp/";
