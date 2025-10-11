@@ -142,6 +142,7 @@ import org.pdks.entity.VardiyaYemekIzin;
 import org.pdks.entity.YemekIzin;
 import org.pdks.entity.YemekOgun;
 import org.pdks.enums.BordroDetayTipi;
+import org.pdks.enums.DenklestirmeTipi;
 import org.pdks.enums.KatSayiTipi;
 import org.pdks.enums.KesintiTipi;
 import org.pdks.enums.OrganizasyonTipi;
@@ -239,6 +240,20 @@ public class OrtakIslemler implements Serializable {
 	HashMap<String, MenuItem> menuItemMap = new HashMap<String, MenuItem>();
 	@In(required = false)
 	FacesMessages facesMessages;
+
+	/**
+	 * @param ap
+	 * @return
+	 */
+	public String getUcretiOdenenMesaiSureStr(AylikPuantaj ap) {
+		String str = null;
+		try {
+			str = "Günlük " + PdksUtil.numericValueFormatStr(ap.getFazlaMesaiMaxSure(), null) + " saat fazlası ödenir.";
+		} catch (Exception e) {
+			str = "";
+		}
+		return str;
+	}
 
 	/**
 	 * @param vardiyaYemekSuresi
@@ -2341,6 +2356,9 @@ public class OrtakIslemler implements Serializable {
 			kesintiTipi = KesintiTipi.KESINTI_YOK;
 		denklestirmeKesintiDurum = kesintiTipi.value();
 		Double fazlaMesaiMaxSure = getFazlaMesaiMaxSure(null);
+		Double radyolojiFazlaMesaiMaxSure = getRadyolojiFazlaMesaiMaxSure(null);
+		if (radyolojiFazlaMesaiMaxSure == null)
+			radyolojiFazlaMesaiMaxSure = fazlaMesaiMaxSure;
 		Double yemekMolasiYuzdesi = getYemekMolasiYuzdesi(null, xSession) * 100.0d;
 		User user = getSistemAdminUser(xSession);
 		if (user == null)
@@ -2354,6 +2372,16 @@ public class OrtakIslemler implements Serializable {
 		}
 		int basDonem = Integer.parseInt(ilkDonem);
 		String str = getParameterKey("denklestirmeDevredilenAylar");
+		String denklestirmeTipiStr = getParameterKey("denklestirmeTipi");
+		DenklestirmeTipi denklestirmeTipi = null;
+		if (PdksUtil.hasStringValue(denklestirmeTipiStr))
+			try {
+				denklestirmeTipi = DenklestirmeTipi.fromValue(Integer.parseInt(denklestirmeTipiStr));
+			} catch (Exception e) {
+
+			}
+		if (denklestirmeTipi == null)
+			denklestirmeTipi = DenklestirmeTipi.GECEN_AY_ODE;
 		List<String> denklestirmeDevredilenAylar = PdksUtil.getListByString(str, null);
 		for (int i = 1; i <= 12; i++) {
 			DenklestirmeAy denklestirmeAy = null;
@@ -2366,8 +2394,16 @@ public class OrtakIslemler implements Serializable {
 					denklestirmeAy.setYemekMolasiYuzdesi(yemekMolasiYuzdesi);
 					flush = true;
 				}
+				if (denklestirmeAy.getDenklestirmeTipi() == null) {
+					denklestirmeAy.setDenklestirmeTipi(denklestirmeTipi.value());
+					flush = true;
+				}
 				if (denklestirmeAy.getFazlaMesaiMaxSure() == null) {
 					denklestirmeAy.setFazlaMesaiMaxSure(fazlaMesaiMaxSure);
+					flush = true;
+				}
+				if (denklestirmeAy.getRadyolojiFazlaMesaiMaxSure() == null) {
+					denklestirmeAy.setRadyolojiFazlaMesaiMaxSure(radyolojiFazlaMesaiMaxSure);
 					flush = true;
 				}
 			} else {
@@ -2384,6 +2420,8 @@ public class OrtakIslemler implements Serializable {
 				denklestirmeAy.setSure(0d);
 				denklestirmeAy.setYemekMolasiYuzdesi(yemekMolasiYuzdesi);
 				denklestirmeAy.setFazlaMesaiMaxSure(fazlaMesaiMaxSure);
+
+				denklestirmeAy.setRadyolojiFazlaMesaiMaxSure(radyolojiFazlaMesaiMaxSure);
 				if (!denklestirmeDevredilenAylar.isEmpty())
 					denklestirmeAy.setDenklestirmeDevret(denklestirmeDevredilenAylar.contains(String.valueOf(i)));
 				denklestirmeAy.setDurum(basDonem != donem);
@@ -14792,7 +14830,7 @@ public class OrtakIslemler implements Serializable {
 			boolean offFazlaMesaiKatSayiOku = getParameterKey("offFazlaMesaiKatSayiOku").equals("1");
 			boolean yuvarlamaKatSayiOku = getParameterKey("yuvarlamaKatSayiOku").equals("1");
 			HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> allMap = getPlanKatSayiAllMap(personelIdler, basTarih, bitTarih, session);
-			TreeMap<String, BigDecimal> radyolojiFCSMap = allMap.containsKey(KatSayiTipi.RADYOLOJI_SAAT_MAX) ? allMap.get(KatSayiTipi.RADYOLOJI_SAAT_MAX) : null;
+			// TreeMap<String, BigDecimal> radyolojiFCSMap = allMap.containsKey(KatSayiTipi.RADYOLOJI_SAAT_MAX) ? allMap.get(KatSayiTipi.RADYOLOJI_SAAT_MAX) : null;
 			TreeMap<String, BigDecimal> sureMap = planKatSayiOku && allMap.containsKey(KatSayiTipi.HAREKET_BEKLEME_SURESI) ? allMap.get(KatSayiTipi.HAREKET_BEKLEME_SURESI) : null;
 			TreeMap<String, BigDecimal> sureSuaMap = suaKatSayiOku && allMap.containsKey(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI) ? allMap.get(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI) : null;
 			TreeMap<String, BigDecimal> yuvarlamaMap = yuvarlamaKatSayiOku && allMap.containsKey(KatSayiTipi.YUVARLAMA_TIPI) ? allMap.get(KatSayiTipi.YUVARLAMA_TIPI) : null;
@@ -14814,7 +14852,7 @@ public class OrtakIslemler implements Serializable {
 			TreeMap<String, BigDecimal> saatCalisanResmiTatilMap = allMap.containsKey(KatSayiTipi.SAAT_CALISAN_RESMI_TATIL) ? allMap.get(KatSayiTipi.SAAT_CALISAN_RESMI_TATIL) : null;
 			TreeMap<String, BigDecimal> saatCalisanArifeTatilMap = allMap.containsKey(KatSayiTipi.SAAT_CALISAN_ARIFE_TATIL_SAAT) ? allMap.get(KatSayiTipi.SAAT_CALISAN_ARIFE_TATIL_SAAT) : null;
 			TreeMap<String, BigDecimal> saatCalisanArifeNormalMap = allMap.containsKey(KatSayiTipi.SAAT_CALISAN_ARIFE_NORMAL_SAAT) ? allMap.get(KatSayiTipi.SAAT_CALISAN_ARIFE_NORMAL_SAAT) : null;
-			boolean radyolojiFCSKontrolEt = radyolojiFCSMap != null && !radyolojiFCSMap.isEmpty();
+			// boolean radyolojiFCSKontrolEt = radyolojiFCSMap != null && !radyolojiFCSMap.isEmpty();
 			boolean erkenGirisKontrolEt = erkenGirisMap != null && !erkenGirisMap.isEmpty();
 			boolean erkenCikisKontrolEt = erkenCikisMap != null && !erkenCikisMap.isEmpty();
 			boolean gecCikisKontrolEt = gecCikisMap != null && !gecCikisMap.isEmpty();
@@ -14901,8 +14939,8 @@ public class OrtakIslemler implements Serializable {
 						}
 					}
 
-					if (radyolojiFCSKontrolEt && veriKatSayiVar(radyolojiFCSMap, sirketId, tesisId, vardiyaId, str))
-						katSayiMap.put(KatSayiTipi.RADYOLOJI_SAAT_MAX.value(), getKatSayiVeriMap(radyolojiFCSMap, sirketId, tesisId, vardiyaId, str));
+					// if (radyolojiFCSKontrolEt && veriKatSayiVar(radyolojiFCSMap, sirketId, tesisId, vardiyaId, str))
+					// katSayiMap.put(KatSayiTipi.RADYOLOJI_SAAT_MAX.value(), getKatSayiVeriMap(radyolojiFCSMap, sirketId, tesisId, vardiyaId, str));
 
 					if (saatCalisanNormalGunKontrolEt && veriKatSayiVar(saatCalisanNormalGunMap, sirketId, tesisId, vardiyaId, str))
 						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_NORMAL_GUN.value(), getKatSayiVeriMap(saatCalisanNormalGunMap, sirketId, tesisId, vardiyaId, str));
@@ -18642,7 +18680,6 @@ public class OrtakIslemler implements Serializable {
 		if (denklestirmeAy != null && denklestirmeAy.getFazlaMesaiMaxSure() != null)
 			fazlaMesaiMaxSure = denklestirmeAy.getFazlaMesaiMaxSure();
 		else {
-
 			try {
 				if (getParameterKeyHasStringValue("fazlaMesaiMaxSure"))
 					fazlaMesaiMaxSure = Double.parseDouble(getParameterKey("fazlaMesaiMaxSure"));
@@ -18651,6 +18688,43 @@ public class OrtakIslemler implements Serializable {
 			}
 			if (fazlaMesaiMaxSure <= 0d)
 				fazlaMesaiMaxSure = 11d;
+		}
+		return fazlaMesaiMaxSure;
+	}
+
+	/**
+	 * @param pd
+	 * @return
+	 */
+	public double getPersonelFazlaMesaiMaxSure(PersonelDenklestirme pd) {
+		double fazlaMesaiMaxSure = 0d;
+		DenklestirmeAy denklestirmeAy = pd.getDenklestirmeAy();
+		if (denklestirmeAy != null) {
+			fazlaMesaiMaxSure = denklestirmeAy.getFazlaMesaiMaxSure();
+			if (denklestirmeAy.getRadyolojiFazlaMesaiMaxSure() != null && denklestirmeAy.getRadyolojiFazlaMesaiMaxSure().doubleValue() > 0.0d)
+				fazlaMesaiMaxSure = denklestirmeAy.getRadyolojiFazlaMesaiMaxSure().doubleValue();
+		}
+
+		return fazlaMesaiMaxSure;
+	}
+
+	/**
+	 * @param denklestirmeAy
+	 * @return
+	 */
+	public Double getRadyolojiFazlaMesaiMaxSure(DenklestirmeAy denklestirmeAy) {
+		Double fazlaMesaiMaxSure = null;
+		if (denklestirmeAy != null && denklestirmeAy.getRadyolojiFazlaMesaiMaxSure() != null)
+			fazlaMesaiMaxSure = denklestirmeAy.getRadyolojiFazlaMesaiMaxSure();
+		else {
+
+			try {
+				if (getParameterKeyHasStringValue("radyolojiFazlaMesaiMaxSure"))
+					fazlaMesaiMaxSure = Double.parseDouble(getParameterKey("radyolojiFazlaMesaiMaxSure"));
+			} catch (Exception e) {
+				fazlaMesaiMaxSure = null;
+			}
+
 		}
 		return fazlaMesaiMaxSure;
 	}
@@ -18725,6 +18799,7 @@ public class OrtakIslemler implements Serializable {
 				// denklestirmeAy = puantajData.getPersonelDenklestirme().getDenklestirmeAy();
 				String donemKodu = String.valueOf(denklestirmeAy.getDonem());
 				double planlanSure = 0, izinSuresi = 0d, ucretiOdenenMesaiSure = 0d, tatilSuresi = 0d, fazlaMesaiMaxSure = getFazlaMesaiMaxSure(denklestirmeAy), resmiTatilSure = 0d;
+				Double radyolojiFazlaMesaiMaxSure = null;
 				boolean resmiTatilVardiyaEkle = false;
 
 				AylikPuantaj sablonAylikPuantaj = puantajData.getSablonAylikPuantaj();
@@ -18824,6 +18899,15 @@ public class OrtakIslemler implements Serializable {
 
 							double normalCalismaSuresi = izinSaat != null ? izinSaat : normalCalismaVardiya.getNetCalismaSuresi();
 							double mesaiMaxSure = fazlaMesaiMaxSure;
+							if (personelDenklestirme.isSuaDurumu()) {
+								if (radyolojiFazlaMesaiMaxSure == null) {
+									radyolojiFazlaMesaiMaxSure = denklestirmeAy.getRadyolojiFazlaMesaiMaxSure();
+									if (radyolojiFazlaMesaiMaxSure == null)
+										radyolojiFazlaMesaiMaxSure = fazlaMesaiMaxSure;
+								}
+								mesaiMaxSure = radyolojiFazlaMesaiMaxSure;
+							}
+							puantajData.setFazlaMesaiMaxSure(mesaiMaxSure);
 							boolean raporIzni = getVardiyaIzniEkle(pdksVardiyaGun);
 							gecenAyResmiTatilSure += pdksVardiyaGun.getGecenAyResmiTatilSure();
 							Tatil tatil = null;
@@ -19092,13 +19176,13 @@ public class OrtakIslemler implements Serializable {
 									}
 								}
 								if (pdksVardiyaGun.getCalismaSuresi() > 0) {
-									Double d = pdksVardiyaGun.getRadyolojiMaxCalismaSaat();
-									if (d != null) {
-										if (personelDenklestirme.isSuaDurumu())
-											mesaiMaxSure = d;
-										else
-											pdksVardiyaGun.getKatSayiMap().remove(KatSayiTipi.RADYOLOJI_SAAT_MAX.value());
-									}
+									// Double d = pdksVardiyaGun.getRadyolojiMaxCalismaSaat();
+									// if (d != null) {
+									// if (personelDenklestirme.isSuaDurumu())
+									// mesaiMaxSure = d;
+									// else
+									// pdksVardiyaGun.getKatSayiMap().remove(KatSayiTipi.RADYOLOJI_SAAT_MAX.value());
+									// }
 									double normalSure = pdksVardiyaGun.getCalismaSuresi() - (pdksVardiyaGun.getHaftaCalismaSuresi() + pdksVardiyaGun.getResmiTatilSure());
 									if (pdksVardiyaGun.isFcsDahil() && normalSure > mesaiMaxSure && maxSureDurum) {
 										ucretiOdenenMesaiSure += normalSure - mesaiMaxSure;
@@ -19246,7 +19330,7 @@ public class OrtakIslemler implements Serializable {
 						izinSuresi += calismaModeli.getHaftaIci();
 					puantajData.setIzinSuresi(izinSuresi);
 					int yarimYuvarla = puantajData.getYarimYuvarla();
-					;
+
 					Integer rtYuvarla = null, ucmYuvarla = puantajData.getYarimYuvarla();
 					if (puantajData.getKatSayiMap() != null) {
 						if (puantajData.getKatSayiMap().containsKey(KatSayiTipi.UOM_YUVARLAMA.value()))
@@ -19294,7 +19378,11 @@ public class OrtakIslemler implements Serializable {
 					}
 					boolean bakiyeSifirlaDurum = personelDenklestirme != null && personelDenklestirme.getBakiyeSifirlaDurum() != null && personelDenklestirme.getBakiyeSifirlaDurum().booleanValue();
 					boolean mesaiDevret = personelDenklestirme.getFazlaMesaiIzinKullan() && personel.isCalisiyorGun(puantajData.getSonGun());
-					PersonelDenklestirme hesaplananDenklestirme = puantajData.getPersonelDenklestirme(fazlaMesaiOde, hesaplananBuAySure, gecenAydevredenSure);
+					PersonelDenklestirme hesaplananDenklestirme = null;
+					if (denklestirmeAy.isGecenAyOde())
+						hesaplananDenklestirme = puantajData.getPersonelDenklestirme(fazlaMesaiOde, hesaplananBuAySure, gecenAydevredenSure);
+					else
+						hesaplananDenklestirme = puantajData.getTamPersonelDenklestirme(hesaplananBuAySure, gecenAydevredenSure);
 					puantajData.setFazlaMesaiSure(PdksUtil.setSureDoubleTypeRounded((hesaplananDenklestirme.getOdenenSure() > 0 ? hesaplananDenklestirme.getOdenenSure() : 0) + (bakiyeSifirlaDurum == false || mesaiDevret == false ? ucretiOdenenMesaiSure : 0), ucmYuvarla));
 					puantajData.setHesaplananSure(hesaplananDenklestirme.getHesaplananSure());
 

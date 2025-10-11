@@ -547,8 +547,13 @@
 										value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.aylikFazlaMesai)}" rendered="#{aylikPuantaj.aylikFazlaMesai != 0}" /></td>
 							</ui:fragment>
 							<ui:fragment rendered="#{vardiyaGunHome.yasalFazlaCalismaAsanSaat}">
-								<td class="#{aylikPuantaj.trClass}" style="width: 20px" align="center"><h:outputText
-										value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.ucretiOdenenMesaiSure)}" rendered="#{aylikPuantaj.ucretiOdenenMesaiSure != 0}" /></td>
+								<td class="#{aylikPuantaj.trClass}" style="width: 20px" align="center"><ui:fragment rendered="#{aylikPuantaj.ucretiOdenenMesaiSure != 0}">
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.ucretiOdenenMesaiSure)}"
+											id="ucretiOdenenMesaiSure#{aylikPuantaj.personelDenklestirme.id}" />
+										<rich:toolTip for="ucretiOdenenMesaiSure#{aylikPuantaj.personelDenklestirme.id}">
+											<span style="color: black; font-size: 13px;">#{ortakIslemler.getUcretiOdenenMesaiSureStr(aylikPuantaj)}</span>
+										</rich:toolTip>
+									</ui:fragment></td>
 							</ui:fragment>
 							<ui:fragment rendered="#{vardiyaGunHome.devredenMesaiKod}">
 								<td class="#{aylikPuantaj.trClass}" style="width: 20px" align="center"><h:outputText

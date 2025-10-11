@@ -2384,7 +2384,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						planlananCell.setCellComment(comment1);
 					}
 					if (yasalFazlaCalismaAsanSaat) {
-						setCell(sheet, row, col++, styleGenel, aylikPuantaj.getUcretiOdenenMesaiSure());
+						if (aylikPuantaj.getUcretiOdenenMesaiSure() > 0) {
+							Cell ucretiOdenenMesaiSure = setCell(sheet, row, col++, styleGenel, aylikPuantaj.getUcretiOdenenMesaiSure());
+							ExcelUtil.setCellComment(ucretiOdenenMesaiSure, anchor, helper, drawing, ortakIslemler.getUcretiOdenenMesaiSureStr(aylikPuantaj));
+						} else
+							ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
 					}
 					setCell(sheet, row, col++, styleGenel, aylikPuantaj.getAylikNetFazlaMesai());
 					if (devredenMesaiKod)

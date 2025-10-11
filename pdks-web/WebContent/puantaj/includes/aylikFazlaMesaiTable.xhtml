@@ -352,7 +352,11 @@
 					</ui:fragment>
 				</f:facet>
 				<ui:fragment rendered="#{aylikPuantaj.fazlaMesaiHesapla and aylikPuantaj.ucretiOdenenMesaiSure != 0}">
-					<span style="color: red;"> <h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.ucretiOdenenMesaiSure)}" /></span>
+					<span style="color: red;" id="ucretiOdenenMesaiSure#{aylikPuantaj.personelDenklestirme.id}"> <h:outputText
+							value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.ucretiOdenenMesaiSure)}" /></span>
+					<rich:toolTip for="ucretiOdenenMesaiSure#{aylikPuantaj.personelDenklestirme.id}">
+						<span style="color: black; font-size: 13px;">#{ortakIslemler.getUcretiOdenenMesaiSureStr(aylikPuantaj)}</span>
+					</rich:toolTip>
 				</ui:fragment>
 
 			</rich:column>

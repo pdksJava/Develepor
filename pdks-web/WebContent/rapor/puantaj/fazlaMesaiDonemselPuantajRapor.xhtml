@@ -735,7 +735,11 @@
 												<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.yasalFazlaCalismaAsanSaat}">
 													<td class="#{ap.trSonucClass}" style="width: 20px" align="center"><ui:fragment
 															rendered="#{ap.fazlaMesaiHesapla and ap.ucretiOdenenMesaiSure != 0}">
-															<span style="color: red;"> <h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.ucretiOdenenMesaiSure)}" /></span>
+															<span style="color: red;" id="ucretiOdenenMesaiSure#{ap.personelDenklestirme.id}"> <h:outputText
+																	value="#{authenticatedUser.sayiFormatliGoster(ap.ucretiOdenenMesaiSure)}" /></span>
+															<rich:toolTip for="ucretiOdenenMesaiSure#{ap.personelDenklestirme.id}">
+																<span style="color: black; font-size: 13px;">#{ortakIslemler.getUcretiOdenenMesaiSureStr(aylikPuantaj)}</span>
+															</rich:toolTip>
 														</ui:fragment></td>
 												</ui:fragment>
 												<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.gerceklesenMesaiKod}">

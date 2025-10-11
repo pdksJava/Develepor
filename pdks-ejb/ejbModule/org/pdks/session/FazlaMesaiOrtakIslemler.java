@@ -74,6 +74,7 @@ import org.pdks.entity.VardiyaPlan;
 import org.pdks.entity.VardiyaSaat;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.BordroDetayTipi;
+import org.pdks.enums.DenklestirmeTipi;
 import org.pdks.erp.action.PdksNoSapController;
 import org.pdks.erp.action.PdksSap3Controller;
 import org.pdks.erp.action.PdksSapController;
@@ -2836,7 +2837,14 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	 */
 	@Transactional
 	public void setFazlaMesaiMaxSure(DenklestirmeAy denklestirmeAy, Session session) {
-		denklestirmeAy.setFazlaMesaiMaxSure(ortakIslemler.getFazlaMesaiMaxSure(null));
+		Double fazlaMesaiMaxSure = ortakIslemler.getFazlaMesaiMaxSure(null);
+		Double radyolojiFazlaMesaiMaxSure = ortakIslemler.getRadyolojiFazlaMesaiMaxSure(null);
+		if (radyolojiFazlaMesaiMaxSure == null || radyolojiFazlaMesaiMaxSure < 0.0d)
+			radyolojiFazlaMesaiMaxSure = fazlaMesaiMaxSure;
+		if (denklestirmeAy.getDenklestirmeTipi() == null)
+			denklestirmeAy.setDenklestirmeTipi(DenklestirmeTipi.GECEN_AY_ODE.value());
+		denklestirmeAy.setFazlaMesaiMaxSure(fazlaMesaiMaxSure);
+		denklestirmeAy.setRadyolojiFazlaMesaiMaxSure(radyolojiFazlaMesaiMaxSure);
 		pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeAy);
 		session.flush();
 

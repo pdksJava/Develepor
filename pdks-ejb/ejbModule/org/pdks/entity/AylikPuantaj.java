@@ -86,7 +86,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	private Double saatToplami = 0d, resmiTatilToplami = 0d, haftaCalismaSuresi = 0d, ucretiOdenenMesaiSure = 0d, fazlaMesaiSure = 0d, odenenSure = 0d, planlananSure = 0d, offSure = 0.0d;
 
-	private Double izinSuresi = 0d, saatlikIzinSuresi = 0d, eksikCalismaSure = 0d, gecenAyFazlaMesai = 0d, hesaplananSure = 0d, devredenSure = 0d, aksamVardiyaSaatSayisi = 0d, kesilenSure = 0d;
+	private Double izinSuresi = 0d, saatlikIzinSuresi = 0d, fazlaMesaiMaxSure = 0d, eksikCalismaSure = 0d, gecenAyFazlaMesai = 0d, hesaplananSure = 0d, devredenSure = 0d, aksamVardiyaSaatSayisi = 0d, kesilenSure = 0d;
 
 	private boolean fazlaMesaiHesapla = Boolean.FALSE, vardiyaSua = Boolean.FALSE, eksikGunVar = Boolean.FALSE, denklestirilmeyenDevredenVar = Boolean.FALSE;
 
@@ -106,8 +106,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	private PersonelDenklestirmeDinamikAlan personelDenklestirmeDinamikAlan;
 
 	private PersonelDinamikAlan personelDinamikAlan;
-	
-	 
+
 	private HashMap<Integer, BigDecimal> katSayiMap;
 
 	private User loginUser;
@@ -706,8 +705,8 @@ public class AylikPuantaj implements Serializable, Cloneable {
 				}
 			}
 		}
- 		if (kalanSure == null)
- 			kalanSure = 0d;
+		if (kalanSure == null)
+			kalanSure = 0d;
 		return kalanSure;
 
 	}
@@ -962,6 +961,25 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public void setVardiyaSua(boolean vardiyaSua) {
 		this.vardiyaSua = vardiyaSua;
+	}
+
+	/**
+	 * @param hesaplananBuAySure
+	 * @param gecenAyDevredenSure
+	 * @return
+	 */
+	public PersonelDenklestirme getTamPersonelDenklestirme(double hesaplananBuAySure, double gecenAyDevredenSure) {
+		PersonelDenklestirme personelDenklestirme = new PersonelDenklestirme();
+		double devredenSure = 0.0d, odenenSure = 0.0d, hesaplananSure = gecenAyDevredenSure + hesaplananBuAySure;
+		if (hesaplananSure > 0.0d)
+			odenenSure = hesaplananSure;
+		else if (hesaplananSure < 00.0d)
+			devredenSure = hesaplananSure;
+
+		personelDenklestirme.setDevredenSure(devredenSure);
+		personelDenklestirme.setHesaplananSure(odenenSure);
+		return personelDenklestirme;
+
 	}
 
 	/**
@@ -1442,6 +1460,14 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public void setKatSayiMap(HashMap<Integer, BigDecimal> katSayiMap) {
 		this.katSayiMap = katSayiMap;
+	}
+
+	public Double getFazlaMesaiMaxSure() {
+		return fazlaMesaiMaxSure;
+	}
+
+	public void setFazlaMesaiMaxSure(Double fazlaMesaiMaxSure) {
+		this.fazlaMesaiMaxSure = fazlaMesaiMaxSure;
 	}
 
 }

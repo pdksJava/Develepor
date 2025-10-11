@@ -282,7 +282,7 @@
 									</f:facet>
 									<h:outputText value="#{ap.pdksPersonel.sirket.ad}" style="width:autostretch ;white-space: nowrap;" />
 								</rich:column>
-								
+
 								<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;"
 									rendered="#{fazlaMesaiOzetRaporHome.ekSahaTanimMap.containsKey('ekSaha1')}">
 									<f:facet name="header">
@@ -574,6 +574,9 @@
 									</f:facet>
 									<ui:fragment rendered="#{ap.fazlaMesaiHesapla and ap.ucretiOdenenMesaiSure != 0}">
 										<span style="color: red;"> <h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.ucretiOdenenMesaiSure)}" /></span>
+										<rich:toolTip for="ucretiOdenenMesaiSure#{ap.personelDenklestirme.id}">
+											<span style="color: black; font-size: 13px;" id="ucretiOdenenMesaiSure#{ap.personelDenklestirme.id}">#{ortakIslemler.getUcretiOdenenMesaiSureStr(aylikPuantaj)}</span>
+										</rich:toolTip>
 									</ui:fragment>
 								</rich:column>
 

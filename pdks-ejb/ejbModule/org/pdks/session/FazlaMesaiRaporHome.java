@@ -1418,15 +1418,15 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 			try {
 				boolean help = helpPersonel(aylikPuantaj.getPdksPersonel());
 				try {
-					CellStyle styleTutarRed = null;
+
 					if (row % 2 != 0) {
 						styleTutarDay = styleTutarOddDay;
-						styleTutarRed = styleTutarOddRed;
+
 						styleGenel = styleOdd;
 						styleCenter = styleOddCenter;
 					} else {
 						styleTutarDay = styleTutarEvenDay;
-						styleTutarRed = styleTutarEvenRed;
+
 						styleGenel = styleEven;
 						styleCenter = styleEvenCenter;
 					}
@@ -1501,9 +1501,10 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 							ExcelUtil.setCellComment(planlananCell, anchor, helper, drawing, title);
 						}
 						if (yasalFazlaCalismaAsanSaat) {
-							if (aylikPuantaj.getUcretiOdenenMesaiSure() > 0)
-								setCell(sheet, row, col++, styleTutarRed, aylikPuantaj.getUcretiOdenenMesaiSure());
-							else
+							if (aylikPuantaj.getUcretiOdenenMesaiSure() > 0) {
+								Cell ucretiOdenenMesaiSure = setCell(sheet, row, col++, styleGenel, aylikPuantaj.getUcretiOdenenMesaiSure());
+								ExcelUtil.setCellComment(ucretiOdenenMesaiSure, anchor, helper, drawing, ortakIslemler.getUcretiOdenenMesaiSureStr(aylikPuantaj));
+							} else
 								ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
 						}
 						setCell(sheet, row, col++, styleGenel, aylikPuantaj.getAylikNetFazlaMesai());

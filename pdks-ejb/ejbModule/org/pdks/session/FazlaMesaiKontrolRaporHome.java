@@ -1099,9 +1099,10 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 				if (aksamCalismaSaati == null)
 					aksamCalismaSaati = 4.0d;
 				double fazlaMesaiMaxSure = ortakIslemler.getFazlaMesaiMaxSure(denklestirmeAy);
+				Double radyolojiFazlaMesaiMaxSure = null;
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
-					double mesaiMaxSure = fazlaMesaiMaxSure;
+
 					int yarimYuvarla = puantaj.getYarimYuvarla();
 					TreeMap<String, VardiyaGun> vgMap = new TreeMap<String, VardiyaGun>();
 					puantaj.setVgMap(vgMap);
@@ -1113,6 +1114,16 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 
 					perCalismaModeli = personel.getCalismaModeli();
 					PersonelDenklestirme personelDenklestirme = puantaj.getPersonelDenklestirme();
+					double mesaiMaxSure = fazlaMesaiMaxSure;
+					if (personelDenklestirme.isSuaDurumu()) {
+						if (radyolojiFazlaMesaiMaxSure == null) {
+							radyolojiFazlaMesaiMaxSure = denklestirmeAy.getRadyolojiFazlaMesaiMaxSure();
+							if (radyolojiFazlaMesaiMaxSure == null)
+								radyolojiFazlaMesaiMaxSure = fazlaMesaiMaxSure;
+						}
+						mesaiMaxSure = radyolojiFazlaMesaiMaxSure;
+					}
+					puantaj.setFazlaMesaiMaxSure(mesaiMaxSure);
 					if (personelDenklestirme != null && personelDenklestirme.getCalismaModeliAy() != null)
 						perCalismaModeli = personelDenklestirme.getCalismaModeli();
 					Date sonPersonelCikisZamani = null;
@@ -1222,9 +1233,9 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 							if (vardiyaGun.getIzin() == null && vardiyaGun.isZamanGelmedi()) {
 								toplamSure = vardiyaGun.getCalismaSuresi();
 							}
-							Double d = personelDenklestirme.isSuaDurumu() ? vardiyaGun.getRadyolojiMaxCalismaSaat() : null;
-							if (d != null)
-								mesaiMaxSure = d.doubleValue();
+							// Double d = personelDenklestirme.isSuaDurumu() ? vardiyaGun.getRadyolojiMaxCalismaSaat() : null;
+							// if (d != null)
+							// mesaiMaxSure = d.doubleValue();
 							if (vardiyaGun.isFcsDahil() && vardiyaGun.getCalismaNetSuresi() > mesaiMaxSure && gunMaxCalismaOdenir)
 								puantajUcretiOdenenSure += vardiyaGun.getCalismaNetSuresi() - mesaiMaxSure;
 							puantajSaatToplami += toplamSure;
@@ -1301,7 +1312,10 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 							gecenAydevredenSure = personelDenklestirme.getPersonelDenklestirmeGecenAy().getDevredenSure();
 						if (ayBitti == false || personelDenklestirme.getDurum() == false) {
 							puantaj.setUcretiOdenenMesaiSure(puantajUcretiOdenenSure);
-							hesaplananDenklestirmeHesaplanan = puantaj.getPersonelDenklestirme(personelDenklestirme.getFazlaMesaiOde(), puantajSaatToplami - puantaj.getPlanlananSure(), gecenAydevredenSure);
+							if (denklestirmeAy.isGecenAyOde())
+								hesaplananDenklestirmeHesaplanan = puantaj.getPersonelDenklestirme(personelDenklestirme.getFazlaMesaiOde(), puantajSaatToplami - puantaj.getPlanlananSure(), gecenAydevredenSure);
+							else
+								hesaplananDenklestirmeHesaplanan = puantaj.getTamPersonelDenklestirme(puantajSaatToplami - puantaj.getPlanlananSure(), gecenAydevredenSure);
 
 						} else
 							puantajSaatToplami = personelDenklestirme.getHesaplananSure();

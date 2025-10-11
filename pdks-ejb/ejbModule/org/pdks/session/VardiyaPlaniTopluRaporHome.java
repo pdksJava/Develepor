@@ -1162,12 +1162,20 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 					calismaPlaniDenklestir(denklestirmeDonemi, puantajDenklestirmeList);
 				Date sonPersonelCikisZamani = null;
 				boolean sirketFazlaMesaiOde = sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde();
-
+				Double radyolojiFazlaMesaiMaxSure = null;
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					double mesaiMaxSure = fazlaMesaiMaxSure;
 					PersonelDenklestirme personelDenklestirme = puantaj.getPersonelDenklestirme();
-
+					if (personelDenklestirme.isSuaDurumu()) {
+						if (radyolojiFazlaMesaiMaxSure == null) {
+							radyolojiFazlaMesaiMaxSure = denklestirmeAy.getRadyolojiFazlaMesaiMaxSure();
+							if (radyolojiFazlaMesaiMaxSure == null)
+								radyolojiFazlaMesaiMaxSure = fazlaMesaiMaxSure;
+						}
+						mesaiMaxSure = radyolojiFazlaMesaiMaxSure;
+					}
+					puantaj.setFazlaMesaiMaxSure(mesaiMaxSure);
 					puantaj.setDonemBitti(Boolean.TRUE);
 					puantaj.setAyrikHareketVar(false);
 					puantaj.setFiiliHesapla(true);
@@ -1230,9 +1238,9 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 							if (!gebemi && vardiyaGun.getVardiya() != null)
 								gebemi = vardiyaGun.getVardiya().isGebelikMi();
 							if (calisiyor) {
-								Double d = personelDenklestirme.isSuaDurumu() ? vardiyaGun.getRadyolojiMaxCalismaSaat() : null;
-								if (d != null)
-									mesaiMaxSure = d.doubleValue();
+								// Double d = personelDenklestirme.isSuaDurumu() ? vardiyaGun.getRadyolojiMaxCalismaSaat() : null;
+								// if (d != null)
+								// mesaiMaxSure = d.doubleValue();
 								Double sure = vardiyaGun.getCalismaSuresi();
 								ucretiOdenenMesaiSure += vardiyaGun.isFcsDahil() && sure != null && sure.doubleValue() > mesaiMaxSure + vardiyaGun.getResmiTatilSure() ? sure.doubleValue() - mesaiMaxSure - vardiyaGun.getResmiTatilSure() : 0.0d;
 								if (vardiyaGun.getHaftaCalismaSuresi() > 0) {
@@ -2221,9 +2229,11 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 						}
 						if (fazlaMesaiVar) {
 							if (yasalFazlaCalismaAsanSaat) {
-								if (aylikPuantaj.getUcretiOdenenMesaiSure() > 0)
-									setCell(sheet, row, col++, styleTutar, aylikPuantaj.getUcretiOdenenMesaiSure());
-								else
+								if (aylikPuantaj.getUcretiOdenenMesaiSure() > 0) {
+									Cell ucretiOdenenMesaiSure = setCell(sheet, row, col++, styleTutar, aylikPuantaj.getUcretiOdenenMesaiSure());
+									ExcelUtil.setCellComment(ucretiOdenenMesaiSure, anchor, helper, drawing, authenticatedUser.sayiFormatliGoster(aylikPuantaj.getFazlaMesaiMaxSure() + " saat fazlası ödenir."));
+								} else
+
 									ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
 							}
 
