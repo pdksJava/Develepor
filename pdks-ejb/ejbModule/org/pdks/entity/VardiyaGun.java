@@ -2247,17 +2247,6 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	@Transient
-	public Double getRadyolojiMaxCalismaSaat() {
-		Double katSayi = null;
-		if (ayinGunu) {
-			BigDecimal decimal = getKatSayi(KatSayiTipi.RADYOLOJI_SAAT_MAX.value());
-			if (decimal != null)
-				katSayi = decimal.doubleValue();
-		}
-		return katSayi;
-	}
-
-	@Transient
 	public double getSaatCalisanGunlukKatsayisi() {
 		double katSayi = 0.0d;
 		if (ayinGunu) {
