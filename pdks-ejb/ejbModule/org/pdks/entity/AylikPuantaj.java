@@ -980,14 +980,17 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		double hesaplananSure = gecenAyDevredenSure + hesaplananBuAySure;
 
 		if (dt.equals(DenklestirmeTipi.TAMAMI_ODE)) {
-			if (hesaplananSure > 0.0d)
+			if (hesaplananSure > 0 && (fazlaMesaiOde != null && fazlaMesaiOde)) {
 				odenenSure = hesaplananSure;
-			else if (hesaplananSure < 0.0d) {
-				if (gecenAyDevredenSure > 0)
-					devredenSure = hesaplananSure;
+			} else {
+				if (hesaplananSure > 0.0d)
+					odenenSure = hesaplananSure;
+				else if (hesaplananSure < 0.0d) {
+					if (gecenAyDevredenSure > 0)
+						devredenSure = hesaplananSure;
+				}
 			}
 			personelDenklestirme.setOdenenSure(odenenSure);
-
 		} else {
 
 			Double odenenFazlaMesaiSaati = PdksUtil.getOdenenFazlaMesaiSaati();
@@ -1018,6 +1021,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 		}
 
+		// if (personelDenklestirme.g personelDenklestirme.isOnaylandi())
 		personelDenklestirme.setDevredenSure(devredenSure);
 		personelDenklestirme.setHesaplananSure(hesaplananSure);
 		return personelDenklestirme;
