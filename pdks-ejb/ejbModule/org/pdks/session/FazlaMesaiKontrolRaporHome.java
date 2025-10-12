@@ -1312,10 +1312,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 							gecenAydevredenSure = personelDenklestirme.getPersonelDenklestirmeGecenAy().getDevredenSure();
 						if (ayBitti == false || personelDenklestirme.getDurum() == false) {
 							puantaj.setUcretiOdenenMesaiSure(puantajUcretiOdenenSure);
-							if (denklestirmeAy.isGecenAyOde())
-								hesaplananDenklestirmeHesaplanan = puantaj.getPersonelDenklestirme(personelDenklestirme.getFazlaMesaiOde(), puantajSaatToplami - puantaj.getPlanlananSure(), gecenAydevredenSure);
-							else
-								hesaplananDenklestirmeHesaplanan = puantaj.getTamPersonelDenklestirme(puantajSaatToplami - puantaj.getPlanlananSure(), gecenAydevredenSure);
+							hesaplananDenklestirmeHesaplanan = puantaj.getPersonelDenklestirme(personelDenklestirme.getFazlaMesaiOde(), puantajSaatToplami - puantaj.getPlanlananSure(), gecenAydevredenSure, denklestirmeAy.getTipi());
 
 						} else
 							puantajSaatToplami = personelDenklestirme.getHesaplananSure();

@@ -1732,6 +1732,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					ortakIslemler.odemeYuvarlamaGuncelle(puantajDenklestirmeList, session);
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
+					int yarimYuvarla = puantaj.getYarimYuvarla();
+					Integer ucmYuvarla = yarimYuvarla;
+					if (puantaj.getKatSayiMap() != null) {
+						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.UOM_YUVARLAMA.value()))
+							ucmYuvarla = puantaj.getKatSayiMap().get(KatSayiTipi.UOM_YUVARLAMA.value()).intValue();
+					}
 					puantaj.setFazlaMesaiHesapla(true);
 					HashMap<Integer, BigDecimal> katSayiMap = puantaj.getKatSayiMap();
 					puantaj.setYoneticiZorunlu(true);
@@ -2316,7 +2322,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							if (denklestirmeAyDurum) {
 								if (puantaj.getDevredenSure() > 0 && !personelCalisiyor) {
 									double devredenSure = puantaj.getDevredenSure();
-									puantaj.setFazlaMesaiSure(puantaj.getFazlaMesaiSure() + devredenSure);
+									puantaj.setFazlaMesaiSure(PdksUtil.setSureDoubleTypeRounded(puantaj.getFazlaMesaiSure() + devredenSure, ucmYuvarla));
 									personelDenklestirme.setFazlaMesaiSure(personelDenklestirme.getFazlaMesaiSure() + devredenSure);
 									puantaj.setDevredenSure(0.0d);
 								}
@@ -2458,7 +2464,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (!kesilenSureGoster)
 						kesilenSureGoster = kesilenSure > 0.0d;
 					puantaj.setKesilenSure(kesilenSure);
-					int yarimYuvarla = puantaj.getYarimYuvarla();
+
 					puantaj.setResmiTatilToplami(PdksUtil.setSureDoubleTypeRounded(resmiTatilToplami, yarimYuvarla));
 					if (denklestirmeAyDurum && puantaj.isFazlaMesaiHesapla() && personelDenklestirme.getPersonelDenklestirmeGecenAy() != null && personel.getIseGirisTarihi().before(aylikPuantajSablon.getIlkGun())) {
 						PersonelDenklestirme personelDenklestirmeGecenAy = personelDenklestirme.getPersonelDenklestirmeGecenAy();

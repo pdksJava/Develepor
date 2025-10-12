@@ -13,6 +13,7 @@ import java.util.TreeMap;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
+import org.pdks.enums.DenklestirmeTipi;
 import org.pdks.security.entity.User;
 import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksUtil;
@@ -964,62 +965,59 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	}
 
 	/**
-	 * @param hesaplananBuAySure
-	 * @param gecenAyDevredenSure
-	 * @return
-	 */
-	public PersonelDenklestirme getTamPersonelDenklestirme(double hesaplananBuAySure, double gecenAyDevredenSure) {
-		PersonelDenklestirme personelDenklestirme = new PersonelDenklestirme();
-		double devredenSure = 0.0d, odenenSure = 0.0d, hesaplananSure = gecenAyDevredenSure + hesaplananBuAySure;
-		if (hesaplananSure > 0.0d)
-			odenenSure = hesaplananSure;
-		else if (hesaplananSure < 00.0d)
-			devredenSure = hesaplananSure;
-
-		personelDenklestirme.setDevredenSure(devredenSure);
-		personelDenklestirme.setHesaplananSure(odenenSure);
-		return personelDenklestirme;
-
-	}
-
-	/**
 	 * @param fazlaMesaiOde
 	 * @param hesaplananBuAySure
-	 * @param gecenAydevredenSure
+	 * @param gecenAyDevredenSure
+	 * @param dt
 	 * @return
 	 */
-
-	public PersonelDenklestirme getPersonelDenklestirme(Boolean fazlaMesaiOde, double hesaplananBuAySure, double gecenAyDevredenSure) {
+	public PersonelDenklestirme getPersonelDenklestirme(Boolean fazlaMesaiOde, double hesaplananBuAySure, double gecenAyDevredenSure, DenklestirmeTipi dt) {
+		if (dt == null)
+			dt = DenklestirmeTipi.GECEN_AY_ODE;
 		PersonelDenklestirme personelDenklestirme = new PersonelDenklestirme();
 		double devredenSure = 0;
-		double hesaplananSure = gecenAyDevredenSure + hesaplananBuAySure;
 		Double odenenSure = 0d;
-		Double odenenFazlaMesaiSaati = PdksUtil.getOdenenFazlaMesaiSaati();
-		Double barajOdeme = odenenFazlaMesaiSaati;
-		if (odenenFazlaMesaiSaati <= 0.0) {
-			if (hesaplananSure > 0) {
-				barajOdeme = hesaplananSure + 1;
+		double hesaplananSure = gecenAyDevredenSure + hesaplananBuAySure;
+
+		if (dt.equals(DenklestirmeTipi.TAMAMI_ODE)) {
+			if (hesaplananSure > 0.0d)
+				odenenSure = hesaplananSure;
+			else if (hesaplananSure < 0.0d) {
+				if (gecenAyDevredenSure > 0)
+					devredenSure = hesaplananSure;
 			}
-		}
-		if (hesaplananSure > 0 && (fazlaMesaiOde != null && fazlaMesaiOde) || (hesaplananSure >= barajOdeme)) {
-			odenenSure = hesaplananSure;
-		} else {
-			if (hesaplananSure > 0 && gecenAyDevredenSure > 0) {
-				if (hesaplananBuAySure > 0) {
-					odenenSure = gecenAyDevredenSure;
-					devredenSure = hesaplananBuAySure;
-				} else
-					odenenSure = hesaplananSure;
-
-			} else
-				devredenSure = hesaplananSure;
-		}
-
-		if (odenenSure > 0)
 			personelDenklestirme.setOdenenSure(odenenSure);
-		else
-			devredenSure = hesaplananSure;
-		// if (personelDenklestirme.g personelDenklestirme.isOnaylandi())
+
+		} else {
+
+			Double odenenFazlaMesaiSaati = PdksUtil.getOdenenFazlaMesaiSaati();
+			Double barajOdeme = odenenFazlaMesaiSaati;
+			if (odenenFazlaMesaiSaati <= 0.0) {
+				if (hesaplananSure > 0) {
+					barajOdeme = hesaplananSure + 1;
+				}
+			}
+			if (hesaplananSure > 0 && (fazlaMesaiOde != null && fazlaMesaiOde) || (hesaplananSure >= barajOdeme)) {
+				odenenSure = hesaplananSure;
+			} else {
+				if (hesaplananSure > 0 && gecenAyDevredenSure > 0) {
+					if (hesaplananBuAySure > 0) {
+						odenenSure = gecenAyDevredenSure;
+						devredenSure = hesaplananBuAySure;
+					} else
+						odenenSure = hesaplananSure;
+
+				} else
+					devredenSure = hesaplananSure;
+			}
+
+			if (odenenSure > 0)
+				personelDenklestirme.setOdenenSure(odenenSure);
+			else
+				devredenSure = hesaplananSure;
+
+		}
+
 		personelDenklestirme.setDevredenSure(devredenSure);
 		personelDenklestirme.setHesaplananSure(hesaplananSure);
 		return personelDenklestirme;
