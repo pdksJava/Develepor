@@ -22,9 +22,9 @@
 								<a4j:support event="onchange" action="#{vardiyaGunHome.fillSirketDoldur(true)}" ajaxSingle="true" reRender="denklestirmeDonemiTable,girisler" />
 							</rich:inputNumberSpinner>
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.aylar!=null}">
 							<ui:define name="label">#{ortakIslemler.aylarAciklama()}</ui:define>
-							<h:selectOneMenu id="basAy" value="#{vardiyaGunHome.ay}" required="true" requiredMessage="Başlangıç ay seçiniz">
+							<h:selectOneMenu value="#{vardiyaGunHome.ay}" required="true" requiredMessage="Başlangıç ay seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaGunHome.aylar}" />
 								<a4j:support event="onchange" status="ajaxStatus" action="#{vardiyaGunHome.fillSirketDoldur(true)}" ajaxSingle="true"
@@ -34,7 +34,8 @@
 						<s:decorate template="/layout/edit.xhtml"
 							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and vardiyaGunHome.aramaSecenekleri.departmanIdList.size()>1}">
 							<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
-							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.departmanId}" required="true" requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
+							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.departmanId}" required="true"
+								requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.departmanIdList}" />
 								<a4j:support event="onchange" action="#{vardiyaGunHome.fillSirketDoldur(true)}" ajaxSingle="true" reRender="girisler,denklestirmeDonemiTable" />
@@ -45,7 +46,7 @@
 						<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.aramaSecenekleri.sirketIdList.size()>0}">
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.sirketId}" disabled="#{vardiyaGunHome.aramaSecenekleri.sirketIdList.size() == 1}"
-								required="true" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
+								required="#{vardiyaGunHome.ikRole==false}" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.sirketIdList}" />
 								<a4j:support event="onchange" action="#{vardiyaGunHome.fillTesisDoldur(true)}" ajaxSingle="true" reRender="denklestirmeDonemiTable,girisler" />
@@ -55,8 +56,8 @@
 						<s:decorate template="/layout/edit.xhtml"
 							rendered="#{ortakIslemler.tesisDurumu and vardiyaGunHome.aramaSecenekleri.tesisList != null and vardiyaGunHome.aramaSecenekleri.tesisList.size()>0}">
 							<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
-							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.tesisId}" requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz!" required="true"
-								disabled="#{vardiyaGunHome.aramaSecenekleri.tesisList.size() == 1}">
+							<h:selectOneMenu value="#{vardiyaGunHome.aramaSecenekleri.tesisId}" requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz!"
+								required="#{vardiyaGunHome.ikRole==false}" disabled="#{vardiyaGunHome.aramaSecenekleri.tesisList.size() == 1}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaGunHome.aramaSecenekleri.tesisList}" />
 								<a4j:support event="onchange" status="ajaxStatus" action="#{vardiyaGunHome.fillBolumDoldur()}" ajaxSingle="true"
@@ -175,6 +176,12 @@
 													<h:outputText value="Adı Soyadı" />
 												</f:facet>
 												<h:outputText value="#{fmt.vardiyaGun.personel.adSoyad}" />
+											</rich:column>
+											<rich:column rendered="#{vardiyaGunHome.aramaSecenekleri.sirketId==null}">
+												<f:facet name="header">
+													#{ortakIslemler.sirketAciklama()}
+												</f:facet>
+												<h:outputText value="#{fmt.vardiyaGun.personel.sirket.ad}" />
 											</rich:column>
 											<rich:column rendered="#{ortakIslemler.getListTesisDurum(vardiyaGunHome.fazlaMesaiTalepler)}">
 												<f:facet name="header">
