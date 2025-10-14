@@ -19374,10 +19374,8 @@ public class OrtakIslemler implements Serializable {
 					boolean bakiyeSifirlaDurum = personelDenklestirme != null && personelDenklestirme.getBakiyeSifirlaDurum() != null && personelDenklestirme.getBakiyeSifirlaDurum().booleanValue();
 					boolean mesaiDevret = personelDenklestirme.getFazlaMesaiIzinKullan() && personel.isCalisiyorGun(puantajData.getSonGun());
 					PersonelDenklestirme hesaplananDenklestirme = null;
-					DenklestirmeTipi denklestirmeTipi = denklestirmeAy.getTipi();
-					if (personelDenklestirme == null || personelDenklestirme.getPdksPersonel().getSirket().getDepartman().isAdminMi() == false)
-						denklestirmeTipi = DenklestirmeTipi.GECEN_AY_ODE;
-					hesaplananDenklestirme = puantajData.getPersonelDenklestirme(fazlaMesaiOde, hesaplananBuAySure, gecenAydevredenSure, denklestirmeTipi);
+
+					hesaplananDenklestirme = puantajData.getPersonelDenklestirme(fazlaMesaiOde, hesaplananBuAySure, gecenAydevredenSure, denklestirmeAy);
 					puantajData.setFazlaMesaiSure(PdksUtil.setSureDoubleTypeRounded((hesaplananDenklestirme.getOdenenSure() > 0 ? hesaplananDenklestirme.getOdenenSure() : 0) + (bakiyeSifirlaDurum == false || mesaiDevret == false ? ucretiOdenenMesaiSure : 0), ucmYuvarla));
 					puantajData.setHesaplananSure(hesaplananDenklestirme.getHesaplananSure());
 

@@ -57,7 +57,6 @@ import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaHafta;
 import org.pdks.entity.VardiyaSaat;
 import org.pdks.entity.YemekIzin;
-import org.pdks.enums.DenklestirmeTipi;
 import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.User;
 
@@ -1313,12 +1312,12 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 							gecenAydevredenSure = personelDenklestirme.getPersonelDenklestirmeGecenAy().getDevredenSure();
 						if (ayBitti == false || personelDenklestirme.getDurum() == false) {
 							puantaj.setUcretiOdenenMesaiSure(puantajUcretiOdenenSure);
-							DenklestirmeTipi denklestirmeTipi = denklestirmeAy.getTipi();
-							if (departman == null)
-								departman = sirket != null ? sirket.getDepartman() : null;
-							if (departman == null || departman.isAdminMi() == false)
-								denklestirmeTipi = DenklestirmeTipi.GECEN_AY_ODE;
-							hesaplananDenklestirmeHesaplanan = puantaj.getPersonelDenklestirme(personelDenklestirme.getFazlaMesaiOde(), puantajSaatToplami - puantaj.getPlanlananSure(), gecenAydevredenSure, denklestirmeTipi);
+//							DenklestirmeTipi denklestirmeTipi = denklestirmeAy.getTipi();
+//							if (departman == null)
+//								departman = sirket != null ? sirket.getDepartman() : null;
+//							if (departman == null || departman.isAdminMi() == false)
+//								denklestirmeTipi = DenklestirmeTipi.GECEN_AY_ODE;
+							hesaplananDenklestirmeHesaplanan = puantaj.getPersonelDenklestirme(personelDenklestirme.getFazlaMesaiOde(), puantajSaatToplami - puantaj.getPlanlananSure(), gecenAydevredenSure, denklestirmeAy);
 
 						} else
 							puantajSaatToplami = personelDenklestirme.getHesaplananSure();

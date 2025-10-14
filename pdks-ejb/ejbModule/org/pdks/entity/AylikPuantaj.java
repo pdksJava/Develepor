@@ -971,7 +971,8 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	 * @param dt
 	 * @return
 	 */
-	public PersonelDenklestirme getPersonelDenklestirme(Boolean fazlaMesaiOde, double hesaplananBuAySure, double gecenAyDevredenSure, DenklestirmeTipi dt) {
+	public PersonelDenklestirme getPersonelDenklestirme(Boolean fazlaMesaiOde, double hesaplananBuAySure, double gecenAyDevredenSure, DenklestirmeAy da) {
+		DenklestirmeTipi dt = da.getTipi();
 		if (dt == null)
 			dt = DenklestirmeTipi.GECEN_AY_ODE;
 		PersonelDenklestirme personelDenklestirme = new PersonelDenklestirme();
@@ -979,47 +980,39 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		Double odenenSure = 0d;
 		double hesaplananSure = gecenAyDevredenSure + hesaplananBuAySure;
 
-		if (dt.equals(DenklestirmeTipi.TAMAMI_ODE)) {
-			if (hesaplananSure > 0 && (fazlaMesaiOde != null && fazlaMesaiOde)) {
-				odenenSure = hesaplananSure;
-			} else if (hesaplananBuAySure != 0.0d || hesaplananBuAySure != 0.0d) {
-
-				if (hesaplananSure > 0.0d)
+		Double odenenFazlaMesaiSaati = PdksUtil.getOdenenFazlaMesaiSaati();
+		Double barajOdeme = odenenFazlaMesaiSaati;
+		if (odenenFazlaMesaiSaati <= 0.0) {
+			if (hesaplananSure > 0) {
+				barajOdeme = hesaplananSure + 1;
+			}
+		}
+		if (hesaplananSure > 0 && (fazlaMesaiOde != null && fazlaMesaiOde) || (hesaplananSure >= barajOdeme)) {
+			odenenSure = hesaplananSure;
+		} else {
+			if (hesaplananSure > 0 && gecenAyDevredenSure > 0) {
+				if (hesaplananBuAySure > 0) {
+					odenenSure = gecenAyDevredenSure;
+					devredenSure = hesaplananBuAySure;
+				} else
 					odenenSure = hesaplananSure;
-//				else if (hesaplananSure < 0.0d) {
-//					if (gecenAyDevredenSure > 0)
-//						devredenSure = hesaplananSure;
-//				}
 
+			} else
+				devredenSure = hesaplananSure;
+		}
+
+		if (odenenSure > 0)
+			personelDenklestirme.setOdenenSure(odenenSure);
+		else
+			devredenSure = hesaplananSure;
+
+		if (dt.equals(DenklestirmeTipi.TAMAMI_ODE)) {
+			if (da == null || da.getAy() % 2 == 0) {
+				if (hesaplananSure > 0)
+					odenenSure = hesaplananSure;
+				devredenSure = 0;
 			}
 			personelDenklestirme.setOdenenSure(odenenSure);
-		} else {
-			Double odenenFazlaMesaiSaati = PdksUtil.getOdenenFazlaMesaiSaati();
-			Double barajOdeme = odenenFazlaMesaiSaati;
-			if (odenenFazlaMesaiSaati <= 0.0) {
-				if (hesaplananSure > 0) {
-					barajOdeme = hesaplananSure + 1;
-				}
-			}
-			if (hesaplananSure > 0 && (fazlaMesaiOde != null && fazlaMesaiOde) || (hesaplananSure >= barajOdeme)) {
-				odenenSure = hesaplananSure;
-			} else {
-				if (hesaplananSure > 0 && gecenAyDevredenSure > 0) {
-					if (hesaplananBuAySure > 0) {
-						odenenSure = gecenAyDevredenSure;
-						devredenSure = hesaplananBuAySure;
-					} else
-						odenenSure = hesaplananSure;
-
-				} else
-					devredenSure = hesaplananSure;
-			}
-
-			if (odenenSure > 0)
-				personelDenklestirme.setOdenenSure(odenenSure);
-			else
-				devredenSure = hesaplananSure;
-
 		}
 		if (PdksUtil.getCanliSunucuDurum() == false && PdksUtil.getTestSunucuDurum() == false)
 			logger.debug(dt.toString() + " : GM = " + hesaplananBuAySure + " DM = " + gecenAyDevredenSure + " --> HS = " + hesaplananSure + " UOC = " + odenenSure + " B = " + devredenSure);
