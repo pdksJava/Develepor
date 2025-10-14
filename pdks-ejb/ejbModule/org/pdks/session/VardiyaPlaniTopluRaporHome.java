@@ -2285,6 +2285,13 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 									if (commentGuncelleyen != null)
 										devredenSureCell.setCellComment(commentGuncelleyen);
 								}
+								if (aylikPuantaj.getEksiBakiyeSuresi() != null && aylikPuantaj.getEksiBakiyeSuresi().doubleValue() != 0 && personelDenklestirme.getDurum()) {
+									devredenSureCell.setCellValue("X");
+									devredenSureCell.setCellStyle(styleCenter);
+									commentGuncelleyen = ExcelUtil.getComment(anchor, helper, drawing, "Denkleştirilmeyen Bakiye(Saat) : " + authenticatedUser.sayiFormatliGoster(aylikPuantaj.getEksiBakiyeSuresi()));
+									if (commentGuncelleyen != null)
+										devredenSureCell.setCellComment(commentGuncelleyen);
+								}
 							} else
 								ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
 						}

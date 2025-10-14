@@ -89,6 +89,8 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	private Double izinSuresi = 0d, saatlikIzinSuresi = 0d, fazlaMesaiMaxSure = 0d, eksikCalismaSure = 0d, gecenAyFazlaMesai = 0d, hesaplananSure = 0d, devredenSure = 0d, aksamVardiyaSaatSayisi = 0d, kesilenSure = 0d;
 
+	private Double eksiBakiyeSuresi = 0d;
+
 	private boolean fazlaMesaiHesapla = Boolean.FALSE, vardiyaSua = Boolean.FALSE, eksikGunVar = Boolean.FALSE, denklestirilmeyenDevredenVar = Boolean.FALSE;
 
 	private boolean suaDurum = Boolean.FALSE;
@@ -976,6 +978,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		DenklestirmeTipi dt = denklestirmeAy.getTipi();
 		if (dt == null)
 			dt = DenklestirmeTipi.GECEN_AY_ODE;
+		eksiBakiyeSuresi = 0.0d;
 		PersonelDenklestirme personelDenklestirme = new PersonelDenklestirme();
 		double devredenSure = 0;
 		Double odenenSure = 0d;
@@ -1012,6 +1015,8 @@ public class AylikPuantaj implements Serializable, Cloneable {
 				if (denklestirmeAy == null || denklestirmeAy.getAy() % 2 == 0) {
 					if (hesaplananSure > 0)
 						odenenSure = hesaplananSure;
+					else if (hesaplananSure < 0)
+						eksiBakiyeSuresi = -hesaplananSure;
 					devredenSure = 0;
 				}
 				personelDenklestirme.setOdenenSure(odenenSure);
@@ -1469,6 +1474,14 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public void setFazlaMesaiMaxSure(Double fazlaMesaiMaxSure) {
 		this.fazlaMesaiMaxSure = fazlaMesaiMaxSure;
+	}
+
+	public Double getEksiBakiyeSuresi() {
+		return eksiBakiyeSuresi;
+	}
+
+	public void setEksiBakiyeSuresi(Double eksiBakiyeSuresi) {
+		this.eksiBakiyeSuresi = eksiBakiyeSuresi;
 	}
 
 }

@@ -668,6 +668,7 @@
 															aylikPuantaj.personelDenklestirme.guncellemeTarihi)}<br />
 														</DIV>
 													</rich:toolTip>
+
 												</ui:fragment>
 												<ui:fragment rendered="#{aylikPuantaj.denklestirilmeyenDevredenVar}">
 													<SPAN id="devredenSure#{aylikPuantaj.personelDenklestirme.id}" style="color: red; font-size: 13px;"><U> <h:outputText
@@ -682,6 +683,15 @@
 												</ui:fragment>
 											</ui:fragment>
 
+										</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.eksiBakiyeSuresi ne 0 and aylikPuantaj.personelDenklestirme.durum}">
+											<DIV id="eksiBakiyeSuresi#{aylikPuantaj.personelDenklestirme.id}">
+												<h:graphicImage value="/img/clock_16.png" style="border:0" />
+ 												<rich:toolTip for="eksiBakiyeSuresi#{aylikPuantaj.personelDenklestirme.id}">
+													<span style="color: red; font-size: 13px;"><b> Denkleştirilmeyen Bakiye(Saat) :</b>
+														#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.eksiBakiyeSuresi)} </span>
+
+												</rich:toolTip>
+											</DIV>
 										</ui:fragment></td>
 								</ui:fragment>
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.kesilenSureGoster}">

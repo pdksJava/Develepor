@@ -625,21 +625,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			tesisList = null;
 			setSicilNo(userLogin.getPdksPersonel().getPdksSicilNo());
 		}
-//		if (authenticatedUser.isAdmin()) {
-//			if (seciliAylikPuantaj == null)
-//				seciliAylikPuantaj = new AylikPuantaj(denklestirmeAy);
-//			seciliAylikPuantaj.getPersonelDenklestirme(false, 10, 2, DenklestirmeTipi.TAMAMI_ODE);
-//			seciliAylikPuantaj.getPersonelDenklestirme(false, 10, -2, DenklestirmeTipi.TAMAMI_ODE);
-//			seciliAylikPuantaj.getPersonelDenklestirme(false, -2, 7, DenklestirmeTipi.TAMAMI_ODE);
-//			seciliAylikPuantaj.getPersonelDenklestirme(false, 0, 2, DenklestirmeTipi.TAMAMI_ODE);
-//			seciliAylikPuantaj.getPersonelDenklestirme(false, 3, 0, DenklestirmeTipi.TAMAMI_ODE);
-//			seciliAylikPuantaj.getPersonelDenklestirme(false, -5, 4, DenklestirmeTipi.TAMAMI_ODE);
-//			seciliAylikPuantaj.getPersonelDenklestirme(false, 5, -6, DenklestirmeTipi.TAMAMI_ODE);
-//			seciliAylikPuantaj.getPersonelDenklestirme(false, -2, -1, DenklestirmeTipi.TAMAMI_ODE);
-//			seciliAylikPuantaj.getPersonelDenklestirme(false, 0, -1, DenklestirmeTipi.TAMAMI_ODE);
-//			seciliAylikPuantaj.getPersonelDenklestirme(false, -3, 0, DenklestirmeTipi.TAMAMI_ODE);
-//			seciliAylikPuantaj = null;
-//		}
 		return "";
 	}
 
@@ -5846,6 +5831,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							if (aylikPuantaj.getDevredenSure() != null && aylikPuantaj.getDevredenSure().doubleValue() != 0.0d && commentGuncelleyen == null) {
 								if (olustur)
 									commentGuncelleyen = fazlaMesaiOrtakIslemler.getCommentGuncelleyen(anchor, helper, drawing, personelDenklestirme);
+								if (commentGuncelleyen != null)
+									devredenSureCell.setCellComment(commentGuncelleyen);
+							}
+							if (aylikPuantaj.getEksiBakiyeSuresi() != null && aylikPuantaj.getEksiBakiyeSuresi().doubleValue() != 0 && personelDenklestirme.getDurum()) {
+								devredenSureCell.setCellValue("X");
+								devredenSureCell.setCellStyle(styleCenter);
+								commentGuncelleyen = ExcelUtil.getComment(anchor, helper, drawing, "Denkleştirilmeyen Bakiye(Saat) : " + authenticatedUser.sayiFormatliGoster(aylikPuantaj.getEksiBakiyeSuresi()));
 								if (commentGuncelleyen != null)
 									devredenSureCell.setCellComment(commentGuncelleyen);
 							}
