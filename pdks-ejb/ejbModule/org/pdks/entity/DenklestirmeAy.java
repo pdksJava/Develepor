@@ -39,10 +39,11 @@ public class DenklestirmeAy extends BaseObject {
 	public static final String COLUMN_NAME_DENKLESTIRME_DEVRET = "DENKLESTIRME_DEVRET";
 	public static final String COLUMN_NAME_RADYOLOJI_GUN_MAX_SURESI = "RADYOLOJI_GUN_MAX_SURESI";
 	public static final String COLUMN_NAME_DENKLESTIRME_TIPI = "DENKLESTIRME_TIPI";
+	public static final String COLUMN_NAME_TASERON_DENKLESTIRME_TIPI = "TASERON_DENKLESTIRME_TIPI";
 
 	private int ay, yil;
-	private Integer denklestirmeTipi;
-	private DenklestirmeTipi tipi;
+	private Integer denklestirmeTipi, taseronDenklestirmeTipi;
+	private DenklestirmeTipi tipi, taseronTipi;
 	private double sure = 0, toplamIzinSure = 0;
 	private Double yemekMolasiYuzdesi, fazlaMesaiMaxSure, radyolojiFazlaMesaiMaxSure;
 
@@ -90,6 +91,16 @@ public class DenklestirmeAy extends BaseObject {
 	public void setDenklestirmeTipi(Integer value) {
 		this.tipi = value != null ? DenklestirmeTipi.fromValue(value) : null;
 		this.denklestirmeTipi = value;
+	}
+
+	@Column(name = COLUMN_NAME_TASERON_DENKLESTIRME_TIPI)
+	public Integer getTaseronDenklestirmeTipi() {
+		return taseronDenklestirmeTipi;
+	}
+
+	public void setTaseronDenklestirmeTipi(Integer value) {
+		this.taseronTipi = value != null ? DenklestirmeTipi.fromValue(value) : null;
+		this.taseronDenklestirmeTipi = value;
 	}
 
 	@Temporal(TemporalType.DATE)
@@ -408,12 +419,27 @@ public class DenklestirmeAy extends BaseObject {
 	}
 
 	@Transient
+	public String getTaseronDenklestirmeTipiAciklama() {
+		String str = getDenklestirmeTipiAciklama(taseronDenklestirmeTipi);
+		return str;
+	}
+
+	@Transient
 	public DenklestirmeTipi getTipi() {
 		return tipi;
 	}
 
 	public void setTipi(DenklestirmeTipi tipi) {
 		this.tipi = tipi;
+	}
+
+	@Transient
+	public DenklestirmeTipi getTaseronTipi() {
+		return taseronTipi;
+	}
+
+	public void setTaseronTipi(DenklestirmeTipi taseronTipi) {
+		this.taseronTipi = taseronTipi;
 	}
 
 }

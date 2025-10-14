@@ -975,7 +975,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	 * @return
 	 */
 	public PersonelDenklestirme getPersonelDenklestirme(Boolean fazlaMesaiOde, double hesaplananBuAySure, double gecenAyDevredenSure, DenklestirmeAy denklestirmeAy, Departman departman) {
-		DenklestirmeTipi dt = denklestirmeAy.getTipi();
+		DenklestirmeTipi dt = departman == null || departman.isAdminMi() ? denklestirmeAy.getTipi() : denklestirmeAy.getTaseronTipi();
 		if (dt == null)
 			dt = DenklestirmeTipi.GECEN_AY_ODE;
 		eksiBakiyeSuresi = 0.0d;
@@ -983,8 +983,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		double devredenSure = 0;
 		Double odenenSure = 0d;
 		double hesaplananSure = gecenAyDevredenSure + hesaplananBuAySure;
-
-		Double odenenFazlaMesaiSaati = PdksUtil.getOdenenFazlaMesaiSaati();
+ 		Double odenenFazlaMesaiSaati = PdksUtil.getOdenenFazlaMesaiSaati();
 		Double barajOdeme = odenenFazlaMesaiSaati;
 		if (odenenFazlaMesaiSaati <= 0.0) {
 			if (hesaplananSure > 0) {
@@ -1011,16 +1010,14 @@ public class AylikPuantaj implements Serializable, Cloneable {
 			devredenSure = hesaplananSure;
 
 		if (dt.equals(DenklestirmeTipi.TAMAMI_ODE)) {
-			if (departman == null || departman.isAdminMi()) {
-				if (denklestirmeAy == null || denklestirmeAy.getAy() % 2 == 0) {
-					if (hesaplananSure > 0)
-						odenenSure = hesaplananSure;
-					else if (hesaplananSure < 0)
-						eksiBakiyeSuresi = -hesaplananSure;
-					devredenSure = 0;
-				}
-				personelDenklestirme.setOdenenSure(odenenSure);
+			if (denklestirmeAy == null || denklestirmeAy.getAy() % 2 == 0) {
+				if (hesaplananSure > 0)
+					odenenSure = hesaplananSure;
+				else if (hesaplananSure < 0)
+					eksiBakiyeSuresi = -hesaplananSure;
+				devredenSure = 0;
 			}
+			personelDenklestirme.setOdenenSure(odenenSure);
 
 		}
 		if (PdksUtil.getCanliSunucuDurum() == false && PdksUtil.getTestSunucuDurum() == false)

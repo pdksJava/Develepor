@@ -230,6 +230,15 @@
 											<f:selectItem itemLabel="#{vardiyaTanimlaHome.denklestirmeAy.getDenklestirmeTipiAciklama(2)}" itemValue="2" />
 										</h:selectOneMenu>
 									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKeyHasStringValue('denklestirmeTipi')}">
+										<ui:define name="label">Taşeron Denkleştirme Tipi</ui:define>
+										<h:selectOneMenu value="#{vardiyaTanimlaHome.denklestirmeAy.taseronDenklestirmeTipi}"
+											disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false}">
+											<f:selectItem itemLabel="Lütfen seçiniz" />
+											<f:selectItem itemLabel="#{vardiyaTanimlaHome.denklestirmeAy.getDenklestirmeTipiAciklama(1)}" itemValue="1" />
+											<f:selectItem itemLabel="#{vardiyaTanimlaHome.denklestirmeAy.getDenklestirmeTipiAciklama(2)}" itemValue="2" />
+										</h:selectOneMenu>
+									</s:decorate>
 								</c:if>
 								<c:if test="#{authenticatedUser.admin or (userHome.hasPermission('pdksVardiyaTanimlama','guncelIK'))}">
 									<s:decorate template="/layout/edit.xhtml">

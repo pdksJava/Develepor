@@ -2373,10 +2373,17 @@ public class OrtakIslemler implements Serializable {
 		int basDonem = Integer.parseInt(ilkDonem);
 		String str = getParameterKey("denklestirmeDevredilenAylar");
 		String denklestirmeTipiStr = getParameterKey("denklestirmeTipi");
-		DenklestirmeTipi denklestirmeTipi = null;
+		String taseronDenklestirmeTipiStr = getParameterKey("taseronDenklestirmeTipi");
+		DenklestirmeTipi denklestirmeTipi = null, taseronDenklestirmeTipi = null;
 		if (PdksUtil.hasStringValue(denklestirmeTipiStr))
 			try {
 				denklestirmeTipi = DenklestirmeTipi.fromValue(Integer.parseInt(denklestirmeTipiStr));
+			} catch (Exception e) {
+
+			}
+		if (PdksUtil.hasStringValue(taseronDenklestirmeTipiStr))
+			try {
+				taseronDenklestirmeTipi = DenklestirmeTipi.fromValue(Integer.parseInt(taseronDenklestirmeTipiStr));
 			} catch (Exception e) {
 
 			}
@@ -2395,9 +2402,20 @@ public class OrtakIslemler implements Serializable {
 					flush = true;
 				}
 				if (denklestirmeAy.getDenklestirmeTipi() == null) {
-					denklestirmeAy.setDenklestirmeTipi(denklestirmeTipi.value());
+					if (denklestirmeTipi.equals(DenklestirmeTipi.TAMAMI_ODE))
+						denklestirmeAy.setDenklestirmeTipi(denklestirmeAy.getAy() % 2 == 0 ? DenklestirmeTipi.TAMAMI_ODE.value() : DenklestirmeTipi.GECEN_AY_ODE.value());
+					else
+						denklestirmeAy.setDenklestirmeTipi(denklestirmeTipi.value());
 					flush = true;
 				}
+				if (denklestirmeAy.getTaseronDenklestirmeTipi() == null && taseronDenklestirmeTipi != null) {
+					if (taseronDenklestirmeTipi.equals(DenklestirmeTipi.TAMAMI_ODE))
+						denklestirmeAy.setTaseronDenklestirmeTipi(denklestirmeAy.getAy() % 2 == 0 ? DenklestirmeTipi.TAMAMI_ODE.value() : DenklestirmeTipi.GECEN_AY_ODE.value());
+					else
+						denklestirmeAy.setTaseronDenklestirmeTipi(taseronDenklestirmeTipi.value());
+					flush = true;
+				}
+
 				if (denklestirmeAy.getFazlaMesaiMaxSure() == null) {
 					denklestirmeAy.setFazlaMesaiMaxSure(fazlaMesaiMaxSure);
 					flush = true;
@@ -18825,8 +18843,7 @@ public class OrtakIslemler implements Serializable {
 				puantajData.setIzinSuresi(0d);
 				boolean suaVar = personelDenklestirme.isSuaDurumu();
 				Personel personel = personelDenklestirme.getPersonel();
-				Departman departman=personel!=null?personel.getSirket().getDepartman():null;
-						
+				Departman departman = personel != null ? personel.getSirket().getDepartman() : null;
 
 				double gecenAyResmiTatilSure = 0;
 				double haftaTatiliFark = 0.0d, haftaTatilDigerSure = 0.0d;
@@ -19377,7 +19394,7 @@ public class OrtakIslemler implements Serializable {
 					boolean mesaiDevret = personelDenklestirme.getFazlaMesaiIzinKullan() && personel.isCalisiyorGun(puantajData.getSonGun());
 					PersonelDenklestirme hesaplananDenklestirme = null;
 
-					hesaplananDenklestirme = puantajData.getPersonelDenklestirme(fazlaMesaiOde, hesaplananBuAySure, gecenAydevredenSure, denklestirmeAy,departman);
+					hesaplananDenklestirme = puantajData.getPersonelDenklestirme(fazlaMesaiOde, hesaplananBuAySure, gecenAydevredenSure, denklestirmeAy, departman);
 					puantajData.setFazlaMesaiSure(PdksUtil.setSureDoubleTypeRounded((hesaplananDenklestirme.getOdenenSure() > 0 ? hesaplananDenklestirme.getOdenenSure() : 0) + (bakiyeSifirlaDurum == false || mesaiDevret == false ? ucretiOdenenMesaiSure : 0), ucmYuvarla));
 					puantajData.setHesaplananSure(hesaplananDenklestirme.getHesaplananSure());
 
