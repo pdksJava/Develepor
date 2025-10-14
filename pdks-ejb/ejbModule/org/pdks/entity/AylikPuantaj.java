@@ -968,11 +968,12 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	 * @param fazlaMesaiOde
 	 * @param hesaplananBuAySure
 	 * @param gecenAyDevredenSure
-	 * @param dt
+	 * @param da
+	 * @param departman
 	 * @return
 	 */
-	public PersonelDenklestirme getPersonelDenklestirme(Boolean fazlaMesaiOde, double hesaplananBuAySure, double gecenAyDevredenSure, DenklestirmeAy da) {
-		DenklestirmeTipi dt = da.getTipi();
+	public PersonelDenklestirme getPersonelDenklestirme(Boolean fazlaMesaiOde, double hesaplananBuAySure, double gecenAyDevredenSure, DenklestirmeAy denklestirmeAy, Departman departman) {
+		DenklestirmeTipi dt = denklestirmeAy.getTipi();
 		if (dt == null)
 			dt = DenklestirmeTipi.GECEN_AY_ODE;
 		PersonelDenklestirme personelDenklestirme = new PersonelDenklestirme();
@@ -1007,12 +1008,15 @@ public class AylikPuantaj implements Serializable, Cloneable {
 			devredenSure = hesaplananSure;
 
 		if (dt.equals(DenklestirmeTipi.TAMAMI_ODE)) {
-			if (da == null || da.getAy() % 2 == 0) {
-				if (hesaplananSure > 0)
-					odenenSure = hesaplananSure;
-				devredenSure = 0;
+			if (departman == null || departman.isAdminMi()) {
+				if (denklestirmeAy == null || denklestirmeAy.getAy() % 2 == 0) {
+					if (hesaplananSure > 0)
+						odenenSure = hesaplananSure;
+					devredenSure = 0;
+				}
+				personelDenklestirme.setOdenenSure(odenenSure);
 			}
-			personelDenklestirme.setOdenenSure(odenenSure);
+
 		}
 		if (PdksUtil.getCanliSunucuDurum() == false && PdksUtil.getTestSunucuDurum() == false)
 			logger.debug(dt.toString() + " : GM = " + hesaplananBuAySure + " DM = " + gecenAyDevredenSure + " --> HS = " + hesaplananSure + " UOC = " + odenenSure + " B = " + devredenSure);
