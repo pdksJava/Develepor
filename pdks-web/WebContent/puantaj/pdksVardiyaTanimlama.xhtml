@@ -226,8 +226,8 @@
 										<h:selectOneMenu value="#{vardiyaTanimlaHome.denklestirmeAy.denklestirmeTipi}" required="true" requiredMessage="Denkleştirme Tipi seçiniz"
 											disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false}">
 											<f:selectItem itemLabel="Lütfen seçiniz" />
-											<f:selectItem itemLabel="Geçen Ay Öde" itemValue="1" />
-											<f:selectItem itemLabel="Tamamı Öde" itemValue="2" />
+											<f:selectItem itemLabel="#{vardiyaTanimlaHome.denklestirmeAy.getDenklestirmeTipiAciklama(1)}" itemValue="1" />
+											<f:selectItem itemLabel="#{vardiyaTanimlaHome.denklestirmeAy.getDenklestirmeTipiAciklama(2)}" itemValue="2" />
 										</h:selectOneMenu>
 									</s:decorate>
 								</c:if>

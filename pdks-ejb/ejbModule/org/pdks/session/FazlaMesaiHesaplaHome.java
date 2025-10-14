@@ -326,6 +326,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		boolean calistir = false;
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+
 		aylikPuantajListClear();
 		hataliPersoneller = null;
 		userLogin = authenticatedUser;
@@ -624,7 +625,21 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			tesisList = null;
 			setSicilNo(userLogin.getPdksPersonel().getPdksSicilNo());
 		}
-
+//		if (authenticatedUser.isAdmin()) {
+//			if (seciliAylikPuantaj == null)
+//				seciliAylikPuantaj = new AylikPuantaj(denklestirmeAy);
+//			seciliAylikPuantaj.getPersonelDenklestirme(false, 10, 2, DenklestirmeTipi.TAMAMI_ODE);
+//			seciliAylikPuantaj.getPersonelDenklestirme(false, 10, -2, DenklestirmeTipi.TAMAMI_ODE);
+//			seciliAylikPuantaj.getPersonelDenklestirme(false, -2, 7, DenklestirmeTipi.TAMAMI_ODE);
+//			seciliAylikPuantaj.getPersonelDenklestirme(false, 0, 2, DenklestirmeTipi.TAMAMI_ODE);
+//			seciliAylikPuantaj.getPersonelDenklestirme(false, 3, 0, DenklestirmeTipi.TAMAMI_ODE);
+//			seciliAylikPuantaj.getPersonelDenklestirme(false, -5, 4, DenklestirmeTipi.TAMAMI_ODE);
+//			seciliAylikPuantaj.getPersonelDenklestirme(false, 5, -6, DenklestirmeTipi.TAMAMI_ODE);
+//			seciliAylikPuantaj.getPersonelDenklestirme(false, -2, -1, DenklestirmeTipi.TAMAMI_ODE);
+//			seciliAylikPuantaj.getPersonelDenklestirme(false, 0, -1, DenklestirmeTipi.TAMAMI_ODE);
+//			seciliAylikPuantaj.getPersonelDenklestirme(false, -3, 0, DenklestirmeTipi.TAMAMI_ODE);
+//			seciliAylikPuantaj = null;
+//		}
 		return "";
 	}
 

@@ -384,6 +384,29 @@ public class DenklestirmeAy extends BaseObject {
 
 	}
 
+	/**
+	 * @param value
+	 * @return
+	 */
+	@Transient
+	public String getDenklestirmeTipiAciklama(Integer value) {
+		DenklestirmeTipi denklestirmeTipi = DenklestirmeTipi.fromValue(value);
+		if (denklestirmeTipi == null)
+			denklestirmeTipi = DenklestirmeTipi.GECEN_AY_ODE;
+		String str = "";
+		if (denklestirmeTipi.equals(DenklestirmeTipi.GECEN_AY_ODE))
+			str = "Geçen Ay Öde";
+		else if (denklestirmeTipi.equals(DenklestirmeTipi.TAMAMI_ODE))
+			str = "Tamamı Öde";
+		return str;
+	}
+
+	@Transient
+	public String getDenklestirmeTipiAciklama() {
+		String str = getDenklestirmeTipiAciklama(denklestirmeTipi);
+		return str;
+	}
+
 	@Transient
 	public DenklestirmeTipi getTipi() {
 		return tipi;

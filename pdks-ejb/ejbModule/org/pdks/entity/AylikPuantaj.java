@@ -982,17 +982,18 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		if (dt.equals(DenklestirmeTipi.TAMAMI_ODE)) {
 			if (hesaplananSure > 0 && (fazlaMesaiOde != null && fazlaMesaiOde)) {
 				odenenSure = hesaplananSure;
-			} else {
+			} else if (hesaplananBuAySure != 0.0d || hesaplananBuAySure != 0.0d) {
+
 				if (hesaplananSure > 0.0d)
 					odenenSure = hesaplananSure;
-				else if (hesaplananSure < 0.0d) {
-					if (gecenAyDevredenSure > 0)
-						devredenSure = hesaplananSure;
-				}
+//				else if (hesaplananSure < 0.0d) {
+//					if (gecenAyDevredenSure > 0)
+//						devredenSure = hesaplananSure;
+//				}
+
 			}
 			personelDenklestirme.setOdenenSure(odenenSure);
 		} else {
-
 			Double odenenFazlaMesaiSaati = PdksUtil.getOdenenFazlaMesaiSaati();
 			Double barajOdeme = odenenFazlaMesaiSaati;
 			if (odenenFazlaMesaiSaati <= 0.0) {
@@ -1020,7 +1021,8 @@ public class AylikPuantaj implements Serializable, Cloneable {
 				devredenSure = hesaplananSure;
 
 		}
-
+		if (PdksUtil.getCanliSunucuDurum() == false && PdksUtil.getTestSunucuDurum() == false)
+			logger.debug(dt.toString() + " : GM = " + hesaplananBuAySure + " DM = " + gecenAyDevredenSure + " --> HS = " + hesaplananSure + " UOC = " + odenenSure + " B = " + devredenSure);
 		// if (personelDenklestirme.g personelDenklestirme.isOnaylandi())
 		personelDenklestirme.setDevredenSure(devredenSure);
 		personelDenklestirme.setHesaplananSure(hesaplananSure);
