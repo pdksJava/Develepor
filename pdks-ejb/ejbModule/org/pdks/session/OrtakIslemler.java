@@ -4845,7 +4845,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public boolean isExisStoreProcedure(String name, Session session) {
-		boolean durum = isExisObject(name, "P", session);
+		boolean durum = isExisObject(name, "P", session, pdksEntityController);
 		return durum;
 	}
 
@@ -4855,7 +4855,9 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	private boolean isExisObject(String name, String type, Session session) {
+	public boolean isExisObject(String name, String type, Session session, PdksEntityController entityController) {
+		if (entityController == null)
+			entityController = pdksEntityController;
 		boolean durum = false;
 		StringBuffer sb = new StringBuffer();
 		sb.append("select name, object_id from sys.objects " + PdksEntityController.getJoinLOCK());
@@ -4865,7 +4867,7 @@ public class OrtakIslemler implements Serializable {
 		fields.put("t", type);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List list = pdksEntityController.getObjectBySQLList(sb, fields, null);
+		List list = entityController.getObjectBySQLList(sb, fields, null);
 		durum = list != null && list.size() == 1;
 		return durum;
 	}
@@ -4876,7 +4878,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public boolean isExisFunction(String name, Session session) {
-		boolean durum = isExisObject(name, "FN", session);
+		boolean durum = isExisObject(name, "FN", session, pdksEntityController);
 		return durum;
 	}
 
@@ -4886,7 +4888,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public boolean isExisView(String name, Session session) {
-		boolean durum = isExisObject(name, "V", session);
+		boolean durum = isExisObject(name, "V", session, pdksEntityController);
 		return durum;
 	}
 

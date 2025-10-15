@@ -101,6 +101,14 @@
 									<f:facet name="header">Denkleştirme Kesinti Yap</f:facet>
 									#{vardiyaView.kesintiAciklama}
 								</rich:column>
+								<rich:column style="text-align: center;width: 50px;" rendered="#{vardiyaTanimlaHome.denklestirmeTipiVar}">
+									<f:facet name="header">Denkleştirme Tipi</f:facet>
+									#{vardiyaView.denklestirmeTipiAciklama}
+								</rich:column>
+								<rich:column style="text-align: center;width: 50px;" rendered="#{vardiyaTanimlaHome.taseronVar}">
+									<f:facet name="header">Denkleştirme Tipi</f:facet>
+									#{vardiyaView.taseronDenklestirmeTipiAciklama}
+								</rich:column>
 								<rich:column style="text-align: center;width: 50px;">
 									<f:facet name="header">Aktif</f:facet>
 									#{authenticatedUser.getYesNo(vardiyaView.durum)}
@@ -221,7 +229,7 @@
 										<h:inputText value="#{vardiyaTanimlaHome.denklestirmeAy.radyolojiFazlaMesaiMaxSure}"
 											disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false}" />
 									</s:decorate>
-									<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKeyHasStringValue('denklestirmeTipi')}">
+									<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaTanimlaHome.denklestirmeTipiVar}">
 										<ui:define name="label">Denkleştirme Tipi</ui:define>
 										<h:selectOneMenu value="#{vardiyaTanimlaHome.denklestirmeAy.denklestirmeTipi}" required="true" requiredMessage="Denkleştirme Tipi seçiniz"
 											disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false}">
@@ -230,7 +238,7 @@
 											<f:selectItem itemLabel="#{vardiyaTanimlaHome.denklestirmeAy.getDenklestirmeTipiAciklama(2)}" itemValue="2" />
 										</h:selectOneMenu>
 									</s:decorate>
-									<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKeyHasStringValue('denklestirmeTipi')}">
+									<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaTanimlaHome.taseronVar}">
 										<ui:define name="label">Taşeron Denkleştirme Tipi</ui:define>
 										<h:selectOneMenu value="#{vardiyaTanimlaHome.denklestirmeAy.taseronDenklestirmeTipi}"
 											disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false}">

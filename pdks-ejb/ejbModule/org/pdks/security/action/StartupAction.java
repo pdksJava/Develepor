@@ -249,6 +249,19 @@ public class StartupAction implements Serializable {
 		// pdksUtil.setTimeZome();
 		Session session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		startupMethod(session);
+		OrtakIslemler ortakIslemler = new OrtakIslemler();
+		StringBuffer spName = new StringBuffer("SP_DROP_NOT_USED_TABLES");
+		if (ortakIslemler.isExisObject(spName.toString(), "P", session, pdksEntityController)) {
+			LinkedHashMap<String, Object> dataMap = new LinkedHashMap<String, Object>();
+			if (session != null)
+				dataMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+			try {
+				pdksEntityController.execSP(dataMap, spName);
+			} catch (Exception e) {
+
+			}
+		}
+		ortakIslemler = null;
 	}
 
 	/**
