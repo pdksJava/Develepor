@@ -54,7 +54,7 @@
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">İşlem</ui:define>
-							<h:selectOneMenu value="#{hareketGirisHome.nedenId}" required="true" requiredMessage="Islem seciniz">
+							<h:selectOneMenu value="#{hareketGirisHome.nedenId}" required="false" requiredMessage="Islem seciniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{hareketGirisHome.nedenList}" />
 								<a4j:support event="onchange" ajaxSingle="true" status="ajaxStatus" reRender="dosyaPanel" action="#{ortakIslemler.emtpyAjaxFunction()}" />
@@ -71,7 +71,7 @@
 					</h:panelGrid>
 					<a4j:outputPanel id="dosyaPanel">
 						<rich:fileUpload id="fileUpload" fileUploadListener="#{hareketGirisHome.listener}" listHeight="50px" listWidth="300px"
-							rendered="#{hareketGirisHome.tarih != null or hareketGirisHome.instance.islem.neden != null}" sizeErrorLabel="Dosya boyutu büyük"
+							rendered="#{hareketGirisHome.tarih != null or hareketGirisHome.nedenId != null}" sizeErrorLabel="Dosya boyutu büyük"
 							maxFilesQuantity="1" immediateUpload="true" acceptedTypes="xls,xlsx" transferErrorLabel="Dosya  hatalı yüklenmiştir" doneLabel="Bitti"
 							addControlLabel="Dosya Seçin (Excel)" uploadControlLabel="Dosya Kaydet" cancelEntryControlLabel="Temizle" allowFlash="false">
 							<a4j:support event="onuploadcomplete" process="fileUpload" ajaxSingle="true" reRender="dosyaPanel" />
@@ -86,10 +86,64 @@
 								</h:panelGrid>
 
 								<a4j:commandButton id="dosyaOku" value="Dosya Oku" status="ajaxStatus" ajaxSingle="true" action="#{hareketGirisHome.dosyaOku}"
-									rendered="#{hareketGirisHome.dosya.dosyaIcerik != null and hareketGirisHome.tarih != null and hareketGirisHome.dosyaTamam == false}"
+									rendered="#{hareketGirisHome.dosya.dosyaIcerik != null and (hareketGirisHome.tarih != null or hareketGirisHome.nedenId != null) and hareketGirisHome.dosyaTamam == false}"
 									reRender="excelPanel,personelDosya"></a4j:commandButton>
 								<a4j:commandButton value="Dosya Aktar" status="ajaxStatus" ajaxSingle="true" action="#{hareketGirisHome.dosyaKaydet()}"
-									rendered="#{hareketGirisHome.dosyaTamam}" reRender="dosyaPanel,excelPanel" />
+									rendered="#{hareketGirisHome.nedenId!=null and hareketGirisHome.dosyaTamam}" reRender="dosyaPanel,excelPanel" />
+							</ui:fragment>
+
+							<ui:fragment rendered="#{empty hareketGirisHome.vardiyaGunleri and (authenticatedUser.admin or authenticatedUser.sistemYoneticisi)}">
+								<rich:toolTip for="fileUpload">
+									<table class="rich-table">
+										<caption>Örnek Excel Dosya Formatı</caption>
+										<thead class="rich-table-thead">
+											<tr class="rich-table-subheader">
+												<th style="width: 20px">#{ortakIslemler.personelNoAciklama()}</th>
+												<th style="width: 60px"><h:outputText value="Adı Soyadı" /></th>
+												<th style="width: 60px"><h:outputText value="Zaman" /></th>
+												<th style="width: 60px"><h:outputText value="Kapı" /></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr class="acik">
+												<td align="center">1780</td>
+												<td nowrap="nowrap">Personel 1780</td>
+												<td nowrap="nowrap" align="center">13.10.2025 07:00</td>
+												<td align="center">1</td>
+											</tr>
+											<tr class="koyu">
+												<td align="center">1780</td>
+												<td nowrap="nowrap">Personel 1780</td>
+												<td nowrap="nowrap" align="center">13.10.2025 17:00</td>
+												<td align="center">2</td>
+											</tr>
+											<tr class="acik">
+												<td align="center">1858</td>
+												<td nowrap="nowrap">Personel 1858</td>
+												<td nowrap="nowrap" align="center">13.10.2025 07:00</td>
+												<td align="center">1</td>
+											</tr>
+											<tr class="koyu">
+												<td align="center">1858</td>
+												<td nowrap="nowrap">Personel 1858</td>
+												<td nowrap="nowrap" align="center">13.10.2025 17:00</td>
+												<td align="center">2</td>
+											</tr>
+											<tr class="acik">
+												<td align="center">1441</td>
+												<td nowrap="nowrap">Personel 1441</td>
+												<td nowrap="nowrap" align="center">13.10.2025 07:00</td>
+												<td align="center">1</td>
+											</tr>
+											<tr class="koyu">
+												<td align="center">1441</td>
+												<td nowrap="nowrap">Personel 1441</td>
+												<td nowrap="nowrap" align="center">13.10.2025 17:00</td>
+												<td align="center">2</td>
+											</tr>
+										</tbody>
+									</table>
+								</rich:toolTip>
 							</ui:fragment>
 						</a4j:outputPanel>
 					</a4j:outputPanel>
