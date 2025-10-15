@@ -707,10 +707,10 @@
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.devredenSure)}" rendered="#{ap.fazlaMesaiHesapla and ap.devredenSure != 0}" />
 									<ui:fragment rendered="#{ap.eksiBakiyeSuresi ne 0 and ap.personelDenklestirme.durum}">
-										<DIV id="eksiBakiyeSuresi#{ap.personelDenklestirme.id }">
+										<DIV id="eksiBakiyeSuresi#{ap.personelDenklestirme.id }" style="background-color: red;">
 											<h:graphicImage value="/img/clock_16.png" style="border:0" />
 											<rich:toolTip for="eksiBakiyeSuresi#{ap.personelDenklestirme.id}">
-												<span style="color: red; font-size: 13px;"><b> Denkleştirilmeyen Bakiye(Saat) :</b>
+												<span style="color: blue; font-size: 13px;"><b> Denkleştirilmeyen Bakiye(Saat) :</b>
 													#{authenticatedUser.sayiFormatliGoster(ap.eksiBakiyeSuresi)}</span>
 											</rich:toolTip>
 										</DIV>
