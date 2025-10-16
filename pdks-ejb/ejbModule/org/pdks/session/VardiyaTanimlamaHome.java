@@ -36,6 +36,7 @@ import org.pdks.entity.PersonelDenklestirmeDinamikAlan;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.VardiyaGun;
+import org.pdks.enums.DenklestirmeTipi;
 import org.pdks.enums.KesintiTipi;
 import org.pdks.security.entity.User;
 import org.richfaces.event.UploadEvent;
@@ -767,12 +768,41 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		denklestirmeDevredilenAylar = ortakIslemler.getParameterKeyHasStringValue("denklestirmeDevredilenAylar");
 		Tanim bakiyeSifirla = ortakIslemler.getSQLTanimAktifByTipKodu(Tanim.TIPI_PERSONEL_DENKLESTIRME_DINAMIK_DURUM, PersonelDenklestirmeDinamikAlan.TIPI_BAKIYE_SIFIRLA, session);
 		bakiyeSifirlaDurum = bakiyeSifirla != null && bakiyeSifirla.getDurum();
+		denklestirmeTipiVar = false;
+		taseronVar = false;
 		if (denklestirmeAylar != null && (denklestirmeDevredilenAylar == false || bakiyeSifirlaDurum == false)) {
+
+			DenklestirmeTipi dt = null, taseronDt = null;
+			if (authenticatedUser.isAdmin()) {
+				dt = DenklestirmeTipi.GECEN_AY_ODE;
+				taseronDt = DenklestirmeTipi.GECEN_AY_ODE;
+				denklestirmeTipiVar = ortakIslemler.getParameterKeyHasStringValue("denklestirmeTipi");
+
+			}
+
 			for (DenklestirmeAy dm : denklestirmeAylar) {
+				if (dt != null && denklestirmeTipiVar == false)
+					denklestirmeTipiVar = dm.getTipi() != null && dt.equals(dm.getTipi()) == false;
+				if (taseronDt != null && taseronVar == false)
+					taseronVar = dm.getTaseronTipi() != null && taseronDt.equals(dm.getTaseronTipi());
+
 				if (!denklestirmeDevredilenAylar)
 					denklestirmeDevredilenAylar = dm.getDenklestirmeDevret() != null && dm.getDenklestirmeDevret();
 				if (!bakiyeSifirlaDurum)
 					bakiyeSifirlaDurum = dm.getBakiyeSifirlaDurum() != null && dm.getBakiyeSifirlaDurum();
+			}
+			if (denklestirmeTipiVar && taseronVar == false) {
+				HashMap parametreMap = new HashMap();
+				StringBuffer sb = new StringBuffer();
+				sb.append("select S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+				sb.append(" inner join " + Departman.TABLE_NAME + " D " + PdksEntityController.getJoinLOCK() + " on D." + Departman.COLUMN_NAME_ID + " = S." + Sirket.COLUMN_NAME_DEPARTMAN);
+				sb.append(" and D." + Departman.COLUMN_NAME_ADMIN_DURUM + " <> 1 ");
+				sb.append(" where S." + Sirket.COLUMN_NAME_PDKS + " = 1");
+				if (session != null)
+					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List sirketList = pdksEntityController.getObjectBySQLList(sb, parametreMap, Sirket.class);
+				taseronVar = sirketList.isEmpty() == false;
+				sirketList = null;
 			}
 		}
 		return "";
