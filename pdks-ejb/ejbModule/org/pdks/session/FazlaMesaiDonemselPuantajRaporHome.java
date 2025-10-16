@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,6 +60,7 @@ import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaSaat;
 import org.pdks.enums.BordroDetayTipi;
+import org.pdks.enums.KatSayiTipi;
 import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
@@ -1486,6 +1488,42 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				TreeMap<String, VardiyaGun> vgPerMap = new TreeMap<String, VardiyaGun>();
 				boolean ayBasladi = false;
 				double ucretiOdenenMesaiSure = 0.0d, fazlaMesaiMaxSure = da.getFazlaMesaiMaxSure();
+				if (pd.isSuaDurumu()) {
+					Double radyolojiFazlaMesaiMaxSure = null;
+					Date tarih1 = PdksUtil.convertToJavaDate(String.valueOf(da.getDonem()) + "01", "yyyyMMdd");
+					cal.setTime(tarih1);
+					cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+					Date tarih2 = cal.getTime();
+					List<Integer> radyolojiList = Arrays.asList(new Integer[] { KatSayiTipi.RADYOLOJI_MAX_GUN.value() });
+					HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> katSayilarMap = ortakIslemler.getYuvarlamaKatSayiMap(tarih1, tarih2, radyolojiList, session);
+					if (katSayilarMap.containsKey(KatSayiTipi.RADYOLOJI_MAX_GUN)) {
+						TreeMap<String, BigDecimal> radyolojiMap = katSayilarMap.get(KatSayiTipi.RADYOLOJI_MAX_GUN);
+						Sirket sirket = null;
+						if (personel != null) {
+							sirket = personel.getSirket();
+							if (sirket != null) {
+								sirketId = sirket.getId();
+								if (sirket.isTesisDurumu() && personel.getTesis() != null)
+									tesisId = personel.getTesis().getId();
+							}
+						}
+						if (ortakIslemler.veriKatSayiVar(radyolojiMap, sirketId, tesisId, null, "")) {
+							BigDecimal deger = ortakIslemler.getKatSayiVeriMap(radyolojiMap, sirketId, tesisId, null, "");
+							if (deger != null && deger.doubleValue() > 0.0d)
+								radyolojiFazlaMesaiMaxSure = deger.doubleValue();
+						}
+						radyolojiMap = null;
+					}
+					if (radyolojiFazlaMesaiMaxSure == null)
+						radyolojiFazlaMesaiMaxSure = da.getRadyolojiFazlaMesaiMaxSure();
+					if (radyolojiFazlaMesaiMaxSure != null && radyolojiFazlaMesaiMaxSure.doubleValue() > 0.0d)
+						fazlaMesaiMaxSure = radyolojiFazlaMesaiMaxSure.doubleValue();
+
+					radyolojiList = null;
+					katSayilarMap = null;
+
+				}
+
 				boolean fazlaMesaiOdenir = pd.getCalismaModeliAy() != null && pd.getCalismaModeliAy().isGunMaxCalismaOdenir();
 				boolean gunMaxCalismaOdenir = pd.getCalismaModeli().isFazlaMesaiVarMi() && fazlaMesaiOdenir;
 
@@ -1547,6 +1585,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				}
 				List<VardiyaGun> gunList = new ArrayList<VardiyaGun>(vgPerMap.values());
 				AylikPuantaj aylikPuantaj = new AylikPuantaj();
+				aylikPuantaj.setFazlaMesaiMaxSure(fazlaMesaiMaxSure);
 				aylikPuantaj.setPersonelDenklestirmeData(pd);
 				CalismaModeli cm = aylikPuantaj.getCalismaModeli();
 				if (!fazlaMesaiVar)
