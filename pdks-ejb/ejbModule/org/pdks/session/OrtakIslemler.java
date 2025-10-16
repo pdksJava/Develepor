@@ -14732,17 +14732,21 @@ public class OrtakIslemler implements Serializable {
 				cal.setTime(tarih1);
 				cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
 				Date tarih2 = cal.getTime();
-				List<Integer> list = Arrays.asList(new Integer[] { KatSayiTipi.UOM_YUVARLAMA.value(), KatSayiTipi.RT_YUVARLAMA.value(), KatSayiTipi.HT_YUVARLAMA.value() });
+				List<Integer> list = Arrays.asList(new Integer[] { KatSayiTipi.UOM_YUVARLAMA.value(), KatSayiTipi.RT_YUVARLAMA.value(), KatSayiTipi.HT_YUVARLAMA.value(), KatSayiTipi.DENKLESTIRME_TIPI.value(), KatSayiTipi.RADYOLOJI_MAX_GUN.value() });
 				HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> katSayilarMap = getYuvarlamaKatSayiMap(tarih1, tarih2, list, session);
 				TreeMap<String, BigDecimal> ucmYuvarlamaMap = katSayilarMap.containsKey(KatSayiTipi.UOM_YUVARLAMA) ? katSayilarMap.get(KatSayiTipi.UOM_YUVARLAMA) : new TreeMap<String, BigDecimal>();
 				TreeMap<String, BigDecimal> rtYuvarlamaMap = katSayilarMap.containsKey(KatSayiTipi.RT_YUVARLAMA) ? katSayilarMap.get(KatSayiTipi.RT_YUVARLAMA) : new TreeMap<String, BigDecimal>();
 				TreeMap<String, BigDecimal> htYuvarlamaMap = katSayilarMap.containsKey(KatSayiTipi.HT_YUVARLAMA) ? katSayilarMap.get(KatSayiTipi.HT_YUVARLAMA) : new TreeMap<String, BigDecimal>();
-				if (ucmYuvarlamaMap.size() + rtYuvarlamaMap.size() + htYuvarlamaMap.size() > 0) {
+				TreeMap<String, BigDecimal> denklestirmeTipiMap = katSayilarMap.containsKey(KatSayiTipi.DENKLESTIRME_TIPI) ? katSayilarMap.get(KatSayiTipi.DENKLESTIRME_TIPI) : new TreeMap<String, BigDecimal>();
+				TreeMap<String, BigDecimal> radyolojiMap = katSayilarMap.containsKey(KatSayiTipi.RADYOLOJI_MAX_GUN) ? katSayilarMap.get(KatSayiTipi.RADYOLOJI_MAX_GUN) : new TreeMap<String, BigDecimal>();
+				if (ucmYuvarlamaMap.size() + rtYuvarlamaMap.size() + htYuvarlamaMap.size() + denklestirmeTipiMap.size() + radyolojiMap.size() > 0) {
 					for (AylikPuantaj ap : puantajList) {
 						Personel personel = ap.getPersonelDenklestirme().getPdksPersonel();
+						da = ap.getDenklestirmeAy();
 						Long sirketId = null, tesisId = null;
+						Sirket sirket = null;
 						if (personel != null) {
-							Sirket sirket = personel.getSirket();
+							sirket = personel.getSirket();
 							if (sirket != null) {
 								sirketId = sirket.getId();
 								if (sirket.isTesisDurumu() && personel.getTesis() != null)
@@ -14765,6 +14769,24 @@ public class OrtakIslemler implements Serializable {
 							if (deger != null)
 								katSayiMap.put(KatSayiTipi.HT_YUVARLAMA.value(), deger);
 						}
+						if (veriKatSayiVar(denklestirmeTipiMap, sirketId, tesisId, null, "")) {
+							BigDecimal deger = getKatSayiVeriMap(denklestirmeTipiMap, sirketId, tesisId, null, "");
+							if (deger != null)
+								katSayiMap.put(KatSayiTipi.DENKLESTIRME_TIPI.value(), deger);
+						} else if (sirket != null && denklestirmeTipiMap.isEmpty() == false) {
+							Integer deger = sirket.getDepartman().isAdminMi() ? da.getDenklestirmeTipi() : da.getTaseronDenklestirmeTipi();
+							if (deger != null)
+								katSayiMap.put(KatSayiTipi.DENKLESTIRME_TIPI.value(), new BigDecimal(deger.intValue()));
+						}
+						if (veriKatSayiVar(radyolojiMap, sirketId, tesisId, null, "")) {
+							BigDecimal deger = getKatSayiVeriMap(radyolojiMap, sirketId, tesisId, null, "");
+							if (deger != null)
+								katSayiMap.put(KatSayiTipi.RADYOLOJI_MAX_GUN.value(), deger);
+						} else if (sirket != null && radyolojiMap.isEmpty() == false) {
+							Double deger = sirket.getDepartman().isAdminMi() ? da.getRadyolojiFazlaMesaiMaxSure() : null;
+							if (deger != null)
+								katSayiMap.put(KatSayiTipi.RADYOLOJI_MAX_GUN.value(), new BigDecimal(deger.doubleValue()));
+						}
 						if (katSayiMap.isEmpty() == false)
 							ap.setKatSayiMap(katSayiMap);
 						else
@@ -14775,6 +14797,8 @@ public class OrtakIslemler implements Serializable {
 				ucmYuvarlamaMap = null;
 				rtYuvarlamaMap = null;
 				htYuvarlamaMap = null;
+				denklestirmeTipiMap = null;
+				radyolojiMap = null;
 			}
 		}
 	}
@@ -18760,11 +18784,20 @@ public class OrtakIslemler implements Serializable {
 		PersonelDenklestirme personelDenklestirme = null;
 		int yarimYuvarla = puantajData.getYarimYuvarla();
 		Integer rtYuvarla = null, ucmYuvarla = yarimYuvarla;
+		DenklestirmeTipi dt = null;
+		Double radyolojiKatsayi = null;
 		if (puantajData.getKatSayiMap() != null) {
 			if (puantajData.getKatSayiMap().containsKey(KatSayiTipi.UOM_YUVARLAMA.value()))
 				ucmYuvarla = puantajData.getKatSayiMap().get(KatSayiTipi.UOM_YUVARLAMA.value()).intValue();
 			if (puantajData.getKatSayiMap().containsKey(KatSayiTipi.RT_YUVARLAMA.value()))
 				rtYuvarla = puantajData.getKatSayiMap().get(KatSayiTipi.RT_YUVARLAMA.value()).intValue();
+			if (puantajData.getKatSayiMap().containsKey(KatSayiTipi.DENKLESTIRME_TIPI.value())) {
+				Integer denkInteger = puantajData.getKatSayiMap().get(KatSayiTipi.DENKLESTIRME_TIPI.value()).intValue();
+				dt = DenklestirmeTipi.fromValue(denkInteger);
+			}
+			if (puantajData.getKatSayiMap().containsKey(KatSayiTipi.RADYOLOJI_MAX_GUN.value()))
+				radyolojiKatsayi = puantajData.getKatSayiMap().get(KatSayiTipi.RADYOLOJI_MAX_GUN.value()).doubleValue();
+
 		}
 		try {
 			DenklestirmeAy dm = puantajData.getDenklestirmeAy();
@@ -18929,7 +18962,10 @@ public class OrtakIslemler implements Serializable {
 									if (radyolojiFazlaMesaiMaxSure == null)
 										radyolojiFazlaMesaiMaxSure = fazlaMesaiMaxSure;
 								}
-								mesaiMaxSure = radyolojiFazlaMesaiMaxSure;
+								if (radyolojiKatsayi == null)
+									mesaiMaxSure = radyolojiFazlaMesaiMaxSure;
+								else
+									mesaiMaxSure = radyolojiKatsayi;
 							}
 							puantajData.setFazlaMesaiMaxSure(mesaiMaxSure);
 							boolean raporIzni = getVardiyaIzniEkle(pdksVardiyaGun);
@@ -19396,7 +19432,7 @@ public class OrtakIslemler implements Serializable {
 					boolean mesaiDevret = personelDenklestirme.getFazlaMesaiIzinKullan() && personel.isCalisiyorGun(puantajData.getSonGun());
 					PersonelDenklestirme hesaplananDenklestirme = null;
 
-					hesaplananDenklestirme = puantajData.getPersonelDenklestirme(fazlaMesaiOde, hesaplananBuAySure, gecenAydevredenSure, denklestirmeAy, departman);
+					hesaplananDenklestirme = puantajData.getPersonelDenklestirme(fazlaMesaiOde, hesaplananBuAySure, gecenAydevredenSure, denklestirmeAy, departman, dt);
 					puantajData.setFazlaMesaiSure(PdksUtil.setSureDoubleTypeRounded((hesaplananDenklestirme.getOdenenSure() > 0 ? hesaplananDenklestirme.getOdenenSure() : 0) + (bakiyeSifirlaDurum == false || mesaiDevret == false ? ucretiOdenenMesaiSure : 0), ucmYuvarla));
 					puantajData.setHesaplananSure(hesaplananDenklestirme.getHesaplananSure());
 

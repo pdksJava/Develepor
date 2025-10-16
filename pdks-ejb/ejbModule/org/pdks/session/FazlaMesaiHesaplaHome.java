@@ -1734,9 +1734,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					int yarimYuvarla = puantaj.getYarimYuvarla();
 					Integer ucmYuvarla = yarimYuvarla;
+					Double radyolojiKatsayi = null;
 					if (puantaj.getKatSayiMap() != null) {
 						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.UOM_YUVARLAMA.value()))
 							ucmYuvarla = puantaj.getKatSayiMap().get(KatSayiTipi.UOM_YUVARLAMA.value()).intValue();
+						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.RADYOLOJI_MAX_GUN.value()))
+							radyolojiKatsayi = puantaj.getKatSayiMap().get(KatSayiTipi.RADYOLOJI_MAX_GUN.value()).doubleValue();
 					}
 					puantaj.setFazlaMesaiHesapla(true);
 					HashMap<Integer, BigDecimal> katSayiMap = puantaj.getKatSayiMap();
@@ -2182,7 +2185,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							if (radyolojiFazlaMesaiMaxSure == null)
 								radyolojiFazlaMesaiMaxSure = fazlaMesaiMaxSure;
 						}
-						maxCalismaSure = radyolojiFazlaMesaiMaxSure;
+						if (radyolojiKatsayi == null)
+							maxCalismaSure = radyolojiFazlaMesaiMaxSure;
+						else
+							maxCalismaSure = radyolojiKatsayi;
 					}
 					puantaj.setFazlaMesaiMaxSure(maxCalismaSure);
 					for (Iterator iterator = puantaj.getVardiyalar().iterator(); iterator.hasNext();) {

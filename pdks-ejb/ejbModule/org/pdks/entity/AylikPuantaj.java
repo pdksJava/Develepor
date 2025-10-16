@@ -966,16 +966,19 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		this.vardiyaSua = vardiyaSua;
 	}
 
+ 
 	/**
 	 * @param fazlaMesaiOde
 	 * @param hesaplananBuAySure
 	 * @param gecenAyDevredenSure
-	 * @param da
+	 * @param denklestirmeAy
 	 * @param departman
+	 * @param dt
 	 * @return
 	 */
-	public PersonelDenklestirme getPersonelDenklestirme(Boolean fazlaMesaiOde, double hesaplananBuAySure, double gecenAyDevredenSure, DenklestirmeAy denklestirmeAy, Departman departman) {
-		DenklestirmeTipi dt = departman == null || departman.isAdminMi() ? denklestirmeAy.getTipi() : denklestirmeAy.getTaseronTipi();
+	public PersonelDenklestirme getPersonelDenklestirme(Boolean fazlaMesaiOde, double hesaplananBuAySure, double gecenAyDevredenSure, DenklestirmeAy denklestirmeAy, Departman departman, DenklestirmeTipi dt) {
+		if (dt == null)
+			dt = departman == null || departman.isAdminMi() ? denklestirmeAy.getTipi() : denklestirmeAy.getTaseronTipi();
 		if (dt == null)
 			dt = DenklestirmeTipi.GECEN_AY_ODE;
 		eksiBakiyeSuresi = 0.0d;
@@ -983,7 +986,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		double devredenSure = 0;
 		Double odenenSure = 0d;
 		double hesaplananSure = gecenAyDevredenSure + hesaplananBuAySure;
- 		Double odenenFazlaMesaiSaati = PdksUtil.getOdenenFazlaMesaiSaati();
+		Double odenenFazlaMesaiSaati = PdksUtil.getOdenenFazlaMesaiSaati();
 		Double barajOdeme = odenenFazlaMesaiSaati;
 		if (odenenFazlaMesaiSaati <= 0.0) {
 			if (hesaplananSure > 0) {

@@ -64,6 +64,7 @@ import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaHafta;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.BordroDetayTipi;
+import org.pdks.enums.KatSayiTipi;
 import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.User;
 
@@ -1167,13 +1168,22 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					double mesaiMaxSure = fazlaMesaiMaxSure;
 					PersonelDenklestirme personelDenklestirme = puantaj.getPersonelDenklestirme();
+					Double radyolojiKatsayi = null;
+					if (puantaj.getKatSayiMap() != null) {
+
+						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.RADYOLOJI_MAX_GUN.value()))
+							radyolojiKatsayi = puantaj.getKatSayiMap().get(KatSayiTipi.RADYOLOJI_MAX_GUN.value()).doubleValue();
+					}
 					if (personelDenklestirme.isSuaDurumu()) {
 						if (radyolojiFazlaMesaiMaxSure == null) {
 							radyolojiFazlaMesaiMaxSure = denklestirmeAy.getRadyolojiFazlaMesaiMaxSure();
 							if (radyolojiFazlaMesaiMaxSure == null)
 								radyolojiFazlaMesaiMaxSure = fazlaMesaiMaxSure;
 						}
-						mesaiMaxSure = radyolojiFazlaMesaiMaxSure;
+						if (radyolojiKatsayi == null)
+							mesaiMaxSure = radyolojiFazlaMesaiMaxSure;
+						else
+							mesaiMaxSure = radyolojiKatsayi;
 					}
 					puantaj.setFazlaMesaiMaxSure(mesaiMaxSure);
 					puantaj.setDonemBitti(Boolean.TRUE);

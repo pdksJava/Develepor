@@ -71,6 +71,7 @@ import org.pdks.entity.VardiyaHafta;
 import org.pdks.entity.VardiyaSaat;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.BordroDetayTipi;
+import org.pdks.enums.DenklestirmeTipi;
 import org.pdks.enums.KatSayiTipi;
 import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.MenuItemConstant;
@@ -1370,12 +1371,21 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					int yarimYuvarla = puantaj.getYarimYuvarla();
 					Integer rtYuvarla = null, ucmYuvarla = yarimYuvarla;
+					DenklestirmeTipi dt = null;
+					Double radyolojiKatsayi = null;
 					if (puantaj.getKatSayiMap() != null) {
 						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.UOM_YUVARLAMA.value()))
 							ucmYuvarla = puantaj.getKatSayiMap().get(KatSayiTipi.UOM_YUVARLAMA.value()).intValue();
 						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.RT_YUVARLAMA.value()))
 							rtYuvarla = puantaj.getKatSayiMap().get(KatSayiTipi.RT_YUVARLAMA.value()).intValue();
+						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.DENKLESTIRME_TIPI.value())) {
+							Integer denkInteger = puantaj.getKatSayiMap().get(KatSayiTipi.DENKLESTIRME_TIPI.value()).intValue();
+							dt = DenklestirmeTipi.fromValue(denkInteger);
+						}
+						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.RADYOLOJI_MAX_GUN.value()))
+							radyolojiKatsayi = puantaj.getKatSayiMap().get(KatSayiTipi.RADYOLOJI_MAX_GUN.value()).doubleValue();
 					}
+
 					double maxCalismaSure = fazlaMesaiMaxSure;
 
 					TreeMap<String, VardiyaGun> vgMap = new TreeMap<String, VardiyaGun>();
@@ -1386,7 +1396,10 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							if (radyolojiFazlaMesaiMaxSure == null)
 								radyolojiFazlaMesaiMaxSure = fazlaMesaiMaxSure;
 						}
-						maxCalismaSure = radyolojiFazlaMesaiMaxSure;
+						if (radyolojiKatsayi == null)
+							maxCalismaSure = radyolojiFazlaMesaiMaxSure;
+						else
+							maxCalismaSure = radyolojiKatsayi;
 					}
 					puantaj.setFazlaMesaiMaxSure(maxCalismaSure);
 					if (!sutIzniDurum)
@@ -1682,12 +1695,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							gecenAydevredenSure = personelDenklestirme.getPersonelDenklestirmeGecenAy().getDevredenSure();
 						if (ayBitti == false || personelDenklestirme.getDurum() == false) {
 							puantaj.setUcretiOdenenMesaiSure(puantajUcretiOdenenSure);
-							// DenklestirmeTipi denklestirmeTipi=denklestirmeAy.getTipi();
-							// if (departman == null)
-							// departman = sirket != null ? sirket.getDepartman() : null;
-							// if (departman == null || departman.isAdminMi() == false)
-							// denklestirmeTipi = DenklestirmeTipi.GECEN_AY_ODE;
-							hesaplananDenklestirmeHesaplanan = puantaj.getPersonelDenklestirme(personelDenklestirme.getFazlaMesaiOde(), puantajSaatToplami - puantaj.getPlanlananSure(), gecenAydevredenSure, denklestirmeAy, departman);
+
+							hesaplananDenklestirmeHesaplanan = puantaj.getPersonelDenklestirme(personelDenklestirme.getFazlaMesaiOde(), puantajSaatToplami - puantaj.getPlanlananSure(), gecenAydevredenSure, denklestirmeAy, departman, dt);
 
 						} else
 							puantajSaatToplami = personelDenklestirme.getHesaplananSure();
