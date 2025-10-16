@@ -255,10 +255,17 @@ public class StartupAction implements Serializable {
 			LinkedHashMap<String, Object> dataMap = new LinkedHashMap<String, Object>();
 			if (session != null)
 				dataMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+			List<String> list = null;
 			try {
-				pdksEntityController.execSP(dataMap, spName);
+				list = pdksEntityController.execSPList(dataMap, spName, null);
 			} catch (Exception e) {
-
+				list = null;
+			}
+			if (list != null) {
+				for (String string : list) {
+					logger.info("drop table " + string + ";");
+				}
+				list = null;
 			}
 		}
 		ortakIslemler = null;
