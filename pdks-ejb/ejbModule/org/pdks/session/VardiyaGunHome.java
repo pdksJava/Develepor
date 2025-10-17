@@ -3496,6 +3496,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		ortakIslemler.saveAramaSecenekleri(aramaSecenekleri, lastMap);
 		if (PdksUtil.hasStringValue(sicilNo))
 			lastMap.put("sicilNo", sicilNo.trim());
+		lastMap.put("sayfaURL", authenticatedUser.getCalistigiSayfa());
 		try {
 			ortakIslemler.saveLastParameter(lastMap, session);
 		} catch (Exception e) {
@@ -6471,6 +6472,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		vardiyalarMap.clear();
 		vardiyaBolumList = null;
 		aylikHareketKaydiVardiyaBul = Boolean.FALSE;
+
 		savePlanLastParameter();
 		fazlaMesaiIzinRaporuDurum = userHome != null && loginUser.getLogin() && userHome.hasPermission("fazlaMesaiIzinRaporu", "view");
 		offIzinGuncelle = ortakIslemler.getParameterKey("offIzinGuncelle").equals("1");

@@ -19962,25 +19962,38 @@ public class OrtakIslemler implements Serializable {
 				lastMap.put("tesisId", "" + aramaSecenekleri.getTesisId());
 				lastMap.put("tesis", getSelectItemText(aramaSecenekleri.getTesisId(), aramaSecenekleri.getTesisList()));
 			}
+			if (aramaSecenekleri.getEkSaha1Id() != null) {
+				lastMap.put("ekSaha1Id", "" + aramaSecenekleri.getEkSaha1Id());
+			}
+			if (aramaSecenekleri.getEkSaha2Id() != null) {
+				lastMap.put("ekSaha2Id", "" + aramaSecenekleri.getEkSaha2Id());
+			}
+			if (aramaSecenekleri.getEkSaha3Id() != null) {
+				lastMap.put("ekSaha3Id", "" + aramaSecenekleri.getEkSaha3Id());
+				lastMap.put("bolumId", "" + aramaSecenekleri.getEkSaha3Id());
+			}
+			if (aramaSecenekleri.getEkSaha4Id() != null) {
+				lastMap.put("ekSaha4Id", "" + aramaSecenekleri.getEkSaha4Id());
+				lastMap.put("altBolumId", "" + aramaSecenekleri.getEkSaha4Id());
+			}
 			if (aramaSecenekleri.getEkSahaSelectListMap() != null) {
 				HashMap<String, List<SelectItem>> ekSahaSelectListMap = aramaSecenekleri.getEkSahaSelectListMap();
 				if (aramaSecenekleri.getEkSaha1Id() != null) {
-					lastMap.put("ekSaha1Id", "" + aramaSecenekleri.getEkSaha1Id());
 					lastMap.put("ekSaha1", getSelectItemText(aramaSecenekleri.getEkSaha1Id(), ekSahaSelectListMap.get("ekSaha1")));
 				}
 				if (aramaSecenekleri.getEkSaha2Id() != null) {
-					lastMap.put("ekSaha2Id", "" + aramaSecenekleri.getEkSaha2Id());
 					lastMap.put("ekSaha2", getSelectItemText(aramaSecenekleri.getEkSaha2Id(), ekSahaSelectListMap.get("ekSaha2")));
 				}
 				if (aramaSecenekleri.getEkSaha3Id() != null) {
-					lastMap.put("ekSaha3Id", "" + aramaSecenekleri.getEkSaha3Id());
 					lastMap.put("ekSaha3", getSelectItemText(aramaSecenekleri.getEkSaha3Id(), ekSahaSelectListMap.get("ekSaha3")));
+					lastMap.put("bolum", getSelectItemText(aramaSecenekleri.getEkSaha3Id(), ekSahaSelectListMap.get("ekSaha3")));
 				}
 				if (aramaSecenekleri.getEkSaha4Id() != null) {
-					lastMap.put("ekSaha4Id", "" + aramaSecenekleri.getEkSaha4Id());
 					lastMap.put("ekSaha4", getSelectItemText(aramaSecenekleri.getEkSaha4Id(), ekSahaSelectListMap.get("ekSaha4")));
+					lastMap.put("altBolum", getSelectItemText(aramaSecenekleri.getEkSaha4Id(), ekSahaSelectListMap.get("ekSaha4")));
 				}
 			}
+
 			if (PdksUtil.hasStringValue(aramaSecenekleri.getSicilNo()))
 				lastMap.put("sicilNo", "" + aramaSecenekleri.getSicilNo().trim());
 			if (PdksUtil.hasStringValue(aramaSecenekleri.getAd()))
