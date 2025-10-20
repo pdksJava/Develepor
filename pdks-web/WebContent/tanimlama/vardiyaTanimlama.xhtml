@@ -392,7 +392,7 @@
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Yemek Süresi (Dakika)</ui:define>
 												<ui:fragment rendered="#{vardiyaHome.seciliVardiya.yemekSuresiKontrolEt}">
-													<rich:inputNumberSpinner value="#{vardiyaHome.seciliVardiya.yemekSuresi}" minValue="0" maxValue="1440" inputSize="4" step="5" />
+													<rich:inputNumberSpinner value="#{vardiyaHome.seciliVardiya.yemekSuresi}" minValue="0" maxValue="1440" inputSize="4" step="15" />
 												</ui:fragment>
 												<ui:fragment rendered="#{vardiyaHome.seciliVardiya.yemekSuresiKontrolEt==false}">
 													<h:outputText value="#{vardiyaHome.seciliVardiya.yemekSuresi}" />
