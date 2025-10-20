@@ -83,6 +83,7 @@ public class Vardiya extends BaseObject {
 	private Vardiya sonrakiVardiya, oncekiVardiya;
 	private CalismaSekli calismaSekli;
 	private List<YemekIzin> yemekIzinList;
+	private Boolean guncellemeDurum;
 	private Integer version = 0;
 
 	@Column(name = "VERSION")
@@ -225,7 +226,7 @@ public class Vardiya extends BaseObject {
 			yemekSuresi = 0;
 		BigDecimal value = getKatSayi(KatSayiTipi.VARDIYA_MOLA.value());
 		return value != null ? value.intValue() : yemekSuresi;
-		 
+
 	}
 
 	public void setYemekSuresi(Integer yemekSuresi) {
@@ -1710,6 +1711,25 @@ public class Vardiya extends BaseObject {
 	}
 
 	@Transient
+	public Boolean getGuncellemeDurum() {
+		if (guncellemeDurum == null) {
+			guncellemeDurum = this.getId() == null;
+			if (guncellemeDurum == false) {
+				Date bugun = new Date();
+				String pattern = "yyyyMM";
+				String bugunDeger = PdksUtil.convertToDateString(bugun, pattern);
+				String olusturmaDeger = PdksUtil.convertToDateString(this.getOlusturmaTarihi() != null ? this.getOlusturmaTarihi() : bugun, pattern);
+				guncellemeDurum = bugunDeger.equals(olusturmaDeger);
+			}
+		}
+		return guncellemeDurum;
+	}
+
+	public void setGuncellemeDurum(Boolean guncellemeDurum) {
+		this.guncellemeDurum = guncellemeDurum;
+	}
+
+	@Transient
 	public long getVardiyaNumeric() {
 		long vardiyaNumeric = id;
 		if (isCalisma()) {
@@ -1987,4 +2007,5 @@ public class Vardiya extends BaseObject {
 	public void entityRefresh() {
 
 	}
+
 }

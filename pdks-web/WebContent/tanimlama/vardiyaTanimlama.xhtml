@@ -389,7 +389,7 @@
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Yemek Süresi (Dakika)</ui:define>
-												<h:inputText value="#{vardiyaHome.instance.yemekSuresi}" size="2" disabled="#{vardiyaHome.instance.yemekMolaKontrolEt}"/>
+												<h:inputText value="#{vardiyaHome.instance.yemekSuresi}" size="2" disabled="#{vardiyaHome.instance.guncellemeDurum==false}"/>
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Çıkış Mola Süresi (Dakika)</ui:define>
@@ -401,24 +401,24 @@
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Tolerans erken giriş dakikası</ui:define>
 												<rich:inputNumberSpinner minValue="0" maxValue="120" inputSize="2" value="#{vardiyaHome.instance.girisErkenToleransDakika}"
-													disabled="#{vardiyaHome.instance.erkenGirisKontrolEt}" />
+													disabled="#{vardiyaHome.instance.guncellemeDurum==false or vardiyaHome.instance.erkenGirisKontrolEt}" />
 
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Tolerans gecikme giriş dakikası</ui:define>
 												<rich:inputNumberSpinner minValue="0" maxValue="60" inputSize="2" value="#{vardiyaHome.instance.girisGecikmeToleransDakika}"
-													disabled="#{vardiyaHome.instance.gecGirisKontrolEt}" />
+													disabled="#{vardiyaHome.instance.guncellemeDurum==false or vardiyaHome.instance.gecGirisKontrolEt}" />
 
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Tolerans erken çıkış dakikası</ui:define>
 												<rich:inputNumberSpinner minValue="0" maxValue="60" inputSize="2" value="#{vardiyaHome.instance.cikisErkenToleransDakika}"
-													disabled="#{vardiyaHome.instance.erkenCikisKontrolEt}" />
+													disabled="#{vardiyaHome.instance.guncellemeDurum==false or vardiyaHome.instance.erkenCikisKontrolEt}" />
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Tolerans gecikme çıkış dakikası</ui:define>
 												<rich:inputNumberSpinner minValue="0" maxValue="60" inputSize="2" value="#{vardiyaHome.instance.cikisGecikmeToleransDakika}"
-													disabled="#{vardiyaHome.instance.gecCikisKontrolEt}" />
+													disabled="#{vardiyaHome.instance.guncellemeDurum==false or vardiyaHome.instance.gecCikisKontrolEt}" />
 											</s:decorate>
 
 											<s:decorate template="/layout/edit.xhtml">
