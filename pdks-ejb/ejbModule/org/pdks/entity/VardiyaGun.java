@@ -112,6 +112,9 @@ public class VardiyaGun extends BaseObject {
 		this.setPersonel(xPersonel);
 		this.setVardiya(xVardiya);
 		this.setVardiyaDate(xVardiyaDate);
+		if (xVardiya != null && xVardiya.getKatSayiMap() != null)
+			this.katSayiMap = xVardiya.getKatSayiMap();
+
 		if (xVardiya != null)
 			this.durum = !xVardiya.isCalisma();
 	}

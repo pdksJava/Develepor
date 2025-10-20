@@ -283,7 +283,7 @@
 							</rich:dataTable>
 							<a4j:commandButton status="ajaxStatus" value="#{ortakIslemler.vardiyaAciklama()} Ekle" action="#{vardiyaHome.kayitGuncelle(null)}"
 								oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
-								<f:setPropertyActionListener value="#{vardiya}" target="#{vardiyaHome.instance}">
+								<f:setPropertyActionListener value="#{vardiya}" target="#{vardiyaHome.seciliVardiya}">
 									<s:convertEntity />
 								</f:setPropertyActionListener>
 							</a4j:commandButton>
@@ -306,7 +306,7 @@
 				<h:panelGroup>
 					<h:form>
 						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
-							<a4j:support event="onclick" action="#{vardiyaHome.instanceRefresh}" reRender="vardiyaTable"
+							<a4j:support event="onclick" action="#{vardiyaHome.instanceRefresh()}" reRender="vardiyaTable"
 								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
 						</h:graphicImage>
 					</h:form>
@@ -321,29 +321,30 @@
 						<h:panelGrid columns="1" width="800">
 							<s:decorate template="/layout/edit.xhtml" id="adi">
 								<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} adı</ui:define>
-								<h:inputText required="true" value="#{vardiyaHome.instance.adi}" size="35" requiredMessage="#{ortakIslemler.vardiyaAciklama()} adını giriniz">
+								<h:inputText required="true" value="#{vardiyaHome.seciliVardiya.adi}" size="35"
+									requiredMessage="#{ortakIslemler.vardiyaAciklama()} adını giriniz">
 									<a4j:support event="onchange" reRender="adi" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 								</h:inputText>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" id="kisaAdi">
 								<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} kısa adı</ui:define>
-								<h:inputText value="#{vardiyaHome.instance.kisaAdi}" size="4" maxlength="16">
+								<h:inputText value="#{vardiyaHome.seciliVardiya.kisaAdi}" size="4" maxlength="16">
 									<a4j:support event="onchange" reRender="kisaAdi" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 								</h:inputText>
 
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" rendered="#{not empty vardiyaHome.vardiyaTipiList}">
 								<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} Tipi</ui:define>
-								<h:selectOneMenu value="#{vardiyaHome.instance.tipi}" rendered="#{authenticatedUser.admin == false}">
+								<h:selectOneMenu value="#{vardiyaHome.seciliVardiya.tipi}" rendered="#{authenticatedUser.admin == false}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{vardiyaHome.vardiyaTipiList}" />
 									<a4j:support event="onchange" reRender="saatler,vardiyaEdit" status="ajaxStatus" ajaxSingle="true" />
 								</h:selectOneMenu>
-								<h:outputText value="#{vardiyaHome.instance.vardiyaTipiAciklama}" rendered="#{authenticatedUser.admin == false}" />
+								<h:outputText value="#{vardiyaHome.seciliVardiya.vardiyaTipiAciklama}" rendered="#{authenticatedUser.admin == false}" />
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.instance.izin}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.seciliVardiya.izin}">
 								<ui:define name="label">İzin Tipi</ui:define>
-								<h:selectOneMenu required="true" value="#{vardiyaHome.instance.styleClass}" disabled="#{authenticatedUser.admin == true}"
+								<h:selectOneMenu required="true" value="#{vardiyaHome.seciliVardiya.styleClass}" disabled="#{authenticatedUser.admin == true}"
 									requiredMessage="İzin tipini seçiniz">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{vardiyaHome.izinTipiList}" />
@@ -353,20 +354,20 @@
 							</s:decorate>
 							<a4j:outputPanel id="saatler">
 
-								<h:panelGrid width="800" rendered="#{vardiyaHome.instance.calisma or vardiyaHome.instance.izin }">
+								<h:panelGrid width="800" rendered="#{vardiyaHome.seciliVardiya.calisma or vardiyaHome.seciliVardiya.izin }">
 									<h:panelGrid columns="2" cellpadding="0" cellspacing="0" width="800">
 
-										<c:if test="#{vardiyaHome.instance.calisma}">
+										<c:if test="#{vardiyaHome.seciliVardiya.calisma}">
 											<s:decorate template="/layout/edit.xhtml">
 
 												<ui:define name="label">Başlangıç saati - dakikası</ui:define>
 												<TABLE>
 													<TR>
-														<TD><rich:inputNumberSpinner minValue="0" maxValue="23" inputSize="2" value="#{vardiyaHome.instance.basSaat}">
+														<TD><rich:inputNumberSpinner minValue="0" maxValue="23" inputSize="2" value="#{vardiyaHome.seciliVardiya.basSaat}">
 																<a4j:support event="onchange" reRender="saatler" status="ajaxStatus" ajaxSingle="true" />
 															</rich:inputNumberSpinner></TD>
 														<TD>:</TD>
-														<TD><rich:inputNumberSpinner minValue="0" maxValue="59" inputSize="2" value="#{vardiyaHome.instance.basDakika}">
+														<TD><rich:inputNumberSpinner minValue="0" maxValue="59" inputSize="2" value="#{vardiyaHome.seciliVardiya.basDakika}">
 																<a4j:support event="onchange" reRender="saatler" status="ajaxStatus" ajaxSingle="true" />
 															</rich:inputNumberSpinner></TD>
 													</TR>
@@ -377,69 +378,94 @@
 												<ui:define name="label">Bitiş saati - dakikası</ui:define>
 												<TABLE>
 													<TR>
-														<TD><rich:inputNumberSpinner minValue="0" maxValue="23" inputSize="2" value="#{vardiyaHome.instance.bitSaat}">
+														<TD><rich:inputNumberSpinner minValue="0" maxValue="23" inputSize="2" value="#{vardiyaHome.seciliVardiya.bitSaat}">
 																<a4j:support event="onchange" reRender="saatler" status="ajaxStatus" ajaxSingle="true" />
 															</rich:inputNumberSpinner></TD>
 														<TD>:</TD>
-														<TD><rich:inputNumberSpinner minValue="0" maxValue="59" inputSize="2" value="#{vardiyaHome.instance.bitDakika}">
+														<TD><rich:inputNumberSpinner minValue="0" maxValue="59" inputSize="2" value="#{vardiyaHome.seciliVardiya.bitDakika}">
 																<a4j:support event="onchange" reRender="saatler" status="ajaxStatus" ajaxSingle="true" />
 															</rich:inputNumberSpinner></TD>
 													</TR>
 												</TABLE>
 											</s:decorate>
+
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Yemek Süresi (Dakika)</ui:define>
-												<h:inputText value="#{vardiyaHome.instance.yemekSuresi}" size="2" disabled="#{vardiyaHome.instance.guncellemeDurum==false}"/>
+												<ui:fragment rendered="#{vardiyaHome.seciliVardiya.yemekSuresiKontrolEt}">
+													<rich:inputNumberSpinner value="#{vardiyaHome.seciliVardiya.yemekSuresi}" minValue="0" maxValue="1440" inputSize="4" step="5" />
+												</ui:fragment>
+												<ui:fragment rendered="#{vardiyaHome.seciliVardiya.yemekSuresiKontrolEt==false}">
+													<h:outputText value="#{vardiyaHome.seciliVardiya.yemekSuresi}" />
+												</ui:fragment>
 											</s:decorate>
+
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Çıkış Mola Süresi (Dakika)</ui:define>
-												<h:inputText value="#{vardiyaHome.instance.cikisMolaSaat}" size="2">
+												<h:inputText value="#{vardiyaHome.seciliVardiya.cikisMolaSaat}" size="2">
 													<a4j:support event="onchange" reRender="saatler" status="ajaxStatus" ajaxSingle="true" />
 												</h:inputText>
 											</s:decorate>
 
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Tolerans erken giriş dakikası</ui:define>
-												<rich:inputNumberSpinner minValue="0" maxValue="120" inputSize="2" value="#{vardiyaHome.instance.girisErkenToleransDakika}"
-													disabled="#{vardiyaHome.instance.guncellemeDurum==false or vardiyaHome.instance.erkenGirisKontrolEt}" />
-
+												<ui:fragment rendered="#{vardiyaHome.seciliVardiya.girisErkenKontrolEt}">
+													<rich:inputNumberSpinner minValue="0" maxValue="120" inputSize="2" value="#{vardiyaHome.seciliVardiya.girisErkenToleransDakika}" />
+												</ui:fragment>
+												<ui:fragment rendered="#{vardiyaHome.seciliVardiya.girisErkenKontrolEt==false}">
+													<h:outputText value="#{vardiyaHome.seciliVardiya.girisErkenToleransDakika}" />
+												</ui:fragment>
 											</s:decorate>
+
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Tolerans gecikme giriş dakikası</ui:define>
-												<rich:inputNumberSpinner minValue="0" maxValue="60" inputSize="2" value="#{vardiyaHome.instance.girisGecikmeToleransDakika}"
-													disabled="#{vardiyaHome.instance.guncellemeDurum==false or vardiyaHome.instance.gecGirisKontrolEt}" />
-
+												<ui:fragment rendered="#{vardiyaHome.seciliVardiya.girisGecikmeKontrolEt}">
+													<rich:inputNumberSpinner minValue="0" maxValue="120" inputSize="2" value="#{vardiyaHome.seciliVardiya.girisGecikmeToleransDakika}" />
+												</ui:fragment>
+												<ui:fragment rendered="#{vardiyaHome.seciliVardiya.girisGecikmeKontrolEt==false}">
+													<h:outputText value="#{vardiyaHome.seciliVardiya.girisGecikmeToleransDakika}" />
+												</ui:fragment>
 											</s:decorate>
+
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Tolerans erken çıkış dakikası</ui:define>
-												<rich:inputNumberSpinner minValue="0" maxValue="60" inputSize="2" value="#{vardiyaHome.instance.cikisErkenToleransDakika}"
-													disabled="#{vardiyaHome.instance.guncellemeDurum==false or vardiyaHome.instance.erkenCikisKontrolEt}" />
+												<ui:fragment rendered="#{vardiyaHome.seciliVardiya.cikisErkenKontrolEt}">
+													<rich:inputNumberSpinner minValue="0" maxValue="120" inputSize="2" value="#{vardiyaHome.seciliVardiya.cikisErkenToleransDakika}" />
+												</ui:fragment>
+												<ui:fragment rendered="#{vardiyaHome.seciliVardiya.cikisErkenKontrolEt==false}">
+													<h:outputText value="#{vardiyaHome.seciliVardiya.cikisErkenToleransDakika}" />
+												</ui:fragment>
 											</s:decorate>
+
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Tolerans gecikme çıkış dakikası</ui:define>
-												<rich:inputNumberSpinner minValue="0" maxValue="60" inputSize="2" value="#{vardiyaHome.instance.cikisGecikmeToleransDakika}"
-													disabled="#{vardiyaHome.instance.guncellemeDurum==false or vardiyaHome.instance.gecCikisKontrolEt}" />
+												<ui:fragment rendered="#{vardiyaHome.seciliVardiya.cikisGecikmeKontrolEt}">
+													<rich:inputNumberSpinner minValue="0" maxValue="120" inputSize="2" value="#{vardiyaHome.seciliVardiya.cikisGecikmeToleransDakika}" />
+												</ui:fragment>
+												<ui:fragment rendered="#{vardiyaHome.seciliVardiya.cikisGecikmeKontrolEt==false}">
+													<h:outputText value="#{vardiyaHome.seciliVardiya.cikisGecikmeToleransDakika}" />
+												</ui:fragment>
 											</s:decorate>
 
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Haftalık Toplam Saat</ui:define>
-												<h:inputText required="true" value="#{vardiyaHome.instance.calismaSaati}" size="2" requiredMessage="Haftalık toplam saati giriniz" />
+												<h:inputText required="true" value="#{vardiyaHome.seciliVardiya.calismaSaati}" size="2" requiredMessage="Haftalık toplam saati giriniz" />
 											</s:decorate>
+
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Gün Sayısı</ui:define>
-												<h:inputText required="true" value="#{vardiyaHome.instance.calismaGun}" size="1" requiredMessage="Gün sayısı giriniz" />
+												<h:inputText required="true" value="#{vardiyaHome.seciliVardiya.calismaGun}" size="1" requiredMessage="Gün sayısı giriniz" />
 											</s:decorate>
 
 
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Akşam #{ortakIslemler.vardiyaAciklama()} Mı?</ui:define>
-												<h:selectBooleanCheckbox value="#{vardiyaHome.instance.aksamVardiya}" />
+												<h:selectBooleanCheckbox value="#{vardiyaHome.seciliVardiya.aksamVardiya}" />
 											</s:decorate>
 
 											<s:decorate template="/layout/edit.xhtml" id="calismaSekli">
 												<ui:define name="label">Çalışma Şekli</ui:define>
-												<h:selectOneMenu value="#{vardiyaHome.instance.calismaSekliId}"
-													required="#{vardiyaHome.instance.calismaSekliId != null or vardiyaHome.instance.arifeNormalCalismaDakika>0}"
+												<h:selectOneMenu value="#{vardiyaHome.seciliVardiya.calismaSekliId}"
+													required="#{vardiyaHome.seciliVardiya.calismaSekliId != null or vardiyaHome.seciliVardiya.arifeNormalCalismaDakika>0}"
 													requiredMessage="Çalışma şekli seçiniz">
 													<f:selectItem itemLabel="Lütfen seçiniz" />
 													<f:selectItems value="#{vardiyaHome.calismaSekliIdList}" />
@@ -448,64 +474,64 @@
 
 												<h:graphicImage id="bilgiLink1" value="/img/msginfo.png" />
 												<rich:toolTip for="bilgiLink1">
-													<s:formattedText value="#{vardiyaHome.getArifeMesaiAciklama(vardiyaHome.instance)}" />
+													<s:formattedText value="#{vardiyaHome.getArifeMesaiAciklama(vardiyaHome.seciliVardiya)}" />
 												</rich:toolTip>
 
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 												<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} sınıf adı</ui:define>
-												<h:inputText value="#{vardiyaHome.instance.styleClass}" size="8" />
+												<h:inputText value="#{vardiyaHome.seciliVardiya.styleClass}" size="8" />
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml">
 
 												<ui:define name="label">Ekran Sıra</ui:define>
-												<rich:inputNumberSpinner minValue="0" maxValue="9995" step="5" inputSize="5" value="#{vardiyaHome.instance.ekranSira}" />
+												<rich:inputNumberSpinner minValue="0" maxValue="9995" step="5" inputSize="5" value="#{vardiyaHome.seciliVardiya.ekranSira}" />
 											</s:decorate>
 
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Arife Normal Çalışma(Dakika)</ui:define>
-												<h:inputText value="#{vardiyaHome.instance.arifeNormalCalismaDakika}"
-													required="#{vardiyaHome.instance.calismaSekli != null or vardiyaHome.instance.arifeNormalCalismaDakika>0}"
+												<h:inputText value="#{vardiyaHome.seciliVardiya.arifeNormalCalismaDakika}"
+													required="#{vardiyaHome.seciliVardiya.calismaSekli != null or vardiyaHome.seciliVardiya.arifeNormalCalismaDakika>0}"
 													requiredMessage="Arife Normal Çalışma giriniz" size="2">
 													<a4j:support event="onchange" reRender="saatler" status="ajaxStatus" ajaxSingle="true" />
 												</h:inputText>
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Genel</ui:define>
-												<h:selectBooleanCheckbox value="#{vardiyaHome.instance.genel}">
+												<h:selectBooleanCheckbox value="#{vardiyaHome.seciliVardiya.genel}">
 													<a4j:support event="onclick" reRender="saatler" status="ajaxStatus" ajaxSingle="true"
-														action="#{vardiyaHome.izinVardiyalariGetir(vardiyaHome.instance)}" />
+														action="#{vardiyaHome.izinVardiyalariGetir(vardiyaHome.seciliVardiya)}" />
 												</h:selectBooleanCheckbox>
 											</s:decorate>
 
 
-											<c:if test="#{vardiyaHome.instance.genel == false}">
-												<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.instance.departman.admin}">
+											<c:if test="#{vardiyaHome.seciliVardiya.genel == false}">
+												<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.seciliVardiya.departman.admin}">
 													<ui:define name="label">İcap #{ortakIslemler.vardiyaAciklama()} Mı?</ui:define>
-													<h:selectBooleanCheckbox value="#{vardiyaHome.instance.icapVardiya}" />
+													<h:selectBooleanCheckbox value="#{vardiyaHome.seciliVardiya.icapVardiya}" />
 												</s:decorate>
-												<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.instance.departman.admin}">
+												<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.seciliVardiya.departman.admin}">
 													<ui:define name="label">Şua #{ortakIslemler.vardiyaAciklama()} Mı?</ui:define>
-													<h:selectBooleanCheckbox value="#{vardiyaHome.instance.sua}" />
+													<h:selectBooleanCheckbox value="#{vardiyaHome.seciliVardiya.sua}" />
 												</s:decorate>
 
 
 												<s:decorate template="/layout/edit.xhtml">
 													<ui:define name="label">Gebeler İçin</ui:define>
-													<h:selectBooleanCheckbox value="#{vardiyaHome.instance.gebelik}" />
+													<h:selectBooleanCheckbox value="#{vardiyaHome.seciliVardiya.gebelik}" />
 												</s:decorate>
 												<s:decorate template="/layout/edit.xhtml">
 													<ui:define name="label">Süt İzni İçin</ui:define>
-													<h:selectBooleanCheckbox value="#{vardiyaHome.instance.sutIzni}" />
+													<h:selectBooleanCheckbox value="#{vardiyaHome.seciliVardiya.sutIzni}" />
 												</s:decorate>
 											</c:if>
 											<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('isKurCalismaPlani') != '1'}">
 												<ui:define name="label">Mesai Ödenir</ui:define>
-												<h:selectBooleanCheckbox value="#{vardiyaHome.instance.mesaiOde}" />
+												<h:selectBooleanCheckbox value="#{vardiyaHome.seciliVardiya.mesaiOde}" />
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('isKurCalismaPlani') != '1'}">
 												<ui:define name="label">FÇS Ödeme</ui:define>
-												<h:selectBooleanCheckbox value="#{vardiyaHome.instance.fcsHaric}" />
+												<h:selectBooleanCheckbox value="#{vardiyaHome.seciliVardiya.fcsHaric}" />
 											</s:decorate>
 
 										</c:if>
@@ -513,11 +539,11 @@
 
 									<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaHome.sirketIdList != null}">
 										<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
-										<h:selectOneMenu value="#{vardiyaHome.instance.sirketId}">
+										<h:selectOneMenu value="#{vardiyaHome.seciliVardiya.sirketId}">
 											<f:selectItem itemLabel="Lütfen seçiniz" />
 											<f:selectItems value="#{vardiyaHome.sirketIdList}" />
-											<a4j:support event="onchange" action="#{vardiyaHome.fillCalismaModeliList(vardiyaHome.instance)}" reRender="modeller" status="ajaxStatus"
-												ajaxSingle="true" />
+											<a4j:support event="onchange" action="#{vardiyaHome.fillCalismaModeliList(vardiyaHome.seciliVardiya)}" reRender="modeller"
+												status="ajaxStatus" ajaxSingle="true" />
 
 										</h:selectOneMenu>
 
@@ -562,20 +588,20 @@
 							</a4j:outputPanel>
 
 						</h:panelGrid>
-						<c:if test="#{vardiyaHome.instance.calisma or vardiyaHome.instance.izinVardiya or vardiyaHome.instance.FMI}">
+						<c:if test="#{vardiyaHome.seciliVardiya.calisma or vardiyaHome.seciliVardiya.izinVardiya or vardiyaHome.seciliVardiya.FMI}">
 
 							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaHome.departmanIdList.size()>1}">
 								<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
-								<h:selectOneMenu value="#{vardiyaHome.instance.departmanId}">
+								<h:selectOneMenu value="#{vardiyaHome.seciliVardiya.departmanId}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{vardiyaHome.departmanIdList}" />
 									<a4j:support event="onchange" reRender="saatler" status="ajaxStatus" ajaxSingle="true"
-										action="#{vardiyaHome.izinVardiyalariGetir(vardiyaHome.instance)}" />
+										action="#{vardiyaHome.izinVardiyalariGetir(vardiyaHome.seciliVardiya)}" />
 								</h:selectOneMenu>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Aktif</ui:define>
-								<h:selectBooleanCheckbox value="#{vardiyaHome.instance.durum}" />
+								<h:selectBooleanCheckbox value="#{vardiyaHome.seciliVardiya.durum}" />
 							</s:decorate>
 						</c:if>
 

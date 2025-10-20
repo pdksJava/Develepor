@@ -81,6 +81,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	private List<YemekIzin> yemekIzinList = new ArrayList<YemekIzin>(), yemekIzinKayitliList = new ArrayList<YemekIzin>();
 
 	private List<YemekIzin> yemekList;
+	private Vardiya seciliVardiya;
 	private Long seciliSirketId;
 	private int saat = 13, dakika = 0;
 	private Boolean sirketGoster = Boolean.FALSE, icapVardiyaGoster = Boolean.FALSE, sutIzniGoster = Boolean.FALSE, gebelikGoster = Boolean.FALSE, suaGoster = Boolean.FALSE;
@@ -305,7 +306,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			pdksVardiyaYeni.setKisaAdi(pdksVardiya.getKisaAdi() + " kopya");
 		pdksVardiyaYeni.setAdi(pdksVardiya.getAdi() + " kopya");
 
-		setInstance(pdksVardiyaYeni);
+		setSeciliVardiya(pdksVardiyaYeni);
 		return "";
 
 	}
@@ -332,14 +333,14 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		}
 		vardiyaAlanlariDoldur(pdksVardiya);
 
-		setInstance(pdksVardiya);
+		setSeciliVardiya(pdksVardiya);
 	}
 
 	/**
 	 * @param pdksVardiya
 	 */
 	private void vardiyaAlanlariDoldur(Vardiya pdksVardiya) {
-		setInstance(pdksVardiya);
+		setSeciliVardiya(pdksVardiya);
 		fillSaatler();
 		fillSablonlar();
 		if (authenticatedUser.isAdmin())
@@ -362,7 +363,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	@Transactional
 	public String save() {
 		String cikis = "";
-		Vardiya pdksVardiya = getInstance();
+		Vardiya pdksVardiya = getSeciliVardiya();
 		if (pdksVardiya.getId() == null && !authenticatedUser.isAdmin())
 			pdksVardiya.setDepartman(authenticatedUser.getDepartman());
 		boolean yaz = Boolean.TRUE;
@@ -566,15 +567,12 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 							if (deger != null)
 								katSayiMap.put(KatSayiTipi.GEC_CIKIS_TIPI.value(), deger);
 						}
-						if (katSayiMap.isEmpty() == false)
-							vardiya.setKatSayiMap(katSayiMap);
-						else {
+						if (katSayiMap.isEmpty())
 							katSayiMap = null;
-						}
-
+						if (katSayiMap == null)
+							logger.info(vardiya.getAdi() + " " + vardiya.getKisaAdi());
 					}
-					if (katSayiMap == null)
-						logger.info(vardiya.getAdi() + " " + vardiya.getKisaAdi());
+					vardiya.setKatSayiMap(katSayiMap);
 
 				}
 			}
@@ -1041,10 +1039,9 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	}
 
 	public void instanceRefresh() {
-		Vardiya pdksVardiya = getInstance();
-		if (pdksVardiya.getId() != null)
+		if (seciliVardiya.getId() != null)
 			try {
-				session.refresh(pdksVardiya);
+				session.refresh(seciliVardiya);
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n");
 				e.printStackTrace();
@@ -1373,5 +1370,13 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 	public void setGecGirisKontrolEt(boolean gecGirisKontrolEt) {
 		this.gecGirisKontrolEt = gecGirisKontrolEt;
+	}
+
+	public Vardiya getSeciliVardiya() {
+		return seciliVardiya;
+	}
+
+	public void setSeciliVardiya(Vardiya seciliVardiya) {
+ 		this.seciliVardiya = seciliVardiya;
 	}
 }
