@@ -87,7 +87,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 
 	private boolean pasifGoster = Boolean.FALSE, manuelVardiyaIzinGir = false;
 
-	private boolean erkenGirisKontrolEt = false, erkenCikisKontrolEt = false, gecCikisKontrolEt = false, gecGirisKontrolEt = false;
+	private boolean yemekMolaKontrolEt = false, erkenGirisKontrolEt = false, erkenCikisKontrolEt = false, gecCikisKontrolEt = false, gecGirisKontrolEt = false;
 	private Session session;
 
 	@Override
@@ -525,10 +525,12 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			if (vardiyalar.isEmpty() == false) {
 				Date bugun = PdksUtil.buGun();
 				HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> allMap = ortakIslemler.getVardiyaKatSayiAllMap(bugun, session);
+				TreeMap<String, BigDecimal> yemekMolaMap = allMap.containsKey(KatSayiTipi.VARDIYA_MOLA) ? allMap.get(KatSayiTipi.VARDIYA_MOLA) : null;
 				TreeMap<String, BigDecimal> erkenGirisMap = allMap.containsKey(KatSayiTipi.ERKEN_GIRIS_TIPI) ? allMap.get(KatSayiTipi.ERKEN_GIRIS_TIPI) : null;
 				TreeMap<String, BigDecimal> erkenCikisMap = allMap.containsKey(KatSayiTipi.ERKEN_CIKIS_TIPI) ? allMap.get(KatSayiTipi.ERKEN_CIKIS_TIPI) : null;
 				TreeMap<String, BigDecimal> gecGirisMap = allMap.containsKey(KatSayiTipi.GEC_GIRIS_TIPI) ? allMap.get(KatSayiTipi.GEC_GIRIS_TIPI) : null;
 				TreeMap<String, BigDecimal> gecCikisMap = allMap.containsKey(KatSayiTipi.GEC_CIKIS_TIPI) ? allMap.get(KatSayiTipi.GEC_CIKIS_TIPI) : null;
+				yemekMolaKontrolEt = yemekMolaMap != null && !yemekMolaMap.isEmpty();
 				erkenGirisKontrolEt = erkenGirisMap != null && !erkenGirisMap.isEmpty();
 				erkenCikisKontrolEt = erkenCikisMap != null && !erkenCikisMap.isEmpty();
 				gecCikisKontrolEt = gecCikisMap != null && !gecCikisMap.isEmpty();
@@ -539,6 +541,11 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					if (vardiya.isCalisma()) {
 						katSayiMap = new HashMap<Integer, BigDecimal>();
 						Long sirketId = vardiya.getSirket() != null ? vardiya.getSirket().getId() : null, tesisId = null, vardiyaId = vardiya.getId();
+						if (yemekMolaKontrolEt && ortakIslemler.veriKatSayiVar(yemekMolaMap, sirketId, tesisId, vardiyaId, str)) {
+							BigDecimal deger = ortakIslemler.getKatSayiVeriMap(yemekMolaMap, sirketId, tesisId, vardiyaId, str);
+							if (deger != null)
+								katSayiMap.put(KatSayiTipi.VARDIYA_MOLA.value(), deger);
+						}
 						if (erkenGirisKontrolEt && ortakIslemler.veriKatSayiVar(erkenGirisMap, sirketId, tesisId, vardiyaId, str)) {
 							BigDecimal deger = ortakIslemler.getKatSayiVeriMap(erkenGirisMap, sirketId, tesisId, vardiyaId, str);
 							if (deger != null)

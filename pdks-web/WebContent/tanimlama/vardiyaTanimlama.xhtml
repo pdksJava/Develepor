@@ -389,7 +389,7 @@
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Yemek Süresi (Dakika)</ui:define>
-												<h:inputText value="#{vardiyaHome.instance.yemekSuresi}" size="2" />
+												<h:inputText value="#{vardiyaHome.instance.yemekSuresi}" size="2" disabled="#{vardiyaHome.instance.yemekMolaKontrolEt}"/>
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Çıkış Mola Süresi (Dakika)</ui:define>

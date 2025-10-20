@@ -223,7 +223,9 @@ public class Vardiya extends BaseObject {
 	public Integer getYemekSuresi() {
 		if (yemekSuresi == null)
 			yemekSuresi = 0;
-		return yemekSuresi;
+		BigDecimal value = getKatSayi(KatSayiTipi.VARDIYA_MOLA.value());
+		return value != null ? value.intValue() : yemekSuresi;
+		 
 	}
 
 	public void setYemekSuresi(Integer yemekSuresi) {
@@ -1539,7 +1541,7 @@ public class Vardiya extends BaseObject {
 			}
 
 			double vardiyaCalismaDakika = PdksUtil.getDakikaFarkiHesapla(bitZaman, basZaman).doubleValue();
-			sure = (vardiyaCalismaDakika - ((double) (yemekSuresi != null ? yemekSuresi.doubleValue() : 0d))) / 60;
+			sure = (vardiyaCalismaDakika - ((double) (getYemekSuresi() != null ? getYemekSuresi().doubleValue() : 0d))) / 60;
 
 		}
 		return sure;
@@ -1576,7 +1578,7 @@ public class Vardiya extends BaseObject {
 
 	@Column(name = "CIKISERKENTOLERANSDAKIKA")
 	public short getCikisErkenToleransDakika() {
-		BigDecimal value = getKatSayi(KatSayiTipi.ERKEN_GIRIS_TIPI.value());
+		BigDecimal value = getKatSayi(KatSayiTipi.ERKEN_CIKIS_TIPI.value());
 		return value != null ? value.shortValue() : cikisErkenToleransDakika;
 	}
 
