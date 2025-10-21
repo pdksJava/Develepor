@@ -1572,8 +1572,8 @@ public class PdksEntityController implements Serializable {
 			int size = PdksEntityController.LIST_MAX_SIZE - fieldsOrj.size();
 			List idInputList = new ArrayList(dataIdList);
 			String str = ":" + fieldName, sqlStr = sb.toString();
-			if (dataIdList.size() == 1) {
-				fieldsOrj.put(fieldName, dataIdList);
+			if (idInputList.size() == 1) {
+				fieldsOrj.put(fieldName, idInputList);
 				veriList = getObjectBySQLList(sb, fieldsOrj, class1);
 			} else {
 				int adet = 0;
