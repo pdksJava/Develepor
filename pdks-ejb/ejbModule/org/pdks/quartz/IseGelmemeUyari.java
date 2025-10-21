@@ -853,9 +853,17 @@ public class IseGelmemeUyari implements Serializable {
 										if (mailBox == null || !mailBox.equalsIgnoreCase(mailBoxStr)) {
 											mailBoxStr = mailBox;
 											if (PdksUtil.isStrDegisti(mailBoxStr, departman.getMailBox())) {
-												departman.setMailBox(mailBoxStr);
-												pdksEntityController.saveOrUpdate(session, entityManager, departman);
-												session.flush();
+												try {
+													Departman departmanSave = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
+													departmanSave.setMailBox(mailBoxStr);
+													pdksEntityController.saveOrUpdate(session, entityManager, departmanSave);
+													session.flush();
+													departman = departmanSave;
+												} catch (Exception e) {
+													logger.error(departmanId + " " + mailBoxStr + "\n" + e);
+													e.printStackTrace();
+												}
+
 											}
 
 										}
@@ -899,8 +907,8 @@ public class IseGelmemeUyari implements Serializable {
 							String sicilNo = personel.getPdksSicilNo();
 							if (ikMailGonderme) {
 								HashMap<String, HashMap<String, List<User>>> ikSorguMap = null;
-								if (ikMap.containsKey(departmanId) == false) { 
- 									ikSorguMap = ortakIslemler.getIKRollerUser(personelIdList, departmanId, session);
+								if (ikMap.containsKey(departmanId) == false) {
+									ikSorguMap = ortakIslemler.getIKRollerUser(personelIdList, departmanId, session);
 									ikMap.put(departmanId, ikSorguMap);
 									personelIdList = null;
 								} else
