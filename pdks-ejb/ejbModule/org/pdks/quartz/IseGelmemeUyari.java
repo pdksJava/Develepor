@@ -3,7 +3,9 @@ package org.pdks.quartz;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,6 +53,7 @@ import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
+import org.pdks.enums.KatSayiTipi;
 import org.pdks.enums.NoteTipi;
 import org.pdks.enums.OrganizasyonTipi;
 import org.pdks.security.entity.DefaultPasswordGenerator;
@@ -101,7 +104,9 @@ public class IseGelmemeUyari implements Serializable {
 	private String hataKonum, personelNoAciklama, tesisAciklama, bolumAciklama, altBolumAciklama, yoneticiAciklama, calismaModeliBaslikAciklama;
 
 	private boolean statuGoster = Boolean.FALSE, hariciPersonelVar, yoneticiTanimsiz = Boolean.FALSE, yoneticiMailGonderme = Boolean.FALSE, izinVar = Boolean.FALSE, tesisVar = Boolean.FALSE, hataliHareketVar = Boolean.FALSE;
-	private boolean izinDahil = false;
+
+	private boolean izinDahil = false, ikMailGonderKontrolEt = false, yoneticiMailGonderKontrolEt = false;
+
 	private Tanim ekSaha1, ekSaha2, ekSaha3, ekSaha4;
 	private CellStyle header = null;
 	private CellStyle styleOdd = null;
@@ -253,6 +258,7 @@ public class IseGelmemeUyari implements Serializable {
 		String yoneticiTanimsizStr = ortakIslemler.getParameterKey("yoneticiTanimsiz");
 		yoneticiTanimsiz = PdksUtil.hasStringValue(yoneticiTanimsizStr);
 		boolean devam = tarih == null;
+
 		userTesisMap = null;
 		if (tarih == null)
 			tarih = (Date) bugun.clone();
@@ -286,18 +292,10 @@ public class IseGelmemeUyari implements Serializable {
 			map.put("t1", tarihAralik);
 			map.put("t2", tarihAralik);
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// if (islemYapan != null && !islemYapan.isAdmin())
-			// map.put("sirket.departman.id=", islemYapan.getDepartman().getId());
-			// map.put("iseBaslamaTarihi<=", tarihAralik);
-			// map.put("sskCikisTarihi>=", tarihAralik);
-			// map.put("durum=", Boolean.TRUE);
-			// if (yoneticiTanimsiz == false)
-			// map.put("yoneticisi<>", null);
-			// map.put("mailTakip=", Boolean.TRUE);
-			// List<Personel> personeller = pdksEntityController.getObjectByInnerObjectListInLogic(map, Personel.class);
-
+			List<Long> personelIdler = new ArrayList<Long>();
 			List<Personel> personeller = pdksEntityController.getObjectBySQLList(sb, map, Personel.class);
 			if (personeller != null && !personeller.isEmpty()) {
+
 				HashMap<Long, Long> yoneticiler = new HashMap<Long, Long>();
 				HashMap<Long, Personel> kgsPerMap = new HashMap<Long, Personel>();
 				if (yoneticiTanimsiz) {
@@ -372,6 +370,20 @@ public class IseGelmemeUyari implements Serializable {
 
 					List<VardiyaGun> vardiyaList = new ArrayList<VardiyaGun>(vardiyalar.values());
 					ortakIslemler.sonrakiGunVardiyalariAyikla(tarih, vardiyaList, session);
+					HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> allMap = null;
+					if (vardiyaList.isEmpty() == false) {
+						for (Personel per : personeller)
+							personelIdler.add(per.getId());
+						List<Integer> katSayilar = Arrays.asList(new Integer[] { KatSayiTipi.IK_MAIL_GONDER.value(), KatSayiTipi.YONETICI_MAIL_GONDER.value() });
+						allMap = ortakIslemler.getPlanKatSayiAllMap(katSayilar, personelIdler, oncekiGun, tarihAralik, session);
+						personelIdler = null;
+
+					}
+					TreeMap<String, BigDecimal> ikMailGonderMap = allMap != null && allMap.containsKey(KatSayiTipi.IK_MAIL_GONDER) ? allMap.get(KatSayiTipi.IK_MAIL_GONDER) : null;
+					TreeMap<String, BigDecimal> yoneticiMailGonderMap = allMap != null && allMap.containsKey(KatSayiTipi.YONETICI_MAIL_GONDER) ? allMap.get(KatSayiTipi.YONETICI_MAIL_GONDER) : null;
+					allMap = null;
+					ikMailGonderKontrolEt = ikMailGonderMap != null && !ikMailGonderMap.isEmpty();
+					yoneticiMailGonderKontrolEt = yoneticiMailGonderMap != null && !yoneticiMailGonderMap.isEmpty();
 
 					Date vardiyaBas = null;
 
@@ -380,21 +392,46 @@ public class IseGelmemeUyari implements Serializable {
 					// İlk vardiya başlangıç zamanı okunuyor
 					HashMap<Long, List<User>> depMail = new HashMap<Long, List<User>>();
 					HashMap<Long, Personel> depYoneticiMap = new HashMap<Long, Personel>();
+					boolean ikMailGonderme = ortakIslemler.getParameterKey("ikMailGonderme").equals("1") == false;
 					for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 						VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
 						if (pdksVardiyaGun.getVardiyaDate().before(oncekiGun) || pdksVardiyaGun.getVardiyaDate().after(sonrakiGun) || pdksVardiyaGun.getSonrakiVardiyaGun() == null) {
 							iterator.remove();
 							continue;
 						}
-						if (pdksVardiyaGun.getIslemVardiya() != null && pdksVardiyaGun.getIslemVardiya().getVardiyaTelorans2BitZaman().getTime() > vardiyaBitTar.getTime())
-							vardiyaBitTar = (Date) pdksVardiyaGun.getIslemVardiya().getVardiyaTelorans2BitZaman().clone();
+						String vardiyaGunStr = PdksUtil.convertToDateString(pdksVardiyaGun.getVardiyaDate(), "yyyyMMdd");
+						Personel per = pdksVardiyaGun.getPdksPersonel();
+						Sirket sirket = per != null ? per.getSirket() : null;
+						Tanim tesis = sirket != null && sirket.isTesisDurumu() ? per.getTesis() : null;
+						Long sirketId = sirket != null ? sirket.getId() : null;
+						Long tesisId = tesis != null ? tesis.getId() : null;
+						Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya();
+						Long vardiyaId = islemVardiya != null && islemVardiya.isCalisma() ? islemVardiya.getId() : null;
+						boolean yoneticiMailGonder = yoneticiMailGonderme == false, ikMailGonder = ikMailGonderme;
+						if (yoneticiMailGonderKontrolEt) {
+							yoneticiMailGonder = false;
+							if (ortakIslemler.veriKatSayiVar(yoneticiMailGonderMap, sirketId, tesisId, vardiyaId, vardiyaGunStr)) {
+								BigDecimal deger = ortakIslemler.getKatSayiVeriMap(yoneticiMailGonderMap, sirketId, tesisId, vardiyaId, vardiyaGunStr);
+								yoneticiMailGonder = deger != null;
+							}
+						}
+						if (ikMailGonderKontrolEt) {
+							ikMailGonder = false;
+							if (ortakIslemler.veriKatSayiVar(ikMailGonderMap, sirketId, tesisId, vardiyaId, vardiyaGunStr)) {
+								BigDecimal deger = ortakIslemler.getKatSayiVeriMap(ikMailGonderMap, sirketId, tesisId, vardiyaId, vardiyaGunStr);
+								ikMailGonder = deger != null;
+							}
+						}
+						if (ikMailGonder == false && yoneticiMailGonder == false)
+							continue;
+						if (islemVardiya != null && islemVardiya.getVardiyaTelorans2BitZaman().getTime() > vardiyaBitTar.getTime())
+							vardiyaBitTar = (Date) islemVardiya.getVardiyaTelorans2BitZaman().clone();
 						// Long yoneticisiId = pdksVardiyaGun.getPersonel().getYoneticisi().getId();
 						Tatil arifeGun = null;
-						Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya(), arifeVardiya = null;
+						Vardiya arifeVardiya = null;
 						try {
 							if ((!pdksVardiyaGun.getVardiya().isIcapVardiyasi() && pdksVardiyaGun.getVardiya().isCalisma())) {
 
-								String vardiyaGunStr = PdksUtil.convertToDateString(pdksVardiyaGun.getVardiyaDate(), "yyyyMMdd");
 								if (resmiTatilGunleri.containsKey(vardiyaGunStr)) {
 									Tatil tatil = resmiTatilGunleri.get(vardiyaGunStr);
 									if (tatil.isYarimGunMu()) {
@@ -737,7 +774,7 @@ public class IseGelmemeUyari implements Serializable {
 			String renderAdres = "/email/" + (PdksUtil.getTestDurum() == false ? "iseGelisUyariMail.xhtml" : "iseGelisUyariTestMail.xhtml");
 			List<User> mailIKList = new ArrayList<User>();
 			yoneticiMailGonderme = ortakIslemler.getParameterKey("yoneticiMailGonderme").equals("1");
-			boolean ikMailGonderme = ortakIslemler.getParameterKey("ikMailGonderme").equals("1");
+			boolean ikMailGonderme = ortakIslemler.getParameterKey("ikMailGonderme").equals("1") == false;
 			if (ikMailGonderme && userTesisMap == null) {
 				HashMap fields = new HashMap();
 				StringBuffer sb = new StringBuffer();
@@ -1004,8 +1041,9 @@ public class IseGelmemeUyari implements Serializable {
 								logger.info(personelYonetici.getPdksSicilNo() + " " + personelYonetici.getAdSoyad() + " personel veya kullanıcısında sorun var!");
 							continue;
 						}
+						boolean yoneticiMailGonder = yoneticiMailGonderme == false;
 
-						if (yoneticiMailGonderme == false)
+						if (yoneticiMailGonder)
 							user.setStaffId(yonetici.getEmail());
 
 						if (islemYapan != null) {

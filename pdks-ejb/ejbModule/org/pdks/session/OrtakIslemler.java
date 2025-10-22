@@ -14873,7 +14873,7 @@ public class OrtakIslemler implements Serializable {
 			boolean haftaTatilFazlaMesaiKatSayiOku = getParameterKey("haftaTatilFazlaMesaiKatSayiOku").equals("1");
 			boolean offFazlaMesaiKatSayiOku = getParameterKey("offFazlaMesaiKatSayiOku").equals("1");
 			boolean yuvarlamaKatSayiOku = getParameterKey("yuvarlamaKatSayiOku").equals("1");
-			HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> allMap = getPlanKatSayiAllMap(personelIdler, basTarih, bitTarih, session);
+			HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> allMap = getPlanKatSayiAllMap(null, personelIdler, basTarih, bitTarih, session);
 			TreeMap<String, BigDecimal> sureMap = planKatSayiOku && allMap.containsKey(KatSayiTipi.HAREKET_BEKLEME_SURESI) ? allMap.get(KatSayiTipi.HAREKET_BEKLEME_SURESI) : null;
 			TreeMap<String, BigDecimal> sureSuaMap = suaKatSayiOku && allMap.containsKey(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI) ? allMap.get(KatSayiTipi.SUA_GUNLUK_SAAT_SURESI) : null;
 			TreeMap<String, BigDecimal> yuvarlamaMap = yuvarlamaKatSayiOku && allMap.containsKey(KatSayiTipi.YUVARLAMA_TIPI) ? allMap.get(KatSayiTipi.YUVARLAMA_TIPI) : null;
@@ -15276,32 +15276,56 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param katsayiList
 	 * @param personelIdler
 	 * @param basTarih
 	 * @param bitTarih
 	 * @param session
 	 * @return
 	 */
-	public HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> getPlanKatSayiAllMap(List<Long> personelIdler, Date basTarih, Date bitTarih, Session session) {
-		String fieldName = "pId";
+	public HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> getPlanKatSayiAllMap(List<Integer> katsayiList, List<Long> personelIdler, Date basTarih, Date bitTarih, Session session) {
+		String fieldName = null;
 		HashMap map = new HashMap();
 		StringBuffer sb = new StringBuffer();
+		List dataIdList = null;
 		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ", V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, ");
 		sb.append("B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + KatSayi.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " on B." + KatSayi.COLUMN_NAME_BAS_TARIH + " <= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		sb.append(" and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
+		if (katsayiList != null && katsayiList.isEmpty() == false) {
+			String katSayiName = "t";
+			sb.append(" and B." + KatSayi.COLUMN_NAME_TIPI + " :" + katSayiName + " ");
+			dataIdList = katsayiList;
+			fieldName = katSayiName;
+			map.put(katSayiName, katsayiList);
+		}
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
 		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
-		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :bitTarih and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
+		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :bitTarih");
+		if (personelIdler != null && personelIdler.isEmpty() == false) {
+			String perName = "pId";
+ 			fieldName = perName;
+ 			dataIdList = personelIdler;
+			sb.append(" and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + perName);
+			map.put(perName, personelIdler);
+		}
 		sb.append(" group by B." + KatSayi.COLUMN_NAME_TIPI + ", B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
-		map.put(fieldName, personelIdler);
+
 		map.put("basTarih", basTarih);
 		map.put("bitTarih", bitTarih);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		// List<Object[]> list = pdksEntityController.getObjectBySQLList(sb, map, null);
-		List<Object[]> list = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, map, null, session);
+		List<Object[]> list = null;
+		if (fieldName != null)
+			list = pdksEntityController.getSQLParamList(dataIdList, sb, fieldName, map, null, session);
+		else {
+			if (session != null)
+				map.put(PdksEntityController.MAP_KEY_SESSION, session);
+			list = pdksEntityController.getObjectBySQLList(sb, map, null);
+		}
+
 		map = null;
 		HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> allMap = setKatSayiMap(list);
 
