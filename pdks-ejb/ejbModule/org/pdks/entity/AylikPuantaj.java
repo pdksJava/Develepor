@@ -541,10 +541,18 @@ public class AylikPuantaj implements Serializable, Cloneable {
 												} else if (vardiyaTatil.isArifeCalismaSaatYokCGSDussun())
 													arifeSure = 0.0d;
 
-											} else if (vg.getCalismaSuresi() <= 0.0d) {
-												// TODO Arife çalışmıyorsa ÇGS sayma
-												if (vardiyaTatil.isArifeCalismaSaatYokCGSDussun())
-													arifeSure = 0.0d;
+											} else {
+												if (vg.getCalismaSuresi() <= 0.0d) {
+													// TODO Arife çalışmıyorsa ÇGS sayma
+													if (vardiyaTatil.isArifeCalismaSaatYokCGSDussun())
+														arifeSure = 0.0d;
+												} else if (vg.getCalismaSuresi() == vardiya.getNetCalismaSuresi() && vg.getResmiTatilSure() > calSure) {
+													double fark = (vg.getResmiTatilSure() - calSure) / 2.0;
+													vg.addResmiTatilSure(-fark);
+													saatToplami += fark;
+													// arifeSure = 0.0d;
+													// yarimGun = 0.0d;
+												}
 											}
 										}
 									}
@@ -966,7 +974,6 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		this.vardiyaSua = vardiyaSua;
 	}
 
- 
 	/**
 	 * @param fazlaMesaiOde
 	 * @param hesaplananBuAySure
