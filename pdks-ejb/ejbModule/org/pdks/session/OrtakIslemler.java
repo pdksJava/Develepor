@@ -21510,7 +21510,10 @@ public class OrtakIslemler implements Serializable {
 												}
 											}
 										} else if (toplamParcalanmisSure < netSure + vardiyaYemekSuresi) {
-											calSure = toplamParcalanmisSure - vardiyaYemekSuresi;
+											double yemekOranFark = toplamYemekSuresi - (toplamParcalanmisSure * vardiyaYemekSuresi) / (netSure + vardiyaYemekSuresi);
+											if (fark < yemekOranFark && yemekOranFark < 0)
+												fark = yemekOranFark;
+											calSure += fark;
 										}
 									}
 								}
