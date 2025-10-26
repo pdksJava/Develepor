@@ -21373,7 +21373,7 @@ public class OrtakIslemler implements Serializable {
 									}
 								}
 								if (arifeYarimGun == false) {
- 									if (yemekList.isEmpty()) {
+									if (yemekList.isEmpty()) {
 										double eksikSure = vardiyaToplamSure - calSure;
 										if (eksikSure <= 0) {
 											fark += (vardiyaToplamSure - calSure);
@@ -21516,18 +21516,16 @@ public class OrtakIslemler implements Serializable {
 												}
 											}
 										} else if (vardiyaYemekSuresi > 0 && toplamParcalanmisSure < vardiyaToplamSure) {
-											if (vGun.endsWith("1015") || vGun.endsWith("1016")) {
-												logger.debug(vGun + " " + calSure + " " + toplamParcalanmisSure + " " + tamCalismaSaat);
-											}
-
-											if (tamCalismaSaat < toplamParcalanmisSure) {
+//											if (vGun.endsWith("1015") || vGun.endsWith("1016")) {
+//												logger.debug(vGun + " " + calSure + " " + toplamParcalanmisSure + " " + tamCalismaSaat);
+//											}
+											if (tamCalismaSaat < toplamParcalanmisSure)
 												calSure = toplamParcalanmisSure - vardiyaYemekSuresi;
-											} else {
+											else {
 												double yemekOranFark = calismaYuzde * vardiyaYemekSuresi;
 												if (yemekOranFark > 0 && yemekOranFark > toplamYemekSuresi)
 													calSure = toplamParcalanmisSure - yemekOranFark;
 											}
-
 										}
 									}
 								}
