@@ -19779,6 +19779,7 @@ public class OrtakIslemler implements Serializable {
 							if (kapi.isGirisKapi())
 								girisHareketList.add(hareketKGS);
 							else if (kapi.isCikisKapi()) {
+								// TODO Arife günü düzeltme HASAN
 								if (vardiyaMap != null && hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET)) {
 									Vardiya tatilVardiya = vardiyaMap.containsKey(islemVardiya.getId()) ? vardiyaMap.get(islemVardiya.getId()) : null;
 									if (tatilVardiya != null && tatilVardiya.getArifeBaslangicTarihi() != null && hareketKGS.getZaman().after(tatilVardiya.getArifeBaslangicTarihi())) {
@@ -21049,10 +21050,15 @@ public class OrtakIslemler implements Serializable {
 								if (girisZaman.before(ilkGun) && PdksUtil.hasStringValue(cikisId) == false && girisHareket.getOncekiGun().booleanValue() == false)
 									continue;
 								if (islemVardiya.isCalisma()) {
+									if (vGun.endsWith("1028"))
+										logger.debug(vGun + " " + calSure + " " + girisZaman + " " + cikisZaman);
+
 									if (girisZaman.getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime() && girisZaman.getTime() >= islemVardiya.getVardiyaTelorans1BasZaman().getTime())
-										girisZaman = islemVardiya.getVardiyaBasZaman();
+										if (girisHareket.isTatil() == false || girisId.startsWith(HareketKGS.SANAL_HAREKET) == false)
+											girisZaman = islemVardiya.getVardiyaBasZaman();
 									if (cikisZaman.getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime() && cikisZaman.getTime() <= islemVardiya.getVardiyaTelorans2BitZaman().getTime())
-										cikisZaman = islemVardiya.getVardiyaBitZaman();
+										if (cikisHareket.isTatil() == false || cikisId.startsWith(HareketKGS.SANAL_HAREKET) == false)
+											cikisZaman = islemVardiya.getVardiyaBitZaman();
 								}
 
 								if (!parcalanmisSureVar)
@@ -21361,9 +21367,7 @@ public class OrtakIslemler implements Serializable {
 							double tamCalismaSaat = vardiyaToplamSure - (15.0 + Double.parseDouble("" + islemVardiya.getCikisErkenToleransDakika())) / 60.0;
 							if (vardiyaToplamSure == vardiyaToplamSure)
 								tamCalismaSaat = vardiyaToplamSure;
-							if (vGun.endsWith("1030") || vGun.endsWith("1031")) {
-								logger.debug(vGun + " " + calSure + " " + toplamParcalanmisSure + " " + tamCalismaSaat);
-							}
+
 							if (sureHesapla && (gunlukSaat > 0 || vardiyaGun.getGecenAyResmiTatilSure() > 0.0d)) {
 								toplamYemekSuresi = getToplamYemekSuresi(vardiyaYemekSuresi, toplamYemekSuresi, toplamParcalanmisSure);
 								boolean tatilYemekHesabiSureEkle = vardiyaGun.isYemekHesabiSureEkle();
@@ -22943,8 +22947,8 @@ public class OrtakIslemler implements Serializable {
 			cikis.setId(HareketKGS.SANAL_HAREKET + vardiyaGun.getId() + "" + vardiya.getVardiyaBitZaman().getTime());
 			Date zaman = vardiya.getVardiyaBitZaman();
 			if (vardiyaGun.getIslemVardiya() != null && vardiyaGun.getIslemVardiya().getVardiyaFazlaMesaiBitZaman().before(zaman))
-				zaman = vardiyaGun.getIslemVardiya().getVardiyaFazlaMesaiBitZaman();
-			zaman = PdksUtil.addTarih(zaman, Calendar.SECOND, -10);
+				zaman = PdksUtil.addTarih(vardiyaGun.getIslemVardiya().getVardiyaFazlaMesaiBitZaman(), Calendar.SECOND, -10);
+			// zaman = PdksUtil.addTarih(zaman, Calendar.SECOND, -10);
 			cikis.setZaman(zaman);
 			cikis.setPersonel(personelView);
 			cikis.setKapiView(cikisKapi);
@@ -22973,8 +22977,7 @@ public class OrtakIslemler implements Serializable {
 			String bayramEkle = getParameterKey("bayramEkle");
 			ekleDurum = bayramEkle != null && bayramEkle.equals("+");
 		}
-		if (vg.getVardiyaDateStr().endsWith("0422"))
-			logger.debug("");
+
 		// Arife günü hareketleri güncelleniyor
 		Tatil tatil = vg.getTatil();
 		Date bayramBaslama = tatil.getOrjTatil().getBasTarih();
