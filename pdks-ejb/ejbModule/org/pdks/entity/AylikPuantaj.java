@@ -522,11 +522,10 @@ public class AylikPuantaj implements Serializable, Cloneable {
 								if (tatil.getArifeSonraVardiyaDenklestirmeVar() != null && tatil.getArifeSonraVardiyaDenklestirmeVar()) {
 									if (tatil.getVardiyaMap() != null && tatil.getVardiyaMap().containsKey(vardiya.getId())) {
 										Vardiya vardiyaTatil = tatil.getVardiyaMap().get(vardiya.getId());
-										vardiya.setArifeBaslangicTarihi(vardiyaTatil.getArifeBaslangicTarihi());
-										if (vg.getPdksPersonel().getPdksSicilNo().equals("2737"))
-											logger.debug("");
-										if (vardiyaTatil.getArifeBaslangicTarihi() != null && vardiyaTatil.getArifeCalismaSure() != null) {
-											if (vardiyaTatil.getArifeBaslangicTarihi().getTime() <= vardiya.getVardiyaBasZaman().getTime()) {
+										Date arifeBaslangicTarihi = vardiyaTatil.getArifeBaslangicTarihi();
+										vardiya.setArifeBaslangicTarihi(arifeBaslangicTarihi);
+										if (arifeBaslangicTarihi != null && vardiyaTatil.getArifeCalismaSure() != null) {
+											if (arifeBaslangicTarihi.getTime() <= vardiya.getVardiyaBasZaman().getTime()) {
 												if (vg.getResmiTatilSure() > 0.0d) {
 													saatToplami -= vg.getCalismaSuresi() - vg.getResmiTatilSure();
 													vg.setResmiTatilSure(vg.getCalismaSuresi());
@@ -534,7 +533,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 												if (vardiyaTatil.isArifeCalismaSaatYokCGSDussun())
 													arifeSure = 0.0d;
 												// yarimGun = 0.0d;
-											} else if (vardiyaTatil.getArifeBaslangicTarihi().getTime() >= vardiya.getVardiyaBitZaman().getTime()) {
+											} else if (arifeBaslangicTarihi.getTime() >= vardiya.getVardiyaBitZaman().getTime()) {
 												// arifeSure = 0.0d;
 												if (vg.getCalismaSuresi() > 0.0d) {
 													yarimGun = 0.0d;
