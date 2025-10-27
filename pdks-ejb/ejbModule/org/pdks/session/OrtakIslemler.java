@@ -21048,12 +21048,13 @@ public class OrtakIslemler implements Serializable {
 								String cikisId = cikisHareket != null && cikisHareket.getId() != null ? cikisHareket.getId() : "";
 								if (girisZaman.before(ilkGun) && PdksUtil.hasStringValue(cikisId) == false && girisHareket.getOncekiGun().booleanValue() == false)
 									continue;
-								if (islemVardiya.isCalisma() && girisHareket.getOncekiGun().booleanValue() == false) {
-									if (girisZaman.getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime() && girisId.startsWith(HareketKGS.SANAL_HAREKET) == false)
+								if (islemVardiya.isCalisma()) {
+									if (girisZaman.getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime() && girisZaman.getTime() >= islemVardiya.getVardiyaTelorans1BasZaman().getTime())
 										girisZaman = islemVardiya.getVardiyaBasZaman();
-									if (cikisZaman.getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime() && cikisId.startsWith(HareketKGS.SANAL_HAREKET) == false)
+									if (cikisZaman.getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime() && cikisZaman.getTime() <= islemVardiya.getVardiyaTelorans2BitZaman().getTime())
 										cikisZaman = islemVardiya.getVardiyaBitZaman();
 								}
+
 								if (!parcalanmisSureVar)
 									parcalanmisSureVar = girisHareket.getOncekiGun() || PdksUtil.hasStringValue(girisId) == false || PdksUtil.hasStringValue(cikisId) == false;
 								double saatFarki = PdksUtil.getSaatFarki(cikisZaman, girisZaman);
@@ -21358,6 +21359,11 @@ public class OrtakIslemler implements Serializable {
 							double calismaYuzde = toplamParcalanmisSure / vardiyaToplamSure;
 							double yemekMaxSure = vardiyaToplamSure * yemekMolasiYuzdesi;
 							double tamCalismaSaat = vardiyaToplamSure - (15.0 + Double.parseDouble("" + islemVardiya.getCikisErkenToleransDakika())) / 60.0;
+							if (vardiyaToplamSure == vardiyaToplamSure)
+								tamCalismaSaat = vardiyaToplamSure;
+							if (vGun.endsWith("1030") || vGun.endsWith("1031")) {
+								logger.debug(vGun + " " + calSure + " " + toplamParcalanmisSure + " " + tamCalismaSaat);
+							}
 							if (sureHesapla && (gunlukSaat > 0 || vardiyaGun.getGecenAyResmiTatilSure() > 0.0d)) {
 								toplamYemekSuresi = getToplamYemekSuresi(vardiyaYemekSuresi, toplamYemekSuresi, toplamParcalanmisSure);
 								boolean tatilYemekHesabiSureEkle = vardiyaGun.isYemekHesabiSureEkle();
@@ -21516,9 +21522,7 @@ public class OrtakIslemler implements Serializable {
 												}
 											}
 										} else if (vardiyaYemekSuresi > 0 && toplamParcalanmisSure < vardiyaToplamSure) {
-//											if (vGun.endsWith("1015") || vGun.endsWith("1016")) {
-//												logger.debug(vGun + " " + calSure + " " + toplamParcalanmisSure + " " + tamCalismaSaat);
-//											}
+
 											if (tamCalismaSaat < toplamParcalanmisSure)
 												calSure = toplamParcalanmisSure - vardiyaYemekSuresi;
 											else {
