@@ -19717,6 +19717,8 @@ public class OrtakIslemler implements Serializable {
 					ArrayList<HareketKGS> yeniHareketler = new ArrayList<HareketKGS>(), hareketler = new ArrayList<HareketKGS>();
 					if (!oncekiHareketler.isEmpty()) {
 						for (HareketKGS hareketKGS : oncekiHareketler) {
+							if (tatilBas.getTime() > hareketKGS.getZaman().getTime())
+								continue;
 							hareketKGS.setOncekiGun(true);
 							hareketler.add(hareketKGS);
 						}
