@@ -19703,12 +19703,10 @@ public class OrtakIslemler implements Serializable {
 					if (tatilGunleriMap.containsKey(str))
 						tatil = tatilGunleriMap.get(str);
 					else if (vg.getVardiyaDate().before(tatil.getBasTarih())) {
-
 						String strDiger = PdksUtil.convertToDateString(tatil.getBasTarih(), "yyyyMMdd");
 						if (tatilGunleriMap.containsKey(strDiger))
 							tatil = tatilGunleriMap.get(strDiger);
 					}
-
 					Tatil orjTatil = tatil.getOrjTatil();
 					Date tatilBas = tatil.getBasTarih(), tatilBit = tatil.getBitTarih(), gunBit = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(vg.getVardiyaDate(), "yyyyMMdd") + " 23:59:59", "yyyyMMdd HH:mm:ss");
 					if (tatil.isYarimGunMu()) {
@@ -19719,11 +19717,9 @@ public class OrtakIslemler implements Serializable {
 								if (arifeBaslangicTarihi != null)
 									tatilBas = arifeBaslangicTarihi;
 							}
-
 						}
 						orjTatil.setBasTarih(tatilBas);
 					}
-
 					if (islemVardiya.isCalisma() && islemVardiya.getVardiyaBitZaman().after(tatilBit))
 						gunBit = islemVardiya.getVardiyaBitZaman();
 					ArrayList<HareketKGS> yeniHareketler = new ArrayList<HareketKGS>(), hareketler = new ArrayList<HareketKGS>();
