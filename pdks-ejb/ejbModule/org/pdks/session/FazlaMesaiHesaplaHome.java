@@ -1733,11 +1733,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					int yarimYuvarla = puantaj.getYarimYuvarla();
-					Integer ucmYuvarla = yarimYuvarla;
+					Integer ucmYuvarla = yarimYuvarla, rtYuvarla = yarimYuvarla;
 					Double radyolojiKatsayi = null;
 					if (puantaj.getKatSayiMap() != null) {
 						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.UOM_YUVARLAMA.value()))
 							ucmYuvarla = puantaj.getKatSayiMap().get(KatSayiTipi.UOM_YUVARLAMA.value()).intValue();
+						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.RT_YUVARLAMA.value()))
+							rtYuvarla = puantaj.getKatSayiMap().get(KatSayiTipi.UOM_YUVARLAMA.value()).intValue();
 						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.RADYOLOJI_MAX_GUN.value()))
 							radyolojiKatsayi = puantaj.getKatSayiMap().get(KatSayiTipi.RADYOLOJI_MAX_GUN.value()).doubleValue();
 					}
@@ -2470,8 +2472,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (!kesilenSureGoster)
 						kesilenSureGoster = kesilenSure > 0.0d;
 					puantaj.setKesilenSure(kesilenSure);
-
-					puantaj.setResmiTatilToplami(PdksUtil.setSureDoubleTypeRounded(resmiTatilToplami, yarimYuvarla));
+					puantaj.setResmiTatilToplami(PdksUtil.setSureDoubleTypeRounded(resmiTatilToplami, rtYuvarla));
 					if (denklestirmeAyDurum && puantaj.isFazlaMesaiHesapla() && personelDenklestirme.getPersonelDenklestirmeGecenAy() != null && personel.getIseGirisTarihi().before(aylikPuantajSablon.getIlkGun())) {
 						PersonelDenklestirme personelDenklestirmeGecenAy = personelDenklestirme.getPersonelDenklestirmeGecenAy();
 						if (personelDenklestirmeGecenAy != null) {
@@ -4170,58 +4171,60 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							}
 
 						}
+						if (key1.endsWith("1028"))
+							logger.debug("");
 						if (sureAz) {
-
 							vGun.setHataliDurum(eksikSaatYuzde != null);
 							if (!izinERPUpdateStr.equals("1")) {
 								String izinKey = "perId=" + personel.getId();
 								personelIzinGirisiEkle(vGun, null, izinKey);
 							}
+
 							kapiGirisGetir(vGun, vardiyaPlanKey);
-							if (vGun.getGirisHareketleri() != null) {
-								HareketKGS girisHareket = vGun.getGirisHareketleri().get(0);
-								HareketKGS cikisHareket = vGun.getCikisHareketleri().get(0);
-								boolean hatali = Boolean.TRUE;
-								if (vGun.getFazlaMesailer() != null) {
-									for (PersonelFazlaMesai personelFazlaMesai : vGun.getFazlaMesailer()) {
-										if (vGun.isAyinGunu() && islemVardiya.isCalisma()) {
-											if (personelFazlaMesai.getBasZaman().after(islemVardiya.getVardiyaTelorans1BasZaman()))
-												logger.debug(vardiyaKey + " " + personelFazlaMesai.getId() + " " + personelFazlaMesai.getBasZaman() + " " + personelFazlaMesai.getBitZaman());
-										}
-										if (personelFazlaMesai.getHareketId().equals(girisHareket.getId()) || personelFazlaMesai.getHareketId().equals(cikisHareket.getId())) {
-											hatali = Boolean.FALSE;
-										}
-									}
-								}
-
-								if (hatali && girisHareket.getOrjinalZaman().getTime() < islemVardiya.getVardiyaTelorans1BasZaman().getTime()) {
-									personelFazlaMesaiEkle(vGun, vardiyaPlanKey);
-									fazlaMesaiHesapla = Boolean.FALSE;
-									vGun.setHareketHatali(Boolean.TRUE);
-									vGun.setOnayli(Boolean.FALSE);
-								}
-							}
-							if (vGun.getCikisHareketleri() != null) {
-								HareketKGS cikisHareket = vGun.getCikisHareketleri().get(vGun.getCikisHareketleri().size() - 1);
-								boolean hatali = Boolean.TRUE;
-								if (vGun.getFazlaMesailer() != null) {
-									for (PersonelFazlaMesai personelFazlaMesai : vGun.getFazlaMesailer()) {
-										if (personelFazlaMesai.getHareketId().equals(cikisHareket.getId())) {
-											hatali = Boolean.FALSE;
-										}
-									}
-								}
-								if (hatali && cikisHareket.getOrjinalZaman().getTime() > islemVardiya.getVardiyaTelorans2BitZaman().getTime()) {
-									personelFazlaMesaiEkle(vGun, vardiyaPlanKey);
-									fazlaMesaiHesapla = Boolean.FALSE;
-									vGun.setOnayli(Boolean.FALSE);
-									vGun.setHareketHatali(Boolean.TRUE);
-								}
-							}
-							if (vGun.getHareketler() == null || vGun.getHareketler().isEmpty())
-								vardiyaPlaniGetir(vGun, vardiyaPlanKey);
-
 						}
+						if (vGun.getGirisHareketleri() != null) {
+							HareketKGS girisHareket = vGun.getGirisHareketleri().get(0);
+							HareketKGS cikisHareket = vGun.getCikisHareketleri().get(0);
+							boolean hatali = Boolean.TRUE;
+							if (vGun.getFazlaMesailer() != null) {
+								for (PersonelFazlaMesai personelFazlaMesai : vGun.getFazlaMesailer()) {
+									if (vGun.isAyinGunu() && islemVardiya.isCalisma()) {
+										if (personelFazlaMesai.getBasZaman().after(islemVardiya.getVardiyaTelorans1BasZaman()))
+											logger.debug(vardiyaKey + " " + personelFazlaMesai.getId() + " " + personelFazlaMesai.getBasZaman() + " " + personelFazlaMesai.getBitZaman());
+									}
+									if (personelFazlaMesai.getHareketId().equals(girisHareket.getId()) || personelFazlaMesai.getHareketId().equals(cikisHareket.getId())) {
+										hatali = Boolean.FALSE;
+									}
+								}
+							}
+
+							if (hatali && girisHareket.getOrjinalZaman().getTime() < islemVardiya.getVardiyaTelorans1BasZaman().getTime()) {
+								personelFazlaMesaiEkle(vGun, vardiyaPlanKey);
+								fazlaMesaiHesapla = Boolean.FALSE;
+								vGun.setHareketHatali(Boolean.TRUE);
+								vGun.setOnayli(Boolean.FALSE);
+							}
+						}
+						if (vGun.getCikisHareketleri() != null) {
+							HareketKGS cikisHareket = vGun.getCikisHareketleri().get(vGun.getCikisHareketleri().size() - 1);
+							boolean hatali = Boolean.TRUE;
+							if (vGun.getFazlaMesailer() != null) {
+								for (PersonelFazlaMesai personelFazlaMesai : vGun.getFazlaMesailer()) {
+									if (personelFazlaMesai.getHareketId().equals(cikisHareket.getId())) {
+										hatali = Boolean.FALSE;
+									}
+								}
+							}
+							if (hatali && cikisHareket.getOrjinalZaman().getTime() > islemVardiya.getVardiyaTelorans2BitZaman().getTime()) {
+								personelFazlaMesaiEkle(vGun, vardiyaPlanKey);
+								fazlaMesaiHesapla = Boolean.FALSE;
+								vGun.setOnayli(Boolean.FALSE);
+								vGun.setHareketHatali(Boolean.TRUE);
+							}
+						}
+						if (vGun.getHareketler() == null || vGun.getHareketler().isEmpty())
+							vardiyaPlaniGetir(vGun, vardiyaPlanKey);
+
 						try {
 							if (vardiyaKey.endsWith("01"))
 								logger.debug(key1 + " " + vGun.getId());

@@ -1739,8 +1739,10 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						puantaj.setHaftaCalismaSuresi(puantajHaftaTatil);
 						if (rtYuvarla != null)
 							puantajResmiTatil = PdksUtil.setSureDoubleTypeRounded(puantajResmiTatil, rtYuvarla);
+						else
+							puantajResmiTatil = PdksUtil.setSureDoubleTypeRounded(puantajResmiTatil, yarimYuvarla);
 
-						puantaj.setResmiTatilToplami(PdksUtil.setSureDoubleTypeRounded(puantajResmiTatil, yarimYuvarla));
+						puantaj.setResmiTatilToplami(puantajResmiTatil);
 					}
 					puantaj.setFazlaMesaiHesapla(puantajFazlaMesaiHesapla);
 					if (!personelDenklestirme.getDenklestirmeAy().isDurumu()) {
