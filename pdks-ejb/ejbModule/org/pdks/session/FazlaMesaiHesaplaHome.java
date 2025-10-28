@@ -4089,7 +4089,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 		if (planOnayDurum == false)
 			vardiyaPlaniGetir(vGun, vardiyaPlanKey);
-
+		if (key1.endsWith("1028"))
+			logger.debug("");
 		boolean izinDurum = false;
 		if (hareketler == null && vGun.getIslemVardiya() != null) {
 			if (vGun.isZamanGelmedi() == false)
@@ -4171,8 +4172,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							}
 
 						}
-						if (key1.endsWith("1028"))
-							logger.debug("");
+						
 						if (sureAz) {
 							vGun.setHataliDurum(eksikSaatYuzde != null);
 							if (!izinERPUpdateStr.equals("1")) {
@@ -4483,7 +4483,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		}
 		if (fazlaMesaiOnaylaDurum && vGun.getIslemVardiya() != null && vGun.getHareketDurum().equals(Boolean.TRUE)) {
 			try {
-				if (key1.equals("20211111"))
+				if (key1.endsWith("1028"))
 					logger.debug(vardiyaKey + " " + vGun.getHareketDurum() + " " + vGun.isAyrikHareketVar());
 
 				islemVardiya = vGun.getIslemVardiya();
