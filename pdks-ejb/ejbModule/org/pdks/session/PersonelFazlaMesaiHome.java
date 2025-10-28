@@ -1350,7 +1350,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	private boolean setTatilDurum(HareketKGS kgsHareket, Date zaman) {
 		boolean tatilMi = false;
 		if (zaman != null && !tatilMap.isEmpty() && tatilMap.containsKey(PdksUtil.convertToDateString(zaman, "yyyyMMdd"))) {
-			Tatil hareketTatil = tatilMap.get(PdksUtil.convertToDateString(zaman, "yyyyMMdd")).getOrjTatil();
+			Tatil hareketTatil = tatilMap.get(PdksUtil.convertToDateString(zaman, "yyyyMMdd"));
 			tatilMi = zaman != null && zaman.getTime() >= hareketTatil.getBasTarih().getTime() && zaman.getTime() <= hareketTatil.getBitTarih().getTime();
 			if (kgsHareket != null)
 				kgsHareket.setTatil(tatilMi);

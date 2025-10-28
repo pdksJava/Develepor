@@ -19698,8 +19698,6 @@ public class OrtakIslemler implements Serializable {
 				}
 				HashMap<Long, Vardiya> vardiyaMap = null;
 				if (tatil != null) {
-					if (str.endsWith("1027"))
-						logger.debug("");
 					if (tatilGunleriMap.containsKey(str))
 						tatil = tatilGunleriMap.get(str);
 					else if (vg.getVardiyaDate().before(tatil.getBasTarih())) {
@@ -19744,6 +19742,9 @@ public class OrtakIslemler implements Serializable {
 					Date zaman = PdksUtil.tariheGunEkleCikar(vg.getVardiyaDate(), 1);
 					vg.setBayramAyir(true);
 					boolean tatilBasladi = false;
+					if (str.endsWith("1027"))
+						logger.debug("");
+					boolean tatilVar = false;
 					for (Iterator iterator = hareketler.iterator(); iterator.hasNext();) {
 						HareketKGS hareketKGS = (HareketKGS) iterator.next();
 						if (hareketKGS.getId() == null) {
@@ -19751,6 +19752,8 @@ public class OrtakIslemler implements Serializable {
 							continue;
 						}
 						boolean tatilDurum = hareketKGS.getZaman().getTime() >= orjTatil.getBasTarih().getTime() && hareketKGS.getZaman().getTime() <= orjTatil.getBitTarih().getTime();
+						if (!tatilVar)
+							tatilVar = tatilDurum;
 						hareketKGS.setTatil(tatilDurum);
 						if (tatilBasladi == false) {
 							tatilBasladi = tatilDurum;
@@ -19820,6 +19823,8 @@ public class OrtakIslemler implements Serializable {
 							yeniHareketler.add(hareketKGS);
 						}
 					}
+					if (vg.getTatil() != null && tatilVar == false)
+						vg.setTatil(null);
 					vg.setGirisHareketleri(girisHareketList);
 					vg.setCikisHareketleri(cikisHareketList);
 					vg.setGecerliHareketler(hareketVar ? new ArrayList<HareketKGS>(vg.getHareketler()) : null);
@@ -21074,7 +21079,7 @@ public class OrtakIslemler implements Serializable {
 								String cikisId = cikisHareket != null && cikisHareket.getId() != null ? cikisHareket.getId() : "";
 								if (girisZaman.before(ilkGun) && PdksUtil.hasStringValue(cikisId) == false && girisHareket.getOncekiGun().booleanValue() == false)
 									continue;
-								if (vGun.endsWith("1029"))
+								if (vGun.endsWith("1027"))
 									logger.debug(vGun + " " + calSure + " " + girisZaman + " " + cikisZaman);
 								if (resmiTatilCalisma == false)
 									resmiTatilCalisma = tatilGunleriMap.containsKey(vGun);
