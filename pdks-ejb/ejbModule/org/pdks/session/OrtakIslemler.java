@@ -19716,7 +19716,9 @@ public class OrtakIslemler implements Serializable {
 									tatilBas = arifeBaslangicTarihi;
 							}
 						}
+						orjTatil = (Tatil) orjTatil.clone();
 						orjTatil.setBasTarih(tatilBas);
+						tatil.setOrjTatil(orjTatil);
 					}
 					if (islemVardiya.isCalisma() && islemVardiya.getVardiyaBitZaman().after(tatilBit))
 						gunBit = islemVardiya.getVardiyaBitZaman();
