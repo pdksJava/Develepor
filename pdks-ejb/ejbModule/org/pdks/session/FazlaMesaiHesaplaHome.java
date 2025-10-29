@@ -4172,7 +4172,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							}
 
 						}
-						
+
 						if (sureAz) {
 							vGun.setHataliDurum(eksikSaatYuzde != null);
 							if (!izinERPUpdateStr.equals("1")) {
@@ -4182,7 +4182,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 							kapiGirisGetir(vGun, vardiyaPlanKey);
 						}
-						if (vGun.getGirisHareketleri() != null) {
+						if (vGun.getGirisHareketleri() != null && vGun.getGirisHareketleri().isEmpty() == false) {
 							HareketKGS girisHareket = vGun.getGirisHareketleri().get(0);
 							HareketKGS cikisHareket = vGun.getCikisHareketleri().get(0);
 							boolean hatali = Boolean.TRUE;
@@ -4205,7 +4205,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								vGun.setOnayli(Boolean.FALSE);
 							}
 						}
-						if (vGun.getCikisHareketleri() != null) {
+						if (vGun.getCikisHareketleri() != null && vGun.getCikisHareketleri().isEmpty() == false) {
 							HareketKGS cikisHareket = vGun.getCikisHareketleri().get(vGun.getCikisHareketleri().size() - 1);
 							boolean hatali = Boolean.TRUE;
 							if (vGun.getFazlaMesailer() != null) {
