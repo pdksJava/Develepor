@@ -803,6 +803,11 @@ public class VardiyaGun extends BaseObject {
 					islemVardiya.setArifeCalismaSure(vardiyaTatil.getArifeCalismaSure());
 				vardiya.setArifeCalismaSure(vardiyaTatil.getArifeCalismaSure());
 				tatilNew.setBasTarih(vardiyaTatil.getArifeBaslangicTarihi());
+				if (tatilNew.getOrjTatil() != null && vardiyaTatil.getArifeBaslangicTarihi() != null) {
+					Tatil orjTatil = (Tatil) tatilNew.getOrjTatil().clone();
+					orjTatil.setBasTarih(vardiyaTatil.getArifeBaslangicTarihi());
+					tatilNew.setOrjTatil(orjTatil);
+				}
 				this.tatil = tatilNew;
 			}
 
