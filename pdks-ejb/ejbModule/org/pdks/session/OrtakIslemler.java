@@ -12484,6 +12484,10 @@ public class OrtakIslemler implements Serializable {
 					cal.set(Calendar.YEAR, yil);
 					tatilOrj.setBitTarih(cal.getTime());
 				}
+				if (tatilOrj.getYarimGun()) {
+					tatilOrj.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.HOUR_OF_DAY, saat));
+					tatilOrj.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.MINUTE, dakika));
+				}
 				tatil.setOrjTatil(tatilOrj);
 				tatil.setYarimGun(tatilGunView.getYarimGun());
 				tatil.setBasGun(tatilGunView.getTarih());
@@ -12501,6 +12505,7 @@ public class OrtakIslemler implements Serializable {
 					tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.HOUR_OF_DAY, saat));
 					tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.MINUTE, dakika));
 				}
+
 				tatil.setBasGun(tatil.getBasTarih());
 				tatilMap.put(key, tatil);
 			}
@@ -12603,7 +12608,7 @@ public class OrtakIslemler implements Serializable {
 						Date arifeBaslangicTarihi = tatilIslem.getBasTarih();
 						CalismaSekli calismaSekli = vardiyaTatil.getCalismaSekli();
 						Double arifeCalismaSure = null;
-						if (vardiyaTatil.isCalisma()) {
+						if (vardiyaTatil.isCalisma() || vardiyaTatil.isIzinVardiya() == false) {
 							String tatilStr = !PdksUtil.hasStringValue(arifeTatilBasZaman) ? null : arifeTatilBasZaman;
 							ArifeVardiyaDonem arifeVardiyaDonemDB = null;
 							for (ArifeVardiyaDonem arifeVardiyaDonem : arifeTatilList) {
@@ -19576,6 +19581,7 @@ public class OrtakIslemler implements Serializable {
 		ArrayList<HareketKGS> oncekiHareketler = new ArrayList<HareketKGS>();
 		VardiyaGun oncekiGun = null;
 		Date oncekiGunVardiyaBit = null;
+		HashMap<String, Tatil> arifeTatilMap = new HashMap<String, Tatil>();
 		for (VardiyaGun vg : bayramAyirList) {
 			boolean devam = false;
 			vg.setGecmisHataliDurum(false);
@@ -19705,21 +19711,30 @@ public class OrtakIslemler implements Serializable {
 						if (tatilGunleriMap.containsKey(strDiger))
 							tatil = tatilGunleriMap.get(strDiger);
 					}
+
 					Tatil orjTatil = tatil.getOrjTatil();
+
 					Date tatilBas = tatil.getBasTarih(), tatilBit = tatil.getBitTarih(), gunBit = PdksUtil.convertToJavaDate(PdksUtil.convertToDateString(vg.getVardiyaDate(), "yyyyMMdd") + " 23:59:59", "yyyyMMdd HH:mm:ss");
+					Long tatilId = tatil.getId() != null ? tatil.getId() : (orjTatil != null ? orjTatil.getId() : null);
+					String tatilKey = tatilId != null ? "" + tatilId : "";
 					if (tatil.isYarimGunMu()) {
-						if (islemVardiya.isCalisma()) {
-							vardiyaMap = tatil.getVardiyaMap();
-							if (vardiyaMap != null && vardiyaMap.containsKey(islemVardiya.getId())) {
-								Date arifeBaslangicTarihi = vardiyaMap.get(islemVardiya.getId()).getArifeBaslangicTarihi();
-								if (arifeBaslangicTarihi != null)
-									tatilBas = arifeBaslangicTarihi;
-							}
+						vardiyaMap = tatil.getVardiyaMap();
+						if (vardiyaMap != null && vardiyaMap.containsKey(islemVardiya.getId())) {
+							Date arifeBaslangicTarihi = vardiyaMap.get(islemVardiya.getId()).getArifeBaslangicTarihi();
+							if (arifeBaslangicTarihi != null)
+								tatilBas = arifeBaslangicTarihi;
 						}
-						orjTatil = (Tatil) orjTatil.clone();
-						orjTatil.setBasTarih(tatilBas);
+						if (arifeTatilMap.containsKey(tatilKey) == false) {
+							orjTatil = (Tatil) orjTatil.clone();
+							orjTatil.setBasTarih(tatilBas);
+							arifeTatilMap.put(tatilKey, orjTatil);
+						}
+					}
+					if (arifeTatilMap.containsKey(tatilKey)) {
+						orjTatil = arifeTatilMap.get(tatilKey);
 						tatil.setOrjTatil(orjTatil);
 					}
+
 					if (islemVardiya.isCalisma() && islemVardiya.getVardiyaBitZaman().after(tatilBit))
 						gunBit = islemVardiya.getVardiyaBitZaman();
 					ArrayList<HareketKGS> yeniHareketler = new ArrayList<HareketKGS>(), hareketler = new ArrayList<HareketKGS>();
@@ -19847,6 +19862,7 @@ public class OrtakIslemler implements Serializable {
 			oncekiGun = vg.getVardiya() != null ? vg : null;
 			oncekiGunVardiyaBit = islemVardiya.getVardiyaBitZaman();
 		}
+		arifeTatilMap = null;
 	}
 
 	/**
