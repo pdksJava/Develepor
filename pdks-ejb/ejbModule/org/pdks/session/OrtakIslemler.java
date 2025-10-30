@@ -19866,7 +19866,7 @@ public class OrtakIslemler implements Serializable {
 			if (bayramAyir != null)
 				vg.setBayramAyir(bayramAyir);
 			oncekiGun = vg.getVardiya() != null ? vg : null;
-			if (islemVardiya.getVardiyaBitZaman() != null)
+			if (islemVardiya != null)
 				oncekiGunVardiyaBit = islemVardiya.getVardiyaBitZaman();
 		}
 		arifeTatilMap = null;
