@@ -10,6 +10,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
+import org.pdks.session.PdksUtil;
 
 @Entity(name = VardiyaSaat.TABLE_NAME)
 public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneable {
@@ -26,9 +27,11 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 	public static final String COLUMN_NAME_CALISMA_SURESI = "CALISMA_SURESI";
 	public static final String COLUMN_NAME_RESMI_TATIL_SURESI = "RESMI_TATIL_SURESI";
 	public static final String COLUMN_NAME_AKSAM_VARDIYA = "AKSAM_VARDIYA_SURESI";
+	public static final String COLUMN_NAME_RT_KANUNI_EKLENEN_SURE = "RT_KANUNI_EKLENEN_SURE";
 	public static final String COLUMN_NAME_GUNCELLEME_TARIHI = "GUNCELLEME_TARIHI";
 
 	private double normalSure = 0d, calismaSuresi = 0d, resmiTatilSure = 0d, aksamVardiyaSaatSayisi = 0d;
+	private Double resmiTatilKanunenEklenenSure = 0d;
 
 	private Date guncellemeTarihi;
 
@@ -70,6 +73,17 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 		this.resmiTatilSure = value;
 	}
 
+	@Column(name = COLUMN_NAME_RT_KANUNI_EKLENEN_SURE)
+	public Double getResmiTatilKanunenEklenenSure() {
+		return resmiTatilKanunenEklenenSure;
+	}
+
+	public void setResmiTatilKanunenEklenenSure(Double value) {
+		if (!guncellendi)
+			guncellendi = PdksUtil.isDoubleDegisti(value, resmiTatilKanunenEklenenSure);
+		this.resmiTatilKanunenEklenenSure = value;
+	}
+
 	@Column(name = COLUMN_NAME_AKSAM_VARDIYA)
 	public double getAksamVardiyaSaatSayisi() {
 		return aksamVardiyaSaatSayisi;
@@ -100,6 +114,12 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 			// bu class cloneable oldugu icin buraya girilmemeli...
 			throw new InternalError();
 		}
+	}
+
+	@Transient
+	public double getResmiTatilToplamSure() {
+		double resmiTatilToplamSure = resmiTatilSure + (resmiTatilKanunenEklenenSure != null ? resmiTatilKanunenEklenenSure.doubleValue() : 0.0d);
+		return resmiTatilToplamSure;
 	}
 
 	@Transient

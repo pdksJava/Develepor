@@ -482,8 +482,8 @@
 															rendered="#{vardiyaGunHome.ikRole and vardiyaGun.izin != null and vardiyaGun.vardiya.izin == false}">
 															<br />[ #{vardiyaGun.vardiya.kisaAdi} ] </ui:fragment> <rich:toolTip for="vardiya#{vardiyaGun.vardiyaKeyStr}">
 															<SPAN style="font-size: 12px; font-weight: normal; color: black;"> #{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate,
-																'd MMM')} --> #{vardiyaGun.title} <ui:fragment rendered="#{vardiyaGun.resmiTatilSure>0}">
-												          	RT : #{authenticatedUser.sayiFormatliGoster(vardiyaGun.resmiTatilSure)}
+																'd MMM')} --> #{vardiyaGun.title} <ui:fragment rendered="#{vardiyaGun.resmiTatilToplamSure>0}">
+												          	RT : #{authenticatedUser.sayiFormatliGoster(vardiyaGun.resmiTatilToplamSure)}
 												          </ui:fragment>
 
 															</SPAN>

@@ -1119,6 +1119,11 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 						if (title != null) {
 							if (vardiyaGun.getVardiya() != null && (vardiyaGun.getCalismaSuresi() > 0 || (vardiyaGun.getVardiya().isCalisma() && styleGenel == styleCalisma)))
 								title = vardiyaGun.getVardiya().getKisaAdi() + " --> " + title;
+							double rtSure = vardiyaGun.getResmiTatilToplamSure(), htSure = vardiyaGun.getHaftaCalismaSuresi();
+							if (htSure > 0.0d)
+								title += " HT : " + authenticatedUser.sayiFormatliGoster(htSure);
+							if (rtSure > 0.0d)
+								title += " RT : " + authenticatedUser.sayiFormatliGoster(rtSure);
 							if (PdksUtil.hasStringValue(title))
 								ExcelUtil.setCellComment(cell, anchor, helper, drawing, title);
 
@@ -1557,8 +1562,8 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 										ucretiOdenenMesaiSure += vardiyaGun.getCalismaNetSuresi() - fazlaMesaiMaxSure;
 
 								}
-								if (vardiyaSaatDB.getResmiTatilSure() > 0.0d)
-									vardiyaGun.setResmiTatilSure(vardiyaSaatDB.getResmiTatilSure());
+								if (vardiyaSaatDB.getResmiTatilToplamSure() > 0.0d)
+									vardiyaGun.setResmiTatilSure(vardiyaSaatDB.getResmiTatilToplamSure());
 								else if (pd.getHaftaCalismaSuresi() != null && vardiyaGun.getVardiya().isHaftaTatil() && pd.getHaftaCalismaSuresi() > 0.0d) {
 									puantajHaftaTatil += vardiyaSaatDB.getCalismaSuresi();
 									vardiyaGun.setHaftaCalismaSuresi(vardiyaSaatDB.getCalismaSuresi());

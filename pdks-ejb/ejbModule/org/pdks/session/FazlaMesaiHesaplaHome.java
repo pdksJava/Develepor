@@ -2010,9 +2010,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									normalSure = islemVardiya.getNetCalismaSuresi();
 								if (denklestirmeAyDurum) {
 									if (hareketDurum.equals(Boolean.FALSE)) {
+										vardiyaSaat.setResmiTatilKanunenEklenenSure(0.0d);
 										vardiyaSaat.setResmiTatilSure(0.0d);
 										vardiyaSaat.setAksamVardiyaSaatSayisi(0.0d);
 									} else {
+										vardiyaSaat.setResmiTatilKanunenEklenenSure(vardiyaGun.getResmiTatilKanunenEklenenSure());
 										vardiyaSaat.setResmiTatilSure(vardiyaGun.getResmiTatilSure());
 										vardiyaSaat.setAksamVardiyaSaatSayisi(vardiyaGun.getAksamKatSayisi());
 									}
@@ -2218,12 +2220,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							}
 							if (vardiyaGun.getGecenAyResmiTatilSure() > 0)
 								vardiyaGun.addCalismaSuresi(vardiyaGun.getGecenAyResmiTatilSure());
-
-							if (vardiyaGun.getResmiTatilSure() > 0) {
+							double resmiTatilToplamSure = vardiyaGun.getResmiTatilToplamSure();
+							if (resmiTatilToplamSure > 0) {
 								if (!resmiTatilVar)
 									resmiTatilVar = Boolean.TRUE;
-								resmiTatilToplami += vardiyaGun.getResmiTatilSure();
-								// logger.info(vardiyaGun.getVardiyaKeyStr() + " " + resmiTatilToplami + " " + vardiyaGun.getResmiTatilSure());
+								resmiTatilToplami += resmiTatilToplamSure;
 							}
 							if (vardiyaGun.getCalisilmayanAksamSure() > 0)
 								aksamVardiyaSaatSayisi += vardiyaGun.getCalisilmayanAksamSure();
@@ -5773,6 +5774,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						if (title != null) {
 							if (vardiyaGun.getVardiya() != null && (vardiyaGun.getCalismaSuresi() > 0 || (vardiyaGun.getVardiya().isCalisma() && styleGenel == styleCalisma)))
 								title = vardiyaGun.getVardiya().getKisaAdi() + " --> " + title;
+							double rtSure = vardiyaGun.getResmiTatilToplamSure(), htSure = vardiyaGun.getHaftaCalismaSuresi();
+							if (htSure > 0.0d)
+								title += " HT : " + authenticatedUser.sayiFormatliGoster(htSure);
+							if (rtSure > 0.0d)
+								title += " RT : " + authenticatedUser.sayiFormatliGoster(rtSure);
 							ExcelUtil.setCellComment(cell, anchor, helper, drawing, title);
 						}
 						cell.setCellValue(aciklama);

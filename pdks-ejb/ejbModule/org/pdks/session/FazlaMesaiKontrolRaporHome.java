@@ -1232,8 +1232,8 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 							if (vardiyaGun.getVardiyaSaatDB() != null) {
 								if (fazlaMesaiHesapla) {
 									VardiyaSaat vardiyaSaatDB = vardiyaGun.getVardiyaSaatDB();
-									if (vardiyaSaatDB.getResmiTatilSure() > 0.0d)
-										vardiyaGun.setResmiTatilSure(vardiyaSaatDB.getResmiTatilSure());
+									if (vardiyaSaatDB.getResmiTatilToplamSure() > 0.0d)
+										vardiyaGun.setResmiTatilSure(vardiyaSaatDB.getResmiTatilToplamSure());
 									else if (vardiyaGun.getVardiya().isHaftaTatil()) {
 										puantajHaftaTatil += vardiyaSaatDB.getCalismaSuresi();
 										vardiyaGun.setHaftaCalismaSuresi(vardiyaSaatDB.getCalismaSuresi());

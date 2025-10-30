@@ -70,7 +70,7 @@ public class VardiyaGun extends BaseObject {
 	private ArrayList<Vardiya> vardiyalar;
 	private VardiyaGun oncekiVardiyaGun, sonrakiVardiyaGun;
 	private int beklemeSuresi = 6;
-	private Double calismaSuaSaati = PersonelDenklestirme.getCalismaSaatiSua();
+	private Double calismaSuaSaati = PersonelDenklestirme.getCalismaSaatiSua(), resmiTatilKanunenEklenenSure;
 	private Boolean izinHaftaTatilDurum;
 	private boolean hareketHatali = Boolean.FALSE, planHareketEkle = Boolean.TRUE, kullaniciYetkili = Boolean.TRUE, zamanGuncelle = Boolean.TRUE, zamanGelmedi = Boolean.FALSE;
 	private boolean fazlaMesaiTalepOnayliDurum = Boolean.FALSE, fazlaMesaiTalepDurum = Boolean.FALSE, ayarlamaBitti = false, bayramAyir = false;
@@ -1204,6 +1204,15 @@ public class VardiyaGun extends BaseObject {
 		return resmiTatilSure;
 	}
 
+	@Transient
+	public double getResmiTatilToplamSure() {
+		double resmiTatilToplamSure = resmiTatilSure + (resmiTatilKanunenEklenenSure != null ? resmiTatilKanunenEklenenSure.doubleValue() : 0.0d);
+
+		if (resmiTatilToplamSure > 0.0d)
+			logger.debug(resmiTatilToplamSure);
+		return resmiTatilToplamSure;
+	}
+
 	public void setResmiTatilSure(double value) {
 		if (value != 0.0d) {
 			if (this.getVardiyaDateStr().endsWith("0501"))
@@ -1233,7 +1242,7 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public boolean isTatilMesai() {
-		double tatilSure = resmiTatilSure + haftaCalismaSuresi;
+		double tatilSure = getResmiTatilToplamSure() + haftaCalismaSuresi;
 		return tatilSure > 0.0d;
 	}
 
@@ -1468,8 +1477,8 @@ public class VardiyaGun extends BaseObject {
 				title += " FM : " + PdksUtil.numericValueFormatStr(fm, null);
 			if (title != null && haftaCalismaSuresi > 0.0d)
 				title += " HT : " + PdksUtil.numericValueFormatStr(haftaCalismaSuresi, null);
-			if (title != null && resmiTatilSure > 0.0d)
-				title += " RT: " + PdksUtil.numericValueFormatStr(resmiTatilSure, null);
+			if (title != null && getResmiTatilToplamSure() > 0.0d)
+				title += " RT: " + PdksUtil.numericValueFormatStr(getResmiTatilToplamSure(), null);
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
@@ -2532,6 +2541,15 @@ public class VardiyaGun extends BaseObject {
 
 	public void setCihazZamanSaniyeSifirla(boolean cihazZamanSaniyeSifirla) {
 		this.cihazZamanSaniyeSifirla = cihazZamanSaniyeSifirla;
+	}
+
+	@Transient
+	public Double getResmiTatilKanunenEklenenSure() {
+		return resmiTatilKanunenEklenenSure;
+	}
+
+	public void setResmiTatilKanunenEklenenSure(Double resmiTatilKanunenEklenenSure) {
+		this.resmiTatilKanunenEklenenSure = resmiTatilKanunenEklenenSure;
 	}
 
 	public void entityRefresh() {

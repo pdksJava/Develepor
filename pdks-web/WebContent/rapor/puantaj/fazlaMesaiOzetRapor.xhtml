@@ -484,8 +484,8 @@
 																<ui:fragment rendered="#{ap.vardiyaGun.vardiya.calisma == false}">
 																	<h:outputText value="#{ap.vardiyaGun.aciklama}" />
 																</ui:fragment>
-																<ui:fragment rendered="#{ap.vardiyaGun.resmiTatilSure>0}">
-																	<h:outputText value=" RT : #{authenticatedUser.sayiFormatliGoster(ap.vardiyaGun.resmiTatilSure)}" />
+																<ui:fragment rendered="#{ap.vardiyaGun.resmiTatilToplamSure>0}">
+																	<h:outputText value=" RT : #{authenticatedUser.sayiFormatliGoster(ap.vardiyaGun.resmiTatilToplamSure)}" />
 																</ui:fragment>
 															</ui:fragment>
 															<ui:fragment rendered="#{ap.vardiyaGun.izin != null }">

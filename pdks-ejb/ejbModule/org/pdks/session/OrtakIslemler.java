@@ -13737,6 +13737,7 @@ public class OrtakIslemler implements Serializable {
 				vardiyaGun.setCalismaSuresi(0);
 				vardiyaGun.setNormalSure(0);
 				vardiyaGun.setResmiTatilSure(0);
+				vardiyaGun.setResmiTatilKanunenEklenenSure(0.0d);
 				vardiyaGun.setBayramCalismaSuresi(0);
 				vardiyaGun.setCalisilmayanAksamSure(0d);
 				vardiyaGun.setHaftaCalismaSuresi(0d);
@@ -14893,6 +14894,7 @@ public class OrtakIslemler implements Serializable {
 			TreeMap<String, BigDecimal> gecGirisMap = allMap.containsKey(KatSayiTipi.GEC_GIRIS_TIPI) ? allMap.get(KatSayiTipi.GEC_GIRIS_TIPI) : null;
 			TreeMap<String, BigDecimal> gecCikisMap = allMap.containsKey(KatSayiTipi.GEC_CIKIS_TIPI) ? allMap.get(KatSayiTipi.GEC_CIKIS_TIPI) : null;
 			TreeMap<String, BigDecimal> izinHaftaTatilDurumMap = allMap.containsKey(KatSayiTipi.IZIN_HAFTA_TATIL_DURUM) ? allMap.get(KatSayiTipi.IZIN_HAFTA_TATIL_DURUM) : null;
+			TreeMap<String, BigDecimal> resmiTatilToplamSureEklemeDurumMap = allMap.containsKey(KatSayiTipi.RT_KANUNEN_EKLEME) ? allMap.get(KatSayiTipi.RT_KANUNEN_EKLEME) : null;
 			TreeMap<String, BigDecimal> tatilYemekHesabiSureEkleDurumMap = allMap.containsKey(KatSayiTipi.YEMEK_SURE_EKLE_DURUM) ? allMap.get(KatSayiTipi.YEMEK_SURE_EKLE_DURUM) : null;
 			TreeMap<String, BigDecimal> fmtDurumMap = allMap.containsKey(KatSayiTipi.FMT_DURUM) ? allMap.get(KatSayiTipi.FMT_DURUM) : null;
 			TreeMap<String, BigDecimal> saatCalisanNormalGunMap = allMap.containsKey(KatSayiTipi.SAAT_CALISAN_NORMAL_GUN) ? allMap.get(KatSayiTipi.SAAT_CALISAN_NORMAL_GUN) : null;
@@ -14919,6 +14921,7 @@ public class OrtakIslemler implements Serializable {
 			boolean saatCalisanArifeNormalKontrolEt = saatCalisanArifeNormalMap != null && !saatCalisanArifeNormalMap.isEmpty();
 			boolean saatCalisanArifeTatilKontrolEt = saatCalisanArifeTatilMap != null && !saatCalisanArifeTatilMap.isEmpty();
 			boolean fazlaMesaiYuvarlamaKontrolEt = fazlaMesaiYuvarlamaMap != null && !fazlaMesaiYuvarlamaMap.isEmpty();
+			boolean resmiTatilToplamSureEklemeDurumKontrolEt = resmiTatilToplamSureEklemeDurumMap != null && !resmiTatilToplamSureEklemeDurumMap.isEmpty();
 			boolean tatilYemekHesabiSureEkleDurumKontrolEt = tatilYemekHesabiSureEkleDurumMap != null && !tatilYemekHesabiSureEkleDurumMap.isEmpty();
 			yuvarlamaKatSayiOku = yuvarlamaMap != null && !yuvarlamaMap.isEmpty();
 			suaKatSayiOku = sureSuaMap != null && !sureSuaMap.isEmpty();
@@ -14987,7 +14990,8 @@ public class OrtakIslemler implements Serializable {
 							gun = null;
 						}
 					}
-
+					if (resmiTatilToplamSureEklemeDurumKontrolEt && veriKatSayiVar(resmiTatilToplamSureEklemeDurumMap, sirketId, tesisId, vardiyaId, str))
+						katSayiMap.put(KatSayiTipi.RT_KANUNEN_EKLEME.value(), getKatSayiVeriMap(resmiTatilToplamSureEklemeDurumMap, sirketId, tesisId, vardiyaId, str));
 					if (saatCalisanNormalGunKontrolEt && veriKatSayiVar(saatCalisanNormalGunMap, sirketId, tesisId, vardiyaId, str))
 						katSayiMap.put(KatSayiTipi.SAAT_CALISAN_NORMAL_GUN.value(), getKatSayiVeriMap(saatCalisanNormalGunMap, sirketId, tesisId, vardiyaId, str));
 					if (vg.isIzinli() && saatCalisanIzinGunKontrolEt && veriKatSayiVar(saatCalisanIzinGunMap, sirketId, tesisId, vardiyaId, str))
@@ -20675,6 +20679,7 @@ public class OrtakIslemler implements Serializable {
 					Date digerAyinIlkGunu = vardiyaGun.isAyinGunu() && ayinSonGunu == Integer.parseInt(gun) ? tariheGunEkleCikar(cal, vardiyaGun.getVardiyaDate(), 1) : null;
 					boolean tatilGunu = tatilGunleriMap != null && tatilGunleriMap.containsKey(vGun);
 					vardiyaGun.setResmiTatilSure(0);
+					vardiyaGun.setResmiTatilKanunenEklenenSure(0d);
 					vardiyaGun.setHaftaTatilDigerSure(0);
 					vardiyaGun.setBayramCalismaSuresi(0);
 					vardiyaGun.setCalisilmayanAksamSure(0d);
@@ -21858,14 +21863,21 @@ public class OrtakIslemler implements Serializable {
 					if (toplamTatilSure > 0.0d) {
 
 						BigDecimal bayramAyirKatsayi = vardiyaGun.getKatSayi(KatSayiTipi.BAYRAM_AYIR.value());
+						
 						boolean bayramAyir = bayramAyirKatsayi != null && bayramAyirKatsayi.intValue() == 1;
 						if (bayramAyir || bayramAyirGun != null) {
 							double minBayramSure = 7.5d;
 							if ((bayramAyir || (bayramAyirGun != null && vardiyaGun.getVardiyaDate().getTime() >= bayramAyirGun.getTime())) && toplamTatilSure < minBayramSure) {
 								double fark = minBayramSure - toplamTatilSure;
-								vardiyaGun.addCalismaSuresi(fark);
-								vardiyaGun.setResmiTatilSure(minBayramSure);
-
+								BigDecimal decimal = vardiyaGun.getKatSayi(KatSayiTipi.RT_KANUNEN_EKLEME.value());
+								boolean resmiTatilToplamSureEkleme = decimal != null && decimal.intValue() > 0;
+								if (resmiTatilToplamSureEkleme) {
+									vardiyaGun.setResmiTatilKanunenEklenenSure(fark);
+									vardiyaGun.setResmiTatilSure(toplamTatilSure);
+								} else {
+									vardiyaGun.addCalismaSuresi(fark);
+									vardiyaGun.setResmiTatilSure(minBayramSure);
+								}
 							}
 							if (vardiyaGun.getCalismaSuresi() <= vardiyaGun.getGecenAyResmiTatilSure()) {
 								vardiyaGun.addCalismaSuresi(vardiyaGun.getGecenAyResmiTatilSure());
@@ -21884,10 +21896,6 @@ public class OrtakIslemler implements Serializable {
 					String key = vardiyaGun.getVardiyaKeyStr();
 					double haftaCalismaSuresi = 0d;
 					if (haftaSonuSureMap.containsKey(key)) {
-						// String gunStr = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMMdd").substring(6);
-						// if (gunStr.equals("01")) {
-						// haftaCalismaSuresi = 0d;
-						// }
 						haftaCalismaSuresi = haftaSonuSureMap.get(key);
 						if (calismaModeli != null && calismaModeli.isFazlaMesaiVarMi())
 							vardiyaGun.setHaftaCalismaSuresi(haftaSonuSureMap.get(key));
@@ -22075,6 +22083,7 @@ public class OrtakIslemler implements Serializable {
 							if (vardiyaGun.getDurum() && !vardiyaGun.isZamanGelmedi()) {
 								vardiyaGun.setCalismaSuresi(vardiyaSaat.getCalismaSuresi());
 								vardiyaGun.setResmiTatilSure(vardiyaSaat.getResmiTatilSure());
+								vardiyaGun.setResmiTatilKanunenEklenenSure(vardiyaSaat.getResmiTatilKanunenEklenenSure());
 							}
 
 						}
@@ -22669,8 +22678,8 @@ public class OrtakIslemler implements Serializable {
 				vardiyaGun.setCalismaSuresi(0);
 				vardiyaGun.setNormalSure(0);
 				vardiyaGun.setResmiTatilSure(0);
+				vardiyaGun.setResmiTatilKanunenEklenenSure(0.0d);
 				vardiyaGun.setBayramCalismaSuresi(0);
-				vardiyaGun.setCalisilmayanAksamSure(0d);
 				vardiyaGun.setCalisilmayanAksamSure(0d);
 				vardiyaGun.setHaftaCalismaSuresi(0d);
 				vardiyaGun.setHareketler(null);

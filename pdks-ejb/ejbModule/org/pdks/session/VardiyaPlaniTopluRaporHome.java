@@ -2221,8 +2221,14 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 						}
 
 						cell.setCellValue(aciklama);
-						if (!titleVardiya.equals(""))
+						if (!titleVardiya.equals("")) {
+							double rtSure = vardiyaGun.getResmiTatilToplamSure(), htSure = vardiyaGun.getHaftaCalismaSuresi();
+							if (htSure > 0.0d)
+								titleVardiya += " HT : " + authenticatedUser.sayiFormatliGoster(htSure);
+							if (rtSure > 0.0d)
+								titleVardiya += " RT : " + authenticatedUser.sayiFormatliGoster(rtSure);
 							ExcelUtil.setCellComment(cell, anchor, helper, drawing, titleVardiya);
+						}
 
 					}
 					if (denklestirmeYap) {

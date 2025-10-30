@@ -131,16 +131,16 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 	}
 
 	public String fillTesisList() {
- 		clearVardiyaList();
+		clearVardiyaList();
 		Date bugun = PdksUtil.getDate(date);
 		ortakIslemler.setAramaSecenekTesisData(aramaSecenekleri, bugun, bugun, false, session);
- 		return "";
+		return "";
 	}
 
 	private void clearVardiyaList() {
 		hareketList.clear();
 		vardiyaGunList.clear();
- 	}
+	}
 
 	private void fillEkSahaTanim() {
 		ortakIslemler.fillEkSahaTanimAramaSecenekAta(session, Boolean.FALSE, Boolean.TRUE, aramaSecenekleri);
@@ -355,7 +355,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 				if (vardiyaGun.getDurum() && vardiyaGun.getVardiyaSaat() != null) {
 					VardiyaSaat vs = vardiyaGun.getVardiyaSaat();
 					calismaSuresi = vs.getCalismaSuresi();
-					resmiMesaiSure = vs.getResmiTatilSure();
+					resmiMesaiSure = vs.getResmiTatilToplamSure();
 					hesapla = calismaSuresi == 0.0d;
 
 				} else

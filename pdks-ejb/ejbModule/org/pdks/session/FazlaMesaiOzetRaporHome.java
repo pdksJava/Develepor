@@ -1543,8 +1543,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 								vardiyaGun.setCikisHareketleri(null);
 								if (fazlaMesaiHesapla) {
 									VardiyaSaat vardiyaSaatDB = vardiyaGun.getVardiyaSaatDB();
-									if (vardiyaSaatDB.getResmiTatilSure() > 0.0d) {
-										vardiyaGun.setResmiTatilSure(vardiyaSaatDB.getResmiTatilSure());
+									if (vardiyaSaatDB.getResmiTatilToplamSure() > 0.0d) {
+										vardiyaGun.setResmiTatilSure(vardiyaSaatDB.getResmiTatilToplamSure());
 									}
 
 									else if (personelDenklestirme.getHaftaCalismaSuresi() != null && vardiyaGun.getVardiya().isHaftaTatil() && personelDenklestirme.getHaftaCalismaSuresi() > 0.0d) {
@@ -1561,6 +1561,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 								if (tipi.equals("S")) {
 									vardiyaGun.setCalismaSuresi(0.0d);
 									vardiyaGun.setResmiTatilSure(0.0d);
+									vardiyaGun.setResmiTatilKanunenEklenenSure(0.0d);
 								}
 
 								vardiyaGun.setDurum(true);
@@ -2669,6 +2670,11 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 						}
 						String title = vardiya != null ? vardiyaGun.getFazlaMesaiTitle() : null;
+						double rtSure = vardiyaGun.getResmiTatilToplamSure(), htSure = vardiyaGun.getHaftaCalismaSuresi();
+						if (htSure > 0.0d)
+							title += " HT : " + authenticatedUser.sayiFormatliGoster(htSure);
+						if (rtSure > 0.0d)
+							title += " RT : " + authenticatedUser.sayiFormatliGoster(rtSure);
 						// cell.setCellValue(aciklama);
 						ExcelUtil.baslikCell(cell, anchor, helper, drawing, aciklama, title);
 

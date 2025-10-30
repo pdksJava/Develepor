@@ -1004,8 +1004,8 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 											Double sure = vardiyaGun.getCalismaNetSuresi();
 											if (gunMaxCalismaOdenir)
 												ucretiOdenenMesaiSure += sure != null && sure.doubleValue() > vardiyaGun.getYasalMaxSure() ? sure.doubleValue() - vardiyaGun.getYasalMaxSure() : 0.0d;
-											if (vardiyaSaatDB.getResmiTatilSure() > 0.0d)
-												puantajResmiTatil += vardiyaSaatDB.getResmiTatilSure();
+											if (vardiyaSaatDB.getResmiTatilToplamSure() > 0.0d)
+												puantajResmiTatil += vardiyaSaatDB.getResmiTatilToplamSure();
 											else if (vardiyaGun.getVardiya().isHaftaTatil()) {
 												if (puantaj.getCalismaModeli().getHaftaTatilMesaiOde()) {
 													haftaTatilDurum = true;
@@ -1018,6 +1018,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 												puantajSaatToplami += vardiyaSaatDB.getCalismaSuresi() - vardiyaSaatDB.getResmiTatilSure();
 											vardiyaGun.setCalismaSuresi(vardiyaSaatDB.getCalismaSuresi());
 											vardiyaGun.setResmiTatilSure(vardiyaSaatDB.getResmiTatilSure());
+											vardiyaGun.setResmiTatilKanunenEklenenSure(vardiyaSaatDB.getResmiTatilKanunenEklenenSure());
 										}
 
 									}
@@ -1476,7 +1477,11 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 						if (title != null) {
 							if (vardiyaGun.getVardiya() != null && (vardiyaGun.getCalismaSuresi() > 0 || (vardiyaGun.getVardiya().isCalisma() && styleGenel == styleCalisma)))
 								title = vardiyaGun.getVardiya().getKisaAdi() + " --> " + title;
-
+							double rtSure = vardiyaGun.getResmiTatilToplamSure(), htSure = vardiyaGun.getHaftaCalismaSuresi();
+							if (htSure > 0.0d)
+								title += " HT : " + authenticatedUser.sayiFormatliGoster(htSure);
+							if (rtSure > 0.0d)
+								title += " RT : " + authenticatedUser.sayiFormatliGoster(rtSure);
 							ExcelUtil.setCellComment(cell, anchor, helper, drawing, title);
 
 						}

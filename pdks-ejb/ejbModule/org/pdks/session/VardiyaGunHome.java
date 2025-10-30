@@ -2354,6 +2354,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 					String title = !help || calisan(pdksVardiyaGun) ? pdksVardiyaGun.getTitle() : null;
 					if (title != null) {
+						double rtSure = pdksVardiyaGun.getResmiTatilToplamSure(), htSure = pdksVardiyaGun.getHaftaCalismaSuresi();
+						if (htSure > 0.0d)
+							title += " HT : " + authenticatedUser.sayiFormatliGoster(htSure);
+						if (rtSure > 0.0d)
+							title += " RT : " + authenticatedUser.sayiFormatliGoster(rtSure);
 						Comment comment1 = drawing.createCellComment(anchor);
 						RichTextString str1 = helper.createRichTextString(title);
 						comment1.setString(str1);
@@ -3910,6 +3915,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					pdksVardiyaGun.setHaftaCalismaSuresi(0.0d);
 					pdksVardiyaGun.setCalismaSuresi(0.0d);
 					pdksVardiyaGun.setResmiTatilSure(0.0d);
+					pdksVardiyaGun.setResmiTatilKanunenEklenenSure(0.0d);
 					Long newVardiyaId = pdksVardiyaGun.getVardiya() != null ? pdksVardiyaGun.getVardiya().getId() : 0L;
 					Long eskiVardiyaId = pdksVardiyaGun.getEskiVardiya() != null ? pdksVardiyaGun.getEskiVardiya().getId() : 0L;
 					pdksVardiyaGun.setGuncellendi(PdksUtil.isLongDegisti(newVardiyaId, eskiVardiyaId));
