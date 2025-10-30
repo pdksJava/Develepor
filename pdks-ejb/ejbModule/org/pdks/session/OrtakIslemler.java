@@ -19594,7 +19594,13 @@ public class OrtakIslemler implements Serializable {
 			Boolean bayramAyir = null;
 			if (vg.isBayramAyir() == false && vg.getTatil() != null) {
 				bayramAyir = vg.isBayramAyir();
-				vg.setBayramAyir(tatilGunleriMap.get(str).isYarimGunMu());
+				try {
+					if (tatilGunleriMap.containsKey(str))
+						vg.setBayramAyir(tatilGunleriMap.get(str).isYarimGunMu());
+				} catch (Exception e) {
+					logger.error(e);
+				}
+
 			}
 
 			if (str.endsWith("01")) {
