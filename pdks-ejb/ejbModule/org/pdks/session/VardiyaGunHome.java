@@ -1151,16 +1151,21 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						fazlaMesaiTalep.setOnayDurumu(FazlaMesaiTalep.ONAY_DURUM_ONAYLANDI);
 						fazlaMesaiTalep.setGuncellemeTarihi(new Date());
 					}
-					saveOrUpdate(fazlaMesaiTalep);
-					sessionFlush();
-					mesaiMailHatirlatma(fazlaMesaiTalep);
-					if (manuelHareketEkle != null && manuelHareketEkle)
-						talepGirisCikisHareketEkle(islemFazlaMesaiTalep, false);
-					PdksUtil.addMessageAvailableInfo(str + fazlaMesaiTalep.getGuncelleyenUser().getAdSoyad() + " tarafından onaylanacaktır.");
-					if (!topluGuncelle)
-						mesaiGuncelle(seciliVardiyaGun);
-					else
-						fazlaMesaiTalep = null;
+					try {
+						saveOrUpdate(fazlaMesaiTalep);
+						sessionFlush();
+						mesaiMailHatirlatma(fazlaMesaiTalep);
+						if (manuelHareketEkle != null && manuelHareketEkle)
+							talepGirisCikisHareketEkle(islemFazlaMesaiTalep, false);
+						PdksUtil.addMessageAvailableInfo(str + fazlaMesaiTalep.getGuncelleyenUser().getAdSoyad() + " tarafından onaylanacaktır.");
+						if (!topluGuncelle)
+							mesaiGuncelle(seciliVardiyaGun);
+						else
+							fazlaMesaiTalep = null;
+					} catch (Exception e) {
+						logger.error(e);
+						e.printStackTrace();
+					}
 				} else {
 					FazlaMesaiTalep mesaiTalep = list.get(0);
 					String str = authenticatedUser.dateTimeFormatla(mesaiTalep.getBaslangicZamani()) + getTarihArasiBitisZamanString(mesaiTalep.getBaslangicZamani(), mesaiTalep.getBitisZamani()) + " arası " + authenticatedUser.sayiFormatliGoster(mesaiTalep.getMesaiSuresi()) + " saat mesai ";
