@@ -1018,7 +1018,8 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 												puantajSaatToplami += vardiyaSaatDB.getCalismaSuresi() - vardiyaSaatDB.getResmiTatilSure();
 											vardiyaGun.setCalismaSuresi(vardiyaSaatDB.getCalismaSuresi());
 											vardiyaGun.setResmiTatilSure(vardiyaSaatDB.getResmiTatilSure());
-											vardiyaGun.setResmiTatilKanunenEklenenSure(vardiyaSaatDB.getResmiTatilKanunenEklenenSure());
+											if (vardiyaSaatDB.getResmiTatilKanunenEklenenSure() != null)
+												vardiyaGun.setResmiTatilKanunenEklenenSure(vardiyaSaatDB.getResmiTatilKanunenEklenenSure());
 										}
 
 									}

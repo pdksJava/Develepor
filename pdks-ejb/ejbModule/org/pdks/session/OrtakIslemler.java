@@ -21863,7 +21863,7 @@ public class OrtakIslemler implements Serializable {
 					if (toplamTatilSure > 0.0d) {
 
 						BigDecimal bayramAyirKatsayi = vardiyaGun.getKatSayi(KatSayiTipi.BAYRAM_AYIR.value());
-						
+
 						boolean bayramAyir = bayramAyirKatsayi != null && bayramAyirKatsayi.intValue() == 1;
 						if (bayramAyir || bayramAyirGun != null) {
 							double minBayramSure = 7.5d;
@@ -22083,7 +22083,8 @@ public class OrtakIslemler implements Serializable {
 							if (vardiyaGun.getDurum() && !vardiyaGun.isZamanGelmedi()) {
 								vardiyaGun.setCalismaSuresi(vardiyaSaat.getCalismaSuresi());
 								vardiyaGun.setResmiTatilSure(vardiyaSaat.getResmiTatilSure());
-								vardiyaGun.setResmiTatilKanunenEklenenSure(vardiyaSaat.getResmiTatilKanunenEklenenSure());
+								if (vardiyaSaat.getResmiTatilKanunenEklenenSure() != null)
+									vardiyaGun.setResmiTatilKanunenEklenenSure(vardiyaSaat.getResmiTatilKanunenEklenenSure());
 							}
 
 						}

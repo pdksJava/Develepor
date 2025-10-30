@@ -85,7 +85,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	private boolean donemBitti = Boolean.TRUE, ayrikHareketVar = Boolean.FALSE, fazlaMesaiIzinKontrol = Boolean.TRUE, gebeDurum = Boolean.FALSE, sutIzniDurumu = Boolean.FALSE;
 
-	private Double saatToplami = 0d, resmiTatilToplami = 0d, haftaCalismaSuresi = 0d, ucretiOdenenMesaiSure = 0d, fazlaMesaiSure = 0d, odenenSure = 0d, planlananSure = 0d, offSure = 0.0d;
+	private Double saatToplami = 0d, resmiTatilKanunenEklenenSure = 0d, resmiTatilToplami = 0d, haftaCalismaSuresi = 0d, ucretiOdenenMesaiSure = 0d, fazlaMesaiSure = 0d, odenenSure = 0d, planlananSure = 0d, offSure = 0.0d;
 
 	private Double izinSuresi = 0d, saatlikIzinSuresi = 0d, fazlaMesaiMaxSure = 0d, eksikCalismaSure = 0d, gecenAyFazlaMesai = 0d, hesaplananSure = 0d, devredenSure = 0d, aksamVardiyaSaatSayisi = 0d, kesilenSure = 0d;
 
@@ -178,6 +178,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	public void degerSifirla() {
 		this.setSaatlikIzinSuresi(0.0d);
 		this.setResmiTatilToplami(0.0d);
+		this.setResmiTatilKanunenEklenenSure(0.0d);
 		this.setHaftaCalismaSuresi(0.0d);
 		this.setAksamVardiyaSaatSayisi(0.0d);
 		this.setAksamVardiyaSayisi(0);
@@ -402,10 +403,6 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public double getSaatToplami() {
 		return saatToplami;
-	}
-
-	public double getResmiTatilToplami() {
-		return resmiTatilToplami;
 	}
 
 	public VardiyaPlan getVardiyaPlan() {
@@ -777,6 +774,10 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		if (value != null && value.doubleValue() > 0.0d)
 			logger.debug(value);
 		this.saatToplami = value;
+	}
+
+	public double getResmiTatilToplami() {
+		return resmiTatilToplami;
 	}
 
 	public void setResmiTatilToplami(Double value) {
@@ -1488,6 +1489,14 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public void setEksiBakiyeSuresi(Double eksiBakiyeSuresi) {
 		this.eksiBakiyeSuresi = eksiBakiyeSuresi;
+	}
+
+	public Double getResmiTatilKanunenEklenenSure() {
+		return resmiTatilKanunenEklenenSure;
+	}
+
+	public void setResmiTatilKanunenEklenenSure(Double resmiTatilKanunenEklenenSure) {
+		this.resmiTatilKanunenEklenenSure = resmiTatilKanunenEklenenSure;
 	}
 
 }

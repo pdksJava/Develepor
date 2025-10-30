@@ -669,6 +669,26 @@
 											</ui:fragment>
 
 										</rich:column>
+										<rich:column rendered="#{fazlaMesaiOzetRaporHome.resmiTatilKanunenEklenenSureGoster}"
+											style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;color:black;"
+											styleClass="#{ap.trSonucClass}">
+											<f:facet name="header">
+												<ui:fragment>
+													<h:outputText value="KRÖM" id="krom" />
+													<rich:toolTip for="krom">
+														<SPAN class="rich-table-subheader"><B>Kanunen Eklenen Tatil Mesai: </B>Çalışanın bu listenin sonunda ücret olarak ödediğimiz 7.5
+															tamamlanan resmi tatil mesai saati
+														</SPAN>
+													</rich:toolTip>
+												</ui:fragment>
+											</f:facet>
+											<ui:fragment rendered="#{ap.resmiTatilKanunenEklenenSure gt 0}">
+
+												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.resmiTatilKanunenEklenenSure)}" />
+
+											</ui:fragment>
+
+										</rich:column>
 										<rich:column rendered="#{fazlaMesaiOzetRaporHome.haftaTatilVar}"
 											style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;color:black;"
 											styleClass="#{ap.trSonucClass}">

@@ -70,7 +70,7 @@ public class VardiyaGun extends BaseObject {
 	private ArrayList<Vardiya> vardiyalar;
 	private VardiyaGun oncekiVardiyaGun, sonrakiVardiyaGun;
 	private int beklemeSuresi = 6;
-	private Double calismaSuaSaati = PersonelDenklestirme.getCalismaSaatiSua(), resmiTatilKanunenEklenenSure;
+	private Double calismaSuaSaati = PersonelDenklestirme.getCalismaSaatiSua(), resmiTatilKanunenEklenenSure = 0.0d;
 	private Boolean izinHaftaTatilDurum;
 	private boolean hareketHatali = Boolean.FALSE, planHareketEkle = Boolean.TRUE, kullaniciYetkili = Boolean.TRUE, zamanGuncelle = Boolean.TRUE, zamanGelmedi = Boolean.FALSE;
 	private boolean fazlaMesaiTalepOnayliDurum = Boolean.FALSE, fazlaMesaiTalepDurum = Boolean.FALSE, ayarlamaBitti = false, bayramAyir = false;
