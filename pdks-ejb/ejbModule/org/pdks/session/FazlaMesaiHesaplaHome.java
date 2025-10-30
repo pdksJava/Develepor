@@ -4129,7 +4129,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						}
 					}
 
-					if (vGun.getGirisHareketleri() != null && !vGun.getGirisHareketleri().isEmpty() && !vGun.getCikisHareketleri().isEmpty()) {
+					if (vGun.getGirisHareketleri() != null && vGun.getCikisHareketleri() != null && !vGun.getGirisHareketleri().isEmpty() && !vGun.getCikisHareketleri().isEmpty()) {
 						int i = 0;
 						for (HareketKGS hareketGiris : vGun.getGirisHareketleri()) {
 							HareketKGS hareketCikis = null;
