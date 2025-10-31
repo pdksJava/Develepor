@@ -71,6 +71,7 @@ import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
 import org.pdks.entity.Vardiya;
+import org.pdks.entity.VardiyaEkSaat;
 import org.pdks.entity.VardiyaGorev;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaHafta;
@@ -2034,11 +2035,30 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								}
 
 								vardiyaSaat.setNormalSure(normalSure);
-								if (vardiyaSaat.isGuncellendi()) {
+								VardiyaEkSaat ekSaat = vardiyaSaat.getEkSaat();
+								boolean ekSaatEkle = false;
+								if (denklestirmeAyDurum) {
+									ekSaatEkle = vardiyaSaat.isEkSaatEkle() && ekSaat == null;
+									if (ekSaat != null) {
+										ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure());
+										ekSaatEkle = ekSaat.isGuncellendi() && denklestirmeAyDurum;
+									}
+								}
+
+								if (vardiyaSaat.isGuncellendi() || ekSaatEkle) {
+									if (ekSaatEkle) {
+										if (ekSaat == null) {
+											ekSaat = new VardiyaEkSaat();
+											ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure());
+											vardiyaSaat.setEkSaat(ekSaat);
+										}
+									}
 									if (vardiyaSaat.getId() == null)
 										vardiyaSaat.setNormalSure(normalSure);
-									else
+									else if (vardiyaSaat.isGuncellendi())
 										vardiyaSaat.setGuncellemeTarihi(bugun);
+									if (ekSaat != null && ekSaat.isGuncellendi())
+										saveList.add(ekSaat);
 									saveList.add(vardiyaSaat);
 									if (vardiyaGun.getVardiyaSaat() == null) {
 										vardiyaGun.setVardiyaSaat(vardiyaSaat);
@@ -2228,7 +2248,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									resmiTatilKanunenEklenenSure += vardiyaGun.getResmiTatilKanunenEklenenSure();
 								else if (vardiyaGun.getVardiyaSaat() != null && vardiyaGun.getVardiyaSaat().getResmiTatilKanunenEklenenSure() != null)
 									resmiTatilKanunenEklenenSure += vardiyaGun.getVardiyaSaat().getResmiTatilKanunenEklenenSure();
-								
 
 								if (!resmiTatilVar)
 									resmiTatilVar = Boolean.TRUE;
@@ -2484,7 +2503,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (!kesilenSureGoster)
 						kesilenSureGoster = kesilenSure > 0.0d;
 					puantaj.setKesilenSure(kesilenSure);
-					resmiTatilToplami = PdksUtil.setSureDoubleTypeRounded(resmiTatilToplami, rtYuvarla); 
+					resmiTatilToplami = PdksUtil.setSureDoubleTypeRounded(resmiTatilToplami, rtYuvarla);
 					if (!resmiTatilKanunenEklenenSureGoster)
 						resmiTatilKanunenEklenenSureGoster = resmiTatilKanunenEklenenSure > 0.0d;
 					puantaj.setResmiTatilKanunenEklenenSure(resmiTatilKanunenEklenenSure);

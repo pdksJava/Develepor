@@ -21114,10 +21114,10 @@ public class OrtakIslemler implements Serializable {
 								if (resmiTatilCalisma == false)
 									resmiTatilCalisma = tatilGunleriMap.containsKey(vGun);
 								if (islemVardiya.isCalisma()) {
-									if (girisZaman.getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime() && girisZaman.getTime() >= islemVardiya.getVardiyaTelorans1BasZaman().getTime())
+									if (girisZaman.getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime() && girisZaman.equals(islemVardiya.getVardiyaBasZaman()) == false)
 										if (girisHareket.isTatil() == false || girisId.startsWith(HareketKGS.SANAL_HAREKET) == false)
 											girisZaman = islemVardiya.getVardiyaBasZaman();
-									if (cikisZaman.getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime() && cikisZaman.getTime() <= islemVardiya.getVardiyaTelorans2BitZaman().getTime())
+									if (cikisZaman.getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime() && cikisZaman.equals(islemVardiya.getVardiyaBitZaman()) == false)
 										if (cikisHareket.isTatil() == false || cikisId.startsWith(HareketKGS.SANAL_HAREKET) == false)
 											cikisZaman = islemVardiya.getVardiyaBitZaman();
 								}
