@@ -19769,6 +19769,7 @@ public class OrtakIslemler implements Serializable {
 					vg.setBayramAyir(true);
 					if (str.endsWith("1027"))
 						logger.debug("" + hareketler.size());
+
 					boolean tatilBasladi = false;
 					boolean tatilVar = false;
 					for (Iterator iterator = hareketler.iterator(); iterator.hasNext();) {
