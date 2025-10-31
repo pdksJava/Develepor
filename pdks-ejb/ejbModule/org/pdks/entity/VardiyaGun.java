@@ -1478,9 +1478,9 @@ public class VardiyaGun extends BaseObject {
 			if (title != null && haftaCalismaSuresi > 0.0d)
 				title += " HT : " + PdksUtil.numericValueFormatStr(haftaCalismaSuresi, null);
 			if (title != null && getResmiTatilToplamSure() > 0.0d) {
-				title += " RT: " + PdksUtil.numericValueFormatStr(getResmiTatilToplamSure(), null);
+				title += " RT : " + PdksUtil.numericValueFormatStr(getResmiTatilToplamSure(), null);
 				if (title != null && resmiTatilKanunenEklenenSure != null && resmiTatilKanunenEklenenSure > 0.0d)
-					title += " KRT: " + PdksUtil.numericValueFormatStr(resmiTatilKanunenEklenenSure, null);
+					title += " KRT : " + PdksUtil.numericValueFormatStr(resmiTatilKanunenEklenenSure, null);
 			}
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
