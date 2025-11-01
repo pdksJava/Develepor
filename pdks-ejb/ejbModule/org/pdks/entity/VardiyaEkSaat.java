@@ -80,7 +80,7 @@ public class VardiyaEkSaat extends BasePDKSObject implements Serializable, Clone
 		this.guncellendi = id == null;
 		this.setResmiTatilSure(resmiTatilSureInput);
 		this.setAksamVardiyaSaatSayisi(aksamVardiyaSaatSayisiInput);
-		this.setResmiTatilKanunenEklenenSure(resmiTatilKanunenEklenenSureInput);
+		this.setResmiTatilKanunenEklenenSure(resmiTatilKanunenEklenenSureInput != null ? resmiTatilKanunenEklenenSureInput : 0.0d);
 	}
 
 	@Transient

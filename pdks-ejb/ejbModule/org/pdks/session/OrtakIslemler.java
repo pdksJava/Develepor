@@ -15061,11 +15061,7 @@ public class OrtakIslemler implements Serializable {
 							katSayiMap.put(KatSayiTipi.CIHAZ_ZAMAN_SANIYE_SIFIRLA.value(), deger);
 						}
 					}
-					if (erkenGirisKontrolEt && veriKatSayiVar(erkenGirisMap, sirketId, tesisId, vardiyaId, str)) {
-						BigDecimal deger = getKatSayiVeriMap(erkenGirisMap, sirketId, tesisId, vardiyaId, str);
-						if (deger != null)
-							katSayiMap.put(KatSayiTipi.ERKEN_GIRIS_TIPI.value(), deger);
-					}
+
 					if (vardiya.isCalisma()) {
 						if (yemekMolaKontrolEt && veriKatSayiVar(yemekMolaMap, sirketId, tesisId, vardiyaId, str)) {
 							BigDecimal deger = getKatSayiVeriMap(yemekMolaMap, sirketId, tesisId, vardiyaId, str);
@@ -20976,8 +20972,8 @@ public class OrtakIslemler implements Serializable {
 
 												Kapi kapi = hareketKGS.getKapiView().getKapi();
 												boolean sanalHareket = hareketKGS.getOncekiGun() || hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET);
-//												if (hareketKGS.isTatil() && sanalYok && hareketKGS.getOncekiGun() == false)
-//													sanalYok = hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET) == false;
+												// if (hareketKGS.isTatil() && sanalYok && hareketKGS.getOncekiGun() == false)
+												// sanalYok = hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET) == false;
 												if (hareketKGS.getId() != null && sanalYok) {
 													if (zaman > basZaman && zaman <= bitZaman) {
 														if (sanalHareket == false && bayramBasladi == false) {
