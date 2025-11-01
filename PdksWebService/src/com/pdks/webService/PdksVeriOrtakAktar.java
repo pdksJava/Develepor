@@ -2352,7 +2352,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		String kapaliDonemOkuma = mailMap.containsKey("kapaliDonemOkuma") ? (String) mailMap.get("kapaliDonemOkuma") : "";
 		boolean kapaliDonemOku = kapaliDonemOkuma.equals("1") == false;
 		List<String> kayitIzinList = new ArrayList<String>();
-		Date izinlerBasTarih = null, izinlerBitTarih = null;
+		Date izinlerBasTarih = null, izinlerBitTarih = null, izinlerBitMinTarih = null;
 		for (Iterator iterator = izinList.iterator(); iterator.hasNext();) {
 			IzinERP izinERP = (IzinERP) iterator.next();
 			boolean tamam = false;
@@ -2601,6 +2601,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 						izinlerBasTarih = baslangicZamani;
 					if (izinlerBitTarih == null || bitisZamani.after(izinlerBitTarih))
 						izinlerBitTarih = bitisZamani;
+					if (izinlerBitMinTarih == null || bitisZamani.before(izinlerBitMinTarih))
+						izinlerBitMinTarih = bitisZamani;
 					if (personelIzin.getId() != null && (olusturmaTarihi == null || olusturmaTarihi.before(personelIzin.getOlusturmaTarihi())))
 						olusturmaTarihi = personelIzin.getOlusturmaTarihi();
 					personelIzin.setIzinSahibi(izinSahibi);
@@ -2788,8 +2790,17 @@ public class PdksVeriOrtakAktar implements Serializable {
 			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_PERSONEL);
 			sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :b");
 			sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + "< I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
-			sb.append(" where I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :b2 and I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= :b1 ");
-			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> :d1 and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> :d2  ");
+			// sb.append(" where I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :b2 and I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= :b1 ");
+			cal = Calendar.getInstance();
+			int gun = cal.get(Calendar.DATE) % 2;
+			if (gun == 0) {
+				sb.append(" where I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :b1");
+				map.put("b1", izinlerBasTarih);
+			} else {
+				sb.append(" where I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " <= :b1");
+				map.put("b1", izinlerBitMinTarih);
+			}
+
 			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> :d1 and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> :d2  ");
 			if (olusturmaTarihi != null) {
 				sb.append(" and I." + Personel.COLUMN_NAME_OLUSTURMA_TARIHI + " <= :o");
@@ -2798,10 +2809,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 			sb.append(" order by I." + PersonelIzin.COLUMN_NAME_PERSONEL_NO + ",I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
 			map.put("b", PdksUtil.getDate(bugun));
-			map.put("b1", izinlerBasTarih);
-			map.put("b2", izinlerBitTarih);
+
+			// map.put("b2", izinlerBitTarih);
 			map.put("d1", PersonelIzin.IZIN_DURUMU_REDEDILDI);
 			map.put("d2", PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
+			String pattern = PdksUtil.getDateTimeFormat();
+			logger.info("İzin aralığı : " + PdksUtil.convertToDateString(izinlerBasTarih, pattern) + " - " + PdksUtil.convertToDateString(izinlerBitTarih, pattern));
 			List<Object[]> list = PdksUtil.isPazar() == false ? pdksDAO.getNativeSQLList(map, sb, null) : null;
 			map.clear();
 			if (list != null) {
