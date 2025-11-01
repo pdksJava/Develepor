@@ -1998,12 +1998,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 								}
 							}
-							if (vardiyaGun.getVardiyaDateStr().endsWith("0501"))
-								logger.debug(vardiyaGun.getGecenAyResmiTatilSure());
 							VardiyaSaat vardiyaSaat = null;
 							if (saatEkle) {
-								// vardiyaGun.addCalismaSuresi(vardiyaGun.getGecenAyResmiTatilSure());
-
 								vardiyaSaat = vardiyaGun.getVardiyaSaat();
 								if (vardiyaSaat == null)
 									vardiyaSaat = new VardiyaSaat();
@@ -2037,11 +2033,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								vardiyaSaat.setNormalSure(normalSure);
 								VardiyaEkSaat ekSaat = vardiyaSaat.getEkSaat();
 								boolean ekSaatEkle = false;
+
 								if (denklestirmeAyDurum) {
 									ekSaatEkle = vardiyaSaat.isEkSaatEkle() && ekSaat == null;
 									if (ekSaat != null) {
 										ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure());
-										ekSaatEkle = ekSaat.isGuncellendi() && denklestirmeAyDurum;
+										ekSaatEkle = ekSaat.isGuncellendi();
 									}
 								}
 
