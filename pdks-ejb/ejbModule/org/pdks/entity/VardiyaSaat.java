@@ -70,7 +70,8 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 		this.calismaSuresi = value;
 	}
 
-	@Column(name = COLUMN_NAME_RESMI_TATIL_SURESI)
+	@Transient
+	// @Column(name = COLUMN_NAME_RESMI_TATIL_SURESI)
 	public double getResmiTatilSure() {
 		return resmiTatilSure;
 	}
@@ -81,7 +82,8 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 		this.resmiTatilSure = value;
 	}
 
-	@Column(name = COLUMN_NAME_RT_KANUNI_EKLENEN_SURE)
+	@Transient
+	// @Column(name = COLUMN_NAME_RT_KANUNI_EKLENEN_SURE)
 	public Double getResmiTatilKanunenEklenenSure() {
 		return resmiTatilKanunenEklenenSure;
 	}
@@ -92,7 +94,8 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 		this.resmiTatilKanunenEklenenSure = value;
 	}
 
-	@Column(name = COLUMN_NAME_AKSAM_VARDIYA)
+	@Transient
+	// @Column(name = COLUMN_NAME_AKSAM_VARDIYA)
 	public double getAksamVardiyaSaatSayisi() {
 		return aksamVardiyaSaatSayisi;
 	}
@@ -116,7 +119,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 				this.resmiTatilSure = value.getResmiTatilSure();
 			if (aksamVardiyaSaatSayisi == 0.0d)
 				this.aksamVardiyaSaatSayisi = value.getAksamVardiyaSaatSayisi();
-			if (resmiTatilKanunenEklenenSure == null || resmiTatilKanunenEklenenSure.doubleValue() > 0.0d)
+			if (resmiTatilKanunenEklenenSure == null || resmiTatilKanunenEklenenSure.doubleValue() == 0.0d)
 				this.resmiTatilKanunenEklenenSure = value.getResmiTatilKanunenEklenenSure();
 		}
 		this.ekSaat = value;
