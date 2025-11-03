@@ -19763,7 +19763,7 @@ public class OrtakIslemler implements Serializable {
 					}
 					Date zaman = PdksUtil.tariheGunEkleCikar(vg.getVardiyaDate(), 1);
 					vg.setBayramAyir(true);
-					if (str.endsWith("1029"))
+					if (str.endsWith("1028"))
 						logger.debug("" + hareketler.size());
 					boolean tatilBasladi = false;
 					boolean tatilVar = false;
@@ -19778,17 +19778,16 @@ public class OrtakIslemler implements Serializable {
 						if (!tatilVar)
 							tatilVar = tatilDurum;
 						hareketKGS.setTatil(tatilDurum);
-
 						if (islemVardiya.isCalisma() && hareketKGS.getOncekiGun().booleanValue() == false && hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET) == false) {
 							if (hareketZaman.getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime())
 								hareketKGS.setZaman(islemVardiya.getVardiyaBitZaman());
 							if (hareketZaman.getTime() < islemVardiya.getVardiyaTelorans2BasZaman().getTime())
 								hareketKGS.setZaman(islemVardiya.getVardiyaBasZaman());
-
+							hareketZaman = hareketKGS.getZaman();
 						}
 						if (tatilBasladi == false) {
 							tatilBasladi = tatilDurum;
-							if (tatilDurum && tatilBas.getTime() > hareketZaman.getTime()) {
+							if (tatilDurum) {
 								HareketKGS cikis = new HareketKGS(personelView, cikisKapiView, tatilBas);
 								cikis.setTatil(false);
 								cikisHareketList.add(cikis);
