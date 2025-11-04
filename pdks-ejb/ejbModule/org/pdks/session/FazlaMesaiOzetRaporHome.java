@@ -1544,12 +1544,16 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 								logger.debug(key);
 
 							if (vardiyaGun.getVardiyaSaatDB() != null && vardiyaGun.getDurum()) {
+								VardiyaSaat vardiyaSaatDB = vardiyaGun.getVardiyaSaatDB();
+								aksamVardiyaSayisi += (int) vardiyaSaatDB.getAksamVardiyaSaatSayisi();
+ 								if (aksamGun == false)
+									aksamGun = aksamVardiyaSayisi > 0;
 								vardiyaGun.setPlanHareketEkle(false);
 								vardiyaGun.setHareketler(null);
 								vardiyaGun.setGirisHareketleri(null);
 								vardiyaGun.setCikisHareketleri(null);
 								if (fazlaMesaiHesapla) {
-									VardiyaSaat vardiyaSaatDB = vardiyaGun.getVardiyaSaatDB();
+
 									if (vardiyaSaatDB.getResmiTatilToplamSure() > 0.0d) {
 										vardiyaGun.setResmiTatilSure(vardiyaSaatDB.getResmiTatilToplamSure());
 										if (vardiyaSaatDB.getResmiTatilKanunenEklenenSure() != null)
@@ -1619,7 +1623,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						puantaj.setVardiyalar(vardiyaGunList);
 						if (vardiyaGunSon != null)
 							ayBitti = bugun.after(vardiyaGunSon.getIslemVardiya().getVardiyaTelorans1BitZaman());
-
+						puantaj.setAksamVardiyaSayisi(aksamVardiyaSayisi);
 					}
 					if (!isAramaDurum)
 						isAramaDurum = personelDenklestirme != null && (personelDenklestirme.getIsAramaPersonelDonemselDurum() != null && personelDenklestirme.getIsAramaPersonelDonemselDurum().getIsAramaIzni());

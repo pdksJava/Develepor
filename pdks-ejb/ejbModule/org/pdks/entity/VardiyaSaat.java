@@ -70,7 +70,8 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 		this.calismaSuresi = value;
 	}
 
-	@Column(name = COLUMN_NAME_RESMI_TATIL_SURESI, updatable = false, insertable = false)
+	@Transient
+	// @Column(name = COLUMN_NAME_RESMI_TATIL_SURESI, updatable = false, insertable = false)
 	public double getResmiTatilSure() {
 		return resmiTatilSure;
 	}
@@ -81,7 +82,8 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 		this.resmiTatilSure = value;
 	}
 
-	@Column(name = COLUMN_NAME_RT_KANUNI_EKLENEN_SURE, updatable = false, insertable = false)
+	@Transient
+	//@Column(name = COLUMN_NAME_RT_KANUNI_EKLENEN_SURE, updatable = false, insertable = false)
 	public Double getResmiTatilKanunenEklenenSure() {
 		return resmiTatilKanunenEklenenSure;
 	}
@@ -92,7 +94,8 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 		this.resmiTatilKanunenEklenenSure = value;
 	}
 
-	@Column(name = COLUMN_NAME_AKSAM_VARDIYA, updatable = false, insertable = false)
+	@Transient
+	//@Column(name = COLUMN_NAME_AKSAM_VARDIYA, updatable = false, insertable = false)
 	public double getAksamVardiyaSaatSayisi() {
 		return aksamVardiyaSaatSayisi;
 	}
@@ -112,12 +115,12 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 
 	public void setEkSaat(VardiyaEkSaat value) {
 		if (value != null && value.getId() != null) {
-			// if (resmiTatilSure == 0.0d)
-			// this.setResmiTatilSure(value.getResmiTatilSure());
-			// if (aksamVardiyaSaatSayisi == 0.0d)
-			// this.setAksamVardiyaSaatSayisi(value.getAksamVardiyaSaatSayisi());
-			// if (resmiTatilKanunenEklenenSure == null || resmiTatilKanunenEklenenSure.doubleValue() == 0.0d)
-			// this.setResmiTatilKanunenEklenenSure(value.getResmiTatilKanunenEklenenSure());
+			if (resmiTatilSure == 0.0d)
+				this.setResmiTatilSure(value.getResmiTatilSure());
+			if (aksamVardiyaSaatSayisi == 0.0d)
+				this.setAksamVardiyaSaatSayisi(value.getAksamVardiyaSaatSayisi());
+			if (resmiTatilKanunenEklenenSure == null || resmiTatilKanunenEklenenSure.doubleValue() == 0.0d)
+				this.setResmiTatilKanunenEklenenSure(value.getResmiTatilKanunenEklenenSure());
 		}
 		this.ekSaat = value;
 	}
