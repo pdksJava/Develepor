@@ -2790,15 +2790,15 @@ public class PdksVeriOrtakAktar implements Serializable {
 			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_PERSONEL);
 			sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :b");
 			sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + "< I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
-			// sb.append(" where I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :b2 and I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= :b1 ");
 			cal = Calendar.getInstance();
 			int gun = cal.get(Calendar.DATE) % 2;
 			if (gun == 0) {
-				sb.append(" where I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :b1");
-				map.put("b1", izinlerBasTarih);
-			} else {
-				sb.append(" where I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " <= :b1");
+				sb.append(" where I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= :b1");
 				map.put("b1", izinlerBitMinTarih);
+			} else {
+				sb.append(" where I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :b2 and I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= :b1 ");
+				map.put("b1", izinlerBasTarih);
+				map.put("b2", izinlerBitTarih);
 			}
 
 			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> :d1 and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " <> :d2  ");
