@@ -9128,7 +9128,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				sb.append(" select * from " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 				sb.append(" where " + Vardiya.COLUMN_NAME_SUA + " = 1 " + ozelMap.get(Vardiya.SUA_KEY));
 			}
-			if (vardiyaSablonu != null && vardiyaSablonu.getVardiya1() != null && vardiyaSablonu.getVardiya1().isIzinVardiya()) {
+			Vardiya izinVardiya = vardiyaSablonu.getVardiya1();
+			if (vardiyaSablonu != null && izinVardiya != null && izinVardiya.isIzinVardiya()) {
 				sb.append(" union ");
 				sb.append(" select * from " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 				sb.append(" where " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = 'I' ");
@@ -9178,9 +9179,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (!pdksVardiya.getGenel()) {
 						if (!pdksVardiya.isRadyasyonIzni() || (pdksVardiya.isRadyasyonIzni() && (sua || radyolojiIzinDurum.equals("1"))))
 							pdksList.add(pdksVardiya);
-					} else if (!pdksVardiya.isIsKurMu()) {
+					} else
 						pdksList.add(pdksVardiya);
-					}
+
 				}
 			}
 
@@ -9369,8 +9370,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			for (Iterator iterator = pdksList.iterator(); iterator.hasNext();) {
 				Vardiya pdksVardiya = (Vardiya) iterator.next();
 				if (pdksVardiya.getDepartman() != null && !aramaSecenekleri.getDepartmanId().equals(pdksVardiya.getDepartman().getId()))
-					iterator.remove();
-				else if (pdksVardiya.isIsKurMu())
 					iterator.remove();
 
 			}

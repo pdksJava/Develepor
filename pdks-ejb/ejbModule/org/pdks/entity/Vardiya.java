@@ -70,7 +70,7 @@ public class Vardiya extends BaseObject {
 	private Integer yemekSuresi, cikisMolaSaat = 0;
 	private Departman departman;
 	private List<Integer> gunlukList;
-	private Boolean aksamVardiya = Boolean.FALSE, fcsHaric = Boolean.FALSE, icapVardiya = Boolean.FALSE, sutIzni = Boolean.FALSE, gebelik = Boolean.FALSE, kopya = Boolean.FALSE, genel = Boolean.FALSE, isKur = Boolean.FALSE;
+	private Boolean aksamVardiya = Boolean.FALSE, fcsHaric = Boolean.FALSE, icapVardiya = Boolean.FALSE, sutIzni = Boolean.FALSE, gebelik = Boolean.FALSE, kopya = Boolean.FALSE, genel = Boolean.FALSE;
 	private String tipi;
 	private VardiyaGun islemVardiyaGun;
 	private char vardiyaTipi;
@@ -1811,11 +1811,6 @@ public class Vardiya extends BaseObject {
 
 	public static void setVardiyaKontrolTarih3(Date vardiyaKontrolTarih3) {
 		Vardiya.vardiyaKontrolTarih3 = vardiyaKontrolTarih3;
-	}
-
-	@Transient
-	public boolean isIsKurMu() {
-		return isKur != null && isKur;
 	}
 
 	public static Date getVardiyaAySonuKontrolTarih() {
