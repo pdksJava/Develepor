@@ -9212,6 +9212,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			vardiyaSablonu = personel.getSablon();
 			vardiyaSablonu.setVardiyaList(null);
+			VardiyaSablonu bagliVardiyaSablonu = personelAylikPuantaj.getCalismaModeli() != null ? personelAylikPuantaj.getCalismaModeli().getBagliVardiyaSablonu() : null;
 			List<Vardiya> list = new ArrayList<Vardiya>(vardiyaSablonu.getVardiyaList());
 			List<Long> idList = new ArrayList<Long>();
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -9221,7 +9222,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					continue;
 				}
 				idList.add(vardiyaS.getId());
-				boolean ekle = true;
+				boolean ekle = vardiyaS.isIcapVardiyasi() || bagliVardiyaSablonu != null;
 				for (Iterator iterator2 = vardiyaList.iterator(); iterator2.hasNext();) {
 					Vardiya vardiya = (Vardiya) iterator2.next();
 					if (vardiyaS.getId().equals(vardiya.getId())) {
