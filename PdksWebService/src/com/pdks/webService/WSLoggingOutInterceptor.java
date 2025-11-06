@@ -105,12 +105,20 @@ public class WSLoggingOutInterceptor extends AbstractSoapInterceptor {
 						}
 					}
 					if (action != null) {
+
 						logger.debug(action + " --> " + xml);
 						if (inputXML != null) {
 							if (inputXML.indexOf("<return/>") > 0)
 								xml = PdksUtil.replaceAllManuel(inputXML, "<return/>", "<return>" + xml + "</return>");
 							if (inputXML.indexOf("<stopTime/>") > 0)
 								xml = PdksUtil.replaceAllManuel(xml, "<stopTime/>", "<stopTime>" + PdksUtil.convertToDateString(new Date(), "yyyy-MM-dd HH:mm:ss") + "</stopTime>");
+							if (xml.indexOf("&") > 0) {
+								if (xml.indexOf("&amp;") > 0)
+									xml = PdksUtil.replaceAll(xml, "&amp;", "&");
+								xml = PdksUtil.replaceAll(xml, "&", "&amp;");
+								xml = PdksUtil.formatXML(xml);
+								xml = PdksUtil.replaceAll(xml, "&amp;", "&");
+							}
 						}
 						if (!action.startsWith("service")) {
 							if (action.length() > 1)
