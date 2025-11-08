@@ -464,7 +464,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							Long calismaSekliId = pdksVardiyaGun.getCalismaModeli() != null ? pdksVardiyaGun.getCalismaModeli().getId() : 0L;
 							Tanim bolum = personel.getEkSaha3(), altBolum = null;
 							Long bolumId = bolum != null ? bolum.getId() : 0L, altBolumId = 0L;
-							if (ekSaha4Tanim != null && bolumId.longValue() > 0L && bolum.getKodu().equals(Personel.altBolumGrupGoster)) {
+							if (ekSaha4Tanim != null && bolumId.longValue() > 0L && bolum.getKodu().endsWith(Personel.altBolumGrupGoster)) {
 								altBolum = personel.getEkSaha4();
 								altBolumId = altBolum != null ? altBolum.getId() : 0L;
 								altBolumVar = true;
@@ -1136,10 +1136,9 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		String bolumAciklama = "";
 		if (bolum != null) {
 			bolumAciklama = bolum.getAciklama();
-			if (ekSaha4Tanim != null && bolum.getKodu().equals(Personel.altBolumGrupGoster)) {
+			if (ekSaha4Tanim != null && personel.isAltBolumGrupGoster()) {
 				Tanim altBolum = personel.getEkSaha4();
-				if (altBolum != null)
-					bolumAciklama += " " + altBolum.getAciklama();
+				bolumAciklama += " " + altBolum.getAciklama();
 			}
 		}
 
@@ -1357,4 +1356,5 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	public static void setSayfaURL(String sayfaURL) {
 		VardiyaOzetRaporuHome.sayfaURL = sayfaURL;
 	}
+
 }

@@ -1074,6 +1074,15 @@ public class Personel extends BaseObject {
 	}
 
 	@Transient
+	public boolean isAltBolumGrupGoster() {
+		boolean goster = false;
+		if (ekSaha4 != null && ekSaha3 != null)
+			goster = ekSaha3.getKodu().endsWith(altBolumGrupGoster);
+
+		return goster;
+	}
+
+	@Transient
 	private String getBolumOzelAciklamaGetir(boolean ozel) {
 		String bolumAciklama = "";
 		if (ekSaha3 != null) {

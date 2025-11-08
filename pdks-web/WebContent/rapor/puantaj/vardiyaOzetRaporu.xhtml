@@ -17,7 +17,8 @@
 						<s:decorate template="/layout/edit.xhtml"
 							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and vardiyaOzetRaporuHome.aramaSecenekleri.departmanIdList.size()>1}">
 							<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
-							<h:selectOneMenu value="#{vardiyaOzetRaporuHome.aramaSecenekleri.departmanId}" required="true" requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
+							<h:selectOneMenu value="#{vardiyaOzetRaporuHome.aramaSecenekleri.departmanId}" required="true"
+								requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{vardiyaOzetRaporuHome.aramaSecenekleri.departmanIdList}" />
 								<a4j:support event="onchange" action="#{vardiyaOzetRaporuHome.fillSirketList()}" ajaxSingle="true" reRender="secimler,vardiyaOzetPanel" />
@@ -105,8 +106,7 @@
 								<tr>
 									<td class="#{aylikPuantaj.trClass}" style="width: 150px"><b> <ui:fragment rendered="#{aylikPuantaj.pdksPersonel.ekSaha3 != null}">
 									#{aylikPuantaj.pdksPersonel.ekSaha3.aciklama}
-									<ui:fragment
-													rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and aylikPuantaj.pdksPersonel.ekSaha3.kodu == vardiyaOzetRaporuHome.altBolumGrupGoster and aylikPuantaj.pdksPersonel.ekSaha4 != null}">
+									<ui:fragment rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and aylikPuantaj.pdksPersonel.altBolumGrupGoster }">
 									   #{aylikPuantaj.pdksPersonel.ekSaha4.aciklama}
 									</ui:fragment>
 											</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.pdksPersonel.ekSaha3 == null}">
@@ -170,7 +170,7 @@
 										<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.tesis.aciklama}</td>
 									</ui:fragment>
 									<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.ekSaha3.aciklama} <ui:fragment
-											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and vardiyaGun.personel.ekSaha3.kodu == vardiyaOzetRaporuHome.altBolumGrupGoster and vardiyaGun.personel.ekSaha4 != null}">
+											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and vardiyaGun.personel.altBolumGrupGoster}">
 									   #{vardiyaGun.personel.ekSaha4.aciklama}
 									</ui:fragment>
 
@@ -193,7 +193,7 @@
 										<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.tesis.aciklama}</td>
 									</ui:fragment>
 									<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.ekSaha3.aciklama} <ui:fragment
-											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and vardiyaGun.personel.ekSaha3.kodu == vardiyaOzetRaporuHome.altBolumGrupGoster and vardiyaGun.personel.ekSaha4 != null}">
+											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and vardiyaGun.personel.altBolumGrupGoster}">
 									   #{vardiyaGun.personel.ekSaha4.aciklama}
 									</ui:fragment></td>
 									<td class="#{vardiyaGun.tdClass}" align="center" style="width: 40px">#{authenticatedUser.dateFormatla(vardiyaGun.vardiyaDate)}</td>
@@ -215,7 +215,7 @@
 										<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.tesis.aciklama}</td>
 									</ui:fragment>
 									<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.ekSaha3.aciklama} <ui:fragment
-											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and vardiyaGun.personel.ekSaha3.kodu == vardiyaOzetRaporuHome.altBolumGrupGoster and vardiyaGun.personel.ekSaha4 != null}">
+											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and vardiyaGun.personel.altBolumGrupGoster}">
 									   #{vardiyaGun.personel.ekSaha4.aciklama}
 									</ui:fragment></td>
 									<td class="#{vardiyaGun.tdClass}" align="center" style="width: 40px">#{authenticatedUser.dateFormatla(vardiyaGun.vardiyaDate)}</td>
@@ -239,7 +239,7 @@
 					</table>
 				</ui:fragment>
 				<ui:fragment rendered="#{not empty vardiyaOzetRaporuHome.erkenCikanVardiyaGunList}">
-						<table class="rich-table" width="500">
+					<table class="rich-table" width="500">
 						<thead class="rich-table-thead">
 							<tr class="rich-table-subheader">
 								<TH colspan="9">ERKEN ÇIKAN TABLOSU</TH>
@@ -272,7 +272,7 @@
 										<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.tesis.aciklama}</td>
 									</ui:fragment>
 									<td class="#{vardiyaGun.tdClass}" style="width: 100px">#{vardiyaGun.personel.ekSaha3.aciklama} <ui:fragment
-											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and vardiyaGun.personel.ekSaha3.kodu == vardiyaOzetRaporuHome.altBolumGrupGoster and vardiyaGun.personel.ekSaha4 != null}">
+											rendered="#{vardiyaOzetRaporuHome.ekSaha4Tanim != null and vardiyaGun.personel.altBolumGrupGoster}">
 									   #{vardiyaGun.personel.ekSaha4.aciklama}
 									</ui:fragment></td>
 									<td class="#{vardiyaGun.tdClass}" align="center" style="width: 40px">#{authenticatedUser.dateFormatla(vardiyaGun.vardiyaDate)}</td>
