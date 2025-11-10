@@ -11,7 +11,7 @@
 		<rich:panel header="#{ortakIslemler.getMenuUserAdi(menuItemTree.session,'menuItemTanimlama')}">
 			<h:panelGrid style=" width : 897px; vertical-align:top;">
 				<h:form id="formYemekYiyenler">
-					<a4j:commandButton status="ajaxStatus" id="editBtn" value="Yeni Menü" reRender="editPanel" action="#{menuItemHome.guncelle(null)}"
+					<a4j:commandButton status="ajaxStatus" id="editBtn" value="Yeni Menü" reRender="editPanel" action="#{menuItemHome.guncelle(null,false)}"
 						oncomplete="#{rich:component('editPanel')}.show();" />
 				</h:form>
 			</h:panelGrid>
@@ -29,18 +29,17 @@
 										ajaxKeys="#{null}" iconCollapsed="#{menuItemTree.iconLeaf}" iconExpanded="#{menuItemTree.iconLeaf}">
 										<rich:treeNode id="menuItemTreeNode">
 											<f:facet name="icon">
-												<a4j:commandLink status="ajaxStatus" id="editIconLink" action="#{menuItemHome.guncelle(item)}"
+												<a4j:commandLink status="ajaxStatus" id="editIconLink" action="#{menuItemHome.guncelle(item,false)}"
 													oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
 													<h:graphicImage value="/img/edit.gif" style="border:0" />
 
 												</a4j:commandLink>
 											</f:facet>
 											<f:facet name="iconLeaf">
-												<a4j:commandLink status="ajaxStatus" id="editIconLeafLink" oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
+												<a4j:commandLink status="ajaxStatus" id="editIconLeafLink" action="#{menuItemHome.guncelle(item,authenticatedUser.admin)}"
+													oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
 													<h:graphicImage value="/img/edit.gif" style="border:0" />
-													<f:setPropertyActionListener value="#{item}" target="#{menuItemHome.instance}">
-														<s:convertEntity />
-													</f:setPropertyActionListener>
+
 												</a4j:commandLink>
 											</f:facet>
 											<h:selectBooleanCheckbox value="#{menuItemTree.selectedIdsFromTree[item.id]}" id="secim" />
@@ -203,6 +202,63 @@
 									</s:decorate>
 
 								</h:panelGrid>
+								<rich:panel rendered="#{not empty menuItemHome.userMenuItemTimeList}" header="#{menuItemHome.instance.description.aciklama} Kullanım Bilgisi">
+									<rich:dataTable rowClasses="acik,koyu" value="#{menuItemHome.userMenuItemTimeList}" var="um" style="width: 80%;" rows="50" rowKeyVar="row">
+
+										<f:facet name="header">
+											<h:outputText value="İşlem Bilgileri" />
+										</f:facet>
+										<rich:column style="text-align: center;width: 30px;">
+											<f:facet name="header">
+												<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
+											</f:facet>
+
+											<h:outputText value="#{um.user.pdksPersonel.sicilNo}" />
+										</rich:column>
+										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;">
+											<f:facet name="header">
+												<h:outputText value="Adı Soyadı" />
+											</f:facet>
+											<h:outputText value="#{um.user.pdksPersonel.adSoyad}" />
+
+										</rich:column>
+										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{menuItemHome.tesisYetki}">
+											<f:facet name="header">
+												<h:outputText value="#{ortakIslemler.sirketAciklama()}" />
+											</f:facet>
+											<h:outputText value="#{um.user.pdksPersonel.sirket.ad}" style="width:autostretch ;white-space: nowrap;" />
+										</rich:column>
+										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{menuItemHome.tesisYetki}">
+											<f:facet name="header">
+												<h:outputText value="#{ortakIslemler.tesisAciklama()}" />
+											</f:facet>
+											<h:outputText value="#{um.user.pdksPersonel.tesis.aciklama}" style="width:autostretch ;white-space: nowrap;"
+												rendered="#{um.user.pdksPersonel.sirket.tesisDurum and um.user.pdksPersonel.tesis!=null}" />
+										</rich:column>
+										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;">
+											<f:facet name="header">
+												<h:outputText value="#{menuItemHome.bolumAciklama}" />
+											</f:facet>
+											<h:outputText value="#{um.user.pdksPersonel.ekSaha3.aciklama}" style="width:autostretch ;white-space: nowrap;" />
+										</rich:column>
+
+										<rich:column style="text-align: center;width: 30px;">
+											<f:facet name="header">
+												<h:outputText value="Son İşlem Tarihi" />
+											</f:facet>
+											<h:outputText value="#{authenticatedUser.dateTimeFormatla(um.lastTime)}" />
+										</rich:column>
+										<rich:column style="text-align: center;width: 30px;white-space: nowrap;">
+											<f:facet name="header">
+												<h:outputText value="İşlem Adet" />
+											</f:facet>
+											<h:outputText value="#{um.useCount}" rendered="#{um.useCount gt 0}" />
+										</rich:column>
+										<f:facet name="footer">
+											<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+										</f:facet>
+									</rich:dataTable>
+								</rich:panel>
 							</a4j:outputPanel>
 						</h:panelGrid>
 						<h:panelGrid columns="4">

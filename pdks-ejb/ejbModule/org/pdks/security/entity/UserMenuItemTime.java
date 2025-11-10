@@ -32,7 +32,7 @@ public class UserMenuItemTime extends BasePDKSObject implements Serializable {
 
 	public static final String TABLE_NAME = "USER_MENUITEM_TIME";
 	public static final String VIEW_NAME = "USER_MENUITEM_TIME_VIEW";
- 	public static final String COLUMN_NAME_USER = "USER_ID";
+	public static final String COLUMN_NAME_USER = "USER_ID";
 	public static final String COLUMN_NAME_MENU = "MENU_ID";
 	public static final String COLUMN_NAME_SESSION = "SESSION_ID";
 	public static final String COLUMN_NAME_MENU_ADI = "MENU_ADI";
@@ -120,7 +120,8 @@ public class UserMenuItemTime extends BasePDKSObject implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "LAST_TIME")
 	public Date getLastTime() {
-		return lastTime;
+		Date zaman = lastTime != null ? lastTime : firstTime;
+		return zaman;
 	}
 
 	public void setLastTime(Date lastTime) {
