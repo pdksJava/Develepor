@@ -1541,12 +1541,23 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 							izinSuresi = vardiyalIzin.getIzinSuresi();
 							for (VardiyaGun vg : ap.getVardiyalar()) {
 								if (vg.getVardiya() != null && vg.getIzin() != null && vg.getIzin().getId().equals(vardiyalIzin.getId())) {
-									if (vg.isAyinGunu() && vg.getTatil() != null)
-										izinTatilAdet += 1;
+
+									if (vg.isAyinGunu() && vg.getTatil() != null) {
+										IzinTipi izinTipi = vg.getIzin().getIzinTipi();
+										izinBordroDetayTipi = ortakIslemler.getBordroDetayTipi(izinTipi, izinGrupMap);
+										if (izinBordroDetayTipi == null || izinBordroDetayTipi.equals(BordroDetayTipi.UCRETSIZ_IZIN) == false)
+											izinTatilAdet += 1;
+
+									}
+
 								}
 							}
+							if (resmiTatil)
+								resmiTatil = izinTatilAdet > 0;
 						} else
 							vardiyalIzin = null;
+						if (resmiTatil)
+							logger.debug(vardiyaGun.getVardiyaDateStr());
 
 						if (vardiyaGun.isIzinli()) {
 
