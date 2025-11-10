@@ -55,7 +55,7 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 	OrtakIslemler ortakIslemler;
 
 	private Session session;
-	private boolean tesisYetki = false;
+	private boolean tesisYetki = false, paramDurum = false;
 	private String bolumAciklama;
 
 	private List<UserMenuItemTime> userMenuItemTimeList;
@@ -84,6 +84,7 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 	 */
 	public String guncelle(MenuItem item, boolean userDurum) {
 		tesisYetki = false;
+		paramDurum = false;
 		bolumAciklama = null;
 		if (authenticatedUser.isAdmin() == false || item == null)
 			userDurum = false;
@@ -109,19 +110,17 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 							UserMenuItemTime userMenuItemTime = (UserMenuItemTime) iterator.next();
 							User user = userMenuItemTime.getUser();
 							Personel personel = user.getPdksPersonel();
-							if (personel == null || personel.isCalisiyor() == false)
-								iterator.remove();
-							else {
-								Sirket sirket = personel.getSirket();
-								Tanim bolum = personel.getEkSaha3();
-								if (bolumAciklama == null && sirket.getDepartman().isAdminMi() && bolum != null) {
-									if (bolum.getParentTanim() != null)
-										bolumAciklama = bolum.getParentTanim().getAciklama();
-								}
-								if (tesisYetki == false && personel.getTesis() != null) {
-									tesisYetki = sirket.isTesisDurumu();
-								}
+							Sirket sirket = personel.getSirket();
+							Tanim bolum = personel.getEkSaha3();
+							if (bolumAciklama == null && sirket.getDepartman().isAdminMi() && bolum != null) {
+								if (bolum.getParentTanim() != null)
+									bolumAciklama = bolum.getParentTanim().getAciklama();
 							}
+							if (tesisYetki == false && personel.getTesis() != null)
+								tesisYetki = sirket.isTesisDurumu();
+							if (!paramDurum)
+								paramDurum = userMenuItemTime.getParametreJSON() != null && userMenuItemTime.getParametreJSON().indexOf("}") > 3;
+
 						}
 						if (userMenuItemTimeList.isEmpty() == false) {
 							if (bolumAciklama == null)
@@ -285,6 +284,14 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 
 	public void setBolumAciklama(String bolumAciklama) {
 		this.bolumAciklama = bolumAciklama;
+	}
+
+	public boolean isParamDurum() {
+		return paramDurum;
+	}
+
+	public void setParamDurum(boolean paramDurum) {
+		this.paramDurum = paramDurum;
 	}
 
 }

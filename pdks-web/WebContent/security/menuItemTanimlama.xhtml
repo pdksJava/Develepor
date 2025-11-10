@@ -208,6 +208,22 @@
 										<f:facet name="header">
 											<h:outputText value="İşlem Bilgileri" />
 										</f:facet>
+										<rich:column style="text-align: center;" rendered="#{menuItemHome.paramDurum}">
+											<f:facet name="header">
+												<h:outputText value="" />
+											</f:facet>
+											<ui:fragment rendered="#{um.parametreJSON.length() gt 3}">
+												<DIV id="denkf#{um.id}">
+													<h:graphicImage value="/img/msginfo.png" style="border:0" height="20" width="20" />
+													<rich:toolTip for="denkf#{um.id}">
+														<DIV style="text-align: left;">
+															<h:outputText value="#{um.parametreJSON}" />
+														</DIV>
+													</rich:toolTip>
+												</DIV>
+
+											</ui:fragment>
+										</rich:column>
 										<rich:column style="text-align: center;width: 30px;">
 											<f:facet name="header">
 												<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
@@ -242,7 +258,7 @@
 											<h:outputText value="#{um.user.pdksPersonel.ekSaha3.aciklama}" style="width:autostretch ;white-space: nowrap;" />
 										</rich:column>
 
-										<rich:column style="text-align: center;width: 30px;">
+										<rich:column style="text-align: center;width: 30px;width:autostretch ;white-space: nowrap;">
 											<f:facet name="header">
 												<h:outputText value="Son İşlem Tarihi" />
 											</f:facet>
@@ -254,6 +270,7 @@
 											</f:facet>
 											<h:outputText value="#{um.useCount}" rendered="#{um.useCount gt 0}" />
 										</rich:column>
+
 										<f:facet name="footer">
 											<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 										</f:facet>
