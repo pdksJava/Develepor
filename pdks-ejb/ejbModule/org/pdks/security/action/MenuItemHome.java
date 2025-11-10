@@ -1,8 +1,11 @@
 package org.pdks.security.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -19,6 +22,8 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.MenuItem;
+import org.pdks.entity.Personel;
+import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
@@ -50,6 +55,10 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 	OrtakIslemler ortakIslemler;
 
 	private Session session;
+	private boolean tesisYetki = false;
+	private String bolumAciklama;
+
+	private List<UserMenuItemTime> userMenuItemTimeList;
 
 	// SampleDAO sampleDAO=new SampleDAO();
 
@@ -68,9 +77,65 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		super.create();
 	}
 
-	public String guncelle(MenuItem item) {
-		if (item == null)
+	/**
+	 * @param item
+	 * @param userDurum
+	 * @return
+	 */
+	public String guncelle(MenuItem item, boolean userDurum) {
+		tesisYetki = false;
+		bolumAciklama = null;
+		if (authenticatedUser.isAdmin() == false || item == null)
+			userDurum = false;
+		if (userMenuItemTimeList == null)
+			userMenuItemTimeList = new ArrayList<UserMenuItemTime>();
+		else
+			userMenuItemTimeList.clear();
+		if (item == null) {
 			item = new MenuItem();
+		} else {
+			if (item.getDurum().booleanValue() == false || item.getTopMenu() == null || item.getTopMenu().booleanValue())
+				userDurum = false;
+			if (userDurum) {
+				session = getSession();
+				String spName = "SP_MENUITEM_USER_LIST";
+				if (ortakIslemler.isExisStoreProcedure(spName, session)) {
+					try {
+						LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+						veriMap.put("menuId", item.getId());
+						veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+						userMenuItemTimeList = pdksEntityController.execSPList(veriMap, new StringBuffer(spName), UserMenuItemTime.class);
+						for (Iterator iterator = userMenuItemTimeList.iterator(); iterator.hasNext();) {
+							UserMenuItemTime userMenuItemTime = (UserMenuItemTime) iterator.next();
+							User user = userMenuItemTime.getUser();
+							Personel personel = user.getPdksPersonel();
+							if (personel == null || personel.isCalisiyor() == false)
+								iterator.remove();
+							else {
+								Sirket sirket = personel.getSirket();
+								Tanim bolum = personel.getEkSaha3();
+								if (bolumAciklama == null && sirket.getDepartman().isAdminMi() && bolum != null) {
+									if (bolum.getParentTanim() != null)
+										bolumAciklama = bolum.getParentTanim().getAciklama();
+								}
+								if (tesisYetki == false && personel.getTesis() != null) {
+									tesisYetki = sirket.isTesisDurumu();
+								}
+							}
+						}
+						if (userMenuItemTimeList.isEmpty() == false) {
+							if (bolumAciklama == null)
+								bolumAciklama = "Bölüm";
+						}
+					} catch (Exception e) {
+						logger.error(e);
+						e.printStackTrace();
+					}
+
+				}
+			}
+		}
+
 		setInstance(item);
 		return "";
 	}
@@ -196,6 +261,30 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 
 	public void setSession(Session session) {
 		this.session = session;
+	}
+
+	public List<UserMenuItemTime> getUserMenuItemTimeList() {
+		return userMenuItemTimeList;
+	}
+
+	public void setUserMenuItemTimeList(List<UserMenuItemTime> userMenuItemTimeList) {
+		this.userMenuItemTimeList = userMenuItemTimeList;
+	}
+
+	public boolean isTesisYetki() {
+		return tesisYetki;
+	}
+
+	public void setTesisYetki(boolean tesisYetki) {
+		this.tesisYetki = tesisYetki;
+	}
+
+	public String getBolumAciklama() {
+		return bolumAciklama;
+	}
+
+	public void setBolumAciklama(String bolumAciklama) {
+		this.bolumAciklama = bolumAciklama;
 	}
 
 }
