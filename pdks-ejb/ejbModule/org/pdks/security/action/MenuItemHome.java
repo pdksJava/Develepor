@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -98,9 +97,8 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 			if (item.getDurum().booleanValue() == false || item.getTopMenu() == null || item.getTopMenu().booleanValue())
 				userDurum = false;
 			if (userDurum) {
-				Session sessionx = getSession();
-				userMenuItemTimeList = ortakIslemler.getUserMenuItemTimeList(item.getId(), null, sessionx);
- 				for (Iterator iterator = userMenuItemTimeList.iterator(); iterator.hasNext();) {
+				userMenuItemTimeList = ortakIslemler.getUserMenuItemTimeList(item.getId(), null, getSession());
+				for (Iterator iterator = userMenuItemTimeList.iterator(); iterator.hasNext();) {
 					UserMenuItemTime userMenuItemTime = (UserMenuItemTime) iterator.next();
 					User user = userMenuItemTime.getUser();
 					Personel personel = user.getPdksPersonel();

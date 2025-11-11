@@ -3499,12 +3499,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 */
 	private String userMenuList(User user) {
 		menuItemTimeList = null;
-		if (user != null && user.getId() != null) {
-			List<UserMenuItemTime> list = pdksEntityController.getSQLParamByFieldList(UserMenuItemTime.TABLE_NAME, UserMenuItemTime.COLUMN_NAME_USER, user.getId(), UserMenuItemTime.class, session);
-			if (!list.isEmpty())
-				menuItemTimeList = PdksUtil.sortListByAlanAdi(list, "lastTime", Boolean.TRUE);
-		}
-
+		if (user != null && user.getId() != null)
+			menuItemTimeList = ortakIslemler.getUserMenuItemTimeList(null, user.getId(), session);
 		return "";
 	}
 

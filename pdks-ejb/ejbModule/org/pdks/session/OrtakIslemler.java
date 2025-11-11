@@ -263,19 +263,21 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public List<UserMenuItemTime> getUserMenuItemTimeList(Long menuId, Long userId, Session session) {
 		List<UserMenuItemTime> userMenuItemTimeList = null;
- 		String spName = "SP_GET_MENUITEM_USER_LIST";
-		if (isExisStoreProcedure(spName, session)) {
+		StringBuffer spName = new StringBuffer("SP_GET_MENUITEM_USER_LIST");
+		if (isExisStoreProcedure(spName.toString(), session)) {
+			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 			try {
-				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 				veriMap.put("menuId", menuId);
 				veriMap.put("userId", userId);
 				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				userMenuItemTimeList = pdksEntityController.execSPList(veriMap, new StringBuffer(spName), UserMenuItemTime.class);
+				userMenuItemTimeList = pdksEntityController.execSPList(veriMap, spName, UserMenuItemTime.class);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				logger.error(e);
 				e.printStackTrace();
 			}
+			veriMap = null;
 		}
+		spName = null;
 		if (userMenuItemTimeList == null)
 			userMenuItemTimeList = new ArrayList<UserMenuItemTime>();
 		return userMenuItemTimeList;
