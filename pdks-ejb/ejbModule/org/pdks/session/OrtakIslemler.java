@@ -256,6 +256,32 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param menuId
+	 * @param userId
+	 * @param session
+	 * @return
+	 */
+	public List<UserMenuItemTime> getUserMenuItemTimeList(Long menuId, Long userId, Session session) {
+		List<UserMenuItemTime> userMenuItemTimeList = null;
+ 		String spName = "SP_GET_MENUITEM_USER_LIST";
+		if (isExisStoreProcedure(spName, session)) {
+			try {
+				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+				veriMap.put("menuId", menuId);
+				veriMap.put("userId", userId);
+				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+				userMenuItemTimeList = pdksEntityController.execSPList(veriMap, new StringBuffer(spName), UserMenuItemTime.class);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if (userMenuItemTimeList == null)
+			userMenuItemTimeList = new ArrayList<UserMenuItemTime>();
+		return userMenuItemTimeList;
+	}
+
+	/**
 	 * @param vardiyaYemekSuresi
 	 * @param toplamYemekSuresi
 	 * @param sure
