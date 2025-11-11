@@ -202,7 +202,8 @@
 									</s:decorate>
 
 								</h:panelGrid>
-								<rich:panel rendered="#{not empty menuItemHome.userMenuItemTimeList}" header="#{menuItemHome.instance.description.aciklama} Kullanım Bilgisi">
+								<rich:simpleTogglePanel rendered="#{not empty menuItemHome.userMenuItemTimeList}" switchType="client"
+									label="#{menuItemHome.instance.description.aciklama} - Kullanım Bilgisi" opened="true">
 									<rich:dataTable rowClasses="acik,koyu" value="#{menuItemHome.userMenuItemTimeList}" var="um" style="width: 80%;" rows="50" rowKeyVar="row">
 
 										<f:facet name="header">
@@ -237,6 +238,13 @@
 											</f:facet>
 											<h:outputText value="#{um.user.pdksPersonel.adSoyad}" />
 
+										</rich:column>
+										<rich:column style="width: 30px;">
+											<f:facet name="header">
+												<h:outputText value="Kullanıcı Adı" />
+											</f:facet>
+
+											<h:outputText value="#{um.user.username}" />
 										</rich:column>
 										<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{menuItemHome.tesisYetki}">
 											<f:facet name="header">
@@ -275,7 +283,7 @@
 											<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 										</f:facet>
 									</rich:dataTable>
-								</rich:panel>
+								</rich:simpleTogglePanel>
 							</a4j:outputPanel>
 						</h:panelGrid>
 						<h:panelGrid columns="4">
