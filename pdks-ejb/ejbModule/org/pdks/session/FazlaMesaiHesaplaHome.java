@@ -2041,6 +2041,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										ekSaatEkle = ekSaat.isGuncellendi();
 									}
 								}
+								if (vardiyaSaat.isGuncellendi() == false && ekSaatEkle)
+									vardiyaSaat.setGuncellendi(true);
 
 								if (vardiyaSaat.isGuncellendi() || ekSaatEkle) {
 									if (ekSaatEkle) {
