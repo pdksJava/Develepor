@@ -1617,7 +1617,12 @@
 													<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.kullanici.yeniSifre}" />
 												</s:decorate>
 											</h:panelGrid>
-
+											<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.kullanici.IK}">
+												<ui:define name="label">Entegrasyon Mail Durum</ui:define>
+												<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.kullanici.entegrasyonMailDurum}" >
+													<a4j:support event="onclick" reRender="kullaniciBilgi" status="ajaxStatus" ajaxSingle="true" />
+												</h:selectBooleanCheckbox>
+											</s:decorate>
 										</h:panelGrid>
 
 										<a4j:outputPanel id="roller">
@@ -1641,7 +1646,7 @@
 
 
 															</h:column>
-															<a4j:support event="onlistchanged" action="#{pdksPersonelHome.durumIK()}" reRender="roller" ajaxSingle="true" />
+															<a4j:support event="onlistchanged" action="#{pdksPersonelHome.durumIK()}" reRender="roller,kullaniciBilgi" ajaxSingle="true" />
 															<s:convertEntity />
 
 														</rich:listShuttle>

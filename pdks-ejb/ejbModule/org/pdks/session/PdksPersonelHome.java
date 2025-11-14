@@ -1129,7 +1129,13 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						ortakIslemler.setUserRoller(kullanici, session);
 						if (kullanici.getYetkiliRollerim() != null && kullanici.getYetkiliRollerim().isEmpty())
 							kullanici = ortakIslemler.personelPdksRolAta(kullanici, Boolean.FALSE, session);
+						if (kullanici.isIK() == false) {
+							if (kullanici.isEntegrasyonMailDurum())
+								kullanici.setEntegrasyonMailDurum(false);
+						} else if (kullanici.getId() == null)
+							kullanici.setEntegrasyonMailDurum(true);
 						pdksEntityController.saveOrUpdate(session, entityManager, kullanici);
+
 						HashMap<Long, UserRoles> roller = new HashMap<Long, UserRoles>();
 
 						List<UserRoles> yetkiliRoller = pdksEntityController.getSQLParamByFieldList(UserRoles.TABLE_NAME, UserRoles.COLUMN_NAME_USER, kullanici.getId(), UserRoles.class, session);
@@ -2168,6 +2174,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 				}
 				PdksUtil.setUserYetki(seciliKullanici);
+				if (seciliKullanici.getId() == null)
+					seciliKullanici.setEntegrasyonMailDurum(seciliKullanici.isIK());
 			}
 		}
 		return "";
@@ -3746,7 +3754,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * 
 	 */
 	private void dosyaGuncelleDurum() {
-		dosyaGuncellemeYetki = ortakIslemler.getTestDurum() && (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIK());
+		dosyaGuncellemeYetki = false;
+		// dosyaGuncellemeYetki = ortakIslemler.getTestDurum() && (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIK());
 		if (dosyaGuncellemeYetki == false) {
 			String dosyaGuncellemeYetkiStr = ortakIslemler.getParameterKey("dosyaGuncellemeYetki").trim();
 			dosyaGuncellemeYetki = dosyaGuncellemeYetkiStr.equals("1");

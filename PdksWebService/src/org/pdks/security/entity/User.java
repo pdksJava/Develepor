@@ -48,6 +48,7 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	public static final String COLUMN_NAME_USERNAME = "KULLANICI_ADI";
 	public static final String COLUMN_NAME_PERSONEL = "PERSONEL_ID";
 	public static final String COLUMN_NAME_DURUM = "DURUM";
+	public static final String COLUMN_NAME_ENTEGRASYON_MAIL_DURUM = "ENTEGRASYON_MAIL_DURUM";
 	public static final String COLUMN_NAME_DEPARTMAN = "DEPARTMAN_ID";
 	public static final String COLUMN_NAME_LAST_LOGIN = "LAST_LOGIN";
 	public static final String COLUMN_NAME_EMAIL = "EMAIL";
@@ -73,7 +74,7 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	// private Set<UserRoles> yetkilerim;
 
-	private boolean durum = Boolean.TRUE, yeniSifre = Boolean.FALSE, admin = Boolean.FALSE, IK = Boolean.FALSE, IKSirket = Boolean.FALSE, IK_Tesis = Boolean.FALSE;
+	private boolean durum = Boolean.TRUE, entegrasyonMailDurum = false, yeniSifre = Boolean.FALSE, admin = Boolean.FALSE, IK = Boolean.FALSE, IKSirket = Boolean.FALSE, IK_Tesis = Boolean.FALSE;
 	private boolean sistemYoneticisi = Boolean.FALSE, yonetici = Boolean.FALSE, anahtarKullanici = Boolean.FALSE, yoneticiKontratli = Boolean.FALSE, genelMudur = Boolean.FALSE, sekreter = Boolean.FALSE;
 	private boolean projeMuduru = Boolean.FALSE, mudur = Boolean.FALSE, superVisor = Boolean.FALSE, IKDirektor = Boolean.FALSE, personel = Boolean.FALSE;
 	private boolean operatorSSK = Boolean.FALSE, yetkiSet = Boolean.FALSE, tesisSuperVisor = Boolean.FALSE, direktorSuperVisor = Boolean.FALSE, taseronAdmin = Boolean.FALSE;
@@ -173,6 +174,15 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	public void setDurum(boolean durum) {
 		this.durum = durum;
+	}
+
+	@Column(name = COLUMN_NAME_ENTEGRASYON_MAIL_DURUM)
+	public boolean isEntegrasyonMailDurum() {
+		return entegrasyonMailDurum;
+	}
+
+	public void setEntegrasyonMailDurum(boolean entegrasyonMailDurum) {
+		this.entegrasyonMailDurum = entegrasyonMailDurum;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
