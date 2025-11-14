@@ -1504,7 +1504,18 @@
 									rendered="#{pdksPersonelHome.eskiKullanici != null}" reRender="pdksPersonelList"
 									oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 
+								<ui:fragment
+									rendered="#{pdksPersonelHome.instance.kullanici.id != null and pdksPersonelHome.instance.kullanici.durum == false and pdksPersonelHome.instance.calisiyor}">
 
+									<DIV id="denkf#{pdksPersonelHome.instance.kullanici.id}">
+										<h:graphicImage value="/img/msginfo.png" style="border:0" height="20" width="20" />
+										<rich:toolTip for="denkf#{pdksPersonelHome.instance.kullanici.id}">
+											<DIV style="text-align: left;">
+												<B><h:outputText value="#{pdksPersonelHome.instance.kullanici.username}" /></B> kullanıcısı geçici pasif durumdadır!
+											</DIV>
+										</rich:toolTip>
+									</DIV>
+								</ui:fragment>
 
 							</h:panelGrid>
 							<a4j:outputPanel id="kullaniciBilgi">
