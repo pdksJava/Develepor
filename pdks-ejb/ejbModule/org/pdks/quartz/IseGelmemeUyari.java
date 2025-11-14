@@ -749,7 +749,10 @@ public class IseGelmemeUyari implements Serializable {
 				HashMap<Long, User> perUserMap = new HashMap<Long, User>();
 				for (Long key : userMap.keySet()) {
 					User user = userMap.get(key);
-					perUserMap.put(user.getPersonelId(), user);
+					if (userIKMailMap.containsKey(user.getEmail()) == false)
+						perUserMap.put(user.getPersonelId(), user);
+					else
+						perUserMap.put(user.getPersonelId(), userIKMailMap.get(user.getEmail()));
 				}
 				for (Personel personel : yoneticiler) {
 					Long yoneticisiId = personel.getId();
@@ -1053,7 +1056,16 @@ public class IseGelmemeUyari implements Serializable {
 							userYoneticiMap.put(user.getId(), user);
 						} else
 							logger.debug(user.getId());
+						if (userIKMailMap.containsKey(user.getEmail())) {
+							User userIK = userIKMailMap.get(user.getEmail());
+							if (userIK.getId().equals(user.getId()) == false) {
+								List<VardiyaGun> list = yoneticisi.getPersonelVardiyalari();
+								yoneticisi = userIK.getPdksPersonel();
+								yoneticisi.setPersonelVardiyalari(list);
+							}
+								
 
+						}
 						user.setEmail(eposta);
 						user.setPdksPersonel(yoneticisi);
 						setUserYonetici(user);
@@ -1176,6 +1188,7 @@ public class IseGelmemeUyari implements Serializable {
 	private MailStatu mailGonder(String renderAdres, boolean hariciGonder, Session session) throws Exception {
 		MailStatu mailSatu = null;
 		List<VardiyaGun> list = userYonetici.getPdksPersonel().getPersonelVardiyalari();
+
 		if (list != null && list.isEmpty() == false) {
 			MailObject mail = new MailObject();
 			boolean devam = true;
