@@ -68,6 +68,7 @@ import org.pdks.session.PdksUtil;
 
 import com.pdks.webservice.MailFile;
 import com.pdks.webservice.MailObject;
+import com.pdks.webservice.MailPersonel;
 import com.pdks.webservice.MailStatu;
 
 @Name("iseGelmemeUyari")
@@ -1063,7 +1064,6 @@ public class IseGelmemeUyari implements Serializable {
 								yoneticisi = userIK.getPdksPersonel();
 								yoneticisi.setPersonelVardiyalari(list);
 							}
-								
 
 						}
 						user.setEmail(eposta);
@@ -1188,16 +1188,31 @@ public class IseGelmemeUyari implements Serializable {
 	private MailStatu mailGonder(String renderAdres, boolean hariciGonder, Session session) throws Exception {
 		MailStatu mailSatu = null;
 		List<VardiyaGun> list = userYonetici.getPdksPersonel().getPersonelVardiyalari();
+		if (userIKMailMap != null && userIKMailMap.containsKey(userYonetici.getStaffId())) {
+			String email = userYonetici.getEmail();
+			userYonetici = userIKMailMap.get(userYonetici.getStaffId());
+			userYonetici.setEmail(email);
+		}
 
 		if (list != null && list.isEmpty() == false) {
 			MailObject mail = new MailObject();
 			boolean devam = true;
 			if (yoneticiMailGonderme == false || hariciGonder) {
-				if (userYonetici.getPdksPersonel() == null || userYonetici.getPdksPersonel().isCalisiyor())
-					mail.getToList().add(userYonetici.getMailPersonel());
+				if (userYonetici.getPdksPersonel() == null || userYonetici.getPdksPersonel().isCalisiyor()) {
+					MailPersonel mp = userYonetici.getMailPersonel();
+					mail.getToList().add(mp);
+				}
 				if (userUstYonetici != null && hariciGonder == false)
-					if (userUstYonetici.getPdksPersonel() == null || userUstYonetici.getPdksPersonel().isCalisiyor())
-						mail.getCcList().add(userUstYonetici.getMailPersonel());
+					if (userUstYonetici.getPdksPersonel() == null || userUstYonetici.getPdksPersonel().isCalisiyor()) {
+						if (userIKMailMap != null && userIKMailMap.containsKey(userUstYonetici.getStaffId())) {
+							String email = userUstYonetici.getEmail();
+							userUstYonetici = userIKMailMap.get(userUstYonetici.getStaffId());
+							userUstYonetici.setEmail(email);
+						}
+
+						MailPersonel mp = userUstYonetici.getMailPersonel();
+						mail.getCcList().add(mp);
+					}
 				devam = !mail.getToList().isEmpty();
 			} else
 				devam = ikMailList.contains(userYonetici.getStaffId());
