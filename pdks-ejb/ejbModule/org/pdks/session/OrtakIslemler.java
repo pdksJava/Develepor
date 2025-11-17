@@ -435,19 +435,8 @@ public class OrtakIslemler implements Serializable {
 		if (session != null) {
 			if (personelIdList == null)
 				personelIdList = new ArrayList<Long>();
-			List<String> roller = new ArrayList<String>();
-			roller.add(Role.TIPI_IK);
-			roller.add(Role.TIPI_IK_SIRKET);
-			roller.add(Role.TIPI_IK_Tesis);
-			HashMap fields = new HashMap();
-			String fieldName = "rn";
-			fields.put(fieldName, roller);
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			StringBuffer sb = new StringBuffer();
-			sb.append("select UR.* from " + UserRoles.TABLE_NAME + " UR " + PdksEntityController.getSelectLOCK());
-			sb.append(" inner join " + Role.TABLE_NAME + " R " + PdksEntityController.getJoinLOCK() + " on R." + Role.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_ROLE + " and R." + Role.COLUMN_NAME_ROLE_NAME + " :" + fieldName);
-			sb.append(" where UR." + UserRoles.COLUMN_NAME_USER + " is not null");
-			List<UserRoles> pdkRoles = pdksEntityController.getSQLParamList(roller, sb, fieldName, fields, UserRoles.class, session);
+
+			List<UserRoles> pdkRoles = getIKUserList(UserRoles.class, session);
 			HashMap<Long, User> userMap = new HashMap<Long, User>();
 			for (Iterator iterator = pdkRoles.iterator(); iterator.hasNext();) {
 				UserRoles userRoles = (UserRoles) iterator.next();
@@ -506,11 +495,39 @@ public class OrtakIslemler implements Serializable {
 
 			}
 
-			roller = null;
 			pdkRoles = null;
 		}
 
 		return map;
+	}
+
+	/**
+	 * @param class1
+	 * @param session
+	 * @return
+	 */
+	public List getIKUserList(Class class1, Session session) {
+		List<String> roller = new ArrayList<String>();
+		roller.add(Role.TIPI_IK);
+		roller.add(Role.TIPI_IK_SIRKET);
+		roller.add(Role.TIPI_IK_Tesis);
+		HashMap fields = new HashMap();
+		String fieldName = "rn";
+		fields.put(fieldName, roller);
+		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		StringBuffer sb = new StringBuffer();
+		if (class1.equals(UserRoles.class)) {
+			sb.append("select UR.* from " + UserRoles.TABLE_NAME + " UR " + PdksEntityController.getSelectLOCK());
+			sb.append(" inner join " + Role.TABLE_NAME + " R " + PdksEntityController.getJoinLOCK() + " on R." + Role.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_ROLE + " and R." + Role.COLUMN_NAME_ROLE_NAME + " :" + fieldName);
+			sb.append(" where UR." + UserRoles.COLUMN_NAME_USER + " is not null");
+		} else if (class1.equals(User.class)) {
+			sb.append("select distinct U.* from " + UserRoles.TABLE_NAME + " UR " + PdksEntityController.getSelectLOCK());
+			sb.append(" inner join " + Role.TABLE_NAME + " R " + PdksEntityController.getJoinLOCK() + " on R." + Role.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_ROLE + " and R." + Role.COLUMN_NAME_ROLE_NAME + " :" + fieldName);
+			sb.append(" inner join " + User.TABLE_NAME + " U " + PdksEntityController.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER + " and U." + User.COLUMN_NAME_DURUM + " = 1");
+		}
+		List pdkRoles = pdksEntityController.getSQLParamList(roller, sb, fieldName, fields, class1, session);
+		roller = null;
+		return pdkRoles;
 	}
 
 	/**
@@ -527,6 +544,7 @@ public class OrtakIslemler implements Serializable {
 			if (user != null) {
 				if (user.isDurum()) {
 					if (user.getPdksPersonel().isCalisiyor()) {
+						HashMap<String, Object> veriMap = new HashMap<String, Object>();
 						MailObject mailObject = new MailObject();
 						MailPersonel mp = new MailPersonel();
 						mp.setAdiSoyadi(user.getAdSoyad());
@@ -548,8 +566,13 @@ public class OrtakIslemler implements Serializable {
 						body.append("<td width=\"90px\"><a style=\"font-size: 16px;\" href=\"http://" + donusAdres + "/sifreDegistirme?id=" + id + "\"><b>Şifre güncellemek için tıklayınız.</b></a></td>");
 						body.append("</TR></TABLE></p>");
 						mailObject.setBody(body.toString());
+
+						veriMap.put("temizleTOCCList", true);
+						veriMap.put("mailObject", mailObject);
+						veriMap.put("rd", null);
+						veriMap.put("sayfaAdi", "/email/fazlaMesaiTalepMail.xhtml");
 						try {
-							ms = mailSoapServisGonder(true, mailObject, null, "/email/fazlaMesaiTalepMail.xhtml", session);
+							ms = mailSoapServisGonder(veriMap, session);
 
 						} catch (Exception e) {
 							ex = e;
@@ -1548,6 +1571,7 @@ public class OrtakIslemler implements Serializable {
 		} catch (Exception e) {
 			maxGunCalismaSaat = 0.0d;
 		}
+		HashMap<String, Object> veriMap = new HashMap<String, Object>();
 		if (maxGunCalismaSaat > 0.0d && maxGunCalismaAy != null) {
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.MONTH, -maxGunCalismaAy);
@@ -1723,8 +1747,14 @@ public class OrtakIslemler implements Serializable {
 						mail.getToList().add(mailUser);
 						mail.setBody(PdksUtil.replaceAll(str, geciciPER, yonetici.getAdSoyad()));
 
+						veriMap.put("temizleTOCCList", true);
+						veriMap.put("mailObject", mail);
+						veriMap.put("rd", null);
+						veriMap.put("sayfaAdi", null);
+
 						try {
-							MailStatu mailSatu = mailSoapServisGonder(true, mail, null, null, session);
+							MailStatu mailSatu = mailSoapServisGonder(veriMap, session);
+							;
 							if (mailSatu != null && mailSatu.getDurum())
 								logger.info(fazlaCalismalar.size());
 						} catch (Exception e) {
@@ -7709,7 +7739,12 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public MailStatu mailSoapServisGonder(boolean temizleTOCCList, MailObject mailObject, Renderer rd, String sayfaAdi, Session session) throws Exception {
+	public MailStatu mailSoapServisGonder(HashMap<String, Object> dataMap, Session session) throws Exception {
+		boolean temizleTOCCList = dataMap.containsKey("temizleTOCCList") ? (Boolean) dataMap.get("temizleTOCCList") : false;
+		MailObject mailObject = dataMap.containsKey("mailObject") ? (MailObject) dataMap.get("mailObject") : new MailObject();
+		Renderer rd = dataMap.containsKey("rd") ? (Renderer) dataMap.get("rd") : null;
+		String sayfaAdi = dataMap.containsKey("sayfaAdi") ? (String) dataMap.get("sayfaAdi") : "";
+
 		String servisMailGonderKey = getParameterKey("servisMailGonder");
 		boolean servisMailGonder = PdksUtil.hasStringValue(servisMailGonderKey);
 		MailStatu mailStatu = null;
@@ -7762,6 +7797,37 @@ public class OrtakIslemler implements Serializable {
 				mailObject.getToList().clear();
 				mailObject.getCcList().clear();
 			}
+
+			List<MailPersonel> list = new ArrayList<MailPersonel>();
+			if (mailObject.getToList().isEmpty() == false)
+				list.addAll(mailObject.getToList());
+			if (mailObject.getCcList().isEmpty() == false)
+				list.addAll(mailObject.getCcList());
+			if (mailObject.getBccList().isEmpty() == false)
+				list.addAll(mailObject.getBccList());
+			if (list.isEmpty() == false) {
+				HashMap<String, String> ikMap = new HashMap<String, String>();
+				List<User> ikList = null;
+				if (dataMap.containsKey("ikList"))
+					ikList = (List<User>) dataMap.get("ikList");
+				else {
+					ikList = getIKUserList(User.class, session);
+					dataMap.put("ikList", ikList);
+				}
+
+				for (User user : ikList) {
+					Personel per = user.getPdksPersonel();
+					if (per.isCalisiyor())
+						ikMap.put(user.getEmail(), per.getAdSoyad());
+				}
+				for (MailPersonel mailPersonel : list) {
+					if (ikMap.containsKey(mailPersonel.getEPosta()))
+						mailPersonel.setAdiSoyadi(ikMap.get(mailPersonel.getEPosta()));
+				}
+				ikList = null;
+				ikMap = null;
+			}
+			list = null;
 			mailObject.setSmtpUser(getParameterKey("smtpUserName"));
 			mailObject.setSmtpPassword(getParameterKey("smtpPassword"));
 			try {
