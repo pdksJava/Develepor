@@ -393,8 +393,14 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 								mail.setBody(body.toString());
 								if (seciliUser.getPdksPersonel() == null || seciliUser.getPdksPersonel().isCalisiyor())
 									mail.getToList().add(seciliUser.getMailPersonel());
-								ortakIslemler.mailSoapServisGonder(false, mail, renderer, "/email/onayPersonelIzinMail.xhtml", session);
-
+								// ortakIslemler.mailSoapServisGonder(false, mail, renderer, "/email/onayPersonelIzinMail.xhtml", session);
+								HashMap<String, Object> veriMap = new HashMap<String, Object>();
+								veriMap.put("temizleTOCCList", false);
+								veriMap.put("mailObject", mail);
+								veriMap.put("renderer", renderer);
+								veriMap.put("sayfaAdi", "/email/onayPersonelIzinMail.xhtml");
+								ortakIslemler.mailSoapServisGonder(veriMap, session);
+								veriMap = null;
 							} catch (Exception e) {
 								logger.error("PDKS hata in : \n");
 								e.printStackTrace();
@@ -2162,7 +2168,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 
 				}
 				ccIlebccMailKarsilastir();
-				MailStatu mailSatu = null;
+				MailStatu mailStatu = null;
 				try {
 					MailObject mail = new MailObject();
 					String konu = mailKonu, body = null;
@@ -2181,8 +2187,14 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					ortakIslemler.addMailPersonelList(bccMailList, mail.getBccList());
 					mail.setSubject(konu);
 					mail.setBody(body);
-					mailSatu = ortakIslemler.mailSoapServisGonder(false, mail, renderer, "/email/" + adres, session);
-
+					// mailStatu = ortakIslemler.mailSoapServisGonder(false, mail, renderer, "/email/" + adres, session);
+					HashMap<String, Object> veriMap = new HashMap<String, Object>();
+					veriMap.put("temizleTOCCList", false);
+					veriMap.put("mailObject", mail);
+					veriMap.put("renderer", renderer);
+					veriMap.put("sayfaAdi", "/email/" + adres);
+					mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+					veriMap = null;
 				} catch (Exception e) {
 					logger.error("Pdks hata in : \n");
 					e.printStackTrace();
@@ -2191,7 +2203,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					PdksUtil.addMessageError("Mesaj gönderilmemiştir. " + e.getMessage());
 
 				}
-				if (mailSatu != null && mailSatu.getDurum()) {
+				if (mailStatu != null && mailStatu.getDurum()) {
 					if (listeOlustur)
 						PdksUtil.addMessageInfo("Mesaj Gönderildi.");
 				}
@@ -2207,7 +2219,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 						setSeciliUser(izinUser);
 				}
 
-				MailStatu mailSatu = null;
+				MailStatu mailStatu = null;
 				try {
 					userList = new ArrayList<User>();
 					userList.add(getSeciliUser());
@@ -2226,8 +2238,14 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 						mail.getToList().add(seciliUser.getMailPersonel());
 					mail.setSubject("İzin Kaydı");
 					mail.setBody(body);
-					mailSatu = ortakIslemler.mailSoapServisGonder(false, mail, renderer, "/email/onayPersonelIzinMail.xhtml", session);
-
+					// mailStatu = ortakIslemler.mailSoapServisGonder(false, mail, renderer, "/email/onayPersonelIzinMail.xhtml", session);
+					HashMap<String, Object> veriMap = new HashMap<String, Object>();
+					veriMap.put("temizleTOCCList", false);
+					veriMap.put("mailObject", mail);
+					veriMap.put("renderer", renderer);
+					veriMap.put("sayfaAdi", "/email/onayPersonelIzinMail.xhtml");
+					mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+					veriMap = null;
 				} catch (Exception e) {
 					logger.error("Pdks hata in : \n");
 					e.printStackTrace();
@@ -2236,7 +2254,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					PdksUtil.addMessageError("Mesaj gönderilmemiştir. " + e.getMessage());
 
 				}
-				if (mailSatu != null && mailSatu.getDurum()) {
+				if (mailStatu != null && mailStatu.getDurum()) {
 					if (listeOlustur)
 						PdksUtil.addMessageInfo("Onay mesaj gönderildi.");
 				}
@@ -2781,7 +2799,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		izinIptal = PdksUtil.replaceAll(izin.getIzinTipiAciklama() + " " + authenticatedUser.getAdSoyad() + " tarafından iptal edilmiştir", "  ", " ");
 		body = "<p>" + mailPersonelAciklama + " ait başlangıç tarihi " + authenticatedUser.dateTimeFormatla(mailIzin.getBaslangicZamani()) + " bitiş tarihi " + authenticatedUser.dateTimeFormatla(mailIzin.getBitisZamani()) + " " + izinIptal + ".</p>" + "<p>Saygılarımla,</p>";
 
-		MailStatu mailSatu = null;
+		MailStatu mailStatu = null;
 		try {
 			MailObject mail = new MailObject();
 
@@ -2794,7 +2812,14 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			ortakIslemler.addMailPersonelUserList(bccList, mail.getBccList());
 			mail.setSubject(konu);
 			mail.setBody(body);
-			mailSatu = ortakIslemler.mailSoapServisGonder(false, mail, renderer, "/email/" + adres, session);
+			// mailStatu = ortakIslemler.mailSoapServisGonder(false, mail, renderer, "/email/" + adres, session);
+			HashMap<String, Object> veriMap = new HashMap<String, Object>();
+			veriMap.put("temizleTOCCList", false);
+			veriMap.put("mailObject", mail);
+			veriMap.put("renderer", renderer);
+			veriMap.put("sayfaAdi", "/email/" + adres);
+			mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+			veriMap = null;
 
 		} catch (Exception e) {
 			logger.error("Pdks hata in : \n");
@@ -2816,7 +2841,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			PdksUtil.addMessageAvailableInfo("İzin iptal edilmiştir.");
 			izinIptalGoster = false;
 		}
-		if (mailSatu != null && mailSatu.getDurum()) {
+		if (mailStatu != null && mailStatu.getDurum()) {
 			PdksUtil.addMessageAvailableInfo("Mesaj Gönderildi.");
 		}
 
@@ -2854,7 +2879,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 						hekimCCList();
 					mailListesineEkle(bccMailList, izin.getIzinSahibi().getEMailBCCList());
 				}
-				MailStatu mailSatu = null;
+				MailStatu mailStatu = null;
 				try {
 					String mailPersonelAciklama = getMailPersonelAciklama(izin.getIzinSahibi());
 					izinIptal = izin.getIzinTipiAciklama() + " " + authenticatedUser.getAdSoyad() + " tarafından iptal edilmiştir";
@@ -2868,14 +2893,22 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					ortakIslemler.addMailPersonelUserList(toList, mail.getToList());
 					ortakIslemler.addMailPersonelList(ccMailList, mail.getCcList());
 					ortakIslemler.addMailPersonelList(bccMailList, mail.getBccList());
-					mailSatu = ortakIslemler.mailSoapServisGonder(false, mail, renderer, "/email/retPersonelIzinMail.xhtml", session);
+					// mailStatu = ortakIslemler.mailSoapServisGonder(false, mail, renderer, "/email/retPersonelIzinMail.xhtml", session);
+					HashMap<String, Object> veriMap = new HashMap<String, Object>();
+					veriMap.put("temizleTOCCList", false);
+					veriMap.put("mailObject", mail);
+					veriMap.put("renderer", renderer);
+					veriMap.put("sayfaAdi", "/email/retPersonelIzinMail.xhtml");
+					mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+					veriMap = null;
+
 				} catch (Exception e) {
 					logger.error("Pdks hata in : \n");
 					e.printStackTrace();
 					logger.error("Pdks hata out : " + e.getMessage());
 
 				}
-				if (mailSatu != null && mailSatu.getDurum())
+				if (mailStatu != null && mailStatu.getDurum())
 					PdksUtil.addMessageInfo("Mesaj gönderilmiştir.");
 				if (!nedenSor) {
 					redSebebiTanim = null;
@@ -4266,7 +4299,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					} catch (Exception e) {
 
 					}
-				MailStatu mailSatu = null;
+				MailStatu mailStatu = null;
 				try {
 					String mailKonu = null, body = null;
 					if (onayliIzin) {
@@ -4338,16 +4371,23 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					}
 					list = null;
 					ortakIslemler.addMailPersonelList(bccMailList, mail.getBccList());
-					mailSatu = ortakIslemler.mailSoapServisGonder(false, mail, renderer, render, session);
+	//				mailStatu = ortakIslemler.mailSoapServisGonder(false, mail, renderer, render, session);
+					HashMap<String, Object> veriMap = new HashMap<String, Object>();
+					veriMap.put("temizleTOCCList", false);
+					veriMap.put("mailObject", mail);
+					veriMap.put("renderer", renderer);
+					veriMap.put("sayfaAdi", render);
+					mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+					veriMap = null;
 				} catch (Exception e) {
 					logger.error("PDKS hata in : \n");
 					e.printStackTrace();
 					logger.error("PDKS hata out : " + e.getMessage());
 					PdksUtil.addMessageError(e.getMessage());
 				}
-				if (mailSatu != null && mailSatu.getDurum() == false) {
-					if (mailSatu.getHataMesai() != null)
-						PdksUtil.addMessageAvailableError(mailSatu.getHataMesai());
+				if (mailStatu != null && mailStatu.getDurum() == false) {
+					if (mailStatu.getHataMesai() != null)
+						PdksUtil.addMessageAvailableError(mailStatu.getHataMesai());
 
 				}
 

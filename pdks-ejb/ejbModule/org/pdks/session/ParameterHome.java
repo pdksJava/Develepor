@@ -138,7 +138,14 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 			MailStatu mailStatu = null;
 			boolean gonderildi = false;
 			try {
-				mailStatu = ortakIslemler.mailSoapServisGonder(false, mailObject, renderer, "/email/testMail.xhtml", session);
+				// mailStatu = ortakIslemler.mailSoapServisGonder(false, mailObject, renderer, "/email/testMail.xhtml", session);
+				HashMap<String, Object> veriMap = new HashMap<String, Object>();
+				veriMap.put("temizleTOCCList", false);
+				veriMap.put("mailObject", mailObject);
+				veriMap.put("renderer", renderer);
+				veriMap.put("sayfaAdi", "/email/testMail.xhtml");
+				mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+				veriMap = null;
 				if (mailStatu != null) {
 					gonderildi = mailStatu.getDurum();
 					if (!gonderildi)

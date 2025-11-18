@@ -3755,7 +3755,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				mail.getToList().add(admin.getMailPersonel());
 				mail.setBody(sb.toString());
 				sb = null;
-				ortakIslemler.mailSoapServisGonder(false, mail, null, null, session);
+				// ortakIslemler.mailSoapServisGonder(false, mail, null, null, session);
+				HashMap<String, Object> veriMap = new HashMap<String, Object>();
+				veriMap.put("temizleTOCCList", false);
+				veriMap.put("mailObject", mail);
+				ortakIslemler.mailSoapServisGonder(veriMap, session);
+				veriMap = null;
+
 			}
 		} catch (Exception e) {
 		}
@@ -5151,10 +5157,18 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				mailObject.getToList().clear();
 				mailObject.getCcList().clear();
 			}
-			if (!userLogin.isAdmin())
-				mailStatu = ortakIslemler.mailSoapServisGonder(true, mailObject, renderer, "/email/fazlaMesaiOnayMail.xhtml", session);
-			else
-				mailStatu = ortakIslemler.mailSoapServisGonder(true, mailObject, null, null, session);
+			HashMap<String, Object> veriMap = new HashMap<String, Object>();
+			veriMap.put("temizleTOCCList", true);
+			veriMap.put("mailObject", mailObject);
+ 			if (!userLogin.isAdmin()) {
+				// mailStatu = ortakIslemler.mailSoapServisGonder(true, mailObject, renderer, "/email/fazlaMesaiOnayMail.xhtml", session);
+				veriMap.put("renderer", renderer);
+				veriMap.put("sayfaAdi", "/email/fazlaMesaiOnayMail.xhtml");
+			}
+			// else
+			// mailStatu = ortakIslemler.mailSoapServisGonder(true, mailObject, null, null, session);
+			mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+			veriMap = null;
 		} catch (Exception e) {
 			mailStatu = new MailStatu();
 			if (e.getMessage() != null)

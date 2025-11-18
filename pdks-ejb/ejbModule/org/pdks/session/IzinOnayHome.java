@@ -147,8 +147,7 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 		session.refresh(izin);
 		Personel personel = izin.getIzinSahibi();
 		Personel pdksPersonel = (Personel) personel.clone();
-		 
- 
+
 		User izinSahibiUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, pdksPersonel.getId(), User.class, session);
 		User userYonetici = null;
 		List<User> list = new ArrayList<User>();
@@ -204,7 +203,7 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 			ccMailList = new ArrayList<String>();
 			setInstance(izin);
 			setUserList(list);
-			MailStatu mailSatu = null;
+			MailStatu mailStatu = null;
 			try {
 				String bolumu = personel.getEkSaha3() != null && personel.getEkSaha3().getParentTanim() != null ? personel.getEkSaha3().getParentTanim().getAciklama() : ortakIslemler.bolumAciklama();
 				String mailPersonelAciklama = personel.getSirket().getAd() + " " + (personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() + " " + bolumu.toLowerCase(PdksUtil.TR_LOCALE) + " " : "") + personel.getAdSoyad();
@@ -216,15 +215,21 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 				mail.setBody(body);
 				ortakIslemler.addMailPersonelUserList(userList, mail.getToList());
 				ortakIslemler.addMailPersonelList(ccMailList, mail.getCcList());
-				mailSatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/izinHatirlatmaMail.xhtml", session);
-
+				// mailStatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/izinHatirlatmaMail.xhtml", session);
+				HashMap<String, Object> veriMap = new HashMap<String, Object>();
+				veriMap.put("temizleTOCCList", true);
+				veriMap.put("mailObject", mail);
+				veriMap.put("renderer", renderer);
+				veriMap.put("sayfaAdi", "/email/izinHatirlatmaMail.xhtml");
+				mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+				veriMap = null;
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n");
 				e.printStackTrace();
 				logger.error("PDKS hata out : " + e.getMessage());
 				PdksUtil.addMessageError(e.getMessage());
 			}
-			if (mailSatu != null && mailSatu.getDurum())
+			if (mailStatu != null && mailStatu.getDurum())
 				PdksUtil.addMessageInfo("Mesaj gönderildi");
 		}
 		return "";

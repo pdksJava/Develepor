@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -142,7 +143,7 @@ public class Zamanlayici implements Serializable {
 			setAdminList(userList);
 			setKonu(xkonu);
 			setAciklama(xaciklama + (thisIp != null ? " --> Host Name : " + thisIp.getHostName() : ""));
-			MailStatu mailSatu = null;
+			MailStatu mailStatu = null;
 			try {
 				// ortakIslemler.mailGonder(renderer, "/email/" + sayfaAdi);
 
@@ -155,8 +156,15 @@ public class Zamanlayici implements Serializable {
 					mail.getAttachmentFiles().add(mf);
 				}
 				ortakIslemler.addMailPersonelUserList(userList, mail.getToList());
-				mailSatu = ortakIslemler.mailSoapServisGonder(false, mail, renderer, "/email/" + sayfaAdi, session);
-				if (mailSatu != null && mailSatu.getDurum()) {
+				// mailStatu = ortakIslemler.mailSoapServisGonder(false, mail, renderer, "/email/" + sayfaAdi, session);
+				HashMap<String, Object> veriMap = new HashMap<String, Object>();
+				veriMap.put("temizleTOCCList", false);
+				veriMap.put("mailObject", mail);
+				veriMap.put("renderer", renderer);
+				veriMap.put("sayfaAdi", "/email/" + sayfaAdi);
+				mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+				veriMap = null;
+				if (mailStatu != null && mailStatu.getDurum()) {
 					if (thisIp != null)
 						logger.info(xkonu + " " + thisIp + " tamamlandı.");
 				}
@@ -246,7 +254,6 @@ public class Zamanlayici implements Serializable {
 	public void setAciklama(String aciklama) {
 		this.aciklama = aciklama;
 	}
-
 
 	// http://www.quartz-scheduler.org/docs/tutorials/crontrigger.html
 

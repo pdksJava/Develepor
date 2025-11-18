@@ -337,9 +337,14 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 									mail.setBody(body.toString());
 
 									ortakIslemler.addMailPersonelUserList(userList, mail.getToList());
-
-									ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/tatilUyariMail.xhtml", session);
-
+									// ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/tatilUyariMail.xhtml", session);
+									HashMap<String, Object> veriMap = new HashMap<String, Object>();
+									veriMap.put("temizleTOCCList", true);
+									veriMap.put("mailObject", mail);
+									veriMap.put("renderer", renderer);
+									veriMap.put("sayfaAdi", "/email/tatilUyariMail.xhtml");
+									ortakIslemler.mailSoapServisGonder(veriMap, session);
+									veriMap = null;
 								} catch (Exception e) {
 									logger.error("PDKS hata in : \n");
 									e.printStackTrace();

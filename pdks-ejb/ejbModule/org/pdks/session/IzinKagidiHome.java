@@ -88,7 +88,7 @@ public class IzinKagidiHome extends EntityHome<PersonelIzin> implements Serializ
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		// setPersonelizinList(new ArrayList());
 		fillIzinKagidiList();
 	}
@@ -126,9 +126,9 @@ public class IzinKagidiHome extends EntityHome<PersonelIzin> implements Serializ
 		Personel pdksPersonel = (Personel) personel.clone();
 
 		List<User> list = new ArrayList<User>();
-	 
+
 		User izinSahibiUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, pdksPersonel.getId(), User.class, session);
- 
+
 		if (izinSahibiUser != null) {
 			if (izinSahibiUser.isSuperVisor()) {
 				Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());
@@ -165,7 +165,7 @@ public class IzinKagidiHome extends EntityHome<PersonelIzin> implements Serializ
 		}
 
 		if (pdksPersonel.getPdksYonetici() != null) {
-			 
+
 			User userYonetici = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, pdksPersonel.getPdksYonetici().getId(), User.class, session);
 			if (userYonetici != null) {
 				list.add(userYonetici);
@@ -189,7 +189,7 @@ public class IzinKagidiHome extends EntityHome<PersonelIzin> implements Serializ
 
 		if (!list.isEmpty()) {
 			setCcUserList(list);
-			MailStatu mailSatu = null;
+			MailStatu mailStatu = null;
 			try {
 				if (!list.isEmpty()) {
 					MailObject mail = new MailObject();
@@ -199,7 +199,14 @@ public class IzinKagidiHome extends EntityHome<PersonelIzin> implements Serializ
 					mail.setBody(body);
 					ortakIslemler.addMailPersonelUserList(toUserList, mail.getToList());
 					ortakIslemler.addMailPersonelUserList(ccUserList, mail.getCcList());
-					mailSatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/izinKagidiMail.xhtml", session);
+					// mailStatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/izinKagidiMail.xhtml", session);
+					HashMap<String, Object> veriMap = new HashMap<String, Object>();
+					veriMap.put("temizleTOCCList", true);
+					veriMap.put("mailObject", mail);
+					veriMap.put("renderer", renderer);
+					veriMap.put("sayfaAdi", "/email/izinKagidiMail.xhtml");
+					mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+					veriMap = null;
 				}
 
 			} catch (Exception e) {
@@ -209,7 +216,7 @@ public class IzinKagidiHome extends EntityHome<PersonelIzin> implements Serializ
 
 				PdksUtil.addMessageError(e.getMessage());
 			}
-			if (mailSatu != null && mailSatu.getDurum())
+			if (mailStatu != null && mailStatu.getDurum())
 				PdksUtil.addMessageInfo("Mesaj gönderildi");
 		}
 

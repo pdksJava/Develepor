@@ -914,7 +914,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		sb.append((fmt.getMesaiNeden() != null ? "<b>\"" + fmt.getMesaiNeden().getAciklama() + (PdksUtil.hasStringValue(fmt.getAciklama()) ? " ( Açıklama : " + fmt.getAciklama().trim() + " ) " : "") + "\"</b> nedeniyle " : "") + " fazla mesai yapacaktır." + "</p>");
 		mailIcerik = PdksUtil.replaceAll(sb.toString(), "  ", " ");
 		try {
-			MailStatu mailSatu = null;
+			MailStatu mailStatu = null;
 			try {
 				MailObject mail = new MailObject();
 				mail.setSubject(mailKonu);
@@ -926,14 +926,21 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				mail.setBody(body.toString());
 				body = null;
 				ortakIslemler.addMailPersonelUserList(toList, mail.getToList());
-				mailSatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/fazlaMesaiTalepMail.xhtml", session);
+				// mailStatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/fazlaMesaiTalepMail.xhtml", session);
+				HashMap<String, Object> veriMap = new HashMap<String, Object>();
+				veriMap.put("temizleTOCCList", true);
+				veriMap.put("mailObject", mail);
+				veriMap.put("renderer", renderer);
+				veriMap.put("sayfaAdi", "/email/fazlaMesaiTalepMail.xhtml");
+				mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+				veriMap = null;
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n");
 				e.printStackTrace();
 				logger.error("PDKS hata out : " + e.getMessage());
 				PdksUtil.addMessageError(e.getMessage());
 			}
-			if (mailSatu != null && mailSatu.getDurum())
+			if (mailStatu != null && mailStatu.getDurum())
 				PdksUtil.addMessageAvailableInfo(personel.getAdSoyad() + " " + authenticatedUser.getTarihFormatla(vg.getVardiyaDate(), PdksUtil.getDateFormat()) + " günü " + authenticatedUser.sayiFormatliGoster(fmt.getMesaiSuresi()) + " saat  fazla mesai talep mesajı "
 						+ fmt.getGuncelleyenUser().getAdSoyad() + " gönderildi.");
 		} catch (Exception e) {
@@ -1043,22 +1050,30 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			sb.append(uyariNot.getValue());
 		mailIcerik = PdksUtil.replaceAll(sb.toString(), "  ", " ");
 
-		MailStatu mailSatu = null;
+		MailStatu mailStatu = null;
 		try {
 			MailObject mail = new MailObject();
 			ortakIslemler.addMailPersonelUserList(toList, mail.getToList());
 			ortakIslemler.addMailPersonelUserList(ccList, mail.getCcList());
 			mail.setSubject(mailKonu);
 			mail.setBody(mailIcerik);
-			if (!mail.getToList().isEmpty() || !mail.getCcList().isEmpty())
-				mailSatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/fazlaMesaiTalepCevapMail.xhtml", session);
+			if (!mail.getToList().isEmpty() || !mail.getCcList().isEmpty()) {
+				// mailStatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/fazlaMesaiTalepCevapMail.xhtml", session);
+				HashMap<String, Object> veriMap = new HashMap<String, Object>();
+				veriMap.put("temizleTOCCList", true);
+				veriMap.put("mailObject", mail);
+				veriMap.put("renderer", renderer);
+				veriMap.put("sayfaAdi", "/email/fazlaMesaiTalepCevapMail.xhtml");
+				mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+				veriMap = null;
+			}
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
 			logger.error("PDKS hata out : " + e.getMessage());
 			PdksUtil.addMessageError(e.getMessage());
 		}
-		if (mailSatu != null && mailSatu.getDurum())
+		if (mailStatu != null && mailStatu.getDurum())
 			PdksUtil.addMessageAvailableInfo(fmt.getOlusturanUser().getAdSoyad() + " fazla mesai talep cevabı gönderildi.");
 
 		return "";
@@ -5077,7 +5092,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				mail.setBody(mailIcerik);
 				if (!mail.getToList().isEmpty() || !mail.getCcList().isEmpty())
 					try {
-						ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/fazlaMesaiTalepCevapMail.xhtml", session);
+						// ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/fazlaMesaiTalepCevapMail.xhtml", session);
+						HashMap<String, Object> veriMap = new HashMap<String, Object>();
+						veriMap.put("temizleTOCCList", true);
+						veriMap.put("mailObject", mail);
+						veriMap.put("renderer", renderer);
+						veriMap.put("sayfaAdi", "/email/fazlaMesaiTalepCevapMail.xhtml");
+						ortakIslemler.mailSoapServisGonder(veriMap, session);
+
 					} catch (Exception e) {
 
 					}
@@ -5392,7 +5414,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							mf.setDisplayName(dosyaAdi);
 							mf.setIcerik(mailData);
 							mail.getAttachmentFiles().add(mf);
-							ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/" + calismaPlanOnayMailAdres, session);
+							// ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/" + calismaPlanOnayMailAdres, session);
+							HashMap<String, Object> dataMap = new HashMap<String, Object>();
+							dataMap.put("temizleTOCCList", true);
+							dataMap.put("mailObject", mail);
+							dataMap.put("rd", renderer);
+							dataMap.put("sayfaAdi", "/email/" + calismaPlanOnayMailAdres);
+							ortakIslemler.mailSoapServisGonder(dataMap, session);
+							dataMap = null;
 						}
 
 						Boolean durum = saveOnay(session, aylikPuantaj);
@@ -5518,7 +5547,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							mf.setDisplayName(dosyaAdi);
 							mf.setIcerik(mailData);
 							mail.getAttachmentFiles().add(mf);
-							ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/" + calismaPlanOnayMailAdres, session);
+							// ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/" + calismaPlanOnayMailAdres, session);
+							HashMap<String, Object> veriMap = new HashMap<String, Object>();
+							veriMap.put("temizleTOCCList", true);
+							veriMap.put("mailObject", mail);
+							veriMap.put("renderer", renderer);
+							veriMap.put("sayfaAdi", "/email/" + calismaPlanOnayMailAdres);
+							ortakIslemler.mailSoapServisGonder(veriMap, session);
+							veriMap = null;
 						}
 
 					} catch (Exception e) {
@@ -8031,7 +8067,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			ccList = ortakIslemler.IKKullanicilariBul(toList, null, session);
 		String bolumAdi = PdksUtil.getSelectItemLabel(aramaSecenekleri.getEkSaha3Id(), aramaSecenekleri.getGorevYeriList());
 		toList.add(kilit.getOlusturanUser());
-		MailStatu mailSatu = null;
+		MailStatu mailStatu = null;
 		try {
 			MailObject mail = new MailObject();
 			mail.setSubject(denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " " + bolumAdi + " çalışma plan durumu");
@@ -8053,14 +8089,21 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (!ccList.isEmpty())
 				ortakIslemler.addMailPersonelUserList(ccList, mail.getCcList());
 			ortakIslemler.addMailPersonelUserList(toList, mail.getToList());
-			mailSatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/fazlaMesaiTalepMail.xhtml", session);
+			// mailStatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/fazlaMesaiTalepMail.xhtml", session);
+			HashMap<String, Object> veriMap = new HashMap<String, Object>();
+			veriMap.put("temizleTOCCList", true);
+			veriMap.put("mailObject", mail);
+			veriMap.put("renderer", renderer);
+			veriMap.put("sayfaAdi", "/email/fazlaMesaiTalepMail.xhtml");
+			mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+			veriMap = null;
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
 			logger.error("PDKS hata out : " + e.getMessage());
 			PdksUtil.addMessageError(e.getMessage());
 		}
-		if (mailSatu != null && mailSatu.getDurum()) {
+		if (mailStatu != null && mailStatu.getDurum()) {
 			if (authenticatedUser != null)
 				PdksUtil.addMessageAvailableInfo("Bilgilendirme maili gönderildi.");
 		}

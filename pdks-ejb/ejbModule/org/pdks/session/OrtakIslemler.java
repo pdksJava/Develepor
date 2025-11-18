@@ -1753,9 +1753,9 @@ public class OrtakIslemler implements Serializable {
 						veriMap.put("sayfaAdi", null);
 
 						try {
-							MailStatu mailSatu = mailSoapServisGonder(veriMap, session);
+							MailStatu mailStatu = mailSoapServisGonder(veriMap, session);
 							;
-							if (mailSatu != null && mailSatu.getDurum())
+							if (mailStatu != null && mailStatu.getDurum())
 								logger.info(fazlaCalismalar.size());
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -7731,10 +7731,7 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param temizleTOCCList
-	 * @param mailObject
-	 * @param rd
-	 * @param sayfaAdi
+	 * @param dataMap
 	 * @param session
 	 * @return
 	 * @throws Exception
@@ -7742,9 +7739,8 @@ public class OrtakIslemler implements Serializable {
 	public MailStatu mailSoapServisGonder(HashMap<String, Object> dataMap, Session session) throws Exception {
 		boolean temizleTOCCList = dataMap.containsKey("temizleTOCCList") ? (Boolean) dataMap.get("temizleTOCCList") : false;
 		MailObject mailObject = dataMap.containsKey("mailObject") ? (MailObject) dataMap.get("mailObject") : new MailObject();
-		Renderer rd = dataMap.containsKey("rd") ? (Renderer) dataMap.get("rd") : null;
-		String sayfaAdi = dataMap.containsKey("sayfaAdi") ? (String) dataMap.get("sayfaAdi") : "";
-
+		Renderer myRenderer = dataMap.containsKey("renderer") ? (Renderer) dataMap.get("renderer") : null;
+		String sayfaAdi = myRenderer != null && dataMap.containsKey("sayfaAdi") ? (String) dataMap.get("sayfaAdi") : null;
 		String servisMailGonderKey = getParameterKey("servisMailGonder");
 		boolean servisMailGonder = PdksUtil.hasStringValue(servisMailGonderKey);
 		MailStatu mailStatu = null;
@@ -7797,8 +7793,7 @@ public class OrtakIslemler implements Serializable {
 				mailObject.getToList().clear();
 				mailObject.getCcList().clear();
 			}
-
-			List<MailPersonel> list = new ArrayList<MailPersonel>();
+ 			List<MailPersonel> list = new ArrayList<MailPersonel>();
 			if (mailObject.getToList().isEmpty() == false)
 				list.addAll(mailObject.getToList());
 			if (mailObject.getCcList().isEmpty() == false)
@@ -7814,17 +7809,19 @@ public class OrtakIslemler implements Serializable {
 					ikList = getIKUserList(User.class, session);
 					dataMap.put("ikList", ikList);
 				}
-
-				for (User user : ikList) {
-					Personel per = user.getPdksPersonel();
-					if (per.isCalisiyor())
-						ikMap.put(user.getEmail(), per.getAdSoyad());
+				if (ikList != null) {
+					for (User user : ikList) {
+						Personel per = user.getPdksPersonel();
+						if (per.isCalisiyor())
+							ikMap.put(user.getEmail(), per.getAdSoyad());
+					}
+					ikList = null;
 				}
+
 				for (MailPersonel mailPersonel : list) {
 					if (ikMap.containsKey(mailPersonel.getEPosta()))
 						mailPersonel.setAdiSoyadi(ikMap.get(mailPersonel.getEPosta()));
 				}
-				ikList = null;
 				ikMap = null;
 			}
 			list = null;
@@ -7848,8 +7845,8 @@ public class OrtakIslemler implements Serializable {
 			}
 		}
 		if (!servisMailGonder) {
-			if (rd != null) {
-				mailGonder(rd, sayfaAdi);
+			if (myRenderer != null) {
+				mailGonder(myRenderer, sayfaAdi);
 				if (mailStatu == null) {
 					mailStatu = new MailStatu();
 					mailStatu.setDurum(true);

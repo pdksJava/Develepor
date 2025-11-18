@@ -363,7 +363,7 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 			mailAciklamaUserList = null;
 			setMailAciklamaTarih(mailAciklamaTarih);
 			setYeniYonetici(yeniYonetici);
-			MailStatu mailSatu = null;
+			MailStatu mailStatu = null;
 			try {
 				MailObject mail = new MailObject();
 				mail.setSubject("Rotasyon Bilgisi");
@@ -371,15 +371,21 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 				mail.setBody(body);
 				ortakIslemler.addMailPersonelUserList(toList, mail.getToList());
 
-				mailSatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/rotasyonMail.xhtml", session);
-
+				// mailStatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/rotasyonMail.xhtml", session);
+				HashMap<String, Object> veriMap = new HashMap<String, Object>();
+				veriMap.put("temizleTOCCList", true);
+				veriMap.put("mailObject", mail);
+				veriMap.put("renderer", renderer);
+				veriMap.put("sayfaAdi", "/email/rotasyonMail.xhtml");
+				mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+				veriMap = null;
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n");
 				e.printStackTrace();
 				logger.error("PDKS hata out : " + e.getMessage());
 				PdksUtil.addMessageError(e.getMessage());
 			}
-			if (mailSatu != null && mailSatu.getDurum())
+			if (mailStatu != null && mailStatu.getDurum())
 				PdksUtil.addMessageInfo("Mesaj gönderildi");
 
 			session.flush();

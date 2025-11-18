@@ -1072,16 +1072,16 @@ public class IseGelmemeUyari implements Serializable {
 						setUserIKList((ArrayList<User>) mailIKList);
 						statuGoster = Boolean.FALSE;
 						ekSahaAlanAdi = "ekSaha" + ekSahaAlanNo;
-						MailStatu mailSatu = null;
+						MailStatu mailStatu = null;
 
 						try {
 
 							if (yoneticiCalisiyor && mailGonder && !mailPersonelMap.containsKey(yonetici.getEmail())) {
 								baslikAyarla(userYonetici.getPdksPersonel());
 
-								mailSatu = mailGonder(renderAdres, false, session);
+								mailStatu = mailGonder(renderAdres, false, session);
 								// ortakIslemler.mailGonder(renderer, renderAdres);
-								if (mailSatu != null && mailSatu.getDurum())
+								if (mailStatu != null && mailStatu.getDurum())
 
 									logger.info(userYonetici.getPdksPersonel().getSirket().getAd() + " " + user.getAdSoyad() + " " + eposta + " iseGelisUyariMail mesaj gönderildi! ");
 							}
@@ -1147,13 +1147,13 @@ public class IseGelmemeUyari implements Serializable {
 
 					}
 					if (!personelVardiyalari.isEmpty()) {
-						MailStatu mailSatu = null;
+						MailStatu mailStatu = null;
 						try {
 							userYonetici.setStaffId(email);
 							baslikAyarla(userYonetici.getPdksPersonel());
 							// ortakIslemler.mailGonder(renderer, renderAdres);
-							mailSatu = mailGonder(renderAdres, true, session);
-							if (mailSatu != null && mailSatu.getDurum())
+							mailStatu = mailGonder(renderAdres, true, session);
+							if (mailStatu != null && mailStatu.getDurum())
 								logger.info(userYonetici.getPdksPersonel().getSirket().getAd() + " " + userYonetici.getAdSoyad() + " " + userYonetici.getEmail() + " iseGelisUyariMail mesaj gönderildi! ");
 
 							if (!userYoneticiMap.containsKey(userYonetici.getId())) {
@@ -1186,12 +1186,17 @@ public class IseGelmemeUyari implements Serializable {
 	 * @throws Exception
 	 */
 	private MailStatu mailGonder(String renderAdres, boolean hariciGonder, Session session) throws Exception {
-		MailStatu mailSatu = null;
+		MailStatu mailStatu = null;
+		HashMap<String, Object> veriMap = new HashMap<String, Object>();
+
 		List<VardiyaGun> list = userYonetici.getPdksPersonel().getPersonelVardiyalari();
-		if (userIKMailMap != null && userIKMailMap.containsKey(userYonetici.getStaffId())) {
-			String email = userYonetici.getEmail();
-			userYonetici = userIKMailMap.get(userYonetici.getStaffId());
-			userYonetici.setEmail(email);
+		if (userIKMailMap != null) {
+			veriMap.put("ikList", new ArrayList<User>(userIKMailMap.values()));
+			if (userIKMailMap.containsKey(userYonetici.getStaffId())) {
+				String email = userYonetici.getEmail();
+				userYonetici = userIKMailMap.get(userYonetici.getStaffId());
+				userYonetici.setEmail(email);
+			}
 		}
 
 		if (list != null && list.isEmpty() == false) {
@@ -1256,7 +1261,13 @@ public class IseGelmemeUyari implements Serializable {
 						mailFile.setIcerik(baos.toByteArray());
 						mailFile.setDisplayName("Işe Gelmeme Durum_" + PdksUtil.convertToDateString(islemTarihi, "yyyyMMdd") + ".xlsx");
 						mail.getAttachmentFiles().add(mailFile);
-						mailSatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, renderAdres, session);
+						// mailStatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, renderAdres, session);
+						veriMap.put("temizleTOCCList", true);
+						veriMap.put("mailObject", mail);
+						veriMap.put("renderer", renderer);
+						veriMap.put("sayfaAdi", renderAdres);
+						mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+						
 					} catch (Exception e) {
 						logger.error(e);
 						e.printStackTrace();
@@ -1267,8 +1278,8 @@ public class IseGelmemeUyari implements Serializable {
 				}
 			}
 		}
-
-		return mailSatu;
+		veriMap = null;
+		return mailStatu;
 	}
 
 	/**

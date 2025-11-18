@@ -1362,7 +1362,14 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			String mesaj = "";
 
 			try {
-				ms = ortakIslemler.mailSoapServisGonder(false, mailObject, renderer, "/mail.xhtml", session);
+				// ms = ortakIslemler.mailSoapServisGonder(false, mailObject, renderer, "/mail.xhtml", session);
+				HashMap<String, Object> veriMap = new HashMap<String, Object>();
+				veriMap.put("temizleTOCCList", false);
+				veriMap.put("mailObject", mailObject);
+				veriMap.put("renderer", renderer);
+				veriMap.put("sayfaAdi", "/mail.xhtml");
+				ms = ortakIslemler.mailSoapServisGonder(veriMap, session);
+				veriMap = null;
 				if (ms != null) {
 					durum = ms.getDurum();
 					if (!durum)
@@ -1511,8 +1518,15 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				if (!ePosta.equals(authenticatedUser.getEmail()))
 					mailObject.getBccList().add(authenticatedUser.getMailPersonel());
 				try {
-					mailStatu = ortakIslemler.mailSoapServisGonder(false, mailObject, renderer, "/email/testKullaniciMail.xhtml", session);
 
+					// mailStatu = ortakIslemler.mailSoapServisGonder(false, mailObject, renderer, "/email/testKullaniciMail.xhtml", session);
+					HashMap<String, Object> veriMap = new HashMap<String, Object>();
+					veriMap.put("temizleTOCCList", false);
+					veriMap.put("mailObject", mailObject);
+					veriMap.put("renderer", renderer);
+					veriMap.put("sayfaAdi", "/email/testKullaniciMail.xhtml");
+					mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+					veriMap = null;
 				} catch (Exception e) {
 					mailStatu = new MailStatu();
 					if (e.getMessage() != null)

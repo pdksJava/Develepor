@@ -747,7 +747,14 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 							mf.setDisplayName("tumHareketler.zip");
 							mf.setIcerik(zipVeri);
 							mail.getAttachmentFiles().add(mf);
-							ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/hareketMail.xhtml", session);
+							// ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/hareketMail.xhtml", session);
+							HashMap<String, Object> veriMap = new HashMap<String, Object>();
+							veriMap.put("temizleTOCCList", true);
+							veriMap.put("mailObject", mail);
+							veriMap.put("renderer", renderer);
+							veriMap.put("sayfaAdi", "/email/hareketMail.xhtml");
+							ortakIslemler.mailSoapServisGonder(veriMap, session);
+							veriMap = null;
 							if (authenticatedUser.isAdmin())
 								PdksUtil.addMessageInfo(dosyaAdi + " dosyası mail gönderildi.");
 						} catch (Exception e) {
@@ -879,7 +886,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 				File zipDosya = PdksUtil.dosyaOlustur("/tmp/tumHareketler" + (authenticatedUser.getShortUsername() != null ? authenticatedUser.getShortUsername().trim() : "") + ".zip", bytes);
 				logger.debug(authenticatedUser.getAdSoyad() + " Hareket zip dosyası kayıt ediliyor.");
 				setZipVeri(bytes);
-				MailStatu mailSatu = null;
+				MailStatu mailStatu = null;
 				try {
 					// ortakIslemler.mailGonder(renderer, "/email/hareketMail.xhtml");
 					if (bytes != null) {
@@ -892,7 +899,14 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 						mf.setDisplayName("tumHareketler.zip");
 						mf.setIcerik(bytes);
 						mail.getAttachmentFiles().add(mf);
-						mailSatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/hareketMail.xhtml", session);
+						// mailStatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, "/email/hareketMail.xhtml", session);
+						HashMap<String, Object> veriMap = new HashMap<String, Object>();
+						veriMap.put("temizleTOCCList", true);
+						veriMap.put("mailObject", mail);
+						veriMap.put("renderer", renderer);
+						veriMap.put("sayfaAdi", "/email/hareketMail.xhtml");
+						mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+						veriMap = null;
 					}
 					logger.debug(authenticatedUser.getAdSoyad() + " Hareket zip dosyası mail olarak gönderildi.");
 
@@ -902,7 +916,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					logger.error("Onay Akis Hata out : " + e.getMessage());
 
 				}
-				if (mailSatu != null && mailSatu.getDurum())
+				if (mailStatu != null && mailStatu.getDurum())
 					PdksUtil.addMessageInfo("Hareket dosyası mail gönderildi");
 				if (zipDosya != null && zipDosya.exists())
 					zipDosya.delete();

@@ -108,7 +108,7 @@ public class PersonelERPGuncelleme implements Serializable {
 				int saat = PdksUtil.getDateField(bugun, Calendar.HOUR_OF_DAY), haftaGun = PdksUtil.getDateField(bugun, Calendar.DAY_OF_WEEK);
 				if (session != null && haftaGun != Calendar.SUNDAY && saat > 7 && saat < 19) {
 					if (dakika == 0 || dakika == 30)
-						mailSatusKontrol(session);
+						mailStatusKontrol(session);
 				}
 
 			} catch (Exception e) {
@@ -139,7 +139,7 @@ public class PersonelERPGuncelleme implements Serializable {
 	 * @param sessionDB
 	 * @return
 	 */
-	public String mailSatusKontrol(Session sessionDB) {
+	public String mailStatusKontrol(Session sessionDB) {
 		String smtpHost = parameterMap.containsKey("smtpHost") ? parameterMap.get("smtpHost") : "";
 		String smtpUserName = parameterMap.containsKey("smtpUserName") ? parameterMap.get("smtpUserName") : "";
 		if (PdksUtil.hasStringValue(smtpHost) && PdksUtil.hasStringValue(smtpUserName)) {
