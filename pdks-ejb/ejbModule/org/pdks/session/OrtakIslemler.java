@@ -7737,6 +7737,8 @@ public class OrtakIslemler implements Serializable {
 	 * @throws Exception
 	 */
 	public MailStatu mailSoapServisGonder(HashMap<String, Object> dataMap, Session session) throws Exception {
+		if (dataMap == null)
+			dataMap = new HashMap<String, Object>();
 		boolean temizleTOCCList = dataMap.containsKey("temizleTOCCList") ? (Boolean) dataMap.get("temizleTOCCList") : false;
 		MailObject mailObject = dataMap.containsKey("mailObject") ? (MailObject) dataMap.get("mailObject") : new MailObject();
 		Renderer homeRenderer = dataMap.containsKey("homeRenderer") ? (Renderer) dataMap.get("homeRenderer") : null;
@@ -7793,7 +7795,7 @@ public class OrtakIslemler implements Serializable {
 				mailObject.getToList().clear();
 				mailObject.getCcList().clear();
 			}
- 			List<MailPersonel> list = new ArrayList<MailPersonel>();
+			List<MailPersonel> list = new ArrayList<MailPersonel>();
 			if (mailObject.getToList().isEmpty() == false)
 				list.addAll(mailObject.getToList());
 			if (mailObject.getCcList().isEmpty() == false)
@@ -7856,7 +7858,7 @@ public class OrtakIslemler implements Serializable {
 		}
 		if (mailStatu.getDurum() == false && mailStatu.getHataMesai() == null)
 			mailStatu.setHataMesai("Mail gönderiminde hata oluştu");
-
+		dataMap.clear();
 		return mailStatu;
 	}
 
