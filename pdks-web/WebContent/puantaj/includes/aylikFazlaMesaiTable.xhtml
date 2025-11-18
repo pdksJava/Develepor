@@ -65,7 +65,13 @@
 				</f:facet>
 				<DIV id="bolumBordroAltBirimSicil#{aylikPuantaj.pdksPersonel.sicilNo}">
 					<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi == false or aylikPuantaj.personelDenklestirme.denklestirme == false}">
-						<SPAN style="color: red"><h:outputText value="#{aylikPuantaj.pdksPersonel.sicilNo}" /></SPAN>
+						<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi == false}">
+							<h:commandLink style="color: red;" value="#{aylikPuantaj.pdksPersonel.sicilNo}"
+								action="#{fazlaMesaiHesaplaHome.vardiyaPlaniGetir(aylikPuantaj)}" />
+						</ui:fragment>
+						<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi}">
+							<SPAN style='color: red;'>#{aylikPuantaj.pdksPersonel.sicilNo}</SPAN>
+						</ui:fragment>
 					</ui:fragment>
 					<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi and aylikPuantaj.personelDenklestirme.denklestirme }">
 						<SPAN> <h:outputText value="#{aylikPuantaj.pdksPersonel.sicilNo}" />
@@ -493,8 +499,8 @@
 						<ui:fragment>
 							<h:outputText value="KRÖM" id="krom" />
 							<rich:toolTip for="krom">
-								<SPAN class="rich-table-subheader"><B>Kanunen Eklenen Resmi Tatil Mesai : </B>Çalışanın bu listenin sonunda ücret olarak 7.5 tamamlanan toplam
-									resmi tatil mesai saati </SPAN>
+								<SPAN class="rich-table-subheader"><B>Kanunen Eklenen Resmi Tatil Mesai : </B>Çalışanın bu listenin sonunda ücret olarak 7.5 tamamlanan
+									toplam resmi tatil mesai saati </SPAN>
 							</rich:toolTip>
 						</ui:fragment>
 					</f:facet>

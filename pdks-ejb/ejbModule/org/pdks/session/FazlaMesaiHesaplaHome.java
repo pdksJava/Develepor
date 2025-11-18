@@ -4847,6 +4847,24 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	}
 
 	/**
+	 * @param ap
+	 * @return
+	 */
+	public String vardiyaPlaniGetir(AylikPuantaj ap) {
+		String link = "";
+		try {
+			if (ap != null) {
+				linkAdres = getLinkAdresBilgi(sicilNo, false);
+				link = MenuItemConstant.vardiyaPlani + "?planKey=" + ap.getPlanKey();
+				// link +="&tarih=" + denklestirmeAy.getDonem() + "01";
+			}
+
+		} catch (Exception e) {
+		}
+		return link;
+	}
+
+	/**
 	 * @param fazlaMesaiOnayla
 	 * @param vardiyaGun
 	 * @param vardiyaPlanKey
@@ -5160,7 +5178,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			HashMap<String, Object> veriMap = new HashMap<String, Object>();
 			veriMap.put("temizleTOCCList", true);
 			veriMap.put("mailObject", mailObject);
- 			if (!userLogin.isAdmin()) {
+			if (!userLogin.isAdmin()) {
 				// mailStatu = ortakIslemler.mailSoapServisGonder(true, mailObject, renderer, "/email/fazlaMesaiOnayMail.xhtml", session);
 				veriMap.put("homeRenderer", renderer);
 				veriMap.put("sayfaAdi", "/email/fazlaMesaiOnayMail.xhtml");

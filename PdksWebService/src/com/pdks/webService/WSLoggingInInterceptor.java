@@ -201,7 +201,7 @@ public class WSLoggingInInterceptor extends AbstractSoapInterceptor {
 		try {
 			if (PdksUtil.hasStringValue(xmlString)) {
 				if (xmlString.indexOf("&") > 0)
-					xmlString = PdksUtil.replaceAllManuel(xmlString, "&", "&amp;");
+					xmlString = PdksUtil.replaceAll(xmlString, "&", "&amp;");
 				document = DocumentHelper.parseText(xmlString);
 			}
 

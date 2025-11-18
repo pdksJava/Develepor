@@ -1425,6 +1425,18 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		this.personelDenklestirme = pd;
 	}
 
+	public String getPlanKey() {
+		String key = (pdksPersonel != null ? "perId=" + pdksPersonel.getId() : "");
+		if (denklestirmeAy != null) {
+			if (pdksPersonel != null)
+				key += "&";
+			key += "tarih=" + denklestirmeAy.getDonem() + "01";
+		}
+		key += "&calistir=F";
+		String planKey = PdksUtil.getEncodeStringByBase64(key);
+		return planKey;
+	}
+
 	public boolean isSuaDurum() {
 		return suaDurum;
 	}

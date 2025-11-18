@@ -147,7 +147,8 @@
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.resmiTatilKanunenEklenenSureGoster}">
 									<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikKROM"><h:outputText
 											value="KRÖM" /> <rich:toolTip for="baslikKROM">
-											<SPAN style="font-size: 12px; font-weight: normal;"><B>Kanunen Eklenen Resmi Tatil Mesai : </B>Çalışanın bu listenin sonunda ücret olarak 7.5 tamamlanan toplam resmi tatil mesai saati</SPAN>
+											<SPAN style="font-size: 12px; font-weight: normal;"><B>Kanunen Eklenen Resmi Tatil Mesai : </B>Çalışanın bu listenin sonunda ücret
+												olarak 7.5 tamamlanan toplam resmi tatil mesai saati</SPAN>
 										</rich:toolTip></th>
 								</ui:fragment>
 							</ui:fragment>
@@ -372,7 +373,14 @@
 							<td class="#{aylikPuantaj.trClass}" style="width: 20px" align="center">
 								<DIV id="bolumBordroAltBirimSicil#{aylikPuantaj.pdksPersonel.sicilNo}">
 									<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi == false or aylikPuantaj.personelDenklestirme.denklestirme == false}">
-										<SPAN style="color: red"><h:outputText value="#{aylikPuantaj.pdksPersonel.sicilNo}" /></SPAN>
+										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi == false}">
+											<h:commandLink style="color: red;" value="#{aylikPuantaj.pdksPersonel.sicilNo}"
+												action="#{fazlaMesaiHesaplaHome.vardiyaPlaniGetir(aylikPuantaj)}" />
+										</ui:fragment>
+										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi}">
+											<SPAN style='color: red;'>#{aylikPuantaj.pdksPersonel.sicilNo}</SPAN>
+										</ui:fragment>
+
 									</ui:fragment>
 									<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.onaylandi and aylikPuantaj.personelDenklestirme.denklestirme }">
 										<SPAN> <h:outputText value="#{aylikPuantaj.pdksPersonel.sicilNo}" />
