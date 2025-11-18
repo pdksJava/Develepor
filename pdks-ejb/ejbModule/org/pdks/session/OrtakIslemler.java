@@ -7739,8 +7739,8 @@ public class OrtakIslemler implements Serializable {
 	public MailStatu mailSoapServisGonder(HashMap<String, Object> dataMap, Session session) throws Exception {
 		boolean temizleTOCCList = dataMap.containsKey("temizleTOCCList") ? (Boolean) dataMap.get("temizleTOCCList") : false;
 		MailObject mailObject = dataMap.containsKey("mailObject") ? (MailObject) dataMap.get("mailObject") : new MailObject();
-		Renderer myRenderer = dataMap.containsKey("renderer") ? (Renderer) dataMap.get("renderer") : null;
-		String sayfaAdi = myRenderer != null && dataMap.containsKey("sayfaAdi") ? (String) dataMap.get("sayfaAdi") : null;
+		Renderer homeRenderer = dataMap.containsKey("homeRenderer") ? (Renderer) dataMap.get("homeRenderer") : null;
+		String sayfaAdi = homeRenderer != null && dataMap.containsKey("sayfaAdi") ? (String) dataMap.get("sayfaAdi") : null;
 		String servisMailGonderKey = getParameterKey("servisMailGonder");
 		boolean servisMailGonder = PdksUtil.hasStringValue(servisMailGonderKey);
 		MailStatu mailStatu = null;
@@ -7845,8 +7845,8 @@ public class OrtakIslemler implements Serializable {
 			}
 		}
 		if (!servisMailGonder) {
-			if (myRenderer != null) {
-				mailGonder(myRenderer, sayfaAdi);
+			if (homeRenderer != null) {
+				mailGonder(homeRenderer, sayfaAdi);
 				if (mailStatu == null) {
 					mailStatu = new MailStatu();
 					mailStatu.setDurum(true);

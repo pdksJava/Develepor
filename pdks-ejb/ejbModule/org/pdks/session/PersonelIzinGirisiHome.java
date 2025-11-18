@@ -397,7 +397,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 								HashMap<String, Object> veriMap = new HashMap<String, Object>();
 								veriMap.put("temizleTOCCList", false);
 								veriMap.put("mailObject", mail);
-								veriMap.put("renderer", renderer);
+								veriMap.put("homeRenderer", renderer);
 								veriMap.put("sayfaAdi", "/email/onayPersonelIzinMail.xhtml");
 								ortakIslemler.mailSoapServisGonder(veriMap, session);
 								veriMap = null;
@@ -2191,7 +2191,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					HashMap<String, Object> veriMap = new HashMap<String, Object>();
 					veriMap.put("temizleTOCCList", false);
 					veriMap.put("mailObject", mail);
-					veriMap.put("renderer", renderer);
+					veriMap.put("homeRenderer", renderer);
 					veriMap.put("sayfaAdi", "/email/" + adres);
 					mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
 					veriMap = null;
@@ -2242,7 +2242,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					HashMap<String, Object> veriMap = new HashMap<String, Object>();
 					veriMap.put("temizleTOCCList", false);
 					veriMap.put("mailObject", mail);
-					veriMap.put("renderer", renderer);
+					veriMap.put("homeRenderer", renderer);
 					veriMap.put("sayfaAdi", "/email/onayPersonelIzinMail.xhtml");
 					mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
 					veriMap = null;
@@ -2816,7 +2816,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			HashMap<String, Object> veriMap = new HashMap<String, Object>();
 			veriMap.put("temizleTOCCList", false);
 			veriMap.put("mailObject", mail);
-			veriMap.put("renderer", renderer);
+			veriMap.put("homeRenderer", renderer);
 			veriMap.put("sayfaAdi", "/email/" + adres);
 			mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
 			veriMap = null;
@@ -2897,7 +2897,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					HashMap<String, Object> veriMap = new HashMap<String, Object>();
 					veriMap.put("temizleTOCCList", false);
 					veriMap.put("mailObject", mail);
-					veriMap.put("renderer", renderer);
+					veriMap.put("homeRenderer", renderer);
 					veriMap.put("sayfaAdi", "/email/retPersonelIzinMail.xhtml");
 					mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
 					veriMap = null;
@@ -4375,7 +4375,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					HashMap<String, Object> veriMap = new HashMap<String, Object>();
 					veriMap.put("temizleTOCCList", false);
 					veriMap.put("mailObject", mail);
-					veriMap.put("renderer", renderer);
+					veriMap.put("homeRenderer", renderer);
 					veriMap.put("sayfaAdi", render);
 					mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
 					veriMap = null;

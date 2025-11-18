@@ -160,7 +160,7 @@ public class Zamanlayici implements Serializable {
 				HashMap<String, Object> veriMap = new HashMap<String, Object>();
 				veriMap.put("temizleTOCCList", false);
 				veriMap.put("mailObject", mail);
-				veriMap.put("renderer", renderer);
+				veriMap.put("homeRenderer", renderer);
 				veriMap.put("sayfaAdi", "/email/" + sayfaAdi);
 				mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
 				veriMap = null;

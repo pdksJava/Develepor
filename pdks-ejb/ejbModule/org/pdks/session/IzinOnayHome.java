@@ -219,7 +219,7 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 				HashMap<String, Object> veriMap = new HashMap<String, Object>();
 				veriMap.put("temizleTOCCList", true);
 				veriMap.put("mailObject", mail);
-				veriMap.put("renderer", renderer);
+				veriMap.put("homeRenderer", renderer);
 				veriMap.put("sayfaAdi", "/email/izinHatirlatmaMail.xhtml");
 				mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
 				veriMap = null;

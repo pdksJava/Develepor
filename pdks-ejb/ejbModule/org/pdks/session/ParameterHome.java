@@ -142,7 +142,7 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 				HashMap<String, Object> veriMap = new HashMap<String, Object>();
 				veriMap.put("temizleTOCCList", false);
 				veriMap.put("mailObject", mailObject);
-				veriMap.put("renderer", renderer);
+				veriMap.put("homeRenderer", renderer);
 				veriMap.put("sayfaAdi", "/email/testMail.xhtml");
 				mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
 				veriMap = null;

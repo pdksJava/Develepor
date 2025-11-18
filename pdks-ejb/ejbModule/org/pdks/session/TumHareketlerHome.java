@@ -751,7 +751,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 							HashMap<String, Object> veriMap = new HashMap<String, Object>();
 							veriMap.put("temizleTOCCList", true);
 							veriMap.put("mailObject", mail);
-							veriMap.put("renderer", renderer);
+							veriMap.put("homeRenderer", renderer);
 							veriMap.put("sayfaAdi", "/email/hareketMail.xhtml");
 							ortakIslemler.mailSoapServisGonder(veriMap, session);
 							veriMap = null;
@@ -903,7 +903,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 						HashMap<String, Object> veriMap = new HashMap<String, Object>();
 						veriMap.put("temizleTOCCList", true);
 						veriMap.put("mailObject", mail);
-						veriMap.put("renderer", renderer);
+						veriMap.put("homeRenderer", renderer);
 						veriMap.put("sayfaAdi", "/email/hareketMail.xhtml");
 						mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
 						veriMap = null;

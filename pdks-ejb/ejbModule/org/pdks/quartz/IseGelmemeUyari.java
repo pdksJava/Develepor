@@ -1264,7 +1264,7 @@ public class IseGelmemeUyari implements Serializable {
 						// mailStatu = ortakIslemler.mailSoapServisGonder(true, mail, renderer, renderAdres, session);
 						veriMap.put("temizleTOCCList", true);
 						veriMap.put("mailObject", mail);
-						veriMap.put("renderer", renderer);
+						veriMap.put("homeRenderer", renderer);
 						veriMap.put("sayfaAdi", renderAdres);
 						mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
 						

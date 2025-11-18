@@ -1366,7 +1366,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				HashMap<String, Object> veriMap = new HashMap<String, Object>();
 				veriMap.put("temizleTOCCList", false);
 				veriMap.put("mailObject", mailObject);
-				veriMap.put("renderer", renderer);
+				veriMap.put("homeRenderer", renderer);
 				veriMap.put("sayfaAdi", "/mail.xhtml");
 				ms = ortakIslemler.mailSoapServisGonder(veriMap, session);
 				veriMap = null;
@@ -1523,7 +1523,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					HashMap<String, Object> veriMap = new HashMap<String, Object>();
 					veriMap.put("temizleTOCCList", false);
 					veriMap.put("mailObject", mailObject);
-					veriMap.put("renderer", renderer);
+					veriMap.put("homeRenderer", renderer);
 					veriMap.put("sayfaAdi", "/email/testKullaniciMail.xhtml");
 					mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
 					veriMap = null;
