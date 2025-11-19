@@ -1104,7 +1104,7 @@ public class PdksEntityController implements Serializable {
 	}
 
 	/**
-	 * @param sb
+	 * @param sqlObject
 	 * @param fields
 	 * @param class1
 	 * @return
