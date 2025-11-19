@@ -1531,6 +1531,7 @@ public class PdksUtil implements Serializable {
 	public static String replaceAllManuel(String str, String pattern, String replace) {
 
 		if ((str != null) && (pattern != null) && (pattern.length() > 0) && (replace != null)) {
+
 			while (str.indexOf(pattern) >= 0) {
 				StringBuffer lSb = new StringBuffer();
 				int i = 0;
@@ -1553,6 +1554,10 @@ public class PdksUtil implements Serializable {
 					lSb.append(str);
 				}
 				str = lSb.toString();
+				if (replace.contains(pattern))
+					break;
+//				if (replace.indexOf(pattern) >= 0)
+//					break;
 			}
 		}
 

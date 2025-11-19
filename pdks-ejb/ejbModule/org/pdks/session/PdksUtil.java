@@ -2116,29 +2116,36 @@ public class PdksUtil implements Serializable {
 	 * @return
 	 */
 	public static String replaceAllManuel(String str, String pattern, String replace) {
-		StringBuffer lSb = new StringBuffer();
-		if ((str != null) && (pattern != null) && (pattern.length() > 0) && (replace != null)) {
-			int i = 0;
-			int j = str.indexOf(pattern, i);
-			int l = pattern.length();
-			int m = str.length();
-			if (j > -1) {
-				while (j > -1) {
-					if (i != j) {
-						lSb.append(str.substring(i, j));
-					}
-					lSb.append(replace);
-					i = j + l;
-					j = (i > m) ? -1 : str.indexOf(pattern, i);
-				}
-				if (i < m) {
-					lSb.append(str.substring(i));
-				}
-			} else {
-				lSb.append(str);
-			}
-			str = lSb.toString();
 
+		if ((str != null) && (pattern != null) && (pattern.length() > 0) && (replace != null)) {
+
+			while (str.indexOf(pattern) >= 0) {
+				StringBuffer lSb = new StringBuffer();
+				int i = 0;
+				int j = str.indexOf(pattern, i);
+				int l = pattern.length();
+				int m = str.length();
+				if (j > -1) {
+					while (j > -1) {
+						if (i != j) {
+							lSb.append(str.substring(i, j));
+						}
+						lSb.append(replace);
+						i = j + l;
+						j = (i > m) ? -1 : str.indexOf(pattern, i);
+					}
+					if (i < m) {
+						lSb.append(str.substring(i));
+					}
+				} else {
+					lSb.append(str);
+				}
+				str = lSb.toString();
+				if (replace.contains(pattern))
+					break;
+//				if (replace.indexOf(pattern) >= 0)
+//					break;
+			}
 		}
 
 		return str;
