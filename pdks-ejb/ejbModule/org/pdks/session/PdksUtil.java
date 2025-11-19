@@ -2099,56 +2099,53 @@ public class PdksUtil implements Serializable {
 
 	/**
 	 * @param str
-	 * @param pattern
+	 * @param findStr
 	 * @param replace
 	 * @return
 	 */
-	public static String replaceAll(String str, String pattern, String replace) {
-		if (str != null && pattern != null && replace != null) {
-			if (replace.contains(pattern))
-				str = str.replaceAll(pattern, replace);
+	public static String replaceAll(String str, String findStr, String replace) {
+		if (str != null && findStr != null && replace != null && str.contains(findStr)) {
+			if (replace.contains(findStr))
+				str = str.replaceAll(findStr, replace);
 			else
-				str = replaceAllManuel(str, pattern, replace);
+				str = replaceAllManuel(str, findStr, replace);
 		}
 		return str;
 	}
 
 	/**
 	 * @param str
-	 * @param pattern
+	 * @param findStr
 	 * @param replace
 	 * @return
 	 */
-	public static String replaceAllManuel(String str, String pattern, String replace) {
-
-		if ((str != null) && (pattern != null) && (pattern.length() > 0) && (replace != null)) {
-
-			while (str.indexOf(pattern) >= 0) {
+	public static String replaceAllManuel(String str, String findStr, String replace) {
+		if ((str != null) && (findStr != null) && (findStr.length() > 0) && (replace != null)) {
+			int l = findStr.length();
+			while (str.indexOf(findStr) >= 0) {
 				StringBuffer lSb = new StringBuffer();
 				int i = 0;
-				int j = str.indexOf(pattern, i);
-				int l = pattern.length();
+				int j = str.indexOf(findStr, i);
 				int m = str.length();
 				if (j > -1) {
 					while (j > -1) {
-						if (i != j) {
+						if (i != j)
 							lSb.append(str.substring(i, j));
-						}
 						lSb.append(replace);
 						i = j + l;
-						j = (i > m) ? -1 : str.indexOf(pattern, i);
+						j = (i > m) ? -1 : str.indexOf(findStr, i);
 					}
-					if (i < m) {
+					if (i < m)
 						lSb.append(str.substring(i));
-					}
-				} else {
+
+				} else
 					lSb.append(str);
-				}
+
 				str = lSb.toString();
-				if (replace.contains(pattern))
+				if (replace.contains(findStr))
 					break;
-//				if (replace.indexOf(pattern) >= 0)
-//					break;
+				// if (replace.indexOf(findStr) >= 0)
+				// break;
 			}
 		}
 

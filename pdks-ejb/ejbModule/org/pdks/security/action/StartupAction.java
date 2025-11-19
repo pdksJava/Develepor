@@ -251,7 +251,7 @@ public class StartupAction implements Serializable {
 		startupMethod(session);
 		OrtakIslemler ortakIslemler = new OrtakIslemler();
 		String spName = "SP_DROP_NOT_USED_TABLES";
-		if (ortakIslemler.isExisObject(spName.toString(), "P", session, pdksEntityController)) {
+		if (ortakIslemler.isExisObject(spName, "P", session, pdksEntityController)) {
 			LinkedHashMap<String, Object> dataMap = new LinkedHashMap<String, Object>();
 			if (session != null)
 				dataMap.put(PdksEntityController.MAP_KEY_SESSION, session);
