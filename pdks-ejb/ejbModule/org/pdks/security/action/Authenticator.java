@@ -172,7 +172,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 				if (loginUser == null && ldapUser != null) {
 					String sicilNo = "900" + ldapUser.getStaffId().substring(3).trim();
 					HashMap parametreMap = new HashMap();
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					sb.append("select U.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 					sb.append("inner join " + User.TABLE_NAME + " U " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " and U." + User.COLUMN_NAME_DURUM + " = 1 and U." + User.COLUMN_NAME_DEPARTMAN + " is not null ");
 					sb.append(" where P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :sicilNo and P." + Personel.COLUMN_NAME_DURUM + " = 1  ");
@@ -181,7 +181,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 					parametreMap.put("sicilNo", sicilNo);
 					if (session != null)
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-					loginUser = (User) pdksEntityController.getObjectBySQL(sb, parametreMap, User.class);
+					loginUser = (User) pdksEntityController.getObjectBySQL(PdksUtil.getStringBuffer(sb), parametreMap, User.class);
 					if (loginUser != null) {
 						logger.info(loginUser.getUsername() + " kullanıcı bilgisi okundu.");
 						loginUser.setUsername(ldapUser.getUsername());
@@ -353,14 +353,14 @@ public class Authenticator implements IAuthenticator, Serializable {
 		User user = null;
 		try {
 			if (userName.indexOf("%") > 0) {
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append("select S.* from " + User.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
 				sb.append(" where S." + fieldName + " like :userName");
 				HashMap fields = new HashMap();
 				fields.put("userName", userName);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				user = (User) pdksEntityController.getObjectBySQL(sb, fields, User.class);
+				user = (User) pdksEntityController.getObjectBySQL(PdksUtil.getStringBuffer(sb), fields, User.class);
 			} else
 				user = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, fieldName, userName, User.class, session);
 

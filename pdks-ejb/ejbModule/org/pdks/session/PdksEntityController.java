@@ -1109,7 +1109,8 @@ public class PdksEntityController implements Serializable {
 	 * @param class1
 	 * @return
 	 */
-	public Object getObjectBySQL(StringBuffer sb, HashMap fields, Class class1) {
+	public Object getObjectBySQL(Object sqlObject, HashMap fields, Class class1) {
+		StringBuffer sb = PdksUtil.getStringBuffer(sqlObject);
 		StringBuffer sbOrj = new StringBuffer(sb.toString());
 		HashMap fieldsOrj = new HashMap();
 		fieldsOrj.putAll(fields);
