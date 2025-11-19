@@ -1128,7 +1128,7 @@ public class PdksEntityController implements Serializable {
 			list = getObjectBySQLList(sbOrj.toString(), fieldsOrj, class1);
 		Object object = list != null && !list.isEmpty() ? list.get(0) : null;
 		fieldsOrj = null;
-		sb = new StringBuffer(sbOrj.toString());
+		sb = null;
 		return object;
 	}
 
