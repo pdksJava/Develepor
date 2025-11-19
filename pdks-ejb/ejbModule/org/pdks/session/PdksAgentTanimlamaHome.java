@@ -141,7 +141,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		sb.append("select T.* from " + PdksAgent.TABLE_NAME + " T " + PdksEntityController.getSelectLOCK() + " ");
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<PdksAgent> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), parametreMap, PdksAgent.class);
+		List<PdksAgent> list = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), parametreMap, PdksAgent.class);
 
 		list = PdksUtil.sortListByAlanAdi(list, "id", admin);
 

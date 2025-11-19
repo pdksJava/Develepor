@@ -162,7 +162,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<PersonelIzin> list = pdksEntityController.getSQLParamList(dataIdList, new StringBuffer(sb.toString()), fieldName, fields, PersonelIzin.class, session);
+		List<PersonelIzin> list = pdksEntityController.getSQLParamList(dataIdList, PdksUtil.getStringBuffer(sb), fieldName, fields, PersonelIzin.class, session);
 		dataIdList = null;
 		fields = null;
 		return list;
@@ -981,7 +981,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		fields.put(fieldName, tipler);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<IzinTipi> list = pdksEntityController.getSQLParamList(tipler, new StringBuffer(sb.toString()), fieldName, fields, IzinTipi.class, session);
+		List<IzinTipi> list = pdksEntityController.getSQLParamList(tipler, PdksUtil.getStringBuffer(sb), fieldName, fields, IzinTipi.class, session);
 
 		return list;
 	}

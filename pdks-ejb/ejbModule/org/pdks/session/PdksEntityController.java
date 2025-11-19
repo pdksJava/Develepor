@@ -850,7 +850,7 @@ public class PdksEntityController implements Serializable {
 				sb.append("select 'K' + CAST(Z." + HareketKGS.COLUMN_NAME_ID + " as VARCHAR(12)) as ID, 'K' as SIRKET, Z." + HareketKGS.COLUMN_NAME_ID + " as TABLE_ID, Z.USERID as " + HareketKGS.COLUMN_NAME_PERSONEL + " ,");
 				sb.append(" Z.KAPIID as " + HareketKGS.COLUMN_NAME_KAPI + ", Z.HAREKET_ZAMANI as ZAMAN, Z.DURUM, Z.ISLEM_ID, NULL as ORJ_ZAMAN,Z.OLUSTURMA_ZAMANI,Z.KGS_SIRKET_ID from " + HareketKGS.TABLE_NAME + " as Z " + selectLOCK);
 				sb.append(" where " + HareketKGS.COLUMN_NAME_ID + " = :hareketId");
-				List<HareketKGS> list1 = getObjectBySQLList(sb, fields, HareketKGS.class);
+				List<HareketKGS> list1 = getObjectBySQLList(sb.toString(), fields, HareketKGS.class);
 				if (!list1.isEmpty())
 					id = list1.get(0);
 			}
@@ -1122,9 +1122,9 @@ public class PdksEntityController implements Serializable {
 			}
 		} catch (Exception e) {
 		}
-		List list = getObjectBySQLList(sb, fields, class1);
+		List list = getObjectBySQLList(sb.toString(), fields, class1);
 		if (list == null)
-			list = getObjectBySQLList(sbOrj, fieldsOrj, class1);
+			list = getObjectBySQLList(sbOrj.toString(), fieldsOrj, class1);
 		Object object = list != null && !list.isEmpty() ? list.get(0) : null;
 		fieldsOrj = null;
 		sb = new StringBuffer(sbOrj.toString());
@@ -1132,18 +1132,19 @@ public class PdksEntityController implements Serializable {
 	}
 
 	/**
-	 * @param sb
+	 * @param sqlObject
 	 * @param fields
 	 * @param class1
 	 * @param uzerineYaz
 	 * @return
 	 */
-	public TreeMap getObjectBySQLMap(StringBuffer sb, HashMap fields, Class class1, Boolean uzerineYaz) {
+	public TreeMap getObjectBySQLMap(Object sqlObject, HashMap fields, Class class1, Boolean uzerineYaz) {
+		StringBuffer sb = PdksUtil.getStringBuffer(sqlObject);
 		TreeMap treeMap = null;
 		if (fields.containsKey(MAP_KEY_MAP)) {
 			String method = (String) fields.get(MAP_KEY_MAP);
 			fields.remove(MAP_KEY_MAP);
-			List list = getObjectBySQLList(sb, fields, class1);
+			List list = getObjectBySQLList(sb.toString(), fields, class1);
 			treeMap = getTreeMapByList(list, method, uzerineYaz);
 		} else
 			treeMap = new TreeMap();
@@ -1293,7 +1294,7 @@ public class PdksEntityController implements Serializable {
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			}
-			list = getObjectBySQLList(sb, fields, class1);
+			list = getObjectBySQLList(sb.toString(), fields, class1);
 
 		}
 		return list;
@@ -1337,12 +1338,13 @@ public class PdksEntityController implements Serializable {
 	}
 
 	/**
-	 * @param sb
+	 * @param sqlObject
 	 * @param fields
 	 * @param class1
 	 * @return
 	 */
-	public List getObjectBySQLList(StringBuffer sb, HashMap fields, Class class1) {
+	public List getObjectBySQLList(Object sqlObject, HashMap fields, Class class1) {
+		StringBuffer sb = PdksUtil.getStringBuffer(sqlObject);
 		List list = null;
 		// Integer ti = null;
 		// Connection cn = null;
@@ -1444,7 +1446,7 @@ public class PdksEntityController implements Serializable {
 	public List getDataByIdList(StringBuffer sb, HashMap map, String tableName, Class class1, String idColumn) {
 		List list = null;
 		Session session = map.containsKey(PdksEntityController.MAP_KEY_SESSION) ? (Session) map.get(PdksEntityController.MAP_KEY_SESSION) : PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		List idler = getObjectBySQLList(sb, map, null);
+		List idler = getObjectBySQLList(sb.toString(), map, null);
 		if (idler != null && !idler.isEmpty()) {
 			String fieldName = "id";
 			if (idColumn == null)
@@ -1469,14 +1471,15 @@ public class PdksEntityController implements Serializable {
 	 * @param method
 	 * @param uzerineYaz
 	 * @param dataIdList
-	 * @param sb
+	 * @param sqlObject
 	 * @param fieldName
 	 * @param fieldsOrj
 	 * @param class1
 	 * @param session
 	 * @return
 	 */
-	public TreeMap getSQLParamTreeMap(String method, boolean uzerineYaz, List dataIdList, StringBuffer sb, String fieldName, HashMap<String, Object> fieldsOrj, Class class1, Session session) {
+	public TreeMap getSQLParamTreeMap(String method, boolean uzerineYaz, List dataIdList, Object sqlObject, String fieldName, HashMap<String, Object> fieldsOrj, Class class1, Session session) {
+		StringBuffer sb = PdksUtil.getStringBuffer(sqlObject);
 		TreeMap treeMap = null;
 		if (fieldsOrj != null && fieldsOrj.containsKey(PdksEntityController.MAP_KEY_MAP)) {
 			if (PdksUtil.hasStringValue(method) == false)
@@ -1509,7 +1512,7 @@ public class PdksEntityController implements Serializable {
 
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List list = getObjectBySQLList(sb, parametreMap, class1);
+		List list = getObjectBySQLList(sb.toString(), parametreMap, class1);
 
 		Object object = list != null && !list.isEmpty() ? list.get(0) : null;
 		if (object == null && class1 != null) {
@@ -1531,14 +1534,15 @@ public class PdksEntityController implements Serializable {
 
 	/**
 	 * @param dataIdList
-	 * @param sb
+	 * @param sqlObject
 	 * @param fieldName
 	 * @param fieldsOrj
 	 * @param class1
 	 * @param session
 	 * @return
 	 */
-	public List getSQLParamList(List dataIdList, StringBuffer sb, String fieldName, HashMap<String, Object> fieldsOrj, Class class1, Session session) {
+	public List getSQLParamList(List dataIdList, Object sqlObject, String fieldName, HashMap<String, Object> fieldsOrj, Class class1, Session session) {
+		StringBuffer sb = PdksUtil.getStringBuffer(sqlObject);
 		List idList = new ArrayList();
 		List veriList = new ArrayList();
 		try {
@@ -1549,7 +1553,7 @@ public class PdksEntityController implements Serializable {
 			String str = ":" + fieldName, sqlStr = sb.toString();
 			if (idInputList.size() == 1) {
 				fieldsOrj.put(fieldName, idInputList);
-				veriList = getObjectBySQLList(sb, fieldsOrj, class1);
+				veriList = getObjectBySQLList(sb.toString(), fieldsOrj, class1);
 			} else {
 				int adet = 0;
 				for (String key : fieldsOrj.keySet()) {
@@ -1582,7 +1586,7 @@ public class PdksEntityController implements Serializable {
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 					try {
-						List list = getObjectBySQLList(sb, fields, class1);
+						List list = getObjectBySQLList(sb.toString(), fields, class1);
 						if (!list.isEmpty())
 							veriList.addAll(list);
 						list = null;

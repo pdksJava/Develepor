@@ -138,6 +138,38 @@ public class PdksUtil implements Serializable {
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
 
 	/**
+	 * @param sqlObject
+	 * @return
+	 */
+	public static StringBuffer getStringBuffer(Object sqlObject) {
+		StringBuffer sb = null;
+		if (sqlObject != null) {
+			if (sqlObject instanceof String) {
+				String sqlObjectStr = (String) sqlObject;
+				sb = new StringBuffer(sqlObjectStr);
+			} else if (sqlObject instanceof StringBuffer)
+				sb = (StringBuffer) sqlObject;
+		}
+		if (sb == null)
+			sb = new StringBuffer();
+		return sb;
+	}
+
+	/**
+	 * @param sbu
+	 * @return
+	 */
+	public static String getStringBuffer(StringBuilder sbu) {
+		String str = "";
+		if (sbu != null) {
+			str = sbu.toString();
+
+			sbu = null;
+		}
+		return str;
+	}
+
+	/**
 	 * @param zaman
 	 * @return
 	 */

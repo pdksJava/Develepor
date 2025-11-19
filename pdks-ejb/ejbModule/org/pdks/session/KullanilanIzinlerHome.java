@@ -417,7 +417,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 					fields.put(fieldName, siciller);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					personelMap = pdksEntityController.getTreeMapByList(pdksEntityController.getSQLParamList(siciller, new StringBuffer(sb.toString()), fieldName, fields, Personel.class, session), "getPdksSicilNo", true);
+					personelMap = pdksEntityController.getTreeMapByList(pdksEntityController.getSQLParamList(siciller, PdksUtil.getStringBuffer(sb), fieldName, fields, Personel.class, session), "getPdksSicilNo", true);
 					sb = null;
 					if (!personelMap.isEmpty()) {
 						List personelIdler = new ArrayList(), izinTipiIdler = new ArrayList();
@@ -441,7 +441,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 						if (session != null)
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 
-						List<PersonelIzin> list = pdksEntityController.getSQLParamList(personelIdler, new StringBuffer(sb.toString()), fieldName, fields, PersonelIzin.class, session);
+						List<PersonelIzin> list = pdksEntityController.getSQLParamList(personelIdler, PdksUtil.getStringBuffer(sb), fieldName, fields, PersonelIzin.class, session);
 						for (PersonelIzin pd : list) {
 							String key = pd.getIzinSahibi().getPdksSicilNo();
 							PersonelIzin personelIzin = bakiyeMap.get(key);
@@ -964,7 +964,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 				fields.put(fieldName, dataIdList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				personelMap = pdksEntityController.getSQLParamTreeMap("getPdksSicilNo", true, dataIdList, new StringBuffer(sb.toString()), fieldName, fields, Personel.class, session);
+				personelMap = pdksEntityController.getSQLParamTreeMap("getPdksSicilNo", true, dataIdList, PdksUtil.getStringBuffer(sb), fieldName, fields, Personel.class, session);
 				sb = new StringBuilder();
 				for (String key : dataIdList) {
 					if (personelMap.containsKey(key))

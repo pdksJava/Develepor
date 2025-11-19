@@ -671,7 +671,7 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				map.put("bitTarih", PdksUtil.getDate(bitTarih));
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<PersonelFazlaMesai> idList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, PersonelFazlaMesai.class);
+				List<PersonelFazlaMesai> idList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), map, PersonelFazlaMesai.class);
 				TreeMap<String, Liste> listeMap = new TreeMap<String, Liste>();
 				HashMap<Long, String> vardiyaAciklamaMap = new HashMap<Long, String>();
 				for (Iterator iterator = idList.iterator(); iterator.hasNext();) {

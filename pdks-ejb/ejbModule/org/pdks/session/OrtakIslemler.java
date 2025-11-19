@@ -2857,9 +2857,10 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param fields
-	 * @param sb
+	 * @param sqlObject
 	 */
-	public void addIKSirketTesisKriterleri(HashMap fields, StringBuffer sb) {
+	public void addIKSirketTesisKriterleri(HashMap fields, Object sqlObject) {
+		StringBuffer sb = PdksUtil.getStringBuffer(sqlObject);
 		List<Long> tesisIdList = null;
 		if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
 			tesisIdList = new ArrayList<Long>();
@@ -11307,11 +11308,12 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param sb
+	 * @param sqlObject
 	 * @param fields
 	 * @return
 	 */
-	public List<Personel> getPersonelList(StringBuffer sb, HashMap fields) {
+	public List<Personel> getPersonelList(Object sqlObject, HashMap fields) {
+		StringBuffer sb = PdksUtil.getStringBuffer(sqlObject);
 		List<Personel> perList = null;
 		Session session = fields.containsKey(PdksEntityController.MAP_KEY_SESSION) ? (Session) fields.get(PdksEntityController.MAP_KEY_SESSION) : PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		List<Long> idList = pdksEntityController.getObjectBySQLList(sb, fields, null);
@@ -13547,13 +13549,14 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param sb
+	 * @param sqlObject
 	 * @param map
 	 * @param tableName
 	 * @param class1
 	 * @return
 	 */
-	public TreeMap getDataByIdMap(StringBuffer sb, HashMap map, String tableName, Class class1) {
+	public TreeMap getDataByIdMap(Object sqlObject, HashMap map, String tableName, Class class1) {
+		StringBuffer sb = PdksUtil.getStringBuffer(sqlObject);
 		TreeMap map1 = null;
 		String fonksiyonAdi = map.containsKey(PdksEntityController.MAP_KEY_MAP) ? (String) map.get(PdksEntityController.MAP_KEY_MAP) : null;
 		if (fonksiyonAdi != null)
@@ -13593,13 +13596,14 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param sb
+	 * @param sqlObject
 	 * @param map
 	 * @param tableName
 	 * @param class1
 	 * @return
 	 */
-	public List getDataByIdList(StringBuffer sb, HashMap map, String tableName, Class class1) {
+	public List getDataByIdList(Object sqlObject, HashMap map, String tableName, Class class1) {
+		StringBuffer sb = PdksUtil.getStringBuffer(sqlObject);
 		List list = getDataByIdList(sb, map, tableName, class1, null);
 		return list;
 	}

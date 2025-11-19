@@ -1715,8 +1715,8 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 		fields.put(fieldName, idList);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		// List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, PersonelDenklestirme.class);
-		List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, fields, PersonelDenklestirme.class, session);
+		// List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, PersonelDenklestirme.class);
+		List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(idList, PdksUtil.getStringBuffer(sb), fieldName, fields, PersonelDenklestirme.class, session);
 		ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			PersonelDenklestirme personelDenklestirme = (PersonelDenklestirme) iterator.next();

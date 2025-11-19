@@ -183,7 +183,7 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 			fields.put("s", sirket.getId());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			iptalYoneticiList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Personel.class);
+			iptalYoneticiList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, Personel.class);
 			if (!iptalYoneticiList.isEmpty()) {
 				yoneticiList = ortakIslemler.getTaseronYoneticiler(session);
 				if (!yoneticiList.isEmpty()) {

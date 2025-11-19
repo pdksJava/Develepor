@@ -770,7 +770,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 					// personelList = pdksEntityController.getObjectBySQLList(sb, fields, Personel.class);
-					personelList = pdksEntityController.getSQLParamList(personelIdler, new StringBuffer(sb.toString()), fieldName, fields, Personel.class, session);
+					personelList = pdksEntityController.getSQLParamList(personelIdler, PdksUtil.getStringBuffer(sb), fieldName, fields, Personel.class, session);
 
 				} else if (raporSecim.equals("minGunCalismaSaat")) {
 					vardiyaGunPerList = ortakIslemler.getPersonelEksikVardiyaCalismaList(personelIdler, basTarih, bitTarih, session);
@@ -792,7 +792,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 							parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 						parametreMap.put(fieldName, idList);
 						// List<PersonelDinamikAlan> pdList = pdksEntityController.getObjectBySQLList(sb, parametreMap, PersonelDinamikAlan.class);
-						List<PersonelDinamikAlan> pdList = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, parametreMap, PersonelDinamikAlan.class, session);
+						List<PersonelDinamikAlan> pdList = pdksEntityController.getSQLParamList(idList, PdksUtil.getStringBuffer(sb), fieldName, parametreMap, PersonelDinamikAlan.class, session);
 
 						if (!pdList.isEmpty()) {
 							TreeMap<Long, Tanim> alanMap = new TreeMap<Long, Tanim>();
@@ -993,7 +993,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			// List<PersonelFazlaMesai> list = pdksEntityController.getObjectBySQLList(sb, parametreMap, PersonelFazlaMesai.class);
-			List<PersonelFazlaMesai> list = pdksEntityController.getSQLParamList(ekCalismaList, new StringBuffer(sb.toString()), fieldName, parametreMap, PersonelFazlaMesai.class, session);
+			List<PersonelFazlaMesai> list = pdksEntityController.getSQLParamList(ekCalismaList, PdksUtil.getStringBuffer(sb), fieldName, parametreMap, PersonelFazlaMesai.class, session);
 
 			for (PersonelFazlaMesai personelFazlaMesai : list) {
 				if (personelFazlaMesai.isOnaylandi()) {
@@ -1200,7 +1200,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			// List<PersonelFazlaMesai> list = pdksEntityController.getObjectBySQLList(sb, parametreMap, PersonelFazlaMesai.class);
-			List<PersonelFazlaMesai> list = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, parametreMap, PersonelFazlaMesai.class, session);
+			List<PersonelFazlaMesai> list = pdksEntityController.getSQLParamList(idList, PdksUtil.getStringBuffer(sb), fieldName, parametreMap, PersonelFazlaMesai.class, session);
 
 			if (!list.isEmpty()) {
 				String patern = "yyyyMMdd" + (maxGeceCalismaSaatStr.indexOf(":") > 0 ? "HH:mm" : "HHmm");

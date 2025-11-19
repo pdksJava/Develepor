@@ -143,7 +143,7 @@ public class IzinAylikRaporHome extends EntityHome<PersonelIzin> implements Seri
 
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<Sirket> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, Sirket.class);
+		List<Sirket> list = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), map, Sirket.class);
 
 		if (list.size() > 1)
 			list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);

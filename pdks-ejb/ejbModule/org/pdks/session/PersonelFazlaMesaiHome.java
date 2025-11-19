@@ -783,7 +783,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					parametreMap2.put(fieldName, idler);
 					if (session != null)
 						parametreMap2.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<Personel> personelList = pdksEntityController.getSQLParamList(idler, new StringBuffer(sb.toString()), fieldName, parametreMap2, Personel.class, session);
+					List<Personel> personelList = pdksEntityController.getSQLParamList(idler, PdksUtil.getStringBuffer(sb), fieldName, parametreMap2, Personel.class, session);
 					if (!personelList.isEmpty()) {
 						idler.clear();
 						for (Personel personel : personelList) {
@@ -801,7 +801,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						if (session != null)
 							parametreMap2.put(PdksEntityController.MAP_KEY_SESSION, session);
 						// mesaiList = pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap2, PersonelFazlaMesai.class);
-						mesaiList = pdksEntityController.getSQLParamList(idler, new StringBuffer(sb.toString()), fieldName, parametreMap2, PersonelFazlaMesai.class, session);
+						mesaiList = pdksEntityController.getSQLParamList(idler, PdksUtil.getStringBuffer(sb), fieldName, parametreMap2, PersonelFazlaMesai.class, session);
 
 					} else
 						mesaiList = new ArrayList<PersonelFazlaMesai>();

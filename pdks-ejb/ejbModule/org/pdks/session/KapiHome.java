@@ -131,7 +131,7 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 			}
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<KapiKGS> kapiKGSList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), parametreMap, KapiKGS.class);
+			List<KapiKGS> kapiKGSList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), parametreMap, KapiKGS.class);
 			if (eskiKayitDurum == null || eskiKayitDurum.booleanValue() == false) {
 				Date bugun = new Date();
 				for (Iterator iterator = kapiKGSList.iterator(); iterator.hasNext();) {
@@ -164,8 +164,8 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 				fields.put(fieldName, idList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// kapiKGSList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, KapiKGS.class);
-				kapiKGSList = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, fields, KapiKGS.class, session);
+				// kapiKGSList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, KapiKGS.class);
+				kapiKGSList = pdksEntityController.getSQLParamList(idList, PdksUtil.getStringBuffer(sb), fieldName, fields, KapiKGS.class, session);
 
 				list.clear();
 				for (Iterator iterator = kapiKGSList.iterator(); iterator.hasNext();) {

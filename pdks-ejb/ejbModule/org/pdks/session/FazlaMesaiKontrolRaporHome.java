@@ -1518,8 +1518,8 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 		fields.put(fieldName, siciller);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		// List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, PersonelDenklestirme.class);
-		List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(siciller, new StringBuffer(sb.toString()), fieldName, fields, PersonelDenklestirme.class, session);
+		// List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, PersonelDenklestirme.class);
+		List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(siciller, PdksUtil.getStringBuffer(sb), fieldName, fields, PersonelDenklestirme.class, session);
 		ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 
 		fields = null;
