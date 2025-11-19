@@ -128,11 +128,11 @@ public class IzinBakiyeGuncelleme implements Serializable {
 				value = ortakIslemler.getParameterKey(parameterUpdateKey);
 				if (PdksUtil.hasStringValue(value)) {
 					guncellemeDBDurum = PdksUtil.zamanKontrol(parameterUpdateKey, value, time);
-//					if (guncellemeDBDurum == false && PdksUtil.isSistemDestekVar()) {
-//						// Calendar cal = Calendar.getInstance();
-//						int gun = cal.get(Calendar.DATE), dakika = cal.get(Calendar.MINUTE), saat = cal.get(Calendar.HOUR_OF_DAY), dayOffWeek = cal.get(Calendar.DAY_OF_WEEK);
-//						guncellemeDBDurum = dayOffWeek != Calendar.SATURDAY && dayOffWeek != Calendar.SUNDAY && (gun > 25 || gun < 6) && (saat > 7 && saat < 20) && dakika % 15 == 0;
-//					}
+					// if (guncellemeDBDurum == false && PdksUtil.isSistemDestekVar()) {
+					// // Calendar cal = Calendar.getInstance();
+					// int gun = cal.get(Calendar.DATE), dakika = cal.get(Calendar.MINUTE), saat = cal.get(Calendar.HOUR_OF_DAY), dayOffWeek = cal.get(Calendar.DAY_OF_WEEK);
+					// guncellemeDBDurum = dayOffWeek != Calendar.SATURDAY && dayOffWeek != Calendar.SUNDAY && (gun > 25 || gun < 6) && (saat > 7 && saat < 20) && dakika % 15 == 0;
+					// }
 				}
 			}
 			hataKonum = "Paramatre okundu ";
@@ -193,12 +193,12 @@ public class IzinBakiyeGuncelleme implements Serializable {
 									List<BigDecimal> izinList = pdksEntityController.getObjectBySQLList(sb, fields, null);
 									if (!izinList.isEmpty()) {
 										LinkedHashMap veriMap = new LinkedHashMap();
-										sb = new StringBuffer(PersonelIzinDetay.SP_NAME);
+
 										for (BigDecimal bigDecimal : izinList) {
 											veriMap.put("id", bigDecimal.longValue());
 											if (session != null)
 												veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-											pdksEntityController.execSP(veriMap, sb);
+											pdksEntityController.execSP(veriMap, PersonelIzinDetay.SP_NAME);
 										}
 										session.flush();
 									}

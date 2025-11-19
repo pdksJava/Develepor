@@ -3069,14 +3069,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			personelDenklestirme.clone();
 			try {
 				if (tipi.equals("P")) {
-					StringBuffer sb = new StringBuffer();
-					sb.append("SP_GET_PERS_DENK_DINAMIK_ALAN");
 					LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
 					fields.put("pdId", personelDenklestirme.getId().toString());
 					fields.put("durum", 0);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List list = pdksEntityController.execSPList(fields, sb, null);
+					List list = pdksEntityController.execSPList(fields, "SP_GET_PERS_DENK_DINAMIK_ALAN", null);
 					List<Long> idList = new ArrayList<Long>();
 					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 						Object[] object = (Object[]) iterator.next();
@@ -5981,7 +5979,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		Long id = null;
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		try {
-			StringBuffer sp = new StringBuffer("SP_HAREKET_EKLE_RETURN");
 			veriMap.put("kapi", kapi.getId());
 			veriMap.put("personelKGS", personelKGS.getId());
 			veriMap.put("zaman", zaman);
@@ -5990,7 +5987,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			veriMap.put("aciklama", aciklama);
 			if (session != null)
 				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List list = pdksEntityController.execSPList(veriMap, sp, null);
+			List list = pdksEntityController.execSPList(veriMap, "SP_HAREKET_EKLE_RETURN", null);
 			if (list != null && !list.isEmpty())
 				id = ((BigDecimal) list.get(0)).longValue();
 			list = null;
@@ -8393,16 +8390,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				pdIdSb.append(",");
 		}
 
-		StringBuffer sb = new StringBuffer();
-		sb.append("SP_GET_PERS_DENK_DINAMIK_ALAN");
 		LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
 		fields.put("pdId", pdIdSb.toString());
 		fields.put("durum", 1);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List list = pdksEntityController.execSPList(fields, sb, null);
+		List list = pdksEntityController.execSPList(fields, "SP_GET_PERS_DENK_DINAMIK_ALAN", null);
 		pdIdSb = null;
-		sb = null;
+
 		List<Long> tanimIdList = new ArrayList<Long>();
 		HashMap<Long, Boolean> secimDurumMap = new HashMap<Long, Boolean>();
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -8847,8 +8842,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		veriMap.put("bitTarih", bitTarihStr != null ? PdksUtil.convertToDateString(PdksUtil.convertToJavaDate(bitTarihStr, PdksUtil.getDateFormat()), "yyyy-MM-dd") : "");
 		if (session != null)
 			veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		StringBuffer sb = new StringBuffer("SP_FAZLA_MESAI_TALEP_MAIL");
-		aylikFazlaMesaiTalepler = pdksEntityController.execSPList(veriMap, sb, FazlaMesaiTalep.class);
+		aylikFazlaMesaiTalepler = pdksEntityController.execSPList(veriMap, "SP_FAZLA_MESAI_TALEP_MAIL", FazlaMesaiTalep.class);
 		islemYapiliyor = null;
 		if (!aylikFazlaMesaiTalepler.isEmpty()) {
 			HashMap fields = new HashMap();
@@ -9348,8 +9342,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			} catch (Exception e) {
 
 			}
-			StringBuffer sb = new StringBuffer();
-			sb.append("SP_GET_PERSONEL_VARDIYA");
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 			veriMap.put("basYil", yilBas);
 			veriMap.put("bitDonem", maxDonem);
@@ -9358,7 +9350,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<Vardiya> vardiyaDonemList = null;
 			try {
-				vardiyaDonemList = pdksEntityController.execSPList(veriMap, sb, Vardiya.class);
+				vardiyaDonemList = pdksEntityController.execSPList(veriMap, "SP_GET_PERSONEL_VARDIYA", Vardiya.class);
 
 			} catch (Exception e) {
 				logger.error(e);
@@ -10076,8 +10068,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 
 			list = new ArrayList();
-			StringBuffer sb = new StringBuffer();
-			sb.append("SP_YONETICI_VARDIYA_BILGI_TIPI ");
 			LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
 			fields.put("yoneticiId", authenticatedUser.isIK() == false && authenticatedUser.isAdmin() == false ? authenticatedUser.getPdksPersonel().getId() : -1L);
 			fields.put("donemId", denklestirmeAy.getId());
@@ -10086,7 +10076,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
-				List newList = pdksEntityController.execSPList(fields, sb, class1);
+				List newList = pdksEntityController.execSPList(fields, "SP_YONETICI_VARDIYA_BILGI_TIPI ", class1);
 				if (list != null && !newList.isEmpty())
 					list.addAll(newList);
 				newList = null;
@@ -10095,7 +10085,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				logger.error(e);
 				e.printStackTrace();
 			}
-			sb = null;
 
 		}
 		return list;

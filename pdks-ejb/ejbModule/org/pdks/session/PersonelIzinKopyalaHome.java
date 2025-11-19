@@ -382,7 +382,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 					idStr += (idStr.length() > 0 ? "," : "") + String.valueOf(izinTipi.getId());
 			}
 			fields.clear();
-			StringBuffer sb = new StringBuffer();
+
 			if (PdksUtil.hasStringValue(idStr) && !idler.isEmpty()) {
 				try {
 					User sistemAdminUser = ortakIslemler.getSistemAdminUser(session);
@@ -390,7 +390,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 						sistemAdminUser = authenticatedUser;
 
 					// eskiKayitlariSil(idler);
-					sb = new StringBuffer("SP_IZIN_KOPYALA");
+
 					List params = Arrays.asList(new String[] { "izinSahibiId", "izinSahibiNewId", "sistemAdminUserId" });
 					Calendar cal = Calendar.getInstance();
 					long bugun = Long.parseLong(PdksUtil.convertToDateString(cal.getTime(), "yyyyMMdd"));
@@ -409,13 +409,13 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 						map.put(PdksEntityController.MAP_KEY_SQLPARAMS, params);
 						map.put(PdksEntityController.MAP_KEY_SESSION, session);
 						try {
-							pdksEntityController.execSP(map, sb);
+							pdksEntityController.execSP(map, "SP_IZIN_KOPYALA");
 							if (yil > izinHakEdisYil && bugun >= izinHakEdisTarihi) {
 								LinkedHashMap<String, Object> dataKidemMap = new LinkedHashMap<String, Object>();
 								dataKidemMap.put("sistemYonetici", null);
- 								dataKidemMap.put("personel", izinSahibiClone);
- 								dataKidemMap.put("user", authenticatedUser);
-	 							dataKidemMap.put("gecmis", Boolean.TRUE);
+								dataKidemMap.put("personel", izinSahibiClone);
+								dataKidemMap.put("user", authenticatedUser);
+								dataKidemMap.put("gecmis", Boolean.TRUE);
 								dataKidemMap.put("yeniBakiyeOlustur", Boolean.FALSE);
 								ortakIslemler.getKidemHesabi(dataKidemMap, session);
 								session.flush();
@@ -462,7 +462,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 			map.put("izinSahibiId", sb.toString());
 			map.put(PdksEntityController.MAP_KEY_SQLPARAMS, params);
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			pdksEntityController.execSP(map, new StringBuffer("SP_IZINLERI_SIL"));
+			pdksEntityController.execSP(map, "SP_IZINLERI_SIL");
 
 		}
 
@@ -565,7 +565,6 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 		personelBakiyeIzinler = null;
 	}
 
- 
 	/**
 	 * @param sheet
 	 * @param row

@@ -247,15 +247,14 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 
 					}
 					String personelList = sb.toString();
-					sb = new StringBuffer();
-					sb.append(spName);
+					 
 					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 					veriMap.put("personelList", personelList);
 					veriMap.put("sirketId", aramaSecenekleri.getSirketId() != null ? String.valueOf(aramaSecenekleri.getSirketId()) : null);
 					veriMap.put("tarih", hakedisTarihiStr);
 					veriMap.put("format", "120");
 					veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<HoldingIzin> izinList = pdksEntityController.execSPList(veriMap, sb, HoldingIzin.class);
+					List<HoldingIzin> izinList = pdksEntityController.execSPList(veriMap, spName, HoldingIzin.class);
 
 					if (!izinList.isEmpty()) {
 						for (HoldingIzin holdingIzin : izinList) {

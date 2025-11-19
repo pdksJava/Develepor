@@ -42,11 +42,11 @@ public class ThreadAgent extends Thread implements Serializable {
 					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 					try {
 						veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-						StringBuffer sb = new StringBuffer(agent.getStoreProcedureAdi());
+
 						if (agent.getUpdateSP())
-							pdksEntityController.execSP(veriMap, sb);
+							pdksEntityController.execSP(veriMap, agent.getStoreProcedureAdi());
 						else
-							pdksEntityController.execSPList(veriMap, sb, null);
+							pdksEntityController.execSPList(veriMap, agent.getStoreProcedureAdi(), null);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

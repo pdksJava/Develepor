@@ -206,14 +206,14 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	 * @return
 	 */
 	public String fillDinamikRaporList() {
-		StringBuffer sb = new StringBuffer();
+		
 		List<Object[]> list = null;
 		if (dinamikRaporDataList == null)
 			dinamikRaporDataList = new ArrayList<Liste>();
 		else
 			dinamikRaporDataList.clear();
 		if (seciliPdksDinamikRapor.isStoreProcedure()) {
-			sb.append(seciliPdksDinamikRapor.getDbTanim());
+			
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 			for (Iterator iterator = dinamikRaporParametreList.iterator(); iterator.hasNext();) {
 				PdksDinamikRaporParametre rp = (PdksDinamikRaporParametre) iterator.next();
@@ -232,12 +232,13 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			if (session != null)
 				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
-				list = pdksEntityController.execSPList(veriMap, sb, null);
+				list = pdksEntityController.execSPList(veriMap, seciliPdksDinamikRapor.getDbTanim(), null);
 			} catch (Exception e) {
 
 			}
 		} else {
 			HashMap fields = new HashMap();
+			StringBuffer sb = new StringBuffer();
 			sb.append("select ");
 			for (Iterator iterator = dinamikRaporAlanList.iterator(); iterator.hasNext();) {
 				PdksDinamikRaporAlan ra = (PdksDinamikRaporAlan) iterator.next();

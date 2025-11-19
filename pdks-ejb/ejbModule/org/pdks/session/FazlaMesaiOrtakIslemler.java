@@ -1939,11 +1939,10 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		Long sonuc = null;
 		try {
 			if (talepId != null) {
-				StringBuffer sp = new StringBuffer("SP_DELETE_FAZLA_MESAI_TALEP_HAREKET_DATA");
-				veriMap.put("talepId", talepId);
+ 				veriMap.put("talepId", talepId);
 				if (session != null)
 					veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List list = pdksEntityController.execSPList(veriMap, sp, null);
+				List list = pdksEntityController.execSPList(veriMap, "SP_DELETE_FAZLA_MESAI_TALEP_HAREKET_DATA", null);
 				if (list != null && !list.isEmpty())
 					sonuc = ((BigInteger) list.get(0)).longValue();
 			}
@@ -1990,9 +1989,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			if (maxCalismaSaat == null || maxCalismaSaat.doubleValue() < 0.0d)
 				maxCalismaSaatStr = "D." + DenklestirmeAy.COLUMN_NAME_GUN_MAX_CALISMA_SURESI;
 
-			sb = new StringBuffer();
-			sb.append("SP_GET_FAZLA_MESAI_KONTROL");
-			LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<String, Object>();
+ 			LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<String, Object>();
 			linkedHashMap.put("perList", ortakIslemler.getListIdStr(new ArrayList(idMap.keySet())));
 			linkedHashMap.put("yil", String.valueOf(yil));
 			linkedHashMap.put("ay", String.valueOf(ay));
@@ -2004,7 +2001,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				linkedHashMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<Object[]> alanList = null;
 			try {
-				alanList = pdksEntityController.execSPList(linkedHashMap, sb, null);
+				alanList = pdksEntityController.execSPList(linkedHashMap, "SP_GET_FAZLA_MESAI_KONTROL", null);
 				// if (session != null)
 				// fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				// alanList = pdksEntityController.getObjectBySQLList(sb, fields, null);

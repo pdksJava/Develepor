@@ -3448,15 +3448,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						AylikPuantaj aylikPuantaj = (AylikPuantaj) iterator.next();
 						puantajMap.put(aylikPuantaj.getPdksPersonel().getId(), aylikPuantaj);
 					}
-					StringBuffer sb = new StringBuffer();
-					sb.append("SP_CIFT_PERSONEL");
+			 
 					LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<String, Object>();
 					linkedHashMap.put("donemId", denklestirmeAy.getId());
 					if (session != null)
 						linkedHashMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 					List<Object[]> alanList = null;
 					try {
-						alanList = pdksEntityController.execSPList(linkedHashMap, sb, null);
+						alanList = pdksEntityController.execSPList(linkedHashMap, "SP_CIFT_PERSONEL", null);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

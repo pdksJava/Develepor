@@ -250,7 +250,7 @@ public class StartupAction implements Serializable {
 		Session session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		startupMethod(session);
 		OrtakIslemler ortakIslemler = new OrtakIslemler();
-		StringBuffer spName = new StringBuffer("SP_DROP_NOT_USED_TABLES");
+		String spName = "SP_DROP_NOT_USED_TABLES";
 		if (ortakIslemler.isExisObject(spName.toString(), "P", session, pdksEntityController)) {
 			LinkedHashMap<String, Object> dataMap = new LinkedHashMap<String, Object>();
 			if (session != null)
@@ -340,7 +340,7 @@ public class StartupAction implements Serializable {
 		try {
 			veriMap.put("ekranYaz", 0);
 			veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List hatalar = pdksEntityController.execSPList(veriMap, new StringBuffer("SP_PDKS_VIEW_REFRESH"), null);
+			List hatalar = pdksEntityController.execSPList(veriMap, "SP_PDKS_VIEW_REFRESH", null);
 			if (hatalar != null && !hatalar.isEmpty()) {
 				Clob clobComment = (Clob) hatalar.get(0);
 				String aciklama = PdksUtil.replaceAllManuel(PdksUtil.StringToByClob(clobComment), "|", "\n");

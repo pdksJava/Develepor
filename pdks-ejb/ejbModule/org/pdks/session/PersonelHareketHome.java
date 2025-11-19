@@ -629,8 +629,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 				KapiView terminalKapi = terminalKapiManuelUpdate(kgsHareket.getTerminalKapi());
 				String name = "SP_HAREKET_TERMINAL_SIRKET";
 				if (ortakIslemler.isExisStoreProcedure(name, session)) {
-					StringBuffer sb = new StringBuffer(name);
-					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+ 					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 					veriMap.put("kgsId", kgsId);
 					veriMap.put("pdksId", pdksId);
 					veriMap.put("kapi", terminalKapi.getId());
@@ -642,7 +641,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 					veriMap.put("sirketId", kgsHareket.getKgsSirketId());
 					if (session != null)
 						veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-					pdksEntityController.execSP(veriMap, sb);
+					pdksEntityController.execSP(veriMap, name);
 				} else {
 					pdksEntityController.hareketSil(kgsId, pdksId, authenticatedUser, neden.getId(), "", kgsHareket.getKgsSirketId(), session);
 					pdksId = pdksEntityController.hareketEkle(terminalKapi, kgsHareket.getPersonel(), kgsHareket.getZaman(), authenticatedUser, neden.getId(), aciklama, session);

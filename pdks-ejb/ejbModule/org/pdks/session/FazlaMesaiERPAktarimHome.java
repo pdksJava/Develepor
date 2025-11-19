@@ -870,12 +870,12 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 			veriMap.put("sirketId", sirketId != null ? sirketId : 0L);
 			veriMap.put("yil", getYil());
 			veriMap.put("ay", getAy());
-			StringBuffer sb = new StringBuffer("SP_GET_FAZLA_MESAI");
+			 
 			if (session != null)
 				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<PersonelMesai> aylikFazlaMesaiTalepler = null;
 			try {
-				aylikFazlaMesaiTalepler = pdksEntityController.execSPList(veriMap, sb, PersonelMesai.class);
+				aylikFazlaMesaiTalepler = pdksEntityController.execSPList(veriMap, "SP_GET_FAZLA_MESAI", PersonelMesai.class);
 			} catch (Exception e1) {
 			}
 
