@@ -110,7 +110,7 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 		List<Kapi> kapiList = new ArrayList<Kapi>();
 		HashMap parametreMap = new HashMap();
 		try {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select P.* from VIEW_KAPI_SIRKET_KGS_LIST  P ");
 			String str = " inner join " + Kapi.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on K." + Kapi.COLUMN_NAME_KGS_ID + " = P." + KapiKGS.COLUMN_NAME_ID;
 			if (PdksUtil.hasStringValue(kapiView.getKapiAciklama())) {
@@ -131,7 +131,7 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 			}
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<KapiKGS> kapiKGSList = pdksEntityController.getObjectBySQLList(sb, parametreMap, KapiKGS.class);
+			List<KapiKGS> kapiKGSList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), parametreMap, KapiKGS.class);
 			if (eskiKayitDurum == null || eskiKayitDurum.booleanValue() == false) {
 				Date bugun = new Date();
 				for (Iterator iterator = kapiKGSList.iterator(); iterator.hasNext();) {
@@ -157,15 +157,15 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 				List<Kapi> tanimliPkdsList = new ArrayList<Kapi>(), tanimliList = new ArrayList<Kapi>();
 				String fieldName = "k";
 				HashMap fields = new HashMap();
-				sb = new StringBuffer();
+				sb = new StringBuilder();
 				sb.append("select P.* from " + KapiKGS.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" where P." + KapiKGS.COLUMN_NAME_ID + " :" + fieldName);
 				sb.append(" order by " + KapiKGS.COLUMN_NAME_ACIKLAMA);
 				fields.put(fieldName, idList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// kapiKGSList = pdksEntityController.getObjectBySQLList(sb, fields, KapiKGS.class);
-				kapiKGSList = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, KapiKGS.class, session);
+				// kapiKGSList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, KapiKGS.class);
+				kapiKGSList = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, fields, KapiKGS.class, session);
 
 				list.clear();
 				for (Iterator iterator = kapiKGSList.iterator(); iterator.hasNext();) {

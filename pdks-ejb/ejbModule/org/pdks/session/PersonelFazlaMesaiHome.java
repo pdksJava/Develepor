@@ -766,7 +766,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					}
 					HashMap parametreMap2 = new HashMap();
 					List idler = new ArrayList();
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					String fieldName = "p";
 					sb.append("select * from " + Personel.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 					sb.append(" where " + Personel.COLUMN_NAME_ID + " :" + fieldName + " and " + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :s ");
@@ -783,14 +783,14 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					parametreMap2.put(fieldName, idler);
 					if (session != null)
 						parametreMap2.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<Personel> personelList = pdksEntityController.getSQLParamList(idler, sb, fieldName, parametreMap2, Personel.class, session);
+					List<Personel> personelList = pdksEntityController.getSQLParamList(idler, new StringBuffer(sb.toString()), fieldName, parametreMap2, Personel.class, session);
 					if (!personelList.isEmpty()) {
 						idler.clear();
 						for (Personel personel : personelList) {
 							idler.add(personel.getId());
 						}
 						fieldName = "p";
-						sb = new StringBuffer();
+						sb = new StringBuilder();
 						sb.append("select F.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 						sb.append(" inner join " + PersonelFazlaMesai.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " on F." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 						sb.append(" and F." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1 ");
@@ -801,7 +801,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						if (session != null)
 							parametreMap2.put(PdksEntityController.MAP_KEY_SESSION, session);
 						// mesaiList = pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap2, PersonelFazlaMesai.class);
-						mesaiList = pdksEntityController.getSQLParamList(idler, sb, fieldName, parametreMap2, PersonelFazlaMesai.class, session);
+						mesaiList = pdksEntityController.getSQLParamList(idler, new StringBuffer(sb.toString()), fieldName, parametreMap2, PersonelFazlaMesai.class, session);
 
 					} else
 						mesaiList = new ArrayList<PersonelFazlaMesai>();

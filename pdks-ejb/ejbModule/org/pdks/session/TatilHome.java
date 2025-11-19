@@ -316,7 +316,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 								try {
 									MailObject mail = new MailObject();
 									mail.setSubject("Tatil Tanımlama");
-									StringBuffer body = new StringBuffer("<p>Girdiğiniz izin ile aynı tarihe resmi yada genel tatil tanımlaması yapılmıştır. İzni silip, tekrardan yaratınız.</p><p></p>");
+									StringBuilder body = new StringBuilder("<p>Girdiğiniz izin ile aynı tarihe resmi yada genel tatil tanımlaması yapılmıştır. İzni silip, tekrardan yaratınız.</p><p></p>");
 									body.append("<table><thead><tr>");
 									body.append("<th><b>" + ortakIslemler.personelNoAciklama() + "</b></th>");
 									body.append("<th><b>İzin Sahibi</b></th>");

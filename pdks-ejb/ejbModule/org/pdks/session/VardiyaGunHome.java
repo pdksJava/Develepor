@@ -682,7 +682,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	public String mesaiDonemDegisti(boolean yilDegisti) throws Exception {
 		Date basTarih = null, bitTarih = null;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		HashMap fields = new HashMap();
 		List idler = null;
 		Calendar cal = Calendar.getInstance();
@@ -696,7 +696,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			sb.append(" order by 1");
 			fields.put("ta1", basTarih);
 			fields.put("ta2", bitTarih);
-			idler = pdksEntityController.getObjectBySQLList(sb, fields, null);
+			idler = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, null);
 			int seciliAy = ay;
 			aylar.clear();
 			ay = 0;
@@ -724,7 +724,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			int sonGun = cal.getActualMaximum(Calendar.DATE);
 			cal.set(Calendar.DATE, sonGun);
 			bitTarih = cal.getTime();
-			sb = new StringBuffer();
+			sb = new StringBuilder();
 			fields.clear();
 			sb.append("select distinct " + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " FT " + PdksEntityController.getJoinLOCK() + " on FT." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
@@ -737,7 +737,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 
 			try {
-				idler = pdksEntityController.getObjectBySQLList(sb, fields, null);
+				idler = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, null);
 			} catch (Exception e) {
 				logger.equals(e);
 				e.printStackTrace();
@@ -908,7 +908,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		String ortakAciklama = PdksUtil.replaceAll(sirket.getAd() + " " + ortakIslemler.sirketAciklama().toLowerCase(PdksUtil.TR_LOCALE) + "i " + (tesis != null ? tesis.getAciklama() + " " + tesisAciklamasi + " " : "") + " " + (bolum != null ? bolum.getAciklama() + " " + bolumAciklamasi + " " : "")
 				+ " " + (altBolum != null ? altBolum.getAciklama() + " " + altBolumAciklamasi + " " : "") + " çalışanı " + personel.getAdSoyad(), "  ", " ");
 		mailKonu = PdksUtil.replaceAll(ortakAciklama + " fazla mesai talep ", "  ", " ");
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<p>Sayın " + fmt.getGuncelleyenUser().getAdSoyad() + ",</p>");
 		sb.append("<p>" + ortakAciklama + " " + authenticatedUser.dateTimeFormatla(fmt.getBaslangicZamani()) + getTarihArasiBitisZamanString(fmt.getBaslangicZamani(), fmt.getBitisZamani()) + " arası " + authenticatedUser.sayiFormatliGoster(fmt.getMesaiSuresi()) + " saat ");
 		sb.append((fmt.getMesaiNeden() != null ? "<b>\"" + fmt.getMesaiNeden().getAciklama() + (PdksUtil.hasStringValue(fmt.getAciklama()) ? " ( Açıklama : " + fmt.getAciklama().trim() + " ) " : "") + "\"</b> nedeniyle " : "") + " fazla mesai yapacaktır." + "</p>");
@@ -918,7 +918,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			try {
 				MailObject mail = new MailObject();
 				mail.setSubject(mailKonu);
-				StringBuffer body = new StringBuffer(mailIcerik);
+				StringBuilder body = new StringBuilder(mailIcerik);
 				body.append("<p><TABLE style=\"width: 270px;\"><TR>");
 				body.append("<td width=\"90px\"><a style=\"font-size: 16px;\" href=\"http://" + donusAdres + "/mesaiTalepLinkOnay?id=" + getOnayId(String.valueOf(FazlaMesaiTalep.ONAY_DURUM_ONAYLANDI)) + "\"><b>Onay</b></a></td>");
 				body.append("<td width=\"90px\"><a style=\"font-size: 16px;\" href=\"http://" + donusAdres + "/mesaiTalepLinkOnay?id=" + getOnayId(String.valueOf(FazlaMesaiTalep.ONAY_DURUM_RED)) + "\"><b>Red</b></a></td>");
@@ -1038,7 +1038,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		String ortakAciklama = PdksUtil.replaceAll(sirket.getAd() + " " + ortakIslemler.sirketAciklama().toLowerCase(PdksUtil.TR_LOCALE) + "i " + (tesis != null ? tesis.getAciklama() + " " + tesisAciklamasi + " " : "") + " " + (bolum != null ? bolum.getAciklama() + " " + bolumAciklamasi + " " : "")
 				+ " " + (altBolum != null ? altBolum.getAciklama() + " " + altBolumAciklamasi + " " : "") + " çalışanı " + personel.getAdSoyad(), "  ", " ");
 		mailKonu = PdksUtil.replaceAll(ortakAciklama + " Fazla Mesai Talep " + fmt.getOnayDurumAciklama(), "  ", " ");
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<p>Sayın " + fmt.getOlusturanUser().getAdSoyad() + ",</p>");
 		sb.append("<p>" + ortakAciklama + " " + fmt.getOlusturanUser().dateTimeFormatla(fmt.getBaslangicZamani()) + getTarihArasiBitisZamanString(fmt.getBaslangicZamani(), fmt.getBitisZamani()) + " arası " + fmt.getOlusturanUser().sayiFormatliGoster(fmt.getMesaiSuresi()) + " saat ");
 		sb.append((fmt.getMesaiNeden() != null ? "<b>\"" + fmt.getMesaiNeden().getAciklama() + (PdksUtil.hasStringValue(fmt.getAciklama()) ? " ( Açıklama : " + fmt.getAciklama().trim() + " ) " : "") + "\"</b>" : " olması sebebiyle ") + " fazla mesai talebi "
@@ -1567,7 +1567,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		Date ilkGun = aylikPuantajDefault.getIlkGun(), iseBaslamaTarihi = null, istenAyrilmaTarihi = null;
 		Date sonGun = ortakIslemler.tariheAyEkleCikar(cal, ilkGun, 1);
 		boolean admin = ikRole;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (vardiyaMap != null && vardiyaMap.isEmpty())
 			vardiyaMap = null;
 		boolean ikMesaj = false;
@@ -1594,7 +1594,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 			}
 		}
-		StringBuffer sbCalismaModeliUyumsuz = new StringBuffer();
+		StringBuilder sbCalismaModeliUyumsuz = new StringBuilder();
 		CalismaModeli cm = personelDenklestirme != null && personelDenklestirme.getPersonel() != null ? personelDenklestirme.getPersonel().getCalismaModeli() : null;
 		if (personelDenklestirme.getCalismaModeliAy() != null)
 			cm = personelDenklestirme.getCalismaModeli();
@@ -1653,7 +1653,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 		}
 		VardiyaGun oncekiVardiyaGun = null;
-		StringBuffer izinSonrasiOffDurum = new StringBuffer(), haftaTatilSb = new StringBuffer(), cakisanVardiyaSb = new StringBuffer();
+		StringBuilder izinSonrasiOffDurum = new StringBuilder(), haftaTatilSb = new StringBuilder(), cakisanVardiyaSb = new StringBuilder();
 		Vardiya vardiyaGunOnceki = null;
 		for (Iterator<String> iterator = vardiyaGunMap.keySet().iterator(); iterator.hasNext();) {
 			String key = iterator.next();
@@ -1663,7 +1663,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			String str = vardiyaGun.getVardiyaDateStr();
 			vardiyaGun.setAyinGunu(str.startsWith(donem));
 			if (vardiyaGun.getVardiya() != null) {
-				StringBuffer manuelGirisHTML = new StringBuffer();
+				StringBuilder manuelGirisHTML = new StringBuilder();
 				Vardiya vardiya = vardiyaGun.getVardiya(), islemVardiya = vardiyaGun.getIslemVardiya();
 				if (vardiyaGun.getIzin() == null && vardiyaGunOnceki != null && islemVardiya != null && islemVardiya.isCalisma() && vardiyaGunOnceki.getVardiyaBitZaman().after(islemVardiya.getVardiyaBasZaman())) {
 					if (cakisanVardiyaSb.length() > 0)
@@ -2554,11 +2554,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				renk = !renk;
 				String bolumAdi = "";
 				Personel personel = vardiyaGun.getPersonel();
-				StringBuffer sb = null;
+				StringBuilder sb = null;
 				if (personel != null) {
 					List<Personel> list = getGorevPersonelList(personel.getPlanGrup2());
 					if (list != null) {
-						sb = new StringBuffer();
+						sb = new StringBuilder();
 						for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 							Personel personel2 = (Personel) iterator.next();
 							sb.append(personel2.getPdksSicilNo() + " " + personel2.getAdSoyad());
@@ -2604,7 +2604,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					ArrayList<Long> idler = (ArrayList<Long>) ortakIslemler.getBaseObjectIdList(donemPerList);
 					String fieldName = "p";
 					HashMap fields = new HashMap();
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					sb.append("select distinct CM.* from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
 					sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CMA " + PdksEntityController.getJoinLOCK() + " on CMA." + CalismaModeliAy.COLUMN_NAME_ID + " = S." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY);
 					sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CM." + CalismaModeliAy.COLUMN_NAME_ID + " = CMA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI);
@@ -2612,7 +2612,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					fields.put(fieldName, idler);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<CalismaModeli> list = pdksEntityController.getSQLParamList(idler, sb, fieldName, fields, CalismaModeli.class, session);
+					List<CalismaModeli> list = pdksEntityController.getSQLParamList(idler, new StringBuffer(sb.toString()), fieldName, fields, CalismaModeli.class, session);
 					for (CalismaModeli calismaModeli : list) {
 						if (calismaModeli != null && calismaModeli.getDurum()) {
 							if (!modelMap.containsKey(calismaModeli.getId()))
@@ -2969,7 +2969,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (!PdksUtil.hasStringValue(sicilNo))
 						adet = aylikPuantajList.size();
 
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					sb.append(" with DATA as ( ");
 					sb.append("	select CMA." + CalismaModeliAy.COLUMN_NAME_ID + ", COUNT (*) as ADET from " + PersonelDenklestirme.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
 					sb.append("	inner join " + CalismaModeliAy.TABLE_NAME + " CMA " + PdksEntityController.getJoinLOCK() + " on CMA." + CalismaModeliAy.COLUMN_NAME_ID + " = D." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY);
@@ -2989,7 +2989,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					sb.append("	order by V.ADET desc, CM." + CalismaModeli.COLUMN_NAME_ACIKLAMA);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					modelList = pdksEntityController.getObjectBySQLList(sb, fields, CalismaModeliAy.class);
+					modelList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, CalismaModeliAy.class);
 				} else
 					modelList = new ArrayList<CalismaModeliAy>();
 				if (aylikPuantaj.getPersonelDenklestirme() != null)
@@ -3491,14 +3491,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (vardiyaIdList != null && !vardiyaIdList.isEmpty()) {
 				String fieldName = "v";
 				HashMap map = new HashMap();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append("select P.* from " + tableName + " P " + PdksEntityController.getSelectLOCK());
 				sb.append(" where P." + columnName + " :" + fieldName);
 				map.put(fieldName, vardiyaIdList);
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// list = pdksEntityController.getObjectBySQLList(sb, map, tableClass);
-				list = pdksEntityController.getSQLParamList(vardiyaIdList, sb, fieldName, map, tableClass, session);
+				// list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, tableClass);
+				list = pdksEntityController.getSQLParamList(vardiyaIdList, new StringBuffer(sb.toString()), fieldName, map, tableClass, session);
 
 			}
 		} catch (Exception e) {
@@ -4433,7 +4433,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	public void aylariDoldur() {
 		int buYil = PdksUtil.getDateField(new Date(), Calendar.YEAR);
 		HashMap fields = new HashMap();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
 		if (fazlaMesaiTalepDurum == false) {
 			if (buYil > yil) {
@@ -4464,7 +4464,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_AY);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<DenklestirmeAy> list = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
+		List<DenklestirmeAy> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, DenklestirmeAy.class);
 
 		aylar = ortakIslemler.getSelectItemList("ay", authenticatedUser);
 		int seciliAy = ay;
@@ -5078,7 +5078,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				MailObject mail = new MailObject();
 				String key = "userId=" + ikUser.getId() + "&talepId=" + talep.getId();
 				String mailKonu = authenticatedUser.getAdSoyad() + " çalışma plan güncelleme talep ";
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append(denklestirmeAy.getAyAdi() + " " + yil + " " + PdksUtil.getSelectItemLabel(aramaSecenekleri.getEkSaha3Id(), aramaSecenekleri.getGorevYeriList()) + " " + bolumAciklama + "  çalışma planı güncelleme talebi cevabını verir misiniz. ");
 				sb.append("<p><TABLE style=\"width: 270px;\"><TR>");
 				sb.append("<td width=\"90px\"><a style=\"font-size: 16px;\" href=\"http://" + donusAdres + "/planGuncellemeTalepLinkOnay?id=" + ortakIslemler.getEncodeStringByBase64(key + "&durum=1") + "\"><b>Onay</b></a></td>");
@@ -5440,7 +5440,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				if (planDepartman != null) {
 					HashMap map = new HashMap();
 
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					fields.clear();
 					sb.append("select TOP 1 T.* from " + Tanim.TABLE_NAME + " T " + PdksEntityController.getSelectLOCK());
 					sb.append(" inner join " + Tanim.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Tanim.COLUMN_NAME_ID + " = T." + Tanim.COLUMN_NAME_PARENT_ID);
@@ -5451,7 +5451,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					fields.put("k", Personel.BOLUM_SUPERVISOR);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<Tanim> list = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
+					List<Tanim> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Tanim.class);
 					Tanim superVisor = list != null && !list.isEmpty() ? list.get(0) : null;
 
 					if (superVisor != null) {
@@ -6058,15 +6058,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (!perIdList.isEmpty()) {
 				String fieldName = "v";
 				HashMap map = new HashMap();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append("select U.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + User.TABLE_NAME + " U " + PdksEntityController.getJoinLOCK() + " on U." + User.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID + " and U." + User.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" where P." + Personel.COLUMN_NAME_ID + " :" + fieldName);
 				map.put(fieldName, perIdList);
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// List<User> userList = pdksEntityController.getObjectBySQLList(sb, map, User.class);
-				List<User> userList = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, map, User.class, session);
+				// List<User> userList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, User.class);
+				List<User> userList = pdksEntityController.getSQLParamList(perIdList, new StringBuffer(sb.toString()), fieldName, map, User.class, session);
 				for (User user : userList) {
 					userMap.put(user.getPersonelId(), user);
 				}
@@ -6112,7 +6112,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				List idList = new ArrayList(devamMap.keySet());
 				String fieldName = "id";
 				HashMap map = new HashMap();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append("select F.*," + FazlaMesaiTalep.COLUMN_NAME_ONAY_DURUMU + " from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " on F." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID + " and F." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :t2 and F." + FazlaMesaiTalep.COLUMN_NAME_BITIS_ZAMANI + " >= :t1 ");
@@ -6122,8 +6122,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				map.put("t2", fazlaMesaiTalep.getBitisZamani());
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// List<FazlaMesaiTalep> mesaiList = pdksEntityController.getObjectBySQLList(sb, map, FazlaMesaiTalep.class);
-				List<FazlaMesaiTalep> mesaiList = pdksEntityController.getSQLParamList(idList, sb, fieldName, map, FazlaMesaiTalep.class, session);
+				// List<FazlaMesaiTalep> mesaiList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, FazlaMesaiTalep.class);
+				List<FazlaMesaiTalep> mesaiList = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, map, FazlaMesaiTalep.class, session);
 				String patternTarih = PdksUtil.getDateFormat(), saatPattern = PdksUtil.getSaatFormat();
 				for (FazlaMesaiTalep fazlaMesaiTalep : mesaiList) {
 					Personel personel = fazlaMesaiTalep.getVardiyaGun().getPersonel();
@@ -6335,15 +6335,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				ortakIslemler.fazlaMesaiSaatiAyarla(vm);
 			HashMap map = new HashMap();
 			String fieldName = "v";
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 			sb.append(" left join " + User.TABLE_NAME + " U " + PdksEntityController.getJoinLOCK() + " on U." + User.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID + " and U." + User.COLUMN_NAME_DURUM + " = 1 ");
 			sb.append(" where P." + Personel.COLUMN_NAME_ID + " :" + fieldName + " and U." + User.COLUMN_NAME_ID + " is null ");
 			map.put(fieldName, perIdList);
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// List<Personel> perList = pdksEntityController.getObjectBySQLList(sb, map, Personel.class);
-			List<Personel> perList = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, map, Personel.class, session);
+			// List<Personel> perList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, Personel.class);
+			List<Personel> perList = pdksEntityController.getSQLParamList(perIdList, new StringBuffer(sb.toString()), fieldName, map, Personel.class, session);
 			for (Personel yonetici : perList) {
 				mesajlar.add(yonetici.getPdksSicilNo() + " " + yonetici.getAdSoyad() + " aktif kullanıcısı bulunmamaktadır!");
 			}
@@ -8068,7 +8068,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		try {
 			MailObject mail = new MailObject();
 			mail.setSubject(denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " " + bolumAdi + " çalışma plan durumu");
-			StringBuffer body = new StringBuffer();
+			StringBuilder body = new StringBuilder();
 			body.append("<p>");
 			body.append(denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " " + bolumAdi);
 			CalismaPlanKilitTalep talep = kilit.getTalep();
@@ -8214,7 +8214,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		CalismaPlanKilit cpk = null;
 
 		HashMap parametreMap = new HashMap();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select TOP 1 U.* from " + CalismaPlanKilit.TABLE_NAME + " U " + PdksEntityController.getSelectLOCK());
 		sb.append(" where U." + CalismaPlanKilit.COLUMN_NAME_DONEM + " = :d and U." + CalismaPlanKilit.COLUMN_NAME_SIRKET + " = :s");
 		if (aramaSecenekleri.getTesisId() != null) {
@@ -8228,7 +8228,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		parametreMap.put("o", authenticatedUser.getId());
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<CalismaPlanKilit> cpkList = pdksEntityController.getObjectBySQLList(sb, parametreMap, CalismaPlanKilit.class);
+		List<CalismaPlanKilit> cpkList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), parametreMap, CalismaPlanKilit.class);
 
 		cpk = cpkList != null && !cpkList.isEmpty() ? cpkList.get(0) : null;
 
@@ -8380,7 +8380,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	private void setDenklestirmeAlanlari(List<AylikPuantaj> puantajList) throws Exception {
 
 		TreeMap<Long, PersonelDenklestirme> map = new TreeMap<Long, PersonelDenklestirme>();
-		StringBuffer pdIdSb = new StringBuffer();
+		StringBuilder pdIdSb = new StringBuilder();
 		for (Iterator iterator = puantajList.iterator(); iterator.hasNext();) {
 			AylikPuantaj ap = (AylikPuantaj) iterator.next();
 			PersonelDenklestirme pd = ap.getPersonelDenklestirme();
@@ -8473,7 +8473,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (!perIdList.isEmpty()) {
 			HashMap map = new HashMap();
 			String fieldName = "p";
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select F.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " on F." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 			sb.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1 and F." + FazlaMesaiTalep.COLUMN_NAME_ONAY_DURUMU + " <> " + FazlaMesaiTalep.ONAY_DURUM_RED);
@@ -8485,8 +8485,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			map.put("t2", t2);
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// fazlaMesaiTalepler = pdksEntityController.getObjectBySQLList(sb, map, FazlaMesaiTalep.class);
-			fazlaMesaiTalepler = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, map, FazlaMesaiTalep.class, session);
+			// fazlaMesaiTalepler = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, FazlaMesaiTalep.class);
+			fazlaMesaiTalepler = pdksEntityController.getSQLParamList(perIdList, new StringBuffer(sb.toString()), fieldName, map, FazlaMesaiTalep.class, session);
 
 			for (FazlaMesaiTalep fmt : fazlaMesaiTalepler) {
 				Long key = fmt.getVardiyaGun().getId();
@@ -8631,7 +8631,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	private TreeMap<Long, PersonelDenklestirme> getPersonelDenklestirme(DenklestirmeAy denklestirmeAy, ArrayList<Long> idler) {
 		String fieldName = "p";
 		HashMap fields = new HashMap();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select S.* from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
 		sb.append(" where S." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " and S." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
 		fields.put(fieldName, idler);
@@ -8639,7 +8639,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		TreeMap<Long, PersonelDenklestirme> denklestirmeMap = new TreeMap<Long, PersonelDenklestirme>();
-		List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(idler, sb, fieldName, fields, PersonelDenklestirme.class, session);
+		List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(idler, new StringBuffer(sb.toString()), fieldName, fields, PersonelDenklestirme.class, session);
 		ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 		for (PersonelDenklestirme pd : list) {
 			pd.setGuncellendi(Boolean.FALSE);
@@ -8926,7 +8926,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	private TreeMap<String, VardiyaHafta> getVardiyaHaftaMap(ArrayList<Long> idler) {
 		HashMap map = new HashMap();
 		String fieldName = "pId";
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct * from " + VardiyaHafta.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 		sb.append(" where " + VardiyaHafta.COLUMN_NAME_BAS_TARIH + " <= :bitTarih and " + VardiyaHafta.COLUMN_NAME_BIT_TARIH + " >= :basTarih and " + VardiyaHafta.COLUMN_NAME_PERSONEL + ":pId ");
 		// map.put(PdksEntityController.MAP_KEY_MAP, "getKeyHafta");
@@ -8935,8 +8935,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		map.put("bitTarih", bitTarih);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		// TreeMap<String, VardiyaHafta> vardiyaHaftaMap = pdksEntityController.getObjectBySQLMap(sb, map, VardiyaHafta.class, Boolean.FALSE);
-		TreeMap<String, VardiyaHafta> vardiyaHaftaMap = pdksEntityController.getSQLParamTreeMap("getKeyHafta", false, idler, sb, fieldName, map, VardiyaHafta.class, session);
+		// TreeMap<String, VardiyaHafta> vardiyaHaftaMap = pdksEntityController.getObjectBySQLMap(new StringBuffer(sb.toString()), map, VardiyaHafta.class, Boolean.FALSE);
+		TreeMap<String, VardiyaHafta> vardiyaHaftaMap = pdksEntityController.getSQLParamTreeMap("getKeyHafta", false, idler, new StringBuffer(sb.toString()), fieldName, map, VardiyaHafta.class, session);
 
 		idler = null;
 		return vardiyaHaftaMap;
@@ -9059,7 +9059,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 
 			HashMap map = new HashMap();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 
 			HashMap<String, String> ozelMap = new HashMap<String, String>();
 			ozelMap.put(Vardiya.GEBE_KEY, "");
@@ -9078,7 +9078,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							sb.append(" where V." + Vardiya.COLUMN_NAME_DURUM + " = 1 and V." + Vardiya.COLUMN_NAME_GENEL + " <> 1");
 							if (session != null)
 								map.put(PdksEntityController.MAP_KEY_SESSION, session);
-							List<Vardiya> list = pdksEntityController.getObjectBySQLList(sb, map, Vardiya.class);
+							List<Vardiya> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, Vardiya.class);
 							if (!list.isEmpty()) {
 								HashMap<String, List<Vardiya>> varMap = new HashMap<String, List<Vardiya>>();
 								for (Vardiya vardiya : list) {
@@ -9121,7 +9121,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 			}
 
-			sb = new StringBuffer();
+			sb = new StringBuilder();
 			sb.append("with VARDIYA_DATA as ( ");
 			sb.append("select V.* from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 			if (pd != null) {
@@ -9205,7 +9205,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			logger.debug(sb.toString());
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			vardiyaList = pdksEntityController.getObjectBySQLList(sb, map, Vardiya.class);
+			vardiyaList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, Vardiya.class);
 			if (!vardiyaList.isEmpty()) {
 				for (Iterator<Vardiya> iterator = vardiyaList.iterator(); iterator.hasNext();) {
 					Vardiya pdksVardiya = iterator.next();
@@ -9235,7 +9235,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					vardiyaMap.put(pdksVardiya.getId(), pdksVardiya);
 				String fieldName = "id";
 				List idList = new ArrayList(vardiyaMap.keySet());
-				sb = new StringBuffer();
+				sb = new StringBuilder();
 
 				sb.append("select V.* from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" where V." + Vardiya.COLUMN_NAME_ID + " :" + fieldName);
@@ -9244,8 +9244,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				map.put(fieldName, idList);
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// vardiyaList = pdksEntityController.getObjectBySQLList(sb, map, Vardiya.class);
-				vardiyaList = pdksEntityController.getSQLParamList(idList, sb, fieldName, map, Vardiya.class, session);
+				// vardiyaList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, Vardiya.class);
+				vardiyaList = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, map, Vardiya.class, session);
 			}
 			vardiyaSablonu = personel.getSablon();
 			vardiyaSablonu.setVardiyaList(null);
@@ -9286,7 +9286,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					vardiyaMap.put(pdksVardiya.getId(), pdksVardiya);
 				String fieldName = "id";
 				idList = new ArrayList(vardiyaMap.keySet());
-				sb = new StringBuffer();
+				sb = new StringBuilder();
 				sb.append("with VERI as ( ");
 				sb.append("select V.* from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" where V." + Vardiya.COLUMN_NAME_ID + " :" + fieldName);
@@ -9304,8 +9304,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				map.put(fieldName, idList);
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// vardiyaList = pdksEntityController.getObjectBySQLList(sb, map, Vardiya.class);
-				vardiyaList = pdksEntityController.getSQLParamList(idList, sb, fieldName, map, Vardiya.class, session);
+				// vardiyaList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, Vardiya.class);
+				vardiyaList = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, map, Vardiya.class, session);
 			}
 			aylikPuantajAllList = null;
 			pdksList.clear();
@@ -9612,7 +9612,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				for (SelectItem selectItem : veriList)
 					list.add(selectItem.getValue());
 				String fieldName = "l";
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				HashMap fields = new HashMap();
 				sb.append("select distinct " + tip + ".ID from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " FT " + PdksEntityController.getJoinLOCK() + " on FT." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
@@ -9643,8 +9643,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				List idler = null;
 				try {
-					// idler = pdksEntityController.getObjectBySQLList(sb, fields, null);
-					idler = pdksEntityController.getSQLParamList(list, sb, fieldName, fields, null, session);
+					// idler = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, null);
+					idler = pdksEntityController.getSQLParamList(list, new StringBuffer(sb.toString()), fieldName, fields, null, session);
 				} catch (Exception e) {
 					logger.equals(e);
 					e.printStackTrace();
@@ -9941,7 +9941,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 				map.clear();
 				String fieldName = "p";
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append("select F.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P.ID=V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 				sb.append(" and P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
@@ -9964,8 +9964,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				map.put(fieldName, perList);
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// fazlaMesaiTalepler = pdksEntityController.getObjectBySQLList(sb, map, FazlaMesaiTalep.class);
-				fazlaMesaiTalepler = pdksEntityController.getSQLParamList(perList, sb, fieldName, map, FazlaMesaiTalep.class, session);
+				// fazlaMesaiTalepler = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, FazlaMesaiTalep.class);
+				fazlaMesaiTalepler = pdksEntityController.getSQLParamList(perList, new StringBuffer(sb.toString()), fieldName, map, FazlaMesaiTalep.class, session);
 
 				Personel loginPersonel = authenticatedUser.getPdksPersonel();
 				for (FazlaMesaiTalep ft : fazlaMesaiTalepler) {
@@ -10417,7 +10417,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		HashMap fields = new HashMap();
 		Date basGun = PdksUtil.convertToJavaDate(denklestirmeAy.getDonem() + "01", "yyyyMMdd");
 		Date bitGun = PdksUtil.tariheAyEkleCikar(basGun, 1);
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select T.* FROM " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " ON T." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :t1 and  V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " < :t2 ");
@@ -10427,7 +10427,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
 			Calendar cal = Calendar.getInstance();
-			List<FazlaMesaiTalep> fmtList = pdksEntityController.getObjectBySQLList(sb, fields, FazlaMesaiTalep.class);
+			List<FazlaMesaiTalep> fmtList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, FazlaMesaiTalep.class);
 			for (FazlaMesaiTalep fmt : fmtList) {
 				VardiyaGun vg = fmt.getVardiyaGun();
 				if (fmt.isIptalEdilebilir() && vg.getVardiya().isCalisma()) {
@@ -11302,15 +11302,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (!perIdList.isEmpty()) {
 				String fieldName = "p";
 				HashMap fields = new HashMap();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append("select S.* from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
 				sb.append(" where S." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " and (S." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 or S." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 )");
 				sb.append(" and S." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
 				fields.put(fieldName, perIdList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDenklestirme.class);
-				List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, fields, PersonelDenklestirme.class, session);
+				// List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, PersonelDenklestirme.class);
+				List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(perIdList, new StringBuffer(sb.toString()), fieldName, fields, PersonelDenklestirme.class, session);
 				flush = false;
 				ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 				for (PersonelDenklestirme personelDenklestirme : list) {
@@ -11439,14 +11439,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 			}
 			fields.clear();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select S.* from " + Vardiya.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
 			sb.append(" where (S." + Vardiya.COLUMN_NAME_DEPARTMAN + " is null or S." + Vardiya.COLUMN_NAME_DEPARTMAN + " = :deptId )");
 			sb.append(" and S." + Vardiya.COLUMN_NAME_KISA_ADI + " <> '' and S." + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
 			fields.put("deptId", departman.getId());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<Vardiya> vardiyalar = pdksEntityController.getObjectBySQLList(sb, fields, Vardiya.class);
+			List<Vardiya> vardiyalar = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Vardiya.class);
 			TreeMap<String, Vardiya> vardiyaMap = new TreeMap<String, Vardiya>();
 			for (Vardiya pdksVardiya : vardiyalar) {
 				String key = PdksUtil.setTurkishStr(pdksVardiya.getKisaAdi()).toLowerCase(Locale.ENGLISH);
@@ -11601,7 +11601,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						List dataIdList = new ArrayList(perMap.keySet());
 						String fieldName = "p";
 						fields.clear();
-						sb = new StringBuffer();
+						sb = new StringBuilder();
 						sb.append("select S.* from " + Personel.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
 						sb.append(" inner join " + Sirket.TABLE_NAME + " SI " + PdksEntityController.getJoinLOCK() + " on SI." + Sirket.COLUMN_NAME_ID + " = S." + Personel.COLUMN_NAME_SIRKET);
 						sb.append(" and SI." + Sirket.COLUMN_NAME_DEPARTMAN + " = :deptId ");
@@ -11615,11 +11615,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						fields.put(PdksEntityController.MAP_KEY_MAP, "getPdksSicilNo");
 						if (session != null)
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-						// TreeMap<String, Personel> personelMap = pdksEntityController.getObjectBySQLMap(sb, fields, Personel.class, false);
-						TreeMap<String, Personel> personelMap = pdksEntityController.getSQLParamTreeMap("getPdksSicilNo", false, dataIdList, sb, fieldName, fields, Personel.class, session);
+						// TreeMap<String, Personel> personelMap = pdksEntityController.getObjectBySQLMap(new StringBuffer(sb.toString()), fields, Personel.class, false);
+						TreeMap<String, Personel> personelMap = pdksEntityController.getSQLParamTreeMap("getPdksSicilNo", false, dataIdList, new StringBuffer(sb.toString()), fieldName, fields, Personel.class, session);
 						if (personelMap.size() == perMap.size()) {
 							fieldName = "s";
-							sb = new StringBuffer();
+							sb = new StringBuilder();
 							sb.append("select D.* from " + PersonelDenklestirme.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
 							sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = D." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 							sb.append(" and P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
@@ -11631,7 +11631,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							fields.put(fieldName, idList);
 							if (session != null)
 								fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-							List<PersonelDenklestirme> personelDenklestirmeList = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, PersonelDenklestirme.class, session);
+							List<PersonelDenklestirme> personelDenklestirmeList = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, fields, PersonelDenklestirme.class, session);
 							ortakIslemler.setPersonelDenklestirmeDevir(null, personelDenklestirmeList, session);
 							TreeMap<String, PersonelDenklestirme> personelDenklestirmeMap = new TreeMap<String, PersonelDenklestirme>();
 
@@ -11690,7 +11690,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							fieldName = "s";
 							idList = new ArrayList(perMap.keySet());
 							fields.clear();
-							sb = new StringBuffer();
+							sb = new StringBuilder();
 							sb.append("select D.* from " + PersonelIzin.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
 							sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = D." + PersonelIzin.COLUMN_NAME_PERSONEL);
 							sb.append(" and P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
@@ -11704,7 +11704,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							fields.put(fieldName, idList);
 							if (session != null)
 								fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-							List<PersonelIzin> izinler = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, PersonelIzin.class, session);
+							List<PersonelIzin> izinler = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, fields, PersonelIzin.class, session);
 
 							HashMap<Long, List<PersonelIzin>> izinMap = new HashMap<Long, List<PersonelIzin>>();
 							for (PersonelIzin izin : izinler) {

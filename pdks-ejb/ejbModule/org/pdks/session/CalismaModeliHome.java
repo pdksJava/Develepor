@@ -676,7 +676,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 				if (suaGoster)
 					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(calismaModeli.getSuaDurum()));
 				if (admin) {
-					StringBuffer cmAciklama = new StringBuffer();
+					StringBuilder cmAciklama = new StringBuilder();
 					if (vMap.containsKey(calismaModeli.getId())) {
 						List<Vardiya> list = vMap.get(calismaModeli.getId());
 						for (Iterator iterator = list.iterator(); iterator.hasNext();) {

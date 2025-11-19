@@ -853,14 +853,14 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 					String fieldName = "p";
 					HashMap parametreMap = new HashMap();
 					HashMap map = new HashMap();
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					sb.append("select P." + Personel.COLUMN_NAME_KGS_PERSONEL + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 					sb.append(" where P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
 					map.put(fieldName, sicilNoList);
 					if (session != null)
 						map.put(PdksEntityController.MAP_KEY_SESSION, session);
-					// List<BigDecimal> idList = pdksEntityController.getObjectBySQLList(sb, map, null);
-					List<BigDecimal> idList = pdksEntityController.getSQLParamList(sicilNoList, sb, fieldName, map, null, session);
+					// List<BigDecimal> idList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, null);
+					List<BigDecimal> idList = pdksEntityController.getSQLParamList(sicilNoList, new StringBuffer(sb.toString()), fieldName, map, null, session);
 
 					ArrayList<Long> personeller = new ArrayList<Long>();
 					for (BigDecimal bigDecimal : idList) {

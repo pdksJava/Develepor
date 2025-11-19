@@ -966,7 +966,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiya.isMesaiOdenir()));
 
 				if (admin) {
-					StringBuffer cmAciklama = new StringBuffer();
+					StringBuilder cmAciklama = new StringBuilder();
 					if (calisma && cMap.containsKey(vardiya.getId())) {
 						List<CalismaModeli> list = cMap.get(vardiya.getId());
 						for (Iterator iterator = list.iterator(); iterator.hasNext();) {

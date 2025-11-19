@@ -578,7 +578,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 			else
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
 			if (izinDurum) {
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				if (vardiya.isCalisma() == false || calismaPlani.isIzinli()) {
 					PersonelIzin izin = calismaPlani.getIzin();
 					if (izin != null) {
@@ -592,7 +592,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(sb.toString());
 			}
 			if (hareketDurum) {
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				if (hareketler != null) {
 					for (Iterator iterator = calismaPlani.getHareketler().iterator(); iterator.hasNext();) {
 						HareketKGS hareketKGS = (HareketKGS) iterator.next();

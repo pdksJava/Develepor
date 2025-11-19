@@ -197,7 +197,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		Calendar cal = Calendar.getInstance();
 		Date oncekiGun = ortakIslemler.tariheGunEkleCikar(cal, date, -1);
 		HashMap map = new HashMap();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
 		sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1");
@@ -221,7 +221,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		ArrayList<Personel> tumPersoneller = (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(sb, map, Personel.class);
+		ArrayList<Personel> tumPersoneller = (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, Personel.class);
 
 		List<HareketKGS> kgsList = new ArrayList<HareketKGS>();
 		Date tarih1 = null;

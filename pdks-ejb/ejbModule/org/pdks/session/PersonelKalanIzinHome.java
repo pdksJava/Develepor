@@ -145,7 +145,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 	 * @return
 	 */
 	public List<PersonelIzin> getIzinList(TempIzin izin) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		List dataIdList = izin.getIzinler();
 		String fieldName = "s";
 		sb.append("select * from " + PersonelIzin.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
@@ -162,7 +162,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<PersonelIzin> list = pdksEntityController.getSQLParamList(dataIdList, sb, fieldName, fields, PersonelIzin.class, session);
+		List<PersonelIzin> list = pdksEntityController.getSQLParamList(dataIdList, new StringBuffer(sb.toString()), fieldName, fields, PersonelIzin.class, session);
 		dataIdList = null;
 		fields = null;
 		return list;
@@ -970,7 +970,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		else
 			tipler = Arrays.asList(new String[] { IzinTipi.YILLIK_UCRETLI_IZIN });
 		HashMap fields = new HashMap();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		String fieldName = "k";
 		sb.append("select I.* from " + IzinTipi.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + IzinTipi.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " on B." + IzinTipi.COLUMN_NAME_ID + " = I." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI);
@@ -981,7 +981,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 		fields.put(fieldName, tipler);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<IzinTipi> list = pdksEntityController.getSQLParamList(tipler, sb, fieldName, fields, IzinTipi.class, session);
+		List<IzinTipi> list = pdksEntityController.getSQLParamList(tipler, new StringBuffer(sb.toString()), fieldName, fields, IzinTipi.class, session);
 
 		return list;
 	}

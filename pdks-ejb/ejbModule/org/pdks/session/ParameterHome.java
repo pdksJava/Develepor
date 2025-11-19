@@ -233,7 +233,7 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 		helpDesk = false;
 		// List<Parameter> list = pdksEntityController.getObjectByInnerObjectList(parametreMap, Parameter.class);
 		//
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select T.* from " + Parameter.TABLE_NAME + " T " + PdksEntityController.getSelectLOCK() + " ");
 		if (!authenticatedUser.isAdmin()) {
 			sb.append(" where T." + Parameter.COLUMN_NAME_GUNCELLE + " = 1 and T." + Parameter.COLUMN_NAME_HELP_DESK + " = 0 ");
@@ -242,7 +242,7 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<Parameter> list = pdksEntityController.getObjectBySQLList(sb, parametreMap, Parameter.class);
+		List<Parameter> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), parametreMap, Parameter.class);
 
 		list = PdksUtil.sortListByAlanAdi(list, "id", admin);
 		if (authenticatedUser.isAdmin()) {

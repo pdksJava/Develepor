@@ -174,7 +174,7 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 		iptalYonetici = null;
 		if (sirket != null) {
 			HashMap fields = new HashMap();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select distinct Y.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append("inner join " + Personel.TABLE_NAME + " Y " + PdksEntityController.getJoinLOCK() + " on Y." + Personel.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_YONETICI);
 			sb.append(" where P." + Personel.COLUMN_NAME_SIRKET + " = :s and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
@@ -183,7 +183,7 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 			fields.put("s", sirket.getId());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			iptalYoneticiList = pdksEntityController.getObjectBySQLList(sb, fields, Personel.class);
+			iptalYoneticiList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Personel.class);
 			if (!iptalYoneticiList.isEmpty()) {
 				yoneticiList = ortakIslemler.getTaseronYoneticiler(session);
 				if (!yoneticiList.isEmpty()) {

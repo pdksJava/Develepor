@@ -138,7 +138,7 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 
 	public void fillSirketList() {
 		HashMap map = new HashMap();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
 		List<Long> tesisIdList = null;
 		if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
@@ -159,7 +159,7 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<Sirket> list = pdksEntityController.getObjectBySQLList(sb, map, Sirket.class);
+		List<Sirket> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, Sirket.class);
 
 		if (list.size() > 1)
 			list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);

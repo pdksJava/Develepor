@@ -182,7 +182,7 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 			Date istenAyrilmaTarih = PdksUtil.getDate(cal.getTime());
 
 			TreeMap<String, HoldingIzin> map = new TreeMap<String, HoldingIzin>();
-			StringBuffer sb = null;
+			StringBuilder sb = null;
 
 			LinkedHashMap<Long, String> dataMap = new LinkedHashMap<Long, String>();
 			if (ortakIslemler.isExisStoreProcedure(spName, session)) {
@@ -197,7 +197,7 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 					}
 					fields.clear();
 					String fieldName = "p";
-					sb = new StringBuffer();
+					sb = new StringBuilder();
 					sb.append("select P." + Personel.COLUMN_NAME_ID + " as PER_ID," + Personel.COLUMN_NAME_IZIN_HAKEDIS_TARIHI + ", P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + ", P." + Personel.COLUMN_NAME_SIRKET + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 					sb.append(" where P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
 					sb.append(" and P." + Personel.COLUMN_NAME_IZIN_KARTI_VAR + " = 1");
@@ -215,8 +215,8 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 					fields.put(fieldName, sorguList);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					// List<Object[]> idList = pdksEntityController.getObjectBySQLList(sb, fields, null);
-					List<Object[]> idList = pdksEntityController.getSQLParamList(sorguList, sb, fieldName, fields, null, session);
+					// List<Object[]> idList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, null);
+					List<Object[]> idList = pdksEntityController.getSQLParamList(sorguList, new StringBuffer(sb.toString()), fieldName, fields, null, session);
 
 					for (Iterator iterator = idList.iterator(); iterator.hasNext();) {
 						Object[] objects = (Object[]) iterator.next();
@@ -235,7 +235,7 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 			while (!list.isEmpty()) {
 				try {
 					int i = 0;
-					sb = new StringBuffer();
+					sb = new StringBuilder();
 					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 						Object object = (Object) iterator.next();
 						sb.append(object.toString());
@@ -286,7 +286,7 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 				String fieldName = "p";
 				List numStrList = new ArrayList(dataMap.keySet());
 				fields.clear();
-				sb = new StringBuffer();
+				sb = new StringBuilder();
 				sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" where P." + Personel.COLUMN_NAME_ID + " :" + fieldName);
 				sb.append(" and P." + Personel.COLUMN_NAME_IZIN_KARTI_VAR + " = 1 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + "  <= :ia2");
@@ -299,8 +299,8 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 				fields.put(fieldName, numStrList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// List<Personel> idList = pdksEntityController.getObjectBySQLList(sb, fields, Personel.class);
-				List<Personel> idList = pdksEntityController.getSQLParamList(numStrList, sb, fieldName, fields, Personel.class, session);
+				// List<Personel> idList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Personel.class);
+				List<Personel> idList = pdksEntityController.getSQLParamList(numStrList, new StringBuffer(sb.toString()), fieldName, fields, Personel.class, session);
 				for (Iterator iterator = idList.iterator(); iterator.hasNext();) {
 					Personel personel = (Personel) iterator.next();
 					holdingIzinList.add(new HoldingIzin(personel));

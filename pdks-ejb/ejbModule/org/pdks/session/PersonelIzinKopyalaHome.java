@@ -69,7 +69,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 
 	private Session session;
 	private List<TempIzin> personelBakiyeIzinList = new ArrayList<TempIzin>();
-	private StringBuffer sbAll = new StringBuffer();
+	private StringBuilder sbAll = new StringBuilder();
 	private SimpleDateFormat sdf;
 	private Boolean checkBoxDurum;
 
@@ -177,9 +177,9 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 
 				String perEskiSicilNo = null, perYeniSicilNo = null;
 
-				sbAll = new StringBuffer();
+				sbAll = new StringBuilder();
 				for (int row = 1; row <= sheet.getLastRowNum(); row++) {
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					try {
 
 						perEskiSicilNo = getSheetStringValue(sheet, row, COL_ESKI_SICIL_NO);
@@ -211,7 +211,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 						}
 
 						sb = null;
-						sb = new StringBuffer();
+						sb = new StringBuilder();
 						sayac = 0;
 						if (eskiler.contains(perEskiSicilNo) || yeniler.contains(perEskiSicilNo))
 							++sayac;
@@ -247,11 +247,11 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 					tumPersonel.addAll(yeniler);
 					parametreMap.put("p", tumPersonel);
 					parametreMap.put(PdksEntityController.MAP_KEY_MAP, "getPdksSicilNo");
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					sb.append("select V.* from " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 					sb.append(" where V." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :p");
 					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-					TreeMap<String, Personel> map = pdksEntityController.getObjectBySQLMap(sb, parametreMap, Personel.class, Boolean.FALSE);
+					TreeMap<String, Personel> map = pdksEntityController.getObjectBySQLMap(new StringBuffer(sb.toString()), parametreMap, Personel.class, Boolean.FALSE);
 					boolean renk = false;
 
 					for (int i = 0; i < eskiler.size(); i++) {
@@ -450,7 +450,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 	 */
 	protected void eskiKayitlariSil(List<Long> idler) throws Exception {
 		if (idler != null && !idler.isEmpty()) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			for (Iterator iterator = idler.iterator(); iterator.hasNext();) {
 				Long long1 = (Long) iterator.next();
 				sb.append(long1.toString());
@@ -475,7 +475,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 	 */
 	protected void izinKopyalaJAVA(String idStr, TreeMap<Long, Personel> iliskiMap, User sistemAdminUser) {
 		HashMap fields = new HashMap();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select I.* from " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + IzinTipi.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI);
 		sb.append(" where I." + PersonelIzin.COLUMN_NAME_PERSONEL + " :pId");
@@ -484,7 +484,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 		sb.append(" order by I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
 		fields.put("pId", iliskiMap.keySet());
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<PersonelIzin> personelBakiyeIzinler = pdksEntityController.getObjectBySQLList(sb, fields, PersonelIzin.class);
+		List<PersonelIzin> personelBakiyeIzinler = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, PersonelIzin.class);
 		if (!personelBakiyeIzinler.isEmpty()) {
 			List<Long> idler = new ArrayList<Long>();
 			for (PersonelIzin personelIzin : personelBakiyeIzinler)
@@ -600,11 +600,11 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 		this.personelBakiyeIzinList = personelBakiyeIzinList;
 	}
 
-	public StringBuffer getSbAll() {
+	public StringBuilder getSbAll() {
 		return sbAll;
 	}
 
-	public void setSbAll(StringBuffer sbAll) {
+	public void setSbAll(StringBuilder sbAll) {
 		this.sbAll = sbAll;
 	}
 

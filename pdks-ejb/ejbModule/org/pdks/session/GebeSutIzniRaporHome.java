@@ -158,7 +158,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 		tesisDurum = false;
 		if (sirket != null && sirket.isTesisDurumu()) {
 			HashMap fields = new HashMap();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select distinct T.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_TESIS);
 			sb.append(" where P." + Personel.COLUMN_NAME_SIRKET + " = :s and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b2");
@@ -182,7 +182,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 			fields.put("b2", bitTarih);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<Tanim> tesisTanimList = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
+			List<Tanim> tesisTanimList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Tanim.class);
 			if (tesisTanimList.size() > 1)
 				tesisTanimList = PdksUtil.sortTanimList(null, tesisTanimList);
 			for (Tanim tesis : tesisTanimList) {
@@ -203,7 +203,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 	public String fillPersonelDonemselDurumList() {
 		List<Long> list = new ArrayList<Long>();
 		HashMap fields = new HashMap();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select D.* from " + PersonelDonemselDurum.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = D." + PersonelDonemselDurum.COLUMN_NAME_PERSONEL);
 		if (sirketId != null) {
@@ -233,7 +233,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 		fields.put("b2", bitTarih);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		personelDonemDurumList = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDonemselDurum.class);
+		personelDonemDurumList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, PersonelDonemselDurum.class);
 		if (sirketId == null)
 			tesisDurum = false;
 		for (Iterator iterator = personelDonemDurumList.iterator(); iterator.hasNext();) {

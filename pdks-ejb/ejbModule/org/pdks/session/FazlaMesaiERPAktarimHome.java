@@ -246,7 +246,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				}
 				if (!hucreMap.isEmpty()) {
 					HashMap fields = new HashMap();
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					sb.append("select V." + Personel.COLUMN_NAME_ID + " from " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 					sb.append(" where " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :pId  ");
 					sb.append(" and V." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :basTarih ");
@@ -261,7 +261,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 					fields.put("basTarih", basTarih);
 					fields.put("bitTarih", bitTarih);
 					fields.put(PdksEntityController.MAP_KEY_MAP, "getPdksSicilNo");
-					TreeMap<String, Personel> personelMap = ortakIslemler.getDataByIdMap(sb, fields, Personel.TABLE_NAME, Personel.class);
+					TreeMap<String, Personel> personelMap = ortakIslemler.getDataByIdMap(new StringBuffer(sb.toString()), fields, Personel.TABLE_NAME, Personel.class);
 					sb = null;
 					if (!personelMap.isEmpty()) {
 						List personelIdler = new ArrayList();
@@ -270,13 +270,13 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 							personelIdler.add(personelMap.get(key).getId());
 						}
 						fields.clear();
-						sb = new StringBuffer();
+						sb = new StringBuilder();
 						sb.append("select V." + PersonelDenklestirme.COLUMN_NAME_ID + " from " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 						sb.append(" where " + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " and " + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :pId  ");
 						fields.put(PdksEntityController.MAP_KEY_MAP, "getSicilNo");
 						// fields.put("denklestirmeAy", denklestirmeAy.getId());
 						fields.put("pId", personelIdler);
-						TreeMap<String, PersonelDenklestirme> bakiyeMap = ortakIslemler.getDataByIdMap(sb, fields, PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.class);
+						TreeMap<String, PersonelDenklestirme> bakiyeMap = ortakIslemler.getDataByIdMap(new StringBuffer(sb.toString()), fields, PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.class);
 						ortakIslemler.setPersonelDenklestirmeDevir(null, new ArrayList<PersonelDenklestirme>(bakiyeMap.values()), session);
 
 						List<HashMap<Integer, org.apache.poi.ss.usermodel.Cell>> hucreler = new ArrayList<HashMap<Integer, org.apache.poi.ss.usermodel.Cell>>(hucreMap.values());
@@ -870,7 +870,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 			veriMap.put("sirketId", sirketId != null ? sirketId : 0L);
 			veriMap.put("yil", getYil());
 			veriMap.put("ay", getAy());
-			 
+
 			if (session != null)
 				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<PersonelMesai> aylikFazlaMesaiTalepler = null;
@@ -1085,7 +1085,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 			bitGun = ortakIslemler.tariheAyEkleCikar(cal, basGun, 1);
 
 			fields.clear();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select V." + PersonelDenklestirme.COLUMN_NAME_ID + " from " + PersonelDenklestirme.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 			Boolean ikSirket = departman == null || departman.isAdminMi();
 			if (sirketId != null || (sicilNo != null && sicilNo.length() > 0) || sanalPersonelDurum != 0) {
@@ -1113,13 +1113,13 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 			fields.put("denklestirmeAy", denklestirmeAy.getId());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			personelDenklestirmeList = ortakIslemler.getDataByIdList(sb, fields, PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.class);
- 			ortakIslemler.setPersonelDenklestirmeDevir(null, personelDenklestirmeList, session);
+			personelDenklestirmeList = ortakIslemler.getDataByIdList(new StringBuffer(sb.toString()), fields, PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.class);
+			ortakIslemler.setPersonelDenklestirmeDevir(null, personelDenklestirmeList, session);
 			sb = null;
 			if (denklestirmeAyDurum) {
 				String fieldName = "p";
 				fields.clear();
-				sb = new StringBuffer();
+				sb = new StringBuilder();
 				sb.append("select V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_ID + " from " + PersonelDenklestirmeOnaylanmayan.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 				if (sirketId != null) {
 					sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PERSONEL_ID);
@@ -1131,8 +1131,8 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				fields.put(fieldName, veriList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// List<BigDecimal> list = pdksEntityController.getObjectBySQLList(sb, fields, null);
-				List<BigDecimal> list = pdksEntityController.getSQLParamList(veriList, sb, fieldName, fields, null, session);
+				// List<BigDecimal> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()) fields, null);
+				List<BigDecimal> list = pdksEntityController.getSQLParamList(veriList, new StringBuffer(sb.toString()), fieldName, fields, null, session);
 				if (!list.isEmpty())
 					onaylanmayanDurum = Boolean.FALSE;
 				list = null;
@@ -1206,7 +1206,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				}
 				String fieldName = "p";
 				fields.clear();
-				sb = new StringBuffer();
+				sb = new StringBuilder();
 				sb.append("select distinct G.* from " + VardiyaGun.TABLE_NAME + " G " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + Vardiya.COLUMN_NAME_ID + " = G." + VardiyaGun.COLUMN_NAME_VARDIYA);
 				sb.append(" and  V." + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " IN ('" + Vardiya.TIPI_IZIN + "','" + Vardiya.TIPI_HASTALIK_RAPOR + "') ");
@@ -1219,8 +1219,8 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				try {
-					// vgList = pdksEntityController.getObjectBySQLList(sb, fields, VardiyaGun.class);
-					vgList = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, fields, VardiyaGun.class, session);
+					// vgList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()) fields, VardiyaGun.class);
+					vgList = pdksEntityController.getSQLParamList(perIdList, new StringBuffer(sb.toString()), fieldName, fields, VardiyaGun.class, session);
 
 				} catch (Exception e) {
 					logger.error(sb.toString());
@@ -1267,7 +1267,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 	public String onaylanmayanPersonelleriGetir() {
 		if (onaysizPersonelDenklestirmeList == null && onaylanmayanDurum) {
 			HashMap fields = new HashMap();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select V.* from " + PersonelDenklestirmeOnaylanmayan.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 			if (sirketId != null || sanalPersonelDurum != 0) {
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PERSONEL_ID);
@@ -1285,8 +1285,8 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 			sb.append(" order by V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_YONETICI + ", V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_BOLUM + "," + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PDKS_SICIL_NO);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// List<PersonelDenklestirmeOnaylanmayan> list = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDenklestirmeOnaylanmayan.class);
-			List<PersonelDenklestirmeOnaylanmayan> list = pdksEntityController.getSQLParamList(veriList, sb, fieldName, fields, PersonelDenklestirmeOnaylanmayan.class, session);
+			// List<PersonelDenklestirmeOnaylanmayan> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()) fields, PersonelDenklestirmeOnaylanmayan.class);
+			List<PersonelDenklestirmeOnaylanmayan> list = pdksEntityController.getSQLParamList(veriList, new StringBuffer(sb.toString()), fieldName, fields, PersonelDenklestirmeOnaylanmayan.class, session);
 
 			if (!list.isEmpty()) {
 				onaysizPersonelDenklestirmeList = new ArrayList<PersonelDenklestirme>();

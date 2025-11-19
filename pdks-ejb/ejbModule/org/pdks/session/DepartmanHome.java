@@ -176,7 +176,7 @@ public class DepartmanHome extends EntityHome<Departman> implements Serializable
 					if (user.getYetkiliPersonelNoList().size() > 1 && user.getShortUsername() != null) {
 						List<User> groups = ortakIslemler.getMailUser(eMail, true);
 						PdksUtil.addMessageError(user.getShortUsername() + " Grubu");
-						StringBuffer sb = new StringBuffer("");
+						StringBuilder sb = new StringBuilder("");
 						int sira = 0;
 						for (User user2 : groups)
 							sb.append((sira++ > 0 ? ", " : "") + user2.getFullName() + " - " + user2.getEmail());

@@ -655,7 +655,7 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				List<Long> personelIdler = new ArrayList<Long>();
 				for (Personel personel : personelList)
 					personelIdler.add(personel.getId());
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append("select F.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + PersonelFazlaMesai.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " on F." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 				sb.append(" and F." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1");
@@ -671,7 +671,7 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				map.put("bitTarih", PdksUtil.getDate(bitTarih));
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<PersonelFazlaMesai> idList = pdksEntityController.getObjectBySQLList(sb, map, PersonelFazlaMesai.class);
+				List<PersonelFazlaMesai> idList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, PersonelFazlaMesai.class);
 				TreeMap<String, Liste> listeMap = new TreeMap<String, Liste>();
 				HashMap<Long, String> vardiyaAciklamaMap = new HashMap<Long, String>();
 				for (Iterator iterator = idList.iterator(); iterator.hasNext();) {
@@ -1054,7 +1054,7 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				iterator.hasNext();
 			}
 			int bas[] = new int[titles.size()], uz[] = new int[titles.size()];
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			int b1 = 0, b2 = 0;
 			int i = 0;
 			for (Iterator iterator = titles.iterator(); iterator.hasNext();) {

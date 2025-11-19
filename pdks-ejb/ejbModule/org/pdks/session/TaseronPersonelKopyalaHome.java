@@ -228,7 +228,7 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 
 						}
 						sorunYok = perNoList.isEmpty();
-						StringBuffer sb = new StringBuffer();
+						StringBuilder sb = new StringBuilder();
 						List<PersonelView> hataList = new ArrayList<PersonelView>();
 						for (PersonelView personelView : personelList) {
 							String perNo = personelView.getPdksPersonel().getPdksSicilNo();

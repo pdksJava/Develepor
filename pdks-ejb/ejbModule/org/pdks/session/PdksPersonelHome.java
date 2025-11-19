@@ -611,7 +611,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						if (user.getYetkiliPersonelNoList().size() > 1 && user.getShortUsername() != null) {
 							List<User> groups = ortakIslemler.getMailUser(eMail, true);
 							PdksUtil.addMessageError(user.getShortUsername() + " Grubu");
-							StringBuffer sb = new StringBuffer("");
+							StringBuilder sb = new StringBuilder("");
 							int sira = 0;
 							for (User user2 : groups)
 								sb.append((sira++ > 0 ? ", " : "") + user2.getFullName() + " - " + user2.getEmail());
@@ -960,7 +960,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			mesajList.add("İşe Giriş Tarihi İşten Ayrılma Tarihinden önce olamaz");
 		if (izinGirisiVar && PdksUtil.tarihKarsilastirNumeric(pdksPersonel.getDogumTarihi(), pdksPersonel.getIzinHakEdisTarihi()) == 1)
 			mesajList.add("Doğum Tarihi " + ortakIslemler.kidemBasTarihiAciklama() + "den önce olamaz");
-		StringBuffer kullaniciRolMesaj = pdksPersonel.getKullanici() != null ? kullaniciRolKontrolMesaji(pdksPersonel.getKullanici(), true) : null;
+		StringBuilder kullaniciRolMesaj = pdksPersonel.getKullanici() != null ? kullaniciRolKontrolMesaji(pdksPersonel.getKullanici(), true) : null;
 		if (kullaniciRolMesaj != null)
 			mesajList.add(kullaniciRolMesaj.toString());
 		kullaniciRolMesaj = null;
@@ -1562,7 +1562,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (pdksPersonel.getSirket() != null) {
 
 			HashMap map = new HashMap();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select * from " + IzinTipi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 			sb.append(" where " + IzinTipi.COLUMN_NAME_DURUM + " = 1 and " + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null ");
 			sb.append(" and " + IzinTipi.COLUMN_NAME_DEPARTMAN + " = :d and " + IzinTipi.COLUMN_NAME_GIRIS_TIPI + " <> :g ");
@@ -1570,7 +1570,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			map.put("g", IzinTipi.GIRIS_TIPI_YOK);
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<IzinTipi> list = pdksEntityController.getObjectBySQLList(sb, map, IzinTipi.class);
+			List<IzinTipi> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), map, IzinTipi.class);
 
 			izinGirisiVar = !list.isEmpty();
 			list = null;
@@ -1674,7 +1674,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		else
 			gebeIcapSuaDurumMap.clear();
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		HashMap fields = new HashMap();
 		sb.append("select distinct COALESCE(" + Vardiya.COLUMN_NAME_DEPARTMAN + ",-1) " + Vardiya.COLUMN_NAME_DEPARTMAN + ", CASE WHEN " + Vardiya.COLUMN_NAME_GEBELIK + "=1 THEN '" + Vardiya.GEBE_KEY + "' ");
 		sb.append("	WHEN " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :fm1 THEN '" + Vardiya.FMI_KEY + "' ");
@@ -1688,7 +1688,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
-			List<Object[]> veriler = pdksEntityController.getObjectBySQLList(sb, fields, null);
+			List<Object[]> veriler = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, null);
 			for (Iterator iterator = veriler.iterator(); iterator.hasNext();) {
 				Object[] objects = (Object[]) iterator.next();
 				Long key = ((BigDecimal) objects[0]).longValue();
@@ -1805,7 +1805,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			}
 			if (parentDepartman != null) {
 				fields.clear();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append("select TOP 1 P.* from " + Tanim.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" where P." + Tanim.COLUMN_NAME_TIPI + " = :t and P." + Tanim.COLUMN_NAME_KODU + " = :k ");
 				sb.append(" and P." + Tanim.COLUMN_NAME_PARENT_ID + " = :p and P." + Tanim.COLUMN_NAME_DURUM + " = 0");
@@ -1814,7 +1814,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				fields.put("p", parentDepartman.getId());
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<Tanim> list = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
+				List<Tanim> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Tanim.class);
 				bosDepartman = list != null && !list.isEmpty() ? list.get(0) : null;
 
 			}
@@ -2005,7 +2005,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			HashMap map = new HashMap();
 
 			String fieldName = "p";
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select * from " + Tanim.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 			sb.append(" where " + Tanim.COLUMN_NAME_DURUM + " = 1 and " + Tanim.COLUMN_NAME_TIPI + " = :t ");
 			sb.append(" and " + Tanim.COLUMN_NAME_PARENT_ID + " :" + fieldName);
@@ -2013,7 +2013,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			map.put("t", Tanim.TIPI_PERSONEL_DINAMIK_LISTE_TANIM);
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<Tanim> tanimList = pdksEntityController.getSQLParamList(idList, sb, fieldName, map, Tanim.class, session);
+			List<Tanim> tanimList = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, map, Tanim.class, session);
 			if (!tanimList.isEmpty())
 				tanimList = PdksUtil.sortObjectStringAlanList(tanimList, "getErpKodu", null);
 			for (Tanim tanim : tanimList) {
@@ -2180,7 +2180,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			User seciliKullanici = seciliPersonel.getKullanici();
 			if (seciliKullanici != null) {
 				if (seciliKullanici.getDepartman() != null) {
-					StringBuffer sb = kullaniciRolKontrolMesaji(seciliKullanici, false);
+					StringBuilder sb = kullaniciRolKontrolMesaji(seciliKullanici, false);
 					if (sb != null)
 						sb = null;
 
@@ -2198,10 +2198,10 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * @param kayit
 	 * @return
 	 */
-	private StringBuffer kullaniciRolKontrolMesaji(User seciliKullanici, boolean kayit) {
-		StringBuffer sb = null;
+	private StringBuilder kullaniciRolKontrolMesaji(User seciliKullanici, boolean kayit) {
+		StringBuilder sb = null;
 		if (seciliKullanici != null && seciliKullanici.getYetkiliRollerim() != null) {
-			sb = new StringBuffer();
+			sb = new StringBuilder();
 			for (Iterator iterator = seciliKullanici.getYetkiliRollerim().iterator(); iterator.hasNext();) {
 				Role role = (Role) iterator.next();
 				if (role.getDepartman() != null && !role.getDepartman().getId().equals(seciliKullanici.getDepartman().getId())) {
@@ -2214,7 +2214,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			}
 			if (sb.length() > 0) {
 				String hataliRol = sb.toString();
-				sb = new StringBuffer(hataliRol + " " + seciliKullanici.getDepartman().getAciklama() + " ait rol" + (hataliRol.indexOf(",") > 0 ? "ler" : "") + " değildir!");
+				sb = new StringBuilder(hataliRol + " " + seciliKullanici.getDepartman().getAciklama() + " ait rol" + (hataliRol.indexOf(",") > 0 ? "ler" : "") + " değildir!");
 				if (!kayit)
 					PdksUtil.addMessageError(sb.toString());
 			} else
@@ -2449,15 +2449,15 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						idList.add(personel.getId());
 				fields.clear();
 				String fieldName = "p";
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append(" select D." + PersonelDinamikAlan.COLUMN_NAME_PERSONEL + " from " + PersonelDinamikAlan.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" where D." + PersonelDinamikAlan.COLUMN_NAME_PERSONEL + " :" + fieldName + " and " + PersonelDinamikAlan.COLUMN_NAME_ALAN + " = " + ikinciYoneticiOlmaz.getId());
 				sb.append(" and " + PersonelDinamikAlan.COLUMN_NAME_DURUM_SECIM + " = 1 ");
 				fields.put(fieldName, idList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// List<BigDecimal> list2 = pdksEntityController.getObjectBySQLList(sb, fields, null);
-				List<BigDecimal> list2 = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, null, session);
+				// List<BigDecimal> list2 = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, null);
+				List<BigDecimal> list2 = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, fields, null, session);
 
 				for (BigDecimal bigDecimal : list2) {
 					yIdList.add(bigDecimal.longValue());
@@ -2529,10 +2529,10 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			ortakIslemler.digerPersoneller(tumPersoneller, null, bugun, bugun, session);
 
 		List<Long> pList = new ArrayList<Long>();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select V.* from " + PdksPersonelView.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PdksPersonelView.COLUMN_NAME_PERSONEL);
-		ortakIslemler.addIKSirketTesisKriterleri(parametreMap, sb);
+		ortakIslemler.addIKSirketTesisKriterleri(parametreMap,  new StringBuffer(sb.toString()));
 		if (!authenticatedUser.isAdmin()) {
 			sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_ID + " :d");
 			for (Personel personel : tumPersoneller) {
@@ -2545,7 +2545,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<PersonelView> list = ortakIslemler.getPersonelViewList(pdksEntityController.getObjectBySQLList(sb, parametreMap, PdksPersonelView.class));
+		List<PersonelView> list = ortakIslemler.getPersonelViewList(pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), parametreMap, PdksPersonelView.class));
 		tumPersoneller = null;
 		pList = null;
 		TreeMap<String, Boolean> map = mantiksalAlanlariDoldur(list);
@@ -2905,7 +2905,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		eskiKullanici = null;
 		List<PersonelView> list = null;
 		HashMap fields = new HashMap();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select V.* from " + PersonelKGS.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" left join " + Personel.TABLE_NAME + " Y " + PdksEntityController.getJoinLOCK() + " on Y." + Personel.COLUMN_NAME_KGS_PERSONEL + " = V." + PersonelKGS.COLUMN_NAME_ID);
 		String str = " where ";
@@ -2967,7 +2967,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		try {
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			list = ortakIslemler.getPersonelViewByPersonelKGSList(pdksEntityController.getObjectBySQLList(sb, fields, PersonelKGS.class));
+			list = ortakIslemler.getPersonelViewByPersonelKGSList(pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, PersonelKGS.class));
 			if (bos) {
 				bugun = PdksUtil.getDate(new Date());
 				for (Iterator<PersonelView> iterator = list.iterator(); iterator.hasNext();) {
@@ -3097,15 +3097,15 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						List pList = new ArrayList(idMap.keySet());
 						String fieldName = "p";
 						fields.clear();
-						sb = new StringBuffer();
+						sb = new StringBuilder();
 						sb.append("select P." + PersonelKGS.COLUMN_NAME_ID + ", K." + PersonelKGS.COLUMN_NAME_ID + " as REF from " + PersonelKGS.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 						sb.append(" inner join " + PersonelKGS.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on " + birdenFazlaKGSSirketSQL);
 						sb.append(" where P." + PersonelKGS.COLUMN_NAME_ID + " :" + fieldName + " and P." + PersonelKGS.COLUMN_NAME_SICIL_NO + " <>''");
 						fields.put(fieldName, pList);
 						if (session != null)
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-						// List<Object[]> perList = pdksEntityController.getObjectBySQLList(sb, fields, null);
-						List<Object[]> perList = pdksEntityController.getSQLParamList(pList, sb, fieldName, fields, null, session);
+						// List<Object[]> perList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, null);
+						List<Object[]> perList = pdksEntityController.getSQLParamList(pList, new StringBuffer(sb.toString()), fieldName, fields, null, session);
 						for (Object[] objects : perList) {
 							BigDecimal refId = (BigDecimal) objects[1], id = (BigDecimal) objects[0];
 							if (refId.longValue() != id.longValue())
@@ -3127,7 +3127,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							}
 						}
 						iliskiMap = null;
-						sb = new StringBuffer();
+						sb = new StringBuilder();
 
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -3434,7 +3434,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		boolean durum = ortakIslemler.getParameterKeyHasStringValue("bakiyeIzinGoster");
 		if (durum && personelDepartman != null) {
 			HashMap parametreMap = new HashMap();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select TOP 1 U.* from " + IzinTipi.TABLE_NAME + " U " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append("  inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = U." + IzinTipi.COLUMN_NAME_IZIN_TIPI);
 			sb.append(" and T." + Tanim.COLUMN_NAME_KODU + " = :k");
@@ -3444,7 +3444,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			parametreMap.put("k", IzinTipi.YILLIK_UCRETLI_IZIN);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<IzinTipi> list = pdksEntityController.getObjectBySQLList(sb, parametreMap, IzinTipi.class);
+			List<IzinTipi> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), parametreMap, IzinTipi.class);
 			IzinTipi tipi = list != null && !list.isEmpty() ? list.get(0) : null;
 
 			durum = tipi != null && !tipi.getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK);
@@ -3737,7 +3737,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		String key = ortakIslemler.getParametrePersonelERPTableView();
 		List<String> list = null;
 		if (authenticatedUser.isAdmin() && ortakIslemler.getParameterKeyHasStringValue(key)) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append(" select PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " from " + PersonelERPDB.VIEW_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + PersonelKGS.TABLE_NAME + " PS " + PdksEntityController.getJoinLOCK() + " on PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " = D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO);
 			sb.append(" inner join " + KapiSirket.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on K." + KapiSirket.COLUMN_NAME_ID + " = PS." + PersonelKGS.COLUMN_NAME_KGS_SIRKET + " and PS." + PersonelKGS.COLUMN_NAME_DURUM + " = 1");
@@ -3749,7 +3749,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			HashMap fields = new HashMap();
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			list = pdksEntityController.getObjectBySQLList(sb, fields, null);
+			list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, null);
 			yeniPersonelGuncelle = !list.isEmpty();
 			if (organizasyonDurum || yeniPersonelGuncelle == false)
 				list = null;
@@ -4303,7 +4303,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					boolean listeDolu = true;
 					for (String veriTip : anaMap.keySet()) {
 						if (referansMap.containsKey(veriTip)) {
-							StringBuffer sb = new StringBuffer();
+							StringBuilder sb = new StringBuilder();
 							String aciklama = referansMap.get(veriTip);
 							TreeMap<String, LinkedHashMap<String, Liste>> veriMap = anaMap.get(veriTip);
 							for (String key : veriMap.keySet()) {
@@ -4640,7 +4640,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			User seciliKullanici = seciliPersonel.getKullanici();
 			if (seciliKullanici != null) {
 				Sirket sirket = seciliPersonel.getSirket();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				HashMap fields = new HashMap();
 				sb.append("select distinct T.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_EK_SAHA3);
@@ -4657,7 +4657,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				fields.put("t2", bugun);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				bolumList = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
+				bolumList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Tanim.class);
 				seciliKullanici.setYetkiliBolumler(null);
 				ortakIslemler.setUserBolumler(seciliKullanici, session);
 

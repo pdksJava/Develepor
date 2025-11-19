@@ -174,7 +174,7 @@ public class LDAPUserManager implements Serializable {
 		if (user != null && user.getFirstname() != null && user.getLastname() != null && user.getFullName() != null) {
 			String[] adiArray = user.getFirstname().split(" "), soyadiArray = user.getLastname().split(" "), fullNameArray = user.getFullName().split(" ");
 			if (fullNameArray.length >= (adiArray.length + soyadiArray.length)) {
-				StringBuffer sbAdi = new StringBuffer(), sbSoyadi = new StringBuffer();
+				StringBuilder sbAdi = new StringBuilder(), sbSoyadi = new StringBuilder();
 				int adiLength = adiArray.length > fullNameArray.length ? fullNameArray.length : adiArray.length;
 				for (int i = 0; i < adiLength; i++) {
 					if (sbAdi.length() > 0)

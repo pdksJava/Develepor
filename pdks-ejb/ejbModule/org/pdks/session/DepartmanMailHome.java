@@ -94,7 +94,7 @@ public class DepartmanMailHome extends EntityHome<DepartmanMailGrubu> implements
 	}
 
 	private void mailDuzenle() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		if (mailList.size() > 0) {
 			sb.append(mailList.get(0));

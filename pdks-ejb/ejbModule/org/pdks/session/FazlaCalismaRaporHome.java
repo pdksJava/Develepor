@@ -754,7 +754,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 				sirketMap = null;
 				if (raporSecim.equals("maxGeceCalismaSaat")) {
 
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					String fieldName = "p";
 					HashMap fields = new HashMap();
 					sb.append("select distinct P.* from " + VardiyaGun.TABLE_NAME + " G " + PdksEntityController.getSelectLOCK() + " ");
@@ -770,7 +770,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 					// personelList = pdksEntityController.getObjectBySQLList(sb, fields, Personel.class);
-					personelList = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, fields, Personel.class, session);
+					personelList = pdksEntityController.getSQLParamList(personelIdler, new StringBuffer(sb.toString()), fieldName, fields, Personel.class, session);
 
 				} else if (raporSecim.equals("minGunCalismaSaat")) {
 					vardiyaGunPerList = ortakIslemler.getPersonelEksikVardiyaCalismaList(personelIdler, basTarih, bitTarih, session);
@@ -783,7 +783,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 						List idList = new ArrayList(perMap.keySet());
 						String fieldName = "p";
 						HashMap parametreMap = new HashMap();
-						StringBuffer sb = new StringBuffer();
+						StringBuilder sb = new StringBuilder();
 						sb.append("select PD.* from " + PersonelDinamikAlan.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
 						sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = PD." + PersonelDinamikAlan.COLUMN_NAME_ALAN + " and T.KODU='" + PersonelDenklestirmeDinamikAlan.TIPI_DEVAMLILIK_PRIMI + "'");
 						sb.append(" and T." + Tanim.COLUMN_NAME_DURUM + " = 1 ");
@@ -792,7 +792,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 							parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 						parametreMap.put(fieldName, idList);
 						// List<PersonelDinamikAlan> pdList = pdksEntityController.getObjectBySQLList(sb, parametreMap, PersonelDinamikAlan.class);
-						List<PersonelDinamikAlan> pdList = pdksEntityController.getSQLParamList(idList, sb, fieldName, parametreMap, PersonelDinamikAlan.class, session);
+						List<PersonelDinamikAlan> pdList = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, parametreMap, PersonelDinamikAlan.class, session);
 
 						if (!pdList.isEmpty()) {
 							TreeMap<Long, Tanim> alanMap = new TreeMap<Long, Tanim>();
@@ -985,7 +985,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 			}
 			String fieldName = "v";
 			HashMap parametreMap = new HashMap();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select I.* from " + PersonelFazlaMesai.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" where I." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " :" + fieldName);
 			sb.append(" and I." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1 ");
@@ -993,7 +993,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			// List<PersonelFazlaMesai> list = pdksEntityController.getObjectBySQLList(sb, parametreMap, PersonelFazlaMesai.class);
-			List<PersonelFazlaMesai> list = pdksEntityController.getSQLParamList(ekCalismaList, sb, fieldName, parametreMap, PersonelFazlaMesai.class, session);
+			List<PersonelFazlaMesai> list = pdksEntityController.getSQLParamList(ekCalismaList, new StringBuffer(sb.toString()), fieldName, parametreMap, PersonelFazlaMesai.class, session);
 
 			for (PersonelFazlaMesai personelFazlaMesai : list) {
 				if (personelFazlaMesai.isOnaylandi()) {
@@ -1192,7 +1192,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 			List idList = new ArrayList(gunMap.keySet());
 			String fieldName = "v";
 			HashMap parametreMap = new HashMap();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select I.* from " + PersonelFazlaMesai.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" where I." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " :" + fieldName);
 			sb.append(" and I." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1 ");
@@ -1200,7 +1200,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			// List<PersonelFazlaMesai> list = pdksEntityController.getObjectBySQLList(sb, parametreMap, PersonelFazlaMesai.class);
-			List<PersonelFazlaMesai> list = pdksEntityController.getSQLParamList(idList, sb, fieldName, parametreMap, PersonelFazlaMesai.class, session);
+			List<PersonelFazlaMesai> list = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, parametreMap, PersonelFazlaMesai.class, session);
 
 			if (!list.isEmpty()) {
 				String patern = "yyyyMMdd" + (maxGeceCalismaSaatStr.indexOf(":") > 0 ? "HH:mm" : "HHmm");
@@ -1797,7 +1797,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 			}
 			int[] bas = new int[titles.size()];
 			int[] uz = new int[titles.size()];
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			int b1 = 0;
 			int b2 = 0;
 			int i = 0;

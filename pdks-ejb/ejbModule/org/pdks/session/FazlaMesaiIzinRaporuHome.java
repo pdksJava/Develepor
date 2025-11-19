@@ -270,7 +270,7 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 			}
 			String fieldName = "p";
 			HashMap fields = new HashMap();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select distinct P.* from " + VardiyaGun.TABLE_NAME + " VG " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on VG." + VardiyaGun.COLUMN_NAME_VARDIYA + " = V." + Vardiya.COLUMN_NAME_ID);
 			sb.append(" and V." + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :vt");
@@ -283,11 +283,11 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 			fields.put(fieldName, idler);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// tumPersoneller = (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(sb, fields, Personel.class);
-			tumPersoneller = (ArrayList<Personel>) pdksEntityController.getSQLParamList(idler, sb, fieldName, fields, Personel.class, session);
+			// tumPersoneller = (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Personel.class);
+			tumPersoneller = (ArrayList<Personel>) pdksEntityController.getSQLParamList(idler, new StringBuffer(sb.toString()), fieldName, fields, Personel.class, session);
 
 			fields.clear();
-			sb = new StringBuffer();
+			sb = new StringBuilder();
 			sb.append("select distinct P.* from " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + IzinTipi.TABLE_NAME + " IT " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " = IT." + IzinTipi.COLUMN_NAME_ID);
 			sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on IT." + IzinTipi.COLUMN_NAME_IZIN_TIPI + " = T." + Tanim.COLUMN_NAME_ID);
@@ -301,8 +301,8 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 			fields.put(fieldName, idler);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// List<Personel> tumPersonelIzinler = (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(sb, fields, Personel.class);
-			List<Personel> tumPersonelIzinler = (ArrayList<Personel>) pdksEntityController.getSQLParamList(idler, sb, fieldName, fields, Personel.class, session);
+			// List<Personel> tumPersonelIzinler = (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Personel.class);
+			List<Personel> tumPersonelIzinler = (ArrayList<Personel>) pdksEntityController.getSQLParamList(idler, new StringBuffer(sb.toString()), fieldName, fields, Personel.class, session);
 			for (Iterator iterator = tumPersonelIzinler.iterator(); iterator.hasNext();) {
 				Personel personel = (Personel) iterator.next();
 				for (Personel personel1 : tumPersoneller) {

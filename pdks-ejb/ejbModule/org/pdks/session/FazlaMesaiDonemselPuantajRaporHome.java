@@ -306,7 +306,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	public String tesisDoldur() {
 		personelList.clear();
 		tesisler.clear();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		bolumler.clear();
 		boolean bolumVar = false;
 		try {
@@ -332,7 +332,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 					fields.put("s", sonDonem);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<Tanim> list = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
+					List<Tanim> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Tanim.class);
 					if (list.isEmpty()) {
 						tesisId = null;
 					} else {
@@ -363,7 +363,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	public String bolumDoldur() {
 		personelList.clear();
 		bolumler.clear();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		try {
 			Long oncekiEkSaha3Id = null;
 			boolean idVar = false;
@@ -390,7 +390,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				fields.put("s", sonDonem);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<Tanim> list = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
+				List<Tanim> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Tanim.class);
 
 				if (list.isEmpty()) {
 					bolumId = null;
@@ -439,7 +439,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	public String altBolumDoldur() {
 		personelList.clear();
 		if (ekSaha4Tanim != null) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			HashMap fields = new HashMap();
 			sb.append("select distinct AB.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
@@ -467,7 +467,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			fields.put("s", sonDonem);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<Tanim> list = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
+			List<Tanim> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Tanim.class);
 			if (list.size() > 1)
 				list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
 
@@ -502,7 +502,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	public String personelDoldur() {
 		personelList.clear();
 		puantajList.clear();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		try {
 			if (bolumId != null) {
 				HashMap fields = new HashMap();
@@ -528,7 +528,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				fields.put("s", sonDonem);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				personelList = pdksEntityController.getObjectBySQLList(sb, fields, Personel.class);
+				personelList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Personel.class);
 				if (!personelList.isEmpty()) {
 					personelList = PdksUtil.sortObjectStringAlanList(personelList, "getAdSoyad", null);
 					List<Personel> ayrilanlar = new ArrayList<Personel>();
@@ -566,20 +566,20 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		denklestirmeAyList.clear();
 		basTarih = basAy != null ? PdksUtil.convertToJavaDate(String.valueOf(basYil * 100 + basAy) + "01", "yyyyMMdd") : null;
 		bitTarih = bitAy != null ? PdksUtil.tariheGunEkleCikar(PdksUtil.tariheAyEkleCikar(PdksUtil.convertToJavaDate(String.valueOf(bitYil * 100 + bitAy) + "01", "yyyyMMdd"), 1), -1) : null;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		HashMap fields = new HashMap();
 		try {
 			sb.append("select distinct S.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
 			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 			personelSQLBagla(sb, fields);
-			ortakIslemler.addIKSirketTesisKriterleri(fields, sb);
+			ortakIslemler.addIKSirketTesisKriterleri(fields, new StringBuffer(sb.toString()));
 			donemSQLKontrol(sb);
 			sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ")<=" + sonDonem);
 			sb.append(" order by S." + Sirket.COLUMN_NAME_ID);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<Sirket> sirketList = pdksEntityController.getObjectBySQLList(sb, fields, Sirket.class);
+			List<Sirket> sirketList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, Sirket.class);
 			if (sirketList != null && !sirketList.isEmpty()) {
 				if (sirketList.size() == 1)
 					sirketId = sirketList.get(0).getId();
@@ -608,7 +608,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	 */
 	public String ayDoldur(int yil, List<SelectItem> donemler, boolean donemDoldur) {
 		HashMap fields = new HashMap();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " ON D." + DenklestirmeAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_DONEM);
 		sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1");
@@ -621,7 +621,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		fields.put("s", sonDonem);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<DenklestirmeAy> denkList = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
+		List<DenklestirmeAy> denkList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, DenklestirmeAy.class);
 		if (donemler != null)
 			donemler.clear();
 		for (DenklestirmeAy da : denkList)
@@ -640,7 +640,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		perDenkMap.clear();
 		denklestirmeAyList.clear();
 		HashMap fields = new HashMap();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ D." + DenklestirmeAy.COLUMN_NAME_AY + ") >= :y1");
 		sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ D." + DenklestirmeAy.COLUMN_NAME_AY + ") <= :y2");
@@ -655,7 +655,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
 			sirketler.clear();
-			List<DenklestirmeAy> denkList = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
+			List<DenklestirmeAy> denkList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, DenklestirmeAy.class);
 			List<Long> idList = new ArrayList<Long>();
 			for (DenklestirmeAy denklestirmeAy : denkList) {
 				idList.add(denklestirmeAy.getId());
@@ -663,16 +663,16 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			}
 			if (!idList.isEmpty()) {
 				String fieldName = "d";
-				sb = new StringBuffer();
+				sb = new StringBuilder();
 				sb.append("select distinct S.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
-				ortakIslemler.addIKSirketTesisKriterleri(fields, sb);
+				ortakIslemler.addIKSirketTesisKriterleri(fields, new StringBuffer(sb.toString()));
 				sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " :" + fieldName);
 				sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 				sb.append(" order by S." + Sirket.COLUMN_NAME_ID);
 				fields.put(fieldName, idList);
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<Sirket> sirketList = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, Sirket.class, session);
+				List<Sirket> sirketList = pdksEntityController.getSQLParamList(idList, new StringBuffer(sb.toString()), fieldName, fields, Sirket.class, session);
 				if (!sirketList.isEmpty()) {
 					sirketDoldur();
 				}
@@ -1403,7 +1403,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		baslikMap.clear();
 		bordroPuantajEkranindaGoster = ortakIslemler.getParameterKey("bordroPuantajEkranindaGoster").equals("1");
 		yasalFazlaCalismaAsanSaat = false;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		HashMap fields = new HashMap();
 		sb.append("select PD.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
@@ -1415,12 +1415,12 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDenklestirme.class);
+		List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, PersonelDenklestirme.class);
 		boolean sirketFazlaMesaiOde = sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde();
 		if (!list.isEmpty()) {
 			ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 			fields.clear();
-			sb = new StringBuffer();
+			sb = new StringBuilder();
 			sb.append("select sum(COALESCE(PD." + PersonelDenklestirme.COLUMN_NAME_RESMI_TATIL_SURE + ",0)) " + PersonelDenklestirme.COLUMN_NAME_RESMI_TATIL_SURE + ", ");
 			sb.append("  sum(COALESCE(PD." + PersonelDenklestirme.COLUMN_NAME_HAFTA_TATIL_SURE + ",0)) " + PersonelDenklestirme.COLUMN_NAME_HAFTA_TATIL_SURE + ", ");
 			sb.append("  sum(PD." + PersonelDenklestirme.COLUMN_NAME_FAZLA_MESAI_IZIN_KULLAN + ") " + PersonelDenklestirme.COLUMN_NAME_FAZLA_MESAI_IZIN_KULLAN + ", ");
@@ -1431,7 +1431,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			personelSQLBagla(sb, fields);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<Object[]> list2 = pdksEntityController.getObjectBySQLList(sb, fields, null);
+			List<Object[]> list2 = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), fields, null);
 			if (!list2.isEmpty()) {
 				Object[] data = list2.get(0);
 				resmiTatilVar = ((Double) data[0]).doubleValue() > 0d;
@@ -1780,7 +1780,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	/**
 	 * @param sb
 	 */
-	private void donemSQLKontrol(StringBuffer sb) {
+	private void donemSQLKontrol(StringBuilder sb) {
 		if (basYil == bitYil) {
 			sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = " + basYil);
 			if (basAy != null) {
@@ -1827,7 +1827,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	 * @param sb
 	 * @param fields
 	 */
-	private void personelSQLBagla(StringBuffer sb, HashMap fields) {
+	private void personelSQLBagla(StringBuilder sb, HashMap fields) {
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 		if (basTarih != null && bitTarih != null) {
 			sb.append(" and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :b2 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :b1 ");

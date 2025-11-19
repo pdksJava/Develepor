@@ -411,13 +411,13 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 				if (!siciller.isEmpty()) {
 					String fieldName = "pId";
 					HashMap fields = new HashMap();
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					sb.append("select * from " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 					sb.append(" where " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
 					fields.put(fieldName, siciller);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					personelMap = pdksEntityController.getTreeMapByList(pdksEntityController.getSQLParamList(siciller, sb, fieldName, fields, Personel.class, session), "getPdksSicilNo", true);
+					personelMap = pdksEntityController.getTreeMapByList(pdksEntityController.getSQLParamList(siciller, new StringBuffer(sb.toString()), fieldName, fields, Personel.class, session), "getPdksSicilNo", true);
 					sb = null;
 					if (!personelMap.isEmpty()) {
 						List personelIdler = new ArrayList(), izinTipiIdler = new ArrayList();
@@ -430,7 +430,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 							personelIdler.add(personelMap.get(key).getId());
 						}
 						fields.clear();
-						sb = new StringBuffer();
+						sb = new StringBuilder();
 						fieldName = "pId";
 						sb.append("select * from " + PersonelIzin.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 						sb.append(" where " + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " :t and " + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
@@ -441,7 +441,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 						if (session != null)
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 
-						List<PersonelIzin> list = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, fields, PersonelIzin.class, session);
+						List<PersonelIzin> list = pdksEntityController.getSQLParamList(personelIdler, new StringBuffer(sb.toString()), fieldName, fields, PersonelIzin.class, session);
 						for (PersonelIzin pd : list) {
 							String key = pd.getIzinSahibi().getPdksSicilNo();
 							PersonelIzin personelIzin = bakiyeMap.get(key);
@@ -957,15 +957,15 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 				String fieldName = "p";
 				List<String> dataIdList = new ArrayList<String>(izinMap.keySet());
 				HashMap fields = new HashMap();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append("select * from " + Personel.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 				sb.append(" where " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
 				fields.put(PdksEntityController.MAP_KEY_MAP, "getPdksSicilNo");
 				fields.put(fieldName, dataIdList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				personelMap = pdksEntityController.getSQLParamTreeMap("getPdksSicilNo", true, dataIdList, sb, fieldName, fields, Personel.class, session);
-				sb = new StringBuffer();
+				personelMap = pdksEntityController.getSQLParamTreeMap("getPdksSicilNo", true, dataIdList, new StringBuffer(sb.toString()), fieldName, fields, Personel.class, session);
+				sb = new StringBuilder();
 				for (String key : dataIdList) {
 					if (personelMap.containsKey(key))
 						izinERPList.addAll(izinMap.get(key));

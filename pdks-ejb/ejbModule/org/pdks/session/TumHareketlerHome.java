@@ -456,9 +456,9 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 
 		if (devam) {
 			Calendar cal = Calendar.getInstance();
-			StringBuffer sb = null;
+			StringBuilder sb = null;
 			if ((personelId == null || personelId.isEmpty()) && (sirketId != null || departmanId != null)) {
-				sb = new StringBuffer();
+				sb = new StringBuilder();
 				sb.append("select V.* from " + PdksPersonelView.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PdksPersonelView.COLUMN_NAME_PERSONEL);
 				if (!admin) {
@@ -482,7 +482,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 
 				perMap.clear();
 				personelId.clear();
-				List<PdksPersonelView> list = pdksEntityController.getObjectBySQLList(sb, parametreMap, PdksPersonelView.class);
+				List<PdksPersonelView> list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), parametreMap, PdksPersonelView.class);
 				for (PdksPersonelView pdksPersonelView : list) {
 					if (pdksPersonelView.getPdksPersonel() != null)
 						personelMap.put(pdksPersonelView.getId(), pdksPersonelView.getPdksPersonel());
@@ -495,7 +495,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 			}
 
 			parametreMap.clear();
-			sb = new StringBuffer();
+			sb = new StringBuilder();
 			sb.append("select V." + HareketKGS.COLUMN_NAME_ID + " from " + HareketKGS.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 
 			sb.append(" where V." + HareketKGS.COLUMN_NAME_ZAMAN + " >= :vardiyaBas");
@@ -528,12 +528,12 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 				if (personelId != null && !personelId.isEmpty()) {
 					kgsList = ortakIslemler.getHareketBilgileri(new ArrayList<Long>(kapiMap.keySet()), personelId, basTarih, ortakIslemler.tariheGunEkleCikar(cal, PdksUtil.getDate(bitTarih), 1), BasitHareket.class, session);
 				} else {
-					List list = pdksEntityController.getObjectBySQLList(sb, parametreMap, null);
+					List list = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), parametreMap, null);
 					kgsList = ortakIslemler.getHareketIdBilgileri(list, null, basTarih, bitTarih, session);
 					list = null;
 				}
 
-				// kgsList = pdksEntityController.getObjectBySQLList(sb, parametreMap, BasitHareket.class);
+				// kgsList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), parametreMap, BasitHareket.class);
 			} catch (Exception e) {
 				kgsList = new ArrayList<BasitHareket>();
 				logger.error("PDKS hata in : \n");
@@ -674,7 +674,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					TreeMap<Long, PersonelHareketIslem> islemMap = pdksEntityController.getObjectByInnerObjectMap(parametreMap, PersonelHareketIslem.class, Boolean.FALSE);
 					String fieldName = "s";
 					parametreMap.clear();
-					sb = new StringBuffer();
+					sb = new StringBuilder();
 					sb.append("select P.ISLEM_ID,HAREKET_ZAMANI from PDKS_LOG P " + PdksEntityController.getSelectLOCK() + " ");
 					sb.append(" inner join PDKS_ISLEM I " + PdksEntityController.getJoinLOCK() + " on I.ID=P.ISLEM_ID and I.ISLEM_TIPI='U' ");
 
@@ -683,8 +683,8 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					if (session != null)
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 					TreeMap<Long, Date> islemTarihMap = new TreeMap<Long, Date>();
-					// List<Object[]> islemList = pdksEntityController.getObjectBySQLList(sb, parametreMap, null);
-					List<Object[]> islemList = pdksEntityController.getSQLParamList(islemIdler, sb, fieldName, parametreMap, null, session);
+					// List<Object[]> islemList = pdksEntityController.getObjectBySQLList(new StringBuffer(sb.toString()), parametreMap, null);
+					List<Object[]> islemList = pdksEntityController.getSQLParamList(islemIdler, new StringBuffer(sb.toString()), fieldName, parametreMap, null, session);
 
 					for (Object[] objects : islemList) {
 						Long key = ((BigInteger) objects[0]).longValue();
@@ -813,7 +813,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 	 */
 	private byte[] textZipDosyaOlustur(String dosyaAdi) throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("Zaman|" + ortakIslemler.sirketAciklama() + "|Adı Soyadı|" + ortakIslemler.personelNoAciklama() + "|Kapi|");
 		if (guncellenmis) {
 			sb.append("Orjinal Zamanı|İşlem Yapan|");
@@ -830,7 +830,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					sirket = "" + ortakIslemler.sirketAciklama() + " tanımsız";
 				}
 				if (sb == null)
-					sb = new StringBuffer();
+					sb = new StringBuilder();
 				sb.append("\n" + PdksUtil.convertToDateString(hareket.getZaman(), "dd/MM/yyyy HH:mm") + "|");
 				sb.append(sirket + "|");
 				sb.append(hareket.getAdSoyad() + "|");
