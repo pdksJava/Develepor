@@ -1517,8 +1517,12 @@ public class PdksUtil implements Serializable {
 	 * @return
 	 */
 	public static String replaceAll(String str, String pattern, String replace) {
-		if (str != null && pattern != null && replace != null)
-			str = str.replaceAll(pattern, replace);
+		if (str != null && pattern != null && replace != null) {
+			if (replace.contains(pattern))
+				str = str.replaceAll(pattern, replace);
+			else
+				str = replaceAllManuel(str, pattern, replace);
+		}
 		return str;
 	}
 
@@ -1556,8 +1560,8 @@ public class PdksUtil implements Serializable {
 				str = lSb.toString();
 				if (replace.contains(pattern))
 					break;
-//				if (replace.indexOf(pattern) >= 0)
-//					break;
+				// if (replace.indexOf(pattern) >= 0)
+				// break;
 			}
 		}
 
