@@ -1148,6 +1148,7 @@ public class PdksEntityController implements Serializable {
 			treeMap = getTreeMapByList(list, method, uzerineYaz);
 		} else
 			treeMap = new TreeMap();
+		sb = null;
 		return treeMap;
 	}
 
@@ -1489,6 +1490,7 @@ public class PdksEntityController implements Serializable {
 		List veriList = getSQLParamList(dataIdList, sb, fieldName, fieldsOrj, class1, session);
 		if (veriList != null)
 			treeMap = getTreeMapByList(veriList, method, uzerineYaz);
+		sb = null;
 		return treeMap;
 	}
 
@@ -1604,7 +1606,7 @@ public class PdksEntityController implements Serializable {
 			logger.error(sb + "\n" + ex);
 
 		}
-
+		sb = null;
 		return veriList;
 	}
 
