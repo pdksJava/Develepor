@@ -1809,50 +1809,59 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				if (orgMap != null) {
 					Personel personel = personelDenklestirme.getPersonel();
 					PersonelDenklestirmeOrganizasyon denklestirmeOrganizasyon = null;
-					if (orgMap.containsKey(personelDenklestirme.getId())) {
-						denklestirmeOrganizasyon = orgMap.get(personelDenklestirme.getId());
-						denklestirmeOrganizasyon.setDegisti(false);
-						if (personelDenklestirme.getPersonel() != null) {
-							denklestirmeOrganizasyon.setTesis(personel.getSirket().getTesisDurum() ? personel.getTesis() : null);
-							denklestirmeOrganizasyon.setDirektor(personel.getEkSaha1());
-							denklestirmeOrganizasyon.setBolum(personel.getEkSaha3());
-							denklestirmeOrganizasyon.setGorevTipi(personel.getGorevTipi());
-						}
-					} else
-						denklestirmeOrganizasyon = new PersonelDenklestirmeOrganizasyon(personelDenklestirme);
-					if (denklestirmeOrganizasyon.getId() == null || denklestirmeOrganizasyon.isDegisti()) {
-						pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeOrganizasyon);
-						flush = true;
-
-					}
-					if (orgMap.containsKey(personelDenklestirme.getId()))
-						orgMap.remove(personelDenklestirme.getId());
-					for (Tanim alan : personelDinamikAlanlar) {
-						String key = PersonelDinamikAlan.getKey(personel, alan);
-						if (personelDinamikAlanMap.containsKey(key)) {
-							PersonelDinamikAlan dinamikAlan = personelDinamikAlanMap.get(key);
-							PersonelDenklestirmeOrganizasyonDetay organizasyonDetay = null;
-							key = PersonelDenklestirmeOrganizasyonDetay.getKey(denklestirmeOrganizasyon, alan);
-							if (orgDetayMap.containsKey(key)) {
-								organizasyonDetay = orgDetayMap.get(key);
-								organizasyonDetay.setDegisti(false);
-							} else
-								organizasyonDetay = new PersonelDenklestirmeOrganizasyonDetay(denklestirmeOrganizasyon, alan);
-							organizasyonDetay.setDeger(dinamikAlan.getTanimDeger());
-							if (organizasyonDetay.getId() != null || organizasyonDetay.getDeger() != null) {
-								if (organizasyonDetay.getId() == null || organizasyonDetay.isDegisti()) {
-									pdksEntityController.saveOrUpdate(session, entityManager, organizasyonDetay);
-									flush = true;
+					Long personelDenklestirmeId = personelDenklestirme.getId();
+					if (personelDenklestirmeId != null) {
+						if (orgMap.containsKey(personelDenklestirmeId)) {
+							denklestirmeOrganizasyon = orgMap.get(personelDenklestirmeId);
+							denklestirmeOrganizasyon.setDegisti(false);
+							if (personelDenklestirme.getPersonel() != null) {
+								denklestirmeOrganizasyon.setTesis(personel.getSirket().getTesisDurum() ? personel.getTesis() : null);
+								denklestirmeOrganizasyon.setDirektor(personel.getEkSaha1());
+								denklestirmeOrganizasyon.setBolum(personel.getEkSaha3());
+								denklestirmeOrganizasyon.setGorevTipi(personel.getGorevTipi());
+							}
+						} else
+							denklestirmeOrganizasyon = new PersonelDenklestirmeOrganizasyon(personelDenklestirme);
+						if (denklestirmeOrganizasyon.getId() == null || denklestirmeOrganizasyon.isDegisti()) {
+							pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeOrganizasyon);
+							flush = true;
+ 						}
+						if (orgMap.containsKey(personelDenklestirmeId))
+							orgMap.remove(personelDenklestirmeId);
+						if (denklestirmeOrganizasyon.getId() != null) {
+							for (Tanim alan : personelDinamikAlanlar) {
+								String key = PersonelDinamikAlan.getKey(personel, alan);
+								if (personelDinamikAlanMap.containsKey(key)) {
+									PersonelDinamikAlan dinamikAlan = personelDinamikAlanMap.get(key);
+									PersonelDenklestirmeOrganizasyonDetay organizasyonDetay = null;
+									key = PersonelDenklestirmeOrganizasyonDetay.getKey(denklestirmeOrganizasyon, alan);
+									if (orgDetayMap.containsKey(key)) {
+										organizasyonDetay = orgDetayMap.get(key);
+										organizasyonDetay.setDegisti(false);
+									} else
+										organizasyonDetay = new PersonelDenklestirmeOrganizasyonDetay(denklestirmeOrganizasyon, alan);
+									organizasyonDetay.setDeger(dinamikAlan.getTanimDeger());
+									if (organizasyonDetay.getId() != null || organizasyonDetay.getDeger() != null) {
+										if (organizasyonDetay.getId() == null || organizasyonDetay.isDegisti()) {
+											pdksEntityController.saveOrUpdate(session, entityManager, organizasyonDetay);
+											flush = true;
+										}
+									}
+									if (orgDetayMap.containsKey(key))
+										orgDetayMap.remove(key);
 								}
 							}
-							if (orgDetayMap.containsKey(key))
-								orgDetayMap.remove(key);
 						}
 					}
 				}
 				detayMap = null;
-				if (flush)
-					session.flush();
+				try {
+					if (flush)
+						session.flush();
+				} catch (Exception e) {
+
+				}
+
 				if (saatlikCalismaVar) {
 					String keyEk = saatlikCalisma ? "" : "G";
 					baslikGuncelle(baslikMap, ortakIslemler.normalCalismaSaatKod() + keyEk, saatlikCalisma ? normalCalisma : normalSaat);
