@@ -814,8 +814,11 @@ public class IseGelmemeUyari implements Serializable {
 			int islemAdet = mailIKMap.isEmpty() == false ? 2 : 1;
 			HashMap<Long, List<User>> depMail = new HashMap<Long, List<User>>();
 			for (int i = 1; i <= islemAdet; i++) {
-				if (i != 1)
+				if (i != 1) {
 					logger.info("İnsan kaynaklarına mail gönderiliyor");
+					mailIKMap = null;
+				}
+
 				for (Iterator iterator = yoneticiler.iterator(); iterator.hasNext();) {
 					Personel personelYonetici = (Personel) iterator.next();
 					boolean yoneticiCalisiyor = personelYonetici.isCalisiyor();
@@ -1115,9 +1118,7 @@ public class IseGelmemeUyari implements Serializable {
 
 				}
 			}
-			mailIKMap = null;
-
-			if (!hareketHataliMap.isEmpty() && !mailPersonelMap.isEmpty()) {
+ 			if (!hareketHataliMap.isEmpty() && !mailPersonelMap.isEmpty()) {
 				hariciPersonelVar = true;
 				userUstYonetici = null;
 				userIKList = null;
