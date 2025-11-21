@@ -516,14 +516,14 @@ public class OrtakIslemler implements Serializable {
 		fields.put(fieldName, roller);
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		StringBuffer sb = new StringBuffer();
- 		sb.append("with IZIN AS ( ");
+ 		sb.append(" with IZIN AS ( ");
 		sb.append(" select U." + User.COLUMN_NAME_ID + " AS " + UserRoles.COLUMN_NAME_USER + ", MAX (I." + PersonelIzin.COLUMN_NAME_ID + ") AS IZIN_ID from " + User.TABLE_NAME + " U ");
 		sb.append("   inner join " + PersonelIzin.TABLE_NAME + " I with(nolock) on I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = U." + User.COLUMN_NAME_PERSONEL);
 		sb.append("		 and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (" + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + "," + PersonelIzin.IZIN_DURUMU_REDEDILDI + ") and I." + PersonelIzin.COLUMN_NAME_IZIN_SURESI + " > 30 ");
 		sb.append(" 	 and ( convert(date, getdate()) between convert(date, I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ") and convert(date, I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + ")) ");
 		sb.append("   inner join " + IzinTipi.TABLE_NAME + " T with(nolock) on T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " and T." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null  ");
 		sb.append(" group by U." + User.COLUMN_NAME_ID);
-		sb.append("  ) ");
+		sb.append(" ) ");
 		if (class1.equals(UserRoles.class)) {
 			sb.append("select UR.* from " + UserRoles.TABLE_NAME + " UR " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join " + Role.TABLE_NAME + " R " + PdksEntityController.getJoinLOCK() + " on R." + Role.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_ROLE + " and R." + Role.COLUMN_NAME_ROLE_NAME + " :" + fieldName);
