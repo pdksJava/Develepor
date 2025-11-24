@@ -743,6 +743,8 @@ public class IseGelmemeUyari implements Serializable {
 			dataMap.put("hareketHataliMap", hareketHataliMap);
 			dataMap.put("mailPersonelMap", mailPersonelMap);
 			List<Personel> yoneticiler = new ArrayList<Personel>(yoneticiMap.values());
+			TreeMap izinKullaniciMap = ortakIslemler.getUzunSureliIzinlerMap("U", yoneticiler, null, session);
+//			TreeMap izinKullaniciMap = ortakIslemler.getUzunSureliIzinlerMap("P", null, null, session);
 			boolean hareketExcelGonder = PdksUtil.hasStringValue(hareketExcelGonderDurum);
 			if (hareketExcelGonder) {
 				boolean hareketDurum = hareketExcelGonderDurum.equalsIgnoreCase("IK");
@@ -822,10 +824,15 @@ public class IseGelmemeUyari implements Serializable {
 				for (Iterator iterator = yoneticiler.iterator(); iterator.hasNext();) {
 					Personel personelYonetici = (Personel) iterator.next();
 					boolean yoneticiCalisiyor = personelYonetici.isCalisiyor();
+					Long yoneticisiId = personelYonetici.getId();
+					if (izinKullaniciMap.containsKey(yoneticisiId)) {
+						iterator.remove();
+						continue;
+					}
 					List<Long> depMailList = new ArrayList<Long>();
 					String eposta = null;
 					try {
-						Long yoneticisiId = personelYonetici.getId();
+
 						User yonetici = null;
 						if (yoneticisiId != null && userMap.containsKey(yoneticisiId)) {
 							User user = userMap.get(yoneticisiId);
@@ -1118,7 +1125,7 @@ public class IseGelmemeUyari implements Serializable {
 
 				}
 			}
- 			if (!hareketHataliMap.isEmpty() && !mailPersonelMap.isEmpty()) {
+			if (!hareketHataliMap.isEmpty() && !mailPersonelMap.isEmpty()) {
 				hariciPersonelVar = true;
 				userUstYonetici = null;
 				userIKList = null;

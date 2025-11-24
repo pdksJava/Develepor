@@ -256,6 +256,93 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param tip
+	 * @param personelList
+	 * @param kullaniciList
+	 * @param session
+	 * @return
+	 */
+	public TreeMap<Long, Object> getUzunSureliIzinlerMap(String tip, List personelList, List kullaniciList, Session session) {
+		TreeMap<Long, Object> sonucMap = new TreeMap<Long, Object>();
+		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+		StringBuffer sbPersonel = new StringBuffer(), sbKullanici = new StringBuffer();
+		try {
+			if (tip == null || tip.equalsIgnoreCase("U") == false)
+				tip = "P";
+			if (personelList != null) {
+				for (Iterator iterator = personelList.iterator(); iterator.hasNext();) {
+					Object object = (Object) iterator.next();
+					Long id = null;
+					if (object instanceof Personel) {
+						Personel personel = (Personel) object;
+						id = personel.getId();
+
+					} else if (object instanceof Long) {
+						id = (Long) object;
+
+					}
+					if (id != null) {
+						if (sbPersonel.length() > 0)
+							sbPersonel.append(",");
+						sbPersonel.append("" + id);
+					}
+
+				}
+			}
+			if (kullaniciList != null) {
+				for (Iterator iterator = kullaniciList.iterator(); iterator.hasNext();) {
+					Object object = (Object) iterator.next();
+					Long id = null;
+					if (object instanceof User) {
+						User user = (User) object;
+						id = user.getId();
+
+					} else if (object instanceof Long) {
+						id = (Long) object;
+
+					}
+					if (id != null) {
+						if (sbKullanici.length() > 0)
+							sbKullanici.append(",");
+						sbKullanici.append("" + id);
+					}
+
+				}
+			}
+			veriMap.put("tip", tip);
+			veriMap.put("p", sbPersonel.length() > 0 ? sbPersonel.toString() : null);
+			veriMap.put("u", sbKullanici.length() > 0 ? sbKullanici.toString() : null);
+			veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+			Class class1 = tip.equalsIgnoreCase("P") ? Personel.class : User.class;
+			List list = pdksEntityController.execSPList(veriMap, "SP_UZUN_SURE_IZINLER", class1);
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				Object object = (Object) iterator.next();
+				if (object == null)
+					continue;
+				Personel personel = null;
+				if (object instanceof Personel) {
+					personel = (Personel) object;
+
+				} else if (object instanceof User) {
+					User user = (User) object;
+					personel = user.getPdksPersonel();
+				}
+				if (personel != null && personel.getId() != null && personel.isCalisiyor())
+					sonucMap.put(personel.getId(), object);
+
+			}
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+		veriMap = null;
+		sbPersonel = null;
+		sbKullanici = null;
+		return sonucMap;
+
+	}
+
+	/**
 	 * @param menuId
 	 * @param userId
 	 * @param session
@@ -516,7 +603,7 @@ public class OrtakIslemler implements Serializable {
 		fields.put(fieldName, roller);
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		StringBuffer sb = new StringBuffer();
- 		sb.append("with IZIN AS ( ");
+		sb.append("with IZIN AS ( ");
 		sb.append(" select U." + User.COLUMN_NAME_ID + " AS " + UserRoles.COLUMN_NAME_USER + ", MAX (I." + PersonelIzin.COLUMN_NAME_ID + ") AS IZIN_ID from " + User.TABLE_NAME + " U ");
 		sb.append("   inner join " + PersonelIzin.TABLE_NAME + " I with(nolock) on I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = U." + User.COLUMN_NAME_PERSONEL);
 		sb.append("		 and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (" + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + "," + PersonelIzin.IZIN_DURUMU_REDEDILDI + ") and I." + PersonelIzin.COLUMN_NAME_IZIN_SURESI + " > 30 ");
