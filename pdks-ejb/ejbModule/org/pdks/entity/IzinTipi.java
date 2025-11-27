@@ -31,6 +31,7 @@ public class IzinTipi extends BaseObject {
 	public static final String COLUMN_NAME_SAAT_GOSTERILECEK = "SAAT_GOSTERILECEK";
 	public static final String COLUMN_NAME_BAKIYE_DEVIR_TIPI = "BAKIYE_DEVIR_TIPI";
 	public static final String COLUMN_NAME_KOTA_BAKIYE = "KOTA_BAKIYE";
+	public static final String COLUMN_NAME_ONAYLAYAN_TIPI = "ONAYLAYAN_TIPI";
 	
 	
 	public static final String COLUMN_NAME_CUMA_CUMARTESI_TEK_IZIN_SAY = "CUMA_CUMARTESI_TEK_IZIN_SAY";
@@ -338,7 +339,7 @@ public class IzinTipi extends BaseObject {
 		this.bakiyeIzinTipi = bakiyeIzinTipi;
 	}
 
-	@Column(name = "ONAYLAYAN_TIPI", length = 1)
+	@Column(name = COLUMN_NAME_ONAYLAYAN_TIPI, length = 1)
 	public String getOnaylayanTipi() {
 		return onaylayanTipi;
 	}
