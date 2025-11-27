@@ -827,8 +827,6 @@ public class IseGelmemeUyari implements Serializable {
 					Personel personelYonetici = (Personel) iterator.next();
 					boolean yoneticiCalisiyor = personelYonetici.isCalisiyor();
 					Long yoneticisiId = personelYonetici.getId();
-					if (yoneticisiId.longValue() == 63690L)
-						logger.info(personelYonetici.getAdSoyad());
 					if (izinKullaniciMap.containsKey(yoneticisiId)) {
 						iterator.remove();
 						continue;
