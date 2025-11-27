@@ -1401,7 +1401,7 @@
 												<rich:toolTip for="idEMailBCC" value="#{pdksPersonelHome.instance.emailBCC}" />
 											</a4j:region>
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.iseGelmemeMailDurum and ortakIslemler.getParameterKey('yoneticiMailGonderme') != '1'}">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.iseGelmemeMailDurum}">
 											<ui:define name="label">E-Posta İşe Gelmeme</ui:define>
 											<a4j:region>
 												<h:inputText id="idEMailHareket" title="#{pdksPersonelHome.instance.hareketMail}" value="#{pdksPersonelHome.instance.hareketMail}"

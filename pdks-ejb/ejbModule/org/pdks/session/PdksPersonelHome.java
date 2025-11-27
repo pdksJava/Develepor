@@ -2099,6 +2099,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		} else if (pdksPersonel.getSirket() != null)
 			pdksPersonel.setIzinKartiVar(pdksPersonel.getSirket().getIzinKartiVar());
 		Departman departman = pdksPersonel.getSirket() != null ? pdksPersonel.getSirket().getDepartman() : null;
+		iseGelmemeMailDurum = ortakIslemler.hasStringValue("uyariMail") || ortakIslemler.hasStringValue("uyariMailIzinHaric");
+		if (iseGelmemeMailDurum)
+			iseGelmemeMailDurum = ortakIslemler.getParameterKey("yoneticiMailGonderme").equals("0");
 		mailAdresDurumGuncelle(departman);
 	}
 
@@ -3434,7 +3437,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * @param departman
 	 */
 	private void mailAdresDurumGuncelle(Departman departman) {
-		iseGelmemeMailDurum = ortakIslemler.hasStringValue("uyariMail") || ortakIslemler.hasStringValue("uyariMailIzinHaric");
 		onayMailDurum = false;
 		if (departman != null) {
 			HashMap fields = new HashMap();
