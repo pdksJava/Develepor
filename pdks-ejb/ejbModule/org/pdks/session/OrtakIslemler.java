@@ -2958,7 +2958,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param sqlObject
 	 */
 	public void addIKSirketTesisKriterleri(HashMap fields, Object sqlObject) {
-		StringBuffer sb = PdksUtil.getStringBuffer(sqlObject);
+		StringBuilder sb = (StringBuilder) sqlObject;
 		List<Long> tesisIdList = null;
 		if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
 			tesisIdList = new ArrayList<Long>();

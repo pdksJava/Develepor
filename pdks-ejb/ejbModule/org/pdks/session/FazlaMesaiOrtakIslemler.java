@@ -2829,7 +2829,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :a2 ");
 				fields.put("a2", basTarih);
 			}
-			ortakIslemler.addIKSirketTesisKriterleri(fields, PdksUtil.getStringBuffer(sb));
+			ortakIslemler.addIKSirketTesisKriterleri(fields,sb);
 			sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
 			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 

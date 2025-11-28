@@ -2537,7 +2537,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		StringBuilder sb = new StringBuilder();
 		sb.append("select V.* from " + PdksPersonelView.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PdksPersonelView.COLUMN_NAME_PERSONEL);
-		ortakIslemler.addIKSirketTesisKriterleri(parametreMap, PdksUtil.getStringBuffer(sb));
+		ortakIslemler.addIKSirketTesisKriterleri(parametreMap, sb);
 		if (!authenticatedUser.isAdmin()) {
 			sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_ID + " :d");
 			for (Personel personel : tumPersoneller) {
