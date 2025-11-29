@@ -863,7 +863,7 @@ public class PersonelDenklestirme extends BaseObject {
 
 	@Transient
 	public String getDurumAciklama(PersonelDurumTipi key) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		PersonelDonemselDurum personelDonemselDurum = null;
 		if (key != null && donemselDurumlarMap.containsKey(key)) {
 			String pattern = PdksUtil.getDateFormat();

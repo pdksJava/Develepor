@@ -104,7 +104,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		ozelKontrol = Boolean.FALSE;
 		boolean hataGonder = Boolean.FALSE;
 		guncellemeDBDurum = false;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		try {
 			if (session == null)
 				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
@@ -184,7 +184,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 								String girisTipi = (String) objects[0];
 								if (girisTipi.equals(IzinTipi.GIRIS_TIPI_YOK)) {
 									fields.clear();
-									sb = new StringBuffer();
+									sb = new StringBuilder();
 									sb.append(" select distinct  P." + PersonelIzin.COLUMN_NAME_ID + " from " + PersonelIzin.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 									sb.append(" left join " + PersonelIzinDetay.TABLE_NAME + " D " + PdksEntityController.getJoinLOCK() + " on D." + PersonelIzinDetay.COLUMN_NAME_IZIN + " = P." + PersonelIzin.COLUMN_NAME_ID);
 									sb.append(" where P." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " =  " + objects[1] + " and P." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " =  " + PersonelIzin.IZIN_DURUMU_ONAYLANDI + " and D." + PersonelIzinDetay.COLUMN_NAME_ID + " is null");
@@ -259,7 +259,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 	@Transactional
 	public void ciftBakiyeIzinKontrol(Session session) throws Exception {
 		HashMap parametreMap = new HashMap();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		try {
 			sb.append(" select distinct  I.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID);
@@ -301,7 +301,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			boolean suaSenelikKullan = parameter != null && parameter.getValue().equals("1");
 
 			HashMap parametreMap = new HashMap();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			try {
 				sb.append(" with IZIN_BAKIYELER as ( ");
 				sb.append(" select  YEAR(I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ") as YIL,I." + PersonelIzin.COLUMN_NAME_PERSONEL + ",I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + ",max(I." + IzinTipi.COLUMN_NAME_ID + ") as IZIN_ID from " + PersonelIzin.TABLE_NAME + " I "
@@ -448,7 +448,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		String parameterName = ortakIslemler.getParametreHakEdisIzinERPTableView();
 		boolean izinTipiGiris = ortakIslemler.isExisStoreProcedure(PersonelIzinDetay.SP_NAME, userSession) == false && !ortakIslemler.getParameterKeyHasStringValue(parameterName);
 		HashMap map = new HashMap();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
 		if (siciller == null || siciller.isEmpty()) {

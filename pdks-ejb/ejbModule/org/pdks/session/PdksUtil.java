@@ -142,21 +142,21 @@ public class PdksUtil implements Serializable {
 	 * @return
 	 */
 	public static StringBuffer getStringBuffer(Object sqlObject) {
-		StringBuffer sb = null;
+		StringBuffer stringBuffer = null;
 		if (sqlObject != null) {
 			if (sqlObject instanceof StringBuilder) {
 				StringBuilder sb2 = (StringBuilder) sqlObject;
-				sb = new StringBuffer(sb2.toString());
+				stringBuffer = new StringBuffer(sb2.toString());
 				sb2 = null;
 			} else if (sqlObject instanceof String) {
 				String sqlObjectStr = (String) sqlObject;
-				sb = new StringBuffer(sqlObjectStr);
+				stringBuffer = new StringBuffer(sqlObjectStr);
 			} else if (sqlObject instanceof StringBuffer)
-				sb = (StringBuffer) sqlObject;
+				stringBuffer = (StringBuffer) sqlObject;
 		}
-		if (sb == null)
-			sb = new StringBuffer();
-		return sb;
+		if (stringBuffer == null)
+			stringBuffer = new StringBuffer();
+		return stringBuffer;
 	}
 
 	/**
@@ -511,7 +511,7 @@ public class PdksUtil implements Serializable {
 		String str = aciklama;
 		if (aciklama != null) {
 			if (str.length() > 0) {
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < str.length(); i++) {
 					char c = str.charAt(i);
 					int j = (int) c;
@@ -799,7 +799,7 @@ public class PdksUtil implements Serializable {
 		if (key != null) {
 			key = encode(key);
 			int i = 0, j = 0;
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			// logger.info(key);
 			for (i = 0; i < key.length(); i++) {
 
@@ -2145,25 +2145,25 @@ public class PdksUtil implements Serializable {
 		if ((str != null) && (findStr != null) && (findStr.length() > 0) && (replace != null)) {
 			int l = findStr.length();
 			while (str.indexOf(findStr) >= 0) {
-				StringBuffer lSb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				int i = 0;
 				int j = str.indexOf(findStr, i);
 				int m = str.length();
 				if (j > -1) {
 					while (j > -1) {
 						if (i != j)
-							lSb.append(str.substring(i, j));
-						lSb.append(replace);
+							sb.append(str.substring(i, j));
+						sb.append(replace);
 						i = j + l;
 						j = (i > m) ? -1 : str.indexOf(findStr, i);
 					}
 					if (i < m)
-						lSb.append(str.substring(i));
+						sb.append(str.substring(i));
 
 				} else
-					lSb.append(str);
+					sb.append(str);
 
-				str = lSb.toString();
+				str = sb.toString();
 				if (replace.contains(findStr))
 					break;
 				// if (replace.indexOf(findStr) >= 0)
@@ -3759,7 +3759,7 @@ public class PdksUtil implements Serializable {
 
 			try {
 				String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-				StringBuffer sb = new StringBuffer(xml + "<" + name + ">");
+				StringBuilder sb = new StringBuilder(xml + "<" + name + ">");
 				try {
 					if (function.getImportParameterList() != null) {
 						JCO.ParameterList imp = function.getImportParameterList();
@@ -3825,7 +3825,7 @@ public class PdksUtil implements Serializable {
 		if (function != null) {
 			String name = function.getName();
 			String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-			StringBuffer sb = new StringBuffer(xml + "<" + name + ">");
+			StringBuilder sb = new StringBuilder(xml + "<" + name + ">");
 			if (function.getImportParameterList() != null) {
 				JCO.ParameterList imp = function.getImportParameterList();
 				try {
@@ -3886,7 +3886,7 @@ public class PdksUtil implements Serializable {
 			try {
 				String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 				String client = "";
-				StringBuffer sb = new StringBuffer(xml + "<" + name + ">");
+				StringBuilder sb = new StringBuilder(xml + "<" + name + ">");
 				TreeMap veriMap = new TreeMap();
 
 				try {

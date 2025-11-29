@@ -1760,7 +1760,7 @@ public class VardiyaGun extends BaseObject {
 	public String getLinkAdresHtml() {
 		String adres = null;
 		if (linkAdresler != null) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			if (linkAdresler.size() > 1)
 				sb.append("<B>Uyarılar</B></br>");
 			for (String string : linkAdresler)

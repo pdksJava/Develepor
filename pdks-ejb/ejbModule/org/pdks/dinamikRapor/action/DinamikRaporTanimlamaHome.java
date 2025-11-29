@@ -215,7 +215,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 			dinamikRaporBagliAlanList = new ArrayList<PdksDinamikRaporAlan>();
 		else {
 			HashMap fields = new HashMap();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select * from " + PdksDinamikRaporAlan.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 			sb.append(" where " + PdksDinamikRaporAlan.COLUMN_NAME_DINAMIK_RAPOR + " = :a and " + PdksDinamikRaporAlan.COLUMN_NAME_DURUM + " = 1");
 			sb.append(" and " + PdksDinamikRaporAlan.COLUMN_NAME_ID + " not in  (");
@@ -266,7 +266,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		HashMap fields = new HashMap();
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select * from " + PdksDinamikRapor.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 		dinamikRaporList = pdksEntityController.getObjectBySQLList(sb, fields, PdksDinamikRapor.class);
 		startupAction.fillRaporRole(session);

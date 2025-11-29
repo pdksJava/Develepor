@@ -265,7 +265,7 @@ public class OrtakIslemler implements Serializable {
 	public TreeMap<Long, Object> getUzunSureliIzinlerMap(String tip, List personelList, List kullaniciList, Session session) {
 		TreeMap<Long, Object> sonucMap = new TreeMap<Long, Object>();
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-		StringBuffer sbPersonel = new StringBuffer(), sbKullanici = new StringBuffer();
+		StringBuilder sbPersonel = new StringBuilder(), sbKullanici = new StringBuilder();
 		try {
 			if (tip == null || tip.equalsIgnoreCase("U") == false)
 				tip = "P";
@@ -3418,7 +3418,7 @@ public class OrtakIslemler implements Serializable {
 			StringBuilder sb = new StringBuilder();
 			sb.append("with PERSONELLER as ( ");
 			if (islemUser.getYetkiliPersoneller() != null) {
-				StringBuffer perSb = new StringBuffer();
+				StringBuilder perSb = new StringBuilder();
 				for (Iterator iterator = islemUser.getYetkiliPersoneller().iterator(); iterator.hasNext();) {
 					Personel personelDiger = (Personel) iterator.next();
 					perSb.append(personelDiger.getId() + (iterator.hasNext() ? ", " : ""));
@@ -3657,7 +3657,7 @@ public class OrtakIslemler implements Serializable {
 		List list = new ArrayList();
 		while (!idler.isEmpty()) {
 			int sayi = 0;
-			StringBuffer kgs = new StringBuffer(), pdks = new StringBuffer();
+			StringBuilder kgs = new StringBuilder(), pdks = new StringBuilder();
 			for (Iterator iterator = idler.iterator(); iterator.hasNext();) {
 				HareketKGS kgs2 = (HareketKGS) iterator.next();
 				String id = kgs2.getId(), tableId = kgs2.getHareketTableId() != null ? String.valueOf(kgs2.getHareketTableId()) : null;
@@ -5338,7 +5338,7 @@ public class OrtakIslemler implements Serializable {
 									Clob blob = (Clob) strlist.get(0);
 									blobAsBytes = PdksUtil.StringToByClob(blob);
 									if (blobAsBytes != null) {
-										StringBuffer sb = new StringBuffer(blobAsBytes);
+										StringBuilder sb = new StringBuilder(blobAsBytes);
 										HashMap fields = new HashMap();
 										fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 										if (alanStr == null || alanStr.equals("*")) {
@@ -6782,7 +6782,7 @@ public class OrtakIslemler implements Serializable {
 		List<IzinHakEdisERPDB> izinHakEdisERPDBList = null;
 		if (!list.isEmpty()) {
 			HashMap parametreMap = new HashMap();
-			StringBuffer sb = new StringBuffer("with VERILER as ( ");
+			StringBuilder sb = new StringBuilder("with VERILER as ( ");
 			sb.append("select ");
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				Tanim tanim = (Tanim) iterator.next();
@@ -7385,7 +7385,7 @@ public class OrtakIslemler implements Serializable {
 		List<Tanim> list = isExisView(izinERPTableViewAdi, session) ? getTanimList(Tanim.TIPI_ERP_IZIN_DB, session) : null;
 		List<IzinERPDB> izinList = null;
 		Parameter parameter = null;
-		StringBuffer sb = null;
+		StringBuilder sb = null;
 		List<String> perList = veriMap != null && veriMap.containsKey("P") ? veriMap.get("P") : null;
 		List<String> referansList = veriMap != null && veriMap.containsKey("R") ? veriMap.get("R") : null;
 		if (list != null && !list.isEmpty()) {
@@ -7394,7 +7394,7 @@ public class OrtakIslemler implements Serializable {
 			String deleteIzinViewName = getParameterKey("silinenERPIzinView");
 			if (PdksUtil.hasStringValue(deleteIzinViewName) && isExisView(deleteIzinViewName, session)) {
 				HashMap fields = new HashMap();
-				sb = new StringBuffer("select I.* from " + deleteIzinViewName + " D " + PdksEntityController.getSelectLOCK());
+				sb = new StringBuilder("select I.* from " + deleteIzinViewName + " D " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on D." + DeleteIzinERPView.COLUMN_NAME_IZIN + " = I." + PersonelIzin.COLUMN_NAME_ID);
 				sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " = :d");
 				fields.put("d", PersonelIzin.IZIN_DURUMU_ONAYLANDI);
@@ -7417,7 +7417,7 @@ public class OrtakIslemler implements Serializable {
 				personelIzinList = null;
 			}
 			HashMap parametreMap = new HashMap();
-			sb = new StringBuffer("select ");
+			sb = new StringBuilder("select ");
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				Tanim tanim = (Tanim) iterator.next();
 				String erpAlan = (PdksUtil.hasStringValue(tanim.getErpKodu()) ? tanim.getErpKodu() : "null");
@@ -7444,7 +7444,7 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" ( DURUM = 1 and REFERANS_ID not in ( select " + IzinReferansERP.COLUMN_NAME_ID + " from " + IzinReferansERP.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ))");
 			}
 			String str = sb.toString();
-			sb = new StringBuffer("with DATA as (" + str + " ) ");
+			sb = new StringBuilder("with DATA as (" + str + " ) ");
 			sb.append("select distinct D.* from DATA D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + Personel.TABLE_NAME + " P  " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = D." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
 
@@ -7535,7 +7535,7 @@ public class OrtakIslemler implements Serializable {
 		if (list != null & !list.isEmpty()) {
 			HashMap parametreMap = new HashMap();
 			boolean update = false;
-			StringBuffer sb = new StringBuffer("select ");
+			StringBuilder sb = new StringBuilder("select ");
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				Tanim tanim = (Tanim) iterator.next();
 				String erpAlan = (PdksUtil.hasStringValue(tanim.getErpKodu()) ? tanim.getErpKodu() : "null");
@@ -7565,7 +7565,7 @@ public class OrtakIslemler implements Serializable {
 			}
 			if (update) {
 				String str = sb.toString();
-				sb = new StringBuffer("with DATA as (" + str + ")");
+				sb = new StringBuilder("with DATA as (" + str + ")");
 				sb.append(" select D.* from DATA D");
 				sb.append(" left join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ERP_KODU + " = D." + PersonelERPDB.COLUMN_NAME_SIRKET_KODU);
 				sb.append(" where COALESCE(S." + Sirket.COLUMN_NAME_DURUM + ",1) = 1 ");
@@ -7606,7 +7606,7 @@ public class OrtakIslemler implements Serializable {
 				List idList = new ArrayList(ayrilanMap.keySet());
 				String fieldName = "p";
 				parametreMap.clear();
-				sb = new StringBuffer();
+				sb = new StringBuilder();
 				sb.append("select PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " from " + PersonelKGS.TABLE_NAME + " PS " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + KapiSirket.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on K." + KapiSirket.COLUMN_NAME_ID + " = PS." + PersonelKGS.COLUMN_NAME_KGS_SIRKET);
 				sb.append(" and K." + KapiSirket.COLUMN_NAME_DURUM + " = 1 and K." + KapiSirket.COLUMN_NAME_BIT_TARIH + " > GETDATE()");
@@ -8026,7 +8026,7 @@ public class OrtakIslemler implements Serializable {
 		String isim = "";
 		if (authenticatedUser != null)
 			jsonMap.put("kullanici", authenticatedUser.getAdSoyad());
-		StringBuffer sb = null;
+		StringBuilder sb = null;
 		Integer responseCode = null;
 		try {
 			if (path.lastIndexOf("//") > 5) {
@@ -8036,7 +8036,7 @@ public class OrtakIslemler implements Serializable {
 			}
 
 			SSLImport.getCertificateInputStream(path);
-			sb = new StringBuffer();
+			sb = new StringBuilder();
 
 			URL url = new URL(path);
 			if (logGoster)
@@ -18216,7 +18216,7 @@ public class OrtakIslemler implements Serializable {
 			izinTipleri = new ArrayList<IzinTipi>();
 		izinTipiIdler = null;
 		parametreMap.clear();
-		StringBuffer qsb = new StringBuffer();
+		StringBuilder qsb = new StringBuilder();
 		qsb.append("select S.* from " + PersonelIzin.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
 		if (personeller != null && !personeller.isEmpty()) {
 			List<Long> idler = new ArrayList<Long>();
@@ -18614,7 +18614,7 @@ public class OrtakIslemler implements Serializable {
 		Calendar cal = Calendar.getInstance();
 		Date sistemTarihi = tarih != null ? (Date) tarih.clone() : null;
 		parametreMap.clear();
-		StringBuffer qsb = new StringBuffer();
+		StringBuilder qsb = new StringBuilder();
 		qsb.append("select S.* from " + PersonelIzin.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
 		qsb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P.id=S." + PersonelIzin.COLUMN_NAME_PERSONEL);
 
@@ -20318,7 +20318,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param es
 	 */
 	public void setExceptionLog(String mesaj, Exception es) {
-		StringBuffer mesajSb = new StringBuffer();
+		StringBuilder mesajSb = new StringBuilder();
 		if (authenticatedUser != null) {
 			mesajSb.append(authenticatedUser.getAdSoyad());
 			if (PdksUtil.hasStringValue(authenticatedUser.getCalistigiSayfa()))

@@ -875,7 +875,7 @@ public class Personel extends BaseObject {
 
 	@Transient
 	public String getPersonelExtraAciklama() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		String str = sb.toString();
 

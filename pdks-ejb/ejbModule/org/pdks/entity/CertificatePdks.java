@@ -36,7 +36,7 @@ public class CertificatePdks implements Serializable {
 		this.durum = Boolean.FALSE;
 		if (cer != null && cer.getSubjectDN() != null) {
 			Principal principal = cer.getSubjectDN();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			String[] names = principal.getName().split(",");
 			for (int i = 0; i < names.length; i++) {
 				String bilgi = names[i];

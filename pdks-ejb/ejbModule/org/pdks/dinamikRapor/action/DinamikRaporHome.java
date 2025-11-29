@@ -238,7 +238,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 			}
 		} else {
 			HashMap fields = new HashMap();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select ");
 			for (Iterator iterator = dinamikRaporAlanList.iterator(); iterator.hasNext();) {
 				PdksDinamikRaporAlan ra = (PdksDinamikRaporAlan) iterator.next();
@@ -355,7 +355,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	 * @return
 	 */
 	public String excelDinamikRaporList() {
-		StringBuffer baslikSb = new StringBuffer(), aciklamaSb = new StringBuffer();
+		StringBuilder baslikSb = new StringBuilder(), aciklamaSb = new StringBuilder();
 		try {
 			for (PdksDinamikRaporParametre pdrp : dinamikRaporParametreList) {
 				String aciklama = null;

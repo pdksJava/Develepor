@@ -77,7 +77,7 @@ public class MailManager implements Serializable {
 	 */
 	private String getHmtlString(String bodyHTML) throws Exception {
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<html>");
 		sb.append("<head>");
 		sb.append("<style>");
@@ -200,7 +200,7 @@ public class MailManager implements Serializable {
 		String subject = mailObject.getSubject() != null ? PdksUtil.setTurkishStr(mailObject.getSubject()) : null;
 		if (subject != null)
 			logger.debug(subject + " in " + PdksUtil.getCurrentTimeStampStr());
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		if (!PdksUtil.hasStringValue(mailObject.getSmtpUser()))
 			sb.append("Mail user belirtiniz!");
 		if (!PdksUtil.hasStringValue(mailObject.getSmtpPassword()))
@@ -211,7 +211,7 @@ public class MailManager implements Serializable {
 			mailStatu.setHataMesai(sb.toString());
 		else {
 
-			StringBuffer pasifPersonelSB = new StringBuffer();
+			StringBuilder pasifPersonelSB = new StringBuilder();
 			String smtpUserName = parameterMap.containsKey("smtpUserName") ? (String) parameterMap.get("smtpUserName") : "";
 			String smtpPassword = parameterMap.containsKey("smtpPassword") ? (String) parameterMap.get("smtpPassword") : "";
 			if (mailObject.getSmtpUser().equals(smtpUserName) && mailObject.getSmtpPassword().equals(smtpPassword)) {
@@ -475,7 +475,7 @@ public class MailManager implements Serializable {
 	 */
 	private void mailDurumKontrol(MailObject mailObject, HashMap<String, String> mailMap, Session sessionDB, MailStatu mailStatu) throws Exception {
 		if (mailMap.containsKey("smtpYedekUserName") && PdksUtil.hasStringValue(mailObject.getBody()) == false) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("<TABLE><TBODY><TR><TD><B>Host Name</B></TD><TD><B>:</B>" + mailMap.get("smtpHost") + " </TD></TR>");
 			sb.append("<TR><TD><B>User Name</B></TD><TD><B>:</B>" + mailMap.get("smtpUserName") + " </TD></TR>");
 			sb.append("<TR><TD><B>Hata </B></TD><TD><B>:</B>" + (PdksUtil.hasStringValue(mailStatu.getHataMesai()) ? mailStatu.getHataMesai() : "Hata oluştu!") + " </TD></TR></TBODY></TABLE>");
@@ -817,7 +817,7 @@ public class MailManager implements Serializable {
 	 * @param session
 	 * @throws Exception
 	 */
-	private void mailAdresKontrol(MailObject mailObject, StringBuffer pasifPersonelSB, Session session) throws Exception {
+	private void mailAdresKontrol(MailObject mailObject, StringBuilder pasifPersonelSB, Session session) throws Exception {
 		if (parameterMap.containsKey("bccAdres")) {
 			String bccAdres = PdksUtil.isSistemDestekVar() ? (String) parameterMap.get("bccAdres") : "";
 			if (bccAdres.indexOf("@") > 1) {
@@ -923,7 +923,7 @@ public class MailManager implements Serializable {
 	 * @param sb
 	 * @throws Exception
 	 */
-	private void pasifListKontrol(List<MailPersonel> list, List<String> pasifList, StringBuffer sb) throws Exception {
+	private void pasifListKontrol(List<MailPersonel> list, List<String> pasifList, StringBuilder sb) throws Exception {
 		if (sb != null && list != null && pasifList != null) {
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				MailPersonel mailPersonel = (MailPersonel) iterator.next();

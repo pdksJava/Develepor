@@ -64,7 +64,7 @@ public class SessionListener implements HttpSessionListener, Serializable {
 	 */
 	public void sessionDestroyed(HttpSessionEvent se) {
 		HttpSession session = se.getSession();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		User authenticatedUser = (User) session.getAttribute(SESSION_USER_NAME);
 		if (authenticatedUser != null) {
 			PdksUtil.getSessionUser(null, authenticatedUser);

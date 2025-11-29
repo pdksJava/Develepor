@@ -531,7 +531,7 @@ public class PersonelERPGuncelleme implements Serializable {
 
 		}
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " and S." + Sirket.COLUMN_NAME_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_ERP_DURUM + " = 1 ");
 		sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1 and S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1   ");
@@ -556,7 +556,7 @@ public class PersonelERPGuncelleme implements Serializable {
 		if (parameter != null && parameter.getActive() != null && parameter.getActive()) {
 			String sapKodu = parameter.getValue();
 			if (sapKodu != null && sapKodu.trim().length() == 4) {
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append("select P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " and S." + Sirket.COLUMN_NAME_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1 and S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1 and S.ERP_KODU= :sapKodu ");
@@ -583,7 +583,7 @@ public class PersonelERPGuncelleme implements Serializable {
 	@Transactional
 	public String aktifMailAdressGuncelle(Session session) {
 		HashMap fields = new HashMap();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 1 and (" + Personel.COLUMN_NAME_MAIL_CC_ID + " is not null or " + Personel.COLUMN_NAME_MAIL_BCC_ID + " is not null or " + Personel.COLUMN_NAME_HAREKET_MAIL_ID + " is not null)");
 		sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=convert(date,GETDATE())   ");

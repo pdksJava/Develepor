@@ -129,7 +129,7 @@ public class MenuLoaderActionBean implements Serializable {
 		if (PdksUtil.hasStringValue(menuBaslik) == false)
 			menuBaslik = "Dinamik Raporlar";
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("select * from " + PdksDinamikRapor.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 		sb.append(" where " + PdksDinamikRapor.COLUMN_NAME_DURUM + " = 1 ");
 		if (authenticatedUser.isAdmin() == false)

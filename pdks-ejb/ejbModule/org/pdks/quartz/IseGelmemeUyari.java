@@ -195,7 +195,7 @@ public class IseGelmemeUyari implements Serializable {
 		TreeMap<String, List<String>> hareketPersonelMap = new TreeMap<String, List<String>>(), mailPersonelMap = new TreeMap<String, List<String>>();
 		try {
 			HashMap fields = new HashMap();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_HAREKET_MAIL_ID + " is not null");
 			sb.append(" and P." + Personel.COLUMN_NAME_MAIL_TAKIP + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
@@ -279,7 +279,7 @@ public class IseGelmemeUyari implements Serializable {
 			cal.add(Calendar.DATE, -1);
 			Date oncekiGun = cal.getTime();
 
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
 			sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1  and S." + Sirket.COLUMN_NAME_DURUM + " = 1");
@@ -784,7 +784,7 @@ public class IseGelmemeUyari implements Serializable {
 			boolean ikMailGonderme = ortakIslemler.getParameterKey("ikMailGonderme").equals("1") == false;
 			if (ikMailGonderme && userTesisMap == null) {
 				HashMap fields = new HashMap();
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append("select UR.* from " + UserDigerOrganizasyon.TABLE_NAME + " UR " + PdksEntityController.getSelectLOCK());
 				sb.append(" where " + UserDigerOrganizasyon.COLUMN_NAME_TIPI + " = " + OrganizasyonTipi.TESIS.value());
 				if (session != null)
@@ -1272,7 +1272,7 @@ public class IseGelmemeUyari implements Serializable {
 
 			if (devam) {
 				mail.setSubject("Giriş-Çıkış problemli personeller");
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				User ikUser = null;
 				if (userIKMailMap.containsKey(userYonetici.getStaffId()) == false)
 					sb.append("<p>Sayın " + userYonetici.getAdSoyad() + "</p>");
@@ -1339,7 +1339,7 @@ public class IseGelmemeUyari implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	private boolean mesajIcerikOlustur(User user, StringBuffer sb, List<VardiyaGun> vardiyaGunList, TreeMap<String, String> map1, Workbook wb, Session session) {
+	private boolean mesajIcerikOlustur(User user, StringBuilder sb, List<VardiyaGun> vardiyaGunList, TreeMap<String, String> map1, Workbook wb, Session session) {
 		boolean mesajGonder = false;
 		try {
 			if (wb == null)
@@ -1674,7 +1674,7 @@ public class IseGelmemeUyari implements Serializable {
 									ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue("");
 								Cell hareketCell = null;
 								if (hataliHareketGundeVar) {
-									StringBuffer sbMesaj = new StringBuffer();
+									StringBuilder sbMesaj = new StringBuilder();
 									if (vg.getHareketler() != null && !vg.getHareketler().isEmpty()) {
 										for (HareketKGS hareketKGS : vg.getHareketler()) {
 											sbMesaj.append((sbMesaj.length() > 0 ? "\n" : "") + hareketKGS.getKapiView().getAciklama() + " " + (hareketKGS.getZaman() != null ? user.getTarihFormatla(hareketKGS.getZaman(), PdksUtil.getDateFormat() + " H:mm") : ""));
@@ -1686,7 +1686,7 @@ public class IseGelmemeUyari implements Serializable {
 								}
 
 								if (izinGirisVar) {
-									StringBuffer sbMesaj = new StringBuffer();
+									StringBuilder sbMesaj = new StringBuilder();
 									if (vg.getIzin() != null) {
 										String aciklama = vg.getIzin().getIzinTipiAciklama();
 										sbMesaj.append(aciklama);
@@ -2207,12 +2207,12 @@ public class IseGelmemeUyari implements Serializable {
 			userYoneticiList = null;
 		}
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("İşe gelme durumu kontrolü tamamlandı.");
 		if (userYoneticiList != null && !userYoneticiList.isEmpty()) {
 			MailObject mail = new MailObject();
 			HashMap fields = new HashMap();
-			sb = new StringBuffer();
+			sb = new StringBuilder();
 			sb.append("with BUGUN as ( ");
 			sb.append("		select 1 as ID ");
 			sb.append("	),");
@@ -2231,7 +2231,7 @@ public class IseGelmemeUyari implements Serializable {
 				departmanYoneticiRolVar = ((String) veri[0]).length() > 0;
 
 			}
-			sb = new StringBuffer();
+			sb = new StringBuilder();
 			TreeMap<String, String> map1 = new TreeMap<String, String>();
 
 			logger.info("Toplu mail dosyasi hazirlaniyor in " + PdksUtil.getCurrentTimeStampStr());
@@ -2270,7 +2270,7 @@ public class IseGelmemeUyari implements Serializable {
 				if (hareketExcelGonder)
 					hareketExcelGonderEkle = user.isIK() || hareketExcelGonderDurum.equals("M");
 
-				StringBuffer sbUser = new StringBuffer();
+				StringBuilder sbUser = new StringBuilder();
 				Personel personel = user.getPdksPersonel();
 				Sirket sirket = personel.getSirket();
 				sbUser.append("<BR/><BR/>" + user.getAdSoyad() + (personel.getGorevTipi() != null ? " ( " + personel.getGorevTipi().getAciklama() + " ) " : " - ") + "<BR/>" + (sirket.getSirketGrup() != null ? sirket.getSirketGrup().getAciklama() : sirket.getAd()));
