@@ -743,6 +743,8 @@ public class IseGelmemeUyari implements Serializable {
 			dataMap.put("hareketHataliMap", hareketHataliMap);
 			dataMap.put("mailPersonelMap", mailPersonelMap);
 			List<Personel> yoneticiler = new ArrayList<Personel>(yoneticiMap.values());
+			TreeMap izinKullaniciMap = ortakIslemler.getUzunSureliIzinlerMap("U", null, null, session);
+			// TreeMap izinKullaniciMap = ortakIslemler.getUzunSureliIzinlerMap("P", null, null, session);
 			boolean hareketExcelGonder = PdksUtil.hasStringValue(hareketExcelGonderDurum);
 			if (hareketExcelGonder) {
 				boolean hareketDurum = hareketExcelGonderDurum.equalsIgnoreCase("IK");
@@ -806,26 +808,33 @@ public class IseGelmemeUyari implements Serializable {
 			}
 			List<User> ikList = ortakIslemler.getIKUserList(User.class, session);
 			TreeMap<String, User> mailIKMap = new TreeMap<String, User>();
-			for (User user : ikList) {
-				if (user.getPdksPersonel().isCalisiyor() == false)
-					continue;
-				mailIKMap.put(user.getEmail(), user);
+			if (ikList != null) {
+				for (User user : ikList) {
+					if (user.getPdksPersonel().isCalisiyor() == false)
+						continue;
+					mailIKMap.put(user.getEmail(), user);
+				}
+				ikList = null;
 			}
 			int islemAdet = mailIKMap.isEmpty() == false ? 2 : 1;
 			HashMap<Long, List<User>> depMail = new HashMap<Long, List<User>>();
 			for (int i = 1; i <= islemAdet; i++) {
-				if (i != 1) {
-					logger.info("İnsan kaynaklarına mail gönderiliyor");
-					mailIKMap = null;
-				}
+				if (i != 1)
+					if (yoneticiler.isEmpty() == false)
+						logger.info("İnsan kaynaklarına " + yoneticiler.size() + " adet mail gönderiliyor ");
 
 				for (Iterator iterator = yoneticiler.iterator(); iterator.hasNext();) {
 					Personel personelYonetici = (Personel) iterator.next();
 					boolean yoneticiCalisiyor = personelYonetici.isCalisiyor();
+					Long yoneticisiId = personelYonetici.getId();
+					if (izinKullaniciMap.containsKey(yoneticisiId)) {
+						iterator.remove();
+						continue;
+					}
 					List<Long> depMailList = new ArrayList<Long>();
 					String eposta = null;
 					try {
-						Long yoneticisiId = personelYonetici.getId();
+
 						User yonetici = null;
 						if (yoneticisiId != null && userMap.containsKey(yoneticisiId)) {
 							User user = userMap.get(yoneticisiId);
@@ -839,8 +848,15 @@ public class IseGelmemeUyari implements Serializable {
 							yoneticiCalisiyor = false;
 
 						eposta = yonetici != null ? yonetici.getEmail() : "";
-						if (i == 1 && mailIKMap != null && mailIKMap.containsKey(eposta))
-							continue;
+
+						if (i == 1) {
+							if (mailIKMap.containsKey(eposta))
+								continue;
+						} else {
+							if (mailIKMap.containsKey(eposta) == false)
+								continue;
+						}
+
 						iterator.remove();
 						List<VardiyaGun> personelVardiyalari = personelYonetici.getPersonelVardiyalari();
 						if (personelVardiyalari == null) {
@@ -1118,7 +1134,8 @@ public class IseGelmemeUyari implements Serializable {
 
 				}
 			}
- 			if (!hareketHataliMap.isEmpty() && !mailPersonelMap.isEmpty()) {
+
+			if (!hareketHataliMap.isEmpty() && !mailPersonelMap.isEmpty()) {
 				hariciPersonelVar = true;
 				userUstYonetici = null;
 				userIKList = null;
@@ -1135,65 +1152,79 @@ public class IseGelmemeUyari implements Serializable {
 				List<String> mailList = !mailPersonelMap.isEmpty() ? new ArrayList(mailPersonelMap.keySet()) : new ArrayList<String>();
 				TreeMap<String, User> userYoneticilerMap = ortakIslemler.getUserRoller(islemTarihi, mailList, session);
 
-				boolean sort = false;
-				for (String email : mailList) {
-					personelVardiyalari.clear();
-					logger.debug(email);
-					User user = userYoneticilerMap.containsKey(email) ? userYoneticilerMap.get(email) : null;
-					if (user == null || !user.isDurum()) {
-						user = bosYonetici;
-						user.setEmail(email);
-					} else if (!user.getPdksPersonel().isCalisiyor()) {
-						logger.error(user.getAdSoyad() + " MAİL GÖNDERİLEMİYOR!");
-						continue;
-					}
-					List<Role> yetkiliRollerim = user.getYetkiliRollerim();
-					if (yetkiliRollerim == null || yetkiliRollerim.isEmpty())
-						yetkiliRollerim = user.getYetkiliRoller();
-					userYonetici = (User) user.clone();
-					userYonetici.setYetkiliRollerim(yetkiliRollerim);
+				for (int i = 1; i <= islemAdet; i++) {
+					if (i != 1)
+						if (mailList.isEmpty() == false)
+							logger.info("İnsan kaynaklarına " + mailList.size() + " adet mail gönderiliyor ");
+					for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
+						String email = (String) iterator.next();
+						personelVardiyalari.clear();
+						logger.debug(email);
+						if (i == 1) {
+							if (mailIKMap.containsKey(email))
+								continue;
+						} else {
+							if (mailIKMap.containsKey(email) == false)
+								continue;
+						}
+						iterator.remove();
+						User user = userYoneticilerMap.containsKey(email) ? userYoneticilerMap.get(email) : null;
+						if (user == null || !user.isDurum()) {
+							user = bosYonetici;
+							user.setEmail(email);
+						} else if (!user.getPdksPersonel().isCalisiyor()) {
+							logger.error(user.getAdSoyad() + " MAİL GÖNDERİLEMİYOR!");
+							continue;
+						}
+						Long yoneticisiId = user != null && user.getPdksPersonel() != null ? user.getPdksPersonel().getId() : null;
+						if (yoneticisiId != null && izinKullaniciMap.containsKey(yoneticisiId)) {
+							continue;
+						}
+						List<Role> yetkiliRollerim = user.getYetkiliRollerim();
+						if (yetkiliRollerim == null || yetkiliRollerim.isEmpty())
+							yetkiliRollerim = user.getYetkiliRoller();
+						userYonetici = (User) user.clone();
+						userYonetici.setYetkiliRollerim(yetkiliRollerim);
 
-					if (islemYapan != null)
-						userYonetici.setEmail(islemYapan.getEmail());
-					userYonetici.getPdksPersonel().setPersonelVardiyalari(personelVardiyalari);
-					List<String> hariciPersoneller = mailPersonelMap.get(email);
-					for (Iterator iterator2 = hariciPersoneller.iterator(); iterator2.hasNext();) {
-						String sicilNo = (String) iterator2.next();
-						if (hareketHataliMap.containsKey(sicilNo))
-							personelVardiyalari.addAll(hareketHataliMap.get(sicilNo));
-
-					}
-					if (!personelVardiyalari.isEmpty()) {
-						MailStatu mailStatu = null;
-						try {
-							userYonetici.setStaffId(email);
-							baslikAyarla(userYonetici.getPdksPersonel());
-							// ortakIslemler.mailGonder(renderer, renderAdres);
-							mailStatu = mailGonder(renderAdres, true, session);
-							if (mailStatu != null && mailStatu.getDurum())
-								logger.info(userYonetici.getPdksPersonel().getSirket().getAd() + " " + userYonetici.getAdSoyad() + " " + userYonetici.getEmail() + " iseGelisUyariMail mesaj gönderildi! ");
-
-							if (!userYoneticiMap.containsKey(userYonetici.getId())) {
-								userYoneticiMap.put(userYonetici.getId(), userYonetici);
-							} else
-								logger.debug(userYonetici.getId());
-
-							sort = true;
-						} catch (Exception ex) {
-							if (islemYapan != null)
-								ex.printStackTrace();
-							logger.error(email + " yoneticiyeMailGonder : " + ex.getMessage());
+						if (islemYapan != null)
+							userYonetici.setEmail(islemYapan.getEmail());
+						userYonetici.getPdksPersonel().setPersonelVardiyalari(personelVardiyalari);
+						List<String> hariciPersoneller = mailPersonelMap.get(email);
+						for (Iterator iterator2 = hariciPersoneller.iterator(); iterator2.hasNext();) {
+							String sicilNo = (String) iterator2.next();
+							if (hareketHataliMap.containsKey(sicilNo))
+								personelVardiyalari.addAll(hareketHataliMap.get(sicilNo));
 
 						}
+						if (!personelVardiyalari.isEmpty()) {
+							MailStatu mailStatu = null;
+							try {
+								userYonetici.setStaffId(email);
+								baslikAyarla(userYonetici.getPdksPersonel());
+								// ortakIslemler.mailGonder(renderer, renderAdres);
+								mailStatu = mailGonder(renderAdres, true, session);
+								if (mailStatu != null && mailStatu.getDurum())
+									logger.info(userYonetici.getPdksPersonel().getSirket().getAd() + " " + userYonetici.getAdSoyad() + " " + userYonetici.getEmail() + " iseGelisUyariMail mesaj gönderildi! ");
 
+								if (!userYoneticiMap.containsKey(userYonetici.getId())) {
+									userYoneticiMap.put(userYonetici.getId(), userYonetici);
+								} else
+									logger.debug(userYonetici.getId());
+
+								 
+							} catch (Exception ex) {
+								if (islemYapan != null)
+									ex.printStackTrace();
+								logger.error(email + " yoneticiyeMailGonder : " + ex.getMessage());
+
+							}
+
+						}
 					}
-				}
-				if (sort) {
-					// userYoneticiList = (ArrayList<User>) PdksUtil.sortObjectStringAlanList(userYoneticiList, "getAdSoyad", null);
-
 				}
 
 			}
+			mailIKMap = null;
 		}
 	}
 

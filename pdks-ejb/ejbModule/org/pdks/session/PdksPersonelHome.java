@@ -176,7 +176,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private Boolean emailCCDurum = Boolean.FALSE, emailBCCDurum = Boolean.FALSE, taseronKulaniciTanimla = Boolean.FALSE, manuelTanimla = Boolean.FALSE, ikinciYoneticiManuelTanimla = Boolean.FALSE;
 	private Boolean onaysizIzinKullanilir = Boolean.FALSE, departmanGoster = Boolean.FALSE, kartNoGoster = Boolean.FALSE, ikinciYoneticiIzinOnayla = Boolean.FALSE, izinGirisiVar = Boolean.FALSE, dosyaGuncellemeYetki = Boolean.FALSE;
 	private Boolean ekSaha1Disable, ekSaha2Disable, ekSaha4Disable, transferAciklamaCiftKontrol, bakiyeIzinGoster = Boolean.FALSE, gebeSecim = Boolean.FALSE, personelTipiGoster = Boolean.FALSE;
-	public Boolean disableAdviseNodeOpened, organizasyonSemasiGoster = Boolean.FALSE, bakiyeTakipEdiliyor = Boolean.FALSE;
+	public Boolean disableAdviseNodeOpened, organizasyonSemasiGoster = Boolean.FALSE, bakiyeTakipEdiliyor = Boolean.FALSE, onayMailDurum = Boolean.FALSE, iseGelmemeMailDurum = Boolean.FALSE;
 	private TreeMap<Long, PersonelKGS> personelKGSMap;
 	private int COL_SICIL_NO, COL_ADI, COL_SOYADI, COL_SIRKET_KODU, COL_SIRKET_ADI, COL_TESIS_KODU, COL_TESIS_ADI, COL_GOREV_KODU, COL_GOREVI, COL_BOLUM_KODU, COL_BOLUM_ADI;
 	private int COL_ISE_BASLAMA_TARIHI, COL_KIDEM_TARIHI, COL_GRUBA_GIRIS_TARIHI, COL_ISTEN_AYRILMA_TARIHI, COL_DOGUM_TARIHI, COL_CINSIYET_KODU, COL_CINSIYET, COL_YONETICI_KODU, COL_YONETICI2_KODU;
@@ -2098,6 +2098,11 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			}
 		} else if (pdksPersonel.getSirket() != null)
 			pdksPersonel.setIzinKartiVar(pdksPersonel.getSirket().getIzinKartiVar());
+		Departman departman = pdksPersonel.getSirket() != null ? pdksPersonel.getSirket().getDepartman() : null;
+		iseGelmemeMailDurum = ortakIslemler.hasStringValue("uyariMail") || ortakIslemler.hasStringValue("uyariMailIzinHaric");
+		if (iseGelmemeMailDurum)
+			iseGelmemeMailDurum = ortakIslemler.getParameterKey("yoneticiMailGonderme").equals("0");
+		mailAdresDurumGuncelle(departman);
 	}
 
 	/**
@@ -2532,7 +2537,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		StringBuilder sb = new StringBuilder();
 		sb.append("select V.* from " + PdksPersonelView.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PdksPersonelView.COLUMN_NAME_PERSONEL);
-		ortakIslemler.addIKSirketTesisKriterleri(parametreMap,  PdksUtil.getStringBuffer(sb));
+		ortakIslemler.addIKSirketTesisKriterleri(parametreMap, sb);
 		if (!authenticatedUser.isAdmin()) {
 			sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_ID + " :d");
 			for (Personel personel : tumPersoneller) {
@@ -3337,9 +3342,10 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	}
 
 	/**
-	 * 
+	 * @param tanimOku
 	 */
 	public void fillPdksPersonelList(boolean tanimOku) {
+
 		if (tanimOku)
 			fillEkSahaTanim();
 		Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());
@@ -3356,6 +3362,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		} catch (Exception e) {
 			departman = null;
 		}
+		mailAdresDurumGuncelle(departman);
 		bolumDepartmanlari = departman != null && !departman.isAdminMi() ? ortakIslemler.getBolumDepartmanlari(departman, session) : null;
 		gorevDepartmanlari = departman != null && !departman.isAdminMi() ? ortakIslemler.getGorevDepartmanlari(departman, session) : null;
 		if (departman != null)
@@ -3424,6 +3431,28 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		fillPdksCalismaModeliList();
 		cinsiyetDegisti();
 		ekSahaDisable();
+	}
+
+	/**
+	 * @param departman
+	 */
+	private void mailAdresDurumGuncelle(Departman departman) {
+		onayMailDurum = false;
+		if (departman != null) {
+			HashMap fields = new HashMap();
+			StringBuilder sb = new StringBuilder();
+			sb.append("select * from " + IzinTipi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+			sb.append(" where ( " + IzinTipi.COLUMN_NAME_DEPARTMAN + " is null or " + IzinTipi.COLUMN_NAME_DEPARTMAN + " = :d ) and " + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null ");
+			sb.append(" and " + IzinTipi.COLUMN_NAME_ONAYLAYAN_TIPI + " <> :t and " + IzinTipi.COLUMN_NAME_DURUM + " = 1");
+			fields.put("d", departman.getId());
+			fields.put("t", IzinTipi.ONAYLAYAN_TIPI_YOK);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			List<IzinTipi> izinList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, IzinTipi.class);
+			onayMailDurum = izinList.isEmpty() == false;
+			izinList = null;
+			fields = null;
+		}
 	}
 
 	/**
@@ -6230,6 +6259,22 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 	public void setKartNo(String kartNo) {
 		this.kartNo = kartNo;
+	}
+
+	public Boolean getOnayMailDurum() {
+		return onayMailDurum;
+	}
+
+	public void setOnayMailDurum(Boolean onayMailDurum) {
+		this.onayMailDurum = onayMailDurum;
+	}
+
+	public Boolean getIseGelmemeMailDurum() {
+		return iseGelmemeMailDurum;
+	}
+
+	public void setIseGelmemeMailDurum(Boolean iseGelmemeMailDurum) {
+		this.iseGelmemeMailDurum = iseGelmemeMailDurum;
 	}
 
 }

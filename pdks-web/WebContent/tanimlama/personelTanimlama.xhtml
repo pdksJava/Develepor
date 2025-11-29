@@ -1377,7 +1377,7 @@
 												<h:inputText value="#{dpa.sayisalDeger}" />
 											</s:decorate>
 										</c:forEach>
-										<s:decorate template="/layout/edit.xhtml">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.onayMailDurum}">
 											<ui:define name="label">E-Posta CC</ui:define>
 											<a4j:region>
 												<h:inputText id="idEMailCC" title="#{pdksPersonelHome.instance.emailCC}" value="#{pdksPersonelHome.instance.emailCC}" size="35"
@@ -1389,7 +1389,7 @@
 												<rich:toolTip for="idEMailCC" value="#{pdksPersonelHome.instance.emailCC}" />
 											</a4j:region>
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.onayMailDurum}">
 											<ui:define name="label">E-Posta BCC</ui:define>
 											<a4j:region>
 												<h:inputText id="idEMailBCC" title="#{pdksPersonelHome.instance.emailBCC}" value="#{pdksPersonelHome.instance.emailBCC}" size="35"
@@ -1401,8 +1401,8 @@
 												<rich:toolTip for="idEMailBCC" value="#{pdksPersonelHome.instance.emailBCC}" />
 											</a4j:region>
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{ortakIslemler.getParameterKey('yoneticiMailGonderme') != '1'}">
-											<ui:define name="label">E-Posta Hareket</ui:define>
+										<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.iseGelmemeMailDurum}">
+											<ui:define name="label">E-Posta İşe Gelmeme</ui:define>
 											<a4j:region>
 												<h:inputText id="idEMailHareket" title="#{pdksPersonelHome.instance.hareketMail}" value="#{pdksPersonelHome.instance.hareketMail}"
 													size="35" disabled="true" />
@@ -1619,7 +1619,7 @@
 											</h:panelGrid>
 											<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.kullanici.IK}">
 												<ui:define name="label">Entegrasyon Mail Durum</ui:define>
-												<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.kullanici.entegrasyonMailDurum}" >
+												<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.kullanici.entegrasyonMailDurum}">
 													<a4j:support event="onclick" reRender="kullaniciBilgi" status="ajaxStatus" ajaxSingle="true" />
 												</h:selectBooleanCheckbox>
 											</s:decorate>
@@ -1786,9 +1786,9 @@
 					<rich:panel>
 						<h:panelGrid columns="1" id="adresHareketBilgileri">
 							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Hareket Mail Adres	</ui:define>
+								<ui:define name="label">İşe Gelmeme Mail Adres</ui:define>
 								<ui:fragment>
-									<h:inputText value="#{pdksPersonelHome.ccAdres}" maxlength="55" size="40" required="true" requiredMessage="Hareket mail adresi giriniz!" />
+									<h:inputText value="#{pdksPersonelHome.ccAdres}" maxlength="55" size="40" required="true" requiredMessage="İşe gelmeme mail adresi giriniz!" />
 									<a4j:commandButton image="/img/ok.gif" action="#{pdksPersonelHome.adresEkle}" reRender="adresHareketBilgileri" />
 								</ui:fragment>
 							</s:decorate>
@@ -1808,7 +1808,7 @@
 									</rich:column>
 									<rich:column>
 										<f:facet name="header">
-											<h:outputText value="Hareket Mail Adres" />
+											<h:outputText value="İşe Gelmeme Mail Adres" />
 										</f:facet>
 										<h:outputText value="#{adres}" />
 									</rich:column>
@@ -1839,9 +1839,9 @@
 				<a4j:outputPanel ajaxRendered="true">
 					<h:messages />
 				</a4j:outputPanel>
-				<a4j:outputPanel>
-					<rich:panel>
-						<h:panelGrid columns="1" id="adresBCCBilgileri">
+				<a4j:outputPanel id="adresBCCBilgileri">
+					<rich:panel rendered="#{pdksPersonelHome.onayMailDurum}">
+						<h:panelGrid columns="1">
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">BCC Mail Adres	</ui:define>
 								<ui:fragment>
