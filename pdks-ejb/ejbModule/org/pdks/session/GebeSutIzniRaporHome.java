@@ -182,7 +182,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 			fields.put("b2", bitTarih);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<Tanim> tesisTanimList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, Tanim.class);
+			List<Tanim> tesisTanimList = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
 			if (tesisTanimList.size() > 1)
 				tesisTanimList = PdksUtil.sortTanimList(null, tesisTanimList);
 			for (Tanim tesis : tesisTanimList) {
@@ -233,7 +233,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 		fields.put("b2", bitTarih);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		personelDonemDurumList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, PersonelDonemselDurum.class);
+		personelDonemDurumList = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDonemselDurum.class);
 		if (sirketId == null)
 			tesisDurum = false;
 		for (Iterator iterator = personelDonemDurumList.iterator(); iterator.hasNext();) {

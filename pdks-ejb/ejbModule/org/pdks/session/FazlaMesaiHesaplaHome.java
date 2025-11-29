@@ -672,7 +672,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				fields.put("d", denklestirmeAy.getId());
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List idList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, null);
+				List idList = pdksEntityController.getObjectBySQLList(sb, fields, null);
 				if (idList.isEmpty()) {
 					denklestirmeAy = null;
 					if (userLogin.getLogin())
@@ -692,7 +692,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			sb.append(" order by (D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ D." + DenklestirmeAy.COLUMN_NAME_AY + " desc ");
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<DenklestirmeAy> list = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, DenklestirmeAy.class);
+			List<DenklestirmeAy> list = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
 			if (!list.isEmpty())
 				gecenAy = list.get(0);
 		}
@@ -902,7 +902,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<IzinTipi> izinTipiList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, IzinTipi.class);
+			List<IzinTipi> izinTipiList = pdksEntityController.getObjectBySQLList(sb, fields, IzinTipi.class);
 			if (!izinTipiList.isEmpty())
 				yuzde = 100.0d;
 		}
@@ -1386,7 +1386,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 					if (session != null)
 						map.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<IzinTipi> izinTipiList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), map, IzinTipi.class);
+					List<IzinTipi> izinTipiList = pdksEntityController.getObjectBySQLList(sb, map, IzinTipi.class);
 
 					sirketIzinGirisDurum = !izinTipiList.isEmpty();
 				}
@@ -3814,7 +3814,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				try {
-					List<PersonelDenklestirme> denkList = pdksEntityController.getSQLParamList(tempList, PdksUtil.getStringBuffer(sb), fieldName, fields, PersonelDenklestirme.class, session);
+					List<PersonelDenklestirme> denkList = pdksEntityController.getSQLParamList(tempList, sb, fieldName, fields, PersonelDenklestirme.class, session);
 					ortakIslemler.setPersonelDenklestirmeDevir(null, denkList, session);
 
 					for (PersonelDenklestirme personelDenklestirme : denkList) {

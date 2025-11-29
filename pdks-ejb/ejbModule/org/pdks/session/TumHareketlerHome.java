@@ -482,7 +482,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 
 				perMap.clear();
 				personelId.clear();
-				List<PdksPersonelView> list = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), parametreMap, PdksPersonelView.class);
+				List<PdksPersonelView> list = pdksEntityController.getObjectBySQLList(sb, parametreMap, PdksPersonelView.class);
 				for (PdksPersonelView pdksPersonelView : list) {
 					if (pdksPersonelView.getPdksPersonel() != null)
 						personelMap.put(pdksPersonelView.getId(), pdksPersonelView.getPdksPersonel());
@@ -528,12 +528,12 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 				if (personelId != null && !personelId.isEmpty()) {
 					kgsList = ortakIslemler.getHareketBilgileri(new ArrayList<Long>(kapiMap.keySet()), personelId, basTarih, ortakIslemler.tariheGunEkleCikar(cal, PdksUtil.getDate(bitTarih), 1), BasitHareket.class, session);
 				} else {
-					List list = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), parametreMap, null);
+					List list = pdksEntityController.getObjectBySQLList(sb, parametreMap, null);
 					kgsList = ortakIslemler.getHareketIdBilgileri(list, null, basTarih, bitTarih, session);
 					list = null;
 				}
 
-				// kgsList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), parametreMap, BasitHareket.class);
+				// kgsList = pdksEntityController.getObjectBySQLList(sb, parametreMap, BasitHareket.class);
 			} catch (Exception e) {
 				kgsList = new ArrayList<BasitHareket>();
 				logger.error("PDKS hata in : \n");
@@ -683,8 +683,8 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					if (session != null)
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 					TreeMap<Long, Date> islemTarihMap = new TreeMap<Long, Date>();
-					// List<Object[]> islemList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), parametreMap, null);
-					List<Object[]> islemList = pdksEntityController.getSQLParamList(islemIdler, PdksUtil.getStringBuffer(sb), fieldName, parametreMap, null, session);
+					// List<Object[]> islemList = pdksEntityController.getObjectBySQLList(sb, parametreMap, null);
+					List<Object[]> islemList = pdksEntityController.getSQLParamList(islemIdler, sb, fieldName, parametreMap, null, session);
 
 					for (Object[] objects : islemList) {
 						Long key = ((BigInteger) objects[0]).longValue();

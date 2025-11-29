@@ -181,7 +181,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 					parametreMap.put("sicilNo", sicilNo);
 					if (session != null)
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-					loginUser = (User) pdksEntityController.getObjectBySQL(PdksUtil.getStringBuffer(sb), parametreMap, User.class);
+					loginUser = (User) pdksEntityController.getObjectBySQL(sb, parametreMap, User.class);
 					if (loginUser != null) {
 						logger.info(loginUser.getUsername() + " kullanıcı bilgisi okundu.");
 						loginUser.setUsername(ldapUser.getUsername());
@@ -360,7 +360,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 				fields.put("userName", userName);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				user = (User) pdksEntityController.getObjectBySQL(PdksUtil.getStringBuffer(sb), fields, User.class);
+				user = (User) pdksEntityController.getObjectBySQL(sb, fields, User.class);
 			} else
 				user = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, fieldName, userName, User.class, session);
 

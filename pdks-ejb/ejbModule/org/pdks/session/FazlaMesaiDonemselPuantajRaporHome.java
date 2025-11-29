@@ -332,7 +332,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 					fields.put("s", sonDonem);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<Tanim> list = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, Tanim.class);
+					List<Tanim> list = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
 					if (list.isEmpty()) {
 						tesisId = null;
 					} else {
@@ -390,7 +390,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				fields.put("s", sonDonem);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<Tanim> list = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, Tanim.class);
+				List<Tanim> list = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
 
 				if (list.isEmpty()) {
 					bolumId = null;
@@ -467,7 +467,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			fields.put("s", sonDonem);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<Tanim> list = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, Tanim.class);
+			List<Tanim> list = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
 			if (list.size() > 1)
 				list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
 
@@ -528,7 +528,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				fields.put("s", sonDonem);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				personelList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, Personel.class);
+				personelList = pdksEntityController.getObjectBySQLList(sb, fields, Personel.class);
 				if (!personelList.isEmpty()) {
 					personelList = PdksUtil.sortObjectStringAlanList(personelList, "getAdSoyad", null);
 					List<Personel> ayrilanlar = new ArrayList<Personel>();
@@ -579,7 +579,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			sb.append(" order by S." + Sirket.COLUMN_NAME_ID);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<Sirket> sirketList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, Sirket.class);
+			List<Sirket> sirketList = pdksEntityController.getObjectBySQLList(sb, fields, Sirket.class);
 			if (sirketList != null && !sirketList.isEmpty()) {
 				if (sirketList.size() == 1)
 					sirketId = sirketList.get(0).getId();
@@ -621,7 +621,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		fields.put("s", sonDonem);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<DenklestirmeAy> denkList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, DenklestirmeAy.class);
+		List<DenklestirmeAy> denkList = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
 		if (donemler != null)
 			donemler.clear();
 		for (DenklestirmeAy da : denkList)
@@ -655,7 +655,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
 			sirketler.clear();
-			List<DenklestirmeAy> denkList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, DenklestirmeAy.class);
+			List<DenklestirmeAy> denkList = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
 			List<Long> idList = new ArrayList<Long>();
 			for (DenklestirmeAy denklestirmeAy : denkList) {
 				idList.add(denklestirmeAy.getId());
@@ -672,7 +672,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				sb.append(" order by S." + Sirket.COLUMN_NAME_ID);
 				fields.put(fieldName, idList);
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<Sirket> sirketList = pdksEntityController.getSQLParamList(idList, PdksUtil.getStringBuffer(sb), fieldName, fields, Sirket.class, session);
+				List<Sirket> sirketList = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, Sirket.class, session);
 				if (!sirketList.isEmpty()) {
 					sirketDoldur();
 				}
@@ -1415,7 +1415,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, PersonelDenklestirme.class);
+		List<PersonelDenklestirme> list = pdksEntityController.getObjectBySQLList(sb, fields, PersonelDenklestirme.class);
 		boolean sirketFazlaMesaiOde = sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde();
 		if (!list.isEmpty()) {
 			ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
@@ -1431,7 +1431,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			personelSQLBagla(sb, fields);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<Object[]> list2 = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, null);
+			List<Object[]> list2 = pdksEntityController.getObjectBySQLList(sb, fields, null);
 			if (!list2.isEmpty()) {
 				Object[] data = list2.get(0);
 				resmiTatilVar = ((Double) data[0]).doubleValue() > 0d;

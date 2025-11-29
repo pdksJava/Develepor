@@ -283,8 +283,8 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 			fields.put(fieldName, idler);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// tumPersoneller = (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, Personel.class);
-			tumPersoneller = (ArrayList<Personel>) pdksEntityController.getSQLParamList(idler, PdksUtil.getStringBuffer(sb), fieldName, fields, Personel.class, session);
+			// tumPersoneller = (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(sb, fields, Personel.class);
+			tumPersoneller = (ArrayList<Personel>) pdksEntityController.getSQLParamList(idler, sb, fieldName, fields, Personel.class, session);
 
 			fields.clear();
 			sb = new StringBuilder();
@@ -301,8 +301,8 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 			fields.put(fieldName, idler);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// List<Personel> tumPersonelIzinler = (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, Personel.class);
-			List<Personel> tumPersonelIzinler = (ArrayList<Personel>) pdksEntityController.getSQLParamList(idler, PdksUtil.getStringBuffer(sb), fieldName, fields, Personel.class, session);
+			// List<Personel> tumPersonelIzinler = (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(sb, fields, Personel.class);
+			List<Personel> tumPersonelIzinler = (ArrayList<Personel>) pdksEntityController.getSQLParamList(idler, sb, fieldName, fields, Personel.class, session);
 			for (Iterator iterator = tumPersonelIzinler.iterator(); iterator.hasNext();) {
 				Personel personel = (Personel) iterator.next();
 				for (Personel personel1 : tumPersoneller) {

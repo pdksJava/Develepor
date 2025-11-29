@@ -144,7 +144,11 @@ public class PdksUtil implements Serializable {
 	public static StringBuffer getStringBuffer(Object sqlObject) {
 		StringBuffer sb = null;
 		if (sqlObject != null) {
-			if (sqlObject instanceof String) {
+			if (sqlObject instanceof StringBuilder) {
+				StringBuilder sb2 = (StringBuilder) sqlObject;
+				sb = new StringBuffer(sb2.toString());
+				sb2 = null;
+			} else if (sqlObject instanceof String) {
 				String sqlObjectStr = (String) sqlObject;
 				sb = new StringBuffer(sqlObjectStr);
 			} else if (sqlObject instanceof StringBuffer)
@@ -153,20 +157,6 @@ public class PdksUtil implements Serializable {
 		if (sb == null)
 			sb = new StringBuffer();
 		return sb;
-	}
-
-	/**
-	 * @param sbu
-	 * @return
-	 */
-	public static String getStringBuffer(StringBuilder sbu) {
-		String str = "";
-		if (sbu != null) {
-			str = sbu.toString();
-
-			sbu = null;
-		}
-		return str;
 	}
 
 	/**

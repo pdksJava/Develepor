@@ -159,7 +159,7 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<Sirket> list = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), map, Sirket.class);
+		List<Sirket> list = pdksEntityController.getObjectBySQLList(sb, map, Sirket.class);
 
 		if (list.size() > 1)
 			list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);

@@ -242,7 +242,7 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<Parameter> list = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), parametreMap, Parameter.class);
+		List<Parameter> list = pdksEntityController.getObjectBySQLList(sb, parametreMap, Parameter.class);
 
 		list = PdksUtil.sortListByAlanAdi(list, "id", admin);
 		if (authenticatedUser.isAdmin()) {

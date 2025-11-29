@@ -467,7 +467,7 @@ public class OrtakIslemler implements Serializable {
 			HashMap fields = new HashMap();
 			try {
 				List<String> strList = PdksUtil.getListByString(parameterMap.get("serverTimeUpdateFromDB"), "|");
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				sb.append(strList.get(0));
 				fields.clear();
 				if (session != null)
@@ -602,7 +602,7 @@ public class OrtakIslemler implements Serializable {
 		String fieldName = "rn";
 		fields.put(fieldName, roller);
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("with IZIN AS ( ");
 		sb.append(" select U." + User.COLUMN_NAME_ID + " AS " + UserRoles.COLUMN_NAME_USER + ", MAX (I." + PersonelIzin.COLUMN_NAME_ID + ") AS IZIN_ID from " + User.TABLE_NAME + " U ");
 		sb.append("   inner join " + PersonelIzin.TABLE_NAME + " I with(nolock) on I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = U." + User.COLUMN_NAME_PERSONEL);
@@ -651,7 +651,7 @@ public class OrtakIslemler implements Serializable {
 						mailObject.getToList().add(mp);
 						MailStatu ms = null;
 						Exception ex = null;
-						StringBuffer body = new StringBuffer();
+						StringBuilder body = new StringBuilder();
 						Map<String, String> map = null;
 						try {
 							map = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
@@ -714,7 +714,7 @@ public class OrtakIslemler implements Serializable {
 					String fieldName = "d";
 					List<Long> dataIdList = new ArrayList<Long>(idMap.keySet());
 					HashMap fields = new HashMap();
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					sb.append("select * from " + PersonelDenklestirmeDinamikAlan.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 					sb.append(" where " + PersonelDenklestirmeDinamikAlan.COLUMN_NAME_PERSONEL_DENKLESTIRME + " :" + fieldName);
 					sb.append(" and " + PersonelDenklestirmeDinamikAlan.COLUMN_NAME_ALAN + " = " + bakiyeSifirla.getId());

@@ -152,7 +152,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_AY);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		denklestirmeAylar = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), map, DenklestirmeAy.class);
+		denklestirmeAylar = pdksEntityController.getObjectBySQLList(sb, map, DenklestirmeAy.class);
 		List<Long> dmIdList = new ArrayList<Long>();
 		for (DenklestirmeAy dm : denklestirmeAylar) {
 			dmIdList.add(dm.getId());
@@ -262,7 +262,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 				sb.append(" where S." + Sirket.COLUMN_NAME_PDKS + " = 1");
 				if (session != null)
 					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List sirketList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), parametreMap, Sirket.class);
+				List sirketList = pdksEntityController.getObjectBySQLList(sb, parametreMap, Sirket.class);
 				taseronVar = sirketList.isEmpty() == false;
 				sirketList = null;
 			}
@@ -394,7 +394,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 					fields.put("bitTarih", bitTarih);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					TreeMap<String, Personel> personelMap = pdksEntityController.getTreeMapByList(pdksEntityController.getSQLParamList(siciller, PdksUtil.getStringBuffer(sb), fieldName, fields, Personel.class, session), "getPdksSicilNo", true);
+					TreeMap<String, Personel> personelMap = pdksEntityController.getTreeMapByList(pdksEntityController.getSQLParamList(siciller, sb, fieldName, fields, Personel.class, session), "getPdksSicilNo", true);
 
 					sb = null;
 					if (!personelMap.isEmpty()) {
@@ -422,7 +422,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 						if (session != null)
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 						TreeMap<String, PersonelDenklestirme> bakiyeMap = new TreeMap<String, PersonelDenklestirme>();
-						List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(personelIdler, PdksUtil.getStringBuffer(sb), fieldName, fields, PersonelDenklestirme.class, session);
+						List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, fields, PersonelDenklestirme.class, session);
 						ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 						for (PersonelDenklestirme pd : list)
 							bakiyeMap.put(pd.getSicilNo(), pd);
@@ -434,7 +434,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 							fields.put(fieldName, personelIdler);
 							if (session != null)
 								fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-							list = pdksEntityController.getSQLParamList(personelIdler, PdksUtil.getStringBuffer(sb), fieldName, fields, PersonelDenklestirme.class, session);
+							list = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, fields, PersonelDenklestirme.class, session);
 							ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 							for (PersonelDenklestirme pd : list)
 								bakiySonrakiMap.put(pd.getSicilNo(), pd);
@@ -580,7 +580,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 					fields.put(PdksEntityController.MAP_KEY_MAP, "getPdksSicilNo");
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					TreeMap<String, Personel> personelMap = ortakIslemler.getDataByIdMap(PdksUtil.getStringBuffer(sb), fields, Personel.TABLE_NAME, Personel.class);
+					TreeMap<String, Personel> personelMap = ortakIslemler.getDataByIdMap(sb, fields, Personel.TABLE_NAME, Personel.class);
 					sb = null;
 					if (!personelMap.isEmpty()) {
 						List personelIdler = new ArrayList();
@@ -597,7 +597,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 						fields.put("pId", personelIdler);
 						if (session != null)
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-						TreeMap<String, PersonelDenklestirme> bakiyeMap = ortakIslemler.getDataByIdMap(PdksUtil.getStringBuffer(sb), fields, PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.class);
+						TreeMap<String, PersonelDenklestirme> bakiyeMap = ortakIslemler.getDataByIdMap(sb, fields, PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.class);
 						if (bakiyeMap != null && bakiyeMap.isEmpty() == false)
 							ortakIslemler.setPersonelDenklestirmeDevir(null, new ArrayList<PersonelDenklestirme>(bakiyeMap.values()), session);
 						List<HashMap<Integer, org.apache.poi.ss.usermodel.Cell>> hucreler = new ArrayList<HashMap<Integer, org.apache.poi.ss.usermodel.Cell>>(hucreMap.values());
@@ -800,7 +800,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 				sb.append(" where S." + Sirket.COLUMN_NAME_PDKS + " = 1");
 				if (session != null)
 					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List sirketList = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), parametreMap, Sirket.class);
+				List sirketList = pdksEntityController.getObjectBySQLList(sb, parametreMap, Sirket.class);
 				taseronVar = sirketList.isEmpty() == false;
 				sirketList = null;
 			}

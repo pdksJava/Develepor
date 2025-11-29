@@ -251,7 +251,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 					sb.append("select V.* from " + Personel.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 					sb.append(" where V." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :p");
 					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-					TreeMap<String, Personel> map = pdksEntityController.getObjectBySQLMap(PdksUtil.getStringBuffer(sb), parametreMap, Personel.class, Boolean.FALSE);
+					TreeMap<String, Personel> map = pdksEntityController.getObjectBySQLMap(sb, parametreMap, Personel.class, Boolean.FALSE);
 					boolean renk = false;
 
 					for (int i = 0; i < eskiler.size(); i++) {
@@ -484,7 +484,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 		sb.append(" order by I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI);
 		fields.put("pId", iliskiMap.keySet());
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<PersonelIzin> personelBakiyeIzinler = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), fields, PersonelIzin.class);
+		List<PersonelIzin> personelBakiyeIzinler = pdksEntityController.getObjectBySQLList(sb, fields, PersonelIzin.class);
 		if (!personelBakiyeIzinler.isEmpty()) {
 			List<Long> idler = new ArrayList<Long>();
 			for (PersonelIzin personelIzin : personelBakiyeIzinler)

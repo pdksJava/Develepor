@@ -221,7 +221,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		ArrayList<Personel> tumPersoneller = (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(sb), map, Personel.class);
+		ArrayList<Personel> tumPersoneller = (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(sb, map, Personel.class);
 
 		List<HareketKGS> kgsList = new ArrayList<HareketKGS>();
 		Date tarih1 = null;
