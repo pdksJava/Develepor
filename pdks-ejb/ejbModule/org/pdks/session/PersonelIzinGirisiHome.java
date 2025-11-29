@@ -1616,7 +1616,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		}
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<PersonelIzinOnay> onayList = ortakIslemler.getDataByIdList(PdksUtil.getStringBuffer(builder), parametreMap, PersonelIzinOnay.TABLE_NAME, PersonelIzinOnay.class);
+		List<PersonelIzinOnay> onayList = ortakIslemler.getDataByIdList(builder, parametreMap, PersonelIzinOnay.TABLE_NAME, PersonelIzinOnay.class);
 
 		builder = null;
 		TreeMap<Long, PersonelIzinOnay> personelIzinOnayMap = null;
@@ -1693,7 +1693,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 						parametreMap.put("basDate", basDate);
 						if (session != null)
 							parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-						List<PersonelIzinOnay> list = ortakIslemler.getDataByIdList(PdksUtil.getStringBuffer(builder), parametreMap, PersonelIzinOnay.TABLE_NAME, PersonelIzinOnay.class);
+						List<PersonelIzinOnay> list = ortakIslemler.getDataByIdList(builder, parametreMap, PersonelIzinOnay.TABLE_NAME, PersonelIzinOnay.class);
 						if (!list.isEmpty())
 							personelIzinOnayList.addAll(list);
 						list = null;
@@ -1754,7 +1754,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<OnaylanmamisIzinIKView> list = pdksEntityController.getObjectBySQLList(PdksUtil.getStringBuffer(builder), fields, OnaylanmamisIzinIKView.class);
+			List<OnaylanmamisIzinIKView> list = pdksEntityController.getObjectBySQLList(builder, fields, OnaylanmamisIzinIKView.class);
 			if (!list.isEmpty()) {
 				TreeMap<Long, PersonelIzinOnay> onayMap = new TreeMap<Long, PersonelIzinOnay>();
 				for (OnaylanmamisIzinIKView onaylanmamisIzinIKView : list) {

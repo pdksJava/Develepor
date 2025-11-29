@@ -375,7 +375,7 @@ public class StartupAction implements Serializable {
 					notice = (Notice) noticeList.get(0).clone();
 				else {
 					notice = new Notice();
-					StringBuffer aciklama = new StringBuffer();
+					StringBuilder aciklama = new StringBuilder();
 					for (Iterator iterator = noticeList.iterator(); iterator.hasNext();) {
 						Notice nt = (Notice) iterator.next();
 						if (aciklama.length() > 0)
@@ -442,7 +442,7 @@ public class StartupAction implements Serializable {
 		HashMap fields = new HashMap();
 		List<PdksDinamikRaporRole> list = null;
 		try {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select * from " + PdksDinamikRaporRole.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -455,11 +455,15 @@ public class StartupAction implements Serializable {
 		}
 	}
 
+	/**
+	 * @param session
+	 * @param lockVar
+	 */
 	public void fillParameter(Session session, boolean lockVar) {
 		HashMap fields = new HashMap();
 		List<Parameter> parameterList = null;
 		try {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select * from " + Parameter.TABLE_NAME + (lockVar ? " " + PdksEntityController.getSelectLOCK() : ""));
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);

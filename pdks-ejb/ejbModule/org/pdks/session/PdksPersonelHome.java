@@ -3257,7 +3257,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		izinKartiVardir = map.containsKey("izinKartiVardir");
 		gebeMi = map.containsKey("gebeMi");
 		sutIzni = map.containsKey("sutIzni");
-		kimlikNoGoster = map.containsKey("kimlikNoGoster");
+		kimlikNoGoster = map.containsKey("kimlikNoGoster") && map.get("kimlikNoGoster");
 		ustYonetici = map.containsKey("ustYonetici");
 		icapDurum = map.containsKey("icapDurum");
 		partTimeDurum = map.containsKey("partTimeDurum");

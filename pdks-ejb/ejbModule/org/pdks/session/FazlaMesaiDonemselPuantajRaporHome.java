@@ -53,6 +53,7 @@ import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDenklestirmeBordro;
 import org.pdks.entity.PersonelDenklestirmeBordroDetay;
 import org.pdks.entity.PersonelDenklestirmeDinamikAlan;
+import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
@@ -666,7 +667,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				sb = new StringBuilder();
 				sb.append("select distinct S.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
-				ortakIslemler.addIKSirketTesisKriterleri(fields, sb );
+				ortakIslemler.addIKSirketTesisKriterleri(fields, sb);
 				sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " :" + fieldName);
 				sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 				sb.append(" order by S." + Sirket.COLUMN_NAME_ID);
@@ -688,7 +689,16 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 
 	public String fazlaMesaiExcel() {
 		String donemOrj = (seciliPersonel.getAdSoyad() + " " + seciliPersonel.getPdksSicilNo());
+		DenklestirmeAy puantajBas = null, puantajBit = null;
 		String donem = basYil + " " + PdksUtil.getSelectItemLabel(basAy, donemBas) + " - " + bitYil + " " + PdksUtil.getSelectItemLabel(bitAy, donemBit);
+		if (puantajList != null && puantajList.isEmpty() == false) {
+			puantajBas = puantajList.get(0).getDenklestirmeAy();
+			puantajBit = puantajList.get(puantajList.size() - 1).getDenklestirmeAy();
+			if (puantajBas != null && puantajBit != null)
+				donem = puantajBas.getYil() + " " + puantajBas.getAyAdi() + " - " + puantajBit.getYil() + " " + puantajBit.getAyAdi();
+
+		}
+
 		try {
 			ByteArrayOutputStream baosDosya = fazlaMesaiExcelDevam(donem);
 			if (baosDosya != null) {
@@ -1405,9 +1415,19 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		yasalFazlaCalismaAsanSaat = false;
 		StringBuilder sb = new StringBuilder();
 		HashMap fields = new HashMap();
-		sb.append("select PD.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("with DATA as (");
+		sb.append(" select K." + PersonelKGS.COLUMN_NAME_PERSONEL_ID + " from " + PersonelKGS.TABLE_NAME + " K " + PdksEntityController.getSelectLOCK());
+		sb.append(" where  K." + PersonelKGS.COLUMN_NAME_PERSONEL_ID + " = " + personel.getId());
+//		sb.append(" union ");
+//		sb.append(" select D." + PersonelKGS.COLUMN_NAME_PERSONEL_ID + " from " + PersonelKGS.TABLE_NAME + " K " + PdksEntityController.getSelectLOCK());
+//		sb.append(" inner join " + PersonelKGS.TABLE_NAME + " D ON D." + PersonelKGS.COLUMN_NAME_ACIKLAMA + " = K." + PersonelKGS.COLUMN_NAME_ACIKLAMA);
+//		sb.append(" and D." + PersonelKGS.COLUMN_NAME_KIMLIK_NO + " = K." + PersonelKGS.COLUMN_NAME_KIMLIK_NO + " and D." + PersonelKGS.COLUMN_NAME_KIMLIK_NO + " <>''");
+//		sb.append(" where  K." + PersonelKGS.COLUMN_NAME_PERSONEL_ID + " = " + personel.getId() + " and D." + PersonelKGS.COLUMN_NAME_PERSONEL_ID + " is not null ");
+		sb.append(" ) ");
+ 		sb.append("select PD.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
-		sb.append(" and  PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + "= " + personel.getId());
+		sb.append(" inner join DATA DA " + PdksEntityController.getJoinLOCK() + " on DA." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
+		// sb.append(" and  PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + "= " + personel.getId());
 		personelSQLBagla(sb, fields);
 
 		donemSQLKontrol(sb);
