@@ -727,7 +727,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	 * @return
 	 */
 	private ByteArrayOutputStream fazlaMesaiExcelDevam(String donem) {
-		String donemOrj = (seciliPersonel.getAdSoyad() + " " + seciliPersonel.getPdksSicilNo());
+		String donemOrj = (seciliPersonel.getAdSoyad() + (eskiKayitDurum == false ? " " + seciliPersonel.getPdksSicilNo() : ""));
 		ByteArrayOutputStream baos = null;
 		Workbook wb = new XSSFWorkbook();
 		Sheet sheet = ExcelUtil.createSheet(wb, donem + " Çalışma", Boolean.TRUE);
