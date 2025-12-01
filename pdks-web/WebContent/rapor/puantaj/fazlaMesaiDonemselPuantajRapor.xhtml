@@ -112,8 +112,19 @@
 				</h:panelGrid>
 				<a4j:outputPanel id="denklestirmeDonemiTable">
 					<c:if test="#{fazlaMesaiDonemselPuantajRaporHome.bolumler.size()>0}">
-						<a4j:commandButton action="#{fazlaMesaiDonemselPuantajRaporHome.personelDoldur()}" value="Personel Getir" reRender="denklestirmeDonemiTable"
-							onclick="#{rich:component('wait')}.show()" oncomplete="#{rich:component('wait')}.hide()" />
+						<h:panelGrid columns="1">
+							<a4j:commandButton action="#{fazlaMesaiDonemselPuantajRaporHome.personelDoldur()}" value="Personel Getir" reRender="denklestirmeDonemiTable"
+								onclick="#{rich:component('wait')}.show()" oncomplete="#{rich:component('wait')}.hide()" />
+							<s:decorate template="/layout/edit.xhtml" rendered="#{not empty fazlaMesaiDonemselPuantajRaporHome.personelList}">
+								<ui:define name="label">Tüm Geçmişi Göster</ui:define>
+								<h:selectBooleanCheckbox value="#{fazlaMesaiDonemselPuantajRaporHome.eskiKayitGetir}">
+									<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{fazlaMesaiDonemselPuantajRaporHome.puantajList.clear()}"
+										reRender="editPanel" />
+								</h:selectBooleanCheckbox>
+							</s:decorate>
+
+						</h:panelGrid>
+
 					</c:if>
 
 					<ui:fragment rendered="#{not empty fazlaMesaiDonemselPuantajRaporHome.personelList}">
@@ -210,7 +221,9 @@
 									<p style="text-align: center;">
 										#{ortakIslemler.getSelectItemText(fazlaMesaiDonemselPuantajRaporHome.bolumId,fazlaMesaiDonemselPuantajRaporHome.bolumler)}
 										<ui:fragment rendered="#{not empty fazlaMesaiDonemselPuantajRaporHome.ekSaha4Tanim != null}"> #{ortakIslemler.getSelectItemText(fazlaMesaiDonemselPuantajRaporHome.seciliEkSaha4Id,fazlaMesaiDonemselPuantajRaporHome.altBolumList)}</ui:fragment>
-										- #{fazlaMesaiDonemselPuantajRaporHome.seciliPersonel.pdksSicilNo} #{fazlaMesaiDonemselPuantajRaporHome.seciliPersonel.adSoyad}
+										<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.eskiKayitDurum == false}">	- #{fazlaMesaiDonemselPuantajRaporHome.seciliPersonel.pdksSicilNo}
+									</ui:fragment>
+										#{fazlaMesaiDonemselPuantajRaporHome.seciliPersonel.adSoyad}
 									</p>
 								</DIV>
 								<br></br>
@@ -232,6 +245,9 @@
 										<tr class="rich-table-subheader">
 											<th></th>
 											<th>Dönem</th>
+											<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.eskiKayitDurum}">
+												<th style="width: 30px">#{ortakIslemler.personelNoAciklama()}</th>
+											</ui:fragment>
 											<th style="width: 30px"><h:outputText value="#{ortakIslemler.calismaModeliAciklama()}" /></th>
 											<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.fazlaMesaiOde}">
 												<th style="width: 30px"><h:outputText value="FM Öde" /></th>
@@ -455,6 +471,9 @@
 												<td class="#{ap.trClass}" style="width: 30px"></td>
 
 												<td class="#{ap.trClass}" style="width: 50px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold;"></td>
+												<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.eskiKayitDurum}">
+													<td class="#{ap.trClass}" style="width: 30px"></td>
+												</ui:fragment>
 												<td class="#{ap.trClass}" style="width: 30px"></td>
 												<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.fazlaMesaiOde}">
 													<td class="#{ap.trClass}" style="width: 30px"></td>
@@ -603,7 +622,16 @@
 												<td nowrap="nowrap" class="#{ap.trClass}"
 													style="width: 50px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold;"><b>#{ap.denklestirmeAy.ayAdi}
 														#{ap.denklestirmeAy.yil}</b></td>
+												<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.eskiKayitDurum}">
+													<td class="#{ap.trClass}" style="width: 30px"><ui:fragment
+															rendered="#{fazlaMesaiDonemselPuantajRaporHome.seciliPersonel.id eq ap.personelDenklestirme.pdksPersonel.id}">
+															<b><h:outputText value="#{ap.personelDenklestirme.pdksPersonel.pdksSicilNo}" /></b>
+														</ui:fragment> <ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.seciliPersonel.id ne ap.personelDenklestirme.pdksPersonel.id}">
+															<h:outputText value="#{ap.personelDenklestirme.pdksPersonel.pdksSicilNo}" />
+														</ui:fragment></td>
+												</ui:fragment>
 												<td class="#{ap.trClass}" style="width: 50px; font-family: Arial, Verdana, sans-serif; font-size: 11px;">#{ap.calismaModeli.aciklama}</td>
+
 												<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.fazlaMesaiOde}">
 													<td class="#{ap.trClass}" style="width: 30px"><ui:fragment rendered="#{ap.personelDenklestirme.fazlaMesaiOde == false}">
 															<h:outputText value="#{authenticatedUser.getYesNo(ap.personelDenklestirme.fazlaMesaiOde)}" />

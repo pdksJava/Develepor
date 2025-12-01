@@ -56,6 +56,7 @@ public class Personel extends BaseObject {
 	public static final String COLUMN_NAME_EK_SAHA4 = "EK_SAHA4_ID";
 	public static final String COLUMN_NAME_AD = "AD";
 	public static final String COLUMN_NAME_SOYAD = "SOYAD";
+	public static final String COLUMN_NAME_AD_SOYAD = "AD_SOYAD";
 	public static final String COLUMN_NAME_SUA_OLABILIR = "SUA_OLABILIR";
 	public static final String COLUMN_NAME_FAZLA_MESAI_ODE = "FAZLA_MESAI_ODE";
 	public static final String COLUMN_NAME_SANAL_PERSONEL = "SANAL_PERSONEL";
