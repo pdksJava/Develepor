@@ -1483,20 +1483,18 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 					PersonelDenklestirme pd = (PersonelDenklestirme) iterator.next();
 					Personel personel2 = pd.getPdksPersonel();
-					if (seciliPersonel.getId().equals(personel2.getId()))
-						continue;
-					Sirket sirket2 = personel2.getSirket();
-					if (sirket.getId().equals(sirket2.getId()) || (sirket.getSirketGrup() != null && sirket2.getSirketGrup() != null && sirket.getSirketGrup().getId().equals(sirket2.getSirketGrup()))) {
-						if (!perIdList.contains(personel2.getId())) {
+					if (!perIdList.contains(personel2.getId())) {
+						Sirket sirket2 = personel2.getSirket();
+						if (sirket.getId().equals(sirket2.getId()) || (sirket.getSirketGrup() != null && sirket2.getSirketGrup() != null && sirket.getSirketGrup().getId().equals(sirket2.getSirketGrup().getId()))) {
 							if (personel2.getIseBaslamaTarihi().before(b1))
 								b1 = personel2.getIseBaslamaTarihi();
 							if (personel2.getSskCikisTarihi().after(b2))
 								b2 = personel2.getSskCikisTarihi();
 							perIdList.add(personel2.getId());
 							perList.add(personel2);
-						}
-					} else
-						iterator.remove();
+ 						} else
+							iterator.remove();
+					}
 				}
 			}
 
@@ -1512,8 +1510,8 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			if (perIdList.size() == 1)
 				sb.append(" and  PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + "= " + seciliPersonel.getId());
 			else {
-				sb.append(" and  PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :l ");
-				fields.put("l", perIdList);
+				sb.append(" and  PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :pg ");
+				fields.put("pg", perIdList);
 			}
 			personelSQLBagla(kimlikNo, sb, fields);
 			if (session != null)
