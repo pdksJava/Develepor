@@ -12613,15 +12613,9 @@ public class OrtakIslemler implements Serializable {
 		try {
 			list = pdksEntityController.execSPList(map, TatilGunView.SP_NAME, TatilGunView.class);
 		} catch (Exception e) {
-			String sp = "SP_GET_TATIL_GUN";
-			if (isExisStoreProcedure(sp, session) == false) {
-				try {
-					list = pdksEntityController.execSPList(map, sp, TatilGunView.class);
-				} catch (Exception e2) {
-					logger.equals(e);
-					e.printStackTrace();
-				}
-			}
+
+			logger.equals(e);
+			e.printStackTrace();
 
 		}
 
