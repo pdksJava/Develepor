@@ -115,7 +115,7 @@
 						<h:panelGrid columns="1">
 							<a4j:commandButton action="#{fazlaMesaiDonemselPuantajRaporHome.personelDoldur()}" value="Personel Getir" reRender="denklestirmeDonemiTable"
 								onclick="#{rich:component('wait')}.show()" oncomplete="#{rich:component('wait')}.hide()" />
-							<s:decorate template="/layout/edit.xhtml" rendered="#{not empty fazlaMesaiDonemselPuantajRaporHome.personelList}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiDonemselPuantajRaporHome.eskiKayitGoster}">
 								<ui:define name="label">Tüm Geçmişi Göster</ui:define>
 								<h:selectBooleanCheckbox value="#{fazlaMesaiDonemselPuantajRaporHome.eskiKayitGetir}">
 									<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{fazlaMesaiDonemselPuantajRaporHome.puantajList.clear()}"

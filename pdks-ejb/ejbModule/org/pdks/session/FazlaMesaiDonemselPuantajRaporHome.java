@@ -113,7 +113,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	private Boolean normalCalismaGunKod = Boolean.FALSE, haftaTatilCalismaGunKod = Boolean.FALSE, resmiTatilCalismaGunKod = Boolean.FALSE, izinSureGunKod = Boolean.FALSE, ucretliIzinGunKod = Boolean.FALSE, ucretsizIzinGunKod = Boolean.FALSE, hastalikIzinGunKod = Boolean.FALSE;
 	private Boolean normalGunKod = Boolean.FALSE, haftaTatilGunKod = Boolean.FALSE, resmiTatilGunKod = Boolean.FALSE, artikGunKod = Boolean.FALSE, bordroToplamGunKod = Boolean.FALSE, devredenMesaiKod = Boolean.FALSE, ucretiOdenenKod = Boolean.FALSE;
 	private Boolean suaDurum = Boolean.FALSE, sutIzniDurum = Boolean.FALSE, gebeDurum = Boolean.FALSE, partTime = Boolean.FALSE, vardiyaAdiEkle = false;
-	private Boolean eskiKayitGetir = Boolean.FALSE, eskiKayitDurum = Boolean.FALSE;
+	private Boolean eskiKayitGoster = Boolean.FALSE, eskiKayitGetir = Boolean.FALSE, eskiKayitDurum = Boolean.FALSE;
 	private List<Tanim> denklestirmeDinamikAlanlar;
 	private HashMap<String, List<Tanim>> ekSahaListMap;
 	private TreeMap<String, Boolean> baslikMap;
@@ -504,6 +504,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	public String personelDoldur() {
 		eskiKayitGetir = Boolean.FALSE;
 		eskiKayitDurum = Boolean.FALSE;
+		eskiKayitGoster = Boolean.FALSE;
 		personelList.clear();
 		puantajList.clear();
 		StringBuilder sb = new StringBuilder();
@@ -539,6 +540,8 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 					Date tarih = PdksUtil.convertToJavaDate(String.valueOf(bitYil * 100 + bitAy) + "01", "yyyyMMdd");
 					for (Iterator iterator = personelList.iterator(); iterator.hasNext();) {
 						Personel personel = (Personel) iterator.next();
+						if (eskiKayitGoster == false && personel.getPersonelKGS() != null)
+							eskiKayitGoster = PdksUtil.hasStringValue(personel.getPersonelKGS().getKimlikNo());
 						if (!personel.isCalisiyorGun(tarih)) {
 							ayrilanlar.add(personel);
 							iterator.remove();
@@ -1434,7 +1437,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		sb.append(" DATA as (  ");
 		sb.append(" select K." + Personel.COLUMN_NAME_ID + " from PER_DATA K " + PdksEntityController.getSelectLOCK());
 		String kimlikNo = null;
-		if (eskiKayitGetir) {
+		if (eskiKayitGoster && eskiKayitGetir) {
 			kimlikNo = seciliPersonel.getPersonelKGS() != null ? seciliPersonel.getPersonelKGS().getKimlikNo() : null;
 			if (PdksUtil.hasStringValue(kimlikNo) && kimlikNo.length() > 5) {
 				fields.put("k", kimlikNo);
@@ -1471,22 +1474,30 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		boolean sirketFazlaMesaiOde = sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde();
 		if (!list.isEmpty()) {
 			List<Personel> perList = new ArrayList<Personel>();
-			perList.add(seciliPersonel);
 			List<Long> perIdList = new ArrayList<Long>();
+			perList.add(seciliPersonel);
 			perIdList.add(seciliPersonel.getId());
 			Date b1 = seciliPersonel.getIseBaslamaTarihi().after(basTarih) ? seciliPersonel.getIseBaslamaTarihi() : basTarih;
 			Date b2 = seciliPersonel.getSskCikisTarihi().after(bitTarih) ? bitTarih : seciliPersonel.getSskCikisTarihi();
-			for (PersonelDenklestirme pd : list) {
-				Personel personel2 = pd.getPdksPersonel();
-				if (!perIdList.contains(personel2.getId())) {
-					if (personel2.getIseBaslamaTarihi().before(b1))
-						b1 = personel2.getIseBaslamaTarihi();
-					if (personel2.getSskCikisTarihi().after(b2))
-						b2 = personel2.getSskCikisTarihi();
-					perIdList.add(personel2.getId());
-					perList.add(personel2);
+			if (eskiKayitGetir) {
+				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+					PersonelDenklestirme pd = (PersonelDenklestirme) iterator.next();
+					Personel personel2 = pd.getPdksPersonel();
+					if (seciliPersonel.getId().equals(personel2.getId()))
+						continue;
+					Sirket sirket2 = personel2.getSirket();
+					if (sirket.getId().equals(sirket2.getId()) || (sirket.getSirketGrup() != null && sirket2.getSirketGrup() != null && sirket.getSirketGrup().getId().equals(sirket2.getSirketGrup()))) {
+						if (!perIdList.contains(personel2.getId())) {
+							if (personel2.getIseBaslamaTarihi().before(b1))
+								b1 = personel2.getIseBaslamaTarihi();
+							if (personel2.getSskCikisTarihi().after(b2))
+								b2 = personel2.getSskCikisTarihi();
+							perIdList.add(personel2.getId());
+							perList.add(personel2);
+						}
+					} else
+						iterator.remove();
 				}
-
 			}
 
 			ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
@@ -2534,6 +2545,14 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 
 	public void setEskiKayitDurum(Boolean eskiKayitDurum) {
 		this.eskiKayitDurum = eskiKayitDurum;
+	}
+
+	public Boolean getEskiKayitGoster() {
+		return eskiKayitGoster;
+	}
+
+	public void setEskiKayitGoster(Boolean eskiKayitGoster) {
+		this.eskiKayitGoster = eskiKayitGoster;
 	}
 
 }
