@@ -5760,6 +5760,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		boolean istifaGosterDurum = istifaGoster && (ikRole || mailGonder);
 		if (istifaGosterDurum)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Durum");
+		TreeMap<String, String> izinGrupMap = ortakIslemler.getIzinGrupMap(session);
 		for (Iterator iter = list.iterator(); iter.hasNext();) {
 			AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
 
@@ -5841,6 +5842,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							styleDay = styleOff;
 						cell = ExcelUtil.getCell(sheet, row, col++, styleDay);
 						String aciklama = !help || calisan(vardiyaGun) ? vardiyaGun.getFazlaMesaiOzelAciklama(Boolean.TRUE, userLogin.sayiFormatliGoster(vardiyaGun.getCalismaSuresi())) : "";
+						if (vardiyaGun.getIzin() != null) {
+							IzinTipi izinTipi = vardiyaGun.getIzin().getIzinTipi();
+							BordroDetayTipi izinBordroDetayTipi = ortakIslemler.getBordroDetayTipi(izinTipi, izinGrupMap);
+							if (izinBordroDetayTipi != null && izinBordroDetayTipi.equals(BordroDetayTipi.UCRETLI_IZIN) == false)
+								aciklama = izinTipi.getKisaAciklama();
+						}
 						String title = !help || calisan(vardiyaGun) ? vardiyaGun.getTitle() : null;
 						if (title != null) {
 							if (vardiyaGun.getVardiya() != null && (vardiyaGun.getCalismaSuresi() > 0 || (vardiyaGun.getVardiya().isCalisma() && styleGenel == styleCalisma)))

@@ -1546,7 +1546,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							if (vardiyaGun.getVardiyaSaatDB() != null && vardiyaGun.getDurum()) {
 								VardiyaSaat vardiyaSaatDB = vardiyaGun.getVardiyaSaatDB();
 								aksamVardiyaSayisi += (int) vardiyaSaatDB.getAksamVardiyaSaatSayisi();
- 								if (aksamGun == false)
+								if (aksamGun == false)
 									aksamGun = aksamVardiyaSayisi > 0;
 								vardiyaGun.setPlanHareketEkle(false);
 								vardiyaGun.setHareketler(null);
@@ -2546,6 +2546,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		int sira = 0;
 		double maxSure = denklestirmeAy.getFazlaMesaiMaxSure() != null ? denklestirmeAy.getFazlaMesaiMaxSure() : 11.0d;
 		Date bugun = PdksUtil.getDate(new Date());
+		TreeMap<String, String> izinGrupMap = ortakIslemler.getIzinGrupMap(session);
 		for (Iterator iter = list.iterator(); iter.hasNext();) {
 			AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
 			Personel personel = aylikPuantaj.getPdksPersonel();
@@ -2680,7 +2681,15 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 						cell = ExcelUtil.getCell(sheet, row, col++, styleDay);
 						if (!onayHata) {
+							if (vardiyaGun.getVardiyaDateStr().endsWith("30"))
+								logger.debug("");
 							aciklama = !help || calisan(vardiyaGun) ? vardiyaGun.getFazlaMesaiOzelAciklama(Boolean.TRUE, authenticatedUser.sayiFormatliGoster(sure)) : "";
+							if (vardiyaGun.getIzin() != null) {
+								IzinTipi izinTipi = vardiyaGun.getIzin().getIzinTipi();
+								BordroDetayTipi izinBordroDetayTipi = ortakIslemler.getBordroDetayTipi(izinTipi, izinGrupMap);
+								if (izinBordroDetayTipi != null && izinBordroDetayTipi.equals(BordroDetayTipi.UCRETLI_IZIN) == false)
+									aciklama = izinTipi.getKisaAciklama();
+							}
 							if (vardiya != null) {
 								if (aciklama.equals("0")) {
 									if (vardiya.isCalisma() == false || vardiyaGun.getTatil() != null || vardiyaGun.isIzinli())
