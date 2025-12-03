@@ -1646,7 +1646,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (bitTarih.getTime() >= basTarih.getTime()) {
 				List<Long> personeller = new ArrayList<Long>();
 				personeller.add(personel.getId());
-				List<VardiyaGun> list = ortakIslemler.getAllPersonelIdVardiyalar(personeller, basTarih, bitTarih, false, session);
+				List<VardiyaGun> list = ortakIslemler.getAllPersonelIdVardiyalar(personeller, null, basTarih, bitTarih, false, session);
 				for (VardiyaGun vg : list) {
 					vardiyaGunMap.put(vg.getVardiyaDateStr(), vg);
 				}
@@ -6364,7 +6364,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					personelIdler.add(aylikPuantaj.getPdksPersonel().getId());
 				}
 			if (!personelIdler.isEmpty()) {
-				List<VardiyaGun> vardiyaGunler = ortakIslemler.getAllPersonelIdVardiyalar(personelIdler, seciliVardiyaGun.getVardiyaDate(), seciliVardiyaGun.getVardiyaDate(), false, session);
+				List<VardiyaGun> vardiyaGunler = ortakIslemler.getAllPersonelIdVardiyalar(personelIdler, null, seciliVardiyaGun.getVardiyaDate(), seciliVardiyaGun.getVardiyaDate(), false, session);
 				for (VardiyaGun vardiyaGun : vardiyaGunler) {
 					seciliVardiyaGun.setYarimYuvarla(vardiyaGun.getFazlaMesaiYuvarla());
 					break;
@@ -6813,7 +6813,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					TreeMap<String, VardiyaGun> yeniVardiyaMap = null;
 					if (denklestirmeAyDurum) {
 						try {
-							vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), Boolean.FALSE, session);
+							vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, null, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), Boolean.FALSE, session);
 							List<Long> olmayanPerList = new ArrayList<Long>(perIdler);
 							for (VardiyaGun vardiyaGun : vardiyaGunList) {
 								vardiyaGun.setAyinGunu(vardiyaGun.getVardiyaDateStr().startsWith(donem));
@@ -6827,18 +6827,18 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								List<Personel> perYeniList = new ArrayList<Personel>();
 								for (Long key : olmayanPerList)
 									perYeniList.add(perKeyMap.get(key));
-								yeniVardiyaMap = ortakIslemler.getVardiyalar(perYeniList,null, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), izinMap, true, session, false);
+								yeniVardiyaMap = ortakIslemler.getVardiyalar(perYeniList, null, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), izinMap, true, session, false);
 								tekrarOku = true;
 								if (!yeniVardiyaMap.isEmpty())
-									vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), Boolean.FALSE, session);
+									vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, null, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), Boolean.FALSE, session);
 								perYeniList = null;
 
 							}
 						} catch (Exception e) {
-							vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), Boolean.FALSE, session);
+							vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, null, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), Boolean.FALSE, session);
 						}
 					} else
-						vardiyaGunList = ortakIslemler.getPersonelIdVardiyalar(perIdler, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), null, session);
+						vardiyaGunList = ortakIslemler.getPersonelIdVardiyalar(perIdler, null, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), null, session);
 					if (yeniVardiyaMap == null)
 						yeniVardiyaMap = new TreeMap<String, VardiyaGun>();
 					if (testDurum)
