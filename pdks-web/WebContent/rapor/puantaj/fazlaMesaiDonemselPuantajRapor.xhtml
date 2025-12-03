@@ -624,14 +624,14 @@
 													style="width: 50px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold;"><b>#{ap.denklestirmeAy.ayAdi}
 														#{ap.denklestirmeAy.yil}</b></td>
 												<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.eskiKayitDurum}">
-													<td class="#{ap.trClass}" style="width: 30px"><ui:fragment
+													<td class="#{ap.trClass}" style="width: 30px;text-align: center;"><ui:fragment
 															rendered="#{fazlaMesaiDonemselPuantajRaporHome.seciliPersonel.id eq ap.personelDenklestirme.pdksPersonel.id}">
 															<b><h:outputText value="#{ap.personelDenklestirme.pdksPersonel.pdksSicilNo}" /></b>
 														</ui:fragment> <ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.seciliPersonel.id ne ap.personelDenklestirme.pdksPersonel.id}">
 															<h:outputText value="#{ap.personelDenklestirme.pdksPersonel.pdksSicilNo}" />
 														</ui:fragment></td>
 												</ui:fragment>
-												<td class="#{ap.trClass}" style="width: 50px; font-family: Arial, Verdana, sans-serif; font-size: 11px;">#{ap.calismaModeli.aciklama}</td>
+												<td class="#{ap.trClass}" style="width: 50px; font-family: Arial, Verdana, sans-serif; font-size: 11px;" nowrap="nowrap">#{ap.calismaModeli.aciklama}</td>
 
 												<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.fazlaMesaiOde}">
 													<td class="#{ap.trClass}" style="width: 30px"><ui:fragment rendered="#{ap.personelDenklestirme.fazlaMesaiOde == false}">
