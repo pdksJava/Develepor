@@ -22251,7 +22251,7 @@ public class OrtakIslemler implements Serializable {
 		HashMap<Long, List<PersonelIzin>> izinMap = denklestirmeIzinleriOlustur(denklestirmeDonemi, personeller, session);
 		try {
 			Date bugun = new Date();
-			TreeMap<String, VardiyaGun> vardiyaMap = getVardiyalar(personeller, null, aylikPuantajDefault.getIlkGun(), aylikPuantajDefault.getSonGun(), null, false, session, false);
+			TreeMap<String, VardiyaGun> vardiyaMap = getVardiyalar(personeller, tatilGunleriMap, aylikPuantajDefault.getIlkGun(), aylikPuantajDefault.getSonGun(), null, false, session, false);
 			List<PersonelIzin> izinler = new ArrayList<PersonelIzin>();
 			for (PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici : perDenkList) {
 				String perNo = personelDenklestirmeTasiyici.getPersonel().getPdksSicilNo();

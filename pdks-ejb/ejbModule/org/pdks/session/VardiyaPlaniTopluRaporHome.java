@@ -1348,12 +1348,9 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 
 				}
 
-				Date basTarih = PdksUtil.convertToJavaDate(String.valueOf(yil * 100 + ay) + "01", "yyyyMMdd");
-				Date bitTarih = PdksUtil.tariheAyEkleCikar(basTarih, 1);
-				TreeMap<String, Tatil> tatilMap = ortakIslemler.getTatilGunleri(null, PdksUtil.tariheGunEkleCikar(basTarih, -1), bitTarih, session);
 				if (bordroPuantajEkranindaGoster)
 					fazlaMesaiOrtakIslemler.setAylikPuantajBordroVeri(puantajDenklestirmeList, session);
-				bordroVeriOlusturBasla(puantajDenklestirmeList, tatilMap);
+				bordroVeriOlusturBasla(puantajDenklestirmeList, tatilGunleriMap);
 				if (!(authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()) && yasalFazlaCalismaAsanSaat)
 					yasalFazlaCalismaAsanSaat = ortakIslemler.getParameterKey("yasalFazlaCalismaAsanSaat").equals("1");
 

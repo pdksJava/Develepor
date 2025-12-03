@@ -6838,10 +6838,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 							}
 						} catch (Exception e) {
-							vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, null, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), Boolean.FALSE, session);
+							vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, tatilGunleriMap, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), Boolean.FALSE, session);
 						}
 					} else
-						vardiyaGunList = ortakIslemler.getPersonelIdVardiyalar(perIdler, null, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), null, session);
+						vardiyaGunList = ortakIslemler.getPersonelIdVardiyalar(perIdler, tatilGunleriMap, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), null, session);
 					if (yeniVardiyaMap == null)
 						yeniVardiyaMap = new TreeMap<String, VardiyaGun>();
 					if (testDurum)
