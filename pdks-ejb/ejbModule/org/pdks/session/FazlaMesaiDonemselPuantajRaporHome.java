@@ -1478,27 +1478,36 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			List<Long> perIdList = new ArrayList<Long>();
 			perList.add(seciliPersonel);
 			perIdList.add(seciliPersonel.getId());
-			Date b1 = seciliPersonel.getIseBaslamaTarihi().after(basTarih) ? seciliPersonel.getIseBaslamaTarihi() : basTarih;
-			Date b2 = seciliPersonel.getSskCikisTarihi().after(bitTarih) ? bitTarih : seciliPersonel.getSskCikisTarihi();
-			if (eskiKayitGetir) {
-				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-					PersonelDenklestirme pd = (PersonelDenklestirme) iterator.next();
-					Personel personel2 = pd.getPdksPersonel();
+			Date b1 = null;
+			Date b2 = null;
+			Calendar cal = Calendar.getInstance();
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				PersonelDenklestirme pd = (PersonelDenklestirme) iterator.next();
+				Personel personel2 = pd.getPdksPersonel();
+
+				if (eskiKayitGetir) {
 					if (!perIdList.contains(personel2.getId())) {
 						Sirket sirket2 = personel2.getSirket();
 						if (sirket.getId().equals(sirket2.getId()) || (sirket.getSirketGrup() != null && sirket2.getSirketGrup() != null && sirket.getSirketGrup().getId().equals(sirket2.getSirketGrup().getId()))) {
-							if (personel2.getIseBaslamaTarihi().before(b1))
-								b1 = personel2.getIseBaslamaTarihi();
-							if (personel2.getSskCikisTarihi().after(b2))
-								b2 = personel2.getSskCikisTarihi();
 							perIdList.add(personel2.getId());
 							perList.add(personel2);
-						} else
+						} else {
 							iterator.remove();
+							continue;
+						}
+
 					}
 				}
-			}
+				DenklestirmeAy da = pd.getDenklestirmeAy();
 
+				cal.set(Calendar.DATE, 1);
+				cal.set(Calendar.MONTH, da.getAy() - 1);
+				cal.set(Calendar.YEAR, da.getYil());
+				if (b1 == null)
+					b1 = PdksUtil.getDate(cal.getTime());
+				cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+				b2 = PdksUtil.getDate(cal.getTime());
+			}
 			ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 			fields.clear();
 			sb = new StringBuilder();
@@ -1530,16 +1539,16 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				kismiOdemeGoster = ((BigDecimal) data[4]).doubleValue() > 0d;
 			}
 			List<AylikPuantaj> dataList = new ArrayList<AylikPuantaj>();
-			Calendar cal = Calendar.getInstance();
-
+			logger.debug("fillBilgileriDoldur 3000 " + PdksUtil.getCurrentTimeStampStr());
+			TreeMap<String, Tatil> tatilMap = ortakIslemler.getTatilGunleri(null, b1, b2, session);
 			TreeMap<String, VardiyaGun> vardiyaMap = null;
 			try {
-				vardiyaMap = ortakIslemler.getVardiyalar(perList, ortakIslemler.tariheGunEkleCikar(cal, b1, -6), ortakIslemler.tariheGunEkleCikar(cal, b2, 6), null, Boolean.FALSE, session, Boolean.FALSE);
+				vardiyaMap = ortakIslemler.getVardiyalar(perList, tatilMap, ortakIslemler.tariheGunEkleCikar(cal, b1, -6), ortakIslemler.tariheGunEkleCikar(cal, b2, 6), null, Boolean.FALSE, session, Boolean.FALSE);
 
 			} catch (Exception e) {
 				vardiyaMap = new TreeMap<String, VardiyaGun>();
 			}
-			TreeMap<String, Tatil> tatilMap = ortakIslemler.getTatilGunleri(perList, b1, b2, session);
+
 			int sonGun = 0;
 			Date bugun = new Date();
 			boolean renk = Boolean.TRUE;

@@ -241,7 +241,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					Calendar cal = Calendar.getInstance();
 					List<Personel> personeller = new ArrayList<Personel>();
 					personeller.add(izinSahibi);
-					TreeMap<String, VardiyaGun> vardiyalar = ortakIslemler.getVardiyalar(personeller, ortakIslemler.tariheGunEkleCikar(cal, yilBasiIzin.getBaslangicZamani(), -7), ortakIslemler.tariheGunEkleCikar(cal, yilBasiIzin.getBitisZamani(), 1), null, Boolean.FALSE, session, Boolean.TRUE);
+					TreeMap<String, VardiyaGun> vardiyalar = ortakIslemler
+							.getVardiyalar(personeller, null, ortakIslemler.tariheGunEkleCikar(cal, yilBasiIzin.getBaslangicZamani(), -7), ortakIslemler.tariheGunEkleCikar(cal, yilBasiIzin.getBitisZamani(), 1), null, Boolean.FALSE, session, Boolean.TRUE);
 					try {
 						Date guncellemeTarihi = new Date();
 						Tatil tatil = tatilMap.get(key);

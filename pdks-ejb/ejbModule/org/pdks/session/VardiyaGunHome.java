@@ -6827,7 +6827,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								List<Personel> perYeniList = new ArrayList<Personel>();
 								for (Long key : olmayanPerList)
 									perYeniList.add(perKeyMap.get(key));
-								yeniVardiyaMap = ortakIslemler.getVardiyalar(perYeniList, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), izinMap, true, session, false);
+								yeniVardiyaMap = ortakIslemler.getVardiyalar(perYeniList,null, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), izinMap, true, session, false);
 								tekrarOku = true;
 								if (!yeniVardiyaMap.isEmpty())
 									vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), Boolean.FALSE, session);

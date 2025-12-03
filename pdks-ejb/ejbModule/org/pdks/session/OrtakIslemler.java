@@ -9063,7 +9063,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	private List<VardiyaGun> denklestirmeVardiyalariGetir(DepartmanDenklestirmeDonemi denklestirmeDonemi, ArrayList<Personel> perList, HashMap<Long, List<PersonelIzin>> izinMap, boolean zamanGuncelle, Session session) throws Exception {
 		Calendar cal = Calendar.getInstance();
-		TreeMap<String, VardiyaGun> vardiyaMap = getVardiyalar((List<Personel>) perList.clone(), denklestirmeDonemi.getBaslangicTarih(), tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), izinMap, Boolean.FALSE, session, Boolean.FALSE);
+		TreeMap<String, VardiyaGun> vardiyaMap = getVardiyalar((List<Personel>) perList.clone(),null, denklestirmeDonemi.getBaslangicTarih(), tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), izinMap, Boolean.FALSE, session, Boolean.FALSE);
 		List<VardiyaGun> vardiyaDblar = new ArrayList<VardiyaGun>(vardiyaMap.values());
 
 		return vardiyaDblar;
@@ -13753,7 +13753,7 @@ public class OrtakIslemler implements Serializable {
 	public TreeMap<String, VardiyaGun> getIslemVardiyalar(List<Personel> personeller, Date baslamaTarih, Date bitisTarih, boolean veriYaz, Session session, boolean zamanGuncelle) throws Exception {
 		Calendar cal = Calendar.getInstance();
 		HashMap<Long, List<PersonelIzin>> izinMap = getPersonelIzinMap(getBaseObjectIdList(personeller), tariheGunEkleCikar(cal, baslamaTarih, -1), tariheGunEkleCikar(cal, bitisTarih, 1), session);
-		TreeMap<String, VardiyaGun> vardiyaMap = getVardiyalar(personeller, tariheGunEkleCikar(cal, baslamaTarih, -3), tariheGunEkleCikar(cal, bitisTarih, 3), izinMap, veriYaz, session, zamanGuncelle);
+		TreeMap<String, VardiyaGun> vardiyaMap = getVardiyalar(personeller, null, tariheGunEkleCikar(cal, baslamaTarih, -3), tariheGunEkleCikar(cal, bitisTarih, 3), izinMap, veriYaz, session, zamanGuncelle);
 		fazlaMesaiSaatiAyarla(vardiyaMap);
 		Long id = null;
 		Date tarih1 = null, tarih2 = null;
@@ -13808,6 +13808,7 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param personeller
+	 * @param tatillerMap
 	 * @param baslamaTarih
 	 * @param bitisTarih
 	 * @param izinMap
@@ -13818,7 +13819,7 @@ public class OrtakIslemler implements Serializable {
 	 * @throws Exception
 	 */
 	@Transactional
-	public TreeMap<String, VardiyaGun> getVardiyalar(List<Personel> personeller, Date baslamaTarih, Date bitisTarih, HashMap<Long, List<PersonelIzin>> izinMap, boolean veriYaz, Session session, boolean zamanGuncelle) throws Exception {
+	public TreeMap<String, VardiyaGun> getVardiyalar(List<Personel> personeller, TreeMap<String, Tatil> tatillerMap, Date baslamaTarih, Date bitisTarih, HashMap<Long, List<PersonelIzin>> izinMap, boolean veriYaz, Session session, boolean zamanGuncelle) throws Exception {
 		if (izinMap == null)
 			izinMap = getPersonelIzinMap(getBaseObjectIdList(personeller), baslamaTarih, bitisTarih, session);
 		List saveList = new ArrayList();
@@ -13835,7 +13836,8 @@ public class OrtakIslemler implements Serializable {
 		if (izinMap == null)
 			izinMap = !personelIdler.isEmpty() ? getPersonelIzinMap(personelIdler, baslamaTarih, bitisTarih, session) : new HashMap<Long, List<PersonelIzin>>();
 		TreeMap<String, VardiyaGun> vardiyaIstenen = new TreeMap<String, VardiyaGun>(), vardiyaMap = new TreeMap<String, VardiyaGun>();
-		TreeMap<String, Tatil> tatillerMap = getTatilGunleri(personeller, tariheAyEkleCikar(cal, baslamaTarih, -1), tariheAyEkleCikar(cal, bitisTarih, 1), session);
+		if (tatillerMap == null)
+			tatillerMap = getTatilGunleri(personeller, tariheAyEkleCikar(cal, baslamaTarih, -1), tariheAyEkleCikar(cal, bitisTarih, 1), session);
 		List<String> tarihList = new ArrayList<String>();
 		for (String key : tatillerMap.keySet()) {
 			Tatil tatil = tatillerMap.get(key);
@@ -22244,7 +22246,7 @@ public class OrtakIslemler implements Serializable {
 		HashMap<Long, List<PersonelIzin>> izinMap = denklestirmeIzinleriOlustur(denklestirmeDonemi, personeller, session);
 		try {
 			Date bugun = new Date();
-			TreeMap<String, VardiyaGun> vardiyaMap = getVardiyalar(personeller, aylikPuantajDefault.getIlkGun(), aylikPuantajDefault.getSonGun(), null, false, session, false);
+			TreeMap<String, VardiyaGun> vardiyaMap = getVardiyalar(personeller,null, aylikPuantajDefault.getIlkGun(), aylikPuantajDefault.getSonGun(), null, false, session, false);
 			List<PersonelIzin> izinler = new ArrayList<PersonelIzin>();
 			for (PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici : perDenkList) {
 				String perNo = personelDenklestirmeTasiyici.getPersonel().getPdksSicilNo();
