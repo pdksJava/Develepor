@@ -247,11 +247,11 @@
 											<th></th>
 											<th>Dönem</th>
 											<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.eskiKayitDurum}">
-												<th style="width: 30px">#{ortakIslemler.personelNoAciklama()}</th>
+												<th style="width: 30px" nowrap="nowrap">#{ortakIslemler.personelNoAciklama()}</th>
 											</ui:fragment>
-											<th style="width: 30px"><h:outputText value="#{ortakIslemler.calismaModeliAciklama()}" /></th>
+											<th style="width: 30px" nowrap="nowrap"><h:outputText value="#{ortakIslemler.calismaModeliAciklama()}" /></th>
 											<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.fazlaMesaiOde}">
-												<th style="width: 30px"><h:outputText value="FM Öde" /></th>
+												<th style="width: 30px" nowrap="nowrap"><h:outputText value="FM Öde" /></th>
 											</ui:fragment>
 											<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.fazlaMesaiIzinKullan}">
 												<th style="width: 30px"><h:outputText value="#{ortakIslemler.fmIzinKullanAciklama()}" /></th>
@@ -260,10 +260,10 @@
 												<th style="width: 30px"><h:outputText value="Şua" /></th>
 											</ui:fragment>
 											<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.gebeDurum}">
-												<th style="width: 30px"><h:outputText value="Gebe" /></th>
+												<th style="width: 30px" nowrap="nowrap"><h:outputText value="Gebe" /></th>
 											</ui:fragment>
 											<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.sutIzniDurum}">
-												<th style="width: 30px"><h:outputText value="Süt İzni" /></th>
+												<th style="width: 30px" nowrap="nowrap"><h:outputText value="Süt İzni" /></th>
 											</ui:fragment>
 											<ui:fragment rendered="#{fazlaMesaiDonemselPuantajRaporHome.partTime}">
 												<th style="width: 30px"><h:outputText value="Part Time" /></th>
