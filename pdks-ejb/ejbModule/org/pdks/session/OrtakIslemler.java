@@ -1677,7 +1677,7 @@ public class OrtakIslemler implements Serializable {
 			HashMap fields = new HashMap();
 			StringBuilder sb = new StringBuilder();
 			sb.append("select D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100+D." + DenklestirmeAy.COLUMN_NAME_AY + " >= " + donem + " and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1 ");
+			sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " >= " + donem + " and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1 ");
 			List<DenklestirmeAy> list = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
 			if (!list.isEmpty()) {
 				List<VardiyaGun> fazlaCalismalar = new ArrayList<VardiyaGun>();
@@ -2479,9 +2479,9 @@ public class OrtakIslemler implements Serializable {
 				ilkDonem = sistemBaslangicYili + ilkDonem;
 		}
 		if (PdksUtil.hasStringValue(ilkDonem))
-			sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100) + D." + DenklestirmeAy.COLUMN_NAME_AY + ")>=" + ilkDonem);
+			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " >=" + ilkDonem);
 		fields.put("y", yil);
-		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_AY);
+		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		TreeMap<Integer, DenklestirmeAy> ayMap = pdksEntityController.getObjectBySQLMap(sb, fields, DenklestirmeAy.class, true);
@@ -9831,7 +9831,7 @@ public class OrtakIslemler implements Serializable {
 			cal.setTime(tarih1);
 			StringBuilder sb = new StringBuilder();
 			sb.append("select " + DenklestirmeAy.COLUMN_NAME_ID + " from " + DenklestirmeAy.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
-			sb.append(" where ( " + DenklestirmeAy.COLUMN_NAME_YIL + " * 100 ) + " + DenklestirmeAy.COLUMN_NAME_AY + " BETWEEN :d1 and :d2");
+			sb.append(" where " + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " BETWEEN :d1 and :d2");
 			fields.put("d1", Long.parseLong(PdksUtil.convertToDateString(tarih1, "yyyyMM")));
 			fields.put("d2", Long.parseLong(PdksUtil.convertToDateString(tarih2 == null ? tarih1 : tarih2, "yyyyMM")));
 			if (session != null)
@@ -13861,7 +13861,7 @@ public class OrtakIslemler implements Serializable {
 			sb.append(") ");
 			sb.append(" select T.TARIH,P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join TATILLER T " + PdksEntityController.getJoinLOCK() + " on 1=1  ");
-			sb.append(" inner join " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getJoinLOCK() + " on D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100+D." + DenklestirmeAy.COLUMN_NAME_AY + " = T.DONEM and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1 ");
+			sb.append(" inner join " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getJoinLOCK() + " on D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " = T.DONEM and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1 ");
 			sb.append(" left join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on D." + DenklestirmeAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " and PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " = P."
 					+ Personel.COLUMN_NAME_ID);
 			sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on (CA.ID=PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " or (D." + DenklestirmeAy.COLUMN_NAME_ID + " = CA." + CalismaModeliAy.COLUMN_NAME_DONEM + " and CA."
@@ -14647,8 +14647,8 @@ public class OrtakIslemler implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct P." + VardiyaGun.COLUMN_NAME_ID + " from " + PersonelDenklestirme.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getJoinLOCK() + " on P." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
-		sb.append(" and (D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+D." + DenklestirmeAy.COLUMN_NAME_AY + " >= " + PdksUtil.convertToDateString(basTarih, "yyyyMM"));
-		sb.append(" and (D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+D." + DenklestirmeAy.COLUMN_NAME_AY + " <= " + PdksUtil.convertToDateString(bitTarih, "yyyyMM"));
+		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " >= " + PdksUtil.convertToDateString(basTarih, "yyyyMM"));
+		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= " + PdksUtil.convertToDateString(bitTarih, "yyyyMM"));
 		sb.append(" where P." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :p ");
 		map.put("p", perIdList);
 		if (session != null)

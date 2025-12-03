@@ -544,18 +544,18 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		sb.append("select D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
 		String str = " where";
 		if (basTarih != null) {
-			sb.append(str + " (D." + DenklestirmeAy.COLUMN_NAME_YIL + " * 100 + D." + DenklestirmeAy.COLUMN_NAME_AY + " >= :b1)");
+			sb.append(str + " D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " >= :b1)");
 			int b1 = Integer.parseInt(PdksUtil.convertToDateString(basTarih, "yyyyMM"));
 			fields.put("b1", b1);
 			str = " and ";
 		}
 		if (bitTarih != null) {
-			sb.append(str + " (D." + DenklestirmeAy.COLUMN_NAME_YIL + " * 100 + D." + DenklestirmeAy.COLUMN_NAME_AY + " <= :b2)");
+			sb.append(str + " D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= :b2)");
 			int b2 = Integer.parseInt(PdksUtil.convertToDateString(bitTarih, "yyyyMM"));
 			fields.put("b2", b2);
 			str = " and ";
 		}
-		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_AY);
+		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<DenklestirmeAy> list = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
@@ -1330,7 +1330,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0 ");
 		if (donemYil == maxYil) {
-			sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ") <= :s");
+			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= :s");
 			fields.put("s", sonDonem);
 		}
 		String ilkDonem = ortakIslemler.getParameterKey("ilkMaasDonemi");
@@ -1825,7 +1825,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						if (denklestirmeOrganizasyon.getId() == null || denklestirmeOrganizasyon.isDegisti()) {
 							pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeOrganizasyon);
 							flush = true;
- 						}
+						}
 						if (orgMap.containsKey(personelDenklestirmeId))
 							orgMap.remove(personelDenklestirmeId);
 						if (denklestirmeOrganizasyon.getId() != null) {
@@ -2829,7 +2829,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :a2 ");
 				fields.put("a2", basTarih);
 			}
-			ortakIslemler.addIKSirketTesisKriterleri(fields,sb);
+			ortakIslemler.addIKSirketTesisKriterleri(fields, sb);
 			sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
 			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 

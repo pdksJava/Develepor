@@ -40,12 +40,13 @@ public class DenklestirmeAy extends BaseObject {
 	public static final String COLUMN_NAME_RADYOLOJI_GUN_MAX_SURESI = "RADYOLOJI_GUN_MAX_SURESI";
 	public static final String COLUMN_NAME_DENKLESTIRME_TIPI = "DENKLESTIRME_TIPI";
 	public static final String COLUMN_NAME_TASERON_DENKLESTIRME_TIPI = "TASERON_DENKLESTIRME_TIPI";
-
+	public static final String COLUMN_NAME_DONEM_KODU = "DONEM_KODU";
 	private int ay, yil;
 	private Integer denklestirmeTipi, taseronDenklestirmeTipi;
 	private DenklestirmeTipi tipi, taseronTipi;
 	private double sure = 0, toplamIzinSure = 0;
 	private Double yemekMolasiYuzdesi, fazlaMesaiMaxSure, radyolojiFazlaMesaiMaxSure;
+	private Long donemKodu;
 
 	private Date otomatikOnayIKTarih, otomatikOnayIKBaslangicTarih, basTarih, bitTarih;
 	private String ayAdi = "", trClass;
@@ -81,6 +82,15 @@ public class DenklestirmeAy extends BaseObject {
 		this.yil = value;
 		if (value >= PdksUtil.getSistemBaslangicYili())
 			donemGuncelle();
+	}
+
+	@Column(name = COLUMN_NAME_DONEM_KODU, insertable = false, updatable = false)
+	public Long getDonemKodu() {
+		return donemKodu;
+	}
+
+	public void setDonemKodu(Long donemKodu) {
+		this.donemKodu = donemKodu;
 	}
 
 	@Column(name = COLUMN_NAME_DENKLESTIRME_TIPI)
@@ -353,7 +363,7 @@ public class DenklestirmeAy extends BaseObject {
 
 	@Transient
 	public long getDonem() {
-		long donem = yil * 100 + ay;
+		long donem = donemKodu != null ? donemKodu : yil * 100 + ay;
 		return donem;
 	}
 

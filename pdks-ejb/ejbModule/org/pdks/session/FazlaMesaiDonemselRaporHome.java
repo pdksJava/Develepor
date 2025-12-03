@@ -193,7 +193,7 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 			ortakIslemler.addIKSirketTesisKriterleri(fields, sb);
 			sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0 ");
-			sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ") <= :s");
+			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= :s");
 			if (basAy != null) {
 				sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_AY + " >= :d1");
 				fields.put("d1", basAy);
@@ -238,7 +238,7 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct PD.* from " + DenklestirmeAy.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where PD." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y");
-		sb.append(" and ((PD." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ PD." + DenklestirmeAy.COLUMN_NAME_AY + ") <= :s");
+		sb.append(" and PD." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= :s");
 		sb.append(" order by PD." + DenklestirmeAy.COLUMN_NAME_AY);
 		fields.put("y", yil);
 		fields.put("s", sonDonem);

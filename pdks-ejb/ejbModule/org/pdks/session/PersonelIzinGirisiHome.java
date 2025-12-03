@@ -2704,7 +2704,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		HashMap fields = new HashMap();
 		StringBuilder sb = new StringBuilder();
 		sb.append("with DENKAY as ( ");
-		sb.append(" select " + DenklestirmeAy.COLUMN_NAME_YIL + "*100+" + DenklestirmeAy.COLUMN_NAME_AY + " as DONEM,* from " + DenklestirmeAy.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append(" select " + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " as DONEM,* from " + DenklestirmeAy.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append("	 where " + DenklestirmeAy.COLUMN_NAME_DURUM + " = 0");
 		sb.append(" ) ");
 		sb.append(" select PD.* from DENKAY D " + PdksEntityController.getSelectLOCK() + " ");

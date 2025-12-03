@@ -973,7 +973,7 @@
 												disabled="#{pdksPersonelHome.instance.id != null and pdksPersonelHome.instance.sirket.erp and pdksPersonelHome.personelERPGuncelleme != '1' and pdksPersonelHome.personelERPGuncelleme != 'M' and pdksPersonelHome.instance.sanalPersonel == false}"
 												required="#{pdksPersonelHome.izinGirisiVar and pdksPersonelHome.instance.sanalPersonel == false}"
 												requiredMessage="#{ortakIslemler.kidemBasTarihiAciklama()}ni seçiniz">
-												<a4j:support event="onchanged" action="#{pdksPersonelHome.bakiyeDurumKontrolEt(pdksPersonelHome.instance)}" ajaxSingle="true"
+												<a4j:support event="onchanged" action="#{pdksPersonelHome. bakiyeIzinDurumKontrol()}" ajaxSingle="true"
 													reRender="sirketDegisti" />
 											</rich:calendar>
 										</s:decorate>
@@ -1305,7 +1305,7 @@
 											<s:decorate template="/layout/edit.xhtml" rendered="#{pdksPersonelHome.instance.sirket.izinKartiVardir}">
 												<ui:define name="label">İzin Kartı Var</ui:define>
 												<h:selectBooleanCheckbox value="#{pdksPersonelHome.instance.izinKartiVar}">
-													<a4j:support event="onclick" action="#{pdksPersonelHome.bakiyeDurumKontrolEt(pdksPersonelHome.instance)}" ajaxSingle="true"
+													<a4j:support event="onclick" action="#{pdksPersonelHome. bakiyeIzinDurumKontrol()}" ajaxSingle="true"
 														reRender="sirketDegisti" />
 												</h:selectBooleanCheckbox>
 											</s:decorate>

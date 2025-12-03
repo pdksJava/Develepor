@@ -175,7 +175,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private Boolean ustYonetici = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, suaOlabilir = Boolean.FALSE, izinKartiVardir = Boolean.FALSE, egitimDonemi = Boolean.FALSE, partTimeDurum = Boolean.FALSE, tesisDurum = Boolean.FALSE;
 	private Boolean emailCCDurum = Boolean.FALSE, emailBCCDurum = Boolean.FALSE, taseronKulaniciTanimla = Boolean.FALSE, manuelTanimla = Boolean.FALSE, ikinciYoneticiManuelTanimla = Boolean.FALSE;
 	private Boolean onaysizIzinKullanilir = Boolean.FALSE, departmanGoster = Boolean.FALSE, kartNoGoster = Boolean.FALSE, ikinciYoneticiIzinOnayla = Boolean.FALSE, izinGirisiVar = Boolean.FALSE, dosyaGuncellemeYetki = Boolean.FALSE;
-	private Boolean ekSaha1Disable, ekSaha2Disable, ekSaha4Disable, transferAciklamaCiftKontrol, bakiyeIzinGoster = Boolean.FALSE, gebeSecim = Boolean.FALSE, personelTipiGoster = Boolean.FALSE;
+	private Boolean ekSaha1Disable, ekSaha2Disable, ekSaha4Disable, transferAciklamaCiftKontrol, bakiyeIzinDurum = Boolean.FALSE, bakiyeIzinGoster = Boolean.FALSE, gebeSecim = Boolean.FALSE, personelTipiGoster = Boolean.FALSE;
 	public Boolean disableAdviseNodeOpened, organizasyonSemasiGoster = Boolean.FALSE, bakiyeTakipEdiliyor = Boolean.FALSE, onayMailDurum = Boolean.FALSE, iseGelmemeMailDurum = Boolean.FALSE;
 	private TreeMap<Long, PersonelKGS> personelKGSMap;
 	private int COL_SICIL_NO, COL_ADI, COL_SOYADI, COL_SIRKET_KODU, COL_SIRKET_ADI, COL_TESIS_KODU, COL_TESIS_ADI, COL_GOREV_KODU, COL_GOREVI, COL_BOLUM_KODU, COL_BOLUM_ADI;
@@ -1746,10 +1746,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * @param pdksDurum
 	 */
 	public void kayitGuncelle(PersonelView personelView, boolean pdksDurum) {
-
+		bakiyeIzinDurum = Boolean.FALSE;
 		bakiyeIzinGoster = Boolean.FALSE;
 		PersonelKGS personelKGS = personelView.getPersonelKGS();
-
 		parentBordroTanim = null;
 		izinGirisiVar = Boolean.FALSE;
 		HashMap fields = new HashMap();
@@ -2051,8 +2050,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		}
 		PersonelIzin izin = null;
 		try {
-			bakiyeDurumKontrolEt(pdksPersonel);
-
+			bakiyeIzinDurumKontrol();
 			if (bakiyeIzinGoster) {
 				Departman departman = pdksPersonel.getSirket() != null ? pdksPersonel.getSirket().getDepartman() : null;
 				if (pdksPersonel.getId() != null)
@@ -2103,13 +2101,14 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (iseGelmemeMailDurum)
 			iseGelmemeMailDurum = ortakIslemler.getParameterKey("yoneticiMailGonderme").equals("0");
 		mailAdresDurumGuncelle(departman);
+		bakiyeIzinDurumKontrol();
 	}
 
 	/**
 	 * @param pdksPersonel
 	 * @return
 	 */
-	public String bakiyeDurumKontrolEt(Personel pdksPersonel) {
+	private String bakiyeDurumKontrolEt(Personel pdksPersonel) {
 		bakiyeIzinGoster = false;
 		if (pdksPersonel.getIseGirisTarihi() != null && pdksPersonel.getIzinKartiVar()) {
 			try {
@@ -2126,6 +2125,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					bakiyeIzinGoster = (pdksPersonel.getGrubaGirisTarihi() != null && pdksPersonel.getGrubaGirisTarihi().before(pdksPersonel.getIseGirisTarihi())) || (pdksPersonel.getIzinHakEdisTarihi() != null && pdksPersonel.getIzinHakEdisTarihi().after(pdksPersonel.getIseGirisTarihi()));
 			}
 		}
+
 		return "";
 	}
 
@@ -3341,6 +3341,31 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 	}
 
+	public String bakiyeIzinDurumKontrol() {
+		Personel pdksPersonel = getInstance();
+		bakiyeDurumKontrolEt(pdksPersonel);
+		if (bakiyeIzinDurum && bakiyeIzinGoster == false && pdksPersonel.getSirket() != null) {
+			if (bakiyeIzinSuresi == null || bakiyeIzinSuresi <= 0.0d) {
+				if (pdksPersonel.getIzinHakEdisTarihi() != null && pdksPersonel.getIseBaslamaTarihi() != null) {
+					Sirket sirket = pdksPersonel.getSirket();
+					if (pdksPersonel.getIzinHakEdisTarihi().before(pdksPersonel.getIseBaslamaTarihi()))
+						bakiyeIzinGoster = true;
+					else if (sirket != null && sirket.getBakiyeDevirSonTarih() != null) {
+						if (pdksPersonel.getIzinHakEdisTarihi().before(sirket.getBakiyeDevirSonTarih()))
+							bakiyeIzinGoster = true;
+					}
+				}
+
+			} else
+				bakiyeIzinGoster = true;
+
+		}
+		if (bakiyeIzinDurum == false)
+			bakiyeIzinGoster = false;
+
+		return "";
+	}
+
 	/**
 	 * @param tanimOku
 	 */
@@ -3365,8 +3390,10 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		mailAdresDurumGuncelle(departman);
 		bolumDepartmanlari = departman != null && !departman.isAdminMi() ? ortakIslemler.getBolumDepartmanlari(departman, session) : null;
 		gorevDepartmanlari = departman != null && !departman.isAdminMi() ? ortakIslemler.getGorevDepartmanlari(departman, session) : null;
-		if (departman != null)
-			bakiyeIzinGoster = getBakiyeDeparmanIzinDurum(departman);
+		if (departman != null) {
+			bakiyeIzinDurum = getBakiyeDeparmanIzinDurum(departman);
+			bakiyeIzinGoster = bakiyeIzinDurum;
+		}
 
 		if (pdksPersonel.getId() == null && sirket != null) {
 			if (sirket.getPdks()) {
@@ -3431,6 +3458,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		fillPdksCalismaModeliList();
 		cinsiyetDegisti();
 		ekSahaDisable();
+		bakiyeIzinDurumKontrol();
+
 	}
 
 	/**
@@ -3461,6 +3490,12 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 */
 	private boolean getBakiyeDeparmanIzinDurum(Departman personelDepartman) {
 		boolean durum = ortakIslemler.getParameterKeyHasStringValue("bakiyeIzinGoster");
+		if (durum == false) {
+			Personel pdksPersonel = getInstance();
+			if (pdksPersonel.getSirket() != null)
+				durum = pdksPersonel.getSirket().getBakiyeDevirSonTarih() != null;
+		}
+
 		if (durum && personelDepartman != null) {
 			HashMap parametreMap = new HashMap();
 			StringBuilder sb = new StringBuilder();
@@ -6275,6 +6310,14 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 	public void setIseGelmemeMailDurum(Boolean iseGelmemeMailDurum) {
 		this.iseGelmemeMailDurum = iseGelmemeMailDurum;
+	}
+
+	public Boolean getBakiyeIzinDurum() {
+		return bakiyeIzinDurum;
+	}
+
+	public void setBakiyeIzinDurum(Boolean bakiyeIzinDurum) {
+		this.bakiyeIzinDurum = bakiyeIzinDurum;
 	}
 
 }

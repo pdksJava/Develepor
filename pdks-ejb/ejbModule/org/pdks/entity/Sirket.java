@@ -1,16 +1,20 @@
 package org.pdks.entity;
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.pdks.session.PdksUtil;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.session.PdksUtil;
 
 @Entity(name = Sirket.TABLE_NAME)
 public class Sirket extends BaseObject {
@@ -37,6 +41,7 @@ public class Sirket extends BaseObject {
 	public static final String COLUMN_NAME_IS_ARAMA_GUNLUK_SAAT = "IS_ARAMA_GUNLUK_SAAT";
 	public static final String COLUMN_NAME_ERP_DATABASE_ADI = "ERP_DATABASE_ADI";
 	public static final String COLUMN_NAME_ERP_DATABASE_KODU = "ERP_DATABASE_KODU";
+	public static final String COLUMN_NAME_BAKIYE_DEVIR_SON_TARIH = "BAKIYE_DEVIR_SON_TARIH";
 	public static final String SP_NAME_SP_ERP_VIEW_ALTER_CREATE = "SP_ERP_VIEW_ALTER_CREATE";
 
 	public static final String SIRKET_ERP_KODU = "3030";
@@ -48,6 +53,7 @@ public class Sirket extends BaseObject {
 	private Boolean fazlaMesaiOde = Boolean.FALSE, fazlaMesai = Boolean.FALSE, istenAyrilmaTarihindeCalisiyor = Boolean.FALSE;
 	private Boolean fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiTalepGirilebilir = Boolean.FALSE, izinKartiVar = Boolean.FALSE, gebelikSutIzin = Boolean.FALSE;
 	private Tanim sirketGrup;
+	private Date bakiyeDevirSonTarih;
 	private Double isAramaGunlukSaat = 0.0d;
 	private Departman departman;
 	private Integer version = 0;
@@ -282,6 +288,16 @@ public class Sirket extends BaseObject {
 
 	public void setGebelikSutIzin(Boolean gebelikSutIzin) {
 		this.gebelikSutIzin = gebelikSutIzin;
+	}
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = COLUMN_NAME_BAKIYE_DEVIR_SON_TARIH)
+	public Date getBakiyeDevirSonTarih() {
+		return bakiyeDevirSonTarih;
+	}
+
+	public void setBakiyeDevirSonTarih(Date bakiyeDevirSonTarih) {
+		this.bakiyeDevirSonTarih = bakiyeDevirSonTarih;
 	}
 
 	@Transient

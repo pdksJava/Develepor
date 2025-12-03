@@ -330,7 +330,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 					sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + sirketId);
 					sb.append(" inner join " + Tanim.TABLE_NAME + " TE " + PdksEntityController.getJoinLOCK() + " on TE." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_TESIS);
 					donemSQLKontrol(sb);
-					sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ") <= :s");
+					sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= :s");
 					fields.put("s", sonDonem);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -387,7 +387,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				}
 				sb.append(" inner join " + Tanim.TABLE_NAME + " BO " + PdksEntityController.getJoinLOCK() + " on BO." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_EK_SAHA3);
 				donemSQLKontrol(sb);
-				sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ") <= :s");
+				sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= :s");
 
 				fields.put("s", sonDonem);
 				if (session != null)
@@ -464,7 +464,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				sb.append(" inner join " + Tanim.TABLE_NAME + " BO " + PdksEntityController.getJoinLOCK() + " on BO." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_EK_SAHA3);
 			sb.append(" inner join " + Tanim.TABLE_NAME + " AB " + PdksEntityController.getJoinLOCK() + " on AB." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_EK_SAHA4);
 			donemSQLKontrol(sb);
-			sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ") <= :s");
+			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= :s");
 
 			fields.put("s", sonDonem);
 			if (session != null)
@@ -529,7 +529,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 					sb.append(" and S." + Sirket.COLUMN_NAME_SIRKET_GRUP + " = " + sirket.getSirketGrup().getId());
 				}
 				donemSQLKontrol(sb);
-				sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ") <= :s");
+				sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= :s");
 				fields.put("s", sonDonem);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -582,7 +582,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			personelSQLBagla(null, sb, fields);
 			ortakIslemler.addIKSirketTesisKriterleri(fields, sb);
 			donemSQLKontrol(sb);
-			sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+" + DenklestirmeAy.COLUMN_NAME_AY + ")<=" + sonDonem);
+			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <=" + sonDonem);
 			sb.append(" order by S." + Sirket.COLUMN_NAME_ID);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -619,8 +619,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		sb.append("select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " ON D." + DenklestirmeAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_DONEM);
 		sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1");
-		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y");
-		sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ D." + DenklestirmeAy.COLUMN_NAME_AY + ") <= :s");
+		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= :s");
 		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0");
 		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 0");
 		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_AY);
@@ -649,9 +648,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		HashMap fields = new HashMap();
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" where ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ D." + DenklestirmeAy.COLUMN_NAME_AY + ") >= :y1");
-		sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ D." + DenklestirmeAy.COLUMN_NAME_AY + ") <= :y2");
-		sb.append(" and ((D." + DenklestirmeAy.COLUMN_NAME_YIL + "*100)+ D." + DenklestirmeAy.COLUMN_NAME_AY + ") <= :s");
+		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " >= :y1");
+		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + "  <= :y2");
+		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + "  <= :s");
 		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0");
 		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 0");
 		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_AY);
@@ -1457,9 +1456,11 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		sb.append(" inner join DATA DA " + PdksEntityController.getJoinLOCK() + " on DA." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 		// sb.append(" and  PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + "= " + personel.getId());
 		personelSQLBagla(kimlikNo, sb, fields);
+		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " >= year( " + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " ) * 100 + month(" + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " ) ");
+		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= year( " + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " ) * 100 + month(" + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " ) ");
 
 		donemSQLKontrol(sb);
-		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_YIL + ", D." + DenklestirmeAy.COLUMN_NAME_AY);
+		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU);
 		if (kimlikNo != null)
 			sb.append(", PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 		if (session != null)
@@ -1492,7 +1493,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 								b2 = personel2.getSskCikisTarihi();
 							perIdList.add(personel2.getId());
 							perList.add(personel2);
- 						} else
+						} else
 							iterator.remove();
 					}
 				}
@@ -1514,6 +1515,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				fields.put("pg", perIdList);
 			}
 			personelSQLBagla(kimlikNo, sb, fields);
+			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " >= year( " + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " ) * 100 + month(" + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " ) ");
+			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= year( " + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " ) * 100 + month(" + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " ) ");
+
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<Object[]> list2 = pdksEntityController.getObjectBySQLList(sb, fields, null);
@@ -1877,8 +1881,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		} else {
 			int donem1 = basYil * 100 + (basAy != null ? basAy : 1);
 			int donem2 = bitYil * 100 + (bitAy != null ? bitAy : 12);
-			sb.append(" where (100 * D." + DenklestirmeAy.COLUMN_NAME_YIL + " + D." + DenklestirmeAy.COLUMN_NAME_AY + " ) > = " + donem1);
-			sb.append(" and (100 * D." + DenklestirmeAy.COLUMN_NAME_YIL + " + D." + DenklestirmeAy.COLUMN_NAME_AY + " ) < = " + donem2);
+			sb.append(" where  D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " > = " + donem1 + " and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + "  < = " + donem2);
 		}
 
 		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 0");
