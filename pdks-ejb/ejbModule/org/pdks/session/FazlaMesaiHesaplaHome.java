@@ -210,6 +210,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private HashMap<Long, List<HareketKGS>> ciftBolumCalisanHareketMap = new HashMap<Long, List<HareketKGS>>();
 	private HashMap<Long, Personel> ciftBolumCalisanMap = new HashMap<Long, Personel>();
 	private List<HareketKGS> hareketler = new ArrayList<HareketKGS>();
+	private TreeMap<String, Tatil> tatilGunleriMap;
 	private Date bugun;
 	private User userLogin;
 	private Session session;
@@ -1115,13 +1116,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 		denklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
 		denklestirmeAyDurum = fazlaMesaiOrtakIslemler.getDurum(denklestirmeAy);
+		tatilGunleriMap = null;
 		if (denklestirmeAy != null) {
 			try {
 				if (denklestirmeAy.getFazlaMesaiMaxSure() == null)
 					fazlaMesaiOrtakIslemler.setFazlaMesaiMaxSure(denklestirmeAy, session);
 				DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
+				denklestirmeDonemi.setTatilGunleriMap(new TreeMap<String, Tatil>());
 				AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, denklestirmeDonemi, session);
-
 				aylikPuantaj.setLoginUser(authenticatedUser);
 				denklestirmeDonemi.setLoginUser(authenticatedUser);
 				denklestirmeDonemi.setDenklestirmeAy(denklestirmeAy);
@@ -1415,8 +1417,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				map.clear();
 
 				List<Personel> perListesi = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, perList, Personel.class, session);
-
-				TreeMap<String, Tatil> tatilGunleriMap = ortakIslemler.getTatilGunleri(perListesi, ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBaslangicTarih(), -1), ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), session);
+ 				tatilGunleriMap = ortakIslemler.getTatilGunleri(perListesi, ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBaslangicTarih(), -1), ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), session);
+				denklestirmeDonemi.setTatilGunleriMap(tatilGunleriMap);
 				boolean ayBitmedi = denklestirmeDonemi.getBitisTarih().getTime() >= PdksUtil.getDate(bugun).getTime();
 				List<PersonelDenklestirmeTasiyici> list = null;
 				if (testDurum)
@@ -1430,6 +1432,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						sessionClear();
 						denklestirmeDonemi.setDurum(Boolean.FALSE);
 						tatilGunleriMap = ortakIslemler.getTatilGunleri(perListesi, ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBaslangicTarih(), -1), ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), session);
+						denklestirmeDonemi.setTatilGunleriMap(tatilGunleriMap);
 						list = ortakIslemler.personelDenklestir(denklestirmeDonemi, tatilGunleriMap, searchKey, perList, Boolean.TRUE, Boolean.FALSE, ayBitmedi, session);
 
 					}
@@ -1448,7 +1451,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 				boolean renk = Boolean.TRUE;
 				aylikPuantajSablon = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, denklestirmeDonemi, session);
-
+				tatilGunleriMap = denklestirmeDonemi.getTatilGunleriMap();
 				List<VardiyaHafta> vardiyaHaftaList = new ArrayList<VardiyaHafta>();
 				fazlaMesaiOrtakIslemler.haftalikVardiyaOlustur(vardiyaHaftaList, aylikPuantajSablon, denklestirmeDonemi, tatilGunleriMap, null);
 				if (denklestirmeAyDurum && vardiyaHaftaList != null && vardiyaHaftaList.size() > 4) {
@@ -8130,6 +8133,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	public void setResmiTatilKanunenEklenenSureGoster(boolean resmiTatilKanunenEklenenSureGoster) {
 		this.resmiTatilKanunenEklenenSureGoster = resmiTatilKanunenEklenenSureGoster;
+	}
+
+	public TreeMap<String, Tatil> getTatilGunleriMap() {
+		return tatilGunleriMap;
+	}
+
+	public void setTatilGunleriMap(TreeMap<String, Tatil> tatilGunleriMap) {
+		this.tatilGunleriMap = tatilGunleriMap;
 	}
 
 }

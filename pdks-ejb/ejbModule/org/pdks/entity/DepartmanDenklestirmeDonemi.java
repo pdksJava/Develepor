@@ -36,6 +36,8 @@ public class DepartmanDenklestirmeDonemi extends BaseObject {
 	private Integer version = 0;
 
 	private DenklestirmeAy denklestirmeAy;
+	
+ 
 
 	private Boolean denklestirmeAyDurum = Boolean.FALSE;
 

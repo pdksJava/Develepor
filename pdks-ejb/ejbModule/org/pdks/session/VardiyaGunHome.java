@@ -6545,7 +6545,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			aylikPuantajListClear();
 			List<VardiyaGun> aylikSablonVardiyalar = new ArrayList<VardiyaGun>();
 			gunSec = Boolean.FALSE;
+			TreeMap<String, Tatil> tatilGunleriTmpMap = new TreeMap<String, Tatil>();
 			DepartmanDenklestirmeDonemi denklestirmeDonemiGecenAy = new DepartmanDenklestirmeDonemi();
+			denklestirmeDonemiGecenAy.setTatilGunleriMap(tatilGunleriTmpMap);
 			HashMap fields = new HashMap();
 
 			if (aramaSecenekleri.getSirketId() != null) {
@@ -6811,9 +6813,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					HashMap<Long, List<PersonelIzin>> izinMap = ortakIslemler.getPersonelIzinMap(perIdler, ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemiGecenAy.getBaslangicTarih(), -2), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 1), session);
 
 					TreeMap<String, VardiyaGun> yeniVardiyaMap = null;
+					tatilGunleriMap = ortakIslemler.getTatilGunleri(personelList, denklestirmeDonemiGecenAy.getBaslangicTarih(), bitTarih, session);
 					if (denklestirmeAyDurum) {
 						try {
-							vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, null, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), Boolean.FALSE, session);
+							vardiyaGunList = ortakIslemler.getAllPersonelIdVardiyalar(perIdler, tatilGunleriMap, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -7), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 7), Boolean.FALSE, session);
 							List<Long> olmayanPerList = new ArrayList<Long>(perIdler);
 							for (VardiyaGun vardiyaGun : vardiyaGunList) {
 								vardiyaGun.setAyinGunu(vardiyaGun.getVardiyaDateStr().startsWith(donem));
@@ -7030,7 +7033,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					perMap = null;
 					if (testDurum)
 						logger.info("aylikPuantajOlusturuluyor 6000 " + PdksUtil.getCurrentTimeStampStr());
-					tatilGunleriMap = ortakIslemler.getTatilGunleri(personelList, denklestirmeDonemiGecenAy.getBaslangicTarih(), bitTarih, session);
 
 					fazlaMesaiOrtakIslemler.haftalikVardiyaOlustur(vardiyaHaftaList, gecenAylikPuantajSablon, denklestirmeDonemiGecenAy, tatilGunleriMap, null);
 

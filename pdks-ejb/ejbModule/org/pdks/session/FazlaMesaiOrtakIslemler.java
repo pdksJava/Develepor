@@ -3303,8 +3303,12 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			}
 
 		}
+		TreeMap<String, Tatil> tatilGunleriMap = denklestirmeDonemi.getTatilGunleriMap();
+		if (tatilGunleriMap == null) {
+			tatilGunleriMap = ortakIslemler.getTatilGunleri(null, denklestirmeDonemi.getBaslangicTarih(), denklestirmeDonemi.getBitisTarih(), session);
+			denklestirmeDonemi.setTatilGunleriMap(tatilGunleriMap);
+		}
 
-		TreeMap<String, Tatil> tatilGunleriMap = ortakIslemler.getTatilGunleri(null, denklestirmeDonemi.getBaslangicTarih(), denklestirmeDonemi.getBitisTarih(), session);
 		List<VardiyaGun> vardiyaGunList = aylikPuantaj.getVardiyalar();
 		for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 			VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();

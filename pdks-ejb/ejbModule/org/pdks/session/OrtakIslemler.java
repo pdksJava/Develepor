@@ -9063,7 +9063,8 @@ public class OrtakIslemler implements Serializable {
 	 */
 	private List<VardiyaGun> denklestirmeVardiyalariGetir(DepartmanDenklestirmeDonemi denklestirmeDonemi, ArrayList<Personel> perList, HashMap<Long, List<PersonelIzin>> izinMap, boolean zamanGuncelle, Session session) throws Exception {
 		Calendar cal = Calendar.getInstance();
-		TreeMap<String, VardiyaGun> vardiyaMap = getVardiyalar((List<Personel>) perList.clone(), null, denklestirmeDonemi.getBaslangicTarih(), tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), izinMap, Boolean.FALSE, session, Boolean.FALSE);
+		TreeMap<String, Tatil> tatillerMap = denklestirmeDonemi != null ? denklestirmeDonemi.getTatilGunleriMap() : null;
+		TreeMap<String, VardiyaGun> vardiyaMap = getVardiyalar((List<Personel>) perList.clone(), tatillerMap, denklestirmeDonemi.getBaslangicTarih(), tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), izinMap, Boolean.FALSE, session, Boolean.FALSE);
 		List<VardiyaGun> vardiyaDblar = new ArrayList<VardiyaGun>(vardiyaMap.values());
 
 		return vardiyaDblar;
@@ -9407,7 +9408,8 @@ public class OrtakIslemler implements Serializable {
 	public List<PersonelDenklestirmeTasiyici> personelDenklestir(DepartmanDenklestirmeDonemi denklestirmeDonemi, TreeMap<String, Tatil> tatilGunleriMap, String searchKey, Object value, boolean pdks, boolean zamanGuncelle, boolean tarihHareketEkle, Session session) throws Exception {
 		TreeMap<String, Boolean> gunMap = new TreeMap<String, Boolean>();
 		User loginUser = denklestirmeDonemi.getLoginUser() != null ? denklestirmeDonemi.getLoginUser() : authenticatedUser;
-
+		if (denklestirmeDonemi.getTatilGunleriMap() == null)
+			denklestirmeDonemi.setTatilGunleriMap(tatilGunleriMap);
 		boolean yenidenCalistir = false;
 		List<YemekIzin> yemekAraliklari = getYemekList(denklestirmeDonemi.getBaslangicTarih(), denklestirmeDonemi.getBitisTarih(), session);
 
@@ -12701,6 +12703,7 @@ public class OrtakIslemler implements Serializable {
 	public TreeMap<String, Tatil> getTatilGunleri(List<Personel> perList, Date basTarih, Date bitTarih, Session session) {
 		TreeMap<String, Tatil> tatilMap = new TreeMap<String, Tatil>();
 		String pattern = PdksUtil.getDateTimeFormat();
+		logger.debug("\nbasTarih : " + PdksUtil.convertToDateString(basTarih, pattern) + "\nbitTarih : " + PdksUtil.convertToDateString(bitTarih, pattern));
 		Calendar cal = Calendar.getInstance();
 		HashMap map = new HashMap();
 		StringBuilder sb = new StringBuilder();
@@ -15029,7 +15032,7 @@ public class OrtakIslemler implements Serializable {
 			vardiyaGunList = new ArrayList<VardiyaGun>();
 		map = null;
 		idList = null;
- 
+
 		if (!vardiyaGunList.isEmpty()) {
 			HashMap<Long, List<VardiyaGun>> vMap = new HashMap<Long, List<VardiyaGun>>();
 			for (VardiyaGun vardiyaGun : vardiyaGunList) {
