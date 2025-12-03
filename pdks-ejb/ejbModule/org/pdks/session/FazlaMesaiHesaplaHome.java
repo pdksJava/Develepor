@@ -1122,7 +1122,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				if (denklestirmeAy.getFazlaMesaiMaxSure() == null)
 					fazlaMesaiOrtakIslemler.setFazlaMesaiMaxSure(denklestirmeAy, session);
 				DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
-				denklestirmeDonemi.setTatilGunleriMap(new TreeMap<String, Tatil>());
 				AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, denklestirmeDonemi, session);
 				aylikPuantaj.setLoginUser(authenticatedUser);
 				denklestirmeDonemi.setLoginUser(authenticatedUser);
@@ -1450,8 +1449,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 
 				boolean renk = Boolean.TRUE;
+				denklestirmeDonemi.setTatilGunleriMap(tatilGunleriMap);
 				aylikPuantajSablon = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, denklestirmeDonemi, session);
-				tatilGunleriMap = denklestirmeDonemi.getTatilGunleriMap();
 				List<VardiyaHafta> vardiyaHaftaList = new ArrayList<VardiyaHafta>();
 				fazlaMesaiOrtakIslemler.haftalikVardiyaOlustur(vardiyaHaftaList, aylikPuantajSablon, denklestirmeDonemi, tatilGunleriMap, null);
 				if (denklestirmeAyDurum && vardiyaHaftaList != null && vardiyaHaftaList.size() > 4) {
