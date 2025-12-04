@@ -28,11 +28,14 @@ public class IzinReferansERP implements Serializable {
 	public static final String TABLE_NAME = "IZIN_REFERANS_ERP";
 	public static final String COLUMN_NAME_ID = "REFERANS_ID";
 	public static final String COLUMN_NAME_IZIN_ID = "IZIN_ID";
+	public static final String COLUMN_NAME_SILINEBILIR = "SILINEBILIR";
 	public static final String PDKS_REFERANS_START = "NP_";
-	
+
 	private String id;
 
 	private PersonelIzin izin;
+
+	private Boolean silinebilir = Boolean.TRUE;
 
 	public IzinReferansERP() {
 		super();
@@ -42,6 +45,7 @@ public class IzinReferansERP implements Serializable {
 	public IzinReferansERP(String id) {
 		super();
 		this.id = id;
+		this.silinebilir = Boolean.TRUE;
 		PersonelIzin personelIzin = new PersonelIzin();
 		personelIzin.setDegisti(true);
 		this.izin = personelIzin;
@@ -66,6 +70,15 @@ public class IzinReferansERP implements Serializable {
 
 	public void setIzin(PersonelIzin izin) {
 		this.izin = izin;
+	}
+
+	@Column(name = COLUMN_NAME_SILINEBILIR)
+	public Boolean getSilinebilir() {
+		return silinebilir;
+	}
+
+	public void setSilinebilir(Boolean silinebilir) {
+		this.silinebilir = silinebilir;
 	}
 
 	@Transient

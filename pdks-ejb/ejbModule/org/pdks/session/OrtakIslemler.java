@@ -7222,7 +7222,7 @@ public class OrtakIslemler implements Serializable {
 					sb.append(" and P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :p1");
 					fields.put("p1", perNo);
 				}
-				sb.append(" where E." + IzinReferansERP.COLUMN_NAME_ID + " not in (select " + IzinERPDB.COLUMN_NAME_REFERANS_NO + " from " + izinERPTableViewAdi + " " + PdksEntityController.getSelectLOCK());
+				sb.append(" where E." + IzinReferansERP.COLUMN_NAME_SILINEBILIR + " = 1 and E." + IzinReferansERP.COLUMN_NAME_ID + " not in (select " + IzinERPDB.COLUMN_NAME_REFERANS_NO + " from " + izinERPTableViewAdi + " " + PdksEntityController.getSelectLOCK());
 				if (perNo != null) {
 					sb.append(" where " + IzinERPDB.COLUMN_NAME_PERSONEL_NO + " = :p2");
 					fields.put("p2", perNo);
@@ -7398,6 +7398,8 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" inner join " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on D." + DeleteIzinERPView.COLUMN_NAME_IZIN + " = I." + PersonelIzin.COLUMN_NAME_ID);
 				sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " = :d");
 				fields.put("d", PersonelIzin.IZIN_DURUMU_ONAYLANDI);
+				sb.append(" inner join " + IzinReferansERP.TABLE_NAME + " E " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_ID + " = E." + IzinReferansERP.COLUMN_NAME_IZIN_ID);
+				sb.append(" and E." + IzinReferansERP.COLUMN_NAME_SILINEBILIR + " = 1");
 				sb.append(" where D." + DeleteIzinERPView.COLUMN_NAME_ID + " Not like :r");
 				fields.put("r", IzinReferansERP.PDKS_REFERANS_START + "%");
 				// sb.append(" where D." + DeleteIzinERPView.COLUMN_NAME_GUNCELLEME_ZAMANI + " >= :g");
