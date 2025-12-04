@@ -544,13 +544,13 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		sb.append("select D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
 		String str = " where";
 		if (basTarih != null) {
-			sb.append(str + " D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " >= :b1)");
+			sb.append(str + " D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " >= :b1");
 			int b1 = Integer.parseInt(PdksUtil.convertToDateString(basTarih, "yyyyMM"));
 			fields.put("b1", b1);
 			str = " and ";
 		}
 		if (bitTarih != null) {
-			sb.append(str + " D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= :b2)");
+			sb.append(str + " D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= :b2");
 			int b2 = Integer.parseInt(PdksUtil.convertToDateString(bitTarih, "yyyyMM"));
 			fields.put("b2", b2);
 			str = " and ";
@@ -560,7 +560,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<DenklestirmeAy> list = pdksEntityController.getObjectBySQLList(sb, fields, DenklestirmeAy.class);
 		for (DenklestirmeAy denklestirmeAy : list) {
-			String key = String.valueOf(denklestirmeAy.getYil() * 100 + denklestirmeAy.getAy());
+			String key = String.valueOf(denklestirmeAy.getDonem());
 			map.put(key, denklestirmeAy);
 		}
 		return map;

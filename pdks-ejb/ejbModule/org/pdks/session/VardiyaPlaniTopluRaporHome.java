@@ -690,10 +690,12 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 
 		denklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
 		denklestirmeAyDurum = denklestirmeAy != null && denklestirmeAy.getDurum();
+		tatilGunleriMap = null;
 		if (denklestirmeAy != null) {
 			try {
 				DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 				AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, denklestirmeDonemi, session);
+				tatilGunleriMap = denklestirmeDonemi.getTatilGunleriMap();
 				denklestirmeDonemi.setDenklestirmeAy(denklestirmeAy);
 				fillVardiyaPlaniTopluRaporDevam(aylikPuantaj, denklestirmeDonemi);
 			} catch (Exception ee) {
@@ -923,7 +925,10 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 						denklestirmeTasiyici.setDenklestirmeAy(denklestirmeAy);
 						list.add(denklestirmeTasiyici);
 					}
-					tatilGunleriMap = ortakIslemler.getTatilGunleri(perList, ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBaslangicTarih(), -1), ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), session);
+					if (tatilGunleriMap == null || tatilGunleriMap.isEmpty() == false) {
+						if (perList != null && perList.isEmpty() == false)
+							tatilGunleriMap = ortakIslemler.getTatilGunleri(perList, ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBaslangicTarih(), -1), ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), session);
+					}
 					ortakIslemler.personelDenklestirmeDuzenle(list, aylikPuantajDefault, tatilGunleriMap, session);
 				} catch (Exception ex) {
 					list = new ArrayList<PersonelDenklestirmeTasiyici>();

@@ -1123,6 +1123,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					fazlaMesaiOrtakIslemler.setFazlaMesaiMaxSure(denklestirmeAy, session);
 				DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 				AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, denklestirmeDonemi, session);
+				tatilGunleriMap = denklestirmeDonemi.getTatilGunleriMap();
 				aylikPuantaj.setLoginUser(authenticatedUser);
 				denklestirmeDonemi.setLoginUser(authenticatedUser);
 				denklestirmeDonemi.setDenklestirmeAy(denklestirmeAy);
@@ -1414,9 +1415,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					sabahVardiya = null;
 				setInstance(denklestirmeDonemi);
 				map.clear();
-
-				List<Personel> perListesi = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, perList, Personel.class, session);
- 				tatilGunleriMap = ortakIslemler.getTatilGunleri(perListesi, ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBaslangicTarih(), -1), ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), session);
+ 				List<Personel> perListesi = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, perList, Personel.class, session);
+				if (tatilGunleriMap == null || tatilGunleriMap.isEmpty() == false) {
+ 					if (perListesi != null && perListesi.isEmpty() == false)  
+						tatilGunleriMap = ortakIslemler.getTatilGunleri(perListesi, ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBaslangicTarih(), -1), ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), session);
+					 
+				}
 				denklestirmeDonemi.setTatilGunleriMap(tatilGunleriMap);
 				boolean ayBitmedi = denklestirmeDonemi.getBitisTarih().getTime() >= PdksUtil.getDate(bugun).getTime();
 				List<PersonelDenklestirmeTasiyici> list = null;

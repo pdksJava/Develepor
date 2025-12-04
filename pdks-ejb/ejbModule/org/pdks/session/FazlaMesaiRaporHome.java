@@ -939,7 +939,14 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 						puantaj.setHareketler(null);
 						double puantajPlanlananSure = 0.0d, puantajSaatToplami = 0.0d, puantajResmiTatil = 0.0d, puantajHaftaTatil = 0.0d, ucretiOdenenMesaiSure = 0.0d;
 						boolean puantajFazlaMesaiHesapla = true;
-						boolean gunMaxCalismaOdenir = puantaj.getCalismaModeli().isFazlaMesaiVarMi() && personelDenklestirme.getCalismaModeliAy().isGunMaxCalismaOdenir() && personelDenklestirme.isFazlaMesaiIzinKullanacak() == false;
+						boolean gunMaxCalismaOdenir = false;
+						try {
+							gunMaxCalismaOdenir = puantaj.getCalismaModeli().isFazlaMesaiVarMi() && personelDenklestirme.isFazlaMesaiIzinKullanacak() == false;
+
+						} catch (Exception e) {
+							// personelDenklestirme.getCalismaModeliAy().isGunMaxCalismaOdenir()
+							e.printStackTrace();
+						}
 
 						if (puantaj.getVardiyalar() != null) {
 
@@ -1161,6 +1168,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 
 		} catch (Exception ex) {
 			ortakIslemler.loggerErrorYaz(sayfaURL, ex);
+			ex.printStackTrace();
 			throw new Exception(ex);
 
 		} finally {
@@ -1475,7 +1483,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 							styleGenel = maxSureGecti == false ? styleOff : styleOffRed;
 						cell = ExcelUtil.getCell(sheet, row, col++, styleGenel);
 						String aciklama = !help || calisan(vardiyaGun) ? vardiyaGun.getFazlaMesaiOzelAciklama(Boolean.TRUE, authenticatedUser.sayiFormatliGoster(vardiyaGun.getCalismaSuresi())) : "";
-						if (vardiyaGun.getIzin() != null ) {
+						if (vardiyaGun.getIzin() != null) {
 							IzinTipi izinTipi = vardiyaGun.getIzin().getIzinTipi();
 							BordroDetayTipi izinBordroDetayTipi = ortakIslemler.getBordroDetayTipi(izinTipi, izinGrupMap);
 							if (izinBordroDetayTipi != null && izinBordroDetayTipi.equals(BordroDetayTipi.UCRETLI_IZIN) == false)

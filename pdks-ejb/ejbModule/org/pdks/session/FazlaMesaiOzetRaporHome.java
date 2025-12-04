@@ -860,10 +860,12 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 		denklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
 		denklestirmeAyDurum = denklestirmeAy != null && denklestirmeAy.getDurum();
+		tatilGunleriMap = null;
 		if (denklestirmeAy != null) {
 			try {
 				DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 				AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, denklestirmeDonemi, session);
+				tatilGunleriMap = denklestirmeDonemi.getTatilGunleriMap();
 				denklestirmeDonemi.setDenklestirmeAy(denklestirmeAy);
 				fillFazlaMesaiOzetRaporDevam(aylikPuantaj, denklestirmeDonemi);
 			} catch (Exception ee) {
@@ -1109,7 +1111,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 				map.clear();
 				setInstance(denklestirmeDonemi);
-				tatilGunleriMap = ortakIslemler.getTatilGunleri(null, ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBaslangicTarih(), -1), ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), session);
+				if (tatilGunleriMap == null || tatilGunleriMap.isEmpty() == false)
+					tatilGunleriMap = ortakIslemler.getTatilGunleri(null, ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBaslangicTarih(), -1), ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), session);
 				List<PersonelDenklestirmeTasiyici> list = null;
 				try {
 					denklestirmeDonemi.setPersonelDenklestirmeDonemMap(personelDenklestirmeDonemMap);
@@ -1851,10 +1854,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				if (bordroPuantajEkranindaGoster) {
 					fazlaMesaiOrtakIslemler.setAylikPuantajBordroVeri(puantajDenklestirmeList, session);
 				}
-				Date basTarih = PdksUtil.convertToJavaDate(String.valueOf(yil * 100 + ay) + "01", "yyyyMMdd");
-				Date bitTarih = PdksUtil.tariheAyEkleCikar(basTarih, 1);
-				TreeMap<String, Tatil> tatilMap = denklestirmeDonemi != null ? denklestirmeDonemi.getTatilGunleriMap() : ortakIslemler.getTatilGunleri(null, PdksUtil.tariheGunEkleCikar(basTarih, -1), bitTarih, session);
-				bordroVeriOlusturBasla(puantajDenklestirmeList, tatilMap);
+
+				bordroVeriOlusturBasla(puantajDenklestirmeList, tatilGunleriMap);
 				if (!(authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()) && yasalFazlaCalismaAsanSaat)
 					yasalFazlaCalismaAsanSaat = ortakIslemler.getParameterKey("yasalFazlaCalismaAsanSaat").equals("1");
 
