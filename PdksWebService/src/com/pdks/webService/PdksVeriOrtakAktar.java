@@ -37,7 +37,6 @@ import org.pdks.entity.PersonelMesai;
 import org.pdks.entity.ServiceData;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
-import org.pdks.entity.Tatil;
 import org.pdks.entity.TatilGunView;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
@@ -388,104 +387,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 			pdksRoles = null;
 		}
 		return map;
-	}
-
-	/**
-	 * @param basTarih
-	 * @param bitTarih
-	 * @return
-	 */
-	public TreeMap<String, Tatil> getTatilGunleri(Date basTarih, Date bitTarih) {
-		if (bitTarih == null)
-			bitTarih = PdksUtil.getDate(bugun != null ? bugun : new Date());
-		if (basTarih == null)
-			basTarih = PdksUtil.tariheGunEkleCikar(bitTarih, -7);
-		TreeMap<String, Tatil> tatilMap = new TreeMap<String, Tatil>();
-		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-		map.put(BaseDAOHibernate.MAP_KEY_SELECT, TatilGunView.SP_NAME);
-		map.put("basTarih", basTarih);
-		map.put("bitTarih", bitTarih);
-
-		try {
-			List<TatilGunView> list = pdksDAO.execSPList(map, TatilGunView.class);
-			if (!list.isEmpty()) {
-				String yarimGunStr = "13:00";
-				int saat = 13, dakika = 0;
-				if (mailMap != null) {
-					if (mailMap.containsKey("arifeTatilBasZaman"))
-						yarimGunStr = (String) mailMap.get("arifeTatilBasZaman");
-					else if (mailMap.containsKey("yarimGunSaati"))
-						yarimGunStr = (String) mailMap.get("yarimGunSaati");
-				}
-				if (yarimGunStr.indexOf(":") > 0) {
-					StringTokenizer st = new StringTokenizer(yarimGunStr, ":");
-					if (st.countTokens() >= 2) {
-						try {
-							saat = Integer.parseInt(st.nextToken().trim());
-						} catch (Exception e) {
-							logger.error("Pdks hata in : \n");
-							e.printStackTrace();
-							logger.error("Pdks hata out : " + e.getMessage());
-							saat = 13;
-						}
-						try {
-							dakika = Integer.parseInt(st.nextToken().trim());
-						} catch (Exception e) {
-							logger.error("Pdks hata in : \n");
-							e.printStackTrace();
-							logger.error("Pdks hata out : " + e.getMessage());
-							saat = 13;
-							dakika = 0;
-						}
-					}
-				}
-				Calendar cal = Calendar.getInstance();
-				String pattern = "yyyyMMdd";
-
-				for (TatilGunView tatilGunView : list) {
-					String key = PdksUtil.convertToDateString(tatilGunView.getTarih(), pattern);
-					Tatil tatilOrj = (Tatil) tatilGunView.getTatil().clone();
-					Tatil tatil = (Tatil) tatilOrj.clone();
-					int yil = PdksUtil.getDateField(tatilGunView.getTarih(), Calendar.YEAR);
-					if (tatilOrj.isPeriyodik()) {
-						cal.setTime(tatilOrj.getBasTarih());
-						cal.set(Calendar.YEAR, yil);
-						tatilOrj.setBasTarih(cal.getTime());
-						cal.setTime(tatilOrj.getBitTarih());
-						cal.set(Calendar.YEAR, yil);
-						tatilOrj.setBitTarih(cal.getTime());
-					}
-					if (tatilOrj.getYarimGun()) {
-						tatilOrj.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.HOUR_OF_DAY, saat));
-						tatilOrj.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.MINUTE, dakika));
-					}
-					tatil.setOrjTatil(tatilOrj);
-					tatil.setYarimGun(tatilGunView.getYarimGun());
-					tatil.setBasGun(tatilGunView.getTarih());
-					tatil.setBitGun(tariheGunEkleCikar(cal, PdksUtil.getDate(tatilGunView.getTarih()), 1));
-					tatil.setBasTarih(tatilOrj.getBasTarih());
-					cal.setTime(tatilOrj.getBasTarih());
-					if (tatilOrj.isPeriyodik())
-						cal.set(Calendar.YEAR, yil);
-					tatil.setBasTarih(cal.getTime());
-					cal.setTime(tatilOrj.getBitTarih());
-					if (tatilOrj.isPeriyodik())
-						cal.set(Calendar.YEAR, yil);
-					tatil.setBitTarih(cal.getTime());
-					if (tatilGunView.getYarimGun()) {
-						tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.HOUR_OF_DAY, saat));
-						tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.MINUTE, dakika));
-					}
-
-					tatil.setBasGun(tatil.getBasTarih());
-					tatilMap.put(key, tatil);
-				}
-			}
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
-		return tatilMap;
 	}
 
 	/**
@@ -2066,8 +1967,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 			bugun = PdksUtil.getDate(new Date());
 
 			if (!izinHakedisHataList.isEmpty() && izinHakedisList != null && izinHakedisList.size() > 1) {
-				TreeMap<String, Tatil> tatilMap = getTatilGunleri(PdksUtil.tariheGunEkleCikar(bugun, -5), bugun);
-				if (tatilMap.containsKey(PdksUtil.convertToDateString(bugun, "yyyyMMdd")))
+				// TreeMap<String, Tatil> tatilMap = getTatilGunleri(PdksUtil.tariheGunEkleCikar(bugun, -5), bugun);
+				if (isTatil())
 					izinHakedisHataList.clear();
 			}
 			if (!izinHakedisHataList.isEmpty()) {
@@ -5570,8 +5471,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				iterator.remove();
 		}
 		if (!hataList.isEmpty() && izinCok) {
-			TreeMap<String, Tatil> tatilMap = getTatilGunleri(PdksUtil.tariheGunEkleCikar(bugun, -5), bugun);
-			if (tatilMap.containsKey(PdksUtil.convertToDateString(bugun, "yyyyMMdd")))
+			// TreeMap<String, Tatil> tatilMap = getTatilGunleri(PdksUtil.tariheGunEkleCikar(bugun, -5), bugun);
+			if (isTatil())
 				hataList.clear();
 
 		}
@@ -5716,8 +5617,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 			list = null;
 		}
 		if (!hataList.isEmpty() && personelList != null && personelList.size() > 1) {
-			TreeMap<String, Tatil> tatilMap = getTatilGunleri(PdksUtil.tariheGunEkleCikar(bugun, -5), bugun);
-			if (tatilMap.containsKey(PdksUtil.convertToDateString(bugun, "yyyyMMdd")))
+			// / TreeMap<String, Tatil> tatilMap = getTatilGunleri(PdksUtil.tariheGunEkleCikar(bugun, -5), bugun);
+			if (isTatil())
 				hataList.clear();
 		}
 		if (!hataList.isEmpty() && (mailBosGonder == false || PdksUtil.isPazar() == false)) {

@@ -12513,9 +12513,11 @@ public class OrtakIslemler implements Serializable {
 					cal.set(Calendar.YEAR, yil);
 					tatilOrj.setBitTarih(cal.getTime());
 				}
-				if (tatilOrj.getYarimGun()) {
-					tatilOrj.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.HOUR_OF_DAY, saat));
-					tatilOrj.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.MINUTE, dakika));
+				if (tatilGunView.getYarimGun()) {
+					cal.setTime(tatil.getBasTarih());
+					cal.set(Calendar.HOUR_OF_DAY, saat);
+					cal.set(Calendar.MINUTE, dakika);
+					tatilOrj.setBasTarih(cal.getTime());
 				}
 				tatil.setOrjTatil(tatilOrj);
 				tatil.setYarimGun(tatilGunView.getYarimGun());
@@ -12534,7 +12536,6 @@ public class OrtakIslemler implements Serializable {
 					tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.HOUR_OF_DAY, saat));
 					tatil.setBasTarih(PdksUtil.setTarih(tatil.getBasTarih(), Calendar.MINUTE, dakika));
 				}
-
 				tatil.setBasGun(tatil.getBasTarih());
 				tatilMap.put(key, tatil);
 			}
