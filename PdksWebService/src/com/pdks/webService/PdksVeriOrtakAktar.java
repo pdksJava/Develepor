@@ -2621,7 +2621,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 						if (izinERP.getDurum().booleanValue() || donemKapali) {
 							fields.clear();
 							StringBuffer sb = new StringBuffer();
-							sb.append(" select R." + IzinReferansERP.COLUMN_NAME_ID + ",I." + PersonelIzin.COLUMN_NAME_ID + " as " + IzinReferansERP.COLUMN_NAME_IZIN_ID + " from " + PersonelIzin.TABLE_NAME + " I " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
+							sb.append(" select R." + IzinReferansERP.COLUMN_NAME_ID + ",I." + PersonelIzin.COLUMN_NAME_ID + " as " + IzinReferansERP.COLUMN_NAME_IZIN_ID + ", R." + IzinReferansERP.COLUMN_NAME_SILINEBILIR + " from " + PersonelIzin.TABLE_NAME + " I "
+									+ PdksVeriOrtakAktar.getSelectLOCK() + " ");
 							sb.append(" left join " + IzinReferansERP.TABLE_NAME + " R " + PdksVeriOrtakAktar.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_ID + " = R." + IzinReferansERP.COLUMN_NAME_IZIN_ID);
 							sb.append(" where I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = " + izinSahibi.getId());
 							sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in ( " + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + "," + PersonelIzin.IZIN_DURUMU_REDEDILDI + ")");
