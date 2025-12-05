@@ -7200,11 +7200,13 @@ public class OrtakIslemler implements Serializable {
 		List<String> referansNoList = veriMap != null && veriMap.containsKey("R") ? veriMap.get("R") : null;
 		List<String> referansNoStartList = null;
 		List<IzinERP> yeniler = null;
+		String perNo = null;
 		if (getParameterKeyHasStringValue(parameterName)) {
 			String izinERPTableViewAdi = getParameterKey(parameterName);
 			HashMap<String, Date> updateMap = new HashMap<String, Date>();
 			Calendar cal = Calendar.getInstance();
-			Date tarih = PdksUtil.tariheAyEkleCikar(cal.getTime(), -2);
+			Date bugun = PdksUtil.getDate(cal.getTime());
+			Date tarih = PdksUtil.tariheAyEkleCikar(bugun, -2);
 			boolean iptalDevam = authenticatedUser != null && (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi());
 			if (!iptalDevam) {
 				int saat = cal.get(Calendar.HOUR_OF_DAY), dakika = cal.get(Calendar.MINUTE);
@@ -7213,11 +7215,14 @@ public class OrtakIslemler implements Serializable {
 			HashMap fields = new HashMap();
 			StringBuilder sb = new StringBuilder();
 			if (referansNoList == null && (guncellemeDurum || iptalDevam || perList != null)) {
-				String perNo = perList != null && perList.isEmpty() == false ? perList.get(0) : null;
+				perNo = perList != null && perList.isEmpty() == false ? perList.get(0) : null;
 				sb.append(" select I.* from " + IzinReferansERP.TABLE_NAME + " E " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_ID + " = E." + IzinReferansERP.COLUMN_NAME_IZIN_ID);
 				sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (" + PersonelIzin.IZIN_DURUMU_REDEDILDI + "," + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + ")");
-				if (perNo != null) {
+				if (perNo == null) {
+					sb.append(" and I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " < :t1");
+					fields.put("t1", PdksUtil.tariheAyEkleCikar(tarih, -1));
+				} else {
 					sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID);
 					sb.append(" and P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :p1");
 					fields.put("p1", perNo);
@@ -7228,6 +7233,8 @@ public class OrtakIslemler implements Serializable {
 					fields.put("p2", perNo);
 				}
 				sb.append(")");
+				sb.append(" and E." + DeleteIzinERPView.COLUMN_NAME_ID + " Not like :r");
+				fields.put("r", IzinReferansERP.PDKS_REFERANS_START + "%");
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				List<PersonelIzin> izinList = pdksEntityController.getObjectBySQLList(sb, fields, PersonelIzin.class);
@@ -7274,7 +7281,7 @@ public class OrtakIslemler implements Serializable {
 				}
 
 			}
-			List<IzinERPDB> izinList = getIzinERPDBList(guncellemeDurum, veriMap, parameterName, session);
+			List<IzinERPDB> izinList = getIzinERPDBList(guncellemeDurum, veriMap, perNo, parameterName, session);
 			if (izinList != null && !izinList.isEmpty()) {
 				List<IzinERP> izinERPList = new ArrayList<IzinERP>();
 				for (IzinERPDB izinERPDB : izinList) {
@@ -7375,12 +7382,13 @@ public class OrtakIslemler implements Serializable {
 	/**
 	 * @param guncellemeDurum
 	 * @param veriMap
+	 * @param perNo
 	 * @param parameterName
 	 * @param session
 	 * @return
 	 * @throws Exception
 	 */
-	private List<IzinERPDB> getIzinERPDBList(boolean guncellemeDurum, HashMap<String, List<String>> veriMap, String parameterName, Session session) throws Exception {
+	private List<IzinERPDB> getIzinERPDBList(boolean guncellemeDurum, HashMap<String, List<String>> veriMap, String perNo, String parameterName, Session session) throws Exception {
 		String izinERPTableViewAdi = getParameterKey(parameterName);
 		List<Tanim> list = isExisView(izinERPTableViewAdi, session) ? getTanimList(Tanim.TIPI_ERP_IZIN_DB, session) : null;
 		List<IzinERPDB> izinList = null;
@@ -7398,6 +7406,10 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" inner join " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on D." + DeleteIzinERPView.COLUMN_NAME_IZIN + " = I." + PersonelIzin.COLUMN_NAME_ID);
 				sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " = :d");
 				fields.put("d", PersonelIzin.IZIN_DURUMU_ONAYLANDI);
+				if (perNo == null) {
+					sb.append(" and I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " < :t1");
+					fields.put("t1", PdksUtil.tariheAyEkleCikar(tarih, -1));
+				}
 				sb.append(" inner join " + IzinReferansERP.TABLE_NAME + " E " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_ID + " = E." + IzinReferansERP.COLUMN_NAME_IZIN_ID);
 				sb.append(" and E." + IzinReferansERP.COLUMN_NAME_SILINEBILIR + " = 1");
 				sb.append(" where D." + DeleteIzinERPView.COLUMN_NAME_ID + " Not like :r");
@@ -7460,7 +7472,7 @@ public class OrtakIslemler implements Serializable {
 			if (perList != null) {
 				if (perList.size() == 1) {
 					sb.append(" and D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " = :p ");
-					String perNo = perList.get(0);
+					perNo = perList.get(0);
 					parametreMap.put("p", perNo);
 				} else {
 					sb.append(" and D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " :p ");
