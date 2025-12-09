@@ -167,7 +167,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						if (oncekiTesisId != null && st.getValue().equals(oncekiTesisId))
 							tesisId = (Long) st.getValue();
 					}
-				} else
+				} else if (sirket.isTesisDurumu())
 					tesisId = (Long) tesisIdList.get(0).getValue();
 			}
 			list = null;
