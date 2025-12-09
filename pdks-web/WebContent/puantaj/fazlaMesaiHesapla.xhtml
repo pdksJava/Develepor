@@ -399,13 +399,21 @@
 
 
 				<h:panelGrid width="600" id="vardiyaPlanAciklama">
+					<ui:fragment rendered="#{authenticatedUser.admin}">
+						<SPAN style="text-align: left;"><B>Plan Id : </B> #{fazlaMesaiHesaplaHome.seciliVardiyaGun.id}<br></br><br></br>
+						</SPAN>
+					</ui:fragment>
+
 					<rich:dataTable rowClasses="acik,koyu" value="#{fazlaMesaiHesaplaHome.seciliVardiyaGun.orjinalHareketler}" var="hareket" rows="20"
 						rowKeyVar="row">
 						<f:facet name="header">
 							<ui:fragment>
 								<h:outputText
 									value="Giriş Çıkış Hareketleri [ #{fazlaMesaiHesaplaHome.seciliVardiyaGun.pdksPersonel.ekSaha3.aciklama} #{fazlaMesaiHesaplaHome.seciliVardiyaGun.pdksPersonel.ekSaha4.aciklama}  ]" />
-
+								<ui:fragment rendered="#{authenticatedUser.admin}">
+									<br></br>
+									<h:outputText value="Plan Id : #{fazlaMesaiHesaplaHome.seciliVardiyaGun.id}" />
+								</ui:fragment>
 							</ui:fragment>
 						</f:facet>
 						<rich:column rendered="#{fazlaMesaiHesaplaHome.hareketIptalEt}" style="text-align:center;">
