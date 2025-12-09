@@ -3460,7 +3460,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					object = map.get(key);
 
 				}
- 			}
+			}
 			if (object == null) {
 				key = "0_0_0";
 				object = map.get(key);
@@ -3995,6 +3995,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 					personelSirket = sirket;
 					personel.setSirket(sirket);
+					Tanim tesis = sirket != null && sirket.isTesisDurumu() ? personel.getTesis() : null;
 					if (personel.getId() == null) {
 						boolean fazlaMesaiIzinKullan = false;
 						if (mailMap.containsKey("fazlaMesaiIzinKullan")) {
@@ -4004,21 +4005,21 @@ public class PdksVeriOrtakAktar implements Serializable {
 						}
 						personel.setFazlaMesaiIzinKullan(fazlaMesaiIzinKullan);
 
-						if (sirket != null) {
+						if (sirket != null)  
 							personel.setFazlaMesaiOde(sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde());
+						 
+						if (personel.getCalismaModeli() == null) {
+							CalismaModeli cm = null;
+							if (sirket != null)
+								cm = (CalismaModeli) getCalismaModel_VardiyaSablonByMap(sirket, tesis, cmMap);
+							if (cm == null && modeller.size() == 1)
+								cm = modeller.get(0);
+							if (cm != null)
+								personel.setCalismaModeli(cm);
+
 						}
 					}
-					Tanim tesis = sirket != null && sirket.isTesisDurumu() ? personel.getTesis() : null;
-					if (personel.getCalismaModeli() == null) {
-						CalismaModeli cm = null;
-						if (sirket != null)
-							cm = (CalismaModeli) getCalismaModel_VardiyaSablonByMap(sirket, tesis, cmMap);
-						if (cm == null && modeller.size() == 1)
-							cm = modeller.get(0);
-						if (cm != null)
-							personel.setCalismaModeli(cm);
 
-					}
 					if (personel.getSablon() == null) {
 						VardiyaSablonu vs = null;
 						if (sirket != null)
