@@ -81,6 +81,12 @@
 									</f:facet>
 									<h:outputText value="#{vardiya.sirket.ad}" />
 								</rich:column>
+								<rich:column rendered="#{vardiyaHome.tesisGoster}">
+									<f:facet name="header">
+										<h:outputText value="#{ortakIslemler.tesisAciklama()}" />
+									</f:facet>
+									<h:outputText value="#{vardiya.tesis.aciklama}" />
+								</rich:column>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="Ekran Sıra" />
@@ -542,11 +548,21 @@
 										<h:selectOneMenu value="#{vardiyaHome.seciliVardiya.sirketId}">
 											<f:selectItem itemLabel="Lütfen seçiniz" />
 											<f:selectItems value="#{vardiyaHome.sirketIdList}" />
-											<a4j:support event="onchange" action="#{vardiyaHome.fillCalismaModeliList(vardiyaHome.seciliVardiya)}" reRender="modeller"
+											<a4j:support event="onchange" action="#{vardiyaHome.fillCalismaModeliList(vardiyaHome.seciliVardiya)}" reRender="modeller,saatler"
 												status="ajaxStatus" ajaxSingle="true" />
 
 										</h:selectOneMenu>
 
+									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and not empty vardiyaHome.tesisIdList}">
+										<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
+										<h:selectOneMenu value="#{vardiyaHome.tesisId}" disabled="#{vardiyaHome.tesisIdList.size() == 1}">
+											<f:selectItem itemLabel="Lütfen seçiniz" />
+											<f:selectItems value="#{vardiyaHome.tesisIdList}" />
+											<a4j:support event="onchange" action="#{vardiyaHome.fillCalismaModeliList(vardiyaHome.seciliVardiya)}" reRender="modeller"
+												status="ajaxStatus" ajaxSingle="true" />
+
+										</h:selectOneMenu>
 									</s:decorate>
 									<a4j:outputPanel id="modeller">
 										<rich:simpleTogglePanel rendered="#{vardiyaHome.calismaModeliList.size()+vardiyaHome.calismaModeliKayitliList.size()>0}" switchType="client"

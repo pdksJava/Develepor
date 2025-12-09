@@ -72,6 +72,7 @@ import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaHafta;
 import org.pdks.entity.VardiyaPlan;
 import org.pdks.entity.VardiyaSaat;
+import org.pdks.entity.VardiyaSablonu;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.BordroDetayTipi;
 import org.pdks.enums.DenklestirmeTipi;
@@ -124,6 +125,59 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	HashMap<String, MenuItem> menuItemMap = new HashMap<String, MenuItem>();
 	@In(required = false)
 	FacesMessages facesMessages;
+
+	/**
+	 * @param object
+	 * @param oncekiTesisId
+	 * @param tesisIdList
+	 * @param session
+	 * @return
+	 */
+	public Long tesisDoldur(Object object, Long oncekiTesisId, List<SelectItem> tesisIdList, Session session) {
+		Sirket sirket = null;
+		Date olusturmaTarihi = null;
+		if (object instanceof CalismaModeli) {
+			CalismaModeli cm = (CalismaModeli) object;
+			sirket = cm.getSirket();
+			olusturmaTarihi = cm.getOlusturmaTarihi();
+		} else if (object instanceof VardiyaSablonu) {
+			VardiyaSablonu vs = (VardiyaSablonu) object;
+			sirket = vs.getSirket();
+			olusturmaTarihi = vs.getOlusturmaTarihi();
+		} else if (object instanceof Vardiya) {
+			Vardiya vardiya = (Vardiya) object;
+			sirket = vardiya.getSirket();
+			olusturmaTarihi = vardiya.getOlusturmaTarihi();
+		}
+
+		Long tesisId = null;
+		tesisIdList.clear();
+		if (sirket != null) {
+			Date bugun = new Date();
+			Date sonGun = PdksUtil.getDate(PdksUtil.tariheAyEkleCikar(bugun, 1));
+			Date ilkGun = PdksUtil.getDate(olusturmaTarihi != null ? olusturmaTarihi : bugun);
+			AylikPuantaj aylikPuantajDonem = new AylikPuantaj();
+			aylikPuantajDonem.setIlkGun(ilkGun);
+			aylikPuantajDonem.setSonGun(sonGun);
+			List list = getFazlaMesaiTesisList(sirket, aylikPuantajDonem, true, session);
+			if (list.isEmpty() == false) {
+				tesisIdList.addAll(list);
+				if (tesisIdList.size() > 1) {
+					for (SelectItem st : tesisIdList) {
+						if (oncekiTesisId != null && st.getValue().equals(oncekiTesisId))
+							tesisId = (Long) st.getValue();
+					}
+				} else
+					tesisId = (Long) tesisIdList.get(0).getValue();
+			}
+			list = null;
+			aylikPuantajDonem = null;
+
+		}
+
+		return tesisId;
+
+	}
 
 	/**
 	 * @param vardiyaGunList

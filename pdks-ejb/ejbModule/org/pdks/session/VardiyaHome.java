@@ -66,6 +66,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	HashMap parameterMap;
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
+	@In(required = false, create = true)
+	FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemler;
 	@In(required = false)
 	FacesMessages facesMessages;
 
@@ -73,7 +75,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	private List<String> saatList = new ArrayList<String>();
 	private List<String> dakikaList = new ArrayList<String>();
 	private List<String> toleransDakikaList = new ArrayList<String>();
-	private List<SelectItem> vardiyaTipiList, departmanIdList, calismaSekliIdList, sirketIdList, pdksSirketIdList, izinTipiList;
+	private List<SelectItem> vardiyaTipiList, departmanIdList, calismaSekliIdList, sirketIdList, pdksSirketIdList, izinTipiList, tesisIdList;
+	private Long tesisId;
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), izinCalismaVardiyaList = new ArrayList<Vardiya>();
 	private List<VardiyaSablonu> sablonList = new ArrayList<VardiyaSablonu>();
 
@@ -84,7 +87,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	private Vardiya seciliVardiya;
 	private Long seciliSirketId;
 	private int saat = 13, dakika = 0;
-	private Boolean sirketGoster = Boolean.FALSE, icapVardiyaGoster = Boolean.FALSE, sutIzniGoster = Boolean.FALSE, gebelikGoster = Boolean.FALSE, suaGoster = Boolean.FALSE;
+	private Boolean sirketGoster = Boolean.FALSE, tesisGoster = Boolean.FALSE, icapVardiyaGoster = Boolean.FALSE, sutIzniGoster = Boolean.FALSE, gebelikGoster = Boolean.FALSE, suaGoster = Boolean.FALSE;
 
 	private boolean pasifGoster = Boolean.FALSE, manuelVardiyaIzinGir = false;
 
@@ -122,6 +125,19 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		}
 		fillCalismaModeliList(pdksVardiya);
 		return "";
+	}
+
+	/**
+	 * @param cm
+	 * @return
+	 */
+	private String tesisDoldur(Vardiya vardiya) {
+		if (tesisIdList == null)
+			tesisIdList = new ArrayList<SelectItem>();
+		tesisId = fazlaMesaiOrtakIslemler.tesisDoldur(vardiya, tesisId, tesisIdList, session);
+		vardiya.setTesis(tesisId != null ? ortakIslemler.getTanimById(tesisId, session) : null);
+		return "";
+
 	}
 
 	public void fillYemekList(Vardiya pdksVardiya) {
@@ -166,13 +182,29 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		if (pdksVardiya.getId() == null || pdksVardiya.isCalisma()) {
 			Long pdksDepartmanId = pdksVardiya.getDepartmanId() != null ? pdksVardiya.getDepartmanId() : null;
 			Sirket sirket = pdksVardiya.getSirketId() != null ? new Sirket(pdksVardiya.getSirketId()) : null;
+
 			calismaModeliList = ortakIslemler.getCalismaModeliList(sirket, pdksDepartmanId, false, session);
 
-			if (pdksDepartmanId != null) {
-				for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
-					CalismaModeli cm = (CalismaModeli) iterator.next();
-					if (cm.getDepartman() != null && !cm.getDepartman().getId().equals(pdksDepartmanId))
+			for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
+				CalismaModeli cm = (CalismaModeli) iterator.next();
+				if (pdksDepartmanId != null) {
+					if (cm.getDepartman() != null && !cm.getDepartman().getId().equals(pdksDepartmanId)) {
 						iterator.remove();
+						continue;
+					}
+
+				}
+				if (sirket != null) {
+					if (cm.getSirket() != null && !cm.getSirket().getId().equals(pdksVardiya.getSirketId())) {
+						iterator.remove();
+						continue;
+					}
+				}
+				if (tesisId != null) {
+					if (cm.getTesis() != null && !cm.getTesis().getId().equals(tesisId)) {
+						iterator.remove();
+						continue;
+					}
 				}
 			}
 			if (pdksVardiya.getId() != null) {
@@ -305,7 +337,6 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		if (pdksVardiya.getKisaAdi() != null)
 			pdksVardiyaYeni.setKisaAdi(pdksVardiya.getKisaAdi() + " kopya");
 		pdksVardiyaYeni.setAdi(pdksVardiya.getAdi() + " kopya");
-
 		setSeciliVardiya(pdksVardiyaYeni);
 		return "";
 
@@ -341,6 +372,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	 */
 	private void vardiyaAlanlariDoldur(Vardiya pdksVardiya) {
 		setSeciliVardiya(pdksVardiya);
+		tesisId = pdksVardiya.getTesis() != null ? pdksVardiya.getTesis().getId() : null;
+		tesisDoldur(pdksVardiya);
 		fillSaatler();
 		fillSablonlar();
 		if (authenticatedUser.isAdmin())
@@ -497,6 +530,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		gebelikGoster = Boolean.FALSE;
 		suaGoster = Boolean.FALSE;
 		sirketGoster = Boolean.FALSE;
+		tesisGoster = Boolean.FALSE;
 		HashMap parametreMap = new HashMap();
 		try {
 			manuelVardiyaIzinGir = ortakIslemler.getVardiyaIzinGir(session, authenticatedUser.getDepartman());
@@ -698,6 +732,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					suaGoster = vardiya.isSuaMi();
 				if (sirketGoster.booleanValue() == false)
 					sirketGoster = vardiya.getSirket() != null;
+				if (tesisGoster.booleanValue() == false)
+					tesisGoster = vardiya.getTesis() != null;
 
 			}
 
@@ -788,6 +824,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(vardiyaAciklama + " Kısa Adı");
 			if (sirketGoster)
 				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.sirketAciklama());
+			if (tesisGoster)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Ekran Sıra");
 
 			if (admin)
@@ -888,6 +926,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(vardiya.getKisaAdi());
 				if (sirketGoster)
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiya.getSirket() != null ? vardiya.getSirket().getAd() : "");
+				if (tesisGoster)
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiya.getTesis() != null ? vardiya.getTesis().getAciklama() : "");
 				ExcelUtil.getCell(sheet, row, col++, cellStyleSayi).setCellValue(vardiya.getEkranSira());
 
 				if (admin)
@@ -1377,6 +1417,30 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	}
 
 	public void setSeciliVardiya(Vardiya seciliVardiya) {
- 		this.seciliVardiya = seciliVardiya;
+		this.seciliVardiya = seciliVardiya;
+	}
+
+	public List<SelectItem> getTesisIdList() {
+		return tesisIdList;
+	}
+
+	public void setTesisIdList(List<SelectItem> tesisIdList) {
+		this.tesisIdList = tesisIdList;
+	}
+
+	public Long getTesisId() {
+		return tesisId;
+	}
+
+	public void setTesisId(Long tesisId) {
+		this.tesisId = tesisId;
+	}
+
+	public Boolean getTesisGoster() {
+		return tesisGoster;
+	}
+
+	public void setTesisGoster(Boolean tesisGoster) {
+		this.tesisGoster = tesisGoster;
 	}
 }

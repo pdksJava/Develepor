@@ -42,6 +42,7 @@ public class Vardiya extends BaseObject {
 	public static final String COLUMN_NAME_GENEL = "GENEL";
 	public static final String COLUMN_NAME_DEPARTMAN = "DEPARTMAN_ID";
 	public static final String COLUMN_NAME_SIRKET = "SIRKET_ID";
+	public static final String COLUMN_NAME_TESIS = "TESIS_ID";
 	public static final String COLUMN_NAME_EKRAN_SIRA = "EKRAN_SIRA";
 	public static final String COLUMN_NAME_FCS_HARIC = "FCS_HARIC";
 	public static final String COLUMN_NAME_CALISMA_SEKLI = "CALISMA_SEKLI";
@@ -59,6 +60,7 @@ public class Vardiya extends BaseObject {
 	public static Date vardiyaKontrolTarih, vardiyaKontrolTarih2, vardiyaKontrolTarih3, vardiyaAySonuKontrolTarih;
 	private Long sirketId, calismaSekliId, departmanId;
 	private Sirket sirket;
+	private Tanim tesis;
 	private static Integer fazlaMesaiBasSaati = 2, intOffFazlaMesaiBasDakika = -60, intHaftaTatiliFazlaMesaiBasDakika = -60;
 	private Integer offFazlaMesaiBasDakika, haftaTatiliFazlaMesaiBasDakika;
 	private String adi, kisaAdi, styleClass, vardiyaDateStr;
@@ -152,6 +154,17 @@ public class Vardiya extends BaseObject {
 
 	public void setSirket(Sirket sirket) {
 		this.sirket = sirket;
+	}
+
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_TESIS)
+	@Fetch(FetchMode.JOIN)
+	public Tanim getTesis() {
+		return tesis;
+	}
+
+	public void setTesis(Tanim tesis) {
+		this.tesis = tesis;
 	}
 
 	@Column(name = COLUMN_NAME_KISA_ADI, length = 16)

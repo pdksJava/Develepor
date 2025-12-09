@@ -3,6 +3,7 @@ package org.pdks.entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,23 +18,26 @@ import org.pdks.genel.model.PdksUtil;
 
 @Entity(name = VardiyaSablonu.TABLE_NAME)
 public class VardiyaSablonu extends BaseObject {
+	 
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 3465834359641056337L;
+	private static final long serialVersionUID = -2155847986818939372L;
 
 	public static final String TABLE_NAME = "VARDIYASABLONU";
 
 	public static final String COLUMN_NAME_BEYAZ_YAKA = "BEYAZ_YAKA";
 	public static final String COLUMN_NAME_SIRKET = "SIRKET_ID";
 	public static final String COLUMN_NAME_DEPARTMAN = "DEPARTMAN_ID";
+	public static final String COLUMN_NAME_TESIS = "TESIS_ID";
 
 	private String adi;
 	private Sirket sirket;
-	private Vardiya vardiya1, vardiya2, vardiya3, vardiya4, vardiya5, vardiya6, vardiya7;
+	private Tanim tesis;
+	private Vardiya vardiya1, vardiya2, vardiya3, vardiya4, vardiya5, vardiya6, vardiya7, vardiyaArife;
 	private CalismaModeli calismaModeli;
-	private double toplamSaat = 0;
-	private int calismaGunSayisi = 0;
+
 	private Personel personel;
 	private String kayitDurum = VardiyaGun.STYLE_CLASS_EVEN;
 	private HashMap tatilMap;
@@ -84,6 +88,17 @@ public class VardiyaSablonu extends BaseObject {
 
 	public void setSirket(Sirket sirket) {
 		this.sirket = sirket;
+	}
+
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_TESIS)
+	@Fetch(FetchMode.JOIN)
+	public Tanim getTesis() {
+		return tesis;
+	}
+
+	public void setTesis(Tanim tesis) {
+		this.tesis = tesis;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -174,6 +189,17 @@ public class VardiyaSablonu extends BaseObject {
 		this.vardiya7 = vardiya7;
 	}
 
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = "VARDIYA_ARIFE_ID")
+	@Fetch(FetchMode.JOIN)
+	public Vardiya getVardiyaArife() {
+		return vardiyaArife;
+	}
+
+	public void setVardiyaArife(Vardiya vardiyaArife) {
+		this.vardiyaArife = vardiyaArife;
+	}
+
 	@Column(name = COLUMN_NAME_BEYAZ_YAKA)
 	public Boolean getBeyazYakaDefault() {
 		return beyazYakaDefault;
@@ -184,29 +210,79 @@ public class VardiyaSablonu extends BaseObject {
 	}
 
 	@Transient
-	public double getToplamSaat() {
+	public List<Vardiya> getVardiyaListesi(int gun) {
+		Date tarih = personel != null ? gunler.get(gun - 1) : null;
+		boolean offAcik = Boolean.FALSE;
+		if (tarih != null)
+			offAcik = PdksUtil.tarihKarsilastirNumeric(personel.getIseGirisTarihi(), tarih) == 1 || PdksUtil.tarihKarsilastirNumeric(tarih, personel.getSonCalismaTarihi()) == 1;
+		ArrayList<Vardiya> list = (ArrayList<Vardiya>) vardiyaList.clone();
+		if (offAcik) {
+			switch (gun) {
+			case 1:
+				setVardiya1(null);
+				break;
+			case 2:
+				setVardiya2(null);
+				break;
+			case 3:
+				setVardiya3(null);
+				break;
+			case 4:
+				setVardiya4(null);
+				break;
+			case 5:
+				setVardiya5(null);
+				break;
+			case 6:
+				setVardiya6(null);
+				break;
+			case 7:
+				setVardiya7(null);
+				break;
+			default:
+				break;
+			}
 
-		return toplamSaat;
-	}
+			list.clear();
 
-	public void setToplamSaat(double toplamSaat) {
-		this.toplamSaat = toplamSaat;
+		}
+
+		return list;
 	}
 
 	@Transient
-	public int getCalismaGunSayisi() {
-
-		return calismaGunSayisi;
-	}
-
-	public void setCalismaGunSayisi(int calismaGunSayisi) {
-		this.calismaGunSayisi = calismaGunSayisi;
+	public List<Vardiya> getVardiyaList1() {
+		return getVardiyaListesi(1);
 	}
 
 	@Transient
-	public ArrayList<Vardiya> getVardiyaList() {
+	public List<Vardiya> getVardiyaList2() {
+		return getVardiyaListesi(2);
+	}
 
-		return vardiyaList;
+	@Transient
+	public List<Vardiya> getVardiyaList3() {
+		return getVardiyaListesi(3);
+	}
+
+	@Transient
+	public List<Vardiya> getVardiyaList4() {
+		return getVardiyaListesi(4);
+	}
+
+	@Transient
+	public List<Vardiya> getVardiyaList5() {
+		return getVardiyaListesi(5);
+	}
+
+	@Transient
+	public List<Vardiya> getVardiyaList6() {
+		return getVardiyaListesi(6);
+	}
+
+	@Transient
+	public List<Vardiya> getVardiyaList7() {
+		return getVardiyaListesi(7);
 	}
 
 	public void setVardiyaList(ArrayList<Vardiya> vardiyaList) {
@@ -318,7 +394,7 @@ public class VardiyaSablonu extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
 
 	}
+
 }

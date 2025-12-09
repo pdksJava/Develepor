@@ -2994,10 +2994,18 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					modelList = new ArrayList<CalismaModeliAy>();
 				if (aylikPuantaj.getPersonelDenklestirme() != null)
 					ortakIslemler.addObjectList(aylikPuantaj.getPersonelDenklestirme().getCalismaModeliAy(), modelList, null);
+				Long tesisId = sirket.getTesisDurum() && personel.getTesis() != null ? personel.getTesis().getId() : null;
 				List<Long> idList = new ArrayList<Long>();
 				for (Iterator iterator = modelList.iterator(); iterator.hasNext();) {
 					CalismaModeliAy cma = (CalismaModeliAy) iterator.next();
 					CalismaModeli cm = cma.getCalismaModeli();
+					if (tesisId != null) {
+						Tanim tesis = cm.getTesis();
+						if (tesis != null && tesis.getId().equals(tesisId) == false) {
+							iterator.remove();
+							continue;
+						}
+					}
 					if (cma.getDurum().booleanValue() == false && cm.getDurum().booleanValue() == false)
 						iterator.remove();
 					else if (cma.getId() == null || idList.contains(cma.getId()) || !cma.getDenklestirmeAy().getId().equals(denklestirmeAy.getId())) {

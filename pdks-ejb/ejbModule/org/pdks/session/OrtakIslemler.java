@@ -1123,12 +1123,12 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param sirket
+	 * @param tesis
 	 * @param departmanId
-	 * @param genel
 	 * @param session
 	 * @return
 	 */
-	public List<VardiyaSablonu> getVardiyaSablonuList(Sirket sirket, Long departmanId, Session session) {
+	public List<VardiyaSablonu> getVardiyaSablonuList(Sirket sirket, Tanim tesis, Long departmanId, Session session) {
 		HashMap map = new HashMap();
 		StringBuilder sb = new StringBuilder();
 		sb.append("select * from " + VardiyaSablonu.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
@@ -1137,6 +1137,10 @@ public class OrtakIslemler implements Serializable {
 		if (sirket != null) {
 			sb.append(" and ( " + VardiyaSablonu.COLUMN_NAME_SIRKET + " is null or " + VardiyaSablonu.COLUMN_NAME_SIRKET + " = :s )");
 			map.put("s", sirket.getId());
+		}
+		if (tesis != null) {
+			sb.append(" and ( " + VardiyaSablonu.COLUMN_NAME_TESIS + " is null or " + VardiyaSablonu.COLUMN_NAME_TESIS + " = :t )");
+			map.put("t", tesis.getId());
 		}
 		if (departmanId != null) {
 			sb.append(" and ( " + VardiyaSablonu.COLUMN_NAME_DEPARTMAN + " is null or " + VardiyaSablonu.COLUMN_NAME_DEPARTMAN + " = :d )");
@@ -1208,27 +1212,49 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param sirket
+	 * @param tesis
 	 * @param departmanId
 	 * @param session
 	 * @return
 	 */
-	public List<Vardiya> getVardiyaList(Sirket sirket, Long departmanId, Session session) {
-
+	public List<Vardiya> getVardiyaList(Sirket sirket, Tanim tesis, Long departmanId, Session session) {
 		HashMap parametreMap = new HashMap();
 		StringBuilder sb = new StringBuilder();
 		sb.append("select * from " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 		sb.append(" where " + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
-		if (sirket != null) {
-			sb.append(" and ( " + Vardiya.COLUMN_NAME_SIRKET + " is null or " + Vardiya.COLUMN_NAME_SIRKET + " = :s )");
-			parametreMap.put("s", sirket.getId());
-		}
-		if (departmanId != null) {
-			sb.append(" and ( " + Vardiya.COLUMN_NAME_DEPARTMAN + " is null or " + Vardiya.COLUMN_NAME_DEPARTMAN + " = :d )");
-			parametreMap.put("d", departmanId);
-		}
+		Long sirketId = sirket != null ? sirket.getId() : null;
+		Long tesisId = tesis != null ? tesis.getId() : null;
+		if (departmanId != null)
+			sb.append(" and ( " + Vardiya.COLUMN_NAME_DEPARTMAN + " is null or " + Vardiya.COLUMN_NAME_DEPARTMAN + " = " + departmanId + " )");
+		if (sirketId != null)
+			sb.append(" and ( " + Vardiya.COLUMN_NAME_SIRKET + " is null or " + Vardiya.COLUMN_NAME_SIRKET + " = " + sirketId + " )");
+		if (tesisId != null)
+			sb.append(" and ( " + Vardiya.COLUMN_NAME_TESIS + " is null or " + Vardiya.COLUMN_NAME_TESIS + " = " + tesisId + " )");
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<Vardiya> vardiyaList = pdksEntityController.getObjectBySQLList(sb, parametreMap, Vardiya.class);
+		for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
+			Vardiya vardiya = (Vardiya) iterator.next();
+			if (departmanId != null) {
+				if (vardiya.getDepartman() != null && vardiya.getDepartman().getId().equals(departmanId) == false) {
+					iterator.remove();
+					continue;
+				}
+			}
+			if (sirketId != null) {
+				if (vardiya.getSirket() != null && vardiya.getSirket().getId().equals(sirketId) == false) {
+					iterator.remove();
+					continue;
+				}
+			}
+			if (tesisId != null) {
+				if (vardiya.getTesis() != null && vardiya.getTesis().getId().equals(tesisId) == false) {
+					iterator.remove();
+					continue;
+				}
+			}
+
+		}
 		return vardiyaList;
 	}
 

@@ -78,6 +78,12 @@
 									</f:facet>
 									<h:outputText value="#{calismaModeli.sirket.ad}" />
 								</rich:column>
+								<rich:column rendered="#{calismaModeliHome.tesisGoster}">
+									<f:facet name="header">
+										<h:outputText value="#{ortakIslemler.tesisAciklama()}" />
+									</f:facet>
+									<h:outputText value="#{calismaModeli.tesis.aciklama}" />
+								</rich:column>
 
 								<rich:column>
 									<f:facet name="header">
@@ -298,6 +304,7 @@
 								<s:convertEntity />
 							</h:selectOneMenu>
 						</s:decorate>
+
 						<s:decorate template="/layout/edit.xhtml" cellpadding="0" cellspacing="0" style="text-align : left">
 							<ui:define name="label">Bağlı #{ortakIslemler.vardiyaAciklama()} Şablonu</ui:define>
 							<h:selectOneMenu value="#{calismaModeliHome.calismaModeli.bagliVardiyaSablonu}" disabled="#{authenticatedUser.admin == false}"
@@ -317,6 +324,7 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Hafta Tatil</ui:define>
 							<h:selectOneMenu value="#{calismaModeliHome.calismaModeli.haftaTatilGun}" disabled="#{authenticatedUser.admin == false}">
+								<f:selectItem itemLabel="Seçiniz" />
 								<f:selectItems value="#{calismaModeliHome.haftaTatilGunleri}" />
 								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" />
 							</h:selectOneMenu>
@@ -540,6 +548,16 @@
 						</h:selectOneMenu>
 
 					</s:decorate>
+					<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and not empty calismaModeliHome.tesisIdList}">
+						<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
+						<h:selectOneMenu value="#{calismaModeliHome.tesisId}" disabled="#{calismaModeliHome.tesisIdList.size() == 1}">
+							<f:selectItem itemLabel="Lütfen seçiniz" />
+							<f:selectItems value="#{calismaModeliHome.tesisIdList}" />
+							<a4j:support event="onchange" action="#{calismaModeliHome.fillVardiyalar(calismaModeliHome.calismaModeli)}"
+								reRender="vardiyalar" status="ajaxStatus" ajaxSingle="true" />
+
+						</h:selectOneMenu>
+					</s:decorate>
 					<a4j:outputPanel id="vardiyalar">
 
 						<rich:simpleTogglePanel
@@ -576,8 +594,7 @@
 									<h:inputText required="true" value="#{cmg.sure}" size="6"
 										validatorMessage="#{ortakIslemler.getGunAdi(cmg.haftaGun-1,null)} günü saati giriniz">
 										<f:validateDoubleRange minimum="0" maximum="12" />
-										<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}"
-										reRender="haftaIciGunler" />
+										<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="haftaIciGunler" />
 									</h:inputText>
 								</s:decorate>
 							</a4j:repeat>

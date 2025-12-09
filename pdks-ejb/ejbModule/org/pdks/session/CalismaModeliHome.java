@@ -60,6 +60,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	FacesMessages facesMessages;
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
+	@In(required = false, create = true)
+	FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemler;
 
 	public static String sayfaURL = "calismaModeliTanimlama";
 	private CalismaModeli calismaModeli;
@@ -70,12 +72,14 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), kayitliVardiyaList = new ArrayList<Vardiya>();
 	private List<CalismaModeliGun> cmGunList;
 	private List<Departman> departmanList;
-	private List<SelectItem> haftaTatilGunleri;
+	private List<SelectItem> haftaTatilGunleri, tesisIdList;
+	private Long tesisId;
+
 	private HashMap<Integer, List<CalismaModeliGun>> cmGunMap;
 	private Sirket seciliSirket;
 	private CalismaModeliGun cmgPage = new CalismaModeliGun();
 
-	private Boolean sirketGoster = Boolean.FALSE, suaGoster = Boolean.FALSE, pasifGoster = Boolean.FALSE, hareketKaydiVardiyaBul = Boolean.FALSE, saatlikCalismaVar = false, otomatikFazlaCalismaOnaylansinVar = false, izinGoster = false;
+	private Boolean sirketGoster = Boolean.FALSE, tesisGoster = Boolean.FALSE, suaGoster = Boolean.FALSE, pasifGoster = Boolean.FALSE, hareketKaydiVardiyaBul = Boolean.FALSE, saatlikCalismaVar = false, otomatikFazlaCalismaOnaylansinVar = false, izinGoster = false;
 
 	private Session session;
 
@@ -94,6 +98,10 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		super.create();
 	}
 
+	/**
+	 * @param xCalismaModeli
+	 * @return
+	 */
 	public String calismaModeliEkle(CalismaModeli xCalismaModeli) {
 
 		if (xCalismaModeli == null) {
@@ -113,10 +121,23 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			fillBagliOlduguDepartmanTanimList();
 		if (xCalismaModeli.getId() == null && departmanList.size() > 0)
 			xCalismaModeli.setDepartman(departmanList.get(0));
-
+		tesisId = xCalismaModeli.getTesis() != null ? xCalismaModeli.getTesis().getId() : null;
 		fillVardiyalar(xCalismaModeli);
 
 		return "";
+	}
+
+	/**
+	 * @param cm
+	 * @return
+	 */
+	private String tesisDoldur(CalismaModeli cm) {
+		if (tesisIdList == null)
+			tesisIdList = new ArrayList<SelectItem>();
+		tesisId = fazlaMesaiOrtakIslemler.tesisDoldur(cm, tesisId, tesisIdList, session);
+		cm.setTesis(tesisId != null ? ortakIslemler.getTanimById(tesisId, session) : null);
+		return "";
+
 	}
 
 	private void gunleriSifirla() {
@@ -229,8 +250,13 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	}
 
+	/**
+	 * @param cm
+	 * @return
+	 */
 	public String fillVardiyalar(CalismaModeli cm) {
 		Sirket sirket = cm.getSirket();
+		tesisDoldur(cm);
 		haftaTatilGunleri.clear();
 		Calendar cal = Calendar.getInstance();
 		haftaTatilGunleri.add(new SelectItem(null, "Sabit Gün Değil"));
@@ -241,7 +267,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		gunleriSifirla();
 		Long departmanId = cm.getDepartman() != null ? cm.getDepartman().getId() : null;
 
-		sablonList = ortakIslemler.getVardiyaSablonuList(sirket, departmanId, session);
+		sablonList = ortakIslemler.getVardiyaSablonuList(sirket, cm.getTesis(), departmanId, session);
 
 		for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
 			VardiyaSablonu sablonu = (VardiyaSablonu) iterator.next();
@@ -263,7 +289,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		}
 		Long cmaDepartmanId = cm.getDepartman() != null ? cm.getDepartman().getId() : null;
 		HashMap parametreMap = new HashMap();
-		vardiyaList = ortakIslemler.getVardiyaList(sirket, cmaDepartmanId, session);
+		vardiyaList = ortakIslemler.getVardiyaList(sirket, cm.getTesis(), cmaDepartmanId, session);
 		for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 			Vardiya vardiya = (Vardiya) iterator.next();
 			if (vardiya.getKisaAdi().equals("TA") || vardiya.getKisaAdi().equals("TG"))
@@ -412,6 +438,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 		haftaTatilGunleri = ortakIslemler.getSelectItemList("haftaTatilGun", authenticatedUser);
 		sirketGoster = false;
+		tesisGoster = false;
 		izinGoster = false;
 		suaGoster = false;
 		hareketKaydiVardiyaBul = ortakIslemler.getParameterKey("hareketKaydiVardiyaBul").equals("1");
@@ -452,6 +479,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			for (CalismaModeli cm : calismaModeliList) {
 				if (sirketGoster == false)
 					sirketGoster = cm.getSirket() != null;
+				if (tesisGoster == false)
+					tesisGoster = cm.getTesis() != null;
 				if (suaGoster == false)
 					suaGoster = cm.getSuaDurum() != null && cm.getSuaDurum().booleanValue();
 				if (cm.getDurum()) {
@@ -517,6 +546,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Adı");
 			if (sirketGoster)
 				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.sirketAciklama());
+			if (tesisGoster)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Hafta İçi (Saat)");
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.getGunAdi(6, null) + " (Saat)");
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.getGunAdi(7, null) + " (Saat)");
@@ -614,6 +645,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(calismaModeli.getAciklama());
 				if (sirketGoster)
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(calismaModeli.getSirket() == null ? "" : calismaModeli.getSirket().getAd());
+				if (tesisGoster)
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(calismaModeli.getTesis() == null ? "" : calismaModeli.getTesis().getAciklama());
 				if (calismaModeli.getHaftaIci() > 0.0d)
 					ExcelUtil.getCell(sheet, row, col++, cellStyleTutar).setCellValue(calismaModeli.getHaftaIci());
 				else
@@ -893,6 +926,30 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	public void setSuaGoster(Boolean suaGoster) {
 		this.suaGoster = suaGoster;
+	}
+
+	public List<SelectItem> getTesisIdList() {
+		return tesisIdList;
+	}
+
+	public void setTesisIdList(List<SelectItem> tesisIdList) {
+		this.tesisIdList = tesisIdList;
+	}
+
+	public Long getTesisId() {
+		return tesisId;
+	}
+
+	public void setTesisId(Long tesisId) {
+		this.tesisId = tesisId;
+	}
+
+	public Boolean getTesisGoster() {
+		return tesisGoster;
+	}
+
+	public void setTesisGoster(Boolean tesisGoster) {
+		this.tesisGoster = tesisGoster;
 	}
 
 }

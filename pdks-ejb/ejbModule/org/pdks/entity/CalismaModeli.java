@@ -46,6 +46,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_BAGLI_VARDIYA_SABLON = "BAGLI_VARDIYA_SABLON_ID";
 	public static final String COLUMN_NAME_DEPARTMAN = "DEPARTMAN_ID";
 	public static final String COLUMN_NAME_SIRKET = "SIRKET_ID";
+	public static final String COLUMN_NAME_TESIS = "TESIS_ID";
 	public static final String COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL = "HAREKET_KAYDI_VARDIYA_BUL";
 	public static final String COLUMN_NAME_MAAS_ODEME_TIPI = "MAAS_ODEME_TIPI";
 	public static final String COLUMN_NAME_FAZLA_MESAI_VAR = "FAZLA_MESAI_VAR";
@@ -71,6 +72,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 
 	private Sirket sirket;
+	private Tanim tesis;
 	private String aciklama = "";
 	private double haftaIci = 0.0d, arife = 0.0d, negatifBakiyeDenkSaat = 0.0d;
 	private Double haftaIciSutIzniSure = 7.5d, cumartesiSaat = 0.0d, izin = 0.0d, cumartesiIzinSaat = 0.0d, cumartesiSutIzniSure = 0.0d, sutIzniSabitSaat;
@@ -107,6 +109,17 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	public void setSirket(Sirket sirket) {
 		this.sirket = sirket;
+	}
+
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_TESIS)
+	@Fetch(FetchMode.JOIN)
+	public Tanim getTesis() {
+		return tesis;
+	}
+
+	public void setTesis(Tanim tesis) {
+		this.tesis = tesis;
 	}
 
 	@Column(name = "HAFTA_ICI_SAAT")
@@ -617,7 +630,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 				sutIzinSure = gunSure;
 			break;
 		}
-		
+
 		if (sutIzinSure == null) {
 			if (this.getDepartman() != null) {
 				Departman dm = this.getDepartman();
@@ -638,7 +651,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 			}
 			if ((this.getHaftaTatilGun() != null && dayOfWeek == this.getHaftaTatilGun().intValue()) || sutIzinSure == null)
 				sutIzinSure = 0.0d;
-			 
+
 		}
 
 		if (sutIzinSure > 0.0d)

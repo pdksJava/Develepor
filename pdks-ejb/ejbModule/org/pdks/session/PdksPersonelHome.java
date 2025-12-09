@@ -711,10 +711,18 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 */
 	private void fillCalismaModeli(Personel pdksPersonel) {
 		Long pdksDepartmanId = pdksPersonel.getSirket() != null ? pdksPersonel.getSirket().getDepartman().getId() : null;
+		Long tesisId = pdksPersonel.getTesis() != null ? pdksPersonel.getTesis().getId() : null;
 		calismaModeliList = ortakIslemler.getCalismaModeliList(pdksPersonel.getSirket(), pdksDepartmanId, true, session);
 		// calismaModeliList = pdksEntityController.getSQLParamByFieldList(CalismaModeli.TABLE_NAME, CalismaModeli.COLUMN_NAME_DURUM, 1, CalismaModeli.class, session);
 		for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
 			CalismaModeli cm = (CalismaModeli) iterator.next();
+			if (tesisId != null) {
+				Tanim tesis = cm.getTesis();
+				if (tesis != null && tesis.getId().equals(tesisId) == false) {
+					iterator.remove();
+					continue;
+				}
+			}
 			Departman departman = cm.getSirket() != null ? cm.getSirket().getDepartman() : cm.getDepartman();
 			if (departman != null && pdksDepartmanId != null && !pdksDepartmanId.equals(departman.getId())) {
 				iterator.remove();
@@ -755,9 +763,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			Personel pdksPersonel = getInstance();
 			Departman pdksDepartman = pdksPersonel.getSirket() != null ? pdksPersonel.getSirket().getDepartman() : null;
 			sablonlar.clear();
-
-			Long departmanId = pdksDepartman != null ? pdksDepartman.getId() : null;
-			sablonList = ortakIslemler.getVardiyaSablonuList(pdksPersonel.getSirket(), departmanId, session);
+ 			Long departmanId = pdksDepartman != null ? pdksDepartman.getId() : null;
+			sablonList = ortakIslemler.getVardiyaSablonuList(pdksPersonel.getSirket(), pdksPersonel.getTesis(), departmanId, session);
 			for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
 				VardiyaSablonu vardiyaSablonu = (VardiyaSablonu) iterator.next();
 				Departman departman = vardiyaSablonu.getSirket() != null ? vardiyaSablonu.getSirket().getDepartman() : vardiyaSablonu.getDepartman();

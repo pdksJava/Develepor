@@ -70,6 +70,12 @@
 									</f:facet>
 									<h:outputText value="#{vardiyaSablon.sirket.ad}" />
 								</rich:column>
+								<rich:column rendered="#{vardiyaSablonuHome.tesisGoster}">
+									<f:facet name="header">
+										<h:outputText value="#{ortakIslemler.tesisAciklama()}" />
+									</f:facet>
+									<h:outputText value="#{vardiyaSablon.tesis.aciklama}" />
+								</rich:column>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="Gün Sayısı" />
@@ -194,7 +200,7 @@
 				<a4j:outputPanel ajaxRendered="true">
 					<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 				</a4j:outputPanel>
-				<h:panelGrid columns="1">
+				<h:panelGrid columns="1" id="sablonPanel">
 
 					<s:decorate template="/layout/edit.xhtml">
 						<ui:define name="label">#{ortakIslemler.vardiyaAciklama()} Şablon adı</ui:define>
@@ -247,10 +253,21 @@
 						<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 						<h:selectOneMenu value="#{vardiyaSablonuHome.instance.sirket}">
 							<s:selectItems var="comp" value="#{vardiyaSablonuHome.sirketList}" label="#{comp.ad}" noSelectionLabel="Lütfen seçiniz" />
-							<a4j:support event="onchange" action="#{vardiyaSablonuHome.fillPdksVardiyaList()}" reRender="vardiyalar" status="ajaxStatus" ajaxSingle="true" />
+							<a4j:support event="onchange" action="#{vardiyaSablonuHome.fillPdksVardiyaList()}" reRender="vardiyalar,sablonPanel" status="ajaxStatus"
+								ajaxSingle="true" />
 							<s:convertEntity />
 						</h:selectOneMenu>
 
+					</s:decorate>
+					<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and not empty vardiyaSablonuHome.tesisIdList}">
+						<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
+						<h:selectOneMenu value="#{vardiyaSablonuHome.tesisId}" disabled="#{vardiyaSablonuHome.tesisIdList.size() == 1}">
+							<f:selectItem itemLabel="Lütfen seçiniz" />
+							<f:selectItems value="#{vardiyaSablonuHome.tesisIdList}" />
+							<a4j:support event="onchange" action="#{vardiyaSablonuHome.fillPdksVardiyaList()}" reRender="vardiyalar" status="ajaxStatus"
+								ajaxSingle="true" />
+
+						</h:selectOneMenu>
 					</s:decorate>
 					<a4j:outputPanel id="vardiyalar">
 
