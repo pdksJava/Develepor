@@ -3451,19 +3451,27 @@ public class PdksVeriOrtakAktar implements Serializable {
 	private Object getCalismaModel_VardiyaSablonByMap(Sirket sirket, Tanim tesis, TreeMap map) {
 		Object object = null;
 		if (map != null && !map.isEmpty()) {
-			String key = "0_0_0";
+			Departman departman = sirket != null ? sirket.getDepartman() : null;
+			String departmanKey = "" + (departman != null ? departman.getId() : 0l);
+			String key = departmanKey + "_0_0";
 			if (tesis != null) {
-				key = "0_" + tesis.getId() + "_0";
+				key = departmanKey + "_" + (sirket != null ? sirket.getId() : 0L) + "_" + tesis.getId();
 				object = map.get(key);
-				if (object == null && sirket != null) {
-					key = "0_" + sirket.getId() + "_0";
-					object = map.get(key);
 
-				}
+			}
+			if (object == null && sirket != null) {
+				key = departmanKey + "_" + sirket.getId() + "_0";
+				object = map.get(key);
+
 			}
 			if (object == null) {
-				key = "0_0_0";
+				key = departmanKey + "_0_0";
 				object = map.get(key);
+				if (object == null && departmanKey.equals("0") == false) {
+					key = "0_0_0";
+					object = map.get(key);
+				}
+
 			}
 		}
 		return object;
@@ -4005,9 +4013,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 						}
 						personel.setFazlaMesaiIzinKullan(fazlaMesaiIzinKullan);
 
-						if (sirket != null)  
+						if (sirket != null)
 							personel.setFazlaMesaiOde(sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde());
-						 
+
 						if (personel.getCalismaModeli() == null) {
 							CalismaModeli cm = null;
 							if (sirket != null)
@@ -4021,9 +4029,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 
 					if (personel.getSablon() == null) {
-						VardiyaSablonu vs = null;
-						if (sirket != null)
-							vs = (VardiyaSablonu) getCalismaModel_VardiyaSablonByMap(sirket, tesis, sablonMap);
+						VardiyaSablonu vs = (VardiyaSablonu) getCalismaModel_VardiyaSablonByMap(sirket, tesis, sablonMap);
 						if (vs != null)
 							personel.setSablon(vs);
 						else {
@@ -4977,13 +4983,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 			if (departman == null || departman.isAdminMi()) {
 				Sirket sirket = vs.getSirket();
 				Tanim tesis = vs.getTesis();
-				String key = "0_0_0";
+				String departmanKey = "" + (departman != null ? departman.getId() : 0l);
+				String key = departmanKey + "_0_0";
 				if (tesis != null)
-					key = "0_0_" + tesis.getId();
+					key = departmanKey + "_" + (sirket != null ? sirket.getId() : 0L) + "_" + tesis.getId();
 				else if (sirket != null)
-					key = "0_" + sirket.getId() + "_0";
+					key = departmanKey + "_" + sirket.getId() + "_0";
 				else if (departman != null)
-					key = departman.getId() + "_0_0";
+					key = departmanKey + "_0_0";
 				sablonMap.put(key, vs);
 			}
 		}
@@ -4998,13 +5005,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 			if (departman == null || departman.isAdminMi()) {
 				Sirket sirket = cm.getSirket();
 				Tanim tesis = cm.getTesis();
-				String key = "0_0_0";
+				String departmanKey = "" + (departman != null ? departman.getId() : 0l);
+				String key = departmanKey + "_0_0";
 				if (tesis != null)
-					key = "0_0_" + tesis.getId();
+					key = departmanKey + "_" + (sirket != null ? sirket.getId() : 0L) + "_" + tesis.getId();
 				else if (sirket != null)
 					key = "0_" + sirket.getId() + "_0";
 				else if (departman != null)
-					key = departman.getId() + "_0_0";
+					key = departmanKey + "_0_0";
 				cmMap.put(key, cm);
 			}
 		}
