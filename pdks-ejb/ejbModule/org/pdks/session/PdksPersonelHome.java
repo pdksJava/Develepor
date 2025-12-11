@@ -37,7 +37,6 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.framework.EntityHome;
-import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.CalismaModeli;
 import org.pdks.entity.Departman;
 import org.pdks.entity.Dosya;
@@ -56,6 +55,7 @@ import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
+import org.pdks.entity.TesisBaglanti;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaSablonu;
 import org.pdks.enums.NoteTipi;
@@ -106,6 +106,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	User authenticatedUser;
 	@In(required = true, create = true)
 	OrtakIslemler ortakIslemler;
+	@In(required = false, create = true)
+	FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemler;
 	@In(required = false, create = true)
 	HashMap<String, String> parameterMap;
 
@@ -763,7 +765,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			Personel pdksPersonel = getInstance();
 			Departman pdksDepartman = pdksPersonel.getSirket() != null ? pdksPersonel.getSirket().getDepartman() : null;
 			sablonlar.clear();
- 			Long departmanId = pdksDepartman != null ? pdksDepartman.getId() : null;
+			Long departmanId = pdksDepartman != null ? pdksDepartman.getId() : null;
 			sablonList = ortakIslemler.getVardiyaSablonuList(pdksPersonel.getSirket(), pdksPersonel.getTesis(), departmanId, session);
 			for (Iterator iterator = sablonList.iterator(); iterator.hasNext();) {
 				VardiyaSablonu vardiyaSablonu = (VardiyaSablonu) iterator.next();
@@ -4648,7 +4650,60 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 * 
 	 */
 	public void fillDistinctTesisList() {
-		List<Tanim> allTesis = ortakIslemler.getTesisDurumu() ? ortakIslemler.getTanimList(Tanim.TIPI_TESIS, session) : new ArrayList<Tanim>();
+		List<Tanim> allTesis = null;
+		boolean tesisIK = authenticatedUser.isIK_Tesis(), sirketIK = authenticatedUser.isIKSirket();
+		if (ortakIslemler.getTesisDurumu()) {
+			boolean userIK = authenticatedUser.isIK() && tesisIK == false && sirketIK == false;
+			if (userIK || sirketIK || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isAdmin()) {
+				List<SelectItem> tesisIdList = new ArrayList<SelectItem>();
+				fazlaMesaiOrtakIslemler.tesisDoldur(authenticatedUser, null, tesisIdList, session);
+				if (tesisIdList.isEmpty() == false) {
+					List<Long> idList = new ArrayList<Long>();
+					for (SelectItem st : tesisIdList)
+						idList.add((Long) st.getValue());
+					allTesis = pdksEntityController.getSQLParamByFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, idList, Tanim.class, session);
+					if (sirketIK) {
+						if (allTesis.isEmpty() == false) {
+							idList.clear();
+							for (Tanim tesis : allTesis) {
+								idList.add(tesis.getId());
+							}
+							List<TesisBaglanti> list = pdksEntityController.getSQLParamByFieldList(TesisBaglanti.TABLE_NAME, TesisBaglanti.COLUMN_NAME_TESIS, new ArrayList(idList), TesisBaglanti.class, session);
+							for (TesisBaglanti tb : list) {
+								Tanim tesis = tb.getTesisBaglanti();
+								if (idList.contains(tesis.getId()) == false) {
+									allTesis.add(tesis);
+									idList.add(tesis.getId());
+								}
+
+							}
+							list = null;
+						}
+
+					}
+					idList = null;
+				}
+				tesisIdList = null;
+			} else if (tesisIK) {
+				Personel personel = getInstance();
+				Tanim tesis = personel != null ? personel.getTesis() : null;
+				if (tesis != null) {
+					allTesis = new ArrayList<Tanim>();
+					allTesis.add(tesis);
+					List<TesisBaglanti> list = pdksEntityController.getSQLParamByFieldList(TesisBaglanti.TABLE_NAME, TesisBaglanti.COLUMN_NAME_TESIS, tesis.getId(), TesisBaglanti.class, session);
+					if (list.isEmpty() == false) {
+						for (TesisBaglanti tb : list)
+							if (tb.getTesisBaglanti().getId().equals(tesis.getId()) == false)
+								allTesis.add(tb.getTesisBaglanti());
+					}
+					list = null;
+				}
+			}
+
+		}
+		if (allTesis == null)
+			allTesis = new ArrayList<Tanim>();
+
 		if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
 			for (Iterator iterator = allTesis.iterator(); iterator.hasNext();) {
 				Tanim tanim = (Tanim) iterator.next();
@@ -4662,25 +4717,26 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				if (sil)
 					iterator.remove();
 			}
-		} else if (authenticatedUser.isIKSirket()) {
-			AramaSecenekleri as = new AramaSecenekleri();
-			Date bugun = PdksUtil.getDate(new Date());
-			as.setSirket(authenticatedUser.getPdksPersonel().getSirket());
-			as.setSirketId(authenticatedUser.getPdksPersonel().getSirket().getId());
-			ortakIslemler.setAramaSecenekTesisData(as, bugun, bugun, false, session);
-			for (Iterator iterator = allTesis.iterator(); iterator.hasNext();) {
-				Tanim tanim = (Tanim) iterator.next();
-				boolean sil = true;
-				for (SelectItem tesis : as.getTesisList()) {
-					if (tesis.getValue().equals(tanim.getId())) {
-						sil = false;
-						break;
-					}
-				}
-				if (sil)
-					iterator.remove();
-			}
 		}
+		// else if (sirketIK) {
+		// AramaSecenekleri as = new AramaSecenekleri();
+		// Date bugun = PdksUtil.getDate(new Date());
+		// as.setSirket(authenticatedUser.getPdksPersonel().getSirket());
+		// as.setSirketId(authenticatedUser.getPdksPersonel().getSirket().getId());
+		// ortakIslemler.setAramaSecenekTesisData(as, bugun, bugun, false, session);
+		// for (Iterator iterator = allTesis.iterator(); iterator.hasNext();) {
+		// Tanim tanim = (Tanim) iterator.next();
+		// boolean sil = true;
+		// for (SelectItem tesis : as.getTesisList()) {
+		// if (tesis.getValue().equals(tanim.getId())) {
+		// sil = false;
+		// break;
+		// }
+		// }
+		// if (sil)
+		// iterator.remove();
+		// }
+		// }
 		Personel seciliPersonel = getInstance();
 		if (seciliPersonel != null) {
 			User seciliKullanici = seciliPersonel.getKullanici();

@@ -136,8 +136,9 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	public Long tesisDoldur(Object object, Long oncekiTesisId, List<SelectItem> tesisIdList, Session session) {
 		Sirket sirket = null;
 		Date olusturmaTarihi = null;
+		boolean kullaniciDurum = false;
 		if (object != null) {
- 			if (object instanceof CalismaModeli) {
+			if (object instanceof CalismaModeli) {
 				CalismaModeli cm = (CalismaModeli) object;
 				sirket = cm.getSirket();
 				olusturmaTarihi = cm.getOlusturmaTarihi();
@@ -150,15 +151,16 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				sirket = vardiya.getSirket();
 				olusturmaTarihi = vardiya.getOlusturmaTarihi();
 			} else if (object instanceof User) {
+				kullaniciDurum = true;
 				User user = (User) object;
-				sirket = user.getPdksPersonel() != null ? user.getPdksPersonel().getSirket() : null;
+				sirket = user.isIK() && user.getPdksPersonel() != null ? user.getPdksPersonel().getSirket() : null;
 				olusturmaTarihi = PdksUtil.convertToJavaDate(PdksUtil.getSistemBaslangicYili() + "0101", "yyyyMMdd");
 			}
 		}
 
 		Long tesisId = null;
 		tesisIdList.clear();
-		if (sirket != null) {
+		if (sirket != null || kullaniciDurum) {
 			Date bugun = new Date();
 			Date sonGun = PdksUtil.getDate(PdksUtil.tariheAyEkleCikar(bugun, 1));
 			Date ilkGun = PdksUtil.getDate(olusturmaTarihi != null ? olusturmaTarihi : bugun);
