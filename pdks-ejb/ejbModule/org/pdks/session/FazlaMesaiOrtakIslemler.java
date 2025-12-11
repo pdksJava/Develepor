@@ -136,18 +136,24 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	public Long tesisDoldur(Object object, Long oncekiTesisId, List<SelectItem> tesisIdList, Session session) {
 		Sirket sirket = null;
 		Date olusturmaTarihi = null;
-		if (object instanceof CalismaModeli) {
-			CalismaModeli cm = (CalismaModeli) object;
-			sirket = cm.getSirket();
-			olusturmaTarihi = cm.getOlusturmaTarihi();
-		} else if (object instanceof VardiyaSablonu) {
-			VardiyaSablonu vs = (VardiyaSablonu) object;
-			sirket = vs.getSirket();
-			olusturmaTarihi = vs.getOlusturmaTarihi();
-		} else if (object instanceof Vardiya) {
-			Vardiya vardiya = (Vardiya) object;
-			sirket = vardiya.getSirket();
-			olusturmaTarihi = vardiya.getOlusturmaTarihi();
+		if (object != null) {
+ 			if (object instanceof CalismaModeli) {
+				CalismaModeli cm = (CalismaModeli) object;
+				sirket = cm.getSirket();
+				olusturmaTarihi = cm.getOlusturmaTarihi();
+			} else if (object instanceof VardiyaSablonu) {
+				VardiyaSablonu vs = (VardiyaSablonu) object;
+				sirket = vs.getSirket();
+				olusturmaTarihi = vs.getOlusturmaTarihi();
+			} else if (object instanceof Vardiya) {
+				Vardiya vardiya = (Vardiya) object;
+				sirket = vardiya.getSirket();
+				olusturmaTarihi = vardiya.getOlusturmaTarihi();
+			} else if (object instanceof User) {
+				User user = (User) object;
+				sirket = user.getPdksPersonel() != null ? user.getPdksPersonel().getSirket() : null;
+				olusturmaTarihi = PdksUtil.convertToJavaDate(PdksUtil.getSistemBaslangicYili() + "0101", "yyyyMMdd");
+			}
 		}
 
 		Long tesisId = null;
