@@ -12,52 +12,56 @@
 			<a4j:region>
 				<rich:panel header="#{ortakIslemler.getMenuUserAdi(tesisBaglantiHome.session,'tesisBaglantiTanimlama')}">
 					<a4j:outputPanel id="tesisler">
-						<h:panelGrid columns="2">
+						<table width="%90">
+							<tr>
+								<td valign="top" width="%50"><s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 
-							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
-
-								<h:selectOneMenu value="#{tesisBaglantiHome.tesis}">
-									<s:selectItems var="comp" value="#{tesisBaglantiHome.tesisList}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
-									<a4j:support event="onchange" action="#{tesisBaglantiHome.tesisGuncelle()}" reRender="tesisler" status="ajaxStatus" />
-									<s:convertEntity />
-								</h:selectOneMenu>
-							</s:decorate>
-
-
-
-							<DIV class="#{authenticatedUser.scroolClass}" id="#{authenticatedUser.scroolDiv}">
-
-
-								<a4j:commandButton value="Kaydet" action="#{tesisBaglantiHome.kaydet()}" reRender="tesisler"
-									rendered="#{not empty tesisBaglantiHome.tesisBaglantiList}" />
-								<rich:dataTable rowClasses="acik,koyu" value="#{tesisBaglantiHome.tesisBaglantiList}" var="tb" rows="50" rowKeyVar="row"
-									id="tesisBaglantiTable">
-									<f:facet name="header">
-										<h:outputText value="Tesisler" />
-									</f:facet>
-									<rich:column style="text-align: center;">
-										<f:facet name="header">İşlemler</f:facet>
-										<h:selectBooleanCheckbox value="#{tb.checkBoxDurum}" />
-									</rich:column>
+										<h:selectOneMenu value="#{tesisBaglantiHome.tesis}">
+											<s:selectItems var="comp" value="#{tesisBaglantiHome.tesisList}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
+											<a4j:support event="onchange" action="#{tesisBaglantiHome.tesisGuncelle()}" reRender="tesisler" status="ajaxStatus" />
+											<s:convertEntity />
+										</h:selectOneMenu>
+									</s:decorate></td>
+								<td valign="top" width="%50">
+									<DIV class="#{authenticatedUser.scroolClass}" id="#{authenticatedUser.scroolDiv}" width="%100">
+										<ui:fragment rendered="#{not empty tesisBaglantiHome.tesisBaglantiList}">
+											<a4j:commandButton value="Kaydet" action="#{tesisBaglantiHome.kaydet()}" reRender="tesisler" />
+											<rich:dataTable rowClasses="acik,koyu" value="#{tesisBaglantiHome.tesisBaglantiList}" var="tb" rows="50" rowKeyVar="row"
+												id="tesisBaglantiTable" style="width=:%100">
+												<f:facet name="header">
+													<h:outputText value="Tesisler" />
+												</f:facet>
+												<rich:column style="text-align: center;">
+													<f:facet name="header">İşlemler</f:facet>
+													<h:selectBooleanCheckbox value="#{tb.checkBoxDurum}" />
+												</rich:column>
 
 
-									<rich:column>
-										<f:facet name="header">
+												<rich:column>
+													<f:facet name="header">
 									#{ortakIslemler.tesisAciklama()}
 								</f:facet>
+													<ui:fragment rendered="#{tb.id==null}">
+														<h:outputText value="#{tb.tesisBaglanti.aciklama}" />
+													</ui:fragment>
+													<ui:fragment rendered="#{tb.id!=null}">
+														<b><h:outputText value="#{tb.tesisBaglanti.aciklama}" /></b>
+													</ui:fragment>
+												</rich:column>
 
-										<h:outputText value="#{tb.tesisBaglanti.aciklama}" />
-									</rich:column>
 
+												<f:facet name="footer">
+													<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+												</f:facet>
+											</rich:dataTable>
+										</ui:fragment>
 
-									<f:facet name="footer">
-										<rich:datascroller renderIfSinglePage="false" maxPages="5" />
-									</f:facet>
-								</rich:dataTable>
+									</DIV>
+								</td>
+							</tr>
+						</table>
 
-							</DIV>
-						</h:panelGrid>
 					</a4j:outputPanel>
 
 				</rich:panel>

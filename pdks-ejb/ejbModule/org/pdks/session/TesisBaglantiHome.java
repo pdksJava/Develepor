@@ -121,14 +121,14 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 	}
 
 	/**
-	 * @param tesis
 	 * @return
 	 */
 	public String tesisGuncelle() {
 		tesisBaglantiList.clear();
 		if (tesis != null) {
+			List<TesisBaglanti> list = pdksEntityController.getSQLParamByFieldList(TesisBaglanti.TABLE_NAME, TesisBaglanti.COLUMN_NAME_TESIS, tesis.getId(), TesisBaglanti.class, session);
 			HashMap<Long, TesisBaglanti> map = new HashMap<Long, TesisBaglanti>();
-			List<TesisBaglanti> list = pdksEntityController.getSQLParamByFieldList(TesisBaglanti.TABLE_NAME, TesisBaglanti.COLUMN_NAME_TESIS, tesis.getId(), Tanim.class, session);
+			List<TesisBaglanti> list2 = new ArrayList<TesisBaglanti>();
 			for (TesisBaglanti tb : list) {
 				tb.setCheckBoxDurum(true);
 				map.put(tb.getTesisBaglanti().getId(), tb);
@@ -138,9 +138,12 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 					if (map.containsKey(tesisBaglanti.getId()))
 						tesisBaglantiList.add(map.get(tesisBaglanti.getId()));
 					else
-						tesisBaglantiList.add(new TesisBaglanti(tesis, tesisBaglanti));
+						list2.add(new TesisBaglanti(tesis, tesisBaglanti));
 				}
 			}
+			if (list2.isEmpty() == false)
+				tesisBaglantiList.addAll(list2);
+			list2 = null;
 			list = null;
 			map = null;
 		}
