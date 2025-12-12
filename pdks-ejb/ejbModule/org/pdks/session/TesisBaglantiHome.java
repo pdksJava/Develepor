@@ -71,27 +71,31 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 
 	@Transactional
 	public String kaydet() {
-		boolean flush = false, sirala = false;
+		int sirala = 0, kayit = 0;
 		for (Iterator iterator = tesisBaglantiList.iterator(); iterator.hasNext();) {
 			TesisBaglanti tb = (TesisBaglanti) iterator.next();
 			if (tb.isCheckBoxDurum()) {
 				if (tb.getId() == null) {
 					pdksEntityController.saveOrUpdate(session, entityManager, tb);
-					flush = true;
+					++kayit;
+
 				}
 			} else if (tb.getId() != null) {
 				pdksEntityController.deleteObject(session, entityManager, tb);
-				flush = true;
-				sirala = true;
+
+				++sirala;
 			}
 			iterator.remove();
 		}
-		if (flush)
+		if (kayit > 0 || sirala > 0)
 			try {
-				if (sirala)
-					pdksEntityController.savePrepareTableID(false, TesisBaglanti.class, entityManager, session);
 				session.flush();
-				PdksUtil.addMessageInfo("Kayıt başarılı.");
+				if (sirala > 0)
+					pdksEntityController.savePrepareTableID(true, TesisBaglanti.class, entityManager, session);
+				if (kayit > 0)
+					PdksUtil.addMessageInfo("Kayıt" + (kayit == 1 ? "" : "lar") + " başarılı.");
+				else
+					PdksUtil.addMessageInfo("Kayıt" + (sirala == 1 ? "" : "lar") + " silindi.");
 			} catch (Exception e) {
 			}
 		tesis = null;
