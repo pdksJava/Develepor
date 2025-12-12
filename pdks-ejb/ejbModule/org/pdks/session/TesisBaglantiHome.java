@@ -20,6 +20,7 @@ import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.TesisBaglanti;
+import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 
 @Name("tesisBaglantiHome")
@@ -103,23 +104,23 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 
 	private void fillTesisList() {
 		session.clear();
-		if (ortakIslemler.getTesisDurumu()) {
-			List<SelectItem> tesisIdList = new ArrayList<SelectItem>();
-			fazlaMesaiOrtakIslemler.tesisDoldur(authenticatedUser, null, tesisIdList, session);
-			if (tesisList == null)
-				tesisList = new ArrayList<Tanim>();
-			else
-				tesisList.clear();
 
-			if (tesisIdList.size() > 1) {
-				List<Long> idList = new ArrayList<Long>();
-				for (SelectItem st : tesisIdList)
-					idList.add((Long) st.getValue());
-				tesisList = PdksUtil.sortTanimList(null, pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, idList, Tanim.class, session));
+		List<SelectItem> tesisIdList = new ArrayList<SelectItem>();
+		fazlaMesaiOrtakIslemler.tesisDoldur(authenticatedUser, null, tesisIdList, session);
+		if (tesisList == null)
+			tesisList = new ArrayList<Tanim>();
+		else
+			tesisList.clear();
 
-			}
-			tesisIdList = null;
+		if (tesisIdList.size() > 1) {
+			List<Long> idList = new ArrayList<Long>();
+			for (SelectItem st : tesisIdList)
+				idList.add((Long) st.getValue());
+			tesisList = PdksUtil.sortTanimList(null, pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, idList, Tanim.class, session));
+
 		}
+		tesisIdList = null;
+
 		tesis = null;
 		tesisGuncelle();
 	}
@@ -160,12 +161,17 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
-	public void sayfaGirisAction() {
+	public String sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
-		fillTesisList();
+		String sayfa = "";
+		if (ortakIslemler.getTesisDurumu()) {
+			ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+			fillTesisList();
+		} else
+			sayfa = MenuItemConstant.home;
 
+		return sayfa;
 	}
 
 	public Session getSession() {
