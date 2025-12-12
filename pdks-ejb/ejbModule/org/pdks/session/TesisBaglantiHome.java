@@ -78,16 +78,14 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 				if (tb.getId() == null) {
 					pdksEntityController.saveOrUpdate(session, entityManager, tb);
 					++kayit;
-
 				}
 			} else if (tb.getId() != null) {
 				pdksEntityController.deleteObject(session, entityManager, tb);
-
 				++sirala;
 			}
 			iterator.remove();
 		}
-		if (kayit > 0 || sirala > 0)
+		if (kayit + sirala > 0)
 			try {
 				session.flush();
 				if (sirala > 0)
@@ -103,25 +101,27 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 
 	}
 
-	public String fillTesisList() {
+	private void fillTesisList() {
 		session.clear();
-		List<SelectItem> tesisIdList = new ArrayList<SelectItem>();
-		fazlaMesaiOrtakIslemler.tesisDoldur(authenticatedUser, null, tesisIdList, session);
-		if (tesisList == null)
-			tesisList = new ArrayList<Tanim>();
-		else
-			tesisList.clear();
+		if (ortakIslemler.getTesisDurumu()) {
+			List<SelectItem> tesisIdList = new ArrayList<SelectItem>();
+			fazlaMesaiOrtakIslemler.tesisDoldur(authenticatedUser, null, tesisIdList, session);
+			if (tesisList == null)
+				tesisList = new ArrayList<Tanim>();
+			else
+				tesisList.clear();
 
-		if (tesisIdList.size() > 1) {
-			List<Long> idList = new ArrayList<Long>();
-			for (SelectItem st : tesisIdList)
-				idList.add((Long) st.getValue());
-			tesisList = PdksUtil.sortTanimList(null, pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, idList, Tanim.class, session));
+			if (tesisIdList.size() > 1) {
+				List<Long> idList = new ArrayList<Long>();
+				for (SelectItem st : tesisIdList)
+					idList.add((Long) st.getValue());
+				tesisList = PdksUtil.sortTanimList(null, pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, idList, Tanim.class, session));
 
+			}
+			tesisIdList = null;
 		}
 		tesis = null;
 		tesisGuncelle();
-		return "";
 	}
 
 	/**
