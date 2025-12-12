@@ -153,7 +153,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			} else if (object instanceof User) {
 				kullaniciDurum = true;
 				User user = (User) object;
-				sirket = user.isIK() && user.getPdksPersonel() != null ? user.getPdksPersonel().getSirket() : null;
+				sirket = user.isIK() && user.getPdksPersonel() != null ? user.getPdksPersonel().getSirket() : new Sirket();
 				olusturmaTarihi = PdksUtil.convertToJavaDate(PdksUtil.getSistemBaslangicYili() + "0101", "yyyyMMdd");
 			}
 		}
@@ -2508,7 +2508,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		List<Tanim> list = null;
 		LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
 		Long tesisId = null;
-		if (sirket != null && (sirket.isTesisDurumu() || loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis())) {
+		if (sirket != null && (sirket.getId() == null || (sirket.isTesisDurumu()) || loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis())) {
 			if (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty()) {
 				if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
 					Personel personel = loginUser.getPdksPersonel();
@@ -2517,7 +2517,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				}
 			}
 			paramsMap.put("loginUser", loginUser);
-			paramsMap.put("sirket", sirket);
+			paramsMap.put("sirket", sirket != null && sirket.getId() != null ? sirket : null);
 			paramsMap.put("tesisId", tesisId != null ? String.valueOf(tesisId) : null);
 			paramsMap.put("aylikPuantaj", aylikPuantaj);
 			paramsMap.put("denklestirme", denklestirme);

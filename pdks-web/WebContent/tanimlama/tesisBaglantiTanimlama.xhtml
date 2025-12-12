@@ -1,0 +1,73 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" template="/layout/template.xhtml">
+	<ui:define name="title">
+		<h:outputText value="#{ortakIslemler.getMenuAdi('tesisBaglantiTanimlama')}" />
+	</ui:define>
+	<ui:define name="body">
+
+		<h:form>
+			<a4j:region>
+				<rich:panel header="#{ortakIslemler.getMenuUserAdi(tesisBaglantiHome.session,'tesisBaglantiTanimlama')}">
+					<a4j:outputPanel id="tesisler">
+						<h:panelGrid columns="2">
+
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
+
+								<h:selectOneMenu value="#{tesisBaglantiHome.tesis}">
+									<s:selectItems var="comp" value="#{tesisBaglantiHome.tesisList}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
+									<a4j:support event="onchange" action="#{tesisBaglantiHome.tesisGuncelle()}" reRender="tesisler" status="ajaxStatus" />
+									<s:convertEntity />
+								</h:selectOneMenu>
+							</s:decorate>
+
+
+
+							<DIV class="#{authenticatedUser.scroolClass}" id="#{authenticatedUser.scroolDiv}">
+
+
+								<a4j:commandButton value="Kaydet" action="#{tesisBaglantiHome.kaydet()}" reRender="tesisler"
+									rendered="#{not empty tesisBaglantiHome.tesisBaglantiList}" />
+								<rich:dataTable rowClasses="acik,koyu" value="#{tesisBaglantiHome.tesisBaglantiList}" var="tb" rows="50" rowKeyVar="row"
+									id="tesisBaglantiTable">
+									<f:facet name="header">
+										<h:outputText value="Tesisler" />
+									</f:facet>
+									<rich:column style="text-align: center;">
+										<f:facet name="header">İşlemler</f:facet>
+										<h:selectBooleanCheckbox value="#{tb.checkBoxDurum}" />
+									</rich:column>
+
+
+									<rich:column>
+										<f:facet name="header">
+									#{ortakIslemler.tesisAciklama()}
+								</f:facet>
+
+										<h:outputText value="#{tb.tesisBaglanti.aciklama}" />
+									</rich:column>
+
+
+									<f:facet name="footer">
+										<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+									</f:facet>
+								</rich:dataTable>
+
+							</DIV>
+						</h:panelGrid>
+					</a4j:outputPanel>
+
+				</rich:panel>
+			</a4j:region>
+		</h:form>
+
+
+
+
+
+	</ui:define>
+
+</ui:composition>

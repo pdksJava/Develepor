@@ -16,8 +16,6 @@ import org.hibernate.annotations.FetchMode;
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { TesisBaglanti.COLUMN_NAME_TESIS, TesisBaglanti.COLUMN_NAME_TESIS_BAGLANTI }) })
 public class TesisBaglanti extends BasePDKSObject implements Serializable {
 
-	 
-
 	/**
 	 * 
 	 */
@@ -27,6 +25,18 @@ public class TesisBaglanti extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_TESIS_BAGLANTI = "TESIS_BAGLANTI_ID";
 
 	private Tanim tesis, tesisBaglanti;
+
+	public TesisBaglanti() {
+		super();
+
+	}
+
+	public TesisBaglanti(Tanim tesis, Tanim tesisBaglanti) {
+		super();
+		this.tesis = tesis;
+		this.tesisBaglanti = tesisBaglanti;
+		this.setCheckBoxDurum(false);
+	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_TESIS, nullable = false)

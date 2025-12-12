@@ -61,6 +61,7 @@ import org.pdks.entity.Sirket;
 import org.pdks.entity.SkinBean;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
+import org.pdks.entity.TesisBaglanti;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGorev;
 import org.pdks.entity.VardiyaGun;
@@ -299,6 +300,7 @@ public class StartupAction implements Serializable {
 			list.add(SAPSunucu.class);
 			list.add(ServiceData.class);
 			list.add(Tatil.class);
+			list.add(TesisBaglanti.class);
 			list.add(UserDigerOrganizasyon.class);
 			list.add(UserRoles.class);
 			list.add(VardiyaGorev.class);
