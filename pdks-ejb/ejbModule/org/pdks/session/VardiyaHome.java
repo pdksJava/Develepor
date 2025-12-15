@@ -42,7 +42,8 @@ import org.pdks.entity.VardiyaSablonu;
 import org.pdks.entity.VardiyaYemekIzin;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.BordroDetayTipi;
-import org.pdks.enums.KatSayiTipi;
+import org.pdks.enums.KatSayiPuantajTipi;
+import org.pdks.enums.KatSayiVardiyaGunTipi;
 import org.pdks.security.entity.User;
 
 @Name("vardiyaHome")
@@ -559,12 +560,12 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			gecGirisKontrolEt = false;
 			if (vardiyalar.isEmpty() == false) {
 				Date bugun = PdksUtil.buGun();
-				HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> allMap = ortakIslemler.getVardiyaKatSayiAllMap(bugun, session);
-				TreeMap<String, BigDecimal> yemekMolaMap = allMap.containsKey(KatSayiTipi.VARDIYA_MOLA) ? allMap.get(KatSayiTipi.VARDIYA_MOLA) : null;
-				TreeMap<String, BigDecimal> erkenGirisMap = allMap.containsKey(KatSayiTipi.ERKEN_GIRIS_TIPI) ? allMap.get(KatSayiTipi.ERKEN_GIRIS_TIPI) : null;
-				TreeMap<String, BigDecimal> erkenCikisMap = allMap.containsKey(KatSayiTipi.ERKEN_CIKIS_TIPI) ? allMap.get(KatSayiTipi.ERKEN_CIKIS_TIPI) : null;
-				TreeMap<String, BigDecimal> gecGirisMap = allMap.containsKey(KatSayiTipi.GEC_GIRIS_TIPI) ? allMap.get(KatSayiTipi.GEC_GIRIS_TIPI) : null;
-				TreeMap<String, BigDecimal> gecCikisMap = allMap.containsKey(KatSayiTipi.GEC_CIKIS_TIPI) ? allMap.get(KatSayiTipi.GEC_CIKIS_TIPI) : null;
+				HashMap<KatSayiPuantajTipi, TreeMap<String, BigDecimal>> allMap = ortakIslemler.getVardiyaKatSayiAllMap(bugun, session);
+				TreeMap<String, BigDecimal> yemekMolaMap = allMap.containsKey(KatSayiVardiyaGunTipi.VARDIYA_MOLA) ? allMap.get(KatSayiVardiyaGunTipi.VARDIYA_MOLA) : null;
+				TreeMap<String, BigDecimal> erkenGirisMap = allMap.containsKey(KatSayiVardiyaGunTipi.ERKEN_GIRIS_TIPI) ? allMap.get(KatSayiVardiyaGunTipi.ERKEN_GIRIS_TIPI) : null;
+				TreeMap<String, BigDecimal> erkenCikisMap = allMap.containsKey(KatSayiVardiyaGunTipi.ERKEN_CIKIS_TIPI) ? allMap.get(KatSayiVardiyaGunTipi.ERKEN_CIKIS_TIPI) : null;
+				TreeMap<String, BigDecimal> gecGirisMap = allMap.containsKey(KatSayiVardiyaGunTipi.GEC_GIRIS_TIPI) ? allMap.get(KatSayiVardiyaGunTipi.GEC_GIRIS_TIPI) : null;
+				TreeMap<String, BigDecimal> gecCikisMap = allMap.containsKey(KatSayiVardiyaGunTipi.GEC_CIKIS_TIPI) ? allMap.get(KatSayiVardiyaGunTipi.GEC_CIKIS_TIPI) : null;
 				yemekMolaKontrolEt = yemekMolaMap != null && !yemekMolaMap.isEmpty();
 				erkenGirisKontrolEt = erkenGirisMap != null && !erkenGirisMap.isEmpty();
 				erkenCikisKontrolEt = erkenCikisMap != null && !erkenCikisMap.isEmpty();
@@ -579,27 +580,27 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 						if (yemekMolaKontrolEt && ortakIslemler.veriKatSayiVar(yemekMolaMap, sirketId, tesisId, vardiyaId, str)) {
 							BigDecimal deger = ortakIslemler.getKatSayiVeriMap(yemekMolaMap, sirketId, tesisId, vardiyaId, str);
 							if (deger != null)
-								katSayiMap.put(KatSayiTipi.VARDIYA_MOLA.value(), deger);
+								katSayiMap.put(KatSayiVardiyaGunTipi.VARDIYA_MOLA.value(), deger);
 						}
 						if (erkenGirisKontrolEt && ortakIslemler.veriKatSayiVar(erkenGirisMap, sirketId, tesisId, vardiyaId, str)) {
 							BigDecimal deger = ortakIslemler.getKatSayiVeriMap(erkenGirisMap, sirketId, tesisId, vardiyaId, str);
 							if (deger != null)
-								katSayiMap.put(KatSayiTipi.ERKEN_GIRIS_TIPI.value(), deger);
+								katSayiMap.put(KatSayiVardiyaGunTipi.ERKEN_GIRIS_TIPI.value(), deger);
 						}
 						if (erkenCikisKontrolEt && ortakIslemler.veriKatSayiVar(erkenCikisMap, sirketId, tesisId, vardiyaId, str)) {
 							BigDecimal deger = ortakIslemler.getKatSayiVeriMap(erkenCikisMap, sirketId, tesisId, vardiyaId, str);
 							if (deger != null)
-								katSayiMap.put(KatSayiTipi.ERKEN_CIKIS_TIPI.value(), deger);
+								katSayiMap.put(KatSayiVardiyaGunTipi.ERKEN_CIKIS_TIPI.value(), deger);
 						}
 						if (gecGirisKontrolEt && ortakIslemler.veriKatSayiVar(gecGirisMap, sirketId, tesisId, vardiyaId, str)) {
 							BigDecimal deger = ortakIslemler.getKatSayiVeriMap(gecGirisMap, sirketId, tesisId, vardiyaId, str);
 							if (deger != null)
-								katSayiMap.put(KatSayiTipi.GEC_GIRIS_TIPI.value(), deger);
+								katSayiMap.put(KatSayiVardiyaGunTipi.GEC_GIRIS_TIPI.value(), deger);
 						}
 						if (gecCikisKontrolEt && ortakIslemler.veriKatSayiVar(gecCikisMap, sirketId, tesisId, vardiyaId, str)) {
 							BigDecimal deger = ortakIslemler.getKatSayiVeriMap(gecCikisMap, sirketId, tesisId, vardiyaId, str);
 							if (deger != null)
-								katSayiMap.put(KatSayiTipi.GEC_CIKIS_TIPI.value(), deger);
+								katSayiMap.put(KatSayiVardiyaGunTipi.GEC_CIKIS_TIPI.value(), deger);
 						}
 						if (katSayiMap.isEmpty())
 							katSayiMap = null;

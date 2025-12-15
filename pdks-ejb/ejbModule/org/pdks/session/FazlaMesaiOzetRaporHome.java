@@ -72,7 +72,7 @@ import org.pdks.entity.VardiyaSaat;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.BordroDetayTipi;
 import org.pdks.enums.DenklestirmeTipi;
-import org.pdks.enums.KatSayiTipi;
+import org.pdks.enums.KatSayiPuantajTipi;
 import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
@@ -1382,16 +1382,16 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					Double radyolojiKatsayi = null;
 					double resmiTatilKanunenEklenenSure = 0.0d;
 					if (puantaj.getKatSayiMap() != null) {
-						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.UOM_YUVARLAMA.value()))
-							ucmYuvarla = puantaj.getKatSayiMap().get(KatSayiTipi.UOM_YUVARLAMA.value()).intValue();
-						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.RT_YUVARLAMA.value()))
-							rtYuvarla = puantaj.getKatSayiMap().get(KatSayiTipi.RT_YUVARLAMA.value()).intValue();
-						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.DENKLESTIRME_TIPI.value())) {
-							Integer denkInteger = puantaj.getKatSayiMap().get(KatSayiTipi.DENKLESTIRME_TIPI.value()).intValue();
+						if (puantaj.getKatSayiMap().containsKey(KatSayiPuantajTipi.UOM_YUVARLAMA.value()))
+							ucmYuvarla = puantaj.getKatSayiMap().get(KatSayiPuantajTipi.UOM_YUVARLAMA.value()).intValue();
+						if (puantaj.getKatSayiMap().containsKey(KatSayiPuantajTipi.RT_YUVARLAMA.value()))
+							rtYuvarla = puantaj.getKatSayiMap().get(KatSayiPuantajTipi.RT_YUVARLAMA.value()).intValue();
+						if (puantaj.getKatSayiMap().containsKey(KatSayiPuantajTipi.DENKLESTIRME_TIPI.value())) {
+							Integer denkInteger = puantaj.getKatSayiMap().get(KatSayiPuantajTipi.DENKLESTIRME_TIPI.value()).intValue();
 							dt = DenklestirmeTipi.fromValue(denkInteger);
 						}
-						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.RADYOLOJI_MAX_GUN.value()))
-							radyolojiKatsayi = puantaj.getKatSayiMap().get(KatSayiTipi.RADYOLOJI_MAX_GUN.value()).doubleValue();
+						if (puantaj.getKatSayiMap().containsKey(KatSayiPuantajTipi.RADYOLOJI_MAX_GUN.value()))
+							radyolojiKatsayi = puantaj.getKatSayiMap().get(KatSayiPuantajTipi.RADYOLOJI_MAX_GUN.value()).doubleValue();
 					}
 
 					double maxCalismaSure = fazlaMesaiMaxSure;

@@ -30,7 +30,7 @@
 											<rich:dataTable rowClasses="acik,koyu" value="#{tesisBaglantiHome.tesisBaglantiList}" var="tb" rows="50" rowKeyVar="row"
 												id="tesisBaglantiTable" style="width=:%100">
 												<f:facet name="header">
-													<h:outputText value="Tesisler" />
+												<ui:fragment>#{tesisBaglantiHome.tesis.aciklama} Bağlanacak #{ortakIslemler.tesisAciklama()}</ui:fragment> 
 												</f:facet>
 												<rich:column style="text-align: center;">
 													<f:facet name="header">İşlemler</f:facet>
