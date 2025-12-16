@@ -613,7 +613,6 @@ public class IseGelmemeUyari implements Serializable {
 									if (tesisYetki && (ikMailGonderme || yoneticiMailGonderme == false))
 										digerOrganizasyonOlustur(session);
 									if (tesis != null && tesisUserMap != null && tesisUserMap.containsKey(tesis.getId())) {
-
 										List<User> userList = tesisUserMap.get(tesis.getId());
 										for (User user : userList) {
 											Personel yoneticiTesis = user.getPdksPersonel();
@@ -627,12 +626,8 @@ public class IseGelmemeUyari implements Serializable {
 											if (yoneticiMap.containsKey(yoneticiId)) {
 												yoneticiTesis = yoneticiMap.get(yoneticiId);
 											} else {
-												if (user.isIK()) {
-
+												if (user.isIK() && ikMailList.contains(user.getEmail()) == false)
 													ikMailList.add(user.getEmail());
-
-													ikMailList.add(yoneticiTesis.getPdksSicilNo());
-												}
 
 												yoneticiMap.put(yoneticiId, yoneticiTesis);
 												yoneticiTesis.setPersonelVardiyalari(new ArrayList<VardiyaGun>());
@@ -1382,6 +1377,8 @@ public class IseGelmemeUyari implements Serializable {
 				devam = !mail.getToList().isEmpty();
 			} else {
 				devam = ikMailList.contains(userYonetici.getStaffId());
+//				if (devam == false)
+//					devam = (userTesisMap != null && userYonetici != null && userTesisMap.containsKey(userYonetici.getId()));
 			}
 
 			if (devam) {

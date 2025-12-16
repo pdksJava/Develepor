@@ -1249,7 +1249,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 					}
 					if (mesajList.isEmpty()) {
-						if (izinERPUpdate) {
+						if (izinERPUpdate || bakiyeIzin != null) {
 							if (bakiyeIzin != null) {
 								boolean izinGuncelle = false;
 								if (bakiyeIzin.getId() != null) {
