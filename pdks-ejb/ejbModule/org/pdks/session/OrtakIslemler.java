@@ -15425,9 +15425,9 @@ public class OrtakIslemler implements Serializable {
 					continue;
 				try {
 					Integer kaySayi = (Integer) objects[0];
-					Object key = KatSayiPuantajTipi.fromValue(kaySayi);
+					Object key = KatSayiVardiyaGunTipi.fromValue(kaySayi);
 					if (key == null)
-						key = KatSayiVardiyaGunTipi.fromValue(kaySayi);
+						key = KatSayiPuantajTipi.fromValue(kaySayi);
 					if (key != null) {
 						TreeMap<String, BigDecimal> degerMap = allMap.containsKey(key) ? allMap.get(key) : new TreeMap<String, BigDecimal>();
 						if (degerMap.isEmpty())
