@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.Min;
-import org.pdks.enums.KatSayiTipi;
+import org.pdks.enums.KatSayiVardiyaGunTipi;
 import org.pdks.security.entity.User;
 import org.pdks.session.PdksUtil;
 
@@ -237,7 +237,7 @@ public class Vardiya extends BaseObject {
 	public Integer getYemekSuresi() {
 		if (yemekSuresi == null)
 			yemekSuresi = 0;
-		BigDecimal value = getKatSayi(KatSayiTipi.VARDIYA_MOLA.value());
+		BigDecimal value = getKatSayi(KatSayiVardiyaGunTipi.VARDIYA_MOLA.value());
 		return value != null ? value.intValue() : yemekSuresi;
 
 	}
@@ -1572,10 +1572,10 @@ public class Vardiya extends BaseObject {
 
 	@Column(name = "GIRISERKENTOLERANSDAKIKA")
 	public short getGirisErkenToleransDakika() {
-		BigDecimal value = getKatSayi(KatSayiTipi.ERKEN_GIRIS_TIPI.value());
+		BigDecimal value = getKatSayi(KatSayiVardiyaGunTipi.ERKEN_GIRIS_TIPI.value());
 		short s = value != null ? value.shortValue() : girisErkenToleransDakika;
 		if (value == null)
-			logger.debug(KatSayiTipi.ERKEN_GIRIS_TIPI + " " + s);
+			logger.debug(KatSayiVardiyaGunTipi.ERKEN_GIRIS_TIPI + " " + s);
 		return s;
 
 	}
@@ -1586,10 +1586,10 @@ public class Vardiya extends BaseObject {
 
 	@Column(name = "GIRISGECIKMETOLERANSDAKIKA")
 	public short getGirisGecikmeToleransDakika() {
-		BigDecimal value = getKatSayi(KatSayiTipi.GEC_GIRIS_TIPI.value());
+		BigDecimal value = getKatSayi(KatSayiVardiyaGunTipi.GEC_GIRIS_TIPI.value());
 		short s = value != null ? value.shortValue() : girisGecikmeToleransDakika;
 		if (value != null)
-			logger.debug(KatSayiTipi.GEC_GIRIS_TIPI + " " + s);
+			logger.debug(KatSayiVardiyaGunTipi.GEC_GIRIS_TIPI + " " + s);
 		return s;
 
 	}
@@ -1600,10 +1600,10 @@ public class Vardiya extends BaseObject {
 
 	@Column(name = "CIKISERKENTOLERANSDAKIKA")
 	public short getCikisErkenToleransDakika() {
-		BigDecimal value = getKatSayi(KatSayiTipi.ERKEN_CIKIS_TIPI.value());
+		BigDecimal value = getKatSayi(KatSayiVardiyaGunTipi.ERKEN_CIKIS_TIPI.value());
 		short s = value != null ? value.shortValue() : cikisErkenToleransDakika;
 		if (value != null)
-			logger.debug(KatSayiTipi.ERKEN_CIKIS_TIPI + " " + s);
+			logger.debug(KatSayiVardiyaGunTipi.ERKEN_CIKIS_TIPI + " " + s);
 		return s;
 	}
 
@@ -1613,10 +1613,10 @@ public class Vardiya extends BaseObject {
 
 	@Column(name = "CIKISGECIKMETOLERANSDAKIKA")
 	public short getCikisGecikmeToleransDakika() {
-		BigDecimal value = getKatSayi(KatSayiTipi.GEC_CIKIS_TIPI.value());
+		BigDecimal value = getKatSayi(KatSayiVardiyaGunTipi.GEC_CIKIS_TIPI.value());
 		short s = value != null ? value.shortValue() : cikisGecikmeToleransDakika;
 		if (value != null)
-			logger.debug(KatSayiTipi.GEC_CIKIS_TIPI + " " + s);
+			logger.debug(KatSayiVardiyaGunTipi.GEC_CIKIS_TIPI + " " + s);
 		return s;
 	}
 
@@ -1885,7 +1885,7 @@ public class Vardiya extends BaseObject {
 
 	@Transient
 	public Integer getOffFazlaMesaiBasDakika() {
-		BigDecimal value = getKatSayi(KatSayiTipi.OFF_FAZLA_MESAI_TIPI.value());
+		BigDecimal value = getKatSayi(KatSayiVardiyaGunTipi.OFF_FAZLA_MESAI_TIPI.value());
 		return value != null ? value.intValue() : offFazlaMesaiBasDakika;
 	}
 
@@ -1895,7 +1895,7 @@ public class Vardiya extends BaseObject {
 
 	@Transient
 	public Integer getHaftaTatiliFazlaMesaiBasDakika() {
-		BigDecimal value = getKatSayi(KatSayiTipi.HT_FAZLA_MESAI_TIPI.value());
+		BigDecimal value = getKatSayi(KatSayiVardiyaGunTipi.HT_FAZLA_MESAI_TIPI.value());
 		return value != null ? value.intValue() : haftaTatiliFazlaMesaiBasDakika;
 	}
 
@@ -2010,7 +2010,7 @@ public class Vardiya extends BaseObject {
 	public boolean isYemekSuresiKontrolEt() {
 		boolean kontrolDurum = this.getGuncellemeDurum();
 		if (kontrolDurum)
-			kontrolDurum = katSayiMap == null || katSayiMap.containsKey(KatSayiTipi.VARDIYA_MOLA.value()) == false;
+			kontrolDurum = katSayiMap == null || katSayiMap.containsKey(KatSayiVardiyaGunTipi.VARDIYA_MOLA.value()) == false;
 		return kontrolDurum;
 	}
 
@@ -2018,7 +2018,7 @@ public class Vardiya extends BaseObject {
 	public boolean isGirisErkenKontrolEt() {
 		boolean kontrolDurum = this.getGuncellemeDurum();
 		if (kontrolDurum)
-			kontrolDurum = katSayiMap == null || katSayiMap.containsKey(KatSayiTipi.ERKEN_GIRIS_TIPI.value()) == false;
+			kontrolDurum = katSayiMap == null || katSayiMap.containsKey(KatSayiVardiyaGunTipi.ERKEN_GIRIS_TIPI.value()) == false;
 		return kontrolDurum;
 	}
 
@@ -2026,7 +2026,7 @@ public class Vardiya extends BaseObject {
 	public boolean isGirisGecikmeKontrolEt() {
 		boolean kontrolDurum = this.getGuncellemeDurum();
 		if (kontrolDurum)
-			kontrolDurum = katSayiMap == null || katSayiMap.containsKey(KatSayiTipi.GEC_GIRIS_TIPI.value()) == false;
+			kontrolDurum = katSayiMap == null || katSayiMap.containsKey(KatSayiVardiyaGunTipi.GEC_GIRIS_TIPI.value()) == false;
 		return kontrolDurum;
 	}
 
@@ -2034,7 +2034,7 @@ public class Vardiya extends BaseObject {
 	public boolean isCikisErkenKontrolEt() {
 		boolean kontrolDurum = this.getGuncellemeDurum();
 		if (kontrolDurum)
-			kontrolDurum = katSayiMap == null || katSayiMap.containsKey(KatSayiTipi.ERKEN_CIKIS_TIPI.value()) == false;
+			kontrolDurum = katSayiMap == null || katSayiMap.containsKey(KatSayiVardiyaGunTipi.ERKEN_CIKIS_TIPI.value()) == false;
 		return kontrolDurum;
 	}
 
@@ -2042,7 +2042,7 @@ public class Vardiya extends BaseObject {
 	public boolean isCikisGecikmeKontrolEt() {
 		boolean kontrolDurum = this.getGuncellemeDurum();
 		if (kontrolDurum)
-			kontrolDurum = katSayiMap == null || katSayiMap.containsKey(KatSayiTipi.GEC_CIKIS_TIPI.value()) == false;
+			kontrolDurum = katSayiMap == null || katSayiMap.containsKey(KatSayiVardiyaGunTipi.GEC_CIKIS_TIPI.value()) == false;
 
 		return kontrolDurum;
 	}

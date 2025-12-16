@@ -61,7 +61,7 @@ import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaSaat;
 import org.pdks.enums.BordroDetayTipi;
-import org.pdks.enums.KatSayiTipi;
+import org.pdks.enums.KatSayiPuantajTipi;
 import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
@@ -1597,10 +1597,10 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 					cal.setTime(tarih1);
 					cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
 					Date tarih2 = cal.getTime();
-					List<Integer> radyolojiList = Arrays.asList(new Integer[] { KatSayiTipi.RADYOLOJI_MAX_GUN.value() });
-					HashMap<KatSayiTipi, TreeMap<String, BigDecimal>> katSayilarMap = ortakIslemler.getYuvarlamaKatSayiMap(tarih1, tarih2, radyolojiList, session);
-					if (katSayilarMap.containsKey(KatSayiTipi.RADYOLOJI_MAX_GUN)) {
-						TreeMap<String, BigDecimal> radyolojiMap = katSayilarMap.get(KatSayiTipi.RADYOLOJI_MAX_GUN);
+					List<Integer> radyolojiList = Arrays.asList(new Integer[] { KatSayiPuantajTipi.RADYOLOJI_MAX_GUN.value() });
+					HashMap<KatSayiPuantajTipi, TreeMap<String, BigDecimal>> katSayilarMap = ortakIslemler.getYuvarlamaKatSayiMap(tarih1, tarih2, radyolojiList, session);
+					if (katSayilarMap.containsKey(KatSayiPuantajTipi.RADYOLOJI_MAX_GUN)) {
+						TreeMap<String, BigDecimal> radyolojiMap = katSayilarMap.get(KatSayiPuantajTipi.RADYOLOJI_MAX_GUN);
 						Sirket sirket = null;
 						if (personel != null) {
 							sirket = personel.getSirket();

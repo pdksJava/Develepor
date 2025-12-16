@@ -58,7 +58,7 @@ import org.pdks.entity.VardiyaHafta;
 import org.pdks.entity.VardiyaSaat;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.DenklestirmeTipi;
-import org.pdks.enums.KatSayiTipi;
+import org.pdks.enums.KatSayiPuantajTipi;
 import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.User;
 
@@ -1110,12 +1110,12 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 					DenklestirmeTipi dt = null;
 					Double radyolojiKatsayi = null;
 					if (puantaj.getKatSayiMap() != null) {
-						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.DENKLESTIRME_TIPI.value())) {
-							Integer denkInteger = puantaj.getKatSayiMap().get(KatSayiTipi.DENKLESTIRME_TIPI.value()).intValue();
+						if (puantaj.getKatSayiMap().containsKey(KatSayiPuantajTipi.DENKLESTIRME_TIPI.value())) {
+							Integer denkInteger = puantaj.getKatSayiMap().get(KatSayiPuantajTipi.DENKLESTIRME_TIPI.value()).intValue();
 							dt = DenklestirmeTipi.fromValue(denkInteger);
 						}
-						if (puantaj.getKatSayiMap().containsKey(KatSayiTipi.RADYOLOJI_MAX_GUN.value()))
-							radyolojiKatsayi = puantaj.getKatSayiMap().get(KatSayiTipi.RADYOLOJI_MAX_GUN.value()).doubleValue();
+						if (puantaj.getKatSayiMap().containsKey(KatSayiPuantajTipi.RADYOLOJI_MAX_GUN.value()))
+							radyolojiKatsayi = puantaj.getKatSayiMap().get(KatSayiPuantajTipi.RADYOLOJI_MAX_GUN.value()).doubleValue();
 					}
 
 					TreeMap<String, VardiyaGun> vgMap = new TreeMap<String, VardiyaGun>();
