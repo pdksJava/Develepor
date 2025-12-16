@@ -42,7 +42,6 @@ import org.pdks.entity.VardiyaSablonu;
 import org.pdks.entity.VardiyaYemekIzin;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.BordroDetayTipi;
-import org.pdks.enums.KatSayiPuantajTipi;
 import org.pdks.enums.KatSayiVardiyaGunTipi;
 import org.pdks.security.entity.User;
 
@@ -560,7 +559,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			gecGirisKontrolEt = false;
 			if (vardiyalar.isEmpty() == false) {
 				Date bugun = PdksUtil.buGun();
-				HashMap<KatSayiPuantajTipi, TreeMap<String, BigDecimal>> allMap = ortakIslemler.getVardiyaKatSayiAllMap(bugun, session);
+				HashMap<Object, TreeMap<String, BigDecimal>> allMap = ortakIslemler.getVardiyaKatSayiAllMap(bugun, session);
 				TreeMap<String, BigDecimal> yemekMolaMap = allMap.containsKey(KatSayiVardiyaGunTipi.VARDIYA_MOLA) ? allMap.get(KatSayiVardiyaGunTipi.VARDIYA_MOLA) : null;
 				TreeMap<String, BigDecimal> erkenGirisMap = allMap.containsKey(KatSayiVardiyaGunTipi.ERKEN_GIRIS_TIPI) ? allMap.get(KatSayiVardiyaGunTipi.ERKEN_GIRIS_TIPI) : null;
 				TreeMap<String, BigDecimal> erkenCikisMap = allMap.containsKey(KatSayiVardiyaGunTipi.ERKEN_CIKIS_TIPI) ? allMap.get(KatSayiVardiyaGunTipi.ERKEN_CIKIS_TIPI) : null;
