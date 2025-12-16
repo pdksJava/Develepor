@@ -1377,8 +1377,8 @@ public class IseGelmemeUyari implements Serializable {
 				devam = !mail.getToList().isEmpty();
 			} else {
 				devam = ikMailList.contains(userYonetici.getStaffId());
-//				if (devam == false)
-//					devam = (userTesisMap != null && userYonetici != null && userTesisMap.containsKey(userYonetici.getId()));
+				// if (devam == false)
+				// devam = (userTesisMap != null && userYonetici != null && userTesisMap.containsKey(userYonetici.getId()));
 			}
 
 			if (devam) {
@@ -1599,7 +1599,7 @@ public class IseGelmemeUyari implements Serializable {
 						for (Liste liste : listeler) {
 							try {
 								List list = (List) liste.getValue();
-								liste.setSelected(PdksUtil.textBaslangicinaKarakterEkle("" + list.size(), '0', 10) + "_" + liste.getSelected());
+								liste.setSelected((user != null && user.isIK() ? PdksUtil.textBaslangicinaKarakterEkle("" + list.size(), '0', 10) + "_" : "") + liste.getSelected());
 							} catch (Exception e) {
 								logger.error(e);
 							}
