@@ -168,7 +168,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private String oldUserName, bosDepartmanKodu, kgsPersonelSPAdi, kartNo;
 
 	private PersonelIzin bakiyeIzin;
-	private Double bakiyeIzinSuresi;
+	private Long bakiyeIzinSuresi;
 	private Sirket oldSirket;
 	private Personel asilYonetici1;
 	private String hataMesaj = "", personelERPGuncelleme = "";
@@ -1249,7 +1249,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 					}
 					if (mesajList.isEmpty()) {
-						if (izinERPUpdate) {
+						if (izinERPUpdate || bakiyeIzin != null) {
 							if (bakiyeIzin != null) {
 								boolean izinGuncelle = false;
 								if (bakiyeIzin.getId() != null) {
@@ -1262,8 +1262,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 												iterator2.remove();
 
 										}
-										bakiyeIzin.setIzinDurumu(!list.isEmpty() || bakiyeIzinSuresi != 0.0d ? PersonelIzin.IZIN_DURUMU_ONAYLANDI : PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
-										bakiyeIzin.setIzinSuresi(bakiyeIzinSuresi);
+										bakiyeIzin.setIzinDurumu(!list.isEmpty() || bakiyeIzinSuresi.longValue() != 0L ? PersonelIzin.IZIN_DURUMU_ONAYLANDI : PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
+										bakiyeIzin.setIzinSuresi(bakiyeIzinSuresi.doubleValue());
 										bakiyeIzin.setGuncelleyenUser(authenticatedUser);
 										bakiyeIzin.setGuncellemeTarihi(new Date());
 										izinGuncelle = true;
@@ -1278,7 +1278,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 									Date bitisZamani = cal.getTime();
 									bakiyeIzin.setBitisZamani(bitisZamani);
 									bakiyeIzin.setAciklama("Devir İzin");
-									bakiyeIzin.setIzinSuresi(bakiyeIzinSuresi);
+									bakiyeIzin.setIzinSuresi(bakiyeIzinSuresi.doubleValue());
 									bakiyeIzin.setOlusturanUser(authenticatedUser);
 									bakiyeIzin.setOlusturmaTarihi(new Date());
 									bakiyeIzin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_ONAYLANDI);
@@ -2068,7 +2068,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					bakiyeIzinGoster = getBakiyeDeparmanIzinDurum(departman);
 
 			}
-			setBakiyeIzinSuresi(izin != null ? izin.getIzinSuresi() : null);
+			setBakiyeIzinSuresi(izin != null ? izin.getIzinSuresi().longValue() : null);
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
@@ -5302,11 +5302,11 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		this.ekSahaTanimMap = ekSahaTanimMap;
 	}
 
-	public Double getBakiyeIzinSuresi() {
+	public Long getBakiyeIzinSuresi() {
 		return bakiyeIzinSuresi;
 	}
 
-	public void setBakiyeIzinSuresi(Double bakiyeIzinSuresi) {
+	public void setBakiyeIzinSuresi(Long bakiyeIzinSuresi) {
 		this.bakiyeIzinSuresi = bakiyeIzinSuresi;
 	}
 
