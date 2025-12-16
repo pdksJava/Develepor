@@ -14954,7 +14954,7 @@ public class OrtakIslemler implements Serializable {
 			boolean haftaTatilFazlaMesaiKatSayiOku = getParameterKey("haftaTatilFazlaMesaiKatSayiOku").equals("1");
 			boolean offFazlaMesaiKatSayiOku = getParameterKey("offFazlaMesaiKatSayiOku").equals("1");
 			boolean yuvarlamaKatSayiOku = getParameterKey("yuvarlamaKatSayiOku").equals("1");
-			HashMap<KatSayiPuantajTipi, TreeMap<String, BigDecimal>> allMap = getPlanKatSayiAllMap(null, personelIdler, basTarih, bitTarih, session);
+			HashMap<Object, TreeMap<String, BigDecimal>> allMap = getPlanKatSayiAllMap(null, personelIdler, basTarih, bitTarih, session);
 			TreeMap<String, BigDecimal> sureMap = planKatSayiOku && allMap.containsKey(KatSayiPuantajTipi.HAREKET_BEKLEME_SURESI) ? allMap.get(KatSayiPuantajTipi.HAREKET_BEKLEME_SURESI) : null;
 			TreeMap<String, BigDecimal> sureSuaMap = suaKatSayiOku && allMap.containsKey(KatSayiPuantajTipi.SUA_GUNLUK_SAAT_SURESI) ? allMap.get(KatSayiPuantajTipi.SUA_GUNLUK_SAAT_SURESI) : null;
 			TreeMap<String, BigDecimal> yuvarlamaMap = yuvarlamaKatSayiOku && allMap.containsKey(KatSayiPuantajTipi.YUVARLAMA_TIPI) ? allMap.get(KatSayiPuantajTipi.YUVARLAMA_TIPI) : null;
@@ -15276,7 +15276,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	public HashMap<KatSayiPuantajTipi, TreeMap<String, BigDecimal>> getVardiyaKatSayiAllMap(Date bugun, Session session) {
+	public HashMap<Object, TreeMap<String, BigDecimal>> getVardiyaKatSayiAllMap(Date bugun, Session session) {
 		if (bugun == null)
 			bugun = PdksUtil.buGun();
 		HashMap map = new HashMap();
@@ -15292,7 +15292,7 @@ public class OrtakIslemler implements Serializable {
 		// List<Object[]> list = pdksEntityController.getObjectBySQLList(sb, map, null);
 		List<Object[]> list = pdksEntityController.getObjectBySQLList(sb, map, null);
 		map = null;
-		HashMap<KatSayiPuantajTipi, TreeMap<String, BigDecimal>> allMap = setKatSayiMap(list);
+		HashMap<Object, TreeMap<String, BigDecimal>> allMap = setKatSayiMap(list);
 
 		return allMap;
 	}
@@ -15363,7 +15363,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	public HashMap<KatSayiPuantajTipi, TreeMap<String, BigDecimal>> getPlanKatSayiAllMap(List<Integer> katsayiList, List<Long> personelIdler, Date basTarih, Date bitTarih, Session session) {
+	public HashMap<Object, TreeMap<String, BigDecimal>> getPlanKatSayiAllMap(List<Integer> katsayiList, List<Long> personelIdler, Date basTarih, Date bitTarih, Session session) {
 		String fieldName = null;
 		HashMap map = new HashMap();
 		StringBuilder sb = new StringBuilder();
@@ -15407,7 +15407,7 @@ public class OrtakIslemler implements Serializable {
 		}
 
 		map = null;
-		HashMap<KatSayiPuantajTipi, TreeMap<String, BigDecimal>> allMap = setKatSayiMap(list);
+		HashMap<Object, TreeMap<String, BigDecimal>> allMap = setKatSayiMap(list);
 
 		return allMap;
 	}
@@ -15416,8 +15416,8 @@ public class OrtakIslemler implements Serializable {
 	 * @param list
 	 * @return
 	 */
-	private HashMap<KatSayiPuantajTipi, TreeMap<String, BigDecimal>> setKatSayiMap(List<Object[]> list) {
-		HashMap<KatSayiPuantajTipi, TreeMap<String, BigDecimal>> allMap = new HashMap<KatSayiPuantajTipi, TreeMap<String, BigDecimal>>();
+	private HashMap<Object, TreeMap<String, BigDecimal>> setKatSayiMap(List<Object[]> list) {
+		HashMap<Object, TreeMap<String, BigDecimal>> allMap = new HashMap<Object, TreeMap<String, BigDecimal>>();
 		if (list != null) {
 			String[] dizi = new String[] { "S", "T", "V" };
 			for (Object[] objects : list) {
@@ -15425,7 +15425,9 @@ public class OrtakIslemler implements Serializable {
 					continue;
 				try {
 					Integer kaySayi = (Integer) objects[0];
-					KatSayiPuantajTipi key = KatSayiPuantajTipi.fromValue(kaySayi);
+					Object key = KatSayiPuantajTipi.fromValue(kaySayi);
+					if (key == null)
+						key = KatSayiVardiyaGunTipi.fromValue(kaySayi);
 					if (key != null) {
 						TreeMap<String, BigDecimal> degerMap = allMap.containsKey(key) ? allMap.get(key) : new TreeMap<String, BigDecimal>();
 						if (degerMap.isEmpty())

@@ -379,7 +379,7 @@ public class IseGelmemeUyari implements Serializable {
 
 					List<VardiyaGun> vardiyaList = new ArrayList<VardiyaGun>(vardiyalar.values());
 					ortakIslemler.sonrakiGunVardiyalariAyikla(tarih, vardiyaList, session);
-					HashMap<KatSayiPuantajTipi, TreeMap<String, BigDecimal>> allMap = null;
+					HashMap<Object, TreeMap<String, BigDecimal>> allMap = null;
 					if (vardiyaList.isEmpty() == false) {
 						for (Personel per : personeller)
 							personelIdler.add(per.getId());
