@@ -4713,13 +4713,13 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (allTesis == null)
 			allTesis = new ArrayList<Tanim>();
 		List<Tanim> yetkiliTesisler = authenticatedUser.getYetkiliTesisler();
-		if (yetkiliTesisler != null && yetkiliTesisler.isEmpty() == false && (seciliKullanici == null || seciliKullanici.isIK())) {
+		if (yetkiliTesisler != null && yetkiliTesisler.isEmpty() == false) {
 			for (Iterator iterator = allTesis.iterator(); iterator.hasNext();) {
 				Tanim tanim = (Tanim) iterator.next();
-				boolean sil = true;
+				boolean sil = false;
 				for (Tanim tesis : yetkiliTesisler) {
 					if (tesis.getId().equals(tanim.getId())) {
-						sil = tesis.isGuncellendi();
+						sil = tesis.isGuncellendi() == false;
 						break;
 					}
 				}
@@ -4731,11 +4731,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (seciliKullanici != null) {
 			seciliKullanici.setYetkiliTesisler(null);
 			ortakIslemler.setUserTesisler(seciliKullanici, session);
-			yetkiliTesisler = seciliKullanici.getYetkiliTesisler();
-			if (yetkiliTesisler == null) {
-				yetkiliTesisler = new ArrayList<Tanim>();
-				seciliKullanici.setYetkiliTesisler(yetkiliTesisler);
-			}
+			yetkiliTesisler = new ArrayList<Tanim>();
+			if (seciliKullanici.getYetkiliTesisler() != null)
+				yetkiliTesisler = seciliKullanici.getYetkiliTesisler();
 
 			if (yetkiliTesisler != null) {
 				for (Iterator iterator = yetkiliTesisler.iterator(); iterator.hasNext();) {
