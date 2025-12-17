@@ -4698,7 +4698,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					List<TesisBaglanti> list = pdksEntityController.getSQLParamByFieldList(TesisBaglanti.TABLE_NAME, TesisBaglanti.COLUMN_NAME_TESIS, tesisId, TesisBaglanti.class, session);
 					if (list.isEmpty() == false) {
 						for (TesisBaglanti tb : list) {
-							if (tb.getPersonelTipi() == null) {
+							if (tb.getPersonelTipi() == null || (seciliKullanici != null && seciliKullanici.isIK() == false)) {
 								if (tb.getTesisBaglanti().getId().equals(tesisId) == false)
 									allTesis.add(tb.getTesisBaglanti());
 							}
