@@ -517,6 +517,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						if (ikRole && sirket != null) {
 							departman = sirket.getDepartman();
 							departmanId = departman.getId();
+						} else {
+							sirketId = null;
+							tesisId = null;
+							seciliEkSaha3Id = null;
+							seciliEkSaha4Id = null;
 						}
 					}
 					fillSirketList();
@@ -845,6 +850,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		ekSaha4Tanim = null;
 		if (ikRole || userLogin.isYonetici()) {
 			Long depId = departman != null ? departman.getId() : null;
+			if (depId == null)
+				depId = authenticatedUser.getDepartman().getId();
 			sirketler = fazlaMesaiOrtakIslemler.getFazlaMesaiSirketList(depId, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, sadeceFazlaMesai, session);
 			sirket = null;
 			if (!sirketler.isEmpty()) {
@@ -1415,11 +1422,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					sabahVardiya = null;
 				setInstance(denklestirmeDonemi);
 				map.clear();
- 				List<Personel> perListesi = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, perList, Personel.class, session);
+				List<Personel> perListesi = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, perList, Personel.class, session);
 				if (tatilGunleriMap == null || tatilGunleriMap.isEmpty() == false) {
- 					if (perListesi != null && perListesi.isEmpty() == false)  
+					if (perListesi != null && perListesi.isEmpty() == false)
 						tatilGunleriMap = ortakIslemler.getTatilGunleri(perListesi, ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBaslangicTarih(), -1), ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), session);
-					 
+
 				}
 				denklestirmeDonemi.setTatilGunleriMap(tatilGunleriMap);
 				boolean ayBitmedi = denklestirmeDonemi.getBitisTarih().getTime() >= PdksUtil.getDate(bugun).getTime();
@@ -6320,7 +6327,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		} else {
 
 			if ((ikRole || adminRole || authenticatedUser.isDirektorSuperVisor()) & denklestirmeAyDurum && gorevYeriList != null) {
-				if (departman.isAdminMi() && sirket.isTesisDurumu()) {
+				departman = sirket != null ? sirket.getDepartman() : null;
+				if (sirket != null && departman.isAdminMi() && sirket.isTesisDurumu()) {
 					planTanimsizBolumList = fazlaMesaiOrtakIslemler.getFazlaMesaiTanimsizBolumList(sirket, tesisId != null ? String.valueOf(tesisId) : null, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, session);
 					// planTanimsizBolumList = fazlaMesaiOrtakIslemler.getFazlaMesaiBolumList(sirket, tesisId != null ? String.valueOf(tesisId) : null, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, false, session);
 				} else {

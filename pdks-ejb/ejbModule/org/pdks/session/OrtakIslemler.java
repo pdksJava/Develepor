@@ -131,6 +131,7 @@ import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
 import org.pdks.entity.TatilGunView;
 import org.pdks.entity.TempIzin;
+import org.pdks.entity.TesisBaglanti;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGorev;
 import org.pdks.entity.VardiyaGun;
@@ -11762,7 +11763,53 @@ public class OrtakIslemler implements Serializable {
 		Boolean tesisYetki = getParameterKey("tesisYetki").equals("1");
 		if (tesisYetki && user != null && user.getId() != null && (user.getYetkiliTesisler() == null || user.getYetkiliTesisler().isEmpty())) {
 			yetkiliTesisler = filUserTesisList(user, session);
-			user.setYetkiliTesisler(yetkiliTesisler);
+			boolean bos = yetkiliTesisler.isEmpty();
+			Tanim tesis = user.getPdksPersonel() != null ? user.getPdksPersonel().getTesis() : null;
+			boolean userIK = user.isIK(), superVisor = user.isTesisSuperVisor() || user.isSirketSuperVisor();
+			Long tesisId = tesis != null ? tesis.getId() : null;
+			Tanim tesisBaglanti = null;
+			if (tesisId != null) {
+				tesisBaglanti = new Tanim(tesisId);
+				for (Tanim tanim : yetkiliTesisler) {
+					if (tesisBaglanti != null && tanim.getId().equals(tesisId)) {
+						tesisBaglanti = null;
+						break;
+					}
+				}
+			}
+
+			if (tesisBaglanti != null)
+				yetkiliTesisler.add(tesis);
+			if (userIK || superVisor) {
+				if (tesisId != null) {
+					List<TesisBaglanti> list = pdksEntityController.getSQLParamByFieldList(TesisBaglanti.TABLE_NAME, TesisBaglanti.COLUMN_NAME_TESIS, tesisId, TesisBaglanti.class, session);
+
+					for (TesisBaglanti tb : list) {
+						tesisBaglanti = null;
+						if (userIK) {
+							if (tb.isIK())
+								tesisBaglanti = tb.getTesisBaglanti();
+						} else if (tb.isSupervisor())
+							tesisBaglanti = tb.getTesisBaglanti();
+						if (bos == false) {
+							if (tesisBaglanti != null) {
+								for (Tanim tanim : yetkiliTesisler) {
+									if (tanim.getId().equals(tesisBaglanti.getId())) {
+										tesisBaglanti = null;
+										break;
+									}
+								}
+							}
+
+						}
+						if (tesisBaglanti != null)
+							yetkiliTesisler.add(tesisBaglanti);
+					}
+
+				}
+				user.setYetkiliTesisler(yetkiliTesisler);
+			}
+
 		}
 	}
 
@@ -14812,7 +14859,8 @@ public class OrtakIslemler implements Serializable {
 				cal.setTime(tarih1);
 				cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
 				Date tarih2 = cal.getTime();
-				List<Integer> list = Arrays.asList(new Integer[] { PuantajKatSayiTipi.AYLIK_UOM_YUVARLAMA.value(), PuantajKatSayiTipi.AYLIK_RT_YUVARLAMA.value(), PuantajKatSayiTipi.AYLIK_HT_YUVARLAMA.value(), PuantajKatSayiTipi.AYLIK_DENKLESTIRME_TIPI.value(), PuantajKatSayiTipi.AYLIK_RADYOLOJI_MAX_GUN.value() });
+				List<Integer> list = Arrays.asList(new Integer[] { PuantajKatSayiTipi.AYLIK_UOM_YUVARLAMA.value(), PuantajKatSayiTipi.AYLIK_RT_YUVARLAMA.value(), PuantajKatSayiTipi.AYLIK_HT_YUVARLAMA.value(), PuantajKatSayiTipi.AYLIK_DENKLESTIRME_TIPI.value(),
+						PuantajKatSayiTipi.AYLIK_RADYOLOJI_MAX_GUN.value() });
 				HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> katSayilarMap = getYuvarlamaKatSayiMap(tarih1, tarih2, list, session);
 				TreeMap<String, BigDecimal> ucmYuvarlamaMap = katSayilarMap.containsKey(PuantajKatSayiTipi.AYLIK_UOM_YUVARLAMA) ? katSayilarMap.get(PuantajKatSayiTipi.AYLIK_UOM_YUVARLAMA) : new TreeMap<String, BigDecimal>();
 				TreeMap<String, BigDecimal> rtYuvarlamaMap = katSayilarMap.containsKey(PuantajKatSayiTipi.AYLIK_RT_YUVARLAMA) ? katSayilarMap.get(PuantajKatSayiTipi.AYLIK_RT_YUVARLAMA) : new TreeMap<String, BigDecimal>();
@@ -15425,7 +15473,7 @@ public class OrtakIslemler implements Serializable {
 				try {
 					Integer kaySayi = (Integer) objects[0];
 					PuantajKatSayiTipi key = PuantajKatSayiTipi.fromValue(kaySayi);
-					 
+
 					if (key != null) {
 						TreeMap<String, BigDecimal> degerMap = allMap.containsKey(key) ? allMap.get(key) : new TreeMap<String, BigDecimal>();
 						if (degerMap.isEmpty())

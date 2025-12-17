@@ -10538,12 +10538,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (aramaSecenekleri.getSirket() != null || aramaSecenekleri.getSirketId() != null) {
 			sirket = aramaSecenekleri.getSirket();
 			if (aramaSecenekleri.getSirket() == null) {
-
-				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
-
-				aramaSecenekleri.setSirket(sirket);
+ 				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
+ 				aramaSecenekleri.setSirket(sirket);
 			}
-			departman = sirket.getDepartman();
+			if (sirket != null)
+				departman = sirket.getDepartman();
 
 		}
 		List<SelectItem> list = null;

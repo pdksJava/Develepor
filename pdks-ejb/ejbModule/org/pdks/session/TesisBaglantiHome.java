@@ -20,6 +20,7 @@ import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.TesisBaglanti;
+import org.pdks.enums.PersonelTipi;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 
@@ -51,6 +52,8 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 	public static String sayfaURL = "tesisBaglantiTanimlama";
 	private List<TesisBaglanti> tesisBaglantiList = new ArrayList<TesisBaglanti>();
 	private List<Tanim> tesisList;
+
+	private List<SelectItem> personelTipiList;
 	private Tanim tesis;
 
 	private Session session;
@@ -76,7 +79,7 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 		for (Iterator iterator = tesisBaglantiList.iterator(); iterator.hasNext();) {
 			TesisBaglanti tb = (TesisBaglanti) iterator.next();
 			if (tb.isCheckBoxDurum()) {
-				if (tb.getId() == null) {
+				if (tb.getId() == null || tb.isDegisti()) {
 					pdksEntityController.saveOrUpdate(session, entityManager, tb);
 					++kayit;
 				}
@@ -136,6 +139,7 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 			List<TesisBaglanti> list2 = new ArrayList<TesisBaglanti>();
 			for (TesisBaglanti tb : list) {
 				tb.setCheckBoxDurum(true);
+				tb.setDegisti(false);
 				map.put(tb.getTesisBaglanti().getId(), tb);
 			}
 			for (Tanim tesisBaglanti : tesisList) {
@@ -166,6 +170,13 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		String sayfa = "";
 		if (ortakIslemler.getTesisDurumu()) {
+			if (personelTipiList == null)
+				personelTipiList = new ArrayList<SelectItem>();
+			else
+				personelTipiList.clear();
+			personelTipiList.add(new SelectItem(PersonelTipi.TUM.value(), TesisBaglanti.getPersonelTipiAciklama(PersonelTipi.TUM)));
+			personelTipiList.add(new SelectItem(PersonelTipi.IK.value(), TesisBaglanti.getPersonelTipiAciklama(PersonelTipi.IK)));
+			personelTipiList.add(new SelectItem(PersonelTipi.SUPERVISOR.value(), TesisBaglanti.getPersonelTipiAciklama(PersonelTipi.SUPERVISOR)));
 			ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 			fillTesisList();
 		} else
@@ -212,5 +223,13 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 
 	public void setTesis(Tanim tesis) {
 		this.tesis = tesis;
+	}
+
+	public List<SelectItem> getPersonelTipiList() {
+		return personelTipiList;
+	}
+
+	public void setPersonelTipiList(List<SelectItem> personelTipiList) {
+		this.personelTipiList = personelTipiList;
 	}
 }

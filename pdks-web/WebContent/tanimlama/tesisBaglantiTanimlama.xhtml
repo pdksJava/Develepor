@@ -30,7 +30,7 @@
 											<rich:dataTable rowClasses="acik,koyu" value="#{tesisBaglantiHome.tesisBaglantiList}" var="tb" rows="50" rowKeyVar="row"
 												id="tesisBaglantiTable" style="width=:%100">
 												<f:facet name="header">
-												<ui:fragment>#{tesisBaglantiHome.tesis.aciklama} Bağlanacak #{ortakIslemler.tesisAciklama()}</ui:fragment> 
+													<ui:fragment>#{tesisBaglantiHome.tesis.aciklama} Bağlanacak #{ortakIslemler.tesisAciklama()}</ui:fragment>
 												</f:facet>
 												<rich:column style="text-align: center;">
 													<f:facet name="header">İşlemler</f:facet>
@@ -50,7 +50,16 @@
 													</ui:fragment>
 												</rich:column>
 
-
+												<rich:column>
+													<f:facet name="header">Personel Tipi</f:facet>
+													<DIV id="tipi#{tb.tesisBaglanti.id}">
+														<h:selectOneMenu value="#{tb.tipi}">
+															<f:selectItem itemLabel="Lütfen seçiniz" />
+															<f:selectItems value="#{tesisBaglantiHome.personelTipiList}" />
+															<a4j:support event="onchange" status="ajaxStatus" reRender="tipi#{tb.tesisBaglanti.id}" />
+														</h:selectOneMenu>
+													</DIV>
+												</rich:column>
 												<f:facet name="footer">
 													<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 												</f:facet>

@@ -4665,13 +4665,13 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					if (sirketIK) {
 						if (allTesis.isEmpty() == false) {
 							idList.clear();
-							for (Tanim tesis : allTesis) {
+							for (Tanim tesis : allTesis)
 								idList.add(tesis.getId());
-							}
+
 							List<TesisBaglanti> list = pdksEntityController.getSQLParamByFieldList(TesisBaglanti.TABLE_NAME, TesisBaglanti.COLUMN_NAME_TESIS, new ArrayList(idList), TesisBaglanti.class, session);
 							for (TesisBaglanti tb : list) {
 								Tanim tesis = tb.getTesisBaglanti();
-								if (idList.contains(tesis.getId()) == false) {
+								if (idList.contains(tesis.getId()) == false && tb.getPersonelTipi() == null) {
 									allTesis.add(tesis);
 									idList.add(tesis.getId());
 								}
@@ -4693,7 +4693,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					List<TesisBaglanti> list = pdksEntityController.getSQLParamByFieldList(TesisBaglanti.TABLE_NAME, TesisBaglanti.COLUMN_NAME_TESIS, tesis.getId(), TesisBaglanti.class, session);
 					if (list.isEmpty() == false) {
 						for (TesisBaglanti tb : list)
-							if (tb.getTesisBaglanti().getId().equals(tesis.getId()) == false)
+							if (tb.getTesisBaglanti().getId().equals(tesis.getId()) == false && tb.getPersonelTipi() == null)
 								allTesis.add(tb.getTesisBaglanti());
 					}
 					list = null;
