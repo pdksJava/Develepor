@@ -2973,7 +2973,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 		}
 		if (authenticatedUser.isIK_Tesis() && authenticatedUser.getPdksPersonel().getTesis() != null) {
-			tesisIdList = new ArrayList<Long>();
+			if (tesisIdList == null)
+				tesisIdList = new ArrayList<Long>();
 			tesisIdList.add(authenticatedUser.getPdksPersonel().getTesis().getId());
 		}
 
@@ -3054,7 +3055,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						} else {
 							Personel ppdksPersonel = personelView.getPdksPersonel();
 							if (tesisIdList != null) {
-								if (ppdksPersonel.getTesis() == null || tesisIdList.contains(ppdksPersonel.getTesis().getId()) == false) {
+								Long tesisId = ppdksPersonel.getTesis() != null ? ppdksPersonel.getTesis().getId() : null;
+								if (tesisId == null || tesisIdList.contains(tesisId) == false) {
 									iterator.remove();
 									continue;
 								}
@@ -4652,6 +4654,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public void fillDistinctTesisList() {
 		List<Tanim> allTesis = null;
 		boolean tesisIK = authenticatedUser.isIK_Tesis(), sirketIK = authenticatedUser.isIKSirket();
+		Personel seciliPersonel = getInstance();
+		User seciliKullanici = seciliPersonel != null ? seciliPersonel.getKullanici() : null;
 		if (ortakIslemler.getTesisDurumu()) {
 			boolean userIK = authenticatedUser.isIK() && tesisIK == false && sirketIK == false;
 			if (userIK || sirketIK || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isAdmin()) {
@@ -4689,13 +4693,18 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				Tanim tesis = personel != null ? personel.getTesis() : null;
 				if (tesis != null) {
 					allTesis = new ArrayList<Tanim>();
+					Long tesisId = tesis.getId();
 					allTesis.add(tesis);
-					List<TesisBaglanti> list = pdksEntityController.getSQLParamByFieldList(TesisBaglanti.TABLE_NAME, TesisBaglanti.COLUMN_NAME_TESIS, tesis.getId(), TesisBaglanti.class, session);
+					List<TesisBaglanti> list = pdksEntityController.getSQLParamByFieldList(TesisBaglanti.TABLE_NAME, TesisBaglanti.COLUMN_NAME_TESIS, tesisId, TesisBaglanti.class, session);
 					if (list.isEmpty() == false) {
-						for (TesisBaglanti tb : list)
-							if (tb.getTesisBaglanti().getId().equals(tesis.getId()) == false && tb.getPersonelTipi() == null)
-								allTesis.add(tb.getTesisBaglanti());
+						for (TesisBaglanti tb : list) {
+							if (tb.getPersonelTipi() == null) {
+								if (tb.getTesisBaglanti().getId().equals(tesisId) == false)
+									allTesis.add(tb.getTesisBaglanti());
+							}
+						}
 					}
+
 					list = null;
 				}
 			}
@@ -4703,14 +4712,14 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		}
 		if (allTesis == null)
 			allTesis = new ArrayList<Tanim>();
-
-		if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+		List<Tanim> yetkiliTesisler = authenticatedUser.getYetkiliTesisler();
+		if (yetkiliTesisler != null && yetkiliTesisler.isEmpty() == false && (seciliKullanici == null || seciliKullanici.isIK())) {
 			for (Iterator iterator = allTesis.iterator(); iterator.hasNext();) {
 				Tanim tanim = (Tanim) iterator.next();
 				boolean sil = true;
-				for (Tanim tesis : authenticatedUser.getYetkiliTesisler()) {
+				for (Tanim tesis : yetkiliTesisler) {
 					if (tesis.getId().equals(tanim.getId())) {
-						sil = false;
+						sil = tesis.isGuncellendi();
 						break;
 					}
 				}
@@ -4718,35 +4727,26 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					iterator.remove();
 			}
 		}
-		// else if (sirketIK) {
-		// AramaSecenekleri as = new AramaSecenekleri();
-		// Date bugun = PdksUtil.getDate(new Date());
-		// as.setSirket(authenticatedUser.getPdksPersonel().getSirket());
-		// as.setSirketId(authenticatedUser.getPdksPersonel().getSirket().getId());
-		// ortakIslemler.setAramaSecenekTesisData(as, bugun, bugun, false, session);
-		// for (Iterator iterator = allTesis.iterator(); iterator.hasNext();) {
-		// Tanim tanim = (Tanim) iterator.next();
-		// boolean sil = true;
-		// for (SelectItem tesis : as.getTesisList()) {
-		// if (tesis.getValue().equals(tanim.getId())) {
-		// sil = false;
-		// break;
-		// }
-		// }
-		// if (sil)
-		// iterator.remove();
-		// }
-		// }
-		Personel seciliPersonel = getInstance();
-		if (seciliPersonel != null) {
-			User seciliKullanici = seciliPersonel.getKullanici();
+
+		if (seciliKullanici != null) {
 			seciliKullanici.setYetkiliTesisler(null);
 			ortakIslemler.setUserTesisler(seciliKullanici, session);
-			if (seciliKullanici.getYetkiliTesisler() != null) {
+			yetkiliTesisler = seciliKullanici.getYetkiliTesisler();
+			if (yetkiliTesisler == null) {
+				yetkiliTesisler = new ArrayList<Tanim>();
+				seciliKullanici.setYetkiliTesisler(yetkiliTesisler);
+			}
+
+			if (yetkiliTesisler != null) {
+				for (Iterator iterator = yetkiliTesisler.iterator(); iterator.hasNext();) {
+					Tanim tanim = (Tanim) iterator.next();
+					if (tanim.isGuncellendi())
+						iterator.remove();
+				}
 				Tanim perTesis = seciliPersonel.getTesis();
 				for (Iterator iterator = allTesis.iterator(); iterator.hasNext();) {
 					Tanim tesis = (Tanim) iterator.next();
-					if (seciliKullanici.getYetkiliTesisler().contains(tesis) || (perTesis != null && perTesis.getId().equals(tesis.getId())))
+					if (yetkiliTesisler.contains(tesis) || (perTesis != null && perTesis.getId().equals(tesis.getId())))
 						iterator.remove();
 				}
 				if (allTesis.size() > 1)

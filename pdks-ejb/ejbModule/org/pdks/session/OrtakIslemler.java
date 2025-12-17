@@ -11769,8 +11769,10 @@ public class OrtakIslemler implements Serializable {
 			Long tesisId = tesis != null ? tesis.getId() : null;
 			Tanim tesisBaglanti = null;
 			if (tesisId != null) {
+				tesis.setGuncellendi(true);
 				tesisBaglanti = new Tanim(tesisId);
 				for (Tanim tanim : yetkiliTesisler) {
+					tanim.setGuncellendi(false);
 					if (tesisBaglanti != null && tanim.getId().equals(tesisId)) {
 						tesisBaglanti = null;
 						break;
@@ -11802,8 +11804,11 @@ public class OrtakIslemler implements Serializable {
 							}
 
 						}
-						if (tesisBaglanti != null)
+						if (tesisBaglanti != null) {
 							yetkiliTesisler.add(tesisBaglanti);
+							tesisBaglanti.setGuncellendi(true);
+						}
+
 					}
 
 				}
