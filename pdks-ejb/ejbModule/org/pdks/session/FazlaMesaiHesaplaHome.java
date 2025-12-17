@@ -78,7 +78,7 @@ import org.pdks.entity.VardiyaHafta;
 import org.pdks.entity.VardiyaSaat;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.BordroDetayTipi;
-import org.pdks.enums.KatSayiPuantajTipi;
+import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.security.action.StartupAction;
 import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.MenuItemConstant;
@@ -1745,12 +1745,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					Integer ucmYuvarla = yarimYuvarla, rtYuvarla = yarimYuvarla;
 					Double radyolojiKatsayi = null;
 					if (puantaj.getKatSayiMap() != null) {
-						if (puantaj.getKatSayiMap().containsKey(KatSayiPuantajTipi.UOM_YUVARLAMA.value()))
-							ucmYuvarla = puantaj.getKatSayiMap().get(KatSayiPuantajTipi.UOM_YUVARLAMA.value()).intValue();
-						if (puantaj.getKatSayiMap().containsKey(KatSayiPuantajTipi.RT_YUVARLAMA.value()))
-							rtYuvarla = puantaj.getKatSayiMap().get(KatSayiPuantajTipi.UOM_YUVARLAMA.value()).intValue();
-						if (puantaj.getKatSayiMap().containsKey(KatSayiPuantajTipi.RADYOLOJI_MAX_GUN.value()))
-							radyolojiKatsayi = puantaj.getKatSayiMap().get(KatSayiPuantajTipi.RADYOLOJI_MAX_GUN.value()).doubleValue();
+						if (puantaj.getKatSayiMap().containsKey(PuantajKatSayiTipi.AYLIK_UOM_YUVARLAMA.value()))
+							ucmYuvarla = puantaj.getKatSayiMap().get(PuantajKatSayiTipi.AYLIK_UOM_YUVARLAMA.value()).intValue();
+						if (puantaj.getKatSayiMap().containsKey(PuantajKatSayiTipi.AYLIK_RT_YUVARLAMA.value()))
+							rtYuvarla = puantaj.getKatSayiMap().get(PuantajKatSayiTipi.AYLIK_UOM_YUVARLAMA.value()).intValue();
+						if (puantaj.getKatSayiMap().containsKey(PuantajKatSayiTipi.AYLIK_RADYOLOJI_MAX_GUN.value()))
+							radyolojiKatsayi = puantaj.getKatSayiMap().get(PuantajKatSayiTipi.AYLIK_RADYOLOJI_MAX_GUN.value()).doubleValue();
 					}
 					puantaj.setFazlaMesaiHesapla(true);
 					HashMap<Integer, BigDecimal> katSayiMap = puantaj.getKatSayiMap();
@@ -2123,8 +2123,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								}
 							}
 						}
-						if (haftaCalismaSuresi > 0 && katSayiMap != null && katSayiMap.containsKey(KatSayiPuantajTipi.HT_YUVARLAMA)) {
-							int htYuvarla = katSayiMap.get(KatSayiPuantajTipi.HT_YUVARLAMA.value()).intValue();
+						if (haftaCalismaSuresi > 0 && katSayiMap != null && katSayiMap.containsKey(PuantajKatSayiTipi.AYLIK_HT_YUVARLAMA)) {
+							int htYuvarla = katSayiMap.get(PuantajKatSayiTipi.AYLIK_HT_YUVARLAMA.value()).intValue();
 							haftaCalismaSuresi = PdksUtil.setSureDoubleTypeRounded(haftaCalismaSuresi, htYuvarla);
 						}
 

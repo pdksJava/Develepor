@@ -45,7 +45,7 @@ import org.pdks.entity.Tatil;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.YemekIzin;
-import org.pdks.enums.KatSayiPuantajTipi;
+import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 
@@ -693,8 +693,8 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						List<Long> perIdList = new ArrayList<Long>();
 						for (Personel personel : personeller)
 							perIdList.add(personel.getId());
-						yuvarlamaMap = ortakIslemler.getPlanKatSayiMap(perIdList, basTarih, bitTarih, KatSayiPuantajTipi.YUVARLAMA_TIPI, session);
-						fazlaMesaiYuvarlamaMap = ortakIslemler.getPlanKatSayiMap(perIdList, basTarih, bitTarih, KatSayiPuantajTipi.FAZLA_MESAI_YUVARLAMA, session);
+						yuvarlamaMap = ortakIslemler.getPlanKatSayiMap(perIdList, basTarih, bitTarih, PuantajKatSayiTipi.AYLIK_YUVARLAMA_TIPI, session);
+						fazlaMesaiYuvarlamaMap = ortakIslemler.getPlanKatSayiMap(perIdList, basTarih, bitTarih, PuantajKatSayiTipi.AYLIK_FAZLA_MESAI_YUVARLAMA, session);
 						perIdList = null;
 					}
 					vardiyaList = new ArrayList<VardiyaGun>(vardiyaMap.values());

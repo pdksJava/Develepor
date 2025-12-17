@@ -23,8 +23,8 @@ import javax.persistence.UniqueConstraint;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.pdks.enums.KatSayiVardiyaGunTipi;
 import org.pdks.enums.PersonelDurumTipi;
+import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.session.PdksUtil;
 
 @Entity(name = VardiyaGun.TABLE_NAME)
@@ -2229,7 +2229,7 @@ public class VardiyaGun extends BaseObject {
 	public double getSaatCalisanNormalGunKatsayisi() {
 		double katSayi = 0.0d;
 		if (ayinGunu) {
-			BigDecimal decimal = getKatSayi(KatSayiVardiyaGunTipi.SAAT_CALISAN_NORMAL_GUN.value());
+			BigDecimal decimal = getKatSayi(PuantajKatSayiTipi.GUN_SAAT_CALISAN_NORMAL_GUN.value());
 			katSayi = decimal != null ? decimal.doubleValue() : 9.0d;
 		}
 		return katSayi;
@@ -2239,7 +2239,7 @@ public class VardiyaGun extends BaseObject {
 	public double getSaatCalisanIzinGunKatsayisi() {
 		double katSayi = 0.0d;
 		if (ayinGunu) {
-			BigDecimal decimal = getKatSayi(KatSayiVardiyaGunTipi.SAAT_CALISAN_IZIN_GUN.value());
+			BigDecimal decimal = getKatSayi(PuantajKatSayiTipi.GUN_SAAT_CALISAN_IZIN_GUN.value());
 
 			katSayi = decimal != null ? decimal.doubleValue() : 9.0d;
 		}
@@ -2250,7 +2250,7 @@ public class VardiyaGun extends BaseObject {
 	public double getSaatCalisanHaftaTatilKatsayisi() {
 		double katSayi = 0.0d;
 		if (ayinGunu) {
-			BigDecimal decimal = getKatSayi(KatSayiVardiyaGunTipi.SAAT_CALISAN_HAFTA_TATIL.value());
+			BigDecimal decimal = getKatSayi(PuantajKatSayiTipi.GUN_SAAT_CALISAN_HAFTA_TATIL.value());
 			katSayi = decimal != null ? decimal.doubleValue() : 7.5d;
 		}
 		return katSayi;
@@ -2260,7 +2260,7 @@ public class VardiyaGun extends BaseObject {
 	public double getSaatCalisanResmiTatilKatsayisi() {
 		double katSayi = 0.0d;
 		if (ayinGunu) {
-			BigDecimal decimal = getKatSayi(KatSayiVardiyaGunTipi.SAAT_CALISAN_RESMI_TATIL.value());
+			BigDecimal decimal = getKatSayi(PuantajKatSayiTipi.GUN_SAAT_CALISAN_RESMI_TATIL.value());
 			katSayi = decimal != null ? decimal.doubleValue() : 7.5d;
 		}
 		return katSayi;
@@ -2270,7 +2270,7 @@ public class VardiyaGun extends BaseObject {
 	public double getSaatCalisanGunlukKatsayisi() {
 		double katSayi = 0.0d;
 		if (ayinGunu) {
-			BigDecimal decimal = getKatSayi(KatSayiVardiyaGunTipi.SAAT_CALISAN_GUN.value());
+			BigDecimal decimal = getKatSayi(PuantajKatSayiTipi.GUN_SAAT_CALISAN_GUN.value());
 			katSayi = decimal != null ? decimal.doubleValue() : 7.5d;
 		}
 		return katSayi;
@@ -2280,7 +2280,7 @@ public class VardiyaGun extends BaseObject {
 	public double getSaatCalisanArifeNormalKatsayisi() {
 		double katSayi = 0.0d;
 		if (ayinGunu) {
-			BigDecimal decimal = getKatSayi(KatSayiVardiyaGunTipi.SAAT_CALISAN_ARIFE_NORMAL_SAAT.value());
+			BigDecimal decimal = getKatSayi(PuantajKatSayiTipi.GUN_SAAT_CALISAN_ARIFE_NORMAL_SAAT.value());
 			katSayi = decimal != null ? decimal.doubleValue() : 3.75d;
 		}
 		return katSayi;
@@ -2290,7 +2290,7 @@ public class VardiyaGun extends BaseObject {
 	public double getSaatCalisanArifeTatilKatsayisi() {
 		double katSayi = 0.0d;
 		if (ayinGunu) {
-			BigDecimal decimal = getKatSayi(KatSayiVardiyaGunTipi.SAAT_CALISAN_ARIFE_TATIL_SAAT.value());
+			BigDecimal decimal = getKatSayi(PuantajKatSayiTipi.GUN_SAAT_CALISAN_ARIFE_TATIL_SAAT.value());
 			katSayi = decimal != null ? decimal.doubleValue() : 3.75d;
 		}
 		return katSayi;
@@ -2299,7 +2299,7 @@ public class VardiyaGun extends BaseObject {
 	@Transient
 	public boolean isFazlaMesaiTalepDurum() {
 		if (!fazlaMesaiTalepDurum && izin == null && ayinGunu) {
-			BigDecimal decimal = getKatSayi(KatSayiVardiyaGunTipi.FMT_DURUM.value());
+			BigDecimal decimal = getKatSayi(PuantajKatSayiTipi.GUN_FMT_DURUM.value());
 			fazlaMesaiTalepDurum = decimal != null && decimal.intValue() > 0;
 		}
 		return fazlaMesaiTalepDurum;
@@ -2325,7 +2325,7 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public boolean isYemekHesabiSureEkle() {
-		BigDecimal decimal = getKatSayi(KatSayiVardiyaGunTipi.YEMEK_SURE_EKLE_DURUM.value());
+		BigDecimal decimal = getKatSayi(PuantajKatSayiTipi.GUN_YEMEK_SURE_EKLE_DURUM.value());
 		boolean tatilYemekHesabiSureEkle = decimal != null && decimal.intValue() > 0;
 		return tatilYemekHesabiSureEkle;
 	}

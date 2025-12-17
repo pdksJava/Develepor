@@ -16,7 +16,7 @@ import javax.persistence.TemporalType;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.pdks.enums.KatSayiPuantajTipi;
+import org.pdks.enums.PuantajKatSayiTipi;
 
 @Entity
 @Table(name = KatSayi.TABLE_NAME)
@@ -44,7 +44,7 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_VARDIYA = "VARDIYA_ID";
 
 	private Date basTarih, bitTarih;
-	private KatSayiPuantajTipi tipi;
+	private PuantajKatSayiTipi tipi;
 	private Sirket sirket;
 	private Tanim tesis;
 	private Vardiya vardiya;
@@ -56,11 +56,11 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 	}
 
 	@Column(name = COLUMN_NAME_TIPI)
-	public KatSayiPuantajTipi getTipi() {
+	public PuantajKatSayiTipi getTipi() {
 		return tipi;
 	}
 
-	public void setTipi(KatSayiPuantajTipi tipi) {
+	public void setTipi(PuantajKatSayiTipi tipi) {
 		this.tipi = tipi;
 	}
 

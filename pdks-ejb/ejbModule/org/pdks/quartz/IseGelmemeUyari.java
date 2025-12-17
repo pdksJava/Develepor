@@ -53,9 +53,9 @@ import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
-import org.pdks.enums.KatSayiPuantajTipi;
 import org.pdks.enums.NoteTipi;
 import org.pdks.enums.OrganizasyonTipi;
+import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.security.entity.DefaultPasswordGenerator;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
@@ -379,17 +379,17 @@ public class IseGelmemeUyari implements Serializable {
 
 					List<VardiyaGun> vardiyaList = new ArrayList<VardiyaGun>(vardiyalar.values());
 					ortakIslemler.sonrakiGunVardiyalariAyikla(tarih, vardiyaList, session);
-					HashMap<Object, TreeMap<String, BigDecimal>> allMap = null;
+					HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> allMap = null;
 					if (vardiyaList.isEmpty() == false) {
 						for (Personel per : personeller)
 							personelIdler.add(per.getId());
-						List<Integer> katSayilar = Arrays.asList(new Integer[] { KatSayiPuantajTipi.IK_MAIL_GONDER.value(), KatSayiPuantajTipi.YONETICI_MAIL_GONDER.value() });
+						List<Integer> katSayilar = Arrays.asList(new Integer[] { PuantajKatSayiTipi.AYLIK_IK_MAIL_GONDER.value(), PuantajKatSayiTipi.AYLIK_YONETICI_MAIL_GONDER.value() });
 						allMap = ortakIslemler.getPlanKatSayiAllMap(katSayilar, personelIdler, oncekiGun, tarihAralik, session);
 						personelIdler = null;
 
 					}
-					TreeMap<String, BigDecimal> ikMailGonderMap = allMap != null && allMap.containsKey(KatSayiPuantajTipi.IK_MAIL_GONDER) ? allMap.get(KatSayiPuantajTipi.IK_MAIL_GONDER) : null;
-					TreeMap<String, BigDecimal> yoneticiMailGonderMap = allMap != null && allMap.containsKey(KatSayiPuantajTipi.YONETICI_MAIL_GONDER) ? allMap.get(KatSayiPuantajTipi.YONETICI_MAIL_GONDER) : null;
+					TreeMap<String, BigDecimal> ikMailGonderMap = allMap != null && allMap.containsKey(PuantajKatSayiTipi.AYLIK_IK_MAIL_GONDER) ? allMap.get(PuantajKatSayiTipi.AYLIK_IK_MAIL_GONDER) : null;
+					TreeMap<String, BigDecimal> yoneticiMailGonderMap = allMap != null && allMap.containsKey(PuantajKatSayiTipi.AYLIK_YONETICI_MAIL_GONDER) ? allMap.get(PuantajKatSayiTipi.AYLIK_YONETICI_MAIL_GONDER) : null;
 					allMap = null;
 					ikMailGonderKontrolEt = ikMailGonderMap != null && !ikMailGonderMap.isEmpty();
 					yoneticiMailGonderKontrolEt = yoneticiMailGonderMap != null && !yoneticiMailGonderMap.isEmpty();
