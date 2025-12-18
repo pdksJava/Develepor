@@ -1489,7 +1489,7 @@ public class IseGelmemeUyari implements Serializable {
 			List<Long> yoneticiPerIdList = new ArrayList<Long>();
 			List<Long> tesisList = null;
 			if (tesisYetki && session != null) {
-				ortakIslemler.setUserTesisler(user, session);
+				ortakIslemler.setUserTesisler(user,true, session);
 				if (user.getYetkiliTesisler() != null) {
 					tesisList = new ArrayList<Long>();
 					for (Tanim tesis : user.getYetkiliTesisler())

@@ -1162,12 +1162,13 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 						List<UserDigerOrganizasyon> yetkiliUserDigerOrganizasyonlar = pdksEntityController.getSQLParamByFieldList(UserDigerOrganizasyon.TABLE_NAME, UserDigerOrganizasyon.COLUMN_NAME_USER, kullanici.getId(), UserDigerOrganizasyon.class, session);
 						HashMap<Long, UserDigerOrganizasyon> tesisler = new HashMap<Long, UserDigerOrganizasyon>(), bolumler = new HashMap<Long, UserDigerOrganizasyon>();
-
 						for (UserDigerOrganizasyon userDigerOrganizasyon : yetkiliUserDigerOrganizasyonlar) {
-							if (userDigerOrganizasyon.isTesis())
-								tesisler.put(userDigerOrganizasyon.getOrganizasyon().getId(), userDigerOrganizasyon);
-							else if (userDigerOrganizasyon.isBolum())
-								bolumler.put(userDigerOrganizasyon.getOrganizasyon().getId(), userDigerOrganizasyon);
+							Tanim organizasyon = userDigerOrganizasyon.getOrganizasyon();
+							if (userDigerOrganizasyon.isTesis()) {
+								if (organizasyon.getKodu().equals(organizasyon.getErpKodu()))
+									tesisler.put(organizasyon.getId(), userDigerOrganizasyon);
+							} else if (userDigerOrganizasyon.isBolum())
+								bolumler.put(organizasyon.getId(), userDigerOrganizasyon);
 						}
 						if (pdksPersonel.getTesis() != null && !tesisler.containsKey(pdksPersonel.getTesis().getId()))
 							tesisler.put(pdksPersonel.getTesis().getId(), new UserDigerOrganizasyon(kullanici, OrganizasyonTipi.TESIS, pdksPersonel.getTesis()));
@@ -1299,7 +1300,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						session.flush();
 						if (tesisYetki && kullanici.getId() != null && authenticatedUser.getId() != null) {
 							authenticatedUser.setYetkiliTesisler(null);
-							ortakIslemler.setUserTesisler(authenticatedUser, session);
+							ortakIslemler.setUserTesisler(authenticatedUser, false, session);
 						}
 						try {
 							session.refresh(personelView);
@@ -4730,15 +4731,16 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 		if (seciliKullanici != null) {
 			seciliKullanici.setYetkiliTesisler(null);
-			ortakIslemler.setUserTesisler(seciliKullanici, session);
+			ortakIslemler.setUserTesisler(seciliKullanici, false, session);
 			yetkiliTesisler = new ArrayList<Tanim>();
+			Tanim tesisUser = seciliPersonel.getTesis();
 			if (seciliKullanici.getYetkiliTesisler() != null)
 				yetkiliTesisler = seciliKullanici.getYetkiliTesisler();
 
 			if (yetkiliTesisler != null) {
 				for (Iterator iterator = yetkiliTesisler.iterator(); iterator.hasNext();) {
 					Tanim tanim = (Tanim) iterator.next();
-					if (tanim.isGuncellendi())
+					if (tanim.isGuncellendi() || (tesisUser != null && tesisUser.getId().equals(tanim.getId())) || tanim.getKodu().equals(tanim.getErpKodu()) == false)
 						iterator.remove();
 				}
 				Tanim perTesis = seciliPersonel.getTesis();

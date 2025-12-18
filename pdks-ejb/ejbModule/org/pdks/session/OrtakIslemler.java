@@ -2927,7 +2927,7 @@ public class OrtakIslemler implements Serializable {
 		List<Long> tesisList = null;
 		boolean tesisYetki = getParameterKey("tesisYetki").equals("1");
 		if (tesisYetki && session != null && user != null) {
-			setUserTesisler(user, session);
+			setUserTesisler(user, false, session);
 			if (user.getYetkiliTesisler() != null) {
 				tesisList = new ArrayList<Long>();
 				for (Tanim tesis : loginUser.getYetkiliTesisler())
@@ -5215,7 +5215,7 @@ public class OrtakIslemler implements Serializable {
 				if (tipi.equalsIgnoreCase("D") || tipi.equalsIgnoreCase("S") || tipi.equalsIgnoreCase("T")) {
 					tesisEkle = true;
 					if (tesisYetki && loginUser.getId() != null && (loginUser.isIK() || loginUser.isTesisSuperVisor()) && (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty())) {
-						setUserTesisler(loginUser, session);
+						setUserTesisler(loginUser, false, session);
 					}
 				}
 
@@ -11756,9 +11756,11 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param user
+	 * @param kayitYap
 	 * @param session
 	 */
-	public void setUserTesisler(User user, Session session) {
+	@Transactional
+	public void setUserTesisler(User user, boolean kayitYap, Session session) {
 		List<Tanim> yetkiliTesisler = null;
 		Boolean tesisYetki = getParameterKey("tesisYetki").equals("1");
 		if (tesisYetki && user != null && user.getId() != null && (user.getYetkiliTesisler() == null || user.getYetkiliTesisler().isEmpty())) {
@@ -11784,8 +11786,8 @@ public class OrtakIslemler implements Serializable {
 				yetkiliTesisler.add(tesis);
 			if (userIK || superVisor) {
 				if (tesisId != null) {
+					boolean flush = false;
 					List<TesisBaglanti> list = pdksEntityController.getSQLParamByFieldList(TesisBaglanti.TABLE_NAME, TesisBaglanti.COLUMN_NAME_TESIS, tesisId, TesisBaglanti.class, session);
-
 					for (TesisBaglanti tb : list) {
 						tesisBaglanti = null;
 						if (userIK) {
@@ -11805,11 +11807,30 @@ public class OrtakIslemler implements Serializable {
 
 						}
 						if (tesisBaglanti != null) {
+							UserDigerOrganizasyon udo = null;
+							if (kayitYap && tesisBaglanti.getKodu().equals(tesisBaglanti.getErpKodu()) == false) {
+								try {
+									if (tesisId.equals(tesisBaglanti.getId()) == false) {
+										udo = new UserDigerOrganizasyon(user, OrganizasyonTipi.TESIS, tesisBaglanti);
+										session.saveOrUpdate(udo);
+										flush = true;
+									}
+								} catch (Exception e) {
+								}
+
+							}
 							yetkiliTesisler.add(tesisBaglanti);
 							tesisBaglanti.setGuncellendi(true);
+
 						}
 
 					}
+					if (flush)
+						try {
+							session.flush();
+						} catch (Exception e) {
+
+						}
 
 				}
 				user.setYetkiliTesisler(yetkiliTesisler);
