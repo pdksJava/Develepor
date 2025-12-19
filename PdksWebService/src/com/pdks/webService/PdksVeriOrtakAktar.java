@@ -828,7 +828,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		if (!mailDataMap.containsKey(KEY_IK_MAIL_IPTAL)) {
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 			veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_IK_USERNAME_LIST");
-			veriMap.put("alanAdi", "*");
+			veriMap.put("alanAdi", null);
 			try {
 				userList = dao.execSPList(veriMap, User.class);
 			} catch (Exception e) {
@@ -1611,7 +1611,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 							String tesisKodu = personel.getTesis() != null ? personel.getTesis().getErpKodu() : null;
 							mesaiPDKS.setSirketKodu(sirketERPKodu);
 							if (sirketERPKodu != null && tesisKodu != null && tesisKodu.startsWith(sirketERPKodu + "-"))
-								tesisKodu = tesisKodu.substring(tesisKodu.indexOf("-" + 1));
+								tesisKodu = tesisKodu.substring(tesisKodu.indexOf("-") + 1);
 
 							mesaiPDKS.setTesisKodu(tesisKodu);
 							mesaiPDKS.setMasrafYeriKodu(personel.getMasrafYeri() != null ? personel.getMasrafYeri().getErpKodu() : null);
