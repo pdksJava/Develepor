@@ -1607,9 +1607,15 @@ public class PdksVeriOrtakAktar implements Serializable {
 							mesaiPDKS.setPersonelNo(personel.getPdksSicilNo());
 							mesaiPDKS.setMesaiKodu(personelMesai.getErpKodu());
 							mesaiPDKS.setToplamSure(personelMesai.getSure());
-							mesaiPDKS.setSirketKodu(personel.getSirket() != null ? personel.getSirket().getErpKodu() : null);
+							String sirketERPKodu = personel.getSirket() != null ? personel.getSirket().getErpKodu() : null;
+							String tesisKodu = personel.getTesis() != null ? personel.getTesis().getErpKodu() : null;
+							mesaiPDKS.setSirketKodu(sirketERPKodu);
+							if (sirketERPKodu != null && tesisKodu != null && tesisKodu.startsWith(sirketERPKodu + "-"))
+								tesisKodu = tesisKodu.substring(tesisKodu.indexOf("-" + 1));
+
+							mesaiPDKS.setTesisKodu(tesisKodu);
 							mesaiPDKS.setMasrafYeriKodu(personel.getMasrafYeri() != null ? personel.getMasrafYeri().getErpKodu() : null);
-							mesaiPDKS.setTesisKodu(personel.getTesis() != null ? personel.getTesis().getErpKodu() : null);
+
 							list.add(mesaiPDKS);
 							if (perNoList != null && !perNoList.contains(mesaiPDKS.getPersonelNo()))
 								perNoList.add(mesaiPDKS.getPersonelNo());
