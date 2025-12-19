@@ -1783,6 +1783,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			personelView.setPdksPersonel(pdksPersonel);
 		}
 		if (sirket != null && sirket.isPdksMi() && sirket.isErp()) {
+			bakiyeIzinDurum = getBakiyeDeparmanIzinDurum(sirket.getDepartman());
+
 			try {
 				kgsPersonelEntegrasyonVeriOlustur();
 				if (kgsPersonelSPAdi != null)
