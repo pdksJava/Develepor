@@ -9123,7 +9123,7 @@ public class OrtakIslemler implements Serializable {
 		TreeMap<Long, VardiyaGun> vardiyaMap = new TreeMap<Long, VardiyaGun>();
 		String donemKodu = denklestirmeAy != null ? String.valueOf(denklestirmeAy.getYil() * 100 + denklestirmeAy.getAy()) : null;
 		List<PersonelFazlaMesai> fazlaMesailer = null;
-		boolean iptalDurum = denklestirmeAy != null && (denklestirmeAy.getDurum() || ((loginUser.isIK() || loginUser.isAdmin()) && denklestirmeAy.getGuncelleIK()));
+		// boolean iptalDurum = denklestirmeAy != null && (denklestirmeAy.getDurum() || ((loginUser.isIK() || loginUser.isAdmin()) && denklestirmeAy.getGuncelleIK()));
 		if (vardiyalar != null) {
 			for (Iterator iterator = vardiyalar.iterator(); iterator.hasNext();) {
 				VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
@@ -9207,16 +9207,16 @@ public class OrtakIslemler implements Serializable {
 								logger.debug(str + " Geç çıkma");
 							else
 								logger.debug(str + " Erken gelme");
-							if (iptalDurum) {
-								fazlaMesai.setDurum(Boolean.FALSE);
-								if (!loginUser.isAdmin()) {
-									fazlaMesai.setGuncelleyenUser(loginUser);
-									fazlaMesai.setGuncellemeTarihi(new Date());
-								}
-								pdksEntityController.saveOrUpdate(session, entityManager, fazlaMesai);
-								iterator.remove();
-								flush = Boolean.TRUE;
-							}
+							// if (iptalDurum) {
+							// fazlaMesai.setDurum(Boolean.FALSE);
+							// if (!loginUser.isAdmin()) {
+							// fazlaMesai.setGuncelleyenUser(loginUser);
+							// fazlaMesai.setGuncellemeTarihi(new Date());
+							// }
+							// pdksEntityController.saveOrUpdate(session, entityManager, fazlaMesai);
+							// iterator.remove();
+							// flush = Boolean.TRUE;
+							// }
 						}
 
 					}
@@ -20810,14 +20810,14 @@ public class OrtakIslemler implements Serializable {
 
 									}
 								}
-								if (hataVar) {
-									fm.setGuncellemeTarihi(new Date());
-									fm.setDurum(Boolean.FALSE);
-									session.saveOrUpdate(fm);
-									session.flush();
-									iterator.remove();
-									logger.info(vardiyaGun.getVardiyaKeyStr() + " " + fm.getHareketId());
-								}
+								// if (hataVar) {
+								// fm.setGuncellemeTarihi(new Date());
+								// fm.setDurum(Boolean.FALSE);
+								// session.saveOrUpdate(fm);
+								// session.flush();
+								// iterator.remove();
+								// logger.info(vardiyaGun.getVardiyaKeyStr() + " " + fm.getHareketId());
+								// }
 							}
 
 						}

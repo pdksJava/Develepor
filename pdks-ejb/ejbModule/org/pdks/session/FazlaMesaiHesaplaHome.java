@@ -4560,23 +4560,23 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							String girisId = giris != null && giris.getId() != null ? giris.getId() : "";
 							String cikisId = cikis != null && cikis.getId() != null ? cikis.getId() : "";
 							if (!(pfmMap.containsKey(cikisId) || pfmMap.containsKey(girisId))) {
+								boolean hataVar = false;
 								if (giris != null && giris.getPersonelFazlaMesai() != null) {
-									if (denklestirmeAyDurum) {
-										PersonelFazlaMesai value = giris.getPersonelFazlaMesai();
-										value.setDurum(Boolean.FALSE);
-										saveGenelList.add(value);
-									}
-
+									if (denklestirmeAyDurum)
+										hataVar = true;
 									giris.setPersonelFazlaMesai(null);
 								}
 								if (cikis != null && cikis.getPersonelFazlaMesai() != null) {
-									if (denklestirmeAyDurum) {
-										PersonelFazlaMesai value = cikis.getPersonelFazlaMesai();
-										value.setDurum(Boolean.FALSE);
-										saveGenelList.add(value);
-									}
-									cikis.setPersonelFazlaMesai(null);
+									if (denklestirmeAyDurum)
+										hataVar = true;
+ 									cikis.setPersonelFazlaMesai(null);
 								}
+								if (hataVar) {
+									vGun.setFazlaMesaiOnayla(true);
+									vGun.setHareketHatali(false);
+									vGun.setHataliDurum(false);
+									personelFazlaMesaiEkle(vGun, vardiyaPlanKey);
+ 								}
 							}
 							if (giris.getPersonelFazlaMesai() == null && cikis.getPersonelFazlaMesai() == null) {
 								vGun.setFazlaMesaiOnayla(true);
@@ -4645,23 +4645,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		} catch (Exception e) {
 
 		}
-		// if (vGun.isGecmisHataliDurum()) {
-		// if (vGun.getOncekiVardiyaGun() != null) {
-		// Personel izinSahibi = vGun.getPdksPersonel();
-		// String hataStr = "";
-		// if (PdksUtil.hasStringValue(sicilNo) == false)
-		// hataStr += izinSahibi.getPdksSicilNo() + " " + ortakIslemler.personelNoAciklama() + " " + izinSahibi.getAdSoyad() + " ait  ";
-		// hataStr += PdksUtil.convertToDateString(vGun.getOncekiVardiyaGun().getVardiyaDate(), "d MMM yyyy EEEEE") + " gününde hatalı girişi vardır!";
-		// PdksUtil.addMessageAvailableError(hataStr);
-		//
-		// }
-		// // vGun.setHareketHatali(true);
-		// // vGun.setHataliDurum(false);
-		// // vGun.setOnayli(false);
-		// vGun.setDurum(false);
-		// islemPuantaj.setFiiliHesapla(false);
-		// fazlaMesaiHesapla = false;
-		// }
+
 		ciftHareketMap = null;
 		paramsMap.put("fazlaMesaiHesapla", fazlaMesaiHesapla);
 		paramsMap.put("aksamVardiyaSayisi", aksamVardiyaSayisi);
