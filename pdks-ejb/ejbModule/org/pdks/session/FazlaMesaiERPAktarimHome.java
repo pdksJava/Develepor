@@ -1104,6 +1104,21 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				List<FazlaMesaiERPDetay> detayList = pdksEntityController.getSQLParamByFieldList(FazlaMesaiERPDetay.TABLE_NAME, FazlaMesaiERPDetay.COLUMN_NAME_FAZLA_MESAI_ERP, fazlaMesaiERP.getId(), FazlaMesaiERPDetay.class, session);
 				if (detayList.size() > 1)
 					detayList = PdksUtil.sortListByAlanAdi(detayList, "sira", false);
+				LinkedHashMap<String, String> headerMap = new LinkedHashMap<String, String>();
+				for (Iterator iterator = detayList.iterator(); iterator.hasNext();) {
+					FazlaMesaiERPDetay fmd = (FazlaMesaiERPDetay) iterator.next();
+					MethodAlanAPI methodAlanAPI = fmd.getMethodAlanAPI();
+					if (methodAlanAPI == null)
+						iterator.remove();
+					else if (methodAlanAPI.equals(MethodAlanAPI.USER_NAME)) {
+						headerMap.put(fmd.getAlanTipi(), fmd.getAlanAdi());
+						iterator.remove();
+					} else if (methodAlanAPI.equals(MethodAlanAPI.PASSWORD)) {
+						headerMap.put(fmd.getAlanTipi(), fmd.getAlanAdi());
+						iterator.remove();
+					}
+
+				}
 
 				Object dataMap = null;
 				List<HashMap<String, Object>> dataList = new ArrayList<HashMap<String, Object>>();
@@ -1123,7 +1138,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 							tesisKodu = tesisKodu.substring(tesisKodu.indexOf("-") + 1);
 					}
 					LinkedHashMap<String, Object> perMap = new LinkedHashMap<String, Object>();
-					LinkedHashMap<String, Double> mesaiMap =   pdMap.get(personelId)  ;
+					LinkedHashMap<String, Double> mesaiMap = pdMap.get(personelId);
 					for (FazlaMesaiERPDetay fmd : detayList) {
 						MethodAlanAPI methodAlanAPI = fmd.getMethodAlanAPI();
 						if (methodAlanAPI != null) {
@@ -1165,7 +1180,12 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				Gson gson = new Gson();
 				String jsonData = gson.toJson(dataMap);
 				try {
-
+					if (fazlaMesaiERP.getLoginBilgi() != null) {
+						StringBuilder sb = new StringBuilder();
+						sb.append("{" + fazlaMesaiERP.getLoginBilgi() + jsonData.substring(1));
+						jsonData = sb.toString();
+						sb = null;
+					}
 					java.net.URL url = new java.net.URL(fazlaMesaiERP.getServerURL());
 					java.net.HttpURLConnection connjava = (java.net.HttpURLConnection) url.openConnection();
 
@@ -1178,6 +1198,12 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 					connjava.setUseCaches(false);
 					int timeOutSaniye = 15;
 					connjava.setConnectTimeout(timeOutSaniye * 1000); // set timeout to 5 seconds
+					if (headerMap.size() == 2) {
+						for (String key : headerMap.keySet())
+							connjava.setRequestProperty(key, headerMap.get(key));
+
+					}
+					headerMap = null;
 					connjava.setAllowUserInteraction(true);
 					DataOutputStream printout = new DataOutputStream(connjava.getOutputStream());
 					printout.writeBytes(jsonData);
@@ -1189,7 +1215,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 
 					}
 				} catch (Exception e) {
-					// TODO: handle exception
+					logger.error(e);
 				}
 
 				logger.info(jsonData);
