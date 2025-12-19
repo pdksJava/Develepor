@@ -22,11 +22,13 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_ODENEN_SAAT = "ODENEN_SAAT_KOLON_YAZ";
 	public static final String COLUMN_NAME_URL = "SERVER_URL";
 	public static final String COLUMN_NAME_UOM = "UOM_ALAN_ADI";
+	public static final String COLUMN_NAME_ROOT = "KOK_ADI";
 	public static final String COLUMN_NAME_RT = "RT_ALAN_ADI";
 	public static final String COLUMN_NAME_HT = "HT_ALAN_ADI";
 	public static final String COLUMN_NAME_METHOT_ADI = "METHOT_ADI";
+	public static final String COLUMN_NAME_LOGIN = "LOGIN";
 
-	private String sirketAdi, serverURL, uomAlanAdi, rtAlanAdi, htAlanAdi, methodAdi = MethodAPI.POST.value();
+	private String sirketAdi, serverURL, rootAdi, uomAlanAdi, rtAlanAdi, htAlanAdi, loginBilgi, methodAdi = MethodAPI.POST.value();
 
 	private boolean odenenSaatKolonYaz;
 
@@ -94,6 +96,24 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 
 	public void setOdenenSaatKolonYaz(boolean odenenSaatKolonYaz) {
 		this.odenenSaatKolonYaz = odenenSaatKolonYaz;
+	}
+
+	@Column(name = COLUMN_NAME_ROOT)
+	public String getRootAdi() {
+		return rootAdi;
+	}
+
+	public void setRootAdi(String rootAdi) {
+		this.rootAdi = rootAdi;
+	}
+
+	@Column(name = COLUMN_NAME_LOGIN)
+	public String getLoginBilgi() {
+		return loginBilgi;
+	}
+
+	public void setLoginBilgi(String loginBilgi) {
+		this.loginBilgi = loginBilgi;
 	}
 
 	@Transient

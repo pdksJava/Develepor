@@ -33,7 +33,8 @@
 						<s:decorate template="/layout/edit.xhtml"
 							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and fazlaMesaiERPAktarimHome.departmanList.size()>1}">
 							<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
-							<h:selectOneMenu value="#{fazlaMesaiERPAktarimHome.departmanId}" required="true" requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
+							<h:selectOneMenu value="#{fazlaMesaiERPAktarimHome.departmanId}" required="true"
+								requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{fazlaMesaiERPAktarimHome.departmanList}" />
 								<a4j:support event="onchange" action="#{fazlaMesaiERPAktarimHome.fillSirketList()}" ajaxSingle="true"
@@ -81,6 +82,11 @@
 							<a4j:commandButton status="ajaxStatus"
 								rendered="#{false and fazlaMesaiERPAktarimHome.instance.durum and fazlaMesaiERPAktarimHome.sirket.erpDurum and authenticatedUser.admin}"
 								value="Fazla Mesai Aktar" oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" />
+
+							<a4j:commandButton status="ajaxStatus" action="#{fazlaMesaiERPAktarimHome.fazlaMesaiERPAktar}"
+								rendered="#{fazlaMesaiERPAktarimHome.sirket.erpDurum and  fazlaMesaiERPAktarimHome.fazlaMesaiERP!=null}"
+								value="Fazla Mesai #{fazlaMesaiERPAktarimHome.fazlaMesaiERP.sirketAdi} Aktar" />
+
 							<ui:fragment rendered="#{fazlaMesaiERPAktarimHome.onaylanmayanDurum != null}">
 								<b>Onaysız Personeller : </b>
 								<h:selectBooleanCheckbox value="#{fazlaMesaiERPAktarimHome.onaylanmayanDurum}">

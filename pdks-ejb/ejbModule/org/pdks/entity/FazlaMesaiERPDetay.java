@@ -17,7 +17,7 @@ import org.hibernate.annotations.FetchMode;
 import org.pdks.enums.MethodAlanAPI;
 
 @Entity(name = FazlaMesaiERPDetay.TABLE_NAME)
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { FazlaMesaiERPDetay.COLUMN_NAME_FAZLA_MESAI_ERP, FazlaMesaiERPDetay.COLUMN_NAME_METHOD_ALAN }) })
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { FazlaMesaiERPDetay.COLUMN_NAME_FAZLA_MESAI_ERP, FazlaMesaiERPDetay.COLUMN_NAME_ALAN_TIPI }) })
 public class FazlaMesaiERPDetay extends BasePDKSObject implements Serializable {
 
 	/**
@@ -28,13 +28,14 @@ public class FazlaMesaiERPDetay extends BasePDKSObject implements Serializable {
 	public static final String TABLE_NAME = "FAZLA_MESAI_ERP_DETAY";
 	public static final String COLUMN_NAME_FAZLA_MESAI_ERP = "FAZLA_MESAI_ERP";
 	public static final String COLUMN_NAME_SIRA = "SIRA";
-	public static final String COLUMN_NAME_METHOD_ALAN = "METHOD_ALAN";
+	public static final String COLUMN_NAME_ALAN_TIPI = "ALAN_TIPI";
+	public static final String COLUMN_NAME_ALAN_ADI = "ALAN_ADI";
 
 	private FazlaMesaiERP fazlaMesaiERP;
 
 	private Integer sira;
 
-	private String methodAlan;
+	private String alanTipi, alanAdi;
 
 	private MethodAlanAPI methodAlanAPI;
 
@@ -58,17 +59,27 @@ public class FazlaMesaiERPDetay extends BasePDKSObject implements Serializable {
 		this.sira = sira;
 	}
 
-	@Column(name = COLUMN_NAME_METHOD_ALAN, nullable = false)
-	public String getMethodAlan() {
-		return methodAlan;
+	@Column(name = COLUMN_NAME_ALAN_TIPI, nullable = false)
+	public String getAlanTipi() {
+		return alanTipi;
 	}
 
-	public void setMethodAlan(String methodAlan) {
-		this.methodAlan = methodAlan;
+	public void setAlanTipi(String value) {
+		this.methodAlanAPI = value != null ? MethodAlanAPI.fromValue(value) : null;
+		this.alanTipi = value;
+	}
+
+	@Column(name = COLUMN_NAME_ALAN_ADI, nullable = false)
+	public String getAlanAdi() {
+		return alanAdi;
+	}
+
+	public void setAlanAdi(String alanAdi) {
+		this.alanAdi = alanAdi;
 	}
 
 	@Transient
-	public static String getMethodAlanAdi(String alan) {
+	public static String getAlanAciklama(String alan) {
 		String str = "";
 		if (alan != null) {
 			MethodAlanAPI alanAPI = MethodAlanAPI.fromValue(alan);
@@ -87,8 +98,8 @@ public class FazlaMesaiERPDetay extends BasePDKSObject implements Serializable {
 	}
 
 	@Transient
-	public String getMethodAlanAdi() {
-		String str = FazlaMesaiERPDetay.getMethodAlanAdi(methodAlan);
+	public String getAlanAciklama() {
+		String str = FazlaMesaiERPDetay.getAlanAciklama(alanAdi);
 		return str;
 	}
 
