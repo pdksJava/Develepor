@@ -2103,8 +2103,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								if (vardiyaGun.getVardiya() != null && tatilOncesiEksik == false) {
 									Double netSure = vardiyaGun.getVardiya().getNetCalismaSuresi();
 									if (vardiyaGun.getHareketDurum() && vardiyaGun.isIzinli() == false && netSure > 0.0d) {
-										if (vardiyaGun.getVardiyaDateStr().endsWith("0606"))
-											logger.debug("");
 										if ((calismaSuresi(vardiyaGun) * 100) / netSure < denklestirmeAy.getYemekMolasiYuzdesi()) {
 											eksikCalismaDurum = denklestirmeAyDurum && eksikCalismaGoster;
 											if (!vardiyaGun.isHataliDurum())
@@ -4143,8 +4141,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 		if (planOnayDurum == false)
 			vardiyaPlaniGetir(vGun, vardiyaPlanKey);
-		if (key1.endsWith("1028"))
-			logger.debug("");
 		boolean izinDurum = false;
 		if (hareketler == null && vGun.getIslemVardiya() != null) {
 			if (vGun.isZamanGelmedi() == false)
@@ -4280,8 +4276,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							vardiyaPlaniGetir(vGun, vardiyaPlanKey);
 
 						try {
-							if (vardiyaKey.endsWith("01"))
-								logger.debug(key1 + " " + vGun.getId());
 							girisHareketleri = vGun.getGirisHareketleri();
 							cikisHareketleri = vGun.getCikisHareketleri();
 							if (vGun.getFazlaMesailer() != null) {
@@ -4552,8 +4546,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 		if (fazlaMesaiOnaylaDurum && vGun.getIslemVardiya() != null && vGun.getHareketDurum().equals(Boolean.TRUE)) {
 			try {
-				if (key1.endsWith("1028"))
-					logger.debug(vardiyaKey + " " + vGun.getHareketDurum() + " " + vGun.isAyrikHareketVar());
 
 				islemVardiya = vGun.getIslemVardiya();
 				boolean calisma = islemVardiya.isCalisma() && vGun.getIzin() == null;
@@ -4642,8 +4634,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			personelIzinGirisiEkle(vGun, null, izinKey);
 
 		}
-		if (key1.equals("20220202"))
-			logger.debug(fazlaMesaiTalepOnayliDurum + " " + vardiyaKey);
 		if (fazlaMesaiTalepOnayliDurum && vGun.getFazlaMesaiOnayla() != null) {
 			fazlaMesaiTalepVardiyaOnayliDurum = vardiyaFazlaMesaiTalepOnayKontrol(vGun, islemVardiya);
 		}
@@ -4665,8 +4655,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			vGun.setHataliDurum(false);
 			personelFazlaMesaiEkle(vGun, vardiyaPlanKey);
 		}
-		if (key1.endsWith("1203"))
-			logger.debug("");
 		hareketMap = null;
 		ciftHareketMap = null;
 		paramsMap.put("fazlaMesaiHesapla", fazlaMesaiHesapla);
