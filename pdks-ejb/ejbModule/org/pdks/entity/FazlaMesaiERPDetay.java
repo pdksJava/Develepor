@@ -36,7 +36,7 @@ public class FazlaMesaiERPDetay extends BasePDKSObject implements Serializable {
 
 	private FazlaMesaiERP fazlaMesaiERP;
 
-	private Integer sira;
+	private Integer sira, indis;
 
 	private String alanTipi, alanAdi, alanDeger;
 
@@ -158,6 +158,15 @@ public class FazlaMesaiERPDetay extends BasePDKSObject implements Serializable {
 	@Transient
 	public MethodAlanAPI getMethodAlanAPI() {
 		return methodAlanAPI;
+	}
+
+	@Transient
+	public Integer getIndis() {
+		return indis;
+	}
+
+	public void setIndis(Integer indis) {
+		this.indis = indis;
 	}
 
 	public void setMethodAlanAPI(MethodAlanAPI methodAlanAPI) {

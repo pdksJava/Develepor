@@ -87,6 +87,14 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 	 */
 	public boolean asagiKaydirabilir(FazlaMesaiERPDetay fmd) {
 		boolean kaydir = false;
+		MethodAlanAPI alanAPI = fmd.getMethodAlanAPI();
+		if (alanAPI != null) {
+			if (alanAPI.equals(MethodAlanAPI.USER_NAME) || alanAPI.equals(MethodAlanAPI.PASSWORD)) {
+				kaydir = fmd.getIndis().intValue() == 0;
+			} else
+				kaydir = fmd.getIndis().intValue() + 1 < fazlaMesaiERPDetayList.size();
+
+		}
 		return kaydir;
 	}
 
@@ -116,6 +124,18 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 	 */
 	public boolean yukariKaydirabilir(FazlaMesaiERPDetay fmd) {
 		boolean kaydir = false;
+		MethodAlanAPI alanAPI = fmd.getMethodAlanAPI();
+		if (alanAPI != null) {
+			if (alanAPI.equals(MethodAlanAPI.USER_NAME) || alanAPI.equals(MethodAlanAPI.PASSWORD)) {
+				kaydir = fmd.getIndis().intValue() == 1;
+			} else if (fmd.getIndis().intValue() > 0) {
+				int index = fmd.getIndis().intValue() - 1;
+				FazlaMesaiERPDetay detay1 = fazlaMesaiERPDetayList.get(index);
+				alanAPI = detay1.getMethodAlanAPI();
+				kaydir = alanAPI != null && (alanAPI.equals(MethodAlanAPI.USER_NAME) || alanAPI.equals(MethodAlanAPI.PASSWORD)) == false;
+			}
+
+		}
 		return kaydir;
 	}
 
@@ -181,6 +201,10 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 			list = pdksEntityController.getSQLParamByFieldList(FazlaMesaiERPDetay.TABLE_NAME, FazlaMesaiERPDetay.COLUMN_NAME_FAZLA_MESAI_ERP, seciliFazlaMesaiERP.getId(), FazlaMesaiERPDetay.class, session);
 			if (list.size() > 1)
 				list = PdksUtil.sortListByAlanAdi(list, "sira", false);
+			int indis = 0;
+			for (FazlaMesaiERPDetay fazlaMesaiERPDetay : list)
+				fazlaMesaiERPDetay.setIndis(indis++);
+
 		} else
 			list = new ArrayList<FazlaMesaiERPDetay>();
 		setFazlaMesaiERPDetayList(list);
