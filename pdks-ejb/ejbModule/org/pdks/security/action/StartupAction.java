@@ -41,6 +41,7 @@ import org.pdks.entity.AylikPuantaj;
 import org.pdks.entity.CalismaModeliGun;
 import org.pdks.entity.CalismaModeliVardiya;
 import org.pdks.entity.DepartmanMailGrubu;
+import org.pdks.entity.FazlaMesaiERPDetay;
 import org.pdks.entity.IzinHakedisHakki;
 import org.pdks.entity.IzinTipiBirlesikHaric;
 import org.pdks.entity.IzinTipiMailAdres;
@@ -285,6 +286,7 @@ public class StartupAction implements Serializable {
 			list.add(CalismaModeliGun.class);
 			list.add(CalismaModeliVardiya.class);
 			list.add(DepartmanMailGrubu.class);
+			list.add(FazlaMesaiERPDetay.class);
 			list.add(PdksDinamikRaporAlan.class);
 			list.add(PdksDinamikRaporParametre.class);
 			list.add(PdksDinamikRaporRole.class);

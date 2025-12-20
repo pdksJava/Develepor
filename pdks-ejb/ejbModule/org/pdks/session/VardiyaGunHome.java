@@ -2977,7 +2977,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					sb.append("	group by CMA." + CalismaModeliAy.COLUMN_NAME_ID);
 					sb.append("	), ");
 					sb.append(" VERI as ( ");
-					sb.append(" select CMA." + CalismaModeliAy.COLUMN_NAME_ID + ", CASE WHEN COALESCE(ADET,0) >= " + adet + "  THEN ADET ELSE 0 END ADET from " + CalismaModeliAy.TABLE_NAME + " CMA " + PdksEntityController.getSelectLOCK());
+					sb.append(" select CMA." + CalismaModeliAy.COLUMN_NAME_ID + ", case when COALESCE(ADET,0) >= " + adet + "  then ADET ELSE 0 end ADET from " + CalismaModeliAy.TABLE_NAME + " CMA " + PdksEntityController.getSelectLOCK());
 					sb.append(" left join DATA D " + PdksEntityController.getJoinLOCK() + " on D." + CalismaModeliAy.COLUMN_NAME_ID + " = CMA." + CalismaModeliAy.COLUMN_NAME_ID);
 					sb.append("	where CMA." + CalismaModeliAy.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
 					sb.append(" ) ");
@@ -9303,10 +9303,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				sb.append(" and V." + Vardiya.COLUMN_NAME_DURUM + " = 1   ");
 				sb.append(" ), ");
 				sb.append(" SIRA_VARDIYA as (");
-				sb.append(" select CASE WHEN " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'' THEN 1  ");
-				sb.append(" WHEN " + Vardiya.COLUMN_NAME_GENEL + " = 1 THEN 99 ");
-				sb.append(" WHEN " + Vardiya.COLUMN_NAME_GEBELIK + " = 1 THEN 12 WHEN " + Vardiya.COLUMN_NAME_SUA + " = 1 THEN 13 WHEN " + Vardiya.COLUMN_NAME_ICAP + " = 1 THEN 14  ELSE 19 END * 10000 + ");
-				sb.append(" CASE WHEN " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'' THEN " + Vardiya.COLUMN_NAME_ID + " ELSE 0 END ONCELIK_SIRA,   " + Vardiya.COLUMN_NAME_ID + " from VERI ");
+				sb.append(" select case when " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'' then 1  ");
+				sb.append(" when " + Vardiya.COLUMN_NAME_GENEL + " = 1 then 99 ");
+				sb.append(" when " + Vardiya.COLUMN_NAME_GEBELIK + " = 1 then 12 when " + Vardiya.COLUMN_NAME_SUA + " = 1 then 13 when " + Vardiya.COLUMN_NAME_ICAP + " = 1 then 14  ELSE 19 end * 10000 + ");
+				sb.append(" case when " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'' then " + Vardiya.COLUMN_NAME_ID + " ELSE 0 end ONCELIK_SIRA,   " + Vardiya.COLUMN_NAME_ID + " from VERI ");
 				sb.append(" ) ");
 				sb.append(" select V.* from VERI V ");
 				sb.append(" inner join SIRA_VARDIYA S on S." + Vardiya.COLUMN_NAME_ID + " = V." + Vardiya.COLUMN_NAME_ID);

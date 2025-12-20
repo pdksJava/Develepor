@@ -1686,11 +1686,11 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 		StringBuilder sb = new StringBuilder();
 		HashMap fields = new HashMap();
-		sb.append("select distinct COALESCE(" + Vardiya.COLUMN_NAME_DEPARTMAN + ",-1) " + Vardiya.COLUMN_NAME_DEPARTMAN + ", CASE WHEN " + Vardiya.COLUMN_NAME_GEBELIK + "=1 THEN '" + Vardiya.GEBE_KEY + "' ");
-		sb.append("	WHEN " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :fm1 THEN '" + Vardiya.FMI_KEY + "' ");
-		sb.append("	WHEN " + Vardiya.COLUMN_NAME_SUA + " = 1 THEN '" + Vardiya.SUA_KEY + "' ");
-		sb.append("	WHEN " + Vardiya.COLUMN_NAME_SUT_IZNI + " = 1 THEN '" + Vardiya.SUT_IZNI_KEY + "' ");
-		sb.append("	WHEN " + Vardiya.COLUMN_NAME_ICAP + " = 1 THEN '" + Vardiya.ICAP_KEY + "' END SONUC from " + Vardiya.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+		sb.append("select distinct COALESCE(" + Vardiya.COLUMN_NAME_DEPARTMAN + ",-1) " + Vardiya.COLUMN_NAME_DEPARTMAN + ", case when " + Vardiya.COLUMN_NAME_GEBELIK + "=1 then '" + Vardiya.GEBE_KEY + "' ");
+		sb.append("	when " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :fm1 then '" + Vardiya.FMI_KEY + "' ");
+		sb.append("	when " + Vardiya.COLUMN_NAME_SUA + " = 1 then '" + Vardiya.SUA_KEY + "' ");
+		sb.append("	when " + Vardiya.COLUMN_NAME_SUT_IZNI + " = 1 then '" + Vardiya.SUT_IZNI_KEY + "' ");
+		sb.append("	when " + Vardiya.COLUMN_NAME_ICAP + " = 1 then '" + Vardiya.ICAP_KEY + "' end SONUC from " + Vardiya.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where P." + PersonelKGS.COLUMN_NAME_DURUM + " = 1 ");
 		sb.append(" and (" + Vardiya.COLUMN_NAME_GEBELIK + " + " + Vardiya.COLUMN_NAME_SUT_IZNI + " + " + Vardiya.COLUMN_NAME_SUA + " + " + Vardiya.COLUMN_NAME_ICAP + " = 1 or " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :fm2 ) ");
 		fields.put("fm1", Vardiya.TIPI_FMI);
