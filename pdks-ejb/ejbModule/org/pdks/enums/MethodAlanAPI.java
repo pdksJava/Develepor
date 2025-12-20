@@ -2,7 +2,7 @@ package org.pdks.enums;
 
 public enum MethodAlanAPI {
 
-	PERSONEL("0"), SIRKET("1"), TESIS("2"), KIMLIK("3"), MASRAF_YERI("4"), USER_NAME("98"), PASSWORD("99");
+	SIRKET("0"), PERSONEL("1"), KIMLIK("2"), TESIS("3"), MASRAF_YERI("4"), UOM("UO"), RT("RT"), HT("HT"), AKSAM_GUN("A"), AKSAM_SAAT("AS"), YIL("90"), AY("91"), USER_NAME("98"), PASSWORD("99");
 
 	private final String value;
 

@@ -30,12 +30,17 @@ public class FazlaMesaiERPDetay extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_SIRA = "SIRA";
 	public static final String COLUMN_NAME_ALAN_TIPI = "ALAN_TIPI";
 	public static final String COLUMN_NAME_ALAN_ADI = "ALAN_ADI";
+	public static final String COLUMN_NAME_ALAN_DEGER = "ALAN_DEGER";
+
+	public static final String COLUMN_NAME_BASLIK_ALAN = "BASLIK_ALAN_DURUM";
 
 	private FazlaMesaiERP fazlaMesaiERP;
 
 	private Integer sira;
 
-	private String alanTipi, alanAdi;
+	private String alanTipi, alanAdi, alanDeger;
+
+	private boolean baslikAlan = Boolean.FALSE;
 
 	private MethodAlanAPI methodAlanAPI;
 
@@ -76,6 +81,24 @@ public class FazlaMesaiERPDetay extends BasePDKSObject implements Serializable {
 
 	public void setAlanAdi(String alanAdi) {
 		this.alanAdi = alanAdi;
+	}
+
+	@Column(name = COLUMN_NAME_BASLIK_ALAN)
+	public boolean isBaslikAlan() {
+		return baslikAlan;
+	}
+
+	public void setBaslikAlan(boolean baslikAlan) {
+		this.baslikAlan = baslikAlan;
+	}
+
+	@Column(name = COLUMN_NAME_ALAN_DEGER)
+	public String getAlanDeger() {
+		return alanDeger;
+	}
+
+	public void setAlanDeger(String alanDeger) {
+		this.alanDeger = alanDeger;
 	}
 
 	@Transient

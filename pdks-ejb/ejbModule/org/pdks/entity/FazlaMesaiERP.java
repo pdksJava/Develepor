@@ -8,6 +8,7 @@ import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 import org.pdks.enums.MethodAPI;
+import org.pdks.session.PdksUtil;
 
 @Entity(name = FazlaMesaiERP.TABLE_NAME)
 public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
@@ -26,11 +27,16 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_RT = "RT_ALAN_ADI";
 	public static final String COLUMN_NAME_HT = "HT_ALAN_ADI";
 	public static final String COLUMN_NAME_METHOT_ADI = "METHOT_ADI";
+	public static final String COLUMN_NAME_BASLIK_ALAN = "BASLIK_ALAN_ADI";
+	public static final String COLUMN_NAME_DETAY_ALAN = "DETAY_ALAN_ADI";
+
+	public static final String COLUMN_NAME_DETAY_BASLIK_ICINDE = "DETAY_BASLIK_ICINDE";
 	public static final String COLUMN_NAME_LOGIN = "LOGIN";
 
-	private String sirketAdi, serverURL, rootAdi, uomAlanAdi, rtAlanAdi, htAlanAdi, loginBilgi, methodAdi = MethodAPI.POST.value();
+	private String sirketAdi, serverURL, rootAdi, baslikAlanAdi, detayAlanAdi, uomAlanAdi, rtAlanAdi, htAlanAdi, loginBilgi, methodAdi = MethodAPI.POST.value();
 
 	private boolean odenenSaatKolonYaz;
+	private Boolean detayBaslikIcineYaz = Boolean.FALSE;
 
 	private MethodAPI methodAPI;
 
@@ -107,6 +113,33 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 		this.rootAdi = rootAdi;
 	}
 
+	@Column(name = COLUMN_NAME_BASLIK_ALAN)
+	public String getBaslikAlanAdi() {
+		return baslikAlanAdi;
+	}
+
+	public void setBaslikAlanAdi(String baslikAlanAdi) {
+		this.baslikAlanAdi = baslikAlanAdi;
+	}
+
+	@Column(name = COLUMN_NAME_DETAY_ALAN)
+	public String getDetayAlanAdi() {
+		return detayAlanAdi;
+	}
+
+	public void setDetayAlanAdi(String detayAlanAdi) {
+		this.detayAlanAdi = detayAlanAdi;
+	}
+
+	@Column(name = COLUMN_NAME_DETAY_BASLIK_ICINDE)
+	public Boolean getDetayBaslikIcineYaz() {
+		return detayBaslikIcineYaz;
+	}
+
+	public void setDetayBaslikIcineYaz(Boolean detayBaslikIcineYaz) {
+		this.detayBaslikIcineYaz = detayBaslikIcineYaz;
+	}
+
 	@Column(name = COLUMN_NAME_LOGIN)
 	public String getLoginBilgi() {
 		return loginBilgi;
@@ -114,6 +147,14 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 
 	public void setLoginBilgi(String loginBilgi) {
 		this.loginBilgi = loginBilgi;
+	}
+
+	@Transient
+	public boolean isDetayBaslikIcineYazin() {
+		boolean yaz = PdksUtil.hasStringValue(baslikAlanAdi);
+		if (yaz)
+			yaz = detayBaslikIcineYaz != null && detayBaslikIcineYaz.booleanValue();
+		return yaz;
 	}
 
 	@Transient
