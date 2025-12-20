@@ -21,8 +21,9 @@
 						<f:facet name="header">
 							<h:outputText value="Fazla Mesai ERP Aktarım Tanımlama" />
 						</f:facet>
-						<rich:column>
-							<f:facet name="header">
+						<rich:column style="text-align:center">
+							<f:facet name="header"> 
+							
                         İşlemler
               	      </f:facet>
 							<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink" action="#{fazlaMesaiERPHome.fazlaMesaiERPGuncelle(fazlaMesaiERP)}"
@@ -83,7 +84,7 @@
 							</f:facet>
 							<h:outputText value="#{fazlaMesaiERP.rtAlanAdi}" />
 						</rich:column>
-						<rich:column>
+						<rich:column style="text-align:center">
 							<f:facet name="header">
 								<h:outputText value="Mesai Saati Kolon Yaz" />
 							</f:facet>
@@ -95,7 +96,7 @@
 							</f:facet>
 							<h:outputText value="#{fazlaMesaiERP.baslikAlanAdi}" />
 						</rich:column>
-						<rich:column>
+						<rich:column style="text-align:center">
 							<f:facet name="header">
 								<h:outputText value="Detay Satır Başlık İçinde" />
 							</f:facet>
@@ -191,7 +192,7 @@
 								<f:facet name="header">
 									<h:outputText value="Detay Bilgiler" />
 								</f:facet>
-								<rich:column>
+								<rich:column style="text-align:center">
 									<f:facet name="header">
                         İşlemler
               	      </f:facet>
@@ -217,16 +218,19 @@
 												</a4j:commandLink></td>
 										</tr>
 									</table>
-
-
-
-
+ 
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="Id" />
 									</f:facet>
 									<h:outputText value="#{fazlaMesaiERPDetay.id}" />
+								</rich:column>
+								<rich:column>
+									<f:facet name="header">
+										<h:outputText value="Sıra" />
+									</f:facet>
+									<h:outputText value="#{fazlaMesaiERPDetay.sira}" />
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
@@ -246,7 +250,7 @@
 									</f:facet>
 									<h:outputText value="#{fazlaMesaiERPDetay.alanDeger}" />
 								</rich:column>
-								<rich:column>
+								<rich:column style="text-align:center">
 									<f:facet name="header">
 										<h:outputText value="Başlık Alan Durum" />
 									</f:facet>
@@ -258,6 +262,9 @@
 							</rich:dataTable>
 
 						</ui:fragment>
+						<a4j:commandButton value="Ekle" status="ajaxStatus" ajaxSingle="true" action="#{fazlaMesaiERPHome.fazlaMesaiERPDetayGuncelle(null)}"
+							oncomplete="#{rich:component('fazlaMesaiERPDetayPanel')}.show();" reRender="fazlaMesaiERPDetayPanel" />
+
 					</ui:fragment>
 				</a4j:outputPanel>
 			</rich:panel>
@@ -286,6 +293,10 @@
 					</a4j:outputPanel>
 					<a4j:outputPanel id="fazlaMesaiERPDetayBilgi">
 						<h:panelGrid columns="2" rendered="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay!=null}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.id==null}">
+								<ui:define name="label">Sıra</ui:define>
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.sira}" size="35" required="true" requiredMessage="Sıra giriniz!" />
+							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" id="methodAlan">
 								<ui:define name="label">Alan Tipi</ui:define>
 								<h:selectOneMenu value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.alanTipi}" required="true" requiredMessage="Alan tipi seçiniz">
