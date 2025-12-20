@@ -1267,9 +1267,10 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 					InputStream is = responseCode >= 400 ? connjava.getErrorStream() : connjava.getInputStream();
 					if (is != null) {
 						String str = PdksUtil.StringToByInputStream(is);
-						if (connjava.getErrorStream() != null)
+						if (connjava.getErrorStream() != null) {
 							PdksUtil.addMessageAvailableError(str);
-						else
+							logger.error(jsonData);
+						} else
 							PdksUtil.addMessageAvailableInfo("Veriler başarılı aktarıldı.");
 					}
 				} catch (Exception e) {
@@ -1277,8 +1278,6 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 						PdksUtil.addMessageAvailableError(e.getMessage());
 					logger.error(e);
 				}
-
-				logger.info(jsonData);
 
 			}
 			pdMap = null;
