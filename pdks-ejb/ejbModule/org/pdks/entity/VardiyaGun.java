@@ -66,7 +66,7 @@ public class VardiyaGun extends BaseObject {
 	private VardiyaSaat vardiyaSaat, vardiyaSaatDB;
 	private ArrayList<HareketKGS> hareketler, gecerliHareketler, girisHareketleri, cikisHareketleri, yemekHareketleri, gecersizHareketler, sonrakiGunHareketler;
 	private ArrayList<PersonelIzin> izinler;
-	private List<PersonelFazlaMesai> fazlaMesailer;
+	private List<PersonelFazlaMesai> fazlaMesailer, hataliFazlaMesailer;
 	private ArrayList<Vardiya> vardiyalar;
 	private VardiyaGun oncekiVardiyaGun, sonrakiVardiyaGun;
 	private int beklemeSuresi = 6;
@@ -2555,8 +2555,33 @@ public class VardiyaGun extends BaseObject {
 		this.resmiTatilKanunenEklenenSure = resmiTatilKanunenEklenenSure;
 	}
 
+	@Transient
+	public List<PersonelFazlaMesai> getHataliFazlaMesailer() {
+		return hataliFazlaMesailer;
+	}
+
+	/**
+	 * @param pfm
+	 */
+	public void addHataliFazlaMesailer(PersonelFazlaMesai pfm) {
+		if (pfm != null && pfm.getId() != null) {
+			if (this.hataliFazlaMesailer == null)
+				this.hataliFazlaMesailer = new ArrayList<PersonelFazlaMesai>();
+			boolean ekle = true;
+			for (PersonelFazlaMesai personelFazlaMesai : hataliFazlaMesailer) {
+				if (personelFazlaMesai.getId().equals(pfm.getId()))
+					ekle = false;
+			}
+			if (ekle)
+				this.hataliFazlaMesailer.add(pfm);
+		}
+	}
+
+	public void setHataliFazlaMesailer(List<PersonelFazlaMesai> hataliFazlaMesailer) {
+		this.hataliFazlaMesailer = hataliFazlaMesailer;
+	}
+
 	public void entityRefresh() {
 
 	}
-
 }

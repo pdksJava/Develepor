@@ -3940,8 +3940,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param paramsMap
 	 */
 	private void vardiyaGunKontrol(AylikPuantaj islemPuantaj, VardiyaGun vGun, HashMap<String, Object> paramsMap) {
-		HashMap<String, HareketKGS> ciftHareketMap = new HashMap<String, HareketKGS>();
+		HashMap<String, HareketKGS> ciftHareketMap = new HashMap<String, HareketKGS>(), hareketMap = new HashMap<String, HareketKGS>();
 		boolean fazlaMesaiTalepVardiyaOnayliDurum = false;
+		vGun.setHataliFazlaMesailer(null);
 		vGun.setAksamKatSayisi(0.0d);
 		Date aksamVardiyaBitisZamani = null, aksamVardiyaBaslangicZamani = null;
 		Vardiya vardiya = vGun.getVardiya();
@@ -4534,6 +4535,21 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			}
 
 		}
+
+		List<HareketKGS> list = vGun.getOrjinalHareketler();
+		if (list != null) {
+			for (HareketKGS hareketKGS : list) {
+				if (hareketKGS.getId() != null)
+					hareketMap.put(hareketKGS.getId(), hareketKGS);
+			}
+		}
+		if (denklestirmeAyDurum && vGun.getFazlaMesailer() != null) {
+			for (PersonelFazlaMesai pfm : vGun.getFazlaMesailer()) {
+				if (pfm.getHareketId() == null || hareketMap.containsKey(pfm.getHareketId()) == false)
+					vGun.addHataliFazlaMesailer(pfm);
+			}
+		}
+
 		if (fazlaMesaiOnaylaDurum && vGun.getIslemVardiya() != null && vGun.getHareketDurum().equals(Boolean.TRUE)) {
 			try {
 				if (key1.endsWith("1028"))
@@ -4543,6 +4559,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				boolean calisma = islemVardiya.isCalisma() && vGun.getIzin() == null;
 				Date fazlaMesaiBasZaman = calisma ? islemVardiya.getVardiyaTelorans1BasZaman() : null;
 				Date fazlaMesaiBitZaman = calisma ? islemVardiya.getVardiyaTelorans2BitZaman() : null;
+
 				if (girisHareketleri.size() == cikisHareketleri.size()) {
 					TreeMap<String, PersonelFazlaMesai> pfmMap = new TreeMap<String, PersonelFazlaMesai>();
 					if (vGun.getFazlaMesailer() != null) {
@@ -4560,23 +4577,19 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							String girisId = giris != null && giris.getId() != null ? giris.getId() : "";
 							String cikisId = cikis != null && cikis.getId() != null ? cikis.getId() : "";
 							if (!(pfmMap.containsKey(cikisId) || pfmMap.containsKey(girisId))) {
-								boolean hataVar = false;
+
 								if (giris != null && giris.getPersonelFazlaMesai() != null) {
 									if (denklestirmeAyDurum)
-										hataVar = true;
+										vGun.addHataliFazlaMesailer(giris.getPersonelFazlaMesai());
 									giris.setPersonelFazlaMesai(null);
 								}
+
 								if (cikis != null && cikis.getPersonelFazlaMesai() != null) {
 									if (denklestirmeAyDurum)
-										hataVar = true;
- 									cikis.setPersonelFazlaMesai(null);
+										vGun.addHataliFazlaMesailer(cikis.getPersonelFazlaMesai());
+									cikis.setPersonelFazlaMesai(null);
 								}
-								if (hataVar) {
-									vGun.setFazlaMesaiOnayla(true);
-									vGun.setHareketHatali(false);
-									vGun.setHataliDurum(false);
-									personelFazlaMesaiEkle(vGun, vardiyaPlanKey);
- 								}
+
 							}
 							if (giris.getPersonelFazlaMesai() == null && cikis.getPersonelFazlaMesai() == null) {
 								vGun.setFazlaMesaiOnayla(true);
@@ -4645,7 +4658,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		} catch (Exception e) {
 
 		}
-
+		if (vGun.getHataliFazlaMesailer() != null) {
+			vGun.setFazlaMesaiOnayla(true);
+			vGun.setOnayli(false);
+			vGun.setHareketHatali(false);
+			vGun.setHataliDurum(false);
+			personelFazlaMesaiEkle(vGun, vardiyaPlanKey);
+		}
+		if (key1.endsWith("1203"))
+			logger.debug("");
+		hareketMap = null;
 		ciftHareketMap = null;
 		paramsMap.put("fazlaMesaiHesapla", fazlaMesaiHesapla);
 		paramsMap.put("aksamVardiyaSayisi", aksamVardiyaSayisi);
@@ -6661,6 +6683,24 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			str1 = "<SPAN style=\"color: " + (calSure > 0.0d ? "black" : "red") + "; font-size: 12px; font-weight: bold;\">Eksik çalışma var!" + (str != null ? " ( " + str.trim() + " ) " : "") + "</SPAN><br/><br/>";
 		}
 		return str1;
+	}
+
+	/**
+	 * @param fmt
+	 * @return
+	 */
+	@Transactional
+	public String fazlaMesaiOnaySil(PersonelFazlaMesai fmt) {
+		fmt.setDurum(Boolean.FALSE);
+		if (authenticatedUser.isAdmin() == false) {
+			fmt.setGuncellemeTarihi(new Date());
+			fmt.setGuncelleyenUser(authenticatedUser);
+		}
+		pdksEntityController.saveOrUpdate(session, entityManager, fmt);
+		session.flush();
+		fillPersonelDenklestirmeList(null);
+
+		return "";
 	}
 
 	/**

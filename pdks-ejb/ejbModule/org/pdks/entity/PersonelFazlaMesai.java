@@ -57,13 +57,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	public void setHareketId(String hareketId) {
 		this.hareketId = hareketId;
 	}
-@Override
-	public void setDurum(Boolean value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.durum == null || this.durum.booleanValue() != value.booleanValue());
-		}
-		this.durum = value;
-	}
+ 
 	@Transient
 	// @OneToOne(cascade = CascadeType.REFRESH)
 	// @JoinColumn(name = COLUMN_NAME_HAREKET)

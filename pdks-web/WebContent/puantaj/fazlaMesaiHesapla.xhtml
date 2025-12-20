@@ -400,8 +400,7 @@
 
 				<h:panelGrid width="600" id="vardiyaPlanAciklama">
 					<ui:fragment rendered="#{authenticatedUser.admin}">
-						<SPAN style="text-align: left;"><B>Plan Id : </B> #{fazlaMesaiHesaplaHome.seciliVardiyaGun.id}<br></br><br></br>
-						</SPAN>
+						<SPAN style="text-align: left;"><B>Plan Id : </B> #{fazlaMesaiHesaplaHome.seciliVardiyaGun.id}<br></br> <br></br> </SPAN>
 					</ui:fragment>
 
 					<rich:dataTable rowClasses="acik,koyu" value="#{fazlaMesaiHesaplaHome.seciliVardiyaGun.orjinalHareketler}" var="hareket" rows="20"
@@ -711,6 +710,74 @@
 							value="#{ortakIslemler.vardiyaAciklama()} Plan Id : #{fazlaMesaiHesaplaHome.seciliVardiyaGun.id}"
 							rendered="#{fazlaMesaiHesaplaHome.seciliVardiyaGun != null}" /></span>
 				</rich:toolTip>
+				<a4j:outputPanel id="fazlaMesaiSilPanel">
+					<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ikRole or fazlaMesaiHesaplaHome.adminRole}">
+						<rich:panel header="Fazla Mesai İptal" rendered="#{fazlaMesaiHesaplaHome.seciliVardiyaGun.hataliFazlaMesailer!=null}">
+							<rich:dataTable rowClasses="acik,koyu" value="#{fazlaMesaiHesaplaHome.seciliVardiyaGun.hataliFazlaMesailer}" var="fmt" rows="50"
+								rowKeyVar="row" id="fmtHataliTable">
+								<f:facet name="header">
+									<h:outputText value="Fazla Mesai Hatalı Onay" />
+								</f:facet>
+								<rich:column style="text-align:center;">
+									<f:facet name="header">
+
+									</f:facet>
+									<a4j:commandButton value="Onay Sil" action="#{fazlaMesaiHesaplaHome.fazlaMesaiOnaySil(fmt)}" reRender="denklestirmeDonemiTable"
+										onclick="#{rich:component('wait')}.show()" oncomplete="#{rich:component('wait')}.hide(); #{rich:component('hareketDetayPanel')}.hide(); " />
+								</rich:column>
+								<rich:column style="text-align:center;" rendered="#{fazlaMesaiHesaplaHome.adminRole}">
+									<f:facet name="header">
+										<h:outputText value="Mesai Onay Id" />
+									</f:facet>
+									<h:outputText value="#{fmt.id}" />
+								</rich:column>
+								<rich:column style="text-align:center;">
+									<f:facet name="header">
+										<h:outputText value="Mesai Başlangıç Zamanı" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.dateTimeFormatla(fmt.basZaman)}" />
+								</rich:column>
+								<rich:column style="text-align:center;">
+									<f:facet name="header">
+										<h:outputText value="Mesai Bitiş Zamanı" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.dateTimeFormatla(fmt.bitZaman)}" />
+								</rich:column>
+								<rich:column style="text-align:center;">
+									<f:facet name="header">
+										<h:outputText value="Mesai Süresi (Saat)" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(fmt.fazlaMesaiSaati)}" />
+								</rich:column>
+								<rich:column>
+									<f:facet name="header">
+										<h:outputText value="Mesai Nedeni" />
+									</f:facet>
+									<DIV id="mnd#{fmt.id}">
+										<a href="#"><h:outputText value="#{fmt.fazlaMesaiOnayDurum.aciklama}" /></a>
+
+									</DIV>
+								</rich:column>
+
+								<rich:column>
+									<f:facet name="header">
+										<h:outputText value="Onaylayan" />
+									</f:facet>
+									<h:outputText value="#{fmt.olusturanUser.adSoyad}" />
+								</rich:column>
+
+
+								<rich:column style="text-align:center;">
+									<f:facet name="header">
+										<h:outputText value="Onaylama Zamanı" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.dateTimeFormatla(fmt.olusturmaTarihi)}" />
+								</rich:column>
+							</rich:dataTable>
+
+						</rich:panel>
+					</ui:fragment>
+				</a4j:outputPanel>
 				<a4j:outputPanel id="hareketSilPanel">
 					<rich:panel header="Kapı Giriş/Çıkış İptal" rendered="#{fazlaMesaiHesaplaHome.hareketIptalEt and fazlaMesaiHesaplaHome.islemHareketKGS != null}">
 						<h:panelGrid columns="1" style="width:90%;background-color:white;">
