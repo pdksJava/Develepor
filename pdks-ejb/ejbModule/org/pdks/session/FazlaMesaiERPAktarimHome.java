@@ -1266,9 +1266,15 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 					int responseCode = connjava.getResponseCode();
 					InputStream is = responseCode >= 400 ? connjava.getErrorStream() : connjava.getInputStream();
 					if (is != null) {
-
+						String str = PdksUtil.StringToByInputStream(is);
+						if (connjava.getErrorStream() != null)
+							PdksUtil.addMessageAvailableError(str);
+						else
+							PdksUtil.addMessageAvailableInfo("Veriler başarılı aktarıldı.");
 					}
 				} catch (Exception e) {
+					if (e.getMessage() != null)
+						PdksUtil.addMessageAvailableError(e.getMessage());
 					logger.error(e);
 				}
 
