@@ -135,7 +135,8 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 			methodAlanList.clear();
 		for (MethodAlanAPI methodAlanAPI : MethodAlanAPI.values()) {
 			String key = methodAlanAPI.value();
-			methodAlanList.add(new SelectItem(key, FazlaMesaiERPDetay.getAlanAciklama(key)));
+			String aciklama = FazlaMesaiERPDetay.getAlanAciklama(key);
+			methodAlanList.add(new SelectItem(key, aciklama));
 		}
 		return "";
 	}
@@ -170,10 +171,12 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 	/**
 	 * @return
 	 */
+	/**
+	 * @return
+	 */
 	public String fillFazlaMesaiERPDetayList() {
-		List<FazlaMesaiERPDetay> list = null;
 		seciliFazlaMesaiERPDetay = null;
-
+		List<FazlaMesaiERPDetay> list = null;
 		if (seciliFazlaMesaiERP.getId() != null) {
 			list = pdksEntityController.getSQLParamByFieldList(FazlaMesaiERPDetay.TABLE_NAME, FazlaMesaiERPDetay.COLUMN_NAME_FAZLA_MESAI_ERP, seciliFazlaMesaiERP.getId(), FazlaMesaiERPDetay.class, session);
 			if (list.size() > 1)
@@ -184,16 +187,19 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 		return "";
 	}
 
+	/**
+	 * @return
+	 */
 	public String fillFazlaMesaiERPList() {
-		seciliFazlaMesaiERP = null;
-		seciliFazlaMesaiERPDetay = null;
 		String uygulamaBordro = ortakIslemler.getParameterKey("uygulamaBordro");
 		List<FazlaMesaiERP> list = pdksEntityController.getSQLTableList(FazlaMesaiERP.TABLE_NAME, FazlaMesaiERP.class, session);
 		veriVar = PdksUtil.hasStringValue(uygulamaBordro) == false;
+		seciliFazlaMesaiERP = null;
+		seciliFazlaMesaiERPDetay = null;
 		for (FazlaMesaiERP fazlaMesaiERP : list) {
-			if (fazlaMesaiERP.getSirketAdi().equals(uygulamaBordro)) {
+			if (fazlaMesaiERP.getSirketAdi().equals(uygulamaBordro))
 				veriVar = true;
-			}
+
 		}
 		if (veriVar == false) {
 			seciliFazlaMesaiERP = new FazlaMesaiERP();
@@ -205,8 +211,9 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 	}
 
 	public void instanceRefresh() {
-		if (getInstance().getId() != null)
-			session.refresh(getInstance());
+		if (seciliFazlaMesaiERPDetay != null && seciliFazlaMesaiERPDetay.getId() != null)
+			session.refresh(seciliFazlaMesaiERPDetay);
+
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)

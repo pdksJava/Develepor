@@ -9,18 +9,24 @@
 	<ui:define name="body">
 
 		<h:form>
-			<a4j:region>
-				<rich:panel header="#{ortakIslemler.getMenuUserAdi(fazlaMesaiERPHome.session,'fazlaMesaiERPTanimlama')}">
-					<rich:dataTable rowClasses="acik,koyu" value="#{fazlaMesaiERPHome.fazlaMesaiERPList}" var="fazlaMesaiERP" rows="20" rowKeyVar="row" id="fazlaMesaiERPTable">
+
+			<rich:panel header="#{ortakIslemler.getMenuUserAdi(fazlaMesaiERPHome.session,'fazlaMesaiERPTanimlama')}">
+				<a4j:outputPanel ajaxRendered="true" id="anaForm">
+					<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+				</a4j:outputPanel>
+
+				<a4j:outputPanel id="fazlaMesaiERPTable">
+
+					<rich:dataTable rowClasses="acik,koyu" value="#{fazlaMesaiERPHome.fazlaMesaiERPList}" var="fazlaMesaiERP" rows="20" rowKeyVar="row">
 						<f:facet name="header">
 							<h:outputText value="Fazla Mesai ERP Aktarım Tanımlama" />
 						</f:facet>
 						<rich:column>
 							<f:facet name="header">
                         İşlemler
-                </f:facet>
+              	      </f:facet>
 							<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink" action="#{fazlaMesaiERPHome.fazlaMesaiERPGuncelle(fazlaMesaiERP)}"
-								oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
+								reRender="fazlaMesaiERPPanel,fazlaMesaiERPDetayTable">
 								<h:graphicImage value="/img/edit.gif" style="border:0" />
 
 							</a4j:commandLink>
@@ -39,30 +45,268 @@
 							<f:facet name="header">
 								<h:outputText value="Şirket Adı" />
 							</f:facet>
-							<h:outputText value="#{fazlaMesaiERP.sirketAdi}"   />
+							<h:outputText value="#{fazlaMesaiERP.sirketAdi}" />
 						</rich:column>
-						 
-
-						 
-
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Servis Adresi" />
+							</f:facet>
+							<h:outputText value="#{fazlaMesaiERP.serverURL}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Fonksiyon Adı" />
+							</f:facet>
+							<h:outputText value="#{fazlaMesaiERP.methodAciklama}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Kök Alan Adı" />
+							</f:facet>
+							<h:outputText value="#{fazlaMesaiERP.rootAdi}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Ücreti Ödenen Alan Adı" />
+							</f:facet>
+							<h:outputText value="#{fazlaMesaiERP.uomAlanAdi}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Hafta Tatil Mesai Alan Adı" />
+							</f:facet>
+							<h:outputText value="#{fazlaMesaiERP.htAlanAdi}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Resmi Tatil Mesai Alan Adı" />
+							</f:facet>
+							<h:outputText value="#{fazlaMesaiERP.rtAlanAdi}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Mesai Saati Kolon Yaz" />
+							</f:facet>
+							<h:outputText value="#{authenticatedUser.getYesNo(fazlaMesaiERP.rtAlanAdi)}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Başlık Alan Adı" />
+							</f:facet>
+							<h:outputText value="#{fazlaMesaiERP.baslikAlanAdi}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Detay Satır Başlık İçinde" />
+							</f:facet>
+							<h:outputText value="#{authenticatedUser.getYesNo(fazlaMesaiERP.detayBaslikIcineYaz)}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Detay Alan Adı" />
+							</f:facet>
+							<h:outputText value="#{fazlaMesaiERP.detayAlanAdi}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Login Bilgisi" />
+							</f:facet>
+							<h:outputText value="#{fazlaMesaiERP.loginBilgi}" />
+						</rich:column>
 						<f:facet name="footer">
 							<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 						</f:facet>
 					</rich:dataTable>
-					<h:panelGrid columns="1"   rendered="#{fazlaMesaiERPHome.veriVar}">
-						<a4j:commandButton status="ajaxStatus" value="Ekle" action="#{fazlaMesaiERPHome.fazlaMesaiERPGuncelle(null)}"
-							oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
+				</a4j:outputPanel>
+				<a4j:outputPanel id="fazlaMesaiERPPanel">
+					<ui:fragment rendered="#{fazlaMesaiERPHome.seciliFazlaMesaiERP!=null}">
+						<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Şirket Adı</ui:define>
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.sirketAdi}" size="35" disabled="true" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Servis Adresi</ui:define>
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.serverURL}" size="135" required="true" requiredMessage="Servis adresi giriniz!" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml" id="methodAdi">
+								<ui:define name="label">Fonksiyon Adı</ui:define>
+								<h:selectOneMenu value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.methodAdi}" required="true" requiredMessage="Fonksiyon adı seçiniz">
+									<f:selectItem itemLabel="Lütfen seçiniz" />
+									<f:selectItems value="#{fazlaMesaiERPHome.methodList}" />
+									<a4j:support event="onchange" ajaxSingle="true" reRender="methodAdi" />
+								</h:selectOneMenu>
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Kök Alan Adı</ui:define>
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.rootAdi}" size="35" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Ücreti Ödenen Alan Adı</ui:define>
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.uomAlanAdi}" size="35" required="true"
+									requiredMessage="Ücreti Ödenen Alan Adı giriniz" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Hafta Tatil Mesai Alan Adı</ui:define>
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.htAlanAdi}" size="35" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Resmi Tatil Mesai Alan Adı</ui:define>
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.rtAlanAdi}" size="35" required="true"
+									requiredMessage="Resmi Tatil Mesai Alan Adı giriniz" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Mesai Saati Kolon Yaz</ui:define>
+								<h:selectBooleanCheckbox value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.odenenSaatKolonYaz}" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Başlık Alan Adı</ui:define>
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.baslikAlanAdi}" size="35"
+									required="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.detayBaslikIcineYaz}" requiredMessage="Başlık Alan Adı giriniz" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Detay Satır Başlık İçinde</ui:define>
+								<h:selectBooleanCheckbox value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.detayBaslikIcineYaz}" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Detay Alan Adı</ui:define>
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.detayAlanAdi}" size="35"
+									required="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.detayBaslikIcineYaz}" requiredMessage="Başlık Alan Adı giriniz" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Login bilgisi</ui:define>
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.loginBilgi}" size="135" />
+							</s:decorate>
+						</h:panelGrid>
+						<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{fazlaMesaiERPHome.baslikKaydet()}"
+							reRender="fazlaMesaiERPTable,fazlaMesaiERPPanel" />
+					</ui:fragment>
+				</a4j:outputPanel>
+				<a4j:outputPanel id="fazlaMesaiERPDetayTable">
+					<ui:fragment rendered="#{fazlaMesaiERPHome.seciliFazlaMesaiERP!=null }">
+						<ui:fragment rendered="#{not empty fazlaMesaiERPHome.fazlaMesaiERPDetayList}">
+							<rich:dataTable rowClasses="acik,koyu" value="#{fazlaMesaiERPHome.fazlaMesaiERPDetayList}" var="fazlaMesaiERPDetay" rows="20" rowKeyVar="row">
+								<f:facet name="header">
+									<h:outputText value="Detay Bilgiler" />
+								</f:facet>
+								<rich:column>
+									<f:facet name="header">
+                        İşlemler
+              	      </f:facet>
+									<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink"
+										action="#{fazlaMesaiERPHome.fazlaMesaiERPDetayGuncelle(fazlaMesaiERPDetay)}" reRender="fazlaMesaiERPDetayPanel"
+										oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('fazlaMesaiERPDetayPanel')}.show();">
+										<h:graphicImage value="/img/edit.gif" style="border:0" />
 
-						</a4j:commandButton>
-						<rich:toolTip for="addlink" value="Add" />
-					</h:panelGrid>
-				</rich:panel>
-			</a4j:region>
+									</a4j:commandLink>
+									<rich:toolTip for="editlink" value="Güncelle" />
+									<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="asagilink" rendered="#{fazlaMesaiERPHome.asagiKaydirabilir(fazlaMesaiERPDetay)}"
+										action="#{fazlaMesaiERPHome.asagiKaydirabilir(fazlaMesaiERPDetay)}" reRender="fazlaMesaiERPDetayTable">
+										<h:graphicImage value="/img/down.gif" style="border:0" />
+
+									</a4j:commandLink>
+									<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="yukarilink" rendered="#{fazlaMesaiERPHome.yukariKaydirabilir(fazlaMesaiERPDetay)}"
+										action="#{fazlaMesaiERPHome.yukariKaydirabilir(fazlaMesaiERPDetay)}" reRender="fazlaMesaiERPDetayTable">
+										<h:graphicImage value="/img/up.gif" style="border:0" />
+
+									</a4j:commandLink>
+
+
+								</rich:column>
+								<rich:column>
+									<f:facet name="header">
+										<h:outputText value="Id" />
+									</f:facet>
+									<h:outputText value="#{fazlaMesaiERPDetay.id}" />
+								</rich:column>
+								<rich:column>
+									<f:facet name="header">
+										<h:outputText value="Alan Tipi" />
+									</f:facet>
+									<h:outputText value="#{fazlaMesaiERPDetay.alanAciklama}" />
+								</rich:column>
+								<rich:column>
+									<f:facet name="header">
+										<h:outputText value="Detay Alan Adı" />
+									</f:facet>
+									<h:outputText value="#{fazlaMesaiERPDetay.alanAdi}" />
+								</rich:column>
+								<rich:column>
+									<f:facet name="header">
+										<h:outputText value="Detay Alan Değeri" />
+									</f:facet>
+									<h:outputText value="#{fazlaMesaiERPDetay.alanDeger}" />
+								</rich:column>
+								<rich:column>
+									<f:facet name="header">
+										<h:outputText value="Başlık Alan Durum" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.getYesNo(fazlaMesaiERPDetay.baslikAlan) }" />
+								</rich:column>
+								<f:facet name="footer">
+									<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+								</f:facet>
+							</rich:dataTable>
+
+						</ui:fragment>
+					</ui:fragment>
+				</a4j:outputPanel>
+			</rich:panel>
+
 
 		</h:form>
- 
-		 
-		 
+
+		<rich:modalPanel id="fazlaMesaiERPDetayPanel" autosized="true" width="800">
+			<f:facet name="header">
+				<h:outputText value="Güncelle Detay" />
+			</f:facet>
+			<f:facet name="controls">
+				<h:panelGroup>
+					<h:form>
+						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
+							<a4j:support event="onclick" action="#{fazlaMesaiERPHome.instanceRefresh}" reRender="fazlaMesaiERPDetayTable"
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('fazlaMesaiERPDetayPanel')}.hide();" ajaxSingle="true" />
+						</h:graphicImage>
+					</h:form>
+				</h:panelGroup>
+			</f:facet>
+			<h:form id="fazlaMesaiERPDetayForm">
+				<h:panelGrid columns="1">
+					<a4j:outputPanel ajaxRendered="true">
+						<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+					</a4j:outputPanel>
+					<a4j:outputPanel id="fazlaMesaiERPDetayBilgi">
+						<h:panelGrid columns="2" rendered="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay!=null}">
+							<s:decorate template="/layout/edit.xhtml" id="methodAlan">
+								<ui:define name="label">Alan Tipi</ui:define>
+								<h:selectOneMenu value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.alanTipi}" required="true" requiredMessage="Alan tipi seçiniz">
+									<f:selectItem itemLabel="Lütfen seçiniz" />
+									<f:selectItems value="#{fazlaMesaiERPHome.methodAlanList}" />
+									<a4j:support event="onchange" ajaxSingle="true" reRender="alanTipi" />
+								</h:selectOneMenu>
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Detay Alan Adı</ui:define>
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.alanAdi}" size="35" required="true" requiredMessage="Detay Alan Adı giriniz!" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml" id="alanTipi">
+								<ui:define name="label">Detay Alan Değeri</ui:define>
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.alanDeger}" size="35" required="true"
+									requiredMessage="Detay Alan Değeri giriniz!" />
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Başlık Alan Durum</ui:define>
+								<h:selectBooleanCheckbox value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.baslikAlan}" />
+							</s:decorate>
+						</h:panelGrid>
+						<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{fazlaMesaiERPHome.detayKaydet()}" reRender="fazlaMesaiERPDetayTable"
+							oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('fazlaMesaiERPDetayPanel')}.hide();" />
+					</a4j:outputPanel>
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
+
+
 
 	</ui:define>
 
