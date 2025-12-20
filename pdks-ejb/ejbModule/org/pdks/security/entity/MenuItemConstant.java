@@ -123,6 +123,8 @@ public class MenuItemConstant implements Serializable {
 	public static String detaysizPersonelTanimlama = "/tanimlama/detaysizPersonelTanimlama.xhtml";
 	public static String izinHakedisHakkiTanimlama = "/tanimlama/izinHakedisHakkiTanimlama.xhtml";
 	public static String izinTipiTanimlama = "/tanimlama/izinTipiTanimlama.xhtml";
+	public static String fazlaMesaiERPTanimlama = "/tanimlama/fazlaMesaiERPTanimlama.xhtml";
+	
 	public static String kapiTanimlama = "/tanimlama/kapiTanimlama.xhtml";
 	public static String personelGeciciYonetici = "/tanimlama/personelGeciciYonetici.xhtml";
 	public static String personelKullaniciExcelGuncelle = "/tanimlama/personelKullaniciExcelGuncelle.xhtml";
@@ -1043,6 +1045,14 @@ public class MenuItemConstant implements Serializable {
 
 	public static void setTesisBaglantiTanimlama(String tesisBaglantiTanimlama) {
 		MenuItemConstant.tesisBaglantiTanimlama = tesisBaglantiTanimlama;
+	}
+
+	public static String getFazlaMesaiERPTanimlama() {
+		return fazlaMesaiERPTanimlama;
+	}
+
+	public static void setFazlaMesaiERPTanimlama(String fazlaMesaiERPTanimlama) {
+		MenuItemConstant.fazlaMesaiERPTanimlama = fazlaMesaiERPTanimlama;
 	}
 
 }

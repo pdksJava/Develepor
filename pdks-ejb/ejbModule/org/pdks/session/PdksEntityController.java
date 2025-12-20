@@ -1255,6 +1255,24 @@ public class PdksEntityController implements Serializable {
 
 	/**
 	 * @param tableName
+	 * @param class1
+	 * @param session
+	 * @return
+	 */
+	public List getSQLTableList(String tableName, Class class1, Session session) {
+		StringBuffer sb = new StringBuffer();
+		HashMap<String, Object> fields = new HashMap<String, Object>();
+		sb.append("select * from " + tableName + " " + selectLOCK);
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List list = getObjectBySQLList(sb.toString(), fields, class1);
+
+		return list;
+
+	}
+
+	/**
+	 * @param tableName
 	 * @param fieldName
 	 * @param value
 	 * @param class1

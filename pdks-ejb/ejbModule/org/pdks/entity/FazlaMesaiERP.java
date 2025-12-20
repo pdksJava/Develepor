@@ -158,6 +158,30 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 	}
 
 	@Transient
+	public String getMethodAciklama() {
+		String aciklama = getMethodAciklama(methodAdi);
+		return aciklama;
+	}
+
+	@Transient
+	public static String getMethodAciklama(String methodAdi) {
+		String str = "";
+		if (methodAdi != null) {
+			MethodAPI methodAPI = MethodAPI.fromValue(methodAdi);
+			if (methodAPI != null) {
+				if (methodAPI.equals(MethodAPI.POST))
+					str = "Post";
+				else if (methodAPI.equals(MethodAPI.PUT))
+					str = "Put";
+				else if (methodAPI.equals(MethodAPI.GET))
+					str = "Get";
+
+			}
+		}
+		return str;
+	}
+
+	@Transient
 	public MethodAPI getMethodAPI() {
 		return methodAPI;
 	}
