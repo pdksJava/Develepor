@@ -35,7 +35,7 @@
 
 
 						</rich:column>
-						<rich:column rendered="#{authenticatedUser.admin}">
+						<rich:column style="text-align:center">
 							<f:facet name="header">
 								<h:outputText value="Id" />
 							</f:facet>
@@ -47,6 +47,12 @@
 								<h:outputText value="Şirket Adı" />
 							</f:facet>
 							<h:outputText value="#{fazlaMesaiERP.sirketAdi}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Servis Veri Tipi" />
+							</f:facet>
+							<h:outputText value="#{fazlaMesaiERP.servisTipiAciklama}" />
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
@@ -110,6 +116,12 @@
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
+								<h:outputText value="Detay Kök Adı" />
+							</f:facet>
+							<h:outputText value="#{fazlaMesaiERP.detayKokAdi}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
 								<h:outputText value="Login Bilgisi" />
 							</f:facet>
 							<h:outputText value="#{fazlaMesaiERP.loginBilgi}" />
@@ -126,6 +138,14 @@
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Şirket Adı</ui:define>
 									<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.sirketAdi}" size="35" disabled="true" />
+								</s:decorate>
+								<s:decorate template="/layout/edit.xhtml" id="servisVeriTipi">
+									<ui:define name="label">Servis Veri Tipi</ui:define>
+									<h:selectOneMenu value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.servisVeriTipi}" required="true" requiredMessage="Servis veri seçiniz">
+										<f:selectItem itemLabel="Lütfen seçiniz" />
+										<f:selectItems value="#{fazlaMesaiERPHome.veriTipiList}" />
+										<a4j:support event="onchange" ajaxSingle="true" reRender="servisVeriTipi" />
+									</h:selectOneMenu>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Servis Adresi</ui:define>
@@ -171,9 +191,14 @@
 									<h:selectBooleanCheckbox value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.detayBaslikIcineYaz}" />
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
+									<ui:define name="label">Detay Kök Adı</ui:define>
+									<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.detayKokAdi}" size="35"
+										required="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.detayBaslikIcineYaz}" requiredMessage="Detay Kök Adı Adı giriniz" />
+								</s:decorate>
+								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Detay Alan Adı</ui:define>
 									<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.detayAlanAdi}" size="35"
-										required="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.detayBaslikIcineYaz}" requiredMessage="Başlık Alan Adı giriniz" />
+										required="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.detayBaslikIcineYaz}" requiredMessage="Detay Alan Adı giriniz" />
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Login bilgisi</ui:define>
@@ -196,37 +221,49 @@
 									<f:facet name="header">
                         İşlemler
               	      </f:facet>
-									<table>
+									<table style="width: 50;">
 										<tr>
-											<td><a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink"
+											<td style="width: %30;"><a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink"
 													action="#{fazlaMesaiERPHome.fazlaMesaiERPDetayGuncelle(fazlaMesaiERPDetay)}" reRender="fazlaMesaiERPDetayPanel"
 													oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('fazlaMesaiERPDetayPanel')}.show();">
 													<h:graphicImage value="/img/edit.gif" style="border:0" />
 
 												</a4j:commandLink> <rich:toolTip for="editlink" value="Güncelle" /></td>
-											<td><a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="asagilink"
-													rendered="#{fazlaMesaiERPHome.asagiKaydirabilir(fazlaMesaiERPDetay)}" action="#{fazlaMesaiERPHome.asagiKaydirabilir(fazlaMesaiERPDetay)}"
-													reRender="fazlaMesaiERPDetayTable">
-													<h:graphicImage value="/img/down.gif" style="border:0" />
-
-												</a4j:commandLink></td>
-											<td><a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="yukarilink"
-													rendered="#{fazlaMesaiERPHome.yukariKaydirabilir(fazlaMesaiERPDetay)}"
-													action="#{fazlaMesaiERPHome.yukariKaydirabilir(fazlaMesaiERPDetay)}" reRender="fazlaMesaiERPDetayTable">
-													<h:graphicImage value="/img/up.gif" style="border:0" />
-
-												</a4j:commandLink></td>
+											<td style="width: %35;">
+												<DIV style="width: 100;">
+													<a4j:commandLink status="ajaxStatus" action="#{fazlaMesaiERPHome.asagiKaydir(fazlaMesaiERPDetay)}"
+														rendered="#{fazlaMesaiERPHome.asagiKaydirabilir(fazlaMesaiERPDetay)}" reRender="fazlaMesaiERPDetayTable">
+														<h:graphicImage value="/img/down.gif" style="border:0" />
+													</a4j:commandLink>
+													<ui:fragment rendered="#{fazlaMesaiERPHome.asagiKaydirabilir(fazlaMesaiERPDetay)==false}">
+														<h:graphicImage value="/img/beklemede.gif" id="asagiLink" style="border:0" />
+														<rich:toolTip for="asagiLink" value="Aşağı gidemez" />
+													</ui:fragment>
+												</DIV>
+											</td>
+											<td style="width: %35;">
+												<DIV style="width: 100;">
+													<a4j:commandLink status="ajaxStatus" action="#{fazlaMesaiERPHome.yukariKaydir(fazlaMesaiERPDetay)}"
+														rendered="#{fazlaMesaiERPHome.yukariKaydirabilir(fazlaMesaiERPDetay)}" reRender="fazlaMesaiERPDetayTable">
+														<h:graphicImage value="/img/up.gif" style="border:0" />
+													</a4j:commandLink>
+													<ui:fragment rendered="#{fazlaMesaiERPHome.yukariKaydirabilir(fazlaMesaiERPDetay)==false}">
+														<h:graphicImage value="/img/beklemede.gif" id="yukariLink" style="border:0" />
+														<rich:toolTip for="yukariLink" value="Yukarı gidemez" />
+													</ui:fragment>
+												</DIV>
+											</td>
 										</tr>
 									</table>
- 
+
 								</rich:column>
-								<rich:column>
+								<rich:column style="text-align:center">
 									<f:facet name="header">
 										<h:outputText value="Id" />
 									</f:facet>
 									<h:outputText value="#{fazlaMesaiERPDetay.id}" />
 								</rich:column>
-								<rich:column>
+								<rich:column style="text-align:center">
 									<f:facet name="header">
 										<h:outputText value="Sıra" />
 									</f:facet>
@@ -236,7 +273,7 @@
 									<f:facet name="header">
 										<h:outputText value="Alan Tipi" />
 									</f:facet>
-									<h:outputText value="#{fazlaMesaiERPDetay.alanAciklama}" />
+									<h:outputText value="#{fazlaMesaiERPHome.getAlanAciklama(fazlaMesaiERPDetay.methodAlanAPI)}" />
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
@@ -262,9 +299,10 @@
 							</rich:dataTable>
 
 						</ui:fragment>
-						<a4j:commandButton value="Ekle" status="ajaxStatus" ajaxSingle="true" action="#{fazlaMesaiERPHome.fazlaMesaiERPDetayGuncelle(null)}"
-							oncomplete="#{rich:component('fazlaMesaiERPDetayPanel')}.show();" reRender="fazlaMesaiERPDetayPanel" />
-
+						<ui:fragment rendered="#{fazlaMesaiERPHome.methodAlanList.size() ne fazlaMesaiERPHome.fazlaMesaiERPDetayList.size()}">
+							<a4j:commandButton value="Ekle" status="ajaxStatus" ajaxSingle="true" action="#{fazlaMesaiERPHome.fazlaMesaiERPDetayGuncelle(null)}"
+								oncomplete="#{rich:component('fazlaMesaiERPDetayPanel')}.show();" reRender="fazlaMesaiERPDetayPanel" />
+						</ui:fragment>
 					</ui:fragment>
 				</a4j:outputPanel>
 			</rich:panel>
@@ -293,9 +331,9 @@
 					</a4j:outputPanel>
 					<a4j:outputPanel id="fazlaMesaiERPDetayBilgi">
 						<h:panelGrid columns="2" rendered="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay!=null}">
-							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.id==null}">
+							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Sıra</ui:define>
-								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.sira}" size="35" required="true" requiredMessage="Sıra giriniz!" />
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.sira}" disabled="true" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" id="methodAlan">
 								<ui:define name="label">Alan Tipi</ui:define>
@@ -312,7 +350,7 @@
 							<s:decorate template="/layout/edit.xhtml" id="alanTipi">
 								<ui:define name="label">Detay Alan Değeri</ui:define>
 								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.alanDeger}" size="35" required="true"
-									requiredMessage="Detay Alan Değeri giriniz!" />
+								 disabled="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.guvenlikAlani}"	requiredMessage="Detay Alan Değeri giriniz!" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Başlık Alan Durum</ui:define>

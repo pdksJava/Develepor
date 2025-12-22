@@ -8,6 +8,7 @@ import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 import org.pdks.enums.MethodAPI;
+import org.pdks.enums.VeriTipiAPI;
 import org.pdks.session.PdksUtil;
 
 @Entity(name = FazlaMesaiERP.TABLE_NAME)
@@ -29,14 +30,18 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_METHOT_ADI = "METHOT_ADI";
 	public static final String COLUMN_NAME_BASLIK_ALAN = "BASLIK_ALAN_ADI";
 	public static final String COLUMN_NAME_DETAY_ALAN = "DETAY_ALAN_ADI";
+	public static final String COLUMN_NAME_DETAY_KOK = "DETAY_KOK_ADI";
+	public static final String COLUMN_NAME_SERVIS_TIPI = "SERVIS_TIPI";
 
 	public static final String COLUMN_NAME_DETAY_BASLIK_ICINDE = "DETAY_BASLIK_ICINDE";
 	public static final String COLUMN_NAME_LOGIN = "LOGIN";
 
-	private String sirketAdi, serverURL, rootAdi, baslikAlanAdi, detayAlanAdi, uomAlanAdi, rtAlanAdi, htAlanAdi, loginBilgi, methodAdi = MethodAPI.POST.value();
+	private String sirketAdi, serverURL, rootAdi, baslikAlanAdi, detayAlanAdi, detayKokAdi, uomAlanAdi, rtAlanAdi, htAlanAdi, loginBilgi, methodAdi = MethodAPI.POST.value();
 
 	private boolean odenenSaatKolonYaz;
 	private Boolean detayBaslikIcineYaz = Boolean.FALSE;
+	private Integer servisVeriTipi = VeriTipiAPI.JSON.value();
+	private VeriTipiAPI veriTipiAPI;
 
 	private MethodAPI methodAPI;
 
@@ -56,6 +61,16 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 
 	public void setServerURL(String serverURL) {
 		this.serverURL = serverURL;
+	}
+
+	@Column(name = COLUMN_NAME_SERVIS_TIPI)
+	public Integer getServisVeriTipi() {
+		return servisVeriTipi;
+	}
+
+	public void setServisVeriTipi(Integer value) {
+		this.veriTipiAPI = value != null ? VeriTipiAPI.fromValue(value) : null;
+		this.servisVeriTipi = value;
 	}
 
 	@Column(name = COLUMN_NAME_METHOT_ADI, nullable = false)
@@ -131,6 +146,15 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 		this.detayAlanAdi = detayAlanAdi;
 	}
 
+	@Column(name = COLUMN_NAME_DETAY_KOK)
+	public String getDetayKokAdi() {
+		return detayKokAdi;
+	}
+
+	public void setDetayKokAdi(String detayKokAdi) {
+		this.detayKokAdi = detayKokAdi;
+	}
+
 	@Column(name = COLUMN_NAME_DETAY_BASLIK_ICINDE)
 	public Boolean getDetayBaslikIcineYaz() {
 		return detayBaslikIcineYaz;
@@ -159,26 +183,23 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 
 	@Transient
 	public String getMethodAciklama() {
-		String aciklama = getMethodAciklama(methodAdi);
+		String aciklama = MethodAPI.getMethodAciklama(methodAdi);
 		return aciklama;
 	}
 
 	@Transient
-	public static String getMethodAciklama(String methodAdi) {
-		String str = "";
-		if (methodAdi != null) {
-			MethodAPI methodAPI = MethodAPI.fromValue(methodAdi);
-			if (methodAPI != null) {
-				if (methodAPI.equals(MethodAPI.POST))
-					str = "Post";
-				else if (methodAPI.equals(MethodAPI.PUT))
-					str = "Put";
-				else if (methodAPI.equals(MethodAPI.GET))
-					str = "Get";
+	public String getServisTipiAciklama() {
+		String aciklama = VeriTipiAPI.getServisTipiAciklama(servisVeriTipi);
+		return aciklama;
+	}
 
-			}
-		}
-		return str;
+	@Transient
+	public VeriTipiAPI getVeriTipiAPI() {
+		return veriTipiAPI;
+	}
+
+	public void setVeriTipiAPI(VeriTipiAPI veriTipiAPI) {
+		this.veriTipiAPI = veriTipiAPI;
 	}
 
 	@Transient

@@ -2,6 +2,7 @@ package org.pdks.session;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
@@ -20,6 +21,7 @@ import org.pdks.entity.FazlaMesaiERP;
 import org.pdks.entity.FazlaMesaiERPDetay;
 import org.pdks.enums.MethodAPI;
 import org.pdks.enums.MethodAlanAPI;
+import org.pdks.enums.VeriTipiAPI;
 import org.pdks.security.entity.User;
 
 @Name("fazlaMesaiERPHome")
@@ -44,7 +46,7 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 	OrtakIslemler ortakIslemler;
 
 	public static String sayfaURL = "fazlaMesaiERPTanimlama";
-	private List<SelectItem> methodAlanList, methodList;
+	private List<SelectItem> methodAlanList, methodList, veriTipiList;
 	private List<FazlaMesaiERP> fazlaMesaiERPList = new ArrayList<FazlaMesaiERP>();
 	private List<FazlaMesaiERPDetay> fazlaMesaiERPDetayList;
 	private FazlaMesaiERP seciliFazlaMesaiERP;
@@ -69,14 +71,45 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 
 	@Transactional
 	public String baslikKaydet() {
-		fillFazlaMesaiERPList();
+		try {
+			pdksEntityController.saveOrUpdate(session, entityManager, seciliFazlaMesaiERP);
+			session.flush();
+			fillFazlaMesaiERPList();
+			seciliFazlaMesaiERP = null;
+		} catch (Exception e) {
+		}
+
 		return "";
 
 	}
 
 	@Transactional
-	public String datayKaydet() {
-		fillFazlaMesaiERPDetayList();
+	public String detayKaydet() {
+		boolean devam = true;
+		if (seciliFazlaMesaiERPDetay.getId() != null) {
+			for (FazlaMesaiERPDetay dt : fazlaMesaiERPDetayList) {
+				if (dt.getId().equals(seciliFazlaMesaiERPDetay.getId()) == false && seciliFazlaMesaiERPDetay.getAlanTipi().equals(dt.getAlanTipi())) {
+					PdksUtil.addMessageWarn(getAlanAciklama(seciliFazlaMesaiERPDetay.getMethodAlanAPI()) + " alan tipi kayıtlıdır!");
+					devam = false;
+					break;
+				}
+			}
+		}
+		if (devam) {
+			try {
+				if (seciliFazlaMesaiERPDetay.isGuvenlikAlani()) {
+					seciliFazlaMesaiERPDetay.setBaslikAlan(false);
+				} else
+					seciliFazlaMesaiERPDetay.setAlanDeger("");
+				pdksEntityController.saveOrUpdate(session, entityManager, seciliFazlaMesaiERPDetay);
+				session.flush();
+				fillFazlaMesaiERPDetayList();
+				fillMethodAlanList();
+				seciliFazlaMesaiERPDetay = null;
+			} catch (Exception e) {
+			}
+		}
+
 		return "";
 
 	}
@@ -89,7 +122,7 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 		boolean kaydir = false;
 		MethodAlanAPI alanAPI = fmd.getMethodAlanAPI();
 		if (alanAPI != null) {
-			if (alanAPI.equals(MethodAlanAPI.USER_NAME) || alanAPI.equals(MethodAlanAPI.PASSWORD)) {
+			if (fmd.isGuvenlikAlani()) {
 				kaydir = fmd.getIndis().intValue() == 0;
 			} else
 				kaydir = fmd.getIndis().intValue() + 1 < fazlaMesaiERPDetayList.size();
@@ -102,31 +135,11 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 	 * @param fmd
 	 * @return
 	 */
-	@Transactional
-	public String asagiKaydir(FazlaMesaiERPDetay fmd) {
-
-		return "";
-	}
-
-	/**
-	 * @param fmd
-	 * @return
-	 */
-	@Transactional
-	public String yukariKaydir(FazlaMesaiERPDetay fmd) {
-
-		return "";
-	}
-
-	/**
-	 * @param fmd
-	 * @return
-	 */
 	public boolean yukariKaydirabilir(FazlaMesaiERPDetay fmd) {
 		boolean kaydir = false;
 		MethodAlanAPI alanAPI = fmd.getMethodAlanAPI();
 		if (alanAPI != null) {
-			if (alanAPI.equals(MethodAlanAPI.USER_NAME) || alanAPI.equals(MethodAlanAPI.PASSWORD)) {
+			if (fmd.isGuvenlikAlani()) {
 				kaydir = fmd.getIndis().intValue() == 1;
 			} else if (fmd.getIndis().intValue() > 0) {
 				int index = fmd.getIndis().intValue() - 1;
@@ -140,25 +153,102 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 	}
 
 	/**
+	 * @param fmd
+	 * @return
+	 */
+	@Transactional
+	public String asagiKaydir(FazlaMesaiERPDetay fmd) {
+		int index = fmd.getIndis().intValue() + 1;
+		FazlaMesaiERPDetay fmd1 = fazlaMesaiERPDetayList.get(index);
+		int sira1 = fmd.getSira(), sira2 = fmd1.getSira();
+		if (sira2 > sira1) {
+			fmd1.setSira(sira1);
+			fmd.setSira(sira2);
+			pdksEntityController.saveOrUpdate(session, entityManager, fmd);
+			pdksEntityController.saveOrUpdate(session, entityManager, fmd1);
+			session.flush();
+			fillFazlaMesaiERPDetayList();
+		}
+		return "";
+	}
+
+	/**
+	 * @param fmd
+	 * @return
+	 */
+	@Transactional
+	public String yukariKaydir(FazlaMesaiERPDetay fmd) {
+		int index = fmd.getIndis().intValue() - 1;
+		FazlaMesaiERPDetay fmd0 = fazlaMesaiERPDetayList.get(index);
+		int sira2 = fmd.getSira(), sira1 = fmd0.getSira();
+		if (sira2 > sira1) {
+			fmd0.setSira(sira2);
+			fmd.setSira(sira1);
+			pdksEntityController.saveOrUpdate(session, entityManager, fmd);
+			pdksEntityController.saveOrUpdate(session, entityManager, fmd0);
+			session.flush();
+			fillFazlaMesaiERPDetayList();
+		}
+		return "";
+	}
+
+	/**yukariLink
 	 * @param detay
 	 * @return
 	 */
 	public String fazlaMesaiERPDetayGuncelle(FazlaMesaiERPDetay detay) {
+		fillMethodAlanList();
+
 		if (detay == null) {
 			detay = new FazlaMesaiERPDetay();
 			detay.setFazlaMesaiERP(seciliFazlaMesaiERP);
+			detay.setSira(fazlaMesaiERPDetayList.size() + 1);
+			for (FazlaMesaiERPDetay dt : fazlaMesaiERPDetayList) {
+				for (Iterator iterator = methodAlanList.iterator(); iterator.hasNext();) {
+					SelectItem st = (SelectItem) iterator.next();
+					if (st.getValue().equals(dt.getAlanTipi())) {
+						iterator.remove();
+						break;
+					}
+
+				}
+			}
 		}
 		seciliFazlaMesaiERPDetay = detay;
+
+		return "";
+	}
+
+	private void fillMethodAlanList() {
 		if (methodAlanList == null)
 			methodAlanList = new ArrayList<SelectItem>();
 		else
 			methodAlanList.clear();
 		for (MethodAlanAPI methodAlanAPI : MethodAlanAPI.values()) {
 			String key = methodAlanAPI.value();
-			String aciklama = FazlaMesaiERPDetay.getAlanAciklama(key);
+			String aciklama = getAlanAciklama(methodAlanAPI);
 			methodAlanList.add(new SelectItem(key, aciklama));
 		}
-		return "";
+	}
+
+	/**
+	 * @param methodAlanAPI
+	 * @return
+	 */
+	public String getAlanAciklama(MethodAlanAPI methodAlanAPI) {
+		String aciklama = "";
+		if (methodAlanAPI != null) {
+			String key = methodAlanAPI.value();
+			if (methodAlanAPI.equals(MethodAlanAPI.SIRKET))
+				aciklama = ortakIslemler.sirketAciklama() + " No";
+			else if (methodAlanAPI.equals(MethodAlanAPI.TESIS))
+				aciklama = ortakIslemler.tesisAciklama() + " No";
+			else if (methodAlanAPI.equals(MethodAlanAPI.PERSONEL))
+				aciklama = ortakIslemler.personelNoAciklama();
+			else
+				aciklama = MethodAlanAPI.getAlanAciklama(key);
+		}
+		return aciklama;
 	}
 
 	/**
@@ -176,11 +266,23 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 			methodList = new ArrayList<SelectItem>();
 		else
 			methodList.clear();
+
+		if (veriTipiList == null)
+			veriTipiList = new ArrayList<SelectItem>();
+		else
+			veriTipiList.clear();
+
 		for (MethodAPI methodAPI : MethodAPI.values()) {
 			String key = methodAPI.value();
-			methodList.add(new SelectItem(key, FazlaMesaiERP.getMethodAciklama(key)));
+			methodList.add(new SelectItem(key, MethodAPI.getMethodAciklama(key)));
+		}
+		for (VeriTipiAPI veriTipiAPI : VeriTipiAPI.values()) {
+			Integer key = veriTipiAPI.value();
+			String value = VeriTipiAPI.getServisTipiAciklama(key);
+			veriTipiList.add(new SelectItem(key, value));
 		}
 		setSeciliFazlaMesaiERP(fazlaMesaiERP);
+		fillMethodAlanList();
 		fillFazlaMesaiERPDetayList();
 
 		setInstance(fazlaMesaiERP);
@@ -191,9 +293,7 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 	/**
 	 * @return
 	 */
-	/**
-	 * @return
-	 */
+	@Transactional
 	public String fillFazlaMesaiERPDetayList() {
 		seciliFazlaMesaiERPDetay = null;
 		List<FazlaMesaiERPDetay> list = null;
@@ -202,8 +302,26 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 			if (list.size() > 1)
 				list = PdksUtil.sortListByAlanAdi(list, "sira", false);
 			int indis = 0;
-			for (FazlaMesaiERPDetay fazlaMesaiERPDetay : list)
+			boolean flush = false;
+			for (FazlaMesaiERPDetay fazlaMesaiERPDetay : list) {
 				fazlaMesaiERPDetay.setIndis(indis++);
+				if (fazlaMesaiERPDetay.getSira().intValue() != indis) {
+					try {
+						fazlaMesaiERPDetay.setSira(indis);
+						pdksEntityController.saveOrUpdate(session, entityManager, fazlaMesaiERPDetay);
+						flush = true;
+					} catch (Exception e) {
+
+					}
+
+				}
+			}
+			if (flush)
+				try {
+					session.flush();
+				} catch (Exception e) {
+
+				}
 
 		} else
 			list = new ArrayList<FazlaMesaiERPDetay>();
@@ -318,5 +436,13 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 
 	public void setVeriVar(boolean veriVar) {
 		this.veriVar = veriVar;
+	}
+
+	public List<SelectItem> getVeriTipiList() {
+		return veriTipiList;
+	}
+
+	public void setVeriTipiList(List<SelectItem> veriTipiList) {
+		this.veriTipiList = veriTipiList;
 	}
 }

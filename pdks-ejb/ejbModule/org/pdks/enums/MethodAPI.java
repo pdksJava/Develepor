@@ -1,5 +1,6 @@
 package org.pdks.enums;
 
+
 public enum MethodAPI {
 
 	GET("get"), POST("post"), PUT("put");
@@ -23,6 +24,27 @@ public enum MethodAPI {
 		}
 		return methodAPI;
 
+	}
+
+	/**
+	 * @param methodAdi
+	 * @return
+	 */
+	public static String getMethodAciklama(String methodAdi) {
+		String str = "";
+		if (methodAdi != null) {
+			MethodAPI methodAPI = fromValue(methodAdi);
+			if (methodAPI != null) {
+				if (methodAPI.equals(POST))
+					str = "Post";
+				else if (methodAPI.equals(PUT))
+					str = "Put";
+				else if (methodAPI.equals(GET))
+					str = "Get";
+
+			}
+		}
+		return str;
 	}
 
 }

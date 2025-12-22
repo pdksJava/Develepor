@@ -25,4 +25,42 @@ public enum MethodAlanAPI {
 
 	}
 
+	/**
+	 * @param alanTipi
+	 * @return
+	 */
+	public static String getAlanAciklama(String alanTipi) {
+		String str = "";
+		if (alanTipi != null) {
+			str = alanTipi;
+			MethodAlanAPI alanAPI = fromValue(alanTipi);
+			if (alanAPI != null) {
+				if (alanAPI.equals(KIMLIK))
+					str = "Kimlik No";
+				else if (alanAPI.equals(MASRAF_YERI))
+					str = "Masraf Yeri No";
+				else if (alanAPI.equals(UOM))
+					str = "Ücreti Ödenen Mesai";
+				else if (alanAPI.equals(RT))
+					str = "Resmi Tatil Mesai";
+				else if (alanAPI.equals(HT))
+					str = "Hafta Tatil Mesai";
+				else if (alanAPI.equals(AKSAM_GUN))
+					str = "Akşam Gün Sayısı";
+				else if (alanAPI.equals(AKSAM_SAAT))
+					str = "Akşam Saat Sayısı";
+				else if (alanAPI.equals(YIL))
+					str = "Yıl";
+				else if (alanAPI.equals(AY))
+					str = "Ay";
+				else if (alanAPI.equals(USER_NAME))
+					str = "Kullanıcı Adı";
+				else if (alanAPI.equals(PASSWORD))
+					str = "Şifre";
+
+			}
+		}
+		return str;
+	}
+
 }

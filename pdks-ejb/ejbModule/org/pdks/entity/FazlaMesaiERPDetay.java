@@ -102,57 +102,12 @@ public class FazlaMesaiERPDetay extends BasePDKSObject implements Serializable {
 	}
 
 	@Transient
-	public static String getAlanAciklama(String alan) {
-		String str = "";
-		if (alan != null) {
-			str = alan;
-			MethodAlanAPI alanAPI = MethodAlanAPI.fromValue(alan);
-			if (alanAPI != null) {
-				if (alanAPI.equals(MethodAlanAPI.KIMLIK))
-					str = "Kimlik No";
-				else if (alanAPI.equals(MethodAlanAPI.MASRAF_YERI))
-					str = "Masraf Yeri No";
-				else if (alanAPI.equals(MethodAlanAPI.SIRKET))
-					str = "Şirket No";
-				else if (alanAPI.equals(MethodAlanAPI.TESIS))
-					str = "Tesis No";
-				else if (alanAPI.equals(MethodAlanAPI.UOM))
-					str = "Ücreti Ödenen Mesai";
-				else if (alanAPI.equals(MethodAlanAPI.RT))
-					str = "Resmi Tatil Mesai";
-				else if (alanAPI.equals(MethodAlanAPI.HT))
-					str = "Hafta Tatil Mesai";
-				else if (alanAPI.equals(MethodAlanAPI.AKSAM_GUN))
-					str = "Akşam Gün Sayısı";
-				else if (alanAPI.equals(MethodAlanAPI.AKSAM_SAAT))
-					str = "Akşam Saat Sayısı";
-				else if (alanAPI.equals(MethodAlanAPI.YIL))
-					str = "Yıl";
-				else if (alanAPI.equals(MethodAlanAPI.AY))
-					str = "Ay";
-				else if (alanAPI.equals(MethodAlanAPI.USER_NAME))
-					str = "Kullanıcı Adı";
-				else if (alanAPI.equals(MethodAlanAPI.PASSWORD))
-					str = "Şifre";
-
-			}
-		}
-		return str;
-	}
-
-	@Transient
-	public boolean isAlanDegerZorunlu() {
+	public boolean isGuvenlikAlani() {
 		boolean zorunlu = false;
 		MethodAlanAPI alanAPI = alanTipi != null ? MethodAlanAPI.fromValue(alanTipi) : null;
 		if (alanAPI != null)
 			zorunlu = alanAPI.equals(MethodAlanAPI.USER_NAME) || alanAPI.equals(MethodAlanAPI.PASSWORD);
 		return zorunlu;
-	}
-
-	@Transient
-	public String getAlanAciklama() {
-		String str = FazlaMesaiERPDetay.getAlanAciklama(alanAdi);
-		return str;
 	}
 
 	@Transient

@@ -19,7 +19,10 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.yilAciklama()}</ui:define>
 							<rich:inputNumberSpinner styleClass="size10" inputStyle="width:20px" minValue="#{ortakIslemler.getParameterKey('sistemBaslangicYili')}"
-								maxValue="#{fazlaMesaiERPAktarimHome.maxYil}" inputSize="1" value="#{fazlaMesaiERPAktarimHome.yil}" />
+								maxValue="#{fazlaMesaiERPAktarimHome.maxYil}" inputSize="1" value="#{fazlaMesaiERPAktarimHome.yil}">
+								<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaMesaiERPAktarimHome.yilAyDegisti(true)}" ajaxSingle="true"
+									reRender="secimler,denklestirmeDonemiTable,anaForm" />
+							</rich:inputNumberSpinner>
 
 
 						</s:decorate>
@@ -28,6 +31,8 @@
 							<h:selectOneMenu value="#{fazlaMesaiERPAktarimHome.ay}" required="true" requiredMessage="Başlangıç ay seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{fazlaMesaiERPAktarimHome.aylar}" />
+								<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaMesaiERPAktarimHome.yilAyDegisti(false)}" ajaxSingle="true"
+									reRender="secimler,denklestirmeDonemiTable,anaForm" />
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
@@ -51,10 +56,22 @@
 								requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{fazlaMesaiERPAktarimHome.sirketler}" />
-
+								<a4j:support event="onchange" action="#{fazlaMesaiERPAktarimHome.tesisDoldur()}" ajaxSingle="true"
+									reRender="secimler,denklestirmeDonemiTable,anaForm" />
 							</h:selectOneMenu>
 
 
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml"
+							rendered="#{ortakIslemler.tesisDurumu and fazlaMesaiERPAktarimHome.tesisList != null and fazlaMesaiERPAktarimHome.tesisList.size()>0}">
+							<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
+							<h:selectOneMenu value="#{fazlaMesaiERPAktarimHome.tesisId}" requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz!"
+								disabled="#{fazlaMesaiERPAktarimHome.tesisList.size() == 1}">
+								<f:selectItem itemLabel="Lütfen seçiniz" />
+								<f:selectItems value="#{fazlaMesaiERPAktarimHome.tesisList}" />
+								<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaMesaiERPAktarimHome.personelDenklestirmeList.clear()}" ajaxSingle="true"
+									reRender="secimler,denklestirmeDonemiTable,anaForm" />
+							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiERPAktarimHome.sanalPersonelAciklama != ''}">
 							<ui:define name="label">Liste Durum</ui:define>
