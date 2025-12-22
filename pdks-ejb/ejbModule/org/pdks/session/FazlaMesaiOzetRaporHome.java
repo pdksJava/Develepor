@@ -372,7 +372,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			String gorevTipiIdStr = null, gorevYeriIdStr = null, sirketIdStr = null, tesisIdStr = null;
 			LinkedHashMap<String, Object> veriLastMap = null;
 			if (linkAdresKey == null) {
-				veriLastMap = ortakIslemler.getLastParameter("fazlaMesaiOzetRapor", session);
+				veriLastMap = ortakIslemler.getLastParameter(sayfaURL, session);
 				if (veriLastMap != null) {
 					if (veriLastMap.containsKey("yil"))
 						yilStr = (String) veriLastMap.get("yil");

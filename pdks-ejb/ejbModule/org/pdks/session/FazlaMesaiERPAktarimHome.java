@@ -180,10 +180,60 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 			filDepartmanList();
 		if (departmanList.size() == 1)
 			setDepartmanId((Long) departmanList.get(0).getValue());
-		if (!authenticatedUser.isAdmin()) {
-			setDepartmanId(authenticatedUser.getDepartman().getId());
-			if (authenticatedUser.isIK())
-				fillSirketList();
+
+		LinkedHashMap<String, Object> veriLastMap = ortakIslemler.getLastParameter(sayfaURL, session);
+		String yilStr = null, ayStr = null, sirketIdStr = null, tesisIdStr = null, sicilNoStr = null;
+		if (veriLastMap != null) {
+			if (veriLastMap.containsKey("yil"))
+				yilStr = (String) veriLastMap.get("yil");
+			if (veriLastMap.containsKey("ay"))
+				ayStr = (String) veriLastMap.get("ay");
+			if (veriLastMap.containsKey("sirketId"))
+				sirketIdStr = (String) veriLastMap.get("sirketId");
+			if (veriLastMap.containsKey("tesisId"))
+				tesisIdStr = (String) veriLastMap.get("tesisId");
+			if (veriLastMap.containsKey("sicilNo"))
+				sicilNoStr = (String) veriLastMap.get("sicilNo");
+
+		}
+		if (ayStr != null && yilStr != null) {
+
+			yil = Integer.parseInt(yilStr);
+			ay = Integer.parseInt(ayStr);
+
+			if (sirketIdStr != null) {
+				sirketId = Long.parseLong(sirketIdStr);
+				if (sirket != null) {
+					if (!sirket.getId().equals(sirketId))
+						sirket = null;
+				}
+
+				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
+
+				if (sirket != null) {
+					departmanId = sirket.getDepartman().getId();
+					fillSirketList();
+					if (tesisIdStr != null)
+						tesisId = Long.parseLong(tesisIdStr);
+					if (sirket != null) {
+						sirketId = sirket.getId();
+						sicilNo = sicilNoStr;
+					}
+
+					tesisDoldur();
+				}
+
+			}
+		} else {
+			if (sirket != null) {
+				departmanId = sirket.getDepartman().getId();
+				setDepartman(sirket.getDepartman());
+			}
+			if (!authenticatedUser.isAdmin()) {
+				setDepartmanId(authenticatedUser.getDepartman().getId());
+				if (authenticatedUser.isIK())
+					fillSirketList();
+			}
 		}
 
 		// return ortakIslemler.yetkiIKAdmin(Boolean.FALSE);
@@ -592,9 +642,8 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 
 	/**
 	 * @param bolumDoldurDurum
-	 * @throws Exception
 	 */
-	public void tesisDoldur() throws Exception {
+	public void tesisDoldur() {
 
 		sirket = null;
 
@@ -1491,6 +1540,28 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 		return baslikAlanMap;
 	}
 
+	private void saveLastParameter() {
+		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
+		lastMap.put("yil", "" + yil);
+		lastMap.put("ay", "" + ay);
+		if (departmanId != null)
+			lastMap.put("departmanId", "" + departmanId);
+		if (sirketId != null)
+			lastMap.put("sirketId", "" + sirketId);
+		if (tesisId != null)
+			lastMap.put("tesisId", "" + tesisId);
+		if (PdksUtil.hasStringValue(sicilNo))
+			lastMap.put("sicilNo", sicilNo);
+
+		try {
+
+			lastMap.put("sayfaURL", sayfaURL);
+			ortakIslemler.saveLastParameter(lastMap, session);
+		} catch (Exception e) {
+
+		}
+	}
+
 	public String fillPersonelDenklestirmeList() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
@@ -1503,7 +1574,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 		fazlaMesaiERP = null;
 
 		personelDenklestirmeList.clear();
-		// DenklestirmeAy denklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
+		saveLastParameter();
 		basGun = null;
 		bitGun = null;
 		denklestirmeAyDurum = denklestirmeAy != null && denklestirmeAy.getDurum();
