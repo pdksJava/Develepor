@@ -257,6 +257,21 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param menuItem
+	 * @return
+	 */
+	public String getMenuAciklamaERP(MenuItem menuItem) {
+		String aciklama = menuItem != null && menuItem.getDescription() != null ? menuItem.getDescription().getAciklama() : "";
+		String replace = "ERP";
+		if (aciklama.indexOf(replace) >= 0) {
+			String uygulamaBordro = getParameterKey("uygulamaBordro");
+			if (PdksUtil.hasStringValue(uygulamaBordro))
+				aciklama = PdksUtil.replaceAll(aciklama, replace, uygulamaBordro);
+		}
+		return aciklama;
+	}
+
+	/**
 	 * @param tip
 	 * @param personelList
 	 * @param kullaniciList
@@ -6665,7 +6680,7 @@ public class OrtakIslemler implements Serializable {
 					Gson gson = new Gson();
 					LinkedHashMap<String, Object> map1 = new LinkedHashMap<String, Object>();
 					map1.put("kullanici", authenticatedUser.getAdSoyad());
-					map1.put("menuAdi", menuItemTime.getMenu().getDescription().getAciklama());
+					map1.put("menuAdi", getMenuAciklamaERP(menuItemTime.getMenu()));
 					map1.putAll(map);
 					String parametreJSON = gson.toJson(map1);
 					HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
@@ -10347,7 +10362,7 @@ public class OrtakIslemler implements Serializable {
 		String menuTanimAdi = null;
 		if (menuAdi != null && menuItemMap != null) {
 			if (menuItemMap.containsKey(menuAdi)) {
-				menuTanimAdi = menuItemMap.get(menuAdi).getDescription().getAciklama();
+				menuTanimAdi = getMenuAciklamaERP(menuItemMap.get(menuAdi));
 			} else if (menuAdi.equalsIgnoreCase("anasayfa"))
 				menuTanimAdi = "Ana Sayfa";
 		}
@@ -10535,7 +10550,7 @@ public class OrtakIslemler implements Serializable {
 		if (menuAdi.equalsIgnoreCase("anaSayfa"))
 			menuTanimAdi = "Ana Sayfa";
 		else if (menuItemMap.containsKey(menuAdi))
-			menuTanimAdi = menuItemMap.get(menuAdi).getDescription().getAciklama();
+			menuTanimAdi = getMenuAciklamaERP(menuItemMap.get(menuAdi));
 		return menuTanimAdi;
 	}
 

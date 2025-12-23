@@ -217,7 +217,8 @@ public class MenuLoaderActionBean implements Serializable {
 			Application app = FacesContext.getCurrentInstance().getApplication();
 			menu = (HtmlDropDownMenu) app.createComponent(HtmlDropDownMenu.COMPONENT_TYPE);
 			menu.setRendered(Boolean.TRUE);
-			menu.setValue(topMenu.getDescription().getAciklama());
+			String aciklama = ortakIslemler.getMenuAciklamaERP(topMenu);
+			menu.setValue(aciklama);
 			menu.setId(topMenu.getName());
 			menu.getChildren().add(menu);
 			HtmlMenuItem hmiHomePage;
@@ -228,7 +229,8 @@ public class MenuLoaderActionBean implements Serializable {
 
 						if (subMenu.getStatus() && userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW)) {// gormeye yetkisi yoksa menüyü yaratmasın
 							hmiHomePage = new HtmlMenuItem();
-							hmiHomePage.setValue(subMenu.getDescription().getAciklama());
+							String subAciklama = ortakIslemler.getMenuAciklamaERP(subMenu);
+							hmiHomePage.setValue(subAciklama);
 							hmiHomePage.setId(subMenu.getName());
 							hmiHomePage.setActionExpression(this.startAction(subMenu));
 							// hmiHomePage.setRendered(userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW));
@@ -241,7 +243,8 @@ public class MenuLoaderActionBean implements Serializable {
 					} else {// sub menuleri de var
 						if (userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW)) {// gormeye yetkisi yoksa menüyü yaratmasın
 							htmlMenuGroup = new HtmlMenuGroup();
-							htmlMenuGroup.setValue(subMenu.getDescription().getAciklama());
+							String subAciklama = ortakIslemler.getMenuAciklamaERP(subMenu);
+							htmlMenuGroup.setValue(subAciklama);
 							htmlMenuGroup.setId(subMenu.getName());
 							// htmlMenuGroup.setRendered(userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW));
 							menu.getChildren().add(htmlMenuGroup);
@@ -270,7 +273,8 @@ public class MenuLoaderActionBean implements Serializable {
 			if (subMenu.getChildMenuItemList().isEmpty()) {// demekki sub menuleri yok
 				if (subMenu.getStatus() && userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW)) {// gormeye yetkisi yoksa menüyü yaratmasın
 					hmiHomePage = new HtmlMenuItem();
-					hmiHomePage.setValue(subMenu.getDescription().getAciklama());
+					String aciklama = ortakIslemler.getMenuAciklamaERP(subMenu);
+					hmiHomePage.setValue(aciklama);
 					hmiHomePage.setActionExpression(startAction(subMenu));
 					// hmiHomePage.setRendered(userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW));
 					if (hmiHomePage.getActionExpression() != null)
@@ -279,7 +283,8 @@ public class MenuLoaderActionBean implements Serializable {
 			} else {// sub menuleri de var
 				if (userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW)) {// gormeye yetkisi yoksa menüyü yaratmasın
 					htmlMenuGroup = new HtmlMenuGroup();
-					htmlMenuGroup.setValue(subMenu.getDescription().getAciklama());
+					String aciklama = ortakIslemler.getMenuAciklamaERP(subMenu);
+					htmlMenuGroup.setValue(aciklama);
 					// htmlMenuGroup.setRendered(userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW));
 					menuGroup.getChildren().add(htmlMenuGroup);
 					addChildNodes(subMenu, htmlMenuGroup);// sub menüleri doldur

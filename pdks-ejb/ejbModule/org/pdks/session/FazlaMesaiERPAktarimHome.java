@@ -197,17 +197,10 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 
 		}
 		if (ayStr != null && yilStr != null) {
-
 			yil = Integer.parseInt(yilStr);
 			ay = Integer.parseInt(ayStr);
-
 			if (sirketIdStr != null) {
 				sirketId = Long.parseLong(sirketIdStr);
-				if (sirket != null) {
-					if (!sirket.getId().equals(sirketId))
-						sirket = null;
-				}
-
 				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 
 				if (sirket != null) {
