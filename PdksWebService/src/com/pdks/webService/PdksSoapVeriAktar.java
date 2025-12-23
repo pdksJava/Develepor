@@ -156,6 +156,7 @@ public class PdksSoapVeriAktar implements Serializable {
 	 * @param yil
 	 * @param ay
 	 * @param donemKapat
+	 * @param tesisKodu
 	 * @return
 	 * @throws Exception
 	 */
@@ -164,13 +165,14 @@ public class PdksSoapVeriAktar implements Serializable {
 	@ResponseWrapper(className = "com.pdks.webService.jaxws.GetMesaiPDKSResponse", localName = "getMesaiPDKSResponse", targetNamespace = "http://webService.pdks.com/")
 	@WebMethod(operationName = "getMesaiPDKS", action = "getMesaiPDKS")
 	@WSDLDocumentation("Bordro uygulaması PDKS uygulamasındaki fazla mesai bilgileri çeker  ")
-	public List<MesaiPDKS> getMesaiPDKS(@WebParam(name = "sirketKodu") String sirketKodu, @WebParam(name = "yil") Integer yil, @WebParam(name = "ay") Integer ay, @WebParam(name = "donemKapat") Boolean donemKapat) throws Exception {
+	public List<MesaiPDKS> getMesaiPDKS(@WebParam(name = "sirketKodu") String sirketKodu, @WebParam(name = "yil") Integer yil, @WebParam(name = "ay") Integer ay, @WebParam(name = "donemKapat") Boolean donemKapat, @WebParam(name = "tesisKodu") String tesisKodu) throws Exception {
 		List<MesaiPDKS> list = null;
 		if (yil != null && ay != null) {
 			PdksVeriOrtakAktar ortakAktar = new PdksVeriOrtakAktar();
 			try {
+				donemKapat = false;
 				if (yil >= 2020 && ay > 0 && ay < 13)
-					list = ortakAktar.getMesaiPDKS(sirketKodu, yil, ay, donemKapat);
+					list = ortakAktar.getMesaiPDKS(sirketKodu, yil, ay, donemKapat, tesisKodu);
 			} catch (Exception e) {
 
 				logger.error(e);

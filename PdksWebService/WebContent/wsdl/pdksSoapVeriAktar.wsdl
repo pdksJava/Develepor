@@ -109,6 +109,7 @@
 					<xs:element minOccurs="0" name="yil" type="xs:int" />
 					<xs:element minOccurs="0" name="ay" type="xs:int" />
 					<xs:element minOccurs="0" name="donemKapat" type="xs:boolean" />
+					<xs:element minOccurs="0" name="tesisKodu" type="xs:string" />
 				</xs:sequence>
 			</xs:complexType>
 			<xs:complexType name="getMesaiPDKSResponse">

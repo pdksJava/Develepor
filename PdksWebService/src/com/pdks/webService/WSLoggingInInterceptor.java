@@ -286,6 +286,8 @@ public class WSLoggingInInterceptor extends AbstractSoapInterceptor {
 				} else if (soapAction.equalsIgnoreCase("getMesaiPDKS")) {
 					if (map.containsKey("sirketKodu"))
 						parseKey += map.get("sirketKodu") + "-";
+					if (map.containsKey("tesisKodu"))
+						parseKey += map.get("tesisKodu") + "-";
 					if (map.containsKey("yil"))
 						parseKey += map.get("yil") + "-";
 					if (map.containsKey("ay"))

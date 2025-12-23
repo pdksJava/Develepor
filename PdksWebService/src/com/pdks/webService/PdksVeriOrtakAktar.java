@@ -1552,11 +1552,13 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @param yil
 	 * @param ay
 	 * @param donemKapat
+	 * @param tesisKodu
 	 * @return
 	 * @throws Exception
 	 */
-	public List<MesaiPDKS> getMesaiPDKS(String sirketKodu, Integer yil, Integer ay, Boolean donemKapat) throws Exception {
+	public List<MesaiPDKS> getMesaiPDKS(String sirketKodu, Integer yil, Integer ay, Boolean donemKapat, String tesisKodu) throws Exception {
 		sistemVerileriniYukle(pdksDAO, true);
+
 		boolean servisDurum = !PdksUtil.getCanliSunucuDurum() || !(mailMap.containsKey("getMesaiPDKSDurum") && mailMap.get("getMesaiPDKSDurum").equals("0"));
 		List<MesaiPDKS> list = null;
 		if (servisDurum && pdksDAO != null) {
@@ -1569,6 +1571,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				inputMap.put("ay", ay);
 			if (donemKapat != null)
 				inputMap.put("donemKapat", donemKapat);
+			if (PdksUtil.hasStringValue(tesisKodu))
+				inputMap.put("tesisKodu", tesisKodu);
 			saveFonksiyonVeri("getMesaiPDKS", inputMap);
 
 			dosyaEkAdi = (PdksUtil.hasStringValue(sirketKodu) ? sirketKodu.trim() : "") + "-" + ((yil != null ? yil : 0) * 100 + (ay != null ? +ay : 0));
@@ -1598,27 +1602,50 @@ public class PdksVeriOrtakAktar implements Serializable {
 						if (donemKapat != null && donemKapat.booleanValue() && !personelMesaiList.isEmpty())
 							perNoList = new ArrayList<String>();
 						list = new ArrayList<MesaiPDKS>();
+						Long tesisId = null;
+						if (personelMesaiList.isEmpty() == false) {
+
+							if (sirket != null && PdksUtil.hasStringValue(tesisKodu)) {
+								StringBuffer sb = new StringBuffer();
+								sb.append("select D.* from " + Tanim.TABLE_NAME + " D " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
+								sb.append(" where D." + Tanim.COLUMN_NAME_TIPI + " = :t and D." + Tanim.COLUMN_NAME_ERP_KODU + " in (:k1,:k2)");
+								fields.put("t", Tanim.TIPI_TESIS);
+								fields.put("k1", tesisKodu);
+								fields.put("k2", sirket.getErpKodu() + "-" + tesisKodu);
+								List<Tanim> tesisList = pdksDAO.getNativeSQLList(fields, sb, Tanim.class);
+								if (tesisList.isEmpty() == false)
+									tesisId = tesisList.get(0).getId();
+								else
+									tesisId = -1L;
+								tesisList = null;
+							}
+						}
 						for (Iterator iterator = personelMesaiList.iterator(); iterator.hasNext();) {
 							PersonelMesai personelMesai = (PersonelMesai) iterator.next();
 							Personel personel = personelMesai.getPersonel();
+							if (tesisId != null && (personel.getTesis() == null || personel.getTesis().getId().equals(tesisId) == false)) {
+								iterator.remove();
+								continue;
+							}
 							MesaiPDKS mesaiPDKS = new MesaiPDKS();
 							mesaiPDKS.setYil(yil);
 							mesaiPDKS.setAy(ay);
-							mesaiPDKS.setPersonelNo(personel.getPdksSicilNo());
+							String personelNo = mesaiPDKS.getPersonelNo();
+							mesaiPDKS.setPersonelNo(personelNo);
 							mesaiPDKS.setMesaiKodu(personelMesai.getErpKodu());
 							mesaiPDKS.setToplamSure(personelMesai.getSure());
 							String sirketERPKodu = personel.getSirket() != null ? personel.getSirket().getErpKodu() : null;
-							String tesisKodu = personel.getTesis() != null ? personel.getTesis().getErpKodu() : null;
+							String personelTesisKodu = personel.getTesis() != null ? personel.getTesis().getErpKodu() : null;
 							mesaiPDKS.setSirketKodu(sirketERPKodu);
-							if (sirketERPKodu != null && tesisKodu != null && tesisKodu.startsWith(sirketERPKodu + "-"))
-								tesisKodu = tesisKodu.substring(tesisKodu.indexOf("-") + 1);
+							if (sirketERPKodu != null && personelTesisKodu != null && personelTesisKodu.startsWith(sirketERPKodu + "-"))
+								personelTesisKodu = personelTesisKodu.substring(personelTesisKodu.indexOf("-") + 1);
 
-							mesaiPDKS.setTesisKodu(tesisKodu);
+							mesaiPDKS.setTesisKodu(personelTesisKodu);
 							mesaiPDKS.setMasrafYeriKodu(personel.getMasrafYeri() != null ? personel.getMasrafYeri().getErpKodu() : null);
 
 							list.add(mesaiPDKS);
-							if (perNoList != null && !perNoList.contains(mesaiPDKS.getPersonelNo()))
-								perNoList.add(mesaiPDKS.getPersonelNo());
+							if (perNoList != null && !perNoList.contains(personelNo))
+								perNoList.add(personelNo);
 						}
 						if (perNoList != null && !perNoList.isEmpty()) {
 							String fieldName = "p";
@@ -1650,7 +1677,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
 						mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
 						MailObject mailObject = kullaniciIKYukle(null, mailMap, pdksDAO);
-						String dosyaAdi = PdksUtil.setTurkishStr("FazlaMesai_" + +denklestirmeAy.getYil() + " " + denklestirmeAy.getAyAdi() + (sirket != null ? "_" + sirket.getAd() : "")) + ".xml";
+						String dosyaAdi = PdksUtil.setTurkishStr("FazlaMesai_" + +denklestirmeAy.getYil() + " " + denklestirmeAy.getAyAdi() + (sirket != null ? "_" + sirket.getAd() : "")) + (PdksUtil.hasStringValue(tesisKodu) ? "_" + tesisKodu : "") + ".xml";
 						String subject = uygulamaBordro + " " + denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " " + (sirket != null ? sirket.getAd() + " " : "") + "fazla mesai yükleme";
 						String body = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " dönemi " + (sirket != null ? sirket.getAd() + " " : "") + " fazla mesai dosyası " + dosyaAdi + " ektedir.";
 						mailObject.setSubject(subject);
@@ -1660,6 +1687,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 						dataInputMap.put("yil", yil);
 						dataInputMap.put("ay", ay);
 						dataInputMap.put("donemKapat", donemKapat);
+						if (PdksUtil.hasStringValue(tesisKodu))
+							dataInputMap.put("tesisKodu", tesisKodu);
 						dataMap.put("input", dataInputMap);
 						if (!list.isEmpty())
 							dataMap.put("getMesaiPDKSReturn", list);
