@@ -1471,6 +1471,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 						veriData = sb.toString();
 						sb = null;
 					}
+					SSLImport.getCertificateInputStream(fazlaMesaiERP.getServerURL());
 					java.net.URL url = new java.net.URL(fazlaMesaiERP.getServerURL());
 					java.net.HttpURLConnection connjava = (java.net.HttpURLConnection) url.openConnection();
 					if (headerMap.size() == 2) {
