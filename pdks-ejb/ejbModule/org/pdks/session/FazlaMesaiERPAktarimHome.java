@@ -218,9 +218,9 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 					if (sirket != null) {
 						sirketId = sirket.getId();
 						sicilNo = sicilNoStr;
+						tesisDoldur();
 					}
 
-					tesisDoldur();
 				}
 
 			}
@@ -646,18 +646,15 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 	public void tesisDoldur() {
 
 		sirket = null;
-
-		if (sirketler == null || sirketler.isEmpty())
-			setTesisList(new ArrayList<SelectItem>());
-		else {
+		List<SelectItem> list = null;
+		if (sirketler != null && sirketler.isEmpty() == false) {
 			if (sirketId != null) {
-
 				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 				if (!sirket.isTesisDurumu())
 					tesisId = null;
+				else
+					list = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, true, session);
 			}
-			List<SelectItem> list = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, true, session);
-			setTesisList(list);
 			Long onceki = tesisId;
 			if (list != null && !list.isEmpty()) {
 				if (list.size() == 1 || onceki == null)
@@ -672,6 +669,9 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 			}
 
 		}
+		if (list == null)
+			list = new ArrayList<SelectItem>();
+		setTesisList(list);
 		personelDenklestirmeList.clear();
 	}
 
@@ -1541,6 +1541,9 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 		return baslikAlanMap;
 	}
 
+	/**
+	 * 
+	 */
 	private void saveLastParameter() {
 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
 		lastMap.put("yil", "" + yil);
@@ -1563,6 +1566,9 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	public String fillPersonelDenklestirmeList() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
@@ -1603,11 +1609,10 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 
 				fields.put("basGun", basGun);
 				fields.put("bitGun", bitGun);
-				if (sirketId != null) {
+				if (sirketId != null)
 
 					sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 
-				}
 				if (sicilNo != null && sicilNo.length() > 0) {
 					sb.append(" and P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :sicilNo ");
 					fields.put("sicilNo", sicilNo);
@@ -1634,6 +1639,9 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				if (sirketId != null) {
 					sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PERSONEL_ID);
 					sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + sirketId);
+					if (tesisId != null)
+						sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = " + tesisId);
+
 				}
 				sb.append(" where v." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
 				sb.append(" and V." + PersonelDenklestirmeOnaylanmayan.COLUMN_NAME_PERSONEL_ID + " :" + fieldName);
