@@ -1,5 +1,7 @@
 package com.pdks.webservice;
 
+import java.util.List;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
@@ -23,8 +25,8 @@ public interface PdksSoapVeriAktar {
 	@RequestWrapper(localName = "getERPPersonelList", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.GetERPPersonelList")
 	@WebMethod(action = "urn:GetERPPersonelList")
 	@ResponseWrapper(localName = "getERPPersonelListResponse", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.GetERPPersonelListResponse")
-	public java.util.List<com.pdks.webservice.PersonelERP> getERPPersonelList(@WebParam(name = "sirketKodu", targetNamespace = "") java.lang.String sirketKodu, @WebParam(name = "personelNo", targetNamespace = "") java.lang.String personelNo,
-			@WebParam(name = "basTarih", targetNamespace = "") java.lang.String basTarih, @WebParam(name = "bitTarih", targetNamespace = "") java.lang.String bitTarih) throws Exception_Exception;
+	public List<com.pdks.webservice.PersonelERP> getERPPersonelList(@WebParam(name = "sirketKodu", targetNamespace = "") String sirketKodu, @WebParam(name = "personelNo", targetNamespace = "") String personelNo, @WebParam(name = "basTarih", targetNamespace = "") String basTarih,
+			@WebParam(name = "bitTarih", targetNamespace = "") String bitTarih) throws Exception_Exception;
 
 	/**
 	 * PDKS uygulamasi kullanimi içindir
@@ -33,7 +35,7 @@ public interface PdksSoapVeriAktar {
 	@RequestWrapper(localName = "getFazlaMesaiList", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.GetFazlaMesaiList")
 	@WebMethod(action = "urn:GetFazlaMesaiList")
 	@ResponseWrapper(localName = "getFazlaMesaiListResponse", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.GetFazlaMesaiListResponse")
-	public com.pdks.webservice.GetFazlaMesaiListResponse.Return getFazlaMesaiList(@WebParam(name = "mesaiId", targetNamespace = "") java.util.List<java.lang.Long> mesaiId) throws Exception_Exception;
+	public com.pdks.webservice.GetFazlaMesaiListResponse.Return getFazlaMesaiList(@WebParam(name = "mesaiId", targetNamespace = "") List<Long> mesaiId) throws Exception_Exception;
 
 	/**
 	 * Bordro uygulamasi PDKS uygulamasindaki fazla mesai bilgileri çeker
@@ -42,8 +44,8 @@ public interface PdksSoapVeriAktar {
 	@RequestWrapper(localName = "getMesaiPDKS", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.GetMesaiPDKS")
 	@WebMethod(action = "getMesaiPDKS")
 	@ResponseWrapper(localName = "getMesaiPDKSResponse", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.GetMesaiPDKSResponse")
-	public java.util.List<com.pdks.webservice.MesaiPDKS> getMesaiPDKS(@WebParam(name = "sirketKodu", targetNamespace = "") java.lang.String sirketKodu, @WebParam(name = "yil", targetNamespace = "") java.lang.Integer yil, @WebParam(name = "ay", targetNamespace = "") java.lang.Integer ay,
-			@WebParam(name = "donemKapat", targetNamespace = "") java.lang.Boolean donemKapat) throws Exception_Exception;
+	public List<com.pdks.webservice.MesaiPDKS> getMesaiPDKS(@WebParam(name = "sirketKodu", targetNamespace = "") String sirketKodu, @WebParam(name = "yil", targetNamespace = "") Integer yil, @WebParam(name = "ay", targetNamespace = "") Integer ay,
+			@WebParam(name = "donemKapat", targetNamespace = "") Boolean donemKapat, @WebParam(name = "tesisKodu", targetNamespace = "") String tesisKodu) throws Exception_Exception;
 
 	@WebResult(name = "mailStatu", targetNamespace = "")
 	@RequestWrapper(localName = "sendMail", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.SendMail")
@@ -59,7 +61,7 @@ public interface PdksSoapVeriAktar {
 	@RequestWrapper(localName = "saveIzinHakedisler", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.SaveIzinHakedisler")
 	@WebMethod(action = "urn:SaveIzinHakedisler")
 	@ResponseWrapper(localName = "saveIzinHakedislerResponse", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.SaveIzinHakedislerResponse")
-	public java.util.List<com.pdks.webservice.IzinHakedis> saveIzinHakedisler(@WebParam(name = "izinHakedis", targetNamespace = "") java.util.List<com.pdks.webservice.IzinHakedis> izinHakedis) throws Exception_Exception;
+	public List<com.pdks.webservice.IzinHakedis> saveIzinHakedisler(@WebParam(name = "izinHakedis", targetNamespace = "") List<com.pdks.webservice.IzinHakedis> izinHakedis) throws Exception_Exception;
 
 	/**
 	 * PDKS uygulamasi kullanimi içindir
@@ -68,7 +70,7 @@ public interface PdksSoapVeriAktar {
 	@RequestWrapper(localName = "sendERPIzinler", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.SendERPIzinler")
 	@WebMethod(action = "urn:SendERPIzinler")
 	@ResponseWrapper(localName = "sendERPIzinlerResponse", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.SendERPIzinlerResponse")
-	public java.util.List<com.pdks.webservice.IzinERP> sendERPIzinler(@WebParam(name = "izin", targetNamespace = "") java.util.List<com.pdks.webservice.IzinERP> izin) throws Exception_Exception;
+	public List<com.pdks.webservice.IzinERP> sendERPIzinler(@WebParam(name = "izin", targetNamespace = "") List<com.pdks.webservice.IzinERP> izin) throws Exception_Exception;
 
 	/**
 	 * PDKS uygulamasinda Bordro uygulamasindan okunan senelik izin hakedişler için kullanir. (Sure Birimi : Gun='1'/Saat='2', Zaman format : yyyy-MM-dd HH:mm)
@@ -78,7 +80,7 @@ public interface PdksSoapVeriAktar {
 	@RequestWrapper(localName = "getIzinHakedisler", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.GetIzinHakedisler")
 	@WebMethod(action = "urn:GetIzinHakedisler")
 	@ResponseWrapper(localName = "getIzinHakedislerResponse", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.GetIzinHakedislerResponse")
-	public java.util.List<com.pdks.webservice.IzinHakedis> getIzinHakedisler(@WebParam(name = "personeller", targetNamespace = "") java.util.List<java.lang.String> personeller) throws Exception_Exception;
+	public List<com.pdks.webservice.IzinHakedis> getIzinHakedisler(@WebParam(name = "personeller", targetNamespace = "") List<String> personeller) throws Exception_Exception;
 
 	/**
 	 * Bordro uygulamasindan PDKS uygulamasina personel verisini aktariminda kullanir (Tarih format : yyyy-MM-dd)
@@ -87,7 +89,7 @@ public interface PdksSoapVeriAktar {
 	@RequestWrapper(localName = "savePersoneller", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.SavePersoneller")
 	@WebMethod(action = "urn:SavePersoneller")
 	@ResponseWrapper(localName = "savePersonellerResponse", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.SavePersonellerResponse")
-	public java.util.List<com.pdks.webservice.PersonelERP> savePersoneller(@WebParam(name = "personel", targetNamespace = "") java.util.List<com.pdks.webservice.PersonelERP> personel) throws Exception_Exception;
+	public List<com.pdks.webservice.PersonelERP> savePersoneller(@WebParam(name = "personel", targetNamespace = "") List<com.pdks.webservice.PersonelERP> personel) throws Exception_Exception;
 
 	/**
 	 * PDKS uygulamasi kullanimi içindir
@@ -96,7 +98,7 @@ public interface PdksSoapVeriAktar {
 	@RequestWrapper(localName = "sendFazlaMesaiList", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.SendFazlaMesaiList")
 	@WebMethod(action = "urn:SendFazlaMesaiList")
 	@ResponseWrapper(localName = "sendFazlaMesaiListResponse", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.SendFazlaMesaiListResponse")
-	public java.util.List<com.pdks.webservice.MesaiPDKS> sendFazlaMesaiList(@WebParam(name = "mesaiId", targetNamespace = "") java.util.List<java.lang.Long> mesaiId) throws Exception_Exception;
+	public List<com.pdks.webservice.MesaiPDKS> sendFazlaMesaiList(@WebParam(name = "mesaiId", targetNamespace = "") List<Long> mesaiId) throws Exception_Exception;
 
 	/**
 	 * Bordro uygulamasindan PDKS uygulamasina izinleri aktariminda kullanir. (Sure Birimi : Gun='1'/Saat='2', Zaman format : yyyy-MM-dd HH:mm)
@@ -106,5 +108,5 @@ public interface PdksSoapVeriAktar {
 	@RequestWrapper(localName = "saveIzinler", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.SaveIzinler")
 	@WebMethod(action = "urn:SaveIzinler")
 	@ResponseWrapper(localName = "saveIzinlerResponse", targetNamespace = "http://webService.pdks.com/", className = "com.pdks.webservice.SaveIzinlerResponse")
-	public java.util.List<com.pdks.webservice.IzinERP> saveIzinler(@WebParam(name = "izin", targetNamespace = "") java.util.List<com.pdks.webservice.IzinERP> izin) throws Exception_Exception;
+	public List<com.pdks.webservice.IzinERP> saveIzinler(@WebParam(name = "izin", targetNamespace = "") List<com.pdks.webservice.IzinERP> izin) throws Exception_Exception;
 }

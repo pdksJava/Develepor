@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="yil" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *         &lt;element name="ay" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *         &lt;element name="donemKapat" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="tesisKodu" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,13 +30,14 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getMesaiPDKS", propOrder = { "sirketKodu", "yil", "ay", "donemKapat" })
+@XmlType(name = "getMesaiPDKS", propOrder = { "sirketKodu", "yil", "ay", "donemKapat", "tesisKodu" })
 public class GetMesaiPDKS {
 
 	protected String sirketKodu;
 	protected Integer yil;
 	protected Integer ay;
 	protected Boolean donemKapat;
+	protected String tesisKodu;
 
 	/**
 	 * Gets the value of the sirketKodu property.
@@ -119,6 +121,14 @@ public class GetMesaiPDKS {
 	 */
 	public void setDonemKapat(Boolean value) {
 		this.donemKapat = value;
+	}
+
+	public String getTesisKodu() {
+		return tesisKodu;
+	}
+
+	public void setTesisKodu(String tesisKodu) {
+		this.tesisKodu = tesisKodu;
 	}
 
 }
