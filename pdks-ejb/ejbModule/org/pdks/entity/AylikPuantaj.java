@@ -1024,7 +1024,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 				if (hesaplananSure > 0)
 					odenenSure = hesaplananSure;
 				else if (hesaplananSure < 0)
-					eksiBakiyeSuresi = -hesaplananSure;
+					eksiBakiyeSuresi = hesaplananSure;
 				devredenSure = 0;
 			}
 			personelDenklestirme.setOdenenSure(odenenSure);
