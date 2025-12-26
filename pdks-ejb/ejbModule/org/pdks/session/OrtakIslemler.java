@@ -5276,6 +5276,7 @@ public class OrtakIslemler implements Serializable {
 					Personel personel = loginUser != null ? loginUser.getPdksPersonel() : new Personel();
 
 					boolean departmanYonetici = ikRol == false && loginUser.isDepartmentAdmin() && getParameterKey("tesisYetki").equals("1");
+					departmanYonetici = false;
 					Long direktorId = null;
 					if ((loginUser.isDirektorSuperVisor() || departmanYonetici) && personel.getEkSaha1() != null)
 						direktorId = personel.getEkSaha1().getId();

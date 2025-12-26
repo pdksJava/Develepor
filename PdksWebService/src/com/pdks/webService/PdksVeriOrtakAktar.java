@@ -1630,8 +1630,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 							MesaiPDKS mesaiPDKS = new MesaiPDKS();
 							mesaiPDKS.setYil(yil);
 							mesaiPDKS.setAy(ay);
-							String personelNo = mesaiPDKS.getPersonelNo();
+							String personelNo = personel.getPdksSicilNo();
 							mesaiPDKS.setPersonelNo(personelNo);
+							if (personel.getPersonelKGS() != null && PdksUtil.hasStringValue(personel.getPersonelKGS().getKimlikNo()))
+								mesaiPDKS.setKimlikNo(personel.getPersonelKGS().getKimlikNo());
 							mesaiPDKS.setMesaiKodu(personelMesai.getErpKodu());
 							mesaiPDKS.setToplamSure(personelMesai.getSure());
 							String sirketERPKodu = personel.getSirket() != null ? personel.getSirket().getErpKodu() : null;
@@ -4038,6 +4040,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 					personelSirket = sirket;
 					personel.setSirket(sirket);
+					personel.setTesis(getTanim((sirketBirlestirme ? null : personelERP.getSirketKodu()), Tanim.TIPI_TESIS, personelERP.getTesisKodu(), personelERP.getTesisAdi(), dataMap, saveList));
 					Tanim tesis = sirket != null && sirket.isTesisDurumu() ? personel.getTesis() : null;
 					if (personel.getId() == null) {
 						boolean fazlaMesaiIzinKullan = false;
@@ -4088,7 +4091,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 					boolean bolumYok = bolum != null && bolum.getKodu().equalsIgnoreCase("yok");
 					Tanim bordroAltAlan = getTanim(null, parentBordroTanimKoduStr, personelERP.getBordroAltAlanKodu(), personelERP.getBordroAltAlanAdi(), dataMap, saveList);
-					personel.setTesis(getTanim((sirketBirlestirme ? null : personelERP.getSirketKodu()), Tanim.TIPI_TESIS, personelERP.getTesisKodu(), personelERP.getTesisAdi(), dataMap, saveList));
 					personel.setGorevTipi(getTanim(null, Tanim.TIPI_GOREV_TIPI, personelERP.getGorevKodu(), personelERP.getGorevi(), dataMap, saveList));
 					personel.setMasrafYeri(getTanim(null, Tanim.TIPI_ERP_MASRAF_YERI, personelERP.getMasrafYeriKodu(), personelERP.getMasrafYeriAdi(), dataMap, saveList));
 					Date dogumTarihi = getTarih(personelERP.getDogumTarihi(), FORMAT_DATE);
