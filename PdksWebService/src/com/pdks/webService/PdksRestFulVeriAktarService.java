@@ -177,9 +177,10 @@ public class PdksRestFulVeriAktarService implements Serializable {
 
 						Tanim tesis = null;
 						if (sirket != null && PdksUtil.hasStringValue(tesisKoduInput)) {
+							fields.clear();
 							sb = new StringBuffer();
 							sb.append("select A.* from " + Tanim.TABLE_NAME + " A " + PdksVeriOrtakAktar.getSelectLOCK());
-							sb.append(" where A." + Tanim.COLUMN_NAME_TIPI + " = :T ");
+							sb.append(" where A." + Tanim.COLUMN_NAME_TIPI + " = :t ");
 							sb.append(" and ( A." + Tanim.COLUMN_NAME_ERP_KODU + " = :k1 or A." + Tanim.COLUMN_NAME_ERP_KODU + " = :k2 )");
 							fields.put("t", Tanim.TIPI_TESIS);
 							fields.put("k1", tesisKoduInput);
@@ -217,28 +218,11 @@ public class PdksRestFulVeriAktarService implements Serializable {
 						LinkedHashMap<String, String> headerMap = new LinkedHashMap<String, String>();
 						List<FazlaMesaiERPDetay> baslikList = new ArrayList<FazlaMesaiERPDetay>();
 						boolean uomDetay = true, rtDetay = true, htDetay = true;
-						for (Iterator iterator = detayList.iterator(); iterator.hasNext();) {
-							FazlaMesaiERPDetay fmd = (FazlaMesaiERPDetay) iterator.next();
-							MethodAlanAPI methodAlanAPI = fmd.getMethodAlanAPI();
-							if (methodAlanAPI == null)
-								iterator.remove();
-							else if (methodAlanAPI.equals(MethodAlanAPI.USER_NAME) || methodAlanAPI.equals(MethodAlanAPI.PASSWORD)) {
-								headerMap.put(fmd.getAlanAdi(), fmd.getAlanDeger());
-								iterator.remove();
-							} else if (fmd.isBaslikAlan() && baslikAlan) {
-								baslikList.add(fmd);
-								iterator.remove();
-							} else {
-								if (methodAlanAPI.equals(MethodAlanAPI.UOM))
-									uomDetay = false;
-								else if (methodAlanAPI.equals(MethodAlanAPI.RT))
-									rtDetay = false;
-								else if (methodAlanAPI.equals(MethodAlanAPI.HT))
-									htDetay = false;
-							}
-
+						for (FazlaMesaiERPDetay fd : detayList) {
+							if (fd.isBaslikAlan())
+								baslikList.add(fd);
 						}
-						baslikAlan = baslikList.isEmpty() == false && PdksUtil.hasStringValue(fazlaMesaiERP.getDetayAlanAdi());
+						baslikAlan = baslikList.isEmpty() == false && PdksUtil.hasStringValue(fazlaMesaiERP.getBaslikAlanAdi()) && PdksUtil.hasStringValue(fazlaMesaiERP.getDetayAlanAdi());
 						Object dataMap = null;
 						List<HashMap<String, Object>> dataList = new ArrayList<HashMap<String, Object>>();
 
@@ -259,9 +243,14 @@ public class PdksRestFulVeriAktarService implements Serializable {
 							dataMap = verilerMap;
 						} else {
 							if (baslikAlan) {
+								LinkedHashMap<String, Object> veriAlanMap = new LinkedHashMap<String, Object>();
 								LinkedHashMap<String, Object> baslikAlanMap = getBaslikHeaderMap(sirketKoduInput, baslikList);
-								if (fazlaMesaiERP.isDetayBaslikIcineYazin())
+								veriAlanMap.put(fazlaMesaiERP.getBaslikAlanAdi(), baslikAlanMap);
+								if (fazlaMesaiERP.isDetayBaslikIcineYazin()) {
 									baslikAlanMap.put(fazlaMesaiERP.getDetayAlanAdi(), dataList);
+								} else
+									veriAlanMap.put(fazlaMesaiERP.getDetayAlanAdi(), dataList);
+								dataMap = veriAlanMap;
 
 							} else
 								dataMap = dataList;
@@ -272,7 +261,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 							fields.clear();
 							sb = new StringBuffer();
 							sb.append("select A.* from " + Tanim.TABLE_NAME + " A " + PdksVeriOrtakAktar.getSelectLOCK());
-							sb.append(" where A." + Tanim.COLUMN_NAME_TIPI + " = :T and A." + Tanim.COLUMN_NAME_DURUM + " = 1");
+							sb.append(" where A." + Tanim.COLUMN_NAME_TIPI + " = :t and A." + Tanim.COLUMN_NAME_DURUM + " = 1");
 							fields.put("t", Tanim.TIPI_ERP_FAZLA_MESAI);
 
 							List<Tanim> fmTanimList = pdksDAO.getNativeSQLList(fields, sb, Tanim.class);
@@ -383,13 +372,13 @@ public class PdksRestFulVeriAktarService implements Serializable {
 											perDataMap.put(fazlaMesaiERP.getHtAlanAdi(), mesaiMap.get(key));
 
 									}
+									if (detayRootVar == false)
+										dataList.add(perMap);
 									perMap = null;
 								}
 							}
 							Gson gson = new Gson();
-
 							sonuc = gson.toJson(dataMap);
-
 							devam = false;
 						}
 
