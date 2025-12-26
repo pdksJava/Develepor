@@ -1917,7 +1917,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						iterator.remove();
 						continue;
 					}
-					if (suaDurum && vardiya.isCalisma() && vardiya.isIzin() == false)
+					if (suaDurum && vardiya.isSuaMi() && vardiya.isIzin() == false)
 						suaSaat += vardiya.getNetCalismaSuresi();
 
 					if (vardiya.isHaftaTatil()) {
