@@ -345,11 +345,11 @@
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Detay Alan Adı</ui:define>
-								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.alanAdi}" size="35" required="true" requiredMessage="Detay Alan Adı giriniz!" />
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.alanAdi}" size="35" required="#{fazlaMesaiERPHome.seciliAlanAdiDisabled}" requiredMessage="Detay Alan Adı giriniz!" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" id="alanTipi">
 								<ui:define name="label">Detay Alan Değeri</ui:define>
-								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.alanDeger}" size="35" required="true"
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.alanDeger}" size="35" required="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.guvenlikAlani}"
 								 disabled="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.guvenlikAlani}"	requiredMessage="Detay Alan Değeri giriniz!" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">

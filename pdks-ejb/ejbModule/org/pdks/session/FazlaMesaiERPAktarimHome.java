@@ -55,6 +55,7 @@ import org.pdks.entity.VardiyaGun;
 import org.pdks.enums.MethodAlanAPI;
 import org.pdks.enums.VeriTipiAPI;
 import org.pdks.erp.action.ERPController;
+import org.pdks.erp.entity.SAPSunucu;
 import org.pdks.security.entity.User;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
@@ -93,7 +94,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 
 	private List<PersonelDenklestirme> personelDenklestirmeList, onaysizPersonelDenklestirmeList, personelDenklestirmeler;
 
-	private Boolean secimDurum = Boolean.FALSE, sureDurum, fazlaMesaiDurum, haftaTatilDurum, maasKesintiGoster, resmiTatilDurum, durumERP, onaylanmayanDurum, personelERP, modelGoster = Boolean.FALSE;
+	private Boolean secimDurum = Boolean.FALSE, sureDurum, sapDurum, fazlaMesaiDurum, haftaTatilDurum, maasKesintiGoster, resmiTatilDurum, durumERP, onaylanmayanDurum, personelERP, modelGoster = Boolean.FALSE;
 
 	private int ay, yil, maxYil, sanalPersonelDurum;
 
@@ -1712,7 +1713,16 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				}
 
 			}
+			sapDurum = false;
 			if (!personelDenklestirmeList.isEmpty()) {
+				List<SAPSunucu> list = pdksEntityController.getSQLTableList(SAPSunucu.TABLE_NAME, SAPSunucu.class, session);
+				for (Iterator iterator2 = list.iterator(); iterator2.hasNext();) {
+					SAPSunucu sapSunucu = (SAPSunucu) iterator2.next();
+					if (sapSunucu.getAktif().booleanValue() == false)
+						iterator2.remove();
+
+				}
+				sapDurum = list.isEmpty() == false;
 				if (!ikSirket)
 					personelDenklestirmeList = (ArrayList<PersonelDenklestirme>) PdksUtil.sortObjectStringAlanList(personelDenklestirmeList, "getKontratliSortKey", null);
 				else
@@ -2192,6 +2202,14 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 
 	public void setDenklestirmeAy(DenklestirmeAy denklestirmeAy) {
 		this.denklestirmeAy = denklestirmeAy;
+	}
+
+	public Boolean getSapDurum() {
+		return sapDurum;
+	}
+
+	public void setSapDurum(Boolean sapDurum) {
+		this.sapDurum = sapDurum;
 	}
 
 }
