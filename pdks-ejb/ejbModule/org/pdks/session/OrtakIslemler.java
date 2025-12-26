@@ -8075,6 +8075,13 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public String getURLJSONData(Boolean logGoster, String path, String method, LinkedHashMap<String, String> headerMap, boolean hataKodu, String contentType) throws Exception {
 		LinkedHashMap<String, Object> jsonMap = new LinkedHashMap<String, Object>();
+		String body = headerMap != null && headerMap.containsKey("body") ? headerMap.get("body") : null;
+		if (body != null) {
+			headerMap.remove("body");
+			if (headerMap.isEmpty())
+				headerMap = null;
+		}
+
 		String pattern = PdksUtil.getDateTimeLongFormat();
 		jsonMap.put("path", path);
 		jsonMap.put("httpMethod", method);
@@ -8117,6 +8124,12 @@ public class OrtakIslemler implements Serializable {
 
 			}
 			connjava.setAllowUserInteraction(true);
+			if (body != null) {
+				DataOutputStream printout = new DataOutputStream(connjava.getOutputStream());
+				printout.writeBytes(body);
+				printout.flush();
+				printout.close();
+			}
 
 			responseCode = ((HttpURLConnection) connjava).getResponseCode();
 
