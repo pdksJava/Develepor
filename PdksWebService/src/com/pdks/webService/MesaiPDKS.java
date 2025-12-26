@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Transient;
 
-public class MesaiPDKS implements Serializable,Cloneable {
+public class MesaiPDKS implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -22,10 +22,16 @@ public class MesaiPDKS implements Serializable,Cloneable {
 	private String tesisKodu;
 
 	private String masrafYeriKodu;
+	
+	private String kimlikNo;
 
 	private String mesaiKodu;
 
 	private Double toplamSure;
+
+	public MesaiPDKS() {
+		super();
+	}
 
 	public int getYil() {
 		return yil;
@@ -90,14 +96,23 @@ public class MesaiPDKS implements Serializable,Cloneable {
 	public void setToplamSure(Double toplamSure) {
 		this.toplamSure = toplamSure;
 	}
+
 	@Transient
 	public Object clone() {
 		try {
-			 
+
 			return super.clone();
 		} catch (CloneNotSupportedException e) {
 			// bu class cloneable oldugu icin buraya girilmemeli...
 			throw new InternalError();
 		}
+	}
+
+	public String getKimlikNo() {
+		return kimlikNo;
+	}
+
+	public void setKimlikNo(String kimlikNo) {
+		this.kimlikNo = kimlikNo;
 	}
 }

@@ -97,6 +97,9 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 		}
 		if (devam) {
 			try {
+				boolean disable = getSeciliAlanAdiDisabled();
+				if (disable)
+					seciliFazlaMesaiERPDetay.setAlanAdi("");
 				if (seciliFazlaMesaiERPDetay.isGuvenlikAlani()) {
 					seciliFazlaMesaiERPDetay.setBaslikAlan(false);
 				} else
@@ -192,7 +195,9 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 		return "";
 	}
 
-	/**yukariLink
+	/**
+	 * yukariLink
+	 * 
 	 * @param detay
 	 * @return
 	 */
@@ -364,6 +369,28 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		fillFazlaMesaiERPList();
+	}
+
+	/**
+	 * @return
+	 */
+	public Boolean getSeciliAlanAdiDisabled() {
+		Boolean disabled = false;
+		if (seciliFazlaMesaiERPDetay != null) {
+			MethodAlanAPI alan = seciliFazlaMesaiERPDetay.getMethodAlanAPI();
+			// boolean alanDolu = PdksUtil.hasStringValue(seciliFazlaMesaiERPDetay.getAlanAdi());
+			if (alan == null)
+				alan = MethodAlanAPI.fromValue(seciliFazlaMesaiERPDetay.getAlanTipi());
+			if (alan != null) {
+				if (alan.equals(MethodAlanAPI.UOM))
+					disabled = PdksUtil.hasStringValue(seciliFazlaMesaiERP.getUomAlanAdi());
+				else if (alan.equals(MethodAlanAPI.RT))
+					disabled = PdksUtil.hasStringValue(seciliFazlaMesaiERP.getRtAlanAdi());
+				else if (alan.equals(MethodAlanAPI.HT))
+					disabled = PdksUtil.hasStringValue(seciliFazlaMesaiERP.getHtAlanAdi());
+			}
+		}
+		return disabled;
 	}
 
 	public Session getSession() {

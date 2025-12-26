@@ -97,11 +97,11 @@
 							<a4j:commandButton status="ajaxStatus" action="#{fazlaMesaiERPAktarimHome.fillPersonelDenklestirmeList}" value="Fazla Mesai Getir"
 								reRender="denklestirmeDonemiTable" />
 							<a4j:commandButton status="ajaxStatus"
-								rendered="#{false and fazlaMesaiERPAktarimHome.instance.durum and fazlaMesaiERPAktarimHome.sirket.erpDurum and authenticatedUser.admin}"
+								rendered="#{fazlaMesaiERPAktarimHome.sapDurum and fazlaMesaiERPAktarimHome.sirket.erpDurum and authenticatedUser.admin}"
 								value="Fazla Mesai Aktar" oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" />
 
 							<a4j:commandButton status="ajaxStatus" action="#{fazlaMesaiERPAktarimHome.fazlaMesaiERPAktar}"
-								rendered="#{fazlaMesaiERPAktarimHome.sirket.erpDurum and  fazlaMesaiERPAktarimHome.fazlaMesaiERP!=null}"
+								rendered="#{fazlaMesaiERPAktarimHome.sirket.erpDurum and fazlaMesaiERPAktarimHome.fazlaMesaiERP.serverURL.startsWith('http')}"
 								value="Fazla Mesai #{fazlaMesaiERPAktarimHome.fazlaMesaiERP.sirketAdi} Aktar" />
 
 							<ui:fragment rendered="#{fazlaMesaiERPAktarimHome.onaylanmayanDurum != null}">
@@ -211,7 +211,7 @@
 									<f:facet name="header">
 										<h:outputText value="Fazla Mesailer" />
 									</f:facet>
-									<rich:column rendered="#{fazlaMesaiERPAktarimHome.durumERP or fazlaMesaiERPAktarimHome.instance.durum}">
+									<rich:column rendered="#{fazlaMesaiERPAktarimHome.sapDurum or fazlaMesaiERPAktarimHome.fazlaMesaiERP.serverURL.startsWith('http')}">
 										<f:facet name="header">
 											<h:selectBooleanCheckbox value="#{fazlaMesaiERPAktarimHome.secimDurum}">
 												<a4j:support event="onclick" status="ajaxStatus" action="#{fazlaMesaiERPAktarimHome.islemSec()}" reRender="hareketTables" />

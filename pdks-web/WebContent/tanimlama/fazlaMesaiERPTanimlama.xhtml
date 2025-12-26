@@ -263,12 +263,6 @@
 									</f:facet>
 									<h:outputText value="#{fazlaMesaiERPDetay.id}" />
 								</rich:column>
-								<rich:column style="text-align:center">
-									<f:facet name="header">
-										<h:outputText value="Sıra" />
-									</f:facet>
-									<h:outputText value="#{fazlaMesaiERPDetay.sira}" />
-								</rich:column>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="Alan Tipi" />
@@ -331,31 +325,31 @@
 					</a4j:outputPanel>
 					<a4j:outputPanel id="fazlaMesaiERPDetayBilgi">
 						<h:panelGrid columns="2" rendered="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay!=null}">
-							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Sıra</ui:define>
-								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.sira}" disabled="true" />
-							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" id="methodAlan">
 								<ui:define name="label">Alan Tipi</ui:define>
 								<h:selectOneMenu value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.alanTipi}" required="true" requiredMessage="Alan tipi seçiniz">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{fazlaMesaiERPHome.methodAlanList}" />
-									<a4j:support event="onchange" ajaxSingle="true" reRender="alanTipi" />
+									<a4j:support event="onchange" ajaxSingle="true" reRender="fazlaMesaiERPDetayBilgi" />
 								</h:selectOneMenu>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Detay Alan Adı</ui:define>
-								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.alanAdi}" size="35" required="true" requiredMessage="Detay Alan Adı giriniz!" />
+								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.alanAdi}" size="35" disabled="#{fazlaMesaiERPHome.seciliAlanAdiDisabled}"
+									required="#{fazlaMesaiERPHome.seciliAlanAdiDisabled==false}" requiredMessage="Detay Alan Adı giriniz!" />
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" id="alanTipi">
-								<ui:define name="label">Detay Alan Değeri</ui:define>
-								<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.alanDeger}" size="35" required="true"
-								 disabled="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.guvenlikAlani}"	requiredMessage="Detay Alan Değeri giriniz!" />
-							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">Başlık Alan Durum</ui:define>
-								<h:selectBooleanCheckbox value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.baslikAlan}" />
-							</s:decorate>
+							<c:if test="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.guvenlikAlani==false}">
+								<s:decorate template="/layout/edit.xhtml" id="alanTipi">
+									<ui:define name="label">Detay Alan Değeri</ui:define>
+									<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.alanDeger}" size="35"
+										required="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.guvenlikAlani}"
+										disabled="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.guvenlikAlani==false}" requiredMessage="Detay Alan Değeri giriniz!" />
+								</s:decorate>
+								<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaMesaiERPHome.seciliAlanAdiDisabled==false}">
+									<ui:define name="label">Başlık Alan Durum</ui:define>
+									<h:selectBooleanCheckbox value="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.baslikAlan}" />
+								</s:decorate>
+							</c:if>
 						</h:panelGrid>
 						<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{fazlaMesaiERPHome.detayKaydet()}" reRender="fazlaMesaiERPDetayTable"
 							oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('fazlaMesaiERPDetayPanel')}.hide();" />
