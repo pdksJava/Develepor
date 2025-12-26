@@ -90,9 +90,20 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getMesaiPDKS(@QueryParam("sirketKodu") String sirketKodu, @QueryParam("yil") Integer yil, @QueryParam("ay") Integer ay, @QueryParam("tesisKodu") String tesisKodu) throws Exception {
 		Response response = null;
+		String data = getBodyString(request);
+		List<String> perNoList = null;
+		if (data != null) {
+			try {
+				LinkedTreeMap<String, Object> jsonMap = gson.fromJson(data, LinkedTreeMap.class);
+				perNoList = jsonMap.containsKey("personelNo") ? (List<String>) jsonMap.get("personelNo") : null;
+
+			} catch (Exception e) {
+
+			}
+		}
 		try {
 			if (yil != null && ay != null)
-				response = getFazlaMesaiJSON(yil, ay, sirketKodu, tesisKodu);
+				response = getFazlaMesaiJSON(yil, ay, sirketKodu, tesisKodu, perNoList);
 		} catch (Exception e) {
 		}
 		return response;
@@ -108,10 +119,13 @@ public class PdksRestFulVeriAktarService implements Serializable {
 		if (data != null) {
 			try {
 				LinkedTreeMap<String, Object> jsonMap = gson.fromJson(data, LinkedTreeMap.class);
-				String sirketKodu = (String) jsonMap.get("sirketKodu"), tesisKodu = (String) jsonMap.get("tesisKodu");
 				Integer yil = ((Double) jsonMap.get("yil")).intValue(), ay = ((Double) jsonMap.get("ay")).intValue();
-				if (yil != null && ay != null)
-					response = getFazlaMesaiJSON(yil, ay, sirketKodu, tesisKodu);
+				if (yil != null && ay != null) {
+					List<String> perNoList = jsonMap.containsKey("personelNo") ? (List<String>) jsonMap.get("personelNo") : null;
+					String sirketKodu = (String) jsonMap.get("sirketKodu"), tesisKodu = (String) jsonMap.get("tesisKodu");
+					response = getFazlaMesaiJSON(yil, ay, sirketKodu, tesisKodu, perNoList);
+
+				}
 			} catch (Exception e) {
 
 			}
@@ -125,9 +139,10 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	 * @param ay
 	 * @param sirketKoduInput
 	 * @param tesisKoduInput
+	 * @param perNoList
 	 * @return
 	 */
-	private Response getFazlaMesaiJSON(Integer yil, Integer ay, String sirketKoduInput, String tesisKoduInput) {
+	private Response getFazlaMesaiJSON(Integer yil, Integer ay, String sirketKoduInput, String tesisKoduInput, List<String> perNoList) {
 
 		Response response;
 		String sonuc = "";
@@ -200,6 +215,8 @@ public class PdksRestFulVeriAktarService implements Serializable {
 						List<PersonelMesai> personelMesaiList = pdksDAO.execSPList(veriMap, PersonelMesai.class);
 						for (PersonelMesai pm : personelMesaiList) {
 							Personel personel = pm.getPersonel();
+							if (perNoList != null && perNoList.contains(personel.getPdksSicilNo()) == false)
+								continue;
 							if (tesis != null && (personel.getTesis() == null || personel.getTesis().getId().equals(tesis.getId())) == false)
 								continue;
 
@@ -387,6 +404,14 @@ public class PdksRestFulVeriAktarService implements Serializable {
 				}
 				if (devam) {
 					List<MesaiPDKS> list = ortakAktar.getMesaiPDKS(sirketKoduInput, yil, ay, false, tesisKoduInput);
+					if (perNoList != null) {
+						for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+							MesaiPDKS mesaiPDKS = (MesaiPDKS) iterator.next();
+							if (perNoList.contains(mesaiPDKS.getPersonelNo()) == false)
+								iterator.remove();
+
+						}
+					}
 					if (sirketVar || tesisVar) {
 						for (MesaiPDKS mesaiPDKS : list) {
 							if (sirketVar)
