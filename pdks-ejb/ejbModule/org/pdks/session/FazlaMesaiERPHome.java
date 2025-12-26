@@ -97,6 +97,9 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 		}
 		if (devam) {
 			try {
+				boolean disable = getSeciliAlanAdiDisabled();
+				if (disable)
+					seciliFazlaMesaiERPDetay.setAlanAdi("");
 				if (seciliFazlaMesaiERPDetay.isGuvenlikAlani()) {
 					seciliFazlaMesaiERPDetay.setBaslikAlan(false);
 				} else
@@ -375,6 +378,7 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 		Boolean disabled = false;
 		if (seciliFazlaMesaiERPDetay != null) {
 			MethodAlanAPI alan = seciliFazlaMesaiERPDetay.getMethodAlanAPI();
+			// boolean alanDolu = PdksUtil.hasStringValue(seciliFazlaMesaiERPDetay.getAlanAdi());
 			if (alan == null)
 				alan = MethodAlanAPI.fromValue(seciliFazlaMesaiERPDetay.getAlanTipi());
 			if (alan != null) {
