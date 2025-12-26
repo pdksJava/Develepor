@@ -101,7 +101,7 @@
 								value="Fazla Mesai Aktar" oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" />
 
 							<a4j:commandButton status="ajaxStatus" action="#{fazlaMesaiERPAktarimHome.fazlaMesaiERPAktar}"
-								rendered="#{fazlaMesaiERPAktarimHome.sirket.erpDurum and  fazlaMesaiERPAktarimHome.fazlaMesaiERP!=null}"
+								rendered="#{fazlaMesaiERPAktarimHome.sirket.erpDurum and fazlaMesaiERPAktarimHome.fazlaMesaiERP.serverURL!=null}"
 								value="Fazla Mesai #{fazlaMesaiERPAktarimHome.fazlaMesaiERP.sirketAdi} Aktar" />
 
 							<ui:fragment rendered="#{fazlaMesaiERPAktarimHome.onaylanmayanDurum != null}">

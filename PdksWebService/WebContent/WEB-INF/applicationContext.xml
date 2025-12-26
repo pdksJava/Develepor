@@ -51,38 +51,41 @@
 				<value>org.pdks.entity.CalismaModeliGun</value>
 				<value>org.pdks.entity.DenklestirmeAy</value>
 				<value>org.pdks.entity.Departman</value>
+				<value>org.pdks.entity.ERPPersonel</value>
+				<value>org.pdks.entity.FazlaMesaiERP</value>
+				<value>org.pdks.entity.FazlaMesaiERPDetay</value>
+				<value>org.pdks.entity.HataliPersonel</value>
 				<value>org.pdks.entity.IzinReferansERP</value>
 				<value>org.pdks.entity.IzinTipi</value>
+				<value>org.pdks.entity.Kapi</value>
+				<value>org.pdks.entity.KapiKGS</value>
+				<value>org.pdks.entity.KapiSirket</value>
 				<value>org.pdks.entity.MailGrubu</value>
 				<value>org.pdks.entity.Parameter</value>
+				<value>org.pdks.entity.PdksAgent</value>
 				<value>org.pdks.entity.PdksPersonelView</value>
-				<value>org.pdks.entity.Kapi</value>
-				<value>org.pdks.entity.KapiSirket</value>
-				<value>org.pdks.entity.KapiKGS</value>
 				<value>org.pdks.entity.Personel</value>
 				<value>org.pdks.entity.PersonelDenklestirme</value>
-				<value>org.pdks.entity.PersonelMesai</value>
+				<value>org.pdks.entity.PersonelDinamikAlan</value>
 				<value>org.pdks.entity.PersonelIzin</value>
 				<value>org.pdks.entity.PersonelIzinDetay</value>
-				<value>org.pdks.entity.ERPPersonel</value>
-				<value>org.pdks.entity.PdksAgent</value>
 				<value>org.pdks.entity.PersonelKGS</value>
+				<value>org.pdks.entity.PersonelMesai</value>
 				<value>org.pdks.entity.PersonelView</value>
-				<value>org.pdks.entity.Sirket</value>
 				<value>org.pdks.entity.ServiceData</value>
+				<value>org.pdks.entity.Sirket</value>
 				<value>org.pdks.entity.Tanim</value>
 				<value>org.pdks.entity.Tatil</value>
 				<value>org.pdks.entity.TatilGunView</value>
 				<value>org.pdks.entity.Vardiya</value>
 				<value>org.pdks.entity.VardiyaGun</value>
 				<value>org.pdks.entity.VardiyaSablonu</value>
-				<value>org.pdks.entity.HataliPersonel</value>
-				<value>org.pdks.entity.PersonelDinamikAlan</value>
+				<value>org.pdks.erp.entity.PersonelERPDB</value>
 				<value>org.pdks.security.entity.Role</value>
 				<value>org.pdks.security.entity.User</value>
 				<value>org.pdks.security.entity.UserDigerOrganizasyon</value>
 				<value>org.pdks.security.entity.UserRoles</value>
-				<value>org.pdks.erp.entity.PersonelERPDB</value>
+
 			</list>
 		</property>
 		<property name="hibernateProperties">
