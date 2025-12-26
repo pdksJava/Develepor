@@ -1302,187 +1302,11 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			if (returnData == null) {
-
-				HashMap<Long, LinkedHashMap<String, Double>> pdMap = new HashMap<Long, LinkedHashMap<String, Double>>();
-				veriMap.clear();
-				veriMap.put("sirketId", sirket != null ? sirket.getId() : 0L);
-				veriMap.put("yil", yil);
-				veriMap.put("ay", ay);
-				if (session != null)
-					veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				try {
-					List<PersonelMesai> personelMesaiList = pdksEntityController.execSPList(veriMap, "SP_GET_FAZLA_MESAI", PersonelMesai.class);
-					for (PersonelMesai pm : personelMesaiList) {
-						Long personelId = pm.getPdksPersonel().getId();
-						if (pm.getErpKodu().equals(MethodAlanAPI.HT.value()) && fazlaMesaiERP.getHtAlanAdi() == null)
-							continue;
-						if (idMap.containsKey(personelId)) {
-							LinkedHashMap<String, Double> mesaiMap = pdMap.containsKey(personelId) ? pdMap.get(personelId) : new LinkedHashMap<String, Double>();
-							if (mesaiMap.isEmpty())
-								pdMap.put(personelId, mesaiMap);
-							mesaiMap.put(pm.getErpKodu(), pm.getSure());
-						}
-
-					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				if (pdMap.isEmpty() == false) {
-					HashMap<String, String> fmTanimMap = new HashMap<String, String>();
-					List<Tanim> fmTanimList = ortakIslemler.getTanimList(Tanim.TIPI_ERP_FAZLA_MESAI, session);
-					for (Tanim tanim : fmTanimList)
-						fmTanimMap.put(tanim.getErpKodu(), tanim.getKodu());
-
-					List<FazlaMesaiERPDetay> detayList = pdksEntityController.getSQLParamByFieldList(FazlaMesaiERPDetay.TABLE_NAME, FazlaMesaiERPDetay.COLUMN_NAME_FAZLA_MESAI_ERP, fazlaMesaiERP.getId(), FazlaMesaiERPDetay.class, session);
-					if (detayList.size() > 1)
-						detayList = PdksUtil.sortListByAlanAdi(detayList, "sira", false);
-					boolean baslikAlan = PdksUtil.hasStringValue(fazlaMesaiERP.getBaslikAlanAdi());
-					headerMap = new LinkedHashMap<String, String>();
-					List<FazlaMesaiERPDetay> baslikList = new ArrayList<FazlaMesaiERPDetay>();
-					boolean uomDetay = true, rtDetay = true, htDetay = true;
-					for (Iterator iterator = detayList.iterator(); iterator.hasNext();) {
-						FazlaMesaiERPDetay fmd = (FazlaMesaiERPDetay) iterator.next();
-						MethodAlanAPI methodAlanAPI = fmd.getMethodAlanAPI();
-						if (methodAlanAPI == null)
-							iterator.remove();
-						else if (methodAlanAPI.equals(MethodAlanAPI.USER_NAME) || methodAlanAPI.equals(MethodAlanAPI.PASSWORD)) {
-							headerMap.put(fmd.getAlanAdi(), fmd.getAlanDeger());
-							iterator.remove();
-						} else if (fmd.isBaslikAlan() && baslikAlan) {
-							baslikList.add(fmd);
-							iterator.remove();
-						} else {
-							if (methodAlanAPI.equals(MethodAlanAPI.UOM))
-								uomDetay = false;
-							else if (methodAlanAPI.equals(MethodAlanAPI.RT))
-								rtDetay = false;
-							else if (methodAlanAPI.equals(MethodAlanAPI.HT))
-								htDetay = false;
-						}
-
-					}
-					baslikAlan = baslikList.isEmpty() == false && PdksUtil.hasStringValue(fazlaMesaiERP.getDetayAlanAdi());
-					Object dataMap = null;
-					List<HashMap<String, Object>> dataList = new ArrayList<HashMap<String, Object>>();
-					String sirketERPKodu = sirket.getErpKodu();
-					if (PdksUtil.hasStringValue(fazlaMesaiERP.getRootAdi())) {
-						LinkedHashMap<String, Object> verilerMap = new LinkedHashMap<String, Object>();
-						if (baslikAlan) {
-							LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-							verilerMap.put(fazlaMesaiERP.getRootAdi(), map);
-							LinkedHashMap<String, Object> baslikAlanMap = getBaslikHeaderMap(sirketERPKodu, baslikList);
-							map.put(fazlaMesaiERP.getBaslikAlanAdi(), baslikAlanMap);
-							if (fazlaMesaiERP.isDetayBaslikIcineYazin())
-								baslikAlanMap.put(fazlaMesaiERP.getDetayAlanAdi(), dataList);
-							else
-								map.put(fazlaMesaiERP.getDetayAlanAdi(), dataList);
-						} else
-							verilerMap.put(fazlaMesaiERP.getRootAdi(), dataList);
-
-						dataMap = verilerMap;
-					} else {
-						if (baslikAlan) {
-							LinkedHashMap<String, Object> baslikAlanMap = getBaslikHeaderMap(sirketERPKodu, baslikList);
-							if (fazlaMesaiERP.isDetayBaslikIcineYazin())
-								baslikAlanMap.put(fazlaMesaiERP.getDetayAlanAdi(), dataList);
-
-						} else
-							dataMap = dataList;
-					}
-
-					for (Long personelId : pdMap.keySet()) {
-						Personel personelERP = idMap.get(personelId);
-						String tesisKodu = "", kimlikNo = personelERP.getPersonelKGS().getKimlikNo();
-						if (personelERP.getTesis() != null) {
-							tesisKodu = personelERP.getTesis().getErpKodu();
-							if (sirketERPKodu != null && tesisKodu != null && tesisKodu.startsWith(sirketERPKodu + "-"))
-								tesisKodu = tesisKodu.substring(tesisKodu.indexOf("-") + 1);
-						}
-						LinkedHashMap<String, Object> perMap = new LinkedHashMap<String, Object>();
-						LinkedHashMap<String, Double> mesaiMap = pdMap.get(personelId);
-						for (FazlaMesaiERPDetay fmd : detayList) {
-							MethodAlanAPI methodAlanAPI = fmd.getMethodAlanAPI();
-							if (methodAlanAPI != null) {
-								String key = fmd.getAlanAdi();
-								if (methodAlanAPI.equals(MethodAlanAPI.PERSONEL))
-									perMap.put(key, personelERP.getPdksSicilNo());
-								else if (methodAlanAPI.equals(MethodAlanAPI.SIRKET))
-									perMap.put(key, sirketERPKodu);
-								else if (methodAlanAPI.equals(MethodAlanAPI.TESIS))
-									perMap.put(key, tesisKodu);
-								else if (methodAlanAPI.equals(MethodAlanAPI.KIMLIK))
-									perMap.put(key, kimlikNo != null ? kimlikNo : "");
-								else {
-									Double tutar = null;
-									if (fmTanimMap.containsKey(fmd.getAlanTipi())) {
-										MethodAlanAPI mesaiAlanAPI = MethodAlanAPI.fromValue(fmTanimMap.get(fmd.getAlanTipi()));
-										if (mesaiAlanAPI != null) {
-											tutar = mesaiMap.containsKey(mesaiAlanAPI.value()) ? mesaiMap.get(mesaiAlanAPI.value()) : 0.0d;
-											mesaiMap.remove(mesaiAlanAPI.value());
-											if (mesaiAlanAPI.equals(MethodAlanAPI.UOM))
-												key = fazlaMesaiERP.getUomAlanAdi();
-											else if (mesaiAlanAPI.equals(MethodAlanAPI.RT))
-												key = fazlaMesaiERP.getRtAlanAdi();
-											else if (fazlaMesaiERP.getHtAlanAdi() != null && mesaiAlanAPI.equals(MethodAlanAPI.HT))
-												key = fazlaMesaiERP.getHtAlanAdi();
-											perMap.put(key, tutar);
-										}
-									}
-								}
-
-							}
-
-						}
-						if (fazlaMesaiERP.isOdenenSaatKolonYaz()) {
-							if (mesaiMap.isEmpty() == false) {
-								if (uomDetay)
-									perMap.put(fazlaMesaiERP.getUomAlanAdi(), mesaiMap.containsKey(MethodAlanAPI.UOM.value()) ? mesaiMap.get(MethodAlanAPI.UOM.value()) : 0.0d);
-								if (htDetay && fazlaMesaiERP.getHtAlanAdi() != null)
-									perMap.put(fazlaMesaiERP.getHtAlanAdi(), mesaiMap.containsKey(MethodAlanAPI.HT.value()) ? mesaiMap.get(MethodAlanAPI.HT.value()) : 0.0d);
-								if (rtDetay)
-									perMap.put(fazlaMesaiERP.getRtAlanAdi(), mesaiMap.containsKey(MethodAlanAPI.UOM.value()) ? mesaiMap.get(MethodAlanAPI.UOM.value()) : 0.0d);
-							}
-							dataList.add(perMap);
-						} else {
-							boolean detayRootVar = PdksUtil.hasStringValue(fazlaMesaiERP.getDetayKokAdi());
-							LinkedHashMap<String, Object> perDataMap = null;
-							if (detayRootVar) {
-								perDataMap = new LinkedHashMap<String, Object>();
-								LinkedHashMap<String, Object> veriDataMap = new LinkedHashMap<String, Object>();
-								veriDataMap.putAll(perMap);
-								veriDataMap.put(fazlaMesaiERP.getDetayKokAdi(), perDataMap);
-								dataList.add(veriDataMap);
-							}
-
-							for (String key : mesaiMap.keySet()) {
-								if (detayRootVar == false) {
-									perDataMap = new LinkedHashMap<String, Object>();
-									perDataMap.putAll(perMap);
-									dataList.add(perDataMap);
-								}
-								if (key.equals(MethodAlanAPI.UOM.value()))
-									perDataMap.put(fazlaMesaiERP.getUomAlanAdi(), mesaiMap.get(key));
-								else if (key.equals(MethodAlanAPI.RT.value()))
-									perDataMap.put(fazlaMesaiERP.getRtAlanAdi(), mesaiMap.get(key));
-								else if (key.equals(MethodAlanAPI.HT.value()))
-									perDataMap.put(fazlaMesaiERP.getHtAlanAdi(), mesaiMap.get(key));
-
-							}
-							perMap = null;
-						}
-					}
-
-					veriData = gson.toJson(dataMap);
-					pdMap = null;
-				}
-			} else
-				veriData = returnData;
-			if (veriData != null) {
+			 
+			if (returnData != null) {
  				if (fazlaMesaiERP.getVeriTipiAPI().equals(VeriTipiAPI.XML)) {
 					try {
-						JSONObject jsonObject = new JSONObject(veriData);
+						JSONObject jsonObject = new JSONObject(returnData);
 						String xml = XML.toString(jsonObject);
 						contentType = MediaType.APPLICATION_XML;
 						veriData = xml;
@@ -1548,7 +1372,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 	 * @param baslikList
 	 * @return
 	 */
-	private LinkedHashMap<String, Object> getBaslikHeaderMap(String sirketERPKodu, List<FazlaMesaiERPDetay> baslikList) {
+	protected LinkedHashMap<String, Object> getBaslikHeaderMap(String sirketERPKodu, List<FazlaMesaiERPDetay> baslikList) {
 		LinkedHashMap<String, Object> baslikAlanMap = new LinkedHashMap();
 		for (FazlaMesaiERPDetay fmd : baslikList) {
 			MethodAlanAPI methodAlanAPI = fmd.getMethodAlanAPI();
