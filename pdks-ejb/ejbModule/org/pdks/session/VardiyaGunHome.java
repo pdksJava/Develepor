@@ -1653,7 +1653,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 		}
 		VardiyaGun oncekiVardiyaGun = null;
-		StringBuilder izinSonrasiOffDurum = new StringBuilder(), haftaTatilSb = new StringBuilder(), cakisanVardiyaSb = new StringBuilder();
+		StringBuilder izinSonrasiOffDurum = new StringBuilder(), suaCalismaSb = new StringBuilder(), haftaTatilSb = new StringBuilder(), cakisanVardiyaSb = new StringBuilder();
 		Vardiya vardiyaGunOnceki = null;
 		for (Iterator<String> iterator = vardiyaGunMap.keySet().iterator(); iterator.hasNext();) {
 			String key = iterator.next();
@@ -1804,6 +1804,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			vardiyaGun.setHataliDurum(hataliDurum);
 			oncekiVardiyaGun = vardiyaGun;
 		}
+
 		if (cakisanVardiyaSb.length() > 0) {
 			sb.append(cakisanVardiyaSb.toString() + " çakışmaktadır!");
 			yaz = false;
@@ -1817,6 +1818,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			sb.append(izinSonrasiOffDurum.toString() + " olamaz!");
 		izinSonrasiOffDurum = null;
 		if (yaz) {
+
 			List<VardiyaHafta> vardiyaHaftaList = plan.getVardiyaHaftaList();
 			if (vardiyaHaftaList == null) {
 				vardiyaHaftaList = new ArrayList<VardiyaHafta>();
@@ -1826,7 +1828,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 			}
 			List<VardiyaGun> haftaTatilAyList = new ArrayList<VardiyaGun>(), haftaTatilSonrakiAyList = new ArrayList<VardiyaGun>(), haftaTatilOncekiAyList = new ArrayList<VardiyaGun>();
-
+			boolean suaDurum = personelAylikPuantaj.getPersonelDenklestirme().isSuaDurumu();
 			for (int i = 1; i <= vardiyaHaftaList.size(); i++) {
 				VardiyaHafta vardiyaHafta = vardiyaHaftaList.get(i - 1);
 				if (iseBaslamaTarihi == null && vardiyaHafta.getPersonel() != null)
@@ -1893,6 +1895,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					Double dakikaFarki = PdksUtil.getDakikaFarki(iseBaslamaTarihi, vardiyaHafta.getBasTarih());
 					gunSayisi = new Double(dakikaFarki.doubleValue() / 1440d).intValue();
 				}
+				double suaSaat = 0.0d;
 				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 					Vardiya vardiya = (Vardiya) iterator.next();
 					Date vardiyaDate = vardiya.getVardiyaTarih();
@@ -1914,6 +1917,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						iterator.remove();
 						continue;
 					}
+					if (suaDurum && vardiya.isCalisma() && vardiya.isIzin() == false)
+						suaSaat += vardiya.getNetCalismaSuresi();
 
 					if (vardiya.isHaftaTatil()) {
 						if (parcaliBasHafta) {
@@ -1960,6 +1965,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					haftaTatilSb.append(haftaStr + " tatil tanımlanmamıştır! ");
 					yaz = Boolean.FALSE;
 				}
+				if (suaSaat > 35.0d) {
+					String str = haftaStr + "  [ " + authenticatedUser.sayiFormatliGoster(suaSaat) + " ] ";
+					suaCalismaSb.append(str);
+
+				}
 				boolean partTime = Boolean.FALSE;
 				if (plan.getPersonel() != null && plan.getPersonel().getPartTime() != null)
 					partTime = plan.getPersonel().getPartTime();
@@ -1989,6 +1999,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 
 		}
+
 		boolean flush = false;
 		if (haftaTatilSb.length() == 0) {
 			if (!yaz || (ikMesaj && sb.length() > 0)) {
@@ -2024,7 +2035,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			yaz = false;
 			PdksUtil.addMessageAvailableWarn(mesaj + sb.toString());
 		}
-
+		if (yaz && suaCalismaSb.length() > 0)
+			PdksUtil.addMessageAvailableWarn(suaCalismaSb.toString()+" haftalık çalışma saati 35 geçmiştir!");
 		vardiyaGunMap = null;
 		sb = null;
 		sbCalismaModeliUyumsuz = null;
@@ -10538,8 +10550,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (aramaSecenekleri.getSirket() != null || aramaSecenekleri.getSirketId() != null) {
 			sirket = aramaSecenekleri.getSirket();
 			if (aramaSecenekleri.getSirket() == null) {
- 				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
- 				aramaSecenekleri.setSirket(sirket);
+				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
+				aramaSecenekleri.setSirket(sirket);
 			}
 			if (sirket != null)
 				departman = sirket.getDepartman();
