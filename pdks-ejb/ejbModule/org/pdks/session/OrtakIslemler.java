@@ -9738,16 +9738,20 @@ public class OrtakIslemler implements Serializable {
 						sb.append("select distinct V.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 						sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
 						sb.append(" inner join " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + Vardiya.COLUMN_NAME_SUA + " = 1 and V." + Vardiya.COLUMN_NAME_DURUM + " = 1");
-						sb.append(" and  colaesce( V." + Vardiya.COLUMN_NAME_DEPARTMAN + ",P." + Sirket.COLUMN_NAME_DEPARTMAN + ") = S." + Sirket.COLUMN_NAME_DEPARTMAN);
-						sb.append(" and  colaesce( V." + Vardiya.COLUMN_NAME_SIRKET + ",P." + Personel.COLUMN_NAME_SIRKET + ") = P." + Personel.COLUMN_NAME_SIRKET);
-						sb.append(" and (S." + Sirket.COLUMN_NAME_TESIS_DURUM + " = 0 or colaesce( V." + Vardiya.COLUMN_NAME_TESIS + ",P." + Personel.COLUMN_NAME_TESIS + ",0) = colaesce(P." + Personel.COLUMN_NAME_TESIS + ",0) )");
+						sb.append(" and  coalesce( V." + Vardiya.COLUMN_NAME_DEPARTMAN + ", S." + Sirket.COLUMN_NAME_DEPARTMAN + ") = S." + Sirket.COLUMN_NAME_DEPARTMAN);
+						sb.append(" and  coalesce( V." + Vardiya.COLUMN_NAME_SIRKET + ", P." + Personel.COLUMN_NAME_SIRKET + ") = P." + Personel.COLUMN_NAME_SIRKET);
+						sb.append(" and (S." + Sirket.COLUMN_NAME_TESIS_DURUM + " = 0 or coalesce( V." + Vardiya.COLUMN_NAME_TESIS + ",P." + Personel.COLUMN_NAME_TESIS + ") = P." + Personel.COLUMN_NAME_TESIS + " )");
 						sb.append(" where P." + Personel.COLUMN_NAME_ID + " :d ");
 						fields.put("d", suaPerIdList);
 						if (session != null)
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 						suaVardiyaList = pdksEntityController.getObjectBySQLList(sb, fields, Vardiya.class);
-						if (suaVardiyaList.isEmpty() == false)
+						if (suaVardiyaList.isEmpty() == false) {
+							if (suaVardiyaList.size() > 1)
+								suaVardiyaList = PdksUtil.sortListByAlanAdi(suaVardiyaList, "netCalismaSuresi", true);
 							suaListe = new Liste(suaPerIdList, suaVardiyaList);
+						}
+
 					}
 
 					if (!vardiyaGunModelGuncelleList.isEmpty())
@@ -10184,7 +10188,7 @@ public class OrtakIslemler implements Serializable {
 		fields.put(fieldName, idList);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<CalismaModeliVardiya> calismaModeliVardiyaList = getParamList(false, idList, fieldName, fields, CalismaModeliVardiya.class, session);
+		List<CalismaModeliVardiya> calismaModeliVardiyaList = pdksEntityController.getSQLParamByFieldList(CalismaModeliVardiya.TABLE_NAME, CalismaModeliVardiya.COLUMN_NAME_CALISMA_MODELI, idList, CalismaModeliVardiya.class, session);
 		HashMap<Long, List<Vardiya>> calismaModeliVardiyaMap = new HashMap<Long, List<Vardiya>>();
 		for (CalismaModeliVardiya calismaModeliVardiya : calismaModeliVardiyaList) {
 			if (calismaModeliVardiya.getVardiya().getDurum()) {
@@ -10207,6 +10211,8 @@ public class OrtakIslemler implements Serializable {
 		Date bugun = new Date();
 		List<String> hareketIdList = new ArrayList<String>();
 		for (Long perId : personelVardiyaBulMap.keySet()) {
+			if (suaPerIdList.contains(perId))
+				continue;
 			PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici = personelDenklestirmeMap.get(perId);
 			Personel personel = personelDenklestirmeTasiyici.getPersonel();
 			Long personelKGSId = personel.getPersonelKGS().getId();
@@ -10246,16 +10252,19 @@ public class OrtakIslemler implements Serializable {
 					vardiyaPerList.addAll(calismaModeliVardiyaMap.get(cmId));
 
 				if (!vardiyaPerList.isEmpty()) {
+					Date sonGun = PdksUtil.getDate(bugun);
 					for (Iterator iterator = varList.iterator(); iterator.hasNext();) {
 						VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 						vardiyaGun.setGuncellendi(Boolean.FALSE);
-						if (vardiyaGun.isIzinli())
+						if (vardiyaGun.isIzinli() || vardiyaGun.getVardiyaDate().after(sonGun))
 							continue;
 						vardiyalarMap.put(vardiyaGun.getVardiyaKeyStr(), vardiyaGun);
 						if (vardiyaGun.getVersion() >= 0)
 							continue;
-						Tatil tatil = vardiyaGun.getTatil();
 						String vardiyaKeyStr = vardiyaGun.getVardiyaKeyStr();
+						if (vardiyaKeyStr.endsWith("1218"))
+							logger.debug("");
+						Tatil tatil = vardiyaGun.getTatil();
 						Vardiya islemVardiyaGun = vardiyaGun.getIslemVardiya();
 						if (vardiyaGun.getVardiya().isCalisma() == false) {
 							vardiyaGun.setVersion(0);
@@ -10316,9 +10325,20 @@ public class OrtakIslemler implements Serializable {
 								}
 							}
 							if (!listeler.isEmpty()) {
+								VardiyaGun vg = null;
 								if (listeler.size() > 1)
 									listeler = PdksUtil.sortListByAlanAdi(listeler, "value", true);
-								VardiyaGun vg = (VardiyaGun) listeler.get(0).getId();
+								vg = (VardiyaGun) listeler.get(0).getId();
+//								if (suaPerIdList.contains(perId) && listeler.size() > 1) {
+//									for (Liste liste : listeler) {
+//										VardiyaGun vGun = (VardiyaGun) liste.getId();
+//										if (vGun.getVardiya().isSuaMi()) {
+//											vg = vGun;
+//											break;
+//										}
+//									}
+//								}
+								vardiyalarMap.put(vardiyaGun.getVardiyaKeyStr(), vardiyaGun);
 								for (HareketKGS hareket : vg.getHareketler()) {
 									hareketIdList.add(hareket.getId());
 								}
