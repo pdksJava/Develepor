@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
 import org.pdks.dao.PdksDAO;
@@ -34,7 +35,6 @@ import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.enums.MethodAPI;
 import org.pdks.enums.MethodAlanAPI;
-import org.pdks.enums.VeriTipiAPI;
 import org.pdks.genel.model.Constants;
 import org.pdks.genel.model.PdksUtil;
 import org.pdks.mail.model.MailObject;
@@ -90,26 +90,6 @@ public class PdksRestFulVeriAktarService implements Serializable {
 		return baslikAlanMap;
 	}
 
-	@GET
-	@Path("/getJSONMesaiPDKS")
-	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
-	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response getJSONMesaiPDKS(@QueryParam("sirketKodu") String sirketKodu, @QueryParam("yil") Integer yil, @QueryParam("ay") Integer ay, @QueryParam("tesisKodu") String tesisKodu) throws Exception {
-		String mediaType = MediaType.APPLICATION_JSON;
-		Response response = getMesaiPDKS(sirketKodu, yil, ay, tesisKodu, mediaType);
-		return response;
-	}
-
-	@GET
-	@Path("/getXMLMesaiPDKS")
-	@Produces({ MediaType.APPLICATION_XML + ";charset=utf-8" })
-	@Consumes(MediaType.APPLICATION_XML + ";charset=utf-8")
-	public Response getXMLMesaiPDKS(@QueryParam("sirketKodu") String sirketKodu, @QueryParam("yil") Integer yil, @QueryParam("ay") Integer ay, @QueryParam("tesisKodu") String tesisKodu) throws Exception {
-		String mediaType = MediaType.APPLICATION_JSON;
-		Response response = getMesaiPDKS(sirketKodu, yil, ay, tesisKodu, mediaType);
-		return response;
-	}
-
 	/**
 	 * @param sirketKodu
 	 * @param yil
@@ -132,10 +112,48 @@ public class PdksRestFulVeriAktarService implements Serializable {
 		return response;
 	}
 
+	@GET
+	@Path("/getJSONMesaiPDKS")
+	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
+	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getJSONMesaiPDKS(@QueryParam("sirketKodu") String sirketKodu, @QueryParam("yil") Integer yil, @QueryParam("ay") Integer ay, @QueryParam("tesisKodu") String tesisKodu) throws Exception {
+		String mediaType = MediaType.APPLICATION_JSON;
+		Response response = getMesaiPDKS(sirketKodu, yil, ay, tesisKodu, mediaType);
+		return response;
+	}
+
+	@GET
+	@Path("/getXMLMesaiPDKS")
+	@Produces({ MediaType.APPLICATION_XML + ";charset=utf-8" })
+	@Consumes(MediaType.APPLICATION_XML + ";charset=utf-8")
+	public Response getXMLMesaiPDKS(@QueryParam("sirketKodu") String sirketKodu, @QueryParam("yil") Integer yil, @QueryParam("ay") Integer ay, @QueryParam("tesisKodu") String tesisKodu) throws Exception {
+		String mediaType = MediaType.APPLICATION_XML;
+		Response response = getMesaiPDKS(sirketKodu, yil, ay, tesisKodu, mediaType);
+		return response;
+	}
+
 	@POST
 	@Path("/postJSONMesaiPDKS")
 	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	/**
+
+	 {
+	 "yil": 2025,
+	 "ay": 10,
+	 "sirketKodu": "1",
+	 "tesisKodu": "1-100001",
+	 "personelNo": [
+	 "SU00001",
+	 "SU00002",
+	 "SU00003",
+	 "SU00004",
+	 "SU00006"
+	 ]
+	 }
+
+
+	 */
 	public Response postJSONMesaiPDKS() throws Exception {
 		String mediaType = MediaType.APPLICATION_JSON;
 		Response response = postMesaiPDKS(mediaType);
@@ -143,10 +161,22 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	}
 
 	@POST
-	@Path("/postJXMLMesaiPDKS")
+	@Path("/postXMLMesaiPDKS")
 	@Produces({ MediaType.APPLICATION_XML + ";charset=utf-8" })
 	@Consumes(MediaType.APPLICATION_XML + ";charset=utf-8")
-	public Response postJXMLMesaiPDKS() throws Exception {
+	/**	
+	
+	 <sirketKodu>1</sirketKodu>
+	 <ay>10</ay>
+	 <yil>2025</yil>
+	 <personelNo>SU00001</personelNo>
+	 <personelNo>SU00002</personelNo>
+	 <personelNo>SU00003</personelNo>
+	 <personelNo>SU00004</personelNo>
+	 <personelNo>SU00006</personelNo>
+	 <tesisKodu>1-100001</tesisKodu>
+	 **/
+	public Response postXMLMesaiPDKS() throws Exception {
 		String mediaType = MediaType.APPLICATION_XML;
 		Response response = postMesaiPDKS(mediaType);
 		return response;
@@ -175,19 +205,29 @@ public class PdksRestFulVeriAktarService implements Serializable {
 
 				} else {
 					JSONObject jsonMap = XML.toJSONObject(data);
-					yil = ((Double) jsonMap.get("yil")).intValue();
-					ay = ((Double) jsonMap.get("ay")).intValue();
-					sirketKodu = (String) jsonMap.get("sirketKodu");
-					tesisKodu = (String) jsonMap.get("tesisKodu");
-					perNoList = (List<String>) jsonMap.get("personelNo");
-				}
+					yil = ((Long) jsonMap.get("yil")).intValue();
+					ay = ((Long) jsonMap.get("ay")).intValue();
+					if (jsonMap.isNull("sirketKodu") == false)
+						sirketKodu = "" + jsonMap.get("sirketKodu");
+					if (jsonMap.isNull("tesisKodu") == false)
+						tesisKodu = "" + jsonMap.get("tesisKodu");
+					if (jsonMap.isNull("personelNo") == false) {
+						perNoList = new ArrayList<String>();
+						JSONArray array = (JSONArray) jsonMap.get("personelNo");
+						for (int i = 0; i < array.length(); i++) {
+							String personelNo = array.getString(i);
+ 							perNoList.add(personelNo);
+						}
+					}
+ 				}
 
 				if (yil != null && ay != null) {
 					response = getFazlaMesaiVeri(mediaType, MethodAPI.POST.value(), yil, ay, sirketKodu, tesisKodu, perNoList);
 
 				}
 			} catch (Exception e) {
-
+				logger.error(e);
+				e.getMessage();
 			}
 
 		}
@@ -491,14 +531,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 			logger.error(e);
 			e.printStackTrace();
 		}
-
-		if (fazlaMesaiERP != null) {
-			if (PdksUtil.hasStringValue(fazlaMesaiERP.getServerURL())) {
-				if (fazlaMesaiERP.getVeriTipiAPI().equals(VeriTipiAPI.XML))
-					mediaType = MediaType.APPLICATION_XML;
-			}
-		}
-		if (mediaType != null && mediaType.equals(MediaType.APPLICATION_XML)) {
+ 		if (mediaType != null && mediaType.equals(MediaType.APPLICATION_XML)) {
 			try {
 				JSONObject jsonObject = new JSONObject(sonuc);
 				String xml = XML.toString(jsonObject);
