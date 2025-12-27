@@ -721,10 +721,17 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				erpMesaiList.add(denklestirme.getId());
 		}
 		if (!erpMesaiList.isEmpty()) {
-
+			PdksSoapVeriAktar service = null;
+			GetFazlaMesaiListResponse.Return rtn = null;
 			try {
-				PdksSoapVeriAktar service = ortakIslemler.getPdksSoapVeriAktar();
-				GetFazlaMesaiListResponse.Return rtn = service != null ? service.getFazlaMesaiList(erpMesaiList) : null;
+				try {
+					service = ortakIslemler.getPdksSoapVeriAktar(true);
+					rtn = service != null ? service.getFazlaMesaiList(erpMesaiList) : null;
+
+				} catch (Exception e) {
+					service = ortakIslemler.getPdksSoapVeriAktar(false);
+					rtn = service != null ? service.getFazlaMesaiList(erpMesaiList) : null;
+				}
 				if (rtn != null && rtn.getEntry().size() == 3) {
 					TreeMap<String, Object> map = new TreeMap<String, Object>();
 					List<GetFazlaMesaiListResponse.Return.Entry> list = rtn.getEntry();
@@ -1292,7 +1299,8 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 			Gson gson = new Gson();
 
 			String veriData = gson.toJson(veriMap);
-			String servisUrl = ortakIslemler.getParameterKey("pdksWebService") + "/rest/servicesPDKS/postMesaiPDKS";
+			String servisUrl = ortakIslemler.getParameterKey("pdksWebService") + "/rest/servicesPDKS/";
+			servisUrl += (fazlaMesaiERP == null || fazlaMesaiERP.getVeriTipiAPI().equals(VeriTipiAPI.JSON) ? "postJSONMesaiPDKS" : "postXMLMesaiPDKS");
 			LinkedHashMap<String, String> headerMap = new LinkedHashMap<String, String>();
 			headerMap.put("body", veriData);
 			String returnData = null, contentType = MediaType.APPLICATION_JSON;
@@ -1302,9 +1310,9 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			 
+
 			if (returnData != null) {
- 				if (fazlaMesaiERP.getVeriTipiAPI().equals(VeriTipiAPI.XML)) {
+				if (fazlaMesaiERP.getVeriTipiAPI().equals(VeriTipiAPI.XML)) {
 					try {
 						JSONObject jsonObject = new JSONObject(returnData);
 						String xml = XML.toString(jsonObject);
@@ -1368,6 +1376,8 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 	}
 
 	/**
+	 * json
+	 * 
 	 * @param sirketERPKodu
 	 * @param baslikList
 	 * @return

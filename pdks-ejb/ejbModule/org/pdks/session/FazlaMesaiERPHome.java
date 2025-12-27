@@ -83,6 +83,21 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 
 	}
 
+	public Boolean getFazlaMesaiERPUrlZorunlu() {
+		boolean zorunlu = false;
+		if (seciliFazlaMesaiERP != null && seciliFazlaMesaiERP.getMethodAdi() != null) {
+			MethodAPI methodAPI = seciliFazlaMesaiERP.getMethodAPI();
+			if (methodAPI == null)
+				methodAPI = MethodAPI.fromValue(seciliFazlaMesaiERP.getMethodAdi());
+			if (methodAPI != null)
+				zorunlu = methodAPI.equals(MethodAPI.GET) == false;
+
+		}
+		return zorunlu;
+	}
+
+
+
 	@Transactional
 	public String detayKaydet() {
 		boolean devam = true;

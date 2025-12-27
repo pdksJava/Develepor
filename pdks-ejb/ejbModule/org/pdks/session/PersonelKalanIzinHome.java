@@ -2076,18 +2076,19 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 
 				}
 				if (!izinERPList.isEmpty()) {
+					PdksSoapVeriAktar service = null;
+					List<IzinERP> izinERPReturnList = null;
 					try {
-						PdksSoapVeriAktar service = ortakIslemler.getPdksSoapVeriAktar();
-						List<IzinERP> izinERPReturnList = service != null ? service.saveIzinler(izinERPList) : null;
-						if (izinERPReturnList != null) {
-
-						}
+						service = ortakIslemler.getPdksSoapVeriAktar(true);
+						izinERPReturnList = service != null ? service.saveIzinler(izinERPList) : null;
 
 					} catch (Exception e) {
-						logger.error(e);
-						e.printStackTrace();
+						service = ortakIslemler.getPdksSoapVeriAktar(false);
+						izinERPReturnList = service != null ? service.saveIzinler(izinERPList) : null;
 					}
+					if (izinERPReturnList != null) {
 
+					}
 				} else if (!izinMap.isEmpty()) {
 					bakiyeIzinler = new ArrayList<PersonelIzin>(izinMap.values());
 					for (Iterator iterator = bakiyeIzinler.iterator(); iterator.hasNext();) {

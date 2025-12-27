@@ -3860,11 +3860,19 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			personelERP.setYazildi(null);
 		}
 		servisCalisti = Boolean.FALSE;
+		PdksSoapVeriAktar service = null;
 		try {
 			personelERPReturnList = null;
-			PdksSoapVeriAktar service = ortakIslemler.getPdksSoapVeriAktar();
-			if (service != null)
+			try {
+				service = ortakIslemler.getPdksSoapVeriAktar(true);
+
 				personelERPReturnList = service.savePersoneller(personelERPList);
+			} catch (Exception e) {
+				service = ortakIslemler.getPdksSoapVeriAktar(false);
+
+				personelERPReturnList = service.savePersoneller(personelERPList);
+			}
+
 			if (personelERPReturnList != null) {
 				List<PersonelERP> personelERPHatasizList = new ArrayList<PersonelERP>();
 				for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {

@@ -147,16 +147,17 @@
 										<a4j:support event="onchange" ajaxSingle="true" reRender="servisVeriTipi" />
 									</h:selectOneMenu>
 								</s:decorate>
-								<s:decorate template="/layout/edit.xhtml">
+								<s:decorate template="/layout/edit.xhtml" id="serverURL">
 									<ui:define name="label">Servis Adresi</ui:define>
-									<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.serverURL}" size="135" required="true" requiredMessage="Servis adresi giriniz!" />
+									<h:inputText value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.serverURL}" size="135" required="#{fazlaMesaiERPHome.fazlaMesaiERPUrlZorunlu}"
+										requiredMessage="Servis adresi giriniz!" />
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" id="methodAdi">
 									<ui:define name="label">Fonksiyon Adı</ui:define>
 									<h:selectOneMenu value="#{fazlaMesaiERPHome.seciliFazlaMesaiERP.methodAdi}" required="true" requiredMessage="Fonksiyon adı seçiniz">
 										<f:selectItem itemLabel="Lütfen seçiniz" />
 										<f:selectItems value="#{fazlaMesaiERPHome.methodList}" />
-										<a4j:support event="onchange" ajaxSingle="true" reRender="methodAdi" />
+										<a4j:support event="onchange" ajaxSingle="true" reRender="methodAdi,serverURL" />
 									</h:selectOneMenu>
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
@@ -351,8 +352,11 @@
 								</s:decorate>
 							</c:if>
 						</h:panelGrid>
-						<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{fazlaMesaiERPHome.detayKaydet()}" reRender="fazlaMesaiERPDetayTable"
-							oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('fazlaMesaiERPDetayPanel')}.hide();" />
+						<ui:fragment>
+							<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{fazlaMesaiERPHome.detayKaydet()}" reRender="fazlaMesaiERPDetayTable"
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('fazlaMesaiERPDetayPanel')}.hide();" />
+							
+						</ui:fragment>
 					</a4j:outputPanel>
 				</h:panelGrid>
 			</h:form>

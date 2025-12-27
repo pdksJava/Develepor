@@ -21,6 +21,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
+import org.json.XML;
 import org.pdks.dao.PdksDAO;
 import org.pdks.dao.impl.BaseDAOHibernate;
 import org.pdks.entity.FazlaMesaiERP;
@@ -30,7 +32,9 @@ import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelMesai;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
+import org.pdks.enums.MethodAPI;
 import org.pdks.enums.MethodAlanAPI;
+import org.pdks.enums.VeriTipiAPI;
 import org.pdks.genel.model.Constants;
 import org.pdks.genel.model.PdksUtil;
 import org.pdks.mail.model.MailObject;
@@ -62,6 +66,8 @@ public class PdksRestFulVeriAktarService implements Serializable {
 
 	private Integer year, month;
 
+	private FazlaMesaiERP fazlaMesaiERP;
+
 	/**
 	 * @param sirketERPKodu
 	 * @param baslikList
@@ -85,45 +91,99 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	}
 
 	@GET
-	@Path("/getMesaiPDKS")
+	@Path("/getJSONMesaiPDKS")
 	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response getMesaiPDKS(@QueryParam("sirketKodu") String sirketKodu, @QueryParam("yil") Integer yil, @QueryParam("ay") Integer ay, @QueryParam("tesisKodu") String tesisKodu) throws Exception {
+	public Response getJSONMesaiPDKS(@QueryParam("sirketKodu") String sirketKodu, @QueryParam("yil") Integer yil, @QueryParam("ay") Integer ay, @QueryParam("tesisKodu") String tesisKodu) throws Exception {
+		String mediaType = MediaType.APPLICATION_JSON;
+		Response response = getMesaiPDKS(sirketKodu, yil, ay, tesisKodu, mediaType);
+		return response;
+	}
+
+	@GET
+	@Path("/getXMLMesaiPDKS")
+	@Produces({ MediaType.APPLICATION_XML + ";charset=utf-8" })
+	@Consumes(MediaType.APPLICATION_XML + ";charset=utf-8")
+	public Response getXMLMesaiPDKS(@QueryParam("sirketKodu") String sirketKodu, @QueryParam("yil") Integer yil, @QueryParam("ay") Integer ay, @QueryParam("tesisKodu") String tesisKodu) throws Exception {
+		String mediaType = MediaType.APPLICATION_JSON;
+		Response response = getMesaiPDKS(sirketKodu, yil, ay, tesisKodu, mediaType);
+		return response;
+	}
+
+	/**
+	 * @param sirketKodu
+	 * @param yil
+	 * @param ay
+	 * @param tesisKodu
+	 * @param mediaType
+	 * @return
+	 * @throws Exception
+	 */
+	private Response getMesaiPDKS(String sirketKodu, Integer yil, Integer ay, String tesisKodu, String mediaType) throws Exception {
 		Response response = null;
-		String data = getBodyString(request);
+
 		List<String> perNoList = null;
-		if (data != null) {
-			try {
-				LinkedTreeMap<String, Object> jsonMap = gson.fromJson(data, LinkedTreeMap.class);
-				perNoList = jsonMap.containsKey("personelNo") ? (List<String>) jsonMap.get("personelNo") : null;
 
-			} catch (Exception e) {
-
-			}
-		}
 		try {
 			if (yil != null && ay != null)
-				response = getFazlaMesaiJSON(yil, ay, sirketKodu, tesisKodu, perNoList);
+				response = getFazlaMesaiVeri(mediaType, MethodAPI.GET.value(), yil, ay, sirketKodu, tesisKodu, perNoList);
 		} catch (Exception e) {
 		}
 		return response;
 	}
 
 	@POST
-	@Path("/postMesaiPDKS")
+	@Path("/postJSONMesaiPDKS")
 	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Response postMesaiPDKS() throws Exception {
+	public Response postJSONMesaiPDKS() throws Exception {
+		String mediaType = MediaType.APPLICATION_JSON;
+		Response response = postMesaiPDKS(mediaType);
+		return response;
+	}
+
+	@POST
+	@Path("/postJXMLMesaiPDKS")
+	@Produces({ MediaType.APPLICATION_XML + ";charset=utf-8" })
+	@Consumes(MediaType.APPLICATION_XML + ";charset=utf-8")
+	public Response postJXMLMesaiPDKS() throws Exception {
+		String mediaType = MediaType.APPLICATION_XML;
+		Response response = postMesaiPDKS(mediaType);
+		return response;
+	}
+
+	/**
+	 * @param mediaType
+	 * @return
+	 * @throws Exception
+	 */
+	private Response postMesaiPDKS(String mediaType) throws Exception {
 		Response response = null;
 		String data = getBodyString(request);
 		if (data != null) {
 			try {
-				LinkedTreeMap<String, Object> jsonMap = gson.fromJson(data, LinkedTreeMap.class);
-				Integer yil = ((Double) jsonMap.get("yil")).intValue(), ay = ((Double) jsonMap.get("ay")).intValue();
+				Integer yil = null, ay = null;
+				String sirketKodu = null, tesisKodu = null;
+				List<String> perNoList = null;
+				if (mediaType.equals(MediaType.APPLICATION_JSON)) {
+					LinkedTreeMap<String, Object> jsonMap = gson.fromJson(data, LinkedTreeMap.class);
+					yil = ((Double) jsonMap.get("yil")).intValue();
+					ay = ((Double) jsonMap.get("ay")).intValue();
+					sirketKodu = (String) jsonMap.get("sirketKodu");
+					tesisKodu = (String) jsonMap.get("tesisKodu");
+					perNoList = jsonMap.containsKey("personelNo") ? (List<String>) jsonMap.get("personelNo") : null;
+
+				} else {
+					JSONObject jsonMap = XML.toJSONObject(data);
+					yil = ((Double) jsonMap.get("yil")).intValue();
+					ay = ((Double) jsonMap.get("ay")).intValue();
+					sirketKodu = (String) jsonMap.get("sirketKodu");
+					tesisKodu = (String) jsonMap.get("tesisKodu");
+					perNoList = (List<String>) jsonMap.get("personelNo");
+				}
+
 				if (yil != null && ay != null) {
-					List<String> perNoList = jsonMap.containsKey("personelNo") ? (List<String>) jsonMap.get("personelNo") : null;
-					String sirketKodu = (String) jsonMap.get("sirketKodu"), tesisKodu = (String) jsonMap.get("tesisKodu");
-					response = getFazlaMesaiJSON(yil, ay, sirketKodu, tesisKodu, perNoList);
+					response = getFazlaMesaiVeri(mediaType, MethodAPI.POST.value(), yil, ay, sirketKodu, tesisKodu, perNoList);
 
 				}
 			} catch (Exception e) {
@@ -135,6 +195,8 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	}
 
 	/**
+	 * @param mediaType
+	 * @param method
 	 * @param yil
 	 * @param ay
 	 * @param sirketKoduInput
@@ -142,7 +204,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	 * @param perNoList
 	 * @return
 	 */
-	private Response getFazlaMesaiJSON(Integer yil, Integer ay, String sirketKoduInput, String tesisKoduInput, List<String> perNoList) {
+	private Response getFazlaMesaiVeri(String mediaType, String method, Integer yil, Integer ay, String sirketKoduInput, String tesisKoduInput, List<String> perNoList) {
 
 		Response response;
 		String sonuc = "";
@@ -169,7 +231,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 				boolean devam = true;
 				if (fazlaMesaiERPList.isEmpty() == false) {
 					fields.clear();
-					FazlaMesaiERP fazlaMesaiERP = fazlaMesaiERPList.get(0);
+					fazlaMesaiERP = fazlaMesaiERPList.get(0);
 					List<FazlaMesaiERPDetay> detayList = null;
 					if (PdksUtil.hasStringValue(fazlaMesaiERP.getServerURL())) {
 						sb = new StringBuffer();
@@ -430,7 +492,21 @@ public class PdksRestFulVeriAktarService implements Serializable {
 			e.printStackTrace();
 		}
 
-		response = Response.ok(sonuc, MediaType.APPLICATION_JSON).build();
+		if (fazlaMesaiERP != null) {
+			if (PdksUtil.hasStringValue(fazlaMesaiERP.getServerURL())) {
+				if (fazlaMesaiERP.getVeriTipiAPI().equals(VeriTipiAPI.XML))
+					mediaType = MediaType.APPLICATION_XML;
+			}
+		}
+		if (mediaType != null && mediaType.equals(MediaType.APPLICATION_XML)) {
+			try {
+				JSONObject jsonObject = new JSONObject(sonuc);
+				String xml = XML.toString(jsonObject);
+				sonuc = xml;
+			} catch (Exception e) {
+			}
+		}
+		response = Response.ok(sonuc, mediaType).build();
 		return response;
 	}
 

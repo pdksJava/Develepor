@@ -991,11 +991,19 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 			izinERP.setYazildi(null);
 		}
 		servisCalisti = Boolean.FALSE;
+		PdksSoapVeriAktar service = null;
 		try {
 			izinERPReturnList = null;
-			PdksSoapVeriAktar service = ortakIslemler.getPdksSoapVeriAktar();
-			if (service != null)
+			try {
+
+				service = ortakIslemler.getPdksSoapVeriAktar(true);
+
 				izinERPReturnList = service.saveIzinler(izinERPList);
+			} catch (Exception e) {
+				service = ortakIslemler.getPdksSoapVeriAktar(false);
+
+				izinERPReturnList = service.saveIzinler(izinERPList);
+			}
 			if (izinERPReturnList != null) {
 				izinERPList.clear();
 				for (Iterator iterator = izinERPReturnList.iterator(); iterator.hasNext();) {
