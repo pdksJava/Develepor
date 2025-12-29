@@ -554,17 +554,18 @@
 										</h:selectOneMenu>
 
 									</s:decorate>
-									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and not empty vardiyaHome.tesisIdList}">
-										<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
-										<h:selectOneMenu value="#{vardiyaHome.tesisId}" disabled="#{vardiyaHome.tesisIdList.size() == 1}">
-											<f:selectItem itemLabel="Lütfen seçiniz" />
-											<f:selectItems value="#{vardiyaHome.tesisIdList}" />
-											<a4j:support event="onchange" action="#{vardiyaHome.fillCalismaModeliList(vardiyaHome.seciliVardiya)}" reRender="modeller"
-												status="ajaxStatus" ajaxSingle="true" />
 
-										</h:selectOneMenu>
-									</s:decorate>
 									<a4j:outputPanel id="modeller">
+										<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and not empty vardiyaHome.tesisIdList}">
+											<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
+											<h:selectOneMenu value="#{vardiyaHome.tesisId}" disabled="#{vardiyaHome.tesisIdList.size() == 1}">
+												<f:selectItem itemLabel="Lütfen seçiniz" />
+												<f:selectItems value="#{vardiyaHome.tesisIdList}" />
+												<a4j:support event="onchange" action="#{vardiyaHome.fillCalismaModeliList(vardiyaHome.seciliVardiya)}" reRender="modeller"
+													status="ajaxStatus" ajaxSingle="true" />
+
+											</h:selectOneMenu>
+										</s:decorate>
 										<rich:simpleTogglePanel rendered="#{vardiyaHome.calismaModeliList.size()+vardiyaHome.calismaModeliKayitliList.size()>0}" switchType="client"
 											label="Çalışma Modelleri" height="110" opened="true">
 

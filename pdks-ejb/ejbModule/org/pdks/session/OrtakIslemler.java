@@ -9749,7 +9749,7 @@ public class OrtakIslemler implements Serializable {
 						suaVardiyaList = pdksEntityController.getObjectBySQLList(sb, fields, Vardiya.class);
 						if (suaVardiyaList.isEmpty() == false) {
 							if (suaVardiyaList.size() > 1)
-								suaVardiyaList = PdksUtil.sortListByAlanAdi(suaVardiyaList, "netCalismaSuresi", true);
+								suaVardiyaList = PdksUtil.sortListByAlanAdi(suaVardiyaList, "netCalismaSuresi", false);
 							suaListe = new Liste(suaPerIdList, suaVardiyaList);
 						}
 
@@ -10212,8 +10212,8 @@ public class OrtakIslemler implements Serializable {
 		Date bugun = new Date();
 		List<String> hareketIdList = new ArrayList<String>();
 		for (Long perId : personelVardiyaBulMap.keySet()) {
-//			if (suaPerIdList.contains(perId))
-//				continue;
+			if (suaPerIdList.contains(perId))
+				continue;
 			PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici = personelDenklestirmeMap.get(perId);
 			Personel personel = personelDenklestirmeTasiyici.getPersonel();
 			Long personelKGSId = personel.getPersonelKGS().getId();
@@ -10263,8 +10263,6 @@ public class OrtakIslemler implements Serializable {
 						if (vardiyaGun.getVersion() >= 0)
 							continue;
 						String vardiyaKeyStr = vardiyaGun.getVardiyaKeyStr();
-						if (vardiyaKeyStr.endsWith("1218"))
-							logger.debug("");
 						Tatil tatil = vardiyaGun.getTatil();
 						Vardiya islemVardiyaGun = vardiyaGun.getIslemVardiya();
 						if (vardiyaGun.getVardiya().isCalisma() == false) {
@@ -10328,16 +10326,21 @@ public class OrtakIslemler implements Serializable {
 							if (!listeler.isEmpty()) {
 								VardiyaGun vg = null;
 								if (listeler.size() > 1)
-									listeler = PdksUtil.sortListByAlanAdi(listeler, "value", false);
- 								if (suaPerIdList.contains(perId) && listeler.size() > 1) {
-									for (Liste liste : listeler) {
-										VardiyaGun vGun = (VardiyaGun) liste.getId();
-										if (vGun.getVardiya().isSuaMi()) {
-											vg = vGun;
-											break;
-										}
-									}
-								}
+									listeler = PdksUtil.sortListByAlanAdi(listeler, "value", true);
+								// List<Liste> suaList = null;
+								// if (suaPerIdList.contains(perId)) {
+								// suaList = new ArrayList<Liste>();
+								// for (Liste liste : listeler) {
+								// VardiyaGun vGun = (VardiyaGun) liste.getId();
+								// if (vGun.getVardiya().isSuaMi()) {
+								// suaList.add(liste);
+								// if (vg == null)
+								// vg = vGun;
+								//
+								// }
+								// }
+								//
+								// }
 								if (vg == null)
 									vg = (VardiyaGun) listeler.get(0).getId();
 

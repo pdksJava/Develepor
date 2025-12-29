@@ -259,18 +259,17 @@
 						</h:selectOneMenu>
 
 					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and not empty vardiyaSablonuHome.tesisIdList}">
-						<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
-						<h:selectOneMenu value="#{vardiyaSablonuHome.tesisId}" disabled="#{vardiyaSablonuHome.tesisIdList.size() == 1}">
-							<f:selectItem itemLabel="Lütfen seçiniz" />
-							<f:selectItems value="#{vardiyaSablonuHome.tesisIdList}" />
-							<a4j:support event="onchange" action="#{vardiyaSablonuHome.fillPdksVardiyaList()}" reRender="vardiyalar" status="ajaxStatus"
-								ajaxSingle="true" />
 
-						</h:selectOneMenu>
-					</s:decorate>
 					<a4j:outputPanel id="vardiyalar">
+						<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and not empty vardiyaSablonuHome.tesisIdList}">
+							<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
+							<h:selectOneMenu value="#{vardiyaSablonuHome.tesisId}" disabled="#{vardiyaSablonuHome.tesisIdList.size() == 1}">
+								<f:selectItem itemLabel="Lütfen seçiniz" />
+								<f:selectItems value="#{vardiyaSablonuHome.tesisIdList}" />
+								<a4j:support event="onchange" action="#{vardiyaSablonuHome.fillPdksVardiyaList()}" reRender="vardiyalar" status="ajaxStatus" ajaxSingle="true" />
 
+							</h:selectOneMenu>
+						</s:decorate>
 						<h:panelGrid columns="1" rendered="#{vardiyaSablonuHome.instance.toplamSaat>0 and vardiyaSablonuHome.instance.calismaGunSayisi>0}">
 							<s:decorate template="/layout/edit.xhtml" cellpadding="0" cellspacing="0" style="text-align : left">
 								<ui:define name="label">

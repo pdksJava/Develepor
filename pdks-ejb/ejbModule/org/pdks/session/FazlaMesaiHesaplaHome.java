@@ -2090,6 +2090,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							}
 							if (denklestirmeAyDurum && vardiyaGun.getVardiya() != null && vardiyaGun.getId() != null && !vardiyaGun.getDurum().equals(hareketDurum)) {
 								vardiyaGun.setDurum(hareketDurum);
+								if (hareketDurum)
+									vardiyaGun.setVersion(0);
 								vardiyaGun.setGuncellemeTarihi(bugun);
 								saveVardiyaGun = Boolean.TRUE;
 							}

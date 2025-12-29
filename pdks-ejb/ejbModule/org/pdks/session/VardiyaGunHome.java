@@ -2632,8 +2632,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				styleTutarEvenDay = ExcelUtil.setAlignment(ExcelUtil.getStyleEven(ExcelUtil.FORMAT_TUTAR, wb), CellStyle.ALIGN_CENTER);
 				styleTutarOddDay = ExcelUtil.setAlignment(ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_TUTAR, wb), CellStyle.ALIGN_CENTER);
 
-				HashMap<Long, List<Vardiya>> hashMap = new HashMap<Long, List<Vardiya>>();
 				List<CalismaModeliVardiya> calismaModeliVardiyaList = pdksEntityController.getSQLParamByAktifFieldList(CalismaModeliVardiya.TABLE_NAME, CalismaModeliVardiya.COLUMN_NAME_CALISMA_MODELI, new ArrayList(modelMap.keySet()), CalismaModeliVardiya.class, session);
+				HashMap<Long, List<Vardiya>> hashMap = new HashMap<Long, List<Vardiya>>();
 				for (CalismaModeliVardiya calismaModeliVardiya : calismaModeliVardiyaList) {
 					Vardiya vardiya = calismaModeliVardiya.getVardiya();
 					if (vardiya.isCalisma() && vardiya.getDurum()) {
@@ -9164,6 +9164,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 			}
 			Sirket sirket = personel.getSirket();
+			Tanim tesis = sirket.getTesisDurum() ? personel.getTesis() : null;
 			manuelVardiyaIzinGir = ortakIslemler.getVardiyaIzinGir(session, sirket.getDepartman());
 			if (manuelVardiyaIzinGir == false)
 				manuelVardiyaIzinGir = sirket.getDepartman().getIzinGirilebilir() == false;
@@ -9217,6 +9218,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			sb.append(" where " + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
 			sb.append(" and COALESCE(" + Vardiya.COLUMN_NAME_DEPARTMAN + " , " + sirket.getDepartman().getId() + ") = " + sirket.getDepartman().getId());
 			sb.append(" and COALESCE(" + Vardiya.COLUMN_NAME_SIRKET + " , " + sirket.getId() + ") = " + sirket.getId());
+			if (tesis != null)
+				sb.append(" and COALESCE(" + Vardiya.COLUMN_NAME_TESIS + " , " + tesis.getId() + ") = " + tesis.getId());
 			if (fmi == false) {
 				sb.append(" and " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <> :fm ");
 				map.put("fm", Vardiya.TIPI_FMI);
