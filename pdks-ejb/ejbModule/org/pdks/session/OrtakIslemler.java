@@ -7306,7 +7306,8 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = V." + IzinERPDB.COLUMN_NAME_PERSONEL_NO);
 				sb.append(" where V." + IzinERPDB.COLUMN_NAME_REFERANS_NO + " not in (");
 				sb.append(" select " + IzinReferansERP.COLUMN_NAME_ID + " from " + IzinReferansERP.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " )");
-				sb.append(" and V." + IzinERPDB.COLUMN_NAME_BIT_TARIHI + " >= :t and V." + IzinERPDB.COLUMN_NAME_DURUM + " = 1 and V." + IzinERPDB.COLUMN_NAME_IZIN_SURESI + " > 0");
+				sb.append(" and (V." + IzinERPDB.COLUMN_NAME_BIT_TARIHI + " >= :t or V." + IzinERPDB.COLUMN_NAME_IZIN_ID + " is null)");
+				sb.append(" and V." + IzinERPDB.COLUMN_NAME_DURUM + " = 1 and V." + IzinERPDB.COLUMN_NAME_IZIN_SURESI + " > 0");
 				fields.put("t", tarih);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -10211,8 +10212,8 @@ public class OrtakIslemler implements Serializable {
 		Date bugun = new Date();
 		List<String> hareketIdList = new ArrayList<String>();
 		for (Long perId : personelVardiyaBulMap.keySet()) {
-			if (suaPerIdList.contains(perId))
-				continue;
+//			if (suaPerIdList.contains(perId))
+//				continue;
 			PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici = personelDenklestirmeMap.get(perId);
 			Personel personel = personelDenklestirmeTasiyici.getPersonel();
 			Long personelKGSId = personel.getPersonelKGS().getId();
@@ -10327,17 +10328,19 @@ public class OrtakIslemler implements Serializable {
 							if (!listeler.isEmpty()) {
 								VardiyaGun vg = null;
 								if (listeler.size() > 1)
-									listeler = PdksUtil.sortListByAlanAdi(listeler, "value", true);
-								vg = (VardiyaGun) listeler.get(0).getId();
-//								if (suaPerIdList.contains(perId) && listeler.size() > 1) {
-//									for (Liste liste : listeler) {
-//										VardiyaGun vGun = (VardiyaGun) liste.getId();
-//										if (vGun.getVardiya().isSuaMi()) {
-//											vg = vGun;
-//											break;
-//										}
-//									}
-//								}
+									listeler = PdksUtil.sortListByAlanAdi(listeler, "value", false);
+ 								if (suaPerIdList.contains(perId) && listeler.size() > 1) {
+									for (Liste liste : listeler) {
+										VardiyaGun vGun = (VardiyaGun) liste.getId();
+										if (vGun.getVardiya().isSuaMi()) {
+											vg = vGun;
+											break;
+										}
+									}
+								}
+								if (vg == null)
+									vg = (VardiyaGun) listeler.get(0).getId();
+
 								vardiyalarMap.put(vardiyaGun.getVardiyaKeyStr(), vardiyaGun);
 								for (HareketKGS hareket : vg.getHareketler()) {
 									hareketIdList.add(hareket.getId());

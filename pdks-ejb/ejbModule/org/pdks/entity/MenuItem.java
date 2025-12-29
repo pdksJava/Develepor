@@ -72,7 +72,7 @@ public class MenuItem extends BasePDKSObject implements Serializable {
 	 * @return the description
 	 */
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "DESCRIPTION_ID", nullable = false)
 	@Fetch(FetchMode.JOIN)
 	public Tanim getDescription() {
@@ -141,14 +141,14 @@ public class MenuItem extends BasePDKSObject implements Serializable {
 	/**
 	 * @return the childMenuItemList
 	 */
-	@OneToMany(cascade = CascadeType.ALL, targetEntity = MenuItem.class, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.REFRESH, targetEntity = MenuItem.class, fetch = FetchType.EAGER)
 	@JoinTable(name = MenuIliski.TABLE_NAME, joinColumns = @JoinColumn(name = MenuIliski.COLUMN_NAME_MENU_ITEM), inverseJoinColumns = @JoinColumn(name = MenuIliski.COLUMN_NAME_CHILD_MENU_ITEM))
 	public List<MenuItem> getChildMenuItemList() {
 		return childMenuItemList;
 	}
 
 	/**
-	 * @OneToMany(cascade = CascadeType.ALL, targetEntity = ExampleObject.class, fetch = FetchType.EAGER)
+	 * @OneToMany(cascade = CascadeType.REFRESH, targetEntity = ExampleObject.class, fetch = FetchType.EAGER)
 	 * @JoinColumn(name = "CHILD_OBJECT_ID", referencedColumnName = "EXAMPLE_OBJECT_ID")
 	 * 
 	 * @param childMenuItemList

@@ -355,7 +355,9 @@
 						<ui:fragment>
 							<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{fazlaMesaiERPHome.detayKaydet()}" reRender="fazlaMesaiERPDetayTable"
 								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('fazlaMesaiERPDetayPanel')}.hide();" />
-							
+							<a4j:commandButton status="ajaxStatus" value="Sil" action="#{fazlaMesaiERPHome.detaySil()}" reRender="fazlaMesaiERPDetayTable"
+								rendered="#{fazlaMesaiERPHome.seciliFazlaMesaiERPDetay.id!=null}"
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('fazlaMesaiERPDetayPanel')}.hide();" />
 						</ui:fragment>
 					</a4j:outputPanel>
 				</h:panelGrid>

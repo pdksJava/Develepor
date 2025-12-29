@@ -23,7 +23,7 @@ public class IzinOnay implements Serializable {
 
 	private String onaylayanTipi;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "PERSONEL_IZIN_ID", nullable = false)
 	@Fetch(FetchMode.JOIN)
 	public PersonelIzin getPersonelIzin() {

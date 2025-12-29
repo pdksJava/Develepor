@@ -33,6 +33,7 @@ public class IzinERPDB implements Serializable, Cloneable {
 	public static final String COLUMN_NAME_GUNCELLEME_TARIHI = "GUNCELLEME_TARIHI";
 	public static final String COLUMN_NAME_IZIN_SURESI = "IZIN_SURESI";
 	public static final String COLUMN_NAME_PERSONEL_NO = "PERSONEL_NO";
+	public static final String COLUMN_NAME_IZIN_ID = "IZIN_ID";
 	
 	public static final String COLUMN_NAME_DURUM = "DURUM";
 

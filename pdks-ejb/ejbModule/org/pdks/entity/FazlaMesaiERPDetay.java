@@ -44,7 +44,7 @@ public class FazlaMesaiERPDetay extends BasePDKSObject implements Serializable {
 
 	private MethodAlanAPI methodAlanAPI;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_FAZLA_MESAI_ERP, nullable = false)
 	@Fetch(FetchMode.JOIN)
 	public FazlaMesaiERP getFazlaMesaiERP() {

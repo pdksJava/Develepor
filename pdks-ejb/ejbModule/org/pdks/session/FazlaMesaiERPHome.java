@@ -96,7 +96,23 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 		return zorunlu;
 	}
 
+	@Transactional
+	public String detaySil() {
+		try {
+			session.delete(seciliFazlaMesaiERPDetay);
+			session.flush();
+			pdksEntityController.savePrepareTableID(true, FazlaMesaiERPDetay.class, entityManager, session);
 
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+
+		fillFazlaMesaiERPDetayList();
+		fillMethodAlanList();
+		seciliFazlaMesaiERPDetay = null;
+		return "";
+	}
 
 	@Transactional
 	public String detayKaydet() {

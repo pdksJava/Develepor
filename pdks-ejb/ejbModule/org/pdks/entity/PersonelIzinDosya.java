@@ -44,7 +44,7 @@ public class PersonelIzinDosya extends BasePDKSObject implements Serializable {
 		this.personelIzin = personelIzin;
 	}
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "DOSYA_ID")
 	@Fetch(FetchMode.JOIN)
 	public Dosya getDosya() {

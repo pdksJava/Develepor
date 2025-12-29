@@ -52,7 +52,7 @@ public class IzinIstirahat extends BaseObject {
 
 	}
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_IZIN, nullable = false)
 	@Fetch(FetchMode.JOIN)
 	public PersonelIzin getPersonelIzin() {
