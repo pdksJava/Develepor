@@ -190,7 +190,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	private boolean fileImport = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE, fazlaMesaiTalepVar = Boolean.FALSE, fazlaMesaiOde, fazlaMesaiIzinKullan, modelGoster = Boolean.FALSE, gebeGoster = Boolean.FALSE;
 
-	private Boolean manuelHareketEkle, vardiyaFazlaMesaiTalepGoster = Boolean.FALSE, bakiyeSifirlaDurum = Boolean.FALSE, isAramaGoster = Boolean.FALSE, yoneticiERP1Kontrol = Boolean.FALSE, bordroPuantajEkranindaGoster = Boolean.FALSE;
+	private Boolean manuelHareketEkle, kayitBasarili, vardiyaFazlaMesaiTalepGoster = Boolean.FALSE, bakiyeSifirlaDurum = Boolean.FALSE, isAramaGoster = Boolean.FALSE, yoneticiERP1Kontrol = Boolean.FALSE, bordroPuantajEkranindaGoster = Boolean.FALSE;
 
 	private boolean adminRole, ikRole, gorevYeriGirisDurum, kartBasmayanPersonel, fazlaMesaiTarihGuncelle = Boolean.FALSE, offIzinGuncelle = Boolean.FALSE, gebeSutIzniGuncelle = Boolean.FALSE;
 
@@ -3407,7 +3407,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	@Transactional
 	public String aylikKaydet() throws Exception {
+		kayitBasarili = true;
 		if (!islemYapiliyor) {
+			kayitBasarili = false;
 			islemYapiliyor = Boolean.TRUE;
 			boolean flush = false;
 			for (Iterator iterator = personelDenklestirmeDinamikAlanList.iterator(); iterator.hasNext();) {
@@ -11380,6 +11382,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param list
 	 */
 	private void suaUyariMesaji(AylikPuantaj ap, List<AylikPuantaj> list) {
+		kayitBasarili = true;
 		if (denklestirmeAy.getDurum()) {
 			if (list == null) {
 				list = new ArrayList<AylikPuantaj>();
@@ -11388,14 +11391,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 			}
 
-			for (AylikPuantaj puantaj : list) {
-				boolean suaDurum = puantaj.getPersonelDenklestirme().isSuaDurumu();
+			for (AylikPuantaj puantajData : list) {
+				boolean suaDurum = puantajData.getPersonelDenklestirme().isSuaDurumu();
 				if (suaDurum) {
 					Double suaHaftaSaat = 35.0d;
-					VardiyaPlan plan = personelAylikPuantaj.getVardiyaPlan();
-					List<VardiyaHafta> vardiyaHaftaList = plan.getVardiyaHaftaList();
+					VardiyaPlan plan = puantajData.getVardiyaPlan();
+					List<VardiyaHafta> vardiyaHaftaList = plan != null ? plan.getVardiyaHaftaList() : null;
 					if (vardiyaHaftaList != null) {
-						Personel personel = personelAylikPuantaj.getPdksPersonel();
+						Personel personel = puantajData.getPdksPersonel();
 						Date basTarih = personel.getIseBaslamaTarihi(), bitTarih = personel.getSskCikisTarihi();
 						StringBuilder suaCalismaSb = new StringBuilder();
 						for (VardiyaHafta vardiyaHafta : vardiyaHaftaList) {
@@ -11426,6 +11429,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						if (suaCalismaSb.length() > 0) {
 							String str = (ap == null ? personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " " : "") + suaCalismaSb.toString() + " haftalık çalışma saati " + authenticatedUser.sayiFormatliGoster(suaHaftaSaat) + " geçmiştir!";
 							PdksUtil.addMessageAvailableWarn(str);
+							kayitBasarili = ikRole || adminRole || authenticatedUser.isSistemYoneticisi();
 						}
 						suaCalismaSb = null;
 					}
@@ -13609,6 +13613,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	public void setYasalFazlaCalismaAsanSaat(boolean yasalFazlaCalismaAsanSaat) {
 		this.yasalFazlaCalismaAsanSaat = yasalFazlaCalismaAsanSaat;
+	}
+
+	public Boolean getKayitBasarili() {
+		return kayitBasarili;
+	}
+
+	public void setKayitBasarili(Boolean kayitBasarili) {
+		this.kayitBasarili = kayitBasarili;
 	}
 
 }

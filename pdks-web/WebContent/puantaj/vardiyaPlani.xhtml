@@ -800,7 +800,7 @@
 				<a4j:outputPanel id="butonlar">
 					<h:panelGrid columns="5">
 						<a4j:commandButton value="Kaydet" action="#{vardiyaGunHome.aylikKaydet}" reRender="vardiyaPanel" onclick="#{rich:component('wait')}.show()"
-							oncomplete="if (#{facesContext.maximumSeverity == null}) { #{rich:component('editAylikPanel')}.hide();}#{rich:component('wait')}.hide();" />
+							oncomplete="if (#{vardiyaGunHome.kayitBasarili}) { #{rich:component('editAylikPanel')}.hide();}#{rich:component('wait')}.hide();" />
 						<ui:fragment rendered="#{vardiyaGunHome.kartBasmayanPersonel}">
 							<a4j:commandButton value="Şablon #{ortakIslemler.vardiyaAciklama()}larını Güncelle" id="sablonlar"
 								action="#{vardiyaGunHome.saveSablonGuncelle()}" reRender="secimler,butonlar" ajaxSingle="true" />
