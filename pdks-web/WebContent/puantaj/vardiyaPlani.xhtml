@@ -488,6 +488,9 @@
 											<rich:toolTip for="vardiya#{vardiyaGun.vardiyaDateStr}">
 												<ui:fragment rendered="#{vardiyaGunHome.personelAylikPuantaj.kaydet == false}">
 													<h2>#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM ')} : #{vardiyaGun.vardiyaPlanAdi}</h2>
+													<ui:fragment rendered="#{authenticatedUser.admin}">
+														<b>Plan Id : </b> #{vardiyaGun.id} ---> <b>Vardiya Id : </b>#{vardiyaGun.vardiya.id}
+													</ui:fragment>
 												</ui:fragment>
 												<ui:fragment rendered="#{vardiyaGunHome.personelAylikPuantaj.kaydet}">
 													<DIV>
@@ -641,7 +644,8 @@
 									<a4j:support event="onchange" action="#{vardiyaGunHome.personelDenklestirme.setGuncellendi(true)}" />
 								</h:inputText>
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.sistemYoneticisi or ortakIslemler.getParameterKey('fazlaMesaiHesaplaKisitliPersonel')=='1'}">
+							<s:decorate template="/layout/edit.xhtml"
+								rendered="#{authenticatedUser.sistemYoneticisi or ortakIslemler.getParameterKey('fazlaMesaiHesaplaKisitliPersonel')=='1'}">
 								<ui:define name="label">Denkleştime Var</ui:define>
 								<h:selectBooleanCheckbox value="#{vardiyaGunHome.personelDenklestirme.denklestirme}" disabled="#{vardiyaGunHome.denklestirmeAyDurum == false}">
 									<a4j:support event="onclick" action="#{vardiyaGunHome.personelDenklestirme.setGuncellendi(true)}" />
