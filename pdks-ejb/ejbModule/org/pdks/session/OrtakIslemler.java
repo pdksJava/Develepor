@@ -10298,7 +10298,7 @@ public class OrtakIslemler implements Serializable {
 										islemVardiya.setVardiyaFazlaMesaiBasZaman(cal.getTime());
 
 										cal.setTime(islemVardiya.getVardiyaFazlaMesaiBitZaman());
-										cal.add(Calendar.MINUTE, islemVardiya.getCikisGecikmeToleransDakika());
+										cal.add(Calendar.MINUTE, -islemVardiya.getCikisGecikmeToleransDakika());
 										islemVardiya.setVardiyaFazlaMesaiBitZaman(cal.getTime());
 
 									}
