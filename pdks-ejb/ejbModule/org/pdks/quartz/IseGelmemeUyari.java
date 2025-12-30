@@ -402,14 +402,26 @@ public class IseGelmemeUyari implements Serializable {
 					HashMap<Long, List<User>> depMail = new HashMap<Long, List<User>>();
 					HashMap<Long, Personel> depYoneticiMap = new HashMap<Long, Personel>();
 					boolean ikMailGonderme = ortakIslemler.getParameterKey("ikMailGonderme").equals("1") == false;
+					String pattern = "yyyyMMdd";
+					String bugunStr = PdksUtil.convertToDateString(tarih, pattern);
+
 					for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 						VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
 						if (pdksVardiyaGun.getVardiyaDate().before(oncekiGun) || pdksVardiyaGun.getVardiyaDate().after(sonrakiGun) || pdksVardiyaGun.getSonrakiVardiyaGun() == null) {
 							iterator.remove();
 							continue;
 						}
-						String vardiyaGunStr = PdksUtil.convertToDateString(pdksVardiyaGun.getVardiyaDate(), "yyyyMMdd");
 						Personel per = pdksVardiyaGun.getPdksPersonel();
+
+						String vardiyaGunStr = PdksUtil.convertToDateString(pdksVardiyaGun.getVardiyaDate(), "yyyyMMdd");
+						if (vardiyaGunStr.equals(bugunStr)) {
+							CalismaModeli cm = per.getCalismaModeli();
+							if (cm != null && per.getCalismaModeli().isHareketKaydiVardiyaBulsunmu()) {
+								iterator.remove();
+								continue;
+							}
+						}
+
 						Sirket sirket = per != null ? per.getSirket() : null;
 						Tanim tesis = sirket != null && sirket.isTesisDurumu() ? per.getTesis() : null;
 						Long sirketId = sirket != null ? sirket.getId() : null;
@@ -1489,7 +1501,7 @@ public class IseGelmemeUyari implements Serializable {
 			List<Long> yoneticiPerIdList = new ArrayList<Long>();
 			List<Long> tesisList = null;
 			if (tesisYetki && session != null) {
-				ortakIslemler.setUserTesisler(user,true, session);
+				ortakIslemler.setUserTesisler(user, true, session);
 				if (user.getYetkiliTesisler() != null) {
 					tesisList = new ArrayList<Long>();
 					for (Tanim tesis : user.getYetkiliTesisler())
