@@ -52,7 +52,8 @@
 				<value>org.pdks.entity.DenklestirmeAy</value>
 				<value>org.pdks.entity.Departman</value>
 				<value>org.pdks.entity.ERPPersonel</value>
-				<value>org.pdks.entity.FazlaMesaiERP</value>
+				<value>org.pdks.entity.ERPSistem</value>
+ 				<value>org.pdks.entity.FazlaMesaiERP</value>
 				<value>org.pdks.entity.FazlaMesaiERPDetay</value>
 				<value>org.pdks.entity.HataliPersonel</value>
 				<value>org.pdks.entity.IzinReferansERP</value>
