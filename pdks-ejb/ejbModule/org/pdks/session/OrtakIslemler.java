@@ -814,6 +814,7 @@ public class OrtakIslemler implements Serializable {
 					try {
 						tesisTanimList = PdksUtil.sortTanimList(null, tesisTanimList);
 					} catch (Exception e) {
+						logger.error(e);
 					}
 
 				}
