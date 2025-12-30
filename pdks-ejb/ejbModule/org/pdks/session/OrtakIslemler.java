@@ -10293,9 +10293,9 @@ public class OrtakIslemler implements Serializable {
 											saatSifirVar = vardiya.getBasSaat() == 0 || vardiya.getBitSaat() == 0;
 									} else if (vardiya.getBasSaat() == 0 || vardiya.getBitSaat() == 0) {
 										Vardiya islemVardiya = vardiyaGunNew.getIslemVardiya();
-										Calendar cal=Calendar.getInstance();
+										Calendar cal = Calendar.getInstance();
 										if (vardiya.getBasSaat() == 0) {
-											 
+
 										}
 									}
 									// vardiyaGunNew.setVardiyaZamani();
@@ -10340,7 +10340,7 @@ public class OrtakIslemler implements Serializable {
 										}
 									}
 								}
-								if (listeler.isEmpty() == false && saatSifirVar == false)
+								if (listeler.isEmpty() == false || saatSifirVar == false)
 									break;
 							}
 							if (!listeler.isEmpty() && listeler.size() < 3) {

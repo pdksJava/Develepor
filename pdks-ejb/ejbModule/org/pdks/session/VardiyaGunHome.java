@@ -3987,8 +3987,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				pdksVardiyaHafta.setCheckBoxDurum(Boolean.TRUE);
 			if (vardiyaGuncellendi && !vardiyalarMap.isEmpty())
 				durum = vardiyaPlanKontrol(personelDenklestirme, null, null, plan, "", false) || ortakIslemler.getParameterKey("calismaPlanKaydetme").equals("1") == false;
+			if (durum)
+				durum = suaUyariMesaji(personelAylikPuantaj, null);
+
 			if (durum) {
-				suaUyariMesaji(personelAylikPuantaj, null);
+
 				if (personelDenklestirme.isGuncellendi())
 					flush = Boolean.TRUE;
 
@@ -11381,8 +11384,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param ap
 	 * @param list
 	 */
-	private void suaUyariMesaji(AylikPuantaj ap, List<AylikPuantaj> list) {
+	private boolean suaUyariMesaji(AylikPuantaj ap, List<AylikPuantaj> list) {
 		kayitBasarili = true;
+		boolean hataYok = true;
 		if (denklestirmeAy.getDurum()) {
 			if (list == null) {
 				list = new ArrayList<AylikPuantaj>();
@@ -11430,6 +11434,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							String str = (ap == null ? personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " " : "") + suaCalismaSb.toString() + " haftalık çalışma saati " + authenticatedUser.sayiFormatliGoster(suaHaftaSaat) + " geçmiştir!";
 							PdksUtil.addMessageAvailableWarn(str);
 							kayitBasarili = ikRole || adminRole || authenticatedUser.isSistemYoneticisi();
+							if (!(ikRole || adminRole || authenticatedUser.isSistemYoneticisi()))
+								hataYok = false;
 						}
 						suaCalismaSb = null;
 					}
@@ -11438,7 +11444,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (ap != null)
 				list = null;
 		}
-
+		return hataYok;
 	}
 
 	@Transactional
