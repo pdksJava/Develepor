@@ -10279,10 +10279,8 @@ public class OrtakIslemler implements Serializable {
 							List<Liste> listeler = new ArrayList<Liste>();
 							boolean hareketVar = false, saatSifirVar = false;
 							for (int ii = 1; ii < 3; ii++) {
-
 								for (Vardiya vardiya : vardiyaPerList) {
 									personelHareketList.clear();
-
 									personelHareketList.addAll(personelHareketMap.get(personelKGSId));
 									VardiyaGun vardiyaGunNew = new VardiyaGun(personelDenklestirmeTasiyici.getPersonel(), vardiya, vardiyaGun.getVardiyaDate());
 									vardiyaGunNew.setVersion(-1);
@@ -10294,9 +10292,15 @@ public class OrtakIslemler implements Serializable {
 									} else if (vardiya.getBasSaat() == 0 || vardiya.getBitSaat() == 0) {
 										Vardiya islemVardiya = vardiyaGunNew.getIslemVardiya();
 										Calendar cal = Calendar.getInstance();
-										if (vardiya.getBasSaat() == 0) {
 
-										}
+										cal.setTime(islemVardiya.getVardiyaFazlaMesaiBasZaman());
+										cal.add(Calendar.MINUTE, islemVardiya.getCikisGecikmeToleransDakika());
+										islemVardiya.setVardiyaFazlaMesaiBasZaman(cal.getTime());
+
+										cal.setTime(islemVardiya.getVardiyaFazlaMesaiBitZaman());
+										cal.add(Calendar.MINUTE, islemVardiya.getCikisGecikmeToleransDakika());
+										islemVardiya.setVardiyaFazlaMesaiBitZaman(cal.getTime());
+
 									}
 									// vardiyaGunNew.setVardiyaZamani();
 									for (Iterator iterator1 = personelHareketList.iterator(); iterator1.hasNext();) {
