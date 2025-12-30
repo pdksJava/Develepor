@@ -412,8 +412,7 @@ public class IseGelmemeUyari implements Serializable {
 							continue;
 						}
 						Personel per = pdksVardiyaGun.getPdksPersonel();
-
-						String vardiyaGunStr = PdksUtil.convertToDateString(pdksVardiyaGun.getVardiyaDate(), "yyyyMMdd");
+ 						String vardiyaGunStr = PdksUtil.convertToDateString(pdksVardiyaGun.getVardiyaDate(), "yyyyMMdd");
 						if (vardiyaGunStr.equals(bugunStr)) {
 							CalismaModeli cm = per.getCalismaModeli();
 							if (cm != null && per.getCalismaModeli().isHareketKaydiVardiyaBulsunmu()) {
@@ -421,8 +420,7 @@ public class IseGelmemeUyari implements Serializable {
 								continue;
 							}
 						}
-
-						Sirket sirket = per != null ? per.getSirket() : null;
+ 						Sirket sirket = per != null ? per.getSirket() : null;
 						Tanim tesis = sirket != null && sirket.isTesisDurumu() ? per.getTesis() : null;
 						Long sirketId = sirket != null ? sirket.getId() : null;
 						Long tesisId = tesis != null ? tesis.getId() : null;
