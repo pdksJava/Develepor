@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.log4j.Logger;
 import org.pdks.enums.MethodAPI;
@@ -12,6 +14,7 @@ import org.pdks.enums.VeriTipiAPI;
 import org.pdks.session.PdksUtil;
 
 @Entity(name = FazlaMesaiERP.TABLE_NAME)
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { FazlaMesaiERP.COLUMN_NAME_ERP_SIRKET }) })
 public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 
 	/**
