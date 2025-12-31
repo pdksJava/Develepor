@@ -2,19 +2,24 @@ package org.pdks.entity;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.pdks.enums.MethodAPI;
 import org.pdks.enums.VeriTipiAPI;
 import org.pdks.session.PdksUtil;
 
 @Entity(name = FazlaMesaiERP.TABLE_NAME)
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { FazlaMesaiERP.COLUMN_NAME_ERP_SIRKET }) })
+//@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { FazlaMesaiERP.COLUMN_NAME_ERP_SISTEM }) })
 public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 
 	/**
@@ -24,6 +29,7 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 	static Logger logger = Logger.getLogger(FazlaMesaiERP.class);
 	public static final String TABLE_NAME = "FAZLA_MESAI_ERP";
 	public static final String COLUMN_NAME_ERP_SIRKET = "ERP_SIRKET_ADI";
+	public static final String COLUMN_NAME_ERP_SISTEM = "ERP_SISTEM _ID";
 	public static final String COLUMN_NAME_ODENEN_SAAT = "ODENEN_SAAT_KOLON_YAZ";
 	public static final String COLUMN_NAME_URL = "SERVER_URL";
 	public static final String COLUMN_NAME_UOM = "UOM_ALAN_ADI";
@@ -40,7 +46,7 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_LOGIN = "LOGIN";
 
 	private String sirketAdi, serverURL, rootAdi, baslikAlanAdi, detayAlanAdi, detayKokAdi, uomAlanAdi, rtAlanAdi, htAlanAdi, loginBilgi, methodAdi = MethodAPI.POST.value();
-
+	private ERPSistem erpSistem;
 	private boolean odenenSaatKolonYaz;
 	private Boolean detayBaslikIcineYaz = Boolean.FALSE;
 	private Integer servisVeriTipi = VeriTipiAPI.JSON.value();
@@ -48,9 +54,21 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 
 	private MethodAPI methodAPI;
 
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_ERP_SISTEM)
+	@Fetch(FetchMode.JOIN)
+	public ERPSistem getErpSistem() {
+		return erpSistem;
+	}
+
+	public void setErpSistem(ERPSistem erpSistem) {
+		this.erpSistem = erpSistem;
+	}
+
 	@Column(name = COLUMN_NAME_ERP_SIRKET, nullable = false)
 	public String getSirketAdi() {
-		return sirketAdi;
+		String str = erpSistem != null ? erpSistem.getSirketAdi() : sirketAdi;
+		return str;
 	}
 
 	public void setSirketAdi(String sirketAdi) {
