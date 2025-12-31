@@ -61,14 +61,15 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 		return erpSistem;
 	}
 
-	public void setErpSistem(ERPSistem erpSistem) {
-		this.erpSistem = erpSistem;
+	public void setErpSistem(ERPSistem value) {
+		if (erpSistem != null && sirketAdi == null)
+			this.sirketAdi = erpSistem.getSirketAdi();
+		this.erpSistem = value;
 	}
 
 	@Column(name = COLUMN_NAME_ERP_SIRKET)
 	public String getSirketAdi() {
-		String str = erpSistem != null ? erpSistem.getSirketAdi() : sirketAdi;
-		return str;
+		return sirketAdi;
 	}
 
 	public void setSirketAdi(String sirketAdi) {
