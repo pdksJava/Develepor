@@ -17,6 +17,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.framework.EntityHome;
+import org.pdks.entity.ERPSistem;
 import org.pdks.entity.FazlaMesaiERP;
 import org.pdks.entity.FazlaMesaiERPDetay;
 import org.pdks.enums.MethodAPI;
@@ -294,8 +295,11 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 	public String fazlaMesaiERPGuncelle(FazlaMesaiERP fazlaMesaiERP) {
 		if (fazlaMesaiERP == null) {
 			String sirketAdi = ortakIslemler.getParameterKey("uygulamaBordro");
+			ERPSistem sistem = (ERPSistem) pdksEntityController.getSQLParamByFieldObject(ERPSistem.TABLE_NAME, ERPSistem.COLUMN_NAME_ERP_SIRKET, sirketAdi, ERPSistem.class, session);
 			fazlaMesaiERP = new FazlaMesaiERP();
-			fazlaMesaiERP.setSirketAdi(sirketAdi);
+			fazlaMesaiERP.setErpSistem(sistem);
+			if (sistem == null)
+				fazlaMesaiERP.setSirketAdi(sirketAdi);
 		}
 
 		if (methodList == null)
