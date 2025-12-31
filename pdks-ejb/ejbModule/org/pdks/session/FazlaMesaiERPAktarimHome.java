@@ -42,6 +42,7 @@ import org.pdks.entity.CalismaModeliAy;
 import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.Departman;
 import org.pdks.entity.Dosya;
+import org.pdks.entity.ERPSistem;
 import org.pdks.entity.FazlaMesaiERP;
 import org.pdks.entity.FazlaMesaiERPDetay;
 import org.pdks.entity.Personel;
@@ -1531,11 +1532,12 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				else {
 					if (denklestirme.getPersonel().getSirket().isErp()) {
 						if (uygulamaBordro == null) {
-
 							uygulamaBordro = ortakIslemler.getParameterKey("uygulamaBordro");
-							if (PdksUtil.hasStringValue(uygulamaBordro))
-								fazlaMesaiERP = (FazlaMesaiERP) pdksEntityController.getSQLParamByFieldObject(FazlaMesaiERP.TABLE_NAME, FazlaMesaiERP.COLUMN_NAME_ERP_SIRKET, uygulamaBordro, FazlaMesaiERP.class, session);
-
+							if (PdksUtil.hasStringValue(uygulamaBordro)) {
+								ERPSistem sistem = (ERPSistem) pdksEntityController.getSQLParamByFieldObject(ERPSistem.TABLE_NAME, ERPSistem.COLUMN_NAME_ERP_SIRKET, uygulamaBordro, ERPSistem.class, session);
+								if (sistem != null)
+									fazlaMesaiERP = (FazlaMesaiERP) pdksEntityController.getSQLParamByFieldObject(FazlaMesaiERP.TABLE_NAME, FazlaMesaiERP.COLUMN_NAME_ERP_SISTEM, sistem.getId(), FazlaMesaiERP.class, session);
+							}
 						}
 
 						if (denklestirme.getPersonel().getBordroAltAlan() != null)
