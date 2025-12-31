@@ -2,25 +2,33 @@ package org.pdks.entity;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.pdks.enums.MethodAPI;
 import org.pdks.enums.VeriTipiAPI;
 import org.pdks.genel.model.PdksUtil;
 
 @Entity(name = FazlaMesaiERP.TABLE_NAME)
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { FazlaMesaiERP.COLUMN_NAME_ERP_SISTEM }) })
 public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 
- 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -38276314400737830L;
 	static Logger logger = Logger.getLogger(FazlaMesaiERP.class);
 	public static final String TABLE_NAME = "FAZLA_MESAI_ERP";
+	public static final String COLUMN_NAME_ERP_SISTEM = "ERP_SISTEM_ID";
 	public static final String COLUMN_NAME_ERP_SIRKET = "ERP_SIRKET_ADI";
 	public static final String COLUMN_NAME_ODENEN_SAAT = "ODENEN_SAAT_KOLON_YAZ";
 	public static final String COLUMN_NAME_URL = "SERVER_URL";
@@ -38,7 +46,7 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_LOGIN = "LOGIN";
 
 	private String sirketAdi, serverURL, rootAdi, baslikAlanAdi, detayAlanAdi, detayKokAdi, uomAlanAdi, rtAlanAdi, htAlanAdi, loginBilgi, methodAdi = MethodAPI.POST.value();
-
+	private ERPSistem erpSistem;
 	private boolean odenenSaatKolonYaz;
 	private Boolean detayBaslikIcineYaz = Boolean.FALSE;
 	private Integer servisVeriTipi = VeriTipiAPI.JSON.value();
@@ -46,7 +54,18 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 
 	private MethodAPI methodAPI;
 
-	@Column(name = COLUMN_NAME_ERP_SIRKET, nullable = false)
+	@OneToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_ERP_SISTEM, nullable = false)
+	@Fetch(FetchMode.JOIN)
+	public ERPSistem getErpSistem() {
+		return erpSistem;
+	}
+
+	public void setErpSistem(ERPSistem erpSistem) {
+		this.erpSistem = erpSistem;
+	}
+
+	@Column(name = COLUMN_NAME_ERP_SIRKET)
 	public String getSirketAdi() {
 		return sirketAdi;
 	}

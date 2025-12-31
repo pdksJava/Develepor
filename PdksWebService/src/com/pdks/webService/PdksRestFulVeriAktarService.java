@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import org.json.XML;
 import org.pdks.dao.PdksDAO;
 import org.pdks.dao.impl.BaseDAOHibernate;
+import org.pdks.entity.ERPSistem;
 import org.pdks.entity.FazlaMesaiERP;
 import org.pdks.entity.FazlaMesaiERPDetay;
 import org.pdks.entity.Parameter;
@@ -263,7 +264,9 @@ public class PdksRestFulVeriAktarService implements Serializable {
 				PdksDAO pdksDAO = Constants.pdksDAO;
 				StringBuffer sb = new StringBuffer();
 				sb.append("select A.* from " + Parameter.TABLE_NAME + " P " + PdksVeriOrtakAktar.getSelectLOCK());
-				sb.append(" inner join " + FazlaMesaiERP.TABLE_NAME + " A " + PdksVeriOrtakAktar.getJoinLOCK() + " on A." + FazlaMesaiERP.COLUMN_NAME_ERP_SIRKET + " = P." + Parameter.COLUMN_NAME_DEGER);
+				sb.append(" inner join " + ERPSistem.TABLE_NAME + " E " + PdksVeriOrtakAktar.getJoinLOCK() + " on E." + ERPSistem.COLUMN_NAME_ERP_SIRKET + " = P." + Parameter.COLUMN_NAME_DEGER);
+				sb.append(" and E." + ERPSistem.COLUMN_NAME_DURUM + " = 1");
+				sb.append(" inner join " + FazlaMesaiERP.TABLE_NAME + " A " + PdksVeriOrtakAktar.getJoinLOCK() + " on A." + FazlaMesaiERP.COLUMN_NAME_ERP_SISTEM + " = E." + ERPSistem.COLUMN_NAME_ID);
 				sb.append(" where P." + Parameter.COLUMN_NAME_ADI + " = :b and P." + Parameter.COLUMN_NAME_DURUM + " = 1");
 				HashMap fields = new HashMap();
 				fields.put("b", "uygulamaBordro");

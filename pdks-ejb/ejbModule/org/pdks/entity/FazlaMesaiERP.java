@@ -28,8 +28,8 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 	private static final long serialVersionUID = -1067969681278459227L;
 	static Logger logger = Logger.getLogger(FazlaMesaiERP.class);
 	public static final String TABLE_NAME = "FAZLA_MESAI_ERP";
-	public static final String COLUMN_NAME_ERP_SIRKET = "ERP_SIRKET_ADI";
 	public static final String COLUMN_NAME_ERP_SISTEM = "ERP_SISTEM_ID";
+	public static final String COLUMN_NAME_ERP_SIRKET = "ERP_SIRKET_ADI";
 	public static final String COLUMN_NAME_ODENEN_SAAT = "ODENEN_SAAT_KOLON_YAZ";
 	public static final String COLUMN_NAME_URL = "SERVER_URL";
 	public static final String COLUMN_NAME_UOM = "UOM_ALAN_ADI";
@@ -55,7 +55,7 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 	private MethodAPI methodAPI;
 
 	@OneToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = COLUMN_NAME_ERP_SISTEM)
+	@JoinColumn(name = COLUMN_NAME_ERP_SISTEM, nullable = false)
 	@Fetch(FetchMode.JOIN)
 	public ERPSistem getErpSistem() {
 		return erpSistem;
@@ -65,7 +65,7 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 		this.erpSistem = erpSistem;
 	}
 
-	@Column(name = COLUMN_NAME_ERP_SIRKET, nullable = false)
+	@Column(name = COLUMN_NAME_ERP_SIRKET)
 	public String getSirketAdi() {
 		String str = erpSistem != null ? erpSistem.getSirketAdi() : sirketAdi;
 		return str;
