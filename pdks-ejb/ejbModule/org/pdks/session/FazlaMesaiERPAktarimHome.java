@@ -1535,7 +1535,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 							uygulamaBordro = ortakIslemler.getParameterKey("uygulamaBordro");
 							if (PdksUtil.hasStringValue(uygulamaBordro)) {
 								ERPSistem sistem = (ERPSistem) pdksEntityController.getSQLParamByFieldObject(ERPSistem.TABLE_NAME, ERPSistem.COLUMN_NAME_ERP_SIRKET, uygulamaBordro, ERPSistem.class, session);
-								if (sistem != null)
+								if (sistem != null && sistem.getDurum())
 									fazlaMesaiERP = (FazlaMesaiERP) pdksEntityController.getSQLParamByFieldObject(FazlaMesaiERP.TABLE_NAME, FazlaMesaiERP.COLUMN_NAME_ERP_SISTEM, sistem.getId(), FazlaMesaiERP.class, session);
 							}
 						}
