@@ -4234,7 +4234,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 							kapiGirisGetir(vGun, vardiyaPlanKey);
 						}
-						if (vGun.getGirisHareketleri() != null && vGun.getGirisHareketleri().isEmpty() == false && vGun.getCikisHareketleri().isEmpty() == false) {
+						if (vGun.getGirisHareketleri() != null && vGun.getGirisHareketleri().isEmpty() == false && vGun.getCikisHareketleri() != null && vGun.getCikisHareketleri().isEmpty() == false) {
 							HareketKGS girisHareket = vGun.getGirisHareketleri().get(0);
 							HareketKGS cikisHareket = vGun.getCikisHareketleri().get(0);
 							boolean hatali = Boolean.TRUE;
