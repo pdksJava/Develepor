@@ -6,7 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -19,7 +19,7 @@ import org.pdks.enums.VeriTipiAPI;
 import org.pdks.session.PdksUtil;
 
 @Entity(name = FazlaMesaiERP.TABLE_NAME)
-//@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { FazlaMesaiERP.COLUMN_NAME_ERP_SISTEM }) })
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { FazlaMesaiERP.COLUMN_NAME_ERP_SISTEM }) })
 public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 
 	/**
@@ -29,7 +29,7 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 	static Logger logger = Logger.getLogger(FazlaMesaiERP.class);
 	public static final String TABLE_NAME = "FAZLA_MESAI_ERP";
 	public static final String COLUMN_NAME_ERP_SIRKET = "ERP_SIRKET_ADI";
-	public static final String COLUMN_NAME_ERP_SISTEM = "ERP_SISTEM _ID";
+	public static final String COLUMN_NAME_ERP_SISTEM = "ERP_SISTEM_ID";
 	public static final String COLUMN_NAME_ODENEN_SAAT = "ODENEN_SAAT_KOLON_YAZ";
 	public static final String COLUMN_NAME_URL = "SERVER_URL";
 	public static final String COLUMN_NAME_UOM = "UOM_ALAN_ADI";
@@ -54,7 +54,7 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 
 	private MethodAPI methodAPI;
 
-	@ManyToOne(cascade = CascadeType.REFRESH)
+	@OneToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_ERP_SISTEM)
 	@Fetch(FetchMode.JOIN)
 	public ERPSistem getErpSistem() {
