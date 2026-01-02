@@ -56,6 +56,8 @@ public class Zamanlayici implements Serializable {
 	SertifikaSSLKontrol sertifikaSSLKontrol;
 	@In
 	KapiGirisGuncelleme kapiGirisGuncelleme;
+	@In
+	PlanVardiyaHareketGuncelleme planVardiyaHareketGuncelleme;
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
 	@In(required = false, create = true)
@@ -80,6 +82,9 @@ public class Zamanlayici implements Serializable {
 	public void schedulePersonelERPGuncellemeTimer() {
 		personelERPGuncelleme.personelERPGuncellemeTimer(new Date(), "0 0/5 0-23 ? * *");
 		logger.info("schedulePersonelERPGuncellemeTimer start : " + PdksUtil.getCurrentTimeStampStr());
+		planVardiyaHareketGuncelleme.planVardiyaHareketGuncellemeTimer(new Date(), "0 0/5 0-23 ? * *");
+		logger.info("planVardiyaHareketGuncelleme start : " + PdksUtil.getCurrentTimeStampStr());
+
 	}
 
 	public void izinBakiyeGuncellemeTimer() {
