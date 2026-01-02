@@ -55,8 +55,7 @@ public class PersonelDenklestirme extends BaseObject {
 	public static final String COLUMN_NAME_PERSONEL_NO = "PERSONEL_NO";
 	public static final String COLUMN_NAME_EKSIK_CALISMA_SURE = "EKSIK_CALISMA_SURE";
 	public static final String COLUMN_NAME_SUA_DURUM = "SUA_DURUM";
-	
-	
+
 	public static final String COLUMN_NAME_GECEN_AY_DENKLESTIRME = "GECEN_AY_DENKLESTIRME_ID";
 
 	public static double calismaSaatiSua = 7.0d, calismaSaatiPartTime = 4.5d;
@@ -117,7 +116,7 @@ public class PersonelDenklestirme extends BaseObject {
 		this.calismaModeliAy = cmAy;
 		if (cmAy != null) {
 			CalismaModeli cm = cmAy.getCalismaModeli();
-			this.onaylandi = cm.isIlkPlanOnaylidir() || cm.isFazlaMesaiVarMi() == false;
+			this.onaylandi = cm.isIlkPlanOnaylidir() || cm.isFazlaMesaiVarMi() == false || cmAy.isHareketKaydiVardiyaBulsunmu();
 			if (cm.isFazlaMesaiVarMi() == false)
 				this.fazlaMesaiOde = false;
 		}
