@@ -44,6 +44,8 @@ public class VardiyaGun extends BaseObject {
 	public static final String COLUMN_NAME_VARDIYA_SAAT = "VARDIYA_SAAT_ID";
 	public static final String COLUMN_NAME_VARDIYA_ACIKLAMA = "VARDIYA_ACIKLAMA";
 	public static final String COLUMN_NAME_PERSONEL_NO = "PERSONEL_NO";
+	public static final String COLUMN_NAME_VERSION = "VERSION";
+
 	public static final String STYLE_CLASS_NORMAL_CALISMA = "calismaAylik";
 	public static final String STYLE_CLASS_NORMAL_CALISMA_EVEN = "calismaAylikEven";
 	public static final String STYLE_CLASS_OZEL_ISTEK = "ozelIstekAylik";
@@ -119,7 +121,7 @@ public class VardiyaGun extends BaseObject {
 			this.durum = !xVardiya.isCalisma();
 	}
 
-	@Column(name = "VERSION")
+	@Column(name = COLUMN_NAME_VERSION)
 	public Integer getVersion() {
 		return version;
 	}

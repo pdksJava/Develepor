@@ -10240,7 +10240,9 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	@Transactional
-	public boolean vardiyaHareketlerdenGuncelle(TreeMap<Long, PersonelDenklestirmeTasiyici> personelDenklestirmeMap, TreeMap<Long, List<VardiyaGun>> personelVardiyaBulMap, HashMap<Long, ArrayList<VardiyaGun>> calismaPlaniMap, HashMap<Long, Boolean> hareketKaydiVardiyaMap,
+	public boolean vardiyaHareketlerdenGuncelle(TreeMap<Long, PersonelDenklestirmeTasiyici> personelDenklestirmeMap,
+			TreeMap<Long, List<VardiyaGun>> personelVardiyaBulMap, 
+			HashMap<Long, ArrayList<VardiyaGun>> calismaPlaniMap, HashMap<Long, Boolean> hareketKaydiVardiyaMap,
 			HashMap<Long, ArrayList<HareketKGS>> personelHareketMap, Liste suaListe, Session session) {
 		List<Long> suaPerIdList = suaListe != null ? (List<Long>) suaListe.getId() : new ArrayList<Long>();
 		List<Vardiya> suaVardiyaList = suaListe != null ? (List<Vardiya>) suaListe.getValue() : new ArrayList<Vardiya>();

@@ -78,7 +78,7 @@ public class Zamanlayici implements Serializable {
 	}
 
 	public void schedulePersonelERPGuncellemeTimer() {
-		personelERPGuncelleme.personelERPGuncellemeTimer(new Date(), "0 0/5 3-23 ? * *");
+		personelERPGuncelleme.personelERPGuncellemeTimer(new Date(), "0 0/5 0-23 ? * *");
 		logger.info("schedulePersonelERPGuncellemeTimer start : " + PdksUtil.getCurrentTimeStampStr());
 	}
 

@@ -147,6 +147,9 @@
 								<a4j:commandButton status="ajaxStatus" value="MailSatusKontrol Calistir"
 									rendered="#{ortakIslemler.getParameterKeyHasStringValue('smtpYedekUserNameaa')}"
 									action="#{personelERPGuncelleme.mailSatusKontrol(parameterHome.session)}" />
+									
+								<a4j:commandButton status="ajaxStatus" value="vardiyaHareketGuncelleme Calistir"  
+									action="#{personelERPGuncelleme.vardiyaHareketGuncelleme(parameterHome.session,null)}" />	
 
 							</c:if>
 							<a4j:commandButton status="ajaxStatus" value="Sistem Saati Güncelle Calistir"
