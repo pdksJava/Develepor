@@ -84,6 +84,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			logger.debug("kapiGirisGuncelleme in " + PdksUtil.getCurrentTimeStampStr());
 			Session session = null;
 			try {
+				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 				Parameter parameterHareket = ortakIslemler.getParameter(session, PARAMETER_HAREKET_KEY);
 				String valueHareket = (parameterHareket != null) ? parameterHareket.getValue() : null;
 				if (PdksUtil.hasStringValue(valueHareket)) {
