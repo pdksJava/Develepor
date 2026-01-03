@@ -121,13 +121,11 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	 */
 	@Transactional
 	public boolean vardiyaHareketGuncelleme(Date tarih, Session session) throws Exception {
-		boolean islemYapildi = false;
 		if (tarih == null)
 			tarih = ortakIslemler.getBugun();
 		Calendar cal = Calendar.getInstance();
 		String dateStr = PdksUtil.convertToDateString(cal.getTime(), "yyyyMMdd");
 		int dayOffWeek = cal.get(Calendar.DAY_OF_WEEK);
-
 		cal.setTime(tarih);
 		cal.set(Calendar.DATE, 1);
 		cal.add(Calendar.MONTH, -1);
@@ -143,16 +141,21 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		sb.append(" inner join PERSONEL P " + PdksEntityController.getJoinLOCK() + " on P.ID = V." + VardiyaGun.COLUMN_NAME_PERSONEL + " and  V.VARDIYA_TARIHI between P.ISE_BASLAMA_TARIHI and P.SSK_CIKIS_TARIHI");
 		sb.append(" where (V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between :t1 and :t2 ) and V." + VardiyaGun.COLUMN_NAME_DURUM + " = 0 AND V." + VardiyaGun.COLUMN_NAME_VERSION + " < 0");
 		sb.append(" )");
-		sb.append(" select PD.* from VERI V");
+		sb.append(" select PD." + PersonelDenklestirme.COLUMN_NAME_ID + " from VERI V " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + DenklestirmeAy.TABLE_NAME + " D ON D." + DenklestirmeAy.COLUMN_NAME_YIL + " = V." + DenklestirmeAy.COLUMN_NAME_YIL + " AND D." + DenklestirmeAy.COLUMN_NAME_AY + " = V." + DenklestirmeAy.COLUMN_NAME_AY + " AND D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1");
 		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD ON PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL + "  and PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
-		sb.append(" and coalesce(PD." + PersonelDenklestirme.COLUMN_NAME_SUA_DURUM + ",0) = 0");
+		sb.append(" and coalesce(PD." + PersonelDenklestirme.COLUMN_NAME_SUA_DURUM + ", 0) = 0");
 		sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " C ON C." + CalismaModeliAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " and C." + CalismaModeliAy.COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL + " = 1");
 		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_YIL + " desc, D." + DenklestirmeAy.COLUMN_NAME_AY + " desc, PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<PersonelDenklestirme> denklestirmeList = pdksEntityController.getObjectBySQLList(sb.toString(), fields, PersonelDenklestirme.class);
-		if (denklestirmeList.isEmpty() == false) {
+		List<Long> idList = PdksUtil.getLongListFromBigDecimal(pdksEntityController.getObjectBySQLList(sb.toString(), fields, null));
+		List<PersonelDenklestirme> denklestirmeList = null;
+		if (idList.isEmpty() == false)
+			denklestirmeList = pdksEntityController.getSQLParamByFieldList(PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.COLUMN_NAME_ID, idList, PersonelDenklestirme.class, session);
+		idList = null;
+		boolean islemYapildi = false;
+		if (denklestirmeList != null && denklestirmeList.isEmpty() == false) {
 			TreeMap<String, Tatil> tatilMap = ortakIslemler.getTatilGunleri(null, basTarih, bitTarih, session);
 			islemYapildi = dayOffWeek != Calendar.SUNDAY && tatilMap.containsKey(dateStr) == false;
 			LinkedHashMap<String, List<PersonelDenklestirme>> linkedHashMap = new LinkedHashMap<String, List<PersonelDenklestirme>>();
@@ -215,7 +218,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						personelDenklestirmeMap.put(perId, pdt);
 						personelIdList.add(perId);
 					}
-					String str = da.getAyAdi() + " " + da.getYil() + " "
+					String str = da.getAyAdi() + " " + da.getYil() + " : "
 							+ PdksUtil.replaceAllManuel(sirket.getAd() + " " + (tesis != null ? tesis.getAciklama() + " " : "") + (bolum != null ? bolum.getAciklama() + " " : "") + (altBolum != null ? altBolum.getAciklama() + " " : "") + " [ " + list.size() + " ]", "  ", " ");
 					logger.info(str + " in " + PdksUtil.getCurrentTimeStampStr());
 					HashMap<Long, ArrayList<HareketKGS>> personelHareketMap = ortakIslemler.personelHareketleriGetir(kgsPerMap, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -1), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 1), session);

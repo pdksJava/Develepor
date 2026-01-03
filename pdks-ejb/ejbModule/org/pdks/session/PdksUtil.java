@@ -1696,7 +1696,9 @@ public class PdksUtil implements Serializable {
 			newId = 0;
 		boolean degisti = newId.intValue() != oldId.intValue();
 		return degisti;
-	}/**
+	}
+
+	/**
 	 * @param oldId
 	 * @param newId
 	 * @return
@@ -4117,6 +4119,38 @@ public class PdksUtil implements Serializable {
 	public static Date getDateFromTimestamp(Timestamp ts) {
 		Date date = ts != null ? new Date(ts.getTime()) : null;
 		return date;
+	}
+
+	/**
+	 * @param bd
+	 * @return
+	 */
+	public static List<Long> getLongListFromBigDecimal(List bdList) {
+		List<Long> list = null;
+		if (bdList != null) {
+			list = new ArrayList<Long>();
+			try {
+				for (Iterator iterator = bdList.iterator(); iterator.hasNext();) {
+					Object object = (Object) iterator.next();
+					if (object instanceof BigDecimal) {
+						BigDecimal bd = (BigDecimal) object;
+						list.add(bd.longValue());
+					} else if (object instanceof Long) {
+						Long l = (Long) object;
+						list.add(l);
+					} else if (object instanceof Double) {
+						Double d = (Double) object;
+						list.add(d.longValue());
+					}
+
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+
+		}
+
+		return list;
 	}
 
 	/**
