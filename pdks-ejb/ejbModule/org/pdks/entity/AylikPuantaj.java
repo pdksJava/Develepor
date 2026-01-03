@@ -988,7 +988,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 			dt = departman == null || departman.isAdminMi() ? denklestirmeAy.getTipi() : denklestirmeAy.getTaseronTipi();
 		if (dt == null)
 			dt = DenklestirmeTipi.GECEN_AY_ODE;
-		eksiBakiyeSuresi = 0.0d;
+		this.setEksiBakiyeSuresi(0.0d);
 		PersonelDenklestirme personelDenklestirme = new PersonelDenklestirme();
 		double devredenSure = 0;
 		Double odenenSure = 0d;
@@ -1024,7 +1024,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 				if (hesaplananSure > 0)
 					odenenSure = hesaplananSure;
 				else if (hesaplananSure < 0)
-					eksiBakiyeSuresi = hesaplananSure;
+					this.setEksiBakiyeSuresi(hesaplananSure);
 				devredenSure = 0;
 			}
 			personelDenklestirme.setOdenenSure(odenenSure);
