@@ -81,7 +81,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	public QuartzTriggerHandle planVardiyaHareketGuncellemeTimer(@Expiration Date when, @IntervalCron String interval) {
 		if (!isCalisiyor()) {
 			setCalisiyor(Boolean.TRUE);
-			logger.debug("kapiGirisGuncelleme in " + PdksUtil.getCurrentTimeStampStr());
+			logger.debug("planVardiyaHareketGuncelleme in " + PdksUtil.getCurrentTimeStampStr());
 			Session session = null;
 			try {
 				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
@@ -90,11 +90,13 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				if (PdksUtil.hasStringValue(valueHareket)) {
 					Date tarih = ortakIslemler.getBugun();
 					boolean guncellemeHareketDurum = PdksUtil.zamanKontrol(PARAMETER_HAREKET_KEY, valueHareket, tarih);
-					if (guncellemeHareketDurum)
-						vardiyaHareketGuncelleme(session, tarih);
+					if (guncellemeHareketDurum) {
+						guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
+						if (guncellemeHareketDurum)
+							zamanlayici.mailGonder(session, null, parameterHareket.getDescription(), "Plan Vardiya Hareket Güncelleme güncellenmiştir.", null, Boolean.TRUE);
 
+					}
 				}
-
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n" + e.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());
 				e.printStackTrace();
@@ -105,22 +107,27 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				setCalisiyor(Boolean.FALSE);
 
 			}
-
+			logger.debug("planVardiyaHareketGuncelleme out " + PdksUtil.getCurrentTimeStampStr());
 		}
 
 		return null;
 	}
 
 	/**
+	 * @param tarih
 	 * @param session
-	 * @param time
+	 * @return
 	 * @throws Exception
 	 */
 	@Transactional
-	public void vardiyaHareketGuncelleme(Session session, Date tarih) throws Exception {
+	public boolean vardiyaHareketGuncelleme(Date tarih, Session session) throws Exception {
+		boolean islemYapildi = false;
 		if (tarih == null)
 			tarih = ortakIslemler.getBugun();
 		Calendar cal = Calendar.getInstance();
+		String dateStr = PdksUtil.convertToDateString(cal.getTime(), "yyyyMMdd");
+		int dayOffWeek = cal.get(Calendar.DAY_OF_WEEK);
+
 		cal.setTime(tarih);
 		cal.set(Calendar.DATE, 1);
 		cal.add(Calendar.MONTH, -1);
@@ -147,6 +154,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		List<PersonelDenklestirme> denklestirmeList = pdksEntityController.getObjectBySQLList(sb.toString(), fields, PersonelDenklestirme.class);
 		if (denklestirmeList.isEmpty() == false) {
 			TreeMap<String, Tatil> tatilMap = ortakIslemler.getTatilGunleri(null, basTarih, bitTarih, session);
+			islemYapildi = dayOffWeek != Calendar.SUNDAY && tatilMap.containsKey(dateStr) == false;
 			LinkedHashMap<String, List<PersonelDenklestirme>> linkedHashMap = new LinkedHashMap<String, List<PersonelDenklestirme>>();
 			HashMap<Long, Boolean> hareketKaydiVardiyaMap = new HashMap<Long, Boolean>();
 			for (PersonelDenklestirme pd : denklestirmeList) {
@@ -207,7 +215,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						personelDenklestirmeMap.put(perId, pdt);
 						personelIdList.add(perId);
 					}
-					String str = PdksUtil.replaceAllManuel(sirket.getAd() + " " + (tesis != null ? tesis.getAciklama() + " " : "") + (bolum != null ? bolum.getAciklama() + " " : "") + (altBolum != null ? altBolum.getAciklama() + " " : "") + " [ " + list.size() + " ]", "  ", " ");
+					String str = da.getAyAdi() + " " + da.getYil() + " "
+							+ PdksUtil.replaceAllManuel(sirket.getAd() + " " + (tesis != null ? tesis.getAciklama() + " " : "") + (bolum != null ? bolum.getAciklama() + " " : "") + (altBolum != null ? altBolum.getAciklama() + " " : "") + " [ " + list.size() + " ]", "  ", " ");
 					logger.info(str + " in " + PdksUtil.getCurrentTimeStampStr());
 					HashMap<Long, ArrayList<HareketKGS>> personelHareketMap = ortakIslemler.personelHareketleriGetir(kgsPerMap, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -1), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 1), session);
 					if (personelHareketMap.isEmpty() == false) {
@@ -251,7 +260,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		}
 		denklestirmeList = null;
 		sb = null;
-
+		return islemYapildi;
 	}
 
 	public static boolean isCalisiyor() {
