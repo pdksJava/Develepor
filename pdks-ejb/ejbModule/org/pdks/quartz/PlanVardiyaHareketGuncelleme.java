@@ -149,7 +149,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_YIL + " desc, D." + DenklestirmeAy.COLUMN_NAME_AY + " desc, PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<Long> idList = PdksUtil.getLongListFromBigDecimal(pdksEntityController.getObjectBySQLList(sb.toString(), fields, null));
+		List<Long> idList = PdksUtil.getLongListFromBigDecimal(null, pdksEntityController.getObjectBySQLList(sb.toString(), fields, null));
 		List<PersonelDenklestirme> denklestirmeList = null;
 		if (idList.isEmpty() == false)
 			denklestirmeList = pdksEntityController.getSQLParamByFieldList(PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.COLUMN_NAME_ID, idList, PersonelDenklestirme.class, session);
@@ -220,7 +220,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					}
 					String str = da.getAyAdi() + " " + da.getYil() + " : "
 							+ PdksUtil.replaceAllManuel(sirket.getAd() + " " + (tesis != null ? tesis.getAciklama() + " " : "") + (bolum != null ? bolum.getAciklama() + " " : "") + (altBolum != null ? altBolum.getAciklama() + " " : "") + " [ " + list.size() + " ]", "  ", " ");
-					logger.info(str + " in " + PdksUtil.getCurrentTimeStampStr());
+					if (authenticatedUser != null)
+						logger.info(str + " in " + PdksUtil.getCurrentTimeStampStr());
 					HashMap<Long, ArrayList<HareketKGS>> personelHareketMap = ortakIslemler.personelHareketleriGetir(kgsPerMap, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -1), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 1), session);
 					if (personelHareketMap.isEmpty() == false) {
 						List<VardiyaGun> gunList = ortakIslemler.getAllPersonelIdVardiyalar(personelIdList, tatilMap, basTarih, bitTarih, true, session);
@@ -248,7 +249,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						calismaPlaniMap = null;
 						vGunMap = null;
 					}
-					logger.info(str + " out " + PdksUtil.getCurrentTimeStampStr());
+					if (authenticatedUser != null)
+						logger.info(str + " out " + PdksUtil.getCurrentTimeStampStr());
 					list = null;
 					personelDenklestirmeMap = null;
 					personelHareketMap = null;

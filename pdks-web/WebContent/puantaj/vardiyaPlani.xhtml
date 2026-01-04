@@ -351,7 +351,7 @@
 															value="#{aylikPuantaj.pdksPersonel.pdksYonetici.adSoyad}" /></SPAN></td>
 												<a4j:repeat value="#{aylikPuantaj.ayinVardiyalari}" var="vardiyaGun">
 													<ui:fragment rendered="#{vardiyaGun.ayinGunu}">
-														<td align="center" class="#{vardiyaGun.getAylikClassAdi(aylikPuantaj.trClass)}" id="vardiyaDosya#{vardiyaGun.vardiyaKeyStr}"
+														<td align="center" class="#{vardiyaGunHome.vardiyaGunRenk(vardiyaGun,aylikPuantaj)}" id="vardiyaDosya#{vardiyaGun.vardiyaKeyStr}"
 															style="width: 20px"><ui:fragment id="veri" rendered="#{vardiyaGun.calisan}">
 																<ui:fragment rendered="#{vardiyaGun.izin != null}">
 																	<SPAN> <h:outputText value="#{vardiyaGun.vardiya.kisaAdi}" rendered="#{vardiyaGun.vardiya.haftaTatil}" />
@@ -467,7 +467,7 @@
 							<tr class="acik">
 
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
-									<td style="width: 90px; height: 20px;" id="vardiya#{vardiyaGun.vardiyaDateStr}" class="#{vardiyaGun.getAylikClassAdi(aylikPuantaj.trClass)}"
+									<td style="width: 90px; height: 20px;" id="vardiya#{vardiyaGun.vardiyaDateStr}" class="#{vardiyaGunHome.vardiyaGunRenk(vardiyaGun,aylikPuantaj)}"
 										align="center"><ui:fragment
 											rendered="#{vardiyaGun.vardiyalar == null or vardiyaGun.vardiya == null or vardiyaGun.aylikGirisYap == false or  vardiyaGun.izin != null or vardiyaGun.kullaniciYetkili == false}">
 											<h:panelGrid id="veriDigerAy">
@@ -1213,7 +1213,7 @@
 							</tr>
 							<tr class="koyu">
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
-									<td style="width: 90px; height: 25px;" class="#{vardiyaGun.getAylikClassAdi(aylikPuantaj.trClass)}" align="center"><ui:fragment
+									<td style="width: 90px; height: 25px;" class="#{vardiyaGunHome.vardiyaGunRenk(vardiyaGun,null)}" align="center"><ui:fragment
 											rendered="#{vardiyaGun.ayinGunu == false or vardiyaGun.fazlaMesaiTalepDurum == false or vardiyaGun.vardiya == null   or vardiyaGun.izin != null or vardiyaGun.kullaniciYetkili == false}">
 											<h:panelGrid id="veriDigerAy">
 												<h:outputText style="font-size: 11px;#{vardiyaGun.styleGun}" value="#{vardiyaGun.aciklama}" />

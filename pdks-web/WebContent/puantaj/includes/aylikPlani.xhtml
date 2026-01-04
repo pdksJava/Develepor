@@ -474,7 +474,7 @@
 							</ui:fragment>
 							<a4j:repeat value="#{aylikPuantaj.ayinVardiyalari}" var="vardiyaGun">
 								<ui:fragment rendered="#{vardiyaGun.ayinGunu}">
-									<td align="center" class="#{vardiyaGun.getAylikClassAdi(aylikPuantaj.trClass)}" style="width: 20px"><ui:fragment id="veri"
+									<td align="center" class="#{vardiyaGunHome.vardiyaGunRenk(vardiyaGun,aylikPuantaj)}" style="width: 20px"><ui:fragment id="veri"
 											rendered="#{vardiyaGun.calisan}">
 											<table>
 												<TR>

@@ -1971,7 +1971,8 @@ public class OrtakIslemler implements Serializable {
 		List<Long> longList = new ArrayList<Long>();
 		if (bigDecimalList != null) {
 			for (BigDecimal bigDecimal : bigDecimalList) {
-				longList.add(bigDecimal.longValue());
+				if (bigDecimal != null)
+					longList.add(bigDecimal.longValue());
 			}
 		}
 		return longList;
@@ -10228,6 +10229,47 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param guncelleyenUser
+	 * @param ap
+	 * @param session
+	 */
+	@Transactional
+	public void puantajOnayKontrol(User guncelleyenUser, AylikPuantaj ap, Session session) {
+		if (ap != null && ap.getPersonelDenklestirme() != null) {
+			PersonelDenklestirme pd = ap.getPersonelDenklestirme();
+			if (pd.isOnaylandi() && ap.getVardiyaHaftaList() != null) {
+				boolean flush = false;
+				for (VardiyaHafta vh : ap.getVardiyaHaftaList()) {
+					if (vh.getVardiyaGunler() == null)
+						continue;
+					int gunAdet = 0, haftaAdet = 0;
+					for (VardiyaGun vg : vh.getVardiyaGunler()) {
+						if (vg.getId() != null && vg.getVersion().intValue() == 0) {
+							++gunAdet;
+							if (vg.isHaftaTatil())
+								++haftaAdet;
+						}
+
+					}
+					if (gunAdet == 7 && haftaAdet != 1)
+						flush = true;
+				}
+				if (flush) {
+					pd.setOnaylandi(false);
+					pd.setDurum(false);
+					pd.setGuncelleyenUser(guncelleyenUser);
+					pd.setGuncellemeTarihi(new Date());
+					session.saveOrUpdate(pd);
+					session.flush();
+				}
+
+			}
+
+		}
+
+	}
+
+	/**
 	 * TODO Hareketlere göre vardiya planı güncellemesi
 	 * 
 	 * @param personelDenklestirmeMap
@@ -10240,13 +10282,13 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	@Transactional
-	public boolean vardiyaHareketlerdenGuncelle(TreeMap<Long, PersonelDenklestirmeTasiyici> personelDenklestirmeMap,
-			TreeMap<Long, List<VardiyaGun>> personelVardiyaBulMap, 
-			HashMap<Long, ArrayList<VardiyaGun>> calismaPlaniMap, HashMap<Long, Boolean> hareketKaydiVardiyaMap,
+	public boolean vardiyaHareketlerdenGuncelle(TreeMap<Long, PersonelDenklestirmeTasiyici> personelDenklestirmeMap, TreeMap<Long, List<VardiyaGun>> personelVardiyaBulMap, HashMap<Long, ArrayList<VardiyaGun>> calismaPlaniMap, HashMap<Long, Boolean> hareketKaydiVardiyaMap,
 			HashMap<Long, ArrayList<HareketKGS>> personelHareketMap, Liste suaListe, Session session) {
 		List<Long> suaPerIdList = suaListe != null ? (List<Long>) suaListe.getId() : new ArrayList<Long>();
 		List<Vardiya> suaVardiyaList = suaListe != null ? (List<Vardiya>) suaListe.getValue() : new ArrayList<Vardiya>();
 		boolean yenidenCalistir = false;
+		Date guncellemeTarihi = new Date();
+		User guncelleyenUser = null;
 		HashMap fields = new HashMap();
 		TreeMap<Long, List<Vardiya>> vMap = new TreeMap<Long, List<Vardiya>>();
 		List idList = new ArrayList(hareketKaydiVardiyaMap.keySet());
@@ -10396,7 +10438,7 @@ public class OrtakIslemler implements Serializable {
 												if (islemVardiya.getVardiyaBitZaman().after(bugun) && islemVardiya.getVardiyaBasZaman().before(bugun)) {
 													HareketKGS girisHareketKGS = girisler.get(0);
 													double sure = PdksUtil.setSureDoubleTypeRounded(PdksUtil.getSaatFarki(islemVardiya.getVardiyaBitZaman(), girisHareketKGS.getZaman()).doubleValue(), vardiyaGunNew.getYarimYuvarla());
-													if (sure > 0.0d) {
+													if (sure > 3.5d) {
 														vardiyaGunNew.setVersion(-1);
 														listeler.add(new Liste(vardiyaGunNew, sure));
 													}
@@ -10413,20 +10455,7 @@ public class OrtakIslemler implements Serializable {
 								VardiyaGun vg = null;
 								if (listeler.size() > 1)
 									listeler = PdksUtil.sortListByAlanAdi(listeler, "value", true);
-								// List<Liste> suaList = null;
-								// if (suaPerIdList.contains(perId)) {
-								// suaList = new ArrayList<Liste>();
-								// for (Liste liste : listeler) {
-								// VardiyaGun vGun = (VardiyaGun) liste.getId();
-								// if (vGun.getVardiya().isSuaMi()) {
-								// suaList.add(liste);
-								// if (vg == null)
-								// vg = vGun;
-								//
-								// }
-								// }
-								//
-								// }
+
 								if (vg == null)
 									vg = (VardiyaGun) listeler.get(0).getId();
 
@@ -10434,6 +10463,10 @@ public class OrtakIslemler implements Serializable {
 								for (HareketKGS hareket : vg.getHareketler()) {
 									hareketIdList.add(hareket.getId());
 								}
+								if (guncelleyenUser == null)
+									guncelleyenUser = getSistemAdminUser(session);
+								vardiyaGun.setGuncelleyenUser(guncelleyenUser);
+								vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
 								vardiyaGun.setVardiya(vg.getVardiya());
 								vardiyaGun.setVersion(vg.getVersion());
 								pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);

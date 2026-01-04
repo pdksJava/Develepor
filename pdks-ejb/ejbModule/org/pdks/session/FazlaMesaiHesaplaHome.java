@@ -1746,6 +1746,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				ortakIslemler.calismaModeliGunListGuncelle(puantajDenklestirmeList, null, session);
 				if (puantajDenklestirmeList.isEmpty() == false)
 					ortakIslemler.odemeYuvarlamaGuncelle(puantajDenklestirmeList, session);
+				User adminUser = null;
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					int yarimYuvarla = puantaj.getYarimYuvarla();
@@ -2711,6 +2712,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					} catch (Exception ex) {
 						logger.error(ex);
 						ex.printStackTrace();
+					}
+					if (denklestirmeAyDurum && calismaModeli != null) {
+						if (calismaModeli.isHareketKaydiVardiyaBulsunmu()) {
+							if (adminUser == null)
+								adminUser = ortakIslemler.getSistemAdminUser(session);
+							ortakIslemler.puantajOnayKontrol(adminUser, puantaj, session);
+						}
+
 					}
 
 				}

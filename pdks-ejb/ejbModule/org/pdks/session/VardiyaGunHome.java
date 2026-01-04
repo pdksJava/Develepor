@@ -150,6 +150,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	private TreeMap<String, Tanim> fazlaMesaiMap;
 
+	private Date bugunTarih;
+
 	private Integer aksamVardiyaBasSaat, aksamVardiyaBitSaat, aksamVardiyaBasDakika, aksamVardiyaBitDakika;
 
 	private List<VardiyaPlan> vardiyaPlanList = new ArrayList<VardiyaPlan>();
@@ -2915,11 +2917,32 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	}
 
 	/**
+	 * @param vg
+	 * @param ap
+	 * @return
+	 */
+	public String vardiyaGunRenk(VardiyaGun vg, AylikPuantaj ap) {
+		if (ap == null)
+			ap = personelAylikPuantaj;
+		String renk = vg.getAylikClassAdi(ap.getTrClass());
+		if (vg != null && vg.getId() != null) {
+			if (vg.getVersion() < 0 && (vg.isAyinGunu() == false || vg.getVardiyaDate().before(bugunTarih) == false)) {
+				VardiyaGun vardiyaGun = (VardiyaGun) vg.clone();
+				vardiyaGun.setVersion(0);
+				renk = vardiyaGun.getAylikClassAdi(ap.getTrClass());
+			}
+		}
+		return renk;
+
+	}
+
+	/**
 	 * @param aylikPuantaj
 	 * @param tipi
 	 * @return
 	 */
 	public String aylikPuantajSec(AylikPuantaj aylikPuantaj, String tipi) {
+		bugunTarih = PdksUtil.getDate(new Date());
 		kartBasmayanPersonel = false;
 		personelAylikPuantaj = null;
 		if (personelDenklestirmeDinamikAlanList == null)
@@ -7780,7 +7803,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			Long userId = loginUser.getPdksPersonel().getId();
 			boolean kullaniciYonetici = loginUser.isYonetici() || loginUser.isSuperVisor() || loginUser.isProjeMuduru() || loginUser.isDirektorSuperVisor();
 			calismaPlaniDenklestir(departmanDenklestirmeDonemi, aylikPuantajList, null);
-
+			bugunTarih = PdksUtil.getDate(new Date());
 			for (Iterator iterator = aylikPuantajList.iterator(); iterator.hasNext();) {
 				AylikPuantaj aylikPuantaj = (AylikPuantaj) iterator.next();
 				if (!kullaniciYonetici || !aylikPuantaj.getPdksPersonel().getId().equals(userId)) {
@@ -13627,6 +13650,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	public void setKayitBasarili(Boolean kayitBasarili) {
 		this.kayitBasarili = kayitBasarili;
+	}
+
+	public Date getBugunTarih() {
+		return bugunTarih;
+	}
+
+	public void setBugunTarih(Date bugun) {
+		this.bugunTarih = bugun;
 	}
 
 }

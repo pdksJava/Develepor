@@ -4121,26 +4121,58 @@ public class PdksUtil implements Serializable {
 		return date;
 	}
 
+	 
 	/**
-	 * @param bd
+	 * @param indis
+	 * @param veri
 	 * @return
 	 */
-	public static List<Long> getLongListFromBigDecimal(List bdList) {
+	public static List<Long> getLongListFromBigDecimal(Integer indis, Object veri) {
 		List<Long> list = null;
-		if (bdList != null) {
+		if (veri != null) {
 			list = new ArrayList<Long>();
-			try {
-				for (Iterator iterator = bdList.iterator(); iterator.hasNext();) {
-					Object object = (Object) iterator.next();
-					if (object instanceof BigDecimal) {
-						BigDecimal bd = (BigDecimal) object;
-						list.add(bd.longValue());
-					} else if (object instanceof Long) {
-						Long l = (Long) object;
-						list.add(l);
-					} else if (object instanceof Double) {
-						Double d = (Double) object;
-						list.add(d.longValue());
+ 			try {
+
+				if (veri instanceof List) {
+					if (indis == null) {
+						List bdList = (List) veri;
+						for (Iterator iterator = bdList.iterator(); iterator.hasNext();) {
+							Object object = (Object) iterator.next();
+							if (object == null)
+								continue;
+							if (object instanceof BigDecimal) {
+								BigDecimal bd = (BigDecimal) object;
+								list.add(bd.longValue());
+							} else if (object instanceof Long) {
+								Long l = (Long) object;
+								list.add(l);
+							} else if (object instanceof Double) {
+								Double d = (Double) object;
+								list.add(d.longValue());
+							}
+
+						}
+					} else {
+						List<Object[]> bdList = (List) veri;
+						for (Object[] objects : bdList) {
+							if (indis < objects.length) {
+								Object object =objects[indis];
+								if (object == null)
+									continue;
+								if (object instanceof BigDecimal) {
+									BigDecimal bd = (BigDecimal) object;
+									list.add(bd.longValue());
+								} else if (object instanceof Long) {
+									Long l = (Long) object;
+									list.add(l);
+								} else if (object instanceof Double) {
+									Double d = (Double) object;
+									list.add(d.longValue());
+								}
+
+							}
+
+						}
 					}
 
 				}
