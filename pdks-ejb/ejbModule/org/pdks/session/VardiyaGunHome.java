@@ -6456,18 +6456,18 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	private void aylikHareketKaydiVardiyalariBul() {
 		aylikHareketKaydiVardiyaBul = Boolean.FALSE;
-		Date bugun = new Date();
+		Date bugun = PdksUtil.getDate(new Date());
 		for (AylikPuantaj aylikPuantaj : aylikPuantajList) {
 			CalismaModeliAy calismaModeliAy = aylikPuantaj.getPersonelDenklestirme().getCalismaModeliAy();
 			if (calismaModeliAy != null && calismaModeliAy.isHareketKaydiVardiyaBulsunmu()) {
 				for (VardiyaGun vg : aylikPuantaj.getVardiyalar()) {
-					if (!vg.getDurum() && vg.isAyinGunu() && vg.getId() != null) {
-						if (vg.getIslemVardiya() == null || bugun.before(vg.getIslemVardiya().getVardiyaTelorans2BitZaman()))
-							continue;
-
-						if (vg.getVersion() == 0)
-							aylikHareketKaydiVardiyaBul = Boolean.TRUE;
+					if (vg.isAyinGunu() == false)
+						continue;
+					if (vg.getId() != null && vg.getVardiyaDate().after(bugun) && vg.getVersion() == 0) {
+						aylikHareketKaydiVardiyaBul = Boolean.TRUE;
+						break;
 					}
+
 				}
 			}
 			if (aylikHareketKaydiVardiyaBul)
@@ -6481,25 +6481,20 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	@Transactional
 	public String aylikHareketKaydiVardiyaBulGuncelle() {
 		try {
-			Date bugun = new Date();
+			Date bugun = PdksUtil.getDate(new Date());
 			for (AylikPuantaj aylikPuantaj : aylikPuantajList) {
 				CalismaModeliAy calismaModeliAy = aylikPuantaj.getPersonelDenklestirme().getCalismaModeliAy();
 				if (calismaModeliAy != null && calismaModeliAy.isHareketKaydiVardiyaBulsunmu()) {
 					boolean flush = false;
 					for (VardiyaGun vg : aylikPuantaj.getVardiyalar()) {
-						if (vg.getIslemVardiya() == null || bugun.before(vg.getIslemVardiya().getVardiyaTelorans2BitZaman()))
+						if (vg.isAyinGunu() == false || vg.getIslemVardiya() == null || vg.isIzinli() || vg.getVersion() < 0)
 							continue;
-						if (vg.isAyinGunu() && vg.getId() != null) {
-							if (vg.getDurum() && vg.getVersion() < 0) {
-								vg.setVersion(0);
-								saveOrUpdate(vg);
-								flush = true;
-							} else if (!vg.getDurum() && vg.getVersion() == 0 && vg.isIzinli() == false && vg.getVardiya().isHaftaTatil() == false) {
-								vg.setVersion(-1);
-								saveOrUpdate(vg);
-								flush = true;
-							}
+						if (vg.getId() != null && (vg.getVardiyaDate().after(bugun) || vg.getDurum().equals(Boolean.FALSE))) {
+							vg.setVersion(-1);
+							saveOrUpdate(vg);
+							flush = true;
 						}
+
 					}
 					if (flush)
 						sessionFlush();
