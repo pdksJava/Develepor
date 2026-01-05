@@ -133,7 +133,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 							}
 							if (!list.isEmpty()) {
 								hataList.addAll(list);
-								logger.info(mesaiTable.toXML() + "\n" + cikanTable.toXML()+" "+logger.info();
+								logger.info(mesaiTable.toXML() + "\n" + cikanTable.toXML() + " " + PdksUtil.getCurrentTimeStampStr());
 							}
 							if (list.isEmpty() && user.isIK()) {
 								personelDenklestirme.setErpAktarildi(Boolean.TRUE);
@@ -309,7 +309,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 							Sirket sirket = null;
 							do {
 								personel = ((Personel) personelMap.get(sonucResultTable.getString("PERNR")));
- 								String sirketKodu = sonucResultTable.getString("BUKRS").trim();
+								String sirketKodu = sonucResultTable.getString("BUKRS").trim();
 								if (!personel.getDurum())
 									personel.setDurum(Boolean.TRUE);
 								if (sirketMap.containsKey(sirketKodu))
