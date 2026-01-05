@@ -706,7 +706,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 
 			}
 		} catch (Exception e) {
-			logger.info(e);
+			logger.error(e);
 			e.printStackTrace();
 		}
 		if (abhId != null)

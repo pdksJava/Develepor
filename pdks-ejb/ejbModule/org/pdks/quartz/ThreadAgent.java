@@ -38,7 +38,7 @@ public class ThreadAgent extends Thread implements Serializable {
 		if (session != null) {
 			if (agent != null) {
 				if (PdksUtil.hasStringValue(agent.getStoreProcedureAdi())) {
-					logger.info(agent.getAciklama() + " --> " + agent.getStoreProcedureAdi() + (agent.getStart() ? " (manuel)" : " " + PdksUtil.convertToDateString(new Date(), "HH:mm")));
+					logger.info(agent.getAciklama() + " --> " + agent.getStoreProcedureAdi() + (agent.getStart() ? " (manuel)" : " " + PdksUtil.convertToDateString(new Date(), "HH:mm")) + " " + PdksUtil.getCurrentTimeStampStr());
 					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 					try {
 						veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);

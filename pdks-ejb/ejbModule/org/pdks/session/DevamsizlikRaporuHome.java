@@ -304,7 +304,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			}
 		}
 		if (aciklama == null)
-			logger.info(vardiyaGun.getVardiyaKeyStr());
+			logger.info(vardiyaGun.getVardiyaKeyStr() + " " + PdksUtil.getCurrentTimeStampStr());
 
 		return aciklama;
 	}

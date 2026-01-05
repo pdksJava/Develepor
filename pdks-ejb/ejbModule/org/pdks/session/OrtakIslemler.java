@@ -13494,7 +13494,7 @@ public class OrtakIslemler implements Serializable {
 										pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
 										flush = true;
 									} else
-										logger.info(personelIzin.getPdksPersonel().getPdksSicilNo() + " " + aciklama);
+										logger.info(personelIzin.getPdksPersonel().getPdksSicilNo() + " " + aciklama + " " + PdksUtil.getCurrentTimeStampStr());
 
 								}
 							}
@@ -13563,7 +13563,7 @@ public class OrtakIslemler implements Serializable {
 										pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
 										flush = true;
 									} else
-										logger.info(personelIzin.getPdksPersonel().getPdksSicilNo() + " " + aciklama);
+										logger.info(personelIzin.getPdksPersonel().getPdksSicilNo() + " " + aciklama + " " + PdksUtil.getCurrentTimeStampStr());
 								}
 							}
 						}

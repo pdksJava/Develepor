@@ -367,7 +367,7 @@ public class PersonelERPGuncelleme implements Serializable {
 						kisaKullanici = null;
 					if (kisaKullanici != null) {
 						if (!kullanici.getUsername().equals(kisaKullanici.getUsername()) || kullanici.getShortUsername() == null || !kullanici.getShortUsername().equals(kisaKullanici.getShortUsername())) {
-							logger.info(kullanici.getId() + " : " + kisaKullanici.getUsername() + " --> " + kisaKullanici.getShortUsername() + " - " + kisaKullanici.getEmail());
+							logger.info(kullanici.getId() + " : " + kisaKullanici.getUsername() + " --> " + kisaKullanici.getShortUsername() + " - " + kisaKullanici.getEmail() + " " + PdksUtil.getCurrentTimeStampStr());
 							kullanici.setUsername(kisaKullanici.getUsername());
 							kullanici.setShortUsername(kisaKullanici.getShortUsername());
 							if (!emailBozuk)

@@ -265,7 +265,7 @@ public class StartupAction implements Serializable {
 			}
 			if (list != null) {
 				for (String string : list) {
-					logger.info("drop table " + string + ";");
+					logger.info("drop table " + string + "; " + PdksUtil.getCurrentTimeStampStr());
 				}
 				list = null;
 			}
@@ -319,7 +319,7 @@ public class StartupAction implements Serializable {
 			logger.error(e);
 		}
 		if (toplamAdet > 0)
-			logger.info(toplamAdet + " adet kayıt id güncellendi.");
+			logger.info(toplamAdet + " adet kayıt id güncellendi. "+ PdksUtil.getCurrentTimeStampStr());
 
 		list = null;
 	}

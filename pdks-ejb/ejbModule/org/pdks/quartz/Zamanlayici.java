@@ -143,7 +143,7 @@ public class Zamanlayici implements Serializable {
 			xaciklama += " ( " + PdksUtil.convertToDateString(Calendar.getInstance().getTime(), PdksUtil.getDateFormat() + " H:mm") + " ) ";
 		}
 		if (thisIp != null)
-			logger.info(xkonu + " " + thisIp);
+			logger.info(xkonu + " " + thisIp + " " + PdksUtil.getCurrentTimeStampStr());
 		if (!userList.isEmpty()) {
 			setAdminList(userList);
 			setKonu(xkonu);
@@ -171,11 +171,11 @@ public class Zamanlayici implements Serializable {
 				veriMap = null;
 				if (mailStatu != null && mailStatu.getDurum()) {
 					if (thisIp != null)
-						logger.info(xkonu + " " + thisIp + " tamamlandı.");
+						logger.info(xkonu + " " + thisIp + " tamamlandı." + PdksUtil.getCurrentTimeStampStr());
 				}
 
 			} catch (Exception e) {
-				logger.info(sayfaAdi + " : " + xkonu + " --> " + e.getMessage());
+				logger.error(sayfaAdi + " : " + xkonu + " --> " + e.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());
 			}
 		}
 		if (yeni && session != null)

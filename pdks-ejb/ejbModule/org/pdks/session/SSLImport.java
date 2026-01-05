@@ -208,7 +208,7 @@ public class SSLImport implements Serializable {
 			if (devam) {
 				// Add the certificate
 				ks.setCertificateEntry(alias, cert);
-				logger.info(alias + " Certificate is add ");
+				logger.info(alias + " Certificate is add "+ PdksUtil.getCurrentTimeStampStr());
 				// Save the new keystore contents
 				guncelle = Boolean.TRUE;
 			}
@@ -217,7 +217,7 @@ public class SSLImport implements Serializable {
 		if (guncelle)
 			try {
 				keyStoreKaydet(keystore_pass, ks);
-				logger.info(" Certificate is update ");
+				logger.info(" Certificate is update "+ PdksUtil.getCurrentTimeStampStr());
 			} catch (Exception e) {
 				logger.error(" Certificate is guncelle hata " + e);
 			}

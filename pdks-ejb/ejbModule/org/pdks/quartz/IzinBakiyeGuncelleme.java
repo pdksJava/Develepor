@@ -553,7 +553,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		userSession.flush();
 		logger.info("izinleriBakiyeleriniHesapla out " + PdksUtil.getCurrentTimeStampStr());
 		if (yeni)
-			logger.info("izinBakiyeGuncelleme tamam");
+			logger.info("izinBakiyeGuncelleme tamam " + PdksUtil.getCurrentTimeStampStr());
 
 	}
 

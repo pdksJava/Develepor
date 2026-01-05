@@ -604,7 +604,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 						if (katSayiMap.isEmpty())
 							katSayiMap = null;
 						if (katSayiMap == null)
-							logger.info(vardiya.getAdi() + " " + vardiya.getKisaAdi());
+							logger.info(vardiya.getAdi() + " " + vardiya.getKisaAdi() + " " + PdksUtil.getCurrentTimeStampStr());
 					}
 					vardiya.setKatSayiMap(katSayiMap);
 

@@ -8608,7 +8608,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 												if (vardiyaYeniGun.getGirisHareketleri() != null && vardiyaYeniGun.getCikisHareketleri() != null && vardiyaYeniGun.getGirisHareketleri().size() == vardiyaYeniGun.getCikisHareketleri().size()) {
 													if (!vardiya.getId().equals(vardiyaGun.getVardiya().getId())) {
 														vardiyaGun.setYeniVardiya(vardiya);
-														logger.info(vardiyaYeniGun.getVardiyaKeyStr() + " " + vardiya.getVardiyaAdi());
+														logger.info(vardiyaYeniGun.getVardiyaKeyStr() + " " + vardiya.getVardiyaAdi() + " " + PdksUtil.getCurrentTimeStampStr());
 													}
 													break;
 												}

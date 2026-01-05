@@ -477,7 +477,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 									personelDenklestirmeler.add(pdksPersonelDenklestirme);
 								}
 							} catch (Exception e1) {
-								logger.info(e1.getMessage());
+								logger.error(e1.getMessage());
 								e1.printStackTrace();
 							}
 
@@ -638,7 +638,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 									personelDenklestirmeler.add(pdksPersonelDenklestirme);
 								}
 							} catch (Exception e1) {
-								logger.info(e1.getMessage());
+								logger.error(e1.getMessage());
 								e1.printStackTrace();
 							}
 

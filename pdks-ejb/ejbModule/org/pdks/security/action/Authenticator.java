@@ -183,7 +183,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 					loginUser = (User) pdksEntityController.getObjectBySQL(sb, parametreMap, User.class);
 					if (loginUser != null) {
-						logger.info(loginUser.getUsername() + " kullanıcı bilgisi okundu.");
+						logger.info(loginUser.getUsername() + " kullanıcı bilgisi okundu. " + PdksUtil.getCurrentTimeStampStr());
 						loginUser.setUsername(ldapUser.getUsername());
 						if (!parametreMap.containsKey("emailBozuk"))
 							loginUser.setEmail(ldapUser.getEmail());
@@ -225,7 +225,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 									String ldapHataDonusKodu = LDAPUserManager.ldapHatasininDetayAciklamasiniGetir(e);
 									if (ldapHataDonusKodu != null) {
 										String mesaj = PdksUtil.getMessageBundleMessage(LDAPUserManager.LDAP_HATA_KODU_KEY_ON_EK + ldapHataDonusKodu);
-										logger.info(mesaj + " ( " + userName + " )");
+										logger.info(mesaj + " ( " + userName + " ) " + PdksUtil.getCurrentTimeStampStr());
 										addMessageAvailableError(mesaj + " ( " + userName + " )");
 									}
 								} catch (Exception e2) {
@@ -259,7 +259,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 							boolean browserIE = PdksUtil.isInternetExplorer((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 							authenticatedUser = loginUser;
 							ortakIslemler.setUserRoller(loginUser, session);
-							ortakIslemler.setUserTesisler(loginUser,true, session);
+							ortakIslemler.setUserTesisler(loginUser, true, session);
 							ortakIslemler.setUserBolumler(loginUser, session);
 							loginUser.setBrowserIE(browserIE);
 							if (loginUser.getYetkiliRollerim() != null) {
@@ -269,7 +269,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 							try {
 								List<SAPSunucu> sapSunucular = pdksEntityController.getSQLParamByFieldList(SAPSunucu.TABLE_NAME, SAPSunucu.COLUMN_NAME_DURUM, SAPSunucu.DURUM_AKTIF, SAPSunucu.class, session);
 								if (!sapSunucular.isEmpty())
-									logger.info("ERP sunucuları okundu.");
+									logger.info("ERP sunucuları okundu. " + PdksUtil.getCurrentTimeStampStr());
 								SapRfcManager.setSapSunucular(sapSunucular);
 								if (loginUser.getYetkiliRollerim().isEmpty())
 									loginUser = ortakIslemler.personelPdksRolAta(loginUser, Boolean.TRUE, session);

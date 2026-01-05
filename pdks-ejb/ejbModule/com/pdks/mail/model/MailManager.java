@@ -655,11 +655,11 @@ public class MailManager implements Serializable {
 
 						}
 						String aciklama = ((authenticatedUser != null ? authenticatedUser.getAdSoyad() + " " : "") + "\"" + konu + "\" konulu mail " + (mesajAlan != null ? mesajAlan + " " : "")).trim();
-						logger.info(aciklama + " gönderiliyor.");
+						logger.info(aciklama + " gönderiliyor. " + PdksUtil.getCurrentTimeStampStr());
 						Transport.send(message);
 						mailStatu.setDurum(true);
 						mailStatu.setHataMesai("");
-						logger.info(aciklama + " gönderildi.");
+						logger.info(aciklama + " gönderildi. " + PdksUtil.getCurrentTimeStampStr());
 					} catch (Exception e) {
 						hata = e;
 						try {

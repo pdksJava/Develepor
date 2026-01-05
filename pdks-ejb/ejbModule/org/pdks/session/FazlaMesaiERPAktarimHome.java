@@ -373,7 +373,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 									personelDenklestirmeler.add(pdksPersonelDenklestirme);
 								}
 							} catch (Exception e1) {
-								logger.info(e1.getMessage());
+								logger.error(e1.getMessage()+" "+ PdksUtil.getCurrentTimeStampStr());
 							}
 
 						}

@@ -1638,7 +1638,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 
 								}
 								pdksEntityController.saveOrUpdate(session, entityManager, personel);
-								logger.info(personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " sıfırlandı!");
+								logger.info(personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " sıfırlandı! " + PdksUtil.getCurrentTimeStampStr());
 								flush = Boolean.TRUE;
 							}
 						}
@@ -1983,7 +1983,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 			Personel pdksPersonel = tempIzin.getPersonel();
 			Long personelId = pdksPersonel.getId();
 			Date tarih = new Date();
-			logger.info((sayi--) + " " + pdksPersonel.getPdksSicilNo() + " " + pdksPersonel.getAdSoyad());
+			logger.info((sayi--) + " " + pdksPersonel.getPdksSicilNo() + " " + pdksPersonel.getAdSoyad() + " " + PdksUtil.getCurrentTimeStampStr());
 
 			// session.clear();
 			fields.clear();

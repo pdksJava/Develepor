@@ -133,7 +133,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 							}
 							if (!list.isEmpty()) {
 								hataList.addAll(list);
-								logger.info(mesaiTable.toXML() + "\n" + cikanTable.toXML());
+								logger.info(mesaiTable.toXML() + "\n" + cikanTable.toXML()+" "+logger.info();
 							}
 							if (list.isEmpty() && user.isIK()) {
 								personelDenklestirme.setErpAktarildi(Boolean.TRUE);

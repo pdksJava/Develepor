@@ -1210,7 +1210,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					personelIzin.setGuncelleyenUser(guncelleyen);
 					saveOrUpdate(personelIzin);
 
-					logger.info(personel.getSicilNo() + " " + personel.getAdSoyad() + " " + guncelleyen.getAdSoyad());
+					logger.info(personel.getSicilNo() + " " + personel.getAdSoyad() + " " + guncelleyen.getAdSoyad() + " " + PdksUtil.getCurrentTimeStampStr());
 				}
 				iterator.remove();
 
@@ -1883,7 +1883,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					e.printStackTrace();
 					logger.error("Pdks hata out : " + e.getMessage());
 					if (mailAdres != null)
-						logger.info(mailAdres + " " + e.getMessage());
+						logger.error(mailAdres + " " + e.getMessage());
 
 				}
 			}
@@ -5159,7 +5159,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	 * @return
 	 */
 	public String izinRedDoldur() {
-		logger.info("Red Tipi" + redSebebi);
+		logger.info("Red Tipi" + redSebebi + " " + PdksUtil.getCurrentTimeStampStr());
 
 		return "";
 	}

@@ -1399,7 +1399,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			}
 
 		} catch (Exception e) {
-			logger.info(kullanici.getUsername() + " --> " + encodePassword);
+			logger.error(kullanici.getUsername() + " --> " + encodePassword + " " + PdksUtil.getCurrentTimeStampStr());
 		}
 
 		kullanici.setPasswordHash(PdksUtil.encodePassword(encodePassword));
@@ -2610,7 +2610,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					logger.error("PDKS hata in : \n");
 					e.printStackTrace();
 					logger.error("PDKS hata out : " + e.getMessage());
-					logger.info(personelView.getSicilNo());
+					logger.error(personelView.getSicilNo() + " " + PdksUtil.getCurrentTimeStampStr());
 				}
 
 			}
@@ -3946,7 +3946,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					}
 				}
 		}
-		logger.info(strGson);
 
 		// String strGson1 = ortakIslemler.getURLJSONData(true, url, HttpMethod.POST, null, true, null);
 
@@ -5017,7 +5016,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				logger.error("Pdks hata in : \n");
 				e.printStackTrace();
 				logger.error("Pdks hata out : " + e.getMessage());
-				logger.info(row + " " + personel.getPdksSicilNo());
+				logger.error(row + " " + personel.getPdksSicilNo() + " " + PdksUtil.getCurrentTimeStampStr());
 
 			}
 		}

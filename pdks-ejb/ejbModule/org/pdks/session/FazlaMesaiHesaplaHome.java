@@ -2949,7 +2949,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				Date fark = new Date(bitTarih.getTime() - basTarih.getTime());
 				String str = yil + " " + denklestirmeAy.getAyAdi() + " " + aylikPuantajList.size() + " adet " + (seciliBolum != null ? seciliBolum.getAciklama() + " personeli " : " personel ") + loginUser.getAdSoyad();
 				if (userLogin.getLogin())
-					logger.info(str + " --> " + PdksUtil.convertToDateString(basTarih, "HH:mm:ss") + " - " + PdksUtil.convertToDateString(bitTarih, "HH:mm:ss") + " : " + PdksUtil.convertToDateString(fark, "mm:ss"));
+					logger.info(str + " --> " + PdksUtil.convertToDateString(basTarih, "HH:mm:ss") + " - " + PdksUtil.convertToDateString(bitTarih, "HH:mm:ss") + " : " + PdksUtil.convertToDateString(fark, "mm:ss") + " " + PdksUtil.getCurrentTimeStampStr());
 			}
 		}
 
@@ -4517,7 +4517,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				e.printStackTrace();
 				logger.error("Pdks hata out : " + e.getMessage());
 
-				logger.info(vardiyaKey + " " + e.getMessage());
+				logger.error(vardiyaKey + " " + e.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());
 			}
 
 		} else {
