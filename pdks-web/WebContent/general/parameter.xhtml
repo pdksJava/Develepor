@@ -148,7 +148,7 @@
 									rendered="#{ortakIslemler.getParameterKeyHasStringValue('smtpYedekUserNameaa')}"
 									action="#{personelERPGuncelleme.mailSatusKontrol(parameterHome.session)}" />
 									
-								<a4j:commandButton status="ajaxStatus" value="vardiyaHareketGuncelleme Calistir"  rendered="false"
+								<a4j:commandButton status="ajaxStatus" value="vardiyaHareketGuncelleme Calistir"  rendered="#{ortakIslemler.canliDurum==false}"
 									action="#{planVardiyaHareketGuncelleme.vardiyaHareketGuncelleme(null,parameterHome.session)}" />	
 
 							</c:if>

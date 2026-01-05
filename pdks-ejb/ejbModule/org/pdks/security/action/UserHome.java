@@ -350,7 +350,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 							yetkiliRollerim.addAll(digerRoller);
 
 						if (adminRole)
-							sonuc = getSonuc(target);
+							sonuc = adminRole || getSonuc(target);
 						else if (yetkiliRollerim != null) {
 							for (Role role : yetkiliRollerim) {
 								String roleName = role.getRolename();
