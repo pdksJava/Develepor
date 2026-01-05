@@ -32,6 +32,7 @@ import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDenklestirmeTasiyici;
+import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
@@ -113,6 +114,69 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		return null;
 	}
 
+	@Transactional
+	private void vardiyaBaslatGuncelleme(Date basTarih, Session session) throws Exception {
+		if (basTarih == null)
+			basTarih = ortakIslemler.getBugun();
+		Date bitTarih = PdksUtil.tariheAyEkleCikar(basTarih, 2);
+		HashMap fields = new HashMap();
+		fields.put("t1", basTarih);
+		fields.put("t2", bitTarih);
+		StringBuffer sb = new StringBuffer();
+
+		sb.append(" with PLAN_VERI as ( ");
+		sb.append(" select V.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
+		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
+		sb.append(" and (V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ")");
+		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "  between :t1 and :t2");
+		sb.append(" and V." + VardiyaGun.COLUMN_NAME_DURUM + " = 0 and V." + VardiyaGun.COLUMN_NAME_VERSION + " = 0 and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "> GETDATE()");
+		sb.append(" )");
+		sb.append(" select P.* FROM PLAN_VERI P");
+		sb.append(" inner join " + DenklestirmeAy.TABLE_NAME + " D  " + PdksEntityController.getJoinLOCK() + " on D." + DenklestirmeAy.COLUMN_NAME_YIL + " = year(P." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ")");
+		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_AY + " = month(P." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ") and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1");
+		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " = P." + VardiyaGun.COLUMN_NAME_PERSONEL);
+		sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
+		sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " C " + PdksEntityController.getJoinLOCK() + " on C." + CalismaModeliAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " and C." + CalismaModeliAy.COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL + " = 1");
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<VardiyaGun> vardiyaGunList = pdksEntityController.getObjectBySQLList(sb.toString(), fields, VardiyaGun.class);
+		if (vardiyaGunList.isEmpty() == false) {
+			boolean flush = false;
+			User guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
+			Date guncellemeTarihi = new Date();
+			HashMap<Long, List<VardiyaGun>> vMap = new HashMap<Long, List<VardiyaGun>>();
+			for (VardiyaGun vg : vardiyaGunList) {
+				Long perId = vg.getPdksPersonel().getId();
+				List<VardiyaGun> list = vMap.containsKey(perId) ? vMap.get(perId) : new ArrayList<VardiyaGun>();
+				if (list.isEmpty())
+					vMap.put(perId, list);
+				list.add(vg);
+
+			}
+			HashMap<Long, List<PersonelIzin>> izinMap = ortakIslemler.getPersonelIzinMap(new ArrayList<Long>(vMap.keySet()), basTarih, bitTarih, session);
+			if (izinMap.isEmpty() == false) {
+				for (Long key : izinMap.keySet()) {
+					if (vMap.containsKey(key))
+						ortakIslemler.vardiyaIzinleriGuncelle(izinMap.get(key), vMap.get(key));
+
+				}
+			}
+			izinMap = null;
+			for (VardiyaGun vardiyaGun : vardiyaGunList) {
+				if (vardiyaGun.isIzinli())
+					continue;
+				vardiyaGun.setVersion(-1);
+				vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
+				vardiyaGun.setGuncelleyenUser(guncelleyenUser);
+				pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
+				flush = true;
+			}
+			if (flush)
+				session.flush();
+		}
+		vardiyaGunList = null;
+	}
+
 	/**
 	 * @param tarih
 	 * @param session
@@ -131,6 +195,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		cal.add(Calendar.MONTH, -1);
 		Date basTarih = PdksUtil.getDate(cal.getTime());
 		Date bitTarih = PdksUtil.getDate(tarih);
+		vardiyaBaslatGuncelleme(basTarih, session);
 		HashMap fields = new HashMap();
 		fields.put("t1", basTarih);
 		fields.put("t2", bitTarih);
@@ -142,10 +207,10 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		sb.append(" where (V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between :t1 and :t2 ) and V." + VardiyaGun.COLUMN_NAME_DURUM + " = 0 AND V." + VardiyaGun.COLUMN_NAME_VERSION + " < 0");
 		sb.append(" )");
 		sb.append(" select PD." + PersonelDenklestirme.COLUMN_NAME_ID + " from VERI V " + PdksEntityController.getSelectLOCK());
-		sb.append(" inner join " + DenklestirmeAy.TABLE_NAME + " D ON D." + DenklestirmeAy.COLUMN_NAME_YIL + " = V." + DenklestirmeAy.COLUMN_NAME_YIL + " AND D." + DenklestirmeAy.COLUMN_NAME_AY + " = V." + DenklestirmeAy.COLUMN_NAME_AY + " AND D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1");
-		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD ON PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL + "  and PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
+		sb.append(" inner join " + DenklestirmeAy.TABLE_NAME + " D on D." + DenklestirmeAy.COLUMN_NAME_YIL + " = V." + DenklestirmeAy.COLUMN_NAME_YIL + " AND D." + DenklestirmeAy.COLUMN_NAME_AY + " = V." + DenklestirmeAy.COLUMN_NAME_AY + " AND D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1");
+		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD on PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL + "  and PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
 		sb.append(" and coalesce(PD." + PersonelDenklestirme.COLUMN_NAME_SUA_DURUM + ", 0) = 0");
-		sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " C ON C." + CalismaModeliAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " and C." + CalismaModeliAy.COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL + " = 1");
+		sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " C on C." + CalismaModeliAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " and C." + CalismaModeliAy.COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL + " = 1");
 		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_YIL + " desc, D." + DenklestirmeAy.COLUMN_NAME_AY + " desc, PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
