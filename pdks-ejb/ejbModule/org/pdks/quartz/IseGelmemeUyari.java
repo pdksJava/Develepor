@@ -417,13 +417,15 @@ public class IseGelmemeUyari implements Serializable {
 						}
 						Personel per = pdksVardiyaGun.getPdksPersonel();
 						String vardiyaGunStr = PdksUtil.convertToDateString(pdksVardiyaGun.getVardiyaDate(), "yyyyMMdd");
-						if (bugunStr != null && vardiyaGunStr.equals(bugunStr)) {
-							CalismaModeli cm = pdksVardiyaGun.getCalismaModeli();
-							if (cm == null)
-								cm = per.getCalismaModeli();
-							if (cm != null && cm.isHareketKaydiVardiyaBulsunmu()) {
-								iterator.remove();
-								continue;
+						if (pdksVardiyaGun.getVersion() < 0) {
+							if (bugunStr != null && vardiyaGunStr.equals(bugunStr)) {
+								CalismaModeli cm = pdksVardiyaGun.getCalismaModeli();
+								if (cm == null)
+									cm = per.getCalismaModeli();
+								if (cm != null && cm.isHareketKaydiVardiyaBulsunmu()) {
+									iterator.remove();
+									continue;
+								}
 							}
 						}
 						Sirket sirket = per != null ? per.getSirket() : null;
