@@ -337,6 +337,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	 * @param dataMap
 	 * @param session
 	 */
+	@Transactional
 	public void calismaPlaniDenklestir(LinkedHashMap<String, Object> dataMap, Session session) {
 		List<AylikPuantaj> puantajList = dataMap.containsKey("aylikPuantajList") ? (List<AylikPuantaj>) dataMap.get("aylikPuantajList") : new ArrayList<AylikPuantaj>();
 		KapiView manuelGiris = dataMap.containsKey("manuelGirisKapi") ? (KapiView) dataMap.get("manuelGirisKapi") : null;

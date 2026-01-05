@@ -154,10 +154,9 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		if (idList.isEmpty() == false)
 			denklestirmeList = pdksEntityController.getSQLParamByFieldList(PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.COLUMN_NAME_ID, idList, PersonelDenklestirme.class, session);
 		idList = null;
-		boolean islemYapildi = false;
+		Boolean islemYapildi = null;
 		if (denklestirmeList != null && denklestirmeList.isEmpty() == false) {
 			TreeMap<String, Tatil> tatilMap = ortakIslemler.getTatilGunleri(null, basTarih, bitTarih, session);
-			islemYapildi = dayOffWeek != Calendar.SUNDAY && tatilMap.containsKey(dateStr) == false;
 			LinkedHashMap<String, List<PersonelDenklestirme>> linkedHashMap = new LinkedHashMap<String, List<PersonelDenklestirme>>();
 			HashMap<Long, Boolean> hareketKaydiVardiyaMap = new HashMap<Long, Boolean>();
 			for (PersonelDenklestirme pd : denklestirmeList) {
@@ -245,6 +244,9 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							vardiyaGunList.add(vg);
 						}
 						ortakIslemler.vardiyaHareketlerdenGuncelle(personelDenklestirmeMap, vGunMap, calismaPlaniMap, hareketKaydiVardiyaMap, personelHareketMap, null, session);
+						if (islemYapildi == null)
+							islemYapildi = dayOffWeek != Calendar.SUNDAY && tatilMap.containsKey(dateStr) == false;
+
 						gunList = null;
 						calismaPlaniMap = null;
 						vGunMap = null;
@@ -265,6 +267,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		}
 		denklestirmeList = null;
 		sb = null;
+		if (islemYapildi == null)
+			islemYapildi = false;
 		return islemYapildi;
 	}
 

@@ -370,11 +370,15 @@ public class IseGelmemeUyari implements Serializable {
 					// Vardiya kayıtları okunuyor
 					TreeMap<String, VardiyaGun> vardiyalar = ortakIslemler.getIslemVardiyalar(personeller, oncekiGun, sonrakiGun, Boolean.FALSE, session, Boolean.TRUE);
 					try {
-						boolean islem = ortakIslemler.getVardiyaHareketIslenecekList(new ArrayList<VardiyaGun>(vardiyalar.values()), tarih, tarih, session);
-						if (islem)
-							vardiyalar = ortakIslemler.getIslemVardiyalar(personeller, oncekiGun, sonrakiGun, Boolean.FALSE, session, Boolean.TRUE);
-
+						boolean otomatikGuncelle = ortakIslemler.getParameterKeyHasStringValue(PlanVardiyaHareketGuncelleme.PARAMETER_HAREKET_KEY);
+						if (otomatikGuncelle == false) {
+							boolean islem = ortakIslemler.getVardiyaHareketIslenecekList(new ArrayList<VardiyaGun>(vardiyalar.values()), tarih, tarih, session);
+							if (islem)
+								vardiyalar = ortakIslemler.getIslemVardiyalar(personeller, oncekiGun, sonrakiGun, Boolean.FALSE, session, Boolean.TRUE);
+						}
 					} catch (Exception e) {
+						logger.error(e);
+						e.printStackTrace();
 					}
 
 					List<VardiyaGun> vardiyaList = new ArrayList<VardiyaGun>(vardiyalar.values());
@@ -402,8 +406,8 @@ public class IseGelmemeUyari implements Serializable {
 					HashMap<Long, List<User>> depMail = new HashMap<Long, List<User>>();
 					HashMap<Long, Personel> depYoneticiMap = new HashMap<Long, Personel>();
 					boolean ikMailGonderme = ortakIslemler.getParameterKey("ikMailGonderme").equals("1") == false;
-//					String pattern = "yyyyMMdd";
-//					String bugunStr = PdksUtil.convertToDateString(tarih, pattern);
+					String pattern = "yyyyMMdd";
+					String bugunStr = PdksUtil.convertToDateString(tarih, pattern);
 
 					for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 						VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
@@ -413,13 +417,15 @@ public class IseGelmemeUyari implements Serializable {
 						}
 						Personel per = pdksVardiyaGun.getPdksPersonel();
 						String vardiyaGunStr = PdksUtil.convertToDateString(pdksVardiyaGun.getVardiyaDate(), "yyyyMMdd");
-//						if (bugunStr != null && vardiyaGunStr.equals(bugunStr)) {
-//							CalismaModeli cm = per.getCalismaModeli();
-//							if (cm != null && per.getCalismaModeli().isHareketKaydiVardiyaBulsunmu()) {
-//								iterator.remove();
-//								continue;
-//							}
-//						}
+						if (bugunStr != null && vardiyaGunStr.equals(bugunStr)) {
+							CalismaModeli cm = pdksVardiyaGun.getCalismaModeli();
+							if (cm == null)
+								cm = per.getCalismaModeli();
+							if (cm != null && cm.isHareketKaydiVardiyaBulsunmu()) {
+								iterator.remove();
+								continue;
+							}
+						}
 						Sirket sirket = per != null ? per.getSirket() : null;
 						Tanim tesis = sirket != null && sirket.isTesisDurumu() ? per.getTesis() : null;
 						Long sirketId = sirket != null ? sirket.getId() : null;

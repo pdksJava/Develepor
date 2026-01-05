@@ -3965,6 +3965,7 @@ public class OrtakIslemler implements Serializable {
 					list = null;
 				} catch (Exception e) {
 					logger.error(e);
+					e.printStackTrace();
 					idInputList.clear();
 				}
 
@@ -10069,6 +10070,7 @@ public class OrtakIslemler implements Serializable {
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<CalismaModeliAy> cmaList = pdksEntityController.getObjectByInnerObjectList(fields, CalismaModeliAy.class);
+		fields.clear();
 		HashMap<Long, CalismaModeliAy> cmaMap = new HashMap<Long, CalismaModeliAy>();
 		for (CalismaModeliAy calismaModeliAy : cmaList)
 			cmaMap.put(calismaModeliAy.getCalismaModeli().getId(), calismaModeliAy);
@@ -10120,10 +10122,11 @@ public class OrtakIslemler implements Serializable {
 				String fieldName = "personel.id";
 				HashMap map1 = new HashMap();
 				map1.put("denklestirmeAy.id", denklestirmeAyIdList);
+				map1.put("denklestirmeAy.durum", Boolean.TRUE);
 				map1.put(fieldName, idList);
 				if (session != null)
 					map1.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<PersonelDenklestirme> personelDenklestirmeList = getParamList(false, idList, fieldName, fields, PersonelDenklestirme.class, session);
+				List<PersonelDenklestirme> personelDenklestirmeList = getParamList(false, idList, fieldName, map1, PersonelDenklestirme.class, session);
 				setPersonelDenklestirmeDevir(null, personelDenklestirmeList, session);
 
 				if (!denkMap.isEmpty() || !personelDenklestirmeList.isEmpty()) {
@@ -10144,6 +10147,7 @@ public class OrtakIslemler implements Serializable {
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 					List<Long> idLongList = pdksEntityController.getObjectByInnerObjectList(fields, CalismaModeliAy.class);
+					fields.clear();
 					for (Long long1 : idLongList)
 						hareketKaydiVardiyaMap.put(long1, Boolean.TRUE);
 					personelDenklestirmeMap = new TreeMap<Long, PersonelDenklestirmeTasiyici>();
