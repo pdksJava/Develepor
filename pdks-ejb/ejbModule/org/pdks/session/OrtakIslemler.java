@@ -10430,8 +10430,11 @@ public class OrtakIslemler implements Serializable {
 												double sure = 0.0d;
 												for (int i = 0; i < girisler.size(); i++) {
 													HareketKGS giris = girisler.get(i), cikis = cikislar.get(i);
-													if (giris != null && cikis != null && giris.getZaman().before(cikis.getZaman()))
-														sure += PdksUtil.setSureDoubleTypeRounded(PdksUtil.getSaatFarki(cikis.getZaman(), giris.getZaman()).doubleValue(), vardiyaGunNew.getYarimYuvarla());
+													if (giris != null && cikis != null && giris.getZaman().before(cikis.getZaman())) {
+														if (giris.getOrjinalZaman().getTime() >= islemVardiya.getVardiyaTelorans1BasZaman().getTime() && cikis.getOrjinalZaman().getTime() <= islemVardiya.getVardiyaTelorans2BitZaman().getTime())
+															sure += PdksUtil.setSureDoubleTypeRounded(PdksUtil.getSaatFarki(cikis.getZaman(), giris.getZaman()).doubleValue(), vardiyaGunNew.getYarimYuvarla());
+
+													}
 												}
 												if (sure > 0.0d) {
 													vardiyaGunNew.setVersion(0);
