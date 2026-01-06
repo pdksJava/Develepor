@@ -55,11 +55,14 @@ public class PersonelDenklestirmeTasiyici extends BaseObject {
 	private CalismaModeli calismaModeli;
 	private DenklestirmeAy denklestirmeAy;
 	private CalismaModeliAy calismaModeliAy;
+	private PersonelDenklestirme personelDenklestirme;
 	private Integer version = 0;
 
 	public PersonelDenklestirmeTasiyici(AylikPuantaj ap) {
 		super();
+
 		PersonelDenklestirme pd = ap.getPersonelDenklestirme();
+		this.personelDenklestirme = pd;
 		if (pd != null) {
 			this.setCalismaModeliAy(pd.getCalismaModeliAy());
 			this.setDenklestirmeAy(pd.getDenklestirmeAy());
@@ -187,6 +190,10 @@ public class PersonelDenklestirmeTasiyici extends BaseObject {
 		return genelHaftaMap;
 	}
 
+	/**
+	 * @param genelHaftaMap
+	 * @param tatilGunleriMap
+	 */
 	public void setGenelHaftaMap(TreeMap<String, Integer> genelHaftaMap, TreeMap<String, Tatil> tatilGunleriMap) {
 		if (genelHaftaMap != null && !genelHaftaMap.isEmpty()) {
 			vardiyaGunleriMap = new TreeMap<String, VardiyaGun>();
@@ -455,7 +462,14 @@ public class PersonelDenklestirmeTasiyici extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
-		
+
+	}
+
+	public PersonelDenklestirme getPersonelDenklestirme() {
+		return personelDenklestirme;
+	}
+
+	public void setPersonelDenklestirme(PersonelDenklestirme personelDenklestirme) {
+		this.personelDenklestirme = personelDenklestirme;
 	}
 }

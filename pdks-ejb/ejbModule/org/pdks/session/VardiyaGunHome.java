@@ -6471,19 +6471,31 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				for (VardiyaGun vg : list) {
 					if (vg.isAyinGunu() == false)
 						continue;
-					if (vg.getId() != null && vg.getVersion() == 0 && vg.getDurum().booleanValue() == false) {
-						if (vg.getVardiyaDate().after(bugun))
-							aylikHareketKaydiVardiyaBul = Boolean.TRUE;
-						else {
-							vg.setVersion(-1);
-							if (guncelleyenUser == null)
-								guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
-							vg.setGuncellemeTarihi(guncellemeTarihi);
-							vg.setGuncelleyenUser(guncelleyenUser);
-							pdksEntityController.saveOrUpdate(session, entityManager, vg);
-							flush = true;
-						}
+					if (vg.getId() != null && vg.getDurum().booleanValue() == false) {
+						Vardiya vardiya = vg.getVardiya();
+						if (vardiya.isHaftaTatil()) {
+							if (vg.getVersion() < 0) {
+								if (guncelleyenUser == null)
+									guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
+								vg.setGuncellemeTarihi(guncellemeTarihi);
+								vg.setGuncelleyenUser(guncelleyenUser);
+								pdksEntityController.saveOrUpdate(session, entityManager, vg);
+								flush = true;
+							}
+						} else if (vg.getVersion() == 0) {
+							if (vg.getVardiyaDate().after(bugun))
+								aylikHareketKaydiVardiyaBul = Boolean.TRUE;
+							else {
+								vg.setVersion(-1);
+								if (guncelleyenUser == null)
+									guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
+								vg.setGuncellemeTarihi(guncellemeTarihi);
+								vg.setGuncelleyenUser(guncelleyenUser);
+								pdksEntityController.saveOrUpdate(session, entityManager, vg);
+								flush = true;
+							}
 
+						}
 					}
 
 				}

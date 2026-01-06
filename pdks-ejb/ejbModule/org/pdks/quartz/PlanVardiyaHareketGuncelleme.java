@@ -38,6 +38,7 @@ import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
+import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.security.entity.User;
 import org.pdks.session.OrtakIslemler;
@@ -129,7 +130,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 		sb.append(" and (V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ")");
 		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "  between :t1 and :t2");
-		sb.append(" and V." + VardiyaGun.COLUMN_NAME_DURUM + " = 0 and V." + VardiyaGun.COLUMN_NAME_VERSION + " = 0 and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "> GETDATE()");
+		sb.append(" and V." + VardiyaGun.COLUMN_NAME_DURUM + " = 0 and V." + VardiyaGun.COLUMN_NAME_VERSION + " = 0");
 		sb.append(" )");
 		sb.append(" select P.* FROM PLAN_VERI P");
 		sb.append(" inner join " + DenklestirmeAy.TABLE_NAME + " D  " + PdksEntityController.getJoinLOCK() + " on D." + DenklestirmeAy.COLUMN_NAME_YIL + " = year(P." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ")");
@@ -165,11 +166,27 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			for (VardiyaGun vardiyaGun : vardiyaGunList) {
 				if (vardiyaGun.isIzinli())
 					continue;
-				vardiyaGun.setVersion(-1);
-				vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
-				vardiyaGun.setGuncelleyenUser(guncelleyenUser);
-				pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
-				flush = true;
+				int version = vardiyaGun.getVersion();
+				Vardiya vardiya = vardiyaGun.getVardiya();
+				if (version == 0) {
+					if (vardiya.isHaftaTatil() == false) {
+						vardiyaGun.setVersion(-1);
+						vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
+						vardiyaGun.setGuncelleyenUser(guncelleyenUser);
+						pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
+						flush = true;
+					}
+				} else if (version < 0) {
+					if (vardiya.isHaftaTatil()) {
+						vardiyaGun.setVersion(-1);
+						vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
+						vardiyaGun.setGuncelleyenUser(guncelleyenUser);
+						pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
+						flush = true;
+					}
+
+				}
+
 			}
 			if (flush)
 				session.flush();
