@@ -2925,8 +2925,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (ap == null)
 			ap = personelAylikPuantaj;
 		String renk = vg.getAylikClassAdi(ap.getTrClass());
+		PersonelDenklestirme pd = ap.getPersonelDenklestirme();
+		boolean hareketKaydiVardiyaBul = pd != null && pd.getCalismaModeliAy() != null ? pd.getCalismaModeliAy().isHareketKaydiVardiyaBulsunmu() : false;
 		if (vg != null && vg.getId() != null) {
-			if (vg.getVersion() < 0 && (vg.isAyinGunu() == false || vg.getVardiyaDate().before(bugunTarih) == false)) {
+			if (vg.getVersion() < 0 && (vg.isAyinGunu() == false || vg.getVardiyaDate().before(bugunTarih) == false || hareketKaydiVardiyaBul == false)) {
 				VardiyaGun vardiyaGun = (VardiyaGun) vg.clone();
 				vardiyaGun.setVersion(0);
 				renk = vardiyaGun.getAylikClassAdi(ap.getTrClass());
@@ -6456,22 +6458,55 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	private void aylikHareketKaydiVardiyalariBul() {
 		aylikHareketKaydiVardiyaBul = Boolean.FALSE;
-		Date bugun = PdksUtil.getDate(new Date());
+		User guncelleyenUser = null;
+		Date guncellemeTarihi = new Date();
+		Date bugun = PdksUtil.getDate(guncellemeTarihi);
 		for (AylikPuantaj aylikPuantaj : aylikPuantajList) {
 			CalismaModeliAy calismaModeliAy = aylikPuantaj.getPersonelDenklestirme().getCalismaModeliAy();
+			List<VardiyaGun> list = aylikPuantaj.getVardiyalar();
+			if (list == null)
+				list = new ArrayList<VardiyaGun>();
+			boolean flush = false;
 			if (calismaModeliAy != null && calismaModeliAy.isHareketKaydiVardiyaBulsunmu()) {
-				for (VardiyaGun vg : aylikPuantaj.getVardiyalar()) {
+				for (VardiyaGun vg : list) {
 					if (vg.isAyinGunu() == false)
 						continue;
-					if (vg.getId() != null && vg.getVardiyaDate().after(bugun) && vg.getVersion() == 0) {
-						aylikHareketKaydiVardiyaBul = Boolean.TRUE;
-						break;
+					if (vg.getId() != null && vg.getVersion() == 0 && vg.getDurum().booleanValue() == false) {
+						if (vg.getVardiyaDate().after(bugun))
+							aylikHareketKaydiVardiyaBul = Boolean.TRUE;
+						else {
+							vg.setVersion(-1);
+							if (guncelleyenUser == null)
+								guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
+							vg.setGuncellemeTarihi(guncellemeTarihi);
+							vg.setGuncelleyenUser(guncelleyenUser);
+							pdksEntityController.saveOrUpdate(session, entityManager, vg);
+							flush = true;
+						}
+
 					}
 
 				}
+			} else {
+
+				for (VardiyaGun vg : list) {
+					if (vg.isAyinGunu() == false)
+						continue;
+					if (vg.getId() != null && vg.getVersion() < 0) {
+						vg.setVersion(0);
+						if (guncelleyenUser == null)
+							guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
+						vg.setGuncellemeTarihi(guncellemeTarihi);
+						vg.setGuncelleyenUser(guncelleyenUser);
+						pdksEntityController.saveOrUpdate(session, entityManager, vg);
+						flush = true;
+					}
+				}
+
 			}
-			if (aylikHareketKaydiVardiyaBul)
-				break;
+			if (flush)
+				session.flush();
+
 		}
 	}
 
