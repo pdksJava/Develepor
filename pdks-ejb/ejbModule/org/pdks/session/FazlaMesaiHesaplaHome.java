@@ -1600,12 +1600,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 				if (!ortakIslemler.getParameterKey("bosCalismaOffGuncelle").equals("1"))
 					bosCalismaList.clear();
-				if (denklestirmeAyDurum && (bosCalismaList.size() + haftaSonuList.size()) > 0) {
-					if (!haftaSonuList.isEmpty())
-						haftaTatilVardiyaGuncelle(haftaSonuList);
-					if (!bosCalismaList.isEmpty())
-						bosCalismaOffGuncelle(bosCalismaList, haftaSonuList.isEmpty());
-				}
+//				if (denklestirmeAyDurum && (bosCalismaList.size() + haftaSonuList.size()) > 0) {
+//					if (!haftaSonuList.isEmpty())
+//						haftaTatilVardiyaGuncelle(haftaSonuList);
+//					if (!bosCalismaList.isEmpty())
+//						bosCalismaOffGuncelle(bosCalismaList, haftaSonuList.isEmpty());
+//				}
 				bosCalismaList = null;
 				haftaSonuList = null;
 
@@ -3234,7 +3234,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param bosCalismaList
 	 * @param uyariMesai
 	 */
-	private void bosCalismaOffGuncelle(List<VardiyaGun> bosCalismaList, boolean uyariMesai) {
+	protected void bosCalismaOffGuncelle(List<VardiyaGun> bosCalismaList, boolean uyariMesai) {
 
 		Vardiya offVardiya = ortakIslemler.getVardiyaOFF(session);
 
@@ -3255,7 +3255,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	/**
 	 * @param list
 	 */
-	private void haftaTatilVardiyaGuncelle(List<PersonelDenklestirmeTasiyici> list) {
+	protected void haftaTatilVardiyaGuncelle(List<PersonelDenklestirmeTasiyici> list) {
 		for (PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici : list) {
 			boolean flush = false;
 			TreeMap<String, VardiyaGun> vgMap = new TreeMap<String, VardiyaGun>();
