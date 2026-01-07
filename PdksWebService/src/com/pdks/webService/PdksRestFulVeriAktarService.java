@@ -625,7 +625,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 					xml = XML.toString(jsonObject);
 				} else {
 					JSONArray jsonObject = new JSONArray(str);
-					xml = "<data>" + PdksUtil.replaceAllManuel(XML.toString(jsonObject), "array", "satir") + "</data>";
+					xml = "<" + fonksiyonAdi + ">" + PdksUtil.replaceAllManuel(XML.toString(jsonObject), "array", "satir") + "</" + fonksiyonAdi + ">";
 				}
 				sonuc = xml;
 				dosyaAdi = dosyaAdiBaslangic + ".xml";
