@@ -342,6 +342,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					list = null;
 					personelIdList = null;
 				}
+				if (authenticatedUser != null && listeList.isEmpty() == false)
+					logger.info("VardiyaHareketGuncelleme bitti. " + PdksUtil.getCurrentTimeStampStr());
 				listeList = null;
 			}
 			linkedHashMap = null;
