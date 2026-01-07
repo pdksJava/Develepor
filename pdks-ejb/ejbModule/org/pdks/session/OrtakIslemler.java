@@ -10467,7 +10467,8 @@ public class OrtakIslemler implements Serializable {
 													}
 													if (sure > 3.5d) {
 														vardiyaGunNew.setVersion(0);
-														listeler.add(new Liste(vardiyaGunNew, sure));
+														String str = PdksUtil.textBaslangicinaKarakterEkle("" + new Double(sure * 100).longValue() + String.valueOf(10000 + islemVardiya.getBasDonem()), '0', 10);
+														listeler.add(new Liste(vardiyaGunNew, str));
 													}
 												}
 
@@ -10477,7 +10478,8 @@ public class OrtakIslemler implements Serializable {
 													double sure = PdksUtil.setSureDoubleTypeRounded(PdksUtil.getSaatFarki(islemVardiya.getVardiyaBitZaman(), girisHareketKGS.getZaman()).doubleValue(), vardiyaGunNew.getYarimYuvarla());
 													if (sure > 3.5d) {
 														vardiyaGunNew.setVersion(-1);
-														listeler.add(new Liste(vardiyaGunNew, sure));
+														String str = PdksUtil.textBaslangicinaKarakterEkle("" + new Double(sure * 100).longValue() + String.valueOf(10000 + islemVardiya.getBasDonem()), '0', 16);
+														listeler.add(new Liste(vardiyaGunNew, str));
 													}
 
 												}
