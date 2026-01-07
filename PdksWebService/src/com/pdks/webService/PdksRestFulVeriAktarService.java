@@ -105,11 +105,15 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	/**
 	 * @param sirketKodu
 	 * @param tesisKodu
-	 * @param dosyaAdi
-	 * @param mesajStr
-	 * @throws Exception
+	 * @return
 	 */
-	private void sendIKMail(String sirketKodu, String tesisKodu, String dosyaAdi, String mesajStr) throws Exception {
+	public HashMap<String, Object> getUserBilgileri(String sirketKodu, String tesisKodu) {
+		HashMap<String, Object> dataMap = new HashMap<String, Object>();
+ 		List<User> userList = null;
+		Tanim tesis = null;
+		Sirket sirket = null;
+		if (pdksDAO == null)
+			pdksDAO = Constants.pdksDAO;
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
 		String alanAdi = User.COLUMN_NAME_ID;
@@ -124,11 +128,9 @@ public class PdksRestFulVeriAktarService implements Serializable {
 		}
 		HashMap<String, List<User>> userMap = new HashMap<String, List<User>>();
 		if (userFieldList.isEmpty() == false) {
-
 			List<Long> longList = PdksUtil.getLongListFromBigDecimal(null, userFieldList);
 			HashMap<Long, List<Tanim>> orgMap = new HashMap<Long, List<Tanim>>();
-			Tanim tesis = null;
-			Sirket sirket = null;
+
 			HashMap<Long, List<Tanim>> tesisBaglantiMap = new HashMap<Long, List<Tanim>>();
 			sb = new StringBuffer();
 			sb.append("select * from " + UserDigerOrganizasyon.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
@@ -145,10 +147,8 @@ public class PdksRestFulVeriAktarService implements Serializable {
 			}
 			sb = new StringBuffer();
 			sb.append("select * from " + TesisBaglanti.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
-			// sb.append(" where " + TesisBaglanti.COLUMN_NAME_TESIS + " = :b ");
-			fields.clear();
-
-			List<TesisBaglanti> tesisBaglantiList = pdksDAO.getNativeSQLList(fields, sb, TesisBaglanti.class);
+ 			fields.clear();
+ 			List<TesisBaglanti> tesisBaglantiList = pdksDAO.getNativeSQLList(fields, sb, TesisBaglanti.class);
 			for (TesisBaglanti tb : tesisBaglantiList) {
 				if (tb.getPersonelTipi() != null && tb.isIK() == false)
 					continue;
@@ -242,7 +242,6 @@ public class PdksRestFulVeriAktarService implements Serializable {
 			tesisBaglantiMap = null;
 			orgMap = null;
 			if (userMap.isEmpty() == false) {
-
 				String key = null;
 				if (tesis != null) {
 					key = Role.TIPI_IK_Tesis + "_" + tesis.getId();
@@ -257,39 +256,8 @@ public class PdksRestFulVeriAktarService implements Serializable {
 				}
 				if (key == null)
 					key = Role.TIPI_IK;
-				if (userMap.containsKey(key)) {
-					MailObject mailObject = new MailObject();
-					List<User> userList = userMap.get(key);
-					PdksVeriOrtakAktar ortakAktar = new PdksVeriOrtakAktar();
-					for (User user : userList) {
-						MailPersonel mailPersonel = new MailPersonel();
-						mailPersonel.setAdiSoyadi(user.getPdksPersonel().getAdSoyad());
-						String ePosta = user.getEmail();
-						if (ortakAktar.getTestDurum())
-							ePosta = "hasansayar58@gmail.com";
-						mailPersonel.setePosta(ePosta);
-
-						mailObject.getToList().add(mailPersonel);
-					}
-
-					HashMap<String, Object> mailMap = ortakAktar.sistemVerileriniYukle(pdksDAO, true);
-					DenklestirmeAy denklestirmeAy = new DenklestirmeAy();
-					denklestirmeAy.setAy(month);
-					denklestirmeAy.setYil(year);
-					String subject = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " " + (sirket != null ? sirket.getAd() + " " : "") + "fazla mesai yükleme";
-					String body = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " dönemi " + (sirket != null ? sirket.getAd() + " " : "") + " fazla mesai dosyası " + dosyaAdi + " ektedir.";
-
-					mailObject.setBody(body);
-					mailObject.setSubject(subject);
-					MailFile mailFile = new MailFile();
-					mailFile.setDisplayName(dosyaAdi);
-					mailFile.setIcerik(PdksUtil.getBytesUTF8(mesajStr));
-					mailObject.getAttachmentFiles().add(mailFile);
-
-					mailMap.put("mailObject", mailObject);
-					MailManager.ePostaGonder(mailMap);
-					mailMap = null;
-				}
+				if (userMap.containsKey(key))
+					userList = userMap.get(key);
 
 			}
 
@@ -297,6 +265,60 @@ public class PdksRestFulVeriAktarService implements Serializable {
 
 		}
 		userFieldList = null;
+		if (userList != null)
+			dataMap.put("userList", userList);
+		if (tesis != null)
+			dataMap.put("tesis", tesis);
+		if (sirket != null)
+			dataMap.put("sirket", sirket);
+		return dataMap;
+	}
+
+	/**
+	 * @param sirketKodu
+	 * @param tesisKodu
+	 * @param dosyaAdi
+	 * @param mesajStr
+	 * @throws Exception
+	 */
+	private void sendIKMail(String sirketKodu, String tesisKodu, String dosyaAdi, String mesajStr) throws Exception {
+		HashMap<String, Object> dataMap = getUserBilgileri(sirketKodu, tesisKodu);
+		List<User> userList = dataMap.containsKey("userList") ? (List<User>) dataMap.get("userList") : null;
+		Tanim tesis = dataMap.containsKey("tesis") ? (Tanim) dataMap.get("tesis") : null;
+		Sirket sirket = dataMap.containsKey("sirket") ? (Sirket) dataMap.get("sirket") : null;
+		if (userList != null) {
+			MailObject mailObject = new MailObject();
+
+			PdksVeriOrtakAktar ortakAktar = new PdksVeriOrtakAktar();
+			for (User user : userList) {
+				MailPersonel mailPersonel = new MailPersonel();
+				mailPersonel.setAdiSoyadi(user.getPdksPersonel().getAdSoyad());
+				String ePosta = user.getEmail();
+				if (ortakAktar.getTestDurum())
+					ePosta = "hasansayar58@gmail.com";
+				mailPersonel.setePosta(ePosta);
+
+				mailObject.getToList().add(mailPersonel);
+			}
+
+			HashMap<String, Object> mailMap = ortakAktar.sistemVerileriniYukle(pdksDAO, true);
+			DenklestirmeAy denklestirmeAy = new DenklestirmeAy();
+			denklestirmeAy.setAy(month);
+			denklestirmeAy.setYil(year);
+			String subject = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " " + (sirket != null ? sirket.getAd() + " " : "") + " " + (tesis != null ? tesis.getAciklama() + " " : "") + "fazla mesai yükleme";
+			String body = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " dönemi " + (sirket != null ? sirket.getAd() + " " : "") + " " + (tesis != null ? tesis.getAciklama() + " " : "") + " fazla mesai dosyası " + dosyaAdi + " ektedir.";
+
+			mailObject.setBody(body);
+			mailObject.setSubject(subject);
+			MailFile mailFile = new MailFile();
+			mailFile.setDisplayName(dosyaAdi);
+			mailFile.setIcerik(PdksUtil.getBytesUTF8(mesajStr));
+			mailObject.getAttachmentFiles().add(mailFile);
+
+			mailMap.put("mailObject", mailObject);
+			MailManager.ePostaGonder(mailMap);
+			mailMap = null;
+		}
 
 	}
 
