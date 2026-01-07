@@ -109,7 +109,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	 */
 	public HashMap<String, Object> getUserBilgileri(String sirketKodu, String tesisKodu) {
 		HashMap<String, Object> dataMap = new HashMap<String, Object>();
- 		List<User> userList = null;
+		List<User> userList = null;
 		Tanim tesis = null;
 		Sirket sirket = null;
 		if (pdksDAO == null)
@@ -147,8 +147,8 @@ public class PdksRestFulVeriAktarService implements Serializable {
 			}
 			sb = new StringBuffer();
 			sb.append("select * from " + TesisBaglanti.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
- 			fields.clear();
- 			List<TesisBaglanti> tesisBaglantiList = pdksDAO.getNativeSQLList(fields, sb, TesisBaglanti.class);
+			fields.clear();
+			List<TesisBaglanti> tesisBaglantiList = pdksDAO.getNativeSQLList(fields, sb, TesisBaglanti.class);
 			for (TesisBaglanti tb : tesisBaglantiList) {
 				if (tb.getPersonelTipi() != null && tb.isIK() == false)
 					continue;
@@ -284,9 +284,9 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	private void sendIKMail(String sirketKodu, String tesisKodu, String dosyaAdi, String mesajStr) throws Exception {
 		HashMap<String, Object> dataMap = getUserBilgileri(sirketKodu, tesisKodu);
 		List<User> userList = dataMap.containsKey("userList") ? (List<User>) dataMap.get("userList") : null;
-		Tanim tesis = dataMap.containsKey("tesis") ? (Tanim) dataMap.get("tesis") : null;
-		Sirket sirket = dataMap.containsKey("sirket") ? (Sirket) dataMap.get("sirket") : null;
 		if (userList != null) {
+			Tanim tesis = dataMap.containsKey("tesis") ? (Tanim) dataMap.get("tesis") : null;
+			Sirket sirket = dataMap.containsKey("sirket") ? (Sirket) dataMap.get("sirket") : null;
 			MailObject mailObject = new MailObject();
 
 			PdksVeriOrtakAktar ortakAktar = new PdksVeriOrtakAktar();
@@ -318,8 +318,9 @@ public class PdksRestFulVeriAktarService implements Serializable {
 			mailMap.put("mailObject", mailObject);
 			MailManager.ePostaGonder(mailMap);
 			mailMap = null;
+			userList = null;
 		}
-
+		dataMap = null;
 	}
 
 	/**
