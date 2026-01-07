@@ -97,6 +97,7 @@ import org.xml.sax.InputSource;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sap.conn.jco.JCoAttributes;
@@ -775,10 +776,15 @@ public class PdksUtil implements Serializable {
 		String prettyJson = null;
 		try {
 			JsonParser parser = new JsonParser();
-			JsonObject json = parser.parse(jsonString).getAsJsonObject();
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
-			prettyJson = gson.toJson(json);
-			if (prettyJson.lastIndexOf("\\u0026") > 0)
+			if (jsonString.startsWith("{")) {
+				JsonObject json = parser.parse(jsonString).getAsJsonObject();
+				prettyJson = gson.toJson(json);
+			} else {
+				JsonArray array = parser.parse(jsonString).getAsJsonArray();
+				prettyJson = gson.toJson(array);
+			}
+ 			if (prettyJson.lastIndexOf("\\u0026") > 0)
 				prettyJson = replaceAll(prettyJson, "\\u0026", "&");
 			if (prettyJson.lastIndexOf("\\u003d") > 0)
 				prettyJson = replaceAll(prettyJson, "\\u003d", "=");
