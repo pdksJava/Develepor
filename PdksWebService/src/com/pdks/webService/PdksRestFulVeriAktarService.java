@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import org.json.XML;
 import org.pdks.dao.PdksDAO;
 import org.pdks.dao.impl.BaseDAOHibernate;
+import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.ERPSistem;
 import org.pdks.entity.FazlaMesaiERP;
 import org.pdks.entity.FazlaMesaiERPDetay;
@@ -37,9 +38,15 @@ import org.pdks.entity.Tanim;
 import org.pdks.enums.MethodAPI;
 import org.pdks.enums.MethodAlanAPI;
 import org.pdks.genel.model.Constants;
+import org.pdks.genel.model.MailManager;
 import org.pdks.genel.model.PdksUtil;
+import org.pdks.mail.model.MailFile;
 import org.pdks.mail.model.MailObject;
+import org.pdks.mail.model.MailPersonel;
 import org.pdks.mail.model.MailStatu;
+import org.pdks.security.entity.Role;
+import org.pdks.security.entity.User;
+import org.pdks.security.entity.UserRoles;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
@@ -69,6 +76,8 @@ public class PdksRestFulVeriAktarService implements Serializable {
 
 	private FazlaMesaiERP fazlaMesaiERP;
 
+	private PdksDAO pdksDAO;
+
 	/**
 	 * @param sirketERPKodu
 	 * @param baslikList
@@ -93,21 +102,156 @@ public class PdksRestFulVeriAktarService implements Serializable {
 
 	/**
 	 * @param sirketKodu
+	 * @param tesisKodu
+	 * @param dosyaAdi
+	 * @param mesajStr
+	 * @throws Exception
+	 */
+	private void sendIKMail(String sirketKodu, String tesisKodu, String dosyaAdi, String mesajStr) throws Exception {
+		HashMap fields = new HashMap();
+		StringBuffer sb = new StringBuffer();
+ 		String alanAdi = User.COLUMN_NAME_ID;
+		List userFieldList = null;
+		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+		veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_IK_USERNAME_LIST");
+		veriMap.put("alanAdi", alanAdi);
+		try {
+			userFieldList = pdksDAO.execSPList(veriMap, null);
+		} catch (Exception e) {
+			userFieldList = new ArrayList<Long>();
+		}
+		HashMap<String, List<User>> userMap = new HashMap<String, List<User>>();
+		if (userFieldList.isEmpty() == false) {
+			Tanim tesis = null;
+			Sirket sirket = null;
+			if (PdksUtil.hasStringValue(sirketKodu)) {
+				sb.append("select A.* from " + Sirket.TABLE_NAME + " A " + PdksVeriOrtakAktar.getSelectLOCK());
+				sb.append(" where A." + Sirket.COLUMN_NAME_ERP_KODU + " = :b ");
+				fields.put("b", sirketKodu);
+				List<Sirket> sirketList = pdksDAO.getNativeSQLList(fields, sb, Sirket.class);
+				if (sirketList.isEmpty() == false) {
+					sirket = sirketList.get(0);
+					if (PdksUtil.hasStringValue(tesisKodu)) {
+						sb = new StringBuffer();
+						sb.append("select A.* from " + Tanim.TABLE_NAME + " A " + PdksVeriOrtakAktar.getSelectLOCK());
+						sb.append(" where A." + Tanim.COLUMN_NAME_TIPI + " = :t ");
+						sb.append(" and ( A." + Tanim.COLUMN_NAME_KODU + " = :k1 or A." + Tanim.COLUMN_NAME_KODU + " = :k2 ) ");
+						fields.clear();
+						fields.put("t", Tanim.TIPI_TESIS);
+						fields.put("k1", tesisKodu);
+						fields.put("k2", sirketKodu + "-" + tesisKodu);
+						List<Tanim> tesisList = pdksDAO.getNativeSQLList(fields, sb, Tanim.class);
+						if (tesisList.isEmpty() == false)
+							tesis = tesisList.get(0);
+						tesisList = null;
+					}
+				}
+				sirketList = null;
+			}
+			List<Long> longList = PdksUtil.getLongListFromBigDecimal(null, userFieldList);
+			sb = new StringBuffer();
+			sb.append("select A.* from " + UserRoles.TABLE_NAME + " A " + PdksVeriOrtakAktar.getSelectLOCK());
+			sb.append(" where A." + UserRoles.COLUMN_NAME_USER + " :u ");
+			fields.clear();
+			fields.put("b", longList);
+			List<UserRoles> userRolesList = pdksDAO.getNativeSQLList(fields, sb, UserRoles.class);
+			longList = null;
+			for (UserRoles userRoles : userRolesList) {
+				Role role = userRoles.getRole();
+				Personel personel = userRoles.getUser().getPdksPersonel();
+				String key = role.getRolename();
+				if (key.equals(Role.TIPI_IK_SIRKET)) {
+					key = key + "_" + personel.getSirket().getId();
+				} else if (key.equals(Role.TIPI_IK_Tesis)) {
+					if (personel.getTesis() != null)
+						key = key + "_" + personel.getTesis().getId();
+					else
+						key = null;
+
+				} else if (key.equals(Role.TIPI_IK) == false)
+					key = null;
+				if (key != null) {
+					List<User> list = userMap.containsKey(key) ? userMap.get(key) : new ArrayList<User>();
+					if (list.isEmpty())
+						userMap.put(key, list);
+					list.add(userRoles.getUser());
+				}
+			}
+			userRolesList = null;
+			if (userMap.isEmpty() == false) {
+				String key = null;
+				if (tesis != null) {
+					key = Role.TIPI_IK_Tesis + "_" + tesis.getId();
+					if (userMap.containsKey(key) == false)
+						key = null;
+
+				}
+				if (sirket != null && key == null) {
+					key = Role.TIPI_IK_SIRKET + "_" + sirket.getId();
+					if (userMap.containsKey(key) == false)
+						key = null;
+				}
+				if (key == null)
+					key = Role.TIPI_IK;
+				if (userMap.containsKey(key)) {
+					MailObject mailObject = new MailObject();
+					List<User> userList = userMap.get(key);
+					PdksVeriOrtakAktar ortakAktar = new PdksVeriOrtakAktar();
+					for (User user : userList) {
+						MailPersonel mailPersonel = new MailPersonel();
+						mailPersonel.setAdiSoyadi(user.getPdksPersonel().getAdSoyad());
+						String ePosta = user.getEmail();
+						if (ortakAktar.getTestDurum())
+							ePosta = "hasansayar58@gmail.com";
+						mailPersonel.setePosta(ePosta);
+
+						mailObject.getToList().add(mailPersonel);
+					}
+
+					HashMap<String, Object> mailMap = ortakAktar.sistemVerileriniYukle(pdksDAO, true);
+					DenklestirmeAy denklestirmeAy = new DenklestirmeAy();
+					denklestirmeAy.setAy(month);
+					denklestirmeAy.setYil(year);
+					String subject = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " " + (sirket != null ? sirket.getAd() + " " : "") + "fazla mesai yükleme";
+					String body = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " dönemi " + (sirket != null ? sirket.getAd() + " " : "") + " fazla mesai dosyası " + dosyaAdi + " ektedir.";
+
+					mailObject.setBody(body);
+					mailObject.setSubject(subject);
+					MailFile mailFile = new MailFile();
+					mailFile.setDisplayName(dosyaAdi);
+					mailFile.setIcerik(PdksUtil.getBytesUTF8(mesajStr));
+					mailObject.getAttachmentFiles().add(mailFile);
+
+					mailMap.put("mailObject", mailObject);
+					MailManager.ePostaGonder(mailMap);
+				}
+
+			}
+			userMap = null;
+
+		}
+		userFieldList = null;
+
+	}
+
+	/**
+	 * @param sirketKodu
 	 * @param yil
 	 * @param ay
 	 * @param tesisKodu
+	 * @param fonksiyonAdi
 	 * @param mediaType
 	 * @return
 	 * @throws Exception
 	 */
-	private Response getMesaiPDKS(String sirketKodu, Integer yil, Integer ay, String tesisKodu, String mediaType) throws Exception {
+	private Response getMesaiPDKS(String sirketKodu, Integer yil, Integer ay, String tesisKodu, String fonksiyonAdi, String mediaType) throws Exception {
 		Response response = null;
 
 		List<String> perNoList = null;
 
 		try {
 			if (yil != null && ay != null)
-				response = getFazlaMesaiVeri(mediaType, MethodAPI.GET.value(), yil, ay, sirketKodu, tesisKodu, perNoList);
+				response = getFazlaMesaiVeri(fonksiyonAdi, mediaType, MethodAPI.GET.value(), yil, ay, sirketKodu, tesisKodu, perNoList);
 		} catch (Exception e) {
 		}
 		return response;
@@ -119,7 +263,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getJSONMesaiPDKS(@QueryParam("sirketKodu") String sirketKodu, @QueryParam("yil") Integer yil, @QueryParam("ay") Integer ay, @QueryParam("tesisKodu") String tesisKodu) throws Exception {
 		String mediaType = MediaType.APPLICATION_JSON;
-		Response response = getMesaiPDKS(sirketKodu, yil, ay, tesisKodu, mediaType);
+		Response response = getMesaiPDKS(sirketKodu, yil, ay, tesisKodu, "getJSONMesaiPDKS", mediaType);
 		return response;
 	}
 
@@ -129,7 +273,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	@Consumes(MediaType.APPLICATION_XML + ";charset=utf-8")
 	public Response getXMLMesaiPDKS(@QueryParam("sirketKodu") String sirketKodu, @QueryParam("yil") Integer yil, @QueryParam("ay") Integer ay, @QueryParam("tesisKodu") String tesisKodu) throws Exception {
 		String mediaType = MediaType.APPLICATION_XML;
-		Response response = getMesaiPDKS(sirketKodu, yil, ay, tesisKodu, mediaType);
+		Response response = getMesaiPDKS(sirketKodu, yil, ay, tesisKodu, "getXMLMesaiPDKS", mediaType);
 		return response;
 	}
 
@@ -157,7 +301,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	 */
 	public Response postJSONMesaiPDKS() throws Exception {
 		String mediaType = MediaType.APPLICATION_JSON;
-		Response response = postMesaiPDKS(mediaType);
+		Response response = postMesaiPDKS("postJSONMesaiPDKS", mediaType);
 		return response;
 	}
 
@@ -179,16 +323,17 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	 **/
 	public Response postXMLMesaiPDKS() throws Exception {
 		String mediaType = MediaType.APPLICATION_XML;
-		Response response = postMesaiPDKS(mediaType);
+		Response response = postMesaiPDKS("postXMLMesaiPDKS", mediaType);
 		return response;
 	}
 
 	/**
+	 * @param fonksiyonAdi
 	 * @param mediaType
 	 * @return
 	 * @throws Exception
 	 */
-	private Response postMesaiPDKS(String mediaType) throws Exception {
+	private Response postMesaiPDKS(String fonksiyonAdi, String mediaType) throws Exception {
 		Response response = null;
 		String data = getBodyString(request);
 		if (data != null) {
@@ -217,13 +362,13 @@ public class PdksRestFulVeriAktarService implements Serializable {
 						JSONArray array = (JSONArray) jsonMap.get("personelNo");
 						for (int i = 0; i < array.length(); i++) {
 							String personelNo = array.getString(i);
- 							perNoList.add(personelNo);
+							perNoList.add(personelNo);
 						}
 					}
- 				}
+				}
 
 				if (yil != null && ay != null) {
-					response = getFazlaMesaiVeri(mediaType, MethodAPI.POST.value(), yil, ay, sirketKodu, tesisKodu, perNoList);
+					response = getFazlaMesaiVeri(fonksiyonAdi, mediaType, MethodAPI.POST.value(), yil, ay, sirketKodu, tesisKodu, perNoList);
 
 				}
 			} catch (Exception e) {
@@ -236,6 +381,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	}
 
 	/**
+	 * @param fonksiyonAdi
 	 * @param mediaType
 	 * @param method
 	 * @param yil
@@ -245,7 +391,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	 * @param perNoList
 	 * @return
 	 */
-	private Response getFazlaMesaiVeri(String mediaType, String method, Integer yil, Integer ay, String sirketKoduInput, String tesisKoduInput, List<String> perNoList) {
+	private Response getFazlaMesaiVeri(String fonksiyonAdi, String mediaType, String method, Integer yil, Integer ay, String sirketKoduInput, String tesisKoduInput, List<String> perNoList) {
 
 		Response response;
 		String sonuc = "";
@@ -261,7 +407,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 			if (yil >= 2020 && ay > 0 && ay < 13) {
 				year = yil;
 				month = ay;
-				PdksDAO pdksDAO = Constants.pdksDAO;
+				pdksDAO = Constants.pdksDAO;
 				StringBuffer sb = new StringBuffer();
 				sb.append("select A.* from " + Parameter.TABLE_NAME + " P " + PdksVeriOrtakAktar.getSelectLOCK());
 				sb.append(" inner join " + ERPSistem.TABLE_NAME + " E " + PdksVeriOrtakAktar.getJoinLOCK() + " on E." + ERPSistem.COLUMN_NAME_ERP_SIRKET + " = P." + Parameter.COLUMN_NAME_DEGER);
@@ -534,13 +680,24 @@ public class PdksRestFulVeriAktarService implements Serializable {
 			logger.error(e);
 			e.printStackTrace();
 		}
- 		if (mediaType != null && mediaType.equals(MediaType.APPLICATION_XML)) {
+		String dosyaAdiBaslangic = fonksiyonAdi + "_" + yil + "" + ay + "_" + sirketKoduInput + (PdksUtil.hasStringValue(tesisKoduInput) ? "_" + tesisKoduInput : "");
+		String dosyaAdi = dosyaAdiBaslangic + ".json";
+		if (mediaType != null && mediaType.equals(MediaType.APPLICATION_XML)) {
 			try {
 				JSONObject jsonObject = new JSONObject(sonuc);
 				String xml = XML.toString(jsonObject);
 				sonuc = xml;
+				dosyaAdi = dosyaAdiBaslangic + ".xml";
 			} catch (Exception e) {
 			}
+		}
+		if (PdksUtil.hasStringValue(sonuc)) {
+			try {
+				sendIKMail(sirketKoduInput, tesisKoduInput, dosyaAdi, sonuc);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+
 		}
 		response = Response.ok(sonuc, mediaType).build();
 		return response;

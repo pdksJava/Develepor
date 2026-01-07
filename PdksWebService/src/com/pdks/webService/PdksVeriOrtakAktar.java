@@ -749,7 +749,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		return mailService;
 	}
 
-	private boolean getTestDurum() {
+	public boolean getTestDurum() {
 		return !PdksUtil.getCanliSunucuDurum() && !PdksUtil.getTestSunucuDurum();
 	}
 
@@ -809,8 +809,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			islemYapan = getSistemAdminUser(dao);
 			try {
 				fields.clear();
-				HashMap fields = new HashMap();
-				StringBuffer sb = new StringBuffer();
+ 				StringBuffer sb = new StringBuffer();
 				sb.append("select * from " + Parameter.TABLE_NAME + (lockVar ? " " + selectLOCK : ""));
 				// sb.append(" where " + Parameter.COLUMN_NAME_DURUM + " = 1 ");
 				List<Parameter> list = dao.getNativeSQLList(fields, sb, Parameter.class);
