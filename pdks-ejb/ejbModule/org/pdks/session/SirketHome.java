@@ -148,7 +148,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 				sirket.setFazlaMesaiOde(Boolean.FALSE);
 			}
 			boolean spCalistir = false;
-			if (erpDatabaseDurum && sirket.isDegisti() && sirket.isErp()) {
+			if (erpDatabaseDurum && sirket.isDegisti()&& sirket.getDurum() && sirket.isErp()) {
 				if (PdksUtil.hasStringValue(sirket.getDatabaseAdiERP()) || PdksUtil.hasStringValue(sirket.getDatabaseKoduERP())) {
 					if (PdksUtil.hasStringValue(sirket.getDatabaseAdiERP()) == false) {
 						sirket.setDatabaseAdiERP("");
@@ -164,7 +164,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 			if (spCalistir) {
 				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				pdksEntityController.execSPList(veriMap, Sirket.SP_NAME_SP_ERP_VIEW_ALTER_CREATE, null);
+				pdksEntityController.execSP(veriMap, Sirket.SP_NAME_SP_ERP_VIEW_ALTER_CREATE);
 			}
 
 			session.flush();
