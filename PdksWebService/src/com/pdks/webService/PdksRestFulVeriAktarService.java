@@ -34,6 +34,7 @@ import org.pdks.entity.FazlaMesaiERPDetay;
 import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelMesai;
+import org.pdks.entity.ServiceData;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.enums.MethodAPI;
@@ -616,6 +617,19 @@ public class PdksRestFulVeriAktarService implements Serializable {
 		}
 		String dosyaAdiBaslangic = fonksiyonAdi + (PdksUtil.hasStringValue(sirketKoduInput) ? "_" + sirketKoduInput : "") + (PdksUtil.hasStringValue(tesisKoduInput) ? "_" + tesisKoduInput : "") + "_" + yil + "-" + ay;
 		String dosyaAdi = dosyaAdiBaslangic + ".json";
+		if (PdksUtil.hasStringValue(sonuc)) {
+			LinkedHashMap<String, Object> inputMap = new LinkedHashMap<String, Object>();
+			inputMap.put("yil", yil);
+			inputMap.put("ay", ay);
+			inputMap.put("sirketKodu", sirketKoduInput);
+			inputMap.put("tesisKodu", tesisKoduInput);
+			String inputData = gson.toJson(inputMap);
+			ServiceData serviceData = new ServiceData(fonksiyonAdi);
+			serviceData.setInputData(inputData);
+			serviceData.setOutputData(sonuc);
+			pdksDAO.saveObject(serviceData);
+
+		}
 		if (mediaType != null && mediaType.equals(MediaType.APPLICATION_XML)) {
 			try {
 				String str = sonuc;
