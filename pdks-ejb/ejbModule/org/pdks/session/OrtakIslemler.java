@@ -10325,10 +10325,11 @@ public class OrtakIslemler implements Serializable {
 		List<HareketKGS> personelHareketList = new ArrayList<HareketKGS>();
 		Date bugun = new Date();
 		String bugunStr = PdksUtil.convertToDateString(bugun, "yyyyMMdd");
-		;
+
 		List<String> hareketIdList = new ArrayList<String>();
 		for (Long perId : personelVardiyaBulMap.keySet()) {
-			if (suaPerIdList.contains(perId))
+			boolean suaPersonel = suaPerIdList.contains(perId);
+			if (suaPersonel)
 				continue;
 			PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici = personelDenklestirmeMap.get(perId);
 			PersonelDenklestirme pd = personelDenklestirmeTasiyici.getPersonelDenklestirme();
@@ -10373,10 +10374,12 @@ public class OrtakIslemler implements Serializable {
 					Date sonGun = PdksUtil.getDate(bugun);
 					for (Iterator iterator = varList.iterator(); iterator.hasNext();) {
 						VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-						vardiyaGun.setGuncellendi(Boolean.FALSE);
 						Vardiya vardiyaVg = vardiyaGun.getVardiya();
-						String key = PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "yyyyMMdd");
-						String vardiyaKeyStr = vardiyaGun.getVardiyaKeyStr();
+						String key = vardiyaGun.getVardiyaDateStr(), vardiyaKeyStr = vardiyaGun.getVardiyaKeyStr();
+						if (key.endsWith("1219"))
+							logger.debug(vardiyaVg.getAdi());
+						vardiyaGun.setGuncellendi(Boolean.FALSE);
+
 						if (vardiyaGun.isIzinli() || vardiyaGun.getVardiyaDate().after(sonGun) || vardiyaVg.isHaftaTatil()) {
 							if (vardiyaVg.isHaftaTatil()) {
 								if (vardiyaVg.getVersion() < 0) {
@@ -10411,11 +10414,15 @@ public class OrtakIslemler implements Serializable {
 							}
 
 						} else {
-
 							List<Liste> listeler = new ArrayList<Liste>();
 							boolean hareketVar = false, saatSifirVar = false;
 							for (int ii = 1; ii < 3; ii++) {
 								for (Vardiya vardiya : vardiyaPerList) {
+									if (ii == 1 && suaPersonel) {
+										if (vardiya.getSua() == false)
+											continue;
+									}
+
 									personelHareketList.clear();
 									personelHareketList.addAll(personelHareketMap.get(personelKGSId));
 									VardiyaGun vardiyaGunNew = new VardiyaGun(personelDenklestirmeTasiyici.getPersonel(), vardiya, vardiyaGun.getVardiyaDate());
@@ -10469,7 +10476,7 @@ public class OrtakIslemler implements Serializable {
 													}
 													if (sure > 3.5d) {
 														vardiyaGunNew.setVersion(0);
-														String str = (girisTamam && cikisTamam ? "1" : "0") + PdksUtil.textBaslangicinaKarakterEkle("" + new Double(sure * 100).longValue() + String.valueOf(10000 + islemVardiya.getBasDonem()), '0', 10);
+														String str = (vardiya.getSua() || (girisTamam && cikisTamam) ? "1" : "0") + PdksUtil.textBaslangicinaKarakterEkle("" + new Double(sure * 100).longValue() + String.valueOf(10000 + islemVardiya.getBasDonem()), '0', 10);
 														listeler.add(new Liste(vardiyaGunNew, str));
 													}
 												}
@@ -10494,7 +10501,7 @@ public class OrtakIslemler implements Serializable {
 								if (listeler.isEmpty() == false || saatSifirVar == false)
 									break;
 							}
-							if (!listeler.isEmpty() && listeler.size() < 3) {
+							if (!listeler.isEmpty() && (suaPersonel || listeler.size() < 3)) {
 								VardiyaGun vg = null;
 								if (listeler.size() > 1)
 									listeler = PdksUtil.sortListByAlanAdi(listeler, "value", true);
