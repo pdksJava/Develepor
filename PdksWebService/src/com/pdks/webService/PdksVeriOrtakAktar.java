@@ -750,7 +750,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		return mailService;
 	}
 
-	public boolean getTestDurum() {
+	public static boolean getTestDurum() {
 		return !PdksUtil.getCanliSunucuDurum() && !PdksUtil.getTestSunucuDurum();
 	}
 

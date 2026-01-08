@@ -118,7 +118,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 			Tanim tesis = dataMap.containsKey("tesis") ? (Tanim) dataMap.get("tesis") : null;
 			Sirket sirket = dataMap.containsKey("sirket") ? (Sirket) dataMap.get("sirket") : null;
 			MailObject mailObject = new MailObject();
-			boolean testDurum = ortakAktar.getTestDurum();
+			boolean testDurum = PdksVeriOrtakAktar.getTestDurum();
 			for (User user : userList) {
 				MailPersonel mailPersonel = new MailPersonel();
 				mailPersonel.setAdiSoyadi(user.getPdksPersonel().getAdSoyad());
@@ -617,7 +617,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 		}
 		String dosyaAdiBaslangic = fonksiyonAdi + (PdksUtil.hasStringValue(sirketKoduInput) ? "_" + sirketKoduInput : "") + (PdksUtil.hasStringValue(tesisKoduInput) ? "_" + tesisKoduInput : "") + "_" + yil + "-" + ay;
 		String dosyaAdi = dosyaAdiBaslangic + ".json";
-		if (PdksUtil.hasStringValue(sonuc)) {
+		if (PdksUtil.hasStringValue(sonuc) && PdksVeriOrtakAktar.getTestDurum() == false) {
 			LinkedHashMap<String, Object> inputMap = new LinkedHashMap<String, Object>();
 			inputMap.put("yil", yil);
 			inputMap.put("ay", ay);
