@@ -141,7 +141,7 @@
 							</rich:column>
 							<rich:column>
 								<f:facet name="header">
-									<h:outputText value="ERP Database Koud" />
+									<h:outputText value="ERP Database Kodu" />
 								</f:facet>
 								<h:outputText value="#{sirket.databaseKoduERP}" />
 							</rich:column>
@@ -223,6 +223,17 @@
 									<s:convertEntity />
 								</h:selectOneMenu>
 							</s:decorate>
+							<c:if test="#{sirketHome.erpDatabaseDurum and authenticatedUser.admin}">
+								<s:decorate template="/layout/edit.xhtml">
+									<ui:define name="label">ERP Database Adı</ui:define>
+									<h:inputText value="#{sirketHome.seciliSirket.databaseAdiERP}" size="15" maxlength="128" style="width:270px" />
+								</s:decorate>
+								<s:decorate template="/layout/edit.xhtml">
+									<ui:define name="label">ERP Database Kodu</ui:define>
+									<h:inputText value="#{sirketHome.seciliSirket.databaseKoduERP}" size="15" maxlength="32" style="width:270px" />
+								</s:decorate>
+
+							</c:if>
 							<h:panelGrid columns="2">
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">ERP</ui:define>
@@ -243,17 +254,7 @@
 											<a4j:support event="onchange" status="ajaxStatus" />
 										</h:selectOneMenu>
 									</s:decorate>
-									<c:if test="#{sirketHome.erpDatabaseDurum and authenticatedUser.admin}">
-										<s:decorate template="/layout/edit.xhtml">
-											<ui:define name="label">ERP Database Adı</ui:define>
-											<h:inputText value="#{sirketHome.seciliSirket.databaseAdiERP}" size="15" maxlength="128" />
-										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml">
-											<ui:define name="label">ERP Database Kodu</ui:define>
-											<h:inputText value="#{sirketHome.seciliSirket.databaseKoduERP}" size="15" maxlength="32" />
-										</s:decorate>
 
-									</c:if>
 								</c:if>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">LDAP</ui:define>

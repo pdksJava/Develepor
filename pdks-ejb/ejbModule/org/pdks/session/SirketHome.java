@@ -161,14 +161,14 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 			}
 
 			pdksEntityController.saveOrUpdate(session, entityManager, sirket);
+			session.flush();
 			if (spCalistir) {
 				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 				pdksEntityController.execSP(veriMap, Sirket.SP_NAME_SP_ERP_VIEW_ALTER_CREATE);
 			}
 
-			session.flush();
-			fillsirketList();
+ 			fillsirketList();
 
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
