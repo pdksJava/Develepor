@@ -9214,7 +9214,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 			sb = new StringBuilder();
 			sb.append("with VARDIYA_DATA as ( ");
-			sb.append("select V.* from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
+			sb.append("select 1 AS OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + "  from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 			if (pd != null) {
 				if (pd.getCalismaModeliAy() != null) {
 					try {
@@ -9244,39 +9244,39 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			sb.append(" and V." + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'I'  ");
 			if (gebeMi) {
 				sb.append(" union ");
-				sb.append(" select * from " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+				sb.append(" select 0 AS OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" where " + Vardiya.COLUMN_NAME_GEBELIK + " = 1 " + ozelMap.get(Vardiya.GEBE_KEY));
 			}
 			if (sutIzniGoster) {
 				sb.append(" union ");
-				sb.append(" select * from " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+				sb.append(" select 0 AS OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" where " + Vardiya.COLUMN_NAME_SUT_IZNI + " = 1 " + ozelMap.get(Vardiya.SUT_IZNI_KEY));
 			}
 			if (sua) {
 				sb.append(" union ");
-				sb.append(" select * from " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+				sb.append(" select 0 AS OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" where " + Vardiya.COLUMN_NAME_SUA + " = 1 " + ozelMap.get(Vardiya.SUA_KEY));
 			}
 			Vardiya izinVardiya = vardiyaSablonu.getVardiya1();
 			if (vardiyaSablonu != null && izinVardiya != null && izinVardiya.isIzinVardiya()) {
 				sb.append(" union ");
-				sb.append(" select * from " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+				sb.append(" select 0 AS OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" where " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = 'I' ");
 			}
 			if (icap) {
 				sb.append(" union ");
-				sb.append(" select * from " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+				sb.append(" select 0 AS OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" where " + Vardiya.COLUMN_NAME_ICAP + " = 1 " + ozelMap.get(Vardiya.ICAP_KEY));
 
 			}
 			if (calismaOlmayanVardiyalar) {
 				sb.append(" union ");
-				sb.append(" select * from " + Vardiya.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+				sb.append(" select 0 AS OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" where " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <>'' and " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <> 'I' ");
 			}
 			if (manuelVardiyaIzinGir) {
 				sb.append(" union ");
-				sb.append(" select distinct V.* from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
+				sb.append(" select distinct 0 AS OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" left join " + IzinTipi.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + IzinTipi.COLUMN_NAME_DEPARTMAN + " = V." + Vardiya.COLUMN_NAME_DEPARTMAN + " and I." + IzinTipi.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" and I." + IzinTipi.COLUMN_NAME_GIRIS_TIPI + " = 0 and I." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null");
 				sb.append(" where COALESCE( V." + Vardiya.COLUMN_NAME_DEPARTMAN + ", " + personel.getSirket().getDepartman().getId() + " )  = " + personel.getSirket().getDepartman().getId() + " and V." + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
@@ -9284,16 +9284,20 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			sb.append(" ) ");
 
-			sb.append(" select distinct D.* from VARDIYA_DATA D ");
-			sb.append(" where " + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
-			sb.append(" and COALESCE(" + Vardiya.COLUMN_NAME_DEPARTMAN + " , " + sirket.getDepartman().getId() + ") = " + sirket.getDepartman().getId());
-			sb.append(" and COALESCE(" + Vardiya.COLUMN_NAME_SIRKET + " , " + sirket.getId() + ") = " + sirket.getId());
+			sb.append(" select distinct V.* from VARDIYA_DATA D ");
+			sb.append(" inner join " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on  D." + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " = V." + Vardiya.COLUMN_NAME_ID);
+
+			sb.append(" where " + Vardiya.COLUMN_NAME_DURUM + " = 1 and (OZEL_MODEL = 1 or (");
+			sb.append(" coalesce(" + Vardiya.COLUMN_NAME_DEPARTMAN + " , " + sirket.getDepartman().getId() + ") = " + sirket.getDepartman().getId());
+			sb.append(" and coalesce(" + Vardiya.COLUMN_NAME_SIRKET + " , " + sirket.getId() + ") = " + sirket.getId());
 			if (tesis != null)
-				sb.append(" and COALESCE(" + Vardiya.COLUMN_NAME_TESIS + " , " + tesis.getId() + ") = " + tesis.getId());
+				sb.append(" and coalesce(" + Vardiya.COLUMN_NAME_TESIS + " , " + tesis.getId() + ") = " + tesis.getId());
+
 			if (fmi == false) {
 				sb.append(" and " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <> :fm ");
 				map.put("fm", Vardiya.TIPI_FMI);
 			}
+			sb.append(" )) ");
 
 			// map.put("departmanId", personel.getSirket().getDepartman().getId());
 			logger.debug(sb.toString());

@@ -86,17 +86,18 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			logger.debug("planVardiyaHareketGuncelleme in " + PdksUtil.getCurrentTimeStampStr());
 			Session session = null;
 			try {
-				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-				Parameter parameterHareket = ortakIslemler.getParameter(session, PARAMETER_HAREKET_KEY);
-				String valueHareket = (parameterHareket != null) ? parameterHareket.getValue() : null;
-				if (PdksUtil.hasStringValue(valueHareket)) {
-					Date tarih = ortakIslemler.getBugun();
-					boolean guncellemeHareketDurum = PdksUtil.zamanKontrol(PARAMETER_HAREKET_KEY, valueHareket, tarih);
-					if (guncellemeHareketDurum) {
-						guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
-						if (guncellemeHareketDurum)
-							zamanlayici.mailGonder(session, null, parameterHareket.getDescription(), "Plan Vardiya Hareket Güncelleme güncellenmiştir.", null, Boolean.TRUE);
-
+				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
+					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+					Parameter parameterHareket = ortakIslemler.getParameter(session, PARAMETER_HAREKET_KEY);
+					String valueHareket = (parameterHareket != null) ? parameterHareket.getValue() : null;
+					if (PdksUtil.hasStringValue(valueHareket)) {
+						Date tarih = ortakIslemler.getBugun();
+						boolean guncellemeHareketDurum = PdksUtil.zamanKontrol(PARAMETER_HAREKET_KEY, valueHareket, tarih);
+						if (guncellemeHareketDurum) {
+							guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
+							if (guncellemeHareketDurum)
+								zamanlayici.mailGonder(session, null, parameterHareket.getDescription(), "Plan Vardiya Hareket Güncelleme güncellenmiştir.", null, Boolean.TRUE);
+						}
 					}
 				}
 			} catch (Exception e) {
