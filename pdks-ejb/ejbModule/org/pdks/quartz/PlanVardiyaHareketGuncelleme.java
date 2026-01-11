@@ -1,6 +1,9 @@
 package org.pdks.quartz;
 
+import java.io.File;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeMap;
 
+import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
@@ -26,6 +30,7 @@ import org.jboss.seam.async.QuartzTriggerHandle;
 import org.pdks.entity.AylikPuantaj;
 import org.pdks.entity.CalismaModeliAy;
 import org.pdks.entity.DenklestirmeAy;
+import org.pdks.entity.DepartmanDenklestirmeDonemi;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.Liste;
 import org.pdks.entity.Parameter;
@@ -41,6 +46,7 @@ import org.pdks.entity.Tatil;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.security.entity.User;
+import org.pdks.session.FazlaMesaiOrtakIslemler;
 import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
@@ -72,6 +78,9 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
 
+	@In(required = false, create = true)
+	FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemler;
+
 	public static final String PARAMETER_HAREKET_KEY = "hareketVardiyaZamani";
 
 	private static boolean calisiyor = Boolean.FALSE;
@@ -97,6 +106,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
 							if (guncellemeHareketDurum)
 								zamanlayici.mailGonder(session, null, parameterHareket.getDescription(), "Plan Vardiya Hareket Güncelleme güncellenmiştir.", null, Boolean.TRUE);
+							fazlaMesaiGuncelleme(tarih, session);
 						}
 					}
 				}
@@ -193,6 +203,120 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				session.flush();
 		}
 		vardiyaGunList = null;
+	}
+
+	@Transactional
+	public String fazlaMesaiGuncelleme(Date tarih, Session session) throws Exception {
+		if (tarih == null)
+			tarih = ortakIslemler.getBugun();
+		Long buAy = Long.parseLong(PdksUtil.convertToDateString(tarih, "yyyyMM"));
+		Long oncekiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheAyEkleCikar(tarih, -1), "yyyyMM"));
+		StringBuffer sb = new StringBuffer();
+		HashMap fields = new HashMap();
+		sb.append(" select distinct PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + ", P." + Personel.COLUMN_NAME_SIRKET + ", S.AD, D.DONEM_KODU from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
+		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
+		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
+		sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " AND S." + Sirket.COLUMN_NAME_PDKS + " = 1");
+		sb.append(" where (D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + "  between :d1 and :d2 ) and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1");
+		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + ", S." + Sirket.COLUMN_NAME_AD);
+		fields.put("d1", oncekiAy);
+		fields.put("d2", buAy);
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<Object[]> veriler = pdksEntityController.getObjectBySQLList(sb.toString(), fields, null);
+		if (veriler.isEmpty() == false) {
+			LinkedHashMap<Long, List<Long>> veriMap = new LinkedHashMap<Long, List<Long>>();
+			for (Object[] objects : veriler) {
+				Long key = ((BigDecimal) objects[0]).longValue(), sirketId = ((BigDecimal) objects[1]).longValue();
+				List<Long> sirketIdList = veriMap.containsKey(key) ? veriMap.get(key) : new ArrayList<Long>();
+				if (sirketIdList.isEmpty())
+					veriMap.put(key, sirketIdList);
+				sirketIdList.add(sirketId);
+			}
+			String adresStr = null;
+			if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
+				File file = new File("/opt/sertifika/web.txt");
+				if (file.exists()) {
+					List<String> dosyaList = PdksUtil.getStringListFromFile(file);
+					if (dosyaList != null && dosyaList.isEmpty() == false) {
+						for (String string : dosyaList) {
+							if (string.startsWith("http") && string.indexOf("login") > 1)
+								adresStr = string;
+
+						}
+					}
+				}
+			} else
+				adresStr = "http://localhost:8080/login";
+			if (PdksUtil.hasStringValue(adresStr)) {
+				String adres = PdksUtil.replaceAllManuel(adresStr, "login", "fazlaMesaiGuncelleme");
+				for (Long donemId : veriMap.keySet()) {
+					DenklestirmeAy da = (DenklestirmeAy) pdksEntityController.getSQLParamByFieldObject(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_ID, donemId, DenklestirmeAy.class, session);
+					logger.info(da.getAyAdi() + " " + da.getYil()  + " in " + PdksUtil.getCurrentTimeStampStr());
+					DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
+					AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(da.getAy(), da.getYil(), denklestirmeDonemi, session);
+					List<Sirket> sirketList = pdksEntityController.getSQLParamByFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, veriMap.get(donemId), Sirket.class, session);
+					if (sirketList.size() > 1)
+						sirketList = PdksUtil.sortObjectStringAlanList(sirketList, "getAd", null);
+					for (Sirket sirket : sirketList) {
+						if (sirket.isTesisDurumu() == false) {
+							logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " in " + PdksUtil.getCurrentTimeStampStr());
+							String id = ortakIslemler.getEncodeStringByBase64("donemId=" + donemId + "&sirketId=" + sirket.getId());
+							String sonuc = callFazlaMesaiGuncelleme(adres + "?id=" + id);
+							if (sonuc == null)
+								logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " out " + PdksUtil.getCurrentTimeStampStr());
+							else
+								logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+						} else {
+							List<SelectItem> tesisDetayList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, aylikPuantaj, false, session);
+							for (SelectItem st : tesisDetayList) {
+								Tanim tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, st.getValue(), Tanim.class, session);
+								if (tesis != null) {
+									String id = ortakIslemler.getEncodeStringByBase64("donemId=" + donemId + "&sirketId=" + sirket.getId() + "&tesisId=" + tesis.getId());
+									logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " in " + PdksUtil.getCurrentTimeStampStr());
+									String sonuc = callFazlaMesaiGuncelleme(adres + "?id=" + id);
+									if (sonuc == null)
+										logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " out " + PdksUtil.getCurrentTimeStampStr());
+									else
+										logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+								}
+							}
+
+						}
+
+					}
+					logger.info(da.getAyAdi() + " " + da.getYil()  + " out " + PdksUtil.getCurrentTimeStampStr());
+
+				}
+			}
+
+		}
+		return "";
+
+	}
+
+	/**
+	 * @param adres
+	 * @return
+	 * @throws Exception
+	 */
+	private String callFazlaMesaiGuncelleme(String adres) throws Exception {
+		String str = null;
+		java.net.URL url = new java.net.URL(adres);
+		java.net.HttpURLConnection connjava = (java.net.HttpURLConnection) url.openConnection();
+		connjava.setRequestMethod("GET");
+		connjava.setRequestProperty("Content-Language", "tr-TR");
+		connjava.setDoInput(true);
+		connjava.setDoOutput(true);
+		connjava.setUseCaches(false);
+		int timeOutSaniye = 60 * 60;
+		connjava.setConnectTimeout(timeOutSaniye * 1000); // set timeout to 5 seconds
+		connjava.setAllowUserInteraction(true);
+		int responseCode = connjava.getResponseCode();
+		InputStream is = responseCode >= 400 ? connjava.getErrorStream() : connjava.getInputStream();
+		if (responseCode >= 400 && is != null)
+			str = PdksUtil.StringToByInputStream(is);
+		return str;
 	}
 
 	/**

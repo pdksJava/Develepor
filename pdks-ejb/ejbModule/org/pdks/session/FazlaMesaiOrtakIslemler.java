@@ -2339,7 +2339,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (denklestirmeAy != null) {
 			if (user == null)
 				user = authenticatedUser;
-			boolean adminRole = user.isAdmin() || user.isSistemYoneticisi() || user.isIKAdmin();
+			boolean adminRole = user == null || user.isAdmin() || user.isSistemYoneticisi() || user.isIKAdmin();
 			if (adminRole)
 				durum = denklestirmeAy.getDurum() || denklestirmeAy.getGuncelleIK();
 			else
@@ -2657,6 +2657,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		User loginUser = aylikPuantaj != null && aylikPuantaj.getLoginUser() != null ? aylikPuantaj.getLoginUser() : null;
 		if (loginUser == null)
 			loginUser = authenticatedUser;
+		if (loginUser == null)
+			loginUser = ortakIslemler.getSistemAdminUser(session);
 		LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
 		paramsMap.put("loginUser", loginUser);
 		paramsMap.put("sirket", sirket);
@@ -2674,7 +2676,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				Tanim veri = (Tanim) iterator.next();
 				selectList.add(new SelectItem(veri.getId(), veri.getAciklama()));
 			}
-		}
+		} 
 		list = null;
 		paramsMap = null;
 		return selectList;

@@ -1600,12 +1600,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 				if (!ortakIslemler.getParameterKey("bosCalismaOffGuncelle").equals("1"))
 					bosCalismaList.clear();
-//				if (denklestirmeAyDurum && (bosCalismaList.size() + haftaSonuList.size()) > 0) {
-//					if (!haftaSonuList.isEmpty())
-//						haftaTatilVardiyaGuncelle(haftaSonuList);
-//					if (!bosCalismaList.isEmpty())
-//						bosCalismaOffGuncelle(bosCalismaList, haftaSonuList.isEmpty());
-//				}
+				// if (denklestirmeAyDurum && (bosCalismaList.size() + haftaSonuList.size()) > 0) {
+				// if (!haftaSonuList.isEmpty())
+				// haftaTatilVardiyaGuncelle(haftaSonuList);
+				// if (!bosCalismaList.isEmpty())
+				// bosCalismaOffGuncelle(bosCalismaList, haftaSonuList.isEmpty());
+				// }
 				bosCalismaList = null;
 				haftaSonuList = null;
 
@@ -2794,7 +2794,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 				gecersizHareketler = null;
 				gecersizHareketMap = null;
-				if (!(authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()) && yasalFazlaCalismaAsanSaat)
+				if (!(authenticatedUser == null || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()) && yasalFazlaCalismaAsanSaat)
 					yasalFazlaCalismaAsanSaat = ortakIslemler.getParameterKey("yasalFazlaCalismaAsanSaat").equals("1");
 				if (testDurum)
 					logger.info("fillPersonelDenklestirmeDevam 7000 " + PdksUtil.getCurrentTimeStampStr());
@@ -2971,7 +2971,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			cal.set(Calendar.DATE, 1);
 			cal.add(Calendar.MONTH, 1);
 			Date tarih = PdksUtil.getDate(cal.getTime());
-			if (authenticatedUser.isIKAdmin()) {
+			if (authenticatedUser != null && authenticatedUser.isIKAdmin()) {
 				cal.add(Calendar.MONTH, 1);
 				otomatikOnayIKTarih = PdksUtil.getDate(cal.getTime());
 			}

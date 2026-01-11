@@ -269,29 +269,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				if (vardiya.isCalisma()) {
 
 				}
-				// boolean sil = false;
-				// if (gunDurum == 1 || islemVardiya == null || vardiya.getId() == null || perIdList.contains(personelId)) {
-				// sil = true;
-				// } else if (islemVardiya.isCalisma() == false) {
-				// sil = PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0;
-				// } else {
-				// if (pdksVardiyaGun.getVardiyaDate().before(date)) {
-				// if (!(islemVardiya.getBitSaat() < islemVardiya.getBasSaat() && gunDurum == 0) || pdksVardiyaGun.getIzin() != null)
-				// sil = true;
-				//
-				// } else {
-				// if (islemVardiya.getBitSaat() < islemVardiya.getBasSaat() && gunDurum == 0 && bugun.before(islemVardiya.getVardiyaBasZaman()))
-				// sil = true;
-				// }
-				// }
-				// if (pdksVardiyaGun.getIzin() != null && sil) {
-				// sil = !PdksUtil.tarihKarsilastir(pdksVardiyaGun.getVardiyaDate(), date);
-				// }
-				// if (sil) {
-				// iterator.remove();
-				// continue;
-				// } else if (islemVardiya.isCalisma())
-				// logger.debug(pdksVardiyaGun.getVardiyaDateStr() + " " + islemVardiya.getAdi());
+ 
 				perIdList.add(personelId);
 				if (islemVardiya.isCalisma()) {
 					if (tarih1 == null || pdksVardiyaGun.getIslemVardiya().getVardiyaTelorans1BasZaman().getTime() < tarih1.getTime())
