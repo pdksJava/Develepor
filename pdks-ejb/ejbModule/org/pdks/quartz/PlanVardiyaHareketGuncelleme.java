@@ -252,7 +252,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				String adres = PdksUtil.replaceAllManuel(adresStr, "login", "fazlaMesaiGuncelleme");
 				for (Long donemId : veriMap.keySet()) {
 					DenklestirmeAy da = (DenklestirmeAy) pdksEntityController.getSQLParamByFieldObject(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_ID, donemId, DenklestirmeAy.class, session);
-					logger.info(da.getAyAdi() + " " + da.getYil()  + " in " + PdksUtil.getCurrentTimeStampStr());
+					logger.info(da.getAyAdi() + " " + da.getYil() + " in " + PdksUtil.getCurrentTimeStampStr());
 					DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 					AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(da.getAy(), da.getYil(), denklestirmeDonemi, session);
 					List<Sirket> sirketList = pdksEntityController.getSQLParamByFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, veriMap.get(donemId), Sirket.class, session);
@@ -285,7 +285,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						}
 
 					}
-					logger.info(da.getAyAdi() + " " + da.getYil()  + " out " + PdksUtil.getCurrentTimeStampStr());
+					logger.info(da.getAyAdi() + " " + da.getYil() + " out " + PdksUtil.getCurrentTimeStampStr());
 
 				}
 			}
@@ -478,6 +478,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		sb = null;
 		if (islemYapildi == null)
 			islemYapildi = false;
+		if (authenticatedUser != null)
+			fazlaMesaiGuncelleme(tarih, session);
 		return islemYapildi;
 	}
 
