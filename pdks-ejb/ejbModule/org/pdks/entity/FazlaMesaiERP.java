@@ -67,7 +67,8 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 		this.erpSistem = value;
 	}
 
-	@Column(name = COLUMN_NAME_ERP_SIRKET)
+	@Transient
+	// @Column(name = COLUMN_NAME_ERP_SIRKET)
 	public String getSirketAdi() {
 		return sirketAdi;
 	}

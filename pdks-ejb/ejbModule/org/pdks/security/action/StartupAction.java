@@ -270,6 +270,14 @@ public class StartupAction implements Serializable {
 				list = null;
 			}
 		}
+		try {
+			String adresStr = PdksUtil.getWebLoginAdres();
+			if (PdksUtil.hasStringValue(adresStr))
+				logger.info("Web Login Adres : " + adresStr);
+		} catch (Exception e) {
+		 
+		}
+
 		ortakIslemler = null;
 	}
 
@@ -319,7 +327,7 @@ public class StartupAction implements Serializable {
 			logger.error(e);
 		}
 		if (toplamAdet > 0)
-			logger.info(toplamAdet + " adet kayıt id güncellendi. "+ PdksUtil.getCurrentTimeStampStr());
+			logger.info(toplamAdet + " adet kayıt id güncellendi. " + PdksUtil.getCurrentTimeStampStr());
 
 		list = null;
 	}

@@ -139,6 +139,29 @@ public class PdksUtil implements Serializable {
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
 
 	/**
+	 * @return
+	 * @throws Exception
+	 */
+	public static String getWebLoginAdres() throws Exception {
+		String adresStr = null;
+		if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
+			File file = new File("/opt/sertifika/web.txt");
+			if (file.exists()) {
+				List<String> dosyaList = getStringListFromFile(file);
+				if (dosyaList != null && dosyaList.isEmpty() == false) {
+					for (String string : dosyaList) {
+						if (string.startsWith("http") && string.indexOf("login") > 1)
+							adresStr = string;
+
+					}
+				}
+			}
+		} else
+			adresStr = "http://localhost:8080/login";
+		return adresStr;
+	}
+
+	/**
 	 * @param sqlObject
 	 * @return
 	 */
@@ -784,7 +807,7 @@ public class PdksUtil implements Serializable {
 				JsonArray array = parser.parse(jsonString).getAsJsonArray();
 				prettyJson = gson.toJson(array);
 			}
- 			if (prettyJson.lastIndexOf("\\u0026") > 0)
+			if (prettyJson.lastIndexOf("\\u0026") > 0)
 				prettyJson = replaceAll(prettyJson, "\\u0026", "&");
 			if (prettyJson.lastIndexOf("\\u003d") > 0)
 				prettyJson = replaceAll(prettyJson, "\\u003d", "=");
@@ -4127,7 +4150,6 @@ public class PdksUtil implements Serializable {
 		return date;
 	}
 
-	 
 	/**
 	 * @param indis
 	 * @param veri
@@ -4137,7 +4159,7 @@ public class PdksUtil implements Serializable {
 		List<Long> list = null;
 		if (veri != null) {
 			list = new ArrayList<Long>();
- 			try {
+			try {
 
 				if (veri instanceof List) {
 					if (indis == null) {
@@ -4162,7 +4184,7 @@ public class PdksUtil implements Serializable {
 						List<Object[]> bdList = (List) veri;
 						for (Object[] objects : bdList) {
 							if (indis < objects.length) {
-								Object object =objects[indis];
+								Object object = objects[indis];
 								if (object == null)
 									continue;
 								if (object instanceof BigDecimal) {

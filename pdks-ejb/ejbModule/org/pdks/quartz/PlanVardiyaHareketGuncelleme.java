@@ -1,6 +1,5 @@
 package org.pdks.quartz;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -107,8 +106,11 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
 							if (guncellemeHareketDurum)
 								zamanlayici.mailGonder(session, null, parameterHareket.getDescription(), "Plan Vardiya Hareket Güncelleme güncellenmiştir.", null, Boolean.TRUE);
-							if (saat < 7 || saat > 18)
-								fazlaMesaiGuncelleme(tarih, session);
+							if (saat < 7 || saat > 18) {
+								if (fazlaMesaiGuncelleme(tarih, session) != null)
+									zamanlayici.mailGonder(session, null, "Fazla Mesai Toplu Güncelleme", "Fazla Mesai güncellenmiştir.", null, Boolean.TRUE);
+							}
+
 						}
 					}
 				}
@@ -207,10 +209,17 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		vardiyaGunList = null;
 	}
 
+	/**
+	 * @param tarih
+	 * @param session
+	 * @return
+	 * @throws Exception
+	 */
 	@Transactional
 	public String fazlaMesaiGuncelleme(Date tarih, Session session) throws Exception {
 		if (tarih == null)
 			tarih = ortakIslemler.getBugun();
+		String adresStr = null;
 		Long buAy = Long.parseLong(PdksUtil.convertToDateString(tarih, "yyyyMM"));
 		Long oncekiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheAyEkleCikar(tarih, -1), "yyyyMM"));
 		StringBuffer sb = new StringBuffer();
@@ -235,21 +244,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					veriMap.put(key, sirketIdList);
 				sirketIdList.add(sirketId);
 			}
-			String adresStr = null;
-			if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
-				File file = new File("/opt/sertifika/web.txt");
-				if (file.exists()) {
-					List<String> dosyaList = PdksUtil.getStringListFromFile(file);
-					if (dosyaList != null && dosyaList.isEmpty() == false) {
-						for (String string : dosyaList) {
-							if (string.startsWith("http") && string.indexOf("login") > 1)
-								adresStr = string;
-
-						}
-					}
-				}
-			} else
-				adresStr = "http://localhost:8080/login";
+			adresStr = PdksUtil.getWebLoginAdres();
 			if (PdksUtil.hasStringValue(adresStr)) {
 				String adres = PdksUtil.replaceAllManuel(adresStr, "login", "fazlaMesaiGuncelleme");
 				for (Long donemId : veriMap.keySet()) {
@@ -293,7 +288,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			}
 
 		}
-		return "";
+		return adresStr;
 
 	}
 
