@@ -101,12 +101,14 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					String valueHareket = (parameterHareket != null) ? parameterHareket.getValue() : null;
 					if (PdksUtil.hasStringValue(valueHareket)) {
 						Date tarih = ortakIslemler.getBugun();
+						int saat = PdksUtil.getDateField(tarih, Calendar.HOUR_OF_DAY);
 						boolean guncellemeHareketDurum = PdksUtil.zamanKontrol(PARAMETER_HAREKET_KEY, valueHareket, tarih);
 						if (guncellemeHareketDurum) {
 							guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
 							if (guncellemeHareketDurum)
 								zamanlayici.mailGonder(session, null, parameterHareket.getDescription(), "Plan Vardiya Hareket Güncelleme güncellenmiştir.", null, Boolean.TRUE);
-							fazlaMesaiGuncelleme(tarih, session);
+							if (saat < 7 || saat > 18)
+								fazlaMesaiGuncelleme(tarih, session);
 						}
 					}
 				}
