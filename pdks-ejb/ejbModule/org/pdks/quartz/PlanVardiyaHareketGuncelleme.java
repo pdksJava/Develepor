@@ -222,7 +222,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		String adresStr = null;
 		Long buAy = Long.parseLong(PdksUtil.convertToDateString(tarih, "yyyyMM"));
 		Long oncekiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheAyEkleCikar(tarih, -1), "yyyyMM"));
-		StringBuffer sb = new StringBuffer();
+ 		StringBuffer sb = new StringBuffer();
 		HashMap fields = new HashMap();
 		sb.append(" select distinct PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + ", P." + Personel.COLUMN_NAME_SIRKET + ", S.AD, D.DONEM_KODU from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
@@ -260,15 +260,17 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 			if (PdksUtil.hasStringValue(adresStr)) {
 				int index = adresStr.lastIndexOf("/");
-				if (adresStr.lastIndexOf("/") == adresStr.length() - 1)  
+				if (adresStr.lastIndexOf("/") == adresStr.length() - 1)
 					adresStr = adresStr.substring(0, index);
-				 
+
 				if (adresStr.indexOf("//") > 0) {
 					adresStr = PdksUtil.replaceAll(adresStr, "//", "/");
 					adresStr = PdksUtil.replaceAll(adresStr, ":/", "://");
 				}
 
 				String adres = PdksUtil.replaceAllManuel(adresStr, "login", "fazlaMesaiGuncelleme");
+				logger.info(adres + " in " + PdksUtil.getCurrentTimeStampStr());
+
 				for (Long donemId : veriMap.keySet()) {
 					DenklestirmeAy da = (DenklestirmeAy) pdksEntityController.getSQLParamByFieldObject(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_ID, donemId, DenklestirmeAy.class, session);
 					logger.info(da.getAyAdi() + " " + da.getYil() + " in " + PdksUtil.getCurrentTimeStampStr());
@@ -307,6 +309,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					logger.info(da.getAyAdi() + " " + da.getYil() + " out " + PdksUtil.getCurrentTimeStampStr());
 
 				}
+				logger.info(adres + " out " + PdksUtil.getCurrentTimeStampStr());
 			}
 
 		}
