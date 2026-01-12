@@ -285,7 +285,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							if (sonuc == null)
 								logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " out " + PdksUtil.getCurrentTimeStampStr());
 							else
-								logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+								logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
 						} else {
 							List<SelectItem> tesisDetayList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, aylikPuantaj, false, session);
 							for (SelectItem st : tesisDetayList) {
