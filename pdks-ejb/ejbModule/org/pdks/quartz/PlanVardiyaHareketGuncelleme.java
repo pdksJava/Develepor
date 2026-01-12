@@ -269,7 +269,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				}
 
 				String adres = PdksUtil.replaceAllManuel(adresStr, "login", "fazlaMesaiGuncelleme");
-				logger.info(adres + " in " + PdksUtil.getCurrentTimeStampStr());
+				if (veriMap.size() > 1)
+					logger.info(adres + " in " + PdksUtil.getCurrentTimeStampStr());
 
 				for (Long donemId : veriMap.keySet()) {
 					DenklestirmeAy da = (DenklestirmeAy) pdksEntityController.getSQLParamByFieldObject(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_ID, donemId, DenklestirmeAy.class, session);
@@ -277,8 +278,20 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(da.getAy(), da.getYil(), denklestirmeDonemi, session);
 					List<SelectItem> sirketIdList = fazlaMesaiOrtakIslemler.getFazlaMesaiSirketList(null, aylikPuantaj, false, session);
 					logger.info(da.getAyAdi() + " " + da.getYil() + " in " + PdksUtil.getCurrentTimeStampStr());
-					for (SelectItem sirketSelectItem : sirketIdList) {
-						Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketSelectItem.getValue(), Sirket.class, session);
+					List<Long> dataIdList = new ArrayList<Long>();
+					for (SelectItem sirketSelectItem : sirketIdList)
+						dataIdList.add((Long) sirketSelectItem.getValue());
+					fields.clear();
+					String fieldName = "k";
+					sb = new StringBuffer();
+					sb.append(" select  S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+					sb.append(" where S." + Sirket.COLUMN_NAME_ID + " :" + fieldName);
+					sb.append(" order by S." + Sirket.COLUMN_NAME_DEPARTMAN + ", S." + Sirket.COLUMN_NAME_AD);
+					fields.put(fieldName, dataIdList);
+					if (session != null)
+						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+					List<Sirket> sirketList = pdksEntityController.getSQLParamList(dataIdList, sb.toString(), fieldName, fields, Sirket.class, session);
+					for (Sirket sirket : sirketList) {
 						if (sirket.isTesisDurumu() == false) {
 							logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " in " + PdksUtil.getCurrentTimeStampStr());
 							String id = ortakIslemler.getEncodeStringByBase64("donemId=" + donemId + "&sirketId=" + sirket.getId());
@@ -308,7 +321,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					logger.info(da.getAyAdi() + " " + da.getYil() + " out " + PdksUtil.getCurrentTimeStampStr());
 
 				}
-				logger.info(adres + " out " + PdksUtil.getCurrentTimeStampStr());
+				if (veriMap.size() > 1)
+					logger.info(adres + " out " + PdksUtil.getCurrentTimeStampStr());
 			}
 
 		}
