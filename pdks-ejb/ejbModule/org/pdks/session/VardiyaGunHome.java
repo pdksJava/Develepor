@@ -3552,7 +3552,23 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	@Transactional
 	private void savePlanLastParameter() {
- 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
+ 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
 		lastMap.put("yil", "" + yil);
 		lastMap.put("ay", "" + ay);
 		ortakIslemler.saveAramaSecenekleri(aramaSecenekleri, lastMap);
