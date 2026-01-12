@@ -222,7 +222,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		String adresStr = null;
 		Long buAy = Long.parseLong(PdksUtil.convertToDateString(tarih, "yyyyMM"));
 		Long oncekiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheAyEkleCikar(tarih, -1), "yyyyMM"));
- 		StringBuffer sb = new StringBuffer();
+		StringBuffer sb = new StringBuffer();
 		HashMap fields = new HashMap();
 		sb.append(" select distinct PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + ", P." + Personel.COLUMN_NAME_SIRKET + ", S.AD, D.DONEM_KODU from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
@@ -276,10 +276,9 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					logger.info(da.getAyAdi() + " " + da.getYil() + " in " + PdksUtil.getCurrentTimeStampStr());
 					DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 					AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(da.getAy(), da.getYil(), denklestirmeDonemi, session);
-					List<Sirket> sirketList = pdksEntityController.getSQLParamByFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, veriMap.get(donemId), Sirket.class, session);
-					if (sirketList.size() > 1)
-						sirketList = PdksUtil.sortObjectStringAlanList(sirketList, "getAd", null);
-					for (Sirket sirket : sirketList) {
+					List<SelectItem> sirketIdList = fazlaMesaiOrtakIslemler.getFazlaMesaiSirketList(null, aylikPuantaj, false, session);
+					for (SelectItem sirketSelectItem : sirketIdList) {
+						Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketSelectItem.getValue(), Sirket.class, session);
 						if (sirket.isTesisDurumu() == false) {
 							logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " in " + PdksUtil.getCurrentTimeStampStr());
 							String id = ortakIslemler.getEncodeStringByBase64("donemId=" + donemId + "&sirketId=" + sirket.getId());
