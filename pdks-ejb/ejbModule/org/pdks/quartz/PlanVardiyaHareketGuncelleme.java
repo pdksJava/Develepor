@@ -106,7 +106,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
 							if (guncellemeHareketDurum)
 								zamanlayici.mailGonder(session, null, parameterHareket.getDescription(), "Plan Vardiya Hareket Güncelleme güncellenmiştir.", null, Boolean.TRUE);
-							if (saat < 7 || saat > 18) {
+							if (saat < 9 || saat > 18) {
 								if (fazlaMesaiGuncelleme(tarih, session) != null)
 									zamanlayici.mailGonder(session, null, "Fazla Mesai Toplu Güncelleme", "Fazla Mesai güncellenmiştir.", null, Boolean.TRUE);
 							}
@@ -259,10 +259,15 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			}
 
 			if (PdksUtil.hasStringValue(adresStr)) {
-				if (adresStr.indexOf("//") > 0){
+				int index = adresStr.lastIndexOf("/");
+				if (adresStr.lastIndexOf("/") == adresStr.length() - 1)  
+					adresStr = adresStr.substring(0, index);
+				 
+				if (adresStr.indexOf("//") > 0) {
 					adresStr = PdksUtil.replaceAll(adresStr, "//", "/");
 					adresStr = PdksUtil.replaceAll(adresStr, ":/", "://");
 				}
+
 				String adres = PdksUtil.replaceAllManuel(adresStr, "login", "fazlaMesaiGuncelleme");
 				for (Long donemId : veriMap.keySet()) {
 					DenklestirmeAy da = (DenklestirmeAy) pdksEntityController.getSQLParamByFieldObject(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_ID, donemId, DenklestirmeAy.class, session);
