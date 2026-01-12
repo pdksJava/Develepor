@@ -671,7 +671,7 @@ public class OrtakIslemler implements Serializable {
 		sb.append(" select U." + User.COLUMN_NAME_ID + " AS " + UserRoles.COLUMN_NAME_USER + ", MAX (I." + PersonelIzin.COLUMN_NAME_ID + ") AS IZIN_ID from " + User.TABLE_NAME + " U ");
 		sb.append("   inner join " + PersonelIzin.TABLE_NAME + " I with(nolock) on I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = U." + User.COLUMN_NAME_PERSONEL);
 		sb.append("		 and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (" + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + "," + PersonelIzin.IZIN_DURUMU_REDEDILDI + ") and I." + PersonelIzin.COLUMN_NAME_IZIN_SURESI + " > 30 ");
-		sb.append(" 	 and ( convert(date, getdate()) between convert(date, I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ") and convert(date, I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + ")) ");
+		sb.append(" 	 and ( convert(date, " + PdksEntityController.getSqlSistemTarihi() + ") between convert(date, I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ") and convert(date, I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + ")) ");
 		sb.append("   inner join " + IzinTipi.TABLE_NAME + " T with(nolock) on T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " and T." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null  ");
 		sb.append(" group by U." + User.COLUMN_NAME_ID);
 		sb.append("  ) ");
@@ -6930,7 +6930,7 @@ public class OrtakIslemler implements Serializable {
 				StringBuilder sb = new StringBuilder();
 				sb.append(" select V." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " from " + personelERPTableViewAdi + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + KapiSirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + KapiSirket.COLUMN_NAME_DURUM + " = 1");
-				sb.append(" and S." + KapiSirket.COLUMN_NAME_ID + " > 0 and getdate() between S." + KapiSirket.COLUMN_NAME_BAS_TARIH + " and S." + KapiSirket.COLUMN_NAME_BIT_TARIH);
+				sb.append(" and S." + KapiSirket.COLUMN_NAME_ID + " > 0 and " + PdksEntityController.getSqlSistemTarihi() + " between S." + KapiSirket.COLUMN_NAME_BAS_TARIH + " and S." + KapiSirket.COLUMN_NAME_BIT_TARIH);
 				sb.append(" inner join " + PersonelKGS.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on K." + PersonelKGS.COLUMN_NAME_SICIL_NO + " = V." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " and K." + PersonelKGS.COLUMN_NAME_KGS_SIRKET + " = S." + KapiSirket.COLUMN_NAME_ID);
 				sb.append(" where K." + PersonelKGS.COLUMN_NAME_PERSONEL_ID + " is null and V." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " not in  ( select " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + " " + PdksEntityController.getSelectLOCK() + " )");
 				if (session != null)
@@ -24550,7 +24550,7 @@ public class OrtakIslemler implements Serializable {
 								yoneticiUserClone.setAd(aylikPuantaj.getYonetici().getAdSoyad());
 								yonetici1 = yoneticiUserClone;
 							}
-							if (authenticatedUser!=null&& authenticatedUser.isIK() && aylikPuantaj.getYonetici() != null) {
+							if (authenticatedUser != null && authenticatedUser.isIK() && aylikPuantaj.getYonetici() != null) {
 								if (yonetici1 == null || yonetici1.getId() == null) {
 									yonetici1 = (Personel) aylikPuantaj.getYonetici().clone();
 									yonetici1.setAd(aylikPuantaj.getYonetici().getAdSoyad());

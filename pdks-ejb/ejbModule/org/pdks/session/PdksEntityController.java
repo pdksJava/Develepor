@@ -63,7 +63,7 @@ public class PdksEntityController implements Serializable {
 	public static final String MAP_KEY_TRANSACTION = "transaction";
 	public static final String TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED = "read uncommitted";
 	public static final String TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED = "read committed";
-	private static String selectLOCK = "with(nolock)", joinLOCK = "with(nolock)";
+	private static String selectLOCK = "with(nolock)", joinLOCK = "with(nolock)", sqlSistemTarihi = "getdate()";
 	private static boolean readUnCommitted = false;
 
 	public static final String SELECT_KARAKTER = "c";
@@ -1660,5 +1660,15 @@ public class PdksEntityController implements Serializable {
 	public static void setReadUnCommitted(boolean readUnCommitted) {
 		PdksEntityController.readUnCommitted = readUnCommitted;
 	}
+
+	public static String getSqlSistemTarihi() {
+		return sqlSistemTarihi;
+	}
+
+	public static void setSqlSistemTarihi(String sqlSistemTarihi) {
+		PdksEntityController.sqlSistemTarihi = sqlSistemTarihi;
+	}
+
+	 
 
 }
