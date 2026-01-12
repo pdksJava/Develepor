@@ -3552,7 +3552,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	@Transactional
 	private void savePlanLastParameter() {
-		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
+ 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
 		lastMap.put("yil", "" + yil);
 		lastMap.put("ay", "" + ay);
 		ortakIslemler.saveAramaSecenekleri(aramaSecenekleri, lastMap);
@@ -6588,6 +6588,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 		if (loginUser == null)
 			loginUser = authenticatedUser;
+		if (loginUser == null)
+			loginUser = ortakIslemler.getSistemAdminUser(session);
 		Personel per = loginUser.getPdksPersonel();
 		aylikPuantajListClear();
 		// HashMap<Long, List<PersonelDonemselDurum>> pddMap = new HashMap<Long, List<PersonelDonemselDurum>>();
@@ -6608,8 +6610,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		vardiyalarMap.clear();
 		vardiyaBolumList = null;
 		aylikHareketKaydiVardiyaBul = Boolean.FALSE;
-
-		savePlanLastParameter();
+		if (authenticatedUser != null)
+			savePlanLastParameter();
 		fazlaMesaiIzinRaporuDurum = userHome != null && loginUser.getLogin() && userHome.hasPermission("fazlaMesaiIzinRaporu", "view");
 		offIzinGuncelle = ortakIslemler.getParameterKey("offIzinGuncelle").equals("1");
 		try {
