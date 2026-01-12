@@ -151,7 +151,7 @@ public class PdksUtil implements Serializable {
 				if (dosyaList != null && dosyaList.isEmpty() == false) {
 					for (String string : dosyaList) {
 						if (string.startsWith("http") && string.indexOf("login") > 1)
-							adresStr = string;
+							adresStr = string.trim();
 
 					}
 				}

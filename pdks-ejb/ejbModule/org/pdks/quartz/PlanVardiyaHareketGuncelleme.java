@@ -246,6 +246,23 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			}
 			adresStr = PdksUtil.getWebLoginAdres();
 			if (PdksUtil.hasStringValue(adresStr)) {
+				String adresDurum = callFazlaMesaiGuncelleme(adresStr);
+				if (adresDurum != null)
+					adresStr = "";
+			}
+			if (PdksUtil.hasStringValue(adresStr) == false) {
+				if (ortakIslemler.getParameterKeyHasStringValue("uygulamaURL") && ortakIslemler.getParameterKey("sirketFazlaMesaiGuncelleme").equals("1") == false) {
+					adresStr = ortakIslemler.getParameterKey("uygulamaURL");
+					if (adresStr.indexOf("login") < 0)
+						adresStr = adresStr + "/login";
+				}
+			}
+
+			if (PdksUtil.hasStringValue(adresStr)) {
+				if (adresStr.indexOf("//") > 0){
+					adresStr = PdksUtil.replaceAll(adresStr, "//", "/");
+					adresStr = PdksUtil.replaceAll(adresStr, ":/", "://");
+				}
 				String adres = PdksUtil.replaceAllManuel(adresStr, "login", "fazlaMesaiGuncelleme");
 				for (Long donemId : veriMap.keySet()) {
 					DenklestirmeAy da = (DenklestirmeAy) pdksEntityController.getSQLParamByFieldObject(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_ID, donemId, DenklestirmeAy.class, session);
