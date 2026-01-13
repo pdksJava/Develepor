@@ -210,7 +210,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	@Transactional
-	public void sayfaFazlaMesaiGuncellemeAction() throws Exception {
+	public String sayfaFazlaMesaiGuncellemeAction() throws Exception {
 		if (session == null)
 			session = PdksUtil.getSession(entityManager, true);
 		session.setFlushMode(FlushMode.MANUAL);
@@ -221,8 +221,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			String decodeStr = OrtakIslemler.getDecodeStringByBase64(id);
 			StringTokenizer st = new StringTokenizer(decodeStr, "&");
 			HashMap<String, String> param = new HashMap<String, String>();
-
-			while (st.hasMoreTokens()) {
+ 			while (st.hasMoreTokens()) {
 				String tk = st.nextToken();
 				String[] parStrings = tk.split("=");
 				param.put(parStrings[0], parStrings[1]);
@@ -261,6 +260,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			}
 		}
 		session.close();
+		return  MenuItemConstant.login;
 	}
 
 	@Transactional
