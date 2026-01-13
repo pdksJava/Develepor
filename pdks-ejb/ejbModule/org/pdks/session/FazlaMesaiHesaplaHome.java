@@ -1102,10 +1102,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		}
 
 	}
+
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	@Transactional
 	public String sayfaFazlaMesaiGuncelle() {
-  		if (session == null)
+		if (session == null)
 			session = PdksUtil.getSession(entityManager, true);
 		session.setFlushMode(FlushMode.MANUAL);
 		session.clear();
@@ -1143,6 +1144,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					pdksUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, pdksUserId, User.class, session);
 				else
 					pdksUser = ortakIslemler.getSistemAdminUser(session);
+				pdksUser.setAdmin(true);
 				try {
 					sicilNo = "";
 					this.setStajerSirket(false);

@@ -223,10 +223,10 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		Long oncekiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheAyEkleCikar(tarih, -1), "yyyyMM"));
 		StringBuffer sb = new StringBuffer();
 		HashMap fields = new HashMap();
-		sb.append(" select distinct PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + ", P." + Personel.COLUMN_NAME_SIRKET + ", S.AD, D.DONEM_KODU from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
-		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
-		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
-		sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " AND S." + Sirket.COLUMN_NAME_PDKS + " = 1");
+		sb.append(" select distinct D." + DenklestirmeAy.COLUMN_NAME_ID + ", P." + Personel.COLUMN_NAME_SIRKET + ", S.AD, D.DONEM_KODU from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
+		sb.append(" left join " + PersonelDenklestirme.TABLE_NAME + " PD on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
+		sb.append(" left join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
+		sb.append(" left join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " AND S." + Sirket.COLUMN_NAME_PDKS + " = 1");
 		sb.append(" where (D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + "  between :d1 and :d2 ) and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1");
 		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + ", S." + Sirket.COLUMN_NAME_AD);
 		fields.put("d1", oncekiAy);
@@ -237,11 +237,12 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		if (veriler.isEmpty() == false) {
 			LinkedHashMap<Long, List<Long>> veriMap = new LinkedHashMap<Long, List<Long>>();
 			for (Object[] objects : veriler) {
-				Long key = ((BigDecimal) objects[0]).longValue(), sirketId = ((BigDecimal) objects[1]).longValue();
+				Long key = ((BigDecimal) objects[0]).longValue(), sirketId = objects[1] != null ? ((BigDecimal) objects[1]).longValue() : null;
 				List<Long> sirketIdList = veriMap.containsKey(key) ? veriMap.get(key) : new ArrayList<Long>();
 				if (sirketIdList.isEmpty())
 					veriMap.put(key, sirketIdList);
-				sirketIdList.add(sirketId);
+				if (sirketId != null)
+					sirketIdList.add(sirketId);
 			}
 			adresStr = ortakIslemler.getLoginAdres();
 			if (PdksUtil.hasStringValue(adresStr)) {

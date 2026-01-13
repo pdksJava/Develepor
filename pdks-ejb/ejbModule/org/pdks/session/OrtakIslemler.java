@@ -5280,7 +5280,7 @@ public class OrtakIslemler implements Serializable {
 					bitTarih = aylikPuantaj.getSonGun();
 				}
 				if (basTarih != null && bitTarih != null && session != null) {
-					boolean ikRol = getIKRolSayfa(loginUser);
+					boolean ikRol = authenticatedUser == null || getIKRolSayfa(loginUser);
 					if ((loginUser.isTesisSuperVisor() || loginUser.isSirketSuperVisor()))
 						ikRol = true;
 					Class class1 = null;
@@ -5437,6 +5437,8 @@ public class OrtakIslemler implements Serializable {
 							if (isExisFunction(fnName, session)) {
 								String blobAsBytes = null;
 								try {
+									if (tipi.equalsIgnoreCase("P"))
+										logger.debug(spAdi + " " + tipi + "\n" + gson.toJson(map));
 									List strlist = pdksEntityController.execFNList(map, fnName);
 									if (strlist != null && !strlist.isEmpty()) {
 										Clob blob = (Clob) strlist.get(0);

@@ -4348,6 +4348,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		}
 		if (apd == null)
 			apd = new AylikPuantaj();
+		if (authenticatedUser == null)
+			loginUser = null;
 		if (loginUser == null) {
 			if (getPdksUser() != null) {
 				loginUser = getPdksUser();
@@ -4355,8 +4357,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				loginUser = ortakIslemler.getSistemAdminUser(session);
 				loginUser.setAdmin(Boolean.TRUE);
 			}
-			loginUser.setLogin(getPdksUser() != null);
-
+			loginUser.setLogin(authenticatedUser != null);
 		}
 
 		apd.setLoginUser(loginUser);
@@ -6609,29 +6610,34 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					aylikPuantajList = new ArrayList<AylikPuantaj>();
 				Long donemId = Long.parseLong(param.get("donemId"));
 				denklestirmeAy = (DenklestirmeAy) pdksEntityController.getSQLParamByFieldObject(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_ID, donemId, DenklestirmeAy.class, session);
-				yil = denklestirmeAy.getYil();
-				ay = denklestirmeAy.getAy();
-				plansiz = true;
-				aramaSecenekleri.setSirketId(Long.parseLong(param.get("sirketId")));
-				Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
-				if (ekSaha4Tanim == null)
-					ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, aramaSecenekleri.getSirketId(), session);
-				departman = sirket.getDepartman();
-
-				Long departmanId = departman.getId();
-				Long tesisId = param.containsKey("tesisId") ? Long.parseLong(param.get("tesisId")) : null;
-				Long ekSaha3Id = param.containsKey("seciliEkSaha3Id") ? Long.parseLong(param.get("seciliEkSaha3Id")) : null;
-				Long ekSaha4Id = param.containsKey("seciliEkSaha4Id") ? Long.parseLong(param.get("seciliEkSaha4Id")) : null;
-				aramaSecenekleri.setDepartmanId(departmanId);
-				aramaSecenekleri.setTesisId(tesisId);
-				aramaSecenekleri.setEkSaha3Id(ekSaha3Id);
-				aramaSecenekleri.setEkSaha4Id(ekSaha4Id);
 				Long pdksUserId = param.containsKey("pdksUserId") ? Long.parseLong(param.get("pdksUserId")) : null;
 				if (pdksUserId != null)
 					pdksUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, pdksUserId, User.class, session);
 				else
 					pdksUser = ortakIslemler.getSistemAdminUser(session);
 				try {
+					pdksUser.setAdmin(true);
+					setAylikPuantajDonem(denklestirmeAy);
+					yil = denklestirmeAy.getYil();
+					ay = denklestirmeAy.getAy();
+					plansiz = true;
+					aramaSecenekleri.setSirketId(Long.parseLong(param.get("sirketId")));
+					Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
+					if (ekSaha4Tanim == null)
+						ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, aramaSecenekleri.getSirketId(), session);
+					departman = sirket.getDepartman();
+
+					Long departmanId = departman.getId();
+					Long tesisId = param.containsKey("tesisId") ? Long.parseLong(param.get("tesisId")) : null;
+					Long ekSaha3Id = param.containsKey("seciliEkSaha3Id") ? Long.parseLong(param.get("seciliEkSaha3Id")) : null;
+					Long ekSaha4Id = param.containsKey("seciliEkSaha4Id") ? Long.parseLong(param.get("seciliEkSaha4Id")) : null;
+					aramaSecenekleri.setSirket(sirket);
+					aramaSecenekleri.setDepartmanId(departmanId);
+					aramaSecenekleri.setTesisId(tesisId);
+					aramaSecenekleri.setEkSaha3Id(ekSaha3Id);
+					aramaSecenekleri.setEkSaha4Id(ekSaha4Id);
+					denklestirmeAyDurum = false;
+
 					aylikPuantajOlusturuluyor();
 					session.flush();
 				} catch (Exception e) {
