@@ -1153,7 +1153,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (personelDenklestirmeList == null)
 						personelDenklestirmeList = new ArrayList<PersonelDenklestirme>();
 					fillPersonelDenklestirmeList("");
-
+					session.flush();
 				} catch (Exception e) {
 					logger.error(e);
 					e.printStackTrace();

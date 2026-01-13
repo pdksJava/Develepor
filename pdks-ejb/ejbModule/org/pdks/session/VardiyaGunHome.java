@@ -6633,6 +6633,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					pdksUser = ortakIslemler.getSistemAdminUser(session);
 				try {
 					aylikPuantajOlusturuluyor();
+					session.flush();
 				} catch (Exception e) {
 					logger.error(e);
 					e.printStackTrace();
