@@ -6583,9 +6583,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		return "";
 	}
 
+	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	@Transactional
-	public String aylikPuantajOlusturGiris() {
- 		if (session == null)
+	public String sayfaCalismaPlanOlustur() {
+		if (session == null)
 			session = PdksUtil.getSession(entityManager, true);
 		session.setFlushMode(FlushMode.MANUAL);
 		session.clear();
@@ -6603,19 +6604,20 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			ekSaha4Tanim = null;
 			if (param.containsKey("donemId") && param.containsKey("sirketId")) {
-				aramaSecenekleri=new AramaSecenekleri();
+				aramaSecenekleri = new AramaSecenekleri();
 				if (aylikPuantajList == null)
 					aylikPuantajList = new ArrayList<AylikPuantaj>();
 				Long donemId = Long.parseLong(param.get("donemId"));
 				denklestirmeAy = (DenklestirmeAy) pdksEntityController.getSQLParamByFieldObject(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_ID, donemId, DenklestirmeAy.class, session);
 				yil = denklestirmeAy.getYil();
 				ay = denklestirmeAy.getAy();
+				plansiz = true;
 				aramaSecenekleri.setSirketId(Long.parseLong(param.get("sirketId")));
 				Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
 				if (ekSaha4Tanim == null)
 					ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, aramaSecenekleri.getSirketId(), session);
 				departman = sirket.getDepartman();
-				
+
 				Long departmanId = departman.getId();
 				Long tesisId = param.containsKey("tesisId") ? Long.parseLong(param.get("tesisId")) : null;
 				Long ekSaha3Id = param.containsKey("seciliEkSaha3Id") ? Long.parseLong(param.get("seciliEkSaha3Id")) : null;
@@ -6640,9 +6642,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		}
 		session.close();
 
-		 
-	
-		return "";
+		return MenuItemConstant.login;
 	}
 
 	/**

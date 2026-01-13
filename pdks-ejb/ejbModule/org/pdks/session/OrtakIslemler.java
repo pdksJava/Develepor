@@ -24512,6 +24512,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public String adresKontrol(String adres) {
 		String str = null;
+		int responseCode = 0;
 		try {
 			java.net.URL url = new java.net.URL(adres);
 			java.net.HttpURLConnection connjava = (java.net.HttpURLConnection) url.openConnection();
@@ -24523,7 +24524,7 @@ public class OrtakIslemler implements Serializable {
 			int timeOutSaniye = 60 * 60;
 			connjava.setConnectTimeout(timeOutSaniye * 1000); // set timeout to 5 seconds
 			connjava.setAllowUserInteraction(true);
-			int responseCode = connjava.getResponseCode();
+			responseCode = connjava.getResponseCode();
 			InputStream is = responseCode >= 400 ? connjava.getErrorStream() : connjava.getInputStream();
 			if (responseCode >= 400 && is != null)
 				str = PdksUtil.StringToByInputStream(is);

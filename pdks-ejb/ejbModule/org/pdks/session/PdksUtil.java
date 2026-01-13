@@ -139,29 +139,6 @@ public class PdksUtil implements Serializable {
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
 
 	/**
-	 * @return
-	 * @throws Exception
-	 */
-	public static String getWebLoginAdres() throws Exception {
-		String adresStr = null;
-		if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
-			File file = new File("/opt/sertifika/web.txt");
-			if (file.exists()) {
-				List<String> dosyaList = getStringListFromFile(file);
-				if (dosyaList != null && dosyaList.isEmpty() == false) {
-					for (String string : dosyaList) {
-						if (string.startsWith("http") && string.indexOf("login") > 1)
-							adresStr = string.trim();
-
-					}
-				}
-			}
-		} else
-			adresStr = "http://localhost:8080/login";
-		return adresStr;
-	}
-
-	/**
 	 * @param sqlObject
 	 * @return
 	 */

@@ -351,7 +351,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 						tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, tesisId, Tanim.class, session);
 					}
-					PdksUtil.addMessageInfo(sirket.getAd() + (tesis != null ? " " + tesis.getAciklama() : "") + " fazla mesai hesaplaması tamamlandı.");
+					if (authenticatedUser != null)
+						PdksUtil.addMessageInfo(sirket.getAd() + (tesis != null ? " " + tesis.getAciklama() : "") + " fazla mesai hesaplaması tamamlandı.");
 				}
 
 			} catch (Exception e) {
@@ -370,7 +371,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	@Transactional
 	private boolean bolumFazlaMesai(LinkedHashMap<String, Object> paramMap) {
 		DepartmanDenklestirmeDonemi denklestirmeDonemi = (DepartmanDenklestirmeDonemi) paramMap.get("denklestirmeDonemi");
-		String adresCalismaPlaniGuncelleme = PdksUtil.replaceAllManuel(loginAdres, "login", "calismaPlaniGuncelleme");
+		String adresCalismaPlaniGuncelleme = null;
 		String adresFazlaMesaiGuncelleme = PdksUtil.replaceAllManuel(loginAdres, "login", "fazlaMesaiGuncelleme");
 		AylikPuantaj aylikPuantaj = (AylikPuantaj) paramMap.get("aylikPuantaj");
 		User loginUser = (User) paramMap.get("loginUser");
@@ -435,20 +436,22 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								try {
 									devam = donemCPPerList != null && kayitAdet != donemCPPerList.size();
 									if (devam) {
-										if (authenticatedUser != null)
-											logger.info(altBolumStr + " aylikPuantajOlusturuluyor in " + PdksUtil.getCurrentTimeStampStr());
+
+										logger.info(altBolumStr + " aylikPuantajOlusturuluyor in " + PdksUtil.getCurrentTimeStampStr());
 										vardiyaGunHome.setSession(session);
 										vardiyaGunHome.setAramaSecenekleri(as);
 										if (authenticatedUser != null)
 											vardiyaGunHome.aylikPuantajOlusturuluyor();
 										else {
+											if (adresCalismaPlaniGuncelleme == null)
+												adresCalismaPlaniGuncelleme = PdksUtil.replaceAllManuel(loginAdres, "login", "calismaPlaniGuncelleme");
 											String adres = adresCalismaPlaniGuncelleme + "?id=" + ortakIslemler.getEncodeStringByBase64(linkStr + "&seciliEkSaha4Id=" + altBolumId);
 											String sonuc = ortakIslemler.adresKontrol(adres);
 											if (sonuc != null)
-												logger.info(sonuc + PdksUtil.getCurrentTimeStampStr());
+												logger.error(adres + "\n" + PdksUtil.getCurrentTimeStampStr());
 										}
-										if (authenticatedUser != null)
-											logger.info(altBolumStr + " aylikPuantajOlusturuluyor out " + PdksUtil.getCurrentTimeStampStr());
+
+										logger.info(altBolumStr + " aylikPuantajOlusturuluyor out " + PdksUtil.getCurrentTimeStampStr());
 									}
 								} catch (Exception e) {
 									logger.error(seciliEkSaha3Id + " " + e);
@@ -471,8 +474,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 									String adres = adresFazlaMesaiGuncelleme + "?id=" + ortakIslemler.getEncodeStringByBase64(linkStr + "&seciliEkSaha4Id=" + altBolumId);
 									String sonuc = ortakIslemler.adresKontrol(adres);
 									if (sonuc != null)
-										logger.info(sonuc + PdksUtil.getCurrentTimeStampStr());
-									// TODO
+										logger.error(adres + "\n" + PdksUtil.getCurrentTimeStampStr());
+
 								}
 							}
 							if (puantajList != null && !puantajList.isEmpty()) {
@@ -503,10 +506,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								if (authenticatedUser != null)
 									vardiyaGunHome.aylikPuantajOlusturuluyor();
 								else {
+									if (adresCalismaPlaniGuncelleme == null)
+										adresCalismaPlaniGuncelleme = PdksUtil.replaceAllManuel(loginAdres, "login", "calismaPlaniGuncelleme");
 									String adres = adresCalismaPlaniGuncelleme + "?id=" + ortakIslemler.getEncodeStringByBase64(linkStr);
 									String sonuc = ortakIslemler.adresKontrol(adres);
 									if (sonuc != null)
-										logger.info(sonuc + PdksUtil.getCurrentTimeStampStr());
+										logger.error(adres + "\n" + PdksUtil.getCurrentTimeStampStr());
 								}
 								if (authenticatedUser != null)
 									logger.info(str + " aylikPuantajOlusturuluyor out " + PdksUtil.getCurrentTimeStampStr());
@@ -530,11 +535,11 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					if (authenticatedUser != null)
 						puantajList = fazlaMesaiHesaplaHome.fillPersonelDenklestirmeDevam(null, aylikPuantaj, denklestirmeDonemi);
 					else {
-						// TODO
+
 						String adres = adresFazlaMesaiGuncelleme + "?id=" + ortakIslemler.getEncodeStringByBase64(linkStr);
 						String sonuc = ortakIslemler.adresKontrol(adres);
 						if (sonuc != null)
-							logger.info(sonuc + PdksUtil.getCurrentTimeStampStr());
+							logger.error(adres + "\n" + PdksUtil.getCurrentTimeStampStr());
 					}
 				}
 				if (puantajList != null && !puantajList.isEmpty()) {
@@ -1138,10 +1143,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		}
 
 		if (personelDenklestirmeList.isEmpty()) {
-			if (fazlaMesaiHesaplaDurum == false)
-				PdksUtil.addMessageWarn("İlgili döneme ait fazla mesai bulunamadı!");
-			else
-				PdksUtil.addMessageWarn((tesisId != null ? ortakIslemler.tesisAciklama() : ortakIslemler.sirketAciklama()) + " Fazla Mesai Hesapla çalıştırın.");
+			if (authenticatedUser != null) {
+				if (fazlaMesaiHesaplaDurum == false)
+					PdksUtil.addMessageWarn("İlgili döneme ait fazla mesai bulunamadı!");
+				else
+					PdksUtil.addMessageWarn((tesisId != null ? ortakIslemler.tesisAciklama() : ortakIslemler.sirketAciklama()) + " Fazla Mesai Hesapla çalıştırın.");
+			}
 		}
 
 		else
@@ -1175,7 +1182,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			}
 			if (baosDosya != null)
 				PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi + PdksUtil.convertToDateString(basGun, "_MMMMM_yyyy") + ".xlsx");
-		} else
+		} else if (authenticatedUser!= null)
 			PdksUtil.addMessageAvailableWarn("Aktarılacak veri bulunamadı!");
 
 		return "";

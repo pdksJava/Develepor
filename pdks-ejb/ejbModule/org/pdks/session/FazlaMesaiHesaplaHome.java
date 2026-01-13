@@ -1102,11 +1102,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		}
 
 	}
-
+	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	@Transactional
-	public String fazlaMesaiGuncelle() {
-
-		if (session == null)
+	public String sayfaFazlaMesaiGuncelle() {
+  		if (session == null)
 			session = PdksUtil.getSession(entityManager, true);
 		session.setFlushMode(FlushMode.MANUAL);
 		session.clear();
@@ -1164,7 +1163,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		}
 		session.close();
 
-		return "";
+		return MenuItemConstant.login;
 	}
 
 	/**
