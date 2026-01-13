@@ -271,7 +271,7 @@ public class StartupAction implements Serializable {
 			}
 		}
 		try {
-			String adresStr = PdksUtil.getWebLoginAdres();
+			String adresStr = ortakIslemler.getLoginAdres();
 			if (PdksUtil.hasStringValue(adresStr))
 				logger.info("Web Login Adres : " + adresStr);
 		} catch (Exception e) {

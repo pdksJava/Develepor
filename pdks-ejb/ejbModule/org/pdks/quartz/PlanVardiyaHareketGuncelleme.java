@@ -1,6 +1,5 @@
 package org.pdks.quartz;
 
-import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -244,69 +243,56 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					veriMap.put(key, sirketIdList);
 				sirketIdList.add(sirketId);
 			}
-			adresStr = PdksUtil.getWebLoginAdres();
+			adresStr = ortakIslemler.getLoginAdres();
 			if (PdksUtil.hasStringValue(adresStr)) {
-				String adresDurum = callFazlaMesaiGuncelleme(adresStr);
-				if (adresDurum != null)
-					adresStr = "";
-			}
-			if (PdksUtil.hasStringValue(adresStr) == false) {
-				if (ortakIslemler.getParameterKeyHasStringValue("uygulamaURL") && ortakIslemler.getParameterKey("sirketFazlaMesaiGuncelleme").equals("1") == false) {
-					adresStr = ortakIslemler.getParameterKey("uygulamaURL");
-					if (adresStr.indexOf("login") < 0)
-						adresStr = adresStr + "/login";
-				}
-			}
-
-			if (PdksUtil.hasStringValue(adresStr)) {
-				int index = adresStr.lastIndexOf("/");
-				if (adresStr.lastIndexOf("/") == adresStr.length() - 1)
-					adresStr = adresStr.substring(0, index);
-
-				if (adresStr.indexOf("//") > 0) {
-					adresStr = PdksUtil.replaceAll(adresStr, "//", "/");
-					adresStr = PdksUtil.replaceAll(adresStr, ":/", "://");
-				}
-
-				String adres = PdksUtil.replaceAllManuel(adresStr, "login", "fazlaMesaiGuncelleme");
+				String adres = PdksUtil.replaceAllManuel(adresStr, "login", "denklestirmeBordroGuncelleme");
 				logger.info(adres + " in " + PdksUtil.getCurrentTimeStampStr());
-
+				User loginUser = ortakIslemler.getSistemAdminUser(session);
+				loginUser.setAdmin(true);
 				for (Long donemId : veriMap.keySet()) {
 					DenklestirmeAy da = (DenklestirmeAy) pdksEntityController.getSQLParamByFieldObject(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_ID, donemId, DenklestirmeAy.class, session);
+					if (veriMap.size() > 1)
+						logger.info(da.getAyAdi() + " " + da.getYil() + " in " + PdksUtil.getCurrentTimeStampStr());
 					DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 					AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(da.getAy(), da.getYil(), denklestirmeDonemi, session);
-					List<SelectItem> sirketIdList = fazlaMesaiOrtakIslemler.getFazlaMesaiSirketList(null, aylikPuantaj, false, session);
-					logger.info(da.getAyAdi() + " " + da.getYil() + " in " + PdksUtil.getCurrentTimeStampStr());
-					for (SelectItem sirketSelectItem : sirketIdList) {
-						Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketSelectItem.getValue(), Sirket.class, session);
-						if (sirket.isTesisDurumu() == false) {
-							logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " in " + PdksUtil.getCurrentTimeStampStr());
-							String id = ortakIslemler.getEncodeStringByBase64("donemId=" + donemId + "&sirketId=" + sirket.getId());
-							String sonuc = callFazlaMesaiGuncelleme(adres + "?id=" + id);
-							if (sonuc == null)
-								logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " out " + PdksUtil.getCurrentTimeStampStr());
-							else
-								logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
-						} else {
-							List<SelectItem> tesisDetayList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, aylikPuantaj, false, session);
-							for (SelectItem st : tesisDetayList) {
-								Tanim tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, st.getValue(), Tanim.class, session);
-								if (tesis != null) {
-									String id = ortakIslemler.getEncodeStringByBase64("donemId=" + donemId + "&sirketId=" + sirket.getId() + "&tesisId=" + tesis.getId());
-									logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " in " + PdksUtil.getCurrentTimeStampStr());
-									String sonuc = callFazlaMesaiGuncelleme(adres + "?id=" + id);
-									if (sonuc == null)
-										logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " out " + PdksUtil.getCurrentTimeStampStr());
-									else
-										logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+					aylikPuantaj.setLoginUser(loginUser);
+					aylikPuantaj.setDenklestirmeAy(da);
+					List<SelectItem> departmanIdList = fazlaMesaiOrtakIslemler.getFazlaMesaiDepartmanList(aylikPuantaj, false, session);
+					for (SelectItem siDepartman : departmanIdList) {
+						Long departmanId = (Long) siDepartman.getValue();
+						List<SelectItem> sirketIdList = fazlaMesaiOrtakIslemler.getFazlaMesaiSirketList(departmanId, aylikPuantaj, false, session);
+						for (SelectItem sirketSelectItem : sirketIdList) {
+							Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketSelectItem.getValue(), Sirket.class, session);
+							String linkStr = "loginAdres=" + ortakIslemler.getEncodeStringByBase64(adresStr) + "&pdksUserId=" + loginUser.getId() + "&donemId=" + donemId + "&sirketId=" + sirket.getId();
+							if (sirket.isTesisDurumu() == false) {
+								logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " in " + PdksUtil.getCurrentTimeStampStr());
+								String id = ortakIslemler.getEncodeStringByBase64(linkStr);
+								String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
+								if (sonuc == null)
+									logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " out " + PdksUtil.getCurrentTimeStampStr());
+								else
+									logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+							} else {
+								List<SelectItem> tesisDetayList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, aylikPuantaj, false, session);
+								for (SelectItem st : tesisDetayList) {
+									Tanim tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, st.getValue(), Tanim.class, session);
+									if (tesis != null) {
+										String id = ortakIslemler.getEncodeStringByBase64(linkStr + "&tesisId=" + tesis.getId());
+										logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " in " + PdksUtil.getCurrentTimeStampStr());
+										String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
+										if (sonuc == null)
+											logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " out " + PdksUtil.getCurrentTimeStampStr());
+										else
+											logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+									}
 								}
+
 							}
 
 						}
-
 					}
-					logger.info(da.getAyAdi() + " " + da.getYil() + " out " + PdksUtil.getCurrentTimeStampStr());
-
+					if (veriMap.size() > 1)
+						logger.info(da.getAyAdi() + " " + da.getYil() + " out " + PdksUtil.getCurrentTimeStampStr());
 				}
 				logger.info(adres + " out " + PdksUtil.getCurrentTimeStampStr());
 			}
@@ -314,30 +300,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		}
 		return adresStr;
 
-	}
-
-	/**
-	 * @param adres
-	 * @return
-	 * @throws Exception
-	 */
-	private String callFazlaMesaiGuncelleme(String adres) throws Exception {
-		String str = null;
-		java.net.URL url = new java.net.URL(adres);
-		java.net.HttpURLConnection connjava = (java.net.HttpURLConnection) url.openConnection();
-		connjava.setRequestMethod("GET");
-		connjava.setRequestProperty("Content-Language", "tr-TR");
-		connjava.setDoInput(true);
-		connjava.setDoOutput(true);
-		connjava.setUseCaches(false);
-		int timeOutSaniye = 60 * 60;
-		connjava.setConnectTimeout(timeOutSaniye * 1000); // set timeout to 5 seconds
-		connjava.setAllowUserInteraction(true);
-		int responseCode = connjava.getResponseCode();
-		InputStream is = responseCode >= 400 ? connjava.getErrorStream() : connjava.getInputStream();
-		if (responseCode >= 400 && is != null)
-			str = PdksUtil.StringToByInputStream(is);
-		return str;
 	}
 
 	/**
