@@ -150,8 +150,6 @@
 									
 								<a4j:commandButton status="ajaxStatus" value="vardiyaHareketGuncelleme Calistir"  rendered="#{ortakIslemler.canliDurum==false}"
 									action="#{planVardiyaHareketGuncelleme.vardiyaHareketGuncelleme(null,parameterHome.session)}" />	
-								<a4j:commandButton status="ajaxStatus" value="fazlaMesaiGuncelleme Calistir"  rendered="#{ortakIslemler.canliDurum==false}"
-									action="#{planVardiyaHareketGuncelleme.fazlaMesaiGuncelleme(null,parameterHome.session)}" />	
 
 							</c:if>
 							<a4j:commandButton status="ajaxStatus" value="Sistem Saati Güncelle Calistir"
