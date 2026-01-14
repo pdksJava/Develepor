@@ -24489,7 +24489,7 @@ public class OrtakIslemler implements Serializable {
 				adresStr = "";
 		}
 		if (PdksUtil.hasStringValue(adresStr) == false) {
-			if (getParameterKeyHasStringValue("uygulamaURL") && getParameterKey("sirketFazlaMesaiGuncelleme").equals("1") == false) {
+			if (getParameterKeyHasStringValue("uygulamaURL")) {
 				adresStr = getParameterKey("uygulamaURL");
 				if (adresStr.indexOf("login") < 0)
 					adresStr = adresStr + "/login";

@@ -4033,7 +4033,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		Date aksamVardiyaBitisZamani = null, aksamVardiyaBaslangicZamani = null;
 		Vardiya vardiya = vGun.getVardiya();
 		String key1 = vGun.getVardiyaDateStr(), vardiyaKey = vGun.getVardiyaKeyStr();
-		
+
 		if (denklestirmeAyDurum && vGun.getGecersizHareketler() != null) {
 			if (vGun.getFazlaMesailer() != null) {
 				for (Iterator iterator = vGun.getGecersizHareketler().iterator(); iterator.hasNext();) {
@@ -4747,10 +4747,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			vGun.setHataliDurum(false);
 			personelFazlaMesaiEkle(vGun, vardiyaPlanKey);
 		}
-		if (vGun.getVardiyaDate().after(bugun)) {
+		if (vGun.getVardiyaDate().after(bugun))
 			vGun.setZamanGelmedi(true);
-		}
-			logger.debug("");
+
+		logger.debug("");
 
 		hareketMap = null;
 		ciftHareketMap = null;
@@ -4933,7 +4933,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	private void kapiGirisGetir(VardiyaGun vardiyaGun, String vardiyaPlanKey) {
 		if (denklestirmeAyDurum && planOnayDurum && personelHareketDurum) {
- 			String link = "<a href='http://" + adres + "/personelHareket?planKey=" + vardiyaPlanKey + "'>" + personelHareketStr + "</a>";
+			String link = "<a href='http://" + adres + "/personelHareket?planKey=" + vardiyaPlanKey + "'>" + personelHareketStr + "</a>";
 			vardiyaGun.addLinkAdresler(link);
 		}
 	}
