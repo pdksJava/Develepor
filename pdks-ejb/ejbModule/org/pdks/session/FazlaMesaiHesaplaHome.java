@@ -1108,7 +1108,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	public String sayfaFazlaMesaiGuncelle(String id) {
 		String donus = "";
 		if (session == null)
-			session = PdksUtil.getSession(entityManager, true);
+			session = PdksUtil.getSession(entityManager, false);
 		session.setFlushMode(FlushMode.MANUAL);
 		if (id == null) {
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
@@ -1150,6 +1150,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				else
 					pdksUser = ortakIslemler.getSistemAdminUser(session);
 				pdksUser.setAdmin(true);
+				pdksUser.setLogin(false);
 				try {
 					sicilNo = "";
 					this.setStajerSirket(false);
@@ -2852,7 +2853,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 						if (devam && mukerrerHareket.getId().startsWith(HareketKGS.AYRIK_HAREKET) == false) {
 							try {
-								if (getPdksUser() != null)
+								if (authenticatedUser != null)
 									logger.info(vardiyaGun.getVardiyaKeyStr() + " : " + hId + " " + mukerrerHareket.getId());
 								String aciklama = mukerrerHareket.getId().substring(1) + " " + mukerrerHareket.getKapiKGS().getKapi().getAciklama() + " geçiş iptal";
 								Long id = pdksEntityController.hareketSil(pdksLog.getKgsId(), 0, guncelleyen, mukerrerHareketIptalNeden.getId(), aciklama, pdksLog.getKgsSirketId(), session);
