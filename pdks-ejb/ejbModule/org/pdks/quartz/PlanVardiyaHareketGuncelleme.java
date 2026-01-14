@@ -103,12 +103,11 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						boolean guncellemeHareketDurum = PdksUtil.zamanKontrol(PARAMETER_HAREKET_KEY, valueHareket, tarih);
 						if (guncellemeHareketDurum) {
 							guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
-							if (guncellemeHareketDurum)
-								zamanlayici.mailGonder(session, null, parameterHareket.getDescription(), "Plan Vardiya Hareket Güncelleme güncellenmiştir.", null, Boolean.TRUE);
 							if (saat < 9 || saat > 18) {
 								if (fazlaMesaiGuncelleme(tarih, session) != null)
 									zamanlayici.mailGonder(session, null, "Fazla Mesai Toplu Güncelleme", "Fazla Mesai güncellenmiştir.", null, Boolean.TRUE);
-							}
+							} else if (guncellemeHareketDurum)
+								zamanlayici.mailGonder(session, null, parameterHareket.getDescription(), "Plan Vardiya Hareket Güncelleme güncellenmiştir.", null, Boolean.TRUE);
 
 						}
 					}

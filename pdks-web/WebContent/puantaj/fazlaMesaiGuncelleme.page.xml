@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.1.xsd">
 	
 	<rewrite pattern="/fazlaMesaiGuncelleme" />
-	<action execute="#{fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle()}" on-postback="false" />
+	<action execute="#{fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(null)}" on-postback="false" />
 	<begin-conversation join="true" flush-mode="manual" />
 	<navigation>
 

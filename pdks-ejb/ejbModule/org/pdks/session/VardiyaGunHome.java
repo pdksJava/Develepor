@@ -6586,13 +6586,17 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	@Transactional
-	public String sayfaCalismaPlanOlustur() {
+	public String sayfaCalismaPlanOlustur(String id) {
+		String donus="";
 		if (session == null)
 			session = PdksUtil.getSession(entityManager, true);
 		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
-		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-		String id = (String) req.getParameter("id");
+		if (id == null) {
+			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+			id = (String) req.getParameter("id");
+			session.clear();
+			donus=MenuItemConstant.login;
+		}
 		if (id != null) {
 			String decodeStr = OrtakIslemler.getDecodeStringByBase64(id);
 			StringTokenizer st = new StringTokenizer(decodeStr, "&");
@@ -6641,15 +6645,16 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					aylikPuantajOlusturuluyor();
 					session.flush();
 				} catch (Exception e) {
+					donus = "";
 					logger.error(e);
 					e.printStackTrace();
 				}
 
 			}
 		}
-		session.close();
+		 
 
-		return MenuItemConstant.login;
+		return donus;
 	}
 
 	/**

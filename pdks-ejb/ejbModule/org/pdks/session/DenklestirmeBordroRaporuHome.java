@@ -221,7 +221,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			String decodeStr = OrtakIslemler.getDecodeStringByBase64(id);
 			StringTokenizer st = new StringTokenizer(decodeStr, "&");
 			HashMap<String, String> param = new HashMap<String, String>();
- 			while (st.hasMoreTokens()) {
+			while (st.hasMoreTokens()) {
 				String tk = st.nextToken();
 				String[] parStrings = tk.split("=");
 				param.put(parStrings[0], parStrings[1]);
@@ -260,7 +260,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			}
 		}
 		session.close();
-		return  MenuItemConstant.login;
+		return MenuItemConstant.login;
 	}
 
 	@Transactional
@@ -371,8 +371,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	@Transactional
 	private boolean bolumFazlaMesai(LinkedHashMap<String, Object> paramMap) {
 		DepartmanDenklestirmeDonemi denklestirmeDonemi = (DepartmanDenklestirmeDonemi) paramMap.get("denklestirmeDonemi");
-		String adresCalismaPlaniGuncelleme = null;
-		String adresFazlaMesaiGuncelleme = PdksUtil.replaceAllManuel(loginAdres, "login", "fazlaMesaiGuncelleme");
+//		String adresCalismaPlaniGuncelleme = null;
+//		String adresFazlaMesaiGuncelleme = PdksUtil.replaceAllManuel(loginAdres, "login", "fazlaMesaiGuncelleme");
 		AylikPuantaj aylikPuantaj = (AylikPuantaj) paramMap.get("aylikPuantaj");
 		User loginUser = (User) paramMap.get("loginUser");
 		Sirket seciliSirket = (Sirket) paramMap.get("seciliSirket");
@@ -443,12 +443,14 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 										if (authenticatedUser != null)
 											vardiyaGunHome.aylikPuantajOlusturuluyor();
 										else {
-											if (adresCalismaPlaniGuncelleme == null)
-												adresCalismaPlaniGuncelleme = PdksUtil.replaceAllManuel(loginAdres, "login", "calismaPlaniGuncelleme");
-											String adres = adresCalismaPlaniGuncelleme + "?id=" + ortakIslemler.getEncodeStringByBase64(linkStr + "&seciliEkSaha4Id=" + altBolumId);
-											String sonuc = ortakIslemler.adresKontrol(adres);
-											if (sonuc != null)
-												logger.error(adres + "\n" + PdksUtil.getCurrentTimeStampStr());
+											String idStr = ortakIslemler.getEncodeStringByBase64(linkStr + "&seciliEkSaha4Id=" + altBolumId);
+											vardiyaGunHome.sayfaCalismaPlanOlustur(idStr);
+											// if (adresCalismaPlaniGuncelleme == null)
+											// adresCalismaPlaniGuncelleme = PdksUtil.replaceAllManuel(loginAdres, "login", "calismaPlaniGuncelleme");
+											// String adres = adresCalismaPlaniGuncelleme + "?id=" + idStr;
+											// String sonuc = ortakIslemler.adresKontrol(adres);
+											// if (sonuc != null)
+											// logger.error(adres + "\n" + PdksUtil.getCurrentTimeStampStr());
 										}
 
 										logger.info(altBolumStr + " aylikPuantajOlusturuluyor out " + PdksUtil.getCurrentTimeStampStr());
@@ -470,11 +472,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								if (authenticatedUser != null)
 									puantajList = fazlaMesaiHesaplaHome.fillPersonelDenklestirmeDevam(null, aylikPuantaj, denklestirmeDonemi);
 								else {
-
-									String adres = adresFazlaMesaiGuncelleme + "?id=" + ortakIslemler.getEncodeStringByBase64(linkStr + "&seciliEkSaha4Id=" + altBolumId);
-									String sonuc = ortakIslemler.adresKontrol(adres);
-									if (sonuc != null)
-										logger.error(adres + "\n" + PdksUtil.getCurrentTimeStampStr());
+									fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(ortakIslemler.getEncodeStringByBase64(linkStr));
+									puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
+									// String adres = adresFazlaMesaiGuncelleme + "?id=" + ortakIslemler.getEncodeStringByBase64(linkStr + "&seciliEkSaha4Id=" + altBolumId);
+									// String sonuc = ortakIslemler.adresKontrol(adres);
+									// if (sonuc != null)
+									// logger.error(adres + "\n" + PdksUtil.getCurrentTimeStampStr());
 
 								}
 							}
@@ -506,12 +509,14 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								if (authenticatedUser != null)
 									vardiyaGunHome.aylikPuantajOlusturuluyor();
 								else {
-									if (adresCalismaPlaniGuncelleme == null)
-										adresCalismaPlaniGuncelleme = PdksUtil.replaceAllManuel(loginAdres, "login", "calismaPlaniGuncelleme");
-									String adres = adresCalismaPlaniGuncelleme + "?id=" + ortakIslemler.getEncodeStringByBase64(linkStr);
-									String sonuc = ortakIslemler.adresKontrol(adres);
-									if (sonuc != null)
-										logger.error(adres + "\n" + PdksUtil.getCurrentTimeStampStr());
+									String idStr = ortakIslemler.getEncodeStringByBase64(linkStr);
+									vardiyaGunHome.sayfaCalismaPlanOlustur(idStr);
+									// if (adresCalismaPlaniGuncelleme == null)
+									// adresCalismaPlaniGuncelleme = PdksUtil.replaceAllManuel(loginAdres, "login", "calismaPlaniGuncelleme");
+									// String adres = adresCalismaPlaniGuncelleme + "?id=" +idStr;
+									// String sonuc = ortakIslemler.adresKontrol(adres);
+									// if (sonuc != null)
+									// logger.error(adres + "\n" + PdksUtil.getCurrentTimeStampStr());
 								}
 								if (authenticatedUser != null)
 									logger.info(str + " aylikPuantajOlusturuluyor out " + PdksUtil.getCurrentTimeStampStr());
@@ -535,11 +540,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					if (authenticatedUser != null)
 						puantajList = fazlaMesaiHesaplaHome.fillPersonelDenklestirmeDevam(null, aylikPuantaj, denklestirmeDonemi);
 					else {
-
-						String adres = adresFazlaMesaiGuncelleme + "?id=" + ortakIslemler.getEncodeStringByBase64(linkStr);
-						String sonuc = ortakIslemler.adresKontrol(adres);
-						if (sonuc != null)
-							logger.error(adres + "\n" + PdksUtil.getCurrentTimeStampStr());
+						fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(ortakIslemler.getEncodeStringByBase64(linkStr));
+						puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
+						// String adres = adresFazlaMesaiGuncelleme + "?id=" + ortakIslemler.getEncodeStringByBase64(linkStr);
+						// String sonuc = ortakIslemler.adresKontrol(adres);
+						// if (sonuc != null)
+						// logger.error(adres + "\n" + PdksUtil.getCurrentTimeStampStr());
 					}
 				}
 				if (puantajList != null && !puantajList.isEmpty()) {
@@ -1182,7 +1188,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			}
 			if (baosDosya != null)
 				PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi + PdksUtil.convertToDateString(basGun, "_MMMMM_yyyy") + ".xlsx");
-		} else if (authenticatedUser!= null)
+		} else if (authenticatedUser != null)
 			PdksUtil.addMessageAvailableWarn("Aktarılacak veri bulunamadı!");
 
 		return "";
