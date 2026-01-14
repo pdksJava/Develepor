@@ -192,7 +192,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	private List<Vardiya> calismaModeliVardiyaList;
 
-	private boolean fileImport = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE, fazlaMesaiTalepVar = Boolean.FALSE, fazlaMesaiOde, fazlaMesaiIzinKullan, modelGoster = Boolean.FALSE, gebeGoster = Boolean.FALSE;
+	private boolean fileImport = Boolean.FALSE, topluGuncelleme, yasalFazlaCalismaAsanSaat = Boolean.FALSE, fazlaMesaiTalepVar = Boolean.FALSE, fazlaMesaiOde, fazlaMesaiIzinKullan, modelGoster = Boolean.FALSE, gebeGoster = Boolean.FALSE;
 
 	private Boolean manuelHareketEkle, kayitBasarili, vardiyaFazlaMesaiTalepGoster = Boolean.FALSE, bakiyeSifirlaDurum = Boolean.FALSE, isAramaGoster = Boolean.FALSE, yoneticiERP1Kontrol = Boolean.FALSE, bordroPuantajEkranindaGoster = Boolean.FALSE;
 
@@ -4348,18 +4348,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		}
 		if (apd == null)
 			apd = new AylikPuantaj();
-		if (authenticatedUser == null)
-			loginUser = null;
-		if (loginUser == null) {
-			if (getPdksUser() != null) {
-				loginUser = getPdksUser();
-			} else {
-				loginUser = ortakIslemler.getSistemAdminUser(session);
-				loginUser.setAdmin(Boolean.TRUE);
-			}
-			loginUser.setLogin(authenticatedUser != null);
-		}
 
+		if (getPdksUser() != null) {
+			loginUser = getPdksUser();
+		} else {
+			loginUser = ortakIslemler.getSistemAdminUser(session);
+			loginUser.setAdmin(Boolean.TRUE);
+		}
 		apd.setLoginUser(loginUser);
 		setAylikPuantajDonem(apd);
 	}
@@ -6584,13 +6579,19 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		return "";
 	}
 
+	/**
+	 * @param id
+	 * @param islemUser
+	 * @return
+	 */
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	@Transactional
-	public String sayfaCalismaPlanOlustur(String id) {
+	public String sayfaCalismaPlanOlustur(String id, User islemUser) {
 		String donus = "";
 		if (session == null)
 			session = PdksUtil.getSession(entityManager, false);
 		session.setFlushMode(FlushMode.MANUAL);
+		topluGuncelleme = true;
 		if (id == null) {
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			id = (String) req.getParameter("id");
@@ -6614,15 +6615,18 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					aylikPuantajList = new ArrayList<AylikPuantaj>();
 				Long donemId = Long.parseLong(param.get("donemId"));
 				denklestirmeAy = (DenklestirmeAy) pdksEntityController.getSQLParamByFieldObject(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_ID, donemId, DenklestirmeAy.class, session);
-				Long pdksUserId = param.containsKey("pdksUserId") ? Long.parseLong(param.get("pdksUserId")) : null;
-				if (pdksUserId != null)
-					pdksUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, pdksUserId, User.class, session);
-				else
-					pdksUser = ortakIslemler.getSistemAdminUser(session);
+				if (islemUser == null) {
+					Long pdksUserId = param.containsKey("pdksUserId") ? Long.parseLong(param.get("pdksUserId")) : null;
+					if (pdksUserId != null)
+						pdksUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, pdksUserId, User.class, session);
+					else
+						pdksUser = ortakIslemler.getSistemAdminUser(session);
+				} else
+					pdksUser = islemUser;
 				try {
 					pdksUser.setAdmin(true);
 					pdksUser.setLogin(false);
-					setAylikPuantajDonem(denklestirmeAy);
+ 					setAylikPuantajDonem(denklestirmeAy);
 					yil = denklestirmeAy.getYil();
 					ay = denklestirmeAy.getAy();
 					plansiz = true;
@@ -6662,7 +6666,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	@Transactional
 	public Boolean aylikPuantajOlusturuluyor() {
-
 		if (loginUser == null)
 			loginUser = getPdksUser();
 		if (loginUser == null)
@@ -6791,11 +6794,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				gorevliPersonelMap = new HashMap<String, Personel>();
 
 			ArrayList<Long> perIdler = new ArrayList<Long>();
+			AylikPuantaj personeAylikPuantaj = denklestirmeAy != null ? aylikPuantajDonem : null;
+			if (personeAylikPuantaj != null) {
+				if (personeAylikPuantaj.getLoginUser() != null)
+					personeAylikPuantaj.getLoginUser().setLogin(topluGuncelleme == false);
+			}
 			List<Personel> personelFMList = new ArrayList<Personel>(fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(aramaSecenekleri.getSirket(), aramaSecenekleri.getTesisId() != null ? String.valueOf(aramaSecenekleri.getTesisId()) : null, aramaSecenekleri.getEkSaha3Id(),
-					aramaSecenekleri.getEkSaha4Id(), denklestirmeAy != null ? aylikPuantajDonem : null, true, session));
-
+					aramaSecenekleri.getEkSaha4Id(), personeAylikPuantaj, true, session));
 			List<Personel> personelList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(aramaSecenekleri.getSirket(), aramaSecenekleri.getTesisId() != null ? String.valueOf(aramaSecenekleri.getTesisId()) : null, aramaSecenekleri.getEkSaha3Id(), aramaSecenekleri.getEkSaha4Id(),
-					denklestirmeAy != null ? aylikPuantajDonem : null, getDenklestirmeDurum(), session);
+					personeAylikPuantaj, getDenklestirmeDurum(), session);
 			for (Personel personelFm : personelFMList) {
 				boolean ekle = true;
 				for (Personel personelPlan : personelList) {
@@ -9083,6 +9090,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	public String fillAylikVardiyaPlanList() throws Exception {
 		veriGuncellendi = Boolean.FALSE;
 		haftaTatilMesaiDurum = Boolean.FALSE;
+		topluGuncelleme = false;
 		if (!islemYapiliyor) {
 			islemYapiliyor = Boolean.TRUE;
 			try {
@@ -10593,6 +10601,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	public void sayfaGirisAction() throws Exception {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+		topluGuncelleme = false;
 		setPdksUser(authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		aylikPuantajListClear();
@@ -13807,6 +13816,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	public void setPdksUser(User pdksUser) {
 		this.pdksUser = pdksUser;
+	}
+
+	public boolean isTopluGuncelleme() {
+		return topluGuncelleme;
+	}
+
+	public void setTopluGuncelleme(boolean topluGuncelleme) {
+		this.topluGuncelleme = topluGuncelleme;
 	}
 
 }
