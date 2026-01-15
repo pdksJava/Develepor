@@ -1660,14 +1660,17 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				List<Long> denklestirmeIdList = new ArrayList<Long>();
 				List<PersonelDenklestirmeTasiyici> haftaSonuList = new ArrayList<PersonelDenklestirmeTasiyici>();
 				List<VardiyaGun> bosCalismaList = new ArrayList<VardiyaGun>();
+				boolean haftaTatilDurumu = ortakIslemler.getParameterKey("haftaTatilDurum").equals("1");
 				for (Iterator iterator1 = list.iterator(); iterator1.hasNext();) {
 					PersonelDenklestirmeTasiyici denklestirmeTasiyici = (PersonelDenklestirmeTasiyici) iterator1.next();
 					if (personelDenklestirmeMap.containsKey(denklestirmeTasiyici.getPersonel().getId())) {
 						PersonelDenklestirme personelDenklestirme = personelDenklestirmeMap.get(denklestirmeTasiyici.getPersonel().getId());
+						CalismaModeli cm = personelDenklestirme.getCalismaModeli();
 						boolean hareketKaydiVardiyaBulsunmu = personelDenklestirme.getCalismaModeliAy().isHareketKaydiVardiyaBulsunmu();
 						if (hareketKaydiVardiyaBulsunmu) {
-							// if (haftaTatilDurum.equals("1"))
-							haftaSonuList.add(denklestirmeTasiyici);
+							if (cm.getHaftaTatilMesaiOde() == null || cm.getHaftaTatilMesaiOde().booleanValue() == false)
+								if (haftaTatilDurumu == false)
+									haftaSonuList.add(denklestirmeTasiyici);
 							TreeMap<String, VardiyaGun> vardiyaGunleriMap = denklestirmeTasiyici.getVardiyaGunleriMap();
 							if (vardiyaGunleriMap != null) {
 								for (String key : vardiyaGunleriMap.keySet()) {
@@ -1685,12 +1688,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 				if (!ortakIslemler.getParameterKey("bosCalismaOffGuncelle").equals("1"))
 					bosCalismaList.clear();
-				// if (denklestirmeAyDurum && (bosCalismaList.size() + haftaSonuList.size()) > 0) {
-				// if (!haftaSonuList.isEmpty())
-				// haftaTatilVardiyaGuncelle(haftaSonuList);
-				// if (!bosCalismaList.isEmpty())
-				// bosCalismaOffGuncelle(bosCalismaList, haftaSonuList.isEmpty());
-				// }
+				if (denklestirmeAyDurum && (bosCalismaList.size() + haftaSonuList.size()) > 0) {
+					if (haftaSonuList.isEmpty() == false)
+						haftaTatilVardiyaGuncelle(haftaSonuList);
+					// if (!bosCalismaList.isEmpty())
+					// bosCalismaOffGuncelle(bosCalismaList, haftaSonuList.isEmpty());
+				}
 				bosCalismaList = null;
 				haftaSonuList = null;
 
@@ -3400,7 +3403,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 			}
 			if (flush) {
-				if (userLogin.getLogin())
+				if (authenticatedUser != null && userLogin.getLogin())
 					PdksUtil.addMessageWarn("Hafta tatilleri güncellendi, 'Fazla Mesai Getir' tekrar çalıştırın.");
 				sessionFlush();
 			}
