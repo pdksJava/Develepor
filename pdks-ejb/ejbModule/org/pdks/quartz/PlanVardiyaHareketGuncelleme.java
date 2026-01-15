@@ -80,6 +80,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemler;
 
 	public static final String PARAMETER_HAREKET_KEY = "hareketVardiyaZamani";
+	public static final String PARAMETER_FAZLA_MESAI_KEY = "fazlaMesaiHesaplamaZamani";
 
 	private static boolean calisiyor = Boolean.FALSE;
 
@@ -95,18 +96,39 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			try {
 				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+					boolean fazlaMesaiHesaplaDurum = ortakIslemler.getParameterKey("sirketFazlaMesaiGuncelleme").equals("1");
 					Parameter parameterHareket = ortakIslemler.getParameter(session, PARAMETER_HAREKET_KEY);
-					String valueHareket = (parameterHareket != null) ? parameterHareket.getValue() : null;
-					if (PdksUtil.hasStringValue(valueHareket)) {
+					Parameter fazlaMesaiHesaplama = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
+					String valueHareket = (parameterHareket != null) ? parameterHareket.getValue() : "";
+					String valueFazlaMesaiHesaplama = (fazlaMesaiHesaplama != null) ? fazlaMesaiHesaplama.getValue() : "";
+					if (PdksUtil.hasStringValue(valueHareket) || PdksUtil.hasStringValue(valueFazlaMesaiHesaplama) || fazlaMesaiHesaplaDurum) {
 						Date tarih = ortakIslemler.getBugun();
-						boolean guncellemeHareketDurum = PdksUtil.zamanKontrol(PARAMETER_HAREKET_KEY, valueHareket, tarih);
+						Date basTarih = tarih;
+						boolean guncellemeFazlaMesaiHesaplama = false;
+						boolean guncellemeHareketDurum = PdksUtil.hasStringValue(valueHareket) && PdksUtil.zamanKontrol(PARAMETER_HAREKET_KEY, valueHareket, tarih);
+						if (PdksUtil.hasStringValue(valueFazlaMesaiHesaplama))
+							guncellemeFazlaMesaiHesaplama = PdksUtil.zamanKontrol(PARAMETER_HAREKET_KEY, valueFazlaMesaiHesaplama, tarih);
+						else
+							guncellemeFazlaMesaiHesaplama = fazlaMesaiHesaplaDurum;
+						String konu = null, aciklama = null;
 						if (guncellemeHareketDurum) {
 							guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
-							if (fazlaMesaiGuncelleme(tarih, session) != null)
-								zamanlayici.mailGonder(session, null, "Fazla Mesai Toplu Güncelleme", "Fazla Mesai güncellenmiştir.", null, Boolean.TRUE);
-							else if (guncellemeHareketDurum)
-								zamanlayici.mailGonder(session, null, parameterHareket.getDescription(), "Plan Vardiya Hareket Güncelleme güncellenmiştir.", null, Boolean.TRUE);
-
+							if (guncellemeHareketDurum) {
+								konu = parameterHareket.getDescription();
+								aciklama = "Plan Vardiya Hareket Güncelleme güncellenmiştir.";
+							}
+ 						}
+						if (guncellemeFazlaMesaiHesaplama) {
+							basTarih = ortakIslemler.getBugun();
+							if (fazlaMesaiGuncelleme(tarih, session) != null) {
+								konu = fazlaMesaiHesaplama != null ? fazlaMesaiHesaplama.getDescription() : "Fazla Mesai Toplu Güncelleme";
+								aciklama = "Fazla Mesai güncellenmiştir.";
+							}
+						}
+						if (PdksUtil.hasStringValue(konu)) {
+							aciklama = aciklama + "</br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
+							aciklama = aciklama + "</br><b>Stop Time  : </b>" + PdksUtil.convertToDateString(ortakIslemler.getBugun(), PdksUtil.getDateTimeLongFormat());
+							zamanlayici.mailGonder(session, null, konu, aciklama, null, Boolean.TRUE);
 						}
 					}
 				}
