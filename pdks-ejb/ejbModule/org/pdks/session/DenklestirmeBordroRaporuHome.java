@@ -244,6 +244,11 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 				departman = sirket.getDepartman();
 				departmanId = departman.getId();
 				tesisId = param.containsKey("tesisId") ? Long.parseLong(param.get("tesisId")) : null;
+				Tanim tesis = null;
+				if (tesisId != null && sirket.isTesisDurumu())
+					tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, tesisId, Tanim.class, session);
+				String str = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " : " + sirket.getAd() + " " + (tesis != null ? tesis.getAciklama() + " " : "");
+				logger.info(str + " in " + PdksUtil.getCurrentTimeStampStr());
 				Long pdksUserId = param.containsKey("pdksUserId") ? Long.parseLong(param.get("pdksUserId")) : null;
 				if (pdksUserId != null)
 					pdksUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, pdksUserId, User.class, session);
@@ -252,8 +257,9 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 				try {
 					sirketFazlaMesaiGuncelleme();
+					logger.info(str + " out " + PdksUtil.getCurrentTimeStampStr());
 				} catch (Exception e) {
-					logger.error(e);
+					logger.error(str + " hata \n" + e + " " + PdksUtil.getCurrentTimeStampStr());
 					e.printStackTrace();
 				}
 
@@ -375,7 +381,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		for (SelectItem selectItem : bolumList) {
 			Long seciliEkSaha3Id = (Long) selectItem.getValue();
 			String linkStr = "donemId=" + denklestirmeAy.getId() + "&sirketId=" + sirketId + (tesisId != null ? "&tesisId=" + tesisId : "") + "&seciliEkSaha3Id=" + seciliEkSaha3Id;
- 			try {
+			try {
 				Tanim bolum = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha3Id, Tanim.class, session);
 				String str = baslik + (bolum != null ? " " + bolum.getAciklama() : "");
 				List<Personel> donemPerList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(sirket, tesisId != null ? String.valueOf(tesisId) : null, seciliEkSaha3Id, null, aylikPuantaj, false, session);

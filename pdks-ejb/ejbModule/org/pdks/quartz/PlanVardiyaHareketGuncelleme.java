@@ -99,14 +99,12 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					String valueHareket = (parameterHareket != null) ? parameterHareket.getValue() : null;
 					if (PdksUtil.hasStringValue(valueHareket)) {
 						Date tarih = ortakIslemler.getBugun();
-						int saat = PdksUtil.getDateField(tarih, Calendar.HOUR_OF_DAY);
 						boolean guncellemeHareketDurum = PdksUtil.zamanKontrol(PARAMETER_HAREKET_KEY, valueHareket, tarih);
 						if (guncellemeHareketDurum) {
 							guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
-							if (saat < 9 || saat > 18) {
-								if (fazlaMesaiGuncelleme(tarih, session) != null)
-									zamanlayici.mailGonder(session, null, "Fazla Mesai Toplu Güncelleme", "Fazla Mesai güncellenmiştir.", null, Boolean.TRUE);
-							} else if (guncellemeHareketDurum)
+							if (fazlaMesaiGuncelleme(tarih, session) != null)
+								zamanlayici.mailGonder(session, null, "Fazla Mesai Toplu Güncelleme", "Fazla Mesai güncellenmiştir.", null, Boolean.TRUE);
+							else if (guncellemeHareketDurum)
 								zamanlayici.mailGonder(session, null, parameterHareket.getDescription(), "Plan Vardiya Hareket Güncelleme güncellenmiştir.", null, Boolean.TRUE);
 
 						}
@@ -265,12 +263,9 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketSelectItem.getValue(), Sirket.class, session);
 							String linkStr = "loginAdres=" + ortakIslemler.getEncodeStringByBase64(adresStr) + "&pdksUserId=" + loginUser.getId() + "&donemId=" + donemId + "&sirketId=" + sirket.getId();
 							if (sirket.isTesisDurumu() == false) {
-								logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " in " + PdksUtil.getCurrentTimeStampStr());
 								String id = ortakIslemler.getEncodeStringByBase64(linkStr);
 								String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
-								if (sonuc == null)
-									logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " out " + PdksUtil.getCurrentTimeStampStr());
-								else
+								if (sonuc != null)
 									logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
 							} else {
 								List<SelectItem> tesisDetayList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, aylikPuantaj, false, session);
@@ -278,11 +273,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 									Tanim tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, st.getValue(), Tanim.class, session);
 									if (tesis != null) {
 										String id = ortakIslemler.getEncodeStringByBase64(linkStr + "&tesisId=" + tesis.getId());
-										logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " in " + PdksUtil.getCurrentTimeStampStr());
 										String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
-										if (sonuc == null)
-											logger.info(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " out " + PdksUtil.getCurrentTimeStampStr());
-										else
+										if (sonuc != null)
 											logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
 									}
 								}
