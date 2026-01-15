@@ -247,7 +247,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 				Tanim tesis = null;
 				if (tesisId != null && sirket.isTesisDurumu())
 					tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, tesisId, Tanim.class, session);
-				String str = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " : " + sirket.getAd() + " " + (tesis != null ? tesis.getAciklama() + " " : "");
+				String str = PdksUtil.replaceAll(denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " : " + sirket.getAd() + " " + (tesis != null ? tesis.getAciklama() + " " : ""), "  ", " ").trim();
 				logger.info(str + " in " + PdksUtil.getCurrentTimeStampStr());
 				Long pdksUserId = param.containsKey("pdksUserId") ? Long.parseLong(param.get("pdksUserId")) : null;
 				if (pdksUserId != null)

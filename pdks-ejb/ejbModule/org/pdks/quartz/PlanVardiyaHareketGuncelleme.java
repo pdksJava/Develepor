@@ -117,7 +117,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								konu = parameterHareket.getDescription();
 								aciklama = "Plan Vardiya Hareket Güncelleme güncellenmiştir.";
 							}
- 						}
+						}
 						if (guncellemeFazlaMesaiHesaplama) {
 							basTarih = ortakIslemler.getBugun();
 							if (fazlaMesaiGuncelleme(tarih, session) != null) {
@@ -281,29 +281,38 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					for (SelectItem siDepartman : departmanIdList) {
 						Long departmanId = (Long) siDepartman.getValue();
 						List<SelectItem> sirketIdList = fazlaMesaiOrtakIslemler.getFazlaMesaiSirketList(departmanId, aylikPuantaj, false, session);
-						for (SelectItem sirketSelectItem : sirketIdList) {
-							Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketSelectItem.getValue(), Sirket.class, session);
-							String linkStr = "loginAdres=" + ortakIslemler.getEncodeStringByBase64(adresStr) + "&pdksUserId=" + loginUser.getId() + "&donemId=" + donemId + "&sirketId=" + sirket.getId();
-							if (sirket.isTesisDurumu() == false) {
-								String id = ortakIslemler.getEncodeStringByBase64(linkStr);
-								String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
-								if (sonuc != null)
-									logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
-							} else {
-								List<SelectItem> tesisDetayList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, aylikPuantaj, false, session);
-								for (SelectItem st : tesisDetayList) {
-									Tanim tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, st.getValue(), Tanim.class, session);
-									if (tesis != null) {
-										String id = ortakIslemler.getEncodeStringByBase64(linkStr + "&tesisId=" + tesis.getId());
-										String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
-										if (sonuc != null)
-											logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+						if (sirketIdList.isEmpty() == false) {
+							List<Long> idList = new ArrayList<Long>();
+							for (SelectItem sirketSelectItem : sirketIdList)
+								idList.add((Long) sirketSelectItem.getValue());
+							List<Sirket> sirketList = pdksEntityController.getSQLParamByFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, idList, Sirket.class, session);
+							if (sirketList.size() > 1)
+								sirketList = PdksUtil.sortObjectStringAlanList(sirketList, "getAd", null);
+							idList = null;
+							for (Sirket sirket : sirketList) {
+								String linkStr = "loginAdres=" + ortakIslemler.getEncodeStringByBase64(adresStr) + "&pdksUserId=" + loginUser.getId() + "&donemId=" + donemId + "&sirketId=" + sirket.getId();
+								if (sirket.isTesisDurumu() == false) {
+									String id = ortakIslemler.getEncodeStringByBase64(linkStr);
+									String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
+									if (sonuc != null)
+										logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+								} else {
+									List<SelectItem> tesisDetayList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, aylikPuantaj, false, session);
+									for (SelectItem st : tesisDetayList) {
+										Tanim tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, st.getValue(), Tanim.class, session);
+										if (tesis != null) {
+											String id = ortakIslemler.getEncodeStringByBase64(linkStr + "&tesisId=" + tesis.getId());
+											String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
+											if (sonuc != null)
+												logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+										}
 									}
+									tesisDetayList = null;
 								}
-
 							}
-
+							sirketList = null;
 						}
+						sirketIdList = null;
 					}
 					if (veriMap.size() > 1)
 						logger.info(da.getAyAdi() + " " + da.getYil() + " out " + PdksUtil.getCurrentTimeStampStr());
