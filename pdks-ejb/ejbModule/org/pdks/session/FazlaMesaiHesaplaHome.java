@@ -214,6 +214,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private HashMap<Long, List<HareketKGS>> ciftBolumCalisanHareketMap = new HashMap<Long, List<HareketKGS>>();
 	private HashMap<Long, Personel> ciftBolumCalisanMap = new HashMap<Long, Personel>();
 	private List<HareketKGS> hareketler = new ArrayList<HareketKGS>();
+	private List<Long> userIkIdList;
 	private TreeMap<String, Tatil> tatilGunleriMap;
 	private Date bugun;
 	private User userLogin;
@@ -3345,6 +3346,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param list
 	 */
 	protected void haftaTatilVardiyaGuncelle(List<PersonelDenklestirmeTasiyici> list) {
+		if (userIkIdList == null)
+			userIkIdList = ortakIslemler.getIKUserIdList(session);
 		for (PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici : list) {
 			boolean flush = false;
 			TreeMap<String, VardiyaGun> vgMap = new TreeMap<String, VardiyaGun>();
@@ -3383,6 +3386,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (!haftaMap.isEmpty()) {
 				for (String key : vgHaftaMap.keySet()) {
 					VardiyaGun vardiyaGun = vgMap.get(key);
+					if (vardiyaGun.getGuncelleyenUser() != null && userIkIdList.contains(vardiyaGun.getGuncelleyenUser().getId()))
+						continue;
 					hafta = vgHaftaMap.get(key);
 					if ((vardiyaGun.getVardiyaDate().after(bugun) || vardiyaGun.getHareketler() != null) && haftaMap.containsKey(hafta)) {
 						List<VardiyaGun> vList = haftaMap.get(hafta);
@@ -8283,6 +8288,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	public void setPdksUser(User pdksUser) {
 		this.pdksUser = pdksUser;
+	}
+
+	public List<Long> getUserIkIdList() {
+		return userIkIdList;
+	}
+
+	public void setUserIkIdList(List<Long> userIkIdList) {
+		this.userIkIdList = userIkIdList;
 	}
 
 }

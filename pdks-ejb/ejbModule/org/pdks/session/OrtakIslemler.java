@@ -10329,25 +10329,7 @@ public class OrtakIslemler implements Serializable {
 		List<CalismaModeliVardiya> calismaModeliVardiyaList = pdksEntityController.getSQLParamByFieldList(CalismaModeliVardiya.TABLE_NAME, CalismaModeliVardiya.COLUMN_NAME_CALISMA_MODELI, idList, CalismaModeliVardiya.class, session);
 		HashMap<Long, List<Vardiya>> calismaModeliVardiyaMap = new HashMap<Long, List<Vardiya>>();
 
-		List<User> userIKList = null;
-		try {
-			String spName = "SP_IK_LIST";
-			if (isExisStoreProcedure(spName, session)) {
-				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-				veriMap.put("alan", null);
-				if (session != null)
-					veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				userIKList = pdksEntityController.execSPList(veriMap, spName, User.class);
-			}
-
-		} catch (Exception e) {
-		}
-		List<Long> userIKIdList = new ArrayList<Long>();
-		if (userIKList != null) {
-			for (User user : userIKList)
-				userIKIdList.add(user.getId());
-			userIKList = null;
-		}
+		List<Long> userIKIdList = getIKUserIdList(session);
 
 		for (CalismaModeliVardiya calismaModeliVardiya : calismaModeliVardiyaList) {
 			if (calismaModeliVardiya.getVardiya().getDurum()) {
@@ -10692,6 +10674,33 @@ public class OrtakIslemler implements Serializable {
 		}
 		userIKIdList = null;
 		return yenidenCalistir;
+	}
+
+	/**
+	 * @param session
+	 * @return
+	 */
+	public List<Long> getIKUserIdList(Session session) {
+		List<User> userIKList = null;
+		List<Long> userIKIdList = new ArrayList<Long>();
+		try {
+			String spName = "SP_IK_LIST";
+			if (isExisStoreProcedure(spName, session)) {
+				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+				veriMap.put("alan", null);
+				if (session != null)
+					veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+				userIKList = pdksEntityController.execSPList(veriMap, spName, User.class);
+			}
+
+		} catch (Exception e) {
+		}
+		if (userIKList != null) {
+			for (User user : userIKList)
+				userIKIdList.add(user.getId());
+			userIKList = null;
+		}
+		return userIKIdList;
 	}
 
 	/**

@@ -237,6 +237,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 				denklestirmeAy = (DenklestirmeAy) pdksEntityController.getSQLParamByFieldObject(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_ID, donemId, DenklestirmeAy.class, session);
 				yil = denklestirmeAy.getYil();
 				ay = denklestirmeAy.getAy();
+				List<Long> userIkIdList = ortakIslemler.getIKUserIdList(session);
+				fazlaMesaiHesaplaHome.setUserIkIdList(userIkIdList);
 				sirketId = Long.parseLong(param.get("sirketId"));
 				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 				if (ekSaha4Tanim == null)
