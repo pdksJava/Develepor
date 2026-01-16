@@ -68,6 +68,8 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_IZIN_CUMARTESI_SAAT = "IZIN_CUMARTESI_SAAT";
 	public static final String COLUMN_NAME_IZIN_PAZAR_SAAT = "IZIN_PAZAR_SAAT";
 	public static final String COLUMN_NAME_PAZAR_SUT_IZNI_SURE = "PAZAR_SUT_IZNI_SURE";
+	public static final String COLUMN_NAME_HAFTA_TATIL_HAREKET_GUNCELLE = "HT_HAREKET_GUNCELLE";
+	public static final String COLUMN_NAME_OFF_HAREKET_GUNCELLE = "OFF_HAREKET_GUNCELLE";
 	public static final String COLUMN_NAME_SUT_IZNI_SABIT = "SUT_IZNI_SABIT";
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 
@@ -80,7 +82,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	private Boolean fazlaMesaiVar = Boolean.TRUE, toplamGunGuncelle = Boolean.FALSE, durum = Boolean.TRUE, genelVardiya = Boolean.TRUE, hareketKaydiVardiyaBul = Boolean.FALSE;
 	private Boolean haftaTatilMesaiOde = Boolean.FALSE, geceHaftaTatilMesaiParcala = Boolean.FALSE, geceCalismaOdemeVar = Boolean.FALSE, otomatikFazlaCalismaOnaylansin = Boolean.FALSE;
 	private Boolean ortakVardiya = Boolean.FALSE, fazlaMesaiGoruntulensin = Boolean.TRUE, ilkPlanOnayliDurum = Boolean.FALSE, gunMaxCalismaOdemeDurum = Boolean.TRUE;
-	private Boolean genelModel = Boolean.TRUE, idariModel = Boolean.FALSE, suaDurum = Boolean.FALSE;
+	private Boolean genelModel = Boolean.TRUE, idariModel = Boolean.FALSE, suaDurum = Boolean.FALSE, haftaTatilHareketGuncelle = Boolean.FALSE, offHareketGuncelle = Boolean.FALSE;
 	private Integer haftaTatilGun = Calendar.SUNDAY;
 	private VardiyaSablonu bagliVardiyaSablonu;
 	private Departman departman;
@@ -399,6 +401,24 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	public void setDepartman(Departman departman) {
 		this.departman = departman;
+	}
+
+	@Column(name = COLUMN_NAME_HAFTA_TATIL_HAREKET_GUNCELLE)
+	public Boolean getHaftaTatilHareketGuncelle() {
+		return haftaTatilHareketGuncelle;
+	}
+
+	public void setHaftaTatilHareketGuncelle(Boolean haftaTatilHareketGuncelle) {
+		this.haftaTatilHareketGuncelle = haftaTatilHareketGuncelle;
+	}
+
+	@Column(name = COLUMN_NAME_OFF_HAREKET_GUNCELLE)
+	public Boolean getOffHareketGuncelle() {
+		return offHareketGuncelle;
+	}
+
+	public void setOffHareketGuncelle(Boolean offHareketGuncelle) {
+		this.offHareketGuncelle = offHareketGuncelle;
 	}
 
 	@Column(name = COLUMN_NAME_HAFTA_ICI_SUT_IZNI_SURE)

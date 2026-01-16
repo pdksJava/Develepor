@@ -362,6 +362,10 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 					calismaModeli.setOlusturmaTarihi(new Date());
 					calismaModeli.setOlusturanUser(authenticatedUser);
 				}
+				if (calismaModeli.isHareketKaydiVardiyaBulsunmu() == false) {
+					calismaModeli.setHaftaTatilHareketGuncelle(Boolean.FALSE);
+					calismaModeli.setOffHareketGuncelle(Boolean.FALSE);
+				}
 				List<CalismaModeliVardiya> kayitliCalismaModeliVardiyaList = null;
 				if (calismaModeli.getId() != null && calismaModeli.getGenelVardiya().equals(Boolean.FALSE)) {
 					HashMap parametreMap = new HashMap();

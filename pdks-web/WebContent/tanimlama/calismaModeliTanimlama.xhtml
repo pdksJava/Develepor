@@ -213,6 +213,19 @@
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.hareketKaydiVardiyaBul)}" />
 								</rich:column>
+
+								<rich:column rendered="#{calismaModeliHome.hareketKaydiVardiyaBul}">
+									<f:facet name="header">
+										<h:outputText value="Hareket Kayıtlarından HT Bul" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.haftaTatilHareketGuncelle)}" />
+								</rich:column>
+								<rich:column rendered="#{calismaModeliHome.hareketKaydiVardiyaBul}">
+									<f:facet name="header">
+										<h:outputText value="Hareket Kayıtlarından OFF Bul" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.offHareketGuncelle)}" />
+								</rich:column>
 								<rich:column rendered="#{calismaModeliHome.otomatikFazlaCalismaOnaylansinVar}">
 									<f:facet name="header">
 										<h:outputText value="Fazla Çalışma Otomatik Onaylansın" />
@@ -501,9 +514,23 @@
 							rendered="#{(calismaModeliHome.otomatikFazlaCalismaOnaylansinVar or calismaModeliHome.calismaModeli.otomatikFazlaCalismaOnaylansin)==false}">
 							<ui:define name="label">Hareket Kayıtlarından #{ortakIslemler.vardiyaAciklama()} Bul</ui:define>
 							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.hareketKaydiVardiyaBul}" disabled="#{authenticatedUser.admin == false}">
-
+								<a4j:support event="onclick" reRender="haftaTatilHareketGuncelle,offHareketGuncelle" status="ajaxStatus" ajaxSingle="true" />
 							</h:selectBooleanCheckbox>
 						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml" id="haftaTatilHareketGuncelle"
+							rendered="#{(calismaModeliHome.otomatikFazlaCalismaOnaylansinVar or calismaModeliHome.calismaModeli.otomatikFazlaCalismaOnaylansin)==false}">
+							<ui:define name="label">Hareket Kayıtlarından HT Bul</ui:define>
+							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.haftaTatilHareketGuncelle}" 
+							disabled="#{calismaModeliHome.calismaModeli.hareketKaydiVardiyaBulsunmu==false or authenticatedUser.admin == false}">
+	 						</h:selectBooleanCheckbox>
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml" id="offHareketGuncelle"
+							rendered="#{(calismaModeliHome.otomatikFazlaCalismaOnaylansinVar or calismaModeliHome.calismaModeli.otomatikFazlaCalismaOnaylansin)==false}">
+							<ui:define name="label">Hareket Kayıtlarından OFF Bul</ui:define>
+							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.offHareketGuncelle}" disabled="#{calismaModeliHome.calismaModeli.hareketKaydiVardiyaBulsunmu==false or authenticatedUser.admin == false}">
+ 							</h:selectBooleanCheckbox>
+						</s:decorate>
+
 						<s:decorate template="/layout/edit.xhtml"
 							rendered="#{calismaModeliHome.otomatikFazlaCalismaOnaylansinVar or calismaModeliHome.calismaModeli.otomatikFazlaCalismaOnaylansin}">
 							<ui:define name="label">Fazla Çalışma Otomatik Onaylansın</ui:define>

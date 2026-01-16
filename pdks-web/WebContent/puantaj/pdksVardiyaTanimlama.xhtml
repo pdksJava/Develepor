@@ -187,17 +187,32 @@
 												<f:validateDoubleRange maximum="0" />
 											</h:inputText>
 										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaTanimlaHome.hareketKaydiVardiyaBul}">
-											<ui:define name="label">#{md.calismaModeli.aciklama} Hareket Kayıtlarından #{ortakIslemler.vardiyaAciklama()} Bul</ui:define>
-											<h:selectBooleanCheckbox value="#{md.hareketKaydiVardiyaBul}"
-												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or (md.hareketKaydiVardiyaBulsunmu == false and md.calismaModeli.hareketKaydiVardiyaBulsunmu == false)}">
-											</h:selectBooleanCheckbox>
-										</s:decorate>
+										<c:if test="#{authenticatedUser.admin and vardiyaTanimlaHome.hareketKaydiVardiyaBul}">
+											<s:decorate template="/layout/edit.xhtml">
+												<ui:define name="label">#{md.calismaModeli.aciklama} Hareket Kayıtlarından #{ortakIslemler.vardiyaAciklama()} Bul</ui:define>
+												<h:selectBooleanCheckbox value="#{md.hareketKaydiVardiyaBul}"
+													disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or (md.hareketKaydiVardiyaBulsunmu == false and md.calismaModeli.hareketKaydiVardiyaBulsunmu == false)}">
+													<a4j:support event="onclick" reRender="haftaTatilHareketGuncelle#{md.id},offHareketGuncelle#{md.id}" status="ajaxStatus" ajaxSingle="true" />
+
+												</h:selectBooleanCheckbox>
+											</s:decorate>
+											<s:decorate template="/layout/edit.xhtml" id="haftaTatilHareketGuncelle#{md.id}">
+												<ui:define name="label">#{md.calismaModeli.aciklama} Hareket Kayıtlarından HT Güncelle</ui:define>
+												<h:selectBooleanCheckbox value="#{md.haftaTatilHareketGuncelle}"
+													disabled="#{md.hareketKaydiVardiyaBulsunmu==false or vardiyaTanimlaHome.denklestirmeAy.durum == false}">
+												</h:selectBooleanCheckbox>
+											</s:decorate>
+											<s:decorate template="/layout/edit.xhtml" id="offHareketGuncelle#{md.id}">
+												<ui:define name="label">#{md.calismaModeli.aciklama} Hareket Kayıtlarından OFF Güncelle</ui:define>
+												<h:selectBooleanCheckbox value="#{md.offHareketGuncelle}"
+													disabled="#{md.hareketKaydiVardiyaBulsunmu==false or vardiyaTanimlaHome.denklestirmeAy.durum == false}">
+												</h:selectBooleanCheckbox>
+											</s:decorate>
+										</c:if>
 
 										<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaTanimlaHome.otomatikFazlaCalismaOnaylansinVar}">
 											<ui:define name="label">#{md.calismaModeli.aciklama}Fazla Çalışma Otomatik Onaylansın</ui:define>
-											<h:selectBooleanCheckbox value="#{md.otomatikFazlaCalismaOnaylansin}"
-												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or (md.otomatikFazlaCalismaOnaylansin == false and md.calismaModeli.otomatikFazlaCalismaOnaylansin == false)}">
+											<h:selectBooleanCheckbox value="#{md.otomatikFazlaCalismaOnaylansin}" disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false}">
 											</h:selectBooleanCheckbox>
 										</s:decorate>
 									</c:if>

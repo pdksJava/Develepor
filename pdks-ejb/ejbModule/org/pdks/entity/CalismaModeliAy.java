@@ -31,6 +31,8 @@ public class CalismaModeliAy extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_OTOMATIK_FAZLA_CALISMA_ONAYLANSIN = "OTOMATIK_FAZLA_CALISMA_ONAYLANSIN";
 	public static final String COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL = "HAREKET_KAYDI_VARDIYA_BUL";
 	public static final String COLUMN_NAME_GUN_MAX_CALISMA_SURESI_ODENIR = "GUN_MAX_CALISMA_SURESI_ODENIR";
+	public static final String COLUMN_NAME_HAFTA_TATIL_HAREKET_GUNCELLE = "HT_HAREKET_GUNCELLE";
+	public static final String COLUMN_NAME_OFF_HAREKET_GUNCELLE = "OFF_HAREKET_GUNCELLE";
 
 	private DenklestirmeAy denklestirmeAy;
 
@@ -39,21 +41,26 @@ public class CalismaModeliAy extends BasePDKSObject implements Serializable {
 	private double sure = 0, toplamIzinSure = 0, negatifBakiyeDenkSaat = 0.0d;
 
 	private Boolean durum = Boolean.TRUE, hareketKaydiVardiyaBul = Boolean.FALSE, otomatikFazlaCalismaOnaylansin = Boolean.FALSE, gunMaxCalismaOdemeDurum = Boolean.TRUE;
+	private Boolean haftaTatilHareketGuncelle = Boolean.FALSE, offHareketGuncelle = Boolean.FALSE;
 
 	public CalismaModeliAy() {
 		super();
 	}
 
-	public CalismaModeliAy(DenklestirmeAy denklestirmeAy, CalismaModeli calismaModeli) {
+	public CalismaModeliAy(DenklestirmeAy denklestirmeAy, CalismaModeli cm) {
 		super();
 		this.denklestirmeAy = denklestirmeAy;
-		this.calismaModeli = calismaModeli;
+		this.calismaModeli = cm;
 		this.setDurum(Boolean.TRUE);
-		if (calismaModeli != null) {
-			this.negatifBakiyeDenkSaat = calismaModeli.getNegatifBakiyeDenkSaat();
-			this.hareketKaydiVardiyaBul = calismaModeli.getHareketKaydiVardiyaBul();
-			this.otomatikFazlaCalismaOnaylansin = calismaModeli.getOtomatikFazlaCalismaOnaylansin();
-			this.gunMaxCalismaOdemeDurum = calismaModeli.isGunMaxCalismaOdenir();
+		if (cm != null) {
+			this.negatifBakiyeDenkSaat = cm.getNegatifBakiyeDenkSaat();
+			this.hareketKaydiVardiyaBul = cm.getHareketKaydiVardiyaBul();
+			this.otomatikFazlaCalismaOnaylansin = cm.getOtomatikFazlaCalismaOnaylansin();
+			this.gunMaxCalismaOdemeDurum = cm.isGunMaxCalismaOdenir();
+			if (cm.isHareketKaydiVardiyaBulsunmu()) {
+				this.haftaTatilHareketGuncelle = cm.getHaftaTatilHareketGuncelle();
+				this.offHareketGuncelle = cm.getOffHareketGuncelle();
+			}
 		}
 	}
 
@@ -133,6 +140,24 @@ public class CalismaModeliAy extends BasePDKSObject implements Serializable {
 		this.gunMaxCalismaOdemeDurum = gunMaxCalismaOdemeDurum;
 	}
 
+	@Column(name = COLUMN_NAME_HAFTA_TATIL_HAREKET_GUNCELLE)
+	public Boolean getHaftaTatilHareketGuncelle() {
+		return haftaTatilHareketGuncelle;
+	}
+
+	public void setHaftaTatilHareketGuncelle(Boolean haftaTatilHareketGuncelle) {
+		this.haftaTatilHareketGuncelle = haftaTatilHareketGuncelle;
+	}
+
+	@Column(name = COLUMN_NAME_OFF_HAREKET_GUNCELLE)
+	public Boolean getOffHareketGuncelle() {
+		return offHareketGuncelle;
+	}
+
+	public void setOffHareketGuncelle(Boolean offHareketGuncelle) {
+		this.offHareketGuncelle = offHareketGuncelle;
+	}
+
 	@Column(name = COLUMN_NAME_DURUM)
 	public Boolean getDurum() {
 		return durum;
@@ -170,7 +195,6 @@ public class CalismaModeliAy extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		
 
 	}
 

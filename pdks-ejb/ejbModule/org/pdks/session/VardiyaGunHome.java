@@ -6486,6 +6486,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							if (vg.getVardiyaDate().after(bugunTarih))
 								aylikHareketKaydiVardiyaBul = Boolean.TRUE;
 							Integer version = getPdksUser().isIK() == false || vg.getVardiyaDate().after(bugunTarih) ? -1 : 0;
+							if (vg.getVardiya().isHaftaTatil() && calismaModeliAy.getHaftaTatilHareketGuncelle().booleanValue() == false)  
+								version = 0;
+							 
 							if (version != vg.getVersion()) {
 								vg.setVersion(version);
 								if (guncelleyenUser == null)
@@ -6540,6 +6543,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							continue;
 						if (vg.getId() != null && (vg.getVardiyaDate().after(bugunTarih) || vg.getDurum().equals(Boolean.FALSE))) {
 							Integer version = getPdksUser().isIK() == false || vg.getVardiyaDate().after(bugunTarih) ? -1 : 0;
+							if (vg.getVardiya().isHaftaTatil() && calismaModeliAy.getHaftaTatilHareketGuncelle().booleanValue() == false)  
+								version = 0;
 							if (version != vg.getVersion()) {
 								vg.setVersion(version);
 								saveOrUpdate(vg);
@@ -6626,7 +6631,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				try {
 					pdksUser.setAdmin(true);
 					pdksUser.setLogin(false);
- 					setAylikPuantajDonem(denklestirmeAy);
+					setAylikPuantajDonem(denklestirmeAy);
 					yil = denklestirmeAy.getYil();
 					ay = denklestirmeAy.getAy();
 					plansiz = true;
@@ -7523,10 +7528,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								}
 								if (pdksVardiyaGun.isAyinGunu()) {
 									if (hareketKaydiVardiyaBul && !pdksVardiyaGun.getVardiya().isHaftaTatil() && pdksVardiyaGun.getVersion() >= 0) {
+										
 										if ((yeniKayit || yeniVardiyaMap.containsKey(vardiyaKey))) {
 											kayit = true;
 											if (pdksVardiyaGun.getVardiya().isCalisma()) {
 												Integer version = getPdksUser().isIK() == false || pdksVardiyaGun.getVardiyaDate().after(bugunTarih) ? -1 : 0;
+												if (pdksVardiyaGun.getVardiya().isHaftaTatil() && calismaModeliAy.getHaftaTatilHareketGuncelle().booleanValue() == false)  
+													version = 0;
 												pdksVardiyaGun.setVersion(version);
 											}
 
