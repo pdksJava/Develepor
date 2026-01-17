@@ -100,24 +100,20 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 					Calendar cal = Calendar.getInstance();
 					bugun = cal.getTime();
-					Date tarih = bugun;
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-					boolean fazlaMesaiHesaplaDurum = false;
+					boolean fazlaMesaiHesaplaDurum = ortakIslemler.getParameterKey("sirketFazlaMesaiGuncelleme").equals("1");
 					Parameter parameterHareket = getParameter(PARAMETER_HAREKET_KEY, session);
 					Parameter parameterFazlaMesaiHesaplama = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
 					if (parameterHareket != null || parameterFazlaMesaiHesaplama != null || fazlaMesaiHesaplaDurum) {
+						Date tarih = PdksUtil.getDate(bugun);
 						Date basTarih = bugun;
 						String konu = null, aciklama = null;
-						if (parameterHareket != null) {
-							fazlaMesaiHesaplaDurum = ortakIslemler.getParameterKey("sirketFazlaMesaiGuncelleme").equals("1");
-							if (parameterFazlaMesaiHesaplama == null) {
-								boolean guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
-								if (guncellemeHareketDurum) {
-									konu = parameterHareket.getDescription();
-									aciklama = "Plan Vardiya Hareket Güncelleme güncellenmiştir.";
-								}
+						if (parameterHareket != null && parameterFazlaMesaiHesaplama == null) {
+							boolean guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
+							if (guncellemeHareketDurum) {
+								konu = parameterHareket.getDescription();
+								aciklama = "Plan Vardiya Hareket Güncelleme güncellenmiştir.";
 							}
-
 						}
 						if (parameterFazlaMesaiHesaplama != null || (parameterHareket != null && fazlaMesaiHesaplaDurum)) {
 							basTarih = ortakIslemler.getBugun();
