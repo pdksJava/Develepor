@@ -101,18 +101,21 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					Calendar cal = Calendar.getInstance();
 					bugun = cal.getTime();
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-					boolean fazlaMesaiHesaplaDurum = ortakIslemler.getParameterKey("sirketFazlaMesaiGuncelleme").equals("1");
 					Parameter parameterHareket = getParameter(PARAMETER_HAREKET_KEY, session);
 					Parameter parameterFazlaMesaiHesaplama = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
-					if (parameterHareket != null || parameterFazlaMesaiHesaplama != null || fazlaMesaiHesaplaDurum) {
+					if (parameterHareket != null || parameterFazlaMesaiHesaplama != null) {
+						boolean fazlaMesaiHesaplaDurum = false;
 						Date tarih = PdksUtil.getDate(bugun);
 						Date basTarih = bugun;
 						String konu = null, aciklama = null;
-						if (parameterHareket != null && parameterFazlaMesaiHesaplama == null) {
-							boolean guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
-							if (guncellemeHareketDurum) {
-								konu = parameterHareket.getDescription();
-								aciklama = "Plan Vardiya Hareket Güncelleme güncellenmiştir.";
+						if (parameterHareket != null) {
+							fazlaMesaiHesaplaDurum = ortakIslemler.getParameterKey("sirketFazlaMesaiGuncelleme").equals("1");
+							if (parameterFazlaMesaiHesaplama == null && fazlaMesaiHesaplaDurum == false) {
+								boolean guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
+								if (guncellemeHareketDurum) {
+									konu = parameterHareket.getDescription();
+									aciklama = "Plan Vardiya Hareket Güncelleme güncellenmiştir.";
+								}
 							}
 						}
 						if (parameterFazlaMesaiHesaplama != null || (parameterHareket != null && fazlaMesaiHesaplaDurum)) {
