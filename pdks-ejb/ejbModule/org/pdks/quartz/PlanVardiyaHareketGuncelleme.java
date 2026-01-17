@@ -84,6 +84,28 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	private static boolean calisiyor = Boolean.FALSE;
 
+	private Date bugun;
+
+	/**
+	 * @param adi
+	 * @param session
+	 * @return
+	 */
+	private Parameter getParameter(String adi, Session session) {
+		Parameter parameter = ortakIslemler.getParameter(session, adi);
+		if (parameter != null) {
+			boolean guncelleme = false;
+			String value = parameter.getValue();
+			if (PdksUtil.hasStringValue(value)) {
+				guncelleme = PdksUtil.zamanKontrol(adi, value, bugun);
+			}
+			if (guncelleme == false)
+				parameter = null;
+		}
+		return parameter;
+
+	}
+
 	@Asynchronous
 	@SuppressWarnings("unchecked")
 	@Transactional
@@ -95,33 +117,26 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			Session session = null;
 			try {
 				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
+					bugun = ortakIslemler.getBugun();
+					Date tarih = bugun;
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 					boolean fazlaMesaiHesaplaDurum = ortakIslemler.getParameterKey("sirketFazlaMesaiGuncelleme").equals("1");
-					Parameter parameterHareket = ortakIslemler.getParameter(session, PARAMETER_HAREKET_KEY);
-					Parameter fazlaMesaiHesaplama = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
-					String valueHareket = (parameterHareket != null) ? parameterHareket.getValue() : "";
-					String valueFazlaMesaiHesaplama = (fazlaMesaiHesaplama != null) ? fazlaMesaiHesaplama.getValue() : "";
-					if (PdksUtil.hasStringValue(valueHareket) || PdksUtil.hasStringValue(valueFazlaMesaiHesaplama) || fazlaMesaiHesaplaDurum) {
-						Date tarih = ortakIslemler.getBugun();
-						Date basTarih = tarih;
-						boolean guncellemeFazlaMesaiHesaplama = false;
-						boolean guncellemeHareketDurum = PdksUtil.hasStringValue(valueHareket) && PdksUtil.zamanKontrol(PARAMETER_HAREKET_KEY, valueHareket, tarih);
-						if (PdksUtil.hasStringValue(valueFazlaMesaiHesaplama))
-							guncellemeFazlaMesaiHesaplama = PdksUtil.zamanKontrol(PARAMETER_HAREKET_KEY, valueFazlaMesaiHesaplama, tarih);
-						else
-							guncellemeFazlaMesaiHesaplama = fazlaMesaiHesaplaDurum;
+					Parameter parameterHareket = getParameter(PARAMETER_HAREKET_KEY, session);
+					Parameter parameterFazlaMesaiHesaplama = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
+					if (parameterHareket != null || parameterFazlaMesaiHesaplama != null || fazlaMesaiHesaplaDurum) {
+						Date basTarih = bugun;
 						String konu = null, aciklama = null;
-						if (guncellemeHareketDurum) {
-							guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
+						if (parameterHareket != null) {
+							boolean guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
 							if (guncellemeHareketDurum) {
 								konu = parameterHareket.getDescription();
 								aciklama = "Plan Vardiya Hareket Güncelleme güncellenmiştir.";
 							}
 						}
-						if (guncellemeFazlaMesaiHesaplama) {
+						if (parameterFazlaMesaiHesaplama != null) {
 							basTarih = ortakIslemler.getBugun();
 							if (fazlaMesaiGuncelleme(tarih, session) != null) {
-								konu = fazlaMesaiHesaplama != null ? fazlaMesaiHesaplama.getDescription() : "Fazla Mesai Toplu Güncelleme";
+								konu = parameterFazlaMesaiHesaplama.getDescription();
 								aciklama = "Fazla Mesai güncellenmiştir.";
 							}
 						}
@@ -291,24 +306,30 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							idList = null;
 							for (Sirket sirket : sirketList) {
 								String linkStr = "loginAdres=" + ortakIslemler.getEncodeStringByBase64(adresStr) + "&pdksUserId=" + loginUser.getId() + "&donemId=" + donemId + "&sirketId=" + sirket.getId();
-								if (sirket.isTesisDurumu() == false) {
-									String id = ortakIslemler.getEncodeStringByBase64(linkStr);
-									String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
-									if (sonuc != null)
-										logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
-								} else {
-									List<SelectItem> tesisDetayList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, aylikPuantaj, false, session);
-									for (SelectItem st : tesisDetayList) {
-										Tanim tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, st.getValue(), Tanim.class, session);
-										if (tesis != null) {
-											String id = ortakIslemler.getEncodeStringByBase64(linkStr + "&tesisId=" + tesis.getId());
-											String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
-											if (sonuc != null)
-												logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
-										}
-									}
-									tesisDetayList = null;
-								}
+								if (sirket.isTesisDurumu())
+									linkStr = linkStr + "&tesisId=*";
+								String id = ortakIslemler.getEncodeStringByBase64(linkStr);
+								String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
+								if (sonuc != null)
+									logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+								// if (sirket.isTesisDurumu() == false) {
+								// String id = ortakIslemler.getEncodeStringByBase64(linkStr);
+								// String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
+								// if (sonuc != null)
+								// logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+								// } else {
+								// List<SelectItem> tesisDetayList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, aylikPuantaj, false, session);
+								// for (SelectItem st : tesisDetayList) {
+								// Tanim tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, st.getValue(), Tanim.class, session);
+								// if (tesis != null) {
+								// String id = ortakIslemler.getEncodeStringByBase64(linkStr + "&tesisId=" + tesis.getId());
+								// String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
+								// if (sonuc != null)
+								// logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+								// }
+								// }
+								// tesisDetayList = null;
+								// }
 							}
 							sirketList = null;
 						}
