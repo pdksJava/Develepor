@@ -81,30 +81,11 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	public static final String PARAMETER_HAREKET_KEY = "hareketVardiyaZamani";
 	public static final String PARAMETER_FAZLA_MESAI_KEY = "fazlaMesaiHesaplamaZamani";
+	public static final String PATTERN = "yyyyMMdd";
 
 	private static boolean calisiyor = Boolean.FALSE;
 
 	private Date bugun;
-
-	/**
-	 * @param adi
-	 * @param session
-	 * @return
-	 */
-	private Parameter getParameter(String adi, Session session) {
-		Parameter parameter = ortakIslemler.getParameter(session, adi);
-		if (parameter != null) {
-			boolean guncelleme = false;
-			String value = parameter.getValue();
-			if (PdksUtil.hasStringValue(value)) {
-				guncelleme = PdksUtil.zamanKontrol(adi, value, bugun);
-			}
-			if (guncelleme == false)
-				parameter = null;
-		}
-		return parameter;
-
-	}
 
 	@Asynchronous
 	@SuppressWarnings("unchecked")
@@ -117,33 +98,48 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			Session session = null;
 			try {
 				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
-					bugun = ortakIslemler.getBugun();
+					Calendar cal = Calendar.getInstance();
+					bugun = cal.getTime();
 					Date tarih = bugun;
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-					boolean fazlaMesaiHesaplaDurum = ortakIslemler.getParameterKey("sirketFazlaMesaiGuncelleme").equals("1");
+					boolean fazlaMesaiHesaplaDurum = false;
 					Parameter parameterHareket = getParameter(PARAMETER_HAREKET_KEY, session);
 					Parameter parameterFazlaMesaiHesaplama = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
 					if (parameterHareket != null || parameterFazlaMesaiHesaplama != null || fazlaMesaiHesaplaDurum) {
 						Date basTarih = bugun;
 						String konu = null, aciklama = null;
 						if (parameterHareket != null) {
-							boolean guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
-							if (guncellemeHareketDurum) {
-								konu = parameterHareket.getDescription();
-								aciklama = "Plan Vardiya Hareket Güncelleme güncellenmiştir.";
+							fazlaMesaiHesaplaDurum = ortakIslemler.getParameterKey("sirketFazlaMesaiGuncelleme").equals("1");
+							if (parameterFazlaMesaiHesaplama == null) {
+								boolean guncellemeHareketDurum = vardiyaHareketGuncelleme(tarih, session);
+								if (guncellemeHareketDurum) {
+									konu = parameterHareket.getDescription();
+									aciklama = "Plan Vardiya Hareket Güncelleme güncellenmiştir.";
+								}
 							}
+
 						}
-						if (parameterFazlaMesaiHesaplama != null) {
+						if (parameterFazlaMesaiHesaplama != null || (parameterHareket != null && fazlaMesaiHesaplaDurum)) {
 							basTarih = ortakIslemler.getBugun();
 							if (fazlaMesaiGuncelleme(tarih, session) != null) {
-								konu = parameterFazlaMesaiHesaplama.getDescription();
+								konu = parameterFazlaMesaiHesaplama != null ? parameterFazlaMesaiHesaplama.getDescription() : "Fazla Mesai Toplu Güncelleme";
 								aciklama = "Fazla Mesai güncellenmiştir.";
 							}
 						}
 						if (PdksUtil.hasStringValue(konu)) {
-							aciklama = aciklama + "<br></br><br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
-							aciklama = aciklama + "<br></br><b>Stop Time  : </b>" + PdksUtil.convertToDateString(ortakIslemler.getBugun(), PdksUtil.getDateTimeLongFormat()) + "<br></br>";
-							zamanlayici.mailGonder(session, null, konu, aciklama, null, Boolean.TRUE);
+							boolean mailGonder = true;
+							if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+								String key = PdksUtil.convertToDateString(cal.getTime(), PATTERN);
+								Date bitTarih = PdksUtil.tariheGunEkleCikar(cal.getTime(), 1);
+								TreeMap<String, Tatil> tatilMap = ortakIslemler.getTatilGunleri(null, basTarih, bitTarih, session);
+								mailGonder = tatilMap.containsKey(key) == false;
+							}
+							if (mailGonder) {
+								aciklama = aciklama + "<br></br><br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
+								aciklama = aciklama + "<br></br><b>Stop Time  : </b>" + PdksUtil.convertToDateString(ortakIslemler.getBugun(), PdksUtil.getDateTimeLongFormat()) + "<br></br>";
+								zamanlayici.mailGonder(session, null, konu, aciklama, null, Boolean.TRUE);
+							}
+
 						}
 					}
 				}
@@ -312,24 +308,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
 								if (sonuc != null)
 									logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
-								// if (sirket.isTesisDurumu() == false) {
-								// String id = ortakIslemler.getEncodeStringByBase64(linkStr);
-								// String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
-								// if (sonuc != null)
-								// logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
-								// } else {
-								// List<SelectItem> tesisDetayList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, aylikPuantaj, false, session);
-								// for (SelectItem st : tesisDetayList) {
-								// Tanim tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, st.getValue(), Tanim.class, session);
-								// if (tesis != null) {
-								// String id = ortakIslemler.getEncodeStringByBase64(linkStr + "&tesisId=" + tesis.getId());
-								// String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
-								// if (sonuc != null)
-								// logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " " + tesis.getAciklama() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
-								// }
-								// }
-								// tesisDetayList = null;
-								// }
 							}
 							sirketList = null;
 						}
@@ -357,7 +335,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		if (tarih == null)
 			tarih = ortakIslemler.getBugun();
 		Calendar cal = Calendar.getInstance();
-		String dateStr = PdksUtil.convertToDateString(cal.getTime(), "yyyyMMdd");
+		String dateStr = PdksUtil.convertToDateString(cal.getTime(), PATTERN);
 		int dayOffWeek = cal.get(Calendar.DAY_OF_WEEK);
 		cal.setTime(tarih);
 		cal.set(Calendar.DATE, 1);
@@ -405,7 +383,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				list.add(pd);
 			}
 			for (String key : linkedHashMap.keySet()) {
-				tarih = PdksUtil.convertToJavaDate(key + "01", "yyyyMMdd");
+				tarih = PdksUtil.convertToJavaDate(key + "01", PATTERN);
 				basTarih = PdksUtil.tariheGunEkleCikar(tarih, -6);
 				bitTarih = PdksUtil.tariheGunEkleCikar(PdksUtil.tariheAyEkleCikar(tarih, 1), 5);
 				List<PersonelDenklestirme> list1 = linkedHashMap.get(key);
@@ -464,7 +442,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							if (vg.getPdksPersonel() == null)
 								continue;
 							vg.setAyinGunu(vg.getVardiyaDateStr().startsWith(key));
-							String vKey = PdksUtil.convertToDateString(vg.getVardiyaDate(), "yyyyMMdd");
+							String vKey = PdksUtil.convertToDateString(vg.getVardiyaDate(), PATTERN);
 							Long perId = vg.getPdksPersonel().getId();
 							TreeMap<String, VardiyaGun> vardiyaGunleriMap = personelDenklestirmeMap.get(perId).getVardiyaGunleriMap();
 							vardiyaGunleriMap.put(vKey, vg);
@@ -508,6 +486,31 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		if (authenticatedUser != null)
 			fazlaMesaiGuncelleme(tarih, session);
 		return islemYapildi;
+	}
+
+	/**
+	 * @param adi
+	 * @param session
+	 * @return
+	 */
+	private Parameter getParameter(String adi, Session session) {
+		Parameter parameter = null;
+		if (ortakIslemler.getParameterKeyHasStringValue(adi))
+			parameter = ortakIslemler.getParameter(session, adi);
+		if (parameter != null) {
+			boolean guncelleme = false;
+			String value = parameter.getValue();
+			if (PdksUtil.hasStringValue(value))
+				try {
+					guncelleme = PdksUtil.zamanKontrol(adi, value, bugun);
+				} catch (Exception e) {
+				}
+
+			if (guncelleme == false)
+				parameter = null;
+		}
+		return parameter;
+
 	}
 
 	public static boolean isCalisiyor() {
