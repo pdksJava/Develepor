@@ -254,8 +254,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					pdksUser = ortakIslemler.getSistemAdminUser(session);
 				pdksUser.setAdmin(true);
 				pdksUser.setLogin(false);
-				Tanim tesis = null;
 				departmanId = departman.getId();
+				String donemStr = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " : " + sirket.getAd();
 				if (sirket.isTesisDurumu()) {
 					String tesisIdStr = param.get("tesisId");
 					List<Long> idList = new ArrayList<Long>();
@@ -282,9 +282,9 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						List<Tanim> tesisList = pdksEntityController.getSQLParamByFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, idList, Tanim.class, session);
 						if (tesisList.size() > 1)
 							tesisList = PdksUtil.sortTanimList(Constants.TR_LOCALE, tesisList);
-						for (Tanim tesisTanim : tesisList) {
-							tesisId = tesisTanim.getId();
-							String str = PdksUtil.replaceAll(denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " : " + sirket.getAd() + " " + tesisTanim.getAciklama(), "  ", " ").trim();
+						for (Tanim tesis : tesisList) {
+							tesisId = tesis.getId();
+							String str = PdksUtil.replaceAll(donemStr + " " + tesis.getAciklama(), "  ", " ").trim();
 							try {
 								logger.info(str + " in " + PdksUtil.getCurrentTimeStampStr());
 								sirketFazlaMesaiGuncelleme();
@@ -297,7 +297,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					idList = null;
 				}
 				if (sirketCalistir) {
-					String str = PdksUtil.replaceAll(denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " : " + sirket.getAd() + " " + (tesis != null ? tesis.getAciklama() + " " : ""), "  ", " ").trim();
+					String str = PdksUtil.replaceAll(donemStr, "  ", " ").trim();
 					try {
 						logger.info(str + " in " + PdksUtil.getCurrentTimeStampStr());
 						sirketFazlaMesaiGuncelleme();
