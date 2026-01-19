@@ -454,7 +454,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							vardiyaGun1List.add(vg);
 							vardiyaGunList.add(vg);
 						}
-						ortakIslemler.vardiyaHareketlerdenGuncelle(personelDenklestirmeMap, vGunMap, calismaPlaniMap, hareketKaydiVardiyaMap, personelHareketMap, null, session);
+						if (personelHareketMap != null && personelHareketMap.isEmpty() == false)
+							ortakIslemler.vardiyaHareketlerdenGuncelle(personelDenklestirmeMap, vGunMap, calismaPlaniMap, hareketKaydiVardiyaMap, personelHareketMap, null, session);
 						if (islemYapildi == null)
 							islemYapildi = dayOffWeek != Calendar.SUNDAY && tatilMap.containsKey(dateStr) == false;
 

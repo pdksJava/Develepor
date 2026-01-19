@@ -1959,15 +1959,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								iterator.remove();
 								continue;
 							}
+
 							if (vardiyaGun.getId() != null)
 								vgIdList.add(vardiyaGun.getId());
 							vardiyaGun.setStyle("");
 
 							boolean saatEkle = false;
-							Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
+							Vardiya islemVardiya = vardiyaGun.getVardiya() != null ? vardiyaGun.getIslemVardiya() : null;
 							Tatil vardiyaTatil = vardiyaGun.getTatil();
 							vardiyaGun.addResmiTatilSure(vardiyaGun.getGecenAyResmiTatilSure());
-							if (vardiyaGun.getPersonel().isCalisiyorGun(vardiyaGun.getVardiyaDate())) {
+							if (islemVardiya != null && vardiyaGun.getPersonel().isCalisiyorGun(vardiyaGun.getVardiyaDate())) {
 								if (islemVardiya.getVardiyaTelorans2BitZaman() != null)
 									vardiyaGun.setZamanGelmedi(vardiyaGun.getSonrakiVardiyaGun() != null && !bugun.after(islemVardiya.getVardiyaTelorans2BitZaman()));
 								else
@@ -1984,7 +1985,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 							}
 
-							if (offSure != null && vardiyaGun.getVardiya() != null && vardiyaGun.getIzin() == null && vardiyaGun.getVardiya().isOffGun()) {
+							if (offSure != null && islemVardiya != null && vardiyaGun.getIzin() == null && vardiyaGun.getVardiya().isOffGun()) {
 								cal.setTime(vardiyaGun.getVardiyaDate());
 								int haftaGunu = cal.get(Calendar.DAY_OF_WEEK);
 								if (haftaGunu != Calendar.SATURDAY && haftaGunu != Calendar.SUNDAY)
@@ -2005,7 +2006,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							vardiyaGun.setCalismaModeli(puantaj.getCalismaModeli());
 							vardiyaGun.setFiiliHesapla(fazlaMesaiHesapla);
 
-							if (vardiyaGun.getVardiya() != null && vardiyaGun.getVardiyaDate().getTime() >= puantaj.getIlkGun().getTime() && vardiyaGun.getVardiyaDate().getTime() <= puantaj.getSonGun().getTime()) {
+							if (islemVardiya != null && vardiyaGun.getVardiyaDate().getTime() >= puantaj.getIlkGun().getTime() && vardiyaGun.getVardiyaDate().getTime() <= puantaj.getSonGun().getTime()) {
 								paramsMap.put("fazlaMesaiHesapla", fazlaMesaiHesapla);
 								paramsMap.put("aksamVardiyaSayisi", aksamVardiyaSayisi);
 								paramsMap.put("aksamVardiyaSaatSayisi", aksamVardiyaSaatSayisi);

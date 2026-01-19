@@ -6486,9 +6486,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							if (vg.getVardiyaDate().after(bugunTarih))
 								aylikHareketKaydiVardiyaBul = Boolean.TRUE;
 							Integer version = getPdksUser().isIK() == false || vg.getVardiyaDate().after(bugunTarih) ? -1 : 0;
-							if (vg.getVardiya().isHaftaTatil() && calismaModeliAy.getHaftaTatilHareketGuncelle().booleanValue() == false)  
+							if (vg.getVardiya().isHaftaTatil() && calismaModeliAy.getHaftaTatilHareketGuncelle().booleanValue() == false)
 								version = 0;
-							 
+
 							if (version != vg.getVersion()) {
 								vg.setVersion(version);
 								if (guncelleyenUser == null)
@@ -6543,7 +6543,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							continue;
 						if (vg.getId() != null && (vg.getVardiyaDate().after(bugunTarih) || vg.getDurum().equals(Boolean.FALSE))) {
 							Integer version = getPdksUser().isIK() == false || vg.getVardiyaDate().after(bugunTarih) ? -1 : 0;
-							if (vg.getVardiya().isHaftaTatil() && calismaModeliAy.getHaftaTatilHareketGuncelle().booleanValue() == false)  
+							if (vg.getVardiya().isHaftaTatil() && calismaModeliAy.getHaftaTatilHareketGuncelle().booleanValue() == false)
 								version = 0;
 							if (version != vg.getVersion()) {
 								vg.setVersion(version);
@@ -7463,7 +7463,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							boolean kayit = false;
 							if (!pdksVardiyaGun.isCalismayaBaslamadi() && !pdksVardiyaGun.isCalismayiBirakti()) {
 								boolean yeniKayit = false;
-								if (pdksVardiyaGun.getId() == null) {
+								if (pdksVardiyaGun.getId() == null && sablonu != null) {
 									yeniKayit = true;
 									if (pdksVardiyaGun.isAyinGunu())
 										tekrarOku = true;
@@ -7528,12 +7528,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								}
 								if (pdksVardiyaGun.isAyinGunu()) {
 									if (hareketKaydiVardiyaBul && !pdksVardiyaGun.getVardiya().isHaftaTatil() && pdksVardiyaGun.getVersion() >= 0) {
-										
+
 										if ((yeniKayit || yeniVardiyaMap.containsKey(vardiyaKey))) {
 											kayit = true;
 											if (pdksVardiyaGun.getVardiya().isCalisma()) {
 												Integer version = getPdksUser().isIK() == false || pdksVardiyaGun.getVardiyaDate().after(bugunTarih) ? -1 : 0;
-												if (pdksVardiyaGun.getVardiya().isHaftaTatil() && calismaModeliAy.getHaftaTatilHareketGuncelle().booleanValue() == false)  
+												if (pdksVardiyaGun.getVardiya().isHaftaTatil() && calismaModeliAy.getHaftaTatilHareketGuncelle().booleanValue() == false)
 													version = 0;
 												pdksVardiyaGun.setVersion(version);
 											}

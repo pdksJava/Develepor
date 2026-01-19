@@ -5439,7 +5439,7 @@ public class OrtakIslemler implements Serializable {
 							if (isExisFunction(fnName, session)) {
 								String blobAsBytes = null;
 								try {
-									if (tipi.equalsIgnoreCase("P"))
+									if (tipi.equalsIgnoreCase("B"))
 										logger.debug(spAdi + " " + tipi + "\n" + gson.toJson(map));
 									List strlist = pdksEntityController.execFNList(map, fnName);
 									if (strlist != null && !strlist.isEmpty()) {
@@ -10221,7 +10221,8 @@ public class OrtakIslemler implements Serializable {
 								list.add(hareketKGS);
 							}
 							try {
-								sonuc = vardiyaHareketlerdenGuncelle(personelDenklestirmeMap, personelVardiyaBulMap, calismaPlaniMap, hareketKaydiVardiyaMap, personelHareketMap, null, session);
+								if (personelHareketMap != null && personelHareketMap.isEmpty() == false)
+									sonuc = vardiyaHareketlerdenGuncelle(personelDenklestirmeMap, personelVardiyaBulMap, calismaPlaniMap, hareketKaydiVardiyaMap, personelHareketMap, null, session);
 							} catch (Exception e) {
 								logger.error(e);
 								e.printStackTrace();
@@ -14347,36 +14348,43 @@ public class OrtakIslemler implements Serializable {
 
 					testVardiyaGun1 = new VardiyaGun(personel, null, vardiyaDate);
 					String vardiyaKey = testVardiyaGun1.getVardiyaKeyStr();
-					if (!vardiyaMap.containsKey(vardiyaKey)) {
+					if (vardiyaSablonu != null && !vardiyaMap.containsKey(vardiyaKey)) {
 						testVardiyaGun1.setOlusturanUser(olusturanUser);
 						testVardiyaGun1.setOlusturmaTarihi(olusturmaTarihi);
 						String vardiyaMetodName = "getVardiya" + (i + 1);
-						Vardiya vardiya = (Vardiya) PdksUtil.getMethodObject(vardiyaSablonu, vardiyaMetodName, null);
-						testVardiyaGun1.setDurum(!vardiya.isCalisma());
-						String key = testVardiyaGun1.getVardiyaDateStr();
-						if (tatillerMap.containsKey(key)) {
-							if (vardiya.isCalisma()) {
-								Tatil pdksTatil = tatillerMap.get(key);
-								if (!pdksTatil.isYarimGunMu()) {
-									vardiya = offVardiya;
-									testVardiyaGun1.setVersion(0);
+						Vardiya vardiya = null;
+						try {
+							vardiya = (Vardiya) PdksUtil.getMethodObject(vardiyaSablonu, vardiyaMetodName, null);
+						} catch (Exception e) {
+							logger.error(e);
+						}
+						if (vardiya != null) {
+							testVardiyaGun1.setDurum(!vardiya.isCalisma());
+							String key = testVardiyaGun1.getVardiyaDateStr();
+							if (tatillerMap.containsKey(key)) {
+								if (vardiya.isCalisma()) {
+									Tatil pdksTatil = tatillerMap.get(key);
+									if (!pdksTatil.isYarimGunMu()) {
+										vardiya = offVardiya;
+										testVardiyaGun1.setVersion(0);
+									}
+
+								}
+							}
+							testVardiyaGun1.setVardiya((Vardiya) vardiya.clone());
+							if (saveList != null && testVardiyaGun1 != null) {
+								if (!vardiyaMap.containsKey(vardiyaKey)) {
+									if (veriYaz || personelYaz)
+										saveList.add(testVardiyaGun1);
 								}
 
-							}
-						}
-						testVardiyaGun1.setVardiya((Vardiya) vardiya.clone());
-						if (saveList != null && testVardiyaGun1 != null) {
-							if (!vardiyaMap.containsKey(vardiyaKey)) {
-								if (veriYaz || personelYaz)
-									saveList.add(testVardiyaGun1);
-							}
+								else
+									testVardiyaGun1 = vardiyaMap.get(vardiyaKey);
 
-							else
-								testVardiyaGun1 = vardiyaMap.get(vardiyaKey);
-
+							}
+							if (testVardiyaGun1 != null)
+								vardiyaMap.put(vardiyaKey, testVardiyaGun1);
 						}
-						if (testVardiyaGun1 != null)
-							vardiyaMap.put(vardiyaKey, testVardiyaGun1);
 					}
 				}
 
