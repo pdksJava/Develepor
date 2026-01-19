@@ -296,7 +296,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					}
 					idList = null;
 				}
-				departmanId = departman.getId();
 				if (sirketCalistir) {
 					String str = PdksUtil.replaceAll(denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " : " + sirket.getAd() + " " + (tesis != null ? tesis.getAciklama() + " " : ""), "  ", " ").trim();
 					try {
