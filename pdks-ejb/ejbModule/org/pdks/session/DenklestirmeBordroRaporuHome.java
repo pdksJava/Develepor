@@ -405,7 +405,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	 */
 	@Transactional
 	private boolean bolumFazlaMesai(LinkedHashMap<String, Object> paramMap) {
-		Long donemKodu = Long.parseLong(PdksUtil.convertToDateString(new Date(), "yyyyMM"));
+		Long donemKodu = Long.parseLong(PdksUtil.convertToDateString(new Date(), "yyyyMM")), islemDonemKodu = denklestirmeAy.getDonemKodu();
 		AylikPuantaj aylikPuantaj = (AylikPuantaj) paramMap.get("aylikPuantaj");
 		User loginUser = (User) paramMap.get("loginUser");
 		Sirket seciliSirket = (Sirket) paramMap.get("seciliSirket");
@@ -463,11 +463,10 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								donemCPPerList = null;
 							}
 							List<AylikPuantaj> puantajList = null;
-							if (donemKodu.longValue() >= denklestirmeAy.getDonemKodu().longValue()) {
+							if (donemKodu.longValue() >= islemDonemKodu.longValue()) {
 								if (authenticatedUser != null)
 									logger.info(altBolumStr + " [ " + donemPerList.size() + " ] in " + PdksUtil.getCurrentTimeStampStr());
-
-								if (kayitAdet > 0 && gelecekTarih == false) {
+ 								if (kayitAdet > 0 && gelecekTarih == false) {
 									fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(ortakIslemler.getEncodeStringByBase64(linkStr), loginUser);
 									puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
 								}
@@ -475,12 +474,9 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 									session.flush();
 									if (authenticatedUser != null)
 										logger.info(altBolumStr + " [ " + donemPerList.size() + " ] out " + PdksUtil.getCurrentTimeStampStr());
-
-								}
-
-							}
-
-							donemPerList = null;
+ 								}
+ 							}
+ 							donemPerList = null;
 						}
 						continue;
 					}
@@ -513,10 +509,10 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 				}
 
 				List<AylikPuantaj> puantajList = null;
-				if (donemKodu.longValue() >= denklestirmeAy.getDonemKodu().longValue()) {
+				if (donemKodu.longValue() >= islemDonemKodu.longValue()) {
 					if (authenticatedUser != null)
 						logger.info(str + " [ " + donemPerList.size() + " ] in " + PdksUtil.getCurrentTimeStampStr());
- 					if (kayitAdet > 0 && gelecekTarih == false) {
+					if (kayitAdet > 0 && gelecekTarih == false) {
 						fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(ortakIslemler.getEncodeStringByBase64(linkStr), loginUser);
 						puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
 					}
