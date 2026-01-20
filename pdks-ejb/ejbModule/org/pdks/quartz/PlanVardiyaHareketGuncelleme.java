@@ -397,8 +397,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		sb = null;
 		if (islemYapildi == null)
 			islemYapildi = false;
-		if (authenticatedUser == null)
-			fazlaMesaiGuncelleme(tarih, session);
 		return islemYapildi;
 	}
 
