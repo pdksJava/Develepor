@@ -858,7 +858,7 @@ public class IseGelmemeUyari implements Serializable {
 			for (int i = 1; i <= islemAdet; i++) {
 				if (i != 1)
 					if (yoneticiler.isEmpty() == false)
-						logger.info("İnsan kaynaklarına " + yoneticiler.size() + " adet mail gönderiliyor "+ PdksUtil.getCurrentTimeStampStr());
+						logger.info("İnsan kaynaklarına " + yoneticiler.size() + " adet mail gönderiliyor " + PdksUtil.getCurrentTimeStampStr());
 
 				for (Iterator iterator = yoneticiler.iterator(); iterator.hasNext();) {
 					Personel personelYonetici = (Personel) iterator.next();
@@ -1106,13 +1106,13 @@ public class IseGelmemeUyari implements Serializable {
 							}
 							if (yoneticiCalisiyor == false) {
 								if (personelYonetici != null && islemYapan == null)
-									logger.info(personelYonetici.getPdksSicilNo() + " " + personelYonetici.getAdSoyad()+" "+ PdksUtil.getCurrentTimeStampStr());
+									logger.info(personelYonetici.getPdksSicilNo() + " " + personelYonetici.getAdSoyad() + " " + PdksUtil.getCurrentTimeStampStr());
 								continue;
 							}
 							User user = yonetici != null ? (User) yonetici.clone() : null;
 							if (user == null || !user.isDurum() || !user.getPdksPersonel().isCalisiyor()) {
 								if (personelYonetici != null && user != null)
-									logger.info(personelYonetici.getPdksSicilNo() + " " + personelYonetici.getAdSoyad() + " personel veya kullanıcısında sorun var! "+ PdksUtil.getCurrentTimeStampStr());
+									logger.info(personelYonetici.getPdksSicilNo() + " " + personelYonetici.getAdSoyad() + " personel veya kullanıcısında sorun var! " + PdksUtil.getCurrentTimeStampStr());
 								continue;
 							}
 							boolean yoneticiMailGonder = yoneticiMailGonderme == false;
@@ -1153,7 +1153,7 @@ public class IseGelmemeUyari implements Serializable {
 									// ortakIslemler.mailGonder(renderer, renderAdres);
 									if (mailStatu != null && mailStatu.getDurum())
 
-										logger.info(userYonetici.getPdksPersonel().getSirket().getAd() + " " + user.getAdSoyad() + " " + eposta + " iseGelisUyariMail mesaj gönderildi! "+ PdksUtil.getCurrentTimeStampStr());
+										logger.info(userYonetici.getPdksPersonel().getSirket().getAd() + " " + user.getAdSoyad() + " " + eposta + " iseGelisUyariMail mesaj gönderildi! " + PdksUtil.getCurrentTimeStampStr());
 								}
 							} catch (Exception ee) {
 								if (islemYapan != null)
@@ -1192,7 +1192,7 @@ public class IseGelmemeUyari implements Serializable {
 				for (int i = 1; i <= islemAdet; i++) {
 					if (i != 1)
 						if (mailList.isEmpty() == false)
-							logger.info("İnsan kaynaklarına " + mailList.size() + " adet mail gönderiliyor ."+ PdksUtil.getCurrentTimeStampStr());
+							logger.info("İnsan kaynaklarına " + mailList.size() + " adet mail gönderiliyor ." + PdksUtil.getCurrentTimeStampStr());
 					for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
 						String email = (String) iterator.next();
 						personelVardiyalari.clear();
@@ -1507,12 +1507,17 @@ public class IseGelmemeUyari implements Serializable {
 			List<Long> yoneticiPerIdList = new ArrayList<Long>();
 			List<Long> tesisList = null;
 			if (tesisYetki && session != null) {
-				ortakIslemler.setUserTesisler(user, true, session);
-				if (user.getYetkiliTesisler() != null) {
-					tesisList = new ArrayList<Long>();
-					for (Tanim tesis : user.getYetkiliTesisler())
-						tesisList.add(tesis.getId());
+				try {
+					ortakIslemler.setUserTesisler(user, true, session);
+					if (user.getYetkiliTesisler() != null) {
+						tesisList = new ArrayList<Long>();
+						for (Tanim tesis : user.getYetkiliTesisler())
+							tesisList.add(tesis.getId());
 
+					}
+				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
 				}
 
 			}
@@ -1926,7 +1931,7 @@ public class IseGelmemeUyari implements Serializable {
 				if (hareketExcelEkle)
 					sb.append("<p><SPAN style='color:blue;'> Personel giriş çıkışlarında problem yoktur.</SPAN></p>");
 				else if (user.getId() != null)
-					logger.info(user.getAdSoyad() + " " + user.getUsername()+" " + PdksUtil.getCurrentTimeStampStr());
+					logger.info(user.getAdSoyad() + " " + user.getUsername() + " " + PdksUtil.getCurrentTimeStampStr());
 			}
 
 			if (hareketExcelEkle && !yoneticiPerIdList.isEmpty()) {

@@ -889,18 +889,19 @@ public class OrtakIslemler implements Serializable {
 	 */
 	private List<Tanim> filUserOrganizasyonList(User user, OrganizasyonTipi tipi, Session session) {
 		List<Tanim> tanimList = null;
-		if (user != null) {
+		Long userId = user != null ? user.getId() : null;
+		if (userId != null && tipi != null) {
 			HashMap fields = new HashMap();
 			StringBuilder sb = new StringBuilder();
 			sb.append("select T.* from " + UserDigerOrganizasyon.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = P." + UserDigerOrganizasyon.COLUMN_NAME_ORGANIZASYON);
 			sb.append(" where P." + UserDigerOrganizasyon.COLUMN_NAME_USER + " = :s and P." + UserDigerOrganizasyon.COLUMN_NAME_TIPI + " = :t ");
-			fields.put("s", user.getId());
+			fields.put("s", userId);
 			fields.put("t", tipi.value());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			tanimList = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
-			if (tanimList.size() > 1)
+			if (tanimList != null && tanimList.size() > 1)
 				tanimList = PdksUtil.sortTanimList(null, tanimList);
 		} else
 			tanimList = new ArrayList<Tanim>();

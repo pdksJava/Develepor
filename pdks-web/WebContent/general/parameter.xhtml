@@ -149,8 +149,10 @@
 									action="#{personelERPGuncelleme.mailSatusKontrol(parameterHome.session)}" />
 								<ui:fragment rendered="#{ortakIslemler.canliDurum==false}">
 									<a4j:commandButton status="ajaxStatus" value="vardiyaHareketGuncelleme Calistir"
+										rendered="#{ortakIslemler.getParameterKeyHasStringValue('hareketVardiyaZamani')}"
 										action="#{planVardiyaHareketGuncelleme.vardiyaHareketGuncelleme(null,parameterHome.session)}" />
 									<a4j:commandButton status="ajaxStatus" value="fazlaMesaiGuncelleme Calistir"
+										rendered="#{ortakIslemler.getParameterKeyHasStringValue('fazlaMesaiHesaplamaZamani')}"
 										action="#{planVardiyaHareketGuncelleme.fazlaMesaiGuncelleme(null,parameterHome.session)}" />
 								</ui:fragment>
 							</c:if>
