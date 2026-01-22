@@ -96,7 +96,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			logger.debug("planVardiyaHareketGuncelleme in " + PdksUtil.getCurrentTimeStampStr());
 			Session session = null;
 			try {
- 				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
+				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 					Calendar cal = Calendar.getInstance();
 					bugun = cal.getTime();
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
@@ -214,9 +214,11 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								sirketList = PdksUtil.sortObjectStringAlanList(sirketList, "getAd", null);
 							idList = null;
 							for (Sirket sirket : sirketList) {
-								String linkStr = "loginAdres=" + ortakIslemler.getEncodeStringByBase64(adresStr) + "&pdksUserId=" + loginUser.getId() + "&donemId=" + donemId + "&sirketId=" + sirket.getId();
+								String linkStr = "pdksUserId=" + loginUser.getId() + "&donemId=" + donemId + "&sirketId=" + sirket.getId();
 								if (sirket.isTesisDurumu())
 									linkStr = linkStr + "&tesisId=*";
+								if (authenticatedUser != null)
+									linkStr = linkStr + "&login=" + authenticatedUser.getId();
 								String id = ortakIslemler.getEncodeStringByBase64(linkStr);
 								String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
 								if (sonuc != null)
