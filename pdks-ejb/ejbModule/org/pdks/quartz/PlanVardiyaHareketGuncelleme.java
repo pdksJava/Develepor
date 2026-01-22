@@ -217,8 +217,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								String linkStr = "pdksUserId=" + loginUser.getId() + "&donemId=" + donemId + "&sirketId=" + sirket.getId();
 								if (sirket.isTesisDurumu())
 									linkStr = linkStr + "&tesisId=*";
-								if (authenticatedUser != null)
-									linkStr = linkStr + "&login=" + authenticatedUser.getId();
+//								if (authenticatedUser != null)
+//									linkStr = linkStr + "&login=" + authenticatedUser.getId();
 								String id = ortakIslemler.getEncodeStringByBase64(linkStr);
 								String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
 								if (sonuc != null)
