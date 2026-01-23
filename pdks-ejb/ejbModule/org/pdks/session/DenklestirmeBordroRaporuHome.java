@@ -213,11 +213,9 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	public String sayfaFazlaMesaiGuncellemeAction() throws Exception {
 		if (session == null)
 			session = PdksUtil.getSession(entityManager, true);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String id = (String) req.getParameter("id");
-		if (id != null) {
+		if (session != null && id != null) {
 			String decodeStr = OrtakIslemler.getDecodeStringByBase64(id);
 			StringTokenizer st = new StringTokenizer(decodeStr, "&");
 			HashMap<String, String> param = new HashMap<String, String>();
@@ -228,6 +226,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			}
 			ekSaha4Tanim = null;
 			if (param.containsKey("donemId") && param.containsKey("sirketId")) {
+				session.setFlushMode(FlushMode.MANUAL);
+				session.clear();
 				Long donemId = Long.parseLong(param.get("donemId"));
 				denklestirmeAy = (DenklestirmeAy) pdksEntityController.getSQLParamByFieldObject(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_ID, donemId, DenklestirmeAy.class, session);
 				if (denklestirmeAy != null && denklestirmeAy.getDurum()) {
