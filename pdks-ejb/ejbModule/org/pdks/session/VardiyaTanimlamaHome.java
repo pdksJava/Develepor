@@ -836,6 +836,10 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	public String kaydet() {
 
 		try {
+			if (authenticatedUser.isAdmin() && denklestirmeAy.getModeller() != null) {
+				for (CalismaModeliAy cma : denklestirmeAy.getModeller())
+					pdksEntityController.saveOrUpdate(session, entityManager, cma);
+			}
 			denklestirmeAy.setGuncellemeTarihi(new Date());
 			denklestirmeAy.setGuncelleyenUser(authenticatedUser);
 			pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeAy);
