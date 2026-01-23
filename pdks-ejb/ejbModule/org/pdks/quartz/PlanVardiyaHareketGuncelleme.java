@@ -127,7 +127,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						if (PdksUtil.hasStringValue(konu)) {
 							boolean mailGonder = getMailGonder(session);
 							if (mailGonder) {
-								aciklama = aciklama + "<br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
+								aciklama = "<br></br>" + aciklama + "<br></br><br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
 								aciklama = aciklama + "<br></br><b>Stop Time  : </b>" + PdksUtil.convertToDateString(ortakIslemler.getBugun(), PdksUtil.getDateTimeLongFormat()) + "<br></br>";
 								zamanlayici.mailGonder(session, null, konu, aciklama, null, Boolean.TRUE);
 							}
@@ -217,8 +217,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								String linkStr = "pdksUserId=" + loginUser.getId() + "&donemId=" + donemId + "&sirketId=" + sirket.getId();
 								if (sirket.isTesisDurumu())
 									linkStr = linkStr + "&tesisId=*";
-//								if (authenticatedUser != null)
-//									linkStr = linkStr + "&login=" + authenticatedUser.getId();
+								// if (authenticatedUser != null)
+								// linkStr = linkStr + "&login=" + authenticatedUser.getId();
 								String id = ortakIslemler.getEncodeStringByBase64(linkStr);
 								String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
 								if (sonuc != null)

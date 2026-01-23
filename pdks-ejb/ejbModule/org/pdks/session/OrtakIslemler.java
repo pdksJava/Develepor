@@ -10427,7 +10427,7 @@ public class OrtakIslemler implements Serializable {
 					for (Iterator iterator = varList.iterator(); iterator.hasNext();) {
 						VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 						if (vardiyaGun.getVardiyaDate().after(sonGun)) {
- 								continue;
+							continue;
 						}
 						if (vardiyaGun.getGuncelleyenUser() != null && vardiyaGun.getVardiyaDate().before(sonGun)) {
 							if (userIKIdList.contains(vardiyaGun.getGuncelleyenUser().getId()))
@@ -10464,6 +10464,8 @@ public class OrtakIslemler implements Serializable {
 						if (vardiyaGun.getVardiya().isCalisma() == false) {
 							if (vardiyaGun.getVersion() < 0) {
 								vardiyaGun.setVersion(0);
+								vardiyaGun.setGuncelleyenUser(guncelleyenUser);
+								vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
 								pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
 								vardiyaGun.setGuncellendi(Boolean.TRUE);
 								flush = true;
@@ -10640,8 +10642,11 @@ public class OrtakIslemler implements Serializable {
 								try {
 									if (tatil != null && tatil.isYarimGunMu() == false && offVardiya != null && offDurum && hareketVar == false) {
 										if (islemVardiyaGun != null && islemVardiyaGun.isCalisma() && islemVardiyaGun.getVardiyaFazlaMesaiBitZaman().before(bugun)) {
+
 											vardiyaGun.setVardiya(offVardiya);
 											vardiyaGun.setVersion(0);
+											vardiyaGun.setGuncelleyenUser(guncelleyenUser);
+											vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
 											pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
 											vardiyaGun.setGuncellendi(Boolean.TRUE);
 											personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(vardiyaDateStr, vardiyaGun);
