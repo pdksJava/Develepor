@@ -7638,7 +7638,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								pdksVardiyaHafta.getVardiyaGunler().clear();
 								for (VardiyaGun pdksVardiyaGun2 : haftaVardiyaGunleri) {
 									String key = pdksVardiyaGun2.getVardiyaKeyStr();
-									long ayinGunu = Long.parseLong(key.substring(key.indexOf("_") + 1));
+									long ayinGunu = Long.parseLong(key.substring(key.lastIndexOf("_") + 1));
 									VardiyaGun pdksVardiyaGun = pdksVardiyaGun2;
 									if (ayinGunu >= iseBasTarih && istenAyrilmaTarih >= ayinGunu)
 										pdksVardiyaGun = vardiyaGunMap.containsKey(key) ? vardiyaGunMap.get(key) : pdksVardiyaGun2;
