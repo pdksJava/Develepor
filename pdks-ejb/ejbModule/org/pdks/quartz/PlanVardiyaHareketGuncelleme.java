@@ -187,8 +187,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				User loginUser = ortakIslemler.getSistemAdminUser(session);
 				loginUser.setAdmin(true);
 				for (DenklestirmeAy da : denklestirmeAyList) {
-
-					if (denklestirmeAyList.size() > 1)
+ 					if (denklestirmeAyList.size() > 1)
 						logger.info(da.getAyAdi() + " " + da.getYil() + " in " + PdksUtil.getCurrentTimeStampStr());
 					DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 					AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(da.getAy(), da.getYil(), denklestirmeDonemi, session);
