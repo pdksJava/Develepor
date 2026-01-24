@@ -171,7 +171,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		sb.append(" left join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 		sb.append(" left join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " AND S." + Sirket.COLUMN_NAME_PDKS + " = 1");
 		sb.append(" where (D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + "  between :d1 and :d2 ) and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1");
-		sb.append(" and (D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + "  <= :d3 and PD." + PersonelDenklestirme.COLUMN_NAME_ID + " is null) ");
+		sb.append(" and (D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + "  <= :d3 or PD." + PersonelDenklestirme.COLUMN_NAME_ID + " is null) ");
 		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU);
 		fields.put("d1", oncekiAy);
 		fields.put("d2", sonrakiAy);
