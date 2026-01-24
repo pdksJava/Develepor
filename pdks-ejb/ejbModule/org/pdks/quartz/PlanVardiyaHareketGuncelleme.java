@@ -126,7 +126,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						if (PdksUtil.hasStringValue(konu)) {
 							boolean mailGonder = getMailGonder(session);
 							if (mailGonder) {
-								aciklama = "<br></br>" + aciklama + "<br></br><br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
+								aciklama = aciklama + "<br></br><br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
 								aciklama = aciklama + "<br></br><b>Stop Time  : </b>" + PdksUtil.convertToDateString(ortakIslemler.getBugun(), PdksUtil.getDateTimeLongFormat()) + "<br></br>";
 								zamanlayici.mailGonder(session, null, konu, aciklama, null, Boolean.TRUE);
 							}
