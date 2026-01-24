@@ -187,15 +187,14 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				User loginUser = ortakIslemler.getSistemAdminUser(session);
 				loginUser.setAdmin(true);
 				for (DenklestirmeAy da : denklestirmeAyList) {
- 					if (denklestirmeAyList.size() > 1)
+					if (denklestirmeAyList.size() > 1)
 						logger.info(da.getAyAdi() + " " + da.getYil() + " in " + PdksUtil.getCurrentTimeStampStr());
 					DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 					AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(da.getAy(), da.getYil(), denklestirmeDonemi, session);
 					aylikPuantaj.setLoginUser(loginUser);
 					aylikPuantaj.setDenklestirmeAy(da);
 					List<SelectItem> departmanIdList = fazlaMesaiOrtakIslemler.getFazlaMesaiDepartmanList(aylikPuantaj, false, session);
-					Long donemId = da.getDonemKodu();
-					for (SelectItem siDepartman : departmanIdList) {
+ 					for (SelectItem siDepartman : departmanIdList) {
 						Long departmanId = (Long) siDepartman.getValue();
 						List<SelectItem> sirketIdList = fazlaMesaiOrtakIslemler.getFazlaMesaiSirketList(departmanId, aylikPuantaj, false, session);
 						if (sirketIdList.isEmpty() == false) {
@@ -207,7 +206,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								sirketList = PdksUtil.sortObjectStringAlanList(sirketList, "getAd", null);
 							idList = null;
 							for (Sirket sirket : sirketList) {
-								String linkStr = "pdksUserId=" + loginUser.getId() + "&donemId=" + donemId + "&sirketId=" + sirket.getId();
+								String linkStr = "pdksUserId=" + loginUser.getId() + "&donemId=" + da.getId() + "&sirketId=" + sirket.getId();
 								if (sirket.isTesisDurumu())
 									linkStr = linkStr + "&tesisId=*";
 								// if (authenticatedUser != null)
