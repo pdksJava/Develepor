@@ -160,41 +160,41 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	public String fazlaMesaiGuncelleme(Date tarih, Session session) throws Exception {
 		if (tarih == null)
 			tarih = ortakIslemler.getBugun();
+		Calendar cal = Calendar.getInstance();
 		String adresStr = null;
-		long sonrakiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(tarih, 6), PATTERN_DONEM));
 		long buAy = Long.parseLong(PdksUtil.convertToDateString(tarih, PATTERN_DONEM));
 		long oncekiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheAyEkleCikar(PdksUtil.convertToJavaDate(buAy + "01", PATTERN), -1), PATTERN_DONEM));
-		StringBuffer sb = new StringBuffer();
+		long sonrakiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(tarih, 6), PATTERN_DONEM));
+		Date tarihBas = PdksUtil.convertToJavaDate(oncekiAy + "01", PATTERN);
+		Date tarih2 = PdksUtil.convertToJavaDate(sonrakiAy + "01", PATTERN);
+		String str = "";
+ 		StringBuffer sb = new StringBuffer();
 		HashMap fields = new HashMap();
 		sb.append(" with VERI AS (");
-		sb.append(" select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
-		sb.append(" left join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
- 		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " between :d1 and :d2");
-		sb.append(" and coalesce(PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + ",0) = 0");
-		if (sonrakiAy > buAy) {
-			Calendar cal = Calendar.getInstance();
-			Date tarih1 = PdksUtil.convertToJavaDate(sonrakiAy + "01", PATTERN);
-			cal.setTime(tarih1);
+		int sayac = 0;
+		while (tarih2.getTime() >= tarihBas.getTime()) {
+			++sayac;
+			cal.setTime(tarihBas);
 			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
-			Date tarih2 = cal.getTime();
-			sb.append(" union ");
-			sb.append(" select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
-			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :t2 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :t1  ");
-			sb.append(" and P." + Personel.COLUMN_NAME_CALISMA_MODELI + " is not null and P." + Personel.COLUMN_NAME_SABLON + " is not null  ");
+			Date tarihBit = cal.getTime();
+			sb.append(str + " select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
+			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :bit" + sayac + " and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :bas" + sayac);
+			sb.append(" and P." + Personel.COLUMN_NAME_CALISMA_MODELI + " is not null and P." + Personel.COLUMN_NAME_SABLON + " is not null");
 			sb.append(" and P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1");
 			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " AND S." + Sirket.COLUMN_NAME_PDKS + " = 1");
 			sb.append(" left join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
-			sb.append(" and  PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + "  = P." + Personel.COLUMN_NAME_ID);
-			sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " = :d3 and PD." + PersonelDenklestirme.COLUMN_NAME_ID + " is null");
-			fields.put("d3", sonrakiAy);
-			fields.put("t1", tarih1);
-			fields.put("t2", tarih2);
+			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID);
+			sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " = :d" + sayac + " and coalesce(PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + ",0) = 0");
+			str = " union";
+			fields.put("bas" + sayac, tarihBas);
+			fields.put("bit" + sayac, tarihBit);
+			fields.put("d" + sayac, Long.parseLong(PdksUtil.convertToDateString(tarihBas, PATTERN_DONEM)));
+			tarihBas = PdksUtil.tariheAyEkleCikar(tarihBas, 1);
 		}
 		sb.append(" ) select distinct D.* from VERI D " + PdksEntityController.getSelectLOCK());
 		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1");
 		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU);
-		fields.put("d1", oncekiAy);
-		fields.put("d2", buAy);
+
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<DenklestirmeAy> denklestirmeAyList = pdksEntityController.getObjectBySQLList(sb.toString(), fields, DenklestirmeAy.class);
