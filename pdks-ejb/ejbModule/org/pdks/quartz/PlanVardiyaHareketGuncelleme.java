@@ -177,8 +177,9 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			cal.setTime(tarihBas);
 			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
 			Date tarihBit = cal.getTime();
+			long donem = Long.parseLong(PdksUtil.convertToDateString(tarihBas, PATTERN_DONEM));
 			boolean eski = sayac < 3 || buAy == sonrakiAy;
-			String str2 = eski ? "coalesce(PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + ", 0) = 0" : "PD." + PersonelDenklestirme.COLUMN_NAME_ID + " is null";
+			String str2 = eski ? "( coalesce(PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + ", 0) = 0 or  " + donem + " = " + buAy + " )" : "PD." + PersonelDenklestirme.COLUMN_NAME_ID + " is null";
 			sb.append(str + " select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :bit" + sayac + " and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :bas" + sayac);
 			sb.append(" and P." + Personel.COLUMN_NAME_CALISMA_MODELI + " is not null and P." + Personel.COLUMN_NAME_SABLON + " is not null");
@@ -194,7 +195,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			fields.put("dbas" + sayac, tarihBas);
 			fields.put("bas" + sayac, tarihBas);
 			fields.put("bit" + sayac, tarihBit);
-			fields.put("d" + sayac, Long.parseLong(PdksUtil.convertToDateString(tarihBas, PATTERN_DONEM)));
+			fields.put("d" + sayac, donem);
 			tarihBas = PdksUtil.tariheAyEkleCikar(tarihBas, 1);
 		}
 		sb.append(" ) select distinct D.* from VERI D " + PdksEntityController.getSelectLOCK());
