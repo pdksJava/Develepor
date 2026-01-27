@@ -4809,10 +4809,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			aramaSecenekleri.setSirket(sirket);
 			if (sirket != null && sirketler.size() == 1) {
-				if (sirket.isTesisDurumu())
+				if (sirket.isTesisDurumu()) {
 					fillTesisDoldur(true);
-				else
+				}
+				else {
+					aramaSecenekleri.setTesisId(null);
+					aramaSecenekleri.setTesisList(null);
 					bolumDoldur();
+				}
+
 			}
 		}
 
