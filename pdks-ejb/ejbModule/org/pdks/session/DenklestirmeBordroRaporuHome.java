@@ -648,10 +648,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			fazlaMesaiHesaplaDurum = getPdksUser().isAdmin() || getPdksUser().isSistemYoneticisi() || getPdksUser().isAnahtarKullanici();
 			if (!fazlaMesaiHesaplaDurum)
 				fazlaMesaiHesaplaDurum = ortakIslemler.getParameterKey("sirketFazlaMesaiGuncelleme").equals("1");
-			if (getPdksUser().isAdmin() || getPdksUser().isIKAdmin())
-				filDepartmanList();
-			if (departmanList.size() == 1)
-				setDepartmanId((Long) departmanList.get(0).getValue());
+
 			LinkedHashMap<String, Object> veriLastMap = ortakIslemler.getLastParameter(sayfaURL, session);
 			String yilStr = null;
 			String ayStr = null;
@@ -775,14 +772,26 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	}
 
 	public void filDepartmanList() {
-		List<SelectItem> departmanListe = ortakIslemler.getSelectItemList("departman", getPdksUser());
-		List<Departman> list = ortakIslemler.fillDepartmanTanimList(session);
-		if (list.size() == 1) {
-			departmanId = list.get(0).getId();
-			yilDegisti();
-		}
-		for (Departman pdksDepartman : list)
-			departmanListe.add(new SelectItem(pdksDepartman.getId(), pdksDepartman.getAciklama()));
+		denklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
+		// List<SelectItem> departmanListe = ortakIslemler.getSelectItemList("departman", getPdksUser());
+		List<SelectItem> departmanListe = denklestirmeAy != null ? fazlaMesaiOrtakIslemler.getFazlaMesaiDepartmanList(denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, true, session) : new ArrayList<SelectItem>();
+		departman = null;
+
+		if (!departmanListe.isEmpty()) {
+			Long onceki = departmanId;
+			if (departmanListe.size() == 1)
+				departmanId = (Long) departmanListe.get(0).getValue();
+			else if (onceki != null) {
+				for (SelectItem st : departmanListe) {
+					if (st.getValue().equals(onceki))
+						departmanId = onceki;
+				}
+			}
+			if (departmanId != null)
+				departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
+
+		} else
+			departmanId = null;
 
 		setDepartmanList(departmanListe);
 	}
@@ -829,9 +838,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	public void yilDegisti() {
 		if (yil > 0) {
 			aylar = ortakIslemler.getSelectItemList("ay", getPdksUser());
-			// ay = fazlaMesaiOrtakIslemler.aylariDoldur(yil, ay, aylar, session);
-			// if (aylar.isEmpty() && fazlaMesaiHesaplaDurum)
 			ay = fazlaMesaiOrtakIslemler.aylariDoldurDurum(yil, ay, aylar, fazlaMesaiHesaplaDurum == false, session);
+			filDepartmanList();
 			if (!aylar.isEmpty())
 				fillSirketList();
 		}
@@ -850,7 +858,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		if (ay <= 0)
 			ay = (Integer) aylar.get(aylar.size() - 1).getValue();
 
-		denklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
 		denklestirmeAyDurum = fazlaMesaiOrtakIslemler.getDurum(denklestirmeAy);
 		List<SelectItem> sirketList = fazlaMesaiOrtakIslemler.getFazlaMesaiSirketList(departmanId, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, getPdksUser().isAdmin() == false, session);
 		if (fazlaMesaiHesaplaDurum && denklestirmeAyDurum) {
