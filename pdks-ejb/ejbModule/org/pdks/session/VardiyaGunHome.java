@@ -6760,7 +6760,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				fazlaMesaiOrtakIslemler.setFazlaMesaiMaxSure(denklestirmeAy, session);
 			setAylikPuantajDonem(denklestirmeAy);
 			setDenklestirmeAyDurum(fazlaMesaiOrtakIslemler.getDurum(denklestirmeAy, loginUser));
-
+			Date basDonemTarih = null;
+			if (pdksUser != null && pdksUser.getLogin().booleanValue() == false)
+				basDonemTarih = PdksUtil.convertToJavaDate(denklestirmeAy.getDonem() + "01", "yyyyMMdd");
 			LinkedHashMap<Long, CalismaModeliAy> modelMap = new LinkedHashMap<Long, CalismaModeliAy>();
 
 			fields.clear();
@@ -6824,7 +6826,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			perList = new ArrayList<String>();
 			for (Iterator iterator = personelList.iterator(); iterator.hasNext();) {
 				Personel personel = (Personel) iterator.next();
-				if (PdksUtil.hasStringValue(sicilNo) && !personel.getPdksSicilNo().equals(sicilNo)) {
+				if (basDonemTarih != null && personel.getIseBaslamaTarihi().before(basDonemTarih) == false) {
+					iterator.remove();
+				} else if (PdksUtil.hasStringValue(sicilNo) && !personel.getPdksSicilNo().equals(sicilNo)) {
 					iterator.remove();
 
 				} else {

@@ -178,20 +178,20 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
 			Date tarihBit = cal.getTime();
 			boolean eski = sayac < 3 || buAy == sonrakiAy;
-			String strJoin = eski ? "inner" : "left";
-			String str2 = eski ? "PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 0" : "PD." + PersonelDenklestirme.COLUMN_NAME_ID + " is null";
+			String str2 = eski ? "coalesce(PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + ", 0) = 0" : "PD." + PersonelDenklestirme.COLUMN_NAME_ID + " is null";
 			sb.append(str + " select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :bit" + sayac + " and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :bas" + sayac);
 			sb.append(" and P." + Personel.COLUMN_NAME_CALISMA_MODELI + " is not null and P." + Personel.COLUMN_NAME_SABLON + " is not null");
 			sb.append(" and (P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1 or P." + Personel.COLUMN_NAME_MAIL_TAKIP + " = 1) and P." + Personel.COLUMN_NAME_EK_SAHA3 + " is not null");
-			sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1");
+			sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " < :dbas" + sayac);
 			if (eski == false)
 				sb.append(" inner join " + PersonelKGS.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on K." + PersonelKGS.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_KGS_PERSONEL + " and K." + PersonelKGS.COLUMN_NAME_DURUM + " = 1");
 			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " AND S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1");
-			sb.append(" " + strJoin + " join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
+			sb.append(" left join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
 			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID);
 			sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " = :d" + sayac + " and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1 and " + str2);
 			str = " union";
+			fields.put("dbas" + sayac, tarihBas);
 			fields.put("bas" + sayac, tarihBas);
 			fields.put("bit" + sayac, tarihBit);
 			fields.put("d" + sayac, Long.parseLong(PdksUtil.convertToDateString(tarihBas, PATTERN_DONEM)));
