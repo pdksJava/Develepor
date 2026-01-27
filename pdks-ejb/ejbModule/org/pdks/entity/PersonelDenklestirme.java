@@ -100,6 +100,7 @@ public class PersonelDenklestirme extends BaseObject {
 	public PersonelDenklestirme() {
 		super();
 		this.setGuncellendi(null);
+		this.setDurum(Boolean.FALSE);
 	}
 
 	/**
@@ -124,7 +125,7 @@ public class PersonelDenklestirme extends BaseObject {
 			this.fazlaMesaiOde = false;
 			this.fazlaMesaiIzinKullan = true;
 		}
-
+		this.setDurum(Boolean.FALSE);
 		this.setGuncellendi(Boolean.FALSE);
 
 	}
