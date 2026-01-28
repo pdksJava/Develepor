@@ -441,6 +441,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 				if (pdksVardiya.getSirket() != null)
 					pdksVardiya.setDepartman(pdksVardiya.getSirket().getDepartman());
 				pdksEntityController.saveOrUpdate(session, entityManager, pdksVardiya);
+				boolean cmvIptal = false, vyiIptal = false;
 				if (calismaModeliList.size() + calismaModeliKayitliList.size() > 0) {
 					parametreMap.clear();
 					parametreMap.put("vardiya.id", pdksVardiya.getId());
@@ -461,11 +462,14 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 						if (ekle) {
 							CalismaModeliVardiya vyi = new CalismaModeliVardiya(pdksVardiya, kayitli);
 							pdksEntityController.saveOrUpdate(session, entityManager, vyi);
+
 						}
 					}
+
 					for (Iterator iterator2 = kayitliCalismaModeliVardiyaList.iterator(); iterator2.hasNext();) {
 						CalismaModeliVardiya vyi = (CalismaModeliVardiya) iterator2.next();
 						pdksEntityController.deleteObject(session, entityManager, vyi);
+						cmvIptal = true;
 					}
 					kayitliCalismaModeliVardiyaList = null;
 				}
@@ -495,10 +499,21 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					for (Iterator iterator2 = list.iterator(); iterator2.hasNext();) {
 						VardiyaYemekIzin vyi = (VardiyaYemekIzin) iterator2.next();
 						pdksEntityController.deleteObject(session, entityManager, vyi);
+						vyiIptal = true;
 					}
 					list = null;
 				}
 				session.flush();
+				if (vyiIptal || cmvIptal) {
+					try {
+						if (cmvIptal)
+							pdksEntityController.savePrepareTableID(true, CalismaModeliVardiya.class, entityManager, session);
+						if (vyiIptal)
+							pdksEntityController.savePrepareTableID(true, VardiyaYemekIzin.class, entityManager, session);
+					} catch (Exception e) {
+					}
+					session.flush();
+				}
 				fillVardiyalar();
 				cikis = "persisted";
 			}

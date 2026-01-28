@@ -36,6 +36,7 @@ import org.pdks.entity.Liste;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaSablonu;
+import org.pdks.entity.VardiyaYemekIzin;
 import org.pdks.security.entity.User;
 
 @Name("calismaModeliHome")
@@ -402,9 +403,11 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 						pdksEntityController.saveOrUpdate(session, entityManager, cmv);
 					}
 				}
+				boolean sirala = false;
 				for (Iterator iterator2 = kayitliCalismaModeliVardiyaList.iterator(); iterator2.hasNext();) {
 					CalismaModeliVardiya cmv = (CalismaModeliVardiya) iterator2.next();
 					pdksEntityController.deleteObject(session, entityManager, cmv);
+					sirala = true;
 				}
 				if (cmGunMap != null && !cmGunMap.isEmpty()) {
 					for (Integer gunTipi : cmGunMap.keySet()) {
@@ -420,6 +423,13 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 					}
 				}
 				session.flush();
+				if (sirala) {
+					try {
+						pdksEntityController.savePrepareTableID(true, CalismaModeliVardiya.class, entityManager, session);
+					} catch (Exception e) {
+					}
+					session.flush();
+				}
 				fillCalismaModeliList();
 			}
 		} catch (Exception e) {

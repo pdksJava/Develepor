@@ -107,12 +107,21 @@ public class YemekIzinHome extends EntityHome<YemekIzin> implements Serializable
 					pdksEntityController.saveOrUpdate(session, entityManager, vyi);
 				}
 			}
+			boolean iptal = false;
 			for (Iterator iterator2 = kayitliVardiyaYemekIzinList.iterator(); iterator2.hasNext();) {
 				VardiyaYemekIzin vyi = (VardiyaYemekIzin) iterator2.next();
 				pdksEntityController.deleteObject(session, entityManager, vyi);
+				iptal = true;
 			}
 
 			session.flush();
+			if (iptal) {
+				try {
+					pdksEntityController.savePrepareTableID(true, VardiyaYemekIzin.class, entityManager, session);
+				} catch (Exception e) {
+				}
+				session.flush();
+			}
 			fillPdksYemekList();
 
 		} catch (Exception e) {
