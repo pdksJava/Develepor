@@ -521,9 +521,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					}
 					if (sirketId != null && sirket == null) {
 						sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
-						if (ikRole && sirket != null) {
-							departman = sirket.getDepartman();
-							departmanId = departman.getId();
+						if (sirket != null) {
+							if (ikRole) {
+								departman = sirket.getDepartman();
+								departmanId = departman.getId();
+							}
 						} else {
 							sirketId = null;
 							tesisId = null;
