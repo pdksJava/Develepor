@@ -533,6 +533,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		tesisGoster = Boolean.FALSE;
 		HashMap parametreMap = new HashMap();
 		try {
+			session.clear();
 			manuelVardiyaIzinGir = ortakIslemler.getVardiyaIzinGir(session, authenticatedUser.getDepartman());
 			List<Vardiya> vardiyalar = pdksEntityController.getSQLParamByFieldList(Vardiya.TABLE_NAME, pasifGoster == false ? Vardiya.COLUMN_NAME_DURUM : null, Boolean.TRUE, Vardiya.class, session);
 			if (seciliSirketId != null) {
