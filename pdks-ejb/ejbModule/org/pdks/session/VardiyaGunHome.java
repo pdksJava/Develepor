@@ -2009,8 +2009,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				if (personelDenklestirme != null) {
 					if (getPdksUser().getLogin().booleanValue() == false)
 						personelDenklestirme = (PersonelDenklestirme) pdksEntityController.getSQLParamByFieldObject(PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.COLUMN_NAME_ID, personelDenklestirme.getId(), PersonelDenklestirme.class, session);
-
-					if (ikMesaj)
+					else if (ikMesaj)
 						personelDenklestirme.setGuncelleyenUser(getPdksUser());
 					personelDenklestirme.setOnaylandi(yaz);
 					personelDenklestirme.setDurum(Boolean.FALSE);
@@ -6602,8 +6601,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param session
 	 */
 	@Transactional
-	public void hesaplanmisPlanOnayla(User userInput, List<AylikPuantaj> puantajList, Session sessionx) {
-
+	public boolean hesaplanmisPlanOnayla(User userInput, List<AylikPuantaj> puantajList, Session sessionx) {
+		boolean onaylandi = false;
 		if (puantajList != null) {
 			if (aramaSecenekleri == null)
 				aramaSecenekleri = new AramaSecenekleri();
@@ -6632,21 +6631,22 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				this.setPdksUser(user);
 				try {
 					planOnayla();
-					// for (AylikPuantaj ap : list) {
-					// PersonelDenklestirme pd = ap.getPersonelDenklestirme();
-					// if (pd.isOnaylandi()) {
-					// Personel personel = pd.getPdksPersonel();
-					// logger.info(personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " " + PdksUtil.getCurrentTimeStampStr());
-					// }
-					// }
+					for (AylikPuantaj ap : list) {
+						PersonelDenklestirme pd = ap.getPersonelDenklestirme();
+						if (pd.isOnaylandi()) {
+							onaylandi = true;
+							Personel personel = pd.getPdksPersonel();
+							logger.debug(personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " " + PdksUtil.getCurrentTimeStampStr());
+						}
+					}
 				} catch (Exception e) {
 					logger.error(e);
 					e.printStackTrace();
 				}
 			}
-
+			list = null;
 		}
-
+		return onaylandi;
 	}
 
 	/**
@@ -11731,16 +11731,16 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param personelDenklestirme
 	 */
 
-	private void savePersonelDenklestirme(PersonelDenklestirme personelDenklestirme) {
-		personelDenklestirme.setOnaylandi(Boolean.FALSE);
-		personelDenklestirme.setGuncellemeTarihi(new Date());
-		personelDenklestirme.setDevredenSure(null);
-		saveOrUpdate(personelDenklestirme);
-		if (personelDenklestirme.getPersonelDenklestirmeGecenAy() == null && personelDenklestirme.getCalismaModeliAy() != null) {
+	private void savePersonelDenklestirme(PersonelDenklestirme pd) {
+		pd.setOnaylandi(Boolean.FALSE);
+		pd.setGuncellemeTarihi(new Date());
+		pd.setDevredenSure(null);
+		saveOrUpdate(pd);
+		if (pd.getPersonelDenklestirmeGecenAy() == null && pd.getCalismaModeliAy() != null) {
 			try {
-				CalismaModeli cm = personelDenklestirme.getCalismaModeliAy().getCalismaModeli();
+				CalismaModeli cm = pd.getCalismaModeliAy().getCalismaModeli();
 				if (cm != null) {
-					Personel personel = personelDenklestirme.getPdksPersonel();
+					Personel personel = pd.getPdksPersonel();
 					if (personel.getCalismaModeli() == null || !personel.getCalismaModeli().getId().equals(cm.getId())) {
 						personel.setCalismaModeli(cm);
 						if (getPdksUser().isAdmin() == false) {

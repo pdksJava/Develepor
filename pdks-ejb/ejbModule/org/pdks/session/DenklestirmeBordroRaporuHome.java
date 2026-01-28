@@ -477,9 +477,13 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								if (authenticatedUser != null || login)
 									logger.info(altBolumStr + " [ " + donemPerList.size() + " ] in " + PdksUtil.getCurrentTimeStampStr());
 								if (kayitAdet > 0 && gelecekTarih == false) {
-									fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(ortakIslemler.getEncodeStringByBase64(linkStr + "&seciliEkSaha4Id=" + altBolumId), loginUser);
+									String idStr = ortakIslemler.getEncodeStringByBase64(linkStr + "&seciliEkSaha4Id=" + altBolumId);
+									fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
 									puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
-									vardiyaGunHome.hesaplanmisPlanOnayla(ap.getLoginUser(), puantajList, session);
+									if (vardiyaGunHome.hesaplanmisPlanOnayla(ap.getLoginUser(), puantajList, session)) {
+										fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
+										puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
+									}
 								}
 								if (puantajList != null && !puantajList.isEmpty()) {
 									session.flush();
@@ -522,9 +526,14 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					if (authenticatedUser != null || login)
 						logger.info(str + " [ " + donemPerList.size() + " ] in " + PdksUtil.getCurrentTimeStampStr());
 					if (kayitAdet > 0 && gelecekTarih == false) {
-						fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(ortakIslemler.getEncodeStringByBase64(linkStr), loginUser);
+						String idStr = ortakIslemler.getEncodeStringByBase64(linkStr);
+						fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
 						puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
-						vardiyaGunHome.hesaplanmisPlanOnayla(ap.getLoginUser(), puantajList, session);
+						if (vardiyaGunHome.hesaplanmisPlanOnayla(ap.getLoginUser(), puantajList, session)) {
+							fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
+							puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
+						}
+
 					}
 					if (puantajList != null && !puantajList.isEmpty()) {
 						session.flush();
