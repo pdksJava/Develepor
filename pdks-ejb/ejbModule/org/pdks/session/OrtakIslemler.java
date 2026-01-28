@@ -1684,6 +1684,26 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param session
+	 * @return
+	 * @throws Exception
+	 */
+	public List<User> getIKUserList(Session session) throws Exception {
+		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+		veriMap.put("alanAdi", null);
+		if (session != null)
+			veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<User> list = null;
+		try {
+			list = pdksEntityController.execSPList(veriMap, "SP_IK_USERNAME_LIST", User.class);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return list;
+	}
+
+	/**
 	 * @param basTarih
 	 * @param bitTarih
 	 * @param session
