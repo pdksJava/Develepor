@@ -359,11 +359,11 @@
 
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Mesai Saati</ui:define>
-								<ui:fragment>
+								<ui:fragment rendered="#{personelFazlaMesaiHome.instance.hareket!=null}">
 									<h:inputText size="10" value="#{personelFazlaMesaiHome.instance.hareket.fazlaMesai}" />
 									<ui:fragment rendered="#{personelFazlaMesaiHome.instance.hareket.yemekMolasi gt 0}">
-								Kanuni Minumum Mola : #{authenticatedUser.sayiFormatliGoster(personelFazlaMesaiHome.instance.hareket.yemekMolasi)}
-								</ui:fragment>
+										Kanuni Minumum Mola : #{authenticatedUser.sayiFormatliGoster(personelFazlaMesaiHome.instance.hareket.yemekMolasi)}
+									</ui:fragment>
 								</ui:fragment>
 
 							</s:decorate>
