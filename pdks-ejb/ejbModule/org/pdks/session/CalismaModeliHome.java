@@ -36,7 +36,6 @@ import org.pdks.entity.Liste;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaSablonu;
-import org.pdks.entity.VardiyaYemekIzin;
 import org.pdks.security.entity.User;
 
 @Name("calismaModeliHome")

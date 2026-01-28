@@ -22,14 +22,12 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
-import org.pdks.entity.CalismaModeliVardiya;
 import org.pdks.entity.Departman;
 import org.pdks.entity.IzinTipi;
 import org.pdks.entity.IzinTipiMailAdres;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
-import org.pdks.entity.VardiyaYemekIzin;
 import org.pdks.security.entity.User;
 
 @Name("izinTipiHome")
