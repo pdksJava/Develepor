@@ -184,7 +184,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			Sirket sirket = pdksVardiya.getSirketId() != null ? new Sirket(pdksVardiya.getSirketId()) : null;
 
 			calismaModeliList = ortakIslemler.getCalismaModeliList(sirket, pdksDepartmanId, false, session);
-
+			Long seciliTesisId = pdksVardiya.getTesisId();
 			for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
 				CalismaModeli cm = (CalismaModeli) iterator.next();
 				if (pdksDepartmanId != null) {
@@ -200,8 +200,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 						continue;
 					}
 				}
-				if (tesisId != null) {
-					if (cm.getTesis() != null && !cm.getTesis().getId().equals(tesisId)) {
+				if (seciliTesisId != null) {
+					if (cm.getTesis() != null && !cm.getTesis().getId().equals(seciliTesisId)) {
 						iterator.remove();
 						continue;
 					}

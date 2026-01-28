@@ -58,7 +58,7 @@ public class Vardiya extends BaseObject {
 	public static final String GEBE_KEY = "g", SUA_KEY = "s", ICAP_KEY = "i", SUT_IZNI_KEY = "e", FMI_KEY = "f";
 
 	public static Date vardiyaKontrolTarih, vardiyaKontrolTarih2, vardiyaKontrolTarih3, vardiyaAySonuKontrolTarih;
-	private Long sirketId, calismaSekliId, departmanId;
+	private Long sirketId, tesisId, calismaSekliId, departmanId;
 	private Sirket sirket;
 	private Tanim tesis;
 	private static Integer fazlaMesaiBasSaati = 2, intOffFazlaMesaiBasDakika = -60, intHaftaTatiliFazlaMesaiBasDakika = -60;
@@ -143,21 +143,30 @@ public class Vardiya extends BaseObject {
 		return sirket;
 	}
 
+	public void setSirketId(Long sirketId) {
+		this.sirketId = sirketId;
+	}
+
 	@Column(name = COLUMN_NAME_SIRKET)
 	public Long getSirketId() {
 		return sirketId;
-	}
-
-	public void setSirketId(Long sirketId) {
-		this.sirketId = sirketId;
 	}
 
 	public void setSirket(Sirket sirket) {
 		this.sirket = sirket;
 	}
 
+	@Column(name = COLUMN_NAME_TESIS)
+	public Long getTesisId() {
+		return tesisId;
+	}
+
+	public void setTesisId(Long tesisId) {
+		this.tesisId = tesisId;
+	}
+
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = COLUMN_NAME_TESIS)
+	@JoinColumn(name = COLUMN_NAME_TESIS, insertable = false, updatable = false)
 	@Fetch(FetchMode.JOIN)
 	public Tanim getTesis() {
 		return tesis;
