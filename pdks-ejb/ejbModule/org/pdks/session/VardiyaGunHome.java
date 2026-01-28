@@ -4811,8 +4811,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (sirket != null && sirketler.size() == 1) {
 				if (sirket.isTesisDurumu()) {
 					fillTesisDoldur(true);
-				}
-				else {
+				} else {
 					aramaSecenekleri.setTesisId(null);
 					aramaSecenekleri.setTesisList(null);
 					bolumDoldur();
@@ -5646,7 +5645,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					sessionFlush();
 
 				}
-				aylikPuantajOlusturuluyor();
+				if (getPdksUser().getLogin())
+					aylikPuantajOlusturuluyor();
 				puantajList = aylikPuantajList;
 				suaKontrol(puantajList);
 				if (onayliVar)
@@ -6587,6 +6587,59 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			aylikPuantajOlusturuluyor();
 		}
 		return "";
+	}
+
+	/**
+	 * @param user
+	 * @param puantajList
+	 * @param session
+	 */
+	@Transactional
+	public void hesaplanmisPlanOnayla(User userInput, List<AylikPuantaj> puantajList, Session sessionx) {
+
+		if (puantajList != null) {
+			if (aramaSecenekleri == null)
+				aramaSecenekleri = new AramaSecenekleri();
+			List<AylikPuantaj> list = new ArrayList<AylikPuantaj>(puantajList);
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				AylikPuantaj ap = (AylikPuantaj) iterator.next();
+				PersonelDenklestirme pd = ap.getPersonelDenklestirme();
+				this.setDenklestirmeAy(pd.getDenklestirmeAy());
+				CalismaModeliAy cma = pd.getCalismaModeliAy();
+				if (pd.isOnaylandi() || cma.isHareketKaydiVardiyaBulsunmu() == false)
+					iterator.remove();
+				else {
+					Personel personel = pd.getPdksPersonel();
+					aramaSecenekleri.setEkSaha3Id(personel.getEkSaha3() != null ? personel.getEkSaha3().getId() : null);
+					ap.setOnayDurum(true);
+				}
+
+			}
+			if (list.isEmpty() == false) {
+				User user = (User) userInput.clone();
+				user.setYonetici(Boolean.TRUE);
+				user.setIK(Boolean.FALSE);
+				user.setAdmin(Boolean.FALSE);
+				this.setSession(sessionx);
+				this.setAylikPuantajList(list);
+				this.setPdksUser(user);
+				try {
+					planOnayla();
+					for (AylikPuantaj ap : list) {
+						PersonelDenklestirme pd = ap.getPersonelDenklestirme();
+						if (pd.isOnaylandi()) {
+							Personel personel = pd.getPdksPersonel();
+							logger.info(personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " " + PdksUtil.getCurrentTimeStampStr());
+						}
+					}
+				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
+				}
+			}
+
+		}
+
 	}
 
 	/**

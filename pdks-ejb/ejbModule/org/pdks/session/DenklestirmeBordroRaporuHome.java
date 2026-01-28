@@ -84,7 +84,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	@In(required = false, create = true)
 	FazlaMesaiHesaplaHome fazlaMesaiHesaplaHome;
 	@In(required = false, create = true)
-	VardiyaGunHome vardiyaGunHome;;
+	VardiyaGunHome vardiyaGunHome;
 
 	@In(required = false, create = true)
 	FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemler;
@@ -428,7 +428,9 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		boolean hataYok = true;
 		Date basGun = PdksUtil.convertToJavaDate(String.valueOf(yil * 100 + ay) + "01", "yyyyMMdd"), bugun = new Date();
 		boolean gelecekTarih = basGun.after(bugun);
-
+		DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
+		AylikPuantaj aylikPuantajDefault = fazlaMesaiOrtakIslemler.getAylikPuantaj(denklestirmeAy.getAy(), denklestirmeAy.getYil(), denklestirmeDonemi, session);
+		vardiyaGunHome.setAylikPuantajDefault(aylikPuantajDefault);
 		if (ekSaha4Tanim == null)
 			ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
 		for (SelectItem selectItem : bolumList) {
@@ -459,6 +461,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 										logger.info(altBolumStr + " aylikPuantajOlusturuluyor in " + PdksUtil.getCurrentTimeStampStr());
 										String idStr = ortakIslemler.getEncodeStringByBase64(linkStr + "&seciliEkSaha4Id=" + altBolumId);
 										vardiyaGunHome.sayfaCalismaPlanOlustur(idStr, loginUser);
+
 										logger.info(altBolumStr + " aylikPuantajOlusturuluyor out " + PdksUtil.getCurrentTimeStampStr());
 									}
 								} catch (Exception e) {
@@ -476,6 +479,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								if (kayitAdet > 0 && gelecekTarih == false) {
 									fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(ortakIslemler.getEncodeStringByBase64(linkStr + "&seciliEkSaha4Id=" + altBolumId), loginUser);
 									puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
+									vardiyaGunHome.hesaplanmisPlanOnayla(ap.getLoginUser(), puantajList, session);
 								}
 								if (puantajList != null && !puantajList.isEmpty()) {
 									session.flush();
@@ -520,6 +524,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					if (kayitAdet > 0 && gelecekTarih == false) {
 						fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(ortakIslemler.getEncodeStringByBase64(linkStr), loginUser);
 						puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
+						vardiyaGunHome.hesaplanmisPlanOnayla(ap.getLoginUser(), puantajList, session);
 					}
 					if (puantajList != null && !puantajList.isEmpty()) {
 						session.flush();
