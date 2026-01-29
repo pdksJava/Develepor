@@ -2,6 +2,7 @@ package org.pdks.quartz;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -170,6 +171,14 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		long buAy = Long.parseLong(PdksUtil.convertToDateString(tarih, PATTERN_DONEM));
 		long oncekiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheAyEkleCikar(PdksUtil.convertToJavaDate(buAy + "01", PATTERN), -1), PATTERN_DONEM));
 		long sonrakiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(tarih, 6), PATTERN_DONEM));
+		List<DenklestirmeAy> aylar = pdksEntityController.getSQLParamByFieldList(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_DONEM_KODU, Arrays.asList(new Long[] { oncekiAy, buAy, sonrakiAy }), DenklestirmeAy.class, session);
+		HashMap<Long, Long> ayMap = new HashMap<Long, Long>();
+		for (DenklestirmeAy denklestirmeAy : aylar)
+			ayMap.put(denklestirmeAy.getDonem(), denklestirmeAy.getId());
+		aylar = null;
+		if (ayMap.containsKey(sonrakiAy) == false)
+			ayMap.put(sonrakiAy, ayMap.get(buAy));
+		aylar = null;
 		Date tarihBas = PdksUtil.convertToJavaDate(oncekiAy + "01", PATTERN);
 		Date tarih2 = PdksUtil.convertToJavaDate(sonrakiAy + "01", PATTERN);
 		String str = "";
@@ -191,7 +200,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			sb2.append("), ");
 			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
 			Date tarihBit = cal.getTime();
-			long donem = Long.parseLong(PdksUtil.convertToDateString(tarihBas, PATTERN_DONEM));
+			long donemId = ayMap.get(Long.parseLong(PdksUtil.convertToDateString(tarihBas, PATTERN_DONEM)));
 			boolean eski = sayac < 3 || buAy == sonrakiAy;
 			// String str2 = eski ? "( coalesce(PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + ", 0) = 0 or " + donem + " < " + buAy + " )" : "PD." + PersonelDenklestirme.COLUMN_NAME_ID + " is null";
 			String str2 = eski ? "" : " and PD." + PersonelDenklestirme.COLUMN_NAME_ID + " is null";
@@ -199,12 +208,17 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			sb1.append(" inner join PERSONEL" + sayac + " V " + PdksEntityController.getJoinLOCK() + " on  1 = 1");
 			sb1.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 
-			if (eski == false)
+			if (eski == false) {
+				long buDonemId = ayMap.get(buAy);
+				sb1.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " G " + PdksEntityController.getJoinLOCK() + " on G." + Personel.COLUMN_NAME_ID + " = " + buDonemId);
+				sb1.append(" and G." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 				sb1.append(" inner join " + PersonelKGS.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on K." + PersonelKGS.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_KGS_PERSONEL + " and K." + PersonelKGS.COLUMN_NAME_DURUM + " = 1");
+
+			}
 			sb1.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " AND S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1");
 			sb1.append(" left join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
 			sb1.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID);
-			sb1.append(" where D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " = " + donem + " and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1" + str2);
+			sb1.append(" where D." + DenklestirmeAy.COLUMN_NAME_ID + " = " + donemId + " and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 1" + str2);
 			str = " union";
 
 			fields.put("pbas" + sayac, tarihBas);
