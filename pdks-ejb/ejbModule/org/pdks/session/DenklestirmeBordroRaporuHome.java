@@ -36,6 +36,7 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.AylikPuantaj;
+import org.pdks.entity.CalismaModeliAy;
 import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.Departman;
 import org.pdks.entity.DepartmanDenklestirmeDonemi;
@@ -480,10 +481,10 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 									String idStr = ortakIslemler.getEncodeStringByBase64(linkStr + "&seciliEkSaha4Id=" + altBolumId);
 									fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
 									puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
-//									if (vardiyaGunHome.hesaplanmisPlanOnayla(ap.getLoginUser(), puantajList, session)) {
-//										fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
-//										puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
-//									}
+									// if (vardiyaGunHome.hesaplanmisPlanOnayla(ap.getLoginUser(), puantajList, session)) {
+									// fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
+									// puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
+									// }
 								}
 								if (puantajList != null && !puantajList.isEmpty()) {
 									session.flush();
@@ -529,10 +530,10 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						String idStr = ortakIslemler.getEncodeStringByBase64(linkStr);
 						fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
 						puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
-//						if (vardiyaGunHome.hesaplanmisPlanOnayla(ap.getLoginUser(), puantajList, session)) {
-//							fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
-//							puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
-//						}
+						// if (vardiyaGunHome.hesaplanmisPlanOnayla(ap.getLoginUser(), puantajList, session)) {
+						// fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
+						// puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
+						// }
 
 					}
 					if (puantajList != null && !puantajList.isEmpty()) {
@@ -585,7 +586,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			lastMap.put("altBolumId", "" + (personel.getEkSaha4() != null ? personel.getEkSaha4().getId() : "-1"));
 		lastMap.put("sicilNo", personel.getPdksSicilNo());
 		String sayfa = MenuItemConstant.fazlaMesaiHesapla;
-		if (personelDenklestirme.getDurum().equals(Boolean.TRUE) || personelDenklestirme.isOnaylandi()) {
+		CalismaModeliAy cma = personelDenklestirme.getCalismaModeliAy();
+		if (personelDenklestirme.getDurum().equals(Boolean.TRUE) || personelDenklestirme.isOnaylandi() || (cma == null || cma.isHareketKaydiVardiyaBulsunmu())) {
 			lastMap.put("sayfaURL", FazlaMesaiHesaplaHome.sayfaURL);
 			lastMap.put("calistir", Boolean.TRUE);
 		} else {
