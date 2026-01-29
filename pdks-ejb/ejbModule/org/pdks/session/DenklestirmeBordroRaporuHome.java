@@ -480,10 +480,10 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 									String idStr = ortakIslemler.getEncodeStringByBase64(linkStr + "&seciliEkSaha4Id=" + altBolumId);
 									fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
 									puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
-									if (vardiyaGunHome.hesaplanmisPlanOnayla(ap.getLoginUser(), puantajList, session)) {
-										fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
-										puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
-									}
+//									if (vardiyaGunHome.hesaplanmisPlanOnayla(ap.getLoginUser(), puantajList, session)) {
+//										fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
+//										puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
+//									}
 								}
 								if (puantajList != null && !puantajList.isEmpty()) {
 									session.flush();
@@ -529,10 +529,10 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						String idStr = ortakIslemler.getEncodeStringByBase64(linkStr);
 						fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
 						puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
-						if (vardiyaGunHome.hesaplanmisPlanOnayla(ap.getLoginUser(), puantajList, session)) {
-							fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
-							puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
-						}
+//						if (vardiyaGunHome.hesaplanmisPlanOnayla(ap.getLoginUser(), puantajList, session)) {
+//							fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
+//							puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
+//						}
 
 					}
 					if (puantajList != null && !puantajList.isEmpty()) {
