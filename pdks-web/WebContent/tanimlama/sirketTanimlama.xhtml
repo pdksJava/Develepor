@@ -287,6 +287,10 @@
 									<ui:define name="label">Fazla Mesai Öde</ui:define>
 									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.fazlaMesaiOde}" />
 								</s:decorate>
+								<s:decorate template="/layout/edit.xhtml">
+									<ui:define name="label">İzin Kartı Var</ui:define>
+									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.izinKartiVar}" />
+								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml"
 									rendered="#{sirketHome.seciliSirket.fazlaMesaiIzinKullan or ortakIslemler.getParameterKey('fazlaMesaiIzinKullan') == '1'}">
 									<ui:define name="label">#{ortakIslemler.fmIzinKullanAciklama()}</ui:define>
@@ -297,10 +301,7 @@
 									<ui:define name="label">Fazla Mesai Talep</ui:define>
 									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.fazlaMesaiTalepGirilebilir}" />
 								</s:decorate>
-								<s:decorate template="/layout/edit.xhtml" rendered="#{sirketHome.seciliSirket.izinGirer == false}">
-									<ui:define name="label">İzin Kartı Var</ui:define>
-									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.izinKartiVar}" />
-								</s:decorate>
+								 
 
 								<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 									<ui:define name="label">İşten Ayrıldığı Tarih Çalışıyor</ui:define>
