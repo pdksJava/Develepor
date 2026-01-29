@@ -2001,11 +2001,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		boolean flush = false;
 		if (haftaTatilSb.length() == 0) {
 			if (!yaz || (ikMesaj && sb.length() > 0)) {
-				if (sb.length() > 0)
+				if (sb.length() > 0 && userLoginOldu)
 					PdksUtil.addMessageAvailableWarn(mesaj + sb.toString());
 				if (sbCalismaModeliUyumsuz.length() > 0) {
 					String str = sbCalismaModeliUyumsuz.toString();
-					PdksUtil.addMessageAvailableWarn(mesaj + str + " " + (cm != null ? cm.getAciklama() + " vardiyalarına " : ortakIslemler.calismaModeliAciklama() + "ne") + " uymayan hatalı " + (str.indexOf(",") < 0 ? "vardiyadır!" : "vardiyalardır"));
+					if (userLoginOldu)
+						PdksUtil.addMessageAvailableWarn(mesaj + str + " " + (cm != null ? cm.getAciklama() + " vardiyalarına " : ortakIslemler.calismaModeliAciklama() + "ne") + " uymayan hatalı " + (str.indexOf(",") < 0 ? "vardiyadır!" : "vardiyalardır"));
 				}
 				if (personelDenklestirme != null) {
 					if (userLoginOldu == false)
@@ -2035,7 +2036,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				sessionFlush();
 		} else {
 			yaz = false;
-			PdksUtil.addMessageAvailableWarn(mesaj + sb.toString());
+			if (userLoginOldu)
+				PdksUtil.addMessageAvailableWarn(mesaj + sb.toString());
 		}
 
 		vardiyaGunMap = null;
@@ -6232,7 +6234,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (!aylikPuantajMesaiTalepList.isEmpty())
 				fazlaMesaiTalep = asil;
 		}
-
 		for (String mesaj : mesajlar)
 			PdksUtil.addMessageAvailableWarn(mesaj);
 
@@ -11697,7 +11698,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 						if (suaCalismaSb.length() > 0) {
 							String str = (ap == null ? personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " " : "") + suaCalismaSb.toString() + " haftalık çalışma saati " + getPdksUser().sayiFormatliGoster(suaHaftaSaat) + " geçmiştir!";
-							PdksUtil.addMessageAvailableWarn(str);
+							if (userLoginOldu)
+								PdksUtil.addMessageAvailableWarn(str);
 							kayitBasarili = ikRole || adminRole || getPdksUser().isSistemYoneticisi();
 							if (!(ikRole || adminRole || getPdksUser().isSistemYoneticisi()))
 								hataYok = false;
@@ -12229,7 +12231,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						baslangic = 2;
 					} else {
 						devam = false;
-						PdksUtil.addMessageAvailableWarn("Gün sayısı uyumsuz!");
+						if (userLoginOldu)
+							PdksUtil.addMessageAvailableWarn("Gün sayısı uyumsuz!");
 					}
 				}
 
