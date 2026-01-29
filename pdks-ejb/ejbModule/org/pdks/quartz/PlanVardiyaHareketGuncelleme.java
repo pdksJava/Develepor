@@ -188,27 +188,35 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		while (tarih2.getTime() >= tarihBas.getTime()) {
 			++sayac;
 			cal.setTime(tarihBas);
-			sb2.append(" PERSONEL" + sayac + " as ( ");
-			sb2.append(" select distinct P." + Personel.COLUMN_NAME_ID + " as " + VardiyaGun.COLUMN_NAME_PERSONEL + ", count(*) ADET from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
-			sb2.append(" left join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
-			sb2.append(" and ( V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between :vbas" + sayac + " and :vbit" + sayac + ")");
-			sb2.append(" where P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :pbas" + sayac + " and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :pbit" + sayac);
-			sb2.append(" and P." + Personel.COLUMN_NAME_CALISMA_MODELI + " is not null and P." + Personel.COLUMN_NAME_SABLON + " is not null");
-			sb2.append(" and (P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1 or P." + Personel.COLUMN_NAME_MAIL_TAKIP + " = 1) and P." + Personel.COLUMN_NAME_EK_SAHA3 + " is not null");
-			sb2.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 and coalesce(V." + VardiyaGun.COLUMN_NAME_DURUM + ", 0) = 0 ");
-			sb2.append(" group by P." + Personel.COLUMN_NAME_ID);
-			sb2.append("), ");
 			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
 			Date tarihBit = cal.getTime();
-			long donemId = ayMap.get(Long.parseLong(PdksUtil.convertToDateString(tarihBas, PATTERN_DONEM))).getId();
-			int durum = ayMap.get(Long.parseLong(PdksUtil.convertToDateString(tarihBas, PATTERN_DONEM))).getDurum() ? 1 : 0;
+			DenklestirmeAy da = ayMap.get(Long.parseLong(PdksUtil.convertToDateString(tarihBas, PATTERN_DONEM)));
+			sb2.append(" PERSONEL" + sayac + " as ( ");
+			sb2.append(" select distinct P." + Personel.COLUMN_NAME_ID + " as " + VardiyaGun.COLUMN_NAME_PERSONEL + ", count(*) ADET from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+			if (da.getDurum()) {
+				fields.put("pbas" + sayac, tarihBas);
+				fields.put("pbit" + sayac, tarihBit);
+				fields.put("vbas" + sayac, tarihBas);
+				fields.put("vbit" + sayac, tarihBit);
+				sb2.append(" left join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
+				sb2.append(" and ( V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between :vbas" + sayac + " and :vbit" + sayac + ")");
+				sb2.append(" where P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :pbas" + sayac + " and P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :pbit" + sayac);
+				sb2.append(" and P." + Personel.COLUMN_NAME_CALISMA_MODELI + " is not null and P." + Personel.COLUMN_NAME_SABLON + " is not null");
+				sb2.append(" and (P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1 or P." + Personel.COLUMN_NAME_MAIL_TAKIP + " = 1) and P." + Personel.COLUMN_NAME_EK_SAHA3 + " is not null");
+				sb2.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 and coalesce(V." + VardiyaGun.COLUMN_NAME_DURUM + ", 0) = 0 ");
+				sb2.append(" group by P." + Personel.COLUMN_NAME_ID);
+			} else
+				sb2.append(" where 1 = 2 ");
+			sb2.append(" group by P." + Personel.COLUMN_NAME_ID);
+ 			sb2.append("), ");
+ 			long donemId = da.getId();
+			int durum = da.getDurum() ? 1 : 0;
 			boolean eski = sayac < 3 || buAy == sonrakiAy;
 			// String str2 = eski ? "( coalesce(PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + ", 0) = 0 or " + donem + " < " + buAy + " )" : "PD." + PersonelDenklestirme.COLUMN_NAME_ID + " is null";
 			String str2 = eski ? "" : " and PD." + PersonelDenklestirme.COLUMN_NAME_ID + " is null";
 			sb1.append(str + " select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK());
-			sb1.append(" inner join PERSONEL" + sayac + " V " + PdksEntityController.getJoinLOCK() + " on  1 = 1");
+			sb1.append(" inner join PERSONEL" + sayac + " V " + PdksEntityController.getJoinLOCK() + " on  1 = " + durum);
 			sb1.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
-
 			if (eski == false) {
 				long buDonemId = ayMap.get(buAy).getId();
 				sb1.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " G " + PdksEntityController.getJoinLOCK() + " on G." + Personel.COLUMN_NAME_ID + " = " + buDonemId);
@@ -221,11 +229,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			sb1.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID);
 			sb1.append(" where D." + DenklestirmeAy.COLUMN_NAME_ID + " = " + donemId + " and " + durum + " = 1" + str2);
 			str = " union";
-
-			fields.put("pbas" + sayac, tarihBas);
-			fields.put("pbit" + sayac, tarihBit);
-			fields.put("vbas" + sayac, tarihBas);
-			fields.put("vbit" + sayac, tarihBit);
 
 			tarihBas = PdksUtil.tariheAyEkleCikar(tarihBas, 1);
 
