@@ -76,6 +76,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	private Sirket sirket;
 	private Tanim tesis;
 	private String aciklama = "";
+	private Long tesisId;
 	private double haftaIci = 0.0d, arife = 0.0d, negatifBakiyeDenkSaat = 0.0d;
 	private Double haftaIciSutIzniSure = 7.5d, cumartesiSaat = 0.0d, izin = 0.0d, cumartesiIzinSaat = 0.0d, cumartesiSutIzniSure = 0.0d, sutIzniSabitSaat;
 	private Double pazarSaat = 0.0d, pazarIzinSaat = 0.0d, pazarSutIzniSure = 0.0d;
@@ -113,8 +114,17 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 		this.sirket = sirket;
 	}
 
+	@Column(name = COLUMN_NAME_TESIS)
+	public Long getTesisId() {
+		return tesisId;
+	}
+
+	public void setTesisId(Long tesisId) {
+		this.tesisId = tesisId;
+	}
+
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = COLUMN_NAME_TESIS)
+	@JoinColumn(name = COLUMN_NAME_TESIS, insertable = false, updatable = false)
 	@Fetch(FetchMode.JOIN)
 	public Tanim getTesis() {
 		return tesis;

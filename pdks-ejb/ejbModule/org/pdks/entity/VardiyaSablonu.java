@@ -35,6 +35,7 @@ public class VardiyaSablonu extends BaseObject {
 	private String adi;
 	private Sirket sirket;
 	private Tanim tesis;
+	private Long tesisId;
 	private Vardiya vardiya1, vardiya2, vardiya3, vardiya4, vardiya5, vardiya6, vardiya7, vardiyaArife;
 	private CalismaModeli calismaModeli;
 	private double toplamSaat = 0;
@@ -91,8 +92,17 @@ public class VardiyaSablonu extends BaseObject {
 		this.sirket = sirket;
 	}
 
+	@Column(name = COLUMN_NAME_TESIS)
+	public Long getTesisId() {
+		return tesisId;
+	}
+
+	public void setTesisId(Long tesisId) {
+		this.tesisId = tesisId;
+	}
+
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = COLUMN_NAME_TESIS)
+	@JoinColumn(name = COLUMN_NAME_TESIS, insertable = false, updatable = false)
 	@Fetch(FetchMode.JOIN)
 	public Tanim getTesis() {
 		return tesis;

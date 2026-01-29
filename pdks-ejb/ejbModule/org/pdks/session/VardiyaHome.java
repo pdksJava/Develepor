@@ -36,6 +36,7 @@ import org.pdks.entity.CalismaSekli;
 import org.pdks.entity.Departman;
 import org.pdks.entity.Liste;
 import org.pdks.entity.Sirket;
+import org.pdks.entity.Tanim;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaSablonu;
@@ -128,14 +129,19 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	}
 
 	/**
-	 * @param cm
+	 * @param modelDoldur
+	 * @param vardiya
 	 * @return
 	 */
-	private String tesisDoldur(Vardiya vardiya) {
+	public String tesisDoldur(boolean modelDoldur, Vardiya vardiya) {
 		if (tesisIdList == null)
 			tesisIdList = new ArrayList<SelectItem>();
-		tesisId = fazlaMesaiOrtakIslemler.tesisDoldur(vardiya, tesisId, tesisIdList, session);
+		if (modelDoldur)
+			vardiya.setTesisId(null);
+		tesisId = fazlaMesaiOrtakIslemler.tesisDoldur(vardiya, vardiya.getTesisId(), tesisIdList, session);
 		vardiya.setTesis(tesisId != null ? ortakIslemler.getTanimById(tesisId, session) : null);
+		if (modelDoldur)
+			fillCalismaModeliList(vardiya);
 		return "";
 
 	}
@@ -182,8 +188,8 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 		if (pdksVardiya.getId() == null || pdksVardiya.isCalisma()) {
 			Long pdksDepartmanId = pdksVardiya.getDepartmanId() != null ? pdksVardiya.getDepartmanId() : null;
 			Sirket sirket = pdksVardiya.getSirketId() != null ? new Sirket(pdksVardiya.getSirketId()) : null;
-
-			calismaModeliList = ortakIslemler.getCalismaModeliList(sirket, pdksDepartmanId, false, session);
+			Tanim tesis = pdksVardiya.getTesisId() != null ? new Tanim(pdksVardiya.getTesisId()) : null;
+			calismaModeliList = ortakIslemler.getCalismaModeliList(sirket, tesis, pdksDepartmanId, false, session);
 			Long seciliTesisId = pdksVardiya.getTesisId();
 			for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
 				CalismaModeli cm = (CalismaModeli) iterator.next();
@@ -373,7 +379,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	private void vardiyaAlanlariDoldur(Vardiya pdksVardiya) {
 		setSeciliVardiya(pdksVardiya);
 		tesisId = pdksVardiya.getTesis() != null ? pdksVardiya.getTesis().getId() : null;
-		tesisDoldur(pdksVardiya);
+		tesisDoldur(false, pdksVardiya);
 		fillSaatler();
 		fillSablonlar();
 		if (authenticatedUser.isAdmin())

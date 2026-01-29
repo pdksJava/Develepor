@@ -34,6 +34,7 @@ import org.pdks.entity.CalismaModeliVardiya;
 import org.pdks.entity.Departman;
 import org.pdks.entity.Liste;
 import org.pdks.entity.Sirket;
+import org.pdks.entity.Tanim;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaSablonu;
 import org.pdks.security.entity.User;
@@ -128,14 +129,21 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	}
 
 	/**
+	 * @param vardiyaDoldur
 	 * @param cm
 	 * @return
 	 */
-	private String tesisDoldur(CalismaModeli cm) {
+	public String tesisDoldur(boolean vardiyaDoldur, CalismaModeli cm) {
 		if (tesisIdList == null)
 			tesisIdList = new ArrayList<SelectItem>();
-		tesisId = fazlaMesaiOrtakIslemler.tesisDoldur(cm, tesisId, tesisIdList, session);
+		if (vardiyaDoldur)
+			cm.setTesisId(null);
+		tesisId = fazlaMesaiOrtakIslemler.tesisDoldur(cm, cm.getTesisId(), tesisIdList, session);
 		cm.setTesis(tesisId != null ? ortakIslemler.getTanimById(tesisId, session) : null);
+		if (vardiyaDoldur) {
+			fillVardiyalar(cm);
+		}
+
 		return "";
 
 	}
@@ -256,7 +264,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	 */
 	public String fillVardiyalar(CalismaModeli cm) {
 		Sirket sirket = cm.getSirket();
-		tesisDoldur(cm);
+		tesisDoldur(false, cm);
 		haftaTatilGunleri.clear();
 		Calendar cal = Calendar.getInstance();
 		haftaTatilGunleri.add(new SelectItem(null, "Sabit Gün Değil"));
@@ -289,7 +297,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		}
 		Long cmaDepartmanId = cm.getDepartman() != null ? cm.getDepartman().getId() : null;
 		HashMap parametreMap = new HashMap();
-		vardiyaList = ortakIslemler.getVardiyaList(sirket, cm.getTesis(), cmaDepartmanId, session);
+		Tanim seciliTesis = cm.getTesisId() != null ? new Tanim(cm.getTesisId()) : null;
+		vardiyaList = ortakIslemler.getVardiyaList(sirket, seciliTesis, cmaDepartmanId, session);
 		for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 			Vardiya vardiya = (Vardiya) iterator.next();
 			if (vardiya.getKisaAdi().equals("TA") || vardiya.getKisaAdi().equals("TG"))
