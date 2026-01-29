@@ -1186,7 +1186,7 @@ public class OrtakIslemler implements Serializable {
 			CalismaModeli calismaModeli = (CalismaModeli) iterator.next();
 			if (departmanId != null && calismaModeli.getDepartman() != null && calismaModeli.getDepartman().getId().equals(departmanId) == false)
 				iterator.remove();
-			else if (sirketId != null && calismaModeli.getSirket() != null && calismaModeli.getSirket().getId().equals(tesisId) == false)
+			else if (sirketId != null && calismaModeli.getSirket() != null && calismaModeli.getSirket().getId().equals(sirketId) == false)
 				iterator.remove();
 			else if (tesisId != null && calismaModeli.getTesis() != null && calismaModeli.getTesis().getId().equals(tesisId) == false)
 				iterator.remove();
