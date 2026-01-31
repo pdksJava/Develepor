@@ -549,7 +549,7 @@
 											<h:selectOneMenu value="#{vardiyaHome.seciliVardiya.sirketId}">
 												<f:selectItem itemLabel="Lütfen seçiniz" />
 												<f:selectItems value="#{vardiyaHome.sirketIdList}" />
-												<a4j:support event="onchange" action="#{vardiyaHome.fillCalismaModeliList(vardiyaHome.seciliVardiya)}"
+												<a4j:support event="onchange" action="#{vardiyaHome.tesisDoldur(true,vardiyaHome.seciliVardiya)}"
 													reRender="modeller,sirketBilgi,saatler" status="ajaxStatus" ajaxSingle="true" />
 
 											</h:selectOneMenu>

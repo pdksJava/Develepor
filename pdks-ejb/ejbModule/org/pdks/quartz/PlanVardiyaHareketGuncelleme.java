@@ -124,7 +124,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								aciklama = "Fazla Mesai Toplu güncellenmiştir.";
 							}
 						}
-						if (PdksUtil.hasStringValue(konu)) {
+						if (PdksUtil.getCanliSunucuDurum() && PdksUtil.hasStringValue(konu)) {
 							boolean mailGonder = getMailGonder(session);
 							if (mailGonder) {
 								List<User> userList = null;

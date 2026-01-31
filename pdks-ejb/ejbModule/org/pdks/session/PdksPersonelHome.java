@@ -714,7 +714,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private void fillCalismaModeli(Personel pdksPersonel) {
 		Long pdksDepartmanId = pdksPersonel.getSirket() != null ? pdksPersonel.getSirket().getDepartman().getId() : null;
 		Long tesisId = pdksPersonel.getTesis() != null ? pdksPersonel.getTesis().getId() : null;
-		calismaModeliList = ortakIslemler.getCalismaModeliList(pdksPersonel.getSirket(), pdksDepartmanId, true, session);
+		calismaModeliList = ortakIslemler.getCalismaModeliList(pdksPersonel.getSirket(), pdksPersonel.getTesis(), pdksDepartmanId, true, session);
 		// calismaModeliList = pdksEntityController.getSQLParamByFieldList(CalismaModeli.TABLE_NAME, CalismaModeli.COLUMN_NAME_DURUM, 1, CalismaModeli.class, session);
 		for (Iterator iterator = calismaModeliList.iterator(); iterator.hasNext();) {
 			CalismaModeli cm = (CalismaModeli) iterator.next();

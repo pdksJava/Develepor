@@ -1164,30 +1164,35 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param sirket
+	 * @param tesis
 	 * @param departmanId
 	 * @param genel
 	 * @param session
 	 * @return
 	 */
-	public List<CalismaModeli> getCalismaModeliList(Sirket sirket, Long departmanId, boolean genel, Session session) {
+	public List<CalismaModeli> getCalismaModeliList(Sirket sirket, Tanim tesis, Long departmanId, boolean genel, Session session) {
 		HashMap map = new HashMap();
 		StringBuilder sb = new StringBuilder();
 		sb.append("select * from " + CalismaModeli.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 		sb.append(" where " + CalismaModeli.COLUMN_NAME_DURUM + " = 1 ");
 		if (genel == false)
 			sb.append(" and " + CalismaModeli.COLUMN_NAME_GENEL_VARDIYA + " = 0 ");
-
-		if (sirket != null) {
-			sb.append(" and ( " + CalismaModeli.COLUMN_NAME_SIRKET + " is null or " + CalismaModeli.COLUMN_NAME_SIRKET + " = :s )");
-			map.put("s", sirket.getId());
-		}
-		if (departmanId != null) {
-			sb.append(" and ( " + CalismaModeli.COLUMN_NAME_DEPARTMAN + " is null or " + CalismaModeli.COLUMN_NAME_DEPARTMAN + " = :d )");
-			map.put("d", departmanId);
-		}
+		Long tesisId = tesis != null ? tesis.getId() : null;
+		Long sirketId = sirket != null ? sirket.getId() : null;
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<CalismaModeli> list = pdksEntityController.getObjectBySQLList(sb, map, CalismaModeli.class);
+		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+			CalismaModeli calismaModeli = (CalismaModeli) iterator.next();
+			if (departmanId != null && calismaModeli.getDepartman() != null && calismaModeli.getDepartman().getId().equals(departmanId) == false)
+				iterator.remove();
+			else if (sirketId != null && calismaModeli.getSirket() != null && calismaModeli.getSirket().getId().equals(sirketId) == false)
+				iterator.remove();
+			else if (tesisId != null && calismaModeli.getTesis() != null && calismaModeli.getTesis().getId().equals(tesisId) == false)
+				iterator.remove();
+		}
+		if (list.size() > 1)
+			list = PdksUtil.sortObjectStringAlanList(list, "getAciklama", null);
 		return list;
 	}
 
@@ -6780,29 +6785,26 @@ public class OrtakIslemler implements Serializable {
 					String parametreJSON = gson.toJson(map1);
 					HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 					String sessionId = mySession != null ? mySession.getId() : null;
-					if (PdksUtil.isStrDegisti(parametreJSON, menuItemTime.getParametreJSON())) {
+					if (PdksUtil.isStrDegisti(mySession != null ? mySession.getId() : "", menuItemTime.getSessionId()) || PdksUtil.isStrDegisti(parametreJSON, menuItemTime.getParametreJSON())) {
 						boolean flush = false;
-						if (PdksUtil.isStrDegisti(mySession != null ? mySession.getId() : "", menuItemTime.getSessionId()) || PdksUtil.isStrDegisti(parametreJSON, menuItemTime.getParametreJSON())) {
-							String spName = "SP_UPDATE_USER_MENUITEM_TIME_IPTAL";
-							if (menuItemTime.getId() == null || isExisStoreProcedure(spName, session) == false) {
-								menuItemTime.setParametreJSON(parametreJSON);
-								if (sessionId != null)
-									menuItemTime.setSessionId(sessionId);
-								menuItemTime.setLastTime(new Date());
-								pdksEntityController.saveOrUpdate(session, entityManager, menuItemTime);
-								flush = true;
-							} else {
-
-								LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-								veriMap.put("j", parametreJSON);
-								veriMap.put("s", sessionId != null ? sessionId : menuItemTime.getSessionId());
-								veriMap.put("mt", menuItemTime.getId());
-								veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-								pdksEntityController.execSP(veriMap, spName);
-							}
-							if (flush)
-								session.flush();
+						String spName = "SP_UPDATE_USER_MENUITEM_TIME_IPTAL";
+						if (menuItemTime.getId() == null || isExisStoreProcedure(spName, session) == false) {
+							menuItemTime.setParametreJSON(parametreJSON);
+							if (sessionId != null)
+								menuItemTime.setSessionId(sessionId);
+							menuItemTime.setLastTime(new Date());
+							pdksEntityController.saveOrUpdate(session, entityManager, menuItemTime);
+							flush = true;
+						} else {
+							LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+							veriMap.put("j", parametreJSON);
+							veriMap.put("s", sessionId != null ? sessionId : menuItemTime.getSessionId());
+							veriMap.put("mt", menuItemTime.getId());
+							veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+							pdksEntityController.execSP(veriMap, spName);
 						}
+						if (flush)
+							session.flush();
 
 					}
 					if (authenticatedUser != null && parametreJSON != null)
@@ -10941,10 +10943,10 @@ public class OrtakIslemler implements Serializable {
 	 * @param menuAdi
 	 * @param sessionx
 	 */
+	@Transactional
 	private UserMenuItemTime setUserMenuItem(String menuAdi, Session sessionx) {
 		UserMenuItemTime menuItemTime = null;
 		if (authenticatedUser != null) {
-
 			authenticatedUser.setCalistigiSayfa(menuAdi);
 			HashMap fields = new HashMap();
 			StringBuilder sb = new StringBuilder();
