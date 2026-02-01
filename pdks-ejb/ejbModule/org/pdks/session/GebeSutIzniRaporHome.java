@@ -24,7 +24,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
-import org.pdks.entity.Departman;
+import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDonemselDurum;
 import org.pdks.entity.Sirket;
@@ -95,7 +95,6 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		bitTarih = PdksUtil.getDate(new Date());
 		basTarih = PdksUtil.tariheAyEkleCikar(bitTarih, -12);
-		Departman departman = null;
 		sirketId = null;
 		tesisDurum = false;
 		List<Long> tesisIdList = null;
@@ -107,34 +106,8 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 		}
 		if (tesisIdList == null && (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis()))
 			sirketId = authenticatedUser.getPdksPersonel().getSirket().getId();
-		if (!(authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin()))
-			departman = authenticatedUser.getDepartman();
-		List<Sirket> pdksSirketList = ortakIslemler.getDepartmanPDKSSirketList(departman, session);
-		sirketList = ortakIslemler.getSelectItemList("sirket", authenticatedUser);
-		tesisList = ortakIslemler.getSelectItemList("tesis", authenticatedUser);
-		if (tesisIdList != null) {
-			for (Iterator iterator = tesisList.iterator(); iterator.hasNext();) {
-				SelectItem tesis = (SelectItem) iterator.next();
-				if (!tesisIdList.contains(tesis.getValue()))
-					iterator.remove();
-			}
-		}
-		if (personelDonemDurumList == null)
-			personelDonemDurumList = new ArrayList<PersonelDonemselDurum>();
-		else
-			personelDonemDurumList.clear();
-		tesisTanimList = null;
-		for (Sirket pdksSirket : pdksSirketList) {
-			if (pdksSirket.isGebelikSutIzinVar()) {
-				if (sirketId == null || pdksSirket.getId().equals(sirketId)) {
-					if (sirketId != null)
-						sirket = pdksSirket;
-					sirketList.add(new SelectItem(pdksSirket.getId(), pdksSirket.getAd()));
-				}
-			}
-		}
-		if (sirket != null)
-			fillTesisList();
+
+		fillMudurlukList();
 		HashMap sonucMap = ortakIslemler.fillEkSahaTanim(session, Boolean.FALSE, null);
 		bolumAciklama = (String) sonucMap.get("bolumAciklama");
 	}
@@ -143,8 +116,27 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 	 * @return
 	 */
 	public String fillMudurlukList() {
-		sirket = sirketId != null ? (Sirket) pdksEntityController.getSQLParamByAktifFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session) : null;
-		fillMudurlukTesisList("S");
+		if (personelDonemDurumList == null)
+			personelDonemDurumList = new ArrayList<PersonelDonemselDurum>();
+		else
+			personelDonemDurumList.clear();
+		AramaSecenekleri as = new AramaSecenekleri(authenticatedUser);
+		as.setSirketId(sirketId);
+		try {
+			if (tesisList == null)
+				tesisList = new ArrayList<SelectItem>();
+			sirketList = ortakIslemler.setAramaSecenekSirketVeTesisData(as, basTarih, bitTarih, false, session);
+			if (sirketList != null && sirketList.size() == 1)
+				sirketId = (Long) sirketList.get(0).getValue();
+			if (sirketId != null) {
+				fillTesisList();
+			} else
+				tesisList.clear();
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+
 		return "";
 	}
 
@@ -196,7 +188,10 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 	public String fillTesisList() {
 		tesisId = null;
 		sirket = sirketId != null ? (Sirket) pdksEntityController.getSQLParamByAktifFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session) : null;
-		fillMudurlukTesisList("T");
+		if (sirket != null && sirket.isTesisDurumu())
+			fillMudurlukTesisList("T");
+		else
+			tesisList.clear();
 		return "";
 	}
 

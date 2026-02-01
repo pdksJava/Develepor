@@ -18,12 +18,19 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.basTarih}"
-								required="#{authenticatedUser.admin == false}" requiredMessage="#{ortakIslemler.basTarihAciklama()} giriniz" />
+								required="#{authenticatedUser.admin == false}" requiredMessage="#{ortakIslemler.basTarihAciklama()} giriniz">
+								<a4j:support event="onchanged" action="#{gebeSutIzniRaporHome.fillMudurlukList()}" ajaxSingle="true" status="ajaxStatus"
+									reRender="girisler,personelDurumTable" />
+
+							</rich:calendar>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
 							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.basTarih}"
-								required="#{authenticatedUser.admin == false}" requiredMessage="#{ortakIslemler.bitTarihAciklama()} giriniz" />
+								required="#{authenticatedUser.admin == false}" requiredMessage="#{ortakIslemler.bitTarihAciklama()} giriniz">
+								<a4j:support event="onchanged" action="#{gebeSutIzniRaporHome.fillMudurlukList()}" ajaxSingle="true" status="ajaxStatus"
+									reRender="girisler,personelDurumTable" />
+							</rich:calendar>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
