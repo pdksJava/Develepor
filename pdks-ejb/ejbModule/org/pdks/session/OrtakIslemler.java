@@ -10424,7 +10424,7 @@ public class OrtakIslemler implements Serializable {
 			List<String> hareketIdList = new ArrayList<String>();
 			PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici = personelDenklestirmeMap.get(perId);
 			PersonelDenklestirme pd = personelDenklestirmeTasiyici.getPersonelDenklestirme();
-			CalismaModeliAy cma = pd.getCalismaModeliAy();
+			CalismaModeliAy cma = pd != null ? pd.getCalismaModeliAy() : null;
 			if (allMap == null) {
 				Date basTarih = PdksUtil.convertToJavaDate(pd.getDenklestirmeAy().getDonem() + "01", pattern);
 				Date bitTarih = PdksUtil.tariheAyEkleCikar(basTarih, 1);
@@ -10497,7 +10497,7 @@ public class OrtakIslemler implements Serializable {
 						vardiyaGun.setGuncellendi(Boolean.FALSE);
 
 						if (vardiyaGun.isIzinli() || vardiyaGun.getVardiyaDate().after(sonGun) || vardiyaVg.isHaftaTatil()) {
-							if (vardiyaVg.isHaftaTatil() && cma.getHaftaTatilHareketGuncelle().booleanValue() == false) {
+							if (vardiyaVg.isHaftaTatil() && cma != null && cma.getHaftaTatilHareketGuncelle().booleanValue() == false) {
 								if (vardiyaVg.getVersion() < 0) {
 									vardiyaGun.setVersion(0);
 									if (guncelleyenUser == null)
