@@ -6641,6 +6641,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				this.setSession(sessionx);
 				this.setAylikPuantajList(list);
 				this.setPdksUser(user);
+				this.setUserLoginOldu(false);
 				try {
 					planOnayla();
 					for (AylikPuantaj ap : list) {
