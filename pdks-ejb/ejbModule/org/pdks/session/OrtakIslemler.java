@@ -10426,7 +10426,8 @@ public class OrtakIslemler implements Serializable {
 			PersonelDenklestirme pd = personelDenklestirmeTasiyici.getPersonelDenklestirme();
 			CalismaModeliAy cma = pd != null ? pd.getCalismaModeliAy() : null;
 			if (allMap == null) {
-				Date basTarih = PdksUtil.convertToJavaDate(pd.getDenklestirmeAy().getDonem() + "01", pattern);
+				DenklestirmeAy da = pd != null ? pd.getDenklestirmeAy() : personelDenklestirmeTasiyici.getDenklestirmeAy();
+				Date basTarih = PdksUtil.convertToJavaDate(da.getDonem() + "01", pattern);
 				Date bitTarih = PdksUtil.tariheAyEkleCikar(basTarih, 1);
 				allMap = getPlanKatSayiAllMap(katSayilar, new ArrayList<Long>(personelVardiyaBulMap.keySet()), basTarih, bitTarih, session);
 				erkenGirisMap = allMap.containsKey(PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI) ? allMap.get(PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI) : null;
