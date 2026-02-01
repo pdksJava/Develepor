@@ -26,7 +26,7 @@
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
-							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.basTarih}"
+							<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{gebeSutIzniRaporHome.bitTarih}"
 								required="#{authenticatedUser.admin == false}" requiredMessage="#{ortakIslemler.bitTarihAciklama()} giriniz">
 								<a4j:support event="onchanged" action="#{gebeSutIzniRaporHome.fillMudurlukList()}" ajaxSingle="true" status="ajaxStatus"
 									reRender="girisler,personelDurumTable" />
