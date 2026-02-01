@@ -141,12 +141,14 @@ public class Zamanlayici implements Serializable {
 		if (userList == null || userList.isEmpty()) {
 			userList = ortakIslemler.bccAdminAdres(session, null);
 			xaciklama += " ( " + PdksUtil.convertToDateString(Calendar.getInstance().getTime(), PdksUtil.getDateFormat() + " H:mm") + " ) ";
-		}
+		} else
+			thisIp = null;
 		if (thisIp != null)
 			logger.info(xkonu + " " + thisIp + " " + PdksUtil.getCurrentTimeStampStr());
 		if (!userList.isEmpty()) {
 			setAdminList(userList);
 			setKonu(xkonu);
+
 			setAciklama(xaciklama + (thisIp != null ? " --> Host Name : " + thisIp.getHostName() : ""));
 			MailStatu mailStatu = null;
 			try {
