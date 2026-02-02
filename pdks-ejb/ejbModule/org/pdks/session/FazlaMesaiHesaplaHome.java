@@ -1866,7 +1866,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				if (bugun == null)
 					bugun = ortakIslemler.getBugun();
 				long simdikiDonem = Long.parseLong(PdksUtil.convertToDateString(bugun, "yyyMM"));
-				boolean donemGeldi = denklestirmeAy.getDonem() >= simdikiDonem;
+				boolean donemGeldi = denklestirmeAy.getDonem() <= simdikiDonem;
 				User adminUser = null;
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
