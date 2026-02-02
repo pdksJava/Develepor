@@ -5071,30 +5071,21 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	public String fazlaMesaiOnayKontrol() {
 		onayla = Boolean.FALSE;
 		for (AylikPuantaj puantaj : aylikPuantajList) {
-			if (puantaj.isKaydet()) {
+			if (puantaj.isKaydet())  
 				onayla = Boolean.TRUE;
-			}
-		}
+ 		}
 		seciliBolum = null;
 		seciliAltBolum = null;
 		if (!onayla) {
 			if (userLogin.getLogin())
 				PdksUtil.addMessageAvailableWarn(PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "MMMMM yyyy") + " fazla mesai onayı yapacak personel seçiniz!");
 		} else {
-
-			if (seciliEkSaha3Id != null) {
-
-				seciliBolum = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha3Id, Tanim.class, session);
-
-			}
-			if (seciliEkSaha4Id != null) {
-
-				seciliAltBolum = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha4Id, Tanim.class, session);
-
-			}
+ 			if (seciliEkSaha3Id != null)  
+ 				seciliBolum = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha3Id, Tanim.class, session);
+ 			if (seciliEkSaha4Id != null)  
+ 				seciliAltBolum = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha4Id, Tanim.class, session);
 		}
-
-		return "";
+ 		return "";
 	}
 
 	/**
