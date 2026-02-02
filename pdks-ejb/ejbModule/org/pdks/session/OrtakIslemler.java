@@ -7319,7 +7319,7 @@ public class OrtakIslemler implements Serializable {
 		if (!sirketList.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(new ArrayList<Sirket>(sirketList), "getAd", null);
 			for (Sirket sirket : list)
-				if (sirket.getDurum() && sirket.getFazlaMesai()) {
+				if (sirket.getPdks() && sirket.getFazlaMesai()) {
 					if (oldSirketId != null && sirket.getId().equals(oldSirketId))
 						sirketId = sirket.getId();
 					sirketIdList.add(new SelectItem(sirket.getId(), sirket.getAd()));

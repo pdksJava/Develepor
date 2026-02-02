@@ -121,7 +121,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 		else
 			personelDonemDurumList.clear();
 		AramaSecenekleri as = new AramaSecenekleri(authenticatedUser);
-		as.setSirketId(sirketId);
+		// as.setSirketId(sirketId);
 		try {
 			if (tesisList == null)
 				tesisList = new ArrayList<SelectItem>();
@@ -187,7 +187,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 
 	public String fillTesisList() {
 		tesisId = null;
-		sirket = sirketId != null ? (Sirket) pdksEntityController.getSQLParamByAktifFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session) : null;
+		sirket = sirketId != null ? (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session) : null;
 		if (sirket != null && sirket.isTesisDurumu())
 			fillMudurlukTesisList("T");
 		else
@@ -196,6 +196,9 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 	}
 
 	public String fillPersonelDonemselDurumList() {
+		if (sirket == null)
+			sirket = sirketId != null ? (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session) : null;
+
 		List<Long> list = new ArrayList<Long>();
 		HashMap fields = new HashMap();
 		StringBuilder sb = new StringBuilder();
