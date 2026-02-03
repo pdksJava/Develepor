@@ -256,11 +256,20 @@
 							</s:decorate>
 							<a4j:outputPanel id="calismaModeliPanel">
 								<ui:fragment rendered="#{vardiyaTanimlaHome.calismaModeliAy!=null}">
-									<ui:fragment>
-										<h:outputText value="#{vardiyaTanimlaHome.calismaModeli.departman.aciklama}" rendered="#{vardiyaTanimlaHome.calismaModeli.departman!=null}" />
-										<h:outputText value="#{vardiyaTanimlaHome.calismaModeli.sirket.adi}" rendered="#{vardiyaTanimlaHome.calismaModeli.sirket!=null}" />
-										<h:outputText value="#{vardiyaTanimlaHome.calismaModeli.tesis.aciklama}" rendered="#{vardiyaTanimlaHome.calismaModeli.tesis!=null}" />
-									</ui:fragment>
+									<ui:fragment rendered="#{authenticatedUser.admin}">
+										<ui:fragment rendered="#{vardiyaTanimlaHome.calismaModeli.departman!=null}">
+											<b>#{ortakIslemler.firmaKaynagiAciklama()} : </b>
+											<h:outputText value="#{vardiyaTanimlaHome.calismaModeli.departman.aciklama} " />
+										</ui:fragment>
+										<ui:fragment rendered="#{vardiyaTanimlaHome.calismaModeli.sirket!=null}">
+											<b>#{ortakIslemler.sirketAciklama()} : </b>
+											<h:outputText value="#{vardiyaTanimlaHome.calismaModeli.sirket.ad} " />
+										</ui:fragment>
+										<ui:fragment rendered="#{vardiyaTanimlaHome.calismaModeli.tesis!=null}">
+											<b>#{ortakIslemler.tesisAciklama()} : </b>
+											<h:outputText value="#{vardiyaTanimlaHome.calismaModeli.tesis.aciklama} " />
+										</ui:fragment>
+ 									</ui:fragment>
 									<h:panelGrid columns="#{vardiyaTanimlaHome.girisKolonSayisi}">
 										<s:decorate template="/layout/edit.xhtml">
 											<ui:define name="label">#{vardiyaTanimlaHome.calismaModeli.aciklama} Süre</ui:define>
