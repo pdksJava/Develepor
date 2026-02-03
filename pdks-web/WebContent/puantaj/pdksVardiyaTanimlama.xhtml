@@ -163,62 +163,6 @@
 								<ui:define name="label">#{ortakIslemler.aylarAciklama()}</ui:define>
 								<h:outputText value="#{vardiyaTanimlaHome.denklestirmeAy.ayAdi}" id="ay" />
 							</s:decorate>
-
-							<h:panelGrid columns="#{vardiyaTanimlaHome.girisKolonSayisi}">
-								<c:forEach items="#{vardiyaTanimlaHome.denklestirmeAy.modeller}" var="md">
-									<c:if
-										test="#{(md.calismaModeli.updateCGS == false or authenticatedUser.admin) and md.durum and ( md.calismaModeli.genelModel or md.calismaModeli.fazlaMesaiGoruntulensin) }">
-										<s:decorate template="/layout/edit.xhtml">
-											<ui:define name="label">#{md.calismaModeli.aciklama} Süre</ui:define>
-											<h:inputText value="#{md.sure}"
-												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or !(authenticatedUser.admin or authenticatedUser.IKAdmin)}" />
-										</s:decorate>
-										<s:decorate template="/layout/edit.xhtml" rendered="#{md.calismaModeli.updateCGS == false}">
-											<ui:define name="label">#{md.calismaModeli.aciklama} Süt İzni</ui:define>
-											<h:inputText value="#{md.toplamIzinSure}"
-												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or !(authenticatedUser.admin or authenticatedUser.IKAdmin)}" />
-										</s:decorate>
-
-										<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaTanimlaHome.negatifBakiyeDenkSaat}">
-											<ui:define name="label">#{md.calismaModeli.aciklama} Negatif Bakiye Max (Saati)</ui:define>
-											<h:inputText required="true" value="#{md.negatifBakiyeDenkSaat}"
-												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or ( md.negatifBakiyeDenkSaat ge 0 and md.calismaModeli.negatifBakiyeDenkSaat ge 0)}"
-												size="6" validatorMessage="Negatif bakiye saati giriniz">
-												<f:validateDoubleRange maximum="0" />
-											</h:inputText>
-										</s:decorate>
-										<c:if test="#{authenticatedUser.admin and vardiyaTanimlaHome.hareketKaydiVardiyaBul}">
-											<s:decorate template="/layout/edit.xhtml">
-												<ui:define name="label">#{md.calismaModeli.aciklama} Hareket Kayıtlarından #{ortakIslemler.vardiyaAciklama()} Bul</ui:define>
-												<h:selectBooleanCheckbox value="#{md.hareketKaydiVardiyaBul}"
-													disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or (md.hareketKaydiVardiyaBulsunmu == false and md.calismaModeli.hareketKaydiVardiyaBulsunmu == false)}">
-													<a4j:support event="onclick" reRender="haftaTatilHareketGuncelle#{md.id},offHareketGuncelle#{md.id}" status="ajaxStatus" ajaxSingle="true" />
-
-												</h:selectBooleanCheckbox>
-											</s:decorate>
-											<s:decorate template="/layout/edit.xhtml" id="haftaTatilHareketGuncelle#{md.id}">
-												<ui:define name="label">#{md.calismaModeli.aciklama} Hareket Kayıtlarından HT Güncelle</ui:define>
-												<h:selectBooleanCheckbox value="#{md.haftaTatilHareketGuncelle}"
-													disabled="#{md.hareketKaydiVardiyaBulsunmu==false or vardiyaTanimlaHome.denklestirmeAy.durum == false}">
-												</h:selectBooleanCheckbox>
-											</s:decorate>
-											<s:decorate template="/layout/edit.xhtml" id="offHareketGuncelle#{md.id}">
-												<ui:define name="label">#{md.calismaModeli.aciklama} Hareket Kayıtlarından OFF Güncelle</ui:define>
-												<h:selectBooleanCheckbox value="#{md.offHareketGuncelle}"
-													disabled="#{md.hareketKaydiVardiyaBulsunmu==false or vardiyaTanimlaHome.denklestirmeAy.durum == false}">
-												</h:selectBooleanCheckbox>
-											</s:decorate>
-										</c:if>
-
-										<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaTanimlaHome.otomatikFazlaCalismaOnaylansinVar}">
-											<ui:define name="label">#{md.calismaModeli.aciklama}Fazla Çalışma Otomatik Onaylansın</ui:define>
-											<h:selectBooleanCheckbox value="#{md.otomatikFazlaCalismaOnaylansin}" disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false}">
-											</h:selectBooleanCheckbox>
-										</s:decorate>
-									</c:if>
-								</c:forEach>
-
-							</h:panelGrid>
 							<h:panelGrid columns="2">
 								<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 									<ui:define name="label">Otomatik Son Onay Tarihi</ui:define>
@@ -300,6 +244,74 @@
 								</c:if>
 
 							</h:panelGrid>
+							<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaTanimlaHome.modeller!=null}">
+								<ui:define name="label">#{ortakIslemler.calismaModeliAciklama()}</ui:define>
+								<h:selectOneMenu value="#{vardiyaTanimlaHome.calismaModeliAy}" required="true" disabled="#{vardiyaTanimlaHome.modeller.size() == 1}"
+									requiredMessage="#{ortakIslemler.calismaModeliAciklama()} seçiniz">
+									<s:selectItems var="comp" value="#{vardiyaTanimlaHome.modeller}" label="#{comp.aciklama}" noSelectionLabel="Lütfen seçiniz" />
+									<a4j:support event="onchange" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="calismaModeliPanel" status="ajaxStatus"
+										ajaxSingle="true" />
+									<s:convertEntity />
+								</h:selectOneMenu>
+							</s:decorate>
+							<a4j:outputPanel id="calismaModeliPanel">
+								<h:panelGrid columns="#{vardiyaTanimlaHome.girisKolonSayisi}" rendered="#{vardiyaTanimlaHome.calismaModeliAy!=null}">
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">#{vardiyaTanimlaHome.calismaModeli.aciklama} Süre</ui:define>
+										<h:inputText value="#{vardiyaTanimlaHome.calismaModeliAy.sure}"
+											disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or !(authenticatedUser.admin or authenticatedUser.IKAdmin)}" />
+									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaTanimlaHome.calismaModeliAy.calismaModeli.updateCGS == false}">
+										<ui:define name="label">#{vardiyaTanimlaHome.calismaModeli.aciklama} Süt İzni</ui:define>
+										<h:inputText value="#{vardiyaTanimlaHome.calismaModeliAy.toplamIzinSure}"
+											disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or !(authenticatedUser.admin or authenticatedUser.IKAdmin)}" />
+									</s:decorate>
+
+									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaTanimlaHome.negatifBakiyeDenkSaat}">
+										<ui:define name="label">#{vardiyaTanimlaHome.calismaModeli.aciklama} Negatif Bakiye Max (Saati)</ui:define>
+										<h:inputText required="true" value="#{vardiyaTanimlaHome.calismaModeliAy.negatifBakiyeDenkSaat}"
+											disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or ( vardiyaTanimlaHome.calismaModeliAy.negatifBakiyeDenkSaat ge 0 and vardiyaTanimlaHome.calismaModeliAy.calismaModeli.negatifBakiyeDenkSaat ge 0)}"
+											size="6" validatorMessage="Negatif bakiye saati giriniz">
+											<f:validateDoubleRange maximum="0" />
+										</h:inputText>
+									</s:decorate>
+									<c:if test="#{authenticatedUser.admin and vardiyaTanimlaHome.hareketKaydiVardiyaBul}">
+										<s:decorate template="/layout/edit.xhtml">
+											<ui:define name="label">Hareket Kayıtlarından #{ortakIslemler.vardiyaAciklama()} Bul</ui:define>
+											<h:selectBooleanCheckbox value="#{vardiyaTanimlaHome.calismaModeliAy.hareketKaydiVardiyaBul}"
+												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or (vardiyaTanimlaHome.calismaModeliAy.hareketKaydiVardiyaBulsunmu == false and vardiyaTanimlaHome.calismaModeliAy.calismaModeli.hareketKaydiVardiyaBulsunmu == false)}">
+												<a4j:support event="onclick"
+													reRender="haftaTatilHareketGuncelle#{vardiyaTanimlaHome.calismaModeliAy.id},offHareketGuncelle#{vardiyaTanimlaHome.calismaModeliAy.id}"
+													status="ajaxStatus" ajaxSingle="true" />
+
+											</h:selectBooleanCheckbox>
+										</s:decorate>
+										<s:decorate template="/layout/edit.xhtml" id="haftaTatilHareketGuncelle#{vardiyaTanimlaHome.calismaModeliAy.id}">
+											<ui:define name="label">Hareket Kayıtlarından HT Güncelle</ui:define>
+											<h:selectBooleanCheckbox value="#{vardiyaTanimlaHome.calismaModeliAy.haftaTatilHareketGuncelle}"
+												disabled="#{vardiyaTanimlaHome.calismaModeliAy.hareketKaydiVardiyaBulsunmu==false or vardiyaTanimlaHome.denklestirmeAy.durum == false}">
+											</h:selectBooleanCheckbox>
+										</s:decorate>
+										<s:decorate template="/layout/edit.xhtml" id="offHareketGuncelle#{vardiyaTanimlaHome.calismaModeliAy.id}">
+											<ui:define name="label">Hareket Kayıtlarından OFF Güncelle</ui:define>
+											<h:selectBooleanCheckbox value="#{vardiyaTanimlaHome.calismaModeliAy.offHareketGuncelle}"
+												disabled="#{vardiyaTanimlaHome.calismaModeliAy.hareketKaydiVardiyaBulsunmu==false or vardiyaTanimlaHome.denklestirmeAy.durum == false}">
+											</h:selectBooleanCheckbox>
+										</s:decorate>
+									</c:if>
+
+									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaTanimlaHome.otomatikFazlaCalismaOnaylansinVar}">
+										<ui:define name="label">Fazla Çalışma Otomatik Onaylansın</ui:define>
+										<h:selectBooleanCheckbox value="#{vardiyaTanimlaHome.calismaModeliAy.otomatikFazlaCalismaOnaylansin}"
+											disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false}">
+										</h:selectBooleanCheckbox>
+									</s:decorate>
+
+
+
+								</h:panelGrid>
+							</a4j:outputPanel>
+
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Aktif</ui:define>
 								<h:selectBooleanCheckbox value="#{vardiyaTanimlaHome.denklestirmeAy.durum}" disabled="#{vardiyaTanimlaHome.disabled}">

@@ -71,6 +71,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 
 	public static String sayfaURL = "pdksVardiyaTanimlama";
 	private List<DenklestirmeAy> aylikList = null;
+	private List<CalismaModeliAy> modeller;
 	private String maxYil = null, vardiyaTanimKodu = null;
 	private int yilEdit, yilModal, yilSelect, yil;
 	private boolean aktif, denklestirmeTipiVar, taseronVar;
@@ -79,7 +80,8 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	private List<PersonelDenklestirme> personelDenklestirmeler;
 
 	private List<DenklestirmeAy> denklestirmeAylar;
-
+	private CalismaModeli calismaModeli;
+	private CalismaModeliAy calismaModeliAy;
 	private DenklestirmeAy denklestirmeAy;
 	private TreeMap<String, CalismaModeliAy> modelMap;
 	boolean guncelle = Boolean.FALSE, denklestirmeKesintiYap = Boolean.FALSE, disabled = false;
@@ -812,8 +814,8 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	 * @param value
 	 * @return
 	 */
-	public String guncelle(DenklestirmeAy value) {
-		setInstance(value);
+	public String guncelle(DenklestirmeAy da) {
+		setInstance(da);
 		if (personelDenklestirmeler != null)
 			personelDenklestirmeler.clear();
 		denklestirmeAy = getInstance();
@@ -823,6 +825,29 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 
 		int adet = getGirisKolonSayisi();
 		kesintiTuruList = ortakIslemler.getSelectItemList("kesintiTuru", authenticatedUser);
+		setCalismaModeliAy(null);
+		modeller = null;
+		if (da.getDurum()) {
+			List<CalismaModeliAy> calismaModeliList = pdksEntityController.getSQLParamByFieldList(CalismaModeliAy.TABLE_NAME, CalismaModeliAy.COLUMN_NAME_DONEM, da.getId(), CalismaModeliAy.class, session);
+			if (calismaModeliList.isEmpty() == false) {
+				for (CalismaModeliAy cma : calismaModeliList) {
+					CalismaModeli cm = cma.getCalismaModeli();
+					if (authenticatedUser.isAdmin() || cm.isUpdateCGS()) {
+						if (cm.getGenelModel() || cm.getFazlaMesaiGoruntulensin() || cm.isHareketKaydiVardiyaBulsunmu()) {
+							if (modeller == null)
+								modeller = new ArrayList<CalismaModeliAy>();
+							modeller.add(cma);
+						}
+					}
+				}
+				if (modeller != null) {
+					modeller = PdksUtil.sortObjectStringAlanList(modeller, "getAciklama", null);
+					setCalismaModeliAy(modeller.get(0));
+				}
+			}
+			calismaModeliList = null;
+		}
+
 		if (authenticatedUser.isAdmin() && adet > 2 && (!denklestirmeAy.isKesintiYok() || denklestirmeKesintiYap)) {
 			kesintiTuruList.add(new SelectItem(KesintiTipi.KESINTI_YOK.value(), DenklestirmeAy.getKesintiAciklama(KesintiTipi.KESINTI_YOK.value())));
 			kesintiTuruList.add(new SelectItem(KesintiTipi.SAAT.value(), DenklestirmeAy.getKesintiAciklama(KesintiTipi.SAAT.value())));
@@ -836,8 +861,8 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	public String kaydet() {
 
 		try {
-			if (authenticatedUser.isAdmin() && denklestirmeAy.getModeller() != null) {
-				for (CalismaModeliAy cma : denklestirmeAy.getModeller())
+			if (authenticatedUser.isAdmin() && modeller != null) {
+				for (CalismaModeliAy cma : modeller)
 					pdksEntityController.saveOrUpdate(session, entityManager, cma);
 			}
 			denklestirmeAy.setGuncellemeTarihi(new Date());
@@ -1082,6 +1107,31 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 
 	public void setTaseronVar(boolean taseronVar) {
 		this.taseronVar = taseronVar;
+	}
+
+	public CalismaModeliAy getCalismaModeliAy() {
+		return calismaModeliAy;
+	}
+
+	public void setCalismaModeliAy(CalismaModeliAy value) {
+		this.calismaModeli = value != null ? value.getCalismaModeli() : null;
+		this.calismaModeliAy = value;
+	}
+
+	public List<CalismaModeliAy> getModeller() {
+		return modeller;
+	}
+
+	public void setModeller(List<CalismaModeliAy> modeller) {
+		this.modeller = modeller;
+	}
+
+	public CalismaModeli getCalismaModeli() {
+		return calismaModeli;
+	}
+
+	public void setCalismaModeli(CalismaModeli calismaModeli) {
+		this.calismaModeli = calismaModeli;
 	}
 
 }

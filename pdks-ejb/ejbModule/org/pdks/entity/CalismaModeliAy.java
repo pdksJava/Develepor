@@ -190,6 +190,12 @@ public class CalismaModeliAy extends BasePDKSObject implements Serializable {
 	}
 
 	@Transient
+	public String getAciklama() {
+		String key = calismaModeli != null ? calismaModeli.getAciklama() : "";
+		return key;
+	}
+
+	@Transient
 	public boolean isGunMaxCalismaOdenir() {
 		return gunMaxCalismaOdemeDurum != null && gunMaxCalismaOdemeDurum;
 	}
