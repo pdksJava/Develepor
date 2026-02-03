@@ -164,8 +164,9 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	 */
 	@Transactional
 	public String fazlaMesaiGuncelleme(Date tarih, Session session) throws Exception {
+		Date bugun = PdksUtil.getDate(ortakIslemler.getBugun());
 		if (tarih == null)
-			tarih = ortakIslemler.getBugun();
+			tarih = bugun;
 		Calendar cal = Calendar.getInstance();
 		String adresStr = null;
 		long buAy = Long.parseLong(PdksUtil.convertToDateString(tarih, PATTERN_DONEM));
@@ -251,14 +252,58 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			if (PdksUtil.hasStringValue(adresStr)) {
 				String adres = PdksUtil.replaceAllManuel(adresStr, "login", "denklestirmeBordroGuncelleme");
 				logger.info(adres + " in " + PdksUtil.getCurrentTimeStampStr());
-				User loginUser = ortakIslemler.getSistemAdminUser(session);
-				loginUser.setAdmin(true);
+				User guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
+				guncelleyenUser.setAdmin(true);
 				for (DenklestirmeAy da : aylar) {
+					tarihBas = PdksUtil.convertToJavaDate(da.getDonem() + "01", PATTERN);
+					cal.setTime(tarihBas);
+					cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+					Date tarihBit = cal.getTime();
+					if (tarihBit.after(bugun))
+						tarihBit = bugun;
+					fields.clear();
+					sb1 = new StringBuffer();
+					sb1.append("select V.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK());
+					sb1.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY);
+					sb1.append(" and CA." + CalismaModeliAy.COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL + " = 1");
+					sb1.append(" inner join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + VardiyaGun.COLUMN_NAME_PERSONEL + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
+					sb1.append(" and (V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between :t1 and :t2) ");
+					sb1.append(" and ( (V." + VardiyaGun.COLUMN_NAME_VERSION + " = 0 and V." + VardiyaGun.COLUMN_NAME_DURUM + " = 0 ) ");
+					sb1.append(" or (V." + VardiyaGun.COLUMN_NAME_VERSION + " < 0 and V." + VardiyaGun.COLUMN_NAME_DURUM + " = 1 ) ) ");
+					sb1.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
+					sb1.append(" and (V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ") ");
+					sb1.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + da.getId() + " and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1");
+					sb1.append(" order by P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + ", V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
+					fields.put("t1", tarihBas);
+					fields.put("t2", tarihBit);
+					if (session != null)
+						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+					List<VardiyaGun> vGunList = pdksEntityController.getObjectBySQLList(sb1.toString(), fields, VardiyaGun.class);
+					if (vGunList.isEmpty() == false) {
+						Date guncellemeTarihi = null;
+						boolean flush = false;
+						for (VardiyaGun vg : vGunList) {
+							if (vg.getVardiya().isHaftaTatil() == false) {
+								if (guncellemeTarihi == null)
+									guncellemeTarihi = new Date();
+								vg.setGuncellemeTarihi(guncellemeTarihi);
+								vg.setGuncelleyenUser(guncelleyenUser);
+								vg.setVersion(vg.getDurum() ? 0 : -1);
+								pdksEntityController.saveOrUpdate(session, entityManager, vg);
+								flush = true;
+							}
+						}
+						if (flush)
+							session.flush();
+					}
+					vGunList = null;
+					sb1 = null;
+					fields.clear();
 					if (aylar.size() > 1)
 						logger.info(da.getAyAdi() + " " + da.getYil() + " in " + PdksUtil.getCurrentTimeStampStr());
 					DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 					AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(da.getAy(), da.getYil(), denklestirmeDonemi, session);
-					aylikPuantaj.setLoginUser(loginUser);
+					aylikPuantaj.setLoginUser(guncelleyenUser);
 					aylikPuantaj.setDenklestirmeAy(da);
 					List<SelectItem> departmanIdList = fazlaMesaiOrtakIslemler.getFazlaMesaiDepartmanList(aylikPuantaj, false, session);
 					for (SelectItem siDepartman : departmanIdList) {
@@ -273,7 +318,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								sirketList = PdksUtil.sortObjectStringAlanList(sirketList, "getAd", null);
 							idList = null;
 							for (Sirket sirket : sirketList) {
-								String linkStr = "pdksUserId=" + loginUser.getId() + "&donemId=" + da.getId() + "&sirketId=" + sirket.getId();
+								String linkStr = "pdksUserId=" + guncelleyenUser.getId() + "&donemId=" + da.getId() + "&sirketId=" + sirket.getId();
 								if (sirket.isTesisDurumu())
 									linkStr = linkStr + "&tesisId=*";
 								// if (authenticatedUser != null)
