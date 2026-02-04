@@ -841,7 +841,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 					}
 				}
 				if (modeller != null) {
-					modeller = PdksUtil.sortObjectStringAlanList(modeller, "getAciklama", null);
+					modeller = PdksUtil.sortObjectStringAlanList(modeller, "getSortAciklama", null);
 					setCalismaModeliAy(modeller.get(0));
 				}
 			}

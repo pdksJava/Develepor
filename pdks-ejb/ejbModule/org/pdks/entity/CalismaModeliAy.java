@@ -196,6 +196,19 @@ public class CalismaModeliAy extends BasePDKSObject implements Serializable {
 	}
 
 	@Transient
+	public String getSortAciklama() {
+		String key = "";
+		if (calismaModeli != null) {
+			key += (calismaModeli.getDepartman() != null ? calismaModeli.getDepartman().getId() : "0") + "_";
+			key += (calismaModeli.getSirket() != null ? calismaModeli.getSirket().getAd() : "") + "_";
+			key += (calismaModeli.getTesis() != null ? calismaModeli.getTesis().getAciklama() : "") + "_";
+			key += calismaModeli.getAciklama();
+		}
+
+		return key;
+	}
+
+	@Transient
 	public boolean isGunMaxCalismaOdenir() {
 		return gunMaxCalismaOdemeDurum != null && gunMaxCalismaOdemeDurum;
 	}
