@@ -319,6 +319,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			}
 		}
 		session.close();
+		session = null;
 		return MenuItemConstant.login;
 	}
 
