@@ -323,7 +323,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		Date tarihBit = cal.getTime();
 		if (tarihBit.after(bugun))
 			tarihBit = bugun;
-		fields.clear();
 		StringBuffer sb1 = new StringBuffer();
 		sb1.append("select V.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK());
 		sb1.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY);
@@ -342,19 +341,49 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<VardiyaGun> vGunList = pdksEntityController.getObjectBySQLList(sb1.toString(), fields, VardiyaGun.class);
 		if (vGunList.isEmpty() == false) {
+			List<Long> perIdList = new ArrayList<Long>();
+			for (VardiyaGun vg : vGunList) {
+				if (vg.getVardiya().isHaftaTatil()) {
+					Long perId = vg.getPdksPersonel().getId();
+					if (!perIdList.contains(perId))
+						perIdList.add(perId);
+
+				}
+			}
+			if (perIdList.isEmpty() == false) {
+				fields.clear();
+				sb1 = new StringBuffer();
+				sb1.append("select PD.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK());
+				sb1.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY);
+				sb1.append(" and CA." + CalismaModeliAy.COLUMN_NAME_HAFTA_TATIL_HAREKET_GUNCELLE + " = 0");
+				sb1.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + da.getId() + " and PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :p");
+				fields.put("p", perIdList);
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List<PersonelDenklestirme> pdList = pdksEntityController.getObjectBySQLList(sb1.toString(), fields, PersonelDenklestirme.class);
+				perIdList.clear();
+				for (PersonelDenklestirme pd : pdList)
+					perIdList.add(pd.getPersonelId());
+				pdList = null;
+			}
 			Date guncellemeTarihi = null;
 			boolean flush = false;
 			for (VardiyaGun vg : vGunList) {
-				if (vg.getVardiya().isHaftaTatil() == false) {
-					if (guncellemeTarihi == null)
-						guncellemeTarihi = new Date();
-					vg.setGuncellemeTarihi(guncellemeTarihi);
-					vg.setGuncelleyenUser(guncelleyenUser);
-					vg.setVersion(vg.getDurum() ? 0 : -1);
-					pdksEntityController.saveOrUpdate(session, entityManager, vg);
-					flush = true;
+				Long perId = vg.getPdksPersonel().getId();
+				if (vg.getVardiya().isHaftaTatil() == false || perIdList.contains(perId) == false) {
+					Integer versiyon = vg.getDurum() ? 0 : -1;
+					if (vg.getVersion().equals(versiyon) == false) {
+						if (guncellemeTarihi == null)
+							guncellemeTarihi = new Date();
+						vg.setGuncellemeTarihi(guncellemeTarihi);
+						vg.setGuncelleyenUser(guncelleyenUser);
+						vg.setVersion(vg.getDurum() ? 0 : -1);
+						pdksEntityController.saveOrUpdate(session, entityManager, vg);
+						flush = true;
+					}
 				}
 			}
+			perIdList = null;
 			if (flush)
 				session.flush();
 		}
