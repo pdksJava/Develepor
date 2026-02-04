@@ -3511,14 +3511,17 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			aylikPuantaj.setDenklestirmeAy(denklestirmeAy);
 			aylikPuantaj.setOnayDurum(aylikPuantaj.getPersonelDenklestirme() == null || aylikPuantaj.getPersonelDenklestirme().isOnaylandi() == false);
-			puantajYetkilendir(vardiyaMap, aylikPuantaj, aylikPuantajToplam, toplamVardiyaGun);
+			try {
+				puantajYetkilendir(vardiyaMap, aylikPuantaj, aylikPuantajToplam, toplamVardiyaGun);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 
 		}
 		if (!vardiyaMap.isEmpty()) {
 			if (vardiyaMap.containsKey("0"))
-
 				vardiyaMap.remove("0");
-
 			aylikVardiyaOzetList.addAll(new ArrayList(vardiyaMap.values()));
 			if (aylikVardiyaOzetList.size() > 1)
 				aylikVardiyaOzetList.add(toplamVardiyaGun);
