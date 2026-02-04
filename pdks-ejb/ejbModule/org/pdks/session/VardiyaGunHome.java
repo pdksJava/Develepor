@@ -3580,44 +3580,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	}
 
 	/**
-	 * @return
-	 */
-	public String gunlukListeleriOlustur() {
-		List<Integer> list = new ArrayList<Integer>();
-		for (VardiyaGun pdksVardiyaGun : aylikPuantajDefault.getAyinVardiyalari()) {
-			if (pdksVardiyaGun.isCheckBoxDurum()) {
-				int index = PdksUtil.getDateField(pdksVardiyaGun.getVardiyaDate(), Calendar.DATE) - 1;
-				list.add(index);
-			}
-		}
-		if (list.size() == 1) {
-			int index = list.get(0);
-			AylikPuantaj aylikPuantajToplam = new AylikPuantaj();
-			for (AylikPuantaj aylikPuantaj : aylikPuantajList) {
-				puantajYetkilendir(null, aylikPuantaj, aylikPuantajToplam, null);
-				List<VardiyaGun> gunler = aylikPuantaj.getAyinVardiyalari();
-				VardiyaGun pdksVardiyaGun = gunler.get(index);
-				pdksVardiyaGun.setGuncellendi(Boolean.FALSE);
-				pdksVardiyaGun.saklaVardiya();
-				aylikPuantaj.setVardiyaGun(pdksVardiyaGun);
-			}
-
-		} else if (list.size() > 1)
-			PdksUtil.addMessageWarn("Bir'den fazla gün seçemezsiniz!");
-		else
-			PdksUtil.addMessageWarn("Bir gün seçiniz!");
-		return "";
-	}
-
-	/**
-	 * @return
-	 */
-	public String gunlukListeKaydet() {
-
-		return "";
-	}
-
-	/**
 	 * @param vardiyaMap
 	 * @param aylikPuantaj
 	 * @param aylikPuantajToplam
@@ -4859,20 +4821,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (aylikPuantaj != null) {
 			Personel personel = aylikPuantaj.getPdksPersonel();
 			gorevli = helpPersonel(personel);
-
 			if (!aylikPuantaj.isGorevYeriSec() && aramaSecenekleri.getEkSaha3Id() != null && aramaSecenekleri.getEkSaha3Id() > 0) {
-				// HashMap map1 = new HashMap();
-				// map1.put("durum", Boolean.TRUE);
-				// map1.put("bolum.id", aramaSecenekleri.getEkSaha3Id());
-				// if (session != null)
-				// map1.put(PdksEntityController.MAP_KEY_SESSION, session);
 				bolumKatlari = pdksEntityController.getSQLParamByAktifFieldList(BolumKat.TABLE_NAME, BolumKat.COLUMN_NAME_BOLUM, aramaSecenekleri.getEkSaha3Id(), BolumKat.class, session);
-
 				if (bolumKatlari.size() > 1)
 					bolumKatlari = PdksUtil.sortObjectStringAlanList(bolumKatlari, "getAciklama", null);
 				else
 					bolumKatlari.clear();
-
 			} else
 				bolumKatlari = new ArrayList<BolumKat>();
 			AylikPuantaj aylikPuantajToplam = new AylikPuantaj();
@@ -4881,9 +4835,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
 		}
-
 	}
 
 	/**
