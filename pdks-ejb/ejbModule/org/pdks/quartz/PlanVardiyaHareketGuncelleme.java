@@ -370,18 +370,21 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			boolean flush = false;
 			for (VardiyaGun vg : vGunList) {
 				Long perId = vg.getPdksPersonel().getId();
-				if (vg.getVardiya().isHaftaTatil() == false || perIdList.contains(perId) == false) {
-					Integer versiyon = vg.getDurum() ? 0 : -1;
-					if (vg.getVersion().equals(versiyon) == false) {
-						if (guncellemeTarihi == null)
-							guncellemeTarihi = new Date();
-						vg.setGuncellemeTarihi(guncellemeTarihi);
-						vg.setGuncelleyenUser(guncelleyenUser);
-						vg.setVersion(vg.getDurum() ? 0 : -1);
-						pdksEntityController.saveOrUpdate(session, entityManager, vg);
-						flush = true;
-					}
+				Integer versiyon = vg.getDurum() ? 0 : -1;
+				if (vg.getVardiya().isHaftaTatil()) {
+					if (perIdList.contains(perId))
+						versiyon = 0;
 				}
+				if (vg.getVersion().equals(versiyon) == false) {
+					if (guncellemeTarihi == null)
+						guncellemeTarihi = new Date();
+					vg.setGuncellemeTarihi(guncellemeTarihi);
+					vg.setGuncelleyenUser(guncelleyenUser);
+					vg.setVersion(vg.getDurum() ? 0 : -1);
+					pdksEntityController.saveOrUpdate(session, entityManager, vg);
+					flush = true;
+				}
+
 			}
 			perIdList = null;
 			if (flush)
