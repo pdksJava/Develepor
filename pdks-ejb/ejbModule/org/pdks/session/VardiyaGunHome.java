@@ -2937,7 +2937,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		PersonelDenklestirme pd = ap.getPersonelDenklestirme();
 		boolean hareketKaydiVardiyaBul = pd != null && pd.getCalismaModeliAy() != null ? pd.getCalismaModeliAy().isHareketKaydiVardiyaBulsunmu() : false;
 		if (vg != null && vg.getId() != null) {
-			if (vg.getVersion() < 0 && (vg.isAyinGunu() == false || vg.getVardiyaDate().before(bugunTarih) == false || hareketKaydiVardiyaBul == false)) {
+			boolean yonetici = ikRole == false && adminRole == false && vg.getVersion().equals(0) == false;
+			if (vg.getVersion() < 0 && (yonetici || vg.isAyinGunu() == false || vg.getVardiyaDate().before(bugunTarih) == false || hareketKaydiVardiyaBul == false)) {
 				VardiyaGun vardiyaGun = (VardiyaGun) vg.clone();
 				vardiyaGun.setVersion(0);
 				renk = vardiyaGun.getAylikClassAdi(ap.getTrClass());
