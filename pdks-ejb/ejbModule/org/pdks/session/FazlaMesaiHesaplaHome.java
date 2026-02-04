@@ -1178,7 +1178,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					denklestirmeDonemi.setLoginUser(getPdksUser());
 					denklestirmeDonemi.setDenklestirmeAy(denklestirmeAy);
 					fillPersonelDenklestirmeDevam("", aylikPuantaj, denklestirmeDonemi);
-					session.flush();
 				} catch (Exception e) {
 					logger.error(e);
 					e.printStackTrace();
