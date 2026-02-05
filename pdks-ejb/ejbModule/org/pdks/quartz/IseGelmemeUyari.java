@@ -51,10 +51,12 @@ import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
+import org.pdks.entity.TesisBaglanti;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.enums.NoteTipi;
 import org.pdks.enums.OrganizasyonTipi;
+import org.pdks.enums.PersonelTipi;
 import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.security.entity.DefaultPasswordGenerator;
 import org.pdks.security.entity.Role;
@@ -457,7 +459,7 @@ public class IseGelmemeUyari implements Serializable {
 						Tatil arifeGun = null;
 						Vardiya arifeVardiya = null;
 						try {
-							if ((!pdksVardiyaGun.getVardiya().isIcapVardiyasi() && pdksVardiyaGun.getVardiya().isCalisma())) {
+							if ((!islemVardiya.isIcapVardiyasi() && islemVardiya.isCalisma())) {
 
 								if (resmiTatilGunleri.containsKey(vardiyaGunStr)) {
 									Tatil tatil = resmiTatilGunleri.get(vardiyaGunStr);
@@ -588,6 +590,8 @@ public class IseGelmemeUyari implements Serializable {
 								pdksVardiyaGun.setHareketler(null);
 								pdksVardiyaGun.setHareketHatali(Boolean.FALSE);
 								Personel pdksPersonel = pdksVardiyaGun.getPersonel();
+//								if (pdksPersonel.getPdksSicilNo().equals("SR0013"))
+//									logger.debug("");
 								Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya();
 								Long perNoId = pdksPersonel.getPersonelKGS().getId(), personelNoId = pdksPersonel.getId();
 								Long depId = pdksPersonel.getSirket().getDepartman().getId();
@@ -1270,6 +1274,67 @@ public class IseGelmemeUyari implements Serializable {
 	private void digerOrganizasyonOlustur(Session session) {
 		if (userTesisMap == null) {
 			boolean ikMailGonderme = ortakIslemler.getParameterKey("ikMailGonderme").equals("1") == false;
+			List<Long> idList = new ArrayList<Long>();
+			userTesisMap = new HashMap<Long, List<Long>>();
+			tesisUserMap = new HashMap<Long, List<User>>();
+			if (ikMailGonderme) {
+				List<TesisBaglanti> baglantiList = pdksEntityController.getSQLTableList(TesisBaglanti.TABLE_NAME, TesisBaglanti.class, session);
+				if (baglantiList.isEmpty() == false) {
+					List<User> ikList = ortakIslemler.getUserIKList(session);
+					if (ikList != null) {
+						List<Long> id2List = new ArrayList<Long>();
+						for (User user : ikList)
+							id2List.add(user.getId());
+						List<UserRoles> userRoller = pdksEntityController.getSQLParamByFieldList(UserRoles.TABLE_NAME, UserRoles.COLUMN_NAME_USER, new ArrayList(id2List), UserRoles.class, session);
+						HashMap<Long, List<Role>> roleMap = new HashMap<Long, List<Role>>();
+						for (UserRoles ur : userRoller) {
+							Long key = ur.getUser().getId();
+							List<Role> list = roleMap.containsKey(key) ? roleMap.get(key) : new ArrayList<Role>();
+							if (list.isEmpty())
+								roleMap.put(key, list);
+							list.add(ur.getRole());
+						}
+						userRoller = null;
+						id2List = null;
+						for (User user : ikList) {
+							Personel personel = user.getPdksPersonel();
+							Long key = user.getId();
+
+							Tanim tesis = personel.getTesis();
+							if (tesis != null) {
+								if (roleMap.containsKey(key) == false)
+									continue;
+								List<Role> yetkiliRollerim = roleMap.get(key);
+								user.setYetkiliRollerim(yetkiliRollerim);
+								PdksUtil.setUserYetki(user);
+								if (user.isIK_Tesis() == false && user.isIKSirket() == false)
+									continue;
+								Long tesisId = tesis.getId();
+								for (TesisBaglanti tb : baglantiList) {
+									if (tb.getTesis().getId().equals(tesisId) && tb.getTesisBaglanti() != null) {
+										PersonelTipi pd = tb.getPersonelTipi();
+										if (pd == null || pd.equals(PersonelTipi.IK) || pd.equals(PersonelTipi.TUM)) {
+											Long id = tb.getTesisBaglanti().getId();
+											List<User> list = tesisUserMap.containsKey(id) ? tesisUserMap.get(id) : new ArrayList<User>();
+											if (list.isEmpty())
+												tesisUserMap.put(id, list);
+											list.add(user);
+											List<Long> tesisList = userTesisMap.containsKey(key) ? userTesisMap.get(key) : new ArrayList<Long>();
+											if (tesisList.isEmpty())
+												userTesisMap.put(key, tesisList);
+											tesisList.add(tb.getTesisBaglanti().getId());
+										}
+									}
+
+								}
+							}
+						}
+					}
+
+				}
+
+			}
+
 			HashMap fields = new HashMap();
 			StringBuilder sb = new StringBuilder();
 			sb.append("select UR.* from " + UserDigerOrganizasyon.TABLE_NAME + " UR " + PdksEntityController.getSelectLOCK());
@@ -1277,8 +1342,7 @@ public class IseGelmemeUyari implements Serializable {
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<UserDigerOrganizasyon> digerOrganizasyonsList = pdksEntityController.getObjectBySQLList(sb, fields, UserDigerOrganizasyon.class);
-			userTesisMap = new HashMap<Long, List<Long>>();
-			tesisUserMap = new HashMap<Long, List<User>>();
+
 			tesisUserVardiyaMap = new HashMap<Long, List<VardiyaGun>>();
 			HashMap<Long, User> userOrgMap = new HashMap<Long, User>();
 			for (UserDigerOrganizasyon userDigerOrganizasyon : digerOrganizasyonsList) {
@@ -1300,7 +1364,7 @@ public class IseGelmemeUyari implements Serializable {
 			}
 			if (userTesisMap.isEmpty() == false) {
 				HashMap<Long, User> userRolMap = new HashMap<Long, User>();
-				List<Long> idList = new ArrayList(userTesisMap.keySet());
+				idList.addAll(new ArrayList(userTesisMap.keySet()));
 				List<UserRoles> userRoller = pdksEntityController.getSQLParamByFieldList(UserRoles.TABLE_NAME, UserRoles.COLUMN_NAME_USER, new ArrayList(idList), UserRoles.class, session);
 				for (UserRoles ur : userRoller) {
 					User user = ur.getUser();
@@ -1342,7 +1406,13 @@ public class IseGelmemeUyari implements Serializable {
 						List<User> list = tesisUserMap.containsKey(tesisId) ? tesisUserMap.get(tesisId) : new ArrayList<User>();
 						if (list.isEmpty())
 							tesisUserMap.put(tesisId, list);
-						list.add(user);
+						boolean ekle = true;
+						for (User user2 : list) {
+							if (user2.getId().equals(user.getId()))
+								ekle = false;
+						}
+						if (ekle)
+							list.add(user);
 					}
 
 				}
