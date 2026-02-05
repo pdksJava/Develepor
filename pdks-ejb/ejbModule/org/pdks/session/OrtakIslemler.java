@@ -10496,9 +10496,22 @@ public class OrtakIslemler implements Serializable {
 						Vardiya vardiyaVg = vardiyaGun.getVardiya();
 						String vardiyaDateStr = vardiyaGun.getVardiyaDateStr(), vardiyaKeyStr = vardiyaGun.getVardiyaKeyStr();
 						vardiyaGun.setGuncellendi(Boolean.FALSE);
-
-						if (vardiyaGun.isIzinli() || vardiyaGun.getVardiyaDate().after(sonGun) || vardiyaVg.isHaftaTatil()) {
-							if (vardiyaVg.isHaftaTatil() && cma != null && cma.getHaftaTatilHareketGuncelle().booleanValue() == false) {
+						boolean talepVar = vardiyaVg.getVersion() == 0;
+						boolean htVar = talepVar;
+						if (htVar == false) {
+							if (vardiyaVg.isHaftaTatil())
+								htVar = cma != null && cma.getHaftaTatilHareketGuncelle().booleanValue() == false;
+							if (vardiyaGun.getFazlaMesaiTalepler() != null) {
+								for (FazlaMesaiTalep fmt : vardiyaGun.getFazlaMesaiTalepler()) {
+									if (fmt.getDurum()) {
+										talepVar = true;
+										break;
+									}
+								}
+							}
+						}
+						if (vardiyaGun.isIzinli() || vardiyaGun.getVardiyaDate().after(sonGun) || htVar || talepVar) {
+							if (talepVar || htVar) {
 								if (vardiyaVg.getVersion() < 0) {
 									vardiyaGun.setVersion(0);
 									if (guncelleyenUser == null)

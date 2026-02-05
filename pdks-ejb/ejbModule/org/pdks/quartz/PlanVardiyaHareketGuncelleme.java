@@ -29,6 +29,7 @@ import org.pdks.entity.AylikPuantaj;
 import org.pdks.entity.CalismaModeliAy;
 import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.DepartmanDenklestirmeDonemi;
+import org.pdks.entity.FazlaMesaiTalep;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.Liste;
 import org.pdks.entity.Parameter;
@@ -333,7 +334,10 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		sb1.append(" or (V." + VardiyaGun.COLUMN_NAME_VERSION + " < 0 and V." + VardiyaGun.COLUMN_NAME_DURUM + " = 1 ) ) ");
 		sb1.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 		sb1.append(" and (V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ") ");
+		sb1.append(" left join " + FazlaMesaiTalep.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " on F." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
+		sb1.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1");
 		sb1.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + da.getId() + " and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1");
+		sb1.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_ID + " is null");
 		sb1.append(" order by P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + ", V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		fields.put("t1", tarihBas);
 		fields.put("t2", tarihBit);
@@ -380,7 +384,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						guncellemeTarihi = new Date();
 					vg.setGuncellemeTarihi(guncellemeTarihi);
 					vg.setGuncelleyenUser(guncelleyenUser);
-					vg.setVersion(vg.getDurum() ? 0 : -1);
+					vg.setVersion(versiyon);
 					pdksEntityController.saveOrUpdate(session, entityManager, vg);
 					flush = true;
 				}
