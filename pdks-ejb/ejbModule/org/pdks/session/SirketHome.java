@@ -13,6 +13,7 @@ import java.util.TreeMap;
 
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -66,6 +67,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	private TreeMap<String, Tanim> ekSahaTanimMap;
 	private String bolumAciklama;
 	private List<SelectItem> sirketGrupList;
+	private List<SelectItem> mediaTyepList;
 	private Sirket seciliSirket;
 
 	private SirketEntegrasyon seciliSirketEntegrasyon;
@@ -104,7 +106,15 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 		return "";
 	}
 
+	/**
+	 * @param sirket
+	 * @return
+	 */
 	public String guncelle(Sirket sirket) {
+		if (mediaTyepList == null)
+			mediaTyepList = new ArrayList<SelectItem>();
+		else
+			mediaTyepList.clear();
 		fillBagliOlduguDepartmanTanimList();
 		sirketGrupList = ortakIslemler.getTanimSelectItem("sirketGrup", ortakIslemler.getTanimList(Tanim.TIPI_SIRKET_GRUP, session));
 		if (sirket == null) {
@@ -132,6 +142,8 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 			if (seciliSirketEntegrasyon == null)
 				seciliSirketEntegrasyon = new SirketEntegrasyon(sirket);
 			seciliSirketEntegrasyon.setDegisti(Boolean.FALSE);
+			mediaTyepList.add(new SelectItem(MediaType.APPLICATION_JSON, "JSON"));
+			mediaTyepList.add(new SelectItem(MediaType.APPLICATION_XML, "XML"));
 		}
 		sirket.setDegisti(sirket.getId() == null);
 		if (personelList != null)
@@ -444,6 +456,14 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 
 	public void setSeciliSirketEntegrasyon(SirketEntegrasyon seciliSirketEntegrasyon) {
 		this.seciliSirketEntegrasyon = seciliSirketEntegrasyon;
+	}
+
+	public List<SelectItem> getMediaTyepList() {
+		return mediaTyepList;
+	}
+
+	public void setMediaTyepList(List<SelectItem> mediaTyepList) {
+		this.mediaTyepList = mediaTyepList;
 	}
 
 }

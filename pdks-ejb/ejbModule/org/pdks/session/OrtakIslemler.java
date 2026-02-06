@@ -69,6 +69,8 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.international.StatusMessage.Severity;
+import org.json.JSONArray;
+import org.json.XML;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.pdks.dinamikRapor.entity.PdksDinamikRapor;
@@ -255,6 +257,59 @@ public class OrtakIslemler implements Serializable {
 			str = "";
 		}
 		return str;
+	}
+
+	/**
+	 * @param fonksiyonAdi
+	 * @param sonuc
+	 * @return
+	 */
+	public String convertJSONtoXML(String fonksiyonAdi, String sonuc) {
+		String str = sonuc;
+		String xml = null;
+		if (str.startsWith("{")) {
+			org.json.JSONObject jsonObject = new org.json.JSONObject(str);
+			xml = XML.toString(jsonObject);
+		} else {
+			JSONArray jsonObject = new JSONArray(str);
+			xml = "<" + fonksiyonAdi + ">" + PdksUtil.replaceAllManuel(XML.toString(jsonObject), "array", "satir") + "</" + fonksiyonAdi + ">";
+		}
+		sonuc = xml;
+		return sonuc;
+	}
+
+	/**
+	 * @param xml
+	 * @return
+	 */
+	public String convertXMLtoJSON(String xml) {
+		org.json.JSONObject json = org.json.XML.toJSONObject(xml);
+		String sonuc = json.toString();
+		return sonuc;
+	}
+
+	/**
+	 * @param sirketKodu
+	 * @param personelNo
+	 * @param session
+	 * @return
+	 */
+	public List<PersonelERP> updatePersonelAPI(String sirketKodu, String personelNo, Session session) {
+		List<PersonelERP> list = null;
+		return list;
+
+	}
+
+	/**
+	 * @param sirketKodu
+	 * @param personelNo
+	 * @param session
+	 * @return
+	 */
+	public List<IzinERP> updateIzinAPI(String sirketKodu, String personelNo, Session session) {
+		List<IzinERP> list = null;
+		return list;
+
 	}
 
 	/**
@@ -10785,7 +10840,7 @@ public class OrtakIslemler implements Serializable {
 	 * @throws Exception
 	 */
 	public List<User> getUserIKList(Session session) {
-		List<User> userIKList=null;
+		List<User> userIKList = null;
 		String spName = "SP_IK_LIST";
 		if (isExisStoreProcedure(spName, session)) {
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
@@ -10795,9 +10850,9 @@ public class OrtakIslemler implements Serializable {
 			try {
 				userIKList = pdksEntityController.execSPList(veriMap, spName, User.class);
 			} catch (Exception e) {
-				 
+
 			}
-			
+
 		}
 		return userIKList;
 	}

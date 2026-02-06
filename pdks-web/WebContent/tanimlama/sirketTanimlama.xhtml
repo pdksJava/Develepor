@@ -312,27 +312,67 @@
 
 							</h:panelGrid>
 							<c:if test="#{sirketHome.seciliSirket.erp}">
-								<h:panelGrid columns="2">
+								<h:panelGrid columns="3" id="erpPanel">
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 										<ui:define name="label">Personel Servis Bilgi</ui:define>
-										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlPersonel}" cols="80" rows="5" />
+										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlPersonel}" cols="80" rows="5">
+											<a4j:support event="onchange" ajaxSingle="true" reRender="sirketGiris" />
+										</h:inputTextarea>
 									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">Personel Servis Type</ui:define>
+										<h:selectOneMenu value="#{sirketHome.seciliSirketEntegrasyon.mediaTypePersonel}"
+											required="#{ortakIslemler.hasStringValue(sirketHome.seciliSirketEntegrasyon.mediaTypePersonel)}"
+											requiredMessage="Personel Servis Type seçiniz">
+											<f:selectItem itemLabel="Lütfen seçiniz" />
+											<f:selectItems value="#{sirketHome.mediaTyepList}" />
+											<a4j:support event="onchange" ajaxSingle="true" reRender="erpPanel" />
+										</h:selectOneMenu>
+									</s:decorate>
+
+
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">Personel Güncelle Tarihi</ui:define>
 										<rich:calendar value="#{sirketHome.seciliSirketEntegrasyon.guncelemeZamaniPersonel}" datePattern="#{authenticatedUser.dateFormat}" />
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 										<ui:define name="label">İzin Servis Bilgi</ui:define>
-										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlIzin}" cols="80" rows="5" />
+										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlIzin}" cols="80" rows="5">
+											<a4j:support event="onchange" ajaxSingle="true" reRender="sirketGiris" />
+										</h:inputTextarea>
 									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">İzin Servis Type</ui:define>
+										<h:selectOneMenu value="#{sirketHome.seciliSirketEntegrasyon.mediaTypeIzin}"
+											required="#{ortakIslemler.hasStringValue(sirketHome.seciliSirketEntegrasyon.mediaTypeIzin)}"
+											requiredMessage="İzin Servis Type seçiniz">
+											<f:selectItem itemLabel="Lütfen seçiniz" />
+											<f:selectItems value="#{sirketHome.mediaTyepList}" />
+											<a4j:support event="onchange" ajaxSingle="true" reRender="erpPanel" />
+										</h:selectOneMenu>
+									</s:decorate>
+									
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">İzin Güncelle Tarihi</ui:define>
 										<rich:calendar value="#{sirketHome.seciliSirketEntegrasyon.guncelemeZamaniIzin}" datePattern="#{authenticatedUser.dateFormat}" />
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 										<ui:define name="label">Mesai Servis Bilgi</ui:define>
-										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlMesai}" cols="80" rows="5" />
+										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlMesai}" cols="80" rows="5">
+											<a4j:support event="onchange" ajaxSingle="true" reRender="sirketGiris" />
+										</h:inputTextarea>
 									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">Mesai Servis Type</ui:define>
+										<h:selectOneMenu value="#{sirketHome.seciliSirketEntegrasyon.mediaTypeMesai}"
+											required="#{ortakIslemler.hasStringValue(sirketHome.seciliSirketEntegrasyon.mediaTypeMesai)}"
+											requiredMessage="Mesai Servis Type seçiniz">
+											<f:selectItem itemLabel="Lütfen seçiniz" />
+											<f:selectItems value="#{sirketHome.mediaTyepList}" />
+											<a4j:support event="onchange" ajaxSingle="true" reRender="erpPanel" />
+										</h:selectOneMenu>
+									</s:decorate>
+									
 								</h:panelGrid>
 							</c:if>
 							<s:decorate template="/layout/edit.xhtml">

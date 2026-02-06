@@ -32,12 +32,16 @@ public class SirketEntegrasyon extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_URL_PERSONEL = "URL_PERSONEL";
 	public static final String COLUMN_NAME_URL_IZIN = "URL_IZIN";
 	public static final String COLUMN_NAME_URL_MESAI = "URL_MESAI";
+	public static final String COLUMN_NAME_MEDIA_TYPE_PERSONEL = "MEDIA_TYPE_PERSONEL";
+	public static final String COLUMN_NAME_MEDIA_TYPE_IZIN = "MEDIA_TYPE_IZIN";
+	public static final String COLUMN_NAME_MEDIA_TYPE_MESAI = "MEDIA_TYPE_MESAI";
+
 	public static final String COLUMN_NAME_GUNCELLEME_ZAMANI_PERSONEL = "GUNCELLEME_ZAMANI_PERSONEL";
 	public static final String COLUMN_NAME_GUNCELLEME_ZAMANI_IZIN = "GUNCELLEME_ZAMANI_IZIN";
 
 	private Sirket sirket;
 
-	private String urlPersonel, urlIzin, urlMesai;
+	private String urlPersonel, mediaTypePersonel, urlIzin, mediaTypeIzin, urlMesai, mediaTypeMesai;
 	private Date guncelemeZamaniPersonel, guncelemeZamaniIzin;
 
 	public SirketEntegrasyon() {
@@ -72,6 +76,17 @@ public class SirketEntegrasyon extends BasePDKSObject implements Serializable {
 		this.urlPersonel = value;
 	}
 
+	@Column(name = COLUMN_NAME_MEDIA_TYPE_PERSONEL)
+	public String getMediaTypePersonel() {
+		return mediaTypePersonel;
+	}
+
+	public void setMediaTypePersonel(String value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isStrDegisti(mediaTypePersonel, value));
+		this.mediaTypePersonel = value;
+	}
+
 	@Column(name = COLUMN_NAME_URL_IZIN)
 	public String getUrlIzin() {
 		return urlIzin;
@@ -83,6 +98,17 @@ public class SirketEntegrasyon extends BasePDKSObject implements Serializable {
 		this.urlIzin = value;
 	}
 
+	@Column(name = COLUMN_NAME_MEDIA_TYPE_IZIN)
+	public String getMediaTypeIzin() {
+		return mediaTypeIzin;
+	}
+
+	public void setMediaTypeIzin(String value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isStrDegisti(mediaTypeIzin, value));
+		this.mediaTypeIzin = value;
+	}
+
 	@Column(name = COLUMN_NAME_URL_MESAI)
 	public String getUrlMesai() {
 		return urlMesai;
@@ -92,6 +118,17 @@ public class SirketEntegrasyon extends BasePDKSObject implements Serializable {
 		if (this.isDegisti() == false)
 			this.setDegisti(PdksUtil.isStrDegisti(urlMesai, value));
 		this.urlMesai = value;
+	}
+
+	@Column(name = COLUMN_NAME_MEDIA_TYPE_MESAI)
+	public String getMediaTypeMesai() {
+		return mediaTypeMesai;
+	}
+
+	public void setMediaTypeMesai(String value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isStrDegisti(mediaTypeMesai, value));
+		this.mediaTypeMesai = value;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -121,4 +158,5 @@ public class SirketEntegrasyon extends BasePDKSObject implements Serializable {
 	public void entityRefresh() {
 
 	}
+
 }
