@@ -126,8 +126,9 @@ public class PdksRestTestVeriAktarService implements Serializable {
 		sb.append(" inner join " + IzinTipi.TABLE_NAME + " T " + PdksVeriOrtakAktar.getJoinLOCK() + " on T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI);
 		sb.append(" and T." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null");
 		if (zaman != null) {
-			sb.append(" where I." + PersonelIzin.COLUMN_NAME_GUNCELLEME_TARIHI + " >= :g");
-			fields.put("g", zaman);
+			sb.append(" where I." + PersonelIzin.COLUMN_NAME_GUNCELLEME_TARIHI + " >= :g1 or I." + PersonelIzin.COLUMN_NAME_OLUSTURMA_TARIHI + " >= :g2");
+			fields.put("g1", zaman);
+			fields.put("g2", zaman);
 		}
 		List<IzinERP> izinERPList = new ArrayList<IzinERP>();
 		pdksDAO = Constants.pdksDAO;
@@ -149,6 +150,7 @@ public class PdksRestTestVeriAktarService implements Serializable {
 				izin.setIzinTipi(izinTipiTanim.getErpKodu());
 				izin.setIzinTipiAciklama(izinTipiTanim.getAciklama());
 				izin.setDurum(personelIzin.getIzinDurumu() == PersonelIzin.IZIN_DURUMU_ONAYLANDI);
+				izin.setSureBirimi(SureBirimi.GUN);
 				izin.setYazildi(null);
 				izinERPList.add(izin);
 			}
@@ -190,8 +192,9 @@ public class PdksRestTestVeriAktarService implements Serializable {
 			sb.append(" where P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :p");
 			fields.put("p", personelNo);
 		} else if (zaman != null) {
-			sb.append(" where P." + Personel.COLUMN_NAME_GUNCELLEME_TARIHI + " >= :g");
-			fields.put("g", zaman);
+			sb.append(" where P." + Personel.COLUMN_NAME_GUNCELLEME_TARIHI + " >= :g or P." + PersonelIzin.COLUMN_NAME_OLUSTURMA_TARIHI + " >= :g2");
+			fields.put("g1", zaman);
+			fields.put("g2", zaman);
 		}
 		List<PersonelERP> personelERPList = new ArrayList<PersonelERP>();
 		pdksDAO = Constants.pdksDAO;
