@@ -300,6 +300,7 @@ public class OrtakIslemler implements Serializable {
 			personelNo = "";
 		List<SirketEntegrasyon> entegrasyonList = getSirketEntegrasyonList(sirketKodu, personelNo, session);
 		if (entegrasyonList != null) {
+			HashMap<String, String> entegrasyonMap = new HashMap<String, String>();
 			for (SirketEntegrasyon se : entegrasyonList) {
 				String mediaType = se.getMediaTypePersonel(), urlAPI = se.getUrlPersonel();
 				Date tarih = se.getGuncelemeZamaniPersonel();
@@ -335,10 +336,35 @@ public class OrtakIslemler implements Serializable {
 					if (apiData != null) {
 						org.json.JSONArray jsonArray = getJSONArray(mediaType, apiData);
 						if (jsonArray != null) {
-							if (list == null)
+							if (list == null) {
 								list = new ArrayList<PersonelERP>();
+								List<Tanim> tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_API_PERSONEL, Tanim.class, session);
+								for (Tanim tanim : tanimList)
+									entegrasyonMap.put(tanim.getErpKodu(), tanim.getKodu());
+
+							}
+
 							for (int i = 0; i < jsonArray.length(); i++) {
 								org.json.JSONObject obj = jsonArray.getJSONObject(i);
+								PersonelERP erp = null;
+								for (Iterator iterator = obj.keys(); iterator.hasNext();) {
+									String key = (String) iterator.next();
+									Object value = obj.get(key);
+									if (value != null && entegrasyonMap.containsKey(key)) {
+										if (erp == null)
+											erp = new PersonelERP();
+										String tipi = entegrasyonMap.get(key);
+										if (tipi.equals("personelNo"))
+											erp.setPersonelNo((String) value);
+										else if (tipi.equals("adi"))
+											erp.setAdi((String) value);
+										else if (tipi.equals("soyadi"))
+											erp.setSoyadi((String) value);
+									}
+
+								}
+								if (erp != null)
+									list.add(erp);
 
 							}
 						}
@@ -366,6 +392,7 @@ public class OrtakIslemler implements Serializable {
 			personelNo = "";
 		List<SirketEntegrasyon> entegrasyonList = getSirketEntegrasyonList(sirketKodu, personelNo, session);
 		if (entegrasyonList != null) {
+			HashMap<String, String> entegrasyonMap = new HashMap<String, String>();
 			for (SirketEntegrasyon se : entegrasyonList) {
 				String mediaType = se.getMediaTypeIzin(), urlAPI = se.getUrlIzin();
 				Date tarih = se.getGuncelemeZamaniPersonel();
@@ -401,10 +428,35 @@ public class OrtakIslemler implements Serializable {
 					if (apiData != null) {
 						org.json.JSONArray jsonArray = getJSONArray(mediaType, apiData);
 						if (jsonArray != null) {
-							if (list == null)
+							if (list == null) {
 								list = new ArrayList<IzinERP>();
+								List<Tanim> tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_API_IZIN, Tanim.class, session);
+								for (Tanim tanim : tanimList)
+									entegrasyonMap.put(tanim.getErpKodu(), tanim.getKodu());
+							}
 							for (int i = 0; i < jsonArray.length(); i++) {
 								org.json.JSONObject obj = jsonArray.getJSONObject(i);
+								IzinERP erp = null;
+								for (Iterator iterator = obj.keys(); iterator.hasNext();) {
+									String key = (String) iterator.next();
+									Object value = obj.get(key);
+									if (value != null && entegrasyonMap.containsKey(key)) {
+										if (erp == null)
+											erp = new IzinERP();
+										String tipi = entegrasyonMap.get(key);
+										if (tipi.equals("personelNo"))
+											erp.setPersonelNo((String) value);
+										else if (tipi.equals("aciklama"))
+											erp.setAciklama((String) value);
+										else if (tipi.equals("izinTipi"))
+											erp.setIzinTipi((String) value);
+										else if (tipi.equals("izinTipiAciklama"))
+											erp.setIzinTipiAciklama((String) value);
+									}
+
+								}
+								if (erp != null)
+									list.add(erp);
 
 							}
 						}
