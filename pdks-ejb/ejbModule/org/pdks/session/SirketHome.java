@@ -131,7 +131,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 				seciliSirketEntegrasyon = (SirketEntegrasyon) pdksEntityController.getSQLParamByFieldObject(SirketEntegrasyon.TABLE_NAME, SirketEntegrasyon.COLUMN_NAME_SIRKET, sirket.getId(), SirketEntegrasyon.class, session);
 			if (seciliSirketEntegrasyon == null)
 				seciliSirketEntegrasyon = new SirketEntegrasyon(sirket);
-
+			seciliSirketEntegrasyon.setDegisti(Boolean.FALSE);
 		}
 		sirket.setDegisti(sirket.getId() == null);
 		if (personelList != null)

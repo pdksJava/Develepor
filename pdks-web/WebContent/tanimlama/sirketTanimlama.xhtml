@@ -315,7 +315,7 @@
 								<h:panelGrid columns="2">
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 										<ui:define name="label">Personel Servis Bilgi</ui:define>
-										<h:inputText value="#{sirketHome.seciliSirketEntegrasyon.urlPersonel}" size="5" maxlength="2048" />
+										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlPersonel}" cols="80" rows="5" />
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">Personel Güncelle Tarihi</ui:define>
@@ -323,7 +323,7 @@
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 										<ui:define name="label">İzin Servis Bilgi</ui:define>
-										<h:inputText value="#{sirketHome.seciliSirketEntegrasyon.urlIzin}" size="5" maxlength="2048" />
+										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlIzin}" cols="80" rows="5" />
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">İzin Güncelle Tarihi</ui:define>
@@ -331,7 +331,7 @@
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 										<ui:define name="label">Mesai Servis Bilgi</ui:define>
-										<h:inputText value="#{sirketHome.seciliSirketEntegrasyon.urlMesai}" size="5" maxlength="2048" />
+										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlMesai}" cols="80" rows="5" />
 									</s:decorate>
 								</h:panelGrid>
 							</c:if>

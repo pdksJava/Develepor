@@ -8,8 +8,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
@@ -17,6 +19,7 @@ import org.hibernate.annotations.FetchMode;
 import org.pdks.session.PdksUtil;
 
 @Entity(name = SirketEntegrasyon.TABLE_NAME)
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { SirketEntegrasyon.COLUMN_NAME_SIRKET }) })
 public class SirketEntegrasyon extends BasePDKSObject implements Serializable {
 
 	/**

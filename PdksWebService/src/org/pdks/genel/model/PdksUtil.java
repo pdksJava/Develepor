@@ -198,7 +198,8 @@ public class PdksUtil implements Serializable {
 		}
 		return str.trim();
 	}
-
+	
+	
 	/**
 	 * @param aciklama
 	 * @return
