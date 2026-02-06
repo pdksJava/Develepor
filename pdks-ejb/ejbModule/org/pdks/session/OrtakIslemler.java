@@ -315,6 +315,7 @@ public class OrtakIslemler implements Serializable {
 							urlAPI = PdksUtil.replaceAll(urlAPI, key, map.get(key));
 
 					}
+					map = null;
 					int index = urlAPI.indexOf("?");
 					if (index > 0) {
 						String str1 = urlAPI.substring(0, index), str2 = urlAPI.substring(index + 1), ek = "?";
@@ -396,9 +397,9 @@ public class OrtakIslemler implements Serializable {
 			for (SirketEntegrasyon se : entegrasyonList) {
 				String mediaType = se.getMediaTypeIzin(), urlAPI = se.getUrlIzin();
 				Date tarih = se.getGuncelemeZamaniPersonel();
-				HashMap<String, String> map = new HashMap<String, String>();
-				map.put("$personelKodu$", personelNo);
 				if (PdksUtil.hasStringValue(mediaType)) {
+					HashMap<String, String> map = new HashMap<String, String>();
+					map.put("$personelKodu$", personelNo);
 					map.put("$sirketKodu$", se.getSirket().getErpKodu());
 					if (tarih != null)
 						map.put("$tarih$", PdksUtil.convertToDateString(tarih, "yyyy-MM-dd"));
@@ -407,6 +408,7 @@ public class OrtakIslemler implements Serializable {
 							urlAPI = PdksUtil.replaceAll(urlAPI, key, map.get(key));
 
 					}
+					map = null;
 					int index = urlAPI.indexOf("?");
 					if (index > 0) {
 						String str1 = urlAPI.substring(0, index), str2 = urlAPI.substring(index + 1), ek = "?";
@@ -463,7 +465,7 @@ public class OrtakIslemler implements Serializable {
 
 					}
 				}
-				map = null;
+
 			}
 		}
 		return list;
