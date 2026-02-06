@@ -69,7 +69,6 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.international.StatusMessage.Severity;
-import org.json.JSONArray;
 import org.json.XML;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -272,7 +271,7 @@ public class OrtakIslemler implements Serializable {
 			org.json.JSONObject jsonObject = new org.json.JSONObject(str);
 			xml = XML.toString(jsonObject);
 		} else {
-			JSONArray jsonObject = new JSONArray(str);
+			org.json.JSONArray jsonObject = new org.json.JSONArray(str);
 			xml = "<" + fonksiyonAdi + ">" + PdksUtil.replaceAllManuel(XML.toString(jsonObject), "array", "satir") + "</" + fonksiyonAdi + ">";
 		}
 		sonuc = xml;
@@ -301,23 +300,51 @@ public class OrtakIslemler implements Serializable {
 			personelNo = "";
 		List<SirketEntegrasyon> entegrasyonList = getSirketEntegrasyonList(sirketKodu, personelNo, session);
 		if (entegrasyonList != null) {
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("$personelKodu$", personelNo);
 			for (SirketEntegrasyon se : entegrasyonList) {
 				String mediaType = se.getMediaTypePersonel(), urlAPI = se.getUrlPersonel();
 				Date tarih = se.getGuncelemeZamaniPersonel();
 				if (PdksUtil.hasStringValue(mediaType)) {
+					HashMap<String, String> map = new HashMap<String, String>();
+					map.put("$personelKodu$", personelNo);
 					map.put("$sirketKodu$", se.getSirket().getErpKodu());
-					map.put("$tarih$", tarih != null ? PdksUtil.convertToDateString(tarih, "yyyy-MM-dd") : "1900-01-01");
+					if (tarih != null)
+						map.put("$tarih$", PdksUtil.convertToDateString(tarih, "yyyy-MM-dd"));
 					for (String key : map.keySet()) {
 						if (urlAPI.indexOf(key) > 0)
 							urlAPI = PdksUtil.replaceAll(urlAPI, key, map.get(key));
 
 					}
-					String apiData = getApiData(urlAPI);
-					if (mediaType.equals(MediaType.APPLICATION_XML)) {
-						apiData = convertXMLtoJSON(apiData);
+					int index = urlAPI.indexOf("?");
+					if (index > 0) {
+						String str1 = urlAPI.substring(0, index), str2 = urlAPI.substring(index + 1), ek = "?";
+						StringTokenizer st = new StringTokenizer(str2, "&");
+						str2 = "";
+						while (st.hasMoreTokens()) {
+							String str = st.nextToken();
+							String[] parca = str.trim().split("=");
+							if (parca.length == 2) {
+								if (parca[1].length() > 0) {
+									str2 += ek + str;
+									ek = "&";
+								}
+							}
+						}
+						urlAPI = str1 + str2;
 					}
+					String apiData = getApiData(urlAPI);
+					if (apiData != null) {
+						org.json.JSONArray jsonArray = getJSONArray(mediaType, apiData);
+						if (jsonArray != null) {
+							if (list == null)
+								list = new ArrayList<PersonelERP>();
+							for (int i = 0; i < jsonArray.length(); i++) {
+								org.json.JSONObject obj = jsonArray.getJSONObject(i);
+
+							}
+						}
+
+					}
+					map = null;
 				}
 			}
 
@@ -339,28 +366,84 @@ public class OrtakIslemler implements Serializable {
 			personelNo = "";
 		List<SirketEntegrasyon> entegrasyonList = getSirketEntegrasyonList(sirketKodu, personelNo, session);
 		if (entegrasyonList != null) {
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("$personelKodu$", personelNo);
 			for (SirketEntegrasyon se : entegrasyonList) {
 				String mediaType = se.getMediaTypeIzin(), urlAPI = se.getUrlIzin();
 				Date tarih = se.getGuncelemeZamaniPersonel();
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("$personelKodu$", personelNo);
 				if (PdksUtil.hasStringValue(mediaType)) {
 					map.put("$sirketKodu$", se.getSirket().getErpKodu());
-					map.put("$tarih$", tarih != null ? PdksUtil.convertToDateString(tarih, "yyyy-MM-dd") : "1900-01-01");
+					if (tarih != null)
+						map.put("$tarih$", PdksUtil.convertToDateString(tarih, "yyyy-MM-dd"));
 					for (String key : map.keySet()) {
 						if (urlAPI.indexOf(key) > 0)
 							urlAPI = PdksUtil.replaceAll(urlAPI, key, map.get(key));
 
 					}
+					int index = urlAPI.indexOf("?");
+					if (index > 0) {
+						String str1 = urlAPI.substring(0, index), str2 = urlAPI.substring(index + 1), ek = "?";
+						StringTokenizer st = new StringTokenizer(str2, "&");
+						str2 = "";
+						while (st.hasMoreTokens()) {
+							String str = st.nextToken();
+							String[] parca = str.trim().split("=");
+							if (parca.length == 2) {
+								if (parca[1].length() > 0) {
+									str2 += ek + str;
+									ek = "&";
+								}
+							}
+						}
+						urlAPI = str1 + str2;
+					}
 					String apiData = getApiData(urlAPI);
-					if (mediaType.equals(MediaType.APPLICATION_XML)) {
-						apiData = convertXMLtoJSON(apiData);
+					if (apiData != null) {
+						org.json.JSONArray jsonArray = getJSONArray(mediaType, apiData);
+						if (jsonArray != null) {
+							if (list == null)
+								list = new ArrayList<IzinERP>();
+							for (int i = 0; i < jsonArray.length(); i++) {
+								org.json.JSONObject obj = jsonArray.getJSONObject(i);
+
+							}
+						}
+
 					}
 				}
+				map = null;
 			}
 		}
 		return list;
 
+	}
+
+	private org.json.JSONArray getJSONArray(String mediaType, String apiData) {
+		if (mediaType.equals(MediaType.APPLICATION_XML))
+			apiData = convertXMLtoJSON(apiData);
+
+		org.json.JSONArray jsonArray = null;
+		if (apiData.startsWith("{")) {
+			org.json.JSONObject jsonObject = new org.json.JSONObject(apiData);
+			if (jsonObject != null) {
+				boolean devam = true;
+				while (jsonArray == null && devam) {
+					for (Iterator iterator = jsonObject.keySet().iterator(); iterator.hasNext();) {
+						String key = (String) iterator.next();
+						Object object = jsonObject.get(key);
+						devam = false;
+						if (object instanceof org.json.JSONObject) {
+							jsonObject = (org.json.JSONObject) object;
+							devam = true;
+						} else if (object instanceof org.json.JSONArray)
+							jsonArray = (org.json.JSONArray) object;
+
+					}
+				}
+			}
+		} else
+			jsonArray = new org.json.JSONArray(apiData);
+		return jsonArray;
 	}
 
 	/**
@@ -24799,7 +24882,7 @@ public class OrtakIslemler implements Serializable {
 			connjava.setAllowUserInteraction(true);
 			responseCode = connjava.getResponseCode();
 			InputStream is = responseCode >= 400 ? connjava.getErrorStream() : connjava.getInputStream();
-			if (responseCode >= 400 && is != null)
+			if (responseCode == 200 && is != null)
 				str = PdksUtil.StringToByInputStream(is);
 		} catch (Exception e) {
 			// TODO: handle exception
