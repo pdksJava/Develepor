@@ -10496,7 +10496,7 @@ public class OrtakIslemler implements Serializable {
 						Vardiya vardiyaVg = vardiyaGun.getVardiya();
 						String vardiyaDateStr = vardiyaGun.getVardiyaDateStr(), vardiyaKeyStr = vardiyaGun.getVardiyaKeyStr();
 						vardiyaGun.setGuncellendi(Boolean.FALSE);
-						boolean talepVar = vardiyaVg.getVersion() == 0;
+						boolean talepVar = vardiyaGun.getVersion() == 0;
 						boolean htVar = talepVar;
 						if (htVar == false) {
 							if (vardiyaVg.isHaftaTatil())
@@ -10550,6 +10550,7 @@ public class OrtakIslemler implements Serializable {
 							boolean hareketVar = false, saatSifirVar = false;
 							if (vardiyaPerList.size() > 1)
 								vardiyaPerList = PdksUtil.sortListByAlanAdi(vardiyaPerList, "basDonem", true);
+
 							for (int ii = 1; ii < 3; ii++) {
 								for (Vardiya vardiya : vardiyaPerList) {
 									if (ii == 1 && suaPersonel) {

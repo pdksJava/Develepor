@@ -259,7 +259,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	@Transactional
 	private void sessionFlush() {
-		session.flush();
+		try {
+			session.flush();
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -1734,7 +1740,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 				if (puantajList != null) {
 					if (vardiyaGunHome != null && !puantajList.isEmpty())
-						try { 
+						try {
 							vardiyaGunHome.setAylikPuantajDefault(aylikPuantajSablon);
 							vardiyaGunHome.hesaplanmisPlanOnayla(getPdksUser(), puantajList, session);
 						} catch (Exception e) {
@@ -5070,21 +5076,21 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	public String fazlaMesaiOnayKontrol() {
 		onayla = Boolean.FALSE;
 		for (AylikPuantaj puantaj : aylikPuantajList) {
-			if (puantaj.isKaydet())  
+			if (puantaj.isKaydet())
 				onayla = Boolean.TRUE;
- 		}
+		}
 		seciliBolum = null;
 		seciliAltBolum = null;
 		if (!onayla) {
 			if (userLogin.getLogin())
 				PdksUtil.addMessageAvailableWarn(PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "MMMMM yyyy") + " fazla mesai onayı yapacak personel seçiniz!");
 		} else {
- 			if (seciliEkSaha3Id != null)  
- 				seciliBolum = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha3Id, Tanim.class, session);
- 			if (seciliEkSaha4Id != null)  
- 				seciliAltBolum = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha4Id, Tanim.class, session);
+			if (seciliEkSaha3Id != null)
+				seciliBolum = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha3Id, Tanim.class, session);
+			if (seciliEkSaha4Id != null)
+				seciliAltBolum = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, seciliEkSaha4Id, Tanim.class, session);
 		}
- 		return "";
+		return "";
 	}
 
 	/**
