@@ -10767,14 +10767,7 @@ public class OrtakIslemler implements Serializable {
 		List<User> userIKList = null;
 		List<Long> userIKIdList = new ArrayList<Long>();
 		try {
-			String spName = "SP_IK_LIST";
-			if (isExisStoreProcedure(spName, session)) {
-				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-				veriMap.put("alan", null);
-				if (session != null)
-					veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				userIKList = pdksEntityController.execSPList(veriMap, spName, User.class);
-			}
+			userIKList = getUserIKList(session);
 
 		} catch (Exception e) {
 		}
@@ -10784,6 +10777,29 @@ public class OrtakIslemler implements Serializable {
 			userIKList = null;
 		}
 		return userIKIdList;
+	}
+
+	/**
+	 * @param session
+	 * @return
+	 * @throws Exception
+	 */
+	public List<User> getUserIKList(Session session) {
+		List<User> userIKList=null;
+		String spName = "SP_IK_LIST";
+		if (isExisStoreProcedure(spName, session)) {
+			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+			veriMap.put("alan", null);
+			if (session != null)
+				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+			try {
+				userIKList = pdksEntityController.execSPList(veriMap, spName, User.class);
+			} catch (Exception e) {
+				 
+			}
+			
+		}
+		return userIKList;
 	}
 
 	/**
