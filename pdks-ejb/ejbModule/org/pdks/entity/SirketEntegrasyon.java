@@ -14,6 +14,7 @@ import javax.persistence.TemporalType;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.session.PdksUtil;
 
 @Entity(name = SirketEntegrasyon.TABLE_NAME)
 public class SirketEntegrasyon extends BasePDKSObject implements Serializable {
@@ -30,12 +31,21 @@ public class SirketEntegrasyon extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_URL_MESAI = "URL_MESAI";
 	public static final String COLUMN_NAME_GUNCELLEME_ZAMANI_PERSONEL = "GUNCELLEME_ZAMANI_PERSONEL";
 	public static final String COLUMN_NAME_GUNCELLEME_ZAMANI_IZIN = "GUNCELLEME_ZAMANI_IZIN";
-	public static final String COLUMN_NAME_GUNCELLEME_ZAMANI_MESAI = "GUNCELLEME_ZAMANI_MESAI";
 
 	private Sirket sirket;
 
 	private String urlPersonel, urlIzin, urlMesai;
-	private Date guncelemeZamaniPersonel, guncelemeZamaniIzin, guncelemeZamaniMesai;
+	private Date guncelemeZamaniPersonel, guncelemeZamaniIzin;
+
+	public SirketEntegrasyon() {
+		super();
+
+	}
+
+	public SirketEntegrasyon(Sirket sirket) {
+		super();
+		this.sirket = sirket;
+	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_SIRKET)
@@ -53,8 +63,10 @@ public class SirketEntegrasyon extends BasePDKSObject implements Serializable {
 		return urlPersonel;
 	}
 
-	public void setUrlPersonel(String urlPersonel) {
-		this.urlPersonel = urlPersonel;
+	public void setUrlPersonel(String value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isStrDegisti(urlPersonel, value));
+		this.urlPersonel = value;
 	}
 
 	@Column(name = COLUMN_NAME_URL_IZIN)
@@ -62,8 +74,10 @@ public class SirketEntegrasyon extends BasePDKSObject implements Serializable {
 		return urlIzin;
 	}
 
-	public void setUrlIzin(String urlIzin) {
-		this.urlIzin = urlIzin;
+	public void setUrlIzin(String value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isStrDegisti(urlIzin, value));
+		this.urlIzin = value;
 	}
 
 	@Column(name = COLUMN_NAME_URL_MESAI)
@@ -71,8 +85,10 @@ public class SirketEntegrasyon extends BasePDKSObject implements Serializable {
 		return urlMesai;
 	}
 
-	public void setUrlMesai(String urlMesai) {
-		this.urlMesai = urlMesai;
+	public void setUrlMesai(String value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isStrDegisti(urlMesai, value));
+		this.urlMesai = value;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -81,8 +97,10 @@ public class SirketEntegrasyon extends BasePDKSObject implements Serializable {
 		return guncelemeZamaniPersonel;
 	}
 
-	public void setGuncelemeZamaniPersonel(Date guncelemeZamaniPersonel) {
-		this.guncelemeZamaniPersonel = guncelemeZamaniPersonel;
+	public void setGuncelemeZamaniPersonel(Date value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isDateDegisti(guncelemeZamaniPersonel, value));
+		this.guncelemeZamaniPersonel = value;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -91,18 +109,10 @@ public class SirketEntegrasyon extends BasePDKSObject implements Serializable {
 		return guncelemeZamaniIzin;
 	}
 
-	public void setGuncelemeZamaniIzin(Date guncelemeZamaniIzin) {
-		this.guncelemeZamaniIzin = guncelemeZamaniIzin;
-	}
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = COLUMN_NAME_GUNCELLEME_ZAMANI_MESAI)
-	public Date getGuncelemeZamaniMesai() {
-		return guncelemeZamaniMesai;
-	}
-
-	public void setGuncelemeZamaniMesai(Date guncelemeZamaniMesai) {
-		this.guncelemeZamaniMesai = guncelemeZamaniMesai;
+	public void setGuncelemeZamaniIzin(Date value) {
+		if (this.isDegisti() == false)
+			this.setDegisti(PdksUtil.isDateDegisti(guncelemeZamaniIzin, value));
+		this.guncelemeZamaniIzin = value;
 	}
 
 	public void entityRefresh() {

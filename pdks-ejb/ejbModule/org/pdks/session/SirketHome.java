@@ -28,6 +28,7 @@ import org.pdks.entity.PdksPersonelView;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
+import org.pdks.entity.SirketEntegrasyon;
 import org.pdks.entity.Tanim;
 import org.pdks.security.action.StartupAction;
 import org.pdks.security.entity.User;
@@ -66,6 +67,8 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	private String bolumAciklama;
 	private List<SelectItem> sirketGrupList;
 	private Sirket seciliSirket;
+
+	private SirketEntegrasyon seciliSirketEntegrasyon;
 	private Session session;
 
 	@Override
@@ -122,6 +125,14 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 				sirket.setIsAramaGunlukSaat(departman.getIsAramaGunlukSaat());
 			}
 		}
+		seciliSirketEntegrasyon = null;
+		if (sirket.isErp() || sirket.getId() == null) {
+			if (sirket.getId() != null)
+				seciliSirketEntegrasyon = (SirketEntegrasyon) pdksEntityController.getSQLParamByFieldObject(SirketEntegrasyon.TABLE_NAME, SirketEntegrasyon.COLUMN_NAME_SIRKET, sirket.getId(), SirketEntegrasyon.class, session);
+			if (seciliSirketEntegrasyon == null)
+				seciliSirketEntegrasyon = new SirketEntegrasyon(sirket);
+
+		}
 		sirket.setDegisti(sirket.getId() == null);
 		if (personelList != null)
 			personelList.clear();
@@ -148,7 +159,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 				sirket.setFazlaMesaiOde(Boolean.FALSE);
 			}
 			boolean spCalistir = false;
-			if (erpDatabaseDurum && sirket.isDegisti()&& sirket.getDurum() && sirket.isErp()) {
+			if (erpDatabaseDurum && sirket.isDegisti() && sirket.getDurum() && sirket.isErp()) {
 				if (PdksUtil.hasStringValue(sirket.getDatabaseAdiERP()) || PdksUtil.hasStringValue(sirket.getDatabaseKoduERP())) {
 					if (PdksUtil.hasStringValue(sirket.getDatabaseAdiERP()) == false) {
 						sirket.setDatabaseAdiERP("");
@@ -161,6 +172,8 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 			}
 
 			pdksEntityController.saveOrUpdate(session, entityManager, sirket);
+			if (seciliSirketEntegrasyon != null && seciliSirketEntegrasyon.isDegisti())
+				pdksEntityController.saveOrUpdate(session, entityManager, seciliSirketEntegrasyon);
 			session.flush();
 			if (spCalistir) {
 				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
@@ -168,7 +181,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 				pdksEntityController.execSP(veriMap, Sirket.SP_NAME_SP_ERP_VIEW_ALTER_CREATE);
 			}
 
- 			fillsirketList();
+			fillsirketList();
 
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
@@ -423,6 +436,14 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 
 	public void setErpDatabaseDurum(Boolean erpDatabaseDurum) {
 		this.erpDatabaseDurum = erpDatabaseDurum;
+	}
+
+	public SirketEntegrasyon getSeciliSirketEntegrasyon() {
+		return seciliSirketEntegrasyon;
+	}
+
+	public void setSeciliSirketEntegrasyon(SirketEntegrasyon seciliSirketEntegrasyon) {
+		this.seciliSirketEntegrasyon = seciliSirketEntegrasyon;
 	}
 
 }

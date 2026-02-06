@@ -301,8 +301,6 @@
 									<ui:define name="label">Fazla Mesai Talep</ui:define>
 									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.fazlaMesaiTalepGirilebilir}" />
 								</s:decorate>
-								 
-
 								<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 									<ui:define name="label">İşten Ayrıldığı Tarih Çalışıyor</ui:define>
 									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.istenAyrilmaTarihindeCalisiyor}" />
@@ -311,11 +309,36 @@
 									<ui:define name="label">#{ortakIslemler.tesisAciklama()} Durumu</ui:define>
 									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.tesisDurum}" />
 								</s:decorate>
-								<s:decorate template="/layout/edit.xhtml">
-									<ui:define name="label">Aktif</ui:define>
-									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.durum}" />
-								</s:decorate>
+
 							</h:panelGrid>
+							<c:if test="#{sirketHome.seciliSirket.erp}">
+								<h:panelGrid columns="2">
+									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
+										<ui:define name="label">Personel Servis Bilgi</ui:define>
+										<h:inputText value="#{sirketHome.seciliSirketEntegrasyon.urlPersonel}" size="5" maxlength="2048" />
+									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">Personel Güncelle Tarihi</ui:define>
+										<rich:calendar value="#{sirketHome.seciliSirketEntegrasyon.guncelemeZamaniPersonel}" datePattern="#{authenticatedUser.dateFormat}" />
+									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
+										<ui:define name="label">İzin Servis Bilgi</ui:define>
+										<h:inputText value="#{sirketHome.seciliSirketEntegrasyon.urlIzin}" size="5" maxlength="2048" />
+									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">İzin Güncelle Tarihi</ui:define>
+										<rich:calendar value="#{sirketHome.seciliSirketEntegrasyon.guncelemeZamaniIzin}" datePattern="#{authenticatedUser.dateFormat}" />
+									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
+										<ui:define name="label">Mesai Servis Bilgi</ui:define>
+										<h:inputText value="#{sirketHome.seciliSirketEntegrasyon.urlMesai}" size="5" maxlength="2048" />
+									</s:decorate>
+								</h:panelGrid>
+							</c:if>
+							<s:decorate template="/layout/edit.xhtml">
+								<ui:define name="label">Aktif</ui:define>
+								<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.durum}" />
+							</s:decorate>
 						</h:panelGrid>
 					</a4j:outputPanel>
 
