@@ -130,6 +130,7 @@ import org.pdks.entity.PersonelIzinOnay;
 import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
+import org.pdks.entity.SirketEntegrasyon;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
 import org.pdks.entity.TatilGunView;
@@ -296,6 +297,32 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public List<PersonelERP> updatePersonelAPI(String sirketKodu, String personelNo, Session session) {
 		List<PersonelERP> list = null;
+		if (personelNo == null)
+			personelNo = "";
+		List<SirketEntegrasyon> entegrasyonList = getSirketEntegrasyonList(sirketKodu, personelNo, session);
+		if (entegrasyonList != null) {
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("$personelKodu$", personelNo);
+			for (SirketEntegrasyon se : entegrasyonList) {
+				String mediaType = se.getMediaTypePersonel(), urlAPI = se.getUrlPersonel();
+				Date tarih = se.getGuncelemeZamaniPersonel();
+				if (PdksUtil.hasStringValue(mediaType)) {
+					map.put("$sirketKodu$", se.getSirket().getErpKodu());
+					map.put("$tarih$", tarih != null ? PdksUtil.convertToDateString(tarih, "yyyy-MM-dd") : "1900-01-01");
+					for (String key : map.keySet()) {
+						if (urlAPI.indexOf(key) > 0)
+							urlAPI = PdksUtil.replaceAll(urlAPI, key, map.get(key));
+
+					}
+					String apiData = getApiData(urlAPI);
+					if (mediaType.equals(MediaType.APPLICATION_XML)) {
+						apiData = convertXMLtoJSON(apiData);
+					}
+				}
+			}
+
+		}
+
 		return list;
 
 	}
@@ -308,8 +335,55 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public List<IzinERP> updateIzinAPI(String sirketKodu, String personelNo, Session session) {
 		List<IzinERP> list = null;
+		if (personelNo == null)
+			personelNo = "";
+		List<SirketEntegrasyon> entegrasyonList = getSirketEntegrasyonList(sirketKodu, personelNo, session);
+		if (entegrasyonList != null) {
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("$personelKodu$", personelNo);
+			for (SirketEntegrasyon se : entegrasyonList) {
+				String mediaType = se.getMediaTypeIzin(), urlAPI = se.getUrlIzin();
+				Date tarih = se.getGuncelemeZamaniPersonel();
+				if (PdksUtil.hasStringValue(mediaType)) {
+					map.put("$sirketKodu$", se.getSirket().getErpKodu());
+					map.put("$tarih$", tarih != null ? PdksUtil.convertToDateString(tarih, "yyyy-MM-dd") : "1900-01-01");
+					for (String key : map.keySet()) {
+						if (urlAPI.indexOf(key) > 0)
+							urlAPI = PdksUtil.replaceAll(urlAPI, key, map.get(key));
+
+					}
+					String apiData = getApiData(urlAPI);
+					if (mediaType.equals(MediaType.APPLICATION_XML)) {
+						apiData = convertXMLtoJSON(apiData);
+					}
+				}
+			}
+		}
 		return list;
 
+	}
+
+	/**
+	 * @param sirketKodu
+	 * @param personelNo
+	 * @param session
+	 * @return
+	 */
+	private List<SirketEntegrasyon> getSirketEntegrasyonList(String sirketKodu, String personelNo, Session session) {
+		List<SirketEntegrasyon> entegrasyonList = null;
+		if (PdksUtil.hasStringValue(personelNo)) {
+			Personel personel = (Personel) pdksEntityController.getSQLParamByFieldObject(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, personelNo, Personel.class, session);
+			if (personel != null)
+				entegrasyonList = pdksEntityController.getSQLParamByFieldList(SirketEntegrasyon.TABLE_NAME, SirketEntegrasyon.COLUMN_NAME_SIRKET, personel.getSirket().getId(), SirketEntegrasyon.class, session);
+
+		} else if (PdksUtil.hasStringValue(sirketKodu)) {
+			Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ERP_KODU, sirketKodu, Sirket.class, session);
+			if (sirket != null)
+				entegrasyonList = pdksEntityController.getSQLParamByFieldList(SirketEntegrasyon.TABLE_NAME, SirketEntegrasyon.COLUMN_NAME_SIRKET, sirket.getId(), SirketEntegrasyon.class, session);
+
+		} else
+			entegrasyonList = pdksEntityController.getSQLTableList(SirketEntegrasyon.TABLE_NAME, SirketEntegrasyon.class, session);
+		return entegrasyonList;
 	}
 
 	/**
@@ -24685,6 +24759,31 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String adresKontrol(String adres) {
+		String str = null;
+		int responseCode = 0;
+		try {
+			java.net.URL url = new java.net.URL(adres);
+			java.net.HttpURLConnection connjava = (java.net.HttpURLConnection) url.openConnection();
+			connjava.setRequestMethod("GET");
+			connjava.setRequestProperty("Content-Language", "tr-TR");
+			connjava.setDoInput(true);
+			connjava.setDoOutput(true);
+			connjava.setUseCaches(false);
+			int timeOutSaniye = 60 * 60;
+			connjava.setConnectTimeout(timeOutSaniye * 1000); // set timeout to 5 seconds
+			connjava.setAllowUserInteraction(true);
+			responseCode = connjava.getResponseCode();
+			InputStream is = responseCode >= 400 ? connjava.getErrorStream() : connjava.getInputStream();
+			if (responseCode >= 400 && is != null)
+				str = PdksUtil.StringToByInputStream(is);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return str;
+	}
+
+	public String getApiData(String adres) {
 		String str = null;
 		int responseCode = 0;
 		try {
