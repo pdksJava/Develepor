@@ -58,7 +58,7 @@ public class PdksRestTestVeriAktarService implements Serializable {
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getJSONPersonel(@QueryParam("sirketKodu") String sirketKodu, @QueryParam("personelNo") String personelNo, @QueryParam("tarih") String tarih) throws Exception {
 		String mediaType = MediaType.APPLICATION_JSON;
-		Response response = getPersonelPDKS(sirketKodu, personelNo, tarih, "GetJSONPersonel", mediaType);
+		Response response = getPersonelPDKS(sirketKodu, personelNo, tarih, null, mediaType);
 		return response;
 	}
 
@@ -78,7 +78,7 @@ public class PdksRestTestVeriAktarService implements Serializable {
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getJSONIzin(@QueryParam("sirketKodu") String sirketKodu, @QueryParam("personelNo") String personelNo, @QueryParam("tarih") String tarih) throws Exception {
 		String mediaType = MediaType.APPLICATION_JSON;
-		Response response = getIzinPDKS(sirketKodu, personelNo, tarih, "GetJSONIzin", mediaType);
+		Response response = getIzinPDKS(sirketKodu, personelNo, tarih, null, mediaType);
 		return response;
 	}
 
@@ -158,7 +158,7 @@ public class PdksRestTestVeriAktarService implements Serializable {
 		}
 		Gson gson = new Gson();
 		String sonuc = gson.toJson(izinERPList);
-		if (mediaType != null && mediaType.equals(MediaType.APPLICATION_XML))
+		if (fonksiyonAdi != null)
 			sonuc = PdksRestFulVeriAktarService.convertJSONtoXML(fonksiyonAdi, sonuc);
 
 		response = Response.ok(sonuc).type(mediaType + ";charset=utf-8").build();
@@ -192,7 +192,7 @@ public class PdksRestTestVeriAktarService implements Serializable {
 			sb.append(" where P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :p");
 			fields.put("p", personelNo);
 		} else if (zaman != null) {
-			sb.append(" where P." + Personel.COLUMN_NAME_GUNCELLEME_TARIHI + " >= :g or P." + PersonelIzin.COLUMN_NAME_OLUSTURMA_TARIHI + " >= :g2");
+			sb.append(" where P." + Personel.COLUMN_NAME_GUNCELLEME_TARIHI + " >= :g1 or P." + PersonelIzin.COLUMN_NAME_OLUSTURMA_TARIHI + " >= :g2");
 			fields.put("g1", zaman);
 			fields.put("g2", zaman);
 		}
@@ -247,7 +247,7 @@ public class PdksRestTestVeriAktarService implements Serializable {
 		}
 		Gson gson = new Gson();
 		String sonuc = gson.toJson(personelERPList);
-		if (mediaType != null && mediaType.equals(MediaType.APPLICATION_XML))
+		if (fonksiyonAdi != null)
 			sonuc = PdksRestFulVeriAktarService.convertJSONtoXML(fonksiyonAdi, sonuc);
 
 		response = Response.ok(sonuc).type(mediaType + ";charset=utf-8").build();
