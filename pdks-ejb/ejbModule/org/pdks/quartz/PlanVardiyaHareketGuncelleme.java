@@ -126,6 +126,12 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							}
 						}
 						if (PdksUtil.getCanliSunucuDurum() && PdksUtil.hasStringValue(konu)) {
+							try {
+								session.close();
+							} catch (Exception e) {
+								// TODO: handle exception
+							}
+							session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 							boolean mailGonder = getMailGonder(session);
 							if (mailGonder) {
 								List<User> userList = null;
@@ -177,7 +183,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		TreeMap<Long, DenklestirmeAy> ayMap = new TreeMap<Long, DenklestirmeAy>();
 		for (DenklestirmeAy denklestirmeAy : aylar)
 			ayMap.put(denklestirmeAy.getDonem(), denklestirmeAy);
-		aylar = null;
 		if (ayMap.containsKey(sonrakiAy) == false)
 			ayMap.put(sonrakiAy, ayMap.get(buAy));
 		aylar = null;
@@ -255,6 +260,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				logger.info(adres + " in " + PdksUtil.getCurrentTimeStampStr());
 				User guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
 				guncelleyenUser.setAdmin(true);
+				List<Liste> islemList = new ArrayList<Liste>();
+
 				for (DenklestirmeAy da : aylar) {
 					try {
 						vardiyaVersiyonGuncelle(da, bugun, guncelleyenUser, session);
@@ -288,9 +295,10 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								// if (authenticatedUser != null)
 								// linkStr = linkStr + "&login=" + authenticatedUser.getId();
 								String id = ortakIslemler.getEncodeStringByBase64(linkStr);
-								String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
-								if (sonuc != null)
-									logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+								islemList.add(new Liste(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd(), adres + "?id=" + id));
+								// String sonuc = ortakIslemler.adresKontrol(adres + "?id=" + id);
+								// if (sonuc != null)
+								// logger.error(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
 							}
 							sirketList = null;
 						}
@@ -299,6 +307,16 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					if (aylar.size() > 1)
 						logger.info(da.getAyAdi() + " " + da.getYil() + " out " + PdksUtil.getCurrentTimeStampStr());
 				}
+				for (Liste liste : islemList) {
+					adres = (String) liste.getValue();
+					String sonuc = ortakIslemler.adresKontrol(adres);
+					if (sonuc != null)
+						logger.error(liste.getId() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+
+				}
+				islemList = null;
+				if (authenticatedUser == null)
+					session.close();
 				logger.info(adres + " out " + PdksUtil.getCurrentTimeStampStr());
 			}
 

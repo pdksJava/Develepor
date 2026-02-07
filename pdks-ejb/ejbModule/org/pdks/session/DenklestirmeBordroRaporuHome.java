@@ -229,80 +229,78 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			if (param.containsKey("donemId") && param.containsKey("sirketId")) {
 				session.setFlushMode(FlushMode.MANUAL);
 				session.clear();
-				Long donemId = Long.parseLong(param.get("donemId"));
-				denklestirmeAy = (DenklestirmeAy) pdksEntityController.getSQLParamByFieldObject(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_ID, donemId, DenklestirmeAy.class, session);
-				if (denklestirmeAy != null && denklestirmeAy.getDurum()) {
-					login = param.containsKey("login");
-					if (baslikMap == null)
-						baslikMap = new TreeMap<String, Tanim>();
-					if (personelDenklestirmeList == null)
-						personelDenklestirmeList = new ArrayList<AylikPuantaj>();
-					yil = denklestirmeAy.getYil();
-					ay = denklestirmeAy.getAy();
-					List<Long> userIkIdList = ortakIslemler.getIKUserIdList(session);
-					fazlaMesaiHesaplaHome.setUserIkIdList(userIkIdList);
-					sirketId = Long.parseLong(param.get("sirketId"));
-					sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
-					if (ekSaha4Tanim == null)
-						ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
-					departman = sirket.getDepartman();
-					departmanId = departman.getId();
-					tesisId = null;
-					boolean sirketCalistir = true;
-					Long pdksUserId = param.containsKey("pdksUserId") ? Long.parseLong(param.get("pdksUserId")) : null;
-					if (pdksUserId != null)
-						pdksUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, pdksUserId, User.class, session);
-					else
-						pdksUser = ortakIslemler.getSistemAdminUser(session);
-					pdksUser.setAdmin(true);
-					pdksUser.setLogin(false);
-					departmanId = departman.getId();
-					String donemStr = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " : " + sirket.getAd();
-					if (sirket.isTesisDurumu()) {
-						String tesisIdStr = param.get("tesisId");
-						List<Long> idList = new ArrayList<Long>();
-						if (tesisIdStr.equals("*")) {
-							sirketCalistir = false;
-							DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
-							AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(denklestirmeAy.getAy(), denklestirmeAy.getYil(), denklestirmeDonemi, session);
-							aylikPuantaj.setLoginUser(pdksUser);
-							aylikPuantaj.setDenklestirmeAy(denklestirmeAy);
-							List<SelectItem> tesisDetayList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, aylikPuantaj, false, session);
-							for (SelectItem selectItem : tesisDetayList)
-								idList.add((Long) selectItem.getValue());
-							tesisDetayList = null;
-						} else {
-							try {
+				try {
+					Long donemId = Long.parseLong(param.get("donemId"));
+					denklestirmeAy = (DenklestirmeAy) pdksEntityController.getSQLParamByFieldObject(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_ID, donemId, DenklestirmeAy.class, session);
+					if (denklestirmeAy != null && denklestirmeAy.getDurum()) {
+						login = param.containsKey("login");
+						if (baslikMap == null)
+							baslikMap = new TreeMap<String, Tanim>();
+						if (personelDenklestirmeList == null)
+							personelDenklestirmeList = new ArrayList<AylikPuantaj>();
+						yil = denklestirmeAy.getYil();
+						ay = denklestirmeAy.getAy();
+						List<Long> userIkIdList = ortakIslemler.getIKUserIdList(session);
+						fazlaMesaiHesaplaHome.setUserIkIdList(userIkIdList);
+						sirketId = Long.parseLong(param.get("sirketId"));
+						sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
+						if (ekSaha4Tanim == null)
+							ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
+						departman = sirket.getDepartman();
+						departmanId = departman.getId();
+						tesisId = null;
+						boolean sirketCalistir = true;
+						Long pdksUserId = param.containsKey("pdksUserId") ? Long.parseLong(param.get("pdksUserId")) : null;
+						if (pdksUserId != null)
+							pdksUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, pdksUserId, User.class, session);
+						else
+							pdksUser = ortakIslemler.getSistemAdminUser(session);
+						pdksUser.setAdmin(true);
+						pdksUser.setLogin(false);
+						departmanId = departman.getId();
+						String donemStr = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " : " + sirket.getAd();
+						if (sirket.isTesisDurumu()) {
+							String tesisIdStr = param.get("tesisId");
+							List<Long> idList = new ArrayList<Long>();
+							if (tesisIdStr.equals("*")) {
+								sirketCalistir = false;
+								DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
+								AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(denklestirmeAy.getAy(), denklestirmeAy.getYil(), denklestirmeDonemi, session);
+								aylikPuantaj.setLoginUser(pdksUser);
+								aylikPuantaj.setDenklestirmeAy(denklestirmeAy);
+								List<SelectItem> tesisDetayList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, aylikPuantaj, false, session);
+								for (SelectItem selectItem : tesisDetayList)
+									idList.add((Long) selectItem.getValue());
+								tesisDetayList = null;
+							} else {
+
 								Long paramId = param.containsKey("tesisId") ? Long.parseLong(tesisIdStr) : null;
 								if (paramId != null)
 									idList.add(paramId);
-							} catch (Exception e) {
+
 							}
-						}
-						if (!idList.isEmpty()) {
-							sirketCalistir = false;
-							List<Tanim> tesisList = pdksEntityController.getSQLParamByFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, idList, Tanim.class, session);
-							if (tesisList.size() > 1)
-								tesisList = PdksUtil.sortTanimList(Constants.TR_LOCALE, tesisList);
-							for (Tanim tesis : tesisList) {
-								tesisId = tesis.getId();
-								String str = PdksUtil.replaceAll(donemStr + " " + tesis.getAciklama(), "  ", " ").trim();
-								try {
+							if (!idList.isEmpty()) {
+								sirketCalistir = false;
+								List<Tanim> tesisList = pdksEntityController.getSQLParamByFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, idList, Tanim.class, session);
+								if (tesisList.size() > 1)
+									tesisList = PdksUtil.sortTanimList(Constants.TR_LOCALE, tesisList);
+								for (Tanim tesis : tesisList) {
+									tesisId = tesis.getId();
+									String str = PdksUtil.replaceAll(donemStr + " " + tesis.getAciklama(), "  ", " ").trim();
 									if (login == false)
 										logger.info(str + " in " + PdksUtil.getCurrentTimeStampStr());
 									sirketFazlaMesaiGuncelleme();
 									if (login == false)
 										logger.info(str + " out " + PdksUtil.getCurrentTimeStampStr());
-								} catch (Exception e) {
+
 								}
+								tesisList = null;
 							}
-							tesisList = null;
+							idList = null;
 						}
-						idList = null;
-					}
-					if (sirketCalistir) {
-						String str = PdksUtil.replaceAll(donemStr, "  ", " ").trim();
-						try {
+						if (sirketCalistir) {
+							String str = PdksUtil.replaceAll(donemStr, "  ", " ").trim();
+
 							tesisId = null;
 							if (login == false)
 								logger.info(str + " in " + PdksUtil.getCurrentTimeStampStr());
@@ -310,12 +308,13 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 							if (login == false)
 								logger.info(str + " out " + PdksUtil.getCurrentTimeStampStr());
 
-						} catch (Exception e) {
-							logger.error(str + " hata \n" + e + " " + PdksUtil.getCurrentTimeStampStr());
-							e.printStackTrace();
 						}
 					}
+
+				} catch (Exception e) {
+					// TODO: handle exception
 				}
+
 			}
 		}
 		session.close();
