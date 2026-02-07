@@ -308,8 +308,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						logger.info(da.getAyAdi() + " " + da.getYil() + " out " + PdksUtil.getCurrentTimeStampStr());
 				}
 				for (Liste liste : islemList) {
-					adres = (String) liste.getValue();
-					String sonuc = ortakIslemler.adresKontrol(adres);
+					String id = (String) liste.getValue();
+					String sonuc = ortakIslemler.adresKontrol(id);
 					if (sonuc != null)
 						logger.error(liste.getId() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
 
