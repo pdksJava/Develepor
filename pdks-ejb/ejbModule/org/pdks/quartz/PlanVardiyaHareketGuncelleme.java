@@ -261,17 +261,14 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				User guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
 				guncelleyenUser.setAdmin(true);
 				List<Liste> islemList = new ArrayList<Liste>();
-
 				for (DenklestirmeAy da : aylar) {
 					try {
 						vardiyaVersiyonGuncelle(da, bugun, guncelleyenUser, session);
 					} catch (Exception e) {
 
 					}
-
-					fields.clear();
-					if (aylar.size() > 1)
-						logger.info(da.getAyAdi() + " " + da.getYil() + " in " + PdksUtil.getCurrentTimeStampStr());
+					// if (aylar.size() > 1)
+					// logger.info(da.getAyAdi() + " " + da.getYil() + " in " + PdksUtil.getCurrentTimeStampStr());
 					DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 					AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(da.getAy(), da.getYil(), denklestirmeDonemi, session);
 					aylikPuantaj.setLoginUser(guncelleyenUser);
@@ -304,8 +301,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						}
 						sirketIdList = null;
 					}
-					if (aylar.size() > 1)
-						logger.info(da.getAyAdi() + " " + da.getYil() + " out " + PdksUtil.getCurrentTimeStampStr());
+					// if (aylar.size() > 1)
+					// logger.info(da.getAyAdi() + " " + da.getYil() + " out " + PdksUtil.getCurrentTimeStampStr());
 				}
 				for (Liste liste : islemList) {
 					String id = (String) liste.getValue();
