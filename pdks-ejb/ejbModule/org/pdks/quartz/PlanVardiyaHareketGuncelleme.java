@@ -312,8 +312,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 				}
 				islemList = null;
-				if (authenticatedUser == null)
-					session.close();
 				logger.info(adres + " out " + PdksUtil.getCurrentTimeStampStr());
 			}
 

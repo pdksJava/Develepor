@@ -827,13 +827,13 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		kesintiTuruList = ortakIslemler.getSelectItemList("kesintiTuru", authenticatedUser);
 		setCalismaModeliAy(null);
 		modeller = null;
-		if (da.getDurum()) {
+		if (da.getDurum() && authenticatedUser.isAdmin()) {
 			List<CalismaModeliAy> calismaModeliList = pdksEntityController.getSQLParamByFieldList(CalismaModeliAy.TABLE_NAME, CalismaModeliAy.COLUMN_NAME_DONEM, da.getId(), CalismaModeliAy.class, session);
 			if (calismaModeliList.isEmpty() == false) {
 				for (CalismaModeliAy cma : calismaModeliList) {
 					CalismaModeli cm = cma.getCalismaModeli();
 					if (authenticatedUser.isAdmin() || cm.isUpdateCGS()) {
-						if (cm.getGenelModel() || cm.getFazlaMesaiGoruntulensin() || cm.isHareketKaydiVardiyaBulsunmu()) {
+						if (cm.getGenelModel() || cm.getFazlaMesaiGoruntulensin() || cm.isSua() || cm.isHareketKaydiVardiyaBulsunmu()) {
 							if (modeller == null)
 								modeller = new ArrayList<CalismaModeliAy>();
 							modeller.add(cma);
