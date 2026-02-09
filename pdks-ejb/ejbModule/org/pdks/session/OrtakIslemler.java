@@ -361,6 +361,99 @@ public class OrtakIslemler implements Serializable {
 											erp.setAdi((String) value);
 										else if (tipi.equals("soyadi"))
 											erp.setSoyadi((String) value);
+										else if (tipi.equals("bolumAdi"))
+											erp.setBolumAdi((String) value);
+										else if (tipi.equals("bolumKodu"))
+											erp.setBolumKodu((String) value);
+										else if (tipi.equals("bordroAltAlanAdi"))
+											erp.setBordroAltAlanAdi((String) value);
+										else if (tipi.equals("bordroAltAlanKodu"))
+											erp.setBordroAltAlanKodu((String) value);
+										else if (tipi.equals("cinsiyeti"))
+											erp.setCinsiyeti((String) value);
+										else if (tipi.equals("cinsiyetKodu"))
+											erp.setCinsiyetKodu((String) value);
+										else if (tipi.equals("departmanAdi"))
+											erp.setDepartmanAdi((String) value);
+										else if (tipi.equals("departmanKodu"))
+											erp.setDepartmanKodu((String) value);
+										else if (tipi.equals("dogumTarihi"))
+											erp.setDogumTarihi((String) value);
+										else if (tipi.equals("gorevi"))
+											erp.setGorevi((String) value);
+										else if (tipi.equals("gorevKodu"))
+											erp.setGorevKodu((String) value);
+										else if (tipi.equals("grubaGirisTarihi"))
+											erp.setGrubaGirisTarihi((String) value);
+										else if (tipi.equals("istenAyrilmaTarihi"))
+											erp.setIstenAyrilmaTarihi((String) value);
+										else if (tipi.equals("kidemTarihi"))
+											erp.setKidemTarihi((String) value);
+										else if (tipi.equals("kimlikNo"))
+											erp.setKimlikNo((String) value);
+										else if (tipi.equals("masrafYeriAdi"))
+											erp.setMasrafYeriAdi((String) value);
+										else if (tipi.equals("masrafYeriKodu"))
+											erp.setMasrafYeriKodu((String) value);
+										else if (tipi.equals("personelTipi"))
+											erp.setPersonelTipi((String) value);
+										else if (tipi.equals("personelTipiKodu"))
+											erp.setPersonelTipiKodu((String) value);
+										else if (tipi.equals("sanalPersonel"))
+											erp.setSanalPersonel((Boolean) value);
+										else if (tipi.equals("sirketAdi"))
+											erp.setSirketAdi((String) value);
+										else if (tipi.equals("sirketKodu"))
+											erp.setSirketKodu((String) value);
+										else if (tipi.equals("tesisAdi"))
+											erp.setTesisAdi((String) value);
+										else if (tipi.equals("tesisKodu"))
+											erp.setTesisKodu((String) value);
+										else if (tipi.equals("yonetici2PerNo"))
+											erp.setYonetici2PerNo((String) value);
+										else if (tipi.equals("yoneticiPerNo"))
+											erp.setYoneticiPerNo((String) value);
+										else if (tipi.equals("digerTanimAlan01"))
+											erp.setDigerTanimAlan01((String) value);
+										else if (tipi.equals("digerTanimAlan01Kodu"))
+											erp.setDigerTanimAlan01Kodu((String) value);
+										else if (tipi.equals("digerTanimAlan02"))
+											erp.setDigerTanimAlan02((String) value);
+										else if (tipi.equals("digerTanimAlan02Kodu"))
+											erp.setDigerTanimAlan02Kodu((String) value);
+										else if (tipi.equals("digerTanimAlan03"))
+											erp.setDigerTanimAlan03((String) value);
+										else if (tipi.equals("digerTanimAlan03Kodu"))
+											erp.setDigerTanimAlan03Kodu((String) value);
+										else if (tipi.equals("digerTanimAlan04"))
+											erp.setDigerTanimAlan04((String) value);
+										else if (tipi.equals("digerTanimAlan04Kodu"))
+											erp.setDigerTanimAlan04Kodu((String) value);
+										else if (tipi.equals("digerTanimAlan05"))
+											erp.setDigerTanimAlan05((String) value);
+										else if (tipi.equals("digerTanimAlan05Kodu"))
+											erp.setDigerTanimAlan05Kodu((String) value);
+										else if (tipi.equals("digerTanimAlan06"))
+											erp.setDigerTanimAlan06((String) value);
+										else if (tipi.equals("digerTanimAlan06Kodu"))
+											erp.setDigerTanimAlan06Kodu((String) value);
+										else if (tipi.equals("digerTanimAlan07"))
+											erp.setDigerTanimAlan07((String) value);
+										else if (tipi.equals("digerTanimAlan07Kodu"))
+											erp.setDigerTanimAlan07Kodu((String) value);
+										else if (tipi.equals("digerTanimAlan08"))
+											erp.setDigerTanimAlan08((String) value);
+										else if (tipi.equals("digerTanimAlan08Kodu"))
+											erp.setDigerTanimAlan08Kodu((String) value);
+										else if (tipi.equals("digerTanimAlan09"))
+											erp.setDigerTanimAlan09((String) value);
+										else if (tipi.equals("digerTanimAlan09Kodu"))
+											erp.setDigerTanimAlan09Kodu((String) value);
+										else if (tipi.equals("digerTanimAlan10"))
+											erp.setDigerTanimAlan10((String) value);
+										else if (tipi.equals("digerTanimAlan10Kodu"))
+											erp.setDigerTanimAlan10Kodu((String) value);
+
 									}
 
 								}
@@ -448,12 +541,25 @@ public class OrtakIslemler implements Serializable {
 										String tipi = entegrasyonMap.get(key);
 										if (tipi.equals("personelNo"))
 											erp.setPersonelNo((String) value);
+										else if (tipi.equals("referansNoERP"))
+											erp.setReferansNoERP((String) value);
 										else if (tipi.equals("aciklama"))
 											erp.setAciklama((String) value);
 										else if (tipi.equals("izinTipi"))
 											erp.setIzinTipi((String) value);
 										else if (tipi.equals("izinTipiAciklama"))
 											erp.setIzinTipiAciklama((String) value);
+										else if (tipi.equals("basZaman"))
+											erp.setBasZaman((String) value);
+										else if (tipi.equals("bitZaman"))
+											erp.setBitZaman((String) value);
+										else if (tipi.equals("izinSuresi"))
+											erp.setIzinSuresi((Double) value);
+ 										else if (tipi.equals("durum"))
+											erp.setDurum((Boolean) value);
+										else if (tipi.equals("sureBirimi"))
+											erp.setSureBirimi((String) value);
+
 									}
 
 								}
