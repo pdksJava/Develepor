@@ -62,7 +62,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	private List<Departman> departmanList = new ArrayList<Departman>();
 	private List<Sirket> sirketList = new ArrayList<Sirket>();
 	private List<PersonelView> personelList;
-	private Boolean istenAyrilanlariEkle, sirketEklenebilir, sirketGrupGoster, erpDatabaseDurum;
+	private Boolean istenAyrilanlariEkle, sirketEklenebilir, sirketGrupGoster, erpDatabaseDurum, aipGuncelle;
 	private HashMap<String, List<Tanim>> ekSahaListMap;
 	private TreeMap<String, Tanim> ekSahaTanimMap;
 	private String bolumAciklama;
@@ -111,6 +111,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	 * @return
 	 */
 	public String guncelle(Sirket sirket) {
+		aipGuncelle = false;
 		if (mediaTyepList == null)
 			mediaTyepList = new ArrayList<SelectItem>();
 		else
@@ -144,6 +145,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 			seciliSirketEntegrasyon.setDegisti(Boolean.FALSE);
 			mediaTyepList.add(new SelectItem(MediaType.APPLICATION_JSON, "JSON"));
 			mediaTyepList.add(new SelectItem(MediaType.APPLICATION_XML, "XML"));
+			aipGuncelle = ortakIslemler.getCanliDurum() == false && ortakIslemler.getTestDurum() == false;
 		}
 		sirket.setDegisti(sirket.getId() == null);
 		if (personelList != null)
@@ -464,6 +466,14 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 
 	public void setMediaTyepList(List<SelectItem> mediaTyepList) {
 		this.mediaTyepList = mediaTyepList;
+	}
+
+	public Boolean getAipGuncelle() {
+		return aipGuncelle;
+	}
+
+	public void setAipGuncelle(Boolean aipGuncelle) {
+		this.aipGuncelle = aipGuncelle;
 	}
 
 }
