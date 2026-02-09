@@ -338,6 +338,7 @@ public class OrtakIslemler implements Serializable {
 					if (apiData != null) {
 						org.json.JSONArray jsonArray = getJSONArray(mediaType, apiData);
 						if (jsonArray != null && jsonArray.length() > 0) {
+							List<String> idList = new ArrayList<String>();
 							if (tanimList == null) {
 								tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_API_PERSONEL, Tanim.class, session);
 								for (Tanim tanim : tanimList)
@@ -348,117 +349,126 @@ public class OrtakIslemler implements Serializable {
 							for (int i = 0; i < jsonArray.length(); i++) {
 								org.json.JSONObject obj = jsonArray.getJSONObject(i);
 								PersonelERP erp = null;
-								for (Iterator iterator = obj.keys(); iterator.hasNext();) {
-									String key = (String) iterator.next();
-									Object value = obj.get(key);
-									if (value != null && entegrasyonMap.containsKey(key)) {
-										String tipi = entegrasyonMap.get(key);
- 										if (erp == null)
-											erp = new PersonelERP();
+								try {
+									for (Iterator iterator = obj.keys(); iterator.hasNext();) {
+										String key = (String) iterator.next();
+										Object value = obj.get(key);
+										if (value != null && entegrasyonMap.containsKey(key)) {
+											String tipi = entegrasyonMap.get(key);
+											if (erp == null)
+												erp = new PersonelERP();
 
-										if (tipi.equals("personelNo"))
-											erp.setPersonelNo(value.toString());
-										else if (tipi.equals("adi"))
-											erp.setAdi((String) value);
-										else if (tipi.equals("soyadi"))
-											erp.setSoyadi((String) value);
-										else if (tipi.equals("bolumAdi"))
-											erp.setBolumAdi((String) value);
-										else if (tipi.equals("bolumKodu"))
-											erp.setBolumKodu((String) value);
-										else if (tipi.equals("bordroAltAlanAdi"))
-											erp.setBordroAltAlanAdi((String) value);
-										else if (tipi.equals("bordroAltAlanKodu"))
-											erp.setBordroAltAlanKodu((String) value);
-										else if (tipi.equals("cinsiyeti"))
-											erp.setCinsiyeti((String) value);
-										else if (tipi.equals("cinsiyetKodu"))
-											erp.setCinsiyetKodu((String) value);
-										else if (tipi.equals("departmanAdi"))
-											erp.setDepartmanAdi((String) value);
-										else if (tipi.equals("departmanKodu"))
-											erp.setDepartmanKodu((String) value);
-										else if (tipi.equals("dogumTarihi"))
-											erp.setDogumTarihi((String) value);
-										else if (tipi.equals("gorevi"))
-											erp.setGorevi((String) value);
-										else if (tipi.equals("gorevKodu"))
-											erp.setGorevKodu((String) value);
-										else if (tipi.equals("grubaGirisTarihi"))
-											erp.setGrubaGirisTarihi((String) value);
-										else if (tipi.equals("istenAyrilmaTarihi"))
-											erp.setIstenAyrilmaTarihi((String) value);
-										else if (tipi.equals("kidemTarihi"))
-											erp.setKidemTarihi((String) value);
-										else if (tipi.equals("kimlikNo"))
-											erp.setKimlikNo((String) value);
-										else if (tipi.equals("masrafYeriAdi"))
-											erp.setMasrafYeriAdi((String) value);
-										else if (tipi.equals("masrafYeriKodu"))
-											erp.setMasrafYeriKodu((String) value);
-										else if (tipi.equals("personelTipi"))
-											erp.setPersonelTipi((String) value);
-										else if (tipi.equals("personelTipiKodu"))
-											erp.setPersonelTipiKodu((String) value);
-										else if (tipi.equals("sanalPersonel"))
-											erp.setSanalPersonel((Boolean) value);
-										else if (tipi.equals("sirketAdi"))
-											erp.setSirketAdi((String) value);
-										else if (tipi.equals("sirketKodu"))
-											erp.setSirketKodu((String) value);
-										else if (tipi.equals("tesisAdi"))
-											erp.setTesisAdi((String) value);
-										else if (tipi.equals("tesisKodu"))
-											erp.setTesisKodu((String) value);
-										else if (tipi.equals("yonetici2PerNo"))
-											erp.setYonetici2PerNo((String) value);
-										else if (tipi.equals("yoneticiPerNo"))
-											erp.setYoneticiPerNo(value.toString());
-										else if (tipi.equals("digerTanimAlan01"))
-											erp.setDigerTanimAlan01(value.toString());
-										else if (tipi.equals("digerTanimAlan01Kodu"))
-											erp.setDigerTanimAlan01Kodu((String) value);
-										else if (tipi.equals("digerTanimAlan02"))
-											erp.setDigerTanimAlan02((String) value);
-										else if (tipi.equals("digerTanimAlan02Kodu"))
-											erp.setDigerTanimAlan02Kodu((String) value);
-										else if (tipi.equals("digerTanimAlan03"))
-											erp.setDigerTanimAlan03((String) value);
-										else if (tipi.equals("digerTanimAlan03Kodu"))
-											erp.setDigerTanimAlan03Kodu((String) value);
-										else if (tipi.equals("digerTanimAlan04"))
-											erp.setDigerTanimAlan04((String) value);
-										else if (tipi.equals("digerTanimAlan04Kodu"))
-											erp.setDigerTanimAlan04Kodu((String) value);
-										else if (tipi.equals("digerTanimAlan05"))
-											erp.setDigerTanimAlan05((String) value);
-										else if (tipi.equals("digerTanimAlan05Kodu"))
-											erp.setDigerTanimAlan05Kodu((String) value);
-										else if (tipi.equals("digerTanimAlan06"))
-											erp.setDigerTanimAlan06((String) value);
-										else if (tipi.equals("digerTanimAlan06Kodu"))
-											erp.setDigerTanimAlan06Kodu((String) value);
-										else if (tipi.equals("digerTanimAlan07"))
-											erp.setDigerTanimAlan07((String) value);
-										else if (tipi.equals("digerTanimAlan07Kodu"))
-											erp.setDigerTanimAlan07Kodu((String) value);
-										else if (tipi.equals("digerTanimAlan08"))
-											erp.setDigerTanimAlan08((String) value);
-										else if (tipi.equals("digerTanimAlan08Kodu"))
-											erp.setDigerTanimAlan08Kodu((String) value);
-										else if (tipi.equals("digerTanimAlan09"))
-											erp.setDigerTanimAlan09((String) value);
-										else if (tipi.equals("digerTanimAlan09Kodu"))
-											erp.setDigerTanimAlan09Kodu((String) value);
-										else if (tipi.equals("digerTanimAlan10"))
-											erp.setDigerTanimAlan10((String) value);
-										else if (tipi.equals("digerTanimAlan10Kodu"))
-											erp.setDigerTanimAlan10Kodu((String) value);
+											if (tipi.equals("personelNo"))
+												erp.setPersonelNo(value.toString());
+											else if (tipi.equals("adi"))
+												erp.setAdi((String) value);
+											else if (tipi.equals("soyadi"))
+												erp.setSoyadi((String) value);
+											else if (tipi.equals("bolumAdi"))
+												erp.setBolumAdi((String) value);
+											else if (tipi.equals("bolumKodu"))
+												erp.setBolumKodu((String) value);
+											else if (tipi.equals("bordroAltAlanAdi"))
+												erp.setBordroAltAlanAdi((String) value);
+											else if (tipi.equals("bordroAltAlanKodu"))
+												erp.setBordroAltAlanKodu((String) value);
+											else if (tipi.equals("cinsiyeti"))
+												erp.setCinsiyeti((String) value);
+											else if (tipi.equals("cinsiyetKodu"))
+												erp.setCinsiyetKodu((String) value);
+											else if (tipi.equals("departmanAdi"))
+												erp.setDepartmanAdi((String) value);
+											else if (tipi.equals("departmanKodu"))
+												erp.setDepartmanKodu((String) value);
+											else if (tipi.equals("dogumTarihi"))
+												erp.setDogumTarihi((String) value);
+											else if (tipi.equals("gorevi"))
+												erp.setGorevi((String) value);
+											else if (tipi.equals("gorevKodu"))
+												erp.setGorevKodu((String) value);
+											else if (tipi.equals("grubaGirisTarihi"))
+												erp.setGrubaGirisTarihi((String) value);
+											else if (tipi.equals("istenAyrilmaTarihi"))
+												erp.setIstenAyrilmaTarihi((String) value);
+											else if (tipi.equals("iseGirisTarihi"))
+												erp.setIseGirisTarihi((String) value);
+											else if (tipi.equals("kidemTarihi"))
+												erp.setKidemTarihi((String) value);
+											else if (tipi.equals("kimlikNo"))
+												erp.setKimlikNo((String) value);
+											else if (tipi.equals("masrafYeriAdi"))
+												erp.setMasrafYeriAdi((String) value);
+											else if (tipi.equals("masrafYeriKodu"))
+												erp.setMasrafYeriKodu((String) value);
+											else if (tipi.equals("personelTipi"))
+												erp.setPersonelTipi((String) value);
+											else if (tipi.equals("personelTipiKodu"))
+												erp.setPersonelTipiKodu((String) value);
+											else if (tipi.equals("sanalPersonel"))
+												erp.setSanalPersonel((Boolean) value);
+											else if (tipi.equals("sirketAdi"))
+												erp.setSirketAdi((String) value);
+											else if (tipi.equals("sirketKodu"))
+												erp.setSirketKodu((String) value);
+											else if (tipi.equals("tesisAdi"))
+												erp.setTesisAdi((String) value);
+											else if (tipi.equals("tesisKodu"))
+												erp.setTesisKodu((String) value);
+											else if (tipi.equals("yonetici2PerNo"))
+												erp.setYonetici2PerNo((String) value);
+											else if (tipi.equals("yoneticiPerNo"))
+												erp.setYoneticiPerNo(value.toString());
+											else if (tipi.equals("digerTanimAlan01"))
+												erp.setDigerTanimAlan01(value.toString());
+											else if (tipi.equals("digerTanimAlan01Kodu"))
+												erp.setDigerTanimAlan01Kodu((String) value);
+											else if (tipi.equals("digerTanimAlan02"))
+												erp.setDigerTanimAlan02((String) value);
+											else if (tipi.equals("digerTanimAlan02Kodu"))
+												erp.setDigerTanimAlan02Kodu((String) value);
+											else if (tipi.equals("digerTanimAlan03"))
+												erp.setDigerTanimAlan03((String) value);
+											else if (tipi.equals("digerTanimAlan03Kodu"))
+												erp.setDigerTanimAlan03Kodu((String) value);
+											else if (tipi.equals("digerTanimAlan04"))
+												erp.setDigerTanimAlan04((String) value);
+											else if (tipi.equals("digerTanimAlan04Kodu"))
+												erp.setDigerTanimAlan04Kodu((String) value);
+											else if (tipi.equals("digerTanimAlan05"))
+												erp.setDigerTanimAlan05((String) value);
+											else if (tipi.equals("digerTanimAlan05Kodu"))
+												erp.setDigerTanimAlan05Kodu((String) value);
+											else if (tipi.equals("digerTanimAlan06"))
+												erp.setDigerTanimAlan06((String) value);
+											else if (tipi.equals("digerTanimAlan06Kodu"))
+												erp.setDigerTanimAlan06Kodu((String) value);
+											else if (tipi.equals("digerTanimAlan07"))
+												erp.setDigerTanimAlan07((String) value);
+											else if (tipi.equals("digerTanimAlan07Kodu"))
+												erp.setDigerTanimAlan07Kodu((String) value);
+											else if (tipi.equals("digerTanimAlan08"))
+												erp.setDigerTanimAlan08((String) value);
+											else if (tipi.equals("digerTanimAlan08Kodu"))
+												erp.setDigerTanimAlan08Kodu((String) value);
+											else if (tipi.equals("digerTanimAlan09"))
+												erp.setDigerTanimAlan09((String) value);
+											else if (tipi.equals("digerTanimAlan09Kodu"))
+												erp.setDigerTanimAlan09Kodu((String) value);
+											else if (tipi.equals("digerTanimAlan10"))
+												erp.setDigerTanimAlan10((String) value);
+											else if (tipi.equals("digerTanimAlan10Kodu"))
+												erp.setDigerTanimAlan10Kodu((String) value);
+
+										}
 
 									}
-
+								} catch (Exception e) {
+									logger.error(e);
+									e.printStackTrace();
 								}
+
 								if (erp != null && erp.getPersonelNo() != null) {
+									idList.add(erp.getPersonelNo());
 									if (list == null)
 										list = new ArrayList<PersonelERP>();
 									list.add(erp);
@@ -481,17 +491,9 @@ public class OrtakIslemler implements Serializable {
 
 								}
 								if (personelERPReturnList != null && personelNo.equals("")) {
-									List<Long> idList = new ArrayList<Long>();
-									for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
-										PersonelERP personelERP = (PersonelERP) iterator.next();
-										if (personelERP.getYazildi()) {
-											idList.add(personelERP.getId());
-										}
-
-									}
 									if (idList.isEmpty() == false) {
 										tarih = null;
-										List<Personel> personelList = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_ID, idList, Personel.class, session);
+										List<Personel> personelList = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, idList, Personel.class, session);
 										for (Personel personel : personelList) {
 											if (tarih == null || personel.getSonIslemTarihi().after(tarih))
 												tarih = personel.getSonIslemTarihi();
@@ -507,6 +509,7 @@ public class OrtakIslemler implements Serializable {
 									}
 								}
 							}
+							idList = null;
 						}
 
 					}
@@ -568,12 +571,15 @@ public class OrtakIslemler implements Serializable {
 					String apiData = getApiData(urlAPI);
 					if (apiData != null) {
 						org.json.JSONArray jsonArray = getJSONArray(mediaType, apiData);
+
 						if (jsonArray != null && jsonArray.length() > 0) {
+							List<String> idList = new ArrayList<String>();
 							if (tanimList == null) {
 								tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_API_IZIN, Tanim.class, session);
 								for (Tanim tanim : tanimList)
 									entegrasyonMap.put(tanim.getErpKodu(), tanim.getKodu());
 							}
+
 							for (int i = 0; i < jsonArray.length(); i++) {
 								org.json.JSONObject obj = jsonArray.getJSONObject(i);
 								IzinERP erp = null;
@@ -608,59 +614,55 @@ public class OrtakIslemler implements Serializable {
 									}
 
 								}
-								if (erp != null) {
+								if (erp != null && erp.getReferansNoERP() != null) {
+									idList.add(erp.getReferansNoERP());
 									if (list == null)
 										list = new ArrayList<IzinERP>();
 									list.add(erp);
 								}
 
 							}
-						}
+							if (list != null) {
+								PdksSoapVeriAktar service = null;
+								List<IzinERP> izinERPReturnList = null;
+								try {
+									service = getPdksSoapVeriAktar(true);
+									izinERPReturnList = service.saveIzinler(list);
+								} catch (Exception e) {
+									try {
+										service = getPdksSoapVeriAktar(false);
+										izinERPReturnList = service.saveIzinler(list);
+									} catch (Exception e1) {
+										e1.printStackTrace();
+									}
 
-					}
-				}
-				if (list != null) {
-					PdksSoapVeriAktar service = null;
-					List<IzinERP> izinERPReturnList = null;
-					try {
-						service = getPdksSoapVeriAktar(true);
-						izinERPReturnList = service.saveIzinler(list);
-					} catch (Exception e) {
-						try {
-							service = getPdksSoapVeriAktar(false);
-							izinERPReturnList = service.saveIzinler(list);
-						} catch (Exception e1) {
-							e1.printStackTrace();
-						}
-
-					}
-					if (izinERPReturnList != null && personelNo.equals("")) {
-						List<Long> idList = new ArrayList<Long>();
-						for (Iterator iterator = izinERPReturnList.iterator(); iterator.hasNext();) {
-							IzinERP izinERP = (IzinERP) iterator.next();
-							if (izinERP.getYazildi()) {
-								idList.add(izinERP.getId());
-							}
-
-						}
-						if (idList.isEmpty() == false) {
-							tarih = null;
-							List<PersonelIzin> izinList = pdksEntityController.getSQLParamByFieldList(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, idList, PersonelIzin.class, session);
-							for (PersonelIzin personelIzin : izinList) {
-								if (tarih == null || personelIzin.getSonIslemTarihi().after(tarih))
-									tarih = personelIzin.getSonIslemTarihi();
-							}
-							if (tarih != null) {
-								if (se.getGuncelemeZamaniIzin() == null || se.getGuncelemeZamaniIzin().before(tarih)) {
-									se.setGuncelemeZamaniIzin(tarih);
-									session.saveOrUpdate(se);
-									session.flush();
 								}
+								if (izinERPReturnList != null && personelNo.equals("")) {
+
+									if (idList.isEmpty() == false) {
+										tarih = null;
+										List<IzinReferansERP> izinList = pdksEntityController.getSQLParamByFieldList(IzinReferansERP.TABLE_NAME, IzinReferansERP.COLUMN_NAME_ID, idList, IzinReferansERP.class, session);
+										for (IzinReferansERP izinReferansERP : izinList) {
+											PersonelIzin personelIzin = izinReferansERP.getIzin();
+											if (tarih == null || personelIzin.getSonIslemTarihi().after(tarih))
+												tarih = personelIzin.getSonIslemTarihi();
+										}
+										if (tarih != null) {
+											if (se.getGuncelemeZamaniIzin() == null || se.getGuncelemeZamaniIzin().before(tarih)) {
+												se.setGuncelemeZamaniIzin(tarih);
+												session.saveOrUpdate(se);
+												session.flush();
+											}
+										}
+
+									}
+								}
+
 							}
-
+							idList = null;
 						}
-					}
 
+					}
 				}
 
 			}
