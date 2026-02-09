@@ -299,7 +299,7 @@ public class OrtakIslemler implements Serializable {
 			personelNo = "";
 		List<SirketEntegrasyon> entegrasyonList = getSirketEntegrasyonList(sirketKodu, personelNo, session);
 		if (entegrasyonList != null) {
-
+			List<Tanim> tanimList = null;
 			HashMap<String, String> entegrasyonMap = new HashMap<String, String>();
 			for (SirketEntegrasyon se : entegrasyonList) {
 				List<PersonelERP> list = null;
@@ -336,12 +336,10 @@ public class OrtakIslemler implements Serializable {
 					}
 					String apiData = getApiData(urlAPI);
 					if (apiData != null) {
-
 						org.json.JSONArray jsonArray = getJSONArray(mediaType, apiData);
-						if (jsonArray != null) {
-							if (list == null) {
-								list = new ArrayList<PersonelERP>();
-								List<Tanim> tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_API_PERSONEL, Tanim.class, session);
+						if (jsonArray != null && jsonArray.length() > 0) {
+							if (tanimList == null) {
+								tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_API_PERSONEL, Tanim.class, session);
 								for (Tanim tanim : tanimList)
 									entegrasyonMap.put(tanim.getErpKodu(), tanim.getKodu());
 
@@ -354,11 +352,12 @@ public class OrtakIslemler implements Serializable {
 									String key = (String) iterator.next();
 									Object value = obj.get(key);
 									if (value != null && entegrasyonMap.containsKey(key)) {
-										if (erp == null)
-											erp = new PersonelERP();
 										String tipi = entegrasyonMap.get(key);
+ 										if (erp == null)
+											erp = new PersonelERP();
+
 										if (tipi.equals("personelNo"))
-											erp.setPersonelNo((String) value);
+											erp.setPersonelNo(value.toString());
 										else if (tipi.equals("adi"))
 											erp.setAdi((String) value);
 										else if (tipi.equals("soyadi"))
@@ -414,9 +413,9 @@ public class OrtakIslemler implements Serializable {
 										else if (tipi.equals("yonetici2PerNo"))
 											erp.setYonetici2PerNo((String) value);
 										else if (tipi.equals("yoneticiPerNo"))
-											erp.setYoneticiPerNo((String) value);
+											erp.setYoneticiPerNo(value.toString());
 										else if (tipi.equals("digerTanimAlan01"))
-											erp.setDigerTanimAlan01((String) value);
+											erp.setDigerTanimAlan01(value.toString());
 										else if (tipi.equals("digerTanimAlan01Kodu"))
 											erp.setDigerTanimAlan01Kodu((String) value);
 										else if (tipi.equals("digerTanimAlan02"))
@@ -459,57 +458,61 @@ public class OrtakIslemler implements Serializable {
 									}
 
 								}
-								if (erp != null)
+								if (erp != null && erp.getPersonelNo() != null) {
+									if (list == null)
+										list = new ArrayList<PersonelERP>();
 									list.add(erp);
+								}
 
+							}
+							if (list != null) {
+								PdksSoapVeriAktar service = null;
+								List<PersonelERP> personelERPReturnList = null;
+								try {
+									service = getPdksSoapVeriAktar(true);
+									personelERPReturnList = service.savePersoneller(list);
+								} catch (Exception e) {
+									try {
+										service = getPdksSoapVeriAktar(false);
+										personelERPReturnList = service.savePersoneller(list);
+									} catch (Exception e1) {
+										e1.printStackTrace();
+									}
+
+								}
+								if (personelERPReturnList != null && personelNo.equals("")) {
+									List<Long> idList = new ArrayList<Long>();
+									for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
+										PersonelERP personelERP = (PersonelERP) iterator.next();
+										if (personelERP.getYazildi()) {
+											idList.add(personelERP.getId());
+										}
+
+									}
+									if (idList.isEmpty() == false) {
+										tarih = null;
+										List<Personel> personelList = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_ID, idList, Personel.class, session);
+										for (Personel personel : personelList) {
+											if (tarih == null || personel.getSonIslemTarihi().after(tarih))
+												tarih = personel.getSonIslemTarihi();
+										}
+										if (tarih != null) {
+											if (se.getGuncelemeZamaniPersonel() == null || se.getGuncelemeZamaniPersonel().before(tarih)) {
+												se.setGuncelemeZamaniPersonel(tarih);
+												session.saveOrUpdate(se);
+												session.flush();
+											}
+										}
+
+									}
+								}
 							}
 						}
 
 					}
 					map = null;
 				}
-				if (list != null) {
-					PdksSoapVeriAktar service = null;
-					List<PersonelERP> personelERPReturnList = null;
-					try {
-						service = getPdksSoapVeriAktar(true);
-						personelERPReturnList = service.savePersoneller(list);
-					} catch (Exception e) {
-						try {
-							service = getPdksSoapVeriAktar(false);
-							personelERPReturnList = service.savePersoneller(list);
-						} catch (Exception e1) {
-							e1.printStackTrace();
-						}
 
-					}
-					if (personelERPReturnList != null && personelNo.equals("")) {
-						List<Long> idList = new ArrayList<Long>();
-						for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
-							PersonelERP personelERP = (PersonelERP) iterator.next();
-							if (personelERP.getYazildi()) {
-								idList.add(personelERP.getId());
-							}
-
-						}
-						if (idList.isEmpty() == false) {
-							tarih = null;
-							List<Personel> personelList = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_ID, idList, Personel.class, session);
-							for (Personel personel : personelList) {
-								if (tarih == null || personel.getSonIslemTarihi().after(tarih))
-									tarih = personel.getSonIslemTarihi();
-							}
-							if (tarih != null) {
-								if (se.getGuncelemeZamaniPersonel() == null || se.getGuncelemeZamaniPersonel().before(tarih)) {
-									se.setGuncelemeZamaniPersonel(tarih);
-									session.saveOrUpdate(se);
-									session.flush();
-								}
-							}
-
-						}
-					}
-				}
 			}
 
 		}
@@ -528,6 +531,7 @@ public class OrtakIslemler implements Serializable {
 		List<SirketEntegrasyon> entegrasyonList = getSirketEntegrasyonList(sirketKodu, personelNo, session);
 		if (entegrasyonList != null) {
 			HashMap<String, String> entegrasyonMap = new HashMap<String, String>();
+			List<Tanim> tanimList = null;
 			for (SirketEntegrasyon se : entegrasyonList) {
 				List<IzinERP> list = null;
 				String mediaType = se.getMediaTypeIzin(), urlAPI = se.getUrlIzin();
@@ -564,10 +568,9 @@ public class OrtakIslemler implements Serializable {
 					String apiData = getApiData(urlAPI);
 					if (apiData != null) {
 						org.json.JSONArray jsonArray = getJSONArray(mediaType, apiData);
-						if (jsonArray != null) {
-							if (list == null) {
-								list = new ArrayList<IzinERP>();
-								List<Tanim> tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_API_IZIN, Tanim.class, session);
+						if (jsonArray != null && jsonArray.length() > 0) {
+							if (tanimList == null) {
+								tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_API_IZIN, Tanim.class, session);
 								for (Tanim tanim : tanimList)
 									entegrasyonMap.put(tanim.getErpKodu(), tanim.getKodu());
 							}
@@ -605,8 +608,11 @@ public class OrtakIslemler implements Serializable {
 									}
 
 								}
-								if (erp != null)
+								if (erp != null) {
+									if (list == null)
+										list = new ArrayList<IzinERP>();
 									list.add(erp);
+								}
 
 							}
 						}
@@ -614,7 +620,6 @@ public class OrtakIslemler implements Serializable {
 					}
 				}
 				if (list != null) {
-
 					PdksSoapVeriAktar service = null;
 					List<IzinERP> izinERPReturnList = null;
 					try {
