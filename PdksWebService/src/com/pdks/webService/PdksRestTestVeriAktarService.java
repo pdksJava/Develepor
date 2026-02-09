@@ -152,6 +152,7 @@ public class PdksRestTestVeriAktarService implements Serializable {
 				izin.setDurum(personelIzin.getIzinDurumu() == PersonelIzin.IZIN_DURUMU_ONAYLANDI);
 				izin.setSureBirimi(SureBirimi.GUN);
 				izin.setYazildi(null);
+				izin.setGuncellemeZamani(PdksUtil.convertToDateString(personelIzin.getSonIslemTarihi(), PdksVeriOrtakAktar.FORMAT_DATE_TIME));
 				izinERPList.add(izin);
 			}
 
@@ -241,6 +242,7 @@ public class PdksRestTestVeriAktarService implements Serializable {
 			personelERP.setSanalPersonel(personel.getSanalPersonel());
 			personelERP.setYoneticiPerNo(personel.getYoneticisi() != null ? personel.getYoneticisi().getPdksSicilNo() : "");
 			personelERP.setKimlikNo(personel.getPersonelKGS().getKimlikNo());
+			personelERP.setGuncellemeZamani(PdksUtil.convertToDateString(personel.getSonIslemTarihi(), PdksVeriOrtakAktar.FORMAT_DATE_TIME));
 			personelERP.setYazildi(null);
 			personelERPList.add(personelERP);
 

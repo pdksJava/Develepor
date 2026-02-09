@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "baseERPObject", propOrder = { "hataList", "id", "yazildi" })
+@XmlType(name = "baseERPObject", propOrder = { "hataList", "id", "yazildi","guncellemeZamani" })
 @XmlSeeAlso({ IzinHakedis.class, IzinERP.class, IzinHakedisDetay.class, PersonelERP.class })
 public abstract class BaseERPObject {
 
@@ -40,6 +40,7 @@ public abstract class BaseERPObject {
 	protected List<String> hataList;
 	protected Long id;
 	protected Boolean yazildi;
+	protected String guncellemeZamani;
 
 	/**
 	 * Gets the value of the hataList property.
@@ -107,6 +108,14 @@ public abstract class BaseERPObject {
 	 */
 	public void setYazildi(Boolean value) {
 		this.yazildi = value;
+	}
+
+	public String getGuncellemeZamani() {
+		return guncellemeZamani;
+	}
+
+	public void setGuncellemeZamani(String guncellemeZamani) {
+		this.guncellemeZamani = guncellemeZamani;
 	}
 
 }

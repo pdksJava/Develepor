@@ -11,6 +11,8 @@ public abstract class BaseERPObject implements Serializable, Cloneable {
 	private Long id;
 
 	private Boolean yazildi = Boolean.FALSE;
+	
+	private String guncellemeZamani;
 
 	private List<String> hataList;
 
@@ -60,5 +62,13 @@ public abstract class BaseERPObject implements Serializable, Cloneable {
 			// bu class cloneable oldugu icin buraya girilmemeli...
 			throw new InternalError();
 		}
+	}
+
+	public String getGuncellemeZamani() {
+		return guncellemeZamani;
+	}
+
+	public void setGuncellemeZamani(String guncellemeZamani) {
+		this.guncellemeZamani = guncellemeZamani;
 	}
 }
