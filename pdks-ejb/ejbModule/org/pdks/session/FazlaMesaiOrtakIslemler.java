@@ -1442,8 +1442,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		String arifeGunuBordroYarim = ortakIslemler.getParameterKey("arifeGunuBordroYarim");
 		boolean saatlikCalismaVar = ortakIslemler.getParameterKey("saatlikCalismaVar").equals("1");
 		List<Tanim> list = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_IZIN_GRUPLARI, Tanim.class, session);
-
-		if (list.isEmpty()) {
+ 		if (list != null && list.isEmpty()) {
 			BordroDetayTipi[] bordroTipileri = new BordroDetayTipi[] { BordroDetayTipi.UCRETLI_IZIN, BordroDetayTipi.UCRETSIZ_IZIN, BordroDetayTipi.RAPORLU_IZIN };
 			for (BordroDetayTipi bordroTipi : bordroTipileri) {
 				Tanim tanim = new Tanim();
