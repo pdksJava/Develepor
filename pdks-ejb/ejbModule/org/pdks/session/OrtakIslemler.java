@@ -591,7 +591,7 @@ public class OrtakIslemler implements Serializable {
 											erp = new IzinERP();
 										String tipi = entegrasyonMap.get(key);
 										if (tipi.equals("personelNo"))
-											erp.setPersonelNo((String) value);
+											erp.setPersonelNo(value.toString());
 										else if (tipi.equals("referansNoERP"))
 											erp.setReferansNoERP((String) value);
 										else if (tipi.equals("aciklama"))
@@ -605,7 +605,7 @@ public class OrtakIslemler implements Serializable {
 										else if (tipi.equals("bitZaman"))
 											erp.setBitZaman((String) value);
 										else if (tipi.equals("izinSuresi"))
-											erp.setIzinSuresi((Double) value);
+											erp.setIzinSuresi(Double.parseDouble("" + value));
 										else if (tipi.equals("durum"))
 											erp.setDurum((Boolean) value);
 										else if (tipi.equals("sureBirimi"))
