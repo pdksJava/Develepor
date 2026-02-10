@@ -241,7 +241,8 @@ public class PdksRestTestVeriAktarService implements Serializable {
 			}
 			personelERP.setSanalPersonel(personel.getSanalPersonel());
 			personelERP.setYoneticiPerNo(personel.getYoneticisi() != null ? personel.getYoneticisi().getPdksSicilNo() : "");
-			personelERP.setKimlikNo(personel.getPersonelKGS().getKimlikNo());
+			if (PdksUtil.hasStringValue(personel.getPersonelKGS().getKimlikNo()))
+				personelERP.setKimlikNo(personel.getPersonelKGS().getKimlikNo());
 			personelERP.setGuncellemeZamani(PdksUtil.convertToDateString(personel.getSonIslemTarihi(), PdksVeriOrtakAktar.FORMAT_DATE_TIME));
 			personelERP.setYazildi(null);
 			personelERPList.add(personelERP);
