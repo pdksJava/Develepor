@@ -501,12 +501,11 @@ public class OrtakIslemler implements Serializable {
 										for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
 											PersonelERP erp = (PersonelERP) iterator.next();
 											if (erp.getYazildi() == null || erp.getYazildi().booleanValue() == false) {
-												iterator.remove();
 												Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), pattern);
 												if (guncellemeTarih == null || xTarih.before(guncellemeTarih))
 													guncellemeTarih = xTarih;
+												iterator.remove();
 											}
-
 										}
 										if (guncellemeTarih == null) {
 											for (PersonelERP erp : personelERPReturnList) {
