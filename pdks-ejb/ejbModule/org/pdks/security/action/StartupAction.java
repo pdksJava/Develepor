@@ -77,6 +77,7 @@ import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 import org.pdks.security.entity.UserDigerOrganizasyon;
 import org.pdks.security.entity.UserRoles;
+import org.pdks.session.Constants;
 import org.pdks.session.ExcelUtil;
 import org.pdks.session.LDAPUserManager;
 import org.pdks.session.OrtakIslemler;
@@ -273,9 +274,9 @@ public class StartupAction implements Serializable {
 		try {
 			String adresStr = ortakIslemler.getLoginAdres();
 			if (PdksUtil.hasStringValue(adresStr))
-				logger.info("Web Login Adres : " + adresStr);
+				logger.info("Web Login Adres : " + adresStr + " ---> " + Constants.VERSION);
 		} catch (Exception e) {
-		 
+
 		}
 
 		ortakIslemler = null;

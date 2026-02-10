@@ -23,6 +23,8 @@ public class Constants implements Serializable {
 	// ServletContext
 	public static final String SERVLET_CONTEXT_UYGULAMA_DILLERI = "servletContextUygulamaDilleri";
 
+	public static final String VERSION = "Pdks-ear_20251209_1105.1.0.0.ear";
+
 	public static final String SERVLET_CONTEXT_UYGULAMA_DB = "servletContextUygulamaDb";
 
 	// genel islem tipleri

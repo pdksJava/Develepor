@@ -10113,6 +10113,14 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @return
+	 */
+	public String versiyon() {
+		String str = Constants.VERSION;
+		return str;
+	}
+
+	/**
 	 * @param denklestirmeDonemi
 	 * @param tatilGunleriMap
 	 * @param searchKey
