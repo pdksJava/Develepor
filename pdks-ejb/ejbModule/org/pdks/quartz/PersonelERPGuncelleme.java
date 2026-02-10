@@ -34,6 +34,7 @@ import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
+import org.pdks.entity.SirketEntegrasyon;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
 import org.pdks.erp.action.ERPController;
@@ -208,8 +209,21 @@ public class PersonelERPGuncelleme implements Serializable {
 						// guncellemeDBDurum = true;
 					}
 					if (zamanDurum || guncellemeDBDurum) {
-						if (ortakIslemler.getGuncellemeDurum(Personel.TABLE_NAME, session))
-							personelERPGuncellemeCalistir(session, tarih, true);
+						if (ortakIslemler.getGuncellemeDurum(Personel.TABLE_NAME, session)) {
+							List<SirketEntegrasyon> sirketEntegrasyonList = pdksEntityController.getSQLTableList(SirketEntegrasyon.TABLE_NAME, SirketEntegrasyon.class, session);
+							boolean calistir = true;
+							for (SirketEntegrasyon se : sirketEntegrasyonList) {
+								Sirket sirket = se.getSirket();
+								String url = se.getUrlPersonel();
+								if (sirket.getDurum() && PdksUtil.hasStringValue(url) && url.startsWith("http")) {
+									calistir = false;
+									ortakIslemler.updatePersonelAPI(sirket.getErpKodu(), null, session);
+								}
+							}
+							if (calistir)
+								personelERPGuncellemeCalistir(session, tarih, true);
+						}
+
 					}
 				}
 

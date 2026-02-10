@@ -36,6 +36,7 @@ import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.PersonelIzinDetay;
 import org.pdks.entity.Sirket;
+import org.pdks.entity.SirketEntegrasyon;
 import org.pdks.entity.Tanim;
 import org.pdks.security.action.StartupAction;
 import org.pdks.security.entity.User;
@@ -144,7 +145,18 @@ public class IzinBakiyeGuncelleme implements Serializable {
 						try {
 							if (manuel == false) {
 								logger.info(uygulamaBordro + " izin bilgileri güncelleniyor in " + PdksUtil.getCurrentTimeStampStr());
-								ortakIslemler.izinERPDBGuncelle(true, null, session);
+								List<SirketEntegrasyon> sirketEntegrasyonList = pdksEntityController.getSQLTableList(SirketEntegrasyon.TABLE_NAME, SirketEntegrasyon.class, session);
+								boolean calistir = true;
+								for (SirketEntegrasyon se : sirketEntegrasyonList) {
+									Sirket sirket = se.getSirket();
+									String url = se.getUrlIzin();
+									if (sirket.getDurum() && PdksUtil.hasStringValue(url) && url.startsWith("http")) {
+										calistir = false;
+										ortakIslemler.updateIzinAPI(sirket.getErpKodu(), null, session);
+									}
+								}
+								if (calistir)
+									ortakIslemler.izinERPDBGuncelle(true, null, session);
 								logger.info(uygulamaBordro + " izin bilgileri güncelleniyor out " + PdksUtil.getCurrentTimeStampStr());
 							}
 						} catch (Exception e) {
