@@ -302,7 +302,7 @@ public class OrtakIslemler implements Serializable {
 			List<Tanim> tanimList = null;
 			HashMap<String, String> entegrasyonMap = new HashMap<String, String>();
 			for (SirketEntegrasyon se : entegrasyonList) {
-				 
+
 				HashMap<String, PersonelERP> erpMap = null;
 				String mediaType = se.getMediaTypePersonel(), urlAPI = se.getUrlPersonel();
 				Date tarih = se.getGuncelemeZamaniPersonel();
@@ -339,7 +339,7 @@ public class OrtakIslemler implements Serializable {
 					if (apiData != null) {
 						org.json.JSONArray jsonArray = getJSONArray(mediaType, apiData);
 						if (jsonArray != null && jsonArray.length() > 0) {
- 							if (tanimList == null) {
+							if (tanimList == null) {
 								tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_API_PERSONEL, Tanim.class, session);
 								for (Tanim tanim : tanimList)
 									entegrasyonMap.put(tanim.getErpKodu(), tanim.getKodu());
@@ -470,10 +470,10 @@ public class OrtakIslemler implements Serializable {
 								}
 
 								if (erp != null && erp.getPersonelNo() != null) {
-									 
+
 									if (erpMap == null)
 										erpMap = new HashMap<String, PersonelERP>();
-									erpMap.put(erp.getPersonelNo(),erp);
+									erpMap.put(erp.getPersonelNo(), erp);
 								}
 
 							}
@@ -10406,7 +10406,7 @@ public class OrtakIslemler implements Serializable {
 					HashMap<Long, ArrayList<HareketKGS>> personelHareketMap = personelHareketleriGetir(kgsPerList, tariheGunEkleCikar(cal, tarih1, -1), tariheGunEkleCikar(cal, tarih2, 1), session);
 					if (!personelVardiyaBulMap.isEmpty() && !personelHareketMap.isEmpty()) {
 						if (fullYetkiliKullanici())
-						yenidenCalistir = vardiyaHareketlerdenGuncelle(personelDenklestirmeMap, personelVardiyaBulMap, calismaPlaniMap, hareketKaydiVardiyaMap, personelHareketMap, suaListe, session);
+							yenidenCalistir = vardiyaHareketlerdenGuncelle(personelDenklestirmeMap, personelVardiyaBulMap, calismaPlaniMap, hareketKaydiVardiyaMap, personelHareketMap, suaListe, session);
 						TreeMap<String, VardiyaGun> vardiyalarMap = new TreeMap<String, VardiyaGun>();
 						for (Long key : calismaPlaniMap.keySet()) {
 							List<VardiyaGun> list = calismaPlaniMap.get(key);
@@ -10555,7 +10555,7 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	private boolean fullYetkiliKullanici() {
-		return authenticatedUser==null|| authenticatedUser.isIK()|| authenticatedUser.isAdmin()|| authenticatedUser.isSistemYoneticisi();
+		return authenticatedUser == null || authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi();
 	}
 
 	/**
@@ -10773,7 +10773,7 @@ public class OrtakIslemler implements Serializable {
 								list.add(hareketKGS);
 							}
 							try {
-								if (personelHareketMap != null && personelHareketMap.isEmpty() == false && fullYetkiliKullanici() )
+								if (personelHareketMap != null && personelHareketMap.isEmpty() == false && fullYetkiliKullanici())
 									sonuc = vardiyaHareketlerdenGuncelle(personelDenklestirmeMap, personelVardiyaBulMap, calismaPlaniMap, hareketKaydiVardiyaMap, personelHareketMap, null, session);
 							} catch (Exception e) {
 								logger.error(e);
@@ -11243,7 +11243,7 @@ public class OrtakIslemler implements Serializable {
 				calismaPlaniMap.put(perId, vardiyalar);
 				personelDenklestirmeTasiyici.setVardiyalar(vardiyalar);
 				session.flush();
-				yenidenCalistir = true;
+				// yenidenCalistir = true;
 			}
 
 		}
