@@ -478,60 +478,61 @@ public class OrtakIslemler implements Serializable {
 
 							}
 							if (erpMap != null) {
+								List<PersonelERP> erpList = new ArrayList<PersonelERP>(erpMap.values());
 								PdksSoapVeriAktar service = null;
 								List<PersonelERP> personelERPReturnList = null;
 								try {
 									service = getPdksSoapVeriAktar(true);
-									personelERPReturnList = service.savePersoneller(new ArrayList<PersonelERP>(erpMap.values()));
+									personelERPReturnList = service.savePersoneller(erpList);
 								} catch (Exception e) {
 									try {
 										service = getPdksSoapVeriAktar(false);
-										personelERPReturnList = service.savePersoneller(new ArrayList<PersonelERP>(erpMap.values()));
+										personelERPReturnList = service.savePersoneller(erpList);
 									} catch (Exception e1) {
 										e1.printStackTrace();
 									}
 
 								}
-								if (personelERPReturnList != null && personelNo.equals("")) {
-									tarih = null;
-									for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
-										PersonelERP erp = (PersonelERP) iterator.next();
-										if (erp.getYazildi().booleanValue() == false) {
-											iterator.remove();
-											Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), "yyyy-MM-dd HH:mm");
-											if (tarih == null || xTarih.before(tarih))
-												xTarih = tarih;
-										}
+								erpList = null;
+								if (personelERPReturnList != null) {
+									if (personelNo.equals("")) {
+										String pattern = "yyyy-MM-dd HH:mm";
+										Date guncellemeTarih = null;
+										for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
+											PersonelERP erp = (PersonelERP) iterator.next();
+											if (erp.getYazildi() == null || erp.getYazildi().booleanValue() == false) {
+												iterator.remove();
+												Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), pattern);
+												if (guncellemeTarih == null || xTarih.before(guncellemeTarih))
+													guncellemeTarih = xTarih;
+											}
 
-									}
-									if (tarih == null) {
-										for (PersonelERP erp : personelERPReturnList) {
-											Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), "yyyy-MM-dd HH:mm");
-											if (tarih == null || xTarih.after(tarih))
-												xTarih = tarih;
+										}
+										if (guncellemeTarih == null) {
+											for (PersonelERP erp : personelERPReturnList) {
+												Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), pattern);
+												if (guncellemeTarih == null || xTarih.after(guncellemeTarih))
+													guncellemeTarih = xTarih;
+											}
+										}
+										if (guncellemeTarih != null) {
+											if (se.getGuncelemeZamaniPersonel() == null || se.getGuncelemeZamaniPersonel().before(guncellemeTarih)) {
+												se.setGuncelemeZamaniPersonel(guncellemeTarih);
+												session.saveOrUpdate(se);
+												session.flush();
+											}
 										}
 									}
-									if (tarih == null) {
-										if (se.getGuncelemeZamaniPersonel() == null || se.getGuncelemeZamaniPersonel().before(tarih)) {
-											se.setGuncelemeZamaniPersonel(tarih);
-											session.saveOrUpdate(se);
-											session.flush();
-										}
-									}
+									personelERPReturnList = null;
 								}
-
 							}
 							erpMap = null;
 						}
-
 					}
 					map = null;
 				}
-
 			}
-
 		}
-
 	}
 
 	/**
@@ -636,61 +637,58 @@ public class OrtakIslemler implements Serializable {
 
 							}
 							if (erpMap != null) {
+								List<IzinERP> erpList = new ArrayList<IzinERP>(erpMap.values());
 								PdksSoapVeriAktar service = null;
 								List<IzinERP> izinERPReturnList = null;
 								try {
 									service = getPdksSoapVeriAktar(true);
-									izinERPReturnList = service.saveIzinler(new ArrayList<IzinERP>(erpMap.values()));
+									izinERPReturnList = service.saveIzinler(erpList);
 								} catch (Exception e) {
 									try {
 										service = getPdksSoapVeriAktar(false);
-										izinERPReturnList = service.saveIzinler(new ArrayList<IzinERP>(erpMap.values()));
+										izinERPReturnList = service.saveIzinler(erpList);
 									} catch (Exception e1) {
 										e1.printStackTrace();
 									}
-
 								}
-								if (izinERPReturnList != null && personelNo.equals("")) {
-									tarih = null;
-									for (Iterator iterator = izinERPReturnList.iterator(); iterator.hasNext();) {
-										IzinERP erp = (IzinERP) iterator.next();
-										if (erp.getYazildi().booleanValue() == false) {
-											iterator.remove();
-											Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), "yyyy-MM-dd HH:mm");
-											if (tarih == null || xTarih.before(tarih))
-												xTarih = tarih;
-										}
-
-									}
-									if (tarih == null) {
-										for (IzinERP erp : izinERPReturnList) {
-											Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), "yyyy-MM-dd HH:mm");
-											if (tarih == null || xTarih.after(tarih))
-												xTarih = tarih;
-										}
-									}
-									if (tarih == null) {
-
-										if (se.getGuncelemeZamaniIzin() == null || se.getGuncelemeZamaniIzin().before(tarih)) {
-											se.setGuncelemeZamaniIzin(tarih);
-											session.saveOrUpdate(se);
-											session.flush();
+								erpList = null;
+								if (izinERPReturnList != null) {
+									if (personelNo.equals("")) {
+										String pattern = "yyyy-MM-dd HH:mm";
+										Date guncellemeTarih = null;
+										for (Iterator iterator = izinERPReturnList.iterator(); iterator.hasNext();) {
+											IzinERP erp = (IzinERP) iterator.next();
+											if (erp.getYazildi() == null || erp.getYazildi().booleanValue() == false) {
+												Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), pattern);
+												if (guncellemeTarih == null || xTarih.before(guncellemeTarih))
+													guncellemeTarih = xTarih;
+												iterator.remove();
+											}
 
 										}
-
+										if (guncellemeTarih == null) {
+											for (IzinERP erp : izinERPReturnList) {
+												Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), pattern);
+												if (guncellemeTarih == null || xTarih.after(guncellemeTarih))
+													guncellemeTarih = xTarih;
+											}
+										}
+										if (guncellemeTarih != null) {
+											if (se.getGuncelemeZamaniIzin() == null || se.getGuncelemeZamaniIzin().before(guncellemeTarih)) {
+												se.setGuncelemeZamaniIzin(guncellemeTarih);
+												session.saveOrUpdate(se);
+												session.flush();
+											}
+										}
 									}
+									izinERPReturnList = null;
 								}
-
 							}
-
 						}
-
 					}
 				}
-
 			}
 		}
-
 	}
 
 	private org.json.JSONArray getJSONArray(String mediaType, String apiData) {

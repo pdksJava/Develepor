@@ -334,7 +334,7 @@
 										<ui:define name="label">Personel Güncelle Tarihi</ui:define>
 										<rich:calendar value="#{sirketHome.seciliSirketEntegrasyon.guncelemeZamaniPersonel}" datePattern="#{authenticatedUser.dateFormat}" />
 										<a4j:commandButton status="ajaxStatus" value="Personel Güncelle Calistir"
-											rendered="#{sirketHome.aipGuncelle and ortakIslemler.hasStringValue(sirketHome.seciliSirketEntegrasyon.urlPersonel)}"
+											rendered="#{sirketHome.apiGuncelle and ortakIslemler.hasStringValue(sirketHome.seciliSirketEntegrasyon.urlPersonel)}"
 											action="#{ortakIslemler.updatePersonelAPI(sirketHome.seciliSirket.erpKodu,'',sirketHome.session)}" />
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
@@ -357,7 +357,7 @@
 										<ui:define name="label">İzin Güncelle Tarihi</ui:define>
 										<rich:calendar value="#{sirketHome.seciliSirketEntegrasyon.guncelemeZamaniIzin}" datePattern="#{authenticatedUser.dateFormat}" />
 										<a4j:commandButton status="ajaxStatus" value="İzin Güncelle Calistir"
-											rendered="#{sirketHome.aipGuncelle and ortakIslemler.hasStringValue(sirketHome.seciliSirketEntegrasyon.urlIzin)}"
+											rendered="#{sirketHome.apiGuncelle and ortakIslemler.hasStringValue(sirketHome.seciliSirketEntegrasyon.urlIzin)}"
 											action="#{ortakIslemler.updateIzinAPI(sirketHome.seciliSirket.erpKodu,'',sirketHome.session)}" />
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
