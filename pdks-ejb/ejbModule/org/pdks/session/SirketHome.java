@@ -340,6 +340,20 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 		fillsirketList();
 	}
 
+	public String updateIzinAPI() {
+		Date tarih = ortakIslemler.updateIzinAPI(seciliSirket.getErpKodu(), "", session);
+		if (tarih != null && PdksUtil.isDateDegisti(seciliSirketEntegrasyon.getGuncelemeZamaniIzin(), tarih))
+			seciliSirketEntegrasyon.setGuncelemeZamaniIzin(tarih);
+		return "";
+	}
+
+	public String updatePersonelAPI() {
+		Date tarih = ortakIslemler.updatePersonelAPI(seciliSirket.getErpKodu(), "", session);
+		if (tarih != null && PdksUtil.isDateDegisti(seciliSirketEntegrasyon.getGuncelemeZamaniPersonel(), tarih))
+			seciliSirketEntegrasyon.setGuncelemeZamaniPersonel(tarih);
+		return "";
+	}
+
 	public List<Departman> getDepartmanList() {
 		return departmanList;
 	}
@@ -475,7 +489,5 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	public void setApiGuncelle(Boolean apiGuncelle) {
 		this.apiGuncelle = apiGuncelle;
 	}
-
-	 
 
 }

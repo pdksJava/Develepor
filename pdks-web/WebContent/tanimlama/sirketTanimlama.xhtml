@@ -330,12 +330,12 @@
 									</s:decorate>
 
 
-									<s:decorate template="/layout/edit.xhtml">
+									<s:decorate template="/layout/edit.xhtml" id="guncelemeZamaniPersonel">
 										<ui:define name="label">Personel Güncelle Tarihi</ui:define>
 										<rich:calendar value="#{sirketHome.seciliSirketEntegrasyon.guncelemeZamaniPersonel}" datePattern="#{authenticatedUser.dateFormat}" />
 										<a4j:commandButton status="ajaxStatus" value="Personel Güncelle Calistir"
 											rendered="#{sirketHome.apiGuncelle and ortakIslemler.hasStringValue(sirketHome.seciliSirketEntegrasyon.urlPersonel)}"
-											action="#{ortakIslemler.updatePersonelAPI(sirketHome.seciliSirket.erpKodu,'',sirketHome.session)}" />
+											action="#{sirketHome.updatePersonelAPI()}" reRender="guncelemeZamaniPersonel" />
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 										<ui:define name="label">İzin Servis Bilgi</ui:define>
@@ -353,12 +353,12 @@
 										</h:selectOneMenu>
 									</s:decorate>
 
-									<s:decorate template="/layout/edit.xhtml">
+									<s:decorate template="/layout/edit.xhtml" id="guncelemeZamaniIzin">
 										<ui:define name="label">İzin Güncelle Tarihi</ui:define>
 										<rich:calendar value="#{sirketHome.seciliSirketEntegrasyon.guncelemeZamaniIzin}" datePattern="#{authenticatedUser.dateFormat}" />
 										<a4j:commandButton status="ajaxStatus" value="İzin Güncelle Calistir"
 											rendered="#{sirketHome.apiGuncelle and ortakIslemler.hasStringValue(sirketHome.seciliSirketEntegrasyon.urlIzin)}"
-											action="#{ortakIslemler.updateIzinAPI(sirketHome.seciliSirket.erpKodu,'',sirketHome.session)}" />
+											action="#{sirketHome.updateIzinAPI()}" reRender="guncelemeZamaniIzin" />
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 										<ui:define name="label">Mesai Servis Bilgi</ui:define>

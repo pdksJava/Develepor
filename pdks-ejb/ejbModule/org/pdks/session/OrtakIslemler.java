@@ -294,7 +294,8 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	public void updatePersonelAPI(String sirketKodu, String personelNo, Session session) {
+	public Date updatePersonelAPI(String sirketKodu, String personelNo, Session session) {
+		Date guncellemeTarih = null;
 		if (personelNo == null)
 			personelNo = "";
 		List<SirketEntegrasyon> entegrasyonList = getSirketEntegrasyonList(sirketKodu, personelNo, session);
@@ -497,7 +498,6 @@ public class OrtakIslemler implements Serializable {
 								if (personelERPReturnList != null) {
 									if (personelNo.equals("")) {
 										String pattern = "yyyy-MM-dd HH:mm";
-										Date guncellemeTarih = null;
 										for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
 											PersonelERP erp = (PersonelERP) iterator.next();
 											if (erp.getYazildi() == null || erp.getYazildi().booleanValue() == false) {
@@ -532,15 +532,18 @@ public class OrtakIslemler implements Serializable {
 				}
 			}
 		}
+		return guncellemeTarih;
 	}
 
+	 
 	/**
 	 * @param sirketKodu
 	 * @param personelNo
 	 * @param session
 	 * @return
 	 */
-	public void updateIzinAPI(String sirketKodu, String personelNo, Session session) {
+	public Date updateIzinAPI(String sirketKodu, String personelNo, Session session) {
+		Date guncellemeTarih = null;
 		if (personelNo == null)
 			personelNo = "";
 		List<SirketEntegrasyon> entegrasyonList = getSirketEntegrasyonList(sirketKodu, personelNo, session);
@@ -654,7 +657,6 @@ public class OrtakIslemler implements Serializable {
 								if (izinERPReturnList != null) {
 									if (personelNo.equals("")) {
 										String pattern = "yyyy-MM-dd HH:mm";
-										Date guncellemeTarih = null;
 										for (Iterator iterator = izinERPReturnList.iterator(); iterator.hasNext();) {
 											IzinERP erp = (IzinERP) iterator.next();
 											if (erp.getYazildi() == null || erp.getYazildi().booleanValue() == false) {
@@ -688,6 +690,7 @@ public class OrtakIslemler implements Serializable {
 				}
 			}
 		}
+		return guncellemeTarih;
 	}
 
 	private org.json.JSONArray getJSONArray(String mediaType, String apiData) {
