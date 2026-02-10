@@ -16,10 +16,6 @@ import org.pdks.session.PdksUtil;
 
 import com.pdks.webservice.PersonelERP;
 
- 
-
- 
-
 @Entity(name = PersonelERPDB.VIEW_NAME)
 @Immutable
 public class PersonelERPDB implements Serializable, Cloneable {
@@ -31,6 +27,7 @@ public class PersonelERPDB implements Serializable, Cloneable {
 
 	public static final String VIEW_NAME = "PERSONEL_ERP_VIEW";
 	public static final String FORMAT_DATE = "yyyy-MM-dd";
+	public static final String FORMAT_DATE_TIME = "yyyy-MM-dd HH:mm";
 	public static final String COLUMN_NAME_ISTEN_AYRILMA_TARIHI = "ISTEN_AYRILMA_TARIHI";
 	public static final String COLUMN_NAME_GUNCELLEME_TARIHI = "GUNCELLEME_TARIHI";
 	public static final String COLUMN_NAME_PERSONEL_NO = "PERSONEL_NO";
@@ -395,6 +392,8 @@ public class PersonelERPDB implements Serializable, Cloneable {
 		p.setGrubaGirisTarihi(PdksUtil.convertToDateString(this.grubaGirisTarihi, pattern));
 		p.setYonetici2PerNo(this.yonetici2PerNo);
 		p.setKimlikNo(this.kimlikNo);
+		if (this.guncellemeTarihi != null)
+			p.setGuncellemeZamani(PdksUtil.convertToDateString(this.guncellemeTarihi, FORMAT_DATE_TIME));
 		return p;
 	}
 

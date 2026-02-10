@@ -171,6 +171,9 @@ public class IzinERPDB implements Serializable, Cloneable {
 		i.setAciklama(this.getAciklama());
 		i.setDurum(this.getDurum());
 		i.setSureBirimi(this.getSureBirimi());
+		if (this.guncellemeTarihi != null)
+			i.setGuncellemeZamani(PdksUtil.convertToDateString(this.guncellemeTarihi, FORMAT_DATE_TIME));
+
 		return i;
 	}
 
