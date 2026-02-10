@@ -535,7 +535,6 @@ public class OrtakIslemler implements Serializable {
 		return guncellemeTarih;
 	}
 
-	 
 	/**
 	 * @param sirketKodu
 	 * @param personelNo
@@ -10244,7 +10243,8 @@ public class OrtakIslemler implements Serializable {
 						personelDenklestirmeDonemMap = new TreeMap<Long, PersonelDenklestirme>();
 					HashMap<Long, Boolean> hareketKaydiVardiyaMap = new HashMap<Long, Boolean>();
 					Date donemBas = denklestirmeDonemi.getBaslangicTarih(), donemBit = denklestirmeDonemi.getBitisTarih();
-					if (pdks && denklestirmeDonemi.getDenklestirmeAy() != null && denklestirmeDonemi.getDenklestirmeAyDurum()) {
+					boolean fullYetki = fullYetkiliKullanici() && pdks;
+					if (fullYetki && denklestirmeDonemi.getDenklestirmeAy() != null && denklestirmeDonemi.getDenklestirmeAyDurum()) {
 						DenklestirmeAy denklestirmeAy = denklestirmeDonemi.getDenklestirmeAy();
 						donemBas = PdksUtil.convertToJavaDate((denklestirmeAy.getYil() * 100 + denklestirmeAy.getAy()) + "01", "yyyyMMdd");
 						donemBit = tariheGunEkleCikar(cal, tariheAyEkleCikar(cal, donemBas, 1), -1);
@@ -10405,8 +10405,7 @@ public class OrtakIslemler implements Serializable {
 
 					HashMap<Long, ArrayList<HareketKGS>> personelHareketMap = personelHareketleriGetir(kgsPerList, tariheGunEkleCikar(cal, tarih1, -1), tariheGunEkleCikar(cal, tarih2, 1), session);
 					if (!personelVardiyaBulMap.isEmpty() && !personelHareketMap.isEmpty()) {
-						if (fullYetkiliKullanici())
-							yenidenCalistir = vardiyaHareketlerdenGuncelle(personelDenklestirmeMap, personelVardiyaBulMap, calismaPlaniMap, hareketKaydiVardiyaMap, personelHareketMap, suaListe, session);
+						yenidenCalistir = vardiyaHareketlerdenGuncelle(personelDenklestirmeMap, personelVardiyaBulMap, calismaPlaniMap, hareketKaydiVardiyaMap, personelHareketMap, suaListe, session);
 						TreeMap<String, VardiyaGun> vardiyalarMap = new TreeMap<String, VardiyaGun>();
 						for (Long key : calismaPlaniMap.keySet()) {
 							List<VardiyaGun> list = calismaPlaniMap.get(key);
@@ -10554,8 +10553,12 @@ public class OrtakIslemler implements Serializable {
 		return personelDenklestirmeTasiyiciList;
 	}
 
-	private boolean fullYetkiliKullanici() {
-		return authenticatedUser == null || authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi();
+	/**
+	 * @return
+	 */
+	public boolean fullYetkiliKullanici() {
+		boolean yetki = authenticatedUser == null || authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi();
+		return yetki;
 	}
 
 	/**
