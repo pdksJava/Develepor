@@ -2626,6 +2626,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 							try {
 
+								if (izinSahibi.getIzinKartiVar().booleanValue() == false) {
+									izinSahibi.setIzinKartiVar(Boolean.TRUE);
+									izinSahibi.setGuncellemeTarihi(islemZamani);
+									izinSahibi.setGuncelleyenUser(islemYapan);
+									saveList.add(izinSahibi);
+								}
 								if (listeKaydet(referansNoERP, saveList, deleteList)) {
 									if (personelIzin.getIzinDurumu() != PersonelIzin.IZIN_DURUMU_REDEDILDI && personelIzin.getIzinDurumu() != PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL) {
 										kayitIzinList.add(referansNoERP);
