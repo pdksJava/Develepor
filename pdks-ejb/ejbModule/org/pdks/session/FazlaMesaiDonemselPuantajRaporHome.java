@@ -1948,12 +1948,13 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 					idList.add(tanim.getId());
 			}
 			if (!idList.isEmpty()) {
-				if (idList.size() > 1) {
+				if (idList.size() == 1)
+					sb.append(key + " = " + idList.get(0));
+				else if (fields != null) {
 					sb.append(key + " :x ");
 					fields.put("x", idList);
 
-				} else
-					sb.append(key + idList.get(0));
+				}
 			}
 		}
 	}
