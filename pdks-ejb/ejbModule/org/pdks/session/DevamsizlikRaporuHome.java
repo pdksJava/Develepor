@@ -107,12 +107,12 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		setBitisTarih(dateBas);
 		vardiyaGunList.clear();
 		durumList.clear();
-		durumList.add(new Liste(1, "Erken Giriş."));
-		durumList.add(new Liste(2, "Erken Çıkış."));
-		durumList.add(new Liste(3, "Geç Giriş."));
-		durumList.add(new Liste(4, "Geç Çıkış."));
-		durumList.add(new Liste(5, "Hatalı Kart Basıldı."));
-		durumList.add(new Liste(6, "Kart Basılmadı."));
+		durumList.add(new Liste(1, "Erken Giriş"));
+		durumList.add(new Liste(2, "Erken Çıkış"));
+		durumList.add(new Liste(3, "Geç Giriş"));
+		durumList.add(new Liste(4, "Geç Çıkış"));
+		durumList.add(new Liste(5, "Hatalı Kart Basıldı"));
+		durumList.add(new Liste(6, "Kart Basılmadı"));
 
 		// devamsizlikListeOlustur();
 
