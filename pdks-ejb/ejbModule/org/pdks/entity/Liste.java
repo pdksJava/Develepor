@@ -26,6 +26,7 @@ public class Liste implements Serializable {
 	private String selected = "";
 	private String checked = "";
 	private Object numValue;
+	private boolean secili = Boolean.TRUE;
 
 	public Liste(Object xId, Object xvalue) {
 		this.setId(xId);
@@ -108,6 +109,14 @@ public class Liste implements Serializable {
 
 		return rt;
 
+	}
+
+	public boolean isSecili() {
+		return secili;
+	}
+
+	public void setSecili(boolean secili) {
+		this.secili = secili;
 	}
 
 }

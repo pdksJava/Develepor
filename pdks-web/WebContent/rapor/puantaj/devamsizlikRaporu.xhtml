@@ -16,36 +16,69 @@
 					<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
 				</a4j:outputPanel>
 				<a4j:outputPanel id="anaForm">
-					<h:panelGrid columns="1">
-						<h:panelGrid columns="3">
- 						<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
-								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{devamsizlikRaporuHome.date}" id="dateFilter1" />
-							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml">
-								<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
-								<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{devamsizlikRaporuHome.bitisTarih}" id="dateFilter2" />
-							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
-								<ui:define name="label">İzinli Göster</ui:define>
-								<h:selectBooleanCheckbox value="#{devamsizlikRaporuHome.izinliGoster}" />
-							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
-								<ui:define name="label">Tümünü Göster</ui:define>
-								<h:selectBooleanCheckbox value="#{devamsizlikRaporuHome.gelenGoster}" />
-							</s:decorate>
-						</h:panelGrid>
-						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">Hareketleri Göster</ui:define>
-							<h:selectBooleanCheckbox value="#{devamsizlikRaporuHome.hareketleriGoster}" />
-						</s:decorate>
-						<a4j:commandButton status="ajaxStatus" value="Devamsızlık Raporu Göster" action="#{devamsizlikRaporuHome.devamsizlikListeOlustur}"
-							reRender="devamsizlikPanel" />
-						<a4j:commandButton id="girisKontrol" status="ajaxStatus" rendered="#{authenticatedUser.admin}"
-							action="#{iseGelmemeUyari.iseGelmemeDurumuCalistir(devamsizlikRaporuHome.date,devamsizlikRaporuHome.session,authenticatedUser,true,true)}"
-							value="Giriş/Çıkış Kontrol Mail" reRender="girisKontrol" />
+					<h:panelGrid columns="2" id="devamGiris">
+						<ui:fragment>
+
+							<h:panelGrid columns="1">
+								<h:panelGrid columns="2">
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
+										<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{devamsizlikRaporuHome.date}" id="dateFilter1" />
+									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
+										<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{devamsizlikRaporuHome.bitisTarih}" id="dateFilter2" />
+									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
+										<ui:define name="label">Tümünü Göster</ui:define>
+										<h:selectBooleanCheckbox value="#{devamsizlikRaporuHome.gelenGoster}">
+											<a4j:support event="onclick" reRender="devamGiris" />
+										</h:selectBooleanCheckbox>
+									</s:decorate>
+
+									<s:decorate template="/layout/edit.xhtml"
+										rendered="#{devamsizlikRaporuHome.gelenGoster==false and (authenticatedUser.admin or authenticatedUser.IK)}">
+										<ui:define name="label">İzinli Göster</ui:define>
+										<h:selectBooleanCheckbox value="#{devamsizlikRaporuHome.izinliGoster}" />
+									</s:decorate>
+
+
+								</h:panelGrid>
+
+								<s:decorate template="/layout/edit.xhtml">
+									<ui:define name="label">Hareketleri Göster</ui:define>
+									<h:selectBooleanCheckbox value="#{devamsizlikRaporuHome.hareketleriGoster}" />
+								</s:decorate>
+								<a4j:commandButton status="ajaxStatus" value="Devamsızlık Raporu Göster" action="#{devamsizlikRaporuHome.devamsizlikListeOlustur}"
+									reRender="devamsizlikPanel" />
+								<a4j:commandButton id="girisKontrol" status="ajaxStatus" rendered="#{authenticatedUser.admin}"
+									action="#{iseGelmemeUyari.iseGelmemeDurumuCalistir(devamsizlikRaporuHome.date,devamsizlikRaporuHome.session,authenticatedUser,true,true)}"
+									value="Giriş/Çıkış Kontrol Mail" reRender="girisKontrol" />
+							</h:panelGrid>
+						</ui:fragment>
+						<ui:fragment rendered="#{devamsizlikRaporuHome.gelenGoster==false}">
+
+							<TABLE>
+
+								<caption>
+									<span style="font-size: 14px; font-weight: bold; color: red;">Hatalı Durumlar</span>
+								</caption>
+								<ui:repeat value="#{devamsizlikRaporuHome.durumList}" var="durum">
+									<tr>
+										<td><b>#{durum.value}</b></td>
+										<td><h:selectBooleanCheckbox value="#{durum.secili}" /></td>
+									</tr>
+								</ui:repeat>
+							</TABLE>
+
+						</ui:fragment>
+
+
 
 					</h:panelGrid>
+
+
+
 				</a4j:outputPanel>
 			</rich:panel>
 
