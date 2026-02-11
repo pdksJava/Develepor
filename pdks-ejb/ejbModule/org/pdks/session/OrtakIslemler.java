@@ -303,9 +303,10 @@ public class OrtakIslemler implements Serializable {
 			List<Tanim> tanimList = null;
 			HashMap<String, String> entegrasyonMap = new HashMap<String, String>();
 			for (SirketEntegrasyon se : entegrasyonList) {
-
-				HashMap<String, PersonelERP> erpMap = null;
 				String mediaType = se.getMediaTypePersonel(), urlAPI = se.getUrlPersonel();
+				if (urlAPI == null || urlAPI.startsWith("http") == false)
+					continue;
+				HashMap<String, PersonelERP> erpMap = null;
 				Date tarih = se.getGuncelemeZamaniPersonel();
 				if (PdksUtil.hasStringValue(mediaType)) {
 					HashMap<String, String> map = new HashMap<String, String>();
@@ -550,8 +551,10 @@ public class OrtakIslemler implements Serializable {
 			HashMap<String, String> entegrasyonMap = new HashMap<String, String>();
 			List<Tanim> tanimList = null;
 			for (SirketEntegrasyon se : entegrasyonList) {
-				HashMap<String, IzinERP> erpMap = null;
 				String mediaType = se.getMediaTypeIzin(), urlAPI = se.getUrlIzin();
+				if (urlAPI == null || urlAPI.startsWith("http") == false)
+					continue;
+				HashMap<String, IzinERP> erpMap = null;
 				Date tarih = se.getGuncelemeZamaniPersonel();
 				if (PdksUtil.hasStringValue(mediaType)) {
 					HashMap<String, String> map = new HashMap<String, String>();
@@ -740,6 +743,21 @@ public class OrtakIslemler implements Serializable {
 
 		} else
 			entegrasyonList = pdksEntityController.getSQLTableList(SirketEntegrasyon.TABLE_NAME, SirketEntegrasyon.class, session);
+		if (entegrasyonList != null) {
+			for (Iterator iterator = entegrasyonList.iterator(); iterator.hasNext();) {
+				SirketEntegrasyon se = (SirketEntegrasyon) iterator.next();
+				Sirket sirket = se.getSirket();
+				boolean sil = false;
+				try {
+					if (sirket.getDurum().booleanValue() == false || sirket.getPdks().booleanValue() == false || sirket.getFazlaMesai().booleanValue() == false)
+						sil = true;
+				} catch (Exception e) {
+					sil = true;
+				}
+				if (sil)
+					iterator.remove();
+			}
+		}
 		return entegrasyonList;
 	}
 
@@ -3575,9 +3593,9 @@ public class OrtakIslemler implements Serializable {
 				tesisIdList = new ArrayList<Long>();
 				for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
 					tesisIdList.add(tesis.getId());
-				sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t ");
+				sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :v ");
 				if (fields != null)
-					fields.put("t", tesisIdList);
+					fields.put("v", tesisIdList);
 			}
 			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
 			if (tesisIdList == null && (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis()))

@@ -126,12 +126,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							}
 						}
 						if (PdksUtil.getCanliSunucuDurum() && PdksUtil.hasStringValue(konu)) {
-							try {
-								session.close();
-							} catch (Exception e) {
-								// TODO: handle exception
-							}
-							session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 							boolean mailGonder = getMailGonder(session);
 							if (mailGonder) {
 								List<User> userList = null;
