@@ -648,14 +648,12 @@ public class OrtakIslemler implements Serializable {
 							}
 							if (erpMap != null) {
 								List<IzinERP> erpList = new ArrayList<IzinERP>(erpMap.values());
-
 								if (perNoList.isEmpty() == false) {
 									List<Personel> personelList = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, perNoList, Personel.class, session);
 									perNoList.clear();
 									for (Personel personel : personelList) {
 										if (personel.getSirket().equals(sirket))
 											perNoList.add(personel.getPdksSicilNo());
-
 									}
 									personelList = null;
 									for (Iterator iterator = erpList.iterator(); iterator.hasNext();) {
