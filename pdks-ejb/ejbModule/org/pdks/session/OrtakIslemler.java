@@ -3588,15 +3588,26 @@ public class OrtakIslemler implements Serializable {
 	public void addIKSirketTesisKriterleri(HashMap fields, Object sqlObject) {
 		StringBuilder sb = (StringBuilder) sqlObject;
 		List<Long> tesisIdList = null;
+
 		if (authenticatedUser != null) {
-			if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+			String key = " and P." + Personel.COLUMN_NAME_TESIS;
+ 			if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
 				tesisIdList = new ArrayList<Long>();
 				for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
 					tesisIdList.add(tesis.getId());
-				sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :v ");
-				if (fields != null)
-					fields.put("v", tesisIdList);
+				if (tesisIdList.isEmpty())
+					tesisIdList = null;
+
 			}
+			if (tesisIdList != null && sb.toString().indexOf(key) < 0) {
+				if (tesisIdList.size() == 1)
+					sb.append(key + " = " + tesisIdList.get(0));
+				else if (fields != null) {
+					sb.append(key + " :v ");
+					fields.put("v", tesisIdList);
+				}
+			}
+
 			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
 			if (tesisIdList == null && (authenticatedUser.isIKSirket() || authenticatedUser.isIK_Tesis()))
 				sb.append(" and S." + Sirket.COLUMN_NAME_ID + " = " + authenticatedUser.getPdksPersonel().getSirket().getId());

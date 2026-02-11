@@ -1940,7 +1940,8 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				fields.put("a", bitTarih);
 			}
 		}
-		if (authenticatedUser.getYetkiliTesisler() != null && !authenticatedUser.getYetkiliTesisler().isEmpty()) {
+		String key = " and P." + Personel.COLUMN_NAME_TESIS;
+		if (authenticatedUser.getYetkiliTesisler() != null && !authenticatedUser.getYetkiliTesisler().isEmpty() && sb.toString().indexOf(key) < 0) {
 			List<Long> idList = new ArrayList<Long>();
 			for (Tanim tanim : authenticatedUser.getYetkiliTesisler()) {
 				if (tanim.getId() != null)
@@ -1948,11 +1949,11 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			}
 			if (!idList.isEmpty()) {
 				if (idList.size() > 1) {
-					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :te ");
-					fields.put("te", idList);
+					sb.append(key + " :x ");
+					fields.put("x", idList);
 
 				} else
-					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = " + idList.get(0));
+					sb.append(key + idList.get(0));
 			}
 		}
 	}
