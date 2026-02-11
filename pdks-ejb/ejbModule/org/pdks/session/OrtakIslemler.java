@@ -775,6 +775,16 @@ public class OrtakIslemler implements Serializable {
 				} catch (Exception e) {
 					sil = true;
 				}
+				if (sil == false) {
+					String urlIzinAPI = se.getUrlIzin(), urlPersonelAPI = se.getUrlPersonel(), urlMesai = se.getUrlMesai();
+					if (urlIzinAPI == null)
+						urlIzinAPI = "";
+					if (urlPersonelAPI == null)
+						urlPersonelAPI = "";
+					if (urlMesai == null)
+						urlMesai = "";
+					sil = urlIzinAPI.startsWith("http") == false && urlPersonelAPI.startsWith("http") == false && urlMesai.startsWith("http") == false;
+				}
 				if (sil)
 					iterator.remove();
 			}
