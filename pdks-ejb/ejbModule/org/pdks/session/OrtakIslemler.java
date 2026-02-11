@@ -613,9 +613,7 @@ public class OrtakIslemler implements Serializable {
 											if (personelNo.length() == 0)
 												perNoList.add(perNo);
 											erp.setPersonelNo(perNo);
-										}
-
-										else if (tipi.equals("referansNoERP"))
+										} else if (tipi.equals("referansNoERP"))
 											erp.setReferansNoERP((String) value);
 										else if (tipi.equals("aciklama"))
 											erp.setAciklama((String) value);
