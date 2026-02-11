@@ -303,6 +303,7 @@ public class OrtakIslemler implements Serializable {
 			List<Tanim> tanimList = null;
 			HashMap<String, String> entegrasyonMap = new HashMap<String, String>();
 			for (SirketEntegrasyon se : entegrasyonList) {
+				String sirketERPKodu = se.getSirket().getErpKodu();
 				String mediaType = se.getMediaTypePersonel(), urlAPI = se.getUrlPersonel();
 				if (urlAPI == null || urlAPI.startsWith("http") == false)
 					continue;
@@ -311,7 +312,7 @@ public class OrtakIslemler implements Serializable {
 				if (PdksUtil.hasStringValue(mediaType)) {
 					HashMap<String, String> map = new HashMap<String, String>();
 					map.put("$personelKodu$", personelNo);
-					map.put("$sirketKodu$", se.getSirket().getErpKodu());
+					map.put("$sirketKodu$", sirketERPKodu);
 					if (tarih != null)
 						map.put("$tarih$", PdksUtil.convertToDateString(tarih, "yyyy-MM-dd"));
 					for (String key : map.keySet()) {
@@ -359,7 +360,6 @@ public class OrtakIslemler implements Serializable {
 											String tipi = entegrasyonMap.get(key);
 											if (erp == null)
 												erp = new PersonelERP();
-
 											if (tipi.equals("personelNo"))
 												erp.setPersonelNo(value.toString());
 											else if (tipi.equals("adi"))
@@ -470,14 +470,15 @@ public class OrtakIslemler implements Serializable {
 									logger.error(e);
 									e.printStackTrace();
 								}
-
-								if (erp != null && erp.getPersonelNo() != null) {
-
-									if (erpMap == null)
-										erpMap = new HashMap<String, PersonelERP>();
-									erpMap.put(erp.getPersonelNo(), erp);
+								if (erp != null) {
+									if (erp.getPersonelNo() != null && erp.getSirketKodu() != null) {
+										if (erp.getPersonelNo().equals(personelNo) || sirketERPKodu.equals(erp.getSirketKodu())) {
+											if (erpMap == null)
+												erpMap = new HashMap<String, PersonelERP>();
+											erpMap.put(erp.getPersonelNo(), erp);
+										}
+									}
 								}
-
 							}
 							if (erpMap != null) {
 								List<PersonelERP> erpList = new ArrayList<PersonelERP>(erpMap.values());
@@ -554,6 +555,7 @@ public class OrtakIslemler implements Serializable {
 				String mediaType = se.getMediaTypeIzin(), urlAPI = se.getUrlIzin();
 				if (urlAPI == null || urlAPI.startsWith("http") == false)
 					continue;
+				Sirket sirket = se.getSirket();
 				HashMap<String, IzinERP> erpMap = null;
 				Date tarih = se.getGuncelemeZamaniPersonel();
 				if (PdksUtil.hasStringValue(mediaType)) {
@@ -588,7 +590,6 @@ public class OrtakIslemler implements Serializable {
 					String apiData = getApiData(urlAPI);
 					if (apiData != null) {
 						org.json.JSONArray jsonArray = getJSONArray(mediaType, apiData);
-
 						if (jsonArray != null && jsonArray.length() > 0) {
 							List<String> idList = new ArrayList<String>();
 							if (tanimList == null) {
@@ -596,7 +597,7 @@ public class OrtakIslemler implements Serializable {
 								for (Tanim tanim : tanimList)
 									entegrasyonMap.put(tanim.getErpKodu(), tanim.getKodu());
 							}
-
+							List<String> perNoList = new ArrayList<String>();
 							for (int i = 0; i < jsonArray.length(); i++) {
 								org.json.JSONObject obj = jsonArray.getJSONObject(i);
 								IzinERP erp = null;
@@ -607,8 +608,13 @@ public class OrtakIslemler implements Serializable {
 										if (erp == null)
 											erp = new IzinERP();
 										String tipi = entegrasyonMap.get(key);
-										if (tipi.equals("personelNo"))
-											erp.setPersonelNo(value.toString());
+										if (tipi.equals("personelNo")) {
+											String perNo = value.toString();
+											if (personelNo.length() > 0)
+												perNoList.add(perNo);
+											erp.setPersonelNo(perNo);
+										}
+
 										else if (tipi.equals("referansNoERP"))
 											erp.setReferansNoERP((String) value);
 										else if (tipi.equals("aciklama"))
@@ -642,17 +648,35 @@ public class OrtakIslemler implements Serializable {
 							}
 							if (erpMap != null) {
 								List<IzinERP> erpList = new ArrayList<IzinERP>(erpMap.values());
-								PdksSoapVeriAktar service = null;
+
+								if (perNoList.isEmpty() == false) {
+									List<Personel> personelList = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, perNoList, Personel.class, session);
+									perNoList.clear();
+									for (Personel personel : personelList) {
+										if (personel.getSirket().equals(sirket))
+											perNoList.add(personel.getPdksSicilNo());
+
+									}
+									personelList = null;
+									for (Iterator iterator = erpList.iterator(); iterator.hasNext();) {
+										IzinERP izinERP = (IzinERP) iterator.next();
+										if (perNoList.contains(izinERP.getPersonelNo()) == false)
+											iterator.remove();
+									}
+								}
 								List<IzinERP> izinERPReturnList = null;
-								try {
-									service = getPdksSoapVeriAktar(true);
-									izinERPReturnList = service.saveIzinler(erpList);
-								} catch (Exception e) {
+								if (erpList.isEmpty() == false) {
+									PdksSoapVeriAktar service = null;
 									try {
-										service = getPdksSoapVeriAktar(false);
+										service = getPdksSoapVeriAktar(true);
 										izinERPReturnList = service.saveIzinler(erpList);
-									} catch (Exception e1) {
-										e1.printStackTrace();
+									} catch (Exception e) {
+										try {
+											service = getPdksSoapVeriAktar(false);
+											izinERPReturnList = service.saveIzinler(erpList);
+										} catch (Exception e1) {
+											e1.printStackTrace();
+										}
 									}
 								}
 								erpList = null;
@@ -687,6 +711,7 @@ public class OrtakIslemler implements Serializable {
 									izinERPReturnList = null;
 								}
 							}
+							perNoList = null;
 						}
 					}
 				}
@@ -3591,7 +3616,7 @@ public class OrtakIslemler implements Serializable {
 
 		if (authenticatedUser != null) {
 			String key = " and P." + Personel.COLUMN_NAME_TESIS;
- 			if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+			if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
 				tesisIdList = new ArrayList<Long>();
 				for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
 					tesisIdList.add(tesis.getId());
