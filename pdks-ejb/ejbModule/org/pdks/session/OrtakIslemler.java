@@ -213,6 +213,8 @@ public class OrtakIslemler implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 8530535795343437404L;
+	public static final String SERVIS_FORMAT_DATE = "yyyy-MM-dd";
+	public static final String SERVIS_FORMAT_DATE_TIME = "yyyy-MM-dd HH:mm";
 	static Logger logger = Logger.getLogger(OrtakIslemler.class);
 
 	@In(required = false, create = true)
@@ -314,7 +316,7 @@ public class OrtakIslemler implements Serializable {
 					map.put("$personelKodu$", personelNo);
 					map.put("$sirketKodu$", sirketERPKodu);
 					if (tarih != null)
-						map.put("$tarih$", PdksUtil.convertToDateString(tarih, "yyyy-MM-dd"));
+						map.put("$tarih$", PdksUtil.convertToDateString(tarih, SERVIS_FORMAT_DATE));
 					for (String key : map.keySet()) {
 						if (urlAPI.indexOf(key) > 0)
 							urlAPI = PdksUtil.replaceAll(urlAPI, key, map.get(key));
@@ -499,11 +501,10 @@ public class OrtakIslemler implements Serializable {
 								erpList = null;
 								if (personelERPReturnList != null) {
 									if (personelNo.equals("")) {
-										String pattern = "yyyy-MM-dd HH:mm";
 										for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
 											PersonelERP erp = (PersonelERP) iterator.next();
 											if (erp.getYazildi() == null || erp.getYazildi().booleanValue() == false) {
-												Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), pattern);
+												Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), SERVIS_FORMAT_DATE_TIME);
 												if (guncellemeTarih == null || xTarih.before(guncellemeTarih))
 													guncellemeTarih = xTarih;
 												iterator.remove();
@@ -511,7 +512,7 @@ public class OrtakIslemler implements Serializable {
 										}
 										if (guncellemeTarih == null) {
 											for (PersonelERP erp : personelERPReturnList) {
-												Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), pattern);
+												Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), SERVIS_FORMAT_DATE_TIME);
 												if (guncellemeTarih == null || xTarih.after(guncellemeTarih))
 													guncellemeTarih = xTarih;
 											}
@@ -563,7 +564,7 @@ public class OrtakIslemler implements Serializable {
 					map.put("$personelKodu$", personelNo);
 					map.put("$sirketKodu$", se.getSirket().getErpKodu());
 					if (tarih != null)
-						map.put("$tarih$", PdksUtil.convertToDateString(tarih, "yyyy-MM-dd"));
+						map.put("$tarih$", PdksUtil.convertToDateString(tarih, SERVIS_FORMAT_DATE));
 					for (String key : map.keySet()) {
 						if (urlAPI.indexOf(key) > 0)
 							urlAPI = PdksUtil.replaceAll(urlAPI, key, map.get(key));
@@ -678,11 +679,10 @@ public class OrtakIslemler implements Serializable {
 								erpList = null;
 								if (izinERPReturnList != null) {
 									if (personelNo.equals("")) {
-										String pattern = "yyyy-MM-dd HH:mm";
 										for (Iterator iterator = izinERPReturnList.iterator(); iterator.hasNext();) {
 											IzinERP erp = (IzinERP) iterator.next();
 											if (erp.getYazildi() == null || erp.getYazildi().booleanValue() == false) {
-												Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), pattern);
+												Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), SERVIS_FORMAT_DATE_TIME);
 												if (guncellemeTarih == null || xTarih.before(guncellemeTarih))
 													guncellemeTarih = xTarih;
 												iterator.remove();
@@ -691,7 +691,7 @@ public class OrtakIslemler implements Serializable {
 										}
 										if (guncellemeTarih == null) {
 											for (IzinERP erp : izinERPReturnList) {
-												Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), pattern);
+												Date xTarih = PdksUtil.convertToJavaDate(erp.getGuncellemeZamani(), SERVIS_FORMAT_DATE_TIME);
 												if (guncellemeTarih == null || xTarih.after(guncellemeTarih))
 													guncellemeTarih = xTarih;
 											}
@@ -7507,10 +7507,10 @@ public class OrtakIslemler implements Serializable {
 		String parameterName = getParametrePersonelERPTableView();
 		String personelERPTableViewAdi = getParameterKey(parameterName);
 		if (PdksUtil.hasStringValue(personelERPTableViewAdi)) {
+			boolean tarihGuncelle = perNoList == null;
 			List<PersonelERP> personelERPList = new ArrayList<PersonelERP>();
 			List<String> yeniNoList = null;
-			HashMap<String, Date> updateMap = new HashMap<String, Date>();
-			if (perNoList == null) {
+			if (tarihGuncelle) {
 				HashMap fields = new HashMap();
 				StringBuilder sb = new StringBuilder();
 				sb.append(" select V." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " from " + personelERPTableViewAdi + " V " + PdksEntityController.getSelectLOCK());
@@ -7527,8 +7527,6 @@ public class OrtakIslemler implements Serializable {
 						for (Iterator iterator = personelYeniList.iterator(); iterator.hasNext();) {
 							PersonelERPDB personelERPDB = (PersonelERPDB) iterator.next();
 							personelERPList.add(personelERPDB.getPersonelERP());
-							if (personelERPDB.getGuncellemeTarihi() != null)
-								updateMap.put(personelERPDB.getPersonelNo(), personelERPDB.getGuncellemeTarihi());
 						}
 					} else
 						yeniNoList = null;
@@ -7543,71 +7541,78 @@ public class OrtakIslemler implements Serializable {
 						continue;
 					}
 					personelERPList.add(personelERPDB.getPersonelERP());
-					if (personelERPDB.getGuncellemeTarihi() != null)
-						updateMap.put(personelERPDB.getPersonelNo(), personelERPDB.getGuncellemeTarihi());
+
 				}
 				if (!personelList.isEmpty()) {
 					PdksSoapVeriAktar service = null;
 					try {
-						try {
-							service = getPdksSoapVeriAktar(true);
-							personelERPReturnList = service.savePersoneller(personelERPList);
-						} catch (Exception e) {
-							service = getPdksSoapVeriAktar(false);
-							personelERPReturnList = service.savePersoneller(personelERPList);
-						}
+						service = getPdksSoapVeriAktar(true);
+						personelERPReturnList = service.savePersoneller(personelERPList);
+					} catch (Exception e) {
+						service = getPdksSoapVeriAktar(false);
+						personelERPReturnList = service.savePersoneller(personelERPList);
+					}
 
-						Date changeDate = null;
-						boolean update = false;
-						if (personelERPReturnList != null) {
-							changeDate = new Date();
+					Date changeDate = null;
+					boolean update = false;
+					if (personelERPReturnList != null) {
+						changeDate = null;
+						if (tarihGuncelle) {
+							Date tarih = null;
 							for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
-								PersonelERP personelERP = (PersonelERP) iterator.next();
-								if (personelERP.getYazildi() == null || personelERP.getYazildi().booleanValue() == false) {
-									if (updateMap.containsKey(personelERP.getPersonelNo())) {
-										Date tarih = updateMap.get(personelERP.getPersonelNo());
-										if (tarih.before(changeDate))
+								PersonelERP erpVeri = (PersonelERP) iterator.next();
+								if (erpVeri.getYazildi() == null || erpVeri.getYazildi().booleanValue() == false) {
+									tarih = erpVeri.getGuncellemeZamani() != null ? PdksUtil.convertToJavaDate(erpVeri.getGuncellemeZamani(), SERVIS_FORMAT_DATE_TIME) : null;
+									if (tarih != null) {
+										if (changeDate == null || tarih.before(changeDate))
 											changeDate = tarih;
-									}
 
-								} else {
-									update = true;
+									}
+									if (authenticatedUser != null)
+										for (String message : erpVeri.getHataList()) {
+											PdksUtil.addMessageAvailableWarn(message);
+										}
 									iterator.remove();
 								}
 							}
+							if (changeDate == null) {
+								for (PersonelERP erpVeri : personelERPReturnList) {
+									tarih = erpVeri.getGuncellemeZamani() != null ? PdksUtil.convertToJavaDate(erpVeri.getGuncellemeZamani(), SERVIS_FORMAT_DATE_TIME) : null;
+									if (tarih != null) {
+										if (changeDate == null || tarih.after(changeDate))
+											changeDate = tarih;
+									}
+								}
+
+							} else {
+								Calendar cal = Calendar.getInstance();
+								cal.add(Calendar.MONTH, -1);
+								cal.set(Calendar.DATE, 1);
+								if (changeDate.before(cal.getTime()))
+									changeDate = cal.getTime();
+							}
+							update = changeDate != null;
+							if (update)
+								changeDate = PdksUtil.getDate(changeDate);
 						}
-						if (guncellemeDurum && update && changeDate != null) {
-							Parameter parameter = getParameter(session, parameterName);
-							if (parameter != null) {
+
+					}
+					if (update && changeDate != null) {
+						Parameter parameter = getParameter(session, parameterName);
+						if (parameter != null) {
+							if (parameter.getChangeDate() == null || parameter.getChangeDate().before(changeDate)) {
 								parameter.setChangeDate(changeDate);
 								pdksEntityController.saveOrUpdate(session, entityManager, parameter);
 								session.flush();
 							}
-						}
 
-					} catch (Exception ex) {
-						loggerErrorYaz(null, ex);
-					}
-					if (authenticatedUser != null) {
-						if (personelERPReturnList != null) {
-							for (Iterator iterator = personelERPReturnList.iterator(); iterator.hasNext();) {
-								PersonelERP personelERP = (PersonelERP) iterator.next();
-								if (personelERP.getYazildi() != null && personelERP.getYazildi().booleanValue())
-									iterator.remove();
-								else if (perNoList == null) {
-									for (String message : personelERP.getHataList()) {
-										PdksUtil.addMessageWarn(message);
-									}
-								}
-							}
 						}
-					} else if (guncellemeDurum == false)
-						personelERPReturnList = null;
+					}
 					personelERPList = null;
 				}
 			}
 			personelList = null;
-			updateMap = null;
+
 		}
 		return personelERPReturnList;
 	}
@@ -7896,10 +7901,11 @@ public class OrtakIslemler implements Serializable {
 		List<String> referansNoStartList = null;
 		List<IzinERP> yeniler = null;
 		String perNo = null;
+		boolean tarihGuncelle = perList == null;
 		if (getParameterKeyHasStringValue(parameterName)) {
 			User guncelleyenUser = null;
 			String izinERPTableViewAdi = getParameterKey(parameterName);
-			if (perList == null) {
+			if (tarihGuncelle) {
 				HashMap fields = new HashMap();
 				StringBuilder sb = new StringBuilder();
 				sb.append(" select R.* from " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK());
@@ -8046,39 +8052,53 @@ public class OrtakIslemler implements Serializable {
 					Date changeDate = null;
 					boolean update = false;
 					if (izinERPReturnList != null) {
-						TreeMap<String, IzinReferansERP> refMap = authenticatedUser != null ? new TreeMap<String, IzinReferansERP>() : pdksEntityController.getSQLParamByFieldMap(IzinReferansERP.TABLE_NAME, IzinReferansERP.COLUMN_NAME_ID, new ArrayList(updateMap.keySet()), IzinReferansERP.class,
-								"getId", false, session);
-						changeDate = new Date();
-						for (Iterator iterator = izinERPReturnList.iterator(); iterator.hasNext();) {
-							IzinERP izinERP = (IzinERP) iterator.next();
-							if (izinERP.getYazildi() == null || izinERP.getYazildi().booleanValue() == false) {
-								if (updateMap.containsKey(izinERP.getReferansNoERP()) && !refMap.containsKey(izinERP.getReferansNoERP())) {
-									if (authenticatedUser != null) {
-										for (String message : izinERP.getHataList()) {
-											if (message.indexOf(izinERP.getPersonelNo()) < 0)
-												message = izinERP.getPersonelNo() + " : " + message;
-											PdksUtil.addMessageAvailableWarn(message);
-										}
+						// TreeMap<String, IzinReferansERP> refMap = authenticatedUser != null ? new TreeMap<String, IzinReferansERP>() : pdksEntityController.getSQLParamByFieldMap(IzinReferansERP.TABLE_NAME, IzinReferansERP.COLUMN_NAME_ID, new ArrayList(updateMap.keySet()), IzinReferansERP.class,
+						// "getId", false, session);
+						changeDate = null;
+						if (tarihGuncelle) {
+							for (Iterator iterator = izinERPReturnList.iterator(); iterator.hasNext();) {
+								IzinERP erpVeri = (IzinERP) iterator.next();
+								if (erpVeri.getYazildi() == null || erpVeri.getYazildi().booleanValue() == false) {
+									tarih = erpVeri.getGuncellemeZamani() != null ? PdksUtil.convertToJavaDate(erpVeri.getGuncellemeZamani(), SERVIS_FORMAT_DATE_TIME) : null;
+									if (tarih != null) {
+										if (changeDate == null || tarih.before(changeDate))
+											changeDate = tarih;
 
 									}
-									tarih = updateMap.get(izinERP.getReferansNoERP());
-									if (tarih.before(changeDate))
-										changeDate = tarih;
+									iterator.remove();
+								}
+							}
+							if (changeDate == null) {
+								for (IzinERP erpVeri : izinERPList) {
+									tarih = erpVeri.getGuncellemeZamani() != null ? PdksUtil.convertToJavaDate(erpVeri.getGuncellemeZamani(), SERVIS_FORMAT_DATE_TIME) : null;
+									if (tarih != null) {
+										if (changeDate == null || tarih.after(changeDate))
+											changeDate = tarih;
+									}
 								}
 
 							} else {
-								update = true;
-								iterator.remove();
+								cal = Calendar.getInstance();
+								cal.add(Calendar.MONTH, -1);
+								cal.set(Calendar.DATE, 1);
+								if (changeDate.before(cal.getTime()))
+									changeDate = cal.getTime();
 							}
-
+							update = changeDate != null;
+							if (update)
+								changeDate = PdksUtil.getDate(changeDate);
 						}
+
 					}
 					if (update && changeDate != null && perList == null) {
 						Parameter parameter = getParameter(session, parameterName);
 						if (parameter != null) {
-							parameter.setChangeDate(changeDate);
-							pdksEntityController.saveOrUpdate(session, entityManager, parameter);
-							session.flush();
+							if (parameter.getChangeDate() == null || parameter.getChangeDate().before(changeDate)) {
+								parameter.setChangeDate(changeDate);
+								pdksEntityController.saveOrUpdate(session, entityManager, parameter);
+								session.flush();
+							}
+
 						}
 					}
 
