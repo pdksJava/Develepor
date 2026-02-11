@@ -610,7 +610,7 @@ public class OrtakIslemler implements Serializable {
 										String tipi = entegrasyonMap.get(key);
 										if (tipi.equals("personelNo")) {
 											String perNo = value.toString();
-											if (personelNo.length() > 0)
+											if (personelNo.length() == 0)
 												perNoList.add(perNo);
 											erp.setPersonelNo(perNo);
 										}
