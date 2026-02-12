@@ -43,11 +43,7 @@
 								</h:panelGrid>
 
 
-								<a4j:commandButton status="ajaxStatus" value="Devamsızlık Raporu Göster" action="#{devamsizlikRaporuHome.devamsizlikListeOlustur}"
-									reRender="devamsizlikPanel" />
-								<a4j:commandButton id="girisKontrol" status="ajaxStatus" rendered="#{authenticatedUser.admin}"
-									action="#{iseGelmemeUyari.iseGelmemeDurumuCalistir(devamsizlikRaporuHome.date,devamsizlikRaporuHome.session,authenticatedUser,true,true)}"
-									value="Giriş/Çıkış Kontrol Mail" reRender="girisKontrol" />
+
 							</h:panelGrid>
 						</ui:fragment>
 						<ui:fragment rendered="#{devamsizlikRaporuHome.hepsiniGoster==false}">
@@ -67,7 +63,11 @@
 
 						</ui:fragment>
 
-
+						<a4j:commandButton status="ajaxStatus" value="Devamsızlık Raporu Göster" action="#{devamsizlikRaporuHome.devamsizlikListeOlustur}"
+							reRender="devamsizlikPanel" />
+						<a4j:commandButton id="girisKontrol" status="ajaxStatus" rendered="#{authenticatedUser.admin}"
+							action="#{iseGelmemeUyari.iseGelmemeDurumuCalistir(devamsizlikRaporuHome.date,devamsizlikRaporuHome.session,authenticatedUser,true,true)}"
+							value="Giriş/Çıkış Kontrol Mail" reRender="girisKontrol" />
 
 					</h:panelGrid>
 
@@ -155,8 +155,7 @@
 								value="#{authenticatedUser.dateTimeFormatla(calismaPlani.cikisHareket.orjinalZaman)}" />
 						</rich:column>
 
-						<rich:column width="60"
-							rendered="#{devamsizlikRaporuHome.hepsiniGoster or (authenticatedUser.admin or authenticatedUser.IK)}">
+						<rich:column width="60" rendered="#{devamsizlikRaporuHome.hepsiniGoster or (authenticatedUser.admin or authenticatedUser.IK)}">
 							<f:facet name="header">
 								<h:outputText value="Açıklama" />
 							</f:facet>
