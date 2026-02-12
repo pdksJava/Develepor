@@ -36,19 +36,13 @@
 										</h:selectBooleanCheckbox>
 									</s:decorate>
 
-									<s:decorate template="/layout/edit.xhtml"
-										rendered="#{devamsizlikRaporuHome.gelenGoster==false and (authenticatedUser.admin or authenticatedUser.IK)}">
-										<ui:define name="label">İzinli Göster</ui:define>
-										<h:selectBooleanCheckbox value="#{devamsizlikRaporuHome.izinliGoster}" />
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">Hareketleri Göster</ui:define>
+										<h:selectBooleanCheckbox value="#{devamsizlikRaporuHome.hareketleriGoster}" />
 									</s:decorate>
-
-
 								</h:panelGrid>
 
-								<s:decorate template="/layout/edit.xhtml">
-									<ui:define name="label">Hareketleri Göster</ui:define>
-									<h:selectBooleanCheckbox value="#{devamsizlikRaporuHome.hareketleriGoster}" />
-								</s:decorate>
+
 								<a4j:commandButton status="ajaxStatus" value="Devamsızlık Raporu Göster" action="#{devamsizlikRaporuHome.devamsizlikListeOlustur}"
 									reRender="devamsizlikPanel" />
 								<a4j:commandButton id="girisKontrol" status="ajaxStatus" rendered="#{authenticatedUser.admin}"
@@ -162,7 +156,7 @@
 						</rich:column>
 
 						<rich:column width="60"
-							rendered="#{devamsizlikRaporuHome.izinliGoster or devamsizlikRaporuHome.gelenGoster or (authenticatedUser.admin or authenticatedUser.IK)}">
+							rendered="#{devamsizlikRaporuHome.gelenGoster or (authenticatedUser.admin or authenticatedUser.IK)}">
 							<f:facet name="header">
 								<h:outputText value="Açıklama" />
 							</f:facet>

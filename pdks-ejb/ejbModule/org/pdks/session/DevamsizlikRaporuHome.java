@@ -107,12 +107,15 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		setBitisTarih(dateBas);
 		vardiyaGunList.clear();
 		durumList.clear();
+		Liste izinli = new Liste(7, "İzinli");
+		izinli.setSecili(false);
 		durumList.add(new Liste(1, "Erken Giriş"));
 		durumList.add(new Liste(2, "Erken Çıkış"));
 		durumList.add(new Liste(3, "Geç Giriş"));
 		durumList.add(new Liste(4, "Geç Çıkış"));
 		durumList.add(new Liste(5, "Hatalı Kart Basıldı"));
 		durumList.add(new Liste(6, "Kart Basılmadı"));
+		durumList.add(izinli);
 
 		// devamsizlikListeOlustur();
 
@@ -292,9 +295,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	public String getVardiyaAciklama(VardiyaGun vg) {
 		String aciklama = null;
 		if (vg.getIzin() != null) {
-			aciklama = "";
-			if (izinliGoster)
-				aciklama = "İzinli";
+
+			aciklama = "İzinli";
 			if (vg.getNormalSure() > 0.0d)
 				aciklama += " (Çalıştı)";
 			aciklama += ".";
@@ -317,7 +319,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							Date giris = vg.getGirisHareketleri().get(0).getOrjinalZaman();
 							if (giris.before(vardiya.getVardiyaTelorans1BasZaman()))
 								sb.append("Erken Giriş.");
-							else if (giris.after(vardiya.getVardiyaTelorans2BasZaman()) && giris.before(vardiya.getVardiyaTelorans1BitZaman()))
+							else if (giris.after(vardiya.getVardiyaTelorans2BasZaman()))
 								sb.append("Geç Giriş.");
 						}
 					} catch (Exception e) {
@@ -327,7 +329,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							Date cikis = vg.getGirisHareketleri().get(cikisAdet - 1).getOrjinalZaman();
 							if (cikis.after(vardiya.getVardiyaTelorans2BitZaman()))
 								sb.append("Geç Çıkış.");
-							else if (cikis.after(vardiya.getVardiyaTelorans2BasZaman()) && cikis.before(vardiya.getVardiyaTelorans1BitZaman()))
+							else if (cikis.before(vardiya.getVardiyaTelorans1BitZaman()))
 								sb.append("Erken Çıkış.");
 						}
 					} catch (Exception e) {
@@ -362,7 +364,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				vardiyaGunList.clear();
 			else
 				vardiyaGunList = new ArrayList<VardiyaGun>();
-			boolean devam = izinliGoster || gelenGoster;
+			boolean devam = gelenGoster;
 			for (Liste liste : durumList) {
 				if (devam == false)
 					devam = liste.isSecili();
@@ -386,7 +388,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		 * gosteririrz. Diyelim hic mazeret girmemiş 4 saat gösteririz
 		 */
 		List<VardiyaGun> vardiyaList = new ArrayList<VardiyaGun>();
-
+		izinliGoster = gelenGoster || durumList.get(durumList.size() - 1).isSecili();
 		List<HareketKGS> kgsList = new ArrayList<HareketKGS>();
 		Date tarih1 = null;
 		Date tarih2 = null;
@@ -504,7 +506,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							iterator.remove();
 							continue;
 						}
-						boolean izinli = false;
+
 						String aciklama = null;
 						Vardiya vardiya = vardiyaGun.getVardiya();
 						vardiyaGun.setHareketler(null);
@@ -532,7 +534,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 									izinDurum = vardiyaGun.getIslemVardiya().getVardiyaBasZaman().getTime() <= izinBitis && vardiyaGun.getIslemVardiya().getVardiyaBitZaman().getTime() >= izinBaslangic;
 								}
 								if (izinDurum) {
-									izinDurum = izinliGoster || gelenGoster;
+									izinDurum = izinliGoster;
 									yaz = izinDurum;
 
 								}
@@ -573,10 +575,10 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 										if (vardiyaGun.getIzin() != null)
 											vardiyaGun.setNormalSure(calismaSaati);
 										aciklama = getVardiyaAciklama(vardiyaGun);
-										izinli = izinliGoster && aciklama != null && aciklama.startsWith("İzinli");
-										yaz = (aciklama == null || PdksUtil.hasStringValue(aciklama)) || gelenGoster || izinli;
+
+										yaz = (aciklama == null || PdksUtil.hasStringValue(aciklama)) || gelenGoster;
 										if (yaz) {
-											yaz = gelenGoster || izinli;
+											yaz = gelenGoster;
 											if (aciklama != null) {
 												for (Liste liste : durumList) {
 													if (liste.isSecili()) {
@@ -592,10 +594,10 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								}
 							} else {
 								aciklama = getVardiyaAciklama(vardiyaGun);
-								izinli = izinliGoster && aciklama != null && aciklama.startsWith("İzinli");
+
 								yaz = (aciklama == null || PdksUtil.hasStringValue(aciklama)) || gelenGoster;
 								if (yaz) {
-									yaz = gelenGoster || izinli;
+									yaz = gelenGoster;
 									if (aciklama != null) {
 										for (Liste liste : durumList) {
 											if (liste.isSecili()) {
@@ -611,7 +613,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 						}
 						if (!yaz) {
-							if (vardiyaGun.getIzin() == null || vardiya.isCalisma() == false || izinli == false)
+							if (vardiyaGun.getIzin() == null || vardiya.isCalisma() == false)
 								iterator.remove();
 							else
 								logger.debug(vardiyaGun.getVardiyaKeyStr());
@@ -684,14 +686,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 	public void setSession(Session session) {
 		this.session = session;
-	}
-
-	public boolean isIzinliGoster() {
-		return izinliGoster;
-	}
-
-	public void setIzinliGoster(boolean izinliGoster) {
-		this.izinliGoster = izinliGoster;
 	}
 
 	public boolean isGelenGoster() {
