@@ -68,10 +68,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 	List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 	List<VardiyaGun> vardiyaGunList = new ArrayList<VardiyaGun>();
-	private boolean izinliGoster = Boolean.FALSE, gelenGoster = Boolean.FALSE, hareketleriGoster = Boolean.TRUE;
-	/**
-	 * 
-	 */
+	private boolean izinliGoster = Boolean.FALSE, hepsiniGoster = Boolean.FALSE, hareketleriGoster = Boolean.TRUE;
+
 	private List<Liste> durumList = new ArrayList<Liste>();
 	private HashMap<String, List<Tanim>> ekSahaListMap;
 	private TreeMap<String, Tanim> ekSahaTanimMap;
@@ -107,14 +105,16 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		setBitisTarih(dateBas);
 		vardiyaGunList.clear();
 		durumList.clear();
-		Liste izinli = new Liste(7, "İzinli");
-		izinli.setSecili(false);
+
 		durumList.add(new Liste(1, "Erken Giriş"));
 		durumList.add(new Liste(2, "Erken Çıkış"));
 		durumList.add(new Liste(3, "Geç Giriş"));
 		durumList.add(new Liste(4, "Geç Çıkış"));
-		durumList.add(new Liste(5, "Hatalı Kart Basıldı"));
-		durumList.add(new Liste(6, "Kart Basılmadı"));
+		durumList.add(new Liste(5, "Eksik Kart Basıldı"));
+		durumList.add(new Liste(6, "Plansız Giriş"));
+		durumList.add(new Liste(7, "Kart Basılmadı"));
+		Liste izinli = new Liste(8, "İzinli");
+		izinli.setSecili(false);
 		durumList.add(izinli);
 
 		// devamsizlikListeOlustur();
@@ -169,7 +169,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		ClientAnchor anchor = helper.createClientAnchor();
 		Drawing drawing = sheet.createDrawingPatriarch();
 		int row = 0, col = 0;
-		boolean aciklamaGoster = (authenticatedUser.isIK() || authenticatedUser.isAdmin()) || izinliGoster || gelenGoster;
+		boolean aciklamaGoster = (authenticatedUser.isIK() || authenticatedUser.isAdmin()) || izinliGoster || hepsiniGoster;
 
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.sirketAciklama());
 		boolean tesisDurum = ortakIslemler.getListTesisDurum(vardiyaGunList);
@@ -294,29 +294,32 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	 */
 	public String getVardiyaAciklama(VardiyaGun vg) {
 		String aciklama = null;
+		int girisAdet = vg.getGirisHareketleri() != null ? vg.getGirisHareketleri().size() : 0;
+		int cikisAdet = vg.getCikisHareketleri() != null ? vg.getCikisHareketleri().size() : 0;
 		if (vg.getIzin() != null) {
-
 			aciklama = "İzinli";
-			if (vg.getNormalSure() > 0.0d)
-				aciklama += " (Çalıştı)";
+			if (girisAdet + cikisAdet > 0)
+				aciklama += " (Geçiş bilgisi mevcut)";
 			aciklama += ".";
 		} else if (vg.getVersion() == 0) {
-			int girisAdet = vg.getGirisHareketleri() != null ? vg.getGirisHareketleri().size() : 0;
-			int cikisAdet = vg.getCikisHareketleri() != null ? vg.getCikisHareketleri().size() : 0;
-			Vardiya vardiya = vg.getIslemVardiya();
-			if (vg.getNormalSure() > 0.0) {
-				aciklama = "";
-			} else if (girisAdet + cikisAdet == 0) {
-				if (vardiya.isCalisma())
-					aciklama = "Kart Basılmadı.";
-			} else if (cikisAdet != girisAdet) {
-				aciklama = "Hatalı Kart Basıldı.";
-				StringBuffer sb = new StringBuffer();
 
-				if (vardiya.isCalisma()) {
+			Vardiya vardiya = vg.getIslemVardiya();
+			if (vardiya.isCalisma() == false) {
+				if (girisAdet + cikisAdet > 0)
+					aciklama = "Plansız Giriş.";
+			} else {
+				if (vg.getNormalSure() > 0.0) {
+					aciklama = "";
+				} else if (girisAdet + cikisAdet == 0) {
+					if (vardiya.isCalisma())
+						aciklama = "Kart Basılmadı.";
+				} else if (cikisAdet != girisAdet) {
+					aciklama = "Eksik Kart Basıldı.";
+					Date giris = null;
+					StringBuffer sb = new StringBuffer();
 					try {
 						if (girisAdet > 0) {
-							Date giris = vg.getGirisHareketleri().get(0).getOrjinalZaman();
+							giris = vg.getGirisHareketleri().get(0).getOrjinalZaman();
 							if (giris.before(vardiya.getVardiyaTelorans1BasZaman()))
 								sb.append("Erken Giriş.");
 							else if (giris.after(vardiya.getVardiyaTelorans2BasZaman()))
@@ -331,15 +334,15 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								sb.append("Geç Çıkış.");
 							else if (cikis.before(vardiya.getVardiyaTelorans1BitZaman()))
 								sb.append("Erken Çıkış.");
-						}
+						} else if (vardiya.getVardiyaTelorans1BitZaman().after(new Date()))
+							aciklama = "";
 					} catch (Exception e) {
 						// TODO: handle exception
 					}
 
+					if (sb.length() > 0)
+						aciklama = sb.toString();
 				}
-				if (sb.length() > 0)
-					aciklama = sb.toString();
-
 			}
 		}
 		if (aciklama == null)
@@ -364,7 +367,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				vardiyaGunList.clear();
 			else
 				vardiyaGunList = new ArrayList<VardiyaGun>();
-			boolean devam = gelenGoster;
+			boolean devam = hepsiniGoster;
 			for (Liste liste : durumList) {
 				if (devam == false)
 					devam = liste.isSecili();
@@ -388,7 +391,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		 * gosteririrz. Diyelim hic mazeret girmemiş 4 saat gösteririz
 		 */
 		List<VardiyaGun> vardiyaList = new ArrayList<VardiyaGun>();
-		izinliGoster = gelenGoster || durumList.get(durumList.size() - 1).isSecili();
+		izinliGoster = hepsiniGoster || durumList.get(durumList.size() - 1).isSecili();
 		List<HareketKGS> kgsList = new ArrayList<HareketKGS>();
 		Date tarih1 = null;
 		Date tarih2 = null;
@@ -560,14 +563,14 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 											}
 											if (calismaSaati > 0) {
 												double netSure = vardiya.getNetCalismaSuresi();
-												yaz = gelenGoster || izinDurum;
+												yaz = hepsiniGoster || izinDurum;
 												if (calismaSaati > netSure)
 													calismaSaati = netSure;
 												// eksik saati bulunup ekranda gosterilmelidir.
 												// double eksikSaat = netSure > 0 ? netSure - calismaSaati : 0.0d;
 												// vardiyaGun.setNormalSure(eksikSaat);
 											} else
-												yaz = izinDurum || (girisHareketleriList != null && gelenGoster);
+												yaz = izinDurum || (girisHareketleriList != null && hepsiniGoster);
 										} else
 											yaz = true;
 
@@ -575,48 +578,40 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 										if (vardiyaGun.getIzin() != null)
 											vardiyaGun.setNormalSure(calismaSaati);
 										aciklama = getVardiyaAciklama(vardiyaGun);
-
-										yaz = (aciklama == null || PdksUtil.hasStringValue(aciklama)) || gelenGoster;
-										if (yaz) {
-											yaz = gelenGoster;
-											if (aciklama != null) {
-												for (Liste liste : durumList) {
-													if (liste.isSecili()) {
-														if (aciklama.indexOf((String) liste.getValue()) >= 0) {
-															yaz = true;
-														}
+										yaz = hepsiniGoster;
+										if (aciklama != null && hepsiniGoster == false) {
+											for (Liste liste : durumList) {
+												if (liste.isSecili()) {
+													if (aciklama.indexOf((String) liste.getValue()) >= 0) {
+														yaz = true;
 													}
 												}
 											}
 										}
+
 									}
 									vardiyaGun.setNormalSure(calismaSaati);
 								}
 							} else {
 								aciklama = getVardiyaAciklama(vardiyaGun);
-
-								yaz = (aciklama == null || PdksUtil.hasStringValue(aciklama)) || gelenGoster;
-								if (yaz) {
-									yaz = gelenGoster;
-									if (aciklama != null) {
-										for (Liste liste : durumList) {
-											if (liste.isSecili()) {
-												if (aciklama.indexOf((String) liste.getValue()) >= 0) {
-													yaz = true;
-												}
+								yaz = hepsiniGoster;
+								if (aciklama != null && hepsiniGoster == false) {
+									for (Liste liste : durumList) {
+										if (liste.isSecili()) {
+											if (aciklama.indexOf((String) liste.getValue()) >= 0) {
+												yaz = true;
 											}
-
 										}
+
 									}
+
 								}
 							}
 
 						}
 						if (!yaz) {
-							if (vardiyaGun.getIzin() == null || vardiya.isCalisma() == false)
-								iterator.remove();
-							else
-								logger.debug(vardiyaGun.getVardiyaKeyStr());
+							iterator.remove();
+
 						}
 
 					}
@@ -688,14 +683,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		this.session = session;
 	}
 
-	public boolean isGelenGoster() {
-		return gelenGoster;
-	}
-
-	public void setGelenGoster(boolean gelenGoster) {
-		this.gelenGoster = gelenGoster;
-	}
-
 	public boolean isHareketleriGoster() {
 		return hareketleriGoster;
 	}
@@ -750,6 +737,14 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 	public void setDurumList(List<Liste> durumList) {
 		this.durumList = durumList;
+	}
+
+	public boolean isHepsiniGoster() {
+		return hepsiniGoster;
+	}
+
+	public void setHepsiniGoster(boolean hepsiniGoster) {
+		this.hepsiniGoster = hepsiniGoster;
 	}
 
 }
