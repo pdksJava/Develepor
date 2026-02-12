@@ -190,9 +190,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		int sayac = 0;
 		while (tarih2.getTime() >= tarihBas.getTime()) {
 			++sayac;
-			cal.setTime(tarihBas);
-			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
-			Date tarihBit = cal.getTime();
+			Date tarihBit = PdksUtil.getAyinSonGunu(tarihBas);
 			DenklestirmeAy da = ayMap.get(Long.parseLong(PdksUtil.convertToDateString(tarihBas, PATTERN_DONEM)));
 			long donemId = da.getId();
 			int durum = da.getDurum() ? 1 : 0;
@@ -335,11 +333,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 		sirketList = null;
 		HashMap fields = new HashMap();
-		Calendar cal = Calendar.getInstance();
-		Date tarihBas = PdksUtil.convertToJavaDate(da.getDonem() + "01", PATTERN);
-		cal.setTime(tarihBas);
-		cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
-		Date tarihBit = cal.getTime();
+ 		Date tarihBas = PdksUtil.convertToJavaDate(da.getDonem() + "01", PATTERN);
+ 		Date tarihBit = PdksUtil.getAyinSonGunu(tarihBas);
 		if (tarihBit.after(bugun))
 			tarihBit = bugun;
 		if (talepVar) {

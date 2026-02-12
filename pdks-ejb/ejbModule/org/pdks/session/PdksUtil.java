@@ -139,6 +139,22 @@ public class PdksUtil implements Serializable {
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
 
 	/**
+	 * @param tarih
+	 * @return
+	 */
+	public static Date getAyinSonGunu(Date tarih) {
+		Date bitTarih = null;
+		if (tarih != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(tarih);
+			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+			bitTarih = cal.getTime();
+		}
+
+		return bitTarih;
+	}
+
+	/**
 	 * @param sqlObject
 	 * @return
 	 */

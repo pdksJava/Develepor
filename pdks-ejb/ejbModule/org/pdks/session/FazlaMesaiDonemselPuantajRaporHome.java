@@ -1594,9 +1594,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				if (pd.isSuaDurumu()) {
 					Double radyolojiFazlaMesaiMaxSure = null;
 					Date tarih1 = PdksUtil.convertToJavaDate(String.valueOf(da.getDonem()) + "01", "yyyyMMdd");
-					cal.setTime(tarih1);
-					cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
-					Date tarih2 = cal.getTime();
+ 					Date tarih2 = PdksUtil.getAyinSonGunu(tarih1);
 					List<Integer> radyolojiList = Arrays.asList(new Integer[] { PuantajKatSayiTipi.AYLIK_RADYOLOJI_MAX_GUN.value() });
 					HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> katSayilarMap = ortakIslemler.getYuvarlamaKatSayiMap(tarih1, tarih2, radyolojiList, session);
 					if (katSayilarMap.containsKey(PuantajKatSayiTipi.AYLIK_RADYOLOJI_MAX_GUN)) {

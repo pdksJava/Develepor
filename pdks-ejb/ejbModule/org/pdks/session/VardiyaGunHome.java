@@ -70,6 +70,7 @@ import org.pdks.entity.IzinTipi;
 import org.pdks.entity.Kapi;
 import org.pdks.entity.KapiKGS;
 import org.pdks.entity.KapiView;
+import org.pdks.entity.KatSayi;
 import org.pdks.entity.Liste;
 import org.pdks.entity.Notice;
 import org.pdks.entity.Personel;
@@ -97,6 +98,7 @@ import org.pdks.entity.YemekIzin;
 import org.pdks.enums.BordroDetayTipi;
 import org.pdks.enums.NoteTipi;
 import org.pdks.enums.PersonelDurumTipi;
+import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
@@ -6876,6 +6878,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 
 			}
+			if (perIdler.isEmpty() == false && fazlaMesaiTalepVar)
+				try {
+					fazlaMesaiTalepKontrol(perIdler);
+				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
+				}
 
 			if (testDurum)
 				logger.info("aylikPuantajOlusturuluyor 2000 " + PdksUtil.getCurrentTimeStampStr());
@@ -8179,6 +8188,48 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 		}
 		return kontrolDurum;
+	}
+
+	/**
+	 * @param perIdler
+	 */
+	private void fazlaMesaiTalepKontrol(List<Long> perIdler) {
+		Date basTarih = PdksUtil.convertToJavaDate(denklestirmeAy.getDonem() + "01", "yyyyMMdd");
+		Date bitTarih = PdksUtil.getAyinSonGunu(basTarih);
+		HashMap fields = new HashMap();
+		String fieldName = "y";
+		StringBuffer sb = new StringBuffer();
+		sb.append("");
+		sb.append("with KSAYI AS (");
+		sb.append("		select " + KatSayi.COLUMN_NAME_TIPI + ", max(" + KatSayi.COLUMN_NAME_ID + ") AS " + KatSayi.COLUMN_NAME_ID + " from " + KatSayi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+		sb.append("		where " + KatSayi.COLUMN_NAME_BAS_TARIH + " <= :k2 and " + KatSayi.COLUMN_NAME_BIT_TARIH + ">= :k1 ");
+		sb.append("		and " + KatSayi.COLUMN_NAME_TIPI + " = " + PuantajKatSayiTipi.GUN_FMT_DURUM.value() + " and " + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
+		sb.append("		group by " + KatSayi.COLUMN_NAME_TIPI);
+		sb.append("	),");
+		sb.append("	TALEPLER AS (");
+		sb.append("		select V." + VardiyaGun.COLUMN_NAME_PERSONEL + ", max(V." + VardiyaGun.COLUMN_NAME_ID + ") " + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
+		sb.append("		inner join " + FazlaMesaiTalep.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID + " and T." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1");
+		sb.append("		inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P.ID = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
+		sb.append("      and (V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ")");
+		sb.append("		where (V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between :p1 and :p2) ");
+		sb.append("		and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
+		sb.append("		group by V." + VardiyaGun.COLUMN_NAME_PERSONEL);
+		sb.append("	)");
+		sb.append("	select distinct S.* FROM " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+		sb.append(" left join KSAYI K on K." + KatSayi.COLUMN_NAME_TIPI + " > 0");
+		sb.append(" left join TALEPLER T on T." + VardiyaGun.COLUMN_NAME_PERSONEL + " > 0");
+		sb.append(" where S.ID = " + aramaSecenekleri.getSirketId() + " and S." + Sirket.COLUMN_NAME_FAZLA_MESAI_TALEP_GIRILEBILIR + " = 1 and ( K." + KatSayi.COLUMN_NAME_ID + " is not null or T." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " is not null)");
+		fields.clear();
+		fields.put("k1", basTarih);
+		fields.put("k2", bitTarih);
+		fields.put("p1", basTarih);
+		fields.put("p2", bitTarih);
+		fields.put(fieldName, perIdler);
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<Sirket> list = pdksEntityController.getSQLParamList(perIdler, sb, fieldName, fields, Sirket.class, session);
+		fazlaMesaiTalepVar = list != null && list.isEmpty() == false;
+		list = null;
 	}
 
 	/**
