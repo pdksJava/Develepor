@@ -8777,6 +8777,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			fazlaMesaiTalepler = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, map, FazlaMesaiTalep.class, session);
 			perIdList = null;
 			for (FazlaMesaiTalep fmt : fazlaMesaiTalepler) {
+				if (fmt.getDurum())
+					fazlaMesaiTalepVar = true;
 				Long key = fmt.getVardiyaGun().getId();
 				List<FazlaMesaiTalep> ftmList = vardiyaFazlaMesaiMap.containsKey(key) ? vardiyaFazlaMesaiMap.get(key) : new ArrayList<FazlaMesaiTalep>();
 				if (ftmList.isEmpty())
@@ -8790,7 +8792,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							vg.setFazlaMesaiTalepler(vardiyaFazlaMesaiMap.get(vg.getId()));
 					}
 				}
-				fazlaMesaiTalepVar = true;
 			}
 		}
 		perIdMap = null;
