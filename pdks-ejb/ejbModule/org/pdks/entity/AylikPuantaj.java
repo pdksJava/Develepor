@@ -1319,10 +1319,11 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public boolean isFazlaMesaiDurum() {
 		Boolean fazlaMesaiDurum = Boolean.FALSE;
-		// if (personelDenklestirme != null && personelDenklestirme.getCalismaModeliAy() != null)
-		// fazlaMesaiDurum = personelDenklestirme.getCalismaModeliAy().isHareketKaydiVardiyaBulsunmu();
+		if (sirket != null)
+			fazlaMesaiDurum = sirket.isFazlaMesaiTalepGirer();
 
-		if (vardiyalar != null) {
+		if (vardiyalar != null && fazlaMesaiDurum) {
+			fazlaMesaiDurum = false;
 			for (VardiyaGun vardiyaGun : vardiyalar) {
 				if (!fazlaMesaiDurum && vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().getId() != null) {
 					fazlaMesaiDurum = vardiyaGun.isFazlaMesaiTalepDurum();
