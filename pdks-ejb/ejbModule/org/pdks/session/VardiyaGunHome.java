@@ -8790,8 +8790,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							vg.setFazlaMesaiTalepler(vardiyaFazlaMesaiMap.get(vg.getId()));
 					}
 				}
+				fazlaMesaiTalepVar = true;
 			}
-
 		}
 		perIdMap = null;
 	}
