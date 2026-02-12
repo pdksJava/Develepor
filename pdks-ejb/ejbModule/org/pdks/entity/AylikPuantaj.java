@@ -1190,7 +1190,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	public boolean isFazlaMesaiTalepVar() {
 		boolean fazlaMesaiTalepVar = false;
 		if (yonetici2 != null && sirket != null)
-			fazlaMesaiTalepVar = sirket.getDepartman().isFazlaMesaiTalepGirer() && sirket.isFazlaMesaiTalepGirer();
+			fazlaMesaiTalepVar = sirket.isFazlaMesaiTalepGirer();
 		return fazlaMesaiTalepVar;
 	}
 
@@ -1321,7 +1321,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		Boolean fazlaMesaiDurum = Boolean.FALSE;
 		if (sirket != null)
 			fazlaMesaiDurum = sirket.isFazlaMesaiTalepGirer();
- 		if (vardiyalar != null && fazlaMesaiDurum) {
+		if (vardiyalar != null && fazlaMesaiDurum) {
 			fazlaMesaiDurum = false;
 			for (VardiyaGun vardiyaGun : vardiyalar) {
 				if (!fazlaMesaiDurum && vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().getId() != null) {
@@ -1329,7 +1329,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 					if (fazlaMesaiDurum)
 						break;
 				}
- 			}
+			}
 		}
 		return fazlaMesaiDurum;
 	}
