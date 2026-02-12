@@ -1465,10 +1465,14 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					} else if (updateList.size() == 1) {
 						PersonelERP personelERP = updateList.get(0);
 						if (!personelERP.getHataList().isEmpty()) {
-							for (String mesaj : personelERP.getHataList()) {
+							for (String mesaj : personelERP.getHataList())
 								PdksUtil.addMessageAvailableWarn(sicilNo + " " + personelView.getAdSoyad() + " --> " + mesaj);
-
-							}
+						} else if (ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametreIzinERPTableView())) {
+							HashMap<String, List<String>> veriMap = new HashMap<String, List<String>>();
+							List<String> perNoList = new ArrayList<String>();
+							perNoList.add(personelERP.getPersonelNo());
+							veriMap.put("P", perNoList);
+							ortakIslemler.izinERPDBGuncelle(false, veriMap, session);
 						}
 					}
 				}
