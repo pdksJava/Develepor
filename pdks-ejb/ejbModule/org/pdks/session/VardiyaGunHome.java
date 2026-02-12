@@ -1172,6 +1172,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					}
 					try {
 						saveOrUpdate(fazlaMesaiTalep);
+						if (seciliVardiyaGun.getVersion() < 0) {
+							seciliVardiyaGun.setVersion(0);
+							saveOrUpdate(seciliVardiyaGun);
+						}
 						sessionFlush();
 						mesaiMailHatirlatma(fazlaMesaiTalep);
 						if (manuelHareketEkle != null && manuelHareketEkle)
@@ -10372,6 +10376,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				ft.setGuncellemeTarihi(new Date());
 				ft.setGuncelleyenUser(getPdksUser());
 				saveOrUpdate(ft);
+				VardiyaGun vg = ft.getVardiyaGun();
+				if (vg != null && vg.getVersion() < 0) {
+					vg.setVersion(0);
+					saveOrUpdate(vg);
+				}
 
 				mesaiMudurOnayCevabi(true);
 				String mesaj = ft.getOlusturanUser().getAdSoyad() + " fazla mesai talep cevabı gönderildi.";

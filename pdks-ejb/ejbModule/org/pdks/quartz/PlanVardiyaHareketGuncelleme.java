@@ -323,6 +323,14 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	 */
 	@Transactional
 	private void vardiyaVersiyonGuncelle(DenklestirmeAy da, Date bugun, User guncelleyenUser, Session session) {
+		boolean talepVar = false;
+		List<Sirket> sirketList = pdksEntityController.getSQLParamByAktifFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_PDKS, Boolean.TRUE, Sirket.class, session);
+		for (Sirket sirket : sirketList) {
+			if (sirket.getFazlaMesai() && talepVar == false)
+				talepVar = sirket.getFazlaMesaiTalepGirilebilir();
+
+		}
+		sirketList = null;
 		HashMap fields = new HashMap();
 		Calendar cal = Calendar.getInstance();
 		Date tarihBas = PdksUtil.convertToJavaDate(da.getDonem() + "01", PATTERN);
@@ -341,10 +349,12 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		sb1.append(" or (V." + VardiyaGun.COLUMN_NAME_VERSION + " < 0 and V." + VardiyaGun.COLUMN_NAME_DURUM + " = 1 ) ) ");
 		sb1.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 		sb1.append(" and (V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ") ");
-		sb1.append(" left join " + FazlaMesaiTalep.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " on F." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
+		if (talepVar)
+			sb1.append(" left join " + FazlaMesaiTalep.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " on F." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 		sb1.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1");
 		sb1.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + da.getId() + " and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1");
-		sb1.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_ID + " is null");
+		if (talepVar)
+			sb1.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_ID + " is null");
 		sb1.append(" order by P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + ", V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 		fields.put("t1", tarihBas);
 		fields.put("t2", tarihBit);
