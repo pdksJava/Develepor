@@ -8752,12 +8752,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param list
 	 */
 	private void fazlaMesaiGunleriniBul(Date t1, Date t2, List<AylikPuantaj> list) {
-		List<Long> perIdList = new ArrayList<Long>();
+		HashMap<Long, AylikPuantaj> perIdMap = new HashMap<Long, AylikPuantaj>();
 		for (AylikPuantaj aylikPuantaj : list) {
 			if (aylikPuantaj.getPdksPersonel() != null)
-				perIdList.add(aylikPuantaj.getPdksPersonel().getId());
+				perIdMap.put(aylikPuantaj.getPdksPersonel().getId(), aylikPuantaj);
 		}
-		if (!perIdList.isEmpty()) {
+		if (!perIdMap.isEmpty()) {
+			List<Long> perIdList = new ArrayList<Long>(perIdMap.keySet());
 			HashMap map = new HashMap();
 			String fieldName = "p";
 			StringBuilder sb = new StringBuilder();
@@ -8774,7 +8775,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			// fazlaMesaiTalepler = pdksEntityController.getObjectBySQLList(sb, map, FazlaMesaiTalep.class);
 			fazlaMesaiTalepler = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, map, FazlaMesaiTalep.class, session);
-
+			perIdList = null;
 			for (FazlaMesaiTalep fmt : fazlaMesaiTalepler) {
 				Long key = fmt.getVardiyaGun().getId();
 				List<FazlaMesaiTalep> ftmList = vardiyaFazlaMesaiMap.containsKey(key) ? vardiyaFazlaMesaiMap.get(key) : new ArrayList<FazlaMesaiTalep>();
@@ -8782,9 +8783,17 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					vardiyaFazlaMesaiMap.put(key, ftmList);
 				ftmList.add(fmt);
 			}
+			if (vardiyaFazlaMesaiMap.isEmpty() == false) {
+				for (AylikPuantaj ap : list) {
+					for (VardiyaGun vg : ap.getVardiyalar()) {
+						if (vg.getId() != null && vardiyaFazlaMesaiMap.containsKey(vg.getId()))
+							vg.setFazlaMesaiTalepler(vardiyaFazlaMesaiMap.get(vg.getId()));
+					}
+				}
+			}
 
 		}
-		perIdList = null;
+		perIdMap = null;
 	}
 
 	/**

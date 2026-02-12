@@ -1323,11 +1323,13 @@ public class AylikPuantaj implements Serializable, Cloneable {
 			fazlaMesaiDurum = sirket.isFazlaMesaiTalepGirer();
 		if (vardiyalar != null && fazlaMesaiDurum) {
 			fazlaMesaiDurum = false;
-			for (VardiyaGun vardiyaGun : vardiyalar) {
-				if (!fazlaMesaiDurum && vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().getId() != null) {
-					fazlaMesaiDurum = vardiyaGun.isFazlaMesaiTalepDurum();
+			for (VardiyaGun vg : vardiyalar) {
+				if (vg.isAyinGunu() && vg.getVardiya() != null && vg.getVardiya().getId() != null) {
+					if (fazlaMesaiDurum == false)
+						fazlaMesaiDurum = vg.isFazlaMesaiTalepDurum() || (vg.getFazlaMesaiTalepler() != null && vg.getFazlaMesaiTalepler().isEmpty() == false);
 					if (fazlaMesaiDurum)
 						break;
+
 				}
 			}
 		}
