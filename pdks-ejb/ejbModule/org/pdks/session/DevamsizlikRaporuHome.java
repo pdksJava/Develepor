@@ -314,10 +314,10 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				} else if (girisAdet + cikisAdet == 0) {
 					if (vardiya.isCalisma())
 						aciklama = "Kart Basılmadı.";
-				} else if (cikisAdet != girisAdet) {
-					aciklama = "Eksik Kart Basıldı.";
-					Date giris = null;
+				} else {
 					StringBuffer sb = new StringBuffer();
+
+					Date giris = null;
 					try {
 						if (girisAdet > 0) {
 							giris = vg.getGirisHareketleri().get(0).getOrjinalZaman();
@@ -340,7 +340,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					} catch (Exception e) {
 						// TODO: handle exception
 					}
-
+					if (cikisAdet != girisAdet)
+						sb.append("Eksik Kart Basıldı.");
 					if (sb.length() > 0)
 						aciklama = sb.toString();
 				}
@@ -559,8 +560,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 									yaz = izinDurum;
 
 								}
-								if (vardiyaGun.getPdksPersonel().getPdksSicilNo().equals("4807"))
-									logger.debug("");
 								if (girisAdet == cikisAdet) {
 									boolean hataVar = false, giris = true;
 									for (HareketKGS hareketKGS : vardiyaGun.getHareketler()) {
@@ -597,7 +596,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 											// double eksikSaat = netSure > 0 ? netSure - calismaSaati : 0.0d;
 											// vardiyaGun.setNormalSure(eksikSaat);
 										}
-										kontrolEt = hepsiniGoster;
 
 									}
 
