@@ -335,12 +335,10 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								sb.append("Geç Çıkış.");
 							else if (cikis.before(vardiya.getVardiyaTelorans1BitZaman()))
 								sb.append("Erken Çıkış.");
-						} else if (vardiya.getVardiyaTelorans1BitZaman().after(new Date()))
-							aciklama = null;
+						}
 					} catch (Exception e) {
-						// TODO: handle exception
 					}
-					if (cikisAdet != girisAdet)
+					if (cikisAdet != girisAdet && vardiya.getVardiyaTelorans1BitZaman().before(new Date()))
 						sb.append("Eksik Kart Basıldı.");
 					if (sb.length() > 0)
 						aciklama = sb.toString();
