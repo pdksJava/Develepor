@@ -31,6 +31,7 @@ import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.DepartmanDenklestirmeDonemi;
 import org.pdks.entity.FazlaMesaiTalep;
 import org.pdks.entity.HareketKGS;
+import org.pdks.entity.KatSayi;
 import org.pdks.entity.Liste;
 import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
@@ -42,6 +43,7 @@ import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
 import org.pdks.entity.VardiyaGun;
+import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.security.entity.User;
 import org.pdks.session.FazlaMesaiOrtakIslemler;
 import org.pdks.session.OrtakIslemler;
@@ -330,6 +332,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				talepVar = sirket.getFazlaMesaiTalepGirilebilir();
 
 		}
+
 		sirketList = null;
 		HashMap fields = new HashMap();
 		Calendar cal = Calendar.getInstance();
@@ -339,6 +342,20 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		Date tarihBit = cal.getTime();
 		if (tarihBit.after(bugun))
 			tarihBit = bugun;
+		if (talepVar) {
+			StringBuffer sb = new StringBuffer();
+			sb.append("select K.* from " + KatSayi.TABLE_NAME + " K " + PdksEntityController.getSelectLOCK());
+			sb.append(" where K." + KatSayi.COLUMN_NAME_BAS_TARIH + " <= :t2 and K." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= :t1");
+			sb.append(" and K." + KatSayi.COLUMN_NAME_TIPI + " = " + PuantajKatSayiTipi.GUN_FMT_DURUM.value());
+			fields.put("t1", tarihBas);
+			fields.put("t2", tarihBit);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			List<KatSayi> katsayiList = pdksEntityController.getObjectBySQLList(sb.toString(), fields, KatSayi.class);
+			talepVar = katsayiList.isEmpty() == false;
+			katsayiList = null;
+		}
+		fields.clear();
 		StringBuffer sb1 = new StringBuffer();
 		sb1.append("select V.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK());
 		sb1.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY);
