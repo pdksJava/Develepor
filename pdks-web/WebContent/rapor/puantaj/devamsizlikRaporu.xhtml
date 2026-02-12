@@ -20,7 +20,7 @@
 						<ui:fragment>
 
 							<h:panelGrid columns="1">
-								<h:panelGrid columns="2">
+								<h:panelGrid columns="2" width="500px">
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
 										<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{devamsizlikRaporuHome.date}" id="dateFilter1" />
@@ -52,7 +52,7 @@
 						</ui:fragment>
 						<ui:fragment rendered="#{devamsizlikRaporuHome.hepsiniGoster==false}">
 
-							<TABLE>
+							<TABLE width="300px">
 
 								<caption>
 									<span style="font-size: 14px; font-weight: bold; color: red;">Devamsızlık Durumları</span>

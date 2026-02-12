@@ -30,6 +30,7 @@ import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.HareketKGS;
+import org.pdks.entity.Kapi;
 import org.pdks.entity.Liste;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelIzin;
@@ -289,7 +290,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	}
 
 	/**
-	 * @param vardiyaGun
+	 * @param vg
 	 * @return
 	 */
 	public String getVardiyaAciklama(VardiyaGun vg) {
@@ -335,7 +336,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							else if (cikis.before(vardiya.getVardiyaTelorans1BitZaman()))
 								sb.append("Erken Çıkış.");
 						} else if (vardiya.getVardiyaTelorans1BitZaman().after(new Date()))
-							aciklama = "";
+							aciklama = null;
 					} catch (Exception e) {
 						// TODO: handle exception
 					}
@@ -527,8 +528,25 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 						}
 
 						boolean yaz = Boolean.TRUE;
+						ArrayList<HareketKGS> girisHareketleriList = vardiyaGun.getGirisHareketleri();
+						ArrayList<HareketKGS> cikisHareketleriList = vardiyaGun.getCikisHareketleri();
+						int girisAdet = girisHareketleriList != null ? girisHareketleriList.size() : 0;
+						int cikisAdet = cikisHareketleriList != null ? cikisHareketleriList.size() : 0;
+						if (girisAdet + cikisAdet == 0) {
+							boolean sil = false;
+							if (vardiya.isCalisma() == false)
+								sil = true;
+							else if (vardiyaGun.getIzin() != null && izinliGoster == false)
+								sil = true;
+							if (sil) {
+								iterator.remove();
+								continue;
+							}
+
+						}
+						boolean kontrolEt = true;
 						if (vardiya.isCalisma()) {
-							if (vardiyaGun.getHareketDurum()) {
+							if (girisAdet + cikisAdet > 0) {
 								PersonelIzin izin = vardiyaGun.getIzin();
 								boolean izinDurum = Boolean.FALSE;
 								if (izin != null) {
@@ -541,78 +559,68 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 									yaz = izinDurum;
 
 								}
-
-								if (yaz && vardiyaGun.getHareketDurum()) {
-									// butun kontrolleri gecmistir. adam calismistir.
-									// Ancak burada calistigi saatlerin toplami bulunup
-									// calismasi gereken saatle kaslastirilir.
-									// calistigisaat<vardiyadaki saat ise yaz true olur
-									double calismaSaati = 0;
-									ArrayList<HareketKGS> girisHareketleriList = vardiyaGun.getGirisHareketleri();
-									ArrayList<HareketKGS> cikisHareketleriList = vardiyaGun.getCikisHareketleri();
-									if (girisHareketleriList != null && cikisHareketleriList != null) {
-										if (girisHareketleriList.size() == cikisHareketleriList.size()) {
-											for (int i = 0; i < girisHareketleriList.size(); i++) {
-												HareketKGS girisHareket = girisHareketleriList.get(i);
-												HareketKGS cikisHareket = cikisHareketleriList.get(i);
-												if (girisHareket == null || cikisHareket == null)
-													continue;
-												if (girisHareket.getZaman() == null || cikisHareket.getZaman() == null)
-													continue;
-												calismaSaati += PdksUtil.getSaatFarki(cikisHareket.getZaman(), girisHareket.getZaman());
-											}
-											if (calismaSaati > 0) {
-												double netSure = vardiya.getNetCalismaSuresi();
-												yaz = hepsiniGoster || izinDurum;
-												if (calismaSaati > netSure)
-													calismaSaati = netSure;
-												// eksik saati bulunup ekranda gosterilmelidir.
-												// double eksikSaat = netSure > 0 ? netSure - calismaSaati : 0.0d;
-												// vardiyaGun.setNormalSure(eksikSaat);
-											} else
-												yaz = izinDurum || (girisHareketleriList != null && hepsiniGoster);
+								if (vardiyaGun.getPdksPersonel().getPdksSicilNo().equals("4807"))
+									logger.debug("");
+								if (girisAdet == cikisAdet) {
+									boolean hataVar = false, giris = true;
+									for (HareketKGS hareketKGS : vardiyaGun.getHareketler()) {
+										Kapi kapi = hareketKGS.getKapiKGS() != null ? hareketKGS.getKapiKGS().getKapi() : null;
+										if (kapi != null) {
+											if (giris) {
+												if (kapi.isGirisKapi() == false)
+													hataVar = true;
+											} else if (kapi.isCikisKapi() == false)
+												hataVar = true;
 										} else
-											yaz = true;
+											hataVar = true;
+										giris = !giris;
+									}
 
-									} else {
-										if (vardiyaGun.getIzin() != null)
-											vardiyaGun.setNormalSure(calismaSaati);
-										aciklama = getVardiyaAciklama(vardiyaGun);
-										yaz = hepsiniGoster;
-										if (aciklama != null && hepsiniGoster == false) {
-											for (Liste liste : durumList) {
-												if (liste.isSecili()) {
-													if (aciklama.indexOf((String) liste.getValue()) >= 0) {
-														yaz = true;
-													}
-												}
-											}
+									double calismaSaati = 0;
+
+									if (hataVar == false && vardiyaGun.getIzin() == null) {
+										for (int i = 0; i < girisHareketleriList.size(); i++) {
+											HareketKGS girisHareket = girisHareketleriList.get(i);
+											HareketKGS cikisHareket = cikisHareketleriList.get(i);
+											if (girisHareket == null || cikisHareket == null)
+												continue;
+											if (girisHareket.getZaman() == null || cikisHareket.getZaman() == null)
+												continue;
+											calismaSaati += PdksUtil.getSaatFarki(cikisHareket.getZaman(), girisHareket.getZaman());
 										}
+										if (calismaSaati > 0) {
+											double netSure = vardiya.getNetCalismaSuresi();
+											yaz = hepsiniGoster || izinDurum;
+											if (calismaSaati > netSure)
+												calismaSaati = netSure;
+											// eksik saati bulunup ekranda gosterilmelidir.
+											// double eksikSaat = netSure > 0 ? netSure - calismaSaati : 0.0d;
+											// vardiyaGun.setNormalSure(eksikSaat);
+										}
+										kontrolEt = hepsiniGoster;
 
 									}
+
 									vardiyaGun.setNormalSure(calismaSaati);
-								}
-							} else {
-								aciklama = getVardiyaAciklama(vardiyaGun);
-								yaz = hepsiniGoster;
-								if (aciklama != null && hepsiniGoster == false) {
-									for (Liste liste : durumList) {
-										if (liste.isSecili()) {
-											if (aciklama.indexOf((String) liste.getValue()) >= 0) {
-												yaz = true;
-											}
-										}
-
-									}
-
 								}
 							}
 
 						}
-						if (!yaz) {
-							iterator.remove();
-
+						yaz = hepsiniGoster;
+						if (kontrolEt) {
+							aciklama = getVardiyaAciklama(vardiyaGun);
+							if (aciklama != null && hepsiniGoster == false) {
+								for (Liste liste : durumList) {
+									if (liste.isSecili()) {
+										if (aciklama.indexOf((String) liste.getValue()) >= 0) {
+											yaz = true;
+										}
+									}
+								}
+							}
 						}
+						if (!yaz)
+							iterator.remove();
 
 					}
 					ortakIslemler.otomatikHareketEkle(new ArrayList<VardiyaGun>(vardiyaMap.values()), session);
