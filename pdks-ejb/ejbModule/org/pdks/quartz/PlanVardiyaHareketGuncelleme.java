@@ -170,8 +170,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		Date bugun = PdksUtil.getDate(ortakIslemler.getBugun());
 		if (tarih == null)
 			tarih = bugun;
-		Calendar cal = Calendar.getInstance();
-		String adresStr = null;
+ 		String adresStr = null;
 		long buAy = Long.parseLong(PdksUtil.convertToDateString(tarih, PATTERN_DONEM));
 		long oncekiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheAyEkleCikar(PdksUtil.convertToJavaDate(buAy + "01", PATTERN), -1), PATTERN_DONEM));
 		long sonrakiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(tarih, 6), PATTERN_DONEM));
