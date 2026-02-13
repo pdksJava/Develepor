@@ -146,9 +146,10 @@ public class PdksUtil implements Serializable {
 	public static List<Sirket> sortSirketList(List<Sirket> sirketList) {
 		List<Sirket> list = null;
 		if (sirketList != null) {
-			if (sirketList.size() > 1)
+			if (sirketList.size() > 1) {
 				list = PdksUtil.sortObjectStringAlanList(new ArrayList<Sirket>(sirketList), "getAd", null);
-			else
+				sirketList = null;
+			} else
 				list = sirketList;
 			if (list.size() > 1) {
 				TreeMap<Long, List<Sirket>> sirketMap = new TreeMap<Long, List<Sirket>>();

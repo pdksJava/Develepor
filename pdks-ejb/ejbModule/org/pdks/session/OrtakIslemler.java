@@ -6703,7 +6703,7 @@ public class OrtakIslemler implements Serializable {
 			digerIKSirketBul(pdksSirketList, kendisiBul, session);
 		if (!pdksSirketList.isEmpty()) {
 			if (pdksSirketList.size() > 1)
-				pdksSirketList = PdksUtil.sortObjectStringAlanList(pdksSirketList, "getAd", null);
+				pdksSirketList = PdksUtil.sortSirketList(pdksSirketList);
 			sirketList.addAll(pdksSirketList);
 		}
 		pdksSirketList = null;
@@ -6990,6 +6990,7 @@ public class OrtakIslemler implements Serializable {
 
 			List<SelectItem> sirketIdList = getSelectItemList("sirketSelectItemTanim", authenticatedUser);
 			List<Sirket> sirketList = fillSirketList(session, Boolean.TRUE, kendisiBul);
+			sirketList = PdksUtil.sortSirketList(sirketList);
 			for (Sirket sirket : sirketList)
 				sirketIdList.add(new SelectItem(sirket.getId(), sirket.getAd()));
 			sonucMap.put("sirketIdList", sirketIdList);
@@ -7123,6 +7124,7 @@ public class OrtakIslemler implements Serializable {
 				if (aramaSecenekleri.getStajyerOlmayanSirket()) {
 					sirketList = getStajerOlmayanSirketler(sirketList);
 					sirketIdList.clear();
+					sirketList=PdksUtil.sortSirketList(sirketList);
 					for (Sirket sirket : sirketList)
 						sirketIdList.add(new SelectItem(sirket.getId(), sirket.getAd()));
 				}

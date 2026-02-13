@@ -34,6 +34,7 @@ import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalCron;
 import org.jboss.seam.async.QuartzTriggerHandle;
 import org.jboss.seam.faces.Renderer;
+import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.CalismaModeli;
 import org.pdks.entity.Departman;
 import org.pdks.entity.Dosya;
@@ -244,14 +245,16 @@ public class IseGelmemeUyari implements Serializable {
 	}
 
 	/**
+	 * @param as
 	 * @param tarih
 	 * @param islemYapan
 	 * @param manuel
 	 * @param session
+	 * @param mailGonder
 	 * @return
 	 * @throws Exception
 	 */
-	public String iseGelmeDurumu(Date tarih, User islemYapan, boolean manuel, Session session, boolean mailGonder) throws Exception {
+	public String iseGelmeDurumu(AramaSecenekleri as, Date tarih, User islemYapan, boolean manuel, Session session, boolean mailGonder) throws Exception {
 		if (islemYapan != null && session != null)
 			session.clear();
 		logger.info("iseGelmeDurumu in " + PdksUtil.getCurrentTimeStampStr());
@@ -296,6 +299,12 @@ public class IseGelmemeUyari implements Serializable {
 			sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_MAIL_TAKIP + " = 1");
 			if (yoneticiTanimsiz == false)
 				sb.append(" and P." + Personel.COLUMN_NAME_YONETICI + " is not null");
+			if (as != null) {
+				if (as.getSirketId() != null)
+					sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + as.getSirketId());
+				if (as.getTesisId() != null)
+					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = " + as.getTesisId());
+			}
 			// sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = 12996");
 			// sb.append(" and P." + Personel.COLUMN_NAME_YONETICI + " = 388");
 
@@ -375,7 +384,7 @@ public class IseGelmemeUyari implements Serializable {
 						boolean otomatikGuncelle = ortakIslemler.getParameterKeyHasStringValue(PlanVardiyaHareketGuncelleme.PARAMETER_HAREKET_KEY);
 						if (otomatikGuncelle == false) {
 
-								vardiyalar = ortakIslemler.getIslemVardiyalar(personeller, oncekiGun, sonrakiGun, Boolean.FALSE, session, Boolean.TRUE);
+							vardiyalar = ortakIslemler.getIslemVardiyalar(personeller, oncekiGun, sonrakiGun, Boolean.FALSE, session, Boolean.TRUE);
 						}
 					} catch (Exception e) {
 						logger.error(e);
@@ -589,8 +598,8 @@ public class IseGelmemeUyari implements Serializable {
 								pdksVardiyaGun.setHareketler(null);
 								pdksVardiyaGun.setHareketHatali(Boolean.FALSE);
 								Personel pdksPersonel = pdksVardiyaGun.getPersonel();
-//								if (pdksPersonel.getPdksSicilNo().equals("SR0013"))
-//									logger.debug("");
+								// if (pdksPersonel.getPdksSicilNo().equals("SR0013"))
+								// logger.debug("");
 								Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya();
 								Long perNoId = pdksPersonel.getPersonelKGS().getId(), personelNoId = pdksPersonel.getId();
 								Long depId = pdksPersonel.getSirket().getDepartman().getId();
@@ -2391,7 +2400,7 @@ public class IseGelmemeUyari implements Serializable {
 						// if (!zamanDurum)
 						// zamanDurum = PdksUtil.getTestDurum();
 						if (zamanDurum)
-							iseGelmemeDurumuCalistir(null, session, null, false, true);
+							iseGelmemeDurumuCalistir(null, null, session, null, false, true);
 					}
 				}
 			} catch (Exception e) {
@@ -2417,6 +2426,7 @@ public class IseGelmemeUyari implements Serializable {
 	}
 
 	/**
+	 * @param as
 	 * @param tarih
 	 * @param session
 	 * @param islemYapan
@@ -2425,7 +2435,7 @@ public class IseGelmemeUyari implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public String iseGelmemeDurumuCalistir(Date tarih, Session session, User islemYapan, boolean manuel, boolean mailGonder) throws Exception {
+	public String iseGelmemeDurumuCalistir(AramaSecenekleri as, Date tarih, Session session, User islemYapan, boolean manuel, boolean mailGonder) throws Exception {
 		uyariNot = null;
 		if (userYoneticiList == null)
 			userYoneticiList = new ArrayList<User>();
@@ -2437,7 +2447,7 @@ public class IseGelmemeUyari implements Serializable {
 		else
 			userIKMailMap.clear();
 		try {
-			iseGelmeDurumu(tarih, islemYapan, manuel, session, mailGonder);
+			iseGelmeDurumu(as, tarih, islemYapan, manuel, session, mailGonder);
 		} catch (Exception e) {
 			e.printStackTrace();
 			userYoneticiList = null;

@@ -72,14 +72,11 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 	List<VardiyaGun> vardiyaGunList = new ArrayList<VardiyaGun>();
 	private boolean izinliGoster = Boolean.FALSE, hepsiniGoster = Boolean.FALSE, hareketleriGoster = Boolean.TRUE;
-	// private List<SelectItem> sirketIdList, tesisIdList;
-	// private Long sirketId, tesisId;
-
 	private List<Liste> durumList = new ArrayList<Liste>();
 	private HashMap<String, List<Tanim>> ekSahaListMap;
 	private TreeMap<String, Tanim> ekSahaTanimMap;
 	private String bolumAciklama;
-	private Sirket sirket;
+
 	private AramaSecenekleri as;
 	private Session session;
 
@@ -135,13 +132,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			vardiyaGunList.clear();
 		else
 			vardiyaGunList = new ArrayList<VardiyaGun>();
-		sirket = null;
-		try {
-			ortakIslemler.setAramaSecenekSirketVeTesisData(as, date, bitisTarih, false, session);
-		} catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
-		}
+		ortakIslemler.setAramaSecenekSirketVeTesisData(as, date, bitisTarih, false, session);
 
 		return "";
 	}
@@ -151,18 +142,12 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			vardiyaGunList.clear();
 		else
 			vardiyaGunList = new ArrayList<VardiyaGun>();
-		if (as.getSirketId() != null) {
-			try {
-				ortakIslemler.setAramaSecenekTesisData(as, date, bitisTarih, false, session);
-			} catch (Exception e) {
-				logger.error(e);
-				e.printStackTrace();
-			}
-		} else {
+		if (as.getSirketId() != null)
+			ortakIslemler.setAramaSecenekTesisData(as, date, bitisTarih, false, session);
+		else {
 			as.setTesisId(null);
 			as.setSirket(null);
 		}
-
 		return "";
 	}
 
@@ -796,14 +781,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 	public void setUserList(List<User> userList) {
 		this.userList = userList;
-	}
-
-	public Sirket getSirket() {
-		return sirket;
-	}
-
-	public void setSirket(Sirket sirket) {
-		this.sirket = sirket;
 	}
 
 	public AramaSecenekleri getAs() {
