@@ -211,7 +211,7 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 		List<Sirket> list = pdksEntityController.getObjectByInnerObjectList(fields, Sirket.class);
 		fields = null;
 		if (list.size() > 1)
-			list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);
+			list = ortakIslemler.sortSirketList(list);
 		setSirketList(list);
 
 	}

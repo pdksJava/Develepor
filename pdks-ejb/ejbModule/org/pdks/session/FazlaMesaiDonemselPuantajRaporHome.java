@@ -591,7 +591,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				if (sirketList.size() == 1)
 					sirketId = sirketList.get(0).getId();
 				else
-					sirketList = PdksUtil.sortObjectStringAlanList(sirketList, "getAd", null);
+					sirketList = ortakIslemler.sortSirketList(sirketList);
 				for (Sirket sirket : sirketList) {
 					if (sirket.isPdksMi())
 						sirketler.add(new SelectItem(sirket.getId(), sirket.getAd()));
@@ -1594,7 +1594,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				if (pd.isSuaDurumu()) {
 					Double radyolojiFazlaMesaiMaxSure = null;
 					Date tarih1 = PdksUtil.convertToJavaDate(String.valueOf(da.getDonem()) + "01", "yyyyMMdd");
- 					Date tarih2 = PdksUtil.getAyinSonGunu(tarih1);
+					Date tarih2 = PdksUtil.getAyinSonGunu(tarih1);
 					List<Integer> radyolojiList = Arrays.asList(new Integer[] { PuantajKatSayiTipi.AYLIK_RADYOLOJI_MAX_GUN.value() });
 					HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> katSayilarMap = ortakIslemler.getYuvarlamaKatSayiMap(tarih1, tarih2, radyolojiList, session);
 					if (katSayilarMap.containsKey(PuantajKatSayiTipi.AYLIK_RADYOLOJI_MAX_GUN)) {

@@ -2902,6 +2902,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
 				list = pdksEntityController.getSQLParamList(idler, sb, fieldName, fields, Sirket.class, session);
+				list = ortakIslemler.sortSirketList(list);
 				idler = null;
 			} catch (Exception ex) {
 				logger.error(ex + "\n" + sb.toString());

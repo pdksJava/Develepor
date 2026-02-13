@@ -151,17 +151,17 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			vardiyaGunList.clear();
 		else
 			vardiyaGunList = new ArrayList<VardiyaGun>();
-
-		if (as.getSirket() != null && as.getSirket().getTesisDurum()) {
+		if (as.getSirketId() != null) {
 			try {
 				ortakIslemler.setAramaSecenekTesisData(as, date, bitisTarih, false, session);
 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
 			}
-
-		} else
+		} else {
 			as.setTesisId(null);
+			as.setSirket(null);
+		}
 
 		return "";
 	}

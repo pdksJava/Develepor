@@ -1569,11 +1569,13 @@ public class OrtakIslemler implements Serializable {
 	public List<Sirket> getDepartmanPDKSSirketList(Departman departman, Session session) {
 		List<Sirket> list = pdksEntityController.getSQLParamByAktifFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_PDKS, Boolean.TRUE, Sirket.class, session);
 		if (departman != null) {
+
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				Sirket sirket2 = (Sirket) iterator.next();
 				if (!sirket2.getDepartman().getId().equals(departman.getId()))
 					iterator.remove();
 			}
+			list = sortSirketList(list);
 		}
 		return list;
 	}
@@ -6408,6 +6410,7 @@ public class OrtakIslemler implements Serializable {
 							continue;
 						}
 					}
+					sirketList = sortSirketList(sirketList);
 					map.clear();
 					map.put(PdksEntityController.MAP_KEY_MAP, "getKodu");
 					map.put("tipi", Tanim.TIPI_ERP_MASRAF_YERI);
@@ -6695,6 +6698,7 @@ public class OrtakIslemler implements Serializable {
 
 			}
 		}
+		pdksSirketList = sortSirketList(pdksSirketList);
 		if (authenticatedUser != null)
 			digerIKSirketBul(pdksSirketList, kendisiBul, session);
 		if (!pdksSirketList.isEmpty()) {
@@ -7824,6 +7828,14 @@ public class OrtakIslemler implements Serializable {
 	 * @param bitTarih
 	 * @param session
 	 */
+	/**
+	 * @param aramaSecenekleri
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param ekAlanlar
+	 * @param session
+	 * @return
+	 */
 	public List<SelectItem> setAramaSecenekSirketVeTesisData(AramaSecenekleri aramaSecenekleri, Date basTarih, Date bitTarih, boolean ekAlanlar, Session session) {
 		if (basTarih == null)
 			basTarih = PdksUtil.getDate(new Date());
@@ -7870,7 +7882,7 @@ public class OrtakIslemler implements Serializable {
 		List<SelectItem> sirketIdList = aramaSecenekleri.getSirketIdList();
 		aramaSecenekleri.setSirket(null);
 		if (!sirketList.isEmpty()) {
-			list = PdksUtil.sortObjectStringAlanList(new ArrayList<Sirket>(sirketList), "getAd", null);
+			list = sortSirketList(sirketList);
 			for (Sirket sirket : list) {
 				if (sirket.getPdks() && sirket.getFazlaMesai()) {
 					if (oldSirketId != null && sirket.getId().equals(oldSirketId)) {
@@ -7891,6 +7903,32 @@ public class OrtakIslemler implements Serializable {
 		aramaSecenekleri.setSirketIdList(sirketIdList);
 		setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, ekAlanlar, session);
 		return sirketIdList;
+	}
+
+	/**
+	 * @param sirketList
+	 * @return
+	 */
+	public List<Sirket> sortSirketList(List<Sirket> sirketList) {
+		List<Sirket> list = PdksUtil.sortObjectStringAlanList(new ArrayList<Sirket>(sirketList), "getAd", null);
+		if (list.size() > 1) {
+			TreeMap<Long, List<Sirket>> sirketMap = new TreeMap<Long, List<Sirket>>();
+			for (Sirket sirket : list) {
+				Long key = sirket.getDepartman().getId();
+				sirketList = sirketMap.containsKey(key) ? sirketMap.get(key) : new ArrayList<Sirket>();
+				if (sirketList.isEmpty())
+					sirketMap.put(key, sirketList);
+				sirketList.add(sirket);
+			}
+			if (sirketMap.size() > 1) {
+				list.clear();
+				for (Long key : sirketMap.keySet())
+					list.addAll(sirketMap.get(key));
+
+			}
+			sirketMap = null;
+		}
+		return list;
 	}
 
 	/**
@@ -12869,10 +12907,14 @@ public class OrtakIslemler implements Serializable {
 						map.put(PdksEntityController.MAP_KEY_SESSION, session);
 					List<Sirket> sirketList = pdksEntityController.getObjectByInnerObjectListInLogic(map, Sirket.class);
 					if (!sirketList.isEmpty()) {
+						List<Long> idList = new ArrayList<Long>();
+						for (Sirket sirket : sirketList)
+							idList.add(sirket.getId());
+
 						map.clear();
 						map.put(PdksEntityController.MAP_KEY_SELECT, "personel");
 						map.put("kullanici=", null);
-						map.put("pdksPersonel.sirket", sirketList);
+						map.put("pdksPersonel.sirket.id", idList);
 						if (session != null)
 							map.put(PdksEntityController.MAP_KEY_SESSION, session);
 						List<Personel> perList = pdksEntityController.getObjectByInnerObjectListInLogic(map, PdksPersonelView.class);
@@ -12881,6 +12923,7 @@ public class OrtakIslemler implements Serializable {
 								personelSapMap.put(personel.getSicilNo(), personel);
 
 						}
+						idList = null;
 						perList = null;
 					}
 					sirketList = null;

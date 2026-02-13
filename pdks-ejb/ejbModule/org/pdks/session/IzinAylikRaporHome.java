@@ -146,7 +146,7 @@ public class IzinAylikRaporHome extends EntityHome<PersonelIzin> implements Seri
 		List<Sirket> list = pdksEntityController.getObjectBySQLList(sb, map, Sirket.class);
 
 		if (list.size() > 1)
-			list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);
+			list = ortakIslemler.sortSirketList(list);
 		setSirketList(list);
 	}
 

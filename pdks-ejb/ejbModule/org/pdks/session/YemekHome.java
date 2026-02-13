@@ -119,7 +119,7 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<Sirket> list = pdksEntityController.getObjectByInnerObjectList(fields, Sirket.class);
 		if (list.size() > 1)
-			list = PdksUtil.sortObjectStringAlanList(list, "getAd", null);
+			list = ortakIslemler.sortSirketList(list);
 		setSirketList(list);
 
 	}
