@@ -374,8 +374,7 @@ public class IseGelmemeUyari implements Serializable {
 					try {
 						boolean otomatikGuncelle = ortakIslemler.getParameterKeyHasStringValue(PlanVardiyaHareketGuncelleme.PARAMETER_HAREKET_KEY);
 						if (otomatikGuncelle == false) {
-							boolean islem = ortakIslemler.getVardiyaHareketIslenecekList(new ArrayList<VardiyaGun>(vardiyalar.values()), tarih, tarih, session);
-							if (islem)
+
 								vardiyalar = ortakIslemler.getIslemVardiyalar(personeller, oncekiGun, sonrakiGun, Boolean.FALSE, session, Boolean.TRUE);
 						}
 					} catch (Exception e) {

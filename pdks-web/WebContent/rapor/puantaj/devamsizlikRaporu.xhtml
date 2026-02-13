@@ -23,11 +23,35 @@
 								<h:panelGrid columns="2" width="500px">
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
-										<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{devamsizlikRaporuHome.date}" id="dateFilter1" />
+										<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{devamsizlikRaporuHome.date}" id="dateFilter1">
+											<a4j:support event="onchanged" action="#{devamsizlikRaporuHome.fillSirketList()}" ajaxSingle="true" status="ajaxStatus"
+												reRender="devamGiris,devamsizlikPanel" />
+										</rich:calendar>
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">#{ortakIslemler.bitTarihAciklama()}</ui:define>
-										<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{devamsizlikRaporuHome.bitisTarih}" id="dateFilter2" />
+										<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{devamsizlikRaporuHome.bitisTarih}" id="dateFilter2">
+											<a4j:support event="onchanged" action="#{devamsizlikRaporuHome.fillSirketList()}" ajaxSingle="true" status="ajaxStatus"
+												reRender="devamGiris,devamsizlikPanel" />
+										</rich:calendar>
+									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
+										<h:selectOneMenu id="sirketSec" value="#{devamsizlikRaporuHome.sirketId}" disabled="#{devamsizlikRaporuHome.sirketIdList.size() == 1}">
+											<f:selectItem itemLabel="Lütfen seçiniz" />
+											<f:selectItems value="#{devamsizlikRaporuHome.sirketIdList}" />
+											<a4j:support event="onchange" status="ajaxStatus" action="#{devamsizlikRaporuHome.fillTesisList()}" reRender="devamGiris,devamsizlikPanel" />
+										</h:selectOneMenu>
+									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml"
+										rendered="#{devamsizlikRaporuHome.sirket.tesisDurumu and devamsizlikRaporuHome.tesisIdList.size()>0 }">
+										<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
+										<h:selectOneMenu value="#{devamsizlikRaporuHome.tesisId}" disabled="#{devamsizlikRaporuHome.tesisIdList.size() == 1}">
+											<f:selectItem itemLabel="Lütfen seçiniz" />
+											<f:selectItems value="#{devamsizlikRaporuHome.tesisIdList}" />
+											<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{devamsizlikRaporuHome.vardiyaGunList.clear()}"
+												reRender="devamGiris,devamsizlikPanel" />
+										</h:selectOneMenu>
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
 										<ui:define name="label">Tümünü Göster</ui:define>

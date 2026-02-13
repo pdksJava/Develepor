@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 
+import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
@@ -29,11 +30,13 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
+import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.Kapi;
 import org.pdks.entity.Liste;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelIzin;
+import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
@@ -70,11 +73,14 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 	List<VardiyaGun> vardiyaGunList = new ArrayList<VardiyaGun>();
 	private boolean izinliGoster = Boolean.FALSE, hepsiniGoster = Boolean.FALSE, hareketleriGoster = Boolean.TRUE;
+	private List<SelectItem> sirketIdList, tesisIdList;
+	private Long sirketId, tesisId;
 
 	private List<Liste> durumList = new ArrayList<Liste>();
 	private HashMap<String, List<Tanim>> ekSahaListMap;
 	private TreeMap<String, Tanim> ekSahaTanimMap;
 	private String bolumAciklama;
+	private Sirket sirket;
 	private Session session;
 
 	@In(required = false)
@@ -106,7 +112,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		setBitisTarih(dateBas);
 		vardiyaGunList.clear();
 		durumList.clear();
-
+		fillSirketList();
 		durumList.add(new Liste(1, "Erken Giriş"));
 		durumList.add(new Liste(2, "Erken Çıkış"));
 		durumList.add(new Liste(3, "Geç Giriş"));
@@ -120,6 +126,60 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 		// devamsizlikListeOlustur();
 
+	}
+
+	public String fillSirketList() {
+		if (vardiyaGunList != null)
+			vardiyaGunList.clear();
+		else
+			vardiyaGunList = new ArrayList<VardiyaGun>();
+		sirket = null;
+		AramaSecenekleri as = new AramaSecenekleri();
+		as.setLoginUser(authenticatedUser);
+		as.setSirketId(sirketId);
+		as.setTesisId(tesisId);
+		ortakIslemler.setAramaSecenekSirketVeTesisData(as, date, bitisTarih, false, session);
+		sirketIdList = as.getSirketIdList();
+		if (sirketIdList.isEmpty() == false)
+			sirketId = as.getSirketId();
+		else
+			sirketId = null;
+		sirket = null;
+		if (sirketId != null) {
+			sirket = as.getSirket();
+			if (sirket == null)
+				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
+			as.setSirket(sirket);
+			tesisIdList = as.getTesisList();
+			tesisId = as.getTesisId();
+		} else
+			tesisId = null;
+		return "";
+	}
+
+	public String fillTesisList() {
+		if (vardiyaGunList != null)
+			vardiyaGunList.clear();
+		else
+			vardiyaGunList = new ArrayList<VardiyaGun>();
+		sirket = null;
+		if (sirketId != null)
+			sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
+		tesisIdList = null;
+		if (sirket != null && sirket.getTesisDurum()) {
+			AramaSecenekleri as = new AramaSecenekleri();
+			as.setLoginUser(authenticatedUser);
+			as.setSirketId(sirketId);
+			as.setTesisId(tesisId);
+			as.setSirket(sirket);
+			ortakIslemler.setAramaSecenekTesisData(as, date, bitisTarih, false, session);
+			tesisIdList = as.getTesisList();
+			tesisId = as.getTesisId();
+
+		} else
+			tesisId = null;
+
+		return "";
 	}
 
 	private void fillEkSahaTanim() {
@@ -393,20 +453,26 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		List<VardiyaGun> vardiyaList = new ArrayList<VardiyaGun>();
 		izinliGoster = hepsiniGoster || durumList.get(durumList.size() - 1).isSecili();
 		List<HareketKGS> kgsList = new ArrayList<HareketKGS>();
+		HashMap fields = new HashMap();
+		fields.put("t1", date);
+		fields.put("t2", bitisTarih);
 		Date tarih1 = null;
 		Date tarih2 = null;
-		ArrayList<Personel> tumPersoneller = (ArrayList<Personel>) authenticatedUser.getTumPersoneller().clone();
-		for (Iterator iterator = tumPersoneller.iterator(); iterator.hasNext();) {
-			Personel pdksPersonel = (Personel) iterator.next();
-			// if (!pdksPersonel.getPdksSicilNo().equals("0883"))
-			// iterator.remove();
-			// else
-			if (pdksPersonel.getPdks() == null || !pdksPersonel.getPdks())
-				iterator.remove();
-			else if (pdksPersonel.getSirket().isPdksMi() == false)
-				iterator.remove();
+		StringBuilder sb = new StringBuilder();
+		sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+		sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
+		sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1");
+		sb.append(" where P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :t2 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :t1");
+		if (sirketId != null)
+			sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + sirketId);
 
-		}
+		if (tesisId != null)
+			sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = " + tesisId);
+
+		sb.append(" and P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1");
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<Personel> tumPersoneller = date.after(bitisTarih) == false ? (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(sb, fields, Personel.class) : new ArrayList<Personel>();
 		if (!tumPersoneller.isEmpty()) {
 			Calendar cal = Calendar.getInstance();
 			Date date2 = bitisTarih == null ? date : bitisTarih;
@@ -415,31 +481,22 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			TreeMap<String, VardiyaGun> vardiyaMap = null;
 			try {
 				vardiyaMap = ortakIslemler.getIslemVardiyalar((List<Personel>) tumPersoneller, basTarih, bitTarih, Boolean.FALSE, session, Boolean.TRUE);
-				// boolean islem = ortakIslemler.getVardiyaHareketIslenecekList(new ArrayList<VardiyaGun>(vardiyaMap.values()), date, date2, session);
-				// if (islem)
-				// vardiyaMap = ortakIslemler.getIslemVardiyalar((List<Personel>) tumPersoneller, basTarih, bitTarih, Boolean.FALSE, session, Boolean.TRUE);
-
 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
 			}
 			vardiyaList = vardiyaMap != null ? new ArrayList<VardiyaGun>(vardiyaMap.values()) : new ArrayList<VardiyaGun>();
 			ortakIslemler.sonrakiGunVardiyalariAyikla(date2, vardiyaList, session);
-			// butun personeller icin hareket cekerken bu en kucuk tarih ile en
-			// buyuk tarih araligini kullanacaktir
-			// bu araliktaki tum hareketleri cekecektir.
 			for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 				VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
 				if (pdksVardiyaGun.getVardiyaDate().before(date) || pdksVardiyaGun.getVardiyaDate().after(date2)) {
 					iterator.remove();
 					continue;
-
 				}
 				if (pdksVardiyaGun.getVardiya() == null || !pdksVardiyaGun.getVardiya().isCalisma()) {
 					iterator.remove();
 					continue;
 				}
-
 				if (tarih1 == null || pdksVardiyaGun.getIslemVardiya().getVardiyaTelorans1BasZaman().getTime() < tarih1.getTime())
 					tarih1 = pdksVardiyaGun.getIslemVardiya().getVardiyaTelorans1BasZaman();
 
@@ -453,13 +510,11 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				kgsList = null;
 				if (kapiIdler != null && !kapiIdler.isEmpty()) {
 					try {
-						kgsList = ortakIslemler.getPdksHareketBilgileri(Boolean.TRUE, kapiIdler, (List<Personel>) tumPersoneller.clone(), tarih1, tarih2, HareketKGS.class, session);
-
+						kgsList = ortakIslemler.getPdksHareketBilgileri(Boolean.TRUE, kapiIdler, new ArrayList<Personel>(tumPersoneller), tarih1, tarih2, HareketKGS.class, session);
 					} catch (Exception e) {
 						logger.error(e);
 						e.printStackTrace();
 					}
-
 				}
 				if (kgsList == null)
 					kgsList = new ArrayList<HareketKGS>();
@@ -749,6 +804,54 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 	public void setHepsiniGoster(boolean hepsiniGoster) {
 		this.hepsiniGoster = hepsiniGoster;
+	}
+
+	public List<SelectItem> getSirketIdList() {
+		return sirketIdList;
+	}
+
+	public void setSirketIdList(List<SelectItem> sirketIdList) {
+		this.sirketIdList = sirketIdList;
+	}
+
+	public List<SelectItem> getTesisIdList() {
+		return tesisIdList;
+	}
+
+	public void setTesisIdList(List<SelectItem> tesisIdList) {
+		this.tesisIdList = tesisIdList;
+	}
+
+	public List<User> getUserList() {
+		return userList;
+	}
+
+	public void setUserList(List<User> userList) {
+		this.userList = userList;
+	}
+
+	public Long getTesisId() {
+		return tesisId;
+	}
+
+	public void setTesisId(Long tesisId) {
+		this.tesisId = tesisId;
+	}
+
+	public Long getSirketId() {
+		return sirketId;
+	}
+
+	public void setSirketId(Long sirketId) {
+		this.sirketId = sirketId;
+	}
+
+	public Sirket getSirket() {
+		return sirket;
+	}
+
+	public void setSirket(Sirket sirket) {
+		this.sirket = sirket;
 	}
 
 }
