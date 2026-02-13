@@ -2582,7 +2582,6 @@ public class VardiyaGun extends BaseObject {
 				talepDurum = "starGreen.png";
 			else if (onaylanmadi > 0)
 				talepDurum = "starRed.png";
-			logger.info(this.getVardiyaKey() + " " + talepDurum);
 		}
 		return talepDurum;
 
