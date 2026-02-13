@@ -462,9 +462,11 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					iterator.remove();
 					continue;
 				}
-				if (pdksVardiyaGun.getVardiya() == null || !pdksVardiyaGun.getVardiya().isCalisma()) {
-					iterator.remove();
-					continue;
+				if (hepsiniGoster == false) {
+					if (pdksVardiyaGun.getVardiya() == null || !pdksVardiyaGun.getVardiya().isCalisma()) {
+						iterator.remove();
+						continue;
+					}
 				}
 				if (tarih1 == null || pdksVardiyaGun.getIslemVardiya().getVardiyaTelorans1BasZaman().getTime() < tarih1.getTime())
 					tarih1 = pdksVardiyaGun.getIslemVardiya().getVardiyaTelorans1BasZaman();
@@ -529,13 +531,13 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					}
 					for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 						VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-						if (!vardiyaGun.getIslemVardiya().isCalisma()) {
+						Vardiya vardiya = vardiyaGun.getIslemVardiya();
+						if (vardiya.getId() == null) {
 							iterator.remove();
 							continue;
 						}
 
 						String aciklama = null;
-						Vardiya vardiya = vardiyaGun.getVardiya();
 						vardiyaGun.setHareketler(null);
 						vardiyaGun.setGirisHareketleri(null);
 						vardiyaGun.setCikisHareketleri(null);
@@ -561,7 +563,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								sil = true;
 							else if (vardiyaGun.getIzin() != null && izinliGoster == false)
 								sil = true;
-							if (sil) {
+							if (sil && hepsiniGoster == false) {
 								iterator.remove();
 								continue;
 							}
@@ -639,7 +641,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								}
 							}
 						}
-						if (!yaz)
+						if (hepsiniGoster == false && yaz == false)
 							iterator.remove();
 
 					}
