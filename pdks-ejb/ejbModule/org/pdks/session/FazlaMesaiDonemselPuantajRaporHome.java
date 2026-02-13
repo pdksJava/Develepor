@@ -591,7 +591,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				if (sirketList.size() == 1)
 					sirketId = sirketList.get(0).getId();
 				else
-					sirketList = ortakIslemler.sortSirketList(sirketList);
+					sirketList = PdksUtil.sortSirketList(sirketList);
 				for (Sirket sirket : sirketList) {
 					if (sirket.isPdksMi())
 						sirketler.add(new SelectItem(sirket.getId(), sirket.getAd()));

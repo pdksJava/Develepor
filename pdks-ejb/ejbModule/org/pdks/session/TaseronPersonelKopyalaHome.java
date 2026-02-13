@@ -127,7 +127,7 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 		List<Sirket> list = pdksEntityController.getObjectByInnerObjectList(fields, Sirket.class);
 		fields = null;
 		if (list.size() > 1)
-			list = ortakIslemler.sortSirketList(list);
+			list = PdksUtil.sortSirketList(list);
 		for (Sirket sirket : list)
 			sirketList.add(new SelectItem(sirket.getId(), sirket.getAd()));
 

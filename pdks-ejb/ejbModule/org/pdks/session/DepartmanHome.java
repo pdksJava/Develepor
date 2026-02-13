@@ -103,7 +103,7 @@ public class DepartmanHome extends EntityHome<Departman> implements Serializable
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 					List<Sirket> sirketler = pdksEntityController.getObjectByInnerObjectList(fields, Sirket.class);
-					sirketler = ortakIslemler.sortSirketList(sirketler);
+					sirketler = PdksUtil.sortSirketList(sirketler);
 					for (Sirket sirket : sirketler) {
 						sirket.setGuncelleyenUser(authenticatedUser);
 						sirket.setGuncellemeTarihi(pdksDepartman.getGuncellemeTarihi());

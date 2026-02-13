@@ -1575,7 +1575,7 @@ public class OrtakIslemler implements Serializable {
 				if (!sirket2.getDepartman().getId().equals(departman.getId()))
 					iterator.remove();
 			}
-			list = sortSirketList(list);
+			list = PdksUtil.sortSirketList(list);
 		}
 		return list;
 	}
@@ -6410,7 +6410,7 @@ public class OrtakIslemler implements Serializable {
 							continue;
 						}
 					}
-					sirketList = sortSirketList(sirketList);
+					sirketList = PdksUtil.sortSirketList(sirketList);
 					map.clear();
 					map.put(PdksEntityController.MAP_KEY_MAP, "getKodu");
 					map.put("tipi", Tanim.TIPI_ERP_MASRAF_YERI);
@@ -6698,7 +6698,7 @@ public class OrtakIslemler implements Serializable {
 
 			}
 		}
-		pdksSirketList = sortSirketList(pdksSirketList);
+		pdksSirketList = PdksUtil.sortSirketList(pdksSirketList);
 		if (authenticatedUser != null)
 			digerIKSirketBul(pdksSirketList, kendisiBul, session);
 		if (!pdksSirketList.isEmpty()) {
@@ -7882,7 +7882,7 @@ public class OrtakIslemler implements Serializable {
 		List<SelectItem> sirketIdList = aramaSecenekleri.getSirketIdList();
 		aramaSecenekleri.setSirket(null);
 		if (!sirketList.isEmpty()) {
-			list = sortSirketList(sirketList);
+			list = PdksUtil.sortSirketList(sirketList);
 			for (Sirket sirket : list) {
 				if (sirket.getPdks() && sirket.getFazlaMesai()) {
 					if (oldSirketId != null && sirket.getId().equals(oldSirketId)) {
@@ -7903,32 +7903,6 @@ public class OrtakIslemler implements Serializable {
 		aramaSecenekleri.setSirketIdList(sirketIdList);
 		setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, ekAlanlar, session);
 		return sirketIdList;
-	}
-
-	/**
-	 * @param sirketList
-	 * @return
-	 */
-	public List<Sirket> sortSirketList(List<Sirket> sirketList) {
-		List<Sirket> list = PdksUtil.sortObjectStringAlanList(new ArrayList<Sirket>(sirketList), "getAd", null);
-		if (list.size() > 1) {
-			TreeMap<Long, List<Sirket>> sirketMap = new TreeMap<Long, List<Sirket>>();
-			for (Sirket sirket : list) {
-				Long key = sirket.getDepartman().getId();
-				sirketList = sirketMap.containsKey(key) ? sirketMap.get(key) : new ArrayList<Sirket>();
-				if (sirketList.isEmpty())
-					sirketMap.put(key, sirketList);
-				sirketList.add(sirket);
-			}
-			if (sirketMap.size() > 1) {
-				list.clear();
-				for (Long key : sirketMap.keySet())
-					list.addAll(sirketMap.get(key));
-
-			}
-			sirketMap = null;
-		}
-		return list;
 	}
 
 	/**

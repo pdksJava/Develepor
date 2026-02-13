@@ -161,7 +161,7 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<Sirket> list = pdksEntityController.getObjectBySQLList(sb, map, Sirket.class);
 		if (list.size() > 1)
-			list = ortakIslemler.sortSirketList(list);
+			list = PdksUtil.sortSirketList(list);
 		setSirketList(list);
 	}
 
