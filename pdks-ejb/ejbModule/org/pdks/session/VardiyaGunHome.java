@@ -8313,7 +8313,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			LinkedHashMap<String, Object> dataMap = new LinkedHashMap<String, Object>();
 			if (ortakIslemler.getParameterKeyHasStringValue("bayramAyirGun"))
 				dataMap.put("bayramAyirGun", ortakIslemler.getBayramAyirGun());
-			dataMap.put("aylikPuantajList", puantajList);
+			dataMap.put("aylikPuantajList", new ArrayList<AylikPuantaj>(puantajList));
 			dataMap.put("manuelGirisKapi", manuelGiris);
 			dataMap.put("manuelCikisKapi", manuelCikis);
 			dataMap.put("basTarih", donemi.getBaslangicTarih());
