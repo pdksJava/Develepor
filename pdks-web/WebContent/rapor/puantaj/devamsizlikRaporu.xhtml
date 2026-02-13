@@ -35,7 +35,7 @@
 												reRender="devamGiris,devamsizlikPanel" />
 										</rich:calendar>
 									</s:decorate>
-									<s:decorate template="/layout/edit.xhtml">
+									<s:decorate template="/layout/edit.xhtml" rendered="#{devamsizlikRaporuHome.as.sirketIdList.size() > 1}">
 										<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 										<h:selectOneMenu id="sirketSec" value="#{devamsizlikRaporuHome.as.sirketId}" disabled="#{devamsizlikRaporuHome.as.sirketIdList.size() == 1}">
 											<f:selectItem itemLabel="Lütfen seçiniz" />
