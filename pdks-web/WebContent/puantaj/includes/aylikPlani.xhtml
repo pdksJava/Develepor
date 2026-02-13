@@ -507,7 +507,7 @@
 														<TD id="fmt#{vardiyaGun.vardiyaKeyStr}"><a4j:commandLink action="#{vardiyaGunHome.getVardiyaFazlaMesailer(vardiyaGun)}"
 																onclick="#{rich:component('wait')}.show()" ajaxSingle="true"
 																oncomplete="#{rich:component('wait')}.hide();#{rich:component('fmtDetayPanel')}.show()" reRender="fmtDetayPanel,secimlerGunMesai">
-																<img src="/img/left_16.png" height="8px" />
+																<img src="/img/#{vardiyaGun.talepDurum}" height="12px" />
 															</a4j:commandLink> <rich:toolTip for="fmt#{vardiyaGun.vardiyaKeyStr}">
 																Fazla Mesai Talep Göster
 																</rich:toolTip></TD>

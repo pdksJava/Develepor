@@ -2562,6 +2562,32 @@ public class VardiyaGun extends BaseObject {
 		return hataliFazlaMesailer;
 	}
 
+	@Transient
+	public String getTalepDurum() {
+		String talepDurum = "left_16.png";
+		if (fazlaMesaiTalepler != null) {
+			int onaylandi = 0, onaylanmadi = 0, onayBekliyor = 0;
+			for (FazlaMesaiTalep fmt : fazlaMesaiTalepler) {
+				if (fmt.getOnayDurumu() == FazlaMesaiTalep.ONAY_DURUM_ISLEM_YAPILMADI)
+					++onayBekliyor;
+				else if (fmt.getOnayDurumu() == FazlaMesaiTalep.ONAY_DURUM_ONAYLANDI)
+					++onaylandi;
+				else if (fmt.getOnayDurumu() == FazlaMesaiTalep.ONAY_DURUM_RED)
+					++onaylanmadi;
+
+			}
+			if (onayBekliyor > 0)
+				talepDurum = "starYellow.png";
+			else if (onaylandi > 0)
+				talepDurum = "starGreen.png";
+			else if (onaylanmadi > 0)
+				talepDurum = "starRed.png";
+			logger.info(this.getVardiyaKey() + " " + talepDurum);
+		}
+		return talepDurum;
+
+	}
+
 	/**
 	 * @param pfm
 	 */
