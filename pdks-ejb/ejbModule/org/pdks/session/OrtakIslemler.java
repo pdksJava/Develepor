@@ -17954,6 +17954,15 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param tarih
+	 * @return
+	 */
+	public Date getAyinSonGunu(Date tarih) {
+		Date bitTarih = PdksUtil.getAyinSonGunu(tarih);
+		return bitTarih;
+	}
+
+	/**
 	 * @param baslangicYil
 	 * @param bakiyeList
 	 * @param zipDosya
@@ -18429,17 +18438,13 @@ public class OrtakIslemler implements Serializable {
 		if (denklestirmeAy != null) {
 			Calendar cal = Calendar.getInstance();
 			tarih1 = PdksUtil.convertToJavaDate(String.valueOf(denklestirmeAy.getDonem()) + "01", "yyyyMMdd");
-			cal.setTime(tarih1);
-			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
-			tarih2 = cal.getTime();
+			tarih2 = PdksUtil.getAyinSonGunu(tarih1);
 			oncekiTarih2 = PdksUtil.tariheGunEkleCikar(tarih1, -1);
 			sonrakiTarih1 = PdksUtil.tariheGunEkleCikar(tarih2, 1);
 			cal.setTime(oncekiTarih2);
 			cal.set(Calendar.DATE, 1);
 			oncekiTarih1 = cal.getTime();
-			cal.setTime(sonrakiTarih1);
-			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
-			sonrakiTarih2 = cal.getTime();
+			sonrakiTarih2 = PdksUtil.getAyinSonGunu(sonrakiTarih1);
 		}
 		changeMasterMap.put("$oncekiTarih1$", oncekiTarih1 != null ? user.dateFormatla(oncekiTarih1) : "");
 		changeMasterMap.put("$oncekiTarih2$", oncekiTarih2 != null ? user.dateFormatla(oncekiTarih2) : "");
@@ -18634,17 +18639,13 @@ public class OrtakIslemler implements Serializable {
 		if (denklestirmeAy != null) {
 			Calendar cal = Calendar.getInstance();
 			tarih1 = PdksUtil.convertToJavaDate(String.valueOf(denklestirmeAy.getDonem()) + "01", "yyyyMMdd");
-			cal.setTime(tarih1);
-			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
-			tarih2 = cal.getTime();
+ 			tarih2 = PdksUtil.getAyinSonGunu(tarih1);
 			oncekiTarih2 = PdksUtil.tariheGunEkleCikar(tarih1, -1);
 			sonrakiTarih1 = PdksUtil.tariheGunEkleCikar(tarih2, 1);
 			cal.setTime(oncekiTarih2);
 			cal.set(Calendar.DATE, 1);
 			oncekiTarih1 = cal.getTime();
-			cal.setTime(sonrakiTarih1);
-			cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
-			sonrakiTarih2 = cal.getTime();
+ 			sonrakiTarih2 = PdksUtil.getAyinSonGunu(sonrakiTarih1);
 		}
 		changeMasterMap.put("$oncekiTarih1$", oncekiTarih1 != null ? user.dateFormatla(oncekiTarih1) : "");
 		changeMasterMap.put("$oncekiTarih2$", oncekiTarih2 != null ? user.dateFormatla(oncekiTarih2) : "");

@@ -1190,7 +1190,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	public boolean isFazlaMesaiTalepVar() {
 		boolean fazlaMesaiTalepVar = false;
 		if (yonetici2 != null && sirket != null)
-			fazlaMesaiTalepVar = sirket.getDepartman().isFazlaMesaiTalepGirer() && sirket.isFazlaMesaiTalepGirer();
+			fazlaMesaiTalepVar = sirket.isFazlaMesaiTalepGirer();
 		return fazlaMesaiTalepVar;
 	}
 
@@ -1318,18 +1318,23 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	}
 
 	public boolean isFazlaMesaiDurum() {
-		Boolean fazlaMesaiDurum = Boolean.FALSE;
-		// if (personelDenklestirme != null && personelDenklestirme.getCalismaModeliAy() != null)
-		// fazlaMesaiDurum = personelDenklestirme.getCalismaModeliAy().isHareketKaydiVardiyaBulsunmu();
-
-		if (vardiyalar != null) {
-			for (VardiyaGun vardiyaGun : vardiyalar) {
-				if (!fazlaMesaiDurum && vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().getId() != null) {
-					fazlaMesaiDurum = vardiyaGun.isFazlaMesaiTalepDurum();
+		Boolean fazlaMesaiDurum = sirket != null && sirket.isFazlaMesaiTalepGirer();
+		if (vardiyalar != null && fazlaMesaiDurum) {
+			fazlaMesaiDurum = false;
+			for (VardiyaGun vg : vardiyalar) {
+				if (vg.isAyinGunu() && vg.getVardiya() != null && vg.getVardiya().getId() != null) {
+					if (vg.getFazlaMesaiTalepler() != null) {
+						for (FazlaMesaiTalep fmt : vg.getFazlaMesaiTalepler()) {
+							if (fmt.getDurum())
+								fazlaMesaiDurum = true;
+						}
+					}
+					if (fazlaMesaiDurum == false)
+						fazlaMesaiDurum = vg.isFazlaMesaiTalepDurum();
 					if (fazlaMesaiDurum)
 						break;
-				}
 
+				}
 			}
 		}
 		return fazlaMesaiDurum;
