@@ -7871,15 +7871,21 @@ public class OrtakIslemler implements Serializable {
 			list = PdksUtil.sortObjectStringAlanList(new ArrayList<Sirket>(sirketList), "getAd", null);
 			for (Sirket sirket : list)
 				if (sirket.getPdks() && sirket.getFazlaMesai()) {
-					if (oldSirketId != null && sirket.getId().equals(oldSirketId))
+					if (oldSirketId != null && sirket.getId().equals(oldSirketId)) {
 						sirketId = sirket.getId();
+						aramaSecenekleri.setSirket(sirket);
+					}
+
 					sirketIdList.add(new SelectItem(sirket.getId(), sirket.getAd()));
 				}
 
 		}
 		sirketList = null;
-		if (sirketIdList.size() == 1)
+		if (sirketIdList.size() == 1) {
 			sirketId = (Long) sirketIdList.get(0).getValue();
+			aramaSecenekleri.setSirket(list.get(0));
+		}
+
 		aramaSecenekleri.setSirketId(sirketId);
 		aramaSecenekleri.setSirketIdList(sirketIdList);
 		setAramaSecenekTesisData(aramaSecenekleri, basTarih, bitTarih, ekAlanlar, session);
@@ -10647,235 +10653,6 @@ public class OrtakIslemler implements Serializable {
 	public boolean fullYetkiliKullanici() {
 		boolean yetki = authenticatedUser == null || authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi();
 		return yetki;
-	}
-
-	/**
-	 * @param vardiyaGunList
-	 * @param tarih1
-	 * @param tarih2
-	 * @param session
-	 * @return
-	 */
-	@Transactional
-	public boolean getVardiyaHareketIslenecekList(List<VardiyaGun> vardiyaGunList, Date tarih1, Date tarih2, Session session) {
-		boolean sonuc = false;
-		List<VardiyaGun> vardiyaGunIslemList = new ArrayList<VardiyaGun>();
-		if (!vardiyaGunList.isEmpty()) {
-			HashMap fields = new HashMap();
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(tarih1);
-			StringBuilder sb = new StringBuilder();
-			sb.append("select " + DenklestirmeAy.COLUMN_NAME_ID + " from " + DenklestirmeAy.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
-			sb.append(" where " + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " BETWEEN :d1 and :d2");
-			fields.put("d1", Long.parseLong(PdksUtil.convertToDateString(tarih1, "yyyyMM")));
-			fields.put("d2", Long.parseLong(PdksUtil.convertToDateString(tarih2 == null ? tarih1 : tarih2, "yyyyMM")));
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-
-			List<Long> donemIdList = getLongByBigDecimalList(pdksEntityController.getObjectBySQLList(sb, fields, null));
-			if (donemIdList != null) {
-				fields.clear();
-				sb = new StringBuilder();
-				sb.append("select C.* from " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getSelectLOCK());
-				sb.append(" inner join " + CalismaModeli.TABLE_NAME + " C " + PdksEntityController.getJoinLOCK() + " on C." + CalismaModeli.COLUMN_NAME_ID + " = CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI);
-				sb.append(" where CA." + CalismaModeliAy.COLUMN_NAME_DONEM + " :d and CA." + CalismaModeliAy.COLUMN_NAME_HAREKET_KAYDI_VARDIYA_BUL + " = 1");
-				fields.put("d", donemIdList);
-				if (session != null)
-					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				fields.put(PdksEntityController.MAP_KEY_MAP, "getId");
-				TreeMap<Long, CalismaModeli> modelMap = pdksEntityController.getObjectBySQLMap(sb, fields, CalismaModeli.class, false);
-				if (!modelMap.isEmpty()) {
-					boolean flush = false;
-					for (VardiyaGun vardiyaGun : vardiyaGunList) {
-						if (vardiyaGun.getId() == null) {
-							CalismaModeli calismaModeli = vardiyaGun.getPdksPersonel().getCalismaModeli();
-							if (calismaModeli != null && modelMap.containsKey(calismaModeli.getId())) {
-								vardiyaGun.setDurum(!vardiyaGun.getVardiya().isCalisma());
-								if (!vardiyaGun.getDurum())
-									vardiyaGun.setVersion(vardiyaGun.getIzin() == null ? -1 : 0);
-								pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
-								flush = true;
-							}
-						}
-						if (vardiyaGun.getVersion() < 0L)
-							vardiyaGunIslemList.add(vardiyaGun);
-
-					}
-					if (flush)
-						session.flush();
-				}
-			}
-			if (!vardiyaGunIslemList.isEmpty())
-				try {
-					sonuc = vardiyaGunHareketleriGuncelle(vardiyaGunIslemList, donemIdList, tarih1, tarih2, session);
-				} catch (Exception e) {
-					logger.error(e);
-					e.printStackTrace();
-				}
-		}
-
-		vardiyaGunIslemList = null;
-		return sonuc;
-
-	}
-
-	/**
-	 * @param vardiyaGunIslemList
-	 * @param denklestirmeAy
-	 * @param tarih1
-	 * @param tarih2
-	 * @param session
-	 * @return
-	 */
-	private boolean vardiyaGunHareketleriGuncelle(List<VardiyaGun> vardiyaGunIslemList, List<Long> denklestirmeAyIdList, Date tarih1, Date tarih2, Session session) {
-		boolean sonuc = false;
-		TreeMap<Long, List<VardiyaGun>> personelVardiyaBulMap = new TreeMap<Long, List<VardiyaGun>>();
-		TreeMap<Long, PersonelDenklestirmeTasiyici> personelDenklestirmeMap = null;
-		TreeMap<Long, PersonelDenklestirme> denkMap = new TreeMap<Long, PersonelDenklestirme>();
-		HashMap fields = new HashMap();
-		fields.put("denklestirmeAy.id", denklestirmeAyIdList);
-		fields.put("hareketKaydiVardiyaBul", Boolean.TRUE);
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<CalismaModeliAy> cmaList = pdksEntityController.getObjectByInnerObjectList(fields, CalismaModeliAy.class);
-		fields.clear();
-		HashMap<Long, CalismaModeliAy> cmaMap = new HashMap<Long, CalismaModeliAy>();
-		for (CalismaModeliAy calismaModeliAy : cmaList)
-			cmaMap.put(calismaModeliAy.getCalismaModeli().getId(), calismaModeliAy);
-		cmaList = null;
-		boolean fazlaMesaiHesaplaTumPersonel = getParameterKey("fazlaMesaiHesaplaKisitliPersonel").equals("1") == false;
-		List<Long> perIdList = new ArrayList<Long>();
-		for (Iterator iterator = vardiyaGunIslemList.iterator(); iterator.hasNext();) {
-			VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-			if (vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().isCalisma() && vardiyaGun.getVersion() < 0L) {
-				Personel personel = vardiyaGun.getPdksPersonel();
-
-				if (!perIdList.contains(personel.getId()))
-					perIdList.add(personel.getId());
-			}
-
-		}
-		if (perIdList.isEmpty() == false) {
-
-			for (Iterator iterator = vardiyaGunIslemList.iterator(); iterator.hasNext();) {
-				VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-				if (vardiyaGun.getVardiya() == null)
-					iterator.remove();
-				else {
-					Personel personel = vardiyaGun.getPdksPersonel();
-					if (perIdList.contains(personel.getId())) {
-						List<VardiyaGun> list = personelVardiyaBulMap.containsKey(personel.getId()) ? personelVardiyaBulMap.get(personel.getId()) : new ArrayList<VardiyaGun>();
-						if (list.isEmpty()) {
-							Long cmId = personel.getCalismaModeli() != null ? personel.getCalismaModeli().getId() : null;
-							personelVardiyaBulMap.put(personel.getId(), list);
-							if (cmId != null && cmaMap.containsKey(cmId)) {
-								CalismaModeliAy calismaModeliAy = cmaMap.get(cmId);
-								PersonelDenklestirme personelDenklestirme = new PersonelDenklestirme(personel, calismaModeliAy.getDenklestirmeAy(), cmaMap.get(cmId));
-								if (fazlaMesaiHesaplaTumPersonel)
-									personelDenklestirme.setDenklestirme(Boolean.TRUE);
-								denkMap.put(personel.getId(), personelDenklestirme);
-							}
-						}
-						list.add(vardiyaGun);
-					}
-
-				}
-			}
-
-			Calendar cal = Calendar.getInstance();
-			cmaMap = null;
-			if (!personelVardiyaBulMap.isEmpty()) {
-				perIdList = new ArrayList(personelVardiyaBulMap.keySet());
-				List idList = new ArrayList(perIdList);
-				String fieldName = "personel.id";
-				HashMap map1 = new HashMap();
-				map1.put("denklestirmeAy.id", denklestirmeAyIdList);
-				map1.put("denklestirmeAy.durum", Boolean.TRUE);
-				map1.put(fieldName, idList);
-				if (session != null)
-					map1.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<PersonelDenklestirme> personelDenklestirmeList = getParamList(false, idList, fieldName, map1, PersonelDenklestirme.class, session);
-				setPersonelDenklestirmeDevir(null, personelDenklestirmeList, session);
-
-				if (!denkMap.isEmpty() || !personelDenklestirmeList.isEmpty()) {
-					for (PersonelDenklestirme personelDenklestirme : personelDenklestirmeList) {
-						Personel personel = personelDenklestirme.getPdksPersonel();
-						if (denkMap.containsKey(personel.getId()))
-							denkMap.put(personel.getId(), personelDenklestirme);
-					}
-					personelDenklestirmeList = new ArrayList<PersonelDenklestirme>(denkMap.values());
-				}
-				denkMap = null;
-				if (!personelDenklestirmeList.isEmpty()) {
-					HashMap<Long, Boolean> hareketKaydiVardiyaMap = new HashMap<Long, Boolean>();
-					fields.clear();
-					fields.put(PdksEntityController.MAP_KEY_SELECT, "calismaModeli.id");
-					fields.put("denklestirmeAy.id", denklestirmeAyIdList);
-					fields.put("hareketKaydiVardiyaBul", Boolean.TRUE);
-					if (session != null)
-						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<Long> idLongList = pdksEntityController.getObjectByInnerObjectList(fields, CalismaModeliAy.class);
-					fields.clear();
-					for (Long long1 : idLongList)
-						hareketKaydiVardiyaMap.put(long1, Boolean.TRUE);
-					personelDenklestirmeMap = new TreeMap<Long, PersonelDenklestirmeTasiyici>();
-					ArrayList<Personel> tumPersoneller = new ArrayList<Personel>();
-					for (PersonelDenklestirme personelDenklestirme : personelDenklestirmeList) {
-						Personel personel = personelDenklestirme.getPdksPersonel();
-						CalismaModeli calismaModeli = personelDenklestirme.getCalismaModeliAy() != null ? personelDenklestirme.getCalismaModeli() : personel.getCalismaModeli();
-						if (calismaModeli != null && hareketKaydiVardiyaMap.containsKey(calismaModeli.getId())) {
-							PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici = new PersonelDenklestirmeTasiyici();
-							personelDenklestirmeTasiyici.setPersonel(personel);
-							personelDenklestirmeTasiyici.setVardiyaGunleriMap(new TreeMap<String, VardiyaGun>());
-							tumPersoneller.add(personel);
-							personelDenklestirmeTasiyici.setDenklestirmeAy(personelDenklestirme.getDenklestirmeAy());
-							personelDenklestirmeTasiyici.setCalismaModeli(calismaModeli);
-							personelDenklestirmeMap.put(personelDenklestirme.getPdksPersonel().getId(), personelDenklestirmeTasiyici);
-						}
-					}
-					if (!personelDenklestirmeMap.isEmpty()) {
-						HashMap<Long, ArrayList<VardiyaGun>> calismaPlaniMap = new HashMap<Long, ArrayList<VardiyaGun>>();
-						for (Long key : perIdList) {
-							if (!personelDenklestirmeMap.containsKey(key))
-								personelVardiyaBulMap.remove(key);
-							else {
-								calismaPlaniMap.put(key, new ArrayList<VardiyaGun>(personelVardiyaBulMap.get(key)));
-							}
-						}
-						List<Long> kapiIdler = getPdksDonemselKapiIdler(tarih1, tarih2, session);
-						List<HareketKGS> kgsList = null;
-						try {
-							if (kapiIdler != null && !kapiIdler.isEmpty())
-								kgsList = getPdksHareketBilgileri(Boolean.TRUE, kapiIdler, (List<Personel>) tumPersoneller.clone(), tariheGunEkleCikar(cal, tarih1, -1), tariheGunEkleCikar(cal, tarih2, 1), HareketKGS.class, session);
-
-						} catch (Exception e) {
-						}
-						if (kgsList == null)
-							kgsList = new ArrayList<HareketKGS>();
-						HashMap<Long, ArrayList<HareketKGS>> personelHareketMap = new HashMap<Long, ArrayList<HareketKGS>>();
-						if (!kgsList.isEmpty()) {
-							if (kgsList.size() > 1)
-								kgsList = PdksUtil.sortListByAlanAdi(kgsList, "zaman", Boolean.FALSE);
-							for (HareketKGS hareketKGS : kgsList) {
-								Long key = hareketKGS.getPersonelId();
-								ArrayList<HareketKGS> list = personelHareketMap.containsKey(key) ? personelHareketMap.get(key) : new ArrayList<HareketKGS>();
-								if (list.isEmpty())
-									personelHareketMap.put(key, list);
-								list.add(hareketKGS);
-							}
-							try {
-								if (personelHareketMap != null && personelHareketMap.isEmpty() == false && fullYetkiliKullanici())
-									sonuc = vardiyaHareketlerdenGuncelle(personelDenklestirmeMap, personelVardiyaBulMap, calismaPlaniMap, hareketKaydiVardiyaMap, personelHareketMap, null, session);
-							} catch (Exception e) {
-								logger.error(e);
-								e.printStackTrace();
-							}
-						}
-					}
-				}
-			}
-		}
-		return sonuc;
 	}
 
 	/**
