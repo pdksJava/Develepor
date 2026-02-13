@@ -20,6 +20,29 @@
 						<ui:fragment>
 
 							<h:panelGrid columns="1">
+								<h:panelGrid columns="2" width="600px" rendered="#{devamsizlikRaporuHome.as.sirketIdList.size() > 1 or (devamsizlikRaporuHome.as.sirket.tesisDurumu and devamsizlikRaporuHome.as.tesisList.size()>0)}">
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
+										<h:selectOneMenu id="sirketSec" value="#{devamsizlikRaporuHome.as.sirketId}" disabled="#{devamsizlikRaporuHome.as.sirketIdList.size() == 1}">
+											<f:selectItem itemLabel="Lütfen seçiniz" />
+											<f:selectItems value="#{devamsizlikRaporuHome.as.sirketIdList}" />
+											<a4j:support event="onchange" status="ajaxStatus" action="#{devamsizlikRaporuHome.fillTesisList()}" reRender="devamGiris,devamsizlikPanel" />
+										</h:selectOneMenu>
+									</s:decorate>
+
+									<s:decorate template="/layout/edit.xhtml"
+										rendered="#{devamsizlikRaporuHome.as.sirket.tesisDurumu and devamsizlikRaporuHome.as.tesisList.size()>0 }">
+										<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
+										<h:selectOneMenu value="#{devamsizlikRaporuHome.as.tesisId}" disabled="#{devamsizlikRaporuHome.as.tesisList.size() == 1}">
+											<f:selectItem itemLabel="Lütfen seçiniz" />
+											<f:selectItems value="#{devamsizlikRaporuHome.as.tesisList}" />
+											<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{devamsizlikRaporuHome.vardiyaGunList.clear()}"
+												reRender="devamGiris,devamsizlikPanel" />
+										</h:selectOneMenu>
+									</s:decorate>
+
+
+								</h:panelGrid>
 								<h:panelGrid columns="2" width="600px">
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">#{ortakIslemler.basTarihAciklama()}</ui:define>
@@ -35,36 +58,20 @@
 												reRender="devamGiris,devamsizlikPanel" />
 										</rich:calendar>
 									</s:decorate>
-									<s:decorate template="/layout/edit.xhtml" rendered="#{devamsizlikRaporuHome.as.sirketIdList.size() > 1}">
-										<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
-										<h:selectOneMenu id="sirketSec" value="#{devamsizlikRaporuHome.as.sirketId}" disabled="#{devamsizlikRaporuHome.as.sirketIdList.size() == 1}">
-											<f:selectItem itemLabel="Lütfen seçiniz" />
-											<f:selectItems value="#{devamsizlikRaporuHome.as.sirketIdList}" />
-											<a4j:support event="onchange" status="ajaxStatus" action="#{devamsizlikRaporuHome.fillTesisList()}" reRender="devamGiris,devamsizlikPanel" />
-										</h:selectOneMenu>
-									</s:decorate>
-									<s:decorate template="/layout/edit.xhtml"
-										rendered="#{devamsizlikRaporuHome.as.sirket.tesisDurumu and devamsizlikRaporuHome.as.tesisList.size()>0 }">
-										<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
-										<h:selectOneMenu value="#{devamsizlikRaporuHome.as.tesisId}" disabled="#{devamsizlikRaporuHome.as.tesisList.size() == 1}">
-											<f:selectItem itemLabel="Lütfen seçiniz" />
-											<f:selectItems value="#{devamsizlikRaporuHome.as.tesisList}" />
-											<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{devamsizlikRaporuHome.vardiyaGunList.clear()}"
-												reRender="devamGiris,devamsizlikPanel" />
-										</h:selectOneMenu>
-									</s:decorate>
-									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
-										<ui:define name="label">Tümünü Göster</ui:define>
-										<h:selectBooleanCheckbox value="#{devamsizlikRaporuHome.hepsiniGoster}">
-											<a4j:support event="onclick" reRender="devamGiris" />
-										</h:selectBooleanCheckbox>
-									</s:decorate>
+
 
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">Hareketleri Göster</ui:define>
 										<h:selectBooleanCheckbox value="#{devamsizlikRaporuHome.hareketleriGoster}" />
 									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">Tümünü Göster</ui:define>
+										<h:selectBooleanCheckbox value="#{devamsizlikRaporuHome.hepsiniGoster}">
+											<a4j:support event="onclick" reRender="devamGiris" />
+										</h:selectBooleanCheckbox>
+									</s:decorate>
 								</h:panelGrid>
+
 
 
 

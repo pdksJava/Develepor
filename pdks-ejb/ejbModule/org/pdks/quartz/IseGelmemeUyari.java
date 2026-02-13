@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 
+import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
@@ -299,12 +300,18 @@ public class IseGelmemeUyari implements Serializable {
 			sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_MAIL_TAKIP + " = 1");
 			if (yoneticiTanimsiz == false)
 				sb.append(" and P." + Personel.COLUMN_NAME_YONETICI + " is not null");
-			if (as != null) {
-				if (as.getSirketId() != null)
-					sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + as.getSirketId());
+			if (as != null) {		if (as.getSirketId() != null) {
+				sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + as.getSirketId());
 				if (as.getTesisId() != null)
 					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = " + as.getTesisId());
-			}
+				else if (as.getTesisList() != null && as.getTesisList().isEmpty() == false) {
+					List<Long> idList = new ArrayList<Long>();
+					for (SelectItem si : as.getTesisList())
+						idList.add((Long) si.getValue());
+					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :v ");
+					map.put("v", idList);
+				}
+			}}
 			// sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = 12996");
 			// sb.append(" and P." + Personel.COLUMN_NAME_YONETICI + " = 388");
 
