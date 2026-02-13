@@ -7740,6 +7740,7 @@ public class OrtakIslemler implements Serializable {
 
 		List<Tanim> list = null;
 		Sirket sirket = aramaSecenekleri.getSirketId() == null ? null : (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
+		aramaSecenekleri.setSirket(sirket);
 		if (sirket == null || sirket.isTesisDurumu()) {
 			HashMap map = new HashMap();
 			StringBuilder sb = new StringBuilder();
@@ -7867,18 +7868,18 @@ public class OrtakIslemler implements Serializable {
 			aramaSecenekleri.setSirketIdList(new ArrayList<SelectItem>());
 		Long sirketId = null, oldSirketId = aramaSecenekleri.getSirketId();
 		List<SelectItem> sirketIdList = aramaSecenekleri.getSirketIdList();
+		aramaSecenekleri.setSirket(null);
 		if (!sirketList.isEmpty()) {
 			list = PdksUtil.sortObjectStringAlanList(new ArrayList<Sirket>(sirketList), "getAd", null);
-			for (Sirket sirket : list)
+			for (Sirket sirket : list) {
 				if (sirket.getPdks() && sirket.getFazlaMesai()) {
 					if (oldSirketId != null && sirket.getId().equals(oldSirketId)) {
 						sirketId = sirket.getId();
 						aramaSecenekleri.setSirket(sirket);
 					}
-
 					sirketIdList.add(new SelectItem(sirket.getId(), sirket.getAd()));
 				}
-
+			}
 		}
 		sirketList = null;
 		if (sirketIdList.size() == 1) {
@@ -18639,13 +18640,13 @@ public class OrtakIslemler implements Serializable {
 		if (denklestirmeAy != null) {
 			Calendar cal = Calendar.getInstance();
 			tarih1 = PdksUtil.convertToJavaDate(String.valueOf(denklestirmeAy.getDonem()) + "01", "yyyyMMdd");
- 			tarih2 = PdksUtil.getAyinSonGunu(tarih1);
+			tarih2 = PdksUtil.getAyinSonGunu(tarih1);
 			oncekiTarih2 = PdksUtil.tariheGunEkleCikar(tarih1, -1);
 			sonrakiTarih1 = PdksUtil.tariheGunEkleCikar(tarih2, 1);
 			cal.setTime(oncekiTarih2);
 			cal.set(Calendar.DATE, 1);
 			oncekiTarih1 = cal.getTime();
- 			sonrakiTarih2 = PdksUtil.getAyinSonGunu(sonrakiTarih1);
+			sonrakiTarih2 = PdksUtil.getAyinSonGunu(sonrakiTarih1);
 		}
 		changeMasterMap.put("$oncekiTarih1$", oncekiTarih1 != null ? user.dateFormatla(oncekiTarih1) : "");
 		changeMasterMap.put("$oncekiTarih2$", oncekiTarih2 != null ? user.dateFormatla(oncekiTarih2) : "");
