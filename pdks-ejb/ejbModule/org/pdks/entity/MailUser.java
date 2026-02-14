@@ -14,7 +14,7 @@ public class MailUser extends BasePDKSObject implements Serializable {
 
 	public static final String TABLE_NAME = "MAILUSER";
 
-	private Integer version;
+	private Integer version = 0;
 
 	private String username;
 
@@ -81,8 +81,7 @@ public class MailUser extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		
-		
+
 	}
 
 }
