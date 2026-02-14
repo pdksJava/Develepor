@@ -3037,12 +3037,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 					modelList = pdksEntityController.getObjectBySQLList(sb, fields, CalismaModeliAy.class);
+					if (aylikPuantaj.getPersonelDenklestirme() != null) {
+						if (modelList.isEmpty() == false || adminRole || loginUser.isIK())
+							ortakIslemler.addObjectList(aylikPuantaj.getPersonelDenklestirme().getCalismaModeliAy(), modelList, null);
+					}
 				} else
 					modelList = new ArrayList<CalismaModeliAy>();
-				if (aylikPuantaj.getPersonelDenklestirme() != null) {
-					if (modelList.isEmpty() == false || adminRole || loginUser.isIK())
-						ortakIslemler.addObjectList(aylikPuantaj.getPersonelDenklestirme().getCalismaModeliAy(), modelList, null);
-				}
 
 				Long tesisId = sirket.getTesisDurum() && personel.getTesis() != null ? personel.getTesis().getId() : null;
 				List<Long> idList = new ArrayList<Long>();
