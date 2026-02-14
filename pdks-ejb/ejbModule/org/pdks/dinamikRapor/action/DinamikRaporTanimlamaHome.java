@@ -494,7 +494,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 			if (seciliPdksDinamikRapor.isStoreProcedure() == false) {
 				if (PdksUtil.hasStringValue(seciliPdksDinamikRaporParametre.getEsitlik())) {
 					String esitlik = seciliPdksDinamikRaporParametre.getEsitlik().trim().toLowerCase(Locale.ENGLISH);
-					List<String> veriler = Arrays.asList(new String[] { "<=", ">=", "like" });
+					List<String> veriler = Arrays.asList(new String[] { ENumEsitlik.BUYUKESIT.value(), ENumEsitlik.KUCUKESIT.value(), ENumEsitlik.ICEREN.value() });
 					if (!veriler.contains(esitlik))
 						seciliPdksDinamikRaporParametre.setEsitlik("");
 					else
