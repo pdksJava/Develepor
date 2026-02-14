@@ -894,7 +894,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 					if (!authenticatedUser.isIK() && !authenticatedUser.isAdmin()) {
 						map1.clear();
 						map1.put(PdksEntityController.MAP_KEY_MAP, "getPersonelId");
-						map1.put("devredenSure<>", null);
+						map1.put("devredenSure <> ", null);
 						map1.put("onaylandi=", Boolean.TRUE);
 						if (denklestirmeAy != null)
 							map1.put("denklestirmeAy.id=", denklestirmeAy.getId());

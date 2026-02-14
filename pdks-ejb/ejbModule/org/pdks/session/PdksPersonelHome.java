@@ -398,12 +398,12 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				fields.put("bitTarih>=", donemselDurum.getBasTarih());
 				fields.put("basTarih<=", donemselDurum.getBitTarih());
 				if (donemselDurum.getId() != null)
-					fields.put("id<>", donemselDurum.getId());
+					fields.put("id <> ", donemselDurum.getId());
 				if (getIsAramaIzinDurum(donemselDurum.getPersonel())) {
 					if (donemselDurum.getIsAramaIzni())
 						fields.put("personelDurumTipiId=", donemselDurum.getPersonelDurumTipiId());
 					else
-						fields.put("personelDurumTipiId<>", donemselDurum.getPersonelDurumTipiId());
+						fields.put("personelDurumTipiId <> ", donemselDurum.getPersonelDurumTipiId());
 				}
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -3138,7 +3138,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						sb = new StringBuilder();
 						sb.append("select P." + PersonelKGS.COLUMN_NAME_ID + ", K." + PersonelKGS.COLUMN_NAME_ID + " as REF from " + PersonelKGS.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 						sb.append(" inner join " + PersonelKGS.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on " + birdenFazlaKGSSirketSQL);
-						sb.append(" where P." + PersonelKGS.COLUMN_NAME_ID + " :" + fieldName + " and P." + PersonelKGS.COLUMN_NAME_SICIL_NO + " <>''");
+						sb.append(" where P." + PersonelKGS.COLUMN_NAME_ID + " :" + fieldName + " and P." + PersonelKGS.COLUMN_NAME_SICIL_NO + "  <> ''");
 						fields.put(fieldName, pList);
 						if (session != null)
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -3453,7 +3453,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			parametreMap.put("user.pdksPersonel.durum=", Boolean.TRUE);
 			parametreMap.put("user.durum=", Boolean.TRUE);
 			if (pdksPersonel.getId() != null)
-				parametreMap.put("user.pdksPersonel.id<>", pdksPersonel.getId());
+				parametreMap.put("user.pdksPersonel.id <> ", pdksPersonel.getId());
 			parametreMap.put("role.rolename=", Role.TIPI_YONETICI_KONTRATLI);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -3592,7 +3592,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		HashMap fields = new HashMap();
 		if (sirket != null)
 			fields.put("departman.id=", sirket.getDepartman().getId());
-		fields.put("personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+		fields.put("personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
 		fields.put("bakiyeIzinTipi=", null);
 		fields.put("durum=", Boolean.TRUE);
 		if (session != null)

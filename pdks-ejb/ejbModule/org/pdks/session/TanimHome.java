@@ -281,7 +281,7 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("tipi=", Tanim.TIPI_GENEL_TANIM);
 		if (!authenticatedUser.isAdmin()) {
-			parametreMap.put("kodu<>", Tanim.TIPI_GENEL_TANIM);
+			parametreMap.put("kodu <> ", Tanim.TIPI_GENEL_TANIM);
 			parametreMap.put("guncelle=", Boolean.TRUE);
 			parametreMap.put("durum=", Boolean.TRUE);
 

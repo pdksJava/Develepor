@@ -191,9 +191,9 @@ public class UserHome extends EntityHome<User> implements Serializable {
 		HashMap parametreMap = new HashMap();
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		parametreMap.put("status=", Boolean.TRUE);
+		parametreMap.put("status = ", Boolean.TRUE);
 		if (!authenticatedUser.isAdmin())
-			parametreMap.put("rolename<>", Role.TIPI_ADMIN);
+			parametreMap.put("rolename <> ", Role.TIPI_ADMIN);
 		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List allRoles = pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap, Role.class);
 		ortakIslemler.setUserRoller(getInstance(), session);

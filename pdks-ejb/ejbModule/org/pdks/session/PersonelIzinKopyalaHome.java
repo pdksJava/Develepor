@@ -370,7 +370,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 			HashMap fields = new HashMap();
 			fields.put("durum=", Boolean.TRUE);
 			fields.put("izinTipiTanim.kodu", tipler);
-			fields.put("personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+			fields.put("personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<IzinTipi> izinTipleri = pdksEntityController.getObjectByInnerObjectListInLogic(fields, IzinTipi.class);
 			String idStr = "";

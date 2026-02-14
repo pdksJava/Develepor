@@ -316,16 +316,16 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			StringBuilder sb = new StringBuilder();
 			try {
 				sb.append(" with IZIN_BAKIYELER as ( ");
-				sb.append(" select  YEAR(I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ") as YIL,I." + PersonelIzin.COLUMN_NAME_PERSONEL + ",I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + ",max(I." + IzinTipi.COLUMN_NAME_ID + ") as IZIN_ID from " + PersonelIzin.TABLE_NAME + " I "
+				sb.append(" select year(I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ") as YIL, I." + PersonelIzin.COLUMN_NAME_PERSONEL + ",I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + ",max(I." + IzinTipi.COLUMN_NAME_ID + ") as IZIN_ID from " + PersonelIzin.TABLE_NAME + " I "
 						+ PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + Personel.TABLE_NAME + " P on P." + Personel.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_PERSONEL + " and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= " + PdksEntityController.getSqlBuGun());
 				if (suaSenelikKullan)
-					sb.append(" and (P.SUA_OLABILIR is null or P.SUA_OLABILIR<>1 ) ");
+					sb.append(" and (P.SUA_OLABILIR is null or P.SUA_OLABILIR <> 1 ) ");
 				sb.append(" inner join " + IzinTipi.TABLE_NAME + " IT " + PdksEntityController.getJoinLOCK() + " on IT." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " and IT." + IzinTipi.COLUMN_NAME_DEPARTMAN + " = 1 and IT." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI
 						+ " is not null ");
 				sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = IT." + IzinTipi.COLUMN_NAME_IZIN_TIPI + " and T." + Tanim.COLUMN_NAME_KODU + " IN ('" + IzinTipi.YILLIK_UCRETLI_IZIN + "','" + IzinTipi.SUA_IZNI + "') ");
 				sb.append(" where I." + PersonelIzin.COLUMN_NAME_IZIN_SURESI + " > 0 and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (8,9) ");
-				sb.append(" group by YEAR(I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ")  ,I." + PersonelIzin.COLUMN_NAME_PERSONEL + ",I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI);
+				sb.append(" group by year(I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ")  ,I." + PersonelIzin.COLUMN_NAME_PERSONEL + ",I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI);
 				sb.append(" ), ");
 				sb.append(" CIFT_IZIN as ( ");
 				sb.append(" select " + PersonelIzin.COLUMN_NAME_PERSONEL + ",YIL,min(IZIN_ID) as IZIN_1,Max(IZIN_ID) as IZIN_2 from IZIN_BAKIYELER ");
@@ -397,8 +397,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			map.put("bakiyeIzinTipi.izinTipiTanim.kodu not ", haricKodlar);
 			map.put("bakiyeIzinTipi.durum=", Boolean.TRUE);
 			map.put("bakiyeIzinTipi.bakiyeDevirTipi=", IzinTipi.BAKIYE_DEVIR_SENELIK);
-			map.put("bakiyeIzinTipi.onaylayanTipi<>", IzinTipi.ONAYLAYAN_TIPI_YOK);
-			map.put("bakiyeIzinTipi.personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+			map.put("bakiyeIzinTipi.onaylayanTipi <> ", IzinTipi.ONAYLAYAN_TIPI_YOK);
+			map.put("bakiyeIzinTipi.personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
 			map.put("kotaBakiye>=", 0D);
 			hataKonum = "bakiyeIzinTipleri okunuyor ";
 			TreeMap<Long, Tanim> senelikBakiyeIzinTipiMap = pdksEntityController.getObjectByInnerObjectMapInLogic(map, IzinTipi.class, Boolean.TRUE);

@@ -269,7 +269,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 					map.put(PdksEntityController.MAP_KEY_MAP, "getSapKodu");
 					if (session != null)
 						map.put(PdksEntityController.MAP_KEY_SESSION, session);
-					// map.put("sapKodu<>", "");
+					// map.put("sapKodu <> ", "");
 					map.put("erpDurum=", Boolean.TRUE);
 					map.put("durum=", Boolean.TRUE);
 					// map.put("pdks=", Boolean.TRUE);

@@ -297,7 +297,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 				HashMap fields = new HashMap();
 				if (authenticatedUser.isYonetici() || authenticatedUser.isYoneticiKontratli()) {
 					if (!authenticatedUser.isIKAdmin())
-						fields.put("pdksSicilNo<>", authenticatedUser.getPdksPersonel().getPdksSicilNo());
+						fields.put("pdksSicilNo <> ", authenticatedUser.getPdksPersonel().getPdksSicilNo());
 					fields.put("pdksSicilNo", authenticatedUser.getYetkiTumPersonelNoList());
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -728,7 +728,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 					map.clear();
 					map.put("departman.id=", sirket.getDepartman().getId());
 					map.put("durum=", Boolean.TRUE);
-					map.put("personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+					map.put("personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
 					map.put("bakiyeIzinTipi=", null);
 					if (session != null)
 						map.put(PdksEntityController.MAP_KEY_SESSION, session);

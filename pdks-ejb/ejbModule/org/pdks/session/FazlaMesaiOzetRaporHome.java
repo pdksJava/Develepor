@@ -324,7 +324,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				HashMap fields = new HashMap();
 				if (authenticatedUser.isYonetici() || authenticatedUser.isYoneticiKontratli()) {
 					if (!authenticatedUser.isIKAdmin())
-						fields.put("pdksSicilNo<>", authenticatedUser.getPdksPersonel().getPdksSicilNo());
+						fields.put("pdksSicilNo <> ", authenticatedUser.getPdksPersonel().getPdksSicilNo());
 					fields.put("pdksSicilNo", authenticatedUser.getYetkiTumPersonelNoList());
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);

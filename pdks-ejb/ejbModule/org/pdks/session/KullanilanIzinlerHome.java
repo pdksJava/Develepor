@@ -293,12 +293,12 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 		map.put(PdksEntityController.MAP_KEY_MAP, "getKodu");
 		map.put(PdksEntityController.MAP_KEY_SELECT, "izinTipiTanim");
 		map.put("bakiyeIzinTipi=", null);
-		// map.put("izinTipiTanim.kodu<>", IzinTipi.SSK_ISTIRAHAT);
-		// map.put("personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+		// map.put("izinTipiTanim.kodu <> ", IzinTipi.SSK_ISTIRAHAT);
+		// map.put("personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
 		if (!authenticatedUser.isAdmin()) {
 			map.put("departman=", authenticatedUser.getDepartman());
 			if (!authenticatedUser.isIK() && !authenticatedUser.getPdksPersonel().isOnaysizIzinKullanir())
-				map.put("onaylayanTipi<>", IzinTipi.ONAYLAYAN_TIPI_YOK);
+				map.put("onaylayanTipi <> ", IzinTipi.ONAYLAYAN_TIPI_YOK);
 
 		}
 		if (session != null)

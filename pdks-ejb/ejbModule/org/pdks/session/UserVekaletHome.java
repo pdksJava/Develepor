@@ -287,7 +287,7 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 		parametreMap.put("user.pdksPersonel.durum =", Boolean.TRUE);
 		Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());
 		if ((authenticatedUser.isYonetici() && !authenticatedUser.isIK()) || authenticatedUser.isMudur())
-			parametreMap.put("user<>", authenticatedUser);
+			parametreMap.put("user <> ", authenticatedUser);
 		parametreMap.put("user.pdksPersonel.sskCikisTarihi>=", bugun);
 		parametreMap.put("user.pdksPersonel.iseBaslamaTarihi<=", bugun);
 		if (PdksUtil.hasStringValue(sicilNo))
@@ -300,7 +300,7 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 		}
 		UserVekalet userVekalet = getInstance();
 		if (userVekalet.getId() != null)
-			parametreMap.put("user.id<>", userVekalet.getYeniYonetici().getId());
+			parametreMap.put("user.id <> ", userVekalet.getYeniYonetici().getId());
 
 		if (!ortakIslemler.getAdminRole(authenticatedUser))
 			parametreMap.put("user.pdksPersonel.sirket.departman.id=", authenticatedUser.getDepartman().getId());

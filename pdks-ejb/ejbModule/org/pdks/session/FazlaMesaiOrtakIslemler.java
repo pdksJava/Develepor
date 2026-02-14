@@ -3422,7 +3422,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					fields.put("iseBaslamaTarihi<=", bitTarih);
 				if (basTarih != null)
 					fields.put("sskCikisTarihi>=", basTarih);
-				fields.put("ekSaha3<>", null);
+				fields.put("ekSaha3 <> ", null);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				TreeMap<Long, Tanim> bolumMap = pdksEntityController.getObjectByInnerObjectMapInLogic(fields, Personel.class, true);

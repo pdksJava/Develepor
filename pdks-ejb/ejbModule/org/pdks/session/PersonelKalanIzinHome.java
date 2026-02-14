@@ -2223,10 +2223,10 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 					tipler.add(IzinTipi.YILLIK_UCRETLI_IZIN);
 					fields.clear();
 					fields.put("izinTipiTanim.kodu", tipler);
-					fields.put("bakiyeIzinTipi<>", null);
+					fields.put("bakiyeIzinTipi <> ", null);
 					fields.put("departman.id=", pdksPersonel.getSirket().getDepartman().getId());
 					fields.put("durum=", Boolean.TRUE);
-					// fields.put("bakiyeIzinTipi.personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+					// fields.put("bakiyeIzinTipi.personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 					izinTipiList = pdksEntityController.getObjectByInnerObjectListInLogic(fields, IzinTipi.class);

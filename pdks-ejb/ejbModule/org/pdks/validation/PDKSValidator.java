@@ -211,7 +211,7 @@ public class PDKSValidator implements Serializable {
 				map.put("bitisTarih>=", pdksTatil.getBasTarih());
 				map.put("durum=", Boolean.TRUE);
 				if (pdksTatil.getId() != null)
-					map.put("id<>", pdksTatil.getId());
+					map.put("id <> ", pdksTatil.getId());
 				Tatil tatil = (Tatil) pdksEntityController.getObjectByInnerObjectInLogic(map, Tatil.class);
 				if (tatil != null)
 					buffer.add(tatil.getAd() + " tatili ile çakışmaktadır");

@@ -528,7 +528,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 		if (izinTipi.getDepartman() != null)
 			parametreMap.put("departman.id=", izinTipi.getDepartman().getId());
 		if (izinTipi.getId() != null)
-			parametreMap.put("id<>", izinTipi.getId());
+			parametreMap.put("id <> ", izinTipi.getId());
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		TreeMap tanimMap = pdksEntityController.getObjectByInnerObjectMapInLogic(parametreMap, IzinTipi.class, Boolean.FALSE);

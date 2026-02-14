@@ -96,11 +96,11 @@ public class SuperVisorDegistirHome extends EntityHome<User> implements Serializ
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		if (authenticatedUser.getSeciliSuperVisor() != null)
-			parametreMap.put("user<>", authenticatedUser.getSeciliSuperVisor());
+			parametreMap.put("user.id <> ", authenticatedUser.getSeciliSuperVisor().getId());
 		if (authenticatedUser.isSuperVisor()) {
-			parametreMap.put("user.pdksPersonel.sirket=", authenticatedUser.getPdksPersonel().getSirket());
+			parametreMap.put("user.pdksPersonel.sirket.id=", authenticatedUser.getPdksPersonel().getSirket().getId());
 		} else if (authenticatedUser.isIK())
-			parametreMap.put("user.pdksPersonel.sirket.departman=", authenticatedUser.getDepartman());
+			parametreMap.put("user.pdksPersonel.sirket.departman.id=", authenticatedUser.getDepartman().getId());
 		try {
 			TreeMap userMap = pdksEntityController.getObjectByInnerObjectMapInLogic(parametreMap, UserRoles.class, Boolean.FALSE);
 			if (!userMap.isEmpty())

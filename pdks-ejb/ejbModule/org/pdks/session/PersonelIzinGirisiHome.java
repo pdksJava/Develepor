@@ -288,7 +288,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 									saveList.add(izin2);
 									map.clear();
 									map.put("personelIzin.id =", yilBasiIzin.getId());
-									map.put("onaylayanTipi<>", PersonelIzinOnay.ONAYLAYAN_TIPI_IK);
+									map.put("onaylayanTipi <> ", PersonelIzinOnay.ONAYLAYAN_TIPI_IK);
 									map.put(PdksEntityController.MAP_KEY_SESSION, session);
 									List<PersonelIzinOnay> onayIzinler = pdksEntityController.getObjectByInnerObjectListInLogic(map, PersonelIzinOnay.class);
 									PersonelIzinOnay izinOnaySon = null;
@@ -1066,7 +1066,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				hashMap.put("departman.id=", authenticatedUser.getDepartman().getId());
 			// hashMap.put("izinTipiTanim.kodu like", IzinTipi.SSK_ISTIRAHAT);
 			hashMap.put("izinTipiTanim.kodu like", "%I%");
-			hashMap.put("personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+			hashMap.put("personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
 			hashMap.put("durum=", Boolean.TRUE);
 			if (session != null)
 				hashMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -1186,7 +1186,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		HashMap paramMap = new HashMap();
 		paramMap.put("izinTipi.bakiyeIzinTipi=", null);
 		paramMap.put("guncelleyenUser=", null);
-		paramMap.put("izinDurumu<>", PersonelIzin.IZIN_DURUMU_BIRINCI_YONETICI_ONAYINDA);
+		paramMap.put("izinDurumu <> ", PersonelIzin.IZIN_DURUMU_BIRINCI_YONETICI_ONAYINDA);
 		if (session != null)
 			paramMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<PersonelIzin> izinListesi = pdksEntityController.getObjectByInnerObjectListInLogic(paramMap, PersonelIzin.class);
@@ -3000,7 +3000,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				map.put("izinTipi.bakiyeIzinTipi=", null);
 				map.put("hesapTipi=", PersonelIzin.HESAP_TIPI_GUN);
 				if (izin.getId() != null)
-					map.put("id<>", izin.getId());
+					map.put("id <> ", izin.getId());
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
 				try {
@@ -3379,7 +3379,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			param.put("baslangicZamani<=", ortakIslemler.tariheGunEkleCikar(cal, personelIzin.getBaslangicZamani(), 1));
 			param.put("izinDurumu not", izinDurumlari);
 			if (personelIzin.getId() != null)
-				param.put("id<>", personelIzin.getId());
+				param.put("id <> ", personelIzin.getId());
 			if (session != null)
 				param.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
@@ -3435,7 +3435,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			param.put("baslangicZamani<=", personelIzin.getBitisZamani());
 			param.put("izinDurumu not ", izinDurumlari);
 			if (personelIzin.getId() != null)
-				param.put("id<>", personelIzin.getId());
+				param.put("id <> ", personelIzin.getId());
 			if (session != null)
 				param.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
@@ -3579,7 +3579,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			param.put("baslangicZamani<=", ortakIslemler.tariheGunEkleCikar(cal, personelIzin.getBitisZamani(), 1));
 			param.put("izinDurumu not ", izinDurumlari);
 			if (personelIzin.getId() != null)
-				param.put("id<>", personelIzin.getId());
+				param.put("id <> ", personelIzin.getId());
 			TreeMap<String, Double> gunlukToplam = new TreeMap<String, Double>();
 			if (basTarihi.equals(bitTarihi))
 				gunlukToplam.put(basTarihi, izinSuresiGunSaat);
@@ -3897,7 +3897,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		hashMap.put("departman.id=", izinSahibi.getSirket().getDepartman().getId());
 		hashMap.put("izinTipiTanim.kodu like", "%I%");
 		// hashMap.put("izinTipiTanim.kodu=", IzinTipi.SSK_ISTIRAHAT);
-		hashMap.put("personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+		hashMap.put("personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
 		hashMap.put("durum=", Boolean.TRUE);
 		if (session != null)
 			hashMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -4525,7 +4525,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			izinDurum.add(PersonelIzin.IZIN_DURUMU_ERP_GONDERILDI);
 			HashMap paramMap = new HashMap();
 			paramMap.put("izinTipi.bakiyeIzinTipi=", null);
-			paramMap.put("izinTipi.onaylayanTipi<>", IzinTipi.ONAYLAYAN_TIPI_YOK);
+			paramMap.put("izinTipi.onaylayanTipi <> ", IzinTipi.ONAYLAYAN_TIPI_YOK);
 			paramMap.put("izinSahibi", personelList);
 			paramMap.put("baslangicZamani<=", tarih);
 			paramMap.put("bitisZamani>=", tarih);
@@ -4574,7 +4574,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		map.put("sskCikisTarihi>=", bugun);
 		map.put("iseBaslamaTarihi<=", bugun);
 		map.put("ekSaha2.kodu=", Personel.STATU_HEKIM);
-		map.put("pdksSicilNo<>", "");
+		map.put("pdksSicilNo <> ", "");
 		map.put("durum=", Boolean.TRUE);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -5022,7 +5022,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				if (!isGirisSSK()) {
 					map.put("bakiyeIzinTipi=", null);
 					map.put("durum=", Boolean.TRUE);
-					map.put("personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+					map.put("personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
 					if (stajer)
 						map.put("stajerKullanilir=", Boolean.TRUE);
 					map.put("departman.id=", izinSahibi.getSirket().getDepartman().getId());
@@ -5127,7 +5127,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	 */
 	private IzinTipi getBakiyeIzinTipi(Departman departman, String tipiTipiKodu) {
 		HashMap map = new HashMap();
-		map.put("bakiyeIzinTipi <>", null);
+		map.put("bakiyeIzinTipi  <> ", null);
 		map.put("bakiyeIzinTipi.izinTipiTanim.kodu=", tipiTipiKodu);
 		map.put("bakiyeIzinTipi.departman.id=", departman.getId());
 		if (session != null)

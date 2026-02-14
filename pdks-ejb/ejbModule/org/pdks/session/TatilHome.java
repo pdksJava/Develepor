@@ -261,8 +261,8 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 						durumList.add(PersonelIzin.IZIN_DURUMU_REDEDILDI);
 						durumList.add(PersonelIzin.IZIN_DURUMU_ERP_GONDERILDI);
 						parametreMap.put("izinDurumu not", durumList);
-						parametreMap.put("izinTipi.personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
-						parametreMap.put("izinTipi.takvimGunumu<>", Boolean.TRUE);
+						parametreMap.put("izinTipi.personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
+						parametreMap.put("izinTipi.takvimGunumu <> ", Boolean.TRUE);
 						parametreMap.put("izinTipi.bakiyeIzinTipi=", null);
 						if (session != null)
 							parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);

@@ -1202,12 +1202,12 @@ public class OrtakIslemler implements Serializable {
 		fields.put(fieldName, roller);
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		StringBuilder sb = new StringBuilder();
-		sb.append("with IZIN AS ( ");
-		sb.append(" select U." + User.COLUMN_NAME_ID + " AS " + UserRoles.COLUMN_NAME_USER + ", MAX (I." + PersonelIzin.COLUMN_NAME_ID + ") AS IZIN_ID from " + User.TABLE_NAME + " U ");
-		sb.append("   inner join " + PersonelIzin.TABLE_NAME + " I with(nolock) on I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = U." + User.COLUMN_NAME_PERSONEL);
+		sb.append("with IZIN as ( ");
+		sb.append(" select U." + User.COLUMN_NAME_ID + " as " + UserRoles.COLUMN_NAME_USER + ", max(I." + PersonelIzin.COLUMN_NAME_ID + ") as IZIN_ID from " + User.TABLE_NAME + " U ");
+		sb.append("   inner join " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = U." + User.COLUMN_NAME_PERSONEL);
 		sb.append("		 and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (" + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + "," + PersonelIzin.IZIN_DURUMU_REDEDILDI + ") and I." + PersonelIzin.COLUMN_NAME_IZIN_SURESI + " > 30 ");
-		sb.append(" 	 and ( convert(date, " + PdksEntityController.getSqlSistemTarihi() + ") between convert(date, I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ") and convert(date, I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + ")) ");
-		sb.append("   inner join " + IzinTipi.TABLE_NAME + " T with(nolock) on T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " and T." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null  ");
+		sb.append(" 	 and  " + PdksEntityController.getSqlBuGun() + " between convert(date, I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ") and convert(date, I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + ")) ");
+		sb.append("   inner join " + IzinTipi.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " and T." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null  ");
 		sb.append(" group by U." + User.COLUMN_NAME_ID);
 		sb.append("  ) ");
 		if (class1.equals(UserRoles.class)) {
@@ -4811,7 +4811,7 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" and KS." + KapiSirket.COLUMN_NAME_BAS_TARIH + " <= :b2 ");
 				map.put("b2", tariheGunEkleCikar(cal, bitTarih, 1));
 			}
-			sb.append(" where P." + PersonelKGS.COLUMN_NAME_SICIL_NO + " <>''");
+			sb.append(" where P." + PersonelKGS.COLUMN_NAME_SICIL_NO + "  <> ''");
 			if (personelIdInputList != null) {
 				fieldName = "p";
 				sb.append(" and P." + PersonelKGS.COLUMN_NAME_ID + " :" + fieldName);
@@ -6723,7 +6723,7 @@ public class OrtakIslemler implements Serializable {
 			map.put("pdksSicilNo", authenticatedUser.getYetkiTumPersonelNoList());
 			map.put("durum=", Boolean.TRUE);
 			if (!kendisiBul)
-				map.put("id<>", authenticatedUser.getPdksPersonel().getId());
+				map.put("id <> ", authenticatedUser.getPdksPersonel().getId());
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
@@ -7930,8 +7930,8 @@ public class OrtakIslemler implements Serializable {
 				HashMap fields = new HashMap();
 				StringBuilder sb = new StringBuilder();
 				sb.append(" select R.* from " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK());
-				sb.append(" inner join " + IzinReferansERP.TABLE_NAME + " R with(nolock) on I." + PersonelIzin.COLUMN_NAME_ID + " = R." + IzinReferansERP.COLUMN_NAME_IZIN_ID + " and R." + IzinReferansERP.COLUMN_NAME_SILINEBILIR + " = 1");
-				sb.append(" left join " + izinERPTableViewAdi + " V with(nolock) on V." + IzinERPDB.COLUMN_NAME_REFERANS_NO + " = R." + IzinReferansERP.COLUMN_NAME_ID);
+				sb.append(" inner join " + IzinReferansERP.TABLE_NAME + " R " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_ID + " = R." + IzinReferansERP.COLUMN_NAME_IZIN_ID + " and R." + IzinReferansERP.COLUMN_NAME_SILINEBILIR + " = 1");
+				sb.append(" left join " + izinERPTableViewAdi + " V " + PdksEntityController.getJoinLOCK() + " on V." + IzinERPDB.COLUMN_NAME_REFERANS_NO + " = R." + IzinReferansERP.COLUMN_NAME_ID);
 				sb.append(" where I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= :d and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " = " + PersonelIzin.IZIN_DURUMU_ONAYLANDI);
 				sb.append(" and V." + IzinERPDB.COLUMN_NAME_REFERANS_NO + " is null");
 				fields.put("d", PdksUtil.tariheAyEkleCikar(new Date(), -1));
@@ -11490,7 +11490,7 @@ public class OrtakIslemler implements Serializable {
 		HashMap userMap = new HashMap();
 		userMap.put("username=", kullanici.getUsername());
 		if (kullanici.getId() != null)
-			userMap.put("id<>", kullanici.getId());
+			userMap.put("id <> ", kullanici.getId());
 		if (session != null)
 			userMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		user = (User) pdksEntityController.getObjectByInnerObjectInLogic(userMap, User.class);
@@ -12756,7 +12756,7 @@ public class OrtakIslemler implements Serializable {
 			map.put("iseBaslamaTarihi<=", bugun);
 			map.put("durum=", Boolean.TRUE);
 			map.put("yoneticisi.id=", user.getPdksPersonel().getId());
-			map.put("pdksSicilNo<>", "");
+			map.put("pdksSicilNo <> ", "");
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List personeller = pdksEntityController.getObjectByInnerObjectListInLogic(map, Personel.class);
@@ -16703,7 +16703,7 @@ public class OrtakIslemler implements Serializable {
 				// map.put("bakiyeIzinTipi.durum=", Boolean.TRUE);
 				// map.put("bakiyeIzinTipi.bakiyeDevirTipi=", IzinTipi.BAKIYE_DEVIR_SENELIK);
 				// map.put("departman=", personel.getSirket().getDepartman());
-				// map.put("personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+				// map.put("personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
 				// map.put("kotaBakiye>=", 0D);
 				// if (session != null)
 				// map.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -19452,7 +19452,7 @@ public class OrtakIslemler implements Serializable {
 		if (authenticatedUser != null && !authenticatedUser.isYoneticiKontratli() && sirket != null)
 			parametreMap.put("departman.id=", sirket.getDepartman().getId());
 		parametreMap.put("izinTipiTanim.kodu=", izinTipiKodu);
-		parametreMap.put("personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+		parametreMap.put("personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		izinTipList = pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap, IzinTipi.class);
@@ -19591,10 +19591,10 @@ public class OrtakIslemler implements Serializable {
 		else if (authenticatedUser != null)
 			parametreMap.put("departman.id=", authenticatedUser.getDepartman().getId());
 		parametreMap.put("izinTipiTanim.kodu=", IzinTipi.FAZLA_MESAI);
-		parametreMap.put("bakiyeIzinTipi<>", null);
+		parametreMap.put("bakiyeIzinTipi <> ", null);
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		parametreMap.put("personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+		parametreMap.put("personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
 		IzinTipi izinTipi = (IzinTipi) pdksEntityController.getObjectByInnerObjectInLogic(parametreMap, IzinTipi.class);
 		parametreMap.clear();
 		List<PersonelIzin> izinList = new ArrayList<PersonelIzin>();
@@ -19609,7 +19609,7 @@ public class OrtakIslemler implements Serializable {
 			parametreMap.put("izinTipi=", izinTipi);
 		else {
 			parametreMap.put("izinTipi.izinTipiTanim.kodu=", IzinTipi.FAZLA_MESAI);
-			parametreMap.put("izinTipi.bakiyeIzinTipi<>", null);
+			parametreMap.put("izinTipi.bakiyeIzinTipi <> ", null);
 
 		}
 		if (session != null)

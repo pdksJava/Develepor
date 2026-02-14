@@ -174,7 +174,7 @@ public class BakiyeIzinHome extends EntityHome<PersonelIzin> {
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		HashMap fields = new HashMap();
 		fields.put("durum=", Boolean.TRUE);
-		fields.put("bakiyeIzinTipi.izinTipiTanim.kodu<>", IzinTipi.YILLIK_UCRETLI_IZIN);
+		fields.put("bakiyeIzinTipi.izinTipiTanim.kodu <> ", IzinTipi.YILLIK_UCRETLI_IZIN);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<IzinTipi> list = pdksEntityController.getObjectByInnerObjectListInLogic(fields, IzinTipi.class);
@@ -212,7 +212,7 @@ public class BakiyeIzinHome extends EntityHome<PersonelIzin> {
 		map.put(PdksEntityController.MAP_KEY_SELECT, "bakiyeIzinTipi.izinTipiTanim");
 		map.put("bakiyeIzinTipi.durum=", Boolean.TRUE);
 		map.put("bakiyeIzinTipi.bakiyeDevirTipi", devirTipiList);
-		map.put("bakiyeIzinTipi.personelGirisTipi<>", IzinTipi.GIRIS_TIPI_YOK);
+		map.put("bakiyeIzinTipi.personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		boolean hekim = authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.getPdksPersonel().isHekim();
@@ -220,7 +220,7 @@ public class BakiyeIzinHome extends EntityHome<PersonelIzin> {
 		if (!authenticatedUser.isAdmin()) {
 			map.put("departman=", authenticatedUser.getDepartman());
 			if (!authenticatedUser.isIK() && !authenticatedUser.getPdksPersonel().isOnaysizIzinKullanir())
-				map.put("bakiyeIzinTipi.onaylayanTipi<>", IzinTipi.ONAYLAYAN_TIPI_YOK);
+				map.put("bakiyeIzinTipi.onaylayanTipi <> ", IzinTipi.ONAYLAYAN_TIPI_YOK);
 
 		}
 		List<String> haricKodlar = new ArrayList<String>();
