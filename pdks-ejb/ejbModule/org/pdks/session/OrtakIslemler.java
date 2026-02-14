@@ -6253,7 +6253,7 @@ public class OrtakIslemler implements Serializable {
 					queryStr = new StringBuilder("INSERT INTO " + PersonelIzin.TABLE_NAME + " (" + PersonelIzin.COLUMN_NAME_DURUM + ", " + PersonelIzin.COLUMN_NAME_OLUSTURMA_TARIHI + ", " + PersonelIzin.COLUMN_NAME_ACIKLAMA + ", " + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ", "
 							+ PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + ",");
 					queryStr.append(PersonelIzin.COLUMN_NAME_IZIN_SURESI + ", " + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + "," + PersonelIzin.COLUMN_NAME_VERSION + "," + PersonelIzin.COLUMN_NAME_OLUSTURAN + ", " + PersonelIzin.COLUMN_NAME_PERSONEL + ", " + PersonelIzin.COLUMN_NAME_IZIN_TIPI + ")");
-					queryStr.append(" select 1 as DURUM,GETDATE() olusturmaTarihi, '" + aciklama + "' as ACIKLAMA," + bakiyeTarih + " as BASLANGIC_ZAMANI,");
+					queryStr.append(" select 1 as DURUM," + PdksEntityController.getSqlSistemTarihi() + " olusturmaTarihi, '" + aciklama + "' as ACIKLAMA," + bakiyeTarih + " as BASLANGIC_ZAMANI,");
 					queryStr.append(" " + hakedisTarih + " as BITIS_ZAMANI, " + sure + " as IZIN_SURESI," + PersonelIzin.IZIN_DURUMU_ONAYLANDI + " as IZIN_DURUMU, 0 as version," + user.getId() + " olusturanUser_id ,");
 					queryStr.append(" P." + Personel.COLUMN_NAME_ID + " PERSONEL_ID,T." + IzinTipi.COLUMN_NAME_ID + " as IZIN_TIPI_ID from " + IzinTipi.TABLE_NAME + " T " + PdksEntityController.getSelectLOCK() + " ");
 					queryStr.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = " + personel.getId());
@@ -6304,10 +6304,10 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" select PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " from " + PersonelERPDB.VIEW_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + PersonelKGS.TABLE_NAME + " PS " + PdksEntityController.getJoinLOCK() + " on PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " = D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO);
 			sb.append(" inner join " + KapiSirket.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on K." + KapiSirket.COLUMN_NAME_ID + " = PS." + PersonelKGS.COLUMN_NAME_KGS_SIRKET + " and PS." + PersonelKGS.COLUMN_NAME_DURUM + " = 1");
-			sb.append(" and K." + KapiSirket.COLUMN_NAME_DURUM + " = 1 and K." + KapiSirket.COLUMN_NAME_BIT_TARIH + " > GETDATE()");
+			sb.append(" and K." + KapiSirket.COLUMN_NAME_DURUM + " = 1 and K." + KapiSirket.COLUMN_NAME_BIT_TARIH + " > " + PdksEntityController.getSqlSistemTarihi());
 			sb.append(" left join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_KGS_PERSONEL + " = PS." + PersonelKGS.COLUMN_NAME_ID);
 			sb.append(" left join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ERP_KODU + " = D." + PersonelERPDB.COLUMN_NAME_SIRKET_KODU);
-			sb.append(" where P." + Personel.COLUMN_NAME_ID + " is null and COALESCE(S." + Sirket.COLUMN_NAME_DURUM + ",1) = 1 ");
+			sb.append(" where P." + Personel.COLUMN_NAME_ID + " is null and coalesce(S." + Sirket.COLUMN_NAME_DURUM + ",1) = 1 ");
 			sb.append(" and PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " not in ( select " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + ")");
 
 			HashMap fields = new HashMap();
@@ -7124,7 +7124,7 @@ public class OrtakIslemler implements Serializable {
 				if (aramaSecenekleri.getStajyerOlmayanSirket()) {
 					sirketList = getStajerOlmayanSirketler(sirketList);
 					sirketIdList.clear();
-					sirketList=PdksUtil.sortSirketList(sirketList);
+					sirketList = PdksUtil.sortSirketList(sirketList);
 					for (Sirket sirket : sirketList)
 						sirketIdList.add(new SelectItem(sirket.getId(), sirket.getAd()));
 				}
@@ -8373,17 +8373,17 @@ public class OrtakIslemler implements Serializable {
 				sb = new StringBuilder("with DATA as (" + str + ")");
 				sb.append(" select D.* from DATA D");
 				sb.append(" left join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ERP_KODU + " = D." + PersonelERPDB.COLUMN_NAME_SIRKET_KODU);
-				sb.append(" where COALESCE(S." + Sirket.COLUMN_NAME_DURUM + ",1) = 1 ");
+				sb.append(" where coalesce(S." + Sirket.COLUMN_NAME_DURUM + ",1) = 1 ");
 				sb.append(" and D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " not in (");
 				sb.append(" select K." + PersonelKGS.COLUMN_NAME_SICIL_NO + " from " + PersonelKGS.TABLE_NAME + " K");
 				sb.append(" inner join " + KapiSirket.TABLE_NAME + " KS " + PdksEntityController.getJoinLOCK() + " on KS. " + KapiSirket.COLUMN_NAME_ID + "= K." + PersonelKGS.COLUMN_NAME_KGS_SIRKET);
 				sb.append(" and KS." + KapiSirket.COLUMN_NAME_DURUM + " = 1 ");
-				sb.append(" and ( GETDATE() BETWEEN KS." + KapiSirket.COLUMN_NAME_BAS_TARIH + " and KS." + KapiSirket.COLUMN_NAME_BIT_TARIH + " ) ");
+				sb.append(" and ( " + PdksEntityController.getSqlSistemTarihi() + " between KS." + KapiSirket.COLUMN_NAME_BAS_TARIH + " and KS." + KapiSirket.COLUMN_NAME_BIT_TARIH + " ) ");
 				sb.append(" left join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on K." + PersonelKGS.COLUMN_NAME_ID + "=P." + Personel.COLUMN_NAME_ID);
 				sb.append(" where K." + PersonelKGS.COLUMN_NAME_DURUM + " = 0 and K." + PersonelKGS.COLUMN_NAME_KGS_SIRKET + " > 0 ");
 				sb.append(" and P." + Personel.COLUMN_NAME_ID + " is null");
 				sb.append(" )");
-				sb.append(" and (D." + PersonelERPDB.COLUMN_NAME_ISTEN_AYRILMA_TARIHI + ">=CONVERT(DATE,GETDATE()) or " + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + ">DATEADD(MONTH,-3,GETDATE()))");
+				sb.append(" and (D." + PersonelERPDB.COLUMN_NAME_ISTEN_AYRILMA_TARIHI + ">=" + PdksEntityController.getSqlBuGun() + " or " + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " > DATEADD(MONTH,-3,GETDATE()))");
 				sb.append(" order by D." + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI);
 			}
 			TreeMap<String, PersonelERPDB> ayrilanMap = new TreeMap<String, PersonelERPDB>();
@@ -8414,7 +8414,7 @@ public class OrtakIslemler implements Serializable {
 				sb = new StringBuilder();
 				sb.append("select PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " from " + PersonelKGS.TABLE_NAME + " PS " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + KapiSirket.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on K." + KapiSirket.COLUMN_NAME_ID + " = PS." + PersonelKGS.COLUMN_NAME_KGS_SIRKET);
-				sb.append(" and K." + KapiSirket.COLUMN_NAME_DURUM + " = 1 and K." + KapiSirket.COLUMN_NAME_BIT_TARIH + " > GETDATE()");
+				sb.append(" and K." + KapiSirket.COLUMN_NAME_DURUM + " = 1 and K." + KapiSirket.COLUMN_NAME_BIT_TARIH + " > " + PdksEntityController.getSqlSistemTarihi());
 				sb.append(" where PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " :" + fieldName);
 				// sb.append(" and PS." + PersonelKGS.COLUMN_NAME_DURUM + " = 1 ");
 				HashMap fields = new HashMap();
@@ -13069,7 +13069,7 @@ public class OrtakIslemler implements Serializable {
 		sb.append("select distinct P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + User.TABLE_NAME + " U " + PdksEntityController.getJoinLOCK() + " on U." + User.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID);
 		sb.append(" inner join " + MailGrubu.TABLE_NAME + " M " + PdksEntityController.getJoinLOCK() + " on M." + MailGrubu.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_HAREKET_MAIL_ID + " and M." + MailGrubu.COLUMN_NAME_MAIL + " like :e ");
-		sb.append(" where P." + Personel.COLUMN_NAME_YONETICI + " <> :y and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE()) ");
+		sb.append(" where P." + Personel.COLUMN_NAME_YONETICI + " <> :y and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= " + PdksEntityController.getSqlBuGun());
 		sb.append(" order by 1 ");
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("y", user.getPdksPersonel().getId());
@@ -16207,7 +16207,7 @@ public class OrtakIslemler implements Serializable {
 			bugun = PdksUtil.buGun();
 		HashMap map = new HashMap();
 		StringBuilder sb = new StringBuilder();
-		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ", GETDATE()  " + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, ");
+		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ", " + PdksEntityController.getSqlSistemTarihi() + " " + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, ");
 		sb.append("B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from " + KatSayi.TABLE_NAME + " B " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where (:bugun between B." + KatSayi.COLUMN_NAME_BAS_TARIH + " and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " )");
 		sb.append("  and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 ");

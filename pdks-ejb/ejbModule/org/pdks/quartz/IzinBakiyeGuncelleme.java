@@ -278,7 +278,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (8,9) and I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " >= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 			sb.append(" inner join " + IzinTipi.TABLE_NAME + "  T " + PdksEntityController.getJoinLOCK() + " on T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " and T." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is not null");
 			sb.append(" left join " + PersonelIzinDetay.TABLE_NAME + " D " + PdksEntityController.getJoinLOCK() + " on D." + PersonelIzinDetay.COLUMN_NAME_HAKEDIS_IZIN + " = I." + IzinTipi.COLUMN_NAME_ID);
-			sb.append(" where P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " <= convert(date,GETDATE()) and D." + PersonelIzinDetay.COLUMN_NAME_ID + " is null");
+			sb.append(" where P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " <= " + PdksEntityController.getSqlBuGun() + " and D." + PersonelIzinDetay.COLUMN_NAME_ID + " is null");
 
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -318,7 +318,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 				sb.append(" with IZIN_BAKIYELER as ( ");
 				sb.append(" select  YEAR(I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ") as YIL,I." + PersonelIzin.COLUMN_NAME_PERSONEL + ",I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + ",max(I." + IzinTipi.COLUMN_NAME_ID + ") as IZIN_ID from " + PersonelIzin.TABLE_NAME + " I "
 						+ PdksEntityController.getSelectLOCK() + " ");
-				sb.append(" inner join " + Personel.TABLE_NAME + " P on P." + Personel.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_PERSONEL + " and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=convert(date,GETDATE())");
+				sb.append(" inner join " + Personel.TABLE_NAME + " P on P." + Personel.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_PERSONEL + " and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= " + PdksEntityController.getSqlBuGun());
 				if (suaSenelikKullan)
 					sb.append(" and (P.SUA_OLABILIR is null or P.SUA_OLABILIR<>1 ) ");
 				sb.append(" inner join " + IzinTipi.TABLE_NAME + " IT " + PdksEntityController.getJoinLOCK() + " on IT." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " and IT." + IzinTipi.COLUMN_NAME_DEPARTMAN + " = 1 and IT." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI
@@ -586,14 +586,14 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		queryStr.append((bakiye == null ? " T.KOTA_BAKIYE " : String.valueOf(bakiye)) + " as IZIN_SURESI,  B." + Personel.COLUMN_NAME_ID + " PERSONEL_ID,T." + IzinTipi.COLUMN_NAME_ID + " as IZIN_TIPI_ID from " + IzinTipi.TABLE_NAME + " T " + PdksEntityController.getSelectLOCK() + " ");
 		queryStr.append(" inner join " + Tanim.TABLE_NAME + " TA " + PdksEntityController.getJoinLOCK() + " on TA." + Tanim.COLUMN_NAME_ID + " = T." + IzinTipi.COLUMN_NAME_IZIN_TIPI + " and TA.kodu='" + izinTipiKodu + "'");
 		queryStr.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_DEPARTMAN + " = T." + IzinTipi.COLUMN_NAME_DEPARTMAN + " and S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1 and S." + Sirket.COLUMN_NAME_DURUM + " = 1 ");
-		queryStr.append(" inner join " + Personel.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = B." + Personel.COLUMN_NAME_SIRKET + " and B." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE()) and B."
+		queryStr.append(" inner join " + Personel.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = B." + Personel.COLUMN_NAME_SIRKET + " and B." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=  " + PdksEntityController.getSqlBuGun() + " and B."
 				+ Personel.COLUMN_NAME_DURUM + " = 1 " + (sql != null ? " and " + sql : ""));
 		queryStr.append("  where T." + IzinTipi.COLUMN_NAME_DURUM + " = 1 and T." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is not null ");
 		queryStr.append("  )");
 		queryStr.append(" insert into " + PersonelIzin.TABLE_NAME + " (" + PersonelIzin.COLUMN_NAME_DURUM + ", " + PersonelIzin.COLUMN_NAME_OLUSTURMA_TARIHI + ", " + PersonelIzin.COLUMN_NAME_ACIKLAMA + ", " + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ", " + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI
 				+ ",");
 		queryStr.append(PersonelIzin.COLUMN_NAME_IZIN_SURESI + ", " + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + ", " + PersonelIzin.COLUMN_NAME_VERSION + ", " + PersonelIzin.COLUMN_NAME_OLUSTURAN + ", " + PersonelIzin.COLUMN_NAME_PERSONEL + ", " + PersonelIzin.COLUMN_NAME_IZIN_TIPI + ")");
-		queryStr.append(" select 1 as DURUM, GETDATE() olusturmaTarihi, '" + izinYil + " YILI ' + O.ACIKLAMA as ACIKLAMA, O.DONEM as BASLANGIC_ZAMANI,");
+		queryStr.append(" select 1 as DURUM, " + PdksEntityController.getSqlSistemTarihi() + " olusturmaTarihi, '" + izinYil + " YILI ' + O.ACIKLAMA as ACIKLAMA, O.DONEM as BASLANGIC_ZAMANI,");
 		queryStr.append(" O.DONEM as BITIS_ZAMANI,O.IZIN_SURESI, 4 as IZIN_DURUMU, 0 as version," + user.getId() + " olusturanUser_id ,");
 		queryStr.append(" O.PERSONEL_ID, O.IZIN_TIPI_ID from IZIN_OZET O ");
 		queryStr.append(" left join " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " = O.IZIN_TIPI_ID ");

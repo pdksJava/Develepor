@@ -1511,11 +1511,11 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 			fields.clear();
 			sb = new StringBuilder();
-			sb.append("select sum(COALESCE(PD." + PersonelDenklestirme.COLUMN_NAME_RESMI_TATIL_SURE + ",0)) " + PersonelDenklestirme.COLUMN_NAME_RESMI_TATIL_SURE + ", ");
-			sb.append("  sum(COALESCE(PD." + PersonelDenklestirme.COLUMN_NAME_HAFTA_TATIL_SURE + ",0)) " + PersonelDenklestirme.COLUMN_NAME_HAFTA_TATIL_SURE + ", ");
+			sb.append("select sum(coalesce(PD." + PersonelDenklestirme.COLUMN_NAME_RESMI_TATIL_SURE + ",0)) " + PersonelDenklestirme.COLUMN_NAME_RESMI_TATIL_SURE + ", ");
+			sb.append("  sum(coalesce(PD." + PersonelDenklestirme.COLUMN_NAME_HAFTA_TATIL_SURE + ",0)) " + PersonelDenklestirme.COLUMN_NAME_HAFTA_TATIL_SURE + ", ");
 			sb.append("  sum(PD." + PersonelDenklestirme.COLUMN_NAME_FAZLA_MESAI_IZIN_KULLAN + ") " + PersonelDenklestirme.COLUMN_NAME_FAZLA_MESAI_IZIN_KULLAN + ", ");
 			sb.append("  sum(PD." + PersonelDenklestirme.COLUMN_NAME_FAZLA_MESAI_ODE + ") " + PersonelDenklestirme.COLUMN_NAME_FAZLA_MESAI_ODE + ", ");
-			sb.append("  sum(COALESCE(PD." + PersonelDenklestirme.COLUMN_NAME_KISMI_ODEME_SAAT + ",0)) " + PersonelDenklestirme.COLUMN_NAME_KISMI_ODEME_SAAT + " from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append("  sum(coalesce(PD." + PersonelDenklestirme.COLUMN_NAME_KISMI_ODEME_SAAT + ",0)) " + PersonelDenklestirme.COLUMN_NAME_KISMI_ODEME_SAAT + " from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
 			if (perIdList.size() == 1)
 				sb.append(" and  PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + "= " + seciliPersonel.getId());

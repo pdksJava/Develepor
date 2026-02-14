@@ -834,7 +834,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
 				sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 				sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "< :bitTarih  ");
-				sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <=CONVERT(DATE, GETDATE() ) and V." + VardiyaGun.COLUMN_NAME_DURUM + " = 0 ");
+				sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= " + PdksEntityController.getSqlBuGun() + " and V." + VardiyaGun.COLUMN_NAME_DURUM + " = 0 ");
 				sb.append(" and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
 				sb.append(" order by V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
 				Date basTarih = PdksUtil.getDateFromString((yil * 100 + ay) + "01");
@@ -880,7 +880,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					sb.append(" inner join " + Vardiya.TABLE_NAME + " VA " + PdksEntityController.getJoinLOCK() + " on VA." + Vardiya.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA + " and VA.VARDIYATIPI=''");
 					sb.append(" inner join " + VardiyaGun.TABLE_NAME + " VG " + PdksEntityController.getJoinLOCK() + " on VG." + VardiyaGun.COLUMN_NAME_ID + " = V.VARDIYA_GUN_ID ");
 					sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "< :bitTarih  ");
-					sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " < CONVERT(DATE, GETDATE() ) and V." + VardiyaSaat.COLUMN_NAME_CALISMA_SURESI + " = 0 ");
+					sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " < " + PdksEntityController.getSqlBuGun() + " and V." + VardiyaSaat.COLUMN_NAME_CALISMA_SURESI + " = 0 ");
 					sb.append(" and V." + VardiyaSaat.COLUMN_NAME_NORMAL_SURE + " > 0 and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
 					Date basTarih = PdksUtil.getDateFromString((yil * 100 + ay) + "01");
 					Date bitTarih = ortakIslemler.tariheAyEkleCikar(cal, basTarih, 1);
@@ -1442,7 +1442,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		String arifeGunuBordroYarim = ortakIslemler.getParameterKey("arifeGunuBordroYarim");
 		boolean saatlikCalismaVar = ortakIslemler.getParameterKey("saatlikCalismaVar").equals("1");
 		List<Tanim> list = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_IZIN_GRUPLARI, Tanim.class, session);
- 		if (list != null && list.isEmpty()) {
+		if (list != null && list.isEmpty()) {
 			BordroDetayTipi[] bordroTipileri = new BordroDetayTipi[] { BordroDetayTipi.UCRETLI_IZIN, BordroDetayTipi.UCRETSIZ_IZIN, BordroDetayTipi.RAPORLU_IZIN };
 			for (BordroDetayTipi bordroTipi : bordroTipileri) {
 				Tanim tanim = new Tanim();

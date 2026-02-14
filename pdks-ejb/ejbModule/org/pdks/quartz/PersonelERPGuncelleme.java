@@ -554,7 +554,7 @@ public class PersonelERPGuncelleme implements Serializable {
 		sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " and S." + Sirket.COLUMN_NAME_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_ERP_DURUM + " = 1 ");
 		sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1 and S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1   ");
-		sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 0 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
+		sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 0 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= " + PdksEntityController.getSqlBuGun());
 		sb.append(" order by P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
 		HashMap fields = new HashMap();
 		if (session != null)
@@ -579,7 +579,7 @@ public class PersonelERPGuncelleme implements Serializable {
 				sb.append("select P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET + " and S." + Sirket.COLUMN_NAME_DURUM + " = 1 and S." + Sirket.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1 and S." + Sirket.COLUMN_NAME_FAZLA_MESAI + " = 1 and S.ERP_KODU= :sapKodu ");
-				sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
+				sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= " + PdksEntityController.getSqlBuGun());
 				sb.append(" order by P." + Personel.COLUMN_NAME_PDKS_SICIL_NO);
 				HashMap fields = new HashMap();
 				fields.put("erpKodu", sapKodu.trim());
@@ -605,7 +605,7 @@ public class PersonelERPGuncelleme implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 1 and (" + Personel.COLUMN_NAME_MAIL_CC_ID + " is not null or " + Personel.COLUMN_NAME_MAIL_BCC_ID + " is not null or " + Personel.COLUMN_NAME_HAREKET_MAIL_ID + " is not null)");
-		sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=convert(date,GETDATE())   ");
+		sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=" + PdksEntityController.getSqlBuGun());
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {

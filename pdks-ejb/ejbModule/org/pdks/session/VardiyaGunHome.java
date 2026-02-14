@@ -3022,7 +3022,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					sb.append("	group by CMA." + CalismaModeliAy.COLUMN_NAME_ID);
 					sb.append("	), ");
 					sb.append(" VERI as ( ");
-					sb.append(" select CMA." + CalismaModeliAy.COLUMN_NAME_ID + ", case when COALESCE(ADET,0) >= " + adet + "  then ADET ELSE 0 end ADET from " + CalismaModeliAy.TABLE_NAME + " CMA " + PdksEntityController.getSelectLOCK());
+					sb.append(" select CMA." + CalismaModeliAy.COLUMN_NAME_ID + ", case when coalesce(ADET,0) >= " + adet + "  then ADET ELSE 0 end ADET from " + CalismaModeliAy.TABLE_NAME + " CMA " + PdksEntityController.getSelectLOCK());
 					sb.append(" left join DATA D " + PdksEntityController.getJoinLOCK() + " on D." + CalismaModeliAy.COLUMN_NAME_ID + " = CMA." + CalismaModeliAy.COLUMN_NAME_ID);
 					sb.append("	where CMA." + CalismaModeliAy.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId());
 					sb.append(" ) ");
@@ -9492,7 +9492,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				sb.append(" select distinct 0 AS OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" left join " + IzinTipi.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + IzinTipi.COLUMN_NAME_DEPARTMAN + " = V." + Vardiya.COLUMN_NAME_DEPARTMAN + " and I." + IzinTipi.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" and I." + IzinTipi.COLUMN_NAME_GIRIS_TIPI + " = 0 and I." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null");
-				sb.append(" where COALESCE( V." + Vardiya.COLUMN_NAME_DEPARTMAN + ", " + personel.getSirket().getDepartman().getId() + " )  = " + personel.getSirket().getDepartman().getId() + " and V." + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
+				sb.append(" where coalesce( V." + Vardiya.COLUMN_NAME_DEPARTMAN + ", " + personel.getSirket().getDepartman().getId() + " )  = " + personel.getSirket().getDepartman().getId() + " and V." + Vardiya.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" and V." + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " IN ('" + Vardiya.TIPI_IZIN + "','" + Vardiya.TIPI_HASTALIK_RAPOR + "') and I." + IzinTipi.COLUMN_NAME_ID + " is null ");
 			}
 			sb.append(" ) ");

@@ -1705,7 +1705,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 		StringBuilder sb = new StringBuilder();
 		HashMap fields = new HashMap();
-		sb.append("select distinct COALESCE(" + Vardiya.COLUMN_NAME_DEPARTMAN + ",-1) " + Vardiya.COLUMN_NAME_DEPARTMAN + ", case when " + Vardiya.COLUMN_NAME_GEBELIK + "=1 then '" + Vardiya.GEBE_KEY + "' ");
+		sb.append("select distinct coalesce(" + Vardiya.COLUMN_NAME_DEPARTMAN + ",-1) " + Vardiya.COLUMN_NAME_DEPARTMAN + ", case when " + Vardiya.COLUMN_NAME_GEBELIK + "=1 then '" + Vardiya.GEBE_KEY + "' ");
 		sb.append("	when " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :fm1 then '" + Vardiya.FMI_KEY + "' ");
 		sb.append("	when " + Vardiya.COLUMN_NAME_SUA + " = 1 then '" + Vardiya.SUA_KEY + "' ");
 		sb.append("	when " + Vardiya.COLUMN_NAME_SUT_IZNI + " = 1 then '" + Vardiya.SUT_IZNI_KEY + "' ");
@@ -3838,10 +3838,10 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			sb.append(" select PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " from " + PersonelERPDB.VIEW_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + PersonelKGS.TABLE_NAME + " PS " + PdksEntityController.getJoinLOCK() + " on PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " = D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO);
 			sb.append(" inner join " + KapiSirket.TABLE_NAME + " K " + PdksEntityController.getJoinLOCK() + " on K." + KapiSirket.COLUMN_NAME_ID + " = PS." + PersonelKGS.COLUMN_NAME_KGS_SIRKET + " and PS." + PersonelKGS.COLUMN_NAME_DURUM + " = 1");
-			sb.append(" and K." + KapiSirket.COLUMN_NAME_DURUM + " = 1 and K." + KapiSirket.COLUMN_NAME_BIT_TARIH + " > GETDATE()");
+			sb.append(" and K." + KapiSirket.COLUMN_NAME_DURUM + " = 1 and K." + KapiSirket.COLUMN_NAME_BIT_TARIH + " > " + PdksEntityController.getSqlSistemTarihi());
 			sb.append(" left join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ERP_KODU + " = D." + PersonelERPDB.COLUMN_NAME_SIRKET_KODU);
 			sb.append(" left join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_KGS_PERSONEL + " = PS." + PersonelKGS.COLUMN_NAME_ID);
-			sb.append(" where P." + Personel.COLUMN_NAME_ID + " is null and COALESCE(S." + Sirket.COLUMN_NAME_DURUM + ",1) = 1 ");
+			sb.append(" where P." + Personel.COLUMN_NAME_ID + " is null and coalesce(S." + Sirket.COLUMN_NAME_DURUM + ",1) = 1 ");
 			sb.append(" and PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " not in ( select " + Personel.COLUMN_NAME_PDKS_SICIL_NO + " from " + Personel.TABLE_NAME + ")");
 			HashMap fields = new HashMap();
 			if (session != null)

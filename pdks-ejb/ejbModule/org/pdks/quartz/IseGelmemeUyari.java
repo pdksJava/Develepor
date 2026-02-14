@@ -205,7 +205,7 @@ public class IseGelmemeUyari implements Serializable {
 			StringBuilder sb = new StringBuilder();
 			sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_HAREKET_MAIL_ID + " is not null");
-			sb.append(" and P." + Personel.COLUMN_NAME_MAIL_TAKIP + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
+			sb.append(" and P." + Personel.COLUMN_NAME_MAIL_TAKIP + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= " + PdksEntityController.getSqlBuGun());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			// fields.put("ad", "hareketMailGrubu");
@@ -300,18 +300,20 @@ public class IseGelmemeUyari implements Serializable {
 			sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_MAIL_TAKIP + " = 1");
 			if (yoneticiTanimsiz == false)
 				sb.append(" and P." + Personel.COLUMN_NAME_YONETICI + " is not null");
-			if (as != null) {		if (as.getSirketId() != null) {
-				sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + as.getSirketId());
-				if (as.getTesisId() != null)
-					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = " + as.getTesisId());
-				else if (as.getTesisList() != null && as.getTesisList().isEmpty() == false) {
-					List<Long> idList = new ArrayList<Long>();
-					for (SelectItem si : as.getTesisList())
-						idList.add((Long) si.getValue());
-					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :v ");
-					map.put("v", idList);
+			if (as != null) {
+				if (as.getSirketId() != null) {
+					sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + as.getSirketId());
+					if (as.getTesisId() != null)
+						sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = " + as.getTesisId());
+					else if (as.getTesisList() != null && as.getTesisList().isEmpty() == false) {
+						List<Long> idList = new ArrayList<Long>();
+						for (SelectItem si : as.getTesisList())
+							idList.add((Long) si.getValue());
+						sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :v ");
+						map.put("v", idList);
+					}
 				}
-			}}
+			}
 			// sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = 12996");
 			// sb.append(" and P." + Personel.COLUMN_NAME_YONETICI + " = 388");
 
@@ -2473,7 +2475,7 @@ public class IseGelmemeUyari implements Serializable {
 			sb.append("		select R.ROLENAME DEP_YONETICI_ROL_ADI from " + Role.TABLE_NAME + " R " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" where R." + Role.COLUMN_NAME_ROLE_NAME + " = '" + Role.TIPI_DIREKTOR_SUPER_VISOR + "' and R." + Role.COLUMN_NAME_STATUS + " = 1 ");
 			sb.append("	) ");
-			sb.append("	select COALESCE(DY.DEP_YONETICI_ROL_ADI,'') DEP_YONETICI_ROL_ADI, GETDATE() as TARIH from BUGUN B ");
+			sb.append("	select coalesce(DY.DEP_YONETICI_ROL_ADI,'') DEP_YONETICI_ROL_ADI, " + PdksEntityController.getSqlSistemTarihi() + " as TARIH from BUGUN B ");
 			sb.append("	left join DEP_YONETICI DY " + PdksEntityController.getJoinLOCK() + " on 1=1");
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);

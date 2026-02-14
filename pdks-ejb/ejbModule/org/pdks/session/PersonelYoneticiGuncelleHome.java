@@ -46,7 +46,7 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 	OrtakIslemler ortakIslemler;
 	@In(required = false)
 	FacesMessages facesMessages;
-	
+
 	public static String sayfaURL = "personelYoneticiGuncelle";
 	private List<Personel> yoneticiList, iptalYoneticiList, personelList;
 	private Personel yonetici, iptalYonetici;
@@ -112,11 +112,9 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 						List<PersonelIzinOnay> onaylanmisIzinler = pdksEntityController.getObjectByInnerObjectList(fields, PersonelIzinOnay.class);
 
 						if (!onaylanmisIzinler.isEmpty()) {
- 
-							User guncelleyenUser = (User)pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, yonetici.getId(), User.class, session);
 
-									
-									 
+							User guncelleyenUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, yonetici.getId(), User.class, session);
+
 							for (PersonelIzinOnay personelIzinOnay : onaylanmisIzinler) {
 								personelIzinOnay.setGuncelleyenUser(guncelleyenUser);
 								pdksEntityController.saveOrUpdate(session, entityManager, personelIzinOnay);
@@ -178,7 +176,7 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 			sb.append("select distinct Y.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append("inner join " + Personel.TABLE_NAME + " Y " + PdksEntityController.getJoinLOCK() + " on Y." + Personel.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_YONETICI);
 			sb.append(" where P." + Personel.COLUMN_NAME_SIRKET + " = :s and P." + Personel.COLUMN_NAME_DURUM + " = 1 ");
-			sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE())");
+			sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= " + PdksEntityController.getSqlBuGun());
 			sb.append(" order by Y." + Personel.COLUMN_NAME_AD + ",Y." + Personel.COLUMN_NAME_SOYAD + ",Y." + Personel.COLUMN_NAME_ID);
 			fields.put("s", sirket.getId());
 			if (session != null)
@@ -225,9 +223,9 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		setInstance(new Personel());
- ;
+		;
 		sanalPersonelAciklama = ortakIslemler.sanalPersonelAciklama();
 		fillSirketList();
 

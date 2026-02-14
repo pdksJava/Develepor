@@ -632,8 +632,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 		sb.append("			inner join " + Departman.TABLE_NAME + " D " + PdksVeriOrtakAktar.getJoinLOCK() + " on D." + Departman.COLUMN_NAME_ID + " = I." + IzinTipi.COLUMN_NAME_DEPARTMAN + " and D." + Departman.COLUMN_NAME_ADMIN_DURUM + " = 1 and D." + Departman.COLUMN_NAME_DURUM + " = 1 ");
 		sb.append(" where I." + IzinTipi.COLUMN_NAME_DEPARTMAN + " = 1 and I." + IzinTipi.COLUMN_NAME_DURUM + " = 1 and I." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null and I." + IzinTipi.COLUMN_NAME_GIRIS_TIPI + " <> '" + IzinTipi.GIRIS_TIPI_YOK + "'");
 		sb.append("	)");
-		sb.append("	select COALESCE(DY.DEP_YONETICI_ROL_ADI,'') DEP_YONETICI_ROL_ADI,");
-		sb.append("		COALESCE(ID.IZIN_TIPI_ADET,0) IZIN_TIPI_ADET, GETDATE() as TARIH from BUGUN B ");
+		sb.append("	select coalesce(DY.DEP_YONETICI_ROL_ADI,'') DEP_YONETICI_ROL_ADI,");
+		sb.append("		coalesce(ID.IZIN_TIPI_ADET,0) IZIN_TIPI_ADET, GETDATE() as TARIH from BUGUN B ");
 		sb.append("	left join DEP_YONETICI DY " + PdksVeriOrtakAktar.getJoinLOCK() + " on 1=1");
 		sb.append("	left join IZIN_DURUM ID " + PdksVeriOrtakAktar.getJoinLOCK() + " on 1=1");
 		List<Object[]> veriList = dao.getNativeSQLList(fields, sb, null);
