@@ -311,7 +311,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		try {
 			Parameter parameter = ortakIslemler.getParameter(session, "suaSenelikKullan");
 			boolean suaSenelikKullan = parameter != null && parameter.getValue().equals("1");
-
+			Calendar cal = Calendar.getInstance();
 			HashMap parametreMap = new HashMap();
 			StringBuilder sb = new StringBuilder();
 			try {
@@ -338,7 +338,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 				sb.append(" )  ");
 				sb.append("select I.* from DATA V " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_ID + " = V.IZIN_1 or I." + PersonelIzin.COLUMN_NAME_ID + " = V.IZIN_2");
-				sb.append(" where YIL>=YEAR(GETDATE()) ");
+				sb.append(" where YIL > = " + cal.get(Calendar.YEAR));
 				sb.append(" order by V.PERSONEL,V." + Personel.COLUMN_NAME_PDKS_SICIL_NO + ",V.YIL ");
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 				izinList = pdksEntityController.getObjectBySQLList(sb, parametreMap, PersonelIzin.class);
