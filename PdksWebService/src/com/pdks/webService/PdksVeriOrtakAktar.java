@@ -119,7 +119,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	private List<Long> yoneticiIdList = null;
 	private List<Liste> hataListesi = null;
 
-	private static String selectLOCK = "WITH(NOLOCK)", joinLOCK = "WITH(NOLOCK)";
+	private static String selectLOCK = "with(nolock)", joinLOCK = "with(nolock)", sqlSistemTarihi = "getdate()", sqlBuGun = "convert(date,getdate())";
 
 	private List<CalismaModeli> modeller;
 	private List<VardiyaSablonu> sablonlar;
@@ -633,7 +633,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		sb.append(" where I." + IzinTipi.COLUMN_NAME_DEPARTMAN + " = 1 and I." + IzinTipi.COLUMN_NAME_DURUM + " = 1 and I." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null and I." + IzinTipi.COLUMN_NAME_GIRIS_TIPI + " <> '" + IzinTipi.GIRIS_TIPI_YOK + "'");
 		sb.append("	)");
 		sb.append("	select coalesce(DY.DEP_YONETICI_ROL_ADI,'') DEP_YONETICI_ROL_ADI,");
-		sb.append("		coalesce(ID.IZIN_TIPI_ADET,0) IZIN_TIPI_ADET, GETDATE() as TARIH from BUGUN B ");
+		sb.append("		coalesce(ID.IZIN_TIPI_ADET,0) IZIN_TIPI_ADET, " + sqlSistemTarihi + " as TARIH from BUGUN B ");
 		sb.append("	left join DEP_YONETICI DY " + PdksVeriOrtakAktar.getJoinLOCK() + " on 1=1");
 		sb.append("	left join IZIN_DURUM ID " + PdksVeriOrtakAktar.getJoinLOCK() + " on 1=1");
 		List<Object[]> veriList = dao.getNativeSQLList(fields, sb, null);
@@ -688,7 +688,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				sb.append(" inner join " + UserRoles.TABLE_NAME + " UR " + PdksVeriOrtakAktar.getJoinLOCK() + " on UR." + UserRoles.COLUMN_NAME_ROLE + " = R." + Role.COLUMN_NAME_ID);
 				sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER + " and U." + User.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" inner join " + Departman.TABLE_NAME + " D " + PdksVeriOrtakAktar.getJoinLOCK() + " on D." + Departman.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_DEPARTMAN + " and D." + Departman.COLUMN_NAME_ADMIN_DURUM + " = 1 and D." + Departman.COLUMN_NAME_DURUM + " = 1 ");
-				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " > GETDATE() ");
+				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " > "
+						+ sqlSistemTarihi);
 				sb.append(" where R." + Role.COLUMN_NAME_ROLE_NAME + " :r ");
 				fields.put("r", ikYetkiliRoller);
 				userList = dao.getNativeSQLList(fields, sb, User.class);
@@ -5405,15 +5406,15 @@ public class PdksVeriOrtakAktar implements Serializable {
 			sb.append(" with VERI as ( ");
 			if (ikinciYoneticiOlmaz != null) {
 				sb.append(" select D." + PersonelDinamikAlan.COLUMN_NAME_PERSONEL + " as ID from " + PersonelDinamikAlan.TABLE_NAME + " D " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
-				sb.append(" inner join " + Personel.TABLE_NAME + " Y " + PdksVeriOrtakAktar.getJoinLOCK() + " on Y. " + Personel.COLUMN_NAME_YONETICI + " = D." + PersonelDinamikAlan.COLUMN_NAME_PERSONEL);
-				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P. " + Personel.COLUMN_NAME_YONETICI + " = Y." + Personel.COLUMN_NAME_ID);
+				sb.append(" inner join " + Personel.TABLE_NAME + " Y " + PdksVeriOrtakAktar.getJoinLOCK() + " on Y." + Personel.COLUMN_NAME_YONETICI + " = D." + PersonelDinamikAlan.COLUMN_NAME_PERSONEL);
+				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_YONETICI + " = Y." + Personel.COLUMN_NAME_ID);
 				sb.append(" where D." + PersonelDinamikAlan.COLUMN_NAME_ALAN + " = " + ikinciYoneticiOlmaz.getId());
 				sb.append(" and " + PersonelDinamikAlan.COLUMN_NAME_DURUM_SECIM + " = 1 ");
 				sb.append(" union ");
 			}
 			sb.append(" select U." + User.COLUMN_NAME_PERSONEL + " as ID from " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
 			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL);
-			sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= convert(date,GETDATE()) ");
+			sb.append(" and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= " + sqlBuGun);
 			sb.append(" and P.IKINCI_YONETICI_IZIN_ONAYLA = 0");
 			sb.append(" where U." + User.COLUMN_NAME_DURUM + " = 1 ");
 			sb.append(" ) ");
@@ -6153,6 +6154,22 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 	public void setKgsPersonelSPAdi(String kgsPersonelSPAdi) {
 		this.kgsPersonelSPAdi = kgsPersonelSPAdi;
+	}
+
+	public static String getSqlSistemTarihi() {
+		return sqlSistemTarihi;
+	}
+
+	public static void setSqlSistemTarihi(String sqlSistemTarihi) {
+		PdksVeriOrtakAktar.sqlSistemTarihi = sqlSistemTarihi;
+	}
+
+	public static String getSqlBuGun() {
+		return sqlBuGun;
+	}
+
+	public static void setSqlBuGun(String sqlBuGun) {
+		PdksVeriOrtakAktar.sqlBuGun = sqlBuGun;
 	}
 
 }
