@@ -8386,12 +8386,13 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" )");
 				sb.append(" and (D." + PersonelERPDB.COLUMN_NAME_ISTEN_AYRILMA_TARIHI + ">=" + PdksEntityController.getSqlBuGun() + " or " + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " > :gt)");
 				sb.append(" order by D." + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI);
+				Calendar cal = Calendar.getInstance();
+				fields.put("gt", PdksUtil.tariheAyEkleCikar(cal.getTime(), -3));
 			}
 			TreeMap<String, PersonelERPDB> ayrilanMap = new TreeMap<String, PersonelERPDB>();
 
 			try {
-				Calendar cal = Calendar.getInstance();
-				fields.put("gt", PdksUtil.tariheAyEkleCikar(cal.getTime(), -3));
+
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				personelList = pdksEntityController.getObjectBySQLList(sb, fields, PersonelERPDB.class);
@@ -8420,7 +8421,7 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" and K." + KapiSirket.COLUMN_NAME_DURUM + " = 1 and K." + KapiSirket.COLUMN_NAME_BIT_TARIH + " > " + PdksEntityController.getSqlSistemTarihi());
 				sb.append(" where PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " :" + fieldName);
 				// sb.append(" and PS." + PersonelKGS.COLUMN_NAME_DURUM + " = 1 ");
-				 
+
 				fields.put(fieldName, idList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
