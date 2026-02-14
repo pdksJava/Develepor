@@ -250,6 +250,12 @@
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.suaDurum)}" />
 								</rich:column>
+								<rich:column rendered="#{calismaModeliHome.yoneticiGuncelleGoster}">
+									<f:facet name="header">
+										<h:outputText value="Yönetici Günceller" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.yoneticiGuncelle)}" />
+								</rich:column>
 								<rich:column rendered="#{calismaModeliHome.pasifGoster}">
 									<f:facet name="header">
 										<h:outputText value="Aktif" />
@@ -560,6 +566,12 @@
 							</h:selectBooleanCheckbox>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Yönetici Güncelleyebilir</ui:define>
+							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.yoneticiGuncelle}">
+
+							</h:selectBooleanCheckbox>
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Genel #{ortakIslemler.vardiyaAciklama()}</ui:define>
 							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.genelVardiya}" disabled="#{authenticatedUser.admin == false}">
 								<a4j:support event="onclick" reRender="vardiyalar" status="ajaxStatus" ajaxSingle="true" />
@@ -571,8 +583,8 @@
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 							<h:selectOneMenu value="#{calismaModeliHome.calismaModeli.sirket}">
 								<s:selectItems var="comp" value="#{calismaModeliHome.sirketList}" label="#{comp.ad}" noSelectionLabel="Lütfen seçiniz" />
-								<a4j:support event="onchange" action="#{calismaModeliHome.tesisDoldur(true,calismaModeliHome.calismaModeli)}" reRender="sirketBilgi,vardiyalar"
-									status="ajaxStatus" ajaxSingle="true" />
+								<a4j:support event="onchange" action="#{calismaModeliHome.tesisDoldur(true,calismaModeliHome.calismaModeli)}"
+									reRender="sirketBilgi,vardiyalar" status="ajaxStatus" ajaxSingle="true" />
 								<s:convertEntity />
 							</h:selectOneMenu>
 

@@ -80,7 +80,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	private Sirket seciliSirket;
 	private CalismaModeliGun cmgPage = new CalismaModeliGun();
 
-	private Boolean sirketGoster = Boolean.FALSE, tesisGoster = Boolean.FALSE, suaGoster = Boolean.FALSE, pasifGoster = Boolean.FALSE, hareketKaydiVardiyaBul = Boolean.FALSE, saatlikCalismaVar = false, otomatikFazlaCalismaOnaylansinVar = false, izinGoster = false;
+	private Boolean sirketGoster = Boolean.FALSE, tesisGoster = Boolean.FALSE, yoneticiGuncelleGoster = Boolean.FALSE, suaGoster = Boolean.FALSE, pasifGoster = Boolean.FALSE, hareketKaydiVardiyaBul = Boolean.FALSE, saatlikCalismaVar = false, otomatikFazlaCalismaOnaylansinVar = false,
+			izinGoster = false;
 
 	private Session session;
 
@@ -463,6 +464,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		tesisGoster = false;
 		izinGoster = false;
 		suaGoster = false;
+		yoneticiGuncelleGoster = false;
 		hareketKaydiVardiyaBul = ortakIslemler.getParameterKey("hareketKaydiVardiyaBul").equals("1");
 		saatlikCalismaVar = ortakIslemler.getParameterKey("saatlikCalismaVar").equals("1");
 		otomatikFazlaCalismaOnaylansinVar = ortakIslemler.getParameterKey("otomatikFazlaCalismaOnaylansin").equals("1");
@@ -505,6 +507,9 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 					tesisGoster = cm.getTesis() != null;
 				if (suaGoster == false)
 					suaGoster = cm.getSuaDurum() != null && cm.getSuaDurum().booleanValue();
+				if (yoneticiGuncelleGoster == false)
+					yoneticiGuncelleGoster = cm.isYoneticiGuncelleyebilir();
+
 				if (cm.getDurum()) {
 					if (!izinGoster)
 						izinGoster = veriVar(cm.getIzin()) || veriVar(cm.getCumartesiIzinSaat()) || veriVar(cm.getPazarIzinSaat());
@@ -604,6 +609,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			}
 			if (suaGoster)
 				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Şua");
+			if (yoneticiGuncelleGoster)
+				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Yönetici Güncelle");
 			TreeMap<Long, List<Vardiya>> vMap = new TreeMap<Long, List<Vardiya>>();
 			if (admin) {
 				ExcelUtil.getCell(sheet, row, col++, header).setCellValue(vardiyaAciklama);
@@ -730,6 +737,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 				if (suaGoster)
 					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(calismaModeli.getSuaDurum()));
+				if (yoneticiGuncelleGoster)
+					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(calismaModeli.isYoneticiGuncelleyebilir()));
 				if (admin) {
 					StringBuilder cmAciklama = new StringBuilder();
 					if (vMap.containsKey(calismaModeli.getId())) {
@@ -972,6 +981,14 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	public void setTesisGoster(Boolean tesisGoster) {
 		this.tesisGoster = tesisGoster;
+	}
+
+	public Boolean getYoneticiGuncelleGoster() {
+		return yoneticiGuncelleGoster;
+	}
+
+	public void setYoneticiGuncelleGoster(Boolean yoneticiGuncelleGoster) {
+		this.yoneticiGuncelleGoster = yoneticiGuncelleGoster;
 	}
 
 }

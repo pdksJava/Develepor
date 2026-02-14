@@ -3031,14 +3031,19 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					sb.append("	inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CM." + CalismaModeli.COLUMN_NAME_ID + " = CMA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI);
 					sb.append("	AND ( CM." + CalismaModeli.COLUMN_NAME_DEPARTMAN + " is null or CM." + CalismaModeli.COLUMN_NAME_DEPARTMAN + " = " + sirket.getDepartman().getId() + " )");
 					sb.append("	AND ( CM." + CalismaModeli.COLUMN_NAME_SIRKET + " is null or CM." + CalismaModeli.COLUMN_NAME_SIRKET + " = " + sirket.getId() + " )");
-					sb.append("	order by V.ADET desc, CM." + CalismaModeli.COLUMN_NAME_ACIKLAMA);
+					sb.append("	AND coalesce( CM." + CalismaModeli.COLUMN_NAME_YONETICI_GUNCELLE + " ,0 ) = 1  ");
+					if (adminRole == false && loginUser.isIK() == false)
+						sb.append("	order by V.ADET desc, CM." + CalismaModeli.COLUMN_NAME_ACIKLAMA);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 					modelList = pdksEntityController.getObjectBySQLList(sb, fields, CalismaModeliAy.class);
 				} else
 					modelList = new ArrayList<CalismaModeliAy>();
-				if (aylikPuantaj.getPersonelDenklestirme() != null)
-					ortakIslemler.addObjectList(aylikPuantaj.getPersonelDenklestirme().getCalismaModeliAy(), modelList, null);
+				if (aylikPuantaj.getPersonelDenklestirme() != null) {
+					if (modelList.isEmpty() == false || adminRole || loginUser.isIK())
+						ortakIslemler.addObjectList(aylikPuantaj.getPersonelDenklestirme().getCalismaModeliAy(), modelList, null);
+				}
+
 				Long tesisId = sirket.getTesisDurum() && personel.getTesis() != null ? personel.getTesis().getId() : null;
 				List<Long> idList = new ArrayList<Long>();
 				for (Iterator iterator = modelList.iterator(); iterator.hasNext();) {

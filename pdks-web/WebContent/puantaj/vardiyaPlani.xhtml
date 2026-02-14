@@ -573,7 +573,7 @@
 						</a4j:repeat>
 					</table>
 					<h:panelGrid id="digerIslemler" columns="5"
-						rendered="#{vardiyaGunHome.personelAylikPuantaj.kaydet and (vardiyaGunHome.ikRole or ortakIslemler.getParameterKey('yoneticiModelGuncelle')=='1')}">
+						rendered="#{vardiyaGunHome.personelAylikPuantaj.kaydet and (vardiyaGunHome.ikRole or vardiyaGunHome.modelList.size()>0)}">
 
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.calismaModeliAciklama()}</ui:define>

@@ -70,6 +70,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_PAZAR_SUT_IZNI_SURE = "PAZAR_SUT_IZNI_SURE";
 	public static final String COLUMN_NAME_HAFTA_TATIL_HAREKET_GUNCELLE = "HT_HAREKET_GUNCELLE";
 	public static final String COLUMN_NAME_OFF_HAREKET_GUNCELLE = "OFF_HAREKET_GUNCELLE";
+	public static final String COLUMN_NAME_YONETICI_GUNCELLE = "YONETICI_GUNCELLE";
 	public static final String COLUMN_NAME_SUT_IZNI_SABIT = "SUT_IZNI_SABIT";
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 
@@ -84,6 +85,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	private Boolean haftaTatilMesaiOde = Boolean.FALSE, geceHaftaTatilMesaiParcala = Boolean.FALSE, geceCalismaOdemeVar = Boolean.FALSE, otomatikFazlaCalismaOnaylansin = Boolean.FALSE;
 	private Boolean ortakVardiya = Boolean.FALSE, fazlaMesaiGoruntulensin = Boolean.TRUE, ilkPlanOnayliDurum = Boolean.FALSE, gunMaxCalismaOdemeDurum = Boolean.TRUE;
 	private Boolean genelModel = Boolean.TRUE, idariModel = Boolean.FALSE, suaDurum = Boolean.FALSE, haftaTatilHareketGuncelle = Boolean.FALSE, offHareketGuncelle = Boolean.FALSE;
+	private Boolean yoneticiGuncelle = Boolean.FALSE;
 	private Integer haftaTatilGun = Calendar.SUNDAY;
 	private VardiyaSablonu bagliVardiyaSablonu;
 	private Departman departman;
@@ -243,6 +245,15 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	public void setSuaDurum(Boolean suaDurum) {
 		this.suaDurum = suaDurum;
+	}
+
+	@Column(name = COLUMN_NAME_YONETICI_GUNCELLE)
+	public Boolean getYoneticiGuncelle() {
+		return yoneticiGuncelle;
+	}
+
+	public void setYoneticiGuncelle(Boolean yoneticiGuncelle) {
+		this.yoneticiGuncelle = yoneticiGuncelle;
 	}
 
 	@Column(name = COLUMN_NAME_HAFTA_TATIL_MESAI_ODE)
@@ -744,6 +755,11 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 		if (gunSure > 0.0d)
 			logger.debug(dayOfWeek + " : " + gunSure);
 		return gunSure;
+	}
+
+	@Transient
+	public Boolean isYoneticiGuncelleyebilir() {
+		return yoneticiGuncelle != null && yoneticiGuncelle.booleanValue();
 	}
 
 	@Transient
