@@ -454,7 +454,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			tumPersoneller = date.after(bitisTarih) == false ? pdksEntityController.getObjectBySQLList(sb, map, Personel.class) : null;
 		} else
-			tumPersoneller = authenticatedUser.getYetkiliPersoneller();
+			tumPersoneller = authenticatedUser.getTumPersoneller();
 		if (tumPersoneller != null) {
 			if (!tumPersoneller.isEmpty()) {
 				Calendar cal = Calendar.getInstance();
