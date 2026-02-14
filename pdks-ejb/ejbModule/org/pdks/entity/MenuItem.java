@@ -32,12 +32,12 @@ public class MenuItem extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_DURUM = "STATUS";
 	public static final String COLUMN_NAME_TOP_MENU = "TOPMENU";
 
-	private String name = "",parametre="";
+	private String name = "", parametre = "";
 	private List<MenuItem> childMenuItemList = new ArrayList<MenuItem>();;
 	private Tanim description;
 	private Boolean topMenu = Boolean.FALSE;
 	private int orderNo;
-	private Integer version;
+	private Integer version = 0;
 	private Boolean status = Boolean.TRUE;
 	private Boolean check = Boolean.FALSE;
 	private MenuItem parentMenuItem;
@@ -227,6 +227,7 @@ public class MenuItem extends BasePDKSObject implements Serializable {
 	public void entityRefresh() {
 
 	}
+
 	@Transient
 	public String getParametre() {
 		return parametre;
