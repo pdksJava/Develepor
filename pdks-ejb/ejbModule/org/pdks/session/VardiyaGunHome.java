@@ -3009,7 +3009,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (tipi.equalsIgnoreCase("P")) {
 				Sirket sirket = personel.getSirket();
 				HashMap fields = new HashMap();
-				if (denklestirmeAyDurum && (ikRole || ortakIslemler.getParameterKey("yoneticiModelGuncelle").equals("1"))) {
+				if (denklestirmeAyDurum) {
 					int adet = 25;
 					if (!PdksUtil.hasStringValue(sicilNo))
 						adet = aylikPuantajList.size();

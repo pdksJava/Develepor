@@ -112,7 +112,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		durumList.clear();
 		as = new AramaSecenekleri();
 		as.setLoginUser(authenticatedUser);
-		fillSirketList();
+		if (authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isAdmin() || authenticatedUser.isGenelMudur())
+			fillSirketList();
 		durumList.add(new Liste(1, "Erken Giriş"));
 		durumList.add(new Liste(2, "Erken Çıkış"));
 		durumList.add(new Liste(3, "Geç Giriş"));
@@ -428,28 +429,32 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		map.put("t2", bitisTarih);
 		Date tarih1 = null;
 		Date tarih2 = null;
-		StringBuilder sb = new StringBuilder();
-		sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
-		sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
-		sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1");
-		sb.append(" where P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :t2 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :t1");
-		if (as.getSirketId() != null) {
-			sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + as.getSirketId());
-			if (as.getTesisId() != null)
-				sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = " + as.getTesisId());
-			else if (as.getTesisList() != null && as.getTesisList().isEmpty() == false) {
-				List<Long> idList = new ArrayList<Long>();
-				for (SelectItem si : as.getTesisList())
-					idList.add((Long) si.getValue());
-				sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :v ");
-				map.put("v", idList);
+		List<Personel> tumPersoneller = null;
+		if (authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isAdmin() || authenticatedUser.isGenelMudur()) {
+ 			StringBuilder sb = new StringBuilder();
+			sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
+			sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1");
+			sb.append(" where P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " <= :t2 and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :t1");
+			if (as.getSirketId() != null) {
+				sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + as.getSirketId());
+				if (as.getTesisId() != null)
+					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = " + as.getTesisId());
+				else if (as.getTesisList() != null && as.getTesisList().isEmpty() == false) {
+					List<Long> idList = new ArrayList<Long>();
+					for (SelectItem si : as.getTesisList())
+						idList.add((Long) si.getValue());
+					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :v ");
+					map.put("v", idList);
+				}
 			}
-		}
 
-		sb.append(" and P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1");
-		if (session != null)
-			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<Personel> tumPersoneller = date.after(bitisTarih) == false ? pdksEntityController.getObjectBySQLList(sb, map, Personel.class) : null;
+			sb.append(" and P." + Personel.COLUMN_NAME_PDKS_DURUM + " = 1");
+			if (session != null)
+				map.put(PdksEntityController.MAP_KEY_SESSION, session);
+			tumPersoneller = date.after(bitisTarih) == false ? pdksEntityController.getObjectBySQLList(sb, map, Personel.class) : null;
+		} else
+			tumPersoneller = authenticatedUser.getYetkiliPersoneller();
 		if (tumPersoneller != null) {
 			if (!tumPersoneller.isEmpty()) {
 				Calendar cal = Calendar.getInstance();
