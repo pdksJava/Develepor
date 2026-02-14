@@ -140,8 +140,8 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 		ortakIslemler.addIKSirketTesisKriterleri(map);
 		map.put("pdks=", Boolean.TRUE);
 		map.put("durum=", Boolean.TRUE);
-		map.put("sskCikisTarihi>=", bugun);
-		map.put("iseBaslamaTarihi<=", bugun);
+		map.put("sskCikisTarihi >= ", bugun);
+		map.put("iseBaslamaTarihi <= ", bugun);
 		if (aramaSecenekleri.getDepartmanId() != null && (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIKAdmin() || !authenticatedUser.isYoneticiKontratli()))
 			map.put("sirket.departman.id=", aramaSecenekleri.getDepartmanId());
 		if (session != null)
@@ -191,8 +191,8 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 			map.put("pdks=", Boolean.TRUE);
 			map.put("durum=", Boolean.TRUE);
 			map.put("sirket.id=", aramaSecenekleri.getSirketId());
-			map.put("sskCikisTarihi>=", bugun);
-			map.put("iseBaslamaTarihi<=", bugun);
+			map.put("sskCikisTarihi >= ", bugun);
+			map.put("iseBaslamaTarihi <= ", bugun);
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			TreeMap tesisMap = pdksEntityController.getObjectByInnerObjectMapInLogic(map, Personel.class, Boolean.FALSE);
@@ -254,8 +254,8 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 		}
 		if (aramaSecenekleri.getTesisId() != null)
 			map.put("tesis.id=", aramaSecenekleri.getTesisId());
-		map.put("sskCikisTarihi>=", oncekiGun);
-		map.put("iseBaslamaTarihi<=", date);
+		map.put("sskCikisTarihi >= ", oncekiGun);
+		map.put("iseBaslamaTarihi <= ", date);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		ArrayList<Personel> tumPersoneller = (ArrayList<Personel>) pdksEntityController.getObjectByInnerObjectListInLogic(map, Personel.class);

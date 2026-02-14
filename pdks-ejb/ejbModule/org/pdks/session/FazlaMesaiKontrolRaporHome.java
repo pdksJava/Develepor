@@ -745,8 +745,8 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 			if (gorevTipiId != null && gorevTipiId > 0)
 				fields.put("gorevTipi.id=", gorevTipiId);
 
-			fields.put("sskCikisTarihi>=", aylikPuantajSablon.getIlkGun());
-			fields.put("sskCikisTarihi<=", aylikPuantajSablon.getSonGun());
+			fields.put("sskCikisTarihi >= ", aylikPuantajSablon.getIlkGun());
+			fields.put("sskCikisTarihi <= ", aylikPuantajSablon.getSonGun());
 			if (departmanBolumAyni == false && authenticatedUser.isIK() && !authenticatedUser.isYoneticiKontratli())
 				fields.put("sirket.departman.id=", authenticatedUser.getDepartman().getId());
 			if (session != null)
@@ -806,9 +806,9 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 
 					}
 
-					map.put("iseBaslamaTarihi<=", denklestirmeDonemi.getBitisTarih());
+					map.put("iseBaslamaTarihi <= ", denklestirmeDonemi.getBitisTarih());
 
-					map.put("sskCikisTarihi>=", denklestirmeDonemi.getBaslangicTarih());
+					map.put("sskCikisTarihi >= ", denklestirmeDonemi.getBaslangicTarih());
 					if (hastaneSuperVisor)
 						map.put("ekSaha1.id=", authenticatedUser.getPdksPersonel().getEkSaha1().getId());
 					else if (!(authenticatedUser.isAdmin() || authenticatedUser.isIKAdmin()))
@@ -867,10 +867,10 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 				map.put("ekSaha1.id=", authenticatedUser.getPdksPersonel().getEkSaha1().getId());
 			} else
 				map.put(searchKey, value);
-			map.put("iseBaslamaTarihi<=", denklestirmeDonemi.getBitisTarih());
+			map.put("iseBaslamaTarihi <= ", denklestirmeDonemi.getBitisTarih());
 			if (!authenticatedUser.isIK() && !authenticatedUser.isAdmin()) {
 
-				map.put("sskCikisTarihi>=", denklestirmeDonemi.getBaslangicTarih());
+				map.put("sskCikisTarihi >= ", denklestirmeDonemi.getBaslangicTarih());
 			}
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);

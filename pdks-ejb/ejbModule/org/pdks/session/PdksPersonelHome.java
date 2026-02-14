@@ -395,8 +395,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			if (donemselDurum.getDurum()) {
 				HashMap fields = new HashMap();
 				fields.put("personel.id=", donemselDurum.getPersonel().getId());
-				fields.put("bitTarih>=", donemselDurum.getBasTarih());
-				fields.put("basTarih<=", donemselDurum.getBitTarih());
+				fields.put("bitTarih >= ", donemselDurum.getBasTarih());
+				fields.put("basTarih <= ", donemselDurum.getBitTarih());
 				if (donemselDurum.getId() != null)
 					fields.put("id <> ", donemselDurum.getId());
 				if (getIsAramaIzinDurum(donemselDurum.getPersonel())) {
@@ -2469,7 +2469,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			fields.put("pdksPersonel.ikinciYoneticiIzinOnayla=", Boolean.FALSE);
 			fields.put("durum=", Boolean.TRUE);
 			fields.put("pdksPersonel.durum=", Boolean.TRUE);
-			fields.put("pdksPersonel.sskCikisTarihi>=", PdksUtil.getDate(new Date()));
+			fields.put("pdksPersonel.sskCikisTarihi >= ", PdksUtil.getDate(new Date()));
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			yIdList = pdksEntityController.getObjectByInnerObjectListInLogic(fields, User.class);
@@ -3448,8 +3448,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 			HashMap parametreMap = new HashMap();
 			parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "user.pdksPersonel");
-			parametreMap.put("user.pdksPersonel.sskCikisTarihi>=", bugun);
-			parametreMap.put("user.pdksPersonel.iseBaslamaTarihi<=", bugun);
+			parametreMap.put("user.pdksPersonel.sskCikisTarihi >= ", bugun);
+			parametreMap.put("user.pdksPersonel.iseBaslamaTarihi <= ", bugun);
 			parametreMap.put("user.pdksPersonel.durum=", Boolean.TRUE);
 			parametreMap.put("user.durum=", Boolean.TRUE);
 			if (pdksPersonel.getId() != null)
@@ -4658,8 +4658,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());
 			HashMap parametreMap = new HashMap();
 			parametreMap.put("yoneticisi.id=", personel.getId());
-			parametreMap.put("iseBaslamaTarihi<=", bugun);
-			parametreMap.put("sskCikisTarihi>=", bugun);
+			parametreMap.put("iseBaslamaTarihi <= ", bugun);
+			parametreMap.put("sskCikisTarihi >= ", bugun);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<Personel> list = pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap, Personel.class);

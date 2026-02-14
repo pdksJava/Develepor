@@ -398,8 +398,8 @@ public class IzinAylikRaporHome extends EntityHome<PersonelIzin> implements Seri
 			parametreMap.clear();
 			parametreMap.put("izinTipi.bakiyeIzinTipi=", null);
 			parametreMap.put("izinDurumu", durum);
-			parametreMap.put("baslangicZamani<=", bitDate);
-			parametreMap.put("bitisZamani>=", basDate);
+			parametreMap.put("baslangicZamani <= ", bitDate);
+			parametreMap.put("bitisZamani >= ", basDate);
 			parametreMap.put("hesapTipi", hesapTipi);
 			parametreMap.put("izinSahibi", personelList.clone());
 			if (session != null)

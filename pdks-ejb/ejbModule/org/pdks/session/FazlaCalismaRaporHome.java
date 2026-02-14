@@ -759,7 +759,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 					HashMap fields = new HashMap();
 					sb.append("select distinct P.* from " + VardiyaGun.TABLE_NAME + " G " + PdksEntityController.getSelectLOCK() + " ");
 					sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = G." + VardiyaGun.COLUMN_NAME_PERSONEL);
-					sb.append(" and G.VARDIYA_TARIHI>=P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " and G.VARDIYA_TARIHI<=P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
+					sb.append(" and G.VARDIYA_TARIHI >= P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " and G.VARDIYA_TARIHI <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 					sb.append(" inner join " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + Vardiya.COLUMN_NAME_ID + " = G." + VardiyaGun.COLUMN_NAME_VARDIYA + " and V.AKSAM_VARDIYA=1");
 					sb.append(" inner join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = G." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT + " and S.CALISMA_SURESI>0");
 					sb.append(" where G." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :t1 and G." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :t2 ");
@@ -898,8 +898,8 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 						String fieldName = "izinSahibi.id";
 						Calendar cal = Calendar.getInstance();
 						HashMap fields = new HashMap();
-						fields.put("bitisZamani>=", ortakIslemler.tariheGunEkleCikar(cal, basTarih, -2));
-						fields.put("baslangicZamani<=", ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 1));
+						fields.put("bitisZamani >= ", ortakIslemler.tariheGunEkleCikar(cal, basTarih, -2));
+						fields.put("baslangicZamani <= ", ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 1));
 						fields.put(fieldName, idList);
 						fields.put("izinDurumu", ortakIslemler.getAktifIzinDurumList());
 						if (session != null)

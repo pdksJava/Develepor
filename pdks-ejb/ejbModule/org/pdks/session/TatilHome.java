@@ -254,8 +254,8 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 					bs = PdksUtil.convertToDateString(bitTarih, "yyyyMMdd HH:mm:ss");
 					if (oldPdksTatil == null || !oldPdksTatil.getDurum().equals(pdksTatil.getDurum()) || (pdksTatil.isTekSefer() && (basTarih.getTime() != oldPdksTatil.getBasTarih().getTime() || !bs.equals(PdksUtil.convertToDateString(oldPdksTatil.getBitTarih(), "yyyyMMdd HH:mm:ss"))))) {
 						HashMap parametreMap = new HashMap();
-						parametreMap.put("baslangicZamani<=", bitTarih);
-						parametreMap.put("bitisZamani>=", basTarih);
+						parametreMap.put("baslangicZamani <= ", bitTarih);
+						parametreMap.put("bitisZamani >= ", basTarih);
 						ArrayList durumList = new ArrayList();
 						durumList.add(PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
 						durumList.add(PersonelIzin.IZIN_DURUMU_REDEDILDI);

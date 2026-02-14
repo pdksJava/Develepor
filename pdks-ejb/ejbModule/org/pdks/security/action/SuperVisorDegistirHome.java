@@ -91,8 +91,8 @@ public class SuperVisorDegistirHome extends EntityHome<User> implements Serializ
 		parametreMap.put("role.rolename=", Role.TIPI_SUPER_VISOR);
 		parametreMap.put("user.durum=", Boolean.TRUE);
 		parametreMap.put("user.pdksPersonel.durum=", Boolean.TRUE);
-		parametreMap.put("user.pdksPersonel.sskCikisTarihi>=", bugun);
-		parametreMap.put("user.pdksPersonel.iseBaslamaTarihi<=", bugun);
+		parametreMap.put("user.pdksPersonel.sskCikisTarihi >= ", bugun);
+		parametreMap.put("user.pdksPersonel.iseBaslamaTarihi <= ", bugun);
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		if (authenticatedUser.getSeciliSuperVisor() != null)

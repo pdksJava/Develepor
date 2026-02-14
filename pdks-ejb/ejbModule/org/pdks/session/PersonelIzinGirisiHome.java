@@ -468,7 +468,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			HashMap map = new HashMap();
 			map.put("izinSahibi.id =", izinSahibi.getId());
 			map.put("izinTipi.bakiyeIzinTipi.id =", masterIzin.getIzinTipi().getId());
-			map.put("bitisZamani<=", ortakIslemler.tariheAyEkleCikar(cal, izinBaslangicZamani, artiAy));
+			map.put("bitisZamani <= ", ortakIslemler.tariheAyEkleCikar(cal, izinBaslangicZamani, artiAy));
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<PersonelIzin> izinList = pdksEntityController.getObjectByInnerObjectListInLogic(map, PersonelIzin.class);
 			if (izinList.size() > 1)
@@ -1570,8 +1570,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		vekaletMap.put(PdksEntityController.MAP_KEY_MAP, "getId");
 		vekaletMap.put(PdksEntityController.MAP_KEY_SELECT, "vekaletVeren");
 		vekaletMap.put("yeniYonetici =", user);
-		vekaletMap.put("basTarih <=", bugun);
-		vekaletMap.put("bitTarih >=", bugun);
+		vekaletMap.put("basTarih  <= ", bugun);
+		vekaletMap.put("bitTarih  >= ", bugun);
 		vekaletMap.put("durum =", Boolean.TRUE);
 		if (session != null)
 			vekaletMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -1633,8 +1633,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		vekaletMap.clear();
 		vekaletMap.put(PdksEntityController.MAP_KEY_SELECT, "bagliYonetici.pdksPersonel");
 		vekaletMap.put("yeniYonetici =", user);
-		vekaletMap.put("basTarih <=", PdksUtil.buGun());
-		vekaletMap.put("bitTarih >=", PdksUtil.buGun());
+		vekaletMap.put("basTarih  <= ", PdksUtil.buGun());
+		vekaletMap.put("bitTarih  >= ", PdksUtil.buGun());
 		vekaletMap.put("durum =", Boolean.TRUE);
 		if (session != null)
 			vekaletMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -1892,13 +1892,13 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				HashMap map = new HashMap();
 				map.put(PdksEntityController.MAP_KEY_SELECT, "yeniYonetici");
 				map.put("durum=", Boolean.TRUE);
-				map.put("bitTarih>=", bugun);
-				map.put("basTarih<=", bugun);
+				map.put("bitTarih >= ", bugun);
+				map.put("basTarih <= ", bugun);
 				map.put("vekaletVeren.email", yeniListe);
 				map.put("yeniYonetici.durum=", Boolean.TRUE);
 				map.put("yeniYonetici.pdksPersonel.durum=", Boolean.TRUE);
-				map.put("yeniYonetici.pdksPersonel.sskCikisTarihi>=", bugun);
-				map.put("yeniYonetici.pdksPersonel.iseBaslamaTarihi<=", bugun);
+				map.put("yeniYonetici.pdksPersonel.sskCikisTarihi >= ", bugun);
+				map.put("yeniYonetici.pdksPersonel.iseBaslamaTarihi <= ", bugun);
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
 				List<User> vekiller = pdksEntityController.getObjectByInnerObjectListInLogic(map, UserVekalet.class);
@@ -2532,8 +2532,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 							bitisTarihi = ortakIslemler.tariheGunEkleCikar(cal, bitisTarihi, 1);
 
 						ortakIslemler.showSQLQuery(paramMap);
-						paramMap.put("baslangicZamani<=", bitisTarihi);
-						paramMap.put("bitisZamani>=", startDatedt);
+						paramMap.put("baslangicZamani <= ", bitisTarihi);
+						paramMap.put("bitisZamani >= ", startDatedt);
 						sb = new StringBuilder();
 						for (Iterator iterator = izinTipleri.iterator(); iterator.hasNext();) {
 							IzinTipi izinTipi = (IzinTipi) iterator.next();
@@ -2993,8 +2993,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				cal.add(Calendar.MINUTE, -sure);
 				Date baslamaZaman = cal.getTime();
 				map.put("izinSahibi=", izin.getIzinSahibi());
-				map.put("baslangicZamani<=", bitisZaman);
-				map.put("bitisZamani>=", baslamaZaman);
+				map.put("baslangicZamani <= ", bitisZaman);
+				map.put("bitisZamani >= ", baslamaZaman);
 				map.put("izinTipi.izinTipiTanim=", izinTipiBirlesikHaric.getBirlesikIzinTipiTanim());
 				map.put("izinDurumu not ", Arrays.asList(new Integer[] { PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL, PersonelIzin.IZIN_DURUMU_REDEDILDI }));
 				map.put("izinTipi.bakiyeIzinTipi=", null);
@@ -3375,8 +3375,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			HashMap param = new HashMap();
 			param.put("izinSahibi=", izinSahibi);
 			param.put("izinTipi.bakiyeIzinTipi=", null);
-			param.put("bitisZamani>=", ortakIslemler.tariheGunEkleCikar(cal, personelIzin.getBaslangicZamani(), -1));
-			param.put("baslangicZamani<=", ortakIslemler.tariheGunEkleCikar(cal, personelIzin.getBaslangicZamani(), 1));
+			param.put("bitisZamani >= ", ortakIslemler.tariheGunEkleCikar(cal, personelIzin.getBaslangicZamani(), -1));
+			param.put("baslangicZamani <= ", ortakIslemler.tariheGunEkleCikar(cal, personelIzin.getBaslangicZamani(), 1));
 			param.put("izinDurumu not", izinDurumlari);
 			if (personelIzin.getId() != null)
 				param.put("id <> ", personelIzin.getId());
@@ -3431,8 +3431,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			HashMap param = new HashMap();
 			param.put("izinSahibi=", izinSahibi);
 			param.put("izinTipi.bakiyeIzinTipi=", null);
-			param.put("bitisZamani>=", personelIzin.getBaslangicZamani());
-			param.put("baslangicZamani<=", personelIzin.getBitisZamani());
+			param.put("bitisZamani >= ", personelIzin.getBaslangicZamani());
+			param.put("baslangicZamani <= ", personelIzin.getBitisZamani());
 			param.put("izinDurumu not ", izinDurumlari);
 			if (personelIzin.getId() != null)
 				param.put("id <> ", personelIzin.getId());
@@ -3575,8 +3575,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			HashMap param = new HashMap();
 			param.put("izinSahibi=", izinSahibi);
 			param.put("izinTipi.id=", izinTipi.getId());
-			param.put("bitisZamani>=", ortakIslemler.tariheGunEkleCikar(cal, personelIzin.getBaslangicZamani(), -1));
-			param.put("baslangicZamani<=", ortakIslemler.tariheGunEkleCikar(cal, personelIzin.getBitisZamani(), 1));
+			param.put("bitisZamani >= ", ortakIslemler.tariheGunEkleCikar(cal, personelIzin.getBaslangicZamani(), -1));
+			param.put("baslangicZamani <= ", ortakIslemler.tariheGunEkleCikar(cal, personelIzin.getBitisZamani(), 1));
 			param.put("izinDurumu not ", izinDurumlari);
 			if (personelIzin.getId() != null)
 				param.put("id <> ", personelIzin.getId());
@@ -4527,8 +4527,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			paramMap.put("izinTipi.bakiyeIzinTipi=", null);
 			paramMap.put("izinTipi.onaylayanTipi <> ", IzinTipi.ONAYLAYAN_TIPI_YOK);
 			paramMap.put("izinSahibi", personelList);
-			paramMap.put("baslangicZamani<=", tarih);
-			paramMap.put("bitisZamani>=", tarih);
+			paramMap.put("baslangicZamani <= ", tarih);
+			paramMap.put("bitisZamani >= ", tarih);
 			paramMap.put("izinDurumu", izinDurum);
 			if (session != null)
 				paramMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -4571,8 +4571,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	private List<Personel> getHekimler(Date tarih) {
 		Date bugun = PdksUtil.getDate(tarih);
 		HashMap map = new HashMap();
-		map.put("sskCikisTarihi>=", bugun);
-		map.put("iseBaslamaTarihi<=", bugun);
+		map.put("sskCikisTarihi >= ", bugun);
+		map.put("iseBaslamaTarihi <= ", bugun);
 		map.put("ekSaha2.kodu=", Personel.STATU_HEKIM);
 		map.put("pdksSicilNo <> ", "");
 		map.put("durum=", Boolean.TRUE);

@@ -147,8 +147,8 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 		fields.put("sirket.id=", sirket.getId());
 		fields.put("yoneticisi.id=", iptalYonetici.getId());
 		fields.put("durum=", Boolean.TRUE);
-		fields.put("iseBaslamaTarihi<=", tarih);
-		fields.put("sskCikisTarihi>=", tarih);
+		fields.put("iseBaslamaTarihi <= ", tarih);
+		fields.put("sskCikisTarihi >= ", tarih);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		personelList = pdksEntityController.getObjectByInnerObjectListInLogic(fields, Personel.class);

@@ -359,7 +359,7 @@ public class PersonelERPGuncelleme implements Serializable {
 		fields.put("durum=", Boolean.TRUE);
 		fields.put("pdksPersonel.durum=", Boolean.TRUE);
 		fields.put("pdksPersonel.sirket.ldapDurum=", Boolean.TRUE);
-		fields.put("pdksPersonel.sskCikisTarihi>=", PdksUtil.getDate(Calendar.getInstance().getTime()));
+		fields.put("pdksPersonel.sskCikisTarihi >= ", PdksUtil.getDate(Calendar.getInstance().getTime()));
 		List<User> list = pdksEntityController.getObjectByInnerObjectListInLogic(fields, User.class);
 		logger.info("kullaniciGuncelle in " + list.size() + " --> " + PdksUtil.getCurrentTimeStampStr());
 
@@ -460,7 +460,7 @@ public class PersonelERPGuncelleme implements Serializable {
 		// map.put("durum=", Boolean.TRUE);
 		map.put("sirket.durum=", Boolean.TRUE);
 		map.put("sirket.erpDurum=", Boolean.TRUE);
-		map.put("sskCikisTarihi>=", tarih);
+		map.put("sskCikisTarihi >= ", tarih);
 		map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		hataKonum = "personelERPGuncelle basladi ";
 		List<Personel> list = pdksEntityController.getObjectByInnerObjectListInLogic(map, Personel.class);
@@ -605,7 +605,7 @@ public class PersonelERPGuncelleme implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" where P." + Personel.COLUMN_NAME_DURUM + " = 1 and (" + Personel.COLUMN_NAME_MAIL_CC_ID + " is not null or " + Personel.COLUMN_NAME_MAIL_BCC_ID + " is not null or " + Personel.COLUMN_NAME_HAREKET_MAIL_ID + " is not null)");
-		sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >=" + PdksEntityController.getSqlBuGun());
+		sb.append(" and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + "  >= " + PdksEntityController.getSqlBuGun());
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {

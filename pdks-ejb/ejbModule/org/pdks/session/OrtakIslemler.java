@@ -3138,7 +3138,7 @@ public class OrtakIslemler implements Serializable {
 				ilkDonem = sistemBaslangicYili + ilkDonem;
 		}
 		if (PdksUtil.hasStringValue(ilkDonem))
-			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " >=" + ilkDonem);
+			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + "  >= " + ilkDonem);
 		fields.put("y", yil);
 		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU);
 		if (session != null)
@@ -4030,8 +4030,8 @@ public class OrtakIslemler implements Serializable {
 			parametreMap.clear();
 			parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "vekaletVeren");
 			parametreMap.put("yeniYonetici.id=", gelenUser.getId());
-			parametreMap.put("bitTarih>=", bugun);
-			parametreMap.put("basTarih<=", bugun);
+			parametreMap.put("bitTarih >= ", bugun);
+			parametreMap.put("basTarih <= ", bugun);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<User> vekilUserList = pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap, UserVekalet.class);
@@ -4051,8 +4051,8 @@ public class OrtakIslemler implements Serializable {
 			if (adminRole == false && aramaSecenekleriPer.isYetkiliPersoneller() == false) {
 				parametreMap.clear();
 				parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "personelGecici");
-				parametreMap.put("bitTarih>=", bugun);
-				parametreMap.put("basTarih<=", bugun);
+				parametreMap.put("bitTarih >= ", bugun);
+				parametreMap.put("basTarih <= ", bugun);
 				parametreMap.put("yeniYonetici.id=", user.getId());
 				if (session != null)
 					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -5605,8 +5605,8 @@ public class OrtakIslemler implements Serializable {
 		} catch (Exception e) {
 			Personel yoneticiPersonel = user.getPdksPersonel();
 			HashMap map = new HashMap();
-			map.put("sskCikisTarihi>=", tarih);
-			map.put("iseBaslamaTarihi<=", tarih);
+			map.put("sskCikisTarihi >= ", tarih);
+			map.put("iseBaslamaTarihi <= ", tarih);
 			map.put("durum=", Boolean.TRUE);
 			List paramList = new ArrayList();
 			paramList.add(yoneticiPersonel.getId());
@@ -6171,8 +6171,8 @@ public class OrtakIslemler implements Serializable {
 			if (yoneticiKullanici != null) {
 				map.clear();
 				map.put(PdksEntityController.MAP_KEY_SELECT, "yeniYonetici");
-				map.put("bitTarih>=", tarih);
-				map.put("basTarih<=", tarih);
+				map.put("bitTarih >= ", tarih);
+				map.put("basTarih <= ", tarih);
 				map.put("bagliYonetici=", yoneticiKullanici);
 				map.put("personelGecici=", personel);
 				if (session != null)
@@ -6181,8 +6181,8 @@ public class OrtakIslemler implements Serializable {
 			}
 			map.clear();
 			map.put(PdksEntityController.MAP_KEY_SELECT, "yeniYonetici");
-			map.put("bitTarih>=", tarih);
-			map.put("basTarih<=", tarih);
+			map.put("bitTarih >= ", tarih);
+			map.put("basTarih <= ", tarih);
 			if (yeniYonetici == null)
 				yeniYonetici = yoneticiKullanici;
 			map.put("vekaletVeren=", yeniYonetici);
@@ -6868,8 +6868,8 @@ public class OrtakIslemler implements Serializable {
 			fields.put("ekSaha1.id=", departmanId);
 		else if (authenticatedUser != null && authenticatedUser.isYonetici() && !(authenticatedUser.isIK() || authenticatedUser.isAdmin()))
 			fields.put("pdksSicilNo", getYetkiTumPersonelNoListesi(authenticatedUser));
-		fields.put("iseBaslamaTarihi<=", bitTarih);
-		fields.put("sskCikisTarihi>=", basTarih);
+		fields.put("iseBaslamaTarihi <= ", bitTarih);
+		fields.put("sskCikisTarihi >= ", basTarih);
 		if (pdksDepartman != null && pdksDepartman.isAdminMi() && denklestirme != null && denklestirme)
 			fields.put("pdks=", Boolean.TRUE);
 		fields.put(fieldAdi + " <> ", null);
@@ -8384,7 +8384,7 @@ public class OrtakIslemler implements Serializable {
 				sb.append(" where K." + PersonelKGS.COLUMN_NAME_DURUM + " = 0 and K." + PersonelKGS.COLUMN_NAME_KGS_SIRKET + " > 0 ");
 				sb.append(" and P." + Personel.COLUMN_NAME_ID + " is null");
 				sb.append(" )");
-				sb.append(" and (D." + PersonelERPDB.COLUMN_NAME_ISTEN_AYRILMA_TARIHI + ">=" + PdksEntityController.getSqlBuGun() + " or " + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " > :gt)");
+				sb.append(" and (D." + PersonelERPDB.COLUMN_NAME_ISTEN_AYRILMA_TARIHI + " >= " + PdksEntityController.getSqlBuGun() + " or " + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " > :gt)");
 				sb.append(" order by D." + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI);
 				fields.put("gt", PdksUtil.tariheAyEkleCikar(getBugun(), -3));
 			}
@@ -9563,7 +9563,7 @@ public class OrtakIslemler implements Serializable {
 			if (PdksUtil.hasStringValue(soyad))
 				parametreMap.put("soyad like", soyad.trim() + "%");
 			if (istenAyrilanEkleDurum == false)
-				parametreMap.put("sskCikisTarihi>=", bugun);
+				parametreMap.put("sskCikisTarihi >= ", bugun);
 			List siciller = null;
 			if (!istenAyrilanEkle && authenticatedUser != null) {
 				siciller = (List) authenticatedUser.getYetkiTumPersonelNoList().clone();
@@ -9973,8 +9973,8 @@ public class OrtakIslemler implements Serializable {
 					if (kaydet) {
 						parametreMap.clear();
 						parametreMap.put("izinSahibi.id=", vardiyaGun.getPersonel().getId());
-						parametreMap.put("baslangicZamani<=", fazlaMesai.getBitZaman());
-						parametreMap.put("bitisZamani>=", fazlaMesai.getBasZaman());
+						parametreMap.put("baslangicZamani <= ", fazlaMesai.getBitZaman());
+						parametreMap.put("bitisZamani >= ", fazlaMesai.getBasZaman());
 						parametreMap.put("izinDurumu", getAktifIzinDurumList());
 						if (session != null)
 							parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -11459,8 +11459,8 @@ public class OrtakIslemler implements Serializable {
 			HashMap userMap = new HashMap();
 			userMap.put(PdksEntityController.MAP_KEY_SELECT, "yeniYonetici");
 			userMap.put("vekaletVeren=", vekaletVeren);
-			userMap.put("basTarih<=", bugun);
-			userMap.put("bitTarih>=", bugun);
+			userMap.put("basTarih <= ", bugun);
+			userMap.put("bitTarih >= ", bugun);
 			if (session != null)
 				userMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
@@ -12193,8 +12193,8 @@ public class OrtakIslemler implements Serializable {
 	private void digerYetkileriEkle(User user, Date basTarih, Date bitTarih, Session session) {
 		HashMap map = new HashMap();
 		map.put("yeniYonetici=", user);
-		map.put("bitTarih>=", basTarih);
-		map.put("basTarih<=", bitTarih);
+		map.put("bitTarih >= ", basTarih);
+		map.put("basTarih <= ", bitTarih);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<UserVekalet> userList = pdksEntityController.getObjectByInnerObjectListInLogic(map, UserVekalet.class);
@@ -12240,8 +12240,8 @@ public class OrtakIslemler implements Serializable {
 			map.clear();
 			map.put(PdksEntityController.MAP_KEY_SELECT, "personelGecici.pdksSicilNo");
 			map.put("yeniYonetici=", user);
-			map.put("bitTarih>=", basTarih);
-			map.put("basTarih<=", bitTarih);
+			map.put("bitTarih >= ", basTarih);
+			map.put("basTarih <= ", bitTarih);
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List personelList = pdksEntityController.getObjectByInnerObjectListInLogic(map, PersonelGeciciYonetici.class);
@@ -12528,8 +12528,8 @@ public class OrtakIslemler implements Serializable {
 			HashMap map = new HashMap();
 			map.put(PdksEntityController.MAP_KEY_SELECT, "user");
 			map.put("user.pdksPersonel.pdksSicilNo", user.getYetkiliPersonelNoList());
-			map.put("user.pdksPersonel.iseBaslamaTarihi<=", bitTarih);
-			map.put("user.pdksPersonel.sskCikisTarihi>=", basTarih);
+			map.put("user.pdksPersonel.iseBaslamaTarihi <= ", bitTarih);
+			map.put("user.pdksPersonel.sskCikisTarihi >= ", basTarih);
 			map.put("user.durum=", Boolean.TRUE);
 			map.put("user.pdksPersonel.durum=", Boolean.TRUE);
 			map.put("role.rolename=", Role.TIPI_YONETICI);
@@ -12752,8 +12752,8 @@ public class OrtakIslemler implements Serializable {
 		if (user != null && user.getDepartman().isAdminMi()) {
 			HashMap map = new HashMap();
 			Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());
-			map.put("sskCikisTarihi>=", bugun);
-			map.put("iseBaslamaTarihi<=", bugun);
+			map.put("sskCikisTarihi >= ", bugun);
+			map.put("iseBaslamaTarihi <= ", bugun);
 			map.put("durum=", Boolean.TRUE);
 			map.put("yoneticisi.id=", user.getPdksPersonel().getId());
 			map.put("pdksSicilNo <> ", "");
@@ -16239,7 +16239,7 @@ public class OrtakIslemler implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ", max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, ");
 		sb.append("B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from " + KatSayi.TABLE_NAME + " B " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" where B." + KatSayi.COLUMN_NAME_BAS_TARIH + "<= :bitTarih and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= :basTarih");
+		sb.append(" where B." + KatSayi.COLUMN_NAME_BAS_TARIH + " <=  :bitTarih and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= :basTarih");
 		sb.append(" and B." + KatSayi.COLUMN_NAME_TIPI + " :tipi and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
 		sb.append(" group by B." + KatSayi.COLUMN_NAME_TIPI + ", B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA);
 		map.put("tipi", tipiList);
@@ -16704,7 +16704,7 @@ public class OrtakIslemler implements Serializable {
 				// map.put("bakiyeIzinTipi.bakiyeDevirTipi=", IzinTipi.BAKIYE_DEVIR_SENELIK);
 				// map.put("departman=", personel.getSirket().getDepartman());
 				// map.put("personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
-				// map.put("kotaBakiye>=", 0D);
+				// map.put("kotaBakiye >= ", 0D);
 				// if (session != null)
 				// map.put(PdksEntityController.MAP_KEY_SESSION, session);
 				//
@@ -16820,8 +16820,8 @@ public class OrtakIslemler implements Serializable {
 					Date bugun = PdksUtil.buGun();
 					HashMap map = new HashMap();
 					map.put("pdksPersonel.id=", personelIzin.getIzinSahibi().getYonetici2().getId());
-					map.put("pdksPersonel.iseBaslamaTarihi<=", bugun);
-					map.put("pdksPersonel.sskCikisTarihi>=", bugun);
+					map.put("pdksPersonel.iseBaslamaTarihi <= ", bugun);
+					map.put("pdksPersonel.sskCikisTarihi >= ", bugun);
 					map.put("pdksPersonel.durum=", Boolean.TRUE);
 					map.put("durum=", Boolean.TRUE);
 					if (session != null)
@@ -17108,8 +17108,8 @@ public class OrtakIslemler implements Serializable {
 			HashMap onaylamaMap = new HashMap();
 			onaylamaMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			onaylamaMap.put(PdksEntityController.MAP_KEY_SELECT, "user");
-			onaylamaMap.put("user.pdksPersonel.iseBaslamaTarihi<=", bugun);
-			onaylamaMap.put("user.pdksPersonel.sskCikisTarihi>=", bugun);
+			onaylamaMap.put("user.pdksPersonel.iseBaslamaTarihi <= ", bugun);
+			onaylamaMap.put("user.pdksPersonel.sskCikisTarihi >= ", bugun);
 			onaylamaMap.put("user.pdksPersonel.durum=", Boolean.TRUE);
 			if (personel != null)
 				onaylamaMap.put("user.pdksPersonel=", personel);
@@ -19267,7 +19267,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public List<YemekOgun> fillYemekList(Session session, Date basTarih, Date bitTarih) {
 		HashMap parametreMapYemek = new HashMap();
-		parametreMapYemek.put("bitTarih>=", basTarih);
+		parametreMapYemek.put("bitTarih >= ", basTarih);
 		parametreMapYemek.put("basTarih<", tariheGunEkleCikar(null, bitTarih, 1));
 		parametreMapYemek.put("durum=", Boolean.TRUE);
 		if (session != null)
@@ -19600,9 +19600,9 @@ public class OrtakIslemler implements Serializable {
 		List<PersonelIzin> izinList = new ArrayList<PersonelIzin>();
 		parametreMap.put("izinSahibi", personeller);
 		if (bitTarih != null)
-			parametreMap.put("baslangicZamani<=", bitTarih);
+			parametreMap.put("baslangicZamani <= ", bitTarih);
 		if (basTarih != null)
-			parametreMap.put("bitisZamani>=", basTarih);
+			parametreMap.put("bitisZamani >= ", basTarih);
 		if (authenticatedUser != null && (!authenticatedUser.isIK() && !authenticatedUser.isAdmin()))
 			parametreMap.put("izinDurumu=", PersonelIzin.IZIN_DURUMU_ONAYLANDI);
 		if (izinTipi != null)
@@ -24444,8 +24444,8 @@ public class OrtakIslemler implements Serializable {
 					map.put("email", bccAdresler);
 					map.put("durum=", Boolean.TRUE);
 					map.put("pdksPersonel.durum=", Boolean.TRUE);
-					map.put("pdksPersonel.iseBaslamaTarihi<=", bugun);
-					map.put("pdksPersonel.sskCikisTarihi>=", bugun);
+					map.put("pdksPersonel.iseBaslamaTarihi <= ", bugun);
+					map.put("pdksPersonel.sskCikisTarihi >= ", bugun);
 					if (session != null)
 						map.put(PdksEntityController.MAP_KEY_SESSION, session);
 					List<User> list = pdksEntityController.getObjectByInnerObjectListInLogic(map, User.class);
@@ -24476,8 +24476,8 @@ public class OrtakIslemler implements Serializable {
 			map.put("role.rolename=", Role.TIPI_ADMIN);
 			map.put("user.durum=", Boolean.TRUE);
 			map.put("user.pdksPersonel.durum=", Boolean.TRUE);
-			map.put("user.pdksPersonel.iseBaslamaTarihi<=", bugun);
-			map.put("user.pdksPersonel.sskCikisTarihi>=", bugun);
+			map.put("user.pdksPersonel.iseBaslamaTarihi <= ", bugun);
+			map.put("user.pdksPersonel.sskCikisTarihi >= ", bugun);
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			userList = pdksEntityController.getObjectByInnerObjectListInLogic(map, UserRoles.class);
@@ -24536,9 +24536,9 @@ public class OrtakIslemler implements Serializable {
 					map.put("yoneticisi.pdksSicilNo", yetkiTumPersonelNoList);
 				map.put("durum=", Boolean.TRUE);
 				if (tarih2 != null)
-					map.put("iseBaslamaTarihi<=", tarih2);
+					map.put("iseBaslamaTarihi <= ", tarih2);
 				if (tarih1 != null)
-					map.put("sskCikisTarihi>=", tarih1);
+					map.put("sskCikisTarihi >= ", tarih1);
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
 
@@ -25194,7 +25194,7 @@ public class OrtakIslemler implements Serializable {
 						fields.put("alan.id=", ikinciYoneticiOlmaz.getId());
 						fields.put("durumSecim=", Boolean.TRUE);
 						fields.put("personel.durum=", Boolean.TRUE);
-						fields.put("personel.sskCikisTarihi>=", PdksUtil.getDate(new Date()));
+						fields.put("personel.sskCikisTarihi >= ", PdksUtil.getDate(new Date()));
 						if (session != null)
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 						ikinciYoneticiOlmazList = pdksEntityController.getObjectByInnerObjectListInLogic(fields, PersonelDinamikAlan.class);

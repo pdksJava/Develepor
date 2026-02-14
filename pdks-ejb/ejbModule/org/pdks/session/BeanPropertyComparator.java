@@ -98,7 +98,7 @@ public class BeanPropertyComparator implements Comparator {
      *            <DT>-1</DT>
      *            <DD>if <CODE>o1</CODE> &lt; <CODE>o2</CODE></DD>
      *            <DT>0</DT>
-     *            <DD>if <CODE>o1</CODE>=<CODE>o2</CODE></DD>
+     *            <DD>if <CODE>o1</CODE >= <CODE>o2</CODE></DD>
      *            <DT>1</DT>
      *            <DD>if <CODE>o1</CODE> &gt; <CODE>o2</CODE></DD>
      *            </DL>

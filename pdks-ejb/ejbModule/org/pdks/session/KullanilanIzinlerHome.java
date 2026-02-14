@@ -557,8 +557,8 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 			Date bitisTarihi = (Date) bitTarih.clone();
 			if (PdksUtil.tarihKarsilastirNumeric(bitTarih, basTarih) == 0)
 				bitisTarihi = ortakIslemler.tariheGunEkleCikar(null, bitisTarihi, 1);
-			parametreMap.put("baslangicZamani<=", bitisTarihi);
-			parametreMap.put("bitisZamani>=", basTarih);
+			parametreMap.put("baslangicZamani <= ", bitisTarihi);
+			parametreMap.put("bitisZamani >= ", basTarih);
 			List<Integer> izinDurumuList = new ArrayList<Integer>();
 			if (islemTipi.equals("K")) {
 				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_ONAYLANDI);
@@ -756,8 +756,8 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 				Date bitisTarihi = (Date) bitTarih.clone();
 				if (PdksUtil.tarihKarsilastirNumeric(bitTarih, basTarih) == 0)
 					bitisTarihi = ortakIslemler.tariheGunEkleCikar(null, bitisTarihi, 1);
-				parametreMap.put("baslangicZamani<=", bitisTarihi);
-				parametreMap.put("bitisZamani>=", basTarih);
+				parametreMap.put("baslangicZamani <= ", bitisTarihi);
+				parametreMap.put("bitisZamani >= ", basTarih);
 				List<Integer> izinDurumuList = new ArrayList<Integer>();
 				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_BIRINCI_YONETICI_ONAYINDA);
 				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_IKINCI_YONETICI_ONAYINDA);

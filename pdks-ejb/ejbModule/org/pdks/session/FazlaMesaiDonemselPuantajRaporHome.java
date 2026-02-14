@@ -582,7 +582,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			personelSQLBagla(null, sb, fields);
 			ortakIslemler.addIKSirketTesisKriterleri(fields, sb);
 			donemSQLKontrol(sb);
-			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <=" + sonDonem);
+			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + "  <= " + sonDonem);
 			sb.append(" order by S." + Sirket.COLUMN_NAME_ID);
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);

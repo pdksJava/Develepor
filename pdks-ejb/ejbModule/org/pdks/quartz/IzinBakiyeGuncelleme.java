@@ -399,7 +399,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			map.put("bakiyeIzinTipi.bakiyeDevirTipi=", IzinTipi.BAKIYE_DEVIR_SENELIK);
 			map.put("bakiyeIzinTipi.onaylayanTipi <> ", IzinTipi.ONAYLAYAN_TIPI_YOK);
 			map.put("bakiyeIzinTipi.personelGirisTipi <> ", IzinTipi.GIRIS_TIPI_YOK);
-			map.put("kotaBakiye>=", 0D);
+			map.put("kotaBakiye >= ", 0D);
 			hataKonum = "bakiyeIzinTipleri okunuyor ";
 			TreeMap<Long, Tanim> senelikBakiyeIzinTipiMap = pdksEntityController.getObjectByInnerObjectMapInLogic(map, IzinTipi.class, Boolean.TRUE);
 			boolean flush = false;

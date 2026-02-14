@@ -315,8 +315,8 @@ public class GunlukIzinRaporHome extends EntityHome<PersonelIzin> {
 				izinDurumuList.add(PersonelIzin.IZIN_DURUMU_ERP_GONDERILDI);
 				parametreMap.clear();
 				parametreMap.put("izinSahibi.id", idList);
-				parametreMap.put("baslangicZamani<=", ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 1));
-				parametreMap.put("bitisZamani>=", ortakIslemler.tariheGunEkleCikar(cal, basTarih, -1));
+				parametreMap.put("baslangicZamani <= ", ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 1));
+				parametreMap.put("bitisZamani >= ", ortakIslemler.tariheGunEkleCikar(cal, basTarih, -1));
 				parametreMap.put("izinDurumu", izinDurumuList);
 				if (izinTipiKodu != null) {
 					HashMap fields = new HashMap();

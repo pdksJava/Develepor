@@ -98,8 +98,8 @@ public class IzinHakedisHakkiHome extends EntityHome<IzinHakedisHakki> implement
 				parametreMap.put("departman=", hakedisHakki.getDepartman());
 				parametreMap.put("suaDurum=", suaDurum);
 				parametreMap.put("yasTipi=", hakedisHakki.getYasTipi());
-				parametreMap.put("kidemYili>=", basYil);
-				parametreMap.put("kidemYili<=", bitisYil);
+				parametreMap.put("kidemYili >= ", basYil);
+				parametreMap.put("kidemYili <= ", bitisYil);
 				if (session != null)
 					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 				izinHakedisHakkiList = pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap, IzinHakedisHakki.class);

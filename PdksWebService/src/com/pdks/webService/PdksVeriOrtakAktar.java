@@ -869,8 +869,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 			if (PdksUtil.hasStringValue(birdenFazlaKGSSirketSQL)) {
 				HashMap map = new HashMap();
 				map.put("id>", 0L);
-				map.put("basTarih<=", bugun);
-				map.put("bitTarih>=", bugun);
+				map.put("basTarih <= ", bugun);
+				map.put("bitTarih >= ", bugun);
 				List<KapiSirket> kapiSirketList = pdksDAO.getObjectByInnerObjectListInLogic(map, KapiSirket.class);
 				if (kapiSirketList.size() == 1) {
 					kapiSirket = kapiSirketList.get(0);
@@ -5003,8 +5003,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 		if (PdksUtil.hasStringValue(birdenFazlaKGSSirketSQL)) {
 			HashMap map = new HashMap();
 			map.put("id>", 0L);
-			map.put("basTarih<=", bugun);
-			map.put("bitTarih>=", bugun);
+			map.put("basTarih <= ", bugun);
+			map.put("bitTarih >= ", bugun);
 			List<KapiSirket> list = pdksDAO.getObjectByInnerObjectListInLogic(map, KapiSirket.class);
 			if (list.size() == 1) {
 				kapiSirket = list.get(0);

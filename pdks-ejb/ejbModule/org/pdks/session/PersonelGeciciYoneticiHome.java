@@ -141,8 +141,8 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 			HashMap parametreMap = new HashMap();
 			parametreMap.put("durum=", Boolean.TRUE);
 			parametreMap.put("pdksSicilNo", personelNoList);
-			parametreMap.put("iseBaslamaTarihi<=", bugun);
-			parametreMap.put("iseBaslamaTarihi<=", bugun);
+			parametreMap.put("iseBaslamaTarihi <= ", bugun);
+			parametreMap.put("iseBaslamaTarihi <= ", bugun);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			personelBulList = pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap, Personel.class);
@@ -187,7 +187,7 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 		List<PersonelGeciciYonetici> rotasyonList = new ArrayList<PersonelGeciciYonetici>();
 		HashMap parammap = new HashMap();
 		parammap.put("durum=", Boolean.TRUE);
-		parammap.put("bitTarih>=", new Date());
+		parammap.put("bitTarih >= ", new Date());
 		if (session != null)
 			parammap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
@@ -578,8 +578,8 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 			parametreMap.clear();
 			parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "yoneticisi");
 			parametreMap.put(fieldName, dataIdList);
-			parametreMap.put("sskCikisTarihi>=", bugun);
-			parametreMap.put("iseBaslamaTarihi<=", bugun);
+			parametreMap.put("sskCikisTarihi >= ", bugun);
+			parametreMap.put("iseBaslamaTarihi <= ", bugun);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			// parametreMap.put(PdksEntityController.MAP_KEY_MAP, "getId");
@@ -671,8 +671,8 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 			parametreMap.put("role.rolename", roller);
 		}
 		Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());
-		parametreMap.put(onEk + "pdksPersonel.sskCikisTarihi>=", bugun);
-		parametreMap.put(onEk + "pdksPersonel.iseBaslamaTarihi<=", bugun);
+		parametreMap.put(onEk + "pdksPersonel.sskCikisTarihi >= ", bugun);
+		parametreMap.put(onEk + "pdksPersonel.iseBaslamaTarihi <= ", bugun);
 		parametreMap.put(onEk + "durum=", Boolean.TRUE);
 		parametreMap.put(onEk + "pdksPersonel.durum=", Boolean.TRUE);
 

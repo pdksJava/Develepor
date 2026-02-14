@@ -177,8 +177,8 @@ public class IzinERPAktarimHome extends EntityHome<PersonelIzin> implements Seri
 				if (!map.isEmpty()) {
 					List<Long> list = new ArrayList<Long>(map.keySet());
 					parametreMap.clear();
-					parametreMap.put("baslangicZamani<=", getBitDate());
-					parametreMap.put("bitisZamani>=", getBasDate());
+					parametreMap.put("baslangicZamani <= ", getBitDate());
+					parametreMap.put("bitisZamani >= ", getBasDate());
 					if (list.size() == 1)
 						parametreMap.put("izinSahibi.id=", list.get(0));
 					else

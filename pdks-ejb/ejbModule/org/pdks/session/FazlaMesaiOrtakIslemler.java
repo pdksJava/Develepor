@@ -3094,8 +3094,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		fields.put(PdksEntityController.MAP_KEY_SELECT, "sirket");
 		if (pdksDepartman != null)
 			fields.put("sirket.departman.id=", pdksDepartman.getId());
-		fields.put("iseBaslamaTarihi<=", bitTarih);
-		fields.put("sskCikisTarihi>=", basTarih);
+		fields.put("iseBaslamaTarihi <= ", bitTarih);
+		fields.put("sskCikisTarihi >= ", basTarih);
 
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -3221,8 +3221,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			fields.put("ekSaha1.id=", departmanId);
 		else if (loginUser.isYonetici() && !(loginUser.isIK() || loginUser.isAdmin()))
 			fields.put("pdksSicilNo", ortakIslemler.getYetkiTumPersonelNoListesi(loginUser));
-		fields.put("iseBaslamaTarihi<=", bitTarih);
-		fields.put("sskCikisTarihi>=", basTarih);
+		fields.put("iseBaslamaTarihi <= ", bitTarih);
+		fields.put("sskCikisTarihi >= ", basTarih);
 		if (pdksDepartman != null && pdksDepartman.isAdminMi() && denklestirme != null && denklestirme)
 			fields.put("pdks=", Boolean.TRUE);
 		fields.put(fieldAdi + " <> ", null);
@@ -3419,9 +3419,9 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				if (loginUser.isDirektorSuperVisor())
 					fields.put("ekSaha1.id=", loginUser.getPdksPersonel().getEkSaha1().getId());
 				if (bitTarih != null)
-					fields.put("iseBaslamaTarihi<=", bitTarih);
+					fields.put("iseBaslamaTarihi <= ", bitTarih);
 				if (basTarih != null)
-					fields.put("sskCikisTarihi>=", basTarih);
+					fields.put("sskCikisTarihi >= ", basTarih);
 				fields.put("ekSaha3 <> ", null);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);

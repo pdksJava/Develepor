@@ -207,8 +207,8 @@ public class PDKSValidator implements Serializable {
 				buffer.add("Geçmişe ait tatil giremezsiniz");
 			if (durum) {
 				HashMap map = new HashMap();
-				map.put("basTarih<=", pdksTatil.getBitTarih());
-				map.put("bitisTarih>=", pdksTatil.getBasTarih());
+				map.put("basTarih <= ", pdksTatil.getBitTarih());
+				map.put("bitisTarih >= ", pdksTatil.getBasTarih());
 				map.put("durum=", Boolean.TRUE);
 				if (pdksTatil.getId() != null)
 					map.put("id <> ", pdksTatil.getId());

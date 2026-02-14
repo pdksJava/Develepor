@@ -114,7 +114,7 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("izinTipi.bakiyeIzinTipi=", null);
 		parametreMap.put("izinDurumu", durum);
-		parametreMap.put("baslangicZamani<=", Calendar.getInstance().getTime());
+		parametreMap.put("baslangicZamani <= ", Calendar.getInstance().getTime());
 		parametreMap.put("izinSahibi", authenticatedUser.getTumPersoneller().clone());
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -164,8 +164,8 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 				HashMap map = new HashMap();
 				map.put(PdksEntityController.MAP_KEY_SELECT, "user");
 				map.put("user.pdksPersonel.sirket=", personel.getSirket());
-				map.put("user.pdksPersonel.iseBaslamaTarihi<=", bugun);
-				map.put("user.pdksPersonel.sskCikisTarihi>=", bugun);
+				map.put("user.pdksPersonel.iseBaslamaTarihi <= ", bugun);
+				map.put("user.pdksPersonel.sskCikisTarihi >= ", bugun);
 				map.put("user.durum=", Boolean.TRUE);
 				map.put("user.pdksPersonel.durum=", Boolean.TRUE);
 				map.put("role.rolename=", Role.TIPI_PROJE_MUDURU);
@@ -179,8 +179,8 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 				HashMap map = new HashMap();
 				map.put(PdksEntityController.MAP_KEY_SELECT, "user");
 				map.put("user.departman=", personel.getSirket().getDepartman());
-				map.put("user.pdksPersonel.iseBaslamaTarihi<=", bugun);
-				map.put("user.pdksPersonel.sskCikisTarihi>=", bugun);
+				map.put("user.pdksPersonel.iseBaslamaTarihi <= ", bugun);
+				map.put("user.pdksPersonel.sskCikisTarihi >= ", bugun);
 				map.put("user.durum=", Boolean.TRUE);
 				map.put("user.pdksPersonel.durum=", Boolean.TRUE);
 				map.put("role.rolename=", Role.TIPI_IK);

@@ -198,8 +198,8 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 					HashMap map = new HashMap();
 					Date bugun = PdksUtil.getDate(new Date());
 					map.put("id>", 0L);
-					map.put("basTarih<=", ortakIslemler.tariheGunEkleCikar(cal, bugun, +7));
-					map.put("bitTarih>=", ortakIslemler.tariheGunEkleCikar(cal, bugun, -7));
+					map.put("basTarih <= ", ortakIslemler.tariheGunEkleCikar(cal, bugun, +7));
+					map.put("bitTarih >= ", ortakIslemler.tariheGunEkleCikar(cal, bugun, -7));
 					if (session != null)
 						map.put(PdksEntityController.MAP_KEY_SESSION, session);
 					List<KapiSirket> list = pdksEntityController.getObjectByInnerObjectListInLogic(map, KapiSirket.class);

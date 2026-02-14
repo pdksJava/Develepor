@@ -3223,8 +3223,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (vgIlkAy != null) {
 				HashMap fields = new HashMap();
 				fields.put("personel.id=", vGun.getPersonel().getId());
-				fields.put("vardiyaDate>=", ortakIslemler.tariheGunEkleCikar(cal, vgIlkAy.getVardiyaDate(), -7));
-				fields.put("vardiyaDate<=", ortakIslemler.tariheGunEkleCikar(cal, vgIlkAy.getVardiyaDate(), -1));
+				fields.put("vardiyaDate >= ", ortakIslemler.tariheGunEkleCikar(cal, vgIlkAy.getVardiyaDate(), -7));
+				fields.put("vardiyaDate <= ", ortakIslemler.tariheGunEkleCikar(cal, vgIlkAy.getVardiyaDate(), -1));
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				List<VardiyaGun> digerVardiyaGunList = pdksEntityController.getObjectByInnerObjectListInLogic(fields, VardiyaGun.class);
@@ -3235,8 +3235,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (vgAy != null && vGun.getId() != null && vGun.getId().equals(vgAy.getId())) {
 				HashMap fields = new HashMap();
 				fields.put("personel.id=", vGun.getPersonel().getId());
-				fields.put("vardiyaDate>=", ortakIslemler.tariheGunEkleCikar(cal, vgAy.getVardiyaDate(), 1));
-				fields.put("vardiyaDate<=", ortakIslemler.tariheGunEkleCikar(cal, vgAy.getVardiyaDate(), 7));
+				fields.put("vardiyaDate >= ", ortakIslemler.tariheGunEkleCikar(cal, vgAy.getVardiyaDate(), 1));
+				fields.put("vardiyaDate <= ", ortakIslemler.tariheGunEkleCikar(cal, vgAy.getVardiyaDate(), 7));
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				List<VardiyaGun> digerVardiyaGunList = pdksEntityController.getObjectByInnerObjectListInLogic(fields, VardiyaGun.class);
@@ -5481,8 +5481,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (superVisor != null) {
 						map.clear();
 						map.put("pdksPersonel.ekSaha1.id=", planDepartman.getId());
-						map.put("pdksPersonel.iseBaslamaTarihi<=", aylikPuantajDefault.getSonGun());
-						map.put("pdksPersonel.sskCikisTarihi>=", aylikPuantajDefault.getIlkGun());
+						map.put("pdksPersonel.iseBaslamaTarihi <= ", aylikPuantajDefault.getSonGun());
+						map.put("pdksPersonel.sskCikisTarihi >= ", aylikPuantajDefault.getIlkGun());
 						map.put("durum=", Boolean.TRUE);
 						map.put("pdksPersonel.durum=", Boolean.TRUE);
 						map.put("pdksPersonel.ekSaha3.id=", superVisor.getId());
@@ -5730,8 +5730,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						HashMap fields = new HashMap();
 						fields.put("islem.islemTipi <> ", "D");
 						fields.put("personel.id=", personelKGSId);
-						fields.put("zaman>=", ortakIslemler.tariheGunEkleCikar(cal, tarih1, -1));
-						fields.put("zaman<=", ortakIslemler.tariheGunEkleCikar(cal, tarih2, 1));
+						fields.put("zaman >= ", ortakIslemler.tariheGunEkleCikar(cal, tarih1, -1));
+						fields.put("zaman <= ", ortakIslemler.tariheGunEkleCikar(cal, tarih2, 1));
 						fields.put("islem.aciklama like ", "%" + referans + "%");
 						if (session != null)
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -8205,7 +8205,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		sb.append("");
 		sb.append("with KSAYI as (");
 		sb.append("		select " + KatSayi.COLUMN_NAME_TIPI + ", max(" + KatSayi.COLUMN_NAME_ID + ") as " + KatSayi.COLUMN_NAME_ID + " from " + KatSayi.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
-		sb.append("		where " + KatSayi.COLUMN_NAME_BAS_TARIH + " <= :k2 and " + KatSayi.COLUMN_NAME_BIT_TARIH + ">= :k1 ");
+		sb.append("		where " + KatSayi.COLUMN_NAME_BAS_TARIH + " <= :k2 and " + KatSayi.COLUMN_NAME_BIT_TARIH + " >=  :k1 ");
 		sb.append("		and " + KatSayi.COLUMN_NAME_TIPI + " = " + PuantajKatSayiTipi.GUN_FMT_DURUM.value() + " and " + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
 		sb.append("		group by " + KatSayi.COLUMN_NAME_TIPI);
 		sb.append("	),");
@@ -10761,8 +10761,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					fields.clear();
 					fields.put("islem.islemTipi <> ", "D");
 					fields.put("personel.id=", personelKGSId);
-					fields.put("zaman>=", ortakIslemler.tariheGunEkleCikar(cal, tarih1, -1));
-					fields.put("zaman<=", ortakIslemler.tariheGunEkleCikar(cal, tarih2, 1));
+					fields.put("zaman >= ", ortakIslemler.tariheGunEkleCikar(cal, tarih1, -1));
+					fields.put("zaman <= ", ortakIslemler.tariheGunEkleCikar(cal, tarih2, 1));
 					fields.put("islem.aciklama like ", "%" + referans + "%");
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);

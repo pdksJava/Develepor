@@ -288,8 +288,8 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 		Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());
 		if ((authenticatedUser.isYonetici() && !authenticatedUser.isIK()) || authenticatedUser.isMudur())
 			parametreMap.put("user <> ", authenticatedUser);
-		parametreMap.put("user.pdksPersonel.sskCikisTarihi>=", bugun);
-		parametreMap.put("user.pdksPersonel.iseBaslamaTarihi<=", bugun);
+		parametreMap.put("user.pdksPersonel.sskCikisTarihi >= ", bugun);
+		parametreMap.put("user.pdksPersonel.iseBaslamaTarihi <= ", bugun);
 		if (PdksUtil.hasStringValue(sicilNo))
 			parametreMap.put("user.pdksPersonel.pdksSicilNo=", sicilNo);
 		else {
@@ -321,8 +321,8 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 				parametreMap.clear();
 				parametreMap.put(PdksEntityController.MAP_KEY_SELECT, "yoneticisi");
 				parametreMap.put(fieldName, dataIdList);
-				parametreMap.put("sskCikisTarihi>=", bugun);
-				parametreMap.put("iseBaslamaTarihi<=", bugun);
+				parametreMap.put("sskCikisTarihi >= ", bugun);
+				parametreMap.put("iseBaslamaTarihi <= ", bugun);
 				if (session != null)
 					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 				// parametreMap.put(PdksEntityController.MAP_KEY_MAP, "getId");
@@ -403,8 +403,8 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 		if (!authenticatedUser.isIK())
 			if (authenticatedUser.isYonetici() || authenticatedUser.isMudur())
 				parametreMap.put("yeniYonetici.id=", authenticatedUser.getId());
-		parametreMap.put("basTarih<=", ortakIslemler.tariheGunEkleCikar(cal, PdksUtil.getDate(bitDate), 1));
-		parametreMap.put("bitTarih>=", PdksUtil.getDate(basDate));
+		parametreMap.put("basTarih <= ", ortakIslemler.tariheGunEkleCikar(cal, PdksUtil.getDate(bitDate), 1));
+		parametreMap.put("bitTarih >= ", PdksUtil.getDate(basDate));
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
@@ -496,8 +496,8 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 			parametreMap.put("durum=", Boolean.TRUE);
 
 			parametreMap.put("vekaletVeren=", vekaletVerenUser);
-			parametreMap.put("basTarih<=", userVekalet.getBasTarih());
-			parametreMap.put("bitTarih>=", userVekalet.getBitTarih());
+			parametreMap.put("basTarih <= ", userVekalet.getBasTarih());
+			parametreMap.put("bitTarih >= ", userVekalet.getBitTarih());
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<UserVekalet> list = pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap, UserVekalet.class);

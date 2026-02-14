@@ -113,8 +113,8 @@ public class YemekYiyenSayisiHome extends EntityHome<VardiyaGun> implements Seri
 
 	public void fillYemekList() {
 		HashMap parametreMapYemek = new HashMap();
-		parametreMapYemek.put("bitTarih>=", basTarih);
-		parametreMapYemek.put("basTarih<=", bitTarih);
+		parametreMapYemek.put("bitTarih >= ", basTarih);
+		parametreMapYemek.put("basTarih <= ", bitTarih);
 		parametreMapYemek.put("durum=", Boolean.TRUE);
 		if (session != null)
 			parametreMapYemek.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -429,8 +429,8 @@ public class YemekYiyenSayisiHome extends EntityHome<VardiyaGun> implements Seri
 
 			boolean toplamYaz = PdksUtil.tarihKarsilastirNumeric(basTarih, bitTarih) != 0;
 			parametreMap.clear();
-			parametreMap.put("tarih>=", basTarih);
-			parametreMap.put("tarih<=", bitTarih);
+			parametreMap.put("tarih >= ", basTarih);
+			parametreMap.put("tarih <= ", bitTarih);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 

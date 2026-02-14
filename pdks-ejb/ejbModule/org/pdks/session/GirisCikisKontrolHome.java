@@ -183,8 +183,8 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 		}
 		if (aramaSecenekleri.getTesisId() != null)
 			map.put("tesis.id=", aramaSecenekleri.getTesisId());
-		map.put("sskCikisTarihi>=", oncekiGun);
-		map.put("iseBaslamaTarihi<=", date);
+		map.put("sskCikisTarihi >= ", oncekiGun);
+		map.put("iseBaslamaTarihi <= ", date);
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		ArrayList<Personel> tumPersoneller = (ArrayList<Personel>) pdksEntityController.getObjectByInnerObjectListInLogic(map, Personel.class);

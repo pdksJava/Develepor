@@ -102,8 +102,8 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 
 	public void fillYemekOgunler() {
 		HashMap fields = new HashMap();
-		fields.put("bitTarih>=", yemekKartsiz.getTarih());
-		fields.put("basTarih<=", yemekKartsiz.getTarih());
+		fields.put("bitTarih >= ", yemekKartsiz.getTarih());
+		fields.put("basTarih <= ", yemekKartsiz.getTarih());
 		fields.put("durum=", Boolean.TRUE);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -126,8 +126,8 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 
 	public void fillKartSizYemek() {
 		HashMap fields = new HashMap();
-		fields.put("tarih>=", basTarih);
-		fields.put("tarih<=", bitTarih);
+		fields.put("tarih >= ", basTarih);
+		fields.put("tarih <= ", bitTarih);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<YemekKartsiz> kartsizList = pdksEntityController.getObjectByInnerObjectListInLogic(fields, YemekKartsiz.class);

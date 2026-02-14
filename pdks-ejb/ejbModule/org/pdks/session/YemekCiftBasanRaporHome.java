@@ -113,8 +113,8 @@ public class YemekCiftBasanRaporHome extends EntityHome<VardiyaGun> implements S
 
 	public void fillYemekList() {
 		HashMap parametreMapYemek = new HashMap();
-		parametreMapYemek.put("bitTarih>=", basTarih);
-		parametreMapYemek.put("basTarih<=", bitTarih);
+		parametreMapYemek.put("bitTarih >= ", basTarih);
+		parametreMapYemek.put("basTarih <= ", bitTarih);
 		parametreMapYemek.put("durum=", Boolean.TRUE);
 		if (session != null)
 			parametreMapYemek.put(PdksEntityController.MAP_KEY_SESSION, session);

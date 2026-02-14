@@ -288,8 +288,8 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 		HashMap parametreMap = new HashMap();
 		if (!istenAyrilanlariEkle) {
 			Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());
-			parametreMap.put("pdksPersonel.sskCikisTarihi>=", bugun);
-			parametreMap.put("pdksPersonel.iseBaslamaTarihi<=", bugun);
+			parametreMap.put("pdksPersonel.sskCikisTarihi >= ", bugun);
+			parametreMap.put("pdksPersonel.iseBaslamaTarihi <= ", bugun);
 			parametreMap.put("pdksPersonel.durum=", Boolean.TRUE);
 		}
 

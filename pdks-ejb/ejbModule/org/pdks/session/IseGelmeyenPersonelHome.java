@@ -109,8 +109,8 @@ public class IseGelmeyenPersonelHome extends EntityHome<PersonelIzin> implements
 		cal.set(Calendar.SECOND, 59);
 		cal.set(Calendar.MILLISECOND, 0);
 		dateBit = cal.getTime();
-		paramMap.put("bitisZamani >=", dateBas);
-		paramMap.put("baslangicZamani <=", dateBit);
+		paramMap.put("bitisZamani  >= ", dateBas);
+		paramMap.put("baslangicZamani  <= ", dateBit);
 		paramMap.put("izinSahibi", authenticatedUser.getTumPersoneller().clone());
 		if (session != null)
 			paramMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -120,8 +120,8 @@ public class IseGelmeyenPersonelHome extends EntityHome<PersonelIzin> implements
 		// setIzinList(izinList);
 
 		paramMap.clear();
-		paramMap.put("zaman >=", dateBas);
-		paramMap.put("zaman <=", dateBit);
+		paramMap.put("zaman  >= ", dateBas);
+		paramMap.put("zaman  <= ", dateBit);
 		if (session != null)
 			paramMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<PersonelHareket> hareketList = pdksEntityController.getObjectByInnerObjectListInLogic(paramMap, PersonelHareket.class);
