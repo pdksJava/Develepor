@@ -374,7 +374,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	@Transactional
 	private void sessionFlush() {
-		session.flush();
+		try {
+			session.flush();
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -5592,9 +5598,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 			}
 
-			for (AylikPuantaj aylikPuantaj : puantajList) {
+			for (AylikPuantaj aylikPuantaj : puantajList)
 				aylikPuantaj.setOnayDurum(false);
-			}
+
 			try {
 				sessionFlush();
 			} catch (Exception es) {
@@ -6573,8 +6579,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param session
 	 */
 	@Transactional
-	public boolean hesaplanmisPlanOnayla(User userInput, List<AylikPuantaj> puantajList, Session sessionx) {
-		boolean onaylandi = false;
+	public void hesaplanmisPlanOnayla(User userInput, List<AylikPuantaj> puantajList, Session sessionx) {
 		if (puantajList != null) {
 			if (aramaSecenekleri == null)
 				aramaSecenekleri = new AramaSecenekleri();
@@ -6614,7 +6619,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					for (AylikPuantaj ap : list) {
 						PersonelDenklestirme pd = ap.getPersonelDenklestirme();
 						if (pd.isOnaylandi()) {
-							onaylandi = true;
 							Personel personel = pd.getPdksPersonel();
 							logger.debug(personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " " + PdksUtil.getCurrentTimeStampStr());
 						}
@@ -6626,7 +6630,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			list = null;
 		}
-		return onaylandi;
 	}
 
 	/**
@@ -6639,7 +6642,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		String donus = "";
 		if (session == null)
 			session = PdksUtil.getSession(entityManager, false);
- 		topluGuncelleme = true;
+		topluGuncelleme = true;
 		userLoginOldu = false;
 		if (id == null) {
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
