@@ -6634,14 +6634,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param islemUser
 	 * @return
 	 */
-	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	@Transactional
 	public String sayfaCalismaPlanOlustur(String id, User islemUser) {
 		String donus = "";
 		if (session == null)
 			session = PdksUtil.getSession(entityManager, false);
-		session.setFlushMode(FlushMode.MANUAL);
-		topluGuncelleme = true;
+ 		topluGuncelleme = true;
 		userLoginOldu = false;
 		if (id == null) {
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();

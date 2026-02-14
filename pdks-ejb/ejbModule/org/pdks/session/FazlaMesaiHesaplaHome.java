@@ -33,7 +33,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
@@ -1121,13 +1120,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param islemUser
 	 * @return
 	 */
-	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	@Transactional
 	public String sayfaFazlaMesaiGuncelle(String id, User islemUser) {
 		String donus = "";
 		if (session == null)
 			session = PdksUtil.getSession(entityManager, false);
-		session.setFlushMode(FlushMode.MANUAL);
 		userLoginOldu = false;
 		if (id != null) {
 			ikRole = true;
