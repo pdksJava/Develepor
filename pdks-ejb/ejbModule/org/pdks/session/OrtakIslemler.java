@@ -1206,7 +1206,7 @@ public class OrtakIslemler implements Serializable {
 		sb.append(" select U." + User.COLUMN_NAME_ID + " as " + UserRoles.COLUMN_NAME_USER + ", max(I." + PersonelIzin.COLUMN_NAME_ID + ") as IZIN_ID from " + User.TABLE_NAME + " U ");
 		sb.append("   inner join " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = U." + User.COLUMN_NAME_PERSONEL);
 		sb.append("		 and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (" + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + "," + PersonelIzin.IZIN_DURUMU_REDEDILDI + ") and I." + PersonelIzin.COLUMN_NAME_IZIN_SURESI + " > 30 ");
-		sb.append(" 	 and  " + PdksEntityController.getSqlBuGun() + " between convert(date, I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ") and convert(date, I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + ")) ");
+		sb.append(" 	 and  " + PdksEntityController.getSqlBuGun() + " between convert(date, I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + ") and convert(date, I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + ")  ");
 		sb.append("   inner join " + IzinTipi.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + IzinTipi.COLUMN_NAME_ID + " = I." + PersonelIzin.COLUMN_NAME_IZIN_TIPI + " and T." + IzinTipi.COLUMN_NAME_BAKIYE_IZIN_TIPI + " is null  ");
 		sb.append(" group by U." + User.COLUMN_NAME_ID);
 		sb.append("  ) ");
