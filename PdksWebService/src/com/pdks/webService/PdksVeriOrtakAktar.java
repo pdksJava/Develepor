@@ -2610,14 +2610,20 @@ public class PdksVeriOrtakAktar implements Serializable {
 							personelIzin.setIzinDurumu(izinERP.getDurum() != null && izinERP.getDurum() ? PersonelIzin.IZIN_DURUMU_ONAYLANDI : PersonelIzin.IZIN_DURUMU_REDEDILDI);
 							if (personelIzin.isDegisti()) {
 								saveList.add(personelIzin);
+								Date guncellemeTarihi = islemZamani;
+								if (izinERP.getGuncellemeZamani() != null) {
+									Date guncellemeZamani = PdksUtil.convertToJavaDate(izinERP.getGuncellemeZamani(), FORMAT_DATE_TIME);
+									if (guncellemeZamani != null)
+										guncellemeTarihi = guncellemeZamani;
+								}
 								if (personelIzin.getId() == null) {
 									personelIzin.setOlusturanUser(islemYapan);
-									personelIzin.setOlusturmaTarihi(islemZamani);
+									personelIzin.setOlusturmaTarihi(guncellemeTarihi);
 									saveList.add(izinReferansERP);
 									if (donemKapali && kapaliDenklestirmeler != null)
 										saveList.addAll(kapaliDenklestirmeler);
 								} else {
-									personelIzin.setGuncellemeTarihi(islemZamani);
+									personelIzin.setGuncellemeTarihi(guncellemeTarihi);
 									personelIzin.setGuncelleyenUser(islemYapan);
 								}
 							} else {
@@ -3713,9 +3719,16 @@ public class PdksVeriOrtakAktar implements Serializable {
 			kidemHataList.clear();
 			boolean calisiyor = false;
 			Personel personel = null;
-
+			Date guncellemeTarihi = new Date();
+			
 			if (personelERPMap.containsKey(personelNo)) {
+				
 				PersonelERP personelERP = personelERPMap.get(personelNo);
+				if (personelERP.getGuncellemeZamani() != null) {
+					Date guncellemeZamani = PdksUtil.convertToJavaDate(personelERP.getGuncellemeZamani(), FORMAT_DATE_TIME);
+					if (guncellemeZamani != null)
+						guncellemeTarihi = guncellemeZamani;
+				}
 				Tanim bolum = null;
 				Sirket sirket = null;
 				personelSirket = PdksUtil.hasStringValue(personelERP.getSirketKodu()) && sirketMap.containsKey(personelERP.getSirketKodu()) ? sirketMap.get(personelERP.getSirketKodu()) : null;
@@ -4321,14 +4334,13 @@ public class PdksVeriOrtakAktar implements Serializable {
 						} else {
 							if (genelMudurDurum == false) {
 								if (sanalPersonel == false && calisiyor) {
-									if (yoneticiKoduVar == false) {
+									if (yoneticiKoduVar == false) { 
 										if (personel.getId() != null && personel.getYoneticisi() != null) {
 											if (yoneticiERP1Kontrol == false) {
 												personel.setYoneticisi(null);
 												personel.setAsilYonetici1(null);
 											}
-
-											personel.setGuncellemeTarihi(new Date());
+ 											personel.setGuncellemeTarihi(guncellemeTarihi);
 											personel.setGuncelleyenUser(islemYapan);
 											try {
 
@@ -4394,10 +4406,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 					if (personelERP.getHataList().isEmpty()) {
 						if (personel.isDegisti()) {
 							if (personel.getId() != null) {
-								personel.setGuncellemeTarihi(new Date());
+								personel.setGuncellemeTarihi(guncellemeTarihi);
 								personel.setGuncelleyenUser(islemYapan);
 							} else {
-								personel.setOlusturmaTarihi(new Date());
+								personel.setOlusturmaTarihi(guncellemeTarihi);
 								personel.setOlusturanUser(islemYapan);
 								personel.setPdksSicilNo(personelNo);
 								if (bolum != null && bolum.getKodu() != null) {
