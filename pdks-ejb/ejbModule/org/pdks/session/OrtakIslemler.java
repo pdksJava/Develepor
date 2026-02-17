@@ -6235,9 +6235,9 @@ public class OrtakIslemler implements Serializable {
 				List<Object> elements = query1.list();
 				if (!elements.isEmpty()) {
 					BigDecimal izinId = (BigDecimal) elements.get(0);
-					if (izinId != null)  
- 						bakiyeIzin = (PersonelIzin) pdksEntityController.getSQLParamByFieldObject(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, izinId.longValue(), PersonelIzin.class, session);
- 
+					if (izinId != null)
+						bakiyeIzin = (PersonelIzin) pdksEntityController.getSQLParamByFieldObject(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, izinId.longValue(), PersonelIzin.class, session);
+
 				} else if (kidemYil >= 0) {
 					if (sure == null)
 						sure = bakiyeIzinTipi.getKotaBakiye() != null ? bakiyeIzinTipi.getKotaBakiye() : 0D;
@@ -11302,6 +11302,15 @@ public class OrtakIslemler implements Serializable {
 	public UserMenuItemTime setUserMenuItemTime(Session session, String menuAdi) {
 		UserMenuItemTime menuItemTime = null;
 		try {
+			if (authenticatedUser != null) {
+				if (authenticatedUser.getSessionSQL() != null)
+					try {
+						authenticatedUser.getSessionSQL().close();
+					} catch (Exception e) {
+ 					}
+				authenticatedUser.setSessionSQL(session);
+
+			}
 			if (session != null) {
 				session.setFlushMode(FlushMode.MANUAL);
 				session.clear();

@@ -320,6 +320,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 			}
 		}
 		sonuc = getSonDurum(sonuc, userName, loginUser);
+		authenticatedUser.setSessionSQL(session);
 		return sonuc;
 
 	}
