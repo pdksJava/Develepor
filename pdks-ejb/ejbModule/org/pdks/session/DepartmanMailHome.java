@@ -13,10 +13,6 @@ import javax.mail.internet.InternetAddress;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.pdks.entity.DepartmanMailGrubu;
-import org.pdks.entity.Tanim;
-import org.pdks.security.entity.User;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -26,6 +22,9 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
+import org.pdks.entity.DepartmanMailGrubu;
+import org.pdks.entity.Tanim;
+import org.pdks.security.entity.User;
 
 @Name("departmanMailHome")
 public class DepartmanMailHome extends EntityHome<DepartmanMailGrubu> implements Serializable {
