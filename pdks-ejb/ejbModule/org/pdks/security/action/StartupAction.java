@@ -250,7 +250,7 @@ public class StartupAction implements Serializable {
 	@Create
 	public void startupMethodBasla() {
 		// pdksUtil.setTimeZome();
-		Session session = PdksUtil.getSession(entityManager, Boolean.FALSE);
+		Session session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 		startupMethod(session);
 		OrtakIslemler ortakIslemler = new OrtakIslemler();
 		String spName = "SP_DROP_NOT_USED_TABLES";

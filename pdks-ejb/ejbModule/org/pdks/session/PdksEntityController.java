@@ -678,21 +678,11 @@ public class PdksEntityController implements Serializable {
 				manuelReadUnCommitted = true;
 				veriMap.remove("readUnCommitted");
 			}
-			Session session = veriMap.containsKey(MAP_KEY_SESSION) ? (Session) veriMap.get(MAP_KEY_SESSION) : PdksUtil.getSessionUser(entityManager, authenticatedUser);
-			SQLQuery queryReadUnCommitted = null;
-			if (readUnCommitted || manuelReadUnCommitted) {
-				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED));
-				queryReadUnCommitted.executeUpdate();
-			}
-			SQLQuery query = prepareProcedure(veriMap, sp);
+ 			SQLQuery query = prepareProcedure(veriMap, sp);
 			if (class1 != null)
 				query.addEntity(class1);
 			sonucList = query.list();
-			if (queryReadUnCommitted != null) {
-				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
-				queryReadUnCommitted.executeUpdate();
-			}
-		} catch (Exception e) {
+ 		} catch (Exception e) {
 			Gson gson = new Gson();
 			logger.error(sp.toString() + (veriMap != null && !veriMap.isEmpty() ? "\n" + gson.toJson(veriMap) : "") + "\n" + e);
 			gson = null;
@@ -718,18 +708,10 @@ public class PdksEntityController implements Serializable {
 				manuelReadUnCommitted = true;
 				veriMap.remove("readUnCommitted");
 			}
-			Session session = veriMap.containsKey(MAP_KEY_SESSION) ? (Session) veriMap.get(MAP_KEY_SESSION) : PdksUtil.getSessionUser(entityManager, authenticatedUser);
-			SQLQuery queryReadUnCommitted = null;
-			if (readUnCommitted || manuelReadUnCommitted) {
-				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED));
-				queryReadUnCommitted.executeUpdate();
-			}
+
 			SQLQuery query = prepareProcedure(veriMap, sp);
 			sonuc = query.executeUpdate();
-			if (queryReadUnCommitted != null) {
-				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
-				queryReadUnCommitted.executeUpdate();
-			}
+
 		} catch (Exception e) {
 			Gson gson = new Gson();
 			logger.error(sp.toString() + (veriMap != null && !veriMap.isEmpty() ? "\n" + gson.toJson(veriMap) : "") + "\n" + e);
@@ -757,7 +739,7 @@ public class PdksEntityController implements Serializable {
 	 */
 	private SQLQuery prepareProcedure(LinkedHashMap<String, Object> veriMap, String sp) {
 		String queryStr = "exec " + sp;
-		Session session = veriMap.containsKey(MAP_KEY_SESSION) ? (Session) veriMap.get(MAP_KEY_SESSION) : PdksUtil.getSessionUser(entityManager, authenticatedUser);
+		Session session = veriMap.containsKey(MAP_KEY_SESSION) ? (Session) veriMap.get(MAP_KEY_SESSION) : null;
 		if (veriMap.containsKey(MAP_KEY_SESSION))
 			veriMap.remove(MAP_KEY_SESSION);
 		for (Iterator iterator = veriMap.keySet().iterator(); iterator.hasNext();) {
@@ -769,13 +751,16 @@ public class PdksEntityController implements Serializable {
 					queryStr += ",";
 			}
 		}
-		SQLQuery query = session.createSQLQuery(queryStr);
-		logger.debug(queryStr);
-		for (Iterator iterator = veriMap.keySet().iterator(); iterator.hasNext();) {
-			String key1 = (String) iterator.next();
-			if (key1 != null) {
-				Object veri = veriMap.get(key1);
-				query.setParameter(key1, veri);
+		SQLQuery query = null;
+		if (session != null) {
+			query = session.createSQLQuery(queryStr);
+			logger.debug(queryStr);
+			for (Iterator iterator = veriMap.keySet().iterator(); iterator.hasNext();) {
+				String key1 = (String) iterator.next();
+				if (key1 != null) {
+					Object veri = veriMap.get(key1);
+					query.setParameter(key1, veri);
+				}
 			}
 		}
 		return query;

@@ -6015,6 +6015,8 @@ public class OrtakIslemler implements Serializable {
 								try {
 									if (tipi.equalsIgnoreCase("B"))
 										logger.debug(spAdi + " " + tipi + "\n" + gson.toJson(map));
+									if (session != null)
+										map.put(PdksEntityController.MAP_KEY_SESSION, session);
 									List strlist = pdksEntityController.execFNList(map, fnName);
 									if (strlist != null && !strlist.isEmpty()) {
 										Clob blob = (Clob) strlist.get(0);
@@ -11302,15 +11304,6 @@ public class OrtakIslemler implements Serializable {
 	public UserMenuItemTime setUserMenuItemTime(Session session, String menuAdi) {
 		UserMenuItemTime menuItemTime = null;
 		try {
-			if (authenticatedUser != null) {
-				if (authenticatedUser.getSessionSQL() != null)
-					try {
-						authenticatedUser.getSessionSQL().close();
-					} catch (Exception e) {
- 					}
-				authenticatedUser.setSessionSQL(session);
-
-			}
 			if (session != null) {
 				session.setFlushMode(FlushMode.MANUAL);
 				session.clear();
