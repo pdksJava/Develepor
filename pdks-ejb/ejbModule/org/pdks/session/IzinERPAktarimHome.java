@@ -86,11 +86,11 @@ public class IzinERPAktarimHome extends EntityHome<PersonelIzin> implements Seri
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
-	public void sayfaGirisAction() {
+	public void sayfaGirisAction() { 
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		try {
+		ortakIslemler.setUserMenuItemTime(session, "izinERPAktarim");
+ 		try {
 			if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)
 				aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
 			session.clear();

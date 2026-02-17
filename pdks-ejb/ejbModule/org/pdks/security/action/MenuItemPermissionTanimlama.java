@@ -13,7 +13,6 @@ import javax.faces.FacesException;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Begin;
@@ -28,6 +27,7 @@ import org.pdks.entity.MenuItem;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
+import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
 import org.richfaces.component.html.HtmlTree;
@@ -52,6 +52,9 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 
 	@In(create = true)
 	StartupAction startupAction;
+
+	@In(required = false, create = true)
+	OrtakIslemler ortakIslemler;
 
 	@In(required = false)
 	User authenticatedUser;
@@ -198,8 +201,7 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, "menuItemPermissionTanimlama");
 		selectedIdsFromTreeMap.clear();
 		// fillMenuItemTree();
 	}

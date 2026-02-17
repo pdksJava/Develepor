@@ -850,9 +850,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		sirketGoster = Boolean.FALSE;
 		mailGonder = !(authenticatedUser.isIK() || authenticatedUser.isAdmin());
 		linkAdres = null;
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.clear();
+ 		session.clear();
 		// fillSirketList();
 
 		personelDenklestirmeList.clear();

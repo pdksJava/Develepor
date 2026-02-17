@@ -47,6 +47,7 @@ public class OpenSessionHome extends EntityHome<User> implements Serializable {
 	User authenticatedUser;
 
 	private List<KullaniciSession> sessionFilterList = new ArrayList<KullaniciSession>();
+	public static String sayfaURL = "openSession";
 
 	private Date tarih;
 
@@ -166,10 +167,9 @@ public class OpenSessionHome extends EntityHome<User> implements Serializable {
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+ 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		secili = Boolean.FALSE;
-		authenticatedUser.setCalistigiSayfa("openSession");
+		authenticatedUser.setCalistigiSayfa(sayfaURL);
 		HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 		setHttpSession(mySession);
 		durumDegistir();

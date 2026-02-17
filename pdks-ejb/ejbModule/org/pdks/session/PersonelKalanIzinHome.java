@@ -893,8 +893,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 	public void bakiyeGuncelleSayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, "bakiyeGuncelle");
 		minYil = PdksUtil.getSistemBaslangicYili();
 		Calendar cal = Calendar.getInstance();
 		maxYil = cal.get(Calendar.YEAR) - 1;

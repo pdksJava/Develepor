@@ -27,7 +27,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -2933,9 +2932,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			gebeSutIzniDurumList = new ArrayList<Long>();
 		else
 			gebeSutIzniDurumList.clear();
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.clear();
+ 		session.clear();
 		yoneticiRolVarmi = ortakIslemler.yoneticiRolKontrol(session);
 		manuelTanimla = Boolean.FALSE;
 		eskiKullanici = null;
@@ -4578,8 +4575,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public void detaysizSayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, "detaysizPersonelTanimlama");
 		setPdks(Boolean.FALSE);
 		setTanimsizPersonelList(new ArrayList<PersonelView>());
 		fillGorevTipiTanimList();

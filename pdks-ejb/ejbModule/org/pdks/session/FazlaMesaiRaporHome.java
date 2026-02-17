@@ -613,9 +613,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 		haftaTatilVar = Boolean.FALSE;
 		mailGonder = !(authenticatedUser.isIK() || authenticatedUser.isAdmin());
 		linkAdres = null;
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.clear();
+ 		session.clear();
 
 		personelDenklestirmeList.clear();
 		ayrikHareketVar = false;

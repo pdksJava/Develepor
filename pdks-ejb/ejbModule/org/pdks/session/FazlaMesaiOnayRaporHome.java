@@ -572,9 +572,7 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			return "";
 
 		linkAdres = null;
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.clear();
+ 		session.clear();
 
 		listeTemizle();
 

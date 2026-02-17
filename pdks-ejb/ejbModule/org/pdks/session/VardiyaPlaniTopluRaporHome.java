@@ -680,9 +680,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 		gebeDurum = false;
 		mailGonder = !(authenticatedUser.isIK() || authenticatedUser.isAdmin());
 		linkAdres = null;
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.clear();
+ 		session.clear();
 		// fillSirketList();
 
 		personelDenklestirmeList.clear();

@@ -81,8 +81,7 @@ public class SuperVisorDegistirHome extends EntityHome<User> implements Serializ
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, "superVisorDegistir");
 		Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());
 		List<User> list = null;
 		HashMap parametreMap = new HashMap();

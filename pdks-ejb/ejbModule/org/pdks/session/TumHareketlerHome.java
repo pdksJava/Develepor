@@ -281,9 +281,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 	}
 
 	public void fillHareketList() {
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.clear();
+ 		session.clear();
 		guncellenmis = false;
 		List<BasitHareket> kgsList = new ArrayList<BasitHareket>();
 		HashMap parametreMap = new HashMap();

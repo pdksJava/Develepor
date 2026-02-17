@@ -245,8 +245,7 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 	public void sayfaExtraGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, "yemekKartsizTanimlama");
 		if (basTarih == null) {
 			Calendar cal = Calendar.getInstance();
 			bitTarih = PdksUtil.getDate(cal.getTime());

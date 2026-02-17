@@ -1429,9 +1429,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 	 * @return
 	 */
 	public String fillPersonelDenklestirmeList() {
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.clear();
+ 		session.clear();
 		aksamGun = Boolean.FALSE;
 		aksamSaat = Boolean.FALSE;
 		haftaCalisma = Boolean.FALSE;

@@ -168,6 +168,8 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 	public String sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+		ortakIslemler.setUserMenuItemTime(session, "tesisBaglantiTanimlama");
+
 		String sayfa = "";
 		if (ortakIslemler.getTesisDurumu()) {
 			if (personelTipiList == null)

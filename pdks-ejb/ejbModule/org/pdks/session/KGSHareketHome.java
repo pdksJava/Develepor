@@ -99,7 +99,7 @@ public class KGSHareketHome extends EntityHome<HareketKGS> {
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		setHareketList(new ArrayList<HareketKGS>());
 		HareketKGS hareket = new HareketKGS();
 		hareket.setPersonel(new PersonelView());
@@ -135,8 +135,6 @@ public class KGSHareketHome extends EntityHome<HareketKGS> {
 	}
 
 	public void fillHareketList() {
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		session.clear();
 
 		setIptalEdilir(true);

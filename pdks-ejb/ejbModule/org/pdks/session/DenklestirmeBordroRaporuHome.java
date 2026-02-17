@@ -928,9 +928,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 	public String fillPersonelDenklestirmeList() throws Exception {
 		fazlaMesaiHesaplaMenuAdi = "";
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.clear();
+ 		session.clear();
 		Calendar cal = Calendar.getInstance();
 		bordroAdres = null;
 		aksamGun = Boolean.FALSE;

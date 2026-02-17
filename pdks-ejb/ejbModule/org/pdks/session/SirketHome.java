@@ -281,9 +281,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	}
 
 	public void fillPersonelList() throws Exception {
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		Sirket sirket = seciliSirket;
+ 		Sirket sirket = seciliSirket;
 		List<PersonelView> list = new ArrayList<PersonelView>();
 		HashMap parametreMap = new HashMap();
 		if (!istenAyrilanlariEkle) {

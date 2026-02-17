@@ -606,9 +606,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 			lastMap.put("sicilNo", sicilNo.trim());
 
 		linkAdres = null;
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		try {
+ 		try {
 
 			ortakIslemler.saveLastParameter(lastMap, session);
 		} catch (Exception e) {

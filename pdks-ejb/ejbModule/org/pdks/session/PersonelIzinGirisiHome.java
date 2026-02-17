@@ -1053,7 +1053,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	public void sayfaSSKGirisAction() throws Exception {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		sessionClear();
+		ortakIslemler.setUserMenuItemTime(session, "sskIzinGirisi");
 		try {
 			if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)
 				aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
@@ -1226,9 +1226,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	 * @throws Exception
 	 */
 	private void girisIslemleri(boolean sskDurum) throws Exception {
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		sessionIzin = null;
+ 		sessionIzin = null;
 		if (listelenPersonel == null)
 			listelenPersonel = new Personel();
 		Map<String, String> map = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
@@ -1398,10 +1396,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	public void onayimaGelenIzinlerAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-
-		session.setFlushMode(FlushMode.MANUAL);
-		sessionClear();
-		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		ortakIslemler.setUserMenuItemTime(session, "onayimaGelenIzinler");
+ 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String mailId = (String) req.getParameter("mId");
 		if (mailId != null)
 			mId = mailId;
@@ -1484,9 +1480,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	 * @throws Exception
 	 */
 	public void onayListesiOlustur() throws Exception {
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		sessionClear();
+	 	sessionClear();
 		User user = (User) authenticatedUser.clone();
 		List<Tanim> sebepList = ortakIslemler.getTanimList(Tanim.TIPI_ONAYLAMAMA_NEDEN, session);
 		setRedSebebiList(sebepList);
@@ -2376,9 +2370,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		Date startDatedt = PdksUtil.getDate(getFiltreBaslangicZamani());
 		Date endDatedt = PdksUtil.getDate(ortakIslemler.tariheGunEkleCikar(cal, getFiltreBitisZamani(), 1));
 		ArrayList<String> sicilNoList = null;
-		if (session == null)
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		if (sessionClear != null && sessionClear) {
+ 		if (sessionClear != null && sessionClear) {
 			sessionClear();
 			if (izinSahibi != null)
 				getPersonelVeri(izinSahibi);
@@ -4511,8 +4503,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	public void fillHekimIzinleri(boolean izinli) {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		sessionClear();
+		ortakIslemler.setUserMenuItemTime(session, "hekimIzinRaporu");
 
 		List<PersonelIzin> izinList = null;
 		Date tarih = Calendar.getInstance().getTime();

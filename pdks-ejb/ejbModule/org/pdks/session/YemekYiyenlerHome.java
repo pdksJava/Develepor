@@ -19,6 +19,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
+import org.jboss.seam.annotations.FlushModeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.web.RequestParameter;
@@ -81,11 +82,12 @@ public class YemekYiyenlerHome extends EntityHome<VardiyaGun> implements Seriali
 	public void create() {
 		super.create();
 	}
-
+	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (session == null)
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, "yemekYiyenler");
+
 		ogunVar = false;
 		masrafYeriVar = false;
 		setHareketList(new ArrayList<HareketKGS>());
