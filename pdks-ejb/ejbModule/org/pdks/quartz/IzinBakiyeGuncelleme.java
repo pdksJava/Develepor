@@ -107,7 +107,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		guncellemeDBDurum = false;
 		StringBuilder sb = new StringBuilder();
 		try {
-			if (session == null)
+			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 			// Calendar cal = getAgentCalistirTime(session);
 			Calendar cal = Calendar.getInstance();
@@ -381,7 +381,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 
 		try {
 
-			if (session == null)
+			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 			hataKonum = "senelikBakiyeIzinEkle basladı ";
 
@@ -453,7 +453,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 	 */
 	@Transactional
 	public void izinleriBakiyeleriniHesapla(Session userSession, List<String> siciller, Sirket sirket, User user, boolean yeni, boolean gecmisHesapla, boolean manuel, boolean calisanPersonel) {
-		if (userSession == null)
+		if (PdksUtil.isSessionKapali(userSession))
 			userSession = PdksUtil.getSession(entityManager, yeni);
 		logger.info("izinleriBakiyeleriniHesapla in " + PdksUtil.getCurrentTimeStampStr());
 		Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());

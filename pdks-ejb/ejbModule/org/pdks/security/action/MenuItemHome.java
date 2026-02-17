@@ -237,9 +237,9 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 	}
 
 	public Session getSession() {
-		if (session == null) {
+		if (PdksUtil.isSessionKapali(session)) {
 			session = authenticatedUser.getSessionSQL();
-			if (session == null)
+			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSession(entityManager, false);
 			if (session != null)
 				session.clear();

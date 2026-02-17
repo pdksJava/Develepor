@@ -140,6 +140,16 @@ public class PdksUtil implements Serializable {
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
 
 	/**
+	 * @param session
+	 * @return
+	 */
+	public static boolean isSessionKapali(Session session) {
+		boolean kapali = PdksUtil.isSessionKapali(session) || session.isConnected() == false;
+		return kapali;
+
+	}
+
+	/**
 	 * @param sirketList
 	 * @return
 	 */
@@ -3361,7 +3371,7 @@ public class PdksUtil implements Serializable {
 			} catch (Exception e) {
 				logger.error(e);
 			} finally {
-				
+
 			}
 
 		} else

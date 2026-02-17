@@ -152,7 +152,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 	}
 
 	public void sayfaGirisAction() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		vardiyaOku = false;

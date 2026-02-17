@@ -141,7 +141,7 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 	public List<MenuItem> getAllDataTableMenuItemList() {
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("status", Boolean.FALSE);
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 
@@ -232,7 +232,7 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
  	 */
 	@Transactional
 	public String moveMenuItemsFromTree2DataTable() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ArrayList<MenuItem> deleteMenuItemList = new ArrayList<MenuItem>();
 		ArrayList<String> menuItemNameList = new ArrayList<String>();
@@ -367,7 +367,7 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		session.setFlushMode(FlushMode.MANUAL);
 		session.clear();
@@ -410,7 +410,7 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("status", Boolean.TRUE);
 		parametreMap.put(PdksEntityController.MAP_KEY_ORDER, "orderNo");
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		allTreeMenuItemList = (ArrayList<MenuItem>) pdksEntityController.getObjectByInnerObjectList(parametreMap, MenuItem.class);

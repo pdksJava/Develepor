@@ -79,7 +79,7 @@ public class NoticeHome extends EntityHome<Notice> {
 	}
 
 	public void fillNotice() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, "notice");
 		List<Tanim> list = ortakIslemler.getTanimList(Tanim.TIPI_DUYURU, session);

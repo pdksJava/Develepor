@@ -189,7 +189,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 
 	public List<Role> getDistinctRoles() {
 		HashMap parametreMap = new HashMap();
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		parametreMap.put("status = ", Boolean.TRUE);
 		if (!authenticatedUser.isAdmin())
@@ -208,7 +208,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sifreUnuttumAction() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, "sifreUnuttum");
 		String str = MenuItemConstant.login;
@@ -220,7 +220,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		session.setFlushMode(FlushMode.MANUAL);
 		session.clear();
@@ -231,7 +231,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sifreDegistirAction() {
 		User user = authenticatedUser;
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, user);
 		session.setFlushMode(FlushMode.MANUAL);
 		session.clear();
@@ -290,7 +290,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	}
 
 	public List<Role> getRoles() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 
 		if (getInstance().getYetkiliRollerim() == null)
@@ -333,7 +333,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 						sonuc = getSonuc(target);
 					} else {
 						List<Role> yetkiliRollerim = new ArrayList<Role>();
-						if (session == null)
+						if (PdksUtil.isSessionKapali(session))
 							session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 						if (authenticatedUser.getYetkiliRollerim() == null || authenticatedUser.getYetkiliRollerim().isEmpty())
 							ortakIslemler.setUserRoller(authenticatedUser, session);

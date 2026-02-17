@@ -413,7 +413,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * 
 	 */
 	private void fillEkSahaTanim() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, getPdksUser());
 		if (aramaSecenekleri == null)
 			aramaSecenekleri = new AramaSecenekleri();
@@ -4269,7 +4269,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param fazlaMesaiOrtakIslemlerInput
 	 */
 	public void setInject(Session sessionInput, EntityManager entityManagerInput, PdksEntityController pdksEntityControllerInput, OrtakIslemler ortakIslemlerInput, FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemlerInput) {
-		if (sessionInput != null && session == null)
+		if (sessionInput != null && PdksUtil.isSessionKapali(session))
 			this.session = sessionInput;
 		if (entityManagerInput != null && entityManager == null)
 			this.entityManager = entityManagerInput;
@@ -5138,7 +5138,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	@Transactional
 	public void sayfaCalismaPlanKilitTalepAction() throws Exception {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		session.setFlushMode(FlushMode.MANUAL);
 		userLoginOldu = authenticatedUser != null;
@@ -6640,7 +6640,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	@Transactional
 	public String sayfaCalismaPlanOlustur(String id, User islemUser) {
 		String donus = "";
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, false);
 		topluGuncelleme = true;
 		userLoginOldu = false;
@@ -9822,7 +9822,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	@Transactional
 	public void sayfaMesaiTalepAction() throws Exception {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		session.setFlushMode(FlushMode.MANUAL);
 		sessionClear();
@@ -9992,7 +9992,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaMesaiTalepListAction() throws Exception {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		session.setFlushMode(FlushMode.MANUAL);
 		setPdksUser(authenticatedUser);
@@ -10026,7 +10026,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaFazlaMesaiTalepRaporAction() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		session.setFlushMode(FlushMode.MANUAL);
 		userLoginOldu = authenticatedUser != null;
@@ -10146,7 +10146,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		mailGonder = Boolean.FALSE;
 		mesaiOnayla = Boolean.FALSE;
 		linkAdres = null;
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, getPdksUser());
 		sessionClear();
 
@@ -10725,7 +10725,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() throws Exception {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		topluGuncelleme = false;
 		setPdksUser(authenticatedUser);
@@ -10987,7 +10987,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @throws Exception
 	 */
 	private void aylikVardiyaPlanGiris(String calistigiSayfa, boolean planGirisiDurum) throws Exception {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, getPdksUser());
 		session.setFlushMode(FlushMode.MANUAL);
 		setManuelKapi();

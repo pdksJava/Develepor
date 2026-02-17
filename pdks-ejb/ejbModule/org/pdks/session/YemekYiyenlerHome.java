@@ -84,7 +84,7 @@ public class YemekYiyenlerHome extends EntityHome<VardiyaGun> implements Seriali
 	}
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, "yemekYiyenler");
 

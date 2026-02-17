@@ -247,7 +247,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
@@ -754,7 +754,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	 * @return
 	 */
 	public String yilAyKontrol(Session xSession) {
-		if (xSession == null)
+		if (PdksUtil.isSessionKapali(xSession))
 			xSession = session;
 		xSession.clear();
 		fillCalismaModeller(xSession);

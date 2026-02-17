@@ -49,7 +49,7 @@ public class PdksNoSapController implements ERPController, Serializable {
 	public void setFazlaMesaiUcretRFC(List<PersonelDenklestirme> sapMesaiList, User user, Session session) throws Exception {
 
 		try {
-			if (session == null)
+			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 			DenklestirmeAy denklestirmeAy = sapMesaiList.get(0).getDenklestirmeAy();
 			Calendar cal = Calendar.getInstance();

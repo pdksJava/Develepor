@@ -338,7 +338,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, getPdksUser());
 		boolean calistir = false;
 		setPdksUser(authenticatedUser);
@@ -1123,7 +1123,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	@Transactional
 	public String sayfaFazlaMesaiGuncelle(String id, User islemUser) {
 		String donus = "";
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, false);
 		userLoginOldu = false;
 		if (id != null) {
@@ -1206,7 +1206,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		linkAdres = null;
 		if (userLogin == null)
 			userLogin = getPdksUser();
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, userLogin);
 		sessionClear();
 		ciftBolumCalisanMap.clear();
@@ -3290,7 +3290,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param fazlaMesaiOrtakIslemlerInput
 	 */
 	public void setInject(Session sessionInput, EntityManager entityManagerInput, PdksEntityController pdksEntityControllerInput, OrtakIslemler ortakIslemlerInput, FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemlerInput) {
-		if (sessionInput != null && session == null)
+		if (sessionInput != null && PdksUtil.isSessionKapali(session))
 			this.session = sessionInput;
 		if (entityManagerInput != null && entityManager == null)
 			this.entityManager = entityManagerInput;

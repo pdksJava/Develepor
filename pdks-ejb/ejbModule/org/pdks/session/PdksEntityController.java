@@ -236,7 +236,7 @@ public class PdksEntityController implements Serializable {
 		else if (authenticatedUser != null) {
 			session = authenticatedUser.getSessionSQL();
 		}
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		List list = new ArrayList((Collection) parametreMap.get(keyAlan));
 		ArrayList parametreList = new ArrayList();
@@ -354,7 +354,7 @@ public class PdksEntityController implements Serializable {
 				} else if (authenticatedUser != null) {
 					session = authenticatedUser.getSessionSQL();
 				}
-				if (session == null)
+				if (PdksUtil.isSessionKapali(session))
 					session = PdksUtil.getSession(pEntityManager == null ? entityManager : pEntityManager, Boolean.FALSE);
 				StringBuffer strArray = null;
 
@@ -396,13 +396,13 @@ public class PdksEntityController implements Serializable {
 								strArray = new StringBuffer();
 								for (Iterator iter1 = ((List) fieldValue).iterator(); iter1.hasNext();) {
 									Object fieldListValue = iter1.next();
-									strArray.append((session == null ? (parametreSayac++) : "?") + (iter1.hasNext() ? "," : ""));
+									strArray.append((PdksUtil.isSessionKapali(session) ? (parametreSayac++) : "?") + (iter1.hasNext() ? "," : ""));
 									parametreList.add(fieldListValue);
 								}
 								str.append(strArray.toString().indexOf(",") > 0 ? "in (" + strArray.toString() + ")" : "= " + strArray.toString());
 								strArray = null;
 							} else {
-								str.append(esit + "?" + (session == null ? (parametreSayac++) : ""));
+								str.append(esit + "?" + (PdksUtil.isSessionKapali(session) ? (parametreSayac++) : ""));
 								parametreList.add(fieldValue);
 							}
 						}
@@ -413,7 +413,7 @@ public class PdksEntityController implements Serializable {
 			} else if (authenticatedUser != null) {
 				session = authenticatedUser.getSessionSQL();
 			}
-			if (session == null)
+			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSession(pEntityManager == null ? entityManager : pEntityManager, Boolean.FALSE);
 			String sql = MAP_KEY_SELECT + " " + (PdksUtil.hasStringValue(select) == false ? " " + SELECT_KARAKTER + " " : select.trim()) + " from " + class1.getName() + " " + SELECT_KARAKTER + " " + query.toString() + order;
 			if (query.indexOf(" and ") > 0 && or != null)
@@ -486,10 +486,10 @@ public class PdksEntityController implements Serializable {
 	}
 
 	public Object save(Object object, Session session) {
-		if (session == null) {
+		if (PdksUtil.isSessionKapali(session)) {
 			if (authenticatedUser != null)
 				session = authenticatedUser.getSessionSQL();
-			if (session == null)
+			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		}
 
@@ -812,7 +812,7 @@ public class PdksEntityController implements Serializable {
 	 * @return
 	 */
 	public HareketKGS hareketSistemEkleReturn(KapiView kapi, PersonelKGS personel, Date zaman, Session session) {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		HareketKGS id = null;
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
@@ -857,7 +857,7 @@ public class PdksEntityController implements Serializable {
 	 * @return
 	 */
 	public Long hareketEkle(KapiView kapi, PersonelView personel, Date zaman, User guncelleyen, long nedenId, String aciklama, Session session) {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		String sp = "SP_HAREKET_EKLE";
@@ -892,7 +892,7 @@ public class PdksEntityController implements Serializable {
 	 * @return
 	 */
 	public Long hareketGuncelle(long kgsId, long pdksId, Date zaman, User guncelleyen, long nedenId, String aciklama, long sirketId, Session session) {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		String sp = "SP_HAREKET_GUNCELLE_SIRKET";
@@ -929,7 +929,7 @@ public class PdksEntityController implements Serializable {
 	 * @return
 	 */
 	public Long hareketSil(long kgsId, long pdksId, User guncelleyen, long nedenId, String aciklama, long sirketId, Session session) {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		String sp = "SP_HAREKET_SIL_SIRKET";
@@ -1044,7 +1044,7 @@ public class PdksEntityController implements Serializable {
 	 * @return
 	 */
 	public int hareketOnayla(long islemId, User guncelleyen, Session session) {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		String sp = "SP_HAREKET_ONAYLA";
@@ -1069,7 +1069,7 @@ public class PdksEntityController implements Serializable {
 	 * @return
 	 */
 	public int hareketOnaylama(long kgsId, long pdksId, User guncelleyen, Session session) {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		String sp = "SP_HAREKET_ONAYLAMA";
@@ -1361,7 +1361,7 @@ public class PdksEntityController implements Serializable {
 			} else if (authenticatedUser != null) {
 				session = authenticatedUser.getSessionSQL();
 			}
-			if (session == null)
+			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 			Object tr = null;
 
@@ -1552,7 +1552,7 @@ public class PdksEntityController implements Serializable {
 		List idList = new ArrayList();
 		List veriList = new ArrayList();
 		try {
-			if (session == null && fieldsOrj != null && fieldsOrj.containsKey(PdksEntityController.MAP_KEY_SESSION))
+			if (PdksUtil.isSessionKapali(session) && fieldsOrj != null && fieldsOrj.containsKey(PdksEntityController.MAP_KEY_SESSION))
 				session = (Session) fieldsOrj.get(PdksEntityController.MAP_KEY_SESSION);
 			int size = PdksEntityController.LIST_MAX_SIZE - fieldsOrj.size();
 			List idInputList = new ArrayList(dataIdList);

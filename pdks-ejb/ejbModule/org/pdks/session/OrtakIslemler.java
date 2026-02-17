@@ -4507,7 +4507,7 @@ public class OrtakIslemler implements Serializable {
 		List veriList = new ArrayList();
 		try {
 			int size = PdksEntityController.LIST_MAX_SIZE - fieldsOrj.size();
-			if (session == null && fieldsOrj != null && fieldsOrj.containsKey(PdksEntityController.MAP_KEY_SESSION))
+			if (PdksUtil.isSessionKapali(session) && fieldsOrj != null && fieldsOrj.containsKey(PdksEntityController.MAP_KEY_SESSION))
 				session = (Session) fieldsOrj.get(PdksEntityController.MAP_KEY_SESSION);
 			List idInputList = new ArrayList(dataIdList);
 			while (!idInputList.isEmpty()) {
@@ -4723,7 +4723,7 @@ public class OrtakIslemler implements Serializable {
 		List<Long> idList = new ArrayList<Long>();
 		List veriList = new ArrayList();
 		try {
-			if (session == null && fieldsOrj != null && fieldsOrj.containsKey(PdksEntityController.MAP_KEY_SESSION))
+			if (PdksUtil.isSessionKapali(session) && fieldsOrj != null && fieldsOrj.containsKey(PdksEntityController.MAP_KEY_SESSION))
 				session = (Session) fieldsOrj.get(PdksEntityController.MAP_KEY_SESSION);
 			int size = PdksEntityController.LIST_MAX_SIZE - fieldsOrj.size();
 			if (idInputList == null) {
@@ -5016,7 +5016,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public void kullaniciKaydet(User kullanici, Session session) {
 		User loginUser = authenticatedUser != null ? authenticatedUser : new User();
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, loginUser);
 		if (kullanici != null)
 			pdksEntityController.saveOrUpdate(session, entityManager, kullanici);
@@ -5029,7 +5029,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public void personelKaydet(Personel personel, Session session) {
 		User loginUser = authenticatedUser != null ? authenticatedUser : new User();
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, loginUser);
 		if (personel != null) {
 			MailGrubu mailGrubuCC = personel.getMailGrubuCC(), mailGrubuBCC = personel.getMailGrubuBCC(), hareketMailGrubu = personel.getHareketMailGrubu();
@@ -6295,7 +6295,7 @@ public class OrtakIslemler implements Serializable {
 	@Transactional
 	public List<PersonelView> yeniPersonelleriOlustur(List<String> perNoInputList, Session session) throws Exception {
 		List<PersonelView> list = new ArrayList<PersonelView>();
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, true);
 		String parametreKey = getParametrePersonelERPTableView();
 		if (getParameterKeyHasStringValue(parametreKey)) {
@@ -6452,7 +6452,7 @@ public class OrtakIslemler implements Serializable {
 								personel.setSablon(sablon);
 								personel.setDurum(Boolean.TRUE);
 								try {
-									sapVeriGuncelle(session, null, bordroAltBirimiMap, masrafYeriMap, personel, null, Boolean.TRUE, session == null, Boolean.TRUE);
+									sapVeriGuncelle(session, null, bordroAltBirimiMap, masrafYeriMap, personel, null, Boolean.TRUE, PdksUtil.isSessionKapali(session), Boolean.TRUE);
 									personel.setPdksSicilNo(personelView.getPersonelKGS().getSicilNo());
 									if (personel.getId() != null) {
 										ldapUser.setDurum(Boolean.FALSE);
@@ -9734,7 +9734,7 @@ public class OrtakIslemler implements Serializable {
 	public Boolean sapVeriGuncelle(Session session, User user, TreeMap bordroAltBirimiMap, TreeMap masrafYeriMap, Personel personel, LinkedHashMap<String, Personel> personelBilgisiGetir, boolean update, boolean yeni, boolean yoneticiAta) throws Exception {
 		ERPController sapController = getERPController();
 		Boolean guncellendi = Boolean.FALSE;
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, yeni);
 
 		if (personelBilgisiGetir == null)
@@ -11673,7 +11673,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	@Transactional
 	public void sistemeGirisIslemleri(User user, boolean vekaletOku, Date basTarih, Date bitTarih, Session session) {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		if (basTarih == null)
 			basTarih = Calendar.getInstance().getTime();
@@ -12319,7 +12319,7 @@ public class OrtakIslemler implements Serializable {
 	public List<Personel> getPersonelByIdList(List<Long> idList, Session session) {
 		List<Personel> perList = null;
 		if (idList != null && !idList.isEmpty()) {
-			if (session == null)
+			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			String fieldName = "s";
 			HashMap fields = new HashMap();
@@ -12361,7 +12361,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 */
 	private void kapananSirketlerinCalisanlariniEkle(User user, Session session) {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 
 		// daha sonra db ile alinacak, aciliyetten bu sekilde.
@@ -12428,7 +12428,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 */
 	private void IKIslemleri(User user, Date basTarih, Date bitTarih, Session session) {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 
 		if (!user.getDepartman().getId().equals(user.getPdksPersonel().getSirket().getDepartman().getId()))
@@ -12793,7 +12793,7 @@ public class OrtakIslemler implements Serializable {
 	public void yoneticiIslemleri(User user, int level, Date basTarih, Date bitTarih, Session session) {
 		ERPController controller = getERPController();
 		if (user.isIK()) {
-			if (session == null)
+			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			if (basTarih == null)
 				basTarih = Calendar.getInstance().getTime();
@@ -14638,7 +14638,7 @@ public class OrtakIslemler implements Serializable {
 		if (izinMap == null)
 			izinMap = getPersonelIzinMap(getBaseObjectIdList(personeller), baslamaTarih, bitisTarih, session);
 		List saveList = new ArrayList();
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		Calendar cal = Calendar.getInstance();
 
@@ -16779,7 +16779,7 @@ public class OrtakIslemler implements Serializable {
 	 * @throws Exception
 	 */
 	public HashMap izinOnayla(PersonelIzinOnay personelIzinOnay, User kaydeden, Integer onayDurum, Tanim redSebebiTanim, String redSebebiAciklama, Session session) throws Exception {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		List<User> toList = new ArrayList<User>();
 		PersonelIzin personelIzin = (PersonelIzin) pdksEntityController.getSQLParamByFieldObject(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, personelIzinOnay.getPersonelIzin().getId(), PersonelIzin.class, session);
@@ -20539,7 +20539,7 @@ public class OrtakIslemler implements Serializable {
 
 					}
 					if (((loginUser.isIK() || loginUser.isAdmin()) && personelDenklestirme.getDevredenSure() == null) || (kaydet && !personelDenklestirme.isKapandi(loginUser))) {
-						if (session == null)
+						if (PdksUtil.isSessionKapali(session))
 							session = PdksUtil.getSessionUser(entityManager, loginUser);
 						if (puantajData.getPersonelDenklestirme().getId() != null) {
 							try {
@@ -22685,7 +22685,7 @@ public class OrtakIslemler implements Serializable {
 							}
 						}
 						if (vardiyaFazlaMesailer != null) {
-							if (session == null)
+							if (PdksUtil.isSessionKapali(session))
 								session = PdksUtil.getSessionUser(entityManager, loginUser);
 							flush = Boolean.FALSE;
 							for (Iterator<PersonelFazlaMesai> iterator = vardiyaFazlaMesailer.iterator(); iterator.hasNext();) {

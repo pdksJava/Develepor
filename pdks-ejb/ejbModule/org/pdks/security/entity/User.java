@@ -1175,6 +1175,19 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 				key = "";
 			if (sessionMap == null)
 				sessionMap = new LinkedHashMap<String, Session>();
+			else {
+				List<String> keyList = new ArrayList<String>(sessionMap.keySet());
+				for (String string : keyList) {
+					if (string.equals(key) == false) {
+						Session session = sessionMap.get(string);
+						if (session.isConnected()) {
+							session.close();
+							sessionMap.remove(string);
+						}
+					}
+				}
+				keyList = null;
+			}
 			if (sessionMap.containsKey(key) == false)
 				sessionMap.put(key, sessionSQL);
 		}

@@ -219,7 +219,7 @@ public class StartupAction implements Serializable {
 	}
 
 	public void fillMenuItemList(Session session) {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		fillAccountPermission(session, null);
 
@@ -374,9 +374,9 @@ public class StartupAction implements Serializable {
 	 * @param session
 	 */
 	public void fillStartMethod(User user, boolean lockVar, Session session) {
-		if (session == null) {
+		if (PdksUtil.isSessionKapali(session)) {
 			session = user != null ? user.getSessionSQL() : null;
-			if (session == null)
+			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		}
 		logger.info("Sistem verileri yukleniyor in " + PdksUtil.getCurrentTimeStampStr());
@@ -1125,7 +1125,7 @@ public class StartupAction implements Serializable {
 	@Transactional
 	public void setLDAPUserList(Session session) {
 		List saveList = new ArrayList(), list = new ArrayList();
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		HashMap fields = new HashMap();
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -1184,10 +1184,10 @@ public class StartupAction implements Serializable {
 	}
 
 	public void fillAccountPermission(Session session, User user) {
-		if (session == null) {
+		if (PdksUtil.isSessionKapali(session)) {
 			if (user != null)
 				session = user.getSessionSQL();
-			if (session == null)
+			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		}
 

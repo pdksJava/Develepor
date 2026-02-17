@@ -2548,7 +2548,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 */
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void fillPersonelList() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, "personelListesi");
 		personelDurumMap.clear();
@@ -3724,7 +3724,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 */
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 
@@ -4573,7 +4573,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	 */
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void detaysizSayfaGirisAction() {
-		if (session == null)
+		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(session, "detaysizPersonelTanimlama");
 		setPdks(Boolean.FALSE);
