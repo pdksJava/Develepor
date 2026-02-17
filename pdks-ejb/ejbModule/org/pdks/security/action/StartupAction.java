@@ -278,6 +278,7 @@ public class StartupAction implements Serializable {
 		} catch (Exception e) {
 
 		}
+		session.close();
 
 		ortakIslemler = null;
 	}
