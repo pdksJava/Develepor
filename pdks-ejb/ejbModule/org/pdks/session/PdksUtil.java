@@ -3361,7 +3361,7 @@ public class PdksUtil implements Serializable {
 			} catch (Exception e) {
 				logger.error(e);
 			} finally {
-				user.setSessionSQL(session1);
+				
 			}
 
 		} else

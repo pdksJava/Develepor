@@ -288,7 +288,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 								ortakIslemler.sistemeGirisIslemleri(loginUser, Boolean.TRUE, null, null, session);
 								logger.info(loginUser.getUsername() + " " + loginUser.getAdSoyad() + " " + (loginUser.getEmail() != null && !loginUser.getEmail().equals(loginUser.getUsername()) ? loginUser.getEmail() + " e-postalı" : "") + " kullanıcısı PDKS sistemine login oldu. "
 										+ PdksUtil.getCurrentTimeStampStr());
-								loginUser.setSessionSQL(session);
+								loginUser.putSessionMap("", session);
 								loginUser.setLogin(Boolean.TRUE);
 							} catch (Exception e) {
 								logger.error("PDKS hata in : \n");

@@ -2,6 +2,7 @@ package org.pdks.security.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.pdks.security.entity.User;
 import org.pdks.session.PdksUtil;
 
@@ -68,11 +70,28 @@ public class SessionListener implements HttpSessionListener, Serializable {
 	 */
 	public void sessionDestroyed(HttpSessionEvent se) {
 		HttpSession session = se.getSession();
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(), sbSession = new StringBuilder();
 		User authenticatedUser = (User) session.getAttribute(SESSION_USER_NAME);
 		if (authenticatedUser != null) {
 			PdksUtil.getSessionUser(null, authenticatedUser);
 			sb.append(authenticatedUser.getUsername() + " " + authenticatedUser.getAdSoyad() + " kullanıcısı PDKS sisteminden logout oldu.");
+			LinkedHashMap<String, Session> sessionMap = authenticatedUser.getSessionMap();
+			if (sessionMap != null) {
+				for (String key : sessionMap.keySet()) {
+					Session sessionSQL = sessionMap.get(key);
+					try {
+						if (sessionSQL.isConnected()) {
+							sessionSQL.close();
+							if (sbSession.length() > 0)
+								sbSession.append(", ");
+							sbSession.append(key);
+
+						}
+
+					} catch (Exception e) {
+					}
+				}
+			}
 
 		}
 		List<HttpSession> sessionList = getSessionList(session.getServletContext());
@@ -80,6 +99,9 @@ public class SessionListener implements HttpSessionListener, Serializable {
 			if (sessionList.contains(session))
 				sessionList.remove(session);
 		}
+		if (sbSession.length() > 0)
+			sb.append(" " + sbSession.toString() + " bağlantısı kapatıldı ");
+		sbSession = null;
 		if (!sessionList.isEmpty())
 			sb.append("PDKS are now : " + sessionList.size());
 		String message = sb.toString();
@@ -89,5 +111,4 @@ public class SessionListener implements HttpSessionListener, Serializable {
 		sb = null;
 
 	}
-
 }

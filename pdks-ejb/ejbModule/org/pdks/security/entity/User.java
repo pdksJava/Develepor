@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -100,6 +101,7 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	private HttpSession session;
 
+	private LinkedHashMap<String, Session> sessionMap;
 	private Session sessionSQL;
 
 	public User() {
@@ -898,15 +900,6 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	}
 
 	@Transient
-	public Session getSessionSQL() {
-		return sessionSQL;
-	}
-
-	public void setSessionSQL(Session sessionSQL) {
-		this.sessionSQL = sessionSQL;
-	}
-
-	@Transient
 	public boolean isBrowserIE() {
 		return browserIE;
 	}
@@ -1160,6 +1153,41 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	public void entityRefresh() {
 
+	}
+
+	@Transient
+	public LinkedHashMap<String, Session> getSessionMap() {
+		return sessionMap;
+	}
+
+	public void setSessionMap(LinkedHashMap<String, Session> sessionMap) {
+		this.sessionMap = sessionMap;
+	}
+
+	/**
+	 * @param key
+	 * @param sessionSQL
+	 */
+	public void putSessionMap(String key, Session sessionSQL) {
+		if (sessionSQL != null) {
+			this.sessionSQL = sessionSQL;
+			if (key == null)
+				key = "";
+			if (sessionMap == null)
+				sessionMap = new LinkedHashMap<String, Session>();
+			if (sessionMap.containsKey(key) == false)
+				sessionMap.put(key, sessionSQL);
+		}
+
+	}
+
+	@Transient
+	public Session getSessionSQL() {
+		return sessionSQL;
+	}
+
+	public void setSessionSQL(Session sessionSQL) {
+		this.sessionSQL = sessionSQL;
 	}
 
 }
