@@ -51,11 +51,11 @@ public class RequestEncodingFilter implements Filter, Serializable {
 			request.setCharacterEncoding("UTF-8");
 			response.setCharacterEncoding("UTF-8");
 			browserIE9Control((HttpServletRequest) request, (HttpServletResponse) response);
-
+			chain.doFilter(request, response);
 		} catch (UnsupportedEncodingException e) {
 
 		}
-		chain.doFilter(request, response);
+		
 	}
 
 	/*

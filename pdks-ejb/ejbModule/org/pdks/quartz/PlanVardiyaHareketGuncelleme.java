@@ -312,6 +312,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 		}
 		aylar = null;
+		if (adresStr != null)
+			adresStr = "";
 		return adresStr;
 
 	}
