@@ -1180,10 +1180,8 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 				for (String string : keyList) {
 					if (string.equals(key) == false) {
 						Session session = sessionMap.get(string);
-						if (session.isConnected()) {
-							session.close();
+						if (session.isConnected() == false)
 							sessionMap.remove(string);
-						}
 					}
 				}
 				keyList = null;

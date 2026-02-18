@@ -208,9 +208,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 
 										for (BigDecimal bigDecimal : izinList) {
 											veriMap.put("id", bigDecimal.longValue());
-											if (session != null)
-												veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-											pdksEntityController.execSP(veriMap, PersonelIzinDetay.SP_NAME);
+
+											pdksEntityController.execSP(session, veriMap, PersonelIzinDetay.SP_NAME);
 										}
 										session.flush();
 									}

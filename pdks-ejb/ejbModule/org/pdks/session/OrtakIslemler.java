@@ -911,9 +911,8 @@ public class OrtakIslemler implements Serializable {
 			veriMap.put("tip", tip);
 			veriMap.put("p", sbPersonel.length() > 0 ? sbPersonel.toString() : null);
 			veriMap.put("u", sbKullanici.length() > 0 ? sbKullanici.toString() : null);
-			veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			Class class1 = tip.equalsIgnoreCase("P") ? Personel.class : User.class;
-			List list = pdksEntityController.execSPList(veriMap, "SP_UZUN_SURE_IZINLER", class1);
+			List list = pdksEntityController.execSPList(session, veriMap, "SP_UZUN_SURE_IZINLER", class1);
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				Object object = (Object) iterator.next();
 				if (object == null)
@@ -955,8 +954,8 @@ public class OrtakIslemler implements Serializable {
 			try {
 				veriMap.put("menuId", menuId);
 				veriMap.put("userId", userId);
-				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				userMenuItemTimeList = pdksEntityController.execSPList(veriMap, spName, UserMenuItemTime.class);
+
+				userMenuItemTimeList = pdksEntityController.execSPList(session, veriMap, spName, UserMenuItemTime.class);
 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
@@ -2233,11 +2232,9 @@ public class OrtakIslemler implements Serializable {
 	public List<User> getIKUserList(Session session) throws Exception {
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		veriMap.put("alanAdi", null);
-		if (session != null)
-			veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<User> list = null;
 		try {
-			list = pdksEntityController.execSPList(veriMap, "SP_IK_USERNAME_LIST", User.class);
+			list = pdksEntityController.execSPList(session, veriMap, "SP_IK_USERNAME_LIST", User.class);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -2263,7 +2260,7 @@ public class OrtakIslemler implements Serializable {
 			veriMap.put("basTarih", basTarih);
 			veriMap.put("bitTarih", bitTarih);
 			try {
-				List list = pdksEntityController.execSPList(veriMap, name, null);
+				List list = pdksEntityController.execSPList(session, veriMap, name, null);
 				if (list != null) {
 					Calendar cal = Calendar.getInstance();
 					int saat = cal.get(Calendar.HOUR_OF_DAY), dakika = cal.get(Calendar.MINUTE);
@@ -3280,10 +3277,9 @@ public class OrtakIslemler implements Serializable {
 		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 		map.put("yoneticiId", perId);
 		map.put("tipi", kodu);
-		if (session != null)
-			map.put(PdksEntityController.MAP_KEY_SESSION, session);
+
 		try {
-			list = pdksEntityController.execSPList(map, "SP_IKINCI_YONETICI_OLAMAZ", Personel.class);
+			list = pdksEntityController.execSPList(session, map, "SP_IKINCI_YONETICI_OLAMAZ", Personel.class);
 
 		} catch (Exception e) {
 
@@ -4246,11 +4242,8 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public void kgsMasterUpdate(Session session) {
 		LinkedHashMap fields = new LinkedHashMap();
-
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
-			pdksEntityController.execSP(fields, "SP_GET_PDKS_ISLEM");
+			pdksEntityController.execSP(session, fields, "SP_GET_PDKS_ISLEM");
 
 		} catch (Exception e) {
 			logger.error(e);
@@ -4355,9 +4348,8 @@ public class OrtakIslemler implements Serializable {
 				LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
 				fields.put("kgs", kgs.length() > 0 ? kgs.toString() : null);
 				fields.put("pdks", pdks.length() > 0 ? pdks.toString() : null);
-				if (session != null)
-					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List newList = pdksEntityController.execSPList(fields, "SP_GET_HAREKET_BY_ID_SIRKET", BasitHareket.class);
+
+				List newList = pdksEntityController.execSPList(session, fields, "SP_GET_HAREKET_BY_ID_SIRKET", BasitHareket.class);
 				if (!newList.isEmpty()) {
 					list.clear();
 					getHareketKGSByBasitHareketList(newList, null, session);
@@ -4730,9 +4722,8 @@ public class OrtakIslemler implements Serializable {
 				LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
 				fields.putAll(fieldsOrj);
 				fields.put(fieldName, null);
-				if (session != null)
-					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				veriList = pdksEntityController.execSPList(fields, spName, class1);
+
+				veriList = pdksEntityController.execSPList(session, fields, spName, class1);
 			} else
 				while (!idInputList.isEmpty()) {
 					HashMap map = new HashMap();
@@ -4746,9 +4737,8 @@ public class OrtakIslemler implements Serializable {
 					LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
 					fields.putAll(fieldsOrj);
 					fields.put(fieldName, getListIdStr(idList));
-					if (session != null)
-						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List list = pdksEntityController.execSPList(fields, spName, class1);
+
+					List list = pdksEntityController.execSPList(session, fields, spName, class1);
 					if (!list.isEmpty())
 						veriList.addAll(list);
 					list = null;
@@ -5096,9 +5086,7 @@ public class OrtakIslemler implements Serializable {
 
 		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 		try {
-			if (session != null)
-				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			list = pdksEntityController.execSPList(map, "SP_YONETICI_KONTRATLI_VIEW", Personel.class);
+			list = pdksEntityController.execSPList(session, map, "SP_YONETICI_KONTRATLI_VIEW", Personel.class);
 		} catch (Exception e) {
 			logger.error(e);
 			e.printStackTrace();
@@ -5116,10 +5104,9 @@ public class OrtakIslemler implements Serializable {
 		Boolean flush = Boolean.FALSE, yonetici2ERPKontrol = getParameterKey("yonetici2ERPKontrol").equals("1");
 		if (!yonetici2ERPKontrol) {
 			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-			if (session != null)
-				map.put(PdksEntityController.MAP_KEY_SESSION, session);
+
 			try {
-				pdksEntityController.execSP(map, "SP_GET_IKINCI_YONETICI_UPDATE");
+				pdksEntityController.execSP(session, map, "SP_GET_IKINCI_YONETICI_UPDATE");
 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
@@ -5549,9 +5536,8 @@ public class OrtakIslemler implements Serializable {
 					Gson gson = new Gson();
 					if (ikRol)
 						logger.debug(tipi + "\n" + gson.toJson(map));
-					map.put(PdksEntityController.MAP_KEY_SESSION, session);
 					try {
-						list = pdksEntityController.execSPList(map, "SP_GET_FAZLA_MESAI_MUDUR_DATA", class1);
+						list = pdksEntityController.execSPList(session, map, "SP_GET_FAZLA_MESAI_MUDUR_DATA", class1);
 					} catch (Exception e) {
 						logger.error(e);
 						e.printStackTrace();
@@ -6015,9 +6001,7 @@ public class OrtakIslemler implements Serializable {
 								try {
 									if (tipi.equalsIgnoreCase("B"))
 										logger.debug(spAdi + " " + tipi + "\n" + gson.toJson(map));
-									if (session != null)
-										map.put(PdksEntityController.MAP_KEY_SESSION, session);
-									List strlist = pdksEntityController.execFNList(map, fnName);
+									List strlist = pdksEntityController.execFNList(session, map, fnName);
 									if (strlist != null && !strlist.isEmpty()) {
 										Clob blob = (Clob) strlist.get(0);
 										blobAsBytes = PdksUtil.StringToByClob(blob);
@@ -6047,9 +6031,9 @@ public class OrtakIslemler implements Serializable {
 							}
 							if (list == null) {
 								if (alanStr == null || alanStr.equals("*")) {
-									list = pdksEntityController.execSPList(map, spAdi, class1);
+									list = pdksEntityController.execSPList(session, map, spAdi, class1);
 								} else {
-									List bigDecimalList = pdksEntityController.execSPList(map, spAdi, null);
+									List bigDecimalList = pdksEntityController.execSPList(session, map, spAdi, null);
 									if (bigDecimalList != null && bigDecimalList.isEmpty() == false)
 										list = pdksEntityController.getSQLParamByFieldList(tableName, fieldName, bigDecimalList, class1, session);
 									else
@@ -7351,8 +7335,7 @@ public class OrtakIslemler implements Serializable {
 							veriMap.put("j", parametreJSON);
 							veriMap.put("s", sessionId != null ? sessionId : menuItemTime.getSessionId());
 							veriMap.put("mt", menuItemTime.getId());
-							veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-							pdksEntityController.execSP(veriMap, spName);
+							pdksEntityController.execSP(session, veriMap, spName);
 						}
 						if (flush)
 							session.flush();
@@ -11167,10 +11150,8 @@ public class OrtakIslemler implements Serializable {
 		if (isExisStoreProcedure(spName, session)) {
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 			veriMap.put("alan", null);
-			if (session != null)
-				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
-				userIKList = pdksEntityController.execSPList(veriMap, spName, User.class);
+				userIKList = pdksEntityController.execSPList(session, veriMap, spName, User.class);
 			} catch (Exception e) {
 
 			}
@@ -11673,8 +11654,6 @@ public class OrtakIslemler implements Serializable {
 	 */
 	@Transactional
 	public void sistemeGirisIslemleri(User user, boolean vekaletOku, Date basTarih, Date bitTarih, Session session) {
-		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		if (basTarih == null)
 			basTarih = Calendar.getInstance().getTime();
 		if (bitTarih == null)
@@ -13422,11 +13401,9 @@ public class OrtakIslemler implements Serializable {
 		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 		map.put("basTarih", basTarih);
 		map.put("bitTarih", bitTarih);
-		if (session != null)
-			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<TatilGunView> list = null;
 		try {
-			list = pdksEntityController.execSPList(map, TatilGunView.SP_NAME, TatilGunView.class);
+			list = pdksEntityController.execSPList(session, map, TatilGunView.SP_NAME, TatilGunView.class);
 		} catch (Exception e) {
 
 			logger.equals(e);
@@ -23169,10 +23146,8 @@ public class OrtakIslemler implements Serializable {
 			LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
 			fields.put("kgs", null);
 			fields.put("pdks", String.valueOf(manuelId));
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
-				newList = pdksEntityController.execSPList(fields, "SP_GET_HAREKET_BY_ID_SIRKET", BasitHareket.class);
+				newList = pdksEntityController.execSPList(session, fields, "SP_GET_HAREKET_BY_ID_SIRKET", BasitHareket.class);
 				if (!newList.isEmpty())
 					getHareketKGSByBasitHareketList(newList, null, session);
 
@@ -24184,12 +24159,10 @@ public class OrtakIslemler implements Serializable {
 					boolean guncelle = false;
 					if (hareketKopyala == false && fonksiyonVar) {
 						LinkedHashMap map = new LinkedHashMap();
-						if (session != null)
-							map.put(PdksEntityController.MAP_KEY_SESSION, session);
 						map.put("eklenenId", pdksHareket.getId());
 						map.put("pdks", 2);
 						try {
-							pdksEntityController.execSP(map, sp);
+							pdksEntityController.execSP(session, map, sp);
 							guncelle = true;
 							flush = true;
 						} catch (Exception e) {
@@ -24263,12 +24236,10 @@ public class OrtakIslemler implements Serializable {
 							flush = true;
 						} else if (fonksiyonVar) {
 							LinkedHashMap map = new LinkedHashMap();
-							if (session != null)
-								map.put(PdksEntityController.MAP_KEY_SESSION, session);
 							map.put("eklenenId", pdksLog.getId());
 							map.put("pdks", 1);
 							try {
-								pdksEntityController.execSP(map, sp);
+								pdksEntityController.execSP(session, map, sp);
 								flush = true;
 							} catch (Exception e) {
 								pdksLog.setGuncellemeZamani(guncellemeZamani);
@@ -24375,10 +24346,8 @@ public class OrtakIslemler implements Serializable {
 		if (map != null) {
 
 			fields.put("TIP", "U");
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
-				List<User> userList = pec.execSPList(fields, "SP_GET_SISTEM_ADMIN_LIST", User.class);
+				List<User> userList = pec.execSPList(session, fields, "SP_GET_SISTEM_ADMIN_LIST", User.class);
 				if (userList != null && !userList.isEmpty())
 					user = userList.get(0);
 			} catch (Exception e) {

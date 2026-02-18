@@ -373,7 +373,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 									personelDenklestirmeler.add(pdksPersonelDenklestirme);
 								}
 							} catch (Exception e1) {
-								logger.error(e1.getMessage()+" "+ PdksUtil.getCurrentTimeStampStr());
+								logger.error(e1.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());
 							}
 
 						}
@@ -1088,11 +1088,9 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 			veriMap.put("yil", getYil());
 			veriMap.put("ay", getAy());
 
-			if (session != null)
-				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<PersonelMesai> aylikFazlaMesaiTalepler = null;
 			try {
-				aylikFazlaMesaiTalepler = pdksEntityController.execSPList(veriMap, "SP_GET_FAZLA_MESAI", PersonelMesai.class);
+				aylikFazlaMesaiTalepler = pdksEntityController.execSPList(session, veriMap, "SP_GET_FAZLA_MESAI", PersonelMesai.class);
 			} catch (Exception e1) {
 			}
 
@@ -1429,7 +1427,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 	 * @return
 	 */
 	public String fillPersonelDenklestirmeList() {
- 		session.clear();
+		session.clear();
 		aksamGun = Boolean.FALSE;
 		aksamSaat = Boolean.FALSE;
 		haftaCalisma = Boolean.FALSE;

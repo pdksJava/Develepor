@@ -2011,9 +2011,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		try {
 			if (talepId != null) {
 				veriMap.put("talepId", talepId);
-				if (session != null)
-					veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List list = pdksEntityController.execSPList(veriMap, "SP_DELETE_FAZLA_MESAI_TALEP_HAREKET_DATA", null);
+				List list = pdksEntityController.execSPList(session, veriMap, "SP_DELETE_FAZLA_MESAI_TALEP_HAREKET_DATA", null);
 				if (list != null && !list.isEmpty())
 					sonuc = ((BigInteger) list.get(0)).longValue();
 			}
@@ -2067,16 +2065,10 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			linkedHashMap.put("ardisik", String.valueOf(ardisikDurum ? ardisik : 32));
 			linkedHashMap.put("ardisikDurum", ardisikDurum ? 1 : 0);
 			linkedHashMap.put("maxCalismaSaatStr", maxCalismaSaatStr);
-
-			if (session != null)
-				linkedHashMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<Object[]> alanList = null;
 			try {
-				alanList = pdksEntityController.execSPList(linkedHashMap, "SP_GET_FAZLA_MESAI_KONTROL", null);
-				// if (session != null)
-				// fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// alanList = pdksEntityController.getObjectBySQLList(sb, fields, null);
-			} catch (Exception e) {
+				alanList = pdksEntityController.execSPList(session, linkedHashMap, "SP_GET_FAZLA_MESAI_KONTROL", null);
+ 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			ardisikDurum = false;

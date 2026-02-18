@@ -3602,11 +3602,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 					LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<String, Object>();
 					linkedHashMap.put("donemId", denklestirmeAy.getId());
-					if (session != null)
-						linkedHashMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 					List<Object[]> alanList = null;
 					try {
-						alanList = pdksEntityController.execSPList(linkedHashMap, "SP_CIFT_PERSONEL", null);
+						alanList = pdksEntityController.execSPList(session, linkedHashMap, "SP_CIFT_PERSONEL", null);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

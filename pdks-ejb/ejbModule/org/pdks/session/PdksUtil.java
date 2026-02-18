@@ -140,11 +140,11 @@ public class PdksUtil implements Serializable {
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
 
 	/**
-	 * @param session
+	 * @param sessionx
 	 * @return
 	 */
-	public static boolean isSessionKapali(Session session) {
-		boolean kapali = PdksUtil.isSessionKapali(session) || session.isConnected() == false;
+	public static boolean isSessionKapali(Session sessionx) {
+		boolean kapali = sessionx == null || sessionx.isConnected() == false;
 		return kapali;
 
 	}

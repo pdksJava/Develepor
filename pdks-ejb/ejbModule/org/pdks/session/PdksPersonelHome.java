@@ -238,7 +238,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 		}
 
-		List<PersonelKGS> list = pdksEntityController.execSPList(veriMap, kgsPersonelSPAdi, PersonelKGS.class);
+		List<PersonelKGS> list = pdksEntityController.execSPList(session, veriMap, kgsPersonelSPAdi, PersonelKGS.class);
 		if (list != null) {
 			if (list.size() == 1)
 				personelKGS = list.get(0);
@@ -1882,11 +1882,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (sirket != null && pdksPersonel.isCalisiyor() && (kullaniciPer == null || kullaniciPer.getId() == null)) {
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 			veriMap.put("personelId", pdksPersonel.getId());
-			if (session != null)
-				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<User> kullanicilar = null;
 			try {
-				kullanicilar = pdksEntityController.execSPList(veriMap, "SP_FIND_OLD_USER", User.class);
+				kullanicilar = pdksEntityController.execSPList(session, veriMap, "SP_FIND_OLD_USER", User.class);
 			} catch (Exception e1) {
 			}
 			if (kullanicilar != null) {
@@ -2379,9 +2377,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 				map.put("tarih", PdksUtil.convertToDateString(bugun, "yyyyMMdd"));
 				map.put("df", "112");
-				if (session != null)
-					map.put(PdksEntityController.MAP_KEY_SESSION, session);
-				list = pdksEntityController.execSPList(map, "SP_GET_YONETICI", Personel.class);
+				list = pdksEntityController.execSPList(session, map, "SP_GET_YONETICI", Personel.class);
 
 				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 					Personel personel = (Personel) iterator.next();
@@ -2522,10 +2518,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		List<Object[]> list = null;
 		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 		map.put("personelNo", personel.getPdksSicilNo());
-		if (session != null)
-			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
-			list = pdksEntityController.execSPList(map, "SP_PERSONEL_NO_DELETE", null);
+			list = pdksEntityController.execSPList(session, map, "SP_PERSONEL_NO_DELETE", null);
 		} catch (Exception e) {
 		}
 		if (list == null)
@@ -2932,7 +2926,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			gebeSutIzniDurumList = new ArrayList<Long>();
 		else
 			gebeSutIzniDurumList.clear();
- 		session.clear();
+		session.clear();
 		yoneticiRolVarmi = ortakIslemler.yoneticiRolKontrol(session);
 		manuelTanimla = Boolean.FALSE;
 		eskiKullanici = null;
@@ -3557,9 +3551,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		try {
 			long sirketId = sirket != null ? sirket.getIdLong() : 0L;
 			map.put("sirketId", sirketId);
-			if (session != null)
-				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<Object[]> list = pdksEntityController.execSPList(map, "SP_SIRKET_IZIN_ONAY_BILGI", null);
+			List<Object[]> list = pdksEntityController.execSPList(session, map, "SP_SIRKET_IZIN_ONAY_BILGI", null);
 			if (list.size() == 1) {
 				Object[] dizi = list.get(0);
 				onaysizIzinSec = ((Integer) dizi[1]) > 0;

@@ -3136,9 +3136,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
 					fields.put("pdId", personelDenklestirme.getId().toString());
 					fields.put("durum", 0);
-					if (session != null)
-						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List list = pdksEntityController.execSPList(fields, "SP_GET_PERS_DENK_DINAMIK_ALAN", null);
+					List list = pdksEntityController.execSPList(session, fields, "SP_GET_PERS_DENK_DINAMIK_ALAN", null);
 					List<Long> idList = new ArrayList<Long>();
 					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 						Object[] object = (Object[]) iterator.next();
@@ -6016,9 +6014,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			veriMap.put("guncelleyen", getPdksUser().getId());
 			veriMap.put("nedenId", nedenId);
 			veriMap.put("aciklama", aciklama);
-			if (session != null)
-				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List list = pdksEntityController.execSPList(veriMap, "SP_HAREKET_EKLE_RETURN", null);
+			List list = pdksEntityController.execSPList(session, veriMap, "SP_HAREKET_EKLE_RETURN", null);
 			if (list != null && !list.isEmpty())
 				id = ((BigDecimal) list.get(0)).longValue();
 			list = null;
@@ -8686,9 +8682,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
 		fields.put("pdId", pdIdSb.toString());
 		fields.put("durum", 1);
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List list = pdksEntityController.execSPList(fields, "SP_GET_PERS_DENK_DINAMIK_ALAN", null);
+		List list = pdksEntityController.execSPList(session, fields, "SP_GET_PERS_DENK_DINAMIK_ALAN", null);
 		pdIdSb = null;
 
 		List<Long> tanimIdList = new ArrayList<Long>();
@@ -9146,9 +9140,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			veriMap.put("yoneticiId", perId);
 		veriMap.put("basTarih", basTarihStr != null ? PdksUtil.convertToDateString(PdksUtil.convertToJavaDate(basTarihStr, PdksUtil.getDateFormat()), "yyyy-MM-dd") : "");
 		veriMap.put("bitTarih", bitTarihStr != null ? PdksUtil.convertToDateString(PdksUtil.convertToJavaDate(bitTarihStr, PdksUtil.getDateFormat()), "yyyy-MM-dd") : "");
-		if (session != null)
-			veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		aylikFazlaMesaiTalepler = pdksEntityController.execSPList(veriMap, "SP_FAZLA_MESAI_TALEP_MAIL", FazlaMesaiTalep.class);
+		aylikFazlaMesaiTalepler = pdksEntityController.execSPList(session, veriMap, "SP_FAZLA_MESAI_TALEP_MAIL", FazlaMesaiTalep.class);
 		islemYapiliyor = null;
 		if (!aylikFazlaMesaiTalepler.isEmpty()) {
 			HashMap fields = new HashMap();
@@ -9660,11 +9652,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			veriMap.put("basYil", yilBas);
 			veriMap.put("bitDonem", maxDonem);
 			veriMap.put("perId", ortakIslemler.getListIdStr(idList));
-			if (session != null)
-				veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<Vardiya> vardiyaDonemList = null;
 			try {
-				vardiyaDonemList = pdksEntityController.execSPList(veriMap, "SP_GET_PERSONEL_VARDIYA", Vardiya.class);
+				vardiyaDonemList = pdksEntityController.execSPList(session, veriMap, "SP_GET_PERSONEL_VARDIYA", Vardiya.class);
 
 			} catch (Exception e) {
 				logger.error(e);
@@ -10392,10 +10382,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			fields.put("donemId", denklestirmeAy.getId());
 			fields.put("tip", tip);
 			fields.put("kosul", whereStr);
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
-				List newList = pdksEntityController.execSPList(fields, "SP_YONETICI_VARDIYA_BILGI_TIPI ", class1);
+				List newList = pdksEntityController.execSPList(session, fields, "SP_YONETICI_VARDIYA_BILGI_TIPI ", class1);
 				if (list != null && !newList.isEmpty())
 					list.addAll(newList);
 				newList = null;

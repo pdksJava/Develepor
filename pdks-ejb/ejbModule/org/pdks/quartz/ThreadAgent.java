@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.jboss.seam.annotations.Transactional;
 import org.pdks.entity.PdksAgent;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
@@ -34,6 +35,7 @@ public class ThreadAgent extends Thread implements Serializable {
 	}
 
 	@Override
+	@Transactional
 	public void run() {
 		if (session != null) {
 			if (agent != null) {
@@ -41,12 +43,11 @@ public class ThreadAgent extends Thread implements Serializable {
 					logger.info(agent.getAciklama() + " --> " + agent.getStoreProcedureAdi() + (agent.getStart() ? " (manuel)" : " " + PdksUtil.convertToDateString(new Date(), "HH:mm")) + " " + PdksUtil.getCurrentTimeStampStr());
 					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 					try {
-						veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 
 						if (agent.getUpdateSP())
-							pdksEntityController.execSP(veriMap, agent.getStoreProcedureAdi());
+							pdksEntityController.execSP(session, veriMap, agent.getStoreProcedureAdi());
 						else
-							pdksEntityController.execSPList(veriMap, agent.getStoreProcedureAdi(), null);
+							pdksEntityController.execSPList(session, veriMap, agent.getStoreProcedureAdi(), null);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

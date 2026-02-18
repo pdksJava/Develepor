@@ -256,11 +256,9 @@ public class StartupAction implements Serializable {
 		String spName = "SP_DROP_NOT_USED_TABLES";
 		if (ortakIslemler.isExisObject(spName, "P", session, pdksEntityController)) {
 			LinkedHashMap<String, Object> dataMap = new LinkedHashMap<String, Object>();
-			if (session != null)
-				dataMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<String> list = null;
 			try {
-				list = pdksEntityController.execSPList(dataMap, spName, null);
+				list = pdksEntityController.execSPList(session, dataMap, spName, null);
 			} catch (Exception e) {
 				list = null;
 			}
@@ -353,8 +351,7 @@ public class StartupAction implements Serializable {
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		try {
 			veriMap.put("ekranYaz", 0);
-			veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List hatalar = pdksEntityController.execSPList(veriMap, "SP_PDKS_VIEW_REFRESH", null);
+ 			List hatalar = pdksEntityController.execSPList(session, veriMap, "SP_PDKS_VIEW_REFRESH", null);
 			if (hatalar != null && !hatalar.isEmpty()) {
 				Clob clobComment = (Clob) hatalar.get(0);
 				String aciklama = PdksUtil.replaceAllManuel(PdksUtil.StringToByClob(clobComment), "|", "\n");

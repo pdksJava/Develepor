@@ -639,9 +639,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 					veriMap.put("nedenId", neden.getId());
 					veriMap.put("aciklama", aciklama);
 					veriMap.put("sirketId", kgsHareket.getKgsSirketId());
-					if (session != null)
-						veriMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-					pdksEntityController.execSP(veriMap, name);
+ 					pdksEntityController.execSP(session, veriMap, name);
 				} else {
 					pdksEntityController.hareketSil(kgsId, pdksId, authenticatedUser, neden.getId(), "", kgsHareket.getKgsSirketId(), session);
 					pdksId = pdksEntityController.hareketEkle(terminalKapi, kgsHareket.getPersonel(), kgsHareket.getZaman(), authenticatedUser, neden.getId(), aciklama, session);

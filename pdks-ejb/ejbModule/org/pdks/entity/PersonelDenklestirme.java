@@ -859,6 +859,16 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	@Transient
+	public boolean isSonDurum() {
+		boolean sonDurum = this.getDurum();
+		if (sonDurum) {
+			if (personelDenklestirmeGecenAy != null)
+				sonDurum = personelDenklestirmeGecenAy.getDurum();
+		}
+		return sonDurum;
+	}
+
+	@Transient
 	public String getIsAramaIzniDurumAciklama() {
 		String str = getDurumAciklama(PersonelDurumTipi.IS_ARAMA_IZNI);
 		return str;
