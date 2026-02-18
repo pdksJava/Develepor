@@ -606,7 +606,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 			lastMap.put("sicilNo", sicilNo.trim());
 
 		linkAdres = null;
- 		try {
+		try {
 
 			ortakIslemler.saveLastParameter(lastMap, session);
 		} catch (Exception e) {
@@ -1102,11 +1102,17 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 				Double radyolojiFazlaMesaiMaxSure = null;
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
-
-					int yarimYuvarla = puantaj.getYarimYuvarla();
-
-					DenklestirmeTipi dt = null;
 					Double radyolojiKatsayi = null;
+					int yarimYuvarla = puantaj.getYarimYuvarla();
+					Integer rtYuvarla = yarimYuvarla;
+					if (puantaj.getKatSayiMap() != null) {
+						if (puantaj.getKatSayiMap().containsKey(PuantajKatSayiTipi.AYLIK_RT_YUVARLAMA.value()))
+							rtYuvarla = puantaj.getKatSayiMap().get(PuantajKatSayiTipi.AYLIK_UOM_YUVARLAMA.value()).intValue();
+						if (puantaj.getKatSayiMap().containsKey(PuantajKatSayiTipi.AYLIK_RADYOLOJI_MAX_GUN.value()))
+							radyolojiKatsayi = puantaj.getKatSayiMap().get(PuantajKatSayiTipi.AYLIK_RADYOLOJI_MAX_GUN.value()).doubleValue();
+					}
+					DenklestirmeTipi dt = null;
+
 					if (puantaj.getKatSayiMap() != null) {
 						if (puantaj.getKatSayiMap().containsKey(PuantajKatSayiTipi.AYLIK_DENKLESTIRME_TIPI.value())) {
 							Integer denkInteger = puantaj.getKatSayiMap().get(PuantajKatSayiTipi.AYLIK_DENKLESTIRME_TIPI.value()).intValue();
@@ -1360,7 +1366,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 						puantaj.setDevredenSure(hesaplananDenklestirmeHesaplanan.getDevredenSure());
 						puantaj.setEksikCalismaSure(hesaplananDenklestirmeHesaplanan.getEksikCalismaSure());
 						puantaj.setHaftaCalismaSuresi(puantajHaftaTatil);
-						puantaj.setResmiTatilToplami(PdksUtil.setSureDoubleTypeRounded(puantajResmiTatil, yarimYuvarla));
+						puantaj.setResmiTatilToplami(PdksUtil.setSureDoubleTypeRounded(puantajResmiTatil, rtYuvarla));
 					}
 					puantaj.setFazlaMesaiHesapla(puantajFazlaMesaiHesapla);
 					if (!personelDenklestirme.getDenklestirmeAy().isDurumu()) {

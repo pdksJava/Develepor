@@ -2601,8 +2601,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					} else {
 						if (!(ikRole))
 							resmiTatilToplami = personelDenklestirme.getResmiTatilSure();
-						else
-							personelDenklestirme.setResmiTatilSure(resmiTatilToplami);
+						else 
+							personelDenklestirme.setResmiTatilSure(PdksUtil.setSureDoubleTypeRounded(resmiTatilToplami, rtYuvarla));
 
 						aksamVardiyaSaatSayisi = personelDenklestirme.getAksamVardiyaSaatSayisi();
 						aksamVardiyaSayisi = personelDenklestirme.getAksamVardiyaSayisi().intValue();
