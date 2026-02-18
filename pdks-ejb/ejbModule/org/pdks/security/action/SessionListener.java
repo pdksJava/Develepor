@@ -85,14 +85,11 @@ public class SessionListener implements HttpSessionListener, Serializable {
 							if (sbSession.length() > 0)
 								sbSession.append(", ");
 							sbSession.append(key);
-
 						}
-
 					} catch (Exception e) {
 					}
 				}
 			}
-
 		}
 		List<HttpSession> sessionList = getSessionList(session.getServletContext());
 		synchronized (this) {
@@ -103,7 +100,7 @@ public class SessionListener implements HttpSessionListener, Serializable {
 			String str = sbSession.toString();
 			sb.append(" " + str + " " + (str.indexOf(",") > 0 ? "bağlantıları" : "bağlantısı") + " kapatıldı ");
 		}
- 		sbSession = null;
+		sbSession = null;
 		if (!sessionList.isEmpty())
 			sb.append("PDKS are now : " + sessionList.size());
 		String message = sb.toString();
