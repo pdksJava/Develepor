@@ -362,9 +362,10 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		sb1.append(" or (V." + VardiyaGun.COLUMN_NAME_VERSION + " < 0 and V." + VardiyaGun.COLUMN_NAME_DURUM + " = 1 ) ) ");
 		sb1.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 		sb1.append(" and (V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + ") ");
-		if (talepVar)
+		if (talepVar) {
 			sb1.append(" left join " + FazlaMesaiTalep.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " on F." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
-		sb1.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1");
+			sb1.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1");
+		}
 		sb1.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + da.getId() + " and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1");
 		if (talepVar)
 			sb1.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_ID + " is null");
