@@ -2691,14 +2691,30 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					puantaj.setDenklestirilmeyenDevredenVar(denklestirilmeyenPersonelDevredenVar);
 					if ((denklestirmeAyDurum || (bakiyeGuncelle != null && bakiyeGuncelle)) && personelDenklestirme.getDurum()) {
 						if (personelDenklestirme.getSonDurum().booleanValue() == false) {
-							personelDenklestirme.setDurum(Boolean.FALSE);
 							personelDenklestirme.setGuncellendi(Boolean.TRUE);
 						}
+
 					}
 					if (personelDenklestirme.isGuncellendi()) {
 						if ((bakiyeGuncelle != null && bakiyeGuncelle) || puantaj.isFazlaMesaiHesapla() != personelDenklestirme.getDurum() || (gecenAy != null && gecenAy.getDurum().equals(Boolean.FALSE))) {
+							Boolean sonDurum = null;
 							if (puantaj.isFazlaMesaiHesapla() != personelDenklestirme.getDurum())
-								personelDenklestirme.setDurum(donemGeldi && puantaj.isFazlaMesaiHesapla());
+								sonDurum = donemGeldi && puantaj.isFazlaMesaiHesapla();
+							if (personelDenklestirme.getDurum() && personelDenklestirme.getSonDurum().booleanValue() == false) {
+								PersonelDenklestirme pdGecenAy = personelDenklestirme.getPersonelDenklestirmeGecenAy();
+								if (pdGecenAy != null) {
+									puantaj.setFazlaMesaiHesapla(false);
+									sonDurum = Boolean.FALSE;
+									if (userLogin.getLogin()) {
+										DenklestirmeAy da1 = pdGecenAy.getDenklestirmeAy();
+										PdksUtil.addMessageAvailableWarn(personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " " + da1.getAyAdi() + " " + da1.getYil() + " hata mevcut kontrol ediniz!");
+									}
+								}
+
+							}
+
+							if (sonDurum != null)
+								personelDenklestirme.setDurum(sonDurum);
 							saveOrUpdate(personelDenklestirme);
 							flush = Boolean.TRUE;
 						}

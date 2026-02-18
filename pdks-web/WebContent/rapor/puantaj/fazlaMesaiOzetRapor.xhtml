@@ -196,10 +196,10 @@
 									<DIV id="denk#{ap.pdksPersonel.id}">
 										<a4j:commandLink ajaxSingle="true" action="#{fazlaMesaiOzetRaporHome.saveFazlaMesaiLastParameter(ap) }"
 											onclick="#{rich:component('wait')}.show()" oncomplete="#{rich:component('wait')}.hide(); ">
-											<ui:fragment rendered="#{ap.personelDenklestirme.durum}">
+											<ui:fragment rendered="#{ap.personelDenklestirme.sonDurum}">
 												<h:graphicImage value="/img/msginfo.png" style="border:0" height="20" width="20" />
 											</ui:fragment>
-											<ui:fragment rendered="#{ap.personelDenklestirme.durum == false}">
+											<ui:fragment rendered="#{ap.personelDenklestirme.sonDurum == false}">
 												<ui:fragment rendered="#{ap.personelDenklestirme.onaylandi}">
 													<h:graphicImage value="/img/msgerror.png" style="border:0" height="20" width="20" />
 												</ui:fragment>
@@ -524,10 +524,10 @@
 										</ui:fragment>
 									</f:facet>
 									<ui:fragment rendered="#{ap.saatToplami != 0}">
-										<ui:fragment rendered="#{ap.saatToplami ge ap.planlananSure or ap.calismaModeli.fazlaMesaiVar or ap.personelDenklestirme.durum==false}">
+										<ui:fragment rendered="#{ap.saatToplami ge ap.planlananSure or ap.calismaModeli.fazlaMesaiVar or ap.personelDenklestirme.sonDurum==false}">
 											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.saatToplami)}" />
 										</ui:fragment>
-										<ui:fragment rendered="#{ap.saatToplami lt ap.planlananSure and ap.calismaModeli.fazlaMesaiVar==false and ap.personelDenklestirme.durum}">
+										<ui:fragment rendered="#{ap.saatToplami lt ap.planlananSure and ap.calismaModeli.fazlaMesaiVar==false and ap.personelDenklestirme.sonDurum}">
 											<SPAN style="color: red; font-weight: bold;"> <h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.saatToplami)}" />
 											</SPAN>
 										</ui:fragment>
@@ -725,7 +725,7 @@
 										</ui:fragment>
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.devredenSure)}" rendered="#{ap.fazlaMesaiHesapla and ap.devredenSure != 0}" />
-									<ui:fragment rendered="#{ap.eksiBakiyeSuresi ne 0 and ap.personelDenklestirme.durum}">
+									<ui:fragment rendered="#{ap.eksiBakiyeSuresi ne 0 and ap.personelDenklestirme.sonDurum}">
 										<DIV id="eksiBakiyeSuresi#{ap.personelDenklestirme.id }" style="background-color: red;">
 											<h:graphicImage value="/img/clock_16.png" style="border:0" />
 											<rich:toolTip for="eksiBakiyeSuresi#{ap.personelDenklestirme.id}">
