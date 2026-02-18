@@ -330,8 +330,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		session.clear();
 		Sirket sirketSecili = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
 		if (sirketSecili != null) {
-			fazlaMesaiHesaplaHome.setSession(session);
-			vardiyaGunHome.setSession(session);
 			User loginUser = authenticatedUser != null ? ortakIslemler.getSistemAdminUser(session) : pdksUser;
 			loginUser.setAdmin(Boolean.TRUE);
 			loginUser.setLogin(Boolean.FALSE);
@@ -371,6 +369,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 				} else
 					denklestirme = bolumFazlaMesai(paramMap);
+
 				FacesMessages facesMessages = (FacesMessages) Component.getInstance("facesMessages");
 				facesMessages.clear();
 				List<String> mesajlar = new ArrayList<String>();
@@ -388,9 +387,9 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					session.clear();
 					fillPersonelDenklestirmeList();
 					Tanim tesis = null;
-					if (tesisId != null) 
- 						tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, tesisId, Tanim.class, session);
-					 
+					if (tesisId != null)
+						tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, tesisId, Tanim.class, session);
+
 					if (authenticatedUser != null)
 						PdksUtil.addMessageInfo(sirket.getAd() + (tesis != null ? " " + tesis.getAciklama() : "") + " fazla mesai hesaplaması tamamlandı.");
 				}
@@ -410,12 +409,20 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	 */
 	@Transactional
 	private boolean bolumFazlaMesai(LinkedHashMap<String, Object> paramMap) {
+		User loginUser = (User) paramMap.get("loginUser");
+		if (PdksUtil.isSessionKapali(session)) {
+			session = PdksUtil.getSessionUser(entityManager, loginUser);
+			if (authenticatedUser != null)
+				authenticatedUser.putSessionMap("bolumFazlaMesai", session);
+		}
+
+		fazlaMesaiHesaplaHome.setSession(session);
+		vardiyaGunHome.setSession(session);
 		Long donemKodu = Long.parseLong(PdksUtil.convertToDateString(new Date(), "yyyyMM")), islemDonemKodu = denklestirmeAy.getDonemKodu();
 		AylikPuantaj aylikPuantaj = (AylikPuantaj) paramMap.get("aylikPuantaj");
 		boolean logYaz = authenticatedUser != null || login;
 		if (logYaz == false)
 			logYaz = ortakIslemler.getCanliDurum() == false && ortakIslemler.getTestSunucuDurum() == false;
-		User loginUser = (User) paramMap.get("loginUser");
 		Sirket seciliSirket = (Sirket) paramMap.get("seciliSirket");
 		Long seciliTesisId = paramMap.containsKey("seciliTesisId") ? (Long) paramMap.get("seciliTesisId") : null;
 		List<SelectItem> bolumList = fazlaMesaiOrtakIslemler.getFazlaMesaiBolumList(seciliSirket, seciliTesisId != null ? String.valueOf(seciliTesisId) : "", aylikPuantaj, loginUser.isAdmin() == false, session);
@@ -928,7 +935,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 	public String fillPersonelDenklestirmeList() throws Exception {
 		fazlaMesaiHesaplaMenuAdi = "";
- 		session.clear();
+		session.clear();
 		Calendar cal = Calendar.getInstance();
 		bordroAdres = null;
 		aksamGun = Boolean.FALSE;

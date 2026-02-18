@@ -1123,8 +1123,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	@Transactional
 	public String sayfaFazlaMesaiGuncelle(String id, User islemUser) {
 		String donus = "";
-		if (PdksUtil.isSessionKapali(session))
+		if (PdksUtil.isSessionKapali(session)) {
 			session = PdksUtil.getSession(entityManager, false);
+			if (authenticatedUser != null)
+				authenticatedUser.putSessionMap("sayfaFazlaMesaiGuncelle", session);
+		}
 		userLoginOldu = false;
 		if (id != null) {
 			ikRole = true;
@@ -1267,10 +1270,15 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	@Transactional
 	public List<AylikPuantaj> fillPersonelDenklestirmeDevam(String inputPersonelNo, AylikPuantaj aylikPuantajSablon, DepartmanDenklestirmeDonemi denklestirmeDonemi) {
 		boolean kullaniciCalistir = getPdksUser() != null && userHome != null;
+		User loginUser = aylikPuantajSablon.getLoginUser();
+		if (PdksUtil.isSessionKapali(session)) {
+			session = PdksUtil.getSessionUser(entityManager, loginUser);
+			if (authenticatedUser != null)
+				authenticatedUser.putSessionMap(sayfaURL, session);
+		}
 		resmiTatilKanunenEklenenSureGoster = false;
 		aylikPuantajListClear();
 		boolean sonHafta = false;
-		User loginUser = aylikPuantajSablon.getLoginUser();
 		if (loginUser == null && kullaniciCalistir)
 			loginUser = getPdksUser();
 		if (userLogin == null)

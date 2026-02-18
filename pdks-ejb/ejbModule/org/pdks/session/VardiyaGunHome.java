@@ -6636,8 +6636,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	@Transactional
 	public String sayfaCalismaPlanOlustur(String id, User islemUser) {
 		String donus = "";
-		if (PdksUtil.isSessionKapali(session))
+		if (PdksUtil.isSessionKapali(session)) {
 			session = PdksUtil.getSession(entityManager, false);
+			if (authenticatedUser != null)
+				authenticatedUser.putSessionMap("sayfaCalismaPlanOlustur", session);
+		}
 		topluGuncelleme = true;
 		userLoginOldu = false;
 		if (id == null) {
@@ -6696,7 +6699,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					denklestirmeAyDurum = false;
 
 					aylikPuantajOlusturuluyor();
-					session.flush();
+					 
 				} catch (Exception e) {
 					donus = "";
 					logger.error(e);
@@ -6718,6 +6721,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			loginUser = getPdksUser();
 		if (loginUser == null)
 			loginUser = ortakIslemler.getSistemAdminUser(session);
+		if (PdksUtil.isSessionKapali(session)) {
+			session = PdksUtil.getSessionUser(entityManager, loginUser);
+			if (authenticatedUser != null)
+				authenticatedUser.putSessionMap(sayfaURL, session);
+		}
 		Personel per = loginUser.getPdksPersonel();
 		aylikPuantajListClear();
 		// HashMap<Long, List<PersonelDonemselDurum>> pddMap = new HashMap<Long, List<PersonelDonemselDurum>>();

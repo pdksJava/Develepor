@@ -128,6 +128,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							}
 						}
 						if (PdksUtil.getCanliSunucuDurum() && PdksUtil.hasStringValue(konu)) {
+							if (PdksUtil.isSessionKapali(session))
+								session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 							boolean mailGonder = getMailGonder(session);
 							if (mailGonder) {
 								List<User> userList = null;
@@ -170,7 +172,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		Date bugun = PdksUtil.getDate(ortakIslemler.getBugun());
 		if (tarih == null)
 			tarih = bugun;
- 		String adresStr = null;
+		String adresStr = null;
 		long buAy = Long.parseLong(PdksUtil.convertToDateString(tarih, PATTERN_DONEM));
 		long oncekiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheAyEkleCikar(PdksUtil.convertToJavaDate(buAy + "01", PATTERN), -1), PATTERN_DONEM));
 		long sonrakiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(tarih, 6), PATTERN_DONEM));
@@ -332,8 +334,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 		sirketList = null;
 		HashMap fields = new HashMap();
- 		Date tarihBas = PdksUtil.convertToJavaDate(da.getDonem() + "01", PATTERN);
- 		Date tarihBit = PdksUtil.getAyinSonGunu(tarihBas);
+		Date tarihBas = PdksUtil.convertToJavaDate(da.getDonem() + "01", PATTERN);
+		Date tarihBit = PdksUtil.getAyinSonGunu(tarihBas);
 		if (tarihBit.after(bugun))
 			tarihBit = bugun;
 		if (talepVar) {
