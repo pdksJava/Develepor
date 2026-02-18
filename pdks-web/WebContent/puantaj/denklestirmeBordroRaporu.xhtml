@@ -35,7 +35,8 @@
 						<s:decorate template="/layout/edit.xhtml"
 							rendered="#{(authenticatedUser.admin or authenticatedUser.IKAdmin) and denklestirmeBordroRaporuHome.departmanList.size()>1}">
 							<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
-							<h:selectOneMenu value="#{denklestirmeBordroRaporuHome.departmanId}" required="true" requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
+							<h:selectOneMenu value="#{denklestirmeBordroRaporuHome.departmanId}" required="true"
+								requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{denklestirmeBordroRaporuHome.departmanList}" />
 								<a4j:support event="onchange" action="#{denklestirmeBordroRaporuHome.fillSirketList()}" ajaxSingle="true"
@@ -91,7 +92,8 @@
 									reRender="denklestirmeDonemiTable,ozelDurum" />
 							</h:selectBooleanCheckbox>
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml" rendered="#{denklestirmeBordroRaporuHome.hataliVeriGetir or denklestirmeBordroRaporuHome.eksikCalisanVeriGetir}">
+						<s:decorate template="/layout/edit.xhtml"
+							rendered="#{denklestirmeBordroRaporuHome.hataliVeriGetir or denklestirmeBordroRaporuHome.eksikCalisanVeriGetir}">
 							<ui:define name="label">Hatasız Personel Gösterme</ui:define>
 							<h:selectBooleanCheckbox value="#{denklestirmeBordroRaporuHome.sadeceHataliGetir}">
 								<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" action="#{denklestirmeBordroRaporuHome.personelDenklestirmeList.clear()}"
@@ -149,13 +151,13 @@
 										<a4j:commandLink ajaxSingle="true" action="#{denklestirmeBordroRaporuHome.saveLastParameter(puantaj) }"
 											onclick="#{rich:component('wait')}.show()" oncomplete="#{rich:component('wait')}.hide(); ">
 
-											<ui:fragment rendered="#{puantaj.personelDenklestirme.durum}">
+											<ui:fragment rendered="#{puantaj.personelDenklestirme.sonDurum}">
 												<h:graphicImage value="/img/msginfo.png" style="border:0" height="20" width="20" />
 												<rich:toolTip for="denk#{puantaj.pdksPersonel.id}">
 											 #{denklestirmeBordroRaporuHome.fazlaMesaiHesaplaMenuAdi} Göster
 											</rich:toolTip>
 											</ui:fragment>
-											<ui:fragment rendered="#{puantaj.personelDenklestirme.durum == false}">
+											<ui:fragment rendered="#{puantaj.personelDenklestirme.sonDurum == false}">
 												<ui:fragment rendered="#{puantaj.personelDenklestirme.onaylandi}">
 													<h:graphicImage value="/img/msgerror.png" style="border:0" height="20" width="20" />
 												</ui:fragment>
@@ -164,7 +166,12 @@
 												</ui:fragment>
 												<rich:toolTip for="denk#{puantaj.pdksPersonel.id}">
 													<ui:fragment rendered="#{puantaj.personelDenklestirme.onaylandi}">
-														<span style="color: red; font-size: 14px;">#{denklestirmeBordroRaporuHome.fazlaMesaiHesaplaMenuAdi} Hatalı Göster</span>
+														<span style="color: red; font-size: 14px;">#{denklestirmeBordroRaporuHome.fazlaMesaiHesaplaMenuAdi} Hatalı Göster <ui:fragment
+																rendered="#{puantaj.personelDenklestirme.personelDenklestirmeGecenAy!=null and puantaj.personelDenklestirme.personelDenklestirmeGecenAy.durum == false}">
+																<br></br>
+																<br>Önceki ay puantajı hatalı kontrol ediniz!</br>
+															</ui:fragment>
+														</span>
 														<ui:fragment rendered="#{not empty puantaj.vardiyalar}">
 															<p style="height: 10px;"></p>
 															<rich:dataTable rowClasses="acik,koyu" value="#{puantaj.vardiyalar}" var="vardiyaGun">

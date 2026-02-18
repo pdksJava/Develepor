@@ -2689,6 +2689,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 					}
 					puantaj.setDenklestirilmeyenDevredenVar(denklestirilmeyenPersonelDevredenVar);
+					if ((denklestirmeAyDurum || (bakiyeGuncelle != null && bakiyeGuncelle)) && personelDenklestirme.getDurum()) {
+						if (personelDenklestirme.getSonDurum().booleanValue() == false) {
+							personelDenklestirme.setDurum(Boolean.FALSE);
+							personelDenklestirme.setGuncellendi(Boolean.TRUE);
+						}
+					}
 					if (personelDenklestirme.isGuncellendi()) {
 						if ((bakiyeGuncelle != null && bakiyeGuncelle) || puantaj.isFazlaMesaiHesapla() != personelDenklestirme.getDurum() || (gecenAy != null && gecenAy.getDurum().equals(Boolean.FALSE))) {
 							if (puantaj.isFazlaMesaiHesapla() != personelDenklestirme.getDurum())

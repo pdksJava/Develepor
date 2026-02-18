@@ -988,7 +988,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								for (Iterator iterator = personelDenklestirmeList.iterator(); iterator.hasNext();) {
 									AylikPuantaj ap = (AylikPuantaj) iterator.next();
 									PersonelDenklestirme pd = ap.getPersonelDenklestirme();
-									if (pd.getDurum() && ap.getEksikCalismaSure() == null)
+									if (pd.getSonDurum() && ap.getEksikCalismaSure() == null)
 										iterator.remove();
 								}
 							}
@@ -1041,7 +1041,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 										personelDenklestirmeBordro.setDetayMap(new HashMap<BordroDetayTipi, PersonelDenklestirmeBordroDetay>());
 										ap.setDenklestirmeBordro(personelDenklestirmeBordro);
 									}
-									if (pd.isOnaylandi() && pd.getDurum().booleanValue() == false && ap.getVardiyalar() != null) {
+									if (pd.isOnaylandi() && pd.getSonDurum().booleanValue() == false && ap.getVardiyalar() != null) {
 										List<VardiyaGun> vardiyalar = ap.getVardiyalar();
 										int adet = vardiyalar.size();
 										for (Iterator iterator = vardiyalar.iterator(); iterator.hasNext();) {

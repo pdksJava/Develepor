@@ -821,7 +821,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 		lastMap.put("sicilNo", seciliPersonel.getPdksSicilNo());
 		String sayfa = MenuItemConstant.fazlaMesaiHesapla;
-		if (personelDenklestirme.getDurum().equals(Boolean.TRUE) || personelDenklestirme.isOnaylandi()) {
+		if (personelDenklestirme.getSonDurum().equals(Boolean.TRUE) || personelDenklestirme.isOnaylandi()) {
 			lastMap.put("calistir", Boolean.TRUE);
 			lastMap.put("sayfaURL", FazlaMesaiHesaplaHome.sayfaURL);
 		} else {
@@ -881,7 +881,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	public String kaydetSec() {
 		for (AylikPuantaj puantaj : aylikPuantajList) {
 			PersonelDenklestirme personelDenklestirmeAylik = puantaj.getPersonelDenklestirme();
-			if (puantaj.isDonemBitti() && personelDenklestirmeAylik.isOnaylandi() && personelDenklestirmeAylik.getDurum() && puantaj.isFazlaMesaiHesapla() && !personelDenklestirmeAylik.isErpAktarildi())
+			if (puantaj.isDonemBitti() && personelDenklestirmeAylik.isOnaylandi() && personelDenklestirmeAylik.getSonDurum() && puantaj.isFazlaMesaiHesapla() && !personelDenklestirmeAylik.isErpAktarildi())
 				puantaj.setKaydet(kaydetDurum);
 			else
 				puantaj.setKaydet(Boolean.FALSE);
@@ -1650,7 +1650,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					ortakIslemler.puantajHaftalikPlanOlustur(Boolean.TRUE, null, vardiyalar, aylikPuantajSablon, puantaj);
 
 					// puantaj.setSaatToplami(personelDenklestirme.getHesaplananSure());
-					if (personelDenklestirme.getDurum() && (ayBitti || denklestirmeAyDurum == false))
+					if (personelDenklestirme.getSonDurum() && (ayBitti || denklestirmeAyDurum == false))
 						puantaj.setPlanlananSure(personelDenklestirme.getPlanlanSure());
 					personelDenklestirme.setGuncellendi(Boolean.FALSE);
 
@@ -1715,7 +1715,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 						if (personelDenklestirme.getPersonelDenklestirmeGecenAy() != null && personelDenklestirme.getPersonelDenklestirmeGecenAy().getDevredenSure() != null)
 							gecenAydevredenSure = personelDenklestirme.getPersonelDenklestirmeGecenAy().getDevredenSure();
-						if (ayBitti == false || personelDenklestirme.getDurum() == false) {
+						if (ayBitti == false || personelDenklestirme.getSonDurum().booleanValue() == false) {
 							puantaj.setUcretiOdenenMesaiSure(puantajUcretiOdenenSure);
  							hesaplananDenklestirmeHesaplanan = puantaj.getPersonelDenklestirme(personelDenklestirme.getFazlaMesaiOde(), puantajSaatToplami - puantaj.getPlanlananSure(), gecenAydevredenSure, denklestirmeAy, departman, dt);
 
@@ -1750,7 +1750,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						puantaj.setEksikCalismaSure(personelDenklestirme.getEksikCalismaSure());
 						puantaj.setFazlaMesaiSure(personelDenklestirme.getOdenecekSure());
 						puantaj.setSaatToplami(personelDenklestirme.getHesaplananSure());
-						puantajFazlaMesaiHesapla = personelDenklestirme.getDurum();
+						puantajFazlaMesaiHesapla = personelDenklestirme.getSonDurum();
 					} else if (hesaplananDenklestirmeHesaplanan != null) {
 						puantaj.setSaatToplami(puantajSaatToplami);
 						puantaj.setDevredenSure(hesaplananDenklestirmeHesaplanan.getDevredenSure());
@@ -1788,8 +1788,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					}
 
 					if (personelDenklestirme.isGuncellendi()) {
-						if ((bakiyeGuncelle != null && bakiyeGuncelle) || puantaj.isFazlaMesaiHesapla() != personelDenklestirme.getDurum() || (gecenAy != null && gecenAy.getDurum().equals(Boolean.FALSE))) {
-							if (puantaj.isFazlaMesaiHesapla() != personelDenklestirme.getDurum())
+						if ((bakiyeGuncelle != null && bakiyeGuncelle) || puantaj.isFazlaMesaiHesapla() != personelDenklestirme.getSonDurum() || (gecenAy != null && gecenAy.getDurum().equals(Boolean.FALSE))) {
+							if (puantaj.isFazlaMesaiHesapla() != personelDenklestirme.getSonDurum())
 								personelDenklestirme.setDurum(puantaj.isFazlaMesaiHesapla());
 
 						}
@@ -1822,7 +1822,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						iterator1.remove();
 					puantaj.setDonemBitti(Boolean.FALSE);
 					if (sonPersonelCikisZamani != null) {
-						if (puantaj.isFazlaMesaiHesapla() && personelDenklestirme.getDurum()) {
+						if (puantaj.isFazlaMesaiHesapla() && personelDenklestirme.getSonDurum()) {
 							puantaj.setDonemBitti(bugun.after(sonPersonelCikisZamani));
 							if (puantaj.isDonemBitti() && (sonCikisZamani == null || sonPersonelCikisZamani.after(sonCikisZamani)))
 								sonCikisZamani = sonPersonelCikisZamani;
@@ -1911,7 +1911,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			if (toDay.after(tarih) && (toDay.before(denklestirmeAy.getOtomatikOnayIKTarih())) || (authenticatedUser.isTestLogin() && toDay.before(tarihLast))) {
 				onayla = Boolean.FALSE;
 				for (AylikPuantaj puantaj : puantajList) {
-					puantaj.setKaydet(puantaj.getPersonelDenklestirme().getDurum());
+					puantaj.setKaydet(puantaj.getPersonelDenklestirme().getSonDurum());
 					if (puantaj.isKaydet())
 						onayla = hataYok;
 				}
@@ -2783,7 +2783,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 								if (commentGuncelleyen != null)
 									devredenSureCell.setCellComment(commentGuncelleyen);
 							}
-							if (aylikPuantaj.getEksiBakiyeSuresi() != null && aylikPuantaj.getEksiBakiyeSuresi().doubleValue() != 0 && personelDenklestirme.getDurum()) {
+							if (aylikPuantaj.getEksiBakiyeSuresi() != null && aylikPuantaj.getEksiBakiyeSuresi().doubleValue() != 0 && personelDenklestirme.getSonDurum()) {
 								devredenSureCell.setCellValue("X");
 								devredenSureCell.setCellStyle(styleCenter);
 								commentGuncelleyen = ExcelUtil.getComment(anchor, helper, drawing, "Denkleştirilmeyen Eksi Bakiye(Saat) : " + authenticatedUser.sayiFormatliGoster(aylikPuantaj.getEksiBakiyeSuresi()));

@@ -859,11 +859,11 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	@Transient
-	public boolean isSonDurum() {
-		boolean sonDurum = this.getDurum();
+	public Boolean getSonDurum() {
+		boolean sonDurum = this.getDurum() != null && this.getDurum();
 		if (sonDurum) {
 			if (personelDenklestirmeGecenAy != null)
-				sonDurum = personelDenklestirmeGecenAy.getDurum();
+				sonDurum = personelDenklestirmeGecenAy.getDurum() != null && personelDenklestirmeGecenAy.getDurum();
 		}
 		return sonDurum;
 	}

@@ -755,7 +755,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 					if (hataliDurum) {
 						ekle = false;
-						if (pd.getDurum() && pd.isOnaylandi()) {
+						if (pd.getSonDurum() && pd.isOnaylandi()) {
 							CalismaModeli cm = pd.getCalismaModeli();
 							ekle = cm.isFazlaMesaiGoruntulensinMi() || pd.isDenklestirme();
 						}
@@ -765,7 +765,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						pdMap.put(pd.getId(), pd);
 
 						AylikPuantaj aylikPuantaj = new AylikPuantaj();
-						if (hataliVeriGetir != null && hataliVeriGetir && pd.getDurum().equals(Boolean.FALSE) && pd.isOnaylandi())
+						if (hataliVeriGetir != null && hataliVeriGetir && pd.getSonDurum().equals(Boolean.FALSE) && pd.isOnaylandi())
 							hataliMap.put(pd.getPdksPersonel().getId(), aylikPuantaj);
 
 						aylikPuantaj.setPersonelDenklestirme(pd);
@@ -773,7 +773,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						aylikPuantaj.setEksikCalismaSure(null);
 						aylikPuantajMap.put(pd.getId(), aylikPuantaj);
 						personelDenklestirmeList.add(aylikPuantaj);
-						if (pd.getDurum().equals(Boolean.TRUE) && (eksikCalisanVeriGetir != null && eksikCalisanVeriGetir)) {
+						if (pd.getSonDurum().equals(Boolean.TRUE) && (eksikCalisanVeriGetir != null && eksikCalisanVeriGetir)) {
 							double normalSaat = 0.0d, planlananSaaat = 0.0d;
 							CalismaModeli cm = pd.getCalismaModeli();
 							if (cm != null) {
@@ -909,7 +909,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 							if (!perMap.containsKey(id)) {
 								perMap.put(id, personel);
 								PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
-								boolean hataYok = pd.getDurum().equals(Boolean.TRUE), donemBitti = true;
+								boolean hataYok = pd.getSonDurum().equals(Boolean.TRUE), donemBitti = true;
 								if (hataYok) {
 									CalismaModeli cm = eksikCalismaMap.containsKey(pd.getId()) && hataYok && hataliVeriGetir != null && hataliVeriGetir ? pd.getCalismaModeli() : null;
 									Double eksikCalismaSure = null;
@@ -964,7 +964,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			List<AylikPuantaj> aktifList = new ArrayList<AylikPuantaj>(), aktifEksikList = new ArrayList<AylikPuantaj>(), hataliGunList = new ArrayList<AylikPuantaj>();
 			for (AylikPuantaj aylikPuantaj : puantajList) {
 				PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
-				boolean hataYok = pd.getDurum().equals(Boolean.TRUE);
+				boolean hataYok = pd.getSonDurum().equals(Boolean.TRUE);
 				if (aylikPuantaj.getEksikCalismaSure() != null)
 					aktifEksikList.add(aylikPuantaj);
 				else if (hataYok)
@@ -1044,7 +1044,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			boolean aksamSaatBaslik = PdksUtil.hasStringValue(baslikMap.get(home.COL_AKSAM_SAAT_MESAI));
 			boolean eksikCalismaBaslik = PdksUtil.hasStringValue(baslikMap.get(home.COL_EKSIK_CALISMA));
 			for (AylikPuantaj aylikPuantaj : personelDenklestirmeList) {
-				if (aylikPuantaj.getPersonelDenklestirme().getDurum().equals(Boolean.FALSE))
+				if (aylikPuantaj.getPersonelDenklestirme().getSonDurum().equals(Boolean.FALSE))
 					continue;
 				PersonelDenklestirmeBordro personelDenklestirmeBordro = aylikPuantaj.getDenklestirmeBordro();
 				PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
