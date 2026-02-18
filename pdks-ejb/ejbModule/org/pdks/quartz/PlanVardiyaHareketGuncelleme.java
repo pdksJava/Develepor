@@ -256,14 +256,13 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				User guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
 				guncelleyenUser.setAdmin(true);
 				List<Liste> islemList = new ArrayList<Liste>();
+				boolean talepVar = getSirketTalepGirmeDurum(session);
 				for (DenklestirmeAy da : aylar) {
 					try {
-						vardiyaVersiyonGuncelle(da, bugun, guncelleyenUser, session);
+						vardiyaVersiyonGuncelle(da, talepVar, bugun, guncelleyenUser, session);
 					} catch (Exception e) {
 
 					}
-					// if (aylar.size() > 1)
-					// logger.info(da.getAyAdi() + " " + da.getYil() + " in " + PdksUtil.getCurrentTimeStampStr());
 					DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 					AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(da.getAy(), da.getYil(), denklestirmeDonemi, session);
 					aylikPuantaj.setLoginUser(guncelleyenUser);
@@ -318,23 +317,16 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	}
 
+ 
 	/**
 	 * @param da
+	 * @param talepVar
 	 * @param bugun
 	 * @param guncelleyenUser
 	 * @param session
 	 */
 	@Transactional
-	private void vardiyaVersiyonGuncelle(DenklestirmeAy da, Date bugun, User guncelleyenUser, Session session) {
-		boolean talepVar = false;
-		List<Sirket> sirketList = pdksEntityController.getSQLParamByAktifFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_PDKS, Boolean.TRUE, Sirket.class, session);
-		for (Sirket sirket : sirketList) {
-			if (sirket.getFazlaMesai() && talepVar == false)
-				talepVar = sirket.getFazlaMesaiTalepGirilebilir();
-
-		}
-
-		sirketList = null;
+	private void vardiyaVersiyonGuncelle(DenklestirmeAy da, boolean talepVar, Date bugun, User guncelleyenUser, Session session) {
 		HashMap fields = new HashMap();
 		Date tarihBas = PdksUtil.convertToJavaDate(da.getDonem() + "01", PATTERN);
 		Date tarihBit = PdksUtil.getAyinSonGunu(tarihBas);
@@ -429,6 +421,22 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		}
 		vGunList = null;
 		sb1 = null;
+	}
+
+	/**
+	 * @param session
+	 * @return
+	 */
+	private boolean getSirketTalepGirmeDurum(Session session) {
+		boolean talepVar = false;
+		List<Sirket> sirketList = pdksEntityController.getSQLParamByAktifFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_PDKS, Boolean.TRUE, Sirket.class, session);
+		for (Sirket sirket : sirketList) {
+			if (sirket.getFazlaMesai() && talepVar == false)
+				talepVar = sirket.getFazlaMesaiTalepGirilebilir();
+
+		}
+		sirketList = null;
+		return talepVar;
 	}
 
 	/**
