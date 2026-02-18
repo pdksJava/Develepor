@@ -3037,9 +3037,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					sb.append("	inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CM." + CalismaModeli.COLUMN_NAME_ID + " = CMA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI);
 					sb.append("	AND ( CM." + CalismaModeli.COLUMN_NAME_DEPARTMAN + " is null or CM." + CalismaModeli.COLUMN_NAME_DEPARTMAN + " = " + sirket.getDepartman().getId() + " )");
 					sb.append("	AND ( CM." + CalismaModeli.COLUMN_NAME_SIRKET + " is null or CM." + CalismaModeli.COLUMN_NAME_SIRKET + " = " + sirket.getId() + " )");
-					sb.append("	AND coalesce( CM." + CalismaModeli.COLUMN_NAME_YONETICI_GUNCELLE + " ,0 ) = 1  ");
 					if (adminRole == false && loginUser.isIK() == false)
-						sb.append("	order by V.ADET desc, CM." + CalismaModeli.COLUMN_NAME_ACIKLAMA);
+						sb.append("	AND coalesce( CM." + CalismaModeli.COLUMN_NAME_YONETICI_GUNCELLE + " ,0 ) = 1  ");
+					sb.append("	order by V.ADET desc, CM." + CalismaModeli.COLUMN_NAME_ACIKLAMA);
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 					modelList = pdksEntityController.getObjectBySQLList(sb, fields, CalismaModeliAy.class);
@@ -6699,7 +6699,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					denklestirmeAyDurum = false;
 
 					aylikPuantajOlusturuluyor();
-					 
+
 				} catch (Exception e) {
 					donus = "";
 					logger.error(e);
