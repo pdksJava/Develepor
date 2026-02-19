@@ -865,8 +865,8 @@ public class PersonelDenklestirme extends BaseObject {
 		if (sonDurum) {
 			if (personelDenklestirmeGecenAy != null) {
 				Date iseBaslamaTarihi = personel.getIseBaslamaTarihi();
-				Date donemSonu = PdksUtil.getAyinSonGunu(PdksUtil.convertToJavaDate(personelDenklestirmeGecenAy.getDenklestirmeAy().getDonem() + "01", "yyyyMMdd"));
-				if (iseBaslamaTarihi.after(donemSonu) == false)
+				Date donemBasi = PdksUtil.convertToJavaDate(this.getDenklestirmeAy().getDonem() + "01", "yyyyMMdd");
+				if (iseBaslamaTarihi.before(donemBasi))
 					sonDurum = personelDenklestirmeGecenAy.getDurum() != null && personelDenklestirmeGecenAy.getDurum();
 			}
 
