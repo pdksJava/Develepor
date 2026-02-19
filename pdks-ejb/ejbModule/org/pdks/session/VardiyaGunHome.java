@@ -391,7 +391,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 
 			}
-			logger.error(str + " " + e);
+			logger.error(str + "\n" + e);
 
 		}
 
