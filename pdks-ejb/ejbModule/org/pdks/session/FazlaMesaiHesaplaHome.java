@@ -263,12 +263,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		} catch (Exception e) {
 			String str = (getPdksUser() != null ? getPdksUser().getAdSoyad() + " " : "") + yil + " " + denklestirmeAy.getAyAdi();
 			try {
-				str = " " + ortakIslemler.getSelectItemText(sirketId, pdksSirketList);
-				if (tesisId != null)
-					str += " " + ortakIslemler.getSelectItemText(tesisId, tesisList);
-				str += " " + ortakIslemler.getSelectItemText(seciliEkSaha3Id, getGorevYeriList());
-				if (seciliEkSaha4Id != null)
-					str += " " + ortakIslemler.getSelectItemText(seciliEkSaha4Id, altBolumList);
+				if (PdksUtil.hasStringValue(sicilNo))
+					str += " " + sicilNo;
+				else {
+					str = " " + ortakIslemler.getSelectItemText(sirketId, pdksSirketList);
+					if (tesisId != null)
+						str += " " + ortakIslemler.getSelectItemText(tesisId, tesisList);
+					str += " " + ortakIslemler.getSelectItemText(seciliEkSaha3Id, getGorevYeriList());
+					if (seciliEkSaha4Id != null)
+						str += " " + ortakIslemler.getSelectItemText(seciliEkSaha4Id, altBolumList);
+				}
 
 			} catch (Exception e2) {
 			}
