@@ -3,6 +3,7 @@ package org.pdks.entity;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -862,8 +863,13 @@ public class PersonelDenklestirme extends BaseObject {
 	public Boolean getSonDurum() {
 		boolean sonDurum = this.getDurum() != null && this.getDurum();
 		if (sonDurum) {
-			if (personelDenklestirmeGecenAy != null)
-				sonDurum = personelDenklestirmeGecenAy.getDurum() != null && personelDenklestirmeGecenAy.getDurum();
+			if (personelDenklestirmeGecenAy != null) {
+				Date iseBaslamaTarihi = personel.getIseBaslamaTarihi();
+				Date donemSonu = PdksUtil.getAyinSonGunu(PdksUtil.convertToJavaDate(personelDenklestirmeGecenAy.getDenklestirmeAy().getDonem() + "01", "yyyyMMdd"));
+				if (iseBaslamaTarihi.after(donemSonu) == false)
+					sonDurum = personelDenklestirmeGecenAy.getDurum() != null && personelDenklestirmeGecenAy.getDurum();
+			}
+
 		}
 		return sonDurum;
 	}
