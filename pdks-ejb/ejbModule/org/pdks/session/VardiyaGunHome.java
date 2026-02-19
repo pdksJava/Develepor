@@ -377,8 +377,22 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		try {
 			session.flush();
 		} catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
+			String str = (loginUser != null ? loginUser.getAdSoyad() + " " : "") + yil + " " + denklestirmeAy.getAyAdi();
+			if (aramaSecenekleri != null) {
+				try {
+					str = " " + ortakIslemler.getSelectItemText(aramaSecenekleri.getSirketId(), aramaSecenekleri.getSirketIdList());
+					if (aramaSecenekleri.getTesisId() != null)
+						str += " " + ortakIslemler.getSelectItemText(aramaSecenekleri.getTesisId(), aramaSecenekleri.getTesisList());
+					str += " " + ortakIslemler.getSelectItemText(aramaSecenekleri.getEkSaha3Id(), aramaSecenekleri.getGorevYeriList());
+					if (aramaSecenekleri.getEkSaha4Id() != null)
+						str += " " + ortakIslemler.getSelectItemText(aramaSecenekleri.getEkSaha4Id(), aramaSecenekleri.getAltBolumIdList());
+
+				} catch (Exception e2) {
+				}
+
+			}
+			logger.error(str + " " + e);
+
 		}
 
 	}

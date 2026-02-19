@@ -261,8 +261,19 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		try {
 			session.flush();
 		} catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
+			String str = (getPdksUser() != null ? getPdksUser().getAdSoyad() + " " : "") + yil + " " + denklestirmeAy.getAyAdi();
+			try {
+				str = " " + ortakIslemler.getSelectItemText(sirketId, pdksSirketList);
+				if (tesisId != null)
+					str += " " + ortakIslemler.getSelectItemText(tesisId, tesisList);
+				str += " " + ortakIslemler.getSelectItemText(seciliEkSaha3Id, getGorevYeriList());
+				if (seciliEkSaha4Id != null)
+					str += " " + ortakIslemler.getSelectItemText(seciliEkSaha4Id, altBolumList);
+
+			} catch (Exception e2) {
+			}
+			logger.error(str + "\n" + e);
+
 		}
 
 	}
@@ -2601,7 +2612,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					} else {
 						if (!(ikRole))
 							resmiTatilToplami = personelDenklestirme.getResmiTatilSure();
-						else 
+						else
 							personelDenklestirme.setResmiTatilSure(PdksUtil.setSureDoubleTypeRounded(resmiTatilToplami, rtYuvarla));
 
 						aksamVardiyaSaatSayisi = personelDenklestirme.getAksamVardiyaSaatSayisi();
