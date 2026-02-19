@@ -869,8 +869,7 @@ public class PersonelDenklestirme extends BaseObject {
 				if (iseBaslamaTarihi.before(donemBasi))
 					sonDurum = personelDenklestirmeGecenAy.getDurum() != null && personelDenklestirmeGecenAy.getDurum();
 			}
-
-		}
+ 		}
 		return sonDurum;
 	}
 
