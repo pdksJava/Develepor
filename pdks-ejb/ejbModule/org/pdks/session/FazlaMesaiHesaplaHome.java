@@ -2728,7 +2728,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								if (pdGecenAy != null) {
 									puantaj.setFazlaMesaiHesapla(false);
 									sonDurum = Boolean.FALSE;
-									if (userLogin.getLogin()) {
+									if (userLogin != null && userLogin.getLogin() && (adminRole || ikRole)) {
 										DenklestirmeAy da1 = pdGecenAy.getDenklestirmeAy();
 										PdksUtil.addMessageAvailableWarn(personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " " + da1.getAyAdi() + " " + da1.getYil() + " hata mevcut kontrol ediniz!");
 									}
