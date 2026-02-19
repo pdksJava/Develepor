@@ -2713,11 +2713,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					}
 					puantaj.setDenklestirilmeyenDevredenVar(denklestirilmeyenPersonelDevredenVar);
 					if ((denklestirmeAyDurum || (bakiyeGuncelle != null && bakiyeGuncelle)) && personelDenklestirme.getDurum()) {
-						if (personelDenklestirme.getSonDurum().booleanValue() == false) {
+						if (personelDenklestirme.getSonDurum().booleanValue() == false)  
 							personelDenklestirme.setGuncellendi(Boolean.TRUE);
-						}
-
-					}
+ 					}
 					if (personelDenklestirme.isGuncellendi()) {
 						if ((bakiyeGuncelle != null && bakiyeGuncelle) || puantaj.isFazlaMesaiHesapla() != personelDenklestirme.getDurum() || (gecenAy != null && gecenAy.getDurum().equals(Boolean.FALSE))) {
 							Boolean sonDurum = null;
@@ -2733,8 +2731,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										PdksUtil.addMessageAvailableWarn(personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " " + da1.getAyAdi() + " " + da1.getYil() + " hata mevcut kontrol ediniz!");
 									}
 								}
-
-							}
+ 							}
 
 							if (sonDurum != null)
 								personelDenklestirme.setDurum(sonDurum);
