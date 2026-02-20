@@ -176,6 +176,19 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 				aciklama = "Şua Günlük Saat";
 			else if (tipi.equals(PuantajKatSayiTipi.GUN_OFF_FAZLA_MESAI_TIPI))
 				aciklama = "Off Mesai Başlama Dakikası";
+			else if (tipi.equals(PuantajKatSayiTipi.GUN_HT_FAZLA_MESAI_TIPI))
+				aciklama = "Hafta Tatili Mesai Başlama Dakikası";
+			else if (tipi.equals(PuantajKatSayiTipi.GUN_FMT_DURUM))
+				aciklama = "Fazla Mesai Talep Oluşturma Durumu";
+			else if (tipi.equals(PuantajKatSayiTipi.GUN_VARDIYA_MOLA))
+				aciklama = "Vardiya Mola Tarih Başlangıç Tarihi";
+			else if (tipi.equals(PuantajKatSayiTipi.AYLIK_DENKLESTIRME_TIPI))
+				aciklama = "Denkleştirme Tipi";
+			else if (tipi.equals(PuantajKatSayiTipi.AYLIK_RADYOLOJI_MAX_GUN))
+				aciklama = "Aylık Radyoloji Max Çalışma Gün Sayısı";
+			else if (tipi.equals(PuantajKatSayiTipi.GUN_SAAT_CALISAN_IZIN_GUN))
+				aciklama = "İdari Çalışan  Günlük İzin Saati";
+
 			else if (tipi.equals(PuantajKatSayiTipi.AYLIK_IZIN_HAFTA_TATIL_DURUM))
 				aciklama = "İzin Hafta Tatil Pazar";
 			else if (tipi.equals(PuantajKatSayiTipi.GUN_YEMEK_SURE_EKLE_DURUM))
