@@ -165,7 +165,7 @@ public class PdksUtil implements Serializable {
 					++adet;
 			}
 			harfList = null;
-			if (adet > 1)
+			if (adet > 4)
 				hataYok = true;
 		}
 		return hataYok;

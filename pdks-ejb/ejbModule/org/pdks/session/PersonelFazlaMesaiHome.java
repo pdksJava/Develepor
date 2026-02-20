@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
@@ -473,8 +474,13 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			e1.printStackTrace();
 		}
 		boolean hataYok = false;
-		if (onayAciklamaZorunlu && PdksUtil.hasStringValue(fazlaMesai.getNedenAciklama()))
-			hataYok = PdksUtil.getAciklamaDurum(fazlaMesai.getNedenAciklama());
+		String nedenAciklama = fazlaMesai.getNedenAciklama();
+		if (onayAciklamaZorunlu && PdksUtil.hasStringValue(nedenAciklama)) {
+			StringTokenizer st = new StringTokenizer(nedenAciklama, " ");
+			hataYok = nedenAciklama.indexOf(" ") >= 2 && st.countTokens() > 1 && PdksUtil.getAciklamaDurum(nedenAciklama);
+			st = null;
+		}
+
 		if (hataYok) {
 			double fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesai.getHareket().getFazlaMesai(), vg.getFazlaMesaiYuvarla());
 			if (fazlaMesai.getFazlaMesaiMaxSaati() != null && fazlaMesai.getFazlaMesaiMaxSaati().doubleValue() < fazlaMesaiSaati) {
