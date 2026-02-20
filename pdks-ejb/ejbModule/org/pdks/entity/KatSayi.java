@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
@@ -45,6 +46,7 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 
 	private Date basTarih, bitTarih;
 	private PuantajKatSayiTipi tipi;
+	private Long sirketId, tesisId;
 	private Sirket sirket;
 	private Tanim tesis;
 	private Vardiya vardiya;
@@ -93,8 +95,17 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 		this.deger = deger;
 	}
 
+	@Column(name = COLUMN_NAME_SIRKET)
+	public Long getSirketId() {
+		return sirketId;
+	}
+
+	public void setSirketId(Long sirketId) {
+		this.sirketId = sirketId;
+	}
+
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = COLUMN_NAME_SIRKET)
+	@JoinColumn(name = COLUMN_NAME_SIRKET, updatable = false, insertable = false)
 	@Fetch(FetchMode.JOIN)
 	public Sirket getSirket() {
 		return sirket;
@@ -104,8 +115,17 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 		this.sirket = sirket;
 	}
 
+	@Column(name = COLUMN_NAME_TESIS)
+	public Long getTesisId() {
+		return tesisId;
+	}
+
+	public void setTesisId(Long tesisId) {
+		this.tesisId = tesisId;
+	}
+
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = COLUMN_NAME_TESIS)
+	@JoinColumn(name = COLUMN_NAME_TESIS, updatable = false, insertable = false)
 	@Fetch(FetchMode.JOIN)
 	public Tanim getTesis() {
 		return tesis;
@@ -134,6 +154,16 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 
 	public void setDurum(Boolean durum) {
 		this.durum = durum;
+	}
+
+	@Transient
+	public String getTipAciklama() {
+		String aciklama = "";
+		if (tipi != null) {
+			aciklama = tipi.value() + " tanımsız tip";
+
+		}
+		return aciklama;
 	}
 
 	public void entityRefresh() {

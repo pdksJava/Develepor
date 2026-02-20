@@ -64,6 +64,7 @@ public class MenuItemConstant implements Serializable {
 	public static String personelHareket = "/puantaj/personelHareket.xhtml";
 	public static String planGuncellemeTalepLinkOnay = "/puantaj/planGuncellemeTalepLinkOnay.xhtml";
 	public static String vardiyaPlani = "/puantaj/vardiyaPlani.xhtml";
+	
 
 	public static String aylikIzinRapor = "/rapor/izin/aylikIzinRapor.xhtml";
 	public static String bakiyeIzin = "/rapor/izin/bakiyeIzin.xhtml";
@@ -124,6 +125,7 @@ public class MenuItemConstant implements Serializable {
 	public static String izinHakedisHakkiTanimlama = "/tanimlama/izinHakedisHakkiTanimlama.xhtml";
 	public static String izinTipiTanimlama = "/tanimlama/izinTipiTanimlama.xhtml";
 	public static String fazlaMesaiERPTanimlama = "/tanimlama/fazlaMesaiERPTanimlama.xhtml";
+	public static String katSayiTanimlama = "/tanimlama/katSayiTanimlama.xhtml";
 	
 	public static String kapiTanimlama = "/tanimlama/kapiTanimlama.xhtml";
 	public static String personelGeciciYonetici = "/tanimlama/personelGeciciYonetici.xhtml";
@@ -1053,6 +1055,14 @@ public class MenuItemConstant implements Serializable {
 
 	public static void setFazlaMesaiERPTanimlama(String fazlaMesaiERPTanimlama) {
 		MenuItemConstant.fazlaMesaiERPTanimlama = fazlaMesaiERPTanimlama;
+	}
+
+	public static String getKatSayiTanimlama() {
+		return katSayiTanimlama;
+	}
+
+	public static void setKatSayiTanimlama(String katSayiTanimlama) {
+		MenuItemConstant.katSayiTanimlama = katSayiTanimlama;
 	}
 
 }
