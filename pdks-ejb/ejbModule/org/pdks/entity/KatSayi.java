@@ -196,8 +196,7 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 				aciklama = "Saat Çalışan Gün Katsayısı ";
 			else if (tipi.equals(PuantajKatSayiTipi.GUN_SAAT_CALISAN_NORMAL_GUN))
 				aciklama = "Saat Çalışan Normal Gün Katsayısı ";
-			
-			else if (tipi.equals(PuantajKatSayiTipi.GUN_YEMEK_SURE_EKLE_DURUM))
+ 			else if (tipi.equals(PuantajKatSayiTipi.GUN_YEMEK_SURE_EKLE_DURUM))
 				aciklama = "Yemek Süre Ekle";
 			else if (tipi.equals(PuantajKatSayiTipi.GUN_ERKEN_CIKIS_TIPI))
 				aciklama = "Vardiya Erken Çıkış Dakika";

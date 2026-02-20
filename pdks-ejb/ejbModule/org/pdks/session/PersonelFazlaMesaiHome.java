@@ -473,7 +473,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			logger.error(e1);
 			e1.printStackTrace();
 		}
-		boolean hataYok = false;
+		boolean hataYok = onayAciklamaZorunlu == false;
 		String nedenAciklama = fazlaMesai.getNedenAciklama();
 		if (onayAciklamaZorunlu && PdksUtil.hasStringValue(nedenAciklama)) {
 			StringTokenizer st = new StringTokenizer(nedenAciklama, " ");
