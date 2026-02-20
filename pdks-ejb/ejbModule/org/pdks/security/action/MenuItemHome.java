@@ -201,10 +201,11 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 				item.setStatus(Boolean.TRUE);
 			else
 				item.setStatus(Boolean.FALSE);
-			item.getDescription().setDurum(Boolean.TRUE);
-			item.getDescription().setTipi(Tanim.TIPI_MENU_BILESENI);
-			item.getDescription().setKodu(item.getName());
-
+			Tanim description = item.getDescription();
+			description.setDurum(Boolean.TRUE);
+			description.setTipi(Tanim.TIPI_MENU_BILESENI);
+			description.setKodu(item.getName());
+			pdksEntityController.saveOrUpdate(sessionx, entityManager, description);
 			pdksEntityController.saveOrUpdate(sessionx, entityManager, instance);
 			sessionx.flush();
 			startupAction.fillMenuItemList(sessionx);
@@ -237,13 +238,13 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 	}
 
 	public Session getSession() {
-		if (PdksUtil.isSessionKapali(session)) {
-			session = authenticatedUser.getSessionSQL();
-			if (PdksUtil.isSessionKapali(session))
-				session = PdksUtil.getSession(entityManager, false);
-			if (session != null)
-				session.clear();
-		}
+
+		session = authenticatedUser.getSessionSQL();
+		if (PdksUtil.isSessionKapali(session))
+			session = PdksUtil.getSession(entityManager, false);
+		if (session != null)
+			session.clear();
+
 		return session;
 	}
 
