@@ -47,6 +47,8 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 	private Date basTarih, bitTarih;
 	private PuantajKatSayiTipi tipi;
 	private Long sirketId, tesisId;
+	private Integer tipNo;
+
 	private Sirket sirket;
 	private Tanim tesis;
 	private Vardiya vardiya;
@@ -58,6 +60,15 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 	}
 
 	@Column(name = COLUMN_NAME_TIPI)
+	public Integer getTipNo() {
+		return tipNo;
+	}
+
+	public void setTipNo(Integer tipNo) {
+		this.tipNo = tipNo;
+	}
+
+	@Column(name = COLUMN_NAME_TIPI, updatable = false, insertable = false)
 	public PuantajKatSayiTipi getTipi() {
 		return tipi;
 	}

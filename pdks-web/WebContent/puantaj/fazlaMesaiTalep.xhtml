@@ -159,7 +159,7 @@
 
 											</rich:column>
 
-											<rich:column style="text-align:center;">
+											<rich:column style="text-align:center;width:autostretch ;white-space: nowrap;"> 
 												<f:facet name="header">
 													<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Zamanı" />
 												</f:facet>
@@ -171,13 +171,13 @@
 												</f:facet>
 												<h:outputText value="#{fmt.vardiyaGun.personel.sicilNo}" />
 											</rich:column>
-											<rich:column>
+											<rich:column style="width:autostretch ;white-space: nowrap;">
 												<f:facet name="header">
 													<h:outputText value="Adı Soyadı" />
 												</f:facet>
 												<h:outputText value="#{fmt.vardiyaGun.personel.adSoyad}" />
 											</rich:column>
-											<rich:column rendered="#{vardiyaGunHome.aramaSecenekleri.sirketId==null}">
+											<rich:column rendered="#{vardiyaGunHome.aramaSecenekleri.sirketId==null}" style="width:autostretch ;white-space: nowrap;">
 												<f:facet name="header">
 													#{ortakIslemler.sirketAciklama()}
 												</f:facet>
@@ -213,7 +213,7 @@
 												</f:facet>
 												<h:outputText value="#{authenticatedUser.sayiFormatliGoster(fmt.mesaiSuresi)}" />
 											</rich:column>
-											<rich:column>
+											<rich:column style="width:autostretch ;white-space: nowrap;">
 												<f:facet name="header">
 													<h:outputText value="Mesai Nedeni" />
 												</f:facet>
@@ -228,7 +228,7 @@
 												</f:facet>
 												<h:outputText value="#{fmt.onayDurumAciklama}" />
 											</rich:column>
-											<rich:column>
+											<rich:column style="width:autostretch ;white-space: nowrap;">
 												<f:facet name="header">
 													<h:outputText value="Onay'a Gönderen" />
 												</f:facet>
@@ -240,7 +240,7 @@
 												</f:facet>
 												<h:outputText value="#{authenticatedUser.dateTimeFormatla(fmt.olusturmaTarihi)}" />
 											</rich:column>
-											<rich:column>
+											<rich:column style="width:autostretch ;white-space: nowrap;">
 												<f:facet name="header">
 													<h:outputText value="Onaylayan" />
 												</f:facet>

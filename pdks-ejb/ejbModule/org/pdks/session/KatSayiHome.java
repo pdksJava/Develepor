@@ -3,6 +3,7 @@ package org.pdks.session;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
@@ -108,6 +109,7 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 			}
 			xKatSayi.setTipi(null);
 			xKatSayi.setBasTarih(PdksUtil.getDate(new Date()));
+			xKatSayi.setBitTarih(PdksUtil.convertToJavaDate("29991231", "yyyyMMdd"));
 			xKatSayi.setDurum(Boolean.TRUE);
 
 		}
@@ -147,24 +149,48 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 	 * @return
 	 */
 	public String fillVardiyalar() {
+		if (vardiyaGetir) {
+			vardiyaList = pdksEntityController.getSQLParamByFieldList(Vardiya.TABLE_NAME, Vardiya.COLUMN_NAME_DURUM, Boolean.TRUE, Vardiya.class, session);
+			Long sirketId = as.getSirketId(), tesisId = as.getTesisId(), departmanId = as.getSirket() != null ? as.getSirket().getDepartman().getId() : null;
+			for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
+				Vardiya vardiya = (Vardiya) iterator.next();
+				if (vardiya.isCalisma() == false || vardiya.isIzinVardiya() || vardiya.getGenel().booleanValue() == false)
+					iterator.remove();
+				else if (departmanId != null && vardiya.getDepartmanId() != null && departmanId.equals(vardiya.getDepartmanId()) == false)
+					iterator.remove();
+				else if (sirketId != null && vardiya.getSirketId() != null && sirketId.equals(vardiya.getSirketId()) == false)
+					iterator.remove();
+				else if (tesisId != null && vardiya.getTesisId() != null && tesisId.equals(vardiya.getTesisId()) == false)
+					iterator.remove();
+			}
+			if (vardiyaList.size() > 1)
+				vardiyaList = PdksUtil.sortObjectStringAlanList(vardiyaList, "getAdi", null);
+		} else {
+			if (vardiyaList != null)
+				vardiyaList.clear();
+			else
+				vardiyaList = new ArrayList<Vardiya>();
 
+		}
 		return "";
 	}
 
 	@Transactional
 	public String kaydet() {
 		try {
-			boolean devam = true;
-
-			if (devam) {
+			if (seciliKatSayi.getId() == null) {
 				seciliKatSayi.setSirketId(as.getSirketId());
 				seciliKatSayi.setTesisId(as.getTesisId());
-				pdksEntityController.saveOrUpdate(session, entityManager, seciliKatSayi);
-
-				session.flush();
-
-				fillKatSayiList();
+				if (vardiyaGetir.booleanValue() == false)
+					seciliKatSayi.setVardiya(null);
 			}
+
+			pdksEntityController.saveOrUpdate(session, entityManager, seciliKatSayi);
+
+			session.flush();
+
+			fillKatSayiList();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

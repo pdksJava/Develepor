@@ -10242,10 +10242,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 			HashMap map = new HashMap();
 			List<Personel> personelList = null;
-			if (ikRole || adminRole)
-				personelList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(aramaSecenekleri.getSirket(), tesisId != null ? "" + tesisId : null, seciliEkSaha3Id, null, (denklestirmeAy != null ? aylikPuantajDonem : null), getDenklestirmeDurum(), session);
-			else
-				personelList = fazlaMesaiOrtakIslemler.getFazlaMesaiMudurPersonelList(aramaSecenekleri.getSirket(), tesisId != null ? "" + tesisId : null, seciliEkSaha3Id, (denklestirmeAy != null ? aylikPuantajDonem : null), getDenklestirmeDurum(), fazlaMesaiTalepDurum, session);
+			// if (ikRole || adminRole)
+			// personelList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(aramaSecenekleri.getSirket(), tesisId != null ? "" + tesisId : null, seciliEkSaha3Id, null, (denklestirmeAy != null ? aylikPuantajDonem : null), getDenklestirmeDurum(), session);
+			// else
+			personelList = fazlaMesaiOrtakIslemler.getFazlaMesaiMudurPersonelList(aramaSecenekleri.getSirket(), tesisId != null ? "" + tesisId : null, seciliEkSaha3Id, (denklestirmeAy != null ? aylikPuantajDonem : null), getDenklestirmeDurum(), fazlaMesaiTalepDurum, session);
 			List<String> perList = new ArrayList<String>();
 			for (Personel personel : personelList) {
 				if (PdksUtil.hasStringValue(sicilNo) == false || ortakIslemler.isStringEqual(sicilNo, personel.getPdksSicilNo()))
@@ -10278,6 +10278,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				sb.append("select F.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P.ID=V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 				sb.append(" and P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " :" + fieldName);
+				if (aramaSecenekleri.getSirket() != null) {
+					sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + aramaSecenekleri.getSirketId());
+					if (aramaSecenekleri.getSirket().isTesisDurumu() && aramaSecenekleri.getTesisId() != null)
+						sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = " + aramaSecenekleri.getTesisId());
+					if (aramaSecenekleri.getEkSaha3Id() != null)
+						sb.append(" and P." + Personel.COLUMN_NAME_EK_SAHA3 + " = " + aramaSecenekleri.getEkSaha3Id());
+
+				}
 				sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " on F." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V.ID and F.DURUM=1  ");
 				if (talepOnayDurum > 0) {
 					sb.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_ONAY_DURUMU + " = :d  ");
