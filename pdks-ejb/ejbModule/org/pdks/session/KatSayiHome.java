@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
 
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
@@ -209,6 +210,20 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 		katSayiList = pdksEntityController.getSQLParamByFieldList(KatSayi.TABLE_NAME, pasifGoster == false ? KatSayi.COLUMN_NAME_DURUM : null, Boolean.TRUE, KatSayi.class, session);
 		if (katSayiList.size() > 1) {
 			katSayiList = PdksUtil.sortListByAlanAdi(katSayiList, "basTarih", true);
+			TreeMap<Integer, List<KatSayi>> map1 = new TreeMap<Integer, List<KatSayi>>();
+			for (KatSayi ks : katSayiList) {
+				List<KatSayi> list = map1.containsKey(ks.getTipNo()) ? map1.get(ks.getTipNo()) : new ArrayList<KatSayi>();
+				if (list.isEmpty())
+					map1.put(ks.getTipNo(), list);
+				list.add(ks);
+			}
+			katSayiList.clear();
+			for (Integer key : map1.keySet()) {
+				List<KatSayi> list = map1.get(key);
+				katSayiList.addAll(list);
+				list = null;
+			}
+			map1 = null;
 
 		}
 		for (KatSayi ks : katSayiList) {
