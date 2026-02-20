@@ -213,7 +213,7 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 			TreeMap<Integer, List<KatSayi>> map1 = new TreeMap<Integer, List<KatSayi>>();
 			Date bugun = PdksUtil.getDate(new Date());
 			for (KatSayi ks : katSayiList) {
-				if (pasifGoster == false && bugun.before(ks.getBitTarih()))
+				if (pasifGoster == false && ks.getBitTarih().before(bugun))
 					continue;
 				List<KatSayi> list = map1.containsKey(ks.getTipNo()) ? map1.get(ks.getTipNo()) : new ArrayList<KatSayi>();
 				if (list.isEmpty())
