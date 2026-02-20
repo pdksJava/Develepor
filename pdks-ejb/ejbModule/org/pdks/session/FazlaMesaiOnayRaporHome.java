@@ -572,7 +572,7 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			return "";
 
 		linkAdres = null;
- 		session.clear();
+		session.clear();
 
 		listeTemizle();
 
@@ -588,7 +588,7 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			denklestirmeDonemi.setBitisTarih(bitTarih);
 
 			TreeMap<String, Tatil> tatilGunleriMap = ortakIslemler.getTatilGunleri(null, basTarih, bitTarih, session);
- 			for (Iterator iterator = aylikPuantaj.getVardiyalar().iterator(); iterator.hasNext();) {
+			for (Iterator iterator = aylikPuantaj.getVardiyalar().iterator(); iterator.hasNext();) {
 				VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 				vardiyaGun.setTatil(tatilGunleriMap.containsKey(vardiyaGun.getVardiyaDateStr()) ? tatilGunleriMap.get(vardiyaGun.getVardiyaDateStr()) : null);
 			}
@@ -991,7 +991,7 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						ExcelUtil.getCell(sheet, row, col++, styleNumber).setCellValue(tutar.longValue());
 				}
 				Cell cellFazlaMesaiOnayDurum = ExcelUtil.getCell(sheet, row, col++, styleGenel);
-				String aciklama = personelFazlaMesai.getFazlaMesaiOnayDurum() != null ? personelFazlaMesai.getFazlaMesaiOnayDurum().getAciklama() : "";
+				String aciklama = personelFazlaMesai.getFazlaMesaiOnayDurum() != null ? personelFazlaMesai.getFazlaMesaiOnayDurum().getAciklama() + (PdksUtil.hasStringValue(personelFazlaMesai.getNedenAciklama()) ? " [ " + personelFazlaMesai.getNedenAciklama().trim() + " ]" : "") : "";
 				cellFazlaMesaiOnayDurum.setCellValue(aciklama);
 
 				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(personelFazlaMesai.getOlusturanUser() != null ? personelFazlaMesai.getOlusturanUser().getAdSoyad() : "");

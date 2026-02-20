@@ -107,7 +107,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	private User sistemAdminUser;
 	private List<SelectItem> departmanList, pdksSirketList, bolumDepartmanlari;
 	private Long departmanId, sirketId, seciliEkSaha3Id, seciliEkSaha4Id;
-	private boolean denklestirmeAyDurum = Boolean.FALSE, adminRole, ikRole, fazlaMesaiGirisDurum = false;
+	private boolean denklestirmeAyDurum = Boolean.FALSE, adminRole, ikRole, fazlaMesaiGirisDurum = false, onayAciklamaZorunlu = false;
 	private AramaSecenekleri aramaSecenekleri = null;
 	private Session session;
 
@@ -357,11 +357,36 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		return "";
 	}
 
+	/**
+	 * @param fmt
+	 * @return
+	 */
 	public String mesaiSec(FazlaMesaiTalep fmt) {
 		PersonelFazlaMesai fazlaMesai = getInstance();
 		fazlaMesai.setFazlaMesaiTalep(fmt);
 		fazlaMesai.setFazlaMesaiOnayDurum(fmt.getMesaiNeden());
 		return "";
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean getOnayAciklamaGirin() {
+		onayAciklamaZorunlu = false;
+		boolean aciklamaGir = false;
+		PersonelFazlaMesai fazlaMesai = getInstance();
+		if (fazlaMesai != null && fazlaMesai.getFazlaMesaiOnayDurum() != null) {
+			Tanim fazlaMesaiOnayDurum = fazlaMesai.getFazlaMesaiOnayDurum();
+			String kodu = fazlaMesaiOnayDurum.getErpKodu();
+			if (kodu != null && (kodu.startsWith("A") || kodu.startsWith("a") || kodu.startsWith("*"))) {
+				boolean herkes = kodu.startsWith("*");
+				aciklamaGir = true;
+				if (herkes || (authenticatedUser.isIK() == false && authenticatedUser.isSistemYoneticisi() == false))
+					onayAciklamaZorunlu = kodu.indexOf("*") >= 0;
+			}
+
+		}
+		return aciklamaGir;
 	}
 
 	/**
@@ -447,62 +472,66 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			logger.error(e1);
 			e1.printStackTrace();
 		}
-		double fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesai.getHareket().getFazlaMesai(), vg.getFazlaMesaiYuvarla());
-		if (fazlaMesai.getFazlaMesaiMaxSaati() != null && fazlaMesai.getFazlaMesaiMaxSaati().doubleValue() < fazlaMesaiSaati) {
-			fazlaMesai.setOnayDurum(null);
-			PdksUtil.addMessageWarn("Mesai saati " + fazlaMesai.getFazlaMesaiMaxSaati().longValue() + " büyük olamaz!");
-		} else {
-			fazlaMesai.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANMADI);
-			boolean yeni = fazlaMesai.getId() == null;
-			try {
-				List<HareketKGS> list = ortakIslemler.getHareketIdBilgileri(null, fazlaMesai.getHareket(), date, date, session);
-				boolean tatil = fazlaMesai.getHareket().isTatil();
-
-				HareketKGS hareket = !list.isEmpty() ? list.get(0) : null;
-				if (hareket == null && fazlaMesai.getHareketId() != null) {
-					hareket = new HareketKGS();
-					hareket.setId(fazlaMesai.getHareketId());
-				}
-				fazlaMesai.setHareketId(hareket.getId());
-				fazlaMesai.setHareket(hareket);
-				// fazlaMesai.setHareket(hareket);
-				fazlaMesai.setVardiyaGun(vg);
-				fazlaMesai.setFazlaMesaiSaati(fazlaMesaiSaati);
-				if (!tatil)
-					fazlaMesai.setTatilDurum(null);
-				else
-					fazlaMesai.setTatilDurum(PersonelFazlaMesai.BAYRAM);
-				fazlaMesai.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANDI);
-				if (yeni) {
-					fazlaMesai.setOlusturanUser(authenticatedUser);
-
-				} else {
-					fazlaMesai.setGuncelleyenUser(authenticatedUser);
-					fazlaMesai.setGuncellemeTarihi(new Date());
-				}
-
+		boolean hataYok = false;
+		if (onayAciklamaZorunlu && PdksUtil.hasStringValue(fazlaMesai.getNedenAciklama()))
+			hataYok = PdksUtil.getAciklamaDurum(fazlaMesai.getNedenAciklama());
+		if (hataYok) {
+			double fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesai.getHareket().getFazlaMesai(), vg.getFazlaMesaiYuvarla());
+			if (fazlaMesai.getFazlaMesaiMaxSaati() != null && fazlaMesai.getFazlaMesaiMaxSaati().doubleValue() < fazlaMesaiSaati) {
+				fazlaMesai.setOnayDurum(null);
+				PdksUtil.addMessageWarn("Mesai saati " + fazlaMesai.getFazlaMesaiMaxSaati().longValue() + " büyük olamaz!");
+			} else {
+				fazlaMesai.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANMADI);
+				boolean yeni = fazlaMesai.getId() == null;
 				try {
-					saveOrUpdate(fazlaMesai);
-					sessionFlush();
+					List<HareketKGS> list = ortakIslemler.getHareketIdBilgileri(null, fazlaMesai.getHareket(), date, date, session);
+					boolean tatil = fazlaMesai.getHareket().isTatil();
+
+					HareketKGS hareket = !list.isEmpty() ? list.get(0) : null;
+					if (hareket == null && fazlaMesai.getHareketId() != null) {
+						hareket = new HareketKGS();
+						hareket.setId(fazlaMesai.getHareketId());
+					}
+					fazlaMesai.setHareketId(hareket.getId());
+					fazlaMesai.setHareket(hareket);
+					// fazlaMesai.setHareket(hareket);
+					fazlaMesai.setVardiyaGun(vg);
+					fazlaMesai.setFazlaMesaiSaati(fazlaMesaiSaati);
+					if (!tatil)
+						fazlaMesai.setTatilDurum(null);
+					else
+						fazlaMesai.setTatilDurum(PersonelFazlaMesai.BAYRAM);
+					fazlaMesai.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANDI);
+					if (yeni) {
+						fazlaMesai.setOlusturanUser(authenticatedUser);
+
+					} else {
+						fazlaMesai.setGuncelleyenUser(authenticatedUser);
+						fazlaMesai.setGuncellemeTarihi(new Date());
+					}
+
+					try {
+						saveOrUpdate(fazlaMesai);
+						sessionFlush();
+					} catch (Exception e) {
+						logger.error("Pdks hata in : \n");
+						e.printStackTrace();
+						logger.error("Pdks hata out : " + e.getMessage());
+
+					}
+					setInstance(new PersonelFazlaMesai());
+					fillHareketMesaiList();
+
 				} catch (Exception e) {
 					logger.error("Pdks hata in : \n");
 					e.printStackTrace();
 					logger.error("Pdks hata out : " + e.getMessage());
 
 				}
-
-				setInstance(new PersonelFazlaMesai());
-
-				// session.refresh(this.getInstance());
-				fillHareketMesaiList();
-
-			} catch (Exception e) {
-				logger.error("Pdks hata in : \n");
-				e.printStackTrace();
-				logger.error("Pdks hata out : " + e.getMessage());
-
 			}
-		}
+		} else
+			PdksUtil.addMessageWarn("Neden açıklaması eksik girdiniz");
+
 		return "";
 	}
 
@@ -1825,6 +1854,14 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 	public static void setSayfaURL(String sayfaURL) {
 		PersonelFazlaMesaiHome.sayfaURL = sayfaURL;
+	}
+
+	public boolean isOnayAciklamaZorunlu() {
+		return onayAciklamaZorunlu;
+	}
+
+	public void setOnayAciklamaZorunlu(boolean onayAciklamaZorunlu) {
+		this.onayAciklamaZorunlu = onayAciklamaZorunlu;
 	}
 
 }

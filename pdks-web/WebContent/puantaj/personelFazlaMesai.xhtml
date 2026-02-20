@@ -249,7 +249,10 @@
 									<span style="background: #66ff66" title="#{mesai.personelFazlaMesai.olusturanUser.adSoyad} onayladı"> <ui:fragment
 											rendered="#{mesai.personelFazlaMesai.tatilDurum == 1}">
 											<b>Resmi Tatil </b>
-										</ui:fragment> <h:outputText value="#{mesai.personelFazlaMesai.fazlaMesaiOnayDurum.aciklama}" /> <br />
+										</ui:fragment> <h:outputText value="#{mesai.personelFazlaMesai.fazlaMesaiOnayDurum.aciklama}" /> <ui:fragment
+											rendered="#{mesai.personelFazlaMesai.nedenAciklama!=null}"> [ #{mesai.personelFazlaMesai.nedenAciklama} ]</ui:fragment><br />
+
+
 										<DIV style="background: #66ff66">
 											<h:outputText value="Fazla Çalışma Saati : #{authenticatedUser.sayiFormatliGoster(mesai.personelFazlaMesai.fazlaMesaiSaati)}" />
 											<ui:fragment rendered="#{mesai.personelFazlaMesai.fazlaMesaiTalep != null}">
@@ -373,8 +376,16 @@
 								<h:selectOneMenu value="#{personelFazlaMesaiHome.instance.fazlaMesaiOnayDurum}" style="width:350px" required="true"
 									requiredMessage="Islem seciniz">
 									<s:selectItems var="comp" value="#{personelFazlaMesaiHome.fazlaMesaiList}" label="#{comp.aciklama}" noSelectionLabel="Lutfen Seciniz" />
+									<a4j:support event="onchange" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="fazlaMesaiOnay" status="ajaxStatus"
+										ajaxSingle="true" />
 									<s:convertEntity />
 								</h:selectOneMenu>
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.onayAciklamaGirin}">
+								<ui:define name="label">Neden Açıklaması</ui:define>
+								<h:inputText value="#{personelFazlaMesaiHome.instance.nedenAciklama}" maxlength="256" style="width:200px"
+									requiredMessage="Neden açıklaması giriniz" required="#{personelFazlaMesaiHome.onayAciklamaZorunlu}" />
+
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.instance.vardiyaGun.fazlaMesaiTalepler != null}">
 								<ui:define name="label">Fazla Çalışma Talep</ui:define>

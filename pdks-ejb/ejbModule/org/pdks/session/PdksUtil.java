@@ -150,6 +150,28 @@ public class PdksUtil implements Serializable {
 	}
 
 	/**
+	 * @param aciklama
+	 * @return
+	 */
+	public static boolean getAciklamaDurum(String aciklama) {
+		boolean hataYok = PdksUtil.hasStringValue(aciklama) == false;
+		if (hataYok == false) {
+			List<String> harfList = Arrays.asList(new String[] { "A", "a", "B", "b", "C", "c", "Ç", "ç", "D", "d", "E", "e", "F", "f", "G", "g", "Ğ", "ğ", "H", "h", "I", "ı", "İ", "i", "J", "j", "K", "k", "L", "l", "M", "m", "N", "n", "O", "o", "Ö", "ö", "P", "p", "R", "r", "S", "s", "Ş", "ş", "T",
+					"t", "U", "u", "Ü", "ü", "V", "v", "Y", "y", "Z", "z", "Q", "q", "X", "x", "W", "w" });
+			int adet = 0;
+			for (int i = 0; i < aciklama.length(); i++) {
+				String str = aciklama.charAt(i) + "";
+				if (harfList.contains(str))
+					++adet;
+			}
+			harfList = null;
+			if (adet > 1)
+				hataYok = true;
+		}
+		return hataYok;
+	}
+
+	/**
 	 * @param sirketList
 	 * @return
 	 */

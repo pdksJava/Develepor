@@ -356,6 +356,7 @@
 																		</f:facet>
 
 																		<h:outputText value="#{ms.fazlaMesaiOnayDurum.aciklama}" />
+																		 <ui:fragment rendered="#{ms.nedenAciklama!=null}"> [ #{ms.nedenAciklama} ]</ui:fragment>
 																	</rich:column>
 																	<rich:column style=" width: 50px;">
 																		<f:facet name="header">

@@ -531,7 +531,9 @@
 											</TR>
 											<TR>
 												<TD nowrap="nowrap" align="left"><b>Onay Nedeni : </b> <h:outputText
-														value="#{hareket.personelFazlaMesai.fazlaMesaiOnayDurum.aciklama}" /></TD>
+														value="#{hareket.personelFazlaMesai.fazlaMesaiOnayDurum.aciklama}" />
+														 <ui:fragment rendered="#{hareket.personelFazlaMesai.nedenAciklama}"> [ #{hareket.personelFazlaMesai.nedenAciklama} ]</ui:fragment>
+														</TD>
 											</TR>
 											<TR>
 												<TD nowrap="nowrap" align="left"><b>Onay Zamanı : </b> <h:outputText

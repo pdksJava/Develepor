@@ -13,6 +13,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.session.PdksUtil;
 
 @Entity(name = PersonelFazlaMesai.TABLE_NAME)
 public class PersonelFazlaMesai extends BaseObject implements Cloneable {
@@ -26,7 +27,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	public static final String COLUMN_NAME_VARDIYA_GUN = "VARDIYA_GUN";
 	public static final String COLUMN_NAME_HAREKET = "HAREKET_ID";
 	public static final String COLUMN_NAME_FAZLA_MESAI_SAATI = "FAZLA_MESAI_SAATI";
-
+	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final int DURUM_ONAYLANMADI = 0;
 	public static final int DURUM_ONAYLANDI = 1;
 
@@ -49,6 +50,8 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 
 	private Integer onayDurum = DURUM_ONAYLANDI, tatilDurum;
 
+	private String nedenAciklama;
+
 	@Column(name = COLUMN_NAME_HAREKET)
 	public String getHareketId() {
 		return hareketId;
@@ -57,7 +60,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	public void setHareketId(String hareketId) {
 		this.hareketId = hareketId;
 	}
- 
+
 	@Transient
 	// @OneToOne(cascade = CascadeType.REFRESH)
 	// @JoinColumn(name = COLUMN_NAME_HAREKET)
@@ -151,6 +154,15 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 		this.fazlaMesaiSaati = fazlaMesaiSaati;
 	}
 
+	@Column(name = COLUMN_NAME_ACIKLAMA)
+	public String getNedenAciklama() {
+		return nedenAciklama;
+	}
+
+	public void setNedenAciklama(String nedenAciklama) {
+		this.nedenAciklama = nedenAciklama;
+	}
+
 	@Transient
 	public String getOnayDurumAciklama() {
 		String onayladimi = "";
@@ -158,7 +170,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 		try {
 			if (onayDurum != null) {
 				if (onayDurum == DURUM_ONAYLANDI) {
-					onayladimi = getFazlaMesaiOnayDurum().getAciklama();
+					onayladimi = getFazlaMesaiOnayDurum().getAciklama() + (PdksUtil.hasStringValue(nedenAciklama) ? " [ " + nedenAciklama.trim() + " ] " : "");
 					mesaiSaati = " FazlaMesai Saati : " + getFazlaMesaiSaati();
 				} else if (onayDurum == DURUM_ONAYLANMADI) {
 					onayladimi = getFazlaMesaiOnayDurum().getAciklama();
@@ -198,4 +210,5 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	public void entityRefresh() {
 
 	}
+
 }
