@@ -477,7 +477,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		String nedenAciklama = fazlaMesai.getNedenAciklama();
 		if (onayAciklamaZorunlu && PdksUtil.hasStringValue(nedenAciklama)) {
 			StringTokenizer st = new StringTokenizer(nedenAciklama, " ");
-			hataYok = nedenAciklama.indexOf(" ") >= 2 && st.countTokens() > 1 && PdksUtil.getAciklamaDurum(nedenAciklama);
+			hataYok = nedenAciklama.indexOf(" ") >= 2 && st.countTokens() > 1 && PdksUtil.getAciklamaDurum(nedenAciklama, 4);
 			st = null;
 		}
 

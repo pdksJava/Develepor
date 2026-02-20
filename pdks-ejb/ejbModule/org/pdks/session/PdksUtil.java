@@ -149,11 +149,13 @@ public class PdksUtil implements Serializable {
 
 	}
 
+	 
 	/**
 	 * @param aciklama
+	 * @param minAdet
 	 * @return
 	 */
-	public static boolean getAciklamaDurum(String aciklama) {
+	public static boolean getAciklamaDurum(String aciklama,int minAdet) {
 		boolean hataYok = PdksUtil.hasStringValue(aciklama) == false;
 		if (hataYok == false) {
 			List<String> harfList = Arrays.asList(new String[] { "A", "a", "B", "b", "C", "c", "Ç", "ç", "D", "d", "E", "e", "F", "f", "G", "g", "Ğ", "ğ", "H", "h", "I", "ı", "İ", "i", "J", "j", "K", "k", "L", "l", "M", "m", "N", "n", "O", "o", "Ö", "ö", "P", "p", "R", "r", "S", "s", "Ş", "ş", "T",
@@ -165,7 +167,7 @@ public class PdksUtil implements Serializable {
 					++adet;
 			}
 			harfList = null;
-			if (adet > 4)
+			if (adet > minAdet)
 				hataYok = true;
 		}
 		return hataYok;
