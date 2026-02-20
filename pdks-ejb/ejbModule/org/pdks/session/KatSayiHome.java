@@ -208,10 +208,13 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 		else
 			puantajKatSayiTipiList = new ArrayList<SelectItem>();
 		katSayiList = pdksEntityController.getSQLParamByFieldList(KatSayi.TABLE_NAME, pasifGoster == false ? KatSayi.COLUMN_NAME_DURUM : null, Boolean.TRUE, KatSayi.class, session);
-		if (katSayiList.size() > 1) {
+		if (katSayiList.size() > 1 || pasifGoster == false) {
 			katSayiList = PdksUtil.sortListByAlanAdi(katSayiList, "basTarih", true);
 			TreeMap<Integer, List<KatSayi>> map1 = new TreeMap<Integer, List<KatSayi>>();
+			Date bugun = PdksUtil.getDate(new Date());
 			for (KatSayi ks : katSayiList) {
+				if (pasifGoster == false && bugun.before(ks.getBitTarih()))
+					continue;
 				List<KatSayi> list = map1.containsKey(ks.getTipNo()) ? map1.get(ks.getTipNo()) : new ArrayList<KatSayi>();
 				if (list.isEmpty())
 					map1.put(ks.getTipNo(), list);

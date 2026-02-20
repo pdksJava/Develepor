@@ -1201,7 +1201,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					fillPersonelDenklestirmeDevam("", aylikPuantaj, denklestirmeDonemi);
 				} catch (Exception e) {
 					logger.error(e);
-					e.printStackTrace();
+
 					donus = "";
 				}
 
