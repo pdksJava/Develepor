@@ -125,9 +125,9 @@
 				</a4j:outputPanel>
 				<h:panelGrid columns="1" id="devamGiris">
 
-					<s:decorate template="/layout/edit.xhtml">
+					<s:decorate template="/layout/edit.xhtml" rendered="#{katSayiHome.as.sirketIdList!=null}">
 						<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
-						<h:selectOneMenu id="sirketSec" value="#{katSayiHome.as.sirketId}" disabled="#{katSayiHome.seciliKatSayi.id==null}">
+						<h:selectOneMenu id="sirketSec" value="#{katSayiHome.as.sirketId}"  disabled="#{katSayiHome.seciliKatSayi.id==null}">
 							<f:selectItem itemLabel="Lütfen seçiniz" />
 							<f:selectItems value="#{katSayiHome.as.sirketIdList}" />
 							<a4j:support event="onchange" status="ajaxStatus" action="#{katSayiHome.tesisDoldur()}" reRender="devamGiris" />

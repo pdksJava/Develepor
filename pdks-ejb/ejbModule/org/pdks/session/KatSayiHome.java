@@ -111,17 +111,19 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 			xKatSayi.setDurum(Boolean.TRUE);
 
 		}
+		as.setSirket(xKatSayi.getSirket());
 		as.setSirketId(xKatSayi.getSirketId());
 		as.setTesisId(xKatSayi.getTesisId());
-		sirketDoldur();
 		seciliKatSayi = xKatSayi;
+		sirketDoldur();
 
 		return "";
 	}
 
 	public String sirketDoldur() {
 		ortakIslemler.setAramaSecenekSirketVeTesisData(as, seciliKatSayi.getBasTarih(), seciliKatSayi.getBitTarih(), false, session);
-
+		if (vardiyaGetir)
+			fillVardiyalar();
 		return "";
 	}
 
@@ -135,6 +137,8 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 			as.setTesisId(null);
 			as.setSirket(null);
 		}
+		if (vardiyaGetir)
+			fillVardiyalar();
 		return "";
 
 	}
