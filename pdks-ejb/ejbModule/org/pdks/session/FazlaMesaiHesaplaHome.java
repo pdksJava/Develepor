@@ -1180,7 +1180,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				} else
 					pdksUser = islemUser;
 
-<<<<<<< HEAD
 				pdksUser.setAdmin(true);
 				pdksUser.setLogin(false);
 				sicilNo = "";
@@ -1198,31 +1197,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				denklestirmeDonemi.setLoginUser(getPdksUser());
 				denklestirmeDonemi.setDenklestirmeAy(denklestirmeAy);
 				fillPersonelDenklestirmeDevam("", aylikPuantaj, denklestirmeDonemi);
-=======
-				try {
-					pdksUser.setAdmin(true);
-					pdksUser.setLogin(false);
-					sicilNo = "";
-					this.setStajerSirket(false);
-					this.setHataliPuantajGoster(false);
-					this.setBakiyeGuncelle(denklestirmeAy.getDurum() == false);
-					this.setDenklestirmeAyDurum(true);
-					this.setTopluGuncelle(true);
-					if (personelDenklestirmeList == null)
-						personelDenklestirmeList = new ArrayList<PersonelDenklestirme>();
-					DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
-					AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, denklestirmeDonemi, session);
-					tatilGunleriMap = denklestirmeDonemi.getTatilGunleriMap();
-					aylikPuantaj.setLoginUser(pdksUser);
-					denklestirmeDonemi.setLoginUser(getPdksUser());
-					denklestirmeDonemi.setDenklestirmeAy(denklestirmeAy);
-					fillPersonelDenklestirmeDevam("", aylikPuantaj, denklestirmeDonemi);
-				} catch (Exception e) {
-					logger.error(e);
-
-					donus = "";
-				}
->>>>>>> eb610f1bd51ca895066658203fc6c3bf5c225313
 
 			}
 		}
@@ -1233,7 +1207,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	/**
 	 * @return
 	 */
-	@Transactional
 	public String fillPersonelDenklestirmeList(String inputPersonelNo) {
 		componentState.setSeciliTab("tab1");
 		aksamGun = Boolean.FALSE;
@@ -1258,20 +1231,17 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		denklestirmeAyDurum = fazlaMesaiOrtakIslemler.getDurum(denklestirmeAy);
 		tatilGunleriMap = null;
 		if (denklestirmeAy != null) {
-			try {
-				if (denklestirmeAy.getFazlaMesaiMaxSure() == null)
-					fazlaMesaiOrtakIslemler.setFazlaMesaiMaxSure(denklestirmeAy, session);
-				DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
-				AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, denklestirmeDonemi, session);
-				tatilGunleriMap = denklestirmeDonemi.getTatilGunleriMap();
-				aylikPuantaj.setLoginUser(getPdksUser());
-				denklestirmeDonemi.setLoginUser(getPdksUser());
-				denklestirmeDonemi.setDenklestirmeAy(denklestirmeAy);
-				setTopluGuncelle(false);
-				fillPersonelDenklestirmeDevam(inputPersonelNo, aylikPuantaj, denklestirmeDonemi);
-			} catch (Exception ee) {
-				ortakIslemler.setExceptionLog(null, ee);
-			}
+
+			if (denklestirmeAy.getFazlaMesaiMaxSure() == null)
+				fazlaMesaiOrtakIslemler.setFazlaMesaiMaxSure(denklestirmeAy, session);
+			DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
+			AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, denklestirmeDonemi, session);
+			tatilGunleriMap = denklestirmeDonemi.getTatilGunleriMap();
+			aylikPuantaj.setLoginUser(getPdksUser());
+			denklestirmeDonemi.setLoginUser(getPdksUser());
+			denklestirmeDonemi.setDenklestirmeAy(denklestirmeAy);
+			setTopluGuncelle(false);
+			fillPersonelDenklestirmeDevam(inputPersonelNo, aylikPuantaj, denklestirmeDonemi);
 
 		} else if (userLogin.getLogin())
 			PdksUtil.addMessageWarn("İlgili döneme ait fazla mesai bulunamadı!");
