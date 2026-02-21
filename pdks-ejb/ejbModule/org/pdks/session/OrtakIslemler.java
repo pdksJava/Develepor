@@ -11289,7 +11289,10 @@ public class OrtakIslemler implements Serializable {
 				session.setFlushMode(FlushMode.MANUAL);
 				session.clear();
 				if (authenticatedUser != null) {
-					authenticatedUser.putSessionMap(menuAdi, session);
+					String adi = getMenuAdi(menuAdi);
+					if (PdksUtil.hasStringValue(adi) == false)
+						adi = menuAdi;
+					authenticatedUser.putSessionMap(adi, session);
 					HashMap<String, List> selectItemMap = authenticatedUser.getSelectItemMap();
 					if (selectItemMap != null) {
 						for (String key : selectItemMap.keySet()) {

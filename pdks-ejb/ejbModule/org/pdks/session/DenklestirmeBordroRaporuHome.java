@@ -210,7 +210,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
-	@Transactional
 	public String sayfaFazlaMesaiGuncellemeAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, true);
@@ -407,7 +406,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	 * @param paramMap
 	 * @return
 	 */
-	@Transactional
 	private boolean bolumFazlaMesai(LinkedHashMap<String, Object> paramMap) {
 		User loginUser = (User) paramMap.get("loginUser");
 		if (PdksUtil.isSessionKapali(session)) {

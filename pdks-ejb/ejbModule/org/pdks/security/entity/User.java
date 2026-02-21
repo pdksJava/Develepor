@@ -1166,11 +1166,21 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	/**
 	 * @param key
-	 * @param sessionSQL
+	 * @param sessionNewSQL
 	 */
-	public void putSessionMap(String key, Session sessionSQL) {
+	public void putSessionMap(String key, Session sessionNewSQL) {
 		if (sessionSQL != null) {
-			this.sessionSQL = sessionSQL;
+			if (sessionSQL.isConnected()) {
+				try {
+					sessionSQL.disconnect();
+					sessionSQL.close();
+				} catch (Exception e) {
+					logger.error(e);
+				}
+			}
+		}
+		if (sessionNewSQL != null && sessionNewSQL.isConnected()) {
+			this.sessionSQL = sessionNewSQL;
 			if (key == null)
 				key = "";
 			if (sessionMap == null)
@@ -1187,7 +1197,7 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 				keyList = null;
 			}
 			if (sessionMap.containsKey(key) == false)
-				sessionMap.put(key, sessionSQL);
+				sessionMap.put(key, sessionNewSQL);
 		}
 
 	}

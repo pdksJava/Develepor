@@ -376,16 +376,19 @@
 								<h:selectOneMenu value="#{personelFazlaMesaiHome.instance.fazlaMesaiOnayDurum}" style="width:350px" required="true"
 									requiredMessage="Islem seciniz">
 									<s:selectItems var="comp" value="#{personelFazlaMesaiHome.fazlaMesaiList}" label="#{comp.aciklama}" noSelectionLabel="Lutfen Seciniz" />
-									<a4j:support event="onchange" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="fazlaMesaiOnay" status="ajaxStatus"
-										ajaxSingle="true" />
+									<a4j:support event="onchange" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="fazlaMesaiOnay" status="ajaxStatus" ajaxSingle="true" />
 									<s:convertEntity />
 								</h:selectOneMenu>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.onayAciklamaGirin}">
 								<ui:define name="label">Neden Açıklaması</ui:define>
-								<h:inputText value="#{personelFazlaMesaiHome.instance.nedenAciklama}" maxlength="256" style="width: 500px"
-									requiredMessage="Neden açıklaması giriniz" required="#{personelFazlaMesaiHome.onayAciklamaZorunlu}" />
-
+								 
+								 	#{messages['pdks.genel.etiket.kalanKarakterSayisi']}: <SPAN id="Counter">#{255 -
+									personelFazlaMesaiHome.instance.nedenAciklama.length()}</SPAN>
+								<br />
+								<rich:spacer width="5px;" />
+								<h:inputTextarea value="#{personelFazlaMesaiHome.instance.nedenAciklama}" requiredMessage="Neden açıklaması giriniz" rows="4" cols="80"
+									onkeypress="return limitText(this,255,'Counter')" onkeyup="return limitText(this,255, 'Counter')" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.instance.vardiyaGun.fazlaMesaiTalepler != null}">
 								<ui:define name="label">Fazla Çalışma Talep</ui:define>

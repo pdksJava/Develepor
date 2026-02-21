@@ -374,8 +374,8 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	 */
 	public boolean getOnayAciklamaGirin() {
 		onayAciklamaZorunlu = false;
-		boolean aciklamaGir = false;
 		PersonelFazlaMesai fazlaMesai = getInstance();
+		boolean aciklamaGir = false;
 		if (fazlaMesai != null && fazlaMesai.getFazlaMesaiOnayDurum() != null) {
 			Tanim fazlaMesaiOnayDurum = fazlaMesai.getFazlaMesaiOnayDurum();
 			String kodu = fazlaMesaiOnayDurum.getErpKodu();
@@ -403,12 +403,36 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			tipi = Tanim.TIPI_ONAYLAMAMA_NEDEN;
 			sort = "getKodu";
 		}
-		List<Tanim> list = ortakIslemler.getTanimAlanList(tipi, sort, "S", session);
 		PersonelFazlaMesai fazlaMesai = getInstance();
 		fazlaMesai.setId(null);
 		VardiyaGun vg = hareket.getVardiyaGun();
 		Date basZaman = ortakIslemler.getSaniyeSifirla(hareket.getGirisZaman(), vg);
 		Date bitZaman = ortakIslemler.getSaniyeSifirla(hareket.getCikisZaman(), vg);
+		List<Tanim> list = ortakIslemler.getTanimAlanList(tipi, sort, "S", session);
+		if (onayDurum) {
+			Tanim icap = null;
+			Boolean icapYapti = null;
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				Tanim tanim = (Tanim) iterator.next();
+				if (tanim.getKodu().equals("I")) {
+					Vardiya islemVardiya = vg.getIslemVardiya();
+					icapYapti = islemVardiya.isCalisma() == false;
+					if (bitZaman.before(islemVardiya.getVardiyaTelorans1BasZaman()) || basZaman.after(islemVardiya.getVardiyaTelorans2BitZaman()))
+						icapYapti = true;
+					icap = tanim;
+					iterator.remove();
+					break;
+				}
+
+			}
+			if (icap != null) {
+				if (icapYapti.booleanValue() == false)
+					list.add(icap);
+				else
+					PdksUtil.addItemFirstList(icap, list);
+			}
+		}
+
 		fazlaMesai.setBasZaman(basZaman);
 		fazlaMesai.setBitZaman(bitZaman);
 		vg.setFazlaMesaiTalepler(null);
@@ -473,13 +497,20 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			logger.error(e1);
 			e1.printStackTrace();
 		}
-		boolean hataYok = onayAciklamaZorunlu == false;
-		String nedenAciklama = fazlaMesai.getNedenAciklama();
-		if (onayAciklamaZorunlu && PdksUtil.hasStringValue(nedenAciklama)) {
-			StringTokenizer st = new StringTokenizer(nedenAciklama, " ");
-			hataYok = nedenAciklama.indexOf(" ") >= 2 && st.countTokens() > 1 && PdksUtil.getAciklamaDurum(nedenAciklama, 4);
-			st = null;
-		}
+		boolean aciklamaGir = getOnayAciklamaGirin();
+		boolean hataYok = aciklamaGir == false || onayAciklamaZorunlu == false;
+		if (aciklamaGir) {
+			String nedenAciklama = fazlaMesai.getNedenAciklama();
+			if (PdksUtil.hasStringValue(nedenAciklama)) {
+				if (onayAciklamaZorunlu) {
+					nedenAciklama = nedenAciklama.trim();
+					StringTokenizer st = new StringTokenizer(nedenAciklama, " ");
+					hataYok = nedenAciklama.indexOf(" ") >= 2 && st.countTokens() > 1 && PdksUtil.getAciklamaDurum(nedenAciklama, 6);
+					st = null;
+				}
+			}
+		} else
+			fazlaMesai.setNedenAciklama(null);
 
 		if (hataYok) {
 			double fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesai.getHareket().getFazlaMesai(), vg.getFazlaMesaiYuvarla());
