@@ -1238,7 +1238,7 @@
 													</ui:fragment>
 													<ui:fragment rendered="#{vardiyaGun.fazlaMesaiTalepler != null}">
 
-														<h:graphicImage value="/img/left_16.png" style="border:0" id="bilgiMesaiVardiya" />
+														<h:graphicImage value="/img/#{vardiyaGun.talepDurum}" style="border:0" id="bilgiMesaiVardiya" />
 
 													</ui:fragment>
 
@@ -1351,7 +1351,11 @@
 
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Açıklama</ui:define>
-									<h:inputTextarea value="#{vardiyaGunHome.fazlaMesaiTalep.aciklama}" cols="80" rows="3" />
+							 	#{messages['pdks.genel.etiket.kalanKarakterSayisi']}: <SPAN id="Counter">#{255 - vardiyaGunHome.fazlaMesaiTalep.aciklama.length()}</SPAN>
+									<br />
+									<rich:spacer width="5px;" />
+									<h:inputTextarea value="#{vardiyaGunHome.fazlaMesaiTalep.aciklama}" rows="4" cols="80" onkeypress="return limitText(this,255,'Counter')"
+										onkeyup="return limitText(this,255, 'Counter')" />
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaGunHome.hareketPdksList != null}">
 									<ui:define name="label">Otomatik  Kapı Hareketi Ekle </ui:define>
