@@ -991,7 +991,7 @@ public class FazlaMesaiOnayRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						ExcelUtil.getCell(sheet, row, col++, styleNumber).setCellValue(tutar.longValue());
 				}
 				Cell cellFazlaMesaiOnayDurum = ExcelUtil.getCell(sheet, row, col++, styleGenel);
-				String aciklama = personelFazlaMesai.getFazlaMesaiOnayDurum() != null ? personelFazlaMesai.getFazlaMesaiOnayDurum().getAciklama() + (PdksUtil.hasStringValue(personelFazlaMesai.getNedenAciklama()) ? " [ " + personelFazlaMesai.getNedenAciklama().trim() + " ]" : "") : "";
+				String aciklama = personelFazlaMesai.getFazlaMesaiOnayDurum() != null ? personelFazlaMesai.getFazlaMesaiOnayDurum().getAciklama() + (PdksUtil.hasStringValue(personelFazlaMesai.getNedenAciklama()) ? "\n[ " + personelFazlaMesai.getNedenAciklama().trim() + " ]" : "") : "";
 				cellFazlaMesaiOnayDurum.setCellValue(aciklama);
 
 				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(personelFazlaMesai.getOlusturanUser() != null ? personelFazlaMesai.getOlusturanUser().getAdSoyad() : "");
