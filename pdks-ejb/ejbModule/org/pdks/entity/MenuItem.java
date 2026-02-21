@@ -12,7 +12,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -20,6 +22,7 @@ import org.pdks.security.entity.UserMenuItemTime;
 import org.pdks.session.PdksUtil;
 
 @Entity(name = MenuItem.TABLE_NAME)
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { MenuItem.COLUMN_NAME_ADI }) })
 public class MenuItem extends BasePDKSObject implements Serializable {
 
 	/**
