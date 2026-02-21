@@ -61,7 +61,8 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 
 	@In(required = false, create = true)
 	EntityManager entityManager;
-
+	
+	public static String sayfaURL = "menuItemPermissionTanimlama";
 	private boolean selectedFromTree;
 
 	private String iconLeaf = "/img/plus.gif";
@@ -199,9 +200,10 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
+
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, "menuItemPermissionTanimlama");
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		selectedIdsFromTreeMap.clear();
 		// fillMenuItemTree();
 	}

@@ -14,7 +14,6 @@ import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -26,6 +25,7 @@ import org.pdks.entity.AccountPermission;
 import org.pdks.entity.MenuItem;
 import org.pdks.security.entity.User;
 import org.pdks.security.entity.UserMenuItemTime;
+import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
 import org.richfaces.component.html.HtmlTree;
@@ -52,9 +52,13 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 	StartupAction startupAction;
 	@In(required = false, create = true)
 	EntityManager entityManager;
+	@In(required = false, create = true)
+	OrtakIslemler ortakIslemler;
+
 	@In(required = false)
 	User authenticatedUser;
 
+	public static String sayfaURL = "menuItemTanimlama";
 	private String iconLeaf = "/img/plus.gif";
 
 	private MenuItem currentItem;
@@ -369,8 +373,7 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		session.setFlushMode(FlushMode.MANUAL);
-		session.clear();
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		rootNode = null;
 		selectedIdsFromTreeMap.clear();
 		selectedIdsFromDataTableMap.clear();

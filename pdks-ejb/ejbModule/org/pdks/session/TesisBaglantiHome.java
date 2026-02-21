@@ -168,8 +168,7 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, "tesisBaglantiTanimlama");
-
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		String sayfa = "";
 		if (ortakIslemler.getTesisDurumu()) {
 			if (personelTipiList == null)
@@ -179,7 +178,6 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 			personelTipiList.add(new SelectItem(PersonelTipi.TUM.value(), TesisBaglanti.getPersonelTipiAciklama(PersonelTipi.TUM)));
 			personelTipiList.add(new SelectItem(PersonelTipi.IK.value(), TesisBaglanti.getPersonelTipiAciklama(PersonelTipi.IK)));
 			personelTipiList.add(new SelectItem(PersonelTipi.SUPERVISOR.value(), TesisBaglanti.getPersonelTipiAciklama(PersonelTipi.SUPERVISOR)));
-			ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 			fillTesisList();
 		} else
 			sayfa = MenuItemConstant.home;

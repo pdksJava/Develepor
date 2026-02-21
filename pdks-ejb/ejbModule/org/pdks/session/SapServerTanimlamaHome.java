@@ -47,8 +47,9 @@ public class SapServerTanimlamaHome extends EntityHome<SAPSunucu> implements Ser
 
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
+	
+	public static String sayfaURL = "sapSunucuTanimlama";
 	private List<SAPSunucu> sunucuList = new ArrayList<SAPSunucu>();
-
 	private List<SelectItem> sunucuTipleri;
 	private SAPSunucu seciliSAPSunucu;
 	private Session session;
@@ -155,7 +156,7 @@ public class SapServerTanimlamaHome extends EntityHome<SAPSunucu> implements Ser
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, "sapSunucuTanimlama");
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		seciliSAPSunucu = new SAPSunucu();
 		fillSAPSunucuList();
 		fillSAPSunucuTipleri();

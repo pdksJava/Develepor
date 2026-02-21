@@ -61,8 +61,8 @@ public class IzinERPAktarimHome extends EntityHome<PersonelIzin> implements Seri
 
 	List<PersonelIzin> personelizinList = new ArrayList<PersonelIzin>();
 	List<Personel> pdksPersonelList = new ArrayList<Personel>();
+	public static String sayfaURL = "izinERPAktarim";
 	private AramaSecenekleri aramaSecenekleri = null;
-
 	private boolean istenAyrilanEkle = Boolean.FALSE, checkBoxDurum = Boolean.FALSE;
 	private List<User> userList = new ArrayList<User>();
 
@@ -84,11 +84,11 @@ public class IzinERPAktarimHome extends EntityHome<PersonelIzin> implements Seri
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
-	public void sayfaGirisAction() { 
+	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, "izinERPAktarim");
- 		try {
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		try {
 			if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)
 				aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
 			session.clear();

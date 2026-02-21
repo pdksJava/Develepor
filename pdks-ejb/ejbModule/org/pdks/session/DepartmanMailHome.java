@@ -49,6 +49,7 @@ public class DepartmanMailHome extends EntityHome<DepartmanMailGrubu> implements
 	@In(required = false)
 	FacesMessages facesMessages;
 
+	public static String sayfaURL = "departmanMail";
 	DepartmanMailGrubu departmanMail;
 	private String mailAdresleri, departmanAciklama;
 	private String mailString;

@@ -42,6 +42,8 @@ public class YoneticiDegistirHome extends EntityHome<User> implements Serializab
 	User authenticatedUser;
 	@In(required = true, create = true)
 	OrtakIslemler ortakIslemler;
+
+	public static String sayfaURL = "yoneticiDegistir";
 	private List<User> yoneticiList = new ArrayList<User>();
 	private User yonetici;
 	private Session session;
@@ -77,7 +79,7 @@ public class YoneticiDegistirHome extends EntityHome<User> implements Serializab
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, "yoneticiDegistir");
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		if (authenticatedUser.getSeciliSuperVisor() != null)
 			setYonetici(authenticatedUser.getSeciliSuperVisor());
 		else

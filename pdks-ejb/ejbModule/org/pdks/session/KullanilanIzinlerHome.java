@@ -69,8 +69,9 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 
 	@In(required = false)
 	FacesMessages facesMessages;
-
-	private List<PersonelIzin> personelIzinList = new ArrayList<PersonelIzin>(), bakiyeIzinler;
+	
+	public static String sayfaURL = "kullanilanIzinler";
+ 	private List<PersonelIzin> personelIzinList = new ArrayList<PersonelIzin>(), bakiyeIzinler;
 
 	private TempIzin updateTempIzin;
 	private PersonelIzin updateIzin;
@@ -260,7 +261,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, "kullanilanIzinler");
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)
 			aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
 		aramaSecenekleri.setStajyerOlmayanSirket(Boolean.FALSE);

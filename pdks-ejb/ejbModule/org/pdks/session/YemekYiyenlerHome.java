@@ -58,8 +58,9 @@ public class YemekYiyenlerHome extends EntityHome<VardiyaGun> implements Seriali
 	HashMap<String, String> parameterMap;
 	@In(required = false)
 	FacesMessages facesMessages;
-
-	private List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
+	
+	public static String sayfaURL = "yemekYiyenler";
+ 	private List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 	private List<YemekOgun> yemekList;
 	private List<Long> yemekKapiList;
 	private boolean ogunVar = false, masrafYeriVar = false;
@@ -86,8 +87,7 @@ public class YemekYiyenlerHome extends EntityHome<VardiyaGun> implements Seriali
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, "yemekYiyenler");
-
+		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
 		ogunVar = false;
 		masrafYeriVar = false;
 		setHareketList(new ArrayList<HareketKGS>());
