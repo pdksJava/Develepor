@@ -530,10 +530,12 @@
 												<TD nowrap="nowrap" align="left"><b>Onaylayan : </b> <h:outputText value="#{hareket.personelFazlaMesai.olusturanUser.adSoyad }" /></TD>
 											</TR>
 											<TR>
-												<TD nowrap="nowrap" align="left"><b>Onay Nedeni : </b> <h:outputText
-														value="#{hareket.personelFazlaMesai.fazlaMesaiOnayDurum.aciklama}" />
-														 <ui:fragment rendered="#{ortakIslemler.hasStringValue(hareket.personelFazlaMesai.nedenAciklama)}"><br />[ #{hareket.personelFazlaMesai.nedenAciklama} ]</ui:fragment>
-														</TD>
+												<TD nowrap="nowrap" align="left"><b>Onay Nedeni : </b>
+												<ui:fragment>
+														<h:outputText value="#{hareket.personelFazlaMesai.fazlaMesaiOnayDurum.aciklama}" />
+														<ui:fragment rendered="#{ortakIslemler.hasStringValue(hareket.personelFazlaMesai.nedenAciklama)}">
+															<br />[ #{hareket.personelFazlaMesai.nedenAciklama} ]</ui:fragment>
+													</ui:fragment></TD>
 											</TR>
 											<TR>
 												<TD nowrap="nowrap" align="left"><b>Onay Zamanı : </b> <h:outputText

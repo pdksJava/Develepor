@@ -250,7 +250,8 @@
 											rendered="#{mesai.personelFazlaMesai.tatilDurum == 1}">
 											<b>Resmi Tatil </b>
 										</ui:fragment> <h:outputText value="#{mesai.personelFazlaMesai.fazlaMesaiOnayDurum.aciklama}" /> <ui:fragment
-											rendered="#{ortakIslemler.hasStringValue(mesai.personelFazlaMesai.nedenAciklama)}"><br />[ #{mesai.personelFazlaMesai.nedenAciklama} ]</ui:fragment><br />
+											rendered="#{ortakIslemler.hasStringValue(mesai.personelFazlaMesai.nedenAciklama)}">
+											<br />[ #{mesai.personelFazlaMesai.nedenAciklama} ]</ui:fragment><br />
 
 
 										<DIV style="background: #66ff66">
@@ -387,8 +388,9 @@
 									personelFazlaMesaiHome.instance.nedenAciklama.length()}</SPAN>
 								<br />
 								<rich:spacer width="5px;" />
-								<h:inputTextarea value="#{personelFazlaMesaiHome.instance.nedenAciklama}" requiredMessage="Neden açıklaması giriniz" rows="4" cols="80"
-									onkeypress="return limitText(this,255,'Counter')" onkeyup="return limitText(this,255, 'Counter')" />
+								<h:inputTextarea value="#{personelFazlaMesaiHome.instance.nedenAciklama}" required="#{personelFazlaMesaiHome.onayAciklamaZorunlu}"
+									requiredMessage="Neden açıklaması giriniz" rows="4" cols="80" onkeypress="return limitText(this,255,'Counter')"
+									onkeyup="return limitText(this,255, 'Counter')" />
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" rendered="#{personelFazlaMesaiHome.instance.vardiyaGun.fazlaMesaiTalepler != null}">
 								<ui:define name="label">Fazla Çalışma Talep</ui:define>

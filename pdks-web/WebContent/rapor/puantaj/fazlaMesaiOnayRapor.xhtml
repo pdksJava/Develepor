@@ -190,8 +190,11 @@
 												<h:outputText value="Onay Nedeni" />
 											</f:facet>
 											<SPAN id="mesai#{fazlaMesai.id}"> <h:panelGrid columns="2">
-													<h:outputText value="#{fazlaMesai.fazlaMesaiOnayDurum.aciklama}" />
-													<ui:fragment rendered="#{ortakIslemler.hasStringValue(fazlaMesai.nedenAciklama)}"><br />[ #{fazlaMesai.nedenAciklama} ]</ui:fragment>
+													<ui:fragment>
+														<h:outputText value="#{fazlaMesai.fazlaMesaiOnayDurum.aciklama}" />
+														<ui:fragment rendered="#{ortakIslemler.hasStringValue(fazlaMesai.nedenAciklama)}">
+															<br />[ #{fazlaMesai.nedenAciklama} ]</ui:fragment>
+													</ui:fragment>
 													<ui:fragment rendered="#{fazlaMesai.fazlaMesaiTalep != null and fazlaMesaiOnayRaporHome.talepGoster}">
 														<h:graphicImage value="/img/msginfo.png" style="border:0" height="18" />
 														<rich:toolTip for="mesai#{fazlaMesai.id}">
@@ -337,8 +340,11 @@
 											<f:facet name="header">
 												<h:outputText value="Red Nedeni" />
 											</f:facet>
-											<h:outputText value="#{fazlaMesai.fazlaMesaiOnayDurum.aciklama}" />
-											<ui:fragment rendered="#{ortakIslemler.hasStringValue(fazlaMesai.nedenAciklama)}"><br />[ #{fazlaMesai.nedenAciklama} ]</ui:fragment>
+											<ui:fragment>
+												<h:outputText value="#{fazlaMesai.fazlaMesaiOnayDurum.aciklama}" />
+												<ui:fragment rendered="#{ortakIslemler.hasStringValue(fazlaMesai.nedenAciklama)}">
+													<br />[ #{fazlaMesai.nedenAciklama} ]</ui:fragment>
+											</ui:fragment>
 										</rich:column>
 										<rich:column>
 											<f:facet name="header">

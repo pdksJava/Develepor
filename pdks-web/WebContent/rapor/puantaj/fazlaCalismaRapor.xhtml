@@ -39,7 +39,8 @@
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" rendered="#{fazlaCalismaRaporHome.adminRole and fazlaCalismaRaporHome.departmanList.size()>1}">
 								<ui:define name="label">#{ortakIslemler.firmaKaynagiAciklama()}</ui:define>
-								<h:selectOneMenu value="#{fazlaCalismaRaporHome.departmanId}" required="true" requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
+								<h:selectOneMenu value="#{fazlaCalismaRaporHome.departmanId}" required="true"
+									requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{fazlaCalismaRaporHome.departmanList}" />
 									<a4j:support event="onchange" action="#{fazlaCalismaRaporHome.departmanDegisti()}" ajaxSingle="true" reRender="anaForm" />
@@ -354,9 +355,11 @@
 																		<f:facet name="header">
 																			<h:outputText value="Neden" />
 																		</f:facet>
-
-																		<h:outputText value="#{ms.fazlaMesaiOnayDurum.aciklama}" />
-																		 <ui:fragment rendered="#{ortakIslemler.hasStringValue(ms.nedenAciklama)}"><br />[ #{ms.nedenAciklama} ]</ui:fragment>
+																		<ui:fragment>
+																			<h:outputText value="#{ms.fazlaMesaiOnayDurum.aciklama}" />
+																			<ui:fragment rendered="#{ortakIslemler.hasStringValue(ms.nedenAciklama)}">
+																				<br />[ #{ms.nedenAciklama} ]</ui:fragment>
+																		</ui:fragment>
 																	</rich:column>
 																	<rich:column style=" width: 50px;">
 																		<f:facet name="header">
@@ -395,7 +398,8 @@
 									</c:if>
 
 
-									<rich:column style="text-align: center;width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{fazlaCalismaRaporHome.aksamAdetGoster}">
+									<rich:column style="text-align: center;width: 60px;width:autostretch ;white-space: nowrap;"
+										rendered="#{fazlaCalismaRaporHome.aksamAdetGoster}">
 										<f:facet name="header">
 											<h:outputText value="Akşam Gün" />
 										</f:facet>
@@ -406,7 +410,8 @@
 
 
 
-									<rich:column style="text-align: center;width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{fazlaCalismaRaporHome.aksamSaatGoster}">
+									<rich:column style="text-align: center;width: 60px;width:autostretch ;white-space: nowrap;"
+										rendered="#{fazlaCalismaRaporHome.aksamSaatGoster}">
 										<f:facet name="header">
 											<h:outputText value="Akşam Saat" />
 										</f:facet>
