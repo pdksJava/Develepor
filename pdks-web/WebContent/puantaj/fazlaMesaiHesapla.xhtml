@@ -539,7 +539,7 @@
 											<TR class="koyu">
 												<TD nowrap="nowrap" align="left"><b>Onay Nedeni</b></TD>
 												<TD nowrap="nowrap" align="left"><b> : </b> <h:outputText value="#{hareket.personelFazlaMesai.fazlaMesaiOnayDurum.aciklama}" />
-												 <ui:fragment rendered="#{hareket.personelFazlaMesai.nedenAciklama!=null}"> [ #{hareket.personelFazlaMesai.nedenAciklama} ]</ui:fragment>
+												 <ui:fragment rendered="#{ortakIslemler.hasStringValue(hareket.personelFazlaMesai.nedenAciklama)}"> [ #{hareket.personelFazlaMesai.nedenAciklama} ]</ui:fragment>
 												
 												</TD>
 											</TR>
