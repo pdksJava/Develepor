@@ -13,6 +13,16 @@ public class OzelAciklama extends BasePDKSObject {
 	public static final String TABLE_NAME = "OZEL_ACIKLAMA";
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 
+	public OzelAciklama() {
+		super();
+
+	}
+
+	public OzelAciklama(String aciklama) {
+		super();
+		this.aciklama = aciklama;
+	}
+
 	private String aciklama;
 
 	@Column(name = COLUMN_NAME_ACIKLAMA, length = 256)

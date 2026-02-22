@@ -33,8 +33,8 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	public static final String COLUMN_NAME_FAZLA_MESAI_TALEP = "FAZLA_MESAI_TALEP_ID";
 	public static final String COLUMN_NAME_BAS_ZAMAN = "BAS_ZAMAN";
 	public static final String COLUMN_NAME_BIT_ZAMAN = "BIT_ZAMAN";
- 	public static final String COLUMN_NAME_FAZLA_MESAI_SAATI = "FAZLA_MESAI_SAATI";
-	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
+	public static final String COLUMN_NAME_FAZLA_MESAI_SAATI = "FAZLA_MESAI_SAATI";
+	// public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final int DURUM_ONAYLANMADI = 0;
 	public static final int DURUM_ONAYLANDI = 1;
 
@@ -59,7 +59,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 
 	private Integer onayDurum = DURUM_ONAYLANDI, tatilDurum;
 
-	private String nedenAciklama;
+	private String aciklama;
 
 	@Column(name = COLUMN_NAME_HAREKET)
 	public String getHareketId() {
@@ -172,14 +172,25 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 		this.fazlaMesaiSaati = fazlaMesaiSaati;
 	}
 
-	@Column(name = COLUMN_NAME_ACIKLAMA)
+	// @Column(name = COLUMN_NAME_ACIKLAMA)
+	@Transient
 	public String getNedenAciklama() {
+		String nedenAciklama = nedenOzelAciklama != null && PdksUtil.hasStringValue(nedenOzelAciklama.getAciklama()) ? nedenOzelAciklama.getAciklama().trim() : null;
 		return nedenAciklama;
 	}
 
-	public void setNedenAciklama(String nedenAciklama) {
-		this.nedenAciklama = nedenAciklama;
+	@Transient
+	public String getAciklama() {
+		return aciklama;
 	}
+
+	public void setAciklama(String aciklama) {
+		this.aciklama = aciklama;
+	}
+
+	// public void setNedenAciklama(String nedenAciklama) {
+	// this.nedenAciklama = nedenAciklama;
+	// }
 
 	@Transient
 	public String getOnayDurumAciklama() {
@@ -188,7 +199,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 		try {
 			if (onayDurum != null) {
 				if (onayDurum == DURUM_ONAYLANDI) {
-					onayladimi = getFazlaMesaiOnayDurum().getAciklama() + (PdksUtil.hasStringValue(nedenAciklama) ? " [ " + nedenAciklama.trim() + " ] " : "");
+					onayladimi = getFazlaMesaiOnayDurum().getAciklama() + (nedenOzelAciklama != null ? " [ " + getNedenAciklama() + " ] " : "");
 					mesaiSaati = " FazlaMesai Saati : " + getFazlaMesaiSaati();
 				} else if (onayDurum == DURUM_ONAYLANMADI) {
 					onayladimi = getFazlaMesaiOnayDurum().getAciklama();

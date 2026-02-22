@@ -34,6 +34,7 @@ import org.pdks.entity.FazlaMesaiTalep;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.Kapi;
 import org.pdks.entity.KapiView;
+import org.pdks.entity.OzelAciklama;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelFazlaMesai;
 import org.pdks.entity.PersonelHareketIslem;
@@ -499,8 +500,9 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		}
 		boolean aciklamaGir = getOnayAciklamaGirin();
 		boolean hataYok = aciklamaGir == false || onayAciklamaZorunlu == false;
+		String nedenAciklama = null;
 		if (aciklamaGir) {
-			String nedenAciklama = fazlaMesai.getNedenAciklama();
+			nedenAciklama = fazlaMesai.getAciklama();
 			if (PdksUtil.hasStringValue(nedenAciklama)) {
 				if (onayAciklamaZorunlu) {
 					nedenAciklama = nedenAciklama.trim();
@@ -509,8 +511,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					st = null;
 				}
 			}
-		} else
-			fazlaMesai.setNedenAciklama(null);
+		}
 
 		if (hataYok) {
 			double fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesai.getHareket().getFazlaMesai(), vg.getFazlaMesaiYuvarla());
@@ -531,6 +532,13 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					}
 					fazlaMesai.setHareketId(hareket.getId());
 					fazlaMesai.setHareket(hareket);
+					OzelAciklama nedenOzelAciklama = fazlaMesai.getNedenOzelAciklama();
+					boolean aciklamaVar = false;
+					if (PdksUtil.hasStringValue(nedenAciklama)) {
+						aciklamaVar = true;
+						if (nedenOzelAciklama == null)
+							nedenOzelAciklama = new OzelAciklama(nedenAciklama);
+					}
 					// fazlaMesai.setHareket(hareket);
 					fazlaMesai.setVardiyaGun(vg);
 					fazlaMesai.setFazlaMesaiSaati(fazlaMesaiSaati);
@@ -539,16 +547,20 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					else
 						fazlaMesai.setTatilDurum(PersonelFazlaMesai.BAYRAM);
 					fazlaMesai.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANDI);
-					if (yeni) {
+					if (yeni)
 						fazlaMesai.setOlusturanUser(authenticatedUser);
-
-					} else {
+					else {
 						fazlaMesai.setGuncelleyenUser(authenticatedUser);
 						fazlaMesai.setGuncellemeTarihi(new Date());
 					}
-
 					try {
+						if (nedenOzelAciklama != null)
+							saveOrUpdate(nedenOzelAciklama);
+						fazlaMesai.setNedenOzelAciklama(aciklamaVar ? nedenOzelAciklama : null);
 						saveOrUpdate(fazlaMesai);
+						if (aciklamaVar == false && nedenOzelAciklama != null)
+							pdksEntityController.deleteObject(session, entityManager, nedenOzelAciklama);
+
 						sessionFlush();
 					} catch (Exception e) {
 						logger.error("Pdks hata in : \n");
