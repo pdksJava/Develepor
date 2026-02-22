@@ -1307,7 +1307,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 								if (roleIptal)
 									pdksEntityController.savePrepareTableID(true, UserRoles.class, entityManager, session);
 							} catch (Exception e) {
-								// TODO: handle exception
+							 
 							}
 							session.flush();
 						}

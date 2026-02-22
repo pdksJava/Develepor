@@ -117,8 +117,7 @@ public class PdksAgent extends BasePDKSObject implements Serializable, Cloneable
 	}
 
 	public void entityRefresh() {
-		// TODO Auto-generated method stub
-
+ 
 	}
 
 }

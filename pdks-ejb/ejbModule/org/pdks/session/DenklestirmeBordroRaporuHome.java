@@ -311,8 +311,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					}
 
 				} catch (Exception e) {
-					// TODO: handle exception
-				}
+ 				}
 
 			}
 		}

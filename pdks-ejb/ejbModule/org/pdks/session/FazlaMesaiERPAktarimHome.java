@@ -1306,7 +1306,6 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 			try {
 				returnData = ortakIslemler.getURLJSONData(false, servisUrl, "POST", headerMap, false, contentType);
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 

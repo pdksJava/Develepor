@@ -2236,8 +2236,7 @@ public class OrtakIslemler implements Serializable {
 		try {
 			list = pdksEntityController.execSPList(session, veriMap, "SP_IK_USERNAME_LIST", User.class);
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
+ 		}
 
 		return list;
 	}
@@ -25004,8 +25003,7 @@ public class OrtakIslemler implements Serializable {
 			if (responseCode >= 400 && is != null)
 				str = PdksUtil.StringToByInputStream(is);
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
+ 		}
 
 		return str;
 	}
@@ -25029,8 +25027,7 @@ public class OrtakIslemler implements Serializable {
 			if (responseCode == 200 && is != null)
 				str = PdksUtil.StringToByInputStream(is);
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
+ 		}
 
 		return str;
 	}
