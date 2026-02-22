@@ -26,7 +26,14 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	public static final String TABLE_NAME = "PERSONELFAZLAMESAI";
 	public static final String COLUMN_NAME_VARDIYA_GUN = "VARDIYA_GUN";
 	public static final String COLUMN_NAME_HAREKET = "HAREKET_ID";
-	public static final String COLUMN_NAME_FAZLA_MESAI_SAATI = "FAZLA_MESAI_SAATI";
+	public static final String COLUMN_NAME_ONAY = "ONAY_ID";
+	public static final String COLUMN_NAME_ONAY_DURUM = "ONAY_DURUM";
+	public static final String COLUMN_NAME_TATIL_DURUM = "TATIL_DURUM";
+	public static final String COLUMN_NAME_ONAY_ACIKLAMA = "ONAY_ACIKLAMA_ID";
+	public static final String COLUMN_NAME_FAZLA_MESAI_TALEP = "FAZLA_MESAI_TALEP_ID";
+	public static final String COLUMN_NAME_BAS_ZAMAN = "BAS_ZAMAN";
+	public static final String COLUMN_NAME_BIT_ZAMAN = "BIT_ZAMAN";
+ 	public static final String COLUMN_NAME_FAZLA_MESAI_SAATI = "FAZLA_MESAI_SAATI";
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final int DURUM_ONAYLANMADI = 0;
 	public static final int DURUM_ONAYLANDI = 1;
@@ -48,6 +55,8 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 
 	private FazlaMesaiTalep fazlaMesaiTalep;
 
+	private OzelAciklama nedenOzelAciklama;
+
 	private Integer onayDurum = DURUM_ONAYLANDI, tatilDurum;
 
 	private String nedenAciklama;
@@ -62,8 +71,6 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	}
 
 	@Transient
-	// @OneToOne(cascade = CascadeType.REFRESH)
-	// @JoinColumn(name = COLUMN_NAME_HAREKET)
 	public HareketKGS getHareket() {
 		return hareket;
 	}
@@ -86,7 +93,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "FAZLA_MESAI_TALEP_ID")
+	@JoinColumn(name = COLUMN_NAME_FAZLA_MESAI_TALEP)
 	@Fetch(FetchMode.JOIN)
 	public FazlaMesaiTalep getFazlaMesaiTalep() {
 		return fazlaMesaiTalep;
@@ -97,7 +104,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "BAS_ZAMAN", nullable = false)
+	@Column(name = COLUMN_NAME_BAS_ZAMAN, nullable = false)
 	public Date getBasZaman() {
 		return basZaman;
 	}
@@ -107,7 +114,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "BIT_ZAMAN", nullable = false)
+	@Column(name = COLUMN_NAME_BIT_ZAMAN, nullable = false)
 	public Date getBitZaman() {
 		return bitZaman;
 	}
@@ -117,7 +124,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "ONAY_ID")
+	@JoinColumn(name = COLUMN_NAME_ONAY)
 	@Fetch(FetchMode.JOIN)
 	public Tanim getFazlaMesaiOnayDurum() {
 		return fazlaMesaiOnayDurum;
@@ -127,7 +134,18 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 		this.fazlaMesaiOnayDurum = fazlaMesaiOnayDurum;
 	}
 
-	@Column(name = "ONAY_DURUM")
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_ONAY_ACIKLAMA)
+	@Fetch(FetchMode.JOIN)
+	public OzelAciklama getNedenOzelAciklama() {
+		return nedenOzelAciklama;
+	}
+
+	public void setNedenOzelAciklama(OzelAciklama nedenOzelAciklama) {
+		this.nedenOzelAciklama = nedenOzelAciklama;
+	}
+
+	@Column(name = COLUMN_NAME_ONAY_DURUM)
 	public Integer getOnayDurum() {
 		return onayDurum;
 	}
@@ -136,7 +154,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 		this.onayDurum = onayDurum;
 	}
 
-	@Column(name = "TATIL_DURUM")
+	@Column(name = COLUMN_NAME_TATIL_DURUM)
 	public Integer getTatilDurum() {
 		return tatilDurum;
 	}

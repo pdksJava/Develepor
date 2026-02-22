@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -35,7 +36,8 @@ public class FazlaMesaiTalep extends BaseObject {
 	public static final String COLUMN_NAME_MESAI_SURESI = "MESAI_SURESI";
 	public static final String COLUMN_NAME_ONAY_DURUMU = "ONAY_DURUMU";
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
-	public static final String COLUMN_NAME_IPTAL_ACIKLAMA = "IPTAL_ACIKLAMA";
+	public static final String COLUMN_NAME_ONAY_ACIKLAMA = "ONAY_ACIKLAMA_ID";
+	public static final String COLUMN_NAME_IPTAL_ACIKLAMA = "IPTAL_ACIKLAMA_ID";
 	public static final int ONAY_DURUM_ISLEM_YAPILMADI = 1;
 	public static final int ONAY_DURUM_ONAYLANDI = 2;
 	public static final int ONAY_DURUM_RED = 3;
@@ -47,6 +49,8 @@ public class FazlaMesaiTalep extends BaseObject {
 	private int onayDurumu = ONAY_DURUM_ISLEM_YAPILMADI;
 
 	private String aciklama, iptalAciklama;
+
+	private OzelAciklama ozelAciklama, ozelIptalAciklama;
 
 	private VardiyaGun vardiyaGun;
 
@@ -139,7 +143,7 @@ public class FazlaMesaiTalep extends BaseObject {
 		this.onayDurumu = onayDurumu;
 	}
 
-	@Column(name = COLUMN_NAME_IPTAL_ACIKLAMA)
+	@Column(name = "IPTAL_ACIKLAMA")
 	public String getIptalAciklama() {
 		return iptalAciklama;
 	}
@@ -157,6 +161,28 @@ public class FazlaMesaiTalep extends BaseObject {
 
 	public void setRedNedeni(Tanim redNedeni) {
 		this.redNedeni = redNedeni;
+	}
+
+	@OneToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_ONAY_ACIKLAMA)
+	@Fetch(FetchMode.JOIN)
+	public OzelAciklama getOzelAciklama() {
+		return ozelAciklama;
+	}
+
+	public void setOzelAciklama(OzelAciklama ozelAciklama) {
+		this.ozelAciklama = ozelAciklama;
+	}
+
+	@OneToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_IPTAL_ACIKLAMA)
+	@Fetch(FetchMode.JOIN)
+	public OzelAciklama getOzelIptalAciklama() {
+		return ozelIptalAciklama;
+	}
+
+	public void setOzelIptalAciklama(OzelAciklama ozelIptalAciklama) {
+		this.ozelIptalAciklama = ozelIptalAciklama;
 	}
 
 	@Transient
@@ -269,7 +295,7 @@ public class FazlaMesaiTalep extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
-		
+
 	}
+
 }
