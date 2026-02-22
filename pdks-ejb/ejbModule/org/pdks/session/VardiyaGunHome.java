@@ -1209,14 +1209,16 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						fazlaMesaiTalep.setGuncellemeTarihi(new Date());
 					}
 					try {
+						OzelAciklama ozelAciklama = fazlaMesaiTalep.getOzelAciklama();
 						if (topluGuncelle == false) {
 							String aciklama = PdksUtil.hasStringValue(fazlaMesaiTalep.getAciklamaYonetici()) ? fazlaMesaiTalep.getAciklamaYonetici().trim() : null;
-							if (aciklama != null)
-								fazlaMesaiTalep.setOzelAciklama(new OzelAciklama(aciklama));
-
+							if (aciklama != null) {
+								ozelAciklama = new OzelAciklama(aciklama);
+								fazlaMesaiTalep.setOzelAciklama(ozelAciklama);
+							}
 						}
-						if (fazlaMesaiTalep.getOzelAciklama() != null)
-							saveOrUpdate(fazlaMesaiTalep.getOzelAciklama());
+						if (ozelAciklama != null)
+							saveOrUpdate(ozelAciklama);
 						saveOrUpdate(fazlaMesaiTalep);
 						if (seciliVardiyaGun.getVersion() < 0) {
 							seciliVardiyaGun.setVersion(0);
@@ -1243,9 +1245,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					else
 						PdksUtil.addMessageWarn(str + " daha önce " + mesaiTalep.getGuncelleyenUser().getAdSoyad() + " onaylanması beklenmektedir!");
 				}
-				if (topluGuncelle == false) {
+				if (topluGuncelle == false)
 					fazlaMesaiGunleriniBul(defaultAylikPuantajSablon.getIlkGun(), defaultAylikPuantajSablon.getSonGun(), aylikPuantajList);
-				}
 			}
 		}
 
@@ -6245,10 +6246,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			seciliVardiyaGun = (VardiyaGun) vardiyaGunAsil.clone();
 			if (!aylikPuantajMesaiTalepList.isEmpty())
 				fazlaMesaiTalep = asil;
-
 			fazlaMesaiGunleriniBul(defaultAylikPuantajSablon.getIlkGun(), defaultAylikPuantajSablon.getSonGun(), aylikPuantajList);
-
-
 		}
 		for (String mesaj : mesajlar)
 			PdksUtil.addMessageAvailableWarn(mesaj);
@@ -8813,6 +8811,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			sb.append("select F.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " on F." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 			sb.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1 and F." + FazlaMesaiTalep.COLUMN_NAME_ONAY_DURUMU + " <> " + FazlaMesaiTalep.ONAY_DURUM_RED);
+			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
+			sb.append(" and (V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " )");
 			sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :t1 and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :t2  ");
 			sb.append(" and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
 			sb.append(" order by F." + FazlaMesaiTalep.COLUMN_NAME_BASLANGIC_ZAMANI);
