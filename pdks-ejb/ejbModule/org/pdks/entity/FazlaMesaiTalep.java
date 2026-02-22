@@ -48,7 +48,9 @@ public class FazlaMesaiTalep extends BaseObject {
 
 	private int onayDurumu = ONAY_DURUM_ISLEM_YAPILMADI;
 
-	private String aciklama, iptalAciklama;
+	private String aciklamaYonetici, aciklamaIptalMudur;
+
+	// private String aciklama, iptalAciklama;
 
 	private OzelAciklama ozelAciklama, ozelIptalAciklama;
 
@@ -116,13 +118,10 @@ public class FazlaMesaiTalep extends BaseObject {
 		this.bitisZamani = bitisZamani;
 	}
 
-	@Column(name = COLUMN_NAME_ACIKLAMA)
+	@Transient
 	public String getAciklama() {
+		String aciklama = ozelAciklama != null && PdksUtil.hasStringValue(ozelAciklama.getAciklama()) ? ozelAciklama.getAciklama() : null;
 		return aciklama;
-	}
-
-	public void setAciklama(String aciklama) {
-		this.aciklama = aciklama;
 	}
 
 	@Column(name = COLUMN_NAME_MESAI_SURESI, nullable = false)
@@ -143,14 +142,15 @@ public class FazlaMesaiTalep extends BaseObject {
 		this.onayDurumu = onayDurumu;
 	}
 
-	@Column(name = "IPTAL_ACIKLAMA")
-	public String getIptalAciklama() {
-		return iptalAciklama;
+//	@Column(name = "IPTAL_ACIKLAMA")
+	@Transient
+	public String getIptalAciklama() { 
+		String aciklama = ozelIptalAciklama != null && PdksUtil.hasStringValue(ozelIptalAciklama.getAciklama()) ? ozelIptalAciklama.getAciklama().trim() : null;
+		return aciklama;
+
 	}
 
-	public void setIptalAciklama(String iptalAciklama) {
-		this.iptalAciklama = iptalAciklama;
-	}
+	 
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_IPTAL_NEDEN)
@@ -207,7 +207,7 @@ public class FazlaMesaiTalep extends BaseObject {
 				onayDurumAciklama = "Onaylandı.";
 				break;
 			case ONAY_DURUM_RED:
-				onayDurumAciklama = "Red Edildi." + (redNedeni != null ? " ( " + redNedeni.getAciklama() + (PdksUtil.hasStringValue(iptalAciklama) ? " - " + iptalAciklama.trim() : "") + " )" : "");
+				onayDurumAciklama = "Red Edildi." + (redNedeni != null ? " ( " + redNedeni.getAciklama() + (PdksUtil.hasStringValue(getIptalAciklama()) ? " - " + getIptalAciklama().trim() : "") + " )" : "");
 				break;
 			default:
 				onayDurumAciklama = "";
@@ -268,7 +268,7 @@ public class FazlaMesaiTalep extends BaseObject {
 
 	@Transient
 	public boolean isAciklamaVar() {
-		return PdksUtil.hasStringValue(aciklama);
+		return PdksUtil.hasStringValue(getAciklama());
 	}
 
 	@Transient
@@ -292,6 +292,24 @@ public class FazlaMesaiTalep extends BaseObject {
 	@Transient
 	public Personel getPdksPersonel() {
 		return vardiyaGun != null ? vardiyaGun.getPersonel() : null;
+	}
+
+	@Transient
+	public String getAciklamaYonetici() {
+		return aciklamaYonetici;
+	}
+
+	public void setAciklamaYonetici(String aciklamaYonetici) {
+		this.aciklamaYonetici = aciklamaYonetici;
+	}
+
+	@Transient
+	public String getAciklamaIptalMudur() {
+		return aciklamaIptalMudur;
+	}
+
+	public void setAciklamaIptalMudur(String aciklamaIptalMudur) {
+		this.aciklamaIptalMudur = aciklamaIptalMudur;
 	}
 
 	public void entityRefresh() {

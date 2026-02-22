@@ -362,7 +362,7 @@
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" style="vertical-align: top;">
 							<ui:define name="label">İptal Açıklama</ui:define>
-							<h:inputTextarea value="#{vardiyaGunHome.islemFazlaMesaiTalep.iptalAciklama}" cols="80" rows="3" />
+							<h:inputTextarea value="#{vardiyaGunHome.islemFazlaMesaiTalep.aciklamaIptalMudur}" cols="80" rows="3" />
 						</s:decorate>
 						<a4j:commandButton value="İptal Et" action="#{vardiyaGunHome.mesaiIptal}" rendered="#{vardiyaGunHome.mesaiIptalNedenTanimList != null}"
 							onclick="#{rich:component('wait')}.show()" reRender="denklestirmeDonemiTable"
