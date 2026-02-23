@@ -446,9 +446,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					PdksUtil.addItemFirstList(icap, list);
 			}
 			if (eksikCalisma != null) {
-				if (eksikCalismaYapti.booleanValue() == false)
-					list.add(eksikCalisma);
-				else
+				if (eksikCalismaYapti.booleanValue())
 					PdksUtil.addItemFirstList(eksikCalisma, list);
 			}
 		}
