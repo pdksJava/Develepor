@@ -1120,7 +1120,7 @@
 											rendered="#{vardiyaGunHome.fazlaMesaiTalep.bitisZamani.after(vardiyaGunHome.fazlaMesaiTalep.baslangicZamani)}"
 											onclick="#{rich:component('wait')}.show()" action="#{vardiyaGunHome.mesaiTopluKaydet()}"
 											oncomplete="#{rich:component('wait')}.hide();if (#{vardiyaGunHome.fazlaMesaiTalep == null}) #{rich:component('topluMesaiTalepPanel')}.hide(); "
-											reRender="secimlerTopluMesai,personelVardiyaGun" />
+											reRender="secimlerTopluMesai,personelVardiyaGun,vardiyaPanel" />
 
 									</h:panelGrid></TD>
 								<TD valign="top" width="%40"><rich:dataTable rowClasses="acik,koyu" value="#{vardiyaGunHome.aylikPuantajMesaiTalepList}"
