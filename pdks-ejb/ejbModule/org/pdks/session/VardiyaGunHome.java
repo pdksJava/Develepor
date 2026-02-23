@@ -1217,7 +1217,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								fazlaMesaiTalep.setOzelAciklama(ozelAciklama);
 							}
 						}
-						if (ozelAciklama != null)
+						if (ozelAciklama != null && ozelAciklama.getId() == null)
 							saveOrUpdate(ozelAciklama);
 						saveOrUpdate(fazlaMesaiTalep);
 						if (seciliVardiyaGun.getVersion() < 0) {
