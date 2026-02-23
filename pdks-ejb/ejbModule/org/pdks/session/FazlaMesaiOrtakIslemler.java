@@ -1921,7 +1921,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					if (flush)
 						session.flush();
 				} catch (Exception e) {
-					logger.error("personelDenklestirmeId=" + personelDenklestirme.getId() + "\n" + e.getMessage());
+					logger.error("personelDenklestirmeId = " + personelDenklestirme.getId() + "\n" + e.getMessage());
 				}
 
 				if (saatlikCalismaVar) {
