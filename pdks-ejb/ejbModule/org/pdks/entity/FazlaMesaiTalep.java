@@ -35,7 +35,7 @@ public class FazlaMesaiTalep extends BaseObject {
 	public static final String COLUMN_NAME_BITIS_ZAMANI = "BITIS_ZAMANI";
 	public static final String COLUMN_NAME_MESAI_SURESI = "MESAI_SURESI";
 	public static final String COLUMN_NAME_ONAY_DURUMU = "ONAY_DURUMU";
-	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
+	// public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final String COLUMN_NAME_ONAY_ACIKLAMA = "ONAY_ACIKLAMA_ID";
 	public static final String COLUMN_NAME_IPTAL_ACIKLAMA = "IPTAL_ACIKLAMA_ID";
 	public static final int ONAY_DURUM_ISLEM_YAPILMADI = 1;
@@ -118,12 +118,6 @@ public class FazlaMesaiTalep extends BaseObject {
 		this.bitisZamani = bitisZamani;
 	}
 
-	@Transient
-	public String getAciklama() {
-		String aciklama = ozelAciklama != null && PdksUtil.hasStringValue(ozelAciklama.getAciklama()) ? ozelAciklama.getAciklama() : null;
-		return aciklama;
-	}
-
 	@Column(name = COLUMN_NAME_MESAI_SURESI, nullable = false)
 	public Double getMesaiSuresi() {
 		return mesaiSuresi;
@@ -142,16 +136,6 @@ public class FazlaMesaiTalep extends BaseObject {
 		this.onayDurumu = onayDurumu;
 	}
 
-//	@Column(name = "IPTAL_ACIKLAMA")
-	@Transient
-	public String getIptalAciklama() { 
-		String aciklama = ozelIptalAciklama != null && PdksUtil.hasStringValue(ozelIptalAciklama.getAciklama()) ? ozelIptalAciklama.getAciklama().trim() : null;
-		return aciklama;
-
-	}
-
-	 
-
 	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_IPTAL_NEDEN)
 	@Fetch(FetchMode.JOIN)
@@ -163,7 +147,7 @@ public class FazlaMesaiTalep extends BaseObject {
 		this.redNedeni = redNedeni;
 	}
 
-	@OneToOne(cascade = CascadeType.REFRESH)
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_ONAY_ACIKLAMA)
 	@Fetch(FetchMode.JOIN)
 	public OzelAciklama getOzelAciklama() {
@@ -192,6 +176,20 @@ public class FazlaMesaiTalep extends BaseObject {
 
 	public void setIslemYapildi(boolean islemYapildi) {
 		this.islemYapildi = islemYapildi;
+	}
+
+	// @Column(name = "IPTAL_ACIKLAMA")
+	@Transient
+	public String getIptalAciklama() {
+		String aciklama = ozelIptalAciklama != null && PdksUtil.hasStringValue(ozelIptalAciklama.getAciklama()) ? ozelIptalAciklama.getAciklama().trim() : aciklamaIptalMudur;
+		return aciklama;
+
+	}
+
+	@Transient
+	public String getAciklama() {
+		String aciklama = ozelAciklama != null && PdksUtil.hasStringValue(ozelAciklama.getAciklama()) ? ozelAciklama.getAciklama() : aciklamaYonetici;
+		return aciklama;
 	}
 
 	@Transient
