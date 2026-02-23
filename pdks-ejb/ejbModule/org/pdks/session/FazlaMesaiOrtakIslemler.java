@@ -1911,7 +1911,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 											flush = true;
 										}
 									}
- 								}
+								}
 							}
 						}
 					}
@@ -1921,7 +1921,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					if (flush)
 						session.flush();
 				} catch (Exception e) {
-
+					logger.error("personelDenklestirmeId=" + personelDenklestirme.getId() + "\n" + e.getMessage());
 				}
 
 				if (saatlikCalismaVar) {
@@ -2068,7 +2068,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			List<Object[]> alanList = null;
 			try {
 				alanList = pdksEntityController.execSPList(session, linkedHashMap, "SP_GET_FAZLA_MESAI_KONTROL", null);
- 			} catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			ardisikDurum = false;
