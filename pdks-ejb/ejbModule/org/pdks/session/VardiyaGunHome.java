@@ -6227,12 +6227,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			FazlaMesaiTalep asil = (FazlaMesaiTalep) fazlaMesaiTalep.clone();
 			VardiyaGun vardiyaGunAsil = (VardiyaGun) seciliVardiyaGun.clone();
 			String aciklama = PdksUtil.hasStringValue(asil.getAciklamaYonetici()) ? asil.getAciklamaYonetici().trim() : null;
+			OzelAciklama ozelAciklama = aciklama != null ? new OzelAciklama(aciklama) : null;
 			for (Iterator iterator = aylikPuantajMesaiTalepList.iterator(); iterator.hasNext();) {
 				AylikPuantaj aylikPuantaj = (AylikPuantaj) iterator.next();
 				VardiyaGun vardiyaGunPer = aylikPuantaj.getVardiyaGun();
 				if (puantajMap.containsKey(vardiyaGunPer.getId())) {
 					fazlaMesaiTalep = (FazlaMesaiTalep) asil.clone();
-					OzelAciklama ozelAciklama = aciklama != null ? new OzelAciklama(aciklama) : null;
 					fazlaMesaiTalep.setOzelAciklama(ozelAciklama);
 					fazlaMesaiTalep.setGuncelleyenUser(userMap.get(aylikPuantaj.getYonetici2().getId()));
 					fazlaMesaiTalep.setVardiyaGun(vardiyaGunPer);
@@ -7993,8 +7993,44 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					++okumaAdet;
 
 			}
+			topluFazlaCalismaTalep = false;
+			if (fazlaMesaiTalepVar && denklestirmeAyDurum && aylikPuantajList.size() > 0 && aramaSecenekleri.getSirket().isFazlaMesaiTalepGirer())
+				setTopluFazlaCalismaTalep(ortakIslemler.getParameterKey("topluFazlaCalismaTalep").equals("1") || (userHome != null && userLoginOldu && userHome.hasPermission("vardiyaPlani", "topluFazlaCalismaTalep")) || loginUser.isAdmin());
+
 			if (defaultAylikPuantajSablon == null)
 				defaultAylikPuantajSablon = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, departmanDenklestirmeDonemi, session);
+			if (topluFazlaCalismaTalep) {
+				topluFazlaCalismaTalep = false;
+				List<Long> personelIdler = new ArrayList<Long>();
+				List<Integer> katsayiList = new ArrayList<Integer>();
+				for (Iterator iterator = aylikPuantajList.iterator(); iterator.hasNext();) {
+					AylikPuantaj ap = (AylikPuantaj) iterator.next();
+					personelIdler.add(ap.getPdksPersonel().getId());
+				}
+				katsayiList.add(PuantajKatSayiTipi.GUN_FMT_DURUM.value());
+				HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> allMap = ortakIslemler.getPlanKatSayiAllMap(katsayiList, personelIdler, basTarih, bitTarih, session);
+				TreeMap<String, BigDecimal> fmtDurumMap = allMap.containsKey(PuantajKatSayiTipi.GUN_FMT_DURUM) ? allMap.get(PuantajKatSayiTipi.GUN_FMT_DURUM) : null;
+				if (fmtDurumMap != null) {
+					Long sirketId = aramaSecenekleri.getSirketId(), tesisId = aramaSecenekleri.getTesisId(), vardiyaId = null;
+					for (VardiyaGun vg : aylikSablonVardiyalar) {
+						String str = vg.getVardiyaDateStr();
+						if (ortakIslemler.veriKatSayiVar(fmtDurumMap, sirketId, tesisId, vardiyaId, str)) {
+							BigDecimal deger = ortakIslemler.getKatSayiVeriMap(fmtDurumMap, sirketId, tesisId, vardiyaId, str);
+							if (deger != null) {
+								HashMap<Integer, BigDecimal> katSayiMap = new HashMap<Integer, BigDecimal>();
+								katSayiMap.put(PuantajKatSayiTipi.GUN_FMT_DURUM.value(), deger);
+								vg.setKatSayiMap(katSayiMap);
+								if (topluFazlaCalismaTalep == false)
+									topluFazlaCalismaTalep = vg.isFazlaMesaiTalepDurum();
+							}
+						}
+					}
+					fmtDurumMap = null;
+				}
+				katsayiList = null;
+				personelIdler = null;
+
+			}
 
 			defaultAylikPuantajSablon.setVardiyalar(aylikSablonVardiyalar);
 			setAylikPuantajDefault(defaultAylikPuantajSablon);
@@ -8141,10 +8177,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (vardiyaHareketKontrol && defaultAylikPuantajSablon != null && (loginUser.isAdmin()))
 				vardiyaHareketKontrol(defaultAylikPuantajSablon);
 			aylikPuantajAllList = null;
-			if (fazlaMesaiTalepVar && denklestirmeAyDurum && aylikPuantajList.size() > 0)
-				topluFazlaCalismaTalep = ortakIslemler.getParameterKey("topluFazlaCalismaTalep").equals("1") || (userHome != null && userLoginOldu && userHome.hasPermission("vardiyaPlani", "topluFazlaCalismaTalep")) || loginUser.isAdmin();
-			else
-				topluFazlaCalismaTalep = false;
 
 			fields.clear();
 
@@ -8174,29 +8206,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			if (dinamikAlanlar.size() > 1)
 				dinamikAlanlar = PdksUtil.sortTanimList(null, new ArrayList(dinamikAlanlar));
-			int adet = 0;
-			if (topluFazlaCalismaTalep) {
-				topluFazlaCalismaTalep = false;
-				// aylikPuantajDefault
-
-				for (Iterator iterator = aylikPuantajList.iterator(); iterator.hasNext();) {
-					AylikPuantaj aylikPuantaj = (AylikPuantaj) iterator.next();
-					if (aylikPuantaj.getPersonelDenklestirme().isOnaylandi()) {
-						boolean durum = aylikPuantaj.isFazlaMesaiDurum();
-						if (durum) {
-							++adet;
-						}
-
-					}
-
-				}
-			}
-			topluFazlaCalismaTalep = adet > 1;
-			if (topluFazlaCalismaTalep) {
-				for (VardiyaGun vardiyaGun : aylikPuantajDefault.getAyinVardiyalari()) {
-					vardiyaGun.setFazlaMesaiTalepDurum(talepGunList.contains(vardiyaGun.getVardiyaDateStr()));
-				}
-			}
 
 			aylikHareketKaydiVardiyaBul = Boolean.FALSE;
 			if (denklestirmeAyDurum)
@@ -8286,7 +8295,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	private Sirket basliklariGuncelle(HashMap<Long, AylikPuantaj> pdIdMap) {
 		Sirket sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
-		topluFazlaCalismaTalep = false;
 		fazlaMesaiIzinKullan = false;
 		partTimeGoster = false;
 		sutIzniGoster = false;
@@ -8327,8 +8335,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				gebeGoster = aylikPuantaj.isGebeDurum();
 			if (pdIdMap != null)
 				pdIdMap.put(pd.getId(), aylikPuantaj);
-			if (topluFazlaCalismaTalep)
-				topluFazlaCalismaTalep = pd.getPersonel().getSirket().isFazlaMesaiTalepGirer();
 			if (fazlaMesaiTalepVar)
 				setFazlaMesaiTalepVar(pd.getPersonel().getSirket().isFazlaMesaiTalepGirer());
 			if (!sutIzniGoster)
