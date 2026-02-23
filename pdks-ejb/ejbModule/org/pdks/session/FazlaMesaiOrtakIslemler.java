@@ -1882,14 +1882,14 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 								denklestirmeOrganizasyon.setBolum(personel.getEkSaha3());
 								denklestirmeOrganizasyon.setGorevTipi(personel.getGorevTipi());
 							}
-						} else
+						} else {
 							denklestirmeOrganizasyon = new PersonelDenklestirmeOrganizasyon(personelDenklestirme);
+							orgMap.put(personelDenklestirmeId, denklestirmeOrganizasyon);
+						}
 						if (denklestirmeOrganizasyon.getId() == null || denklestirmeOrganizasyon.isDegisti()) {
 							pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeOrganizasyon);
 							flush = true;
 						}
-						if (orgMap.containsKey(personelDenklestirmeId))
-							orgMap.remove(personelDenklestirmeId);
 						if (denklestirmeOrganizasyon.getId() != null) {
 							for (Tanim alan : personelDinamikAlanlar) {
 								String key = PersonelDinamikAlan.getKey(personel, alan);
@@ -1900,8 +1900,10 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 									if (orgDetayMap.containsKey(key)) {
 										organizasyonDetay = orgDetayMap.get(key);
 										organizasyonDetay.setDegisti(false);
-									} else
+									} else {
 										organizasyonDetay = new PersonelDenklestirmeOrganizasyonDetay(denklestirmeOrganizasyon, alan);
+										orgDetayMap.put(key, organizasyonDetay);
+									}
 									organizasyonDetay.setDeger(dinamikAlan.getTanimDeger());
 									if (organizasyonDetay.getId() != null || organizasyonDetay.getDeger() != null) {
 										if (organizasyonDetay.getId() == null || organizasyonDetay.isDegisti()) {
@@ -1909,9 +1911,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 											flush = true;
 										}
 									}
-									if (orgDetayMap.containsKey(key))
-										orgDetayMap.remove(key);
-								}
+ 								}
 							}
 						}
 					}
