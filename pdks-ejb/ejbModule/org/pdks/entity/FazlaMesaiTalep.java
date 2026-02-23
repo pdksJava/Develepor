@@ -181,14 +181,14 @@ public class FazlaMesaiTalep extends BaseObject {
 	// @Column(name = "IPTAL_ACIKLAMA")
 	@Transient
 	public String getIptalAciklama() {
-		String aciklama = ozelIptalAciklama != null && PdksUtil.hasStringValue(ozelIptalAciklama.getAciklama()) ? ozelIptalAciklama.getAciklama().trim() : null;
+		String aciklama = ozelIptalAciklama != null && PdksUtil.hasStringValue(ozelIptalAciklama.getAciklama()) ? ozelIptalAciklama.getAciklama().trim() : aciklamaIptalMudur;
 		return aciklama;
 
 	}
 
 	@Transient
 	public String getAciklama() {
-		String aciklama = ozelAciklama != null && PdksUtil.hasStringValue(ozelAciklama.getAciklama()) ? ozelAciklama.getAciklama() : null;
+		String aciklama = ozelAciklama != null && PdksUtil.hasStringValue(ozelAciklama.getAciklama()) ? ozelAciklama.getAciklama() : aciklamaYonetici;
 		return aciklama;
 	}
 
