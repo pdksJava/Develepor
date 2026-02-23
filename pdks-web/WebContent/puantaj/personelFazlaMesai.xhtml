@@ -365,9 +365,8 @@
 								<ui:define name="label">Mesai Saati</ui:define>
 								<ui:fragment rendered="#{personelFazlaMesaiHome.instance.hareket!=null}">
 									<h:inputText size="10" value="#{personelFazlaMesaiHome.instance.hareket.fazlaMesai}">
-										<a4j:support event="onchange" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="fazlaMesaiSaat" status="ajaxStatus" />
-
-									</h:inputText>
+										<a4j:support event="onchange" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="fazlaMesaiSaat" ajaxSingle="true" status="ajaxStatus" />
+ 									</h:inputText>
 									<ui:fragment rendered="#{personelFazlaMesaiHome.instance.hareket.yemekMolasi gt 0}">
 										Kanuni Minumum Mola : #{authenticatedUser.sayiFormatliGoster(personelFazlaMesaiHome.instance.hareket.yemekMolasi)}
 									</ui:fragment>
