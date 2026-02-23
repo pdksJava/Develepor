@@ -162,8 +162,8 @@ public class FazlaMesaiTalep extends BaseObject {
 	public void setRedNedeni(Tanim redNedeni) {
 		this.redNedeni = redNedeni;
 	}
-
-	@OneToOne(cascade = CascadeType.REFRESH)
+ 
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_ONAY_ACIKLAMA)
 	@Fetch(FetchMode.JOIN)
 	public OzelAciklama getOzelAciklama() {
