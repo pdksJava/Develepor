@@ -280,7 +280,13 @@
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" style="vertical-align: top;">
 							<ui:define name="label">İptal Açıklama</ui:define>
-							<h:inputTextarea value="#{vardiyaGunHome.islemFazlaMesaiTalep.aciklamaIptalMudur}" cols="80" rows="3" />
+							<ui:define name="label">Red Açıklama</ui:define>
+										  #{messages['pdks.genel.etiket.kalanKarakterSayisi']}: <SPAN id="Counter">#{255 -
+								vardiyaGunHome.islemFazlaMesaiTalep.aciklamaIptalMudur.length()}</SPAN>
+							<br />
+							<rich:spacer width="5px;" />
+							<h:inputTextarea value="#{vardiyaGunHome.islemFazlaMesaiTalep.aciklamaIptalMudur}" cols="80" rows="4"
+								onkeypress="return limitText(this,255,'Counter')" onkeyup="return limitText(this,255, 'Counter')" />
 						</s:decorate>
 						<a4j:commandButton value="İptal Et" action="#{vardiyaGunHome.mesaiIptal}" rendered="#{vardiyaGunHome.mesaiIptalNedenTanimList != null}"
 							onclick="#{rich:component('wait')}.show()" reRender="girisler"

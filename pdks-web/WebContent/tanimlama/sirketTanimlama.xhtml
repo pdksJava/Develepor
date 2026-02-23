@@ -315,7 +315,12 @@
 								<h:panelGrid columns="3" id="erpPanel">
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 										<ui:define name="label">Personel Servis Bilgi</ui:define>
-										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlPersonel}" cols="80" rows="5">
+											#{messages['pdks.genel.etiket.kalanKarakterSayisi']}: <SPAN id="urlPersonelCounter">#{1024 -
+											sirketHome.seciliSirketEntegrasyon.urlPersonel.length()}</SPAN>
+										<br />
+										<rich:spacer width="5px;" />
+										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlPersonel}" cols="80" rows="5"
+											onkeypress="return limitText(this,1024,'urlPersonelCounter')" onkeyup="return limitText(this,1024, 'urlPersonelCounter')">
 											<a4j:support event="onchange" ajaxSingle="true" reRender="sirketGiris" />
 										</h:inputTextarea>
 									</s:decorate>
@@ -339,7 +344,12 @@
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 										<ui:define name="label">İzin Servis Bilgi</ui:define>
-										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlIzin}" cols="80" rows="5">
+										#{messages['pdks.genel.etiket.kalanKarakterSayisi']}: <SPAN id="urlIzinCounter">#{1024 -
+											sirketHome.seciliSirketEntegrasyon.urlIzin.length()}</SPAN>
+										<br />
+										<rich:spacer width="5px;" />
+										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlIzin}" cols="80" rows="5"
+											onkeypress="return limitText(this,1024,'urlIzinCounter')" onkeyup="return limitText(this,1024, 'urlIzinCounter')">
 											<a4j:support event="onchange" ajaxSingle="true" reRender="sirketGiris" />
 										</h:inputTextarea>
 									</s:decorate>
@@ -362,7 +372,13 @@
 									</s:decorate>
 									<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin}">
 										<ui:define name="label">Mesai Servis Bilgi</ui:define>
-										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlMesai}" cols="80" rows="5">
+										<ui:define name="label">İzin Servis Bilgi</ui:define>
+										#{messages['pdks.genel.etiket.kalanKarakterSayisi']}: <SPAN id="urlMesaiCounter">#{1024 -
+											sirketHome.seciliSirketEntegrasyon.urlMesai.length()}</SPAN>
+										<br />
+										<rich:spacer width="5px;" />
+										<h:inputTextarea value="#{sirketHome.seciliSirketEntegrasyon.urlMesai}" cols="80" rows="5"
+											onkeypress="return limitText(this,1024,'urlMesaiCounter')" onkeyup="return limitText(this,1024, 'urlMesaiCounter')">
 											<a4j:support event="onchange" ajaxSingle="true" reRender="sirketGiris" />
 										</h:inputTextarea>
 									</s:decorate>
