@@ -411,16 +411,29 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		Date bitZaman = ortakIslemler.getSaniyeSifirla(hareket.getCikisZaman(), vg);
 		List<Tanim> list = ortakIslemler.getTanimAlanList(tipi, sort, "S", session);
 		if (onayDurum) {
-			Tanim icap = null;
-			Boolean icapYapti = null;
+			Tanim icap = null, eksikCalisma = null;
+			Boolean icapYapti = null, eksikCalismaYapti = null;
+			Vardiya islemVardiya = vg.getIslemVardiya();
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				Tanim tanim = (Tanim) iterator.next();
 				if (tanim.getKodu().equals("I")) {
-					Vardiya islemVardiya = vg.getIslemVardiya();
 					icapYapti = islemVardiya.isCalisma() == false;
 					if (bitZaman.before(islemVardiya.getVardiyaTelorans1BasZaman()) || basZaman.after(islemVardiya.getVardiyaTelorans2BitZaman()))
 						icapYapti = true;
 					icap = tanim;
+					iterator.remove();
+					break;
+				} else if (tanim.getKodu().equals("GE")) {
+					eksikCalismaYapti = false;
+					if (vg.getGirisHareketleri() != null && vg.getCikisHareketleri() != null) {
+						try {
+							HareketKGS giris = vg.getGirisHareketleri().get(0), cikis = vg.getCikisHareketleri().get(vg.getCikisHareketleri().size() - 1);
+							if (giris.getOrjinalZaman().after(islemVardiya.getVardiyaTelorans2BasZaman()) || cikis.getOrjinalZaman().before(islemVardiya.getVardiyaTelorans1BitZaman()))
+								eksikCalismaYapti = true;
+						} catch (Exception e) {
+						}
+					}
+					eksikCalisma = tanim;
 					iterator.remove();
 					break;
 				}
@@ -431,6 +444,12 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 					list.add(icap);
 				else
 					PdksUtil.addItemFirstList(icap, list);
+			}
+			if (eksikCalisma != null) {
+				if (eksikCalismaYapti.booleanValue() == false)
+					list.add(eksikCalisma);
+				else
+					PdksUtil.addItemFirstList(eksikCalisma, list);
 			}
 		}
 
