@@ -101,8 +101,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 	@In
 	Identity identity;
-	@In(required = false, create = true)
-	EntityManager entityManager;
+
 	@In(required = false, create = true)
 	MailManager mailManager;
 	@In(required = false, create = true)
@@ -2216,8 +2215,6 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	 * @param loginUser
 	 */
 	public void setInject(EntityManager entityManagerInput, PdksEntityController pdksEntityControllerInput, OrtakIslemler ortakIslemlerInput, User loginUser) {
-		if (entityManagerInput != null && entityManager == null)
-			this.entityManager = entityManagerInput;
 		if (pdksEntityControllerInput != null && pdksEntityController == null)
 			this.pdksEntityController = pdksEntityControllerInput;
 		if (ortakIslemlerInput != null && ortakIslemler == null)

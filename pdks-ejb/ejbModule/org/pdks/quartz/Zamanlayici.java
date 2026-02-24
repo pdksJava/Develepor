@@ -148,8 +148,7 @@ public class Zamanlayici implements Serializable {
 		if (!userList.isEmpty()) {
 			setAdminList(userList);
 			setKonu(xkonu);
-
-			setAciklama(xaciklama + (thisIp != null ? " --> Host Name : " + thisIp.getHostName() : ""));
+ 			setAciklama(xaciklama + (thisIp != null ? " --> Host Name : " + thisIp.getHostName() : ""));
 			MailStatu mailStatu = null;
 			try {
 				// ortakIslemler.mailGonder(renderer, "/email/" + sayfaAdi);
