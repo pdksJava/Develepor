@@ -1943,15 +1943,16 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				}
 
 			}
+			Object islem = authenticatedUser == null || authenticatedUser.getEntityManager() == null ? ortakIslemler : authenticatedUser.getEntityManager();
 			if (orgDetayMap != null && orgDetayMap.isEmpty() == false) {
 				for (String key : orgDetayMap.keySet()) {
-					pdksEntityController.deleteObject(session, ortakIslemler, orgDetayMap.get(key));
+					pdksEntityController.deleteObject(session, islem, orgDetayMap.get(key));
 				}
 				session.flush();
 			}
-			if (kaydet && !bordroDetayMap.isEmpty()) {
+			if (kaydet && bordroDetayMap != null && bordroDetayMap.isEmpty() == false) {
 				for (String key : bordroDetayMap.keySet()) {
-					pdksEntityController.deleteObject(session, ortakIslemler, bordroDetayMap.get(key));
+					pdksEntityController.deleteObject(session, islem, bordroDetayMap.get(key));
 				}
 				session.flush();
 			}
@@ -2212,11 +2213,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	}
 
 	/**
- 	 * @param pdksEntityControllerInput
+	 * @param pdksEntityControllerInput
 	 * @param ortakIslemlerInput
 	 * @param loginUser
 	 */
-	public void setInject( PdksEntityController pdksEntityControllerInput, OrtakIslemler ortakIslemlerInput, User loginUser) {
+	public void setInject(PdksEntityController pdksEntityControllerInput, OrtakIslemler ortakIslemlerInput, User loginUser) {
 		if (pdksEntityControllerInput != null && pdksEntityController == null)
 			this.pdksEntityController = pdksEntityControllerInput;
 		if (ortakIslemlerInput != null && ortakIslemler == null)

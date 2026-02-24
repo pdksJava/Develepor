@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity(name = LDAPDomain.TABLE_NAME)
@@ -125,6 +126,7 @@ public class LDAPDomain extends BasePDKSObject implements Serializable {
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

@@ -1053,7 +1053,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	public void sayfaSSKGirisAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, "sskIzinGirisi");
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, "sskIzinGirisi");
 		try {
 			if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)
 				aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
@@ -1101,7 +1101,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	public void sayfaGirisAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		servisAktarDurum = Boolean.FALSE;
 		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals("personelIzinGirisi");
 		try {
@@ -1396,7 +1396,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	public void onayimaGelenIzinlerAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, "onayimaGelenIzinler");
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, "onayimaGelenIzinler");
  		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String mailId = (String) req.getParameter("mId");
 		if (mailId != null)
@@ -4503,7 +4503,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	public void fillHekimIzinleri(boolean izinli) {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, "hekimIzinRaporu");
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, "hekimIzinRaporu");
 
 		List<PersonelIzin> izinList = null;
 		Date tarih = Calendar.getInstance().getTime();

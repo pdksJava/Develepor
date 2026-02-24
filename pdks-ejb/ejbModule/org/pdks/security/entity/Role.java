@@ -163,6 +163,7 @@ public class Role extends BasePDKSObject implements Serializable {
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

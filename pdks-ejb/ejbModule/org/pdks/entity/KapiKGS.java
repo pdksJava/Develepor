@@ -189,6 +189,7 @@ public class KapiKGS extends BasePDKSObject implements Serializable {
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

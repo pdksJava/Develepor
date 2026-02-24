@@ -402,7 +402,7 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		fillFazlaMesaiERPList();
 	}
 

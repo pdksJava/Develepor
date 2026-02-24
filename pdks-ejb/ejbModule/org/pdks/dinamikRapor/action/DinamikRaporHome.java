@@ -112,7 +112,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		tesisAlan = null;
 		sirket = null;
 		String sayfa = "";

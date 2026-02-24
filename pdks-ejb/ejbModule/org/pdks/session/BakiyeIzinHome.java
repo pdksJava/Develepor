@@ -171,7 +171,7 @@ public class BakiyeIzinHome extends EntityHome<PersonelIzin> {
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		HashMap fields = new HashMap();
 		fields.put("durum=", Boolean.TRUE);
 		fields.put("bakiyeIzinTipi.izinTipiTanim.kodu <> ", IzinTipi.YILLIK_UCRETLI_IZIN);

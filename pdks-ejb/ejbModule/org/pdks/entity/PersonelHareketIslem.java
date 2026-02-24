@@ -170,14 +170,6 @@ public class PersonelHareketIslem extends BasePDKSObject implements Serializable
 		return puantajOnayDurum;
 	}
 
-	public void setPuantajOnayDurum(boolean puantajOnayDurum) {
-		this.puantajOnayDurum = puantajOnayDurum;
-	}
-
-	public void entityRefresh() {
-
-	}
-
 	@Transient
 	public Object clone() {
 		try {
@@ -187,6 +179,15 @@ public class PersonelHareketIslem extends BasePDKSObject implements Serializable
 		throw new InternalError();
 	}
 
+	public void setPuantajOnayDurum(boolean puantajOnayDurum) {
+		this.puantajOnayDurum = puantajOnayDurum;
+	}
+
+	public void entityRefresh() {
+
+	}
+
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

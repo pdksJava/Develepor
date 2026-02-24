@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Fetch;
@@ -54,6 +55,7 @@ public class UserRoles extends BasePDKSObject implements Serializable {
 	public void entityRefresh() {
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

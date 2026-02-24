@@ -179,7 +179,7 @@ public class DepartmanMailHome extends EntityHome<DepartmanMailGrubu> implements
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, "departmanMail");
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, "departmanMail");
 		departmanAciklama = "Departman";
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("parentTanim.tipi", Tanim.TIPI_PERSONEL_EK_SAHA);

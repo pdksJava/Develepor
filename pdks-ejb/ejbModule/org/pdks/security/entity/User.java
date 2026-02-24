@@ -12,6 +12,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -78,6 +79,8 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	private Personel pdksPersonel;
 
 	private Tanim departmanTanim;
+
+	private EntityManager entityManager;
 
 	// private Set<UserRoles> yetkilerim;
 
@@ -1202,8 +1205,18 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 		this.sessionSQL = sessionSQL;
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
+	}
+
+	@Transient
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
 
 }

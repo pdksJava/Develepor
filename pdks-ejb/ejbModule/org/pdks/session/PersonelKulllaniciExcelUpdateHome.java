@@ -541,7 +541,7 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		islemTipi = "";
 		mailAdres = "";
 		ekleSil = "";

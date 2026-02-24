@@ -1117,7 +1117,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		pasifGoster = false;
 		List<Sirket> pdksSirketList = ortakIslemler.getDepartmanPDKSSirketList(null, session);
 		if (pdksSirketIdList == null)

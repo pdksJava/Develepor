@@ -240,6 +240,7 @@ public class MenuItem extends BasePDKSObject implements Serializable {
 		this.parametre = parametre;
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

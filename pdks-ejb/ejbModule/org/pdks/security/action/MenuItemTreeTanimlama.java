@@ -373,7 +373,7 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		rootNode = null;
 		selectedIdsFromTreeMap.clear();
 		selectedIdsFromDataTableMap.clear();

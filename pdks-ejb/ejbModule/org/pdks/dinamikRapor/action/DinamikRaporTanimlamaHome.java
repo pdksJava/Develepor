@@ -89,7 +89,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		if (raporTipiList == null)
 			raporTipiList = new ArrayList<SelectItem>();
 		else

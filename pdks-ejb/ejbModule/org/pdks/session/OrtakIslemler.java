@@ -11256,17 +11256,19 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param em
 	 * @param session
 	 * @param menuAdi
 	 * @return
 	 */
-	public UserMenuItemTime setUserMenuItemTime(Session session, String menuAdi) {
+	public UserMenuItemTime setUserMenuItemTime(EntityManager em, Session session, String menuAdi) {
 		UserMenuItemTime menuItemTime = null;
 		try {
 			if (session != null) {
 				session.setFlushMode(FlushMode.MANUAL);
 				session.clear();
 				if (authenticatedUser != null) {
+					authenticatedUser.setEntityManager(em);
 					String adi = getMenuAdi(menuAdi);
 					if (PdksUtil.hasStringValue(adi) == false)
 						adi = menuAdi;

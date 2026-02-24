@@ -219,6 +219,7 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

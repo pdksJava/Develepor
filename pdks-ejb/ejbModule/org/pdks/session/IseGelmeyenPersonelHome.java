@@ -77,7 +77,7 @@ public class IseGelmeyenPersonelHome extends EntityHome<PersonelIzin> implements
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		// default bugun icin ise gelmeyen raporu cekili olsun
 		setDate(PdksUtil.buGun());
 		gelmeyenListOlustur();

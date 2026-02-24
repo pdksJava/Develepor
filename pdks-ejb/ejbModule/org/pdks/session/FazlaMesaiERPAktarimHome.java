@@ -149,7 +149,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		fazlaMesaiERP = null;
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		aylar = ortakIslemler.getAyListesi(Boolean.TRUE);
 		String sapControllerStr = ortakIslemler.getParameterKey("sapController");
 		erpAktarimDurum = sapControllerStr.equals("2") || sapControllerStr.equals("3");

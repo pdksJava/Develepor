@@ -103,7 +103,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		// default bugun icin ise gelmeyen raporu cekili olsun
 		Date dateBas = PdksUtil.buGun();
 		setDate(dateBas);

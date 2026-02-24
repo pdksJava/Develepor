@@ -310,6 +310,7 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

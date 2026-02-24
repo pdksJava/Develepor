@@ -308,7 +308,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 	public String sayfaGirisAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		if (personelList == null)
 			personelList = new ArrayList<Personel>();
 		else

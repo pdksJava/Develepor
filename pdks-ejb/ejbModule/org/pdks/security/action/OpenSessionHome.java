@@ -166,7 +166,7 @@ public class OpenSessionHome extends EntityHome<User> implements Serializable {
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+ 		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		secili = Boolean.FALSE;
 		authenticatedUser.setCalistigiSayfa(sayfaURL);
 		HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);

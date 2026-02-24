@@ -10780,7 +10780,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		topluGuncelleme = false;
 		setPdksUser(authenticatedUser);
 		userLoginOldu = authenticatedUser != null;
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		aylikPuantajListClear();
 		componentState.setSeciliTab("");
 		tumBolumPersonelleri = null;

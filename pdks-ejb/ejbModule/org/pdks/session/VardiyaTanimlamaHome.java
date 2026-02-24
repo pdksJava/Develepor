@@ -249,7 +249,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		denklestirmeTipiVar = false;
 		taseronVar = false;
 		if (authenticatedUser.isAdmin()) {

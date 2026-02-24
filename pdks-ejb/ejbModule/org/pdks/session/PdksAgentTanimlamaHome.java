@@ -72,7 +72,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		admin = authenticatedUser.isAdmin();
 		fillPdksAgentList();
 	}

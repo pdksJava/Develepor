@@ -600,7 +600,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		durumCGSList = ortakIslemler.getSelectItemList("durumCGS", authenticatedUser);
 		durumCGSList.add(new SelectItem(IzinTipi.CGS_DURUM_YOK, IzinTipi.getDurumCGSAciklama(IzinTipi.CGS_DURUM_YOK)));
 		durumCGSList.add(new SelectItem(IzinTipi.CGS_DURUM_CIKAR, IzinTipi.getDurumCGSAciklama(IzinTipi.CGS_DURUM_CIKAR)));

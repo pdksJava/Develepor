@@ -152,6 +152,7 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

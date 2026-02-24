@@ -87,7 +87,7 @@ public class IzinERPAktarimHome extends EntityHome<PersonelIzin> implements Seri
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		try {
 			if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)
 				aramaSecenekleri = new AramaSecenekleri(authenticatedUser);

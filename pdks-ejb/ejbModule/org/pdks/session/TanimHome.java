@@ -74,7 +74,7 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		genelTanim = new Tanim();
 		genelTanimId = null;
 		setSelectedParentTanim(new Tanim());

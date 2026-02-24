@@ -113,6 +113,7 @@ public class PersonelDenklestirmeBordroDetay extends BasePDKSObject implements S
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

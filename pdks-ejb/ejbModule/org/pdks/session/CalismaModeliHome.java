@@ -347,7 +347,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		pasifGoster = false;
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		pdksSirketList = ortakIslemler.getDepartmanPDKSSirketList(null, session);
 		fillCalismaModeliList();
 	}

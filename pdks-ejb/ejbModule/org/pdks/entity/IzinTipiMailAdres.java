@@ -99,6 +99,7 @@ public class IzinTipiMailAdres extends BasePDKSObject implements Serializable, C
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

@@ -300,7 +300,7 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+ 		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		kapiView = new KapiView();
 		kapiView.setKapi(new Kapi());
 

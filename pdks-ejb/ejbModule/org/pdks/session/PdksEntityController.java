@@ -517,22 +517,32 @@ public class PdksEntityController implements Serializable {
 	 * @param ortakIslemler
 	 * @param del
 	 */
-	public void deleteObject(Session ses, OrtakIslemler ortakIslemler, Object del) {
+	public void deleteObject(Session ses, Object object, Object del) {
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		if (del != null && ses != null) {
 			try {
 				ses.delete(del);
 			} catch (Exception e) {
 				try {
-					String tableName = (String) PdksUtil.getMethodObject(del, "getTableName", null);
-					Long id = (Long) PdksUtil.getMethodObject(del, "getId", null);
-					if (id != null && tableName != null) {
-						String sp = "SP_DELETE_OBJECT_BY_ID";
-						if (ortakIslemler != null && ortakIslemler.isExisStoreProcedure(sp, ses)) {
-							veriMap.put("id", id);
-							veriMap.put("tableName", tableName);
-							execSP(ses, veriMap, sp);
+					if (object != null) {
+						if (object instanceof OrtakIslemler) {
+							OrtakIslemler ortakIslemler = (OrtakIslemler) object;
+							String tableName = (String) PdksUtil.getMethodObject(del, "getTableName", null);
+							Long id = (Long) PdksUtil.getMethodObject(del, "getId", null);
+							if (id != null && tableName != null) {
+								String sp = "SP_DELETE_OBJECT_BY_ID";
+								if (ortakIslemler.isExisStoreProcedure(sp, ses)) {
+									veriMap.put("id", id);
+									veriMap.put("tableName", tableName);
+									execSP(ses, veriMap, sp);
+								}
+							}
+						} else if (object instanceof EntityManager) {
+							EntityManager em = (EntityManager) object;
+							if (em != null)
+								ses.delete(getEntityManagerObject(em, del));
 						}
+
 					}
 
 				} catch (Exception e2) {
@@ -541,20 +551,6 @@ public class PdksEntityController implements Serializable {
 			}
 		}
 		veriMap = null;
-	}
-
-	/**
-	 * @param ses
-	 * @param em
-	 * @param del
-	 */
-	public void deleteObject(Session ses, EntityManager em, Object del) {
-		try {
-			ses.delete(del);
-		} catch (Exception e) {
-			if (em != null)
-				ses.delete(getEntityManagerObject(em, del));
-		}
 	}
 
 	/**

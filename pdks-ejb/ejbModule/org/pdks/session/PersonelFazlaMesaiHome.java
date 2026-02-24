@@ -173,7 +173,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	public String sayfaGirisAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		fazlaMesaiGirisDurum = false;
 		adminRole = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIKAdmin();
 		ikRole = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || (PdksUtil.isSistemDestekVar() && authenticatedUser.isIK());

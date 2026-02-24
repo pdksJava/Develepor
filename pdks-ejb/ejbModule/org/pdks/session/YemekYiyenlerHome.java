@@ -87,7 +87,7 @@ public class YemekYiyenlerHome extends EntityHome<VardiyaGun> implements Seriali
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		ogunVar = false;
 		masrafYeriVar = false;
 		setHareketList(new ArrayList<HareketKGS>());

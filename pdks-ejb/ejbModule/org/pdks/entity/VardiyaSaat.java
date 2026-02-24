@@ -169,6 +169,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

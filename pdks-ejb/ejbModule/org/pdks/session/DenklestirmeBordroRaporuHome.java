@@ -617,7 +617,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			setPdksUser(authenticatedUser);
-			ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+			ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 			aylikPuantajListClear();
 			adminRoleDurum();
 			login = true;

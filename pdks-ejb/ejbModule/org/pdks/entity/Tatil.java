@@ -232,6 +232,7 @@ public class Tatil extends BaseObject {
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

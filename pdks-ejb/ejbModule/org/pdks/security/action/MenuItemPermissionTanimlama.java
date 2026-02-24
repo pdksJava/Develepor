@@ -203,7 +203,7 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		selectedIdsFromTreeMap.clear();
 		// fillMenuItemTree();
 	}

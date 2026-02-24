@@ -92,7 +92,7 @@ public class GebeSutIzniRaporHome extends EntityHome<PersonelDonemselDurum> impl
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		bitTarih = PdksUtil.getDate(new Date());
 		basTarih = PdksUtil.tariheAyEkleCikar(bitTarih, -12);
 		sirketId = null;

@@ -204,6 +204,7 @@ public class YemekIzin extends BaseObject {
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

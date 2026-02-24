@@ -963,6 +963,7 @@ public class PersonelDenklestirme extends BaseObject {
 		this.personelDenklestirmeDevir = personelDenklestirmeDevir;
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

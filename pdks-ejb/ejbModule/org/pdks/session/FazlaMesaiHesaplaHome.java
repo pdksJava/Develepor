@@ -358,7 +358,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		boolean calistir = false;
 		setPdksUser(authenticatedUser);
 		userLoginOldu = authenticatedUser != null;
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		resmiTatilKanunenEklenenSureGoster = false;
 		aylikPuantajListClear();
 		hataliPersoneller = null;

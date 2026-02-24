@@ -95,7 +95,7 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		setHareketList(new ArrayList<HareketKGS>());
 		setVardiyaGunList(new ArrayList<VardiyaGun>());
 		HareketKGS hareket = new HareketKGS();

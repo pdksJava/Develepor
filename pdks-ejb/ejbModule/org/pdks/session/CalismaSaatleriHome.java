@@ -101,7 +101,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		sicilNo = "";
 		setHareketList(new ArrayList<HareketKGS>());
 		setVardiyaGunList(new ArrayList<VardiyaGun>());

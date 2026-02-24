@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 @Entity(name = MailUser.TABLE_NAME)
 public class MailUser extends BasePDKSObject implements Serializable {
@@ -84,6 +85,7 @@ public class MailUser extends BasePDKSObject implements Serializable {
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

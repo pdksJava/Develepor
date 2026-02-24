@@ -99,7 +99,7 @@ public class KGSHareketHome extends EntityHome<HareketKGS> {
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		setHareketList(new ArrayList<HareketKGS>());
 		HareketKGS hareket = new HareketKGS();
 		hareket.setPersonel(new PersonelView());

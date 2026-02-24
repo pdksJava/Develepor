@@ -98,7 +98,7 @@ public class YemekCiftBasanRaporHome extends EntityHome<VardiyaGun> implements S
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+ 		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		setHareketList(new ArrayList<HareketKGS>());
 		setCiftYemekList(new ArrayList<HareketKGS>());
 		setToplamYemekList(new ArrayList<HareketKGS>());

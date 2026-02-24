@@ -267,6 +267,7 @@ public class PersonelDenklestirmeBordro extends BasePDKSObject implements Serial
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

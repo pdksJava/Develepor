@@ -261,7 +261,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)
 			aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
 		aramaSecenekleri.setStajyerOlmayanSirket(Boolean.FALSE);

@@ -240,6 +240,7 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

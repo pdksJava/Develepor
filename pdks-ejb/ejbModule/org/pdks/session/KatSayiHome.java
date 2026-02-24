@@ -90,7 +90,7 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		pasifGoster = false;
-		ortakIslemler.setUserMenuItemTime(session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
 		fillKatSayiList();
 	}
 

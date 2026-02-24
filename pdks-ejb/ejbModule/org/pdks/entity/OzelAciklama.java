@@ -2,6 +2,7 @@ package org.pdks.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 @Entity(name = OzelAciklama.TABLE_NAME)
 public class OzelAciklama extends BasePDKSObject {
@@ -38,6 +39,7 @@ public class OzelAciklama extends BasePDKSObject {
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

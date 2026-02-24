@@ -98,6 +98,7 @@ public class VardiyaEkSaat extends BasePDKSObject implements Serializable, Clone
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

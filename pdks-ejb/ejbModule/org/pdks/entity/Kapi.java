@@ -136,6 +136,7 @@ public class Kapi extends BaseObject {
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return TABLE_NAME;
 	}

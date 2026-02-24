@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
 
+import javax.persistence.Transient;
+
 import org.apache.log4j.Logger;
 import org.pdks.session.PdksUtil;
 
@@ -191,6 +193,7 @@ public class DepartmanDenklestirmeDonemi extends BaseObject {
 
 	}
 
+	@Transient
 	public String getTableName() {
 		return null;
 	}
