@@ -1883,7 +1883,6 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 								denklestirmeOrganizasyon.setGorevTipi(personel.getGorevTipi());
 
 							}
-							orgMap.remove(personelDenklestirmeId);
 						} else
 							denklestirmeOrganizasyon = new PersonelDenklestirmeOrganizasyon(personelDenklestirme);
 
