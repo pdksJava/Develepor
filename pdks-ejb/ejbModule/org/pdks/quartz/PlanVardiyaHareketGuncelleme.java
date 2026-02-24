@@ -173,7 +173,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			tarih = bugun;
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(bugun);
-		int artiGun = cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY ? 0 : 6;
+		int haftaGun = cal.get(Calendar.DAY_OF_WEEK);
+		int artiGun = haftaGun != Calendar.SATURDAY && haftaGun != Calendar.SUNDAY ? 0 : 6;
 		String adresStr = null;
 		long buAy = Long.parseLong(PdksUtil.convertToDateString(tarih, PATTERN_DONEM));
 		long oncekiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheAyEkleCikar(PdksUtil.convertToJavaDate(buAy + "01", PATTERN), -1), PATTERN_DONEM));
