@@ -527,7 +527,7 @@ public class PdksEntityController implements Serializable {
 					String tableName = (String) PdksUtil.getMethodObject(del, "getTableName", null);
 					Long id = (Long) PdksUtil.getMethodObject(del, "getId", null);
 					if (id != null && tableName != null) {
-						String sp = "SP_DELETE_OBJECT";
+						String sp = "SP_DELETE_OBJECT_BY_ID";
 						if (ortakIslemler != null && ortakIslemler.isExisStoreProcedure(sp, ses)) {
 							veriMap.put("id", id);
 							veriMap.put("tableName", tableName);
