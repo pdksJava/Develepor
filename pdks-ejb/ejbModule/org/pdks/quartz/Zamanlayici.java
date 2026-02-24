@@ -140,7 +140,7 @@ public class Zamanlayici implements Serializable {
 			session = PdksUtil.getSession(entityManager, yeni);
 		if (userList == null || userList.isEmpty()) {
 			userList = ortakIslemler.bccAdminAdres(session, null);
-			xaciklama += " ( " + PdksUtil.convertToDateString(Calendar.getInstance().getTime(), PdksUtil.getDateFormat() + " H:mm") + " ) ";
+			xaciklama += " ( " + PdksUtil.getCurrentTimeStampStr() + " ) ";
 		} else
 			thisIp = null;
 		if (thisIp != null)
@@ -148,8 +148,7 @@ public class Zamanlayici implements Serializable {
 		if (!userList.isEmpty()) {
 			setAdminList(userList);
 			setKonu(xkonu);
-
-			setAciklama(xaciklama + (thisIp != null ? " --> Host Name : " + thisIp.getHostName() : ""));
+ 			setAciklama(xaciklama + (thisIp != null ? " --> Host Name : " + thisIp.getHostName() : ""));
 			MailStatu mailStatu = null;
 			try {
 				// ortakIslemler.mailGonder(renderer, "/email/" + sayfaAdi);
