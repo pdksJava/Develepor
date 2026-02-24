@@ -1950,18 +1950,24 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			}
 			Object islem = authenticatedUser == null || authenticatedUser.getEntityManager() == null ? ortakIslemler : authenticatedUser.getEntityManager();
 			if (islem != null && session != null) {
+				List deleteList = new ArrayList();
 				if (orgDetayMap != null && orgDetayMap.isEmpty() == false) {
 					for (String key : orgDetayMap.keySet()) {
-						pdksEntityController.deleteObject(session, islem, orgDetayMap.get(key));
+						deleteList.add(orgDetayMap.get(key));
 					}
-					session.flush();
 				}
 				if (kaydet && bordroDetayMap != null && bordroDetayMap.isEmpty() == false) {
 					for (String key : bordroDetayMap.keySet()) {
-						pdksEntityController.deleteObject(session, islem, bordroDetayMap.get(key));
+						deleteList.add(bordroDetayMap.get(key));
+					}
+ 				}
+				if (deleteList.isEmpty() == false) {
+					for (Object object : deleteList) {
+						pdksEntityController.deleteObject(session, islem, object);
 					}
 					session.flush();
 				}
+				deleteList = null;
 			}
 			bordroDetayMap = null;
 			bordroMap = null;
