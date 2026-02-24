@@ -311,7 +311,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					}
 
 				} catch (Exception e) {
- 				}
+				}
 
 			}
 		}
@@ -319,7 +319,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			session.disconnect();
 			session.close();
 		}
-		
+
 		return MenuItemConstant.login;
 	}
 
@@ -1147,6 +1147,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		}
 
 		if (personelDenklestirmeList.isEmpty()) {
+
 			if (authenticatedUser != null) {
 				if (fazlaMesaiHesaplaDurum == false)
 					PdksUtil.addMessageWarn("İlgili döneme ait fazla mesai bulunamadı!");
@@ -1155,8 +1156,20 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			}
 		}
 
-		else
+		else {
+			List<Long> idList = new ArrayList<Long>();
+			for (Iterator iterator = personelDenklestirmeList.iterator(); iterator.hasNext();) {
+				AylikPuantaj ap = (AylikPuantaj) iterator.next();
+				Long id = ap.getPersonelDenklestirme() != null ? ap.getPersonelDenklestirme().getId() : null;
+				if (id == null || idList.contains(id))
+					iterator.remove();
+				else
+					idList.add(id);
+			}
+			idList = null;
 			fazlaMesaiHesaplaMenuAdi = ortakIslemler.getMenuAdi("fazlaMesaiHesapla");
+
+		}
 
 		setInstance(denklestirmeAy);
 
