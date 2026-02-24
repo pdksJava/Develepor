@@ -2236,7 +2236,7 @@ public class OrtakIslemler implements Serializable {
 		try {
 			list = pdksEntityController.execSPList(session, veriMap, "SP_IK_USERNAME_LIST", User.class);
 		} catch (Exception e) {
- 		}
+		}
 
 		return list;
 	}
@@ -11028,7 +11028,6 @@ public class OrtakIslemler implements Serializable {
 								VardiyaGun vg = null;
 								if (listeler.size() > 1)
 									listeler = PdksUtil.sortListByAlanAdi(listeler, "value", true);
-
 								if (vg == null)
 									vg = (VardiyaGun) listeler.get(0).getId();
 								List<HareketKGS> hareketler = new ArrayList<HareketKGS>(vg.getHareketler());
@@ -11060,7 +11059,6 @@ public class OrtakIslemler implements Serializable {
 									vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
 									if (planGuncelle == false)
 										planGuncelle = vardiyaVg.getId().equals(vg.getVardiya().getId()) == false;
-
 									vardiyaGun.setVardiya(vg.getVardiya());
 									vardiyaGun.setVersion(vg.getVersion());
 									pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
@@ -11075,7 +11073,6 @@ public class OrtakIslemler implements Serializable {
 								try {
 									if (tatil != null && tatil.isYarimGunMu() == false && offVardiya != null && offDurum && hareketVar == false) {
 										if (islemVardiyaGun != null && islemVardiyaGun.isCalisma() && islemVardiyaGun.getVardiyaFazlaMesaiBitZaman().before(bugun)) {
-
 											vardiyaGun.setVardiya(offVardiya);
 											vardiyaGun.setVersion(0);
 											vardiyaGun.setGuncelleyenUser(guncelleyenUser);
@@ -11093,6 +11090,13 @@ public class OrtakIslemler implements Serializable {
 							}
 						}
 						vardiyalarMap.put(vardiyaKeyStr, vardiyaGun);
+						if (vardiyaGun.isGuncellendi())
+							try {
+								session.flush();
+							} catch (Exception e) {
+								logger.error(vardiyaGun.getVardiyaKeyStr() + "\n" + e);
+							}
+
 					}
 
 				}
@@ -25003,7 +25007,7 @@ public class OrtakIslemler implements Serializable {
 			if (responseCode >= 400 && is != null)
 				str = PdksUtil.StringToByInputStream(is);
 		} catch (Exception e) {
- 		}
+		}
 
 		return str;
 	}
@@ -25027,7 +25031,7 @@ public class OrtakIslemler implements Serializable {
 			if (responseCode == 200 && is != null)
 				str = PdksUtil.StringToByInputStream(is);
 		} catch (Exception e) {
- 		}
+		}
 
 		return str;
 	}
