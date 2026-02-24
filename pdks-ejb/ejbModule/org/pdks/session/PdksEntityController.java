@@ -527,8 +527,17 @@ public class PdksEntityController implements Serializable {
 					if (object != null) {
 						if (object instanceof OrtakIslemler) {
 							OrtakIslemler ortakIslemler = (OrtakIslemler) object;
-							String tableName = (String) PdksUtil.getMethodObject(del, "getTableName", null);
-							Long id = (Long) PdksUtil.getMethodObject(del, "getId", null);
+							String tableName = null;
+							Long id = null;
+							if (del instanceof BasePDKSObject) {
+								BasePDKSObject basePDKSObject = (BasePDKSObject) del;
+								tableName = basePDKSObject.getTableName();
+								id = basePDKSObject.getId();
+							} else {
+								tableName = (String) PdksUtil.getMethodObject(del, "getTableName", null);
+								id = (Long) PdksUtil.getMethodObject(del, "getId", null);
+							}
+
 							if (id != null && tableName != null) {
 								String sp = "SP_DELETE_OBJECT_BY_ID";
 								if (ortakIslemler.isExisStoreProcedure(sp, ses)) {
