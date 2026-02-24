@@ -1942,18 +1942,15 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					baslikGuncelle(baslikMap, ortakIslemler.resmiTatilGunKod(), ap.getDenklestirmeBordro().getResmiTatilAdet());
 					baslikGuncelle(baslikMap, ortakIslemler.bordroToplamGunKod(), ap.getDenklestirmeBordro().getBordroToplamGunAdet());
 				}
-
 			}
 			if (orgDetayMap != null && orgDetayMap.isEmpty() == false) {
-				for (String key : orgDetayMap.keySet()) {
+				for (String key : orgDetayMap.keySet())
 					session.delete(orgDetayMap.get(key));
-				}
 				session.flush();
 			}
 			if (kaydet && !bordroDetayMap.isEmpty()) {
-				for (String key : bordroDetayMap.keySet()) {
+				for (String key : bordroDetayMap.keySet())
 					session.delete(bordroDetayMap.get(key));
-				}
 				session.flush();
 			}
 			bordroDetayMap = null;
