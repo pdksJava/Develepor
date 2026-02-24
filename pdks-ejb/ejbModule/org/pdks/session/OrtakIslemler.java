@@ -2277,7 +2277,7 @@ public class OrtakIslemler implements Serializable {
 									parameter.setChangeDate(new Date());
 								}
 								parameter.setValue(value);
-								pdksEntityController.saveOrUpdate(session, entityManager, parameter);
+								session.saveOrUpdate(parameter);
 								session.flush();
 							}
 						}
@@ -5008,7 +5008,7 @@ public class OrtakIslemler implements Serializable {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, loginUser);
 		if (kullanici != null)
-			pdksEntityController.saveOrUpdate(session, entityManager, kullanici);
+			session.saveOrUpdate(kullanici);
 
 	}
 
@@ -5025,7 +5025,7 @@ public class OrtakIslemler implements Serializable {
 			List<MailGrubu> deleteList = new ArrayList<MailGrubu>();
 			if (mailGrubuCC != null) {
 				if (mailGrubuCC.isGuncellendi())
-					pdksEntityController.saveOrUpdate(session, entityManager, mailGrubuCC);
+					session.saveOrUpdate(mailGrubuCC);
 				else {
 					deleteList.add(mailGrubuCC);
 					personel.setMailGrubuCC(null);
@@ -5033,7 +5033,7 @@ public class OrtakIslemler implements Serializable {
 			}
 			if (mailGrubuBCC != null) {
 				if (mailGrubuBCC.isGuncellendi())
-					pdksEntityController.saveOrUpdate(session, entityManager, mailGrubuBCC);
+					session.saveOrUpdate(mailGrubuBCC);
 				else {
 					deleteList.add(mailGrubuBCC);
 					personel.setMailGrubuBCC(null);
@@ -5042,14 +5042,14 @@ public class OrtakIslemler implements Serializable {
 			}
 			if (hareketMailGrubu != null) {
 				if (hareketMailGrubu.isGuncellendi())
-					pdksEntityController.saveOrUpdate(session, entityManager, hareketMailGrubu);
+					session.saveOrUpdate(hareketMailGrubu);
 				else {
 					deleteList.add(hareketMailGrubu);
 					personel.setHareketMailGrubu(null);
 				}
 
 			}
-			pdksEntityController.saveOrUpdate(session, entityManager, personel);
+			session.saveOrUpdate(personel);
 			for (Object del : deleteList) {
 				pdksEntityController.deleteObject(session, entityManager, del);
 
@@ -6441,7 +6441,7 @@ public class OrtakIslemler implements Serializable {
 										ldapUser.setDurum(Boolean.FALSE);
 										ldapUser.setPdksPersonel(personel);
 										ldapUser.setDepartman(personel.getSirket().getDepartman());
-										pdksEntityController.saveOrUpdate(session, entityManager, ldapUser);
+										session.saveOrUpdate(ldapUser);
 										session.flush();
 										personelView.setPdksPersonel(personel);
 										personelView.setKullanici(ldapUser);
@@ -6481,7 +6481,7 @@ public class OrtakIslemler implements Serializable {
 				izin.setGuncelleyenUser(authenticatedUser);
 			izin.setGuncellemeTarihi(new Date());
 			izin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
-			pdksEntityController.saveOrUpdate(session, entityManager, izin);
+			session.saveOrUpdate(izin);
 
 		} catch (Exception e) {
 			logger.error("Pdks hata in : \n");
@@ -7327,7 +7327,7 @@ public class OrtakIslemler implements Serializable {
 							if (sessionId != null)
 								menuItemTime.setSessionId(sessionId);
 							menuItemTime.setLastTime(new Date());
-							pdksEntityController.saveOrUpdate(session, entityManager, menuItemTime);
+							session.saveOrUpdate(menuItemTime);
 							flush = true;
 						} else {
 							LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
@@ -7589,7 +7589,7 @@ public class OrtakIslemler implements Serializable {
 						if (parameter != null) {
 							if (parameter.getChangeDate() == null || parameter.getChangeDate().before(changeDate)) {
 								parameter.setChangeDate(changeDate);
-								pdksEntityController.saveOrUpdate(session, entityManager, parameter);
+								session.saveOrUpdate(parameter);
 								session.flush();
 							}
 
@@ -7929,7 +7929,7 @@ public class OrtakIslemler implements Serializable {
 							personelIzin.setGuncelleyenUser(guncelleyenUser);
 							personelIzin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
 							personelIzin.setGuncellemeTarihi(new Date());
-							pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
+							session.saveOrUpdate(personelIzin);
 							flush = true;
 						}
 					}
@@ -7988,7 +7988,7 @@ public class OrtakIslemler implements Serializable {
 						personelIzin.setGuncelleyenUser(guncelleyenUser);
 						personelIzin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
 						personelIzin.setGuncellemeTarihi(new Date());
-						pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
+						session.saveOrUpdate(personelIzin);
 
 					}
 					session.flush();
@@ -8097,7 +8097,7 @@ public class OrtakIslemler implements Serializable {
 						if (parameter != null) {
 							if (parameter.getChangeDate() == null || parameter.getChangeDate().before(changeDate)) {
 								parameter.setChangeDate(changeDate);
-								pdksEntityController.saveOrUpdate(session, entityManager, parameter);
+								session.saveOrUpdate(parameter);
 								session.flush();
 							}
 
@@ -8196,7 +8196,7 @@ public class OrtakIslemler implements Serializable {
 					for (PersonelIzin personelIzin : personelIzinList) {
 						personelIzin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
 						personelIzin.setGuncellemeTarihi(guncellemeTarihi);
-						pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
+						session.saveOrUpdate(personelIzin);
 						session.flush();
 					}
 				}
@@ -9778,7 +9778,7 @@ public class OrtakIslemler implements Serializable {
 				}
 				if (yeni)
 					session.clear();
-				pdksEntityController.saveOrUpdate(session, entityManager, personel);
+				session.saveOrUpdate(personel);
 			}
 			guncellendi = Boolean.TRUE;
 
@@ -9977,7 +9977,7 @@ public class OrtakIslemler implements Serializable {
 							// fazlaMesai.setGuncelleyenUser(loginUser);
 							// fazlaMesai.setGuncellemeTarihi(new Date());
 							// }
-							// pdksEntityController.saveOrUpdate(session, entityManager, fazlaMesai);
+							// session.saveOrUpdate( fazlaMesai);
 							// iterator.remove();
 							// flush = Boolean.TRUE;
 							// }
@@ -10877,7 +10877,7 @@ public class OrtakIslemler implements Serializable {
 										guncelleyenUser = getSistemAdminUser(session);
 									vardiyaGun.setGuncelleyenUser(guncelleyenUser);
 									vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
-									pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
+									session.saveOrUpdate(vardiyaGun);
 									personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(vardiyaDateStr, vardiyaGun);
 									vgMap.put(vardiyaDateStr, vardiyaGun);
 									flush = true;
@@ -10898,7 +10898,7 @@ public class OrtakIslemler implements Serializable {
 								vardiyaGun.setVersion(0);
 								vardiyaGun.setGuncelleyenUser(guncelleyenUser);
 								vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
-								pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
+								session.saveOrUpdate(vardiyaGun);
 								vardiyaGun.setGuncellendi(Boolean.TRUE);
 								flush = true;
 								planGuncelle = true;
@@ -11061,7 +11061,7 @@ public class OrtakIslemler implements Serializable {
 										planGuncelle = vardiyaVg.getId().equals(vg.getVardiya().getId()) == false;
 									vardiyaGun.setVardiya(vg.getVardiya());
 									vardiyaGun.setVersion(vg.getVersion());
-									pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
+									session.saveOrUpdate(vardiyaGun);
 									vardiyaGun.setGuncellendi(Boolean.TRUE);
 									personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(vardiyaDateStr, vardiyaGun);
 									vgMap.put(vardiyaDateStr, vardiyaGun);
@@ -11077,7 +11077,7 @@ public class OrtakIslemler implements Serializable {
 											vardiyaGun.setVersion(0);
 											vardiyaGun.setGuncelleyenUser(guncelleyenUser);
 											vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
-											pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
+											session.saveOrUpdate(vardiyaGun);
 											vardiyaGun.setGuncellendi(Boolean.TRUE);
 											personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(vardiyaDateStr, vardiyaGun);
 											vgMap.put(vardiyaDateStr, vardiyaGun);
@@ -11108,7 +11108,7 @@ public class OrtakIslemler implements Serializable {
 					pd.setOnaylandi(false);
 					pd.setGuncellemeTarihi(guncellemeTarihi);
 					pd.setGuncelleyenUser(guncelleyenUser);
-					pdksEntityController.saveOrUpdate(session, entityManager, pd);
+					session.saveOrUpdate(pd);
 				}
 				ArrayList<VardiyaGun> vardiyalar = new ArrayList<VardiyaGun>(vgMap.values());
 				calismaPlaniMap.put(perId, vardiyalar);
@@ -11186,7 +11186,7 @@ public class OrtakIslemler implements Serializable {
 					personelIzinOnay.setOnaylamamaNedenAciklama(onaylamamaNedenAciklama);
 					personelIzinOnay.setGuncellemeTarihi(new Date());
 					personelIzinOnay.setOnayDurum(PersonelIzinOnay.ONAY_DURUM_RED);
-					pdksEntityController.saveOrUpdate(session, entityManager, personelIzinOnay);
+					session.saveOrUpdate(personelIzinOnay);
 					break;
 				}
 			}
@@ -11198,7 +11198,7 @@ public class OrtakIslemler implements Serializable {
 		else if (izin.getHesapTipi() != null && izin.getHesapTipi() > 2)
 			izin.setHesapTipi(5 - izin.getHesapTipi());
 		izin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_REDEDILDI);
-		pdksEntityController.saveOrUpdate(session, entityManager, izin);
+		session.saveOrUpdate(izin);
 		session.flush();
 
 	}
@@ -11724,7 +11724,7 @@ public class OrtakIslemler implements Serializable {
 						Personel personel = (Personel) personelMap.get(key);
 						if (personel.getSirket() != null && !personel.getSirket().isErp())
 							personel.setDurum(!bugun.after(personel.getSonCalismaTarihi()));
-						pdksEntityController.saveOrUpdate(session, entityManager, personel);
+						session.saveOrUpdate(personel);
 					}
 				}
 				session.flush();
@@ -12759,7 +12759,7 @@ public class OrtakIslemler implements Serializable {
 				userRoles.setRole(role);
 				userRoles.setUser(user);
 				if (yaz) {
-					pdksEntityController.saveOrUpdate(session, entityManager, userRoles);
+					session.saveOrUpdate(userRoles);
 					session.flush();
 				}
 			}
@@ -12950,7 +12950,7 @@ public class OrtakIslemler implements Serializable {
 										// ldapUser.setDurum(Boolean.FALSE);
 										ldapUser.setPdksPersonel(personelView.getPdksPersonel());
 										ldapUser.setDepartman(pdksSapPersonel.getSirket().getDepartman());
-										pdksEntityController.saveOrUpdate(session, entityManager, ldapUser);
+										session.saveOrUpdate(ldapUser);
 										personelView.setKullanici(ldapUser);
 									}
 								}
@@ -13111,7 +13111,7 @@ public class OrtakIslemler implements Serializable {
 			yoneticisi = null;
 		}
 		if (yoneticisi != null)
-			pdksEntityController.saveOrUpdate(session, entityManager, yoneticisi);
+			session.saveOrUpdate(yoneticisi);
 		personel.setYoneticisiAta(yoneticisi);
 		personel.setAd(pdksSapPersonel.getAd());
 		personel.setSoyad(pdksSapPersonel.getSoyad());
@@ -13130,7 +13130,7 @@ public class OrtakIslemler implements Serializable {
 		try {
 			if (personel.getSirket() == null)
 				personel.setSirket(user.getPdksPersonel().getSirket());
-			pdksEntityController.saveOrUpdate(session, entityManager, personel);
+			session.saveOrUpdate(personel);
 			personelView.setPdksPersonel(personel);
 			if (personelView.getKullanici() == null && pdksSapPersonel.getSirket().isLdap() && personel.getSirket().getLpdapOnEk() != null)
 				kullaniciUpdate(pdksSapPersonel, personelView, personel, session);
@@ -13165,7 +13165,7 @@ public class OrtakIslemler implements Serializable {
 			ldapUser.setPdksPersonel(personelView.getPdksPersonel());
 			ldapUser.setDepartman(pdksSapPersonel.getSirket().getDepartman());
 			try {
-				pdksEntityController.saveOrUpdate(session, entityManager, ldapUser);
+				session.saveOrUpdate(ldapUser);
 			} catch (Exception e) {
 				logger.error("Pdks hata in : \n");
 				e.printStackTrace();
@@ -13227,7 +13227,7 @@ public class OrtakIslemler implements Serializable {
 									if (personel != null && personel.getId() != null)
 										yoneticisi.setYoneticisiAta(personel);
 								}
-								pdksEntityController.saveOrUpdate(session, entityManager, yoneticisi);
+								session.saveOrUpdate(yoneticisi);
 								// yoneticisi = (Personel)
 								// pdksEntityController.save(yoneticisi,
 								// session);
@@ -13703,7 +13703,7 @@ public class OrtakIslemler implements Serializable {
 					if (!saveList.isEmpty()) {
 						for (Iterator iterator = saveList.iterator(); iterator.hasNext();) {
 							Object object = (Object) iterator.next();
-							pdksEntityController.saveOrUpdate(session, entityManager, object);
+							session.saveOrUpdate(object);
 						}
 						session.flush();
 					}
@@ -13770,7 +13770,7 @@ public class OrtakIslemler implements Serializable {
 						personelIzin.setGuncelleyenUser(user);
 				}
 				personelIzin.setIzinSuresi(sure);
-				pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
+				session.saveOrUpdate(personelIzin);
 			}
 		}
 		if (personelIzin != null) {
@@ -13892,7 +13892,7 @@ public class OrtakIslemler implements Serializable {
 					personelIzin.setAciklama(aciklama);
 					personelIzin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_ONAYLANDI);
 					personelIzin.setIzinSuresi((double) yillikIzinMaxBakiye);
-					pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
+					session.saveOrUpdate(personelIzin);
 				}
 			}
 			if (personelIzin != null) {
@@ -14096,7 +14096,7 @@ public class OrtakIslemler implements Serializable {
 									personelIzin.setAciklama(aciklama);
 									if (izinHakEttigiTarihi.getTime() >= personelIzin.getBaslangicZamani().getTime()) {
 										personelIzin.setBitisZamani(izinHakEttigiTarihi);
-										pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
+										session.saveOrUpdate(personelIzin);
 										flush = true;
 									} else
 										logger.info(personelIzin.getPdksPersonel().getPdksSicilNo() + " " + aciklama + " " + PdksUtil.getCurrentTimeStampStr());
@@ -14165,7 +14165,7 @@ public class OrtakIslemler implements Serializable {
 									personelIzin.setAciklama(aciklama);
 									if (izinHakEttigiTarihi.getTime() >= personelIzin.getBaslangicZamani().getTime()) {
 										personelIzin.setBitisZamani(izinHakEttigiTarihi);
-										pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
+										session.saveOrUpdate(personelIzin);
 										flush = true;
 									} else
 										logger.info(personelIzin.getPdksPersonel().getPdksSicilNo() + " " + aciklama + " " + PdksUtil.getCurrentTimeStampStr());
@@ -14872,7 +14872,7 @@ public class OrtakIslemler implements Serializable {
 							try {
 								if (!vardiyaMap.containsKey(vardiyaKey)) {
 									if (veriYaz) {
-										pdksEntityController.saveOrUpdate(session, entityManager, vardiyaGun);
+										session.saveOrUpdate(vardiyaGun);
 										session.flush();
 									}
 									vardiyaMap.put(vardiyaKey, vardiyaGun);
@@ -16787,7 +16787,7 @@ public class OrtakIslemler implements Serializable {
 					personelIzin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_ONAYLANDI);
 					personelIzin.setGuncelleyenUser(kaydeden);
 					personelIzin.setGuncellemeTarihi(new Date());
-					pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
+					session.saveOrUpdate(personelIzin);
 				}
 
 			} else
@@ -18902,7 +18902,7 @@ public class OrtakIslemler implements Serializable {
 
 			for (PersonelIzinOnay izinOnay : savePersonelOnayList)
 				try {
-					pdksEntityController.saveOrUpdate(session, entityManager, izinOnay);
+					session.saveOrUpdate(izinOnay);
 				} catch (Exception e) {
 					logger.error("Pdks hata in : \n");
 					e.printStackTrace();
@@ -20537,7 +20537,7 @@ public class OrtakIslemler implements Serializable {
 									personelDenklestirme.setPlanlanSure(planlanSure);
 								// personelDenklestirme.setDevredenSure(puantajData.getDevredenSure());
 								if (personelDenklestirme.isGuncellendi())
-									pdksEntityController.saveOrUpdate(session, entityManager, personelDenklestirme);
+									session.saveOrUpdate(personelDenklestirme);
 								puantajData.setPersonelDenklestirme(personelDenklestirme);
 							}
 						}
@@ -21457,7 +21457,7 @@ public class OrtakIslemler implements Serializable {
 		if (session != null && denklestirmeAy != null && denklestirmeAy.getYemekMolasiYuzdesi() == null) {
 			try {
 				denklestirmeAy.setYemekMolasiYuzdesi(yemekMolasiYuzdesi);
-				pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeAy);
+				session.saveOrUpdate(denklestirmeAy);
 				session.flush();
 			} catch (Exception e) {
 			}
@@ -22229,7 +22229,7 @@ public class OrtakIslemler implements Serializable {
 											if (personelFazlaMesai.getHareketId() != null && bitZaman.after(basZaman)) {
 												vardiyaGun.addPersonelFazlaMesai(personelFazlaMesai);
 												if (updateSatus) {
-													pdksEntityController.saveOrUpdate(session, entityManager, personelFazlaMesai);
+													session.saveOrUpdate(personelFazlaMesai);
 													flush = true;
 												}
 
