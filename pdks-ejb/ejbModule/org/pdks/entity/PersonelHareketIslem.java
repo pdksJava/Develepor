@@ -187,4 +187,8 @@ public class PersonelHareketIslem extends BasePDKSObject implements Serializable
 		throw new InternalError();
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

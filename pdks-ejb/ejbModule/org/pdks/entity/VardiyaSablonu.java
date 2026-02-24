@@ -487,4 +487,8 @@ public class VardiyaSablonu extends BaseObject {
 
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

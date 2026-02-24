@@ -358,4 +358,8 @@ public class PdksDinamikRaporParametre extends BasePDKSObject implements Seriali
 		return object;
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

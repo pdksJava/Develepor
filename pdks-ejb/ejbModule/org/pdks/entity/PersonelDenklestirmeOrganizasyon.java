@@ -142,4 +142,8 @@ public class PersonelDenklestirmeOrganizasyon extends BasePDKSObject {
 
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

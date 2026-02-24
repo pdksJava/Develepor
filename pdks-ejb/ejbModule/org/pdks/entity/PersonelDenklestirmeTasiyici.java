@@ -472,4 +472,8 @@ public class PersonelDenklestirmeTasiyici extends BaseObject {
 	public void setPersonelDenklestirme(PersonelDenklestirme personelDenklestirme) {
 		this.personelDenklestirme = personelDenklestirme;
 	}
+
+	public String getTableName() {
+		return null;
+	}
 }

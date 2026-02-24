@@ -76,8 +76,11 @@ public class ServiceData extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		
-		
+
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 
 }

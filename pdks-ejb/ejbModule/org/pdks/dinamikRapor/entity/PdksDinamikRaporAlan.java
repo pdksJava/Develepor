@@ -258,4 +258,8 @@ public class PdksDinamikRaporAlan extends BasePDKSObject implements Serializable
 		return object;
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

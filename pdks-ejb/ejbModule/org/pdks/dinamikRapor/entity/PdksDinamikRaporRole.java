@@ -103,4 +103,8 @@ public class PdksDinamikRaporRole extends BasePDKSObject implements Serializable
 		return object;
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

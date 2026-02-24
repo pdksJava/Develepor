@@ -126,4 +126,8 @@ public class TesisBaglanti extends BasePDKSObject implements Serializable {
 
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

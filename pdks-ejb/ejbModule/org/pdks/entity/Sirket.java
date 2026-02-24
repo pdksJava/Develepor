@@ -339,4 +339,8 @@ public class Sirket extends BaseObject {
 
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

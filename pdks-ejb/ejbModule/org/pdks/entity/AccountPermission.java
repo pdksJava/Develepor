@@ -141,9 +141,13 @@ public class AccountPermission extends BasePDKSObject implements Serializable {
 	public Boolean getDurum() {
 		return status;
 	}
+
 	public void entityRefresh() {
-		
-		
+
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 
 }

@@ -26,7 +26,6 @@ public class Kapi extends BaseObject {
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final String COLUMN_NAME_KAPI_TIPI = "KAPI_TIPI_ID";
 	public static final String COLUMN_NAME_PDKS = "PDKS";
-	
 
 	// seam-gen attributes (you should probably edit these)
 	public static final String TIPI_KODU_GIRIS = "G";
@@ -134,8 +133,11 @@ public class Kapi extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
-		
+
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 
 }

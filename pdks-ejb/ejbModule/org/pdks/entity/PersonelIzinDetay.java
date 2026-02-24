@@ -125,4 +125,8 @@ public class PersonelIzinDetay extends BasePDKSObject implements Serializable, C
 
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

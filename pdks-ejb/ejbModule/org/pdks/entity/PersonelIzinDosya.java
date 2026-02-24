@@ -25,7 +25,7 @@ public class PersonelIzinDosya extends BasePDKSObject implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 3123614718217801665L;
-	
+
 	public static final String TABLE_NAME = "PERSONEL_IZIN_DOSYA";
 	public static final String COLUMN_NAME_IZIN = "PERSONEL_IZIN_ID";
 
@@ -63,8 +63,11 @@ public class PersonelIzinDosya extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		
-		
+
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 
 }

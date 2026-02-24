@@ -31,9 +31,9 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 	public static final String COLUMN_NAME_NORMAL_SURE = "NORMAL_SURE";
 	public static final String COLUMN_NAME_CALISMA_SURESI = "CALISMA_SURESI";
 	public static final String COLUMN_NAME_VARDIYA_EK_SAAT = "VARDIYA_EK_SAAT_ID";
-//	public static final String COLUMN_NAME_RESMI_TATIL_SURESI = "EK_RESMI_TATIL_SURESI";
-//	public static final String COLUMN_NAME_AKSAM_VARDIYA = "EK_AKSAM_VARDIYA_SURESI";
-//	public static final String COLUMN_NAME_RT_KANUNI_EKLENEN_SURE = "EK_RT_KANUNI_EKLENEN_SURE";
+	// public static final String COLUMN_NAME_RESMI_TATIL_SURESI = "EK_RESMI_TATIL_SURESI";
+	// public static final String COLUMN_NAME_AKSAM_VARDIYA = "EK_AKSAM_VARDIYA_SURESI";
+	// public static final String COLUMN_NAME_RT_KANUNI_EKLENEN_SURE = "EK_RT_KANUNI_EKLENEN_SURE";
 	public static final String COLUMN_NAME_GUNCELLEME_TARIHI = "GUNCELLEME_TARIHI";
 
 	private double normalSure = 0d, calismaSuresi = 0d, resmiTatilSure = 0d, aksamVardiyaSaatSayisi = 0d;
@@ -83,7 +83,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 	}
 
 	@Transient
-	//@Column(name = COLUMN_NAME_RT_KANUNI_EKLENEN_SURE, updatable = false, insertable = false)
+	// @Column(name = COLUMN_NAME_RT_KANUNI_EKLENEN_SURE, updatable = false, insertable = false)
 	public Double getResmiTatilKanunenEklenenSure() {
 		return resmiTatilKanunenEklenenSure;
 	}
@@ -95,7 +95,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 	}
 
 	@Transient
-	//@Column(name = COLUMN_NAME_AKSAM_VARDIYA, updatable = false, insertable = false)
+	// @Column(name = COLUMN_NAME_AKSAM_VARDIYA, updatable = false, insertable = false)
 	public double getAksamVardiyaSaatSayisi() {
 		return aksamVardiyaSaatSayisi;
 	}
@@ -167,6 +167,10 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 
 	public void entityRefresh() {
 
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 
 }

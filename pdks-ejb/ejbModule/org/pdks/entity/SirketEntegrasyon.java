@@ -159,4 +159,8 @@ public class SirketEntegrasyon extends BasePDKSObject implements Serializable {
 
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

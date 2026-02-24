@@ -203,7 +203,7 @@ public class PersonelIzinOnay extends BaseObject {
 						else if (izinSahibi.getPdksYonetici() != null)
 							yonetici = izinSahibi.getPdksYonetici().getPdksYonetici();
 					} catch (Exception e) {
-					 
+
 					}
 
 				}
@@ -216,7 +216,10 @@ public class PersonelIzinOnay extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
-		
+
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 }

@@ -17,7 +17,7 @@ public class IzinTipiBirlesikHaric extends BaseObject {
 	 */
 	private static final long serialVersionUID = 56230242920057020L;
 	public static final String TABLE_NAME = "IZINTIPIBIRLESIKHARIC";
-	
+
 	public static final String COLUMN_NAME_IZIN_ARALIK_SAAT = "IZIN_ARALIK_SAAT";
 	public static final String COLUMN_NAME_BIRLESIK_IZIN_TIPI = "BIRLESIK_IZIN_TIPI_ID";
 	public static final String COLUMN_NAME_IZIN_TIPI = "IZIN_TIPI_ID";
@@ -69,8 +69,11 @@ public class IzinTipiBirlesikHaric extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
 
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 
 }

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.TreeMap;
 
 import javax.faces.model.SelectItem;
-import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -101,8 +100,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 	@In
 	Identity identity;
-	@In(required = false, create = true)
-	EntityManager entityManager;
+
 	@In(required = false, create = true)
 	MailManager mailManager;
 	@In(required = false, create = true)
@@ -316,13 +314,13 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					if (cm.isIdariModelMi()) {
 						dm.setSure(sure);
 						dm.setToplamIzinSure(toplamIzinSure);
-						pdksEntityController.saveOrUpdate(session, entityManager, dm);
+						session.saveOrUpdate(dm);
 					}
 					if (calismaModeliAy.getSure() == 0.0d)
 						calismaModeliAy.setSure(sure);
 					if (calismaModeliAy.getToplamIzinSure() == 0.0d)
 						calismaModeliAy.setToplamIzinSure(toplamIzinSure);
-					pdksEntityController.saveOrUpdate(session, entityManager, calismaModeliAy);
+					session.saveOrUpdate(calismaModeliAy);
 					flush = true;
 				}
 
@@ -1451,7 +1449,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				tanim.setAciklamaen(bordroTipi.name());
 				tanim.setKodu(bordroTipi.value());
 				tanim.setErpKodu("izinGrup" + bordroTipi.value());
-				pdksEntityController.saveOrUpdate(session, entityManager, tanim);
+				session.saveOrUpdate(tanim);
 
 				list.add(tanim);
 			}
@@ -1812,7 +1810,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					denklestirmeBordro.setArtikAdet(artikAdet);
 					if (kaydet) {
 						if (denklestirmeBordro.isGuncellendi()) {
-							pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeBordro);
+							session.saveOrUpdate(denklestirmeBordro);
 							flush = true;
 						}
 
@@ -1842,7 +1840,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 								bordroDetay.setMiktar(detayMap.get(bordroDetayTipi));
 								if (kaydet) {
 									if (bordroDetay.isGuncellendi()) {
-										pdksEntityController.saveOrUpdate(session, entityManager, bordroDetay);
+										session.saveOrUpdate(bordroDetay);
 										flush = true;
 									}
 								}
@@ -1888,7 +1886,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 							denklestirmeOrganizasyon = new PersonelDenklestirmeOrganizasyon(personelDenklestirme);
 
 						if (denklestirmeOrganizasyon.getId() == null || denklestirmeOrganizasyon.isDegisti()) {
-							pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeOrganizasyon);
+							session.saveOrUpdate(denklestirmeOrganizasyon);
 							flush = true;
 						}
 						if (denklestirmeOrganizasyon.getId() != null) {
@@ -1908,7 +1906,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 									organizasyonDetay.setDeger(dinamikAlan.getTanimDeger());
 									if (organizasyonDetay.getId() != null || organizasyonDetay.getDeger() != null) {
 										if (organizasyonDetay.getId() == null || organizasyonDetay.isDegisti()) {
-											pdksEntityController.saveOrUpdate(session, entityManager, organizasyonDetay);
+											session.saveOrUpdate(organizasyonDetay);
 											flush = true;
 										}
 									}
@@ -1947,13 +1945,13 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			}
 			if (orgDetayMap != null && orgDetayMap.isEmpty() == false) {
 				for (String key : orgDetayMap.keySet()) {
-					session.delete(orgDetayMap.get(key));
+					pdksEntityController.deleteObject(session, ortakIslemler, orgDetayMap.get(key));
 				}
 				session.flush();
 			}
 			if (kaydet && !bordroDetayMap.isEmpty()) {
 				for (String key : bordroDetayMap.keySet()) {
-					session.delete(bordroDetayMap.get(key));
+					pdksEntityController.deleteObject(session, ortakIslemler, bordroDetayMap.get(key));
 				}
 				session.flush();
 			}
@@ -2214,14 +2212,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param entityManagerInput
-	 * @param pdksEntityControllerInput
+ 	 * @param pdksEntityControllerInput
 	 * @param ortakIslemlerInput
 	 * @param loginUser
 	 */
-	public void setInject(EntityManager entityManagerInput, PdksEntityController pdksEntityControllerInput, OrtakIslemler ortakIslemlerInput, User loginUser) {
-		if (entityManagerInput != null && entityManager == null)
-			this.entityManager = entityManagerInput;
+	public void setInject( PdksEntityController pdksEntityControllerInput, OrtakIslemler ortakIslemlerInput, User loginUser) {
 		if (pdksEntityControllerInput != null && pdksEntityController == null)
 			this.pdksEntityController = pdksEntityControllerInput;
 		if (ortakIslemlerInput != null && ortakIslemler == null)
@@ -2919,7 +2914,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			denklestirmeAy.setDenklestirmeTipi(DenklestirmeTipi.GECEN_AY_ODE.value());
 		denklestirmeAy.setFazlaMesaiMaxSure(fazlaMesaiMaxSure);
 		denklestirmeAy.setRadyolojiFazlaMesaiMaxSure(radyolojiFazlaMesaiMaxSure);
-		pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeAy);
+		session.saveOrUpdate(denklestirmeAy);
 		session.flush();
 
 	}

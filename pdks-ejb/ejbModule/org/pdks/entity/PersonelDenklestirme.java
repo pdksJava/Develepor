@@ -869,7 +869,7 @@ public class PersonelDenklestirme extends BaseObject {
 				if (iseBaslamaTarihi.before(donemBasi))
 					sonDurum = personelDenklestirmeGecenAy.getDurum() != null && personelDenklestirmeGecenAy.getDurum();
 			}
- 		}
+		}
 		return sonDurum;
 	}
 
@@ -961,6 +961,10 @@ public class PersonelDenklestirme extends BaseObject {
 
 	public void setPersonelDenklestirmeDevir(PersonelDenklestirmeDevir personelDenklestirmeDevir) {
 		this.personelDenklestirmeDevir = personelDenklestirmeDevir;
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 
 }

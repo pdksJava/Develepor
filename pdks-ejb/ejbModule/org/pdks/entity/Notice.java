@@ -19,7 +19,7 @@ import org.hibernate.annotations.FetchMode;
 import org.pdks.security.entity.User;
 import org.pdks.session.PdksUtil;
 
-@Entity 
+@Entity
 @Table(name = Notice.TABLE_NAME)
 public class Notice extends BasePDKSObject implements Serializable, Cloneable {
 	/**
@@ -130,7 +130,10 @@ public class Notice extends BasePDKSObject implements Serializable, Cloneable {
 	}
 
 	public void entityRefresh() {
-		
 
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 }

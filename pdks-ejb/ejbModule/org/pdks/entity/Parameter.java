@@ -34,7 +34,6 @@ public class Parameter extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final String COLUMN_NAME_HELP_DESK = "HDSK";
 	public static final String COLUMN_NAME_GUNCELLE = "GUNCELLE";
-	
 
 	private Integer version = 0;
 	private String name = "";
@@ -136,8 +135,11 @@ public class Parameter extends BasePDKSObject implements Serializable {
 	}
 
 	public void entityRefresh() {
-		
-		
+
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 
 }

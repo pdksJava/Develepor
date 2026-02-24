@@ -122,4 +122,8 @@ public class UserDigerOrganizasyon extends BasePDKSObject implements Serializabl
 
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

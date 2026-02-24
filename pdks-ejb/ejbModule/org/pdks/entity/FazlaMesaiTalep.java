@@ -314,4 +314,8 @@ public class FazlaMesaiTalep extends BaseObject {
 
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

@@ -158,4 +158,8 @@ public class PdksLog extends BasePDKSObject implements Serializable, Cloneable {
 
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

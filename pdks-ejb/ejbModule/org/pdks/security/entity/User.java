@@ -1202,4 +1202,8 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 		this.sessionSQL = sessionSQL;
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

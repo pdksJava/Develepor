@@ -36,8 +36,6 @@ public class DepartmanDenklestirmeDonemi extends BaseObject {
 	private Integer version = 0;
 
 	private DenklestirmeAy denklestirmeAy;
-	
- 
 
 	private Boolean denklestirmeAyDurum = Boolean.FALSE;
 
@@ -190,8 +188,11 @@ public class DepartmanDenklestirmeDonemi extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
-		
+
+	}
+
+	public String getTableName() {
+		return null;
 	}
 
 }

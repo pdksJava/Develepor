@@ -81,7 +81,10 @@ public class BolumKat extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
 
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 }

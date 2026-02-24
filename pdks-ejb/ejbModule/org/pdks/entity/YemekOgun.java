@@ -99,8 +99,11 @@ public class YemekOgun extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
 
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 
 }

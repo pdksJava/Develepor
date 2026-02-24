@@ -452,4 +452,8 @@ public class DenklestirmeAy extends BaseObject {
 		this.taseronTipi = taseronTipi;
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

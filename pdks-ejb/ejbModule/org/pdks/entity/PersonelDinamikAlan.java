@@ -103,8 +103,6 @@ public class PersonelDinamikAlan extends BasePDKSObject implements Serializable 
 		this.tanimDeger = tanimDeger;
 	}
 
-	
-
 	@Column(name = COLUMN_NAME_SAYISAL_DEGER)
 	public Double getSayisalDeger() {
 		return sayisalDeger;
@@ -113,10 +111,12 @@ public class PersonelDinamikAlan extends BasePDKSObject implements Serializable 
 	public void setSayisalDeger(Double sayisalDeger) {
 		this.sayisalDeger = sayisalDeger;
 	}
+
 	@Column(name = COLUMN_NAME_DURUM_SECIM)
 	public Boolean getDurumSecim() {
 		return durumSecim;
 	}
+
 	public void setDurumSecim(Boolean durumSecim) {
 		this.durumSecim = durumSecim;
 	}
@@ -180,7 +180,10 @@ public class PersonelDinamikAlan extends BasePDKSObject implements Serializable 
 	}
 
 	public void entityRefresh() {
-		
-		
+
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 }

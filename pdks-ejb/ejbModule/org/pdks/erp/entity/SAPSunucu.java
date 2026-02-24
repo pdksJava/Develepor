@@ -13,7 +13,7 @@ import org.pdks.entity.BasePDKSObject;
  * 
  */
 @Entity(name = SAPSunucu.TABLE_NAME)
-public class SAPSunucu  extends BasePDKSObject  implements Serializable {
+public class SAPSunucu extends BasePDKSObject implements Serializable {
 
 	/**
 	 * 
@@ -36,11 +36,9 @@ public class SAPSunucu  extends BasePDKSObject  implements Serializable {
 	public final static String SAP_MESSAGE_ABORT = "A";
 	public final static String SAP_MESSAGE_ERROR = "R";
 
-	private Integer  sunucuTipi = SUNUCU_TIPI_CANLI, durum = DURUM_AKTIF;
+	private Integer sunucuTipi = SUNUCU_TIPI_CANLI, durum = DURUM_AKTIF;
 	private String hostName, client, systemNumber, destinationName, dil = "TR", msHostName;
 	private Boolean aktif = Boolean.TRUE;
-
- 
 
 	@Column(name = "HOSTNAME")
 	public String getHostName() {
@@ -158,7 +156,10 @@ public class SAPSunucu  extends BasePDKSObject  implements Serializable {
 	}
 
 	public void entityRefresh() {
-		
-		
+
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 }

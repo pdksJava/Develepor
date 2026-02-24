@@ -195,7 +195,10 @@ public class VardiyaPlan extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
-		
+
+	}
+
+	public String getTableName() {
+		return null;
 	}
 }

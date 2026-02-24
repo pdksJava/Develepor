@@ -289,13 +289,17 @@ public class VardiyaHafta extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
+
 		if (this.getBaseObject() != null) {
 			VardiyaHafta vh = (VardiyaHafta) this.getBaseObject();
 			this.basTarih = vh.getBasTarih();
 			this.bitTarih = vh.getBasTarih();
-			this.vardiyaSablonu=vh.getVardiyaSablonu();
+			this.vardiyaSablonu = vh.getVardiyaSablonu();
 		}
 
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 }

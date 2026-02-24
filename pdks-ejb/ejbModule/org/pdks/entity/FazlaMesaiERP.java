@@ -238,4 +238,8 @@ public class FazlaMesaiERP extends BasePDKSObject implements Serializable {
 
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

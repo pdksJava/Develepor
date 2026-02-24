@@ -2060,4 +2060,8 @@ public class Vardiya extends BaseObject {
 
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

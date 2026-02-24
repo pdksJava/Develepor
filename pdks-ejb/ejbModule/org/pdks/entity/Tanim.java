@@ -49,7 +49,7 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	public static final String TIPI_IL = "IL";
 	public static final String TIPI_ILCE = "ILCE";
 	public static final String TIPI_MENU_BILESENI = "MENU_BILESENI";
-	
+
 	public static final String TIPI_DUYURU = "DUYURULAR";
 	public static final String TIPI_BAGLI_DEPARTMANLAR = "BAGLI_DEPARTMAN";
 	public static final String TIPI_KGS_ENTEGRASYON_ALAN = "KGS_ENTEGRASYON_ALAN";
@@ -307,8 +307,11 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	}
 
 	public void entityRefresh() {
-		
-		
+
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 
 }

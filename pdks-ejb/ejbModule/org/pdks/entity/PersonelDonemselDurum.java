@@ -98,7 +98,7 @@ public class PersonelDonemselDurum extends BaseObject {
 	public boolean isSutIzni() {
 		return personelDurumTipiId != null && PersonelDurumTipi.SUT_IZNI.value().equals(personelDurumTipiId);
 	}
-	
+
 	@Transient
 	public Boolean getIsAramaIzni() {
 		return personelDurumTipiId != null && PersonelDurumTipi.IS_ARAMA_IZNI.value().equals(personelDurumTipiId);
@@ -119,7 +119,10 @@ public class PersonelDonemselDurum extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
 
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 }

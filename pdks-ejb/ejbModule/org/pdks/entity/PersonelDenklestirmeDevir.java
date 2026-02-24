@@ -76,4 +76,8 @@ public class PersonelDenklestirmeDevir extends BaseObject implements Serializabl
 
 	}
 
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
 }

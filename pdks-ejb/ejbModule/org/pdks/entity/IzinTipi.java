@@ -32,8 +32,7 @@ public class IzinTipi extends BaseObject {
 	public static final String COLUMN_NAME_BAKIYE_DEVIR_TIPI = "BAKIYE_DEVIR_TIPI";
 	public static final String COLUMN_NAME_KOTA_BAKIYE = "KOTA_BAKIYE";
 	public static final String COLUMN_NAME_ONAYLAYAN_TIPI = "ONAYLAYAN_TIPI";
-	
-	
+
 	public static final String COLUMN_NAME_CUMA_CUMARTESI_TEK_IZIN_SAY = "CUMA_CUMARTESI_TEK_IZIN_SAY";
 	public static final String COLUMN_NAME_BASLANGIC_ZAMANI_CALISMA_OLUR = "BASLANGIC_ZAMANI_CALISMA_OLUR";
 	public static final String COLUMN_NAME_TATIL_SAY = "TATIL_SAY";
@@ -775,8 +774,11 @@ public class IzinTipi extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
-		
+
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 
 }

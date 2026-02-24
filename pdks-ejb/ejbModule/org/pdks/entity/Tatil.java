@@ -24,7 +24,7 @@ public class Tatil extends BaseObject {
 	private static final long serialVersionUID = -8647887629561748025L;
 	public static final String TATIL_TIPI_PERIYODIK = "P";
 	public static final String TATIL_TIPI_TEK_SEFER = "D";
-	
+
 	public static final String TABLE_NAME = "TATIL";
 
 	private Boolean yarimGun = Boolean.FALSE, arifeSonraVardiyaDenklestirmeVar = Boolean.FALSE;
@@ -229,8 +229,11 @@ public class Tatil extends BaseObject {
 	}
 
 	public void entityRefresh() {
-		
-		
+
+	}
+
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 
 }
