@@ -1910,6 +1910,10 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 											flush = true;
 										}
 									}
+								} else {
+									key = PersonelDenklestirmeOrganizasyonDetay.getKey(denklestirmeOrganizasyon, alan);
+									if (orgDetayMap.containsKey(key))
+										orgDetayMap.remove(key);
 								}
 							}
 						}
@@ -1945,7 +1949,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			}
 			Object islem = authenticatedUser == null || authenticatedUser.getEntityManager() == null ? ortakIslemler : authenticatedUser.getEntityManager();
 			if (islem != null && session != null) {
- 				if (orgDetayMap != null && orgDetayMap.isEmpty() == false) {
+				if (orgDetayMap != null && orgDetayMap.isEmpty() == false) {
 					for (String key : orgDetayMap.keySet()) {
 						pdksEntityController.deleteObject(session, islem, orgDetayMap.get(key));
 					}
