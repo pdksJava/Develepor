@@ -1881,11 +1881,12 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 								denklestirmeOrganizasyon.setDirektor(personel.getEkSaha1());
 								denklestirmeOrganizasyon.setBolum(personel.getEkSaha3());
 								denklestirmeOrganizasyon.setGorevTipi(personel.getGorevTipi());
+
 							}
-						} else {
+							orgMap.remove(personelDenklestirmeId);
+						} else
 							denklestirmeOrganizasyon = new PersonelDenklestirmeOrganizasyon(personelDenklestirme);
-							orgMap.put(personelDenklestirmeId, denklestirmeOrganizasyon);
-						}
+
 						if (denklestirmeOrganizasyon.getId() == null || denklestirmeOrganizasyon.isDegisti()) {
 							pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeOrganizasyon);
 							flush = true;
@@ -1900,9 +1901,9 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 									if (orgDetayMap.containsKey(key)) {
 										organizasyonDetay = orgDetayMap.get(key);
 										organizasyonDetay.setDegisti(false);
+										orgDetayMap.remove(key);
 									} else {
 										organizasyonDetay = new PersonelDenklestirmeOrganizasyonDetay(denklestirmeOrganizasyon, alan);
-										orgDetayMap.put(key, organizasyonDetay);
 									}
 									organizasyonDetay.setDeger(dinamikAlan.getTanimDeger());
 									if (organizasyonDetay.getId() != null || organizasyonDetay.getDeger() != null) {
