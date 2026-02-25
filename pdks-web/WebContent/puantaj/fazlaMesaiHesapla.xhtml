@@ -404,8 +404,7 @@
 				<h:panelGrid width="600" id="vardiyaPlanAciklama">
 					<ui:fragment rendered="#{authenticatedUser.admin}">
 						<SPAN style="text-align: left;"><b>Plan Id : </b> #{fazlaMesaiHesaplaHome.seciliVardiyaGun.id} ---> <b>Vardiya Id : </b>#{fazlaMesaiHesaplaHome.seciliVardiyaGun.vardiya.id}
-							<br></br> <br></br>
-						</SPAN>
+							<br></br> <br></br> </SPAN>
 					</ui:fragment>
 
 					<rich:dataTable rowClasses="acik,koyu" value="#{fazlaMesaiHesaplaHome.seciliVardiyaGun.orjinalHareketler}" var="hareket" rows="20"
@@ -538,10 +537,9 @@
 											</TR>
 											<TR class="koyu">
 												<TD nowrap="nowrap" align="left"><b>Onay Nedeni</b></TD>
-												<TD nowrap="nowrap" align="left"><b> : </b> <h:outputText value="#{hareket.personelFazlaMesai.fazlaMesaiOnayDurum.aciklama}" />
-												 <ui:fragment rendered="#{ortakIslemler.hasStringValue(hareket.personelFazlaMesai.nedenAciklama)}"><br />[ #{hareket.personelFazlaMesai.nedenAciklama} ]</ui:fragment>
-												
-												</TD>
+												<TD nowrap="nowrap" align="left"><b> : </b> <h:outputText value="#{hareket.personelFazlaMesai.fazlaMesaiOnayDurum.aciklama}" /> <ui:fragment
+														rendered="#{ortakIslemler.hasStringValue(hareket.personelFazlaMesai.nedenAciklama)}">
+														<br />[ #{hareket.personelFazlaMesai.nedenAciklama} ]</ui:fragment></TD>
 											</TR>
 											<TR class="acik">
 												<TD nowrap="nowrap" align="left"><b>Onay Zamanı</b></TD>
@@ -688,7 +686,10 @@
 								<f:facet name="header">
 									<h:outputText value="İzin Tipi" />
 								</f:facet>
-								<h:outputText value="#{izin.izinTipiAciklama}" />
+								<span id="izin#{izin.id}"> <h:outputText value="#{izin.izinTipiAciklama}" /></span>
+								<ui:fragment rendered="#{ortakIslemler.hasStringValue(izin.aciklama)}">
+									<rich:toolTip for="izin#{izin.id}">Açıklama : #{izin.aciklama}</rich:toolTip>
+								</ui:fragment>
 							</rich:column>
 							<rich:column style="text-align:center;">
 								<f:facet name="header">
