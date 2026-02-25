@@ -23387,107 +23387,117 @@ public class OrtakIslemler implements Serializable {
 		Double sure = personelIzin.getIzinSuresi();
 		Calendar cal = Calendar.getInstance();
 		String vardiyaDateStr = vardiyaGun.getVardiyaDateStr();
+		boolean saatlik = izinTipi.getSaatGosterilecek() && izinTipi.getGunGosterilecek().booleanValue() == false;
 		if (vardiyaDateStr.equals("20240801"))
 			logger.debug(personelIzin.getId());
 		try {
 			boolean girisYok = izinTipi.getPersonelGirisTipi() == null || izinTipi.getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK);
 			Tatil tatil = girisYok == false ? vardiyaGun.getTatil() : null;
+			if (vardiyaGun.getVardiyaDateStr().endsWith("0225"))
+				logger.debug("");
+			if (saatlik) {
+				if (islemVardiya.isCalisma() && personelIzin != null) {
+					if (islemVardiya.getVardiyaBasZaman().getTime() <= personelIzin.getBaslangicZamani().getTime() && islemVardiya.getVardiyaBitZaman().getTime() >= personelIzin.getBitisZamani().getTime())
+						vardiyaGun.addPersonelIzin(personelIzin);
+				}
+			} else {
 
-			boolean vardiyaIzin = vardiyaGun.getVardiya().isIzin();
-			if (personelIzin != null && vardiyaGun != null && islemVardiya != null && vardiyaGun.getPersonel().getId().equals(personelIzin.getIzinSahibi().getId())) {
-				BordroDetayTipi bordroDetayTipi = null;
-				if (vardiyaIzin && PdksUtil.hasStringValue(islemVardiya.getStyleClass()))
-					bordroDetayTipi = BordroDetayTipi.fromValue(islemVardiya.getStyleClass());
+				boolean vardiyaIzin = vardiyaGun.getVardiya().isIzin();
+				if (personelIzin != null && vardiyaGun != null && islemVardiya != null && vardiyaGun.getPersonel().getId().equals(personelIzin.getIzinSahibi().getId())) {
+					BordroDetayTipi bordroDetayTipi = null;
+					if (vardiyaIzin && PdksUtil.hasStringValue(islemVardiya.getStyleClass()))
+						bordroDetayTipi = BordroDetayTipi.fromValue(islemVardiya.getStyleClass());
 
-				if (vardiyaIzin == false || bordroDetayTipi == null) {
-					Date vardiyaDate = vardiyaGun.getVardiyaDate();
-					if (!personelIzin.getIzinTipi().getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK))
-						izinERPUpdate = false;
-					Date baslangicZamani = PdksUtil.getDate(personelIzin.getBaslangicZamani());
-					Date bitisZamani = PdksUtil.getDate(izinVardiyaKontrol ? tariheGunEkleCikar(cal, personelIzin.getBitisZamani(), -Integer.parseInt(izinVardiyaKontrolStr)) : personelIzin.getBitisZamani());
-					if (!izinERPUpdate) {
-						baslangicZamani = personelIzin.getBaslangicZamani();
-						bitisZamani = personelIzin.getBitisZamani();
-
-					}
-
-					boolean kontrol = false;
-					Date sonGun = PdksUtil.getDate(bitisZamani);
-					if (izinERPUpdate == false) {
-						kontrol = PdksUtil.getDate(bitisZamani).getTime() > islemVardiya.getVardiyaBasZaman().getTime() && baslangicZamani.getTime() <= islemVardiya.getVardiyaBitZaman().getTime();
-
-					} else
-						kontrol = bitisZamani.getTime() >= vardiyaDate.getTime() && baslangicZamani.getTime() <= vardiyaDate.getTime();
-					if (tatil != null) {
-						if (tatilSay)
-							tatil = null;
-
-					}
-					if (kontrol == false && !izinTipi.getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK) && islemVardiya.isCalisma() == false) {
-						kontrol = sonGun.after(vardiyaDate);
-					}
-					if (tatil == null && (kontrol || vardiyaIzin)) {
-						PersonelIzin izin = (PersonelIzin) personelIzin.clone();
-						int gunlukOldu = 0;
-						int bitisDeger = PdksUtil.tarihKarsilastirNumeric(bitisZamani, vardiyaDate);
-						int baslangicDeger = PdksUtil.tarihKarsilastirNumeric(vardiyaDate, izin.getBaslangicZamani());
-						if (bitisZamani.getTime() >= islemVardiya.getVardiyaBitZaman().getTime() || (izinVardiyaKontrol && bitisDeger != -1 && izin.isGunlukIzin())) {
-							++gunlukOldu;
-							if (islemVardiya.isCalisma() && !izinERPUpdate)
-								izin.setBitisZamani(islemVardiya.getVardiyaBitZaman());
-						}
-						if (baslangicZamani.getTime() <= islemVardiya.getVardiyaBasZaman().getTime() || (izinVardiyaKontrol && baslangicDeger != -1 && izin.isGunlukIzin())) {
-							++gunlukOldu;
-							if (islemVardiya.isCalisma() && !izinERPUpdate)
-								izin.setBaslangicZamani(islemVardiya.getVardiyaBasZaman());
-						}
-						boolean gunIzin = gunlukOldu == 2;
-						izin.setGunlukOldu(gunIzin);
-						PersonelIzin personelIzin2 = izin;
-						boolean izinDurum = true;
-
-						if (cumaCumartesiTekIzinSay && gunIzin && offVardiya && sure.intValue() == 1) {
-							if (vardiyaGun.getTatil() != null || PdksUtil.getDate(personelIzinInput.getBitisZamani()).getTime() == vardiyaGun.getVardiyaDate().getTime()) {
-								izinDurum = false;
-								gunIzin = false;
-							}
+					if (vardiyaIzin == false || bordroDetayTipi == null) {
+						Date vardiyaDate = vardiyaGun.getVardiyaDate();
+						if (!personelIzin.getIzinTipi().getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK))
+							izinERPUpdate = false;
+						Date baslangicZamani = PdksUtil.getDate(personelIzin.getBaslangicZamani());
+						Date bitisZamani = PdksUtil.getDate(izinVardiyaKontrol ? tariheGunEkleCikar(cal, personelIzin.getBitisZamani(), -Integer.parseInt(izinVardiyaKontrolStr)) : personelIzin.getBitisZamani());
+						if (!izinERPUpdate) {
+							baslangicZamani = personelIzin.getBaslangicZamani();
+							bitisZamani = personelIzin.getBitisZamani();
 
 						}
 
-						if (gunIzin) {
-							if (vardiyaDateStr.equals("20240822")) {
-								logger.debug("");
-							}
-							if (izinVardiyaKontrol) {
-								baslangicZamani = islemVardiya.getVardiyaBasZaman();
-								if (vardiyaGun.getOncekiVardiyaGun() != null && vardiyaGun.getOncekiVardiyaGun().getIzin() != null)
-									baslangicZamani = tariheGunEkleCikar(cal, vardiyaGun.getOncekiVardiyaGun().getIzin().getBaslangicZamani(), 1);
-								izin.setBaslangicZamani(baslangicZamani);
-								izin.setBitisZamani(islemVardiya.getVardiyaBitZaman());
-							}
-							if (islemVardiya.isOff() && izinTipi.isOffDahilMi() == false)
-								izinDurum = false;
-							if (islemVardiya.isHaftaTatil() && izinTipi.isHTDahil() == false) {
-								izinDurum = false;
-								// if (vardiyaGun.getCalismaModeli() != null && vardiyaGun.getCalismaModeli().isHaftaTatilSabitDegil())
-								// vardiyaGun.setIzinHT(izin);
-							}
+						boolean kontrol = false;
+						Date sonGun = PdksUtil.getDate(bitisZamani);
+						if (izinERPUpdate == false) {
+							kontrol = PdksUtil.getDate(bitisZamani).getTime() > islemVardiya.getVardiyaBasZaman().getTime() && baslangicZamani.getTime() <= islemVardiya.getVardiyaBitZaman().getTime();
 
-							if (!izinTipi.getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK) && islemVardiya.isCalisma() == false) {
-								izinDurum = sonGun.after(vardiyaDate);
-							}
-
-							if (izinDurum) {
-								personelIzin2 = izin.setVardiyaIzin(vardiyaGun);
-								personelIzin2.setOrjIzin(personelIzin);
-							}
-
-						} else {
-							// vardiyaGun.setIzin(null);
+						} else
+							kontrol = bitisZamani.getTime() >= vardiyaDate.getTime() && baslangicZamani.getTime() <= vardiyaDate.getTime();
+						if (tatil != null) {
+							if (tatilSay)
+								tatil = null;
 
 						}
-						if (izinDurum)
-							vardiyaGun.addPersonelIzin(personelIzin2);
+						if (kontrol == false && !izinTipi.getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK) && islemVardiya.isCalisma() == false) {
+							kontrol = sonGun.after(vardiyaDate);
+						}
+						if (tatil == null && (kontrol || vardiyaIzin)) {
+							PersonelIzin izin = (PersonelIzin) personelIzin.clone();
+							int gunlukOldu = 0;
+							int bitisDeger = PdksUtil.tarihKarsilastirNumeric(bitisZamani, vardiyaDate);
+							int baslangicDeger = PdksUtil.tarihKarsilastirNumeric(vardiyaDate, izin.getBaslangicZamani());
+							if (bitisZamani.getTime() >= islemVardiya.getVardiyaBitZaman().getTime() || (izinVardiyaKontrol && bitisDeger != -1 && izin.isGunlukIzin())) {
+								++gunlukOldu;
+								if (islemVardiya.isCalisma() && !izinERPUpdate)
+									izin.setBitisZamani(islemVardiya.getVardiyaBitZaman());
+							}
+							if (baslangicZamani.getTime() <= islemVardiya.getVardiyaBasZaman().getTime() || (izinVardiyaKontrol && baslangicDeger != -1 && izin.isGunlukIzin())) {
+								++gunlukOldu;
+								if (islemVardiya.isCalisma() && !izinERPUpdate)
+									izin.setBaslangicZamani(islemVardiya.getVardiyaBasZaman());
+							}
+							boolean gunIzin = gunlukOldu == 2;
+							izin.setGunlukOldu(gunIzin);
+							PersonelIzin personelIzin2 = izin;
+							boolean izinDurum = true;
+
+							if (cumaCumartesiTekIzinSay && gunIzin && offVardiya && sure.intValue() == 1) {
+								if (vardiyaGun.getTatil() != null || PdksUtil.getDate(personelIzinInput.getBitisZamani()).getTime() == vardiyaGun.getVardiyaDate().getTime()) {
+									izinDurum = false;
+									gunIzin = false;
+								}
+
+							}
+
+							if (gunIzin) {
+								if (vardiyaDateStr.equals("20240822")) {
+									logger.debug("");
+								}
+								if (izinVardiyaKontrol) {
+									baslangicZamani = islemVardiya.getVardiyaBasZaman();
+									if (vardiyaGun.getOncekiVardiyaGun() != null && vardiyaGun.getOncekiVardiyaGun().getIzin() != null)
+										baslangicZamani = tariheGunEkleCikar(cal, vardiyaGun.getOncekiVardiyaGun().getIzin().getBaslangicZamani(), 1);
+									izin.setBaslangicZamani(baslangicZamani);
+									izin.setBitisZamani(islemVardiya.getVardiyaBitZaman());
+								}
+								if (islemVardiya.isOff() && izinTipi.isOffDahilMi() == false)
+									izinDurum = false;
+								if (islemVardiya.isHaftaTatil() && izinTipi.isHTDahil() == false) {
+									izinDurum = false;
+									// if (vardiyaGun.getCalismaModeli() != null && vardiyaGun.getCalismaModeli().isHaftaTatilSabitDegil())
+									// vardiyaGun.setIzinHT(izin);
+								}
+
+								if (!izinTipi.getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK) && islemVardiya.isCalisma() == false) {
+									izinDurum = sonGun.after(vardiyaDate);
+								}
+
+								if (izinDurum) {
+									personelIzin2 = izin.setVardiyaIzin(vardiyaGun);
+									personelIzin2.setOrjIzin(personelIzin);
+								}
+
+							} else {
+								// vardiyaGun.setIzin(null);
+
+							}
+							if (izinDurum)
+								vardiyaGun.addPersonelIzin(personelIzin2);
+						}
 					}
 				}
 			}

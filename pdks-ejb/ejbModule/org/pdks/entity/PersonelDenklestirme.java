@@ -559,6 +559,25 @@ public class PersonelDenklestirme extends BaseObject {
 	 */
 	@Transient
 	public Double getMaksimumSure(double izinSure, double arifeToplamSure, List<VardiyaGun> vardiyalar) {
+		double cgsIzin = 0.0d;
+		for (VardiyaGun vardiyaGun : vardiyalar) {
+			if (vardiyaGun.isAyinGunu()) {
+				if (vardiyaGun.getIzin() == null && vardiyaGun.getIzinler() != null) {
+					for (PersonelIzin personelIzin : vardiyaGun.getIzinler()) {
+						if (personelIzin.getHesapTipi() != null && personelIzin.getHesapTipi().equals(PersonelIzin.HESAP_TIPI_SAAT)) {
+							IzinTipi izinTipi = personelIzin.getIzinTipi();
+							if (izinTipi.isEkleCGS())
+								izinSure += personelIzin.getIzinSuresi();
+							else if (izinTipi.isCikarCGS())
+								cgsIzin += personelIzin.getIzinSuresi();
+
+						}
+
+					}
+				}
+			}
+		}
+
 		CalismaModeli cm = calismaModeliAy != null ? calismaModeliAy.getCalismaModeli() : personel.getCalismaModeli();
 		PersonelDonemselDurum gebePersonelDonemselDurum = getGebePersonelDonemselDurum(), sutIzniPersonelDonemselDurum = getSutIzniPersonelDonemselDurum();
 		isAramaIzniSaat = 0.0d;
@@ -577,6 +596,7 @@ public class PersonelDenklestirme extends BaseObject {
 			if (izinSure > 0.0d && aylikSure >= izinSure)
 				aylikSure -= izinSure;
 		}
+
 		Double gunlukCalismaSuresi = calismaModeliAy != null ? AylikPuantaj.getGunlukCalismaSuresi() : null;
 		if (isSuaDurumu() || (cm != null && cm.isSua())) {
 			aylikSure = aylikSureHesapla(aylikSure - arifeToplamSure, calismaSuaSaati, gunlukCalismaSuresi) + arifeToplamSure;
@@ -590,6 +610,8 @@ public class PersonelDenklestirme extends BaseObject {
 			double isAramaSure = getIsAramaSure(vardiyalar);
 			maxSure -= isAramaSure;
 		}
+		if (cgsIzin > 0.0d)
+			maxSure -= cgsIzin;
 		return maxSure;
 	}
 

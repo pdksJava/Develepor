@@ -218,14 +218,20 @@
 									<ui:fragment rendered="#{personelIzinGirisiHome.seciliIzinTipi.saatGosterilecek and personelIzinGirisiHome.saatGosterilecek}">
 										<TABLE>
 											<TR>
-												<TD><rich:inputNumberSpinner minValue="0" maxValue="23" inputSize="2" value="#{personelIzinGirisiHome.baslangicSaat}" /></TD>
+												<TD><rich:inputNumberSpinner minValue="0" maxValue="23" inputSize="2" value="#{personelIzinGirisiHome.baslangicSaat}" id="baslangicSaat">
+														<a4j:support event="onchange" action="#{ortakIslemler.emtpyAjaxFunction()}" ajaxSingle="true" status="ajaxStatus"
+															reRender="baslangicSaat" />
+													</rich:inputNumberSpinner></TD>
 												<TD>:</TD>
-												<TD><rich:inputNumberSpinner minValue="0" maxValue="59" inputSize="2" step="5" value="#{personelIzinGirisiHome.baslangicDakika}" /></TD>
+												<TD><rich:inputNumberSpinner minValue="0" maxValue="59" inputSize="2" step="5" value="#{personelIzinGirisiHome.baslangicDakika}" id="baslangicDakika">
+														<a4j:support event="onchange" action="#{ortakIslemler.emtpyAjaxFunction()}" ajaxSingle="true" status="ajaxStatus"
+															reRender="baslangicDakika" />
+													</rich:inputNumberSpinner></TD>
 											</TR>
 										</TABLE>
 									</ui:fragment>
 								</s:decorate>
-								<s:decorate template="/layout/edit.xhtml">
+								<s:decorate template="/layout/edit.xhtml" id="bitisZamani">
 									<ui:define name="label">#{ortakIslemler.bitisZamaniAciklama()}</ui:define>
 									<rich:calendar datePattern="#{authenticatedUser.dateFormat}" value="#{personelIzinGirisiHome.instance.bitisZamani}" showWeekDaysBar="false"
 										showWeeksBar="false" disabled="#{personelIzinGirisiHome.seciliIzinTipi == null}">
@@ -237,9 +243,15 @@
 									<ui:fragment rendered="#{personelIzinGirisiHome.seciliIzinTipi.saatGosterilecek and personelIzinGirisiHome.saatGosterilecek}">
 										<TABLE>
 											<TR>
-												<TD><rich:inputNumberSpinner minValue="0" maxValue="23" inputSize="2" value="#{personelIzinGirisiHome.bitisSaat}" /></TD>
+												<TD><rich:inputNumberSpinner minValue="0" maxValue="23" inputSize="2" value="#{personelIzinGirisiHome.bitisSaat}" id="bitisSaat">
+														<a4j:support event="onchange" action="#{ortakIslemler.emtpyAjaxFunction()}" ajaxSingle="true" status="ajaxStatus"
+															reRender="bitisSaat" />
+													</rich:inputNumberSpinner></TD>
 												<TD>:</TD>
-												<TD><rich:inputNumberSpinner minValue="0" maxValue="59" inputSize="2" step="5" value="#{personelIzinGirisiHome.bitisDakika}" /></TD>
+												<TD><rich:inputNumberSpinner minValue="0" maxValue="59" inputSize="2" step="5" value="#{personelIzinGirisiHome.bitisDakika}" id="bitisDakika">
+														<a4j:support event="onchange" action="#{ortakIslemler.emtpyAjaxFunction()}" ajaxSingle="true" status="ajaxStatus"
+															reRender="bitisDakika" />
+													</rich:inputNumberSpinner></TD>
 											</TR>
 										</TABLE>
 									</ui:fragment>

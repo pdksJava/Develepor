@@ -482,7 +482,13 @@ public class VardiyaGun extends BaseObject {
 			this.setIzin(personelIzin);
 			personelIzin.setGunlukOldu(Boolean.TRUE);
 		}
-		izinler.add(personelIzin);
+		boolean ekle = true;
+		for (PersonelIzin izin : izinler) {
+			if (personelIzin.getId() != null && izin.getId().equals(personelIzin.getId()))
+				ekle = false;
+		}
+		if (ekle)
+			izinler.add(personelIzin);
 	}
 
 	@Transient
