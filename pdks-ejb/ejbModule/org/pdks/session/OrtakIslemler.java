@@ -19873,6 +19873,7 @@ public class OrtakIslemler implements Serializable {
 					int hafta = 0;
 					int toplamCalismaGunSayisi = 0, offGunSayisi = 0;
 					double izinToplam = 0;
+					List<VardiyaGun> vardiyalar = new ArrayList<VardiyaGun>();
 					for (VardiyaHafta pdksVardiyaHafta : vardiyaHaftas) {
 						int calismaGunSayisi = 0, raporGunSayisi = 0;
 
@@ -19882,7 +19883,7 @@ public class OrtakIslemler implements Serializable {
 						List<VardiyaGun> haftaVardiyaGunler = pdksVardiyaHafta.getVardiyaGunler();
 
 						for (VardiyaGun pdksVardiyaGun : haftaVardiyaGunler) {
-
+							vardiyalar.add(pdksVardiyaGun);
 							Date izinTarihKontrolTarihi = null;
 							if (pdksIzinTarihKontrolTarihi != null && pdksIzinTarihKontrolTarihi.getTime() <= pdksVardiyaGun.getVardiyaDate().getTime())
 								izinTarihKontrolTarihi = pdksVardiyaGun.getVardiyaDate();
@@ -20386,7 +20387,8 @@ public class OrtakIslemler implements Serializable {
 					}
 
 					double saatToplami = planlanSure + haftaTatilDigerSure - puantajData.getHaftaCalismaSuresi() + (resmiTatilEkle || resmiTatilVardiyaEkle ? resmiTatilSure - gecenAyResmiTatilSure : 0.0d);
-
+					saatToplami += PersonelDenklestirme.getSaatlikIzin(vardiyalar, false);
+					vardiyalar = null;
 					puantajData.setSaatToplami(saatToplami);
 					puantajData.setUcretiOdenenMesaiSure(ucretiOdenenMesaiSure);
 					puantajData.planSureHesapla(tatilGunleriMap);

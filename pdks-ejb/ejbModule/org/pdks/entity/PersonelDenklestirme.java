@@ -554,30 +554,45 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	/**
+	 * @param vardiyalar
+	 * @param cgsDus
+	 * @return
+	 */
+	public static Double getSaatlikIzin(List<VardiyaGun> vardiyalar, boolean cgsDus) {
+		double izinSure = 0.0d;
+		if (vardiyalar != null) {
+			for (VardiyaGun vardiyaGun : vardiyalar) {
+				if (vardiyaGun.isAyinGunu()) {
+					if (vardiyaGun.getIzin() == null && vardiyaGun.getIzinler() != null) {
+						for (PersonelIzin personelIzin : vardiyaGun.getIzinler()) {
+							if (personelIzin.getHesapTipi() != null && personelIzin.getHesapTipi().equals(PersonelIzin.HESAP_TIPI_SAAT)) {
+								IzinTipi izinTipi = personelIzin.getIzinTipi();
+								double sure = personelIzin.getIzinSuresi();
+								if (cgsDus == false) {
+									if (izinTipi.isEkleCGS()) {
+										izinSure += sure;
+										vardiyaGun.addCalismaSuresi(sure);
+									}
+
+								} else if (cgsDus) {
+									if (izinTipi.isCikarCGS())
+										izinSure += sure;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return izinSure;
+	}
+
+	/**
 	 * @param izinSure
 	 * @return
 	 */
 	@Transient
 	public Double getMaksimumSure(double izinSure, double arifeToplamSure, List<VardiyaGun> vardiyalar) {
-		double cgsIzin = 0.0d;
-		for (VardiyaGun vardiyaGun : vardiyalar) {
-			if (vardiyaGun.isAyinGunu()) {
-				if (vardiyaGun.getIzin() == null && vardiyaGun.getIzinler() != null) {
-					for (PersonelIzin personelIzin : vardiyaGun.getIzinler()) {
-						if (personelIzin.getHesapTipi() != null && personelIzin.getHesapTipi().equals(PersonelIzin.HESAP_TIPI_SAAT)) {
-							IzinTipi izinTipi = personelIzin.getIzinTipi();
-							if (izinTipi.isEkleCGS())
-								izinSure += personelIzin.getIzinSuresi();
-							else if (izinTipi.isCikarCGS())
-								cgsIzin += personelIzin.getIzinSuresi();
-
-						}
-
-					}
-				}
-			}
-		}
-
 		CalismaModeli cm = calismaModeliAy != null ? calismaModeliAy.getCalismaModeli() : personel.getCalismaModeli();
 		PersonelDonemselDurum gebePersonelDonemselDurum = getGebePersonelDonemselDurum(), sutIzniPersonelDonemselDurum = getSutIzniPersonelDonemselDurum();
 		isAramaIzniSaat = 0.0d;
@@ -610,8 +625,8 @@ public class PersonelDenklestirme extends BaseObject {
 			double isAramaSure = getIsAramaSure(vardiyalar);
 			maxSure -= isAramaSure;
 		}
-		if (cgsIzin > 0.0d)
-			maxSure -= cgsIzin;
+		maxSure -= getSaatlikIzin(vardiyalar, true);
+
 		return maxSure;
 	}
 
