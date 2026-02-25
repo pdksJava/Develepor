@@ -625,7 +625,8 @@ public class PersonelDenklestirme extends BaseObject {
 			double isAramaSure = getIsAramaSure(vardiyalar);
 			maxSure -= isAramaSure;
 		}
-		maxSure -= getSaatlikIzin(vardiyalar, true);
+		if (cm != null && cm.isFazlaMesaiVarMi())
+			maxSure -= getSaatlikIzin(vardiyalar, true);
 
 		return maxSure;
 	}

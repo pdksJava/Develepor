@@ -20387,7 +20387,8 @@ public class OrtakIslemler implements Serializable {
 					}
 
 					double saatToplami = planlanSure + haftaTatilDigerSure - puantajData.getHaftaCalismaSuresi() + (resmiTatilEkle || resmiTatilVardiyaEkle ? resmiTatilSure - gecenAyResmiTatilSure : 0.0d);
-					saatToplami += PersonelDenklestirme.getSaatlikIzin(vardiyalar, false);
+					if (calismaModeli != null && calismaModeli.isFazlaMesaiVarMi())
+						saatToplami += PersonelDenklestirme.getSaatlikIzin(vardiyalar, false);
 					vardiyalar = null;
 					puantajData.setSaatToplami(saatToplami);
 					puantajData.setUcretiOdenenMesaiSure(ucretiOdenenMesaiSure);

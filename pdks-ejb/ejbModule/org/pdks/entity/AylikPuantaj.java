@@ -488,8 +488,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		}
 		double arifeToplamSure = getArifeToplamSure(tatilGunleriMap, calismaModeli);
 		Double hesaplananSure = (personelDenklestirme != null ? personelDenklestirme.getMaksimumSure(izinSure, arifeToplamSure, vardiyalar) : 0d);
-
-		if (hesaplananSure < 0)
+ 		if (hesaplananSure < 0)
 			hesaplananSure = 0.0d;
 		if (tatilGunleriMap != null && vardiyalar != null && !vardiyalar.isEmpty()) {
 			double yarimGun = personelDenklestirme.getCalismaModeli().getArife();
