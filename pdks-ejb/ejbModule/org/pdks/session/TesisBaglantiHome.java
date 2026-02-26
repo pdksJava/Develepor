@@ -93,7 +93,7 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 			try {
 				session.flush();
 				if (sirala > 0)
-					pdksEntityController.savePrepareTableID(true, TesisBaglanti.class, entityManager, session);
+					pdksEntityController.savePrepareTableID(true, null, TesisBaglanti.class, ortakIslemler, session);
 				if (kayit > 0)
 					PdksUtil.addMessageInfo("Kayıt" + (kayit == 1 ? "" : "lar") + " başarılı.");
 				else
@@ -168,7 +168,7 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		String sayfa = "";
 		if (ortakIslemler.getTesisDurumu()) {
 			if (personelTipiList == null)

@@ -1031,88 +1031,164 @@ public class PdksEntityController implements Serializable {
 
 	/**
 	 * @param single
+	 * @param object
 	 * @param class1
-	 * @param em1
+	 * @param ortakIslemler
 	 * @param session
 	 * @return
 	 * @throws Exception
 	 */
-	public Long savePrepareTableID(boolean single, Class class1, EntityManager em1, Session session) throws Exception {
+	public Long savePrepareTableID(boolean single, BasePDKSObject object, Class class1, OrtakIslemler ortakIslemler, Session session) throws Exception {
+		Long kayitAdet = null;
+		String tableName = object != null ? object.getTableName() : null;
 		HashMap fields = new HashMap();
 		if (session != null)
 			fields.put(MAP_KEY_SESSION, session);
-		List list = getObjectByInnerObjectList(fields, class1);
-		long kayitAdet = list.size();
-		if (kayitAdet > 0) {
-			if (kayitAdet > 1)
-				list = PdksUtil.sortListByAlanAdi(list, "id", true);
-			Long id = (Long) PdksUtil.getMethodObject(list.get(0), "getId", null);
-			if (id.longValue() != kayitAdet) {
-				kayitAdet = 0;
-				list = PdksUtil.sortListByAlanAdi(list, "id", false);
-				List saveList = new ArrayList(), removeList = new ArrayList();
-				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-					Object object = (Object) iterator.next();
-					kayitAdet++;
-					id = (Long) PdksUtil.getMethodObject(object, "getId", null);
-					if (id.longValue() != kayitAdet) {
-						removeList.add(object);
-						BasePDKSObject basePDKSObject = (BasePDKSObject) PdksUtil.getMethodObject(object, "cloneEmpty", null);
-						if (basePDKSObject != null)
-							saveList.add(basePDKSObject);
-					}
+		List list = null;
+		Long id = object != null ? object.getId() : null;
+		if (id != null) {
+			fields.put("id>", id);
+			list = getObjectByInnerObjectListInLogic(fields, class1);
+		} else
+			list = getObjectByInnerObjectList(fields, class1);
+		int durum = 0;
+		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+		if (ortakIslemler != null) {
+			kayitAdet = 0L;
+			kayitAdet = null;
+			String fn = "FN_TABLE_UPDATE_ID";
+			if (ortakIslemler.isExisFunction(fn, session)) {
+				if (list.isEmpty() == false) {
+					BasePDKSObject object2 = (BasePDKSObject) list.get(0);
+					if (tableName == null)
+						tableName = object2.getTableName();
 				}
-				if (!saveList.isEmpty() && removeList.size() == saveList.size()) {
-					kayitAdet = saveList.size();
-					for (Object object : removeList) {
-						if (object != null) {
-							id = (Long) PdksUtil.getMethodObject(object, "getId", null);
-							if (id != null) {
-								deleteObject(session, em1, object);
-							} else {
-								saveList.clear();
-							}
+				veriMap.put("tableName", tableName);
+				logger.info(veriMap.toString());
+				List list2 = execFNList(session, veriMap, fn);
+				if (list2 != null && list2.isEmpty() == false)
+					durum = ((Integer) list2.get(0));
+				if (durum != -1) {
+					if (list.size() > 1)
+						list = PdksUtil.sortListByAlanAdi(list, "id", false);
+					kayitAdet = null;
+					if (durum == 1) {
+						veriMap.clear();
+						String sp = "SP_UPDATE_OBJECT_BY_ID";
+						if (ortakIslemler.isExisStoreProcedure(sp, session)) {
+							kayitAdet = (long) list.size();
+							if (kayitAdet > 0) {
+								if (id == null) {
+									id = ((BasePDKSObject) list.get(0)).getId();
+									if (id.longValue() > 1)
+										id = 1L;
+								}
+								kayitAdet = 0L;
+
+								while (list.size() > 1) {
+									BasePDKSObject basePDKSObject = (BasePDKSObject) list.get(0);
+									if (tableName == null)
+										tableName = basePDKSObject.getTableName();
+									Long ilkId = basePDKSObject.getId();
+									if (ilkId.equals(id) == false) {
+										long fark = ilkId.longValue() - id.longValue();
+										if (fark > list.size())
+											fark = list.size();
+
+										while (list.size() > 1 && fark > 0) {
+											int sonIndex = list.size() - 1;
+											object = (BasePDKSObject) list.get(sonIndex);
+											Long sonId = object.getId();
+											veriMap.put("id", id);
+											veriMap.put("sonId", sonId);
+											veriMap.put("tableName", tableName);
+											logger.info(veriMap.toString());
+											execSP(session, veriMap, sp);
+											session.flush();
+											veriMap.clear();
+											list.remove(sonIndex);
+											id = id.longValue() + 1L;
+											++kayitAdet;
+											--fark;
+										}
+										id = ilkId;
+									}
+									list.remove(0);
+									id = id.longValue() + 1L;
+								}
+							} else if (single)
+								kayitAdet = 1L;
+
 						}
 
 					}
-					session.flush();
-					session.clear();
-					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-					if (session != null)
-						veriMap.put(MAP_KEY_SESSION, session);
-					String sp = "SP_CHECKIDENT_VIEW";
-					execSP(session, veriMap, sp);
-					session.flush();
-					session.clear();
-					for (Object object : saveList) {
-						if (object != null) {
-							id = (Long) PdksUtil.getMethodObject(object, "getId", null);
-							if (id == null) {
-								save(object, session);
-							}
-						}
 
-					}
-					session.flush();
-				}
-			} else {
-				if (single) {
-					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-					if (session != null)
-						veriMap.put(MAP_KEY_SESSION, session);
-					String sp = "SP_CHECKIDENT_VIEW";
-					execSP(session, veriMap, sp);
-					session.flush();
 				}
 
-				kayitAdet = 0L;
 			}
+		}
+		if (durum != 1 || kayitAdet == null) {
+			if (ortakIslemler == null && list.size() > 1)
+				list = PdksUtil.sortListByAlanAdi(list, "id", false);
+			kayitAdet = (long) list.size();
+			if (kayitAdet > 0) {
+				if (id == null) {
+					id = ((BasePDKSObject) list.get(0)).getId();
+					if (id.longValue() > 1)
+						id = 1L;
+				}
+				kayitAdet = 0L;
+				List<BasePDKSObject> saveList = new ArrayList<BasePDKSObject>(), deleteList = new ArrayList<BasePDKSObject>();
+				while (list.size() > 1) {
+					BasePDKSObject basePDKSObject = (BasePDKSObject) list.get(0);
+					if (tableName == null)
+						tableName = basePDKSObject.getTableName();
+					Long ilkId = basePDKSObject.getId();
+					if (ilkId.equals(id) == false) {
+						long fark = ilkId.longValue() - id.longValue();
+						if (fark > list.size())
+							fark = list.size();
+						saveList.clear();
+						deleteList.clear();
+
+						while (list.size() > 1 && fark > 0) {
+							int sonIndex = list.size() - 1;
+							BasePDKSObject deleteOrj = (BasePDKSObject) list.get(sonIndex);
+							deleteList.add(deleteOrj);
+							BasePDKSObject saveObject = (BasePDKSObject) deleteOrj.cloneEmpty();
+							saveObject.setId(id);
+							saveList.add(saveObject);
+							list.remove(sonIndex);
+							id = id.longValue() + 1L;
+							++kayitAdet;
+							--fark;
+						}
+						for (BasePDKSObject object2 : deleteList) {
+							session.delete(object2);
+						}
+						for (BasePDKSObject object2 : saveList) {
+							session.saveOrUpdate(object2);
+						}
+						session.flush();
+						id = ilkId;
+					}
+					list.remove(0);
+					id = id.longValue() + 1L;
+				}
+				saveList = null;
+				deleteList = null;
+			} else if (single)
+				kayitAdet = 1L;
 
 		}
-		list = null;
-		if (kayitAdet > 0)
-			logger.info(kayitAdet + " " + class1.getName() + " düzenlendi.");
+		if (kayitAdet != null && kayitAdet > 0) {
+			veriMap.clear();
+			execSP(session, veriMap, "SP_CHECKIDENT_VIEW");
+			session.flush();
+		}
+		veriMap = null;
 		return kayitAdet;
+
 	}
 
 	/**

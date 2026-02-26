@@ -434,7 +434,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 				session.flush();
 				if (sirala) {
 					try {
-						pdksEntityController.savePrepareTableID(true, CalismaModeliVardiya.class, entityManager, session);
+						pdksEntityController.savePrepareTableID(true, null, CalismaModeliVardiya.class, ortakIslemler, session);
 					} catch (Exception e) {
 					}
 					session.flush();

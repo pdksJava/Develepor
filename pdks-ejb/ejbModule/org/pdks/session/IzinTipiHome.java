@@ -405,7 +405,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 				session.flush();
 				if (sirala) {
 					try {
-						pdksEntityController.savePrepareTableID(true, IzinTipiMailAdres.class, entityManager, session);
+						pdksEntityController.savePrepareTableID(true, null, IzinTipiMailAdres.class, ortakIslemler, session);
 					} catch (Exception e) {
 					}
 					session.flush();
@@ -600,7 +600,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		durumCGSList = ortakIslemler.getSelectItemList("durumCGS", authenticatedUser);
 		durumCGSList.add(new SelectItem(IzinTipi.CGS_DURUM_YOK, IzinTipi.getDurumCGSAciklama(IzinTipi.CGS_DURUM_YOK)));
 		durumCGSList.add(new SelectItem(IzinTipi.CGS_DURUM_CIKAR, IzinTipi.getDurumCGSAciklama(IzinTipi.CGS_DURUM_CIKAR)));

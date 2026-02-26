@@ -1303,11 +1303,11 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						if (organizasyonIptal || roleIptal) {
 							try {
 								if (organizasyonIptal)
-									pdksEntityController.savePrepareTableID(true, UserDigerOrganizasyon.class, entityManager, session);
+									pdksEntityController.savePrepareTableID(true, null, UserDigerOrganizasyon.class, ortakIslemler, session);
 								if (roleIptal)
-									pdksEntityController.savePrepareTableID(true, UserRoles.class, entityManager, session);
+									pdksEntityController.savePrepareTableID(true, null, UserRoles.class, ortakIslemler, session);
 							} catch (Exception e) {
-							 
+
 							}
 							session.flush();
 						}
@@ -2544,7 +2544,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public void fillPersonelList() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, "personelListesi");
+		ortakIslemler.setUserMenuItemTime(entityManager, session, "personelListesi");
 		personelDurumMap.clear();
 		bakiyeTakipEdiliyor = ortakIslemler.getBakiyeTakipEdiliyor(session);
 		sanalPersonelAciklama = ortakIslemler.sanalPersonelAciklama();
@@ -3718,7 +3718,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 
 		tanimsizPersonelList = ortakIslemler.getSelectItemList("personel", authenticatedUser);
 		fazlaMesaiIzinKullan = Boolean.FALSE;
@@ -4567,7 +4567,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	public void detaysizSayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, "detaysizPersonelTanimlama");
+		ortakIslemler.setUserMenuItemTime(entityManager, session, "detaysizPersonelTanimlama");
 		setPdks(Boolean.FALSE);
 		setTanimsizPersonelList(new ArrayList<PersonelView>());
 		fillGorevTipiTanimList();

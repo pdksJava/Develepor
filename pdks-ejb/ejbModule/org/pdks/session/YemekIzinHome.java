@@ -117,7 +117,7 @@ public class YemekIzinHome extends EntityHome<YemekIzin> implements Serializable
 			session.flush();
 			if (iptal) {
 				try {
-					pdksEntityController.savePrepareTableID(true, VardiyaYemekIzin.class, entityManager, session);
+					pdksEntityController.savePrepareTableID(true, null, VardiyaYemekIzin.class, ortakIslemler, session);
 				} catch (Exception e) {
 				}
 				session.flush();
@@ -210,7 +210,7 @@ public class YemekIzinHome extends EntityHome<YemekIzin> implements Serializable
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		fillPdksYemekList();
 
 	}

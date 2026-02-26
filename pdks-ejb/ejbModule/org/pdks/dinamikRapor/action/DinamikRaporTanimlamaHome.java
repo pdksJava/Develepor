@@ -89,7 +89,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		if (raporTipiList == null)
 			raporTipiList = new ArrayList<SelectItem>();
 		else
@@ -432,7 +432,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		session.delete(deleteValue);
 		session.flush();
 		try {
-			pdksEntityController.savePrepareTableID(true, PdksDinamikRaporParametre.class, entityManager, session);
+			pdksEntityController.savePrepareTableID(true, deleteValue, PdksDinamikRaporParametre.class, ortakIslemler, session);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -449,7 +449,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		session.delete(deleteValue);
 		session.flush();
 		try {
-			pdksEntityController.savePrepareTableID(true, PdksDinamikRaporAlan.class, entityManager, session);
+			pdksEntityController.savePrepareTableID(true, deleteValue, PdksDinamikRaporAlan.class, ortakIslemler, session);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

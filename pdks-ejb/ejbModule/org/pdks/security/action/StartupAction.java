@@ -317,8 +317,9 @@ public class StartupAction implements Serializable {
 			list.add(VardiyaHafta.class);
 			list.add(VardiyaYemekIzin.class);
 			list.add(YemekKartsiz.class);
+			
 			for (Class class1 : list) {
-				long adet = pdksEntityController.savePrepareTableID(false, class1, entityManager, session);
+				long adet = pdksEntityController.savePrepareTableID(false, null, class1, null, session);
 				toplamAdet += adet;
 				if (adet > 0)
 					session.flush();
@@ -351,7 +352,7 @@ public class StartupAction implements Serializable {
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		try {
 			veriMap.put("ekranYaz", 0);
- 			List hatalar = pdksEntityController.execSPList(session, veriMap, "SP_PDKS_VIEW_REFRESH", null);
+			List hatalar = pdksEntityController.execSPList(session, veriMap, "SP_PDKS_VIEW_REFRESH", null);
 			if (hatalar != null && !hatalar.isEmpty()) {
 				Clob clobComment = (Clob) hatalar.get(0);
 				String aciklama = PdksUtil.replaceAllManuel(PdksUtil.StringToByClob(clobComment), "|", "\n");
