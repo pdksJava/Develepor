@@ -248,12 +248,6 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 		startupAction.fillSirketList(session);
 		erpDatabaseDurum = ortakIslemler.isExisStoreProcedure(Sirket.SP_NAME_SP_ERP_VIEW_ALTER_CREATE, session);
 		setSirketList(sirketList);
-		try {
-			pdksEntityController.savePrepareTableID(false, null, PersonelHareket.class, session);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-
 	}
 
 	public void fillBagliOlduguDepartmanTanimList() {

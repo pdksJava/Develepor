@@ -319,11 +319,17 @@ public class StartupAction implements Serializable {
 			list.add(VardiyaHafta.class);
 			list.add(VardiyaYemekIzin.class);
 			list.add(YemekKartsiz.class);
-			for (Class class1 : list) {
-				long adet = pdksEntityController.savePrepareTableID(false, null, class1, session);
-				toplamAdet += adet;
-				if (adet > 0)
-					session.flush();
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				Class class1 = (Class) iterator.next();
+				Long adet = pdksEntityController.savePrepareTableID(false, null, class1, session);
+				if (adet != null) {
+					toplamAdet += adet;
+					if (adet > 0)
+						session.flush();
+				} else
+					logger.error(class1.getName());
+
+				iterator.remove();
 			}
 		} catch (Exception e) {
 			logger.error(e);
