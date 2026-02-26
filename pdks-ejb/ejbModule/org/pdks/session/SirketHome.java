@@ -27,7 +27,6 @@ import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.Departman;
 import org.pdks.entity.PdksPersonelView;
 import org.pdks.entity.Personel;
-import org.pdks.entity.PersonelHareket;
 import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.SirketEntegrasyon;

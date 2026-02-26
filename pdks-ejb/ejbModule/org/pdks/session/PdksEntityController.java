@@ -1175,60 +1175,6 @@ public class PdksEntityController implements Serializable {
 					}
 
 				}
-				if (durum != 1 || kayitAdet == null) {
-					if (list.size() > 1)
-						list = PdksUtil.sortListByAlanAdi(list, "id", false);
-					kayitAdet = (long) list.size();
-					if (kayitAdet > 0) {
-						if (id == null) {
-							id = ((BasePDKSObject) list.get(0)).getId();
-							if (id.longValue() > 1)
-								id = 1L;
-						}
-						kayitAdet = 0L;
-						List<BasePDKSObject> saveList = new ArrayList<BasePDKSObject>(), deleteList = new ArrayList<BasePDKSObject>();
-						while (list.size() > 1) {
-							BasePDKSObject basePDKSObject = (BasePDKSObject) list.get(0);
-							if (tableName == null)
-								tableName = basePDKSObject.getTableName();
-							Long ilkId = basePDKSObject.getId();
-							if (ilkId.equals(id) == false) {
-								long fark = ilkId.longValue() - id.longValue();
-								if (fark > list.size())
-									fark = list.size();
-								saveList.clear();
-								deleteList.clear();
-								while (list.size() > 1 && fark > 0) {
-									int sonIndex = list.size() - 1;
-									BasePDKSObject deleteOrj = (BasePDKSObject) list.get(sonIndex);
-									deleteList.add(deleteOrj);
-									BasePDKSObject saveObject = (BasePDKSObject) deleteOrj.cloneEmpty();
-									saveObject.setId(id);
-									saveList.add(saveObject);
-									list.remove(sonIndex);
-									id = id.longValue() + 1L;
-									++kayitAdet;
-									--fark;
-								}
-								for (BasePDKSObject object2 : deleteList) {
-									session.delete(object2);
-								}
-								session.flush();
-								for (BasePDKSObject object2 : saveList) {
-									session.save(object2);
-								}
-								session.flush();
-								id = ilkId;
-							}
-							list.remove(0);
-							id = id.longValue() + 1L;
-						}
-						saveList = null;
-						deleteList = null;
-					} else if (single)
-						kayitAdet = 1L;
-
-				}
 				if (kayitAdet != null && kayitAdet > 0) {
 					veriMap.clear();
 					execSP(session, veriMap, "SP_CHECKIDENT_VIEW");
