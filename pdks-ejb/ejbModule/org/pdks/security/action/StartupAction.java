@@ -326,8 +326,7 @@ public class StartupAction implements Serializable {
 					toplamAdet += adet;
 					if (adet > 0)
 						session.flush();
-				} else
-					logger.error(class1.getName());
+				}
 
 				iterator.remove();
 			}

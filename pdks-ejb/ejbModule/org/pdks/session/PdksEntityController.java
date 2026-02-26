@@ -1092,8 +1092,7 @@ public class PdksEntityController implements Serializable {
 	public Long savePrepareTableID(boolean single, BasePDKSObject object, Class class1, Session session) throws Exception {
 		Long kayitAdet = null;
 		String tableName = object != null ? object.getTableName() : null;
-
-		kayitAdet = 0L;
+ 		kayitAdet = 0L;
 		kayitAdet = null;
 		String fn = "FN_TABLE_UPDATE_ID";
 		if (isExisFunction(fn, session)) {
