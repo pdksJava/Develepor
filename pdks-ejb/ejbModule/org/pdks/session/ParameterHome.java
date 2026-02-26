@@ -92,7 +92,7 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 		pdksEntityController.deleteObject(session, entityManager, parameter);
 		session.flush();
 		try {
-			pdksEntityController.savePrepareTableID(true, parameter, Parameter.class, ortakIslemler, session);
+			pdksEntityController.savePrepareTableID(true, parameter, Parameter.class, session);
 		} catch (Exception e) {
 		}
 		session.flush();

@@ -117,7 +117,7 @@ public class YemekIzinHome extends EntityHome<YemekIzin> implements Serializable
 			session.flush();
 			if (iptal) {
 				try {
-					pdksEntityController.savePrepareTableID(true, null, VardiyaYemekIzin.class, ortakIslemler, session);
+					pdksEntityController.savePrepareTableID(true, null, VardiyaYemekIzin.class, session);
 				} catch (Exception e) {
 				}
 				session.flush();

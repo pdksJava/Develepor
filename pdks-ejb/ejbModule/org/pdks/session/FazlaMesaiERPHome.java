@@ -102,7 +102,7 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 		try {
 			session.delete(seciliFazlaMesaiERPDetay);
 			session.flush();
-			pdksEntityController.savePrepareTableID(true, seciliFazlaMesaiERPDetay, FazlaMesaiERPDetay.class, ortakIslemler, session);
+			pdksEntityController.savePrepareTableID(true, seciliFazlaMesaiERPDetay, FazlaMesaiERPDetay.class, session);
 
 		} catch (Exception e) {
 			logger.error(e);

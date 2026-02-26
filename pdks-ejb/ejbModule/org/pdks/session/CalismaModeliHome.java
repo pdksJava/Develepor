@@ -347,7 +347,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		pasifGoster = false;
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		pdksSirketList = ortakIslemler.getDepartmanPDKSSirketList(null, session);
 		fillCalismaModeliList();
 	}
@@ -434,7 +434,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 				session.flush();
 				if (sirala) {
 					try {
-						pdksEntityController.savePrepareTableID(true, null, CalismaModeliVardiya.class, ortakIslemler, session);
+						pdksEntityController.savePrepareTableID(true, null, CalismaModeliVardiya.class, session);
 					} catch (Exception e) {
 					}
 					session.flush();

@@ -27,6 +27,7 @@ import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.Departman;
 import org.pdks.entity.PdksPersonelView;
 import org.pdks.entity.Personel;
+import org.pdks.entity.PersonelHareket;
 import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.SirketEntegrasyon;
@@ -191,7 +192,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 			session.flush();
 			if (spCalistir) {
 				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
- 				pdksEntityController.execSP(session, veriMap, Sirket.SP_NAME_SP_ERP_VIEW_ALTER_CREATE);
+				pdksEntityController.execSP(session, veriMap, Sirket.SP_NAME_SP_ERP_VIEW_ALTER_CREATE);
 			}
 
 			fillsirketList();
@@ -247,6 +248,12 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 		startupAction.fillSirketList(session);
 		erpDatabaseDurum = ortakIslemler.isExisStoreProcedure(Sirket.SP_NAME_SP_ERP_VIEW_ALTER_CREATE, session);
 		setSirketList(sirketList);
+		try {
+			pdksEntityController.savePrepareTableID(false, null, PersonelHareket.class, session);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
 	}
 
 	public void fillBagliOlduguDepartmanTanimList() {
@@ -280,7 +287,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	}
 
 	public void fillPersonelList() throws Exception {
- 		Sirket sirket = seciliSirket;
+		Sirket sirket = seciliSirket;
 		List<PersonelView> list = new ArrayList<PersonelView>();
 		HashMap parametreMap = new HashMap();
 		if (!istenAyrilanlariEkle) {
@@ -332,7 +339,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 
 		fillsirketList();
 	}

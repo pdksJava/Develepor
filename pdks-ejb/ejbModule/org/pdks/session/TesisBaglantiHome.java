@@ -93,7 +93,7 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 			try {
 				session.flush();
 				if (sirala > 0)
-					pdksEntityController.savePrepareTableID(true, null, TesisBaglanti.class, ortakIslemler, session);
+					pdksEntityController.savePrepareTableID(true, null, TesisBaglanti.class, session);
 				if (kayit > 0)
 					PdksUtil.addMessageInfo("Kayıt" + (kayit == 1 ? "" : "lar") + " başarılı.");
 				else

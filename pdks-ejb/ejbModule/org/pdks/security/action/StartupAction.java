@@ -55,6 +55,7 @@ import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDinamikAlan;
+import org.pdks.entity.PersonelHareket;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.PersonelIzinDetay;
 import org.pdks.entity.ServiceData;
@@ -254,7 +255,7 @@ public class StartupAction implements Serializable {
 		startupMethod(session);
 		OrtakIslemler ortakIslemler = new OrtakIslemler();
 		String spName = "SP_DROP_NOT_USED_TABLES";
-		if (ortakIslemler.isExisObject(spName, "P", session, pdksEntityController)) {
+		if (pdksEntityController.isExisStoreProcedure(spName, session)) {
 			LinkedHashMap<String, Object> dataMap = new LinkedHashMap<String, Object>();
 			List<String> list = null;
 			try {
@@ -307,6 +308,7 @@ public class StartupAction implements Serializable {
 			list.add(Notice.class);
 			list.add(Parameter.class);
 			list.add(PersonelDinamikAlan.class);
+			list.add(PersonelHareket.class);
 			list.add(SAPSunucu.class);
 			list.add(ServiceData.class);
 			list.add(Tatil.class);
@@ -317,9 +319,8 @@ public class StartupAction implements Serializable {
 			list.add(VardiyaHafta.class);
 			list.add(VardiyaYemekIzin.class);
 			list.add(YemekKartsiz.class);
-			
 			for (Class class1 : list) {
-				long adet = pdksEntityController.savePrepareTableID(false, null, class1, null, session);
+				long adet = pdksEntityController.savePrepareTableID(false, null, class1, session);
 				toplamAdet += adet;
 				if (adet > 0)
 					session.flush();

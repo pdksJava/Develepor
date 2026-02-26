@@ -513,9 +513,9 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 				if (vyiIptal || cmvIptal) {
 					try {
 						if (cmvIptal)
-							pdksEntityController.savePrepareTableID(true, null, CalismaModeliVardiya.class, ortakIslemler, session);
+							pdksEntityController.savePrepareTableID(true, null, CalismaModeliVardiya.class, session);
 						if (vyiIptal)
-							pdksEntityController.savePrepareTableID(true, null, VardiyaYemekIzin.class, ortakIslemler, session);
+							pdksEntityController.savePrepareTableID(true, null, VardiyaYemekIzin.class, session);
 					} catch (Exception e) {
 					}
 					session.flush();

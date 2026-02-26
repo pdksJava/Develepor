@@ -1303,9 +1303,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						if (organizasyonIptal || roleIptal) {
 							try {
 								if (organizasyonIptal)
-									pdksEntityController.savePrepareTableID(true, null, UserDigerOrganizasyon.class, ortakIslemler, session);
+									pdksEntityController.savePrepareTableID(true, null, UserDigerOrganizasyon.class, session);
 								if (roleIptal)
-									pdksEntityController.savePrepareTableID(true, null, UserRoles.class, ortakIslemler, session);
+									pdksEntityController.savePrepareTableID(true, null, UserRoles.class, session);
 							} catch (Exception e) {
 
 							}

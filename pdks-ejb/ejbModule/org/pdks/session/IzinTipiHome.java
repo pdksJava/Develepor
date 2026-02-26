@@ -405,7 +405,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 				session.flush();
 				if (sirala) {
 					try {
-						pdksEntityController.savePrepareTableID(true, null, IzinTipiMailAdres.class, ortakIslemler, session);
+						pdksEntityController.savePrepareTableID(true, null, IzinTipiMailAdres.class, session);
 					} catch (Exception e) {
 					}
 					session.flush();
