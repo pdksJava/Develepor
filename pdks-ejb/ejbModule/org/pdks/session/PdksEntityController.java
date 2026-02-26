@@ -1092,7 +1092,7 @@ public class PdksEntityController implements Serializable {
 	public Long savePrepareTableID(boolean single, BasePDKSObject object, Class class1, Session session) throws Exception {
 		Long kayitAdet = null;
 		String tableName = object != null ? object.getTableName() : null;
- 		kayitAdet = 0L;
+		kayitAdet = 0L;
 		kayitAdet = null;
 		String fn = "FN_TABLE_UPDATE_ID";
 		if (isExisFunction(fn, session)) {
@@ -1155,7 +1155,6 @@ public class PdksEntityController implements Serializable {
 										veriMap.put("tableName", tableName);
 										logger.debug(veriMap.toString());
 										execSP(session, veriMap, sp);
-										session.flush();
 										veriMap.clear();
 										list.remove(sonIndex);
 										id = id.longValue() + 1L;
@@ -1175,6 +1174,7 @@ public class PdksEntityController implements Serializable {
 
 				}
 				if (kayitAdet != null && kayitAdet > 0) {
+					logger.info(tableName + " " + kayitAdet);
 					veriMap.clear();
 					execSP(session, veriMap, "SP_CHECKIDENT_VIEW");
 					session.flush();
