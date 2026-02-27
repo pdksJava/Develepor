@@ -55,7 +55,6 @@ import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDinamikAlan;
-import org.pdks.entity.PersonelHareket;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.PersonelIzinDetay;
 import org.pdks.entity.ServiceData;
@@ -308,7 +307,6 @@ public class StartupAction implements Serializable {
 			list.add(Notice.class);
 			list.add(Parameter.class);
 			list.add(PersonelDinamikAlan.class);
-			list.add(PersonelHareket.class);
 			list.add(SAPSunucu.class);
 			list.add(ServiceData.class);
 			list.add(Tatil.class);
