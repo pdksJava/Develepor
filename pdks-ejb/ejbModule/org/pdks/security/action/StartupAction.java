@@ -308,7 +308,6 @@ public class StartupAction implements Serializable {
 			list.add(Notice.class);
 			list.add(Parameter.class);
 			list.add(PersonelDinamikAlan.class);
-			list.add(PersonelHareket.class);
 			list.add(SAPSunucu.class);
 			list.add(ServiceData.class);
 			list.add(Tatil.class);
