@@ -55,7 +55,6 @@ import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDinamikAlan;
-import org.pdks.entity.PersonelHareket;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.PersonelIzinDetay;
 import org.pdks.entity.ServiceData;
