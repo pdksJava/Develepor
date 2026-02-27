@@ -7995,7 +7995,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			topluFazlaCalismaTalep = false;
 			if (fazlaMesaiTalepVar && denklestirmeAyDurum && aylikPuantajList.size() > 0 && aramaSecenekleri.getSirket().isFazlaMesaiTalepGirer())
-				setTopluFazlaCalismaTalep(ortakIslemler.getParameterKey("topluFazlaCalismaTalep").equals("1") || (userHome != null && userLoginOldu && userHome.hasPermission("vardiyaPlani", "topluFazlaCalismaTalep")) || loginUser.isAdmin());
+				setTopluFazlaCalismaTalep(ortakIslemler.getParameterKey("topluFazlaCalismaTalep").equals("1") || (userHome != null && loginUser.isAdmin() == false && loginUser.getLogin() && userHome.hasPermission("vardiyaPlani", "topluFazlaCalismaTalep")));
 
 			if (defaultAylikPuantajSablon == null)
 				defaultAylikPuantajSablon = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, departmanDenklestirmeDonemi, session);
