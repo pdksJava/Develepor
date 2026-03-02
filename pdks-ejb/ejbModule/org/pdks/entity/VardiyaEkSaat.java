@@ -23,8 +23,9 @@ public class VardiyaEkSaat extends BasePDKSObject implements Serializable, Clone
 	public static final String COLUMN_NAME_RESMI_TATIL_SURESI = "RESMI_TATIL_SURESI";
 	public static final String COLUMN_NAME_AKSAM_VARDIYA = "AKSAM_VARDIYA_SURESI";
 	public static final String COLUMN_NAME_RT_KANUNI_EKLENEN_SURE = "RT_KANUNI_EKLENEN_SURE";
+	public static final String COLUMN_NAME_UCM_FAZLA_CALISMA_SURE = "UCM_FAZLA_CALISMA_SURE";
 
-	private double resmiTatilSure = 0d, aksamVardiyaSaatSayisi = 0d;
+	private double resmiTatilSure = 0d, aksamVardiyaSaatSayisi = 0d, ucretiOdenenFazlaMesaiSaat = 0d;
 	private Double resmiTatilKanunenEklenenSure = 0d;
 
 	public VardiyaEkSaat() {
@@ -32,9 +33,9 @@ public class VardiyaEkSaat extends BasePDKSObject implements Serializable, Clone
 		this.guncellendi = false;
 	}
 
-	public VardiyaEkSaat(double resmiTatilSureInput, double aksamVardiyaSaatSayisiInput, Double resmiTatilKanunenEklenenSureInput) {
+	public VardiyaEkSaat(double resmiTatilSureInput, double aksamVardiyaSaatSayisiInput, Double resmiTatilKanunenEklenenSureInput, Double ucretiOdenenFazlaMesaiSaat) {
 		super();
-		this.guncelle(resmiTatilSureInput, aksamVardiyaSaatSayisiInput, resmiTatilKanunenEklenenSureInput);
+		this.guncelle(resmiTatilSureInput, aksamVardiyaSaatSayisiInput, resmiTatilKanunenEklenenSureInput, ucretiOdenenFazlaMesaiSaat);
 
 	}
 
@@ -71,16 +72,28 @@ public class VardiyaEkSaat extends BasePDKSObject implements Serializable, Clone
 		this.aksamVardiyaSaatSayisi = value;
 	}
 
+	@Column(name = COLUMN_NAME_UCM_FAZLA_CALISMA_SURE)
+	public double getUcretiOdenenFazlaMesaiSaat() {
+		return ucretiOdenenFazlaMesaiSaat;
+	}
+
+	public void setUcretiOdenenFazlaMesaiSaat(double ucretiOdenenFazlaMesaiSaat) {
+		this.ucretiOdenenFazlaMesaiSaat = ucretiOdenenFazlaMesaiSaat;
+	}
+
+	 
 	/**
 	 * @param resmiTatilSureInput
 	 * @param aksamVardiyaSaatSayisiInput
 	 * @param resmiTatilKanunenEklenenSureInput
+	 * @param ucretiOdenenFazlaMesaiSaat
 	 */
-	public void guncelle(double resmiTatilSureInput, double aksamVardiyaSaatSayisiInput, Double resmiTatilKanunenEklenenSureInput) {
+	public void guncelle(double resmiTatilSureInput, double aksamVardiyaSaatSayisiInput, Double resmiTatilKanunenEklenenSureInput, Double ucretiOdenenFazlaMesaiSaat) {
 		this.guncellendi = id == null;
 		this.setResmiTatilSure(resmiTatilSureInput);
 		this.setAksamVardiyaSaatSayisi(aksamVardiyaSaatSayisiInput);
 		this.setResmiTatilKanunenEklenenSure(resmiTatilKanunenEklenenSureInput != null ? resmiTatilKanunenEklenenSureInput : 0.0d);
+		this.setUcretiOdenenFazlaMesaiSaat(ucretiOdenenFazlaMesaiSaat);
 	}
 
 	@Transient

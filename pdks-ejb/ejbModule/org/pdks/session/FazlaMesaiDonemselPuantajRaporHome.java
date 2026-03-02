@@ -138,7 +138,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		aylikPuantajListClear();
 		ekSaha4Tanim = null;
 		if (baslikMap == null)
@@ -1658,6 +1658,11 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 										ucretiOdenenMesaiSure += vardiyaGun.getCalismaNetSuresi() - fazlaMesaiMaxSure;
 
 								}
+								if (vardiyaSaatDB.getUcretiOdenenFazlaMesaiSaat() > 0.0d) {
+									ucretiOdenenMesaiSure += vardiyaSaatDB.getUcretiOdenenFazlaMesaiSaat();
+									vardiyaGun.setUcretiOdenenFazlaMesaiSaat(vardiyaSaatDB.getUcretiOdenenFazlaMesaiSaat());
+								} else
+									vardiyaGun.setUcretiOdenenFazlaMesaiSaat(0.0d);
 								if (vardiyaSaatDB.getResmiTatilToplamSure() > 0.0d)
 									vardiyaGun.setResmiTatilSure(vardiyaSaatDB.getResmiTatilToplamSure());
 								else if (pd.getHaftaCalismaSuresi() != null && vardiyaGun.getVardiya().isHaftaTatil() && pd.getHaftaCalismaSuresi() > 0.0d) {

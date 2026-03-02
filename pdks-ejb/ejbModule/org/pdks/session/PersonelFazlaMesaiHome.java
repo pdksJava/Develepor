@@ -416,7 +416,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			Vardiya islemVardiya = vg.getIslemVardiya();
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				Tanim tanim = (Tanim) iterator.next();
-				if (tanim.getKodu().equals("I")) {
+				if (tanim.getKodu().startsWith("I")) {
 					icapYapti = islemVardiya.isCalisma() == false;
 					if (bitZaman.before(islemVardiya.getVardiyaTelorans1BasZaman()) || basZaman.after(islemVardiya.getVardiyaTelorans2BitZaman()))
 						icapYapti = true;
