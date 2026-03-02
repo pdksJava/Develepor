@@ -1564,16 +1564,16 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public List<Sirket> getDepartmanPDKSSirketList(Departman departman, Session session) {
-		List<Sirket> list = pdksEntityController.getSQLParamByAktifFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_PDKS, Boolean.TRUE, Sirket.class, session);
-		if (departman != null) {
-
-			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-				Sirket sirket2 = (Sirket) iterator.next();
-				if (!sirket2.getDepartman().getId().equals(departman.getId()))
-					iterator.remove();
-			}
-			list = PdksUtil.sortSirketList(list);
+		List<Sirket> list = pdksEntityController.getSQLTableList(Sirket.TABLE_NAME, Sirket.class, session);
+		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+			Sirket sirket2 = (Sirket) iterator.next();
+			if (sirket2.getDurum().equals(Boolean.FALSE) || sirket2.getPdks().equals(Boolean.FALSE))
+				iterator.remove();
+			else if (departman != null && !sirket2.getDepartman().getId().equals(departman.getId()))
+				iterator.remove();
 		}
+		list = PdksUtil.sortSirketList(list);
+
 		return list;
 	}
 
