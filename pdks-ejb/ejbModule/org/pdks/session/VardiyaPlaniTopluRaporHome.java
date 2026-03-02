@@ -62,6 +62,7 @@ import org.pdks.entity.Tatil;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaHafta;
+import org.pdks.entity.VardiyaSaat;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.BordroDetayTipi;
 import org.pdks.enums.PuantajKatSayiTipi;
@@ -1255,6 +1256,15 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 								// if (d != null)
 								// mesaiMaxSure = d.doubleValue();
 								Double sure = vardiyaGun.getCalismaSuresi();
+								if (vardiyaGun.getVardiyaSaat() != null) {
+									VardiyaSaat vardiyaSaat = vardiyaGun.getVardiyaSaat();
+									Double saat = vardiyaSaat.getUcretiOdenenFazlaMesaiSaat();
+									if (saat != null && saat > 0.0d) {
+										ucretiOdenenMesaiSure += saat;
+										sure -= saat;
+									}
+								}
+								
 								ucretiOdenenMesaiSure += vardiyaGun.isFcsDahil() && sure != null && sure.doubleValue() > mesaiMaxSure + vardiyaGun.getResmiTatilSure() ? sure.doubleValue() - mesaiMaxSure - vardiyaGun.getResmiTatilSure() : 0.0d;
 								if (vardiyaGun.getHaftaCalismaSuresi() > 0) {
 									if (!haftaTatilVar)

@@ -358,7 +358,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		boolean calistir = false;
 		setPdksUser(authenticatedUser);
 		userLoginOldu = authenticatedUser != null;
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		resmiTatilKanunenEklenenSureGoster = false;
 		aylikPuantajListClear();
 		hataliPersoneller = null;
@@ -2158,6 +2158,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								if (islemVardiya != null && vardiyaGun.getIzin() == null && islemVardiya.isCalisma())
 									normalSure = islemVardiya.getNetCalismaSuresi();
 								if (denklestirmeAyDurum) {
+									vardiyaSaat.setUcretiOdenenFazlaMesaiSaat(0.0d);
 									if (hareketDurum.equals(Boolean.FALSE)) {
 										vardiyaSaat.setResmiTatilKanunenEklenenSure(0.0d);
 										vardiyaSaat.setResmiTatilSure(0.0d);
@@ -2166,6 +2167,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										vardiyaSaat.setResmiTatilKanunenEklenenSure(vardiyaGun.getResmiTatilKanunenEklenenSure());
 										vardiyaSaat.setResmiTatilSure(vardiyaGun.getResmiTatilSure());
 										vardiyaSaat.setAksamVardiyaSaatSayisi(vardiyaGun.getAksamKatSayisi());
+										double saat = vardiyaGun.getUcretiOdenenFazlaMesaiSaat();
+										if (saat > 0.0d)
+											vardiyaSaat.setUcretiOdenenFazlaMesaiSaat(saat);
 									}
 									if (hareketDurum.equals(Boolean.TRUE) && vardiyaGun.isZamanGelmedi() == false && (vardiyaGun.getHareketler() != null || vardiyaGun.getResmiTatilSure() > 0.0)) {
 										double calSure = vardiyaGun.getCalismaSuresi();
@@ -2179,7 +2183,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										vardiyaSaat.setCalismaSuresi(vardiyaSaat.getCalismaSuresi() + vardiyaGun.getGecenAyResmiTatilSure());
 									}
 								}
-
 								vardiyaSaat.setNormalSure(normalSure);
 								VardiyaEkSaat ekSaat = vardiyaSaat.getEkSaat();
 								boolean ekSaatEkle = false;
@@ -2187,7 +2190,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								if (denklestirmeAyDurum) {
 									ekSaatEkle = vardiyaSaat.isEkSaatEkle() && ekSaat == null;
 									if (ekSaat != null) {
-										ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure());
+										ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure(), vardiyaSaat.getUcretiOdenenFazlaMesaiSaat());
 										ekSaatEkle = ekSaat.isGuncellendi();
 									}
 								}
@@ -2198,7 +2201,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									if (ekSaatEkle) {
 										if (ekSaat == null) {
 											ekSaat = new VardiyaEkSaat();
-											ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure());
+											ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure(), vardiyaSaat.getUcretiOdenenFazlaMesaiSaat());
 											vardiyaSaat.setEkSaat(ekSaat);
 										}
 									}
@@ -2376,8 +2379,15 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								calisiyor = vardiyaGun.getVardiya() != null;
 							if (!gebemi && vardiyaGun.getVardiya() != null)
 								gebemi = vardiyaGun.getVardiya().isGebelikMi();
+
 							if (calisiyor) {
+								double saat = vardiyaGun.ucretiOdenenMesaiHesapla();
 								Double sure = vardiyaGun.getCalismaSuresi();
+								if (saat > 0.0d) {
+									ucretiOdenenMesaiSure += saat;
+									sure -= saat;
+								}
+
 								if (gunMaxCalismaOdenir && vardiyaGun.isFcsDahil())
 									ucretiOdenenMesaiSure += sure != null && sure.doubleValue() > maxCalismaSure + (vardiyaGun.getHaftaCalismaSuresi() + vardiyaGun.getResmiTatilSure()) ? sure.doubleValue() - maxCalismaSure - (vardiyaGun.getHaftaCalismaSuresi() + vardiyaGun.getResmiTatilSure())
 											: 0.0d;

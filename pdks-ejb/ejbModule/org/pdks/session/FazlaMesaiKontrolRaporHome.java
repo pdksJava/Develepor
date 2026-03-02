@@ -203,7 +203,7 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		aylikPuantajListClear();
 		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals(sayfaURL);
 		if (!ayniSayfa)
@@ -1254,11 +1254,18 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 							if (vardiyaGun.getIzin() == null && vardiyaGun.isZamanGelmedi()) {
 								toplamSure = vardiyaGun.getCalismaSuresi();
 							}
-							// Double d = personelDenklestirme.isSuaDurumu() ? vardiyaGun.getRadyolojiMaxCalismaSaat() : null;
-							// if (d != null)
-							// mesaiMaxSure = d.doubleValue();
-							if (vardiyaGun.isFcsDahil() && vardiyaGun.getCalismaNetSuresi() > mesaiMaxSure && gunMaxCalismaOdenir)
-								puantajUcretiOdenenSure += vardiyaGun.getCalismaNetSuresi() - mesaiMaxSure;
+							double normalSure = vardiyaGun.getCalismaNetSuresi();
+							if (vardiyaGun.getVardiyaSaat() != null) {
+								VardiyaSaat vardiyaSaat = vardiyaGun.getVardiyaSaat();
+								Double saat = vardiyaSaat.getUcretiOdenenFazlaMesaiSaat();
+								if (saat != null && saat > 0.0d) {
+									puantajUcretiOdenenSure += saat;
+									normalSure -= saat;
+								}
+							}
+
+							if (vardiyaGun.isFcsDahil() && normalSure > mesaiMaxSure && gunMaxCalismaOdenir)
+								puantajUcretiOdenenSure += normalSure - mesaiMaxSure;
 							puantajSaatToplami += toplamSure;
 							vardiyalar.put(vardiyaGun.getVardiyaKeyStr(), vardiyaGun);
 

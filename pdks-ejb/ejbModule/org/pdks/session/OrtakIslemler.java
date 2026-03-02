@@ -20205,6 +20205,12 @@ public class OrtakIslemler implements Serializable {
 									// pdksVardiyaGun.getKatSayiMap().remove(KatSayiTipi.RADYOLOJI_SAAT_MAX.value());
 									// }
 									double normalSure = pdksVardiyaGun.getCalismaSuresi() - (pdksVardiyaGun.getHaftaCalismaSuresi() + pdksVardiyaGun.getResmiTatilSure());
+									double saat = pdksVardiyaGun.ucretiOdenenMesaiHesapla();
+									if (saat > 0.0d) {
+										ucretiOdenenMesaiSure += saat;
+										normalSure -= saat;
+									}
+
 									if (pdksVardiyaGun.isFcsDahil() && normalSure > mesaiMaxSure && maxSureDurum) {
 										ucretiOdenenMesaiSure += normalSure - mesaiMaxSure;
 										// pdksVardiyaGun.addCalismaSuresi(fazlaMesaiMaxSure - normalSure);

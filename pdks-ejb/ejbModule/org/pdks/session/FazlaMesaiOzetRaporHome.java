@@ -235,7 +235,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		resmiTatilKanunenEklenenSureGoster = Boolean.FALSE;
 		aylikPuantajListClear();
 		if (personelDinamikAlanMap == null)
@@ -1599,6 +1599,9 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							if (vardiyaGun.getIzin() == null && vardiyaGun.isZamanGelmedi()) {
 								toplamSure = vardiyaGun.getCalismaSuresi();
 							}
+							double saat = vardiyaGun.getUcretiOdenenFazlaMesaiSaat();
+							if (saat > 0.0d)
+								puantajUcretiOdenenSure += saat;
 							if (vardiyaGun.isFcsDahil() && toplamSure - vardiyaGun.getResmiTatilSure() > maxCalismaSure)
 								puantajUcretiOdenenSure += toplamSure - maxCalismaSure - vardiyaGun.getResmiTatilSure();
 							puantajSaatToplami += toplamSure;

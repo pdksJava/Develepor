@@ -76,7 +76,8 @@ public class VardiyaGun extends BaseObject {
 	private Boolean izinHaftaTatilDurum;
 	private boolean hareketHatali = Boolean.FALSE, planHareketEkle = Boolean.TRUE, kullaniciYetkili = Boolean.TRUE, zamanGuncelle = Boolean.TRUE, zamanGelmedi = Boolean.FALSE;
 	private boolean fazlaMesaiTalepOnayliDurum = Boolean.FALSE, fazlaMesaiTalepDurum = Boolean.FALSE, ayarlamaBitti = false, bayramAyir = false;
-	private double calismaSuresi = 0, normalSure = 0, resmiTatilSure = 0, haftaTatilDigerSure = 0, gecenAyResmiTatilSure = 0, aksamKatSayisi = 0d, aksamVardiyaSaatSayisi = 0d;
+
+	private double calismaSuresi = 0, normalSure = 0, resmiTatilSure = 0, ucretiOdenenFazlaMesaiSaat = 0, haftaTatilDigerSure = 0, gecenAyResmiTatilSure = 0, aksamKatSayisi = 0d, aksamVardiyaSaatSayisi = 0d;
 	private double calisilmayanAksamSure = 0, fazlaMesaiSure = 0, bayramCalismaSuresi = 0, haftaCalismaSuresi = 0d, yasalMaxSure = 11.0d;
 	private Integer basSaat, basDakika, bitSaat, bitDakika;
 	private String tdClass = "", style = "", manuelGirisHTML = "", vardiyaKisaAciklama, personelNo, vardiyaDateStr, donemStr;
@@ -1219,6 +1220,15 @@ public class VardiyaGun extends BaseObject {
 		if (resmiTatilToplamSure > 0.0d)
 			logger.debug(resmiTatilToplamSure);
 		return resmiTatilToplamSure;
+	}
+
+	@Transient
+	public double getUcretiOdenenFazlaMesaiSaat() {
+		return ucretiOdenenFazlaMesaiSaat;
+	}
+
+	public void setUcretiOdenenFazlaMesaiSaat(double ucretiOdenenFazlaMesaiSaat) {
+		this.ucretiOdenenFazlaMesaiSaat = ucretiOdenenFazlaMesaiSaat;
 	}
 
 	public void setResmiTatilSure(double value) {
@@ -2614,6 +2624,27 @@ public class VardiyaGun extends BaseObject {
 		this.hataliFazlaMesailer = hataliFazlaMesailer;
 	}
 
+	@Transient
+	public double ucretiOdenenMesaiHesapla() {
+		double saat = 0d;
+		if (this.getFazlaMesailer() != null) {
+			try {
+				for (PersonelFazlaMesai pfm : this.getFazlaMesailer()) {
+					if (pfm != null && pfm.getDurum() && pfm.isOnaylandi()) {
+						String kodu = pfm.getFazlaMesaiOnayDurum() != null ? pfm.getFazlaMesaiOnayDurum().getErpKodu() : null;
+						if (kodu != null && kodu.toUpperCase().contains("UCM"))
+							saat += pfm.getFazlaMesaiSaati();
+					}
+
+				}
+			} catch (Exception e) {
+			}
+
+		}
+		this.setUcretiOdenenFazlaMesaiSaat(saat);
+		return saat;
+	}
+
 	public void entityRefresh() {
 
 	}
@@ -2622,4 +2653,5 @@ public class VardiyaGun extends BaseObject {
 	public String getTableName() {
 		return TABLE_NAME;
 	}
+
 }
