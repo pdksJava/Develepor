@@ -45,7 +45,7 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_VARDIYA = "VARDIYA_ID";
 
 	private Date basTarih, bitTarih;
-	private PuantajKatSayiTipi tipi;
+
 	private Long sirketId, tesisId;
 	private Integer tipNo;
 
@@ -54,6 +54,7 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 	private Vardiya vardiya;
 	private BigDecimal deger;
 	private Boolean durum;
+	private PuantajKatSayiTipi tipi;
 
 	public KatSayi() {
 		super();
@@ -64,17 +65,9 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 		return tipNo;
 	}
 
-	public void setTipNo(Integer tipNo) {
-		this.tipNo = tipNo;
-	}
-
-	@Column(name = COLUMN_NAME_TIPI, updatable = false, insertable = false)
-	public PuantajKatSayiTipi getTipi() {
-		return tipi;
-	}
-
-	public void setTipi(PuantajKatSayiTipi tipi) {
-		this.tipi = tipi;
+	public void setTipNo(Integer value) {
+		this.tipi = value != null ? PuantajKatSayiTipi.fromValue(value) : null;
+		this.tipNo = value;
 	}
 
 	@Temporal(TemporalType.DATE)
@@ -168,48 +161,69 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 	}
 
 	@Transient
+	public PuantajKatSayiTipi getTipi() {
+
+		return tipi;
+	}
+
+	public void setTipi(PuantajKatSayiTipi tipi) {
+		this.tipi = tipi;
+	}
+
+	@Transient
 	public String getTipAciklama() {
 		String aciklama = "";
-		if (tipi != null) {
-			aciklama = tipi.value() + " tanımsız tip";
-			if (tipi.equals(PuantajKatSayiTipi.AYLIK_SUA_GUNLUK_SAAT_SURESI))
+		if (id.equals(12L))
+			logger.debug("");
+		if (tipNo != null) {
+			Integer key = tipNo;
+			if (key.equals(PuantajKatSayiTipi.AYLIK_SUA_GUNLUK_SAAT_SURESI.value()))
 				aciklama = "Şua Günlük Saat";
-			else if (tipi.equals(PuantajKatSayiTipi.GUN_OFF_FAZLA_MESAI_TIPI))
+
+			else if (key.equals(PuantajKatSayiTipi.AYLIK_HAREKET_BEKLEME_SURESI.value()))
+				aciklama = "Hareket Bekleme Süresi";
+			else if (key.equals(PuantajKatSayiTipi.AYLIK_YUVARLAMA_TIPI.value()))
+				aciklama = "Aylık Yuvarlama Tipi";
+			else if (key.equals(PuantajKatSayiTipi.GUN_OFF_FAZLA_MESAI_TIPI.value()))
 				aciklama = "Off Mesai Başlama Dakikası";
-			else if (tipi.equals(PuantajKatSayiTipi.GUN_HT_FAZLA_MESAI_TIPI))
+			else if (key.equals(PuantajKatSayiTipi.GUN_HT_FAZLA_MESAI_TIPI.value()))
 				aciklama = "Hafta Tatili Mesai Başlama Dakikası";
-			else if (tipi.equals(PuantajKatSayiTipi.GUN_FMT_DURUM))
+			else if (key.equals(PuantajKatSayiTipi.GUN_FMT_DURUM.value()))
 				aciklama = "Fazla Mesai Talep Oluşturma Durumu";
-			else if (tipi.equals(PuantajKatSayiTipi.GUN_VARDIYA_MOLA))
+			else if (key.equals(PuantajKatSayiTipi.GUN_VARDIYA_MOLA.value()))
 				aciklama = "Vardiya Mola Tarih Başlangıç Tarihi";
-			else if (tipi.equals(PuantajKatSayiTipi.AYLIK_DENKLESTIRME_TIPI))
+			else if (key.equals(PuantajKatSayiTipi.AYLIK_DENKLESTIRME_TIPI.value()))
 				aciklama = "Denkleştirme Tipi";
-			else if (tipi.equals(PuantajKatSayiTipi.AYLIK_RADYOLOJI_MAX_GUN))
+			else if (key.equals(PuantajKatSayiTipi.AYLIK_RADYOLOJI_MAX_GUN.value()))
 				aciklama = "Aylık Radyoloji Max Çalışma Gün Sayısı";
-			else if (tipi.equals(PuantajKatSayiTipi.GUN_SAAT_CALISAN_IZIN_GUN))
+			else if (key.equals(PuantajKatSayiTipi.GUN_SAAT_CALISAN_IZIN_GUN.value()))
 				aciklama = "İdari Çalışan  Günlük İzin Saati";
-			else if (tipi.equals(PuantajKatSayiTipi.AYLIK_FAZLA_MESAI_YUVARLAMA))
+			else if (key.equals(PuantajKatSayiTipi.AYLIK_FAZLA_MESAI_YUVARLAMA.value()))
 				aciklama = "Fazla Mesai Yuvarlama Tipi";
-			else if (tipi.equals(PuantajKatSayiTipi.AYLIK_IZIN_HAFTA_TATIL_DURUM))
+			else if (key.equals(PuantajKatSayiTipi.AYLIK_IZIN_HAFTA_TATIL_DURUM.value()))
 				aciklama = "İzin Hafta Tatil Pazar";
-			else if (tipi.equals(PuantajKatSayiTipi.GUN_SAAT_CALISAN_GUN))
+			else if (key.equals(PuantajKatSayiTipi.GUN_SAAT_CALISAN_GUN.value()))
 				aciklama = "Saat Çalışan Gün Katsayısı ";
-			else if (tipi.equals(PuantajKatSayiTipi.GUN_SAAT_CALISAN_NORMAL_GUN))
+			else if (key.equals(PuantajKatSayiTipi.GUN_SAAT_CALISAN_NORMAL_GUN.value()))
 				aciklama = "Saat Çalışan Normal Gün Katsayısı ";
-			else if (tipi.equals(PuantajKatSayiTipi.GUN_YEMEK_SURE_EKLE_DURUM))
+			else if (key.equals(PuantajKatSayiTipi.GUN_YEMEK_SURE_EKLE_DURUM.value()))
 				aciklama = "Yemek Süre Ekle";
-			else if (tipi.equals(PuantajKatSayiTipi.GUN_ERKEN_CIKIS_TIPI))
+			else if (key.equals(PuantajKatSayiTipi.GUN_ERKEN_CIKIS_TIPI.value()))
 				aciklama = "Vardiya Erken Çıkış Dakika";
-			else if (tipi.equals(PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI))
+			else if (key.equals(PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI.value()))
 				aciklama = "Vardiya Erken Giriş Dakika";
-			else if (tipi.equals(PuantajKatSayiTipi.AYLIK_BAYRAM_AYIR))
+			else if (key.equals(PuantajKatSayiTipi.AYLIK_BAYRAM_AYIR.value()))
 				aciklama = "Bayram Mesai Ayır";
-			else if (tipi.equals(PuantajKatSayiTipi.AYLIK_CIHAZ_ZAMAN_SANIYE_SIFIRLA))
+			else if (key.equals(PuantajKatSayiTipi.AYLIK_CIHAZ_ZAMAN_SANIYE_SIFIRLA.value()))
 				aciklama = "Cihaz Saniye Sıfırla";
-			else if (tipi.equals(PuantajKatSayiTipi.GUN_GEC_CIKIS_TIPI))
+			else if (key.equals(PuantajKatSayiTipi.GUN_GEC_CIKIS_TIPI.value()))
 				aciklama = "Vardiya Geç Çıkış Dakika";
-			else if (tipi.equals(PuantajKatSayiTipi.GUN_GEC_GIRIS_TIPI))
+			else if (key.equals(PuantajKatSayiTipi.GUN_GEC_GIRIS_TIPI.value()))
 				aciklama = "Vardiya Geç Giriş Dakika";
+			else if (key.equals(PuantajKatSayiTipi.GUN_GEBE_PLAN_KONTROL_ETME.value()))
+				aciklama = "Vardiya Plan Saati Gebe Kontrol Etme";
+			else
+				aciklama = tipNo + " tanımsız tip";
 
 		}
 		return aciklama;

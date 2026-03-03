@@ -525,11 +525,12 @@ public class PersonelDenklestirme extends BaseObject {
 				gunPlanSure = sutIzniSure;
 				logger.debug(vg.getVardiyaDateStr() + " Sut İzni " + gunPlanSure + " ");
 			} else if (vg.isGebePersonelDonemselDurum()) {
-				sutIzniSure = gunPlanSure > 7.5d ? 7.5d : gunPlanSure;
+				if (gunPlanSure > 0)
+					sutIzniSure = gunPlanSure > 7.5d || vg.getPlanSaatGebeSaatiKontrolEt().equals(Boolean.FALSE) ? 7.5d : gunPlanSure;
 				gunPlanSure = sutIzniSure;
 				logger.debug(vg.getVardiyaDateStr() + " Gebe " + gunPlanSure + " ");
 			} else if (isSuaDurumu()) {
-				sutIzniSure = gunPlanSure > 7.5d ? 7.5d : gunPlanSure;
+				sutIzniSure = gunPlanSure > 7d ? 7d : gunPlanSure;
 				gunPlanSure = AylikPuantaj.getGunlukCalismaSuresi();
 				logger.debug(vg.getVardiyaDateStr() + " Şua " + gunPlanSure + " ");
 			}

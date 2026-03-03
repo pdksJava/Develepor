@@ -90,7 +90,7 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		pasifGoster = false;
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		fillKatSayiList();
 	}
 
@@ -215,9 +215,10 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 			for (KatSayi ks : katSayiList) {
 				if (pasifGoster == false && ks.getBitTarih().before(bugun))
 					continue;
-				List<KatSayi> list = map1.containsKey(ks.getTipNo()) ? map1.get(ks.getTipNo()) : new ArrayList<KatSayi>();
+				Integer key = ks.getTipi().value();
+				List<KatSayi> list = map1.containsKey(key) ? map1.get(key) : new ArrayList<KatSayi>();
 				if (list.isEmpty())
-					map1.put(ks.getTipNo(), list);
+					map1.put(key, list);
 				list.add(ks);
 			}
 			katSayiList.clear();
