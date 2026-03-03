@@ -240,7 +240,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		ayMap = null;
 		sb.append("with " + sb2.toString() + " VERI as (" + sb1.toString());
 		sb.append(" ) select distinct D.* from VERI D " + PdksEntityController.getSelectLOCK());
-		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " desc");
+		sb.append(" order by D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU);
 		sb2 = null;
 		sb1 = null;
 		if (session != null)
