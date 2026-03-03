@@ -44,6 +44,7 @@ import org.pdks.entity.Kapi;
 import org.pdks.entity.KapiKGS;
 import org.pdks.entity.KapiSirket;
 import org.pdks.entity.KapiView;
+import org.pdks.entity.PdksLog;
 import org.pdks.entity.PdksPersonelView;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelHareketIslem;
@@ -154,7 +155,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		vardiyaOku = false;
 		if (vardiyaOkuDurum == null) {
 			if (authenticatedUser.isAdmin() || ortakIslemler.getParameterKeyHasStringValue("hareketVardiyaOku"))
@@ -281,7 +282,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 	}
 
 	public void fillHareketList() {
- 		session.clear();
+		session.clear();
 		guncellenmis = false;
 		List<BasitHareket> kgsList = new ArrayList<BasitHareket>();
 		HashMap parametreMap = new HashMap();
@@ -673,10 +674,9 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					String fieldName = "s";
 					parametreMap.clear();
 					sb = new StringBuilder();
-					sb.append("select P.ISLEM_ID,HAREKET_ZAMANI from PDKS_LOG P " + PdksEntityController.getSelectLOCK() + " ");
-					sb.append(" inner join PDKS_ISLEM I " + PdksEntityController.getJoinLOCK() + " on I.ID=P.ISLEM_ID and I.ISLEM_TIPI='U' ");
-
-					sb.append(" where P.ISLEM_ID :" + fieldName + " and P.DURUM=0 ");
+					sb.append("select P." + PdksLog.COLUMN_NAME_ISLEM + ", " + PdksLog.COLUMN_NAME_ZAMAN + " from " + PdksLog.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+					sb.append(" inner join " + PersonelHareketIslem.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + PersonelHareketIslem.COLUMN_NAME_ID + " = P." + PdksLog.COLUMN_NAME_ISLEM + " and I." + PersonelHareketIslem.COLUMN_NAME_ISLEM_TIPI + " = 'U' ");
+ 					sb.append(" where P." + PdksLog.COLUMN_NAME_ISLEM + " :" + fieldName + " and P." + PdksLog.COLUMN_NAME_DURUM + " = 0 ");
 					parametreMap.put(fieldName, islemIdler);
 					if (session != null)
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);

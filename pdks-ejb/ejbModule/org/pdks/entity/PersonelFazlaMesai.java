@@ -27,6 +27,8 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	public static final String COLUMN_NAME_VARDIYA_GUN = "VARDIYA_GUN";
 	public static final String COLUMN_NAME_HAREKET = "HAREKET_ID";
 	public static final String COLUMN_NAME_ONAY = "ONAY_ID";
+	public static final String COLUMN_NAME_CIHAZ_GECIS = "CIHAZ_GECIS_ID";
+	public static final String COLUMN_NAME_MANUEL_GIRIS = "MANUEL_GIRIS_ID";
 	public static final String COLUMN_NAME_ONAY_DURUM = "ONAY_DURUM";
 	public static final String COLUMN_NAME_TATIL_DURUM = "TATIL_DURUM";
 	public static final String COLUMN_NAME_ONAY_ACIKLAMA = "ONAY_ACIKLAMA_ID";
@@ -44,6 +46,10 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 	private String hareketId;
 
 	private VardiyaGun vardiyaGun;
+
+	private PersonelHareket manuelGiris;
+
+	private PdksLog cihazGecis;
 
 	private HareketKGS hareket;
 
@@ -90,6 +96,28 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 
 	public void setVardiyaGun(VardiyaGun value) {
 		this.vardiyaGun = value;
+	}
+
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_MANUEL_GIRIS)
+	@Fetch(FetchMode.JOIN)
+	public PersonelHareket getManuelGiris() {
+		return manuelGiris;
+	}
+
+	public void setManuelGiris(PersonelHareket manuelGiris) {
+		this.manuelGiris = manuelGiris;
+	}
+
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_CIHAZ_GECIS)
+	@Fetch(FetchMode.JOIN)
+	public PdksLog getCihazGecis() {
+		return cihazGecis;
+	}
+
+	public void setCihazGecis(PdksLog cihazGecis) {
+		this.cihazGecis = cihazGecis;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
