@@ -1601,7 +1601,6 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 							izinSuresi = vardiyalIzin.getIzinSuresi();
 							for (VardiyaGun vg : ap.getVardiyalar()) {
 								if (vg.getVardiya() != null && vg.getIzin() != null && vg.getIzin().getId().equals(vardiyalIzin.getId())) {
-
 									if (vg.isAyinGunu() && vg.getTatil() != null) {
 										IzinTipi izinTipi = vg.getIzin().getIzinTipi();
 										izinBordroDetayTipi = ortakIslemler.getBordroDetayTipi(izinTipi, izinGrupMap);
@@ -1673,14 +1672,13 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 											calismaGun = 1.0d;
 										}
 									}
-									if (izinTipi.getUcretli() && resmiTatil == false)
-										izinGunAdet += artiGun;
 
 								}
 
 							} else
 								izinKodu = vardiya.getStyleClass();
-
+							if (izinTipi != null && izinTipi.getUcretli() && resmiTatil == false)
+								izinGunAdet += artiGun;
 							if (izinKodu != null) {
 								try {
 									if (izinBordroDetayTipi == null)
@@ -1755,13 +1753,16 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				double toplamAdet = normalGunAdet + haftaTatilAdet + resmiTatilAdet + izinGunAdet;
 				double toplamSaatAdet = saatlikCalisma ? normalSaat + haftaTatilSaat + resmiTatilSaat + izinGunSaat : 0;
 				double normalCalisma = ap.getSaatToplami() > ap.getPlanlananSure() ? ap.getPlanlananSure() : ap.getSaatToplami();
-				if (calismaModeli != null && calismaModeli.isSaatlikOdeme())
+				boolean saatlikOdeme = calismaModeli != null && calismaModeli.isSaatlikOdeme();
+				if (saatlikOdeme)
 					normalCalisma += ap.getGecenAyFazlaMesai(authenticatedUser);
-
+				double normalGunFarkAdet = 0;
 				if (!detayMap.isEmpty() || (saatlikCalisma == false && toplamAdet > 0) || (saatlikCalisma && toplamSaatAdet > 0)) {
 					if (toplamAdet > 0) {
-						if (ayGunSayisi == toplamAdet)
-							normalGunAdet += 30 - ayGunSayisi;
+						if (ayGunSayisi == toplamAdet) {
+							normalGunFarkAdet = 30 - toplamAdet;
+							normalGunAdet += normalGunFarkAdet;
+						}
 						if (toplamAdet > 30) {
 							artikAdet = 1;
 						}
@@ -1782,18 +1783,18 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						izinGunSaat = 0.0d;
 						normalSaat = 0.0d;
 					} else {
-						normalGunAdet = normalCalisma / gunlukKatsayi;
+						normalGunAdet = (normalCalisma / gunlukKatsayi);
+//						double izinFarkAdet = normalGunFarkAdet;
+//						if (izinGunSaat > 0)
+//							izinFarkAdet += (izinGunSaat / gunlukKatsayi) - izinGunAdet;
+//						normalGunAdet += izinFarkAdet;
 						resmiTatilAdet = resmiTatilSaat / gunlukKatsayi;
 						haftaTatilAdet = haftaTatilSaat / gunlukKatsayi;
 						artikAdet = 0;
 
 					}
-					if (izinGunAdet > 0) {
+					if (izinGunAdet > 0)
 						detayMap.put(BordroDetayTipi.IZIN_GUN, izinGunAdet);
-						// if (calismaModeli.isSaatlikOdeme() == false)
-						// normalGunAdet -= izinGunAdet;
-					}
-
 					if (normalCalisma != 0)
 						detayMap.put(BordroDetayTipi.SAAT_NORMAL, normalCalisma);
 					if (resmiTatilSaat > 0)
@@ -1820,9 +1821,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					HashMap<BordroDetayTipi, PersonelDenklestirmeBordroDetay> detayMap1 = new HashMap<BordroDetayTipi, PersonelDenklestirmeBordroDetay>();
 					denklestirmeBordro.setDetayMap(detayMap1);
 					if (kaydet || fazlaMesaiHesapla) {
-						if (devamPrim != null) {
+						if (devamPrim != null)
 							detayMap.put(BordroDetayTipi.DEVAMSIZLIK_PRIMI, devamPrim.getIslemDurum() != null && devamPrim.getIslemDurum() ? 1.0d : 0.0d);
-						}
 						if (!detayMap.isEmpty()) {
 							for (BordroDetayTipi bordroDetayTipi : detayMap.keySet()) {
 								PersonelDenklestirmeBordroDetay bordroDetay = null;
@@ -1830,9 +1830,9 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 								if (bordroDetayMap.containsKey(detayKey)) {
 									bordroDetay = bordroDetayMap.get(detayKey);
 									bordroDetayMap.remove(detayKey);
-								} else {
+								} else
 									bordroDetay = new PersonelDenklestirmeBordroDetay(denklestirmeBordro, bordroDetayTipi);
-								}
+
 								if (!kaydet)
 									bordroDetay = (PersonelDenklestirmeBordroDetay) bordroDetay.cloneEmpty();
 								detayMap1.put(bordroDetayTipi, bordroDetay);
@@ -1960,7 +1960,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					for (String key : bordroDetayMap.keySet()) {
 						deleteList.add(bordroDetayMap.get(key));
 					}
- 				}
+				}
 				if (deleteList.isEmpty() == false) {
 					for (Object object : deleteList) {
 						pdksEntityController.deleteObject(session, islem, object);
