@@ -2235,6 +2235,17 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	@Transient
+	public Double getPlanSaatSutIzinSaati() {
+		Double value = null;
+		if (isSutIzni()) {
+			BigDecimal deger = getKatSayi(PuantajKatSayiTipi.GUN_SUT_IZIN_PLAN_KONTROL_ETME.value());
+			if (deger != null)
+				value = deger.doubleValue();
+		}
+		return value;
+	}
+
+	@Transient
 	public HashMap<Integer, BigDecimal> getKatSayiMap() {
 		return katSayiMap;
 	}

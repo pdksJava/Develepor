@@ -15809,7 +15809,8 @@ public class OrtakIslemler implements Serializable {
 			TreeMap<String, BigDecimal> haftaTatilFazlaMesaiMap = haftaTatilFazlaMesaiKatSayiOku && allMap.containsKey(PuantajKatSayiTipi.GUN_HT_FAZLA_MESAI_TIPI) ? allMap.get(PuantajKatSayiTipi.GUN_HT_FAZLA_MESAI_TIPI) : null;
 			TreeMap<String, BigDecimal> offFazlaMesaiMap = offFazlaMesaiKatSayiOku && allMap.containsKey(PuantajKatSayiTipi.GUN_OFF_FAZLA_MESAI_TIPI) ? allMap.get(PuantajKatSayiTipi.GUN_OFF_FAZLA_MESAI_TIPI) : null;
 			TreeMap<String, BigDecimal> yemekMolaMap = allMap.containsKey(PuantajKatSayiTipi.GUN_VARDIYA_MOLA) ? allMap.get(PuantajKatSayiTipi.GUN_VARDIYA_MOLA) : null;
-			TreeMap<String, BigDecimal> gebePlanKontrolDurumMap = allMap.containsKey(PuantajKatSayiTipi.GUN_GEBE_PLAN_KONTROL_ETME) ? allMap.get(PuantajKatSayiTipi.GUN_GEBE_PLAN_KONTROL_ETME) : null;
+			TreeMap<String, BigDecimal> sutIzinPlanKontrolDurumMap = allMap.containsKey(PuantajKatSayiTipi.GUN_GEBE_PLAN_KONTROL_ETME) ? allMap.get(PuantajKatSayiTipi.GUN_GEBE_PLAN_KONTROL_ETME) : null;
+			TreeMap<String, BigDecimal> gebePlanKontrolDurumMap = allMap.containsKey(PuantajKatSayiTipi.GUN_SUT_IZIN_PLAN_KONTROL_ETME) ? allMap.get(PuantajKatSayiTipi.GUN_SUT_IZIN_PLAN_KONTROL_ETME) : null;
 			TreeMap<String, BigDecimal> erkenGirisMap = allMap.containsKey(PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI) ? allMap.get(PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI) : null;
 			TreeMap<String, BigDecimal> erkenCikisMap = allMap.containsKey(PuantajKatSayiTipi.GUN_ERKEN_CIKIS_TIPI) ? allMap.get(PuantajKatSayiTipi.GUN_ERKEN_CIKIS_TIPI) : null;
 			TreeMap<String, BigDecimal> gecGirisMap = allMap.containsKey(PuantajKatSayiTipi.GUN_GEC_GIRIS_TIPI) ? allMap.get(PuantajKatSayiTipi.GUN_GEC_GIRIS_TIPI) : null;
@@ -15987,6 +15988,13 @@ public class OrtakIslemler implements Serializable {
 							BigDecimal deger = getKatSayiVeriMap(gebePlanKontrolDurumMap, sirketId, tesisId, vardiyaId, str);
 							if (deger != null)
 								katSayiMap.put(PuantajKatSayiTipi.GUN_GEBE_PLAN_KONTROL_ETME.value(), deger);
+						}
+					}
+					if (sutIzinPlanKontrolDurumMap != null) {
+						if (veriKatSayiVar(sutIzinPlanKontrolDurumMap, sirketId, tesisId, vardiyaId, str)) {
+							BigDecimal deger = getKatSayiVeriMap(sutIzinPlanKontrolDurumMap, sirketId, tesisId, vardiyaId, str);
+							if (deger != null)
+								katSayiMap.put(PuantajKatSayiTipi.GUN_SUT_IZIN_PLAN_KONTROL_ETME.value(), deger);
 						}
 					}
 

@@ -522,6 +522,9 @@ public class PersonelDenklestirme extends BaseObject {
 			double gunPlanSure = gebePersonelDonemselDurum == null ? gun : cm.getSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK)), sutIzniSure = 0.0d;
 			if (vg.isSutIzniVar()) {
 				sutIzniSure = gunPlanSure <= 9.0d ? sureGunlukSut : 7.5d;
+				Double deger = vg.getPlanSaatSutIzinSaati();
+				if (deger != null)
+					sutIzniSure = gunPlanSure - deger.doubleValue();
 				gunPlanSure = sutIzniSure;
 				logger.debug(vg.getVardiyaDateStr() + " Sut İzni " + gunPlanSure + " ");
 			} else if (vg.isGebePersonelDonemselDurum()) {

@@ -222,6 +222,14 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 				aciklama = "Vardiya Geç Giriş Dakika";
 			else if (key.equals(PuantajKatSayiTipi.GUN_GEBE_PLAN_KONTROL_ETME.value()))
 				aciklama = "Vardiya Plan Saati Gebe Kontrol Etme";
+			else if (key.equals(PuantajKatSayiTipi.GUN_SUT_IZIN_PLAN_KONTROL_ETME.value()))
+				aciklama = "Vardiya Plan Saati Süt İzin Kontrol Etme";
+			else if (key.equals(PuantajKatSayiTipi.AYLIK_RT_YUVARLAMA.value()))
+				aciklama = "Resmi Tatil Yuvarlama Tipi";
+			else if (key.equals(PuantajKatSayiTipi.AYLIK_UOM_YUVARLAMA.value()))
+				aciklama = "Ücreti Ödenen Mesai Yuvarlama Tipi";
+			else if (key.equals(PuantajKatSayiTipi.AYLIK_RT_KANUNEN_EKLEME.value()))
+				aciklama = "Resmi Tatil 7.5 Saat Yuvarlama";
 			else
 				aciklama = tipNo + " tanımsız tip";
 
