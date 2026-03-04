@@ -151,7 +151,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	private Boolean normalCalismaGunKod = Boolean.FALSE, haftaTatilCalismaGunKod = Boolean.FALSE, resmiTatilCalismaGunKod = Boolean.FALSE, izinSureGunKod = Boolean.FALSE, ucretliIzinGunKod = Boolean.FALSE, ucretsizIzinGunKod = Boolean.FALSE, hastalikIzinGunKod = Boolean.FALSE;
 	private Boolean normalGunKod = Boolean.FALSE, haftaTatilGunKod = Boolean.FALSE, resmiTatilGunKod = Boolean.FALSE, artikGunKod = Boolean.FALSE, bordroToplamGunKod = Boolean.FALSE, devredenMesaiKod = Boolean.FALSE, ucretiOdenenKod = Boolean.FALSE;
 	private Boolean suaDurum = Boolean.FALSE, sutIzniDurum = Boolean.FALSE, gebeDurum = Boolean.FALSE, partTime = Boolean.FALSE, pdfTopluAktarDurum = Boolean.FALSE;
-	private Boolean resmiTatilKanunenEklenenSureGoster = Boolean.FALSE;
+	private Boolean resmiTatilKanunenEklenenSureGoster = Boolean.FALSE, eksiBakiyeGoster = Boolean.FALSE;
 	private Long vardiyaAdet;
 	private List<VardiyaGun> tumVardiyaList;
 
@@ -918,6 +918,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		fazlaMesaiVardiyaGun = null;
 		tumVardiyaList = null;
 		resmiTatilKanunenEklenenSureGoster = false;
+		eksiBakiyeGoster = false;
 		HashMap<Long, Vardiya> vardiyaMap = new HashMap<Long, Vardiya>();
 		if (vardiyaZamanMap == null)
 			vardiyaZamanMap = new HashMap<String, String>();
@@ -1856,6 +1857,12 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						}
 					} else
 						puantaj.setAyrikHareketVar(false);
+
+					if (eksiBakiyeGoster == false) {
+						if (puantaj.getEksiBakiyeSuresi() != null && puantaj.getEksiBakiyeSuresi().doubleValue() != 0 && personelDenklestirme.getSonDurum()) {
+							eksiBakiyeGoster = true;
+						}
+					}
 				}
 				if (resmiTatilVar || haftaTatilVar)
 					fazlaMesaiVar = true;
@@ -2543,12 +2550,18 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			cell = ExcelUtil.getCell(sheet, row, col++, header);
 			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "Hata Açıklama", "Plan onaylanmamış veya hatalı günleri olan puantaj");
 		}
+
 		if (tumVardiyaList != null) {
 			for (VardiyaGun vg : tumVardiyaList) {
 				cell = ExcelUtil.getCell(sheet, row, col++, header);
 				String aciklama = vardiyaAciklama(vg);
 				ExcelUtil.baslikCell(cell, anchor, helper, drawing, aciklama, vg.getVardiya().isCalisma() ? vardiyaTitle(vg, "P") : null);
 			}
+		}
+		if (eksiBakiyeGoster) {
+			cell = ExcelUtil.getCell(sheet, row, col++, header);
+			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "Devretmeyen Eksi Bakiye", "Sıfırlanıp devretmeyen eksi bakiyeler");
+
 		}
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Durum");
 
@@ -2871,6 +2884,14 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							else
 								ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
 						}
+					}
+					if (eksiBakiyeGoster) {
+						double eksiBakiyeSuresi = 0.0d;
+						if (aylikPuantaj.getEksiBakiyeSuresi() != null && aylikPuantaj.getEksiBakiyeSuresi().doubleValue() != 0 && personelDenklestirme.getSonDurum()) {
+							eksiBakiyeSuresi = aylikPuantaj.getEksiBakiyeSuresi().doubleValue();
+
+						}
+						setCell(sheet, row, col++, styleTutar, eksiBakiyeSuresi);
 					}
 					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(aylikPuantaj.isCalisiyor() ? "Çalışıyor" : "Ayrılmış");
 
