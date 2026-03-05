@@ -1468,7 +1468,9 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		Date tarih2 = cal.getTime();
 		List<Integer> saatlikList = Arrays.asList(new Integer[] { PuantajKatSayiTipi.AYLIK_SAATLIK_GUN_HESAP_TIPI.value() });
 		HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> katSayilarMap = ortakIslemler.getYuvarlamaKatSayiMap(tarih, tarih2, saatlikList, session);
-
+		TreeMap<String, BigDecimal> islemTipiMap = null;
+		if (katSayilarMap != null && katSayilarMap.containsKey(PuantajKatSayiTipi.AYLIK_SAATLIK_GUN_HESAP_TIPI))
+			islemTipiMap = katSayilarMap.get(PuantajKatSayiTipi.AYLIK_SAATLIK_GUN_HESAP_TIPI);
 		TreeMap<Long, AylikPuantaj> puantajMap = new TreeMap<Long, AylikPuantaj>();
 		List<Personel> donemPerList = new ArrayList<Personel>();
 		DenklestirmeAy dm = null;
@@ -1793,8 +1795,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					} else {
 						normalGunAdet = (normalCalisma / gunlukKatsayi);
 						Double katSayi = null;
-						if (katSayilarMap != null && katSayilarMap.containsKey(PuantajKatSayiTipi.AYLIK_SAATLIK_GUN_HESAP_TIPI)) {
-							TreeMap<String, BigDecimal> islemTipiMap = katSayilarMap.get(PuantajKatSayiTipi.AYLIK_SAATLIK_GUN_HESAP_TIPI);
+						if (islemTipiMap != null) {
 							Sirket sirket = null;
 							Long sirketId = null, tesisId = null;
 							if (personel != null) {
