@@ -105,12 +105,12 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 		if (xKatSayi == null) {
 			xKatSayi = new KatSayi();
 			for (PuantajKatSayiTipi c : PuantajKatSayiTipi.values()) {
-				xKatSayi.setTipi(c);
+				xKatSayi.setTipNo(c.value());
 				puantajKatSayiTipiList.add(new SelectItem(c.value(), xKatSayi.getTipAciklama()));
 			}
 			xKatSayi.setTipi(null);
 			xKatSayi.setBasTarih(PdksUtil.getDate(new Date()));
-			xKatSayi.setBitTarih(PdksUtil.convertToJavaDate("29991231", "yyyyMMdd"));
+			xKatSayi.setBitTarih(PdksUtil.convertToJavaDate("99991231", "yyyyMMdd"));
 			xKatSayi.setDurum(Boolean.TRUE);
 
 		}

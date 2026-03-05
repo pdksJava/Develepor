@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -75,6 +76,7 @@ import org.pdks.entity.VardiyaSablonu;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.BordroDetayTipi;
 import org.pdks.enums.DenklestirmeTipi;
+import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.erp.action.PdksNoSapController;
 import org.pdks.erp.action.PdksSap3Controller;
 import org.pdks.erp.action.PdksSapController;
@@ -1462,6 +1464,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		Date tarih = PdksUtil.convertToJavaDate(donemStr + "01", "yyyyMMdd");
 		cal.setTime(tarih);
 		int ayGunSayisi = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		cal.set(Calendar.DATE, ayGunSayisi);
+		Date tarih2 = cal.getTime();
+		List<Integer> saatlikList = Arrays.asList(new Integer[] { PuantajKatSayiTipi.AYLIK_SAATLIK_GUN_HESAP_TIPI.value() });
+		HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> katSayilarMap = ortakIslemler.getYuvarlamaKatSayiMap(tarih, tarih2, saatlikList, session);
+
 		TreeMap<Long, AylikPuantaj> puantajMap = new TreeMap<Long, AylikPuantaj>();
 		List<Personel> donemPerList = new ArrayList<Personel>();
 		DenklestirmeAy dm = null;
@@ -1534,6 +1541,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					continue;
 				boolean flush = false;
 				PersonelDenklestirmeDinamikAlan devamPrim = null;
+				Personel personel = personelDenklestirme.getPdksPersonel();
 				if (ap.getDinamikAlanMap() != null) {
 					for (Object key : ap.getDinamikAlanMap().keySet()) {
 						PersonelDenklestirmeDinamikAlan personelDenklestirmeDinamikAlan = ap.getDinamikAlanMap().get(key);
@@ -1784,10 +1792,32 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						normalSaat = 0.0d;
 					} else {
 						normalGunAdet = (normalCalisma / gunlukKatsayi);
-//						double izinFarkAdet = normalGunFarkAdet;
-//						if (izinGunSaat > 0)
-//							izinFarkAdet += (izinGunSaat / gunlukKatsayi) - izinGunAdet;
-//						normalGunAdet += izinFarkAdet;
+						Double katSayi = null;
+						if (katSayilarMap != null && katSayilarMap.containsKey(PuantajKatSayiTipi.AYLIK_SAATLIK_GUN_HESAP_TIPI)) {
+							TreeMap<String, BigDecimal> islemTipiMap = katSayilarMap.get(PuantajKatSayiTipi.AYLIK_SAATLIK_GUN_HESAP_TIPI);
+							Sirket sirket = null;
+							Long sirketId = null, tesisId = null;
+							if (personel != null) {
+								sirket = personel.getSirket();
+								if (sirket != null) {
+									sirketId = sirket.getId();
+									if (sirket.isTesisDurumu() && personel.getTesis() != null)
+										tesisId = personel.getTesis().getId();
+								}
+							}
+							if (ortakIslemler.veriKatSayiVar(islemTipiMap, sirketId, tesisId, null, "")) {
+								BigDecimal deger = ortakIslemler.getKatSayiVeriMap(islemTipiMap, sirketId, tesisId, null, "");
+								if (deger != null)
+									katSayi = deger.doubleValue();
+							}
+
+						}
+						if (katSayi != null) {
+							double izinFarkAdet = (katSayi.doubleValue() > 0.0d ? 1.0d : 0.0d) * normalGunFarkAdet;
+							if (izinGunSaat > 0)
+								izinFarkAdet += (izinGunSaat / gunlukKatsayi) - izinGunAdet;
+							normalGunAdet += izinFarkAdet;
+						}
 						resmiTatilAdet = resmiTatilSaat / gunlukKatsayi;
 						haftaTatilAdet = haftaTatilSaat / gunlukKatsayi;
 						artikAdet = 0;
@@ -1867,7 +1897,6 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 				}
 				if (orgMap != null) {
-					Personel personel = personelDenklestirme.getPersonel();
 					PersonelDenklestirmeOrganizasyon denklestirmeOrganizasyon = null;
 					Long personelDenklestirmeId = personelDenklestirme.getId();
 					if (personelDenklestirmeId != null) {

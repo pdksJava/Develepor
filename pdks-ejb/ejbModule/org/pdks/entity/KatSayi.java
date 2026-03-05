@@ -173,13 +173,12 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 	@Transient
 	public String getTipAciklama() {
 		String aciklama = "";
-		if (id.equals(12L))
-			logger.debug("");
 		if (tipNo != null) {
 			Integer key = tipNo;
 			if (key.equals(PuantajKatSayiTipi.AYLIK_SUA_GUNLUK_SAAT_SURESI.value()))
 				aciklama = "Şua Günlük Saat";
-
+			else if (key.equals(PuantajKatSayiTipi.AYLIK_SAATLIK_GUN_HESAP_TIPI.value()))
+				aciklama = "Aylık Günlük Saat Hesap Tipi";
 			else if (key.equals(PuantajKatSayiTipi.AYLIK_HAREKET_BEKLEME_SURESI.value()))
 				aciklama = "Hareket Bekleme Süresi";
 			else if (key.equals(PuantajKatSayiTipi.AYLIK_YUVARLAMA_TIPI.value()))
