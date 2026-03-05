@@ -1471,6 +1471,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		TreeMap<String, BigDecimal> islemTipiMap = null;
 		if (katSayilarMap != null && katSayilarMap.containsKey(PuantajKatSayiTipi.AYLIK_SAATLIK_GUN_HESAP_TIPI))
 			islemTipiMap = katSayilarMap.get(PuantajKatSayiTipi.AYLIK_SAATLIK_GUN_HESAP_TIPI);
+		katSayilarMap = null;
 		TreeMap<Long, AylikPuantaj> puantajMap = new TreeMap<Long, AylikPuantaj>();
 		List<Personel> donemPerList = new ArrayList<Personel>();
 		DenklestirmeAy dm = null;
