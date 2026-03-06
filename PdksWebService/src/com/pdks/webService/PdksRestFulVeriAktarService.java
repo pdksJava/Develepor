@@ -639,7 +639,8 @@ public class PdksRestFulVeriAktarService implements Serializable {
 				e.printStackTrace();
 			}
 		}
-		if (PdksUtil.hasStringValue(sonuc)) {
+		boolean testDurum = PdksVeriOrtakAktar.getTestDurum();
+		if (PdksUtil.hasStringValue(sonuc) && testDurum == false) {
 			try {
 				sendIKMail(sirketKoduInput, tesisKoduInput, dosyaAdi, sonuc);
 			} catch (Exception e) {
