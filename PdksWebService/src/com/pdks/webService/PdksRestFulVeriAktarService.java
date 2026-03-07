@@ -640,14 +640,17 @@ public class PdksRestFulVeriAktarService implements Serializable {
 			}
 		}
 		boolean testDurum = PdksVeriOrtakAktar.getTestDurum();
-		if (PdksUtil.hasStringValue(sonuc) && testDurum == false) {
-			try {
-				sendIKMail(sirketKoduInput, tesisKoduInput, dosyaAdi, sonuc);
-			} catch (Exception e) {
-				logger.error(e);
-				e.printStackTrace();
-			}
+		PdksVeriOrtakAktar pdksVeriOrtakAktar = new PdksVeriOrtakAktar();
+		if (pdksVeriOrtakAktar.getMesaiEntrasyonMailKapali(sirketKoduInput, tesisKoduInput, null) && testDurum == false) {
+			if (PdksUtil.hasStringValue(sonuc)) {
+				try {
+					sendIKMail(sirketKoduInput, tesisKoduInput, dosyaAdi, sonuc);
+				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
+				}
 
+			}
 		}
 		response = Response.ok(sonuc).type(mediaType + ";charset=utf-8").build();
 		return response;
