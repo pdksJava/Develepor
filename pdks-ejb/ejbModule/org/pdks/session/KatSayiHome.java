@@ -207,6 +207,7 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 			puantajKatSayiTipiList.clear();
 		else
 			puantajKatSayiTipiList = new ArrayList<SelectItem>();
+		session.clear();
 		katSayiList = pdksEntityController.getSQLParamByFieldList(KatSayi.TABLE_NAME, pasifGoster == false ? KatSayi.COLUMN_NAME_DURUM : null, Boolean.TRUE, KatSayi.class, session);
 		if (katSayiList.size() > 1 || pasifGoster == false) {
 			katSayiList = PdksUtil.sortListByAlanAdi(katSayiList, "basTarih", true);
