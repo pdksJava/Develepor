@@ -60,7 +60,8 @@
 				<value>org.pdks.entity.Kapi</value>
 				<value>org.pdks.entity.KapiKGS</value>
 				<value>org.pdks.entity.KapiSirket</value>
-				<value>org.pdks.entity.MailGrubu</value>
+				<value>org.pdks.entity.KatSayi</value>
+ 				<value>org.pdks.entity.MailGrubu</value>
 				<value>org.pdks.entity.Parameter</value>
 				<value>org.pdks.entity.PdksAgent</value>
 				<value>org.pdks.entity.PdksPersonelView</value>

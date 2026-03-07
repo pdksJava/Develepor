@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import org.pdks.entity.ERPSistem;
 import org.pdks.entity.IzinReferansERP;
 import org.pdks.entity.IzinTipi;
 import org.pdks.entity.KapiSirket;
+import org.pdks.entity.KatSayi;
 import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
@@ -42,6 +44,7 @@ import org.pdks.entity.TesisBaglanti;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaSablonu;
+import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.erp.entity.PersonelERPDB;
 import org.pdks.genel.model.Constants;
 import org.pdks.genel.model.Liste;
@@ -152,6 +155,200 @@ public class PdksVeriOrtakAktar implements Serializable {
 			fields = new HashMap();
 			serviceData = null;
 		}
+	}
+
+	/**
+	 * @param map
+	 * @param sirketId
+	 * @param tesisId
+	 * @param vardiyaId
+	 * @param str
+	 * @return
+	 */
+	private boolean veriKatSayiVar(TreeMap<String, BigDecimal> map, Long sirketId, Long tesisId, Long vardiyaId, String str) {
+		boolean veriDurum = false;
+		if (map != null && str != null) {
+			List<String> list = new ArrayList<String>();
+			list.add(str);
+			List<String> list2 = getKatSayiKeyList(sirketId, tesisId, vardiyaId, str, true);
+			list.addAll(list2);
+			for (String key : list) {
+				if (map.containsKey(key)) {
+					veriDurum = true;
+					break;
+				}
+			}
+			list = null;
+			list2 = null;
+
+		}
+		return veriDurum;
+	}
+
+	/**
+	 * @param sirketId
+	 * @param tesisId
+	 * @param vardiyaId
+	 * @param str
+	 * @param reverse
+	 * @return
+	 */
+	private List<String> getKatSayiKeyList(Long sirketId, Long tesisId, Long vardiyaId, String str, boolean reverse) {
+		String sirketKey = sirketId != null ? "S" + sirketId + "_" : "";
+		String tesisKey = tesisId != null ? "T" + tesisId + "_" : "";
+		String vardiyaKey = vardiyaId != null ? "V" + vardiyaId + "_" : "";
+		String[] dizi = new String[] { sirketKey + tesisKey + vardiyaKey, sirketKey + tesisKey, sirketKey + vardiyaKey, tesisKey + vardiyaKey, sirketKey, tesisKey, vardiyaKey };
+		List<String> list = new ArrayList<String>();
+		for (int i = 0; i < dizi.length; i++) {
+			if (dizi[i].equals("") == false) {
+				String key = dizi[i] + str;
+				if (list.contains(key) == false)
+					list.add(key);
+			}
+		}
+		if (reverse)
+			Collections.reverse(list);
+		dizi = null;
+		return list;
+	}
+
+	/**
+	 * @param map
+	 * @param sirketId
+	 * @param tesisId
+	 * @param vardiyaId
+	 * @param str
+	 * @return
+	 */
+	private BigDecimal getKatSayiVeriMap(TreeMap<String, BigDecimal> map, Long sirketId, Long tesisId, Long vardiyaId, String str) {
+		BigDecimal decimal = null;
+		if (map != null && str != null) {
+			List<String> list = getKatSayiKeyList(sirketId, tesisId, vardiyaId, str, false);
+			list.add(str);
+			for (String key : list) {
+				if (map.containsKey(key)) {
+					decimal = map.get(key);
+					break;
+				}
+			}
+			list = null;
+		}
+		return decimal;
+	}
+
+	/**
+	 * @param dAO
+	 * @return
+	 */
+	public boolean getMesaiEntrasyonMailKapali(String sirketKoduInput, String tesisKoduInput, PdksDAO dAO) {
+		if (dAO == null)
+			dAO = Constants.pdksDAO;
+		boolean kapali = false;
+		PuantajKatSayiTipi tipi = PuantajKatSayiTipi.GUN_FAZLA_MESAI_ENTEGRASYON_MAIL_KAPAT;
+		List<Integer> list = Arrays.asList(new Integer[] { tipi.value() });
+		Date tarih = PdksUtil.getDate(new Date());
+		HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> katSayilarMap = getYuvarlamaKatSayiMap(tarih, tarih, list, dAO);
+		if (katSayilarMap != null) {
+			if (katSayilarMap.containsKey(tipi)) {
+				Long sirketId = null, tesisId = null;
+				if (PdksUtil.hasStringValue(sirketKoduInput)) {
+					StringBuffer sb = new StringBuffer();
+					sb.append("select * from " + Sirket.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
+					sb.append(" where " + Sirket.COLUMN_NAME_ERP_KODU + " =:k ");
+					HashMap fields = new HashMap();
+					fields.put("k", sirketKoduInput);
+					List<Sirket> veriList = dAO.getNativeSQLList(fields, sb, Sirket.class);
+					if (veriList != null) {
+						if (veriList.isEmpty() == false)
+							sirketId = veriList.get(0).getId();
+						veriList = null;
+					}
+
+				}
+				if (PdksUtil.hasStringValue(tesisKoduInput)) {
+					StringBuffer sb = new StringBuffer();
+					sb.append("select * from " + Tanim.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
+					sb.append(" where " + Tanim.COLUMN_NAME_TIPI + " =:t ");
+					sb.append(" and (" + Tanim.COLUMN_NAME_KODU + " = k1 or " + Tanim.COLUMN_NAME_KODU + " = k2)");
+					HashMap fields = new HashMap();
+					fields.put("t", Tanim.TIPI_TESIS);
+					fields.put("k1", tesisKoduInput);
+					fields.put("k2", (PdksUtil.hasStringValue(sirketKoduInput) ? sirketKoduInput + "-" : "") + tesisKoduInput);
+					List<Tanim> veriList = dAO.getNativeSQLList(fields, sb, Tanim.class);
+					if (veriList != null) {
+						if (veriList.isEmpty() == false) {
+							tesisId = veriList.get(0).getId();
+						}
+
+					}
+
+				}
+				TreeMap<String, BigDecimal> map = katSayilarMap.get(tipi);
+				if (veriKatSayiVar(map, sirketId, tesisId, null, "")) {
+					BigDecimal deger = getKatSayiVeriMap(map, sirketId, tesisId, null, "");
+					if (deger != null)
+						kapali = deger.doubleValue() > 0.0d;
+				}
+				map = null;
+			}
+			katSayilarMap = null;
+		}
+		list = null;
+		return kapali;
+	}
+
+	/**
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param tipiList
+	 * @param dAO
+	 * @return
+	 */
+	private HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> getYuvarlamaKatSayiMap(Date basTarih, Date bitTarih, List<Integer> tipiList, PdksDAO dAO) {
+		HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> katSayiMap = new HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>>();
+		StringBuffer sb = new StringBuffer();
+		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ", max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, ");
+		sb.append("B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from " + KatSayi.TABLE_NAME + " B " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
+		sb.append(" where B." + KatSayi.COLUMN_NAME_BAS_TARIH + " <=  :bitTarih and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= :basTarih");
+		sb.append(" and B." + KatSayi.COLUMN_NAME_TIPI + " :tipi and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
+		sb.append(" group by B." + KatSayi.COLUMN_NAME_TIPI + ", B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA);
+		HashMap map = new HashMap();
+		map.put("tipi", tipiList);
+		map.put("basTarih", basTarih);
+		map.put("bitTarih", bitTarih);
+
+		try {
+			List<Object[]> list = dAO.getNativeSQLList(map, sb, null);
+			String[] dizi = new String[] { "S", "T", "V" };
+
+			for (Object[] objects : list) {
+				if (objects[0] == null && objects[1] == null)
+					continue;
+				Integer key = (Integer) objects[0];
+				PuantajKatSayiTipi tipi = PuantajKatSayiTipi.fromValue(key.intValue());
+				if (tipi != null) {
+					TreeMap<String, BigDecimal> degerMap = katSayiMap.containsKey(tipi) ? katSayiMap.get(tipi) : new TreeMap<String, BigDecimal>();
+					if (degerMap.isEmpty())
+						katSayiMap.put(tipi, degerMap);
+					BigDecimal deger = new BigDecimal((Double) objects[1]);
+					String dKey = "";
+					for (int i = 0; i < dizi.length; i++) {
+						Object object = objects[i + 2];
+						dKey += (object == null ? "" : dizi[i] + object.toString() + "_");
+					}
+
+					degerMap.put(dKey, deger);
+				}
+
+			}
+			list = null;
+			dizi = null;
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+
+		return katSayiMap;
 	}
 
 	private boolean isTatil() {
@@ -3752,7 +3949,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					personelYoneticiERPMap.put(personelNo, personelERP);
 					personelERPMap.remove(personelNo);
 				}
- 				if (vardiyaSablonu == null)
+				if (vardiyaSablonu == null)
 					addHatalist(hataList, personelERP, null, "Beyaz yaka şablonu bulunamadı!");
 				if (personelERP.getSirketKodu() == null || !sirketMap.containsKey(personelERP.getSirketKodu())) {
 					if (PdksUtil.hasStringValue(personelERP.getSirketKodu()) == false)
@@ -5649,7 +5846,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 	}
 
- 
 	/**
 	 * @param userList
 	 * @param personelList
