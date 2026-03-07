@@ -1727,51 +1727,53 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 					mesajInfoYaz("getMesaiPDKS --> " + mesaj + " out " + PdksUtil.getCurrentTimeStampStr());
 					try {
-						HashMap<String, Object> veriUserMap = getUserBilgileri(sirketKodu, tesisKodu);
-						List<User> userList = veriUserMap.containsKey("userList") ? (List<User>) veriUserMap.get("userList") : null;
-						if (userList != null) {
-							Tanim tesis = veriUserMap.containsKey("tesis") ? (Tanim) veriUserMap.get("tesis") : null;
-							sirket = veriUserMap.containsKey("sirket") ? (Sirket) veriUserMap.get("sirket") : null;
-							MailObject mailObject = new MailObject();
-							mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
-							mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
-							boolean testDurum = getTestDurum();
-							for (User user : userList) {
-								MailPersonel mailPersonel = new MailPersonel();
-								mailPersonel.setAdiSoyadi(user.getPdksPersonel().getAdSoyad());
-								String ePosta = testDurum == false ? user.getEmail() : "hasansayar58@gmail.com";
-								mailPersonel.setePosta(ePosta);
-								mailObject.getToList().add(mailPersonel);
-							}
+						if (getMesaiEntrasyonMailKapali(sirketKodu, tesisKodu, pdksDAO) == false) {
+							HashMap<String, Object> veriUserMap = getUserBilgileri(sirketKodu, tesisKodu);
+							List<User> userList = veriUserMap.containsKey("userList") ? (List<User>) veriUserMap.get("userList") : null;
+							if (userList != null) {
+								Tanim tesis = veriUserMap.containsKey("tesis") ? (Tanim) veriUserMap.get("tesis") : null;
+								sirket = veriUserMap.containsKey("sirket") ? (Sirket) veriUserMap.get("sirket") : null;
+								MailObject mailObject = new MailObject();
+								mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
+								mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
+								boolean testDurum = getTestDurum();
+								for (User user : userList) {
+									MailPersonel mailPersonel = new MailPersonel();
+									mailPersonel.setAdiSoyadi(user.getPdksPersonel().getAdSoyad());
+									String ePosta = testDurum == false ? user.getEmail() : "hasansayar58@gmail.com";
+									mailPersonel.setePosta(ePosta);
+									mailObject.getToList().add(mailPersonel);
+								}
 
-							String dosyaAdi = PdksUtil.setTurkishStr("FazlaMesai_" + +denklestirmeAy.getYil() + " " + denklestirmeAy.getAyAdi() + (sirket != null ? "_" + sirket.getAd() : "")) + (PdksUtil.hasStringValue(tesisKodu) ? "_" + tesisKodu : "") + ".xml";
-							String subject = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " " + (sirket != null ? sirket.getAd() + " " : "") + " " + (tesis != null ? tesis.getAciklama() + " " : "") + "fazla mesai yükleme";
-							String body = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " dönemi " + (sirket != null ? sirket.getAd() + " " : "") + " " + (tesis != null ? tesis.getAciklama() + " " : "") + " fazla mesai dosyası " + dosyaAdi + " ektedir.";
-							mailObject.setSubject(subject);
-							mailObject.setBody(body);
-							LinkedHashMap dataMap = new LinkedHashMap(), dataInputMap = new LinkedHashMap();
-							dataInputMap.put("sirketKodu", sirketKodu);
-							dataInputMap.put("yil", yil);
-							dataInputMap.put("ay", ay);
-							dataInputMap.put("donemKapat", donemKapat);
-							if (PdksUtil.hasStringValue(tesisKodu))
-								dataInputMap.put("tesisKodu", tesisKodu);
-							dataMap.put("input", dataInputMap);
-							if (!list.isEmpty())
-								dataMap.put("getMesaiPDKSReturn", list);
-							else
-								dataMap.put("mesaj", denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " dönemi " + (denklestirmeAy.getDurum() ? " ait kayıt bulunamadı!" : " kapatılmıştır!"));
-							// mailAdresKontrol(mailObject, null);
-							Gson gs = new Gson();
-							String xml = PdksUtil.getJsonToXML(gs.toJson(dataMap), "getMesaiPDKS", null);
-							MailFile mailFile = new MailFile();
-							mailFile.setDisplayName(dosyaAdi);
-							mailFile.setIcerik(PdksUtil.getBytesUTF8(xml));
-							mailObject.getAttachmentFiles().add(mailFile);
-							mailMap.put("mailObject", mailObject);
-							MailManager.ePostaGonder(mailMap);
-							gs = null;
-							mailObject = null;
+								String dosyaAdi = PdksUtil.setTurkishStr("FazlaMesai_" + +denklestirmeAy.getYil() + " " + denklestirmeAy.getAyAdi() + (sirket != null ? "_" + sirket.getAd() : "")) + (PdksUtil.hasStringValue(tesisKodu) ? "_" + tesisKodu : "") + ".xml";
+								String subject = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " " + (sirket != null ? sirket.getAd() + " " : "") + " " + (tesis != null ? tesis.getAciklama() + " " : "") + "fazla mesai yükleme";
+								String body = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " dönemi " + (sirket != null ? sirket.getAd() + " " : "") + " " + (tesis != null ? tesis.getAciklama() + " " : "") + " fazla mesai dosyası " + dosyaAdi + " ektedir.";
+								mailObject.setSubject(subject);
+								mailObject.setBody(body);
+								LinkedHashMap dataMap = new LinkedHashMap(), dataInputMap = new LinkedHashMap();
+								dataInputMap.put("sirketKodu", sirketKodu);
+								dataInputMap.put("yil", yil);
+								dataInputMap.put("ay", ay);
+								dataInputMap.put("donemKapat", donemKapat);
+								if (PdksUtil.hasStringValue(tesisKodu))
+									dataInputMap.put("tesisKodu", tesisKodu);
+								dataMap.put("input", dataInputMap);
+								if (!list.isEmpty())
+									dataMap.put("getMesaiPDKSReturn", list);
+								else
+									dataMap.put("mesaj", denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " dönemi " + (denklestirmeAy.getDurum() ? " ait kayıt bulunamadı!" : " kapatılmıştır!"));
+								// mailAdresKontrol(mailObject, null);
+								Gson gs = new Gson();
+								String xml = PdksUtil.getJsonToXML(gs.toJson(dataMap), "getMesaiPDKS", null);
+								MailFile mailFile = new MailFile();
+								mailFile.setDisplayName(dosyaAdi);
+								mailFile.setIcerik(PdksUtil.getBytesUTF8(xml));
+								mailObject.getAttachmentFiles().add(mailFile);
+								mailMap.put("mailObject", mailObject);
+								MailManager.ePostaGonder(mailMap);
+								gs = null;
+								mailObject = null;
+							}
 						}
 					} catch (Exception e) {
 						logger.error(e);
