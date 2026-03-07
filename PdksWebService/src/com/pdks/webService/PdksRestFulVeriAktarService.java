@@ -639,11 +639,11 @@ public class PdksRestFulVeriAktarService implements Serializable {
 				e.printStackTrace();
 			}
 		}
-		boolean testDurum = PdksVeriOrtakAktar.getTestDurum();
-		PdksVeriOrtakAktar pdksVeriOrtakAktar = new PdksVeriOrtakAktar();
-		if (pdksVeriOrtakAktar.getMesaiEntrasyonMailKapali(sirketKoduInput, tesisKoduInput, null) && testDurum == false) {
-			if (PdksUtil.hasStringValue(sonuc)) {
-				try {
+		if (PdksUtil.hasStringValue(sonuc)) {
+			boolean testDurum = PdksVeriOrtakAktar.getTestDurum();
+			PdksVeriOrtakAktar pdksVeriOrtakAktar = new PdksVeriOrtakAktar();
+			if (testDurum == false && pdksVeriOrtakAktar.getMesaiEntrasyonMailKapali(sirketKoduInput, tesisKoduInput, null) == false) {
+ 				try {
 					sendIKMail(sirketKoduInput, tesisKoduInput, dosyaAdi, sonuc);
 				} catch (Exception e) {
 					logger.error(e);

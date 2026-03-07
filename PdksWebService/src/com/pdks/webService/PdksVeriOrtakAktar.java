@@ -249,49 +249,53 @@ public class PdksVeriOrtakAktar implements Serializable {
 		Date tarih = PdksUtil.getDate(new Date());
 		HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> katSayilarMap = getYuvarlamaKatSayiMap(tarih, tarih, list, dAO);
 		if (katSayilarMap != null) {
-			if (katSayilarMap.containsKey(tipi)) {
-				Long sirketId = null, tesisId = null;
-				if (PdksUtil.hasStringValue(sirketKoduInput)) {
-					StringBuffer sb = new StringBuffer();
-					sb.append("select * from " + Sirket.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
-					sb.append(" where " + Sirket.COLUMN_NAME_ERP_KODU + " =:k ");
-					HashMap fields = new HashMap();
-					fields.put("k", sirketKoduInput);
-					List<Sirket> veriList = dAO.getNativeSQLList(fields, sb, Sirket.class);
-					if (veriList != null) {
-						if (veriList.isEmpty() == false)
-							sirketId = veriList.get(0).getId();
-						veriList = null;
-					}
-
-				}
-				if (PdksUtil.hasStringValue(tesisKoduInput)) {
-					StringBuffer sb = new StringBuffer();
-					sb.append("select * from " + Tanim.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
-					sb.append(" where " + Tanim.COLUMN_NAME_TIPI + " =:t ");
-					sb.append(" and (" + Tanim.COLUMN_NAME_KODU + " = k1 or " + Tanim.COLUMN_NAME_KODU + " = k2)");
-					HashMap fields = new HashMap();
-					fields.put("t", Tanim.TIPI_TESIS);
-					fields.put("k1", tesisKoduInput);
-					fields.put("k2", (PdksUtil.hasStringValue(sirketKoduInput) ? sirketKoduInput + "-" : "") + tesisKoduInput);
-					List<Tanim> veriList = dAO.getNativeSQLList(fields, sb, Tanim.class);
-					if (veriList != null) {
-						if (veriList.isEmpty() == false) {
-							tesisId = veriList.get(0).getId();
+			try {
+				if (katSayilarMap.containsKey(tipi)) {
+					Long sirketId = null, tesisId = null;
+					if (PdksUtil.hasStringValue(sirketKoduInput)) {
+						StringBuffer sb = new StringBuffer();
+						sb.append("select * from " + Sirket.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
+						sb.append(" where " + Sirket.COLUMN_NAME_ERP_KODU + " =:k ");
+						HashMap fields = new HashMap();
+						fields.put("k", sirketKoduInput);
+						List<Sirket> veriList = dAO.getNativeSQLList(fields, sb, Sirket.class);
+						if (veriList != null) {
+							if (veriList.isEmpty() == false)
+								sirketId = veriList.get(0).getId();
+							veriList = null;
 						}
-
 					}
+					if (PdksUtil.hasStringValue(tesisKoduInput)) {
+						StringBuffer sb = new StringBuffer();
+						sb.append("select * from " + Tanim.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
+						sb.append(" where " + Tanim.COLUMN_NAME_TIPI + " =:t ");
+						sb.append(" and (" + Tanim.COLUMN_NAME_ERP_KODU + " = :k1 or " + Tanim.COLUMN_NAME_ERP_KODU + " = :k2)");
+						HashMap fields = new HashMap();
+						fields.put("t", Tanim.TIPI_TESIS);
+						fields.put("k1", tesisKoduInput);
+						fields.put("k2", (PdksUtil.hasStringValue(sirketKoduInput) ? sirketKoduInput + "-" : "") + tesisKoduInput);
+						List<Tanim> veriList = dAO.getNativeSQLList(fields, sb, Tanim.class);
+						if (veriList != null) {
+							if (veriList.isEmpty() == false)
+								tesisId = veriList.get(0).getId();
+							veriList = null;
+						}
+					}
+					TreeMap<String, BigDecimal> map = katSayilarMap.get(tipi);
+					if (veriKatSayiVar(map, sirketId, tesisId, null, "")) {
+						BigDecimal deger = getKatSayiVeriMap(map, sirketId, tesisId, null, "");
+						if (deger != null)
+							kapali = deger.doubleValue() > 0.0d;
+					}
+					map = null;
+				}
 
-				}
-				TreeMap<String, BigDecimal> map = katSayilarMap.get(tipi);
-				if (veriKatSayiVar(map, sirketId, tesisId, null, "")) {
-					BigDecimal deger = getKatSayiVeriMap(map, sirketId, tesisId, null, "");
-					if (deger != null)
-						kapali = deger.doubleValue() > 0.0d;
-				}
-				map = null;
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
 			}
 			katSayilarMap = null;
+
 		}
 		list = null;
 		return kapali;
