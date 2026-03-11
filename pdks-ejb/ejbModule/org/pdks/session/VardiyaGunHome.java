@@ -5315,7 +5315,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		List<Long> eskiOnayList = new ArrayList<Long>();
 		TreeMap<Long, TreeMap<Long, Vardiya>> calismaModeliMap = getCalismaModeliMap(aylikPuantajList, null);
 		boolean onayliVar = false;
-		boolean usetYonetici = getPdksUser().getPdksPersonel().getUstYonetici();
+		boolean ustYonetici = getPdksUser().getPdksPersonel().getUstYonetici();
 
 		for (AylikPuantaj ap : aylikPuantajList) {
 			// for (Iterator iter = aylikPuantajList.iterator(); iter.hasNext();) {
@@ -5331,7 +5331,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			Personel personel = ap.getPdksPersonel();
 			if (denklestirmeAy.isDurumu() && !(getPdksUser().isAdmin() || getPdksUser().isSistemYoneticisi())) {
 				if (personel.isSanalPersonelMi() == false && (yoneticiTanimsiz == false && (ap.getYonetici() == null || ap.getYonetici().getId() == null))) {
-					ap.setOnayDurum(usetYonetici || false);
+					ap.setOnayDurum(ustYonetici || false);
 				}
 			}
 			boolean onayDurum = ap.isOnayDurum();
