@@ -1013,7 +1013,12 @@ public class StartupAction implements Serializable {
 		OrtakIslemler islemler = new OrtakIslemler();
 		Gson gson = new Gson();
 		if (PdksUtil.getCanliSunucuDurum()) {
-			String helpDeskLastDateStr = islemler.getStringHelpDesk();
+			String helpDeskLastDateStr = null;
+			try {
+				helpDeskLastDateStr = islemler.getStringHelpDesk();
+			} catch (Exception e) {
+				logger.error(e);
+			}
 			if (helpDeskLastDateStr != null && pmMap.containsKey(helpDeskLastDateKey)) {
 				Parameter parameter = pmMap.get(helpDeskLastDateKey);
 				if (parameter.getValue() == null || !parameter.getValue().equals(helpDeskLastDateStr)) {
