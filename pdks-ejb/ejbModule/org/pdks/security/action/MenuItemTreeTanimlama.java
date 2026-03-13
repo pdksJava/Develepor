@@ -22,6 +22,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.framework.EntityQuery;
 import org.pdks.entity.AccountPermission;
+import org.pdks.entity.MenuIliski;
 import org.pdks.entity.MenuItem;
 import org.pdks.security.entity.User;
 import org.pdks.security.entity.UserMenuItemTime;
@@ -373,7 +374,7 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		rootNode = null;
 		selectedIdsFromTreeMap.clear();
 		selectedIdsFromDataTableMap.clear();
@@ -417,6 +418,30 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		allTreeMenuItemList = (ArrayList<MenuItem>) pdksEntityController.getObjectByInnerObjectList(parametreMap, MenuItem.class);
+		HashMap<Long, MenuItem> map1 = new HashMap<Long, MenuItem>();
+		for (MenuItem tempMenuItem : allTreeMenuItemList)
+			map1.put(tempMenuItem.getId(), tempMenuItem);
+		List<MenuIliski> menuIliskiList = pdksEntityController.getSQLTableList(MenuIliski.TABLE_NAME, MenuIliski.class, session);
+		for (MenuIliski menuIliski : menuIliskiList) {
+			if (map1.containsKey(menuIliski.getMenuItem().getId()))
+				map1.remove(menuIliski.getMenuItem().getId());
+			if (map1.containsKey(menuIliski.getChildMenuItem().getId()))
+				map1.remove(menuIliski.getChildMenuItem().getId());
+		}
+		menuIliskiList = null;
+		if (map1.isEmpty() == false) {
+			for (Iterator iterator = allTreeMenuItemList.iterator(); iterator.hasNext();) {
+				MenuItem mi = (MenuItem) iterator.next();
+				if (map1.containsKey(mi.getId())) {
+					mi.setStatus(Boolean.FALSE);
+					pdksEntityController.saveOrUpdate(session, entityManager, mi);
+					iterator.remove();
+				}
+
+			}
+			session.flush();
+		}
+		map1 = null;
 		try {
 			rootNode = new TreeNodeImpl<MenuItem>();
 			for (MenuItem tempMenuItem : allTreeMenuItemList) {
@@ -428,6 +453,7 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 					addChildNodes(tempMenuItem, nodeImpl);
 				}
 			}
+
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
