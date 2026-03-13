@@ -15,7 +15,8 @@
 	<classpathentry kind="lib" path="C:/opt/lib/gl/javax.mail-1.6.2.jar"/>
 	<classpathentry kind="lib" path="C:/opt/lib/gl/json-smart-1.0.6.3.jar"/>
 	<classpathentry kind="lib" path="C:/opt/lib/gl/oauth2-oidc-sdk-6.5.jar"/>
-	<classpathentry kind="lib" path="C:/opt/lib/gl/slf4j-api-1.7.36.jar"/>
-	<classpathentry kind="lib" path="C:/opt/lib/gl/slf4j-simple-1.7.36.jar"/>
+	<classpathentry kind="lib" path="C:/opt/lib/gl/slf4j-api-1.6.2.jar"/>
+	<classpathentry kind="lib" path="C:/opt/lib/gl/slf4j-jdk14-1.6.2.jar"/>
+	<classpathentry kind="lib" path="C:/opt/lib/gl/slf4j-simple-1.6.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
