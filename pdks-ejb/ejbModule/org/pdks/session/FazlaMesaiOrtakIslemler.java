@@ -188,14 +188,14 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param tatilGunleriMap
 	 * @param vardiyaGunList
 	 * @param sirket
 	 * @param dm
 	 * @param session
-	 * @return
 	 */
 	@Transactional
-	public void setDenklestirmeAySure(List<VardiyaGun> vardiyaGunList, Sirket sirket, DenklestirmeAy dm, Session session) {
+	public void setDenklestirmeAySure(TreeMap<String, Tatil> tatilGunleriMap, List<VardiyaGun> vardiyaGunList, Sirket sirket, DenklestirmeAy dm, Session session) {
 
 		List<CalismaModeliAy> modelList = pdksEntityController.getSQLParamByAktifFieldList(CalismaModeliAy.TABLE_NAME, CalismaModeliAy.COLUMN_NAME_DONEM, dm.getId(), CalismaModeliAy.class, session);
 
@@ -240,7 +240,27 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 			if (calismaModeliAy.getSure() == 0.0d || calismaModeliAy.getToplamIzinSure() == 0.0d || ((dm.getSure() == 0.0d || dm.getToplamIzinSure() == 0.0d) && cm.getHaftaIci() == 9.0d)) {
 				double sure = 0.0d, toplamIzinSure = 0.0d;
+				TreeMap<String, Tatil> tatilMap = new TreeMap<String, Tatil>();
+				if (tatilGunleriMap == null) {
+					Date basTarih = null, bitTarih = null;
+					if (dm != null) {
+						basTarih = PdksUtil.convertToJavaDate(dm.getDonem() + "01", "yyyyMMdd");
+						bitTarih = PdksUtil.tariheAyEkleCikar(basTarih, 1);
+					} else {
+						for (VardiyaGun vardiyaGun : vardiyaGunList) {
+							if (basTarih == null || basTarih.after(vardiyaGun.getVardiyaDate()))
+								basTarih = vardiyaGun.getVardiyaDate();
+							if (bitTarih == null || bitTarih.before(vardiyaGun.getVardiyaDate()))
+								bitTarih = vardiyaGun.getVardiyaDate();
 
+						}
+					}
+					tatilGunleriMap = ortakIslemler.getTatilGunleri(null, basTarih, bitTarih, session);
+
+				} else
+					tatilMap.putAll(tatilGunleriMap);
+				if (tatilMap.isEmpty())
+					tatilMap = null;
 				if (cm.isHaftaTatilSabitDegil() == false) {
 					List<CalismaModeliGun> gunList = null;
 					if (cm.getCalismaModeliGunler() == null) {
@@ -287,6 +307,12 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 							double gunSure = 0.0d;
 							cal.setTime(vg.getVardiyaDate());
 							int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+							String key = vg.getVardiyaDateStr();
+							if (tatilMap != null && tatilMap.containsKey(key)) {
+								if (vg.getTatil() == null)
+									vg.setTatil(tatilMap.get(key));
+							}
+
 							if (vg.getTatil() == null) {
 								gunSure = cm.getSaat(dayOfWeek);
 								double sutIzinSure = cm.getSutIzinSaat(dayOfWeek);
@@ -296,7 +322,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 								if (PdksUtil.tarihKarsilastirNumeric(vg.getVardiyaDate(), vg.getTatil().getBasTarih()) == 0) {
 									if (vg.isHaftaIci() || cm.getSaat(dayOfWeek) > 0.0d) {
 										gunSure += cm.getArife();
-										logger.debug(vg.getVardiyaDateStr() + " " + sure);
+										logger.debug(key + " " + sure);
 										toplamIzinSure += cm.getArife();
 									}
 
@@ -305,6 +331,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 							}
 							if (gunSure > 0) {
 								sure += gunSure;
+								logger.debug(key + " " + sure + " " + gunSure);
 
 							}
 

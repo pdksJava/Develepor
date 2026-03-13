@@ -4212,7 +4212,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					CalismaModeliAy cma = personelDenklestirme.getCalismaModeliAy();
 					cma.setDurum(Boolean.TRUE);
 					saveOrUpdate(cma);
-					fazlaMesaiOrtakIslemler.setDenklestirmeAySure(defaultAylikPuantajSablon.getVardiyalar(), aramaSecenekleri.getSirket(), denklestirmeAy, session);
+					fazlaMesaiOrtakIslemler.setDenklestirmeAySure(tatilGunleriMap, defaultAylikPuantajSablon.getVardiyalar(), aramaSecenekleri.getSirket(), denklestirmeAy, session);
 				}
 				logger.debug("Denklestirme " + personelDenklestirme.getPersonel().getPdksSicilNo());
 				basliklariGuncelle(null);
@@ -6970,7 +6970,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				if (!perList.isEmpty()) {
 
 					defaultAylikPuantajSablon = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, departmanDenklestirmeDonemi, session);
-					fazlaMesaiOrtakIslemler.setDenklestirmeAySure(defaultAylikPuantajSablon.getVardiyalar(), aramaSecenekleri.getSirket(), denklestirmeAy, session);
+					fazlaMesaiOrtakIslemler.setDenklestirmeAySure(tatilGunleriMap, defaultAylikPuantajSablon.getVardiyalar(), aramaSecenekleri.getSirket(), denklestirmeAy, session);
 					for (CalismaModeliAy cm : denklestirmeAy.getModeller()) {
 						modelMap.put(cm.getCalismaModeli().getId(), cm);
 					}
@@ -7965,7 +7965,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					}
 					plansizList = null;
 					if (gunSaatGuncelle)
-						fazlaMesaiOrtakIslemler.setDenklestirmeAySure(defaultAylikPuantajSablon.getVardiyalar(), aramaSecenekleri.getSirket(), denklestirmeAy, session);
+						fazlaMesaiOrtakIslemler.setDenklestirmeAySure(tatilGunleriMap, defaultAylikPuantajSablon.getVardiyalar(), aramaSecenekleri.getSirket(), denklestirmeAy, session);
 
 				} else {
 					PdksUtil.addMessageWarn(denklestirmeAy.getAyAdi() + " " + yil + " dönemine ait çalışma planı bulunamadı!");
