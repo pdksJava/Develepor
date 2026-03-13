@@ -573,25 +573,14 @@ public class MailManager implements Serializable {
 					props.put("mail.smtp.auth", Boolean.TRUE);
 				}
 				if (mailParametreMap.containsKey("smtpMechanisms")) {
-
-					String token = null;
+ 					String token = null;
 					try {
 						String key = "smtpOffice365";
 						if (mailParametreMap.containsKey(key)) {
 							token = getAccessToken(mailParametreMap.get(key));
 							mailParametreMap.remove(key);
 						}
-						// String[] clients = new String[] { "47eb478f-1f0f-4d5c-a00b-e467c472eb6a", "97f81d88-dd29-4530-84bc-e503e0946a81", "jUI8Q~pktw3ONCY1KYi1rhyeu-IEBu6UefetWdqc" };
-						// clients = new String[] { "97f81d88-dd29-4530-84bc-e503e0946a81" };
-						// for (int i = 0; i < clients.length; i++) {
-						// String str = clients[i];
-						// token = getAccessToken(str, "1108be6e-efc9-4663-9646-8fbcda6708b9", "97667e45-358d-4293-9612-2246ff1d439c");
-						// if (token != null) {
-						// logger.info(str);
-						// break;
-						// }
-						//
-						// }
+					 
 					} catch (Exception e) {
 						System.err.println(e);
 					}

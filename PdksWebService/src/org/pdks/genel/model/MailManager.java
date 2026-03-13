@@ -11,6 +11,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -36,6 +39,9 @@ import org.pdks.security.entity.User;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import com.google.gson.Gson;
+import com.microsoft.aad.adal4j.AuthenticationContext;
+import com.microsoft.aad.adal4j.AuthenticationResult;
+import com.microsoft.aad.adal4j.ClientCredential;
 import com.pdks.webService.PdksVeriOrtakAktar;
 import com.sun.mail.util.MailSSLSocketFactory;
 
@@ -230,6 +236,7 @@ public class MailManager implements Serializable {
 			}
 		}
 	}
+
 	/**
 	 * @param mailObject
 	 * @param ccAdresName
@@ -257,34 +264,38 @@ public class MailManager implements Serializable {
 	 * @throws Exception
 	 */
 	public static MailStatu ePostaGonder(HashMap<String, Object> parameterMap) throws Exception {
+
+		HashMap<String, Object> mailParametreMap = new HashMap<String, Object>();
+		if (parameterMap != null && parameterMap.isEmpty() == false)
+			mailParametreMap.putAll(parameterMap);
 		MailStatu mailStatu = new MailStatu();
 		Properties props = null;
 		boolean uyariServisMailGonder = false;
-		if (parameterMap.containsKey("uyariServisMailGonder")) {
+		if (mailParametreMap.containsKey("uyariServisMailGonder")) {
 			try {
-				uyariServisMailGonder = ((String) parameterMap.get("uyariServisMailGonder")).equals("1");
+				uyariServisMailGonder = ((String) mailParametreMap.get("uyariServisMailGonder")).equals("1");
 			} catch (Exception e) {
 			}
 		}
-		if (parameterMap.containsKey("mailObject")) {
-			if (parameterMap.containsKey("oddTableRenk")) {
-				String deger = (String) parameterMap.get("oddTableRenk");
+		if (mailParametreMap.containsKey("mailObject")) {
+			if (mailParametreMap.containsKey("oddTableRenk")) {
+				String deger = (String) mailParametreMap.get("oddTableRenk");
 				if (deger.length() > 3)
 					MailManager.setOddRenk(deger);
 			}
-			if (parameterMap.containsKey("evenTableRenk")) {
-				String deger = (String) parameterMap.get("evenTableRenk");
+			if (mailParametreMap.containsKey("evenTableRenk")) {
+				String deger = (String) mailParametreMap.get("evenTableRenk");
 				if (deger.length() > 3)
 					MailManager.setEvenRenk(deger);
 			}
-			if (parameterMap.containsKey("headerTableRenk")) {
-				String deger = (String) parameterMap.get("headerTableRenk");
+			if (mailParametreMap.containsKey("headerTableRenk")) {
+				String deger = (String) mailParametreMap.get("headerTableRenk");
 				if (deger.length() > 3)
 					MailManager.setHeaderRenk(deger);
 			}
 
 			props = new Properties();
-			MailObject mailObject = (MailObject) parameterMap.get("mailObject");
+			MailObject mailObject = (MailObject) mailParametreMap.get("mailObject");
 			String konu = mailObject.getSubject();
 			String mailIcerik = mailObject.getBody(), mailAdresFROM = null, smtpTLSProtokol = null;
 			if (konu != null && konu.indexOf("  ") >= 0)
@@ -294,25 +305,25 @@ public class MailManager implements Serializable {
 			List<File> dosyalar = new ArrayList<File>();
 			int port = 25;
 			String username = null, password = null, smtpHostIp = null;
-			if (parameterMap.containsKey("smtpTLSProtokol"))
-				smtpTLSProtokol = (String) parameterMap.get("smtpTLSProtokol");
-			if (parameterMap.containsKey("smtpHost"))
-				smtpHostIp = (String) parameterMap.get("smtpHost");
-			if (parameterMap.containsKey("smtpHostPort"))
-				port = Integer.parseInt((String) parameterMap.get("smtpHostPort"));
-			if (parameterMap.containsKey("smtpUserName"))
-				username = (String) parameterMap.get("smtpUserName");
-			if (parameterMap.containsKey("smtpPassword"))
-				password = (String) parameterMap.get("smtpPassword");
+			if (mailParametreMap.containsKey("smtpTLSProtokol"))
+				smtpTLSProtokol = (String) mailParametreMap.get("smtpTLSProtokol");
+			if (mailParametreMap.containsKey("smtpHost"))
+				smtpHostIp = (String) mailParametreMap.get("smtpHost");
+			if (mailParametreMap.containsKey("smtpHostPort"))
+				port = Integer.parseInt((String) mailParametreMap.get("smtpHostPort"));
+			if (mailParametreMap.containsKey("smtpUserName"))
+				username = (String) mailParametreMap.get("smtpUserName");
+			if (mailParametreMap.containsKey("smtpPassword"))
+				password = (String) mailParametreMap.get("smtpPassword");
 			if (username == null) {
-				if (parameterMap.containsKey("fromAdres")) {
-					mailAdresFROM = (String) parameterMap.get("fromAdres");
+				if (mailParametreMap.containsKey("fromAdres")) {
+					mailAdresFROM = (String) mailParametreMap.get("fromAdres");
 					username = mailAdresFROM;
 				}
 			} else
 				mailAdresFROM = username;
-			if (mailAdresFROM != null && parameterMap.containsKey("fromName"))
-				mailAdresFROM = "\"" + parameterMap.get("fromName") + "\" <" + mailAdresFROM + ">";
+			if (mailAdresFROM != null && mailParametreMap.containsKey("fromName"))
+				mailAdresFROM = "\"" + mailParametreMap.get("fromName") + "\" <" + mailAdresFROM + ">";
 			JavaMailSenderImpl sender = new JavaMailSenderImpl();
 			sender.setDefaultEncoding("utf-8");
 			sender.setHost(smtpHostIp);
@@ -323,15 +334,37 @@ public class MailManager implements Serializable {
 				sender.setPassword(password);
 
 			boolean smtpTLSDurum = false, smtpSSLDurum = false, smtpServerDebug = false;
-			if (parameterMap.containsKey("smtpServerDebug"))
-				smtpServerDebug = ((String) parameterMap.get("smtpServerDebug")).equals("1");
-			if (parameterMap.containsKey("smtpTLSDurum"))
-				smtpTLSDurum = ((String) parameterMap.get("smtpTLSDurum")).equals("1");
-			if (parameterMap.containsKey("smtpSSLDurum"))
-				smtpSSLDurum = ((String) parameterMap.get("smtpSSLDurum")).equals("1");
+			if (mailParametreMap.containsKey("smtpServerDebug"))
+				smtpServerDebug = ((String) mailParametreMap.get("smtpServerDebug")).equals("1");
+			if (mailParametreMap.containsKey("smtpTLSDurum"))
+				smtpTLSDurum = ((String) mailParametreMap.get("smtpTLSDurum")).equals("1");
+			if (mailParametreMap.containsKey("smtpSSLDurum"))
+				smtpSSLDurum = ((String) mailParametreMap.get("smtpSSLDurum")).equals("1");
 			props.setProperty("mail.smtp.host", smtpHostIp);
 			props.setProperty("mail.smtp.port", String.valueOf(port));
-			props.setProperty("mail.smtp.user", username);
+			if (username != null) {
+				props.setProperty("mail.smtp.user", username);
+				props.put("mail.smtp.auth", Boolean.TRUE);
+			}
+			if (mailParametreMap.containsKey("smtpMechanisms")) {
+				String token = null;
+				try {
+					String key = "smtpOffice365";
+					if (mailParametreMap.containsKey(key)) {
+						token = getAccessToken((String) mailParametreMap.get(key));
+						mailParametreMap.remove(key);
+					}
+
+				} catch (Exception e) {
+					System.err.println(e);
+				}
+				if (token != null) {
+					password = token;
+					props.put("mail.smtp.auth.smtpMechanisms", (String) mailParametreMap.get("smtpMechanisms"));
+				} else
+					mailParametreMap.put("tekrarGonder", "");
+				mailParametreMap.remove("smtpMechanisms");
+			}
 			// properties.put("mail.smtp.starttls.enable", port != 465);
 			props.put("mail.smtp.auth", "true");
 			props.put("mail.smtp.starttls.enable", String.valueOf(smtpTLSDurum));
@@ -345,9 +378,9 @@ public class MailManager implements Serializable {
 
 				}
 				// props.setProperty("mail.smtp.socketFactory.port", String.valueOf(port));
-				if (parameterMap.containsKey("smtpSslTrust")) {
+				if (mailParametreMap.containsKey("smtpSslTrust")) {
 					// props.put("mail.smtp.ssl.trust", smtpHostIp);
-					props.put("mail.smtp.ssl.trust", parameterMap.get("smtpSslTrust"));
+					props.put("mail.smtp.ssl.trust", mailParametreMap.get("smtpSslTrust"));
 				}
 			}
 			if (port != 25 && smtpSSLDurum) {
@@ -383,10 +416,10 @@ public class MailManager implements Serializable {
 			message.setSubject(konu);
 			InternetAddress from = new InternetAddress();
 			from.setAddress(username);
-			if (parameterMap.containsKey("fromAdres"))
-				from.setAddress((String) parameterMap.get("fromAdres"));
-			if (parameterMap.containsKey("fromName"))
-				from.setPersonal((String) parameterMap.get("fromName"), "UTF-8");
+			if (mailParametreMap.containsKey("fromAdres"))
+				from.setAddress((String) mailParametreMap.get("fromAdres"));
+			if (mailParametreMap.containsKey("fromName"))
+				from.setPersonal((String) mailParametreMap.get("fromName"), "UTF-8");
 			message.setFrom(from);
 
 			Multipart mp = new MimeMultipart();
@@ -403,14 +436,14 @@ public class MailManager implements Serializable {
 				mailMap.put("cc", mailObject.getCcList());
 			}
 			if (PdksUtil.isSistemDestekVar()) {
-				addMailAdresCC(mailObject, "ccAdres", parameterMap);
-				addMailAdresCC(mailObject, "ccEntegrasyonAdres", parameterMap);
+				addMailAdresCC(mailObject, "ccAdres", mailParametreMap);
+				addMailAdresCC(mailObject, "ccEntegrasyonAdres", mailParametreMap);
 			}
 			if (PdksUtil.isSistemDestekVar()) {
-				addMailAdresBCC(mailObject, "bccAdres", parameterMap);
-				addMailAdresBCC(mailObject, "bccEntegrasyonAdres", parameterMap);
+				addMailAdresBCC(mailObject, "bccAdres", mailParametreMap);
+				addMailAdresBCC(mailObject, "bccEntegrasyonAdres", mailParametreMap);
 			}
-			
+
 			mailMap.put("bcc", mailObject.getBccList());
 			for (String key : mailMap.keySet()) {
 				List<MailPersonel> mailList = mailMap.get(key);
@@ -487,7 +520,7 @@ public class MailManager implements Serializable {
 						if (se.getInvalidAddresses() != null) {
 							javax.mail.Address[] address = se.getInvalidAddresses();
 							List<String> addresList = new ArrayList<String>();
-							parameterMap.put("invalidAddresses", addresList);
+							mailParametreMap.put("invalidAddresses", addresList);
 							for (int i = 0; i < address.length; i++) {
 								InternetAddress iad = (InternetAddress) address[i];
 								addresList.add(iad.getAddress());
@@ -502,8 +535,40 @@ public class MailManager implements Serializable {
 
 			}
 			mailList = null;
-			if (PdksUtil.getCanliSunucuDurum() || !parameterMap.containsKey(PdksVeriOrtakAktar.KEY_IK_MAIL_IPTAL))
-				saveLog(mailObject, parameterMap);
+			if (mailStatu.isDurum() == false) {
+				if (mailStatu.getHataMesai() == null)
+					mailStatu.setHataMesai("Hata oluştu!");
+				if (mailParametreMap.containsKey("tekrarGonder") == false) {
+					mailParametreMap.put("tekrarGonder", "");
+					if (mailParametreMap.containsKey("smtpYedekHost")) {
+
+						String smtpYedekHost = (String) mailParametreMap.get("smtpYedekHost");
+						if (smtpHostIp.equals(smtpYedekHost) == false) {
+							HashMap<String, String> map1 = new HashMap<String, String>();
+							for (String key : mailParametreMap.keySet()) {
+								if (key.startsWith("smtpYedek")) {
+									String deger = (String) mailParametreMap.get(key);
+									String key1 = PdksUtil.replaceAll(key, "smtpYedek", "smtp");
+									map1.put(key1, deger);
+								}
+
+							}
+							if (map1.isEmpty() == false) {
+								if (map1.containsKey("smtpUserName"))
+									mailObject.setSmtpUser(map1.get("smtpUserName"));
+								if (map1.containsKey("smtpPassword"))
+									mailObject.setSmtpPassword(map1.get("smtpPassword"));
+								mailParametreMap.putAll(map1);
+							}
+							map1 = null;
+							mailStatu = ePostaGonder(mailParametreMap);
+						}
+					}
+				}
+
+			}
+			if (PdksUtil.getCanliSunucuDurum() || !mailParametreMap.containsKey(PdksVeriOrtakAktar.KEY_IK_MAIL_IPTAL))
+				saveLog(mailObject, mailParametreMap);
 			for (File file : dosyalar) {
 				if (file.exists())
 					file.delete();
@@ -515,6 +580,58 @@ public class MailManager implements Serializable {
 
 		}
 		return mailStatu;
+	}
+
+	/**
+	 * @param clientId
+	 * @param clientSecret
+	 * @param tenantId
+	 * @return
+	 * @throws Exception
+	 */
+	private static String getAccessToken(String parametre) {
+		String clientSecret = null, clientId = null, tenantId = null;
+		String token = null;
+		try {
+			List<String> list = parametre != null ? PdksUtil.getListByString(parametre, ",") : new ArrayList<String>();
+			HashMap<String, String> veriMap = new HashMap<String, String>();
+			for (String string : list) {
+				if (string.indexOf("=") < 0)
+					continue;
+				String[] strings = string.split("=");
+				if (strings.length == 2)
+					veriMap.put(strings[0].toUpperCase(), strings[1]);
+
+			}
+			list = null;
+
+			if (veriMap.containsKey("T"))
+				tenantId = veriMap.get("T");
+			if (veriMap.containsKey("C"))
+				clientId = veriMap.get("C");
+			else if (veriMap.containsKey("A"))
+				clientId = veriMap.get("A");
+			if (veriMap.containsKey("S"))
+				clientSecret = veriMap.get("S");
+			veriMap = null;
+			if (tenantId != null && clientId != null && clientSecret != null) {
+				String authority = "https://login.microsoftonline.com/" + tenantId;
+				String resource = "https://graph.microsoft.com";
+				ExecutorService service = Executors.newFixedThreadPool(1);
+				AuthenticationContext context = new AuthenticationContext(authority, false, service);
+				ClientCredential credential = new ClientCredential(clientId, clientSecret);
+				logger.info(credential.getClientId() + " " + credential.getClientSecret() + "\n" + context.getCorrelationId() + " " + context.getAuthority());
+				Future<AuthenticationResult> future = context.acquireToken(resource, credential, null);
+				AuthenticationResult result = future.get();
+				token = result.getAccessToken();
+			}
+
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
+		return token;
+
 	}
 
 	/**
