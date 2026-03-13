@@ -8669,6 +8669,7 @@ public class OrtakIslemler implements Serializable {
 					mailStatu = mailManager.ePostaGonder(mailObject, session);
 			} catch (Exception e) {
 				logger.error(e);
+				e.printStackTrace();
 				PdksSoapVeriAktar pdksSoapVeriAktar = null;
 				try {
 					pdksSoapVeriAktar = getPdksSoapVeriAktar(true);

@@ -87,11 +87,7 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 			}
 			pdksEntityController.saveOrUpdate(session, entityManager, kapi);
 			session.flush();
-			// HashMap parametreMap = new HashMap();
-			// parametreMap.put("kapi.id", kapi.getId());
-			// if (session != null)
-			// parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// KapiView kapiView = ortakIslemler.getKapiView(parametreMap);
+
 			fillKapiList();
 
 		} catch (Exception e) {
