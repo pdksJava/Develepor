@@ -264,7 +264,6 @@ public class MailManager implements Serializable {
 	 * @throws Exception
 	 */
 	public static MailStatu ePostaGonder(HashMap<String, Object> parameterMap) throws Exception {
-
 		HashMap<String, Object> mailParametreMap = new HashMap<String, Object>();
 		if (parameterMap != null && parameterMap.isEmpty() == false)
 			mailParametreMap.putAll(parameterMap);
@@ -579,6 +578,7 @@ public class MailManager implements Serializable {
 			}
 
 		}
+		mailParametreMap = null;
 		return mailStatu;
 	}
 
