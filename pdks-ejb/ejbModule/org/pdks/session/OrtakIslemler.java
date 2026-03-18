@@ -6260,7 +6260,7 @@ public class OrtakIslemler implements Serializable {
 			}
 			if (!perNoList.isEmpty()) {
 				List<PersonelERPDB> personelERPDBList = getPersonelERPDBList(false, perNoList, parametreKey, session);
-				if (!personelERPDBList.isEmpty()) {
+				if (personelERPDBList != null && !personelERPDBList.isEmpty()) {
 					List<String> perNoDbList = new ArrayList<String>();
 					for (PersonelERPDB personelERPDB : personelERPDBList) {
 						perNoDbList.add(personelERPDB.getPersonelNo());
@@ -7465,10 +7465,13 @@ public class OrtakIslemler implements Serializable {
 				if (yeniNoList != null) {
 					if (yeniNoList.isEmpty() == false) {
 						List<PersonelERPDB> personelYeniList = getPersonelERPDBList(guncellemeDurum, perNoList, parameterName, session);
-						for (Iterator iterator = personelYeniList.iterator(); iterator.hasNext();) {
-							PersonelERPDB personelERPDB = (PersonelERPDB) iterator.next();
-							personelERPList.add(personelERPDB.getPersonelERP());
+						if (personelYeniList != null) {
+							for (Iterator iterator = personelYeniList.iterator(); iterator.hasNext();) {
+								PersonelERPDB personelERPDB = (PersonelERPDB) iterator.next();
+								personelERPList.add(personelERPDB.getPersonelERP());
+							}
 						}
+
 					} else
 						yeniNoList = null;
 				}
