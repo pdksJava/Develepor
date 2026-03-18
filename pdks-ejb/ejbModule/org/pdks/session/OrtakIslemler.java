@@ -8666,8 +8666,15 @@ public class OrtakIslemler implements Serializable {
 			list = null;
 			mailObject.setSmtpUser(getParameterKey("smtpUserName"));
 			mailObject.setSmtpPassword(getParameterKey("smtpPassword"));
+			Integer port = null;
 			try {
-				mailStatu = mailManager.mailleriDuzenle(mailObject, session);
+				port = Integer.parseInt(getParameterKey("smtpPort"));
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			try {
+
+				mailStatu = mailManager.mailleriDuzenle(mailObject, port, session);
 				if (mailStatu.getDurum())
 					mailStatu = mailManager.ePostaGonder(mailObject, session);
 			} catch (Exception e) {

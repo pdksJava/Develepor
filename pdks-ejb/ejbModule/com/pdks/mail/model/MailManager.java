@@ -65,6 +65,8 @@ public class MailManager implements Serializable {
 
 	public static Logger logger = Logger.getLogger(MailManager.class);
 
+	public static final Integer PORT_RELAY = 25;
+
 	@In(required = false, create = true)
 	PdksEntityController pdksEntityController;
 
@@ -199,13 +201,17 @@ public class MailManager implements Serializable {
 	}
 
 	/**
-	 * @param mailMap
+	 * @param mailObject
+	 * @param port
+	 * @param session
 	 * @return
 	 * @throws Exception
 	 */
-	public MailStatu mailleriDuzenle(MailObject mailObject, Session session) throws Exception {
+	public MailStatu mailleriDuzenle(MailObject mailObject, Integer port, Session session) throws Exception {
 		if (mailParametreMap == null)
 			mailDataOlustur();
+		if (port == null)
+			port = PORT_RELAY;
 		MailStatu mailStatu = new MailStatu();
 		String subject = mailObject.getSubject() != null ? PdksUtil.setTurkishStr(mailObject.getSubject()) : null;
 		if (subject != null)
@@ -213,7 +219,7 @@ public class MailManager implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		if (!PdksUtil.hasStringValue(mailObject.getSmtpUser()))
 			sb.append("Mail user belirtiniz!");
-		if (!PdksUtil.hasStringValue(mailObject.getSmtpPassword()))
+		if (port.equals(PORT_RELAY) == false && !PdksUtil.hasStringValue(mailObject.getSmtpPassword()))
 			sb.append("Mail şifre belirtiniz!");
 		if (!PdksUtil.hasStringValue(mailObject.getSubject()))
 			sb.append("Konu belirtiniz!");
@@ -351,7 +357,7 @@ public class MailManager implements Serializable {
 				props.put("mail.smtp.starttls.enable", smtpTLSDurum);
 				props.put("mail.debug", smtpServerDebug);
 				props.setProperty("mail.transport.protocol", "smtp");
-				if (port != 25)
+				if (port != PORT_RELAY)
 					props.put("mail.smtp.socketFactory.port", port);
 				if (smtpTLSDurum) {
 					if (smtpTLSProtokol != null) {
@@ -573,14 +579,14 @@ public class MailManager implements Serializable {
 					props.put("mail.smtp.auth", Boolean.TRUE);
 				}
 				if (mailParametreMap.containsKey("smtpMechanisms")) {
- 					String token = null;
+					String token = null;
 					try {
 						String key = "smtpOffice365";
 						if (mailParametreMap.containsKey(key)) {
 							token = getAccessToken(mailParametreMap.get(key));
 							mailParametreMap.remove(key);
 						}
-					 
+
 					} catch (Exception e) {
 						System.err.println(e);
 					}
