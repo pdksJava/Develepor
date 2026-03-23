@@ -621,7 +621,7 @@ public class MailManager implements Serializable {
 						props.put("mail.smtp.ssl.trust", mailParametreMap.get("smtpSslTrust"));
 					}
 				}
-				
+
 				if (port != PORT_RELAY && smtpSSLDurum) {
 					props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 					props.put("mail.smtp.socketFactory.fallback", String.valueOf(port == PORT_RELAY));
@@ -630,8 +630,11 @@ public class MailManager implements Serializable {
 						sf.setTrustAllHosts(true);
 						props.put("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 						props.put("mail.imap.ssl.trust", "*");
+
+					}
+					if (mailParametreMap.containsKey("smtpImapPort")) {
 						props.put("mail.imap.host", smtpHostIp);
-						props.put("mail.imap.port", "995");
+						props.put("mail.imap.port", mailParametreMap.get("smtpImapPort"));
 					}
 				}
 
@@ -654,7 +657,7 @@ public class MailManager implements Serializable {
 						if (PdksUtil.hasStringValue(password))
 							session = javax.mail.Session.getInstance(props, new GMailAuthenticator(username, password));
 						else
-						session = javax.mail.Session.getInstance(props);
+							session = javax.mail.Session.getInstance(props);
 
 					}
 				}
