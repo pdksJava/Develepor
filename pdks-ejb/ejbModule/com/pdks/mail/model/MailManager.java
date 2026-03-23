@@ -377,7 +377,7 @@ public class MailManager implements Serializable {
 						props.put("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 						props.put("mail.imap.ssl.trust", "*");
 						props.put("mail.imap.host", smtpHostIp);
-						props.put("mail.imap.port", "993");
+						props.put("mail.imap.port", "995");
 					}
 				}
 

@@ -173,7 +173,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	public String sayfaGirisAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		fazlaMesaiGirisDurum = false;
 		adminRole = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIKAdmin();
 		ikRole = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || (PdksUtil.isSistemDestekVar() && authenticatedUser.isIK());
@@ -686,10 +686,6 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 	}
 
-	public String fillDenklestirmeHareketList() {
-		return "";
-	}
-
 	public void fillHareketMesaiList() throws Exception {
 		sessionClear();
 		seciliEkSaha3 = null;
@@ -921,7 +917,17 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 					}
 					List<Long> kapiIdler = ortakIslemler.getPdksDonemselKapiIdler(tarih1, tarih2, session);
+					HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(null, session);
+					KapiView girisKapi = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS), cikisKapi = manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS);
+
+					Tanim neden = null;
+					User sistemUser = null;
+
+					neden = ortakIslemler.getOtomatikKapGirisiNeden(session);
+					if (neden != null)
+						sistemUser = ortakIslemler.getSistemAdminUser(session);
 					if (!personelList.isEmpty()) {
+
 						List<Long> perIdler = new ArrayList<Long>();
 						for (Iterator iterator2 = personelList.iterator(); iterator2.hasNext();) {
 							Personel pdksPersonel = (Personel) iterator2.next();
@@ -1018,10 +1024,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 										for (int j = 0; j < cikisHareketleri.size(); j++) {
 											HareketKGS hareketGiris = girisHareketleri.get(j);
 											HareketKGS hareketCikis = cikisHareketleri.get(j);
-											// if (hareketGiris.getOrjinalZaman() != null)
-											// hareketGiris.setZaman(hareketGiris.getOrjinalZaman());
-											// if (hareketCikis.getOrjinalZaman() != null)
-											// hareketCikis.setZaman(hareketCikis.getOrjinalZaman());
+
 											HareketKGS kgsHareketGiris = (HareketKGS) hareketGiris.clone();
 											HareketKGS kgsHareketCikis = (HareketKGS) hareketCikis.clone();
 
@@ -1079,12 +1082,60 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 															cikisZaman = islemVardiya.getVardiyaBasZaman();
 														kgsHareketGiris.setCikisZaman(cikisZaman);
 														saat += ortakIslemler.getSaatSure(girisZaman, cikisZaman, yemekList, vardiyaGun, session);
+
+														Date tatilBas = null;
+														if (vardiyaGun.getTatil() != null) {
+
+															tatilBas = tatil.getBasTarih();
+															if ((tatilBas.after(girisZaman) && tatilBas.before(cikisZaman)) == false)
+																tatilBas = null;
+														}
 														if (girisZaman.getTime() <= cikisZaman.getTime()) {
-															kgsHareketGiris.setCikisZaman(cikisZaman);
-															kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getFazlaMesaiYuvarla()));
-															kgsHareketGiris.setVardiyaGun(vardiyaGun);
-															kgsHareketGiris.setGirisZaman(girisZaman);
-															fazlaMesaiEkle(kgsList1, kgsHareketGiris);
+															if (tatilBas == null) {
+																kgsHareketGiris.setCikisZaman(cikisZaman);
+																kgsHareketGiris.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getFazlaMesaiYuvarla()));
+																kgsHareketGiris.setVardiyaGun(vardiyaGun);
+																kgsHareketGiris.setGirisZaman(girisZaman);
+																fazlaMesaiEkle(kgsList1, kgsHareketGiris);
+															} else {
+
+																HareketKGS kgsHareketGiris1 = (HareketKGS) kgsHareketGiris.clone();
+																Date cikisAyrikZaman = PdksUtil.addTarih(tatilBas, Calendar.SECOND, -5);
+																saat = ortakIslemler.getSaatSure(girisZaman, cikisAyrikZaman, yemekList, vardiyaGun, session);
+																kgsHareketGiris1.setTatil(false);
+																kgsHareketGiris1.setCikisZaman(cikisAyrikZaman);
+																kgsHareketGiris1.setKapiView(cikisKapi);
+																kgsHareketGiris1.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getFazlaMesaiYuvarla()));
+																kgsHareketGiris1.setVardiyaGun(vardiyaGun);
+																kgsHareketGiris1.setGirisZaman(girisZaman);
+																try {
+																	Long cikisId = pdksEntityController.hareketEkle(cikisKapi, kgsHareketGiris.getPersonel(), cikisAyrikZaman, sistemUser, neden.getId(), "", session);
+																	kgsHareketGiris1.setId(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS + cikisId);
+
+																	fazlaMesaiEkle(kgsList1, kgsHareketGiris1);
+																} catch (Exception e) {
+
+																}
+
+																HareketKGS kgsHareketGiris2 = (HareketKGS) kgsHareketGiris.clone();
+																kgsHareketGiris2.setTatil(true);
+																saat = ortakIslemler.getSaatSure(tatilBas, cikisZaman, yemekList, vardiyaGun, session);
+																kgsHareketGiris2.setCikisZaman(cikisZaman);
+																kgsHareketGiris2.setKapiView(girisKapi);
+																kgsHareketGiris2.setFazlaMesai(PdksUtil.setSureDoubleTypeRounded(saat, vardiyaGun.getFazlaMesaiYuvarla()));
+																kgsHareketGiris2.setVardiyaGun(vardiyaGun);
+																kgsHareketGiris2.setGirisZaman(tatilBas);
+
+																try {
+																	Long girisId = pdksEntityController.hareketEkle(girisKapi, kgsHareketGiris.getPersonel(), kgsHareketGiris2.getGirisZaman(), sistemUser, neden.getId(), "", session);
+																	kgsHareketGiris1.setId(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS + girisId);
+																	fazlaMesaiEkle(kgsList1, kgsHareketGiris2);
+																} catch (Exception e) {
+																	logger.error(e);
+																}
+
+															}
+
 															// logger.info("aa1 " + kgsList1.size());
 														}
 													}
