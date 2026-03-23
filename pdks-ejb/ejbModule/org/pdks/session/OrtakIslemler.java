@@ -10652,14 +10652,16 @@ public class OrtakIslemler implements Serializable {
 			if (pd.isOnaylandi() && ap.getVardiyaHaftaList() != null) {
 				boolean flush = false;
 				for (VardiyaHafta vh : ap.getVardiyaHaftaList()) {
+					int gunAdet = 0, haftaAdet = 0;
 					if (vh.getVardiyaGunler() == null)
 						continue;
-					int gunAdet = 0, haftaAdet = 0;
 					for (VardiyaGun vg : vh.getVardiyaGunler()) {
 						if (vg.getId() != null && vg.getVersion().intValue() == 0) {
 							++gunAdet;
-							if (vg.isHaftaTatil())
+							Vardiya vardiya = vg.getVardiya();
+							if (vardiya.isHaftaTatil())
 								++haftaAdet;
+
 						}
 
 					}
