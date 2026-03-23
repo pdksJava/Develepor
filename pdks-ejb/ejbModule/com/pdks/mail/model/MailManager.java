@@ -565,7 +565,7 @@ public class MailManager implements Serializable {
 				sender.setPort(port);
 				if (username != null)
 					sender.setUsername(username);
-				if (password != null)
+				if (PdksUtil.hasStringValue(password))
 					sender.setPassword(password);
 
 				if (mailParametreMap.containsKey("smtpTLSDurum"))
@@ -576,7 +576,7 @@ public class MailManager implements Serializable {
 				props.put("mail.smtp.port", port);
 				if (username != null) {
 					props.setProperty("mail.smtp.user", username);
-					props.put("mail.smtp.auth", Boolean.TRUE);
+					props.put("mail.smtp.auth", PdksUtil.hasStringValue(password));
 				}
 				if (mailParametreMap.containsKey("smtpMechanisms")) {
 					String token = null;
@@ -635,9 +635,16 @@ public class MailManager implements Serializable {
 				} catch (Exception ee) {
 
 				}
-				if (session == null)
-					if (username != null && password != null)
-						session = javax.mail.Session.getInstance(props, new GMailAuthenticator(username, password));
+
+				if (session == null) {
+					if (username != null) {
+						if (PdksUtil.hasStringValue(password))
+							session = javax.mail.Session.getInstance(props, new GMailAuthenticator(username, password));
+						else
+							session = javax.mail.Session.getInstance(props);
+
+					}
+				}
 				if (session != null)
 					session.setDebug(smtpServerDebug);
 				Transport transport = session.getTransport("smtp");
