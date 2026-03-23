@@ -648,7 +648,7 @@ public class MailManager implements Serializable {
 				if (session != null)
 					session.setDebug(smtpServerDebug);
 				Transport transport = session.getTransport("smtp");
-				transport.connect(smtpHostIp, username, password);
+ 				transport.connect(smtpHostIp, username, password);
 				MimeMessage message = new MimeMessage(session);
 				List<String> mailList = new ArrayList<String>();
 				message.setRecipients(Message.RecipientType.TO, adresleriDuzenle(mailObject.getToList(), mailList));
