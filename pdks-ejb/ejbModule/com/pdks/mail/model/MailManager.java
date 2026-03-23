@@ -530,7 +530,7 @@ public class MailManager implements Serializable {
 	public MailStatu ePostaGonder(MailObject mailObject, Session sessionDB) throws Exception {
 		if (mailParametreMap == null)
 			mailDataOlustur();
-
+		Exception ee = null;
 		MailStatu mailStatu = new MailStatu();
 		Properties props = null;
 		boolean smtpTLSDurum = false, smtpSSLDurum = false, smtpServerDebug = false;
@@ -648,7 +648,7 @@ public class MailManager implements Serializable {
 								session = javax.mail.Session.getInstance(props);
 						}
 					}
-				} catch (Exception ee) {
+				} catch (Exception exe) {
 
 				}
 
@@ -671,7 +671,6 @@ public class MailManager implements Serializable {
 				message.setRecipients(Message.RecipientType.CC, adresleriDuzenle(mailObject.getCcList(), mailList));
 				message.setRecipients(Message.RecipientType.BCC, adresleriDuzenle(mailObject.getBccList(), mailList));
 				if (!mailList.isEmpty()) {
-
 					InternetAddress from = new InternetAddress();
 					from.setAddress(username);
 					if (mailParametreMap.containsKey("fromAdres"))
@@ -758,13 +757,8 @@ public class MailManager implements Serializable {
 
 			}
 		} catch (Exception e) {
-			if (smtpServerDebug)
-				logger.error("ePostaGonder error " + e.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());
-			Gson gson = new Gson();
-			logger.error(e + "\n" + gson.toJson(props));
-			e.printStackTrace();
-			if (e.toString() != null)
-				mailStatu.setHataMesai(PdksUtil.replaceAll(e.toString(), "\n", ""));
+			ee = e;
+
 		}
 		if (mailStatu.getDurum() == false) {
 			if (mailStatu.getHataMesai() == null)
@@ -794,6 +788,14 @@ public class MailManager implements Serializable {
 						map1 = null;
 						mailStatu = ePostaGonder(mailObject, sessionDB);
 					}
+				} else if (ee != null) {
+					if (smtpServerDebug)
+						logger.error("ePostaGonder error " + ee.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());
+					Gson gson = new Gson();
+					logger.error(ee + "\n" + gson.toJson(props));
+					ee.printStackTrace();
+					if (ee.toString() != null)
+						mailStatu.setHataMesai(PdksUtil.replaceAll(ee.toString(), "\n", ""));
 				}
 			}
 
