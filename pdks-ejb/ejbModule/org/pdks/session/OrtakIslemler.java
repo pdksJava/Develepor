@@ -22198,7 +22198,7 @@ public class OrtakIslemler implements Serializable {
 													PersonelFazlaMesai fm1 = new PersonelFazlaMesai();
 													fm1.setVardiyaGun(vardiyaGun);
 													fm1.setBasZaman(basZaman);
-													if (bitZaman.before(islemVardiya.getVardiyaTelorans1BitZaman()))
+													if (bitZaman.before(islemVardiya.getVardiyaTelorans2BitZaman()))
 														fm1.setBasZaman(islemVardiya.getVardiyaBitZaman());
 													fm1.setBitZaman(bitZaman);
 													fm1.setHareketId(cikisHareket.getId());
