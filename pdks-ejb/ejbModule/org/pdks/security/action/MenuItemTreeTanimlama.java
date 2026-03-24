@@ -408,6 +408,8 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 
 	/**
 	 * Treenin oluşturuldugu Metod
+	 * 
+	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
 	private void loadTree() {
@@ -422,13 +424,13 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 		for (MenuItem tempMenuItem : allTreeMenuItemList)
 			map1.put(tempMenuItem.getId(), tempMenuItem);
 		List<MenuIliski> menuIliskiList = pdksEntityController.getSQLTableList(MenuIliski.TABLE_NAME, MenuIliski.class, session);
-		boolean flush = false;
+		boolean flush = false, baglanti = false;
 		for (MenuIliski menuIliski : menuIliskiList) {
 			MenuItem menuItem = menuIliski.getMenuItem();
 			MenuItem childMenuItem = menuIliski.getChildMenuItem();
 			if (menuItem.getStatus().booleanValue() == false || childMenuItem.getStatus().booleanValue() == false) {
 				session.delete(menuIliski);
-				flush = true;
+				baglanti = true;
 			}
 			if (map1.containsKey(menuItem.getId()))
 				map1.remove(menuItem.getId());
@@ -449,8 +451,17 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 			}
 
 		}
-		if (flush)
+		if (flush || baglanti) {
 			session.flush();
+			if (baglanti) {
+				try {
+					pdksEntityController.savePrepareTableID(true, null, MenuIliski.class, session);
+					session.flush();
+				} catch (Exception e) {
+ 				}
+ 			}
+		}
+
 		map1 = null;
 		try {
 			rootNode = new TreeNodeImpl<MenuItem>();
