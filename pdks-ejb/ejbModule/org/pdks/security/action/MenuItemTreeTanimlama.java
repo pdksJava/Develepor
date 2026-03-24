@@ -422,11 +422,18 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 		for (MenuItem tempMenuItem : allTreeMenuItemList)
 			map1.put(tempMenuItem.getId(), tempMenuItem);
 		List<MenuIliski> menuIliskiList = pdksEntityController.getSQLTableList(MenuIliski.TABLE_NAME, MenuIliski.class, session);
+		boolean flush = false;
 		for (MenuIliski menuIliski : menuIliskiList) {
-			if (map1.containsKey(menuIliski.getMenuItem().getId()))
-				map1.remove(menuIliski.getMenuItem().getId());
-			if (map1.containsKey(menuIliski.getChildMenuItem().getId()))
-				map1.remove(menuIliski.getChildMenuItem().getId());
+			MenuItem menuItem = menuIliski.getMenuItem();
+			MenuItem childMenuItem = menuIliski.getChildMenuItem();
+			if (menuItem.getStatus().booleanValue() == false || childMenuItem.getStatus().booleanValue() == false) {
+				session.delete(menuIliski);
+				flush = true;
+			}
+			if (map1.containsKey(menuItem.getId()))
+				map1.remove(menuItem.getId());
+			if (map1.containsKey(childMenuItem.getId()))
+				map1.remove(childMenuItem.getId());
 		}
 		menuIliskiList = null;
 		if (map1.isEmpty() == false) {
@@ -436,11 +443,14 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 					mi.setStatus(Boolean.FALSE);
 					pdksEntityController.saveOrUpdate(session, entityManager, mi);
 					iterator.remove();
+					flush = true;
 				}
 
 			}
-			session.flush();
+
 		}
+		if (flush)
+			session.flush();
 		map1 = null;
 		try {
 			rootNode = new TreeNodeImpl<MenuItem>();
