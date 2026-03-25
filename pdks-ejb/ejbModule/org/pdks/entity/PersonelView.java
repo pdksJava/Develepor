@@ -198,7 +198,7 @@ public class PersonelView implements Serializable {
 		String sicilNo = "";
 		if (pdksPersonel != null && pdksPersonel.getId() != null && pdksPersonel.getPdksSicilNo() != null)
 			sicilNo = pdksPersonel.getPdksSicilNo().trim();
-		else if (personelKGS != null)
+		else if (personelKGS != null && personelKGS.getSicilNo() != null)
 			sicilNo = personelKGS.getSicilNo().trim();
 		return sicilNo;
 	}

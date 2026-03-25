@@ -3187,7 +3187,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			if (ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametrePersonelERPTableView()) || personelERPGuncelleme.equalsIgnoreCase("E")) {
 				TreeMap<String, PersonelView> viewMap = new TreeMap<String, PersonelView>();
 				for (PersonelView personelView : list) {
-					if (personelView.isERPGuncelle() == false) {
+					if (personelView.isERPGuncelle() == false && PdksUtil.hasStringValue(personelView.getSicilNo())) {
 						viewMap.put(personelView.getSicilNo(), personelView);
 					}
 				}
