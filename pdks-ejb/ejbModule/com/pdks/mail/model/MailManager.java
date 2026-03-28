@@ -508,16 +508,21 @@ public class MailManager implements Serializable {
 			sb.append("<TR><TD><B>Hata </B></TD><TD><B>:</B>" + (PdksUtil.hasStringValue(mailStatu.getHataMesai()) ? mailStatu.getHataMesai() : "Hata oluştu!") + " </TD></TR></TBODY></TABLE>");
 			mailObject.setBody(sb.toString());
 			sb = null;
-			List<String> keyList = new ArrayList<String>(mailMap.keySet());
+			List<String> keyList = new ArrayList<String>(mailMap.keySet()), list = new ArrayList<String>();
 			for (String key : keyList) {
 				if (key.startsWith("smtpYedek")) {
 					String value = mailMap.get(key);
 					mailMap.remove(key);
 					String newKey = PdksUtil.replaceAllManuel(key, "smtpYedek", "smtp");
+					list.add(newKey);
 					mailMap.put(newKey, value);
+				} else if (list.contains(key) == false) {
+					if (key.startsWith("smtp"))
+						mailMap.remove(key);
 				}
 
 			}
+			list = null;
 			ePostaKontrol(mailObject, mailMap, sessionDB);
 		}
 	}
