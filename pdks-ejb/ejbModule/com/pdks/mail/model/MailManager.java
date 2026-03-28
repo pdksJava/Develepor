@@ -364,10 +364,10 @@ public class MailManager implements Serializable {
 					if (smtpTLSProtokol != null) {
 						props.put("mail.smtp.ssl.protocols", smtpTLSProtokol);
 					}
-
-				} else if (mailMap.containsKey("smtpSslTrust")) {
-					// props.put("mail.smtp.ssl.trust", smtpHostIp);
-					props.put("mail.smtp.ssl.trust", mailMap.get("smtpSslTrust"));
+					if (mailMap.containsKey("smtpSslTrust")) {
+						// props.put("mail.smtp.ssl.trust", smtpHostIp);
+						props.put("mail.smtp.ssl.trust", mailMap.get("smtpSslTrust"));
+					}
 				}
 				if (port != PORT_RELAY && smtpSSLDurum) {
 					props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
@@ -543,8 +543,10 @@ public class MailManager implements Serializable {
 
 		try {
 			if (mailObject != null) {
+
 				if (mailParametreMap.containsKey("smtpServerDebug"))
 					smtpServerDebug = ((String) mailParametreMap.get("smtpServerDebug")).equals("1");
+
 				if (smtpServerDebug)
 					logger.info("ePostaGonder in " + PdksUtil.getCurrentTimeStampStr());
 				props = new Properties();
@@ -670,6 +672,8 @@ public class MailManager implements Serializable {
 					session.setDebug(smtpServerDebug);
 				Transport transport = session.getTransport("smtp");
 				transport.connect(smtpHostIp, username, password);
+				if (PdksUtil.getCanliSunucuDurum() == false && PdksUtil.getTestSunucuDurum() == false)
+					logger.info(props);
 				MimeMessage message = new MimeMessage(session);
 				List<String> mailList = new ArrayList<String>();
 				message.setRecipients(Message.RecipientType.TO, adresleriDuzenle(mailObject.getToList(), mailList));
@@ -775,14 +779,22 @@ public class MailManager implements Serializable {
 					String smtpYedekHost = mailParametreMap.get("smtpYedekHost");
 					if (smtpHostIp.equals(smtpYedekHost) == false) {
 						HashMap<String, String> map1 = new HashMap<String, String>();
-						for (String key : mailParametreMap.keySet()) {
+						List<String> list = new ArrayList<String>(), keyList = new ArrayList<String>(mailParametreMap.keySet());
+						for (String key : keyList) {
 							if (key.startsWith("smtpYedek")) {
 								String deger = mailParametreMap.get(key);
 								String key1 = PdksUtil.replaceAll(key, "smtpYedek", "smtp");
+								list.add(key1);
 								map1.put(key1, deger);
+							} else if (list.contains(key) == false) {
+								if (key.startsWith("smtp"))
+									mailParametreMap.remove(key);
+
 							}
 
 						}
+						keyList = null;
+						list = null;
 						if (map1.isEmpty() == false) {
 							if (map1.containsKey("smtpUserName"))
 								mailObject.setSmtpUser(map1.get("smtpUserName"));
