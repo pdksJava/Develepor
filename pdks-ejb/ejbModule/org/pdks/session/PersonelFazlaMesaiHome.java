@@ -1002,7 +1002,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						ortakIslemler.otomatikHareketEkle(new ArrayList<VardiyaGun>(vardiyaMap.values()), session);
 						for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 							VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-							if (vardiyaGun.getHareketler() == null || vardiyaGun.getVersion().intValue() < 0)
+							if (vardiyaGun.getHareketler() == null)
 								continue;
 							List<YemekIzin> yemekList = vardiyaGun.getYemekList();
 							yuvarmaTipi = vardiyaGun.getFazlaMesaiYuvarla();
