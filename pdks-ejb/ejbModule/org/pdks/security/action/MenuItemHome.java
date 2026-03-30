@@ -136,11 +136,11 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		if (sessionx != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, sessionx);
 		List<UserMenuItemTime> list = pdksEntityController.getObjectByInnerObjectList(fields, UserMenuItemTime.class);
-		for (UserMenuItemTime userMenuItemTime : list) {
+		for (UserMenuItemTime userMenuItemTime : list)
 			pdksEntityController.deleteObject(sessionx, entityManager, userMenuItemTime);
-		}
+		Tanim description = item.getDescription();
 		pdksEntityController.deleteObject(sessionx, entityManager, item);
-
+		pdksEntityController.deleteObject(sessionx, entityManager, description);
 		sessionx.flush();
 		sessionx.clear();
 		startupAction.fillMenuItemList(sessionx);
@@ -155,6 +155,7 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		Tanim description = item.getDescription();
 		if (!description.getTipi().equals(Tanim.TIPI_MENU_BILESENI) || description.getKodu() == null || !description.getKodu().equals(item.getName())) {
 			description.setKodu(item.getName());
+			description.setErpKodu(item.getName());
 			description.setTipi(Tanim.TIPI_MENU_BILESENI);
 			description.setIslemTarihi(new Date());
 			description.setIslemYapan(authenticatedUser);
@@ -205,6 +206,7 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 			description.setDurum(Boolean.TRUE);
 			description.setTipi(Tanim.TIPI_MENU_BILESENI);
 			description.setKodu(item.getName());
+			description.setErpKodu(item.getName());
 			pdksEntityController.saveOrUpdate(sessionx, entityManager, description);
 			pdksEntityController.saveOrUpdate(sessionx, entityManager, instance);
 			sessionx.flush();
