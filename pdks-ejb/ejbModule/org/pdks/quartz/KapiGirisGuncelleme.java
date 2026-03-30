@@ -149,13 +149,6 @@ public class KapiGirisGuncelleme implements Serializable {
 		ortakIslemler.kapiGirisGuncelle(PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(new Date(), -61)), null, session);
 	}
 
-	public boolean kapiGirisGuncellemeKontrol(Session session) {
-		if (kapiGirisGuncelleDurum == null)
-			kapiGirisGuncelleDurum = ortakIslemler.isExisStoreProcedure(SP_NAME, session);
-
-		return kapiGirisGuncelleDurum;
-	}
-
 	public static boolean isCalisiyor() {
 		return calisiyor;
 	}
