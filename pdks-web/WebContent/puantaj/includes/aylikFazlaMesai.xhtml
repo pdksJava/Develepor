@@ -104,6 +104,12 @@
 									<SPAN style="font-size: 12px; font-weight: normal;">Yasal Çalışmayı Aşan Mesai Toplam Miktarı</SPAN>
 								</rich:toolTip></th>
 						</ui:fragment>
+						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.icapciSaatGoster}">
+							<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikIcap}"><h:outputText
+									value="ICP" /> <rich:toolTip for="baslikIcap}">
+									<SPAN style="font-size: 12px; font-weight: normal;">İcapçı Mesai Toplam Miktarı</SPAN>
+								</rich:toolTip></th>
+						</ui:fragment>
 						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.gerceklesenMesaiKod}">
 							<th style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;"
 								id="baslik#{ortakIslemler.gerceklesenMesaiKod()}"><h:outputText value="#{ortakIslemler.gerceklesenMesaiKod()}" /> <rich:toolTip
@@ -568,6 +574,13 @@
 										<rich:toolTip for="ucretiOdenenMesaiSure#{aylikPuantaj.personelDenklestirme.id}">
 											<span style="color: black; font-size: 13px;">#{ortakIslemler.getUcretiOdenenMesaiSureStr(aylikPuantaj)}</span>
 										</rich:toolTip>
+									</ui:fragment></td>
+							</ui:fragment>
+							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.icapciSaatGoster}">
+								<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
+										rendered="#{aylikPuantaj.fazlaMesaiHesapla and aylikPuantaj.icapciMesaiSure != 0}">
+										<span> <h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.icapciMesaiSure)}" /></span>
+
 									</ui:fragment></td>
 							</ui:fragment>
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.gerceklesenMesaiKod}">

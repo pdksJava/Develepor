@@ -35,7 +35,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 	public static final String COLUMN_NAME_GUNCELLEME_TARIHI = "GUNCELLEME_TARIHI";
 
 	private double normalSure = 0d, calismaSuresi = 0d, resmiTatilSure = 0d, aksamVardiyaSaatSayisi = 0d;
-	private Double resmiTatilKanunenEklenenSure = 0d, ucretiOdenenFazlaMesaiSaat = 0d;
+	private Double resmiTatilKanunenEklenenSure = 0d, ucretiOdenenFazlaMesaiSaat = 0d, icapciMesaiSaat = 0d;
 
 	private Date guncellemeTarihi;
 
@@ -131,6 +131,8 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 				this.setResmiTatilKanunenEklenenSure(value.getResmiTatilKanunenEklenenSure());
 			if (ucretiOdenenFazlaMesaiSaat == null || ucretiOdenenFazlaMesaiSaat.doubleValue() == 0.0d)
 				this.setUcretiOdenenFazlaMesaiSaat(value.getUcretiOdenenFazlaMesaiSaat());
+			if (icapciMesaiSaat == null || icapciMesaiSaat.doubleValue() == 0.0d)
+				this.setIcapciMesaiSaat(value.getIcapciMesaiSaat());
 		}
 		this.ekSaat = value;
 	}
@@ -143,6 +145,17 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 
 	public void setGuncellemeTarihi(Date guncellemeTarihi) {
 		this.guncellemeTarihi = guncellemeTarihi;
+	}
+
+	@Transient
+	public Double getIcapciMesaiSaat() {
+		return icapciMesaiSaat;
+	}
+
+	public void setIcapciMesaiSaat(Double value) {
+		if (!guncellendi)
+			guncellendi = PdksUtil.isDoubleDegisti(value, icapciMesaiSaat);
+		this.icapciMesaiSaat = value;
 	}
 
 	@Transient
@@ -170,7 +183,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 
 	@Transient
 	public boolean isEkSaatEkle() {
-		double ekSaatToplam = resmiTatilSure + aksamVardiyaSaatSayisi + ucretiOdenenFazlaMesaiSaat + (resmiTatilKanunenEklenenSure != null ? resmiTatilKanunenEklenenSure.doubleValue() : 0.0d);
+		double ekSaatToplam = resmiTatilSure + aksamVardiyaSaatSayisi + ucretiOdenenFazlaMesaiSaat + (icapciMesaiSaat != null ? icapciMesaiSaat.doubleValue() : 0.0d) + (resmiTatilKanunenEklenenSure != null ? resmiTatilKanunenEklenenSure.doubleValue() : 0.0d);
 		boolean ekSaatEkle = ekSaatToplam > 0.0d;
 		return ekSaatEkle;
 	}

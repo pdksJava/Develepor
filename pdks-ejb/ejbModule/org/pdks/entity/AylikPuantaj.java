@@ -524,17 +524,17 @@ public class AylikPuantaj implements Serializable, Cloneable {
 											if (arifeBaslangicTarihi.getTime() <= vardiya.getVardiyaBasZaman().getTime()) {
 												if (vg.getResmiTatilSure() > 0.0d) {
 													saatToplami -= vg.getCalismaSuresi() - vg.getResmiTatilSure();
-													double rtSure = vg.getCalismaSuresi();
+													double rtSure = vg.getCalismaSuresi(), ncSure = 0.0d;
 													if (vg.getFazlaMesailer() != null) {
 														for (PersonelFazlaMesai pfm : vg.getFazlaMesailer()) {
 															if (pfm.isOnaylandi() && pfm.getDurum()) {
-																if (pfm.isBayram() == false)
-																	rtSure -= pfm.getFazlaMesaiSaati();
+																if (pfm.isBayram() == false) {
+																	ncSure += pfm.getFazlaMesaiSaati();
+																}
 															}
-
 														}
 													}
-													vg.setResmiTatilSure(rtSure);
+													vg.setResmiTatilSure(rtSure - ncSure);
 												}
 												if (vardiyaTatil.isArifeCalismaSaatYokCGSDussun())
 													arifeSure = 0.0d;

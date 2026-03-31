@@ -72,7 +72,7 @@ public class VardiyaGun extends BaseObject {
 	private ArrayList<Vardiya> vardiyalar;
 	private VardiyaGun oncekiVardiyaGun, sonrakiVardiyaGun;
 	private int beklemeSuresi = 6;
-	private Double calismaSuaSaati = PersonelDenklestirme.getCalismaSaatiSua(), resmiTatilKanunenEklenenSure = 0.0d;
+	private Double calismaSuaSaati = PersonelDenklestirme.getCalismaSaatiSua(), resmiTatilKanunenEklenenSure = 0.0d, icapciMesaiSaat = 0d;
 	private Boolean izinHaftaTatilDurum;
 	private boolean hareketHatali = Boolean.FALSE, planHareketEkle = Boolean.TRUE, kullaniciYetkili = Boolean.TRUE, zamanGuncelle = Boolean.TRUE, zamanGelmedi = Boolean.FALSE;
 	private boolean fazlaMesaiTalepOnayliDurum = Boolean.FALSE, fazlaMesaiTalepDurum = Boolean.FALSE, ayarlamaBitti = false, bayramAyir = false;
@@ -197,9 +197,6 @@ public class VardiyaGun extends BaseObject {
 		this.personelNo = personelNo;
 	}
 
-	// @Column(name = "VARDIYA_BAS_SAAT")
-	// @Min(value = 0, message = "Sıfır altında değeri olamaz")
-	// @Max(value = 23, message = "23 üstünde değeri olamaz")
 	@Transient
 	public Integer getBasSaat() {
 		return basSaat;
@@ -209,9 +206,6 @@ public class VardiyaGun extends BaseObject {
 		this.basSaat = basSaat;
 	}
 
-	// @Column(name = "VARDIYA_BAS_DAKIKA")
-	// @Min(value = 0, message = "Sıfır altında değeri olamaz")
-	// @Max(value = 59, message = "59 üstünde değeri olamaz")
 	@Transient
 	public Integer getBasDakika() {
 		return basDakika;
@@ -221,9 +215,6 @@ public class VardiyaGun extends BaseObject {
 		this.basDakika = basDakika;
 	}
 
-	// @Column(name = "VARDIYA_BIT_SAAT")
-	// @Min(value = 0, message = "Sıfır altında değeri olamaz")
-	// @Max(value = 23, message = "23 üstünde değeri olamaz")
 	@Transient
 	public Integer getBitSaat() {
 		return bitSaat;
@@ -233,9 +224,6 @@ public class VardiyaGun extends BaseObject {
 		this.bitSaat = bitSaat;
 	}
 
-	// @Column(name = "VARDIYA_BIT_DAKIKA")
-	// @Min(value = 0, message = "Sıfır altında değeri olamaz")
-	// @Max(value = 59, message = "59 üstünde değeri olamaz")
 	@Transient
 	public Integer getBitDakika() {
 		return bitDakika;
@@ -2648,13 +2636,21 @@ public class VardiyaGun extends BaseObject {
 	@Transient
 	public double ucretiOdenenMesaiHesapla() {
 		double saat = 0d;
-		if (this.getFazlaMesailer() != null) {
+		boolean icap = this.getVardiya().isIcapVardiyasi();
+		double icapciSaat = 0.0d;
+		if (icap) {
+			icapciMesaiSaat = this.getCalismaSuresi();
+		} else if (this.getFazlaMesailer() != null) {
 			try {
 				for (PersonelFazlaMesai pfm : this.getFazlaMesailer()) {
 					if (pfm != null && pfm.getDurum() && pfm.isOnaylandi()) {
 						String kodu = pfm.getFazlaMesaiOnayDurum() != null ? pfm.getFazlaMesaiOnayDurum().getErpKodu() : null;
-						if (kodu != null && kodu.toUpperCase().contains("UCM"))
+						if (icap || (kodu != null && kodu.toUpperCase().contains("I+UCM"))) {
+							icapciSaat += pfm.getFazlaMesaiSaati();
+						} else if (kodu != null && kodu.toUpperCase().contains("UCM")) {
 							saat += pfm.getFazlaMesaiSaati();
+						}
+
 					}
 
 				}
@@ -2662,8 +2658,18 @@ public class VardiyaGun extends BaseObject {
 			}
 
 		}
+		this.setIcapciMesaiSaat(icapciSaat);
 		this.setUcretiOdenenFazlaMesaiSaat(saat);
 		return saat;
+	}
+
+	@Transient
+	public Double getIcapciMesaiSaat() {
+		return icapciMesaiSaat;
+	}
+
+	public void setIcapciMesaiSaat(Double icapciMesaiSaat) {
+		this.icapciMesaiSaat = icapciMesaiSaat;
 	}
 
 	public void entityRefresh() {

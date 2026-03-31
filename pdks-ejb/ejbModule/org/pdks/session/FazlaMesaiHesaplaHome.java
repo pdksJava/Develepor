@@ -167,7 +167,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private Boolean aksamGun = Boolean.FALSE, aksamSaat = Boolean.FALSE, hataliPuantajGoster = Boolean.FALSE, stajerSirket, departmanBolumAyni = Boolean.FALSE;
 	private Boolean modelGoster = Boolean.FALSE, kullaniciPersonel = Boolean.FALSE, denklestirmeAyDurum = Boolean.FALSE, gecenAyDurum = Boolean.FALSE, izinGoster = Boolean.FALSE, yoneticiRolVarmi = Boolean.FALSE;
 	private boolean adminRole, hareketIptalEt = false, ikRole, personelHareketDurum, personelFazlaMesaiDurum, vardiyaPlaniDurum, personelIzinGirisiDurum, fazlaMesaiTalepOnayliDurum = Boolean.FALSE;
-	private Boolean izinCalismayanMailGonder = Boolean.FALSE, bakiyeSifirlaDurum = Boolean.FALSE, isAramaGoster = Boolean.FALSE, hatalariAyikla = Boolean.FALSE, kismiOdemeGoster = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE, userLoginOldu;
+	private Boolean izinCalismayanMailGonder = Boolean.FALSE, bakiyeSifirlaDurum = Boolean.FALSE, isAramaGoster = Boolean.FALSE, hatalariAyikla = Boolean.FALSE, kismiOdemeGoster = Boolean.FALSE, icapciSaatGoster = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE, userLoginOldu;
 	private boolean topluGuncelle = false, yarimYuvarla = true, resmiTatilKanunenEklenenSureGoster = false, istifaGoster = false, sadeceFazlaMesai = true, saatlikCalismaGoster = false, izinBordoroGoster = false, bordroPuantajEkranindaGoster = false, planOnayDurum, eksikCalismaGoster,
 			eksikMaasGoster = false;
 	private int ay, yil, maxYil, sonDonem, pageSize;
@@ -388,6 +388,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			eksikSaatYuzde = null;
 			modelGoster = Boolean.FALSE;
 			yasalFazlaCalismaAsanSaat = Boolean.FALSE;
+			icapciSaatGoster = Boolean.FALSE;
 			departmanBolumAyni = Boolean.FALSE;
 			bakiyeGuncelle = null;
 			stajerSirket = Boolean.FALSE;
@@ -1354,6 +1355,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		gebeGoster = Boolean.FALSE;
 		isAramaGoster = Boolean.FALSE;
 		yasalFazlaCalismaAsanSaat = Boolean.FALSE;
+		icapciSaatGoster = Boolean.FALSE;
 		partTimeGoster = Boolean.FALSE;
 		suaGoster = Boolean.FALSE;
 		aylikPuantajSablon.getVardiyalar();
@@ -2150,6 +2152,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							}
 							VardiyaSaat vardiyaSaat = null;
 							if (saatEkle) {
+								if (vardiyaGun.getIcapciMesaiSaat().doubleValue() > 0.0d)
+									logger.info("");
 								vardiyaSaat = vardiyaGun.getVardiyaSaat();
 								if (vardiyaSaat == null)
 									vardiyaSaat = new VardiyaSaat();
@@ -2167,6 +2171,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										vardiyaSaat.setResmiTatilKanunenEklenenSure(vardiyaGun.getResmiTatilKanunenEklenenSure());
 										vardiyaSaat.setResmiTatilSure(vardiyaGun.getResmiTatilSure());
 										vardiyaSaat.setAksamVardiyaSaatSayisi(vardiyaGun.getAksamKatSayisi());
+										vardiyaSaat.setIcapciMesaiSaat(vardiyaGun.getIcapciMesaiSaat());
 										double saat = vardiyaGun.getUcretiOdenenFazlaMesaiSaat();
 										if (saat > 0.0d)
 											vardiyaSaat.setUcretiOdenenFazlaMesaiSaat(saat);
@@ -2190,7 +2195,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								if (denklestirmeAyDurum) {
 									ekSaatEkle = vardiyaSaat.isEkSaatEkle() && ekSaat == null;
 									if (ekSaat != null) {
-										ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure(), vardiyaSaat.getUcretiOdenenFazlaMesaiSaat());
+										ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure(), vardiyaSaat.getUcretiOdenenFazlaMesaiSaat(), vardiyaSaat.getIcapciMesaiSaat());
 										ekSaatEkle = ekSaat.isGuncellendi();
 									}
 								}
@@ -2201,7 +2206,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									if (ekSaatEkle) {
 										if (ekSaat == null) {
 											ekSaat = new VardiyaEkSaat();
-											ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure(), vardiyaSaat.getUcretiOdenenFazlaMesaiSaat());
+											ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure(), vardiyaSaat.getUcretiOdenenFazlaMesaiSaat(), vardiyaSaat.getIcapciMesaiSaat());
 											vardiyaSaat.setEkSaat(ekSaat);
 										}
 									}
@@ -2382,6 +2387,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 							if (calisiyor) {
 								double saat = vardiyaGun.ucretiOdenenMesaiHesapla();
+								saat += vardiyaGun.getIcapciMesaiSaat();
 								Double sure = vardiyaGun.getCalismaSuresi();
 								if (saat > 0.0d) {
 									ucretiOdenenMesaiSure += saat;
@@ -2391,7 +2397,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								if (gunMaxCalismaOdenir && vardiyaGun.isFcsDahil())
 									ucretiOdenenMesaiSure += sure != null && sure.doubleValue() > maxCalismaSure + (vardiyaGun.getHaftaCalismaSuresi() + vardiyaGun.getResmiTatilSure()) ? sure.doubleValue() - maxCalismaSure - (vardiyaGun.getHaftaCalismaSuresi() + vardiyaGun.getResmiTatilSure())
 											: 0.0d;
-
+								ucretiOdenenMesaiSure -= vardiyaGun.getIcapciMesaiSaat();
 								if (vardiyaGun.getIzin() == null)
 									++izinsizGun;
 								if (vardiyaGun.getHaftaCalismaSuresi() > 0) {
@@ -2439,6 +2445,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						gebeGoster = puantaj.isGebeDurum();
 					if (!yasalFazlaCalismaAsanSaat && personelDenklestirme.getCalismaModeliAy().isGunMaxCalismaOdenir())
 						yasalFazlaCalismaAsanSaat = calismaModeli.isFazlaMesaiVarMi() && ucretiOdenenMesaiSure > 0.0d;
+					if (!icapciSaatGoster)
+						icapciSaatGoster = puantaj.getIcapciMesaiSure().doubleValue() > 0.0d;
+
 					if (!sutIzniGoster)
 						sutIzniGoster = personelDenklestirme != null && (personelDenklestirme.getSutIzniDurum() != null && personelDenklestirme.getSutIzniDurum());
 					if (!isAramaGoster)
@@ -8371,6 +8380,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	public void setUserLoginOldu(Boolean userLoginOldu) {
 		this.userLoginOldu = userLoginOldu;
+	}
+
+	public Boolean getIcapciSaatGoster() {
+		return icapciSaatGoster;
+	}
+
+	public void setIcapciSaatGoster(Boolean icapciSaatGoster) {
+		this.icapciSaatGoster = icapciSaatGoster;
 	}
 
 }

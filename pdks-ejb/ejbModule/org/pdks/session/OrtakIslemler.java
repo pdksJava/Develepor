@@ -19845,7 +19845,7 @@ public class OrtakIslemler implements Serializable {
 				// if (denklestirmeAy == null && puantajData.getPersonelDenklestirme() != null)
 				// denklestirmeAy = puantajData.getPersonelDenklestirme().getDenklestirmeAy();
 				String donemKodu = String.valueOf(denklestirmeAy.getDonem());
-				double planlanSure = 0, izinSuresi = 0d, ucretiOdenenMesaiSure = 0d, tatilSuresi = 0d, fazlaMesaiMaxSure = getFazlaMesaiMaxSure(denklestirmeAy), resmiTatilSure = 0d;
+				double planlanSure = 0, izinSuresi = 0d, icapciMesaiSure = 0d, ucretiOdenenMesaiSure = 0d, tatilSuresi = 0d, fazlaMesaiMaxSure = getFazlaMesaiMaxSure(denklestirmeAy), resmiTatilSure = 0d;
 				Double radyolojiFazlaMesaiMaxSure = null;
 				boolean resmiTatilVardiyaEkle = false;
 
@@ -20235,6 +20235,8 @@ public class OrtakIslemler implements Serializable {
 									// }
 									double normalSure = pdksVardiyaGun.getCalismaSuresi() - (pdksVardiyaGun.getHaftaCalismaSuresi() + pdksVardiyaGun.getResmiTatilSure());
 									double saat = pdksVardiyaGun.ucretiOdenenMesaiHesapla();
+									saat += pdksVardiyaGun.getIcapciMesaiSaat();
+									icapciMesaiSure += pdksVardiyaGun.getIcapciMesaiSaat();
 									if (saat > 0.0d) {
 										ucretiOdenenMesaiSure += saat;
 										normalSure -= saat;
@@ -20244,7 +20246,7 @@ public class OrtakIslemler implements Serializable {
 										ucretiOdenenMesaiSure += normalSure - mesaiMaxSure;
 										// pdksVardiyaGun.addCalismaSuresi(fazlaMesaiMaxSure - normalSure);
 									}
-								}
+ 								}
 
 							} else if (hafta == 1 && !isNormalGunMu(pdksVardiyaGun)) {
 
@@ -20403,8 +20405,9 @@ public class OrtakIslemler implements Serializable {
 						saatToplami += PersonelDenklestirme.getSaatlikIzin(vardiyalar, false);
 					vardiyalar = null;
 					puantajData.setSaatToplami(saatToplami);
+					puantajData.setIcapciMesaiSure(icapciMesaiSure);
 					puantajData.setUcretiOdenenMesaiSure(ucretiOdenenMesaiSure);
-					puantajData.planSureHesapla(tatilGunleriMap);
+ 					puantajData.planSureHesapla(tatilGunleriMap);
 
 					if (toplamCalismaGunSayisi + offGunSayisi == 0 && puantajData.getSaatToplami() == 0.0d) {
 						if (puantajData.getPlanlananSure() != 0.0d) {
