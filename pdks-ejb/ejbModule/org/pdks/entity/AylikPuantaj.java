@@ -534,6 +534,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 															}
 														}
 													}
+													saatToplami += ncSure;
 													vg.setResmiTatilSure(rtSure - ncSure);
 												}
 												if (vardiyaTatil.isArifeCalismaSaatYokCGSDussun())

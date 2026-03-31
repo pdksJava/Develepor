@@ -26,8 +26,8 @@ public class VardiyaEkSaat extends BasePDKSObject implements Serializable, Clone
 	public static final String COLUMN_NAME_UCM_FAZLA_CALISMA_SURE = "UCM_FAZLA_CALISMA_SURE";
 	public static final String COLUMN_NAME_ICAP_FAZLA_CALISMA_SURE = "ICAP_FAZLA_CALISMA_SURE";
 
-	private double resmiTatilSure = 0d, aksamVardiyaSaatSayisi = 0d, ucretiOdenenFazlaMesaiSaat = 0d, icapciMesaiSaat = 0d;
-	private Double resmiTatilKanunenEklenenSure = 0d;
+	private double resmiTatilSure = 0d, aksamVardiyaSaatSayisi = 0d, ucretiOdenenFazlaMesaiSaat = 0d;
+	private Double resmiTatilKanunenEklenenSure = 0d, icapciMesaiSaat = 0d;
 
 	public VardiyaEkSaat() {
 		super();
@@ -82,11 +82,11 @@ public class VardiyaEkSaat extends BasePDKSObject implements Serializable, Clone
 	}
 
 	@Column(name = COLUMN_NAME_ICAP_FAZLA_CALISMA_SURE)
-	public double getIcapciMesaiSaat() {
+	public Double getIcapciMesaiSaat() {
 		return icapciMesaiSaat;
 	}
 
-	public void setIcapciMesaiSaat(double icapciMesaiSaat) {
+	public void setIcapciMesaiSaat(Double icapciMesaiSaat) {
 		this.icapciMesaiSaat = icapciMesaiSaat;
 	}
 
