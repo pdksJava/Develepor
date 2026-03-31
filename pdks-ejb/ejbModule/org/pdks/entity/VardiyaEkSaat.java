@@ -77,8 +77,10 @@ public class VardiyaEkSaat extends BasePDKSObject implements Serializable, Clone
 		return ucretiOdenenFazlaMesaiSaat;
 	}
 
-	public void setUcretiOdenenFazlaMesaiSaat(double ucretiOdenenFazlaMesaiSaat) {
-		this.ucretiOdenenFazlaMesaiSaat = ucretiOdenenFazlaMesaiSaat;
+	public void setUcretiOdenenFazlaMesaiSaat(double value) {
+		if (!guncellendi)
+			guncellendi = PdksUtil.isDoubleDegisti(value, ucretiOdenenFazlaMesaiSaat);
+		this.ucretiOdenenFazlaMesaiSaat = value;
 	}
 
 	@Column(name = COLUMN_NAME_ICAP_FAZLA_CALISMA_SURE)
@@ -86,8 +88,10 @@ public class VardiyaEkSaat extends BasePDKSObject implements Serializable, Clone
 		return icapciMesaiSaat;
 	}
 
-	public void setIcapciMesaiSaat(Double icapciMesaiSaat) {
-		this.icapciMesaiSaat = icapciMesaiSaat;
+	public void setIcapciMesaiSaat(Double value) {
+		if (!guncellendi)
+			guncellendi = PdksUtil.isDoubleDegisti(value, icapciMesaiSaat);
+		this.icapciMesaiSaat = value;
 	}
 
 	/**

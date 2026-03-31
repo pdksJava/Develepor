@@ -2152,8 +2152,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							}
 							VardiyaSaat vardiyaSaat = null;
 							if (saatEkle) {
-								if (vardiyaGun.getIcapciMesaiSaat().doubleValue() > 0.0d)
-									logger.info("");
+								vardiyaGun.ucretiOdenenMesaiHesapla();
 								vardiyaSaat = vardiyaGun.getVardiyaSaat();
 								if (vardiyaSaat == null)
 									vardiyaSaat = new VardiyaSaat();
@@ -5813,6 +5812,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			cell = ExcelUtil.getCell(sheet, row, col++, header);
 			ExcelUtil.baslikCell(cell, anchor, helper, drawing, ortakIslemler.yasalFazlaCalismaAsanSaatKod(), "Yasal Çalışmayı Aşan Mesai Toplam Miktarı");
 		}
+		if (icapciSaatGoster) {
+			cell = ExcelUtil.getCell(sheet, row, col++, header);
+			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "ICP", "İcapçı Mesai Toplam Miktarı");
+		}
 		if (gerceklesenMesaiKod) {
 			cell = ExcelUtil.getCell(sheet, row, col++, header);
 			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "GM", "Gerçekleşen Mesai : Çalışanın bu listedeki eksi/fazla çalışma saati");
@@ -6078,6 +6081,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						} else
 							ExcelUtil.getCell(sheet, row, col++, styleTutar).setCellValue("");
 					}
+					if (icapciSaatGoster) {
+						if (aylikPuantaj.getIcapciMesaiSure() > 0) {
+							setCell(sheet, row, col++, styleTutar, aylikPuantaj.getIcapciMesaiSure());
+						} else
+							ExcelUtil.getCell(sheet, row, col++, styleTutar).setCellValue("");
+					}
+
 					if (gerceklesenMesaiKod)
 						setCell(sheet, row, col++, styleTutar, aylikPuantaj.getAylikNetFazlaMesai());
 					if (devredenMesaiKod) {
