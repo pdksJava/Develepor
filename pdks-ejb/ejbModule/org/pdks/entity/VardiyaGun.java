@@ -1233,7 +1233,7 @@ public class VardiyaGun extends BaseObject {
 
 	public void setResmiTatilSure(double value) {
 		if (value != 0.0d) {
-			if (this.getVardiyaDateStr().endsWith("0501"))
+			if (this.getVardiyaDateStr().endsWith("0319"))
 				logger.debug(value);
 		}
 		this.resmiTatilSure = value;
@@ -1241,7 +1241,7 @@ public class VardiyaGun extends BaseObject {
 
 	public void addResmiTatilSure(double value) {
 		if (value != 0.0d) {
-			if (this.getVardiyaDateStr().endsWith("0501"))
+			if (this.getVardiyaDateStr().endsWith("0319"))
 				logger.debug(value);
 		}
 		this.resmiTatilSure += value;

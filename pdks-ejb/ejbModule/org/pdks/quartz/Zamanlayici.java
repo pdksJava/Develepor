@@ -70,7 +70,7 @@ public class Zamanlayici implements Serializable {
 	public void scheduleSertifikaSSLKontrolTimer() {
 		sertifikaSSLKontrol.sertifikaSSLKontrolTimer(new Date(), "0 0/15 8-21 ? * *");
 		logger.info("scheduleSertifikaSSLKontrolTimer start : " + PdksUtil.getCurrentTimeStampStr());
-		kapiGirisGuncelleme.kapiGirisGuncellemeTimer(new Date(), "0 0/30 6-8 ? * *");
+		kapiGirisGuncelleme.kapiGirisGuncellemeTimer(new Date(), "0 0/30 8,12,16,20 ? * *");
 		logger.info("kapiGirisGuncellemeTimer start : " + PdksUtil.getCurrentTimeStampStr());
 	}
 
