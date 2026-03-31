@@ -85,7 +85,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	private boolean donemBitti = Boolean.TRUE, ayrikHareketVar = Boolean.FALSE, fazlaMesaiIzinKontrol = Boolean.TRUE, gebeDurum = Boolean.FALSE, sutIzniDurumu = Boolean.FALSE;
 
-	private Double saatToplami = 0d, resmiTatilKanunenEklenenSure = 0d, resmiTatilToplami = 0d, haftaCalismaSuresi = 0d, ucretiOdenenMesaiSure = 0d, fazlaMesaiSure = 0d, odenenSure = 0d, planlananSure = 0d, offSure = 0.0d;
+	private Double saatToplami = 0d, resmiTatilKanunenEklenenSure = 0d, resmiTatilToplami = 0d, haftaCalismaSuresi = 0d, icapciMesaiSure = 0d, ucretiOdenenMesaiSure = 0d, fazlaMesaiSure = 0d, odenenSure = 0d, planlananSure = 0d, offSure = 0.0d;
 
 	private Double izinSuresi = 0d, saatlikIzinSuresi = 0d, fazlaMesaiMaxSure = 0d, eksikCalismaSure = 0d, gecenAyFazlaMesai = 0d, hesaplananSure = 0d, devredenSure = 0d, aksamVardiyaSaatSayisi = 0d, kesilenSure = 0d;
 
@@ -437,7 +437,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public double getAylikFazlaMesai() {
 
-		double aylikFazlaMesai = saatToplami - (planlananSure + ucretiOdenenMesaiSure);
+		double aylikFazlaMesai = saatToplami - (planlananSure + ucretiOdenenMesaiSure + icapciMesaiSure);
 		if (calismaModeli == null || !calismaModeli.isFazlaMesaiVarMi())
 			aylikFazlaMesai = 0;
 
@@ -488,7 +488,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		}
 		double arifeToplamSure = getArifeToplamSure(tatilGunleriMap, calismaModeli);
 		Double hesaplananSure = (personelDenklestirme != null ? personelDenklestirme.getMaksimumSure(izinSure, arifeToplamSure, vardiyalar) : 0d);
- 		if (hesaplananSure < 0)
+		if (hesaplananSure < 0)
 			hesaplananSure = 0.0d;
 		if (tatilGunleriMap != null && vardiyalar != null && !vardiyalar.isEmpty()) {
 			double yarimGun = personelDenklestirme.getCalismaModeli().getArife();
@@ -922,6 +922,16 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		if (value != null && value.doubleValue() != 0.0d)
 			logger.debug(value);
 		this.ucretiOdenenMesaiSure = value;
+	}
+
+	public Double getIcapciMesaiSure() {
+		return icapciMesaiSure;
+	}
+
+	public void setIcapciMesaiSure(Double value) {
+		if (value != null && value.doubleValue() != 0.0d)
+			logger.debug(value);
+		this.icapciMesaiSure = value;
 	}
 
 	public boolean isVardiyaOlustu() {
