@@ -1870,8 +1870,13 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					denklestirmeBordro.setArtikAdet(artikAdet);
 					if (kaydet) {
 						if (denklestirmeBordro.isGuncellendi()) {
-							session.saveOrUpdate(denklestirmeBordro);
-							flush = true;
+							try {
+								session.saveOrUpdate(denklestirmeBordro);
+								flush = true;
+							} catch (Exception e) {
+								logger.error(e);
+							}
+
 						}
 
 					}
@@ -1899,8 +1904,12 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 								bordroDetay.setMiktar(detayMap.get(bordroDetayTipi));
 								if (kaydet) {
 									if (bordroDetay.isGuncellendi()) {
-										session.saveOrUpdate(bordroDetay);
-										flush = true;
+										try {
+											session.saveOrUpdate(bordroDetay);
+											flush = true;
+										} catch (Exception e) {
+											logger.error(e);
+										}
 									}
 								}
 							}

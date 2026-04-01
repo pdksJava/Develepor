@@ -720,14 +720,15 @@
 											</ui:fragment>
 
 										</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.eksiBakiyeSuresi ne 0 and aylikPuantaj.personelDenklestirme.durum}">
-											<DIV id="eksiBakiyeSuresi#{aylikPuantaj.personelDenklestirme.id}" style="background-color: red;">
-												<h:graphicImage value="/img/clock_16.png" style="border:0" />
-												<rich:toolTip for="eksiBakiyeSuresi#{aylikPuantaj.personelDenklestirme.id}">
-													<span style="color: blue; font-size: 13px;"><b> Denkleştirilmeyen Eksi Bakiye(Saat) :</b>
-														#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.eksiBakiyeSuresi)} </span>
-
-												</rich:toolTip>
-											</DIV>
+											<DIV id="eksiBakiyeSuresi#{aylikPuantaj.personelDenklestirme.id}">
+												<span style="color: red; font-size: 13px;"><b><u>#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.eksiBakiyeSuresi)}</u></b></span>
+												 
+											</DIV>		 
+											<rich:toolTip for="eksiBakiyeSuresi#{aylikPuantaj.personelDenklestirme.id}">
+														<span style="color: blue; font-size: 13px;"><b>Denkleştirilmeyen Eksi Bakiye(Saat) </b></span>
+ 											</rich:toolTip>
+												 
+											
 										</ui:fragment></td>
 								</ui:fragment>
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.kesilenSureGoster}">
