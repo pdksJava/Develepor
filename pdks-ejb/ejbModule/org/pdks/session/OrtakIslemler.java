@@ -19845,6 +19845,7 @@ public class OrtakIslemler implements Serializable {
 				// if (denklestirmeAy == null && puantajData.getPersonelDenklestirme() != null)
 				// denklestirmeAy = puantajData.getPersonelDenklestirme().getDenklestirmeAy();
 				String donemKodu = String.valueOf(denklestirmeAy.getDonem());
+				double mesaiMaxSure = 0;
 				double planlanSure = 0, izinSuresi = 0d, icapciMesaiSure = 0d, ucretiOdenenMesaiSure = 0d, tatilSuresi = 0d, fazlaMesaiMaxSure = getFazlaMesaiMaxSure(denklestirmeAy), resmiTatilSure = 0d;
 				Double radyolojiFazlaMesaiMaxSure = null;
 				boolean resmiTatilVardiyaEkle = false;
@@ -19910,6 +19911,7 @@ public class OrtakIslemler implements Serializable {
 								personelDenklestirme.setIzinVardiyaGun(pdksVardiyaGun);
 							}
 							List<YemekIzin> yemekList = yemekHesapla ? pdksVardiyaGun.getYemekList() : yemekBosList;
+
 							Double izinSaat = null;
 							Tatil tatilOrj = tatilGunleriMap.get(key);
 							if (tatilGunleriMap.containsKey(key))
@@ -19947,7 +19949,7 @@ public class OrtakIslemler implements Serializable {
 							}
 
 							double normalCalismaSuresi = izinSaat != null ? izinSaat : normalCalismaVardiya.getNetCalismaSuresi();
-							double mesaiMaxSure = fazlaMesaiMaxSure;
+							mesaiMaxSure = fazlaMesaiMaxSure;
 							if (personelDenklestirme.isSuaDurumu()) {
 								if (radyolojiFazlaMesaiMaxSure == null) {
 									radyolojiFazlaMesaiMaxSure = denklestirmeAy.getRadyolojiFazlaMesaiMaxSure();
@@ -20236,17 +20238,21 @@ public class OrtakIslemler implements Serializable {
 									double normalSure = pdksVardiyaGun.getCalismaSuresi() - (pdksVardiyaGun.getHaftaCalismaSuresi() + pdksVardiyaGun.getResmiTatilSure());
 									double saat = pdksVardiyaGun.ucretiOdenenMesaiHesapla();
 									saat += pdksVardiyaGun.getIcapciMesaiSaat();
+
 									icapciMesaiSure += pdksVardiyaGun.getIcapciMesaiSaat();
 									if (saat > 0.0d) {
 										ucretiOdenenMesaiSure += saat;
 										normalSure -= saat;
 									}
-
-									if (pdksVardiyaGun.isFcsDahil() && normalSure > mesaiMaxSure && maxSureDurum) {
-										ucretiOdenenMesaiSure += normalSure - mesaiMaxSure;
-										// pdksVardiyaGun.addCalismaSuresi(fazlaMesaiMaxSure - normalSure);
+									double toplamCalismaSure = normalSure + pdksVardiyaGun.getResmiTatilSure();
+									if (pdksVardiyaGun.isFcsDahil() && toplamCalismaSure > mesaiMaxSure && maxSureDurum) {
+										double fark = 0;
+										double resmiTatilGercek = pdksVardiyaGun.getResmiTatilSure() - pdksVardiyaGun.getResmiTatilKanunenEklenenSure();
+										if (resmiTatilGercek > fazlaMesaiMaxSure)
+											fark = resmiTatilGercek - fazlaMesaiMaxSure;
+										ucretiOdenenMesaiSure += toplamCalismaSure - mesaiMaxSure - fark;
 									}
- 								}
+								}
 
 							} else if (hafta == 1 && !isNormalGunMu(pdksVardiyaGun)) {
 
@@ -20405,9 +20411,11 @@ public class OrtakIslemler implements Serializable {
 						saatToplami += PersonelDenklestirme.getSaatlikIzin(vardiyalar, false);
 					vardiyalar = null;
 					puantajData.setSaatToplami(saatToplami);
+					puantajData.setFazlaMesaiMaxSure(mesaiMaxSure);
+
 					puantajData.setIcapciMesaiSure(icapciMesaiSure);
 					puantajData.setUcretiOdenenMesaiSure(ucretiOdenenMesaiSure);
- 					puantajData.planSureHesapla(tatilGunleriMap);
+					puantajData.planSureHesapla(tatilGunleriMap);
 
 					if (toplamCalismaGunSayisi + offGunSayisi == 0 && puantajData.getSaatToplami() == 0.0d) {
 						if (puantajData.getPlanlananSure() != 0.0d) {
