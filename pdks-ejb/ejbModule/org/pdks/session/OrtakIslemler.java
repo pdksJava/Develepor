@@ -20418,9 +20418,8 @@ public class OrtakIslemler implements Serializable {
 						}
 					}
 
-					// if (filliHesapla == false && puantajData.getResmiTatilToplami() > 0.0d)
-					// puantajData.setSaatToplami(puantajData.getSaatToplami() - puantajData.getResmiTatilToplami());
-					double hesaplananBuAySure = puantajData.getAylikFazlaMesai(), gecenAydevredenSure = puantajData.getGecenAyFazlaMesai(loginUser);
+					double hesaplananBuAySure = puantajData.getAylikFazlaMesai() + puantajData.getIcapciMesaiSure();
+					double gecenAydevredenSure = puantajData.getGecenAyFazlaMesai(loginUser);
 					boolean fazlaMesaiOde = puantajData.getPersonelDenklestirme().getFazlaMesaiOde() != null && puantajData.getPersonelDenklestirme().getFazlaMesaiOde();
 					if (!fazlaMesaiOde) {
 						try {

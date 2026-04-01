@@ -6082,12 +6082,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							ExcelUtil.getCell(sheet, row, col++, styleTutar).setCellValue("");
 					}
 					if (icapciSaatGoster) {
-						if (aylikPuantaj.getIcapciMesaiSure() > 0) {
-							setCell(sheet, row, col++, styleTutar, aylikPuantaj.getIcapciMesaiSure());
-						} else
+						if (aylikPuantaj.getIcapciMesaiSure()  > 0) {
+							  setCell(sheet, row, col++, styleTutar, aylikPuantaj.getIcapciMesaiSure());
+	 						} else
 							ExcelUtil.getCell(sheet, row, col++, styleTutar).setCellValue("");
 					}
-
+					
 					if (gerceklesenMesaiKod)
 						setCell(sheet, row, col++, styleTutar, aylikPuantaj.getAylikNetFazlaMesai());
 					if (devredenMesaiKod) {

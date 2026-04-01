@@ -436,7 +436,6 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	}
 
 	public double getAylikFazlaMesai() {
-
 		double aylikFazlaMesai = saatToplami - (planlananSure + ucretiOdenenMesaiSure + icapciMesaiSure);
 		if (calismaModeli == null || !calismaModeli.isFazlaMesaiVarMi())
 			aylikFazlaMesai = 0;
@@ -536,7 +535,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 													}
 													saatToplami += ncSure;
 													vg.setResmiTatilSure(rtSure - ncSure);
-													
+
 												}
 												if (vardiyaTatil.isArifeCalismaSaatYokCGSDussun())
 													arifeSure = 0.0d;
@@ -574,7 +573,6 @@ public class AylikPuantaj implements Serializable, Cloneable {
 							}
 						}
 					}
-					
 
 				}
 
