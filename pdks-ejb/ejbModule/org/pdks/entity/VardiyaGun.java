@@ -2636,7 +2636,13 @@ public class VardiyaGun extends BaseObject {
 	@Transient
 	public double ucretiOdenenMesaiHesapla() {
 		double saat = 0d;
-		boolean icap = this.getVardiya().isIcapVardiyasi();
+		boolean icap = false;
+		try {
+			icap = this.getVardiya() != null && this.getVardiya().isIcapVardiyasi();
+		} catch (Exception e) {
+			logger.debug("");
+		}
+
 		double icapciSaat = 0.0d;
 		if (icap) {
 			icapciMesaiSaat = this.getCalismaSuresi();
@@ -2645,12 +2651,12 @@ public class VardiyaGun extends BaseObject {
 				for (PersonelFazlaMesai pfm : this.getFazlaMesailer()) {
 					if (pfm != null && pfm.getDurum() && pfm.isOnaylandi()) {
 						String kodu = pfm.getFazlaMesaiOnayDurum() != null ? pfm.getFazlaMesaiOnayDurum().getErpKodu() : null;
-						if (icap || (kodu != null && kodu.toUpperCase().contains("I+UCM"))) {
-							icapciSaat += pfm.getFazlaMesaiSaati();
-						} else if (kodu != null && kodu.toUpperCase().contains("UCM")) {
-							saat += pfm.getFazlaMesaiSaati();
+						if (icap || (kodu != null && kodu.toUpperCase().contains("UCM"))) {
+							if (icap || (kodu != null && kodu.toUpperCase().contains("I"))) {
+								icapciSaat += pfm.getFazlaMesaiSaati();
+							} else
+								saat += pfm.getFazlaMesaiSaati();
 						}
-
 					}
 
 				}

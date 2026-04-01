@@ -20228,13 +20228,6 @@ public class OrtakIslemler implements Serializable {
 									}
 								}
 								if (pdksVardiyaGun.getCalismaSuresi() > 0) {
-									// Double d = pdksVardiyaGun.getRadyolojiMaxCalismaSaat();
-									// if (d != null) {
-									// if (personelDenklestirme.isSuaDurumu())
-									// mesaiMaxSure = d;
-									// else
-									// pdksVardiyaGun.getKatSayiMap().remove(KatSayiTipi.RADYOLOJI_SAAT_MAX.value());
-									// }
 									double normalSure = pdksVardiyaGun.getCalismaSuresi() - (pdksVardiyaGun.getHaftaCalismaSuresi() + pdksVardiyaGun.getResmiTatilSure());
 									double saat = pdksVardiyaGun.ucretiOdenenMesaiHesapla();
 									saat += pdksVardiyaGun.getIcapciMesaiSaat();
@@ -20247,9 +20240,11 @@ public class OrtakIslemler implements Serializable {
 									double toplamCalismaSure = normalSure + pdksVardiyaGun.getResmiTatilSure();
 									if (pdksVardiyaGun.isFcsDahil() && toplamCalismaSure > mesaiMaxSure && maxSureDurum) {
 										double fark = 0;
-										double resmiTatilGercek = pdksVardiyaGun.getResmiTatilSure() - pdksVardiyaGun.getResmiTatilKanunenEklenenSure();
-										if (resmiTatilGercek > fazlaMesaiMaxSure)
-											fark = resmiTatilGercek - fazlaMesaiMaxSure;
+										if (pdksVardiyaGun.getResmiTatilSure() > 0) {
+											double resmiTatilGercek = pdksVardiyaGun.getResmiTatilSure() - pdksVardiyaGun.getResmiTatilKanunenEklenenSure();
+											if (resmiTatilGercek > fazlaMesaiMaxSure)
+												fark = resmiTatilGercek - fazlaMesaiMaxSure;
+										}
 										ucretiOdenenMesaiSure += toplamCalismaSure - mesaiMaxSure - fark;
 									}
 								}
