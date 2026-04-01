@@ -2649,7 +2649,7 @@ public class VardiyaGun extends BaseObject {
 		} else if (this.getFazlaMesailer() != null) {
 			try {
 				for (PersonelFazlaMesai pfm : this.getFazlaMesailer()) {
-					if (pfm != null && pfm.getDurum() && pfm.isOnaylandi()) {
+					if (pfm != null && pfm.getDurum() && pfm.isOnaylandi() && pfm.isBayram() == false) {
 						String kodu = pfm.getFazlaMesaiOnayDurum() != null ? pfm.getFazlaMesaiOnayDurum().getErpKodu() : null;
 						if (icap || (kodu != null && kodu.toUpperCase().contains("UCM"))) {
 							if (icap || (kodu != null && kodu.toUpperCase().contains("I"))) {
