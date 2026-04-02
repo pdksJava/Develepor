@@ -410,6 +410,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			yil = cal.get(Calendar.YEAR);
 			cal.add(Calendar.WEEK_OF_YEAR, 1);
 			maxYil = cal.get(Calendar.YEAR);
+			String ilkMaasDonemi = ortakIslemler.getParameterKey("ilkMaasDonemi");
+			if (ilkMaasDonemi.equals(""))
+				ilkMaasDonemi = String.valueOf(yil * 100 + ay);
+
 			if (ortakIslemler.getCanliDurum() == false && getPdksUser().isAdmin() && ay == 12)
 				++maxYil;
 			sonDonem = (maxYil * 100) + cal.get(Calendar.MONTH) + 1;
@@ -528,8 +532,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 
 				if (yilStr != null && ayStr != null) {
-					yil = Integer.parseInt(yilStr);
-					ay = Integer.parseInt(ayStr);
+					int yil1 = Integer.parseInt(yilStr);
+					int ay1 = Integer.parseInt(ayStr);
+					String donemKodu = String.valueOf(yil1 * 100 + ay1);
+					if (ilkMaasDonemi.equals(donemKodu) == false) {
+						yil = yil1;
+						ay = ay1;
+					}
+
 					sirket = null;
 					if (gorevYeriIdStr != null)
 						seciliEkSaha3Id = Long.parseLong(gorevYeriIdStr);
