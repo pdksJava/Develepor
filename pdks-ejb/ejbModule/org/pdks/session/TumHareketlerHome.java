@@ -136,6 +136,11 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 		setDepartmanList(departmanListe);
 	}
 
+	public boolean kapiGirisGuncellemeKontrol() {
+		boolean kapiGirisGuncelleDurum = ortakIslemler.isExisStoreProcedure(KapiGirisGuncelleme.SP_NAME, session);
+		return kapiGirisGuncelleDurum;
+	}
+
 	@Transactional
 	public String kapiGirisGuncellemeBasla() throws Exception {
 		if (bitTarih.before(PdksUtil.tariheAyEkleCikar(basTarih, 2))) {
@@ -676,7 +681,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 					sb = new StringBuilder();
 					sb.append("select P." + PdksLog.COLUMN_NAME_ISLEM + ", " + PdksLog.COLUMN_NAME_ZAMAN + " from " + PdksLog.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
 					sb.append(" inner join " + PersonelHareketIslem.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + PersonelHareketIslem.COLUMN_NAME_ID + " = P." + PdksLog.COLUMN_NAME_ISLEM + " and I." + PersonelHareketIslem.COLUMN_NAME_ISLEM_TIPI + " = 'U' ");
- 					sb.append(" where P." + PdksLog.COLUMN_NAME_ISLEM + " :" + fieldName + " and P." + PdksLog.COLUMN_NAME_DURUM + " = 0 ");
+					sb.append(" where P." + PdksLog.COLUMN_NAME_ISLEM + " :" + fieldName + " and P." + PdksLog.COLUMN_NAME_DURUM + " = 0 ");
 					parametreMap.put(fieldName, islemIdler);
 					if (session != null)
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
