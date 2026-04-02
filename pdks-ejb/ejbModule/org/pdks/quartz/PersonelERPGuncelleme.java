@@ -159,7 +159,6 @@ public class PersonelERPGuncelleme implements Serializable {
 						mailObject.setBody("");
 						HashMap<String, String> mailMap = new HashMap<String, String>();
 						mailMap.putAll(parameterMap);
-						mailMap.put("smtpServerDebug", "1");
 						MailManager.addMailAdresBCC(mailObject, "bccAdres", mailMap);
 						MailStatu mailStatu = null;
 						try {

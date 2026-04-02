@@ -672,7 +672,7 @@ public class MailManager implements Serializable {
 					session.setDebug(smtpServerDebug);
 				Transport transport = session.getTransport("smtp");
 				transport.connect(smtpHostIp, username, password);
-				if (PdksUtil.getCanliSunucuDurum() == false && PdksUtil.getTestSunucuDurum() == false)
+				if (smtpServerDebug)
 					logger.info(props);
 				MimeMessage message = new MimeMessage(session);
 				List<String> mailList = new ArrayList<String>();
