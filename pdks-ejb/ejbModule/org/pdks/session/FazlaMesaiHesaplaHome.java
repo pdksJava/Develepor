@@ -2671,8 +2671,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						kesilenSureGoster = kesilenSure > 0.0d;
 					puantaj.setKesilenSure(kesilenSure);
 					resmiTatilToplami = PdksUtil.setSureDoubleTypeRounded(resmiTatilToplami, rtYuvarla);
-					if (!resmiTatilKanunenEklenenSureGoster)
-						resmiTatilKanunenEklenenSureGoster = resmiTatilKanunenEklenenSure > 0.0d;
+					if (ikRole || adminRole || authenticatedUser.isSistemYoneticisi()) {
+						if (!resmiTatilKanunenEklenenSureGoster)
+							resmiTatilKanunenEklenenSureGoster = resmiTatilKanunenEklenenSure > 0.0d;
+					}
+
 					puantaj.setResmiTatilKanunenEklenenSure(resmiTatilKanunenEklenenSure);
 					puantaj.setResmiTatilToplami(resmiTatilToplami);
 
@@ -6082,12 +6085,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							ExcelUtil.getCell(sheet, row, col++, styleTutar).setCellValue("");
 					}
 					if (icapciSaatGoster) {
-						if (aylikPuantaj.getIcapciMesaiSure()  > 0) {
-							  setCell(sheet, row, col++, styleTutar, aylikPuantaj.getIcapciMesaiSure());
-	 						} else
+						if (aylikPuantaj.getIcapciMesaiSure() > 0) {
+							setCell(sheet, row, col++, styleTutar, aylikPuantaj.getIcapciMesaiSure());
+						} else
 							ExcelUtil.getCell(sheet, row, col++, styleTutar).setCellValue("");
 					}
-					
+
 					if (gerceklesenMesaiKod)
 						setCell(sheet, row, col++, styleTutar, aylikPuantaj.getAylikNetFazlaMesai());
 					if (devredenMesaiKod) {
