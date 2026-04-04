@@ -103,7 +103,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		// default bugun icin ise gelmeyen raporu cekili olsun
 		Date dateBas = PdksUtil.buGun();
 		setDate(dateBas);
@@ -201,7 +201,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		ClientAnchor anchor = helper.createClientAnchor();
 		Drawing drawing = sheet.createDrawingPatriarch();
 		int row = 0, col = 0;
-		boolean aciklamaGoster = (authenticatedUser.isIK() || authenticatedUser.isAdmin()) || izinliGoster || hepsiniGoster;
+		boolean aciklamaGoster = (authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIK() || authenticatedUser.isAdmin()) || izinliGoster || hepsiniGoster;
 
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.sirketAciklama());
 		boolean tesisDurum = ortakIslemler.getListTesisDurum(vardiyaGunList);
@@ -431,7 +431,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		Date tarih2 = null;
 		List<Personel> tumPersoneller = null;
 		if (authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isAdmin() || authenticatedUser.isGenelMudur()) {
- 			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder();
 			sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
 			sb.append(" and S." + Sirket.COLUMN_NAME_PDKS + " = 1");
