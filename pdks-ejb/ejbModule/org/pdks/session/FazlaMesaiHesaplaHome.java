@@ -2343,6 +2343,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					personelDenklestirme = puantaj.getPersonelDenklestirme();
 					if (personelDenklestirme == null)
 						continue;
+			
 
 					personelDenklestirme.setGuncellendi(Boolean.FALSE);
 					try {
@@ -2467,6 +2468,19 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (!suaGoster)
 						suaGoster = personelDenklestirme != null && personelDenklestirme.isSuaDurumu();
 					// if (/*personelDenklestirme.isErpAktarildi() ||*/ !personelDenklestirme.getDenklestirmeAy().isDurumu()) {
+					if (denklestirmeAyDurum) {
+						long iseBaslamaDonem = Long.parseLong(PdksUtil.convertToDateString(personel.getIseBaslamaTarihi(), "yyyyMM"));
+						if (denklestirmeAy.getDonem() == iseBaslamaDonem) {
+							PersonelDenklestirme pdg = personelDenklestirme.getPersonelDenklestirmeGecenAy();
+							if (pdg != null) {
+								if (pdg.getDurum().booleanValue() == false) {
+									pdg.setDurum(Boolean.TRUE);
+									pdksEntityController.saveOrUpdate(session, entityManager, pdg);
+									flush = true;
+								}
+							}
+						}
+					}
 					if (personelDenklestirme.isErpAktarildi() || !denklestirmeAyDurum) {
 						boolean buAyIstenAyrildi = false;
 

@@ -7880,7 +7880,7 @@ public class OrtakIslemler implements Serializable {
 					boolean flush = false;
 					for (IzinReferansERP izinReferansERP : izinList) {
 						PersonelIzin personelIzin = izinReferansERP.getIzin();
-						if (personelIzin.getAciklama() != null && personelIzin.getAciklama().indexOf(izinReferansERP.getId()) >= 0) {
+						if (personelIzin.getAciklama() != null && personelIzin.getAciklama().indexOf(izinReferansERP.getId()) >= 0 && personelIzin.getIzinDurumu() != PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL) {
 							if (guncelleyenUser == null)
 								guncelleyenUser = getSistemAdminUser(session);
 							personelIzin.setGuncelleyenUser(guncelleyenUser);
@@ -7942,6 +7942,8 @@ public class OrtakIslemler implements Serializable {
 					if (guncelleyenUser == null)
 						guncelleyenUser = getSistemAdminUser(session);
 					for (PersonelIzin personelIzin : izinList) {
+						if (personelIzin.getIzinDurumu() == PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL)
+							continue;
 						personelIzin.setGuncelleyenUser(guncelleyenUser);
 						personelIzin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
 						personelIzin.setGuncellemeTarihi(new Date());
@@ -8151,6 +8153,8 @@ public class OrtakIslemler implements Serializable {
 				if (!personelIzinList.isEmpty()) {
 					Date guncellemeTarihi = new Date();
 					for (PersonelIzin personelIzin : personelIzinList) {
+						if (personelIzin.getIzinDurumu() == PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL)
+							continue;
 						personelIzin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL);
 						personelIzin.setGuncellemeTarihi(guncellemeTarihi);
 						session.saveOrUpdate(personelIzin);
