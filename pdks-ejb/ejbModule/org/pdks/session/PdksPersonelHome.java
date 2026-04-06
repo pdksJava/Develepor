@@ -1476,6 +1476,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					}
 				}
 			}
+			fillPersonelKGSList();
 		}
 	}
 

@@ -6522,7 +6522,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 							if (vardiyaOnayli != vg.isVardiyaOnay()) {
 								vg.setVardiyaOnayli(vardiyaOnayli);
- 								if (guncelleyenUser == null)
+								if (guncelleyenUser == null)
 									guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
 								vg.setGuncellemeTarihi(guncellemeTarihi);
 								vg.setGuncelleyenUser(guncelleyenUser);
@@ -6541,7 +6541,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (vg.isAyinGunu() == false)
 						continue;
 					if (vg.getId() != null && vg.isVardiyaOnay() == false) {
- 						vg.setVardiyaOnayli(Boolean.TRUE);
+						vg.setVardiyaOnayli(Boolean.TRUE);
 						if (guncelleyenUser == null)
 							guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
 						vg.setGuncellemeTarihi(guncellemeTarihi);
@@ -6578,7 +6578,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								vardiyaOnayli = Boolean.TRUE;
 							if (vardiyaOnayli != vg.isVardiyaOnay()) {
 								vg.setVardiyaOnayli(vardiyaOnayli);
- 								saveOrUpdate(vg);
+								saveOrUpdate(vg);
 								flush = true;
 							}
 						}
@@ -6679,6 +6679,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param islemUser
 	 * @return
 	 */
+	@Transactional
 	public String sayfaCalismaPlanOlustur(String id, User islemUser) {
 		String donus = "";
 		if (PdksUtil.isSessionKapali(session)) {
@@ -7637,7 +7638,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 												if (pdksVardiyaGun.getVardiya().isHaftaTatil() && calismaModeliAy.getHaftaTatilHareketGuncelle().booleanValue() == false)
 													version = 0;
 												pdksVardiyaGun.setVardiyaOnayli(version >= 0);
- 											}
+											}
 
 											vardiyaGunHareketOnaysizList.add(pdksVardiyaGun);
 

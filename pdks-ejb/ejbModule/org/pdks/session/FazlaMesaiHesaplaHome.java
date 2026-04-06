@@ -1146,6 +1146,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param islemUser
 	 * @return
 	 */
+	@Transactional
 	public String sayfaFazlaMesaiGuncelle(String id, User islemUser) {
 		String donus = "";
 		if (PdksUtil.isSessionKapali(session)) {

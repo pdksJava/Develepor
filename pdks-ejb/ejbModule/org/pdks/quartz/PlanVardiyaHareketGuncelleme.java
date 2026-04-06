@@ -168,6 +168,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
+	@Transactional
 	public String fazlaMesaiGuncelleme(Date tarih, Session session) throws Exception {
 		Date bugun = PdksUtil.getDate(ortakIslemler.getBugun());
 		if (tarih == null)
