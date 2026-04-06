@@ -131,7 +131,6 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setVersion(Integer value) {
-		// this.vardiyaOnayli = value != null && value.longValue() >= 0;
 		this.version = value;
 	}
 
@@ -140,8 +139,15 @@ public class VardiyaGun extends BaseObject {
 		return vardiyaOnayli;
 	}
 
-	public void setVardiyaOnayli(Boolean vardiyaOnayli) {
-		this.vardiyaOnayli = vardiyaOnayli;
+	public void setVardiyaOnayli(Boolean value) {
+		if (value == null || value.booleanValue()) {
+			boolean guncel = PdksUtil.isIntegerDegisti(this.version, 0);
+			if (guncel) {
+				this.version = 0;
+				this.degisti = true;
+			}
+ 		}
+		this.vardiyaOnayli = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)

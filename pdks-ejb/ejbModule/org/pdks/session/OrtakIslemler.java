@@ -11065,7 +11065,7 @@ public class OrtakIslemler implements Serializable {
 										if (islemVardiyaGun != null && islemVardiyaGun.isCalisma() && islemVardiyaGun.getVardiyaFazlaMesaiBitZaman().before(bugun)) {
 											vardiyaGun.setVardiya(offVardiya);
 											vardiyaGun.setVardiyaOnayli(Boolean.TRUE);
-											vardiyaGun.setGuncelleyenUser(guncelleyenUser);
+ 											vardiyaGun.setGuncelleyenUser(guncelleyenUser);
 											vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
 											session.saveOrUpdate(vardiyaGun);
 											vardiyaGun.setGuncellendi(Boolean.TRUE);

@@ -4022,8 +4022,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						pdksVardiyaGun.setGuncelleyenUser(getPdksUser());
 						pdksVardiyaGun.setGuncellemeTarihi(new Date());
 						pdksVardiyaGun.setDurum(Boolean.FALSE);
-						if (pdksVardiyaGun.isVardiyaOnay() == false)
+						if (pdksVardiyaGun.isVardiyaOnay() == false) {
 							pdksVardiyaGun.setVardiyaOnayli(Boolean.TRUE);
+						}
 						mesaiMap.put(pdksVardiyaGun.getId(), pdksVardiyaGun);
 						tekrarOku = Boolean.TRUE;
 					}
@@ -6521,7 +6522,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 							if (vardiyaOnayli != vg.isVardiyaOnay()) {
 								vg.setVardiyaOnayli(vardiyaOnayli);
-								if (guncelleyenUser == null)
+ 								if (guncelleyenUser == null)
 									guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
 								vg.setGuncellemeTarihi(guncellemeTarihi);
 								vg.setGuncelleyenUser(guncelleyenUser);
@@ -6540,7 +6541,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (vg.isAyinGunu() == false)
 						continue;
 					if (vg.getId() != null && vg.isVardiyaOnay() == false) {
-						vg.setVardiyaOnayli(Boolean.TRUE);
+ 						vg.setVardiyaOnayli(Boolean.TRUE);
 						if (guncelleyenUser == null)
 							guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
 						vg.setGuncellemeTarihi(guncellemeTarihi);
@@ -6577,7 +6578,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								vardiyaOnayli = Boolean.TRUE;
 							if (vardiyaOnayli != vg.isVardiyaOnay()) {
 								vg.setVardiyaOnayli(vardiyaOnayli);
-								saveOrUpdate(vg);
+ 								saveOrUpdate(vg);
 								flush = true;
 							}
 						}
@@ -7636,7 +7637,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 												if (pdksVardiyaGun.getVardiya().isHaftaTatil() && calismaModeliAy.getHaftaTatilHareketGuncelle().booleanValue() == false)
 													version = 0;
 												pdksVardiyaGun.setVardiyaOnayli(version >= 0);
-											}
+ 											}
 
 											vardiyaGunHareketOnaysizList.add(pdksVardiyaGun);
 

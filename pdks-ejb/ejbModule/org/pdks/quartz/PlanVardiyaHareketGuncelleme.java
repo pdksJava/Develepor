@@ -394,10 +394,10 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			boolean flush = false;
 			for (VardiyaGun vg : vGunList) {
 				Long perId = vg.getPdksPersonel().getId();
-				Boolean vardiyaOnayli = vg.getDurum() ;
+				Boolean vardiyaOnayli = vg.getDurum();
 				if (vg.getVardiya().isHaftaTatil()) {
 					if (perIdList.contains(perId))
-						vardiyaOnayli= true;
+						vardiyaOnayli = true;
 				}
 				if (vg.getVardiyaOnayli().equals(vardiyaOnayli) == false) {
 					if (guncellemeTarihi == null)
@@ -447,7 +447,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			vg.setGuncellemeTarihi(guncellemeTarihi);
 			vg.setGuncelleyenUser(guncelleyenUser);
 			vg.setVardiyaOnayli(Boolean.FALSE);
-			pdksEntityController.saveOrUpdate(session, entityManager, vg);
+ 			pdksEntityController.saveOrUpdate(session, entityManager, vg);
 			flush = true;
 		}
 		if (flush)
