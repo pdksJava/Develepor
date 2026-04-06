@@ -19,6 +19,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
@@ -45,6 +46,7 @@ public class VardiyaGun extends BaseObject {
 	public static final String COLUMN_NAME_VARDIYA_ACIKLAMA = "VARDIYA_ACIKLAMA";
 	public static final String COLUMN_NAME_PERSONEL_NO = "PERSONEL_NO";
 	public static final String COLUMN_NAME_VERSION = "VERSION";
+	public static final String COLUMN_NAME_ONAYLI = "ONAYLI";
 
 	public static final String STYLE_CLASS_NORMAL_CALISMA = "calismaAylik";
 	public static final String STYLE_CLASS_NORMAL_CALISMA_EVEN = "calismaAylikEven";
@@ -92,7 +94,7 @@ public class VardiyaGun extends BaseObject {
 	private List<String> linkAdresler;
 	private HashMap<String, Personel> gorevliPersonelMap;
 	private CalismaModeli calismaModeli = null;
-	private Boolean fazlaMesaiOnayla;
+	private Boolean fazlaMesaiOnayla, vardiyaOnayli = Boolean.TRUE;
 	private Integer version = 0;
 	private List<FazlaMesaiTalep> fazlaMesaiTalepler;
 	private List<YemekIzin> yemekList;
@@ -122,13 +124,24 @@ public class VardiyaGun extends BaseObject {
 			this.durum = !xVardiya.isCalisma();
 	}
 
-	@Column(name = COLUMN_NAME_VERSION)
-	public Integer getVersion() {
-		return version;
+	 @Version
+	 @Column(name = COLUMN_NAME_VERSION)
+	 public Integer getVersion() {
+	 return version;
+	 }
+
+	public void setVersion(Integer value) {
+		this.vardiyaOnayli = value != null && value.longValue() >= 0;
+		this.version = value;
 	}
 
-	public void setVersion(Integer version) {
-		this.version = version;
+	@Column(name = COLUMN_NAME_ONAYLI)
+	public Boolean getVardiyaOnayli() {
+		return vardiyaOnayli;
+	}
+
+	public void setVardiyaOnayli(Boolean vardiyaOnayli) {
+		this.vardiyaOnayli = vardiyaOnayli;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
@@ -2676,6 +2689,11 @@ public class VardiyaGun extends BaseObject {
 
 	public void setIcapciMesaiSaat(Double icapciMesaiSaat) {
 		this.icapciMesaiSaat = icapciMesaiSaat;
+	}
+
+	@Transient
+	public boolean isVardiyaOnay() {
+		return vardiyaOnayli == null || vardiyaOnayli.booleanValue();
 	}
 
 	public void entityRefresh() {

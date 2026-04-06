@@ -333,7 +333,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			if (girisAdet + cikisAdet > 0)
 				aciklama += " (Geçiş bilgisi mevcut)";
 			aciklama += ".";
-		} else if (vg.getVersion() == 0) {
+		} else if (vg.isVardiyaOnay()) {
 
 			Vardiya vardiya = vg.getIslemVardiya();
 			if (vardiya.isCalisma() == false) {

@@ -2316,7 +2316,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			loginUser = authenticatedUser;
 		StringBuilder sb = new StringBuilder();
 		String brStr = "<BR></BR>";
-		if (vardiyaGun != null && vardiyaGun.getIslemVardiya() != null && vardiyaGun.getVersion() >= 0) {
+		if (vardiyaGun != null && vardiyaGun.getIslemVardiya() != null && vardiyaGun.isVardiyaOnay()) {
 			String pattern = PdksUtil.getDateTimeFormat();
 			Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
 			List<String> list = new ArrayList<String>();
