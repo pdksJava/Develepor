@@ -124,14 +124,14 @@ public class VardiyaGun extends BaseObject {
 			this.durum = !xVardiya.isCalisma();
 	}
 
-	 @Version
-	 @Column(name = COLUMN_NAME_VERSION)
-	 public Integer getVersion() {
-	 return version;
-	 }
+	@Version
+	@Column(name = COLUMN_NAME_VERSION)
+	public Integer getVersion() {
+		return version;
+	}
 
 	public void setVersion(Integer value) {
-		this.vardiyaOnayli = value != null && value.longValue() >= 0;
+		// this.vardiyaOnayli = value != null && value.longValue() >= 0;
 		this.version = value;
 	}
 
@@ -1347,7 +1347,7 @@ public class VardiyaGun extends BaseObject {
 			if (PdksUtil.hasStringValue(anaClasss) && (personel == null || personel.isCalisiyorGun(vardiyaDate) == false))
 				classAd = STYLE_CLASS_OFF;
 		}
-		if (ayinGunu && this.isIzinli() == false && fiiliHesapla == false && (version < 0 || hataliDurum))
+		if (ayinGunu && this.isIzinli() == false && fiiliHesapla == false && (this.isVardiyaOnay() == false || hataliDurum))
 			classAd = STYLE_CLASS_HATA;
 		return classAd;
 
