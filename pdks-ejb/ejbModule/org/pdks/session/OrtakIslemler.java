@@ -22654,10 +22654,15 @@ public class OrtakIslemler implements Serializable {
 								if (calSure == 0.0d && toplamParcalanmisSure > calSure)
 									calSure = toplamParcalanmisSure;
 								if (calSure > netSure) {
-									if (resmiTatilSure > 0 && vardiyaGun.getGecenAyResmiTatilSure() == 0.0d && (islemVardiya.isCalisma() == false || islemVardiya.getBitDonem() > islemVardiya.getBasDonem())) {
-										resmiTatilSure = netSure;
-									}
+									if (resmiTatilSure > 0) {
+										if (vardiyaGun.getGecenAyResmiTatilSure() == 0.0d && (islemVardiya.isCalisma() == false || islemVardiya.getBitDonem() > islemVardiya.getBasDonem())) {
+											if (toplamParcalanmisSure == toplamNormalParcalanmisSure)
+												resmiTatilSure = netSure;
+											else
+												logger.debug(vardiyaGun.getVardiyaKeyStr() + " " + resmiTatilSure);
+										}
 
+									}
 									calSure = netSure;
 								}
 								if (calSure == netSure && vardiyaGun.getTatil() == null) {
