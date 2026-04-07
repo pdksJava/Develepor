@@ -141,12 +141,14 @@ public class VardiyaGun extends BaseObject {
 
 	public void setVardiyaOnayli(Boolean value) {
 		if (value == null || value.booleanValue()) {
-			boolean guncel = PdksUtil.isIntegerDegisti(this.version, 0);
-			if (guncel) {
-				this.version = 0;
-				this.degisti = true;
+			if (vardiyaOnayli != null && PdksUtil.isBooleanDegisti(vardiyaOnayli, value)) {
+				boolean guncel = PdksUtil.isIntegerDegisti(this.version, 0);
+				if (guncel && this.degisti == false) {
+					this.version = 0;
+					this.degisti = true;
+				}
 			}
- 		}
+		}
 		this.vardiyaOnayli = value;
 	}
 
