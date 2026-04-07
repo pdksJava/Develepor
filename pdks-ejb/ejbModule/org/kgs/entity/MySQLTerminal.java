@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 
 @Entity(name = MySQLTerminal.TABLE_NAME)
-public class MySQLTerminal implements Serializable {
+ public class MySQLTerminal implements Serializable {
 
 	/**
 	 * 

@@ -14,7 +14,6 @@ import javax.persistence.TemporalType;
 @Entity(name = MySQLPersonel.TABLE_NAME)
 public class MySQLPersonel implements Serializable {
 
-	 
 	/**
 	 * 
 	 */
