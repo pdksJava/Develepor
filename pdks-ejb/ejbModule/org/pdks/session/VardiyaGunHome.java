@@ -6687,8 +6687,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (authenticatedUser != null)
 				authenticatedUser.putSessionMap("sayfaCalismaPlanOlustur", session);
 		}
+		adminRole = true;
 		topluGuncelleme = true;
 		userLoginOldu = false;
+		sicilNo = "";
 		if (id == null) {
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			id = (String) req.getParameter("id");
@@ -6742,7 +6744,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				aramaSecenekleri.setTesisId(tesisId);
 				aramaSecenekleri.setEkSaha3Id(ekSaha3Id);
 				aramaSecenekleri.setEkSaha4Id(ekSaha4Id);
-				denklestirmeAyDurum = false;
+				denklestirmeAyDurum = true;
 
 				aylikPuantajOlusturuluyor();
 
