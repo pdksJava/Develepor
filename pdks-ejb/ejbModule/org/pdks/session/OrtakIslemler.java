@@ -9234,6 +9234,14 @@ public class OrtakIslemler implements Serializable {
 	/**
 	 * @return
 	 */
+	public String kartNoAciklama() {
+		String kartNoAciklama =  getBaslikAciklama("kartNoAciklama", "Kart No");
+		return kartNoAciklama;
+	}
+	
+	/**
+	 * @return
+	 */
 	public String kimlikNoAciklama() {
 		String kimlikNoAciklama = getBaslikAciklama(ENumBaslik.KIMLIK_NO.value(), "Kimlik No");
 		return kimlikNoAciklama;
