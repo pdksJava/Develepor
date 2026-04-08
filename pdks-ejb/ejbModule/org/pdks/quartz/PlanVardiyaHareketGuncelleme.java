@@ -92,7 +92,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	@Asynchronous
 	@SuppressWarnings("unchecked")
-	@Transactional
 	// @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public QuartzTriggerHandle planVardiyaHareketGuncellemeTimer(@Expiration Date when, @IntervalCron String interval) {
 		if (!isCalisiyor()) {
@@ -168,7 +167,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	@Transactional
 	public String fazlaMesaiGuncelleme(Date tarih, Session session) throws Exception {
 		Date bugun = PdksUtil.getDate(ortakIslemler.getBugun());
 		if (tarih == null)
@@ -448,7 +446,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			vg.setGuncellemeTarihi(guncellemeTarihi);
 			vg.setGuncelleyenUser(guncelleyenUser);
 			vg.setVardiyaOnayli(Boolean.FALSE);
- 			pdksEntityController.saveOrUpdate(session, entityManager, vg);
+			pdksEntityController.saveOrUpdate(session, entityManager, vg);
 			flush = true;
 		}
 		if (flush)
@@ -479,7 +477,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	@Transactional
 	public boolean vardiyaHareketGuncelleme(Date tarih, Session session) throws Exception {
 		if (tarih == null)
 			tarih = ortakIslemler.getBugun();

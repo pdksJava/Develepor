@@ -6679,7 +6679,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param islemUser
 	 * @return
 	 */
-	@Transactional
 	public String sayfaCalismaPlanOlustur(String id, User islemUser) {
 		String donus = "";
 		if (PdksUtil.isSessionKapali(session)) {
