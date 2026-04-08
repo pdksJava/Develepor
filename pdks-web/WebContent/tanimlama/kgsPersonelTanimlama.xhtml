@@ -23,19 +23,22 @@
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">Soyadı</ui:define>
 									<h:inputText value="#{kgsPersonelHome.soyadi}" size="35" />
-
-								</s:decorate>
+ 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
 									<h:inputText value="#{kgsPersonelHome.sicilNo}" size="10">
 										<a4j:support event="onchange" status="ajaxStatus" reRender="aramaSonuc" action="#{kgsPersonelHome.fillPersonelList()}" />
-
-
-									</h:inputText>
+ 									</h:inputText>
 								</s:decorate>
+								<s:decorate template="/layout/edit.xhtml">
+									<ui:define name="label">İşten Ayrılan Göster</ui:define>
+									<h:selectBooleanCheckbox value="#{kgsPersonelHome.istenAyrilanGoster}">
+										<a4j:support event="onclick" status="ajaxStatus" ajaxSingle="true" reRender="anaForm" />
+									</h:selectBooleanCheckbox>
+ 								</s:decorate>
 							</h:panelGrid>
 						</a4j:outputPanel>
-						<a4j:commandButton status="ajaxStatus" action="#{gsPersonelHome.fillPersonelList()}" value="Personel Ara" reRender="aramaSonuc" />
+						<a4j:commandButton status="ajaxStatus" action="#{kgsPersonelHome.fillPersonelList()}" value="Personel Ara" reRender="aramaSonuc" />
 						<a4j:outputPanel id="aramaSonuc">
 
 							<rich:dataTable rowClasses="acik,koyu" value="#{kgsPersonelHome.sqlPersonelList}" var="per" rows="40" rowKeyVar="row" id="sablonTable">
@@ -157,7 +160,8 @@
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml">
 						<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
-						<h:inputText required="true" requiredMessage="#{ortakIslemler.personelNoAciklama()} giriniz" value="#{kgsPersonelHome.sqlPersonel.sicilNo}" size="35" maxlength="20" />
+						<h:inputText required="true" requiredMessage="#{ortakIslemler.personelNoAciklama()} giriniz" value="#{kgsPersonelHome.sqlPersonel.sicilNo}"
+							size="35" maxlength="20" />
 					</s:decorate>
 					<s:decorate template="/layout/edit.xhtml">
 						<ui:define name="label">İşe Giriş Tarihi</ui:define>

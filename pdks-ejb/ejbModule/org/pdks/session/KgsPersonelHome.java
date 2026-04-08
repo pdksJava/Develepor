@@ -57,7 +57,7 @@ public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serial
 
 	private LinkedHashMap<String, String> kgsPersonelSPMap;
 
-	private boolean kimlikGoster, kartNoGoster, dTarihGoster, ekle, kayitEdilebilir;
+	private boolean kimlikGoster, kartNoGoster, dTarihGoster, ekle, kayitEdilebilir, istenAyrilanGoster = Boolean.FALSE;
 
 	private Session session;
 
@@ -242,7 +242,15 @@ public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serial
 			sqlPersonelList = pdksEntityController.getObjectBySQLList(sb, fields, MySQLPersonel.class);
 			if (sqlPersonelList.size() > 1)
 				sqlPersonelList = PdksUtil.sortObjectStringAlanList(sqlPersonelList, "getAdiSoyadi", null);
-			for (MySQLPersonel per : sqlPersonelList) {
+			Date bugun = istenAyrilanGoster ? PdksUtil.getDate(new Date()) : null;
+			for (Iterator iterator = sqlPersonelList.iterator(); iterator.hasNext();) {
+				MySQLPersonel per = (MySQLPersonel) iterator.next();
+				if (istenAyrilanGoster == false) {
+					if (per.getIsCikisTarihi() != null && bugun.after(per.getIsCikisTarihi())) {
+						iterator.remove();
+						continue;
+					}
+				}
 				if (kimlikGoster == false)
 					kimlikGoster = PdksUtil.hasStringValue(per.getKimlikNo());
 				if (kartNoGoster == false)
@@ -352,6 +360,14 @@ public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serial
 
 	public void setKayitEdilebilir(boolean kayitEdilebilir) {
 		this.kayitEdilebilir = kayitEdilebilir;
+	}
+
+	public boolean isIstenAyrilanGoster() {
+		return istenAyrilanGoster;
+	}
+
+	public void setIstenAyrilanGoster(boolean istenAyrilanGoster) {
+		this.istenAyrilanGoster = istenAyrilanGoster;
 	}
 
 }
