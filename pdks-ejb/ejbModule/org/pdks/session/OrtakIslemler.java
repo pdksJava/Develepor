@@ -10841,11 +10841,13 @@ public class OrtakIslemler implements Serializable {
 
 				if (!vardiyaPerList.isEmpty()) {
 					Date sonGun = PdksUtil.getDate(bugun);
+
 					for (Iterator iterator = varList.iterator(); iterator.hasNext();) {
 						VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-						if (vardiyaGun.getVardiyaDate().after(sonGun)) {
+
+						if (vardiyaGun.getVardiyaDate().after(sonGun) || vardiyaGun.isAyinGunu() == false)
 							continue;
-						}
+
 						if (vardiyaGun.getGuncelleyenUser() != null && vardiyaGun.getVardiyaDate().before(sonGun)) {
 							if (userIKIdList.contains(vardiyaGun.getGuncelleyenUser().getId()))
 								continue;
@@ -11073,7 +11075,7 @@ public class OrtakIslemler implements Serializable {
 										if (islemVardiyaGun != null && islemVardiyaGun.isCalisma() && islemVardiyaGun.getVardiyaFazlaMesaiBitZaman().before(bugun)) {
 											vardiyaGun.setVardiya(offVardiya);
 											vardiyaGun.setVardiyaOnayli(Boolean.TRUE);
- 											vardiyaGun.setGuncelleyenUser(guncelleyenUser);
+											vardiyaGun.setGuncelleyenUser(guncelleyenUser);
 											vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
 											session.saveOrUpdate(vardiyaGun);
 											vardiyaGun.setGuncellendi(Boolean.TRUE);
