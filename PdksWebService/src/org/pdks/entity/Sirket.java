@@ -40,7 +40,7 @@ public class Sirket extends BaseObject {
 	private Long sirketGrupId;
 	private String ad, aciklama, erpKodu = "", lpdapOnEk = "";
 	private Boolean erpDurum = Boolean.FALSE, ldapDurum = Boolean.FALSE, pdks = Boolean.FALSE, suaOlabilir = Boolean.FALSE, tesisDurum = Boolean.FALSE;
-	private Boolean fazlaMesaiOde = Boolean.FALSE, fazlaMesai = Boolean.FALSE, istenAyrilmaTarihindeCalisiyor = Boolean.FALSE;
+	private Boolean fazlaMesaiOde = Boolean.FALSE, fazlaMesai = Boolean.FALSE, istenAyrilmaTarihindeCalisiyor = Boolean.TRUE;
 	private Boolean fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiTalepGirilebilir = Boolean.FALSE, izinKartiVar = Boolean.FALSE, gebelikSutIzin = Boolean.FALSE;
 	private Tanim sirketGrup;
 	private Double isAramaGunlukSaat = 0.0d;

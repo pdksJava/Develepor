@@ -4807,13 +4807,19 @@ public class PdksVeriOrtakAktar implements Serializable {
 			veriMap.put(key, value);
 
 		}
-		List<PersonelKGS> list = pdksDAO.execSPList(veriMap, PersonelKGS.class);
-		if (list != null) {
-			if (list.size() == 1)
-				personelKGS = list.get(0);
-			list = null;
-		}
+		try {
+			if (veriMap.isEmpty() == false) {
+				List<PersonelKGS> list = pdksDAO.execSPList(veriMap, PersonelKGS.class);
+				if (list != null) {
+					if (list.size() == 1)
+						personelKGS = list.get(0);
+					list = null;
+				}
+			}
 
+		} catch (Exception e) {
+		}
+		veriMap = null;
 		return personelKGS;
 	}
 

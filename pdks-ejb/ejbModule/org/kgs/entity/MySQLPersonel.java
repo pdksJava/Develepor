@@ -10,11 +10,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.pdks.session.PdksUtil;
 
 @Entity(name = MySQLPersonel.TABLE_NAME)
 public class MySQLPersonel implements Serializable {
 
-	 
 	/**
 	 * 
 	 */
@@ -118,6 +120,12 @@ public class MySQLPersonel implements Serializable {
 
 	public void setDogumTarihi(Date dogumTarihi) {
 		this.dogumTarihi = dogumTarihi;
+	}
+
+	@Transient
+	public String getAdiSoyadi() {
+		String adSoyad = PdksUtil.getAdSoyad(adi, soyadi);
+		return adSoyad;
 	}
 
 }

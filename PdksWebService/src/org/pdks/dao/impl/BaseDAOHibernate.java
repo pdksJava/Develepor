@@ -670,6 +670,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 				query.setParameter(key, fieldsOther.get(key));
 			}
 			try {
+				query.setTimeout(30);
 				list = query.list();
 			} catch (Exception e) {
 				logger.error(sql + "\n" + e);
@@ -735,6 +736,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 			}
 
 			try {
+				query.setTimeout(30);
 				List listNew = query.list();
 				logger.debug(veriler.size() + " " + fieldsOther.size() + " : " + listNew.size());
 				if (!listNew.isEmpty())

@@ -1476,6 +1476,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					}
 				}
 			}
+			fillPersonelKGSList();
 		}
 	}
 
@@ -3872,6 +3873,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		try {
 			personelERPReturnList = null;
 			try {
+				ortakIslemler.personelERPKontrol(personelERPList);
 				service = ortakIslemler.getPdksSoapVeriAktar(true);
 
 				personelERPReturnList = service.savePersoneller(personelERPList);

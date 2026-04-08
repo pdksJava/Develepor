@@ -1711,7 +1711,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								if (vardiyaGunleriMap != null) {
 									for (String key : vardiyaGunleriMap.keySet()) {
 										VardiyaGun vardiyaGun = vardiyaGunleriMap.get(key);
-										if (vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().isCalisma() && vardiyaGun.getVersion() < 0) {
+										if (vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().isCalisma() && vardiyaGun.isVardiyaOnay() == false) {
 											if (vardiyaGun.getIslemVardiya().getVardiyaBitZaman().before(bugun) && vardiyaGun.getCalismaSuresi() == 0.0d && vardiyaGun.isIzinli() == false && vardiyaGun.getHareketler() == null)
 												bosCalismaList.add(vardiyaGun);
 										}
@@ -1995,7 +1995,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										VardiyaGun vardiyaGun = vgMap.get(pVardiyaGun.getVardiyaDateStr());
 										if (vardiyaGun.getVardiya().isHaftaTatil())
 											vardiyaTatil = vardiyaGun;
-										else if (vardiyaGun.getVersion() < 0) {
+										else if (vardiyaGun.isVardiyaOnay() == false) {
 											if (vardiyaGun.getHareketler() == null || vardiyaGun.getHareketler().isEmpty())
 												vardiyaGunList.add(vardiyaGun);
 										}
@@ -2142,9 +2142,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 												if (vardiyaGun2.getVardiyaDate().before(oncekiVardiyaGun.getVardiyaDate())) {
 													Vardiya calismaVardiya = vardiyaGun2.getVardiya();
 													oncekiVardiyaGun.setVardiya(calismaVardiya);
-													oncekiVardiyaGun.setVersion(-1);
+													oncekiVardiyaGun.setVardiyaOnayli(Boolean.FALSE);
 													vardiyaGun2.setVardiya(haftaVardiya);
-													vardiyaGun2.setVersion(0);
+													vardiyaGun2.setVardiyaOnayli(Boolean.TRUE);
 													saveOrUpdate(oncekiVardiyaGun);
 													saveOrUpdate(vardiyaGun2);
 													flush = true;
@@ -2244,8 +2244,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							}
 							if (denklestirmeAyDurum && vardiyaGun.getVardiya() != null && vardiyaGun.getId() != null && !vardiyaGun.getDurum().equals(hareketDurum)) {
 								vardiyaGun.setDurum(hareketDurum);
-								if (hareketDurum)
-									vardiyaGun.setVersion(0);
+								if (hareketDurum) {
+									vardiyaGun.setVardiyaOnayli(Boolean.TRUE);
+								}
 								vardiyaGun.setGuncellemeTarihi(bugun);
 								saveVardiyaGun = Boolean.TRUE;
 							}
@@ -2343,7 +2344,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					personelDenklestirme = puantaj.getPersonelDenklestirme();
 					if (personelDenklestirme == null)
 						continue;
-			
 
 					personelDenklestirme.setGuncellendi(Boolean.FALSE);
 					try {
@@ -3442,7 +3442,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		if (offVardiya != null) {
 			for (VardiyaGun vardiyaGun : bosCalismaList) {
 				vardiyaGun.setVardiya(offVardiya);
-				vardiyaGun.setVersion(0);
+				vardiyaGun.setVardiyaOnayli(Boolean.TRUE);
 				saveOrUpdate(vardiyaGun);
 			}
 			sessionFlush();
@@ -3478,7 +3478,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					boolean haftaTatil = vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().isHaftaTatil();
 					if (vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null && (haftaTatil || bugun.after(vardiyaGun.getVardiyaDate()))) {
 						cal1.setTime(vardiyaGun.getVardiyaDate());
-						if (haftaTatil || (vardiyaGun.getVardiya().isCalisma() && (vardiyaGun.getVersion() < 0 || vardiyaGun.getHareketler() == null || vardiyaGun.getHareketler().isEmpty()))) {
+						if (haftaTatil || (vardiyaGun.getVardiya().isCalisma() && (vardiyaGun.isVardiyaOnay() == false || vardiyaGun.getHareketler() == null || vardiyaGun.getHareketler().isEmpty()))) {
 							if (haftaTatil)
 								vgHaftaMap.put(key, hafta);
 							else if (haftaTatil == false && (vardiyaGun.getHareketler() == null || vardiyaGun.getHareketler().isEmpty())) {
@@ -3508,9 +3508,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							Vardiya vardiyaCalisma = vardiyaCalismaGun.getVardiya();
 							logger.debug(vardiyaCalismaGun.getVardiyaKeyStr() + " " + key);
 							vardiyaGun.setVardiya(vardiyaCalisma);
-							vardiyaGun.setVersion(-1);
+							vardiyaGun.setVardiyaOnayli(Boolean.FALSE);
 							vardiyaCalismaGun.setVardiya(vardiyaHafta);
-							vardiyaCalismaGun.setVersion(0);
+							vardiyaCalismaGun.setVardiyaOnayli(Boolean.TRUE);
 							saveOrUpdate(vardiyaGun);
 							saveOrUpdate(vardiyaCalismaGun);
 							flush = true;

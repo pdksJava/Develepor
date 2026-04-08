@@ -121,6 +121,7 @@ public class MenuItemConstant implements Serializable {
 	public static String calismaModeliTanimlama = "/tanimlama/calismaModeliTanimlama.xhtml";
 	public static String departmanMail = "/tanimlama/departmanMail.xhtml";
 	public static String departmanTanimlama = "/tanimlama/departmanTanimlama.xhtml";
+	public static String kgsPersonelTanimlama = "/tanimlama/kgsPersonelTanimlama.xhtml";
 	public static String detaysizPersonelTanimlama = "/tanimlama/detaysizPersonelTanimlama.xhtml";
 	public static String izinHakedisHakkiTanimlama = "/tanimlama/izinHakedisHakkiTanimlama.xhtml";
 	public static String izinTipiTanimlama = "/tanimlama/izinTipiTanimlama.xhtml";
@@ -1063,6 +1064,14 @@ public class MenuItemConstant implements Serializable {
 
 	public static void setKatSayiTanimlama(String katSayiTanimlama) {
 		MenuItemConstant.katSayiTanimlama = katSayiTanimlama;
+	}
+
+	public static String getKgsPersonelTanimlama() {
+		return kgsPersonelTanimlama;
+	}
+
+	public static void setKgsPersonelTanimlama(String kgsPersonelTanimlama) {
+		MenuItemConstant.kgsPersonelTanimlama = kgsPersonelTanimlama;
 	}
 
 }

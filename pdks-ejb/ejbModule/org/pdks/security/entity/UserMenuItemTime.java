@@ -14,6 +14,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 import javax.servlet.http.HttpSession;
 
 import org.hibernate.annotations.Fetch;
@@ -37,6 +38,9 @@ public class UserMenuItemTime extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_SESSION = "SESSION_ID";
 	public static final String COLUMN_NAME_MENU_ADI = "MENU_ADI";
 	public static final String COLUMN_NAME_LAST_PARAMETRE = "LAST_PARAMETRE";
+	public static final String COLUMN_NAME_VERSION = "VERSION";
+
+	private Integer version = 0;
 
 	private User user;
 
@@ -97,6 +101,17 @@ public class UserMenuItemTime extends BasePDKSObject implements Serializable {
 
 	public void setFirstTime(Date firstTime) {
 		this.firstTime = firstTime;
+	}
+
+	@Version
+	@Column(name = COLUMN_NAME_VERSION)
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer value) {
+
+		this.version = value;
 	}
 
 	@Column(name = COLUMN_NAME_SESSION)

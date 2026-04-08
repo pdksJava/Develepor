@@ -737,6 +737,7 @@ public class PdksEntityController implements Serializable {
 			}
 
 			SQLQuery query = prepareProcedure(session, veriMap, sp);
+
 			if (class1 != null)
 				query.addEntity(class1);
 			sonucList = query.list();
@@ -829,6 +830,7 @@ public class PdksEntityController implements Serializable {
 		SQLQuery query = null;
 		if (session != null) {
 			query = session.createSQLQuery(queryStr);
+
 			logger.debug(queryStr);
 			if (veriMap != null) {
 				for (Iterator iterator = veriMap.keySet().iterator(); iterator.hasNext();) {
@@ -1343,6 +1345,7 @@ public class PdksEntityController implements Serializable {
 			if (showSQL)
 				logger.info(sql + " in " + PdksUtil.convertToDateString(new Date(), PdksUtil.getDateFormat() + " H:mm:ss"));
 			try {
+				query.setTimeout(30);
 				List listNew = query.list();
 				if (!listNew.isEmpty())
 					listAll.addAll(listNew);

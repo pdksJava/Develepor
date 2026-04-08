@@ -436,7 +436,7 @@ public class IseGelmemeUyari implements Serializable {
 						}
 						Personel per = pdksVardiyaGun.getPdksPersonel();
 						String vardiyaGunStr = PdksUtil.convertToDateString(pdksVardiyaGun.getVardiyaDate(), "yyyyMMdd");
-						if (pdksVardiyaGun.getVersion() < 0) {
+						if (pdksVardiyaGun.isVardiyaOnay() == false) {
 							if (bugunStr != null && vardiyaGunStr.equals(bugunStr)) {
 								CalismaModeli cm = pdksVardiyaGun.getCalismaModeli();
 								if (cm == null)
