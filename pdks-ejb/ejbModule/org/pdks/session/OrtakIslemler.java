@@ -10833,11 +10833,13 @@ public class OrtakIslemler implements Serializable {
 
 				if (!vardiyaPerList.isEmpty()) {
 					Date sonGun = PdksUtil.getDate(bugun);
+
 					for (Iterator iterator = varList.iterator(); iterator.hasNext();) {
 						VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-						if (vardiyaGun.getVardiyaDate().after(sonGun) || vardiyaGun.isAyinGunu() == false)  
+
+						if (vardiyaGun.getVardiyaDate().after(sonGun) || vardiyaGun.isAyinGunu() == false)
 							continue;
-						 
+
 						if (vardiyaGun.getGuncelleyenUser() != null && vardiyaGun.getVardiyaDate().before(sonGun)) {
 							if (userIKIdList.contains(vardiyaGun.getGuncelleyenUser().getId()))
 								continue;
