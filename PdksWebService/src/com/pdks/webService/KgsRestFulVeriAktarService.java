@@ -3,19 +3,29 @@ package com.pdks.webService;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.kgs.entity.MySQLPersonel;
+import org.pdks.dao.PdksDAO;
+import org.pdks.entity.Personel;
+import org.pdks.entity.PersonelKGS;
+import org.pdks.genel.model.Constants;
+import org.pdks.genel.model.PdksUtil;
 import org.pdks.kgs.model.Cihaz;
 import org.pdks.kgs.model.CihazGecis;
 import org.pdks.kgs.model.CihazPersonel;
@@ -28,6 +38,7 @@ import com.google.gson.internal.LinkedTreeMap;
 
 @Service
 @Path("/servicesKGS")
+// @WSDLDocumentation("http://localhost:8080/PdksWebService/rest/servicesKGS")
 public class KgsRestFulVeriAktarService implements Serializable {
 
 	/**
@@ -159,6 +170,93 @@ public class KgsRestFulVeriAktarService implements Serializable {
 			response = Response.ok(sonuc, MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {
 		}
+		return response;
+	}
+
+	@GET
+	@Path("/getPersonel")
+	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
+	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getPersonel(@QueryParam("sicilNo") String sicilNo, @QueryParam("kimlikNo") String kimlikNo, @QueryParam("tarih") String tarih) throws Exception {
+		Response response = null;
+		PdksDAO pdksDAO = Constants.pdksDAO;
+		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+		HashMap fields = new HashMap();
+		StringBuffer sb = new StringBuffer();
+		fields.clear();
+		sb = new StringBuffer();
+		sb.append("select K.* from " + MySQLPersonel.TABLE_NAME + " K " + PdksVeriOrtakAktar.getSelectLOCK());
+		sb.append(" where K." + MySQLPersonel.COLUMN_NAME_SICIL_NO + " = :s ");
+		fields.put("s", sicilNo);
+		if (PdksUtil.hasStringValue(kimlikNo)) {
+			sb.append(" and K." + MySQLPersonel.COLUMN_NAME_KIMLIK_NO + " = :k");
+			fields.put("k", kimlikNo);
+		}
+		List<MySQLPersonel> personelSQLList = pdksDAO.getNativeSQLList(fields, sb, MySQLPersonel.class);
+		MySQLPersonel mySQLPersonel = null;
+		if (personelSQLList != null && personelSQLList.isEmpty() == false)
+			mySQLPersonel = personelSQLList.get(0);
+		sb = new StringBuffer();
+		sb.append("select P.* from " + PersonelKGS.TABLE_NAME + " K " + PdksVeriOrtakAktar.getSelectLOCK());
+		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_KGS_PERSONEL + " = K." + PersonelKGS.COLUMN_NAME_ID);
+		sb.append(" where K." + PersonelKGS.COLUMN_NAME_SICIL_NO + " = :s ");
+		fields.put("s", sicilNo);
+		String hata = null;
+		if (mySQLPersonel == null)
+			sb.append(" 1 = 2 ");
+		else {
+			if (PdksUtil.hasStringValue(kimlikNo)) {
+				sb.append(" and K." + PersonelKGS.COLUMN_NAME_KIMLIK_NO + " = :k");
+				fields.put("k", kimlikNo);
+			}
+		}
+
+		Personel personel = null;
+		List<Personel> personelList = pdksDAO.getNativeSQLList(fields, sb, Personel.class);
+		if (personelList != null) {
+			for (Personel per : personelList) {
+				if (per.isCalisiyor())
+					personel = per;
+			}
+		}
+
+		Gson gson = new Gson();
+
+		if (personel != null) {
+			if (mySQLPersonel != null) {
+				veriMap.put("id", mySQLPersonel.getId());
+				veriMap.put("sicilNo", sicilNo);
+				if (PdksUtil.hasStringValue(mySQLPersonel.getKimlikNo()))
+					veriMap.put("kimlikNo", mySQLPersonel.getKimlikNo());
+				veriMap.put("adi", mySQLPersonel.getAdi());
+				veriMap.put("soyadi", mySQLPersonel.getSoyadi());
+			} else {
+				veriMap.put("adi", personel.getAd());
+				veriMap.put("soyadi", personel.getSoyad());
+				hata = "Aktarım tanımı bulunamadı!";
+			}
+		} else {
+			if (mySQLPersonel != null) {
+				veriMap.put("sicilNo", sicilNo);
+				if (PdksUtil.hasStringValue(mySQLPersonel.getKimlikNo()))
+					veriMap.put("kimlikNo", mySQLPersonel.getKimlikNo());
+				veriMap.put("adi", mySQLPersonel.getAdi());
+				veriMap.put("soyadi", mySQLPersonel.getSoyadi());
+				hata = "Personel tanımı bulunamadı!";
+			} else {
+				veriMap.put("sicilNo", sicilNo);
+				if (PdksUtil.hasStringValue(kimlikNo))
+					veriMap.put("kimlikNo", kimlikNo);
+				hata = "Aktarım tanımı bulunamadı!";
+			}
+
+		}
+		veriMap.put("durum", hata == null);
+		if (hata != null)
+			veriMap.put("hata", hata);
+		String sonuc = gson.toJson(veriMap);
+		String mediaType = MediaType.APPLICATION_JSON;
+		response = Response.ok(sonuc).type(mediaType + ";charset=utf-8").build();
 		return response;
 	}
 

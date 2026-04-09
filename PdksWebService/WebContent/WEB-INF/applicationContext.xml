@@ -45,6 +45,9 @@
 		</property>
 		<property name="annotatedClasses">
 			<list>
+				<value>org.kgs.entity.MySQLHareket</value>
+				<value>org.kgs.entity.MySQLPersonel</value>
+				<value>org.kgs.entity.MySQLTerminal</value>
 
 				<value>org.pdks.entity.CalismaModeli</value>
 				<value>org.pdks.entity.CalismaModeliAy</value>
