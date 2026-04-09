@@ -244,10 +244,11 @@ public class KgsRestFulVeriAktarService implements Serializable {
 					fields.put("t", vardiyaTarih);
 					List<VardiyaGun> vList = pdksDAO.getNativeSQLList(fields, sb, VardiyaGun.class);
 					if (vList != null && vList.isEmpty() == false) {
-						Vardiya vardiya = vList.get(0).getIslemVardiya();
+						Vardiya vardiya = vList.get(0).getVardiya();
 						LinkedHashMap<String, Object> shiftMap = new LinkedHashMap<String, Object>();
 						veriMap.put("shift", shiftMap);
 						if (vardiya.isCalisma()) {
+							vardiya = vList.get(0).getIslemVardiya();
 							shiftMap.put("adi", vardiya.getKisaAdi());
 							shiftMap.put("baslangicSaat", vardiya.getBasSaat());
 							shiftMap.put("baslangicDakika", vardiya.getBasDakika());
