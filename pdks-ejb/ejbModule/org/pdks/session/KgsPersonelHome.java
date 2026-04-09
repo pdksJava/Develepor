@@ -85,7 +85,7 @@ public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serial
 		if (personel == null) {
 			personel = new MySQLPersonel();
 			personel.setIsGirisTarihi(PdksUtil.getDate(new Date()));
-			personel.setIsCikisTarihi(PdksUtil.convertToJavaDate("99991231", "yyyyMMdd"));
+//			personel.setIsCikisTarihi(PdksUtil.convertToJavaDate("99991231", "yyyyMMdd"));
 		}
 
 		setSqlPersonel(personel);
