@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -118,6 +119,7 @@ public class PersonelIzin extends BaseObject {
 
 	private List<VardiyaGun> calisilanGunler;
 
+	@Version
 	@Column(name = COLUMN_NAME_VERSION)
 	public Integer getVersion() {
 		return version;

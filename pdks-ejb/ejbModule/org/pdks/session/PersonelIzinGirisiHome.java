@@ -4743,6 +4743,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 							sb.append(", ");
 						sb.append(PdksUtil.convertToDateString(vardiyaDate, PdksUtil.getDateFormat()));
 					}
+					boolean artikEkle = false;
 					if (!(tempVardiya.isHaftaTatil() || tempVardiya.isRadyasyonIzni() || (tempVardiya.isOffGun() && izinTipi.isOffDahilMi() == Boolean.FALSE))) {
 						if (tempVardiyaGun.getIslemVardiya() == null)
 							tempVardiyaGun.setVardiyaZamani();
@@ -4751,9 +4752,11 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 							izinBasTarih = vardiyaDate;
 						}
 						eklenecekGun = 1.0d;
+						Tatil tatil = null;
 						if (resmiTatilGunleri.containsKey(tatilGunuKey) && tatilSay == false) {
-							Tatil tatil = (Tatil) resmiTatilGunleri.get(tatilGunuKey);
-							eklenecekGun = tatil != null && tatil.isYarimGunMu() ? artikIzinGun : 0.0d;
+							tatil = (Tatil) resmiTatilGunleri.get(tatilGunuKey);
+							artikEkle = tatil != null && tatil.isYarimGunMu() && artikIizinVar;
+							eklenecekGun = 0.0d;
 							++tatilSuresi;
 						}
 						if (artiklarMap != null) {
@@ -4779,7 +4782,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 								}
 								++hafta;
 							}
-							if (eklenecekGun > 0) {
+							if (artikEkle) {
 								List<Double> artiklar = artiklarMap.containsKey(hafta) ? artiklarMap.get(hafta) : new ArrayList<Double>();
 								if (artiklar.isEmpty())
 									artiklarMap.put(hafta, artiklar);
