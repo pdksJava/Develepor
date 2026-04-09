@@ -223,18 +223,13 @@ public class KgsRestFulVeriAktarService implements Serializable {
 		Gson gson = new Gson();
 
 		if (personel != null) {
-			if (mySQLPersonel != null) {
-				veriMap.put("id", mySQLPersonel.getId());
-				veriMap.put("sicilNo", sicilNo);
-				if (PdksUtil.hasStringValue(mySQLPersonel.getKimlikNo()))
-					veriMap.put("kimlikNo", mySQLPersonel.getKimlikNo());
-				veriMap.put("adi", mySQLPersonel.getAdi());
-				veriMap.put("soyadi", mySQLPersonel.getSoyadi());
-			} else {
-				veriMap.put("adi", personel.getAd());
-				veriMap.put("soyadi", personel.getSoyad());
-				hata = "Aktarım tanımı bulunamadı!";
-			}
+			veriMap.put("id", mySQLPersonel.getId());
+			veriMap.put("sicilNo", sicilNo);
+			if (PdksUtil.hasStringValue(mySQLPersonel.getKimlikNo()))
+				veriMap.put("kimlikNo", mySQLPersonel.getKimlikNo());
+			veriMap.put("adi", mySQLPersonel.getAdi());
+			veriMap.put("soyadi", mySQLPersonel.getSoyadi());
+
 		} else {
 			if (mySQLPersonel != null) {
 				veriMap.put("sicilNo", sicilNo);
@@ -247,7 +242,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 				veriMap.put("sicilNo", sicilNo);
 				if (PdksUtil.hasStringValue(kimlikNo))
 					veriMap.put("kimlikNo", kimlikNo);
-				hata = "Aktarım tanımı bulunamadı!";
+				hata = "Kayıt bulunamadı!";
 			}
 
 		}
