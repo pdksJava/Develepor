@@ -2,6 +2,7 @@ package com.pdks.webService;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -24,6 +25,8 @@ import org.kgs.entity.MySQLPersonel;
 import org.pdks.dao.PdksDAO;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelKGS;
+import org.pdks.entity.Vardiya;
+import org.pdks.entity.VardiyaGun;
 import org.pdks.genel.model.Constants;
 import org.pdks.genel.model.PdksUtil;
 import org.pdks.kgs.model.Cihaz;
@@ -223,13 +226,42 @@ public class KgsRestFulVeriAktarService implements Serializable {
 		Gson gson = new Gson();
 
 		if (personel != null) {
+			PersonelKGS kgs = personel.getPersonelKGS();
 			veriMap.put("id", mySQLPersonel.getId());
 			veriMap.put("sicilNo", sicilNo);
-			if (PdksUtil.hasStringValue(mySQLPersonel.getKimlikNo()))
-				veriMap.put("kimlikNo", mySQLPersonel.getKimlikNo());
-			veriMap.put("adi", mySQLPersonel.getAdi());
-			veriMap.put("soyadi", mySQLPersonel.getSoyadi());
+			if (PdksUtil.hasStringValue(kgs.getKimlikNo()))
+				veriMap.put("kimlikNo", kgs.getKimlikNo());
+			veriMap.put("adi", kgs.getAd());
+			veriMap.put("soyadi", kgs.getSoyad());
+			if (PdksUtil.hasStringValue(tarih)) {
+				Date vardiyaTarih = PdksUtil.getDateFromString(tarih);
+				if (vardiyaTarih != null) {
+					fields.clear();
+					sb = new StringBuffer();
+					sb.append("select V.* from " + VardiyaGun.TABLE_NAME + " V " + PdksVeriOrtakAktar.getSelectLOCK());
+					sb.append(" where V." + VardiyaGun.COLUMN_NAME_PERSONEL + " = :p and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " = :t ");
+					fields.put("p", personel.getId());
+					fields.put("t", vardiyaTarih);
+					List<VardiyaGun> vList = pdksDAO.getNativeSQLList(fields, sb, VardiyaGun.class);
+					if (vList != null && vList.isEmpty() == false) {
+						Vardiya vardiya = vList.get(0).getIslemVardiya();
+						LinkedHashMap<String, Object> shiftMap = new LinkedHashMap<String, Object>();
+						veriMap.put("shift", shiftMap);
+						if (vardiya.isCalisma()) {
+							shiftMap.put("adi", vardiya.getKisaAdi());
+							shiftMap.put("baslangicSaat", vardiya.getBasSaat());
+							shiftMap.put("baslangicDakika", vardiya.getBasDakika());
+							shiftMap.put("bitisSaat", vardiya.getBitSaat());
+							shiftMap.put("bitisDakika", vardiya.getBitDakika());
+						} else
+							shiftMap.put("hata", tarih + " çalışma planlı değildir ");
+						shiftMap.put("durum", vardiya.isCalisma());
 
+					}
+
+				} else
+					veriMap.put("shiftHata", "Hatalı tarih format " + tarih);
+			}
 		} else {
 			if (mySQLPersonel != null) {
 				veriMap.put("sicilNo", sicilNo);
