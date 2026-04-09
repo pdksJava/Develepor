@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
@@ -97,6 +98,7 @@ public class PersonelIzin extends BaseObject {
 
 	private List<PersonelIzin> harcananDigerIzinler;
 
+	@Version
 	@Column(name = COLUMN_NAME_VERSION)
 	public Integer getVersion() {
 		return version;
