@@ -1053,7 +1053,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	public void sayfaSSKGirisAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, "sskIzinGirisi");
+		ortakIslemler.setUserMenuItemTime(entityManager, session, "sskIzinGirisi");
 		try {
 			if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)
 				aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
@@ -1101,7 +1101,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	public void sayfaGirisAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		servisAktarDurum = Boolean.FALSE;
 		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals("personelIzinGirisi");
 		try {
@@ -1226,7 +1226,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	 * @throws Exception
 	 */
 	private void girisIslemleri(boolean sskDurum) throws Exception {
- 		sessionIzin = null;
+		sessionIzin = null;
 		if (listelenPersonel == null)
 			listelenPersonel = new Personel();
 		Map<String, String> map = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
@@ -1396,8 +1396,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	public void onayimaGelenIzinlerAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, "onayimaGelenIzinler");
- 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		ortakIslemler.setUserMenuItemTime(entityManager, session, "onayimaGelenIzinler");
+		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String mailId = (String) req.getParameter("mId");
 		if (mailId != null)
 			mId = mailId;
@@ -1480,7 +1480,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	 * @throws Exception
 	 */
 	public void onayListesiOlustur() throws Exception {
-	 	sessionClear();
+		sessionClear();
 		User user = (User) authenticatedUser.clone();
 		List<Tanim> sebepList = ortakIslemler.getTanimList(Tanim.TIPI_ONAYLAMAMA_NEDEN, session);
 		setRedSebebiList(sebepList);
@@ -2370,7 +2370,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		Date startDatedt = PdksUtil.getDate(getFiltreBaslangicZamani());
 		Date endDatedt = PdksUtil.getDate(ortakIslemler.tariheGunEkleCikar(cal, getFiltreBitisZamani(), 1));
 		ArrayList<String> sicilNoList = null;
- 		if (sessionClear != null && sessionClear) {
+		if (sessionClear != null && sessionClear) {
 			sessionClear();
 			if (izinSahibi != null)
 				getPersonelVeri(izinSahibi);
@@ -4503,7 +4503,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	public void fillHekimIzinleri(boolean izinli) {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, "hekimIzinRaporu");
+		ortakIslemler.setUserMenuItemTime(entityManager, session, "hekimIzinRaporu");
 
 		List<PersonelIzin> izinList = null;
 		Date tarih = Calendar.getInstance().getTime();
@@ -4752,7 +4752,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 						}
 						eklenecekGun = 1.0d;
 						if (resmiTatilGunleri.containsKey(tatilGunuKey) && tatilSay == false) {
-							eklenecekGun = 0.0d;
+							Tatil tatil = (Tatil) resmiTatilGunleri.get(tatilGunuKey);
+							eklenecekGun = tatil != null && tatil.isYarimGunMu() ? artikIzinGun : 0.0d;
 							++tatilSuresi;
 						}
 						if (artiklarMap != null) {
@@ -4770,6 +4771,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 											Tatil pdksTatil = (Tatil) resmiTatilGunleri.get(key);
 											if (!pdksTatil.isYarimGunMu())
 												artikIizinVar = Boolean.FALSE;
+											else
+												logger.debug("");
 										}
 										tarih = ortakIslemler.tariheGunEkleCikar(cal, tarih, -1);
 									}
@@ -4815,8 +4818,11 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 
 							// izinSuresiSaatGun = izinSaatHesabi(izinSuresi,
 							// izinSuresiSaatGun, tempVardiya);
-						} else if (hesapTipiMethod == PersonelIzin.HESAP_TIPI_GUN)
+						} else if (hesapTipiMethod == PersonelIzin.HESAP_TIPI_GUN) {
 							izinSuresiSaatGun += eklenecekGun;
+							eklenecekGun = 0.0d;
+						}
+
 						if (!ilkGun)
 							ilkGun = Boolean.TRUE;
 					} else if (senelikIzin && !tempVardiya.isHaftaTatil() && resmiTatilGunleri.containsKey(tatilGunuKey)) {

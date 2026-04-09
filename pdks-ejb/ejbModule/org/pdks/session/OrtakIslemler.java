@@ -9235,10 +9235,10 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String kartNoAciklama() {
-		String kartNoAciklama =  getBaslikAciklama("kartNoAciklama", "Kart No");
+		String kartNoAciklama = getBaslikAciklama("kartNoAciklama", "Kart No");
 		return kartNoAciklama;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -15818,8 +15818,12 @@ public class OrtakIslemler implements Serializable {
 		idList = null;
 
 		if (!vardiyaGunList.isEmpty()) {
+			if (tatilMap == null)
+				tatilMap = getTatilGunleri(null, basTarih, bitTarih, session);
 			HashMap<Long, List<VardiyaGun>> vMap = new HashMap<Long, List<VardiyaGun>>();
 			for (VardiyaGun vardiyaGun : vardiyaGunList) {
+				String key = vardiyaGun.getVardiyaDateStr();
+				vardiyaGun.setTatil(tatilMap.containsKey(key) ? tatilMap.get(key) : null);
 				Long perId = vardiyaGun.getPersonel().getId();
 				List<VardiyaGun> list = vMap.containsKey(perId) ? vMap.get(perId) : new ArrayList<VardiyaGun>();
 				if (list.isEmpty())
@@ -15839,8 +15843,6 @@ public class OrtakIslemler implements Serializable {
 					}
 				}
 			}
-			if (tatilMap == null)
-				tatilMap = getTatilGunleri(null, basTarih, bitTarih, session);
 			boolean tatilKontrolEt = tatilMap != null && !tatilMap.isEmpty();
 			boolean planKatSayiOku = getParameterKey("planKatSayiOku").equals("1");
 			Date bayramAyirGun = getBayramAyirGun();
@@ -23498,12 +23500,21 @@ public class OrtakIslemler implements Serializable {
 			Tatil tatil = girisYok == false ? vardiyaGun.getTatil() : null;
 			if (vardiyaGun.getVardiyaDateStr().endsWith("0225"))
 				logger.debug("");
+			Date bitisGun = null;
+			if (girisYok == false) {
+				bitisGun = PdksUtil.getDate(personelIzin.getBitisZamani());
+				if (vardiyaGun.getVardiyaDate().before(bitisGun))
+					bitisGun = null;
+				tatil = vardiyaGun.getTatil();
+				if (tatil != null && tatil.isYarimGunMu())
+					tatil = null;
+			}
 			if (saatlik) {
 				if (islemVardiya.isCalisma() && personelIzin != null) {
 					if (islemVardiya.getVardiyaBasZaman().getTime() <= personelIzin.getBaslangicZamani().getTime() && islemVardiya.getVardiyaBitZaman().getTime() >= personelIzin.getBitisZamani().getTime())
 						vardiyaGun.addPersonelIzin(personelIzin);
 				}
-			} else {
+			} else if (bitisGun == null) {
 
 				boolean vardiyaIzin = vardiyaGun.getVardiya().isIzin();
 				if (personelIzin != null && vardiyaGun != null && islemVardiya != null && vardiyaGun.getPersonel().getId().equals(personelIzin.getIzinSahibi().getId())) {

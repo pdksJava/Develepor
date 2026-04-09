@@ -284,7 +284,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 									}
 									if (cmGun == null) {
 										cmGun = new CalismaModeliGun(cm, gunTipi, haftaGun);
-										cmGun.setSure(gunTipi == CalismaModeliGun.GUN_SAAT ? cm.getHaftaIci() : cm.getHaftaIciSutIzniSure());
+										Double cmSure = gunTipi == CalismaModeliGun.GUN_SAAT ? cm.getHaftaIci() : cm.getHaftaIciSutIzniSure();
+										cmGun.setSure(cmSure != null ? cmSure.doubleValue() : 0.0d);
 									}
 									if (gunTipi == CalismaModeliGun.GUN_SAAT)
 										gunList.add(cmGun);
