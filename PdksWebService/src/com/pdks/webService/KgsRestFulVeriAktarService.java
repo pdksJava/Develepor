@@ -1,12 +1,16 @@
 package com.pdks.webService;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,8 +29,10 @@ import org.kgs.entity.MySQLPersonel;
 import org.pdks.dao.PdksDAO;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelKGS;
+import org.pdks.entity.Sirket;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
+import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.genel.model.Constants;
 import org.pdks.genel.model.PdksUtil;
 import org.pdks.kgs.model.Cihaz;
@@ -176,12 +182,41 @@ public class KgsRestFulVeriAktarService implements Serializable {
 		return response;
 	}
 
+	@POST
+	@Path("/getPersonel")
+	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
+	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response postPersonel(@QueryParam("sicilNo") String sicilNo, @QueryParam("kimlikNo") String kimlikNo, @QueryParam("tarih") String tarih) throws Exception {
+		String data = PdksRestFulVeriAktarService.getBodyString(request);
+		LinkedTreeMap<String, Object> jsonMap = data != null ? gson.fromJson(data, LinkedTreeMap.class) : new LinkedTreeMap<String, Object>();
+		if (PdksUtil.hasStringValue(sicilNo) == false)
+			sicilNo = jsonMap.containsKey("sicilNo") ? (String) jsonMap.get("sicilNo") : null;
+		if (PdksUtil.hasStringValue(kimlikNo) == false)
+			kimlikNo = jsonMap.containsKey("kimlikNo") ? (String) jsonMap.get("kimlikNo") : null;
+		if (PdksUtil.hasStringValue(tarih) == false)
+			tarih = jsonMap.containsKey("tarih") ? (String) jsonMap.get("tarih") : null;
+		jsonMap = null;
+		Response response = getPersonelResponse(sicilNo, kimlikNo, tarih);
+		return response;
+	}
+
 	@GET
 	@Path("/getPersonel")
 	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getPersonel(@QueryParam("sicilNo") String sicilNo, @QueryParam("kimlikNo") String kimlikNo, @QueryParam("tarih") String tarih) throws Exception {
-		Response response = null;
+		Response response = getPersonelResponse(sicilNo, kimlikNo, tarih);
+		return response;
+	}
+
+	/**
+	 * @param sicilNo
+	 * @param kimlikNo
+	 * @param tarih
+	 * @return
+	 */
+	private Response getPersonelResponse(String sicilNo, String kimlikNo, String tarih) {
+		Response response;
 		PdksDAO pdksDAO = Constants.pdksDAO;
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		HashMap fields = new HashMap();
@@ -227,7 +262,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 
 		if (personel != null) {
 			PersonelKGS kgs = personel.getPersonelKGS();
-			veriMap.put("id", mySQLPersonel.getId());
+			veriMap.put("personelId", mySQLPersonel.getId());
 			veriMap.put("sicilNo", sicilNo);
 			if (PdksUtil.hasStringValue(kgs.getKimlikNo()))
 				veriMap.put("kimlikNo", kgs.getKimlikNo());
@@ -236,29 +271,109 @@ public class KgsRestFulVeriAktarService implements Serializable {
 			if (PdksUtil.hasStringValue(tarih)) {
 				Date vardiyaTarih = PdksUtil.getDateFromString(tarih);
 				if (vardiyaTarih != null) {
-					fields.clear();
-					sb = new StringBuffer();
-					sb.append("select V.* from " + VardiyaGun.TABLE_NAME + " V " + PdksVeriOrtakAktar.getSelectLOCK());
-					sb.append(" where V." + VardiyaGun.COLUMN_NAME_PERSONEL + " = :p and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " = :t ");
-					fields.put("p", personel.getId());
-					fields.put("t", vardiyaTarih);
-					List<VardiyaGun> vList = pdksDAO.getNativeSQLList(fields, sb, VardiyaGun.class);
+					PdksVeriOrtakAktar ortak = new PdksVeriOrtakAktar();
+					List<Long> perIdList = new ArrayList<Long>();
+					perIdList.add(personel.getId());
+					Date basTarih = PdksUtil.tariheGunEkleCikar(vardiyaTarih, -1);
+					List<VardiyaGun> vList = ortak.getVardiyalar(basTarih, vardiyaTarih, perIdList);
+					perIdList = null;
+					Vardiya islemVardiya = null;
 					if (vList != null && vList.isEmpty() == false) {
-						Vardiya vardiya = vList.get(0).getVardiya();
-						LinkedHashMap<String, Object> shiftMap = new LinkedHashMap<String, Object>();
-						veriMap.put("shift", shiftMap);
-						if (vardiya.isCalisma()) {
-							vardiya = vList.get(0).getIslemVardiya();
-							shiftMap.put("adi", vardiya.getKisaAdi());
-							shiftMap.put("baslangicSaat", vardiya.getBasSaat());
-							shiftMap.put("baslangicDakika", vardiya.getBasDakika());
-							shiftMap.put("bitisSaat", vardiya.getBitSaat());
-							shiftMap.put("bitisDakika", vardiya.getBitDakika());
-						} else
-							shiftMap.put("hata", tarih + " çalışma planlı değildir ");
-						shiftMap.put("durum", vardiya.isCalisma());
+						VardiyaGun vg = null;
+						if (vList.size() > 1) {
+							boolean calismaVar = false;
+							for (VardiyaGun vardiyaGun : vList) {
+								if (!calismaVar)
+									calismaVar = vardiyaGun.getVardiya().isCalisma();
+
+							}
+							if (calismaVar) {
+								List<Integer> list = Arrays.asList(new Integer[] { PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI.value(), PuantajKatSayiTipi.GUN_GEC_CIKIS_TIPI.value() });
+								HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> katSayilarMap = ortak.getYuvarlamaKatSayiMap(basTarih, vardiyaTarih, list, pdksDAO);
+								if (katSayilarMap != null && katSayilarMap.isEmpty() == false) {
+									TreeMap<String, BigDecimal> erkenGirisMap = katSayilarMap != null && katSayilarMap.containsKey(PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI) ? katSayilarMap.get(PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI) : null;
+									TreeMap<String, BigDecimal> gecCikisMap = katSayilarMap != null && katSayilarMap.containsKey(PuantajKatSayiTipi.GUN_GEC_CIKIS_TIPI) ? katSayilarMap.get(PuantajKatSayiTipi.GUN_GEC_CIKIS_TIPI) : null;
+									for (Iterator iterator = vList.iterator(); iterator.hasNext();) {
+										VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
+										Vardiya vardiya = vardiyaGun.getVardiya();
+										if (vardiya.isCalisma()) {
+											HashMap<Integer, BigDecimal> katSayiMap = new HashMap<Integer, BigDecimal>();
+											String str = vardiyaGun.getVardiyaDateStr();
+											Long sirketId = null, vardiyaId = null, tesisId = null;
+											try {
+												Sirket sirket = personel.getSirket();
+												if (sirket != null) {
+													if (sirket.getTesisDurum())
+														tesisId = personel.getTesis() != null ? personel.getTesis().getId() : null;
+													sirketId = sirket.getId();
+												}
+
+											} catch (Exception e) {
+												sirketId = null;
+											}
+											try {
+												vardiyaId = vardiya != null ? vardiya.getId() : null;
+											} catch (Exception e) {
+												vardiyaId = null;
+											}
+											if (erkenGirisMap != null && ortak.veriKatSayiVar(erkenGirisMap, sirketId, tesisId, vardiyaId, str)) {
+												BigDecimal deger = ortak.getKatSayiVeriMap(erkenGirisMap, sirketId, tesisId, vardiyaId, str);
+												if (deger != null)
+													katSayiMap.put(PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI.value(), deger);
+											}
+											if (gecCikisMap != null && ortak.veriKatSayiVar(gecCikisMap, sirketId, tesisId, vardiyaId, str)) {
+												BigDecimal deger = ortak.getKatSayiVeriMap(gecCikisMap, sirketId, tesisId, vardiyaId, str);
+												if (deger != null)
+													katSayiMap.put(PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI.value(), deger);
+											}
+											if (!katSayiMap.isEmpty()) {
+												vardiya.setKatSayiMap(katSayiMap);
+												vardiya.setIslemVardiyaGun(vardiyaGun);
+												vardiyaGun.setKatSayiMap(katSayiMap);
+											} else
+												katSayiMap = null;
+										}
+										gecCikisMap = null;
+										erkenGirisMap = null;
+									}
+								}
+								katSayilarMap = null;
+							}
+							Date islemZamani = new Date();
+
+							for (Iterator iterator = vList.iterator(); iterator.hasNext();) {
+								VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
+								Vardiya vardiya = vardiyaGun.getIslemVardiya();
+								if (vardiya.isCalisma() && PdksUtil.tarihKarsilastirNumeric(vardiyaTarih, islemZamani) == 0) {
+									if (islemZamani.before(vardiya.getVardiyaTelorans1BasZaman()) == false && islemZamani.after(vardiya.getVardiyaTelorans2BitZaman()) == false)
+										vg = vardiyaGun;
+
+								}
+							}
+						}
+						if (vg == null)
+							vg = vList.get(0);
+						if (vg != null)
+							islemVardiya = vg.getIslemVardiya();
 
 					}
+					if (islemVardiya != null) {
+						LinkedHashMap<String, Object> shiftMap = new LinkedHashMap<String, Object>();
+						veriMap.put("shift", shiftMap);
+						if (islemVardiya.isCalisma()) {
+							islemVardiya = vList.get(0).getIslemVardiya();
+							shiftMap.put("adi", islemVardiya.getKisaAdi());
+							shiftMap.put("baslangicSaat", islemVardiya.getBasSaat());
+							shiftMap.put("baslangicDakika", islemVardiya.getBasDakika());
+							shiftMap.put("bitisSaat", islemVardiya.getBitSaat());
+							shiftMap.put("bitisDakika", islemVardiya.getBitDakika());
+							shiftMap.put("baslangicZamani", PdksUtil.convertToDateString(islemVardiya.getBasZaman(), "yyyy-MM-dd HH:ss"));
+							shiftMap.put("bitisZamani", PdksUtil.convertToDateString(islemVardiya.getBitZaman(), "yyyy-MM-dd HH:ss"));
+						} else
+							shiftMap.put("hata", tarih + " çalışma planlı değildir ");
+						shiftMap.put("durum", islemVardiya.isCalisma());
+					} else
+						veriMap.put("shiftHata", "Shift bilgisi bulunamadı " + tarih);
 
 				} else
 					veriMap.put("shiftHata", "Hatalı tarih format " + tarih);

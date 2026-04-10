@@ -129,6 +129,18 @@ public class PdksVeriOrtakAktar implements Serializable {
 	private LinkedHashMap<String, HashMap<String, List>> hataIKMap;
 	private Sirket personelSirket;
 
+	public PdksVeriOrtakAktar() {
+		super();
+		pdksDAO = Constants.pdksDAO;
+		yoneticiRolVarmi = false;
+		sicilNoUzunluk = null;
+		if (pdksDAO != null) {
+			bugun = new Date();
+			fields = new HashMap();
+			serviceData = null;
+		}
+	}
+
 	/**
 	 * @return
 	 */
@@ -145,16 +157,37 @@ public class PdksVeriOrtakAktar implements Serializable {
 		return grubaTarihiAciklama;
 	}
 
-	public PdksVeriOrtakAktar() {
-		super();
-		pdksDAO = Constants.pdksDAO;
-		yoneticiRolVarmi = false;
-		sicilNoUzunluk = null;
-		if (pdksDAO != null) {
-			bugun = new Date();
-			fields = new HashMap();
-			serviceData = null;
-		}
+	/**
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param perIdList
+	 * @return
+	 */
+	public List<VardiyaGun> getVardiyalar(Date basTarih, Date bitTarih, List<Long> perIdList) {
+		if (pdksDAO == null)
+			pdksDAO = Constants.pdksDAO;
+		StringBuffer sb = new StringBuffer();
+		sb.append("select V.* from " + VardiyaGun.TABLE_NAME + " V " + PdksVeriOrtakAktar.getSelectLOCK());
+		if (perIdList != null && perIdList.isEmpty() == false) {
+			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
+			sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
+			sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
+			sb.append(" where  V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :t1 and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :t2 ");
+			if (perIdList.size() == 1) {
+				sb.append(" and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " = :p ");
+				fields.put("p", perIdList.get(0));
+			} else {
+				sb.append(" and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :p ");
+				fields.put("p", perIdList);
+			}
+
+			sb.append(" order by V." + VardiyaGun.COLUMN_NAME_PERSONEL + ", V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " desc");
+			fields.put("t1", basTarih);
+			fields.put("t2", bitTarih);
+		} else
+			sb.append(" where 1 = 2 ");
+		List<VardiyaGun> vList = pdksDAO.getNativeSQLList(fields, sb, VardiyaGun.class);
+		return vList;
 	}
 
 	/**
@@ -165,7 +198,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @param str
 	 * @return
 	 */
-	private boolean veriKatSayiVar(TreeMap<String, BigDecimal> map, Long sirketId, Long tesisId, Long vardiyaId, String str) {
+	public boolean veriKatSayiVar(TreeMap<String, BigDecimal> map, Long sirketId, Long tesisId, Long vardiyaId, String str) {
 		boolean veriDurum = false;
 		if (map != null && str != null) {
 			List<String> list = new ArrayList<String>();
@@ -220,7 +253,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @param str
 	 * @return
 	 */
-	private BigDecimal getKatSayiVeriMap(TreeMap<String, BigDecimal> map, Long sirketId, Long tesisId, Long vardiyaId, String str) {
+	public BigDecimal getKatSayiVeriMap(TreeMap<String, BigDecimal> map, Long sirketId, Long tesisId, Long vardiyaId, String str) {
 		BigDecimal decimal = null;
 		if (map != null && str != null) {
 			List<String> list = getKatSayiKeyList(sirketId, tesisId, vardiyaId, str, false);
@@ -308,7 +341,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @param dAO
 	 * @return
 	 */
-	private HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> getYuvarlamaKatSayiMap(Date basTarih, Date bitTarih, List<Integer> tipiList, PdksDAO dAO) {
+	public HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> getYuvarlamaKatSayiMap(Date basTarih, Date bitTarih, List<Integer> tipiList, PdksDAO dAO) {
 		HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> katSayiMap = new HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>>();
 		StringBuffer sb = new StringBuffer();
 		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ", max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, ");
