@@ -218,6 +218,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	private Response getPersonelResponse(String sicilNo, String kimlikNo, String tarih) {
 		Response response;
 		PdksDAO pdksDAO = Constants.pdksDAO;
+		Date islemZamani = new Date();
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 		HashMap fields = new HashMap();
 		StringBuffer sb = new StringBuffer();
@@ -230,18 +231,25 @@ public class KgsRestFulVeriAktarService implements Serializable {
 			sb.append(" and K." + MySQLPersonel.COLUMN_NAME_KIMLIK_NO + " = :k");
 			fields.put("k", kimlikNo);
 		}
+		String hata = null;
 		List<MySQLPersonel> personelSQLList = pdksDAO.getNativeSQLList(fields, sb, MySQLPersonel.class);
 		MySQLPersonel mySQLPersonel = null;
-		if (personelSQLList != null && personelSQLList.isEmpty() == false)
+		if (personelSQLList != null && personelSQLList.isEmpty() == false) {
 			mySQLPersonel = personelSQLList.get(0);
+			if (mySQLPersonel.getIsCikisTarihi() != null && mySQLPersonel.getIsCikisTarihi().before(PdksUtil.getDate(islemZamani))) {
+				hata = mySQLPersonel.getAdi() + " " + mySQLPersonel.getSoyadi() + " " + PdksUtil.convertToDateString(mySQLPersonel.getIsCikisTarihi(), "yyyy-MM-dd") + " tarihinde işten ayrıldı!";
+				mySQLPersonel = null;
+			}
+		}
+
 		sb = new StringBuffer();
 		sb.append("select P.* from " + PersonelKGS.TABLE_NAME + " K " + PdksVeriOrtakAktar.getSelectLOCK());
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_KGS_PERSONEL + " = K." + PersonelKGS.COLUMN_NAME_ID);
 		sb.append(" where K." + PersonelKGS.COLUMN_NAME_SICIL_NO + " = :s ");
 		fields.put("s", sicilNo);
-		String hata = null;
+
 		if (mySQLPersonel == null)
-			sb.append(" 1 = 2 ");
+			sb.append(" and 1 = 2 ");
 		else {
 			if (PdksUtil.hasStringValue(kimlikNo)) {
 				sb.append(" and K." + PersonelKGS.COLUMN_NAME_KIMLIK_NO + " = :k");
@@ -340,7 +348,6 @@ public class KgsRestFulVeriAktarService implements Serializable {
 								}
 								katSayilarMap = null;
 							}
-							Date islemZamani = new Date();
 
 							for (Iterator iterator = vList.iterator(); iterator.hasNext();) {
 								VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
@@ -393,7 +400,8 @@ public class KgsRestFulVeriAktarService implements Serializable {
 				veriMap.put("sicilNo", sicilNo);
 				if (PdksUtil.hasStringValue(kimlikNo))
 					veriMap.put("kimlikNo", kimlikNo);
-				hata = "Kayıt bulunamadı!";
+				if (hata == null)
+					hata = "Kayıt bulunamadı!";
 			}
 
 		}
