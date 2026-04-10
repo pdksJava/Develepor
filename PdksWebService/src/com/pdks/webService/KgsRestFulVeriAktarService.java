@@ -275,6 +275,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 				veriMap.put("kimlikNo", kgs.getKimlikNo());
 			veriMap.put("adi", kgs.getAd());
 			veriMap.put("soyadi", kgs.getSoyad());
+			VardiyaGun vg = null;
 			if (PdksUtil.hasStringValue(tarih)) {
 				Date vardiyaTarih = PdksUtil.getDateFromString(tarih);
 				if (vardiyaTarih != null) {
@@ -286,7 +287,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 					perIdList = null;
 					Vardiya islemVardiya = null;
 					if (vList != null && vList.isEmpty() == false) {
-						VardiyaGun vg = null;
+
 						if (vList.size() > 1) {
 							boolean calismaVar = false;
 							for (VardiyaGun vardiyaGun : vList) {
@@ -369,6 +370,8 @@ public class KgsRestFulVeriAktarService implements Serializable {
 					if (islemVardiya != null) {
 						LinkedHashMap<String, Object> shiftMap = new LinkedHashMap<String, Object>();
 						veriMap.put("shift", shiftMap);
+						tarih = PdksUtil.convertToDateString(vg.getVardiyaDate(), "yyyy-MM-dd");
+						shiftMap.put("tarih", tarih);
 						if (islemVardiya.isCalisma()) {
 							islemVardiya = vList.get(0).getIslemVardiya();
 							shiftMap.put("adi", islemVardiya.getKisaAdi());
@@ -376,8 +379,6 @@ public class KgsRestFulVeriAktarService implements Serializable {
 							shiftMap.put("baslangicDakika", islemVardiya.getBasDakika());
 							shiftMap.put("bitisSaat", islemVardiya.getBitSaat());
 							shiftMap.put("bitisDakika", islemVardiya.getBitDakika());
-							shiftMap.put("baslangicZamani", PdksUtil.convertToDateString(islemVardiya.getBasZaman(), "yyyy-MM-dd HH:ss"));
-							shiftMap.put("bitisZamani", PdksUtil.convertToDateString(islemVardiya.getBitZaman(), "yyyy-MM-dd HH:ss"));
 						} else
 							shiftMap.put("hata", tarih + " çalışma planlı değildir ");
 						shiftMap.put("durum", islemVardiya.isCalisma());
