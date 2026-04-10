@@ -337,6 +337,79 @@ public class PdksVeriOrtakAktar implements Serializable {
 	/**
 	 * @param basTarih
 	 * @param bitTarih
+	 * @param personelIdler
+	 * @param tipiList
+	 * @param dAO
+	 * @return
+	 */
+	public HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> getYuvarlamaKatSayiMap(Date basTarih, Date bitTarih, List<Long> personelIdler, List<Integer> tipiList, PdksDAO dAO) {
+
+		HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> katSayiMap = new HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>>();
+		StringBuffer sb = new StringBuffer();
+		HashMap map = new HashMap();
+
+		sb.append("select B." + KatSayi.COLUMN_NAME_TIPI + ", V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",max(B." + KatSayi.COLUMN_NAME_DEGER + ") DEGER, ");
+		sb.append("B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + " from " + VardiyaGun.TABLE_NAME + " V " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
+		sb.append(" inner join " + KatSayi.TABLE_NAME + " B " + PdksVeriOrtakAktar.getJoinLOCK() + " on B." + KatSayi.COLUMN_NAME_BAS_TARIH + " <= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
+		sb.append(" and B." + KatSayi.COLUMN_NAME_BIT_TARIH + " >= V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " and B." + KatSayi.COLUMN_NAME_DURUM + " = 1 ");
+
+		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
+		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
+		sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
+		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :bitTarih");
+		if (personelIdler != null && personelIdler.isEmpty() == false) {
+			String perName = "pId";
+
+			sb.append(" and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + perName);
+			map.put(perName, personelIdler);
+		}
+		sb.append(" group by B." + KatSayi.COLUMN_NAME_TIPI + ", B." + KatSayi.COLUMN_NAME_SIRKET + ", B." + KatSayi.COLUMN_NAME_TESIS + ", B." + KatSayi.COLUMN_NAME_VARDIYA + ",V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI);
+
+		map.put("basTarih", basTarih);
+		map.put("bitTarih", bitTarih);
+
+		try {
+			List<Object[]> list = dAO.getNativeSQLList(map, sb, null);
+			String[] dizi = new String[] { "S", "T", "V" };
+
+			for (Object[] objects : list) {
+				if (objects[0] == null && objects[1] == null)
+					continue;
+				Integer key = (Integer) objects[0];
+				if (tipiList != null && tipiList.contains(key) == false)
+					continue;
+				PuantajKatSayiTipi tipi = PuantajKatSayiTipi.fromValue(key.intValue());
+				if (tipi != null) {
+					TreeMap<String, BigDecimal> degerMap = katSayiMap.containsKey(tipi) ? katSayiMap.get(tipi) : new TreeMap<String, BigDecimal>();
+					if (degerMap.isEmpty())
+						katSayiMap.put(tipi, degerMap);
+					Date date = objects[1] != null ? new Date(((java.sql.Timestamp) objects[1]).getTime()) : null;
+					BigDecimal deger = new BigDecimal((Double) objects[2]);
+					String dKey = "";
+					for (int i = 0; i < dizi.length; i++) {
+						Object object = objects[i + 3];
+						dKey += (object == null ? "" : dizi[i] + object.toString() + "_");
+					}
+					if (date != null)
+						dKey += PdksUtil.convertToDateString(date, "yyyyMMdd");
+					degerMap.put(dKey, deger);
+				}
+
+			}
+			list = null;
+			dizi = null;
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+
+		return katSayiMap;
+
+	}
+
+	/**
+	 * @param basTarih
+	 * @param bitTarih
 	 * @param tipiList
 	 * @param dAO
 	 * @return

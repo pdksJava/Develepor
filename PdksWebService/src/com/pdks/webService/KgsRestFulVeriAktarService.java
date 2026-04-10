@@ -289,8 +289,20 @@ public class KgsRestFulVeriAktarService implements Serializable {
 							}
 							if (calismaVar) {
 								List<Integer> list = Arrays.asList(new Integer[] { PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI.value(), PuantajKatSayiTipi.GUN_GEC_CIKIS_TIPI.value() });
-								HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> katSayilarMap = ortak.getYuvarlamaKatSayiMap(basTarih, vardiyaTarih, list, pdksDAO);
+								HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> katSayilarMap = ortak.getYuvarlamaKatSayiMap(basTarih, vardiyaTarih, perIdList, list, pdksDAO);
 								if (katSayilarMap != null && katSayilarMap.isEmpty() == false) {
+									Long sirketId = null, tesisId = null;
+									try {
+										Sirket sirket = personel.getSirket();
+										if (sirket != null) {
+											if (sirket.getTesisDurum())
+												tesisId = personel.getTesis() != null ? personel.getTesis().getId() : null;
+											sirketId = sirket.getId();
+										}
+
+									} catch (Exception e) {
+										sirketId = null;
+									}
 									TreeMap<String, BigDecimal> erkenGirisMap = katSayilarMap != null && katSayilarMap.containsKey(PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI) ? katSayilarMap.get(PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI) : null;
 									TreeMap<String, BigDecimal> gecCikisMap = katSayilarMap != null && katSayilarMap.containsKey(PuantajKatSayiTipi.GUN_GEC_CIKIS_TIPI) ? katSayilarMap.get(PuantajKatSayiTipi.GUN_GEC_CIKIS_TIPI) : null;
 									for (Iterator iterator = vList.iterator(); iterator.hasNext();) {
@@ -299,18 +311,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 										if (vardiya.isCalisma()) {
 											HashMap<Integer, BigDecimal> katSayiMap = new HashMap<Integer, BigDecimal>();
 											String str = vardiyaGun.getVardiyaDateStr();
-											Long sirketId = null, vardiyaId = null, tesisId = null;
-											try {
-												Sirket sirket = personel.getSirket();
-												if (sirket != null) {
-													if (sirket.getTesisDurum())
-														tesisId = personel.getTesis() != null ? personel.getTesis().getId() : null;
-													sirketId = sirket.getId();
-												}
-
-											} catch (Exception e) {
-												sirketId = null;
-											}
+											Long vardiyaId = null;
 											try {
 												vardiyaId = vardiya != null ? vardiya.getId() : null;
 											} catch (Exception e) {
@@ -345,6 +346,8 @@ public class KgsRestFulVeriAktarService implements Serializable {
 								VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 								Vardiya vardiya = vardiyaGun.getIslemVardiya();
 								if (vardiya.isCalisma() && PdksUtil.tarihKarsilastirNumeric(vardiyaTarih, islemZamani) == 0) {
+									if (vardiya.getKatSayiMap() != null)
+										vardiya.setIslemVardiyaGun(vardiyaGun);
 									if (islemZamani.before(vardiya.getVardiyaTelorans1BasZaman()) == false && islemZamani.after(vardiya.getVardiyaTelorans2BitZaman()) == false)
 										vg = vardiyaGun;
 
