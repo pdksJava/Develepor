@@ -4636,10 +4636,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 								String yonetici2PerNo = PdksUtil.textBaslangicinaKarakterEkle(yonetici2No.trim(), '0', sicilNoUzunluk);
 								yoneticisi2 = personelPDKSMap.get(yonetici2PerNo);
 								if (yoneticiRolVarmi && bolumYok == false) {
-									if (yoneticisi2 != null)
-										addHatalist(hataList, personelERP, null, "2. yönetici " + yonetici2No.trim() + " " + yoneticisi2.getAdSoyad() + " güncellemesi sistemde açık değildir!");
-									else
-										addHatalist(hataList, personelERP, null, "2. yönetici güncellemesi sistemde açık değildir!");
+									if (yoneticisi2 == null) {
+										if (yonetici2ERPKontrol)
+											addHatalist(hataList, personelERP, null, "2. yönetici " + yonetici2No.trim() + " güncellemesi sistemde açık değildir!");
+									}
+									// else addHatalist(hataList, personelERP, null, "2. yönetici güncellemesi sistemde açık değildir!");
 								}
 							}
 						}
@@ -5376,8 +5377,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 			List<String> yoneticiNoList = new ArrayList<String>();
 			for (PersonelERP personelERP : personelList) {
 				String yoneticiNo = personelERP.getYoneticiPerNo() != null ? personelERP.getYoneticiPerNo().trim() : "";
+				String yonetici2PerNo = personelERP.getYonetici2PerNo() != null ? personelERP.getYonetici2PerNo().trim() : "";
 				if (PdksUtil.hasStringValue(yoneticiNo) && !yoneticiNoList.contains(yoneticiNo))
 					yoneticiNoList.add(yoneticiNo);
+				if (PdksUtil.hasStringValue(yonetici2PerNo) && !yoneticiNoList.contains(yonetici2PerNo))
+					yoneticiNoList.add(yonetici2PerNo);
 			}
 			for (PersonelERP personelERP : personelList) {
 				String perNo = personelERP.getPersonelNo() != null ? personelERP.getPersonelNo().trim() : "";
@@ -5652,6 +5656,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 			personelERP.setKimlikNo(null);
 			personelERP.setPersonelTipi(null);
 			personelERP.setPersonelTipiKodu(null);
+			personelERP.setBordroAltAlanAdi(null);
+			personelERP.setBordroAltAlanKodu(null);
 			digerAlanlarBosalt(personelERP);
 
 		}
