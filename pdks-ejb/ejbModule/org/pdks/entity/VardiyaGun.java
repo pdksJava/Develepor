@@ -196,8 +196,38 @@ public class VardiyaGun extends BaseObject {
 
 	public void setVardiyaSaat(VardiyaSaat value) {
 		this.vardiyaSaat = value;
-		if (value != null && this.vardiyaSaatDB == null)
-			this.setVardiyaSaatDB((VardiyaSaat) value.clone());
+		this.setIcapciMesaiSaat(0.0d);
+		this.setResmiTatilSure(0.0d);
+		this.setAksamVardiyaSaatSayisi(0.0d);
+		this.setResmiTatilKanunenEklenenSure(0.0d);
+		if (value != null) {
+			if (this.vardiyaSaatDB == null) {
+				value.setIcapciMesaiSaat(0.0d);
+				value.setResmiTatilSure(0.0d);
+				value.setResmiTatilKanunenEklenenSure(0.0d);
+				VardiyaEkSaat ekSaat = value.getEkSaat();
+				this.setNormalSure(value.getNormalSure());
+				this.setCalismaSuresi(value.getCalismaSuresi());
+				if (ekSaat != null) {
+					this.setAksamVardiyaSaatSayisi(ekSaat.getAksamVardiyaSaatSayisi());
+					value.setAksamVardiyaSaatSayisi(ekSaat.getAksamVardiyaSaatSayisi());
+					this.setResmiTatilSure(ekSaat.getResmiTatilSure());
+					value.setResmiTatilSure(ekSaat.getResmiTatilSure());
+					if (ekSaat.getResmiTatilKanunenEklenenSure() != null) {
+						this.setResmiTatilKanunenEklenenSure(ekSaat.getResmiTatilKanunenEklenenSure().doubleValue());
+						value.setResmiTatilKanunenEklenenSure(ekSaat.getResmiTatilKanunenEklenenSure().doubleValue());
+					}
+					if (ekSaat.getIcapciMesaiSaat() != null) {
+						this.setIcapciMesaiSaat(ekSaat.getIcapciMesaiSaat().doubleValue());
+						value.setIcapciMesaiSaat(ekSaat.getIcapciMesaiSaat().doubleValue());
+					}
+
+				}
+
+				this.setVardiyaSaatDB((VardiyaSaat) value.clone());
+			}
+		}
+
 	}
 
 	@Column(name = COLUMN_NAME_VARDIYA_ACIKLAMA, insertable = false, updatable = false)
@@ -2094,33 +2124,7 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setVardiyaSaatDB(VardiyaSaat value) {
-		this.setIcapciMesaiSaat(0.0d);
-		this.setResmiTatilSure(0.0d);
-		this.setResmiTatilKanunenEklenenSure(0.0d);
 
-		if (value != null) {
-			value.setIcapciMesaiSaat(0.0d);
-			value.setResmiTatilSure(0.0d);
-			value.setResmiTatilKanunenEklenenSure(0.0d);
-			VardiyaEkSaat ekSaat = value.getEkSaat();
-			this.setNormalSure(value.getNormalSure());
-			this.setCalismaSuresi(value.getCalismaSuresi());
-			if (ekSaat != null) {
-				this.setAksamVardiyaSaatSayisi(ekSaat.getAksamVardiyaSaatSayisi());
-				value.setAksamVardiyaSaatSayisi(ekSaat.getAksamVardiyaSaatSayisi());
-				this.setResmiTatilSure(ekSaat.getResmiTatilSure());
-				value.setResmiTatilSure(ekSaat.getResmiTatilSure());
-				if (ekSaat.getResmiTatilKanunenEklenenSure() != null) {
-					this.setResmiTatilKanunenEklenenSure(ekSaat.getResmiTatilKanunenEklenenSure().doubleValue());
-					value.setResmiTatilKanunenEklenenSure(ekSaat.getResmiTatilKanunenEklenenSure().doubleValue());
-				}
-				if (ekSaat.getIcapciMesaiSaat() != null) {
-					this.setIcapciMesaiSaat(ekSaat.getIcapciMesaiSaat().doubleValue());
-					value.setIcapciMesaiSaat(ekSaat.getIcapciMesaiSaat().doubleValue());
-				}
-
-			}
-		}
 		this.vardiyaSaatDB = value;
 	}
 
