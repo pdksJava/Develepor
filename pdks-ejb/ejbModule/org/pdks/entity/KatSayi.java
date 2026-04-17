@@ -231,6 +231,12 @@ public class KatSayi extends BasePDKSObject implements Serializable {
 				aciklama = "Resmi Tatil 7.5 Saat Yuvarlama";
 			else if (key.equals(PuantajKatSayiTipi.GUN_FAZLA_MESAI_ENTEGRASYON_MAIL_KAPAT.value()))
 				aciklama = "Fazla Mesai Entegrasyon Mail Kapatma";
+			else if (key.equals(PuantajKatSayiTipi.GUN_ICAP_KATSAYI.value()))
+				aciklama = "İcap Yasal Kat Sayı";
+			else if (key.equals(PuantajKatSayiTipi.GUN_ICAP_NORMAL.value()))
+				aciklama = "İcap Normal Süre (Saat)";
+			else if (key.equals(PuantajKatSayiTipi.GUN_ICAP_TATIL.value()))
+				aciklama = "İcap Tatil Süre (Saat)";
 			else
 				aciklama = tipNo + " tanımsız tip";
 

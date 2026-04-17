@@ -1370,7 +1370,7 @@ public class VardiyaGun extends BaseObject {
 						classAd = STYLE_CLASS_EGITIM;
 					else if (vardiyaGorev.isRaporIzni() || vardiyaGorev.isSutIzni())
 						classAd = STYLE_CLASS_IZIN;
-				} else if (vardiya.isIcapVardiyasi() || vardiya.isIzin() || vardiya.isFMI())
+				} else if (vardiya.isIzin() || vardiya.isFMI())
 					classAd = STYLE_CLASS_IZIN;
 				else if (isTatilGunu() || (tatil != null && !tatil.isYarimGunMu()))
 					classAd = STYLE_CLASS_HAFTA_TATIL;
@@ -1431,6 +1431,7 @@ public class VardiyaGun extends BaseObject {
 			vTemp = this.vardiya;
 		if (vTemp != null) {
 			str = vTemp.getKisaAdi();
+
 			if (vTemp.isCalisma()) {
 				if (this.vardiyaDate == null)
 					this.vardiyaDate = new Date();
@@ -1444,6 +1445,8 @@ public class VardiyaGun extends BaseObject {
 						ek = " - Süt İzni";
 					else if (tmpVardiya.isSuaMi())
 						ek = " - Şua";
+					else if (tmpVardiya.isIcapVardiyasi())
+						ek = " - İcap";
 					else if (tmpVardiya.isGebelikMi())
 						ek = " - Gebe";
 					str = PdksUtil.convertToDateString(tmpVardiya.getVardiyaBasZaman(), pattern) + " - " + PdksUtil.convertToDateString(tmpVardiya.getVardiyaBitZaman(), pattern) + " ( " + vTemp.getKisaAdi() + ek + " ) ";
@@ -1455,6 +1458,8 @@ public class VardiyaGun extends BaseObject {
 				}
 
 				tmp = null;
+			} else if (vTemp.isIcapVardiyasi()) {
+				str += " - İcap";
 			} else if (!(vTemp.isOff() || vTemp.isHaftaTatil()))
 				str += " - " + vTemp.getAdi();
 		}
@@ -2262,6 +2267,21 @@ public class VardiyaGun extends BaseObject {
 			katSayi = null;
 		}
 		return katSayi;
+	}
+
+	@Transient
+	public double getIcapSaat() {
+		PuantajKatSayiTipi katSayi = vardiya == null || vardiya.isCalisma() ? PuantajKatSayiTipi.GUN_ICAP_NORMAL : PuantajKatSayiTipi.GUN_ICAP_TATIL;
+		BigDecimal value = getKatSayi(katSayi.value());
+		double sure = value != null ? value.doubleValue() : 0.0d;
+		return sure;
+	}
+
+	@Transient
+	public double getIcapKatSayi() {
+		BigDecimal value = getKatSayi(PuantajKatSayiTipi.GUN_ICAP_KATSAYI.value());
+		double sure = value != null ? value.doubleValue() : 0.0d;
+		return sure;
 	}
 
 	@Transient

@@ -15861,6 +15861,9 @@ public class OrtakIslemler implements Serializable {
 			TreeMap<String, BigDecimal> yemekMolaMap = allMap.containsKey(PuantajKatSayiTipi.GUN_VARDIYA_MOLA) ? allMap.get(PuantajKatSayiTipi.GUN_VARDIYA_MOLA) : null;
 			TreeMap<String, BigDecimal> sutIzinPlanKontrolDurumMap = allMap.containsKey(PuantajKatSayiTipi.GUN_GEBE_PLAN_KONTROL_ETME) ? allMap.get(PuantajKatSayiTipi.GUN_GEBE_PLAN_KONTROL_ETME) : null;
 			TreeMap<String, BigDecimal> gebePlanKontrolDurumMap = allMap.containsKey(PuantajKatSayiTipi.GUN_SUT_IZIN_PLAN_KONTROL_ETME) ? allMap.get(PuantajKatSayiTipi.GUN_SUT_IZIN_PLAN_KONTROL_ETME) : null;
+			TreeMap<String, BigDecimal> icapKatsayiMap = allMap.containsKey(PuantajKatSayiTipi.GUN_ICAP_KATSAYI) ? allMap.get(PuantajKatSayiTipi.GUN_ICAP_KATSAYI) : null;
+			TreeMap<String, BigDecimal> icapNormalMap = allMap.containsKey(PuantajKatSayiTipi.GUN_ICAP_NORMAL) ? allMap.get(PuantajKatSayiTipi.GUN_ICAP_NORMAL) : null;
+			TreeMap<String, BigDecimal> icapTatilMap = allMap.containsKey(PuantajKatSayiTipi.GUN_ICAP_TATIL) ? allMap.get(PuantajKatSayiTipi.GUN_ICAP_TATIL) : null;
 			TreeMap<String, BigDecimal> erkenGirisMap = allMap.containsKey(PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI) ? allMap.get(PuantajKatSayiTipi.GUN_ERKEN_GIRIS_TIPI) : null;
 			TreeMap<String, BigDecimal> erkenCikisMap = allMap.containsKey(PuantajKatSayiTipi.GUN_ERKEN_CIKIS_TIPI) ? allMap.get(PuantajKatSayiTipi.GUN_ERKEN_CIKIS_TIPI) : null;
 			TreeMap<String, BigDecimal> gecGirisMap = allMap.containsKey(PuantajKatSayiTipi.GUN_GEC_GIRIS_TIPI) ? allMap.get(PuantajKatSayiTipi.GUN_GEC_GIRIS_TIPI) : null;
@@ -15962,6 +15965,18 @@ public class OrtakIslemler implements Serializable {
 							gun = null;
 						}
 					}
+					if (vardiya.isIcapVardiyasi() && icapKatsayiMap != null) {
+						if (veriKatSayiVar(icapKatsayiMap, sirketId, tesisId, vardiyaId, str)) {
+							katSayiMap.put(PuantajKatSayiTipi.GUN_ICAP_KATSAYI.value(), getKatSayiVeriMap(icapKatsayiMap, sirketId, tesisId, vardiyaId, str));
+							if (icapNormalMap != null && veriKatSayiVar(icapNormalMap, sirketId, tesisId, vardiyaId, str))
+								katSayiMap.put(PuantajKatSayiTipi.GUN_ICAP_NORMAL.value(), getKatSayiVeriMap(icapNormalMap, sirketId, tesisId, vardiyaId, str));
+							if (icapTatilMap != null && veriKatSayiVar(icapTatilMap, sirketId, tesisId, vardiyaId, str))
+								katSayiMap.put(PuantajKatSayiTipi.GUN_ICAP_TATIL.value(), getKatSayiVeriMap(icapTatilMap, sirketId, tesisId, vardiyaId, str));
+
+						}
+
+					}
+
 					if (resmiTatilToplamSureEklemeDurumKontrolEt && veriKatSayiVar(resmiTatilToplamSureEklemeDurumMap, sirketId, tesisId, vardiyaId, str))
 						katSayiMap.put(PuantajKatSayiTipi.AYLIK_RT_KANUNEN_EKLEME.value(), getKatSayiVeriMap(resmiTatilToplamSureEklemeDurumMap, sirketId, tesisId, vardiyaId, str));
 					if (saatCalisanNormalGunKontrolEt && veriKatSayiVar(saatCalisanNormalGunMap, sirketId, tesisId, vardiyaId, str))
@@ -19932,6 +19947,9 @@ public class OrtakIslemler implements Serializable {
 							if (pdksIzinTarihKontrolTarihi != null && pdksIzinTarihKontrolTarihi.getTime() <= pdksVardiyaGun.getVardiyaDate().getTime())
 								izinTarihKontrolTarihi = pdksVardiyaGun.getVardiyaDate();
 							String key = pdksVardiyaGun.getVardiyaDateStr();
+							if (key.endsWith("0410"))
+								logger.debug("");
+
 							boolean ayinGunu = key.startsWith(donemKodu);
 							pdksVardiyaGun.setAyinGunu(ayinGunu);
 
@@ -20264,16 +20282,30 @@ public class OrtakIslemler implements Serializable {
 										}
 									}
 								}
-								if (pdksVardiyaGun.getCalismaSuresi() > 0) {
+								double icapSaat = pdksVardiyaGun.getIcapSaat(), katSayi = pdksVardiyaGun.getIcapKatSayi();
+								if (pdksVardiyaGun.getCalismaSuresi() > 0 || (icapSaat > pdksVardiyaGun.getCalismaSuresi() && katSayi > 0)) {
 									double normalSure = pdksVardiyaGun.getCalismaSuresi() - (pdksVardiyaGun.getHaftaCalismaSuresi() + pdksVardiyaGun.getResmiTatilSure());
-									double saat = pdksVardiyaGun.ucretiOdenenMesaiHesapla();
-									saat += pdksVardiyaGun.getIcapciMesaiSaat();
+									if (islemVardiya.isIcapVardiyasi() == false) {
+										double saat = pdksVardiyaGun.ucretiOdenenMesaiHesapla();
+										saat += pdksVardiyaGun.getIcapciMesaiSaat();
+										icapciMesaiSure += pdksVardiyaGun.getIcapciMesaiSaat();
+										if (saat > 0.0d) {
+											ucretiOdenenMesaiSure += saat;
+											normalSure -= saat;
+										}
+									} else {
+										normalSure = pdksVardiyaGun.getCalismaSuresi();
+										if (icapSaat > normalSure && katSayi > 0) {
+											Double fark = icapSaat - normalSure, orjSure = normalSure;
+											normalSure += (fark) * katSayi;
+											pdksVardiyaGun.setCalismaSuresi(PdksUtil.setSureDoubleTypeRounded(normalSure, pdksVardiyaGun.getYarimYuvarla()));
+											normalSure = pdksVardiyaGun.getCalismaSuresi();
+											toplamSure += normalSure - orjSure;
+										}
+										normalSure -= pdksVardiyaGun.getResmiTatilSure();
 
-									icapciMesaiSure += pdksVardiyaGun.getIcapciMesaiSaat();
-									if (saat > 0.0d) {
-										ucretiOdenenMesaiSure += saat;
-										normalSure -= saat;
 									}
+
 									double toplamCalismaSure = normalSure + pdksVardiyaGun.getResmiTatilSure();
 									if (pdksVardiyaGun.isFcsDahil() && toplamCalismaSure > mesaiMaxSure && maxSureDurum) {
 										double fark = 0;
@@ -20373,7 +20405,7 @@ public class OrtakIslemler implements Serializable {
 							}
 
 							if (ayinGunu && pdksVardiyaGun.getCalismaSuresi() > 0.0d || toplamSure > 0.0d)
-								logger.debug(key + " " + toplamSure + " " + pdksVardiyaGun.getCalismaSuresi() + " " + (planlanSure + toplamSure));
+								logger.info(key + " " + toplamSure + " " + pdksVardiyaGun.getCalismaSuresi() + " " + (planlanSure + toplamSure));
 						}
 
 						if (resmiTatilDepartmanlari == null || (departmanKodu != null && resmiTatilDepartmanlari.contains(departmanKodu)))

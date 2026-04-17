@@ -4906,7 +4906,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			TreeMap<Long, Vardiya> vardiyaMap = new TreeMap<Long, Vardiya>(), vardiyaGebeOzelMap = new TreeMap<Long, Vardiya>(), vardiyaSutIzniOzelMap = new TreeMap<Long, Vardiya>();
 			for (Iterator iterator = vardiyalar.iterator(); iterator.hasNext();) {
 				Vardiya vardiya = (Vardiya) iterator.next();
-				if (ikRole == false && (vardiya.isFMI() || vardiya.isIcapVardiyasi())) {
+				if (ikRole == false && vardiya.isFMI()) {
 					iterator.remove();
 					continue;
 				}
@@ -9539,7 +9539,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (vardiyaMap.containsKey(pdksVardiya.getId()))
 						vardiyaMap.remove(pdksVardiya.getId());
 					if (!pdksVardiya.getGenel()) {
-						if (!pdksVardiya.isRadyasyonIzni() || (pdksVardiya.isRadyasyonIzni() && (sua || radyolojiIzinDurum.equals("1"))))
+						if (pdksVardiya.isIcapVardiyasi() && (personel.getIcapciOlabilir() != null && personel.getIcapciOlabilir()))
+							pdksList.add(pdksVardiya);
+						else if (!pdksVardiya.isRadyasyonIzni() || (pdksVardiya.isRadyasyonIzni() && (sua || radyolojiIzinDurum.equals("1"))))
 							pdksList.add(pdksVardiya);
 					} else
 						pdksList.add(pdksVardiya);

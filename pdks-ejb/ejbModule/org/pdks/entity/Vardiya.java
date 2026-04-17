@@ -1671,7 +1671,7 @@ public class Vardiya extends BaseObject {
 		boolean icapVardiyasi = Boolean.FALSE;
 		if (icapVardiya != null) {
 			icapVardiyasi = icapVardiya.booleanValue();
-			
+
 		}
 
 		return icapVardiyasi;
@@ -1697,10 +1697,13 @@ public class Vardiya extends BaseObject {
 					ek = " - Süt İzni";
 				else if (tmpVardiya.isSuaMi())
 					ek = " - Şua";
+				else if (tmpVardiya.isIcapVardiyasi())
+					ek = " - İcap";
 				else if (tmpVardiya.isGebelikMi())
 					ek = " - Gebe";
 				vardiyaAdi = PdksUtil.convertToDateString(tmpVardiya.getVardiyaBasZaman(), pattern) + " - " + PdksUtil.convertToDateString(tmpVardiya.getVardiyaBitZaman(), pattern) + " [ " + vTemp.getKisaAdi() + ek + " ] ";
-			}
+			} else if (vTemp.isIcapVardiyasi())
+				vardiyaAdi += " - İcap";
 
 			tmp = null;
 		}
