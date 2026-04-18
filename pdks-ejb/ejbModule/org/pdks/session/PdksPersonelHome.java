@@ -1697,15 +1697,33 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		return secim;
 	}
 
-	private void gebeSuaIcapGuncelle() {
+	/**
+	 * @param personel
+	 */
+	public String gebeSuaIcapGuncelle(Personel personel) {
 		if (gebeIcapSuaDurumMap == null)
 			gebeIcapSuaDurumMap = new HashMap<Long, List<String>>();
 		else
 			gebeIcapSuaDurumMap.clear();
 
 		StringBuilder sb = new StringBuilder();
+		Long tesisId = -1L, departmanId = -1L, sirketId = -1L;
+		Sirket sirket = null;
+		if (personel != null) {
+			sirket = personel.getSirket();
+			if (sirket != null || personel.getTesis() != null) {
+				if (sirket != null) {
+					departmanId = sirket.getDepartman().getId();
+					sirketId = sirket.getId();
+					if (sirket.getTesisDurum() && personel.getTesis() != null)
+						tesisId = personel.getTesis().getId();
+				}
+
+			}
+		}
+
 		HashMap fields = new HashMap();
-		sb.append("select distinct coalesce(" + Vardiya.COLUMN_NAME_DEPARTMAN + ",-1) " + Vardiya.COLUMN_NAME_DEPARTMAN + ", case when " + Vardiya.COLUMN_NAME_GEBELIK + "=1 then '" + Vardiya.GEBE_KEY + "' ");
+		sb.append("select distinct coalesce(" + Vardiya.COLUMN_NAME_DEPARTMAN + "," + departmanId + ") " + Vardiya.COLUMN_NAME_DEPARTMAN + ", case when " + Vardiya.COLUMN_NAME_GEBELIK + "=1 then '" + Vardiya.GEBE_KEY + "' ");
 		sb.append("	when " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :fm1 then '" + Vardiya.FMI_KEY + "' ");
 		sb.append("	when " + Vardiya.COLUMN_NAME_SUA + " = 1 then '" + Vardiya.SUA_KEY + "' ");
 		sb.append("	when " + Vardiya.COLUMN_NAME_SUT_IZNI + " = 1 then '" + Vardiya.SUT_IZNI_KEY + "' ");
@@ -1714,6 +1732,13 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		sb.append(" and (" + Vardiya.COLUMN_NAME_GEBELIK + " + " + Vardiya.COLUMN_NAME_SUT_IZNI + " + " + Vardiya.COLUMN_NAME_SUA + " + " + Vardiya.COLUMN_NAME_ICAP + " = 1 or " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :fm2 ) ");
 		fields.put("fm1", Vardiya.TIPI_FMI);
 		fields.put("fm2", Vardiya.TIPI_FMI);
+		if (personel != null) {
+			if (sirket != null || personel.getTesis() != null) {
+				sb.append(" and coalesce(P." + Vardiya.COLUMN_NAME_DEPARTMAN + " , " + departmanId + " )  = " + departmanId);
+				sb.append(" and coalesce(P." + Vardiya.COLUMN_NAME_SIRKET + " , " + sirketId + " )  = " + sirketId);
+				sb.append(" and coalesce(P." + Vardiya.COLUMN_NAME_TESIS + " , " + tesisId + " )  = " + tesisId);
+			}
+		}
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
@@ -1733,7 +1758,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			logger.error(e + "\n" + sb.toString());
 
 		}
-
+		return "";
 	}
 
 	/**
@@ -2097,6 +2122,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		}
 		fillCalismaModeliVardiyaList();
 		setBakiyeIzin(izin);
+		gebeSuaIcapGuncelle(pdksPersonel);
 		izinGirisDurum(pdksPersonel);
 		ekSahaDisable();
 		if (pdksPersonel.getId() != null) {
@@ -3231,7 +3257,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (tanimsizPersonelList.isEmpty()) {
 			gebeIcapSuaDurumMap = new HashMap<Long, List<String>>();
 		} else {
-			gebeSuaIcapGuncelle();
+
 			List<PersonelView> eskiList = new ArrayList<PersonelView>(), calismayanList = new ArrayList<PersonelView>();
 			for (Iterator iterator = tanimsizPersonelList.iterator(); iterator.hasNext();) {
 				PersonelView pw = (PersonelView) iterator.next();
@@ -3250,6 +3276,10 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				tanimsizPersonelList.addAll(calismayanList);
 			if (!eskiList.isEmpty())
 				tanimsizPersonelList.addAll(eskiList);
+			Personel islemPersonel = null;
+			if (tanimsizPersonelList != null && tanimsizPersonelList.size() == 1)
+				islemPersonel = tanimsizPersonelList.get(0).getPdksPersonel();
+			gebeSuaIcapGuncelle(islemPersonel);
 			eskiList = null;
 			calismayanList = null;
 		}
@@ -3400,6 +3430,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			fillEkSahaTanim();
 		Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());
 		Personel pdksPersonel = getInstance();
+		gebeSuaIcapGuncelle(pdksPersonel);
 		parentBordroTanim = null;
 		if (pdksPersonel.getSirket().isErp())
 			parentBordroTanim = ortakIslemler.getEkSaha4(pdksPersonel.getSirket(), null, session);

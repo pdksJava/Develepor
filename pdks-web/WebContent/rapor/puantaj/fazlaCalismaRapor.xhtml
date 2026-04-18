@@ -235,7 +235,7 @@
 																</ui:fragment>
 															</DIV>
 															<rich:toolTip for="vardiya#{fazlaCalismaRaporHome.vardiyaGun.id}">
-																#{fazlaCalismaRaporHome.vardiyaGun.fazlaMesaiTitle}
+																#{fazlaCalismaRaporHome.vardiyaGun.fazlaMesaiTitle(authenticatedUser)}
 															</rich:toolTip>
 														</ui:fragment>
 
@@ -320,7 +320,7 @@
 															</ui:fragment>
 														</DIV>
 														<rich:toolTip for="vardiya#{fazlaCalismaRaporHome.vardiyaGun.vardiyaKeyStr}">
-												#{fazlaCalismaRaporHome.vardiyaGun.fazlaMesaiTitle}  
+												#{fazlaCalismaRaporHome.vardiyaGun.fazlaMesaiTitle(authenticatedUser)}  
 												<ui:fragment rendered="#{fazlaCalismaRaporHome.vardiyaGun.vardiyaSaat != null and not empty fazlaCalismaRaporHome.fazlaMesailer}">
 																<br />
 																<rich:dataTable rowClasses="acik,koyu" value="#{fazlaCalismaRaporHome.fazlaMesailer}" var="ms" style="width: 80%;" rows="50"

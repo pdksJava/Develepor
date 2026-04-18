@@ -2160,11 +2160,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		ExcelUtil.setFontColor(styleOff, Color.WHITE);
 		XSSFCellStyle style = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
 		XSSFCellStyle styleIzin = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
+		XSSFCellStyle styleIcap = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
 		XSSFCellStyle header = (XSSFCellStyle) ExcelUtil.getStyleHeader(9, wb);
 
 		XSSFCellStyle styleCalisma = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
 		int row = 0, col = 0;
-
+		ExcelUtil.setFillForegroundColor(styleIcap, 254, 235, 41);
 		ExcelUtil.setFillForegroundColor(styleTatil, 255, 153, 204);
 		ExcelUtil.setFillForegroundColor(styleIstek, 255, 255, 0);
 		ExcelUtil.setFillForegroundColor(styleIzin, 146, 208, 80);
@@ -2434,6 +2435,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						styleGenel = styleEgitim;
 					else if (styleText.equals(VardiyaGun.STYLE_CLASS_OFF))
 						styleGenel = styleOff;
+					else if (styleText.equals(VardiyaGun.STYLE_CLASS_ICAP))
+						styleGenel = styleIcap;
 					Cell cell = ExcelUtil.getCell(sheet, row, col++, styleGenel);
 					String aciklama = !help || calisan(pdksVardiyaGun) ? pdksVardiyaGun.getOzelAciklama(Boolean.TRUE) : "";
 					if (aciklama.equals(".") && pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getVardiya().isCalisma() == false) {

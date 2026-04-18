@@ -1671,6 +1671,7 @@ public class Vardiya extends BaseObject {
 		boolean icapVardiyasi = Boolean.FALSE;
 		if (icapVardiya != null) {
 			icapVardiyasi = icapVardiya.booleanValue();
+	 
 
 		}
 

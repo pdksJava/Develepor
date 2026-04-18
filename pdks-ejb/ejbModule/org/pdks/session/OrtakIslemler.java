@@ -14694,6 +14694,7 @@ public class OrtakIslemler implements Serializable {
 				vardiyaGun.setIzinler(null);
 				vardiyaGun.setIzin(null);
 				vardiyaGun.setCalismaSuresi(0);
+				vardiyaGun.setIcapciMesaiSaat(0.0d);
 				vardiyaGun.setNormalSure(0);
 				vardiyaGun.setResmiTatilSure(0);
 				vardiyaGun.setResmiTatilKanunenEklenenSure(0.0d);
@@ -20293,16 +20294,22 @@ public class OrtakIslemler implements Serializable {
 											ucretiOdenenMesaiSure += saat;
 											normalSure -= saat;
 										}
-									} else {
-										normalSure = pdksVardiyaGun.getCalismaSuresi();
-										if (icapSaat > normalSure && katSayi > 0) {
-											Double fark = icapSaat - normalSure, orjSure = normalSure;
-											normalSure += (fark) * katSayi;
-											pdksVardiyaGun.setCalismaSuresi(PdksUtil.setSureDoubleTypeRounded(normalSure, pdksVardiyaGun.getYarimYuvarla()));
-											normalSure = pdksVardiyaGun.getCalismaSuresi();
-											toplamSure += normalSure - orjSure;
-										}
-										normalSure -= pdksVardiyaGun.getResmiTatilSure();
+									} else if (pdksVardiyaGun.getIcapciMesaiSaat() > 0.0d) {
+										// normalSure = (pdksVardiyaGun.getCalismaSuresi() - pdksVardiyaGun.getResmiTatilKanunenEklenenSure());
+										// if (icapSaat > normalSure && katSayi > 0) {
+										// Double fark = icapSaat - normalSure, orjSure = normalSure;
+										// normalSure += (fark) * katSayi;
+										// pdksVardiyaGun.setCalismaSuresi(PdksUtil.setSureDoubleTypeRounded(normalSure, pdksVardiyaGun.getYarimYuvarla()));
+										// normalSure = pdksVardiyaGun.getCalismaSuresi();
+										// pdksVardiyaGun.setIcapciMesaiSaat(normalSure - orjSure);
+										// toplamSure += pdksVardiyaGun.getIcapciMesaiSaat();
+										// icapciMesaiSure += pdksVardiyaGun.getIcapciMesaiSaat();
+										// }
+										// normalSure -= pdksVardiyaGun.getResmiTatilSure();
+										toplamSure += pdksVardiyaGun.getIcapciMesaiSaat();
+										icapciMesaiSure += pdksVardiyaGun.getIcapciMesaiSaat();
+										normalSure += pdksVardiyaGun.getIcapciMesaiSaat();
+										pdksVardiyaGun.addCalismaSuresi(pdksVardiyaGun.getIcapciMesaiSaat());
 
 									}
 
@@ -20405,7 +20412,7 @@ public class OrtakIslemler implements Serializable {
 							}
 
 							if (ayinGunu && pdksVardiyaGun.getCalismaSuresi() > 0.0d || toplamSure > 0.0d)
-								logger.info(key + " " + toplamSure + " " + pdksVardiyaGun.getCalismaSuresi() + " " + (planlanSure + toplamSure));
+								logger.debug(key + " " + toplamSure + " " + pdksVardiyaGun.getCalismaSuresi() + " " + (planlanSure + toplamSure));
 						}
 
 						if (resmiTatilDepartmanlari == null || (departmanKodu != null && resmiTatilDepartmanlari.contains(departmanKodu)))
@@ -21731,7 +21738,7 @@ public class OrtakIslemler implements Serializable {
 					vardiyaGun.setCalisilmayanAksamSure(0d);
 					// vardiyaGun.setZamanGelmedi(Boolean.FALSE);
 					vardiyaGun.setCalismaSuresi(0);
-
+					vardiyaGun.setIcapciMesaiSaat(0.0d);
 					vardiyaGun.setFazlaMesaiSure(0);
 					vardiyaGun.setGecenAyResmiTatilSure(0.0d);
 					if (vardiyaGun.getVardiya() == null)
@@ -22745,8 +22752,7 @@ public class OrtakIslemler implements Serializable {
 
 						// if (fazlaMesaiOnayla)
 						// calSure = 0;
-						if (!vardiyaGun.getVardiya().isIcapVardiyasi())
-							vardiyaGun.addCalismaSuresi(PdksUtil.setSureDoubleTypeRounded(calSure, vardiyaGun.getYarimYuvarla()));
+						vardiyaGun.addCalismaSuresi(PdksUtil.setSureDoubleTypeRounded(calSure, vardiyaGun.getYarimYuvarla()));
 						if (vardiyaGun.isHareketHatali()) {
 							vardiyaGun.setFazlaMesailer(null);
 							if (vardiyaGun.getHareketler() != null) {
@@ -23791,6 +23797,7 @@ public class OrtakIslemler implements Serializable {
 				}
 
 				vardiyaGun.setCalismaSuresi(0);
+				vardiyaGun.setIcapciMesaiSaat(0.0d);
 				vardiyaGun.setNormalSure(0);
 				vardiyaGun.setResmiTatilSure(0);
 				vardiyaGun.setResmiTatilKanunenEklenenSure(0.0d);

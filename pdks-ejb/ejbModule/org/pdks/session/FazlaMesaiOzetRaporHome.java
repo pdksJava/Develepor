@@ -2304,7 +2304,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		CellStyle styleOffRed = ExcelUtil.getStyleDataCenter(wb);
 		ExcelUtil.setFontColor(styleTatilRed, Color.RED);
 		ExcelUtil.setFillForegroundColor(izinBaslik, 146, 208, 80);
-
+		CellStyle styleIcap = ExcelUtil.getStyleDataCenter(wb);
+		ExcelUtil.setFillForegroundColor(styleIcap, 254, 235, 41);
 		CellStyle styleIzin = ExcelUtil.getStyleDataCenter(wb);
 		ExcelUtil.setFillForegroundColor(styleIzin, 146, 208, 80);
 
@@ -2705,7 +2706,9 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						} else if (styleText.equals(VardiyaGun.STYLE_CLASS_OFF)) {
 							styleDay = maxSureGecti == false ? styleOff : styleOffRed;
 
-						}
+						} else if (styleText.equals(VardiyaGun.STYLE_CLASS_ICAP))
+							styleDay = styleIcap;
+
 						boolean onayHata = false;
 						String aciklama = "X";
 						if (vardiya != null && vardiyaGun.getDurum() == false && vardiyaGun.getVardiyaDate().before(bugun)) {
@@ -2735,12 +2738,12 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							}
 
 						}
-						String title = vardiya != null ? vardiyaGun.getFazlaMesaiTitle() : null;
-						double rtSure = vardiyaGun.getResmiTatilToplamSure(), htSure = vardiyaGun.getHaftaCalismaSuresi();
-						if (htSure > 0.0d)
-							title += " HT : " + authenticatedUser.sayiFormatliGoster(htSure);
-						if (rtSure > 0.0d)
-							title += " RT : " + authenticatedUser.sayiFormatliGoster(rtSure);
+						String title = vardiya != null ? vardiyaGun.fazlaMesaiTitle(authenticatedUser) : null;
+//						double rtSure = vardiyaGun.getResmiTatilToplamSure(), htSure = vardiyaGun.getHaftaCalismaSuresi();
+//						if (htSure > 0.0d)
+//							title += " HT : " + authenticatedUser.sayiFormatliGoster(htSure);
+//						if (rtSure > 0.0d)
+//							title += " RT : " + authenticatedUser.sayiFormatliGoster(rtSure);
 						// cell.setCellValue(aciklama);
 						ExcelUtil.baslikCell(cell, anchor, helper, drawing, aciklama, title);
 

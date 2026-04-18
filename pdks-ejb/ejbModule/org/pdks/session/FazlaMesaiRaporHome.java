@@ -1348,6 +1348,8 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 
 		XSSFCellStyle styleOff = (XSSFCellStyle) ExcelUtil.getStyleDataCenter(wb);
 		ExcelUtil.setFontColor(styleOff, Color.WHITE);
+		CellStyle styleIcap = ExcelUtil.getStyleDataCenter(wb);
+		ExcelUtil.setFillForegroundColor(styleIcap, 254, 235, 41);
 		CellStyle styleIzin = ExcelUtil.getStyleDataCenter(wb);
 		CellStyle styleCalisma = ExcelUtil.getStyleDataCenter(wb);
 		int row = 0, col = 0;
@@ -1479,6 +1481,9 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 							styleGenel = styleEgitim;
 						else if (styleText.equals(VardiyaGun.STYLE_CLASS_OFF))
 							styleGenel = maxSureGecti == false ? styleOff : styleOffRed;
+ 						else if (styleText.equals(VardiyaGun.STYLE_CLASS_ICAP))
+							styleGenel = styleIcap;
+
 						cell = ExcelUtil.getCell(sheet, row, col++, styleGenel);
 						String aciklama = !help || calisan(vardiyaGun) ? vardiyaGun.getFazlaMesaiOzelAciklama(Boolean.TRUE, authenticatedUser.sayiFormatliGoster(vardiyaGun.getCalismaSuresi())) : "";
 						if (vardiyaGun.getIzin() != null) {

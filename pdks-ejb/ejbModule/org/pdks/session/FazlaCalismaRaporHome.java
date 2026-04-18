@@ -201,7 +201,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		aylikPuantajListClear();
 		fazlaMesaiSayfa = false;
 		aksamAdetGoster = false;
@@ -673,7 +673,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 			return "";
 		}
 		linkAdres = null;
- 		session.clear();
+		session.clear();
 		try {
 			DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 
@@ -1464,7 +1464,10 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 		ExcelUtil.setFillForegroundColor(styleOff, 13, 12, 89);
 		ExcelUtil.setFontColor(styleOff, Color.WHITE);
 		ExcelUtil.setFontColor(styleOff, 256, 256, 256);
+		CellStyle styleIcap = ExcelUtil.getStyleDataCenter(wb);
+		ExcelUtil.setFillForegroundColor(styleIcap, 254, 235, 41);
 		CellStyle styleIzin = ExcelUtil.getStyleDataCenter(wb);
+
 		ExcelUtil.setFillForegroundColor(styleIzin, 146, 208, 80);
 		CreationHelper helper = wb.getCreationHelper();
 		drawing = sheet.createDrawingPatriarch();
@@ -1647,10 +1650,15 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 								if (styleText != null) {
 									if (styleText.equals(VardiyaGun.STYLE_CLASS_HAFTA_TATIL))
 										styleDay = styleTatil;
+									else if (styleText.equals(VardiyaGun.STYLE_CLASS_ICAP))
+										styleDay = styleIcap;
 									else if (styleText.equals(VardiyaGun.STYLE_CLASS_IZIN))
 										styleDay = styleIzin;
 									else if (styleText.equals(VardiyaGun.STYLE_CLASS_OFF))
 										styleDay = styleOff;
+									else if (styleText.equals(VardiyaGun.STYLE_CLASS_ICAP))
+										styleDay = styleIcap;
+
 								}
 								fmtCell = ExcelUtil.getCell(sheet, row, col++, styleDay);
 								String str = "";
@@ -1662,7 +1670,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 							}
 							if (!maxToplamMesaiDurum) {
 								List sb = new ArrayList();
-								String str = gun.getFazlaMesaiTitle();
+								String str = gun.fazlaMesaiTitle(authenticatedUser);
 								if (str != null)
 									sb.add(str);
 								setCommentCell(wb, helper, fmtCell, sb);
@@ -1700,7 +1708,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 										fmtCell = ExcelUtil.getCell(sheet, row, col++, styleDay);
 										fmtCell.setCellValue(tutar.doubleValue());
 									}
-									String str = gun.getFazlaMesaiTitle();
+									String str = gun.fazlaMesaiTitle(authenticatedUser);
 									if (str != null) {
 										List sb = new ArrayList();
 										sb.add(str);

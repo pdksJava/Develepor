@@ -272,7 +272,7 @@
 
 															<rich:toolTip for="vardiya#{aylikPuantaj.vardiyaGun.vardiyaKeyStr}">
 																<SPAN style="font-size: 12px;">#{authenticatedUser.getTarihFormatla(aylikPuantaj.vardiyaGun.vardiyaDate, 'd MMM')} -->
-																	#{aylikPuantaj.vardiyaGun.fazlaMesaiTitle} <ui:fragment rendered="#{aylikPuantaj.vardiyaGun.islemVardiya != null}">
+																	#{aylikPuantaj.vardiyaGun.fazlaMesaiTitle(authenticatedUser)} <ui:fragment rendered="#{aylikPuantaj.vardiyaGun.islemVardiya != null}">
 																		<br />
 																		<br />
 																	Fazla çalışma saat : #{authenticatedUser.dateTimeFormatla(aylikPuantaj.vardiyaGun.islemVardiya.vardiyaFazlaMesaiBasZaman)} -#{authenticatedUser.dateTimeFormatla(aylikPuantaj.vardiyaGun.islemVardiya.vardiyaFazlaMesaiBitZaman)}

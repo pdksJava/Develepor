@@ -492,7 +492,13 @@ table.mars th.sorted a,th.sortable a {
 	white-space: nowrap;
 	width: autostretch;
 }
-
+.icapAylik {
+	background: #FDEA29;
+	color: black;
+	font-size: 10px;
+	white-space: nowrap;
+	width: autostretch;
+}
 .bordroGun {
 	background: yellow;
 	color: black;

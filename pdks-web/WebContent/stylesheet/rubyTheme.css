@@ -703,6 +703,14 @@ sari {
 	width: autostretch;
 }
 
+.icapAylik {
+	background: #FDEA29;
+	color: black;
+	font-size: 10px;
+	white-space: nowrap;
+	width: autostretch;
+}
+
 .izinAylik {
 	background: #92D050;
 	color: black;

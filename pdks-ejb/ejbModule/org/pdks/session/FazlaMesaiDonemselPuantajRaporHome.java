@@ -756,7 +756,8 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		CellStyle styleOff = ExcelUtil.getStyleDataCenter(wb);
 		ExcelUtil.setFontColor(styleOff, Color.WHITE);
 		ExcelUtil.setFillForegroundColor(izinBaslik, 146, 208, 80);
-
+		CellStyle styleIcap = ExcelUtil.getStyleDataCenter(wb);
+		ExcelUtil.setFillForegroundColor(styleIcap, 254, 235, 41);
 		CellStyle styleIzin = ExcelUtil.getStyleDataCenter(wb);
 		ExcelUtil.setFillForegroundColor(styleIzin, 146, 208, 80);
 
@@ -1115,6 +1116,8 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 						styleDay = styleStrDay;
 						if (styleText.equals(VardiyaGun.STYLE_CLASS_HAFTA_TATIL))
 							styleDay = styleTatil;
+						else if (styleText.equals(VardiyaGun.STYLE_CLASS_ICAP))
+							styleDay = styleIcap;
 						else if (styleText.equals(VardiyaGun.STYLE_CLASS_IZIN))
 							styleDay = styleIzin;
 						else if (styleText.equals(VardiyaGun.STYLE_CLASS_OZEL_ISTEK))

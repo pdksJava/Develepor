@@ -89,7 +89,7 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 
 		donemler = ortakIslemler.getSelectItemList("ay", authenticatedUser);
 
@@ -357,21 +357,18 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 		CellStyle styleEven = ExcelUtil.getStyleEven(null, wb);
 		CellStyle styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
 		CellStyle styleTatil = ExcelUtil.getStyleDataCenter(wb);
-		CellStyle styleIstek = ExcelUtil.getStyleDataCenter(wb);
-		CellStyle styleEgitim = ExcelUtil.getStyleDataCenter(wb);
+
 		CellStyle styleOff = ExcelUtil.getStyleDataCenter(wb);
 		ExcelUtil.setFontColor(styleOff, Color.WHITE);
-		CellStyle styleIzin = ExcelUtil.getStyleDataCenter(wb);
+		CellStyle styleIcap = ExcelUtil.getStyleDataCenter(wb);
+		ExcelUtil.setFillForegroundColor(styleIcap, 254, 235, 41);
+
 		CellStyle styleCalisma = ExcelUtil.getStyleDataCenter(wb);
 		int row = 0, col = 0;
 
 		ExcelUtil.setFillForegroundColor(styleTatil, 255, 153, 204);
-		ExcelUtil.setFillForegroundColor(styleIstek, 255, 255, 0);
-		ExcelUtil.setFillForegroundColor(styleIzin, 146, 208, 80);
 
 		ExcelUtil.setFillForegroundColor(styleCalisma, 255, 255, 255);
-
-		ExcelUtil.setFillForegroundColor(styleEgitim, 0, 0, 255);
 
 		ExcelUtil.setFillForegroundColor(styleOff, 13, 12, 89);
 		ExcelUtil.setFontColor(styleOff, 256, 256, 256);

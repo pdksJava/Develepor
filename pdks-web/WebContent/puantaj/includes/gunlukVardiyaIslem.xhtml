@@ -161,7 +161,7 @@
 					</ui:fragment>
 				</DIV>
 			</h:panelGrid> <rich:toolTip for="vardiya#{vardiyaGun.vardiyaKeyStr}">
-				<SPAN style="font-size: 12px;">#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')} --> #{vardiyaGun.fazlaMesaiTitle} <ui:fragment
+				<SPAN style="font-size: 12px;">#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')} --> #{vardiyaGun.fazlaMesaiTitle(authenticatedUser)} <ui:fragment
 						rendered="#{vardiyaGun.islemVardiya != null}">
 						<br />
 						<br />

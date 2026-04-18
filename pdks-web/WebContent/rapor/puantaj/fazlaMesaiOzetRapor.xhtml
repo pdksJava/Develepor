@@ -498,7 +498,7 @@
 															<ui:fragment rendered="#{ap.vardiyaGun.izin == null }">
 																<rich:toolTip for="vardiya#{ap.vardiyaGun.vardiyaKeyStr}">
 																	
-																			#{authenticatedUser.getTarihFormatla(ap.vardiyaGun.vardiyaDate, 'd MMM')} --> #{ap.vardiyaGun.fazlaMesaiTitle}
+																			#{authenticatedUser.getTarihFormatla(ap.vardiyaGun.vardiyaDate, 'd MMM')} --> #{ap.vardiyaGun.fazlaMesaiTitle(authenticatedUser)}
 																</rich:toolTip>
 															</ui:fragment>
 														</ui:fragment>
