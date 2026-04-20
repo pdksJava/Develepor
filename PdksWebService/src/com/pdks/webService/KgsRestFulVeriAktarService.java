@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -201,12 +202,86 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	}
 
 	@GET
+	@Path("/getAllPersonel")
+	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
+	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getAllPersonel(@QueryParam("tarih") String tarih) throws Exception {
+		Response response = getAllPersonelResponse(tarih);
+		return response;
+	}
+
+	@GET
 	@Path("/getPersonel")
 	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getPersonel(@QueryParam("sicilNo") String sicilNo, @QueryParam("kimlikNo") String kimlikNo, @QueryParam("tarih") String tarih) throws Exception {
 		Response response = getPersonelResponse(sicilNo, kimlikNo, tarih);
 		return response;
+	}
+
+	/**
+	 * @param tarih
+	 * @return
+	 */
+	private Response getAllPersonelResponse(String tarih) {
+		Date vardiyaTarih = null;
+		try {
+			if (PdksUtil.hasStringValue(tarih))
+				vardiyaTarih = PdksUtil.getDateFromString(tarih);
+		} catch (Exception e) {
+		}
+		if (vardiyaTarih == null) {
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.MONTH, -1);
+			cal.set(Calendar.DATE, 1);
+			vardiyaTarih = PdksUtil.getDate(cal.getTime());
+
+		}
+		Response response;
+		LinkedHashMap<String, Object> dataMap = new LinkedHashMap<String, Object>();
+		try {
+			PdksDAO pdksDAO = Constants.pdksDAO;
+			HashMap fields = new HashMap();
+			StringBuffer sb = new StringBuffer();
+			fields.clear();
+			sb = new StringBuffer();
+			sb.append("select K.* from " + MySQLPersonel.TABLE_NAME + " K " + PdksVeriOrtakAktar.getSelectLOCK());
+			sb.append(" where (K." + MySQLPersonel.COLUMN_NAME_ISTEN_CIKIS_TARIHI + " is null or K." + MySQLPersonel.COLUMN_NAME_ISTEN_CIKIS_TARIHI + " >= :t)");
+			sb.append(" and K." + MySQLPersonel.COLUMN_NAME_ISE_GIRIS_TARIHI + " is not null");
+			sb.append(" order by K." + MySQLPersonel.COLUMN_NAME_ID);
+			fields.put("t", vardiyaTarih);
+			List<MySQLPersonel> personelSQLList = pdksDAO.getNativeSQLList(fields, sb, MySQLPersonel.class);
+ 			if (personelSQLList != null && personelSQLList.isEmpty() == false) {
+				List<LinkedHashMap<String, Object>> dataList = new ArrayList<LinkedHashMap<String, Object>>();
+				dataMap.put("personeller", dataList);
+				for (MySQLPersonel mySQLPersonel : personelSQLList) {
+					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+					veriMap.put("personelId", mySQLPersonel.getId());
+					veriMap.put("sicilNo", mySQLPersonel.getSicilNo());
+					if (PdksUtil.hasStringValue(mySQLPersonel.getKimlikNo()))
+						veriMap.put("kimlikNo", mySQLPersonel.getKimlikNo());
+					veriMap.put("adi", mySQLPersonel.getAdi());
+					veriMap.put("soyadi", mySQLPersonel.getSoyadi());
+					if (mySQLPersonel.getIsGirisTarihi() != null)
+						veriMap.put("isGirisTarihi", PdksUtil.convertToDateString(mySQLPersonel.getIsGirisTarihi(), "yyyy-MM-dd"));
+					if (mySQLPersonel.getIsCikisTarihi() != null)
+						veriMap.put("isCikisTarihi", PdksUtil.convertToDateString(mySQLPersonel.getIsCikisTarihi(), "yyyy-MM-dd"));
+					dataList.add(veriMap);
+				}
+
+			}
+		} catch (Exception e) {
+			if (e.getMessage() != null)
+				dataMap.put("hata", e.getMessage());
+		}
+		if (dataMap.isEmpty())
+			dataMap.put("hata", "Personel bilgisi bulanamadı!");
+
+		String sonuc = gson.toJson(dataMap);
+		String mediaType = MediaType.APPLICATION_JSON;
+		response = Response.ok(sonuc).type(mediaType + ";charset=utf-8").build();
+		return response;
+
 	}
 
 	/**
