@@ -1894,6 +1894,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				long simdikiDonem = Long.parseLong(PdksUtil.convertToDateString(bugun, "yyyMM"));
 				boolean donemGeldi = denklestirmeAy.getDonem() <= simdikiDonem;
 				User adminUser = null;
+				boolean ekle = (denklestirmeAyDurum || (bakiyeGuncelle != null && bakiyeGuncelle));
+
 				for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 					AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 					int yarimYuvarla = puantaj.getYarimYuvarla();
@@ -1975,7 +1977,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								fazlaMesaiOnayla = bugun.after(sonVardiyaBitZaman);
 						}
 						negatifBakiyeDenkSaat = personelDenklestirme.getCalismaModeliAy() != null ? personelDenklestirme.getCalismaModeliAy().getNegatifBakiyeDenkSaat() : 0.0d;
-						boolean ekle = (denklestirmeAyDurum || (bakiyeGuncelle != null && bakiyeGuncelle));
 						fazlaMesaiHesapla = personelDenklestirme.isDenklestirmeDurum();
 
 						boolean cumartesiCalisiyor = calismaModeli != null && calismaModeli.isHaftaTatilVar();
@@ -2022,7 +2023,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								vgIdList.add(vardiyaGun.getId());
 							vardiyaGun.setStyle("");
 
-							boolean saatEkle = false;
 							Vardiya islemVardiya = vardiyaGun.getVardiya() != null ? vardiyaGun.getIslemVardiya() : null;
 							Tatil vardiyaTatil = vardiyaGun.getTatil();
 							vardiyaGun.addResmiTatilSure(vardiyaGun.getGecenAyResmiTatilSure());
@@ -2031,16 +2031,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									vardiyaGun.setZamanGelmedi(vardiyaGun.getSonrakiVardiyaGun() != null && !bugun.after(islemVardiya.getVardiyaTelorans2BitZaman()));
 								else
 									logger.debug("");
-							}
-
-							if (ekle && vardiyaGun.getHareketDurum() && vardiyaGun.getId() != null && islemVardiya != null) {
-								saatEkle = vardiyaGun.getVardiyaDate().before(gunBas);
-								if (islemVardiya.isCalisma()) {
-									if (!saatEkle)
-										saatEkle = vardiyaTatil != null || islemVardiya.getVardiyaBitZaman().before(bugun);
-
-								}
-
 							}
 
 							if (offSure != null && islemVardiya != null && vardiyaGun.getIzin() == null && vardiyaGun.getVardiya().isOffGun()) {
@@ -2129,6 +2119,17 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								paramsMap.clear();
 							}
 							Boolean hareketDurum = vardiyaGun.getDurum(), saveVardiyaGun = Boolean.FALSE;
+							boolean saatEkle = false;
+
+							if (ekle && vardiyaGun.getHareketDurum() && vardiyaGun.getId() != null && islemVardiya != null) {
+								saatEkle = vardiyaGun.getVardiyaDate().before(gunBas);
+								if (islemVardiya.isCalisma()) {
+									if (!saatEkle)
+										saatEkle = vardiyaTatil != null || islemVardiya.getVardiyaBitZaman().before(bugun);
+
+								}
+
+							}
 							hareketDurum = vardiyaGun.getHareketDurum() && saatEkle;
 							Vardiya vardiya = vardiyaGun.getVardiya();
 
@@ -2167,76 +2168,37 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								vardiyaSaat = vardiyaGun.getVardiyaSaat();
 								if (vardiyaSaat == null)
 									vardiyaSaat = new VardiyaSaat();
-								vardiyaSaat.setGuncellendi(false);
-								double normalSure = 0.0d;
-								if (islemVardiya != null && vardiyaGun.getIzin() == null && islemVardiya.isCalisma())
-									normalSure = islemVardiya.getNetCalismaSuresi();
-								if (denklestirmeAyDurum) {
-									vardiyaSaat.setUcretiOdenenFazlaMesaiSaat(0.0d);
-									if (hareketDurum.equals(Boolean.FALSE)) {
-										vardiyaSaat.setResmiTatilKanunenEklenenSure(0.0d);
-										vardiyaSaat.setResmiTatilSure(0.0d);
-										vardiyaSaat.setAksamVardiyaSaatSayisi(0.0d);
-									} else {
-										vardiyaSaat.setResmiTatilKanunenEklenenSure(vardiyaGun.getResmiTatilKanunenEklenenSure());
-										vardiyaSaat.setResmiTatilSure(vardiyaGun.getResmiTatilSure());
-										vardiyaSaat.setAksamVardiyaSaatSayisi(vardiyaGun.getAksamKatSayisi());
-										vardiyaSaat.setIcapciMesaiSaat(vardiyaGun.getIcapciMesaiSaat());
-										double saat = vardiyaGun.getUcretiOdenenFazlaMesaiSaat();
-										if (saat > 0.0d)
-											vardiyaSaat.setUcretiOdenenFazlaMesaiSaat(saat);
-									}
-
-									if (hareketDurum.equals(Boolean.TRUE) && vardiyaGun.isZamanGelmedi() == false && (islemVardiya.isIcapVardiyasi() || vardiyaGun.getHareketler() != null || vardiyaGun.getResmiTatilSure() > 0.0)) {
-										double calSure = vardiyaGun.getCalismaSuresi();
-										if (calSure == 0.0 && vardiyaGun.getResmiTatilSure() > 0.0)
-											calSure = vardiyaGun.getResmiTatilSure();
-										vardiyaSaat.setCalismaSuresi(calSure);
-									} else {
-										vardiyaSaat.setCalismaSuresi(0.0d);
-									}
-									if (vardiyaGun.getGecenAyResmiTatilSure() > 0.0d) {
-										vardiyaSaat.setCalismaSuresi(vardiyaSaat.getCalismaSuresi() + vardiyaGun.getGecenAyResmiTatilSure());
-									}
+								// vardiyaSaat.setGuncellendi(false);
+								// double normalSure = 0.0d;
+								// if (islemVardiya != null && vardiyaGun.getIzin() == null && islemVardiya.isCalisma())
+								// normalSure = islemVardiya.getNetCalismaSuresi();
+								// if (denklestirmeAyDurum) {
+								// vardiyaSaat.setUcretiOdenenFazlaMesaiSaat(0.0d);
+								// if (hareketDurum.equals(Boolean.FALSE)) {
+								// vardiyaSaat.setResmiTatilKanunenEklenenSure(0.0d);
+								// vardiyaSaat.setResmiTatilSure(0.0d);
+								// vardiyaSaat.setAksamVardiyaSaatSayisi(0.0d);
+								// } else {
+								// vardiyaSaat.setResmiTatilKanunenEklenenSure(vardiyaGun.getResmiTatilKanunenEklenenSure());
+								// vardiyaSaat.setResmiTatilSure(vardiyaGun.getResmiTatilSure());
+								// vardiyaSaat.setAksamVardiyaSaatSayisi(vardiyaGun.getAksamKatSayisi());
+								// vardiyaSaat.setIcapciMesaiSaat(vardiyaGun.getIcapciMesaiSaat());
+								// double saat = vardiyaGun.getUcretiOdenenFazlaMesaiSaat();
+								// if (saat > 0.0d)
+								// vardiyaSaat.setUcretiOdenenFazlaMesaiSaat(saat);
+								// }
+								//
+								if (hareketDurum.equals(Boolean.TRUE) && vardiyaGun.isZamanGelmedi() == false && (islemVardiya.isIcapVardiyasi() || vardiyaGun.getHareketler() != null || vardiyaGun.getResmiTatilSure() > 0.0)) {
+									double calSure = vardiyaGun.getCalismaSuresi();
+									if (calSure == 0.0 && vardiyaGun.getResmiTatilSure() > 0.0)
+										calSure = vardiyaGun.getResmiTatilSure();
+									vardiyaSaat.setCalismaSuresi(calSure);
+								} else {
+									vardiyaSaat.setCalismaSuresi(0.0d);
 								}
-								vardiyaSaat.setNormalSure(normalSure);
-								if (key.endsWith("0410"))
-									logger.debug(key + " " + vardiyaGun.getIcapciMesaiSaat());
-								VardiyaEkSaat ekSaat = vardiyaSaat.getEkSaat();
-								boolean ekSaatEkle = false;
+								if (vardiyaGun.getGecenAyResmiTatilSure() > 0.0d)
+									vardiyaSaat.setCalismaSuresi(vardiyaSaat.getCalismaSuresi() + vardiyaGun.getGecenAyResmiTatilSure());
 
-								if (denklestirmeAyDurum) {
-									ekSaatEkle = vardiyaSaat.isEkSaatEkle() && ekSaat == null;
-									if (ekSaat != null) {
-										ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure(), vardiyaSaat.getUcretiOdenenFazlaMesaiSaat(), vardiyaSaat.getIcapciMesaiSaat());
-										ekSaatEkle = ekSaat.isGuncellendi();
-									}
-								}
-								if (vardiyaSaat.isGuncellendi() == false && ekSaatEkle)
-									vardiyaSaat.setGuncellendi(true);
-
-								if (vardiyaSaat.isGuncellendi() || ekSaatEkle) {
-									if (ekSaatEkle) {
-										if (ekSaat == null) {
-											ekSaat = new VardiyaEkSaat();
-											ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure(), vardiyaSaat.getUcretiOdenenFazlaMesaiSaat(), vardiyaSaat.getIcapciMesaiSaat());
-											vardiyaSaat.setEkSaat(ekSaat);
-										}
-									}
-									if (vardiyaSaat.getId() == null)
-										vardiyaSaat.setNormalSure(normalSure);
-									else if (vardiyaSaat.isGuncellendi())
-										vardiyaSaat.setGuncellemeTarihi(bugun);
-									if (ekSaat != null && ekSaat.isGuncellendi())
-										saveList.add(ekSaat);
-									saveList.add(vardiyaSaat);
-									if (vardiyaGun.getVardiyaSaat() == null) {
-										vardiyaGun.setVardiyaSaat(vardiyaSaat);
-										saveVardiyaGun = Boolean.TRUE;
-
-									}
-								} else if (vardiyaSaat.getId() == null)
-									vardiyaGun.setVardiyaSaat(null);
 							}
 							boolean tatilOncesiEksik = vardiyaGun.isZamanGelmedi();
 							if (tatilOncesiEksik == false && hareketDurum && vardiyaTatil != null && islemVardiya.isCalisma() && (vardiyaTatil.isYarimGunMu() || (islemVardiya.getBasDonem() >= islemVardiya.getBitDonem() && tatilGunleriMap.containsKey(vardiyaGun.getVardiyaDateStr()) == false))) {
@@ -2254,8 +2216,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								vardiyaGun.setGuncellemeTarihi(bugun);
 								saveVardiyaGun = Boolean.TRUE;
 							}
-							if (saveVardiyaGun)
+							if (saveVardiyaGun) {
+								if (vardiyaSaat == null || vardiyaSaat.getId() == null)
+									vardiyaGun.setVardiyaSaat(null);
 								saveList.add(vardiyaGun);
+							}
+
 							vardiyalar.put(vardiyaGun.getVardiyaKeyStr(), vardiyaGun);
 
 							vardiyaGun.setTitleStr(null);
@@ -2360,6 +2326,131 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							Boolean hesapla = puantaj.isFazlaMesaiHesapla();
 							puantaj.setFazlaMesaiHesapla(true);
 							personelDenklestirme = ortakIslemler.aylikPlanSureHesapla(manuelGiris, manuelCikis, true, normalCalismaVardiya, true, puantaj, !personelDenklestirme.isKapandi(loginUser), tatilGunleriMap, session);
+							saveList.clear();
+							double ucretiOdenenMesaiSure = 0.0d;
+							boolean gunMaxCalismaOdenir = puantaj.getCalismaModeli().isFazlaMesaiVarMi() && personelDenklestirme.getCalismaModeliAy().isGunMaxCalismaOdenir() && personelDenklestirme.isFazlaMesaiIzinKullanacak() == false;
+							double maxCalismaSure = fazlaMesaiMaxSure;
+
+							for (VardiyaGun vg : puantaj.getVardiyalar()) {
+
+								if (vg.isAyinGunu() && vg.getId() != null && vg.getVardiya() != null) {
+									Vardiya islemVardiya = vg.getIslemVardiya();
+									String key = vg.getVardiyaDateStr();
+									if (gunMaxCalismaOdenir && islemVardiya.isFcsDahil())
+										ucretiOdenenMesaiSure += vg.getUcretiOdenenFazlaMesaiSaat();
+									if (ekle && denklestirmeAyDurum) {
+										Tatil vardiyaTatil = vg.getTatil();
+										if (key.endsWith("0417"))
+											logger.debug(key + " " + vg.getUcretiOdenenFazlaMesaiSaat() + " " + vg.getIcapciMesaiSaat());
+										boolean saatEkle = false;
+										if (vg.getHareketDurum() && vg.getId() != null && islemVardiya != null) {
+											saatEkle = vg.getVardiyaDate().before(gunBas);
+											if (islemVardiya.isCalisma()) {
+												if (!saatEkle)
+													saatEkle = vardiyaTatil != null || islemVardiya.getVardiyaBitZaman().before(bugun);
+
+											}
+
+										}
+										if (saatEkle == false)
+											continue;
+
+										VardiyaSaat vardiyaSaat = vg.getVardiyaSaat();
+
+										double normalSure = 0.0d;
+
+										if (islemVardiya != null && vg.getIzin() == null && islemVardiya.isCalisma())
+											normalSure = islemVardiya.getNetCalismaSuresi();
+										if (vardiyaSaat == null) {
+											vardiyaSaat = new VardiyaSaat();
+											vardiyaSaat.setNormalSure(normalSure);
+										}
+										vardiyaSaat.setGuncellendi(false);
+										if (vg.getDurum()) {
+											double saat = vg.ucretiOdenenMesaiHesapla();
+ 											if (saat > 0.0d)
+												ucretiOdenenMesaiSure += saat;
+
+											VardiyaEkSaat ekSaat = vardiyaSaat.getEkSaat();
+											if (vg.isZamanGelmedi() == false && (islemVardiya.isIcapVardiyasi() || vg.getHareketler() != null || vg.getResmiTatilSure() > 0.0)) {
+												double calSure = vg.getCalismaSuresi();
+												if (calSure == 0.0 && vg.getResmiTatilSure() > 0.0)
+													calSure = vg.getResmiTatilSure();
+												vardiyaSaat.setCalismaSuresi(calSure);
+											} else {
+												vardiyaSaat.setCalismaSuresi(0.0d);
+											}
+											if (vg.getGecenAyResmiTatilSure() > 0.0d) {
+												vardiyaSaat.setCalismaSuresi(vardiyaSaat.getCalismaSuresi() + vg.getGecenAyResmiTatilSure());
+											}
+											vardiyaSaat.setResmiTatilKanunenEklenenSure(vg.getResmiTatilKanunenEklenenSure());
+											vardiyaSaat.setResmiTatilSure(vg.getResmiTatilSure());
+											vardiyaSaat.setAksamVardiyaSaatSayisi(vg.getAksamKatSayisi());
+											vardiyaSaat.setIcapciMesaiSaat(vg.getIcapciMesaiSaat());
+											saat = vg.getUcretiOdenenFazlaMesaiSaat();
+											vardiyaSaat.setUcretiOdenenFazlaMesaiSaat(saat);
+											boolean ekSaatEkle = false;
+											ekSaatEkle = vardiyaSaat.isEkSaatEkle() && ekSaat == null;
+											if (ekSaat != null) {
+												ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure(), vardiyaSaat.getUcretiOdenenFazlaMesaiSaat(), vardiyaSaat.getIcapciMesaiSaat());
+												ekSaatEkle = ekSaat.isGuncellendi();
+											}
+
+											if (vardiyaSaat.isGuncellendi() == false && ekSaatEkle)
+												vardiyaSaat.setGuncellendi(true);
+
+											if (vardiyaSaat.isGuncellendi() || ekSaatEkle) {
+												if (ekSaatEkle) {
+													if (ekSaat == null) {
+														ekSaat = new VardiyaEkSaat();
+														ekSaat.guncelle(vardiyaSaat.getResmiTatilSure(), vardiyaSaat.getAksamVardiyaSaatSayisi(), vardiyaSaat.getResmiTatilKanunenEklenenSure(), vardiyaSaat.getUcretiOdenenFazlaMesaiSaat(), vardiyaSaat.getIcapciMesaiSaat());
+														vardiyaSaat.setEkSaat(ekSaat);
+													}
+												}
+												if (vardiyaSaat.getId() != null && vardiyaSaat.isGuncellendi())
+													vardiyaSaat.setGuncellemeTarihi(bugun);
+												if (ekSaat != null && ekSaat.isGuncellendi())
+													saveList.add(ekSaat);
+												saveList.add(vardiyaSaat);
+												if (vg.getVardiyaSaat() == null) {
+													vg.setVardiyaSaat(vardiyaSaat);
+													saveList.add(vg);
+
+												}
+											}
+										} else if (vardiyaSaat != null) {
+											vardiyaSaat.setResmiTatilKanunenEklenenSure(0.0d);
+											vardiyaSaat.setResmiTatilSure(0.0d);
+											vardiyaSaat.setAksamVardiyaSaatSayisi(0.0d);
+											saveList.add(vardiyaSaat);
+										}
+
+									}
+								}
+							}
+							if (personelDenklestirme.isSuaDurumu()) {
+								if (radyolojiFazlaMesaiMaxSure == null) {
+									radyolojiFazlaMesaiMaxSure = denklestirmeAy.getRadyolojiFazlaMesaiMaxSure();
+									if (radyolojiFazlaMesaiMaxSure == null)
+										radyolojiFazlaMesaiMaxSure = fazlaMesaiMaxSure;
+								}
+								if (radyolojiKatsayi == null)
+									maxCalismaSure = radyolojiFazlaMesaiMaxSure;
+								else
+									maxCalismaSure = radyolojiKatsayi;
+							}
+							puantaj.setFazlaMesaiMaxSure(maxCalismaSure);
+							puantaj.setUcretiOdenenMesaiSure(ucretiOdenenMesaiSure);
+							if (!yasalFazlaCalismaAsanSaat && personelDenklestirme.getCalismaModeliAy().isGunMaxCalismaOdenir())
+								yasalFazlaCalismaAsanSaat = calismaModeli.isFazlaMesaiVarMi() && ucretiOdenenMesaiSure > 0.0d;
+							if (!saveList.isEmpty()) {
+								for (Iterator iterator = saveList.iterator(); iterator.hasNext();) {
+									Object object = (Object) iterator.next();
+									saveOrUpdate(object);
+								}
+								sessionFlush();
+								saveList.clear();
+							}
 							puantaj.setFazlaMesaiHesapla(hesapla);
 						}
 					} catch (Exception e) {
@@ -2374,21 +2465,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					double kesilenSure = personelDenklestirme != null ? personelDenklestirme.getKesilenSure() : 0.0d;
 					int izinsizGun = 0;
 					ortakIslemler.setVardiyaYemekList(puantaj.getVardiyalar(), yemekAraliklari);
-					double ucretiOdenenMesaiSure = 0.0d;
-					boolean gunMaxCalismaOdenir = puantaj.getCalismaModeli().isFazlaMesaiVarMi() && personelDenklestirme.getCalismaModeliAy().isGunMaxCalismaOdenir() && personelDenklestirme.isFazlaMesaiIzinKullanacak() == false;
-					double maxCalismaSure = fazlaMesaiMaxSure;
-					if (personelDenklestirme.isSuaDurumu()) {
-						if (radyolojiFazlaMesaiMaxSure == null) {
-							radyolojiFazlaMesaiMaxSure = denklestirmeAy.getRadyolojiFazlaMesaiMaxSure();
-							if (radyolojiFazlaMesaiMaxSure == null)
-								radyolojiFazlaMesaiMaxSure = fazlaMesaiMaxSure;
-						}
-						if (radyolojiKatsayi == null)
-							maxCalismaSure = radyolojiFazlaMesaiMaxSure;
-						else
-							maxCalismaSure = radyolojiKatsayi;
-					}
-					puantaj.setFazlaMesaiMaxSure(maxCalismaSure);
+
 					for (Iterator iterator = puantaj.getVardiyalar().iterator(); iterator.hasNext();) {
 						VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 						if (!vardiyaGun.isAyinGunu()) {
@@ -2400,18 +2477,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								gebemi = vardiyaGun.getVardiya().isGebelikMi();
 
 							if (calisiyor) {
-								double saat = vardiyaGun.ucretiOdenenMesaiHesapla();
-								saat += vardiyaGun.getIcapciMesaiSaat();
-								Double sure = vardiyaGun.getCalismaSuresi();
-								if (saat > 0.0d) {
-									ucretiOdenenMesaiSure += saat;
-									sure -= saat;
-								}
 
-								if (gunMaxCalismaOdenir && vardiyaGun.isFcsDahil())
-									ucretiOdenenMesaiSure += sure != null && sure.doubleValue() > maxCalismaSure + (vardiyaGun.getHaftaCalismaSuresi() + vardiyaGun.getResmiTatilSure()) ? sure.doubleValue() - maxCalismaSure - (vardiyaGun.getHaftaCalismaSuresi() + vardiyaGun.getResmiTatilSure())
-											: 0.0d;
-								ucretiOdenenMesaiSure -= vardiyaGun.getIcapciMesaiSaat();
 								if (vardiyaGun.getIzin() == null)
 									++izinsizGun;
 								if (vardiyaGun.getHaftaCalismaSuresi() > 0) {
@@ -2454,11 +2520,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (denklestirmeAyDurum == false && !haftaTatilDurum.equals("1"))
 						haftaCalismaSuresi = 0.0d;
 					puantaj.setHaftaCalismaSuresi(haftaCalismaSuresi);
-					puantaj.setUcretiOdenenMesaiSure(ucretiOdenenMesaiSure);
+
 					if (!gebeGoster)
 						gebeGoster = puantaj.isGebeDurum();
-					if (!yasalFazlaCalismaAsanSaat && personelDenklestirme.getCalismaModeliAy().isGunMaxCalismaOdenir())
-						yasalFazlaCalismaAsanSaat = calismaModeli.isFazlaMesaiVarMi() && ucretiOdenenMesaiSure > 0.0d;
+
 					if (!icapciSaatGoster)
 						icapciSaatGoster = puantaj.getIcapciMesaiSure().doubleValue() > 0.0d;
 

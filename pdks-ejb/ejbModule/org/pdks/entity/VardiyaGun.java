@@ -803,13 +803,7 @@ public class VardiyaGun extends BaseObject {
 			try {
 				if (!hareketDurum)
 					hareketDurum = ayrikHareketVar == false && islemVardiya.getVardiyaBitZaman().getTime() > new Date().getTime();
-//				if (!hareketDurum && islemVardiya.isIcapVardiyasi()) {
-//					// String key = this.getVardiyaDateStr();
-//
-//					hareketDurum = (hareketler == null || (girisHareketleri != null && cikisHareketleri != null && girisHareketleri.size() == cikisHareketleri.size()));
-//					// if (hareketDurum == false && key.equals("20151214"))
-//					// logger.info(this.getVardiyaKeyStr());
-//				}
+ 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1268,15 +1262,15 @@ public class VardiyaGun extends BaseObject {
 		return ucretiOdenenFazlaMesaiSaat;
 	}
 
-	public void setUcretiOdenenFazlaMesaiSaat(double ucretiOdenenFazlaMesaiSaat) {
-		this.ucretiOdenenFazlaMesaiSaat = ucretiOdenenFazlaMesaiSaat;
+	public void setUcretiOdenenFazlaMesaiSaat(double value) {
+		if (value != 0.0d) {
+			logger.debug(this.getVardiyaDateStr() + " " + value);
+		}
+		this.ucretiOdenenFazlaMesaiSaat = value;
 	}
 
 	public void setResmiTatilSure(double value) {
-		if (value != 0.0d) {
-			if (this.getVardiyaDateStr().endsWith("0319"))
-				logger.debug(value);
-		}
+
 		this.resmiTatilSure = value;
 	}
 
@@ -2732,14 +2726,22 @@ public class VardiyaGun extends BaseObject {
 		double icapciSaat = 0.0d;
 		if (icap) {
 			if (this.getIcapciMesaiSaat() == null || this.getIcapciMesaiSaat() <= 0.0d) {
-				normalSure = (this.getCalismaSuresi() - this.getResmiTatilKanunenEklenenSure());
-				double icapSaat = this.getIcapSaat(), katSayi = this.getIcapKatSayi();
-				if (icapSaat > normalSure && katSayi > 0) {
-					Double fark = icapSaat - normalSure, orjSure = normalSure;
-					normalSure += fark * katSayi;
-					this.setCalismaSuresi(PdksUtil.setSureDoubleTypeRounded(normalSure, this.getFazlaMesaiYuvarla()));
-					normalSure = this.getCalismaSuresi();
-					this.setIcapciMesaiSaat(normalSure - orjSure);
+				double fazlaCalisma = 0;
+				if (this.getFazlaMesailer() != null) {
+					for (PersonelFazlaMesai pfm : this.getFazlaMesailer()) {
+						if (pfm != null && pfm.getDurum() && pfm.isOnaylandi())
+							fazlaCalisma += pfm.getFazlaMesaiSaati();
+					}
+				}
+				double icapMolaSaat = this.getIcapSaat();
+				if (vardiyaDateStr.endsWith("0417"))
+					logger.debug("");
+				if (this.getVardiya().isCalisma())
+					icapMolaSaat -= this.getVardiya().getToplamCalismaSuresi();
+				icapMolaSaat -= fazlaCalisma;
+				double katSayi = this.getIcapKatSayi();
+				if (icapMolaSaat > 0 && katSayi > 0) {
+					icapciMesaiSaat = PdksUtil.setSureDoubleTypeRounded(icapMolaSaat * katSayi, this.getFazlaMesaiYuvarla());
 
 				}
 

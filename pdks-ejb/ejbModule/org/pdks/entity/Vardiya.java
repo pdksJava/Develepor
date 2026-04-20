@@ -1546,7 +1546,7 @@ public class Vardiya extends BaseObject {
 	}
 
 	@Transient
-	public double getNetCalismaSuresi() {
+	public double getToplamCalismaSuresi() {
 		double sure = 0;
 		if (isCalisma()) {
 			Calendar cal = Calendar.getInstance();
@@ -1563,10 +1563,22 @@ public class Vardiya extends BaseObject {
 				basZaman = cal.getTime();
 			}
 
-			double vardiyaCalismaDakika = PdksUtil.getDakikaFarkiHesapla(bitZaman, basZaman).doubleValue();
-			sure = (vardiyaCalismaDakika - ((double) (getYemekSuresi() != null ? getYemekSuresi().doubleValue() : 0d))) / 60;
+			sure = PdksUtil.getDakikaFarkiHesapla(bitZaman, basZaman).doubleValue() / 60.0d;
 
 		}
+		return sure;
+	}
+
+	@Transient
+	public double getNetCalismaSuresi() {
+		double sure = 0;
+		if (isCalisma()) {
+			sure = getToplamCalismaSuresi();
+			if (getYemekSuresi() != null)
+				sure -= (double) getYemekSuresi().doubleValue() / 60.0d;
+
+		}
+
 		return sure;
 	}
 
@@ -1671,7 +1683,6 @@ public class Vardiya extends BaseObject {
 		boolean icapVardiyasi = Boolean.FALSE;
 		if (icapVardiya != null) {
 			icapVardiyasi = icapVardiya.booleanValue();
-	 
 
 		}
 
