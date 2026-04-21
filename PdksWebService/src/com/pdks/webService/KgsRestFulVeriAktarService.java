@@ -112,7 +112,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 					sonuc = getKullaniciHatali("Cihaz yok!");
 				dataList = null;
 				CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
-				sonuc = getKullaniciHatali(cihazVeriOrtakAktar.saveCihaz(cihazList, cihazUser).getHata());
+				sonuc = getKullaniciHatali((String) cihazVeriOrtakAktar.saveCihaz(cihazList, cihazUser).getBilgi());
 				cihazList = null;
 			} else
 				sonuc = getKullaniciHatali("Kullanıcı bilgileri eksik!");
@@ -169,7 +169,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 						personelList.add(cihazPersonel);
 					}
 					CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
-					sonuc = getKullaniciHatali(cihazVeriOrtakAktar.savePersonel(personelList, cihazUser).getHata());
+					sonuc = getKullaniciHatali((String) cihazVeriOrtakAktar.savePersonel(personelList, cihazUser).getBilgi());
 					personelList = null;
 				} else
 					sonuc = getKullaniciHatali("Personel yok!");
@@ -180,6 +180,42 @@ public class KgsRestFulVeriAktarService implements Serializable {
 			response = Response.ok(sonuc, MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {
 		}
+		return response;
+	}
+
+	@POST
+	@Path("/postCihaz")
+	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
+	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response postCihaz() throws Exception {
+		String sonuc = null;
+		Response response = null;
+		try {
+			String json = PdksRestFulVeriAktarService.getBodyString(request);
+			List<LinkedTreeMap> dataList = null;
+			if (json.startsWith("{")) {
+				dataList = new ArrayList<LinkedTreeMap>();
+				dataList.add(gson.fromJson(json, LinkedTreeMap.class));
+			} else
+				dataList = gson.fromJson(json, List.class);
+			if (!dataList.isEmpty()) {
+				List<CihazGecis> gecisList = new ArrayList<CihazGecis>();
+				for (LinkedTreeMap linkedTreeMap : dataList) {
+					json = gson.toJson(linkedTreeMap);
+					CihazGecis cihazGecis = gson.fromJson(json, CihazGecis.class);
+					gecisList.add(cihazGecis);
+				}
+				CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
+				sonuc = gson.toJson(cihazVeriOrtakAktar.saveCihazGecis(gecisList));
+				gecisList = null;
+			} else
+				sonuc = getKullaniciHatali("Cihaz geçiş yok!");
+			dataList = null;
+
+			response = Response.ok(sonuc).type(MediaType.APPLICATION_JSON + ";charset=utf-8").build();
+		} catch (Exception e) {
+		}
+
 		return response;
 	}
 
@@ -251,7 +287,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 			sb.append(" order by K." + MySQLPersonel.COLUMN_NAME_ID);
 			fields.put("t", vardiyaTarih);
 			List<MySQLPersonel> personelSQLList = pdksDAO.getNativeSQLList(fields, sb, MySQLPersonel.class);
- 			if (personelSQLList != null && personelSQLList.isEmpty() == false) {
+			if (personelSQLList != null && personelSQLList.isEmpty() == false) {
 				List<LinkedHashMap<String, Object>> dataList = new ArrayList<LinkedHashMap<String, Object>>();
 				dataMap.put("personeller", dataList);
 				for (MySQLPersonel mySQLPersonel : personelSQLList) {
@@ -549,7 +585,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 						gecisList.add(cihazGecis);
 					}
 					CihazVeriOrtakAktar cihazVeriOrtakAktar = new CihazVeriOrtakAktar(fonksiyon);
-					sonuc = getKullaniciHatali(cihazVeriOrtakAktar.saveCihazGecis(gecisList, cihazUser).getHata());
+					sonuc = getKullaniciHatali((String) cihazVeriOrtakAktar.saveCihazGecis(gecisList, cihazUser).getBilgi());
 					gecisList = null;
 				} else
 					sonuc = getKullaniciHatali("Cihaz geçiş yok!");

@@ -2,10 +2,15 @@ package com.pdks.webService;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.TreeMap;
 
+import org.kgs.entity.MySQLHareket;
+import org.kgs.entity.MySQLTerminal;
 import org.pdks.dao.PdksDAO;
 import org.pdks.dao.impl.BaseDAOHibernate;
 import org.pdks.genel.model.Constants;
@@ -147,6 +152,125 @@ public class CihazVeriOrtakAktar implements Serializable {
 		} else
 			sonuc = getKullaniciHatali("Personel yok!");
 		return sonuc;
+	}
+
+	/**
+	 * @param gecisList
+	 * @return
+	 * @throws Exception
+	 */
+	public Sonuc saveCihazGecis(List<CihazGecis> gecisList) throws Exception {
+
+		Sonuc sonuc = null;
+		if (gecisList != null && gecisList.isEmpty() == false) {
+			List<CihazGecis> gecisler = new ArrayList<CihazGecis>();
+			HashMap<String, MySQLTerminal> cihazMap = new HashMap<String, MySQLTerminal>();
+			for (CihazGecis cihazGecis : gecisList) {
+				CihazTipi cihazTipi = CihazTipi.fromValue(cihazGecis.getIslemTipi());
+				if (cihazGecis.getPersonelId() == null || cihazGecis.getZamanDamgasi() == null || cihazGecis.getSubeKodu() == null || cihazTipi == null)
+					continue;
+				if (PdksUtil.hasStringValue(cihazGecis.getSubeKodu()) == false)
+					cihazGecis.setSubeKodu(cihazGecis.getSube());
+				String key = cihazGecis.getSubeKodu() + "_" + cihazTipi.value();
+				if (!cihazMap.containsKey(key)) {
+					String cihazAdi = PdksUtil.hasStringValue(cihazGecis.getSube()) ? cihazGecis.getSube() : cihazGecis.getSubeKodu();
+					String cihazAdiTR = PdksUtil.setTurkishStr(cihazAdi).toUpperCase(Locale.ENGLISH);
+					String ek = "";
+					if (cihazTipi.equals(CihazTipi.GIRIS)) {
+						if (cihazAdiTR.indexOf("GIRIS") < 0)
+							ek = " Giriş";
+					} else if (cihazTipi.equals(CihazTipi.CIKIS)) {
+						if (cihazAdiTR.indexOf("CIKIS") < 0)
+							ek = " Çıkış";
+					}
+					MySQLTerminal terminal = new MySQLTerminal();
+					String value = cihazAdi + ek;
+					terminal.setAciklama(value);
+					terminal.setKodu(key);
+					terminal.setYonDurum(cihazGecis.getIslemTipi());
+					terminal.setHareketYon(null);
+					terminal.setDurum(Boolean.TRUE);
+					cihazMap.put(key, terminal);
+
+					cihazGecis.setSubeKodu(key);
+				}
+				gecisler.add(cihazGecis);
+			}
+			if (!gecisler.isEmpty()) {
+				HashMap fields = new HashMap();
+				fields.put("k", new ArrayList(cihazMap.keySet()));
+				StringBuffer sb = new StringBuffer();
+				sb.append("select * from " + MySQLTerminal.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
+				sb.append(" where " + MySQLTerminal.COLUMN_NAME_KODU + " :k ");
+				List<MySQLTerminal> list = pdksDAO.getNativeSQLList(fields, sb, MySQLTerminal.class);
+
+				TreeMap<String, MySQLTerminal> terminalMap = new TreeMap<String, MySQLTerminal>();
+				for (MySQLTerminal mySQLTerminal : list) {
+					String key = mySQLTerminal.getKodu();
+					String aciklama = cihazMap.get(key).getAciklama();
+					if (mySQLTerminal.getAciklama().equals(aciklama) == false) {
+						mySQLTerminal.setAciklama(aciklama);
+						pdksDAO.saveObject(mySQLTerminal);
+					}
+					cihazMap.remove(key);
+					terminalMap.put(key, mySQLTerminal);
+				}
+				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+				if (cihazMap.isEmpty() == false) {
+					veriMap.put("cihazStr", gson.toJson(new ArrayList(cihazMap.values())));
+					veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_JSON_DATA");
+					list = pdksDAO.execSPList(veriMap, MySQLTerminal.class);
+					for (MySQLTerminal mySQLTerminal : list)
+						terminalMap.put(mySQLTerminal.getKodu(), mySQLTerminal);
+
+				}
+				for (CihazGecis cihazGecis : gecisler) {
+					cihazGecis.setCihazId(terminalMap.get(cihazGecis.getSubeKodu()).getId());
+				}
+				veriMap.clear();
+				veriMap.put("jsonData", gson.toJson(gecisler));
+				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_GECIS_JSON_DATA");
+				List sonucList = null;
+				try {
+					sonucList = pdksDAO.execSPList(veriMap, MySQLHareket.class);
+				} catch (Exception e) {
+					sonucList = new ArrayList();
+				}
+				if (!sonucList.isEmpty()) {
+					veriMap.clear();
+					veriMap.put("mesaj", "Başarılı kayıt sayısı " + sonucList.size());
+					for (CihazGecis cihazGecis : gecisler) {
+						cihazGecis.setDurum(null);
+						int index = cihazGecis.getSubeKodu() != null ? cihazGecis.getSubeKodu().indexOf("_") : -1;
+						if (index > 0)
+							cihazGecis.setSubeKodu(cihazGecis.getSubeKodu().substring(0, index));
+						for (Iterator iterator = sonucList.iterator(); iterator.hasNext();) {
+							MySQLHareket hareket = (MySQLHareket) iterator.next();
+							if (hareket.getPersonel().getId().equals(cihazGecis.getPersonelId()) && hareket.getTerminal().getId().equals(cihazGecis.getCihazId())) {
+								String zaman = PdksUtil.convertToDateString(hareket.getTarih(), "yyyy-MM-dd HH:mm:ss");
+								if (zaman.equals(cihazGecis.getZamanDamgasi())) {
+									cihazGecis.setId(hareket.getId());
+									cihazGecis.setCihazId(null);
+									iterator.remove();
+									break;
+								}
+
+							}
+
+						}
+					}
+					veriMap.put("data", gecisler);
+					sonuc = new Sonuc(null, true, veriMap);
+				} else
+					sonuc = getKullaniciHatali("Kayıt yapılmadı!");
+
+			} else
+				sonuc = getKullaniciHatali("Cihaz geçiş bilgileri eksik!");
+			gecisler = null;
+		} else
+			sonuc = getKullaniciHatali("Personel yok!");
+		return sonuc;
+
 	}
 
 	/**

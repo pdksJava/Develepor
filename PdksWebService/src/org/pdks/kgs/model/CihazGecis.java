@@ -17,11 +17,15 @@ public class CihazGecis implements Serializable {
 
 	private Long personelId;
 
+	private String zamanDamgasi;
+
 	private String tarih;
 
 	private String saat;
 
-	private Integer tipi;
+	private String sube, subeKodu;
+
+	private Integer tipi, islemTipi;
 
 	private Integer durum = Durum.AKTIF.value();
 
@@ -110,5 +114,37 @@ public class CihazGecis implements Serializable {
 
 	public static void setSaatFormat(String saatFormat) {
 		CihazGecis.saatFormat = saatFormat;
+	}
+
+	public String getZamanDamgasi() {
+		return zamanDamgasi;
+	}
+
+	public void setZamanDamgasi(String zamanDamgasi) {
+		this.zamanDamgasi = zamanDamgasi;
+	}
+
+	public String getSube() {
+		return sube;
+	}
+
+	public void setSube(String sube) {
+		this.sube = sube;
+	}
+
+	public String getSubeKodu() {
+		return subeKodu;
+	}
+
+	public void setSubeKodu(String subeKodu) {
+		this.subeKodu = subeKodu;
+	}
+
+	public Integer getIslemTipi() {
+		return islemTipi;
+	}
+
+	public void setIslemTipi(Integer islemTipi) {
+		this.islemTipi = islemTipi;
 	}
 }

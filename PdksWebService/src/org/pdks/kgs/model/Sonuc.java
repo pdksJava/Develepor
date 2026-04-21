@@ -13,18 +13,18 @@ public class Sonuc implements Serializable {
 
 	private Boolean durum;
 
-	private String hata;
+	private Object bilgi;
 
 	public Sonuc() {
 		super();
 
 	}
 
-	public Sonuc(String fonksiyon, Boolean durum, String hata) {
+	public Sonuc(String fonksiyon, Boolean durum, Object hata) {
 		super();
 		this.fonksiyon = fonksiyon;
 		this.durum = durum;
-		this.hata = hata;
+		this.bilgi = hata;
 	}
 
 	public String getFonksiyon() {
@@ -43,12 +43,12 @@ public class Sonuc implements Serializable {
 		this.durum = durum;
 	}
 
-	public String getHata() {
-		return hata;
+	public Object getBilgi() {
+		return bilgi;
 	}
 
-	public void setHata(String hata) {
-		this.hata = hata;
+	public void setBilgi(Object bilgi) {
+		this.bilgi = bilgi;
 	}
 
 }

@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 
 @Entity(name = MySQLTerminal.TABLE_NAME)
- public class MySQLTerminal implements Serializable {
+public class MySQLTerminal implements Serializable {
 
 	/**
 	 * 
@@ -20,9 +20,10 @@ import javax.persistence.Transient;
 	public static final String COLUMN_NAME_ID = "TerminalId";
 	public static final String COLUMN_NAME_YON = "Yon";
 	public static final String COLUMN_NAME_ACIKLAMA = "Aciklama";
+	public static final String COLUMN_NAME_KODU = "Kodu";
 	public static final String COLUMN_NAME_DURUM = "Aktif";
 	private Integer id, yonDurum;
-	private String aciklama;
+	private String aciklama, kodu;
 	private Boolean durum;
 	private ENumHareketYon hareketYon;
 
@@ -56,12 +57,20 @@ import javax.persistence.Transient;
 		this.aciklama = aciklama;
 	}
 
+	@Column(name = COLUMN_NAME_KODU)
+	public String getKodu() {
+		return kodu;
+	}
+
+	public void setKodu(String kodu) {
+		this.kodu = kodu;
+	}
+
 	@Column(name = COLUMN_NAME_DURUM)
 	public Boolean getDurum() {
 		return durum;
 	}
 
-	@Column(name = COLUMN_NAME_DURUM)
 	public void setDurum(Boolean durum) {
 		this.durum = durum;
 	}
@@ -74,4 +83,5 @@ import javax.persistence.Transient;
 	public void setHareketYon(ENumHareketYon hareketYon) {
 		this.hareketYon = hareketYon;
 	}
+
 }
