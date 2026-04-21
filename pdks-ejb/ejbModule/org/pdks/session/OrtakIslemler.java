@@ -20297,20 +20297,33 @@ public class OrtakIslemler implements Serializable {
 										}
 									} else {
 										pdksVardiyaGun.ucretiOdenenMesaiHesapla();
- 										if (pdksVardiyaGun.getIcapciMesaiSaat() > 0.0d) {
+										if (pdksVardiyaGun.getIcapciMesaiSaat() > 0.0d) {
+											vardiya = pdksVardiyaGun.getIslemVardiya();
+											Date sonrakiBasZaman = PdksUtil.tariheGunEkleCikar(vardiya.isCalisma() ? vardiya.getVardiyaBasZaman() : pdksVardiyaGun.getVardiyaDate(), 1);
+											Double icapDakika = pdksVardiyaGun.getIcapciMesaiSaat() * 60;
+											sonrakiBasZaman = PdksUtil.addTarih(sonrakiBasZaman, Calendar.MINUTE, -icapDakika.intValue());
 											toplamSure += pdksVardiyaGun.getIcapciMesaiSaat();
 											icapciMesaiSure += pdksVardiyaGun.getIcapciMesaiSaat();
-
 											normalSure += pdksVardiyaGun.getIcapciMesaiSaat();
-
 											if (pdksVardiyaGun.getTatil() != null) {
+												double icapTatil = 0.0d;
 												Tatil tatil3 = pdksVardiyaGun.getTatil();
-												if (tatil3.isYarimGunMu()) {
-													if (vardiya.getBasSaat() >= vardiya.getBitSaat())
-														pdksVardiyaGun.addResmiTatilSure(icapciMesaiSure);
-												} else if (vardiya.getBasSaat() < vardiya.getBitSaat())
-													pdksVardiyaGun.addResmiTatilSure(icapciMesaiSure);
+												if (tatil3.isYarimGunMu() || vardiya.isCalisma() == false) {
+													icapTatil = icapciMesaiSure;
+												} else {
+													Date tatilBitTarih = tatil3.getOrjTatil() != null ? tatil3.getOrjTatil().getBitTarih() : tatil3.getOrjTatil().getBitTarih();
+													if (tatilBitTarih.after(sonrakiBasZaman))
+														icapTatil = icapciMesaiSure;
 
+												}
+												if (icapTatil > 0.0d) {
+													if (pdksVardiyaGun.getResmiTatilKanunenEklenenSure() > icapTatil)
+														icapTatil = 0.0d;
+													else
+														icapTatil -= pdksVardiyaGun.getResmiTatilKanunenEklenenSure();
+													if (icapTatil > 0.0d)
+														pdksVardiyaGun.addResmiTatilSure(icapTatil);
+												}
 											}
 											pdksVardiyaGun.addCalismaSuresi(pdksVardiyaGun.getIcapciMesaiSaat());
 
