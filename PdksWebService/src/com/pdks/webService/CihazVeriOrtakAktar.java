@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TreeMap;
 
+import org.apache.log4j.Logger;
 import org.kgs.entity.MySQLHareket;
 import org.kgs.entity.MySQLTerminal;
 import org.pdks.dao.PdksDAO;
@@ -30,6 +31,7 @@ public class CihazVeriOrtakAktar implements Serializable {
 	/**
 	 * 
 	 */
+	public Logger logger = Logger.getLogger(CihazVeriOrtakAktar.class);
 	private static final long serialVersionUID = 5158008675024700146L;
 	private String fonksiyon;
 	private Gson gson;
@@ -228,7 +230,8 @@ public class CihazVeriOrtakAktar implements Serializable {
 					cihazGecis.setCihazId(terminalMap.get(cihazGecis.getSubeKodu()).getId());
 				}
 				veriMap.clear();
-				veriMap.put("jsonData", gson.toJson(gecisler));
+				String jsonData = gson.toJson(gecisler);
+				veriMap.put("jsonData", jsonData);
 				veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_UPDATE_CIHAZ_GECIS_JSON_DATA");
 				List sonucList = null;
 				try {
