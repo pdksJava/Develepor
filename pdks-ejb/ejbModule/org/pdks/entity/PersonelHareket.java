@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.kgs.entity.MySQLHareket;
 
 @Entity(name = PersonelHareket.TABLE_NAME)
 public class PersonelHareket extends BasePDKSObject implements Serializable {
@@ -27,11 +28,18 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 
 	public static final String COLUMN_NAME_PER_NO = "PER_NO";
 	public static final String COLUMN_NAME_PERSONEL = "PERSONEL";
-	public static final String COLUMN_NAME_KGS_ID = "KGS_ID";
+	public static final String COLUMN_NAME_KAPI_KGS = "	KAPI";
+	public static final String COLUMN_NAME_KGS = "KGS_ID";
+	public static final String COLUMN_NAME_QR_HAREKET = "QR_HAREKET_ID";
+	public static final String COLUMN_NAME_ISLEM = "ISLEM_ID";
+	public static final String COLUMN_NAME_ZAMAN = "ZAMAN";
+	public static final String COLUMN_NAME_DURUM = "DURUM";
+
 	public static final String COLUMN_NAME_GUNCELLEME_ZAMANI = "GUNCELLEME_ZAMANI";
 
 	private PersonelView personel;
 	private PersonelKGS personelKGS;
+	private MySQLHareket qrHareket;
 	private KapiView kapiView;
 	private KapiKGS kapiKGS;
 	private Date zaman, guncellemeZamani;
@@ -68,7 +76,7 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "KAPI", nullable = false)
+	@JoinColumn(name = COLUMN_NAME_KAPI_KGS, nullable = false)
 	@Fetch(FetchMode.JOIN)
 	public KapiKGS getKapiKGS() {
 		return kapiKGS;
@@ -81,7 +89,7 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	}
 
 	@Temporal(value = TemporalType.TIMESTAMP)
-	@Column(name = "ZAMAN", nullable = false)
+	@Column(name = COLUMN_NAME_ZAMAN, nullable = false)
 	public Date getZaman() {
 		return zaman;
 	}
@@ -91,7 +99,7 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "ISLEM_ID")
+	@JoinColumn(name = COLUMN_NAME_ISLEM)
 	@Fetch(FetchMode.JOIN)
 	public PersonelHareketIslem getIslem() {
 		return islem;
@@ -101,7 +109,18 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 		this.islem = islem;
 	}
 
-	@Column(name = "DURUM")
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_QR_HAREKET)
+	@Fetch(FetchMode.JOIN)
+	public MySQLHareket getQrHareket() {
+		return qrHareket;
+	}
+
+	public void setQrHareket(MySQLHareket qrHareket) {
+		this.qrHareket = qrHareket;
+	}
+
+	@Column(name = COLUMN_NAME_DURUM)
 	public Boolean getDurum() {
 		return durum;
 	}
@@ -110,7 +129,7 @@ public class PersonelHareket extends BasePDKSObject implements Serializable {
 		this.durum = durum;
 	}
 
-	@Column(name = COLUMN_NAME_KGS_ID)
+	@Column(name = COLUMN_NAME_KGS)
 	public Long getKgsHareket() {
 		return kgsHareket;
 	}

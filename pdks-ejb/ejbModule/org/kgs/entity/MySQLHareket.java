@@ -7,7 +7,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -41,7 +40,8 @@ public class MySQLHareket implements Serializable {
 	private ENumHareketYon hareketYon;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue
+	// @GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_NAME_ID)
 	public Long getId() {
 		return id;
