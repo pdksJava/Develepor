@@ -186,7 +186,7 @@ public class CihazVeriOrtakAktar implements Serializable {
 							ek = " Çıkış";
 					}
 					MySQLTerminal terminal = new MySQLTerminal();
-					String value = cihazAdi + ek;
+					String value = cihazAdi + " QR " + ek;
 					terminal.setAciklama(value);
 					terminal.setKodu(key);
 					terminal.setYonDurum(cihazGecis.getIslemTipi());
