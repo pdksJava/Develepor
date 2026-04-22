@@ -803,7 +803,7 @@ public class VardiyaGun extends BaseObject {
 			try {
 				if (!hareketDurum)
 					hareketDurum = ayrikHareketVar == false && islemVardiya.getVardiyaBitZaman().getTime() > new Date().getTime();
- 
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -2725,7 +2725,7 @@ public class VardiyaGun extends BaseObject {
 
 		double icapciSaat = 0.0d;
 		if (icap) {
-			if (this.getIcapciMesaiSaat() == null || this.getIcapciMesaiSaat() <= 0.0d) {
+			if (this.getHareketDurum() && (this.getIcapciMesaiSaat() == null || this.getIcapciMesaiSaat() <= 0.0d)) {
 				double fazlaCalisma = 0;
 				if (this.getFazlaMesailer() != null) {
 					for (PersonelFazlaMesai pfm : this.getFazlaMesailer()) {
@@ -2734,8 +2734,7 @@ public class VardiyaGun extends BaseObject {
 					}
 				}
 				double icapMolaSaat = this.getIcapSaat();
-				if (vardiyaDateStr.endsWith("0417"))
-					logger.debug("");
+
 				if (this.getVardiya().isCalisma())
 					icapMolaSaat -= this.getVardiya().getToplamCalismaSuresi();
 				icapMolaSaat -= fazlaCalisma;
