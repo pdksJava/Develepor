@@ -590,8 +590,8 @@
 										</ui:fragment>
 									</f:facet>
 									<ui:fragment rendered="#{ap.fazlaMesaiHesapla and ap.icapciMesaiSure != 0}">
-										<span > <h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.icapciMesaiSure)}" /></span>
-										 
+										<span> <h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.icapciMesaiSure)}" /></span>
+
 									</ui:fragment>
 								</rich:column>
 
@@ -691,8 +691,8 @@
 												<ui:fragment>
 													<h:outputText value="KRÖM" id="krom" />
 													<rich:toolTip for="krom">
-														<SPAN class="rich-table-subheader"><B>Kanunen Eklenen Resmi Tatil Mesai : </B>Çalışanın bu listenin sonunda ücret olarak 7.5 tamamlanan toplam resmi tatil mesai saati 
-														</SPAN>
+														<SPAN class="rich-table-subheader"><B>Kanunen Eklenen Resmi Tatil Mesai : </B>Çalışanın bu listenin sonunda ücret olarak 7.5
+															tamamlanan toplam resmi tatil mesai saati </SPAN>
 													</rich:toolTip>
 												</ui:fragment>
 											</f:facet>
@@ -750,7 +750,7 @@
 										</DIV>
 									</ui:fragment>
 								</rich:column>
-								
+
 								<rich:column rendered="#{fazlaMesaiOzetRaporHome.aksamGun}"
 									style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;color:black;"
 									styleClass="#{ap.trSonucClass}">
@@ -762,10 +762,11 @@
 											</rich:toolTip>
 										</ui:fragment>
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.aksamVardiyaSayisi)}" rendered="#{ap.fazlaMesaiHesapla and ap.aksamVardiyaSayisi != 0}" />
-									 
+									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.aksamVardiyaSayisi)}"
+										rendered="#{ap.fazlaMesaiHesapla and ap.aksamVardiyaSayisi != 0}" />
+
 								</rich:column>
-								
+
 								<c:if test="#{fazlaMesaiOzetRaporHome.bordroPuantajEkranindaGoster}">
 									<rich:column rendered="#{fazlaMesaiOzetRaporHome.normalCalismaSaatKod}" styleClass="#{ap.trSonucClass}" headerClass="izinAylik"
 										style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;">
@@ -992,6 +993,21 @@
 										<SPAN style="color: red">Ayrılmış</SPAN>
 									</ui:fragment>
 								</rich:column>
+								<c:forEach items="#{fazlaMesaiOzetRaporHome.izinTipiVardiyaList}" var="izinTipi">
+									<rich:column styleClass="#{ap.trSonucClass}" headerClass="tatilAylik"
+										style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;">
+										<f:facet name="header">
+											<ui:fragment>
+												<h:outputText value="#{izinTipi.kisaAdi}" id="izin#{izinTipi.id}" />
+												<rich:toolTip for="izin#{izinTipi.id}">
+													<SPAN style="color: green; font-size: 12px;"><B>#{izinTipi.kisaAdi}: </B>#{izinTipi.adi}</SPAN>
+												</rich:toolTip>
+											</ui:fragment>
+										</f:facet>						 
+										#{authenticatedUser.sayiFormatliGoster(ap.getIzinAdet(izinTipi.kisaAdi))} 
+							
+									</rich:column>
+								</c:forEach>
 								<f:facet name="footer">
 									<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 								</f:facet>

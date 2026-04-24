@@ -151,9 +151,12 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	private Boolean normalCalismaGunKod = Boolean.FALSE, haftaTatilCalismaGunKod = Boolean.FALSE, resmiTatilCalismaGunKod = Boolean.FALSE, izinSureGunKod = Boolean.FALSE, ucretliIzinGunKod = Boolean.FALSE, ucretsizIzinGunKod = Boolean.FALSE, hastalikIzinGunKod = Boolean.FALSE;
 	private Boolean normalGunKod = Boolean.FALSE, haftaTatilGunKod = Boolean.FALSE, resmiTatilGunKod = Boolean.FALSE, artikGunKod = Boolean.FALSE, bordroToplamGunKod = Boolean.FALSE, devredenMesaiKod = Boolean.FALSE, ucretiOdenenKod = Boolean.FALSE;
 	private Boolean suaDurum = Boolean.FALSE, sutIzniDurum = Boolean.FALSE, gebeDurum = Boolean.FALSE, partTime = Boolean.FALSE, pdfTopluAktarDurum = Boolean.FALSE;
-	private Boolean resmiTatilKanunenEklenenSureGoster = Boolean.FALSE, eksiBakiyeGoster = Boolean.FALSE;
+	private Boolean resmiTatilKanunenEklenenSureGoster = Boolean.FALSE, eksiBakiyeGoster = Boolean.FALSE, izinGoster = Boolean.FALSE;
 	private Long vardiyaAdet;
 	private List<VardiyaGun> tumVardiyaList;
+
+	private List<Vardiya> izinTipiVardiyaList;
+	private TreeMap<String, TreeMap<String, List<VardiyaGun>>> izinTipiPersonelVardiyaMap;
 
 	private HashMap<String, Long> vardiyaAdetMap;
 
@@ -1907,6 +1910,16 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		denklestirmeDinamikAlanlar = ortakIslemler.setDenklestirmeDinamikDurum(puantajList, session);
 		ortakIslemler.sortAylikPuantajList(puantajList, true);
 		setAylikPuantajList(puantajList);
+		izinGoster = ortakIslemler.getParameterKeyHasStringValue("izinPersonelOzetGoster") || ortakIslemler.getParameterKeyHasStringValue("izinPersonelTopluOzetGoster");
+		if (!izinGoster)
+			izinGoster = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi();
+		TreeMap<String, Object> ozetMap = izinGoster ? fazlaMesaiOrtakIslemler.getIzinOzetMap(authenticatedUser, null, aylikPuantajList, izinGoster) : new TreeMap<String, Object>();
+		izinTipiVardiyaList = ozetMap.containsKey("izinTipiVardiyaList") ? (List<Vardiya>) ozetMap.get("izinTipiVardiyaList") : new ArrayList<Vardiya>();
+		izinTipiPersonelVardiyaMap = ozetMap.containsKey("izinTipiPersonelVardiyaMap") ? (TreeMap<String, TreeMap<String, List<VardiyaGun>>>) ozetMap.get("izinTipiPersonelVardiyaMap") : new TreeMap<String, TreeMap<String, List<VardiyaGun>>>();
+		if (izinTipiVardiyaList != null && !izinTipiVardiyaList.isEmpty()) {
+			fazlaMesaiOrtakIslemler.personelIzinAdetleriOlustur(aylikPuantajList, izinTipiVardiyaList, izinTipiPersonelVardiyaMap);
+		}
+
 		if (puantajList.isEmpty() == false) {
 			String fileName = ortakIslemler.getParameterKey("mesaiDenklestirmeBelge");
 			if (PdksUtil.hasStringValue(fileName)) {
@@ -2577,7 +2590,13 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 		}
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Durum");
+		if (izinTipiVardiyaList != null) {
+			for (Vardiya vardiya : izinTipiVardiyaList) {
+				cell = ExcelUtil.getCell(sheet, row, col++, headerIzinTipi);
+				ExcelUtil.baslikCell(cell, anchor, helper, drawing, vardiya.getKisaAdi(), vardiya.getAdi());
 
+			}
+		}
 		int sira = 0;
 		double maxSure = denklestirmeAy.getFazlaMesaiMaxSure() != null ? denklestirmeAy.getFazlaMesaiMaxSure() : 11.0d;
 		Date bugun = PdksUtil.getDate(new Date());
@@ -2739,11 +2758,11 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 						}
 						String title = vardiya != null ? vardiyaGun.fazlaMesaiTitle(authenticatedUser) : null;
-//						double rtSure = vardiyaGun.getResmiTatilToplamSure(), htSure = vardiyaGun.getHaftaCalismaSuresi();
-//						if (htSure > 0.0d)
-//							title += " HT : " + authenticatedUser.sayiFormatliGoster(htSure);
-//						if (rtSure > 0.0d)
-//							title += " RT : " + authenticatedUser.sayiFormatliGoster(rtSure);
+						// double rtSure = vardiyaGun.getResmiTatilToplamSure(), htSure = vardiyaGun.getHaftaCalismaSuresi();
+						// if (htSure > 0.0d)
+						// title += " HT : " + authenticatedUser.sayiFormatliGoster(htSure);
+						// if (rtSure > 0.0d)
+						// title += " RT : " + authenticatedUser.sayiFormatliGoster(rtSure);
 						// cell.setCellValue(aciklama);
 						ExcelUtil.baslikCell(cell, anchor, helper, drawing, aciklama, title);
 
@@ -2915,7 +2934,18 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						setCell(sheet, row, col++, styleTutar, eksiBakiyeSuresi);
 					}
 					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(aylikPuantaj.isCalisiyor() ? "Çalışıyor" : "Ayrılmış");
+					if (izinTipiVardiyaList != null) {
+						if (row % 2 != 0)
+							styleGenel = styleTutarOdd;
+						else {
+							styleGenel = styleTutarEven;
+						}
+						for (Vardiya vardiya : izinTipiVardiyaList) {
+							Integer adet = getVardiyaAdet(personel, vardiya);
+							setCell(sheet, row, col++, styleGenel, new Double(adet != null ? adet : 0.0d));
 
+						}
+					}
 					styleGenel = null;
 				} catch (Exception e) {
 					logger.error("Pdks hata in : \n");
@@ -2947,6 +2977,16 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 		return baos;
 
+	}
+
+	/**
+	 * @param per
+	 * @param vardiya
+	 * @return
+	 */
+	public Integer getVardiyaAdet(Personel per, Vardiya vardiya) {
+		Integer adet = fazlaMesaiOrtakIslemler.getVardiyaAdet(izinTipiPersonelVardiyaMap, per, vardiya);
+		return adet;
 	}
 
 	/**
@@ -4234,5 +4274,29 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	public void setIcapciSaatGoster(Boolean icapciSaatGoster) {
 		this.icapciSaatGoster = icapciSaatGoster;
+	}
+
+	public List<Vardiya> getIzinTipiVardiyaList() {
+		return izinTipiVardiyaList;
+	}
+
+	public void setIzinTipiVardiyaList(List<Vardiya> izinTipiVardiyaList) {
+		this.izinTipiVardiyaList = izinTipiVardiyaList;
+	}
+
+	public TreeMap<String, TreeMap<String, List<VardiyaGun>>> getIzinTipiPersonelVardiyaMap() {
+		return izinTipiPersonelVardiyaMap;
+	}
+
+	public void setIzinTipiPersonelVardiyaMap(TreeMap<String, TreeMap<String, List<VardiyaGun>>> izinTipiPersonelVardiyaMap) {
+		this.izinTipiPersonelVardiyaMap = izinTipiPersonelVardiyaMap;
+	}
+
+	public Boolean getIzinGoster() {
+		return izinGoster;
+	}
+
+	public void setIzinGoster(Boolean izinGoster) {
+		this.izinGoster = izinGoster;
 	}
 }
