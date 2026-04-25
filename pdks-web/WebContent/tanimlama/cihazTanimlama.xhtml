@@ -1,0 +1,165 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:c="http://java.sun.com/jstl/core" template="/layout/template.xhtml">
+	<ui:define name="title">
+		<h:outputText value="#{ortakIslemler.getMenuAdi('cihazTanimlama')}" />
+	</ui:define>
+	<ui:define name="body">
+
+		<h:form>
+			<a4j:region>
+
+				<rich:panel header="#{ortakIslemler.getMenuUserAdi(cihazHome.session,'cihazTanimlama')}">
+					<a4j:outputPanel id="anaForm">
+						<h:panelGrid columns="1">
+
+
+
+							<rich:dataTable rowClasses="acik,koyu" value="#{cihazHome.terminalList}" var="cihaz" rows="40" rowKeyVar="row" id="sablonTable">
+								<f:facet name="header">
+									<h:outputText value="Cihazlar " />
+								</f:facet>
+								<rich:column style="text-align: center;">
+									<f:facet name="header">
+                       		 İşlemler
+               			 </f:facet>
+									<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink" action="#{cihazHome.terminalEkle(cihaz)}"
+										oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
+										<h:graphicImage value="/img/edit.gif" style="border:0" />
+
+									</a4j:commandLink>
+									<rich:toolTip for="editlink" value="Güncelle" />
+
+								</rich:column>
+								<rich:column rendered="#{authenticatedUser.admin}">
+									<f:facet name="header">
+										<h:outputText value="Id" />
+									</f:facet>
+									<h:outputText value="#{cihaz.id}" />
+								</rich:column>
+								<rich:column filterBy="#{cihaz.aciklama}" filterEvent="onkeyup">
+									<f:facet name="header">
+										<h:outputText value="Adı" />
+									</f:facet>
+									<h:outputText value="#{cihaz.aciklama}" />
+								</rich:column>
+
+
+
+								<rich:column>
+									<f:facet name="header">
+										<h:outputText value="Yön" />
+									</f:facet>
+									<ui:fragment rendered="#{cihaz.yonDurum==1}">Giriş</ui:fragment>
+									<ui:fragment rendered="#{cihaz.yonDurum==2}">Çıkış</ui:fragment>
+									<ui:fragment rendered="#{cihaz.yonDurum==null or cihaz.yonDurum==0}">Çift Yön</ui:fragment>
+								</rich:column>
+								<rich:column>
+									<f:facet name="header">
+										<h:outputText value="Kodu" />
+									</f:facet>
+									<h:outputText value="#{cihaz.kodu}" />
+								</rich:column>
+
+								<rich:column>
+									<f:facet name="header">
+										<h:outputText value="Aktif" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.getYesNo(cihaz.durum)}" id="durum" />
+								</rich:column>
+
+								<f:facet name="footer">
+									<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+								</f:facet>
+							</rich:dataTable>
+							<a4j:commandButton status="ajaxStatus" value="Ekle" action="#{cihazHome.terminalEkle(null)}" rendered="#{authenticatedUser.admin}"
+								oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" />
+
+						</h:panelGrid>
+					</a4j:outputPanel>
+				</rich:panel>
+			</a4j:region>
+		</h:form>
+
+		<rich:modalPanel id="editPanel" autosized="true" width="650">
+			<f:facet name="header">
+				<h:outputText value="#{ortakIslemler.calismaModeliAciklama()} Güncelle" />
+			</f:facet>
+			<f:facet name="controls">
+				<h:panelGroup>
+					<h:form>
+						<h:graphicImage value="/img/close.png" id="hidelink" styleClass="hidelink">
+							<a4j:support event="onclick" action="#{cihazHome.instanceRefresh}" reRender="sablonTable"
+								oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" ajaxSingle="true" />
+						</h:graphicImage>
+					</h:form>
+				</h:panelGroup>
+			</f:facet>
+			<h:form>
+				<a4j:outputPanel ajaxRendered="true">
+					<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+				</a4j:outputPanel>
+				<h:panelGrid columns="1">
+					<h:panelGrid columns="1" id="calismaModeliGiris">
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Adı</ui:define>
+							<h:inputText required="true" value="#{cihazHome.terminal.aciklama}" disabled="#{authenticatedUser.admin == false}" size="35"
+								requiredMessage="Adı giriniz" />
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Kodu</ui:define>
+							<h:inputText value="#{cihazHome.terminal.kodu}" disabled="#{authenticatedUser.admin == false}" size="35" />
+						</s:decorate>
+
+
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Aktif</ui:define>
+							<h:selectBooleanCheckbox value="#{cihazHome.terminal.durum}" />
+						</s:decorate>
+					</h:panelGrid>
+
+					<!--  -->
+
+
+					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{cihazHome.kaydet()}" reRender="sablonTable" rendered="#{authenticatedUser.admin}"
+						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
+					<ui:fragment rendered="#{cihazHome.terminal!=null}">
+						<h:commandButton value="QR Kodu Göster" onclick="Richfaces.showModalPanel('qrModal'); return false;" rendered="false" />
+						<h:commandButton value="QR Kodu " onclick="window.open('#{cihazHome.cihazQRGoster()}', 'Baslik', 'width=600,height=400'); return false;" />
+					</ui:fragment>
+
+
+				</h:panelGrid>
+			</h:form>
+		</rich:modalPanel>
+
+		<rich:modalPanel id="qrModal" width="600" height="600">
+			<f:facet name="header">
+				<h:outputText value="QR Kod Önizleme" />
+			</f:facet>
+
+			<!-- Kapatma Butonu (Sağ Üst) -->
+			<f:facet name="controls">
+				<h:outputText value="[Kapat]" style="cursor:pointer" onclick="Richfaces.hideModalPanel('qrModal')" />
+			</f:facet>
+
+			<!-- Popup İçeriği -->
+			<div style="text-align: center; padding: 20px;">
+				<!-- QR Kod (Görsel olarak bean'den veya static gelmeli) -->
+				<ui:fragment rendered="#{cihazHome.terminal!=null}">
+					<s:graphicImage value="#{cihazHome.grGoster(cihazHome.terminal.kodu,cihazHome.terminal.aciklama)}" />
+				</ui:fragment>
+
+				<br />
+
+				<!-- Altındaki Metin -->
+
+			</div>
+		</rich:modalPanel>
+
+
+	</ui:define>
+
+</ui:composition>

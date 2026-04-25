@@ -9,9 +9,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Clob;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -269,6 +272,11 @@ public class OrtakIslemler implements Serializable {
 		if (local == null)
 			local = true;
 		byte[] pngData = null;
+		try {
+			txt = URLEncoder.encode(txt, StandardCharsets.UTF_8.toString());
+		} catch (UnsupportedEncodingException e1) {
+		}
+
 		String path = "$path$/rest/servicesKGS/generateQR?text=" + (PdksUtil.hasStringValue(txt) ? txt : "");
 		if (width != null && width.intValue() > 0)
 			path += "&width=" + width;
@@ -282,6 +290,7 @@ public class OrtakIslemler implements Serializable {
 
 			}
 		}
+
 		if (pngData == null || local == false) {
 			String servisAdres = PdksUtil.replaceAllManuel(path, "$path$", getParameterKey("pdksWebService"));
 			try {
@@ -301,11 +310,7 @@ public class OrtakIslemler implements Serializable {
 		byte[] pngData = null;
 		try {
 			URL url = new URL(path);
-
 			HttpURLConnection connjava = (HttpURLConnection) url.openConnection();
-
-			connjava.setRequestProperty("Content-Type", MediaType.APPLICATION_XML + "; charset=UTF-8");
-			// connjava.setRequestProperty("Content-Language", "tr-TR");
 			connjava.setRequestMethod(HttpMethod.GET);
 			connjava.setDoInput(true);
 			connjava.setDoOutput(true);
@@ -313,11 +318,8 @@ public class OrtakIslemler implements Serializable {
 			int timeOutSaniye = 15;
 			connjava.setReadTimeout(2 * timeOutSaniye * 1000);
 			connjava.setConnectTimeout(timeOutSaniye * 1000); // set timeout to 5 seconds
-
 			connjava.setAllowUserInteraction(true);
-
 			Integer responseCode = ((HttpURLConnection) connjava).getResponseCode();
-
 			InputStream is = responseCode >= 400 ? null : connjava.getInputStream();
 			if (is != null)
 				pngData = PdksUtil.toByteArray(is);
