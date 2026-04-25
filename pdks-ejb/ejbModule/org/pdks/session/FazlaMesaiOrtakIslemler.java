@@ -3681,9 +3681,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					}
 				}
 			}
-			String key = ortakIslemler.getParameterKey("izinPersonelOzetGoster");
+			// String key = ortakIslemler.getParameterKey("izinPersonelOzetGoster");
+			// if (key.equals("1") == false)
+			// key = ortakIslemler.getParameterKey("izinPersonelTopluOzetGoster");
 
-			boolean devam = (loginUser.isAdmin() && izinGoster) || key.equals("1") || (loginUser.isIK() && PdksUtil.hasStringValue(key)), htToplamiGuncelle = false;
+			boolean devam = loginUser.isAdmin() || izinGoster, htToplamiGuncelle = false;
 			if (vgList != null && (loginUser.isAdmin() || loginUser.isSistemYoneticisi() || devam)) {
 				TreeMap<String, Vardiya> izinTipiVardiyaMap = new TreeMap<String, Vardiya>();
 				TreeMap<Long, TreeMap<String, List<VardiyaGun>>> izinTipiPersonelVardiyaMap = new TreeMap<Long, TreeMap<String, List<VardiyaGun>>>();
