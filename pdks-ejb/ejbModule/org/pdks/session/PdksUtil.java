@@ -140,6 +140,24 @@ public class PdksUtil implements Serializable {
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
 
 	/**
+	 * @param is
+	 * @return
+	 * @throws IOException
+	 */
+	public static byte[] toByteArray(InputStream is) throws IOException {
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+		byte[] data = new byte[1024];
+		int bytesRead;
+		while ((bytesRead = is.read(data, 0, data.length)) != -1) {
+			buffer.write(data, 0, bytesRead);
+		}
+		byte[] byteArray = buffer.toByteArray();
+		return byteArray;
+
+	}
+
+	/**
 	 * @param sessionx
 	 * @return
 	 */
@@ -4280,7 +4298,7 @@ public class PdksUtil implements Serializable {
 
 				}
 			} catch (Exception e) {
-			 
+
 			}
 
 		}

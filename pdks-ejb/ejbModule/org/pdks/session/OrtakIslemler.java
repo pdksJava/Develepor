@@ -260,6 +260,74 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param txt
+	 * @param height
+	 * @param width
+	 * @return
+	 */
+	public byte[] generateQR(String txt, Integer height, Integer width, Boolean local) {
+		if (local == null)
+			local = true;
+		byte[] pngData = null;
+		String path = "$path$/rest/servicesKGS/generateQR?text=" + (PdksUtil.hasStringValue(txt) ? txt : "");
+		if (width != null && width.intValue() > 0)
+			path += "&width=" + width;
+		if (height != null && height.intValue() > 0)
+			path += "&height=" + height;
+		if (local && getParameterKeyHasStringValue("pdksWebServiceLocal") && getCanliDurum() == false && getTestSunucuDurum() == false) {
+			String servisAdres = PdksUtil.replaceAllManuel(path, "$path$", getParameterKey("pdksWebServiceLocal"));
+			try {
+				pngData = getURLByteArray(servisAdres);
+			} catch (Exception e) {
+
+			}
+		}
+		if (pngData == null || local == false) {
+			String servisAdres = PdksUtil.replaceAllManuel(path, "$path$", getParameterKey("pdksWebService"));
+			try {
+				pngData = getURLByteArray(servisAdres);
+			} catch (Exception e) {
+
+			}
+		}
+		return pngData;
+	}
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	public byte[] getURLByteArray(String path) {
+		byte[] pngData = null;
+		try {
+			URL url = new URL(path);
+
+			HttpURLConnection connjava = (HttpURLConnection) url.openConnection();
+
+			connjava.setRequestProperty("Content-Type", MediaType.APPLICATION_XML + "; charset=UTF-8");
+			// connjava.setRequestProperty("Content-Language", "tr-TR");
+			connjava.setRequestMethod(HttpMethod.GET);
+			connjava.setDoInput(true);
+			connjava.setDoOutput(true);
+			connjava.setUseCaches(false);
+			int timeOutSaniye = 15;
+			connjava.setReadTimeout(2 * timeOutSaniye * 1000);
+			connjava.setConnectTimeout(timeOutSaniye * 1000); // set timeout to 5 seconds
+
+			connjava.setAllowUserInteraction(true);
+
+			Integer responseCode = ((HttpURLConnection) connjava).getResponseCode();
+
+			InputStream is = responseCode >= 400 ? null : connjava.getInputStream();
+			if (is != null)
+				pngData = PdksUtil.toByteArray(is);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return pngData;
+	}
+
+	/**
 	 * @param fonksiyonAdi
 	 * @param sonuc
 	 * @return

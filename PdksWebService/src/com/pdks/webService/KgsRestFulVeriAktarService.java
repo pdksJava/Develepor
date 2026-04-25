@@ -1,5 +1,6 @@
 package com.pdks.webService;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +47,11 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
 
 @Service
 @Path("/servicesKGS")
@@ -66,6 +73,47 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	private Gson gson = new Gson();
 
 	private String fonksiyon;
+
+	@GET
+	@Path("/generateQR")
+	@Produces({ MediaType.APPLICATION_OCTET_STREAM })
+	@Consumes(MediaType.APPLICATION_XML + ";charset=utf-8")
+	public Response generateQR(@QueryParam("text") String text, @QueryParam("height") Integer height, @QueryParam("width") Integer width) throws Exception {
+		Response response = null;
+		try {
+			if (text == null || text.isEmpty())
+				text = "default text";
+
+			if (width == null || width.intValue() <= 0)
+				width = 300;
+			if (height == null || height.intValue() <= 0)
+				height = width;
+			else if (height.equals(width) == false) {
+				if (height.intValue() > width.intValue())
+					width = height;
+				else
+					height = width;
+			}
+
+			Map<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
+			hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+
+			BitMatrix matrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, width, height, hints);
+
+			ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
+			MatrixToImageWriter.writeToStream(matrix, "PNG", pngOutputStream);
+
+			byte[] pngData = pngOutputStream.toByteArray();
+
+			response = Response.ok(pngData).type(MediaType.APPLICATION_OCTET_STREAM).header("Content-Disposition", "inline; filename=\"qrcode.png\"").build();
+
+		} catch (Exception e) {
+			logger.error(e);
+			response = Response.status(500).entity("QR üretilemedi").build();
+		}
+
+		return response;
+	}
 
 	/**
 	 * @return

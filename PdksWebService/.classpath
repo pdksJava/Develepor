@@ -28,5 +28,7 @@
 	<classpathentry kind="lib" path="C:/opt/lib/gl/json-smart-1.0.6.3.jar"/>
 	<classpathentry kind="lib" path="C:/opt/lib/gl/oauth2-oidc-sdk-6.5.jar"/>
 	<classpathentry kind="lib" path="C:/opt/lib/gl/adal4j-1.6.7.jar"/>
+	<classpathentry kind="lib" path="C:/opt/lib/gl/core-3.3.3.jar"/>
+	<classpathentry kind="lib" path="C:/opt/lib/gl/javase-3.3.3.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
