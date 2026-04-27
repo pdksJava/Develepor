@@ -43,5 +43,7 @@
 	<classpathentry kind="lib" path="C:/opt/lib/gl/adal4j-1.6.7.jar"/>
 	<classpathentry kind="lib" path="C:/opt/lib/gl/slf4j-jdk14-1.6.2.jar"/>
 	<classpathentry kind="lib" path="C:/opt/lib/gl/slf4j-api-1.6.2.jar"/>
+	<classpathentry kind="lib" path="C:/opt/lib/gl/core-3.3.3.jar"/>
+	<classpathentry kind="lib" path="C:/opt/lib/gl/javase-3.3.3.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -76,6 +76,27 @@ public class MySQLTerminal implements Serializable {
 	}
 
 	@Transient
+	public static String getTipAciklama(ENumHareketYon hareketYon) {
+		String str = "";
+		if (hareketYon != null) {
+			if (hareketYon.equals(ENumHareketYon.GIRIS))
+				str = "Giriş";
+			else if (hareketYon.equals(ENumHareketYon.CIKIS))
+				str = "Çıkış";
+			else if (hareketYon.equals(ENumHareketYon.CIFT_YON))
+				str = "Seçimli";
+
+		}
+		return str;
+	}
+
+	@Transient
+	public String getTipAciklama() {
+		String str = hareketYon != null ? getTipAciklama(hareketYon) : "";
+		return str;
+	}
+
+	@Transient
 	public ENumHareketYon getHareketYon() {
 		return hareketYon;
 	}

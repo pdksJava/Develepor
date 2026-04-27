@@ -103,16 +103,27 @@
 				</a4j:outputPanel>
 				<h:panelGrid columns="1">
 					<h:panelGrid columns="1" id="calismaModeliGiris">
-						<s:decorate template="/layout/edit.xhtml">
+						<s:decorate template="/layout/edit.xhtml" id="aciklama">
 							<ui:define name="label">Adı</ui:define>
 							<h:inputText required="true" value="#{cihazHome.terminal.aciklama}" disabled="#{authenticatedUser.admin == false}" size="35"
-								requiredMessage="Adı giriniz" />
+								requiredMessage="Adı giriniz">
+								<a4j:support event="onchange" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="QR" />
+							</h:inputText>
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml">
+						<s:decorate template="/layout/edit.xhtml" id="kodu">
 							<ui:define name="label">Kodu</ui:define>
-							<h:inputText value="#{cihazHome.terminal.kodu}" disabled="#{authenticatedUser.admin == false}" size="35" />
+							<h:inputText value="#{cihazHome.terminal.kodu}" disabled="#{authenticatedUser.admin == false}" size="35">
+								<a4j:support event="onchange" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="QR" />
+							</h:inputText>
 						</s:decorate>
-
+						<s:decorate template="/layout/edit.xhtml" rendered="#{cihazHome.yonTipiList!=null}">
+							<ui:define name="label">Cihaz Tipi</ui:define>
+							<h:selectOneMenu value="#{cihazHome.terminal.yonDurum}">
+								<f:selectItem itemLabel="Lütfen seçiniz" />
+								<f:selectItems value="#{cihazHome.yonTipiList}" />
+								<a4j:support event="onchange" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="QR" />
+							</h:selectOneMenu>
+						</s:decorate>
 
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Aktif</ui:define>
@@ -127,7 +138,9 @@
 						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 					<ui:fragment rendered="#{cihazHome.terminal!=null}">
 						<h:commandButton value="QR Kodu Göster" onclick="Richfaces.showModalPanel('qrModal'); return false;" rendered="false" />
-						<h:commandButton value="QR Kodu " onclick="window.open('#{cihazHome.cihazQRGoster()}', 'Baslik', 'width=600,height=400'); return false;" />
+						<a4j:commandButton value="QR Kodu " id="QR">
+							<a4j:support status="ajaxStatus" event="onclick" onclick="window.open('#{cihazHome.cihazQRGoster()}', 'Baslik', 'width=600,height=400'); return false;" />
+						</a4j:commandButton>
 					</ui:fragment>
 
 

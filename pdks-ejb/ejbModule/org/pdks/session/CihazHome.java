@@ -1,10 +1,13 @@
 package org.pdks.session;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,6 +21,7 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
+import org.kgs.entity.ENumHareketYon;
 import org.kgs.entity.MySQLTerminal;
 import org.pdks.security.entity.User;
 
@@ -49,6 +53,8 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 	private MySQLTerminal terminal;
 
 	private List<MySQLTerminal> terminalList;
+	private List<SelectItem> yonTipiList;
+	private String tipAciklama, adi;
 
 	private Session session;
 
@@ -70,7 +76,27 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 	}
 
 	public String cihazQRGoster() {
-		String str = "cihazQRGoster?cihazId=" + (terminal != null ? terminal.getId() : 0L);
+		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+		String tipi = null;
+		if (terminal.getHareketYon() != null) {
+			if (terminal.getHareketYon().equals(ENumHareketYon.CIFT_YON) == false) {
+				tipi = terminal.getTipAciklama();
+			}
+		}
+		map.put("kodu", terminal.getKodu());
+		map.put("adi", terminal.getAciklama());
+		if (tipi != null) {
+			map.put("tipAciklama", tipi);
+			map.put("tipi", terminal.getHareketYon().value());
+		}
+
+		Gson gson = new Gson();
+		String id = null;
+		try {
+			id = PdksUtil.encoderURL(PdksUtil.getEncodeStringByBase64(gson.toJson(map)), null);
+		} catch (Exception e) {
+		}
+		String str = "cihazQRGoster?Id=" + id;
 		return str;
 	}
 
@@ -84,18 +110,6 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 		}
 		terminal = xTerminal;
 		return "";
-	}
-
-	public void qrGoster(String kodu, String adi) {
-		data = null;
-		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-		map.put("kodu", kodu);
-		map.put("adi", adi);
-		Gson gson = new Gson();
-		String text = gson.toJson(map);
-//		text = "kodu:" + kodu + ";adi:" + adi;
-		data = ortakIslemler.generateQR(text, null, null, false);
-
 	}
 
 	public void instanceRefresh() {
@@ -116,16 +130,50 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-		String cihazIdStr = (String) req.getParameter("cihazId");
-		terminal = null;
+		String cihazIdStr = (String) req.getParameter("Id");
 		data = null;
+		tipAciklama = null;
+		adi = null;
 		if (PdksUtil.hasStringValue(cihazIdStr))
 			try {
-				terminal = (MySQLTerminal) pdksEntityController.getSQLParamByFieldObject(MySQLTerminal.TABLE_NAME, MySQLTerminal.COLUMN_NAME_ID, Integer.parseInt(cihazIdStr), MySQLTerminal.class, session);
-				if (terminal != null)
-					qrGoster(terminal.getKodu(), terminal.getAciklama());
+				String text = PdksUtil.getDecodeStringByBase64(cihazIdStr);
+				Gson gson = new Gson();
+				LinkedHashMap<String, Object> map = gson.fromJson(text, LinkedHashMap.class);
+				terminal = new MySQLTerminal();
+				String kodu = "";
+				if (map.containsKey("kodu"))
+					kodu = (String) map.get("kodu");
+				if (map.containsKey("adi"))
+					adi = (String) map.get("adi");
+				if (map.containsKey("tipAciklama")) {
+					tipAciklama = (String) map.get("tipAciklama");
+					Double tipiD = (Double) map.get("tipi");
+					int tipi = tipiD.intValue();
+					map.put("tipi", tipi);
+					int index = kodu.indexOf("_" + tipi);
+					if (index > 0) {
+						kodu = kodu.substring(0, index);
+						map.put("kodu", kodu);
+					}
+					map.remove("tipAciklama");
+					if (adi != null) {
+						String name = PdksUtil.setTurkishStr(adi).toLowerCase(Locale.ENGLISH);
+						String tipEn = PdksUtil.setTurkishStr(tipAciklama).toLowerCase(Locale.ENGLISH);
+						index = name.indexOf(tipEn);
+						if (index > 0) {
+							name = adi.substring(0, index - 1);
+							name += " " + adi.substring(index + tipEn.length());
+							adi = PdksUtil.replaceAll(name, "  ", " ").trim();
+						}
+					}
+
+				}
+				if (adi != null)
+					map.put("adi", adi);
+				text = gson.toJson(map);
+				data = ortakIslemler.generateQR(text, null, null);
 			} catch (Exception e) {
-				// TODO: handle exception
+
 			}
 	}
 
@@ -145,6 +193,15 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 
 	public void fillTerminalList() {
 		terminal = null;
+		if (yonTipiList == null)
+			yonTipiList = new ArrayList<SelectItem>();
+		else
+			yonTipiList.clear();
+		MySQLTerminal tmp = new MySQLTerminal();
+		for (ENumHareketYon c : ENumHareketYon.values()) {
+			tmp.setHareketYon(c);
+			yonTipiList.add(new SelectItem(c.value(), tmp.getTipAciklama()));
+		}
 		terminalList = pdksEntityController.getSQLTableList(MySQLTerminal.TABLE_NAME, MySQLTerminal.class, session);
 	}
 
@@ -178,6 +235,30 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 
 	public void setData(byte[] data) {
 		this.data = data;
+	}
+
+	public List<SelectItem> getYonTipiList() {
+		return yonTipiList;
+	}
+
+	public void setYonTipiList(List<SelectItem> yonTipiList) {
+		this.yonTipiList = yonTipiList;
+	}
+
+	public String getTipAciklama() {
+		return tipAciklama;
+	}
+
+	public void setTipAciklama(String tipAciklama) {
+		this.tipAciklama = tipAciklama;
+	}
+
+	public String getAdi() {
+		return adi;
+	}
+
+	public void setAdi(String adi) {
+		this.adi = adi;
 	}
 
 }

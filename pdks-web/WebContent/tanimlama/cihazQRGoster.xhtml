@@ -8,15 +8,37 @@
 
 		<h:form>
 			<a4j:region>
+				<ui:fragment rendered="#{startupAction.projeHeaderImage != null}">
+					<div width="120" height="83">
+						<ui:fragment rendered="#{startupAction.projeURL != null}">
+							<a href="#" title="#{startupAction.projeURL}" id="imageURL" onclick="createPop('#{startupAction.projeURL}',this.id);return false;"> <s:graphicImage
+									value="#{startupAction.projeHeaderImage}" width="#{startupAction.projeHeaderImageWidth}" height="#{startupAction.projeHeaderImageHeight}" /></a>
+						</ui:fragment>
+						<ui:fragment rendered="#{startupAction.projeURL == null}">
+							<s:graphicImage value="#{startupAction.projeHeaderImage}" width="#{startupAction.projeHeaderImageWidth}"
+								height="#{startupAction.projeHeaderImageHeight}" />
+						</ui:fragment>
+
+
+					</div>
+				</ui:fragment>
 				<div style="text-align: center; padding: 20px;">
 					<!-- QR Kod (Görsel olarak bean'den veya static gelmeli) -->
 					<ui:fragment rendered="#{cihazHome.data!=null}">
+						<ui:fragment rendered="#{cihazHome.adi != null}">
+							<span style="font-weight: bold; font-size: 24px; color: black;">#{cihazHome.adi}</span>
+							<br></br>
+						</ui:fragment>
 						<s:graphicImage value="#{cihazHome.data}" />
+						<ui:fragment rendered="#{cihazHome.tipAciklama != null}">
+							<br></br>
+							<span style="font-weight: bold; font-size: 24px; color: blue;">#{cihazHome.tipAciklama}</span>
+						</ui:fragment>
 					</ui:fragment>
 
 					<br />
 
-				 
+
 				</div>
 			</a4j:region>
 		</h:form>

@@ -177,6 +177,11 @@ import org.pdks.security.entity.UserVekalet;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -268,7 +273,42 @@ public class OrtakIslemler implements Serializable {
 	 * @param width
 	 * @return
 	 */
-	public byte[] generateQR(String txt, Integer height, Integer width, Boolean local) {
+	public byte[] generateQR(String text, Integer height, Integer width) {
+		if (text == null || text.isEmpty())
+			text = "default text";
+
+		if (width == null || width.intValue() <= 0)
+			width = 300;
+		if (height == null || height.intValue() <= 0)
+			height = width;
+		else if (height.equals(width) == false) {
+			if (height.intValue() > width.intValue())
+				width = height;
+			else
+				height = width;
+		}
+
+		ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
+		Map<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
+		hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+		try {
+			BitMatrix matrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, width, height, hints);
+			MatrixToImageWriter.writeToStream(matrix, "PNG", pngOutputStream);
+		} catch (Exception e) {
+
+		}
+		byte[] pngData = pngOutputStream.toByteArray();
+
+		return pngData;
+	}
+
+	/**
+	 * @param txt
+	 * @param height
+	 * @param width
+	 * @return
+	 */
+	public byte[] generateQRRestApi(String txt, Integer height, Integer width, Boolean local) {
 		if (local == null)
 			local = true;
 		byte[] pngData = null;
