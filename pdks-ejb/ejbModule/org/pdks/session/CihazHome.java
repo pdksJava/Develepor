@@ -83,11 +83,11 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 				tipi = terminal.getTipAciklama();
 			}
 		}
-		map.put("subeKodu", terminal.getKodu());
-		map.put("sube", terminal.getAciklama());
+		map.put(MySQLTerminal.JSON_KODU, terminal.getKodu());
+		map.put(MySQLTerminal.JSON_ADI, terminal.getAciklama());
 		if (tipi != null) {
 			map.put("tipAciklama", tipi);
-			map.put("islemTipi", terminal.getHareketYon().value());
+			map.put(MySQLTerminal.JSON_TIPI, terminal.getHareketYon().value());
 		}
 
 		Gson gson = new Gson();
@@ -141,19 +141,19 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 				LinkedHashMap<String, Object> map = gson.fromJson(text, LinkedHashMap.class);
 				terminal = new MySQLTerminal();
 				String kodu = "";
-				if (map.containsKey("subeKodu"))
-					kodu = (String) map.get("subeKodu");
-				if (map.containsKey("sube"))
-					adi = (String) map.get("sube");
+				if (map.containsKey(MySQLTerminal.JSON_KODU))
+					kodu = (String) map.get(MySQLTerminal.JSON_KODU);
+				if (map.containsKey(MySQLTerminal.JSON_ADI))
+					adi = (String) map.get(MySQLTerminal.JSON_ADI);
 				if (map.containsKey("tipAciklama")) {
 					tipAciklama = ("Personel " + (String) map.get("tipAciklama")).toUpperCase(Constants.TR_LOCALE);
-					Double tipiD = (Double) map.get("islemTipi");
+					Double tipiD = (Double) map.get(MySQLTerminal.JSON_TIPI);
 					int tipi = tipiD.intValue();
-					map.put("islemTipi", tipi);
+					map.put(MySQLTerminal.JSON_TIPI, tipi);
 					int index = kodu.indexOf("_" + tipi);
 					if (index > 0) {
 						kodu = kodu.substring(0, index);
-						map.put("subeKodu", kodu);
+						map.put(MySQLTerminal.JSON_KODU, kodu);
 					}
 
 					if (adi != null) {
@@ -170,7 +170,7 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 
 				}
 				if (adi != null)
-					map.put("sube", adi);
+					map.put(MySQLTerminal.JSON_ADI, adi);
 				text = gson.toJson(map);
 				data = ortakIslemler.generateQR(text, null, null);
 			} catch (Exception e) {

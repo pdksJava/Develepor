@@ -16,6 +16,11 @@ public class MySQLTerminal implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -6541019309141599811L;
+
+	public static final String JSON_KODU = "subeKodu";
+	public static final String JSON_ADI = "sube";
+	public static final String JSON_TIPI = "islemTipi";
+
 	public static final String TABLE_NAME = "MYSQL_TERMINAL";
 	public static final String NAME = "terminal_Seq";
 	public static final String SEQUENCE_NAME = "SEQ_MYSQL_TERMINAL";
