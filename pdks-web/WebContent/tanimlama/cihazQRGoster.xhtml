@@ -27,13 +27,13 @@
 					<!-- QR Kod (Görsel olarak bean'den veya static gelmeli) -->
 					<ui:fragment rendered="#{cihazHome.data!=null}">
 						<ui:fragment rendered="#{cihazHome.adi != null}">
-							<span style="font-weight: bold; font-size: 24px; color: black;">#{cihazHome.adi}</span>
+							<span style="font-weight: bold; font-size: 24px; color: black; padding: 40px;">#{cihazHome.adi}</span>
 							<br></br>
 						</ui:fragment>
-						<s:graphicImage value="#{cihazHome.data}" />
+						<s:graphicImage value="#{cihazHome.data}" style="padding: 40px;" />
 						<ui:fragment rendered="#{cihazHome.tipAciklama != null}">
 							<br></br>
-							<span style="font-weight: bold; font-size: 24px; color: blue;">#{cihazHome.tipAciklama}</span>
+							<span style="font-weight: bold; font-size: 24px; color: blue; padding: 40px;">#{cihazHome.tipAciklama}</span>
 						</ui:fragment>
 					</ui:fragment>
 
