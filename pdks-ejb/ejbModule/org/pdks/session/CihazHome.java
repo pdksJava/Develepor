@@ -83,11 +83,11 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 				tipi = terminal.getTipAciklama();
 			}
 		}
-		map.put("kodu", terminal.getKodu());
-		map.put("adi", terminal.getAciklama());
+		map.put("subeKodu", terminal.getKodu());
+		map.put("sube", terminal.getAciklama());
 		if (tipi != null) {
 			map.put("tipAciklama", tipi);
-			map.put("tipi", terminal.getHareketYon().value());
+			map.put("islemTipi", terminal.getHareketYon().value());
 		}
 
 		Gson gson = new Gson();
@@ -141,19 +141,19 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 				LinkedHashMap<String, Object> map = gson.fromJson(text, LinkedHashMap.class);
 				terminal = new MySQLTerminal();
 				String kodu = "";
-				if (map.containsKey("kodu"))
-					kodu = (String) map.get("kodu");
-				if (map.containsKey("adi"))
-					adi = (String) map.get("adi");
+				if (map.containsKey("subeKodu"))
+					kodu = (String) map.get("subeKodu");
+				if (map.containsKey("sube"))
+					adi = (String) map.get("sube");
 				if (map.containsKey("tipAciklama")) {
 					tipAciklama = ("Personel " + (String) map.get("tipAciklama")).toUpperCase(Constants.TR_LOCALE);
-					Double tipiD = (Double) map.get("tipi");
+					Double tipiD = (Double) map.get("islemTipi");
 					int tipi = tipiD.intValue();
-					map.put("tipi", tipi);
+					map.put("islemTipi", tipi);
 					int index = kodu.indexOf("_" + tipi);
 					if (index > 0) {
 						kodu = kodu.substring(0, index);
-						map.put("kodu", kodu);
+						map.put("subeKodu", kodu);
 					}
 
 					if (adi != null) {
@@ -170,7 +170,7 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 
 				}
 				if (adi != null)
-					map.put("adi", adi);
+					map.put("sube", adi);
 				text = gson.toJson(map);
 				data = ortakIslemler.generateQR(text, null, null);
 			} catch (Exception e) {
