@@ -155,10 +155,10 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 						kodu = kodu.substring(0, index);
 						map.put("kodu", kodu);
 					}
-					map.remove("tipAciklama");
+
 					if (adi != null) {
 						String name = PdksUtil.setTurkishStr(adi).toLowerCase(Locale.ENGLISH);
-						String tipEn = PdksUtil.setTurkishStr(tipAciklama).toLowerCase(Locale.ENGLISH);
+						String tipEn = PdksUtil.setTurkishStr((String) map.get("tipAciklama")).toLowerCase(Locale.ENGLISH);
 						index = name.indexOf(tipEn);
 						if (index > 0) {
 							name = adi.substring(0, index - 1);
@@ -166,6 +166,7 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 							adi = PdksUtil.replaceAll(name, "  ", " ").trim();
 						}
 					}
+					map.remove("tipAciklama");
 
 				}
 				if (adi != null)
