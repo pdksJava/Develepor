@@ -11,7 +11,7 @@
 				<div style="text-align: center; padding: 20px;">
 
 					<ui:fragment rendered="#{startupAction.projeHeaderImage != null}">
-						<div width="#{startupAction.projeHeaderImageWidth+2}" height="#{startupAction.projeHeaderImageHeight+2}" align="center">
+						<div width="#{startupAction.projeHeaderImageWidth+4}" height="#{startupAction.projeHeaderImageHeight+2}" align="center">
 							<ui:fragment rendered="#{startupAction.projeURL != null}">
 								<a href="#" title="#{startupAction.projeURL}" id="imageURL" onclick="createPop('#{startupAction.projeURL}',this.id);return false;"> <s:graphicImage
 										value="#{startupAction.projeHeaderImage}" width="#{startupAction.projeHeaderImageWidth}" height="#{startupAction.projeHeaderImageHeight}"

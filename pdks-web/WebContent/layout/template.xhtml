@@ -136,7 +136,7 @@ if (typeof window.event == 'undefined'){
 
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr style="background-color: #{startupAction.projeHeaderBackgroundColor};">
-			<td width="120" height="83"><ui:fragment rendered="#{startupAction.projeHeaderImage != null}">
+			<td width="#{startupAction.projeHeaderImageWidth+4}" height="#{startupAction.projeHeaderImageHeight+2}"><ui:fragment rendered="#{startupAction.projeHeaderImage != null}">
 					<ui:fragment rendered="#{startupAction.projeURL != null}">
 						<a href="#" title="#{startupAction.projeURL}" id="imageURL" onclick="createPop('#{startupAction.projeURL}',this.id);return false;"> <s:graphicImage
 								value="#{startupAction.projeHeaderImage}" width="#{startupAction.projeHeaderImageWidth}" height="#{startupAction.projeHeaderImageHeight}" /></a>
