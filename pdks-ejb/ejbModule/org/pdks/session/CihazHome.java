@@ -146,7 +146,7 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 				if (map.containsKey("adi"))
 					adi = (String) map.get("adi");
 				if (map.containsKey("tipAciklama")) {
-					tipAciklama = ((String) map.get("tipAciklama")).toUpperCase(Constants.TR_LOCALE);
+					tipAciklama = ("Personel " + (String) map.get("tipAciklama")).toUpperCase(Constants.TR_LOCALE);
 					Double tipiD = (Double) map.get("tipi");
 					int tipi = tipiD.intValue();
 					map.put("tipi", tipi);
