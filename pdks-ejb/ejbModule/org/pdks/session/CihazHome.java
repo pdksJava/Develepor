@@ -26,7 +26,6 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.kgs.entity.ENumHareketYon;
 import org.kgs.entity.MySQLTerminal;
-import org.pdks.pdf.action.HeaderIText;
 import org.pdks.pdf.action.PDFITextUtils;
 import org.pdks.security.entity.User;
 
@@ -209,16 +208,13 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 	}
 
 	public String qrPDFOlustur() {
-
 		try {
 			ByteArrayOutputStream baosPDF = new ByteArrayOutputStream();
 			Document document = new Document(PageSize.A4, -60, -60, 30, 30);
 			PdfWriter writer = PdfWriter.getInstance(document, baosPDF);
-
-			HeaderIText event = new HeaderIText();
-			writer.setPageEvent(event);
+			writer.setPageEvent(null);
 			document.open();
- 			BaseFont baseFont = BaseFont.createFont("ARIAL.TTF", BaseFont.IDENTITY_H, true);
+			BaseFont baseFont = BaseFont.createFont("ARIAL.TTF", BaseFont.IDENTITY_H, true);
 			Font fontBaslik = new Font(baseFont, 24f, Font.BOLD, BaseColor.BLACK);
 			Paragraph bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
 			Font fontFooter = new Font(baseFont, 24f, Font.NORMAL, BaseColor.RED);
@@ -228,7 +224,6 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 				tableImage = new PdfPTable(1);
 				com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
 				cellImage.setHorizontalAlignment(Element.ALIGN_CENTER);
-
 				cellImage.setVerticalAlignment(Element.ALIGN_MIDDLE);
 				cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
 				tableImage.addCell(cellImage);
@@ -246,10 +241,8 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 					else
 						hareketYon = null;
 				}
-
 			}
 			Gson gson = new Gson();
-
 			String aciklama = adi;
 			String koduStr = kodu;
 			if (hareketYon != null) {
@@ -261,22 +254,19 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 					aciklama = adi.substring(0, index - 1);
 					aciklama += " " + adi.substring(index + tipAciklama.length());
 					aciklama = PdksUtil.replaceAll(aciklama, "  ", " ").trim();
-
 				}
 			}
 			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-			map.put(MySQLTerminal.JSON_ADI, aciklama);
 			map.put(MySQLTerminal.JSON_KODU, koduStr);
+			map.put(MySQLTerminal.JSON_ADI, aciklama);
 			if (hareketYon != null)
 				map.put(MySQLTerminal.JSON_TIPI, hareketYon.value());
-
 			String text = gson.toJson(map);
 			data = ortakIslemler.generateQR(text, null, null);
 			image = Image.getInstance(data);
 			tableImage = new PdfPTable(1);
 			com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
 			cellImage.setHorizontalAlignment(Element.ALIGN_CENTER);
-
 			cellImage.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
 			tableImage.addCell(cellImage);
@@ -286,18 +276,15 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 			document.add(bos);
 			document.add(bos);
 			document.add(tableImage);
-
 			if (PdksUtil.hasStringValue(tipAciklama)) {
 				tipAciklama = "Personel " + tipAciklama;
 				document.add(bos);
 				document.add(PDFITextUtils.getParagraph(tipAciklama.toUpperCase(Constants.TR_LOCALE), fontFooter, Element.ALIGN_CENTER));
 			}
-
 			document.close();
 			baosPDF.close();
 			if (baosPDF != null && baosPDF.size() > 0) {
-
-				String fileName = "qrCihaz.pdf";
+				String fileName = adi + "_QR.pdf";
 				HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
 				ServletOutputStream sos = response.getOutputStream();
 				String characterEncoding = "ISO-8859-9";
