@@ -284,7 +284,7 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 			document.close();
 			baosPDF.close();
 			if (baosPDF != null && baosPDF.size() > 0) {
-				String fileName = adi + "_QR.pdf";
+				String fileName = aciklama + "_QR.pdf";
 				HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
 				ServletOutputStream sos = response.getOutputStream();
 				String characterEncoding = "ISO-8859-9";
