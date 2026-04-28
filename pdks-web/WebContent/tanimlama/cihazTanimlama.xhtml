@@ -12,9 +12,41 @@
 			<a4j:region>
 
 				<rich:panel header="#{ortakIslemler.getMenuUserAdi(cihazHome.session,'cihazTanimlama')}">
-					<a4j:outputPanel id="anaForm">
-						<h:panelGrid columns="1">
 
+
+					<h:panelGrid columns="1">
+						<a4j:outputPanel id="pdfForm">
+							<rich:simpleTogglePanel label="QR PDF Oluşturma" opened="#{authenticatedUser.admin}">
+								<h:panelGrid columns="1">
+									<s:decorate template="/layout/edit.xhtml">
+										<ui:define name="label">Şube</ui:define>
+										<h:inputText value="#{cihazHome.adi}" size="35">
+											<a4j:support event="onchange" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="pdfForm" />
+										</h:inputText>
+									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml" id="kodu">
+										<ui:define name="label">Kodu</ui:define>
+										<h:inputText value="#{cihazHome.kodu}" size="35">
+											<a4j:support event="onchange" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="pdfForm" />
+										</h:inputText>
+									</s:decorate>
+									<s:decorate template="/layout/edit.xhtml" rendered="#{cihazHome.yonTipiList!=null}">
+										<ui:define name="label">Cihaz Tipi</ui:define>
+										<h:selectOneMenu value="#{cihazHome.tipi}">
+											<f:selectItem itemLabel="Lütfen seçiniz" />
+											<f:selectItems value="#{cihazHome.yonTipiList}" />
+											<a4j:support event="onchange" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="pdfForm" />
+										</h:selectOneMenu>
+									</s:decorate>
+								</h:panelGrid>
+								<ui:fragment rendered="#{ortakIslemler.hasStringValue(cihazHome.adi) and ortakIslemler.hasStringValue(cihazHome.kodu) }">
+									<h:commandLink status="ajaxStatus" title="QR PDF" action="#{cihazHome.qrPDFOlustur()}" target="popupWindow">
+										<h:graphicImage value="/img/pdf.jpg" />
+									</h:commandLink>
+								</ui:fragment>
+							</rich:simpleTogglePanel>
+						</a4j:outputPanel>
+						<a4j:outputPanel id="anaForm">
 
 
 							<rich:dataTable rowClasses="acik,koyu" value="#{cihazHome.terminalList}" var="cihaz" rows="40" rowKeyVar="row" id="sablonTable">
@@ -74,11 +106,12 @@
 									<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 								</f:facet>
 							</rich:dataTable>
-							<a4j:commandButton status="ajaxStatus" value="Ekle" action="#{cihazHome.terminalEkle(null)}" rendered="#{authenticatedUser.admin}"
-								oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" />
+						</a4j:outputPanel>
+						<a4j:commandButton status="ajaxStatus" value="Ekle" action="#{cihazHome.terminalEkle(null)}" rendered="#{authenticatedUser.admin}"
+							oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel" />
 
-						</h:panelGrid>
-					</a4j:outputPanel>
+					</h:panelGrid>
+
 				</rich:panel>
 			</a4j:region>
 		</h:form>
@@ -130,19 +163,17 @@
 							<h:selectBooleanCheckbox value="#{cihazHome.terminal.durum}" />
 						</s:decorate>
 					</h:panelGrid>
-
-					<!--  -->
-
-
-					<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{cihazHome.kaydet()}" reRender="sablonTable" rendered="#{authenticatedUser.admin}"
-						oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
-					<ui:fragment rendered="#{cihazHome.terminal!=null}">
-						<h:commandButton value="QR Kodu Göster" onclick="Richfaces.showModalPanel('qrModal'); return false;" rendered="false" />
-						<a4j:commandButton value="QR Kodu " id="QR">
-							<a4j:support status="ajaxStatus" event="onclick" onclick="window.open('#{cihazHome.cihazQRGoster()}', 'Baslik', 'width=600,height=400'); return false;" />
-						</a4j:commandButton>
+					<ui:fragment>
+						<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{cihazHome.kaydet()}" reRender="sablonTable"
+							rendered="#{authenticatedUser.admin}" oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
+						<ui:fragment rendered="#{cihazHome.terminal!=null}">
+							<h:commandButton value="QR Kodu Göster" onclick="Richfaces.showModalPanel('qrModal'); return false;" rendered="false" />
+							<a4j:commandButton value="QR Kodu " id="QR">
+								<a4j:support status="ajaxStatus" event="onclick"
+									onclick="window.open('#{cihazHome.cihazQRGoster()}', 'Baslik', 'width=600,height=400'); return false;" />
+							</a4j:commandButton>
+						</ui:fragment>
 					</ui:fragment>
-
 
 				</h:panelGrid>
 			</h:form>

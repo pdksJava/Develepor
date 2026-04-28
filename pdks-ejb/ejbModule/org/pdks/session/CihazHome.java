@@ -1,5 +1,6 @@
 package org.pdks.session;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -9,7 +10,9 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -23,9 +26,21 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.kgs.entity.ENumHareketYon;
 import org.kgs.entity.MySQLTerminal;
+import org.pdks.pdf.action.HeaderIText;
+import org.pdks.pdf.action.PDFITextUtils;
 import org.pdks.security.entity.User;
 
 import com.google.gson.Gson;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 @Name("cihazHome")
 public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable {
@@ -54,7 +69,8 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 
 	private List<MySQLTerminal> terminalList;
 	private List<SelectItem> yonTipiList;
-	private String tipAciklama, adi;
+	private String tipAciklama, adi, kodu;
+	private Integer tipi;
 
 	private Session session;
 
@@ -140,7 +156,7 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 				Gson gson = new Gson();
 				LinkedHashMap<String, Object> map = gson.fromJson(text, LinkedHashMap.class);
 				terminal = new MySQLTerminal();
-				String kodu = "";
+				kodu = "";
 				if (map.containsKey(MySQLTerminal.JSON_KODU))
 					kodu = (String) map.get(MySQLTerminal.JSON_KODU);
 				if (map.containsKey(MySQLTerminal.JSON_ADI))
@@ -190,6 +206,116 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 		}
 
 		return "";
+	}
+
+	public String qrPDFOlustur() {
+
+		try {
+			ByteArrayOutputStream baosPDF = new ByteArrayOutputStream();
+			Document document = new Document(PageSize.A4, -60, -60, 30, 30);
+			PdfWriter writer = PdfWriter.getInstance(document, baosPDF);
+
+			HeaderIText event = new HeaderIText();
+			writer.setPageEvent(event);
+			document.open();
+ 			BaseFont baseFont = BaseFont.createFont("ARIAL.TTF", BaseFont.IDENTITY_H, true);
+			Font fontBaslik = new Font(baseFont, 24f, Font.BOLD, BaseColor.BLACK);
+			Paragraph bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
+			Font fontFooter = new Font(baseFont, 24f, Font.NORMAL, BaseColor.RED);
+			Image image = ortakIslemler.getProjeImage();
+			PdfPTable tableImage = null;
+			if (image != null) {
+				tableImage = new PdfPTable(1);
+				com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
+				cellImage.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+				cellImage.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+				tableImage.addCell(cellImage);
+				document.add(tableImage);
+				document.add(bos);
+			}
+
+			ENumHareketYon hareketYon = null;
+			tipAciklama = null;
+			if (tipi != null) {
+				hareketYon = ENumHareketYon.fromValue(tipi);
+				if (hareketYon != null) {
+					if (hareketYon.equals(ENumHareketYon.CIFT_YON) == false)
+						tipAciklama = MySQLTerminal.getTipAciklama(hareketYon);
+					else
+						hareketYon = null;
+				}
+
+			}
+			Gson gson = new Gson();
+
+			String aciklama = adi;
+			String koduStr = kodu;
+			if (hareketYon != null) {
+				int index = koduStr.indexOf("_" + hareketYon.value());
+				if (index > 0)
+					koduStr = koduStr.substring(0, index);
+				index = aciklama.indexOf(tipAciklama);
+				if (index > 0) {
+					aciklama = adi.substring(0, index - 1);
+					aciklama += " " + adi.substring(index + tipAciklama.length());
+					aciklama = PdksUtil.replaceAll(aciklama, "  ", " ").trim();
+
+				}
+			}
+			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+			map.put(MySQLTerminal.JSON_ADI, aciklama);
+			map.put(MySQLTerminal.JSON_KODU, koduStr);
+			if (hareketYon != null)
+				map.put(MySQLTerminal.JSON_TIPI, hareketYon.value());
+
+			String text = gson.toJson(map);
+			data = ortakIslemler.generateQR(text, null, null);
+			image = Image.getInstance(data);
+			tableImage = new PdfPTable(1);
+			com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
+			cellImage.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+			cellImage.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+			tableImage.addCell(cellImage);
+			document.add(bos);
+			document.add(bos);
+			document.add(PDFITextUtils.getParagraph(aciklama, fontBaslik, Element.ALIGN_CENTER));
+			document.add(bos);
+			document.add(bos);
+			document.add(tableImage);
+
+			if (PdksUtil.hasStringValue(tipAciklama)) {
+				tipAciklama = "Personel " + tipAciklama;
+				document.add(bos);
+				document.add(PDFITextUtils.getParagraph(tipAciklama.toUpperCase(Constants.TR_LOCALE), fontFooter, Element.ALIGN_CENTER));
+			}
+
+			document.close();
+			baosPDF.close();
+			if (baosPDF != null && baosPDF.size() > 0) {
+
+				String fileName = "qrCihaz.pdf";
+				HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+				ServletOutputStream sos = response.getOutputStream();
+				String characterEncoding = "ISO-8859-9";
+				response.setContentType("application/pdf;charset=" + characterEncoding);
+				response.setCharacterEncoding(characterEncoding);
+				String fileNameURL = PdksUtil.encoderURL(fileName, characterEncoding);
+				response.setHeader("Content-Disposition", "attachment;filename=" + fileNameURL);
+				response.setContentLength(baosPDF.size());
+				baosPDF.writeTo(sos);
+				sos.flush();
+				sos.close();
+				FacesContext.getCurrentInstance().responseComplete();
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return null;
+
 	}
 
 	public void fillTerminalList() {
@@ -260,6 +386,22 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 
 	public void setAdi(String adi) {
 		this.adi = adi;
+	}
+
+	public String getKodu() {
+		return kodu;
+	}
+
+	public void setKodu(String kodu) {
+		this.kodu = kodu;
+	}
+
+	public Integer getTipi() {
+		return tipi;
+	}
+
+	public void setTipi(Integer tipi) {
+		this.tipi = tipi;
 	}
 
 }
