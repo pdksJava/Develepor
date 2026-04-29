@@ -10964,6 +10964,8 @@ public class OrtakIslemler implements Serializable {
 						}
 						Vardiya vardiyaVg = vardiyaGun.getVardiya();
 						String vardiyaDateStr = vardiyaGun.getVardiyaDateStr(), vardiyaKeyStr = vardiyaGun.getVardiyaKeyStr();
+						if (vardiyaKeyStr.endsWith("0401"))
+							logger.debug("");
 						vardiyaGun.setGuncellendi(Boolean.FALSE);
 						boolean talepVar = vardiyaGun.isVardiyaOnay();
 						boolean htVar = talepVar;
@@ -10998,6 +11000,7 @@ public class OrtakIslemler implements Serializable {
 						}
 
 						vardiyalarMap.put(vardiyaKeyStr, vardiyaGun);
+
 						if (vardiyaGun.isVardiyaOnay())
 							continue;
 
@@ -11134,7 +11137,7 @@ public class OrtakIslemler implements Serializable {
 								if (listeler.isEmpty() == false || saatSifirVar == false)
 									break;
 							}
-							if (!listeler.isEmpty() && listeler.size() < 3) {
+							if (!listeler.isEmpty()) {
 								VardiyaGun vg = null;
 								if (listeler.size() > 1)
 									listeler = PdksUtil.sortListByAlanAdi(listeler, "value", true);
