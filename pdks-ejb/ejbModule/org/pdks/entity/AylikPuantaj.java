@@ -251,17 +251,10 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		return vardiyalar;
 	}
 
-	public void addVardiya(VardiyaGun value) {
-		if (vardiyalar == null)
-			vardiyalar = new ArrayList<VardiyaGun>(bosVardiya().values());
-		if (value != null && value.getPersonel() != null)
-			vardiyalar.add(value);
-
-	}
-
 	public void setVardiyalar(List<VardiyaGun> value) {
 
 		if (value != null) {
+			
 
 			for (Iterator iterator = value.iterator(); iterator.hasNext();) {
 				VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();

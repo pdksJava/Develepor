@@ -2064,6 +2064,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								vardiyaGun.setFazlaMesaiTalepOnayliDurum(Boolean.FALSE);
 
 								vardiyaGunKontrol(puantaj, vardiyaGun, paramsMap);
+								if (key.endsWith("0416"))
+									logger.debug("");
 								if (denklestirmeAyDurum && vardiyaGun.isAyinGunu() && vardiyaGun.getGecersizHareketler() != null) {
 									for (Iterator iterator2 = vardiyaGun.getGecersizHareketler().iterator(); iterator2.hasNext();) {
 										HareketKGS hareketKGS = (HareketKGS) iterator2.next();
@@ -2368,7 +2370,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										vardiyaSaat.setGuncellendi(false);
 										if (vg.getDurum()) {
 											double saat = vg.ucretiOdenenMesaiHesapla();
- 											if (saat > 0.0d)
+											if (saat > 0.0d)
 												ucretiOdenenMesaiSure += saat;
 
 											VardiyaEkSaat ekSaat = vardiyaSaat.getEkSaat();

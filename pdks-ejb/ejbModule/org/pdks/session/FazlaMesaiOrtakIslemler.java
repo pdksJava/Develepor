@@ -762,6 +762,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			TreeMap<Long, AylikPuantaj> aylikPuantajMap = new TreeMap<Long, AylikPuantaj>();
 			TreeMap<Long, PersonelDenklestirmeBordro> idMap = new TreeMap<Long, PersonelDenklestirmeBordro>();
 			TreeMap<Long, AylikPuantaj> hataliMap = new TreeMap<Long, AylikPuantaj>();
+
 			if (!perList.isEmpty()) {
 				String fieldName = "p";
 				fields.clear();
@@ -825,6 +826,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					}
 
 				}
+
 				if (!perList.isEmpty()) {
 					List<PersonelDenklestirmeBordro> borDenklestirmeBordroList = pdksEntityController.getSQLParamByFieldList(PersonelDenklestirmeBordro.TABLE_NAME, PersonelDenklestirmeBordro.COLUMN_NAME_PERSONEL_DENKLESTIRME, perList, PersonelDenklestirmeBordro.class, session);
 					for (PersonelDenklestirmeBordro personelDenklestirmeBordro : borDenklestirmeBordroList) {
@@ -890,6 +892,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				}
 			}
 			if (!eksikCalismaMap.isEmpty()) {
+
 				TreeMap<Long, AylikPuantaj> perDMap = new TreeMap<Long, AylikPuantaj>();
 				for (Long key : eksikCalismaMap.keySet()) {
 					AylikPuantaj aylikPuantaj = eksikCalismaMap.get(key);
@@ -898,6 +901,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				}
 				try {
 					List<Long> perIdList = new ArrayList<Long>(perDMap.keySet());
+
 					String fieldName = "p";
 					HashMap map = new HashMap();
 					sb = new StringBuilder();
@@ -923,15 +927,29 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					if (vardiyaGunList.size() > 1)
 						vardiyaGunList = PdksUtil.sortListByAlanAdi(vardiyaGunList, "vardiyaDate", false);
 					TreeMap<String, Tatil> tatilGunleriMap = ortakIslemler.getTatilGunleri(null, ortakIslemler.tariheGunEkleCikar(cal, basTarih, -1), ortakIslemler.tariheGunEkleCikar(cal, bitTarih, 1), session);
+					Date baslamaTarih = PdksUtil.convertToJavaDate(dm.getDonem() + "01", "yyyyMMdd");
+					Date bitisTarih = PdksUtil.tariheAyEkleCikar(baslamaTarih, 1);
+					HashMap<Long, List<PersonelIzin>> izinMap = ortakIslemler.getPersonelIzinMap(perIdList, baslamaTarih, bitisTarih, session);
 					TreeMap<Long, Personel> perMap = new TreeMap<Long, Personel>();
+
 					for (VardiyaGun vardiyaGun : vardiyaGunList) {
 						String vardiyaDateStr = vardiyaGun.getVardiyaDateStr();
+						Personel personel = vardiyaGun.getPdksPersonel();
+						vardiyaGun.setIzin(null);
+						Long id = personel.getId();
+						if (izinMap.containsKey(id)) {
+							List<PersonelIzin> izinList = izinMap.get(id);
+							for (PersonelIzin personelIzin : izinList)
+								ortakIslemler.setIzinDurum(vardiyaGun, personelIzin);
+							if (vardiyaGun.getIzin() != null)
+								continue;
+
+						}
 						if (vardiyaDateStr.startsWith(donem)) {
 							if (tatilGunleriMap.containsKey(vardiyaDateStr))
 								continue;
 							vardiyaGun.setVardiyaZamani();
-							Personel personel = vardiyaGun.getPdksPersonel();
-							Long id = personel.getId();
+
 							AylikPuantaj aylikPuantaj = perDMap.get(id);
 							aylikPuantaj.getVardiyalar().add(vardiyaGun);
 							if (!perMap.containsKey(id)) {
@@ -975,6 +993,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						}
 
 					}
+					izinMap = null;
 					tatilGunleriMap = null;
 					perMap = null;
 					perDMap = null;
