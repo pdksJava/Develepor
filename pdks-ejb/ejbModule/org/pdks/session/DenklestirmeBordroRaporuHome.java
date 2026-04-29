@@ -992,6 +992,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						personelDenklestirmeList = fazlaMesaiOrtakIslemler.getBordoDenklestirmeList(denklestirmeAy, as, tekSicilGiris == false && (denklestirmeAyDurum == false || (hataliVeriGetir != null && hataliVeriGetir)), tekSicilGiris == false
 								&& (denklestirmeAyDurum == false || (eksikCalisanVeriGetir != null && eksikCalisanVeriGetir)), session);
 						if (personelDenklestirmeList != null) {
+							
 							if (tekSicilGiris == false && sadeceHataliGetir) {
 								for (Iterator iterator = personelDenklestirmeList.iterator(); iterator.hasNext();) {
 									AylikPuantaj ap = (AylikPuantaj) iterator.next();
