@@ -15,7 +15,7 @@
 
 
 					<h:panelGrid columns="1">
-						<a4j:outputPanel id="pdfForm">
+						<a4j:outputPanel id="pdfForm" rendered="#{authenticatedUser.admin}">
 							<rich:simpleTogglePanel label="QR PDF Oluşturma" opened="#{authenticatedUser.admin}">
 								<h:panelGrid columns="1">
 									<s:decorate template="/layout/edit.xhtml">
@@ -158,12 +158,12 @@
 							</h:selectOneMenu>
 						</s:decorate>
 
-						<s:decorate template="/layout/edit.xhtml">
+						<s:decorate template="/layout/edit.xhtml" >
 							<ui:define name="label">Aktif</ui:define>
-							<h:selectBooleanCheckbox value="#{cihazHome.terminal.durum}" />
+							<h:selectBooleanCheckbox value="#{cihazHome.terminal.durum}" disabled="#{authenticatedUser.admin == false}" />
 						</s:decorate>
 					</h:panelGrid>
-					<ui:fragment>
+					<ui:fragment rendered="#{authenticatedUser.admin}">
 						<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{cihazHome.kaydet()}" reRender="sablonTable"
 							rendered="#{authenticatedUser.admin}" oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" />
 						<ui:fragment rendered="#{cihazHome.terminal!=null}">
