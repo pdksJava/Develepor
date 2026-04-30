@@ -40,6 +40,8 @@ public class VardiyaGun extends BaseObject {
 	static Logger logger = Logger.getLogger(VardiyaGun.class);
 
 	public static final String TABLE_NAME = "VARDIYA_GUN";
+	public static final String VIEW_NAME = "VARDIYA_GUN_SAAT_VIEW";
+	
 	public static final String COLUMN_NAME_PERSONEL = "PERSONEL_ID";
 	public static final String COLUMN_NAME_VARDIYA_TARIHI = "VARDIYA_TARIHI";
 	public static final String COLUMN_NAME_VARDIYA = "VARDIYA_ID";
