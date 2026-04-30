@@ -2727,6 +2727,7 @@ public class VardiyaGun extends BaseObject {
 
 		double icapciSaat = 0.0d;
 		if (icap) {
+
 			if (this.getHareketDurum() && (this.getIcapciMesaiSaat() == null || this.getIcapciMesaiSaat() <= 0.0d)) {
 				double fazlaCalisma = 0;
 				if (this.getFazlaMesailer() != null) {

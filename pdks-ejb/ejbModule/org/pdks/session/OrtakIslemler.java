@@ -20409,8 +20409,6 @@ public class OrtakIslemler implements Serializable {
 											normalSure -= saat;
 										}
 									} else {
-										if (key.endsWith("0409"))
-											logger.debug("");
 										pdksVardiyaGun.ucretiOdenenMesaiHesapla();
 										double icapSaati = pdksVardiyaGun.getIcapciMesaiSaat();
 										if (icapSaati > 0.0d) {
