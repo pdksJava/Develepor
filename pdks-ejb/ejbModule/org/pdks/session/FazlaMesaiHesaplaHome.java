@@ -2367,7 +2367,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 											vardiyaSaat = new VardiyaSaat();
 											vardiyaSaat.setNormalSure(normalSure);
 										}
-										vardiyaSaat.setGuncellendi(false);
+										vardiyaSaat.setGuncellendi(vardiyaSaat.getId() == null);
 										if (vg.getDurum()) {
 											double saat = vg.ucretiOdenenMesaiHesapla();
 											if (saat > 0.0d)
