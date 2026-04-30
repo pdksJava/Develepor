@@ -1006,12 +1006,15 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 								}
 
 							}
+							list = null;
+							izinList = null;
 						}
 						vMap = null;
 						izinMap = null;
 						tatilGunleriMap = null;
 						perMap = null;
 					}
+					vardiyaGunList = null;
 
 					perDMap = null;
 				} catch (Exception e) {
