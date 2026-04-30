@@ -41,7 +41,7 @@ public class VardiyaGun extends BaseObject {
 
 	public static final String TABLE_NAME = "VARDIYA_GUN";
 	public static final String VIEW_NAME = "VARDIYA_GUN_SAAT_VIEW";
-	
+
 	public static final String COLUMN_NAME_PERSONEL = "PERSONEL_ID";
 	public static final String COLUMN_NAME_VARDIYA_TARIHI = "VARDIYA_TARIHI";
 	public static final String COLUMN_NAME_VARDIYA = "VARDIYA_ID";
@@ -2742,7 +2742,7 @@ public class VardiyaGun extends BaseObject {
 				icapMolaSaat -= fazlaCalisma;
 				double katSayi = this.getIcapKatSayi();
 				if (icapMolaSaat > 0 && katSayi > 0) {
-					icapciMesaiSaat = PdksUtil.setSureDoubleTypeRounded(icapMolaSaat * katSayi, this.getFazlaMesaiYuvarla());
+					this.setIcapciMesaiSaat(PdksUtil.setSureDoubleTypeRounded(icapMolaSaat * katSayi, this.getFazlaMesaiYuvarla()));
 
 				}
 
@@ -2778,6 +2778,10 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setIcapciMesaiSaat(Double value) {
+		if (value != null && value.doubleValue() > 0.0d) {
+			if (this.getVardiyaDateStr().endsWith("0423"))
+				logger.debug("");
+		}
 		this.icapciMesaiSaat = value;
 	}
 

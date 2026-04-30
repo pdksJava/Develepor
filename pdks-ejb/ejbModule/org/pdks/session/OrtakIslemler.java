@@ -20409,9 +20409,12 @@ public class OrtakIslemler implements Serializable {
 											normalSure -= saat;
 										}
 									} else {
+
 										pdksVardiyaGun.ucretiOdenenMesaiHesapla();
 										double icapSaati = pdksVardiyaGun.getIcapciMesaiSaat();
 										if (icapSaati > 0.0d) {
+											if (key.endsWith("0423"))
+												logger.debug("");
 											vardiya = pdksVardiyaGun.getIslemVardiya();
 											Date sonrakiBasZaman = PdksUtil.tariheGunEkleCikar(vardiya.isCalisma() ? vardiya.getVardiyaBasZaman() : pdksVardiyaGun.getVardiyaDate(), 1);
 											Double icapDakika = icapSaati * 60;
@@ -20423,8 +20426,8 @@ public class OrtakIslemler implements Serializable {
 												if (tatil3.isYarimGunMu() || vardiya.isCalisma() == false) {
 													icapTatil = icapSaati;
 												} else {
-													Date tatilBitTarih = tatil3.getOrjTatil() != null ? tatil3.getOrjTatil().getBitTarih() : tatil3.getOrjTatil().getBitTarih();
-													if (tatilBitTarih.after(sonrakiBasZaman))
+													Date tatilBasTarih = tatil3.getOrjTatil() != null ? tatil3.getOrjTatil().getBasTarih() : tatil3.getOrjTatil().getBasTarih();
+													if (tatilBasTarih.before(vardiya.getVardiyaBasZaman()))
 														icapTatil = icapSaati;
 
 												}
