@@ -343,8 +343,14 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				if (vg.getNormalSure() > 0.0) {
 					aciklama = "";
 				} else if (girisAdet + cikisAdet == 0) {
-					if (vardiya.isCalisma())
-						aciklama = "Kart Basılmadı.";
+					if (vardiya.isCalisma()) {
+						if (vardiya.isIcapVardiyasi() == false)
+							aciklama = "Kart Basılmadı.";
+						else
+							aciklama = null;
+
+					}
+
 				} else {
 					StringBuffer sb = new StringBuffer();
 
