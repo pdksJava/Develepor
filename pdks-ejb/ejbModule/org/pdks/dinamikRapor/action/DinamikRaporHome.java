@@ -112,7 +112,7 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		tesisAlan = null;
 		sirket = null;
 		String sayfa = "";
@@ -225,13 +225,14 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				else if (rp.isSayisal())
 					veriMap.put(adi, rp.getSayisalDeger());
 				else if (rp.isTarih())
-					veriMap.put(adi, rp.getTarihDeger());
+					veriMap.put(adi, PdksUtil.getDate(rp.getTarihDeger()));
 				else if (rp.isMantiksal())
 					veriMap.put(adi, rp.getMantiksalDurum() != null && rp.getMantiksalDurum() ? 1 : 0);
 			}
 			try {
 				list = pdksEntityController.execSPList(session, veriMap, seciliPdksDinamikRapor.getDbTanim(), null);
 			} catch (Exception e) {
+				logger.error(seciliPdksDinamikRapor.getDbTanim() + " " + e);
 
 			}
 		} else {
