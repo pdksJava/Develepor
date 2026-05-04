@@ -319,8 +319,8 @@ public class MailManager implements Serializable {
 				if (mailMap.containsKey("smtpHostPort"))
 					port = Integer.parseInt((String) mailMap.get("smtpHostPort"));
 				if (username == null) {
-					if (mailMap.containsKey("fromAdres")) {
-						mailAdresFROM = (String) mailMap.get("fromAdres");
+					if (mailMap.containsKey("smtpUserName")) {
+						mailAdresFROM = (String) mailMap.get("smtpUserName");
 						username = mailAdresFROM;
 					}
 				} else
@@ -416,8 +416,8 @@ public class MailManager implements Serializable {
 				if (!mailList.isEmpty()) {
 					InternetAddress from = new InternetAddress();
 					from.setAddress(username);
-					if (mailMap.containsKey("fromAdres"))
-						from.setAddress((String) mailMap.get("fromAdres"));
+					if (mailMap.containsKey("smtpUserName"))
+						from.setAddress((String) mailMap.get("smtpUserName"));
 					if (mailMap.containsKey("fromName"))
 						from.setPersonal((String) mailMap.get("fromName"), "UTF-8");
 					message.setFrom(from);
@@ -567,8 +567,8 @@ public class MailManager implements Serializable {
 				if (mailParametreMap.containsKey("smtpHostPort"))
 					port = Integer.parseInt((String) mailParametreMap.get("smtpHostPort"));
 				if (username == null) {
-					if (mailParametreMap.containsKey("fromAdres")) {
-						mailAdresFROM = (String) mailParametreMap.get("fromAdres");
+					if (mailParametreMap.containsKey("smtpUserName")) {
+						mailAdresFROM = (String) mailParametreMap.get("smtpUserName");
 						username = mailAdresFROM;
 					}
 				} else
@@ -682,8 +682,8 @@ public class MailManager implements Serializable {
 				if (!mailList.isEmpty()) {
 					InternetAddress from = new InternetAddress();
 					from.setAddress(username);
-					if (mailParametreMap.containsKey("fromAdres"))
-						from.setAddress((String) mailParametreMap.get("fromAdres"));
+					if (mailParametreMap.containsKey("smtpUserName"))
+						from.setAddress((String) mailParametreMap.get("smtpUserName"));
 					if (mailParametreMap.containsKey("fromName"))
 						from.setPersonal((String) mailParametreMap.get("fromName"), "UTF-8");
 					message.setFrom(from);

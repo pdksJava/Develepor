@@ -315,8 +315,8 @@ public class MailManager implements Serializable {
 			if (mailParametreMap.containsKey("smtpPassword"))
 				password = (String) mailParametreMap.get("smtpPassword");
 			if (username == null) {
-				if (mailParametreMap.containsKey("fromAdres")) {
-					mailAdresFROM = (String) mailParametreMap.get("fromAdres");
+				if (mailParametreMap.containsKey("smtpUserName")) {
+					mailAdresFROM = (String) mailParametreMap.get("smtpUserName");
 					username = mailAdresFROM;
 				}
 			} else
@@ -415,8 +415,8 @@ public class MailManager implements Serializable {
 			message.setSubject(konu);
 			InternetAddress from = new InternetAddress();
 			from.setAddress(username);
-			if (mailParametreMap.containsKey("fromAdres"))
-				from.setAddress((String) mailParametreMap.get("fromAdres"));
+			if (mailParametreMap.containsKey("smtpUserName"))
+				from.setAddress((String) mailParametreMap.get("smtpUserName"));
 			if (mailParametreMap.containsKey("fromName"))
 				from.setPersonal((String) mailParametreMap.get("fromName"), "UTF-8");
 			message.setFrom(from);
