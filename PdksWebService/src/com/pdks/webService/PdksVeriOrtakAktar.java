@@ -724,7 +724,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						sb.append("select * from " + Parameter.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
 						sb.append(" where  " + Parameter.COLUMN_NAME_ADI + " = :d ");
 						fields.put("d", key);
-						List<Parameter> parameterList = dAO.getNativeSQLList(fields, sb, ERPSistem.class);
+						List<Parameter> parameterList = dAO.getNativeSQLList(fields, sb, Parameter.class);
 						if (parameterList.isEmpty() == false) {
 							Parameter parameter = parameterList.get(0);
 							if (parameter.getValue().equals(sistem.getSirketAdi()) == false) {
