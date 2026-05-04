@@ -77,8 +77,7 @@ public class KgsRestFulVeriAktarService implements Serializable {
 	@GET
 	@Path("/generateQR")
 	@Produces({ MediaType.APPLICATION_OCTET_STREAM })
-	@Consumes("charset=utf-8")
-	public Response generateQR(@QueryParam("text") String text, @QueryParam("height") Integer height, @QueryParam("width") Integer width) throws Exception {
+ 	public Response generateQR(@QueryParam("text") String text, @QueryParam("height") Integer height, @QueryParam("width") Integer width) throws Exception {
 		Response response = null;
 		try {
 			if (text == null || text.isEmpty())
