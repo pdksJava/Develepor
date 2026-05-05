@@ -67,7 +67,7 @@
 									<h:outputText value="#{parameter.description}" />
 								</rich:column>
 
-								<rich:column>
+								<rich:column filterBy="#{parameter.value}" filterEvent="onkeyup">
 									<f:facet name="header">
 										<h:outputText value="Değeri" />
 									</f:facet>
