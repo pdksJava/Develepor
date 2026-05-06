@@ -2990,6 +2990,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (ap == null)
 			ap = personelAylikPuantaj;
 		String renk = vg.getAylikClassAdi(ap.getTrClass());
+
 		PersonelDenklestirme pd = ap.getPersonelDenklestirme();
 		boolean hareketKaydiVardiyaBul = pd != null && pd.getCalismaModeliAy() != null ? pd.getCalismaModeliAy().isHareketKaydiVardiyaBulsunmu() : false;
 		if (vg != null && vg.getId() != null) {
@@ -11845,6 +11846,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		degisti = Boolean.FALSE;
 		Workbook wb = vardiyaPlanDosya.getDosyaIcerik() != null ? ortakIslemler.getWorkbook(vardiyaPlanDosya) : null;
 		if (wb != null) {
+			bugunTarih = PdksUtil.getDate(new Date());
 			sessionClear();
 			HashMap fields = new HashMap();
 			if (session != null)
