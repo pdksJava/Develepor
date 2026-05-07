@@ -178,7 +178,9 @@ public class WSLoggingInInterceptor extends AbstractSoapInterceptor {
 					soapAction = "service" + soapAction + "_" + PdksUtil.convertToDateString(bugun, "yyyy-MM-") + ekKey + (transactionId != null ? transactionId : +bugun.getTime());
 					message.put("soapAction", soapAction);
 					message.put("requestXML", xml);
-					PdksUtil.fileWrite(xml, soapAction);
+					String dosyaAdi = soapAction + (soapAction != null && soapAction.toLowerCase().endsWith(".xml") == false ? ".xml" : "");
+
+					PdksUtil.fileWrite(xml, dosyaAdi);
 					sb = null;
 
 				}

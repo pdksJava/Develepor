@@ -126,17 +126,11 @@ public class WSLoggingOutInterceptor extends AbstractSoapInterceptor {
 							Date bugun = new Date();
 							action = "service" + action + "_" + PdksUtil.convertToDateString(bugun, "yyyy-MM-") + bugun.getTime();
 						}
-						try {
-							if (action != null && action.toLowerCase().endsWith(".xml") == false) {
-								action = action + ".xml";
-							}
-						} catch (Exception e) {
-							// TODO: handle exception
-						}
-						try {
-							xml = PdksUtil.formatXML(xml);
 
-							PdksUtil.fileWrite(xml, action);
+						try {
+							String dosyaAdi = action + (action != null && action.toLowerCase().endsWith(".xml") == false ? ".xml" : "");
+							xml = PdksUtil.formatXML(xml);
+							PdksUtil.fileWrite(xml, dosyaAdi);
 						} catch (Exception eg) {
 							logger.error(eg);
 							eg.printStackTrace();
