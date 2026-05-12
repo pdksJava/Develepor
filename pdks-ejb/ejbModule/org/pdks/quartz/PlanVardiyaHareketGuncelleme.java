@@ -1,5 +1,6 @@
 package org.pdks.quartz;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +15,10 @@ import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
@@ -39,6 +44,7 @@ import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDenklestirmeTasiyici;
 import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.PersonelView;
+import org.pdks.entity.ServiceData;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
@@ -46,10 +52,18 @@ import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.security.entity.User;
+import org.pdks.session.ExcelUtil;
 import org.pdks.session.FazlaMesaiOrtakIslemler;
 import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
+
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
+import com.pdks.webservice.MailFile;
+import com.pdks.webservice.MailObject;
+import com.pdks.webservice.MailPersonel;
+import com.pdks.webservice.MailStatu;
 
 @Name("planVardiyaHareketGuncelleme")
 @AutoCreate
@@ -90,6 +104,316 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	private Date bugun;
 
+	public void mailGonder(List<ServiceData> mailList, Session session) {
+		if (mailList == null)
+			mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
+		if (mailList.isEmpty() == false) {
+			Gson gson = new Gson();
+			boolean flush = false;
+			for (ServiceData serviceData : mailList) {
+				List<LinkedTreeMap<String, Object>> paramList = null, veriler = null;
+				String parametreJSON = serviceData.getInputData();
+				String dataJSON = serviceData.getOutputData();
+				try {
+					paramList = gson.fromJson(parametreJSON, List.class);
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				String baslik = "";
+				try {
+					if (dataJSON.startsWith("{") == false)
+						veriler = gson.fromJson(dataJSON, List.class);
+					else {
+						LinkedHashMap<String, Object> verilerMap = gson.fromJson(dataJSON, LinkedHashMap.class);
+						for (String key : verilerMap.keySet()) {
+							baslik = key;
+							veriler = (List<LinkedTreeMap<String, Object>>) verilerMap.get(key);
+						}
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				if (paramList != null && veriler != null) {
+					try {
+						LinkedTreeMap<String, Object> params = paramList.get(0);
+						String konu = (String) params.get("konu");
+						boolean tabloYazDurum = false;
+						List<String> toList = new ArrayList<String>(), ccList = new ArrayList<String>(), bccList = new ArrayList<String>();
+						List<String> mailAdres = new ArrayList<String>();
+						if (params.containsKey("toAdres")) {
+							List<String> list = PdksUtil.getListFromString((String) params.get("toAdres"), null);
+							for (String string : list) {
+								if (mailAdres.contains(string))
+									continue;
+								toList.add(string);
+								mailAdres.add(string);
+							}
+							list = null;
+						}
+						if (params.containsKey("cc")) {
+							List<String> list = PdksUtil.getListFromString((String) params.get("cc"), null);
+							for (String string : list) {
+								if (mailAdres.contains(string))
+									continue;
+								ccList.add(string);
+								mailAdres.add(string);
+							}
+							list = null;
+						}
+						if (params.containsKey("bcc")) {
+							List<String> list = PdksUtil.getListFromString((String) params.get("bcc"), null);
+							for (String string : list) {
+								if (mailAdres.contains(string))
+									continue;
+								bccList.add(string);
+								mailAdres.add(string);
+							}
+							list = null;
+						}
+
+						if (mailAdres.isEmpty() == false) {
+							List<User> userList = pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_EMAIL, mailAdres, User.class, session);
+							HashMap<String, String> userMap = new HashMap<String, String>();
+							for (User user : userList) {
+								Personel personel = user.getPdksPersonel();
+								userMap.put(user.getEmail(), personel.getAdSoyad());
+							}
+							userList = null;
+							if (params.containsKey("tabloYaz")) {
+								Double tabloYaz = (Double) params.get("tabloYaz");
+								tabloYazDurum = tabloYaz.intValue() == 1;
+							}
+							LinkedTreeMap<String, String> alanDurum = null;
+							if (params.containsKey("parametre")) {
+								List list = (ArrayList) params.get("parametre");
+								alanDurum = (LinkedTreeMap<String, String>) list.get(0);
+							} else
+								alanDurum = new LinkedTreeMap<String, String>();
+							if (params.containsKey("tabloYaz")) {
+								Double tabloYaz = (Double) params.get("tabloYaz");
+								tabloYazDurum = tabloYaz.intValue() == 1;
+							}
+
+							LinkedHashMap<String, String> baslikMap = new LinkedHashMap<String, String>();
+							for (LinkedTreeMap<String, Object> linkedHashMap : veriler) {
+								for (String key : linkedHashMap.keySet()) {
+									if (baslikMap.containsKey(key) == false) {
+										String baslikStr = key;
+										if (baslikStr.indexOf(" ") < 0) {
+											try {
+												String method = key + (key.indexOf("Aciklama") > 0 ? "" : "Aciklama");
+												String str = (String) PdksUtil.getMethodObject(ortakIslemler, method, null);
+												if (PdksUtil.hasStringValue(str))
+													baslikStr = str;
+											} catch (Exception e) {
+												// TODO: handle exception
+											}
+
+										}
+										baslikMap.put(key, baslikStr);
+									}
+
+								}
+							}
+							StringBuffer sb = new StringBuffer();
+							sb.append("<DIV>");
+							if (PdksUtil.hasStringValue(baslik)) {
+								sb.append("<P  align='center'>" + baslik + "</P>");
+							}
+							if (tabloYazDurum) {
+								sb.append("<table class=\"mars\" style=\"border-collapse: collapse;\" border=\"1\"><thead><tr>");
+								for (String key : baslikMap.keySet()) {
+									sb.append("<th>" + baslikMap.get(key) + "</th>");
+								}
+								sb.append("</tr></thead><tbody>");
+								boolean renk = true;
+								for (LinkedTreeMap<String, Object> linkedHashMap : veriler) {
+									sb.append("<tr class='" + (renk ? "odd" : "even") + "'>");
+									for (String key : baslikMap.keySet()) {
+										Object veri = linkedHashMap.containsKey(key) ? linkedHashMap.get(key) : null;
+										if (veri != null) {
+											if (veri instanceof String == false) {
+												try {
+													Object value = PdksUtil.numericValueFormatStr(veri, null);
+													if (value != null)
+														veri = value;
+												} catch (Exception e) {
+													// TODO: handle exception
+												}
+
+											}
+
+										}
+										String alignStr = "";
+										if (alanDurum.containsKey(key)) {
+											String str = alanDurum.get(key);
+											if (str.equalsIgnoreCase("c") || str.equalsIgnoreCase("d") || str.equalsIgnoreCase("t") || str.equalsIgnoreCase("dt"))
+												alignStr = " align='center'";
+											else if (str.equalsIgnoreCase("r"))
+												alignStr = " align='rigth'";
+										}
+										sb.append("<td" + alignStr + ">" + (veri != null ? veri : "") + "</td>");
+									}
+									sb.append("</tr>");
+									renk = !renk;
+								}
+								sb.append("</tbody></table>");
+
+							}
+							sb.append("</DIV>");
+							MailObject mail = new MailObject();
+							mail.setSubject(konu);
+							mail.setBody(sb.toString());
+							if (toList.isEmpty() == false) {
+								if (PdksUtil.getCanliSunucuDurum() == true || PdksUtil.getTestSunucuDurum() == true) {
+									for (String key : toList) {
+										MailPersonel mp = new MailPersonel();
+										mp.setEPosta(key);
+										if (userMap.containsKey(key))
+											mp.setAdiSoyadi(userMap.get(key));
+										mail.getToList().add(mp);
+									}
+								}
+							}
+							if (ccList.isEmpty() == false) {
+								for (String key : ccList) {
+									MailPersonel mp = new MailPersonel();
+									mp.setEPosta(key);
+									if (userMap.containsKey(key))
+										mp.setAdiSoyadi(userMap.get(key));
+									mail.getCcList().add(mp);
+								}
+							}
+							if (bccList.isEmpty() == false) {
+								for (String key : bccList) {
+									MailPersonel mp = new MailPersonel();
+									mp.setEPosta(key);
+									if (userMap.containsKey(key))
+										mp.setAdiSoyadi(userMap.get(key));
+									mail.getBccList().add(mp);
+								}
+							}
+							toList = null;
+							ccList = null;
+							bccList = null;
+							if (params.containsKey("dosyaAdi")) {
+								int col = 0, row = 0;
+								Workbook wb = new XSSFWorkbook();
+								CellStyle header = null;
+								CellStyle styleOdd = null, styleOddCenter = null, styleOddDate = null, styleOddDateTime = null, styleOddTime = null, styleOddRight = null;
+								CellStyle styleEven = null, styleEvenCenter = null, styleEvenDate = null, styleEvenDateTime = null, styleEvenTime = null, styleEvenRight;
+								header = ExcelUtil.getStyleHeader(wb);
+								styleOdd = ExcelUtil.getStyleOdd(null, wb);
+								styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
+								styleOddRight = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_RIGHT, wb);
+								styleOddDate = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATE, wb);
+								styleOddDateTime = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATETIME, wb);
+								styleOddTime = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_TIME, wb);
+								styleEven = ExcelUtil.getStyleEven(null, wb);
+								styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
+								styleEvenRight = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_RIGHT, wb);
+								styleEvenDate = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATE, wb);
+								styleEvenDateTime = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATETIME, wb);
+								styleEvenTime = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_TIME, wb);
+								Sheet sheet = ExcelUtil.createSheet(wb, konu, false);
+								for (String key : baslikMap.keySet()) {
+									ExcelUtil.getCell(sheet, row, col++, header).setCellValue(baslikMap.get(key));
+
+								}
+								boolean renk = true;
+								for (LinkedTreeMap<String, Object> linkedHashMap : veriler) {
+									col = 0;
+									++row;
+
+									for (String key : baslikMap.keySet()) {
+										String alignStr = "";
+										String strOrj = "";
+										if (alanDurum.containsKey(key)) {
+											strOrj = alanDurum.get(key);
+											if (strOrj.equalsIgnoreCase("c") || strOrj.equalsIgnoreCase("d") || strOrj.equalsIgnoreCase("t") || strOrj.equalsIgnoreCase("dt"))
+												alignStr = "c";
+											else if (strOrj.equalsIgnoreCase("r"))
+												alignStr = "r";
+										}
+										Object veri = linkedHashMap.containsKey(key) ? linkedHashMap.get(key) : null;
+										if (veri != null) {
+											if (veri instanceof String == false) {
+												try {
+													Object value = PdksUtil.numericValueFormatStr(veri, null);
+													if (value != null)
+														veri = value;
+												} catch (Exception e) {
+													// TODO: handle exception
+												}
+
+											}
+
+										}
+										if (veri == null)
+											veri = "";
+
+										if (veri instanceof String) {
+											String str = (String) veri;
+											if (alignStr.equals("c"))
+												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddCenter : styleEvenCenter).setCellValue(str);
+											else if (alignStr.equals("r"))
+												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddRight : styleEvenRight).setCellValue(str);
+											else
+												ExcelUtil.getCell(sheet, row, col++, renk ? styleOdd : styleEven).setCellValue(str);
+										} else if (veri instanceof Date) {
+											Date tarih = (Date) veri;
+											if (strOrj.equals("dt"))
+												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddDateTime : styleEvenDateTime).setCellValue(tarih);
+											else if (alignStr.equals("d"))
+												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddDate : styleEvenDate).setCellValue(tarih);
+											else
+												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddTime : styleEvenTime).setCellValue(tarih);
+										} else {
+											ExcelUtil.getCell(sheet, row, col++, renk ? styleOddRight : styleEvenRight).setCellValue(PdksUtil.numericValueFormatStr(veri, null));
+										}
+
+									}
+									renk = !renk;
+								}
+								for (int i = 0; i < col; i++)
+									sheet.autoSizeColumn(i);
+								ByteArrayOutputStream baos = new ByteArrayOutputStream();
+								wb.write(baos);
+								String dosyaAdi = (String) params.get("dosyaAdi");
+								MailFile mf = new MailFile();
+								mf.setDisplayName(dosyaAdi);
+								mf.setIcerik(baos.toByteArray());
+								if (mf.getFile() != null || mf.getIcerik() != null)
+									mail.getAttachmentFiles().add(mf);
+							}
+							HashMap<String, Object> veriMap = new HashMap<String, Object>();
+							veriMap.put("temizleTOCCList", true);
+							veriMap.put("mailObject", mail);
+							veriMap.put("homeRenderer", null);
+							veriMap.put("sayfaAdi", null);
+							MailStatu mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
+							if (mailStatu != null && mailStatu.getDurum())
+								logger.info(mail.getSubject() + " mail gönderildi. ");
+						} else {
+
+						}
+						serviceData.setFonksiyonAdi("mailDosyaGonderildi");
+						serviceData.setOlusturmaTarihi(new Date());
+						session.saveOrUpdate(serviceData);
+						flush = true;
+					} catch (Exception e) {
+						logger.error(e);
+					}
+
+				}
+
+			}
+			if (flush)
+				session.flush();
+		}
+		mailList = null;
+	}
+
 	@Asynchronous
 	@SuppressWarnings("unchecked")
 	// @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -99,6 +423,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			logger.debug("planVardiyaHareketGuncelleme in " + PdksUtil.getCurrentTimeStampStr());
 			Session session = null;
 			try {
+				List<ServiceData> mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
 				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 					Calendar cal = Calendar.getInstance();
 					bugun = cal.getTime();
@@ -144,6 +469,15 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 						}
 					}
+					if (mailList.isEmpty() == false) {
+						int saniye = 1;
+						Thread.sleep(saniye * 1000);
+						mailGonder(mailList, session);
+					}
+				} else if (mailList.isEmpty() == false) {
+					int saniye = 1;
+					Thread.sleep(saniye * 1000);
+					mailGonder(mailList, session);
 				}
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n" + e.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());

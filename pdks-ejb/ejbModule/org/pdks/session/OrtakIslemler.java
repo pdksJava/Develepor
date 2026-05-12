@@ -2108,12 +2108,8 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public TreeMap<String, User> getUserRoller(Date tarih, List<String> mailList, Session session) {
 		TreeMap<String, User> userMap = new TreeMap<String, User>();
-		HashMap fields = new HashMap();
-		fields.put("email", mailList);
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<User> userList = pdksEntityController.getObjectByInnerObjectList(fields, User.class);
-		if (!userList.isEmpty()) {
+		List<User> userList = pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_EMAIL, mailList, User.class, session);
+		if (userList != null && !userList.isEmpty()) {
 			if (tarih == null)
 				tarih = PdksUtil.getDate(new Date());
 			for (Iterator iterator = userList.iterator(); iterator.hasNext();) {

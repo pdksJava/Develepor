@@ -766,6 +766,7 @@ public class MailManager implements Serializable {
 
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			ee = e;
 
 		}
@@ -1019,20 +1020,17 @@ public class MailManager implements Serializable {
 				else
 					list.add(string);
 			}
-			HashMap map = new HashMap();
-			map.put("email", list.size() > 1 ? list : list.get(0));
-			if (session != null)
-				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			TreeMap<String, User> userMap = new TreeMap<String, User>();
-			List<User> userList = pdksEntityController.getObjectByInnerObjectList(map, User.class);
+			List<User> userList = pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_EMAIL, list, User.class, session);
 			List<String> pasifList = new ArrayList<String>();
-			for (User user : userList) {
-				String mailStr = user.getEmail();
-				if (user.isDurum() && user.getPdksPersonel().isCalisiyor())
-					userMap.put(mailStr, user);
-				else if (!pasifList.contains(mailStr))
-					pasifList.add(mailStr);
-			}
+			if (userList != null)
+				for (User user : userList) {
+					String mailStr = user.getEmail();
+					if (user.isDurum() && user.getPdksPersonel().isCalisiyor())
+						userMap.put(mailStr, user);
+					else if (!pasifList.contains(mailStr))
+						pasifList.add(mailStr);
+				}
 			if (!userMap.isEmpty()) {
 				mailUserListKontrol(mailObject.getToList(), userMap);
 				mailUserListKontrol(mailObject.getCcList(), userMap);
