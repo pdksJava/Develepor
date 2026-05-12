@@ -217,9 +217,9 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							}
 							StringBuffer sb = new StringBuffer();
 							sb.append("<DIV>");
-							if (PdksUtil.hasStringValue(baslik))  
+							if (PdksUtil.hasStringValue(baslik))
 								sb.append("<P style='font-size: 20px; font-weight: bold;' align='center'>" + baslik + "</P>");
-							 
+
 							if (tabloYazDurum) {
 								sb.append("<table class=\"mars\" style=\"border-collapse: collapse;\" border=\"1\"><thead><tr>");
 								for (String key : baslikMap.keySet()) {
@@ -300,8 +300,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								int col = 0, row = 0;
 								Workbook wb = new XSSFWorkbook();
 								CellStyle header = null;
-								CellStyle styleOdd = null, styleOddCenter = null, styleOddDate = null, styleOddDateTime = null, styleOddTime = null, styleOddRight = null;
-								CellStyle styleEven = null, styleEvenCenter = null, styleEvenDate = null, styleEvenDateTime = null, styleEvenTime = null, styleEvenRight;
+								CellStyle styleOdd = null, styleOddCenter = null, styleOddDate = null, styleOddDateTime = null, styleOddTime = null, styleOddRight = null, styleOddTutar = null;
+								CellStyle styleEven = null, styleEvenCenter = null, styleEvenDate = null, styleEvenDateTime = null, styleEvenTime = null, styleEvenRight = null, styleEvenTutar = null;
 								header = ExcelUtil.getStyleHeader(wb);
 								styleOdd = ExcelUtil.getStyleOdd(null, wb);
 								styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
@@ -309,12 +309,14 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								styleOddDate = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATE, wb);
 								styleOddDateTime = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATETIME, wb);
 								styleOddTime = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_TIME, wb);
+								styleOddTutar = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_TUTAR, wb);
 								styleEven = ExcelUtil.getStyleEven(null, wb);
 								styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
 								styleEvenRight = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_RIGHT, wb);
 								styleEvenDate = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATE, wb);
 								styleEvenDateTime = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATETIME, wb);
 								styleEvenTime = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_TIME, wb);
+								styleEvenTutar = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_TUTAR, wb);
 								Sheet sheet = ExcelUtil.createSheet(wb, konu, false);
 								for (String key : baslikMap.keySet()) {
 									ExcelUtil.getCell(sheet, row, col++, header).setCellValue(baslikMap.get(key));
@@ -336,19 +338,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 												alignStr = "r";
 										}
 										Object veri = linkedHashMap.containsKey(key) ? linkedHashMap.get(key) : null;
-										if (veri != null) {
-											if (veri instanceof String == false) {
-												try {
-													Object value = PdksUtil.numericValueFormatStr(veri, null);
-													if (value != null)
-														veri = value;
-												} catch (Exception e) {
-													// TODO: handle exception
-												}
 
-											}
-
-										}
 										if (veri == null)
 											veri = "";
 
@@ -369,7 +359,13 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 											else
 												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddTime : styleEvenTime).setCellValue(tarih);
 										} else {
-											ExcelUtil.getCell(sheet, row, col++, renk ? styleOddRight : styleEvenRight).setCellValue(PdksUtil.numericValueFormatStr(veri, null));
+											try {
+												Double d = new Double(veri.toString());
+												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddTutar : styleEvenTutar).setCellValue(d);
+											} catch (Exception e) {
+												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddRight : styleEvenRight).setCellValue(PdksUtil.numericValueFormatStr(veri, null));
+											}
+
 										}
 
 									}
