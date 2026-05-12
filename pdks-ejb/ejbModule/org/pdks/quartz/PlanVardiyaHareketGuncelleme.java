@@ -217,9 +217,9 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							}
 							StringBuffer sb = new StringBuffer();
 							sb.append("<DIV>");
-							if (PdksUtil.hasStringValue(baslik)) {
-								sb.append("<P  align='center'>" + baslik + "</P>");
-							}
+							if (PdksUtil.hasStringValue(baslik))  
+								sb.append("<P style='font-size: 20px; font-weight: bold;' align='center'>" + baslik + "</P>");
+							 
 							if (tabloYazDurum) {
 								sb.append("<table class=\"mars\" style=\"border-collapse: collapse;\" border=\"1\"><thead><tr>");
 								for (String key : baslikMap.keySet()) {
