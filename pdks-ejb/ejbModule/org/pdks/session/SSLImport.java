@@ -77,9 +77,9 @@ public class SSLImport implements Serializable {
 			String adres = endPointAdres.toLowerCase(Locale.ENGLISH);
 			if (adres.indexOf("https:") >= 0) {
 				boolean sil = servisURLList == null;
-				if (sil)  
+				if (sil)
 					servisURLList = new ArrayList<String>();
- 				kokSertifikaImport();
+				kokSertifikaImport();
 				String str = endPointAdres.substring(8);
 				String endPoint = (str.indexOf("https") < 0 ? "https://" : "") + str;
 				if (!servisURLList.contains(endPoint)) {
@@ -208,7 +208,7 @@ public class SSLImport implements Serializable {
 			if (devam) {
 				// Add the certificate
 				ks.setCertificateEntry(alias, cert);
-				logger.info(alias + " Certificate is add "+ PdksUtil.getCurrentTimeStampStr());
+				logger.info(alias + " Certificate is add " + PdksUtil.getCurrentTimeStampStr());
 				// Save the new keystore contents
 				guncelle = Boolean.TRUE;
 			}
@@ -217,7 +217,7 @@ public class SSLImport implements Serializable {
 		if (guncelle)
 			try {
 				keyStoreKaydet(keystore_pass, ks);
-				logger.info(" Certificate is update "+ PdksUtil.getCurrentTimeStampStr());
+				logger.info(" Certificate is update " + PdksUtil.getCurrentTimeStampStr());
 			} catch (Exception e) {
 				logger.error(" Certificate is guncelle hata " + e);
 			}
@@ -300,7 +300,7 @@ public class SSLImport implements Serializable {
 			if (dirs != null) {
 				for (int i = 0; i < dirs.length; i++) {
 					File file = dirs[i];
-					if (!file.isDirectory()) {
+					if (file.isFile() && file.getName().toLowerCase().endsWith(".crt")) {
 						String dosyaAdi = PdksUtil.replaceAll(file.getName(), ".", "_");
 						InputStream in = new ByteArrayInputStream(PdksUtil.getFileByteArray(file));
 						try {
