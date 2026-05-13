@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -104,20 +105,25 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	private Date bugun;
 
-	public void mailGonder(List<ServiceData> mailList, Session session) {
+	/**
+	 * @param mailList
+	 * @param session
+	 */
+	public void mailDataGonder(List<ServiceData> mailList, Session session) {
 		if (mailList == null)
 			mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
 		if (mailList.isEmpty() == false) {
 			Gson gson = new Gson();
 			boolean flush = false;
-			for (ServiceData serviceData : mailList) {
+			for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
+				ServiceData serviceData = (ServiceData) iterator.next();
+
 				List<LinkedTreeMap<String, Object>> paramList = null, veriler = null;
 				String parametreJSON = serviceData.getInputData();
 				String dataJSON = serviceData.getOutputData();
 				try {
 					paramList = gson.fromJson(parametreJSON, List.class);
 				} catch (Exception e) {
-					// TODO: handle exception
 				}
 				String baslik = "";
 				try {
@@ -401,6 +407,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						serviceData.setOlusturmaTarihi(new Date());
 						session.saveOrUpdate(serviceData);
 						flush = true;
+						iterator.remove();
 					} catch (Exception e) {
 						logger.error(e);
 					}
@@ -476,7 +483,10 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				if (mailList.isEmpty() == false) {
 					if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 						Thread.sleep(saniye * 1000);
-						mailGonder(mailList, session);
+						logger.info("Sistem mailleri gönderiliyor in " + PdksUtil.getCurrentTimeStampStr());
+						mailDataGonder(mailList, session);
+						if (mailList.isEmpty())
+							logger.info("Sistem mailleri gönderiliyor out " + PdksUtil.getCurrentTimeStampStr());
 					}
 				}
 			} catch (Exception e) {
