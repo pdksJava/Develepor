@@ -507,6 +507,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							logger.info("Sistem mailleri gönderiliyor out " + PdksUtil.getCurrentTimeStampStr());
 					}
 				}
+				mailList = null;
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n" + e.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());
 				e.printStackTrace();
