@@ -449,7 +449,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			Session session = null;
 			int saniye = 5;
 			try {
-				List<ServiceData> mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
 				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 					Calendar cal = Calendar.getInstance();
 					bugun = cal.getTime();
@@ -498,9 +497,10 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 				} else
 					saniye = 15;
+				Thread.sleep(saniye * 1000);
+				List<ServiceData> mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
 				if (mailList.isEmpty() == false) {
 					if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
-						Thread.sleep(saniye * 1000);
 						logger.info("Sistem mailleri gönderiliyor in " + PdksUtil.getCurrentTimeStampStr());
 						mailDataGonder(mailList, session);
 						if (mailList.isEmpty())
