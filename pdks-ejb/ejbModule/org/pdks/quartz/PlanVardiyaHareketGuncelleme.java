@@ -361,7 +361,11 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 										} else {
 											try {
 												Double d = new Double(veri.toString());
-												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddTutar : styleEvenTutar).setCellValue(d);
+												Long l = d.longValue();
+												if (d.doubleValue() > l.longValue())
+													ExcelUtil.getCell(sheet, row, col++, renk ? styleOddTutar : styleEvenTutar).setCellValue(d);
+												else
+													ExcelUtil.getCell(sheet, row, col++, renk ? styleOddRight : styleEvenRight).setCellValue(l);
 											} catch (Exception e) {
 												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddRight : styleEvenRight).setCellValue(PdksUtil.numericValueFormatStr(veri, null));
 											}
@@ -418,6 +422,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			setCalisiyor(Boolean.TRUE);
 			logger.debug("planVardiyaHareketGuncelleme in " + PdksUtil.getCurrentTimeStampStr());
 			Session session = null;
+			int saniye = 5;
 			try {
 				List<ServiceData> mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
 				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
@@ -465,15 +470,14 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 						}
 					}
-					if (mailList.isEmpty() == false) {
-						int saniye = 1;
+
+				} else
+					saniye = 15;
+				if (mailList.isEmpty() == false) {
+					if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 						Thread.sleep(saniye * 1000);
 						mailGonder(mailList, session);
 					}
-				} else if (mailList.isEmpty() == false) {
-					int saniye = 1;
-					Thread.sleep(saniye * 1000);
-					mailGonder(mailList, session);
 				}
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n" + e.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());
