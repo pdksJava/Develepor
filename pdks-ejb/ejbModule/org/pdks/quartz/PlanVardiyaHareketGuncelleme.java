@@ -113,6 +113,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		if (mailList == null)
 			mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
 		if (mailList.isEmpty() == false) {
+			String jsonTarih = "yyyy-MM-dd'T'HH:mm:ss";
 			Gson gson = new Gson();
 			boolean flush = false;
 			for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
@@ -237,7 +238,15 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 									sb.append("<tr class='" + (renk ? "odd" : "even") + "'>");
 									for (String key : baslikMap.keySet()) {
 										Object veri = linkedHashMap.containsKey(key) ? linkedHashMap.get(key) : null;
+										String alignStr = "", str = "";
 										if (veri != null) {
+											if (alanDurum.containsKey(key)) {
+												str = alanDurum.get(key);
+												if (str.equalsIgnoreCase("c") || str.equalsIgnoreCase("d") || str.equalsIgnoreCase("t") || str.equalsIgnoreCase("dt"))
+													alignStr = " align='center'";
+												else if (str.equalsIgnoreCase("r"))
+													alignStr = " align='rigth'";
+											}
 											if (veri instanceof String == false) {
 												try {
 													Object value = PdksUtil.numericValueFormatStr(veri, null);
@@ -247,17 +256,21 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 													// TODO: handle exception
 												}
 
+											} else if (str.equalsIgnoreCase("d") || str.equalsIgnoreCase("t") || str.equalsIgnoreCase("dt")) {
+												Date tarih = PdksUtil.convertToJavaDate((String) veri, jsonTarih);
+												if (tarih != null) {
+													if (str.equalsIgnoreCase("dt"))
+														veri = PdksUtil.convertToDateString(tarih, PdksUtil.getDateTimeFormat());
+													else if (str.equalsIgnoreCase("d"))
+														veri = PdksUtil.convertToDateString(tarih, PdksUtil.getDateFormat());
+													else
+														veri = PdksUtil.convertToDateString(tarih, PdksUtil.getSaatFormat());
+												}
+
 											}
 
 										}
-										String alignStr = "";
-										if (alanDurum.containsKey(key)) {
-											String str = alanDurum.get(key);
-											if (str.equalsIgnoreCase("c") || str.equalsIgnoreCase("d") || str.equalsIgnoreCase("t") || str.equalsIgnoreCase("dt"))
-												alignStr = " align='center'";
-											else if (str.equalsIgnoreCase("r"))
-												alignStr = " align='rigth'";
-										}
+
 										sb.append("<td" + alignStr + ">" + (veri != null ? veri : "") + "</td>");
 									}
 									sb.append("</tr>");
@@ -347,7 +360,12 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 										if (veri == null)
 											veri = "";
+										if (strOrj.equalsIgnoreCase("dt") || strOrj.equalsIgnoreCase("t") || strOrj.equalsIgnoreCase("d")) {
+											Date tarih = PdksUtil.convertToJavaDate((String) veri, jsonTarih);
+											if (tarih != null)
+												veri = tarih;
 
+										}
 										if (veri instanceof String) {
 											String str = (String) veri;
 											if (alignStr.equals("c"))
