@@ -416,14 +416,18 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							veriMap.put("homeRenderer", null);
 							veriMap.put("sayfaAdi", null);
 							MailStatu mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
-							if (mailStatu != null && mailStatu.getDurum())
+							if (mailStatu != null && mailStatu.getDurum()) {
 								logger.info(mail.getSubject() + " mail gönderildi. ");
+								session.delete(serviceData);
+							}
+								
 						} else {
-
+							 serviceData.setFonksiyonAdi("mailDosyaGonderilmedi");
+							 serviceData.setOlusturmaTarihi(new Date());
+							 session.saveOrUpdate(serviceData);
 						}
-						serviceData.setFonksiyonAdi("mailDosyaGonderildi");
-						serviceData.setOlusturmaTarihi(new Date());
-						session.saveOrUpdate(serviceData);
+		
+						
 						flush = true;
 						iterator.remove();
 					} catch (Exception e) {
