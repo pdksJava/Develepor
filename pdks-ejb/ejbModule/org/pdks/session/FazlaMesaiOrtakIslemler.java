@@ -1573,7 +1573,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 				}
 				if (denklestirmeOrgDonemKodu != null && donem.longValue() >= denklestirmeOrgDonemKodu.longValue() && Long.parseLong(str) <= donem.longValue()) {
-					personelDinamikAlanlar = PdksUtil.getAktifList(ortakIslemler.getSQLTanimListByTipKodu(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, null, session));
+					personelDinamikAlanlar = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_PERSONEL_DINAMIK_TANIM, Tanim.class, session);
 					personelDinamikAlanMap = ortakIslemler.getPersonelDinamikAlanMap(donemPerList, personelDinamikAlanlar, session);
 					orgMap = pdksEntityController.getSQLParamByFieldMap(PersonelDenklestirmeOrganizasyon.TABLE_NAME, PersonelDenklestirmeOrganizasyon.COLUMN_NAME_PERSONEL_DENKLESTIRME, dataIdList, PersonelDenklestirmeOrganizasyon.class, "getPersonelDenklestirmeId", false, session);
 					List idList = new ArrayList();
@@ -2002,7 +2002,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 							for (Tanim alan : personelDinamikAlanlar) {
 								String key = PersonelDinamikAlan.getKey(personel, alan);
 								if (personelDinamikAlanMap.containsKey(key)) {
-									PersonelDinamikAlan dinamikAlan = personelDinamikAlanMap.get(key);
+									PersonelDinamikAlan pda = personelDinamikAlanMap.get(key);
 									PersonelDenklestirmeOrganizasyonDetay organizasyonDetay = null;
 									key = PersonelDenklestirmeOrganizasyonDetay.getKey(denklestirmeOrganizasyon, alan);
 									if (orgDetayMap.containsKey(key)) {
@@ -2011,18 +2011,19 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 										orgDetayMap.remove(key);
 									} else {
 										organizasyonDetay = new PersonelDenklestirmeOrganizasyonDetay(denklestirmeOrganizasyon, alan);
+										organizasyonDetay.setDegisti(pda.getTanimDeger() != null);
 									}
-									organizasyonDetay.setDeger(dinamikAlan.getTanimDeger());
+ 									organizasyonDetay.setDeger(pda.getTanimDeger());
 									if (organizasyonDetay.getId() != null || organizasyonDetay.getDeger() != null) {
-										if (organizasyonDetay.getId() == null || organizasyonDetay.isDegisti()) {
-											session.saveOrUpdate(organizasyonDetay);
-											flush = true;
+										if (organizasyonDetay.isDegisti()) {
+											try {
+												session.saveOrUpdate(organizasyonDetay);
+												flush = true;
+											} catch (Exception e) {
+											}
+
 										}
 									}
-								} else {
-									key = PersonelDenklestirmeOrganizasyonDetay.getKey(denklestirmeOrganizasyon, alan);
-									if (orgDetayMap.containsKey(key))
-										orgDetayMap.remove(key);
 								}
 							}
 						}

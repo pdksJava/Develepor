@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -104,20 +105,26 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	private Date bugun;
 
-	public void mailGonder(List<ServiceData> mailList, Session session) {
+	/**
+	 * @param mailList
+	 * @param session
+	 */
+	public void mailDataGonder(List<ServiceData> mailList, Session session) {
 		if (mailList == null)
 			mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
 		if (mailList.isEmpty() == false) {
+			String jsonTarih = "yyyy-MM-dd'T'HH:mm:ss";
 			Gson gson = new Gson();
 			boolean flush = false;
-			for (ServiceData serviceData : mailList) {
+			for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
+				ServiceData serviceData = (ServiceData) iterator.next();
+
 				List<LinkedTreeMap<String, Object>> paramList = null, veriler = null;
 				String parametreJSON = serviceData.getInputData();
 				String dataJSON = serviceData.getOutputData();
 				try {
 					paramList = gson.fromJson(parametreJSON, List.class);
 				} catch (Exception e) {
-					// TODO: handle exception
 				}
 				String baslik = "";
 				try {
@@ -231,7 +238,15 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 									sb.append("<tr class='" + (renk ? "odd" : "even") + "'>");
 									for (String key : baslikMap.keySet()) {
 										Object veri = linkedHashMap.containsKey(key) ? linkedHashMap.get(key) : null;
+										String alignStr = "", str = "";
 										if (veri != null) {
+											if (alanDurum.containsKey(key)) {
+												str = alanDurum.get(key);
+												if (str.equalsIgnoreCase("c") || str.equalsIgnoreCase("d") || str.equalsIgnoreCase("t") || str.equalsIgnoreCase("dt"))
+													alignStr = " align='center'";
+												else if (str.equalsIgnoreCase("r"))
+													alignStr = " align='rigth'";
+											}
 											if (veri instanceof String == false) {
 												try {
 													Object value = PdksUtil.numericValueFormatStr(veri, null);
@@ -241,17 +256,21 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 													// TODO: handle exception
 												}
 
+											} else if (str.equalsIgnoreCase("d") || str.equalsIgnoreCase("t") || str.equalsIgnoreCase("dt")) {
+												Date tarih = PdksUtil.convertToJavaDate((String) veri, jsonTarih);
+												if (tarih != null) {
+													if (str.equalsIgnoreCase("dt"))
+														veri = PdksUtil.convertToDateString(tarih, PdksUtil.getDateTimeFormat());
+													else if (str.equalsIgnoreCase("d"))
+														veri = PdksUtil.convertToDateString(tarih, PdksUtil.getDateFormat());
+													else
+														veri = PdksUtil.convertToDateString(tarih, PdksUtil.getSaatFormat());
+												}
+
 											}
 
 										}
-										String alignStr = "";
-										if (alanDurum.containsKey(key)) {
-											String str = alanDurum.get(key);
-											if (str.equalsIgnoreCase("c") || str.equalsIgnoreCase("d") || str.equalsIgnoreCase("t") || str.equalsIgnoreCase("dt"))
-												alignStr = " align='center'";
-											else if (str.equalsIgnoreCase("r"))
-												alignStr = " align='rigth'";
-										}
+
 										sb.append("<td" + alignStr + ">" + (veri != null ? veri : "") + "</td>");
 									}
 									sb.append("</tr>");
@@ -341,7 +360,12 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 										if (veri == null)
 											veri = "";
+										if (strOrj.equalsIgnoreCase("dt") || strOrj.equalsIgnoreCase("t") || strOrj.equalsIgnoreCase("d")) {
+											Date tarih = PdksUtil.convertToJavaDate((String) veri, jsonTarih);
+											if (tarih != null)
+												veri = tarih;
 
+										}
 										if (veri instanceof String) {
 											String str = (String) veri;
 											if (alignStr.equals("c"))
@@ -361,7 +385,11 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 										} else {
 											try {
 												Double d = new Double(veri.toString());
-												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddTutar : styleEvenTutar).setCellValue(d);
+												Long l = d.longValue();
+												if (d.doubleValue() > l.longValue())
+													ExcelUtil.getCell(sheet, row, col++, renk ? styleOddTutar : styleEvenTutar).setCellValue(d);
+												else
+													ExcelUtil.getCell(sheet, row, col++, renk ? styleOddRight : styleEvenRight).setCellValue(l);
 											} catch (Exception e) {
 												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddRight : styleEvenRight).setCellValue(PdksUtil.numericValueFormatStr(veri, null));
 											}
@@ -388,15 +416,20 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							veriMap.put("homeRenderer", null);
 							veriMap.put("sayfaAdi", null);
 							MailStatu mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
-							if (mailStatu != null && mailStatu.getDurum())
+							if (mailStatu != null && mailStatu.getDurum()) {
 								logger.info(mail.getSubject() + " mail gönderildi. ");
+								session.delete(serviceData);
+							}
+								
 						} else {
-
+							 serviceData.setFonksiyonAdi("mailDosyaGonderilmedi");
+							 serviceData.setOlusturmaTarihi(new Date());
+							 session.saveOrUpdate(serviceData);
 						}
-						serviceData.setFonksiyonAdi("mailDosyaGonderildi");
-						serviceData.setOlusturmaTarihi(new Date());
-						session.saveOrUpdate(serviceData);
+		
+						
 						flush = true;
+						iterator.remove();
 					} catch (Exception e) {
 						logger.error(e);
 					}
@@ -418,8 +451,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			setCalisiyor(Boolean.TRUE);
 			logger.debug("planVardiyaHareketGuncelleme in " + PdksUtil.getCurrentTimeStampStr());
 			Session session = null;
+			int saniye = 5;
 			try {
-				List<ServiceData> mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
 				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 					Calendar cal = Calendar.getInstance();
 					bugun = cal.getTime();
@@ -465,16 +498,20 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 						}
 					}
-					if (mailList.isEmpty() == false) {
-						int saniye = 1;
-						Thread.sleep(saniye * 1000);
-						mailGonder(mailList, session);
+
+				} else
+					saniye = 15;
+				Thread.sleep(saniye * 1000);
+				List<ServiceData> mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
+				if (mailList.isEmpty() == false) {
+					if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
+						logger.info("Sistem mailleri gönderiliyor in " + PdksUtil.getCurrentTimeStampStr());
+						mailDataGonder(mailList, session);
+						if (mailList.isEmpty())
+							logger.info("Sistem mailleri gönderiliyor out " + PdksUtil.getCurrentTimeStampStr());
 					}
-				} else if (mailList.isEmpty() == false) {
-					int saniye = 1;
-					Thread.sleep(saniye * 1000);
-					mailGonder(mailList, session);
 				}
+				mailList = null;
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n" + e.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());
 				e.printStackTrace();
