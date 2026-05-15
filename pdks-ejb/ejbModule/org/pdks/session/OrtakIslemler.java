@@ -23649,58 +23649,53 @@ public class OrtakIslemler implements Serializable {
 			PersonelView personelView = null;
 			for (VardiyaGun pdksVardiyaGun : vardiyaList) {
 				Vardiya vardiya = pdksVardiyaGun.isAyinGunu() && pdksVardiyaGun.getVardiya() != null ? pdksVardiyaGun.getIslemVardiya() : null;
-				if (vardiya == null || !vardiya.isCalisma() || pdksVardiyaGun.getIzin() != null || vardiya.getVardiyaBitZaman().after(bugun)) {
+				if (vardiya == null || vardiya.isCalisma() == false || pdksVardiyaGun.getIzin() != null)
 					continue;
-				}
-
-				if (pdksVardiyaGun.getHareketler() == null || pdksVardiyaGun.getHareketler().isEmpty()) {
-					if (vardiya != null && vardiya.isCalisma() && bugun.after(vardiya.getVardiyaBitZaman())) {
-						if (girisKapi == null) {
-							fields.clear();
-							fields.put("kapi.durum", Boolean.TRUE);
-							fields.put("kapi.pdks", Boolean.TRUE);
-							fields.put("kapi.tipi.kodu", Kapi.TIPI_KODU_GIRIS);
-							if (session != null)
-								fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-							girisKapi = getKapiView(fields);
-						}
-						if (cikisKapi == null) {
-							fields.clear();
-							fields.put("kapi.durum", Boolean.TRUE);
-							fields.put("kapi.pdks", Boolean.TRUE);
-							fields.put("kapi.tipi.kodu", Kapi.TIPI_KODU_CIKIS);
-							if (session != null)
-								fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-							cikisKapi = getKapiView(fields);
-						}
-						if (personelView == null) {
-							Personel personel = pdksVardiyaGun.getPersonel();
-							PersonelKGS personelKGS = personel.getPersonelKGS();
-							personelView = personelKGS.getPersonelView();
-						}
-						Long hareketGirisId = pdksEntityController.hareketEkle(girisKapi, personelView, vardiya.getVardiyaBasZaman(), guncelleyen, neden.getId(), "", session);
-						if (hareketGirisId != null) {
-							HareketKGS hareketGiris = getManuelHareketPDKS(hareketGirisId, session), hareketCikis = null;
-							Long hareketCikisId = pdksEntityController.hareketEkle(cikisKapi, personelView, vardiya.getVardiyaBitZaman(), guncelleyen, neden.getId(), "", session);
-							if (hareketCikisId != null)
-								hareketCikis = getManuelHareketPDKS(hareketCikisId, session);
-							if (hareketGiris != null)
-								pdksVardiyaGun.addHareket(hareketGiris, Boolean.TRUE);
-							if (hareketCikis != null)
-								pdksVardiyaGun.addHareket(hareketCikis, Boolean.TRUE);
-							if (flush == false)
-								flush = hareketGiris != null || hareketCikis != null;
-						}
-
+				Date cikisZaman = vardiya.getVardiyaBitZaman();
+				Date bitTarih = vardiya.getVardiyaTelorans2BitZaman() != null && vardiya.getVardiyaTelorans2BitZaman().after(cikisZaman) ? vardiya.getVardiyaTelorans2BitZaman() : cikisZaman;
+				if (bitTarih != null && bugun.after(bitTarih)) {
+					if (girisKapi == null) {
+						fields.clear();
+						fields.put("kapi.durum", Boolean.TRUE);
+						fields.put("kapi.pdks", Boolean.TRUE);
+						fields.put("kapi.tipi.kodu", Kapi.TIPI_KODU_GIRIS);
+						if (session != null)
+							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+						girisKapi = getKapiView(fields);
 					}
-
-				}
-			}
+					if (cikisKapi == null) {
+						fields.clear();
+						fields.put("kapi.durum", Boolean.TRUE);
+						fields.put("kapi.pdks", Boolean.TRUE);
+						fields.put("kapi.tipi.kodu", Kapi.TIPI_KODU_CIKIS);
+						if (session != null)
+							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+						cikisKapi = getKapiView(fields);
+					}
+					if (personelView == null) {
+						Personel personel = pdksVardiyaGun.getPersonel();
+						PersonelKGS personelKGS = personel.getPersonelKGS();
+						personelView = personelKGS.getPersonelView();
+					}
+					Long hareketGirisId = pdksEntityController.hareketEkle(girisKapi, personelView, vardiya.getVardiyaBasZaman(), guncelleyen, neden.getId(), "", session);
+					if (hareketGirisId != null) {
+						HareketKGS hareketGiris = getManuelHareketPDKS(hareketGirisId, session), hareketCikis = null;
+						Long hareketCikisId = pdksEntityController.hareketEkle(cikisKapi, personelView, cikisZaman, guncelleyen, neden.getId(), "", session);
+						if (hareketCikisId != null)
+							hareketCikis = getManuelHareketPDKS(hareketCikisId, session);
+						if (hareketGiris != null)
+							pdksVardiyaGun.addHareket(hareketGiris, Boolean.TRUE);
+						if (hareketCikis != null)
+							pdksVardiyaGun.addHareket(hareketCikis, Boolean.TRUE);
+						if (flush == false)
+							flush = hareketGiris != null || hareketCikis != null;
+					}
+ 				}
+ 			}
 			if (flush)
 				session.flush();
 		}
-
-	}
+ 	}
 
 	/**
 	 * @param vardiyaGun
