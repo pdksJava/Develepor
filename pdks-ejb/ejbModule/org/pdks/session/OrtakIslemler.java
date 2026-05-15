@@ -10569,7 +10569,7 @@ public class OrtakIslemler implements Serializable {
 						for (PersonelDinamikAlan personelDinamikAlan : alanList) {
 							if (personelDinamikAlan.isCheckBox() && personelDinamikAlan.isDurumSecili()) {
 								Tanim tanim = personelDinamikAlan.getAlan();
-								if (tanim.getKodu().equals(PersonelDinamikAlan.ALAN_KART_OKUTMUYOR))
+								if (tanim.getDurum() && tanim.getKodu().equals(PersonelDinamikAlan.ALAN_KART_OKUTMUYOR))
 									personelDenklestirmeMap.get(personelDinamikAlan.getPdksPersonel().getId()).setOtomatikKartEkle(tanim);
 
 							}
@@ -23640,7 +23640,6 @@ public class OrtakIslemler implements Serializable {
 	 */
 	@Transactional
 	public void otomatikHareketEkle(Tanim neden, List<VardiyaGun> vardiyaList, User guncelleyen, Session session) {
-
 		if (vardiyaList != null && vardiyaList.isEmpty() == false) {
 			HashMap<String, KapiView> manuelKapiMap = getManuelKapiMap(null, session);
 			KapiView girisKapi = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS), cikisKapi = manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS);

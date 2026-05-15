@@ -3413,16 +3413,22 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				Tanim tanim = (Tanim) iterator.next();
 				if (tanim.getParentTanim() != null) {
 					String kodu = tanim.getParentTanim().getErpKodu();
+					boolean sil = false;
 					if (PdksUtil.hasStringValue(kodu)) {
-						boolean sil = true;
+						sil = true;
 						for (Long l : perDepList) {
 							if (kodu.contains(l.toString()))
 								sil = false;
-
 						}
-						if (sil)
-							iterator.remove();
 					}
+					if (sil == false && perDepList.size() == 1) {
+						Long l = perDepList.get(0);
+						if (l.equals(1L) == false)
+							sil = tanim.getKodu().startsWith("digerTanimAlan");
+
+					}
+					if (sil)
+						iterator.remove();
 				}
 
 			}
