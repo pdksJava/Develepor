@@ -52,6 +52,7 @@ public class PersonelDenklestirmeTasiyici extends BaseObject {
 	private List<VardiyaGun> vardiyalar;
 	private ArrayList<PersonelDenklestirmeTasiyici> personelDenklestirmeleri;
 	private boolean goster = Boolean.FALSE;
+	private Tanim otomatikKartEkle;
 	private Object sapTable;
 	private VardiyaGun sonVardiyaGun, oncekiVardiyaGun;
 	private CalismaModeli calismaModeli;
@@ -475,8 +476,17 @@ public class PersonelDenklestirmeTasiyici extends BaseObject {
 		this.personelDenklestirme = personelDenklestirme;
 	}
 
+	public Tanim getOtomatikKartEkle() {
+		return otomatikKartEkle;
+	}
+
+	public void setOtomatikKartEkle(Tanim otomatikKartEkle) {
+		this.otomatikKartEkle = otomatikKartEkle;
+	}
+
 	@Transient
 	public String getTableName() {
 		return null;
 	}
+
 }

@@ -3357,25 +3357,43 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				}
 				if (!perIdList.isEmpty())
 					getPersonelDinamikMap(perIdList);
+				List<Long> perDepList = new ArrayList<Long>();
+				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+					PersonelView personelView = (PersonelView) iterator.next();
+					if (personelView.getPdksPersonel() != null && personelView.getPdksPersonel().getSirket() != null) {
+						Long depId = personelView.getPdksPersonel().getSirket().getDepartman() != null ? personelView.getPdksPersonel().getSirket().getDepartman().getId() : null;
+						if (depId != null && perDepList.contains(depId) == false)
+							perDepList.add(depId);
+					}
 
-				if (!personelDinamikMap.isEmpty()) {
-					dinamikTanimList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, session);
-					dinamikDurumList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_DURUM, session);
-					dinamikSayisalList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_SAYISAL, session);
-				} else {
-					if (dinamikTanimList == null)
-						dinamikTanimList = new ArrayList<Tanim>();
-					else
-						dinamikTanimList.clear();
-					if (dinamikDurumList == null)
-						dinamikDurumList = new ArrayList<Tanim>();
-					else
-						dinamikDurumList.clear();
-					if (dinamikSayisalList == null)
-						dinamikSayisalList = new ArrayList<Tanim>();
-					else
-						dinamikSayisalList.clear();
 				}
+				dinamikDurumList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_DURUM, session);
+				dinamikTanimList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, session);
+				dinamikSayisalList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_SAYISAL, session);
+				if (perDepList.isEmpty() == false) {
+					dinamikAlanKontrol(perDepList, dinamikDurumList);
+					dinamikAlanKontrol(perDepList, dinamikTanimList);
+					dinamikAlanKontrol(perDepList, dinamikSayisalList);
+				}
+
+				// if (!personelDinamikMap.isEmpty()) {
+				// dinamikTanimList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_TANIM, session);
+				// dinamikDurumList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_DURUM, session);
+				// dinamikSayisalList = ortakIslemler.getPersonelTanimList(Tanim.TIPI_PERSONEL_DINAMIK_SAYISAL, session);
+				// } else {
+				// if (dinamikTanimList == null)
+				// dinamikTanimList = new ArrayList<Tanim>();
+				// else
+				// dinamikTanimList.clear();
+				// if (dinamikDurumList == null)
+				// dinamikDurumList = new ArrayList<Tanim>();
+				// else
+				// dinamikDurumList.clear();
+				// if (dinamikSayisalList == null)
+				// dinamikSayisalList = new ArrayList<Tanim>();
+				// else
+				// dinamikSayisalList.clear();
+				// }
 
 			}
 		} catch (Exception ex) {
@@ -3383,6 +3401,33 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			ex.printStackTrace();
 		}
 		return map;
+	}
+
+	/**
+	 * @param perDepList
+	 * @param list
+	 */
+	private void dinamikAlanKontrol(List<Long> perDepList, List<Tanim> list) {
+		if (list != null && list.isEmpty() == false) {
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				Tanim tanim = (Tanim) iterator.next();
+				if (tanim.getParentTanim() != null) {
+					String kodu = tanim.getParentTanim().getErpKodu();
+					if (PdksUtil.hasStringValue(kodu)) {
+						boolean sil = true;
+						for (Long l : perDepList) {
+							if (kodu.contains(l.toString()))
+								sil = false;
+
+						}
+						if (sil)
+							iterator.remove();
+					}
+				}
+
+			}
+		}
+
 	}
 
 	/**
@@ -4841,8 +4886,13 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					Tanim perBolum = seciliPersonel.getEkSaha3();
 					for (Iterator iterator = bolumList.iterator(); iterator.hasNext();) {
 						Tanim bolum = (Tanim) iterator.next();
-						if (bolum.getKodu().equals("YOK") || (perBolum != null && perBolum.getId().equals(bolum.getId())) || seciliKullanici.getYetkiliBolumler().contains(bolum))
-							iterator.remove();
+						try {
+							if (bolum.getKodu().equals("YOK") || (perBolum != null && perBolum.getId().equals(bolum.getId())) || (seciliKullanici.getYetkiliBolumler() != null && seciliKullanici.getYetkiliBolumler().contains(bolum)))
+								iterator.remove();
+						} catch (Exception e) {
+							logger.debug("");
+						}
+
 					}
 					if (bolumList.size() > 1)
 						bolumList = PdksUtil.sortTanimList(null, bolumList);

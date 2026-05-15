@@ -335,7 +335,7 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 				if (!yaz)
 					iterator.remove();
 			}
-			ortakIslemler.otomatikHareketEkle(new ArrayList<VardiyaGun>(vardiyalarMap.values()), session);
+	//		ortakIslemler.otomatikHareketEkle(new ArrayList<VardiyaGun>(vardiyalarMap.values()), session);
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();

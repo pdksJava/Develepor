@@ -105,6 +105,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	private Date bugun;
 
+	private String jsonTarih = "yyyy-MM-dd'T'HH:mm:ss", konu;
+
 	/**
 	 * @param mailList
 	 * @param session
@@ -113,7 +115,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		if (mailList == null)
 			mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
 		if (mailList.isEmpty() == false) {
-			String jsonTarih = "yyyy-MM-dd'T'HH:mm:ss";
 			Gson gson = new Gson();
 			boolean flush = false;
 			for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
@@ -138,12 +139,11 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						}
 					}
 				} catch (Exception e) {
-					// TODO: handle exception
 				}
 				if (paramList != null && veriler != null) {
 					try {
 						LinkedTreeMap<String, Object> params = paramList.get(0);
-						String konu = (String) params.get("konu");
+						konu = (String) params.get("konu");
 						boolean tabloYazDurum = false;
 						List<String> toList = new ArrayList<String>(), ccList = new ArrayList<String>(), bccList = new ArrayList<String>();
 						List<String> mailAdres = new ArrayList<String>();
@@ -213,7 +213,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 												if (PdksUtil.hasStringValue(str))
 													baslikStr = str;
 											} catch (Exception e) {
-												// TODO: handle exception
 											}
 
 										}
@@ -253,7 +252,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 													if (value != null)
 														veri = value;
 												} catch (Exception e) {
-													// TODO: handle exception
 												}
 
 											} else if (str.equalsIgnoreCase("d") || str.equalsIgnoreCase("t") || str.equalsIgnoreCase("dt")) {
@@ -316,118 +314,34 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							ccList = null;
 							bccList = null;
 							if (params.containsKey("dosyaAdi")) {
-								int col = 0, row = 0;
-								Workbook wb = new XSSFWorkbook();
-								CellStyle header = null;
-								CellStyle styleOdd = null, styleOddCenter = null, styleOddDate = null, styleOddDateTime = null, styleOddTime = null, styleOddRight = null, styleOddTutar = null;
-								CellStyle styleEven = null, styleEvenCenter = null, styleEvenDate = null, styleEvenDateTime = null, styleEvenTime = null, styleEvenRight = null, styleEvenTutar = null;
-								header = ExcelUtil.getStyleHeader(wb);
-								styleOdd = ExcelUtil.getStyleOdd(null, wb);
-								styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
-								styleOddRight = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_RIGHT, wb);
-								styleOddDate = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATE, wb);
-								styleOddDateTime = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATETIME, wb);
-								styleOddTime = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_TIME, wb);
-								styleOddTutar = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_TUTAR, wb);
-								styleEven = ExcelUtil.getStyleEven(null, wb);
-								styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
-								styleEvenRight = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_RIGHT, wb);
-								styleEvenDate = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATE, wb);
-								styleEvenDateTime = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATETIME, wb);
-								styleEvenTime = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_TIME, wb);
-								styleEvenTutar = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_TUTAR, wb);
-								Sheet sheet = ExcelUtil.createSheet(wb, konu, false);
-								for (String key : baslikMap.keySet()) {
-									ExcelUtil.getCell(sheet, row, col++, header).setCellValue(baslikMap.get(key));
-
+								byte[] icerik = null;
+								try {
+									icerik = getExcelDosya(veriler, alanDurum, baslikMap);
+								} catch (Exception e) {
 								}
-								boolean renk = true;
-								for (LinkedTreeMap<String, Object> linkedHashMap : veriler) {
-									col = 0;
-									++row;
-
-									for (String key : baslikMap.keySet()) {
-										String alignStr = "";
-										String strOrj = "";
-										if (alanDurum.containsKey(key)) {
-											strOrj = alanDurum.get(key);
-											if (strOrj.equalsIgnoreCase("c") || strOrj.equalsIgnoreCase("d") || strOrj.equalsIgnoreCase("t") || strOrj.equalsIgnoreCase("dt"))
-												alignStr = "c";
-											else if (strOrj.equalsIgnoreCase("r"))
-												alignStr = "r";
-										}
-										Object veri = linkedHashMap.containsKey(key) ? linkedHashMap.get(key) : null;
-
-										if (veri == null)
-											veri = "";
-										if (strOrj.equalsIgnoreCase("dt") || strOrj.equalsIgnoreCase("t") || strOrj.equalsIgnoreCase("d")) {
-											Date tarih = PdksUtil.convertToJavaDate((String) veri, jsonTarih);
-											if (tarih != null)
-												veri = tarih;
-
-										}
-										if (veri instanceof String) {
-											String str = (String) veri;
-											if (alignStr.equals("c"))
-												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddCenter : styleEvenCenter).setCellValue(str);
-											else if (alignStr.equals("r"))
-												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddRight : styleEvenRight).setCellValue(str);
-											else
-												ExcelUtil.getCell(sheet, row, col++, renk ? styleOdd : styleEven).setCellValue(str);
-										} else if (veri instanceof Date) {
-											Date tarih = (Date) veri;
-											if (strOrj.equals("dt"))
-												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddDateTime : styleEvenDateTime).setCellValue(tarih);
-											else if (alignStr.equals("d"))
-												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddDate : styleEvenDate).setCellValue(tarih);
-											else
-												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddTime : styleEvenTime).setCellValue(tarih);
-										} else {
-											try {
-												Double d = new Double(veri.toString());
-												Long l = d.longValue();
-												if (d.doubleValue() > l.longValue())
-													ExcelUtil.getCell(sheet, row, col++, renk ? styleOddTutar : styleEvenTutar).setCellValue(d);
-												else
-													ExcelUtil.getCell(sheet, row, col++, renk ? styleOddRight : styleEvenRight).setCellValue(l);
-											} catch (Exception e) {
-												ExcelUtil.getCell(sheet, row, col++, renk ? styleOddRight : styleEvenRight).setCellValue(PdksUtil.numericValueFormatStr(veri, null));
-											}
-
-										}
-
-									}
-									renk = !renk;
-								}
-								for (int i = 0; i < col; i++)
-									sheet.autoSizeColumn(i);
-								ByteArrayOutputStream baos = new ByteArrayOutputStream();
-								wb.write(baos);
-								String dosyaAdi = (String) params.get("dosyaAdi");
-								MailFile mf = new MailFile();
-								mf.setDisplayName(dosyaAdi);
-								mf.setIcerik(baos.toByteArray());
-								if (mf.getFile() != null || mf.getIcerik() != null)
+								if (icerik != null) {
+									MailFile mf = new MailFile();
+									String dosyaAdi = (String) params.get("dosyaAdi");
+									mf.setDisplayName(dosyaAdi);
+									mf.setIcerik(icerik);
 									mail.getAttachmentFiles().add(mf);
+								}
 							}
 							HashMap<String, Object> veriMap = new HashMap<String, Object>();
 							veriMap.put("temizleTOCCList", true);
 							veriMap.put("mailObject", mail);
-							veriMap.put("homeRenderer", null);
-							veriMap.put("sayfaAdi", null);
 							MailStatu mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
 							if (mailStatu != null && mailStatu.getDurum()) {
 								logger.info(mail.getSubject() + " mail gönderildi. ");
 								session.delete(serviceData);
 							}
-								
+
 						} else {
-							 serviceData.setFonksiyonAdi("mailDosyaGonderilmedi");
-							 serviceData.setOlusturmaTarihi(new Date());
-							 session.saveOrUpdate(serviceData);
+							serviceData.setFonksiyonAdi("mailDosyaGonderilmedi");
+							serviceData.setOlusturmaTarihi(new Date());
+							session.saveOrUpdate(serviceData);
 						}
-		
-						
+
 						flush = true;
 						iterator.remove();
 					} catch (Exception e) {
@@ -441,6 +355,105 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				session.flush();
 		}
 		mailList = null;
+	}
+
+	/**
+	 * @param veriler
+	 * @param alanDurum
+	 * @param baslikMap
+	 * @return
+	 * @throws Exception
+	 */
+	private byte[] getExcelDosya(List<LinkedTreeMap<String, Object>> veriler, LinkedTreeMap<String, String> alanDurum, LinkedHashMap<String, String> baslikMap) throws Exception {
+		int col = 0, row = 0;
+		Workbook wb = new XSSFWorkbook();
+		CellStyle header = null;
+		CellStyle styleOdd = null, styleOddCenter = null, styleOddDate = null, styleOddDateTime = null, styleOddTime = null, styleOddRight = null, styleOddTutar = null;
+		CellStyle styleEven = null, styleEvenCenter = null, styleEvenDate = null, styleEvenDateTime = null, styleEvenTime = null, styleEvenRight = null, styleEvenTutar = null;
+		header = ExcelUtil.getStyleHeader(wb);
+		styleOdd = ExcelUtil.getStyleOdd(null, wb);
+		styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
+		styleOddRight = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_RIGHT, wb);
+		styleOddDate = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATE, wb);
+		styleOddDateTime = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATETIME, wb);
+		styleOddTime = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_TIME, wb);
+		styleOddTutar = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_TUTAR, wb);
+		styleEven = ExcelUtil.getStyleEven(null, wb);
+		styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
+		styleEvenRight = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_RIGHT, wb);
+		styleEvenDate = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATE, wb);
+		styleEvenDateTime = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATETIME, wb);
+		styleEvenTime = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_TIME, wb);
+		styleEvenTutar = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_TUTAR, wb);
+		Sheet sheet = ExcelUtil.createSheet(wb, konu, false);
+		for (String key : baslikMap.keySet()) {
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(baslikMap.get(key));
+
+		}
+		boolean renk = true;
+		for (LinkedTreeMap<String, Object> linkedHashMap : veriler) {
+			col = 0;
+			++row;
+
+			for (String key : baslikMap.keySet()) {
+				String alignStr = "";
+				String strOrj = "";
+				if (alanDurum.containsKey(key)) {
+					strOrj = alanDurum.get(key);
+					if (strOrj.equalsIgnoreCase("c") || strOrj.equalsIgnoreCase("d") || strOrj.equalsIgnoreCase("t") || strOrj.equalsIgnoreCase("dt"))
+						alignStr = "c";
+					else if (strOrj.equalsIgnoreCase("r"))
+						alignStr = "r";
+				}
+				Object veri = linkedHashMap.containsKey(key) ? linkedHashMap.get(key) : null;
+
+				if (veri == null)
+					veri = "";
+				if (strOrj.equalsIgnoreCase("dt") || strOrj.equalsIgnoreCase("t") || strOrj.equalsIgnoreCase("d")) {
+					Date tarih = PdksUtil.convertToJavaDate((String) veri, jsonTarih);
+					if (tarih != null)
+						veri = tarih;
+
+				}
+				if (veri instanceof String) {
+					String str = (String) veri;
+					if (alignStr.equals("c"))
+						ExcelUtil.getCell(sheet, row, col++, renk ? styleOddCenter : styleEvenCenter).setCellValue(str);
+					else if (alignStr.equals("r"))
+						ExcelUtil.getCell(sheet, row, col++, renk ? styleOddRight : styleEvenRight).setCellValue(str);
+					else
+						ExcelUtil.getCell(sheet, row, col++, renk ? styleOdd : styleEven).setCellValue(str);
+				} else if (veri instanceof Date) {
+					Date tarih = (Date) veri;
+					if (strOrj.equals("dt"))
+						ExcelUtil.getCell(sheet, row, col++, renk ? styleOddDateTime : styleEvenDateTime).setCellValue(tarih);
+					else if (alignStr.equals("d"))
+						ExcelUtil.getCell(sheet, row, col++, renk ? styleOddDate : styleEvenDate).setCellValue(tarih);
+					else
+						ExcelUtil.getCell(sheet, row, col++, renk ? styleOddTime : styleEvenTime).setCellValue(tarih);
+				} else {
+					try {
+						Double d = new Double(veri.toString());
+						Long l = d.longValue();
+						if (d.doubleValue() > l.longValue())
+							ExcelUtil.getCell(sheet, row, col++, renk ? styleOddTutar : styleEvenTutar).setCellValue(d);
+						else
+							ExcelUtil.getCell(sheet, row, col++, renk ? styleOddRight : styleEvenRight).setCellValue(l);
+					} catch (Exception e) {
+						ExcelUtil.getCell(sheet, row, col++, renk ? styleOddRight : styleEvenRight).setCellValue(PdksUtil.numericValueFormatStr(veri, null));
+					}
+
+				}
+
+			}
+			renk = !renk;
+		}
+		for (int i = 0; i < col; i++)
+			sheet.autoSizeColumn(i);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		wb.write(baos);
+		byte[] icerik = baos.toByteArray();
+		return icerik;
 	}
 
 	@Asynchronous

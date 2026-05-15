@@ -665,7 +665,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								iterator.remove();
 
 						}
-						ortakIslemler.otomatikHareketEkle(new ArrayList<VardiyaGun>(vardiyaMap.values()), session);
+//						ortakIslemler.otomatikHareketEkle(new ArrayList<VardiyaGun>(vardiyaMap.values()), session);
 					} catch (Exception e) {
 						logger.error("PDKS hata in : \n");
 						e.printStackTrace();

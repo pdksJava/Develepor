@@ -10564,6 +10564,19 @@ public class OrtakIslemler implements Serializable {
 						}
 						personelDenklestirmeMap.put(perId, personelDenklestirmeTasiyici);
 					}
+					if (personelDenklestirmeMap.isEmpty() == false) {
+						List<PersonelDinamikAlan> alanList = pdksEntityController.getSQLParamByFieldList(PersonelDinamikAlan.TABLE_NAME, PersonelDinamikAlan.COLUMN_NAME_PERSONEL, new ArrayList(personelDenklestirmeMap.keySet()), PersonelDinamikAlan.class, session);
+						for (PersonelDinamikAlan personelDinamikAlan : alanList) {
+							if (personelDinamikAlan.isCheckBox() && personelDinamikAlan.isDurumSecili()) {
+								Tanim tanim = personelDinamikAlan.getAlan();
+								if (tanim.getKodu().equals(PersonelDinamikAlan.ALAN_KART_OKUTMUYOR))
+									personelDenklestirmeMap.get(personelDinamikAlan.getPdksPersonel().getId()).setOtomatikKartEkle(tanim);
+
+							}
+
+						}
+						alanList = null;
+					}
 					List<Vardiya> suaVardiyaList = null;
 					Liste suaListe = null;
 					if (suaPerIdList.isEmpty() == false) {
@@ -23598,52 +23611,90 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param kgsId
+	 * @param session
+	 * @return
+	 */
+	public HareketKGS getManuelHareketPDKS(Long kgsId, Session session) {
+
+		HareketKGS hareketKGS = null;
+
+		HashMap fields = new HashMap();
+		StringBuffer sb = new StringBuffer();
+		fields.put("s", HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS);
+		fields.put("h", kgsId);
+		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		sb.append("select Z.* from " + HareketKGS.TABLE_NAME + " as Z " + PdksEntityController.getSelectLOCK());
+		sb.append(" where " + HareketKGS.COLUMN_NAME_TABLE_ID + " = :h");
+		sb.append(" and " + HareketKGS.COLUMN_NAME_SIRKET + " = :s");
+		List<HareketKGS> list1 = pdksEntityController.getObjectBySQLList(sb.toString(), fields, HareketKGS.class);
+		if (!list1.isEmpty())
+			hareketKGS = list1.get(0);
+		return hareketKGS;
+	}
+
+	/**
+	 * @param neden
 	 * @param vardiyaList
 	 * @param session
 	 */
 	@Transactional
-	public void otomatikHareketEkle(List<VardiyaGun> vardiyaList, Session session) {
-		boolean kartOkuyucuDurum = getParameterKey("kartOkuyucuDurum").equals("0");
-		if (kartOkuyucuDurum && vardiyaList != null) {
+	public void otomatikHareketEkle(Tanim neden, List<VardiyaGun> vardiyaList, User guncelleyen, Session session) {
+
+		if (vardiyaList != null && vardiyaList.isEmpty() == false) {
 			HashMap<String, KapiView> manuelKapiMap = getManuelKapiMap(null, session);
 			KapiView girisKapi = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS), cikisKapi = manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS);
 			HashMap fields = new HashMap();
 			Date bugun = new Date();
 			Boolean flush = Boolean.FALSE;
+			PersonelView personelView = null;
 			for (VardiyaGun pdksVardiyaGun : vardiyaList) {
-				if (pdksVardiyaGun.getVardiya() == null || !pdksVardiyaGun.getVardiya().isCalisma() || pdksVardiyaGun.getIzin() != null) {
+				Vardiya vardiya = pdksVardiyaGun.isAyinGunu() && pdksVardiyaGun.getVardiya() != null ? pdksVardiyaGun.getIslemVardiya() : null;
+				if (vardiya == null || !vardiya.isCalisma() || pdksVardiyaGun.getIzin() != null || vardiya.getVardiyaBitZaman().after(bugun)) {
 					continue;
 				}
-				if (!pdksVardiyaGun.isZamanGelmedi()) {
-					if (pdksVardiyaGun.getHareketler() == null || pdksVardiyaGun.getHareketler().isEmpty()) {
-						if (pdksVardiyaGun.getIslemVardiya() != null && pdksVardiyaGun.getIslemVardiya().isCalisma() && bugun.after(pdksVardiyaGun.getIslemVardiya().getVardiyaBitZaman())) {
-							if (girisKapi == null) {
-								fields.clear();
-								fields.put("kapi.durum", Boolean.TRUE);
-								fields.put("kapi.pdks", Boolean.TRUE);
-								fields.put("kapi.tipi.kodu", Kapi.TIPI_KODU_GIRIS);
-								if (session != null)
-									fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-								girisKapi = getKapiView(fields);
-							}
-							if (cikisKapi == null) {
-								fields.clear();
-								fields.put("kapi.durum", Boolean.TRUE);
-								fields.put("kapi.pdks", Boolean.TRUE);
-								fields.put("kapi.tipi.kodu", Kapi.TIPI_KODU_CIKIS);
-								if (session != null)
-									fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-								cikisKapi = getKapiView(fields);
-							}
-							HareketKGS hareketGiris = pdksEntityController.hareketSistemEkleReturn(girisKapi, pdksVardiyaGun.getPersonel().getPersonelKGS(), pdksVardiyaGun.getIslemVardiya().getVardiyaBasZaman(), session);
-							if (hareketGiris != null) {
-								HareketKGS hareketCikis = pdksEntityController.hareketSistemEkleReturn(cikisKapi, pdksVardiyaGun.getPersonel().getPersonelKGS(), pdksVardiyaGun.getIslemVardiya().getVardiyaBitZaman(), session);
-								pdksVardiyaGun.addHareket(hareketGiris, Boolean.TRUE);
-								pdksVardiyaGun.addHareket(hareketCikis, Boolean.TRUE);
-							}
-							flush = Boolean.TRUE;
+
+				if (pdksVardiyaGun.getHareketler() == null || pdksVardiyaGun.getHareketler().isEmpty()) {
+					if (vardiya != null && vardiya.isCalisma() && bugun.after(vardiya.getVardiyaBitZaman())) {
+						if (girisKapi == null) {
+							fields.clear();
+							fields.put("kapi.durum", Boolean.TRUE);
+							fields.put("kapi.pdks", Boolean.TRUE);
+							fields.put("kapi.tipi.kodu", Kapi.TIPI_KODU_GIRIS);
+							if (session != null)
+								fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+							girisKapi = getKapiView(fields);
 						}
+						if (cikisKapi == null) {
+							fields.clear();
+							fields.put("kapi.durum", Boolean.TRUE);
+							fields.put("kapi.pdks", Boolean.TRUE);
+							fields.put("kapi.tipi.kodu", Kapi.TIPI_KODU_CIKIS);
+							if (session != null)
+								fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+							cikisKapi = getKapiView(fields);
+						}
+						if (personelView == null) {
+							Personel personel = pdksVardiyaGun.getPersonel();
+							PersonelKGS personelKGS = personel.getPersonelKGS();
+							personelView = personelKGS.getPersonelView();
+						}
+						Long hareketGirisId = pdksEntityController.hareketEkle(girisKapi, personelView, vardiya.getVardiyaBasZaman(), guncelleyen, neden.getId(), "", session);
+						if (hareketGirisId != null) {
+							HareketKGS hareketGiris = getManuelHareketPDKS(hareketGirisId, session), hareketCikis = null;
+							Long hareketCikisId = pdksEntityController.hareketEkle(cikisKapi, personelView, vardiya.getVardiyaBitZaman(), guncelleyen, neden.getId(), "", session);
+							if (hareketCikisId != null)
+								hareketCikis = getManuelHareketPDKS(hareketCikisId, session);
+							if (hareketGiris != null)
+								pdksVardiyaGun.addHareket(hareketGiris, Boolean.TRUE);
+							if (hareketCikis != null)
+								pdksVardiyaGun.addHareket(hareketCikis, Boolean.TRUE);
+							if (flush == false)
+								flush = hareketGiris != null || hareketCikis != null;
+						}
+
 					}
+
 				}
 			}
 			if (flush)
@@ -23909,6 +23960,7 @@ public class OrtakIslemler implements Serializable {
 			}
 		}
 		if (vardiyaGunList != null) {
+			List<VardiyaGun> bosList = new ArrayList<VardiyaGun>();
 			DenklestirmeAy denklestirmeAy = personelDenklestirmeTasiyici.getDenklestirmeAy();
 			CalismaModeliAy calismaModeliAy = personelDenklestirmeTasiyici.getCalismaModeliAy();
 			boolean denklestirmeAyDurum = denklestirmeAy.isDurum(loginUser);
@@ -24092,6 +24144,9 @@ public class OrtakIslemler implements Serializable {
 
 						if (vardiyaGun.isZamanGelmedi()) {
 							sanalHareketEkle(girisKapi, cikisKapi, bugun, vardiyaGun);
+						} else if (vardiyaGun.getHareketler() == null || vardiyaGun.getHareketler().isEmpty()) {
+							if (vardiyaGun.isAyinGunu())
+								bosList.add(vardiyaGun);
 						}
 
 						if (vardiyaGun.isBayramAyir() == false && vardiyaGun.getVardiya().isCalisma() && vardiyaGun.getHareketDurum() && vardiyaGun.getTatil() != null) {
@@ -24101,6 +24156,7 @@ public class OrtakIslemler implements Serializable {
 					}
 
 					mesaiMap = null;
+
 					personelDenklestirmeTasiyici.setVardiyaGun(vardiyaGun);
 					iterator.remove();
 				} catch (Exception e) {
@@ -24111,6 +24167,9 @@ public class OrtakIslemler implements Serializable {
 				oncekiVardiya = (VardiyaGun) vardiyaGun.clone();
 
 			}
+			if (denklestirmeAy.getDurum() && personelDenklestirmeTasiyici.getOtomatikKartEkle() != null)
+				otomatikHareketEkle(personelDenklestirmeTasiyici.getOtomatikKartEkle(), bosList, sistemUser, session);
+
 			if (denklestirmeAyDurum && hareketKapiKGSUpdateMap.size() + hareketKapiPDKSUpdateMap.size() > 0)
 				hareketKapiUpdate(hareketKapiKGSUpdateMap, hareketKapiPDKSUpdateMap, hareketKopyala, loginUser, session);
 

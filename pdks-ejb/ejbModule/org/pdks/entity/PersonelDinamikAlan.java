@@ -29,6 +29,7 @@ public class PersonelDinamikAlan extends BasePDKSObject implements Serializable 
 	public static final String COLUMN_NAME_TANIM_DEGER = "TANIM_DEGER_ID";
 	public static final String COLUMN_NAME_DURUM_SECIM = "DURUM_SECIM";
 	public static final String COLUMN_NAME_SAYISAL_DEGER = "SAYISAL_DEGER";
+	public static final String ALAN_KART_OKUTMUYOR = "KART_OKUTMUYOR";
 
 	// public static final String TIP_ACIKLAMA = "PERSONEL_DINAMIK_ACIKLAMA";
 	// public static final String TIP_DURUM = "PERSONEL_DINAMIK_DURUM";
