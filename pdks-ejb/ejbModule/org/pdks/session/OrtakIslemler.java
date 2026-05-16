@@ -23690,12 +23690,12 @@ public class OrtakIslemler implements Serializable {
 						if (flush == false)
 							flush = hareketGiris != null || hareketCikis != null;
 					}
- 				}
- 			}
+				}
+			}
 			if (flush)
 				session.flush();
 		}
- 	}
+	}
 
 	/**
 	 * @param vardiyaGun
@@ -24057,6 +24057,11 @@ public class OrtakIslemler implements Serializable {
 										if (!bagliKapiVar)
 											bagliKapiVar = kapiKGS != null && kapiKGS.getBagliKapiKGS() != null;
 									}
+									iterator5.remove();
+								} else if (hareket.getBloke()) {
+									Long nedenId = hareket.getIslem().getNeden().getId();
+									pdksEntityController.hareketSil(0l, hareket.getHareketTableId(), sistemUser, nedenId, "", 0, session);
+									session.flush();
 									iterator5.remove();
 								}
 							} catch (Exception ex) {

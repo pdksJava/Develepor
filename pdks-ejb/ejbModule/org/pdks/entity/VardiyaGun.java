@@ -576,7 +576,18 @@ public class VardiyaGun extends BaseObject {
 						if (this.getIslemVardiya().getVardiyaFazlaMesaiBitZaman() == null)
 							this.getIslemVardiya().setVardiyaFazlaMesaiBitZaman(this.getIslemVardiya().getVardiyaTelorans2BitZaman());
 						if (hareket.getZaman().getTime() >= this.getIslemVardiya().getVardiyaFazlaMesaiBasZaman().getTime() && hareket.getZaman().getTime() <= this.getIslemVardiya().getVardiyaFazlaMesaiBitZaman().getTime()) {
-							durum = hareketKontrolZamansiz(hareket, hareketDuzelt);
+							durum = true;
+							PersonelHareketIslem islem = hareket.getIslem();
+							if (this.isIzinli()) {
+								Tanim neden = islem != null ? islem.getNeden() : null;
+								if (neden != null)
+									durum = neden.getKodu() == null || neden.getKodu().equals(PersonelDinamikAlan.ALAN_KART_OKUTMUYOR) == false;
+							}
+							if (durum)
+								durum = hareketKontrolZamansiz(hareket, hareketDuzelt);
+							else {
+								hareket.setDurum(HareketKGS.DURUM_BLOKE);
+							}
 						}
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -608,7 +619,7 @@ public class VardiyaGun extends BaseObject {
 			kapi = null;
 		}
 		boolean durum = Boolean.TRUE;
-		if (hareketDuzelt && vardiyaDateStr.endsWith("0507"))
+		if (hareketDuzelt && vardiyaDateStr.endsWith("0514"))
 			logger.debug(hareket.getId());
 		if (kapi != null && hareket != null && (kapi.isGirisKapi() || kapi.isCikisKapi())) {
 			HareketKGS yeniHareket = (HareketKGS) hareket.clone();
@@ -876,7 +887,7 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setIzin(PersonelIzin value) {
-		if (vardiyaDateStr.equals("20241124")) {
+		if (vardiyaDateStr.endsWith("0514")) {
 			if (value != null)
 				logger.debug(vardiyaDateStr + " " + value.getId() + " " + value.getAciklama());
 			else
