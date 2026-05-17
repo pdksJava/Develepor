@@ -577,17 +577,17 @@ public class VardiyaGun extends BaseObject {
 							this.getIslemVardiya().setVardiyaFazlaMesaiBitZaman(this.getIslemVardiya().getVardiyaTelorans2BitZaman());
 						if (hareket.getZaman().getTime() >= this.getIslemVardiya().getVardiyaFazlaMesaiBasZaman().getTime() && hareket.getZaman().getTime() <= this.getIslemVardiya().getVardiyaFazlaMesaiBitZaman().getTime()) {
 							durum = true;
-							PersonelHareketIslem islem = hareket.getIslem();
 							if (this.isIzinli() && hareket.getDenklestirmeAyDurum()) {
+								PersonelHareketIslem islem = hareket.getIslem();
 								Tanim neden = islem != null ? islem.getNeden() : null;
 								if (neden != null)
 									durum = neden.getKodu() == null || neden.getKodu().equals(PersonelDinamikAlan.ALAN_KART_OKUTMUYOR) == false;
 							}
 							if (durum)
 								durum = hareketKontrolZamansiz(hareket, hareketDuzelt);
-							else {
+							else
 								hareket.setDurum(HareketKGS.DURUM_BLOKE);
-							}
+
 						}
 					} catch (Exception ex) {
 						ex.printStackTrace();
