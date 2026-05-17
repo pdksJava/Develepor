@@ -115,7 +115,94 @@ public class PdksUtil implements Serializable {
 	public static void setUserYetki(User user) {
 
 	}
+	
+	/**
+	 * @param adres
+	 * @return
+	 */
+	public static String adresKontrol(String adres) {
+		String str = null;
+		int responseCode = 0;
+		try {
+			java.net.URL url = new java.net.URL(adres);
+			java.net.HttpURLConnection connjava = (java.net.HttpURLConnection) url.openConnection();
+			connjava.setRequestMethod("GET");
+			connjava.setRequestProperty("Content-Language", "tr-TR");
+			connjava.setDoInput(true);
+			connjava.setDoOutput(true);
+			connjava.setUseCaches(false);
+			int timeOutSaniye = 60 * 60;
+			connjava.setConnectTimeout(timeOutSaniye * 1000); // set timeout to 5 seconds
+			connjava.setAllowUserInteraction(true);
+			responseCode = connjava.getResponseCode();
+			InputStream is = responseCode >= 400 ? connjava.getErrorStream() : connjava.getInputStream();
+			if (responseCode >= 400 && is != null)
+				str = PdksUtil.StringToByInputStream(is);
+		} catch (Exception e) {
+		}
 
+		return str;
+	}
+	
+	/**
+	 * @param file
+	 * @return
+	 * @throws Exception
+	 */
+	public static List<String> getStringListFromFile(File file) throws Exception {
+		List<String> list = null;
+		if (file != null && file.exists()) {
+			InputStream in = new FileInputStream(file);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+			String line = reader.readLine();
+			list = new ArrayList<String>();
+			while (line != null) {
+				list.add(line);
+				line = reader.readLine();
+			}
+		}
+		return list;
+	}
+	
+	public static String getLoginAdres() {
+		String adresStr = null;
+		if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
+			File file = new File("/opt/sertifika/web.txt");
+			if (file.exists()) {
+				List<String> dosyaList = null;
+				try {
+					dosyaList = PdksUtil.getStringListFromFile(file);
+				} catch (Exception e) {
+				}
+				if (dosyaList != null && dosyaList.isEmpty() == false) {
+					for (String string : dosyaList) {
+						if (string.startsWith("http") && string.indexOf("login") > 1)
+							adresStr = string.trim();
+
+					}
+				}
+			}
+		} else
+			adresStr = "http://localhost:8080/login";
+
+		if (PdksUtil.hasStringValue(adresStr)) {
+			String adresDurum = adresKontrol(adresStr);
+			if (adresDurum != null)
+				adresStr = "";
+		}
+		 
+		if (PdksUtil.hasStringValue(adresStr)) {
+			int index = adresStr.lastIndexOf("/");
+			if (adresStr.lastIndexOf("/") == adresStr.length() - 1)
+				adresStr = adresStr.substring(0, index);
+
+			if (adresStr.indexOf("//") > 0) {
+				adresStr = PdksUtil.replaceAll(adresStr, "//", "/");
+				adresStr = PdksUtil.replaceAll(adresStr, ":/", "://");
+			}
+		}
+		return adresStr;
+	}
 	/**
 	 * @param cmd
 	 * @param bekle

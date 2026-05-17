@@ -24033,6 +24033,7 @@ public class OrtakIslemler implements Serializable {
 								mesaiMap.remove(hareket.getId());
 							}
 							try {
+								hareket.setDenklestirmeAyDurum(denklestirmeAyDurum);
 								if (vardiyaGun.addHareket(hareket, Boolean.TRUE)) {
 									// TODO isOtomatikFazlaCalismaOnaylansinmi GETİR
 									List<HareketKGS> vardiyaHareketler = null;
@@ -24059,10 +24060,12 @@ public class OrtakIslemler implements Serializable {
 									}
 									iterator5.remove();
 								} else if (hareket.getBloke()) {
+
 									Long nedenId = hareket.getIslem().getNeden().getId();
 									pdksEntityController.hareketSil(0l, hareket.getHareketTableId(), sistemUser, nedenId, "", 0, session);
 									session.flush();
 									iterator5.remove();
+
 								}
 							} catch (Exception ex) {
 								logger.error(vardiyaGun.getVardiyaKeyStr());

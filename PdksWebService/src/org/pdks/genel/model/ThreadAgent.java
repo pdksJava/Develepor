@@ -9,8 +9,6 @@ import org.pdks.dao.PdksDAO;
 import org.pdks.dao.impl.BaseDAOHibernate;
 import org.pdks.entity.PdksAgent;
 
-//@Name("threadAgent")
-//@Stateful
 public class ThreadAgent extends Thread implements Serializable {
 
 	/**
@@ -47,11 +45,20 @@ public class ThreadAgent extends Thread implements Serializable {
 						pdksDAO.execSP(veriMap);
 					else
 						pdksDAO.execSPList(veriMap, null);
+					mailGonder();
 				} catch (Exception e) {
 					logger.error(str + "\nHata : " + e);
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+
+	private void mailGonder() {
+		String loginAdres = PdksUtil.getLoginAdres();
+		if (PdksUtil.hasStringValue(loginAdres)) {
+			String adres = PdksUtil.replaceAllManuel(loginAdres, "login", "pdksAgent");
+			PdksUtil.adresKontrol(adres);
 		}
 	}
 

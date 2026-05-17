@@ -578,7 +578,7 @@ public class VardiyaGun extends BaseObject {
 						if (hareket.getZaman().getTime() >= this.getIslemVardiya().getVardiyaFazlaMesaiBasZaman().getTime() && hareket.getZaman().getTime() <= this.getIslemVardiya().getVardiyaFazlaMesaiBitZaman().getTime()) {
 							durum = true;
 							PersonelHareketIslem islem = hareket.getIslem();
-							if (this.isIzinli()) {
+							if (this.isIzinli() && hareket.getDenklestirmeAyDurum()) {
 								Tanim neden = islem != null ? islem.getNeden() : null;
 								if (neden != null)
 									durum = neden.getKodu() == null || neden.getKodu().equals(PersonelDinamikAlan.ALAN_KART_OKUTMUYOR) == false;

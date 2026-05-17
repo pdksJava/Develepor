@@ -50,7 +50,7 @@ public class HareketKGS implements Serializable, Cloneable {
 	public static final int DURUM_BLOKE = 2;
 	public static final int DURUM_AKTIF = 1;
 	public static final int DURUM_PASIF = 0;
- 	public static final String GIRIS_ISLEM_YAPAN_SIRKET_KGS = "K";
+	public static final String GIRIS_ISLEM_YAPAN_SIRKET_KGS = "K";
 	public static final String GIRIS_ISLEM_YAPAN_SIRKET_PDKS = "A";
 
 	private String id;
@@ -71,7 +71,7 @@ public class HareketKGS implements Serializable, Cloneable {
 
 	private int yemekYiyenSayisi, gecerliYemekAdet = 0;
 	private int toplam;
-	private Boolean gecerliYemek, oncekiGun = Boolean.FALSE;
+	private Boolean gecerliYemek, oncekiGun = Boolean.FALSE, denklestirmeAyDurum = Boolean.FALSE;
 	private Long kapiId;
 	private Long personelId;
 	private boolean tatil = Boolean.FALSE, puantajOnayDurum, cokluOgun = Boolean.FALSE, gecerliDegil = Boolean.FALSE, orjinalZamanGetir = Boolean.FALSE;
@@ -95,7 +95,7 @@ public class HareketKGS implements Serializable, Cloneable {
 		super();
 		this.personel = personelView;
 		this.setKapiView(kapiView);
- 		this.setZaman(zaman);
+		this.setZaman(zaman);
 		this.setId(SANAL_HAREKET + "_" + personel.getSicilNo() + "_" + kapiView.getId() + "_" + zaman.getTime());
 	}
 
@@ -682,6 +682,15 @@ public class HareketKGS implements Serializable, Cloneable {
 
 	public void setMukerrerHareket(HareketKGS mukerrerHareket) {
 		this.mukerrerHareket = mukerrerHareket;
+	}
+
+	@Transient
+	public Boolean getDenklestirmeAyDurum() {
+		return denklestirmeAyDurum;
+	}
+
+	public void setDenklestirmeAyDurum(Boolean denklestirmeAyDurum) {
+		this.denklestirmeAyDurum = denklestirmeAyDurum;
 	}
 
 }
