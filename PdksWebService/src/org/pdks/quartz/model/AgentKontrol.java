@@ -92,6 +92,7 @@ public final class AgentKontrol extends QuartzJobBean {
 		StringBuffer sp = new StringBuffer();
 		sp.append("select * from " + PdksAgent.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
 		List<PdksAgent> list = dAO != null ? dAO.getNativeSQLList(fields, sp, PdksAgent.class) : null;
+		boolean mailGonder = false;
 		if (list != null && !list.isEmpty()) {
 			int dakika = cal.get(Calendar.MINUTE);
 			int saat = cal.get(Calendar.HOUR_OF_DAY);
@@ -140,6 +141,7 @@ public final class AgentKontrol extends QuartzJobBean {
 						try {
 							ThreadAgent ta = new ThreadAgent(pa, dAO);
 							ta.start();
+							mailGonder = false;
 						} catch (Exception e) {
 							logger.error(e);
 						}
@@ -150,6 +152,8 @@ public final class AgentKontrol extends QuartzJobBean {
 		list = null;
 		try {
 			dbEPostaGonder(dAO);
+			if (mailGonder)
+				ThreadAgent.mailGonder();
 		} catch (Exception e) {
 
 		}
@@ -160,7 +164,7 @@ public final class AgentKontrol extends QuartzJobBean {
 	 * @param dAO
 	 */
 	private void dbEPostaGonder(PdksDAO dAO) {
-//		ThreadAgent.mailGonder();
+		//
 		String paramName = "dbEPosta";
 		HashMap fields = new HashMap();
 		StringBuffer sp = new StringBuffer();

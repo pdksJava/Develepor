@@ -45,16 +45,17 @@ public class ThreadAgent extends Thread implements Serializable {
 						pdksDAO.execSP(veriMap);
 					else
 						pdksDAO.execSPList(veriMap, null);
-					mailGonder();
+
 				} catch (Exception e) {
-					logger.error(str + "\nHata : " + e);
+					logger.error(agent.getStoreProcedureAdi() + "\n" + str + "\nHata : " + e);
 					e.printStackTrace();
 				}
+				mailGonder();
 			}
 		}
 	}
 
-	private void mailGonder() {
+	public static void mailGonder() {
 		String loginAdres = PdksUtil.getLoginAdres();
 		if (PdksUtil.hasStringValue(loginAdres)) {
 			String adres = PdksUtil.replaceAllManuel(loginAdres, "login", "pdksAgent");

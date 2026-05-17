@@ -88,15 +88,18 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String mailDataGonderBasla() {
-		Session session = null;
+		Session sessionx = null;
 		try {
-			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-			mailDataGonder(null, session);
+			if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
+				sessionx = PdksUtil.getSession(entityManager, Boolean.TRUE);
+				mailDataGonder(null, sessionx);
+			}
 		} catch (Exception e) {
-
+			logger.error(e);
+			e.printStackTrace();
 		}
-		if (session != null)
-			session.close();
+		if (sessionx != null)
+			sessionx.close();
 		return MenuItemConstant.home;
 	}
 
@@ -112,7 +115,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 			boolean flush = false;
 			for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
 				ServiceData serviceData = (ServiceData) iterator.next();
- 				List<LinkedTreeMap<String, Object>> paramList = null, veriler = null;
+				List<LinkedTreeMap<String, Object>> paramList = null, veriler = null;
 				String parametreJSON = serviceData.getInputData();
 				String dataJSON = serviceData.getOutputData();
 				try {
