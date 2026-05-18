@@ -20964,7 +20964,7 @@ public class OrtakIslemler implements Serializable {
 						}
 						Date zaman = PdksUtil.tariheGunEkleCikar(vg.getVardiyaDate(), 1);
 						vg.setBayramAyir(true);
-						if (str.endsWith("1028"))
+						if (str.endsWith("0526"))
 							logger.debug("" + hareketler.size());
 						boolean tatilBasladi = false;
 						boolean tatilVar = false;
@@ -21038,7 +21038,7 @@ public class OrtakIslemler implements Serializable {
 										Vardiya tatilVardiya = vardiyaMap.containsKey(islemVardiya.getId()) ? vardiyaMap.get(islemVardiya.getId()) : null;
 										if (tatilVardiya != null && tatilVardiya.getArifeBaslangicTarihi() != null && hareketZaman.after(tatilVardiya.getArifeBaslangicTarihi())) {
 											boolean arifeSonraVardiyaDenklestirmeVar = tatil != null && tatil.getArifeSonraVardiyaDenklestirmeVar() != null && tatil.getArifeSonraVardiyaDenklestirmeVar();
-											if (arifeSonraVardiyaDenklestirmeVar == false) {
+											if (arifeSonraVardiyaDenklestirmeVar) {
 												hareketKGS.setZaman(tatilVardiya.getArifeBaslangicTarihi());
 												hareketKGS.setOrjinalZaman(tatilVardiya.getArifeBaslangicTarihi());
 											}
@@ -21931,6 +21931,8 @@ public class OrtakIslemler implements Serializable {
 						ArrayList<HareketKGS> tatilGirisHareketleri = new ArrayList<HareketKGS>(), tatilCikisHareketleri = new ArrayList<HareketKGS>();
 						if (tatilGunleriMap.containsKey(key))
 							vardiyaGun.setTatil(tatilGunleriMap.get(key));
+						if (vGun.endsWith("0526"))
+							logger.debug(vGun);
 						double resmiTatilSure = 0, toplamYemekSuresi = 0, vardiyaYemekSuresi = 0, calSure = 0d;
 						if (gun.equals("01")) {
 							if (vardiyaGun.getTatil() != null && vardiyaGun.getVardiya() != null && sonVardiyaGun != null) {
@@ -22283,7 +22285,6 @@ public class OrtakIslemler implements Serializable {
 							Date gunParca = null;
 							if (sonGunMu && tatil != null && tatilGunleriMap.containsKey(vGun) == false)
 								gunParca = PdksUtil.tariheGunEkleCikar(vardiyaGun.getVardiyaDate(), 1);
-
 							for (int i = 0; i < tatilCikisHareketleri.size(); i++) {
 								HareketKGS cikisHareket = tatilCikisHareketleri.get(i);
 								HareketKGS girisHareket = null;
@@ -22328,8 +22329,6 @@ public class OrtakIslemler implements Serializable {
 										if (cikisHareket.isTatil() == false || cikisId.startsWith(HareketKGS.SANAL_HAREKET) == false)
 											cikisZaman = islemVardiya.getVardiyaBitZaman();
 								}
-								if (vGun.endsWith("1028"))
-									logger.debug(vGun + " " + calSure + " " + girisZaman + " " + cikisZaman);
 								if (!parcalanmisSureVar)
 									parcalanmisSureVar = girisHareket.getOncekiGun() || PdksUtil.hasStringValue(girisId) == false || PdksUtil.hasStringValue(cikisId) == false || (girisId.startsWith(HareketKGS.SANAL_HAREKET) && girisHareket.isTatil());
 
@@ -22340,6 +22339,8 @@ public class OrtakIslemler implements Serializable {
 									if (girisHareket.isTatil() == false)
 										toplamNormalParcalanmisSure += saatFarki;
 								}
+								if (vGun.endsWith("0526"))
+									logger.debug(vGun + " " + calSure + " " + girisZaman + " " + cikisZaman + " " + saatFarki + " " + toplamParcalanmisSure + " " + toplamNormalParcalanmisSure);
 
 								if (islemVardiya.isCalisma() && saatFarki >= netSure + yemekSure)
 									saatFarki = netSure + yemekSure;
@@ -22581,8 +22582,7 @@ public class OrtakIslemler implements Serializable {
 													tatilBitZaman = vardiyaGun.getIslemVardiya().getVardiyaBitZaman();
 												if (hareketYilAy.equals(yilAy) && tatilBasZaman.before(tatilBitZaman)) {
 													Double yemekSuresi = 0.0d;
-													if (vGun.endsWith("0609"))
-														logger.debug("");
+
 													double bayramCalisma = PdksUtil.getSaatFarki(tatilBitZaman, tatilBasZaman);
 													if (bayramCalisma > yemeksizSure)
 														bayramCalisma = getSaatSure(tatilBasZaman, tatilBitZaman, yemekler, vardiyaGun, session) - (yemekSuresi / 60.0d);
@@ -22641,8 +22641,8 @@ public class OrtakIslemler implements Serializable {
 								}
 								oncekiCikisZaman = (Date) cikisZaman.clone();
 							}
-							if (vGun.endsWith("0302"))
-								logger.debug(vGun + " " + calSure);
+							if (vGun.endsWith("0526"))
+								logger.debug(vGun + " " + calSure + " " + toplamNormalParcalanmisSure + "  " + toplamParcalanmisSure);
 
 							// TODO Hareketler okuması bitti
 							if (oncekiGunNormalSure + oncekiGunTatilSure > 0.0d) {
