@@ -2455,8 +2455,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 							tesis = new Tanim();
 							tesis.setKodu(tesisKodu);
 							tesis.setErpKodu(tesisKodu);
-							tesis.setAciklamatr(personelERPDB.getTesisAdi());
-							tesis.setAciklamaen(personelERPDB.getTesisAdi());
+							String aciklama = personelERPDB.getTesisAdi();
+							if (aciklama.indexOf("  ") > 0)
+								aciklama = PdksUtil.replaceAllManuel(aciklama, "  ", " ");
+							tesis.setAciklamatr(aciklama);
+							tesis.setAciklamaen(aciklama);
 							tesisMap.put(tesisKodu, tesis);
 						}
 					}
@@ -2593,6 +2596,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 						izinTipiTanim.setTipi(Tanim.TIPI_IZIN_TIPI);
 						izinTipiTanim.setKodu("E" + izinERP.getIzinTipi());
 						izinTipiTanim.setErpKodu(izinERP.getIzinTipi());
+						if (aciklama.indexOf("  ") > 0)
+							aciklama = PdksUtil.replaceAllManuel(aciklama, "  ", " ");
 						izinTipiTanim.setAciklamatr(aciklama);
 						izinTipiTanim.setAciklamaen(aciklama);
 						izinTipiTanim.setDurum(Boolean.TRUE);
@@ -3563,8 +3568,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 					parentTanim.setGuncelle(Boolean.FALSE);
 					parentTanim.setIslemYapan(islemYapan);
 					parentTanim.setIslemTarihi(new Date());
-					parentTanim.setAciklamatr(parentKey + " Tanımsız");
-					parentTanim.setAciklamaen(parentKey + " Tanımsız");
+					String aciklamaParent = parentKey + " Tanımsız";
+					if (aciklamaParent.indexOf("  ") > 0)
+						aciklamaParent = PdksUtil.replaceAllManuel(aciklamaParent, "  ", " ");
+					parentTanim.setAciklamatr(aciklamaParent);
+					parentTanim.setAciklamaen(aciklamaParent);
 					personelDinamikTanimAlanMap.put(parentKey, parentTanim);
 
 					saveList.add(parentTanim);
@@ -3649,6 +3657,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 					ekle = tanim.getId() == null || !tanim.getDurum().booleanValue();
 					if (aciklama != null) {
+						if (aciklama.indexOf("  ") > 0)
+							aciklama = PdksUtil.replaceAllManuel(aciklama, "  ", " ");
 						if (aciklama.indexOf("&amp;") > 0)
 							aciklama = PdksUtil.replaceAllManuel(aciklama, "&amp;", "&");
 						if (tanim.getAciklamatr() == null || PdksUtil.isStrDegisti(tanim.getAciklamatr(), aciklama))
