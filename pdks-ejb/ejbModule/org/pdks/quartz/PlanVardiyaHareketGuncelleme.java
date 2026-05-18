@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -39,6 +40,7 @@ import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDenklestirmeTasiyici;
 import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.PersonelView;
+import org.pdks.entity.ServiceData;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
@@ -48,6 +50,7 @@ import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.security.entity.User;
 import org.pdks.session.FazlaMesaiOrtakIslemler;
 import org.pdks.session.OrtakIslemler;
+import org.pdks.session.PdksAgentTanimlamaHome;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
 
@@ -77,6 +80,9 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
+
+	@In(required = false, create = true)
+	PdksAgentTanimlamaHome pdksAgentTanimlamaHome;
 
 	@In(required = false, create = true)
 	FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemler;
@@ -149,17 +155,23 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				} else
 					saniye = 15;
 				Thread.sleep(saniye * 1000);
-//				List<ServiceData> mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
-//				if (mailList.isEmpty() == false) {
-//					if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
-//						PdksAgentTanimlamaHome home = new PdksAgentTanimlamaHome();
-//						logger.info("Sistem mailleri gönderiliyor in " + PdksUtil.getCurrentTimeStampStr());
-//						home.mailDataGonder(mailList, session);
-//						if (mailList.isEmpty())
-//							logger.info("Sistem mailleri gönderiliyor out " + PdksUtil.getCurrentTimeStampStr());
-//					}
-//				}
-//				mailList = null;
+				if (pdksAgentTanimlamaHome != null) {
+					if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
+						List<ServiceData> mailList = pdksAgentTanimlamaHome.getMailList(session);
+						Date zaman = PdksUtil.addTarih(new Date(), Calendar.MINUTE, -5);
+						for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
+							ServiceData serviceData = (ServiceData) iterator.next();
+							if (serviceData.getOlusturmaTarihi() != null && serviceData.getOlusturmaTarihi().after(zaman))
+								iterator.remove();
+						}
+						if (mailList.isEmpty() == false)
+							pdksAgentTanimlamaHome.mailDataGonder(mailList, session);
+						else
+							mailList = null;
+					}
+
+				}
+
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n" + e.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());
 				e.printStackTrace();

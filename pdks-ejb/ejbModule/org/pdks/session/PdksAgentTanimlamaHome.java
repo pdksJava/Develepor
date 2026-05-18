@@ -109,7 +109,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	 */
 	public void mailDataGonder(List<ServiceData> mailList, Session session) {
 		if (mailList == null)
-			mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
+			mailList = getMailList(session);
 		if (mailList.isEmpty() == false) {
 			Gson gson = new Gson();
 			boolean flush = false;
@@ -350,6 +350,12 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 				session.flush();
 		}
 		mailList = null;
+	}
+
+	public List<ServiceData> getMailList(Session session) {
+		List<ServiceData> mailList;
+		mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
+		return mailList;
 	}
 
 	/**
