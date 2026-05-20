@@ -182,9 +182,9 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 						if (mailAdres.isEmpty() == false) {
 							List<User> userList = pdksEntityController.getSQLParamByFieldList(User.TABLE_NAME, User.COLUMN_NAME_EMAIL, mailAdres, User.class, session);
 							HashMap<String, User> userMap = new HashMap<String, User>();
-							for (User user : userList)  
+							for (User user : userList)
 								userMap.put(user.getEmail(), user);
- 							userList = null;
+							userList = null;
 							if (params.containsKey("tabloYaz")) {
 								Double tabloYaz = (Double) params.get("tabloYaz");
 								tabloYazDurum = tabloYaz.intValue() == 1;
@@ -213,10 +213,10 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 													baslikStr = str;
 											} catch (Exception e) {
 											}
- 										}
+										}
 										baslikMap.put(key, baslikStr);
 									}
- 								}
+								}
 							}
 							StringBuffer sb = new StringBuffer();
 							sb.append("<DIV>");
@@ -261,9 +261,9 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 													else
 														veri = PdksUtil.convertToDateString(tarih, PdksUtil.getSaatFormat());
 												}
-  											}
- 										}
- 										sb.append("<td" + alignStr + ">" + (veri != null ? veri : "") + "</td>");
+											}
+										}
+										sb.append("<td" + alignStr + ">" + (veri != null ? veri : "") + "</td>");
 									}
 									sb.append("</tr>");
 									renk = !renk;
@@ -275,11 +275,12 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 							MailObject mail = new MailObject();
 							mail.setSubject(konu);
 							mail.setBody(sb.toString());
+							int adet = 0;
 							if (toList.size() + ccList.size() + bccList.size() > 0) {
 								if (PdksUtil.getCanliSunucuDurum() == true || PdksUtil.getTestSunucuDurum() == true) {
-									mailListKontrol(userMap, toList, mail.getToList());
-									mailListKontrol(userMap, ccList, mail.getCcList());
-									mailListKontrol(userMap, bccList, mail.getBccList());
+									adet += mailListKontrol(userMap, toList, mail.getToList());
+									adet += mailListKontrol(userMap, ccList, mail.getCcList());
+									adet += mailListKontrol(userMap, bccList, mail.getBccList());
 								}
 							}
 							toList = null;
@@ -302,8 +303,8 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 							HashMap<String, Object> veriMap = new HashMap<String, Object>();
 							veriMap.put("temizleTOCCList", true);
 							veriMap.put("mailObject", mail);
-							MailStatu mailStatu = ortakIslemler.mailSoapServisGonder(veriMap, session);
-							if (mailStatu != null && mailStatu.getDurum()) {
+							MailStatu mailStatu = adet > 0 ? ortakIslemler.mailSoapServisGonder(veriMap, session) : null;
+							if (mailStatu == null || mailStatu.getDurum()) {
 								logger.info(mail.getSubject() + " mail gönderildi. ");
 								session.delete(serviceData);
 							}
@@ -334,8 +335,8 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	 * @param list
 	 * @param mailList
 	 */
-	private void mailListKontrol(HashMap<String, User> userMap, List<String> list, List<MailPersonel> mailList) {
-		if (list != null && list.isEmpty() == false) {
+	private int mailListKontrol(HashMap<String, User> userMap, List<String> list, List<MailPersonel> mailList) {
+		if (list != null && list.isEmpty() == false && mailList != null) {
 			for (String key : list) {
 				MailPersonel mp = new MailPersonel();
 				mp.setEPosta(key);
@@ -352,7 +353,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 					mailList.add(mp);
 			}
 		}
-
+		return mailList != null ? mailList.size() : 0;
 	}
 
 	public List<ServiceData> getMailList(Session session) {
