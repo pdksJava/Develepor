@@ -144,43 +144,47 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 						List<String> mailAdres = new ArrayList<String>();
 						if (params.containsKey("toAdres")) {
 							List<String> list = PdksUtil.getListFromString((String) params.get("toAdres"), null);
-							for (String string : list) {
-								if (mailAdres.contains(string))
-									continue;
-								toList.add(string);
-								mailAdres.add(string);
+							if (list != null && list.isEmpty() == false) {
+								for (String string : list) {
+									if (mailAdres.contains(string))
+										continue;
+									toList.add(string);
+									mailAdres.add(string);
+								}
 							}
 							list = null;
 						}
 						if (params.containsKey("cc")) {
 							List<String> list = PdksUtil.getListFromString((String) params.get("cc"), null);
-							for (String string : list) {
-								if (mailAdres.contains(string))
-									continue;
-								ccList.add(string);
-								mailAdres.add(string);
+							if (list != null && list.isEmpty() == false) {
+								for (String string : list) {
+									if (mailAdres.contains(string))
+										continue;
+									ccList.add(string);
+									mailAdres.add(string);
+								}
 							}
 							list = null;
 						}
 						if (params.containsKey("bcc")) {
 							List<String> list = PdksUtil.getListFromString((String) params.get("bcc"), null);
-							for (String string : list) {
-								if (mailAdres.contains(string))
-									continue;
-								bccList.add(string);
-								mailAdres.add(string);
+							if (list != null && list.isEmpty() == false) {
+								for (String string : list) {
+									if (mailAdres.contains(string))
+										continue;
+									bccList.add(string);
+									mailAdres.add(string);
+								}
 							}
 							list = null;
 						}
 
 						if (mailAdres.isEmpty() == false) {
-							List<User> userList = pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_EMAIL, mailAdres, User.class, session);
-							HashMap<String, String> userMap = new HashMap<String, String>();
-							for (User user : userList) {
-								Personel personel = user.getPdksPersonel();
-								userMap.put(user.getEmail(), personel.getAdSoyad());
-							}
-							userList = null;
+							List<User> userList = pdksEntityController.getSQLParamByFieldList(User.TABLE_NAME, User.COLUMN_NAME_EMAIL, mailAdres, User.class, session);
+							HashMap<String, User> userMap = new HashMap<String, User>();
+							for (User user : userList)  
+								userMap.put(user.getEmail(), user);
+ 							userList = null;
 							if (params.containsKey("tabloYaz")) {
 								Double tabloYaz = (Double) params.get("tabloYaz");
 								tabloYazDurum = tabloYaz.intValue() == 1;
@@ -209,12 +213,10 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 													baslikStr = str;
 											} catch (Exception e) {
 											}
-
-										}
+ 										}
 										baslikMap.put(key, baslikStr);
 									}
-
-								}
+ 								}
 							}
 							StringBuffer sb = new StringBuffer();
 							sb.append("<DIV>");
@@ -259,12 +261,9 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 													else
 														veri = PdksUtil.convertToDateString(tarih, PdksUtil.getSaatFormat());
 												}
-
-											}
-
-										}
-
-										sb.append("<td" + alignStr + ">" + (veri != null ? veri : "") + "</td>");
+  											}
+ 										}
+ 										sb.append("<td" + alignStr + ">" + (veri != null ? veri : "") + "</td>");
 									}
 									sb.append("</tr>");
 									renk = !renk;
@@ -276,33 +275,11 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 							MailObject mail = new MailObject();
 							mail.setSubject(konu);
 							mail.setBody(sb.toString());
-							if (toList.isEmpty() == false) {
+							if (toList.size() + ccList.size() + bccList.size() > 0) {
 								if (PdksUtil.getCanliSunucuDurum() == true || PdksUtil.getTestSunucuDurum() == true) {
-									for (String key : toList) {
-										MailPersonel mp = new MailPersonel();
-										mp.setEPosta(key);
-										if (userMap.containsKey(key))
-											mp.setAdiSoyadi(userMap.get(key));
-										mail.getToList().add(mp);
-									}
-								}
-							}
-							if (ccList.isEmpty() == false) {
-								for (String key : ccList) {
-									MailPersonel mp = new MailPersonel();
-									mp.setEPosta(key);
-									if (userMap.containsKey(key))
-										mp.setAdiSoyadi(userMap.get(key));
-									mail.getCcList().add(mp);
-								}
-							}
-							if (bccList.isEmpty() == false) {
-								for (String key : bccList) {
-									MailPersonel mp = new MailPersonel();
-									mp.setEPosta(key);
-									if (userMap.containsKey(key))
-										mp.setAdiSoyadi(userMap.get(key));
-									mail.getBccList().add(mp);
+									mailListKontrol(userMap, toList, mail.getToList());
+									mailListKontrol(userMap, ccList, mail.getCcList());
+									mailListKontrol(userMap, bccList, mail.getBccList());
 								}
 							}
 							toList = null;
@@ -350,6 +327,32 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 				session.flush();
 		}
 		mailList = null;
+	}
+
+	/**
+	 * @param userMap
+	 * @param list
+	 * @param mailList
+	 */
+	private void mailListKontrol(HashMap<String, User> userMap, List<String> list, List<MailPersonel> mailList) {
+		if (list != null && list.isEmpty() == false) {
+			for (String key : list) {
+				MailPersonel mp = new MailPersonel();
+				mp.setEPosta(key);
+				boolean ekle = true;
+				if (userMap != null && userMap.containsKey(key)) {
+					User user = userMap.get(key);
+					Personel per = user.getPdksPersonel();
+					if (user.isDurum() && per.isCalisiyor())
+						mp.setAdiSoyadi(per.getAdSoyad());
+					else
+						ekle = false;
+				}
+				if (ekle)
+					mailList.add(mp);
+			}
+		}
+
 	}
 
 	public List<ServiceData> getMailList(Session session) {
