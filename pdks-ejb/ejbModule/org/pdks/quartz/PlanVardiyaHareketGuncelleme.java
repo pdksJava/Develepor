@@ -47,6 +47,7 @@ import org.pdks.entity.Tatil;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.enums.PuantajKatSayiTipi;
+import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 import org.pdks.session.FazlaMesaiOrtakIslemler;
 import org.pdks.session.OrtakIslemler;
@@ -94,7 +95,42 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	private static boolean calisiyor = Boolean.FALSE;
 
-	private Date bugun;
+	private Date bugun, basTarih;
+
+	@Transactional
+	public String fazlaMesaiHesaplamaBaslat() {
+		Session session = null;
+		try {
+			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+ 			if (fazlaMesaiGuncelleme(null, session) != null) {
+				Parameter parameterFazlaMesaiHesaplama = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
+				String konu = parameterFazlaMesaiHesaplama != null ? parameterFazlaMesaiHesaplama.getDescription() : "Fazla Mesai Toplu Güncelleme";
+				String aciklama = "Fazla Mesai Toplu güncellenmiştir.";
+				if (PdksUtil.isSessionKapali(session))
+					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+				boolean mailGonder = getMailGonder(session);
+				if (mailGonder) {
+					List<User> userList = null;
+					if (ortakIslemler.getParameterKey("fazlaMesaiGuncelleMail").equals("1"))
+						userList = ortakIslemler.getIKUserList(session);
+					if (userList == null || userList.isEmpty()) {
+						aciklama = aciklama + "<br></br><br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
+						aciklama = aciklama + "<br></br><b>Stop Time  : </b>" + PdksUtil.convertToDateString(ortakIslemler.getBugun(), PdksUtil.getDateTimeLongFormat()) + "<br></br>";
+					}
+					zamanlayici.mailGonder(session, null, konu, aciklama, userList, Boolean.TRUE);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		if (session != null)
+			try {
+				session.close();
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		return MenuItemConstant.home;
+	}
 
 	@Asynchronous
 	@SuppressWarnings("unchecked")
