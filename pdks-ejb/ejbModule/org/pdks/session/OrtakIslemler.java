@@ -24061,12 +24061,12 @@ public class OrtakIslemler implements Serializable {
 									}
 									iterator5.remove();
 								} else if (hareket.getBloke()) {
-
-									Long nedenId = hareket.getIslem().getNeden().getId();
-									pdksEntityController.hareketSil(0l, hareket.getHareketTableId(), sistemUser, nedenId, "", 0, session);
-									session.flush();
-									iterator5.remove();
-
+									if (hareket.getIslem() != null) {
+										Long nedenId = hareket.getIslem().getNeden().getId();
+										pdksEntityController.hareketSil(0l, hareket.getHareketTableId(), sistemUser, nedenId, "", 0, session);
+										session.flush();
+										iterator5.remove();
+									}
 								}
 							} catch (Exception ex) {
 								logger.error(vardiyaGun.getVardiyaKeyStr());

@@ -687,7 +687,8 @@ public class VardiyaGun extends BaseObject {
 						}
 
 					} else {
-						hareket.setDurum(HareketKGS.DURUM_BLOKE);
+						// if (this.isIzinli())
+						// hareket.setDurum(HareketKGS.DURUM_BLOKE);
 
 					}
 
@@ -2600,7 +2601,7 @@ public class VardiyaGun extends BaseObject {
 		if (ayinGunu && hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.AYRIK_HAREKET) == false && hareketKGS.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS)) {
 			if (gecersizHareketler == null)
 				gecersizHareketler = new ArrayList<HareketKGS>();
-			hareketKGS.setDurum(HareketKGS.DURUM_BLOKE);
+			// hareketKGS.setDurum(HareketKGS.DURUM_BLOKE);
 			gecersizHareketler.add(hareketKGS);
 			logger.debug(this.getVardiyaKeyStr() + " " + hareketKGS.getId() + " " + gecersizHareketler.size());
 		}
