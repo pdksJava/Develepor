@@ -25309,25 +25309,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public String adresKontrol(String adres) {
-		String str = null;
-		int responseCode = 0;
-		try {
-			java.net.URL url = new java.net.URL(adres);
-			java.net.HttpURLConnection connjava = (java.net.HttpURLConnection) url.openConnection();
-			connjava.setRequestMethod("GET");
-			connjava.setRequestProperty("Content-Language", "tr-TR");
-			connjava.setDoInput(true);
-			connjava.setDoOutput(true);
-			connjava.setUseCaches(false);
-			int timeOutSaniye = 60 * 60;
-			connjava.setConnectTimeout(timeOutSaniye * 1000); // set timeout to 5 seconds
-			connjava.setAllowUserInteraction(true);
-			responseCode = connjava.getResponseCode();
-			InputStream is = responseCode >= 400 ? connjava.getErrorStream() : connjava.getInputStream();
-			if (responseCode >= 400 && is != null)
-				str = PdksUtil.StringToByInputStream(is);
-		} catch (Exception e) {
-		}
+		String str = PdksUtil.adresKontrol(adres);
 
 		return str;
 	}
