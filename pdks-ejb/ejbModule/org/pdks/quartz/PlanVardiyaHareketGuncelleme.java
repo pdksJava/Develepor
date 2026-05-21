@@ -103,12 +103,15 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		try {
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 			Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
-			if (parameter != null && PdksUtil.hasStringValue(parameter.getValue()) == false && fazlaMesaiGuncelleme(null, session) != null) {
-				String konu = parameter.getDescription();
-				String aciklama = "Fazla Mesai Toplu güncellenmiştir.";
-				if (PdksUtil.isSessionKapali(session))
-					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-				bilgilendirmeMailGonder(session, konu, aciklama);
+			if (parameter != null && PdksUtil.hasStringValue(parameter.getValue()) == false) {
+				basTarih = ortakIslemler.getBugun();
+				if (fazlaMesaiGuncelleme(basTarih, session) != null) {
+ 					String konu = parameter.getDescription();
+					String aciklama = "Fazla Mesai Toplu güncellenmiştir.";
+					if (PdksUtil.isSessionKapali(session))
+						session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+					bilgilendirmeMailGonder(session, konu, aciklama);
+				}
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
