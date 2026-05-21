@@ -1,8 +1,10 @@
 package org.pdks.genel.model;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.pdks.dao.PdksDAO;
@@ -35,22 +37,49 @@ public class ThreadAgent extends Thread implements Serializable {
 	@Override
 	public void run() {
 		if (pdksDAO != null) {
-			if (agent != null && PdksUtil.hasStringValue(agent.getStoreProcedureAdi())) {
-				String str = agent.getAciklama() + " --> " + agent.getStoreProcedureAdi() + " : " + PdksUtil.convertToDateString(new Date(), "HH:mm");
-				logger.info(str);
-				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-				try {
-					veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, agent.getStoreProcedureAdi());
-					if (agent.getUpdateSP())
-						pdksDAO.execSP(veriMap);
-					else
-						pdksDAO.execSPList(veriMap, null);
+			String programAdi = agent != null ? agent.getStoreProcedureAdi() : null;
+			if (PdksUtil.hasStringValue(programAdi)) {
+				int index = programAdi.indexOf(".page.xml");
+				if (index < 0) {
+					String str = agent.getAciklama() + " --> " + agent.getStoreProcedureAdi() + " : " + PdksUtil.convertToDateString(new Date(), "HH:mm");
+					logger.info(str);
+					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+					try {
+						veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, agent.getStoreProcedureAdi());
+						if (agent.getUpdateSP())
+							pdksDAO.execSP(veriMap);
+						else
+							pdksDAO.execSPList(veriMap, null);
 
-				} catch (Exception e) {
-					logger.error(agent.getStoreProcedureAdi() + "\n" + str + "\nHata : " + e);
-					e.printStackTrace();
+					} catch (Exception e) {
+						logger.error(agent.getStoreProcedureAdi() + "\n" + str + "\nHata : " + e);
+						e.printStackTrace();
+					}
+					mailGonder();
+				} else {
+
+					File file = new File("/opt/sertifika/web.txt");
+					if (file.exists()) {
+						List<String> dosyaList = null;
+						try {
+							dosyaList = PdksUtil.getStringListFromFile(file);
+						} catch (Exception e) {
+						}
+						if (dosyaList != null && dosyaList.isEmpty() == false) {
+							for (String string : dosyaList) {
+								if (string.startsWith("http") && string.indexOf("login") > 1) {
+									String adres = PdksUtil.replaceAllManuel(string, "login", programAdi.substring(0, index));
+									logger.info(agent.getAciklama() + " --> " + adres + " " + PdksUtil.getCurrentTimeStampStr());
+									PdksUtil.adresKontrol(adres);
+
+								}
+
+							}
+						}
+					}
+
 				}
-				mailGonder();
+
 			}
 		}
 	}

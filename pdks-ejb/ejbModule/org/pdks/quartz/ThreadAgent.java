@@ -41,7 +41,7 @@ public class ThreadAgent extends Thread implements Serializable {
 	public void run() {
 		if (session != null) {
 			if (agent != null) {
-				String programAdi = agent.getStoreProcedureAdi();
+				String programAdi =agent.getStoreProcedureAdi() ;
 				if (PdksUtil.hasStringValue(programAdi)) {
 					int index = programAdi.indexOf(".page.xml");
 					if (index < 0) {
