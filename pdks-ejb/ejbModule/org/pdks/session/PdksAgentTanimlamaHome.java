@@ -304,7 +304,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 							veriMap.put("temizleTOCCList", true);
 							veriMap.put("mailObject", mail);
 							MailStatu mailStatu = adet > 0 ? ortakIslemler.mailSoapServisGonder(veriMap, session) : null;
-							if (mailStatu == null || mailStatu.getDurum()) {
+							if (adet == 0 || (mailStatu != null && mailStatu.getDurum())) {
 								logger.info(mail.getSubject() + " mail gönderildi. ");
 								session.delete(serviceData);
 							}
