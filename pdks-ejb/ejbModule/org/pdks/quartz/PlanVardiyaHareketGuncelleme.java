@@ -102,7 +102,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		Session session = null;
 		try {
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
- 			if (fazlaMesaiGuncelleme(null, session) != null) {
+			basTarih = ortakIslemler.getBugun();
+			if (fazlaMesaiGuncelleme(basTarih, session) != null) {
 				Parameter parameterFazlaMesaiHesaplama = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
 				String konu = parameterFazlaMesaiHesaplama != null ? parameterFazlaMesaiHesaplama.getDescription() : "Fazla Mesai Toplu Güncelleme";
 				String aciklama = "Fazla Mesai Toplu güncellenmiştir.";
