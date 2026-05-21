@@ -102,23 +102,13 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		Session session = null;
 		try {
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
- 			if (fazlaMesaiGuncelleme(null, session) != null) {
-				Parameter parameterFazlaMesaiHesaplama = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
-				String konu = parameterFazlaMesaiHesaplama != null ? parameterFazlaMesaiHesaplama.getDescription() : "Fazla Mesai Toplu Güncelleme";
+			Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
+			if (parameter != null && PdksUtil.hasStringValue(parameter.getValue()) == false && fazlaMesaiGuncelleme(null, session) != null) {
+				String konu = parameter.getDescription();
 				String aciklama = "Fazla Mesai Toplu güncellenmiştir.";
 				if (PdksUtil.isSessionKapali(session))
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-				boolean mailGonder = getMailGonder(session);
-				if (mailGonder) {
-					List<User> userList = null;
-					if (ortakIslemler.getParameterKey("fazlaMesaiGuncelleMail").equals("1"))
-						userList = ortakIslemler.getIKUserList(session);
-					if (userList == null || userList.isEmpty()) {
-						aciklama = aciklama + "<br></br><br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
-						aciklama = aciklama + "<br></br><b>Stop Time  : </b>" + PdksUtil.convertToDateString(ortakIslemler.getBugun(), PdksUtil.getDateTimeLongFormat()) + "<br></br>";
-					}
-					zamanlayici.mailGonder(session, null, konu, aciklama, userList, Boolean.TRUE);
-				}
+				bilgilendirmeMailGonder(session, konu, aciklama);
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -130,6 +120,26 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				// TODO: handle exception
 			}
 		return MenuItemConstant.home;
+	}
+
+	/**
+	 * @param session
+	 * @param konu
+	 * @param aciklama
+	 * @throws Exception
+	 */
+	private void bilgilendirmeMailGonder(Session session, String konu, String aciklama) throws Exception {
+		boolean mailGonder = getMailGonder(session);
+		if (mailGonder) {
+			List<User> userList = null;
+			if (ortakIslemler.getParameterKey("fazlaMesaiGuncelleMail").equals("1"))
+				userList = ortakIslemler.getIKUserList(session);
+			if (userList == null || userList.isEmpty()) {
+				aciklama = aciklama + "<br></br><br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
+				aciklama = aciklama + "<br></br><b>Stop Time  : </b>" + PdksUtil.convertToDateString(ortakIslemler.getBugun(), PdksUtil.getDateTimeLongFormat()) + "<br></br>";
+			}
+			zamanlayici.mailGonder(session, null, konu, aciklama, userList, Boolean.TRUE);
+		}
 	}
 
 	@Asynchronous
@@ -151,7 +161,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					if (parameterHareket != null || parameterFazlaMesaiHesaplama != null) {
 						boolean fazlaMesaiHesaplaDurum = false;
 						Date tarih = PdksUtil.getDate(bugun);
-						Date basTarih = bugun;
+
 						String konu = null, aciklama = null;
 						if (parameterHareket != null) {
 							fazlaMesaiHesaplaDurum = ortakIslemler.getParameterKey("sirketFazlaMesaiGuncelleme").equals("1");
@@ -173,17 +183,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						if (PdksUtil.getCanliSunucuDurum() && PdksUtil.hasStringValue(konu)) {
 							if (PdksUtil.isSessionKapali(session))
 								session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-							boolean mailGonder = getMailGonder(session);
-							if (mailGonder) {
-								List<User> userList = null;
-								if (ortakIslemler.getParameterKey("fazlaMesaiGuncelleMail").equals("1"))
-									userList = ortakIslemler.getIKUserList(session);
-								if (userList == null || userList.isEmpty()) {
-									aciklama = aciklama + "<br></br><br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
-									aciklama = aciklama + "<br></br><b>Stop Time  : </b>" + PdksUtil.convertToDateString(ortakIslemler.getBugun(), PdksUtil.getDateTimeLongFormat()) + "<br></br>";
-								}
-								zamanlayici.mailGonder(session, null, konu, aciklama, userList, Boolean.TRUE);
-							}
+							bilgilendirmeMailGonder(session, konu, aciklama);
 
 						}
 					}
