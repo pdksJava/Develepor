@@ -74,7 +74,7 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		genelTanim = new Tanim();
 		genelTanimId = null;
 		setSelectedParentTanim(new Tanim());
@@ -183,7 +183,8 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 	 */
 	private void getTanimByGenelTanim() {
 		if (genelTanimId != null) {
-			genelTanim = ortakIslemler.getTanimById(genelTanimId, session);
+			genelTanim = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, genelTanimId, Tanim.class, session);
+
 			Tanim childGenelTanim = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_PARENT_ID, genelTanimId, Tanim.class, session);
 			if (childGenelTanim != null && childGenelTanim.getTipi().equals(genelTanim.getTipi()))
 				genelTanim.setChildGenelTanim(childGenelTanim);
@@ -233,12 +234,12 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 
 	public String tanimEkle(Tanim anaTanim) {
 		Tanim tanim = new Tanim();
-		if (anaTanim == null)
-			tanim.setTipi(genelTanim.getKodu());
-		else {
+		if (anaTanim == null) {
+			anaTanim = genelTanim;
+			tanim.setTipi(anaTanim.getKodu());
+		} else  
 			tanim.setTipi(genelTanim.getChildGenelTanim().getKodu());
-			tanim.setParentTanim(anaTanim);
-		}
+ 		tanim.setParentTanim(anaTanim);
 		tanim.setGuncelle(!authenticatedUser.isAdmin());
 		setInstance(tanim);
 		return "";

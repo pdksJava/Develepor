@@ -10,7 +10,7 @@
 
 		<rich:panel header="#{ortakIslemler.getMenuUserAdi(menuItemTree.session,'menuItemTanimlama')}">
 			<h:panelGrid style=" width : 897px; vertical-align:top;">
-				<h:form id="formYemekYiyenler">
+				<h:form id="formMenuTanimlama">
 					<a4j:commandButton status="ajaxStatus" id="editBtn" value="Yeni Menü" reRender="editPanel" action="#{menuItemHome.guncelle(null,false)}"
 						oncomplete="#{rich:component('editPanel')}.show();" />
 				</h:form>
@@ -178,7 +178,7 @@
 										<ui:define name="label">Name</ui:define>
 										<h:inputText id="name" required="true" value="#{menuItemHome.instance.name}" />
 										<rich:toolTip for="name"
-											value="Menu Bileşen Sabitleri sınıfına bu alana girilen text değeri adlı String alan ve String alanın degeri menü url bilgisi olacak şekilde tanımlamalar yapınız." />
+											value="Menü Bileşen Sabitleri sınıfına bu alana girilen text değeri adlı String alan ve String alanın degeri menü url bilgisi olacak şekilde tanımlamalar yapınız." />
 									</s:decorate>
 									<s:decorate id="orderNo" template="/layout/edit.xhtml">
 										<ui:define name="label">Sıra</ui:define>
@@ -202,7 +202,7 @@
 									</s:decorate>
 
 								</h:panelGrid>
-								<rich:simpleTogglePanel rendered="#{not empty menuItemHome.userMenuItemTimeList}" switchType="client"
+								<rich:simpleTogglePanel rendered="#{menuItemHome.instance.id!=null and not empty menuItemHome.userMenuItemTimeList}" switchType="client"
 									label="#{menuItemHome.instance.description.aciklama} - Kullanım Bilgisi" opened="true">
 									<rich:dataTable rowClasses="acik,koyu" value="#{menuItemHome.userMenuItemTimeList}" var="um" style="width: 80%;" rows="50" rowKeyVar="row">
 
@@ -287,10 +287,10 @@
 							</a4j:outputPanel>
 						</h:panelGrid>
 						<h:panelGrid columns="4">
-							<a4j:commandButton status="ajaxStatus" id="save" value="Save" action="#{menuItemHome.persist}" rendered="#{!menuItemHome.managed}"
+							<a4j:commandButton status="ajaxStatus" id="save" value="Kaydet" action="#{menuItemHome.persist}" rendered="#{menuItemHome.instance.id==null}"
 								reRender="menuItemDataTablePnl,menuItemTree" oncomplete="#{rich:component('editPanel')}.hide();" />
-							<a4j:commandButton status="ajaxStatus" id="update" value="Update" action="#{menuItemHome.update}" reRender="menuItemTree,menuItemDataTablePnl"
-								rendered="#{menuItemHome.managed}" oncomplete="#{rich:component('editPanel')}.hide();" />
+							<a4j:commandButton status="ajaxStatus" id="update" value="Güncelle" action="#{menuItemHome.update}" reRender="menuItemTree,menuItemDataTablePnl"
+								rendered="#{menuItemHome.instance.id!=null}" oncomplete="#{rich:component('editPanel')}.hide();" />
 						</h:panelGrid>
 					</h:form>
 				</rich:modalPanel>
