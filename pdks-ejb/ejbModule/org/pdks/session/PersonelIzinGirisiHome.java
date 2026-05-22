@@ -2642,7 +2642,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		if (onayDurum.equals("true")) {
 			if (guncellenecekIzin.getIzinKagidiGeldi() == null || !guncellenecekIzin.getIzinKagidiGeldi()) {
 				guncellenecekIzin.setIzinKagidiGeldi(Boolean.TRUE);
-				pdksEntityController.save(guncellenecekIzin, session);
+				pdksEntityController.saveOrUpdate(session, entityManager, guncellenecekIzin);
 				sessionFlush();
 				guncellenecekIzin = null;
 				izinListele(Boolean.FALSE, null);

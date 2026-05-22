@@ -902,7 +902,7 @@ public class StartupAction implements Serializable {
 			if (degisti) {
 				if (helpDeskStatus.getId() != null)
 					helpDeskStatus.setChangeDate(bugun);
-				session.saveOrUpdate(helpDeskStatus);
+				pdksEntityController.saveOrUpdate(session, entityManager, helpDeskStatus);
 				session.flush();
 			}
 

@@ -2195,7 +2195,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					personel2.setAsilYonetici2(personel2.getYoneticisi());
 					personel2.setGuncellemeTarihi(guncellemeTarihi);
 					personel2.setGuncelleyenUser(authenticatedUser);
-					session.saveOrUpdate(personel2);
+					pdksEntityController.saveOrUpdate(session, entityManager, personel2);
 				}
 			}
 		}

@@ -312,7 +312,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 						} else {
 							serviceData.setFonksiyonAdi("mailDosyaGonderilmedi");
 							serviceData.setOlusturmaTarihi(new Date());
-							session.saveOrUpdate(serviceData);
+							pdksEntityController.saveOrUpdate(session, entityManager, serviceData);
 						}
 
 						flush = true;

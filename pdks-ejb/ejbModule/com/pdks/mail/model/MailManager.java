@@ -958,7 +958,7 @@ public class MailManager implements Serializable {
 						attachmentFiles = null;
 						String jsonMailStrings = map.containsKey("jsonMailStrings") ? map.get("jsonMailStrings") : null;
 						serviceData.setOutputData(getJsonObject(jsonMailStrings, mailObject, gson));
-						pdksEntityController.save(serviceData, sessionDB);
+						pdksEntityController.saveOrUpdate(sessionDB, null, serviceData);
 					} catch (Exception ex) {
 
 					}

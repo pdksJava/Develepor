@@ -485,19 +485,6 @@ public class PdksEntityController implements Serializable {
 
 	}
 
-	public Object save(Object object, Session session) {
-		if (PdksUtil.isSessionKapali(session)) {
-			if (authenticatedUser != null)
-				session = authenticatedUser.getSessionSQL();
-			if (PdksUtil.isSessionKapali(session))
-				session = PdksUtil.getSession(entityManager, Boolean.FALSE);
-		}
-
-		session.saveOrUpdate(object);
-
-		return object;
-	}
-
 	/**
 	 * @param ses
 	 * @param em
@@ -509,6 +496,10 @@ public class PdksEntityController implements Serializable {
 		} catch (Exception e) {
 			if (em != null)
 				ses.saveOrUpdate(getEntityManagerObject(em, saveObject));
+			else if (ses.contains(saveObject) == false) {
+				Object object = ses.merge(saveObject);
+				ses.saveOrUpdate(object);
+			}
 		}
 	}
 

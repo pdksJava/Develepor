@@ -176,7 +176,7 @@ public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serial
 				}
 				veriMap = null;
 			} else {
-				session.saveOrUpdate(sqlPersonel);
+				pdksEntityController.saveOrUpdate(session, entityManager, sqlPersonel);
 				session.flush();
 			}
 
