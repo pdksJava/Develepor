@@ -97,7 +97,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	private Date bugun, basTarih;
 
-	 
 	public String fazlaMesaiHesaplamaBaslat() {
 		Session session = null;
 		try {
@@ -457,6 +456,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			}
 			Date guncellemeTarihi = null;
 			boolean flush = false;
+			int adet = 0;
 			for (VardiyaGun vg : vGunList) {
 				Long perId = vg.getPdksPersonel().getId();
 				Boolean vardiyaOnayli = vg.getDurum();
@@ -472,6 +472,11 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					vg.setVardiyaOnayli(vardiyaOnayli);
 					pdksEntityController.saveOrUpdate(session, entityManager, vg);
 					flush = true;
+					++adet;
+					if (adet % 10 == 0) {
+						session.flush();
+						flush = false;
+					}
 				}
 
 			}
@@ -503,6 +508,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		vGunList = pdksEntityController.getObjectBySQLList(sb1.toString(), fields, VardiyaGun.class);
 		Date guncellemeTarihi = null;
 		boolean flush = false;
+		int adet = 0;
 		for (VardiyaGun vg : vGunList) {
 			Vardiya v = vg.getVardiya();
 			if (v.isIzinVardiya() || v.isOffGun() || vg.getVardiyaOnayli() || vg.getDurum())
@@ -514,6 +520,11 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			vg.setVardiyaOnayli(Boolean.FALSE);
 			pdksEntityController.saveOrUpdate(session, entityManager, vg);
 			flush = true;
+			++adet;
+			if (adet % 10 == 0) {
+				session.flush();
+				flush = false;
+			}
 		}
 		if (flush)
 			session.flush();
