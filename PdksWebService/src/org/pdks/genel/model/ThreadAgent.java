@@ -24,6 +24,8 @@ public class ThreadAgent extends Thread implements Serializable {
 
 	private PdksDAO pdksDAO = null;
 
+	private boolean mailDurum = false;
+
 	public ThreadAgent(PdksAgent agent, PdksDAO dAO) {
 		super();
 		this.agent = agent;
@@ -56,6 +58,7 @@ public class ThreadAgent extends Thread implements Serializable {
 						e.printStackTrace();
 					}
 					mailGonder();
+					mailDurum = true;
 				} else {
 
 					File file = new File("/opt/sertifika/web.txt");
@@ -166,6 +169,14 @@ public class ThreadAgent extends Thread implements Serializable {
 
 	public void setPdksDAO(PdksDAO pdksDAO) {
 		this.pdksDAO = pdksDAO;
+	}
+
+	public boolean isMailDurum() {
+		return mailDurum;
+	}
+
+	public void setMailDurum(boolean mailDurum) {
+		this.mailDurum = mailDurum;
 	}
 
 }
