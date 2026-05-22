@@ -97,7 +97,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	private Date bugun, basTarih;
 
-	@Transactional
+	// @Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String fazlaMesaiHesaplamaBaslat() {
 		Session session = null;
 		try {

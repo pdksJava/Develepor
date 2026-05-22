@@ -86,7 +86,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		super.create();
 	}
 
-	@Begin(join = true, flushMode = FlushModeType.MANUAL)
+	// @Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String mailDataGonderBasla() {
 		Session sessionx = null;
 		try {
