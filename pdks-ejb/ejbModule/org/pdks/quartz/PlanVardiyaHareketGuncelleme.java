@@ -103,22 +103,24 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		try {
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 			basTarih = ortakIslemler.getBugun();
-			if (fazlaMesaiGuncelleme(basTarih, session) != null) {
-				Parameter parameterFazlaMesaiHesaplama = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
-				String konu = parameterFazlaMesaiHesaplama != null ? parameterFazlaMesaiHesaplama.getDescription() : "Fazla Mesai Toplu Güncelleme";
-				String aciklama = "Fazla Mesai Toplu güncellenmiştir.";
-				if (PdksUtil.isSessionKapali(session))
-					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-				boolean mailGonder = getMailGonder(session);
-				if (mailGonder) {
-					List<User> userList = null;
-					if (ortakIslemler.getParameterKey("fazlaMesaiGuncelleMail").equals("1"))
-						userList = ortakIslemler.getIKUserList(session);
-					if (userList == null || userList.isEmpty()) {
-						aciklama = aciklama + "<br></br><br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
-						aciklama = aciklama + "<br></br><b>Stop Time  : </b>" + PdksUtil.convertToDateString(ortakIslemler.getBugun(), PdksUtil.getDateTimeLongFormat()) + "<br></br>";
+			Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
+			if (parameter != null && ortakIslemler.hasStringValue(parameter.getValue()) == false) {
+				if (fazlaMesaiGuncelleme(basTarih, session) != null) {
+					String konu = parameter.getDescription();
+					String aciklama = "Fazla Mesai Toplu güncellenmiştir.";
+					if (PdksUtil.isSessionKapali(session))
+						session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+					boolean mailGonder = getMailGonder(session);
+					if (mailGonder) {
+						List<User> userList = null;
+						if (ortakIslemler.getParameterKey("fazlaMesaiGuncelleMail").equals("1"))
+							userList = ortakIslemler.getIKUserList(session);
+						if (userList == null || userList.isEmpty()) {
+							aciklama = aciklama + "<br></br><br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
+							aciklama = aciklama + "<br></br><b>Stop Time  : </b>" + PdksUtil.convertToDateString(ortakIslemler.getBugun(), PdksUtil.getDateTimeLongFormat()) + "<br></br>";
+						}
+						zamanlayici.mailGonder(session, null, konu, aciklama, userList, Boolean.TRUE);
 					}
-					zamanlayici.mailGonder(session, null, konu, aciklama, userList, Boolean.TRUE);
 				}
 			}
 		} catch (Exception e) {
