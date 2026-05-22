@@ -505,7 +505,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		boolean flush = false;
 		for (VardiyaGun vg : vGunList) {
 			Vardiya v = vg.getVardiya();
-			if (v.isIzinVardiya() || v.isOffGun())
+			if (v.isIzinVardiya() || v.isOffGun() || vg.getVardiyaOnayli() || vg.getDurum())
 				continue;
 			if (guncellemeTarihi == null)
 				guncellemeTarihi = new Date();
