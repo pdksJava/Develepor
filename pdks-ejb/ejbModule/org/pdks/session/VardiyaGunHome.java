@@ -7349,8 +7349,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					}
 					TreeMap<String, CalismaModeliAy> cmaMap = new TreeMap<String, CalismaModeliAy>();
 					boolean fazlaMesaiHesaplaTumPersonel = ortakIslemler.getParameterKey("fazlaMesaiHesaplaKisitliPersonel").equals("1") == false;
-
-					bugunTarih = PdksUtil.getDate(new Date());
+					boolean arifeCalismiyor = ortakIslemler.getParameterKey("arifeCalismiyor").equals("1");
+ 					bugunTarih = PdksUtil.getDate(new Date());
 					for (Iterator iteratorPer = personelList.iterator(); iteratorPer.hasNext();) {
 						Personel personel = (Personel) iteratorPer.next();
 						boolean pdks = false;
@@ -7588,7 +7588,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									if (yeniKayit && pdksVardiyaGun.getTatil() != null && (vardiya.isCalisma() || vardiya.isIzinVardiya())) {
 										Tatil tatil = pdksVardiyaGun.getTatil();
 										Vardiya vardiyaArife = sablonu.getVardiyaArife();
-										if (!tatil.isYarimGunMu())
+										if (!tatil.isYarimGunMu() || (arifeCalismiyor && cm.getArife() == 0.0d))
 											pdksVardiyaGun.setVardiya(offVardiya);
 										else if (vardiyaArife != null && cm != null) {
 											if (vardiyaArife.getNetCalismaSuresi() < pdksVardiyaGun.getVardiya().getNetCalismaSuresi() && cm.isIlkPlanOnaylidir())
