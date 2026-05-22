@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Persistence deployment descriptor for dev profile -->
-<persistence xmlns="http://java.sun.com/xml/ns/persistence" 
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd" 
-             version="1.0">
-             
-   <persistence-unit name="pdks-web" transaction-type="JTA">
-      <provider>org.hibernate.ejb.HibernatePersistence</provider>
-      <jta-data-source>java:/pdks-webDatasource</jta-data-source>
-      <properties>
-         <property name="hibernate.dialect" value=""/>
-         <property name="hibernate.hbm2ddl.auto" value="update"/>
-         <property name="hibernate.show_sql" value="true"/>
-         <property name="hibernate.format_sql" value="true"/>
-         <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
-      </properties>
-   </persistence-unit>
-    
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd" version="1.0">
+
+	<persistence-unit name="pdks-web" transaction-type="JTA">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jta-data-source>java:/pdks-webDatasource</jta-data-source>
+		<properties>
+			<!-- <property name="hibernate.hbm2ddl.auto" value="update" /> -->
+			<property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup" />
+			<property name="javax.persistence.query.timeout" value="60000" />
+			<property name="hibernate.c3p0.timeout" value="300" />
+			<property name="hibernate.c3p0.preferredTestQuery" value="SELECT 1" />
+			<property name="hibernate.c3p0.idle_test_period" value="100" />
+			<property name="hibernate.max_fetch_depth" value="2" />
+			<property name="hibernate.default_batch_fetch_size" value="16" />
+			<property name="hibernate.jdbc.batch_size" value="25" />
+			<property name="hibernate.jdbc.fetch_size" value="32" />
+			<property name="hibernate.transaction.timeout" value="30" />
+		</properties>
+	</persistence-unit>
+
 </persistence>

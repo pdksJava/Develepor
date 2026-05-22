@@ -152,7 +152,7 @@
 										rendered="#{ortakIslemler.getParameterKeyHasStringValue('hareketVardiyaZamani')}"
 										action="#{planVardiyaHareketGuncelleme.vardiyaHareketGuncelleme(null,parameterHome.session)}" />
 									<a4j:commandButton status="ajaxStatus" value="fazlaMesaiGuncelleme Calistir"
-										rendered="#{ortakIslemler.getParameterKeyHasStringValue('fazlaMesaiHesaplamaZamani')}"
+										rendered="#{ortakIslemler.canliDurum==false and ortakIslemler.testSunucuDurum==false }"
 										action="#{planVardiyaHareketGuncelleme.fazlaMesaiGuncelleme(null,parameterHome.session)}" />
 								</ui:fragment>
 							</c:if>
