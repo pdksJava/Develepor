@@ -402,7 +402,8 @@ public class OrtakIslemler implements Serializable {
 	 * @param yil
 	 * @param session
 	 */
-	public void diniBayramlarGuncelle(int yil, Session session) {
+	public List<Tatil> diniBayramlarGuncelle(int yil, Session session) {
+		List<Tatil> tatiller = new ArrayList<Tatil>();
 		String servisAdres = null, jsonDeger = null;
 		boolean local = getCanliDurum() == false && getTestSunucuDurum() == false;
 		if (getParameterKeyHasStringValue("pdksWebServiceLocal") && getCanliDurum() == false && getTestSunucuDurum() == false) {
@@ -426,12 +427,13 @@ public class OrtakIslemler implements Serializable {
 			Gson gs = new Gson();
 			LinkedHashMap<String, String> map1 = gs.fromJson(jsonDeger, LinkedHashMap.class);
 			if (map1 != null) {
+				Date bugun = new Date();
 				Date rb1 = null, rb2 = null, kb1 = null, kb2 = null;
 				for (int i = 0; i < 5; i++) {
 					String key = "RB" + i;
 					if (map1.containsKey(key)) {
 						Date tarih = PdksUtil.convertToJavaDate(map1.get(key), "yyyy-MM-dd");
-						if (tarih != null) {
+						if (tarih != null && tarih.after(bugun)) {
 							if (rb1 == null)
 								rb1 = tarih;
 							rb2 = tarih;
@@ -443,7 +445,7 @@ public class OrtakIslemler implements Serializable {
 					String key = "KB" + i;
 					if (map1.containsKey(key)) {
 						Date tarih = PdksUtil.convertToJavaDate(map1.get(key), "yyyy-MM-dd");
-						if (tarih != null) {
+						if (tarih != null && tarih.after(bugun)) {
 							if (kb1 == null)
 								kb1 = tarih;
 							kb2 = tarih;
@@ -463,9 +465,9 @@ public class OrtakIslemler implements Serializable {
 					if (tatilTipi != null) {
 						try {
 							if (rb2 != null)
-								updateTatilGunleri(yil, rb1, rb2, "Ramazan Bayramı", tatilTipi, session);
+								updateTatilGunleri(yil, rb1, rb2, "Ramazan Bayramı", tatilTipi, tatiller, session);
 							if (kb2 != null)
-								updateTatilGunleri(yil, kb1, kb2, "Kurban Bayramı", tatilTipi, session);
+								updateTatilGunleri(yil, kb1, kb2, "Kurban Bayramı", tatilTipi, tatiller, session);
 						} catch (Exception e) {
 						}
 					}
@@ -474,6 +476,7 @@ public class OrtakIslemler implements Serializable {
 			}
 
 		}
+		return tatiller;
 	}
 
 	/**
@@ -482,9 +485,10 @@ public class OrtakIslemler implements Serializable {
 	 * @param bitTarih
 	 * @param adi
 	 * @param tatilTipi
+	 * @param tatiller
 	 * @param session
 	 */
-	private void updateTatilGunleri(int yil, Date basTarih, Date bitTarih, String adi, Tanim tatilTipi, Session session) {
+	private void updateTatilGunleri(int yil, Date basTarih, Date bitTarih, String adi, Tanim tatilTipi, List<Tatil> tatiller, Session session) {
 		TreeMap<String, Tatil> tatilMap = getTatilGunleri(null, PdksUtil.tariheGunEkleCikar(basTarih, -1), PdksUtil.tariheGunEkleCikar(bitTarih, 1), session);
 		boolean tatilEkle = true;
 		if (tatilMap.isEmpty() == false) {
@@ -544,6 +548,7 @@ public class OrtakIslemler implements Serializable {
 			pdksTatil.setArifeVardiyaYarimHesapla(arifeVardiyaYarimHesapla.equals("") || arifeVardiyaYarimHesapla.equals("1"));
 			pdksEntityController.saveOrUpdate(session, null, pdksTatil);
 			session.flush();
+			tatiller.add(pdksTatil);
 			logger.info(pdksTatil.getAciklama() + " eklendi");
 		}
 

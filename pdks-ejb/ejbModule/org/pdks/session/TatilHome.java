@@ -27,6 +27,7 @@ import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
+import org.pdks.quartz.Zamanlayici;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
@@ -59,6 +60,9 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	HashMap parameterMap;
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
+
+	@In(required = false, create = true)
+	Zamanlayici zamanlayici;
 
 	public static String sayfaURL = "tatilTanimlama";
 	private List<String> mesajList = new ArrayList<String>();
@@ -93,7 +97,8 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	public String diniBayramBasla() {
 		try {
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-			diniBayramEkle();
+			if (PdksUtil.isSistemDestekVar())
+				diniBayramEkle();
 		} catch (Exception e) {
 		}
 		if (session != null)
@@ -102,17 +107,29 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 
 	}
 
+	/**
+	 * @return
+	 */
 	public String diniBayramEkle() {
+		tatilList = new ArrayList<Tatil>();
 		Calendar cal = Calendar.getInstance();
 		int basYil = cal.get(Calendar.YEAR), sonYil = cal.get(Calendar.YEAR) + 1;
 		for (int yil = basYil; yil <= sonYil; yil++) {
 			try {
-				ortakIslemler.diniBayramlarGuncelle(yil, session);
+				List<Tatil> list = ortakIslemler.diniBayramlarGuncelle(yil, session);
+				if (list.isEmpty() == false)
+					tatilList.addAll(list);
+				list = null;
 			} catch (Exception e) {
 			}
 
 		}
-
+		try {
+			zamanlayici.mailGonder(session, null, "Tatil günleri kontrol", tatilList.isEmpty() ? "Tatil günleri güncelleme olmadı" : "Tatil günlerine " + tatilList.size() + " adet tatil eklendi", null, false);
+		} catch (Exception e) {
+ 			e.printStackTrace();
+		}
+		tatilList = null;
 		return "";
 
 	}
