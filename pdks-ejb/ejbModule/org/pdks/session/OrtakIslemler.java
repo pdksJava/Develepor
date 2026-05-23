@@ -399,6 +399,157 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param yil
+	 * @param session
+	 */
+	public void diniBayramlarGuncelle(int yil, Session session) {
+		String servisAdres = null, jsonDeger = null;
+		boolean local = getCanliDurum() == false && getTestSunucuDurum() == false;
+		if (getParameterKeyHasStringValue("pdksWebServiceLocal") && getCanliDurum() == false && getTestSunucuDurum() == false) {
+			try {
+				servisAdres = getParameterKey("pdksWebServiceLocal") + "/rest/servicesPDKS/getDiniBayram?yil=" + yil;
+				jsonDeger = getApiData(servisAdres);
+			} catch (Exception e) {
+
+			}
+		}
+		if (jsonDeger == null || (local == false)) {
+			try {
+				servisAdres = getParameterKey("pdksWebService") + "/rest/servicesPDKS/getDiniBayram?yil=" + yil;
+				jsonDeger = getApiData(servisAdres);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+
+		}
+		if (jsonDeger != null) {
+			Gson gs = new Gson();
+			LinkedHashMap<String, String> map1 = gs.fromJson(jsonDeger, LinkedHashMap.class);
+			if (map1 != null) {
+				Date rb1 = null, rb2 = null, kb1 = null, kb2 = null;
+				for (int i = 0; i < 5; i++) {
+					String key = "RB" + i;
+					if (map1.containsKey(key)) {
+						Date tarih = PdksUtil.convertToJavaDate(map1.get(key), "yyyy-MM-dd");
+						if (tarih != null) {
+							if (rb1 == null)
+								rb1 = tarih;
+							rb2 = tarih;
+						}
+					}
+
+				}
+				for (int i = 0; i < 5; i++) {
+					String key = "KB" + i;
+					if (map1.containsKey(key)) {
+						Date tarih = PdksUtil.convertToJavaDate(map1.get(key), "yyyy-MM-dd");
+						if (tarih != null) {
+							if (kb1 == null)
+								kb1 = tarih;
+							kb2 = tarih;
+						}
+					}
+
+				}
+				if (rb2 != null || kb2 != null) {
+					List<Tanim> tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_TATIL_TIPI, Tanim.class, session);
+					Tanim tatilTipi = null;
+					Tatil tatil = new Tatil();
+					for (Tanim tanim : tanimList) {
+						tatil.setTatilTipi(tanim);
+						if (tatil.isTekSefer())
+							tatilTipi = tanim;
+					}
+					if (tatilTipi != null) {
+						try {
+							if (rb2 != null)
+								updateTatilGunleri(yil, rb1, rb2, "Ramazan Bayramı", tatilTipi, session);
+							if (kb2 != null)
+								updateTatilGunleri(yil, kb1, kb2, "Kurban Bayramı", tatilTipi, session);
+						} catch (Exception e) {
+						}
+					}
+
+				}
+			}
+
+		}
+	}
+
+	/**
+	 * @param yil
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param adi
+	 * @param tatilTipi
+	 * @param session
+	 */
+	private void updateTatilGunleri(int yil, Date basTarih, Date bitTarih, String adi, Tanim tatilTipi, Session session) {
+		TreeMap<String, Tatil> tatilMap = getTatilGunleri(null, PdksUtil.tariheGunEkleCikar(basTarih, -1), PdksUtil.tariheGunEkleCikar(bitTarih, 1), session);
+		boolean tatilEkle = true;
+		if (tatilMap.isEmpty() == false) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(basTarih);
+			Date tarih = cal.getTime();
+			while (tarih.after(bitTarih) == false && tatilEkle) {
+				String key = PdksUtil.convertToDateString(tarih, "yyyyMMdd");
+				if (tatilMap.containsKey(key)) {
+					Tatil tatil = tatilMap.get(key);
+					if (tatil.isTekSefer())
+						tatilEkle = false;
+				}
+				cal.add(Calendar.DATE, 1);
+				tarih = cal.getTime();
+			}
+		}
+		if (tatilEkle) {
+			Tatil pdksTatil = new Tatil();
+			pdksTatil.setTatilTipi(tatilTipi);
+			pdksTatil.setArifeSonraVardiyaDenklestirmeVar(false);
+			int saat = 13, dakika = 0;
+			String yarimGunStr = (parameterMap.containsKey("yarimGunSaati") ? (String) parameterMap.get("yarimGunSaati") : "");
+			String arifeVardiyaYarimHesapla = getParameterKey("arifeVardiyaYarimHesapla");
+			if (yarimGunStr.indexOf(":") > 0) {
+				StringTokenizer st = new StringTokenizer(yarimGunStr, ":");
+				if (st.countTokens() == 2) {
+					try {
+						saat = Integer.parseInt(st.nextToken().trim());
+					} catch (Exception e) {
+						logger.error("PDKS hata in : \n");
+						e.printStackTrace();
+						logger.error("PDKS hata out : " + e.getMessage());
+						saat = 13;
+					}
+					try {
+						dakika = Integer.parseInt(st.nextToken().trim());
+					} catch (Exception e) {
+						logger.error("PDKS hata in : \n");
+						e.printStackTrace();
+						logger.error("PDKS hata out : " + e.getMessage());
+						saat = 13;
+						dakika = 0;
+					}
+				}
+			}
+			basTarih = PdksUtil.setTarih(basTarih, Calendar.HOUR_OF_DAY, saat);
+			basTarih = PdksUtil.setTarih(basTarih, Calendar.MINUTE, dakika);
+			bitTarih = PdksUtil.getGunSonu(bitTarih);
+			pdksTatil.setYarimGun(true);
+			pdksTatil.setAciklama(yil + " Yılı " + adi);
+			pdksTatil.setAd(adi);
+			pdksTatil.setBasTarih(basTarih);
+			pdksTatil.setBitTarih(bitTarih);
+			pdksTatil.setOlusturanUser(getSistemAdminUser(session));
+			pdksTatil.setOlusturmaTarihi(new Date());
+			pdksTatil.setArifeVardiyaYarimHesapla(arifeVardiyaYarimHesapla.equals("") || arifeVardiyaYarimHesapla.equals("1"));
+			pdksEntityController.saveOrUpdate(session, null, pdksTatil);
+			session.flush();
+			logger.info(pdksTatil.getAciklama() + " eklendi");
+		}
+
+	}
+
+	/**
 	 * @param sirketKodu
 	 * @param personelNo
 	 * @param session

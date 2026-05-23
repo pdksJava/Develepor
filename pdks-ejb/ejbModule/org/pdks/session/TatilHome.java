@@ -27,6 +27,7 @@ import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
+import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
 import org.pdks.security.entity.UserRoles;
@@ -74,22 +75,6 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	private User islemYapan;
 	private Session session;
 
-	public List<Tanim> getTatilTanimList() {
-		return tatilTanimList;
-	}
-
-	public void setTatilTanimList(List<Tanim> tatilTanimList) {
-		this.tatilTanimList = tatilTanimList;
-	}
-
-	public List<Tatil> getTatilList() {
-		return tatilList;
-	}
-
-	public void setTatilList(List<Tatil> value) {
-		this.tatilList = value;
-	}
-
 	@Override
 	public Object getId() {
 		if (pdksTatilId == null) {
@@ -103,6 +88,33 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	@Begin(join = true)
 	public void create() {
 		super.create();
+	}
+
+	public String diniBayramBasla() {
+		try {
+			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+			diniBayramEkle();
+		} catch (Exception e) {
+		}
+		if (session != null)
+			session.close();
+		return MenuItemConstant.home;
+
+	}
+
+	public String diniBayramEkle() {
+		Calendar cal = Calendar.getInstance();
+		int basYil = cal.get(Calendar.YEAR), sonYil = cal.get(Calendar.YEAR) + 1;
+		for (int yil = basYil; yil <= sonYil; yil++) {
+			try {
+				ortakIslemler.diniBayramlarGuncelle(yil, session);
+			} catch (Exception e) {
+			}
+
+		}
+
+		return "";
+
 	}
 
 	public void tatilEkle() {
@@ -660,7 +672,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		setIslemYapan(authenticatedUser);
 		fillPdksTatilList();
 		fillAyList();
@@ -760,6 +772,22 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 
 	public void setYilSayisi(int yilSayisi) {
 		this.yilSayisi = yilSayisi;
+	}
+
+	public List<Tanim> getTatilTanimList() {
+		return tatilTanimList;
+	}
+
+	public void setTatilTanimList(List<Tanim> tatilTanimList) {
+		this.tatilTanimList = tatilTanimList;
+	}
+
+	public List<Tatil> getTatilList() {
+		return tatilList;
+	}
+
+	public void setTatilList(List<Tatil> value) {
+		this.tatilList = value;
 	}
 
 	public Session getSession() {

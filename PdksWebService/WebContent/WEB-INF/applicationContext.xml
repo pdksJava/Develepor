@@ -104,6 +104,10 @@
 				<prop key="hibernate.jdbc.fetch_size">32</prop>
 				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.transaction.timeout">30</prop>
+				<prop key="javax.persistence.query.timeout">60000</prop>
+				<prop key="hibernate.c3p0.timeout" >300</prop>
+				<prop key="hibernate.c3p0.preferredTestQuery">SELECT 1</prop>
+				<prop key="hibernate.c3p0.idle_test_period">100</prop>
 			</props>
 		</property>
 
