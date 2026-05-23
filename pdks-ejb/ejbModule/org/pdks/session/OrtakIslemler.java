@@ -364,7 +364,7 @@ public class OrtakIslemler implements Serializable {
 			if (is != null)
 				pngData = PdksUtil.toByteArray(is);
 		} catch (Exception e) {
- 		}
+		}
 		return pngData;
 	}
 
@@ -410,7 +410,7 @@ public class OrtakIslemler implements Serializable {
 				servisAdres = getParameterKey("pdksWebServiceLocal") + "/rest/servicesPDKS/getDiniBayram?yil=" + yil;
 				jsonDeger = getApiData(servisAdres);
 			} catch (Exception e) {
- 			}
+			}
 		}
 		if (jsonDeger == null || (local == false)) {
 			try {
@@ -425,30 +425,11 @@ public class OrtakIslemler implements Serializable {
 			LinkedHashMap<String, String> map1 = gs.fromJson(jsonDeger, LinkedHashMap.class);
 			if (map1 != null) {
 				Date bugun = new Date();
-				Date rb1 = null, rb2 = null, kb1 = null, kb2 = null;
-				for (int i = 0; i < 5; i++) {
-					String key = "RB" + i;
-					if (map1.containsKey(key)) {
-						Date tarih = PdksUtil.convertToJavaDate(map1.get(key), "yyyy-MM-dd");
-						if (tarih != null) {
-							if (rb1 == null)
-								rb1 = tarih;
-							rb2 = tarih;
-						}
-					}
-				}
-				for (int i = 0; i < 5; i++) {
-					String key = "KB" + i;
-					if (map1.containsKey(key)) {
-						Date tarih = PdksUtil.convertToJavaDate(map1.get(key), "yyyy-MM-dd");
-						if (tarih != null) {
-							if (kb1 == null)
-								kb1 = tarih;
-							kb2 = tarih;
-						}
-					}
- 				}
-				if (rb2 != null || kb2 != null) {
+				Date rb1 = map1.containsKey("RB0") ? PdksUtil.convertToJavaDate(map1.get("RB0"), "yyyy-MM-dd") : null;
+				Date rb2 = map1.containsKey("RB3") ? PdksUtil.convertToJavaDate(map1.get("RB3"), "yyyy-MM-dd") : null;
+				Date kb1 = map1.containsKey("KB0") ? PdksUtil.convertToJavaDate(map1.get("KB0"), "yyyy-MM-dd") : null;
+				Date kb2 = map1.containsKey("KB4") ? PdksUtil.convertToJavaDate(map1.get("KB4"), "yyyy-MM-dd") : null;
+ 				if (rb1 != null || rb2 != null || kb1 != null || kb2 != null) {
 					List<Tanim> tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_TATIL_TIPI, Tanim.class, session);
 					Tanim tatilTipi = null;
 					Tatil tatil = new Tatil();
@@ -459,14 +440,27 @@ public class OrtakIslemler implements Serializable {
 					}
 					if (tatilTipi != null) {
 						try {
-							if (rb2 != null && rb2.after(bugun))
-								updateTatilGunleri(yil, rb1, rb2, "Ramazan Bayramı", tatilTipi, tatiller, session);
-							if (kb2 != null && kb2.after(bugun))
-								updateTatilGunleri(yil, kb1, kb2, "Kurban Bayramı", tatilTipi, tatiller, session);
+							if (rb1 != null || rb2 != null) {
+								if (rb1 == null)
+									rb1 = PdksUtil.tariheGunEkleCikar(rb2, -3);
+								if (rb2 == null)
+									rb2 = PdksUtil.tariheGunEkleCikar(rb1, 3);
+								if (rb2.after(bugun))
+									updateTatilGunleri(yil, rb1, rb2, "Ramazan Bayramı", tatilTipi, tatiller, session);
+							}
+							if (kb1 != null || kb2 != null) {
+								if (kb1 == null)
+									kb1 = PdksUtil.tariheGunEkleCikar(kb2, -4);
+								if (kb2 == null)
+									kb2 = PdksUtil.tariheGunEkleCikar(kb1, 4);
+								if (kb2.after(bugun))
+									updateTatilGunleri(yil, kb1, kb2, "Kurban Bayramı", tatilTipi, tatiller, session);
+							}
+
 						} catch (Exception e) {
 						}
 					}
- 				}
+				}
 			}
 		}
 		return tatiller;
