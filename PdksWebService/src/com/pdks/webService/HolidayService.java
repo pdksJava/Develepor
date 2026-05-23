@@ -14,24 +14,22 @@ import org.threeten.bp.temporal.ChronoField;
 
 public class HolidayService implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4021629424879878878L;
 
+	/**
+	 * @param year
+	 * @return
+	 */
 	public Map<String, String> calculateHolidays(int year) {
 		Map<String, String> holidayMap = new LinkedHashMap<String, String>();
-
-		// Java 7 uyumlu ThreeTenBP LocalDate kullanımı
 		LocalDate startDate = LocalDate.of(year, 1, 1);
 		LocalDate endDate = LocalDate.of(year, 12, 31);
 
 		// LocalDate.isAfter ve plusDays döngüsü
 		for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
 
-			// Miladi tarihi ÜçTen Hicri takvimine çeviriyoruz
+			// Miladi tarihi Hicri takvimine çeviriyoruz
 			HijrahDate hijrahDate = HijrahDate.from(date);
-
 			int hijriMonth = hijrahDate.get(ChronoField.MONTH_OF_YEAR);
 			int hijriDay = hijrahDate.get(ChronoField.DAY_OF_MONTH);
 
