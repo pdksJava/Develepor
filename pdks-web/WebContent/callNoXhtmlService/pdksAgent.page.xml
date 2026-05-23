@@ -3,8 +3,7 @@
 	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.1.xsd">
 	<rewrite pattern="/pdksAgent" />
 	<action execute="#{pdksAgentTanimlamaHome.mailDataGonderBasla()}" on-postback="false" />
-	<begin-conversation join="true" flush-mode="manual" />
-	<navigation>
+ 	<navigation>
 
 		<rule if-outcome="pdksAgent">
 		<redirect view-id="#{menuItemConstant.home}" />

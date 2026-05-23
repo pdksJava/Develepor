@@ -123,8 +123,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
+ 		}
 		if (session != null)
 			try {
 				session.close();
