@@ -13,7 +13,7 @@ import org.threeten.bp.temporal.ChronoField;
 
 public class HolidayService {
 
-	public static Map<String, String> calculateHolidays(int year) {
+	public Map<String, String> calculateHolidays(int year) {
 		Map<String, String> holidayMap = new LinkedHashMap<String, String>();
 
 		// Java 7 uyumlu ThreeTenBP LocalDate kullanımı
@@ -31,7 +31,7 @@ public class HolidayService {
 
 			if (hijriMonth == 10) {// 1. Ramazan Bayramı Hesaplama (Şevval Ayı 1, 2, 3. Günler)
 				if (hijriDay == 1) {
- 					createHolidayMap(holidayMap, "RB0", date.plusDays(-1));
+					createHolidayMap(holidayMap, "RB0", date.plusDays(-1));
 					createHolidayMap(holidayMap, "RB1", date);
 				} else if (hijriDay == 2) {
 					createHolidayMap(holidayMap, "RB2", date);
@@ -58,7 +58,12 @@ public class HolidayService {
 		return holidayMap;
 	}
 
-	private static void createHolidayMap(Map<String, String> map, String name, LocalDate date) {
+	/**
+	 * @param map
+	 * @param name
+	 * @param date
+	 */
+	private void createHolidayMap(Map<String, String> map, String name, LocalDate date) {
 		Date tarih = DateTimeUtils.toDate(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		map.put(name, PdksUtil.convertToDateString(tarih, "yyyy-MM-dd"));
 
