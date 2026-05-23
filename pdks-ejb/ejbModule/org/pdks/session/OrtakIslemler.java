@@ -364,8 +364,7 @@ public class OrtakIslemler implements Serializable {
 			if (is != null)
 				pngData = PdksUtil.toByteArray(is);
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
+ 		}
 		return pngData;
 	}
 
@@ -411,15 +410,13 @@ public class OrtakIslemler implements Serializable {
 				servisAdres = getParameterKey("pdksWebServiceLocal") + "/rest/servicesPDKS/getDiniBayram?yil=" + yil;
 				jsonDeger = getApiData(servisAdres);
 			} catch (Exception e) {
-
-			}
+ 			}
 		}
 		if (jsonDeger == null || (local == false)) {
 			try {
 				servisAdres = getParameterKey("pdksWebService") + "/rest/servicesPDKS/getDiniBayram?yil=" + yil;
 				jsonDeger = getApiData(servisAdres);
 			} catch (Exception e) {
-				// TODO: handle exception
 			}
 
 		}
@@ -433,26 +430,24 @@ public class OrtakIslemler implements Serializable {
 					String key = "RB" + i;
 					if (map1.containsKey(key)) {
 						Date tarih = PdksUtil.convertToJavaDate(map1.get(key), "yyyy-MM-dd");
-						if (tarih != null && tarih.after(bugun)) {
+						if (tarih != null) {
 							if (rb1 == null)
 								rb1 = tarih;
 							rb2 = tarih;
 						}
 					}
-
 				}
 				for (int i = 0; i < 5; i++) {
 					String key = "KB" + i;
 					if (map1.containsKey(key)) {
 						Date tarih = PdksUtil.convertToJavaDate(map1.get(key), "yyyy-MM-dd");
-						if (tarih != null && tarih.after(bugun)) {
+						if (tarih != null) {
 							if (kb1 == null)
 								kb1 = tarih;
 							kb2 = tarih;
 						}
 					}
-
-				}
+ 				}
 				if (rb2 != null || kb2 != null) {
 					List<Tanim> tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_TATIL_TIPI, Tanim.class, session);
 					Tanim tatilTipi = null;
@@ -464,17 +459,15 @@ public class OrtakIslemler implements Serializable {
 					}
 					if (tatilTipi != null) {
 						try {
-							if (rb2 != null)
+							if (rb2 != null && rb2.after(bugun))
 								updateTatilGunleri(yil, rb1, rb2, "Ramazan Bayramı", tatilTipi, tatiller, session);
-							if (kb2 != null)
+							if (kb2 != null && kb2.after(bugun))
 								updateTatilGunleri(yil, kb1, kb2, "Kurban Bayramı", tatilTipi, tatiller, session);
 						} catch (Exception e) {
 						}
 					}
-
-				}
+ 				}
 			}
-
 		}
 		return tatiller;
 	}
