@@ -49,7 +49,6 @@ import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 import org.pdks.session.FazlaMesaiOrtakIslemler;
 import org.pdks.session.OrtakIslemler;
-import org.pdks.session.PdksAgentTanimlamaHome;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
 
@@ -79,9 +78,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
-
-	@In(required = false, create = true)
-	PdksAgentTanimlamaHome pdksAgentTanimlamaHome;
 
 	@In(required = false, create = true)
 	FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemler;
@@ -121,7 +117,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				}
 			}
 		} catch (Exception e) {
- 		}
+		}
 		if (session != null)
 			try {
 				session.close();
@@ -190,7 +186,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				} else
 					saniye = 15;
 				Thread.sleep(saniye * 1000);
- 
 
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n" + e.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());
