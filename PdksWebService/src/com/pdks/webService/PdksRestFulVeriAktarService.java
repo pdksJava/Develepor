@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -77,6 +78,19 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	private FazlaMesaiERP fazlaMesaiERP;
 
 	private PdksDAO pdksDAO;
+
+	@GET
+	@Path("/getDiniBayram")
+	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
+	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	public Response getDiniBayram(@QueryParam("yil") Integer yil) throws Exception {
+		String mediaType = MediaType.APPLICATION_JSON;
+		Map<String, String> map = HolidayService.calculateHolidays(yil);
+		Gson gson = new Gson();
+		String sonuc = gson.toJson(map);
+		Response response = Response.ok(sonuc).type(mediaType + ";charset=utf-8").build();
+ 		return response;
+	}
 
 	/**
 	 * @param sirketERPKodu
@@ -643,7 +657,7 @@ public class PdksRestFulVeriAktarService implements Serializable {
 			boolean testDurum = PdksVeriOrtakAktar.getTestDurum();
 			PdksVeriOrtakAktar pdksVeriOrtakAktar = new PdksVeriOrtakAktar();
 			if (testDurum == false && pdksVeriOrtakAktar.getMesaiEntrasyonMailKapali(sirketKoduInput, tesisKoduInput, null) == false) {
- 				try {
+				try {
 					sendIKMail(sirketKoduInput, tesisKoduInput, dosyaAdi, sonuc);
 				} catch (Exception e) {
 					logger.error(e);
