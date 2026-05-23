@@ -1,5 +1,6 @@
 package com.pdks.webService;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,7 +12,12 @@ import org.threeten.bp.ZoneId;
 import org.threeten.bp.chrono.HijrahDate;
 import org.threeten.bp.temporal.ChronoField;
 
-public class HolidayService {
+public class HolidayService implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4021629424879878878L;
 
 	public Map<String, String> calculateHolidays(int year) {
 		Map<String, String> holidayMap = new LinkedHashMap<String, String>();
