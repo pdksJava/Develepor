@@ -29,29 +29,26 @@ public class HolidayService {
 			int hijriMonth = hijrahDate.get(ChronoField.MONTH_OF_YEAR);
 			int hijriDay = hijrahDate.get(ChronoField.DAY_OF_MONTH);
 
-			// 1. Ramazan Bayramı Hesaplama (Şevval Ayı 1, 2, 3. Günler)
-			if (hijriMonth == 10) {
+			if (hijriMonth == 10) {// 1. Ramazan Bayramı Hesaplama (Şevval Ayı 1, 2, 3. Günler)
 				if (hijriDay == 1) {
-
-					createHolidayMap(holidayMap, "RB0", date.plusDays(-1));
-					// holidayList.add(createHolidayMap("Ramazan Bayramı 1. Gün", date));
+ 					createHolidayMap(holidayMap, "RB0", date.plusDays(-1));
+					createHolidayMap(holidayMap, "RB1", date);
 				} else if (hijriDay == 2) {
-					// holidayList.add(createHolidayMap("Ramazan Bayramı 2. Gün", date));
+					createHolidayMap(holidayMap, "RB2", date);
 				} else if (hijriDay == 3) {
 					createHolidayMap(holidayMap, "RB3", date);
 				}
 			}
 
-			// 2. Kurban Bayramı Hesaplama (Zilhicce Ayı 9, 10, 11, 12, 13. Günler)
-			if (hijriMonth == 12) {
+			if (hijriMonth == 12) {// 2. Kurban Bayramı Hesaplama (Zilhicce Ayı 9, 10, 11, 12, 13. Günler)
 				if (hijriDay == 9) {
 					createHolidayMap(holidayMap, "KB0", date);
 				} else if (hijriDay == 10) {
-					// holidayList.add(createHolidayMap("Kurban Bayramı 1. Gün", date));
+					createHolidayMap(holidayMap, "KB1", date);
 				} else if (hijriDay == 11) {
-					// holidayList.add(createHolidayMap("Kurban Bayramı 2. Gün", date));
+					createHolidayMap(holidayMap, "KB2", date);
 				} else if (hijriDay == 12) {
-					// holidayList.add(createHolidayMap("Kurban Bayramı 3. Gün", date));
+					createHolidayMap(holidayMap, "KB3", date);
 				} else if (hijriDay == 13) {
 					createHolidayMap(holidayMap, "KB4", date);
 				}
