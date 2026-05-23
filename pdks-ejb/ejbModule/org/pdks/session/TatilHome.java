@@ -125,9 +125,10 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 
 		}
 		try {
-			zamanlayici.mailGonder(session, null, "Tatil günleri kontrol", tatilList.isEmpty() ? "Tatil günleri güncelleme olmadı" : "Tatil günlerine " + tatilList.size() + " adet tatil eklendi", null, false);
+			if (PdksUtil.getTestSunucuDurum() == false && PdksUtil.getCanliSunucuDurum() == false)
+				zamanlayici.mailGonder(session, null, "Tatil günleri kontrol", tatilList.isEmpty() ? "Tatil günleri güncelleme olmadı" : "Tatil günlerine " + tatilList.size() + " adet tatil eklendi", null, false);
 		} catch (Exception e) {
- 			e.printStackTrace();
+			e.printStackTrace();
 		}
 		tatilList = null;
 		return "";
