@@ -528,19 +528,29 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 				List<AylikPuantaj> puantajList = null;
 				if (donemKodu.longValue() >= islemDonemKodu.longValue()) {
-					if (logYaz)
-						logger.info(str + " [ " + donemPerList.size() + " ] in " + PdksUtil.getCurrentTimeStampStr());
-					if (kayitAdet > 0 && gelecekTarih == false) {
-						String idStr = ortakIslemler.getEncodeStringByBase64(linkStr);
-						fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
-						puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
-
-					}
-					if (puantajList != null && !puantajList.isEmpty()) {
-					 
+					try {
 						if (logYaz)
-							logger.info(str + (puantajList != null ? " [ " + puantajList.size() + " ]" : "") + " out " + PdksUtil.getCurrentTimeStampStr());
+							logger.info(str + " [ " + donemPerList.size() + " ] in " + PdksUtil.getCurrentTimeStampStr());
+						if (kayitAdet > 0 && gelecekTarih == false) {
+							String idStr = ortakIslemler.getEncodeStringByBase64(linkStr);
+							fazlaMesaiHesaplaHome.sayfaFazlaMesaiGuncelle(idStr, loginUser);
+							puantajList = fazlaMesaiHesaplaHome.getAylikPuantajList();
+
+						}
+						if (puantajList != null && !puantajList.isEmpty()) {
+
+							if (logYaz)
+								logger.info(str + (puantajList != null ? " [ " + puantajList.size() + " ]" : "") + " out " + PdksUtil.getCurrentTimeStampStr());
+						}
+					} catch (Exception eX) {
+						// TODO: handle exception
 					}
+					if (PdksUtil.isSessionKapali(session)) {
+						session = PdksUtil.getSessionUser(entityManager, loginUser);
+						if (authenticatedUser != null)
+							authenticatedUser.putSessionMap("bolumFazlaMesai", session);
+					}
+
 				}
 				donemPerList = null;
 
@@ -992,7 +1002,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						personelDenklestirmeList = fazlaMesaiOrtakIslemler.getBordoDenklestirmeList(denklestirmeAy, as, tekSicilGiris == false && (denklestirmeAyDurum == false || (hataliVeriGetir != null && hataliVeriGetir)), tekSicilGiris == false
 								&& (denklestirmeAyDurum == false || (eksikCalisanVeriGetir != null && eksikCalisanVeriGetir)), session);
 						if (personelDenklestirmeList != null) {
-							
+
 							if (tekSicilGiris == false && sadeceHataliGetir) {
 								for (Iterator iterator = personelDenklestirmeList.iterator(); iterator.hasNext();) {
 									AylikPuantaj ap = (AylikPuantaj) iterator.next();

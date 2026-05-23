@@ -2221,7 +2221,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							if (saveVardiyaGun) {
 								if (vardiyaSaat == null || vardiyaSaat.getId() == null)
 									vardiyaGun.setVardiyaSaat(null);
-								saveList.add(vardiyaGun);
+								if (vardiyaGun.isAyinGunu())
+									saveList.add(vardiyaGun);
 							}
 
 							vardiyalar.put(vardiyaGun.getVardiyaKeyStr(), vardiyaGun);
