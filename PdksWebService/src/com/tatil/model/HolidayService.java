@@ -2,6 +2,7 @@ package com.tatil.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,8 +40,12 @@ public class HolidayService implements Serializable {
 
 			if (hijriMonth == 10) {// 1. Ramazan Bayramı Hesaplama (Şevval Ayı 1, 2, 3. Günler)
 				if (hijriDay == 1) {
-					holiday = new Holiday("R", getTarih(date.plusDays(-1)), 3);
-					tatilList.add(holiday);
+					Date tarih = getTarih(date.plusDays(-1));
+					if (PdksUtil.getDateField(tarih, Calendar.YEAR) == year) {
+						holiday = new Holiday("R", getTarih(date.plusDays(-1)), 3);
+						tatilList.add(holiday);
+					}
+
 					// createHolidayMap(holidayMap, "RB0", date.plusDays(-1));
 					// createHolidayMap(holidayMap, "RB1", date);
 				} else if (hijriDay == 2) {
@@ -54,8 +59,11 @@ public class HolidayService implements Serializable {
 
 			if (hijriMonth == 12) {// 2. Kurban Bayramı Hesaplama (Zilhicce Ayı 9, 10, 11, 12, 13. Günler)
 				if (hijriDay == 9) {
-					holiday = new Holiday("K", getTarih(date), 4);
-					tatilList.add(holiday);
+					Date tarih = getTarih(date);
+					if (PdksUtil.getDateField(tarih, Calendar.YEAR) == year) {
+						holiday = new Holiday("K", tarih, 4);
+						tatilList.add(holiday);
+					}
 					createHolidayMap(holidayMap, "KB0", date);
 				} else if (hijriDay == 10) {
 					createHolidayMap(holidayMap, "KB1", date);
