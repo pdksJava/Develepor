@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.pdks.genel.model.PdksUtil;
 import org.threeten.bp.DateTimeUtils;
@@ -24,7 +22,7 @@ public class HolidayService implements Serializable {
 	 * @return
 	 */
 	public List<Holiday> calculateHolidays(int year) {
-		Map<String, String> holidayMap = new LinkedHashMap<String, String>();
+		// Map<String, String> holidayMap = new LinkedHashMap<String, String>();
 		LocalDate startDate = LocalDate.of(year - 1, 12, 28);
 		LocalDate endDate = LocalDate.of(year + 1, 1, 4);
 
@@ -49,11 +47,11 @@ public class HolidayService implements Serializable {
 					// createHolidayMap(holidayMap, "RB0", date.plusDays(-1));
 					// createHolidayMap(holidayMap, "RB1", date);
 				} else if (hijriDay == 2) {
-					createHolidayMap(holidayMap, "RB2", date);
+					// createHolidayMap(holidayMap, "RB2", date);
 				} else if (hijriDay == 3) {
 					if (holiday != null)
 						holiday.setBitTarih(getTarih(date));
-					createHolidayMap(holidayMap, "RB3", date);
+					// createHolidayMap(holidayMap, "RB3", date);
 				}
 			}
 
@@ -64,17 +62,17 @@ public class HolidayService implements Serializable {
 						holiday = new Holiday("K", tarih, 4);
 						tatilList.add(holiday);
 					}
-					createHolidayMap(holidayMap, "KB0", date);
+					// createHolidayMap(holidayMap, "KB0", date);
 				} else if (hijriDay == 10) {
-					createHolidayMap(holidayMap, "KB1", date);
+					// createHolidayMap(holidayMap, "KB1", date);
 				} else if (hijriDay == 11) {
-					createHolidayMap(holidayMap, "KB2", date);
+					// createHolidayMap(holidayMap, "KB2", date);
 				} else if (hijriDay == 12) {
-					createHolidayMap(holidayMap, "KB3", date);
+					// createHolidayMap(holidayMap, "KB3", date);
 				} else if (hijriDay == 13) {
 					if (holiday != null)
 						holiday.setBitTarih(getTarih(date));
-					createHolidayMap(holidayMap, "KB4", date);
+					// createHolidayMap(holidayMap, "KB4", date);
 				}
 			}
 		}
@@ -82,17 +80,6 @@ public class HolidayService implements Serializable {
 			holiday.setBitTarih(PdksUtil.tariheGunEkleCikar(holiday.getBasTarih(), holiday.getGunAdet()));
 
 		return tatilList;
-	}
-
-	/**
-	 * @param map
-	 * @param name
-	 * @param date
-	 */
-	private void createHolidayMap(Map<String, String> map, String name, LocalDate date) {
-		Date tarih = getTarih(date);
-		map.put(name, PdksUtil.convertToDateString(tarih, "yyyy-MM-dd"));
-
 	}
 
 	private Date getTarih(LocalDate date) {

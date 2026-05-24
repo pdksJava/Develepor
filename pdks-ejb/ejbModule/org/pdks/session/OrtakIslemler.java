@@ -177,6 +177,7 @@ import org.pdks.security.entity.UserVekalet;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.internal.LinkedTreeMap;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -422,42 +423,28 @@ public class OrtakIslemler implements Serializable {
 		}
 		if (jsonDeger != null) {
 			Gson gs = new Gson();
-			LinkedHashMap<String, String> map1 = gs.fromJson(jsonDeger, LinkedHashMap.class);
-			if (map1 != null) {
+			List<LinkedTreeMap<String, String>> list = gs.fromJson(jsonDeger, List.class);
+			if (list != null) {
 				Date bugun = new Date();
-				Date rb1 = map1.containsKey("RB0") ? PdksUtil.convertToJavaDate(map1.get("RB0"), "yyyy-MM-dd") : null;
-				Date rb2 = map1.containsKey("RB3") ? PdksUtil.convertToJavaDate(map1.get("RB3"), "yyyy-MM-dd") : null;
-				Date kb1 = map1.containsKey("KB0") ? PdksUtil.convertToJavaDate(map1.get("KB0"), "yyyy-MM-dd") : null;
-				Date kb2 = map1.containsKey("KB4") ? PdksUtil.convertToJavaDate(map1.get("KB4"), "yyyy-MM-dd") : null;
- 				if (rb1 != null || rb2 != null || kb1 != null || kb2 != null) {
-					List<Tanim> tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_TATIL_TIPI, Tanim.class, session);
-					Tanim tatilTipi = null;
-					Tatil tatil = new Tatil();
-					for (Tanim tanim : tanimList) {
-						tatil.setTatilTipi(tanim);
-						if (tatil.isTekSefer())
-							tatilTipi = tanim;
-					}
-					if (tatilTipi != null) {
-						try {
-							if (rb1 != null || rb2 != null) {
-								if (rb1 == null)
-									rb1 = PdksUtil.tariheGunEkleCikar(rb2, -3);
-								if (rb2 == null)
-									rb2 = PdksUtil.tariheGunEkleCikar(rb1, 3);
-								if (rb2.after(bugun))
-									updateTatilGunleri(yil, rb1, rb2, "Ramazan Bayramı", tatilTipi, tatiller, session);
+				Tanim tatilTipi = null;
+				for (LinkedTreeMap<String, String> map : list) {
+					Date b1 = map.containsKey("basGun") ? PdksUtil.getDateFromString(map.get("basGun")) : null;
+					Date b2 = b1 != null && map.containsKey("bitGun") ? PdksUtil.getDateFromString(map.get("bitGun")) : null;
+					if (b2 != null && b2.after(bugun)) {
+						if (tatilTipi == null) {
+							List<Tanim> tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_TATIL_TIPI, Tanim.class, session);
+							Tatil tatil = new Tatil();
+							for (Tanim tanim : tanimList) {
+								tatil.setTatilTipi(tanim);
+								if (tatil.isTekSefer())
+									tatilTipi = tanim;
 							}
-							if (kb1 != null || kb2 != null) {
-								if (kb1 == null)
-									kb1 = PdksUtil.tariheGunEkleCikar(kb2, -4);
-								if (kb2 == null)
-									kb2 = PdksUtil.tariheGunEkleCikar(kb1, 4);
-								if (kb2.after(bugun))
-									updateTatilGunleri(yil, kb1, kb2, "Kurban Bayramı", tatilTipi, tatiller, session);
+						}
+						if (tatilTipi != null) {
+							try {
+								updateTatilGunleri(yil, b1, b2, map.get("adi"), tatilTipi, tatiller, session);
+							} catch (Exception e) {
 							}
-
-						} catch (Exception e) {
 						}
 					}
 				}
@@ -531,7 +518,7 @@ public class OrtakIslemler implements Serializable {
 			pdksTatil.setBasTarih(basTarih);
 			pdksTatil.setBitTarih(bitTarih);
 			pdksTatil.setOlusturanUser(getSistemAdminUser(session));
-			pdksTatil.setOlusturmaTarihi(new Date());
+			pdksTatil.setOlusturmaTarihi(PdksUtil.convertToJavaDate((yil - 1) + "0101", "yyyyMMdd"));
 			pdksTatil.setArifeVardiyaYarimHesapla(arifeVardiyaYarimHesapla.equals("") || arifeVardiyaYarimHesapla.equals("1"));
 			pdksEntityController.saveOrUpdate(session, null, pdksTatil);
 			session.flush();

@@ -97,7 +97,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	public String diniBayramBasla() {
 		try {
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-			if (PdksUtil.isSistemDestekVar())
+			if ((PdksUtil.getTestSunucuDurum() == false && PdksUtil.getCanliSunucuDurum() == false) || PdksUtil.isSistemDestekVar())
 				diniBayramEkle();
 		} catch (Exception e) {
 		}
@@ -125,7 +125,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 
 		}
 		try {
-			if (PdksUtil.getTestSunucuDurum() == false && PdksUtil.getCanliSunucuDurum() == false)
+			if (PdksUtil.getTestSunucuDurum() || PdksUtil.getCanliSunucuDurum())
 				zamanlayici.mailGonder(session, null, "Tatil günleri kontrol", tatilList.isEmpty() ? "Tatil günleri güncelleme olmadı" : "Tatil günlerine " + tatilList.size() + " adet tatil eklendi", null, false);
 		} catch (Exception e) {
 			e.printStackTrace();
