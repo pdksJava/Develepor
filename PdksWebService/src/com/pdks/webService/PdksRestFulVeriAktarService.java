@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +51,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
+import com.tatil.model.HolidayService;
 
 @Service
 @Path("/servicesPDKS")
@@ -85,9 +85,9 @@ public class PdksRestFulVeriAktarService implements Serializable {
 	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
 	public Response getDiniBayram(@QueryParam("yil") Integer yil) throws Exception {
 		String mediaType = MediaType.APPLICATION_JSON;
-		Map<String, String> map = new HolidayService().calculateHolidays(yil);
+		List tatiller = new HolidayService().calculateHolidays(yil);
 		Gson gson = new Gson();
-		String sonuc = gson.toJson(map);
+		String sonuc = gson.toJson(tatiller);
 		Response response = Response.ok(sonuc).type(mediaType + ";charset=utf-8").build();
 		return response;
 	}
