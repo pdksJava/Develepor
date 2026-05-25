@@ -102,7 +102,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 		} catch (Exception e) {
 		}
 		if (session != null)
-			session.close();
+			session.disconnect();
 		return MenuItemConstant.home;
 
 	}

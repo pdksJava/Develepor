@@ -209,7 +209,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		return str;
 	}
 
-	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaFazlaMesaiGuncellemeAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, true);
@@ -316,7 +315,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			}
 		}
 		if (session != null)
-			session.close();
+			session.disconnect();
 
 		return MenuItemConstant.login;
 	}

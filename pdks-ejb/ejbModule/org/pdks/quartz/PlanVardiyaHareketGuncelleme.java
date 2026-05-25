@@ -91,20 +91,22 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	private Date bugun, basTarih;
 
+	private Session session = null;
+
 	public String fazlaMesaiHesaplamaBaslat() {
-		Session session = null;
 		try {
-			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+			if (PdksUtil.isSessionKapali(session))
+				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 			basTarih = ortakIslemler.getBugun();
 			Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
 			if (parameter != null && ortakIslemler.hasStringValue(parameter.getValue()) == false) {
 				if (fazlaMesaiGuncelleme(basTarih, session) != null) {
-					String konu = parameter.getDescription();
-					String aciklama = "Fazla Mesai Toplu güncellenmiştir.";
 					if (PdksUtil.isSessionKapali(session))
 						session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 					boolean mailGonder = getMailGonder(session);
 					if (mailGonder) {
+						String konu = parameter.getDescription();
+						String aciklama = "Fazla Mesai Toplu güncellenmiştir.";
 						List<User> userList = null;
 						if (ortakIslemler.getParameterKey("fazlaMesaiGuncelleMail").equals("1"))
 							userList = ortakIslemler.getIKUserList(session);
@@ -122,7 +124,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			try {
 				session.close();
 			} catch (Exception e) {
-				// TODO: handle exception
 			}
 		return MenuItemConstant.home;
 	}
@@ -134,13 +135,13 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		if (!isCalisiyor()) {
 			setCalisiyor(Boolean.TRUE);
 			logger.debug("planVardiyaHareketGuncelleme in " + PdksUtil.getCurrentTimeStampStr());
-			Session session = null;
 			int saniye = 5;
 			try {
 				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 					Calendar cal = Calendar.getInstance();
 					bugun = cal.getTime();
-					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+					if (PdksUtil.isSessionKapali(session))
+						session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 					Parameter parameterHareket = getParameter(PARAMETER_HAREKET_KEY, session);
 					Parameter parameterFazlaMesaiHesaplama = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
 					if (parameterHareket != null || parameterFazlaMesaiHesaplama != null) {
@@ -193,7 +194,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				logger.error("PDKS hata out : " + e.getMessage());
 			} finally {
 				if (session != null)
-					session.close();
+					session.disconnect();
 				setCalisiyor(Boolean.FALSE);
 
 			}
@@ -693,15 +694,17 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	 */
 	private boolean getMailGonder(Session session) {
 		boolean mailGonder = false;
-		Calendar cal = Calendar.getInstance();
-		if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-			Date basTarih = PdksUtil.getDate(cal.getTime());
-			String key = PdksUtil.convertToDateString(basTarih, PATTERN);
-			Date bitTarih = PdksUtil.tariheGunEkleCikar(basTarih, 1);
-			TreeMap<String, Tatil> tatilMap = ortakIslemler.getTatilGunleri(null, basTarih, bitTarih, session);
-			Tatil tatil = tatilMap != null && tatilMap.containsKey(key) ? tatilMap.get(key) : null;
-			mailGonder = tatil == null || tatil.isYarimGunMu();
-			tatilMap = null;
+		if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
+			Calendar cal = Calendar.getInstance();
+			if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+				Date basTarih = PdksUtil.getDate(cal.getTime());
+				String key = PdksUtil.convertToDateString(basTarih, PATTERN);
+				Date bitTarih = PdksUtil.tariheGunEkleCikar(basTarih, 1);
+				TreeMap<String, Tatil> tatilMap = ortakIslemler.getTatilGunleri(null, basTarih, bitTarih, session);
+				Tatil tatil = tatilMap != null && tatilMap.containsKey(key) ? tatilMap.get(key) : null;
+				mailGonder = tatil == null || tatil.isYarimGunMu();
+				tatilMap = null;
+			}
 		}
 		return mailGonder;
 	}

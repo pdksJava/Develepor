@@ -1346,7 +1346,7 @@ public class StartupAction implements Serializable {
 		this.smtpTLSDurum = smtpTLSDurum;
 	}
 
-	public boolean getSmtpSSL() {
+	public Boolean getSmtpSSL() {
 		boolean smtpSSL = Boolean.FALSE;
 		try {
 			smtpSSL = smtpSSLDurum != null && smtpSSLDurum.equals("1");
@@ -1356,7 +1356,7 @@ public class StartupAction implements Serializable {
 		return smtpSSL;
 	}
 
-	public boolean getSmtpTLS() {
+	public Boolean getSmtpTLS() {
 		boolean smtpTLS = Boolean.FALSE;
 		try {
 			smtpTLS = smtpTLSDurum != null && smtpTLSDurum.equals("1");
