@@ -7,11 +7,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.pdks.genel.model.PdksUtil;
-import org.threeten.bp.DateTimeUtils;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.ZoneId;
-import org.threeten.bp.chrono.HijrahDate;
-import org.threeten.bp.temporal.ChronoField;
+
+import com.ibm.icu.util.IslamicCalendar;
+import com.ibm.icu.util.ULocale;
 
 public class HolidayService implements Serializable {
 
@@ -22,43 +20,49 @@ public class HolidayService implements Serializable {
 	 * @return
 	 */
 	public List<Holiday> calculateHolidays(int year) {
-		// Map<String, String> holidayMap = new LinkedHashMap<String, String>();
-		LocalDate startDate = LocalDate.of(year - 1, 12, 28);
-		LocalDate endDate = LocalDate.of(year + 1, 1, 4);
-
-		// LocalDate.isAfter ve plusDays döngüsü
 		List<Holiday> tatilList = new ArrayList<Holiday>();
+		Date buYilBasi = PdksUtil.convertToJavaDate(year + "0101", "yyyyMMdd");
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(buYilBasi);
+		cal.add(Calendar.DATE, -4);
+		Date date = cal.getTime();
+		cal.setTime(buYilBasi);
+		cal.add(Calendar.YEAR, 1);
+		cal.set(Calendar.DATE, 4);
+		Date stopDate = cal.getTime();
+		cal.setTime(date);
+		ULocale locale = new ULocale("@calendar=islamic-umalqura");
+		IslamicCalendar calIs = new IslamicCalendar(locale);
+
 		Holiday holiday = null;
-		for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-
-			// Miladi tarihi Hicri takvimine çeviriyoruz
-			HijrahDate hijrahDate = HijrahDate.from(date);
-			int hijriMonth = hijrahDate.get(ChronoField.MONTH_OF_YEAR);
-			int hijriDay = hijrahDate.get(ChronoField.DAY_OF_MONTH);
-
-			if (hijriMonth == 10) {// 1. Ramazan Bayramı Hesaplama (Şevval Ayı 1, 2, 3. Günler)
+		while (date.after(stopDate) == false) {
+			cal.setTime(date);
+			calIs.setTime(date);
+			int hijriMonth = calIs.get(IslamicCalendar.MONTH);
+			int hijriDay = calIs.get(IslamicCalendar.DAY_OF_MONTH);
+			if (hijriMonth == 9) {// 1. Ramazan Bayramı Hesaplama (Şevval Ayı 1, 2, 3. Günler)
 				if (hijriDay == 1) {
-					Date tarih = getTarih(date.plusDays(-1));
-					if (PdksUtil.getDateField(tarih, Calendar.YEAR) == year) {
-						holiday = new Holiday("R", getTarih(date.plusDays(-1)), 3);
+					Date tarih = PdksUtil.tariheGunEkleCikar(date, -1);
+					cal.setTime(tarih);
+					if (cal.get(Calendar.YEAR) == year) {
+						holiday = new Holiday("R", tarih, 3);
 						tatilList.add(holiday);
 					}
 
-					// createHolidayMap(holidayMap, "RB0", date.plusDays(-1));
-					// createHolidayMap(holidayMap, "RB1", date);
 				} else if (hijriDay == 2) {
 					// createHolidayMap(holidayMap, "RB2", date);
 				} else if (hijriDay == 3) {
 					if (holiday != null)
-						holiday.setBitTarih(getTarih(date));
+						holiday.setBitTarih(date);
 					// createHolidayMap(holidayMap, "RB3", date);
 				}
 			}
 
-			if (hijriMonth == 12) {// 2. Kurban Bayramı Hesaplama (Zilhicce Ayı 9, 10, 11, 12, 13. Günler)
+			if (hijriMonth == 11) {// 2. Kurban Bayramı Hesaplama (Zilhicce Ayı 9, 10, 11, 12, 13. Günler)
 				if (hijriDay == 9) {
-					Date tarih = getTarih(date);
-					if (PdksUtil.getDateField(tarih, Calendar.YEAR) == year) {
+					Date tarih = date;
+					cal.setTime(tarih);
+					if (cal.get(Calendar.YEAR) == year) {
 						holiday = new Holiday("K", tarih, 4);
 						tatilList.add(holiday);
 					}
@@ -71,19 +75,19 @@ public class HolidayService implements Serializable {
 					// createHolidayMap(holidayMap, "KB3", date);
 				} else if (hijriDay == 13) {
 					if (holiday != null)
-						holiday.setBitTarih(getTarih(date));
+						holiday.setBitTarih(date);
 					// createHolidayMap(holidayMap, "KB4", date);
 				}
 			}
-		}
-		if (holiday != null && holiday.getBitGun() == null)
-			holiday.setBitTarih(PdksUtil.tariheGunEkleCikar(holiday.getBasTarih(), holiday.getGunAdet()));
 
+			date = PdksUtil.tariheGunEkleCikar(date, 1);
+		}
+		if (holiday != null && holiday.getBitGun() == null) {
+			cal.setTime(holiday.getBasTarih());
+			cal.add(Calendar.DATE, holiday.getGunAdet());
+			holiday.setBitTarih(cal.getTime());
+		}
 		return tatilList;
 	}
 
-	private Date getTarih(LocalDate date) {
-		Date tarih = DateTimeUtils.toDate(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
-		return tarih;
-	}
 }
