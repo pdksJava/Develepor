@@ -194,7 +194,8 @@
 							oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
 						</a4j:commandButton>
 
-						<a4j:commandButton status="ajaxStatus" value="Dini Bayramları Bul" action="#{tatilHome.diniBayramEkle()}" reRender="diniTable">
+						<a4j:commandButton status="ajaxStatus" value="Dini Bayramları Bul" rendered="#{authenticatedUser.admin}" action="#{tatilHome.diniBayramEkle()}"
+							reRender="diniTable">
 						</a4j:commandButton>
 
 						<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" rendered="#{authenticatedUser.admin}"
