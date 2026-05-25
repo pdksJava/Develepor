@@ -194,7 +194,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				logger.error("PDKS hata out : " + e.getMessage());
 			} finally {
 				if (session != null)
-					session.disconnect();
+					session.close();
 				setCalisiyor(Boolean.FALSE);
 
 			}
