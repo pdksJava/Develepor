@@ -2276,7 +2276,7 @@ public class IseGelmemeUyari implements Serializable {
 		if (ekle) {
 			Long perNoId = pdksVardiyaGun.getPersonel().getPersonelKGS().getId();
 			boolean baslangicTatil = Boolean.FALSE, bitisTatil = Boolean.FALSE;// islemVardiya.getVardiyaTelorans1BitZaman().getTime()
-			//  <= 
+			// <=
 			// bugun.getTime();
 
 			ArrayList<HareketKGS> perHareketList = null;

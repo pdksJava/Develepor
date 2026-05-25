@@ -86,20 +86,19 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		super.create();
 	}
 
-	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String mailDataGonderBasla() {
-		Session sessionx = null;
 		try {
 			if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
-				sessionx = PdksUtil.getSession(entityManager, Boolean.TRUE);
-				mailDataGonder(null, sessionx);
+				if (PdksUtil.isSessionKapali(session))
+					session = PdksUtil.getSession(entityManager, session == null);
+				mailDataGonder(null, session);
 			}
 		} catch (Exception e) {
 			logger.error(e);
 			e.printStackTrace();
 		}
-		if (sessionx != null)
-			sessionx.close();
+		if (session != null)
+			session.close();
 		return MenuItemConstant.home;
 	}
 
