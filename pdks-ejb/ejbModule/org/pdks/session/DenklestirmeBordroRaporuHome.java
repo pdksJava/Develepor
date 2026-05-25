@@ -211,7 +211,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 	public String sayfaFazlaMesaiGuncellemeAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSession(entityManager, true);
+			session = PdksUtil.getSession(entityManager, session == null);
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String id = (String) req.getParameter("id");
 		if (session != null && id != null) {

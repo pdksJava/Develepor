@@ -96,7 +96,8 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 
 	public String diniBayramBasla() {
 		try {
-			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+			if (PdksUtil.isSessionKapali(session))
+				session = PdksUtil.getSession(entityManager, session == null);
 			if ((PdksUtil.getTestSunucuDurum() == false && PdksUtil.getCanliSunucuDurum() == false) || PdksUtil.isSistemDestekVar())
 				diniBayramEkle();
 		} catch (Exception e) {

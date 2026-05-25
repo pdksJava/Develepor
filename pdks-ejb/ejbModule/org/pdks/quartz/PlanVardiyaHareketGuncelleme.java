@@ -96,7 +96,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	public String fazlaMesaiHesaplamaBaslat() {
 		try {
 			if (PdksUtil.isSessionKapali(session))
-				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+				session = PdksUtil.getSession(entityManager, session == null);
 			basTarih = ortakIslemler.getBugun();
 			Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
 			if (parameter != null && ortakIslemler.hasStringValue(parameter.getValue()) == false) {

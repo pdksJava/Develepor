@@ -90,7 +90,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		try {
 			if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 				if (PdksUtil.isSessionKapali(session))
-					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+					session = PdksUtil.getSession(entityManager, session == null);
 				mailDataGonder(null, session);
 			}
 		} catch (Exception e) {
