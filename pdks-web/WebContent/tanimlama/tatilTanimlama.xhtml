@@ -28,7 +28,7 @@
 								<rich:column>
 									<f:facet name="header">
                         İşlemler
-                </f:facet>
+             	   </f:facet>
 									<ui:fragment>
 										<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="editlink" action="#{tatilHome.kayitGuncelle(tatil)}"
 											oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
@@ -132,14 +132,74 @@
 								</f:facet>
 							</rich:dataTable>
 						</a4j:outputPanel>
-					</h:panelGrid>
-					<a4j:commandButton status="ajaxStatus" value="Tatil Ekle" action="#{tatilHome.kayitGuncelle(null)}"
-						oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
+						<a4j:outputPanel id="diniTable">
+							<h:panelGrid columns="1" rendered="#{not empty tatilHome.diniList}">
+								<a4j:commandButton status="ajaxStatus" value="Dini Bayramları Ekle" action="#{tatilHome.diniBayramKaydet()}" reRender="diniTable,tatilData">
+								</a4j:commandButton>
+								<rich:dataTable rowClasses="acik,koyu" value="#{tatilHome.diniList}" var="tatil" rows="20" rowKeyVar="row">
+									<f:facet name="header">
+										<h:outputText value="Dini Bayramlar" />
+									</f:facet>
+									<rich:column style="text-align:center">
+										<f:facet name="header">
+                        			İşlemler
+             	 				  </f:facet>
 
-					</a4j:commandButton>
-					<rich:toolTip for="addlink" value="Add" />
-					<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" rendered="#{authenticatedUser.admin}"
-						action="#{org.jboss.seam.excel.exporter.excelExporter.export('formExcel:tatilTable')}" />
+										<h:selectBooleanCheckbox value="#{tatil.checkBoxDurum}" />
+									</rich:column>
+
+
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="Ad" />
+										</f:facet>
+										<h:outputText value="#{tatil.ad}" />
+									</rich:column>
+
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="Açıklama" />
+										</f:facet>
+										<h:outputText value="#{tatil.aciklama}" />
+									</rich:column>
+
+
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="Baslangıç Tarihi" />
+										</f:facet>
+										<h:outputText value="#{tatil.basTarihAciklama}">
+
+										</h:outputText>
+									</rich:column>
+
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="Bitis Tarihi" />
+										</f:facet>
+										<h:outputText value="#{tatil.bitisTarihAciklama}">
+
+										</h:outputText>
+									</rich:column>
+									<f:facet name="footer">
+										<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+									</f:facet>
+								</rich:dataTable>
+							</h:panelGrid>
+						</a4j:outputPanel>
+
+					</h:panelGrid>
+					<ui:fragment>
+						<a4j:commandButton status="ajaxStatus" value="Tatil Ekle" action="#{tatilHome.kayitGuncelle(null)}"
+							oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
+						</a4j:commandButton>
+
+						<a4j:commandButton status="ajaxStatus" value="Dini Bayramları Bul" action="#{tatilHome.diniBayramEkle()}" reRender="diniTable">
+						</a4j:commandButton>
+
+						<h:commandLink value="#{messages['ortak.etiket.excelAktar']}" rendered="#{authenticatedUser.admin}"
+							action="#{org.jboss.seam.excel.exporter.excelExporter.export('formExcel:tatilTable')}" />
+					</ui:fragment>
 				</rich:panel>
 			</a4j:region>
 		</h:form>

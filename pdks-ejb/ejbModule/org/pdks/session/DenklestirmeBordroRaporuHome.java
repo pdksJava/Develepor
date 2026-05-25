@@ -315,10 +315,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 			}
 		}
-		if (session.isConnected()) {
-			session.disconnect();
+		if (session != null)
 			session.close();
-		}
 
 		return MenuItemConstant.login;
 	}

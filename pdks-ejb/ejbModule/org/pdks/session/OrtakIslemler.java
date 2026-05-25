@@ -520,8 +520,11 @@ public class OrtakIslemler implements Serializable {
 			pdksTatil.setOlusturanUser(getSistemAdminUser(session));
 			pdksTatil.setOlusturmaTarihi(PdksUtil.convertToJavaDate((yil - 1) + "0101", "yyyyMMdd"));
 			pdksTatil.setArifeVardiyaYarimHesapla(arifeVardiyaYarimHesapla.equals("") || arifeVardiyaYarimHesapla.equals("1"));
-			pdksEntityController.saveOrUpdate(session, null, pdksTatil);
-			session.flush();
+			if (authenticatedUser == null) {
+				pdksEntityController.saveOrUpdate(session, null, pdksTatil);
+				session.flush();
+			}
+
 			tatiller.add(pdksTatil);
 			logger.info(pdksTatil.getAciklama() + " eklendi");
 		}
