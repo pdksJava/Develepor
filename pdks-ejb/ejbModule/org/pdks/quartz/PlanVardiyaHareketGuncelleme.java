@@ -86,6 +86,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	public static final String PARAMETER_FAZLA_MESAI_KEY = "fazlaMesaiHesaplamaZamani";
 	public static final String PATTERN = "yyyyMMdd";
 	public static final String PATTERN_DONEM = "yyyyMM";
+	private String fazlaMesaiDetay;
 
 	private static boolean calisiyor = Boolean.FALSE;
 
@@ -96,7 +97,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	public String fazlaMesaiHesaplamaBaslat() {
 		try {
 			if (PdksUtil.isSessionKapali(session))
-				session = PdksUtil.getSession(entityManager, session == null);
+				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+
 			basTarih = ortakIslemler.getBugun();
 			Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
 			if (parameter != null && ortakIslemler.hasStringValue(parameter.getValue()) == false) {
@@ -106,7 +108,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					boolean mailGonder = getMailGonder(session);
 					if (mailGonder) {
 						String konu = parameter.getDescription();
-						String aciklama = "Fazla Mesai Toplu güncellenmiştir.";
+						String aciklama = "Fazla Mesai Toplu güncellenmiştir." + (fazlaMesaiDetay != null ? "<br></br>" + fazlaMesaiDetay : "");
 						List<User> userList = null;
 						if (ortakIslemler.getParameterKey("fazlaMesaiGuncelleMail").equals("1"))
 							userList = ortakIslemler.getIKUserList(session);
@@ -120,11 +122,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			}
 		} catch (Exception e) {
 		}
-		if (session != null)
-			try {
-				session.close();
-			} catch (Exception e) {
-			}
+		pdksEntityController.sessionClose(session);
 		return MenuItemConstant.home;
 	}
 
@@ -193,8 +191,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				e.printStackTrace();
 				logger.error("PDKS hata out : " + e.getMessage());
 			} finally {
-				if (session != null)
-					session.close();
+				pdksEntityController.sessionClose(session);
 				setCalisiyor(Boolean.FALSE);
 
 			}
@@ -235,6 +232,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		StringBuffer sb = new StringBuffer(), sb1 = new StringBuffer(), sb2 = new StringBuffer();
 		HashMap fields = new HashMap();
 		int sayac = 0;
+		fazlaMesaiDetay = "";
 		while (tarih2.getTime() >= tarihBas.getTime()) {
 			++sayac;
 			Date tarihBit = PdksUtil.getAyinSonGunu(tarihBas);
@@ -338,11 +336,14 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						sirketIdList = null;
 					}
 				}
+				fazlaMesaiDetay = "";
 				for (Liste liste : islemList) {
 					String id = (String) liste.getValue();
 					String sonuc = ortakIslemler.adresKontrol(id);
 					if (sonuc != null)
 						logger.error(liste.getId() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+					else
+						fazlaMesaiDetay += "<br></br>" + liste.getId();
 				}
 				islemList = null;
 				logger.info(adres + " out " + PdksUtil.getCurrentTimeStampStr());

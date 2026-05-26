@@ -17,7 +17,6 @@ import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalCron;
 import org.jboss.seam.async.QuartzTriggerHandle;
-import org.pdks.security.action.StartupAction;
 import org.pdks.session.PdksUtil;
 import org.pdks.session.SSLImport;
 
@@ -41,9 +40,6 @@ public class SertifikaSSLKontrol implements Serializable {
 
 	@In(required = false, create = true)
 	Zamanlayici zamanlayici;
-
-	@In(required = false, create = true)
-	StartupAction startupAction;
 
 	// @In(required = false, create = true)
 	// FazlaMesaiGuncelleme fazlaMesaiGuncelleme;

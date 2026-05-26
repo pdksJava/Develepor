@@ -28,7 +28,6 @@ import org.pdks.dinamikRapor.enums.ENumAlanHizalaTipi;
 import org.pdks.dinamikRapor.enums.ENumDinamikRaporTipi;
 import org.pdks.dinamikRapor.enums.ENumEsitlik;
 import org.pdks.dinamikRapor.enums.ENumRaporAlanTipi;
-import org.pdks.security.action.StartupAction;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
 import org.pdks.session.ComponentState;
@@ -56,8 +55,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	OrtakIslemler ortakIslemler;
 	@In(required = false, create = true)
 	ComponentState componentState;
-	@In(required = false, create = true)
-	StartupAction startupAction;
+ 
 
 	public static String sayfaURL = "dinamikRaporTanimlama";
 	private List<PdksDinamikRapor> dinamikRaporList;
@@ -269,7 +267,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		StringBuilder sb = new StringBuilder();
 		sb.append("select * from " + PdksDinamikRapor.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 		dinamikRaporList = pdksEntityController.getObjectBySQLList(sb, fields, PdksDinamikRapor.class);
-		startupAction.fillRaporRole(session);
+		
 	}
 
 	@Transactional

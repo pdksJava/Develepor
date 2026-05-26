@@ -686,7 +686,7 @@ public class PdksEntityController implements Serializable {
 				queryReadUnCommitted.executeUpdate();
 			}
 			if (sessinYok)
-				session.close();
+				sessionClose(session);
 		} catch (Exception e) {
 			Gson gson = new Gson();
 			logger.error(sp.toString() + (veriMap != null && !veriMap.isEmpty() ? "\n" + gson.toJson(veriMap) : "") + "\n" + e);
@@ -698,6 +698,23 @@ public class PdksEntityController implements Serializable {
 
 		return sonucList;
 
+	}
+
+	/**
+	 * @param sessionx
+	 */
+	public void sessionClose(Session sessionx) {
+
+		if (sessionx != null) {
+			/**
+			try {
+				sessionx.close();
+			} catch (Exception e) {
+			}
+			**/		
+		
+		}
+	
 	}
 
 	/**
@@ -733,7 +750,7 @@ public class PdksEntityController implements Serializable {
 				query.addEntity(class1);
 			sonucList = query.list();
 			if (sessinYok)
-				session.close();
+				sessionClose(session);
 		} catch (Exception e) {
 			Gson gson = new Gson();
 			logger.error(sp.toString() + (veriMap != null && !veriMap.isEmpty() ? "\n" + gson.toJson(veriMap) : "") + "\n" + e);
@@ -776,7 +793,7 @@ public class PdksEntityController implements Serializable {
 			SQLQuery query = prepareProcedure(session, veriMap, sp);
 			sonuc = query.executeUpdate();
 			if (sessinYok)
-				session.close();
+				sessionClose(session);
 		} catch (Exception e) {
 			Gson gson = new Gson();
 			logger.error(sp.toString() + (veriMap != null && !veriMap.isEmpty() ? "\n" + gson.toJson(veriMap) : "") + "\n" + e);

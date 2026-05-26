@@ -683,8 +683,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 			queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
 			queryReadUnCommitted.executeUpdate();
 		}
-		// session.close();
-		return list;
+ 		return list;
 	}
 
 	/**

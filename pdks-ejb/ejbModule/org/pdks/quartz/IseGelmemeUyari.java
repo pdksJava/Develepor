@@ -2425,8 +2425,7 @@ public class IseGelmemeUyari implements Serializable {
 						logger.error("iseGelmeDurumuTimer 2 : " + e.getMessage());
 					}
 			} finally {
-				if (session != null)
-					session.close();
+				pdksEntityController.sessionClose(session);
 				setCalisiyor(Boolean.FALSE);
 			}
 

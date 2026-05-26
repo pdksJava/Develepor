@@ -97,13 +97,12 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	public String diniBayramBasla() {
 		try {
 			if (PdksUtil.isSessionKapali(session))
-				session = PdksUtil.getSession(entityManager, session == null);
+				session = PdksUtil.getSession(entityManager, Boolean.TRUE);;
 			if ((PdksUtil.getTestSunucuDurum() == false && PdksUtil.getCanliSunucuDurum() == false) || PdksUtil.isSistemDestekVar())
 				diniBayramEkle();
 		} catch (Exception e) {
 		}
-		if (session != null)
-			session.close();
+		pdksEntityController.sessionClose(session);
 		return MenuItemConstant.home;
 
 	}

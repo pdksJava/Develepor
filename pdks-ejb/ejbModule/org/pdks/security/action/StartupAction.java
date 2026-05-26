@@ -276,8 +276,7 @@ public class StartupAction implements Serializable {
 		} catch (Exception e) {
 
 		}
-		if (session != null)
-			session.close();
+		pdksEntityController.sessionClose(session);
 
 		ortakIslemler = null;
 	}
@@ -380,7 +379,7 @@ public class StartupAction implements Serializable {
 		if (PdksUtil.isSessionKapali(session)) {
 			session = user != null ? user.getSessionSQL() : null;
 			if (PdksUtil.isSessionKapali(session))
-				session = PdksUtil.getSession(entityManager, Boolean.FALSE);
+				session = PdksUtil.getSession(entityManager, user == null || user.getLogin().booleanValue() == false);
 		}
 		logger.info("Sistem verileri yukleniyor in " + PdksUtil.getCurrentTimeStampStr());
 		fillParameter(session, lockVar);
@@ -449,27 +448,6 @@ public class StartupAction implements Serializable {
 			pdksSirketleri.addAll(list);
 		list = null;
 
-	}
-
-	/**
-	 * @param session
-	 */
-	public void fillRaporRole(Session session) {
-		raporRoleMap.clear();
-		HashMap fields = new HashMap();
-		List<PdksDinamikRaporRole> list = null;
-		try {
-			StringBuilder sb = new StringBuilder();
-			sb.append("select * from " + PdksDinamikRaporRole.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			list = pdksEntityController.getObjectBySQLList(sb, fields, PdksDinamikRaporRole.class);
-			for (PdksDinamikRaporRole raporRole : list) {
-				raporRoleMap.put(raporRole.getKey(), raporRole.getId());
-			}
-			list = null;
-		} catch (Exception e) {
-		}
 	}
 
 	/**
@@ -855,6 +833,27 @@ public class StartupAction implements Serializable {
 
 	/**
 	 * @param session
+	 */
+	public void fillRaporRole(Session session) {
+		raporRoleMap.clear();
+		HashMap fields = new HashMap();
+		List<PdksDinamikRaporRole> list = null;
+		try {
+			StringBuilder sb = new StringBuilder();
+			sb.append("select * from " + PdksDinamikRaporRole.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			list = pdksEntityController.getObjectBySQLList(sb, fields, PdksDinamikRaporRole.class);
+			for (PdksDinamikRaporRole raporRole : list) {
+				raporRoleMap.put(raporRole.getKey(), raporRole.getId());
+			}
+			list = null;
+		} catch (Exception e) {
+		}
+	}
+
+	/**
+	 * @param session
 	 * @param pmMap
 	 */
 	@Transactional
@@ -1196,7 +1195,7 @@ public class StartupAction implements Serializable {
 			if (user != null)
 				session = user.getSessionSQL();
 			if (PdksUtil.isSessionKapali(session))
-				session = PdksUtil.getSession(entityManager, Boolean.FALSE);
+				session = PdksUtil.getSession(entityManager, user == null || user.getLogin().booleanValue() == false);
 		}
 
 		List<AccountPermission> permissionList = (ArrayList<AccountPermission>) pdksEntityController.getSQLParamByFieldList(AccountPermission.TABLE_NAME, AccountPermission.COLUMN_NAME_DURUM, Boolean.TRUE, AccountPermission.class, session);

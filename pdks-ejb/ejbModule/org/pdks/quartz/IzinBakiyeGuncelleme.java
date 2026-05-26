@@ -38,7 +38,6 @@ import org.pdks.entity.PersonelIzinDetay;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.SirketEntegrasyon;
 import org.pdks.entity.Tanim;
-import org.pdks.security.action.StartupAction;
 import org.pdks.security.entity.User;
 import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
@@ -69,8 +68,6 @@ public class IzinBakiyeGuncelleme implements Serializable {
 	Zamanlayici zamanlayici;
 	@In(required = false, create = true)
 	Renderer renderer;
-	@In(required = false, create = true)
-	StartupAction startupAction;
 	private static boolean calisiyor = Boolean.FALSE;
 	private int yil;
 	private String hataKonum;
@@ -235,8 +232,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 					logger.error("izinBakiyeGuncellemeTimer 2 : " + e2.getMessage());
 				}
 		} finally {
-			if (manuel == false && session != null)
-				session.close();
+			if (manuel == false)
+				pdksEntityController.sessionClose(session);
 			setCalisiyor(Boolean.FALSE);
 
 		}

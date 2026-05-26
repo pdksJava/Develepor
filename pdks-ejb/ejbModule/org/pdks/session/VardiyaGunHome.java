@@ -1220,6 +1220,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						if (ozelAciklama != null && ozelAciklama.getId() == null)
 							saveOrUpdate(ozelAciklama);
 						saveOrUpdate(fazlaMesaiTalep);
+						try {
+							if (session.contains(seciliVardiyaGun) == false)
+								session.refresh(seciliVardiyaGun);
+
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+
 						if (seciliVardiyaGun.isVardiyaOnay() == false) {
 							seciliVardiyaGun.setVardiyaOnayli(Boolean.TRUE);
 							saveOrUpdate(seciliVardiyaGun);
@@ -6691,7 +6699,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	public String sayfaCalismaPlanOlustur(String id, User islemUser) {
 		String donus = "";
 		if (PdksUtil.isSessionKapali(session)) {
-			session = PdksUtil.getSession(entityManager, false);
+			session = PdksUtil.getSession(entityManager, islemUser.getLogin() == false);
 			if (authenticatedUser != null)
 				authenticatedUser.putSessionMap("sayfaCalismaPlanOlustur", session);
 		}
@@ -7350,7 +7358,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					TreeMap<String, CalismaModeliAy> cmaMap = new TreeMap<String, CalismaModeliAy>();
 					boolean fazlaMesaiHesaplaTumPersonel = ortakIslemler.getParameterKey("fazlaMesaiHesaplaKisitliPersonel").equals("1") == false;
 					boolean arifeCalismiyor = ortakIslemler.getParameterKey("arifeCalismiyor").equals("1");
- 					bugunTarih = PdksUtil.getDate(new Date());
+					bugunTarih = PdksUtil.getDate(new Date());
 					for (Iterator iteratorPer = personelList.iterator(); iteratorPer.hasNext();) {
 						Personel personel = (Personel) iteratorPer.next();
 						boolean pdks = false;

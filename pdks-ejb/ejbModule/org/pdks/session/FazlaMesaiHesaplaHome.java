@@ -1149,7 +1149,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	public String sayfaFazlaMesaiGuncelle(String id, User islemUser) {
 		String donus = "";
 		if (PdksUtil.isSessionKapali(session)) {
-			session = PdksUtil.getSession(entityManager, false);
+			session = PdksUtil.getSession(entityManager, islemUser.getLogin() == false);
 			if (authenticatedUser != null)
 				authenticatedUser.putSessionMap("sayfaFazlaMesaiGuncelle", session);
 		}
@@ -2022,7 +2022,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							if (vardiyaGun.getId() != null)
 								vgIdList.add(vardiyaGun.getId());
 							vardiyaGun.setStyle("");
-
 							Vardiya islemVardiya = vardiyaGun.getVardiya() != null ? vardiyaGun.getIslemVardiya() : null;
 							Tatil vardiyaTatil = vardiyaGun.getTatil();
 							vardiyaGun.addResmiTatilSure(vardiyaGun.getGecenAyResmiTatilSure());
@@ -2053,72 +2052,72 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							vardiyaGun.setPersonel(puantaj.getPdksPersonel());
 							vardiyaGun.setCalismaModeli(puantaj.getCalismaModeli());
 							vardiyaGun.setFiiliHesapla(fazlaMesaiHesapla);
+							if (islemVardiya != null) {
+								if (vardiyaGun.getVardiyaDate().getTime() >= puantaj.getIlkGun().getTime() && vardiyaGun.getVardiyaDate().getTime() <= puantaj.getSonGun().getTime()) {
+									paramsMap.put("fazlaMesaiHesapla", fazlaMesaiHesapla);
+									paramsMap.put("aksamVardiyaSayisi", aksamVardiyaSayisi);
+									paramsMap.put("aksamVardiyaSaatSayisi", aksamVardiyaSaatSayisi);
+									paramsMap.put("resmiTatilSuresi", resmiTatilSuresi);
+									paramsMap.put("haftaCalismaSuresi", haftaCalismaSuresi);
+									paramsMap.put("sabahAksamCikisSaatSayisi", sabahAksamCikisSaatSayisi);
+									vardiyaGun.setFazlaMesaiTalepOnayliDurum(Boolean.FALSE);
 
-							if (islemVardiya != null && vardiyaGun.getVardiyaDate().getTime() >= puantaj.getIlkGun().getTime() && vardiyaGun.getVardiyaDate().getTime() <= puantaj.getSonGun().getTime()) {
-								paramsMap.put("fazlaMesaiHesapla", fazlaMesaiHesapla);
-								paramsMap.put("aksamVardiyaSayisi", aksamVardiyaSayisi);
-								paramsMap.put("aksamVardiyaSaatSayisi", aksamVardiyaSaatSayisi);
-								paramsMap.put("resmiTatilSuresi", resmiTatilSuresi);
-								paramsMap.put("haftaCalismaSuresi", haftaCalismaSuresi);
-								paramsMap.put("sabahAksamCikisSaatSayisi", sabahAksamCikisSaatSayisi);
-								vardiyaGun.setFazlaMesaiTalepOnayliDurum(Boolean.FALSE);
+									vardiyaGunKontrol(puantaj, vardiyaGun, paramsMap);
 
-								vardiyaGunKontrol(puantaj, vardiyaGun, paramsMap);
-								if (key.endsWith("0416"))
-									logger.debug("");
-								if (denklestirmeAyDurum && vardiyaGun.isAyinGunu() && vardiyaGun.getGecersizHareketler() != null) {
-									for (Iterator iterator2 = vardiyaGun.getGecersizHareketler().iterator(); iterator2.hasNext();) {
-										HareketKGS hareketKGS = (HareketKGS) iterator2.next();
-										HareketKGS mukerrerHareket = hareketKGS.getMukerrerHareket();
-										if (hareketKGS.getId() != null && mukerrerHareket != null) {
-											gecersizHareketMap.put(hareketKGS.getId(), hareketKGS);
-											mukerrerHareket.setVardiyaGun(vardiyaGun);
-											gecersizHareketMap.put(mukerrerHareket.getId(), mukerrerHareket);
-											gecersizHareketler.add(hareketKGS);
-										}
-										hareketKGS.setVardiyaGun(vardiyaGun);
-
-									}
-									vardiyaGun.setGecersizHareketler(null);
-								}
-
-								if (izinCalismaUyariDurum.equals("1") && vardiyaGun.getIzin() != null) {
-									PersonelIzin izin = vardiyaGun.getIzin();
-									IzinTipi it = izin.getIzinTipi();
-									if (vardiyaGun.isHareketHatali()) {
-										if (ikRole && izin.getOrjIzin() != null) {
-											Long izinId = izin.getOrjIzin().getId();
-											PersonelIzin orjIzin = izinMap.containsKey(izinId) ? izinMap.get(izinId) : izin.getOrjIzin();
-											if (!izinMap.containsKey(izinId)) {
-												orjIzin.setCalisilanGunler(null);
-												izinMap.put(izinId, orjIzin);
+									if (denklestirmeAyDurum && vardiyaGun.isAyinGunu() && vardiyaGun.getGecersizHareketler() != null) {
+										for (Iterator iterator2 = vardiyaGun.getGecersizHareketler().iterator(); iterator2.hasNext();) {
+											HareketKGS hareketKGS = (HareketKGS) iterator2.next();
+											HareketKGS mukerrerHareket = hareketKGS.getMukerrerHareket();
+											if (hareketKGS.getId() != null && mukerrerHareket != null) {
+												gecersizHareketMap.put(hareketKGS.getId(), hareketKGS);
+												mukerrerHareket.setVardiyaGun(vardiyaGun);
+												gecersizHareketMap.put(mukerrerHareket.getId(), mukerrerHareket);
+												gecersizHareketler.add(hareketKGS);
 											}
-											orjIzin.addCalisilanGunler(vardiyaGun);
+											hareketKGS.setVardiyaGun(vardiyaGun);
 
 										}
-									} else if (vardiyaTatil == null && vardiyaGun.getVardiya().isOffGun() && it.isRaporIzin() == false) {
-										if (it.getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK) == false && (it.getTakvimGunumu() == null || it.getTakvimGunumu().equals(Boolean.FALSE))) {
-											if (vardiyaGun.isHaftaIci() || cumartesiCalisiyor) {
-												vardiyaGun.setStyle("color:red;");
-												offIzinliGunler.add(vardiyaGun);
-											}
-										}
-
+										vardiyaGun.setGecersizHareketler(null);
 									}
+
+									if (izinCalismaUyariDurum.equals("1") && vardiyaGun.getIzin() != null) {
+										PersonelIzin izin = vardiyaGun.getIzin();
+										IzinTipi it = izin.getIzinTipi();
+										if (vardiyaGun.isHareketHatali()) {
+											if (ikRole && izin.getOrjIzin() != null) {
+												Long izinId = izin.getOrjIzin().getId();
+												PersonelIzin orjIzin = izinMap.containsKey(izinId) ? izinMap.get(izinId) : izin.getOrjIzin();
+												if (!izinMap.containsKey(izinId)) {
+													orjIzin.setCalisilanGunler(null);
+													izinMap.put(izinId, orjIzin);
+												}
+												orjIzin.addCalisilanGunler(vardiyaGun);
+
+											}
+										} else if (vardiyaTatil == null && vardiyaGun.getVardiya().isOffGun() && it.isRaporIzin() == false) {
+											if (it.getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK) == false && (it.getTakvimGunumu() == null || it.getTakvimGunumu().equals(Boolean.FALSE))) {
+												if (vardiyaGun.isHaftaIci() || cumartesiCalisiyor) {
+													vardiyaGun.setStyle("color:red;");
+													offIzinliGunler.add(vardiyaGun);
+												}
+											}
+
+										}
+									}
+									if (vardiyaGun.isAyrikHareketVar()) {
+										ayrikList.add(PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "d MMMMM EEEEEE"));
+										VardiyaGun sonrakiVardiyaGun = vardiyaGun.getSonrakiVardiyaGun();
+										if (sonrakiVardiyaGun != null && sonrakiVardiyaGun.isAyinGunu() == false && sonrakiVardiyaGun.isAyrikHareketVar())
+											ayrikList.add(PdksUtil.convertToDateString(vardiyaGun.getSonrakiVardiyaGun().getVardiyaDate(), "d MMMMM EEEEEE"));
+									}
+									fazlaMesaiHesapla = (Boolean) paramsMap.get("fazlaMesaiHesapla");
+									aksamVardiyaSayisi = (Integer) paramsMap.get("aksamVardiyaSayisi");
+									resmiTatilSuresi = (Double) paramsMap.get("resmiTatilSuresi");
+									aksamVardiyaSaatSayisi = (Double) paramsMap.get("aksamVardiyaSaatSayisi");
+									sabahAksamCikisSaatSayisi = (Double) paramsMap.get("sabahAksamCikisSaatSayisi");
+									haftaCalismaSuresi = (Double) paramsMap.get("haftaCalismaSuresi");
+									paramsMap.clear();
 								}
-								if (vardiyaGun.isAyrikHareketVar()) {
-									ayrikList.add(PdksUtil.convertToDateString(vardiyaGun.getVardiyaDate(), "d MMMMM EEEEEE"));
-									VardiyaGun sonrakiVardiyaGun = vardiyaGun.getSonrakiVardiyaGun();
-									if (sonrakiVardiyaGun != null && sonrakiVardiyaGun.isAyinGunu() == false && sonrakiVardiyaGun.isAyrikHareketVar())
-										ayrikList.add(PdksUtil.convertToDateString(vardiyaGun.getSonrakiVardiyaGun().getVardiyaDate(), "d MMMMM EEEEEE"));
-								}
-								fazlaMesaiHesapla = (Boolean) paramsMap.get("fazlaMesaiHesapla");
-								aksamVardiyaSayisi = (Integer) paramsMap.get("aksamVardiyaSayisi");
-								resmiTatilSuresi = (Double) paramsMap.get("resmiTatilSuresi");
-								aksamVardiyaSaatSayisi = (Double) paramsMap.get("aksamVardiyaSaatSayisi");
-								sabahAksamCikisSaatSayisi = (Double) paramsMap.get("sabahAksamCikisSaatSayisi");
-								haftaCalismaSuresi = (Double) paramsMap.get("haftaCalismaSuresi");
-								paramsMap.clear();
 							}
 							Boolean hareketDurum = vardiyaGun.getDurum(), saveVardiyaGun = Boolean.FALSE;
 							boolean saatEkle = false;
@@ -2170,26 +2169,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								vardiyaSaat = vardiyaGun.getVardiyaSaat();
 								if (vardiyaSaat == null)
 									vardiyaSaat = new VardiyaSaat();
-								// vardiyaSaat.setGuncellendi(false);
-								// double normalSure = 0.0d;
-								// if (islemVardiya != null && vardiyaGun.getIzin() == null && islemVardiya.isCalisma())
-								// normalSure = islemVardiya.getNetCalismaSuresi();
-								// if (denklestirmeAyDurum) {
-								// vardiyaSaat.setUcretiOdenenFazlaMesaiSaat(0.0d);
-								// if (hareketDurum.equals(Boolean.FALSE)) {
-								// vardiyaSaat.setResmiTatilKanunenEklenenSure(0.0d);
-								// vardiyaSaat.setResmiTatilSure(0.0d);
-								// vardiyaSaat.setAksamVardiyaSaatSayisi(0.0d);
-								// } else {
-								// vardiyaSaat.setResmiTatilKanunenEklenenSure(vardiyaGun.getResmiTatilKanunenEklenenSure());
-								// vardiyaSaat.setResmiTatilSure(vardiyaGun.getResmiTatilSure());
-								// vardiyaSaat.setAksamVardiyaSaatSayisi(vardiyaGun.getAksamKatSayisi());
-								// vardiyaSaat.setIcapciMesaiSaat(vardiyaGun.getIcapciMesaiSaat());
-								// double saat = vardiyaGun.getUcretiOdenenFazlaMesaiSaat();
-								// if (saat > 0.0d)
-								// vardiyaSaat.setUcretiOdenenFazlaMesaiSaat(saat);
-								// }
-								//
+
 								if (hareketDurum.equals(Boolean.TRUE) && vardiyaGun.isZamanGelmedi() == false && (islemVardiya.isIcapVardiyasi() || vardiyaGun.getHareketler() != null || vardiyaGun.getResmiTatilSure() > 0.0)) {
 									double calSure = vardiyaGun.getCalismaSuresi();
 									if (calSure == 0.0 && vardiyaGun.getResmiTatilSure() > 0.0)

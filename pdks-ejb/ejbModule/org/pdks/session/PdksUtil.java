@@ -138,8 +138,7 @@ public class PdksUtil implements Serializable {
 	private static Integer yarimYuvarlaLast = 1, sicilNoUzunluk = null;
 
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
-	
-	
+
 	public static String adresKontrol(String adres) {
 		String str = null;
 		int responseCode = 0;
@@ -3470,35 +3469,24 @@ public class PdksUtil implements Serializable {
 		// Session session1 = (Session) entityManager.getDelegate();
 		Session session1 = null;
 		Object delegate = null;
-		SessionFactory sessionFactory = null;
+
 		try {
 			delegate = em.getDelegate();
-			if (yeni == null) {
-				HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
-				sessionFactory = hsp.getSessionFactory();
-				session1 = sessionFactory.getCurrentSession();
-			}
-
-		} catch (Exception e) {
-			logger.error("PDKS hata in : \n");
-			e.printStackTrace();
-			logger.error("PDKS hata out : " + e.getMessage());
-		}
-
-		try {
-			if (session1 == null)
+			if (yeni == null || yeni.booleanValue() == false)
 				session1 = (Session) delegate;
+
 		} catch (Exception e) {
+			session1 = null;
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
 			logger.error("PDKS hata out : " + e.getMessage());
 		}
 
-		if (yeni != null && yeni && session1 != null) {
-			if (sessionFactory == null)
-				sessionFactory = session1.getSessionFactory();
-			// session1 = sessionFactory.getCurrentSession();
+		if (session1 == null || (yeni != null && yeni)) {
+			HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
+			SessionFactory sessionFactory = hsp.getSessionFactory();
 			session1 = sessionFactory.openSession();
+			// session1 = sessionFactory.getCurrentSession();
 		}
 
 		return session1;

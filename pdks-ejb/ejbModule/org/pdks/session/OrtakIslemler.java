@@ -399,6 +399,15 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param session
+	 */
+	public void sessionClose(Session session) {
+		if (pdksEntityController != null)
+			pdksEntityController.sessionClose(session);
+
+	}
+
+	/**
 	 * @param yil
 	 * @param session
 	 */
@@ -24100,6 +24109,13 @@ public class OrtakIslemler implements Serializable {
 			CalismaModeliAy calismaModeliAy = personelDenklestirmeTasiyici.getCalismaModeliAy();
 			boolean denklestirmeAyDurum = denklestirmeAy.isDurum(loginUser);
 			boolean otomatikFazlaCalismaOnaylansin = denklestirmeAyDurum && calismaModeliAy != null && calismaModeliAy.isOtomatikFazlaCalismaOnaylansinmi();
+			if (tatilGunleriMap != null && tatilGunleriMap.isEmpty() == false) {
+				for (VardiyaGun vg : vardiyaGunList) {
+					String key = vg.getVardiyaDateStr();
+					vg.setTatil(tatilGunleriMap.containsKey(key) ? tatilGunleriMap.get(key) : null);
+
+				}
+			}
 			vardiyaIzinleriGuncelle(izinler, vardiyaGunList);
 			HashMap<Long, KapiKGS> hareketKapiKGSUpdateMap = new HashMap<Long, KapiKGS>(), hareketKapiPDKSUpdateMap = new HashMap<Long, KapiKGS>();
 			String donem = denklestirmeAy != null ? String.valueOf(denklestirmeAy.getYil() * 100 + denklestirmeAy.getAy()) : null;

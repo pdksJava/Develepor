@@ -128,8 +128,7 @@ public class KapiGirisGuncelleme implements Serializable {
 				e.printStackTrace();
 				logger.error("PDKS hata out : " + e.getMessage());
 			} finally {
-				if (session != null)
-					session.close();
+				pdksEntityController.sessionClose(session);
 				setCalisiyor(Boolean.FALSE);
 
 			}

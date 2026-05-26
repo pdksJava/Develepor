@@ -38,7 +38,6 @@ import org.pdks.entity.SirketEntegrasyon;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
 import org.pdks.erp.action.ERPController;
-import org.pdks.security.action.StartupAction;
 import org.pdks.security.entity.User;
 import org.pdks.session.LDAPUserManager;
 import org.pdks.session.OrtakIslemler;
@@ -74,8 +73,7 @@ public class PersonelERPGuncelleme implements Serializable {
 	EntityManager entityManager;
 	@In(required = false, create = true)
 	Renderer renderer;
-	@In(required = false, create = true)
-	StartupAction startupAction;
+
 	@In(required = false, create = true)
 	MailManager mailManager;
 
@@ -128,8 +126,7 @@ public class PersonelERPGuncelleme implements Serializable {
 
 					}
 			} finally {
-				if (session != null)
-					session.close();
+				pdksEntityController.sessionClose(session);
 				setCalisiyor(Boolean.FALSE);
 
 			}
