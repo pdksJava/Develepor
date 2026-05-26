@@ -356,7 +356,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 			}
 			if (flush)
-				session.flush();
+				if (authenticatedUser != null)
+					session.flush();
 		}
 
 	}
@@ -1523,7 +1524,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 				list.add(tanim);
 			}
-			session.flush();
+			if (authenticatedUser != null)
+				session.flush();
 		}
 
 		TreeMap<String, String> izinGrupMap = ortakIslemler.getIzinGrupMap(session);
@@ -2013,7 +2015,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 										organizasyonDetay = new PersonelDenklestirmeOrganizasyonDetay(denklestirmeOrganizasyon, alan);
 										organizasyonDetay.setDegisti(pda.getTanimDeger() != null);
 									}
- 									organizasyonDetay.setDeger(pda.getTanimDeger());
+									organizasyonDetay.setDeger(pda.getTanimDeger());
 									if (organizasyonDetay.getId() != null || organizasyonDetay.getDeger() != null) {
 										if (organizasyonDetay.isDegisti()) {
 											try {
@@ -2032,7 +2034,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				detayMap = null;
 				try {
 					if (flush)
-						session.flush();
+						if (authenticatedUser != null)
+							session.flush();
 				} catch (Exception e) {
 					logger.error("personelDenklestirmeId = " + personelDenklestirme.getId() + "\n" + e.getMessage());
 				}
@@ -2074,7 +2077,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					for (Object object : deleteList) {
 						pdksEntityController.deleteObject(session, islem, object);
 					}
-					session.flush();
+					if (authenticatedUser != null)
+						session.flush();
 				}
 				deleteList = null;
 			}
@@ -3038,7 +3042,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		denklestirmeAy.setFazlaMesaiMaxSure(fazlaMesaiMaxSure);
 		denklestirmeAy.setRadyolojiFazlaMesaiMaxSure(radyolojiFazlaMesaiMaxSure);
 		pdksEntityController.saveOrUpdate(session, null, denklestirmeAy);
-		session.flush();
+		if (authenticatedUser != null)
+			session.flush();
 
 	}
 
