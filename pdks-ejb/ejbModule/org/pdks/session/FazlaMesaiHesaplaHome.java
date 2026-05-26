@@ -247,7 +247,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	/**
 	 * @param object
 	 */
-	@Transactional
+
 	private void saveOrUpdate(Object object) {
 		if (object != null)
 			pdksEntityController.saveOrUpdate(session, entityManager, object);
@@ -256,7 +256,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	/**
 	 * 
 	 */
-	@Transactional
+
 	private void sessionFlush() {
 		try {
 			session.flush();
@@ -1054,7 +1054,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param personel
 	 * @return
 	 */
-	@Transactional
+
 	public String fillBolumPersonelDenklestirmeList(Personel secPersonel) {
 
 		if (secPersonel != null && secPersonel.getEkSaha3() != null) {
@@ -1218,6 +1218,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	/**
 	 * @return
 	 */
+	@Transactional
 	public String fillPersonelDenklestirmeList(String inputPersonelNo) {
 		componentState.setSeciliTab("tab1");
 		aksamGun = Boolean.FALSE;
@@ -1282,7 +1283,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param aylikPuantajSablon
 	 * @param denklestirmeDonemi
 	 */
-	@Transactional
+	
 	public List<AylikPuantaj> fillPersonelDenklestirmeDevam(String inputPersonelNo, AylikPuantaj aylikPuantajSablon, DepartmanDenklestirmeDonemi denklestirmeDonemi) {
 		boolean kullaniciCalistir = getPdksUser() != null && userHome != null;
 		User loginUser = aylikPuantajSablon.getLoginUser();

@@ -68,7 +68,6 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.international.StatusMessage.Severity;
@@ -1047,7 +1046,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	@Transactional
+	
 	public Date getSistemBaslangicTarihi(Session session) {
 		Date tarih = null, bugun = new Date();
 		HashMap fields = new HashMap();
@@ -2480,7 +2479,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @throws Exception
 	 */
-	@Transactional
+
 	public void kapiGirisGuncelle(Date basTarih, Date bitTarih, Session session) throws Exception {
 		String name = KapiGirisGuncelleme.SP_NAME;
 		boolean durum = false;
@@ -3382,7 +3381,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param xSession
 	 * @return
 	 */
-	@Transactional
+
 	public Boolean yilAyKontrol(int yil, TreeMap<Integer, DenklestirmeAy> ayMap, Session xSession) {
 		Boolean denklestirmeKesintiYap = Boolean.FALSE;
 		if (ayMap == null)
@@ -4994,7 +4993,6 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	@Transactional
 	public List getHareketBilgileri(List<Long> kapiIdIList, List<Long> personelIdInputList, Date basTarih, Date bitTarih, Class class1, Session session) throws Exception {
 		List<Long> personelIdList = new ArrayList<Long>();
 		if (personelIdInputList != null)
@@ -5326,7 +5324,6 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @throws Exception
 	 */
-	@Transactional
 	public void setIkinciYoneticiSifirla(Session session) {
 		Boolean flush = Boolean.FALSE, yonetici2ERPKontrol = getParameterKey("yonetici2ERPKontrol").equals("1");
 		if (!yonetici2ERPKontrol) {
@@ -6480,7 +6477,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	@Transactional
+//
 	public List<PersonelView> yeniPersonelleriOlustur(List<String> perNoInputList, Session session) throws Exception {
 		List<PersonelView> list = new ArrayList<PersonelView>();
 		String parametreKey = getParametrePersonelERPTableView();
@@ -7454,7 +7451,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	@Transactional
+	
 	public LinkedHashMap<String, Object> getLastParameter(String key, Session session) {
 		LinkedHashMap<String, Object> map = null;
 		if (key != null && authenticatedUser != null) {
@@ -7563,7 +7560,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	@Transactional
+
 	private UserMenuItemTime getUserMenuItem(String key, Session session) throws Exception {
 		UserMenuItemTime menuItemTime = null;
 		if (authenticatedUser != null && PdksUtil.hasStringValue(key)) {
@@ -7710,7 +7707,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	@Transactional
+
 	public List<PersonelERP> personelERPDBGuncelle(boolean guncellemeDurum, List<String> perNoList, Session session) throws Exception {
 		List<PersonelERP> personelERPReturnList = null;
 		String parameterName = getParametrePersonelERPTableView();
@@ -10126,7 +10123,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	@Transactional
+	
 	public List<PersonelFazlaMesai> denklestirmeFazlaMesaileriGetir(User loginUser, DenklestirmeAy denklestirmeAy, List<VardiyaGun> vardiyalar, Session session) {
 		TreeMap<Long, VardiyaGun> vardiyaMap = new TreeMap<Long, VardiyaGun>();
 		String donemKodu = denklestirmeAy != null ? String.valueOf(denklestirmeAy.getYil() * 100 + denklestirmeAy.getAy()) : null;
@@ -10461,7 +10458,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	@Transactional
+	
 	public List<PersonelDenklestirmeTasiyici> personelDenklestir(DepartmanDenklestirmeDonemi denklestirmeDonemi, TreeMap<String, Tatil> tatilGunleriMap, String searchKey, Object value, boolean pdks, boolean zamanGuncelle, boolean tarihHareketEkle, Session session) throws Exception {
 		TreeMap<String, Boolean> gunMap = new TreeMap<String, Boolean>();
 		User loginUser = denklestirmeDonemi.getLoginUser() != null ? denklestirmeDonemi.getLoginUser() : authenticatedUser;
@@ -10939,7 +10936,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param ap
 	 * @param session
 	 */
-	@Transactional
+
 	public void puantajOnayKontrol(User guncelleyenUser, AylikPuantaj ap, Session session) {
 		if (ap != null && ap.getPersonelDenklestirme() != null) {
 			PersonelDenklestirme pd = ap.getPersonelDenklestirme();
@@ -10989,7 +10986,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	@Transactional
+	
 	public boolean vardiyaHareketlerdenGuncelle(TreeMap<Long, PersonelDenklestirmeTasiyici> personelDenklestirmeMap, TreeMap<Long, List<VardiyaGun>> personelVardiyaBulMap, HashMap<Long, ArrayList<VardiyaGun>> calismaPlaniMap, HashMap<Long, Boolean> hareketKaydiVardiyaMap,
 			HashMap<Long, ArrayList<HareketKGS>> personelHareketMap, Liste suaListe, Session session) {
 		List<Long> suaPerIdList = suaListe != null ? (List<Long>) suaListe.getId() : new ArrayList<Long>();
@@ -11441,7 +11438,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param onaylamamaNedenAciklama
 	 * @param session
 	 */
-	@Transactional
+
 	public void izinIptal(PersonelIzin izin, Tanim onaylamamaNeden, String onaylamamaNedenAciklama, Session session) {
 
 		User updateUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, authenticatedUser.getId(), User.class, session);
@@ -11613,7 +11610,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param menuAdi
 	 * @param sessionx
 	 */
-	@Transactional
+
 	private UserMenuItemTime setUserMenuItem(String menuAdi, Session sessionx) {
 		UserMenuItemTime menuItemTime = null;
 		if (authenticatedUser != null) {
@@ -11925,7 +11922,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param bitTarih
 	 * @param session
 	 */
-	@Transactional
+
 	public void sistemeGirisIslemleri(User user, boolean vekaletOku, Date basTarih, Date bitTarih, Session session) {
 		if (basTarih == null)
 			basTarih = Calendar.getInstance().getTime();
@@ -12892,7 +12889,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param kayitYap
 	 * @param session
 	 */
-	@Transactional
+
 	public void setUserTesisler(User user, boolean kayitYap, Session session) {
 		List<Tanim> yetkiliTesisler = null;
 		Boolean tesisYetki = getParameterKey("tesisYetki").equals("1");
@@ -12991,7 +12988,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	@Transactional
+
 	public User personelPdksRolAta(User user, boolean yaz, Session session) {
 		if (user != null && user.getDepartman().isAdminMi()) {
 			HashMap map = new HashMap();
@@ -13351,7 +13348,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param yoneticiMap
 	 * @param session
 	 */
-	@Transactional
+
 	private void personelUpdate(User user, Personel personel, Personel pdksSapPersonel, Personel yoneticisi, PersonelView personelView, TreeMap personelMap, LinkedHashMap personelSapMap, LinkedHashMap<String, Personel> yoneticiMap, Session session) {
 
 		if (personel == null)
@@ -13753,7 +13750,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	@Transactional
+
 	public TreeMap<String, Tatil> getTatilGunleri(List<Personel> perList, Date basTarih, Date bitTarih, Session session) {
 		TreeMap<String, Tatil> tatilMap = new TreeMap<String, Tatil>();
 		String pattern = PdksUtil.getDateTimeFormat();
@@ -14048,7 +14045,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	@Transactional
+
 	private IzinTipi suaIzinOlustur(Personel izinSahibi, HashMap<String, IzinTipi> izinTipiMap, Session session, IzinTipi izinTipi, User user) throws Exception {
 		Calendar cal = Calendar.getInstance();
 		Date bugun = PdksUtil.getDate(cal.getTime());
@@ -14174,7 +14171,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	@Transactional
+
 	public IzinTipi senelikIzinOlustur(HashMap<String, Object> veriMap, Session session) {
 		IzinTipi izinTipi = (IzinTipi) veriMap.get("izinTipi");
 		int yil = (Integer) veriMap.get("yil");
@@ -14871,7 +14868,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	@Transactional
+
 	public TreeMap<String, VardiyaGun> getVardiyalar(List<Personel> personeller, TreeMap<String, Tatil> tatillerMap, Date baslamaTarih, Date bitisTarih, HashMap<Long, List<PersonelIzin>> izinMap, boolean veriYaz, Session session, boolean zamanGuncelle) throws Exception {
 		if (izinMap == null)
 			izinMap = getPersonelIzinMap(getBaseObjectIdList(personeller), baslamaTarih, bitisTarih, session);
@@ -21787,7 +21784,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	@Transactional
+
 	public double getYemekMolasiYuzdesi(DenklestirmeAy denklestirmeAy, Session session) {
 		Double yuzde = denklestirmeAy != null ? denklestirmeAy.getYemekMolasiYuzdesi() : null;
 		if (yuzde == null)
@@ -21836,7 +21833,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	@Transactional
+
 	public VardiyaGun personelVardiyaDenklestir(LinkedHashMap<String, Object> dataDenkMap, Session session) {
 		HashMap<Long, List<PersonelFazlaMesai>> personelFazlaMesaiMap = dataDenkMap.containsKey("personelFazlaMesaiMap") ? (HashMap<Long, List<PersonelFazlaMesai>>) dataDenkMap.get("personelFazlaMesaiMap") : null;
 		HashMap<Long, List<PersonelFazlaMesai>> sonrakiPersonelFazlaMesaiMap = dataDenkMap.containsKey("sonrakiPersonelFazlaMesaiMap") ? (HashMap<Long, List<PersonelFazlaMesai>>) dataDenkMap.get("sonrakiPersonelFazlaMesaiMap") : null;
@@ -23788,7 +23785,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param vardiyaList
 	 * @param session
 	 */
-	@Transactional
+
 	public void otomatikHareketEkle(Tanim neden, List<VardiyaGun> vardiyaList, User guncelleyen, Session session) {
 		if (vardiyaList != null && vardiyaList.isEmpty() == false) {
 			HashMap<String, KapiView> manuelKapiMap = getManuelKapiMap(null, session);
@@ -24018,7 +24015,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param denklestirmeMap
 	 * @param session
 	 */
-	@Transactional
+
 	public void denklestirmeOlustur(LinkedHashMap<String, Object> denklestirmeMap, Session session) {
 		Tanim neden = denklestirmeMap.containsKey("neden") ? (Tanim) denklestirmeMap.get("neden") : null;
 		User sistemUser = denklestirmeMap.containsKey("sistemUser") ? (User) denklestirmeMap.get("sistemUser") : null;

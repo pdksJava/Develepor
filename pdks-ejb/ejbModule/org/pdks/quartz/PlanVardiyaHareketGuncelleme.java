@@ -94,6 +94,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 
 	private Session session = null;
 
+	@Transactional
 	public String fazlaMesaiHesaplamaBaslat() {
 		try {
 			if (PdksUtil.isSessionKapali(session))
@@ -129,6 +130,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	@Asynchronous
 	@SuppressWarnings("unchecked")
 	// @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@Transactional
 	public QuartzTriggerHandle planVardiyaHareketGuncellemeTimer(@Expiration Date when, @IntervalCron String interval) {
 		if (!isCalisiyor()) {
 			setCalisiyor(Boolean.TRUE);
@@ -363,7 +365,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	 * @param guncelleyenUser
 	 * @param session
 	 */
-	@Transactional
 	private void vardiyaVersiyonGuncelle(DenklestirmeAy da, boolean talepVar, Date bugun, User guncelleyenUser, Session session) {
 		HashMap fields = new HashMap();
 		Date tarihBas = PdksUtil.convertToJavaDate(da.getDonem() + "01", PATTERN);

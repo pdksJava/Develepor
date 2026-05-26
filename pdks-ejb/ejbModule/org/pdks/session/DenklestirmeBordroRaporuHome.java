@@ -209,9 +209,11 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		return str;
 	}
 
+	@Transactional
 	public String sayfaFazlaMesaiGuncellemeAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSession(entityManager, Boolean.TRUE);;
+			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+		;
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String id = (String) req.getParameter("id");
 		if (session != null && id != null) {
@@ -314,13 +316,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 			}
 		}
-		
+
 		pdksEntityController.sessionClose(session);
 
 		return MenuItemConstant.login;
 	}
 
-	@Transactional
 	public String sirketFazlaMesaiGuncelleme() {
 		HashMap fields = new HashMap();
 		fields.put("id", sirketId);
@@ -570,7 +571,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	 * @param aylikPuantaj
 	 * @return
 	 */
-	@Transactional
+
 	public String saveLastParameter(AylikPuantaj aylikPuantaj) {
 		Map<String, String> map1 = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
 		PersonelDenklestirme personelDenklestirme = aylikPuantaj.getPersonelDenklestirme();
@@ -764,7 +765,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	/**
 	 * 
 	 */
-	@Transactional
+
 	private void saveLastParameter() {
 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
 		lastMap.put("yil", "" + yil);
@@ -941,6 +942,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		return aciklama;
 	}
 
+	@Transactional
 	public String fillPersonelDenklestirmeList() throws Exception {
 		fazlaMesaiHesaplaMenuAdi = "";
 		session.clear();
@@ -1259,7 +1261,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	 * @param kartNoAciklamaGoster
 	 * @param bordroAlanlari
 	 */
-	@Transactional
+
 	private void bordroBilgiAciklamaOlustur(boolean kimlikNoGoster, String kartNoAciklama, Boolean kartNoAciklamaGoster, List<Tanim> bordroAlanlari) {
 		int sira = 0;
 		Tanim ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
