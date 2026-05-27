@@ -470,7 +470,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param tatiller
 	 * @param session
 	 */
-	private void updateTatilGunleri(int yil, Date basTarih, Date bitTarih, String adi, Tanim tatilTipi, List<Tatil> tatiller, Session session) {
+	public void updateTatilGunleri(int yil, Date basTarih, Date bitTarih, String adi, Tanim tatilTipi, List<Tatil> tatiller, Session session) {
 		TreeMap<String, Tatil> tatilMap = getTatilGunleri(null, PdksUtil.tariheGunEkleCikar(basTarih, -1), PdksUtil.tariheGunEkleCikar(bitTarih, 1), session);
 		boolean tatilEkle = true;
 		if (tatilMap.isEmpty() == false) {

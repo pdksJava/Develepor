@@ -31,7 +31,7 @@ public class Tatil extends BaseObject {
 	private String ad, aciklama;
 	private Date basTarih, bitTarih;
 	private Tanim tatilTipi;
-	private Integer version = 0;
+	private Integer version = 0,gunAdet;
 	private Object basAy, basGun, bitAy, bitGun;
 	private Tatil orjTatil;
 	private Boolean arifeVardiyaYarimHesapla;
@@ -39,6 +39,13 @@ public class Tatil extends BaseObject {
 
 	public Tatil() {
 		super();
+	}
+	
+	public Tatil(String tipi, Date basTarih, Integer gunAdet) {
+		super();
+		this.ad = (tipi.equalsIgnoreCase("K") ? "Kurban" : "Ramazan") + " Bayramı";
+		this.basTarih = basTarih;
+		this.gunAdet = gunAdet;
 	}
 
 	@Column(name = "VERSION")
@@ -227,7 +234,14 @@ public class Tatil extends BaseObject {
 	public void setArifeSonraVardiyaDenklestirmeVar(Boolean arifeSonraVardiyaDenklestirmeVar) {
 		this.arifeSonraVardiyaDenklestirmeVar = arifeSonraVardiyaDenklestirmeVar;
 	}
+	@Transient
+	public Integer getGunAdet() {
+		return gunAdet;
+	}
 
+	public void setGunAdet(Integer gunAdet) {
+		this.gunAdet = gunAdet;
+	}
 	public void entityRefresh() {
 
 	}
@@ -236,5 +250,7 @@ public class Tatil extends BaseObject {
 	public String getTableName() {
 		return TABLE_NAME;
 	}
+
+	
 
 }
