@@ -106,8 +106,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				if (fazlaMesaiGuncelleme(basTarih, session) != null) {
 					if (PdksUtil.isSessionKapali(session))
 						session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-					boolean mailGonder = getMailGonder(session);
-					if (mailGonder) {
+
+					if (fazlaMesaiDetay != null) {
 						String konu = parameter.getDescription();
 						String aciklama = "Fazla Mesai Toplu güncellenmiştir." + (fazlaMesaiDetay != null ? "<br></br>" + fazlaMesaiDetay : "");
 						List<User> userList = null;
@@ -234,9 +234,16 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		StringBuffer sb = new StringBuffer(), sb1 = new StringBuffer(), sb2 = new StringBuffer();
 		HashMap fields = new HashMap();
 		int sayac = 0;
-		fazlaMesaiDetay = "";
+		fazlaMesaiDetay = null;
+		Boolean mailGonder = null;
 		while (tarih2.getTime() >= tarihBas.getTime()) {
 			++sayac;
+			if (mailGonder == null) {
+				mailGonder = getMailGonder(session);
+				if (mailGonder)
+					fazlaMesaiDetay = "";
+			}
+
 			Date tarihBit = PdksUtil.getAyinSonGunu(tarihBas);
 			DenklestirmeAy da = ayMap.get(Long.parseLong(PdksUtil.convertToDateString(tarihBas, PATTERN_DONEM)));
 			long donemId = da.getId();
@@ -338,13 +345,13 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						sirketIdList = null;
 					}
 				}
-				fazlaMesaiDetay = "";
+
 				for (Liste liste : islemList) {
 					String id = (String) liste.getValue();
 					String sonuc = ortakIslemler.adresKontrol(id);
 					if (sonuc != null)
 						logger.error(liste.getId() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
-					else
+					else if (mailGonder)
 						fazlaMesaiDetay += "<br></br>" + liste.getId();
 				}
 				islemList = null;

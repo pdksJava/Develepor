@@ -99,7 +99,8 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	public String diniBayramBasla() {
 		try {
 			if (PdksUtil.isSessionKapali(session))
-				session = PdksUtil.getSession(entityManager, Boolean.TRUE);;
+				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+			;
 			if ((PdksUtil.getTestSunucuDurum() == false && PdksUtil.getCanliSunucuDurum() == false) || PdksUtil.isSistemDestekVar())
 				diniBayramEkle();
 		} catch (Exception e) {
@@ -108,11 +109,12 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 		return MenuItemConstant.home;
 
 	}
+
 	/**
 	 * @param year
 	 * @return
 	 */
-	public List<Tatil> diniBayramlarGuncelle(int year) {
+	public List<Tatil> diniBayramlarGuncelle(int year, Tanim tatilTipi) {
 		List<Tatil> tatilList = new ArrayList<Tatil>();
 		Date buYilBasi = PdksUtil.convertToJavaDate(year + "0101", "yyyyMMdd");
 		Calendar cal = Calendar.getInstance();
@@ -126,9 +128,8 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 		cal.setTime(date);
 		ULocale locale = new ULocale("@calendar=islamic-umalqura");
 		IslamicCalendar calIs = new IslamicCalendar(locale);
-
 		Tatil holiday = null;
-		while (date.after(stopDate) == false) {
+		while (date.after(stopDate) == false && tatilTipi != null) {
 			cal.setTime(date);
 			calIs.setTime(date);
 			int hijriMonth = calIs.get(IslamicCalendar.MONTH);
@@ -180,8 +181,17 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 			cal.add(Calendar.DATE, holiday.getGunAdet());
 			holiday.setBitTarih(cal.getTime());
 		}
+		if (tatilList.isEmpty() == false) {
+			List<Tatil> list = new ArrayList<Tatil>(tatilList);
+			tatilList.clear();
+			for (Tatil tatil : list)
+				ortakIslemler.updateTatilGunleri(year, tatil.getBasTarih(), tatil.getBitTarih(), tatil.getAd(), tatilTipi, tatilList, session);
+			list = null;
+		}
+
 		return tatilList;
 	}
+
 	/**
 	 * @return
 	 */
@@ -189,10 +199,17 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 		diniList.clear();
 		Calendar cal = Calendar.getInstance();
 		int basYil = cal.get(Calendar.YEAR), sonYil = cal.get(Calendar.YEAR) + (authenticatedUser == null ? 1 : 5);
+		List<Tanim> tatilTipList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_TATIL_TIPI, Tanim.class, session);
+		Tanim tatilTipi = null;
+		for (Tanim tanim : tatilTipList) {
+			if (tanim.getKodu().equals(Tatil.TATIL_TIPI_TEK_SEFER))
+				tatilTipi = tanim;
+		}
+
 		for (int yil = basYil; yil <= sonYil; yil++) {
 			try {
-//				List<Tatil> list = ortakIslemler.diniBayramlarGuncelle(yil, session);
-				List<Tatil> list = diniBayramlarGuncelle(yil);
+				// <Tatil> list = ortakIslemler.diniBayramlarGuncelle(yil, session);
+				List<Tatil> list = diniBayramlarGuncelle(yil, tatilTipi);
 				if (list.isEmpty() == false)
 					diniList.addAll(list);
 				list = null;
