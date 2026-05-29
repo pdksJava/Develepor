@@ -176,7 +176,6 @@ import org.pdks.security.entity.UserVekalet;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.internal.LinkedTreeMap;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -406,60 +405,60 @@ public class OrtakIslemler implements Serializable {
 
 	}
 
-	/**
-	 * @param yil
-	 * @param session
-	 */
-	public List<Tatil> diniBayramlarGuncelle(int yil, Session session) {
-		List<Tatil> tatiller = new ArrayList<Tatil>();
-		String servisAdres = null, jsonDeger = null;
-		boolean local = getCanliDurum() == false && getTestSunucuDurum() == false;
-		if (getParameterKeyHasStringValue("pdksWebServiceLocal") && getCanliDurum() == false && getTestSunucuDurum() == false) {
-			try {
-				servisAdres = getParameterKey("pdksWebServiceLocal") + "/rest/servicesPDKS/getDiniBayram?yil=" + yil;
-				jsonDeger = getApiData(servisAdres);
-			} catch (Exception e) {
-			}
-		}
-		if (jsonDeger == null || (local == false)) {
-			try {
-				servisAdres = getParameterKey("pdksWebService") + "/rest/servicesPDKS/getDiniBayram?yil=" + yil;
-				jsonDeger = getApiData(servisAdres);
-			} catch (Exception e) {
-			}
-
-		}
-		if (jsonDeger != null) {
-			Gson gs = new Gson();
-			List<LinkedTreeMap<String, String>> list = gs.fromJson(jsonDeger, List.class);
-			if (list != null) {
-				Date bugun = new Date();
-				Tanim tatilTipi = null;
-				for (LinkedTreeMap<String, String> map : list) {
-					Date b1 = map.containsKey("basGun") ? PdksUtil.getDateFromString(map.get("basGun")) : null;
-					Date b2 = b1 != null && map.containsKey("bitGun") ? PdksUtil.getDateFromString(map.get("bitGun")) : null;
-					if (b2 != null && b2.after(bugun)) {
-						if (tatilTipi == null) {
-							List<Tanim> tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_TATIL_TIPI, Tanim.class, session);
-							Tatil tatil = new Tatil();
-							for (Tanim tanim : tanimList) {
-								tatil.setTatilTipi(tanim);
-								if (tatil.isTekSefer())
-									tatilTipi = tanim;
-							}
-						}
-						if (tatilTipi != null) {
-							try {
-								updateTatilGunleri(yil, b1, b2, map.get("adi"), tatilTipi, tatiller, session);
-							} catch (Exception e) {
-							}
-						}
-					}
-				}
-			}
-		}
-		return tatiller;
-	}
+//	/**
+//	 * @param yil
+//	 * @param session
+//	 */
+//	public List<Tatil> diniBayramlarGuncelle(int yil, Session session) {
+//		List<Tatil> tatiller = new ArrayList<Tatil>();
+//		String servisAdres = null, jsonDeger = null;
+//		boolean local = getCanliDurum() == false && getTestSunucuDurum() == false;
+//		if (getParameterKeyHasStringValue("pdksWebServiceLocal") && getCanliDurum() == false && getTestSunucuDurum() == false) {
+//			try {
+//				servisAdres = getParameterKey("pdksWebServiceLocal") + "/rest/servicesPDKS/getDiniBayram?yil=" + yil;
+//				jsonDeger = getApiData(servisAdres);
+//			} catch (Exception e) {
+//			}
+//		}
+//		if (jsonDeger == null || (local == false)) {
+//			try {
+//				servisAdres = getParameterKey("pdksWebService") + "/rest/servicesPDKS/getDiniBayram?yil=" + yil;
+//				jsonDeger = getApiData(servisAdres);
+//			} catch (Exception e) {
+//			}
+//
+//		}
+//		if (jsonDeger != null) {
+//			Gson gs = new Gson();
+//			List<LinkedTreeMap<String, String>> list = gs.fromJson(jsonDeger, List.class);
+//			if (list != null) {
+//				Date bugun = new Date();
+//				Tanim tatilTipi = null;
+//				for (LinkedTreeMap<String, String> map : list) {
+//					Date b1 = map.containsKey("basGun") ? PdksUtil.getDateFromString(map.get("basGun")) : null;
+//					Date b2 = b1 != null && map.containsKey("bitGun") ? PdksUtil.getDateFromString(map.get("bitGun")) : null;
+//					if (b2 != null && b2.after(bugun)) {
+//						if (tatilTipi == null) {
+//							List<Tanim> tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_TATIL_TIPI, Tanim.class, session);
+//							Tatil tatil = new Tatil();
+//							for (Tanim tanim : tanimList) {
+//								tatil.setTatilTipi(tanim);
+//								if (tatil.isTekSefer())
+//									tatilTipi = tanim;
+//							}
+//						}
+//						if (tatilTipi != null) {
+//							try {
+//								updateTatilGunleri(yil, b1, b2, map.get("adi"), tatilTipi, tatiller, session);
+//							} catch (Exception e) {
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return tatiller;
+//	}
 
 	/**
 	 * @param yil
