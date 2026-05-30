@@ -87,7 +87,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	public static final String PARAMETER_FAZLA_MESAI_KEY = "fazlaMesaiHesaplamaZamani";
 	public static final String PATTERN = "yyyyMMdd";
 	public static final String PATTERN_DONEM = "yyyyMM";
-	private String fazlaMesaiDetay;
+	private StringBuffer fazlaMesaiDetay;
 
 	private static boolean calisiyor = Boolean.FALSE;
 
@@ -109,7 +109,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						if (PdksUtil.isSessionKapali(session))
 							session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 						String konu = parameter.getDescription();
-						String aciklama = "Fazla Mesai Toplu güncellenmiştir.<br></br>" + fazlaMesaiDetay;
+						String aciklama = "Fazla Mesai Toplu güncellenmiştir.<br></br>" + fazlaMesaiDetay.toString();
 						List<User> userList = null;
 						if (ortakIslemler.getParameterKey("fazlaMesaiGuncelleMail").equals("1"))
 							userList = ortakIslemler.getIKUserList(session);
@@ -238,8 +238,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		Boolean mailGonder = null;
 		while (tarih2.getTime() >= tarihBas.getTime()) {
 			++sayac;
-
-			Date tarihBit = PdksUtil.getAyinSonGunu(tarihBas);
+ 			Date tarihBit = PdksUtil.getAyinSonGunu(tarihBas);
 			DenklestirmeAy da = ayMap.get(Long.parseLong(PdksUtil.convertToDateString(tarihBas, PATTERN_DONEM)));
 			long donemId = da.getId();
 			int durum = da.getDurum() ? 1 : 0;
@@ -343,7 +342,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				if (mailGonder == null && islemList.isEmpty() == false) {
 					mailGonder = getMailGonder(session);
 					if (mailGonder)
-						fazlaMesaiDetay = "";
+						fazlaMesaiDetay = new StringBuffer();
 				}
 				for (Iterator iterator = islemList.iterator(); iterator.hasNext();) {
 					Liste liste = (Liste) iterator.next();
@@ -352,7 +351,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					if (sonuc != null)
 						logger.error(liste.getId() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
 					else if (mailGonder)
-						fazlaMesaiDetay += "<br></br>" + liste.getId() + (iterator.hasNext() ? " " + PdksUtil.getCurrentTimeStampStr() : "");
+						fazlaMesaiDetay.append( "<br></br>" + liste.getId() + (iterator.hasNext() ? " " + PdksUtil.getCurrentTimeStampStr() : ""));
 				}
 				islemList = null;
 				logger.info(adres + " out " + PdksUtil.getCurrentTimeStampStr());
