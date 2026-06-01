@@ -3,6 +3,7 @@
 	<restrict>#{userHome.hasPermission('tumHareketler','view')}</restrict>
 	<rewrite pattern="/tumHareketler" />
 	<action execute="#{tumHareketlerHome.sayfaGirisAction}" on-postback="false" />
+	<begin-conversation join="true" flush-mode="manual" />
 	<navigation>
 		<rule if-outcome="tumHareketler ">
 			<redirect view-id="#{menuItemConstant.tumHareketler}" />
