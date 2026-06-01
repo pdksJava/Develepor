@@ -3503,32 +3503,24 @@ public class PdksUtil implements Serializable {
 		SessionFactory sessionFactory = null;
 		try {
 			delegate = em.getDelegate();
-			if (yeni == null) {
-				HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
-				sessionFactory = hsp.getSessionFactory();
+			HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
+			sessionFactory = hsp.getSessionFactory();
+			if (yeni == null || yeni.booleanValue() == false) {
+				// session1 = (Session) delegate;
 				session1 = sessionFactory.getCurrentSession();
 			}
 
 		} catch (Exception e) {
-			logger.error("PDKS hata in : \n");
-			e.printStackTrace();
-			logger.error("PDKS hata out : " + e.getMessage());
+			session1 = null;
+//			logger.error("PDKS hata in : \n");
+//			e.printStackTrace();
+//			logger.error("PDKS hata out : " + e.getMessage());
 		}
 
-		try {
-			if (session1 == null)
-				session1 = (Session) delegate;
-		} catch (Exception e) {
-			logger.error("PDKS hata in : \n");
-			e.printStackTrace();
-			logger.error("PDKS hata out : " + e.getMessage());
-		}
+		if (session1 == null || (yeni != null && yeni)) {
 
-		if (yeni != null && yeni && session1 != null) {
-			if (sessionFactory == null)
-				sessionFactory = session1.getSessionFactory();
-			// session1 = sessionFactory.getCurrentSession();
 			session1 = sessionFactory.openSession();
+			// session1 = sessionFactory.getCurrentSession();
 		}
 
 		return session1;
