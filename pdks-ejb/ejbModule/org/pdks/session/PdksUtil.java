@@ -3466,30 +3466,69 @@ public class PdksUtil implements Serializable {
 	 * @return
 	 */
 	public static Session getSession(EntityManager em, Boolean yeni) {
+ 		Session session1 = null;
+		Object delegate = null;
+		SessionFactory sessionFactory = null;
+		try {
+			delegate = em.getDelegate();
+			if (yeni == null || yeni.booleanValue() == false) {
+				// session1 = sessionFactory.getCurrentSession();
+				session1 = (Session) delegate;
+			}
+
+		} catch (Exception e) {
+			session1 = null;
+
+		}
+
+		if (session1 == null || (yeni != null && yeni)) {
+			HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
+			sessionFactory = hsp.getSessionFactory();
+ 			session1 = sessionFactory.openSession();
+
+		}
+
+		return session1;
+	}
+
+	/**
+	 * @param em
+	 * @param yeni
+	 * @return
+	 */
+	public static Session getSessionx(EntityManager em, Boolean yeni) {
 		// Session session1 = (Session) entityManager.getDelegate();
 		Session session1 = null;
 		Object delegate = null;
 		SessionFactory sessionFactory = null;
 		try {
 			delegate = em.getDelegate();
-			HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
-			sessionFactory = hsp.getSessionFactory();
-			if (yeni == null || yeni.booleanValue() == false) {
-				// session1 = (Session) delegate;
+			if (yeni == null) {
+				HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
+				sessionFactory = hsp.getSessionFactory();
 				session1 = sessionFactory.getCurrentSession();
 			}
 
 		} catch (Exception e) {
-			session1 = null;
-//			logger.error("PDKS hata in : \n");
-//			e.printStackTrace();
-//			logger.error("PDKS hata out : " + e.getMessage());
+			logger.error("PDKS hata in : \n");
+			e.printStackTrace();
+			logger.error("PDKS hata out : " + e.getMessage());
 		}
 
-		if (session1 == null || (yeni != null && yeni)) {
+		try {
+			if (session1 == null)
+				session1 = (Session) delegate;
+		} catch (Exception e) {
+			logger.error("PDKS hata in : \n");
+			e.printStackTrace();
+			logger.error("PDKS hata out : " + e.getMessage());
+		}
 
-			session1 = sessionFactory.openSession();
+		if (yeni != null && yeni && session1 != null) {
+			if (sessionFactory == null)
+				sessionFactory = session1.getSessionFactory();
 			// session1 = sessionFactory.getCurrentSession();
+			session1 = sessionFactory.openSession();
 		}
 
 		return session1;

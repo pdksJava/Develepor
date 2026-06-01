@@ -109,13 +109,14 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 		return MenuItemConstant.home;
 
 	}
-
+ 
 	/**
 	 * @param year
+	 * @param tatilTipi
 	 * @return
 	 */
-	public List<Tatil> diniBayramlarGuncelle(int year, Tanim tatilTipi) {
-		List<Tatil> tatilList = new ArrayList<Tatil>();
+	private List<Tatil> diniBayramlarGuncelle(int year, Tanim tatilTipi) {
+		List<Tatil> tatiller = new ArrayList<Tatil>();
 		Date buYilBasi = PdksUtil.convertToJavaDate(year + "0101", "yyyyMMdd");
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(buYilBasi);
@@ -140,7 +141,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 					cal.setTime(tarih);
 					if (cal.get(Calendar.YEAR) == year) {
 						holiday = new Tatil("R", tarih, 3);
-						tatilList.add(holiday);
+						tatiller.add(holiday);
 					}
 
 				} else if (hijriDay == 2) {
@@ -158,7 +159,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 					cal.setTime(tarih);
 					if (cal.get(Calendar.YEAR) == year) {
 						holiday = new Tatil("K", tarih, 4);
-						tatilList.add(holiday);
+						tatiller.add(holiday);
 					}
 					// createHolidayMap(holidayMap, "KB0", date);
 				} else if (hijriDay == 10) {
@@ -181,15 +182,15 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 			cal.add(Calendar.DATE, holiday.getGunAdet());
 			holiday.setBitTarih(cal.getTime());
 		}
-		if (tatilList.isEmpty() == false) {
-			List<Tatil> list = new ArrayList<Tatil>(tatilList);
-			tatilList.clear();
+		if (tatiller.isEmpty() == false) {
+			List<Tatil> list = new ArrayList<Tatil>(tatiller);
+			tatiller.clear();
 			for (Tatil tatil : list)
-				ortakIslemler.updateTatilGunleri(year, tatil.getBasTarih(), tatil.getBitTarih(), tatil.getAd(), tatilTipi, tatilList, session);
+				ortakIslemler.updateTatilGunleri(year, tatil.getBasTarih(), tatil.getBitTarih(), tatil.getAd(), tatilTipi, tatiller, session);
 			list = null;
 		}
 
-		return tatilList;
+		return tatiller;
 	}
 
 	/**
@@ -220,7 +221,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 		try {
 			if (authenticatedUser == null)
 				if (PdksUtil.getTestSunucuDurum() || PdksUtil.getCanliSunucuDurum())
-					zamanlayici.mailGonder(session, null, "Tatil günleri kontrol", diniList.isEmpty() ? "Tatil günleri güncelleme olmadı" : "Tatil günlerine " + tatilList.size() + " adet tatil eklendi", null, false);
+					zamanlayici.mailGonder(session, null, "Tatil günleri kontrol", diniList.isEmpty() ? "Tatil günleri güncelleme olmadı" : "Tatil günlerine " + diniList.size() + " adet tatil eklendi", null, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
