@@ -48,6 +48,7 @@ import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.PuantajKatSayiTipi;
+import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 
@@ -82,6 +83,8 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	String linkAdres;
 	@In(required = false, create = true)
 	VardiyaGun fazlaMesaiVardiyaGun;
+	@In(required = false, create = true)
+	UserHome userHome;
 	@In(required = false)
 	FacesMessages facesMessages;
 
@@ -171,6 +174,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() throws Exception {
+		String donusStr = "";
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
@@ -252,72 +256,83 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			}
 
 			donusAdres = null;
-			if (dateStr != null) {
-				donusAdres = linkAdres;
-				Date vardiyaDate = PdksUtil.convertToJavaDate(dateStr, "yyyyMMdd");
-				setDate(vardiyaDate);
-				if (perKGSId != null) {
-
-					PersonelKGS personelKGS = (PersonelKGS) pdksEntityController.getSQLParamByFieldObject(PersonelKGS.TABLE_NAME, PersonelKGS.COLUMN_NAME_ID, perKGSId, PersonelKGS.class, session);
-					PersonelView personelView = personelKGS != null ? personelKGS.getPersonelView() : null;
-					if (personelView != null && personelView.getPdksPersonel() != null) {
-						Personel pdksPersonel = personelView.getPdksPersonel();
-						Sirket pdksSirket = pdksPersonel.getSirket();
-						if (pdksPersonel.getTesis() != null)
-							aramaSecenekleri.setTesisId(pdksPersonel.getTesis().getId());
-						if (pdksSirket != null) {
-							departmanId = pdksSirket.getDepartman().getId();
-							aramaSecenekleri.setDepartmanId(departmanId);
-							sirketId = pdksSirket.getId();
-							aramaSecenekleri.setSirketId(sirketId);
-							if (authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi())
-								fillSirketList();
-							aramaSecenekleri.setSirketId(sirketId);
-						}
-						if (pdksPersonel.getEkSaha1() != null) {
-							aramaSecenekleri.setEkSaha1Id(pdksPersonel.getEkSaha1().getId());
-						}
-						if (pdksPersonel.getEkSaha2() != null) {
-							aramaSecenekleri.setEkSaha2Id(pdksPersonel.getEkSaha2().getId());
-						}
-						if (pdksPersonel.getEkSaha3() != null) {
-							seciliEkSaha3Id = pdksPersonel.getEkSaha3().getId();
-							aramaSecenekleri.setEkSaha3Id(seciliEkSaha3Id);
-						}
-
-						if (pdksPersonel.getEkSaha4() != null) {
-							seciliEkSaha4Id = pdksPersonel.getEkSaha4().getId();
-							aramaSecenekleri.setEkSaha4Id(seciliEkSaha4Id);
-						}
-
-						if (pdksSirket != null)
-							sirket = pdksSirket;
-						aramaSecenekleri.setSicilNo(pdksPersonel.getPdksSicilNo());
-						aramaSecenekleri.setAd(pdksPersonel.getAd());
-						aramaSecenekleri.setSoyad(pdksPersonel.getSoyad());
-					}
-					fillHareketMesaiList();
+			if (authenticatedUser.isAdmin() == false && PdksUtil.hasStringValue(linkAdres) == false) {
+				donusStr = MenuItemConstant.home;
+				if (userHome.hasPermission("fazlaMesaiHesapla", "view")) {
+					PdksUtil.addMessageWarn("Bu ekrandan " + ortakIslemler.getMenuAdi("personelFazlaMesai") + " sayfasına geçiş yapma yetkisi vardır!");
+					donusStr = MenuItemConstant.fazlaMesaiHesapla;
 				}
 
 			} else {
-				if (aramaSecenekleri.getSirketId() != null)
-					fillTesisList();
-				aramaSecenekleri.setSicilNo("");
-				aramaSecenekleri.setAd("");
-				aramaSecenekleri.setSoyad("");
-			}
-			if (!ayniSayfa)
-				authenticatedUser.setCalistigiSayfa("");
-			Boolean kullaniciPersonel = ortakIslemler.getKullaniciPersonel(authenticatedUser);
-			if (kullaniciPersonel) {
-				PdksUtil.addMessageAvailableWarn("'" + ortakIslemler.getMenuAdi("personelFazlaMesai") + "' sayfasına giriş yetkiniz yoktur!");
-				return MenuItemConstant.home;
+
+				if (dateStr != null) {
+					donusAdres = linkAdres;
+
+					Date vardiyaDate = PdksUtil.convertToJavaDate(dateStr, "yyyyMMdd");
+					setDate(vardiyaDate);
+					if (perKGSId != null) {
+
+						PersonelKGS personelKGS = (PersonelKGS) pdksEntityController.getSQLParamByFieldObject(PersonelKGS.TABLE_NAME, PersonelKGS.COLUMN_NAME_ID, perKGSId, PersonelKGS.class, session);
+						PersonelView personelView = personelKGS != null ? personelKGS.getPersonelView() : null;
+						if (personelView != null && personelView.getPdksPersonel() != null) {
+							Personel pdksPersonel = personelView.getPdksPersonel();
+							Sirket pdksSirket = pdksPersonel.getSirket();
+							if (pdksPersonel.getTesis() != null)
+								aramaSecenekleri.setTesisId(pdksPersonel.getTesis().getId());
+							if (pdksSirket != null) {
+								departmanId = pdksSirket.getDepartman().getId();
+								aramaSecenekleri.setDepartmanId(departmanId);
+								sirketId = pdksSirket.getId();
+								aramaSecenekleri.setSirketId(sirketId);
+								if (authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi())
+									fillSirketList();
+								aramaSecenekleri.setSirketId(sirketId);
+							}
+							if (pdksPersonel.getEkSaha1() != null) {
+								aramaSecenekleri.setEkSaha1Id(pdksPersonel.getEkSaha1().getId());
+							}
+							if (pdksPersonel.getEkSaha2() != null) {
+								aramaSecenekleri.setEkSaha2Id(pdksPersonel.getEkSaha2().getId());
+							}
+							if (pdksPersonel.getEkSaha3() != null) {
+								seciliEkSaha3Id = pdksPersonel.getEkSaha3().getId();
+								aramaSecenekleri.setEkSaha3Id(seciliEkSaha3Id);
+							}
+
+							if (pdksPersonel.getEkSaha4() != null) {
+								seciliEkSaha4Id = pdksPersonel.getEkSaha4().getId();
+								aramaSecenekleri.setEkSaha4Id(seciliEkSaha4Id);
+							}
+
+							if (pdksSirket != null)
+								sirket = pdksSirket;
+							aramaSecenekleri.setSicilNo(pdksPersonel.getPdksSicilNo());
+							aramaSecenekleri.setAd(pdksPersonel.getAd());
+							aramaSecenekleri.setSoyad(pdksPersonel.getSoyad());
+						}
+						fillHareketMesaiList();
+					}
+
+				} else {
+					if (aramaSecenekleri.getSirketId() != null)
+						fillTesisList();
+					aramaSecenekleri.setSicilNo("");
+					aramaSecenekleri.setAd("");
+					aramaSecenekleri.setSoyad("");
+				}
+				if (!ayniSayfa)
+					authenticatedUser.setCalistigiSayfa("");
+				Boolean kullaniciPersonel = ortakIslemler.getKullaniciPersonel(authenticatedUser);
+				if (kullaniciPersonel) {
+					PdksUtil.addMessageAvailableWarn("'" + ortakIslemler.getMenuAdi("personelFazlaMesai") + "' sayfasına giriş yetkiniz yoktur!");
+					return MenuItemConstant.home;
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return "";
+		return donusStr;
 	}
 
 	public void filDepartmanList() {
