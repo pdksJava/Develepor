@@ -1044,7 +1044,6 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

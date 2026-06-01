@@ -124,7 +124,6 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -308,7 +307,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 	public String sayfaGirisAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		if (personelList == null)
 			personelList = new ArrayList<Personel>();
 		else
@@ -629,7 +628,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 				KapiView terminalKapi = terminalKapiManuelUpdate(kgsHareket.getTerminalKapi());
 				String name = "SP_HAREKET_TERMINAL_SIRKET";
 				if (ortakIslemler.isExisStoreProcedure(name, session)) {
- 					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 					veriMap.put("kgsId", kgsId);
 					veriMap.put("pdksId", pdksId);
 					veriMap.put("kapi", terminalKapi.getId());
@@ -639,7 +638,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 					veriMap.put("nedenId", neden.getId());
 					veriMap.put("aciklama", aciklama);
 					veriMap.put("sirketId", kgsHareket.getKgsSirketId());
- 					pdksEntityController.execSP(session, veriMap, name);
+					pdksEntityController.execSP(session, veriMap, name);
 				} else {
 					pdksEntityController.hareketSil(kgsId, pdksId, authenticatedUser, neden.getId(), "", kgsHareket.getKgsSirketId(), session);
 					pdksId = pdksEntityController.hareketEkle(terminalKapi, kgsHareket.getPersonel(), kgsHareket.getZaman(), authenticatedUser, neden.getId(), aciklama, session);

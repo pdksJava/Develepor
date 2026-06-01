@@ -65,7 +65,6 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -237,9 +236,9 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 		if (anaTanim == null) {
 			anaTanim = genelTanim;
 			tanim.setTipi(anaTanim.getKodu());
-		} else  
+		} else
 			tanim.setTipi(genelTanim.getChildGenelTanim().getKodu());
- 		tanim.setParentTanim(anaTanim);
+		tanim.setParentTanim(anaTanim);
 		tanim.setGuncelle(!authenticatedUser.isAdmin());
 		setInstance(tanim);
 		return "";

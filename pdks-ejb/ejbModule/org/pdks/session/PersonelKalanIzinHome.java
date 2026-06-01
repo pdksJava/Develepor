@@ -134,7 +134,6 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -892,7 +891,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 	public void bakiyeGuncelleSayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, "bakiyeGuncelle");
+		ortakIslemler.setUserMenuItemTime(entityManager, session, "bakiyeGuncelle");
 		minYil = PdksUtil.getSistemBaslangicYili();
 		Calendar cal = Calendar.getInstance();
 		maxYil = cal.get(Calendar.YEAR) - 1;
@@ -906,7 +905,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 	public String sayfaGirisAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 
 		aramaSecenekleri = null;
 		if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)

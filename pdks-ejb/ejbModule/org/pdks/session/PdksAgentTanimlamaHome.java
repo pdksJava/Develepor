@@ -81,7 +81,6 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -90,7 +89,8 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		try {
 			if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 				if (PdksUtil.isSessionKapali(session))
-					session = PdksUtil.getSession(entityManager, Boolean.TRUE);;
+					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+				;
 				mailDataGonder(null, session);
 			}
 		} catch (Exception e) {

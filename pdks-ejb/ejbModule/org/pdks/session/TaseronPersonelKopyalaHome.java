@@ -82,7 +82,6 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -111,7 +110,7 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 
 		sirketList = ortakIslemler.getSelectItemList("sirket", authenticatedUser);
 

@@ -66,7 +66,6 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -223,7 +222,7 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		setInstance(new Personel());
 		;
 		sanalPersonelAciklama = ortakIslemler.sanalPersonelAciklama();

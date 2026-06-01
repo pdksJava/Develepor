@@ -458,8 +458,8 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 					pdksEntityController.savePrepareTableID(true, null, MenuIliski.class, session);
 					session.flush();
 				} catch (Exception e) {
- 				}
- 			}
+				}
+			}
 		}
 
 		map1 = null;

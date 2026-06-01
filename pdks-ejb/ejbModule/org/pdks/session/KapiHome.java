@@ -47,7 +47,7 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
-	
+
 	public static String sayfaURL = "kapiTanimlama";
 	private List<KapiKGS> kapiKGSList = new ArrayList<KapiKGS>();
 	private List<KapiKGS> tanimsizKapiList = new ArrayList<KapiKGS>();
@@ -69,7 +69,6 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -296,7 +295,7 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		kapiView = new KapiView();
 		kapiView.setKapi(new Kapi());
 

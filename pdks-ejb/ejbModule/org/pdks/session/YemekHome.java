@@ -70,7 +70,6 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -235,7 +234,7 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		fillPdksYemekList();
 
 	}
@@ -244,7 +243,7 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 	public void sayfaExtraGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, "yemekKartsizTanimlama");
+		ortakIslemler.setUserMenuItemTime(entityManager, session, "yemekKartsizTanimlama");
 		if (basTarih == null) {
 			Calendar cal = Calendar.getInstance();
 			bitTarih = PdksUtil.getDate(cal.getTime());

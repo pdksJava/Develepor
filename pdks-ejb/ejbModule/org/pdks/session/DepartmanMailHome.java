@@ -69,7 +69,6 @@ public class DepartmanMailHome extends EntityHome<DepartmanMailGrubu> implements
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -160,7 +159,6 @@ public class DepartmanMailHome extends EntityHome<DepartmanMailGrubu> implements
 		if (mailList.size() > 0)
 			mailList.clear();
 		departmanMail = null;
-		 
 
 		departmanMail = (DepartmanMailGrubu) pdksEntityController.getSQLParamByFieldObject(DepartmanMailGrubu.TABLE_NAME, DepartmanMailGrubu.COLUMN_NAME_DEPARTMAN, departmanTanim.getId(), DepartmanMailGrubu.class, session);
 
@@ -179,7 +177,7 @@ public class DepartmanMailHome extends EntityHome<DepartmanMailGrubu> implements
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, "departmanMail");
+		ortakIslemler.setUserMenuItemTime(entityManager, session, "departmanMail");
 		departmanAciklama = "Departman";
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("parentTanim.tipi", Tanim.TIPI_PERSONEL_EK_SAHA);

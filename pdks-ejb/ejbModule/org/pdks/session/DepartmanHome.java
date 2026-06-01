@@ -66,7 +66,6 @@ public class DepartmanHome extends EntityHome<Departman> implements Serializable
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -260,7 +259,7 @@ public class DepartmanHome extends EntityHome<Departman> implements Serializable
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		fillDepartmanTanimList();
 	}
 

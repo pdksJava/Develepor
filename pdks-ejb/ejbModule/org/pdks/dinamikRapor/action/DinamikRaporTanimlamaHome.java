@@ -55,7 +55,6 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	OrtakIslemler ortakIslemler;
 	@In(required = false, create = true)
 	ComponentState componentState;
- 
 
 	public static String sayfaURL = "dinamikRaporTanimlama";
 	private List<PdksDinamikRapor> dinamikRaporList;
@@ -78,7 +77,6 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -267,7 +265,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		StringBuilder sb = new StringBuilder();
 		sb.append("select * from " + PdksDinamikRapor.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 		dinamikRaporList = pdksEntityController.getObjectBySQLList(sb, fields, PdksDinamikRapor.class);
-		
+
 	}
 
 	@Transactional

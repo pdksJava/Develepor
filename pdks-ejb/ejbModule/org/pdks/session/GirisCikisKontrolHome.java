@@ -86,7 +86,6 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -95,7 +94,7 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		setHareketList(new ArrayList<HareketKGS>());
 		setVardiyaGunList(new ArrayList<VardiyaGun>());
 		HareketKGS hareket = new HareketKGS();
@@ -111,7 +110,7 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 			aramaSecenekleri.setDepartmanId(authenticatedUser.getDepartman().getId());
 		}
 		tesisDurum = false;
- 		fillSirketList();
+		fillSirketList();
 	}
 
 	public String fillSirketList() {
@@ -335,7 +334,7 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 				if (!yaz)
 					iterator.remove();
 			}
-	//		ortakIslemler.otomatikHareketEkle(new ArrayList<VardiyaGun>(vardiyalarMap.values()), session);
+			// ortakIslemler.otomatikHareketEkle(new ArrayList<VardiyaGun>(vardiyalarMap.values()), session);
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();

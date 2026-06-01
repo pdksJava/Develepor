@@ -72,7 +72,6 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

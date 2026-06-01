@@ -93,7 +93,6 @@ public class P10P20Home extends EntityHome<HareketKGS> implements Serializable {
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

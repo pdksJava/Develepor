@@ -79,7 +79,6 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

@@ -126,7 +126,6 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

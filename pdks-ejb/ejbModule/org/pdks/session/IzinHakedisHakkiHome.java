@@ -47,7 +47,7 @@ public class IzinHakedisHakkiHome extends EntityHome<IzinHakedisHakki> implement
 	public static String sayfaURL = "izinHakedisHakkiTanimlama";
 	private List<IzinHakedisHakki> izinHakedisHakkiList = new ArrayList<IzinHakedisHakki>();
 	private List<Departman> departmanList = new ArrayList<Departman>();
-	private List<SelectItem> yasTipiList  ;
+	private List<SelectItem> yasTipiList;
 
 	private int basYil;
 	private int izinSure;
@@ -65,7 +65,6 @@ public class IzinHakedisHakkiHome extends EntityHome<IzinHakedisHakki> implement
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -178,7 +177,7 @@ public class IzinHakedisHakkiHome extends EntityHome<IzinHakedisHakki> implement
 	public void fillYasTipiList() {
 		IzinHakedisHakki hakedisHakki = getInstance();
 		List<SelectItem> list = ortakIslemler.getSelectItemList("yasTipi", authenticatedUser);
- 		list.add(new SelectItem(String.valueOf(IzinHakedisHakki.YAS_TIPI_COCUK), IzinHakedisHakki.getYasTipiStr(IzinHakedisHakki.YAS_TIPI_COCUK, hakedisHakki.getDepartman(), hakedisHakki.isSuaDurum())));
+		list.add(new SelectItem(String.valueOf(IzinHakedisHakki.YAS_TIPI_COCUK), IzinHakedisHakki.getYasTipiStr(IzinHakedisHakki.YAS_TIPI_COCUK, hakedisHakki.getDepartman(), hakedisHakki.isSuaDurum())));
 		list.add(new SelectItem(String.valueOf(IzinHakedisHakki.YAS_TIPI_GENC), IzinHakedisHakki.getYasTipiStr(IzinHakedisHakki.YAS_TIPI_GENC, hakedisHakki.getDepartman(), hakedisHakki.isSuaDurum())));
 		list.add(new SelectItem(String.valueOf(IzinHakedisHakki.YAS_TIPI_YASLI), IzinHakedisHakki.getYasTipiStr(IzinHakedisHakki.YAS_TIPI_YASLI, hakedisHakki.getDepartman(), hakedisHakki.isSuaDurum())));
 		setYasTipiList(list);
@@ -259,7 +258,7 @@ public class IzinHakedisHakkiHome extends EntityHome<IzinHakedisHakki> implement
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		fillIzinHakedisHakkiList();
 		fillDepartmanList();
 	}

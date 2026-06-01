@@ -209,7 +209,6 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

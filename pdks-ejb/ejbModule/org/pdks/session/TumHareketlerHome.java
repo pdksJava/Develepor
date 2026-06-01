@@ -112,7 +112,6 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

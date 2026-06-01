@@ -82,7 +82,6 @@ public class YemekYiyenSayisiHome extends EntityHome<VardiyaGun> implements Seri
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -96,7 +95,7 @@ public class YemekYiyenSayisiHome extends EntityHome<VardiyaGun> implements Seri
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		ogunVar = false;
 
 		setHareketList(new ArrayList<HareketKGS>());

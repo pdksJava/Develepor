@@ -180,7 +180,6 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -209,7 +208,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		aylikPuantajListClear();
 		fazlaMesaiSayfa = false;
 		yasalFazlaCalismaAsanSaat = Boolean.FALSE;
@@ -613,7 +612,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 		haftaTatilVar = Boolean.FALSE;
 		mailGonder = !(authenticatedUser.isIK() || authenticatedUser.isAdmin());
 		linkAdres = null;
- 		session.clear();
+		session.clear();
 
 		personelDenklestirmeList.clear();
 		ayrikHareketVar = false;
@@ -1481,7 +1480,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 							styleGenel = styleEgitim;
 						else if (styleText.equals(VardiyaGun.STYLE_CLASS_OFF))
 							styleGenel = maxSureGecti == false ? styleOff : styleOffRed;
- 						else if (styleText.equals(VardiyaGun.STYLE_CLASS_ICAP))
+						else if (styleText.equals(VardiyaGun.STYLE_CLASS_ICAP))
 							styleGenel = styleIcap;
 
 						cell = ExcelUtil.getCell(sheet, row, col++, styleGenel);

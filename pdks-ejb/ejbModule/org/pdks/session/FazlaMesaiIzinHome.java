@@ -101,7 +101,6 @@ public class FazlaMesaiIzinHome extends EntityHome<PersonelIzin> implements Seri
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -118,7 +117,7 @@ public class FazlaMesaiIzinHome extends EntityHome<PersonelIzin> implements Seri
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		fillEkSahaTanim();
 		setBitTarih(new Date());
 		Calendar cal = Calendar.getInstance();
@@ -179,8 +178,8 @@ public class FazlaMesaiIzinHome extends EntityHome<PersonelIzin> implements Seri
 			query.setParameter(3, kullanilanIzinSuresi);
 			query.setParameter(4, updateIzin.getId());
 			query.executeUpdate();
-			 
-			PersonelIzin izin = (PersonelIzin)pdksEntityController.getSQLParamByFieldObject(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, updateIzin.getId(), PersonelIzin.class, session);
+
+			PersonelIzin izin = (PersonelIzin) pdksEntityController.getSQLParamByFieldObject(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, updateIzin.getId(), PersonelIzin.class, session);
 			session.refresh(izin);
 			session.flush();
 			fillIzinList();

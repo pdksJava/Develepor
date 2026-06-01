@@ -43,7 +43,6 @@ public class AttachmentHome extends EntityHome<Dosya> implements Serializable {
 	}
 
 	@Override
-	@Begin
 	public void create() {
 		super.create();
 	}

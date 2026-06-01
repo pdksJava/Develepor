@@ -68,7 +68,6 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

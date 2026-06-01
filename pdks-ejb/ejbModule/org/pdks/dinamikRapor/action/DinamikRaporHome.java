@@ -103,7 +103,6 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

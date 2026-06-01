@@ -182,7 +182,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

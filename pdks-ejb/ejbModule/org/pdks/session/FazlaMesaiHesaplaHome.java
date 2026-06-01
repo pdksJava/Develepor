@@ -232,7 +232,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

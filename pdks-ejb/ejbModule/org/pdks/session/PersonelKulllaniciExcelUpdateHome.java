@@ -84,7 +84,6 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -541,7 +540,7 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		islemTipi = "";
 		mailAdres = "";
 		ekleSil = "";

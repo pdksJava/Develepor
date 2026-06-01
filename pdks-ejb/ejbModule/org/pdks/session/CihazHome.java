@@ -85,7 +85,6 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

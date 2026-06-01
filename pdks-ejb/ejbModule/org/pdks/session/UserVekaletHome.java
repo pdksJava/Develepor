@@ -160,7 +160,6 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 
@@ -175,7 +174,7 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		if (bitDate == null) {
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.MONTH, 6);

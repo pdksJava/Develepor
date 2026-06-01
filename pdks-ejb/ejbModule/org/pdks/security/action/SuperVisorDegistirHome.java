@@ -61,7 +61,6 @@ public class SuperVisorDegistirHome extends EntityHome<User> implements Serializ
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -82,7 +81,7 @@ public class SuperVisorDegistirHome extends EntityHome<User> implements Serializ
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());
 		List<User> list = null;
 		HashMap parametreMap = new HashMap();

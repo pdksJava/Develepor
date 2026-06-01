@@ -91,7 +91,6 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -109,7 +108,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 		return MenuItemConstant.home;
 
 	}
- 
+
 	/**
 	 * @param year
 	 * @param tatilTipi

@@ -14,7 +14,6 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
@@ -71,7 +70,6 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -148,7 +146,6 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 	}
 
 	@Override
-	@Begin(join = true)
 	public String update() {
 		Session sessionx = getSession();
 		MenuItem item = getInstance();
@@ -171,7 +168,6 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 	}
 
 	@Override
-	@Begin(join = true)
 	@Transactional
 	public String persist() {
 		Session sessionx = getSession();

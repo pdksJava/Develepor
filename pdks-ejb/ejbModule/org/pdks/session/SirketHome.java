@@ -83,7 +83,6 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

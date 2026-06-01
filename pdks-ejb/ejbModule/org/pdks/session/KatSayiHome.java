@@ -75,7 +75,6 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

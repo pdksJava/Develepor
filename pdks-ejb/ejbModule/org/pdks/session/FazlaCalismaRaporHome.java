@@ -139,7 +139,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 		return personelDenklestirmeId;
 	}
 
-	@Begin(join = true)
+	@Override
 	public void create() {
 		super.create();
 	}

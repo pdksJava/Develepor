@@ -61,7 +61,6 @@ public class YemekIzinHome extends EntityHome<YemekIzin> implements Serializable
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

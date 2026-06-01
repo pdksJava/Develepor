@@ -105,7 +105,6 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

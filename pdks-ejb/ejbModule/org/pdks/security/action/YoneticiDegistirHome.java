@@ -59,7 +59,6 @@ public class YoneticiDegistirHome extends EntityHome<User> implements Serializab
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -79,7 +78,7 @@ public class YoneticiDegistirHome extends EntityHome<User> implements Serializab
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		if (authenticatedUser.getSeciliSuperVisor() != null)
 			setYonetici(authenticatedUser.getSeciliSuperVisor());
 		else

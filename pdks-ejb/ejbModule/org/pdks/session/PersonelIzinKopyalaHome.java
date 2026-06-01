@@ -83,7 +83,6 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -460,7 +459,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 			LinkedHashMap map = new LinkedHashMap();
 			map.put("izinSahibiId", sb.toString());
 			map.put(PdksEntityController.MAP_KEY_SQLPARAMS, params);
- 			pdksEntityController.execSP(session, map, "SP_IZINLERI_SIL");
+			pdksEntityController.execSP(session, map, "SP_IZINLERI_SIL");
 
 		}
 

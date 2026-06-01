@@ -100,7 +100,6 @@ public class IzinAylikRaporHome extends EntityHome<PersonelIzin> implements Seri
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
@@ -109,7 +108,7 @@ public class IzinAylikRaporHome extends EntityHome<PersonelIzin> implements Seri
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		fillAyList();
 		setSirket(null);
 		if (authenticatedUser.isIK() || authenticatedUser.isAdmin()) {

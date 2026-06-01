@@ -196,7 +196,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}

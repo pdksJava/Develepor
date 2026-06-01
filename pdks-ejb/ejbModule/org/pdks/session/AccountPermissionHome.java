@@ -48,7 +48,6 @@ public class AccountPermissionHome extends EntityHome<AccountPermission> impleme
 	}
 
 	@Override
-	@Begin(join = true)
 	public void create() {
 		super.create();
 	}
