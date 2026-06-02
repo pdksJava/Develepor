@@ -332,7 +332,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								if (sirket.isTesisDurumu())
 									linkStr = linkStr + "&tesisId=*";
 								String id = ortakIslemler.getEncodeStringByBase64(linkStr);
-								islemList.add(new Liste(da.getAyAdi() + " " + da.getYil() + " " + sirket.getAd(), adres + "?id=" + id));
+								islemList.add(new Liste(da.getAyAdi() + " " + da.getYil() + " : " + sirket.getAd(), adres + "?id=" + id));
 							}
 							sirketList = null;
 						}
@@ -340,7 +340,9 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					}
 				}
 				boolean renkUyari = true;
-				String uolStr = islemList.size() > 1 ? "OL" : "UL";
+				
+				 
+				String uolStr = aylar.size() > 1 ? "OL" : "UL";
 				if (mailGonder == null && islemList.isEmpty() == false) {
 					mailGonder = getMailGonder(session);
 					if (mailGonder) {
