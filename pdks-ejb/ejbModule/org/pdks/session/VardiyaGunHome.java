@@ -9516,7 +9516,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (calismaOlmayanVardiyalar) {
 				sb.append(" union ");
 				sb.append(" select 0 as OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
-				sb.append(" where " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + "  <> '' and " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <> 'I' ");
+				sb.append(" where " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + "  <> '' and " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <> 'I' and V." + Vardiya.COLUMN_NAME_ICAP + " = 0 ");
 			}
 			if (manuelVardiyaIzinGir) {
 				sb.append(" union ");
