@@ -323,7 +323,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 			}
 			if (flush)
-				session.flush();
+				ortakIslemler.sessionFlush(session);
 		}
 		mailList = null;
 	}
@@ -472,12 +472,12 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	public String deleteAgent() {
 		PdksAgent agent = getInstance();
 		pdksEntityController.deleteObject(session, entityManager, agent);
-		session.flush();
+		ortakIslemler.sessionFlush(session);
 		try {
 			pdksEntityController.savePrepareTableID(true, agent, PdksAgent.class, session);
 		} catch (Exception e) {
 		}
-		session.flush();
+		ortakIslemler.sessionFlush(session);
 		session.clear();
 
 		fillPdksAgentList();
@@ -509,7 +509,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	public String kaydet() {
 		PdksAgent agent = getInstance();
 		pdksEntityController.saveOrUpdate(session, entityManager, agent);
-		session.flush();
+		ortakIslemler.sessionFlush(session);
 		session.clear();
 		fillPdksAgentList();
 		return "persisted";

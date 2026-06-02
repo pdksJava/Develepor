@@ -177,7 +177,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 				if (pdksVardiyaSablon.getSirket() != null)
 					pdksVardiyaSablon.setDepartman(pdksVardiyaSablon.getSirket().getDepartman());
 				pdksEntityController.saveOrUpdate(session, entityManager, pdksVardiyaSablon);
-				session.flush();
+				ortakIslemler.sessionFlush(session);
 				fillPdksVardiyaSablonList();
 			}
 

@@ -4293,7 +4293,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							}
 						}
 						if (index >= 0) {
-							session.flush();
+							ortakIslemler.sessionFlush(session);
 							HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(null, session);
 							KapiView manuelGiris = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS);
 							KapiView manuelCikis = manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS);
@@ -6570,7 +6570,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 			}
 			if (flush)
-				session.flush();
+				ortakIslemler.sessionFlush(session);
 
 		}
 	}
@@ -10808,7 +10808,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						talepGirisCikisHareketEkle(fmt, true);
 						vg.setDurum(Boolean.FALSE);
 						pdksEntityController.saveOrUpdate(session, entityManager, vg);
-						session.flush();
+						ortakIslemler.sessionFlush(session);
 						logger.info(vg.getVardiyaKeyStr());
 					}
 				}

@@ -140,7 +140,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 	 */
 	@Transactional
 	private void sessionFlush() {
-		session.flush();
+		ortakIslemler.sessionFlush(session);
 	}
 
 	public String fillPersonelList() {

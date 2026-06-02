@@ -6945,7 +6945,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			fmt.setGuncelleyenUser(getPdksUser());
 		}
 		pdksEntityController.saveOrUpdate(session, entityManager, fmt);
-		session.flush();
+		ortakIslemler.sessionFlush(session);
 		fillPersonelDenklestirmeList(null);
 
 		return "";

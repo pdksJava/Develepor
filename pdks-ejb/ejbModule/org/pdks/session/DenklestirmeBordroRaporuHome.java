@@ -487,8 +487,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 								}
 								if (puantajList != null && !puantajList.isEmpty()) {
-									if (authenticatedUser != null)
-										session.flush();
+									ortakIslemler.sessionFlush(session);
 									if (logYaz)
 										logger.info(altBolumStr + " [ " + donemPerList.size() + " ] out " + PdksUtil.getCurrentTimeStampStr());
 								}
@@ -1307,8 +1306,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			tanim.setIslemTarihi(islemTarihi);
 			pdksEntityController.saveOrUpdate(session, entityManager, tanim);
 		}
-		if (authenticatedUser != null)
-			session.flush();
+		ortakIslemler.sessionFlush(session);
 	}
 
 	public String getSicilNo() {

@@ -356,8 +356,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 			}
 			if (flush)
-				if (authenticatedUser != null)
-					session.flush();
+				ortakIslemler.sessionFlush(session);
 		}
 
 	}
@@ -1524,8 +1523,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 				list.add(tanim);
 			}
-			if (authenticatedUser != null)
-				session.flush();
+			ortakIslemler.sessionFlush(session);
 		}
 
 		TreeMap<String, String> izinGrupMap = ortakIslemler.getIzinGrupMap(session);
@@ -2032,13 +2030,9 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					}
 				}
 				detayMap = null;
-				try {
-					if (flush)
-						if (authenticatedUser != null)
-							session.flush();
-				} catch (Exception e) {
-					logger.error("personelDenklestirmeId = " + personelDenklestirme.getId() + "\n" + e.getMessage());
-				}
+
+				if (flush)
+					ortakIslemler.sessionFlush(session);
 
 				if (saatlikCalismaVar) {
 					String keyEk = saatlikCalisma ? "" : "G";
@@ -2077,8 +2071,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					for (Object object : deleteList) {
 						pdksEntityController.deleteObject(session, islem, object);
 					}
-					if (authenticatedUser != null)
-						session.flush();
+
+					ortakIslemler.sessionFlush(session);
 				}
 				deleteList = null;
 			}
@@ -3042,8 +3036,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		denklestirmeAy.setFazlaMesaiMaxSure(fazlaMesaiMaxSure);
 		denklestirmeAy.setRadyolojiFazlaMesaiMaxSure(radyolojiFazlaMesaiMaxSure);
 		pdksEntityController.saveOrUpdate(session, null, denklestirmeAy);
-		if (authenticatedUser != null)
-			session.flush();
+		ortakIslemler.sessionFlush(session);
 
 	}
 

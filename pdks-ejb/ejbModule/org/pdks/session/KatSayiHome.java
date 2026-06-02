@@ -187,7 +187,7 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 
 			pdksEntityController.saveOrUpdate(session, entityManager, seciliKatSayi);
 
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 
 			fillKatSayiList();
 

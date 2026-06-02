@@ -112,7 +112,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 
 			}
 			pdksEntityController.saveOrUpdate(session, entityManager, currentUser);
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 			assignId(PersistenceProvider.instance().getId(getInstance(), entityManager));
 			// createdMessage();
 			raiseAfterTransactionSuccessEvent();
@@ -144,7 +144,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 				String newPassword = PdksUtil.encodePassword(newPassword1);
 				user.setPasswordHash(newPassword);
 				pdksEntityController.saveOrUpdate(session, entityManager, user);
-				session.flush();
+				ortakIslemler.sessionFlush(session);
 				facesMessages.add("Yeni şifre değiştirilmiştir.", "");
 				if (authenticatedUser != null)
 					ekran = "anaSayfa";

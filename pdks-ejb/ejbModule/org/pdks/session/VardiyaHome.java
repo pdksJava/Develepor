@@ -508,7 +508,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					}
 					list = null;
 				}
-				session.flush();
+				ortakIslemler.sessionFlush(session);
 				if (vyiIptal || cmvIptal) {
 					try {
 						if (cmvIptal)
@@ -517,7 +517,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 							pdksEntityController.savePrepareTableID(true, null, VardiyaYemekIzin.class, session);
 					} catch (Exception e) {
 					}
-					session.flush();
+					ortakIslemler.sessionFlush(session);
 				}
 				fillVardiyalar();
 				cikis = "persisted";

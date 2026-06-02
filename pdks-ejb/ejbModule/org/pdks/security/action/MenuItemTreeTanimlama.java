@@ -224,7 +224,7 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 			}
 			if (selectedMenuItemFromTree != null)
 				pdksEntityController.saveOrUpdate(session, entityManager, selectedMenuItemFromTree);
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 			rootNode = null;
 			startupAction.fillMenuItemList(session);
 			selectedIdsFromTreeMap.clear();
@@ -300,7 +300,7 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 
 			// pdksEntityController.update(deleteAccountPermissionList);
 			// pdksEntityController.update(deleteMenuItemList);
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 
 			rootNode = null;
 			startupAction.fillMenuItemList(session);
@@ -452,11 +452,11 @@ public class MenuItemTreeTanimlama extends EntityQuery<MenuItem> implements Seri
 
 		}
 		if (flush || baglanti) {
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 			if (baglanti) {
 				try {
 					pdksEntityController.savePrepareTableID(true, null, MenuIliski.class, session);
-					session.flush();
+					ortakIslemler.sessionFlush(session);
 				} catch (Exception e) {
 				}
 			}

@@ -473,7 +473,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					flush = true;
 					++adet;
 					if (adet % 10 == 0) {
-						session.flush();
+						ortakIslemler.sessionFlush(session);
+						;
 						flush = false;
 					}
 				}
@@ -481,7 +482,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			}
 			perIdList = null;
 			if (flush)
-				session.flush();
+				ortakIslemler.sessionFlush(session);
+			;
 		}
 		fields.clear();
 		sb1 = new StringBuffer();
@@ -521,12 +523,14 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			flush = true;
 			++adet;
 			if (adet % 10 == 0) {
-				session.flush();
+				ortakIslemler.sessionFlush(session);
+				 
 				flush = false;
 			}
 		}
 		if (flush)
-			session.flush();
+			ortakIslemler.sessionFlush(session);
+		 
 		vGunList = null;
 		sb1 = null;
 	}

@@ -120,7 +120,7 @@ public class PersonelYoneticiGuncelleHome extends EntityHome<Personel> implement
 							}
 						}
 
-						session.flush();
+						ortakIslemler.sessionFlush(session);
 						PdksUtil.addMessageWarn("Yeni yöneticiler güncellendi.");
 						sirketDegisti();
 					} catch (Exception e) {
