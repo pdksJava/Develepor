@@ -238,7 +238,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		Boolean mailGonder = null;
 		while (tarih2.getTime() >= tarihBas.getTime()) {
 			++sayac;
- 			Date tarihBit = PdksUtil.getAyinSonGunu(tarihBas);
+			Date tarihBit = PdksUtil.getAyinSonGunu(tarihBas);
 			DenklestirmeAy da = ayMap.get(Long.parseLong(PdksUtil.convertToDateString(tarihBas, PATTERN_DONEM)));
 			long donemId = da.getId();
 			int durum = da.getDurum() ? 1 : 0;
@@ -339,19 +339,30 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						sirketIdList = null;
 					}
 				}
+				boolean renkUyari = true;
+				String uolStr = islemList.size() > 1 ? "OL" : "UL";
 				if (mailGonder == null && islemList.isEmpty() == false) {
 					mailGonder = getMailGonder(session);
-					if (mailGonder)
+					if (mailGonder) {
 						fazlaMesaiDetay = new StringBuffer();
+						fazlaMesaiDetay.append("<" + uolStr + ">");
+					}
+
 				}
+
 				for (Iterator iterator = islemList.iterator(); iterator.hasNext();) {
 					Liste liste = (Liste) iterator.next();
 					String id = (String) liste.getValue();
 					String sonuc = ortakIslemler.adresKontrol(id);
 					if (sonuc != null)
 						logger.error(liste.getId() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
-					else if (mailGonder)
-						fazlaMesaiDetay.append( "<br></br>" + liste.getId() + (iterator.hasNext() ? " " + PdksUtil.getCurrentTimeStampStr() : ""));
+					else if (mailGonder) {
+						fazlaMesaiDetay.append("<LI class=\"" + (renkUyari ? "odd" : "even") + "\" style=\"text-align: left;\">" + liste.getId() + (iterator.hasNext() ? " " + PdksUtil.getCurrentTimeStampStr() : "") + "</LI>");
+						renkUyari = !renkUyari;
+					}
+				}
+				if (mailGonder) {
+					fazlaMesaiDetay.append("</" + uolStr + ">");
 				}
 				islemList = null;
 				logger.info(adres + " out " + PdksUtil.getCurrentTimeStampStr());
