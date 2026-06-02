@@ -340,14 +340,13 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					}
 				}
 				boolean renkUyari = true;
-				
-				 
+
 				String uolStr = aylar.size() > 1 ? "OL" : "UL";
 				if (mailGonder == null && islemList.isEmpty() == false) {
 					mailGonder = getMailGonder(session);
 					if (mailGonder) {
 						fazlaMesaiDetay = new StringBuffer();
-						fazlaMesaiDetay.append("<" + uolStr + ">");
+						fazlaMesaiDetay.append("<p><" + uolStr + ">");
 					}
 
 				}
@@ -364,7 +363,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					}
 				}
 				if (mailGonder) {
-					fazlaMesaiDetay.append("</" + uolStr + ">");
+					fazlaMesaiDetay.append("</" + uolStr + "></p>");
 				}
 				islemList = null;
 				logger.info(adres + " out " + PdksUtil.getCurrentTimeStampStr());
