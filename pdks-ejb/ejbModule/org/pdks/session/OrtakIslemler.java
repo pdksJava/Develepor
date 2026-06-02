@@ -405,60 +405,60 @@ public class OrtakIslemler implements Serializable {
 
 	}
 
-//	/**
-//	 * @param yil
-//	 * @param session
-//	 */
-//	public List<Tatil> diniBayramlarGuncelle(int yil, Session session) {
-//		List<Tatil> tatiller = new ArrayList<Tatil>();
-//		String servisAdres = null, jsonDeger = null;
-//		boolean local = getCanliDurum() == false && getTestSunucuDurum() == false;
-//		if (getParameterKeyHasStringValue("pdksWebServiceLocal") && getCanliDurum() == false && getTestSunucuDurum() == false) {
-//			try {
-//				servisAdres = getParameterKey("pdksWebServiceLocal") + "/rest/servicesPDKS/getDiniBayram?yil=" + yil;
-//				jsonDeger = getApiData(servisAdres);
-//			} catch (Exception e) {
-//			}
-//		}
-//		if (jsonDeger == null || (local == false)) {
-//			try {
-//				servisAdres = getParameterKey("pdksWebService") + "/rest/servicesPDKS/getDiniBayram?yil=" + yil;
-//				jsonDeger = getApiData(servisAdres);
-//			} catch (Exception e) {
-//			}
-//
-//		}
-//		if (jsonDeger != null) {
-//			Gson gs = new Gson();
-//			List<LinkedTreeMap<String, String>> list = gs.fromJson(jsonDeger, List.class);
-//			if (list != null) {
-//				Date bugun = new Date();
-//				Tanim tatilTipi = null;
-//				for (LinkedTreeMap<String, String> map : list) {
-//					Date b1 = map.containsKey("basGun") ? PdksUtil.getDateFromString(map.get("basGun")) : null;
-//					Date b2 = b1 != null && map.containsKey("bitGun") ? PdksUtil.getDateFromString(map.get("bitGun")) : null;
-//					if (b2 != null && b2.after(bugun)) {
-//						if (tatilTipi == null) {
-//							List<Tanim> tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_TATIL_TIPI, Tanim.class, session);
-//							Tatil tatil = new Tatil();
-//							for (Tanim tanim : tanimList) {
-//								tatil.setTatilTipi(tanim);
-//								if (tatil.isTekSefer())
-//									tatilTipi = tanim;
-//							}
-//						}
-//						if (tatilTipi != null) {
-//							try {
-//								updateTatilGunleri(yil, b1, b2, map.get("adi"), tatilTipi, tatiller, session);
-//							} catch (Exception e) {
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//		return tatiller;
-//	}
+	// /**
+	// * @param yil
+	// * @param session
+	// */
+	// public List<Tatil> diniBayramlarGuncelle(int yil, Session session) {
+	// List<Tatil> tatiller = new ArrayList<Tatil>();
+	// String servisAdres = null, jsonDeger = null;
+	// boolean local = getCanliDurum() == false && getTestSunucuDurum() == false;
+	// if (getParameterKeyHasStringValue("pdksWebServiceLocal") && getCanliDurum() == false && getTestSunucuDurum() == false) {
+	// try {
+	// servisAdres = getParameterKey("pdksWebServiceLocal") + "/rest/servicesPDKS/getDiniBayram?yil=" + yil;
+	// jsonDeger = getApiData(servisAdres);
+	// } catch (Exception e) {
+	// }
+	// }
+	// if (jsonDeger == null || (local == false)) {
+	// try {
+	// servisAdres = getParameterKey("pdksWebService") + "/rest/servicesPDKS/getDiniBayram?yil=" + yil;
+	// jsonDeger = getApiData(servisAdres);
+	// } catch (Exception e) {
+	// }
+	//
+	// }
+	// if (jsonDeger != null) {
+	// Gson gs = new Gson();
+	// List<LinkedTreeMap<String, String>> list = gs.fromJson(jsonDeger, List.class);
+	// if (list != null) {
+	// Date bugun = new Date();
+	// Tanim tatilTipi = null;
+	// for (LinkedTreeMap<String, String> map : list) {
+	// Date b1 = map.containsKey("basGun") ? PdksUtil.getDateFromString(map.get("basGun")) : null;
+	// Date b2 = b1 != null && map.containsKey("bitGun") ? PdksUtil.getDateFromString(map.get("bitGun")) : null;
+	// if (b2 != null && b2.after(bugun)) {
+	// if (tatilTipi == null) {
+	// List<Tanim> tanimList = pdksEntityController.getSQLParamByAktifFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_TIPI, Tanim.TIPI_TATIL_TIPI, Tanim.class, session);
+	// Tatil tatil = new Tatil();
+	// for (Tanim tanim : tanimList) {
+	// tatil.setTatilTipi(tanim);
+	// if (tatil.isTekSefer())
+	// tatilTipi = tanim;
+	// }
+	// }
+	// if (tatilTipi != null) {
+	// try {
+	// updateTatilGunleri(yil, b1, b2, map.get("adi"), tatilTipi, tatiller, session);
+	// } catch (Exception e) {
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	// return tatiller;
+	// }
 
 	/**
 	 * @param yil
@@ -7535,8 +7535,13 @@ public class OrtakIslemler implements Serializable {
 						String spName = "SP_UPDATE_USER_MENUITEM_TIME_IPTAL";
 						if (menuItemTime.getId() == null || isExisStoreProcedure(spName, session) == false) {
 							menuItemTime.setParametreJSON(parametreJSON);
-							if (sessionId != null)
+							if (PdksUtil.isStrDegisti(sessionId, menuItemTime.getSessionId())) {
 								menuItemTime.setSessionId(sessionId);
+								BigDecimal useCount = menuItemTime.getUseCount();
+								menuItemTime.setUseCount(useCount != null ? useCount.add(new BigDecimal("1")) : new BigDecimal("1"));
+								if (sessionId != null)
+									menuItemTime.setSessionId(sessionId);
+							}
 							menuItemTime.setLastTime(new Date());
 							pdksEntityController.saveOrUpdate(session, null, menuItemTime);
 							flush = true;
