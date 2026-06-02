@@ -304,6 +304,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				guncelleyenUser.setAdmin(true);
 				List<Liste> islemList = new ArrayList<Liste>();
 				boolean talepVar = getSirketTalepGirmeDurum(session);
+				List<Sirket> sirketList = null;
 				for (DenklestirmeAy da : aylar) {
 					try {
 						vardiyaVersiyonGuncelle(da, talepVar, bugun, guncelleyenUser, session);
@@ -323,7 +324,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							List<Long> idList = new ArrayList<Long>();
 							for (SelectItem sirketSelectItem : sirketIdList)
 								idList.add((Long) sirketSelectItem.getValue());
-							List<Sirket> sirketList = pdksEntityController.getSQLParamByFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, idList, Sirket.class, session);
+							sirketList = pdksEntityController.getSQLParamByFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, idList, Sirket.class, session);
 							if (sirketList.size() > 1)
 								sirketList = PdksUtil.sortObjectStringAlanList(sirketList, "getAd", null);
 							idList = null;
@@ -341,7 +342,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				}
 				boolean renkUyari = true;
 
-				String uolStr = aylar.size() > 1 ? "OL" : "UL";
+				String uolStr = aylar.size() > 1 && (sirketList != null && sirketList.size() > 1) ? "OL" : "UL";
 				if (mailGonder == null && islemList.isEmpty() == false) {
 					mailGonder = getMailGonder(session);
 					if (mailGonder) {
