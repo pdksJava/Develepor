@@ -358,7 +358,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 						Liste liste = (Liste) iterator.next();
 						String value = (String) liste.getValue();
 						String id = (String) liste.getId();
-						if (id.startsWith(donem)) {
+						if (id.startsWith(donem) || donemler.size() == 1) {
 							String sonuc = ortakIslemler.adresKontrol(value);
 							if (sonuc != null)
 								logger.error(id + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
