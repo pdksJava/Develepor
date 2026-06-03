@@ -294,7 +294,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		} catch (Exception e) {
 			logger.error(e);
 		}
-
+		List<Sirket> sirketList = null;
 		if (aylar != null && aylar.isEmpty() == false) {
 			adresStr = ortakIslemler.getLoginAdres();
 			if (PdksUtil.hasStringValue(adresStr)) {
@@ -304,7 +304,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				guncelleyenUser.setAdmin(true);
 				List<Liste> islemList = new ArrayList<Liste>();
 				boolean talepVar = getSirketTalepGirmeDurum(session);
-				List<Sirket> sirketList = null;
+			
 				for (DenklestirmeAy da : aylar) {
 					try {
 						vardiyaVersiyonGuncelle(da, talepVar, bugun, guncelleyenUser, session);
@@ -335,13 +335,11 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								String id = ortakIslemler.getEncodeStringByBase64(linkStr);
 								islemList.add(new Liste(da.getAyAdi() + " " + da.getYil() + " : " + sirket.getAd(), adres + "?id=" + id));
 							}
-							sirketList = null;
+							 
 						}
 						sirketIdList = null;
-					}
+ 					}
 				}
-				boolean renkUyari = true;
-
 				String uolStr = aylar.size() > 1 && (sirketList != null && sirketList.size() > 1) ? "OL" : "UL";
 				if (mailGonder == null && islemList.isEmpty() == false) {
 					mailGonder = getMailGonder(session);
@@ -351,7 +349,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					}
 
 				}
-
+				boolean renkUyari = true;
 				for (Iterator iterator = islemList.iterator(); iterator.hasNext();) {
 					Liste liste = (Liste) iterator.next();
 					String id = (String) liste.getValue();
@@ -524,13 +522,13 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			++adet;
 			if (adet % 10 == 0) {
 				ortakIslemler.sessionFlush(session);
-				 
+
 				flush = false;
 			}
 		}
 		if (flush)
 			ortakIslemler.sessionFlush(session);
-		 
+
 		vGunList = null;
 		sb1 = null;
 	}
