@@ -68,7 +68,6 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.international.StatusMessage.Severity;
@@ -11392,16 +11391,13 @@ public class OrtakIslemler implements Serializable {
 	/**
 	 * @param session
 	 */
-	@Transactional
 	public void sessionFlush(Session session) {
 		if (authenticatedUser != null)
 			try {
 				session.flush();
 			} catch (Exception e) {
 				logger.error(e);
-				e.printStackTrace();
 			}
-
 	}
 
 	/**
