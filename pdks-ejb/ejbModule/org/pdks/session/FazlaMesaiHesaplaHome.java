@@ -258,8 +258,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	private void sessionFlush() {
 		try {
-			if (authenticatedUser != null)
-				session.flush();
+			// if (authenticatedUser != null)
+			session.flush();
 		} catch (Exception e) {
 			String str = (getPdksUser() != null ? getPdksUser().getAdSoyad() + " " : "") + yil + " " + denklestirmeAy.getAyAdi();
 			try {
