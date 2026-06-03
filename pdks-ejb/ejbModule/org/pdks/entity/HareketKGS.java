@@ -96,7 +96,8 @@ public class HareketKGS implements Serializable, Cloneable {
 		this.personel = personelView;
 		this.setKapiView(kapiView);
 		this.setZaman(zaman);
-		this.setId(SANAL_HAREKET + "_" + personel.getSicilNo() + "_" + kapiView.getId() + "_" + zaman.getTime());
+		if (personel != null && kapiView != null && zaman != null)
+			this.setId(SANAL_HAREKET + "_" + personel.getSicilNo() + "_" + kapiView.getId() + "_" + zaman.getTime());
 	}
 
 	@Id

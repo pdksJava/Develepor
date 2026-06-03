@@ -24335,7 +24335,8 @@ public class OrtakIslemler implements Serializable {
 		}
 
 		if (personelDenklestirmeTasiyici.getVardiyaHaftaMap() != null) {
-			bayramGecisleriAyir(girisView, cikisView, tatilGunleriMap, new ArrayList<VardiyaGun>(personelDenklestirmeTasiyici.getVardiyaGunleriMap().values()), personelDenklestirmeTasiyici.getPdksPersonel().getPersonelView(), session);
+			if (girisView != null && cikisView != null)
+				bayramGecisleriAyir(girisView, cikisView, tatilGunleriMap, new ArrayList<VardiyaGun>(personelDenklestirmeTasiyici.getVardiyaGunleriMap().values()), personelDenklestirmeTasiyici.getPdksPersonel().getPersonelView(), session);
 			List<TreeMap> vardiyaHaftaList = new ArrayList<TreeMap>(personelDenklestirmeTasiyici.getVardiyaHaftaMap().values());
 			int denklestirmeHaftasi = 0;
 			// Personel bilgileri denklestiriliyor
