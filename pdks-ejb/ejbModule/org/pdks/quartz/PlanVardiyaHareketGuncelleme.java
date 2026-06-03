@@ -354,6 +354,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				}
 				boolean renkUyari = true;
 				for (String donem : donemler) {
+
 					for (Iterator iterator = islemList.iterator(); iterator.hasNext();) {
 						Liste liste = (Liste) iterator.next();
 						String value = (String) liste.getValue();
@@ -375,7 +376,9 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 							fazlaMesaiDetay.append("</" + uolStr + "></p>");
 							fazlaMesaiDetay.append("<p><" + uolStr + ">");
 						}
+						renkUyari = true;
 					}
+
 				}
 				if (mailGonder) {
 					fazlaMesaiDetay.append("</" + uolStr + "></p>");
@@ -469,7 +472,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			}
 			Date guncellemeTarihi = null;
 			boolean flush = false;
-			int adet = 0;
+			// int adet = 0;
 			for (VardiyaGun vg : vGunList) {
 				Long perId = vg.getPdksPersonel().getId();
 				Boolean vardiyaOnayli = vg.getDurum();
@@ -485,19 +488,19 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					vg.setVardiyaOnayli(vardiyaOnayli);
 					pdksEntityController.saveOrUpdate(session, entityManager, vg);
 					flush = true;
-					++adet;
-					if (adet % 10 == 0) {
-						ortakIslemler.sessionFlush(session);
-						;
-						flush = false;
-					}
+					// ++adet;
+					// if (adet % 10 == 0) {
+					// ortakIslemler.sessionFlush(session);
+					//
+					// flush = false;
+					// }
 				}
 
 			}
 			perIdList = null;
 			if (flush)
 				ortakIslemler.sessionFlush(session);
-			;
+
 		}
 		fields.clear();
 		sb1 = new StringBuffer();
@@ -523,7 +526,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		vGunList = pdksEntityController.getObjectBySQLList(sb1.toString(), fields, VardiyaGun.class);
 		Date guncellemeTarihi = null;
 		boolean flush = false;
-		int adet = 0;
+		// int adet = 0;
 		for (VardiyaGun vg : vGunList) {
 			Vardiya v = vg.getVardiya();
 			if (v.isIzinVardiya() || v.isOffGun() || vg.getVardiyaOnayli() || vg.getDurum())
@@ -535,12 +538,12 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			vg.setVardiyaOnayli(Boolean.FALSE);
 			pdksEntityController.saveOrUpdate(session, entityManager, vg);
 			flush = true;
-			++adet;
-			if (adet % 10 == 0) {
-				ortakIslemler.sessionFlush(session);
-
-				flush = false;
-			}
+			// ++adet;
+			// if (adet % 10 == 0) {
+			// ortakIslemler.sessionFlush(session);
+			//
+			// flush = false;
+			// }
 		}
 		if (flush)
 			ortakIslemler.sessionFlush(session);
