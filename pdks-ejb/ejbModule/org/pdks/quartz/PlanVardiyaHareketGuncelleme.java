@@ -304,14 +304,15 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				guncelleyenUser.setAdmin(true);
 				List<Liste> islemList = new ArrayList<Liste>();
 				boolean talepVar = getSirketTalepGirmeDurum(session);
-			
+				List<String> donemler = new ArrayList<String>();
 				for (DenklestirmeAy da : aylar) {
 					try {
 						vardiyaVersiyonGuncelle(da, talepVar, bugun, guncelleyenUser, session);
 					} catch (Exception e) {
 
 					}
-
+					String donem = da.getAyAdi() + " " + da.getYil();
+					donemler.add(donem);
 					DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 					AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(da.getAy(), da.getYil(), denklestirmeDonemi, session);
 					aylikPuantaj.setLoginUser(guncelleyenUser);
@@ -333,32 +334,47 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								if (sirket.isTesisDurumu())
 									linkStr = linkStr + "&tesisId=*";
 								String id = ortakIslemler.getEncodeStringByBase64(linkStr);
-								islemList.add(new Liste(da.getAyAdi() + " " + da.getYil() + " : " + sirket.getAd(), adres + "?id=" + id));
+
+								islemList.add(new Liste(donem + " : " + sirket.getAd(), adres + "?id=" + id));
 							}
-							 
+
 						}
 						sirketIdList = null;
- 					}
+					}
 				}
-				String uolStr = aylar.size() > 1 && (sirketList != null && sirketList.size() > 1) ? "OL" : "UL";
+				String uolStr = "";
 				if (mailGonder == null && islemList.isEmpty() == false) {
 					mailGonder = getMailGonder(session);
 					if (mailGonder) {
+						uolStr = aylar.size() > 1 && (sirketList != null && sirketList.size() > 1) ? "OL" : "UL";
 						fazlaMesaiDetay = new StringBuffer();
 						fazlaMesaiDetay.append("<p><" + uolStr + ">");
 					}
 
 				}
 				boolean renkUyari = true;
-				for (Iterator iterator = islemList.iterator(); iterator.hasNext();) {
-					Liste liste = (Liste) iterator.next();
-					String id = (String) liste.getValue();
-					String sonuc = ortakIslemler.adresKontrol(id);
-					if (sonuc != null)
-						logger.error(liste.getId() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
-					else if (mailGonder) {
-						fazlaMesaiDetay.append("<LI class=\"" + (renkUyari ? "odd" : "even") + "\" style=\"text-align: left;\">" + liste.getId() + (iterator.hasNext() ? " " + PdksUtil.getCurrentTimeStampStr() : "") + "</LI>");
-						renkUyari = !renkUyari;
+				for (String donem : donemler) {
+					for (Iterator iterator = islemList.iterator(); iterator.hasNext();) {
+						Liste liste = (Liste) iterator.next();
+						String value = (String) liste.getValue();
+						String id = (String) liste.getId();
+						if (id.startsWith(donem)) {
+							String sonuc = ortakIslemler.adresKontrol(value);
+							if (sonuc != null)
+								logger.error(id + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+							else if (mailGonder) {
+								fazlaMesaiDetay.append("<LI class=\"" + (renkUyari ? "odd" : "even") + "\" style=\"text-align: left;\">" + liste.getId() + (iterator.hasNext() ? " " + PdksUtil.getCurrentTimeStampStr() : "") + "</LI>");
+								renkUyari = !renkUyari;
+							}
+							iterator.remove();
+						}
+
+					}
+					if (uolStr != null && uolStr.equals("OL")) {
+						if (fazlaMesaiDetay != null) {
+							fazlaMesaiDetay.append("</" + uolStr + "></p>");
+							fazlaMesaiDetay.append("<p><" + uolStr + ">");
+						}
 					}
 				}
 				if (mailGonder) {
