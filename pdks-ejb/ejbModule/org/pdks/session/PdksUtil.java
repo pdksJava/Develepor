@@ -3471,6 +3471,38 @@ public class PdksUtil implements Serializable {
 		SessionFactory sessionFactory = null;
 		try {
 			delegate = em.getDelegate();
+			HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
+			sessionFactory = hsp.getSessionFactory();
+			if (yeni != null && yeni.booleanValue() == false) {
+				 session1 = sessionFactory.getCurrentSession();
+				//session1 = (Session) delegate;
+			}
+
+		} catch (Exception e) {
+			session1 = null;
+
+		}
+
+		if (session1 == null || (yeni != null && yeni)) {
+			
+ 			session1 = sessionFactory.openSession();
+
+		}
+
+		return session1;
+	}
+
+	/**
+	 * @param em
+	 * @param yeni
+	 * @return
+	 */
+	public static Session getSessionx(EntityManager em, Boolean yeni) {
+ 		Session session1 = null;
+		Object delegate = null;
+		SessionFactory sessionFactory = null;
+		try {
+			delegate = em.getDelegate();
 			if (yeni == null || yeni.booleanValue() == false) {
 				// session1 = sessionFactory.getCurrentSession();
 				session1 = (Session) delegate;
@@ -3486,41 +3518,6 @@ public class PdksUtil implements Serializable {
 			sessionFactory = hsp.getSessionFactory();
  			session1 = sessionFactory.openSession();
 
-		}
-
-		return session1;
-	}
-
-	/**
-	 * @param em
-	 * @param yeni
-	 * @return
-	 */
-	public static Session getSessionx(EntityManager em, Boolean yeni) {
-		// Session session1 = (Session) entityManager.getDelegate();
-		Session session1 = null;
-		Object delegate = null;
-		SessionFactory sessionFactory = null;
-		try {
-			delegate = em.getDelegate();
-			HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
-			sessionFactory = hsp.getSessionFactory();
-			if (yeni == null || yeni.booleanValue() == false) {
-				// session1 = (Session) delegate;
-				session1 = sessionFactory.getCurrentSession();
-			}
-
-		} catch (Exception e) {
-			session1 = null;
-//			logger.error("PDKS hata in : \n");
-//			e.printStackTrace();
-//			logger.error("PDKS hata out : " + e.getMessage());
-		}
-
-		if (session1 == null || (yeni != null && yeni)) {
-
-			session1 = sessionFactory.openSession();
-			// session1 = sessionFactory.getCurrentSession();
 		}
 
 		return session1;

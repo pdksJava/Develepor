@@ -10668,7 +10668,8 @@ public class OrtakIslemler implements Serializable {
 							ArrayList<VardiyaGun> varList = new ArrayList<VardiyaGun>(personelDenklestirmeTasiyici.getVardiyaGunleriMap().values());
 							for (Iterator iterator = varList.iterator(); iterator.hasNext();) {
 								VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-								vardiyaGun.setGuncellendi(Boolean.FALSE);
+								vardiyaGun.setDegisti(false);
+								vardiyaGun.setGuncellendi(false);
 								vardiyaGun.setZamanGuncelle(zamanGuncelle);
 								vardiyaGun.setVardiyaZamani();
 								String key = vardiyaGun.getPersonel().getId() + "_" + getHafta(vardiyaGun.getVardiyaDate());
@@ -11103,7 +11104,8 @@ public class OrtakIslemler implements Serializable {
 
 					for (Iterator iterator = varList.iterator(); iterator.hasNext();) {
 						VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-
+						vardiyaGun.setDegisti(false);
+						vardiyaGun.setGuncellendi(false);
 						if (vardiyaGun.getVardiyaDate().after(sonGun) || vardiyaGun.isAyinGunu() == false)
 							continue;
 
@@ -11138,10 +11140,10 @@ public class OrtakIslemler implements Serializable {
 										guncelleyenUser = getSistemAdminUser(session);
 									vardiyaGun.setGuncelleyenUser(guncelleyenUser);
 									vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
-									pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
+									// pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
 									personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(vardiyaDateStr, vardiyaGun);
 									vgMap.put(vardiyaDateStr, vardiyaGun);
-									flush = true;
+									flush = authenticatedUser != null;
 									planGuncelle = true;
 								}
 							}
@@ -11160,9 +11162,9 @@ public class OrtakIslemler implements Serializable {
 								vardiyaGun.setVardiyaOnayli(Boolean.TRUE);
 								vardiyaGun.setGuncelleyenUser(guncelleyenUser);
 								vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
-								pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
+								// pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
 								vardiyaGun.setGuncellendi(Boolean.TRUE);
-								flush = true;
+								flush = authenticatedUser != null;
 								planGuncelle = true;
 							}
 
@@ -11325,13 +11327,12 @@ public class OrtakIslemler implements Serializable {
 										vardiyaGun.setVardiya(vg.getVardiya());
 										vardiyaGun.setVardiyaOnayli(vg.isVardiyaOnay());
 										// pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
-										pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
 										vardiyaGun.setGuncellendi(Boolean.TRUE);
 									}
 
 									personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(vardiyaDateStr, vardiyaGun);
 									vgMap.put(vardiyaDateStr, vardiyaGun);
-									flush = true;
+									flush = authenticatedUser != null;
 								}
 								hareketler = null;
 
@@ -11344,13 +11345,13 @@ public class OrtakIslemler implements Serializable {
 												vardiyaGun.setVardiyaOnayli(Boolean.TRUE);
 												vardiyaGun.setGuncelleyenUser(guncelleyenUser);
 												vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
-												pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
+												// pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
 												vardiyaGun.setGuncellendi(Boolean.TRUE);
 											}
 
 											personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(vardiyaDateStr, vardiyaGun);
 											vgMap.put(vardiyaDateStr, vardiyaGun);
-											flush = true;
+											flush = authenticatedUser != null;
 										}
 									}
 								} catch (Exception e) {
@@ -11392,7 +11393,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 */
 	public void sessionFlush(Session session) {
-		// if (authenticatedUser != null)
+		// if (authenticatedUser == null)
 		try {
 			session.flush();
 		} catch (Exception e) {
