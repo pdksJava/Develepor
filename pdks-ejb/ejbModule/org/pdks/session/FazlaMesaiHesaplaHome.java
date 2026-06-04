@@ -1208,7 +1208,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				denklestirmeDonemi.setLoginUser(getPdksUser());
 				denklestirmeDonemi.setDenklestirmeAy(denklestirmeAy);
 				Date donemSon = denklestirmeAy.getOtomatikOnayIKBaslangicTarih() != null ? denklestirmeAy.getOtomatikOnayIKBaslangicTarih() : PdksUtil.tariheGunEkleCikar(aylikPuantaj.getSonGun(), 1);
-				onayla = new Date().after(donemSon);
+				bugun = ortakIslemler.getBugun();
+				onayla = bugun.after(donemSon);
 				fillPersonelDenklestirmeDevam("", aylikPuantaj, denklestirmeDonemi);
 
 			}
