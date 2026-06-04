@@ -4519,6 +4519,15 @@ public class PdksVeriOrtakAktar implements Serializable {
 						bordroAltAlan = istenAyrilanEkSaha;
 					personel.setEkSaha1(departman);
 					personel.setEkSaha3(bolum);
+					if (personel.getId() == null) {
+						boolean icap = false;
+						if (bolum != null) {
+							String kodu = bolum.getKodu();
+ 							if (kodu != null)
+								icap = kodu.toUpperCase(Constants.TR_LOCALE).indexOf("ICAP") >= 0;
+ 						}
+						personel.setIcapciOlabilir(icap);
+					}
 
 					if (ekSahaAdi.startsWith("eksaha2")) {
 						personel.setEkSaha2(bordroAltAlan);
