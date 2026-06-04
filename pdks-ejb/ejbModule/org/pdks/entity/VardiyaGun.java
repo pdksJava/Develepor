@@ -808,7 +808,7 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public Boolean getHareketDurum() {
-		if (vardiyaDateStr.endsWith("01"))
+		if (vardiyaDateStr.endsWith("0502"))
 			logger.debug("");
 		boolean hareketDurum = (hareketler == null || !hareketHatali);
 		if (hareketDurum && hareketler != null)

@@ -47,10 +47,9 @@ public abstract class BaseObject extends BasePDKSObject implements Serializable,
 	}
 
 	public void setDurum(Boolean value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.durum == null || this.durum.booleanValue() != value.booleanValue());
-		}
-		this.durum = value;
+		if (guncellendi != null && !guncellendi)  
+			this.setGuncellendi(PdksUtil.isBooleanDegisti(value, durum));
+  		this.durum = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -155,6 +154,10 @@ public abstract class BaseObject extends BasePDKSObject implements Serializable,
 	}
 
 	public void setGuncellendi(Boolean value) {
+		if (value != null && value) {
+//			if (this instanceof PersonelDenklestirme)
+//				System.out.println("");
+		}
 
 		this.guncellendi = value;
 	}
