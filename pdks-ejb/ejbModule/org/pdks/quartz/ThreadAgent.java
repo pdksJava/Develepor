@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.jboss.seam.annotations.Transactional;
 import org.pdks.entity.PdksAgent;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
@@ -37,7 +36,6 @@ public class ThreadAgent extends Thread implements Serializable {
 	}
 
 	@Override
-	@Transactional
 	public void run() {
 		if (session != null) {
 			if (agent != null) {

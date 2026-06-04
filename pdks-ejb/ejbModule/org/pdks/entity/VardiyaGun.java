@@ -445,7 +445,7 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setCalismaSuresi(double value) {
-		if (this.getVardiyaDateStr().endsWith("0409"))
+		if (this.getVardiyaDateStr().endsWith("0509"))
 			if (value != 0.0d) {
 				logger.debug(value);
 			}
@@ -454,7 +454,7 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public void addCalismaSuresi(double value) {
-		if (this.getVardiyaDateStr().endsWith("0409"))
+		if (this.getVardiyaDateStr().endsWith("0509"))
 			if (value != 0.0d) {
 				logger.debug(value);
 			}

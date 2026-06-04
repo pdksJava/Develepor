@@ -23183,7 +23183,6 @@ public class OrtakIslemler implements Serializable {
 									}
 								}
 								Double calismaSuresi = 0.0d;
-
 								if (vardiyaFazlaMesailer != null) {
 									HashMap<String, Double> dataMap = new HashMap<String, Double>();
 									dataMap.put("haftaCalismaSuresi", haftaCalismaSuresi);

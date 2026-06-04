@@ -85,6 +85,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		super.create();
 	}
 
+	@Transactional
 	public String mailDataGonderBasla() {
 		try {
 			if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
