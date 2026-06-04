@@ -14777,6 +14777,8 @@ public class OrtakIslemler implements Serializable {
 			fields.put("bitTarih", bitisTarih);
 			fields.put("basTarih", baslamaTarih);
 			fields.put(fieldName, perIdList);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<PersonelIzin> izinList = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, fields, PersonelIzin.class, session);
 			if (izinList != null) {
 				for (PersonelIzin izin : izinList) {
