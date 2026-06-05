@@ -946,6 +946,13 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						TreeMap<Long, Personel> perMap = new TreeMap<Long, Personel>();
 						for (Long id : vMap.keySet()) {
 							List<VardiyaGun> list = vMap.get(id);
+							for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+								VardiyaGun vg = (VardiyaGun) iterator.next();
+								Vardiya vardiya = vg.getVardiya();
+								if (vardiya == null || (vardiya.isCalisma() == false && vardiya.isIcapVardiyasi()))
+									iterator.remove();
+
+							}
 							List<PersonelIzin> izinList = izinMap.containsKey(id) ? izinMap.get(id) : null;
 							for (VardiyaGun vardiyaGun : list) {
 								String vardiyaDateStr = vardiyaGun.getVardiyaDateStr();
