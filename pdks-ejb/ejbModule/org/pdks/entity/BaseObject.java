@@ -155,9 +155,10 @@ public abstract class BaseObject extends BasePDKSObject implements Serializable,
 
 	public void setGuncellendi(Boolean value) {
 		if (value != null && value) {
-//			if (this instanceof PersonelDenklestirme)
+//			if (this instanceof PersonelDenklestirme) {
 //				System.out.println("");
-		}
+//			}
+ 		}
 
 		this.guncellendi = value;
 	}

@@ -2803,17 +2803,17 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						}
 					} else if (fazlaMesaiOnayla || gunAdet > 0)
 						puantaj.setDonemBitti(personel.getSskCikisTarihi().before(puantaj.getSonGun()) || puantaj.getSonGun().before(bugun));
-					if (!onayla && denklestirmeAyDurum) {
-						PersonelDenklestirme pd = personelDenklestirme.isGuncellendi() ? personelDenklestirme : (PersonelDenklestirme) personelDenklestirme.clone();
-						if (pd.isGuncellendi() == false)
-							personelDenklestimeOnayla(puantaj, pd);
-						if (pd.isGuncellendi())
-							puantaj.setSecili(true);
-						boolean secili = puantaj.isSecili() && (ikRole || adminRole);
-						if (secili)
-							onayla = personel.getPdks() && puantaj.isDonemBitti() && puantaj.isFazlaMesaiHesapla() && secili && personelDenklestirme.isOnaylandi();
-
-					}
+//					if (!onayla && denklestirmeAyDurum) {
+//						PersonelDenklestirme pd = personelDenklestirme.isGuncellendi() ? personelDenklestirme : (PersonelDenklestirme) personelDenklestirme.clone();
+//						if (pd.isGuncellendi() == false)
+//							personelDenklestimeOnayla(puantaj, pd);
+//						if (pd.isGuncellendi())
+//							puantaj.setSecili(true);
+//						boolean secili = puantaj.isSecili() && (ikRole || adminRole);
+//						if (secili)
+//							onayla = personel.getPdks() && puantaj.isDonemBitti() && puantaj.isFazlaMesaiHesapla() && secili && personelDenklestirme.isOnaylandi();
+//
+//					}
 
 					boolean denklestirilmeyenPersonelDevredenVar = Boolean.FALSE;
 					if (PdksUtil.hasStringValue(denklesmeyenBakiyeDurum) && personel.isCalisiyorGun(sonGun) && personelDenklestirme.getDurum() && personelDenklestirme.getDevredenSure() != null && personelDenklestirme.getDevredenSure().doubleValue() < 0.0d
@@ -2909,7 +2909,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						eksikMaasGoster = puantaj.getEksikCalismaSure() != 0.0d;
 					if (gebemi)
 						iterator1.remove();
-
 
 					if (AylikPuantaj.getGebelikGuncelle() && denklestirmeAyDurum && puantaj.isFazlaMesaiHesapla() && puantaj.isGebeDurum() && puantaj.getCalisilanGunSayisi() > 0 && personelDenklestirme.getSutIzniSaatSayisi().doubleValue() == 0.0d) {
 						puantaj.setFazlaMesaiHesapla(Boolean.FALSE);
@@ -3276,6 +3275,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							puantaj.setDonemBitti(true);
 							fazlaMesaiOnayDurum = true;
 						}
+						boolean planSureDegisti = PdksUtil.isDoubleDegisti(pd.getPlanlanSure(), puantaj.getPlanlananSure());
 						boolean eksikCalismaSureDegisti = PdksUtil.isDoubleDegisti(pd.getEksikCalismaSure(), puantaj.getEksikCalismaSure());
 						boolean kesilenSureDegisti = PdksUtil.isDoubleDegisti(pd.getKesilenSure(), puantaj.getKesilenSure());
 						boolean aksamVardiyaSaatSayisiDegisti = PdksUtil.isDoubleDegisti(pd.getAksamVardiyaSaatSayisi(), puantaj.getAksamVardiyaSaatSayisi());
@@ -3284,7 +3284,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						boolean resmiTatilSureDegisti = PdksUtil.isDoubleDegisti(pd.getResmiTatilSure(), puantaj.getResmiTatilToplami());
 						boolean odenenSureDegisti = PdksUtil.isDoubleDegisti(pd.getOdenenSure(), puantaj.getFazlaMesaiSure());
 						boolean devredenSureDegisti = PdksUtil.isDoubleDegisti(pd.getDevredenSure(), puantaj.getDevredenSure());
-						kaydet = (!pd.isKapandi(loginUser) && (aksamVardiyaSaatSayisiDegisti || aksamVardiyaSayisiDegisti || devredenSureDegisti || eksikCalismaSureDegisti || haftaCalismaSuresiDegisti || resmiTatilSureDegisti || odenenSureDegisti || kesilenSureDegisti));
+						kaydet = (!pd.isKapandi(loginUser) && (planSureDegisti || aksamVardiyaSaatSayisiDegisti || aksamVardiyaSayisiDegisti || devredenSureDegisti || eksikCalismaSureDegisti || haftaCalismaSuresiDegisti || resmiTatilSureDegisti || odenenSureDegisti || kesilenSureDegisti));
 						puantaj.setKaydet(kaydet);
 						if (puantaj.isKaydet())
 							onayla = hataYok;
