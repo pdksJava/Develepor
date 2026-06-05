@@ -2803,17 +2803,17 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						}
 					} else if (fazlaMesaiOnayla || gunAdet > 0)
 						puantaj.setDonemBitti(personel.getSskCikisTarihi().before(puantaj.getSonGun()) || puantaj.getSonGun().before(bugun));
-//					if (!onayla && denklestirmeAyDurum) {
-//						PersonelDenklestirme pd = personelDenklestirme.isGuncellendi() ? personelDenklestirme : (PersonelDenklestirme) personelDenklestirme.clone();
-//						if (pd.isGuncellendi() == false)
-//							personelDenklestimeOnayla(puantaj, pd);
-//						if (pd.isGuncellendi())
-//							puantaj.setSecili(true);
-//						boolean secili = puantaj.isSecili() && (ikRole || adminRole);
-//						if (secili)
-//							onayla = personel.getPdks() && puantaj.isDonemBitti() && puantaj.isFazlaMesaiHesapla() && secili && personelDenklestirme.isOnaylandi();
-//
-//					}
+					// if (!onayla && denklestirmeAyDurum) {
+					// PersonelDenklestirme pd = personelDenklestirme.isGuncellendi() ? personelDenklestirme : (PersonelDenklestirme) personelDenklestirme.clone();
+					// if (pd.isGuncellendi() == false)
+					// personelDenklestimeOnayla(puantaj, pd);
+					// if (pd.isGuncellendi())
+					// puantaj.setSecili(true);
+					// boolean secili = puantaj.isSecili() && (ikRole || adminRole);
+					// if (secili)
+					// onayla = personel.getPdks() && puantaj.isDonemBitti() && puantaj.isFazlaMesaiHesapla() && secili && personelDenklestirme.isOnaylandi();
+					//
+					// }
 
 					boolean denklestirilmeyenPersonelDevredenVar = Boolean.FALSE;
 					if (PdksUtil.hasStringValue(denklesmeyenBakiyeDurum) && personel.isCalisiyorGun(sonGun) && personelDenklestirme.getDurum() && personelDenklestirme.getDevredenSure() != null && personelDenklestirme.getDevredenSure().doubleValue() < 0.0d
@@ -3275,16 +3275,19 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							puantaj.setDonemBitti(true);
 							fazlaMesaiOnayDurum = true;
 						}
-						boolean planSureDegisti = PdksUtil.isDoubleDegisti(pd.getPlanlanSure(), puantaj.getPlanlananSure());
-						boolean eksikCalismaSureDegisti = PdksUtil.isDoubleDegisti(pd.getEksikCalismaSure(), puantaj.getEksikCalismaSure());
-						boolean kesilenSureDegisti = PdksUtil.isDoubleDegisti(pd.getKesilenSure(), puantaj.getKesilenSure());
-						boolean aksamVardiyaSaatSayisiDegisti = PdksUtil.isDoubleDegisti(pd.getAksamVardiyaSaatSayisi(), puantaj.getAksamVardiyaSaatSayisi());
-						boolean aksamVardiyaSayisiDegisti = PdksUtil.isDoubleDegisti(pd.getAksamVardiyaSayisi(), (double) puantaj.getAksamVardiyaSayisi());
+						boolean odenenSureDegisti = PdksUtil.isDoubleDegisti(pd.getOdenenSure(), puantaj.getFazlaMesaiSure());
+						boolean hesaplanSureDegisti = PdksUtil.isDoubleDegisti(pd.getHesaplananSure(), puantaj.getSaatToplami());
 						boolean haftaCalismaSuresiDegisti = PdksUtil.isDoubleDegisti(pd.getHaftaCalismaSuresi(), puantaj.getHaftaCalismaSuresi());
 						boolean resmiTatilSureDegisti = PdksUtil.isDoubleDegisti(pd.getResmiTatilSure(), puantaj.getResmiTatilToplami());
-						boolean odenenSureDegisti = PdksUtil.isDoubleDegisti(pd.getOdenenSure(), puantaj.getFazlaMesaiSure());
+						boolean fazlaMesaiSureDegisti = PdksUtil.isDoubleDegisti(pd.getFazlaMesaiSure(), puantaj.getAylikNetFazlaMesai());
+						boolean planSureDegisti = PdksUtil.isDoubleDegisti(pd.getPlanlanSure(), puantaj.getPlanlananSure());
 						boolean devredenSureDegisti = PdksUtil.isDoubleDegisti(pd.getDevredenSure(), puantaj.getDevredenSure());
-						kaydet = (!pd.isKapandi(loginUser) && (planSureDegisti || aksamVardiyaSaatSayisiDegisti || aksamVardiyaSayisiDegisti || devredenSureDegisti || eksikCalismaSureDegisti || haftaCalismaSuresiDegisti || resmiTatilSureDegisti || odenenSureDegisti || kesilenSureDegisti));
+						boolean aksamVardiyaSaatSayisiDegisti = PdksUtil.isDoubleDegisti(pd.getAksamVardiyaSaatSayisi(), puantaj.getAksamVardiyaSaatSayisi());
+						boolean eksikCalismaSureDegisti = PdksUtil.isDoubleDegisti(pd.getEksikCalismaSure(), puantaj.getEksikCalismaSure());
+						boolean aksamVardiyaSayisiDegisti = PdksUtil.isDoubleDegisti(pd.getAksamVardiyaSayisi(), (double) puantaj.getAksamVardiyaSayisi());
+						boolean kesilenSureDegisti = PdksUtil.isDoubleDegisti(pd.getKesilenSure(), puantaj.getKesilenSure());
+						kaydet = (!pd.isKapandi(loginUser) && (fazlaMesaiSureDegisti || planSureDegisti || hesaplanSureDegisti || aksamVardiyaSaatSayisiDegisti || aksamVardiyaSayisiDegisti || devredenSureDegisti || eksikCalismaSureDegisti || haftaCalismaSuresiDegisti || resmiTatilSureDegisti
+								|| odenenSureDegisti || kesilenSureDegisti));
 						puantaj.setKaydet(kaydet);
 						if (puantaj.isKaydet())
 							onayla = hataYok;
