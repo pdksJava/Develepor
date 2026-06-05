@@ -26,6 +26,8 @@ public class AccountPermission extends BasePDKSObject implements Serializable {
 	private static final long serialVersionUID = -1736440142880303400L;
 	public static final String TABLE_NAME = "ACCOUNTPERMISSION";
 	public static final String COLUMN_NAME_DURUM = "STATUS";
+	public static final String COLUMN_NAME_TARGET = "TARGET";
+	 
 	public static final String ACTION_VIEW = "view";
 	public static final String ACTION_READ = "read";
 	public static final String ACTION_WRITE = "write";
@@ -61,7 +63,7 @@ public class AccountPermission extends BasePDKSObject implements Serializable {
 	}
 
 	@PermissionTarget
-	@Column(name = "TARGET")
+	@Column(name = COLUMN_NAME_TARGET)
 	public String getTarget() {
 		return target;
 	}
