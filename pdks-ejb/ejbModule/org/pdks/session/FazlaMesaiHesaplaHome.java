@@ -3286,8 +3286,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						boolean eksikCalismaSureDegisti = PdksUtil.isDoubleDegisti(pd.getEksikCalismaSure(), puantaj.getEksikCalismaSure());
 						boolean aksamVardiyaSayisiDegisti = PdksUtil.isDoubleDegisti(pd.getAksamVardiyaSayisi(), (double) puantaj.getAksamVardiyaSayisi());
 						boolean kesilenSureDegisti = PdksUtil.isDoubleDegisti(pd.getKesilenSure(), puantaj.getKesilenSure());
-						kaydet = (denklestirmeAyDurum && (fazlaMesaiSureDegisti || planSureDegisti || hesaplanSureDegisti || aksamVardiyaSaatSayisiDegisti || aksamVardiyaSayisiDegisti || devredenSureDegisti || eksikCalismaSureDegisti || haftaCalismaSuresiDegisti || resmiTatilSureDegisti
-								|| odenenSureDegisti || kesilenSureDegisti));
+						kaydet = (denklestirmeAyDurum && (odenenSureDegisti || hesaplanSureDegisti || haftaCalismaSuresiDegisti || resmiTatilSureDegisti || fazlaMesaiSureDegisti || planSureDegisti || devredenSureDegisti || aksamVardiyaSaatSayisiDegisti || eksikCalismaSureDegisti
+								|| aksamVardiyaSayisiDegisti || kesilenSureDegisti));
 						puantaj.setKaydet(kaydet);
 						if (puantaj.isKaydet())
 							onayla = hataYok;
