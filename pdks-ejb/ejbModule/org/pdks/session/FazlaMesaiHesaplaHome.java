@@ -3266,7 +3266,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			onayla = Boolean.FALSE;
 			for (AylikPuantaj puantaj : aylikPuantajList) {
 				PersonelDenklestirme pd = puantaj.getPersonelDenklestirme();
-				boolean kaydet = pd.getDurum();
+				boolean kaydet = denklestirmeAyDurum && pd.getDurum();
 				if (kaydet) {
 					Personel personel = pd.getPdksPersonel();
 					if (tarihGeldi || (loginUser.isTestLogin() && toDay.after(personel.getSskCikisTarihi()))) {
@@ -3286,8 +3286,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						boolean eksikCalismaSureDegisti = PdksUtil.isDoubleDegisti(pd.getEksikCalismaSure(), puantaj.getEksikCalismaSure());
 						boolean aksamVardiyaSayisiDegisti = PdksUtil.isDoubleDegisti(pd.getAksamVardiyaSayisi(), (double) puantaj.getAksamVardiyaSayisi());
 						boolean kesilenSureDegisti = PdksUtil.isDoubleDegisti(pd.getKesilenSure(), puantaj.getKesilenSure());
-						kaydet = (denklestirmeAyDurum && (odenenSureDegisti || hesaplanSureDegisti || haftaCalismaSuresiDegisti || resmiTatilSureDegisti || fazlaMesaiSureDegisti || planSureDegisti || devredenSureDegisti || aksamVardiyaSaatSayisiDegisti || eksikCalismaSureDegisti
-								|| aksamVardiyaSayisiDegisti || kesilenSureDegisti));
+						kaydet = odenenSureDegisti || hesaplanSureDegisti || haftaCalismaSuresiDegisti || resmiTatilSureDegisti || fazlaMesaiSureDegisti || planSureDegisti || devredenSureDegisti || aksamVardiyaSaatSayisiDegisti || eksikCalismaSureDegisti || aksamVardiyaSayisiDegisti
+								|| kesilenSureDegisti;
 						puantaj.setKaydet(kaydet);
 						if (puantaj.isKaydet())
 							onayla = hataYok;
