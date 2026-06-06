@@ -1149,7 +1149,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	public String sayfaFazlaMesaiGuncelle(String id, User islemUser) {
 		String donus = "";
 		if (PdksUtil.isSessionKapali(session)) {
-			session = PdksUtil.getSession(entityManager, islemUser.getLogin() == false);
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			if (authenticatedUser != null)
 				authenticatedUser.putSessionMap("sayfaFazlaMesaiGuncelle", session);
 		}
@@ -2133,15 +2133,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							} catch (Exception e) {
 								logger.debug("");
 							}
+							if (key.endsWith("0523"))
+								logger.debug("");
 							if (hareketYokDurum) {
 								logger.debug(vardiyaGun.getVardiyaKeyStr());
 								hareketDurum = true;
 								vardiyaGun.setOnayli(true);
 							}
 							if (hareketDurum == false && denklestirmeAyDurum && vardiyaGun.isAyinGunu() && vardiyaGun.isHareketHatali() == false && vardiyaGun.isHataliDurum() == false) {
-								// if (key.endsWith("0505"))
-								// logger.debug("");
-								hareketDurum = vardiyaGun.getFazlaMesaiOnayla() != null && vardiyaGun.getFazlaMesaiOnayla();
+
+								hareketDurum = vardiyaGun.getVardiya().isCalisma() == false || vardiyaGun.isIzinli() || (vardiyaGun.getFazlaMesaiOnayla() != null && vardiyaGun.getFazlaMesaiOnayla());
 							}
 
 							if (ekle && hareketDurum && vardiyaGun.getId() != null && islemVardiya != null) {

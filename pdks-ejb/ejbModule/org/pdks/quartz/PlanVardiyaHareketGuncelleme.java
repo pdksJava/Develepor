@@ -99,7 +99,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	public String fazlaMesaiHesaplamaBaslat() {
 		try {
 			if (PdksUtil.isSessionKapali(session))
-				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 
 			basTarih = ortakIslemler.getBugun();
 			Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
@@ -123,7 +123,8 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			}
 		} catch (Exception e) {
 		}
-		pdksEntityController.sessionClose(session);
+		if (authenticatedUser == null)
+			pdksEntityController.sessionClose(session);
 		return MenuItemConstant.home;
 	}
 

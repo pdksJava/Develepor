@@ -6699,7 +6699,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	public String sayfaCalismaPlanOlustur(String id, User islemUser) {
 		String donus = "";
 		if (PdksUtil.isSessionKapali(session)) {
-			session = PdksUtil.getSession(entityManager, islemUser.getLogin() == false);
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			if (authenticatedUser != null)
 				authenticatedUser.putSessionMap("sayfaCalismaPlanOlustur", session);
 		}

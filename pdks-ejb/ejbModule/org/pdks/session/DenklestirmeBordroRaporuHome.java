@@ -210,7 +210,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	@Transactional
 	public String sayfaFazlaMesaiGuncellemeAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String id = (String) req.getParameter("id");
 		if (session != null && id != null) {
@@ -312,8 +312,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 			}
 		}
-
-		pdksEntityController.sessionClose(session);
+		if (authenticatedUser == null)
+			pdksEntityController.sessionClose(session);
 
 		return MenuItemConstant.login;
 	}
