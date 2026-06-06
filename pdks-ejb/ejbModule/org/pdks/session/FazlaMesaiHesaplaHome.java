@@ -2138,6 +2138,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								hareketDurum = true;
 								vardiyaGun.setOnayli(true);
 							}
+							if (hareketDurum == false && denklestirmeAyDurum && vardiyaGun.isAyinGunu() && vardiyaGun.isHareketHatali() == false && vardiyaGun.isHataliDurum() == false) {
+								// if (key.endsWith("0505"))
+								// logger.debug("");
+								hareketDurum = vardiyaGun.getFazlaMesaiOnayla() != null && vardiyaGun.getFazlaMesaiOnayla();
+							}
 
 							if (ekle && hareketDurum && vardiyaGun.getId() != null && islemVardiya != null) {
 
