@@ -972,7 +972,10 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 									vardiyaGun.setVardiyaZamani();
 
 									AylikPuantaj aylikPuantaj = perDMap.get(id);
-									aylikPuantaj.getVardiyalar().add(vardiyaGun);
+									List<VardiyaGun> vList = aylikPuantaj.getVardiyalar();
+									VardiyaSaat vs = vardiyaGun.getVardiyaSaat();
+									if (vs == null || vs.getCalismaSuresi() == 0.0)
+										vList.add(vardiyaGun);
 									if (!perMap.containsKey(id)) {
 										perMap.put(id, personel);
 										PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
@@ -1004,8 +1007,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 												}
 												donemBitti = hataYok;
 											}
-
-											aylikPuantaj.setEksikCalismaSure(eksikCalismaSure);
+											if (eksikCalismaSure < 0 || vList.isEmpty())
+												aylikPuantaj.setEksikCalismaSure(eksikCalismaSure);
 											aylikPuantaj.setDonemBitti(donemBitti);
 										}
 										logger.debug(personel.getPdksSicilNo() + " " + personel.getAdSoyad());
