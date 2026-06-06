@@ -4922,9 +4922,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			logger.debug(vardiyaKey);
 		}
 		try {
-			if (hataliPuantajGoster && vardiya != null && vardiya.isIcapVardiyasi() == false && vGun.isAyinGunu() && vardiya.isCalisma() && vGun.getIzin() == null && vGun.getCalismaSuresi() == 0.0 && vGun.getVardiyaDate().before(bugun)) {
+			if (hataliPuantajGoster && vardiya != null && vGun.isAyinGunu() && vardiya.isCalisma() && vGun.getIzin() == null && vGun.getCalismaSuresi() == 0.0 && vGun.getVardiyaDate().before(bugun)) {
 				logger.debug(vGun.getVardiyaKeyStr());
-				islemPuantaj.setEksikGunVar(true);
+				if (vardiya.isIcapVardiyasi() == false)
+					islemPuantaj.setEksikGunVar(true);
 			}
 		} catch (Exception e) {
 
