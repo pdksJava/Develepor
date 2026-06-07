@@ -105,8 +105,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 				diniBayramEkle();
 		} catch (Exception e) {
 		}
-		if (authenticatedUser == null)
-			pdksEntityController.sessionClose(session);
+		pdksEntityController.sessionClose(session);
 		return MenuItemConstant.home;
 
 	}

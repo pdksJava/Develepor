@@ -98,8 +98,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 			logger.error(e);
 			e.printStackTrace();
 		}
-		if (authenticatedUser == null)
-			pdksEntityController.sessionClose(session);
+		pdksEntityController.sessionClose(session);
 		return MenuItemConstant.home;
 	}
 

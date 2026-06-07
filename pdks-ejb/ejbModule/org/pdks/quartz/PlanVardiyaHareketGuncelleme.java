@@ -123,8 +123,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			}
 		} catch (Exception e) {
 		}
-		if (authenticatedUser == null)
-			pdksEntityController.sessionClose(session);
+		pdksEntityController.sessionClose(session);
 		return MenuItemConstant.home;
 	}
 
@@ -381,11 +380,12 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					}
 
 				}
-				if (mailGonder) {
-					fazlaMesaiDetay.append("</" + uolStr + "></p>");
-				}
-				islemList = null;
 				logger.info(adres + " out " + PdksUtil.getCurrentTimeStampStr());
+				if (fazlaMesaiDetay != null)  
+					fazlaMesaiDetay.append("</" + uolStr + "></p>");
+				 
+				islemList = null;
+
 			}
 		}
 		aylar = null;

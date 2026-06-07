@@ -312,8 +312,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 			}
 		}
-		if (authenticatedUser == null)
-			pdksEntityController.sessionClose(session);
+		pdksEntityController.sessionClose(session);
 
 		return MenuItemConstant.login;
 	}
