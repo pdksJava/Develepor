@@ -2133,8 +2133,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							} catch (Exception e) {
 								logger.debug("");
 							}
-							if (key.endsWith("0601") || key.endsWith("0603") || key.endsWith("0607"))
-								logger.debug(vardiyaGun.getVardiyaKeyStr() + " " + vardiyaGun.isHareketHatali() + " " + vardiyaGun.getFazlaMesaiOnayla());
+							if (key.endsWith("0503") || key.endsWith("0504") || key.endsWith("0607"))
+								logger.debug(vardiyaGun.getVardiyaKeyStr() + " " + vardiyaGun.isHareketHatali() + " " + vardiyaGun.getFazlaMesaiOnayla() + " " + vardiyaGun.isAyrikHareketVar());
 							if (hareketYokDurum) {
 								logger.debug(vardiyaGun.getVardiyaKeyStr());
 								hareketDurum = true;
