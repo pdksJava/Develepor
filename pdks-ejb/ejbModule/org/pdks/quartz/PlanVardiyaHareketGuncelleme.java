@@ -130,7 +130,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	@Asynchronous
 	@SuppressWarnings("unchecked")
 	// @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	@Transactional
 	public QuartzTriggerHandle planVardiyaHareketGuncellemeTimer(@Expiration Date when, @IntervalCron String interval) {
 		if (!isCalisiyor()) {
 			setCalisiyor(Boolean.TRUE);

@@ -7420,7 +7420,6 @@ public class OrtakIslemler implements Serializable {
 	 * @param map
 	 * @param session
 	 */
-	// @Transactional
 	public void saveLastParameter(LinkedHashMap<String, Object> map, Session session) throws Exception {
 		String key = authenticatedUser != null ? authenticatedUser.getCalistigiSayfa() : null;
 		if (key != null && map != null) {

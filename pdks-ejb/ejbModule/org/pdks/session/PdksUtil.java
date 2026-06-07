@@ -186,7 +186,7 @@ public class PdksUtil implements Serializable {
 	 * @return
 	 */
 	public static boolean isSessionKapali(Session sessionx) {
-		boolean kapali = sessionx == null || sessionx.isConnected() == false;
+		boolean kapali = sessionx == null || sessionx.isOpen() == false;
 		return kapali;
 
 	}
