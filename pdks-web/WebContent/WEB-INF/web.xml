@@ -111,6 +111,9 @@
 	<listener>
 		<listener-class>org.pdks.security.action.SessionListener</listener-class>
 	</listener>
+	<listener>
+   	 	<listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
+	</listener>
 	<servlet>
 		<servlet-name>JAX-RS Servlet</servlet-name>
 		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
