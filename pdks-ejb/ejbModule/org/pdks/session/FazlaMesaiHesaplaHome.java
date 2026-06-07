@@ -2133,20 +2133,22 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							} catch (Exception e) {
 								logger.debug("");
 							}
-							if (key.endsWith("0523"))
-								logger.debug("");
+							if (key.endsWith("0601") || key.endsWith("0603") || key.endsWith("0607"))
+								logger.debug(vardiyaGun.getVardiyaKeyStr() + " " + vardiyaGun.isHareketHatali() + " " + vardiyaGun.getFazlaMesaiOnayla());
 							if (hareketYokDurum) {
 								logger.debug(vardiyaGun.getVardiyaKeyStr());
 								hareketDurum = true;
 								vardiyaGun.setOnayli(true);
 							}
-							if (hareketDurum == false && denklestirmeAyDurum && vardiyaGun.isAyinGunu() && vardiyaGun.isHareketHatali() == false && vardiyaGun.isHataliDurum() == false) {
+							hareketDurum = vardiyaGun.isZamanGelmedi() == false && islemVardiya != null;
+							if (denklestirmeAyDurum && vardiyaGun.isAyinGunu() && hareketDurum && (vardiyaGun.isAyrikHareketVar() || vardiyaGun.isHareketHatali() || (islemVardiya.isIcapVardiyasi() == false && vardiyaGun.getFazlaMesaiOnayla() == null))) {
+								hareketDurum = vardiyaGun.isAyrikHareketVar() == false && (islemVardiya.isCalisma() == false || vardiyaGun.isIzinli());
+								if (hareketDurum != vardiyaGun.getDurum().booleanValue() && (authenticatedUser != null && adminRole))
+									logger.info(vardiyaGun.getVardiyaKeyStr() + " " + vardiyaGun.getDurum() + " " + hareketDurum);
 
-								hareketDurum = vardiyaGun.getVardiya().isCalisma() == false || vardiyaGun.isIzinli() || (vardiyaGun.getFazlaMesaiOnayla() != null && vardiyaGun.getFazlaMesaiOnayla());
 							}
 
 							if (ekle && hareketDurum && vardiyaGun.getId() != null && islemVardiya != null) {
-
 								saatEkle = vardiyaGun.getVardiyaDate().before(gunBas);
 								if (islemVardiya.isCalisma()) {
 									if (!saatEkle)
