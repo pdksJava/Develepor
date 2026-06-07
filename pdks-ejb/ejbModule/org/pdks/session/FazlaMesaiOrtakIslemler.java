@@ -34,7 +34,6 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.security.Identity;
 import org.pdks.entity.AramaSecenekleri;
@@ -194,7 +193,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	 * @param dm
 	 * @param session
 	 */
-	@Transactional
+
 	public void setDenklestirmeAySure(TreeMap<String, Tatil> tatilGunleriMap, List<VardiyaGun> vardiyaGunList, Sirket sirket, DenklestirmeAy dm, Session session) {
 
 		List<CalismaModeliAy> modelList = pdksEntityController.getSQLParamByAktifFieldList(CalismaModeliAy.TABLE_NAME, CalismaModeliAy.COLUMN_NAME_DONEM, dm.getId(), CalismaModeliAy.class, session);
@@ -356,8 +355,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 			}
 			if (flush)
-				if (authenticatedUser != null)
-					session.flush();
+				ortakIslemler.sessionFlush(session);
 		}
 
 	}
@@ -366,7 +364,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	 * @param dataMap
 	 * @param session
 	 */
-	@Transactional
+
 	public void calismaPlaniDenklestir(LinkedHashMap<String, Object> dataMap, Session session) {
 		List<AylikPuantaj> puantajList = dataMap.containsKey("aylikPuantajList") ? (List<AylikPuantaj>) dataMap.get("aylikPuantajList") : new ArrayList<AylikPuantaj>();
 		KapiView manuelGiris = dataMap.containsKey("manuelGirisKapi") ? (KapiView) dataMap.get("manuelGirisKapi") : null;
@@ -562,7 +560,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				}
 
 			}
-			ortakIslemler.bayramGecisleriAyir(manuelGiris, manuelCikis, tatilGunleriMap, ap.getVardiyalar(), personelView, session);
+			if (manuelGiris != null && manuelCikis != null)
+				ortakIslemler.bayramGecisleriAyir(manuelGiris, manuelCikis, tatilGunleriMap, ap.getVardiyalar(), personelView, session);
 			try {
 
 				for (VardiyaHafta vh : ap.getVardiyaHaftaList()) {
@@ -947,6 +946,13 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						TreeMap<Long, Personel> perMap = new TreeMap<Long, Personel>();
 						for (Long id : vMap.keySet()) {
 							List<VardiyaGun> list = vMap.get(id);
+							for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+								VardiyaGun vg = (VardiyaGun) iterator.next();
+								Vardiya vardiya = vg.getVardiya();
+								if (vardiya == null || (vardiya.isCalisma() == false && vardiya.isIcapVardiyasi()))
+									iterator.remove();
+
+							}
 							List<PersonelIzin> izinList = izinMap.containsKey(id) ? izinMap.get(id) : null;
 							for (VardiyaGun vardiyaGun : list) {
 								String vardiyaDateStr = vardiyaGun.getVardiyaDateStr();
@@ -966,7 +972,10 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 									vardiyaGun.setVardiyaZamani();
 
 									AylikPuantaj aylikPuantaj = perDMap.get(id);
-									aylikPuantaj.getVardiyalar().add(vardiyaGun);
+									List<VardiyaGun> vList = aylikPuantaj.getVardiyalar();
+									VardiyaSaat vs = vardiyaGun.getVardiyaSaat();
+									if (vs == null || vs.getCalismaSuresi() == 0.0)
+										vList.add(vardiyaGun);
 									if (!perMap.containsKey(id)) {
 										perMap.put(id, personel);
 										PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
@@ -998,8 +1007,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 												}
 												donemBitti = hataYok;
 											}
-
-											aylikPuantaj.setEksikCalismaSure(eksikCalismaSure);
+											if (eksikCalismaSure < 0 || vList.isEmpty())
+												aylikPuantaj.setEksikCalismaSure(eksikCalismaSure);
 											aylikPuantaj.setDonemBitti(donemBitti);
 										}
 										logger.debug(personel.getPdksSicilNo() + " " + personel.getAdSoyad());
@@ -1505,7 +1514,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	@Transactional
+
 	public TreeMap<String, Boolean> bordroVeriOlustur(boolean kaydet, List<AylikPuantaj> puantajList, Boolean fazlaMesaiHesapla, String donemStr, User loginUser, Session session) {
 		TreeMap<String, Boolean> baslikMap = new TreeMap<String, Boolean>();
 		String arifeGunuBordroYarim = ortakIslemler.getParameterKey("arifeGunuBordroYarim");
@@ -1524,8 +1533,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 				list.add(tanim);
 			}
-			if (authenticatedUser != null)
-				session.flush();
+			ortakIslemler.sessionFlush(session);
 		}
 
 		TreeMap<String, String> izinGrupMap = ortakIslemler.getIzinGrupMap(session);
@@ -2032,12 +2040,10 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					}
 				}
 				detayMap = null;
-				try {
-					if (flush)
-						if (authenticatedUser != null)
-							session.flush();
-				} catch (Exception e) {
-					logger.error("personelDenklestirmeId = " + personelDenklestirme.getId() + "\n" + e.getMessage());
+
+				if (flush) {
+					logger.debug("flush : " + personel.getPdksSicilNo() + " " + personel.getAdSoyad());
+					ortakIslemler.sessionFlush(session);
 				}
 
 				if (saatlikCalismaVar) {
@@ -2077,8 +2083,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					for (Object object : deleteList) {
 						pdksEntityController.deleteObject(session, islem, object);
 					}
-					if (authenticatedUser != null)
-						session.flush();
+
+					ortakIslemler.sessionFlush(session);
 				}
 				deleteList = null;
 			}
@@ -3031,7 +3037,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	 * @param denklestirmeAy
 	 * @param session
 	 */
-	@Transactional
+
 	public void setFazlaMesaiMaxSure(DenklestirmeAy denklestirmeAy, Session session) {
 		Double fazlaMesaiMaxSure = ortakIslemler.getFazlaMesaiMaxSure(null);
 		Double radyolojiFazlaMesaiMaxSure = ortakIslemler.getRadyolojiFazlaMesaiMaxSure(null);
@@ -3042,8 +3048,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		denklestirmeAy.setFazlaMesaiMaxSure(fazlaMesaiMaxSure);
 		denklestirmeAy.setRadyolojiFazlaMesaiMaxSure(radyolojiFazlaMesaiMaxSure);
 		pdksEntityController.saveOrUpdate(session, null, denklestirmeAy);
-		if (authenticatedUser != null)
-			session.flush();
+		ortakIslemler.sessionFlush(session);
 
 	}
 

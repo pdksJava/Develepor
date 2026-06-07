@@ -375,8 +375,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	@Transactional
 	private void sessionFlush() {
 		try {
-			if (authenticatedUser != null)
-				session.flush();
+			// if (authenticatedUser != null)
+			session.flush();
 		} catch (Exception e) {
 			String str = (loginUser != null ? loginUser.getAdSoyad() + " " : "") + yil + " " + denklestirmeAy.getAyAdi();
 			if (PdksUtil.hasStringValue(sicilNo))
@@ -4293,7 +4293,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							}
 						}
 						if (index >= 0) {
-							session.flush();
+							ortakIslemler.sessionFlush(session);
 							HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(null, session);
 							KapiView manuelGiris = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS);
 							KapiView manuelCikis = manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS);
@@ -6570,7 +6570,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 			}
 			if (flush)
-				session.flush();
+				ortakIslemler.sessionFlush(session);
 
 		}
 	}
@@ -6699,7 +6699,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	public String sayfaCalismaPlanOlustur(String id, User islemUser) {
 		String donus = "";
 		if (PdksUtil.isSessionKapali(session)) {
-			session = PdksUtil.getSession(entityManager, islemUser.getLogin() == false);
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			if (authenticatedUser != null)
 				authenticatedUser.putSessionMap("sayfaCalismaPlanOlustur", session);
 		}
@@ -9516,7 +9516,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (calismaOlmayanVardiyalar) {
 				sb.append(" union ");
 				sb.append(" select 0 as OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
-				sb.append(" where " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + "  <> '' and " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <> 'I' ");
+				sb.append(" where " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + "  <> '' and " + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " <> 'I' and V." + Vardiya.COLUMN_NAME_ICAP + " = 0 ");
 			}
 			if (manuelVardiyaIzinGir) {
 				sb.append(" union ");
@@ -10808,7 +10808,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						talepGirisCikisHareketEkle(fmt, true);
 						vg.setDurum(Boolean.FALSE);
 						pdksEntityController.saveOrUpdate(session, entityManager, vg);
-						session.flush();
+						ortakIslemler.sessionFlush(session);
 						logger.info(vg.getVardiyaKeyStr());
 					}
 				}

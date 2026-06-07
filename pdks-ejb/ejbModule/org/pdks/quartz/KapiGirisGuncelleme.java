@@ -14,7 +14,6 @@ import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalCron;
@@ -59,8 +58,7 @@ public class KapiGirisGuncelleme implements Serializable {
 
 	@Asynchronous
 	@SuppressWarnings("unchecked")
-	@Transactional
-	// @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+ 	// @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public QuartzTriggerHandle kapiGirisGuncellemeTimer(@Expiration Date when, @IntervalCron String interval) {
 		if (!isCalisiyor()) {
 			setCalisiyor(Boolean.TRUE);
@@ -143,8 +141,7 @@ public class KapiGirisGuncelleme implements Serializable {
 	 * @param session
 	 * @throws Exception
 	 */
-	@Transactional
-	public void kapiGirisGuncellemeBasla(boolean manuel, Session session) throws Exception {
+ 	public void kapiGirisGuncellemeBasla(boolean manuel, Session session) throws Exception {
 		ortakIslemler.kapiGirisGuncelle(PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(new Date(), -61)), null, session);
 	}
 

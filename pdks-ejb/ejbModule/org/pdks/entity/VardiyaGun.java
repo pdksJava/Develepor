@@ -145,12 +145,13 @@ public class VardiyaGun extends BaseObject {
 
 	public void setVardiyaOnayli(Boolean value) {
 		if (value == null || value.booleanValue()) {
-			if (vardiyaOnayli != null && PdksUtil.isBooleanDegisti(vardiyaOnayli, value)) {
+			if (PdksUtil.isBooleanDegisti(vardiyaOnayli, value)) {
 				boolean guncel = PdksUtil.isIntegerDegisti(this.version, 0);
 				if (guncel && this.degisti == false) {
 					this.version = 0;
-					this.degisti = true;
+
 				}
+				this.degisti = true;
 			}
 		}
 		this.vardiyaOnayli = value;
@@ -444,7 +445,7 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setCalismaSuresi(double value) {
-		if (this.getVardiyaDateStr().endsWith("0409"))
+		if (this.getVardiyaDateStr().endsWith("0509"))
 			if (value != 0.0d) {
 				logger.debug(value);
 			}
@@ -453,7 +454,7 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public void addCalismaSuresi(double value) {
-		if (this.getVardiyaDateStr().endsWith("0409"))
+		if (this.getVardiyaDateStr().endsWith("0509"))
 			if (value != 0.0d) {
 				logger.debug(value);
 			}
@@ -687,7 +688,7 @@ public class VardiyaGun extends BaseObject {
 						}
 
 					} else {
-//						hareket.setDurum(HareketKGS.DURUM_BLOKE);
+						// hareket.setDurum(HareketKGS.DURUM_BLOKE);
 
 					}
 
@@ -807,7 +808,7 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public Boolean getHareketDurum() {
-		if (vardiyaDateStr.endsWith("01"))
+		if (vardiyaDateStr.endsWith("0502"))
 			logger.debug("");
 		boolean hareketDurum = (hareketler == null || !hareketHatali);
 		if (hareketDurum && hareketler != null)
@@ -2600,7 +2601,7 @@ public class VardiyaGun extends BaseObject {
 		if (ayinGunu && hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.AYRIK_HAREKET) == false && hareketKGS.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS)) {
 			if (gecersizHareketler == null)
 				gecersizHareketler = new ArrayList<HareketKGS>();
-//			hareketKGS.setDurum(HareketKGS.DURUM_BLOKE);
+			// hareketKGS.setDurum(HareketKGS.DURUM_BLOKE);
 			gecersizHareketler.add(hareketKGS);
 			logger.debug(this.getVardiyaKeyStr() + " " + hareketKGS.getId() + " " + gecersizHareketler.size());
 		}

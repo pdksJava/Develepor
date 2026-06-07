@@ -320,7 +320,8 @@ public class Authenticator implements IAuthenticator, Serializable {
 			}
 		}
 		sonuc = getSonDurum(sonuc, userName, loginUser);
-		authenticatedUser.setSessionSQL(session);
+		if (sonuc && authenticatedUser != null)
+			authenticatedUser.setSessionSQL(session);
 		return sonuc;
 
 	}
@@ -357,6 +358,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 				StringBuilder sb = new StringBuilder();
 				sb.append("select S.* from " + User.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
 				sb.append(" where S." + fieldName + " like :userName");
+				sb.append(" order by S." + User.COLUMN_NAME_DURUM + " desc");
 				HashMap fields = new HashMap();
 				fields.put("userName", userName);
 				if (session != null)

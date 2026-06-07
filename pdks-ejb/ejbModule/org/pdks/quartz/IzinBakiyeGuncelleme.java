@@ -22,7 +22,6 @@ import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalCron;
@@ -79,7 +78,6 @@ public class IzinBakiyeGuncelleme implements Serializable {
 
 	@Asynchronous
 	@SuppressWarnings("unchecked")
-	@Transactional
 	// @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public QuartzTriggerHandle izinBakiyeGuncellemeTimer(@Expiration Date when, @IntervalCron String interval) {
 		hataKonum = "izinBakiyeGuncellemeTimer başladı ";
@@ -208,7 +206,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 
 											pdksEntityController.execSP(session, veriMap, PersonelIzinDetay.SP_NAME);
 										}
-										session.flush();
+										ortakIslemler.sessionFlush(session);
+
 									}
 									izinList = null;
 								}
@@ -264,7 +263,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 	 * @param session
 	 * @throws Exception
 	 */
-	@Transactional
+
 	public void ciftBakiyeIzinKontrol(Session session) throws Exception {
 		HashMap parametreMap = new HashMap();
 		StringBuilder sb = new StringBuilder();
@@ -290,7 +289,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 						personelIzin.setGuncelleyenUser(guncelleyenUser);
 					pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
 				}
-				session.flush();
+				ortakIslemler.sessionFlush(session);
+
 			}
 		} catch (Exception e) {
 			izinList = new ArrayList<PersonelIzin>();
@@ -367,7 +367,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 	 * @param manuel
 	 * @throws Exception
 	 */
-	@Transactional
+
 	// @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void izinleriHesapla(User user, Session session, boolean manuel) throws Exception {
 		logger.info("izinBakiyeGuncellemeTimer in " + PdksUtil.getCurrentTimeStampStr());
@@ -421,7 +421,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 					senelikSuaIzinKontrol(session);
 			}
 			if (flush)
-				session.flush();
+				ortakIslemler.sessionFlush(session);
+
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
@@ -447,7 +448,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 	 * @param manuel
 	 * @param calisanPersonel
 	 */
-	@Transactional
+
 	public void izinleriBakiyeleriniHesapla(Session userSession, List<String> siciller, Sirket sirket, User user, boolean yeni, boolean gecmisHesapla, boolean manuel, boolean calisanPersonel) {
 		if (PdksUtil.isSessionKapali(userSession))
 			userSession = PdksUtil.getSession(entityManager, yeni);
@@ -550,7 +551,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 
 			}
 			if (!list.isEmpty()) {
-				userSession.flush();
+				ortakIslemler.sessionFlush(userSession);
 				if (yeni)
 					userSession = PdksUtil.getSession(entityManager, yeni);
 
@@ -558,7 +559,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 					Collections.shuffle(list);
 			}
 		}
-		userSession.flush();
+		ortakIslemler.sessionFlush(userSession);
 		logger.info("izinleriBakiyeleriniHesapla out " + PdksUtil.getCurrentTimeStampStr());
 		if (yeni)
 			logger.info("izinBakiyeGuncelleme tamam " + PdksUtil.getCurrentTimeStampStr());

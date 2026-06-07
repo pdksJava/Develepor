@@ -169,9 +169,8 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setCalismaModeliAy(CalismaModeliAy value) {
-		Long oldId = calismaModeliAy != null ? calismaModeliAy.getId() : 0L, newId = value != null ? value.getId() : 0L;
-		if (!this.isGuncellendi())
-			this.setGuncellendi(!oldId.equals(newId));
+		if (guncellendi != null && !guncellendi && value != null)
+			this.setGuncellendi(PdksUtil.isLongDegisti(value != null ? value.getId() : null, calismaModeliAy != null ? calismaModeliAy.getId() : null));
 		this.calismaModeliAy = value;
 	}
 
@@ -203,8 +202,8 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setOdenenSure(Double value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.odenenSure == null || this.odenenSure.doubleValue() != value.doubleValue());
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, odenenSure));
 			if (guncellendi)
 				logger.debug(value);
 		}
@@ -227,8 +226,8 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setHesaplananSure(Double value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.hesaplananSure == null || this.hesaplananSure.doubleValue() != value.doubleValue());
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, hesaplananSure));
 			if (guncellendi)
 				logger.debug(value);
 		}
@@ -242,8 +241,8 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setHaftaCalismaSuresi(Double value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.haftaCalismaSuresi == null || this.haftaCalismaSuresi.doubleValue() != value.doubleValue());
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, haftaCalismaSuresi));
 			if (guncellendi)
 				logger.debug(value);
 		}
@@ -256,12 +255,11 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setResmiTatilSure(Double value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.resmiTatilSure == null || this.resmiTatilSure.doubleValue() != value.doubleValue());
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, resmiTatilSure));
 			if (guncellendi)
 				logger.debug(value);
 		}
-
 		this.resmiTatilSure = value;
 	}
 
@@ -271,8 +269,8 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setFazlaMesaiSure(Double value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.fazlaMesaiSure == null || this.fazlaMesaiSure.doubleValue() != value.doubleValue());
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, fazlaMesaiSure));
 			if (guncellendi)
 				logger.debug(value);
 		}
@@ -286,8 +284,8 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setSuaDurum(Boolean value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.suaDurum == null || !this.suaDurum.equals(value));
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isBooleanDegisti(value, suaDurum));
 			if (guncellendi)
 				logger.debug(value);
 		}
@@ -301,8 +299,8 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setPlanlanSure(Double value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.planlanSure == null || this.planlanSure.doubleValue() != value.doubleValue());
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, planlanSure));
 			if (guncellendi)
 				logger.debug(value);
 		}
@@ -316,11 +314,12 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setDevredenSure(Double value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.devredenSure == null || this.devredenSure.doubleValue() != value.doubleValue());
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, devredenSure));
 			if (guncellendi)
 				logger.debug(value);
 		}
+
 		this.devredenSure = value;
 	}
 
@@ -330,8 +329,8 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setKismiOdemeSure(Double value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.kismiOdemeSure == null || this.kismiOdemeSure.doubleValue() != value.doubleValue());
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, kismiOdemeSure));
 			if (guncellendi)
 				logger.debug(value);
 		}
@@ -343,8 +342,14 @@ public class PersonelDenklestirme extends BaseObject {
 		return erpAktarildi;
 	}
 
-	public void setErpAktarildi(boolean erpAktarildi) {
-		this.erpAktarildi = erpAktarildi;
+	public void setErpAktarildi(boolean value) {
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isBooleanDegisti(value, erpAktarildi));
+			if (guncellendi)
+				logger.debug(value);
+		}
+
+		this.erpAktarildi = value;
 	}
 
 	@Column(name = COLUMN_NAME_FAZLA_MESAI_IZIN_KULLAN)
@@ -353,8 +358,8 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setFazlaMesaiIzinKullan(Boolean value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.fazlaMesaiIzinKullan == null || !this.fazlaMesaiIzinKullan.equals(value));
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isBooleanDegisti(value, fazlaMesaiIzinKullan));
 			if (guncellendi)
 				logger.debug(value);
 		}
@@ -373,12 +378,11 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setFazlaMesaiOde(Boolean value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.fazlaMesaiOde == null || !this.fazlaMesaiOde.equals(value));
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isBooleanDegisti(value, fazlaMesaiOde));
 			if (guncellendi)
 				logger.debug(value);
 		}
-
 		this.fazlaMesaiOde = value;
 	}
 
@@ -387,8 +391,13 @@ public class PersonelDenklestirme extends BaseObject {
 		return onaylandi;
 	}
 
-	public void setOnaylandi(boolean onaylandi) {
-		this.onaylandi = onaylandi;
+	public void setOnaylandi(boolean value) {
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isBooleanDegisti(value, onaylandi));
+			if (guncellendi)
+				logger.debug(value);
+		}
+		this.onaylandi = value;
 	}
 
 	@Column(name = COLUMN_NAME_DENKLESTIRME_DURUM)
@@ -396,8 +405,13 @@ public class PersonelDenklestirme extends BaseObject {
 		return denklestirme;
 	}
 
-	public void setDenklestirme(boolean denklestirme) {
-		this.denklestirme = denklestirme;
+	public void setDenklestirme(boolean value) {
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isBooleanDegisti(value, denklestirme));
+			if (guncellendi)
+				logger.debug(value);
+		}
+		this.denklestirme = value;
 	}
 
 	@Column(name = COLUMN_NAME_AKSAM_VARDIYA_GUN_ADET)
@@ -406,8 +420,8 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setAksamVardiyaSayisi(Double value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.aksamVardiyaSayisi == null || this.aksamVardiyaSayisi.doubleValue() != value.doubleValue());
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, aksamVardiyaSayisi));
 			if (guncellendi)
 				logger.debug(value);
 		}
@@ -420,8 +434,8 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setEksikCalismaSure(Double value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.eksikCalismaSure == null || this.eksikCalismaSure.doubleValue() != value.doubleValue());
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, eksikCalismaSure));
 			if (guncellendi)
 				logger.debug(value);
 		}
@@ -434,8 +448,8 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setAksamVardiyaSaatSayisi(Double value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.aksamVardiyaSaatSayisi == null || this.aksamVardiyaSaatSayisi.doubleValue() != value.doubleValue());
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, aksamVardiyaSaatSayisi));
 			if (guncellendi)
 				logger.debug(value);
 		}
@@ -449,11 +463,12 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setPartTime(Boolean value) {
-		if (guncellendi != null && !guncellendi && value != null) {
-			this.setGuncellendi(this.partTime == null || this.partTime.booleanValue() != value.booleanValue());
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isBooleanDegisti(value, partTime));
 			if (guncellendi)
 				logger.debug(value);
 		}
+
 		this.partTime = value;
 	}
 
@@ -462,8 +477,13 @@ public class PersonelDenklestirme extends BaseObject {
 		return sutIzniDurum;
 	}
 
-	public void setSutIzniDurum(Boolean sutIzniDurum) {
-		this.sutIzniDurum = sutIzniDurum;
+	public void setSutIzniDurum(Boolean value) {
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isBooleanDegisti(value, sutIzniDurum));
+			if (guncellendi)
+				logger.debug(value);
+		}
+		this.sutIzniDurum = value;
 	}
 
 	@Column(name = COLUMN_NAME_SUT_IZNI_SAAT)
@@ -471,8 +491,14 @@ public class PersonelDenklestirme extends BaseObject {
 		return sutIzniSaatSayisi;
 	}
 
-	public void setSutIzniSaatSayisi(Double sutIzniSaatSayisi) {
-		this.sutIzniSaatSayisi = sutIzniSaatSayisi;
+	public void setSutIzniSaatSayisi(Double value) {
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, sutIzniSaatSayisi));
+			if (guncellendi)
+				logger.debug(value);
+		}
+
+		this.sutIzniSaatSayisi = value;
 	}
 
 	@Column(name = COLUMN_NAME_EGITIM_SURESI_AKSAM_GUN_SAYISI)
@@ -489,8 +515,13 @@ public class PersonelDenklestirme extends BaseObject {
 		return kesilenSure;
 	}
 
-	public void setKesilenSure(Double kesilenSure) {
-		this.kesilenSure = kesilenSure;
+	public void setKesilenSure(Double value) {
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, kesilenSure));
+			if (guncellendi)
+				logger.debug(value);
+		}
+		this.kesilenSure = value;
 	}
 
 	@Transient

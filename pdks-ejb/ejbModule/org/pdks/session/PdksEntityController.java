@@ -704,17 +704,19 @@ public class PdksEntityController implements Serializable {
 	 * @param sessionx
 	 */
 	public void sessionClose(Session sessionx) {
-
 		if (sessionx != null) {
-			/**
 			try {
-				sessionx.close();
+				if (authenticatedUser == null && PdksUtil.isSessionKapali(sessionx) == false) {
+					sessionx.flush();
+					sessionx.clear();
+					sessionx.close();
+				}
+
 			} catch (Exception e) {
 			}
-			**/		
-		
+
 		}
-	
+
 	}
 
 	/**

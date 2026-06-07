@@ -186,7 +186,7 @@ public class PdksUtil implements Serializable {
 	 * @return
 	 */
 	public static boolean isSessionKapali(Session sessionx) {
-		boolean kapali = sessionx == null || sessionx.isConnected() == false;
+		boolean kapali = sessionx == null || sessionx.isOpen() == false;
 		return kapali;
 
 	}
@@ -3446,8 +3446,14 @@ public class PdksUtil implements Serializable {
 		Session session1 = null;
 		if (user != null) {
 			try {
-				if (em != null)
+				session1 = user.getSessionSQL();
+				if (PdksUtil.isSessionKapali(session1) && em != null) {
 					session1 = getSession(em, Boolean.FALSE);
+					if (PdksUtil.isSessionKapali(session1) == false)
+						user.setSessionSQL(session1);
+
+				}
+
 			} catch (Exception e) {
 				logger.error(e);
 			} finally {
@@ -3466,7 +3472,39 @@ public class PdksUtil implements Serializable {
 	 * @return
 	 */
 	public static Session getSession(EntityManager em, Boolean yeni) {
- 		Session session1 = null;
+		Session session1 = null;
+		Object delegate = null;
+		SessionFactory sessionFactory = null;
+		try {
+			delegate = em.getDelegate();
+			HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
+			sessionFactory = hsp.getSessionFactory();
+			if (yeni != null && yeni.booleanValue() == false) {
+				// session1 = sessionFactory.getCurrentSession();
+				session1 = (Session) delegate;
+			}
+
+		} catch (Exception e) {
+			session1 = null;
+
+		}
+
+		if (session1 == null || (yeni != null && yeni)) {
+
+			session1 = sessionFactory.openSession();
+
+		}
+
+		return session1;
+	}
+
+	/**
+	 * @param em
+	 * @param yeni
+	 * @return
+	 */
+	public static Session getSessionx(EntityManager em, Boolean yeni) {
+		Session session1 = null;
 		Object delegate = null;
 		SessionFactory sessionFactory = null;
 		try {
@@ -3484,43 +3522,8 @@ public class PdksUtil implements Serializable {
 		if (session1 == null || (yeni != null && yeni)) {
 			HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
 			sessionFactory = hsp.getSessionFactory();
- 			session1 = sessionFactory.openSession();
-
-		}
-
-		return session1;
-	}
-
-	/**
-	 * @param em
-	 * @param yeni
-	 * @return
-	 */
-	public static Session getSessionx(EntityManager em, Boolean yeni) {
-		// Session session1 = (Session) entityManager.getDelegate();
-		Session session1 = null;
-		Object delegate = null;
-		SessionFactory sessionFactory = null;
-		try {
-			delegate = em.getDelegate();
-			HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
-			sessionFactory = hsp.getSessionFactory();
-			if (yeni == null || yeni.booleanValue() == false) {
-				// session1 = (Session) delegate;
-				session1 = sessionFactory.getCurrentSession();
-			}
-
-		} catch (Exception e) {
-			session1 = null;
-//			logger.error("PDKS hata in : \n");
-//			e.printStackTrace();
-//			logger.error("PDKS hata out : " + e.getMessage());
-		}
-
-		if (session1 == null || (yeni != null && yeni)) {
-
 			session1 = sessionFactory.openSession();
-			// session1 = sessionFactory.getCurrentSession();
+
 		}
 
 		return session1;

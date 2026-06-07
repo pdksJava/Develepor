@@ -82,7 +82,7 @@ public class PdksPersonelRoleHome extends EntityHome<Role> implements Serializab
 			e.printStackTrace();
 			logger.error("PDKS hata out : " + e.getMessage());
 		}
-		session.flush();
+		ortakIslemler.sessionFlush(session);
 		rolGetir();
 		return "";
 
@@ -98,7 +98,7 @@ public class PdksPersonelRoleHome extends EntityHome<Role> implements Serializab
 			e.printStackTrace();
 			logger.error("PDKS hata out : " + e.getMessage());
 		}
-		session.flush();
+		ortakIslemler.sessionFlush(session);
 		rolGetir();
 		return "";
 	}
@@ -117,7 +117,7 @@ public class PdksPersonelRoleHome extends EntityHome<Role> implements Serializab
 			e.printStackTrace();
 			logger.error("PDKS hata out : " + e.getMessage());
 		}
-		session.flush();
+		ortakIslemler.sessionFlush(session);
 		rolGetir();
 
 		return "";

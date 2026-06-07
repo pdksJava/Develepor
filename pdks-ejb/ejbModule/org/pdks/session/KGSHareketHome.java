@@ -250,7 +250,7 @@ public class KGSHareketHome extends EntityHome<HareketKGS> {
 	public void onayla() {
 		HareketKGS kgsHareket = this.getInstance();
 		pdksEntityController.hareketOnayla(kgsHareket.getIslem().getId(), authenticatedUser, session);
-		session.flush();
+		ortakIslemler.sessionFlush(session);
 
 	}
 
@@ -265,7 +265,7 @@ public class KGSHareketHome extends EntityHome<HareketKGS> {
 			pdksId = 0;
 		}
 		pdksEntityController.hareketOnaylama(kgsId, pdksId, authenticatedUser, session);
-		session.flush();
+		ortakIslemler.sessionFlush(session);
 		fillHareketList();
 	}
 

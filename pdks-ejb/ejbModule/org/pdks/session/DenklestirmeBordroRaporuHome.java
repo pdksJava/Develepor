@@ -21,7 +21,6 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
@@ -208,10 +207,9 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		return str;
 	}
 
-	@Transactional
 	public String sayfaFazlaMesaiGuncellemeAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String id = (String) req.getParameter("id");
 		if (session != null && id != null) {
@@ -225,7 +223,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			}
 			ekSaha4Tanim = null;
 			if (param.containsKey("donemId") && param.containsKey("sirketId")) {
-				session.setFlushMode(FlushMode.MANUAL);
 				session.clear();
 				try {
 					Long donemId = Long.parseLong(param.get("donemId"));
@@ -314,12 +311,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 			}
 		}
-
 		pdksEntityController.sessionClose(session);
 
 		return MenuItemConstant.login;
 	}
 
+	@Transactional
 	public String sirketFazlaMesaiGuncelleme() {
 		HashMap fields = new HashMap();
 		fields.put("id", sirketId);
@@ -487,8 +484,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 								}
 								if (puantajList != null && !puantajList.isEmpty()) {
-									if (authenticatedUser != null)
-										session.flush();
+									// ortakIslemler.sessionFlush(session);
 									if (logYaz)
 										logger.info(altBolumStr + " [ " + donemPerList.size() + " ] out " + PdksUtil.getCurrentTimeStampStr());
 								}
@@ -1307,8 +1303,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			tanim.setIslemTarihi(islemTarihi);
 			pdksEntityController.saveOrUpdate(session, entityManager, tanim);
 		}
-		if (authenticatedUser != null)
-			session.flush();
+		ortakIslemler.sessionFlush(session);
 	}
 
 	public String getSicilNo() {

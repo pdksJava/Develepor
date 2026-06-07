@@ -234,7 +234,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 					renk = !renk;
 				}
 				if (flush)
-					xSession.flush();
+					ortakIslemler.sessionFlush(session);
 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
@@ -645,7 +645,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 
 						}
 						if (flush)
-							session.flush();
+							ortakIslemler.sessionFlush(session);
 						personelIdler = null;
 					}
 				}
@@ -691,7 +691,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		if (adet == 0)
 			PdksUtil.addMessageAvailableWarn("İşlem yapılacak kayıt yok!");
 		else if (flush)
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 		return "";
 	}
 
@@ -728,7 +728,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 			}
 		}
 		if (flush)
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 		personelDenklestirmeler.clear();
 		devredenBakiyeDosya.setDosyaIcerik(null);
 		return "";
@@ -867,7 +867,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 			denklestirmeAy.setGuncellemeTarihi(new Date());
 			denklestirmeAy.setGuncelleyenUser(authenticatedUser);
 			pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeAy);
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

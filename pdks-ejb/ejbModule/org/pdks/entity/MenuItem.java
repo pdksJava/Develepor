@@ -227,8 +227,10 @@ public class MenuItem extends BasePDKSObject implements Serializable {
 		return status;
 	}
 
-	public void entityRefresh() {
-
+	@Transient
+	public String getItemAciklama() {
+		String aciklama = description != null ? description.getAciklama() : "";
+		return aciklama;
 	}
 
 	@Transient
@@ -238,6 +240,10 @@ public class MenuItem extends BasePDKSObject implements Serializable {
 
 	public void setParametre(String parametre) {
 		this.parametre = parametre;
+	}
+
+	public void entityRefresh() {
+
 	}
 
 	@Transient

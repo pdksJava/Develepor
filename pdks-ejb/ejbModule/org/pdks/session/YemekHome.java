@@ -160,7 +160,7 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 		try {
 			if (mesaj == null) {
 				pdksEntityController.saveOrUpdate(session, entityManager, yemekKartsiz);
-				session.flush();
+				ortakIslemler.sessionFlush(session);
 				fillKartSizYemek();
 				yemekKartsiz = new YemekKartsiz();
 			} else
@@ -189,7 +189,7 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 				pdksYemek.setGuncellemeTarihi(new Date());
 			}
 			pdksEntityController.saveOrUpdate(session, entityManager, pdksYemek);
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 			fillPdksYemekList();
 
 		} catch (Exception e) {

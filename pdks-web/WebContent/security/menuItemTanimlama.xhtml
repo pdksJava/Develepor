@@ -8,7 +8,7 @@
 	</ui:define>
 	<ui:define name="body">
 
-		<rich:panel header="#{ortakIslemler.getMenuUserAdi(menuItemTree.session,'menuItemTanimlama')}">
+		<rich:panel header="#{ortakIslemler.getMenuUserAdi(menuItemHome.session,'menuItemTanimlama')}">
 			<h:panelGrid style=" width : 897px; vertical-align:top;">
 				<h:form id="formMenuTanimlama">
 					<a4j:commandButton status="ajaxStatus" id="editBtn" value="Yeni Menü" reRender="editPanel" action="#{menuItemHome.guncelle(null,false)}"
@@ -23,10 +23,10 @@
 								<f:facet name="header">
 									<h:outputText value="Menü Bileşenleri Ağacı" />
 								</f:facet>
-								<h:outputText value="The role search returned no results." rendered="#{empty menuItemTree.treeNode}" />
+								<h:outputText value="The role search returned no results." rendered="#{empty menuItemHome.treeNode}" />
 								<a4j:outputPanel id="menuAgaci">
-									<rich:tree style="width:300px" id="menuItemTree" treeNodeVar="treeNode" switchType="client" value="#{menuItemTree.treeNode}" var="item"
-										ajaxKeys="#{null}" iconCollapsed="#{menuItemTree.iconLeaf}" iconExpanded="#{menuItemTree.iconLeaf}">
+									<rich:tree style="width:300px" id="menuItemTree" treeNodeVar="treeNode" switchType="client" value="#{menuItemHome.treeNode}" var="item"
+										ajaxKeys="#{null}" iconCollapsed="#{menuItemHome.iconLeaf}" iconExpanded="#{menuItemHome.iconLeaf}">
 										<rich:treeNode id="menuItemTreeNode">
 											<f:facet name="icon">
 												<a4j:commandLink status="ajaxStatus" id="editIconLink" action="#{menuItemHome.guncelle(item,false)}"
@@ -42,13 +42,13 @@
 
 												</a4j:commandLink>
 											</f:facet>
-											<h:selectBooleanCheckbox value="#{menuItemTree.selectedIdsFromTree[item.id]}" id="secim" />
+											<h:selectBooleanCheckbox value="#{menuItemHome.selectedIdsFromTree[item.id]}" id="secim" />
 											<ui:fragment rendered="#{item.childMenuItemList != null and item.childMenuItemList.size()>0}">
 												<b><h:outputText value="#{item.description.aciklama}" /></b>
 											</ui:fragment>
 											<ui:fragment rendered="#{item.childMenuItemList == null or item.childMenuItemList.size() == 0}">
 												<h:outputLabel value="#{item.description.aciklama}" id="bilgi">
-													<a4j:support event="onclick" status="ajaxStatus" action="#{menuItemTree.userList(item)}" reRender="menuAgaci" />
+													<a4j:support event="onclick" status="ajaxStatus" action="#{menuItemHome.userList(item)}" reRender="menuAgaci" />
 												</h:outputLabel>
 											</ui:fragment>
 
@@ -95,62 +95,64 @@
 							</rich:panel>
 							<rich:panel id="menuItemTreePnl" style=" border:0;">
 
-								<a4j:commandButton status="ajaxStatus" id="add1Tree" title="Menü'ye item ekle" action="#{menuItemTree.moveMenuItemsFromDataTable2Tree}"
+								<a4j:commandButton status="ajaxStatus" id="add1Tree" title="Menü'ye item ekle" action="#{menuItemHome.moveMenuItemsFromDataTable2Tree}"
 									image="/img/leftArrow.gif" reRender="menuItemDataTablePnl,menuItemTree" />
 								<br />
 								<br />
 								<a4j:commandButton status="ajaxStatus" id="removeFromTree" title="Menü'den item çıkar"
-									action="#{menuItemTree.moveMenuItemsFromTree2DataTable}" reRender="menuItemDataTablePnl,menuItemTree" image="/img/rightArrow.gif" />
+									action="#{menuItemHome.moveMenuItemsFromTree2DataTable}" reRender="menuItemDataTablePnl,menuItemTree" image="/img/rightArrow.gif" />
 							</rich:panel>
-							<rich:panel id="menuItemDataTablePnl" style=" border:0;">
-								<h:outputText value="The role search returned no results." rendered="#{empty menuItemTree.allDataTableMenuItemList}" />
-								<rich:dataTable rowClasses="acik,koyu" style="rich-panel-header" height="40px" width="537px" id="menuItemDataTable"
-									rendered="#{not empty menuItemTree.allDataTableMenuItemList}" value="#{menuItemTree.allDataTableMenuItemList}" var="menuItem">
+							<rich:panel style=" border:0;">
+								<a4j:outputPanel id="menuItemDataTablePnl">
+									<h:outputText value="The role search returned no results." rendered="#{empty menuItemHome.freeMenuItemList}" />
+									<rich:dataTable rowClasses="acik,koyu" style="rich-panel-header" height="40px" width="537px" id="menuItemDataTable"
+										rendered="#{not empty menuItemHome.freeMenuItemList}" value="#{menuItemHome.freeMenuItemList}" var="menuItem">
 
-									<rich:column width="200px" id="aciklama">
-										<f:facet name="header">
-											<h:outputText styleClass="headerText" value="Ağaca Yerleştirilecek Menü Bileşeni" />
-										</f:facet>
-										<h:outputText value="#{menuItem.description.aciklama}" />
-									</rich:column>
-									<rich:column width="60px" id="ustMenu">
-										<f:facet name="header">
-											<h:outputText styleClass="headerText" value="Üst Menü" />
-										</f:facet>
-										<h:outputText value="#{menuItem.topMenu}" />
-									</rich:column>
-									<rich:column width="60px" id="durum">
-										<f:facet name="header">
-											<h:outputText styleClass="headerText" value="Aktif" />
-										</f:facet>
-										<h:outputText value="#{menuItem.status}" />
-									</rich:column>
-									<rich:column width="60px" id="dataTblAction">
-										<f:facet name="header">
-											<h:outputText styleClass="headerText" value="Action" />
-										</f:facet>
-										<a4j:commandLink status="ajaxStatus" id="deletelink4DtTbl" ajaxSingle="true" reRender="deletePanel"
-											oncomplete="#{rich:component('deletePanel')}.show()">
-											<h:graphicImage value="/img/delete.gif" style="border:0" />
-											<f:setPropertyActionListener value="#{menuItem}" target="#{menuItemHome.instance}">
-												<s:convertEntity />
-											</f:setPropertyActionListener>
-										</a4j:commandLink>
-										<a4j:commandLink status="ajaxStatus" id="editlink4DtTbl" ajaxSingle="true" oncomplete="#{rich:component('editPanel')}.show()"
-											reRender="editPanel">
-											<h:graphicImage value="/img/edit.gif" style="border:0" />
-											<f:setPropertyActionListener value="#{menuItem}" target="#{menuItemHome.instance}">
-												<s:convertEntity />
-											</f:setPropertyActionListener>
-										</a4j:commandLink>
-									</rich:column>
-									<rich:column width="60px" id="secim">
-										<f:facet name="header">
-											<h:selectBooleanCheckbox value="#{menuItemTree.selectAll}" />
-										</f:facet>
-										<h:selectBooleanCheckbox value="#{menuItemTree.selectedIdsFromDataTable[menuItem.id]}" />
-									</rich:column>
-								</rich:dataTable>
+										<rich:column width="200px" id="aciklama">
+											<f:facet name="header">
+												<h:outputText styleClass="headerText" value="Ağaca Yerleştirilecek Menü Bileşeni" />
+											</f:facet>
+											<h:outputText value="#{menuItem.description.aciklama}" />
+										</rich:column>
+										<rich:column width="60px" id="ustMenu">
+											<f:facet name="header">
+												<h:outputText styleClass="headerText" value="Üst Menü" />
+											</f:facet>
+											<h:outputText value="#{menuItem.topMenu}" />
+										</rich:column>
+										<rich:column width="60px" id="durum">
+											<f:facet name="header">
+												<h:outputText styleClass="headerText" value="Aktif" />
+											</f:facet>
+											<h:outputText value="#{menuItem.status}" />
+										</rich:column>
+										<rich:column width="60px" id="dataTblAction">
+											<f:facet name="header">
+												<h:outputText styleClass="headerText" value="İşlemker" />
+											</f:facet>
+											<a4j:commandLink status="ajaxStatus" id="deletelink4DtTbl" ajaxSingle="true" reRender="deletePanel"
+												oncomplete="#{rich:component('deletePanel')}.show()">
+												<h:graphicImage value="/img/delete.gif" style="border:0" />
+												<f:setPropertyActionListener value="#{menuItem}" target="#{menuItemHome.instance}">
+													<s:convertEntity />
+												</f:setPropertyActionListener>
+											</a4j:commandLink>
+											<a4j:commandLink status="ajaxStatus" id="editlink4DtTbl" ajaxSingle="true" oncomplete="#{rich:component('editPanel')}.show()"
+												reRender="editPanel">
+												<h:graphicImage value="/img/edit.gif" style="border:0" />
+												<f:setPropertyActionListener value="#{menuItem}" target="#{menuItemHome.instance}">
+													<s:convertEntity />
+												</f:setPropertyActionListener>
+											</a4j:commandLink>
+										</rich:column>
+										<rich:column width="60px" id="secim">
+											<f:facet name="header">
+												<h:selectBooleanCheckbox value="#{menuItemHome.selectAll}" />
+											</f:facet>
+											<h:selectBooleanCheckbox value="#{menuItemHome.selectedIdsFromDataTable[menuItem.id]}" />
+										</rich:column>
+									</rich:dataTable>
+								</a4j:outputPanel>
 							</rich:panel>
 						</h:panelGrid>
 					</h:form>
@@ -287,14 +289,14 @@
 							</a4j:outputPanel>
 						</h:panelGrid>
 						<h:panelGrid columns="4">
-							<a4j:commandButton status="ajaxStatus" id="save" value="Kaydet" action="#{menuItemHome.persist}" rendered="#{menuItemHome.instance.id==null}"
-								reRender="menuItemDataTablePnl,menuItemTree" oncomplete="#{rich:component('editPanel')}.hide();" />
-							<a4j:commandButton status="ajaxStatus" id="update" value="Güncelle" action="#{menuItemHome.update}" reRender="menuItemTree,menuItemDataTablePnl"
-								rendered="#{menuItemHome.instance.id!=null}" oncomplete="#{rich:component('editPanel')}.hide();" />
+							<a4j:commandButton status="ajaxStatus" id="save" value="Kaydet" action="#{menuItemHome.itemEkle()}"
+								rendered="#{menuItemHome.instance.id==null}" reRender="menuItemDataTablePnl,menuItemTree" oncomplete="#{rich:component('editPanel')}.hide();" />
+							<a4j:commandButton status="ajaxStatus" id="update" value="Güncelle" action="#{menuItemHome.itemGuncelle()}"
+								reRender="menuItemTree,menuItemDataTablePnl" rendered="#{menuItemHome.instance.id!=null}" oncomplete="#{rich:component('editPanel')}.hide();" />
 						</h:panelGrid>
 					</h:form>
 				</rich:modalPanel>
-				<rich:modalPanel id="deletePanel" autosized="true" width="200">
+				<rich:modalPanel id="deletePanel" autosized="true" width="450">
 					<f:facet name="header">
 						<h:outputText value="Menü kayıtı silinsin mi?" style="padding-right:15px;" />
 					</f:facet>
@@ -306,6 +308,7 @@
 					</f:facet>
 					<h:form>
 						<table width="100%">
+							<P style="font-size: 14px; font-weight: bold;">#{menuItemHome.instance.description.aciklama}</P>
 							<tbody>
 								<tr>
 									<td align="center" width="50%"><a4j:commandButton status="ajaxStatus" value="Evet" ajaxSingle="true" action="#{menuItemHome.deleteItem}"

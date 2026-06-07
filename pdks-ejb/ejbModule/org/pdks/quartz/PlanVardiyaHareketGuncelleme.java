@@ -99,7 +99,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	public String fazlaMesaiHesaplamaBaslat() {
 		try {
 			if (PdksUtil.isSessionKapali(session))
-				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 
 			basTarih = ortakIslemler.getBugun();
 			Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
@@ -130,7 +130,6 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 	@Asynchronous
 	@SuppressWarnings("unchecked")
 	// @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	@Transactional
 	public QuartzTriggerHandle planVardiyaHareketGuncellemeTimer(@Expiration Date when, @IntervalCron String interval) {
 		if (!isCalisiyor()) {
 			setCalisiyor(Boolean.TRUE);
@@ -294,7 +293,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		} catch (Exception e) {
 			logger.error(e);
 		}
-
+		List<Sirket> sirketList = null;
 		if (aylar != null && aylar.isEmpty() == false) {
 			adresStr = ortakIslemler.getLoginAdres();
 			if (PdksUtil.hasStringValue(adresStr)) {
@@ -304,14 +303,15 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 				guncelleyenUser.setAdmin(true);
 				List<Liste> islemList = new ArrayList<Liste>();
 				boolean talepVar = getSirketTalepGirmeDurum(session);
-				List<Sirket> sirketList = null;
+				List<String> donemler = new ArrayList<String>();
 				for (DenklestirmeAy da : aylar) {
 					try {
 						vardiyaVersiyonGuncelle(da, talepVar, bugun, guncelleyenUser, session);
 					} catch (Exception e) {
 
 					}
-
+					String donem = da.getAyAdi() + " " + da.getYil();
+					donemler.add(donem);
 					DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 					AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(da.getAy(), da.getYil(), denklestirmeDonemi, session);
 					aylikPuantaj.setLoginUser(guncelleyenUser);
@@ -333,41 +333,58 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 								if (sirket.isTesisDurumu())
 									linkStr = linkStr + "&tesisId=*";
 								String id = ortakIslemler.getEncodeStringByBase64(linkStr);
-								islemList.add(new Liste(da.getAyAdi() + " " + da.getYil() + " : " + sirket.getAd(), adres + "?id=" + id));
+
+								islemList.add(new Liste(donem + " : " + sirket.getAd(), adres + "?id=" + id));
 							}
-							sirketList = null;
+
 						}
 						sirketIdList = null;
 					}
 				}
-				boolean renkUyari = true;
-
-				String uolStr = aylar.size() > 1 && (sirketList != null && sirketList.size() > 1) ? "OL" : "UL";
+				String uolStr = "";
 				if (mailGonder == null && islemList.isEmpty() == false) {
 					mailGonder = getMailGonder(session);
 					if (mailGonder) {
+						uolStr = aylar.size() > 1 && (sirketList != null && sirketList.size() > 1) ? "OL" : "UL";
 						fazlaMesaiDetay = new StringBuffer();
 						fazlaMesaiDetay.append("<p><" + uolStr + ">");
 					}
 
 				}
+				boolean renkUyari = true;
+				for (String donem : donemler) {
 
-				for (Iterator iterator = islemList.iterator(); iterator.hasNext();) {
-					Liste liste = (Liste) iterator.next();
-					String id = (String) liste.getValue();
-					String sonuc = ortakIslemler.adresKontrol(id);
-					if (sonuc != null)
-						logger.error(liste.getId() + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
-					else if (mailGonder) {
-						fazlaMesaiDetay.append("<LI class=\"" + (renkUyari ? "odd" : "even") + "\" style=\"text-align: left;\">" + liste.getId() + (iterator.hasNext() ? " " + PdksUtil.getCurrentTimeStampStr() : "") + "</LI>");
-						renkUyari = !renkUyari;
+					for (Iterator iterator = islemList.iterator(); iterator.hasNext();) {
+						Liste liste = (Liste) iterator.next();
+						String value = (String) liste.getValue();
+						String id = (String) liste.getId();
+						if (id.startsWith(donem) || donemler.size() == 1) {
+							String sonuc = ortakIslemler.adresKontrol(value);
+							if (sonuc != null)
+								logger.error(id + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
+							else if (mailGonder) {
+								fazlaMesaiDetay.append("<LI class=\"" + (renkUyari ? "odd" : "even") + "\" style=\"text-align: left;\">" + liste.getId() + (iterator.hasNext() ? " " + PdksUtil.getCurrentTimeStampStr() : "") + "</LI>");
+								renkUyari = !renkUyari;
+							}
+							iterator.remove();
+						}
+
 					}
+					if (uolStr != null && uolStr.equals("OL")) {
+						if (fazlaMesaiDetay != null) {
+							fazlaMesaiDetay.append("</" + uolStr + "></p>");
+							fazlaMesaiDetay.append("<p><" + uolStr + ">");
+						}
+						renkUyari = true;
+					}
+
 				}
-				if (mailGonder) {
-					fazlaMesaiDetay.append("</" + uolStr + "></p>");
-				}
-				islemList = null;
 				logger.info(adres + " out " + PdksUtil.getCurrentTimeStampStr());
+				if (fazlaMesaiDetay != null)  
+					fazlaMesaiDetay.append("</" + uolStr + "></p>");
+				 
+				islemList = null;
+
 			}
 		}
 		aylar = null;
@@ -455,7 +472,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			}
 			Date guncellemeTarihi = null;
 			boolean flush = false;
-			int adet = 0;
+			// int adet = 0;
 			for (VardiyaGun vg : vGunList) {
 				Long perId = vg.getPdksPersonel().getId();
 				Boolean vardiyaOnayli = vg.getDurum();
@@ -471,17 +488,19 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 					vg.setVardiyaOnayli(vardiyaOnayli);
 					pdksEntityController.saveOrUpdate(session, entityManager, vg);
 					flush = true;
-					++adet;
-					if (adet % 10 == 0) {
-						session.flush();
-						flush = false;
-					}
+					// ++adet;
+					// if (adet % 10 == 0) {
+					// ortakIslemler.sessionFlush(session);
+					//
+					// flush = false;
+					// }
 				}
 
 			}
 			perIdList = null;
 			if (flush)
-				session.flush();
+				ortakIslemler.sessionFlush(session);
+
 		}
 		fields.clear();
 		sb1 = new StringBuffer();
@@ -507,7 +526,7 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 		vGunList = pdksEntityController.getObjectBySQLList(sb1.toString(), fields, VardiyaGun.class);
 		Date guncellemeTarihi = null;
 		boolean flush = false;
-		int adet = 0;
+		// int adet = 0;
 		for (VardiyaGun vg : vGunList) {
 			Vardiya v = vg.getVardiya();
 			if (v.isIzinVardiya() || v.isOffGun() || vg.getVardiyaOnayli() || vg.getDurum())
@@ -519,14 +538,16 @@ public class PlanVardiyaHareketGuncelleme implements Serializable {
 			vg.setVardiyaOnayli(Boolean.FALSE);
 			pdksEntityController.saveOrUpdate(session, entityManager, vg);
 			flush = true;
-			++adet;
-			if (adet % 10 == 0) {
-				session.flush();
-				flush = false;
-			}
+			// ++adet;
+			// if (adet % 10 == 0) {
+			// ortakIslemler.sessionFlush(session);
+			//
+			// flush = false;
+			// }
 		}
 		if (flush)
-			session.flush();
+			ortakIslemler.sessionFlush(session);
+
 		vGunList = null;
 		sb1 = null;
 	}

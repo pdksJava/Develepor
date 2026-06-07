@@ -254,7 +254,6 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	public void setVardiyalar(List<VardiyaGun> value) {
 
 		if (value != null) {
-			
 
 			for (Iterator iterator = value.iterator(); iterator.hasNext();) {
 				VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
@@ -1429,6 +1428,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public void setPersonelDenklestirme(PersonelDenklestirme pd) {
 		if (pd != null) {
+			pd.setGuncellendi(false);
 			this.denklestirmeAy = pd.getDenklestirmeAy();
 			this.setPdksPersonel(pd.getPdksPersonel());
 			this.setCalismaModeliAy(pd.getCalismaModeliAy());

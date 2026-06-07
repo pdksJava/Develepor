@@ -95,11 +95,12 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 		super.create();
 	}
 
+	@Transactional
 	public String diniBayramBasla() {
 		try {
 			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-			;
+
 			if ((PdksUtil.getTestSunucuDurum() == false && PdksUtil.getCanliSunucuDurum() == false) || PdksUtil.isSistemDestekVar())
 				diniBayramEkle();
 		} catch (Exception e) {
@@ -241,7 +242,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 
 		}
 		if (flush) {
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 			fillPdksTatilList();
 		} else
 			PdksUtil.addMessageAvailableWarn("Ekleme yapılacak dini bayram seçili değildir!");
@@ -533,7 +534,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 					pdksEntityController.deleteObject(session, entityManager, pdksTatil);
 				}
 
-				session.flush();
+				ortakIslemler.sessionFlush(session);
 				fillPdksTatilList();
 				cikis = "persist";
 
@@ -703,7 +704,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 			kayitGuncelle(pdksTatil);
 		} else {
 			if (flush)
-				session.flush();
+				ortakIslemler.sessionFlush(session);
 			fillPdksTatilList();
 		}
 

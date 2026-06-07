@@ -153,6 +153,15 @@ public class UserMenuItemTime extends BasePDKSObject implements Serializable {
 	}
 
 	@Transient
+	public void addUseCount() {
+		BigDecimal augend = new BigDecimal(1L);
+		if (useCount == null)
+			this.useCount = augend;
+		else
+			this.useCount = useCount.add(augend);
+	}
+
+	@Transient
 	public HttpSession getMySession() {
 		return mySession;
 	}

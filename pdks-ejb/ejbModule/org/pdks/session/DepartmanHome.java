@@ -110,7 +110,7 @@ public class DepartmanHome extends EntityHome<Departman> implements Serializable
 					}
 				}
 
-				session.flush();
+				ortakIslemler.sessionFlush(session);
 				fillDepartmanTanimList();
 				cikis = "persisted";
 			} catch (Exception e) {

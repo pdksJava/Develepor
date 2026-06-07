@@ -63,7 +63,7 @@ public class NoticeHome extends EntityHome<Notice> {
 			notice.setChangeUser(authenticatedUser);
 			notice.setChangeDate(new Date());
 			pdksEntityController.saveOrUpdate(session, entityManager, notice);
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");

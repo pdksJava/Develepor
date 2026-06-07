@@ -73,7 +73,7 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 	public String baslikKaydet() {
 		try {
 			pdksEntityController.saveOrUpdate(session, entityManager, seciliFazlaMesaiERP);
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 			fillFazlaMesaiERPList();
 			seciliFazlaMesaiERP = null;
 		} catch (Exception e) {
@@ -100,7 +100,7 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 	public String detaySil() {
 		try {
 			session.delete(seciliFazlaMesaiERPDetay);
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 			pdksEntityController.savePrepareTableID(true, seciliFazlaMesaiERPDetay, FazlaMesaiERPDetay.class, session);
 
 		} catch (Exception e) {
@@ -136,7 +136,7 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 				} else
 					seciliFazlaMesaiERPDetay.setAlanDeger("");
 				pdksEntityController.saveOrUpdate(session, entityManager, seciliFazlaMesaiERPDetay);
-				session.flush();
+				ortakIslemler.sessionFlush(session);
 				fillFazlaMesaiERPDetayList();
 				fillMethodAlanList();
 				seciliFazlaMesaiERPDetay = null;
@@ -200,7 +200,7 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 			fmd.setSira(sira2);
 			pdksEntityController.saveOrUpdate(session, entityManager, fmd);
 			pdksEntityController.saveOrUpdate(session, entityManager, fmd1);
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 			fillFazlaMesaiERPDetayList();
 		}
 		return "";
@@ -220,7 +220,7 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 			fmd.setSira(sira1);
 			pdksEntityController.saveOrUpdate(session, entityManager, fmd);
 			pdksEntityController.saveOrUpdate(session, entityManager, fmd0);
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 			fillFazlaMesaiERPDetayList();
 		}
 		return "";
@@ -356,11 +356,7 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 				}
 			}
 			if (flush)
-				try {
-					session.flush();
-				} catch (Exception e) {
-
-				}
+				ortakIslemler.sessionFlush(session);
 
 		} else
 			list = new ArrayList<FazlaMesaiERPDetay>();
