@@ -113,6 +113,7 @@
 					</rich:dataTable>
 					<h:outputText value="Bağlı kullanıcı sayısı : #{openSessionHome.sessionFilterList.size()}" />
 					<BR />
+					<a4j:commandButton status="ajaxStatus" action="#{openSessionHome.durumDegistir()}" value="Getir" reRender="sessionTable" />
 					<a4j:commandButton status="ajaxStatus" action="#{openSessionHome.sessionKapat}" value="Session Kapat"
 						rendered="#{openSessionHome.kapatilacakAdet>0}" reRender="sessionTable" />
 					<a4j:commandButton status="ajaxStatus" action="#{acikBaglantiKapat.islemYapanKullanicilariIptalEt(null)}" rendered="false"

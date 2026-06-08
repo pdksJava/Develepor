@@ -3457,11 +3457,12 @@ public class PdksUtil implements Serializable {
 			} catch (Exception e) {
 				logger.error(e);
 			} finally {
-
-			}
+ 			}
 
 		} else
 			session1 = getSession(em, Boolean.TRUE);
+		if (PdksUtil.isSessionKapali(session1) == false)
+			session1.clear();
 		return session1;
 
 	}
@@ -3479,21 +3480,16 @@ public class PdksUtil implements Serializable {
 			delegate = em.getDelegate();
 			HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
 			sessionFactory = hsp.getSessionFactory();
-			if (yeni != null && yeni.booleanValue() == false) {
-				// session1 = sessionFactory.getCurrentSession();
-				session1 = (Session) delegate;
-			}
+			if (yeni != null && yeni.booleanValue() == false)
+				session1 = sessionFactory.getCurrentSession();
 
 		} catch (Exception e) {
 			session1 = null;
 
 		}
 
-		if (session1 == null || (yeni != null && yeni)) {
-
+		if (session1 == null || (yeni != null && yeni))
 			session1 = sessionFactory.openSession();
-
-		}
 
 		return session1;
 	}
