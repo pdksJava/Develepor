@@ -80,7 +80,7 @@ public class SessionListener implements HttpSessionListener, Serializable {
 				for (String key : sessionMap.keySet()) {
 					Session sessionSQL = sessionMap.get(key);
 					try {
-						if (sessionSQL.isConnected()) {
+						if (PdksUtil.isSessionKapali(sessionSQL) == false) {
 							sessionSQL.close();
 							if (sbSession.length() > 0)
 								sbSession.append(", ");
