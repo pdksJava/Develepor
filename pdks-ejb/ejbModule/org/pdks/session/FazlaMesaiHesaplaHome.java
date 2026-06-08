@@ -68,7 +68,6 @@ import org.pdks.entity.PersonelFazlaMesai;
 import org.pdks.entity.PersonelHareketIslem;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.PersonelKGS;
-import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
@@ -1221,7 +1220,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	/**
 	 * @return
 	 */
-	@Transactional
 	public String fillPersonelDenklestirmeList(String inputPersonelNo) {
 		componentState.setSeciliTab("tab1");
 		aksamGun = Boolean.FALSE;
@@ -1286,7 +1284,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param aylikPuantajSablon
 	 * @param denklestirmeDonemi
 	 */
-
+	@Transactional
 	public List<AylikPuantaj> fillPersonelDenklestirmeDevam(String inputPersonelNo, AylikPuantaj aylikPuantajSablon, DepartmanDenklestirmeDonemi denklestirmeDonemi) {
 		boolean kullaniciCalistir = getPdksUser() != null && userHome != null;
 		User loginUser = aylikPuantajSablon.getLoginUser();
@@ -3665,63 +3663,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	}
 
 	/**
-	 * @return
-	 */
-	public String ciftBolumCalisanHareketGuncelle() {
-		PersonelView personelView = null;
-		Tanim ciftBolumCalisanKartNedenTanim = null;
-		KapiView manuelGiris = null, manuelCikis = null;
-		for (HareketKGS hareketKGS : hareketler) {
-			if (hareketKGS.isCheckBoxDurum()) {
-				HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(null, session);
-				manuelGiris = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS);
-				manuelCikis = manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS);
-				manuelKapiMap = null;
-				ciftBolumCalisanKartNedenTanim = ciftBolumTanimGetir();
-				break;
-			}
-		}
-		String islemAciklama = "Seçili kayıt yok!";
-		if (ciftBolumCalisanKartNedenTanim != null) {
-			Long nedenId = ciftBolumCalisanKartNedenTanim.getId();
-			Personel seciliPersonel = seciliAylikPuantaj.getPdksPersonel();
-			Personel islemPersonel = ciftBolumCalisanMap.get(seciliPersonel.getId());
-			personelView = new PersonelView();
-			personelView.setId(islemPersonel.getPersonelKGS().getId());
-			String seciliAciklama = seciliPersonel.getPdksSicilNo() + " - " + seciliPersonel.getAdSoyad() + " aktarım için iptal edildi.";
-			islemAciklama = islemPersonel.getPdksSicilNo() + " - " + islemPersonel.getAdSoyad() + " hareket aktarımı yapıldı.";
-			long pdksId = 0l;
-			for (HareketKGS hareketKGS : hareketler) {
-				if (hareketKGS.isCheckBoxDurum()) {
-					KapiView kapiView = hareketKGS.getKapiView();
-					if (kapiView != null) {
-						if (kapiView.getKapi() != null && manuelCikis != null && manuelGiris != null) {
-							Kapi kapi = kapiView.getKapi();
-							if (kapi.isGirisKapi())
-								kapiView = manuelGiris;
-							else if (kapi.isCikisKapi())
-								kapiView = manuelCikis;
-						}
-					}
-					Long id = pdksEntityController.hareketEkle(kapiView, personelView, hareketKGS.getOrjinalZaman(), userLogin, nedenId, islemAciklama, session);
-					if (id != null) {
-
-						pdksEntityController.hareketSil(Long.parseLong(hareketKGS.getId().substring(1)), pdksId, userLogin, nedenId, seciliAciklama, hareketKGS.getKgsSirketId(), session);
-					}
-				}
-			}
-		}
-		if (personelView != null) {
-			sessionFlush();
-			if (userLogin.getLogin())
-				PdksUtil.addMessageInfo(islemAciklama);
-			fillPersonelDenklestirmeList(null);
-		} else if (userLogin.getLogin())
-			PdksUtil.addMessageWarn(islemAciklama);
-		return "";
-	}
-
-	/**
 	 * @param puantaj
 	 * @return
 	 */
@@ -5251,6 +5192,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param manuelOnay
 	 * @return
 	 */
+
 	private String fazlaMesaiOnaylaDevam(List<AylikPuantaj> puantajList, Boolean guncellendi, Boolean manuelOnay) {
 		try {
 			boolean onaylandi = Boolean.FALSE;

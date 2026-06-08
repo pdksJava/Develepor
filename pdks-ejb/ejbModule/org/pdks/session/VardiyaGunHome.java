@@ -363,7 +363,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	/**
 	 * @param object
 	 */
-	@Transactional
+	
 	private void saveOrUpdate(Object object) {
 		if (object != null)
 			pdksEntityController.saveOrUpdate(session, entityManager, object);
@@ -372,7 +372,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	/**
 	 * 
 	 */
-	@Transactional
+	
 	private void sessionFlush() {
 		try {
 			// if (authenticatedUser != null)
@@ -1625,8 +1625,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param excelAktar
 	 * @return
 	 */
-	@Transactional
-	public boolean vardiyaPlanKontrol(AylikPuantaj ap, PersonelDenklestirme personelDenklestirme, HashMap<Long, HashMap<String, Boolean>> calismaModeliVardiyaOzelMap, TreeMap<Long, Vardiya> vardiyaMap, VardiyaPlan plan, String mesaj, boolean excelAktar) {
+	
+	private boolean vardiyaPlanKontrol(AylikPuantaj ap, PersonelDenklestirme personelDenklestirme, HashMap<Long, HashMap<String, Boolean>> calismaModeliVardiyaOzelMap, TreeMap<Long, Vardiya> vardiyaMap, VardiyaPlan plan, String mesaj, boolean excelAktar) {
 		boolean yaz = Boolean.TRUE;
 		boolean haftaTatil = Boolean.FALSE;
 		Calendar cal = Calendar.getInstance();
@@ -3636,7 +3636,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	/**
 	 * 
 	 */
-	@Transactional
+
 	private void savePlanLastParameter() {
 
 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
@@ -3993,7 +3993,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param aylik
 	 * @throws Exception
 	 */
-	@Transactional
+
 	private boolean aylikVardiyaKontrolKaydet(Boolean aylik) throws Exception {
 
 		boolean flush = Boolean.FALSE;
@@ -5763,8 +5763,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	/**
 	 * 
 	 */
-	@Transactional
-	public void talepGirisCikisHareketEkle(FazlaMesaiTalep fmt, boolean manuel) {
+	
+	private void talepGirisCikisHareketEkle(FazlaMesaiTalep fmt, boolean manuel) {
 		if (fmt != null && fmt.getId() != null) {
 			Vardiya islemVardiya = seciliVardiyaGun != null ? seciliVardiyaGun.getIslemVardiya() : null;
 			PersonelKGS personelKGS = null;
@@ -6617,7 +6617,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param personel
 	 * @return
 	 */
-	@Transactional
+	
 	public String fillBolumPersonelDenklestirmeList(Personel secPersonel) {
 		if (secPersonel != null && secPersonel.getEkSaha3() != null) {
 			sicilNo = secPersonel.getPdksSicilNo();
@@ -6637,7 +6637,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param puantajList
 	 * @param session
 	 */
-	@Transactional
+
 	public void hesaplanmisPlanOnayla(User userInput, List<AylikPuantaj> puantajList, Session sessionx) {
 		if (puantajList != null) {
 			if (aramaSecenekleri == null)
@@ -8699,7 +8699,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param puantajList
 	 * @throws Exception
 	 */
-	@Transactional
+	
 	private void setDenklestirmeAlanlari(List<AylikPuantaj> puantajList) throws Exception {
 
 		TreeMap<Long, PersonelDenklestirme> map = new TreeMap<Long, PersonelDenklestirme>();
