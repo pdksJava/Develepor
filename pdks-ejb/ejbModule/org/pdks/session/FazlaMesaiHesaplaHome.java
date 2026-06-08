@@ -2131,7 +2131,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							} catch (Exception e) {
 								logger.debug("");
 							}
-							if (key.endsWith("0526") || key.endsWith("0504x"))
+							if (key.endsWith("0517") || key.endsWith("0504x"))
 								logger.debug(vardiyaGun.getVardiyaKeyStr() + " " + vardiyaGun.isHareketHatali() + " " + vardiyaGun.getFazlaMesaiOnayla() + " " + vardiyaGun.isAyrikHareketVar());
 							if (hareketYokDurum) {
 								logger.debug(vardiyaGun.getVardiyaKeyStr());
@@ -2141,8 +2141,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							hareketDurum = vardiyaGun.isZamanGelmedi() == false && islemVardiya != null;
 							if (denklestirmeAyDurum && vardiyaGun.isAyinGunu() && hareketDurum && (vardiyaGun.isAyrikHareketVar() || vardiyaGun.isHareketHatali() || (islemVardiya.isIcapVardiyasi() == false && vardiyaGun.getFazlaMesaiOnayla() == null))) {
 								hareketDurum = vardiyaGun.isAyrikHareketVar() == false && (islemVardiya.isCalisma() == false || vardiyaGun.isIzinli());
-								if (hareketDurum == false && tatilGunleriMap.containsKey(key))
-									hareketDurum = islemVardiya.isCalisma() && vardiyaGun.getHareketler() == null;
+								if (hareketDurum == false && islemVardiya.isCalisma()) {
+									if (tatilGunleriMap.containsKey(key))
+										hareketDurum = vardiyaGun.getHareketler() == null;
+									else
+										hareketDurum = key.equals(PdksUtil.convertToDateString(personel.getSskCikisTarihi(), "yyyyMMdd"));
+
+								}
+
 								if (hareketDurum != vardiyaGun.getDurum().booleanValue() && (authenticatedUser != null && adminRole))
 									logger.info(vardiyaGun.getVardiyaKeyStr() + " " + vardiyaGun.getDurum() + " " + hareketDurum);
 
