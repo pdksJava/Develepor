@@ -363,7 +363,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	/**
 	 * @param object
 	 */
-	
+
 	private void saveOrUpdate(Object object) {
 		if (object != null)
 			pdksEntityController.saveOrUpdate(session, entityManager, object);
@@ -372,7 +372,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	/**
 	 * 
 	 */
-	
+
 	private void sessionFlush() {
 		try {
 			// if (authenticatedUser != null)
@@ -1625,7 +1625,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param excelAktar
 	 * @return
 	 */
-	
+
 	private boolean vardiyaPlanKontrol(AylikPuantaj ap, PersonelDenklestirme personelDenklestirme, HashMap<Long, HashMap<String, Boolean>> calismaModeliVardiyaOzelMap, TreeMap<Long, Vardiya> vardiyaMap, VardiyaPlan plan, String mesaj, boolean excelAktar) {
 		boolean yaz = Boolean.TRUE;
 		boolean haftaTatil = Boolean.FALSE;
@@ -5763,7 +5763,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	/**
 	 * 
 	 */
-	
+
 	private void talepGirisCikisHareketEkle(FazlaMesaiTalep fmt, boolean manuel) {
 		if (fmt != null && fmt.getId() != null) {
 			Vardiya islemVardiya = seciliVardiyaGun != null ? seciliVardiyaGun.getIslemVardiya() : null;
@@ -6617,7 +6617,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param personel
 	 * @return
 	 */
-	
+
 	public String fillBolumPersonelDenklestirmeList(Personel secPersonel) {
 		if (secPersonel != null && secPersonel.getEkSaha3() != null) {
 			sicilNo = secPersonel.getPdksSicilNo();
@@ -6702,7 +6702,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 			if (authenticatedUser != null)
 				authenticatedUser.putSessionMap("sayfaCalismaPlanOlustur", session);
+			ortakIslemler.setUserMenuItemTime(entityManager, session, "sayfaCalismaPlanOlustur");
 		}
+
 		adminRole = true;
 		topluGuncelleme = true;
 		userLoginOldu = false;
@@ -8699,7 +8701,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param puantajList
 	 * @throws Exception
 	 */
-	
+
 	private void setDenklestirmeAlanlari(List<AylikPuantaj> puantajList) throws Exception {
 
 		TreeMap<Long, PersonelDenklestirme> map = new TreeMap<Long, PersonelDenklestirme>();
@@ -10021,8 +10023,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaMesaiTalepListAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
-		session.setFlushMode(FlushMode.MANUAL);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, "mesaiTalepListesi");
+		ortakIslemler.setUserMenuItemTime(entityManager, session, "mesaiTalepListesi");
 		setPdksUser(authenticatedUser);
 		userLoginOldu = authenticatedUser != null;
 		adminRoleDurum(getPdksUser());
@@ -10055,8 +10057,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaFazlaMesaiTalepRaporAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
-		session.setFlushMode(FlushMode.MANUAL);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, "fazlaMesaiTalep");
+		ortakIslemler.setUserMenuItemTime(entityManager, session, "fazlaMesaiTalep");
 		userLoginOldu = authenticatedUser != null;
 		setPdksUser(authenticatedUser);
 		adminRoleDurum(getPdksUser());
@@ -11003,6 +11005,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	public void sayfaGirisRaporAction() throws Exception {
 		linkBordroAdres = null;
 		try {
+			if (PdksUtil.isSessionKapali(session))
+				session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, "aylikPlanRapor");
+			ortakIslemler.setUserMenuItemTime(entityManager, session, "aylikPlanRapor");
 			userLoginOldu = authenticatedUser != null;
 			aylikVardiyaPlanGiris("aylikPlanRapor", false);
 
