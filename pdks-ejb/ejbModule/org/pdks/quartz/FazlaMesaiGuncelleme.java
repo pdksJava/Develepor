@@ -94,15 +94,16 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	@Transactional
 	public String fazlaMesaiHesaplamaBaslat() {
 		try {
+			session = null;
 			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-			basTarih = ortakIslemler.getBugun();
 			parameterFazlaMesaiHesaplama = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
 			if (parameterFazlaMesaiHesaplama == null) {
 				parameterFazlaMesaiHesaplama = new Parameter();
 				parameterFazlaMesaiHesaplama.setDescription("Fazla Mesai Toplu Hesaplama");
 			}
 			if (parameterFazlaMesaiHesaplama != null && ortakIslemler.hasStringValue(parameterFazlaMesaiHesaplama.getValue()) == false) {
+				basTarih = ortakIslemler.getBugun();
 				if (fazlaMesaiGuncelleme(basTarih, session) != null) {
 					if (fazlaMesaiDetay != null) {
 						mailGonder();
