@@ -3444,25 +3444,25 @@ public class PdksUtil implements Serializable {
 	 */
 	public static Session getSessionUser(EntityManager em, User user) {
 		Session session1 = null;
-		if (user != null) {
+		boolean durum = user == null;
+		if (durum == false) {
 			try {
 				session1 = user.getSessionSQL();
-				if (PdksUtil.isSessionKapali(session1) && em != null) {
-					session1 = getSession(em, Boolean.FALSE);
-					if (PdksUtil.isSessionKapali(session1) == false)
-						user.setSessionSQL(session1);
-
-				}
-
+				if (PdksUtil.isSessionKapali(session1) && em != null)
+					session1 = getSession(em, durum);
 			} catch (Exception e) {
 				logger.error(e);
 			} finally {
- 			}
+			}
 
-		} else
-			session1 = getSession(em, Boolean.TRUE);
-		if (PdksUtil.isSessionKapali(session1) == false)
+		}
+		boolean sessionVar = PdksUtil.isSessionKapali(session1) == false;
+		if (sessionVar)
 			session1.clear();
+		else
+			session1 = getSession(em, durum);
+		if (user != null && sessionVar)
+			user.setSessionSQL(session1);
 		return session1;
 
 	}
