@@ -3486,13 +3486,16 @@ public class PdksUtil implements Serializable {
 			session1 = null;
 
 		}
-		if (session1 == null) {
-			HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
-			sessionFactory = hsp.getSessionFactory();
-			if (notLogin)
-				session1 = sessionFactory.openSession();
-			else
-				session1 = sessionFactory.getCurrentSession();
+		if (PdksUtil.isSessionKapali(session1) && delegate != null) {
+			try {
+				HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
+				sessionFactory = hsp.getSessionFactory();
+				if (notLogin)
+					session1 = sessionFactory.openSession();
+				else
+					session1 = sessionFactory.getCurrentSession();
+			} catch (Exception e) {
+			}
 		}
 		return session1;
 	}
