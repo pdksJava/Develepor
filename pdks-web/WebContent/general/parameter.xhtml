@@ -148,12 +148,9 @@
 									rendered="#{ortakIslemler.getParameterKeyHasStringValue('smtpYedekUserNameaa')}"
 									action="#{personelERPGuncelleme.mailSatusKontrol(parameterHome.session)}" />
 								<ui:fragment rendered="#{ortakIslemler.canliDurum==false}">
-									<a4j:commandButton status="ajaxStatus" value="vardiyaHareketGuncelleme Calistir"
-										rendered="#{ortakIslemler.getParameterKeyHasStringValue('hareketVardiyaZamani')}"
-										action="#{planVardiyaHareketGuncelleme.vardiyaHareketGuncelleme(null,parameterHome.session)}" />
 									<a4j:commandButton status="ajaxStatus" value="fazlaMesaiGuncelleme Calistir"
 										rendered="#{ortakIslemler.canliDurum==false and ortakIslemler.testSunucuDurum==false }"
-										action="#{planVardiyaHareketGuncelleme.fazlaMesaiGuncelleme(null,parameterHome.session)}" />
+										action="#{fazlaMesaiGuncelleme.fazlaMesaiGuncelleme(null,parameterHome.session)}" />
 								</ui:fragment>
 							</c:if>
 							<a4j:commandButton status="ajaxStatus" value="Sistem Saati Güncelle Calistir"

@@ -388,16 +388,6 @@ public class IseGelmemeUyari implements Serializable {
 					Date sonrakiGun = ortakIslemler.tariheGunEkleCikar(cal, tarih, 1);
 					// Vardiya kayıtları okunuyor
 					TreeMap<String, VardiyaGun> vardiyalar = ortakIslemler.getIslemVardiyalar(personeller, oncekiGun, sonrakiGun, Boolean.FALSE, session, Boolean.TRUE);
-					try {
-						boolean otomatikGuncelle = ortakIslemler.getParameterKeyHasStringValue(PlanVardiyaHareketGuncelleme.PARAMETER_HAREKET_KEY);
-						if (otomatikGuncelle == false) {
-
-							vardiyalar = ortakIslemler.getIslemVardiyalar(personeller, oncekiGun, sonrakiGun, Boolean.FALSE, session, Boolean.TRUE);
-						}
-					} catch (Exception e) {
-						logger.error(e);
-						e.printStackTrace();
-					}
 
 					List<VardiyaGun> vardiyaList = new ArrayList<VardiyaGun>(vardiyalar.values());
 					ortakIslemler.sonrakiGunVardiyalariAyikla(tarih, vardiyaList, session);
@@ -988,7 +978,8 @@ public class IseGelmemeUyari implements Serializable {
 														Departman departmanSave = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
 														departmanSave.setMailBox(mailBoxStr);
 														pdksEntityController.saveOrUpdate(session, entityManager, departmanSave);
-														ortakIslemler.sessionFlush(session);;
+														ortakIslemler.sessionFlush(session);
+														;
 														departman = departmanSave;
 													} catch (Exception e) {
 														logger.error(departmanId + " " + mailBoxStr + "\n" + e);
