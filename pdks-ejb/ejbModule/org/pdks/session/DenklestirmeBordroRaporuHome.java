@@ -562,15 +562,15 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	}
 
 	/**
-	 * @param aylikPuantaj
+	 * @param pd
 	 * @return
 	 */
 
-	public String saveLastParameter(AylikPuantaj aylikPuantaj) {
+	public String saveLastParameter(AylikPuantaj ap) {
 		Map<String, String> map1 = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
-		PersonelDenklestirme personelDenklestirme = aylikPuantaj.getPersonelDenklestirme();
+		PersonelDenklestirme pd = ap.getPersonelDenklestirme();
 		String adres = map1.containsKey("host") ? map1.get("host") : "";
-		Personel personel = aylikPuantaj.getPdksPersonel();
+		Personel personel = pd.getPdksPersonel();
 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
 		lastMap.put("yil", "" + yil);
 		lastMap.put("ay", "" + ay);
@@ -588,15 +588,15 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			lastMap.put("altBolumId", "" + (personel.getEkSaha4() != null ? personel.getEkSaha4().getId() : "-1"));
 		lastMap.put("sicilNo", personel.getPdksSicilNo());
 		String sayfa = MenuItemConstant.fazlaMesaiHesapla;
-		CalismaModeliAy cma = personelDenklestirme.getCalismaModeliAy();
-		if (personelDenklestirme.getDurum().equals(Boolean.TRUE) || personelDenklestirme.isOnaylandi() || (cma == null || cma.isHareketKaydiVardiyaBulsunmu())) {
+		CalismaModeliAy cma = pd.getCalismaModeliAy();
+		if (pd.getDurum().equals(Boolean.TRUE) || pd.isOnaylandi() || (cma == null || cma.isHareketKaydiVardiyaBulsunmu())) {
 			lastMap.put("sayfaURL", FazlaMesaiHesaplaHome.sayfaURL);
 			lastMap.put("calistir", Boolean.TRUE);
 		} else {
 			lastMap.put("sayfaURL", VardiyaGunHome.sayfaURL);
 			sayfa = MenuItemConstant.vardiyaPlani;
 		}
-		bordroAdres = "<a href='http://" + adres + "/" + sayfaURL + "?linkAdresKey=" + aylikPuantaj.getPersonelDenklestirme().getId() + "'>" + ortakIslemler.getCalistiMenuAdi(sayfaURL) + " Ekranına Geri Dön</a>";
+		bordroAdres = "<a href='http://" + adres + "/" + sayfaURL + "?linkAdresKey=" + pd.getId() + "'>" + ortakIslemler.getCalistiMenuAdi(sayfaURL) + " Ekranına Geri Dön</a>";
 
 		try {
 			ortakIslemler.saveLastParameter(lastMap, session);

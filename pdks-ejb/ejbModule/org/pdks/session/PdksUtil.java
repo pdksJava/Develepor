@@ -3444,53 +3444,59 @@ public class PdksUtil implements Serializable {
 	 */
 	public static Session getSessionUser(EntityManager em, User user) {
 		Session session1 = null;
-		if (user != null) {
+		boolean durum = user == null;
+		if (durum == false) {
 			try {
 				session1 = user.getSessionSQL();
-				if (PdksUtil.isSessionKapali(session1) && em != null) {
-					session1 = getSession(em, Boolean.FALSE);
-					if (PdksUtil.isSessionKapali(session1) == false)
-						user.setSessionSQL(session1);
-
-				}
-
+				if (PdksUtil.isSessionKapali(session1) && em != null)
+					session1 = getSession(em, durum);
 			} catch (Exception e) {
 				logger.error(e);
 			} finally {
- 			}
+			}
 
-		} else
-			session1 = getSession(em, Boolean.TRUE);
-		if (PdksUtil.isSessionKapali(session1) == false)
+		}
+		boolean sessionVar = PdksUtil.isSessionKapali(session1) == false;
+		if (sessionVar)
 			session1.clear();
+		else
+			session1 = getSession(em, durum);
+		if (user != null && sessionVar)
+			user.setSessionSQL(session1);
 		return session1;
 
 	}
 
 	/**
 	 * @param em
-	 * @param yeni
+	 * @param notLogin
 	 * @return
 	 */
-	public static Session getSession(EntityManager em, Boolean yeni) {
+	public static Session getSession(EntityManager em, Boolean notLogin) {
 		Session session1 = null;
 		Object delegate = null;
 		SessionFactory sessionFactory = null;
+		if (notLogin == null)
+			notLogin = Boolean.TRUE;
 		try {
 			delegate = em.getDelegate();
-			HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
-			sessionFactory = hsp.getSessionFactory();
-			if (yeni != null && yeni.booleanValue() == false)
-				session1 = sessionFactory.getCurrentSession();
-
+			if (notLogin.booleanValue() == false)
+				session1 = (Session) delegate;
 		} catch (Exception e) {
 			session1 = null;
 
 		}
-
-		if (session1 == null || (yeni != null && yeni))
-			session1 = sessionFactory.openSession();
-
+		if (PdksUtil.isSessionKapali(session1) && delegate != null) {
+			try {
+				HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
+				sessionFactory = hsp.getSessionFactory();
+				if (notLogin)
+					session1 = sessionFactory.openSession();
+				else
+					session1 = sessionFactory.getCurrentSession();
+			} catch (Exception e) {
+			}
+		}
 		return session1;
 	}
 

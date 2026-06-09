@@ -85,8 +85,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			Session session = null;
 
 			zamanDurum = false;
-
-			izinGuncelemeCalistir(false, session);
+			if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum())
+				izinGuncelemeCalistir(false, session);
 		}
 		return null;
 	}
