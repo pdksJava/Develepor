@@ -139,7 +139,7 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 
 	public void setMenuItemTree4Rol(Role rol) {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("status", Boolean.TRUE);
 		parametreMap.put("topMenu", Boolean.TRUE);
@@ -202,7 +202,7 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 	public void sayfaGirisAction() {
 
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		selectedIdsFromTreeMap.clear();
 		// fillMenuItemTree();
@@ -212,7 +212,7 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("status", Boolean.TRUE);
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 
 		allTreeMenuItemList = (ArrayList<MenuItem>) pdksEntityController.getObjectByInnerObjectList(parametreMap, MenuItem.class);
@@ -267,7 +267,7 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 	@SuppressWarnings("unchecked")
 	public List<Role> getAllRoleList() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("status=", Boolean.TRUE);
 		parametreMap.put("rolename <> ", Role.TIPI_ADMIN);
@@ -656,7 +656,7 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 	public ArrayList<MenuItem> getMenuItemList() {
 		HashMap parametreMap = new HashMap();
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 
 		ArrayList<MenuItem> tempMenuItemList = (ArrayList<MenuItem>) pdksEntityController.getObjectByInnerObjectList(parametreMap, MenuItem.class);
@@ -694,7 +694,7 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 	@Transactional
 	public String deleteAccountPermissionFromModelPanel(AccountPermission selectedAccPermission) {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ArrayList<AccountPermission> deleteAccountPermissionList = new ArrayList<AccountPermission>();
 		// permissionun ait oldugu menuitem bulunur.
 		HashMap parametreMap = new HashMap();

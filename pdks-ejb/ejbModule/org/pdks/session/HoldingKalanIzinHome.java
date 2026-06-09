@@ -108,7 +108,7 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		istenAyrilanEkle = Boolean.FALSE;
 		if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)

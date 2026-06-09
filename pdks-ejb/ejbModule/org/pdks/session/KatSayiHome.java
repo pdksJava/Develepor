@@ -87,7 +87,7 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		pasifGoster = false;
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		fillKatSayiList();

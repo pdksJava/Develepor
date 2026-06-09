@@ -109,7 +109,7 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 
 		sirketList = ortakIslemler.getSelectItemList("sirket", authenticatedUser);

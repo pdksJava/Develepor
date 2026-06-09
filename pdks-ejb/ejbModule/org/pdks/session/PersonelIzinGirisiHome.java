@@ -1051,7 +1051,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaSSKGirisAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, "sskIzinGirisi");
 		try {
 			if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)
@@ -1099,7 +1099,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		servisAktarDurum = Boolean.FALSE;
 		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals("personelIzinGirisi");
@@ -1394,7 +1394,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void onayimaGelenIzinlerAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, "onayimaGelenIzinler");
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String mailId = (String) req.getParameter("mId");
@@ -2278,7 +2278,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	 */
 	public void sayfaGirisPDFAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		if (sessionIzin != null)
 			setIzin(sessionIzin);
 		aramaSecenekleri.setSessionClear(Boolean.FALSE);
@@ -4501,7 +4501,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void fillHekimIzinleri(boolean izinli) {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, "hekimIzinRaporu");
 
 		List<PersonelIzin> izinList = null;

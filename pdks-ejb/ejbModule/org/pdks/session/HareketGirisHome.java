@@ -501,7 +501,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		try {
 			ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 			if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)

@@ -131,7 +131,7 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		MenuItem selectedMenuItemFromTree = null;
 		FacesMessage facesMessage = new FacesMessage();
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 
 		// treeden secili olanlari alir.Bu islem sirasinda agactan bir tane menu
 		// bileseni secilmeli fakat biz hepsini aliyoruz. 1den fazlaysa uyari
@@ -224,7 +224,7 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 	@Transactional
 	public String moveMenuItemsFromTree2DataTable() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ArrayList<MenuItem> deleteMenuItemList = new ArrayList<MenuItem>();
 		ArrayList<String> menuItemNameList = new ArrayList<String>();
 		List<AccountPermission> deleteAccountPermissionList = new ArrayList<AccountPermission>();
@@ -344,7 +344,7 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		menuItemGiris();
 

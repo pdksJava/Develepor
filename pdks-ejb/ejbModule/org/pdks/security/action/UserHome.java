@@ -209,7 +209,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sifreUnuttumAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, "/sifreUnuttum");
 		ortakIslemler.setUserMenuItemTime(entityManager ,session, "sifreUnuttum");
 		String str = MenuItemConstant.login;
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();

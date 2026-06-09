@@ -154,7 +154,7 @@ public class SapServerTanimlamaHome extends EntityHome<SAPSunucu> implements Ser
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		seciliSAPSunucu = new SAPSunucu();
 		fillSAPSunucuList();

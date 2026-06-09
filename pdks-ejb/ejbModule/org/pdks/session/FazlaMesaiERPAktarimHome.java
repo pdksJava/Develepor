@@ -146,7 +146,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		fazlaMesaiERP = null;
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		aylar = ortakIslemler.getAyListesi(Boolean.TRUE);

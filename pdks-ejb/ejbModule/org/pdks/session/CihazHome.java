@@ -134,7 +134,7 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		fillTerminalList();
 	}
@@ -142,7 +142,7 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaQRGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String cihazIdStr = (String) req.getParameter("Id");
 		data = null;

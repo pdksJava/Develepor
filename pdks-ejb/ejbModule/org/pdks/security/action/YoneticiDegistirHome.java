@@ -77,7 +77,7 @@ public class YoneticiDegistirHome extends EntityHome<User> implements Serializab
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		if (authenticatedUser.getSeciliSuperVisor() != null)
 			setYonetici(authenticatedUser.getSeciliSuperVisor());

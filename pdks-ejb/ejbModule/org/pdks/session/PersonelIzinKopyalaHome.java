@@ -51,6 +51,8 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 
 	@RequestParameter
 	Long personelIzinId;
+	
+	public static String sayfaURL =  "personelIzinKopyala";
 
 	@In(create = true)
 	PdksEntityController pdksEntityController;
@@ -62,6 +64,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 	OrtakIslemler ortakIslemler;
 	@In(required = false, create = true)
 	IzinBakiyeGuncelleme izinBakiyeGuncelleme;
+	
 
 	private Dosya izinBakiyeDosya = new Dosya();
 	@In(required = false)
@@ -90,7 +93,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		session.setFlushMode(FlushMode.MANUAL);
 		session.clear();
 		sayfaGiris(session);

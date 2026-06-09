@@ -3443,11 +3443,37 @@ public class PdksUtil implements Serializable {
 	 * @return
 	 */
 	public static Session getSessionUser(EntityManager em, User user) {
+
+		Session session1 = null;
+		boolean durum = user == null;
+		if (durum == false) {
+
+			session1 = getSessionUserCalistiSayfa(em, user, null);
+
+		}
+		boolean sessionVar = PdksUtil.isSessionKapali(session1) == false;
+		if (sessionVar)
+			session1.clear();
+		else
+			session1 = getSession(em, durum);
+		if (user != null && sessionVar)
+			user.setSessionSQL(session1);
+		return session1;
+
+	}
+
+	/**
+	 * @param em
+	 * @param user
+	 * @return
+	 */
+	public static Session getSessionUserCalistiSayfa(EntityManager em, User user, String sayfa) {
 		Session session1 = null;
 		boolean durum = user == null;
 		if (durum == false) {
 			try {
-				session1 = user.getSessionSQL();
+				if (PdksUtil.hasStringValue(sayfa) == false)
+					session1 = user.getSessionSQL();
 				if (PdksUtil.isSessionKapali(session1) && em != null)
 					session1 = getSession(em, durum);
 			} catch (Exception e) {

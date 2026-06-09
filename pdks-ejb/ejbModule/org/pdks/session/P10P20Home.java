@@ -63,6 +63,7 @@ public class P10P20Home extends EntityHome<HareketKGS> implements Serializable {
 	ExternalContext extCtx;
 	@In(value = "#{facesContext}")
 	FacesContext facesContext;
+	public static String sayfaURL = "hareketlerText";
 
 	List<HareketKGS> hareketList = new ArrayList<HareketKGS>();
 
@@ -100,7 +101,7 @@ public class P10P20Home extends EntityHome<HareketKGS> implements Serializable {
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		session.setFlushMode(FlushMode.MANUAL);
 		session.clear();
 		aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
