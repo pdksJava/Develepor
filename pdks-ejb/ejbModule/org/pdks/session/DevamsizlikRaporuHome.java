@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -40,7 +41,10 @@ import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
+import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
+
+import com.google.gson.Gson;
 
 @Name("devamsizlikRaporuHome")
 public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Serializable {
@@ -98,21 +102,79 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		super.create();
 	}
 
+	public String sayfaMailRaporAction() {
+		session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+		if (PdksUtil.isSessionKapali(session) == false) {
+			girisBilgiHazirla();
+			// setDate(PdksUtil.tariheGunEkleCikar(PdksUtil.buGun(), -1));
+			try {
+				devamsizlikListeRaporuOlustur();
+			} catch (Exception e) {
+				logger.error(e);
+			}
+			if (vardiyaGunList != null) {
+				if (vardiyaGunList.isEmpty() == false) {
+					Gson gs = new Gson();
+					boolean tesisDurum = ortakIslemler.getListTesisDurum(vardiyaGunList);
+					HashMap<String, Object> map1 = new HashMap<String, Object>();
+					List<LinkedHashMap<String, Object>> list = new ArrayList<LinkedHashMap<String, Object>>();
+					map1.put(ortakIslemler.getMenuAdi(sayfaURL), list);
+					String patternDate = PdksUtil.getDateFormat(), patternTime = PdksUtil.getSaatFormat(), patternDateTime = PdksUtil.getDateTimeFormat();
+					for (VardiyaGun vg : vardiyaGunList) {
+						LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+						Personel personel = vg.getPdksPersonel();
+						Vardiya vardiya = vg.getIslemVardiya();
+						Sirket sirket = personel.getSirket();
+						map.put("sirketAciklama", sirket.getAd());
+						if (tesisDurum)
+							map.put("tesisAciklama", sirket.getTesisDurum() && personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
+						map.put("yoneticiAciklama", personel.getYoneticisi() != null ? personel.getYoneticisi().getAdSoyad() : "");
+						map.put("Adı Soyad", personel.getAdSoyad());
+						map.put("personelNoAciklama", personel.getPdksSicilNo());
+						map.put("bolumAciklama", personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
+						map.put("Tarihi", PdksUtil.convertToDateString(vg.getVardiyaDate(), patternDate));
+						if (vardiya.isCalisma() == false)
+							map.put("vardiyaAciklama", vardiya.getKisaAdi());
+						else
+							map.put("vardiyaAciklama", PdksUtil.convertToDateString(vardiya.getBasZaman(), patternTime) + " - " + PdksUtil.convertToDateString(vardiya.getBitZaman(), patternTime));
+						map.put("Giriş", vg.getGirisHareket() != null ? PdksUtil.convertToDateString(vg.getGirisHareket().getOrjinalZaman(), patternDateTime) : "");
+						map.put("Çıkış", vg.getCikisHareket() != null ? PdksUtil.convertToDateString(vg.getCikisHareket().getOrjinalZaman(), patternDateTime) : "");
+						map.put("Açıklama", getVardiyaAciklama(vg));
+
+						list.add(map);
+					}
+					logger.info(gs.toJson(map1));
+				}
+			}
+
+			pdksEntityController.sessionClose(session);
+		}
+		return MenuItemConstant.home;
+
+	}
+
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		// default bugun icin ise gelmeyen raporu cekili olsun
+		if (authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isAdmin() || authenticatedUser.isGenelMudur())
+			fillSirketList();
+		girisBilgiHazirla();
+
+		// devamsizlikListeOlustur();
+
+	}
+
+	private void girisBilgiHazirla() {
 		Date dateBas = PdksUtil.buGun();
 		setDate(dateBas);
 		setBitisTarih(dateBas);
 		vardiyaGunList.clear();
-		durumList.clear();
 		as = new AramaSecenekleri();
 		as.setLoginUser(authenticatedUser);
-		if (authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isAdmin() || authenticatedUser.isGenelMudur())
-			fillSirketList();
+		durumList.clear();
 		durumList.add(new Liste(1, "Erken Giriş"));
 		durumList.add(new Liste(2, "Erken Çıkış"));
 		durumList.add(new Liste(3, "Geç Giriş"));
@@ -123,9 +185,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		Liste izinli = new Liste(8, "İzinli");
 		izinli.setSecili(false);
 		durumList.add(izinli);
-
-		// devamsizlikListeOlustur();
-
 	}
 
 	public String fillSirketList() {
@@ -394,6 +453,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		setInstance(pdksVardiyaGun);
 		List<HareketKGS> kgsList = pdksVardiyaGun.getHareketler();
 		setHareketList(kgsList);
+		devamsizlikListeRaporuOlustur();
 
 	}
 
@@ -435,7 +495,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		Date tarih1 = null;
 		Date tarih2 = null;
 		List<Personel> tumPersoneller = null;
-		if (authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isAdmin() || authenticatedUser.isGenelMudur()) {
+		if (authenticatedUser == null || authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isAdmin() || authenticatedUser.isGenelMudur()) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
