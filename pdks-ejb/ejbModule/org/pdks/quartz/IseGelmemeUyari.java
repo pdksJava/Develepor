@@ -2398,7 +2398,8 @@ public class IseGelmemeUyari implements Serializable {
 						// if (!zamanDurum)
 						// zamanDurum = PdksUtil.getTestDurum();
 						if (zamanDurum)
-							iseGelmemeDurumuCalistir(null, null, session, null, false, true);
+							if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum())
+								iseGelmemeDurumuCalistir(null, null, session, null, false, true);
 					}
 				}
 			} catch (Exception e) {
