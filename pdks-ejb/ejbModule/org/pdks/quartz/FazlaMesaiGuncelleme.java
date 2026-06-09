@@ -98,6 +98,10 @@ public class FazlaMesaiGuncelleme implements Serializable {
 				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			basTarih = ortakIslemler.getBugun();
 			parameterFazlaMesaiHesaplama = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
+			if (parameterFazlaMesaiHesaplama == null) {
+				parameterFazlaMesaiHesaplama = new Parameter();
+				parameterFazlaMesaiHesaplama.setDescription("Fazla Mesai Toplu Hesaplama");
+			}
 			if (parameterFazlaMesaiHesaplama != null && ortakIslemler.hasStringValue(parameterFazlaMesaiHesaplama.getValue()) == false) {
 				if (fazlaMesaiGuncelleme(basTarih, session) != null) {
 					if (fazlaMesaiDetay != null) {
