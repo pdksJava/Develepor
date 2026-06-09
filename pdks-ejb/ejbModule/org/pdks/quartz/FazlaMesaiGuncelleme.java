@@ -94,7 +94,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		try {
 			if (PdksUtil.isSessionKapali(session))
 				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
- 			basTarih = ortakIslemler.getBugun();
+			basTarih = ortakIslemler.getBugun();
 			Parameter parameterFazlaMesaiHesaplama = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
 			if (parameterFazlaMesaiHesaplama != null && ortakIslemler.hasStringValue(parameterFazlaMesaiHesaplama.getValue()) == false) {
 				if (fazlaMesaiGuncelleme(basTarih, session) != null) {
@@ -122,24 +122,23 @@ public class FazlaMesaiGuncelleme implements Serializable {
 
 	@Asynchronous
 	@SuppressWarnings("unchecked")
- 	public QuartzTriggerHandle fazlaMesaiHesaplamaTimer(@Expiration Date when, @IntervalCron String interval) {
+	public QuartzTriggerHandle fazlaMesaiHesaplamaTimer(@Expiration Date when, @IntervalCron String interval) {
 		if (!isCalisiyor()) {
 			setCalisiyor(Boolean.TRUE);
 			logger.debug("fazlaMesaiHesaplamaTimer in " + PdksUtil.getCurrentTimeStampStr());
-			int saniye = 5;
 			try {
 				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 					Calendar cal = Calendar.getInstance();
 					bugun = cal.getTime();
 					if (PdksUtil.isSessionKapali(session))
 						session = PdksUtil.getSession(entityManager, Boolean.TRUE);
- 					Parameter parameterFazlaMesaiHesaplama = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
+					Parameter parameterFazlaMesaiHesaplama = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
 					if (parameterFazlaMesaiHesaplama != null) {
- 						Date tarih = PdksUtil.getDate(bugun);
+						Date tarih = PdksUtil.getDate(bugun);
 						Date basTarih = bugun;
-	 						basTarih = ortakIslemler.getBugun();
+						basTarih = ortakIslemler.getBugun();
 						if (fazlaMesaiGuncelleme(tarih, session) != null) {
- 							if (fazlaMesaiDetay != null) {
+							if (fazlaMesaiDetay != null) {
 								if (PdksUtil.isSessionKapali(session))
 									session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 								String konu = parameterFazlaMesaiHesaplama.getDescription();
@@ -157,9 +156,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 
 					}
 
-				} else
-					saniye = 15;
-				Thread.sleep(saniye * 1000);
+				}
 
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n" + e.getMessage() + " " + PdksUtil.getCurrentTimeStampStr());
