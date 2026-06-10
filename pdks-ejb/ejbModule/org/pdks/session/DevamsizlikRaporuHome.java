@@ -150,6 +150,10 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 						for (VardiyaGun vg : vardiyaGunList) {
 							LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 							Personel personel = vg.getPdksPersonel();
+							if (personel.getEkSaha3() == null)
+								continue;
+							if (vg.getVardiya().isCalisma())
+								vg.setIslemVardiya(null);
 							Vardiya vardiya = vg.getIslemVardiya();
 							Sirket sirket = personel.getSirket();
 							map.put("sirketAciklama", sirket.getAd());
