@@ -187,7 +187,7 @@ public class PersonelERPGuncelleme implements Serializable {
 
 				hataKonum = "Paramatre okunuyor ";
 
-				Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_KEY);
+				Parameter parameter = ortakIslemler.getParameterAktif(session, PARAMETER_KEY);
 				String value = (parameter != null) ? parameter.getValue() : null;
 				hataKonum = "Paramatre okundu ";
 				String personelERPTableViewAdi = ortakIslemler.getParameterKey(ortakIslemler.getParametrePersonelERPTableView());
@@ -345,7 +345,7 @@ public class PersonelERPGuncelleme implements Serializable {
 	public void kullaniciGuncelle(Session session, User user) {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, user == null);
-		Parameter parameterEmailBozuk = ortakIslemler.getParameter(session, "emailBozuk");
+		Parameter parameterEmailBozuk = ortakIslemler.getParameterAktif(session, "emailBozuk");
 		boolean emailBozuk = parameterEmailBozuk != null;
 		HashMap fields = new HashMap();
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -563,7 +563,7 @@ public class PersonelERPGuncelleme implements Serializable {
 	 * @throws Exception
 	 */
 	private void sapOlmayanPersonelBul(Session session) throws Exception {
-		Parameter parameter = ortakIslemler.getParameter(session, "sapKodu");
+		Parameter parameter = ortakIslemler.getParameterAktif(session, "sapKodu");
 		List<Personel> list = null;
 		if (parameter != null && parameter.getActive() != null && parameter.getActive()) {
 			String sapKodu = parameter.getValue();

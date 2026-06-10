@@ -2382,9 +2382,9 @@ public class IseGelmemeUyari implements Serializable {
 					// logger.error("Ise gelme durumu " + PdksUtil.getCurrentTimeStampStr());
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 					hataKonum = "Paramatre okunuyor ";
-					Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_KEY);
+					Parameter parameter = ortakIslemler.getParameterAktif(session, PARAMETER_KEY);
 					if (parameter == null) {
-						parameter = ortakIslemler.getParameter(session, PARAMETER_KEY + "IzinHaric");
+						parameter = ortakIslemler.getParameterAktif(session, PARAMETER_KEY + "IzinHaric");
 						izinDahil = parameter == null;
 					}
 

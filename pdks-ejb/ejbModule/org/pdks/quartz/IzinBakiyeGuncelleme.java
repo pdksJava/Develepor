@@ -109,7 +109,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			Date time = cal.getTime();
 			hataGonder = Boolean.TRUE;
 			hataKonum = "Paramatre okunuyor ";
-			Parameter parameter = ortakIslemler.getParameter(session, PARAMETER_KEY);
+			Parameter parameter = ortakIslemler.getParameterAktif(session, PARAMETER_KEY);
 			String value = (parameter != null) ? parameter.getValue() : null;
 			String izinERPTableViewAdi = ortakIslemler.getParameterKey(ortakIslemler.getParametreIzinERPTableView());
 			boolean izinBakiye = value != null && (manuel || PdksUtil.zamanKontrol(PARAMETER_KEY, value, time));
@@ -305,7 +305,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 	private void senelikSuaIzinKontrol(Session session) throws Exception {
 
 		try {
-			Parameter parameter = ortakIslemler.getParameter(session, "suaSenelikKullan");
+			Parameter parameter = ortakIslemler.getParameterAktif(session, "suaSenelikKullan");
 			boolean suaSenelikKullan = parameter != null && parameter.getValue().equals("1");
 			Calendar cal = Calendar.getInstance();
 			HashMap parametreMap = new HashMap();
@@ -411,7 +411,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 			izinleriBakiyeleriniHesapla(session, null, null, user, Boolean.TRUE, Boolean.FALSE, manuel, Boolean.TRUE);
 			flush = true;
 			if (ozelKontrol) {
-				Parameter parameter = ortakIslemler.getParameter(session, "suaSenelikKullan");
+				Parameter parameter = ortakIslemler.getParameterAktif(session, "suaSenelikKullan");
 				boolean suaSenelikKullanma = parameter == null || parameter.getValue() == null || !parameter.getValue().equals("1");
 				cal = Calendar.getInstance();
 				int haftaGun = cal.get(Calendar.DAY_OF_WEEK);

@@ -575,7 +575,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	private Parameter getParameter(String adi, Session session) {
 		Parameter parameter = null;
 		if (ortakIslemler.getParameterKeyHasStringValue(adi))
-			parameter = ortakIslemler.getParameter(session, adi);
+			parameter = ortakIslemler.getParameterAktif(session, adi);
 		if (parameter != null) {
 			boolean guncelleme = false;
 			String value = parameter.getValue();

@@ -189,7 +189,7 @@ public class Zamanlayici implements Serializable {
 	 * @return
 	 */
 	public boolean getOzelKontrol(Session session) {
-		Parameter parameterOzel = ortakIslemler.getParameter(session, "ozelKontrol");
+		Parameter parameterOzel = ortakIslemler.getParameterAktif(session, "ozelKontrol");
 		String value = (parameterOzel != null) ? parameterOzel.getValue() : "";
 		boolean ozelKontrolDurum = value == null || !value.equals("0");
 		if (ozelKontrolDurum) {
