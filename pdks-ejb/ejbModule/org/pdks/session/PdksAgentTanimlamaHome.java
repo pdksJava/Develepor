@@ -605,6 +605,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		try {
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				PdksAgent parameter = (PdksAgent) iterator.next();
+				parameter.setStart(Boolean.FALSE);
 				if (parameter.getDurum().equals(Boolean.FALSE)) {
 					pasifList.add(parameter);
 					iterator.remove();

@@ -125,17 +125,10 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					logger.error(e);
 				}
 				if (vardiyaGunList != null) {
-					Date bugun = ortakIslemler.getBugun();
-					for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
+ 					for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 						VardiyaGun vg = (VardiyaGun) iterator.next();
-						if (vg.getVardiya().isCalisma())
-							vg.setIslemVardiya(null);
-						Vardiya vardiya = vg.getIslemVardiya();
-						boolean sil = false;
-						if (vardiya.isCalisma() && vardiya.getBasZaman().after(bugun))
-							sil = true;
-						Personel personel = vg.getPdksPersonel();
-						if (sil || personel.getEkSaha3() == null)
+ 						Personel personel = vg.getPdksPersonel();
+						if (personel.getEkSaha3() == null)
 							iterator.remove();
 					}
 					if (vardiyaGunList.isEmpty() == false) {
@@ -721,10 +714,14 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								hareketMap.put(id, list);
 							list.add(kgsHareket);
 						}
+						Date bugun = ortakIslemler.getBugun();
 						for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 							VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 							Vardiya vardiya = vardiyaGun.getIslemVardiya();
 							if (vardiya.getId() == null) {
+								iterator.remove();
+								continue;
+							} else if (vardiya.isCalisma() && vardiyaGun.getIzin() == null && vardiya.getVardiyaBasZaman().after(bugun)) {
 								iterator.remove();
 								continue;
 							}

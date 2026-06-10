@@ -37,8 +37,9 @@ public class ThreadAgent extends Thread implements Serializable {
 
 	@Override
 	public void run() {
-		if (session != null) {
-			if (agent != null) {
+		if (agent != null) {
+			if (session != null) {
+
 				String programAdi = agent.getStoreProcedureAdi();
 				if (PdksUtil.hasStringValue(programAdi)) {
 					int index = programAdi.indexOf(".page.xml");
@@ -79,8 +80,8 @@ public class ThreadAgent extends Thread implements Serializable {
 					}
 
 				}
-				agent.setStart(false);
-			}
+ 			}
+			agent.setStart(false);
 		}
 	}
 
