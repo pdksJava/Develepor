@@ -119,13 +119,10 @@ public class FazlaMesaiGuncelleme implements Serializable {
 				parameterFazlaMesaiHesaplama.setDescription("Fazla Mesai Toplu Hesaplama");
 			}
 			if (parameterFazlaMesaiHesaplama != null && ortakIslemler.hasStringValue(parameterFazlaMesaiHesaplama.getValue()) == false) {
-				basTarih = ortakIslemler.getBugun();
-				if (fazlaMesaiGuncelleme(basTarih, session) != null) {
-					if (fazlaMesaiDetay != null) {
-						mailGonder();
-					}
-				}
-			}
+ 				fazlaMesaiGuncelleme(ortakIslemler.getBugun(), session);
+				if (fazlaMesaiDetay != null)
+					mailGonder();
+ 			}
 		} catch (Exception e) {
 		}
 		pdksEntityController.sessionClose(session);
@@ -146,14 +143,10 @@ public class FazlaMesaiGuncelleme implements Serializable {
 						session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 					parameterFazlaMesaiHesaplama = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
 					if (parameterFazlaMesaiHesaplama != null) {
-						Date tarih = PdksUtil.getDate(bugun);
-						if (fazlaMesaiGuncelleme(tarih, session) != null) {
-							if (fazlaMesaiDetay != null)
-								mailGonder();
-						}
-
+						fazlaMesaiGuncelleme(PdksUtil.getDate(bugun), session);
+						if (fazlaMesaiDetay != null)
+							mailGonder();
 					}
-
 				}
 
 			} catch (Exception e) {
@@ -463,7 +456,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 					vg.setVardiyaOnayli(vardiyaOnayli);
 					pdksEntityController.saveOrUpdate(session, entityManager, vg);
 					flush = true;
- 
+
 				}
 
 			}
@@ -550,7 +543,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			if (agent != null)
 				konu = agent.getAciklama();
 		}
-		logger.info(konu+" mail gönderiliyor. " + PdksUtil.getCurrentTimeStampStr());
+		logger.info(konu + " mail gönderiliyor. " + PdksUtil.getCurrentTimeStampStr());
 		String aciklama = "Fazla Mesai Toplu güncellenmiştir.<br></br>" + fazlaMesaiDetay.toString();
 		List<User> userList = null;
 		if (fazlaMesaiGuncelleMail.equals("1"))
