@@ -125,13 +125,15 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					logger.error(e);
 				}
 				if (vardiyaGunList != null) {
- 					for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
+					for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 						VardiyaGun vg = (VardiyaGun) iterator.next();
- 						Personel personel = vg.getPdksPersonel();
+						Personel personel = vg.getPdksPersonel();
 						if (personel.getEkSaha3() == null)
 							iterator.remove();
 					}
 					if (vardiyaGunList.isEmpty() == false) {
+
+						User sistemAdmin = new User();
 						Gson gs = new Gson();
 						String baslik = ortakIslemler.getMenuAdi(sayfaURL);
 						if (agentId != null) {
@@ -164,7 +166,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							inputMap.put("bcc", bccAdres);
 						List<LinkedHashMap<String, Object>> list = new ArrayList<LinkedHashMap<String, Object>>();
 						outputMap.put(baslik, list);
-						String patternDate = PdksUtil.getDateFormat(), patternDateTime = PdksUtil.getDateTimeFormat(), patternSaat = PdksUtil.getSaatFormat();
+						String patternDate = PdksUtil.getDateFormat(), patternSaat = PdksUtil.getSaatFormat();
 						Calendar cal = Calendar.getInstance();
 						long zoneOffSet = cal.get(Calendar.ZONE_OFFSET);
 
@@ -189,11 +191,11 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								map.put("Vardiya Başlangıç Zaman", vardiya.getKisaAdi());
 								map.put("Vardiya Bitiş Zaman", "");
 							} else {
-								map.put("Vardiya Başlangıç Zaman", PdksUtil.convertToDateString(vardiya.getBasZaman(), patternDateTime));
-								map.put("Vardiya Bitiş Zaman", PdksUtil.convertToDateString(vardiya.getBitZaman(), patternDateTime));
+								map.put("Vardiya Başlangıç Zaman", sistemAdmin.dateTimeFormatla(vardiya.getBasZaman()));
+								map.put("Vardiya Bitiş Zaman", sistemAdmin.dateTimeFormatla(vardiya.getBitZaman()));
 							}
-							map.put("Giriş", vg.getGirisHareket() != null ? PdksUtil.convertToDateString(vg.getGirisHareket().getOrjinalZaman(), patternDateTime) : "");
-							map.put("Çıkış", vg.getCikisHareket() != null ? PdksUtil.convertToDateString(vg.getCikisHareket().getOrjinalZaman(), patternDateTime) : "");
+							map.put("Giriş", vg.getGirisHareket() != null ? sistemAdmin.dateTimeFormatla(vg.getGirisHareket().getOrjinalZaman()) : "");
+							map.put("Çıkış", vg.getCikisHareket() != null ? sistemAdmin.dateTimeFormatla(vg.getCikisHareket().getOrjinalZaman()) : "");
 							String aciklama = getVardiyaAciklama(vg);
 							map.put("Açıklama", aciklama);
 							String fark = "";
@@ -248,6 +250,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 						String sonuc = ortakIslemler.adresKontrol(adres);
 						if (sonuc == null || sd.getId() != null)
 							adresStr = MenuItemConstant.home;
+						sistemAdmin = null;
 					}
 				}
 			}
