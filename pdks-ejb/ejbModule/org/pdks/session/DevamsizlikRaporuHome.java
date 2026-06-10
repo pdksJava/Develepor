@@ -190,7 +190,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								map.put("Vardiya Bitiş Zaman", "");
 							} else {
 								map.put("Vardiya Başlangıç Zaman", PdksUtil.convertToDateString(vardiya.getBasZaman(), patternDateTime));
-								map.put("Vardiya Bitiş Zaman", PdksUtil.convertToDateString(vardiya.getBitZaman(), patternSaat));
+								map.put("Vardiya Bitiş Zaman", PdksUtil.convertToDateString(vardiya.getBitZaman(), patternDateTime));
 							}
 							map.put("Giriş", vg.getGirisHareket() != null ? PdksUtil.convertToDateString(vg.getGirisHareket().getOrjinalZaman(), patternDateTime) : "");
 							map.put("Çıkış", vg.getCikisHareket() != null ? PdksUtil.convertToDateString(vg.getCikisHareket().getOrjinalZaman(), patternDateTime) : "");
