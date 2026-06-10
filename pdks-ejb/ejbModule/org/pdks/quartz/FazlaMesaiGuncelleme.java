@@ -182,8 +182,10 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		Date bugun = PdksUtil.getDate(ortakIslemler.getBugun());
 		if (tarih == null)
 			tarih = bugun;
+		fazlaMesaiDetay = null;
 		Calendar cal = Calendar.getInstance();
-		fazlaMesaiGuncelleMail = ortakIslemler.getParameterKey("fazlaMesaiGuncelleMail");
+		Parameter parameter = ortakIslemler.getParameterAktif(session, "fazlaMesaiGuncelleMail");
+		fazlaMesaiGuncelleMail = parameter != null && parameter.getValue() != null ? parameter.getValue() : "";
 		cal.setTime(bugun);
 		int haftaGun = cal.get(Calendar.DAY_OF_WEEK);
 		int artiGun = haftaGun != Calendar.SATURDAY && haftaGun != Calendar.SUNDAY ? 0 : 6;
@@ -204,7 +206,6 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		StringBuffer sb = new StringBuffer(), sb1 = new StringBuffer(), sb2 = new StringBuffer();
 		HashMap fields = new HashMap();
 		int sayac = 0;
-		fazlaMesaiDetay = null;
 		Boolean mailGonder = null;
 		while (tarih2.getTime() >= tarihBas.getTime()) {
 			++sayac;
@@ -350,6 +351,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 					}
 
 				}
+
 				logger.info(adres + " out " + PdksUtil.getCurrentTimeStampStr());
 				if (fazlaMesaiDetay != null)
 					fazlaMesaiDetay.append("</" + uolStr + "></p>");
@@ -461,12 +463,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 					vg.setVardiyaOnayli(vardiyaOnayli);
 					pdksEntityController.saveOrUpdate(session, entityManager, vg);
 					flush = true;
-					// ++adet;
-					// if (adet % 10 == 0) {
-					// ortakIslemler.sessionFlush(session);
-					//
-					// flush = false;
-					// }
+ 
 				}
 
 			}
@@ -553,6 +550,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			if (agent != null)
 				konu = agent.getAciklama();
 		}
+		logger.info(konu+" mail gönderiliyor. " + PdksUtil.getCurrentTimeStampStr());
 		String aciklama = "Fazla Mesai Toplu güncellenmiştir.<br></br>" + fazlaMesaiDetay.toString();
 		List<User> userList = null;
 		if (fazlaMesaiGuncelleMail.equals("1"))
