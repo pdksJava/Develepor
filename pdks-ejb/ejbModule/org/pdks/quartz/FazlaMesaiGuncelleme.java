@@ -101,7 +101,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 			}
 
-			parameterFazlaMesaiHesaplama = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
+			parameterFazlaMesaiHesaplama = ortakIslemler.getParameterAktif(session, PARAMETER_FAZLA_MESAI_KEY);
 			if (parameterFazlaMesaiHesaplama == null) {
 				parameterFazlaMesaiHesaplama = new Parameter();
 				parameterFazlaMesaiHesaplama.setDescription("Fazla Mesai Toplu Hesaplama");
@@ -166,6 +166,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	 * @throws Exception
 	 */
 	public String fazlaMesaiGuncelleme(Date tarih, Session session) throws Exception {
+		logger.info(parameterFazlaMesaiHesaplama.getDescription() + " in " + PdksUtil.getCurrentTimeStampStr());
 		Date bugun = PdksUtil.getDate(ortakIslemler.getBugun());
 		if (tarih == null)
 			tarih = bugun;
@@ -347,6 +348,8 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		aylar = null;
 		if (adresStr != null)
 			adresStr = "";
+		logger.info(parameterFazlaMesaiHesaplama.getDescription() + " out " + PdksUtil.getCurrentTimeStampStr());
+
 		return adresStr;
 
 	}

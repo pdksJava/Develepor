@@ -5450,6 +5450,16 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param session
+	 * @param value
+	 * @return
+	 */
+	public Parameter getParameterAktif(Session session, String value) {
+		Parameter parameter = (Parameter) pdksEntityController.getSQLParamByAktifFieldObject(Parameter.TABLE_NAME, Parameter.COLUMN_NAME_ADI, value, Parameter.class, session);
+		return parameter;
+	}
+
+	/**
+	 * @param session
 	 * @param name
 	 * @return
 	 */
