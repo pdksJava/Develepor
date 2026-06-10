@@ -125,6 +125,19 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					logger.error(e);
 				}
 				if (vardiyaGunList != null) {
+					Date bugun = ortakIslemler.getBugun();
+					for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
+						VardiyaGun vg = (VardiyaGun) iterator.next();
+						if (vg.getVardiya().isCalisma())
+							vg.setIslemVardiya(null);
+						Vardiya vardiya = vg.getIslemVardiya();
+						boolean sil = false;
+						if (vardiya.isCalisma() && vardiya.getBasZaman().after(bugun))
+							sil = true;
+						Personel personel = vg.getPdksPersonel();
+						if (sil || personel.getEkSaha3() == null)
+							iterator.remove();
+					}
 					if (vardiyaGunList.isEmpty() == false) {
 						Gson gs = new Gson();
 						String baslik = ortakIslemler.getMenuAdi(sayfaURL);
@@ -161,17 +174,13 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 						String patternDate = PdksUtil.getDateFormat(), patternDateTime = PdksUtil.getDateTimeFormat(), patternSaat = PdksUtil.getSaatFormat();
 						Calendar cal = Calendar.getInstance();
 						long zoneOffSet = cal.get(Calendar.ZONE_OFFSET);
-						Date bugun = ortakIslemler.getBugun();
+
 						for (VardiyaGun vg : vardiyaGunList) {
 							if (vg.getVardiya().isCalisma())
 								vg.setIslemVardiya(null);
 							Vardiya vardiya = vg.getIslemVardiya();
-							if (vardiya.isCalisma() && vardiya.getBasZaman().after(bugun))
-								continue;
-							Personel personel = vg.getPdksPersonel();
 
-							if (personel.getEkSaha3() == null)
-								continue;
+							Personel personel = vg.getPdksPersonel();
 							LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 
 							Sirket sirket = personel.getSirket();

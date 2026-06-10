@@ -85,6 +85,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	public static final String PATTERN = "yyyyMMdd";
 	public static final String PATTERN_DONEM = "yyyyMM";
 	private StringBuffer fazlaMesaiDetay;
+	private String fazlaMesaiGuncelleMail;
 
 	private static boolean calisiyor = Boolean.FALSE;
 
@@ -103,7 +104,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			agentId = req != null ? Long.parseLong(req.getParameter("agentId")) : null;
 		} catch (Exception e) {
- 		}
+		}
 		try {
 			if (PdksUtil.isSessionKapali(session)) {
 				if (authenticatedUser != null)
@@ -182,6 +183,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		if (tarih == null)
 			tarih = bugun;
 		Calendar cal = Calendar.getInstance();
+		fazlaMesaiGuncelleMail = ortakIslemler.getParameterKey("fazlaMesaiGuncelleMail");
 		cal.setTime(bugun);
 		int haftaGun = cal.get(Calendar.DAY_OF_WEEK);
 		int artiGun = haftaGun != Calendar.SATURDAY && haftaGun != Calendar.SUNDAY ? 0 : 6;
@@ -331,7 +333,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 							String sonuc = ortakIslemler.adresKontrol(value);
 							if (sonuc != null)
 								logger.error(id + " hata =" + sonuc + " out " + PdksUtil.getCurrentTimeStampStr());
-							else if (mailGonder) {
+							else if (fazlaMesaiDetay != null) {
 								fazlaMesaiDetay.append("<LI class=\"" + (renkUyari ? "odd" : "even") + "\" style=\"text-align: left;\">" + liste.getId() + (iterator.hasNext() ? " " + PdksUtil.getCurrentTimeStampStr() : "") + "</LI>");
 								renkUyari = !renkUyari;
 							}
@@ -553,7 +555,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		}
 		String aciklama = "Fazla Mesai Toplu güncellenmiştir.<br></br>" + fazlaMesaiDetay.toString();
 		List<User> userList = null;
-		if (ortakIslemler.getParameterKey("fazlaMesaiGuncelleMail").equals("1"))
+		if (fazlaMesaiGuncelleMail.equals("1"))
 			userList = ortakIslemler.getIKUserList(session);
 		if (userList == null || userList.isEmpty()) {
 			aciklama = aciklama + "<br></br><br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
@@ -568,7 +570,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	 */
 	private boolean getMailGonder(Session session) {
 		boolean mailGonder = false;
-		if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
+		if (PdksUtil.getCanliSunucuDurum() || (PdksUtil.getTestSunucuDurum() == false && fazlaMesaiGuncelleMail.equals("1") == false)) {
 			Calendar cal = Calendar.getInstance();
 			if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
 				Date basTarih = PdksUtil.getDate(cal.getTime());
