@@ -9,8 +9,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -23,6 +25,7 @@ import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.IzinTipi;
+import org.pdks.entity.PdksAgent;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.Tanim;
@@ -79,6 +82,7 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 	private int yilSayisi = 1;
 	private Tatil oldPdksTatil;
 	private User islemYapan;
+	private Long agentId;
 	private Session session;
 
 	@Override
@@ -97,6 +101,12 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 
 	@Transactional
 	public String diniBayramBasla() {
+		try {
+			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+			agentId = req != null ? Long.parseLong(req.getParameter("agentId")) : null;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		try {
 			if (PdksUtil.isSessionKapali(session)) {
 				if (authenticatedUser != null)
@@ -224,8 +234,16 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 		}
 		try {
 			if (authenticatedUser == null)
-				if (PdksUtil.getTestSunucuDurum() || PdksUtil.getCanliSunucuDurum())
-					zamanlayici.mailGonder(session, null, "Tatil günleri kontrol", diniList.isEmpty() ? "Tatil günleri güncelleme olmadı" : "Tatil günlerine " + diniList.size() + " adet tatil eklendi", null, false);
+				if (PdksUtil.getTestSunucuDurum() || PdksUtil.getCanliSunucuDurum()) {
+					String konu = "Tatil günleri kontrol";
+					if (agentId != null) {
+						PdksAgent agent = (PdksAgent) pdksEntityController.getSQLParamByFieldObject(PdksAgent.TABLE_NAME, PdksAgent.COLUMN_NAME_ID, agentId, PdksAgent.class, session);
+						if (agent != null)
+							konu = agent.getAciklama();
+					}
+					zamanlayici.mailGonder(session, null, konu, diniList.isEmpty() ? "Tatil günleri güncelleme olmadı" : "Tatil günlerine " + diniList.size() + " adet tatil eklendi", null, false);
+
+				}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

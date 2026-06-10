@@ -144,17 +144,22 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							inputMap.put("bcc", bccAdres);
 						List<LinkedHashMap<String, Object>> list = new ArrayList<LinkedHashMap<String, Object>>();
 						outputMap.put(baslik, list);
-						String patternDate = PdksUtil.getDateFormat(), patternDateTime = Constants.JSON_TARIH, patternSaat = PdksUtil.getSaatFormat();
+						String patternDate = PdksUtil.getDateFormat(), patternDateTime = PdksUtil.getDateTimeFormat(), patternSaat = PdksUtil.getSaatFormat();
 						Calendar cal = Calendar.getInstance();
 						long zoneOffSet = cal.get(Calendar.ZONE_OFFSET);
+						Date bugun = ortakIslemler.getBugun();
 						for (VardiyaGun vg : vardiyaGunList) {
-							LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-							Personel personel = vg.getPdksPersonel();
-							if (personel.getEkSaha3() == null)
-								continue;
 							if (vg.getVardiya().isCalisma())
 								vg.setIslemVardiya(null);
 							Vardiya vardiya = vg.getIslemVardiya();
+ 							if (vardiya.isCalisma() && vardiya.getBasZaman().after(bugun))
+								continue;
+							Personel personel = vg.getPdksPersonel();
+
+							if (personel.getEkSaha3() == null)
+								continue;
+							LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+
 							Sirket sirket = personel.getSirket();
 							map.put("sirketAciklama", sirket.getAd());
 							if (tesisDurum)
@@ -169,7 +174,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								map.put("Vardiya Bitiş Zaman", "");
 							} else {
 								map.put("Vardiya Başlangıç Zaman", PdksUtil.convertToDateString(vardiya.getBasZaman(), patternDateTime));
-								map.put("Vardiya Bitiş Zaman", PdksUtil.convertToDateString(vardiya.getBitZaman(), patternDateTime));
+								map.put("Vardiya Bitiş Zaman", PdksUtil.convertToDateString(vardiya.getBitZaman(), patternSaat));
 							}
 							map.put("Giriş", vg.getGirisHareket() != null ? PdksUtil.convertToDateString(vg.getGirisHareket().getOrjinalZaman(), patternDateTime) : "");
 							map.put("Çıkış", vg.getCikisHareket() != null ? PdksUtil.convertToDateString(vg.getCikisHareket().getOrjinalZaman(), patternDateTime) : "");
@@ -210,7 +215,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 										}
 									}
 
-								}
+								} else
+									logger.debug(aciklama);
 
 							}
 							map.put("Fark", fark);

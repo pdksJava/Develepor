@@ -10,8 +10,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -33,6 +35,7 @@ import org.pdks.entity.FazlaMesaiTalep;
 import org.pdks.entity.KatSayi;
 import org.pdks.entity.Liste;
 import org.pdks.entity.Parameter;
+import org.pdks.entity.PdksAgent;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelKGS;
@@ -89,10 +92,19 @@ public class FazlaMesaiGuncelleme implements Serializable {
 
 	private Parameter parameterFazlaMesaiHesaplama;
 
+	private Long agentId = null;
+
 	private Session session = null;
 
 	@Transactional
 	public String fazlaMesaiHesaplamaBaslat() {
+
+		try {
+			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+			agentId = req != null ? Long.parseLong(req.getParameter("agentId")) : null;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		try {
 			if (PdksUtil.isSessionKapali(session)) {
 				if (authenticatedUser != null)
@@ -535,6 +547,11 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 		String konu = parameterFazlaMesaiHesaplama.getDescription();
+		if (agentId != null) {
+			PdksAgent agent = (PdksAgent) pdksEntityController.getSQLParamByFieldObject(PdksAgent.TABLE_NAME, PdksAgent.COLUMN_NAME_ID, agentId, PdksAgent.class, session);
+			if (agent != null)
+				konu = agent.getAciklama();
+		}
 		String aciklama = "Fazla Mesai Toplu güncellenmiştir.<br></br>" + fazlaMesaiDetay.toString();
 		List<User> userList = null;
 		if (ortakIslemler.getParameterKey("fazlaMesaiGuncelleMail").equals("1"))
