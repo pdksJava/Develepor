@@ -136,7 +136,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 						inputMap.put("baslik", baslik);
 						inputMap.put("tabloYaz", 1);
-						String toAdres = ortakIslemler.getParameterKey("mailGrubuIK");
+						String toAdres = PdksUtil.getCanliSunucuDurum() ? ortakIslemler.getParameterKey("mailGrubuIK") : null;
 						if (toAdres != null && toAdres.indexOf("@") > 0)
 							inputMap.put("toAdres", toAdres);
 						String bccAdres = ortakIslemler.getParameterKey("bccAdres");
