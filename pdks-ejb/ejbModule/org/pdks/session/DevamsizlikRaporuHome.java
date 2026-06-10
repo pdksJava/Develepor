@@ -11,8 +11,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeMap;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -35,6 +37,7 @@ import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.Kapi;
 import org.pdks.entity.Liste;
+import org.pdks.entity.PdksAgent;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.ServiceData;
@@ -104,6 +107,12 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	}
 
 	public String sayfaMailRaporAction() {
+		Long agentId = null;
+		try {
+			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+			agentId = req != null ? Long.parseLong(req.getParameter("agentId")) : null;
+		} catch (Exception e) {
+		}
 		String adresStr = ortakIslemler.getLoginAdres();
 		if (PdksUtil.hasStringValue(adresStr)) {
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
@@ -119,6 +128,11 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					if (vardiyaGunList.isEmpty() == false) {
 						Gson gs = new Gson();
 						String baslik = ortakIslemler.getMenuAdi(sayfaURL);
+						if (agentId != null) {
+							PdksAgent agent = (PdksAgent) pdksEntityController.getSQLParamByFieldObject(PdksAgent.TABLE_NAME, PdksAgent.COLUMN_NAME_ID, agentId, PdksAgent.class, session);
+							if (agent != null)
+								baslik = agent.getAciklama();
+						}
 						String dosyaAdi = baslik + '_' + PdksUtil.convertToDateString(bitisTarih, "yyyyMMdd") + ".xlsx";
 						boolean tesisDurum = ortakIslemler.getListTesisDurum(vardiyaGunList);
 						LinkedHashMap<String, Object> inputMap = new LinkedHashMap<String, Object>();
@@ -152,7 +166,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							if (vg.getVardiya().isCalisma())
 								vg.setIslemVardiya(null);
 							Vardiya vardiya = vg.getIslemVardiya();
- 							if (vardiya.isCalisma() && vardiya.getBasZaman().after(bugun))
+							if (vardiya.isCalisma() && vardiya.getBasZaman().after(bugun))
 								continue;
 							Personel personel = vg.getPdksPersonel();
 
