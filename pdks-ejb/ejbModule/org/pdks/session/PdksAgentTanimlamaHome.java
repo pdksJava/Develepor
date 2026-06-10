@@ -9,7 +9,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -68,7 +70,8 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	private List<PdksAgent> pdksAgentList;
 
 	private Boolean helpDesk, pasifGoster, admin;
-	private String jsonTarih = "yyyy-MM-dd'T'HH:mm:ss", konu;
+	private Long mailId = null;
+	private String konu;
 	private Session session;
 
 	@Override
@@ -87,16 +90,28 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 	@Transactional
 	public String mailDataGonderBasla() {
+
 		try {
-			if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
+			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+			mailId = req != null ? Long.parseLong(req.getParameter("mailId")) : null;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		try {
+
+			if (mailId != null || PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
+
 				if (PdksUtil.isSessionKapali(session)) {
 					if (authenticatedUser != null)
 						session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 					else
 						session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 				}
+				List<ServiceData> mailList = null;
+				if (mailId != null)
+					mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_ID, mailId, ServiceData.class, session);
 
-				mailDataGonder(null, session);
+				mailDataGonder(mailList, session);
 			}
 		} catch (Exception e) {
 			logger.error(e);
@@ -129,6 +144,15 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 				try {
 					paramList = gson.fromJson(parametreJSON, List.class);
 				} catch (Exception e) {
+				}
+				if (paramList == null && parametreJSON != null) {
+					paramList = new ArrayList<LinkedTreeMap<String, Object>>();
+					LinkedHashMap<String, Object> paramMap = gson.fromJson(parametreJSON, LinkedHashMap.class);
+					LinkedTreeMap<String, Object> params = new LinkedTreeMap<String, Object>();
+					params.putAll(paramMap);
+					paramList.add(params);
+					paramMap = null;
+
 				}
 				String baslik = "";
 				try {
@@ -199,8 +223,13 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 							}
 							LinkedTreeMap<String, String> alanDurum = null;
 							if (params.containsKey("parametre")) {
-								List list = (ArrayList) params.get("parametre");
-								alanDurum = (LinkedTreeMap<String, String>) list.get(0);
+								Object parametre = params.get("parametre");
+								if (parametre instanceof List) {
+									List list = (ArrayList) parametre;
+									alanDurum = (LinkedTreeMap<String, String>) list.get(0);
+								} else
+									alanDurum = (LinkedTreeMap<String, String>) parametre;
+
 							} else
 								alanDurum = new LinkedTreeMap<String, String>();
 							if (params.containsKey("tabloYaz")) {
@@ -260,7 +289,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 												}
 
 											} else if (str.equalsIgnoreCase("d") || str.equalsIgnoreCase("t") || str.equalsIgnoreCase("dt")) {
-												Date tarih = PdksUtil.convertToJavaDate((String) veri, jsonTarih);
+												Date tarih = PdksUtil.convertToJavaDate((String) veri, Constants.JSON_TARIH);
 												if (tarih != null) {
 													if (str.equalsIgnoreCase("dt"))
 														veri = PdksUtil.convertToDateString(tarih, PdksUtil.getDateTimeFormat());
@@ -285,7 +314,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 							mail.setBody(sb.toString());
 
 							if (toList.size() + ccList.size() + bccList.size() > 0) {
-								if (PdksUtil.getCanliSunucuDurum() == true || PdksUtil.getTestSunucuDurum() == true) {
+								if (mailId != null || PdksUtil.getCanliSunucuDurum() == true || PdksUtil.getTestSunucuDurum() == true) {
 									adet += mailListKontrol(userMap, toList, mail.getToList());
 									adet += mailListKontrol(userMap, ccList, mail.getCcList());
 									adet += mailListKontrol(userMap, bccList, mail.getBccList());
@@ -294,7 +323,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 							toList = null;
 							ccList = null;
 							bccList = null;
-							if (params.containsKey("dosyaAdi")) {
+							if (adet > 0 && params.containsKey("dosyaAdi")) {
 								byte[] icerik = null;
 								try {
 									icerik = getExcelDosya(veriler, alanDurum, baslikMap);
@@ -450,7 +479,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 				if (veri == null)
 					veri = "";
 				if (strOrj.equalsIgnoreCase("dt") || strOrj.equalsIgnoreCase("t") || strOrj.equalsIgnoreCase("d")) {
-					Date tarih = PdksUtil.convertToJavaDate((String) veri, jsonTarih);
+					Date tarih = PdksUtil.convertToJavaDate((String) veri, Constants.JSON_TARIH);
 					if (tarih != null)
 						veri = tarih;
 

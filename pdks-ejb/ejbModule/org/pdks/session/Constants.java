@@ -24,6 +24,8 @@ public class Constants implements Serializable {
 	public static final String SERVLET_CONTEXT_UYGULAMA_DILLERI = "servletContextUygulamaDilleri";
 
 	public static final String VERSION = "Pdks-ear_20260406_1220.1.0.0.ear";
+	
+	public static final String JSON_TARIH = "yyyy-MM-dd'T'HH:mm:ss";
 
 	public static final String SERVLET_CONTEXT_UYGULAMA_DB = "servletContextUygulamaDb";
 
