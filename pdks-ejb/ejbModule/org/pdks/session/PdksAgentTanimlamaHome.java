@@ -95,8 +95,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			mailId = req != null ? Long.parseLong(req.getParameter("mailId")) : null;
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
+ 		}
 		try {
 
 			if (mailId != null || PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {

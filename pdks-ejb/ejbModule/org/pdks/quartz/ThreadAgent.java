@@ -68,7 +68,7 @@ public class ThreadAgent extends Thread implements Serializable {
 									if (string.startsWith("http") && string.indexOf("login") > 1) {
 										String adres = PdksUtil.replaceAllManuel(string, "login", programAdi.substring(0, index));
 										logger.info(agent.getAciklama() + " --> " + adres + (agent.getStart() ? " (manuel)" : " " + PdksUtil.convertToDateString(new Date(), "HH:mm")) + " " + PdksUtil.getCurrentTimeStampStr());
-										PdksUtil.adresKontrol(adres + "?agentId=" + agent);
+										PdksUtil.adresKontrol(adres + "?agentId=" + agent.getId());
 
 									}
 

@@ -298,8 +298,7 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 				FacesContext.getCurrentInstance().responseComplete();
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
+ 		}
 		return null;
 
 	}

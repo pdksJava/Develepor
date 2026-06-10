@@ -539,7 +539,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								logger.info(str + (puantajList != null ? " [ " + puantajList.size() + " ]" : "") + " out " + PdksUtil.getCurrentTimeStampStr());
 						}
 					} catch (Exception eX) {
-						// TODO: handle exception
 					}
 					if (PdksUtil.isSessionKapali(session)) {
 						session = PdksUtil.getSessionUser(entityManager, loginUser);

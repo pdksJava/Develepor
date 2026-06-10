@@ -103,8 +103,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			agentId = req != null ? Long.parseLong(req.getParameter("agentId")) : null;
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
+ 		}
 		try {
 			if (PdksUtil.isSessionKapali(session)) {
 				if (authenticatedUser != null)

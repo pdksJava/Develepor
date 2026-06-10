@@ -8887,8 +8887,7 @@ public class OrtakIslemler implements Serializable {
 			try {
 				port = Integer.parseInt(getParameterKey("smtpPort"));
 			} catch (Exception e) {
-				// TODO: handle exception
-			}
+ 			}
 			try {
 
 				mailStatu = mailManager.mailleriDuzenle(mailObject, port, session);

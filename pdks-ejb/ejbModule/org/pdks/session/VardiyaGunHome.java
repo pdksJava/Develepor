@@ -1225,7 +1225,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								session.refresh(seciliVardiyaGun);
 
 						} catch (Exception e) {
-							// TODO: handle exception
 						}
 
 						if (seciliVardiyaGun.isVardiyaOnay() == false) {

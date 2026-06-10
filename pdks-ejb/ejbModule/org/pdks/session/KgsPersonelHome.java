@@ -259,8 +259,7 @@ public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serial
 
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
+ 		}
 
 		return "";
 	}
