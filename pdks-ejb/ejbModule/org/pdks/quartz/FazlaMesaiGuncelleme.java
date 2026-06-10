@@ -94,9 +94,13 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	@Transactional
 	public String fazlaMesaiHesaplamaBaslat() {
 		try {
-			session = null;
-			if (PdksUtil.isSessionKapali(session))
-				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+			if (PdksUtil.isSessionKapali(session)) {
+				if (authenticatedUser != null)
+					session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+				else
+					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+			}
+
 			parameterFazlaMesaiHesaplama = ortakIslemler.getParameter(session, PARAMETER_FAZLA_MESAI_KEY);
 			if (parameterFazlaMesaiHesaplama == null) {
 				parameterFazlaMesaiHesaplama = new Parameter();

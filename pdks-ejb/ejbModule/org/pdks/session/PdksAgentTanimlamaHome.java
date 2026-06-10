@@ -89,8 +89,12 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	public String mailDataGonderBasla() {
 		try {
 			if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
-				if (PdksUtil.isSessionKapali(session))
-					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+				if (PdksUtil.isSessionKapali(session)) {
+					if (authenticatedUser != null)
+						session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+					else
+						session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+				}
 
 				mailDataGonder(null, session);
 			}
