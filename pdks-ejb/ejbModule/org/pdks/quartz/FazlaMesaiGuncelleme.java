@@ -100,6 +100,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	@Transactional
 	public String fazlaMesaiHesaplamaBaslat() {
 		try {
+			basTarih = ortakIslemler.getBugun();
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			agentId = req != null ? Long.parseLong(req.getParameter("agentId")) : null;
 		} catch (Exception e) {
@@ -120,7 +121,6 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			}
 			mailAt = ortakIslemler.hasStringValue(parameter.getValue()) == false;
 			if (mailAt) {
-
 				setCalisiyor(Boolean.TRUE);
 				parameterFazlaMesaiHesaplama = parameter;
 				if (agentId != null) {
@@ -128,7 +128,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 					if (agent != null)
 						parameterFazlaMesaiHesaplama.setDescription(agent.getAciklama());
 				}
-				fazlaMesaiGuncelleme(ortakIslemler.getBugun(), session);
+				fazlaMesaiGuncelleme(PdksUtil.getDate(basTarih), session);
 
 			}
 		} catch (Exception e) {
@@ -145,20 +145,19 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	@SuppressWarnings("unchecked")
 	public QuartzTriggerHandle fazlaMesaiHesaplamaTimer(@Expiration Date when, @IntervalCron String interval) {
 		if (!isCalisiyor()) {
+			basTarih = ortakIslemler.getBugun();
 			boolean mailAt = false;
 			setCalisiyor(Boolean.TRUE);
 			logger.debug("fazlaMesaiHesaplamaTimer in " + PdksUtil.getCurrentTimeStampStr());
 			try {
 				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
-					Calendar cal = Calendar.getInstance();
-					bugun = cal.getTime();
 					if (PdksUtil.isSessionKapali(session))
 						session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 					Parameter parameter = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
 					mailAt = parameter != null;
 					if (mailAt) {
 						parameterFazlaMesaiHesaplama = parameter;
-						fazlaMesaiGuncelleme(PdksUtil.getDate(bugun), session);
+						fazlaMesaiGuncelleme(PdksUtil.getDate(basTarih), session);
 					}
 				}
 
