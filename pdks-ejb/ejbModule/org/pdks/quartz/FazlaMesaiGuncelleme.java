@@ -85,7 +85,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	public static final String PATTERN = "yyyyMMdd";
 	public static final String PATTERN_DONEM = "yyyyMM";
 	private StringBuffer fazlaMesaiDetay;
-	private String fazlaMesaiGuncelleMail;
+	private String fazlaMesaiGuncelleMail, konu;
 
 	private static boolean calisiyor = Boolean.FALSE;
 
@@ -178,7 +178,8 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			if (agent != null)
 				parameterFazlaMesaiHesaplama.setDescription(agent.getAciklama());
 		}
-		logger.info(parameterFazlaMesaiHesaplama.getDescription() + " in " + PdksUtil.getCurrentTimeStampStr());
+		konu = parameterFazlaMesaiHesaplama.getDescription();
+		logger.info(konu + " in " + PdksUtil.getCurrentTimeStampStr());
 		Date bugun = PdksUtil.getDate(ortakIslemler.getBugun());
 		if (tarih == null)
 			tarih = bugun;
@@ -363,7 +364,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		aylar = null;
 		if (adresStr != null)
 			adresStr = "";
-		logger.info(parameterFazlaMesaiHesaplama.getDescription() + " out " + PdksUtil.getCurrentTimeStampStr());
+		logger.info(konu + " out " + PdksUtil.getCurrentTimeStampStr());
 
 		return adresStr;
 
@@ -537,7 +538,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	 * @throws Exception
 	 */
 	private void mailGonder() {
-		String konu = parameterFazlaMesaiHesaplama.getDescription();
+	///	String konu = parameterFazlaMesaiHesaplama.getDescription();
 		logger.info(konu + " mail gönderiliyor. " + PdksUtil.getCurrentTimeStampStr());
 		String aciklama = "Fazla Mesai Toplu güncellenmiştir.<br></br>" + fazlaMesaiDetay.toString();
 		if (PdksUtil.isSessionKapali(session))
