@@ -113,12 +113,18 @@ public class FazlaMesaiGuncelleme implements Serializable {
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 			}
 
-			parameterFazlaMesaiHesaplama = ortakIslemler.getParameterAktif(session, PARAMETER_FAZLA_MESAI_KEY);
-			if (parameterFazlaMesaiHesaplama == null) {
-				parameterFazlaMesaiHesaplama = new Parameter();
-				parameterFazlaMesaiHesaplama.setDescription("Fazla Mesai Toplu Hesaplama");
+			Parameter parameter = ortakIslemler.getParameterAktif(session, PARAMETER_FAZLA_MESAI_KEY);
+			if (parameter == null) {
+				parameter = new Parameter();
+				parameter.setDescription("Fazla Mesai Toplu Hesaplama");
 			}
-			if (parameterFazlaMesaiHesaplama != null && ortakIslemler.hasStringValue(parameterFazlaMesaiHesaplama.getValue()) == false) {
+			if (ortakIslemler.hasStringValue(parameter.getValue()) == false) {
+				parameterFazlaMesaiHesaplama = parameter;
+				if (agentId != null) {
+					PdksAgent agent = (PdksAgent) pdksEntityController.getSQLParamByFieldObject(PdksAgent.TABLE_NAME, PdksAgent.COLUMN_NAME_ID, agentId, PdksAgent.class, session);
+					if (agent != null)
+						parameterFazlaMesaiHesaplama.setDescription(agent.getAciklama());
+				}
 				fazlaMesaiGuncelleme(ortakIslemler.getBugun(), session);
 
 			}
@@ -176,11 +182,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	 * @throws Exception
 	 */
 	public String fazlaMesaiGuncelleme(Date tarih, Session session) throws Exception {
-		if (agentId != null) {
-			PdksAgent agent = (PdksAgent) pdksEntityController.getSQLParamByFieldObject(PdksAgent.TABLE_NAME, PdksAgent.COLUMN_NAME_ID, agentId, PdksAgent.class, session);
-			if (agent != null)
-				parameterFazlaMesaiHesaplama.setDescription(agent.getAciklama());
-		}
+		
 		konu = parameterFazlaMesaiHesaplama.getDescription();
 		logger.info(konu + " in " + PdksUtil.getCurrentTimeStampStr());
 		Date bugun = PdksUtil.getDate(ortakIslemler.getBugun());
