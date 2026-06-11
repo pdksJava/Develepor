@@ -186,7 +186,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 							Personel personel = vg.getPdksPersonel();
 							LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-
 							Sirket sirket = personel.getSirket();
 							map.put("sirketAciklama", sirket.getAd());
 							if (tesisDurum)
@@ -200,8 +199,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								map.put("Vardiya Başlangıç Zaman", vardiya.getKisaAdi());
 								map.put("Vardiya Bitiş Zaman", "");
 							} else {
-								map.put("Vardiya Başlangıç Zaman", sistemAdmin.dateTimeFormatla(vardiya.getBasZaman()));
-								map.put("Vardiya Bitiş Zaman", sistemAdmin.dateTimeFormatla(vardiya.getBitZaman()));
+								map.put("Vardiya Başlangıç Zaman", sistemAdmin.dateTimeFormatla(vardiya.getVardiyaBasZaman()));
+								map.put("Vardiya Bitiş Zaman", sistemAdmin.dateTimeFormatla(vardiya.getVardiyaBitZaman()));
 							}
 							map.put("Giriş", vg.getGirisHareket() != null ? sistemAdmin.dateTimeFormatla(vg.getGirisHareket().getOrjinalZaman()) : "");
 							map.put("Çıkış", vg.getCikisHareket() != null ? sistemAdmin.dateTimeFormatla(vg.getCikisHareket().getOrjinalZaman()) : "");
