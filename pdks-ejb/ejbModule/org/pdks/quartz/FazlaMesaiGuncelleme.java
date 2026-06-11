@@ -119,6 +119,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 				parameter.setDescription("Fazla Mesai Toplu Hesaplama");
 			}
 			if (ortakIslemler.hasStringValue(parameter.getValue()) == false) {
+				setCalisiyor(Boolean.TRUE);
 				parameterFazlaMesaiHesaplama = parameter;
 				if (agentId != null) {
 					PdksAgent agent = (PdksAgent) pdksEntityController.getSQLParamByFieldObject(PdksAgent.TABLE_NAME, PdksAgent.COLUMN_NAME_ID, agentId, PdksAgent.class, session);
@@ -132,6 +133,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		}
 		if (fazlaMesaiDetay != null)
 			mailGonder();
+		setCalisiyor(Boolean.FALSE);
 
 		pdksEntityController.sessionClose(session);
 		return MenuItemConstant.home;
@@ -142,7 +144,6 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	public QuartzTriggerHandle fazlaMesaiHesaplamaTimer(@Expiration Date when, @IntervalCron String interval) {
 		if (!isCalisiyor()) {
 			fazlaMesaiDetay = null;
-
 			setCalisiyor(Boolean.TRUE);
 			logger.debug("fazlaMesaiHesaplamaTimer in " + PdksUtil.getCurrentTimeStampStr());
 			try {
