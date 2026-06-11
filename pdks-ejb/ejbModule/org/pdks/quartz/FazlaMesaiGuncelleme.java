@@ -508,12 +508,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			vg.setVardiyaOnayli(Boolean.FALSE);
 			pdksEntityController.saveOrUpdate(session, entityManager, vg);
 			flush = true;
-			// ++adet;
-			// if (adet % 10 == 0) {
-			// ortakIslemler.sessionFlush(session);
-			//
-			// flush = false;
-			// }
+
 		}
 		if (flush)
 			ortakIslemler.sessionFlush(session);
