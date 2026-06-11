@@ -118,7 +118,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 			if (PdksUtil.isSessionKapali(session) == false) {
 				girisBilgiHazirla();
-				// setDate(PdksUtil.tariheGunEkleCikar(PdksUtil.buGun(), -1));
+				setDate(PdksUtil.tariheGunEkleCikar(PdksUtil.buGun(), -1));
 				try {
 					devamsizlikListeRaporuOlustur();
 				} catch (Exception e) {
@@ -128,8 +128,17 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 						VardiyaGun vg = (VardiyaGun) iterator.next();
 						Personel personel = vg.getPdksPersonel();
-						if (personel.getEkSaha3() == null)
+						if (personel.getEkSaha3() == null || vg.getVardiya() == null)
 							iterator.remove();
+						else {
+							Vardiya islemVardiya = vg.getIslemVardiya();
+							if (islemVardiya.isCalisma()) {
+								if (islemVardiya.getVardiyaBitZaman().before(bitisTarih))
+									iterator.remove();
+							} else if (vg.getVardiyaDate().before(bitisTarih))
+								iterator.remove();
+						}
+
 					}
 					if (vardiyaGunList.isEmpty() == false) {
 
@@ -514,7 +523,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 						aciklama = "Kart Basılmadı.";
 						if (vardiya.isIcapVardiyasi())
 							aciklama += "(İcapçı)";
-					} 
+					}
 
 				} else {
 					StringBuffer sb = new StringBuffer();
