@@ -99,7 +99,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 
 	@Transactional
 	public String fazlaMesaiHesaplamaBaslat() {
-
+		fazlaMesaiDetay = null;
 		try {
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			agentId = req != null ? Long.parseLong(req.getParameter("agentId")) : null;
@@ -126,7 +126,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		}
 		if (fazlaMesaiDetay != null)
 			mailGonder();
-	
+
 		pdksEntityController.sessionClose(session);
 		return MenuItemConstant.home;
 	}
@@ -135,6 +135,8 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	@SuppressWarnings("unchecked")
 	public QuartzTriggerHandle fazlaMesaiHesaplamaTimer(@Expiration Date when, @IntervalCron String interval) {
 		if (!isCalisiyor()) {
+			fazlaMesaiDetay = null;
+
 			setCalisiyor(Boolean.TRUE);
 			logger.debug("fazlaMesaiHesaplamaTimer in " + PdksUtil.getCurrentTimeStampStr());
 			try {
@@ -143,8 +145,9 @@ public class FazlaMesaiGuncelleme implements Serializable {
 					bugun = cal.getTime();
 					if (PdksUtil.isSessionKapali(session))
 						session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-					parameterFazlaMesaiHesaplama = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
-					if (parameterFazlaMesaiHesaplama != null) {
+					Parameter parameter = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
+					if (parameter != null) {
+						parameterFazlaMesaiHesaplama = parameter;
 						fazlaMesaiGuncelleme(PdksUtil.getDate(bugun), session);
 					}
 				}
@@ -183,7 +186,6 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		Date bugun = PdksUtil.getDate(ortakIslemler.getBugun());
 		if (tarih == null)
 			tarih = bugun;
-		fazlaMesaiDetay = null;
 		Calendar cal = Calendar.getInstance();
 		Parameter parameter = ortakIslemler.getParameterAktif(session, "fazlaMesaiGuncelleMail");
 		fazlaMesaiGuncelleMail = parameter != null && parameter.getValue() != null ? parameter.getValue() : "";
@@ -538,14 +540,13 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	 * @throws Exception
 	 */
 	private void mailGonder() {
-	///	String konu = parameterFazlaMesaiHesaplama.getDescription();
+		// / String konu = parameterFazlaMesaiHesaplama.getDescription();
 		logger.info(konu + " mail gönderiliyor. " + PdksUtil.getCurrentTimeStampStr());
 		String aciklama = "Fazla Mesai Toplu güncellenmiştir.<br></br>" + fazlaMesaiDetay.toString();
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-		fazlaMesaiDetay = null;
 		List<User> userList = null;
- 		if (fazlaMesaiGuncelleMail.equals("1"))
+		if (fazlaMesaiGuncelleMail.equals("1"))
 			try {
 				userList = ortakIslemler.getIKUserList(session);
 			} catch (Exception e) {
