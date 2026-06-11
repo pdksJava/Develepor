@@ -4523,9 +4523,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 						boolean icap = false;
 						if (bolum != null) {
 							String kodu = bolum.getKodu();
- 							if (kodu != null)
+							if (kodu != null)
 								icap = kodu.toUpperCase(Constants.TR_LOCALE).indexOf("ICAP") >= 0;
- 						}
+						}
 						personel.setIcapciOlabilir(icap);
 					}
 
@@ -5978,22 +5978,41 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @param mailBosGonder
 	 * @return
 	 */
-	private MailStatu personelHataMailGonder(List<User> userList, List<PersonelERP> personelList, HashMap<String, PersonelERP> orjPersonelERPMap, List<PersonelERP> hataList, TreeMap<String, Sirket> sirketMap, boolean mailBosGonder) {
+	private MailStatu personelHataMailGonder(List<User> userList, List<PersonelERP> personelList, HashMap<String, PersonelERP> orjPersonelERPMap, List dataList, TreeMap<String, Sirket> sirketMap, boolean mailBosGonder) {
 		MailStatu mailStatu = null;
 		// boolean testDurum = getTestDurum();
 		// if (testDurum)
 		// hataList.clear();
-		if (!hataList.isEmpty()) {
+		List<PersonelERP> hataList = new ArrayList<PersonelERP>();
+		if (!dataList.isEmpty()) {
 			if (mailBosGonder)
 				logger.info("Hata kontrol ediliyor!");
 			List<String> list = new ArrayList<String>();
-			for (Iterator iterator = hataList.iterator(); iterator.hasNext();) {
-				PersonelERP personelERP = (PersonelERP) iterator.next();
-				if (personelERP.getHataList().isEmpty() || list.contains(personelERP.getPersonelNo()))
-					iterator.remove();
-				else {
-					list.add(personelERP.getPersonelNo());
+			for (Iterator iterator = dataList.iterator(); iterator.hasNext();) {
+				Object object = (Object) iterator.next();
+				if (object instanceof PersonelERP) {
+					PersonelERP personelERP = (PersonelERP) object;
+					if (personelERP.getHataList().isEmpty() || list.contains(personelERP.getPersonelNo()))
+						iterator.remove();
+					else {
+						hataList.add(personelERP);
+						list.add(personelERP.getPersonelNo());
+					}
+				} else if (object instanceof Liste) {
+					Liste liste = (Liste) object;
+					List<PersonelERP> perList = (List<PersonelERP>) liste.getValue();
+					for (Iterator iterator2 = perList.iterator(); iterator2.hasNext();) {
+						PersonelERP personelERP = (PersonelERP) iterator2.next();
+
+						if (personelERP.getHataList().isEmpty() || list.contains(personelERP.getPersonelNo()))
+							iterator.remove();
+						else {
+							hataList.add(personelERP);
+							list.add(personelERP.getPersonelNo());
+						}
+					}
 				}
+
 			}
 			list = null;
 		}
