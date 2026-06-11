@@ -2377,7 +2377,7 @@ public class IseGelmemeUyari implements Serializable {
 				setCalisiyor(Boolean.TRUE);
 				boolean zamanTamam = PdksUtil.zamanKontrolDurum();
 				// zamanTamam = true;
-				if (zamanTamam && PdksUtil.getCanliSunucuDurum()) {
+				if (zamanTamam && (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum() == false)) {
 					izinDahil = true;
 					// logger.error("Ise gelme durumu " + PdksUtil.getCurrentTimeStampStr());
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
@@ -2388,7 +2388,7 @@ public class IseGelmemeUyari implements Serializable {
 						izinDahil = parameter == null;
 					}
 
-					String value = (parameter != null) ? parameter.getValue() : null;
+					String value = (parameter != null && parameter.getActive()) ? parameter.getValue() : null;
 					hataKonum = "Paramatre okundu ";
 					if (value != null) {
 						hataGonder = Boolean.TRUE;

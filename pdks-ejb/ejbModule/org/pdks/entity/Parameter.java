@@ -130,6 +130,11 @@ public class Parameter extends BasePDKSObject implements Serializable {
 	}
 
 	@Transient
+	public Boolean getDurum() {
+		return active != null && active;
+	}
+
+	@Transient
 	public boolean isHelpDeskMi() {
 		return helpDesk != null && helpDesk.booleanValue();
 	}

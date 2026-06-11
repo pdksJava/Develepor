@@ -167,4 +167,10 @@ public class Role extends BasePDKSObject implements Serializable {
 	public String getTableName() {
 		return TABLE_NAME;
 	}
+
+	@Transient
+	public Boolean getDurum() {
+
+		return status != null && status;
+	}
 }

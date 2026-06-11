@@ -1219,4 +1219,10 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 		this.entityManager = entityManager;
 	}
 
+	@Transient
+	public Boolean getDurum() {
+		// TODO Auto-generated method stub
+		return durum;
+	}
+
 }

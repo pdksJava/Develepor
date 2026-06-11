@@ -199,7 +199,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							String aciklama = getVardiyaAciklama(vg);
 							map.put("Açıklama", aciklama);
 							String fark = "";
-							if (aciklama.indexOf(",") < 0) {
+							if (aciklama.indexOf(".") == aciklama.lastIndexOf(".")) {
 								if (aciklama.startsWith("Erken ")) {
 									if (aciklama.indexOf("Giriş") > 0) {
 										if (vg.getGirisHareket() != null) {

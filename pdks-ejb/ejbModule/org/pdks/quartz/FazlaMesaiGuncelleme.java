@@ -119,12 +119,14 @@ public class FazlaMesaiGuncelleme implements Serializable {
 				parameterFazlaMesaiHesaplama.setDescription("Fazla Mesai Toplu Hesaplama");
 			}
 			if (parameterFazlaMesaiHesaplama != null && ortakIslemler.hasStringValue(parameterFazlaMesaiHesaplama.getValue()) == false) {
- 				fazlaMesaiGuncelleme(ortakIslemler.getBugun(), session);
-				if (fazlaMesaiDetay != null)
-					mailGonder();
- 			}
+				fazlaMesaiGuncelleme(ortakIslemler.getBugun(), session);
+
+			}
 		} catch (Exception e) {
 		}
+		if (fazlaMesaiDetay != null)
+			mailGonder();
+	
 		pdksEntityController.sessionClose(session);
 		return MenuItemConstant.home;
 	}
@@ -144,8 +146,6 @@ public class FazlaMesaiGuncelleme implements Serializable {
 					parameterFazlaMesaiHesaplama = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
 					if (parameterFazlaMesaiHesaplama != null) {
 						fazlaMesaiGuncelleme(PdksUtil.getDate(bugun), session);
-						if (fazlaMesaiDetay != null)
-							mailGonder();
 					}
 				}
 
@@ -154,6 +154,8 @@ public class FazlaMesaiGuncelleme implements Serializable {
 				e.printStackTrace();
 				logger.error("PDKS hata out : " + e.getMessage());
 			} finally {
+				if (fazlaMesaiDetay != null)
+					mailGonder();
 				pdksEntityController.sessionClose(session);
 				setCalisiyor(Boolean.FALSE);
 
@@ -171,6 +173,11 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	 * @throws Exception
 	 */
 	public String fazlaMesaiGuncelleme(Date tarih, Session session) throws Exception {
+		if (agentId != null) {
+			PdksAgent agent = (PdksAgent) pdksEntityController.getSQLParamByFieldObject(PdksAgent.TABLE_NAME, PdksAgent.COLUMN_NAME_ID, agentId, PdksAgent.class, session);
+			if (agent != null)
+				parameterFazlaMesaiHesaplama.setDescription(agent.getAciklama());
+		}
 		logger.info(parameterFazlaMesaiHesaplama.getDescription() + " in " + PdksUtil.getCurrentTimeStampStr());
 		Date bugun = PdksUtil.getDate(ortakIslemler.getBugun());
 		if (tarih == null)
@@ -534,25 +541,31 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	/**
 	 * @throws Exception
 	 */
-	private void mailGonder() throws Exception {
-		if (PdksUtil.isSessionKapali(session))
-			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+	private void mailGonder() {
 		String konu = parameterFazlaMesaiHesaplama.getDescription();
-		if (agentId != null) {
-			PdksAgent agent = (PdksAgent) pdksEntityController.getSQLParamByFieldObject(PdksAgent.TABLE_NAME, PdksAgent.COLUMN_NAME_ID, agentId, PdksAgent.class, session);
-			if (agent != null)
-				konu = agent.getAciklama();
-		}
 		logger.info(konu + " mail gönderiliyor. " + PdksUtil.getCurrentTimeStampStr());
 		String aciklama = "Fazla Mesai Toplu güncellenmiştir.<br></br>" + fazlaMesaiDetay.toString();
+		if (PdksUtil.isSessionKapali(session))
+			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+		fazlaMesaiDetay = null;
 		List<User> userList = null;
-		if (fazlaMesaiGuncelleMail.equals("1"))
-			userList = ortakIslemler.getIKUserList(session);
+ 		if (fazlaMesaiGuncelleMail.equals("1"))
+			try {
+				userList = ortakIslemler.getIKUserList(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 		if (userList == null || userList.isEmpty()) {
 			aciklama = aciklama + "<br></br><br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
 			aciklama = aciklama + "<br></br><b>Stop Time  : </b>" + PdksUtil.convertToDateString(ortakIslemler.getBugun(), PdksUtil.getDateTimeLongFormat()) + "<br></br>";
 		}
-		zamanlayici.mailGonder(session, null, konu, aciklama, userList, Boolean.TRUE);
+		try {
+			zamanlayici.mailGonder(session, null, konu, aciklama, userList, Boolean.TRUE);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 	}
 
 	/**
