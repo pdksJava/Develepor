@@ -413,8 +413,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 				authenticatedUser.putSessionMap("bolumFazlaMesai", session);
 		}
 
-		fazlaMesaiHesaplaHome.setSession(session);
-		vardiyaGunHome.setSession(session);
 		Long donemKodu = Long.parseLong(PdksUtil.convertToDateString(new Date(), "yyyyMM")), islemDonemKodu = denklestirmeAy.getDonemKodu();
 		AylikPuantaj aylikPuantaj = (AylikPuantaj) paramMap.get("aylikPuantaj");
 		boolean logYaz = authenticatedUser != null || login;
@@ -440,6 +438,13 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		if (ekSaha4Tanim == null)
 			ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
 		for (SelectItem selectItem : bolumList) {
+			if (PdksUtil.isSessionKapali(session)) {
+				session = PdksUtil.getSessionUser(entityManager, loginUser);
+				if (authenticatedUser != null)
+					authenticatedUser.putSessionMap("bolumFazlaMesai", session);
+			}
+			fazlaMesaiHesaplaHome.setSession(session);
+			vardiyaGunHome.setSession(session);
 			Long seciliEkSaha3Id = (Long) selectItem.getValue();
 			String linkStr = "donemId=" + denklestirmeAy.getId() + "&sirketId=" + sirketId + (seciliTesisId != null ? "&tesisId=" + seciliTesisId : "") + "&seciliEkSaha3Id=" + seciliEkSaha3Id;
 			try {

@@ -2228,23 +2228,24 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 							}
 							if (denklestirmeAyDurum && vardiyaGun.getVardiya() != null && vardiyaGun.getId() != null && !vardiyaGun.getDurum().equals(hareketDurum)) {
-								if (updateMap == null) {
-									vardiyaGun.setDurum(hareketDurum);
-									if (hareketDurum) {
-										vardiyaGun.setVardiyaOnayli(Boolean.TRUE);
-									}
-									vardiyaGun.setGuncellemeTarihi(bugun);
-								} else {
-									vGunMap = new HashMap<String, Object>();
-									vGunMap.put("durum", hareketDurum);
-									if (hareketDurum) {
-										vGunMap.put("vardiyaOnayli", Boolean.TRUE);
-										vGunMap.put("guncellemeTarihi", bugun);
-									}
+								if (hareketDurum != vardiyaGun.getDurum().booleanValue() || (hareketDurum && vardiyaGun.isVardiyaOnay() == false)) {
+									if (updateMap == null) {
+										vardiyaGun.setDurum(hareketDurum);
+										if (hareketDurum) {
+											vardiyaGun.setVardiyaOnayli(Boolean.TRUE);
+										}
+										vardiyaGun.setGuncellemeTarihi(bugun);
+									} else {
+										vGunMap = new HashMap<String, Object>();
+										vGunMap.put("durum", hareketDurum);
+										if (hareketDurum) {
+											vGunMap.put("vardiyaOnayli", Boolean.TRUE);
+											vGunMap.put("guncellemeTarihi", bugun);
+										}
 
+									}
+ 									saveVardiyaGun = Boolean.TRUE;
 								}
-
-								saveVardiyaGun = Boolean.TRUE;
 							}
 							if (saveVardiyaGun) {
 								if (vardiyaSaat == null || vardiyaSaat.getId() == null) {
@@ -2524,24 +2525,18 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									try {
 										vg = (VardiyaGun) session.get(VardiyaGun.class, key);
 									} catch (Exception e) {
-
 									}
-									VardiyaGun vardiyaGun = null;
-									if (vGunMap.containsKey("id")) {
-										vardiyaGun = (VardiyaGun) vGunMap.get("id");
+									if (vGunMap.containsKey("id"))
 										vGunMap.remove("id");
-										if (vg == null)
-											session.refresh(vardiyaGun);
-									}
-									if (vg == null && vardiyaGun != null)
-										vg = vardiyaGun;
+									if (vg == null)
+										vg = (VardiyaGun) pdksEntityController.getSQLParamByFieldObject(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, key, VardiyaGun.class, session);
 
 									if (vGunMap.isEmpty() == false && vg != null) {
 										vg.setGuncellendi(false);
+										vg = (VardiyaGun) session.merge(vg);
 										for (String alan : vGunMap.keySet()) {
 											if (alan.equals("durum"))
 												vg.setDurum((Boolean) vGunMap.get(alan));
-
 											else if (alan.equals("vardiyaOnayli"))
 												vg.setVardiyaOnayli((Boolean) vGunMap.get(alan));
 											else if (alan.equals("vardiyaSaat"))
@@ -2550,10 +2545,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 												vg.setGuncellemeTarihi((Date) vGunMap.get(alan));
 										}
 										if (vg.isGuncellendi()) {
-											flush = true;
 											pdksEntityController.saveOrUpdate(session, null, vg);
+											flush = true;
 										}
-
 									}
 								}
 							}

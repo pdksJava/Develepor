@@ -11057,9 +11057,10 @@ public class OrtakIslemler implements Serializable {
 							if (userIKIdList.contains(vardiyaGun.getGuncelleyenUser().getId()))
 								continue;
 						}
+						boolean hareketEnAzBirindeVar = false;
 						Vardiya vardiyaVg = vardiyaGun.getVardiya();
 						String vardiyaDateStr = vardiyaGun.getVardiyaDateStr(), vardiyaKeyStr = vardiyaGun.getVardiyaKeyStr();
-						if (vardiyaKeyStr.endsWith("0401"))
+						if (vardiyaKeyStr.endsWith("0609"))
 							logger.debug("");
 						vardiyaGun.setGuncellendi(Boolean.FALSE);
 						boolean talepVar = vardiyaGun.isVardiyaOnay();
@@ -11210,12 +11211,15 @@ public class OrtakIslemler implements Serializable {
 									}
 									if (!hareketVar)
 										hareketVar = vardiyaGunNew.getHareketler() != null;
+									if (hareketEnAzBirindeVar == false)
+										hareketEnAzBirindeVar = hareketVar;
 									if (vardiyaGunNew.getHareketler() != null && vardiyaGunNew.getHareketDurum()) {
 
 										List<HareketKGS> girisler = vardiyaGunNew.getGirisHareketleri(), cikislar = vardiyaGunNew.getCikisHareketleri();
 										int girisAdet = girisler != null ? girisler.size() : 0;
 										int cikisAdet = cikislar != null ? cikislar.size() : 0;
 										if (girisAdet > 0) {
+
 											Vardiya islemVardiya = vardiyaGunNew.getIslemVardiya();
 											if (cikisAdet == girisAdet) {
 												Date girisIlkZaman = girisler.get(0).getOrjinalZaman(), cikisSonZaman = cikislar.get(girisler.size() - 1).getOrjinalZaman();
@@ -11351,6 +11355,23 @@ public class OrtakIslemler implements Serializable {
 								}
 							}
 						}
+						if (hareketEnAzBirindeVar == false && vardiyaGun.isVardiyaOnay() == false) {
+							if (updateMap == null) {
+								vardiyaGun.setVardiyaOnayli(Boolean.TRUE);
+								vardiyaGun.setGuncelleyenUser(guncelleyenUser);
+								vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
+								vardiyaGun.setGuncellendi(Boolean.TRUE);
+								pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
+							} else {
+								HashMap<String, Object> vGunMap = new HashMap<String, Object>();
+								vGunMap.put("id", vardiyaGun);
+								vGunMap.put("vardiyaOnayli", Boolean.TRUE);
+								vGunMap.put("guncelleyenUser", guncelleyenUser);
+								vGunMap.put("guncellemeTarihi", guncellemeTarihi);
+								updateMap.put(vardiyaGun.getId(), vGunMap);
+
+							}
+						}
 
 						vardiyalarMap.put(vardiyaKeyStr, vardiyaGun);
 						if (updateMap == null && vardiyaGun.isGuncellendi())
@@ -11365,20 +11386,14 @@ public class OrtakIslemler implements Serializable {
 								try {
 									vg = (VardiyaGun) session.get(VardiyaGun.class, key);
 								} catch (Exception e) {
-
 								}
-								VardiyaGun vardiyaGun = null;
-								if (vGunMap.containsKey("id")) {
-									vardiyaGun = (VardiyaGun) vGunMap.get("id");
+								if (vGunMap.containsKey("id"))
 									vGunMap.remove("id");
-									if (vg == null)
-										session.refresh(vardiyaGun);
- 								}
-								if (vg == null && vardiyaGun != null)
-									vg = vardiyaGun;
-
+								if (vg == null)
+									vg = (VardiyaGun) pdksEntityController.getSQLParamByFieldObject(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, key, VardiyaGun.class, session);
 								if (vGunMap.isEmpty() == false && vg != null) {
 									vg.setGuncellendi(false);
+									vg = (VardiyaGun) session.merge(vg);
 									String vardiyaDateStr = vg.getVardiyaDateStr();
 									for (String alan : vGunMap.keySet()) {
 										if (alan.equals("vardiya")) {
@@ -11391,8 +11406,10 @@ public class OrtakIslemler implements Serializable {
 										else if (alan.equals("guncellemeTarihi"))
 											vg.setGuncellemeTarihi((Date) vGunMap.get(alan));
 									}
-									if (vg.isGuncellendi())
+									if (vg.isGuncellendi()) {
 										pdksEntityController.saveOrUpdate(session, null, vg);
+										flush = true;
+									}
 									personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(vardiyaDateStr, vg);
 								}
 							}
