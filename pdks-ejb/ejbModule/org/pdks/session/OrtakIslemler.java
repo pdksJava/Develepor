@@ -16153,17 +16153,18 @@ public class OrtakIslemler implements Serializable {
 				tatilMap = getTatilGunleri(null, basTarih, bitTarih, session);
 			HashMap<Long, List<VardiyaGun>> vMap = new HashMap<Long, List<VardiyaGun>>();
 			for (VardiyaGun vardiyaGun : vardiyaGunList) {
+				Long perId = vardiyaGun.getPersonel() != null ? vardiyaGun.getPersonel().getId() : null;
+				if (perId == null)
+					continue;
 				String key = vardiyaGun.getVardiyaDateStr();
 				vardiyaGun.setTatil(tatilMap.containsKey(key) ? tatilMap.get(key) : null);
-				Long perId = vardiyaGun.getPersonel().getId();
 				List<VardiyaGun> list = vMap.containsKey(perId) ? vMap.get(perId) : new ArrayList<VardiyaGun>();
 				if (list.isEmpty())
 					vMap.put(perId, list);
 				list.add(vardiyaGun);
 				if (vardiyaGun.getVardiya().getSua() != null && vardiyaGun.getVardiya().getSua()) {
 					suaKatSayiOku = true;
-					if (izinMap.isEmpty())
-						break;
+
 				}
 
 			}
