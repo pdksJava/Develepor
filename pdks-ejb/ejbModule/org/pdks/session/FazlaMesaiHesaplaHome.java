@@ -2231,10 +2231,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								if (hareketDurum != vardiyaGun.getDurum().booleanValue() || (hareketDurum && vardiyaGun.isVardiyaOnay() == false)) {
 									if (updateMap == null) {
 										vardiyaGun.setDurum(hareketDurum);
-										if (hareketDurum) {
+										if (hareketDurum)  
 											vardiyaGun.setVardiyaOnayli(Boolean.TRUE);
-										}
-										vardiyaGun.setGuncellemeTarihi(bugun);
+ 										vardiyaGun.setGuncellemeTarihi(bugun);
 									} else {
 										vGunMap = new HashMap<String, Object>();
 										vGunMap.put("durum", hareketDurum);
@@ -2242,7 +2241,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 											vGunMap.put("vardiyaOnayli", Boolean.TRUE);
 											vGunMap.put("guncellemeTarihi", bugun);
 										}
-
 									}
  									saveVardiyaGun = Boolean.TRUE;
 								}
