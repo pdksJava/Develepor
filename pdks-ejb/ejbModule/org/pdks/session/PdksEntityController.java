@@ -58,6 +58,7 @@ public class PdksEntityController implements Serializable {
 	public static final String MAP_KEY_SHOW_SQL = "key_Show_Sql";
 	public static final String MAP_KEY_SELECT = "select";
 	public static final String MAP_KEY_SESSION = "session";
+	public static final String MAP_KEY_LOCK = "lock";
 	public static final String MAP_KEY_SQLADD = "sql_add";
 	public static final String MAP_KEY_SQLPARAMS = "sql_params";
 	public static final String MAP_KEY_TRANSACTION = "transaction";
@@ -235,7 +236,9 @@ public class PdksEntityController implements Serializable {
 			session = (Session) parametreMap.get(MAP_KEY_SESSION);
 		else if (authenticatedUser != null) {
 			session = authenticatedUser.getSessionSQL();
-		}
+		} 
+		 
+			
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		List list = new ArrayList((Collection) parametreMap.get(keyAlan));
@@ -273,7 +276,7 @@ public class PdksEntityController implements Serializable {
 				queryReadUnCommitted.executeUpdate();
 			}
 			org.hibernate.Query qry1 = session.createQuery(sql);
-			if (!parametreList.isEmpty()) {
+ 			if (!parametreList.isEmpty()) {
 				for (int i = 0; i < parametreList.size(); i++) {
 					Object parametre = parametreList.get(i);
 					qry1.setParameter(i, parametre);
