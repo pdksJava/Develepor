@@ -1977,6 +1977,15 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								sonVardiyaBitZaman = islemVardiya.getVardiyaTelorans1BitZaman();
 						}
 						personelDenklestirme = puantaj.getPersonelDenklestirme();
+						if (denklestirmeAyDurum && authenticatedUser == null) {
+							if (session.contains(personelDenklestirme) == false) {
+								PersonelDenklestirme pd = (PersonelDenklestirme) pdksEntityController.getSQLParamByFieldObject(PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.COLUMN_NAME_ID, personelDenklestirme.getId(), PersonelDenklestirme.class, session);
+								if (pd != null) {
+									puantaj.setPersonelDenklestirme(pd);
+									personelDenklestirme = pd;
+								}
+							}
+ 						}
 						personelDenklestirme.setGuncellendi(false);
 						personelCalisiyor = personelDenklestirme.getPersonel().isCalisiyorGun(sonGun);
 						planOnayDurum = denklestirmeAyDurum && (personelDenklestirme.isOnaylandi());
@@ -2231,9 +2240,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								if (hareketDurum != vardiyaGun.getDurum().booleanValue() || (hareketDurum && vardiyaGun.isVardiyaOnay() == false)) {
 									if (updateMap == null) {
 										vardiyaGun.setDurum(hareketDurum);
-										if (hareketDurum)  
+										if (hareketDurum)
 											vardiyaGun.setVardiyaOnayli(Boolean.TRUE);
- 										vardiyaGun.setGuncellemeTarihi(bugun);
+										vardiyaGun.setGuncellemeTarihi(bugun);
 									} else {
 										vGunMap = new HashMap<String, Object>();
 										vGunMap.put("durum", hareketDurum);
@@ -2242,7 +2251,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 											vGunMap.put("guncellemeTarihi", bugun);
 										}
 									}
- 									saveVardiyaGun = Boolean.TRUE;
+									saveVardiyaGun = Boolean.TRUE;
 								}
 							}
 							if (saveVardiyaGun) {
