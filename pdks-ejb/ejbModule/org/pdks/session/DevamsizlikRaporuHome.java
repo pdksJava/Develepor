@@ -2,6 +2,7 @@ package org.pdks.session;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
@@ -176,9 +178,11 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 						List<LinkedHashMap<String, Object>> list = new ArrayList<LinkedHashMap<String, Object>>();
 						outputMap.put(baslik, list);
 						String patternDate = PdksUtil.getDateFormat(), patternSaat = PdksUtil.getSaatFormat();
-						Calendar cal = Calendar.getInstance();
-						long zoneOffSet = cal.get(Calendar.ZONE_OFFSET);
-
+						// Calendar cal = Calendar.getInstance();
+						// long zoneOffSet = cal.get(Calendar.ZONE_OFFSET);
+						// zoneOffSet = 0L;
+						SimpleDateFormat sdf = new SimpleDateFormat(patternSaat);
+						sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 						for (VardiyaGun vg : vardiyaGunList) {
 							if (vg.getVardiya().isCalisma())
 								vg.setIslemVardiya(null);
@@ -208,42 +212,48 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							map.put("Açıklama", aciklama);
 							String fark = "";
 							if (aciklama.indexOf(".") == aciklama.lastIndexOf(".")) {
+								Date farkTime = null;
 								if (aciklama.startsWith("Erken ")) {
 									if (aciklama.indexOf("Giriş") > 0) {
 										if (vg.getGirisHareket() != null) {
-											Long dts = vardiya.getBasZaman().getTime() - vg.getGirisHareket().getOrjinalZaman().getTime() - zoneOffSet;
-											Date farkTime = new Date(dts);
-											fark = PdksUtil.convertToDateString(farkTime, patternSaat);
+											// Long dts = vardiya.getBasZaman().getTime() - vg.getGirisHareket().getOrjinalZaman().getTime() - zoneOffSet;
+											Long dts = vardiya.getBasZaman().getTime() - vg.getGirisHareket().getOrjinalZaman().getTime();
+											farkTime = new Date(dts);
+											// fark = PdksUtil.convertToDateString(farkTime, patternSaat);
 										}
 
 									} else if (aciklama.indexOf("Çıkış") > 0) {
 										if (vg.getCikisHareket() != null) {
-											Long dts = vg.getCikisHareket().getOrjinalZaman().getTime() - vardiya.getBitZaman().getTime() - zoneOffSet;
-											Date farkTime = new Date(dts);
-											fark = PdksUtil.convertToDateString(farkTime, patternSaat);
+											// Long dts = vg.getCikisHareket().getOrjinalZaman().getTime() - vardiya.getBitZaman().getTime() - zoneOffSet;
+											Long dts = vg.getCikisHareket().getOrjinalZaman().getTime() - vardiya.getBitZaman().getTime();
+											farkTime = new Date(dts);
+											// fark = PdksUtil.convertToDateString(farkTime, patternSaat);
 										}
 									}
 
 								} else if (aciklama.startsWith("Geç ")) {
 									if (aciklama.indexOf("Giriş") > 0) {
 										if (vg.getGirisHareket() != null) {
-											Long dts = vg.getGirisHareket().getOrjinalZaman().getTime() - vardiya.getBasZaman().getTime() - zoneOffSet;
-											Date farkTime = new Date(dts);
-											fark = PdksUtil.convertToDateString(farkTime, patternSaat);
+											// Long dts = vg.getGirisHareket().getOrjinalZaman().getTime() - vardiya.getBasZaman().getTime() - zoneOffSet;
+											Long dts = vg.getGirisHareket().getOrjinalZaman().getTime() - vardiya.getBasZaman().getTime();
+											farkTime = new Date(dts);
+											// fark = PdksUtil.convertToDateString(farkTime, patternSaat);
 										}
 
 									} else if (aciklama.indexOf("Çıkış") > 0) {
 										if (vg.getCikisHareket() != null) {
-											Long dts = vardiya.getBitZaman().getTime() - vg.getCikisHareket().getOrjinalZaman().getTime() - zoneOffSet;
-											Date farkTime = new Date(dts);
-											fark = PdksUtil.convertToDateString(farkTime, patternSaat);
+											// Long dts = vardiya.getBitZaman().getTime() - vg.getCikisHareket().getOrjinalZaman().getTime() - zoneOffSet;
+											Long dts = vardiya.getBitZaman().getTime() - vg.getCikisHareket().getOrjinalZaman().getTime();
+											farkTime = new Date(dts);
+											// fark = PdksUtil.convertToDateString(farkTime, patternSaat);
 
 										}
 									}
 
 								} else
 									logger.debug(aciklama);
-
+								if (farkTime != null)
+									fark = sdf.format(farkTime);
 							}
 							map.put("Fark", fark);
 							list.add(map);
@@ -264,9 +274,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			}
 
 			pdksEntityController.sessionClose(session);
-		} else
-			adresStr = MenuItemConstant.home;
-		return adresStr;
+		}
+		return MenuItemConstant.home;
 
 	}
 

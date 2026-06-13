@@ -14,7 +14,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 import javax.servlet.http.HttpSession;
 
 import org.hibernate.annotations.Fetch;
@@ -103,7 +102,7 @@ public class UserMenuItemTime extends BasePDKSObject implements Serializable {
 		this.firstTime = firstTime;
 	}
 
-	@Version
+	//@Version
 	@Column(name = COLUMN_NAME_VERSION)
 	public Integer getVersion() {
 		return version;

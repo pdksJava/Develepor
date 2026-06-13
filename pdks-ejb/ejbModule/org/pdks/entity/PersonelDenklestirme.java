@@ -131,6 +131,7 @@ public class PersonelDenklestirme extends BaseObject {
 
 	}
 
+	// @Version
 	@Column(name = "VERSION")
 	public Integer getVersion() {
 		return version;

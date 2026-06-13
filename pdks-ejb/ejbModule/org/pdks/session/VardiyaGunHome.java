@@ -10388,7 +10388,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			setDenklestirmeAyDurum(fazlaMesaiOrtakIslemler.getDurum(denklestirmeAy));
 		}
 		if (denklestirmeAy != null && getPdksUser().getCalistigiSayfa() != null && getPdksUser().getCalistigiSayfa().equals("fazlaMesaiTalep")) {
-			String whereStr = " inner join FAZLA_MESAI_TALEP FT " + PdksEntityController.getJoinLOCK() + " on FT.VARDIYA_GUN_ID=V.ID and FT.DURUM=1 ";
+			String whereStr = " inner join FAZLA_MESAI_TALEP FT " + PdksEntityController.getJoinLOCK() + " on FT.VARDIYA_GUN_ID = V.ID and FT.DURUM = 1 ";
 			Class class1 = null;
 			if (tip.equals("S"))
 				class1 = Sirket.class;
@@ -10430,7 +10430,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			fields.put("tip", tip);
 			fields.put("kosul", whereStr);
 			try {
-				List newList = pdksEntityController.execSPList(session, fields, "SP_YONETICI_VARDIYA_BILGI_TIPI ", class1);
+				List newList = pdksEntityController.execSPList(session, fields, "SP_YONETICI_VARDIYA_BILGI_TIPI", class1);
 				if (list != null && !newList.isEmpty())
 					list.addAll(newList);
 				newList = null;

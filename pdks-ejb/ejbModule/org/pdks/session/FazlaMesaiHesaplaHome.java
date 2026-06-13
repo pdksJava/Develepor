@@ -1562,8 +1562,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					denklestirmeDonemi.setDenklestirmeAyDurum(denklestirmeAyDurum);
 					list = ortakIslemler.personelDenklestir(denklestirmeDonemi, tatilGunleriMap, searchKey, perList, Boolean.TRUE, Boolean.FALSE, ayBitmedi, session);
 					if (list.isEmpty()) {
-						sessionFlush();
-						sessionClear();
 						denklestirmeDonemi.setDurum(Boolean.FALSE);
 						tatilGunleriMap = ortakIslemler.getTatilGunleri(perListesi, ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBaslangicTarih(), -1), ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), session);
 						denklestirmeDonemi.setTatilGunleriMap(tatilGunleriMap);
@@ -2344,7 +2342,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								saveOrUpdate(object);
 								iterator.remove();
 							}
-							sessionFlush();
+			//				sessionFlush();
 						}
 					}
 					if (offSure != null)
@@ -2512,7 +2510,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							puantaj.setUcretiOdenenMesaiSure(ucretiOdenenMesaiSure);
 							if (!yasalFazlaCalismaAsanSaat && personelDenklestirme.getCalismaModeliAy().isGunMaxCalismaOdenir())
 								yasalFazlaCalismaAsanSaat = calismaModeli.isFazlaMesaiVarMi() && ucretiOdenenMesaiSure > 0.0d;
-							flush = false;
+//							flush = false;
 							if (!saveList.isEmpty()) {
 								for (Iterator iterator = saveList.iterator(); iterator.hasNext();) {
 									Object object = (Object) iterator.next();
@@ -2561,10 +2559,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							updateMap.clear();
 
 						}
-						if (flush) {
-							sessionFlush();
-							saveList.clear();
-						}
+//						if (flush) {
+//							sessionFlush();
+//							saveList.clear();
+//						}
+						saveList.clear();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

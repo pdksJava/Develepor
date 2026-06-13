@@ -117,19 +117,19 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 			e.printStackTrace();
 		}
 		pdksEntityController.sessionClose(session);
-		return MenuItemConstant.home;
+		return mailId == null ? MenuItemConstant.home : "";
 	}
 
 	/**
 	 * @param mailList
 	 * @param session
 	 */
+	@Transactional
 	public void mailDataGonder(List<ServiceData> mailList, Session session) {
 		if (mailList == null)
 			mailList = getMailList(session);
 		if (mailList.isEmpty() == false) {
 			Gson gson = new Gson();
-			boolean flush = false;
 			for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
 				ServiceData serviceData = (ServiceData) iterator.next();
 				MailStatu mailStatu = null;
@@ -169,7 +169,6 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 				}
 				if (paramList != null && veriler != null) {
 					session.delete(serviceData);
-					flush = true;
 					try {
 						LinkedTreeMap<String, Object> params = paramList.get(0);
 						konu = (String) params.get("konu");
@@ -344,7 +343,6 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 							veriMap.put("mailObject", mail);
 
 						}
-						flush = true;
 						iterator.remove();
 					} catch (Exception e) {
 						logger.error(e);
@@ -369,8 +367,8 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 					}
 				}
 			}
-			if (flush)
-				ortakIslemler.sessionFlush(session);
+
+			ortakIslemler.sessionFlush(session);
 		}
 		mailList = null;
 	}
