@@ -390,6 +390,7 @@ public class IseGelmemeUyari implements Serializable {
 					TreeMap<String, VardiyaGun> vardiyalar = ortakIslemler.getIslemVardiyalar(personeller, oncekiGun, sonrakiGun, Boolean.FALSE, session, Boolean.TRUE);
 
 					List<VardiyaGun> vardiyaList = new ArrayList<VardiyaGun>(vardiyalar.values());
+
 					ortakIslemler.sonrakiGunVardiyalariAyikla(tarih, vardiyaList, session);
 					HashMap<PuantajKatSayiTipi, TreeMap<String, BigDecimal>> allMap = null;
 					if (vardiyaList.isEmpty() == false) {
@@ -529,6 +530,21 @@ public class IseGelmemeUyari implements Serializable {
 							e.printStackTrace();
 							logger.error("Pdks hata out : " + e.getMessage());
 							logger.error("hata " + pdksVardiyaGun.getVardiyaKey());
+						}
+
+					}
+					for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
+						VardiyaGun vg = (VardiyaGun) iterator.next();
+						Personel personel = vg.getPdksPersonel();
+						if (personel.getEkSaha3() == null || vg.getVardiya() == null)
+							iterator.remove();
+						else {
+							Vardiya islemVardiya = vg.getIslemVardiya();
+							if (islemVardiya.isCalisma()) {
+								if (islemVardiya.getVardiyaBitZaman().before(tarih))
+									iterator.remove();
+							} else if (vg.getVardiyaDate().before(tarih))
+								iterator.remove();
 						}
 
 					}
