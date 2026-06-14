@@ -131,6 +131,27 @@ public class PersonelDenklestirme extends BaseObject {
 
 	}
 
+	/**
+	 * @param pd
+	 */
+	public void setPersonelDenklestirme(PersonelDenklestirme pd) {
+		this.setGuncellendi(false);
+		this.setOdenenSure(pd.getOdenenSure());
+		this.setHesaplananSure(pd.getHesaplananSure());
+		this.setHaftaCalismaSuresi(pd.getHaftaCalismaSuresi());
+		this.setResmiTatilSure(pd.getResmiTatilSure());
+		this.setFazlaMesaiSure(pd.getFazlaMesaiSure());
+		this.setPlanlanSure(pd.getPlanlanSure());
+		this.setDevredenSure(pd.getDevredenSure());
+		this.setKismiOdemeSure(pd.getKismiOdemeSure());
+		this.setAksamVardiyaSayisi(pd.getAksamVardiyaSayisi());
+		this.setEksikCalismaSure(pd.getEksikCalismaSure());
+		this.setAksamVardiyaSaatSayisi(pd.getAksamVardiyaSaatSayisi());
+		this.setSutIzniSaatSayisi(pd.getSutIzniSaatSayisi());
+		this.setKesilenSure(pd.getKesilenSure());
+		this.setOnaylandi(pd.isOnaylandi());
+	}
+
 	// @Version
 	@Column(name = "VERSION")
 	public Integer getVersion() {
