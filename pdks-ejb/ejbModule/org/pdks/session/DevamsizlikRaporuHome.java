@@ -286,10 +286,15 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
-		// default bugun icin ise gelmeyen raporu cekili olsun
-		if (authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isAdmin() || authenticatedUser.isGenelMudur())
-			fillSirketList();
-		girisBilgiHazirla();
+		try {
+			// default bugun icin ise gelmeyen raporu cekili olsun
+			girisBilgiHazirla();
+			if (authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isAdmin() || authenticatedUser.isGenelMudur())
+				fillSirketList();
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 
 		// devamsizlikListeOlustur();
 
