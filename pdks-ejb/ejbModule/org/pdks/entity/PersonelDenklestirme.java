@@ -152,7 +152,7 @@ public class PersonelDenklestirme extends BaseObject {
 		this.setOnaylandi(pd.isOnaylandi());
 	}
 
-	// @Version
+	//@Version
 	@Column(name = "VERSION")
 	public Integer getVersion() {
 		return version;

@@ -284,14 +284,9 @@ public class FazlaMesaiGuncelleme implements Serializable {
 				User guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
 				guncelleyenUser.setAdmin(true);
 				List<Liste> islemList = new ArrayList<Liste>();
-				boolean talepVar = getSirketTalepGirmeDurum(session);
+				// boolean talepVar = ortakIslemler.getSirketTalepGirmeDurum(session);
 				List<String> donemler = new ArrayList<String>();
 				for (DenklestirmeAy da : aylar) {
-					try {
-						vardiyaVersiyonGuncelle(da, talepVar, bugun, guncelleyenUser, session);
-					} catch (Exception e) {
-
-					}
 					String donem = da.getAyAdi() + " " + da.getYil();
 					donemler.add(donem);
 					DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
@@ -358,7 +353,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 							}
 							iterator.remove();
 						}
-
+						// break;
 					}
 					if (uolStr != null && uolStr.equals("OL")) {
 						if (fazlaMesaiDetay != null) {
@@ -394,7 +389,8 @@ public class FazlaMesaiGuncelleme implements Serializable {
 	 * @param guncelleyenUser
 	 * @param session
 	 */
-	private void vardiyaVersiyonGuncelle(DenklestirmeAy da, boolean talepVar, Date bugun, User guncelleyenUser, Session session) {
+	protected void vardiyaVersiyonGuncelle(DenklestirmeAy da, boolean talepVar, Date bugun, User guncelleyenUser, Session session) {
+		boolean flush = false;
 		HashMap fields = new HashMap();
 		Date tarihBas = PdksUtil.convertToJavaDate(da.getDonem() + "01", PATTERN);
 		Date tarihBit = PdksUtil.getAyinSonGunu(tarihBas);
@@ -464,7 +460,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 				pdList = null;
 			}
 			Date guncellemeTarihi = null;
-			boolean flush = false;
+
 			// int adet = 0;
 			for (VardiyaGun vg : vGunList) {
 				Long perId = vg.getPdksPersonel().getId();
@@ -486,8 +482,6 @@ public class FazlaMesaiGuncelleme implements Serializable {
 
 			}
 			perIdList = null;
-			if (flush)
-				ortakIslemler.sessionFlush(session);
 
 		}
 		fields.clear();
@@ -513,7 +507,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		vGunList = pdksEntityController.getObjectBySQLList(sb1.toString(), fields, VardiyaGun.class);
 		Date guncellemeTarihi = null;
-		boolean flush = false;
+
 		// int adet = 0;
 		for (VardiyaGun vg : vGunList) {
 			Vardiya v = vg.getVardiya();
@@ -532,23 +526,8 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			ortakIslemler.sessionFlush(session);
 
 		vGunList = null;
+
 		sb1 = null;
-	}
-
-	/**
-	 * @param session
-	 * @return
-	 */
-	private boolean getSirketTalepGirmeDurum(Session session) {
-		boolean talepVar = false;
-		List<Sirket> sirketList = pdksEntityController.getSQLParamByAktifFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_PDKS, Boolean.TRUE, Sirket.class, session);
-		for (Sirket sirket : sirketList) {
-			if (sirket.getFazlaMesai() && talepVar == false)
-				talepVar = sirket.getFazlaMesaiTalepGirilebilir();
-
-		}
-		sirketList = null;
-		return talepVar;
 	}
 
 	/**

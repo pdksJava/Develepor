@@ -253,6 +253,22 @@ public class OrtakIslemler implements Serializable {
 	FacesMessages facesMessages;
 
 	/**
+	 * @param session
+	 * @return
+	 */
+	public boolean getSirketTalepGirmeDurum(Session session) {
+		boolean talepVar = false;
+		List<Sirket> sirketList = pdksEntityController.getSQLParamByAktifFieldList(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_PDKS, Boolean.TRUE, Sirket.class, session);
+		for (Sirket sirket : sirketList) {
+			if (sirket.getFazlaMesai() && talepVar == false)
+				talepVar = sirket.getFazlaMesaiTalepGirilebilir();
+
+		}
+		sirketList = null;
+		return talepVar;
+	}
+
+	/**
 	 * @param ap
 	 * @return
 	 */
@@ -11062,6 +11078,9 @@ public class OrtakIslemler implements Serializable {
 						String vardiyaDateStr = vardiyaGun.getVardiyaDateStr(), vardiyaKeyStr = vardiyaGun.getVardiyaKeyStr();
 						if (vardiyaKeyStr.endsWith("0609"))
 							logger.debug("");
+						if (vardiyaGun.getId().equals(2198767L) && authenticatedUser == null) {
+							logger.debug("");
+						}
 						vardiyaGun.setGuncellendi(Boolean.FALSE);
 						boolean talepVar = vardiyaGun.isVardiyaOnay();
 						boolean htVar = talepVar;
@@ -11384,17 +11403,18 @@ public class OrtakIslemler implements Serializable {
 								HashMap<String, Object> vGunMap = updateMap.get(key);
 								VardiyaGun vg = null;
 								try {
-									vg = (VardiyaGun) session.get(VardiyaGun.class, key);
+									vg = (VardiyaGun) pdksEntityController.getSQLParamByFieldObject(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, key, VardiyaGun.class, session);
 								} catch (Exception e) {
 								}
 								if (vGunMap.containsKey("id"))
 									vGunMap.remove("id");
 								if (vg == null)
-									vg = (VardiyaGun) pdksEntityController.getSQLParamByFieldObject(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, key, VardiyaGun.class, session);
+									vg = (VardiyaGun) session.get(VardiyaGun.class, key);
+								String vardiyaDateStr = vg.getVardiyaDateStr();
 								if (vGunMap.isEmpty() == false && vg != null) {
 									vg.setGuncellendi(false);
 									vg = (VardiyaGun) session.merge(vg);
-									String vardiyaDateStr = vg.getVardiyaDateStr();
+
 									for (String alan : vGunMap.keySet()) {
 										if (alan.equals("vardiya")) {
 											vg.setVardiya((Vardiya) vGunMap.get(alan));
@@ -11410,8 +11430,9 @@ public class OrtakIslemler implements Serializable {
 										pdksEntityController.saveOrUpdate(session, null, vg);
 										flush = true;
 									}
-									personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(vardiyaDateStr, vg);
+
 								}
+								personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(vardiyaDateStr, vg);
 							}
 						}
 						updateMap = null;
