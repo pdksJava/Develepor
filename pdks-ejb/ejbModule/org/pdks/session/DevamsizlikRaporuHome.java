@@ -117,6 +117,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			agentId = req != null ? Long.parseLong(req.getParameter("agentId")) : null;
 		} catch (Exception e) {
 		}
+		ServiceData sd = null;
+		User sistemAdmin = new User();
 		String adresStr = ortakIslemler.getLoginAdres();
 		if (PdksUtil.hasStringValue(adresStr)) {
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
@@ -147,7 +149,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					}
 					if (vardiyaGunList.isEmpty() == false) {
 
-						User sistemAdmin = new User();
 						Gson gs = new Gson();
 						String baslik = ortakIslemler.getMenuAdi(sayfaURL);
 						if (agentId != null) {
@@ -264,22 +265,22 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							list.add(map);
 						}
 
-						ServiceData sd = new ServiceData("mailDosyaGonder");
+						sd = new ServiceData("mailDosyaGonder");
 						sd.setInputData(gs.toJson(inputMap));
 						sd.setOutputData(gs.toJson(outputMap));
 						pdksEntityController.saveOrUpdate(session, entityManager, sd);
 						ortakIslemler.sessionFlush(session);
-						String adres = PdksUtil.replaceAllManuel(adresStr, "login", "pdksAgent") + "?mailId=" + sd.getId();
-						String sonuc = ortakIslemler.adresKontrol(adres);
-						if (sonuc == null || sd.getId() != null)
-							adresStr = MenuItemConstant.home;
-						sistemAdmin = null;
+
 					}
 				}
 			}
-
 			pdksEntityController.sessionClose(session);
 		}
+		if (sd != null) {
+			String adres = PdksUtil.replaceAllManuel(adresStr, "login", "pdksAgent") + "?mailId=" + sd.getId();
+			ortakIslemler.adresKontrol(adres);
+		}
+		sistemAdmin = null;
 		return MenuItemConstant.home;
 
 	}
