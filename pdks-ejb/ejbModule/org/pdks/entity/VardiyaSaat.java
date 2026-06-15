@@ -68,6 +68,39 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 		this.calismaSuresi = value;
 	}
 
+	@OneToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_VARDIYA_EK_SAAT)
+	@Fetch(FetchMode.JOIN)
+	public VardiyaEkSaat getEkSaat() {
+		return ekSaat;
+	}
+
+	public void setEkSaat(VardiyaEkSaat value) {
+		if (value != null && value.getId() != null) {
+			if (resmiTatilSure == 0.0d)
+				this.setResmiTatilSure(value.getResmiTatilSure());
+			if (aksamVardiyaSaatSayisi == 0.0d)
+				this.setAksamVardiyaSaatSayisi(value.getAksamVardiyaSaatSayisi());
+			if (resmiTatilKanunenEklenenSure == null || resmiTatilKanunenEklenenSure.doubleValue() == 0.0d)
+				this.setResmiTatilKanunenEklenenSure(value.getResmiTatilKanunenEklenenSure());
+			if (ucretiOdenenFazlaMesaiSaat == null || ucretiOdenenFazlaMesaiSaat.doubleValue() == 0.0d)
+				this.setUcretiOdenenFazlaMesaiSaat(value.getUcretiOdenenFazlaMesaiSaat());
+			if (icapciMesaiSaat == null || icapciMesaiSaat.doubleValue() == 0.0d)
+				this.setIcapciMesaiSaat(value.getIcapciMesaiSaat());
+		}
+		this.ekSaat = value;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = COLUMN_NAME_GUNCELLEME_TARIHI)
+	public Date getGuncellemeTarihi() {
+		return guncellemeTarihi;
+	}
+
+	public void setGuncellemeTarihi(Date guncellemeTarihi) {
+		this.guncellemeTarihi = guncellemeTarihi;
+	}
+
 	@Transient
 	public double getResmiTatilSure() {
 		return resmiTatilSure;
@@ -112,39 +145,6 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 		if (!guncellendi)
 			guncellendi = PdksUtil.isDoubleDegisti(value, ucretiOdenenFazlaMesaiSaat);
 		this.ucretiOdenenFazlaMesaiSaat = value;
-	}
-
-	@OneToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = COLUMN_NAME_VARDIYA_EK_SAAT)
-	@Fetch(FetchMode.JOIN)
-	public VardiyaEkSaat getEkSaat() {
-		return ekSaat;
-	}
-
-	public void setEkSaat(VardiyaEkSaat value) {
-		if (value != null && value.getId() != null) {
-			if (resmiTatilSure == 0.0d)
-				this.setResmiTatilSure(value.getResmiTatilSure());
-			if (aksamVardiyaSaatSayisi == 0.0d)
-				this.setAksamVardiyaSaatSayisi(value.getAksamVardiyaSaatSayisi());
-			if (resmiTatilKanunenEklenenSure == null || resmiTatilKanunenEklenenSure.doubleValue() == 0.0d)
-				this.setResmiTatilKanunenEklenenSure(value.getResmiTatilKanunenEklenenSure());
-			if (ucretiOdenenFazlaMesaiSaat == null || ucretiOdenenFazlaMesaiSaat.doubleValue() == 0.0d)
-				this.setUcretiOdenenFazlaMesaiSaat(value.getUcretiOdenenFazlaMesaiSaat());
-			if (icapciMesaiSaat == null || icapciMesaiSaat.doubleValue() == 0.0d)
-				this.setIcapciMesaiSaat(value.getIcapciMesaiSaat());
-		}
-		this.ekSaat = value;
-	}
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = COLUMN_NAME_GUNCELLEME_TARIHI)
-	public Date getGuncellemeTarihi() {
-		return guncellemeTarihi;
-	}
-
-	public void setGuncellemeTarihi(Date guncellemeTarihi) {
-		this.guncellemeTarihi = guncellemeTarihi;
 	}
 
 	@Transient
