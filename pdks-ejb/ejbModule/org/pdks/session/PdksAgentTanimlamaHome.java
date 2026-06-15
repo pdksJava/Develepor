@@ -129,248 +129,257 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		if (mailList == null)
 			mailList = getMailList(session);
 		if (mailList.isEmpty() == false) {
-			Gson gson = new Gson();
+
 			for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
 				ServiceData serviceData = (ServiceData) iterator.next();
-				MailStatu mailStatu = null;
-				int adet = 0;
-				boolean sil = true;
-				HashMap<String, Object> veriMap = new HashMap<String, Object>();
-				MailObject mail = new MailObject();
-				List<LinkedTreeMap<String, Object>> paramList = null, veriler = null;
-				String parametreJSON = serviceData.getInputData();
-				String dataJSON = serviceData.getOutputData();
-				try {
-					paramList = gson.fromJson(parametreJSON, List.class);
-				} catch (Exception e) {
-				}
-				if (paramList == null && parametreJSON != null) {
-
-					paramList = new ArrayList<LinkedTreeMap<String, Object>>();
-					LinkedHashMap<String, Object> paramMap = gson.fromJson(parametreJSON, LinkedHashMap.class);
-					LinkedTreeMap<String, Object> params = new LinkedTreeMap<String, Object>();
-					params.putAll(paramMap);
-					paramList.add(params);
-					paramMap = null;
-
-				}
-				String baslik = "";
-				try {
-					if (dataJSON.startsWith("{") == false)
-						veriler = gson.fromJson(dataJSON, List.class);
-					else {
-						LinkedHashMap<String, Object> verilerMap = gson.fromJson(dataJSON, LinkedHashMap.class);
-						for (String key : verilerMap.keySet()) {
-							baslik = key;
-							veriler = (List<LinkedTreeMap<String, Object>>) verilerMap.get(key);
-						}
-					}
-				} catch (Exception e) {
-				}
-				if (paramList != null && veriler != null) {
-					session.delete(serviceData);
-					try {
-						LinkedTreeMap<String, Object> params = paramList.get(0);
-						konu = (String) params.get("konu");
-						boolean tabloYazDurum = false;
-						List<String> toList = new ArrayList<String>(), ccList = new ArrayList<String>(), bccList = new ArrayList<String>();
-						List<String> mailAdres = new ArrayList<String>();
-						if (params.containsKey("toAdres")) {
-							List<String> list = PdksUtil.getListFromString((String) params.get("toAdres"), null);
-							if (list != null && list.isEmpty() == false) {
-								for (String string : list) {
-									if (mailAdres.contains(string))
-										continue;
-									toList.add(string);
-									mailAdres.add(string);
-								}
-							}
-							list = null;
-						}
-						if (params.containsKey("cc")) {
-							List<String> list = PdksUtil.getListFromString((String) params.get("cc"), null);
-							if (list != null && list.isEmpty() == false) {
-								for (String string : list) {
-									if (mailAdres.contains(string))
-										continue;
-									ccList.add(string);
-									mailAdres.add(string);
-								}
-							}
-							list = null;
-						}
-						if (params.containsKey("bcc")) {
-							List<String> list = PdksUtil.getListFromString((String) params.get("bcc"), null);
-							if (list != null && list.isEmpty() == false) {
-								for (String string : list) {
-									if (mailAdres.contains(string))
-										continue;
-									bccList.add(string);
-									mailAdres.add(string);
-								}
-							}
-							list = null;
-						}
-
-						if (mailAdres.isEmpty() == false) {
-							List<User> userList = pdksEntityController.getSQLParamByFieldList(User.TABLE_NAME, User.COLUMN_NAME_EMAIL, mailAdres, User.class, session);
-							HashMap<String, User> userMap = new HashMap<String, User>();
-							for (User user : userList)
-								userMap.put(user.getEmail(), user);
-							userList = null;
-							if (params.containsKey("tabloYaz")) {
-								Double tabloYaz = (Double) params.get("tabloYaz");
-								tabloYazDurum = tabloYaz.intValue() == 1;
-							}
-							LinkedTreeMap<String, String> alanDurum = null;
-							if (params.containsKey("parametre")) {
-								Object parametre = params.get("parametre");
-								if (parametre instanceof List) {
-									List list = (ArrayList) parametre;
-									alanDurum = (LinkedTreeMap<String, String>) list.get(0);
-								} else
-									alanDurum = (LinkedTreeMap<String, String>) parametre;
-
-							} else
-								alanDurum = new LinkedTreeMap<String, String>();
-							if (params.containsKey("tabloYaz")) {
-								Double tabloYaz = (Double) params.get("tabloYaz");
-								tabloYazDurum = tabloYaz.intValue() == 1;
-							}
-
-							LinkedHashMap<String, String> baslikMap = new LinkedHashMap<String, String>();
-							for (LinkedTreeMap<String, Object> linkedHashMap : veriler) {
-								for (String key : linkedHashMap.keySet()) {
-									if (baslikMap.containsKey(key) == false) {
-										String baslikStr = key;
-										if (baslikStr.indexOf(" ") < 0) {
-											try {
-												String method = key + (key.indexOf("Aciklama") > 0 ? "" : "Aciklama");
-												String str = (String) PdksUtil.getMethodObject(ortakIslemler, method, null);
-												if (PdksUtil.hasStringValue(str))
-													baslikStr = str;
-											} catch (Exception e) {
-											}
-										}
-										baslikMap.put(key, baslikStr);
-									}
-								}
-							}
-							StringBuffer sb = new StringBuffer();
-							sb.append("<DIV>");
-							if (PdksUtil.hasStringValue(baslik))
-								sb.append("<P style='font-size: 20px; font-weight: bold;' align='center'>" + baslik + "</P>");
-
-							if (tabloYazDurum) {
-								sb.append("<table class=\"mars\" style=\"border-collapse: collapse;\" border=\"1\"><thead><tr>");
-								for (String key : baslikMap.keySet()) {
-									sb.append("<th>" + baslikMap.get(key) + "</th>");
-								}
-								sb.append("</tr></thead><tbody>");
-								boolean renk = true;
-								for (LinkedTreeMap<String, Object> linkedHashMap : veriler) {
-									sb.append("<tr class='" + (renk ? "odd" : "even") + "'>");
-									for (String key : baslikMap.keySet()) {
-										Object veri = linkedHashMap.containsKey(key) ? linkedHashMap.get(key) : null;
-										String alignStr = "", str = "";
-										if (veri != null) {
-											if (alanDurum.containsKey(key)) {
-												str = alanDurum.get(key);
-												if (str.equalsIgnoreCase("c") || str.equalsIgnoreCase("d") || str.equalsIgnoreCase("t") || str.equalsIgnoreCase("dt"))
-													alignStr = " align='center'";
-												else if (str.equalsIgnoreCase("r"))
-													alignStr = " align='rigth'";
-											}
-											if (veri instanceof String == false) {
-												try {
-													Object value = PdksUtil.numericValueFormatStr(veri, null);
-													if (value != null)
-														veri = value;
-												} catch (Exception e) {
-												}
-
-											} else if (str.equalsIgnoreCase("d") || str.equalsIgnoreCase("t") || str.equalsIgnoreCase("dt")) {
-												Date tarih = PdksUtil.convertToJavaDate((String) veri, Constants.JSON_TARIH);
-												if (tarih != null) {
-													if (str.equalsIgnoreCase("dt"))
-														veri = PdksUtil.convertToDateString(tarih, PdksUtil.getDateTimeFormat());
-													else if (str.equalsIgnoreCase("d"))
-														veri = PdksUtil.convertToDateString(tarih, PdksUtil.getDateFormat());
-													else
-														veri = PdksUtil.convertToDateString(tarih, PdksUtil.getSaatFormat());
-												}
-											}
-										}
-										sb.append("<td" + alignStr + ">" + (veri != null ? veri : "") + "</td>");
-									}
-									sb.append("</tr>");
-									renk = !renk;
-								}
-								sb.append("</tbody></table>");
-
-							}
-							sb.append("</DIV>");
-
-							mail.setSubject(konu);
-							mail.setBody(sb.toString());
-
-							if (toList.size() + ccList.size() + bccList.size() > 0) {
-								if (mailId != null || PdksUtil.getCanliSunucuDurum() == true || PdksUtil.getTestSunucuDurum() == true) {
-									adet += mailListKontrol(userMap, toList, mail.getToList());
-									adet += mailListKontrol(userMap, ccList, mail.getCcList());
-									adet += mailListKontrol(userMap, bccList, mail.getBccList());
-								}
-							}
-							toList = null;
-							ccList = null;
-							bccList = null;
-							if (adet > 0 && params.containsKey("dosyaAdi")) {
-								byte[] icerik = null;
-								try {
-									icerik = getExcelDosya(veriler, alanDurum, baslikMap);
-								} catch (Exception e) {
-								}
-								if (icerik != null) {
-									MailFile mf = new MailFile();
-									String dosyaAdi = (String) params.get("dosyaAdi");
-									mf.setDisplayName(dosyaAdi);
-									mf.setIcerik(icerik);
-									mail.getAttachmentFiles().add(mf);
-								}
-							}
-
-							veriMap.put("temizleTOCCList", true);
-							veriMap.put("mailObject", mail);
-
-						}
-						iterator.remove();
-					} catch (Exception e) {
-						logger.error(e);
-					}
-
-				} else {
-					sil = false;
-					serviceData.setFonksiyonAdi("mailDosyaGonderilmedi");
-					serviceData.setOlusturmaTarihi(new Date());
-					pdksEntityController.saveOrUpdate(session, entityManager, serviceData);
-				}
-
-				if (sil) {
-					try {
-						mailStatu = adet > 0 ? ortakIslemler.mailSoapServisGonder(veriMap, session) : null;
-					} catch (Exception e) {
-
-					}
-					if (adet == 0 || (mailStatu != null && mailStatu.getDurum())) {
-						logger.info(mail.getSubject() + " mail gönderildi. ");
-
-					}
-				}
+				mailGonderServisData(serviceData);
 			}
 
 			ortakIslemler.sessionFlush(session);
 		}
 		mailList = null;
+	}
+
+	/**
+	 * @param sd
+	 */
+	public void mailGonderServisData(ServiceData sd) {
+		Gson gson = new Gson();
+		MailStatu mailStatu = null;
+		int adet = 0;
+		boolean sil = true;
+		HashMap<String, Object> veriMap = new HashMap<String, Object>();
+		MailObject mail = new MailObject();
+		List<LinkedTreeMap<String, Object>> paramList = null, veriler = null;
+		String parametreJSON = sd.getInputData();
+		String dataJSON = sd.getOutputData();
+		try {
+			paramList = gson.fromJson(parametreJSON, List.class);
+		} catch (Exception e) {
+		}
+		if (paramList == null && parametreJSON != null) {
+
+			paramList = new ArrayList<LinkedTreeMap<String, Object>>();
+			LinkedHashMap<String, Object> paramMap = gson.fromJson(parametreJSON, LinkedHashMap.class);
+			LinkedTreeMap<String, Object> params = new LinkedTreeMap<String, Object>();
+			params.putAll(paramMap);
+			paramList.add(params);
+			paramMap = null;
+
+		}
+		String baslik = "";
+		try {
+			if (dataJSON.startsWith("{") == false)
+				veriler = gson.fromJson(dataJSON, List.class);
+			else {
+				LinkedHashMap<String, Object> verilerMap = gson.fromJson(dataJSON, LinkedHashMap.class);
+				for (String key : verilerMap.keySet()) {
+					baslik = key;
+					veriler = (List<LinkedTreeMap<String, Object>>) verilerMap.get(key);
+				}
+			}
+		} catch (Exception e) {
+		}
+		if (paramList != null && veriler != null) {
+			if (sd.getId() != null)
+				session.delete(sd);
+			try {
+				LinkedTreeMap<String, Object> params = paramList.get(0);
+				konu = (String) params.get("konu");
+				boolean tabloYazDurum = false;
+				List<String> toList = new ArrayList<String>(), ccList = new ArrayList<String>(), bccList = new ArrayList<String>();
+				List<String> mailAdres = new ArrayList<String>();
+				if (params.containsKey("toAdres")) {
+					List<String> list = PdksUtil.getListFromString((String) params.get("toAdres"), null);
+					if (list != null && list.isEmpty() == false) {
+						for (String string : list) {
+							if (mailAdres.contains(string))
+								continue;
+							toList.add(string);
+							mailAdres.add(string);
+						}
+					}
+					list = null;
+				}
+				if (params.containsKey("cc")) {
+					List<String> list = PdksUtil.getListFromString((String) params.get("cc"), null);
+					if (list != null && list.isEmpty() == false) {
+						for (String string : list) {
+							if (mailAdres.contains(string))
+								continue;
+							ccList.add(string);
+							mailAdres.add(string);
+						}
+					}
+					list = null;
+				}
+				if (params.containsKey("bcc")) {
+					List<String> list = PdksUtil.getListFromString((String) params.get("bcc"), null);
+					if (list != null && list.isEmpty() == false) {
+						for (String string : list) {
+							if (mailAdres.contains(string))
+								continue;
+							bccList.add(string);
+							mailAdres.add(string);
+						}
+					}
+					list = null;
+				}
+
+				if (mailAdres.isEmpty() == false) {
+					List<User> userList = pdksEntityController.getSQLParamByFieldList(User.TABLE_NAME, User.COLUMN_NAME_EMAIL, mailAdres, User.class, session);
+					HashMap<String, User> userMap = new HashMap<String, User>();
+					for (User user : userList)
+						userMap.put(user.getEmail(), user);
+					userList = null;
+					if (params.containsKey("tabloYaz")) {
+						Double tabloYaz = (Double) params.get("tabloYaz");
+						tabloYazDurum = tabloYaz.intValue() == 1;
+					}
+					LinkedTreeMap<String, String> alanDurum = null;
+					if (params.containsKey("parametre")) {
+						Object parametre = params.get("parametre");
+						if (parametre instanceof List) {
+							List list = (ArrayList) parametre;
+							alanDurum = (LinkedTreeMap<String, String>) list.get(0);
+						} else
+							alanDurum = (LinkedTreeMap<String, String>) parametre;
+
+					} else
+						alanDurum = new LinkedTreeMap<String, String>();
+					if (params.containsKey("tabloYaz")) {
+						Double tabloYaz = (Double) params.get("tabloYaz");
+						tabloYazDurum = tabloYaz.intValue() == 1;
+					}
+
+					LinkedHashMap<String, String> baslikMap = new LinkedHashMap<String, String>();
+					for (LinkedTreeMap<String, Object> linkedHashMap : veriler) {
+						for (String key : linkedHashMap.keySet()) {
+							if (baslikMap.containsKey(key) == false) {
+								String baslikStr = key;
+								if (baslikStr.indexOf(" ") < 0) {
+									try {
+										String method = key + (key.indexOf("Aciklama") > 0 ? "" : "Aciklama");
+										String str = (String) PdksUtil.getMethodObject(ortakIslemler, method, null);
+										if (PdksUtil.hasStringValue(str))
+											baslikStr = str;
+									} catch (Exception e) {
+									}
+								}
+								baslikMap.put(key, baslikStr);
+							}
+						}
+					}
+					StringBuffer sb = new StringBuffer();
+					sb.append("<DIV>");
+					if (PdksUtil.hasStringValue(baslik))
+						sb.append("<P style='font-size: 20px; font-weight: bold;' align='center'>" + baslik + "</P>");
+
+					if (tabloYazDurum) {
+						sb.append("<table class=\"mars\" style=\"border-collapse: collapse;\" border=\"1\"><thead><tr>");
+						for (String key : baslikMap.keySet()) {
+							sb.append("<th>" + baslikMap.get(key) + "</th>");
+						}
+						sb.append("</tr></thead><tbody>");
+						boolean renk = true;
+						for (LinkedTreeMap<String, Object> linkedHashMap : veriler) {
+							sb.append("<tr class='" + (renk ? "odd" : "even") + "'>");
+							for (String key : baslikMap.keySet()) {
+								Object veri = linkedHashMap.containsKey(key) ? linkedHashMap.get(key) : null;
+								String alignStr = "", str = "";
+								if (veri != null) {
+									if (alanDurum.containsKey(key)) {
+										str = alanDurum.get(key);
+										if (str.equalsIgnoreCase("c") || str.equalsIgnoreCase("d") || str.equalsIgnoreCase("t") || str.equalsIgnoreCase("dt"))
+											alignStr = " align='center'";
+										else if (str.equalsIgnoreCase("r"))
+											alignStr = " align='rigth'";
+									}
+									if (veri instanceof String == false) {
+										try {
+											Object value = PdksUtil.numericValueFormatStr(veri, null);
+											if (value != null)
+												veri = value;
+										} catch (Exception e) {
+										}
+
+									} else if (str.equalsIgnoreCase("d") || str.equalsIgnoreCase("t") || str.equalsIgnoreCase("dt")) {
+										Date tarih = PdksUtil.convertToJavaDate((String) veri, Constants.JSON_TARIH);
+										if (tarih != null) {
+											if (str.equalsIgnoreCase("dt"))
+												veri = PdksUtil.convertToDateString(tarih, PdksUtil.getDateTimeFormat());
+											else if (str.equalsIgnoreCase("d"))
+												veri = PdksUtil.convertToDateString(tarih, PdksUtil.getDateFormat());
+											else
+												veri = PdksUtil.convertToDateString(tarih, PdksUtil.getSaatFormat());
+										}
+									}
+								}
+								sb.append("<td" + alignStr + ">" + (veri != null ? veri : "") + "</td>");
+							}
+							sb.append("</tr>");
+							renk = !renk;
+						}
+						sb.append("</tbody></table>");
+
+					}
+					sb.append("</DIV>");
+
+					mail.setSubject(konu);
+					mail.setBody(sb.toString());
+
+					if (toList.size() + ccList.size() + bccList.size() > 0) {
+						if (mailId != null || PdksUtil.getCanliSunucuDurum() == true || PdksUtil.getTestSunucuDurum() == true) {
+							adet += mailListKontrol(userMap, toList, mail.getToList());
+							adet += mailListKontrol(userMap, ccList, mail.getCcList());
+							adet += mailListKontrol(userMap, bccList, mail.getBccList());
+						}
+					}
+					toList = null;
+					ccList = null;
+					bccList = null;
+					if (adet > 0 && params.containsKey("dosyaAdi")) {
+						byte[] icerik = null;
+						try {
+							icerik = getExcelDosya(veriler, alanDurum, baslikMap);
+						} catch (Exception e) {
+						}
+						if (icerik != null) {
+							MailFile mf = new MailFile();
+							String dosyaAdi = (String) params.get("dosyaAdi");
+							mf.setDisplayName(dosyaAdi);
+							mf.setIcerik(icerik);
+							mail.getAttachmentFiles().add(mf);
+						}
+					}
+
+					veriMap.put("temizleTOCCList", true);
+					veriMap.put("mailObject", mail);
+
+				}
+
+			} catch (Exception e) {
+				logger.error(e);
+			}
+
+		} else if (sd.getId() != null) {
+			sil = false;
+			sd.setFonksiyonAdi("mailDosyaGonderilmedi");
+			sd.setOlusturmaTarihi(new Date());
+			pdksEntityController.saveOrUpdate(session, entityManager, sd);
+		}
+
+		if (sil) {
+			try {
+				mailStatu = adet > 0 ? ortakIslemler.mailSoapServisGonder(veriMap, session) : null;
+			} catch (Exception e) {
+
+			}
+			if (adet == 0 || (mailStatu != null && mailStatu.getDurum())) {
+				logger.info(mail.getSubject() + " mail gönderildi. ");
+
+			}
+		}
 	}
 
 	/**

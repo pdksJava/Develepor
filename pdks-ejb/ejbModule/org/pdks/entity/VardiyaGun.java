@@ -13,7 +13,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -192,7 +191,7 @@ public class VardiyaGun extends BaseObject {
 		this.vardiya = value;
 	}
 
-	@OneToOne(cascade = CascadeType.REFRESH)
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_VARDIYA_SAAT)
 	@Fetch(FetchMode.JOIN)
 	public VardiyaSaat getVardiyaSaat() {

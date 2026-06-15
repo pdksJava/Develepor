@@ -32,7 +32,6 @@ import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
@@ -74,6 +73,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 	EntityManager entityManager;
 	@In(required = false, create = true)
 	List<User> userList;
+	@In(required = false, create = true)
+	PdksAgentTanimlamaHome pdksAgentTanimlamaHome;
 
 	public static String sayfaURL = "devamsizlikRaporu";
 	private Date date, bitisTarih;
@@ -109,7 +110,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		super.create();
 	}
 
-	@Transactional
 	public String sayfaMailRaporAction() {
 		Long agentId = null;
 		try {
@@ -268,15 +268,20 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 						sd = new ServiceData("mailDosyaGonder");
 						sd.setInputData(gs.toJson(inputMap));
 						sd.setOutputData(gs.toJson(outputMap));
-						pdksEntityController.saveOrUpdate(session, entityManager, sd);
-						ortakIslemler.sessionFlush(session);
+						if (pdksAgentTanimlamaHome != null) {
+							pdksAgentTanimlamaHome.setSession(session);
+							pdksAgentTanimlamaHome.mailGonderServisData(sd);
+						} else {
+							pdksEntityController.saveOrUpdate(session, entityManager, sd);
+							ortakIslemler.sessionFlush(session);
+						}
 
 					}
 				}
 			}
 			pdksEntityController.sessionClose(session);
 		}
-		if (sd != null) {
+		if (sd != null && sd.getId() != null) {
 			String adres = PdksUtil.replaceAllManuel(adresStr, "login", "pdksAgent") + "?mailId=" + sd.getId();
 			ortakIslemler.adresKontrol(adres);
 		}

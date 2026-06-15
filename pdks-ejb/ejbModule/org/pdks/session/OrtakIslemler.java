@@ -11061,7 +11061,8 @@ public class OrtakIslemler implements Serializable {
 
 				if (!vardiyaPerList.isEmpty()) {
 					Date sonGun = PdksUtil.getDate(bugun);
-					HashMap<Long, HashMap<String, Object>> updateMap = authenticatedUser == null ? new HashMap<Long, HashMap<String, Object>>() : null;
+					HashMap<Long, HashMap<String, Object>> updateMap = null;
+					// updateMap = authenticatedUser == null ? new HashMap<Long, HashMap<String, Object>>() : null;
 					for (Iterator iterator = varList.iterator(); iterator.hasNext();) {
 						VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 						vardiyaGun.setDegisti(false);
@@ -11397,46 +11398,46 @@ public class OrtakIslemler implements Serializable {
 							sessionFlush(session);
 
 					}
-					if (updateMap != null) {
-						if (updateMap.isEmpty() == false) {
-							for (Long key : updateMap.keySet()) {
-								HashMap<String, Object> vGunMap = updateMap.get(key);
-								VardiyaGun vg = null;
-								try {
-									vg = (VardiyaGun) pdksEntityController.getSQLParamByFieldObject(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, key, VardiyaGun.class, session);
-								} catch (Exception e) {
-								}
-								if (vGunMap.containsKey("id"))
-									vGunMap.remove("id");
-								if (vg == null)
-									vg = (VardiyaGun) session.get(VardiyaGun.class, key);
-								String vardiyaDateStr = vg.getVardiyaDateStr();
-								if (vGunMap.isEmpty() == false && vg != null) {
-									vg.setGuncellendi(false);
-									vg = (VardiyaGun) session.merge(vg);
-
-									for (String alan : vGunMap.keySet()) {
-										if (alan.equals("vardiya")) {
-											vg.setVardiya((Vardiya) vGunMap.get(alan));
-											planGuncelle = true;
-										} else if (alan.equals("vardiyaOnayli"))
-											vg.setVardiyaOnayli((Boolean) vGunMap.get(alan));
-										else if (alan.equals("guncelleyenUser"))
-											vg.setGuncelleyenUser((User) vGunMap.get(alan));
-										else if (alan.equals("guncellemeTarihi"))
-											vg.setGuncellemeTarihi((Date) vGunMap.get(alan));
-									}
-									if (vg.isGuncellendi()) {
-										pdksEntityController.saveOrUpdate(session, null, vg);
-										flush = true;
-									}
-
-								}
-								personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(vardiyaDateStr, vg);
-							}
-						}
-						updateMap = null;
-					}
+//					if (updateMap != null) {
+//						if (updateMap.isEmpty() == false) {
+//							for (Long key : updateMap.keySet()) {
+//								HashMap<String, Object> vGunMap = updateMap.get(key);
+//								VardiyaGun vg = null;
+//								try {
+//									vg = (VardiyaGun) pdksEntityController.getSQLParamByFieldObject(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, key, VardiyaGun.class, session);
+//								} catch (Exception e) {
+//								}
+//								if (vGunMap.containsKey("id"))
+//									vGunMap.remove("id");
+//								if (vg == null)
+//									vg = (VardiyaGun) session.get(VardiyaGun.class, key);
+//								String vardiyaDateStr = vg.getVardiyaDateStr();
+//								if (vGunMap.isEmpty() == false && vg != null) {
+//									vg.setGuncellendi(false);
+//									vg = (VardiyaGun) session.merge(vg);
+//
+//									for (String alan : vGunMap.keySet()) {
+//										if (alan.equals("vardiya")) {
+//											vg.setVardiya((Vardiya) vGunMap.get(alan));
+//											planGuncelle = true;
+//										} else if (alan.equals("vardiyaOnayli"))
+//											vg.setVardiyaOnayli((Boolean) vGunMap.get(alan));
+//										else if (alan.equals("guncelleyenUser"))
+//											vg.setGuncelleyenUser((User) vGunMap.get(alan));
+//										else if (alan.equals("guncellemeTarihi"))
+//											vg.setGuncellemeTarihi((Date) vGunMap.get(alan));
+//									}
+//									if (vg.isGuncellendi()) {
+//										pdksEntityController.saveOrUpdate(session, null, vg);
+//										flush = true;
+//									}
+//
+//								}
+//								personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(vardiyaDateStr, vg);
+//							}
+//						}
+//						updateMap = null;
+//					}
 
 				}
 			}

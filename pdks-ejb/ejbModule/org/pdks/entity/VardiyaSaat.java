@@ -7,7 +7,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -68,7 +68,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 		this.calismaSuresi = value;
 	}
 
-	@OneToOne(cascade = CascadeType.REFRESH)
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = COLUMN_NAME_VARDIYA_EK_SAAT)
 	@Fetch(FetchMode.JOIN)
 	public VardiyaEkSaat getEkSaat() {

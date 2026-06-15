@@ -1672,7 +1672,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 				HashMap<String, Object> paramsMap = new HashMap<String, Object>();
 				List saveList = new ArrayList();
-				HashMap<Long, HashMap<String, Object>> updateMap = authenticatedUser == null ? new HashMap<Long, HashMap<String, Object>>() : null;
+				HashMap<Long, HashMap<String, Object>> updateMap = null;
+				// updateMap = authenticatedUser == null ? new HashMap<Long, HashMap<String, Object>>() : null;
 				msgError = ortakIslemler.getParameterKey("msgErrorResim");
 				if (!PdksUtil.hasStringValue(msgError))
 					msgError = "msgerror.png";
