@@ -1,7 +1,6 @@
 package org.pdks.quartz;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -9,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
@@ -318,7 +316,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 				String uolStr = "";
 				userList = null;
 				if (mailGonder == null && islemList.isEmpty() == false) {
-					mailGonder = getMailGonder(session);
+					mailGonder = agentId == null || getMailGonder(session);
 					if (mailGonder) {
 						uolStr = aylar.size() > 1 && (sirketList != null && sirketList.size() > 1) ? "OL" : "UL";
 						fazlaMesaiDetay = new StringBuffer();
@@ -388,15 +386,14 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		String aciklama = "Fazla Mesai Toplu güncellenmiştir.<br></br>" + fazlaMesaiDetay.toString();
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-
 		if (userList == null || userList.isEmpty()) {
 			Date bugun = ortakIslemler.getBugun();
 			aciklama = aciklama + "<br></br>";
 			aciklama = aciklama + "<br></br><b>Başlama Zamanı : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
 			aciklama = aciklama + "<br></br><b>Bitiş Zamanı   : </b>" + PdksUtil.convertToDateString(bugun, PdksUtil.getDateTimeLongFormat()) + "<br></br>";
-			SimpleDateFormat sdf = new SimpleDateFormat(PdksUtil.getSaatLongFormat());
-			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-			aciklama = aciklama + "<br></br><b>Toplam Zamanı  : </b>" + PdksUtil.convertToDateString(new Date(bugun.getTime() - basTarih.getTime()), PdksUtil.getDateTimeLongFormat()) + "<br></br>";
+			String fark = PdksUtil.getZamanFarkiString(bugun, basTarih, PdksUtil.getSaatLongFormat());
+			if (fark.equals("") == false)
+				aciklama = aciklama + "<br></br><b>Toplam Zamanı  : </b>" + fark + "<br></br>";
 		}
 		try {
 			zamanlayici.mailGonder(session, null, konu, aciklama, userList, Boolean.TRUE);

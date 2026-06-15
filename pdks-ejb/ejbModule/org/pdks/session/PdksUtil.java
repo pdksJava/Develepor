@@ -4243,6 +4243,27 @@ public class PdksUtil implements Serializable {
 	}
 
 	/**
+	 * @param basTarih
+	 * @param bitTarih
+	 * @param pattern
+	 * @return
+	 */
+	public static String getZamanFarkiString(Date basTarih, Date bitTarih, String pattern) {
+		String str = "";
+		if (basTarih != null && bitTarih != null && PdksUtil.hasStringValue(pattern)) {
+			Long fark = bitTarih.getTime() - basTarih.getTime();
+			if (fark >= 0L) {
+ 				SimpleDateFormat sdf = new SimpleDateFormat(PdksUtil.getSaatLongFormat());
+				sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+				str = PdksUtil.convertToDateString(new Date(fark), pattern);
+			}
+		}
+
+		return str;
+
+	}
+
+	/**
 	 * @param content
 	 * @param fileName
 	 * @param ekle
