@@ -4476,6 +4476,11 @@ public class PdksUtil implements Serializable {
 		PdksUtil.sistemDestekVar = sistemDestekVar;
 	}
 
+	public static String getSaatLongFormat() {
+		String format = saatFormat + ":ss";
+		return format;
+	}
+
 	public static String getSaatFormat() {
 		return saatFormat;
 	}

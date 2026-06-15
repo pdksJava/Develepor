@@ -540,11 +540,10 @@ public class IseGelmemeUyari implements Serializable {
 							iterator.remove();
 						else {
 							Vardiya islemVardiya = vg.getIslemVardiya();
-							if (islemVardiya.isCalisma()) {
-								if (islemVardiya.getVardiyaBitZaman().before(tarih))
+							if (islemVardiya.isCalisma() == false) {
+								if (vg.getVardiyaDate().before(tarih))
 									iterator.remove();
-							} else if (vg.getVardiyaDate().before(tarih))
-								iterator.remove();
+							}
 						}
 
 					}

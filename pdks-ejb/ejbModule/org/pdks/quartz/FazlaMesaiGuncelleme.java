@@ -1,6 +1,7 @@
 package org.pdks.quartz;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -8,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
@@ -388,8 +390,13 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 
 		if (userList == null || userList.isEmpty()) {
-			aciklama = aciklama + "<br></br><br></br><b>Start Time : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
-			aciklama = aciklama + "<br></br><b>Stop Time  : </b>" + PdksUtil.convertToDateString(ortakIslemler.getBugun(), PdksUtil.getDateTimeLongFormat()) + "<br></br>";
+			Date bugun = ortakIslemler.getBugun();
+			aciklama = aciklama + "<br></br>";
+			aciklama = aciklama + "<br></br><b>Başlama Zamanı : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
+			aciklama = aciklama + "<br></br><b>Bitiş Zamanı   : </b>" + PdksUtil.convertToDateString(bugun, PdksUtil.getDateTimeLongFormat()) + "<br></br>";
+			SimpleDateFormat sdf = new SimpleDateFormat(PdksUtil.getSaatLongFormat());
+			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+			aciklama = aciklama + "<br></br><b>Toplam Zamanı  : </b>" + PdksUtil.convertToDateString(new Date(bugun.getTime() - basTarih.getTime()), PdksUtil.getDateTimeLongFormat()) + "<br></br>";
 		}
 		try {
 			zamanlayici.mailGonder(session, null, konu, aciklama, userList, Boolean.TRUE);

@@ -136,8 +136,9 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							iterator.remove();
 						else {
 							Vardiya islemVardiya = vg.getIslemVardiya();
+							String aciklama = getVardiyaAciklama(vg);
 							if (islemVardiya.isCalisma()) {
-								if (islemVardiya.getVardiyaBitZaman().before(bitisTarih))
+								if (islemVardiya.getVardiyaBitZaman().before(bitisTarih) && aciklama.indexOf("Çıkış") < 0)
 									iterator.remove();
 							} else if (vg.getVardiyaDate().before(bitisTarih))
 								iterator.remove();
