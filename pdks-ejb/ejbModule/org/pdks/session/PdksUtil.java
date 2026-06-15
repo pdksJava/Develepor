@@ -4253,9 +4253,12 @@ public class PdksUtil implements Serializable {
 		if (basTarih != null && bitTarih != null && PdksUtil.hasStringValue(pattern)) {
 			Long fark = bitTarih.getTime() - basTarih.getTime();
 			if (fark >= 0L) {
- 				SimpleDateFormat sdf = new SimpleDateFormat(PdksUtil.getSaatLongFormat());
+				Calendar cal = Calendar.getInstance();
+				long zoneOffSet = cal.get(Calendar.ZONE_OFFSET);
+				zoneOffSet = 0L;
+				SimpleDateFormat sdf = new SimpleDateFormat(PdksUtil.getSaatLongFormat());
 				sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-				str = PdksUtil.convertToDateString(new Date(fark), pattern);
+				str = sdf.format(new Date(fark - zoneOffSet));
 			}
 		}
 
