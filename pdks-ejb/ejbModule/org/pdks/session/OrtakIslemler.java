@@ -16352,7 +16352,7 @@ public class OrtakIslemler implements Serializable {
 						if (bayramAyirKontrolEt) {
 							if (veriKatSayiVar(bayramAyirMap, sirketId, tesisId, vardiyaId, str)) {
 								ba = getKatSayiVeriMap(bayramAyirMap, sirketId, tesisId, vardiyaId, str);
-								vg.setBayramAyir(ba.intValue() == 1);
+								vg.setBayramAyir(ba.intValue() >= 0);
 
 							}
 						}
