@@ -177,7 +177,15 @@
 													<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ikRole}">
 														<TR>
 															<TD nowrap="nowrap"><SPAN style="font-size: 14; font-weight: bold;"><h:commandLink value="Kapı Hareketleri Excel"
-																		action="#{fazlaMesaiHesaplaHome.aylikVardiyaHareketExcel}" target="blank">
+																		action="#{fazlaMesaiHesaplaHome.aylikVardiyaHareketExcel()}" target="blank">
+																		<a4j:support event="oncomplete" status="ajaxStatus" />
+																	</h:commandLink></SPAN></TD>
+														</TR>
+													</ui:fragment>
+													<ui:fragment rendered="#{fazlaMesaiHesaplaHome.adminRole or authenticatedUser.sistemYoneticisi}">
+														<TR>
+															<TD nowrap="nowrap"><SPAN style="font-size: 14; font-weight: bold;"><h:commandLink value="Aylık Giriş/Çıkış Hareketleri Excel"
+																		action="#{fazlaMesaiHesaplaHome.aylikVardiyaTabloHareketExcel()}" target="blank">
 																		<a4j:support event="oncomplete" status="ajaxStatus" />
 																	</h:commandLink></SPAN></TD>
 														</TR>

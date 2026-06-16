@@ -29,8 +29,10 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
@@ -5550,6 +5552,30 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		return islemDurum;
 	}
 
+	public String aylikVardiyaTabloHareketExcel() {
+
+		try {
+			List<AylikPuantaj> list = new ArrayList<AylikPuantaj>(aylikPuantajList);
+
+			if (!aylikPuantajList.isEmpty()) {
+				String gorevYeriAciklama = getExcelAciklama(null);
+				ByteArrayOutputStream baosDosya = aylikVardiyaTabloHareketExcelDevam(list);
+				if (baosDosya != null) {
+					String dosyaAdi = "AylikCalismaHareket_" + gorevYeriAciklama + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyyMM") + ".xlsx";
+					PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi);
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Pdks hata in : \n");
+			e.printStackTrace();
+			logger.error("Pdks hata out : " + e.getMessage());
+
+		}
+
+		return "";
+
+	}
+
 	/**
 	 * @return
 	 */
@@ -5584,6 +5610,27 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param puantajList
 	 * @return
 	 */
+	private ByteArrayOutputStream aylikVardiyaTabloHareketExcelDevam(List<AylikPuantaj> puantajList) {
+		ByteArrayOutputStream baos = null;
+
+		try {
+			String gorevYeriAciklama = getExcelAciklama(null);
+			baos = aylikVardiyaTabloHareketExcelOlustur(gorevYeriAciklama, puantajList);
+
+		} catch (Exception e) {
+			logger.error("PDKS hata in : \n");
+			e.printStackTrace();
+			logger.error("PDKS hata out : " + e.getMessage());
+			baos = null;
+		}
+		return baos;
+
+	}
+
+	/**
+	 * @param puantajList
+	 * @return
+	 */
 	private ByteArrayOutputStream aylikVardiyaHareketExcelDevam(List<AylikPuantaj> puantajList) {
 
 		ByteArrayOutputStream baos = null;
@@ -5600,6 +5647,343 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		}
 
 		return baos;
+	}
+
+	/**
+	 * @param puantajList
+	 * @param wb
+	 */
+	private ByteArrayOutputStream aylikVardiyaTabloHareketExcelOlustur(String gorevYeriAciklama, List<AylikPuantaj> puantajList) {
+		Workbook wb = new XSSFWorkbook();
+		boolean kimlikNoGoster = false;
+		TreeMap<String, String> sirketMap = new TreeMap<String, String>();
+		for (Iterator iter = puantajList.iterator(); iter.hasNext();) {
+			AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
+			Personel personel = aylikPuantaj.getPdksPersonel();
+			if (!kimlikNoGoster && ikRole) {
+				PersonelKGS personelKGS = personel.getPersonelKGS();
+				if (personelKGS != null)
+					kimlikNoGoster = PdksUtil.hasStringValue(personelKGS.getKimlikNo());
+
+			}
+			String tekSirketTesis = (personel.getSirket() != null ? personel.getSirket().getId() : "") + "_" + (personel.getTesis() != null ? personel.getTesis().getId() : "");
+			String tekSirketTesisAdi = (personel.getSirket() != null ? personel.getSirket().getAd() : "") + " " + (personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
+			sirketMap.put(tekSirketTesis, tekSirketTesisAdi);
+		}
+		Sheet sheet = ExcelUtil.createSheet(wb, PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "MMMMM yyyy") + " Fazla Mesai", Boolean.TRUE);
+		ByteArrayOutputStream baos = null;
+
+		CellStyle izinBaslik = ExcelUtil.getStyleHeader(wb);
+		CellStyle styleOdd = ExcelUtil.getStyleOdd(null, wb);
+		CellStyle styleEven = ExcelUtil.getStyleEven(null, wb);
+		CellStyle styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
+		CellStyle styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
+
+		CellStyle styleCenterEvenDay = ExcelUtil.getStyleDayEven(ExcelUtil.ALIGN_CENTER, wb);
+		CellStyle styleCenterOddDay = ExcelUtil.getStyleDayOdd(ExcelUtil.ALIGN_CENTER, wb);
+		CellStyle styleCenterEvenBoldDay = ExcelUtil.getStyleDayEven(ExcelUtil.ALIGN_CENTER, wb);
+		CellStyle styleCenterOddBoldDay = ExcelUtil.getStyleDayOdd(ExcelUtil.ALIGN_CENTER, wb);
+
+		ExcelUtil.setFontNormalBold(wb, styleCenterEvenBoldDay);
+		ExcelUtil.setFontNormalBold(wb, styleCenterOddBoldDay);
+
+		CellStyle styleDay = null, styleGenel = null, styleStrDay = null, styleStrBoldDay = null;
+		CellStyle styleCenter = ExcelUtil.getStyleData(wb);
+		CellStyle styleTatil = ExcelUtil.getStyleDataCenter(wb);
+
+		CellStyle styleIstek = ExcelUtil.getStyleDataCenter(wb);
+		CellStyle styleEgitim = ExcelUtil.getStyleDataCenter(wb);
+		CellStyle styleOff = ExcelUtil.getStyleDataCenter(wb);
+		ExcelUtil.setFontColor(styleOff, Color.WHITE);
+		ExcelUtil.setFillForegroundColor(izinBaslik, 146, 208, 80);
+		CellStyle styleIcap = ExcelUtil.getStyleDataCenter(wb);
+		ExcelUtil.setFillForegroundColor(styleIcap, 254, 235, 41);
+		CellStyle styleIzin = ExcelUtil.getStyleDataCenter(wb);
+		ExcelUtil.setFillForegroundColor(styleIzin, 146, 208, 80);
+
+		CellStyle styleCalisma = ExcelUtil.getStyleDataCenter(wb);
+
+		int row = 0, col = 0;
+		XSSFCellStyle header = (XSSFCellStyle) ExcelUtil.getStyleHeader(9, wb);
+
+		ExcelUtil.setFillForegroundColor(styleTatil, 255, 153, 204);
+
+		ExcelUtil.setFillForegroundColor(styleIstek, 255, 255, 0);
+
+		ExcelUtil.setFillForegroundColor(styleCalisma, 255, 255, 255);
+
+		ExcelUtil.setFillForegroundColor(styleEgitim, 0, 0, 255);
+
+		ExcelUtil.setFillForegroundColor(styleOff, 13, 12, 89);
+		ExcelUtil.setFontColor(styleOff, 256, 256, 256);
+		String aciklamaExcel = PdksUtil.replaceAll(gorevYeriAciklama, "_", " ");
+		ExcelUtil.getCell(sheet, row, col, header).setCellValue(aciklamaExcel);
+		ExcelUtil.getCell(sheet, row + 1, col, header).setCellValue(PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyy MMMMMM  "));
+		for (int i = 0; i < 5; i++) {
+			ExcelUtil.getCell(sheet, row, col + i + 1, header).setCellValue("");
+			ExcelUtil.getCell(sheet, row + 1, col + i + 1, header).setCellValue("");
+
+		}
+
+		try {
+			sheet.addMergedRegion(ExcelUtil.getRegion((int) row, (int) 0, (int) row, (int) 6));
+			sheet.addMergedRegion(ExcelUtil.getRegion((int) row + 1, (int) 0, (int) row + 1, (int) 6));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		row = 2;
+		col = 0;
+		ExcelUtil.getCell(sheet, ++row, col, styleGenel).setCellValue("");
+		ExcelUtil.getCell(sheet, ++row, col++, header).setCellValue(ortakIslemler.personelNoAciklama());
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Adı Soyadı");
+		if (kimlikNoGoster)
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.kimlikNoAciklama());
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.yoneticiAciklama());
+		if (seciliEkSaha3Id != null)
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumAciklama);
+		if (ekSaha4Tanim != null && seciliEkSaha4Id != null && seciliEkSaha4Id.longValue() > 0L)
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ekSaha4Tanim.getAciklama());
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.calismaModeliAciklama());
+
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("FM Ödeme");
+		if (fazlaMesaiIzinKullan)
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.fmIzinKullanAciklama());
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(aylikPuantajDefault.getIlkGun());
+		CreationHelper helper = wb.getCreationHelper();
+		ClientAnchor anchor = helper.createClientAnchor();
+		Drawing drawing = sheet.createDrawingPatriarch();
+		CellStyle headerVardiyaGun = ExcelUtil.getStyleHeader(9, wb);
+		ExcelUtil.setFillForegroundColor(headerVardiyaGun, 99, 182, 153);
+
+		CellStyle headerVardiyaTatilYarimGun = ExcelUtil.getStyleHeader(9, wb);
+		ExcelUtil.setFontColor(headerVardiyaTatilYarimGun, 255, 255, 0);
+		ExcelUtil.setFillForegroundColor(headerVardiyaTatilYarimGun, 144, 185, 63);
+
+		CellStyle headerVardiyaTatilGun = ExcelUtil.getStyleHeader(9, wb);
+		ExcelUtil.setFillForegroundColor(headerVardiyaTatilGun, 92, 127, 45);
+		ExcelUtil.setFontColor(headerVardiyaTatilGun, 255, 255, 0);
+		for (VardiyaGun vardiyaGun : aylikPuantajDefault.getVardiyalar()) {
+			try {
+				if (!vardiyaGun.isAyinGunu())
+					continue;
+				cal.setTime(vardiyaGun.getVardiyaDate());
+				CellStyle headerVardiya = headerVardiyaGun;
+				String title = null;
+				if (vardiyaGun.getTatil() != null) {
+					Tatil tatil = vardiyaGun.getTatil();
+					title = tatil.getAd();
+					headerVardiya = tatil.isYarimGunMu() ? headerVardiyaTatilYarimGun : headerVardiyaTatilGun;
+				}
+				int col1 = col;
+				Cell cell = ExcelUtil.getCell(sheet, row, col1, headerVardiya);
+				ExcelUtil.getCell(sheet, row - 1, col1, headerVardiya).setCellValue("Giriş");
+				ExcelUtil.getCell(sheet, row - 1, col1 + 1, headerVardiya).setCellValue("Çıkış");
+
+				ExcelUtil.baslikCell(cell, anchor, helper, drawing, cal.get(Calendar.DAY_OF_MONTH) + "\n " + userLogin.getTarihFormatla(cal.getTime(), "EEE"), title);
+				ExcelUtil.getCell(sheet, row, col1 + 1, headerVardiya).setCellValue("");
+				CellRangeAddress region = new CellRangeAddress(row, row, col1, col1 + 1);
+				col = col + 2;
+				sheet.addMergedRegion(region);
+			} catch (Exception e) {
+			}
+		}
+
+		Cell cell = null;
+
+		CellStyle headerIzinTipi = (CellStyle) header.clone();
+		ExcelUtil.setFillForegroundColor(headerIzinTipi, 255, 153, 204);
+
+		TreeMap<String, String> izinGrupMap = ortakIslemler.getIzinGrupMap(session);
+		row++;
+		TreeMap<Long, String> vMap = new TreeMap<Long, String>();
+		int adet = 0;
+		for (Iterator iter = puantajList.iterator(); iter.hasNext();) {
+			AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
+
+			Personel personel = aylikPuantaj.getPdksPersonel();
+			if (personel == null || PdksUtil.hasStringValue(personel.getSicilNo()) == false)
+				continue;
+			PersonelDenklestirme personelDenklestirme = aylikPuantaj.getPersonelDenklestirme();
+
+			CalismaModeli calismaModeli = aylikPuantaj.getPersonelDenklestirme().getCalismaModeliAy() != null ? aylikPuantaj.getPersonelDenklestirme().getCalismaModeli() : null;
+			if (calismaModeli == null)
+				calismaModeli = personel.getCalismaModeli();
+			PersonelKGS personelKGS = personel.getPersonelKGS();
+
+			col = 0;
+
+			try {
+
+				if (++adet % 2 != 0) {
+					styleCenter = styleOddCenter;
+					styleStrDay = styleCenterOddDay;
+					styleGenel = styleOdd;
+					styleStrBoldDay = styleCenterOddBoldDay;
+
+				} else {
+					styleCenter = styleEvenCenter;
+					styleStrDay = styleCenterEvenDay;
+					styleGenel = styleEven;
+					styleStrBoldDay = styleCenterEvenBoldDay;
+
+				}
+				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(personel.getSicilNo());
+
+				Cell personelCell = ExcelUtil.getCell(sheet, row, col++, styleGenel);
+				Row row1 = personelCell.getRow();
+				row1.setHeight((short) -1);
+				personelCell.setCellValue(personel.getAdSoyad());
+				ExcelUtil.getCell(sheet, row + 1, col, styleCenter).setCellValue("");
+
+				if (!sirketMap.isEmpty()) {
+					Sirket personelSirket = personel.getSirket();
+					String title = personelSirket.getAd() + (personel.getTesis() != null ? " - " + personel.getTesis().getAciklama() : "");
+					ExcelUtil.setCellComment(personelCell, anchor, helper, drawing, title);
+				}
+				if (kimlikNoGoster) {
+					String kimlikNo = "";
+					if (personelKGS != null && PdksUtil.hasStringValue(personelKGS.getKimlikNo()))
+						kimlikNo = personelKGS.getKimlikNo();
+					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(kimlikNo);
+				}
+				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(aylikPuantaj.getYonetici() != null && aylikPuantaj.getYonetici().getId() != null ? aylikPuantaj.getYonetici().getAdSoyad() : "");
+				if (seciliEkSaha3Id != null)
+					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
+				if (ekSaha4Tanim != null && seciliEkSaha4Id != null && seciliEkSaha4Id.longValue() > 0L)
+					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(personel.getEkSaha4() != null ? personel.getEkSaha4().getAciklama() : "");
+
+				String modelAciklama = "";
+				if (calismaModeli != null)
+					modelAciklama = calismaModeli.getAciklama();
+				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(modelAciklama);
+
+				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(userLogin.getYesNo(personelDenklestirme.getFazlaMesaiOde()));
+				if (fazlaMesaiIzinKullan)
+					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(userLogin.getYesNo(personelDenklestirme.getFazlaMesaiIzinKullan()));
+
+				List vardiyaList = aylikPuantaj.getAyinVardiyalari();
+				CellRangeAddress region = null;
+				for (int i = 0; i < col; i++) {
+					ExcelUtil.getCell(sheet, row + 1, col, styleCenter).setCellValue("");
+					region = new CellRangeAddress(row, row + 1, i, i);
+					sheet.addMergedRegion(region);
+
+				}
+
+				for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
+					VardiyaGun vg = (VardiyaGun) iterator.next();
+					if (vg.isAyinGunu() == false)
+						continue;
+					String styleText = vg.getAylikClassAdi(aylikPuantaj.getTrClass());
+					styleDay = styleStrDay;
+					if (styleText.equals(VardiyaGun.STYLE_CLASS_HAFTA_TATIL))
+						styleDay = styleTatil;
+					else if (styleText.equals(VardiyaGun.STYLE_CLASS_IZIN))
+						styleDay = styleIzin;
+					else if (styleText.equals(VardiyaGun.STYLE_CLASS_ICAP))
+						styleDay = styleIcap;
+					else if (styleText.equals(VardiyaGun.STYLE_CLASS_OZEL_ISTEK))
+						styleDay = styleIstek;
+					else if (styleText.equals(VardiyaGun.STYLE_CLASS_EGITIM))
+						styleDay = styleEgitim;
+					else if (styleText.equals(VardiyaGun.STYLE_CLASS_OFF)) {
+						styleDay = styleOff;
+
+					}
+
+					int col1 = col;
+					cell = ExcelUtil.getCell(sheet, row, col1, styleText.equals(VardiyaGun.STYLE_CLASS_OFF) == false ? styleStrBoldDay : styleOff);
+					Vardiya vardiya = vg.getVardiya();
+					String aciklama = "";
+					StringBuffer giris = new StringBuffer(), cikis = new StringBuffer();
+					boolean merge = true;
+					if (vardiya != null) {
+						if (vMap.containsKey(vardiya.getId()))
+							aciklama = vMap.get(vardiya.getId());
+						else {
+							aciklama = vardiya.isCalisma() ? authenticatedUser.timeFormatla(vardiya.getBasZaman()) + " - " + authenticatedUser.timeFormatla(vardiya.getBitZaman()) : vardiya.getKisaAdi();
+							vMap.put(vardiya.getId(), aciklama);
+						}
+						if (vg.getIzin() != null) {
+							IzinTipi izinTipi = vg.getIzin().getIzinTipi();
+							BordroDetayTipi izinBordroDetayTipi = ortakIslemler.getBordroDetayTipi(izinTipi, izinGrupMap);
+							if (izinBordroDetayTipi != null && izinBordroDetayTipi.equals(BordroDetayTipi.UCRETLI_IZIN) == false)
+								aciklama = izinTipi.getKisaAciklama();
+						}
+						if (vg.getCalismaSuresi() + vg.getResmiTatilSure() + vg.getHaftaCalismaSuresi() > 0.0d) {
+							StringBuffer sb = new StringBuffer();
+							if (vg.getCalismaSuresi() > 0.0d)
+								sb.append("Ç.S : " + authenticatedUser.sayiFormatliGoster(vg.getCalismaSuresi()) + " ");
+							if (vg.getResmiTatilSure() > 0.0d)
+								sb.append("RT : " + authenticatedUser.sayiFormatliGoster(vg.getResmiTatilSure()) + " ");
+							if (vg.getHaftaCalismaSuresi() > 0.0d)
+								sb.append("HT : " + authenticatedUser.sayiFormatliGoster(vg.getHaftaCalismaSuresi()));
+							String title = sb.toString();
+
+							ExcelUtil.setCellComment(cell, anchor, helper, drawing, title);
+						}
+
+						List<HareketKGS> orjinalHareketler = vg.getOrjinalHareketler();
+						if (orjinalHareketler != null) {
+							for (HareketKGS hareketKGS : orjinalHareketler) {
+								Kapi kapi = hareketKGS.getKapiView().getKapi();
+								if (kapi != null) {
+									String zaman = authenticatedUser.timeFormatla(hareketKGS.getOrjinalZaman());
+									if (kapi.isGirisKapi()) {
+										giris.append((giris.length() > 0 ? "\n" : "") + zaman);
+										merge = false;
+									} else if (kapi.isCikisKapi()) {
+										cikis.append((cikis.length() > 0 ? "\n" : "") + zaman);
+										merge = false;
+									}
+								}
+							}
+						}
+
+					}
+					cell.setCellValue(aciklama);
+					ExcelUtil.getCell(sheet, row, col1 + 1, styleText.equals(VardiyaGun.STYLE_CLASS_OFF) == false ? styleStrBoldDay : styleOff).setCellValue("");
+					region = new CellRangeAddress(row, row, col1, col1 + 1);
+					sheet.addMergedRegion(region);
+
+					ExcelUtil.getCell(sheet, row + 1, col1, styleDay).setCellValue(giris.toString());
+					ExcelUtil.getCell(sheet, row + 1, col1 + 1, styleDay).setCellValue(cikis.toString());
+					if (merge) {
+						region = new CellRangeAddress(row + 1, row + 1, col1, col1 + 1);
+						sheet.addMergedRegion(region);
+					}
+					col = col + 2;
+
+					row1.setHeight((short) -1);
+
+				}
+				row = row + 2;
+				styleGenel = null;
+
+			} catch (Exception ex) {
+				logger.error(ex);
+				ex.printStackTrace();
+			}
+
+		}
+
+		try {
+
+			for (int i = 0; i <= col; i++)
+				sheet.autoSizeColumn(i);
+
+			baos = new ByteArrayOutputStream();
+			wb.write(baos);
+		} catch (Exception e) {
+			logger.error("Pdks hata in : \n");
+			e.printStackTrace();
+			logger.error("Pdks hata out : " + e.getMessage());
+			baos = null;
+		}
+		return baos;
+
 	}
 
 	/**
