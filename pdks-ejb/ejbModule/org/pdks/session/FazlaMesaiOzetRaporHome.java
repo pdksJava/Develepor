@@ -2268,6 +2268,9 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			List<HareketKGS> list2 = personelHareketMap.get(key);
 			List<VardiyaGun> vardiyaList = ap.getAyinVardiyalari();
 			for (VardiyaGun vg : vardiyaList) {
+				vg.setHareketler(null);
+				vg.setCikisHareketleri(null);
+				vg.setGirisHareketleri(null);
 				if (vg.isAyinGunu() && vg.getVardiya() != null) {
 					for (Iterator iterator = list2.iterator(); iterator.hasNext();) {
 						HareketKGS hareket = (HareketKGS) iterator.next();
