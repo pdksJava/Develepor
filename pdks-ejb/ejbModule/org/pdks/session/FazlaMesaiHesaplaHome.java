@@ -5551,18 +5551,17 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	}
 
 	public String aylikVardiyaTabloHareketExcel() {
-
-		try {
+ 		try {
 			List<AylikPuantaj> list = new ArrayList<AylikPuantaj>(aylikPuantajList);
-
-			if (!aylikPuantajList.isEmpty()) {
+			if (!list.isEmpty()) {
 				String gorevYeriAciklama = getExcelAciklama(null);
-				ByteArrayOutputStream baosDosya = aylikVardiyaTabloHareketExcelDevam(list);
+				ByteArrayOutputStream baosDosya = aylikVardiyaTabloHareketExcelDevam(gorevYeriAciklama, list);
 				if (baosDosya != null) {
 					String dosyaAdi = "AylikCalismaHareket_" + gorevYeriAciklama + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyyMM") + ".xlsx";
 					PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi);
 				}
 			}
+			list = null;
 		} catch (Exception e) {
 			logger.error("Pdks hata in : \n");
 			e.printStackTrace();
@@ -5605,10 +5604,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	}
 
 	/**
+	 * @param gorevYeriAciklama
 	 * @param puantajList
 	 * @return
 	 */
-	private ByteArrayOutputStream aylikVardiyaTabloHareketExcelDevam(List<AylikPuantaj> puantajList) {
+	private ByteArrayOutputStream aylikVardiyaTabloHareketExcelDevam(String gorevYeriAciklama, List<AylikPuantaj> puantajList) {
 		ByteArrayOutputStream baos = null;
 		HashMap<String, Object> map = new HashMap<String, Object>();
 
@@ -5618,7 +5618,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			map.put("seciliEkSaha3Id", seciliEkSaha3Id);
 			map.put("seciliEkSaha4Id", seciliEkSaha4Id);
 			map.put("ekSaha4Tanim", ekSaha4Tanim);
-			map.put("gorevYeriAciklama", getExcelAciklama(null));
+			map.put("gorevYeriAciklama", gorevYeriAciklama);
 			baos = ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(map, puantajList);
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");

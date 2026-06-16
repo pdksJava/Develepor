@@ -129,6 +129,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	private List<PersonelDenklestirme> baslikDenklestirmeDonemiList;
 
+	private HashMap<Long, List<HareketKGS>> personelHareketMap;
+
 	private HashMap<String, List<Tanim>> ekSahaListMap;
 
 	private List<Tanim> denklestirmeDinamikAlanlar, personelDinamikAlanlar;
@@ -920,6 +922,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	public void fillFazlaMesaiOzetRaporDevam(AylikPuantaj aylikPuantajSablon, DepartmanDenklestirmeDonemi denklestirmeDonemi) throws Exception {
 		fazlaMesaiVardiyaGun = null;
 		tumVardiyaList = null;
+		personelHareketMap = null;
 		resmiTatilKanunenEklenenSureGoster = false;
 		eksiBakiyeGoster = false;
 		HashMap<Long, Vardiya> vardiyaMap = new HashMap<Long, Vardiya>();
@@ -1444,7 +1447,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					puantaj.setTrClass(renk ? VardiyaGun.STYLE_CLASS_ODD : VardiyaGun.STYLE_CLASS_EVEN);
 					renk = !renk;
 					Integer aksamVardiyaSayisi = 0;
-					Double aksamVardiyaSaatSayisi = 0d,  offSure = null;
+					Double aksamVardiyaSaatSayisi = 0d, offSure = null;
 					if (stajerSirket && denklestirmeAyDurum) {
 						puantaj.planSureHesapla(tatilGunleriMap);
 						offSure = 0.0D;
@@ -1577,7 +1580,6 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 									else if (personelDenklestirme.getHaftaCalismaSuresi() != null && vardiyaGun.getVardiya().isHaftaTatil() && personelDenklestirme.getHaftaCalismaSuresi() > 0.0d) {
 										puantajHaftaTatil += vardiyaSaatDB.getCalismaSuresi();
 										vardiyaGun.setHaftaCalismaSuresi(vardiyaSaatDB.getCalismaSuresi());
-										
 
 									}
 									if (!vardiyaGun.getVardiya().isHaftaTatil()) {
@@ -2237,6 +2239,107 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		setEkSahaListMap((HashMap<String, List<Tanim>>) sonucMap.get("ekSahaList"));
 		setEkSahaTanimMap((TreeMap<String, Tanim>) sonucMap.get("ekSahaTanimMap"));
 		bolumAciklama = (String) sonucMap.get("bolumAciklama");
+	}
+
+	/**
+	 * @param list
+	 * @throws Exception
+	 */
+	private void fillHareketList(List<AylikPuantaj> list) throws Exception {
+		personelHareketMap = new HashMap<Long, List<HareketKGS>>();
+		HashMap<Long, AylikPuantaj> apMap = new HashMap<Long, AylikPuantaj>();
+		for (AylikPuantaj ap : list)
+			apMap.put(ap.getPdksPersonel().getPersonelKGS().getId(), ap);
+		Date tarih1 = PdksUtil.tariheGunEkleCikar(aylikPuantajDefault.getIlkGun(), -1);
+		Date tarih2 = PdksUtil.tariheGunEkleCikar(aylikPuantajDefault.getSonGun(), 1);
+		List<Long> kapiIdler = ortakIslemler.getPdksDonemselKapiIdler(tarih1, tarih2, session);
+		List<HareketKGS> kgsList = ortakIslemler.getHareketBilgileri(kapiIdler, new ArrayList<Long>(apMap.keySet()), tarih1, tarih2, HareketKGS.class, session);
+		if (kgsList.size() > 1)
+			kgsList = PdksUtil.sortListByAlanAdi(kgsList, "zaman", Boolean.FALSE);
+		for (HareketKGS hareket : kgsList) {
+			Long key = hareket.getPersonelKGS().getId();
+			List<HareketKGS> list2 = personelHareketMap.containsKey(key) ? personelHareketMap.get(key) : new ArrayList<HareketKGS>();
+			if (list2.isEmpty())
+				personelHareketMap.put(key, list2);
+			list2.add(hareket);
+		}
+		for (Long key : personelHareketMap.keySet()) {
+			AylikPuantaj ap = apMap.get(key);
+			List<HareketKGS> list2 = personelHareketMap.get(key);
+			List<VardiyaGun> vardiyaList = ap.getAyinVardiyalari();
+			for (VardiyaGun vg : vardiyaList) {
+				if (vg.isAyinGunu() && vg.getVardiya() != null) {
+					for (Iterator iterator = list2.iterator(); iterator.hasNext();) {
+						HareketKGS hareket = (HareketKGS) iterator.next();
+						if (vg.addHareket(hareket, Boolean.TRUE)) {
+							iterator.remove();
+						}
+					}
+				}
+
+			}
+		}
+
+	}
+
+	public String aylikVardiyaTabloHareketExcel() {
+
+		try {
+			List<AylikPuantaj> list = new ArrayList<AylikPuantaj>(aylikPuantajList);
+
+			if (!list.isEmpty()) {
+				if (personelHareketMap == null)
+					try {
+						fillHareketList(list);
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+
+				ByteArrayOutputStream baosDosya = aylikVardiyaTabloHareketExcelDevam(list);
+				if (baosDosya != null) {
+					String dosyaAdi = "FazlaMesai" + (sirket != null ? "_" + (sirket.getSirketGrup() == null ? sirket.getAd() : sirket.getSirketGrup().getAciklama()) : "");
+					dosyaAdi += (tesisId != null ? "_" + ortakIslemler.getSelectItemText(tesisId, tesisList) : "") + (seciliEkSaha3Id != null ? "_" + ortakIslemler.getSelectItemText(seciliEkSaha3Id, gorevYeriList) : "");
+					dosyaAdi += "_" + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyyMM") + ".xlsx";
+					PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi);
+				}
+			}
+			list = null;
+		} catch (Exception e) {
+			logger.error("Pdks hata in : \n");
+			e.printStackTrace();
+			logger.error("Pdks hata out : " + e.getMessage());
+
+		}
+
+		return "";
+
+	}
+
+	/**
+	 * @param puantajList
+	 * @return
+	 */
+	private ByteArrayOutputStream aylikVardiyaTabloHareketExcelDevam(List<AylikPuantaj> puantajList) {
+		ByteArrayOutputStream baos = null;
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		String dosyaAdi = (sirket != null ? "_" + (sirket.getSirketGrup() == null ? sirket.getAd() : sirket.getSirketGrup().getAciklama()) : "");
+		dosyaAdi += (tesisId != null ? "_" + ortakIslemler.getSelectItemText(tesisId, tesisList) : "") + (seciliEkSaha3Id != null ? "_" + ortakIslemler.getSelectItemText(seciliEkSaha3Id, gorevYeriList) : "");
+
+		try {
+			map.put("aylikPuantajDefault", aylikPuantajDefault);
+			map.put("bolumAciklama", bolumAciklama);
+			map.put("seciliEkSaha3Id", seciliEkSaha3Id);
+			map.put("gorevYeriAciklama", dosyaAdi);
+			baos = ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(map, puantajList);
+		} catch (Exception e) {
+			logger.error("PDKS hata in : \n");
+			e.printStackTrace();
+			logger.error("PDKS hata out : " + e.getMessage());
+			baos = null;
+		}
+		map = null;
+		return baos;
+
 	}
 
 	/**
