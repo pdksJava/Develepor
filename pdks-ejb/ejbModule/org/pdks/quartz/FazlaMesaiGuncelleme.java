@@ -394,7 +394,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			String fark = PdksUtil.getZamanFarkiString(basTarih, bugun, PdksUtil.getSaatLongFormat());
 			if (fark.equals("") == false)
 				aciklama = aciklama + "<br></br><b>Toplam Zamanı  : </b>" + fark;
-			aciklama = aciklama + "<br></br>";
+			aciklama = aciklama + "<br></br><br></br>";
 		}
 		try {
 			zamanlayici.mailGonder(session, null, konu, aciklama, userList, Boolean.TRUE);
