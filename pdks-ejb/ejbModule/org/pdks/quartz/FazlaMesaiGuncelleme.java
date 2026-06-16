@@ -390,10 +390,11 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			Date bugun = ortakIslemler.getBugun();
 			aciklama = aciklama + "<br></br>";
 			aciklama = aciklama + "<br></br><b>Başlama Zamanı : </b>" + PdksUtil.convertToDateString(basTarih, PdksUtil.getDateTimeLongFormat());
-			aciklama = aciklama + "<br></br><b>Bitiş Zamanı   : </b>" + PdksUtil.convertToDateString(bugun, PdksUtil.getDateTimeLongFormat()) + "<br></br>";
+			aciklama = aciklama + "<br></br><b>Bitiş Zamanı   : </b>" + PdksUtil.convertToDateString(bugun, PdksUtil.getDateTimeLongFormat());
 			String fark = PdksUtil.getZamanFarkiString(basTarih, bugun, PdksUtil.getSaatLongFormat());
 			if (fark.equals("") == false)
-				aciklama = aciklama + "<br></br><b>Toplam Zamanı  : </b>" + fark + "<br></br>";
+				aciklama = aciklama + "<br></br><b>Toplam Zamanı  : </b>" + fark;
+			aciklama = aciklama + "<br></br>";
 		}
 		try {
 			zamanlayici.mailGonder(session, null, konu, aciklama, userList, Boolean.TRUE);
