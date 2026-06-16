@@ -182,7 +182,7 @@
 																	</h:commandLink></SPAN></TD>
 														</TR>
 													</ui:fragment>
-													<ui:fragment rendered="#{fazlaMesaiHesaplaHome.adminRole or authenticatedUser.sistemYoneticisi}">
+													<ui:fragment rendered="#{(fazlaMesaiHesaplaHome.adminRole or authenticatedUser.sistemYoneticisi) and ortakIslemler.getParameterKeyHasStringValue('aylikVardiyaTabloHareketExcel')}">
 														<TR>
 															<TD nowrap="nowrap"><SPAN style="font-size: 14; font-weight: bold;"><h:commandLink value="Aylık Giriş/Çıkış Hareketleri Excel"
 																		action="#{fazlaMesaiHesaplaHome.aylikVardiyaTabloHareketExcel()}" target="blank">
