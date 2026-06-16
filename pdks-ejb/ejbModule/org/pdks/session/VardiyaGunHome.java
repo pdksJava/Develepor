@@ -8966,17 +8966,32 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @return
 	 */
 	private TreeMap<Long, PersonelDenklestirme> getPersonelDenklestirme(DenklestirmeAy denklestirmeAy, ArrayList<Long> idler) {
-		String fieldName = "p";
-		HashMap fields = new HashMap();
-		StringBuilder sb = new StringBuilder();
-		sb.append("select S.* from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
-		sb.append(" where S." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " and S." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
-		fields.put(fieldName, idler);
-		// fields.put(PdksEntityController.MAP_KEY_MAP, "getPersonelId");
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<PersonelDenklestirme> list = getPersonelDenklestirmeList(denklestirmeAy, idler);
+		if (denklestirmeAy.getDurum()) {
+			List<Long> idList = new ArrayList<Long>();
+			for (PersonelDenklestirme pd : list) {
+				CalismaModeliAy cma = pd.getCalismaModeliAy();
+				if (cma != null && cma.getDurum() == false && idList.contains(cma.getId()) == false) {
+					CalismaModeli cm = cma.getCalismaModeli();
+					if (cm.getFazlaMesaiVar()) {
+						cma.setDurum(Boolean.TRUE);
+						pdksEntityController.saveOrUpdate(session, authenticatedUser != null ? entityManager : null, cma);
+						idList.add(cma.getId());
+					}
+				}
+
+			}
+			if (idList.isEmpty() == false) {
+				fazlaMesaiOrtakIslemler.setDenklestirmeAySure(tatilGunleriMap, defaultAylikPuantajSablon.getVardiyalar(), aramaSecenekleri.getSirket(), denklestirmeAy, session);
+				ortakIslemler.sessionFlush(session);
+				if (idler.isEmpty() == false)
+					list = getPersonelDenklestirmeList(denklestirmeAy, idler);
+			}
+			idList = null;
+		}
+
 		TreeMap<Long, PersonelDenklestirme> denklestirmeMap = new TreeMap<Long, PersonelDenklestirme>();
-		List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(idler, sb, fieldName, fields, PersonelDenklestirme.class, session);
+
 		ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 		for (PersonelDenklestirme pd : list) {
 			pd.setGuncellendi(Boolean.FALSE);
@@ -8986,9 +9001,28 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			ortakIslemler.setBakiyeSifirlaDurum(list, session);
 
 		list = null;
+
+		return denklestirmeMap;
+	}
+
+	/**
+	 * @param dma
+	 * @param idler
+	 * @return
+	 */
+	private List<PersonelDenklestirme> getPersonelDenklestirmeList(DenklestirmeAy dma, ArrayList<Long> idler) {
+		String fieldName = "p";
+		HashMap fields = new HashMap();
+		StringBuilder sb = new StringBuilder();
+		sb.append("select S.* from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+		sb.append(" where S." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + dma.getId() + " and S." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
+		fields.put(fieldName, idler);
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(idler, sb, fieldName, fields, PersonelDenklestirme.class, session);
 		sb = null;
 		fields = null;
-		return denklestirmeMap;
+		return list;
 	}
 
 	/**
