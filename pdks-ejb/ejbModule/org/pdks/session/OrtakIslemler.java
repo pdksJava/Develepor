@@ -56,6 +56,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Row;
@@ -21935,6 +21936,66 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param wb
+	 * @param key
+	 * @param orjCellStyle
+	 * @param boldCellStyleMap
+	 * @return
+	 */
+	private CellStyle getBoldTutarCellStyle(Workbook wb, String key, CellStyle orjCellStyle, HashMap<String, CellStyle> boldCellStyleMap) {
+		CellStyle cloneCellStyle = null;
+		if (boldCellStyleMap.containsKey(key))
+			cloneCellStyle = boldCellStyleMap.get(key);
+		else {
+			cloneCellStyle = ExcelUtil.closeStyle(wb, orjCellStyle);
+			ExcelUtil.setFontNormalBold(wb, cloneCellStyle);
+			ExcelUtil.formatCellStyle(ExcelUtil.FORMAT_DATA_NUMBER, wb, cloneCellStyle);
+			boldCellStyleMap.put(key, cloneCellStyle);
+		}
+		return cloneCellStyle;
+	}
+
+	/**
+	 * @param sheet
+	 * @param rowNo
+	 * @param columnNo
+	 * @param style
+	 * @param deger
+	 * @return
+	 */
+	public Cell setCell(Sheet sheet, int rowNo, int columnNo, CellStyle style, Double deger) {
+		Cell cell = ExcelUtil.getCell(sheet, rowNo, columnNo, style);
+
+		try {
+			if (deger != 0.0d) {
+				cell.setCellValue(authenticatedUser.sayiFormatliGoster(deger));
+			}
+
+		} catch (Exception e) {
+		}
+		return cell;
+	}
+
+	/**
+	 * @param anchor
+	 * @param helper
+	 * @param drawing
+	 * @param personelDenklestirme
+	 * @return
+	 */
+	public Comment getCommentGuncelleyen(ClientAnchor anchor, CreationHelper helper, Drawing drawing, PersonelDenklestirme personelDenklestirme) {
+		Comment commentGuncelleyen = null;
+		if (personelDenklestirme.isOnaylandi() && personelDenklestirme.getGuncelleyenUser() != null) {
+			User loginUser = authenticatedUser != null ? authenticatedUser : new User();
+			String title = "Onaylayan : " + personelDenklestirme.getGuncelleyenUser().getAdSoyad() + "\n";
+			title += "Zaman : " + loginUser.dateTimeFormatla(personelDenklestirme.getGuncellemeTarihi());
+			commentGuncelleyen = ExcelUtil.getComment(anchor, helper, drawing, title);
+		}
+
+		return commentGuncelleyen;
+	}
+
+	/**
 	 * @param map
 	 * @param puantajList
 	 * @return
@@ -21948,6 +22009,17 @@ public class OrtakIslemler implements Serializable {
 		Long seciliEkSaha4Id = map.containsKey("seciliEkSaha4Id") == false ? null : (Long) map.get("seciliEkSaha4Id");
 		Tanim ekSaha4Tanim = map.containsKey("ekSaha4Tanim") == false ? null : (Tanim) map.get("ekSaha4Tanim");
 		boolean kimlikNoGoster = false;
+		boolean yasalFazlaCalismaAsanSaat = map.containsKey("yasalFazlaCalismaAsanSaat") == false ? false : (Boolean) map.get("yasalFazlaCalismaAsanSaat");
+		boolean icapciSaatGoster = map.containsKey("icapciSaatGoster") == false ? false : (Boolean) map.get("icapciSaatGoster");
+		boolean gerceklesenMesaiKod = map.containsKey("gerceklesenMesaiKod") == false ? false : (Boolean) map.get("gerceklesenMesaiKod");
+		boolean devredenMesaiKod = map.containsKey("devredenMesaiKod") == false ? false : (Boolean) map.get("devredenMesaiKod");
+		boolean kismiOdemeGoster = map.containsKey("kismiOdemeGoster") == false ? false : (Boolean) map.get("kismiOdemeGoster");
+		boolean resmiTatilVar = map.containsKey("resmiTatilVar") == false ? false : (Boolean) map.get("resmiTatilVar");
+		boolean haftaTatilVar = map.containsKey("haftaTatilVar") == false ? false : (Boolean) map.get("haftaTatilVar");
+		boolean devredenBakiyeKod = map.containsKey("devredenBakiyeKod") == false ? false : (Boolean) map.get("devredenBakiyeKod");
+		boolean aksamGun = map.containsKey("aksamGun") == false ? false : (Boolean) map.get("aksamGun");
+		boolean aksamSaat = map.containsKey("aksamSaat") == false ? false : (Boolean) map.get("aksamSaat");
+		boolean resmiTatilKanunenEklenenSureGoster = map.containsKey("resmiTatilKanunenEklenenSureGoster") == false ? false : (Boolean) map.get("resmiTatilKanunenEklenenSureGoster");
 
 		TreeMap<String, String> sirketMap = new TreeMap<String, String>();
 		for (Iterator iter = puantajList.iterator(); iter.hasNext();) {
@@ -21965,22 +22037,24 @@ public class OrtakIslemler implements Serializable {
 		}
 		Sheet sheet = ExcelUtil.createSheet(wb, PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "MMMMM yyyy") + " Fazla Mesai", Boolean.TRUE);
 		ByteArrayOutputStream baos = null;
-
+		CellStyle styleTutar = null;
 		CellStyle izinBaslik = ExcelUtil.getStyleHeader(wb);
 		CellStyle styleOdd = ExcelUtil.getStyleOdd(null, wb);
 		CellStyle styleEven = ExcelUtil.getStyleEven(null, wb);
 		CellStyle styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
 		CellStyle styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
+		CellStyle styleTutarEven = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_TUTAR, wb);
 
 		CellStyle styleCenterEvenDay = ExcelUtil.getStyleDayEven(ExcelUtil.ALIGN_CENTER, wb);
 		CellStyle styleCenterOddDay = ExcelUtil.getStyleDayOdd(ExcelUtil.ALIGN_CENTER, wb);
 		CellStyle styleCenterEvenBoldDay = ExcelUtil.getStyleDayEven(ExcelUtil.ALIGN_CENTER, wb);
 		CellStyle styleCenterOddBoldDay = ExcelUtil.getStyleDayOdd(ExcelUtil.ALIGN_CENTER, wb);
+		CellStyle styleTutarOdd = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_TUTAR, wb);
 
 		ExcelUtil.setFontNormalBold(wb, styleCenterEvenBoldDay);
 		ExcelUtil.setFontNormalBold(wb, styleCenterOddBoldDay);
 
-		CellStyle styleDay = null, styleGenel = null, styleStrDay = null, styleStrBoldDay = null;
+		CellStyle styleDay = null, styleGenel = null, styleStrDay = null, styleStrBoldDay = null, styleBoldTutarDay = null;
 		CellStyle styleCenter = ExcelUtil.getStyleData(wb);
 		CellStyle styleTatil = ExcelUtil.getStyleDataCenter(wb);
 
@@ -22009,24 +22083,8 @@ public class OrtakIslemler implements Serializable {
 
 		ExcelUtil.setFillForegroundColor(styleOff, 13, 12, 89);
 		ExcelUtil.setFontColor(styleOff, 256, 256, 256);
-		String aciklamaExcel = PdksUtil.replaceAll(gorevYeriAciklama, "_", " ");
-		ExcelUtil.getCell(sheet, row, col, header).setCellValue(aciklamaExcel);
-		ExcelUtil.getCell(sheet, row + 1, col, header).setCellValue(PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyy MMMMMM  "));
-		for (int i = 0; i < 5; i++) {
-			ExcelUtil.getCell(sheet, row, col + i + 1, header).setCellValue("");
-			ExcelUtil.getCell(sheet, row + 1, col + i + 1, header).setCellValue("");
 
-		}
-
-		try {
-			sheet.addMergedRegion(ExcelUtil.getRegion((int) row, (int) 0, (int) row, (int) 6));
-			sheet.addMergedRegion(ExcelUtil.getRegion((int) row + 1, (int) 0, (int) row + 1, (int) 6));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		row = 2;
 		col = 0;
-		ExcelUtil.getCell(sheet, ++row, col, styleGenel).setCellValue("");
 		ExcelUtil.getCell(sheet, ++row, col++, header).setCellValue(personelNoAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Adı Soyadı");
 		if (kimlikNoGoster)
@@ -22083,7 +22141,63 @@ public class OrtakIslemler implements Serializable {
 			}
 		}
 
-		Cell cell = null;
+		Cell cell = ExcelUtil.getCell(sheet, row, col++, header);
+		ExcelUtil.baslikCell(cell, anchor, helper, drawing, "TÇS", "Toplam Çalışma Saati: Çalışanın bu listedeki toplam çalışma saati");
+		cell = ExcelUtil.getCell(sheet, row, col++, header);
+		ExcelUtil.baslikCell(cell, anchor, helper, drawing, "ÇGS", "Çalışılması Gereken Saat: Çalışanın bu listede çalışması gereken saat");
+		if (yasalFazlaCalismaAsanSaat) {
+			cell = ExcelUtil.getCell(sheet, row, col++, header);
+			ExcelUtil.baslikCell(cell, anchor, helper, drawing, yasalFazlaCalismaAsanSaatKod(), "Yasal Çalışmayı Aşan Mesai Toplam Miktarı");
+		}
+		if (icapciSaatGoster) {
+			cell = ExcelUtil.getCell(sheet, row, col++, header);
+			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "ICP", "İcapçı Mesai Toplam Miktarı");
+		}
+
+		if (gerceklesenMesaiKod) {
+			cell = ExcelUtil.getCell(sheet, row, col++, header);
+			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "GM", "Gerçekleşen Mesai : Çalışanın bu listedeki eksi/fazla çalışma saati");
+		}
+
+		if (devredenMesaiKod) {
+			cell = ExcelUtil.getCell(sheet, row, col++, header);
+			ExcelUtil.baslikCell(cell, anchor, helper, drawing, devredenMesaiKod(), "Devreden Mesai: Çalisanin önceki listelerden devreden eksi/fazla mesaisi");
+
+		}
+
+		cell = ExcelUtil.getCell(sheet, row, col++, header);
+		ExcelUtil.baslikCell(cell, anchor, helper, drawing, "ÜÖM", "Çalışanın bu listenin sonunda ücret olarak ödediğimiz fazla mesai saati");
+
+		if (kismiOdemeGoster) {
+			cell = ExcelUtil.getCell(sheet, row, col++, header);
+			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "KÖM", "Çalışanın bu listenin sonunda ücret olarak kısmi ödediğimiz fazla mesai saati ");
+		}
+		if (resmiTatilVar) {
+			cell = ExcelUtil.getCell(sheet, row, col++, header);
+			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "RÖM", "Çalışanın bu listenin sonunda ücret olarak ödediğimiz resmi tatil mesai saati");
+			if (resmiTatilKanunenEklenenSureGoster) {
+				cell = ExcelUtil.getCell(sheet, row, col++, header);
+				ExcelUtil.baslikCell(cell, anchor, helper, drawing, "KRÖM", "Çalışanın bu listenin sonunda ücret olarak 7.5 tamamlanan toplam resmi tatil mesai saati");
+
+			}
+		}
+		if (haftaTatilVar) {
+			cell = ExcelUtil.getCell(sheet, row, col++, header);
+			ExcelUtil.baslikCell(cell, anchor, helper, drawing, AylikPuantaj.MESAI_TIPI_HAFTA_TATIL, "Çalışanın bu listenin sonunda ücret olarak ödediğimiz hafta tatil mesai saati");
+		}
+		if (devredenBakiyeKod) {
+			cell = ExcelUtil.getCell(sheet, row, col++, header);
+			ExcelUtil.baslikCell(cell, anchor, helper, drawing, devredenBakiyeKod(), "Bakiye: Çalışanın bu liste de dahil bugüne kadarki devreden eksi/fazla mesaisi");
+		}
+
+		if (aksamGun) {
+			cell = ExcelUtil.getCell(sheet, row, col++, header);
+			ExcelUtil.baslikCell(cell, anchor, helper, drawing, AylikPuantaj.MESAI_TIPI_AKSAM_ADET, "Çalışanın bu listenin sonunda ücret olarak ödediğimiz gece mesai gün");
+		}
+		if (aksamSaat) {
+			cell = ExcelUtil.getCell(sheet, row, col++, header);
+			ExcelUtil.baslikCell(cell, anchor, helper, drawing, AylikPuantaj.MESAI_TIPI_AKSAM_SAAT, "Çalışanın bu listenin sonunda ücret olarak ödediğimiz gece mesai saati");
+		}
 
 		CellStyle headerIzinTipi = (CellStyle) header.clone();
 		ExcelUtil.setFillForegroundColor(headerIzinTipi, 255, 153, 204);
@@ -22098,6 +22212,7 @@ public class OrtakIslemler implements Serializable {
 				continue;
 			int maxAdet = 1;
 			PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
+			PersonelDenklestirme personelDenklestirmeGecenAy = pd.getPersonelDenklestirmeGecenAy();
 			CalismaModeli calismaModeli = pd.getCalismaModeliAy() != null ? pd.getCalismaModeli() : null;
 			if (calismaModeli == null)
 				calismaModeli = personel.getCalismaModeli();
@@ -22111,18 +22226,21 @@ public class OrtakIslemler implements Serializable {
 					styleCenter = styleOddCenter;
 					styleStrDay = styleCenterOddDay;
 					styleGenel = styleOdd;
+					styleTutar = styleTutarOdd;
 				} else {
 					styleCenter = styleEvenCenter;
 					styleStrDay = styleCenterEvenDay;
 					styleGenel = styleEven;
+					styleTutar = styleTutarEven;
 				}
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(personel.getSicilNo());
 
 				Cell personelCell = ExcelUtil.getCell(sheet, row, col++, styleGenel);
-				Row row1 = personelCell.getRow();
-				row1.setHeight((short) -1);
+
 				personelCell.setCellValue(personel.getAdSoyad());
-				ExcelUtil.getCell(sheet, row + 1, col, styleCenter).setCellValue("");
+				cell = ExcelUtil.getCell(sheet, row + 1, col, styleCenter);
+				Row row1 = cell.getRow();
+				cell.setCellValue("");
 
 				if (!sirketMap.isEmpty()) {
 					Sirket personelSirket = personel.getSirket();
@@ -22146,7 +22264,6 @@ public class OrtakIslemler implements Serializable {
 					modelAciklama = calismaModeli.getAciklama();
 				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(modelAciklama);
 				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(authenticatedUser.getYesNo(pd.getFazlaMesaiOde()));
-
 				List vardiyaList = aylikPuantaj.getAyinVardiyalari();
 				CellRangeAddress region = null;
 				for (int i = 0; i < col; i++) {
@@ -22182,7 +22299,7 @@ public class OrtakIslemler implements Serializable {
 						styleDay = styleOff;
 						styleStrBoldDay = getBoldCellStyle(wb, styleText, styleDay, boldCellStyleMap);
 					}
-
+					styleBoldTutarDay = getBoldTutarCellStyle(wb, styleText + "Tutar", styleStrBoldDay, boldCellStyleMap);
 					int col1 = col;
 					cell = ExcelUtil.getCell(sheet, row, col1, styleText.equals(VardiyaGun.STYLE_CLASS_OFF) == false ? styleStrBoldDay : styleOff);
 					Vardiya vardiya = vg.getVardiya();
@@ -22197,8 +22314,8 @@ public class OrtakIslemler implements Serializable {
 							aciklama = vardiya.isCalisma() ? authenticatedUser.timeFormatla(vardiya.getBasZaman()) + " - " + authenticatedUser.timeFormatla(vardiya.getBitZaman()) + " [" + vardiya.getKisaAdi() + "]" : vardiya.getKisaAdi();
 							vMap.put(vardiya.getId(), aciklama);
 						}
-						if (vg.isIzinli()|| vardiya.isCalisma() == false) {
-							if (vg.getIzin() != null ) {
+						if (vg.isIzinli() || vardiya.isCalisma() == false) {
+							if (vg.getIzin() != null) {
 								IzinTipi izinTipi = vg.getIzin().getIzinTipi();
 								sb.append(aciklama);
 								aciklama = izinTipi.getKisaAciklama() + " - " + izinTipi.getIzinTipiTanim().getAciklama();
@@ -22259,8 +22376,8 @@ public class OrtakIslemler implements Serializable {
 					ExcelUtil.getCell(sheet, row + 1, col1, styleDay).setCellValue(giris.toString());
 					ExcelUtil.getCell(sheet, row + 1, col1 + 1, styleDay).setCellValue(cikis.toString());
 					if (vg.getCalismaSuresi() + vg.getResmiTatilSure() + vg.getHaftaCalismaSuresi() > 0.0d) {
-						Cell sureCell = ExcelUtil.getCell(sheet, row + 1, col1 + 2, styleStrBoldDay);
-						sureCell.setCellValue(authenticatedUser.sayiFormatliGoster(vg.getCalismaSuresi()));
+						Cell sureCell = ExcelUtil.getCell(sheet, row + 1, col1 + 2, styleBoldTutarDay);
+						sureCell.setCellValue(vg.getCalismaSuresi());
 						if (sb.length() > 0) {
 							String title = sb.toString();
 							ExcelUtil.setCellComment(sureCell, anchor, helper, drawing, title);
@@ -22277,10 +22394,109 @@ public class OrtakIslemler implements Serializable {
 					col = col + 3;
 
 				}
+				int startCol = col;
+				setCell(sheet, row, col++, styleTutar, aylikPuantaj.getSaatToplami());
+				Cell planlananCell = setCell(sheet, row, col++, styleTutar, aylikPuantaj.getPlanlananSure());
+				if (aylikPuantaj.getCalismaModeliAy() != null && planlananCell != null && aylikPuantaj.getSutIzniDurum().equals(Boolean.FALSE)) {
+					String title = aylikPuantaj.getCalismaModeli().getAciklama() + " : ";
+					if (aylikPuantaj.getCalismaModeli().getToplamGunGuncelle().equals(Boolean.FALSE))
+						title += authenticatedUser.sayiFormatliGoster(aylikPuantaj.getCalismaModeliAy().getSure());
+					else
+						title += authenticatedUser.sayiFormatliGoster(aylikPuantaj.getPersonelDenklestirme().getPlanlanSure());
+					if (PdksUtil.hasStringValue(title))
+						ExcelUtil.setCellComment(planlananCell, anchor, helper, drawing, title);
+				}
+				if (yasalFazlaCalismaAsanSaat) {
+					if (aylikPuantaj.getUcretiOdenenMesaiSure() > 0) {
+						Cell ucretiOdenenMesaiSure = setCell(sheet, row, col++, styleTutar, aylikPuantaj.getUcretiOdenenMesaiSure());
+						ExcelUtil.setCellComment(ucretiOdenenMesaiSure, anchor, helper, drawing, getUcretiOdenenMesaiSureStr(aylikPuantaj));
+					} else
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+				}
+				if (icapciSaatGoster) {
+					if (aylikPuantaj.getIcapciMesaiSure() > 0) {
+						setCell(sheet, row, col++, styleTutar, aylikPuantaj.getIcapciMesaiSure());
+					} else
+						ExcelUtil.getCell(sheet, row, col++, styleTutar).setCellValue("");
+				}
+				if (gerceklesenMesaiKod)
+					setCell(sheet, row, col++, styleTutar, aylikPuantaj.getAylikNetFazlaMesai());
+				if (devredenMesaiKod) {
+					Double gecenAyFazlaMesai = aylikPuantaj.getGecenAyFazlaMesai(authenticatedUser);
+					Cell gecenAyFazlaMesaiCell = setCell(sheet, row, col++, styleTutar, gecenAyFazlaMesai);
+					if (gecenAyFazlaMesai != null && personelDenklestirmeGecenAy != null && gecenAyFazlaMesai.doubleValue() != 0.0d) {
+						if (personelDenklestirmeGecenAy.getGuncelleyenUser() != null && personelDenklestirmeGecenAy.getGuncellemeTarihi() != null) {
+							String title = "Onaylayan : " + personelDenklestirmeGecenAy.getGuncelleyenUser().getAdSoyad() + "\n";
+							title += "Zaman : " + authenticatedUser.dateTimeFormatla(personelDenklestirmeGecenAy.getGuncellemeTarihi());
+							ExcelUtil.setCellComment(gecenAyFazlaMesaiCell, anchor, helper, drawing, title);
+						}
+					}
+				}
+				boolean olustur = false;
+				Comment commentGuncelleyen = null;
+
+				if (aylikPuantaj.isFazlaMesaiHesapla()) {
+					Cell fazlaMesaiSureCell = setCell(sheet, row, col++, styleTutar, aylikPuantaj.getFazlaMesaiSure());
+					if (aylikPuantaj.getFazlaMesaiSure() != 0.0d) {
+						if (pd.getGuncelleyenUser() != null && pd.getGuncellemeTarihi() != null)
+							commentGuncelleyen = getCommentGuncelleyen(anchor, helper, drawing, pd);
+						fazlaMesaiSureCell.setCellComment(commentGuncelleyen);
+						olustur = true;
+					}
+				} else
+					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+
+				if (kismiOdemeGoster) {
+					if (pd.getKismiOdemeSure() != null && pd.getKismiOdemeSure().doubleValue() > 0.0d)
+						setCell(sheet, row, col++, styleTutar, pd.getKismiOdemeSure());
+					else
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+				}
+				if (resmiTatilVar) {
+					setCell(sheet, row, col++, styleTutar, aylikPuantaj.getResmiTatilToplami());
+					if (resmiTatilKanunenEklenenSureGoster)
+						setCell(sheet, row, col++, styleTutar, aylikPuantaj.getResmiTatilKanunenEklenenSure());
+				}
+
+				if (haftaTatilVar)
+					setCell(sheet, row, col++, styleTutar, aylikPuantaj.getHaftaCalismaSuresi());
+				if (devredenBakiyeKod) {
+					if (aylikPuantaj.isFazlaMesaiHesapla()) {
+						Cell devredenSureCell = setCell(sheet, row, col++, styleTutar, aylikPuantaj.getDevredenSure());
+						if (aylikPuantaj.getDevredenSure() != null && aylikPuantaj.getDevredenSure().doubleValue() != 0.0d && commentGuncelleyen == null) {
+							if (olustur)
+								commentGuncelleyen = getCommentGuncelleyen(anchor, helper, drawing, pd);
+							if (commentGuncelleyen != null)
+								devredenSureCell.setCellComment(commentGuncelleyen);
+						}
+						if (aylikPuantaj.getEksiBakiyeSuresi() != null && aylikPuantaj.getEksiBakiyeSuresi().doubleValue() != 0 && pd.getSonDurum()) {
+							devredenSureCell.setCellValue("X");
+							devredenSureCell.setCellStyle(styleCenter);
+							commentGuncelleyen = ExcelUtil.getComment(anchor, helper, drawing, "Denkleştirilmeyen Eksi Bakiye(Saat) : " + authenticatedUser.sayiFormatliGoster(aylikPuantaj.getEksiBakiyeSuresi()));
+							if (commentGuncelleyen != null)
+								devredenSureCell.setCellComment(commentGuncelleyen);
+						}
+					} else
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+				}
+
+				if (aksamGun)
+					setCell(sheet, row, col++, styleTutar, new Double(aylikPuantaj.getAksamVardiyaSayisi()));
+				if (aksamSaat)
+					setCell(sheet, row, col++, styleTutar, new Double(aylikPuantaj.getAksamVardiyaSaatSayisi()));
+
 				if (maxAdet > 1) {
 					if (row1.getHeight() > 0)
 						row1.setHeight((short) (row1.getHeight() * maxAdet));
 				}
+				region = null;
+				for (int i = startCol; i < col; i++) {
+					ExcelUtil.getCell(sheet, row + 1, i, styleCenter).setCellValue("");
+					region = new CellRangeAddress(row, row + 1, i, i);
+					sheet.addMergedRegion(region);
+
+				}
+
 				row = row + 2;
 				styleGenel = null;
 
@@ -22295,7 +22511,23 @@ public class OrtakIslemler implements Serializable {
 
 			for (int i = 0; i <= col; i++)
 				sheet.autoSizeColumn(i);
+			row = row + 2;
+			col = 0;
+			String aciklamaExcel = PdksUtil.replaceAll(gorevYeriAciklama, "_", " ");
+			ExcelUtil.getCell(sheet, row, col, header).setCellValue(aciklamaExcel);
+			ExcelUtil.getCell(sheet, row + 1, col, header).setCellValue(PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyy MMMMMM  "));
+			for (int i = 0; i < 5; i++) {
+				ExcelUtil.getCell(sheet, row, col + i + 1, header).setCellValue("");
+				ExcelUtil.getCell(sheet, row + 1, col + i + 1, header).setCellValue("");
 
+			}
+
+			try {
+				sheet.addMergedRegion(ExcelUtil.getRegion((int) row, (int) 0, (int) row, (int) 6));
+				sheet.addMergedRegion(ExcelUtil.getRegion((int) row + 1, (int) 0, (int) row + 1, (int) 6));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			baos = new ByteArrayOutputStream();
 			wb.write(baos);
 		} catch (Exception e) {

@@ -433,7 +433,7 @@ public class ExcelUtil implements Serializable {
 	 * @param style
 	 * @return
 	 */
-	private static CellStyle formatCellStyle(String formatStr, Workbook wb, CellStyle style) {
+	public static CellStyle formatCellStyle(String formatStr, Workbook wb, CellStyle style) {
 		String str = null;
 		if (formatStr != null) {
 

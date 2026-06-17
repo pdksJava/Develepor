@@ -5626,6 +5626,19 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			map.put("seciliEkSaha4Id", seciliEkSaha4Id);
 			map.put("ekSaha4Tanim", ekSaha4Tanim);
 			map.put("gorevYeriAciklama", gorevYeriAciklama);
+
+			map.put("yasalFazlaCalismaAsanSaat", yasalFazlaCalismaAsanSaat);
+			map.put("icapciSaatGoster", icapciSaatGoster);
+			map.put("gerceklesenMesaiKod", gerceklesenMesaiKod);
+			map.put("devredenMesaiKod", devredenMesaiKod);
+			map.put("kismiOdemeGoster", kismiOdemeGoster);
+			map.put("resmiTatilVar", resmiTatilVar);
+			map.put("haftaTatilVar", haftaTatilVar);
+			map.put("devredenBakiyeKod", devredenBakiyeKod);
+			map.put("aksamGun", aksamGun);
+			map.put("aksamSaat", aksamSaat);
+			map.put("resmiTatilKanunenEklenenSureGoster", resmiTatilKanunenEklenenSureGoster);
+
 			baos = ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(map, puantajList);
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
