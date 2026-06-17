@@ -22197,11 +22197,17 @@ public class OrtakIslemler implements Serializable {
 							aciklama = vardiya.isCalisma() ? authenticatedUser.timeFormatla(vardiya.getBasZaman()) + " - " + authenticatedUser.timeFormatla(vardiya.getBitZaman()) + " [" + vardiya.getKisaAdi() + "]" : vardiya.getKisaAdi();
 							vMap.put(vardiya.getId(), aciklama);
 						}
-
-						if (vg.getIzin() != null) {
-							IzinTipi izinTipi = vg.getIzin().getIzinTipi();
-							aciklama = izinTipi.getKisaAciklama();
-							sb.append(izinTipi.getIzinTipiTanim().getAciklama());
+						if (vg.isIzinli()|| vardiya.isCalisma() == false) {
+							if (vg.getIzin() != null ) {
+								IzinTipi izinTipi = vg.getIzin().getIzinTipi();
+								sb.append(aciklama);
+								aciklama = izinTipi.getKisaAciklama() + " - " + izinTipi.getIzinTipiTanim().getAciklama();
+								// sb.append(izinTipi.getKisaAciklama() + " - " + izinTipi.getIzinTipiTanim().getAciklama());
+							} else {
+								if (vardiya.getAdi().equals(aciklama) == false) {
+									sb.append(vardiya.getAdi());
+								}
+							}
 						}
 						if (vg.getCalismaSuresi() + vg.getResmiTatilSure() + vg.getHaftaCalismaSuresi() > 0.0d) {
 							if (sb.length() > 0)
@@ -22260,6 +22266,8 @@ public class OrtakIslemler implements Serializable {
 							ExcelUtil.setCellComment(sureCell, anchor, helper, drawing, title);
 						}
 					} else {
+						ExcelUtil.getCell(sheet, row + 1, col1, styleDay).setCellValue(sb.toString());
+						ExcelUtil.getCell(sheet, row + 1, col1 + 1, styleDay).setCellValue("");
 						ExcelUtil.getCell(sheet, row + 1, col1 + 2, styleDay).setCellValue("");
 					}
 					if (merge) {
