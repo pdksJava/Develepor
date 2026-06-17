@@ -2258,6 +2258,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		for (AylikPuantaj ap : list) {
 			Personel personel = ap.getPdksPersonel();
 			apMap.put(personel.getPersonelKGS().getId(), ap);
+			perIdList.add(personel.getId());
 		}
 		HashMap<Long, List<PersonelFazlaMesai>> fmMap = new HashMap<Long, List<PersonelFazlaMesai>>();
 		Date tarih1 = PdksUtil.tariheGunEkleCikar(aylikPuantajDefault.getIlkGun(), -1);
@@ -2270,7 +2271,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			sb.append("select I.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 			String fieldName = "p";
 			parametreMap.put(fieldName, perIdList);
-			sb.append(" inner join " + PersonelFazlaMesai.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + VardiyaGun.COLUMN_NAME_ID + " = I." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN);
+			sb.append(" inner join " + PersonelFazlaMesai.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on V." + VardiyaGun.COLUMN_NAME_ID + " = I." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN);
 			sb.append(" and I." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1 ");
 			sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " > :v1 and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " < :v2 ");
 			sb.append(" and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
