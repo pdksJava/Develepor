@@ -57,6 +57,7 @@ import org.pdks.entity.HareketKGS;
 import org.pdks.entity.IzinTipi;
 import org.pdks.entity.Kapi;
 import org.pdks.entity.KapiView;
+import org.pdks.entity.Parameter;
 import org.pdks.entity.PdksLog;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
@@ -151,6 +152,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private HashMap<String, List<Tanim>> ekSahaListMap;
 
 	private List saveGenelList;
+
+	private Parameter aylikVardiyaTabloHareketExcelParameter;
 
 	private VardiyaGun seciliVardiyaGun;
 
@@ -1296,6 +1299,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				authenticatedUser.putSessionMap(sayfaURL, session);
 		}
 		resmiTatilKanunenEklenenSureGoster = false;
+		aylikVardiyaTabloHareketExcelParameter = null;
+		if (authenticatedUser != null)
+			aylikVardiyaTabloHareketExcelParameter = ortakIslemler.getParameterAktif(session, "aylikVardiyaTabloHareketExcel");
+
 		aylikPuantajListClear();
 		boolean sonHafta = false;
 		if (loginUser == null && kullaniciCalistir)
@@ -5551,7 +5558,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	}
 
 	public String aylikVardiyaTabloHareketExcel() {
- 		try {
+		try {
 			List<AylikPuantaj> list = new ArrayList<AylikPuantaj>(aylikPuantajList);
 			if (!list.isEmpty()) {
 				String gorevYeriAciklama = getExcelAciklama(null);
@@ -8613,6 +8620,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	public void setIcapciSaatGoster(Boolean icapciSaatGoster) {
 		this.icapciSaatGoster = icapciSaatGoster;
+	}
+
+	public Parameter getAylikVardiyaTabloHareketExcelParameter() {
+		return aylikVardiyaTabloHareketExcelParameter;
+	}
+
+	public void setAylikVardiyaTabloHareketExcelParameter(Parameter aylikVardiyaTabloHareketExcelParameter) {
+		this.aylikVardiyaTabloHareketExcelParameter = aylikVardiyaTabloHareketExcelParameter;
 	}
 
 }

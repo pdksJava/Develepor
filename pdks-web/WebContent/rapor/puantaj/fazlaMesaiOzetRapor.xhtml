@@ -156,10 +156,11 @@
 																<a4j:support event="oncomplete" status="ajaxStatus" />
 															</h:commandLink></SPAN></TD>
 												</TR>
-												<ui:fragment rendered="#{(authenticatedUser.admin ) and ortakIslemler.getParameterKeyHasStringValue('aylikVardiyaTabloHareketExcel')}">
+												<ui:fragment rendered="#{(authenticatedUser.admin ) and fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketExcelParameter!=null}">
 													<TR>
 														<TD nowrap="nowrap"><SPAN style="font-size: 14; font-weight: bold;"><h:commandLink
-																	value="Aylık Giriş/Çıkış Hareketleri Excel" action="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketExcel()}" target="blank">
+																	value="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketExcelParameter.description}"
+																	action="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketExcel()}" target="blank">
 																	<a4j:support event="oncomplete" status="ajaxStatus" />
 																</h:commandLink></SPAN></TD>
 													</TR>

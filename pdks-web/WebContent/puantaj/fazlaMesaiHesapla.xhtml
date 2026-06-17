@@ -182,9 +182,11 @@
 																	</h:commandLink></SPAN></TD>
 														</TR>
 													</ui:fragment>
-													<ui:fragment rendered="#{(fazlaMesaiHesaplaHome.adminRole or authenticatedUser.sistemYoneticisi) and ortakIslemler.getParameterKeyHasStringValue('aylikVardiyaTabloHareketExcel')}">
+													<ui:fragment
+														rendered="#{(fazlaMesaiHesaplaHome.adminRole or authenticatedUser.sistemYoneticisi) and fazlaMesaiHesaplaHome.aylikVardiyaTabloHareketExcelParameter!=null}">
 														<TR>
-															<TD nowrap="nowrap"><SPAN style="font-size: 14; font-weight: bold;"><h:commandLink value="Aylık Giriş/Çıkış Hareketleri Excel"
+															<TD nowrap="nowrap"><SPAN style="font-size: 14; font-weight: bold;"><h:commandLink
+																		value="#{fazlaMesaiHesaplaHome.aylikVardiyaTabloHareketExcelParameter.description}"
 																		action="#{fazlaMesaiHesaplaHome.aylikVardiyaTabloHareketExcel()}" target="blank">
 																		<a4j:support event="oncomplete" status="ajaxStatus" />
 																	</h:commandLink></SPAN></TD>

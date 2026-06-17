@@ -21916,11 +21916,30 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param map
- 	 * @param puantajList
+	 * @param wb
+	 * @param key
+	 * @param orjCellStyle
+	 * @param boldCellStyleMap
 	 * @return
 	 */
-	public ByteArrayOutputStream aylikVardiyaTabloHareketExcelOlustur(HashMap<String, Object> map,  List<AylikPuantaj> puantajList) {
+	private CellStyle getBoldCellStyle(Workbook wb, String key, CellStyle orjCellStyle, HashMap<String, CellStyle> boldCellStyleMap) {
+		CellStyle cloneCellStyle = null;
+		if (boldCellStyleMap.containsKey(key))
+			cloneCellStyle = boldCellStyleMap.get(key);
+		else {
+			cloneCellStyle = ExcelUtil.closeStyle(wb, orjCellStyle);
+			ExcelUtil.setFontNormalBold(wb, cloneCellStyle);
+			boldCellStyleMap.put(key, cloneCellStyle);
+		}
+		return cloneCellStyle;
+	}
+
+	/**
+	 * @param map
+	 * @param puantajList
+	 * @return
+	 */
+	public ByteArrayOutputStream aylikVardiyaTabloHareketExcelOlustur(HashMap<String, Object> map, List<AylikPuantaj> puantajList) {
 		Workbook wb = new XSSFWorkbook();
 		AylikPuantaj aylikPuantajDefault = map.containsKey("aylikPuantajDefault") == false ? null : (AylikPuantaj) map.get("aylikPuantajDefault");
 		String gorevYeriAciklama = map.containsKey("gorevYeriAciklama") == false ? "" : (String) map.get("gorevYeriAciklama");
@@ -22036,6 +22055,7 @@ public class OrtakIslemler implements Serializable {
 		CellStyle headerVardiyaTatilGun = ExcelUtil.getStyleHeader(9, wb);
 		ExcelUtil.setFillForegroundColor(headerVardiyaTatilGun, 92, 127, 45);
 		ExcelUtil.setFontColor(headerVardiyaTatilGun, 255, 255, 0);
+		HashMap<String, CellStyle> boldCellStyleMap = new HashMap<String, CellStyle>();
 		for (VardiyaGun vardiyaGun : aylikPuantajDefault.getVardiyalar()) {
 			try {
 				if (!vardiyaGun.isAyinGunu())
@@ -22052,11 +22072,12 @@ public class OrtakIslemler implements Serializable {
 				Cell cell = ExcelUtil.getCell(sheet, row, col1, headerVardiya);
 				ExcelUtil.getCell(sheet, row - 1, col1, headerVardiya).setCellValue("Giriş");
 				ExcelUtil.getCell(sheet, row - 1, col1 + 1, headerVardiya).setCellValue("Çıkış");
+				ExcelUtil.getCell(sheet, row - 1, col1 + 2, headerVardiya).setCellValue("Süre");
 
 				ExcelUtil.baslikCell(cell, anchor, helper, drawing, authenticatedUser.getTarihFormatla(cal.getTime(), "d EEE"), title);
 				ExcelUtil.getCell(sheet, row, col1 + 1, headerVardiya).setCellValue("");
-				CellRangeAddress region = new CellRangeAddress(row, row, col1, col1 + 1);
-				col = col + 2;
+				CellRangeAddress region = new CellRangeAddress(row, row, col1, col1 + 2);
+				col = col + 3;
 				sheet.addMergedRegion(region);
 			} catch (Exception e) {
 			}
@@ -22085,19 +22106,15 @@ public class OrtakIslemler implements Serializable {
 			col = 0;
 
 			try {
-
-				if (++adet % 2 != 0) {
+				++adet;
+				if (adet % 2 != 0) {
 					styleCenter = styleOddCenter;
 					styleStrDay = styleCenterOddDay;
 					styleGenel = styleOdd;
-					styleStrBoldDay = styleCenterOddBoldDay;
-
 				} else {
 					styleCenter = styleEvenCenter;
 					styleStrDay = styleCenterEvenDay;
 					styleGenel = styleEven;
-					styleStrBoldDay = styleCenterEvenBoldDay;
-
 				}
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(personel.getSicilNo());
 
@@ -22145,19 +22162,25 @@ public class OrtakIslemler implements Serializable {
 						continue;
 					String styleText = vg.getAylikClassAdi(aylikPuantaj.getTrClass());
 					styleDay = styleStrDay;
-					if (styleText.equals(VardiyaGun.STYLE_CLASS_HAFTA_TATIL))
+					styleStrBoldDay = adet % 2 != 0 ? styleCenterOddBoldDay : styleCenterEvenBoldDay;
+					if (styleText.equals(VardiyaGun.STYLE_CLASS_HAFTA_TATIL)) {
 						styleDay = styleTatil;
-					else if (styleText.equals(VardiyaGun.STYLE_CLASS_IZIN))
+						styleStrBoldDay = getBoldCellStyle(wb, styleText, styleDay, boldCellStyleMap);
+					} else if (styleText.equals(VardiyaGun.STYLE_CLASS_IZIN)) {
 						styleDay = styleIzin;
-					else if (styleText.equals(VardiyaGun.STYLE_CLASS_ICAP))
+						styleStrBoldDay = getBoldCellStyle(wb, styleText, styleDay, boldCellStyleMap);
+					} else if (styleText.equals(VardiyaGun.STYLE_CLASS_ICAP)) {
 						styleDay = styleIcap;
-					else if (styleText.equals(VardiyaGun.STYLE_CLASS_OZEL_ISTEK))
+						styleStrBoldDay = getBoldCellStyle(wb, styleText, styleDay, boldCellStyleMap);
+					} else if (styleText.equals(VardiyaGun.STYLE_CLASS_OZEL_ISTEK)) {
 						styleDay = styleIstek;
-					else if (styleText.equals(VardiyaGun.STYLE_CLASS_EGITIM))
+						styleStrBoldDay = getBoldCellStyle(wb, styleText, styleDay, boldCellStyleMap);
+					} else if (styleText.equals(VardiyaGun.STYLE_CLASS_EGITIM)) {
 						styleDay = styleEgitim;
-					else if (styleText.equals(VardiyaGun.STYLE_CLASS_OFF)) {
+						styleStrBoldDay = getBoldCellStyle(wb, styleText, styleDay, boldCellStyleMap);
+					} else if (styleText.equals(VardiyaGun.STYLE_CLASS_OFF)) {
 						styleDay = styleOff;
-
+						styleStrBoldDay = getBoldCellStyle(wb, styleText, styleDay, boldCellStyleMap);
 					}
 
 					int col1 = col;
@@ -22166,14 +22189,15 @@ public class OrtakIslemler implements Serializable {
 					String aciklama = "";
 					StringBuffer giris = new StringBuffer(), cikis = new StringBuffer();
 					boolean merge = true;
+					StringBuffer sb = new StringBuffer();
 					if (vardiya != null) {
 						if (vMap.containsKey(vardiya.getId()))
 							aciklama = vMap.get(vardiya.getId());
 						else {
-							aciklama = vardiya.isCalisma() ? authenticatedUser.timeFormatla(vardiya.getBasZaman()) + " - " + authenticatedUser.timeFormatla(vardiya.getBitZaman()) : vardiya.getKisaAdi();
+							aciklama = vardiya.isCalisma() ? authenticatedUser.timeFormatla(vardiya.getBasZaman()) + " - " + authenticatedUser.timeFormatla(vardiya.getBitZaman()) + " [" + vardiya.getKisaAdi() + "]" : vardiya.getKisaAdi();
 							vMap.put(vardiya.getId(), aciklama);
 						}
-						StringBuffer sb = new StringBuffer();
+
 						if (vg.getIzin() != null) {
 							IzinTipi izinTipi = vg.getIzin().getIzinTipi();
 							aciklama = izinTipi.getKisaAciklama();
@@ -22182,19 +22206,19 @@ public class OrtakIslemler implements Serializable {
 						if (vg.getCalismaSuresi() + vg.getResmiTatilSure() + vg.getHaftaCalismaSuresi() > 0.0d) {
 							if (sb.length() > 0)
 								sb.append("\n");
-							if (vg.getCalismaSuresi() > 0.0d)
-								sb.append("ÇS : " + authenticatedUser.sayiFormatliGoster(vg.getCalismaSuresi()) + " ");
+							if (vg.getFazlaMesailer() != null) {
+								double fazlaCalisma = 0.0d;
+								for (PersonelFazlaMesai pfm : vg.getFazlaMesailer())
+									fazlaCalisma += pfm.getFazlaMesaiSaati();
+								if (fazlaCalisma > 0.0d)
+									sb.append("FM : " + authenticatedUser.sayiFormatliGoster(fazlaCalisma) + " ");
+							}
 							if (vg.getResmiTatilSure() > 0.0d)
 								sb.append("RT : " + authenticatedUser.sayiFormatliGoster(vg.getResmiTatilSure()) + " ");
 							if (vg.getHaftaCalismaSuresi() > 0.0d)
 								sb.append("HT : " + authenticatedUser.sayiFormatliGoster(vg.getHaftaCalismaSuresi()));
 
 						}
-						if (sb.length() > 0) {
-							String title = sb.toString();
-							ExcelUtil.setCellComment(cell, anchor, helper, drawing, title);
-						}
-						sb = null;
 
 						List<HareketKGS> orjinalHareketler = vg.getOrjinalHareketler();
 						if (orjinalHareketler != null) {
@@ -22216,16 +22240,26 @@ public class OrtakIslemler implements Serializable {
 					}
 					cell.setCellValue(aciklama);
 					ExcelUtil.getCell(sheet, row, col1 + 1, styleText.equals(VardiyaGun.STYLE_CLASS_OFF) == false ? styleStrBoldDay : styleOff).setCellValue("");
-					region = new CellRangeAddress(row, row, col1, col1 + 1);
+					region = new CellRangeAddress(row, row, col1, col1 + 2);
 					sheet.addMergedRegion(region);
 
 					ExcelUtil.getCell(sheet, row + 1, col1, styleDay).setCellValue(giris.toString());
 					ExcelUtil.getCell(sheet, row + 1, col1 + 1, styleDay).setCellValue(cikis.toString());
+					if (vg.getCalismaSuresi() + vg.getResmiTatilSure() + vg.getHaftaCalismaSuresi() > 0.0d) {
+						Cell sureCell = ExcelUtil.getCell(sheet, row + 1, col1 + 2, styleStrBoldDay);
+						sureCell.setCellValue(authenticatedUser.sayiFormatliGoster(vg.getCalismaSuresi()));
+						if (sb.length() > 0) {
+							String title = sb.toString();
+							ExcelUtil.setCellComment(sureCell, anchor, helper, drawing, title);
+						}
+					} else {
+						ExcelUtil.getCell(sheet, row + 1, col1 + 2, styleDay).setCellValue("");
+					}
 					if (merge) {
-						region = new CellRangeAddress(row + 1, row + 1, col1, col1 + 1);
+						region = new CellRangeAddress(row + 1, row + 1, col1, col1 + 2);
 						sheet.addMergedRegion(region);
 					}
-					col = col + 2;
+					col = col + 3;
 
 					row1.setHeight((short) -1);
 

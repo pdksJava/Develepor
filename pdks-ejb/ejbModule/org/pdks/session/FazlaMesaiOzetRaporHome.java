@@ -54,6 +54,7 @@ import org.pdks.entity.DepartmanDenklestirmeDonemi;
 import org.pdks.entity.FazlaMesaiTalep;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.IzinTipi;
+import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
 import org.pdks.entity.PersonelDenklestirmeBordro;
@@ -61,6 +62,7 @@ import org.pdks.entity.PersonelDenklestirmeBordroDetay;
 import org.pdks.entity.PersonelDenklestirmeDinamikAlan;
 import org.pdks.entity.PersonelDenklestirmeTasiyici;
 import org.pdks.entity.PersonelDinamikAlan;
+import org.pdks.entity.PersonelFazlaMesai;
 import org.pdks.entity.PersonelIzin;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
@@ -156,6 +158,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	private Boolean resmiTatilKanunenEklenenSureGoster = Boolean.FALSE, eksiBakiyeGoster = Boolean.FALSE, izinGoster = Boolean.FALSE;
 	private Long vardiyaAdet;
 	private List<VardiyaGun> tumVardiyaList;
+	private Parameter aylikVardiyaTabloHareketExcelParameter;
 
 	private List<Vardiya> izinTipiVardiyaList;
 	private TreeMap<String, TreeMap<String, List<VardiyaGun>>> izinTipiPersonelVardiyaMap;
@@ -933,6 +936,9 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		vardiyaAdetMap = null;
 		if (seciliEkSaha3Id != null && vardiyaPlanTopluAdet)
 			vardiyaAdetMap = new HashMap<String, Long>();
+		aylikVardiyaTabloHareketExcelParameter = null;
+		if (authenticatedUser != null)
+			aylikVardiyaTabloHareketExcelParameter = ortakIslemler.getParameterAktif(session, "aylikVardiyaTabloHareketExcel");
 
 		bordroPuantajEkranindaGoster = ortakIslemler.getParameterKey("bordroPuantajEkranindaGoster").equals("1");
 		fazlaMesaiVar = false;
@@ -2248,14 +2254,44 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	private void fillHareketList(List<AylikPuantaj> list) throws Exception {
 		personelHareketMap = new HashMap<Long, List<HareketKGS>>();
 		HashMap<Long, AylikPuantaj> apMap = new HashMap<Long, AylikPuantaj>();
-		for (AylikPuantaj ap : list)
-			apMap.put(ap.getPdksPersonel().getPersonelKGS().getId(), ap);
+		List<Long> perIdList = new ArrayList<Long>();
+		for (AylikPuantaj ap : list) {
+			Personel personel = ap.getPdksPersonel();
+			apMap.put(personel.getPersonelKGS().getId(), ap);
+		}
+		HashMap<Long, List<PersonelFazlaMesai>> fmMap = new HashMap<Long, List<PersonelFazlaMesai>>();
 		Date tarih1 = PdksUtil.tariheGunEkleCikar(aylikPuantajDefault.getIlkGun(), -1);
 		Date tarih2 = PdksUtil.tariheGunEkleCikar(aylikPuantajDefault.getSonGun(), 1);
 		List<Long> kapiIdler = ortakIslemler.getPdksDonemselKapiIdler(tarih1, tarih2, session);
 		List<HareketKGS> kgsList = ortakIslemler.getHareketBilgileri(kapiIdler, new ArrayList<Long>(apMap.keySet()), tarih1, tarih2, HareketKGS.class, session);
-		if (kgsList.size() > 1)
-			kgsList = PdksUtil.sortListByAlanAdi(kgsList, "zaman", Boolean.FALSE);
+		if (kgsList.isEmpty() == false) {
+			HashMap parametreMap = new HashMap();
+			StringBuffer sb = new StringBuffer();
+			sb.append("select I.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+			String fieldName = "p";
+			parametreMap.put(fieldName, perIdList);
+			sb.append(" inner join " + PersonelFazlaMesai.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + VardiyaGun.COLUMN_NAME_ID + " = I." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN);
+			sb.append(" and I." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1 ");
+			sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " > :v1 and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " < :v2 ");
+			sb.append(" and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
+			parametreMap.put("v1", tarih1);
+			parametreMap.put("v2", tarih2);
+			if (session != null)
+				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+			List<PersonelFazlaMesai> fazlaMesailer = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, parametreMap, PersonelFazlaMesai.class, session);
+			for (PersonelFazlaMesai pfm : fazlaMesailer) {
+				if (pfm.isOnaylandi()) {
+					Long key = pfm.getVardiyaGun().getId();
+					List<PersonelFazlaMesai> list2 = fmMap.containsKey(key) ? fmMap.get(key) : new ArrayList<PersonelFazlaMesai>();
+					if (list2.isEmpty())
+						fmMap.put(key, list2);
+					list2.add(pfm);
+				}
+
+			}
+			fazlaMesailer = null;
+		}
+		perIdList = null;
 		for (HareketKGS hareket : kgsList) {
 			Long key = hareket.getPersonelKGS().getId();
 			List<HareketKGS> list2 = personelHareketMap.containsKey(key) ? personelHareketMap.get(key) : new ArrayList<HareketKGS>();
@@ -2263,15 +2299,19 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				personelHareketMap.put(key, list2);
 			list2.add(hareket);
 		}
+		kgsList = null;
 		for (Long key : personelHareketMap.keySet()) {
 			AylikPuantaj ap = apMap.get(key);
 			List<HareketKGS> list2 = personelHareketMap.get(key);
+			if (list2.size() > 1)
+				list2 = PdksUtil.sortListByAlanAdi(list2, "zaman", Boolean.FALSE);
 			List<VardiyaGun> vardiyaList = ap.getAyinVardiyalari();
 			for (VardiyaGun vg : vardiyaList) {
 				vg.setHareketler(null);
 				vg.setCikisHareketleri(null);
 				vg.setGirisHareketleri(null);
 				if (vg.isAyinGunu() && vg.getVardiya() != null) {
+					vg.setFazlaMesailer(fmMap.containsKey(vg.getId()) ? fmMap.get(vg.getId()) : null);
 					for (Iterator iterator = list2.iterator(); iterator.hasNext();) {
 						HareketKGS hareket = (HareketKGS) iterator.next();
 						if (vg.addHareket(hareket, Boolean.TRUE)) {
@@ -2281,7 +2321,10 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				}
 
 			}
+			list2 = null;
 		}
+		apMap = null;
+		personelHareketMap.clear();
 
 	}
 
@@ -4404,5 +4447,13 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	public void setIzinGoster(Boolean izinGoster) {
 		this.izinGoster = izinGoster;
+	}
+
+	public Parameter getAylikVardiyaTabloHareketExcelParameter() {
+		return aylikVardiyaTabloHareketExcelParameter;
+	}
+
+	public void setAylikVardiyaTabloHareketExcelParameter(Parameter aylikVardiyaTabloHareketExcelParameter) {
+		this.aylikVardiyaTabloHareketExcelParameter = aylikVardiyaTabloHareketExcelParameter;
 	}
 }
