@@ -91,8 +91,12 @@ public final class AgentKontrol extends QuartzJobBean {
 		HashMap fields = new HashMap();
 		StringBuffer sp = new StringBuffer();
 		sp.append("select * from " + PdksAgent.TABLE_NAME + " " + PdksVeriOrtakAktar.getSelectLOCK());
+		sp.append(" where " + PdksAgent.COLUMN_NAME_DURUM + " = 1 ");
+		if (PdksUtil.isSistemDestekVar() == false)
+			sp.append(" and coalesce(" + PdksAgent.COLUMN_NAME_DURUM + ", 1) = 0 ");
+
 		List<PdksAgent> list = dAO != null ? dAO.getNativeSQLList(fields, sp, PdksAgent.class) : null;
- 		if (list != null && !list.isEmpty()) {
+		if (list != null && !list.isEmpty()) {
 			int dakika = cal.get(Calendar.MINUTE);
 			int saat = cal.get(Calendar.HOUR_OF_DAY);
 			int gun = cal.get(Calendar.DATE);

@@ -26,6 +26,7 @@ public class PdksAgent extends BasePDKSObject implements Serializable, Cloneable
 	public static final String COLUMN_NAME_SAAT = "SAAT";
 	public static final String COLUMN_NAME_GUN = "GUN";
 	public static final String COLUMN_NAME_HAFTA = "HAFTA";
+	public static final String COLUMN_NAME_HELP_DESK = "HDSK";
 	public static final String COLUMN_NAME_DURUM = "DURUM";
 	public static final String COLUMN_NAME_UPDATE_SP = "UPDATE_SP";
 
@@ -33,7 +34,7 @@ public class PdksAgent extends BasePDKSObject implements Serializable, Cloneable
 
 	private String dakikaBilgi, saatBilgi, gunBilgi, haftaBilgi;
 
-	private Boolean durum = Boolean.TRUE, updateSP = Boolean.TRUE, start = false;
+	private Boolean durum = Boolean.TRUE, updateSP = Boolean.TRUE, start = false, helpDesk = Boolean.FALSE;
 
 	@Column(name = COLUMN_NAME_SP)
 	public String getStoreProcedureAdi() {
@@ -105,6 +106,15 @@ public class PdksAgent extends BasePDKSObject implements Serializable, Cloneable
 
 	public void setDurum(Boolean durum) {
 		this.durum = durum;
+	}
+	
+	@Column(name = COLUMN_NAME_HELP_DESK)
+	public Boolean getHelpDesk() {
+		return helpDesk;
+	}
+
+	public void setHelpDesk(Boolean helpDesk) {
+		this.helpDesk = helpDesk;
 	}
 
 	@Transient

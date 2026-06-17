@@ -22093,10 +22093,10 @@ public class OrtakIslemler implements Serializable {
 		int adet = 0;
 		for (Iterator iter = puantajList.iterator(); iter.hasNext();) {
 			AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
-
 			Personel personel = aylikPuantaj.getPdksPersonel();
 			if (personel == null || PdksUtil.hasStringValue(personel.getSicilNo()) == false)
 				continue;
+			int maxAdet = 1;
 			PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
 			CalismaModeli calismaModeli = pd.getCalismaModeliAy() != null ? pd.getCalismaModeli() : null;
 			if (calismaModeli == null)
@@ -22222,6 +22222,7 @@ public class OrtakIslemler implements Serializable {
 
 						List<HareketKGS> orjinalHareketler = vg.getOrjinalHareketler();
 						if (orjinalHareketler != null) {
+							int girisAdet = 0, cikisAdet = 0;
 							for (HareketKGS hareketKGS : orjinalHareketler) {
 								Kapi kapi = hareketKGS.getKapiView().getKapi();
 								if (kapi != null) {
@@ -22229,12 +22230,18 @@ public class OrtakIslemler implements Serializable {
 									if (kapi.isGirisKapi()) {
 										giris.append((giris.length() > 0 ? "\n" : "") + zaman);
 										merge = false;
+										++girisAdet;
 									} else if (kapi.isCikisKapi()) {
 										cikis.append((cikis.length() > 0 ? "\n" : "") + zaman);
 										merge = false;
+										++cikisAdet;
 									}
 								}
 							}
+							if (girisAdet > maxAdet)
+								maxAdet = girisAdet;
+							if (cikisAdet > maxAdet)
+								maxAdet = cikisAdet;
 						}
 
 					}
@@ -22261,8 +22268,10 @@ public class OrtakIslemler implements Serializable {
 					}
 					col = col + 3;
 
-					row1.setHeight((short) -1);
-
+				}
+				if (maxAdet > 1) {
+					if (row1.getHeight() > 0)
+						row1.setHeight((short) (row1.getHeight() * maxAdet));
 				}
 				row = row + 2;
 				styleGenel = null;

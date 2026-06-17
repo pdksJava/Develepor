@@ -51,11 +51,6 @@
 
 
 									</ui:fragment>
-
-
-
-
-
 								</rich:column>
 								<rich:column rendered="#{authenticatedUser.admin == true}">
 									<f:facet name="header">
@@ -105,6 +100,12 @@
 										<h:outputText value="Update İşlemi" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo( pdksAgentTanimlama.updateSP)}" />
+								</rich:column>
+								<rich:column>
+									<f:facet name="header">
+										<h:outputText value="Help Desk" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.getYesNo(pdksAgentTanimlama.helpDesk)}" />
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
@@ -185,7 +186,12 @@
 							<ui:define name="label">Update İşlemi</ui:define>
 							<h:selectBooleanCheckbox required="true" value="#{pdksAgentTanimlamaHome.currentAgent.updateSP}" />
 						</s:decorate>
-
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Help Desk</ui:define>
+							<h:selectBooleanCheckbox required="true" value="#{pdksAgentTanimlamaHome.currentAgent.helpDesk}">
+								<a4j:support event="onclick" reRender="ptmEdit" status="ajaxStatus" />
+							</h:selectBooleanCheckbox>
+						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Aktif</ui:define>
 							<h:selectBooleanCheckbox required="true" value="#{pdksAgentTanimlamaHome.currentAgent.durum}" />
