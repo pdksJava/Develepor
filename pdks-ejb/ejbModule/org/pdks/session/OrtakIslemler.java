@@ -5475,6 +5475,10 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public Parameter getParameterAktif(Session session, String value) {
 		Parameter parameter = (Parameter) pdksEntityController.getSQLParamByAktifFieldObject(Parameter.TABLE_NAME, Parameter.COLUMN_NAME_ADI, value, Parameter.class, session);
+		if (parameter != null) {
+			if (PdksUtil.isSistemDestekVar() == false && parameter.isHelpDeskMi())
+				parameter = null;
+		}
 		return parameter;
 	}
 
@@ -22000,8 +22004,8 @@ public class OrtakIslemler implements Serializable {
 	 * @param puantajList
 	 * @return
 	 */
-	public ByteArrayOutputStream aylikVardiyaTabloHareketExcelOlustur(HashMap<String, Object> map, List<AylikPuantaj> puantajList) {
-		Workbook wb = new XSSFWorkbook();
+	public Workbook aylikVardiyaTabloHareketExcelOlustur(HashMap<String, Object> map, List<AylikPuantaj> puantajList) {
+		Workbook wb = map.containsKey("wb") == false ? new XSSFWorkbook() : (Workbook) map.get("wb");
 		AylikPuantaj aylikPuantajDefault = map.containsKey("aylikPuantajDefault") == false ? null : (AylikPuantaj) map.get("aylikPuantajDefault");
 		String gorevYeriAciklama = map.containsKey("gorevYeriAciklama") == false ? "" : (String) map.get("gorevYeriAciklama");
 		String bolumAciklama = map.containsKey("bolumAciklama") == false ? null : (String) map.get("bolumAciklama");
@@ -22035,8 +22039,7 @@ public class OrtakIslemler implements Serializable {
 			String tekSirketTesisAdi = (personel.getSirket() != null ? personel.getSirket().getAd() : "") + " " + (personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
 			sirketMap.put(tekSirketTesis, tekSirketTesisAdi);
 		}
-		Sheet sheet = ExcelUtil.createSheet(wb, PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "MMMMM yyyy") + " Fazla Mesai", Boolean.TRUE);
-		ByteArrayOutputStream baos = null;
+		Sheet sheet = ExcelUtil.createSheet(wb, PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "MMMMM yyyy") + " Çalışma Saatleri", Boolean.TRUE);
 		CellStyle styleTutar = null;
 		CellStyle izinBaslik = ExcelUtil.getStyleHeader(wb);
 		CellStyle styleOdd = ExcelUtil.getStyleOdd(null, wb);
@@ -22127,14 +22130,14 @@ public class OrtakIslemler implements Serializable {
 					headerVardiya = tatil.isYarimGunMu() ? headerVardiyaTatilYarimGun : headerVardiyaTatilGun;
 				}
 				int col1 = col;
-				Cell cell = ExcelUtil.getCell(sheet, row, col1, headerVardiya);
-				ExcelUtil.getCell(sheet, row - 1, col1, headerVardiya).setCellValue("Giriş");
-				ExcelUtil.getCell(sheet, row - 1, col1 + 1, headerVardiya).setCellValue("Çıkış");
-				ExcelUtil.getCell(sheet, row - 1, col1 + 2, headerVardiya).setCellValue("Süre");
+				Cell cell = ExcelUtil.getCell(sheet, row - 1, col1, headerVardiya);
+				ExcelUtil.getCell(sheet, row, col1, headerVardiya).setCellValue("Giriş");
+				ExcelUtil.getCell(sheet, row, col1 + 1, headerVardiya).setCellValue("Çıkış");
+				ExcelUtil.getCell(sheet, row, col1 + 2, headerVardiya).setCellValue("Süre");
 
 				ExcelUtil.baslikCell(cell, anchor, helper, drawing, authenticatedUser.getTarihFormatla(cal.getTime(), "d EEE"), title);
-				ExcelUtil.getCell(sheet, row, col1 + 1, headerVardiya).setCellValue("");
-				CellRangeAddress region = new CellRangeAddress(row, row, col1, col1 + 2);
+				ExcelUtil.getCell(sheet, row - 1, col1 + 1, headerVardiya).setCellValue("");
+				CellRangeAddress region = new CellRangeAddress(row - 1, row - 1, col1, col1 + 2);
 				col = col + 3;
 				sheet.addMergedRegion(region);
 			} catch (Exception e) {
@@ -22528,16 +22531,36 @@ public class OrtakIslemler implements Serializable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			baos = new ByteArrayOutputStream();
-			wb.write(baos);
+
 		} catch (Exception e) {
 			logger.error("Pdks hata in : \n");
 			e.printStackTrace();
 			logger.error("Pdks hata out : " + e.getMessage());
-			baos = null;
-		}
-		return baos;
 
+		}
+		return wb;
+
+	}
+
+	/**
+	 * @param session
+	 * @return
+	 */
+	public Parameter getAylikVardiyaTabloHareketExcelParameter(Session session) {
+		Parameter parameter = null;
+		if (authenticatedUser != null) {
+			parameter = getParameterAktif(session, "aylikVardiyaTabloHareketExcel");
+			if (parameter != null) {
+				if (authenticatedUser.isIK()) {
+					if (parameter.getValue().equalsIgnoreCase("IK") == false)
+						parameter = null;
+				} else if ((authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()) == false) {
+					parameter = null;
+				}
+			}
+		}
+
+		return parameter;
 	}
 
 	/**

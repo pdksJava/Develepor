@@ -1299,9 +1299,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				authenticatedUser.putSessionMap(sayfaURL, session);
 		}
 		resmiTatilKanunenEklenenSureGoster = false;
-		aylikVardiyaTabloHareketExcelParameter = null;
-		if (authenticatedUser != null)
-			aylikVardiyaTabloHareketExcelParameter = ortakIslemler.getParameterAktif(session, "aylikVardiyaTabloHareketExcel");
+		aylikVardiyaTabloHareketExcelParameter = ortakIslemler.getAylikVardiyaTabloHareketExcelParameter(session);
 
 		aylikPuantajListClear();
 		boolean sonHafta = false;
@@ -5617,29 +5615,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	private ByteArrayOutputStream aylikVardiyaTabloHareketExcelDevam(String gorevYeriAciklama, List<AylikPuantaj> puantajList) {
 		ByteArrayOutputStream baos = null;
-		HashMap<String, Object> map = new HashMap<String, Object>();
-
+		HashMap<String, Object> map = null;
 		try {
-			map.put("aylikPuantajDefault", aylikPuantajDefault);
-			map.put("bolumAciklama", bolumAciklama);
-			map.put("seciliEkSaha3Id", seciliEkSaha3Id);
-			map.put("seciliEkSaha4Id", seciliEkSaha4Id);
-			map.put("ekSaha4Tanim", ekSaha4Tanim);
-			map.put("gorevYeriAciklama", gorevYeriAciklama);
-
-			map.put("yasalFazlaCalismaAsanSaat", yasalFazlaCalismaAsanSaat);
-			map.put("icapciSaatGoster", icapciSaatGoster);
-			map.put("gerceklesenMesaiKod", gerceklesenMesaiKod);
-			map.put("devredenMesaiKod", devredenMesaiKod);
-			map.put("kismiOdemeGoster", kismiOdemeGoster);
-			map.put("resmiTatilVar", resmiTatilVar);
-			map.put("haftaTatilVar", haftaTatilVar);
-			map.put("devredenBakiyeKod", devredenBakiyeKod);
-			map.put("aksamGun", aksamGun);
-			map.put("aksamSaat", aksamSaat);
-			map.put("resmiTatilKanunenEklenenSureGoster", resmiTatilKanunenEklenenSureGoster);
-
-			baos = ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(map, puantajList);
+			map = aylikVardiyaTabloHareketExcelParametre(gorevYeriAciklama);
+			Workbook wb  = ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(map, puantajList);
+			baos = new ByteArrayOutputStream();
+			wb.write(baos);
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
@@ -5649,6 +5630,32 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		map = null;
 		return baos;
 
+	}
+
+	/**
+	 * @param gorevYeriAciklama
+	 * @return
+	 */
+	private HashMap<String, Object> aylikVardiyaTabloHareketExcelParametre(String gorevYeriAciklama) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("aylikPuantajDefault", aylikPuantajDefault);
+		map.put("bolumAciklama", bolumAciklama);
+		map.put("seciliEkSaha3Id", seciliEkSaha3Id);
+		map.put("seciliEkSaha4Id", seciliEkSaha4Id);
+		map.put("ekSaha4Tanim", ekSaha4Tanim);
+		map.put("gorevYeriAciklama", gorevYeriAciklama);
+		map.put("yasalFazlaCalismaAsanSaat", yasalFazlaCalismaAsanSaat);
+		map.put("icapciSaatGoster", icapciSaatGoster);
+		map.put("gerceklesenMesaiKod", gerceklesenMesaiKod);
+		map.put("devredenMesaiKod", devredenMesaiKod);
+		map.put("kismiOdemeGoster", kismiOdemeGoster);
+		map.put("resmiTatilVar", resmiTatilVar);
+		map.put("haftaTatilVar", haftaTatilVar);
+		map.put("devredenBakiyeKod", devredenBakiyeKod);
+		map.put("aksamGun", aksamGun);
+		map.put("aksamSaat", aksamSaat);
+		map.put("resmiTatilKanunenEklenenSureGoster", resmiTatilKanunenEklenenSureGoster);
+		return map;
 	}
 
 	/**
@@ -6489,6 +6496,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				sheet.autoSizeColumn(i);
 			if (ortakIslemler.getParameterKey("aylikVardiyaHareketExcelOlustur").equals("1"))
 				aylikVardiyaHareketExcelOlustur(list, wb);
+
+			if (aylikVardiyaTabloHareketExcelParameter != null) {
+				HashMap<String, Object> map = aylikVardiyaTabloHareketExcelParametre(gorevYeriAciklama);
+				map.put("wb", wb);
+				ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(map, list);
+			}
+
 			baos = new ByteArrayOutputStream();
 			wb.write(baos);
 		} catch (Exception e) {

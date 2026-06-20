@@ -936,9 +936,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		vardiyaAdetMap = null;
 		if (seciliEkSaha3Id != null && vardiyaPlanTopluAdet)
 			vardiyaAdetMap = new HashMap<String, Long>();
-		aylikVardiyaTabloHareketExcelParameter = null;
-		if (authenticatedUser != null)
-			aylikVardiyaTabloHareketExcelParameter = ortakIslemler.getParameterAktif(session, "aylikVardiyaTabloHareketExcel");
+		aylikVardiyaTabloHareketExcelParameter = ortakIslemler.getAylikVardiyaTabloHareketExcelParameter(session);
 
 		bordroPuantajEkranindaGoster = ortakIslemler.getParameterKey("bordroPuantajEkranindaGoster").equals("1");
 		fazlaMesaiVar = false;
@@ -2223,8 +2221,12 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
 				aylikPuantaj.setSecili(Boolean.TRUE);
 			}
-			ByteArrayOutputStream baosDosya = fazlaMesaiExcelDevam(aylikPuantajList);
-			if (baosDosya != null) {
+
+			Workbook wb = fazlaMesaiExcelDevam(aylikPuantajList);
+			if (wb != null) {
+				ByteArrayOutputStream baosDosya = new ByteArrayOutputStream();
+				baosDosya = new ByteArrayOutputStream();
+				wb.write(baosDosya);
 				String dosyaAdi = "FazlaMesai" + (sirket != null ? "_" + (sirket.getSirketGrup() == null ? sirket.getAd() : sirket.getSirketGrup().getAciklama()) : "");
 				dosyaAdi += (tesisId != null ? "_" + ortakIslemler.getSelectItemText(tesisId, tesisList) : "") + (seciliEkSaha3Id != null ? "_" + ortakIslemler.getSelectItemText(seciliEkSaha3Id, gorevYeriList) : "");
 				dosyaAdi += "_" + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyyMM") + ".xlsx";
@@ -2368,26 +2370,22 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	 */
 	private ByteArrayOutputStream aylikVardiyaTabloHareketExcelDevam(List<AylikPuantaj> puantajList) {
 		ByteArrayOutputStream baos = null;
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = null;
 		String dosyaAdi = (sirket != null ? "_" + (sirket.getSirketGrup() == null ? sirket.getAd() : sirket.getSirketGrup().getAciklama()) : "");
 		dosyaAdi += (tesisId != null ? "_" + ortakIslemler.getSelectItemText(tesisId, tesisList) : "") + (seciliEkSaha3Id != null ? "_" + ortakIslemler.getSelectItemText(seciliEkSaha3Id, gorevYeriList) : "");
-
 		try {
-			map.put("aylikPuantajDefault", aylikPuantajDefault);
-			map.put("bolumAciklama", bolumAciklama);
-			map.put("seciliEkSaha3Id", seciliEkSaha3Id);
-			map.put("gorevYeriAciklama", dosyaAdi);
-			map.put("yasalFazlaCalismaAsanSaat", yasalFazlaCalismaAsanSaat);
-			map.put("icapciSaatGoster", icapciSaatGoster);
-			map.put("gerceklesenMesaiKod", gerceklesenMesaiKod);
-			map.put("devredenMesaiKod", devredenMesaiKod);
-			map.put("resmiTatilVar", resmiTatilVar);
-			map.put("haftaTatilVar", haftaTatilVar);
-			map.put("devredenBakiyeKod", devredenBakiyeKod);
-			map.put("aksamGun", aksamGun);
-			map.put("aksamSaat", aksamSaat);
-			map.put("resmiTatilKanunenEklenenSureGoster", resmiTatilKanunenEklenenSureGoster);
-			baos = ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(map, puantajList);
+			map = aylikVardiyaTabloHareketExcelParametre(dosyaAdi);
+			Workbook wb = ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(map, puantajList);
+			if (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()) {
+				if (aylikVardiyaTabloHareketExcelParameter != null) {
+					HashMap<String, Object> harekaketMap = aylikVardiyaTabloHareketExcelParametre(dosyaAdi);
+					harekaketMap.put("wb", wb);
+					ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(harekaketMap, puantajList);
+				}
+			}
+
+			baos = new ByteArrayOutputStream();
+			wb.write(baos);
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
@@ -2400,10 +2398,34 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	}
 
 	/**
+	 * @param dosyaAdi
+	 * @return
+	 */
+	private HashMap<String, Object> aylikVardiyaTabloHareketExcelParametre(String dosyaAdi) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("aylikPuantajDefault", aylikPuantajDefault);
+		map.put("bolumAciklama", bolumAciklama);
+		map.put("seciliEkSaha3Id", seciliEkSaha3Id);
+		map.put("gorevYeriAciklama", dosyaAdi);
+		map.put("yasalFazlaCalismaAsanSaat", yasalFazlaCalismaAsanSaat);
+		map.put("icapciSaatGoster", icapciSaatGoster);
+		map.put("gerceklesenMesaiKod", gerceklesenMesaiKod);
+		map.put("devredenMesaiKod", devredenMesaiKod);
+		map.put("resmiTatilVar", resmiTatilVar);
+		map.put("haftaTatilVar", haftaTatilVar);
+		map.put("devredenBakiyeKod", devredenBakiyeKod);
+		map.put("aksamGun", aksamGun);
+		map.put("aksamSaat", aksamSaat);
+		map.put("resmiTatilKanunenEklenenSureGoster", resmiTatilKanunenEklenenSureGoster);
+		return map;
+	}
+
+	/**
 	 * @param list
 	 * @return
 	 */
-	private ByteArrayOutputStream fazlaMesaiExcelDevam(List<AylikPuantaj> list) {
+	private Workbook fazlaMesaiExcelDevam(List<AylikPuantaj> list) {
+		Workbook wb = new XSSFWorkbook();
 		TreeMap<String, String> sirketMap = new TreeMap<String, String>();
 		sirket = null;
 		tesis = null;
@@ -2426,8 +2448,6 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			sirketMap.put(tekSirketTesis, tekSirketTesisAdi);
 		}
 
-		ByteArrayOutputStream baos = null;
-		Workbook wb = new XSSFWorkbook();
 		Sheet sheet = ExcelUtil.createSheet(wb, PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "MMMMM yyyy") + " Fazla Mesai", Boolean.TRUE);
 		CreationHelper helper = wb.getCreationHelper();
 		ClientAnchor anchor = helper.createClientAnchor();
@@ -3126,16 +3146,14 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			for (int i = 0; i <= col; i++)
 				sheet.autoSizeColumn(i);
 
-			baos = new ByteArrayOutputStream();
-			wb.write(baos);
 		} catch (Exception e) {
 			logger.error("Pdks hata in : \n");
 			e.printStackTrace();
 			logger.error("Pdks hata out : " + e.getMessage());
-			baos = null;
+
 		}
 
-		return baos;
+		return wb;
 
 	}
 
