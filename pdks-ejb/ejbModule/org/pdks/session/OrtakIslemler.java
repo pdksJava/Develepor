@@ -22072,8 +22072,8 @@ public class OrtakIslemler implements Serializable {
 		ExcelUtil.setFillForegroundColor(styleIzin, 146, 208, 80);
 
 		CellStyle styleCalisma = ExcelUtil.getStyleDataCenter(wb);
-
-		int row = 0, col = 0;
+		CellRangeAddress region = null;
+		int row = 1, col = 0;
 		XSSFCellStyle header = (XSSFCellStyle) ExcelUtil.getStyleHeader(9, wb);
 
 		ExcelUtil.setFillForegroundColor(styleTatil, 255, 153, 204);
@@ -22087,8 +22087,7 @@ public class OrtakIslemler implements Serializable {
 		ExcelUtil.setFillForegroundColor(styleOff, 13, 12, 89);
 		ExcelUtil.setFontColor(styleOff, 256, 256, 256);
 
-		col = 0;
-		ExcelUtil.getCell(sheet, ++row, col++, header).setCellValue(personelNoAciklama());
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(personelNoAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Adı Soyadı");
 		if (kimlikNoGoster)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(kimlikNoAciklama());
@@ -22117,6 +22116,13 @@ public class OrtakIslemler implements Serializable {
 		ExcelUtil.setFillForegroundColor(headerVardiyaTatilGun, 92, 127, 45);
 		ExcelUtil.setFontColor(headerVardiyaTatilGun, 255, 255, 0);
 		HashMap<String, CellStyle> boldCellStyleMap = new HashMap<String, CellStyle>();
+
+		for (int i = 0; i < col; i++) {
+			ExcelUtil.getCell(sheet, row + 1, i, header).setCellValue("");
+			region = new CellRangeAddress(row, row + 1, i, i);
+			sheet.addMergedRegion(region);
+
+		}
 		for (VardiyaGun vardiyaGun : aylikPuantajDefault.getVardiyalar()) {
 			try {
 				if (!vardiyaGun.isAyinGunu())
@@ -22130,22 +22136,22 @@ public class OrtakIslemler implements Serializable {
 					headerVardiya = tatil.isYarimGunMu() ? headerVardiyaTatilYarimGun : headerVardiyaTatilGun;
 				}
 				int col1 = col;
-				Cell cell = ExcelUtil.getCell(sheet, row - 1, col1, headerVardiya);
+				Cell cell = ExcelUtil.getCell(sheet, row, col1, headerVardiya);
 				ExcelUtil.baslikCell(cell, anchor, helper, drawing, authenticatedUser.getTarihFormatla(cal.getTime(), "d EEE"), title);
-				ExcelUtil.getCell(sheet, row - 1, col1 + 1, headerVardiya).setCellValue("");
-				ExcelUtil.getCell(sheet, row - 1, col1 + 2, headerVardiya).setCellValue("");
-				CellRangeAddress region = new CellRangeAddress(row - 1, row - 1, col1, col1 + 2);
+				ExcelUtil.getCell(sheet, row, col1 + 1, headerVardiya).setCellValue("");
+				ExcelUtil.getCell(sheet, row, col1 + 2, headerVardiya).setCellValue("");
+				region = new CellRangeAddress(row, row, col1, col1 + 2);
 				sheet.addMergedRegion(region);
-				ExcelUtil.getCell(sheet, row, col1, headerVardiya).setCellValue("Giriş");
-				ExcelUtil.getCell(sheet, row, col1 + 1, headerVardiya).setCellValue("Çıkış");
-				ExcelUtil.getCell(sheet, row, col1 + 2, headerVardiya).setCellValue("Süre");
+				ExcelUtil.getCell(sheet, row + 1, col1, headerVardiya).setCellValue("Giriş");
+				ExcelUtil.getCell(sheet, row + 1, col1 + 1, headerVardiya).setCellValue("Çıkış");
+				ExcelUtil.getCell(sheet, row + 1, col1 + 2, headerVardiya).setCellValue("Süre");
 
 				col = col + 3;
 
 			} catch (Exception e) {
 			}
 		}
-
+		int startCol = col;
 		Cell cell = ExcelUtil.getCell(sheet, row, col++, header);
 		ExcelUtil.baslikCell(cell, anchor, helper, drawing, "TÇS", "Toplam Çalışma Saati: Çalışanın bu listedeki toplam çalışma saati");
 		cell = ExcelUtil.getCell(sheet, row, col++, header);
@@ -22206,8 +22212,13 @@ public class OrtakIslemler implements Serializable {
 
 		CellStyle headerIzinTipi = (CellStyle) header.clone();
 		ExcelUtil.setFillForegroundColor(headerIzinTipi, 255, 153, 204);
+		for (int i = startCol; i < col; i++) {
+			ExcelUtil.getCell(sheet, row + 1, i, header).setCellValue("");
+			region = new CellRangeAddress(row, row + 1, i, i);
+			sheet.addMergedRegion(region);
 
-		row++;
+		}
+		row = row + 2;
 		TreeMap<Long, String> vMap = new TreeMap<Long, String>();
 		int adet = 0;
 		for (Iterator iter = puantajList.iterator(); iter.hasNext();) {
@@ -22270,7 +22281,7 @@ public class OrtakIslemler implements Serializable {
 				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(modelAciklama);
 				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(authenticatedUser.getYesNo(pd.getFazlaMesaiOde()));
 				List vardiyaList = aylikPuantaj.getAyinVardiyalari();
-				CellRangeAddress region = null;
+
 				for (int i = 0; i < col; i++) {
 					ExcelUtil.getCell(sheet, row + 1, i, styleCenter).setCellValue("");
 					region = new CellRangeAddress(row, row + 1, i, i);
@@ -22399,7 +22410,7 @@ public class OrtakIslemler implements Serializable {
 					col = col + 3;
 
 				}
-				int startCol = col;
+				startCol = col;
 				setCell(sheet, row, col++, styleTutar, aylikPuantaj.getSaatToplami());
 				Cell planlananCell = setCell(sheet, row, col++, styleTutar, aylikPuantaj.getPlanlananSure());
 				if (aylikPuantaj.getCalismaModeliAy() != null && planlananCell != null && aylikPuantaj.getSutIzniDurum().equals(Boolean.FALSE)) {
@@ -22516,20 +22527,17 @@ public class OrtakIslemler implements Serializable {
 
 			for (int i = 0; i <= col; i++)
 				sheet.autoSizeColumn(i);
-			row = row + 2;
-			col = 0;
+			row = 0;
+
 			String aciklamaExcel = PdksUtil.replaceAll(gorevYeriAciklama, "_", " ");
-			ExcelUtil.getCell(sheet, row, col, header).setCellValue(aciklamaExcel);
-			// ExcelUtil.getCell(sheet, row + 1, col, header).setCellValue(PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyy MMMMMM  "));
-			for (int i = 0; i < 5; i++) {
-				ExcelUtil.getCell(sheet, row, col + i + 1, header).setCellValue("");
-				// ExcelUtil.getCell(sheet, row + 1, col + i + 1, header).setCellValue("");
+			ExcelUtil.getCell(sheet, row, 0, header).setCellValue(aciklamaExcel);
+			for (int i = 1; i < col; i++) {
+				ExcelUtil.getCell(sheet, row, i, header).setCellValue("");
 
 			}
 
 			try {
-				sheet.addMergedRegion(ExcelUtil.getRegion((int) row, (int) 0, (int) row, (int) 6));
-				// sheet.addMergedRegion(ExcelUtil.getRegion((int) row + 1, (int) 0, (int) row + 1, (int) 6));
+				sheet.addMergedRegion(ExcelUtil.getRegion((int) row, (int) 0, (int) row, (int) col - 1));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
