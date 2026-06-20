@@ -22131,15 +22131,17 @@ public class OrtakIslemler implements Serializable {
 				}
 				int col1 = col;
 				Cell cell = ExcelUtil.getCell(sheet, row - 1, col1, headerVardiya);
+				ExcelUtil.baslikCell(cell, anchor, helper, drawing, authenticatedUser.getTarihFormatla(cal.getTime(), "d EEE"), title);
+				ExcelUtil.getCell(sheet, row - 1, col1 + 1, headerVardiya).setCellValue("");
+				ExcelUtil.getCell(sheet, row - 1, col1 + 2, headerVardiya).setCellValue("");
+				CellRangeAddress region = new CellRangeAddress(row - 1, row - 1, col1, col1 + 2);
+				sheet.addMergedRegion(region);
 				ExcelUtil.getCell(sheet, row, col1, headerVardiya).setCellValue("Giriş");
 				ExcelUtil.getCell(sheet, row, col1 + 1, headerVardiya).setCellValue("Çıkış");
 				ExcelUtil.getCell(sheet, row, col1 + 2, headerVardiya).setCellValue("Süre");
 
-				ExcelUtil.baslikCell(cell, anchor, helper, drawing, authenticatedUser.getTarihFormatla(cal.getTime(), "d EEE"), title);
-				ExcelUtil.getCell(sheet, row - 1, col1 + 1, headerVardiya).setCellValue("");
-				CellRangeAddress region = new CellRangeAddress(row - 1, row - 1, col1, col1 + 2);
 				col = col + 3;
-				sheet.addMergedRegion(region);
+
 			} catch (Exception e) {
 			}
 		}
@@ -22270,7 +22272,7 @@ public class OrtakIslemler implements Serializable {
 				List vardiyaList = aylikPuantaj.getAyinVardiyalari();
 				CellRangeAddress region = null;
 				for (int i = 0; i < col; i++) {
-					ExcelUtil.getCell(sheet, row + 1, col, styleCenter).setCellValue("");
+					ExcelUtil.getCell(sheet, row + 1, i, styleCenter).setCellValue("");
 					region = new CellRangeAddress(row, row + 1, i, i);
 					sheet.addMergedRegion(region);
 
@@ -22518,16 +22520,16 @@ public class OrtakIslemler implements Serializable {
 			col = 0;
 			String aciklamaExcel = PdksUtil.replaceAll(gorevYeriAciklama, "_", " ");
 			ExcelUtil.getCell(sheet, row, col, header).setCellValue(aciklamaExcel);
-			ExcelUtil.getCell(sheet, row + 1, col, header).setCellValue(PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyy MMMMMM  "));
+			// ExcelUtil.getCell(sheet, row + 1, col, header).setCellValue(PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyy MMMMMM  "));
 			for (int i = 0; i < 5; i++) {
 				ExcelUtil.getCell(sheet, row, col + i + 1, header).setCellValue("");
-				ExcelUtil.getCell(sheet, row + 1, col + i + 1, header).setCellValue("");
+				// ExcelUtil.getCell(sheet, row + 1, col + i + 1, header).setCellValue("");
 
 			}
 
 			try {
 				sheet.addMergedRegion(ExcelUtil.getRegion((int) row, (int) 0, (int) row, (int) 6));
-				sheet.addMergedRegion(ExcelUtil.getRegion((int) row + 1, (int) 0, (int) row + 1, (int) 6));
+				// sheet.addMergedRegion(ExcelUtil.getRegion((int) row + 1, (int) 0, (int) row + 1, (int) 6));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
