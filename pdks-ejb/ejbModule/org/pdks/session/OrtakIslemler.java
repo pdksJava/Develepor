@@ -15042,7 +15042,7 @@ public class OrtakIslemler implements Serializable {
 		for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 			VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 			try {
-				if (!izinMap.isEmpty()) {
+				if (izinMap != null && !izinMap.isEmpty()) {
 					Long perId = vardiyaGun.getPersonel().getId();
 					List<VardiyaGun> list = vMap.containsKey(perId) ? vMap.get(perId) : new ArrayList<VardiyaGun>();
 					if (list.isEmpty())
