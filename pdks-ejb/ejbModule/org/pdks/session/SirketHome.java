@@ -275,7 +275,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 
 	public void instanceRefresh() {
 		if (getInstance().getId() != null)
-			session.refresh(getInstance());
+			pdksEntityController.sessionRefresh(session, entityManager, getInstance());
 	}
 
 	public void fillPersonelList() throws Exception {

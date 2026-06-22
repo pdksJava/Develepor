@@ -1102,7 +1102,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 	public void instanceRefresh() {
 		if (seciliVardiya.getId() != null)
 			try {
-				session.refresh(seciliVardiya);
+				pdksEntityController.sessionRefresh(session, entityManager,seciliVardiya);
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n");
 				e.printStackTrace();

@@ -180,7 +180,7 @@ public class FazlaMesaiIzinHome extends EntityHome<PersonelIzin> implements Seri
 			query.executeUpdate();
 
 			PersonelIzin izin = (PersonelIzin) pdksEntityController.getSQLParamByFieldObject(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, updateIzin.getId(), PersonelIzin.class, session);
-			session.refresh(izin);
+			pdksEntityController.sessionRefresh(session, entityManager, izin);
 			ortakIslemler.sessionFlush(session);
 			fillIzinList();
 
@@ -198,7 +198,7 @@ public class FazlaMesaiIzinHome extends EntityHome<PersonelIzin> implements Seri
 
 	public void instanceRefresh() {
 		if (getInstance().getId() != null)
-			session.refresh(getInstance());
+			pdksEntityController.sessionRefresh(session, entityManager, getInstance());
 	}
 
 	public void fillIzinList() {

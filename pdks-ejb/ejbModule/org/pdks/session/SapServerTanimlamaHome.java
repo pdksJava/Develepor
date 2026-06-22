@@ -148,7 +148,7 @@ public class SapServerTanimlamaHome extends EntityHome<SAPSunucu> implements Ser
 
 	public void instanceRefresh() {
 		if (seciliSAPSunucu.getId() != null)
-			session.refresh(seciliSAPSunucu);
+			pdksEntityController.sessionRefresh(session, entityManager,seciliSAPSunucu);
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)

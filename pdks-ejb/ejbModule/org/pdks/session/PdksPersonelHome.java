@@ -871,7 +871,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		pdksPersonel.setPdksSicilNo(pdksPersonel.getPersonelKGS().getSicilNo());
 		session.save(pdksPersonel);
 		ortakIslemler.sessionFlush(session);
-		session.refresh(personelView);
+		pdksEntityController.sessionRefresh(session, entityManager,personelView);
 		return ok;
 
 	}
@@ -1316,7 +1316,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							ortakIslemler.setUserTesisler(authenticatedUser, false, session);
 						}
 						try {
-							session.refresh(personelView);
+							pdksEntityController.sessionRefresh(session, entityManager,personelView);
 						} catch (Exception e) {
 							logger.error("PDKS hata in : \n");
 							e.printStackTrace();
@@ -1495,7 +1495,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 						PdksUtil.addMessageInfo(personel.getAdSoyad() + " SAP'den verileri güncellendi.");
 						if (personelView != null)
-							session.refresh(personelView);
+							pdksEntityController.sessionRefresh(session, entityManager,personelView);
 					}
 				} else
 					PdksUtil.addMessageWarn(personel.getAdSoyad() + " SAP'den verileri güncellenmedi!");
@@ -2641,7 +2641,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						pdksEntityController.saveOrUpdate(session, entityManager, pdksPersonel);
 
 						ortakIslemler.sessionFlush(session);
-						session.refresh(personelView);
+						pdksEntityController.sessionRefresh(session, entityManager,personelView);
 
 					}
 				} catch (Exception e) {
@@ -3778,8 +3778,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (pdksPersonel != null && pdksPersonel.getId() != null) {
 			try {
 				if (pdksPersonel.getKullanici() != null && pdksPersonel.getKullanici().getId() != null)
-					session.refresh(pdksPersonel.getKullanici());
-				session.refresh(pdksPersonel);
+					pdksEntityController.sessionRefresh(session, entityManager,pdksPersonel.getKullanici());
+				pdksEntityController.sessionRefresh(session, entityManager,pdksPersonel);
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n");
 				e.printStackTrace();

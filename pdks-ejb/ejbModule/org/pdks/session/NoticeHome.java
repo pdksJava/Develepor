@@ -73,7 +73,7 @@ public class NoticeHome extends EntityHome<Notice> {
 		}
 		// fillNotice();
 		startupAction.fillStartMethod(authenticatedUser, true, session);
-		// session.refresh(notice);
+		// pdksEntityController.sessionRefresh(session, entityManager,notice);
 		return "persisted";
 
 	}

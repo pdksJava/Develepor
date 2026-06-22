@@ -128,7 +128,7 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 
 	public void instanceRefresh() {
 		if (terminal.getId() != null)
-			session.refresh(terminal);
+			pdksEntityController.sessionRefresh(session, entityManager, terminal);
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
@@ -298,7 +298,7 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 				FacesContext.getCurrentInstance().responseComplete();
 			}
 		} catch (Exception e) {
- 		}
+		}
 		return null;
 
 	}

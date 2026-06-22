@@ -102,7 +102,7 @@ public class HoldingKalanIzinHome extends EntityHome<HoldingIzin> implements Ser
 
 	public void instanceRefresh() {
 		if (getInstance().getId() != null)
-			session.refresh(getInstance());
+			pdksEntityController.sessionRefresh(session, entityManager, getInstance());
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)

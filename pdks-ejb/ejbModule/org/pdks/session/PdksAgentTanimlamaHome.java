@@ -592,7 +592,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 	public void instanceRefresh() {
 		if (currentAgent.getId() != null)
-			session.refresh(currentAgent);
+			pdksEntityController.sessionRefresh(session, entityManager,currentAgent);
 	}
 
 	public String fillPdksAgentList() {
@@ -635,7 +635,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 	public void refreshInstance() {
 		if (getInstance().getId() != null)
-			session.refresh(getInstance());
+			pdksEntityController.sessionRefresh(session, entityManager, getInstance());
 	}
 
 	public Session getSession() {

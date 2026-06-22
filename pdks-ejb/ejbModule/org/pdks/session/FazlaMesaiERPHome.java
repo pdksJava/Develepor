@@ -389,7 +389,7 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 
 	public void instanceRefresh() {
 		if (seciliFazlaMesaiERPDetay != null && seciliFazlaMesaiERPDetay.getId() != null)
-			session.refresh(seciliFazlaMesaiERPDetay);
+			pdksEntityController.sessionRefresh(session, entityManager, seciliFazlaMesaiERPDetay);
 
 	}
 

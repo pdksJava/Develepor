@@ -236,9 +236,8 @@ public class PdksEntityController implements Serializable {
 			session = (Session) parametreMap.get(MAP_KEY_SESSION);
 		else if (authenticatedUser != null) {
 			session = authenticatedUser.getSessionSQL();
-		} 
-		 
-			
+		}
+
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		List list = new ArrayList((Collection) parametreMap.get(keyAlan));
@@ -276,7 +275,7 @@ public class PdksEntityController implements Serializable {
 				queryReadUnCommitted.executeUpdate();
 			}
 			org.hibernate.Query qry1 = session.createQuery(sql);
- 			if (!parametreList.isEmpty()) {
+			if (!parametreList.isEmpty()) {
 				for (int i = 0; i < parametreList.size(); i++) {
 					Object parametre = parametreList.get(i);
 					qry1.setParameter(i, parametre);
@@ -716,6 +715,37 @@ public class PdksEntityController implements Serializable {
 				}
 
 			} catch (Exception e) {
+			}
+
+		}
+
+	}
+
+	/**
+	 * @param session
+	 * @param em
+	 * @param object
+	 */
+	public void sessionRefresh(Session session, EntityManager em, Object object) {
+		if (session != null && object != null) {
+			try {
+				Object id = PdksUtil.getMethodObject(object, "getId", null);
+				if (id != null) {
+					if (session.contains(object))
+						session.refresh(object);
+					else if (em == null) {
+						if (id instanceof Long)
+							object = session.get(object.getClass(), (Long) id);
+						else if (id instanceof Integer)
+							object = session.get(object.getClass(), (Integer) id);
+					} else
+						em.refresh(object);
+
+				}
+
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
 			}
 
 		}

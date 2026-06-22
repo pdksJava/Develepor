@@ -179,7 +179,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 
 	public String instanceRefresh() {
 		if (seciliPdksDinamikRapor.getId() != null)
-			session.refresh(seciliPdksDinamikRapor);
+			pdksEntityController.sessionRefresh(session, entityManager, seciliPdksDinamikRapor);
 		return "";
 	}
 
@@ -298,7 +298,8 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		for (PdksDinamikRaporRole raporRole : list)
 			session.delete(raporRole);
 
-		ortakIslemler.sessionFlush(session);;
+		ortakIslemler.sessionFlush(session);
+		;
 		fillDinamikRaporList();
 		return "";
 
@@ -319,7 +320,8 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 			}
 		}
 		if (flush)
-			ortakIslemler.sessionFlush(session);;
+			ortakIslemler.sessionFlush(session);
+		;
 		return "";
 
 	}
@@ -339,7 +341,8 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 			}
 		}
 		if (flush)
-			ortakIslemler.sessionFlush(session);;
+			ortakIslemler.sessionFlush(session);
+		;
 		return "";
 
 	}
@@ -354,7 +357,8 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 					seciliPdksDinamikRaporAlan.setHizala(ENumAlanHizalaTipi.ORTALA.value());
 			}
 			pdksEntityController.saveOrUpdate(session, entityManager, seciliPdksDinamikRaporAlan);
-			ortakIslemler.sessionFlush(session);;
+			ortakIslemler.sessionFlush(session);
+			;
 			fillDinamikRaporAlanList();
 			if (dinamikRaporAlanList.isEmpty() == false)
 				updateDinamikRaporAlanSira();
@@ -426,13 +430,15 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	@Transactional
 	public String deleteDinamikRaporParametre(PdksDinamikRaporParametre deleteValue) {
 		session.delete(deleteValue);
-		ortakIslemler.sessionFlush(session);;
+		ortakIslemler.sessionFlush(session);
+		;
 		try {
 			pdksEntityController.savePrepareTableID(true, deleteValue, PdksDinamikRaporParametre.class, session);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		ortakIslemler.sessionFlush(session);;
+		ortakIslemler.sessionFlush(session);
+		;
 		filllDinamikRaporParametreList();
 		if (dinamikRaporParametreList.isEmpty() == false)
 			updateDinamikRaporParametreSira();
@@ -443,13 +449,15 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	@Transactional
 	public String deleteDinamikRaporAlan(PdksDinamikRaporAlan deleteValue) {
 		session.delete(deleteValue);
-		ortakIslemler.sessionFlush(session);;
+		ortakIslemler.sessionFlush(session);
+		;
 		try {
 			pdksEntityController.savePrepareTableID(true, deleteValue, PdksDinamikRaporAlan.class, session);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		ortakIslemler.sessionFlush(session);;
+		ortakIslemler.sessionFlush(session);
+		;
 		fillDinamikRaporAlanList();
 		if (dinamikRaporAlanList.isEmpty() == false)
 			updateDinamikRaporAlanSira();
@@ -499,7 +507,8 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 				}
 			}
 			pdksEntityController.saveOrUpdate(session, entityManager, seciliPdksDinamikRaporParametre);
-			ortakIslemler.sessionFlush(session);;
+			ortakIslemler.sessionFlush(session);
+			;
 			filllDinamikRaporParametreList();
 			if (dinamikRaporParametreList.isEmpty() == false)
 				updateDinamikRaporParametreSira();

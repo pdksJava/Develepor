@@ -160,7 +160,7 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 
 	public void instanceRefresh() {
 		if (getInstance().getId() != null)
-			session.refresh(getInstance());
+			pdksEntityController.sessionRefresh(session, entityManager, getInstance());
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)

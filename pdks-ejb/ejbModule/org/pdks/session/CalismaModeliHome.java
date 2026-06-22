@@ -338,7 +338,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	public void instanceRefresh() {
 		if (calismaModeli.getId() != null)
-			session.refresh(calismaModeli);
+			pdksEntityController.sessionRefresh(session, entityManager, calismaModeli);
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)

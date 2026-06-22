@@ -143,7 +143,7 @@ public class IzinOnayHome extends EntityHome<PersonelIzin> implements Serializab
 	}
 
 	public String hatirlatma(PersonelIzin izin) {
-		session.refresh(izin);
+		pdksEntityController.sessionRefresh(session, entityManager, izin);
 		Personel personel = izin.getIzinSahibi();
 		Personel pdksPersonel = (Personel) personel.clone();
 

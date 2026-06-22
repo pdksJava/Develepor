@@ -744,7 +744,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	public boolean isUstOnayla(PersonelIzinOnay izinOnay) {
 		boolean tekrarOnayla = Boolean.FALSE;
 		PersonelIzin izin = izinOnay.getPersonelIzin();
-		// session.refresh(izin);
+		// pdksEntityController.sessionRefresh(session, entityManager,izin);
 		Set<PersonelIzinOnay> onaylayanlar = izin.getOnaylayanlar();
 		if (onaylayanlar != null) {
 			HashMap<String, PersonelIzinOnay> onaylayanlarMap = new HashMap<String, PersonelIzinOnay>();
@@ -4157,7 +4157,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					User yonetici = ortakIslemler.getYoneticiBul(izinSahibi, izinSahibi.getYonetici2(), session);
 					if (yonetici != null) {
 						mailUserSakla(mailUserMap, yonetici);
-						session.refresh(yonetici);
+						pdksEntityController.sessionRefresh(session, entityManager,yonetici);
 						ortakIslemler.setUserRoller(yonetici, session);
 						if (yonetici.isIkinciYoneticiIzinOnaylasin() && !yonetici.isGenelMudur())
 							yoneticiMailList.add(yonetici.getEmail());
@@ -5235,7 +5235,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				PersonelIzinDosya personelIzinDosya = (PersonelIzinDosya) pdksEntityController.getSQLParamByFieldObject(PersonelIzinDosya.TABLE_NAME, PersonelIzinDosya.COLUMN_NAME_IZIN, izin.getId(), PersonelIzinDosya.class, session);
 
 				if (personelIzinDosya != null) {
-					// session.refresh(personelIzinDosya.getDosya());
+					// pdksEntityController.sessionRefresh(session, entityManager,personelIzinDosya.getDosya());
 					setIzinDosya(personelIzinDosya);
 
 				}

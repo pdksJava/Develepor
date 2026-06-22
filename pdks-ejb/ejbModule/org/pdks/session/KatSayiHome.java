@@ -81,7 +81,7 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 
 	public void instanceRefresh() {
 		if (seciliKatSayi.getId() != null)
-			session.refresh(seciliKatSayi);
+			pdksEntityController.sessionRefresh(session, entityManager, seciliKatSayi);
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)

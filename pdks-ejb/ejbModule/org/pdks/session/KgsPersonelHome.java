@@ -93,7 +93,7 @@ public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serial
 
 	public void instanceRefresh() {
 		if (sqlPersonel.getId() != null)
-			session.refresh(sqlPersonel);
+			pdksEntityController.sessionRefresh(session, entityManager, sqlPersonel);
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
@@ -259,7 +259,7 @@ public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serial
 
 			}
 		} catch (Exception e) {
- 		}
+		}
 
 		return "";
 	}

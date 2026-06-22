@@ -222,12 +222,12 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 
 	public void instanceKartsizRefresh() {
 		if (yemekKartsiz.getId() != null)
-			session.refresh(yemekKartsiz);
+			pdksEntityController.sessionRefresh(session, entityManager,yemekKartsiz);
 	}
 
 	public void instanceRefresh() {
 		if (getInstance().getId() != null)
-			session.refresh(getInstance());
+			pdksEntityController.sessionRefresh(session, entityManager, getInstance());
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)

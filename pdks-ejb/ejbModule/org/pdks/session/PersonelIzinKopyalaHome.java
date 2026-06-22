@@ -557,7 +557,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 						iterator2.remove();
 					}
 				}
-				session.refresh(hakEdisIzinClone);
+				pdksEntityController.sessionRefresh(session, entityManager,hakEdisIzinClone);
 
 			}
 			idler = null;

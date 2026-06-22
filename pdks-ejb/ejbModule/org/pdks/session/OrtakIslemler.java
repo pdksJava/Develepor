@@ -11534,7 +11534,7 @@ public class OrtakIslemler implements Serializable {
 	public void izinIptal(PersonelIzin izin, Tanim onaylamamaNeden, String onaylamamaNedenAciklama, Session session) {
 
 		User updateUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, authenticatedUser.getId(), User.class, session);
-		session.refresh(izin);
+		pdksEntityController.sessionRefresh(session, null, izin);
 		Set<PersonelIzinOnay> list = izin.getOnaylayanlar();
 		if (list != null) {
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -19592,8 +19592,7 @@ public class OrtakIslemler implements Serializable {
 			}
 			if (personelIzin.getDevirIzin() || (iptalIzinleriGetir && personelIzin.getIzinKagidiGeldi() != null) || personelIzin.getIzinSuresi() > 0 || (personelIzin.getHarcananDigerIzinler() != null && !personelIzin.getHarcananDigerIzinler().isEmpty()))
 				tempIzin.getYillikIzinler().add(personelIzin);
-			// session.refresh(personelIzin);
-			personelIzin.setKontrolIzin(null);
+ 			personelIzin.setKontrolIzin(null);
 			personelIzin.setDonemSonu(harcananIzinlerHepsi ? null : xDonemSonu);
 			tempIzin.setToplamKalanIzin(tempIzin.getToplamKalanIzin() + personelIzin.getKalanIzin());
 			tempIzin.setKullanilanIzin(tempIzin.getKullanilanIzin() + personelIzin.getHarcananIzin());
@@ -19885,7 +19884,7 @@ public class OrtakIslemler implements Serializable {
 
 			if (onayTipi.equals(IzinTipi.ONAYLAYAN_TIPI_YOK) && !(personelIzin.getIzinSahibi().isHekim() || (personelIzin.getIzinSahibi().getOnaysizIzinKullanilir() != null && personelIzin.getIzinSahibi().getOnaysizIzinKullanilir())))
 				continue;
-			// session.refresh(personelIzin);
+			// pdksEntityController.sessionRefresh(session, entityManager,personelIzin);
 
 			Personel personel = (Personel) personelIzin.getIzinSahibi().clone();
 			personelIzin.setKontrolIzin(null);

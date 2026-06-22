@@ -884,7 +884,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 
 	public void instanceRefresh() {
 		if (getInstance().getId() != null)
-			session.refresh(getInstance());
+			pdksEntityController.sessionRefresh(session, entityManager, getInstance());
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
@@ -2069,7 +2069,7 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 							pdksEntityController.saveOrUpdate(session, entityManager, izinDetay);
 						}
 					}
-					// session.refresh(hakEdisIzin);
+					// pdksEntityController.sessionRefresh(session, entityManager,hakEdisIzin);
 
 				}
 				if (!izinERPList.isEmpty()) {

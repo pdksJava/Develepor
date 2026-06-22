@@ -292,7 +292,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 
 	public void instanceRefresh() {
 		if (getInstance().getId() != null)
-			session.refresh(getInstance());
+			pdksEntityController.sessionRefresh(session, entityManager, getInstance());
 	}
 
 	/**

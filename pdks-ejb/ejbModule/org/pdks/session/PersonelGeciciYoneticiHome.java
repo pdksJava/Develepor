@@ -332,7 +332,7 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 				if (mailAciklamaUserList.length() > 0)
 					mailAciklamaUserList.append("-");
 				Personel pdksPersonel = (Personel) iterator.next();
-				// session.refresh(seciliUser);
+				// pdksEntityController.sessionRefresh(session, entityManager,seciliUser);
 				tempGeciciYonetici = new PersonelGeciciYonetici();
 
 				tempGeciciYonetici.setYeniYonetici(yeniYonetici);
@@ -422,7 +422,7 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 
 	public void instanceRefresh() {
 		if (getInstance().getId() != null)
-			session.refresh(getInstance());
+			pdksEntityController.sessionRefresh(session, entityManager, getInstance());
 	}
 
 	public void personelArama(String entityHomereRender) {

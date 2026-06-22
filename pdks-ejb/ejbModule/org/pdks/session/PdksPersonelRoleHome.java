@@ -125,7 +125,7 @@ public class PdksPersonelRoleHome extends EntityHome<Role> implements Serializab
 
 	public void instanceRefresh() {
 		if (getInstance().getId() != null)
-			session.refresh(getInstance());
+			pdksEntityController.sessionRefresh(session, entityManager, getInstance());
 	}
 
 	public String rolGuncelleGiris(Role rol) {

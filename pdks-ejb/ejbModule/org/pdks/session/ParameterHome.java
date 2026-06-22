@@ -282,7 +282,7 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 
 	public void refreshInstance() {
 		if (getInstance().getId() != null)
-			session.refresh(getInstance());
+			pdksEntityController.sessionRefresh(session, entityManager, getInstance());
 	}
 
 	public Parameter getCurrentParameter() {

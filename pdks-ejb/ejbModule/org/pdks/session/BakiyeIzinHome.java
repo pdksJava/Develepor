@@ -150,7 +150,7 @@ public class BakiyeIzinHome extends EntityHome<PersonelIzin> {
 
 			PersonelIzin izin = (PersonelIzin) pdksEntityController.getSQLParamByFieldObject(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, updateIzin.getId(), PersonelIzin.class, session);
 
-			session.refresh(izin);
+			pdksEntityController.sessionRefresh(session, entityManager, izin);
 			ortakIslemler.sessionFlush(session);
 			fillIzinList();
 

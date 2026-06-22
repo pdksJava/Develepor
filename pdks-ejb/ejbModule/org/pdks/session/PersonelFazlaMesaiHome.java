@@ -156,7 +156,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 	public void instanceRefresh() {
 		if (getInstance().getId() != null)
-			session.refresh(getInstance());
+			pdksEntityController.sessionRefresh(session, entityManager, getInstance());
 	}
 
 	private void fillEkSahaTanim() {
@@ -679,7 +679,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						logger.error("Pdks hata out : " + e.getMessage());
 
 					}
-					session.refresh(this.getInstance());
+					pdksEntityController.sessionRefresh(session, entityManager,this.getInstance());
 					setInstance(new PersonelFazlaMesai());
 					fillHareketMesaiList();
 					islem = "persisted";
