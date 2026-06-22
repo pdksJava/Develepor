@@ -2219,9 +2219,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							VardiyaSaat vardiyaSaat = vardiyaGun.getVardiyaSaat();
 							if (saatEkle) {
 								vardiyaGun.ucretiOdenenMesaiHesapla();
-								vardiyaSaat = vardiyaGun.getVardiyaSaat();
-								if (vardiyaSaat == null)
+								if (vardiyaSaat == null) {
 									vardiyaSaat = new VardiyaSaat();
+									vardiyaGun.setVardiyaSaat(vardiyaSaat);
+									saveVardiyaGun = true;
+								}
+								vardiyaSaat.setGuncellendi(vardiyaSaat.getId() == null);
+								vardiyaSaat.setNormalSure(vardiya.isCalisma() ? vardiya.getNetCalismaSuresi() : 0.0d);
 
 								if (hareketDurum.equals(Boolean.TRUE) && vardiyaGun.isZamanGelmedi() == false && (islemVardiya.isIcapVardiyasi() || vardiyaGun.getHareketler() != null || vardiyaGun.getResmiTatilSure() > 0.0)) {
 									double calSure = vardiyaGun.getCalismaSuresi();
@@ -2237,8 +2241,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							}
 							boolean tatilOncesiEksik = vardiyaGun.isZamanGelmedi();
 							if (tatilOncesiEksik == false && hareketDurum && vardiyaTatil != null && islemVardiya.isCalisma() && (vardiyaTatil.isYarimGunMu() || (islemVardiya.getBasDonem() >= islemVardiya.getBitDonem() && tatilGunleriMap.containsKey(vardiyaGun.getVardiyaDateStr()) == false))) {
-								if (vardiyaSaat == null)
-									vardiyaSaat = vardiyaGun.getVardiyaSaat();
+								if (vardiya.isCalisma() || vardiyaGun.getCalismaSuresi() > 0.0d) {
+									vardiyaSaat = new VardiyaSaat();
+									vardiyaSaat.setGuncellendi(false);
+									vardiyaSaat.setNormalSure(vardiya.isCalisma() ? vardiya.getNetCalismaSuresi() : 0.0d);
+									vardiyaGun.setVardiyaSaat(vardiyaSaat);
+									saveVardiyaGun = true;
+								}
 								if (vardiyaSaat != null)
 									tatilOncesiEksik = vardiyaSaat.getCalismaSuresi() < vardiyaSaat.getNormalSure();
 
@@ -2263,20 +2272,28 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							}
 							if (saveVardiyaGun) {
 								if (vardiyaSaat == null || vardiyaSaat.getId() == null) {
-									if (updateMap == null)
-										vardiyaGun.setVardiyaSaat(null);
-									else {
-										if (vGunMap == null)
-											vGunMap = new HashMap<String, Object>();
-										vGunMap.put("vardiyaSaat", null);
+									if (vardiyaSaat != null && vardiyaSaat.isGuncellendi()) {
 
+										if (updateMap == null)
+											vardiyaGun.setVardiyaSaat(vardiyaSaat);
+										else {
+											if (vGunMap == null)
+												vGunMap = new HashMap<String, Object>();
+											vGunMap.put("vardiyaSaat", vardiyaSaat);
+										}
 									}
 								}
 
 								if (vardiyaGun.isAyinGunu()) {
 
-									if (updateMap == null)
+									if (updateMap == null) {
+										if (vardiyaSaat != null && vardiyaSaat.isGuncellendi() && vardiyaGun.getVardiyaSaat() != null) {
+											saveList.add(vardiyaSaat);
+											vardiyaGun.setVardiyaSaat(vardiyaSaat);
+										}
 										saveList.add(vardiyaGun);
+									}
+
 								}
 
 							}
@@ -2422,15 +2439,15 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										if (saatEkle == false)
 											continue;
 
-										VardiyaSaat vardiyaSaat = vg.getVardiyaSaat();
-
 										double normalSure = 0.0d;
 
 										if (islemVardiya != null && vg.getIzin() == null && islemVardiya.isCalisma())
 											normalSure = islemVardiya.getNetCalismaSuresi();
+										VardiyaSaat vardiyaSaat = vg.getVardiyaSaat();
 										if (vardiyaSaat == null) {
 											vardiyaSaat = new VardiyaSaat();
 											vardiyaSaat.setNormalSure(normalSure);
+											vg.setVardiyaSaat(vardiyaSaat);
 										}
 										vardiyaSaat.setGuncellendi(vardiyaSaat.getId() == null);
 										if (vg.getDurum()) {
@@ -2500,6 +2517,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 											vardiyaSaat.setResmiTatilSure(0.0d);
 											vardiyaSaat.setAksamVardiyaSaatSayisi(0.0d);
 											saveList.add(vardiyaSaat);
+											if (vardiyaSaat.getId() == null)
+												saveList.add(vg);
 										}
 
 									}
