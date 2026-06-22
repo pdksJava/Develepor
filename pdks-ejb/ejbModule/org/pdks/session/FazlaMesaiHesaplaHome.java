@@ -2349,6 +2349,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							for (Iterator iterator = saveList.iterator(); iterator.hasNext();) {
 								Object object = (Object) iterator.next();
 								saveOrUpdate(object);
+								flush = true;
 								iterator.remove();
 							}
 							// sessionFlush();
@@ -2519,7 +2520,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							puantaj.setUcretiOdenenMesaiSure(ucretiOdenenMesaiSure);
 							if (!yasalFazlaCalismaAsanSaat && personelDenklestirme.getCalismaModeliAy().isGunMaxCalismaOdenir())
 								yasalFazlaCalismaAsanSaat = calismaModeli.isFazlaMesaiVarMi() && ucretiOdenenMesaiSure > 0.0d;
-							// flush = false;
+							flush = false;
 							if (!saveList.isEmpty()) {
 								for (Iterator iterator = saveList.iterator(); iterator.hasNext();) {
 									Object object = (Object) iterator.next();
@@ -2568,10 +2569,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							updateMap.clear();
 
 						}
-						// if (flush) {
-						// sessionFlush();
-						// saveList.clear();
-						// }
+						if (flush)
+							sessionFlush();
+
 						saveList.clear();
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -5618,7 +5618,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		HashMap<String, Object> map = null;
 		try {
 			map = aylikVardiyaTabloHareketExcelParametre(gorevYeriAciklama);
-			Workbook wb  = ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(map, puantajList);
+			Workbook wb = ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(map, puantajList);
 			baos = new ByteArrayOutputStream();
 			wb.write(baos);
 		} catch (Exception e) {

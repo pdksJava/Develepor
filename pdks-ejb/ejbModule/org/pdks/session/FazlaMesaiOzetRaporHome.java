@@ -557,10 +557,6 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		File file = new File("/opt/pdks/" + fileName);
 		List<String> list = PdksUtil.getStringListFromFile(file);
 		LinkedHashMap<Long, byte[]> map1 = null;
-		// if (PdksUtil.getCanliSunucuDurum() == false)
-		// map1 = ortakIslemler.getOnayPdf(denklestirmeAy, veriMap, new ArrayList<String>(list), session);
-		// else
-		// map1 = ortakIslemler.getOnayCanliPdf(denklestirmeAy, veriMap, new ArrayList<String>(list), session);
 		map1 = ortakIslemler.getOnayPdf(denklestirmeAy, veriMap, new ArrayList<String>(list), session);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		if (zip) {
@@ -628,7 +624,6 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		aylikPuantajList.clear();
 		if (denklestirmeAy == null && ay > 0) {
 			HashMap fields = new HashMap();
-
 			denklestirmeAy = ortakIslemler.getSQLDenklestirmeAy(yil, ay, session);
 			if (denklestirmeAy != null) {
 				if (denklestirmeAy.getFazlaMesaiMaxSure() == null)
@@ -756,7 +751,6 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 		if (ikRole || authenticatedUser.isYonetici()) {
 			Long depId = departman != null ? departman.getId() : null;
-
 			sirketler = fazlaMesaiOrtakIslemler.getFazlaMesaiSirketList(depId, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, true, session);
 			sirket = null;
 			if (!sirketler.isEmpty()) {
@@ -2224,12 +2218,17 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 			Workbook wb = fazlaMesaiExcelDevam(aylikPuantajList);
 			if (wb != null) {
+				String gorevYeriAciklama = (sirket != null ? "_" + (sirket.getSirketGrup() == null ? sirket.getAd() : sirket.getSirketGrup().getAciklama()) : "");
+				gorevYeriAciklama += (tesisId != null ? "_" + ortakIslemler.getSelectItemText(tesisId, tesisList) : "") + (seciliEkSaha3Id != null ? "_" + ortakIslemler.getSelectItemText(seciliEkSaha3Id, gorevYeriList) : "");
+				if (getAylikVardiyaTabloHareketExcelDurum()) {
+					HashMap<String, Object> map = aylikVardiyaTabloHareketExcelParametre(gorevYeriAciklama);
+					map.put("wb", wb);
+					ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(map, aylikPuantajList);
+
+				}
 				ByteArrayOutputStream baosDosya = new ByteArrayOutputStream();
-				baosDosya = new ByteArrayOutputStream();
 				wb.write(baosDosya);
-				String dosyaAdi = "FazlaMesai" + (sirket != null ? "_" + (sirket.getSirketGrup() == null ? sirket.getAd() : sirket.getSirketGrup().getAciklama()) : "");
-				dosyaAdi += (tesisId != null ? "_" + ortakIslemler.getSelectItemText(tesisId, tesisList) : "") + (seciliEkSaha3Id != null ? "_" + ortakIslemler.getSelectItemText(seciliEkSaha3Id, gorevYeriList) : "");
-				dosyaAdi += "_" + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyyMM") + ".xlsx";
+				String dosyaAdi = "FazlaMesai" + gorevYeriAciklama + "_" + PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "yyyyMM") + ".xlsx";
 				PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi);
 			}
 		} catch (Exception e) {
@@ -2240,6 +2239,14 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		}
 
 		return "";
+	}
+
+	public Boolean getAylikVardiyaTabloHareketExcelDurum() {
+		boolean excelDurum = false;
+
+		if (aylikVardiyaTabloHareketExcelParameter != null)
+			excelDurum = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || seciliEkSaha3Id != null || aylikPuantajList.size() < 160;
+		return excelDurum;
 	}
 
 	private void fillEkSahaTanim() {
@@ -2370,29 +2377,27 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	 */
 	private ByteArrayOutputStream aylikVardiyaTabloHareketExcelDevam(List<AylikPuantaj> puantajList) {
 		ByteArrayOutputStream baos = null;
-		HashMap<String, Object> map = null;
 		String dosyaAdi = (sirket != null ? "_" + (sirket.getSirketGrup() == null ? sirket.getAd() : sirket.getSirketGrup().getAciklama()) : "");
 		dosyaAdi += (tesisId != null ? "_" + ortakIslemler.getSelectItemText(tesisId, tesisList) : "") + (seciliEkSaha3Id != null ? "_" + ortakIslemler.getSelectItemText(seciliEkSaha3Id, gorevYeriList) : "");
 		try {
-			map = aylikVardiyaTabloHareketExcelParametre(dosyaAdi);
-			Workbook wb = ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(map, puantajList);
+
 			if (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()) {
 				if (aylikVardiyaTabloHareketExcelParameter != null) {
 					HashMap<String, Object> harekaketMap = aylikVardiyaTabloHareketExcelParametre(dosyaAdi);
-					harekaketMap.put("wb", wb);
-					ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(harekaketMap, puantajList);
+
+					Workbook wb = ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(harekaketMap, puantajList);
+					baos = new ByteArrayOutputStream();
+					wb.write(baos);
 				}
 			}
 
-			baos = new ByteArrayOutputStream();
-			wb.write(baos);
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
 			e.printStackTrace();
 			logger.error("PDKS hata out : " + e.getMessage());
 			baos = null;
 		}
-		map = null;
+
 		return baos;
 
 	}
