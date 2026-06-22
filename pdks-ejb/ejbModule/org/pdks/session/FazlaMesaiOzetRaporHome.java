@@ -2220,7 +2220,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			if (wb != null) {
 				String gorevYeriAciklama = (sirket != null ? "_" + (sirket.getSirketGrup() == null ? sirket.getAd() : sirket.getSirketGrup().getAciklama()) : "");
 				gorevYeriAciklama += (tesisId != null ? "_" + ortakIslemler.getSelectItemText(tesisId, tesisList) : "") + (seciliEkSaha3Id != null ? "_" + ortakIslemler.getSelectItemText(seciliEkSaha3Id, gorevYeriList) : "");
-				if (getAylikVardiyaTabloHareketExcelDurum()) {
+				if (aylikVardiyaTabloHareketExcelDurum(false)) {
 					HashMap<String, Object> map = aylikVardiyaTabloHareketExcelParametre(gorevYeriAciklama);
 					map.put("wb", wb);
 					ortakIslemler.aylikVardiyaTabloHareketExcelOlustur(map, aylikPuantajList);
@@ -2241,11 +2241,14 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		return "";
 	}
 
-	public Boolean getAylikVardiyaTabloHareketExcelDurum() {
+	/**
+	 * @param ayri
+	 * @return
+	 */
+	public Boolean aylikVardiyaTabloHareketExcelDurum(boolean ayri) {
 		boolean excelDurum = false;
-
 		if (aylikVardiyaTabloHareketExcelParameter != null)
-			excelDurum = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || seciliEkSaha3Id != null || aylikPuantajList.size() < 160;
+			excelDurum = ayri || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || seciliEkSaha3Id != null || aylikPuantajList.size() < 160;
 		return excelDurum;
 	}
 
