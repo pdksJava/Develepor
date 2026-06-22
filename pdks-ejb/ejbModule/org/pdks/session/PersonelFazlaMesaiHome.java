@@ -589,8 +589,8 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 							saveOrUpdate(nedenOzelAciklama);
 						fazlaMesai.setNedenOzelAciklama(aciklamaVar ? nedenOzelAciklama : null);
 						saveOrUpdate(fazlaMesai);
-						if (aciklamaVar == false && nedenOzelAciklama != null)
-							pdksEntityController.deleteObject(session, entityManager, nedenOzelAciklama);
+				//		if (aciklamaVar == false && nedenOzelAciklama != null)
+				//			pdksEntityController.deleteObject(session, entityManager, nedenOzelAciklama);
 
 						sessionFlush();
 					} catch (Exception e) {

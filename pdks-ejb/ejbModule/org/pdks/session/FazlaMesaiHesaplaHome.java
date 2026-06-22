@@ -2216,7 +2216,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 								}
 							}
-							VardiyaSaat vardiyaSaat = null;
+							VardiyaSaat vardiyaSaat = vardiyaGun.getVardiyaSaat();
 							if (saatEkle) {
 								vardiyaGun.ucretiOdenenMesaiHesapla();
 								vardiyaSaat = vardiyaGun.getVardiyaSaat();
