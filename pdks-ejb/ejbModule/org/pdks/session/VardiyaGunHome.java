@@ -2085,11 +2085,17 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			} else {
 				for (Iterator iterator = vardiyaGunHareketOnaysizList.iterator(); iterator.hasNext();) {
 					VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
-					if (vardiyaGun.getId() != null && vardiyaGun.isAyinGunu() && vardiyaGun.isVardiyaOnay() == false) {
-						vardiyaGun.setVardiyaOnayli(Boolean.TRUE);
-						vardiyaSaatKaydet(vardiyaGun);
-						saveOrUpdate(vardiyaGun);
-						flush = true;
+					if (vardiyaGun.getId() != null && vardiyaGun.isAyinGunu()) {
+						boolean kayit = vardiyaSaatKaydet(vardiyaGun);
+						if (vardiyaGun.isVardiyaOnay() == false) {
+							vardiyaGun.setVardiyaOnayli(Boolean.TRUE);
+							kayit = true;
+						}
+						if (kayit) {
+							saveOrUpdate(vardiyaGun);
+							flush = true;
+						}
+
 					}
 
 				}
@@ -4032,7 +4038,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (pdksVardiyaGun.getId() == null && pdksVardiyaGun.getVardiya() != null) {
 						if (pdksVardiyaGun.isGuncellendi()) {
 							tekrarOku = true;
-							vardiyaSaatKaydet(pdksVardiyaGun);
 							saveOrUpdate(pdksVardiyaGun);
 						}
 					}
@@ -4324,17 +4329,21 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	/**
 	 * @param pdksVardiyaGun
 	 */
-	private void vardiyaSaatKaydet(VardiyaGun pdksVardiyaGun) {
-		if (pdksVardiyaGun.isAyinGunu() && denklestirmeAyDurum) {
+	@Transactional
+	private boolean vardiyaSaatKaydet(VardiyaGun pdksVardiyaGun) {
+		boolean kayit = false;
+		if (pdksVardiyaGun.isAyinGunu() && denklestirmeAy.getDurum()) {
 			pdksVardiyaGun.setDurum(false);
-			if (pdksVardiyaGun.getVardiya().isCalisma() && pdksVardiyaGun.getIzin() == null && pdksVardiyaGun.getVardiyaSaat() == null) {
+			if (pdksVardiyaGun.getVardiya().isCalisma() && pdksVardiyaGun.getId() != null && pdksVardiyaGun.getIzin() == null && pdksVardiyaGun.getVardiyaSaat() == null) {
 				VardiyaSaat vs = new VardiyaSaat();
 				vs.setNormalSure(pdksVardiyaGun.getVardiya().getNetCalismaSuresi());
-				saveOrUpdate(pdksVardiyaGun);
+				saveOrUpdate(vs);
 				pdksVardiyaGun.setVardiyaSaat(vs);
+				kayit = true;
 			}
 
 		}
+		return kayit;
 	}
 
 	/**
