@@ -1016,8 +1016,15 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 					IzinERP returnERP = (IzinERP) iterator.next();
 					if (izinMap.containsKey(returnERP.getReferansNoERP())) {
 						IzinERP izinERP = izinMap.get(returnERP.getReferansNoERP());
-						izinERP.setYazildi(returnERP.getYazildi());
-						if (returnERP.getYazildi()) {
+						boolean yazildi = false;
+						try {
+							yazildi = returnERP.getYazildi() != null && returnERP.getYazildi();
+						} catch (Exception e) {
+							logger.error(e);
+							e.printStackTrace();
+						}
+						izinERP.setYazildi(yazildi);
+						if (yazildi) {
 							izinERP.setId(returnERP.getId());
 							izinERPList.add(izinERP);
 							iterator.remove();
@@ -1037,8 +1044,9 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 
 			servisCalisti = Boolean.TRUE;
 		} catch (Exception e) {
-			izinERPReturnList = null;
 			logger.error(e);
+			e.printStackTrace();
+			izinERPReturnList = null;
 		}
 
 		return "";
