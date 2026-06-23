@@ -4105,7 +4105,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								if (pdksVardiyaGun.getId() == null)
 									tekrarOku = true;
 								vardiyaSaatKaydet(pdksVardiyaGun);
- 								saveOrUpdate(pdksVardiyaGun);
+								saveOrUpdate(pdksVardiyaGun);
 
 								if (!pdGuncellendi)
 									pdGuncellendi = pdksVardiyaGun.isAyinGunu();
@@ -6805,6 +6805,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (authenticatedUser != null)
 				authenticatedUser.putSessionMap(sayfaURL, session);
 		}
+		sessionClear();
 		Personel per = loginUser.getPdksPersonel();
 		aylikPuantajListClear();
 		// HashMap<Long, List<PersonelDonemselDurum>> pddMap = new HashMap<Long, List<PersonelDonemselDurum>>();
@@ -7661,6 +7662,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									vardiyalarMap.put(pdksVardiyaGun.getVardiyaKey(), pdksVardiyaGun);
 									if (hareketKaydiVardiyaBul && !pdksVardiyaGun.getDurum() && pdksVardiyaGun.isVardiyaOnay() && !pdksVardiyaGun.getVardiya().isHaftaTatil())
 										aylikHareketKaydiVardiyaBul = Boolean.TRUE;
+									if (denklestirmeAy.getDurum() && pdksVardiyaGun.getVardiyaSaat() == null)
+										kayit = true;
+
 								}
 								if (kayit) {
 									vardiyaSaatKaydet(pdksVardiyaGun);
@@ -7853,10 +7857,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						vardiyaPlan = null;
 						vardiyaGunMap = null;
 						aylikPuantaj.setVardiyaHaftaList(aylikPuantaj.getVardiyaPlan().getVardiyaHaftaList());
-						// if (personelDenklestirme == null) {
-						// personelDenklestirme = denklestirmeMap.containsKey(personel.getId()) ? denklestirmeMap.get(personel.getId()) : new PersonelDenklestirme(personel, denklestirmeAy, ortakIslemler.getCalismaModeliAy(denklestirmeAy, personel.getCalismaModeli(), session));
-						// aylikPuantaj.setPersonelDenklestirme(personelDenklestirme);
-						// }
 
 						if (personelDenklestirme != null) {
 							try {

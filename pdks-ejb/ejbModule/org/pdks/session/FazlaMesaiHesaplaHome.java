@@ -2384,6 +2384,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								iterator.remove();
 							}
 							sessionFlush();
+							flush = false;
 						}
 						keyList.clear();
 					}
@@ -2620,7 +2621,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						}
 						if (flush)
 							sessionFlush();
-
+						flush = false;
 						saveList.clear();
 					} catch (Exception e) {
 						e.printStackTrace();

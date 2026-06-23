@@ -151,6 +151,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 	 */
 	@Transactional
 	private void sessionFlush() {
+		 
 		ortakIslemler.sessionFlush(session);
 	}
 
