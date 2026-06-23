@@ -72,6 +72,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
+import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.international.StatusMessage.Severity;
@@ -490,6 +491,39 @@ public class OrtakIslemler implements Serializable {
 
 			tatiller.add(pdksTatil);
 			logger.info(pdksTatil.getAciklama() + " eklendi");
+		}
+
+	}
+
+	/**
+	 * @param dm
+	 * @param personelIdList
+	 * @param session
+	 */
+	@Transactional
+	public void vardiyaSaatGuncele(DenklestirmeAy dm, List<Long> personelIdList, Session session) {
+		if (dm != null && dm.getDurum()) {
+			if (personelIdList != null && personelIdList.isEmpty() == false) {
+				String name = "SP_SET_VARDIYA_GUN_SAAT";
+				if (isExisStoreProcedure(name, session)) {
+					String personelIdStr = getListIdStr(personelIdList);
+					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+					veriMap.put("yil", dm.getYil());
+					veriMap.put("ay", dm.getAy());
+					veriMap.put("perId", personelIdStr);
+					try {
+						List list = pdksEntityController.execSPList(session, veriMap, name, null);
+						if (list.isEmpty() == false) {
+							String str = PdksUtil.StringToByClob((Clob) list.get(0));
+							if (PdksUtil.hasStringValue(str))
+								logger.debug(str);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
 		}
 
 	}
@@ -19592,7 +19626,7 @@ public class OrtakIslemler implements Serializable {
 			}
 			if (personelIzin.getDevirIzin() || (iptalIzinleriGetir && personelIzin.getIzinKagidiGeldi() != null) || personelIzin.getIzinSuresi() > 0 || (personelIzin.getHarcananDigerIzinler() != null && !personelIzin.getHarcananDigerIzinler().isEmpty()))
 				tempIzin.getYillikIzinler().add(personelIzin);
- 			personelIzin.setKontrolIzin(null);
+			personelIzin.setKontrolIzin(null);
 			personelIzin.setDonemSonu(harcananIzinlerHepsi ? null : xDonemSonu);
 			tempIzin.setToplamKalanIzin(tempIzin.getToplamKalanIzin() + personelIzin.getKalanIzin());
 			tempIzin.setKullanilanIzin(tempIzin.getKullanilanIzin() + personelIzin.getHarcananIzin());

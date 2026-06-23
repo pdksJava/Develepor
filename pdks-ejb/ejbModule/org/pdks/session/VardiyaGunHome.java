@@ -4332,7 +4332,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	@Transactional
 	private boolean vardiyaSaatKaydet(VardiyaGun pdksVardiyaGun) {
 		boolean kayit = false;
-		if (pdksVardiyaGun.isAyinGunu() && denklestirmeAy.getDurum()) {
+		if (pdksVardiyaGun.isAyinGunu() && denklestirmeAy.getDurum() && authenticatedUser == null) {
 			pdksVardiyaGun.setDurum(false);
 			if (pdksVardiyaGun.getVardiya().isCalisma() && pdksVardiyaGun.getId() != null && pdksVardiyaGun.getIzin() == null && pdksVardiyaGun.getVardiyaSaat() == null) {
 				VardiyaSaat vs = new VardiyaSaat();

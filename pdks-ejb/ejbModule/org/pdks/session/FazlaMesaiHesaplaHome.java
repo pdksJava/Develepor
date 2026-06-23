@@ -1416,11 +1416,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (loginUser.getDepartman().isAdminMi() == false && (loginUser.isSuperVisor() || loginUser.isProjeMuduru())) {
 				sirket = loginUser.getPdksPersonel().getSirket();
 			}
-			if (sirketId != null && (ikRole)) {
+			if (sirketId != null && (ikRole))
 
 				sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirketId, Sirket.class, session);
-
-			}
 
 			if (sirket != null)
 				departmanBolumAyni = sirket.isTesisDurumu() == false;
@@ -1552,6 +1550,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				setInstance(denklestirmeDonemi);
 				map.clear();
 				List<Personel> perListesi = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, perList, Personel.class, session);
+				if (perListesi.isEmpty() == false) {
+					perIdList.clear();
+					for (Personel personel : perListesi) {
+						perIdList.add(personel.getId());
+					}
+					ortakIslemler.vardiyaSaatGuncele(denklestirmeAy, perIdList, session);
+				}
 				if (tatilGunleriMap == null || tatilGunleriMap.isEmpty() == false) {
 					if (perListesi != null && perListesi.isEmpty() == false)
 						tatilGunleriMap = ortakIslemler.getTatilGunleri(perListesi, ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBaslangicTarih(), -1), ortakIslemler.tariheGunEkleCikar(cal, denklestirmeDonemi.getBitisTarih(), 1), session);
