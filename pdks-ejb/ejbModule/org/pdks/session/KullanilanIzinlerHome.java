@@ -871,11 +871,18 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 				col = 0;
 				try {
 					Cell cellPersonelNo = ExcelUtil.getCell(sheet, row, col++);
-					if (PdksUtil.hasStringValue(cellPersonelNo.getStringCellValue())) {
+					String personelNo = "";
+					if (cellPersonelNo.getCellType() == Cell.CELL_TYPE_STRING)
+						personelNo = cellPersonelNo.getStringCellValue();
+					else if (cellPersonelNo.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+						Double value = cellPersonelNo.getNumericCellValue();
+						personelNo = value.longValue() + "";
+					}
+					if (PdksUtil.hasStringValue(personelNo)) {
 						Cell cellAdiSoyad = ExcelUtil.getCell(sheet, row, col++);
 						if (PdksUtil.hasStringValue(cellAdiSoyad.getStringCellValue())) {
 							IzinERP izinERP = new IzinERP();
-							izinERP.setPersonelNo(cellPersonelNo.getStringCellValue());
+							izinERP.setPersonelNo(personelNo);
 
 							izinERP.setIzinSuresi(ExcelUtil.getSheetDoubleValue(sheet, row, col++));
 
@@ -897,7 +904,8 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 								referansNoERP = PersonelIzin.IZIN_MANUEL_EK + "_" + izinERP.getPersonelNo() + PdksUtil.replaceAll(izinERP.getBasZaman().substring(0, 10), "-", "");
 							izinERP.setReferansNoERP(referansNoERP);
 							Cell cellAciklama = ExcelUtil.getCell(sheet, row, col++);
-							izinERP.setAciklama(cellAciklama.getStringCellValue());
+							if (cellAciklama != null)
+								izinERP.setAciklama(cellAciklama.getStringCellValue());
 							String izinTipi = "";
 							Cell cellIzinTipi = ExcelUtil.getCell(sheet, row, col++);
 							if (cellIzinTipi != null) {
