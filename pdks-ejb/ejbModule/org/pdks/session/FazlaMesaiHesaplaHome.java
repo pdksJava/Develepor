@@ -2219,7 +2219,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 								}
 							}
-							
+
 							if (key.endsWith("0622"))
 								logger.debug("");
 							if (saatEkle) {
@@ -2383,7 +2383,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								flush = true;
 								iterator.remove();
 							}
-							 sessionFlush();
+							sessionFlush();
 						}
 						keyList.clear();
 					}
