@@ -7183,6 +7183,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					Vardiya offVardiya = ortakIslemler.getVardiyaOFF(session);
 
 					TreeMap<Long, PersonelDenklestirme> denklestirmeMap = getPersonelDenklestirme(denklestirmeAy, perIdler);
+					if (denklestirmeMap.isEmpty() == false)
+						ortakIslemler.vardiyaSaatGuncele("P", denklestirmeAy, new ArrayList<Long>(denklestirmeMap.keySet()), session);
+
 					List<Long> pdIdList = new ArrayList<Long>();
 					for (Long key : denklestirmeMap.keySet()) {
 						PersonelDenklestirme pd = denklestirmeMap.get(key);

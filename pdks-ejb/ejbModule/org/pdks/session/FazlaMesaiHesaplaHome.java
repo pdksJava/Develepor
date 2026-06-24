@@ -1555,7 +1555,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					for (Personel personel : perListesi) {
 						perIdList.add(personel.getId());
 					}
-					ortakIslemler.vardiyaSaatGuncele(denklestirmeAy, perIdList, session);
+					ortakIslemler.vardiyaSaatGuncele("H", denklestirmeAy, perIdList, session);
 				}
 				if (tatilGunleriMap == null || tatilGunleriMap.isEmpty() == false) {
 					if (perListesi != null && perListesi.isEmpty() == false)

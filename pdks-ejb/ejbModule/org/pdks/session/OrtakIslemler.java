@@ -501,25 +501,28 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 */
 	@Transactional
-	public void vardiyaSaatGuncele(DenklestirmeAy dm, List<Long> personelIdList, Session session) {
+	public void vardiyaSaatGuncele(String tipi, DenklestirmeAy dm, List<Long> personelIdList, Session session) {
 		if (dm != null && dm.getDurum()) {
-			if (personelIdList != null && personelIdList.isEmpty() == false) {
-				String name = "SP_SET_VARDIYA_GUN_SAAT";
-				if (isExisStoreProcedure(name, session)) {
-					String personelIdStr = getListIdStr(personelIdList);
-					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-					veriMap.put("yil", dm.getYil());
-					veriMap.put("ay", dm.getAy());
-					veriMap.put("perId", personelIdStr);
-					try {
-						List list = pdksEntityController.execSPList(session, veriMap, name, null);
-						if (list.isEmpty() == false) {
-							String str = PdksUtil.StringToByClob((Clob) list.get(0));
-							if (PdksUtil.hasStringValue(str))
-								logger.debug(str);
+			String vardiyaSaatGunceleTip = getParameterKey("vardiyaSaatGunceleTipi");
+			if (tipi != null && vardiyaSaatGunceleTip.equalsIgnoreCase(tipi)) {
+				if (personelIdList != null && personelIdList.isEmpty() == false) {
+					String name = "SP_SET_VARDIYA_GUN_SAAT";
+					if (isExisStoreProcedure(name, session)) {
+						String personelIdStr = getListIdStr(personelIdList);
+						LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+						veriMap.put("yil", dm.getYil());
+						veriMap.put("ay", dm.getAy());
+						veriMap.put("perId", personelIdStr);
+						try {
+							List list = pdksEntityController.execSPList(session, veriMap, name, null);
+							if (list.isEmpty() == false) {
+								String str = PdksUtil.StringToByClob((Clob) list.get(0));
+								if (PdksUtil.hasStringValue(str))
+									logger.debug(str);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
 					}
 				}
 			}
