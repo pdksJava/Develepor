@@ -2702,8 +2702,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				if (bitisZamani.before(baslangicZamani))
 					addHatalist(hataList, izinERP, izinSahibi, "İzin başlama zamanı bitiş tarihinden sonra olamaz!");
 				Date izinHakEdisTarihi = izinSahibi.getIzinHakEdisTarihi() != null ? izinSahibi.getIzinHakEdisTarihi() : izinSahibi.getIseBaslamaTarihi();
-				if (baslangicZamani.before(izinSahibi.getIseBaslamaTarihi()) && baslangicZamani.before(izinHakEdisTarihi))
-					addHatalist(hataList, izinERP, izinSahibi, "İzin başlangıç zamanı işe giriş tarihi " + PdksUtil.convertToDateString(izinSahibi.getIseBaslamaTarihi(), FORMAT_DATE) + " den önce olamaz! [ " + izinSahibi.getAdSoyad() + " ]");
+				if (baslangicZamani.before(izinHakEdisTarihi))
+					addHatalist(hataList, izinERP, izinSahibi, "İzin başlangıç zamanı kıdem tarihi " + PdksUtil.convertToDateString(izinSahibi.getIseBaslamaTarihi(), FORMAT_DATE) + " den önce olamaz! [ " + izinSahibi.getAdSoyad() + " ]");
 				if (PdksUtil.tarihKarsilastirNumeric(bitTarih, sonCalismaTarihi) > 1)
 					addHatalist(hataList, izinERP, izinSahibi, "İzin bitiş zamanı işten ayrılma tarihi " + PdksUtil.convertToDateString(sonCalismaTarihi, FORMAT_DATE) + " den sonra olamaz! [ " + izinSahibi.getAdSoyad() + " ]");
 				IzinTipi izinTipi = izinTipiMap.get(izinERP.getIzinTipi());
