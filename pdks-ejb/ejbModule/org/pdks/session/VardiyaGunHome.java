@@ -7964,7 +7964,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							aylikPuantajList.add(aylikPuantaj);
 					}
 					if (perIdler.isEmpty() == false)
-						ortakIslemler.vardiyaSaatGuncele("P", denklestirmeAy, perIdler, session);
+						try {
+							ortakIslemler.vardiyaSaatGuncele("P", denklestirmeAy, perIdler, session);
+						} catch (Exception e) {
+							logger.equals(e);
+							e.printStackTrace();
+						}
 
 					if (gunSaatGuncelle)
 						fazlaMesaiOrtakIslemler.setDenklestirmeAySure(tatilGunleriMap, defaultAylikPuantajSablon.getVardiyalar(), aramaSecenekleri.getSirket(), denklestirmeAy, session);
