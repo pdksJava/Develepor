@@ -152,8 +152,10 @@
 																oncomplete="#{rich:component('wait')}.hide();if (#{not empty fazlaMesaiOzetRaporHome.onayList}) #{rich:component('denklestirmeTopluPanel')}.show();" /></td>
 													</ui:fragment>
 													<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketPDFDurum()}">
-														<td><a4j:commandButton action="#{fazlaMesaiOzetRaporHome.fazlaMesaiPDF()}" value="Personel Mesai PDF"
-																onclick="#{rich:component('wait')}.show()" reRender="denklestirmeTopluPanel" oncomplete="#{rich:component('wait')}.hide();" /></td>
+														<td><h:commandLink action="#{fazlaMesaiOzetRaporHome.fazlaMesaiPDF()}" value="Personel Mesai PDF" target="blank">
+																<a4j:support event="onclick" status="ajaxStatus" onclick="#{rich:component('wait')}.show()"
+																	oncomplete="#{rich:component('wait')}.hide();" />
+															</h:commandLink></td>
 													</ui:fragment>
 													<TD nowrap="nowrap"><SPAN style="font-size: 14;"><h:commandLink value="#{messages['ortak.etiket.excelAktar']}"
 																action="#{fazlaMesaiOzetRaporHome.fazlaMesaiExcel}" target="blank">
@@ -191,7 +193,7 @@
 								<f:facet name="header">
 									<h:outputText value="Fazla Mesai Toplu Raporu" />
 								</f:facet>
-								<c:if test="#{fazlaMesaiOzetRaporHome.pdfTopluAktarDurum}">
+								<c:if test="#{fazlaMesaiOzetRaporHome.pdfTopluAktarDurum or fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketPDFDurum()}">
 									<rich:column style="text-align: center;width: 30px;" rendered="#{authenticatedUser.IK or authenticatedUser.admin}">
 										<f:facet name="header">
 											<h:selectBooleanCheckbox value="#{fazlaMesaiOzetRaporHome.secimDurum}">
