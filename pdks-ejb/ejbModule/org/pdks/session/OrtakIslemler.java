@@ -22613,7 +22613,27 @@ public class OrtakIslemler implements Serializable {
 
 		return parameter;
 	}
+	/**
+	 * @param session
+	 * @return
+	 */
+	public Parameter getAylikVardiyaTabloHareketPDFParameter(Session session) {
+		Parameter parameter = null;
+		if (authenticatedUser != null) {
+			parameter = getParameterAktif(session, "aylikVardiyaTabloHareketPDF");
+			if (parameter != null) {
+				if (authenticatedUser.isIK()) {
+					if (parameter.getValue().equalsIgnoreCase("IK") == false)
+						parameter = null;
+				} else if ((authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()) == false) {
+					parameter = null;
+				}
+			}
+		}
 
+		return parameter;
+	}
+	
 	/**
 	 * @param dataDenkMap
 	 * @param session

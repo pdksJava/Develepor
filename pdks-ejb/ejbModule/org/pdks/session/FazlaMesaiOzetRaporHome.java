@@ -3,6 +3,7 @@ package org.pdks.session;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -58,6 +59,7 @@ import org.pdks.entity.FazlaMesaiTalep;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.IzinTipi;
 import org.pdks.entity.Kapi;
+import org.pdks.entity.Liste;
 import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
@@ -87,6 +89,7 @@ import org.pdks.security.entity.User;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
@@ -171,7 +174,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	private Boolean resmiTatilKanunenEklenenSureGoster = Boolean.FALSE, eksiBakiyeGoster = Boolean.FALSE, izinGoster = Boolean.FALSE;
 	private Long vardiyaAdet;
 	private List<VardiyaGun> tumVardiyaList;
-	private Parameter aylikVardiyaTabloHareketExcelParameter;
+	private Parameter aylikVardiyaTabloHareketExcelParameter, aylikVardiyaTabloHareketPDFParameter;
 
 	private List<Vardiya> izinTipiVardiyaList;
 	private TreeMap<String, TreeMap<String, List<VardiyaGun>>> izinTipiPersonelVardiyaMap;
@@ -944,7 +947,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		if (seciliEkSaha3Id != null && vardiyaPlanTopluAdet)
 			vardiyaAdetMap = new HashMap<String, Long>();
 		aylikVardiyaTabloHareketExcelParameter = ortakIslemler.getAylikVardiyaTabloHareketExcelParameter(session);
-
+		aylikVardiyaTabloHareketPDFParameter = ortakIslemler.getAylikVardiyaTabloHareketPDFParameter(session);
 		bordroPuantajEkranindaGoster = ortakIslemler.getParameterKey("bordroPuantajEkranindaGoster").equals("1");
 		fazlaMesaiVar = false;
 		saatlikMesaiVar = false;
@@ -2226,35 +2229,69 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		List<AylikPuantaj> list = new ArrayList<AylikPuantaj>();
 		for (Iterator iter = aylikPuantajList.iterator(); iter.hasNext();) {
 			AylikPuantaj ap = (AylikPuantaj) iter.next();
-			if (ap.isSecili())
-				list.add(ap);
+			if (ap.isSecili()) {
+				PersonelDenklestirme pd = ap.getPersonelDenklestirme();
+				if (pd.getDurum())
+					list.add(ap);
+			}
+
 		}
 		if (list.isEmpty()) {
 			PdksUtil.addMessageAvailableWarn("Seçili kayıt yoktur!!");
 		} else {
-			for (AylikPuantaj ap : list) {
-				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			if (personelHareketMap == null)
+				try {
+					fillHareketList(aylikPuantajList);
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+			HashMap<Long, Liste> vMap = new HashMap<Long, Liste>();
+			BaseFont baseFont = null;
+			try {
+				baseFont = BaseFont.createFont("ARIAL.TTF", BaseFont.IDENTITY_H, true);
+			} catch (DocumentException e2) {
+
+			} catch (IOException e2) {
+
+			}
+			Font fontH = new Font(baseFont, 7f, Font.BOLD, BaseColor.BLACK);
+			Font fontBaslik = new Font(baseFont, 14f, Font.BOLD, BaseColor.BLACK);
+			Font font = new Font(baseFont, 7f, Font.NORMAL, BaseColor.BLACK);
+			Image image = null;
+			try {
+				image = ortakIslemler.getProjeImage();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			ByteArrayOutputStream baosPDF = new ByteArrayOutputStream();
+			Document doc = new Document(PageSize.A4.rotate(), -60, -60, 30, 30);
+			PdfWriter writer = null;
+			try {
+				writer = PdfWriter.getInstance(doc, baosPDF);
+			} catch (DocumentException e1) {
+
+			}
+			HeaderIText event = new HeaderIText();
+			writer.setPageEvent(event);
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				AylikPuantaj ap = (AylikPuantaj) iterator.next();
+
 				try {
 					Personel personel = ap.getPdksPersonel();
 
-					BaseFont baseFont = BaseFont.createFont("ARIAL.TTF", BaseFont.IDENTITY_H, true);
-					Font fontH = new Font(baseFont, 7f, Font.BOLD, BaseColor.BLACK);
-					Font fontBaslik = new Font(baseFont, 14f, Font.BOLD, BaseColor.BLACK);
-					Font font = new Font(baseFont, 7f, Font.NORMAL, BaseColor.BLACK);
-					Image image = ortakIslemler.getProjeImage();
 					PdfPTable tableImage = null;
 					if (image != null) {
 						tableImage = new PdfPTable(1);
 						com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
 						cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
 						tableImage.addCell(cellImage);
+
+						doc.add(tableImage);
 					}
 					Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 					NumberFormat nf = DecimalFormat.getNumberInstance(locale);
-					Document doc = new Document(PageSize.A4.rotate(), -60, -60, 30, 30);
-					PdfWriter writer = PdfWriter.getInstance(doc, outputStream);
-					HeaderIText event = new HeaderIText();
-					writer.setPageEvent(event);
+
 					doc.open();
 					doc.add(PDFITextUtils.getParagraph(denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " Puantaj ", fontBaslik, Element.ALIGN_CENTER));
 					PdfPTable tablePersonel = new PdfPTable(2);
@@ -2304,31 +2341,98 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 									}
 								}
 							}
+							String netSureStr = "", mesai = "";
+							Double netSure = null;
+							Double sureHI = 0.0d, sureHT = 0.0d, sureRT = 0.0d;
+							if (vg.getFazlaMesailer() != null) {
+
+								for (PersonelFazlaMesai pfm : vg.getFazlaMesailer()) {
+									if (pfm.isBayram())
+										sureRT += pfm.getFazlaMesaiSaati();
+									else if (vardiya.isHaftaTatil() == false)
+										sureHI += pfm.getFazlaMesaiSaati();
+									else
+										sureHT += pfm.getFazlaMesaiSaati();
+								}
+
+							}
+							if (vMap.containsKey(vardiya.getId())) {
+								Liste liste = vMap.get(vardiya.getId());
+								netSure = (Double) liste.getNumValue();
+								netSureStr = (String) liste.getId();
+								mesai = (String) liste.getValue();
+							} else {
+								netSure = vardiya.isCalisma() ? vardiya.getNetCalismaSuresi() : 0.0d;
+								Long netSureSaat = netSure.longValue();
+								Long netSureDakika = new Double((netSure - netSureSaat) * 60.0d).longValue();
+								mesai = vardiya.isCalisma() ? authenticatedUser.timeFormatla(vardiya.getBasZaman()) + " - " + authenticatedUser.timeFormatla(vardiya.getBitZaman()) + " [" + vardiya.getKisaAdi() + "]" : vardiya.getKisaAdi();
+								Liste liste = new Liste(netSureSaat + ":" + PdksUtil.textBaslangicinaKarakterEkle("" + netSureDakika, '0', 2), mesai);
+								liste.setNumValue(netSure);
+								vMap.put(vardiya.getId(), liste);
+							}
+
+							Double calismaSuresi = vg.getCalismaSuresi();
+							Long calSureSaat = calismaSuresi.longValue();
+							Long calSureDakika = new Double((calismaSuresi - calSureSaat) * 60.0d).longValue();
+							table.addCell(PDFITextUtils.getPdfCell(mesai, font, Element.ALIGN_CENTER));
 							table.addCell(PDFITextUtils.getPdfCell(giris.toString(), font, Element.ALIGN_CENTER));
 							table.addCell(PDFITextUtils.getPdfCell(cikis.toString(), font, Element.ALIGN_CENTER));
-							Double netSure = vardiya.isCalisma() ? vardiya.getNetCalismaSuresi() : 0.0d, calismaSuresi = vg.getCalismaSuresi();
-							Long netSureSaat = netSure.longValue(), calSureSaat = calismaSuresi.longValue();
-							Long netSureDakika = new Double((netSure - netSureSaat) * 60.0d).longValue();
-							Long calSureDakika = new Double((calismaSuresi - calSureSaat) * 60.0d).longValue();
-							table.addCell(PDFITextUtils.getPdfCell(netSureSaat + ":" + PdksUtil.textBaslangicinaKarakterEkle("" + netSureDakika, '0', 2), font, Element.ALIGN_CENTER));
+
+							table.addCell(PDFITextUtils.getPdfCell(netSureStr, font, Element.ALIGN_CENTER));
 							table.addCell(PDFITextUtils.getPdfCell(calSureSaat + ":" + PdksUtil.textBaslangicinaKarakterEkle("" + calSureDakika, '0', 2), font, Element.ALIGN_CENTER));
 							Double htSure = vg.getHaftaCalismaSuresi();
 							if (htSure > 0.0d) {
-
 								Long htSureSaat = htSure.longValue();
 								Long htSureDakika = new Double((htSure - htSureSaat) * 60.0d).longValue();
 								table.addCell(PDFITextUtils.getPdfCell(htSureSaat + ":" + PdksUtil.textBaslangicinaKarakterEkle("" + htSureDakika, '0', 2), font, Element.ALIGN_CENTER));
 							} else
 								table.addCell(PDFITextUtils.getPdfCell("", font, Element.ALIGN_CENTER));
+							if (sureHI > 0.0d)
+								table.addCell(PDFITextUtils.getPdfCell(nf.format(sureHI), font, Element.ALIGN_CENTER));
+							else
+								table.addCell(PDFITextUtils.getPdfCell("", font, Element.ALIGN_CENTER));
+							if (sureHT > 0.0d)
+								table.addCell(PDFITextUtils.getPdfCell(nf.format(sureHT), font, Element.ALIGN_CENTER));
+							else
+								table.addCell(PDFITextUtils.getPdfCell("", font, Element.ALIGN_CENTER));
+							if (sureRT > 0.0d)
+								table.addCell(PDFITextUtils.getPdfCell(nf.format(sureRT), font, Element.ALIGN_CENTER));
+							else
+								table.addCell(PDFITextUtils.getPdfCell("", font, Element.ALIGN_CENTER));
+							if (vg.getIzin() == null) {
+								table.addCell(PDFITextUtils.getPdfCell("", font, Element.ALIGN_CENTER));
+								table.addCell(PDFITextUtils.getPdfCell("", font, Element.ALIGN_CENTER));
+							} else {
+								table.addCell(PDFITextUtils.getPdfCell(nf.format(netSure), font, Element.ALIGN_CENTER));
+								table.addCell(PDFITextUtils.getPdfCell(vg.getIzin().getIzinTipiAciklama(), font, Element.ALIGN_CENTER));
+							}
 
 						} else
 							table.addCell(PDFITextUtils.getPdfCell("", font, Element.ALIGN_CENTER, wd.length - 1));
 					}
 					doc.add(tablePersonel);
-
+					if (iterator.hasNext())
+						doc.newPage();
 				} catch (Exception e) {
 					// TODO: handle exception
 				}
+			}
+
+			try {
+				doc.close();
+				baosPDF.close();
+				HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+				String characterEncoding = "ISO-8859-9";
+				String contentType = "application/pdf  ;charset=" + characterEncoding;
+				response.setContentType(contentType);
+				response.setCharacterEncoding(characterEncoding);
+				String dosyaAdi = "PersonelMesai.pdf";
+				String fileNameURL = PdksUtil.encoderURL(dosyaAdi, characterEncoding);
+				response.setHeader("Content-Disposition", "attachment;filename=" + fileNameURL);
+				PdksUtil.writeByteArrayOutputStream(response, baosPDF);
+
+			} catch (Exception e) {
+
 			}
 		}
 
@@ -2375,6 +2479,17 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		boolean excelDurum = false;
 		if (aylikVardiyaTabloHareketExcelParameter != null)
 			excelDurum = ayri || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || seciliEkSaha3Id != null || aylikPuantajList.size() < 160;
+		return excelDurum;
+	}
+
+	/**
+	 * @param ayri
+	 * @return
+	 */
+	public Boolean aylikVardiyaTabloHareketPDFDurum() {
+		boolean excelDurum = false;
+		if (aylikVardiyaTabloHareketPDFParameter != null)
+			excelDurum = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || seciliEkSaha3Id != null || aylikPuantajList.size() < 160;
 		return excelDurum;
 	}
 
