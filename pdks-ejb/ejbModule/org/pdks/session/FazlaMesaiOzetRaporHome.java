@@ -101,6 +101,7 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -2229,6 +2230,28 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		return list;
 	}
 
+	/**
+	 * @param baslik
+	 * @param deger
+	 * @param fontH
+	 * @param font
+	 * @return
+	 */
+	private Paragraph getParagraph(String baslik, String deger, Font fontH, Font font) {
+		Phrase phrase = new Phrase();
+		Chunk chunk1 = new Chunk(baslik + " : ", fontH);
+		Chunk chunk2 = new Chunk(deger, font);
+		phrase.add(chunk1);
+		phrase.add(chunk2);
+		Paragraph paragraph1 = new Paragraph(phrase);
+		paragraph1.setAlignment(Element.ALIGN_LEFT);
+		paragraph1.setIndentationLeft(30f);
+		return paragraph1;
+	}
+
+	/**
+	 * @return
+	 */
 	public String fazlaMesaiPDF() {
 		String sayfa = "";
 		List<AylikPuantaj> list = new ArrayList<AylikPuantaj>();
@@ -2305,10 +2328,18 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					PdfPTable tablePersonel = new PdfPTable(2);
 					tablePersonel.setSpacingBefore(20);
 					tablePersonel.setWidths(new float[] { 6, 12 });
-					tablePersonel.addCell(PDFITextUtils.getPdfCell("Adı Soyadı", fontH, Element.ALIGN_LEFT));
-					tablePersonel.addCell(PDFITextUtils.getPdfCell(personel.getAdSoyad(), font, Element.ALIGN_LEFT));
-					tablePersonel.addCell(PDFITextUtils.getPdfCell(ortakIslemler.personelNoAciklama(), fontH, Element.ALIGN_LEFT));
-					tablePersonel.addCell(PDFITextUtils.getPdfCell(personel.getPdksSicilNo(), font, Element.ALIGN_LEFT));
+					PdfPCell cell11 = PDFITextUtils.getPdfCell("Adı Soyadı", fontH, Element.ALIGN_LEFT);
+					PdfPCell cell12 = PDFITextUtils.getPdfCell(personel.getAdSoyad(), font, Element.ALIGN_LEFT);
+					PdfPCell cell21 = PDFITextUtils.getPdfCell(ortakIslemler.personelNoAciklama(), fontH, Element.ALIGN_LEFT);
+					PdfPCell cell22 = PDFITextUtils.getPdfCell(personel.getPdksSicilNo(), font, Element.ALIGN_LEFT);
+					cell11.setBorderWidth(0f);
+					cell12.setBorderWidth(0f);
+					cell21.setBorderWidth(0f);
+					cell22.setBorderWidth(0f);
+					tablePersonel.addCell(cell11);
+					tablePersonel.addCell(cell12);
+					tablePersonel.addCell(cell21);
+					tablePersonel.addCell(cell22);
 					float[] wd = new float[] { 12, 16, 8, 8, 8, 8, 8, 6, 6, 6, 8, 12 };
 					PdfPTable table = new PdfPTable(wd.length);
 					table.setWidths(wd);
@@ -2329,7 +2360,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						if (vg.isAyinGunu() == false)
 							continue;
 						Vardiya vardiya = vg.getIslemVardiya();
-						table.addCell(PDFITextUtils.getPdfCell(authenticatedUser.dateFormatla(vg.getVardiyaDate()), font, Element.ALIGN_CENTER));
+
+						table.addCell(PDFITextUtils.getPdfCell(authenticatedUser.getTarihFormatla(vg.getVardiyaDate(), "dd EEE"), font, Element.ALIGN_CENTER));
 						if (vg.getVardiyaDate().getTime() >= iseBaslamaTarihi.getTime() && vg.getVardiyaDate().getTime() <= istenAyrilmaTarihi.getTime()) {
 							List<HareketKGS> orjinalHareketler = vg.getOrjinalHareketler();
 							StringBuffer giris = new StringBuffer(), cikis = new StringBuffer();
@@ -2386,7 +2418,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							table.addCell(PDFITextUtils.getPdfCell(cikis.toString(), font, Element.ALIGN_CENTER));
 
 							table.addCell(PDFITextUtils.getPdfCell(netSureStr, font, Element.ALIGN_CENTER));
-							table.addCell(PDFITextUtils.getPdfCell(calismaSuresi > 0.0d ? calSureSaat + ":" + PdksUtil.textBaslangicinaKarakterEkle("" + calSureDakika, '0', 2) : "", font, Element.ALIGN_CENTER));
+
+							table.addCell(PDFITextUtils.getPdfCell(calismaSuresi > 0.0d && htSure == 0.0d ? calSureSaat + ":" + PdksUtil.textBaslangicinaKarakterEkle("" + calSureDakika, '0', 2) : "", font, Element.ALIGN_CENTER));
 
 							if (htSure > 0.0d) {
 								Long htSureSaat = htSure.longValue();
@@ -2426,9 +2459,10 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					doc.add(table);
 					doc.add(getParagraph("Toplam Çalışılan Süre ", authenticatedUser.sayiFormatliGoster(ap.getSaatToplami()), fontH, font));
 					doc.add(getParagraph("Çalışması Gereken Süre", authenticatedUser.sayiFormatliGoster(ap.getPlanlananSure()), fontH, font));
-					doc.add(getParagraph("Hesaplanan Mesai Süre", authenticatedUser.sayiFormatliGoster(ap.getAylikNetFazlaMesai()), fontH, font));
-					if (ap.getFazlaMesaiSure() > 0.0d)
-						doc.add(getParagraph("Ücreti Ödenen Süre    ", authenticatedUser.sayiFormatliGoster(ap.getFazlaMesaiSure()), fontH, font));
+					doc.add(getParagraph("Hesaplanan Mesai Süre ", authenticatedUser.sayiFormatliGoster(ap.getAylikNetFazlaMesai()), fontH, font));
+					Double gecenAyFazlaMesai = ap.getGecenAyFazlaMesai(authenticatedUser);
+					doc.add(getParagraph("Devreden Süre         ", authenticatedUser.sayiFormatliGoster(gecenAyFazlaMesai), fontH, font));
+					doc.add(getParagraph("Ücreti Ödenen Süre    ", authenticatedUser.sayiFormatliGoster(ap.getFazlaMesaiSure()), fontH, font));
 					if (ap.getHaftaCalismaSuresi() > 0.0d)
 						doc.add(getParagraph("Hafta Tatil Süre      ", authenticatedUser.sayiFormatliGoster(ap.getHaftaCalismaSuresi()), fontH, font));
 					if (ap.getResmiTatilToplami() > 0.0d)
@@ -2487,25 +2521,6 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		}
 
 		return sayfa;
-	}
-
-	/**
-	 * @param baslik
-	 * @param deger
-	 * @param fontH
-	 * @param font
-	 * @return
-	 */
-	private Paragraph getParagraph(String baslik, String deger, Font fontH, Font font) {
-		Phrase phrase = new Phrase();
- 		Chunk chunk1 = new Chunk(baslik + " : ", fontH);
-		Chunk chunk2 = new Chunk(deger, font);
- 		phrase.add(chunk1);
-		phrase.add(chunk2);
-		Paragraph paragraph1 = new Paragraph(phrase);
-		paragraph1.setAlignment(Element.ALIGN_LEFT);
-		
-		return paragraph1;
 	}
 
 	public String fazlaMesaiExcel() {
