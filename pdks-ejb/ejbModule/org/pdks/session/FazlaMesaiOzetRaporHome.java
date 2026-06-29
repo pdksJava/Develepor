@@ -3,10 +3,7 @@ package org.pdks.session;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,7 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.zip.ZipEntry;
@@ -58,8 +54,6 @@ import org.pdks.entity.DepartmanDenklestirmeDonemi;
 import org.pdks.entity.FazlaMesaiTalep;
 import org.pdks.entity.HareketKGS;
 import org.pdks.entity.IzinTipi;
-import org.pdks.entity.Kapi;
-import org.pdks.entity.Liste;
 import org.pdks.entity.Parameter;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
@@ -81,30 +75,16 @@ import org.pdks.entity.YemekIzin;
 import org.pdks.enums.BordroDetayTipi;
 import org.pdks.enums.DenklestirmeTipi;
 import org.pdks.enums.PuantajKatSayiTipi;
-import org.pdks.pdf.action.HeaderIText;
-import org.pdks.pdf.action.PDFITextUtils;
 import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfImportedPage;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfWriter;
 
 @Name("fazlaMesaiOzetRaporHome")
 public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDonemi> implements Serializable {
@@ -2231,25 +2211,6 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	}
 
 	/**
-	 * @param baslik
-	 * @param deger
-	 * @param fontH
-	 * @param font
-	 * @return
-	 */
-	private Paragraph getParagraph(String baslik, String deger, Font fontH, Font font) {
-		Phrase phrase = new Phrase();
-		Chunk chunk1 = new Chunk(baslik + " : ", fontH);
-		Chunk chunk2 = new Chunk(deger, font);
-		phrase.add(chunk1);
-		phrase.add(chunk2);
-		Paragraph paragraph1 = new Paragraph(phrase);
-		paragraph1.setAlignment(Element.ALIGN_LEFT);
-		paragraph1.setIndentationLeft(30f);
-		return paragraph1;
-	}
-
-	/**
 	 * @return
 	 */
 	public String fazlaMesaiPDF() {
@@ -2272,261 +2233,10 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				try {
 					fillHareketList(aylikPuantajList);
 				} catch (Exception e) {
-					// TODO: handle exception
-				}
-			HashMap<Long, Liste> vMap = new HashMap<Long, Liste>();
-			BaseFont baseFont = null;
-			try {
-				baseFont = BaseFont.createFont("ARIAL.TTF", BaseFont.IDENTITY_H, true);
-			} catch (DocumentException e2) {
-
-			} catch (IOException e2) {
-
-			}
-			Font fontH = new Font(baseFont, 7f, Font.BOLD, BaseColor.BLACK);
-			Font fontBaslik = new Font(baseFont, 14f, Font.BOLD, BaseColor.BLACK);
-			Font font = new Font(baseFont, 7f, Font.NORMAL, BaseColor.BLACK);
-			Image image = null;
-			BaseColor backgroundColorRGB = null;
-			try {
-				image = ortakIslemler.getProjeImage();
-				if (image != null)
-					backgroundColorRGB = ortakIslemler.getProjeImageBackgroundColorRGB();
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-
-			List<Liste> pdfList = new ArrayList<Liste>();
-			HeaderIText event = new HeaderIText();
-			Chunk chunk = new Chunk("", fontH);
-			event.setHeader(new Phrase(chunk));
-			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-				AylikPuantaj ap = (AylikPuantaj) iterator.next();
-
-				try {
-					Personel personel = ap.getPdksPersonel();
-					ByteArrayOutputStream baosPDF = new ByteArrayOutputStream();
-					pdfList.add(new Liste(personel, baosPDF));
-					Document doc = new Document(PageSize.A4, 10, 10, 30, 30);
-					PdfWriter writer = null;
-					try {
-						writer = PdfWriter.getInstance(doc, baosPDF);
-					} catch (DocumentException e1) {
-
-					}
-					writer.setPageEvent(event);
-					doc.open();
-					PdfPTable tableImage = null;
-					if (image != null) {
-						tableImage = new PdfPTable(1);
-						com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
-						cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
-
-						if (backgroundColorRGB != null)
-							cellImage.setBackgroundColor(backgroundColorRGB);
-						tableImage.addCell(cellImage);
-
-						doc.add(tableImage);
-					}
-					Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-					NumberFormat nf = DecimalFormat.getNumberInstance(locale);
-					doc.add(PDFITextUtils.getParagraph(denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " Puantaj Kartı", fontBaslik, Element.ALIGN_CENTER));
-					PdfPTable tablePersonel = new PdfPTable(2);
-					tablePersonel.setSpacingBefore(20);
-					tablePersonel.setWidths(new float[] { 6, 12 });
-					PdfPCell cell11 = PDFITextUtils.getPdfCell("Adı Soyadı", fontH, Element.ALIGN_LEFT);
-					PdfPCell cell12 = PDFITextUtils.getPdfCell(personel.getAdSoyad(), font, Element.ALIGN_LEFT);
-					PdfPCell cell21 = PDFITextUtils.getPdfCell(ortakIslemler.personelNoAciklama(), fontH, Element.ALIGN_LEFT);
-					PdfPCell cell22 = PDFITextUtils.getPdfCell(personel.getPdksSicilNo(), font, Element.ALIGN_LEFT);
-
-					cell11.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
-					cell12.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
-					cell21.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
-					cell22.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
-					tablePersonel.addCell(cell11);
-					tablePersonel.addCell(cell12);
-					tablePersonel.addCell(cell21);
-					tablePersonel.addCell(cell22);
-					float[] wd = new float[] { 12, 16, 8, 8, 8, 8, 8, 6, 6, 6, 8, 12 };
-					PdfPTable table = new PdfPTable(wd.length);
-					table.setWidths(wd);
-					table.addCell(PDFITextUtils.getPdfCell("Tarih", fontH, Element.ALIGN_CENTER));
-					table.addCell(PDFITextUtils.getPdfCell("Çalışma Saati", fontH, Element.ALIGN_CENTER));
-					table.addCell(PDFITextUtils.getPdfCell("Giriş", fontH, Element.ALIGN_CENTER));
-					table.addCell(PDFITextUtils.getPdfCell("Çıkış", fontH, Element.ALIGN_CENTER));
-					table.addCell(PDFITextUtils.getPdfCell("Mesai Süre", fontH, Element.ALIGN_CENTER));
-					table.addCell(PDFITextUtils.getPdfCell("Çalışma Süre", fontH, Element.ALIGN_CENTER));
-					table.addCell(PDFITextUtils.getPdfCell("Hafta Tatil", fontH, Element.ALIGN_CENTER));
-					table.addCell(PDFITextUtils.getPdfCell("H.I", fontH, Element.ALIGN_CENTER));
-					table.addCell(PDFITextUtils.getPdfCell("H.T", fontH, Element.ALIGN_CENTER));
-					table.addCell(PDFITextUtils.getPdfCell("R.T", fontH, Element.ALIGN_CENTER));
-					table.addCell(PDFITextUtils.getPdfCell("İzin Süre", fontH, Element.ALIGN_CENTER));
-					table.addCell(PDFITextUtils.getPdfCell("İzin Durumu", fontH, Element.ALIGN_CENTER));
-					Date iseBaslamaTarihi = personel.getIseBaslamaTarihi(), istenAyrilmaTarihi = personel.getSskCikisTarihi();
-					for (VardiyaGun vg : ap.getVardiyalar()) {
-						if (vg.isAyinGunu() == false)
-							continue;
-						Vardiya vardiya = vg.getIslemVardiya();
-
-						table.addCell(PDFITextUtils.getPdfCell(authenticatedUser.getTarihFormatla(vg.getVardiyaDate(), "dd EEE"), font, Element.ALIGN_CENTER));
-						if (vg.getVardiyaDate().getTime() >= iseBaslamaTarihi.getTime() && vg.getVardiyaDate().getTime() <= istenAyrilmaTarihi.getTime()) {
-							List<HareketKGS> orjinalHareketler = vg.getOrjinalHareketler();
-							StringBuffer giris = new StringBuffer(), cikis = new StringBuffer();
-							if (orjinalHareketler != null) {
-
-								for (HareketKGS hareketKGS : orjinalHareketler) {
-									Kapi kapi = hareketKGS.getKapiView().getKapi();
-									if (kapi != null) {
-										String zaman = authenticatedUser.timeFormatla(hareketKGS.getOrjinalZaman());
-										if (kapi.isGirisKapi()) {
-											giris.append((giris.length() > 0 ? "\n" : "") + zaman);
-										} else if (kapi.isCikisKapi()) {
-											cikis.append((cikis.length() > 0 ? "\n" : "") + zaman);
-										}
-									}
-								}
-							}
-							String netSureStr = "", mesai = "";
-							Double netSure = null;
-							Double sureHI = 0.0d, sureHT = 0.0d, sureRT = 0.0d;
-							Double htSure = vg.getHaftaCalismaSuresi();
-							if (vg.getFazlaMesailer() != null) {
-
-								for (PersonelFazlaMesai pfm : vg.getFazlaMesailer()) {
-									if (pfm.isBayram())
-										sureRT += pfm.getFazlaMesaiSaati();
-									else if (vardiya.isHaftaTatil() && htSure > 0.0d)
-										sureHT += pfm.getFazlaMesaiSaati();
-									else
-										sureHI += pfm.getFazlaMesaiSaati();
-								}
-
-							}
-							if (vMap.containsKey(vardiya.getId())) {
-								Liste liste = vMap.get(vardiya.getId());
-								netSure = (Double) liste.getNumValue();
-								netSureStr = (String) liste.getId();
-								mesai = (String) liste.getValue();
-							} else {
-								netSure = vardiya.isCalisma() ? vardiya.getNetCalismaSuresi() : 0.0d;
-								Long netSureSaat = netSure.longValue();
-								Long netSureDakika = new Double((netSure - netSureSaat) * 60.0d).longValue();
-								mesai = vardiya.isCalisma() ? authenticatedUser.timeFormatla(vardiya.getBasZaman()) + " - " + authenticatedUser.timeFormatla(vardiya.getBitZaman()) + " [" + vardiya.getKisaAdi() + "]" : vardiya.getKisaAdi();
-								Liste liste = new Liste(netSure > 0.0d ? netSureSaat + ":" + PdksUtil.textBaslangicinaKarakterEkle("" + netSureDakika, '0', 2) : "", mesai);
-								liste.setNumValue(netSure);
-								vMap.put(vardiya.getId(), liste);
-							}
-
-							Double calismaSuresi = vg.getCalismaSuresi();
-							Long calSureSaat = calismaSuresi.longValue();
-							Long calSureDakika = new Double((calismaSuresi - calSureSaat) * 60.0d).longValue();
-							table.addCell(PDFITextUtils.getPdfCell(mesai, font, Element.ALIGN_CENTER));
-							table.addCell(PDFITextUtils.getPdfCell(giris.toString(), font, Element.ALIGN_CENTER));
-							table.addCell(PDFITextUtils.getPdfCell(cikis.toString(), font, Element.ALIGN_CENTER));
-
-							table.addCell(PDFITextUtils.getPdfCell(netSureStr, font, Element.ALIGN_CENTER));
-
-							table.addCell(PDFITextUtils.getPdfCell(calismaSuresi > 0.0d && htSure == 0.0d ? calSureSaat + ":" + PdksUtil.textBaslangicinaKarakterEkle("" + calSureDakika, '0', 2) : "", font, Element.ALIGN_CENTER));
-
-							if (htSure > 0.0d) {
-								Long htSureSaat = htSure.longValue();
-								Long htSureDakika = new Double((htSure - htSureSaat) * 60.0d).longValue();
-								table.addCell(PDFITextUtils.getPdfCell(htSureSaat + ":" + PdksUtil.textBaslangicinaKarakterEkle("" + htSureDakika, '0', 2), font, Element.ALIGN_CENTER));
-							} else
-								table.addCell(PDFITextUtils.getPdfCell("", font, Element.ALIGN_CENTER));
-							if (sureHI > 0.0d)
-								table.addCell(PDFITextUtils.getPdfCell(nf.format(sureHI), font, Element.ALIGN_CENTER));
-							else
-								table.addCell(PDFITextUtils.getPdfCell("", font, Element.ALIGN_CENTER));
-							if (sureHT > 0.0d)
-								table.addCell(PDFITextUtils.getPdfCell(nf.format(sureHT), font, Element.ALIGN_CENTER));
-							else
-								table.addCell(PDFITextUtils.getPdfCell("", font, Element.ALIGN_CENTER));
-							if (sureRT > 0.0d)
-								table.addCell(PDFITextUtils.getPdfCell(nf.format(sureRT), font, Element.ALIGN_CENTER));
-							else
-								table.addCell(PDFITextUtils.getPdfCell("", font, Element.ALIGN_CENTER));
-							if (vg.getIzin() == null || netSure == 0) {
-								table.addCell(PDFITextUtils.getPdfCell("", font, Element.ALIGN_CENTER));
-								table.addCell(PDFITextUtils.getPdfCell("", font, Element.ALIGN_CENTER));
-							} else {
-								table.addCell(PDFITextUtils.getPdfCell(nf.format(netSure), font, Element.ALIGN_CENTER));
-								table.addCell(PDFITextUtils.getPdfCell(vg.getIzin().getIzinTipiAciklama(), font, Element.ALIGN_CENTER));
-							}
-
-						} else
-							table.addCell(PDFITextUtils.getPdfCell("", font, Element.ALIGN_CENTER, wd.length - 1));
-					}
-					doc.add(tablePersonel);
-					Paragraph paragraph = new Paragraph("");
-					paragraph.setAlignment(Element.ALIGN_CENTER);
-					paragraph.setSpacingAfter(10.0f);
-					paragraph.setSpacingBefore(10.0f);
-					doc.add(paragraph);
-					doc.add(table);
-					doc.add(paragraph);
-					doc.add(getParagraph("Toplam Çalışılan Süre ", authenticatedUser.sayiFormatliGoster(ap.getSaatToplami()), fontH, font));
-					doc.add(getParagraph("Çalışması Gereken Süre", authenticatedUser.sayiFormatliGoster(ap.getPlanlananSure()), fontH, font));
-					doc.add(getParagraph("Hesaplanan Mesai Süre ", authenticatedUser.sayiFormatliGoster(ap.getAylikNetFazlaMesai()), fontH, font));
-					Double gecenAyFazlaMesai = ap.getGecenAyFazlaMesai(authenticatedUser);
-					if (gecenAyFazlaMesai != 0.0d)
-						doc.add(getParagraph("Devreden Süre         ", authenticatedUser.sayiFormatliGoster(gecenAyFazlaMesai), fontH, font));
-					doc.add(getParagraph("Ücreti Ödenen Süre    ", authenticatedUser.sayiFormatliGoster(ap.getFazlaMesaiSure()), fontH, font));
-					if (ap.getHaftaCalismaSuresi() > 0.0d)
-						doc.add(getParagraph("Hafta Tatil Süre      ", authenticatedUser.sayiFormatliGoster(ap.getHaftaCalismaSuresi()), fontH, font));
-					if (ap.getResmiTatilToplami() > 0.0d)
-						doc.add(getParagraph("Resmi Tatil Süre      ", authenticatedUser.sayiFormatliGoster(ap.getResmiTatilToplami()), fontH, font));
-
-					doc.close();
-					baosPDF.close();
-				} catch (Exception e) {
 					logger.error(e);
-					e.printStackTrace();
 				}
+			sayfa = ortakIslemler.puantajKartiPDF(list, denklestirmeAy);
 
-			}
-
-			try {
-				String extAdi = "pdf";
-				ByteArrayOutputStream baosPDF = null;
-				if (pdfList.size() == 1)
-					baosPDF = (ByteArrayOutputStream) pdfList.get(0).getValue();
-				else {
-					extAdi = "zip";
-					baosPDF = new ByteArrayOutputStream();
-					String path = "/tmp/";
-					File tmp = new File(path);
-					if (!tmp.exists())
-						tmp.mkdir();
-					ZipOutputStream zos = new ZipOutputStream(baosPDF);
-					for (Liste liste : pdfList) {
-						ByteArrayOutputStream bos = (ByteArrayOutputStream) liste.getValue();
-						byte[] bytes = bos.toByteArray();
-						Personel personel = (Personel) liste.getId();
-						String zipDosyaAdi = (personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() + "/" : "") + personel.getAdSoyad() + "_" + personel.getPdksSicilNo() + ".pdf";
-						ZipEntry zipEntry = new ZipEntry(zipDosyaAdi);
-						zos.putNextEntry(zipEntry);
-						int length = bytes.length;
-						zos.write(bytes, 0, length);
-						zos.closeEntry();
-					}
-					zos.close();
-
-				}
-				String dosyaAdi = "PuantajKartı" + yil + "_" + denklestirmeAy.getAyAdi() + "." + extAdi;
-				String characterEncoding = "ISO-8859-9";
-				String contentType = "application/" + extAdi + ";charset=" + characterEncoding;
-				HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-				response.setCharacterEncoding(characterEncoding);
-				response.setContentType(contentType);
-				String fileNameURL = PdksUtil.encoderURL(dosyaAdi, characterEncoding);
-				response.setHeader("Content-Disposition", (pdfList.size() == 1 ? "inline" : "attachment;filename=\"" + fileNameURL + "\""));
-				PdksUtil.writeByteArrayOutputStream(response, baosPDF);
-				sayfa = null;
-			} catch (Exception e) {
-				logger.error(e);
-				e.printStackTrace();
-			}
 		}
 
 		return sayfa;
