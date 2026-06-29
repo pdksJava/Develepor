@@ -18627,9 +18627,12 @@ public class OrtakIslemler implements Serializable {
 		Image image = getProjeImage();
 		PdfPTable tableImage = null;
 		if (image != null) {
+			BaseColor backgroundColorRGB = getProjeImageBackgroundColorRGB();
 			tableImage = new PdfPTable(1);
 			com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
 			cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+			if (backgroundColorRGB != null)
+				cellImage.setBackgroundColor(backgroundColorRGB);
 			tableImage.addCell(cellImage);
 		}
 		List<LinkedHashMap<String, Object>> list = new ArrayList<LinkedHashMap<String, Object>>();
@@ -18841,11 +18844,14 @@ public class OrtakIslemler implements Serializable {
 		Font font = new Font(baseFont, 10f, Font.NORMAL, BaseColor.BLACK);
 		Image image = getProjeImage();
 		PdfPTable tableImage = null;
-		if (image != null) {
+ 		if (image != null) {
+			BaseColor backgroundColorRGB = getProjeImageBackgroundColorRGB();
 			image.scaleToFit(image.getHeight() * 3, image.getWidth() * 3);
 			tableImage = new PdfPTable(1);
 			com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
 			cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+			if (backgroundColorRGB != null)
+				cellImage.setBackgroundColor(backgroundColorRGB);
 			tableImage.addCell(cellImage);
 		}
 		Parameter pm = getParameter(session, "mesaiDenklestirmeBelge");
@@ -19042,11 +19048,15 @@ public class OrtakIslemler implements Serializable {
 		Font font = new Font(baseFont, 10f, Font.NORMAL, BaseColor.BLACK);
 		Image image = getProjeImage();
 		PdfPTable tableImage = null;
+		 
 		if (image != null) {
+			BaseColor backgroundColorRGB = getProjeImageBackgroundColorRGB();
 			image.scaleToFit(image.getHeight() * 3, image.getWidth() * 3);
 			tableImage = new PdfPTable(1);
 			com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
 			cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+			if (backgroundColorRGB != null)
+				cellImage.setBackgroundColor(backgroundColorRGB);
 			tableImage.addCell(cellImage);
 		}
 		Parameter pm = getParameter(session, "mesaiDenklestirmeBelge");
@@ -19150,6 +19160,22 @@ public class OrtakIslemler implements Serializable {
 		changeMap = null;
 		return map;
 
+	}
+
+	/**
+	 * @return
+	 */
+	public BaseColor getProjeImageBackgroundColorRGB() {
+		BaseColor backgroundColorRGB = null;
+		try {
+			String projeImageBackgroundColorRGB = getParameterKey("projeImageBackgroundColorRGB").replaceAll(" ", "");
+			String[] renkler = projeImageBackgroundColorRGB.split(",");
+			if (renkler.length == 3)
+				backgroundColorRGB = new BaseColor(Integer.parseInt(renkler[0]), Integer.parseInt(renkler[1]), Integer.parseInt(renkler[2]));
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return backgroundColorRGB;
 	}
 
 	/**
@@ -22613,6 +22639,7 @@ public class OrtakIslemler implements Serializable {
 
 		return parameter;
 	}
+
 	/**
 	 * @param session
 	 * @return
@@ -22633,7 +22660,7 @@ public class OrtakIslemler implements Serializable {
 
 		return parameter;
 	}
-	
+
 	/**
 	 * @param dataDenkMap
 	 * @param session

@@ -2290,21 +2290,12 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			BaseColor backgroundColorRGB = null;
 			try {
 				image = ortakIslemler.getProjeImage();
-
-				try {
-					if (image != null) {
-						String projeImageBackgroundColorRGB = ortakIslemler.getParameterKey("projeImageBackgroundColorRGB").replaceAll(" ", "");
-						String[] renkler = projeImageBackgroundColorRGB.split(",");
-						if (renkler.length == 3)
-							backgroundColorRGB = new BaseColor(Integer.parseInt(renkler[0]), Integer.parseInt(renkler[1]), Integer.parseInt(renkler[2]));
-					}
-
-				} catch (Exception e) {
-					logger.error(e);
-				}
-			} catch (Exception e1) {
-				e1.printStackTrace();
+				if (image != null)
+					backgroundColorRGB = ortakIslemler.getProjeImageBackgroundColorRGB();
+			} catch (Exception e) {
+				// TODO: handle exception
 			}
+
 			List<Liste> pdfList = new ArrayList<Liste>();
 			HeaderIText event = new HeaderIText();
 			Chunk chunk = new Chunk("", fontH);
