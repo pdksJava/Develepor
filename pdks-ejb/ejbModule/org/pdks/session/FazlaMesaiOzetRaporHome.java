@@ -2257,11 +2257,13 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		List<AylikPuantaj> list = new ArrayList<AylikPuantaj>();
 		for (Iterator iter = aylikPuantajList.iterator(); iter.hasNext();) {
 			AylikPuantaj ap = (AylikPuantaj) iter.next();
-			if (ap.isSecili()) {
-				PersonelDenklestirme pd = ap.getPersonelDenklestirme();
-				if (pd.getDurum())
+			PersonelDenklestirme pd = ap.getPersonelDenklestirme();
+			if (pd.getDurum())
+				if (ap.isSecili() || aylikPuantajList.size() == 1) {
 					list.add(ap);
-			}
+
+				}
+
 		}
 		if (list.isEmpty()) {
 			PdksUtil.addMessageAvailableWarn("Seçili kayıt yoktur!!");
@@ -2285,14 +2287,28 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			Font fontBaslik = new Font(baseFont, 14f, Font.BOLD, BaseColor.BLACK);
 			Font font = new Font(baseFont, 7f, Font.NORMAL, BaseColor.BLACK);
 			Image image = null;
+			BaseColor backgroundColorRGB = null;
 			try {
 				image = ortakIslemler.getProjeImage();
+
+				try {
+					if (image != null) {
+						String projeImageBackgroundColorRGB = ortakIslemler.getParameterKey("projeImageBackgroundColorRGB").replaceAll(" ", "");
+						String[] renkler = projeImageBackgroundColorRGB.split(",");
+						if (renkler.length == 3)
+							backgroundColorRGB = new BaseColor(Integer.parseInt(renkler[0]), Integer.parseInt(renkler[1]), Integer.parseInt(renkler[2]));
+					}
+
+				} catch (Exception e) {
+					logger.error(e);
+				}
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			List<Liste> pdfList = new ArrayList<Liste>();
-
+			HeaderIText event = new HeaderIText();
+			Chunk chunk = new Chunk("", fontH);
+			event.setHeader(new Phrase(chunk));
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				AylikPuantaj ap = (AylikPuantaj) iterator.next();
 
@@ -2300,7 +2316,6 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					Personel personel = ap.getPdksPersonel();
 					ByteArrayOutputStream baosPDF = new ByteArrayOutputStream();
 					pdfList.add(new Liste(personel, baosPDF));
-
 					Document doc = new Document(PageSize.A4, 10, 10, 30, 30);
 					PdfWriter writer = null;
 					try {
@@ -2308,16 +2323,16 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					} catch (DocumentException e1) {
 
 					}
-					HeaderIText event = new HeaderIText();
 					writer.setPageEvent(event);
-					Chunk chunk = new Chunk("", fontH);
-					event.setHeader(new Phrase(chunk));
 					doc.open();
 					PdfPTable tableImage = null;
 					if (image != null) {
 						tableImage = new PdfPTable(1);
 						com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
 						cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+
+						if (backgroundColorRGB != null)
+							cellImage.setBackgroundColor(backgroundColorRGB);
 						tableImage.addCell(cellImage);
 
 						doc.add(tableImage);
@@ -2332,10 +2347,11 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					PdfPCell cell12 = PDFITextUtils.getPdfCell(personel.getAdSoyad(), font, Element.ALIGN_LEFT);
 					PdfPCell cell21 = PDFITextUtils.getPdfCell(ortakIslemler.personelNoAciklama(), fontH, Element.ALIGN_LEFT);
 					PdfPCell cell22 = PDFITextUtils.getPdfCell(personel.getPdksSicilNo(), font, Element.ALIGN_LEFT);
-					cell11.setBorderWidth(0f);
-					cell12.setBorderWidth(0f);
-					cell21.setBorderWidth(0f);
-					cell22.setBorderWidth(0f);
+
+					cell11.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+					cell12.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+					cell21.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+					cell22.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
 					tablePersonel.addCell(cell11);
 					tablePersonel.addCell(cell12);
 					tablePersonel.addCell(cell21);
@@ -2457,11 +2473,13 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					paragraph.setSpacingBefore(10.0f);
 					doc.add(paragraph);
 					doc.add(table);
+					doc.add(paragraph);
 					doc.add(getParagraph("Toplam Çalışılan Süre ", authenticatedUser.sayiFormatliGoster(ap.getSaatToplami()), fontH, font));
 					doc.add(getParagraph("Çalışması Gereken Süre", authenticatedUser.sayiFormatliGoster(ap.getPlanlananSure()), fontH, font));
 					doc.add(getParagraph("Hesaplanan Mesai Süre ", authenticatedUser.sayiFormatliGoster(ap.getAylikNetFazlaMesai()), fontH, font));
 					Double gecenAyFazlaMesai = ap.getGecenAyFazlaMesai(authenticatedUser);
-					doc.add(getParagraph("Devreden Süre         ", authenticatedUser.sayiFormatliGoster(gecenAyFazlaMesai), fontH, font));
+					if (gecenAyFazlaMesai != 0.0d)
+						doc.add(getParagraph("Devreden Süre         ", authenticatedUser.sayiFormatliGoster(gecenAyFazlaMesai), fontH, font));
 					doc.add(getParagraph("Ücreti Ödenen Süre    ", authenticatedUser.sayiFormatliGoster(ap.getFazlaMesaiSure()), fontH, font));
 					if (ap.getHaftaCalismaSuresi() > 0.0d)
 						doc.add(getParagraph("Hafta Tatil Süre      ", authenticatedUser.sayiFormatliGoster(ap.getHaftaCalismaSuresi()), fontH, font));
