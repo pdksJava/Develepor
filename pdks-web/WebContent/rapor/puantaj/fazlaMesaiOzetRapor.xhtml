@@ -152,7 +152,7 @@
 																oncomplete="#{rich:component('wait')}.hide();if (#{not empty fazlaMesaiOzetRaporHome.onayList}) #{rich:component('denklestirmeTopluPanel')}.show();" /></td>
 													</ui:fragment>
 													<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketPDFDurum()}">
-														<td><h:commandLink action="#{fazlaMesaiOzetRaporHome.fazlaMesaiPDF()}" value="Personel Puantaj Kartı PDF" target="blank">
+														<td><h:commandLink action="#{fazlaMesaiOzetRaporHome.puantajKartiPDF()}" value="Personel Puantaj Kartı PDF" target="blank">
 																<a4j:support event="onclick" status="ajaxStatus" onclick="#{rich:component('wait')}.show()"
 																	oncomplete="#{rich:component('wait')}.hide();" reRender="butonlar" />
 															</h:commandLink></td>

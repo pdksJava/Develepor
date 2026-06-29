@@ -2213,7 +2213,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	/**
 	 * @return
 	 */
-	public String fazlaMesaiPDF() {
+	public String puantajKartiPDF() {
 		String sayfa = "";
 		List<AylikPuantaj> list = new ArrayList<AylikPuantaj>();
 		for (Iterator iter = aylikPuantajList.iterator(); iter.hasNext();) {
