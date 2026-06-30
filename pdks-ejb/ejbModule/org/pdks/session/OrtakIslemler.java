@@ -19035,7 +19035,7 @@ public class OrtakIslemler implements Serializable {
 	public String puantajKartiPDF(HashMap<String, Object> dataMap) {
 		List<AylikPuantaj> list = (List<AylikPuantaj>) dataMap.get("puantajList");
 		DenklestirmeAy da = (DenklestirmeAy) dataMap.get("denklestirmeAy");
-		boolean pdfBirlestirDurum = (Boolean) dataMap.get("pdfBirlestirDurum");
+		boolean pdfBirlestirDurum = dataMap.containsKey("pdfBirlestirDurum") ? (Boolean) dataMap.get("pdfBirlestirDurum") : false;
 		String sayfa = "";
 
 		HashMap<Long, Liste> vMap = new HashMap<Long, Liste>();
@@ -19331,6 +19331,25 @@ public class OrtakIslemler implements Serializable {
 					for (Long key : bolumMap.keySet()) {
 						Liste liste = bolumMap.get(key);
 						Tanim bolum = (Tanim) liste.getId();
+						String zipDosyaAdi = (bolum != null ? bolum.getAciklama() : "Tanımsız Bölüm") + ".pdf";
+						List<ByteArrayOutputStream> list1 = (List<ByteArrayOutputStream>) liste.getValue();
+						Document document = new Document();
+						ByteArrayOutputStream bos = new ByteArrayOutputStream();
+						PdfCopy copy = new PdfCopy(document, bos);
+						document.open();
+						for (Iterator iterator = list1.iterator(); iterator.hasNext();) {
+							ByteArrayOutputStream byteArrayOutputStream = (ByteArrayOutputStream) iterator.next();
+							PdfReader reader = new PdfReader(byteArrayOutputStream.toByteArray());
+							copy.freeReader(reader);
+							reader.close();
+						}
+						document.close();
+						ZipEntry zipEntry = new ZipEntry(zipDosyaAdi);
+						zos.putNextEntry(zipEntry);
+						byte[] bytes = bos.toByteArray();
+						int length = bytes.length;
+						zos.write(bytes, 0, length);
+						zos.closeEntry();
 					}
 				}
 				zos.close();
