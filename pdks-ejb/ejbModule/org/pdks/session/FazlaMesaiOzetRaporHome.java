@@ -154,7 +154,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	private Boolean gerceklesenMesaiKod = Boolean.FALSE, isAramaDurum = Boolean.FALSE, devredenBakiyeKod = Boolean.FALSE, normalCalismaSaatKod = Boolean.FALSE, haftaTatilCalismaSaatKod = Boolean.FALSE, resmiTatilCalismaSaatKod = Boolean.FALSE, izinSureSaatKod = Boolean.FALSE;
 	private Boolean normalCalismaGunKod = Boolean.FALSE, haftaTatilCalismaGunKod = Boolean.FALSE, resmiTatilCalismaGunKod = Boolean.FALSE, izinSureGunKod = Boolean.FALSE, ucretliIzinGunKod = Boolean.FALSE, ucretsizIzinGunKod = Boolean.FALSE, hastalikIzinGunKod = Boolean.FALSE;
 	private Boolean normalGunKod = Boolean.FALSE, haftaTatilGunKod = Boolean.FALSE, resmiTatilGunKod = Boolean.FALSE, artikGunKod = Boolean.FALSE, bordroToplamGunKod = Boolean.FALSE, devredenMesaiKod = Boolean.FALSE, ucretiOdenenKod = Boolean.FALSE;
-	private Boolean suaDurum = Boolean.FALSE, sutIzniDurum = Boolean.FALSE, gebeDurum = Boolean.FALSE, partTime = Boolean.FALSE, pdfTopluAktarDurum = Boolean.FALSE;
+
+	private Boolean suaDurum = Boolean.FALSE, sutIzniDurum = Boolean.FALSE, gebeDurum = Boolean.FALSE, partTime = Boolean.FALSE, pdfBirlestirDurum = Boolean.FALSE, pdfTopluAktarDurum = Boolean.FALSE;
 	private Boolean resmiTatilKanunenEklenenSureGoster = Boolean.FALSE, eksiBakiyeGoster = Boolean.FALSE, izinGoster = Boolean.FALSE;
 	private Long vardiyaAdet;
 	private List<VardiyaGun> tumVardiyaList;
@@ -937,6 +938,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		fazlaMesaiVar = false;
 		saatlikMesaiVar = false;
 		aylikMesaiVar = false;
+		pdfTopluAktarDurum = false;
+		pdfBirlestirDurum = false;
 		yoneticiERP1Kontrol = !ortakIslemler.getParameterKeyHasStringValue("yoneticiERP1Kontrol");
 		Map<String, String> map1 = null;
 		sanalPersonelAciklama = ortakIslemler.sanalPersonelAciklama();
@@ -2235,7 +2238,11 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				} catch (Exception e) {
 					logger.error(e);
 				}
-			sayfa = ortakIslemler.puantajKartiPDF(list, denklestirmeAy);
+			HashMap<String, Object> dataMap = new HashMap<String, Object>();
+			dataMap.put("puantajList", list);
+			dataMap.put("denklestirmeAy", denklestirmeAy);
+			dataMap.put("pdfBirlestirDurum", list.size() > 1 && pdfBirlestirDurum);
+			sayfa = ortakIslemler.puantajKartiPDF(dataMap);
 
 		}
 
@@ -4536,5 +4543,13 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	public void setAylikVardiyaTabloHareketExcelParameter(Parameter aylikVardiyaTabloHareketExcelParameter) {
 		this.aylikVardiyaTabloHareketExcelParameter = aylikVardiyaTabloHareketExcelParameter;
+	}
+
+	public Boolean getPdfBirlestirDurum() {
+		return pdfBirlestirDurum;
+	}
+
+	public void setPdfBirlestirDurum(Boolean pdfBirlestirDurum) {
+		this.pdfBirlestirDurum = pdfBirlestirDurum;
 	}
 }

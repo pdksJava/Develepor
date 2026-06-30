@@ -19029,11 +19029,13 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param list
-	 * @param da
+	 * @param dataMap
 	 * @return
 	 */
-	public String puantajKartiPDF(List<AylikPuantaj> list, DenklestirmeAy da) {
+	public String puantajKartiPDF(HashMap<String, Object> dataMap) {
+		List<AylikPuantaj> list = (List<AylikPuantaj>) dataMap.get("puantajList");
+		DenklestirmeAy da = (DenklestirmeAy) dataMap.get("denklestirmeAy");
+		boolean pdfBirlestirDurum = (Boolean) dataMap.get("pdfBirlestirDurum");
 		String sayfa = "";
 
 		HashMap<Long, Liste> vMap = new HashMap<Long, Liste>();
@@ -19288,16 +19290,48 @@ public class OrtakIslemler implements Serializable {
 				if (!tmp.exists())
 					tmp.mkdir();
 				ZipOutputStream zos = new ZipOutputStream(baosPDF);
-				for (Liste liste : pdfList) {
-					ByteArrayOutputStream bos = (ByteArrayOutputStream) liste.getValue();
-					byte[] bytes = bos.toByteArray();
-					Personel personel = (Personel) liste.getId();
-					String zipDosyaAdi = (personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() + "/" : "") + personel.getAdSoyad() + "_" + personel.getPdksSicilNo() + ".pdf";
-					ZipEntry zipEntry = new ZipEntry(zipDosyaAdi);
-					zos.putNextEntry(zipEntry);
-					int length = bytes.length;
-					zos.write(bytes, 0, length);
-					zos.closeEntry();
+				if (pdfBirlestirDurum == false) {
+
+					for (Liste liste : pdfList) {
+						ByteArrayOutputStream bos = (ByteArrayOutputStream) liste.getValue();
+						byte[] bytes = bos.toByteArray();
+						Personel personel = (Personel) liste.getId();
+						String zipDosyaAdi = (personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() + "/" : "") + personel.getAdSoyad() + "_" + personel.getPdksSicilNo() + ".pdf";
+						ZipEntry zipEntry = new ZipEntry(zipDosyaAdi);
+						zos.putNextEntry(zipEntry);
+						int length = bytes.length;
+						zos.write(bytes, 0, length);
+						zos.closeEntry();
+					}
+				} else {
+					HashMap<Long, Liste> bolumMap = new HashMap<Long, Liste>();
+					for (Liste liste : pdfList) {
+						ByteArrayOutputStream bos = (ByteArrayOutputStream) liste.getValue();
+						Personel personel = (Personel) liste.getId();
+						Tanim bolum = personel.getEkSaha3();
+						Long key = bolum != null ? bolum.getId() : null;
+						if (key == null) {
+							if (bolum != null)
+								bolum = null;
+							key = 0L;
+						}
+
+						Liste listeBolum = null;
+						List<ByteArrayOutputStream> list1 = null;
+						if (bolumMap.containsKey(key)) {
+							listeBolum = bolumMap.get(key);
+							list1 = (List<ByteArrayOutputStream>) listeBolum.getValue();
+						} else {
+							list1 = new ArrayList<ByteArrayOutputStream>();
+							listeBolum = new Liste(bolum, list1);
+							bolumMap.put(key, listeBolum);
+						}
+						list1.add(bos);
+					}
+					for (Long key : bolumMap.keySet()) {
+						Liste liste = bolumMap.get(key);
+						Tanim bolum = (Tanim) liste.getId();
+					}
 				}
 				zos.close();
 

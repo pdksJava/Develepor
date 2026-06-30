@@ -148,7 +148,10 @@
 											<TD><a4j:commandButton action="#{fazlaMesaiOzetRaporHome.pdfKontrol()}" value="Denkleştirme Mesai PDF"
 													onclick="#{rich:component('wait')}.show()" reRender="butonlar"
 													oncomplete="#{rich:component('wait')}.hide();if (#{not empty fazlaMesaiOzetRaporHome.onayList}) #{rich:component('denklestirmeTopluPanel')}.show();" /></TD>
-
+											<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.aylikPuantajList.size() > 1}">
+												<SPAN style="font-weight: bold;">Birleştir :</SPAN>
+												<h:selectBooleanCheckbox value="#{fazlaMesaiOzetRaporHome.pdfBirlestirDurum}" />
+											</ui:fragment>
 										</ui:fragment>
 										<TD nowrap="nowrap"><SPAN style="font-size: 14;"><h:commandLink value="#{messages['ortak.etiket.excelAktar']}"
 													action="#{fazlaMesaiOzetRaporHome.fazlaMesaiExcel}" target="blank">
