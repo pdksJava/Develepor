@@ -143,41 +143,42 @@
 											onclick="#{rich:component('wait')}.show()" oncomplete="#{rich:component('wait')}.hide()" /></TD>
 
 									<ui:fragment rendered="#{not empty fazlaMesaiOzetRaporHome.aylikPuantajList}">
-										<td nowrap="nowrap">
-											<TABLE width="85%">
-												<TR>
-													<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.pdfTopluAktarDurum}">
-														<td><a4j:commandButton action="#{fazlaMesaiOzetRaporHome.pdfKontrol()}" value="Denkleştirme Mesai PDF"
-																onclick="#{rich:component('wait')}.show()" reRender="butonlar"
-																oncomplete="#{rich:component('wait')}.hide();if (#{not empty fazlaMesaiOzetRaporHome.onayList}) #{rich:component('denklestirmeTopluPanel')}.show();" /></td>
-													</ui:fragment>
-													<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketPDFDurum()}">
-														<td><h:commandLink action="#{fazlaMesaiOzetRaporHome.puantajKartiPDF()}" value="Personel Puantaj Kartı PDF" target="blank">
-																<a4j:support event="onclick" status="ajaxStatus" onclick="#{rich:component('wait')}.show()"
-																	oncomplete="#{rich:component('wait')}.hide();" reRender="butonlar" />
-															</h:commandLink></td>
-													</ui:fragment>
-													<TD nowrap="nowrap"><SPAN style="font-size: 14;"><h:commandLink value="#{messages['ortak.etiket.excelAktar']}"
-																action="#{fazlaMesaiOzetRaporHome.fazlaMesaiExcel}" target="blank">
-																<a4j:support event="oncomplete" status="ajaxStatus" />
-															</h:commandLink></SPAN></TD>
-												</TR>
-												<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketExcelDurum(true)}">
-													<TR>
-														<TD nowrap="nowrap"><SPAN style="font-size: 14; font-weight: bold;"><h:commandLink
-																	value="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketExcelParameter.description}"
-																	action="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketExcel()}" target="blank">
-																	<a4j:support event="oncomplete" status="ajaxStatus" />
-																</h:commandLink></SPAN></TD>
-													</TR>
-												</ui:fragment>
 
-											</TABLE>
-										</td>
+										<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.pdfTopluAktarDurum}">
+											<TD><a4j:commandButton action="#{fazlaMesaiOzetRaporHome.pdfKontrol()}" value="Denkleştirme Mesai PDF"
+													onclick="#{rich:component('wait')}.show()" reRender="butonlar"
+													oncomplete="#{rich:component('wait')}.hide();if (#{not empty fazlaMesaiOzetRaporHome.onayList}) #{rich:component('denklestirmeTopluPanel')}.show();" /></TD>
+
+										</ui:fragment>
+										<TD nowrap="nowrap"><SPAN style="font-size: 14;"><h:commandLink value="#{messages['ortak.etiket.excelAktar']}"
+													action="#{fazlaMesaiOzetRaporHome.fazlaMesaiExcel}" target="blank">
+													<a4j:support event="oncomplete" status="ajaxStatus" />
+												</h:commandLink></SPAN></TD>
 
 
 									</ui:fragment>
 								</TR>
+								<ui:fragment rendered="#{not empty fazlaMesaiOzetRaporHome.aylikPuantajList}">
+									<ui:fragment
+										rendered="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketExcelDurum(true) or fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketPDFDurum()}">
+										<TR>
+											<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketExcelDurum(true)}">
+												<TD nowrap="nowrap"><SPAN style="font-size: 14; font-weight: bold;"><h:commandLink
+															value="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketExcelParameter.description}"
+															action="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketExcel()}" target="blank">
+															<a4j:support event="oncomplete" status="ajaxStatus" />
+														</h:commandLink></SPAN></TD>
+											</ui:fragment>
+											<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketPDFDurum()}">
+												<TD><h:commandLink action="#{fazlaMesaiOzetRaporHome.puantajKartiPDF()}" value="Personel Puantaj Kartı PDF" target="blank">
+														<a4j:support event="onclick" status="ajaxStatus" onclick="#{rich:component('wait')}.show()"
+															oncomplete="#{rich:component('wait')}.hide();" reRender="butonlar" />
+													</h:commandLink></TD>
+											</ui:fragment>
+										</TR>
+									</ui:fragment>
+								</ui:fragment>
+
 
 
 							</TABLE>
