@@ -18814,9 +18814,12 @@ public class OrtakIslemler implements Serializable {
 			// ImageData data = ImageDataFactory.create(projeHeaderImage);
 			// Image img = new Image(data);
 			if (image != null) {
-				float projeHeaderImageHeight = (Float) projeImageMap.get("projeHeaderImageHeight");
-				float projeHeaderImageWidth = (Float) projeImageMap.get("projeHeaderImageWidth");
-				image.scaleToFit(projeHeaderImageHeight, projeHeaderImageWidth);
+				if (projeImageMap.containsKey("projeHeaderImageHeight") && projeImageMap.containsKey("projeHeaderImageWidth")) {
+					float projeHeaderImageHeight = (Float) projeImageMap.get("projeHeaderImageHeight");
+					float projeHeaderImageWidth = (Float) projeImageMap.get("projeHeaderImageWidth");
+					image.scaleToFit(projeHeaderImageHeight, projeHeaderImageWidth);
+					image.setAlignment(Element.ALIGN_CENTER);
+				}
 			}
 		}
 
@@ -19080,11 +19083,9 @@ public class OrtakIslemler implements Serializable {
 					tableImage = new PdfPTable(1);
 					com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
 					cellImage.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
-
 					if (backgroundColorRGB != null)
 						cellImage.setBackgroundColor(backgroundColorRGB);
 					tableImage.addCell(cellImage);
-
 					doc.add(tableImage);
 				}
 				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();

@@ -217,11 +217,11 @@ public class CihazHome extends EntityHome<MySQLTerminal> implements Serializable
 			Font fontBaslik = new Font(baseFont, 24f, Font.BOLD, BaseColor.BLACK);
 			Paragraph bos = PDFITextUtils.getParagraph("", fontBaslik, Element.ALIGN_CENTER);
 			Font fontFooter = new Font(baseFont, 24f, Font.NORMAL, BaseColor.RED);
-			 
+
 			Image image = ortakIslemler.getProjeImage();
 			PdfPTable tableImage = null;
 			if (image != null) {
-				BaseColor backgroundColorRGB =ortakIslemler. getProjeImageBackgroundColorRGB();
+				BaseColor backgroundColorRGB = ortakIslemler.getProjeImageBackgroundColorRGB();
 				tableImage = new PdfPTable(1);
 				com.itextpdf.text.pdf.PdfPCell cellImage = new com.itextpdf.text.pdf.PdfPCell(image);
 				cellImage.setHorizontalAlignment(Element.ALIGN_CENTER);
