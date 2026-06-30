@@ -145,13 +145,10 @@
 									<ui:fragment rendered="#{not empty fazlaMesaiOzetRaporHome.aylikPuantajList}">
 
 										<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.pdfTopluAktarDurum}">
-											<TD><a4j:commandButton action="#{fazlaMesaiOzetRaporHome.pdfKontrol()}" value="Denkleştirme Mesai PDF"
+											<TD valign="top"><a4j:commandButton action="#{fazlaMesaiOzetRaporHome.pdfKontrol()}" value="Denkleştirme Mesai PDF"
 													onclick="#{rich:component('wait')}.show()" reRender="butonlar"
-													oncomplete="#{rich:component('wait')}.hide();if (#{not empty fazlaMesaiOzetRaporHome.onayList}) #{rich:component('denklestirmeTopluPanel')}.show();" /></TD>
-											<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.aylikPuantajList.size() > 1}">
-												<SPAN style="font-weight: bold;">Birleştir :</SPAN>
-												<h:selectBooleanCheckbox value="#{fazlaMesaiOzetRaporHome.pdfBirlestirDurum}" />
-											</ui:fragment>
+													oncomplete="#{rich:component('wait')}.hide();if (#{not empty fazlaMesaiOzetRaporHome.onayList}) #{rich:component('denklestirmeTopluPanel')}.show();" />
+											</TD>
 										</ui:fragment>
 										<TD nowrap="nowrap"><SPAN style="font-size: 14;"><h:commandLink value="#{messages['ortak.etiket.excelAktar']}"
 													action="#{fazlaMesaiOzetRaporHome.fazlaMesaiExcel}" target="blank">
@@ -173,10 +170,16 @@
 														</h:commandLink></SPAN></TD>
 											</ui:fragment>
 											<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.aylikVardiyaTabloHareketPDFDurum()}">
-												<TD><h:commandLink action="#{fazlaMesaiOzetRaporHome.puantajKartiPDF()}" value="Personel Puantaj Kartı PDF" target="blank">
+												<TD valign="top"><h:commandLink action="#{fazlaMesaiOzetRaporHome.puantajKartiPDF()}" value="Personel Puantaj Kartı PDF"
+														target="blank">
 														<a4j:support event="onclick" status="ajaxStatus" onclick="#{rich:component('wait')}.show()"
 															oncomplete="#{rich:component('wait')}.hide();" reRender="butonlar" />
-													</h:commandLink></TD>
+													</h:commandLink>
+													<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.aylikPuantajList.size() gt 1}">
+														<br></br>
+														<SPAN style="font-weight: bold;">Birleştir :</SPAN>
+														<h:selectBooleanCheckbox value="#{fazlaMesaiOzetRaporHome.pdfBirlestirDurum}" />
+													</ui:fragment></TD>
 											</ui:fragment>
 										</TR>
 									</ui:fragment>

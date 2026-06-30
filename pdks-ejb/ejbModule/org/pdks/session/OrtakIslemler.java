@@ -19332,18 +19332,30 @@ public class OrtakIslemler implements Serializable {
 						Liste liste = bolumMap.get(key);
 						Tanim bolum = (Tanim) liste.getId();
 						String zipDosyaAdi = (bolum != null ? bolum.getAciklama() : "Tanımsız Bölüm") + ".pdf";
-						List<ByteArrayOutputStream> list1 = (List<ByteArrayOutputStream>) liste.getValue();
 						Document document = new Document();
 						ByteArrayOutputStream bos = new ByteArrayOutputStream();
 						PdfCopy copy = new PdfCopy(document, bos);
+						copy.setPageSize(PageSize.A4);
 						document.open();
+						List<ByteArrayOutputStream> list1 = (List<ByteArrayOutputStream>) liste.getValue();
 						for (Iterator iterator = list1.iterator(); iterator.hasNext();) {
 							ByteArrayOutputStream byteArrayOutputStream = (ByteArrayOutputStream) iterator.next();
 							PdfReader reader = new PdfReader(byteArrayOutputStream.toByteArray());
+							int toplamSayfa = reader.getNumberOfPages();
+							for (int i = 1; i <= toplamSayfa; i++) {
+								if (i > 1)
+									copy.newPage();
+								copy.addPage(copy.getImportedPage(reader, i));
+							}
+
+							if (iterator.hasNext())
+								copy.newPage();
 							copy.freeReader(reader);
 							reader.close();
 						}
+						list1 = null;
 						document.close();
+						bos.close();
 						ZipEntry zipEntry = new ZipEntry(zipDosyaAdi);
 						zos.putNextEntry(zipEntry);
 						byte[] bytes = bos.toByteArray();
@@ -19351,6 +19363,7 @@ public class OrtakIslemler implements Serializable {
 						zos.write(bytes, 0, length);
 						zos.closeEntry();
 					}
+					bolumMap = null;
 				}
 				zos.close();
 
