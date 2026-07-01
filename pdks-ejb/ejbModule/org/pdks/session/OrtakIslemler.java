@@ -19393,13 +19393,16 @@ public class OrtakIslemler implements Serializable {
 				dosyaAdi = "PuantajKartı" + (denklestirmeAy != null ? "_" + denklestirmeAy.getYil() + "" + denklestirmeAy.getAyAdi() : "") + "." + extAdi;
 			else
 				dosyaAdi = "PuantajKartı_" + dosyaAdi;
-			String characterEncoding = "UTF-8";
+			String characterEncoding = "ISO-8859-9";
 			String contentType = "application/" + extAdi + ";charset=" + characterEncoding;
 			HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
 			response.setCharacterEncoding(characterEncoding);
 			response.setContentType(contentType);
-			String fileNameURL = PdksUtil.encoderURL(dosyaAdi, characterEncoding);
-			String disposition = (kayitAdet == 1 ? "inline" : "attachment;filename*=" + characterEncoding + "\"" + fileNameURL + "\"");
+		//	String fileNameURL = PdksUtil.encoderURL(dosyaAdi, characterEncoding);
+		//	String disposition = (kayitAdet == 1 ? "inline" : "attachment;filename=\"" + dosyaAdi + "\";filename*=" + characterEncoding + "\"" + fileNameURL + "\"");
+			String fileNameURL = new String(dosyaAdi.getBytes(characterEncoding), "ISO-8859-1");
+			String disposition = (kayitAdet == 1 ? "inline" : "attachment;filename=\"" + fileNameURL + "\"");
+			response.setHeader("Content-Disposition", disposition);
 			response.setHeader("Content-Disposition", disposition);
 			PdksUtil.writeByteArrayOutputStream(response, baosPDF);
 			sayfa = null;

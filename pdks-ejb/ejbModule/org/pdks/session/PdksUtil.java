@@ -2275,7 +2275,7 @@ public class PdksUtil implements Serializable {
 			characterEncoding = StandardCharsets.UTF_8.toString();
 		String url = URLEncoder.encode(fileName, characterEncoding);
 		if (url != null)
-			url = replaceAllManuel(url, "+", "%20");
+			url = replaceAllManuel(url, "+", " ");
 		return url;
 	}
 
