@@ -19100,7 +19100,6 @@ public class OrtakIslemler implements Serializable {
 				PdfPCell cell12 = PDFITextUtils.getPdfCell(personel.getAdSoyad(), font, Element.ALIGN_LEFT);
 				PdfPCell cell21 = PDFITextUtils.getPdfCell(personelNoAciklama(), fontH, Element.ALIGN_LEFT);
 				PdfPCell cell22 = PDFITextUtils.getPdfCell(personel.getPdksSicilNo(), font, Element.ALIGN_LEFT);
-
 				cell11.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
 				cell12.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
 				cell21.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
@@ -19109,6 +19108,15 @@ public class OrtakIslemler implements Serializable {
 				tablePersonel.addCell(cell12);
 				tablePersonel.addCell(cell21);
 				tablePersonel.addCell(cell22);
+				String kimlikNo = personel.getPersonelKGS() != null ? personel.getPersonelKGS().getKimlikNo() : "";
+				if (PdksUtil.hasStringValue(kimlikNo)) {
+					PdfPCell cell31 = PDFITextUtils.getPdfCell(kimlikNoAciklama(), fontH, Element.ALIGN_LEFT);
+					PdfPCell cell32 = PDFITextUtils.getPdfCell(kimlikNo, font, Element.ALIGN_LEFT);
+					cell31.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+					cell32.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+					tablePersonel.addCell(cell31);
+					tablePersonel.addCell(cell32);
+				}
 				float[] wd = new float[] { 12, 16, 8, 8, 8, 8, 8, 6, 6, 6, 8, 12 };
 				PdfPTable table = new PdfPTable(wd.length);
 				table.setWidths(wd);
