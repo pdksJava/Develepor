@@ -19034,7 +19034,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public String puantajKartiPDF(HashMap<String, Object> dataMap) {
 		List<AylikPuantaj> list = (List<AylikPuantaj>) dataMap.get("puantajList");
-		DenklestirmeAy da = (DenklestirmeAy) dataMap.get("denklestirmeAy");
+		DenklestirmeAy denklestirmeAy = (DenklestirmeAy) dataMap.get("denklestirmeAy");
 		boolean pdfBirlestirDurum = dataMap.containsKey("pdfBirlestirDurum") ? (Boolean) dataMap.get("pdfBirlestirDurum") : false;
 		String sayfa = "";
 
@@ -19064,11 +19064,15 @@ public class OrtakIslemler implements Serializable {
 		HeaderIText event = new HeaderIText();
 		Chunk chunk = new Chunk("", fontH);
 		event.setHeader(new Phrase(chunk));
+		String dosyaAdi = null;
+		int kayitAdet = pdfList.size();
 		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 			AylikPuantaj ap = (AylikPuantaj) iterator.next();
 
 			try {
-				Personel personel = ap.getPdksPersonel();
+				PersonelDenklestirme pd = ap.getPersonelDenklestirme();
+				DenklestirmeAy da = pd.getDenklestirmeAy();
+				Personel personel = pd.getPdksPersonel();
 				ByteArrayOutputStream baosPDF = new ByteArrayOutputStream();
 				pdfList.add(new Liste(personel, baosPDF));
 				Document doc = new Document(PageSize.A4, 10, 10, 30, 30);
@@ -19134,7 +19138,7 @@ public class OrtakIslemler implements Serializable {
 				table.addCell(PDFITextUtils.getPdfCell("İzin Durumu", fontH, Element.ALIGN_CENTER));
 				Date iseBaslamaTarihi = personel.getIseBaslamaTarihi(), istenAyrilmaTarihi = personel.getSskCikisTarihi();
 				LinkedHashMap<Long, Liste> izinMap = new LinkedHashMap<Long, Liste>();
-				PersonelDenklestirme pd = ap.getPersonelDenklestirme();
+
 				for (VardiyaGun vg : ap.getVardiyalar()) {
 					if (vg.isAyinGunu() == false)
 						continue;
@@ -19147,11 +19151,10 @@ public class OrtakIslemler implements Serializable {
 					if (vg.getVardiyaDate().getTime() >= iseBaslamaTarihi.getTime() && vg.getVardiyaDate().getTime() <= istenAyrilmaTarihi.getTime()) {
 						if (vardiya != null) {
 							netSure = vardiya.isCalisma() ? vardiya.getNetCalismaSuresi() : 0.0d;
-
 							if (izin != null) {
 								izinSure = getVardiyaIzinSuresi(netSure, vg, pd, null);
 								if (izinSure > 0.0d) {
-									Long key = izin.getId();
+									Long key = izin.getIzinTipi().getId();
 									if (izinMap.containsKey(key)) {
 										Liste liste = izinMap.get(key);
 										Integer adet = (Integer) liste.getId();
@@ -19259,7 +19262,7 @@ public class OrtakIslemler implements Serializable {
 				doc.add(getParagraph("Toplam Çalışılan Süre ", authenticatedUser.sayiFormatliGoster(ap.getSaatToplami()), fontH, font));
 				doc.add(getParagraph("Çalışması Gereken Süre", authenticatedUser.sayiFormatliGoster(ap.getPlanlananSure()), fontH, font));
 				doc.add(getParagraph("Hesaplanan Mesai Süre ", authenticatedUser.sayiFormatliGoster(ap.getAylikNetFazlaMesai()), fontH, font));
-				Double gecenAyFazlaMesai = ap.getGecenAyFazlaMesai(authenticatedUser);
+				Double gecenAyFazlaMesai = ap.getGecenAyFazlaMesai(authenticatedUser), bakiyeSure = ap.getDevredenSure();
 				if (gecenAyFazlaMesai != 0.0d)
 					doc.add(getParagraph("Devreden Süre         ", authenticatedUser.sayiFormatliGoster(gecenAyFazlaMesai), fontH, font));
 				doc.add(getParagraph("Ücreti Ödenen Süre    ", authenticatedUser.sayiFormatliGoster(ap.getFazlaMesaiSure()), fontH, font));
@@ -19267,6 +19270,8 @@ public class OrtakIslemler implements Serializable {
 					doc.add(getParagraph("Hafta Tatil Süre      ", authenticatedUser.sayiFormatliGoster(ap.getHaftaCalismaSuresi()), fontH, font));
 				if (ap.getResmiTatilToplami() > 0.0d)
 					doc.add(getParagraph("Resmi Tatil Süre      ", authenticatedUser.sayiFormatliGoster(ap.getResmiTatilToplami()), fontH, font));
+				if (bakiyeSure != 0.0d)
+					doc.add(getParagraph("Bakiye Süre         ", authenticatedUser.sayiFormatliGoster(bakiyeSure), fontH, font));
 				if (izinMap.isEmpty() == false) {
 					List<Liste> listes = PdksUtil.sortObjectStringAlanList(new ArrayList<Liste>(izinMap.values()), "getValue", null);
 					for (Liste liste : listes) {
@@ -19286,12 +19291,12 @@ public class OrtakIslemler implements Serializable {
 		}
 
 		try {
-			String extAdi = "pdf";
+
 			ByteArrayOutputStream baosPDF = null;
-			if (pdfList.size() == 1)
+			if (kayitAdet == 1)
 				baosPDF = (ByteArrayOutputStream) pdfList.get(0).getValue();
 			else {
-				extAdi = "zip";
+
 				baosPDF = new ByteArrayOutputStream();
 				String path = "/tmp/";
 				File tmp = new File(path);
@@ -19336,10 +19341,13 @@ public class OrtakIslemler implements Serializable {
 						}
 						list1.add(bos);
 					}
+					kayitAdet = bolumMap.size();
 					for (Long key : bolumMap.keySet()) {
 						Liste liste = bolumMap.get(key);
 						Tanim bolum = (Tanim) liste.getId();
 						String zipDosyaAdi = (bolum != null ? bolum.getAciklama() : "Tanımsız Bölüm") + ".pdf";
+						if (kayitAdet == 1)
+							dosyaAdi = zipDosyaAdi;
 						Document document = new Document();
 						ByteArrayOutputStream bos = new ByteArrayOutputStream();
 						PdfCopy copy = new PdfCopy(document, bos);
@@ -19364,26 +19372,35 @@ public class OrtakIslemler implements Serializable {
 						list1 = null;
 						document.close();
 						bos.close();
-						ZipEntry zipEntry = new ZipEntry(zipDosyaAdi);
-						zos.putNextEntry(zipEntry);
-						byte[] bytes = bos.toByteArray();
-						int length = bytes.length;
-						zos.write(bytes, 0, length);
-						zos.closeEntry();
+						if (kayitAdet > 1) {
+							ZipEntry zipEntry = new ZipEntry(zipDosyaAdi);
+							zos.putNextEntry(zipEntry);
+							byte[] bytes = bos.toByteArray();
+							int length = bytes.length;
+							zos.write(bytes, 0, length);
+							zos.closeEntry();
+						} else
+							baosPDF = bos;
+
 					}
 					bolumMap = null;
 				}
 				zos.close();
 
 			}
-			String dosyaAdi = "PuantajKartı" + da.getYil() + "_" + da.getAyAdi() + "." + extAdi;
-			String characterEncoding = "ISO-8859-9";
+			String extAdi = kayitAdet == 1 ? "pdf" : "zip";
+			if (dosyaAdi == null)
+				dosyaAdi = "PuantajKartı" + (denklestirmeAy != null ? "_" + denklestirmeAy.getYil() + "" + denklestirmeAy.getAyAdi() : "") + "." + extAdi;
+			else
+				dosyaAdi = "PuantajKartı_" + dosyaAdi;
+			String characterEncoding = "UTF-8";
 			String contentType = "application/" + extAdi + ";charset=" + characterEncoding;
 			HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
 			response.setCharacterEncoding(characterEncoding);
 			response.setContentType(contentType);
 			String fileNameURL = PdksUtil.encoderURL(dosyaAdi, characterEncoding);
-			response.setHeader("Content-Disposition", (pdfList.size() == 1 ? "inline" : "attachment;filename=\"" + fileNameURL + "\""));
+			String disposition = (kayitAdet == 1 ? "inline" : "attachment;filename*=" + characterEncoding + "\"" + fileNameURL + "\"");
+			response.setHeader("Content-Disposition", disposition);
 			PdksUtil.writeByteArrayOutputStream(response, baosPDF);
 			sayfa = null;
 		} catch (Exception e) {
