@@ -574,11 +574,11 @@ public class PersonelDenklestirme extends BaseObject {
 			Tatil tatil = vg.getTatil();
 			Vardiya vardiya = vg.getVardiya();
 			String key = vg.getVardiyaDateStr();
-			if (key.endsWith("0704"))
+			if (key.endsWith("0628"))
 				logger.debug("");
 
 			int gunHafta = PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK);
-			double gun = gunHafta != Calendar.SATURDAY && gunHafta != Calendar.SUNDAY ? cm.getHaftaIci() : 0;
+			double gun = (gunHafta != Calendar.SATURDAY && gunHafta != Calendar.SUNDAY) ? cm.getHaftaIci() : 0;
 			if (gun == 0.0d) {
 				if (gunHafta == Calendar.SATURDAY)
 					gun = cm.getCumartesiSaat();
