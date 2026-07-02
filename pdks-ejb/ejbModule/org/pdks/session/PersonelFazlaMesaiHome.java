@@ -256,7 +256,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			}
 
 			donusAdres = null;
-			if (authenticatedUser.isAdmin() == false && PdksUtil.hasStringValue(linkAdres) == false) {
+			if (authenticatedUser.isAdmin() == false && PdksUtil.hasStringValue(planKey)==false) {
 				donusStr = MenuItemConstant.home;
 				if (userHome.hasPermission("fazlaMesaiHesapla", "view")) {
 					PdksUtil.addMessageWarn("Bu ekrandan " + ortakIslemler.getMenuAdi("personelFazlaMesai") + " sayfasına geçiş yapma yetkisi vardır!");
