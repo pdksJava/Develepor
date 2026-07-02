@@ -565,7 +565,7 @@ public class PersonelDenklestirme extends BaseObject {
 	 * @return
 	 */
 	private double getPlananSureHesapla(CalismaModeli cm, PersonelDonemselDurum gebePersonelDonemselDurum, List<VardiyaGun> vardiyalar) {
-		double sure = 0.0d, gun = cm.getHaftaIci();
+		double sure = 0.0d;
 		Double sutIzniSabitSaat = null;
 		if (cm.getSutIzniSabitSaat() != null && cm.getSutIzniSabitSaat().doubleValue() > 0.0d)
 			sutIzniSabitSaat = cm.getSutIzniSabitSaat();
@@ -573,23 +573,36 @@ public class PersonelDenklestirme extends BaseObject {
 			double sureGunlukSut = sutIzniSabitSaat == null ? cm.getSutIzinSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK)) : sutIzniSabitSaat;
 			Tatil tatil = vg.getTatil();
 			Vardiya vardiya = vg.getVardiya();
-			double gunPlanSure = gebePersonelDonemselDurum == null ? gun : cm.getSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK)), sutIzniSure = 0.0d;
+			String key = vg.getVardiyaDateStr();
+			if (key.endsWith("0704"))
+				logger.debug("");
+
+			int gunHafta = PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK);
+			double gun = gunHafta != Calendar.SATURDAY && gunHafta != Calendar.SUNDAY ? cm.getHaftaIci() : 0;
+			if (gun == 0.0d) {
+				if (gunHafta == Calendar.SATURDAY)
+					gun = cm.getCumartesiSaat();
+				else if (gunHafta == Calendar.SUNDAY)
+					gun = cm.getPazarSaat();
+			}
+
+			double gunPlanSure = gebePersonelDonemselDurum != null ? gun : cm.getSaat(gunHafta), sutIzniSure = 0.0d;
 			if (vg.isSutIzniVar()) {
 				sutIzniSure = gunPlanSure <= 9.0d ? sureGunlukSut : 7.5d;
 				Double deger = vg.getPlanSaatSutIzinSaati();
 				if (deger != null)
 					sutIzniSure = gunPlanSure - deger.doubleValue();
 				gunPlanSure = sutIzniSure;
-				logger.debug(vg.getVardiyaDateStr() + " Sut İzni " + gunPlanSure + " ");
+				logger.debug(key + " Sut İzni " + gunPlanSure + " ");
 			} else if (vg.isGebePersonelDonemselDurum()) {
 				if (gunPlanSure > 0)
 					sutIzniSure = gunPlanSure > 7.5d || vg.getPlanSaatGebeSaatiKontrolEt().equals(Boolean.FALSE) ? 7.5d : gunPlanSure;
 				gunPlanSure = sutIzniSure;
-				logger.debug(vg.getVardiyaDateStr() + " Gebe " + gunPlanSure + " ");
+				logger.debug(key + " Gebe " + gunPlanSure + " ");
 			} else if (isSuaDurumu()) {
 				sutIzniSure = gunPlanSure > 7d ? 7d : gunPlanSure;
 				gunPlanSure = AylikPuantaj.getGunlukCalismaSuresi();
-				logger.debug(vg.getVardiyaDateStr() + " Şua " + gunPlanSure + " ");
+				logger.debug(key + " Şua " + gunPlanSure + " ");
 			}
 			if (vg.isAyinGunu() && vardiya != null && vardiya.getId() != null) {
 				boolean hesapla = !(vg.isIzinli() || vardiya.isHaftaTatil() || tatil != null || (isSuaDurumu() && vardiya.isOff()));
@@ -604,7 +617,7 @@ public class PersonelDenklestirme extends BaseObject {
 				}
 				if (hesapla) {
 					sure += gunPlanSure;
-					logger.debug(vg.getVardiyaDateStr() + " " + gunPlanSure + " " + sure);
+					logger.debug(key + " " + gunPlanSure + " " + sure);
 				}
 			}
 		}
