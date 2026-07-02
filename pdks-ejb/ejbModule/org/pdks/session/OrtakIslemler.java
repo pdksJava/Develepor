@@ -15093,7 +15093,8 @@ public class OrtakIslemler implements Serializable {
 						if (list.isEmpty())
 							vMap.put(perId, list);
 						list.add(vardiyaGun);
-					}
+					} else
+						logger.debug("");
 				}
 				vardiyaGun.setHareketHatali(Boolean.FALSE);
 				vardiyaGun.setHataliDurum(Boolean.FALSE);
