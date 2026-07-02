@@ -739,7 +739,8 @@ public class PdksEntityController implements Serializable {
 						else if (id instanceof Integer)
 							object = session.get(object.getClass(), (Integer) id);
 					} else {
-						object = em.merge(object);
+						if (em.contains(session) == false)
+							object = em.merge(object);
 						em.refresh(object);
 					}
 
