@@ -15087,11 +15087,13 @@ public class OrtakIslemler implements Serializable {
 			VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 			try {
 				if (izinMap != null && !izinMap.isEmpty()) {
-					Long perId = vardiyaGun.getPersonel().getId();
-					List<VardiyaGun> list = vMap.containsKey(perId) ? vMap.get(perId) : new ArrayList<VardiyaGun>();
-					if (list.isEmpty())
-						vMap.put(perId, list);
-					list.add(vardiyaGun);
+					Long perId = vardiyaGun != null && vardiyaGun.getPersonel() != null ? vardiyaGun.getPersonel().getId() : null;
+					if (perId != null) {
+						List<VardiyaGun> list = vMap.containsKey(perId) ? vMap.get(perId) : new ArrayList<VardiyaGun>();
+						if (list.isEmpty())
+							vMap.put(perId, list);
+						list.add(vardiyaGun);
+					}
 				}
 				vardiyaGun.setHareketHatali(Boolean.FALSE);
 				vardiyaGun.setHataliDurum(Boolean.FALSE);
@@ -19398,8 +19400,8 @@ public class OrtakIslemler implements Serializable {
 			HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
 			response.setCharacterEncoding(characterEncoding);
 			response.setContentType(contentType);
-		//	String fileNameURL = PdksUtil.encoderURL(dosyaAdi, characterEncoding);
-		//	String disposition = (kayitAdet == 1 ? "inline" : "attachment;filename=\"" + dosyaAdi + "\";filename*=" + characterEncoding + "\"" + fileNameURL + "\"");
+			// String fileNameURL = PdksUtil.encoderURL(dosyaAdi, characterEncoding);
+			// String disposition = (kayitAdet == 1 ? "inline" : "attachment;filename=\"" + dosyaAdi + "\";filename*=" + characterEncoding + "\"" + fileNameURL + "\"");
 			String fileNameURL = new String(dosyaAdi.getBytes(characterEncoding), "ISO-8859-1");
 			String disposition = (kayitAdet == 1 ? "inline" : "attachment;filename=\"" + fileNameURL + "\"");
 			response.setHeader("Content-Disposition", disposition);
