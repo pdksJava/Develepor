@@ -7764,7 +7764,9 @@ public class OrtakIslemler implements Serializable {
 						iterator.remove();
 						continue;
 					}
-					personelERPList.add(personelERPDB.getPersonelERP());
+					if (personelERPDB != null) {
+						personelERPList.add(personelERPDB.getPersonelERP());
+					}
 
 				}
 				if (!personelList.isEmpty()) {

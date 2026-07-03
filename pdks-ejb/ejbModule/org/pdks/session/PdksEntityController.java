@@ -505,11 +505,11 @@ public class PdksEntityController implements Serializable {
 	 * @param ortakIslemler
 	 * @param del
 	 */
-	public void deleteObject(Session ses, Object object, Object del) {
+	public void deleteObject(Session session, Object object, Object del) {
 		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-		if (del != null && ses != null) {
+		if (del != null && session != null) {
 			try {
-				ses.delete(del);
+				session.delete(del);
 			} catch (Exception e) {
 				try {
 					if (object != null) {
@@ -528,16 +528,16 @@ public class PdksEntityController implements Serializable {
 
 							if (id != null && tableName != null) {
 								String sp = "SP_DELETE_OBJECT_BY_ID";
-								if (ortakIslemler.isExisStoreProcedure(sp, ses)) {
+								if (ortakIslemler.isExisStoreProcedure(sp, session)) {
 									veriMap.put("id", id);
 									veriMap.put("tableName", tableName);
-									execSP(ses, veriMap, sp);
+									execSP(session, veriMap, sp);
 								}
 							}
 						} else if (object instanceof EntityManager) {
 							EntityManager em = (EntityManager) object;
 							if (em != null)
-								ses.delete(getEntityManagerObject(em, del));
+								session.delete(getEntityManagerObject(em, del));
 						}
 
 					}

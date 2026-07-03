@@ -362,38 +362,43 @@ public class PersonelERPDB implements Serializable, Cloneable {
 	public PersonelERP getPersonelERP() {
 		String pattern = FORMAT_DATE;
 		PersonelERP p = new PersonelERP();
-		p.setPersonelNo(this.personelNo);
-		p.setAdi(this.adi);
-		p.setBolumAdi(this.bolumAdi);
-		p.setBolumKodu(this.bolumKodu);
-		p.setBordroAltAlanAdi(this.bordroAltAlanAdi);
-		p.setBordroAltAlanKodu(this.bordroAltAlanKodu);
-		p.setCinsiyetKodu(this.cinsiyetKodu);
-		p.setCinsiyeti(this.cinsiyeti);
-		p.setDepartmanAdi(this.departmanAdi);
-		p.setDepartmanKodu(this.departmanKodu);
-		p.setDogumTarihi(PdksUtil.convertToDateString(this.dogumTarihi, pattern));
-		p.setGorevKodu(this.gorevKodu);
-		p.setGorevi(this.gorevi);
-		p.setIseGirisTarihi(PdksUtil.convertToDateString(this.iseGirisTarihi, pattern));
-		p.setIstenAyrilmaTarihi(PdksUtil.convertToDateString(this.istenAyrilmaTarihi, pattern));
-		p.setKidemTarihi(PdksUtil.convertToDateString(this.kidemTarihi, pattern));
-		p.setMasrafYeriAdi(this.masrafYeriAdi);
-		p.setMasrafYeriKodu(this.masrafYeriKodu);
-		p.setPersonelTipi(this.personelTipi);
-		p.setPersonelTipiKodu(this.personelTipiKodu);
-		p.setSanalPersonel(this.sanalPersonel);
-		p.setSirketAdi(this.sirketAdi);
-		p.setSirketKodu(this.sirketKodu);
-		p.setSoyadi(this.soyadi);
-		p.setTesisAdi(this.tesisAdi);
-		p.setTesisKodu(this.tesisKodu);
-		p.setYoneticiPerNo(this.yoneticiPerNo);
-		p.setGrubaGirisTarihi(PdksUtil.convertToDateString(this.grubaGirisTarihi, pattern));
-		p.setYonetici2PerNo(this.yonetici2PerNo);
-		p.setKimlikNo(this.kimlikNo);
-		if (this.guncellemeTarihi != null)
-			p.setGuncellemeZamani(PdksUtil.convertToDateString(this.guncellemeTarihi, FORMAT_DATE_TIME));
+		try {
+			p.setPersonelNo(this.personelNo);
+			p.setAdi(this.adi);
+			p.setBolumAdi(this.bolumAdi);
+			p.setBolumKodu(this.bolumKodu);
+			p.setBordroAltAlanAdi(this.bordroAltAlanAdi);
+			p.setBordroAltAlanKodu(this.bordroAltAlanKodu);
+			p.setCinsiyetKodu(this.cinsiyetKodu);
+			p.setCinsiyeti(this.cinsiyeti);
+			p.setDepartmanAdi(this.departmanAdi);
+			p.setDepartmanKodu(this.departmanKodu);
+			p.setDogumTarihi(PdksUtil.convertToDateString(this.dogumTarihi, pattern));
+			p.setGorevKodu(this.gorevKodu);
+			p.setGorevi(this.gorevi);
+			p.setIseGirisTarihi(PdksUtil.convertToDateString(this.iseGirisTarihi, pattern));
+			p.setIstenAyrilmaTarihi(PdksUtil.convertToDateString(this.istenAyrilmaTarihi, pattern));
+			p.setKidemTarihi(PdksUtil.convertToDateString(this.kidemTarihi, pattern));
+			p.setMasrafYeriAdi(this.masrafYeriAdi);
+			p.setMasrafYeriKodu(this.masrafYeriKodu);
+			p.setPersonelTipi(this.personelTipi);
+			p.setPersonelTipiKodu(this.personelTipiKodu);
+			p.setSanalPersonel(this.sanalPersonel);
+			p.setSirketAdi(this.sirketAdi);
+			p.setSirketKodu(this.sirketKodu);
+			p.setSoyadi(this.soyadi);
+			p.setTesisAdi(this.tesisAdi);
+			p.setTesisKodu(this.tesisKodu);
+			p.setYoneticiPerNo(this.yoneticiPerNo);
+			p.setGrubaGirisTarihi(PdksUtil.convertToDateString(this.grubaGirisTarihi, pattern));
+			p.setYonetici2PerNo(this.yonetici2PerNo);
+			p.setKimlikNo(this.kimlikNo);
+			if (this.guncellemeTarihi != null)
+				p.setGuncellemeZamani(PdksUtil.convertToDateString(this.guncellemeTarihi, FORMAT_DATE_TIME));
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 		return p;
 	}
 
