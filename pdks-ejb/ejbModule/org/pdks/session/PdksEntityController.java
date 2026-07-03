@@ -1387,7 +1387,10 @@ public class PdksEntityController implements Serializable {
 
 			if (showSQL)
 				logger.info(sql + " in " + PdksUtil.convertToDateString(new Date(), PdksUtil.getDateFormat() + " H:mm:ss"));
+			// SQLQuery queryReadUnCommitted = null;
 			try {
+				// if (readUnCommitted)
+				// queryReadUnCommitted = readUnCommitted(session);
 				query.setTimeout(30);
 				List listNew = query.list();
 				if (!listNew.isEmpty())
@@ -1399,7 +1402,8 @@ public class PdksEntityController implements Serializable {
 				logger.info(sql + " " + e.getMessage());
 
 			}
-
+			// if (queryReadUnCommitted != null)
+			// readCommitted(session);
 			if (showSQL)
 				logger.info(sql + " out " + PdksUtil.convertToDateString(new Date(), PdksUtil.getDateFormat() + " H:mm:ss"));
 
@@ -1567,9 +1571,6 @@ public class PdksEntityController implements Serializable {
 				fields.remove(MAP_KEY_TRANSACTION);
 			}
 			String sql = sb.toString();
-			// SQLQuery queryReadUnCommitted = null;
-			// if (readUnCommitted)
-			// queryReadUnCommitted = readUnCommitted(session);
 
 			TreeMap fieldsOther = new TreeMap();
 			sb = null;
@@ -1603,6 +1604,9 @@ public class PdksEntityController implements Serializable {
 					fieldsOther.put(key, object);
 			}
 			if (devam) {
+				// SQLQuery queryReadUnCommitted = null;
+				// if (readUnCommitted)
+				// queryReadUnCommitted = readUnCommitted(session);
 				SQLQuery query = session.createSQLQuery(sql);
 				if (class1 != null)
 					query.addEntity(class1);
@@ -1813,8 +1817,11 @@ public class PdksEntityController implements Serializable {
 	 * @return
 	 */
 	private SQLQuery readUnCommitted(Session session) {
-		SQLQuery queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED));
-		queryReadUnCommitted.executeUpdate();
+		SQLQuery queryReadUnCommitted = null;
+		if (PdksUtil.isSessionKapali(session) == false) {
+			queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED));
+			queryReadUnCommitted.executeUpdate();
+		}
 		return queryReadUnCommitted;
 	}
 
@@ -1822,8 +1829,10 @@ public class PdksEntityController implements Serializable {
 	 * @param session
 	 */
 	private void readCommitted(Session session) {
-		SQLQuery queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
-		queryReadUnCommitted.executeUpdate();
+		if (PdksUtil.isSessionKapali(session) == false) {
+			SQLQuery queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
+			queryReadUnCommitted.executeUpdate();
+		}
 	}
 
 	public static boolean isShowSQL() {
