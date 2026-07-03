@@ -871,7 +871,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		pdksPersonel.setPdksSicilNo(pdksPersonel.getPersonelKGS().getSicilNo());
 		session.save(pdksPersonel);
 		ortakIslemler.sessionFlush(session);
-		pdksEntityController.sessionRefresh(session, entityManager,personelView);
+		pdksEntityController.sessionRefresh(session, entityManager, personelView);
 		return ok;
 
 	}
@@ -1316,7 +1316,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							ortakIslemler.setUserTesisler(authenticatedUser, false, session);
 						}
 						try {
-							pdksEntityController.sessionRefresh(session, entityManager,personelView);
+							pdksEntityController.sessionRefresh(session, entityManager, personelView);
 						} catch (Exception e) {
 							logger.error("PDKS hata in : \n");
 							e.printStackTrace();
@@ -1495,7 +1495,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 						PdksUtil.addMessageInfo(personel.getAdSoyad() + " SAP'den verileri güncellendi.");
 						if (personelView != null)
-							pdksEntityController.sessionRefresh(session, entityManager,personelView);
+							pdksEntityController.sessionRefresh(session, entityManager, personelView);
 					}
 				} else
 					PdksUtil.addMessageWarn(personel.getAdSoyad() + " SAP'den verileri güncellenmedi!");
@@ -2641,7 +2641,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						pdksEntityController.saveOrUpdate(session, entityManager, pdksPersonel);
 
 						ortakIslemler.sessionFlush(session);
-						pdksEntityController.sessionRefresh(session, entityManager,personelView);
+						pdksEntityController.sessionRefresh(session, entityManager, personelView);
 
 					}
 				} catch (Exception e) {
@@ -3778,8 +3778,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (pdksPersonel != null && pdksPersonel.getId() != null) {
 			try {
 				if (pdksPersonel.getKullanici() != null && pdksPersonel.getKullanici().getId() != null)
-					pdksEntityController.sessionRefresh(session, entityManager,pdksPersonel.getKullanici());
-				pdksEntityController.sessionRefresh(session, entityManager,pdksPersonel);
+					pdksEntityController.sessionRefresh(session, entityManager, pdksPersonel.getKullanici());
+				pdksEntityController.sessionRefresh(session, entityManager, pdksPersonel);
 			} catch (Exception e) {
 				logger.error("PDKS hata in : \n");
 				e.printStackTrace();
@@ -4736,7 +4736,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			List<Personel> list = pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap, Personel.class);
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				Personel per = (Personel) iterator.next();
-				if (per.getDurum().equals(Boolean.FALSE) || per.getId().equals(personel.getId()) || per.isCalisiyorGun(bugun) == false)
+				if (per.getDurum().equals(Boolean.FALSE) || per.isCalisiyorGun(bugun) == false)
 					iterator.remove();
 
 			}
