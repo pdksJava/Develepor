@@ -270,10 +270,9 @@ public class PdksEntityController implements Serializable {
 
 			}
 			SQLQuery queryReadUnCommitted = null;
-			if (readUnCommitted) {
-				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED));
-				queryReadUnCommitted.executeUpdate();
-			}
+			if (readUnCommitted)
+				queryReadUnCommitted = readUnCommitted(session);
+
 			org.hibernate.Query qry1 = session.createQuery(sql);
 			if (!parametreList.isEmpty()) {
 				for (int i = 0; i < parametreList.size(); i++) {
@@ -283,10 +282,9 @@ public class PdksEntityController implements Serializable {
 				parametreList.clear();
 			}
 			List liste = qry1.list();
-			if (queryReadUnCommitted != null) {
-				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
-				queryReadUnCommitted.executeUpdate();
-			}
+			if (queryReadUnCommitted != null)
+				readCommitted(session);
+
 			if (showSQL)
 				logger.info(sql + " out " + PdksUtil.convertToDateString(new Date(), PdksUtil.getDateFormat() + " H:mm:ss"));
 
@@ -437,10 +435,9 @@ public class PdksEntityController implements Serializable {
 
 			if (session != null) {
 				SQLQuery queryReadUnCommitted = null;
-				if (readUnCommitted) {
-					queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED));
-					queryReadUnCommitted.executeUpdate();
-				}
+				if (readUnCommitted)
+					queryReadUnCommitted = readUnCommitted(session);
+
 				org.hibernate.Query qry1 = session.createQuery(sql);
 				if (!parametreList.isEmpty()) {
 					if (parametreList.size() > 1500)
@@ -451,10 +448,8 @@ public class PdksEntityController implements Serializable {
 					}
 				}
 				list = qry1.list();
-				if (queryReadUnCommitted != null) {
-					queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
-					queryReadUnCommitted.executeUpdate();
-				}
+				if (queryReadUnCommitted != null)
+					readCommitted(session);
 
 				qry1 = null;
 			} else {
@@ -677,16 +672,14 @@ public class PdksEntityController implements Serializable {
 				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			}
 			SQLQuery queryReadUnCommitted = null;
-			if (readUnCommitted || manuelReadUnCommitted) {
-				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED));
-				queryReadUnCommitted.executeUpdate();
-			}
+			if (readUnCommitted || manuelReadUnCommitted)
+				queryReadUnCommitted = readUnCommitted(session);
+
 			SQLQuery query = prepareFunction(session, veriMap, sp);
 			sonucList = query.list();
-			if (queryReadUnCommitted != null) {
-				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
-				queryReadUnCommitted.executeUpdate();
-			}
+			if (queryReadUnCommitted != null)
+				readCommitted(session);
+
 			if (sessinYok)
 				sessionClose(session);
 		} catch (Exception e) {
@@ -781,12 +774,16 @@ public class PdksEntityController implements Serializable {
 				sessinYok = true;
 				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			}
-
+			SQLQuery queryReadUnCommitted = null;
+			if (readUnCommitted)
+				queryReadUnCommitted = readUnCommitted(session);
 			SQLQuery query = prepareProcedure(session, veriMap, sp);
 
 			if (class1 != null)
 				query.addEntity(class1);
 			sonucList = query.list();
+			if (queryReadUnCommitted != null)
+				readCommitted(session);
 			if (sessinYok)
 				sessionClose(session);
 		} catch (Exception e) {
@@ -1570,11 +1567,10 @@ public class PdksEntityController implements Serializable {
 				fields.remove(MAP_KEY_TRANSACTION);
 			}
 			String sql = sb.toString();
-			SQLQuery queryReadUnCommitted = null;
-			if (readUnCommitted) {
-				queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED));
-				queryReadUnCommitted.executeUpdate();
-			}
+			// SQLQuery queryReadUnCommitted = null;
+			// if (readUnCommitted)
+			// queryReadUnCommitted = readUnCommitted(session);
+
 			TreeMap fieldsOther = new TreeMap();
 			sb = null;
 			Boolean devam = Boolean.TRUE;
@@ -1621,10 +1617,9 @@ public class PdksEntityController implements Serializable {
 
 				list = query.list();
 
-				if (queryReadUnCommitted != null) {
-					queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
-					queryReadUnCommitted.executeUpdate();
-				}
+				// if (queryReadUnCommitted != null)
+				// readCommitted(session);
+
 				if (showSQL)
 					logger.info(sql + " out " + PdksUtil.convertToDateString(new Date(), PdksUtil.getDateFormat() + " H:mm:ss"));
 
@@ -1811,6 +1806,24 @@ public class PdksEntityController implements Serializable {
 		}
 		sb = null;
 		return veriList;
+	}
+
+	/**
+	 * @param session
+	 * @return
+	 */
+	private SQLQuery readUnCommitted(Session session) {
+		SQLQuery queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_UNCOMMITTED));
+		queryReadUnCommitted.executeUpdate();
+		return queryReadUnCommitted;
+	}
+
+	/**
+	 * @param session
+	 */
+	private void readCommitted(Session session) {
+		SQLQuery queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
+		queryReadUnCommitted.executeUpdate();
 	}
 
 	public static boolean isShowSQL() {
