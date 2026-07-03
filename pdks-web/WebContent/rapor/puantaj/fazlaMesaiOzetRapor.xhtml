@@ -174,8 +174,7 @@
 														target="blank">
 														<a4j:support event="onclick" status="ajaxStatus" onclick="#{rich:component('wait')}.show()"
 															oncomplete="#{rich:component('wait')}.hide();" reRender="butonlar" />
-													</h:commandLink>
-													<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.aylikPuantajList.size() gt 1}">
+													</h:commandLink> <ui:fragment rendered="#{fazlaMesaiOzetRaporHome.aylikPuantajList.size() gt 1}">
 														<br></br>
 														<SPAN style="font-weight: bold;">Birleştir :</SPAN>
 														<h:selectBooleanCheckbox value="#{fazlaMesaiOzetRaporHome.pdfBirlestirDurum}" />
@@ -1060,6 +1059,7 @@
 				</h:panelGroup>
 			</f:facet>
 			<h:form>
+
 				<DIV class="#{authenticatedUser.scroolClass}" id="#{authenticatedUser.scroolDiv}">
 					<h:panelGrid columns="3">
 						<h:commandLink title="PDF Aktar" action="#{fazlaMesaiOzetRaporHome.pdfTopluAktar(false)}" target="popupWindow">
@@ -1072,32 +1072,33 @@
 						</ui:fragment>
 						<a4j:commandButton value="Vazgeç" onclick="#{rich:component('denklestirmeTopluPanel')}.hide()" />
 					</h:panelGrid>
-
-					<table class="rich-table" cellpadding="1" cellspacing="1" id="denklestirmeTopluTable">
-						<thead class="rich-table-thead">
-							<tr class="rich-table-subheader">
-								<th><h:outputText value="#{ortakIslemler.personelNoAciklama()}" /></th>
-								<th><h:outputText value="Adı Soyadı" /></th>
-								<th><h:outputText value="#{fazlaMesaiOzetRaporHome.bolumAciklama }" /></th>
-								<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.kimlikGoster}">
-									<th><h:outputText value="#{ortakIslemler.kimlikNoAciklama()}" /></th>
-								</ui:fragment>
-							</tr>
-						</thead>
-						<tbody>
-							<a4j:repeat value="#{fazlaMesaiOzetRaporHome.onayList}" var="ap">
-								<tr class="#{ap.trClass}">
-									<td><h:outputText value="#{ap.pdksPersonel.sicilNo}" /></td>
-									<td><h:outputText value="#{ap.pdksPersonel.adSoyad}" style="width:autostretch ;white-space: nowrap;" /></td>
-									<td><h:outputText value="#{ap.pdksPersonel.ekSaha3.aciklama}" style="width:autostretch ;white-space: nowrap;" /></td>
+					<a4j:outputPanel id="denklestirmeTopluTable">
+						<table class="rich-table" cellpadding="1" cellspacing="1">
+							<thead class="rich-table-thead">
+								<tr class="rich-table-subheader">
+									<th><h:outputText value="#{ortakIslemler.personelNoAciklama()}" /></th>
+									<th><h:outputText value="Adı Soyadı" /></th>
+									<th><h:outputText value="#{fazlaMesaiOzetRaporHome.bolumAciklama }" /></th>
 									<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.kimlikGoster}">
-										<td><h:outputText value="#{ap.pdksPersonel.personelKGS.kimlikNo}" /></td>
+										<th><h:outputText value="#{ortakIslemler.kimlikNoAciklama()}" /></th>
 									</ui:fragment>
 								</tr>
-							</a4j:repeat>
+							</thead>
+							<tbody>
+								<a4j:repeat value="#{fazlaMesaiOzetRaporHome.onayList}" var="ap">
+									<tr class="#{ap.trClass}">
+										<td><h:outputText value="#{ap.pdksPersonel.sicilNo}" /></td>
+										<td><h:outputText value="#{ap.pdksPersonel.adSoyad}" style="width:autostretch ;white-space: nowrap;" /></td>
+										<td><h:outputText value="#{ap.pdksPersonel.ekSaha3.aciklama}" style="width:autostretch ;white-space: nowrap;" /></td>
+										<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.kimlikGoster}">
+											<td><h:outputText value="#{ap.pdksPersonel.personelKGS.kimlikNo}" /></td>
+										</ui:fragment>
+									</tr>
+								</a4j:repeat>
 
-						</tbody>
-					</table>
+							</tbody>
+						</table>
+					</a4j:outputPanel>
 				</DIV>
 
 
