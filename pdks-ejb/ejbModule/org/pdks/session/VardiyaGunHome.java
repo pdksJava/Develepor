@@ -254,7 +254,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	private Boolean denklestirmeHesapla = Boolean.FALSE, gunSec = Boolean.FALSE, gorevli = false, ozelIstek = Boolean.FALSE, islemYapiliyor = Boolean.FALSE, departmanBolumAyni = Boolean.FALSE;
 
-	private Boolean resmiTatilVar = Boolean.FALSE, eksikMaasGoster = Boolean.FALSE, aksamGunVar = Boolean.FALSE, aksamSaatVar = Boolean.FALSE, haftaTatilVar = Boolean.FALSE;
+	private Boolean resmiTatilVar = Boolean.FALSE, icapciSaatGoster = Boolean.FALSE, eksikMaasGoster = Boolean.FALSE, aksamGunVar = Boolean.FALSE, aksamSaatVar = Boolean.FALSE, haftaTatilVar = Boolean.FALSE;
 
 	private Boolean topluFazlaCalismaTalep = Boolean.FALSE, denklestirmeAyDurum = Boolean.FALSE, fazlaMesaiTalepDurum = Boolean.FALSE, aylikHareketKaydiVardiyaBul = Boolean.FALSE;
 
@@ -2248,6 +2248,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				ExcelUtil.baslikCell(cell, anchor, helper, drawing, "FÇA", "Yasal Çalışmayı Aşan Mesai Toplam Miktarı");
 
 			}
+			if (icapciSaatGoster) {
+				cell = ExcelUtil.getCell(sheet, row, col++, header);
+				ExcelUtil.baslikCell(cell, anchor, helper, drawing, "ICP", "İcapçı Mesai Toplam Miktarı");
+			}
+
 			cell = ExcelUtil.getCell(sheet, row, col++, header);
 
 			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "GM", "Gerçekleşen Mesai : Çalışanın bu listedeki eksi/fazla çalışma saati");
@@ -2498,6 +2503,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						if (aylikPuantaj.getUcretiOdenenMesaiSure() > 0) {
 							Cell ucretiOdenenMesaiSure = setCell(sheet, row, col++, styleGenel, aylikPuantaj.getUcretiOdenenMesaiSure());
 							ExcelUtil.setCellComment(ucretiOdenenMesaiSure, anchor, helper, drawing, ortakIslemler.getUcretiOdenenMesaiSureStr(aylikPuantaj));
+						} else
+							ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+					}
+					if (icapciSaatGoster) {
+						if (aylikPuantaj.getIcapciMesaiSure() > 0) {
+							setCell(sheet, row, col++, styleGenel, aylikPuantaj.getIcapciMesaiSure());
 						} else
 							ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
 					}
@@ -8040,6 +8051,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			setAylikPuantajDefault(defaultAylikPuantajSablon);
 			bitTarih = null;
 			resmiTatilVar = Boolean.FALSE;
+			icapciSaatGoster = Boolean.FALSE;
 			aksamGunVar = Boolean.FALSE;
 			aksamSaatVar = Boolean.FALSE;
 			haftaTatilVar = Boolean.FALSE;
@@ -8062,6 +8074,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 				for (Iterator iterator = aylikPuantajList.iterator(); iterator.hasNext();) {
 					AylikPuantaj aylikPuantaj = (AylikPuantaj) iterator.next();
+					if (!icapciSaatGoster)
+						icapciSaatGoster = aylikPuantaj.getIcapciMesaiSure() > 0d;
 					if (!resmiTatilVar)
 						resmiTatilVar = aylikPuantaj.getResmiTatilToplami() > 0d;
 					if (!aksamGunVar)
@@ -8108,6 +8122,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 				devam = Boolean.TRUE;
 				resmiTatilVar = Boolean.FALSE;
+				icapciSaatGoster = Boolean.FALSE;
 				aksamGunVar = Boolean.FALSE;
 				aksamSaatVar = Boolean.FALSE;
 				haftaTatilVar = Boolean.FALSE;
@@ -8118,6 +8133,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					AylikPuantaj puantaj = (AylikPuantaj) iterator.next();
 
 					try {
+						if (!icapciSaatGoster)
+							icapciSaatGoster = puantaj.getIcapciMesaiSure() > 0d;
 						if (!aksamGunVar)
 							aksamGunVar = puantaj.getAksamVardiyaSayisi() > 0d;
 						if (!aksamSaatVar)
@@ -14057,6 +14074,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	public void setUserLoginOldu(boolean userLoginOldu) {
 		this.userLoginOldu = userLoginOldu;
+	}
+
+	public Boolean getIcapciSaatGoster() {
+		return icapciSaatGoster;
+	}
+
+	public void setIcapciSaatGoster(Boolean icapciSaatGoster) {
+		this.icapciSaatGoster = icapciSaatGoster;
 	}
 
 }
