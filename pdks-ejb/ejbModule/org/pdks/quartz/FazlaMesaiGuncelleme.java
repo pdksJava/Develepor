@@ -200,7 +200,16 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		long sonrakiAy = Long.parseLong(PdksUtil.convertToDateString(PdksUtil.tariheGunEkleCikar(tarih, artiGun), PATTERN_DONEM));
 		List<DenklestirmeAy> aylar = pdksEntityController.getSQLParamByFieldList(DenklestirmeAy.TABLE_NAME, DenklestirmeAy.COLUMN_NAME_DONEM_KODU, Arrays.asList(new Long[] { oncekiAy, buAy, sonrakiAy }), DenklestirmeAy.class, session);
 		TreeMap<Long, DenklestirmeAy> ayMap = new TreeMap<Long, DenklestirmeAy>();
+		String ilkDonemStr = ortakIslemler.getParameterKey("ilkMaasDonemi");
+		Long ilkMaasDonemi = null;
+		if (PdksUtil.hasStringValue(ilkDonemStr))
+			try {
+				ilkMaasDonemi = Long.parseLong(ilkDonemStr);
+			} catch (Exception e) {
+				ilkMaasDonemi = oncekiAy;
+			}
 		for (DenklestirmeAy denklestirmeAy : aylar)
+
 			ayMap.put(denklestirmeAy.getDonem(), denklestirmeAy);
 		if (ayMap.containsKey(sonrakiAy) == false)
 			ayMap.put(sonrakiAy, ayMap.get(buAy));
@@ -220,7 +229,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			int durum = da.getDurum() ? 1 : 0;
 			sb2.append(" PERSONEL" + sayac + " as ( ");
 			sb2.append(" select P." + Personel.COLUMN_NAME_ID + " as " + VardiyaGun.COLUMN_NAME_PERSONEL + ", count(*) ADET from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
-			if (da.getDurum()) {
+			if (da.getDurum() && da.getDonem() > ilkMaasDonemi.longValue()) {
 				fields.put("pbas" + sayac, tarihBas);
 				fields.put("pbit" + sayac, tarihBit);
 				fields.put("vbas" + sayac, tarihBas);
