@@ -2026,7 +2026,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 									}
 									organizasyonDetay.setDeger(pda.getTanimDeger());
 									if (organizasyonDetay.getId() != null || organizasyonDetay.getDeger() != null) {
-										if (organizasyonDetay.isDegisti()) {
+										if (organizasyonDetay.isDegisti() || organizasyonDetay.getId() == null) {
 											try {
 												pdksEntityController.saveOrUpdate(session, null, organizasyonDetay);
 												flush = true;
