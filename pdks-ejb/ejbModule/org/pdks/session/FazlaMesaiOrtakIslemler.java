@@ -349,10 +349,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						calismaModeliAy.setSure(sure);
 					if (calismaModeliAy.getToplamIzinSure() == 0.0d)
 						calismaModeliAy.setToplamIzinSure(toplamIzinSure);
-					pdksEntityController.saveOrUpdate(session, null, calismaModeliAy);
-					flush = true;
+					if (dm.getId() != null) {
+						pdksEntityController.saveOrUpdate(session, null, calismaModeliAy);
+						flush = true;
+					}
 				}
-
 			}
 			if (flush)
 				ortakIslemler.sessionFlush(session);
