@@ -208,9 +208,10 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			} catch (Exception e) {
 				ilkMaasDonemi = oncekiAy;
 			}
+		if (ilkMaasDonemi == null)
+			ilkMaasDonemi = oncekiAy;
 		for (DenklestirmeAy denklestirmeAy : aylar)
-
-			ayMap.put(denklestirmeAy.getDonem(), denklestirmeAy);
+ 			ayMap.put(denklestirmeAy.getDonem(), denklestirmeAy);
 		if (ayMap.containsKey(sonrakiAy) == false)
 			ayMap.put(sonrakiAy, ayMap.get(buAy));
 		aylar = null;
