@@ -46,6 +46,7 @@ public class Vardiya extends BaseObject {
 	public static final String COLUMN_NAME_EKRAN_SIRA = "EKRAN_SIRA";
 	public static final String COLUMN_NAME_FCS_HARIC = "FCS_HARIC";
 	public static final String COLUMN_NAME_CALISMA_SEKLI = "CALISMA_SEKLI";
+	public static final String COLUMN_NAME_MAX_CALISMA_SURESI_VAR = "MAX_CALISMA_SURESI_VAR";
 
 	public static final char TIPI_CALISMA = ' ';
 	public static final char TIPI_HAFTA_TATIL = 'H';
@@ -72,7 +73,7 @@ public class Vardiya extends BaseObject {
 	private Integer yemekSuresi, cikisMolaSaat = 0;
 	private Departman departman;
 	private List<Integer> gunlukList;
-	private Boolean aksamVardiya = Boolean.FALSE, fcsHaric = Boolean.FALSE, icapVardiya = Boolean.FALSE, sutIzni = Boolean.FALSE, gebelik = Boolean.FALSE, kopya = Boolean.FALSE, genel = Boolean.FALSE;
+	private Boolean aksamVardiya = Boolean.FALSE, aksamVardiyaMaxCalismaVar = Boolean.FALSE, fcsHaric = Boolean.FALSE, icapVardiya = Boolean.FALSE, sutIzni = Boolean.FALSE, gebelik = Boolean.FALSE, kopya = Boolean.FALSE, genel = Boolean.FALSE;
 	private String tipi;
 	private VardiyaGun islemVardiyaGun;
 	private char vardiyaTipi;
@@ -1645,6 +1646,15 @@ public class Vardiya extends BaseObject {
 		this.cikisGecikmeToleransDakika = cikisGecikmeToleransDakika;
 	}
 
+	@Column(name = COLUMN_NAME_MAX_CALISMA_SURESI_VAR)
+	public Boolean getAksamVardiyaMaxCalismaVar() {
+		return aksamVardiyaMaxCalismaVar;
+	}
+
+	public void setAksamVardiyaMaxCalismaVar(Boolean aksamVardiyaMaxCalismaVar) {
+		this.aksamVardiyaMaxCalismaVar = aksamVardiyaMaxCalismaVar;
+	}
+
 	@Transient
 	public Vardiya getSonrakiVardiya() {
 		return sonrakiVardiya;
@@ -1863,6 +1873,15 @@ public class Vardiya extends BaseObject {
 
 	public void setAyinSonGunDurum(boolean ayinSonGunDurum) {
 		this.ayinSonGunDurum = ayinSonGunDurum;
+	}
+
+	@Transient
+	public Boolean isAksamVardiyaMaxCalismaDurum() {
+		boolean aksamVardiyaMaxCalismaDurum = false;
+		if (aksamVardiyaMaxCalismaVar != null && aksamVardiyaMaxCalismaVar.booleanValue()) 
+			aksamVardiyaMaxCalismaDurum = isAksamVardiyasi() && this.getBasDonem() >= this.getBitDonem();
+		 
+		return aksamVardiyaMaxCalismaDurum;
 	}
 
 	@Transient

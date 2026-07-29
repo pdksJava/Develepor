@@ -4944,6 +4944,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 
 		} catch (Exception e) {
+			logger.error(e);
 		}
 		veriMap = null;
 		return personelKGS;
