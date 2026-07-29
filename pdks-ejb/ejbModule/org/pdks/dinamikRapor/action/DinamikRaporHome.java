@@ -360,7 +360,20 @@ public class DinamikRaporHome extends EntityHome<PdksDinamikRapor> implements Se
 				Date tarih = null;
 				if (pdrp.getSecimList() != null) {
 					if (pdrp.getValue() != null) {
-						aciklama = ortakIslemler.getSelectItemText(Long.parseLong((String) pdrp.getValue()), pdrp.getSecimList());
+						try {
+							Long key = null;
+							if (pdrp.getValue() instanceof Long)
+								key = (Long) pdrp.getValue();
+							else if (pdrp.getValue() instanceof String)
+								key = Long.parseLong((String) pdrp.getValue());
+							if (key != null)
+								aciklama = ortakIslemler.getSelectItemText(key, pdrp.getSecimList());
+							else
+								aciklama = "";
+
+						} catch (Exception ex) {
+							logger.error(ex);
+						}
 					}
 				} else if (pdrp.isKarakter()) {
 					if (PdksUtil.hasStringValue(pdrp.getKarakterDeger()))
