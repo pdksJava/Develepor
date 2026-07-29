@@ -349,10 +349,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						calismaModeliAy.setSure(sure);
 					if (calismaModeliAy.getToplamIzinSure() == 0.0d)
 						calismaModeliAy.setToplamIzinSure(toplamIzinSure);
-					pdksEntityController.saveOrUpdate(session, null, calismaModeliAy);
-					flush = true;
+					if (dm.getId() != null) {
+						pdksEntityController.saveOrUpdate(session, null, calismaModeliAy);
+						flush = true;
+					}
 				}
-
 			}
 			if (flush)
 				ortakIslemler.sessionFlush(session);
@@ -2025,7 +2026,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 									}
 									organizasyonDetay.setDeger(pda.getTanimDeger());
 									if (organizasyonDetay.getId() != null || organizasyonDetay.getDeger() != null) {
-										if (organizasyonDetay.isDegisti()) {
+										if (organizasyonDetay.isDegisti() || organizasyonDetay.getId() == null) {
 											try {
 												pdksEntityController.saveOrUpdate(session, null, organizasyonDetay);
 												flush = true;
