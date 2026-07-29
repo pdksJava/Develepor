@@ -21186,7 +21186,7 @@ public class OrtakIslemler implements Serializable {
 									}
 
 									double toplamCalismaSure = normalSure + pdksVardiyaGun.getResmiTatilSure();
-									double gunMesaiMaxSure = islemVardiya.isAksamVardiyaMaxCalismaDurum() == false || mesaiMaxSure < 7.5d ? mesaiMaxSure : 7.5d;
+									double gunMesaiMaxSure = pdksVardiyaGun.getVardiya().isAksamVardiyaMaxCalismaDurum() == false || mesaiMaxSure < 7.5d ? mesaiMaxSure : 7.5d;
 									if (pdksVardiyaGun.isFcsDahil() && toplamCalismaSure > gunMesaiMaxSure && maxSureDurum) {
 										double fark = 0;
 										if (pdksVardiyaGun.getResmiTatilSure() > 0) {
