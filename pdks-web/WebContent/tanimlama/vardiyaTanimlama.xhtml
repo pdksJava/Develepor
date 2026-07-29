@@ -228,6 +228,12 @@
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.icapVardiya)}" />
 								</rich:column>
+								<rich:column rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin}">
+									<f:facet name="header">
+										<h:outputText value="Max Çalışma Ödenir" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.aksamVardiyaMaxCalismaDurum)}" />
+								</rich:column>
 								<rich:column rendered="#{vardiyaHome.suaGoster and (authenticatedUser.admin or authenticatedUser.IKAdmin)}">
 									<f:facet name="header">
 										<h:outputText value="Şua #{ortakIslemler.vardiyaAciklama()}" />
@@ -465,7 +471,10 @@
 
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Akşam #{ortakIslemler.vardiyaAciklama()} Mı?</ui:define>
-												<h:selectBooleanCheckbox value="#{vardiyaHome.seciliVardiya.aksamVardiya}" />
+												<h:selectBooleanCheckbox value="#{vardiyaHome.seciliVardiya.aksamVardiya}">
+													<a4j:support event="onclick" reRender="aksamVardiyaMaxCalismaVar" status="ajaxStatus" ajaxSingle="true"
+														action="#{ortakIslemler.emtpyAjaxFunction()}" />
+												</h:selectBooleanCheckbox>
 											</s:decorate>
 
 											<s:decorate template="/layout/edit.xhtml" id="calismaSekli">
@@ -501,6 +510,13 @@
 													requiredMessage="Arife Normal Çalışma giriniz" size="2">
 													<a4j:support event="onchange" reRender="saatler" status="ajaxStatus" ajaxSingle="true" />
 												</h:inputText>
+											</s:decorate>
+											<s:decorate template="/layout/edit.xhtml" id="aksamVardiyaMaxCalismaVar">
+												<ui:define name="label">Max Çalışma Ödenir</ui:define>
+												<h:selectBooleanCheckbox value="#{vardiyaHome.seciliVardiya.aksamVardiyaMaxCalismaVar}"
+													disabled="#{vardiyaHome.seciliVardiya.aksamVardiyasi==false}">
+
+												</h:selectBooleanCheckbox>
 											</s:decorate>
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">Genel</ui:define>
@@ -549,8 +565,8 @@
 											<h:selectOneMenu value="#{vardiyaHome.seciliVardiya.sirketId}">
 												<f:selectItem itemLabel="Lütfen seçiniz" />
 												<f:selectItems value="#{vardiyaHome.sirketIdList}" />
-												<a4j:support event="onchange" action="#{vardiyaHome.tesisDoldur(true,vardiyaHome.seciliVardiya)}"
-													reRender="modeller,sirketBilgi,saatler" status="ajaxStatus" ajaxSingle="true" />
+												<a4j:support event="onchange" action="#{vardiyaHome.tesisDoldur(true,vardiyaHome.seciliVardiya)}" reRender="modeller,sirketBilgi,saatler"
+													status="ajaxStatus" ajaxSingle="true" />
 
 											</h:selectOneMenu>
 
