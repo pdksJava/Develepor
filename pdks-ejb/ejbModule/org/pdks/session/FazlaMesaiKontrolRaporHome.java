@@ -1262,9 +1262,9 @@ public class FazlaMesaiKontrolRaporHome extends EntityHome<AylikPuantaj> impleme
 									normalSure -= saat;
 								}
 							}
-
-							if (vardiyaGun.isFcsDahil() && normalSure > mesaiMaxSure && gunMaxCalismaOdenir)
-								puantajUcretiOdenenSure += normalSure - mesaiMaxSure;
+							double gunMesaiMaxSure = vardiyaGun.getVardiya().isAksamVardiyaMaxCalismaDurum() == false || mesaiMaxSure < 7.5d ? mesaiMaxSure : 7.5d;
+							if (vardiyaGun.isFcsDahil() && normalSure > gunMesaiMaxSure && gunMaxCalismaOdenir)
+								puantajUcretiOdenenSure += normalSure - gunMesaiMaxSure;
 							puantajSaatToplami += toplamSure;
 							vardiyalar.put(vardiyaGun.getVardiyaKeyStr(), vardiyaGun);
 
