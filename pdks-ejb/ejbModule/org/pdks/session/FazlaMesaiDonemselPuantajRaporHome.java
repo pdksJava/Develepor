@@ -1657,8 +1657,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 							if (vardiyaGun.getVardiyaSaatDB() != null) {
 								VardiyaSaat vardiyaSaatDB = vardiyaGun.getVardiyaSaatDB();
 								if (fazlaMesaiOdenir) {
-									if (vardiyaGun.isFcsDahil() && vardiyaGun.getCalismaNetSuresi() > fazlaMesaiMaxSure && gunMaxCalismaOdenir)
-										ucretiOdenenMesaiSure += vardiyaGun.getCalismaNetSuresi() - fazlaMesaiMaxSure;
+									double gunMesaiMaxSure = islemVardiya.isAksamVardiyaMaxCalismaDurum() == false || fazlaMesaiMaxSure < 7.5d ? fazlaMesaiMaxSure : 7.5d;
+									if (vardiyaGun.isFcsDahil() && vardiyaGun.getCalismaNetSuresi() > gunMesaiMaxSure && gunMaxCalismaOdenir)
+										ucretiOdenenMesaiSure += vardiyaGun.getCalismaNetSuresi() - gunMesaiMaxSure;
 
 								}
 								if (vardiyaSaatDB.getUcretiOdenenFazlaMesaiSaat() > 0.0d) {

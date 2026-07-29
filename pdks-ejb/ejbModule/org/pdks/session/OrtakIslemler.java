@@ -21186,14 +21186,16 @@ public class OrtakIslemler implements Serializable {
 									}
 
 									double toplamCalismaSure = normalSure + pdksVardiyaGun.getResmiTatilSure();
-									if (pdksVardiyaGun.isFcsDahil() && toplamCalismaSure > mesaiMaxSure && maxSureDurum) {
+									double gunMesaiMaxSure = islemVardiya.isAksamVardiyaMaxCalismaDurum() == false || mesaiMaxSure < 7.5d ? mesaiMaxSure : 7.5d;
+
+									if (pdksVardiyaGun.isFcsDahil() && toplamCalismaSure > gunMesaiMaxSure && maxSureDurum) {
 										double fark = 0;
 										if (pdksVardiyaGun.getResmiTatilSure() > 0) {
 											double resmiTatilGercek = pdksVardiyaGun.getResmiTatilSure() - pdksVardiyaGun.getResmiTatilKanunenEklenenSure();
 											if (resmiTatilGercek > fazlaMesaiMaxSure)
 												fark = resmiTatilGercek - fazlaMesaiMaxSure;
 										}
-										double ucmGun = toplamCalismaSure - mesaiMaxSure - fark;
+										double ucmGun = toplamCalismaSure - gunMesaiMaxSure - fark;
 										ucretiOdenenMesaiSure += ucmGun;
 										pdksVardiyaGun.setUcretiOdenenFazlaMesaiSaat(ucmGun);
 									}

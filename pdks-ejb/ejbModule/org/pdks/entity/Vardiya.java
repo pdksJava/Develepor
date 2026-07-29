@@ -1876,7 +1876,7 @@ public class Vardiya extends BaseObject {
 	}
 
 	@Transient
-	public Boolean isAksamVardiyaMaxCalismaDurum() {
+	public boolean isAksamVardiyaMaxCalismaDurum() {
 		boolean aksamVardiyaMaxCalismaDurum = false;
 		if (aksamVardiyaMaxCalismaVar != null && aksamVardiyaMaxCalismaVar.booleanValue()) 
 			aksamVardiyaMaxCalismaDurum = isAksamVardiyasi() && this.getBasDonem() >= this.getBitDonem();
