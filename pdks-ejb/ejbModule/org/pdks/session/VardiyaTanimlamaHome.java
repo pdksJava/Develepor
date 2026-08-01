@@ -156,9 +156,8 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		denklestirmeAylar = pdksEntityController.getObjectBySQLList(sb, map, DenklestirmeAy.class);
 		List<Long> dmIdList = new ArrayList<Long>();
-		Date bugun = ortakIslemler.getBugun();
+
 		for (DenklestirmeAy dm : denklestirmeAylar) {
-			
 			dmIdList.add(dm.getId());
 		}
 		map.clear();
@@ -209,14 +208,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 						flush = true;
 
 					}
-					if (da.getDurum()) {
-						if (da.getOtomatikOnayIKTarih() != null && da.getOtomatikOnayIKTarih().after(bugun) && da.getOtomatikOnayIKBaslangicTarih() == null) {
-							logger.debug("");
-							cal.set(Calendar.YEAR, da.getYil());
-							cal.set(Calendar.MONTH, da.getAy() - 1);
-							cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
-						}
-					}
+
 					TreeMap<Long, CalismaModeliAy> modelDenkMap = new TreeMap<Long, CalismaModeliAy>();
 					da.setModelMap(modelDenkMap);
 					da.setModeller(new ArrayList<CalismaModeliAy>());
@@ -790,7 +782,9 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 				denklestirmeTipiVar = ortakIslemler.getParameterKeyHasStringValue("denklestirmeTipi");
 
 			}
-
+			Date bugun = ortakIslemler.getBugun();
+			Calendar cal = Calendar.getInstance();
+			boolean flush = false;
 			for (DenklestirmeAy dm : denklestirmeAylar) {
 				if (dt != null && denklestirmeTipiVar == false)
 					denklestirmeTipiVar = dm.getTipi() != null && dt.equals(dm.getTipi()) == false;
@@ -801,7 +795,39 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 					denklestirmeDevredilenAylar = dm.getDenklestirmeDevret() != null && dm.getDenklestirmeDevret();
 				if (!bakiyeSifirlaDurum)
 					bakiyeSifirlaDurum = dm.getBakiyeSifirlaDurum() != null && dm.getBakiyeSifirlaDurum();
+				if (dm.getDurum()) {
+					if (dm.getOtomatikOnayIKTarih() != null && dm.getOtomatikOnayIKTarih().after(bugun) && dm.getOtomatikOnayIKBaslangicTarih() == null) {
+						logger.debug("");
+						cal.set(Calendar.YEAR, dm.getYil());
+						cal.set(Calendar.MONTH, dm.getAy() - 1);
+						cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+						int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+						int fark = 0;
+						switch (dayOfWeek) {
+						case Calendar.MONDAY:
+							fark = 6;
+							break;
+						case Calendar.SUNDAY:
+							fark = 6;
+							break;
+
+						default:
+							fark = dayOfWeek - 2;
+							break;
+						}
+						if (fark != 0)
+							cal.add(Calendar.DATE, -fark);
+
+						Date otomatikOnayIKBaslangicTarih = PdksUtil.getDate(cal.getTime());
+						logger.debug(dm.getAyAdi() + " " + dayOfWeek + " " + fark + " " + PdksUtil.convertToDateString(otomatikOnayIKBaslangicTarih, "yyyMMdd"));
+						dm.setOtomatikOnayIKBaslangicTarih(otomatikOnayIKBaslangicTarih);
+						pdksEntityController.saveOrUpdate(session, entityManager, dm);
+						flush = true;
+					}
+				}
 			}
+			if (flush)
+				ortakIslemler.sessionFlush(session);
 			if (denklestirmeTipiVar && taseronVar == false) {
 				HashMap parametreMap = new HashMap();
 				StringBuilder sb = new StringBuilder();
