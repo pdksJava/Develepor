@@ -1262,7 +1262,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 										sure -= saat;
 									}
 								}
-								double gunMesaiMaxSure = vardiyaGun.getVardiya() == null || vardiyaGun.getVardiya().isAksamVardiyaMaxCalismaDurum() == false || mesaiMaxSure < 7.5d ? mesaiMaxSure : 7.5d;
+								double gunMesaiMaxSure = vardiyaGun.isAksamVardiyaMaxCalismaVar() == false || fazlaMesaiMaxSure < 7.5d ? fazlaMesaiMaxSure : 7.5d;
 								ucretiOdenenMesaiSure += vardiyaGun.isFcsDahil() && sure != null && sure.doubleValue() > gunMesaiMaxSure + vardiyaGun.getResmiTatilSure() ? sure.doubleValue() - gunMesaiMaxSure - vardiyaGun.getResmiTatilSure() : 0.0d;
 								if (vardiyaGun.getHaftaCalismaSuresi() > 0) {
 									if (!haftaTatilVar)

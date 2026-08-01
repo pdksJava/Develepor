@@ -2023,6 +2023,14 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	@Transient
+	public boolean isAksamVardiyaMaxCalismaVar() {
+		boolean aksamVardiyaMaxCalismaVar = false;
+		if (vardiya != null)
+			aksamVardiyaMaxCalismaVar = vardiya.isAksamVardiyaMaxCalismaDurum();
+		return aksamVardiyaMaxCalismaVar;
+	}
+
+	@Transient
 	public double getCalisilmayanAksamSure() {
 		return calisilmayanAksamSure;
 	}
