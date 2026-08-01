@@ -1617,7 +1617,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							double saat = vardiyaGun.getUcretiOdenenFazlaMesaiSaat();
 							if (saat > 0.0d)
 								puantajUcretiOdenenSure += saat;
-							double gunMesaiMaxSure = vardiyaGun.getVardiya().isAksamVardiyaMaxCalismaDurum() == false || maxCalismaSure < 7.5d ? maxCalismaSure : 7.5d;
+							double gunMesaiMaxSure = vardiyaGun.getVardiya() == null || vardiyaGun.getVardiya().isAksamVardiyaMaxCalismaDurum() == false || maxCalismaSure < 7.5d ? maxCalismaSure : 7.5d;
 							if (vardiyaGun.isFcsDahil() && toplamSure - vardiyaGun.getResmiTatilSure() > gunMesaiMaxSure)
 								puantajUcretiOdenenSure += toplamSure - gunMesaiMaxSure - vardiyaGun.getResmiTatilSure();
 							puantajSaatToplami += toplamSure;
