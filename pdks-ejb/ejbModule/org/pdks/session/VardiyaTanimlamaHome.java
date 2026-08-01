@@ -158,11 +158,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		List<Long> dmIdList = new ArrayList<Long>();
 		Date bugun = ortakIslemler.getBugun();
 		for (DenklestirmeAy dm : denklestirmeAylar) {
-			if (dm.getDurum()) {
-				if (dm.getOtomatikOnayIKTarih() != null && dm.getOtomatikOnayIKTarih().after(bugun) && dm.getOtomatikOnayIKBaslangicTarih() == null) {
-					logger.debug("");
-				}
-			}
+			
 			dmIdList.add(dm.getId());
 		}
 		map.clear();
@@ -212,6 +208,14 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 						pdksEntityController.saveOrUpdate(xSession, entityManager, da);
 						flush = true;
 
+					}
+					if (da.getDurum()) {
+						if (da.getOtomatikOnayIKTarih() != null && da.getOtomatikOnayIKTarih().after(bugun) && da.getOtomatikOnayIKBaslangicTarih() == null) {
+							logger.debug("");
+							cal.set(Calendar.YEAR, da.getYil());
+							cal.set(Calendar.MONTH, da.getAy() - 1);
+							cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+						}
 					}
 					TreeMap<Long, CalismaModeliAy> modelDenkMap = new TreeMap<Long, CalismaModeliAy>();
 					da.setModelMap(modelDenkMap);
