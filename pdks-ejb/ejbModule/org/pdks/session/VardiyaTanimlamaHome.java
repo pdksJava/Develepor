@@ -156,7 +156,13 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		denklestirmeAylar = pdksEntityController.getObjectBySQLList(sb, map, DenklestirmeAy.class);
 		List<Long> dmIdList = new ArrayList<Long>();
+		Date bugun = ortakIslemler.getBugun();
 		for (DenklestirmeAy dm : denklestirmeAylar) {
+			if (dm.getDurum()) {
+				if (dm.getOtomatikOnayIKTarih() != null && dm.getOtomatikOnayIKTarih().after(bugun) && dm.getOtomatikOnayIKBaslangicTarih() == null) {
+					logger.debug("");
+				}
+			}
 			dmIdList.add(dm.getId());
 		}
 		map.clear();
@@ -249,7 +255,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		denklestirmeTipiVar = false;
 		taseronVar = false;
 		if (authenticatedUser.isAdmin()) {
