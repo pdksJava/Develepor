@@ -156,7 +156,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	private Boolean normalGunKod = Boolean.FALSE, haftaTatilGunKod = Boolean.FALSE, resmiTatilGunKod = Boolean.FALSE, artikGunKod = Boolean.FALSE, bordroToplamGunKod = Boolean.FALSE, devredenMesaiKod = Boolean.FALSE, ucretiOdenenKod = Boolean.FALSE;
 
 	private Boolean suaDurum = Boolean.FALSE, sutIzniDurum = Boolean.FALSE, gebeDurum = Boolean.FALSE, partTime = Boolean.FALSE, pdfBirlestirDurum = Boolean.FALSE, pdfTopluAktarDurum = Boolean.FALSE;
-	private Boolean resmiTatilKanunenEklenenSureGoster = Boolean.FALSE, eksiBakiyeGoster = Boolean.FALSE, izinGoster = Boolean.FALSE;
+	private Boolean brutUcretGoster = Boolean.FALSE, resmiTatilKanunenEklenenSureGoster = Boolean.FALSE, eksiBakiyeGoster = Boolean.FALSE, izinGoster = Boolean.FALSE;
 	private Long vardiyaAdet;
 	private List<VardiyaGun> tumVardiyaList;
 	private Parameter aylikVardiyaTabloHareketExcelParameter, aylikVardiyaTabloHareketPDFParameter;
@@ -4656,5 +4656,13 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	public void setPdfBirlestirDurum(Boolean pdfBirlestirDurum) {
 		this.pdfBirlestirDurum = pdfBirlestirDurum;
+	}
+
+	public Boolean getBrutUcretGoster() {
+		return brutUcretGoster;
+	}
+
+	public void setBrutUcretGoster(Boolean brutUcretGoster) {
+		this.brutUcretGoster = brutUcretGoster;
 	}
 }

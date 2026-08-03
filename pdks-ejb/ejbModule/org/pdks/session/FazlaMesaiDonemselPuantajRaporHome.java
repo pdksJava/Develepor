@@ -113,7 +113,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	private Boolean normalCalismaGunKod = Boolean.FALSE, haftaTatilCalismaGunKod = Boolean.FALSE, resmiTatilCalismaGunKod = Boolean.FALSE, izinSureGunKod = Boolean.FALSE, ucretliIzinGunKod = Boolean.FALSE, ucretsizIzinGunKod = Boolean.FALSE, hastalikIzinGunKod = Boolean.FALSE;
 	private Boolean normalGunKod = Boolean.FALSE, haftaTatilGunKod = Boolean.FALSE, resmiTatilGunKod = Boolean.FALSE, artikGunKod = Boolean.FALSE, bordroToplamGunKod = Boolean.FALSE, devredenMesaiKod = Boolean.FALSE, ucretiOdenenKod = Boolean.FALSE;
 	private Boolean suaDurum = Boolean.FALSE, sutIzniDurum = Boolean.FALSE, gebeDurum = Boolean.FALSE, partTime = Boolean.FALSE, vardiyaAdiEkle = false;
-	private Boolean eskiKayitGoster = Boolean.FALSE, eskiKayitGetir = Boolean.FALSE, eskiKayitDurum = Boolean.FALSE;
+	private Boolean eskiKayitGoster = Boolean.FALSE, brutUcretGoster = Boolean.FALSE, eskiKayitGetir = Boolean.FALSE, eskiKayitDurum = Boolean.FALSE;
 	private List<Tanim> denklestirmeDinamikAlanlar;
 	private HashMap<String, List<Tanim>> ekSahaListMap;
 	private TreeMap<String, Boolean> baslikMap;
@@ -2572,6 +2572,14 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 
 	public void setEskiKayitGoster(Boolean eskiKayitGoster) {
 		this.eskiKayitGoster = eskiKayitGoster;
+	}
+
+	public Boolean getBrutUcretGoster() {
+		return brutUcretGoster;
+	}
+
+	public void setBrutUcretGoster(Boolean brutUcretGoster) {
+		this.brutUcretGoster = brutUcretGoster;
 	}
 
 }

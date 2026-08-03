@@ -126,6 +126,42 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	FacesMessages facesMessages;
 
 	/**
+	 * @param apList
+	 * @return
+	 */
+	public boolean brutUcretGoster(List<AylikPuantaj> apList) {
+		boolean brutUcretGoster = false;
+		if (apList != null) {
+			for (AylikPuantaj ap : apList) {
+				Double aylikBrutUcret = ap != null && ap.getPersonelDenklestirme() != null ? ap.getPersonelDenklestirme().getAylikBrutUcret() : null;
+				if (aylikBrutUcret != null && aylikBrutUcret.doubleValue() > 0.0d) {
+					if (ap.getVardiyalar() != null) {
+						int adet = 0;
+						Double gunlukBrutUcret = aylikBrutUcret / 225.0d;
+						for (VardiyaGun vg : ap.getVardiyalar()) {
+							if (vg.getVardiya() != null && vg.getVardiya().getId() != null) {
+								PersonelIzin izin = vg.getIzin();
+								if (izin != null) {
+									if (izin.getIzinTipi().getUcretli() == null || izin.getIzinTipi().getUcretli().booleanValue() == false)
+										continue;
+								}
+								++adet;
+							}
+
+						}
+						if (adet > 0) {
+							brutUcretGoster = true;
+							ap.setAylikBrutUcret(adet * gunlukBrutUcret);
+						}
+					}
+				}
+			}
+		}
+		return brutUcretGoster;
+
+	}
+
+	/**
 	 * @param object
 	 * @param oncekiTesisId
 	 * @param tesisIdList
