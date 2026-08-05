@@ -3119,7 +3119,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 		}
 		kayitIzinList = null;
 		boolean hataVar = false;
-		if (hataListesi.isEmpty() == false || (hataList != null && hataList.isEmpty() == false) || (hataIKMap != null && hataIKMap.isEmpty() == false)) {
+		boolean hataIKVar = hataIKMap != null && hataIKMap.isEmpty() == false;
+		if (hataIKVar == false)
+			hataIKVar = mailMap.containsKey("ccEntegrasyonAdres") || mailMap.containsKey("bccEntegrasyonAdres");
+
+		if (hataListesi.isEmpty() == false || (hataList != null && hataList.isEmpty() == false) || hataIKVar) {
 			hataVar = isTatil() == false;
 
 		}
@@ -3187,10 +3191,18 @@ public class PdksVeriOrtakAktar implements Serializable {
 					mailMap.remove(KEY_IK_MAIL_IPTAL);
 
 			}
-			if (devam && (userIKList != null && userIKList.isEmpty() == false && !mailMap.containsKey(KEY_IK_MAIL_IPTAL))) {
-				mailStatu = izinHataliMailGonder(userIKList, hataList, personelMap, izinCok);
-				if (mailStatu != null && mailStatu.isDurum())
-					logger.info("saveIzinler hata gonderildi. " + PdksUtil.getCurrentTimeStampStr());
+			if (devam) {
+				if ((userIKList != null && userIKList.isEmpty() == false && !mailMap.containsKey(KEY_IK_MAIL_IPTAL))) {
+					mailStatu = izinHataliMailGonder(userIKList, hataList, personelMap, izinCok);
+					if (mailStatu != null && mailStatu.isDurum())
+						logger.info("saveIzinler hata gonderildi. " + PdksUtil.getCurrentTimeStampStr());
+				} else {
+					userIKList = new ArrayList<User>();
+					mailStatu = izinHataliMailGonder(userIKList, hataList, personelMap, izinCok);
+					if (mailStatu != null && mailStatu.isDurum())
+						logger.info("saveIzinler hata gonderildi. " + PdksUtil.getCurrentTimeStampStr());
+
+				}
 			}
 		}
 		if (!izinMap.isEmpty()) {
@@ -5715,7 +5727,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 		}
 		boolean hataVar = false;
-		if (hataListesi.isEmpty() == false || (hataList != null && hataList.isEmpty() == false) || (hataIKMap != null && hataIKMap.isEmpty() == false)) {
+		boolean hataIKVar = hataIKMap != null && hataIKMap.isEmpty() == false;
+		if (hataIKVar == false)
+			hataIKVar = mailMap.containsKey("ccEntegrasyonAdres") || mailMap.containsKey("bccEntegrasyonAdres");
+
+		if (hataListesi.isEmpty() == false || (hataList != null && hataList.isEmpty() == false) || (hataIKVar)) {
 			hataVar = isTatil() == false;
 
 		}
@@ -5724,6 +5740,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			MailStatu statu = null;
 			boolean devam = true;
 			if (hataIKMap != null) {
+
 				adminIKHatalari();
 				int hataIKMapSize = hataIKMap.size();
 				List<Long> userIdList = new ArrayList<Long>();
@@ -5770,12 +5787,19 @@ public class PdksVeriOrtakAktar implements Serializable {
 				if (mailMap.containsKey(KEY_IK_MAIL_IPTAL))
 					mailMap.remove(KEY_IK_MAIL_IPTAL);
 			}
+			if (devam) {
 
-			if (devam && (userIKList != null && userIKList.isEmpty() == false && !mailMap.containsKey(KEY_IK_MAIL_IPTAL))) {
+				if ((userIKList != null && userIKList.isEmpty() == false && !mailMap.containsKey(KEY_IK_MAIL_IPTAL))) {
 
-				statu = personelHataMailGonder(userIKList, personelList, orjPersonelERPMap, hataList, sirketMap, mailBosGonder);
-				if (statu != null && statu.isDurum())
-					logger.info("savePersoneller hata gonderildi. " + PdksUtil.getCurrentTimeStampStr());
+					statu = personelHataMailGonder(userIKList, personelList, orjPersonelERPMap, hataList, sirketMap, mailBosGonder);
+					if (statu != null && statu.isDurum())
+						logger.info("savePersoneller hata gonderildi. " + PdksUtil.getCurrentTimeStampStr());
+				} else {
+					userIKList = new ArrayList<User>();
+					statu = personelHataMailGonder(userIKList, personelList, orjPersonelERPMap, hataList, sirketMap, mailBosGonder);
+					if (statu != null && statu.isDurum())
+						logger.info("savePersoneller hata gonderildi. " + PdksUtil.getCurrentTimeStampStr());
+				}
 			}
 		}
 		if (mailBosGonder && mailStatu == null && (getTestSunucuDurum() || erpVeriOku == false))
