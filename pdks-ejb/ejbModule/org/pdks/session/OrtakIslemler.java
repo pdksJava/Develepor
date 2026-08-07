@@ -13539,8 +13539,8 @@ public class OrtakIslemler implements Serializable {
 	 * @param user
 	 */
 	public void pasifUserEpostaVeKullaniciDegistir(User user) {
-		Long id = user.getPdksPersonel() != null && user.getDurum().booleanValue() == false ? user.getPdksPersonel().getId() : null;
-		if (id != null) {
+		Long id = user != null && user.getPdksPersonel() != null && user.getDurum().booleanValue() == false ? user.getPdksPersonel().getId() : null;
+		if (id != null && PdksUtil.isSistemDestekVar()) {
 			if (user.getUsername() != null && user.getUsername().indexOf("@") > 0)
 				user.setUsername(PdksUtil.replaceAll(user.getUsername(), "@", id + "@"));
 			if (user.getEmail() != null && user.getEmail().indexOf("@") > 0)
@@ -13567,7 +13567,7 @@ public class OrtakIslemler implements Serializable {
 		if (ldapUser != null) {
 			ldapUser.setDurum(Boolean.FALSE);
 			pasifUserEpostaVeKullaniciDegistir(ldapUser);
- 			ldapUser.setPdksPersonel(personelView.getPdksPersonel());
+			ldapUser.setPdksPersonel(personelView.getPdksPersonel());
 			ldapUser.setDepartman(pdksSapPersonel.getSirket().getDepartman());
 			try {
 				pdksEntityController.saveOrUpdate(session, null, ldapUser);
