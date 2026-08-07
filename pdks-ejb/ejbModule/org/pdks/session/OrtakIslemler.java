@@ -6653,6 +6653,7 @@ public class OrtakIslemler implements Serializable {
 									if (personel.getId() != null) {
 										ldapUser.setDurum(Boolean.FALSE);
 										ldapUser.setPdksPersonel(personel);
+										pasifUserEpostaVeKullaniciDegistir(ldapUser);
 										ldapUser.setDepartman(personel.getSirket().getDepartman());
 										pdksEntityController.saveOrUpdate(session, null, ldapUser);
 										sessionFlush(session);
@@ -13535,6 +13536,20 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param user
+	 */
+	public void pasifUserEpostaVeKullaniciDegistir(User user) {
+		Long id = user.getPdksPersonel() != null && user.getDurum().booleanValue() == false ? user.getPdksPersonel().getId() : null;
+		if (id != null) {
+			if (user.getUsername() != null && user.getUsername().indexOf("@") > 0)
+				user.setUsername(PdksUtil.replaceAll(user.getUsername(), "@", id + "@"));
+			if (user.getEmail() != null && user.getEmail().indexOf("@") > 0)
+				user.setEmail(PdksUtil.replaceAll(user.getEmail(), "@", id + "@"));
+
+		}
+	}
+
+	/**
 	 * @param pdksSapPersonel
 	 * @param personelView
 	 * @param personel
@@ -13551,7 +13566,8 @@ public class OrtakIslemler implements Serializable {
 		}
 		if (ldapUser != null) {
 			ldapUser.setDurum(Boolean.FALSE);
-			ldapUser.setPdksPersonel(personelView.getPdksPersonel());
+			pasifUserEpostaVeKullaniciDegistir(ldapUser);
+ 			ldapUser.setPdksPersonel(personelView.getPdksPersonel());
 			ldapUser.setDepartman(pdksSapPersonel.getSirket().getDepartman());
 			try {
 				pdksEntityController.saveOrUpdate(session, null, ldapUser);

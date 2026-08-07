@@ -898,7 +898,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				pdksPersonel.setGuncellemeTarihi(new Date());
 				pdksPersonel.setGuncelleyenUser(authenticatedUser);
 				pdksEntityController.saveOrUpdate(session, entityManager, pdksPersonel);
-			}
+			} else
+				ortakIslemler.pasifUserEpostaVeKullaniciDegistir(eskiKullanici);
 			ortakIslemler.sessionFlush(session);
 			fillPersonelKGSList();
 		}
