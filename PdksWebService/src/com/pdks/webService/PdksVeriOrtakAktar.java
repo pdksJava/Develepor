@@ -1490,9 +1490,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 	protected void mailAdresKontrol(MailObject mailObject, StringBuffer pasifPersonelSB) throws Exception {
 		if (PdksUtil.isSistemDestekVar()) {
 			MailManager.addMailAdresCC(mailObject, "ccAdres", mailMap);
-			MailManager.addMailAdresCC(mailObject, "ccEntegrasyonAdres", mailMap);
 			MailManager.addMailAdresBCC(mailObject, "bccAdres", mailMap);
-			MailManager.addMailAdresBCC(mailObject, "bccEntegrasyonAdres", mailMap);
+			if (PdksUtil.isSistemDestekVar()) {
+				MailManager.addMailAdresCC(mailObject, "ccEntegrasyonAdres", mailMap);
+				MailManager.addMailAdresBCC(mailObject, "bccEntegrasyonAdres", mailMap);
+			}
 		}
 		HashMap<String, MailPersonel> mailDataMap = new HashMap<String, MailPersonel>();
 		mailListKontrol(mailObject.getToList(), mailDataMap);
@@ -1840,8 +1842,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 								Tanim tesis = veriUserMap.containsKey("tesis") ? (Tanim) veriUserMap.get("tesis") : null;
 								sirket = veriUserMap.containsKey("sirket") ? (Sirket) veriUserMap.get("sirket") : null;
 								MailObject mailObject = new MailObject();
-								mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
-								mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
+								if (PdksUtil.isSistemDestekVar()) {
+									mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
+									mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
+								}
 								boolean testDurum = getTestDurum();
 								for (User user : userList) {
 									MailPersonel mailPersonel = new MailPersonel();
@@ -2233,8 +2237,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 				LinkedHashMap<String, Object> fileMap = new LinkedHashMap<String, Object>();
 				fileMap.put("saveIzinHakedisler.xml", PdksUtil.getJsonToXML(jsonStr, "saveIzinHakedisler", "izinHakedis"));
 				mailMap.put("fileMap", fileMap);
-				mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
-				mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
+				if (PdksUtil.isSistemDestekVar()) {
+					mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
+					mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
+				}
 				kullaniciIKYukle(null, mailMap, pdksDAO);
 				MailManager.ePostaGonder(mailMap);
 
@@ -3108,8 +3114,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 					mailMap.put("mailIcerik", sb.toString());
 					if (testDurum)
 						mailMap.put(KEY_IK_MAIL_IPTAL, testDurum);
-					mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
-					mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
+					if (PdksUtil.isSistemDestekVar()) {
+						mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
+						mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
+					}
+
 					kullaniciIKYukle(null, mailMap, pdksDAO);
 					mailStatu = MailManager.ePostaGonder(mailMap);
 				}
@@ -3120,7 +3129,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		kayitIzinList = null;
 		boolean hataVar = false;
 		boolean hataIKVar = hataIKMap != null && hataIKMap.isEmpty() == false;
-		if (hataIKVar == false)
+		if (hataIKVar == false && PdksUtil.isSistemDestekVar())
 			hataIKVar = mailMap.containsKey("ccEntegrasyonAdres") || mailMap.containsKey("bccEntegrasyonAdres");
 
 		if (hataListesi.isEmpty() == false || (hataList != null && hataList.isEmpty() == false) || hataIKVar) {
@@ -3269,8 +3278,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 									sb.append("<p></p>");
 									sb.append("<p>Saygılarımla</p>");
 									mailMap.put("mailIcerik", sb.toString());
-									mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
-									mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
+									if (PdksUtil.isSistemDestekVar()) {
+										mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
+										mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
+									}
 									kullaniciIKYukle(null, mailMap, pdksDAO);
 									mailStatu = MailManager.ePostaGonder(mailMap);
 									mailBosGonder = false;
@@ -5728,7 +5739,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		}
 		boolean hataVar = false;
 		boolean hataIKVar = hataIKMap != null && hataIKMap.isEmpty() == false;
-		if (hataIKVar == false)
+		if (hataIKVar == false && PdksUtil.isSistemDestekVar())
 			hataIKVar = mailMap.containsKey("ccEntegrasyonAdres") || mailMap.containsKey("bccEntegrasyonAdres");
 
 		if (hataListesi.isEmpty() == false || (hataList != null && hataList.isEmpty() == false) || (hataIKVar)) {
@@ -5953,8 +5964,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 						fileMap.put("saveIzinler.xml", str);
 						mailMap.put("fileMap", fileMap);
 					}
-					mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
-					mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
+					if (PdksUtil.isSistemDestekVar()) {
+						mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
+						mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
+					}
 					MailObject mailObject = kullaniciIKYukle(userList, mailMap, pdksDAO);
 					if (mailObject != null && !mailObject.getToList().isEmpty())
 						mailStatu = MailManager.ePostaGonder(mailMap);
@@ -6121,8 +6134,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 				String xml = getJsonToXML(jsonStr, "personel", PERSONEL_PROP_ORDER, "savePersoneller");
 				fileMap.put("savePersoneller.xml", xml);
 				mailMap.put("fileMap", fileMap);
-				mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
-				mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
+				if (PdksUtil.isSistemDestekVar()) {
+					mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
+					mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
+				}
 				kullaniciIKYukle(userList, mailMap, pdksDAO);
 				mailStatu = MailManager.ePostaGonder(mailMap);
 				mailBosGonder = false;
