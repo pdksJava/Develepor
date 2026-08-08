@@ -131,27 +131,32 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	 */
 	public boolean brutUcretGoster(List<AylikPuantaj> apList) {
 		boolean brutUcretGoster = false;
-		if (apList != null) {
+		boolean userDurum = authenticatedUser != null && (authenticatedUser.isAdmin() || authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi());
+		if (apList != null && userDurum) {
 			for (AylikPuantaj ap : apList) {
 				Double aylikBrutUcret = ap != null && ap.getPersonelDenklestirme() != null ? ap.getPersonelDenklestirme().getAylikBrutUcret() : null;
 				if (aylikBrutUcret != null && aylikBrutUcret.doubleValue() > 0.0d) {
 					if (ap.getVardiyalar() != null) {
-						int adet = 0;
+						double toplamSaat = ap.getSaatToplami();
 						Double gunlukBrutUcret = aylikBrutUcret / 225.0d;
 						for (VardiyaGun vg : ap.getVardiyalar()) {
-							if (vg.getVardiya() != null && vg.getVardiya().getId() != null) {
-								PersonelIzin izin = vg.getIzin();
-								if (izin != null) {
-									if (izin.getIzinTipi().getUcretli() == null || izin.getIzinTipi().getUcretli().booleanValue() == false)
-										continue;
+							if (vg.isAyinGunu()) {
+								if (vg.getVardiya() != null && vg.getVardiya().getId() != null) {
+									PersonelIzin izin = vg.getIzin();
+									if (izin != null) {
+										if (izin.getIzinTipi() == null || izin.getIzinTipi().getUcretli() == null || izin.getIzinTipi().getUcretli().booleanValue() == false)
+											continue;
+										toplamSaat += 7.5d;
+									} else if (vg.getVardiya().isIzin() || vg.getVardiya().isHaftaTatil())
+										toplamSaat += 7.5d;
+
 								}
-								++adet;
 							}
 
 						}
-						if (adet > 0) {
+						if (toplamSaat > 0) {
 							brutUcretGoster = true;
-							ap.setAylikBrutUcret(adet * gunlukBrutUcret);
+							ap.setAylikBrutUcret(toplamSaat * gunlukBrutUcret);
 						}
 					}
 				}
