@@ -1614,6 +1614,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			List<Tanim> personelDinamikAlanlar = null;
 			TreeMap<String, PersonelDinamikAlan> personelDinamikAlanMap = null;
 			TreeMap<String, PersonelDenklestirmeOrganizasyonDetay> orgDetayMap = null;
+			List<String> detayKeyList = new ArrayList<String>();
 			String denklestirmeOrgDonemKoduStr = ortakIslemler.getParameterKey("denklestirmeOrgDonemKodu");
 			if (PdksUtil.hasStringValue(denklestirmeOrgDonemKoduStr) && denklestirmeAyDurum) {
 				cal = Calendar.getInstance();
@@ -2059,35 +2060,41 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 									PersonelDinamikAlan pda = personelDinamikAlanMap.get(key);
 									PersonelDenklestirmeOrganizasyonDetay organizasyonDetay = null;
 									key = PersonelDenklestirmeOrganizasyonDetay.getKey(denklestirmeOrganizasyon, alan);
-									if (orgDetayMap.containsKey(key)) {
-										organizasyonDetay = orgDetayMap.get(key);
-										organizasyonDetay.setDegisti(false);
-										orgDetayMap.remove(key);
-									} else {
-										organizasyonDetay = new PersonelDenklestirmeOrganizasyonDetay(denklestirmeOrganizasyon, alan);
-										organizasyonDetay.setDegisti(pda.getTanimDeger() != null);
-									}
-									organizasyonDetay.setDeger(pda.getTanimDeger());
-									if (organizasyonDetay.getId() != null || organizasyonDetay.getDeger() != null) {
-										if (organizasyonDetay.isDegisti() || organizasyonDetay.getId() == null) {
-											try {
-												pdksEntityController.saveOrUpdate(session, null, organizasyonDetay);
-												flush = true;
-											} catch (Exception e) {
-											}
-
+									if (!detayKeyList.contains(key)) {
+										detayKeyList.add(key);
+										if (orgDetayMap.containsKey(key)) {
+											organizasyonDetay = orgDetayMap.get(key);
+											organizasyonDetay.setDegisti(false);
+											orgDetayMap.remove(key);
+										} else {
+											organizasyonDetay = new PersonelDenklestirmeOrganizasyonDetay(denklestirmeOrganizasyon, alan);
+											organizasyonDetay.setDegisti(pda.getTanimDeger() != null);
 										}
-									}
+										organizasyonDetay.setDeger(pda.getTanimDeger());
+										if (organizasyonDetay.getId() != null || organizasyonDetay.getDeger() != null) {
+											if (organizasyonDetay.isDegisti() || organizasyonDetay.getId() == null) {
+												try {
+													pdksEntityController.saveOrUpdate(session, null, organizasyonDetay);
+													flush = true;
+												} catch (Exception e) {
+												}
+
+											}
+										}
+									} else
+										logger.info(key);
 								}
 							}
 						}
 					}
 				}
 				detayMap = null;
-
 				if (flush) {
-					logger.debug("flush : " + personel.getPdksSicilNo() + " " + personel.getAdSoyad());
-					ortakIslemler.sessionFlush(session);
+					try {
+						session.flush();
+					} catch (Exception e) {
+						logger.error("flush : " + personelDenklestirme.getId() + " " + personel.getPdksSicilNo() + " " + personel.getAdSoyad() + "\n" + e);
+					}
 				}
 
 				if (saatlikCalismaVar) {
