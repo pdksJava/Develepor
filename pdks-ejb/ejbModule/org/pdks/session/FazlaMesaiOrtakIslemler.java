@@ -132,6 +132,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	public boolean brutUcretGoster(List<AylikPuantaj> apList) {
 		boolean brutUcretGoster = false;
 		boolean userDurum = authenticatedUser != null && (authenticatedUser.isAdmin() || authenticatedUser.isIK() || authenticatedUser.isSistemYoneticisi());
+		if (userDurum)
+			userDurum = ortakIslemler.getParameterKey("brutUcretGoster").equals("1");
 		if (apList != null && userDurum) {
 			for (AylikPuantaj ap : apList) {
 				Double aylikBrutUcret = ap != null && ap.getPersonelDenklestirme() != null ? ap.getPersonelDenklestirme().getAylikBrutUcret() : null;
