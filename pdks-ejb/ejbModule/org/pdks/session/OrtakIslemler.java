@@ -2587,7 +2587,8 @@ public class OrtakIslemler implements Serializable {
 					fields.put("s", maxGunCalismaSaat);
 					fields.put("basTarih", PdksUtil.getDate(basTarih));
 					fields.put("bitTarih", PdksUtil.getDate(bitTarih));
-					fazlaCalismalar = getVardiyaGunList(fields, sb, session);
+					// fazlaCalismalar = getVardiyaGunList(fields, sb, session);
+					fazlaCalismalar = pdksEntityController.getObjectBySQLList(sb, fields, VardiyaGun.class);
 				}
 				if (!fazlaCalismalar.isEmpty()) {
 					TreeMap<String, Liste> listeMap = new TreeMap<String, Liste>();
@@ -16006,7 +16007,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	private List<VardiyaGun> getVardiyaGunList(HashMap map, StringBuilder sb, Session session) {
+	public List<VardiyaGun> getVardiyaGunList(HashMap map, StringBuilder sb, Session session) {
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<BigDecimal> idList = pdksEntityController.getObjectBySQLList(sb, map, null);
@@ -16219,7 +16220,7 @@ public class OrtakIslemler implements Serializable {
 		map.clear();
 		HashMap<Long, List<PersonelIzin>> izinMap = getPersonelIzinMap(personelIdler, basTarih, bitTarih, session);
 		StringBuilder sb = new StringBuilder();
-//		sb.append("select V." + VardiyaGun.COLUMN_NAME_ID + " from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
+		// sb.append("select V." + VardiyaGun.COLUMN_NAME_ID + " from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append("select V.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 		if (hepsi == null || hepsi.booleanValue() == false) {
@@ -16233,19 +16234,17 @@ public class OrtakIslemler implements Serializable {
 		map.put("b2", PdksUtil.getDate(bitTarih));
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
- 		List<VardiyaGun> vardiyaGunList = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, map, VardiyaGun.class, session);
-
-//		List<BigDecimal> idList = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, map, null, session);
-//		List<VardiyaGun> vardiyaGunList = null;
-//		if (idList != null && !idList.isEmpty()) {
-//			List<Long> vIdList = getLongByBigDecimalList(idList);
-//			vardiyaGunList = pdksEntityController.getSQLParamByFieldList(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, vIdList, VardiyaGun.class, session);
-//			vIdList = null;
-//		} else
-//			vardiyaGunList = new ArrayList<VardiyaGun>();
-//		idList = null;	
+		List<VardiyaGun> vardiyaGunList = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, map, VardiyaGun.class, session);
+ 		// List<BigDecimal> idList = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, map, null, session);
+		// List<VardiyaGun> vardiyaGunList = null;
+		// if (idList != null && !idList.isEmpty()) {
+		// List<Long> vIdList = getLongByBigDecimalList(idList);
+		// vardiyaGunList = pdksEntityController.getSQLParamByFieldList(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, vIdList, VardiyaGun.class, session);
+		// vIdList = null;
+		// } else
+		// vardiyaGunList = new ArrayList<VardiyaGun>();
+		// idList = null;
 		map = null;
-
 
 		if (!vardiyaGunList.isEmpty()) {
 			if (tatilMap == null)
