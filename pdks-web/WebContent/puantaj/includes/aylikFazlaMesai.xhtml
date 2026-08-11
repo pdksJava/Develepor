@@ -326,6 +326,10 @@
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.istifaGoster and fazlaMesaiHesaplaHome.ikRole }">
 								<th style="width: 60px"><h:outputText value="Durum" /></th>
 							</ui:fragment>
+
+						</ui:fragment>
+						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.brutUcretGoster}">
+							<th style="width: 60px"><h:outputText value="Brüt Ücret" /></th>
 						</ui:fragment>
 					</tr>
 				</thead>
@@ -722,13 +726,13 @@
 										</ui:fragment> <ui:fragment rendered="#{aylikPuantaj.eksiBakiyeSuresi ne 0 and aylikPuantaj.personelDenklestirme.durum}">
 											<DIV id="eksiBakiyeSuresi#{aylikPuantaj.personelDenklestirme.id}">
 												<span style="color: red; font-size: 13px;"><b><u>#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.eksiBakiyeSuresi)}</u></b></span>
-												 
-											</DIV>		 
+
+											</DIV>
 											<rich:toolTip for="eksiBakiyeSuresi#{aylikPuantaj.personelDenklestirme.id}">
-														<span style="color: blue; font-size: 13px;"><b>Denkleştirilmeyen Eksi Bakiye(Saat) </b></span>
- 											</rich:toolTip>
-												 
-											
+												<span style="color: blue; font-size: 13px;"><b>Denkleştirilmeyen Eksi Bakiye(Saat) </b></span>
+											</rich:toolTip>
+
+
 										</ui:fragment></td>
 								</ui:fragment>
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.kesilenSureGoster}">
@@ -931,6 +935,17 @@
 											<SPAN style="color: red">Ayrılmış</SPAN>
 										</ui:fragment></td>
 								</ui:fragment>
+							</ui:fragment>
+							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.brutUcretGoster}">
+								<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
+										rendered="#{aylikPuantaj.personelDenklestirme.aylikBrutUcret gt 0}">
+										<span id="aylikBrutUcret#{aylikPuantaj.personelDenklestirme.id}"> <h:outputText
+												value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.aylikBrutUcret)}" />
+										</span>
+										<rich:toolTip for="aylikBrutUcret#{aylikPuantaj.personelDenklestirme.id}">
+												Aylık Brüt Ücret : <h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.personelDenklestirme.aylikBrutUcret)}" />
+										</rich:toolTip>
+									</ui:fragment></td>
 							</ui:fragment>
 						</tr>
 					</a4j:repeat>

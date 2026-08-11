@@ -1028,6 +1028,19 @@
 							
 									</rich:column>
 								</c:forEach>
+								<rich:column rendered="#{fazlaMesaiOzetRaporHome.brutUcretGoster}" class="#{ap.trSonucClass}" style="width: 30px">
+									<f:facet name="header">
+									Brüt Ücret
+								</f:facet>
+									<ui:fragment rendered="#{ap.personelDenklestirme.aylikBrutUcret gt 0}">
+										<span id="aylikBrutUcret#{ap.personelDenklestirme.id}"> <h:outputText
+												value="#{authenticatedUser.sayiFormatliGoster(ap.aylikBrutUcret)}" />
+										</span>
+										<rich:toolTip for="aylikBrutUcret#{ap.personelDenklestirme.id}">
+								Aylık Brüt Ücret : <h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.personelDenklestirme.aylikBrutUcret)}" />
+										</rich:toolTip>
+									</ui:fragment>
+								</rich:column>
 								<f:facet name="footer">
 									<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 								</f:facet>

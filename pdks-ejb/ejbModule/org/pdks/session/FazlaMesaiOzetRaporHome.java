@@ -1924,8 +1924,11 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		if (izinTipiVardiyaList != null && !izinTipiVardiyaList.isEmpty()) {
 			fazlaMesaiOrtakIslemler.personelIzinAdetleriOlustur(aylikPuantajList, izinTipiVardiyaList, izinTipiPersonelVardiyaMap);
 		}
-
+		brutUcretGoster = false;
 		if (puantajList.isEmpty() == false) {
+			if (authenticatedUser != null)
+				brutUcretGoster = fazlaMesaiOrtakIslemler.brutUcretGoster(puantajList);
+
 			String fileName = ortakIslemler.getParameterKey("mesaiDenklestirmeBelge");
 			if (PdksUtil.hasStringValue(fileName)) {
 				File file = new File("/opt/pdks/" + fileName);
@@ -2820,6 +2823,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				ExcelUtil.baslikCell(cell, anchor, helper, drawing, ortakIslemler.bordroToplamGunKod(), "Toplam Gün");
 			}
 		}
+		if (brutUcretGoster)
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Brüt Ücret");
 		if (hataliPuantajVar) {
 			cell = ExcelUtil.getCell(sheet, row, col++, header);
 			ExcelUtil.baslikCell(cell, anchor, helper, drawing, "Hata Açıklama", "Plan onaylanmamış veya hatalı günleri olan puantaj");
@@ -3252,7 +3257,15 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							setCell(sheet, row, col++, styleGenel, denklestirmeBordro.getBordroToplamGunAdet());
 
 					}
-
+					if (brutUcretGoster) {
+						if (aylikPuantaj.getAylikBrutUcret() != null && aylikPuantaj.getAylikBrutUcret().doubleValue() > 0.0d) {
+							Cell brutUcretCell = null;
+							String title = "Brüt Ücret : " + authenticatedUser.sayiFormatliGoster(aylikPuantaj.getPersonelDenklestirme().getAylikBrutUcret());
+							brutUcretCell = setCell(sheet, row, col++, styleTutar, aylikPuantaj.getAylikBrutUcret());
+							ExcelUtil.setCellComment(brutUcretCell, anchor, helper, drawing, title);
+						} else
+							ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+					}
 					if (hataliPuantajVar) {
 						String hataAciklama = "";
 						if (!aylikPuantaj.isFazlaMesaiHesapla()) {

@@ -891,6 +891,19 @@
 					<SPAN style="color: red">Ayrılmış</SPAN>
 				</ui:fragment>
 			</rich:column>
+			<rich:column rendered="#{fazlaMesaiHesaplaHome.brutUcretGoster}" class="#{aylikPuantaj.trSonucClass}" style="width: 30px">
+				<f:facet name="header">
+							Brüt Ücret
+						</f:facet>
+				<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.aylikBrutUcret gt 0}">
+					<span id="aylikBrutUcret#{aylikPuantaj.personelDenklestirme.id}"> <h:outputText
+							value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.aylikBrutUcret)}" />
+					</span>
+					<rich:toolTip for="aylikBrutUcret#{aylikPuantaj.personelDenklestirme.id}">
+							Aylık Brüt Ücret : <h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.personelDenklestirme.aylikBrutUcret)}" />
+					</rich:toolTip>
+				</ui:fragment>
+			</rich:column>
 			<f:facet name="footer">
 				<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 			</f:facet>

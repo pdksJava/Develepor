@@ -465,13 +465,16 @@ public class StartupAction implements Serializable {
 			parameterList = pdksEntityController.getObjectBySQLList(sb, fields, Parameter.class);
 		} catch (Exception e) {
 			try {
+				e = null;
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				parameterList = pdksEntityController.getObjectByInnerObjectList(fields, Parameter.class);
 			} catch (Exception e2) {
-				logger.error("PDKS hata out : " + e2.getMessage());
-				e2.printStackTrace();
+
+				e = e2;
 			}
+			if (e != null)
+				logger.error("PDKS hata out : " + e.getMessage());
 		}
 		parameterMap.clear();
 		List<String> helpDeskList = new ArrayList<String>();

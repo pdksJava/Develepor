@@ -3537,6 +3537,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 		if (testDurum)
 			logger.info("fillPersonelDenklestirmeDevam 9300 " + PdksUtil.getCurrentTimeStampStr());
+		brutUcretGoster = false;
+		if (authenticatedUser != null)
+			brutUcretGoster = fazlaMesaiOrtakIslemler.brutUcretGoster(aylikPuantajList);
 
 		if (denklestirmeAyDurum) {
 			boolean tekSicil = PdksUtil.hasStringValue(sicilNo);
@@ -6273,6 +6276,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			}
 		}
 		boolean istifaGosterDurum = istifaGoster && (ikRole || mailGonder);
+		if (brutUcretGoster)
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Brüt Ücret");
 		if (istifaGosterDurum)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Durum");
 		TreeMap<String, String> izinGrupMap = ortakIslemler.getIzinGrupMap(session);
@@ -6548,6 +6553,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 						}
 					}
+					if (brutUcretGoster) {
+						if (aylikPuantaj.getAylikBrutUcret() != null && aylikPuantaj.getAylikBrutUcret().doubleValue() > 0.0d) {
+							Cell brutUcretCell = null;
+							String title = "Brüt Ücret : " + authenticatedUser.sayiFormatliGoster(aylikPuantaj.getPersonelDenklestirme().getAylikBrutUcret());
+							brutUcretCell = setCell(sheet, row, col++, styleTutar, aylikPuantaj.getAylikBrutUcret());
+							ExcelUtil.setCellComment(brutUcretCell, anchor, helper, drawing, title);
+						} else
+							ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue("");
+					}
+
 					if (istifaGosterDurum)
 						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(aylikPuantaj.isCalisiyor() ? "Çalışıyor" : "Ayrılmış");
 					styleGenel = null;
