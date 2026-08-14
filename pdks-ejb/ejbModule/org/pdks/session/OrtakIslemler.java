@@ -5841,7 +5841,10 @@ public class OrtakIslemler implements Serializable {
 							setUserTesisler(loginUser, false, session);
 						}
 					}
-
+					if (loginUser.isIK()) {
+						if (loginUser.isIK_Tesis() == false && loginUser.isIKSirket() == false)
+							tesisYetki = false;
+					}
 					if (tipi.equalsIgnoreCase("S")) {
 						class1 = Sirket.class;
 						tableName = Sirket.TABLE_NAME;
@@ -5849,6 +5852,7 @@ public class OrtakIslemler implements Serializable {
 						if (departmanId != null && tesisYetki)
 							departman = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
 						order = Sirket.COLUMN_NAME_AD;
+						
 					} else if (tipi.startsWith("B")) {
 						class1 = Tanim.class;
 						tableName = Tanim.TABLE_NAME;
