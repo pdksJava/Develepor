@@ -4275,7 +4275,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 								personelKGSMap.put(personelERP.getPersonelNo(), personelKGS);
 
 						}
-						personel.setPersonelTipi(personelTipi);
+						
 						sablonList.clear();
 						modelList.clear();
 						PersonelKGS personelKGS2 = personel.getPersonelKGS();
@@ -4353,10 +4353,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 						if (yoneticiPersonel && !yoneticiMailKontrol.equals("1"))
 							personel.setMailTakip(Boolean.FALSE);
 					}
-
+					personel.setPersonelTipi(personelTipi);
 					personel.setCinsiyet(bayanSoyadKontrol || cinsiyet != null ? cinsiyet : null);
-
-					personelERP.setSoyadi(soyadi);
+ 					personelERP.setSoyadi(soyadi);
 					personelSecili = personel;
 					sirket = sirketMap.get(personelERP.getSirketKodu());
 					if (sirket != null) {
