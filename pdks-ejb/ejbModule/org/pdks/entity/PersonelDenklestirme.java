@@ -661,13 +661,13 @@ public class PersonelDenklestirme extends BaseObject {
 							if (personelIzin.getHesapTipi() != null && personelIzin.getHesapTipi().equals(PersonelIzin.HESAP_TIPI_SAAT)) {
 								IzinTipi izinTipi = personelIzin.getIzinTipi();
 								double sure = personelIzin.getIzinSuresi();
-								if (cgsDus == false) {
-									if (izinTipi.isEkleCGS()) {
-										izinSure += sure;
-										vardiyaGun.addCalismaSuresi(sure);
-									}
-
-								} else if (cgsDus) {
+								// if (cgsDus == false) {
+								// if (izinTipi.isEkleCGS()) {
+								// izinSure += sure;
+								// vardiyaGun.addCalismaSuresi(sure);
+								// }
+								// } else
+								if (cgsDus) {
 									if (izinTipi.isCikarCGS())
 										izinSure += sure;
 								}

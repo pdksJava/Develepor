@@ -437,26 +437,47 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	@Transient
+	public double getSaatIzinSuresi() {
+		double saatSure = 0.0d;
+		if (this.getIzinler() != null) {
+			for (PersonelIzin izin : this.getIzinler()) {
+				IzinTipi izinTipi = izin.getIzinTipi();
+				if (izin.isGunlukIzin() == false) {
+					if (izinTipi.isEkleCGS()) {
+						saatSure += izin.getIzinSuresi();
+
+					}
+				}
+			}
+		}
+		return saatSure;
+	}
+
+	@Transient
 	public double getCalismaSuresi() {
-		if (calismaSuresi > 0)
+		if (calismaSuresi > 0) {
 			calismaSuresi = PdksUtil.setSureDoubleTypeRounded(calismaSuresi, yarimYuvarla);
+			if (this.getVardiyaDateStr().endsWith("0810"))
+				logger.debug("getCalismaSuresi " + calismaSuresi);
+		}
+
 		return calismaSuresi;
 	}
 
 	public void setCalismaSuresi(double value) {
-		if (this.getVardiyaDateStr().endsWith("0509"))
-			if (value != 0.0d) {
-				logger.debug(value);
-			}
+		if (value != 0.0d) {
+			if (this.getVardiyaDateStr().endsWith("0810"))
+				logger.debug("setCalismaSuresi " + value);
+		}
 		this.calismaSuresi = value;
 	}
 
 	@Transient
 	public void addCalismaSuresi(double value) {
-		if (this.getVardiyaDateStr().endsWith("0509"))
-			if (value != 0.0d) {
-				logger.debug(value);
-			}
+		if (value != 0.0d) {
+			if (this.getVardiyaDateStr().endsWith("0810"))
+				logger.debug("addCalismaSuresi " + value);
+		}
 
 		calismaSuresi += value;
 	}
@@ -526,7 +547,7 @@ public class VardiyaGun extends BaseObject {
 			this.setIzin(personelIzin);
 			personelIzin.setGunlukOldu(Boolean.TRUE);
 		}
-		boolean ekle = true;
+		boolean ekle = personelIzin.isGunlukOldu() == false;
 		for (PersonelIzin izin : izinler) {
 			if (personelIzin.getId() != null && izin.getId().equals(personelIzin.getId()))
 				ekle = false;

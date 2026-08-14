@@ -98,6 +98,10 @@ public class PersonelIzin extends BaseObject {
 
 	private List<PersonelIzin> harcananDigerIzinler;
 
+	public PersonelIzin() {
+		super();
+	}
+
 	@Version
 	@Column(name = COLUMN_NAME_VERSION)
 	public Integer getVersion() {
