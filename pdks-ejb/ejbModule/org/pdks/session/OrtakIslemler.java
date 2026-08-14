@@ -24090,7 +24090,7 @@ public class OrtakIslemler implements Serializable {
 						if (calSure != 0.0d)
 							vardiyaGun.addCalismaSuresi(PdksUtil.setSureDoubleTypeRounded(calSure, vardiyaGun.getYarimYuvarla()));
 						if (vardiyaGun.getIzinler() != null) {
-							double izinSaatSure = vardiyaGun.getSaatIzinSuresi();
+							double izinSaatSure = vardiyaGun.getSaatIzinSuresi(true);
 							if (izinSaatSure > 0.0d) {
 								calSure += izinSaatSure;
 								vardiyaGun.addCalismaSuresi(izinSaatSure);

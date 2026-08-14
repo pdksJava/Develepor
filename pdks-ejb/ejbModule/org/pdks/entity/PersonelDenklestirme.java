@@ -656,23 +656,10 @@ public class PersonelDenklestirme extends BaseObject {
 		if (vardiyalar != null) {
 			for (VardiyaGun vardiyaGun : vardiyalar) {
 				if (vardiyaGun.isAyinGunu()) {
-					if (vardiyaGun.getIzin() == null && vardiyaGun.getIzinler() != null) {
-						for (PersonelIzin personelIzin : vardiyaGun.getIzinler()) {
-							if (personelIzin.getHesapTipi() != null && personelIzin.getHesapTipi().equals(PersonelIzin.HESAP_TIPI_SAAT)) {
-								IzinTipi izinTipi = personelIzin.getIzinTipi();
-								double sure = personelIzin.getIzinSuresi();
-								// if (cgsDus == false) {
-								// if (izinTipi.isEkleCGS()) {
-								// izinSure += sure;
-								// vardiyaGun.addCalismaSuresi(sure);
-								// }
-								// } else
-								if (cgsDus) {
-									if (izinTipi.isCikarCGS())
-										izinSure += sure;
-								}
-							}
-						}
+					if ( vardiyaGun.getIzinler() != null) {
+						if (cgsDus)
+							izinSure += vardiyaGun.getSaatIzinSuresi(false);
+
 					}
 				}
 			}

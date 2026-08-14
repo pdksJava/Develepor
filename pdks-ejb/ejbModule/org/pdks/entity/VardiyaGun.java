@@ -437,16 +437,17 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	@Transient
-	public double getSaatIzinSuresi() {
+	public double getSaatIzinSuresi(boolean ekle) {
 		double saatSure = 0.0d;
-		if (this.getIzinler() != null) {
+		if (this.getIzinler() != null && this.getIzin() == null) {
 			for (PersonelIzin izin : this.getIzinler()) {
 				IzinTipi izinTipi = izin.getIzinTipi();
 				if (izin.isGunlukIzin() == false) {
-					if (izinTipi.isEkleCGS()) {
+					if (ekle) {
+						if (izinTipi.isEkleCGS())
+							saatSure += izin.getIzinSuresi();
+					} else if (izinTipi.isCikarCGS())
 						saatSure += izin.getIzinSuresi();
-
-					}
 				}
 			}
 		}
