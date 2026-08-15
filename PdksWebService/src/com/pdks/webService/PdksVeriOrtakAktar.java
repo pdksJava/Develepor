@@ -2638,8 +2638,15 @@ public class PdksVeriOrtakAktar implements Serializable {
 					izinTipi.setOnaylayanTipi("0");
 					izinTipi.setPersonelGirisTipi("0");
 					izinTipi.setTakvimGunumu(Boolean.FALSE);
-					izinTipi.setHesapTipi(1);
 					izinTipi.setDurumCGS(1);
+					if (izinERP.getSureBirimi() == null || izinERP.getSureBirimi().equals(SureBirimi.GUN))
+						izinTipi.setHesapTipi(1);
+					else if ( izinERP.getSureBirimi().equals(SureBirimi.SAAT)) {
+						izinTipi.setHesapTipi(2);
+						izinTipi.setSaatGosterilecek(Boolean.TRUE);
+					}
+						
+					
 					izinTipi.setKotaBakiye(null);
 					izinTipi.setOlusturanUser(islemYapan);
 					if (!izinGrupTanimMap.containsKey(izinTipiTanim.getErpKodu())) {
@@ -4275,7 +4282,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 								personelKGSMap.put(personelERP.getPersonelNo(), personelKGS);
 
 						}
-						
+
 						sablonList.clear();
 						modelList.clear();
 						PersonelKGS personelKGS2 = personel.getPersonelKGS();
@@ -4355,7 +4362,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 					personel.setPersonelTipi(personelTipi);
 					personel.setCinsiyet(bayanSoyadKontrol || cinsiyet != null ? cinsiyet : null);
- 					personelERP.setSoyadi(soyadi);
+					personelERP.setSoyadi(soyadi);
 					personelSecili = personel;
 					sirket = sirketMap.get(personelERP.getSirketKodu());
 					if (sirket != null) {
