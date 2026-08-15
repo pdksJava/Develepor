@@ -1299,7 +1299,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						if (kgsPersonelSPAdi != null)
 							kgsPersonelVeriOlustur(pdksPersonel);
 
-						ortakIslemler.sessionFlush(session);
 						if (organizasyonIptal || roleIptal) {
 							try {
 								if (organizasyonIptal)
@@ -1311,7 +1310,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							}
 							ortakIslemler.sessionFlush(session);
 						}
-
+						ortakIslemler.sessionFlush(session);
 						if (tesisYetki && kullanici.getId() != null && authenticatedUser.getId() != null) {
 							authenticatedUser.setYetkiliTesisler(null);
 							ortakIslemler.setUserTesisler(authenticatedUser, false, session);
@@ -1328,7 +1327,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 					}
 
-					ok = "persisted";
+					ok = "";
 				} catch (Exception e) {
 					logger.error("PDKS hata in : \n");
 					e.printStackTrace();
