@@ -11305,7 +11305,6 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 */
 	public void sessionFlush(Session session) {
-		// if (authenticatedUser == null)
 		try {
 			session.flush();
 		} catch (Exception e) {
