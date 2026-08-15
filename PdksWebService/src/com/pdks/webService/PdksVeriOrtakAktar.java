@@ -3854,14 +3854,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 			String key = departmanKey + "_0_0";
 			if (tesis != null) {
 				key = departmanKey + "_" + (sirket != null ? sirket.getId() : 0L) + "_" + tesis.getId() + "_" + +(personelTipi != null ? personelTipi.getId() : 0L);
-
-				object = map.get(key);
+ 				object = map.get(key);
 				if (object == null && personelTipi != null) {
 					key = departmanKey + "_" + sirket.getId() + "_0_0";
 					object = map.get(key);
 				}
-
-			}
+ 			}
 
 			if (object == null && sirket != null) {
 				key = departmanKey + "_" + sirket.getId() + "_0_" + (personelTipi != null ? personelTipi.getId() : 0L);
@@ -3875,6 +3873,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 			if (object == null) {
 				key = departmanKey + "_0_0_" + (personelTipi != null ? personelTipi.getId() : 0L);
 				object = map.get(key);
+				if (object == null && personelTipi != null) {
+					key = departmanKey + "_0_0_0";
+					object = map.get(key);
+				}
 				if (object == null && departmanKey.equals("0") == false && personelTipi != null) {
 					key = "0_0_0_0";
 					object = map.get(key);
