@@ -543,7 +543,7 @@ public class VardiyaGun extends BaseObject {
 	@Transient
 	public void addPersonelIzin(PersonelIzin personelIzin) {
 		IzinTipi izinTipi = personelIzin.isSaatlikIzin() ? personelIzin.getIzinTipi() : null;
-		if (personelIzin != null && izinTipi.getSaatGosterilecek() != null && izinTipi.getSaatGosterilecek()) {
+		if (izinTipi != null && izinTipi.getSaatGosterilecek() != null && izinTipi.getSaatGosterilecek()) {
 			if (izinler == null)
 				izinler = new ArrayList<PersonelIzin>();
 			if (personelIzin.isGunlukOldu()) {
