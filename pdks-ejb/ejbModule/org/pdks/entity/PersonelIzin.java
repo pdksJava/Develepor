@@ -525,6 +525,15 @@ public class PersonelIzin extends BaseObject {
 	}
 
 	@Transient
+	public boolean isSaatlikIzin() {
+		IzinTipi tipi = izinTipi.getBakiyeIzinTipi() == null ? izinTipi : izinTipi.getBakiyeIzinTipi();
+		boolean saatIzin = tipi.getSaatGosterilecek();
+		if (saatIzin && tipi != null && tipi.getHesapTipi() != null)
+			saatIzin = tipi.getHesapTipi().equals(HESAP_TIPI_SAAT) || tipi.equals(HESAP_TIPI_SAAT_GUN_SECILDI);
+		return saatIzin;
+	}
+
+	@Transient
 	public String getSureAciklama() throws Exception {
 		StringBuilder sureAciklama = new StringBuilder();
 		if (izinTipi != null && !izinTipi.isResmiTatilIzin()) {

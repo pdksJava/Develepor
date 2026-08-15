@@ -24922,7 +24922,7 @@ public class OrtakIslemler implements Serializable {
 				if (islemVardiya.isCalisma() && personelIzin != null) {
 					if (islemVardiya.getVardiyaBasZaman().getTime() <= personelIzin.getBaslangicZamani().getTime() && islemVardiya.getVardiyaBitZaman().getTime() >= personelIzin.getBitisZamani().getTime())
 						vardiyaGun.addPersonelIzin(personelIzin);
-					else if (vardiyaGun.getVardiyaDate().getTime() == personelIzin.getBaslangicZamani().getTime())
+					else if (personelIzin.getBitisZamani().getTime() == personelIzin.getBaslangicZamani().getTime() && vardiyaGun.getVardiyaDate().getTime() == personelIzin.getBaslangicZamani().getTime())
 						vardiyaGun.addPersonelIzin(personelIzin);
 				}
 			} else if (bitisGun == null) {

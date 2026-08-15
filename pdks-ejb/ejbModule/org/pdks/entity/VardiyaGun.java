@@ -542,19 +542,22 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public void addPersonelIzin(PersonelIzin personelIzin) {
-		if (izinler == null)
-			izinler = new ArrayList<PersonelIzin>();
-		if (personelIzin.isGunlukOldu()) {
-			this.setIzin(personelIzin);
-			personelIzin.setGunlukOldu(Boolean.TRUE);
+		IzinTipi izinTipi = personelIzin.isSaatlikIzin() ? personelIzin.getIzinTipi() : null;
+		if (personelIzin != null && izinTipi.getSaatGosterilecek() != null && izinTipi.getSaatGosterilecek()) {
+			if (izinler == null)
+				izinler = new ArrayList<PersonelIzin>();
+			if (personelIzin.isGunlukOldu()) {
+				this.setIzin(personelIzin);
+				personelIzin.setGunlukOldu(Boolean.TRUE);
+			}
+			boolean ekle = personelIzin.isGunlukOldu() == false;
+			for (PersonelIzin izin : izinler) {
+				if (personelIzin.getId() != null && izin.getId().equals(personelIzin.getId()))
+					ekle = false;
+			}
+			if (ekle)
+				izinler.add(personelIzin);
 		}
-		boolean ekle = personelIzin.isGunlukOldu() == false;
-		for (PersonelIzin izin : izinler) {
-			if (personelIzin.getId() != null && izin.getId().equals(personelIzin.getId()))
-				ekle = false;
-		}
-		if (ekle)
-			izinler.add(personelIzin);
 	}
 
 	@Transient
