@@ -5289,7 +5289,15 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public Parameter getParameterAktif(Session session, String value) {
-		Parameter parameter = (Parameter) pdksEntityController.getSQLParamByAktifFieldObject(Parameter.TABLE_NAME, Parameter.COLUMN_NAME_ADI, value, Parameter.class, session);
+		HashMap fields = new HashMap();
+		StringBuilder sb = new StringBuilder();
+		sb.append("select * from " + Parameter.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
+		sb.append(" where " + Parameter.COLUMN_NAME_ADI + " = :a and " + Parameter.COLUMN_NAME_DURUM + " = 1");
+		fields.put("a", value);
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<Parameter> parameters = pdksEntityController.getObjectBySQLList(sb, fields, Parameter.class);
+		Parameter parameter = parameters != null && parameters.isEmpty() == false ? parameters.get(0) : null;
 		if (parameter != null) {
 			if (PdksUtil.isSistemDestekVar() == false && parameter.isHelpDeskMi())
 				parameter = null;
