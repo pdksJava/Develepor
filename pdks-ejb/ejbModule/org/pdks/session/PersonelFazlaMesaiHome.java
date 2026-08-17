@@ -146,14 +146,10 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			pdksEntityController.saveOrUpdate(session, entityManager, object);
 	}
 
-	/**
-	 * 
-	 */
-	@Transactional
-	private void sessionFlush() {
+	 
 		 
-		ortakIslemler.sessionFlush(session);
-	}
+		
+	 
 
 	public void instanceRefresh() {
 		if (getInstance().getId() != null)
@@ -586,6 +582,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						fazlaMesai.setGuncellemeTarihi(new Date());
 					}
 					try {
+						session.beginTransaction();
 						if (nedenOzelAciklama != null)
 							saveOrUpdate(nedenOzelAciklama);
 						fazlaMesai.setNedenOzelAciklama(aciklamaVar ? nedenOzelAciklama : null);
@@ -593,7 +590,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 				//		if (aciklamaVar == false && nedenOzelAciklama != null)
 				//			pdksEntityController.deleteObject(session, entityManager, nedenOzelAciklama);
 
-						sessionFlush();
+						ortakIslemler.sessionFlush(session);
 					} catch (Exception e) {
 						logger.error("Pdks hata in : \n");
 						e.printStackTrace();
@@ -656,6 +653,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 				HareketKGS hareket = !list.isEmpty() ? list.get(0) : null;
 
 				if (hareket != null) {
+					session.beginTransaction();
 					fazlaMesai.setHareketId(hareket.getId());
 					fazlaMesai.setHareket(hareket);
 					// fazlaMesai.setHareket(hareket);
@@ -673,7 +671,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 					try {
 						saveOrUpdate(fazlaMesai);
-						sessionFlush();
+						ortakIslemler.sessionFlush(session);
 					} catch (Exception e) {
 						logger.error("Pdks hata in : \n");
 						e.printStackTrace();
@@ -1630,11 +1628,12 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		PersonelFazlaMesai mesai = (PersonelFazlaMesai) pdksEntityController.getSQLParamByFieldObject(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_ID, seciliHareket.getPersonelFazlaMesai().getId(), PersonelFazlaMesai.class, session);
 		if (mesai != null) {
 			try {
+				session.beginTransaction();
 				mesai.setGuncelleyenUser(authenticatedUser);
 				mesai.setGuncellemeTarihi(new Date());
 				mesai.setDurum(Boolean.FALSE);
 				saveOrUpdate(mesai);
-				sessionFlush();
+				ortakIslemler.sessionFlush(session);
 				fillHareketMesaiList();
 			} catch (Exception e) {
 			}

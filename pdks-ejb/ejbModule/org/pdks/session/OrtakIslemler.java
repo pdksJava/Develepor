@@ -68,6 +68,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.FlushMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -11305,8 +11306,11 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 */
 	public void sessionFlush(Session session) {
+		Transaction t = session != null ? session.getTransaction() : null;
 		try {
 			session.flush();
+			if (t != null && t.isActive())
+				t.commit();
 		} catch (Exception e) {
 			logger.error(e);
 		}

@@ -137,14 +137,6 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 		session.clear();
 	}
 
-	/**
-	 * 
-	 */
-	@Transactional
-	private void sessionFlush() {
-		ortakIslemler.sessionFlush(session);
-	}
-
 	public String fillPersonelList() {
 		try {
 			List<Personel> list = ortakIslemler.getAramaSecenekleriPersonelList(authenticatedUser, tarih, aramaSecenekleriPer, session);
@@ -744,6 +736,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 		}
 		Date zaman = zamanGuncelle();
 		try {
+			session.beginTransaction();
 			if (islemTipi.equals("E") || islemTipi.equals("G")) {
 				Date tarih = Calendar.getInstance().getTime();
 				tarih = PdksUtil.addTarih(tarih, Calendar.MINUTE, -1);
@@ -789,7 +782,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 
 				}
-				sessionFlush();
+				ortakIslemler.sessionFlush(session);
 				sessionClear();
 				if (islemVardiyaGun != null)
 					tarih = islemVardiyaGun.getVardiyaDate();

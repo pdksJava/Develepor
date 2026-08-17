@@ -1069,8 +1069,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							pdksPersonel.setHareketMail(hareketMail);
 					}
 					if (mesajList.isEmpty()) {
-
-						ortakIslemler.personelKaydet(pdksPersonel, session);
+						session.beginTransaction();
+ 						ortakIslemler.personelKaydet(pdksPersonel, session);
 						if (secGebe(pdksPersonel).booleanValue() == false)
 							pdksPersonel.setGebeMi(Boolean.FALSE);
 						if (secSutIzni(pdksPersonel).booleanValue() == false)
@@ -1308,7 +1308,6 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							} catch (Exception e) {
 
 							}
-							ortakIslemler.sessionFlush(session);
 						}
 						ortakIslemler.sessionFlush(session);
 						if (tesisYetki && kullanici.getId() != null && authenticatedUser.getId() != null) {
