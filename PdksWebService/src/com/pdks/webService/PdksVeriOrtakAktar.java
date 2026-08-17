@@ -3854,12 +3854,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 			String key = departmanKey + "_0_0";
 			if (tesis != null) {
 				key = departmanKey + "_" + (sirket != null ? sirket.getId() : 0L) + "_" + tesis.getId() + "_" + +(personelTipi != null ? personelTipi.getId() : 0L);
- 				object = map.get(key);
+				object = map.get(key);
 				if (object == null && personelTipi != null) {
 					key = departmanKey + "_" + sirket.getId() + "_0_0";
 					object = map.get(key);
 				}
- 			}
+			}
 
 			if (object == null && sirket != null) {
 				key = departmanKey + "_" + sirket.getId() + "_0_" + (personelTipi != null ? personelTipi.getId() : 0L);
@@ -4178,7 +4178,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						if (gecmisTarih != null && iseBaslamaTarihi != null && iseBaslamaTarihi.before(gecmisTarih))
 							kayitYok = false;
 
-						if (kayitYok && (istenAyrilisTarihi == null || !istenAyrilisTarihi.before(ayBasi))) {
+						if (personelKGSData == null && kayitYok && (istenAyrilisTarihi == null || !istenAyrilisTarihi.before(ayBasi))) {
 							String goreviStr = PdksUtil.hasStringValue(personelERP.getGorevi()) ? "Görevi : " + personelERP.getGorevi() : "";
 							String mesaj = adSoyadERP + " personel'in " + kapiGiris + " " + personelNo + " personel no bilgisi bulunamadı!"
 									+ (iseBaslamaTarihi != null ? " [ İşe giriş tarihi : " + PdksUtil.convertToDateString(iseBaslamaTarihi, PdksUtil.getDateFormat()) + (goreviStr.equals("") ? "" : " - " + goreviStr) + " ]" : (goreviStr.equals("") ? "" : " [ " + goreviStr + " ]"));
