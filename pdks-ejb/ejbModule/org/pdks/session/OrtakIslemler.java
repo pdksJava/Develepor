@@ -11586,6 +11586,7 @@ public class OrtakIslemler implements Serializable {
 							else
 								map = new LinkedHashMap<String, Object>();
 							if (!menuItemTime.getSessionId().equals(sessionId) || map.isEmpty()) {
+								session.beginTransaction();
 								if (map.isEmpty()) {
 									map.put("kullanici", authenticatedUser.getAdSoyad());
 									map.put("menuAdi", getMenuAdi(menuAdi));
@@ -11594,7 +11595,7 @@ public class OrtakIslemler implements Serializable {
 								menuItemTime.setLastTime(lastTime);
 								menuItemTime.addUseCount();
 								menuItemTime.setSessionId(mySession.getId());
-								session.saveOrUpdate(menuItemTime);
+								pdksEntityController.saveOrUpdate(session, null, menuItemTime);
 								flush = true;
 							}
 						}
