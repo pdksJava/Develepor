@@ -7320,6 +7320,8 @@ public class OrtakIslemler implements Serializable {
 						boolean flush = false;
 						String spName = "SP_UPDATE_USER_MENUITEM_TIME_IPTAL";
 						if (menuItemTime.getId() == null || isExisStoreProcedure(spName, session) == false) {
+							if (menuItemTime.getId() != null)
+								session.beginTransaction();
 							menuItemTime.setParametreJSON(parametreJSON);
 							if (PdksUtil.isStrDegisti(sessionId, menuItemTime.getSessionId())) {
 								menuItemTime.addUseCount();
@@ -7330,6 +7332,7 @@ public class OrtakIslemler implements Serializable {
 							pdksEntityController.saveOrUpdate(session, null, menuItemTime);
 							flush = true;
 						} else {
+							session.beginTransaction();
 							LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 							veriMap.put("j", parametreJSON);
 							veriMap.put("s", sessionId != null ? sessionId : menuItemTime.getSessionId());
