@@ -5018,6 +5018,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public void personelKaydet(Personel personel, Session session) {
 		if (personel != null) {
+			startTransaction(session);
 			MailGrubu mailGrubuCC = personel.getMailGrubuCC(), mailGrubuBCC = personel.getMailGrubuBCC(), hareketMailGrubu = personel.getHareketMailGrubu();
 			List<MailGrubu> deleteList = new ArrayList<MailGrubu>();
 			if (mailGrubuCC != null) {
@@ -7321,7 +7322,7 @@ public class OrtakIslemler implements Serializable {
 						String spName = "SP_UPDATE_USER_MENUITEM_TIME_IPTAL";
 						if (menuItemTime.getId() == null || isExisStoreProcedure(spName, session) == false) {
 							if (menuItemTime.getId() != null)
-								session.beginTransaction();
+								startTransaction(session);
 							menuItemTime.setParametreJSON(parametreJSON);
 							if (PdksUtil.isStrDegisti(sessionId, menuItemTime.getSessionId())) {
 								menuItemTime.addUseCount();
@@ -7332,7 +7333,7 @@ public class OrtakIslemler implements Serializable {
 							pdksEntityController.saveOrUpdate(session, null, menuItemTime);
 							flush = true;
 						} else {
-							session.beginTransaction();
+							startTransaction(session);
 							LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 							veriMap.put("j", parametreJSON);
 							veriMap.put("s", sessionId != null ? sessionId : menuItemTime.getSessionId());
@@ -11586,7 +11587,7 @@ public class OrtakIslemler implements Serializable {
 							else
 								map = new LinkedHashMap<String, Object>();
 							if (!menuItemTime.getSessionId().equals(sessionId) || map.isEmpty()) {
-								session.beginTransaction();
+								startTransaction(session);
 								if (map.isEmpty()) {
 									map.put("kullanici", authenticatedUser.getAdSoyad());
 									map.put("menuAdi", getMenuAdi(menuAdi));
@@ -11609,6 +11610,20 @@ public class OrtakIslemler implements Serializable {
 			list = null;
 		}
 		return menuItemTime;
+
+	}
+
+	/**
+	 * @param session
+	 */
+	public void startTransaction(Session session) {
+		if (session != null)
+			try {
+				session.beginTransaction();
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 
 	}
 

@@ -582,7 +582,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						fazlaMesai.setGuncellemeTarihi(new Date());
 					}
 					try {
-						session.beginTransaction();
+						ortakIslemler.startTransaction(session);
 						if (nedenOzelAciklama != null)
 							saveOrUpdate(nedenOzelAciklama);
 						fazlaMesai.setNedenOzelAciklama(aciklamaVar ? nedenOzelAciklama : null);
@@ -653,7 +653,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 				HareketKGS hareket = !list.isEmpty() ? list.get(0) : null;
 
 				if (hareket != null) {
-					session.beginTransaction();
+					ortakIslemler.startTransaction(session);
 					fazlaMesai.setHareketId(hareket.getId());
 					fazlaMesai.setHareket(hareket);
 					// fazlaMesai.setHareket(hareket);
@@ -1628,7 +1628,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		PersonelFazlaMesai mesai = (PersonelFazlaMesai) pdksEntityController.getSQLParamByFieldObject(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_ID, seciliHareket.getPersonelFazlaMesai().getId(), PersonelFazlaMesai.class, session);
 		if (mesai != null) {
 			try {
-				session.beginTransaction();
+				ortakIslemler.startTransaction(session);
 				mesai.setGuncelleyenUser(authenticatedUser);
 				mesai.setGuncellemeTarihi(new Date());
 				mesai.setDurum(Boolean.FALSE);
