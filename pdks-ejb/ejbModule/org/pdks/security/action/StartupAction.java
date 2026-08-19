@@ -251,9 +251,9 @@ public class StartupAction implements Serializable {
 	public void startupMethodBasla() {
 		// pdksUtil.setTimeZome();
 		Session session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+		logger.info("Versiyon : " + Constants.VERSION);
 		startupMethod(session);
 		OrtakIslemler ortakIslemler = new OrtakIslemler();
-		logger.info("Versiyon : " + Constants.VERSION);
 		String spName = "SP_DROP_NOT_USED_TABLES";
 		if (pdksEntityController.isExisStoreProcedure(spName, session)) {
 			LinkedHashMap<String, Object> dataMap = new LinkedHashMap<String, Object>();
@@ -342,6 +342,7 @@ public class StartupAction implements Serializable {
 	 * @param session
 	 */
 	public void startupMethod(Session session) {
+		
 		Calendar cal = Calendar.getInstance();
 		logger.debug("startupMethod : " + cal.getTime());
 		if (cal.get(Calendar.HOUR_OF_DAY) < 7)

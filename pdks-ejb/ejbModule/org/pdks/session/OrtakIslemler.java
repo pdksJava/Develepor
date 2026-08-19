@@ -11617,14 +11617,19 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 */
 	public void startTransaction(Session session) {
-		if (session != null)
+		Transaction t = null;
+		if (session != null) {
 			try {
-				session.beginTransaction();
+				t = session.getTransaction();
+				if (t == null || t.isActive() == false)
+					t = session.beginTransaction();
 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
 			}
-
+		}
+		if (t != null && t.isActive())
+			logger.debug("");
 	}
 
 	/**
