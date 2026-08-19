@@ -736,7 +736,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 		}
 		Date zaman = zamanGuncelle();
 		try {
-			session.beginTransaction();
+			ortakIslemler.startTransaction(session);
 			if (islemTipi.equals("E") || islemTipi.equals("G")) {
 				Date tarih = Calendar.getInstance().getTime();
 				tarih = PdksUtil.addTarih(tarih, Calendar.MINUTE, -1);
