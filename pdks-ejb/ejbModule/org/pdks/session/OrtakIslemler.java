@@ -15791,28 +15791,6 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param map
-	 * @param sb
-	 * @param session
-	 * @return
-	 */
-	public List<VardiyaGun> getVardiyaGunList(HashMap map, StringBuilder sb, Session session) {
-		if (session != null)
-			map.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<BigDecimal> idList = pdksEntityController.getObjectBySQLList(sb, map, null);
-		List<VardiyaGun> vardiyaGunList = null;
-		if (idList != null && !idList.isEmpty()) {
-			List<Long> vIdList = getLongByBigDecimalList(idList);
-			vardiyaGunList = pdksEntityController.getSQLParamByFieldList(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, vIdList, VardiyaGun.class, session);
-			vIdList = null;
-		} else
-			vardiyaGunList = new ArrayList<VardiyaGun>();
-		map = null;
-		idList = null;
-		return vardiyaGunList;
-	}
-
-	/**
 	 * @param personelIdler
 	 * @param tatilMap
 	 * @param basTarih
@@ -16016,6 +15994,7 @@ public class OrtakIslemler implements Serializable {
 			sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
 			sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 		}
+		sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
 		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :b1 and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :b2 and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
 		sb.append(" order by V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 		map.put(fieldName, personelIdler);
