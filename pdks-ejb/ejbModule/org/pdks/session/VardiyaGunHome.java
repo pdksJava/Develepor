@@ -9887,7 +9887,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					int onayDurumu = Integer.parseInt(onayDurumuStr);
 					long fmtId = Long.parseLong(fmtIdStr);
 
- 					islemFazlaMesaiTalep = (FazlaMesaiTalep) ortakIslemler.getVardiyaTable(FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_ID, fmtId, FazlaMesaiTalep.class, session);
+					islemFazlaMesaiTalep = (FazlaMesaiTalep) ortakIslemler.getVardiyaTable(FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_ID, fmtId, FazlaMesaiTalep.class, session);
 
 					if (islemFazlaMesaiTalep != null) {
 						if (islemFazlaMesaiTalep.isIptalEdilebilir()) {
@@ -10768,52 +10768,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		yasalFazlaCalismaAsanSaat = Boolean.FALSE;
 		linkBordroAdres = null;
 		aylikVardiyaPlanGiris(sayfaURL, true);
-	}
-
-	protected void fmtOlustur() {
-		HashMap fields = new HashMap();
-		Date basGun = PdksUtil.convertToJavaDate(denklestirmeAy.getDonem() + "01", "yyyyMMdd");
-		Date bitGun = PdksUtil.tariheAyEkleCikar(basGun, 1);
-		StringBuilder sb = new StringBuilder();
-		sb.append("select T.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
-		sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
-		sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
-		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :t1 and  V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " < :t2 ");
-		sb.append(" and  V." + VardiyaGun.COLUMN_NAME_DURUM + " = 1 ");
-		fields.put("t1", basGun);
-		fields.put("t2", bitGun);
-		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		try {
-			Calendar cal = Calendar.getInstance();
-			List<FazlaMesaiTalep> fmtList = pdksEntityController.getObjectBySQLList(sb, fields, FazlaMesaiTalep.class);
-			for (FazlaMesaiTalep fmt : fmtList) {
-				VardiyaGun vg = fmt.getVardiyaGun();
-				if (fmt.isIptalEdilebilir() && vg.getVardiya().isCalisma()) {
-					Long personelKGSId = vg.getPersonel().getPersonelKGS().getId();
-					Date tarih1 = fmt.getBaslangicZamani(), tarih2 = fmt.getBitisZamani();
-					String referans = "TRef:" + fmt.getId();
-					fields.clear();
-					fields.put("islem.islemTipi <> ", "D");
-					fields.put("personel.id=", personelKGSId);
-					fields.put("zaman >= ", ortakIslemler.tariheGunEkleCikar(cal, tarih1, -1));
-					fields.put("zaman <= ", ortakIslemler.tariheGunEkleCikar(cal, tarih2, 1));
-					fields.put("islem.aciklama like ", "%" + referans + "%");
-					if (session != null)
-						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<PersonelHareket> hareketList = pdksEntityController.getObjectByInnerObjectListInLogic(fields, PersonelHareket.class);
-					if (hareketList.isEmpty()) {
-						talepGirisCikisHareketEkle(fmt, true);
-						vg.setDurum(Boolean.FALSE);
-						pdksEntityController.saveOrUpdate(session, entityManager, vg);
-						ortakIslemler.sessionFlush(session);
-						logger.info(vg.getVardiyaKeyStr());
-					}
-				}
-
-			}
-		} catch (Exception e) {
-			logger.error(e);
-		}
 	}
 
 	/**
