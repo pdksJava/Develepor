@@ -699,6 +699,25 @@ public class PdksEntityController implements Serializable {
 	/**
 	 * @param session
 	 */
+	public void startTransaction(Session session) {
+		Transaction t = null;
+		if (session != null) {
+			try {
+				t = session.getTransaction();
+				if (t == null || t.isActive() == false)
+					t = session.beginTransaction();
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
+		}
+		if (t != null && t.isActive())
+			logger.debug("");
+	}
+
+	/**
+	 * @param session
+	 */
 	public void sessionFlush(Session session) {
 		Transaction t = session != null ? session.getTransaction() : null;
 		try {
