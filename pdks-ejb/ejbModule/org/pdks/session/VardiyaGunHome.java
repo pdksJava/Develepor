@@ -574,7 +574,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (vg != null) {
 				if (vg.getIslemVardiya() != null)
 					fazlaMesaiTarihGuncelle = PdksUtil.tarihKarsilastirNumeric(vg.getIslemVardiya().getVardiyaFazlaMesaiBasZaman(), vg.getIslemVardiya().getVardiyaFazlaMesaiBitZaman()) != 0;
-				List<FazlaMesaiTalep> fazlaMesaiTalepler = pdksEntityController.getSQLParamByFieldList(FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN, seciliVardiyaGun.getId(), FazlaMesaiTalep.class, session);
+				List<FazlaMesaiTalep> fazlaMesaiTalepler = ortakIslemler.getVardiyaTableList(seciliVardiyaGun.getId(), FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN, FazlaMesaiTalep.class, session);
 				if (fazlaMesaiTalepler.size() > 1)
 					fazlaMesaiTalepler = PdksUtil.sortListByAlanAdi(fazlaMesaiTalepler, "id", Boolean.TRUE);
 				vg.setFazlaMesaiTalepler(fazlaMesaiTalepler.isEmpty() ? null : fazlaMesaiTalepler);
@@ -1188,14 +1188,31 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				devam = false;
 			if (devam) {
 				HashMap fields = new HashMap();
-				if (fazlaMesaiTalep.getId() != null)
-					fields.put("id <> ", fazlaMesaiTalep.getId());
-				fields.put("vardiyaGun.id=", seciliVardiyaGun.getId());
-				fields.put("baslangicZamani<", fazlaMesaiTalep.getBitisZamani());
-				fields.put("bitisZamani>", fazlaMesaiTalep.getBaslangicZamani());
+				// if (fazlaMesaiTalep.getId() != null)
+				// fields.put("id <> ", fazlaMesaiTalep.getId());
+				// fields.put("vardiyaGun.id=", seciliVardiyaGun.getId());
+				// fields.put("baslangicZamani<", fazlaMesaiTalep.getBitisZamani());
+				// fields.put("bitisZamani>", fazlaMesaiTalep.getBaslangicZamani());
+				// if (session != null)
+				// fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				// List<FazlaMesaiTalep> list = pdksEntityController.getObjectByInnerObjectListInLogic(fields, FazlaMesaiTalep.class);
+
+				StringBuilder sb = new StringBuilder();
+				sb.append("select P.* from " + FazlaMesaiTalep.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+				sb.append(" inner join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on P." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
+				sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
+				sb.append(" where P." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " =:v");
+				sb.append(" and P." + FazlaMesaiTalep.COLUMN_NAME_BASLANGIC_ZAMANI + " < :b1  and P." + FazlaMesaiTalep.COLUMN_NAME_BITIS_ZAMANI + " > :b2 ");
+				if (fazlaMesaiTalep.getId() != null) {
+					sb.append(" and P." + FazlaMesaiTalep.COLUMN_NAME_ID + " <> :f");
+					fields.put("f", fazlaMesaiTalep.getId());
+				}
+				fields.put("v", seciliVardiyaGun.getId());
+				fields.put("b1", fazlaMesaiTalep.getBitisZamani());
+				fields.put("b2", fazlaMesaiTalep.getBaslangicZamani());
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				List<FazlaMesaiTalep> list = pdksEntityController.getObjectByInnerObjectListInLogic(fields, FazlaMesaiTalep.class);
+				List<FazlaMesaiTalep> list = pdksEntityController.getObjectBySQLList(sb, fields, FazlaMesaiTalep.class);
 				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 					FazlaMesaiTalep fazlaMesaiTalep = (FazlaMesaiTalep) iterator.next();
 					if (fazlaMesaiTalep.getOnayDurumu() == FazlaMesaiTalep.ONAY_DURUM_RED || fazlaMesaiTalep.getDurum().equals(Boolean.FALSE))
@@ -3382,12 +3399,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 				if (!varMap.isEmpty()) {
 					List idList = new ArrayList(varMap.keySet());
-					String fieldName = "vardiyaGun.id";
-					HashMap fields = new HashMap();
-					fields.put(fieldName, idList);
-					if (session != null)
-						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<FazlaMesaiTalep> fazlaMesaiTalepler = ortakIslemler.getParamList(false, idList, fieldName, fields, FazlaMesaiTalep.class, session);
+					List<FazlaMesaiTalep> fazlaMesaiTalepler = ortakIslemler.getVardiyaTableList(idList, FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN, FazlaMesaiTalep.class, session);
 					if (fazlaMesaiTalepler.size() > 1)
 						fazlaMesaiTalepler = PdksUtil.sortListByAlanAdi(fazlaMesaiTalepler, "id", Boolean.TRUE);
 					if (!fazlaMesaiTalepler.isEmpty()) {
@@ -4154,13 +4166,14 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 				if (!mesaiMap.isEmpty()) {
 					List idList = new ArrayList(mesaiMap.keySet());
-					String fieldName = "vardiyaGun.id";
-					HashMap fields = new HashMap();
-					fields.put(fieldName, idList);
-					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<PersonelFazlaMesai> list = ortakIslemler.getParamList(false, idList, fieldName, fields, PersonelFazlaMesai.class, session);
+					// String fieldName = "vardiyaGun.id";
+					// HashMap fields = new HashMap();
+					// fields.put(fieldName, idList);
+					// fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+					// List<PersonelFazlaMesai> list = ortakIslemler.getParamList(false, idList, fieldName, fields, PersonelFazlaMesai.class, session);
+					List<PersonelFazlaMesai> list = ortakIslemler.getVardiyaTableList(idList, PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN, PersonelFazlaMesai.class, session);
 					for (PersonelFazlaMesai fazlaMesai : list) {
-						if (fazlaMesai.isOnaylandi()) {
+						if (fazlaMesai.getDurum() && fazlaMesai.isOnaylandi()) {
 							fazlaMesai.setFazlaMesaiSaati(0.0d);
 							fazlaMesai.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANMADI);
 							fazlaMesai.setGuncelleyenUser(getPdksUser());
@@ -6176,7 +6189,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				map.put("t2", fazlaMesaiTalep.getBitisZamani());
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// List<FazlaMesaiTalep> mesaiList = pdksEntityController.getObjectBySQLList(sb, map, FazlaMesaiTalep.class);
 				List<FazlaMesaiTalep> mesaiList = pdksEntityController.getSQLParamList(idList, sb, fieldName, map, FazlaMesaiTalep.class, session);
 				String patternTarih = PdksUtil.getDateFormat(), saatPattern = PdksUtil.getSaatFormat();
 				for (FazlaMesaiTalep fazlaMesaiTalep : mesaiList) {
@@ -7216,7 +7228,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						if (testDurum)
 							logger.info("aylikPuantajOlusturuluyor 5000 " + PdksUtil.getCurrentTimeStampStr());
 						if (!vardiyaIdList.isEmpty()) {
-							List<FazlaMesaiTalep> fazlaMesaiList = ortakIslemler.getVardiyaTable(vardiyaIdList, FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN, FazlaMesaiTalep.class, session);
+							// List<FazlaMesaiTalep> fazlaMesaiList = ortakIslemler.getVardiyaTableList(vardiyaIdList, FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN, FazlaMesaiTalep.class, session);
+							List<FazlaMesaiTalep> fazlaMesaiList = ortakIslemler.getVardiyaTableList(vardiyaIdList, FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN, FazlaMesaiTalep.class, session);
 							if (fazlaMesaiList != null && !fazlaMesaiList.isEmpty()) {
 								for (FazlaMesaiTalep fazlaMesaiTalep : fazlaMesaiList) {
 									Long id = fazlaMesaiTalep.getVardiyaGun().getId();
@@ -7227,7 +7240,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								}
 							}
 
-							List<PersonelFazlaMesai> personelFazlaMesaiList = ortakIslemler.getVardiyaTable(vardiyaIdList, PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN, PersonelFazlaMesai.class, session);
+							List<PersonelFazlaMesai> personelFazlaMesaiList = ortakIslemler.getVardiyaTableList(vardiyaIdList, PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN, PersonelFazlaMesai.class, session);
 							if (personelFazlaMesaiList != null && !personelFazlaMesaiList.isEmpty()) {
 								for (PersonelFazlaMesai personelFazlaMesai : personelFazlaMesaiList) {
 									Long id = personelFazlaMesai.getVardiyaGun().getId();
@@ -8774,7 +8787,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			map.put("t2", t2);
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// fazlaMesaiTalepler = pdksEntityController.getObjectBySQLList(sb, map, FazlaMesaiTalep.class);
 			fazlaMesaiTalepler = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, map, FazlaMesaiTalep.class, session);
 			perIdList = null;
 			for (FazlaMesaiTalep fmt : fazlaMesaiTalepler) {
@@ -9890,7 +9902,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					int onayDurumu = Integer.parseInt(onayDurumuStr);
 					long fmtId = Long.parseLong(fmtIdStr);
 
-					islemFazlaMesaiTalep = (FazlaMesaiTalep) pdksEntityController.getSQLParamByFieldObject(FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_ID, fmtId, FazlaMesaiTalep.class, session);
+					// islemFazlaMesaiTalep = (FazlaMesaiTalep) pdksEntityController.getSQLParamByFieldObject(FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_ID, fmtId, FazlaMesaiTalep.class, session);
+					islemFazlaMesaiTalep = (FazlaMesaiTalep) ortakIslemler.getVardiyaTable(fmtId, FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_ID, FazlaMesaiTalep.class, session);
 
 					if (islemFazlaMesaiTalep != null) {
 						if (islemFazlaMesaiTalep.isIptalEdilebilir()) {
@@ -10319,7 +10332,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				map.put(fieldName, perList);
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// fazlaMesaiTalepler = pdksEntityController.getObjectBySQLList(sb, map, FazlaMesaiTalep.class);
 				fazlaMesaiTalepler = pdksEntityController.getSQLParamList(perList, sb, fieldName, map, FazlaMesaiTalep.class, session);
 
 				Personel loginPersonel = getPdksUser().getPdksPersonel();

@@ -272,7 +272,7 @@ public class OrtakIslemler implements Serializable {
 		if (id != null) {
 			List<Long> idList = new ArrayList<Long>();
 			idList.add(id);
-			List list = getVardiyaTable(idList, tableName, columnName, tableClass, session);
+			List list = getVardiyaTableList(idList, tableName, columnName, tableClass, session);
 			if (list != null) {
 				if (list.size() == 1)
 					v = list.get(0);
@@ -284,17 +284,26 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param idList
+	 * @param fieldValue
 	 * @param tableName
 	 * @param columnName
 	 * @param tableClass
 	 * @param session
 	 * @return
 	 */
-	public List getVardiyaTable(List<Long> idList, String tableName, String columnName, Class tableClass, Session session) {
+	public List getVardiyaTableList(Object fieldValue, String tableName, String columnName, Class tableClass, Session session) {
 		List list = null;
 		try {
-			if (idList != null && !idList.isEmpty()) {
+			List idList = new ArrayList();
+			if (fieldValue != null) {
+				if (fieldValue instanceof Collection) {
+					Collection c = (Collection) fieldValue;
+					if (c.isEmpty() == false)
+						idList.addAll(c);
+				} else
+					idList.add(fieldValue);
+			}
+			if (!idList.isEmpty()) {
 				String fieldName = "v";
 				HashMap map = new HashMap();
 				StringBuilder sb = new StringBuilder();
@@ -304,7 +313,6 @@ public class OrtakIslemler implements Serializable {
 				} else if (tableClass.equals(PersonelFazlaMesai.class)) {
 					sb.append(" inner join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on P." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 					sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
-
 				} else if (tableClass.equals(FazlaMesaiTalep.class)) {
 					sb.append(" inner join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on P." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 					sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
@@ -314,8 +322,8 @@ public class OrtakIslemler implements Serializable {
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
 				list = pdksEntityController.getSQLParamList(idList, sb, fieldName, map, tableClass, session);
-
 			}
+			idList = null;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -21683,7 +21691,13 @@ public class OrtakIslemler implements Serializable {
 		}
 		siraliList = null;
 		if (ciftHareketMap.isEmpty() == false) {
-			List<PersonelFazlaMesai> fmList = pdksEntityController.getSQLParamByAktifFieldList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, new ArrayList(map.keySet()), PersonelFazlaMesai.class, session);
+			// List<PersonelFazlaMesai> fmList = pdksEntityController.getSQLParamByAktifFieldList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, new ArrayList(map.keySet()), PersonelFazlaMesai.class, session);
+			List<PersonelFazlaMesai> fmList = getVardiyaTableList(new ArrayList(map.keySet()), PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, PersonelFazlaMesai.class, session);
+			for (Iterator iterator = fmList.iterator(); iterator.hasNext();) {
+				PersonelFazlaMesai pm = (PersonelFazlaMesai) iterator.next();
+				if (pm.getDurum().booleanValue() == false)
+					iterator.remove();
+			}
 			boolean mesaiVar = fmList.isEmpty() == false;
 			if (mesaiVar) {
 				for (PersonelFazlaMesai fm : fmList) {
@@ -23581,12 +23595,27 @@ public class OrtakIslemler implements Serializable {
 											idList.add(cikisId);
 										if (!idList.isEmpty()) {
 											HashMap fields = new HashMap();
-											fields.put("vardiyaGun.id", vardiyaGun.getId());
-											fields.put("hareketId", idList);
+											// fields.put("vardiyaGun.id", vardiyaGun.getId());
+											// fields.put("hareketId", idList);
+											// if (session != null)
+											// fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+											// List<PersonelFazlaMesai> personelFazlaMesaiList = pdksEntityController.getObjectByInnerObjectList(fields, PersonelFazlaMesai.class);
+
+											String fieldName = "v";
+											StringBuilder sb = new StringBuilder();
+											sb.append("select I.* from " + PersonelFazlaMesai.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK() + " ");
+											sb.append(" inner join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on I." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
+											sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
+											sb.append(" where I." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " = " + vardiyaGun.getId() + " and I." + PersonelFazlaMesai.COLUMN_NAME_HAREKET + " :" + fieldName);
+											fields.put(fieldName, idList);
 											if (session != null)
 												fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-											List<PersonelFazlaMesai> personelFazlaMesaiList = pdksEntityController.getObjectByInnerObjectList(fields, PersonelFazlaMesai.class);
-											devam = personelFazlaMesaiList.isEmpty();
+											try {
+												List<PersonelFazlaMesai> personelFazlaMesaiList = pdksEntityController.getSQLParamList(idList, sb, PersonelFazlaMesai.COLUMN_NAME_HAREKET, fields, PersonelFazlaMesai.class, session);
+												devam = personelFazlaMesaiList.isEmpty();
+											} catch (Exception e) {
+											}
+
 											fields = null;
 										}
 										idList = null;

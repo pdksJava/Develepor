@@ -147,11 +147,6 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			pdksEntityController.saveOrUpdate(session, entityManager, object);
 	}
 
-	 
-		 
-		
-	 
-
 	public void instanceRefresh() {
 		if (getInstance().getId() != null)
 			pdksEntityController.sessionRefresh(session, entityManager, getInstance());
@@ -253,7 +248,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			}
 
 			donusAdres = null;
-			if (authenticatedUser.isAdmin() == false && PdksUtil.hasStringValue(planKey)==false) {
+			if (authenticatedUser.isAdmin() == false && PdksUtil.hasStringValue(planKey) == false) {
 				donusStr = MenuItemConstant.home;
 				if (userHome.hasPermission("fazlaMesaiHesapla", "view")) {
 					PdksUtil.addMessageWarn("Bu ekrandan " + ortakIslemler.getMenuAdi("personelFazlaMesai") + " sayfasına geçiş yapma yetkisi vardır!");
@@ -471,12 +466,26 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		Double fazlaMesaiMaxSaati = null;
 		if (onayDurum) {
 			HashMap fields = new HashMap();
-			fields.put("vardiyaGun.id=", vg.getId());
-			fields.put("onayDurumu=", FazlaMesaiTalep.ONAY_DURUM_ONAYLANDI);
-			fields.put("durum=", Boolean.TRUE);
+			// fields.put("vardiyaGun.id=", vg.getId());
+			// fields.put("onayDurumu=", FazlaMesaiTalep.ONAY_DURUM_ONAYLANDI);
+			// fields.put("durum=", Boolean.TRUE);
+			// if (session != null)
+			// fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			// List<FazlaMesaiTalep> fazlaMesaiTalepler = pdksEntityController.getObjectByInnerObjectListInLogic(fields, FazlaMesaiTalep.class);
+			//
+			//
+			StringBuilder sb = new StringBuilder();
+			sb.append("select P.* from " + FazlaMesaiTalep.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+			sb.append(" inner join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on P." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
+			sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
+			sb.append(" where P." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " =:v");
+			sb.append(" and P." + FazlaMesaiTalep.COLUMN_NAME_ONAY_DURUMU + " = " + FazlaMesaiTalep.ONAY_DURUM_ONAYLANDI);
+			sb.append(" and P." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1");
+			fields.put("v", vg.getId());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			List<FazlaMesaiTalep> fazlaMesaiTalepler = pdksEntityController.getObjectByInnerObjectListInLogic(fields, FazlaMesaiTalep.class);
+			List<FazlaMesaiTalep> fazlaMesaiTalepler = pdksEntityController.getObjectBySQLList(sb, fields, FazlaMesaiTalep.class);
+
 			if (!fazlaMesaiTalepler.isEmpty()) {
 				for (Iterator iterator = fazlaMesaiTalepler.iterator(); iterator.hasNext();) {
 					FazlaMesaiTalep fazlaMesaiTalep = (FazlaMesaiTalep) iterator.next();
@@ -588,8 +597,8 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 							saveOrUpdate(nedenOzelAciklama);
 						fazlaMesai.setNedenOzelAciklama(aciklamaVar ? nedenOzelAciklama : null);
 						saveOrUpdate(fazlaMesai);
-				//		if (aciklamaVar == false && nedenOzelAciklama != null)
-				//			pdksEntityController.deleteObject(session, entityManager, nedenOzelAciklama);
+						// if (aciklamaVar == false && nedenOzelAciklama != null)
+						// pdksEntityController.deleteObject(session, entityManager, nedenOzelAciklama);
 
 						ortakIslemler.sessionFlush(session);
 					} catch (Exception e) {
@@ -679,7 +688,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						logger.error("Pdks hata out : " + e.getMessage());
 
 					}
-					pdksEntityController.sessionRefresh(session, entityManager,this.getInstance());
+					pdksEntityController.sessionRefresh(session, entityManager, this.getInstance());
 					setInstance(new PersonelFazlaMesai());
 					fillHareketMesaiList();
 					islem = "persisted";
@@ -906,7 +915,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						parametreMap2.put(fieldName, idler);
 						if (session != null)
 							parametreMap2.put(PdksEntityController.MAP_KEY_SESSION, session);
- 						mesaiList = pdksEntityController.getSQLParamList(idler, sb, fieldName, parametreMap2, PersonelFazlaMesai.class, session);
+						mesaiList = pdksEntityController.getSQLParamList(idler, sb, fieldName, parametreMap2, PersonelFazlaMesai.class, session);
 
 					} else
 						mesaiList = new ArrayList<PersonelFazlaMesai>();
@@ -1625,8 +1634,8 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 	@Transactional
 	public String mesaiSil() {
-
-		PersonelFazlaMesai mesai = (PersonelFazlaMesai) pdksEntityController.getSQLParamByFieldObject(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_ID, seciliHareket.getPersonelFazlaMesai().getId(), PersonelFazlaMesai.class, session);
+		// PersonelFazlaMesai mesai = (PersonelFazlaMesai) pdksEntityController.getSQLParamByFieldObject(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_ID, seciliHareket.getPersonelFazlaMesai().getId(), PersonelFazlaMesai.class, session);
+ 		PersonelFazlaMesai mesai =(PersonelFazlaMesai) ortakIslemler.getVardiyaTable(seciliHareket.getPersonelFazlaMesai().getId(), PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_ID, PersonelFazlaMesai.class, session);
 		if (mesai != null) {
 			try {
 				ortakIslemler.startTransaction(session);

@@ -2340,6 +2340,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			parametreMap.put(fieldName, perIdList);
 			sb.append(" inner join " + PersonelFazlaMesai.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on V." + VardiyaGun.COLUMN_NAME_ID + " = I." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN);
 			sb.append(" and I." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1 ");
+			sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
 			sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " > :v1 and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " < :v2 ");
 			sb.append(" and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
 			parametreMap.put("v1", tarih1);
