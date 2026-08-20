@@ -303,7 +303,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 			// if (session != null)
 			// parametreMap2.put(PdksEntityController.MAP_KEY_SESSION, session);
 			// List<PersonelFazlaMesai> fmList = pdksEntityController.getObjectByInnerObjectList(parametreMap2, PersonelFazlaMesai.class);
-			List<PersonelFazlaMesai> fmList = ortakIslemler.getVardiyaTableList(idList, PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN, PersonelFazlaMesai.class, session);
+			List<PersonelFazlaMesai> fmList = ortakIslemler.getVardiyaTableList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN, idList, PersonelFazlaMesai.class, session);
 			for (PersonelFazlaMesai personelFazlaMesai : fmList) {
 				if (personelFazlaMesai.getDurum() && personelFazlaMesai.isOnaylandi()) {
 					Long key = personelFazlaMesai.getVardiyaGun().getId();

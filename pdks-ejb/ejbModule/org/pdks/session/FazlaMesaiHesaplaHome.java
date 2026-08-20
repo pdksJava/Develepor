@@ -3187,7 +3187,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					List<PersonelFazlaMesai> fmList = null;
 					if (gecersizHareketMap.isEmpty() == false) {
 						// fmList = pdksEntityController.getSQLParamByAktifFieldList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, new ArrayList(gecersizHareketMap.keySet()), PersonelFazlaMesai.class, session);
-						fmList = ortakIslemler.getVardiyaTableList(new ArrayList(gecersizHareketMap.keySet()), PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, PersonelFazlaMesai.class, session);
+						fmList = ortakIslemler.getVardiyaTableList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, new ArrayList(gecersizHareketMap.keySet()), PersonelFazlaMesai.class, session);
 						for (Iterator iterator = fmList.iterator(); iterator.hasNext();) {
 							PersonelFazlaMesai pm = (PersonelFazlaMesai) iterator.next();
 							if (pm.getDurum().booleanValue() == false)
@@ -3287,7 +3287,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				izinMap = null;
 				if (!vgIdList.isEmpty()) {
 					map.clear();
-					List<FazlaMesaiTalep> fList = ortakIslemler.getVardiyaTableList(vgIdList, FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN, FazlaMesaiTalep.class, session);
+					List<FazlaMesaiTalep> fList = ortakIslemler.getVardiyaTableList(FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN, vgIdList, FazlaMesaiTalep.class, session);
 					if (!fList.isEmpty()) {
 						fList = PdksUtil.sortListByAlanAdi(fList, "baslangicZamani", true);
 						for (Iterator iterator = fList.iterator(); iterator.hasNext();) {

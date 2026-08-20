@@ -267,12 +267,12 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-	public Object getVardiyaTable(Long id, String tableName, String columnName, Class tableClass, Session session) {
+	public Object getVardiyaTable(String tableName, String columnName, Long id, Class tableClass, Session session) {
 		Object v = null;
 		if (id != null) {
 			List<Long> idList = new ArrayList<Long>();
 			idList.add(id);
-			List list = getVardiyaTableList(idList, tableName, columnName, tableClass, session);
+			List list = getVardiyaTableList(tableName, columnName, idList, tableClass, session);
 			if (list != null) {
 				if (list.size() == 1)
 					v = list.get(0);
@@ -284,14 +284,14 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param fieldValue
 	 * @param tableName
 	 * @param columnName
+	 * @param fieldValue
 	 * @param tableClass
 	 * @param session
 	 * @return
 	 */
-	public List getVardiyaTableList(Object fieldValue, String tableName, String columnName, Class tableClass, Session session) {
+	public List getVardiyaTableList(String tableName, String columnName, Object fieldValue, Class tableClass, Session session) {
 		List list = null;
 		try {
 			List idList = new ArrayList();
@@ -21692,7 +21692,7 @@ public class OrtakIslemler implements Serializable {
 		siraliList = null;
 		if (ciftHareketMap.isEmpty() == false) {
 			// List<PersonelFazlaMesai> fmList = pdksEntityController.getSQLParamByAktifFieldList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, new ArrayList(map.keySet()), PersonelFazlaMesai.class, session);
-			List<PersonelFazlaMesai> fmList = getVardiyaTableList(new ArrayList(map.keySet()), PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, PersonelFazlaMesai.class, session);
+			List<PersonelFazlaMesai> fmList = getVardiyaTableList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, new ArrayList(map.keySet()), PersonelFazlaMesai.class, session);
 			for (Iterator iterator = fmList.iterator(); iterator.hasNext();) {
 				PersonelFazlaMesai pm = (PersonelFazlaMesai) iterator.next();
 				if (pm.getDurum().booleanValue() == false)
