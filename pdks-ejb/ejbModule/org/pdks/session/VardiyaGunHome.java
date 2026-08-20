@@ -377,7 +377,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	private void sessionFlush() {
 		try {
 			// if (authenticatedUser != null)
-			session.flush();
+			ortakIslemler.sessionFlush(session);
 		} catch (Exception e) {
 			String str = (loginUser != null ? loginUser.getAdSoyad() + " " : "") + yil + " " + denklestirmeAy.getAyAdi();
 			if (PdksUtil.hasStringValue(sicilNo))

@@ -215,7 +215,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	/**
 	 * 
 	 */
-	@Transactional
+	 
 	private void sessionFlush() {
 		ortakIslemler.sessionFlush(session);
 	}
