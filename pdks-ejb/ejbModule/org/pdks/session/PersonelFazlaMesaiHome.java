@@ -466,21 +466,12 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		Double fazlaMesaiMaxSaati = null;
 		if (onayDurum) {
 			HashMap fields = new HashMap();
-			// fields.put("vardiyaGun.id=", vg.getId());
-			// fields.put("onayDurumu=", FazlaMesaiTalep.ONAY_DURUM_ONAYLANDI);
-			// fields.put("durum=", Boolean.TRUE);
-			// if (session != null)
-			// fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// List<FazlaMesaiTalep> fazlaMesaiTalepler = pdksEntityController.getObjectByInnerObjectListInLogic(fields, FazlaMesaiTalep.class);
-			//
-			//
 			StringBuilder sb = new StringBuilder();
 			sb.append("select P.* from " + FazlaMesaiTalep.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on P." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 			sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
-			sb.append(" where P." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " =:v");
+			sb.append(" where P." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = :v and P." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1");
 			sb.append(" and P." + FazlaMesaiTalep.COLUMN_NAME_ONAY_DURUMU + " = " + FazlaMesaiTalep.ONAY_DURUM_ONAYLANDI);
-			sb.append(" and P." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1");
 			fields.put("v", vg.getId());
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);

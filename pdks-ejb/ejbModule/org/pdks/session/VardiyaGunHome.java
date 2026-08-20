@@ -1188,20 +1188,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				devam = false;
 			if (devam) {
 				HashMap fields = new HashMap();
-				// if (fazlaMesaiTalep.getId() != null)
-				// fields.put("id <> ", fazlaMesaiTalep.getId());
-				// fields.put("vardiyaGun.id=", seciliVardiyaGun.getId());
-				// fields.put("baslangicZamani<", fazlaMesaiTalep.getBitisZamani());
-				// fields.put("bitisZamani>", fazlaMesaiTalep.getBaslangicZamani());
-				// if (session != null)
-				// fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// List<FazlaMesaiTalep> list = pdksEntityController.getObjectByInnerObjectListInLogic(fields, FazlaMesaiTalep.class);
-
 				StringBuilder sb = new StringBuilder();
 				sb.append("select P.* from " + FazlaMesaiTalep.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on P." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 				sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
-				sb.append(" where P." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " =:v");
+				sb.append(" where P." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = :v");
 				sb.append(" and P." + FazlaMesaiTalep.COLUMN_NAME_BASLANGIC_ZAMANI + " < :b1  and P." + FazlaMesaiTalep.COLUMN_NAME_BITIS_ZAMANI + " > :b2 ");
 				if (fazlaMesaiTalep.getId() != null) {
 					sb.append(" and P." + FazlaMesaiTalep.COLUMN_NAME_ID + " <> :f");
@@ -6175,7 +6166,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				String fieldName = "id";
 				HashMap map = new HashMap();
 				StringBuilder sb = new StringBuilder();
-				sb.append("select F.*," + FazlaMesaiTalep.COLUMN_NAME_ONAY_DURUMU + " from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
+				sb.append("select F.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " on F." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID + " and F." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_BASLANGIC_ZAMANI + " <= :t2 and F." + FazlaMesaiTalep.COLUMN_NAME_BITIS_ZAMANI + " >= :t1 ");
 				sb.append(" where F." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " :" + fieldName);
@@ -9896,8 +9887,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					int onayDurumu = Integer.parseInt(onayDurumuStr);
 					long fmtId = Long.parseLong(fmtIdStr);
 
-					// islemFazlaMesaiTalep = (FazlaMesaiTalep) pdksEntityController.getSQLParamByFieldObject(FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_ID, fmtId, FazlaMesaiTalep.class, session);
-					islemFazlaMesaiTalep = (FazlaMesaiTalep) ortakIslemler.getVardiyaTable(FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_ID, fmtId, FazlaMesaiTalep.class, session);
+ 					islemFazlaMesaiTalep = (FazlaMesaiTalep) ortakIslemler.getVardiyaTable(FazlaMesaiTalep.TABLE_NAME, FazlaMesaiTalep.COLUMN_NAME_ID, fmtId, FazlaMesaiTalep.class, session);
 
 					if (islemFazlaMesaiTalep != null) {
 						if (islemFazlaMesaiTalep.isIptalEdilebilir()) {
@@ -10785,7 +10775,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		Date basGun = PdksUtil.convertToJavaDate(denklestirmeAy.getDonem() + "01", "yyyyMMdd");
 		Date bitGun = PdksUtil.tariheAyEkleCikar(basGun, 1);
 		StringBuilder sb = new StringBuilder();
-		sb.append("select T.* FROM " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
+		sb.append("select T.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + FazlaMesaiTalep.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 		sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
 		sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :t1 and  V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " < :t2 ");
