@@ -2673,8 +2673,7 @@ public class IseGelmemeUyari implements Serializable {
 					fields.put("s", maxGunCalismaSaat);
 					fields.put("basTarih", PdksUtil.getDate(basTarih));
 					fields.put("bitTarih", PdksUtil.getDate(bitTarih));
-					// fazlaCalismalar = getVardiyaGunList(fields, sb, session);
-					fazlaCalismalar = pdksEntityController.getObjectBySQLList(sb, fields, VardiyaGun.class);
+ 					fazlaCalismalar = pdksEntityController.getObjectBySQLList(sb, fields, VardiyaGun.class);
 				}
 				if (fazlaCalismalar != null && !fazlaCalismalar.isEmpty()) {
 					TreeMap<String, Liste> listeMap = new TreeMap<String, Liste>();

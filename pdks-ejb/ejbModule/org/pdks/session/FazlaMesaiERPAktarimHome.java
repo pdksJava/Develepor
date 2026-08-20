@@ -1611,8 +1611,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				try {
-					// vgList = pdksEntityController.getObjectBySQLList(sb fields, VardiyaGun.class);
-					vgList = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, fields, VardiyaGun.class, session);
+ 					vgList = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, fields, VardiyaGun.class, session);
 
 				} catch (Exception e) {
 					logger.error(sb.toString());

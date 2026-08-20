@@ -990,7 +990,6 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 			parametreMap.put(fieldName, ekCalismaList);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// List<PersonelFazlaMesai> list = pdksEntityController.getObjectBySQLList(sb, parametreMap, PersonelFazlaMesai.class);
 			List<PersonelFazlaMesai> list = pdksEntityController.getSQLParamList(ekCalismaList, sb, fieldName, parametreMap, PersonelFazlaMesai.class, session);
 
 			for (PersonelFazlaMesai personelFazlaMesai : list) {

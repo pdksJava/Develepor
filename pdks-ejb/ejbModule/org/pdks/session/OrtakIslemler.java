@@ -260,6 +260,70 @@ public class OrtakIslemler implements Serializable {
 	FacesMessages facesMessages;
 
 	/**
+	 * @param id
+	 * @param tableName
+	 * @param columnName
+	 * @param tableClass
+	 * @param session
+	 * @return
+	 */
+	public Object getVardiyaTable(Long id, String tableName, String columnName, Class tableClass, Session session) {
+		Object v = null;
+		if (id != null) {
+			List<Long> idList = new ArrayList<Long>();
+			idList.add(id);
+			List list = getVardiyaTable(idList, tableName, columnName, tableClass, session);
+			if (list != null) {
+				if (list.size() == 1)
+					v = list.get(0);
+				list = null;
+			}
+			idList = null;
+		}
+		return v;
+	}
+
+	/**
+	 * @param idList
+	 * @param tableName
+	 * @param columnName
+	 * @param tableClass
+	 * @param session
+	 * @return
+	 */
+	public List getVardiyaTable(List<Long> idList, String tableName, String columnName, Class tableClass, Session session) {
+		List list = null;
+		try {
+			if (idList != null && !idList.isEmpty()) {
+				String fieldName = "v";
+				HashMap map = new HashMap();
+				StringBuilder sb = new StringBuilder();
+				sb.append("select P.* from " + tableName + " P " + PdksEntityController.getSelectLOCK());
+				if (tableClass.equals(VardiyaGun.class)) {
+					sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = P." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
+				} else if (tableClass.equals(PersonelFazlaMesai.class)) {
+					sb.append(" inner join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on P." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
+					sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
+
+				} else if (tableClass.equals(FazlaMesaiTalep.class)) {
+					sb.append(" inner join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on P." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
+					sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
+				}
+				sb.append(" where P." + columnName + " :" + fieldName);
+				map.put(fieldName, idList);
+				if (session != null)
+					map.put(PdksEntityController.MAP_KEY_SESSION, session);
+				list = pdksEntityController.getSQLParamList(idList, sb, fieldName, map, tableClass, session);
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+
+	/**
 	 * @param session
 	 * @return
 	 */
@@ -9959,6 +10023,7 @@ public class OrtakIslemler implements Serializable {
 			if (denklestirmeAy != null) {
 				sb.append(" inner join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + VardiyaGun.COLUMN_NAME_ID + " = I." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN);
 				sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :v1 and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :v2 ");
+				sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
 				Calendar cal = Calendar.getInstance();
 				cal.set(Calendar.YEAR, denklestirmeAy.getYil());
 				cal.set(Calendar.MONTH, denklestirmeAy.getAy() - 1);
@@ -11241,47 +11306,6 @@ public class OrtakIslemler implements Serializable {
 							sessionFlush(session);
 
 					}
-					// if (updateMap != null) {
-					// if (updateMap.isEmpty() == false) {
-					// for (Long key : updateMap.keySet()) {
-					// HashMap<String, Object> vGunMap = updateMap.get(key);
-					// VardiyaGun vg = null;
-					// try {
-					// vg = (VardiyaGun) pdksEntityController.getSQLParamByFieldObject(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, key, VardiyaGun.class, session);
-					// } catch (Exception e) {
-					// }
-					// if (vGunMap.containsKey("id"))
-					// vGunMap.remove("id");
-					// if (vg == null)
-					// vg = (VardiyaGun) session.get(VardiyaGun.class, key);
-					// String vardiyaDateStr = vg.getVardiyaDateStr();
-					// if (vGunMap.isEmpty() == false && vg != null) {
-					// vg.setGuncellendi(false);
-					// vg = (VardiyaGun) session.merge(vg);
-					//
-					// for (String alan : vGunMap.keySet()) {
-					// if (alan.equals("vardiya")) {
-					// vg.setVardiya((Vardiya) vGunMap.get(alan));
-					// planGuncelle = true;
-					// } else if (alan.equals("vardiyaOnayli"))
-					// vg.setVardiyaOnayli((Boolean) vGunMap.get(alan));
-					// else if (alan.equals("guncelleyenUser"))
-					// vg.setGuncelleyenUser((User) vGunMap.get(alan));
-					// else if (alan.equals("guncellemeTarihi"))
-					// vg.setGuncellemeTarihi((Date) vGunMap.get(alan));
-					// }
-					// if (vg.isGuncellendi()) {
-					// pdksEntityController.saveOrUpdate(session, null, vg);
-					// flush = true;
-					// }
-					//
-					// }
-					// personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(vardiyaDateStr, vg);
-					// }
-					// }
-					// updateMap = null;
-					// }
-
 				}
 			}
 			if (flush) {
@@ -16023,15 +16047,7 @@ public class OrtakIslemler implements Serializable {
 		if (session != null)
 			map.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<VardiyaGun> vardiyaGunList = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, map, VardiyaGun.class, session);
-		// List<BigDecimal> idList = pdksEntityController.getSQLParamList(personelIdler, sb, fieldName, map, null, session);
-		// List<VardiyaGun> vardiyaGunList = null;
-		// if (idList != null && !idList.isEmpty()) {
-		// List<Long> vIdList = getLongByBigDecimalList(idList);
-		// vardiyaGunList = pdksEntityController.getSQLParamByFieldList(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, vIdList, VardiyaGun.class, session);
-		// vIdList = null;
-		// } else
-		// vardiyaGunList = new ArrayList<VardiyaGun>();
-		// idList = null;
+
 		map = null;
 
 		if (!vardiyaGunList.isEmpty()) {

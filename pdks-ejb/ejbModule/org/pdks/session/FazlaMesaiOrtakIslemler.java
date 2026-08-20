@@ -919,7 +919,6 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				map.put("bitTarih", bitTarih);
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// List<VardiyaGun> vardiyaGunList = pdksEntityController.getObjectBySQLList(sb, map, VardiyaGun.class);
 				List<VardiyaGun> vardiyaGunList = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, map, VardiyaGun.class, session);
 
 				for (VardiyaGun vardiyaGun : vardiyaGunList) {
@@ -969,7 +968,6 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					map.put("bitTarih", bitTarih);
 					if (session != null)
 						map.put(PdksEntityController.MAP_KEY_SESSION, session);
-					// List<VardiyaGun> vardiyaGunList = pdksEntityController.getObjectBySQLList(sb, map, VardiyaGun.class);
 					List<VardiyaGun> vardiyaGunList = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, map, VardiyaGun.class, session);
 					if (vardiyaGunList.isEmpty() == false) {
 						perIdList = new ArrayList<Long>(perDMap.keySet());

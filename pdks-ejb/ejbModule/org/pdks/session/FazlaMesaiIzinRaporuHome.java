@@ -39,6 +39,7 @@ import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
+import org.pdks.entity.VardiyaSaat;
 import org.pdks.security.entity.User;
 
 @Name("fazlaMesaiIzinRaporuHome")
@@ -274,6 +275,7 @@ public class FazlaMesaiIzinRaporuHome extends EntityHome<VardiyaGun> implements 
 			sb.append(" inner join " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on VG." + VardiyaGun.COLUMN_NAME_VARDIYA + " = V." + Vardiya.COLUMN_NAME_ID);
 			sb.append(" and V." + Vardiya.COLUMN_NAME_VARDIYA_TIPI + " = :vt");
 			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on VG." + VardiyaGun.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID);
+			sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = VG." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
 			sb.append("	where VG." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
 			sb.append("	AND VG." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :b1 and VG." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "  <= :b2 ");
 			fields.put("vt", Vardiya.TIPI_FMI);

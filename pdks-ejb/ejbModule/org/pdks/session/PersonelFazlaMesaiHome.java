@@ -46,6 +46,7 @@ import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
+import org.pdks.entity.VardiyaSaat;
 import org.pdks.entity.YemekIzin;
 import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.security.action.UserHome;
@@ -898,14 +899,14 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						sb.append("select F.* from " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
 						sb.append(" inner join " + PersonelFazlaMesai.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " on F." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 						sb.append(" and F." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1 ");
+						sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
 						sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " = :t and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
 						parametreMap2.clear();
 						parametreMap2.put("t", date);
 						parametreMap2.put(fieldName, idler);
 						if (session != null)
 							parametreMap2.put(PdksEntityController.MAP_KEY_SESSION, session);
-						// mesaiList = pdksEntityController.getObjectByInnerObjectListInLogic(parametreMap2, PersonelFazlaMesai.class);
-						mesaiList = pdksEntityController.getSQLParamList(idler, sb, fieldName, parametreMap2, PersonelFazlaMesai.class, session);
+ 						mesaiList = pdksEntityController.getSQLParamList(idler, sb, fieldName, parametreMap2, PersonelFazlaMesai.class, session);
 
 					} else
 						mesaiList = new ArrayList<PersonelFazlaMesai>();
