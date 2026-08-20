@@ -3186,7 +3186,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					}
 					List<PersonelFazlaMesai> fmList = null;
 					if (gecersizHareketMap.isEmpty() == false) {
-						// fmList = pdksEntityController.getSQLParamByAktifFieldList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, new ArrayList(gecersizHareketMap.keySet()), PersonelFazlaMesai.class, session);
 						fmList = ortakIslemler.getVardiyaTableList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, new ArrayList(gecersizHareketMap.keySet()), PersonelFazlaMesai.class, session);
 						for (Iterator iterator = fmList.iterator(); iterator.hasNext();) {
 							PersonelFazlaMesai pm = (PersonelFazlaMesai) iterator.next();

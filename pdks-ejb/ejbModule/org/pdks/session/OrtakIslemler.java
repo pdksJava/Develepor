@@ -322,7 +322,8 @@ public class OrtakIslemler implements Serializable {
 				if (session != null)
 					map.put(PdksEntityController.MAP_KEY_SESSION, session);
 				list = pdksEntityController.getSQLParamList(idList, sb, fieldName, map, tableClass, session);
-			}
+			} else
+				list = new ArrayList();
 			idList = null;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -21691,7 +21692,6 @@ public class OrtakIslemler implements Serializable {
 		}
 		siraliList = null;
 		if (ciftHareketMap.isEmpty() == false) {
-			// List<PersonelFazlaMesai> fmList = pdksEntityController.getSQLParamByAktifFieldList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, new ArrayList(map.keySet()), PersonelFazlaMesai.class, session);
 			List<PersonelFazlaMesai> fmList = getVardiyaTableList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_HAREKET, new ArrayList(map.keySet()), PersonelFazlaMesai.class, session);
 			for (Iterator iterator = fmList.iterator(); iterator.hasNext();) {
 				PersonelFazlaMesai pm = (PersonelFazlaMesai) iterator.next();
@@ -23595,11 +23595,6 @@ public class OrtakIslemler implements Serializable {
 											idList.add(cikisId);
 										if (!idList.isEmpty()) {
 											HashMap fields = new HashMap();
-											// fields.put("vardiyaGun.id", vardiyaGun.getId());
-											// fields.put("hareketId", idList);
-											// if (session != null)
-											// fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-											// List<PersonelFazlaMesai> personelFazlaMesaiList = pdksEntityController.getObjectByInnerObjectList(fields, PersonelFazlaMesai.class);
 
 											String fieldName = "v";
 											StringBuilder sb = new StringBuilder();

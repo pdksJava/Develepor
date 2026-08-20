@@ -1201,8 +1201,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 			List<PersonelFazlaMesai> list = pdksEntityController.getSQLParamList(idList, sb, fieldName, parametreMap, PersonelFazlaMesai.class, session);
-
-			if (!list.isEmpty()) {
+ 			if (!list.isEmpty()) {
 				String patern = "yyyyMMdd" + (maxGeceCalismaSaatStr.indexOf(":") > 0 ? "HH:mm" : "HHmm");
 				Date tarih2;
 				for (PersonelFazlaMesai personelFazlaMesai : list) {

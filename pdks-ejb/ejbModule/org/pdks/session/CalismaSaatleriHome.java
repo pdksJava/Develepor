@@ -298,11 +298,6 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 		}
 		TreeMap<Long, List<PersonelFazlaMesai>> fmMap = new TreeMap<Long, List<PersonelFazlaMesai>>();
 		if (!idList.isEmpty()) {
-			// HashMap parametreMap2 = new HashMap();
-			// parametreMap2.put("vardiyaGun.id", idList);
-			// if (session != null)
-			// parametreMap2.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// List<PersonelFazlaMesai> fmList = pdksEntityController.getObjectByInnerObjectList(parametreMap2, PersonelFazlaMesai.class);
 			List<PersonelFazlaMesai> fmList = ortakIslemler.getVardiyaTableList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN, idList, PersonelFazlaMesai.class, session);
 			for (PersonelFazlaMesai personelFazlaMesai : fmList) {
 				if (personelFazlaMesai.getDurum() && personelFazlaMesai.isOnaylandi()) {

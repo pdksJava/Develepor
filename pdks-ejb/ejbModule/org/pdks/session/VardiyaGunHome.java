@@ -4166,11 +4166,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				}
 				if (!mesaiMap.isEmpty()) {
 					List idList = new ArrayList(mesaiMap.keySet());
-					// String fieldName = "vardiyaGun.id";
-					// HashMap fields = new HashMap();
-					// fields.put(fieldName, idList);
-					// fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					// List<PersonelFazlaMesai> list = ortakIslemler.getParamList(false, idList, fieldName, fields, PersonelFazlaMesai.class, session);
 					List<PersonelFazlaMesai> list = ortakIslemler.getVardiyaTableList(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN, idList, PersonelFazlaMesai.class, session);
 					for (PersonelFazlaMesai fazlaMesai : list) {
 						if (fazlaMesai.getDurum() && fazlaMesai.isOnaylandi()) {

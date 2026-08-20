@@ -1634,8 +1634,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 	@Transactional
 	public String mesaiSil() {
-		// PersonelFazlaMesai mesai = (PersonelFazlaMesai) pdksEntityController.getSQLParamByFieldObject(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_ID, seciliHareket.getPersonelFazlaMesai().getId(), PersonelFazlaMesai.class, session);
-		PersonelFazlaMesai mesai = (PersonelFazlaMesai) ortakIslemler.getVardiyaTable(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_ID, seciliHareket.getPersonelFazlaMesai().getId(), PersonelFazlaMesai.class, session);
+ 		PersonelFazlaMesai mesai = (PersonelFazlaMesai) ortakIslemler.getVardiyaTable(PersonelFazlaMesai.TABLE_NAME, PersonelFazlaMesai.COLUMN_NAME_ID, seciliHareket.getPersonelFazlaMesai().getId(), PersonelFazlaMesai.class, session);
 		if (mesai != null) {
 			try {
 				ortakIslemler.startTransaction(session);
