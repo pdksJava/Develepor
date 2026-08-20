@@ -591,7 +591,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						// if (aciklamaVar == false && nedenOzelAciklama != null)
 						// pdksEntityController.deleteObject(session, entityManager, nedenOzelAciklama);
 
-						ortakIslemler.sessionFlush(session);
+						pdksEntityController.sessionFlush(session);
 					} catch (Exception e) {
 						logger.error("Pdks hata in : \n");
 						e.printStackTrace();
@@ -672,7 +672,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 					try {
 						saveOrUpdate(fazlaMesai);
-						ortakIslemler.sessionFlush(session);
+						pdksEntityController.sessionFlush(session);
 					} catch (Exception e) {
 						logger.error("Pdks hata in : \n");
 						e.printStackTrace();
@@ -1633,7 +1633,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 				mesai.setGuncellemeTarihi(new Date());
 				mesai.setDurum(Boolean.FALSE);
 				saveOrUpdate(mesai);
-				ortakIslemler.sessionFlush(session);
+				pdksEntityController.sessionFlush(session);
 				fillHareketMesaiList();
 			} catch (Exception e) {
 			}

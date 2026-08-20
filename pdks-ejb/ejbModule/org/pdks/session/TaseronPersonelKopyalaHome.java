@@ -362,7 +362,7 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 			}
 
 			if (flush)
-				ortakIslemler.sessionFlush(session);
+				pdksEntityController.sessionFlush(session);
 		}
 		return "";
 	}

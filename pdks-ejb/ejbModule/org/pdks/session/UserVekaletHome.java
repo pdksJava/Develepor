@@ -545,7 +545,7 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 						}
 						pdksEntityController.saveOrUpdate(session, entityManager, userVekalet);
 
-						ortakIslemler.sessionFlush(session);
+						pdksEntityController.sessionFlush(session);
 						girisSifirla();
 						setInstance(new UserVekalet());
 						fillUserTotalVekaletList();
@@ -656,7 +656,7 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 						userVekaletDevir.setGuncellemeTarihi(new Date());
 						pdksEntityController.saveOrUpdate(session, entityManager, userVekaletDevir);
 					}
-					ortakIslemler.sessionFlush(session);
+					pdksEntityController.sessionFlush(session);
 					fillUserTotalVekaletList();
 
 				} catch (Exception e) {

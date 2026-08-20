@@ -417,7 +417,7 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 		}
 		personelList.clear();
 		if (flush)
-			ortakIslemler.sessionFlush(session);
+			pdksEntityController.sessionFlush(session);
 		if (yonetici1)
 			PdksUtil.addMessageInfo(ortakIslemler.yoneticiAciklama() + " güncellemesi yapılmıştır.");
 		else if (yonetici2)
@@ -472,7 +472,7 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 			}
 		}
 		if (flush)
-			ortakIslemler.sessionFlush(session);
+			pdksEntityController.sessionFlush(session);
 		if (bcc)
 			PdksUtil.addMessageInfo("BCC mail adresleri güncellenmiştir.");
 		else if (cc)

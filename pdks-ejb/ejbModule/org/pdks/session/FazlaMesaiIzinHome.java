@@ -147,7 +147,7 @@ public class FazlaMesaiIzinHome extends EntityHome<PersonelIzin> implements Seri
 		try {
 
 			ortakIslemler.bakiyeIzinSil(izin, session);
-			ortakIslemler.sessionFlush(session);
+			pdksEntityController.sessionFlush(session);
 			fillIzinList();
 
 		} catch (Exception e) {
@@ -181,7 +181,7 @@ public class FazlaMesaiIzinHome extends EntityHome<PersonelIzin> implements Seri
 
 			PersonelIzin izin = (PersonelIzin) pdksEntityController.getSQLParamByFieldObject(PersonelIzin.TABLE_NAME, PersonelIzin.COLUMN_NAME_ID, updateIzin.getId(), PersonelIzin.class, session);
 			pdksEntityController.sessionRefresh(session, entityManager, izin);
-			ortakIslemler.sessionFlush(session);
+			pdksEntityController.sessionFlush(session);
 			fillIzinList();
 
 		} catch (Exception e) {

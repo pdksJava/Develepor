@@ -382,7 +382,7 @@ public class PersonelERPGuncelleme implements Serializable {
 							try {
 								session.clear();
 								pdksEntityController.saveOrUpdate(session, entityManager, kullanici);
-								ortakIslemler.sessionFlush(session);
+								pdksEntityController.sessionFlush(session);
 
 							} catch (Exception ee) {
 								logger.error("PDKS hata in : \n" + (kullanici != null ? kullanici.getUsername() : ""));
@@ -494,7 +494,7 @@ public class PersonelERPGuncelleme implements Serializable {
 							logger.error(pdksPersonel.getSicilNo() + " " + pdksPersonel.getAdSoyad() + " SAP'den anaveri bilgisi okunamadı! ");
 						}
 
-						ortakIslemler.sessionFlush(session);
+						pdksEntityController.sessionFlush(session);
 
 						if (pdksPersonel.getPersonelKGS() != null)
 							personelList.add(pdksPersonel.getPersonelKGS().getId());
@@ -684,7 +684,7 @@ public class PersonelERPGuncelleme implements Serializable {
 									}
 								}
 							}
-							ortakIslemler.sessionFlush(session);
+							pdksEntityController.sessionFlush(session);
 
 						}
 

@@ -157,7 +157,8 @@ public class Authenticator implements IAuthenticator, Serializable {
 							if (!parameterMap.containsKey("emailBozuk"))
 								loginUser.setEmail(ldapUser.getEmail());
 							pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
-							session.flush();
+							 
+							pdksEntityController.sessionFlush(session);
 							userName = ldapUser.getUsername();
 						}
 					}
@@ -165,7 +166,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 					if (loginUser.getShortUsername() == null || !loginUser.getShortUsername().equals(ldapUser.getShortUsername())) {
 						loginUser.setShortUsername(ldapUser.getShortUsername());
 						pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
-						session.flush();
+						pdksEntityController.sessionFlush(session);
 					}
 				}
 
@@ -188,7 +189,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 						if (!parametreMap.containsKey("emailBozuk"))
 							loginUser.setEmail(ldapUser.getEmail());
 						pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
-						session.flush();
+						pdksEntityController.sessionFlush(session);
 					}
 				}
 				if (!test && parameterMap != null && parameterMap.containsKey("sifreKontrol"))
@@ -247,7 +248,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 										if (!parameterMap.containsKey("emailBozuk"))
 											loginUser.setEmail(email);
 										pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
-										session.flush();
+										pdksEntityController.sessionFlush(session);
 									}
 								}
 							} catch (Exception e) {
@@ -300,7 +301,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 								try {
 									loginUser.setLastLogin(new Date());
 									pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
-									session.flush();
+									pdksEntityController.sessionFlush(session);
 								} catch (Exception e) {
 								}
 							}

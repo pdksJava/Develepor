@@ -217,7 +217,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	 */
 	 
 	private void sessionFlush() {
-		ortakIslemler.sessionFlush(session);
+		pdksEntityController.sessionFlush(session);
 	}
 
 	/**

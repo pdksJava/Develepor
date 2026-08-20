@@ -90,7 +90,7 @@ public class TesisBaglantiHome extends EntityHome<TesisBaglanti> implements Seri
 		}
 		if (kayit + sirala > 0)
 			try {
-				ortakIslemler.sessionFlush(session);
+				pdksEntityController.sessionFlush(session);
 				if (sirala > 0)
 					pdksEntityController.savePrepareTableID(true, null, TesisBaglanti.class, session);
 				if (kayit > 0)

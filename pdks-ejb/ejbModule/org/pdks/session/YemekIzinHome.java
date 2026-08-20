@@ -113,13 +113,13 @@ public class YemekIzinHome extends EntityHome<YemekIzin> implements Serializable
 				iptal = true;
 			}
 
-			ortakIslemler.sessionFlush(session);
+			pdksEntityController.sessionFlush(session);
 			if (iptal) {
 				try {
 					pdksEntityController.savePrepareTableID(true, null, VardiyaYemekIzin.class, session);
 				} catch (Exception e) {
 				}
-				ortakIslemler.sessionFlush(session);
+				pdksEntityController.sessionFlush(session);
 			}
 			fillPdksYemekList();
 

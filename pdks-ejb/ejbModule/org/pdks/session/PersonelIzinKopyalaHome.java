@@ -419,7 +419,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 								dataKidemMap.put("gecmis", Boolean.TRUE);
 								dataKidemMap.put("yeniBakiyeOlustur", Boolean.FALSE);
 								ortakIslemler.getKidemHesabi(dataKidemMap, session);
-								ortakIslemler.sessionFlush(session);
+								pdksEntityController.sessionFlush(session);
 							}
 						} catch (Exception re) {
 							veriMap.get(izinSahibiId).setSecim(Boolean.FALSE);

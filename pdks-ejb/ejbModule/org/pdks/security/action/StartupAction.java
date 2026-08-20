@@ -324,7 +324,7 @@ public class StartupAction implements Serializable {
 				if (adet != null) {
 					toplamAdet += adet;
 					if (adet > 0)
-						session.flush();
+						pdksEntityController.sessionFlush(session);
 				}
 
 				iterator.remove();
@@ -908,7 +908,7 @@ public class StartupAction implements Serializable {
 				if (helpDeskStatus.getId() != null)
 					helpDeskStatus.setChangeDate(bugun);
 				pdksEntityController.saveOrUpdate(session, entityManager, helpDeskStatus);
-				session.flush();
+				pdksEntityController.sessionFlush(session);
 			}
 
 		} catch (Exception ex) {
@@ -1030,7 +1030,7 @@ public class StartupAction implements Serializable {
 					parameterMap.put(helpDeskLastDateKey, helpDeskLastDateStr);
 					parameter.setValue(helpDeskLastDateStr);
 					pdksEntityController.saveOrUpdate(session, entityManager, parameter);
-					session.flush();
+					pdksEntityController.sessionFlush(session);
 				}
 			}
 		}
@@ -1095,7 +1095,7 @@ public class StartupAction implements Serializable {
 					parameterMap.put(helpDeskLastDateKey, servisHelpDeskLastDateStr);
 					parameter.setValue(servisHelpDeskLastDateStr);
 					pdksEntityController.saveOrUpdate(session, entityManager, parameter);
-					session.flush();
+					pdksEntityController.sessionFlush(session);
 				}
 			}
 			if (helpDeskLastDate == null) {
@@ -1186,7 +1186,7 @@ public class StartupAction implements Serializable {
 				if (lu.getLdapHost() != null)
 					pdksEntityController.saveOrUpdate(session, entityManager, lu);
 			}
-			session.flush();
+			pdksEntityController.sessionFlush(session);
 		}
 
 		saveList = null;

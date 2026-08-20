@@ -326,7 +326,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				pasifList = null;
 				if (flush) {
 					pdksEntityController.saveOrUpdate(session, entityManager, personel);
-					ortakIslemler.sessionFlush(session);
+					pdksEntityController.sessionFlush(session);
 				}
 
 			}
@@ -421,7 +421,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					donemselDurum.setGuncelleyenUser(authenticatedUser);
 				}
 				pdksEntityController.saveOrUpdate(session, entityManager, donemselDurum);
-				ortakIslemler.sessionFlush(session);
+				pdksEntityController.sessionFlush(session);
 				gebeSutIzniSecimi(donemselDurum.getPersonel());
 			} else {
 				PersonelDonemselDurum personelDonemselDurum = list.get(0);
@@ -821,7 +821,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private void savePersonel(Personel pdksPersonel) {
 		if (pdksPersonel.getId() != null) {
 			pdksEntityController.saveOrUpdate(session, entityManager, pdksPersonel);
-			ortakIslemler.sessionFlush(session);
+			pdksEntityController.sessionFlush(session);
 		}
 	}
 
@@ -870,7 +870,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 		pdksPersonel.setPdksSicilNo(pdksPersonel.getPersonelKGS().getSicilNo());
 		session.save(pdksPersonel);
-		ortakIslemler.sessionFlush(session);
+		pdksEntityController.sessionFlush(session);
 		pdksEntityController.sessionRefresh(session, entityManager, personelView);
 		return ok;
 
@@ -900,7 +900,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				pdksEntityController.saveOrUpdate(session, entityManager, pdksPersonel);
 			} else
 				ortakIslemler.pasifUserEpostaVeKullaniciDegistir(eskiKullanici);
-			ortakIslemler.sessionFlush(session);
+			pdksEntityController.sessionFlush(session);
 			fillPersonelKGSList();
 		}
 		return "";
@@ -923,7 +923,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						personel.setGuncelleyenUser(authenticatedUser);
 					}
 					pdksEntityController.saveOrUpdate(session, entityManager, personel);
-					ortakIslemler.sessionFlush(session);
+					pdksEntityController.sessionFlush(session);
 					fillPersonelKGSList();
 				}
 			} catch (Exception e) {
@@ -1308,7 +1308,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 							}
 						}
-						ortakIslemler.sessionFlush(session);
+						pdksEntityController.sessionFlush(session);
 						if (tesisYetki && kullanici.getId() != null && authenticatedUser.getId() != null) {
 							authenticatedUser.setYetkiliTesisler(null);
 							ortakIslemler.setUserTesisler(authenticatedUser, false, session);
@@ -1489,7 +1489,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				boolean guncellendi = ortakIslemler.sapVeriGuncelle(session, authenticatedUser, null, null, personel, null, update, Boolean.FALSE, Boolean.TRUE);
 				if (guncellendi) {
 					if (update) {
-						ortakIslemler.sessionFlush(session);
+						pdksEntityController.sessionFlush(session);
 
 						PdksUtil.addMessageInfo(personel.getAdSoyad() + " SAP'den verileri güncellendi.");
 						if (personelView != null)
@@ -2638,7 +2638,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					if (degisti) {
 						pdksEntityController.saveOrUpdate(session, entityManager, pdksPersonel);
 
-						ortakIslemler.sessionFlush(session);
+						pdksEntityController.sessionFlush(session);
 						pdksEntityController.sessionRefresh(session, entityManager, personelView);
 
 					}

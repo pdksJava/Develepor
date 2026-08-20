@@ -142,7 +142,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 									personelDenklestirme.setGuncelleyenUser(user);
 									personelDenklestirme.setGuncellemeTarihi(guncellemeTarihi);
 									pdksEntityController.saveOrUpdate(session, entityManager, personelDenklestirme);
-									ortakIslemler.sessionFlush(session);
+									pdksEntityController.sessionFlush(session);
 								}
 
 							}
@@ -381,7 +381,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 										if (yeni)
 											session.clear();
 										pdksEntityController.saveOrUpdate(session, entityManager, masrafYeri);
-										ortakIslemler.sessionFlush(session);
+										pdksEntityController.sessionFlush(session);
 									}
 
 								} catch (Exception e) {
@@ -399,7 +399,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 										if (yeni)
 											session.clear();
 										pdksEntityController.saveOrUpdate(session, entityManager, bordroAltAlan);
-										ortakIslemler.sessionFlush(session);
+										pdksEntityController.sessionFlush(session);
 									}
 
 								} catch (Exception e) {
@@ -739,7 +739,7 @@ public class PdksSap3Controller implements ERPController, Serializable {
 				list.addAll(new ArrayList<Personel>(perMap.values()));
 				perMap = null;
 				if (flush)
-					ortakIslemler.sessionFlush(session);
+					pdksEntityController.sessionFlush(session);
 			}
 		}
 		return list;

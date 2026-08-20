@@ -263,7 +263,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private void sessionFlush() {
 		try {
 			// if (authenticatedUser != null)
-			ortakIslemler.sessionFlush(session);
+			pdksEntityController.sessionFlush(session);
 		} catch (Exception e) {
 			String str = (getPdksUser() != null ? getPdksUser().getAdSoyad() + " " : "") + yil + " " + denklestirmeAy.getAyAdi();
 			try {
@@ -7229,7 +7229,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			fmt.setGuncelleyenUser(getPdksUser());
 		}
 		pdksEntityController.saveOrUpdate(session, entityManager, fmt);
-		ortakIslemler.sessionFlush(session);
+		pdksEntityController.sessionFlush(session);
 		fillPersonelDenklestirmeList(null);
 
 		return "";

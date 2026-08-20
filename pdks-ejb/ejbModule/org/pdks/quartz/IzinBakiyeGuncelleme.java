@@ -206,7 +206,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 
 											pdksEntityController.execSP(session, veriMap, PersonelIzinDetay.SP_NAME);
 										}
-										ortakIslemler.sessionFlush(session);
+										pdksEntityController.sessionFlush(session);
 
 									}
 									izinList = null;
@@ -289,7 +289,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 						personelIzin.setGuncelleyenUser(guncelleyenUser);
 					pdksEntityController.saveOrUpdate(session, entityManager, personelIzin);
 				}
-				ortakIslemler.sessionFlush(session);
+				pdksEntityController.sessionFlush(session);
 
 			}
 		} catch (Exception e) {
@@ -421,7 +421,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 					senelikSuaIzinKontrol(session);
 			}
 			if (flush)
-				ortakIslemler.sessionFlush(session);
+				pdksEntityController.sessionFlush(session);
 
 		} catch (Exception e) {
 			logger.error("PDKS hata in : \n");
@@ -551,7 +551,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 
 			}
 			if (!list.isEmpty()) {
-				ortakIslemler.sessionFlush(userSession);
+				pdksEntityController.sessionFlush(userSession);
 				if (yeni)
 					userSession = PdksUtil.getSession(entityManager, yeni);
 
@@ -559,7 +559,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 					Collections.shuffle(list);
 			}
 		}
-		ortakIslemler.sessionFlush(userSession);
+		pdksEntityController.sessionFlush(userSession);
 		logger.info("izinleriBakiyeleriniHesapla out " + PdksUtil.getCurrentTimeStampStr());
 		if (yeni)
 			logger.info("izinBakiyeGuncelleme tamam " + PdksUtil.getCurrentTimeStampStr());

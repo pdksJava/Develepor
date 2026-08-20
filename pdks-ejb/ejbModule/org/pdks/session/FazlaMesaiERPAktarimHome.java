@@ -423,7 +423,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 						pdksPersonelDenklestirme.setGuncelleyenUser(authenticatedUser);
 						pdksPersonelDenklestirme.setGuncellemeTarihi(guncellemeTarihi);
 						pdksEntityController.saveOrUpdate(session, entityManager, pdksPersonelDenklestirme);
-						ortakIslemler.sessionFlush(session);
+						pdksEntityController.sessionFlush(session);
 					} catch (Exception e) {
 						e.printStackTrace();
 						break;
@@ -684,7 +684,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 	public String erpAktarSil(PersonelDenklestirme pdksPersonelDenklestirme) {
 		pdksPersonelDenklestirme.setErpAktarildi(Boolean.FALSE);
 		pdksEntityController.saveOrUpdate(session, entityManager, pdksPersonelDenklestirme);
-		ortakIslemler.sessionFlush(session);
+		pdksEntityController.sessionFlush(session);
 		PdksUtil.addMessageInfo(pdksPersonelDenklestirme.getPersonel().getAdSoyad() + " ait fazla mesai blokesi açılmıştır.");
 		return "";
 

@@ -782,7 +782,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 						parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 
 				}
-				ortakIslemler.sessionFlush(session);
+				pdksEntityController.sessionFlush(session);
 				sessionClear();
 				if (islemVardiyaGun != null)
 					tarih = islemVardiyaGun.getVardiyaDate();

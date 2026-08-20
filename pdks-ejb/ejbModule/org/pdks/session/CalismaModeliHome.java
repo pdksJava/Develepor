@@ -430,13 +430,13 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 						}
 					}
 				}
-				ortakIslemler.sessionFlush(session);
+				pdksEntityController.sessionFlush(session);
 				if (sirala) {
 					try {
 						pdksEntityController.savePrepareTableID(true, null, CalismaModeliVardiya.class, session);
 					} catch (Exception e) {
 					}
-					ortakIslemler.sessionFlush(session);
+					pdksEntityController.sessionFlush(session);
 				}
 				fillCalismaModeliList();
 			}

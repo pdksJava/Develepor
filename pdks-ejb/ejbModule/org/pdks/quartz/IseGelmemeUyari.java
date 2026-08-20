@@ -997,7 +997,7 @@ public class IseGelmemeUyari implements Serializable {
 														Departman departmanSave = (Departman) pdksEntityController.getSQLParamByFieldObject(Departman.TABLE_NAME, Departman.COLUMN_NAME_ID, departmanId, Departman.class, session);
 														departmanSave.setMailBox(mailBoxStr);
 														pdksEntityController.saveOrUpdate(session, entityManager, departmanSave);
-														ortakIslemler.sessionFlush(session);
+														pdksEntityController.sessionFlush(session);
 														;
 														departman = departmanSave;
 													} catch (Exception e) {

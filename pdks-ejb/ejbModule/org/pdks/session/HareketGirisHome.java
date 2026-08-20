@@ -486,7 +486,7 @@ public class HareketGirisHome extends EntityHome<HareketKGS> implements Serializ
 			}
 
 		}
-		ortakIslemler.sessionFlush(session);
+		pdksEntityController.sessionFlush(session);
 		dosyaSifirla();
 		kgsList = null;
 		return "persisted";

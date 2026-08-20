@@ -377,7 +377,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	private void sessionFlush() {
 		try {
 			// if (authenticatedUser != null)
-			ortakIslemler.sessionFlush(session);
+			pdksEntityController.sessionFlush(session);
 		} catch (Exception e) {
 			String str = (loginUser != null ? loginUser.getAdSoyad() + " " : "") + yil + " " + denklestirmeAy.getAyAdi();
 			if (PdksUtil.hasStringValue(sicilNo))
@@ -4282,7 +4282,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							}
 						}
 						if (index >= 0) {
-							ortakIslemler.sessionFlush(session);
+							pdksEntityController.sessionFlush(session);
 							HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(null, session);
 							KapiView manuelGiris = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS);
 							KapiView manuelCikis = manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS);
@@ -6532,7 +6532,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 			}
 			if (flush)
-				ortakIslemler.sessionFlush(session);
+				pdksEntityController.sessionFlush(session);
 
 		}
 	}
@@ -8944,7 +8944,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			if (idList.isEmpty() == false) {
 				fazlaMesaiOrtakIslemler.setDenklestirmeAySure(tatilGunleriMap, defaultAylikPuantajSablon.getVardiyalar(), aramaSecenekleri.getSirket(), denklestirmeAy, session);
-				ortakIslemler.sessionFlush(session);
+				pdksEntityController.sessionFlush(session);
 				if (idler.isEmpty() == false)
 					list = getPersonelDenklestirmeList(denklestirmeAy, idler);
 			}

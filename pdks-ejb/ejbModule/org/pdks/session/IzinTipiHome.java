@@ -401,13 +401,13 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 				}
 				adresler = null;
 				mailMap = null;
-				ortakIslemler.sessionFlush(session);
+				pdksEntityController.sessionFlush(session);
 				if (sirala) {
 					try {
 						pdksEntityController.savePrepareTableID(true, null, IzinTipiMailAdres.class, session);
 					} catch (Exception e) {
 					}
-					ortakIslemler.sessionFlush(session);
+					pdksEntityController.sessionFlush(session);
 				}
 				fillIzinTipiList();
 

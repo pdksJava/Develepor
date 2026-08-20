@@ -20,6 +20,7 @@ import javax.persistence.Query;
 import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.engine.SessionImplementor;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -696,6 +697,21 @@ public class PdksEntityController implements Serializable {
 	}
 
 	/**
+	 * @param session
+	 */
+	public void sessionFlush(Session session) {
+		Transaction t = session != null ? session.getTransaction() : null;
+		try {
+			if (session != null)
+				session.flush();
+			if (t != null && t.isActive())
+				t.commit();
+		} catch (Exception e) {
+			logger.error(e);
+		}
+	}
+
+	/**
 	 * @param sessionx
 	 */
 	public void sessionClose(Session sessionx) {
@@ -1224,7 +1240,7 @@ public class PdksEntityController implements Serializable {
 					logger.info(tableName + " " + kayitAdet);
 					veriMap.clear();
 					execSP(session, veriMap, "SP_CHECKIDENT_VIEW");
-					session.flush();
+					sessionFlush(session);
 				}
 				veriMap = null;
 			}

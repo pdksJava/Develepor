@@ -121,7 +121,7 @@ public class IzinHakedisHakkiHome extends EntityHome<IzinHakedisHakki> implement
 					pdksEntityController.saveOrUpdate(session, entityManager, izinHakedisHakki);
 
 				}
-				ortakIslemler.sessionFlush(session);
+				pdksEntityController.sessionFlush(session);
 
 				fillIzinHakedisHakkiList();
 			} catch (Exception e) {

@@ -508,7 +508,7 @@ public class KullanilanIzinlerHome extends EntityHome<PersonelIzin> implements S
 			}
 		}
 		if (flush) {
-			ortakIslemler.sessionFlush(session);
+			pdksEntityController.sessionFlush(session);
 			bakiyeIzinler.clear();
 			PdksUtil.addMessageAvailableInfo("Güncelleneme başarılı yapıldı.");
 		} else

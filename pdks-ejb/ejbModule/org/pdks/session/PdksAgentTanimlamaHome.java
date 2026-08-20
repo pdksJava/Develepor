@@ -135,7 +135,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 				mailGonderServisData(serviceData);
 			}
 
-			ortakIslemler.sessionFlush(session);
+			pdksEntityController.sessionFlush(session);
 		}
 		mailList = null;
 	}
@@ -430,7 +430,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 		}
 		if (flush)
-			ortakIslemler.sessionFlush(session);
+			pdksEntityController.sessionFlush(session);
 		return mailList;
 	}
 
@@ -546,12 +546,12 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	public String deleteAgent() {
 		PdksAgent agent = getInstance();
 		pdksEntityController.deleteObject(session, entityManager, agent);
-		ortakIslemler.sessionFlush(session);
+		pdksEntityController.sessionFlush(session);
 		try {
 			pdksEntityController.savePrepareTableID(true, agent, PdksAgent.class, session);
 		} catch (Exception e) {
 		}
-		ortakIslemler.sessionFlush(session);
+		pdksEntityController.sessionFlush(session);
 		session.clear();
 
 		fillPdksAgentList();
@@ -583,7 +583,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	public String kaydet() {
 		PdksAgent agent = getInstance();
 		pdksEntityController.saveOrUpdate(session, entityManager, agent);
-		ortakIslemler.sessionFlush(session);
+		pdksEntityController.sessionFlush(session);
 		session.clear();
 		fillPdksAgentList();
 		return "persisted";
