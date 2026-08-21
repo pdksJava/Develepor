@@ -45,6 +45,7 @@ import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
 import org.pdks.entity.Vardiya;
+import org.pdks.entity.VardiyaEkSaat;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaSaat;
 import org.pdks.entity.YemekIzin;
@@ -470,6 +471,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 			sb.append("select P.* from " + FazlaMesaiTalep.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 			sb.append(" inner join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on P." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 			sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
+			sb.append(" left join " + VardiyaEkSaat.TABLE_NAME + " ES " + PdksEntityController.getJoinLOCK() + " on ES." + VardiyaEkSaat.COLUMN_NAME_ID + " =  S." + VardiyaSaat.COLUMN_NAME_VARDIYA_EK_SAAT);
 			sb.append(" where P." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = :v and P." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1");
 			sb.append(" and P." + FazlaMesaiTalep.COLUMN_NAME_ONAY_DURUMU + " = " + FazlaMesaiTalep.ONAY_DURUM_ONAYLANDI);
 			fields.put("v", vg.getId());
@@ -900,6 +902,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						sb.append(" inner join " + PersonelFazlaMesai.TABLE_NAME + " F " + PdksEntityController.getJoinLOCK() + " on F." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 						sb.append(" and F." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1 ");
 						sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
+						sb.append(" left join " + VardiyaEkSaat.TABLE_NAME + " ES " + PdksEntityController.getJoinLOCK() + " on ES." + VardiyaEkSaat.COLUMN_NAME_ID + " =  S." + VardiyaSaat.COLUMN_NAME_VARDIYA_EK_SAAT);
 						sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " = :t and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
 						parametreMap2.clear();
 						parametreMap2.put("t", date);

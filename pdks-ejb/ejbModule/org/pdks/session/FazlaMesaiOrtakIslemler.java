@@ -67,6 +67,7 @@ import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
 import org.pdks.entity.Vardiya;
+import org.pdks.entity.VardiyaEkSaat;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaHafta;
 import org.pdks.entity.VardiyaPlan;
@@ -908,6 +909,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= P." + Personel.getIseGirisTarihiColumn());
 				sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 				sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
+				sb.append(" left join " + VardiyaEkSaat.TABLE_NAME + " ES " + PdksEntityController.getJoinLOCK() + " on ES." + VardiyaEkSaat.COLUMN_NAME_ID + " =  S." + VardiyaSaat.COLUMN_NAME_VARDIYA_EK_SAAT);
 				sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "< :bitTarih  ");
 				sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= " + PdksEntityController.getSqlBuGun() + " and V." + VardiyaGun.COLUMN_NAME_DURUM + " = 0 ");
 				sb.append(" and V." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName);
@@ -957,6 +959,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					sb.append(" and coalesce(VA." + Vardiya.COLUMN_NAME_ICAP + ", 0 ) = 0");
 					sb.append(" inner join " + VardiyaGun.TABLE_NAME + " VG " + PdksEntityController.getJoinLOCK() + " on VG." + VardiyaGun.COLUMN_NAME_ID + " = V.VARDIYA_GUN_ID ");
 					sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = VG." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
+					sb.append(" left join " + VardiyaEkSaat.TABLE_NAME + " ES " + PdksEntityController.getJoinLOCK() + " on ES." + VardiyaEkSaat.COLUMN_NAME_ID + " =  S." + VardiyaSaat.COLUMN_NAME_VARDIYA_EK_SAAT);
 					sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + "< :bitTarih  ");
 					sb.append(" and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " < " + PdksEntityController.getSqlBuGun() + " and V." + VardiyaSaat.COLUMN_NAME_CALISMA_SURESI + " = 0 ");
 					sb.append(" and V." + VardiyaSaat.COLUMN_NAME_NORMAL_SURE + " > 0 ");

@@ -56,6 +56,7 @@ import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Tatil;
 import org.pdks.entity.Vardiya;
+import org.pdks.entity.VardiyaEkSaat;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaHafta;
 import org.pdks.entity.VardiyaSaat;
@@ -760,6 +761,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 					sb.append(" and G.VARDIYA_TARIHI >= P." + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " and G.VARDIYA_TARIHI <= P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI);
 					sb.append(" inner join " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on V." + Vardiya.COLUMN_NAME_ID + " = G." + VardiyaGun.COLUMN_NAME_VARDIYA + " and V.AKSAM_VARDIYA=1");
 					sb.append(" inner join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = G." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT + " and S.CALISMA_SURESI>0");
+					sb.append(" left join " + VardiyaEkSaat.TABLE_NAME + " ES " + PdksEntityController.getJoinLOCK() + " on ES." + VardiyaEkSaat.COLUMN_NAME_ID + " =  S." + VardiyaSaat.COLUMN_NAME_VARDIYA_EK_SAAT);
 					sb.append(" where G." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :t1 and G." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :t2 ");
 					sb.append(" and G." + VardiyaGun.COLUMN_NAME_PERSONEL + " :" + fieldName + " and G." + VardiyaGun.COLUMN_NAME_DURUM + " = 1 ");
 					fields.put("t1", basTarih);
@@ -987,6 +989,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 			sb.append("select I.* from " + PersonelFazlaMesai.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on I." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 			sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
+			sb.append(" left join " + VardiyaEkSaat.TABLE_NAME + " ES " + PdksEntityController.getJoinLOCK() + " on ES." + VardiyaEkSaat.COLUMN_NAME_ID + " =  S." + VardiyaSaat.COLUMN_NAME_VARDIYA_EK_SAAT);
 			sb.append(" where I." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " :" + fieldName);
 			sb.append(" and I." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1 ");
 			parametreMap.put(fieldName, ekCalismaList);
@@ -1195,6 +1198,7 @@ public class FazlaCalismaRaporHome extends EntityHome<DepartmanDenklestirmeDonem
 			sb.append("select I.* from " + PersonelFazlaMesai.TABLE_NAME + " I " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + VardiyaGun.TABLE_NAME + " V " + PdksEntityController.getJoinLOCK() + " on I." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 			sb.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
+			sb.append(" left join " + VardiyaEkSaat.TABLE_NAME + " ES " + PdksEntityController.getJoinLOCK() + " on ES." + VardiyaEkSaat.COLUMN_NAME_ID + " =  S." + VardiyaSaat.COLUMN_NAME_VARDIYA_EK_SAAT);
 			sb.append(" where I." + PersonelFazlaMesai.COLUMN_NAME_VARDIYA_GUN + " :" + fieldName);
 			sb.append(" and I." + PersonelFazlaMesai.COLUMN_NAME_DURUM + " = 1 ");
 			parametreMap.put(fieldName, idList);

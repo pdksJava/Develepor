@@ -52,6 +52,7 @@ import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Vardiya;
+import org.pdks.entity.VardiyaEkSaat;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaSaat;
 import org.pdks.enums.BordroDetayTipi;
@@ -259,6 +260,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			sb1.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_DURUM + " = 1");
 		}
 		sb1.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
+		sb1.append(" left join " + VardiyaEkSaat.TABLE_NAME + " ES " + PdksEntityController.getJoinLOCK() + " on ES." + VardiyaEkSaat.COLUMN_NAME_ID + " =  S." + VardiyaSaat.COLUMN_NAME_VARDIYA_EK_SAAT);
 		sb1.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + da.getId() + " and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1");
 		if (talepVar)
 			sb1.append(" and F." + FazlaMesaiTalep.COLUMN_NAME_ID + " is null");
@@ -333,6 +335,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		if (talepVar)
 			sb1.append(" left join " + FazlaMesaiTalep.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + FazlaMesaiTalep.COLUMN_NAME_VARDIYA_GUN + " = V." + VardiyaGun.COLUMN_NAME_ID);
 		sb1.append(" left join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
+		sb1.append(" left join " + VardiyaEkSaat.TABLE_NAME + " ES " + PdksEntityController.getJoinLOCK() + " on ES." + VardiyaEkSaat.COLUMN_NAME_ID + " =  S." + VardiyaSaat.COLUMN_NAME_VARDIYA_EK_SAAT);
 		sb1.append(" where (V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " between :t1 and :t2) and V." + VardiyaGun.COLUMN_NAME_DURUM + " = 0 and V." + VardiyaGun.COLUMN_NAME_ONAYLI + " = 1");
 		sb1.append("  and (V.VARDIYA_ACIKLAMA <> 'HT' OR D." + CalismaModeliAy.COLUMN_NAME_HAFTA_TATIL_HAREKET_GUNCELLE + " = 1)");
 		sb1.append("  and  V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= " + PdksEntityController.getSqlBuGun());
