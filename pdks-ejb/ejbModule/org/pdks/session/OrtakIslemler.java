@@ -68,7 +68,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.FlushMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -5091,7 +5090,7 @@ public class OrtakIslemler implements Serializable {
 	 */
 	public void personelKaydet(Personel personel, Session session) {
 		if (personel != null) {
-			startTransaction(session);
+			pdksEntityController.startTransaction(session);
 			MailGrubu mailGrubuCC = personel.getMailGrubuCC(), mailGrubuBCC = personel.getMailGrubuBCC(), hareketMailGrubu = personel.getHareketMailGrubu();
 			List<MailGrubu> deleteList = new ArrayList<MailGrubu>();
 			if (mailGrubuCC != null) {
@@ -7395,7 +7394,7 @@ public class OrtakIslemler implements Serializable {
 						String spName = "SP_UPDATE_USER_MENUITEM_TIME_IPTAL";
 						if (menuItemTime.getId() == null || isExisStoreProcedure(spName, session) == false) {
 							if (menuItemTime.getId() != null)
-								startTransaction(session);
+								pdksEntityController.startTransaction(session);
 							menuItemTime.setParametreJSON(parametreJSON);
 							if (PdksUtil.isStrDegisti(sessionId, menuItemTime.getSessionId())) {
 								menuItemTime.addUseCount();
@@ -7406,7 +7405,7 @@ public class OrtakIslemler implements Serializable {
 							pdksEntityController.saveOrUpdate(session, null, menuItemTime);
 							flush = true;
 						} else {
-							startTransaction(session);
+							pdksEntityController.startTransaction(session);
 							LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 							veriMap.put("j", parametreJSON);
 							veriMap.put("s", sessionId != null ? sessionId : menuItemTime.getSessionId());
@@ -11613,7 +11612,7 @@ public class OrtakIslemler implements Serializable {
 							else
 								map = new LinkedHashMap<String, Object>();
 							if (!menuItemTime.getSessionId().equals(sessionId) || map.isEmpty()) {
-								startTransaction(session);
+								pdksEntityController.startTransaction(session);
 								if (map.isEmpty()) {
 									map.put("kullanici", authenticatedUser.getAdSoyad());
 									map.put("menuAdi", getMenuAdi(menuAdi));
@@ -11643,19 +11642,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 */
 	public void startTransaction(Session session) {
-		Transaction t = null;
-		if (session != null) {
-			try {
-				t = session.getTransaction();
-				if (t == null || t.isActive() == false)
-					t = session.beginTransaction();
-			} catch (Exception e) {
-				logger.error(e);
-				e.printStackTrace();
-			}
-		}
-		if (t != null && t.isActive())
-			logger.debug("");
+		pdksEntityController.startTransaction(session);
 	}
 
 	/**
