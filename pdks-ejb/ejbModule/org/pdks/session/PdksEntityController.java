@@ -720,8 +720,8 @@ public class PdksEntityController implements Serializable {
 	 */
 	public void sessionFlush(Session session) throws Exception {
 		if (session != null) {
-			Transaction t = session.getTransaction();
 			try {
+				Transaction t = session.getTransaction();
 				session.flush();
 				if (t != null && t.isActive())
 					t.commit();
@@ -729,8 +729,7 @@ public class PdksEntityController implements Serializable {
 				logger.error(e);
 				throw e;
 			}
-
-		}
+ 		}
 	}
 
 	/**
