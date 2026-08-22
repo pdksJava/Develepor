@@ -263,7 +263,11 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 
 		}
 		if (flush) {
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			fillPdksTatilList();
 		} else
 			PdksUtil.addMessageAvailableWarn("Ekleme yapılacak dini bayram seçili değildir!");
@@ -725,7 +729,12 @@ public class TatilHome extends EntityHome<Tatil> implements Serializable {
 			kayitGuncelle(pdksTatil);
 		} else {
 			if (flush)
-				pdksEntityController.sessionFlush(session);
+				try {
+					pdksEntityController.sessionFlush(session);
+				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
+				}
 			fillPdksTatilList();
 		}
 

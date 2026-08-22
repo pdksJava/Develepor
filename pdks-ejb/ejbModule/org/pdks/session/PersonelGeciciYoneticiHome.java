@@ -388,7 +388,12 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 			if (mailStatu != null && mailStatu.getDurum())
 				PdksUtil.addMessageInfo("Mesaj gönderildi");
 
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+ 			}
 			fillMevcutRotasyonList();
 		} else
 			facesMessages.add("Verilen Tarih aralığı ve personel listesi için mevcut rotasyon bulunmaktadir. Lütfen kontrol ettikten sonra tekrar deneyiniz.", "");
@@ -726,7 +731,12 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 				rotasyon.setDurum(Boolean.FALSE);
 				pdksEntityController.saveOrUpdate(session, entityManager, rotasyon);
 			}
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+ 			}
 			fillMevcutRotasyonList();
 
 		}

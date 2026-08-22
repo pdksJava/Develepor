@@ -236,7 +236,12 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 					renk = !renk;
 				}
 				if (flush)
-					pdksEntityController.sessionFlush(session);
+					try {
+						pdksEntityController.sessionFlush(session);
+					} catch (Exception e) {
+						logger.error(e);
+						e.printStackTrace();
+					}
 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
@@ -647,7 +652,11 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 
 						}
 						if (flush)
-							pdksEntityController.sessionFlush(session);
+							try {
+								pdksEntityController.sessionFlush(session);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						personelIdler = null;
 					}
 				}
@@ -693,7 +702,12 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 		if (adet == 0)
 			PdksUtil.addMessageAvailableWarn("İşlem yapılacak kayıt yok!");
 		else if (flush)
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 		return "";
 	}
 
@@ -730,7 +744,12 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 			}
 		}
 		if (flush)
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 		personelDenklestirmeler.clear();
 		devredenBakiyeDosya.setDosyaIcerik(null);
 		return "";
@@ -827,7 +846,12 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 				}
 			}
 			if (flush)
-				pdksEntityController.sessionFlush(session);
+				try {
+					pdksEntityController.sessionFlush(session);
+				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
+				}
 			if (denklestirmeTipiVar && taseronVar == false) {
 				HashMap parametreMap = new HashMap();
 				StringBuilder sb = new StringBuilder();
@@ -905,6 +929,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 			pdksEntityController.saveOrUpdate(session, entityManager, denklestirmeAy);
 			pdksEntityController.sessionFlush(session);
 		} catch (Exception e) {
+			logger.error(e);
 			e.printStackTrace();
 		}
 

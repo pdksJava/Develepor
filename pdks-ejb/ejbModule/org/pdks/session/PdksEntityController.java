@@ -718,15 +718,18 @@ public class PdksEntityController implements Serializable {
 	/**
 	 * @param session
 	 */
-	public void sessionFlush(Session session) {
-		Transaction t = session != null ? session.getTransaction() : null;
-		try {
-			if (session != null)
+	public void sessionFlush(Session session) throws Exception {
+		if (session != null) {
+			Transaction t = session.getTransaction();
+			try {
 				session.flush();
-			if (t != null && t.isActive())
-				t.commit();
-		} catch (Exception e) {
-			logger.error(e);
+				if (t != null && t.isActive())
+					t.commit();
+			} catch (Exception e) {
+				logger.error(e);
+				throw e;
+			}
+
 		}
 	}
 
@@ -743,6 +746,8 @@ public class PdksEntityController implements Serializable {
 				}
 
 			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
 			}
 
 		}

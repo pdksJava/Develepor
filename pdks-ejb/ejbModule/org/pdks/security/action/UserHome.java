@@ -112,7 +112,12 @@ public class UserHome extends EntityHome<User> implements Serializable {
 
 			}
 			pdksEntityController.saveOrUpdate(session, entityManager, currentUser);
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 			assignId(PersistenceProvider.instance().getId(getInstance(), entityManager));
 			// createdMessage();
 			raiseAfterTransactionSuccessEvent();
@@ -144,7 +149,12 @@ public class UserHome extends EntityHome<User> implements Serializable {
 				String newPassword = PdksUtil.encodePassword(newPassword1);
 				user.setPasswordHash(newPassword);
 				pdksEntityController.saveOrUpdate(session, entityManager, user);
-				pdksEntityController.sessionFlush(session);
+				try {
+					pdksEntityController.sessionFlush(session);
+				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
+				}
 				facesMessages.add("Yeni şifre değiştirilmiştir.", "");
 				if (authenticatedUser != null)
 					ekran = "anaSayfa";
@@ -210,7 +220,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	public String sifreUnuttumAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, "/sifreUnuttum");
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, "sifreUnuttum");
+		ortakIslemler.setUserMenuItemTime(entityManager, session, "sifreUnuttum");
 		String str = MenuItemConstant.login;
 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String username = (String) req.getParameter("username");

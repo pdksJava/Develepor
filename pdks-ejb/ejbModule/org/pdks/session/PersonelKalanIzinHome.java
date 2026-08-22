@@ -203,7 +203,8 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 			pdksEntityController.sessionFlush(session);
 			fillTarihIzinList();
 		} catch (Exception e) {
-
+			logger.error(e);
+			e.printStackTrace();
 		}
 
 		return "";
@@ -229,6 +230,8 @@ public class PersonelKalanIzinHome extends EntityHome<PersonelIzin> implements S
 					aramaSecenekleri.setSicilNo(bakiyeIzin.getPersonelNo());
 				setPdksPersonelList(new ArrayList<TempIzin>());
 			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
 				PdksUtil.addMessageWarn(e.getMessage());
 			}
 

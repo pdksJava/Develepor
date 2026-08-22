@@ -441,6 +441,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 				fillCalismaModeliList();
 			}
 		} catch (Exception e) {
+			logger.error(e);
 			e.printStackTrace();
 		}
 

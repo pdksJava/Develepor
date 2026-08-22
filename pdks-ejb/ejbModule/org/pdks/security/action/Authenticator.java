@@ -303,7 +303,9 @@ public class Authenticator implements IAuthenticator, Serializable {
 									pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
 									pdksEntityController.sessionFlush(session);
 								} catch (Exception e) {
-								}
+				 					logger.error(e);
+									e.printStackTrace();
+ 								}
 							}
 
 						}

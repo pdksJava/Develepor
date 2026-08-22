@@ -362,7 +362,12 @@ public class TaseronPersonelKopyalaHome extends EntityHome<PersonelView> impleme
 			}
 
 			if (flush)
-				pdksEntityController.sessionFlush(session);
+				try {
+					pdksEntityController.sessionFlush(session);
+				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
+				}
 		}
 		return "";
 	}

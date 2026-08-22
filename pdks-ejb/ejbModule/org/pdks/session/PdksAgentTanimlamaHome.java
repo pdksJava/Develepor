@@ -135,7 +135,12 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 				mailGonderServisData(serviceData);
 			}
 
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 		}
 		mailList = null;
 	}
@@ -430,7 +435,12 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 		}
 		if (flush)
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 		return mailList;
 	}
 
@@ -546,12 +556,20 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	public String deleteAgent() {
 		PdksAgent agent = getInstance();
 		pdksEntityController.deleteObject(session, entityManager, agent);
-		pdksEntityController.sessionFlush(session);
+		try {
+			pdksEntityController.sessionFlush(session);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 		try {
 			pdksEntityController.savePrepareTableID(true, agent, PdksAgent.class, session);
+			pdksEntityController.sessionFlush(session);
 		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
 		}
-		pdksEntityController.sessionFlush(session);
+
 		session.clear();
 
 		fillPdksAgentList();
@@ -583,7 +601,12 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	public String kaydet() {
 		PdksAgent agent = getInstance();
 		pdksEntityController.saveOrUpdate(session, entityManager, agent);
-		pdksEntityController.sessionFlush(session);
+		try {
+			pdksEntityController.sessionFlush(session);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 		session.clear();
 		fillPdksAgentList();
 		return "persisted";
@@ -592,7 +615,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 	public void instanceRefresh() {
 		if (currentAgent.getId() != null)
-			pdksEntityController.sessionRefresh(session, entityManager,currentAgent);
+			pdksEntityController.sessionRefresh(session, entityManager, currentAgent);
 	}
 
 	public String fillPdksAgentList() {

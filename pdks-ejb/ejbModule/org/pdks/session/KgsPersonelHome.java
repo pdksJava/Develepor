@@ -182,6 +182,7 @@ public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serial
 			fillPersonelList();
 
 		} catch (Exception e) {
+			logger.error(e);
 			e.printStackTrace();
 		}
 

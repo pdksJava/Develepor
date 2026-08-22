@@ -273,7 +273,12 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							pdksAgentTanimlamaHome.mailGonderServisData(sd);
 						} else {
 							pdksEntityController.saveOrUpdate(session, entityManager, sd);
-							pdksEntityController.sessionFlush(session);
+							try {
+								pdksEntityController.sessionFlush(session);
+							} catch (Exception e) {
+								logger.error(e);
+								e.printStackTrace();
+							}
 						}
 
 					}

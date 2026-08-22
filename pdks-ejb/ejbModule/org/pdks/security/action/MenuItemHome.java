@@ -157,7 +157,7 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 			if (idDataList.isEmpty() == false)
 				selectedMenuItemFromDataTableList = pdksEntityController.getSQLParamByFieldList(MenuItem.TABLE_NAME, MenuItem.COLUMN_NAME_ID, idDataList, MenuItem.class, session);
 		}
-	
+
 		idTreeList = null;
 		idDataList = null;
 		// Kontroller
@@ -203,6 +203,7 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 					pdksEntityController.saveOrUpdate(session, entityManager, selectedMenuItemFromTree);
 				pdksEntityController.sessionFlush(session);
 			} catch (Exception e) {
+				logger.error(e);
 				e.printStackTrace();
 			}
 
@@ -289,7 +290,12 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 
 			// pdksEntityController.update(deleteAccountPermissionList);
 			// pdksEntityController.update(deleteMenuItemList);
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 			session.clear();
 			rootNode = null;
 			startupAction.fillMenuItemList(session);
@@ -430,12 +436,19 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 
 		}
 		if (flush || baglanti) {
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 			if (baglanti) {
 				try {
 					pdksEntityController.savePrepareTableID(true, null, MenuIliski.class, session);
 					pdksEntityController.sessionFlush(session);
 				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
 				}
 			}
 		}
@@ -566,7 +579,12 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		Tanim description = item.getDescription();
 		pdksEntityController.deleteObject(session, entityManager, item);
 		pdksEntityController.deleteObject(session, entityManager, description);
-		pdksEntityController.sessionFlush(session);
+		try {
+			pdksEntityController.sessionFlush(session);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 		fillAllDataTableMenuItemList();
 		// startupAction.fillMenuItemList(session);
 		return "";
@@ -585,8 +603,13 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 			pdksEntityController.saveOrUpdate(session, entityManager, description);
 		}
 
-		pdksEntityController.saveOrUpdate(session, entityManager, item);
-		pdksEntityController.sessionFlush(session);
+		try {
+			pdksEntityController.saveOrUpdate(session, entityManager, item);
+			pdksEntityController.sessionFlush(session);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 		PdksUtil.addMessageInfo("İşlem Başarı ile gerçekleştirildi.");
 		startupAction.fillMenuItemList(session);
 
@@ -630,7 +653,12 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 			description.setErpKodu(item.getName());
 			pdksEntityController.saveOrUpdate(session, entityManager, description);
 			pdksEntityController.saveOrUpdate(session, entityManager, instance);
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 			startupAction.fillMenuItemList(session);
 			PdksUtil.addMessageInfo("İşlem Başarı ile gerçekleştirildi.");
 			cikis = "";

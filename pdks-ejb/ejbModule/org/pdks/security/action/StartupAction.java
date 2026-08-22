@@ -331,6 +331,7 @@ public class StartupAction implements Serializable {
 			}
 		} catch (Exception e) {
 			logger.error(e);
+			e.printStackTrace();
 		}
 		if (toplamAdet > 0)
 			logger.info(toplamAdet + " adet kayıt id güncellendi. " + PdksUtil.getCurrentTimeStampStr());
@@ -342,7 +343,7 @@ public class StartupAction implements Serializable {
 	 * @param session
 	 */
 	public void startupMethod(Session session) {
-		
+
 		Calendar cal = Calendar.getInstance();
 		logger.debug("startupMethod : " + cal.getTime());
 		if (cal.get(Calendar.HOUR_OF_DAY) < 7)
@@ -1030,7 +1031,12 @@ public class StartupAction implements Serializable {
 					parameterMap.put(helpDeskLastDateKey, helpDeskLastDateStr);
 					parameter.setValue(helpDeskLastDateStr);
 					pdksEntityController.saveOrUpdate(session, entityManager, parameter);
-					pdksEntityController.sessionFlush(session);
+					try {
+						pdksEntityController.sessionFlush(session);
+					} catch (Exception e) {
+						logger.error(e);
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -1095,7 +1101,12 @@ public class StartupAction implements Serializable {
 					parameterMap.put(helpDeskLastDateKey, servisHelpDeskLastDateStr);
 					parameter.setValue(servisHelpDeskLastDateStr);
 					pdksEntityController.saveOrUpdate(session, entityManager, parameter);
-					pdksEntityController.sessionFlush(session);
+					try {
+						pdksEntityController.sessionFlush(session);
+					} catch (Exception e) {
+						logger.error(e);
+						e.printStackTrace();
+					}
 				}
 			}
 			if (helpDeskLastDate == null) {
@@ -1186,7 +1197,12 @@ public class StartupAction implements Serializable {
 				if (lu.getLdapHost() != null)
 					pdksEntityController.saveOrUpdate(session, entityManager, lu);
 			}
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 		}
 
 		saveList = null;

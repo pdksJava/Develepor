@@ -77,6 +77,8 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 			fillFazlaMesaiERPList();
 			seciliFazlaMesaiERP = null;
 		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
 		}
 
 		return "";
@@ -200,7 +202,12 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 			fmd.setSira(sira2);
 			pdksEntityController.saveOrUpdate(session, entityManager, fmd);
 			pdksEntityController.saveOrUpdate(session, entityManager, fmd1);
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 			fillFazlaMesaiERPDetayList();
 		}
 		return "";
@@ -220,7 +227,12 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 			fmd.setSira(sira1);
 			pdksEntityController.saveOrUpdate(session, entityManager, fmd);
 			pdksEntityController.saveOrUpdate(session, entityManager, fmd0);
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 			fillFazlaMesaiERPDetayList();
 		}
 		return "";
@@ -356,7 +368,12 @@ public class FazlaMesaiERPHome extends EntityHome<FazlaMesaiERP> implements Seri
 				}
 			}
 			if (flush)
-				pdksEntityController.sessionFlush(session);
+				try {
+					pdksEntityController.sessionFlush(session);
+				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
+				}
 
 		} else
 			list = new ArrayList<FazlaMesaiERPDetay>();

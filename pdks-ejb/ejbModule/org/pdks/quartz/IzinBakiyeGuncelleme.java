@@ -293,6 +293,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 
 			}
 		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
 			izinList = new ArrayList<PersonelIzin>();
 		}
 		parametreMap = null;
@@ -551,7 +553,12 @@ public class IzinBakiyeGuncelleme implements Serializable {
 
 			}
 			if (!list.isEmpty()) {
-				pdksEntityController.sessionFlush(userSession);
+				try {
+					pdksEntityController.sessionFlush(userSession);
+				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
+				}
 				if (yeni)
 					userSession = PdksUtil.getSession(entityManager, yeni);
 
@@ -559,7 +566,12 @@ public class IzinBakiyeGuncelleme implements Serializable {
 					Collections.shuffle(list);
 			}
 		}
-		pdksEntityController.sessionFlush(userSession);
+		try {
+			pdksEntityController.sessionFlush(userSession);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 		logger.info("izinleriBakiyeleriniHesapla out " + PdksUtil.getCurrentTimeStampStr());
 		if (yeni)
 			logger.info("izinBakiyeGuncelleme tamam " + PdksUtil.getCurrentTimeStampStr());

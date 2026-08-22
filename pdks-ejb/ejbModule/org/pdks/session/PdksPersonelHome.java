@@ -326,7 +326,12 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				pasifList = null;
 				if (flush) {
 					pdksEntityController.saveOrUpdate(session, entityManager, personel);
-					pdksEntityController.sessionFlush(session);
+					try {
+						pdksEntityController.sessionFlush(session);
+					} catch (Exception e) {
+						logger.error(e);
+						e.printStackTrace();
+					}
 				}
 
 			}
@@ -421,7 +426,12 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 					donemselDurum.setGuncelleyenUser(authenticatedUser);
 				}
 				pdksEntityController.saveOrUpdate(session, entityManager, donemselDurum);
-				pdksEntityController.sessionFlush(session);
+				try {
+					pdksEntityController.sessionFlush(session);
+				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
+				}
 				gebeSutIzniSecimi(donemselDurum.getPersonel());
 			} else {
 				PersonelDonemselDurum personelDonemselDurum = list.get(0);
@@ -821,7 +831,12 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 	private void savePersonel(Personel pdksPersonel) {
 		if (pdksPersonel.getId() != null) {
 			pdksEntityController.saveOrUpdate(session, entityManager, pdksPersonel);
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -870,7 +885,12 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 		pdksPersonel.setPdksSicilNo(pdksPersonel.getPersonelKGS().getSicilNo());
 		session.save(pdksPersonel);
-		pdksEntityController.sessionFlush(session);
+		try {
+			pdksEntityController.sessionFlush(session);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 		pdksEntityController.sessionRefresh(session, entityManager, personelView);
 		return ok;
 
@@ -900,7 +920,12 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 				pdksEntityController.saveOrUpdate(session, entityManager, pdksPersonel);
 			} else
 				ortakIslemler.pasifUserEpostaVeKullaniciDegistir(eskiKullanici);
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 			fillPersonelKGSList();
 		}
 		return "";
@@ -1069,7 +1094,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							pdksPersonel.setHareketMail(hareketMail);
 					}
 					if (mesajList.isEmpty()) {
-  						ortakIslemler.personelKaydet(pdksPersonel, session);
+						ortakIslemler.personelKaydet(pdksPersonel, session);
 						if (secGebe(pdksPersonel).booleanValue() == false)
 							pdksPersonel.setGebeMi(Boolean.FALSE);
 						if (secSutIzni(pdksPersonel).booleanValue() == false)

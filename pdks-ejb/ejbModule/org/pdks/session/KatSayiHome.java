@@ -192,6 +192,7 @@ public class KatSayiHome extends EntityHome<KatSayi> implements Serializable {
 			fillKatSayiList();
 
 		} catch (Exception e) {
+			logger.error(e);
 			e.printStackTrace();
 		}
 

@@ -363,7 +363,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 		}
 		if (flush)
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 
 		vGunList = null;
 
@@ -662,7 +667,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 
 								}
 								if (puantajList != null && !puantajList.isEmpty()) {
-									// pdksEntityController.sessionFlush(session);
 									if (logYaz)
 										logger.info(altBolumStr + " [ " + donemPerList.size() + " ] out " + PdksUtil.getCurrentTimeStampStr());
 								}
@@ -1480,7 +1484,12 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			tanim.setIslemTarihi(islemTarihi);
 			pdksEntityController.saveOrUpdate(session, entityManager, tanim);
 		}
-		pdksEntityController.sessionFlush(session);
+		try {
+			pdksEntityController.sessionFlush(session);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 	}
 
 	public String getSicilNo() {

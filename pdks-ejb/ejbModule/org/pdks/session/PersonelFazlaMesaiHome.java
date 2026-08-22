@@ -1639,7 +1639,9 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 				pdksEntityController.sessionFlush(session);
 				fillHareketMesaiList();
 			} catch (Exception e) {
-			}
+				logger.error(e);
+				e.printStackTrace();
+ 			}
 
 		}
 		return "";

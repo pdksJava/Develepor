@@ -89,12 +89,20 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 	public String delete() {
 		Parameter parameter = getInstance();
 		pdksEntityController.deleteObject(session, entityManager, parameter);
-		pdksEntityController.sessionFlush(session);
+		try {
+			pdksEntityController.sessionFlush(session);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 		try {
 			pdksEntityController.savePrepareTableID(true, parameter, Parameter.class, session);
+			pdksEntityController.sessionFlush(session);
 		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
 		}
-		pdksEntityController.sessionFlush(session);
+
 		session.clear();
 
 		fillParameterList();
@@ -120,7 +128,12 @@ public class ParameterHome extends EntityHome<Parameter> implements Serializable
 		if (parameter.isHelpDeskMi())
 			parameter.setGuncelle(Boolean.FALSE);
 		pdksEntityController.saveOrUpdate(session, entityManager, parameter);
-		pdksEntityController.sessionFlush(session);
+		try {
+			pdksEntityController.sessionFlush(session);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 		session.clear();
 		fillParameterList();
 		startupAction.fillStartMethod(authenticatedUser, true, session);// fill all list fillParameter();

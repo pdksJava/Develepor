@@ -151,7 +151,12 @@ public class IzinERPAktarimHome extends EntityHome<PersonelIzin> implements Seri
 
 		}
 		if (flush) {
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 		} else
 			PdksUtil.addMessageWarn("İzin seçiniz!");
 
@@ -280,7 +285,12 @@ public class IzinERPAktarimHome extends EntityHome<PersonelIzin> implements Seri
 				}
 				if (!list.isEmpty()) {
 					PdksUtil.addMessageInfo(list.size() + " adet izin aktarıldı.");
-					pdksEntityController.sessionFlush(session);
+					try {
+						pdksEntityController.sessionFlush(session);
+					} catch (Exception e) {
+						logger.error(e);
+						e.printStackTrace();
+					}
 				}
 				if (adet > 0)
 					PdksUtil.addMessageAvailableWarn(adet + " adet izin hatalıdır!");
@@ -310,7 +320,12 @@ public class IzinERPAktarimHome extends EntityHome<PersonelIzin> implements Seri
 			izin.setGuncelleyenUser(authenticatedUser);
 			izin.setIzinDurumu(PersonelIzin.IZIN_DURUMU_ERP_GONDERILDI);
 			pdksEntityController.saveOrUpdate(session, entityManager, izin);
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 			PdksUtil.addMessageInfo("İzin başarı ile SAP sistemine aktarılmıştır.");
 			fillIzinList();
 		}

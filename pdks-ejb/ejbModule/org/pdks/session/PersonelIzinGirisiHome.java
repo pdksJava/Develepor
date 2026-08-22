@@ -213,14 +213,6 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	}
 
 	/**
-	 * 
-	 */
-	 
-	private void sessionFlush() {
-		pdksEntityController.sessionFlush(session);
-	}
-
-	/**
 	 * @param izinOnay
 	 * @return
 	 * @throws Exception
@@ -366,7 +358,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			}
 			if (flush) {
 				try {
-					sessionFlush();
+					pdksEntityController.sessionFlush(session);
 					if (izinSahibi.isCalisiyor()) {
 
 						User izinSahibiUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, izinSahibi.getId(), User.class, session);
@@ -1217,7 +1209,12 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 
 		}
 		if (adet > 0)
-			sessionFlush();
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+ 			}
 	}
 
 	/**
@@ -2254,7 +2251,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				}
 
 			}
-			sessionFlush();
+			pdksEntityController.sessionFlush(session);
 
 			if (listeOlustur) {
 				mailIzin = null;
@@ -2642,7 +2639,12 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			if (guncellenecekIzin.getIzinKagidiGeldi() == null || !guncellenecekIzin.getIzinKagidiGeldi()) {
 				guncellenecekIzin.setIzinKagidiGeldi(Boolean.TRUE);
 				pdksEntityController.saveOrUpdate(session, entityManager, guncellenecekIzin);
-				sessionFlush();
+				try {
+					pdksEntityController.sessionFlush(session);
+				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
+	 			}
 				guncellenecekIzin = null;
 				izinListele(Boolean.FALSE, null);
 			}
@@ -2826,7 +2828,12 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			User guncelleyenUser = !authenticatedUser.isAdmin() ? authenticatedUser : izin.getOlusturanUser();
 			izin.setGuncelleyenUser(guncelleyenUser);
 			saveOrUpdate(izin);
-			sessionFlush();
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+ 			}
 			setGuncellenecekIzin(null);
 			izinListele(Boolean.TRUE, null);
 			baslangicDegerleri();
@@ -4060,7 +4067,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		basarili = PdksUtil.hasStringValue(durum);
 		if (basarili) {
 			try {
-				sessionFlush();
+				pdksEntityController.sessionFlush(session);
 				sessionClear();
 				PdksUtil.addMessageAvailableInfo("İzin başarı ile kaydedilmiştir.");
 			} catch (Exception e) {
@@ -4157,7 +4164,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					User yonetici = ortakIslemler.getYoneticiBul(izinSahibi, izinSahibi.getYonetici2(), session);
 					if (yonetici != null) {
 						mailUserSakla(mailUserMap, yonetici);
-						pdksEntityController.sessionRefresh(session, entityManager,yonetici);
+						pdksEntityController.sessionRefresh(session, entityManager, yonetici);
 						ortakIslemler.setUserRoller(yonetici, session);
 						if (yonetici.isIkinciYoneticiIzinOnaylasin() && !yonetici.isGenelMudur())
 							yoneticiMailList.add(yonetici.getEmail());
@@ -4287,10 +4294,11 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 
 				if (flush)
 					try {
-						sessionFlush();
+						pdksEntityController.sessionFlush(session);
 					} catch (Exception e) {
-
-					}
+ 						logger.error(e);
+						e.printStackTrace();
+ 					}
 				MailStatu mailStatu = null;
 				try {
 					String mailKonu = null, body = null;
@@ -4954,7 +4962,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 					getInstance().setIzinSahibi(izinSahibi);
 				try {
 					HashMap<Integer, Integer> kidemHesabiMap = getKidemHesabi(null, izinSahibi, Boolean.TRUE, Boolean.FALSE);
-					sessionFlush();
+					pdksEntityController.sessionFlush(session);
 					setKidemYil(kidemHesabiMap.containsKey(Calendar.YEAR) ? kidemHesabiMap.get(Calendar.YEAR) : 0);
 					setKidemAy(kidemHesabiMap.containsKey(Calendar.MONTH) ? kidemHesabiMap.get(Calendar.MONTH) : 0);
 					setKidemGun(kidemHesabiMap.containsKey(Calendar.DATE) ? kidemHesabiMap.get(Calendar.DATE) : 0);
@@ -5316,7 +5324,12 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 				if (!onaylayanlar.isEmpty())
 					izin.getOnaylayanlar().addAll(onaylayanlar);
 				izin = entityManager.merge(izin);
-				sessionFlush();
+				try {
+					pdksEntityController.sessionFlush(session);
+				} catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
+	 			}
 			}
 		}
 		setMailIzin(izin);

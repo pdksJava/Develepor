@@ -426,6 +426,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 						pdksEntityController.saveOrUpdate(session, entityManager, pdksPersonelDenklestirme);
 						pdksEntityController.sessionFlush(session);
 					} catch (Exception e) {
+						logger.error(e);
 						e.printStackTrace();
 						break;
 					}
@@ -685,7 +686,12 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 	public String erpAktarSil(PersonelDenklestirme pdksPersonelDenklestirme) {
 		pdksPersonelDenklestirme.setErpAktarildi(Boolean.FALSE);
 		pdksEntityController.saveOrUpdate(session, entityManager, pdksPersonelDenklestirme);
-		pdksEntityController.sessionFlush(session);
+		try {
+			pdksEntityController.sessionFlush(session);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 		PdksUtil.addMessageInfo(pdksPersonelDenklestirme.getPersonel().getAdSoyad() + " ait fazla mesai blokesi açılmıştır.");
 		return "";
 
@@ -1613,7 +1619,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 				try {
- 					vgList = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, fields, VardiyaGun.class, session);
+					vgList = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, fields, VardiyaGun.class, session);
 
 				} catch (Exception e) {
 					logger.error(sb.toString());

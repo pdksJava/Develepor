@@ -999,7 +999,7 @@ public class IseGelmemeUyari implements Serializable {
 														departmanSave.setMailBox(mailBoxStr);
 														pdksEntityController.saveOrUpdate(session, entityManager, departmanSave);
 														pdksEntityController.sessionFlush(session);
-														;
+													 
 														departman = departmanSave;
 													} catch (Exception e) {
 														logger.error(departmanId + " " + mailBoxStr + "\n" + e);

@@ -59,7 +59,7 @@ public class PdksPersonelRoleHome extends EntityHome<Role> implements Serializab
 	public void sayfaGirisAction() {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
-		ortakIslemler.setUserMenuItemTime(entityManager ,session, sayfaURL);
+		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		rolAdi = "";
 		rolAciklama = "";
 		rolAktif = Boolean.TRUE;
@@ -82,7 +82,12 @@ public class PdksPersonelRoleHome extends EntityHome<Role> implements Serializab
 			e.printStackTrace();
 			logger.error("PDKS hata out : " + e.getMessage());
 		}
-		pdksEntityController.sessionFlush(session);
+		try {
+			pdksEntityController.sessionFlush(session);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 		rolGetir();
 		return "";
 
@@ -98,7 +103,12 @@ public class PdksPersonelRoleHome extends EntityHome<Role> implements Serializab
 			e.printStackTrace();
 			logger.error("PDKS hata out : " + e.getMessage());
 		}
-		pdksEntityController.sessionFlush(session);
+		try {
+			pdksEntityController.sessionFlush(session);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 		rolGetir();
 		return "";
 	}
@@ -117,7 +127,12 @@ public class PdksPersonelRoleHome extends EntityHome<Role> implements Serializab
 			e.printStackTrace();
 			logger.error("PDKS hata out : " + e.getMessage());
 		}
-		pdksEntityController.sessionFlush(session);
+		try {
+			pdksEntityController.sessionFlush(session);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 		rolGetir();
 
 		return "";

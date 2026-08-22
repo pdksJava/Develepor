@@ -47,7 +47,6 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 	 */
 	private static final long serialVersionUID = 3927468770176440280L;
 	static Logger logger = Logger.getLogger(PersonelKulllaniciExcelUpdateHome.class);
-	 
 
 	@RequestParameter
 	Long perId;
@@ -417,7 +416,12 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 		}
 		personelList.clear();
 		if (flush)
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 		if (yonetici1)
 			PdksUtil.addMessageInfo(ortakIslemler.yoneticiAciklama() + " güncellemesi yapılmıştır.");
 		else if (yonetici2)
@@ -472,7 +476,12 @@ public class PersonelKulllaniciExcelUpdateHome extends EntityHome<PersonelView> 
 			}
 		}
 		if (flush)
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 		if (bcc)
 			PdksUtil.addMessageInfo("BCC mail adresleri güncellenmiştir.");
 		else if (cc)

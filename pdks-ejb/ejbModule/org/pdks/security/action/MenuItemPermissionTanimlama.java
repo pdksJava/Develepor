@@ -417,7 +417,12 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 				AccountPermission accountPermission = (AccountPermission) iterator.next();
 				pdksEntityController.saveOrUpdate(session, entityManager, accountPermission);
 			}
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 			donus = "";
 		}
 		saveAccountPermissionList = null;
@@ -504,7 +509,12 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 				accountPermission.setStatus(Boolean.FALSE);
 				pdksEntityController.saveOrUpdate(session, entityManager, accountPermission);
 			}
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 			donus = "";
 		}
 		deleteAccountPermissionList = null;
@@ -730,7 +740,12 @@ public class MenuItemPermissionTanimlama extends EntityQuery<MenuItem> implement
 				accountPermission.setStatus(Boolean.FALSE);
 				pdksEntityController.saveOrUpdate(session, entityManager, accountPermission);
 			}
-			pdksEntityController.sessionFlush(session);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
 			startupAction.fillStartMethod(authenticatedUser, true, session);
 		}
 
