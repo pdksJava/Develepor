@@ -1156,6 +1156,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							else
 								kullanici.setPasswordHash("");
 						}
+
 						ortakIslemler.setUserRoller(kullanici, session);
 						if (kullanici.getYetkiliRollerim() != null && kullanici.getYetkiliRollerim().isEmpty())
 							kullanici = ortakIslemler.personelPdksRolAta(kullanici, Boolean.FALSE, session);
@@ -1164,11 +1165,37 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 								kullanici.setEntegrasyonMailDurum(false);
 						} else if (kullanici.getId() == null)
 							kullanici.setEntegrasyonMailDurum(true);
-						pdksEntityController.saveOrUpdate(session, entityManager, kullanici);
 
 						HashMap<Long, UserRoles> roller = new HashMap<Long, UserRoles>();
+						String spName = "SP_SET_PDKS_USERx";
+						boolean save = true;
+						if (kullanici.getId() == null) {
+							pdksEntityController.startTransaction(session);
+							if (ortakIslemler.isExisStoreProcedure(spName, session)) {
+								LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+								veriMap.put("departmanId", kullanici.getDepartman() != null ? kullanici.getDepartman().getId() : null);
+								veriMap.put("personelId", kullanici.getPersonelId());
+								veriMap.put("username", kullanici.getUsername());
+								veriMap.put("email", kullanici.getEmail());
+								veriMap.put("sifre", kullanici.getPasswordHash());
 
-						List<UserRoles> yetkiliRoller = pdksEntityController.getSQLParamByFieldList(UserRoles.TABLE_NAME, UserRoles.COLUMN_NAME_USER, kullanici.getId(), UserRoles.class, session);
+								List<User> kullanicilar = pdksEntityController.execSPList(session, veriMap, spName, User.class);
+								save = false;
+								if (kullanicilar != null && kullanicilar.isEmpty() == false) {
+									User kullaniciSP = kullanicilar.get(0);
+									kullaniciSP.setVardiyaDuzeltYetki(kullanici.getVardiyaDuzeltYetki());
+									kullaniciSP.setEntegrasyonMailDurum(kullanici.isEntegrasyonMailDurum());
+									kullanici = kullaniciSP;
+									save = true;
+								}
+
+							}
+						}
+						if (kullanici.getId() == null || save)
+							pdksEntityController.saveOrUpdate(session, entityManager, kullanici);
+						List<UserRoles> yetkiliRoller = null;
+						if (kullanici.getId() != null)
+							yetkiliRoller = pdksEntityController.getSQLParamByFieldList(UserRoles.TABLE_NAME, UserRoles.COLUMN_NAME_USER, kullanici.getId(), UserRoles.class, session);
 						if (yetkiliRoller != null) {
 							for (Iterator iterator = yetkiliRoller.iterator(); iterator.hasNext();) {
 								UserRoles userRoles = (UserRoles) iterator.next();
@@ -1324,20 +1351,21 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							kgsPersonelVeriOlustur(pdksPersonel);
 
 						if (organizasyonIptal || roleIptal) {
-							try {
-								if (organizasyonIptal)
-									pdksEntityController.savePrepareTableID(true, null, UserDigerOrganizasyon.class, session);
-								if (roleIptal)
-									pdksEntityController.savePrepareTableID(true, null, UserRoles.class, session);
-							} catch (Exception e) {
-
-							}
+//							try {
+//								if (organizasyonIptal)
+//									pdksEntityController.savePrepareTableID(true, null, UserDigerOrganizasyon.class, session);
+//								if (roleIptal)
+//									pdksEntityController.savePrepareTableID(true, null, UserRoles.class, session);
+//							} catch (Exception e) {
+//
+//							}
 						}
 						pdksEntityController.sessionFlush(session);
 						if (tesisYetki && kullanici.getId() != null && authenticatedUser.getId() != null) {
 							authenticatedUser.setYetkiliTesisler(null);
 							ortakIslemler.setUserTesisler(authenticatedUser, false, session);
 						}
+						session.clear();
 						try {
 							pdksEntityController.sessionRefresh(session, entityManager, personelView);
 						} catch (Exception e) {
