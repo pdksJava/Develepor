@@ -266,7 +266,8 @@ public class IseGelmemeUyari implements Serializable {
 		if (!manuel)
 			calisiyor = Boolean.TRUE;
 		Calendar cal = Calendar.getInstance();
-		Date bugun = cal.getTime();
+		Date bugun = cal.getTime(), bugunDate = PdksUtil.getDate(bugun);
+
 		HashMap map = new HashMap();
 		tesisYetki = ortakIslemler.getParameterKey("tesisYetki").equals("1");
 		String yoneticiTanimsizStr = ortakIslemler.getParameterKey("yoneticiTanimsiz");
@@ -656,6 +657,10 @@ public class IseGelmemeUyari implements Serializable {
 									}
 									hareketler = null;
 								}
+								CalismaModeli cm = ekle ? pdksVardiyaGun.getCalismaModeli() : null;
+								if (cm != null && cm.isHareketKaydiVardiyaBulsunmu() && pdksVardiyaGun.getDurum().booleanValue() == false)
+									ekle = pdksVardiyaGun.getVardiyaDate().before(bugunDate);
+
 								if (yoneticisi != null && ekle) {
 									Tanim tesis = pdksPersonel.getTesis();
 									if (tesisYetki && (ikMailGonderme || yoneticiMailGonderme == false))
@@ -999,7 +1004,7 @@ public class IseGelmemeUyari implements Serializable {
 														departmanSave.setMailBox(mailBoxStr);
 														pdksEntityController.saveOrUpdate(session, entityManager, departmanSave);
 														pdksEntityController.sessionFlush(session);
-													 
+
 														departman = departmanSave;
 													} catch (Exception e) {
 														logger.error(departmanId + " " + mailBoxStr + "\n" + e);
@@ -2670,12 +2675,12 @@ public class IseGelmemeUyari implements Serializable {
 					sb.append(" inner join " + VardiyaSaat.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + VardiyaSaat.COLUMN_NAME_ID + " = V." + VardiyaGun.COLUMN_NAME_VARDIYA_SAAT);
 					sb.append(" and S." + VardiyaSaat.COLUMN_NAME_CALISMA_SURESI + " >= :s ");
 					sb.append(" left join " + VardiyaEkSaat.TABLE_NAME + " ES " + PdksEntityController.getJoinLOCK() + " on ES." + VardiyaEkSaat.COLUMN_NAME_ID + " =  S." + VardiyaSaat.COLUMN_NAME_VARDIYA_EK_SAAT);
- 					sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :bitTarih ");
+					sb.append(" where V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " >= :basTarih and V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + " <= :bitTarih ");
 					sb.append(" order by V." + VardiyaGun.COLUMN_NAME_VARDIYA_TARIHI + ",V." + VardiyaGun.COLUMN_NAME_PERSONEL);
 					fields.put("s", maxGunCalismaSaat);
 					fields.put("basTarih", PdksUtil.getDate(basTarih));
 					fields.put("bitTarih", PdksUtil.getDate(bitTarih));
- 					fazlaCalismalar = pdksEntityController.getObjectBySQLList(sb, fields, VardiyaGun.class);
+					fazlaCalismalar = pdksEntityController.getObjectBySQLList(sb, fields, VardiyaGun.class);
 				}
 				if (fazlaCalismalar != null && !fazlaCalismalar.isEmpty()) {
 					TreeMap<String, Liste> listeMap = new TreeMap<String, Liste>();
