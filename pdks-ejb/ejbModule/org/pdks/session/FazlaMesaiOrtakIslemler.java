@@ -1649,6 +1649,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					for (Long key : orgMap.keySet())
 						idList.add(orgMap.get(key).getId());
 					if (!idList.isEmpty()) {
+						pdksEntityController.startTransaction(session);
 						List<PersonelDenklestirmeOrganizasyonDetay> organizasyonDetayList = pdksEntityController.getSQLParamByFieldList(PersonelDenklestirmeOrganizasyonDetay.TABLE_NAME, PersonelDenklestirmeOrganizasyonDetay.COLUMN_NAME_PERSONEL_DENKLESTIRME_ORGANIZASYON, idList,
 								PersonelDenklestirmeOrganizasyonDetay.class, session);
 						for (PersonelDenklestirmeOrganizasyonDetay organizasyonDetay : organizasyonDetayList)
@@ -2079,7 +2080,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 										if (eski) {
 											organizasyonDetay = orgDetayMap.get(key);
 											organizasyonDetay.setDegisti(false);
-											// orgDetayMap.remove(key);
+											orgDetayMap.remove(key);
 										} else {
 											organizasyonDetay = new PersonelDenklestirmeOrganizasyonDetay(denklestirmeOrganizasyon, alan);
 											organizasyonDetay.setDegisti(pda.getTanimDeger() != null);
@@ -2089,8 +2090,6 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 											if (organizasyonDetay.isDegisti() || organizasyonDetay.getId() == null) {
 												try {
 													pdksEntityController.saveOrUpdate(session, null, organizasyonDetay);
-													if (eski == false)
-														orgDetayMap.put(key, organizasyonDetay);
 													flush = true;
 												} catch (Exception e) {
 												}
