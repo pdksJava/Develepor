@@ -609,7 +609,12 @@ public class IseGelmemeUyari implements Serializable {
 
 							for (Iterator iterator1 = vardiyaList.iterator(); iterator1.hasNext();) {
 								VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator1.next();
-								CalismaModeli cm = pdksVardiyaGun.getCalismaModeli();
+								Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya();
+								Personel pdksPersonel = pdksVardiyaGun.getPersonel();
+								Long perNoId = pdksPersonel.getPersonelKGS().getId(), personelNoId = pdksPersonel.getId();
+								Long depId = pdksPersonel.getSirket().getDepartman().getId();
+								boolean hareketVar = personelHareketMap.containsKey(perNoId) && !personelHareketMap.get(perNoId).isEmpty();
+								CalismaModeli cm = pdksVardiyaGun.getIzin() == null && hareketVar == false ? pdksVardiyaGun.getCalismaModeli() : null;
 								if (cm != null && cm.isHareketKaydiVardiyaBulsunmu() && pdksVardiyaGun.getDurum().booleanValue() == false) {
 									if (pdksVardiyaGun.getVardiyaDate().before(bugunDate) == false) {
 										iterator1.remove();
@@ -624,13 +629,8 @@ public class IseGelmemeUyari implements Serializable {
 								pdksVardiyaGun.setCikisHareketleri(null);
 								pdksVardiyaGun.setHareketler(null);
 								pdksVardiyaGun.setHareketHatali(Boolean.FALSE);
-								Personel pdksPersonel = pdksVardiyaGun.getPersonel();
 								// if (pdksPersonel.getPdksSicilNo().equals("SR0013"))
 								// logger.debug("");
-								Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya();
-								Long perNoId = pdksPersonel.getPersonelKGS().getId(), personelNoId = pdksPersonel.getId();
-								Long depId = pdksPersonel.getSirket().getDepartman().getId();
-								boolean hareketVar = personelHareketMap.containsKey(perNoId) && !personelHareketMap.get(perNoId).isEmpty();
 								if (!hareketVar) {
 									hareketVar = pdksVardiyaGun.getIzin() != null;
 									if (hareketVar) {
