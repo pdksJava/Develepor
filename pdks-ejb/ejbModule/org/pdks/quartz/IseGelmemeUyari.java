@@ -609,6 +609,14 @@ public class IseGelmemeUyari implements Serializable {
 
 							for (Iterator iterator1 = vardiyaList.iterator(); iterator1.hasNext();) {
 								VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator1.next();
+								CalismaModeli cm = pdksVardiyaGun.getCalismaModeli();
+								if (cm != null && cm.isHareketKaydiVardiyaBulsunmu() && pdksVardiyaGun.getDurum().booleanValue() == false) {
+									if (pdksVardiyaGun.getVardiyaDate().before(bugunDate) == false) {
+										iterator1.remove();
+										continue;
+									}
+								}
+
 								pdksVardiyaGun.setIlkGiris(null);
 								pdksVardiyaGun.setSonCikis(null);
 								pdksVardiyaGun.setHareketler(null);
@@ -641,10 +649,7 @@ public class IseGelmemeUyari implements Serializable {
 									ekle = vardiyaHareketKontrol(bugun, hareketler, personelHareketMap, pdksVardiyaGun);
 									if (ekle && calisma == false)
 										ekle = pdksVardiyaGun.getHareketler() != null && !pdksVardiyaGun.getHareketler().isEmpty();
-									CalismaModeli cm = ekle && hareketler.isEmpty() ? pdksVardiyaGun.getCalismaModeli() : null;
-									if (cm != null && cm.isHareketKaydiVardiyaBulsunmu() && pdksVardiyaGun.getDurum().booleanValue() == false)
-										ekle = pdksVardiyaGun.getVardiyaDate().before(bugunDate);
-									if (ekle && !hareketler.isEmpty()) {
+									if (!hareketler.isEmpty()) {
 										List<HareketKGS> list = perHareketListMap.containsKey(perNoId) ? perHareketListMap.get(perNoId) : new ArrayList<HareketKGS>();
 										if (list.isEmpty())
 											perHareketListMap.put(perNoId, list);
