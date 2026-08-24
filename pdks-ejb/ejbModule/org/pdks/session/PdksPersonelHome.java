@@ -2050,11 +2050,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			fillDistinctBolumList();
 		if (pdksPersonel.getKullanici() != null)
 			PdksUtil.setUserYetki(pdksPersonel.getKullanici());
-
-		dinamikPersonelDurumList.clear();
-		dinamikPersonelSayisalList.clear();
-		dinamikPersonelTanimList.clear();
-		dinamikPersonelAciklamaMap.clear();
+		personelDinamikAlanClear();
 		if (pdksPersonel.getId() != null)
 			getPersonelDinamikMap(pdksPersonel.getId());
 		else
@@ -2179,6 +2175,28 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			iseGelmemeMailDurum = ortakIslemler.getParameterKey("yoneticiMailGonderme").equals("0");
 		mailAdresDurumGuncelle(departman);
 		bakiyeIzinDurumKontrol();
+	}
+
+	/**
+	 * 
+	 */
+	private void personelDinamikAlanClear() {
+		if (dinamikPersonelDurumList == null)
+			dinamikPersonelDurumList = new ArrayList<PersonelDinamikAlan>();
+		else
+			dinamikPersonelDurumList.clear();
+		if (dinamikPersonelSayisalList == null)
+			dinamikPersonelSayisalList = new ArrayList<PersonelDinamikAlan>();
+		else
+			dinamikPersonelSayisalList.clear();
+		if (dinamikPersonelTanimList == null)
+			dinamikPersonelTanimList = new ArrayList<PersonelDinamikAlan>();
+		else
+			dinamikPersonelTanimList.clear();
+		if (dinamikPersonelAciklamaMap == null)
+			dinamikPersonelAciklamaMap = new HashMap<Long, List<Tanim>>();
+		else
+			dinamikPersonelAciklamaMap.clear();
 	}
 
 	/**
