@@ -641,8 +641,10 @@ public class IseGelmemeUyari implements Serializable {
 									ekle = vardiyaHareketKontrol(bugun, hareketler, personelHareketMap, pdksVardiyaGun);
 									if (ekle && calisma == false)
 										ekle = pdksVardiyaGun.getHareketler() != null && !pdksVardiyaGun.getHareketler().isEmpty();
-
-									if (!hareketler.isEmpty()) {
+									CalismaModeli cm = ekle && hareketler.isEmpty() ? pdksVardiyaGun.getCalismaModeli() : null;
+									if (cm != null && cm.isHareketKaydiVardiyaBulsunmu() && pdksVardiyaGun.getDurum().booleanValue() == false)
+										ekle = pdksVardiyaGun.getVardiyaDate().before(bugunDate);
+									if (ekle && !hareketler.isEmpty()) {
 										List<HareketKGS> list = perHareketListMap.containsKey(perNoId) ? perHareketListMap.get(perNoId) : new ArrayList<HareketKGS>();
 										if (list.isEmpty())
 											perHareketListMap.put(perNoId, list);
@@ -657,9 +659,6 @@ public class IseGelmemeUyari implements Serializable {
 									}
 									hareketler = null;
 								}
-								CalismaModeli cm = ekle ? pdksVardiyaGun.getCalismaModeli() : null;
-								if (cm != null && cm.isHareketKaydiVardiyaBulsunmu() && pdksVardiyaGun.getDurum().booleanValue() == false)
-									ekle = pdksVardiyaGun.getVardiyaDate().before(bugunDate);
 
 								if (yoneticisi != null && ekle) {
 									Tanim tesis = pdksPersonel.getTesis();
