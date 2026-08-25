@@ -375,6 +375,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 					calismaModeli.setHaftaTatilHareketGuncelle(Boolean.FALSE);
 					calismaModeli.setOffHareketGuncelle(Boolean.FALSE);
 				}
+				if (calismaModeli.isFazlaMesaiVarMi())
+					calismaModeli.setFazlaMesaiSureHesapla(false);
 				List<CalismaModeliVardiya> kayitliCalismaModeliVardiyaList = null;
 				if (calismaModeli.getId() != null && calismaModeli.getGenelVardiya().equals(Boolean.FALSE)) {
 					HashMap parametreMap = new HashMap();

@@ -63,6 +63,10 @@ public class PersonelFazlaMesai extends BaseObject implements Cloneable {
 
 	private String aciklama;
 
+	public PersonelFazlaMesai() {
+		super();
+	}
+
 	@Column(name = COLUMN_NAME_HAREKET)
 	public String getHareketId() {
 		return hareketId;

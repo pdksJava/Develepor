@@ -177,6 +177,12 @@
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
+										<h:outputText value="Fazla Mesai Süre Hesapla" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.fazlaMesaiSureHesapla)}" />
+								</rich:column>
+								<rich:column>
+									<f:facet name="header">
 										<h:outputText value="ÇGS Güncellenir" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.updateCGS)}" />
@@ -488,6 +494,14 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Fazla Mesai Var</ui:define>
 							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.fazlaMesaiVar}" disabled="#{authenticatedUser.admin == false}">
+								<a4j:support event="onclick" reRender="fazlaMesaiSureHesapla" status="ajaxStatus" ajaxSingle="true"
+									action="#{ortakIslemler.emtpyAjaxFunction()}" />
+							</h:selectBooleanCheckbox>
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml" id="fazlaMesaiSureHesapla">
+							<ui:define name="label">Fazla Mesai Süre Hesapla</ui:define>
+							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.fazlaMesaiSureHesapla}"
+								disabled="#{authenticatedUser.admin == false or calismaModeliHome.calismaModeli.fazlaMesaiVar}">
 
 							</h:selectBooleanCheckbox>
 						</s:decorate>

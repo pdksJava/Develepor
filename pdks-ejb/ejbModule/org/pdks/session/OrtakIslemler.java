@@ -2602,9 +2602,9 @@ public class OrtakIslemler implements Serializable {
 				}
 				durum = true;
 			} catch (Exception e) {
- 				logger.error(e);
+				logger.error(e);
 				e.printStackTrace();
- 			}
+			}
 
 		}
 		KapiGirisGuncelleme.setKapiGirisGuncelleDurum(durum);
@@ -23196,9 +23196,8 @@ public class OrtakIslemler implements Serializable {
 					vardiyaGun.setGecenAyResmiTatilSure(0.0d);
 					if (vardiyaGun.getVardiya() == null)
 						continue;
-
-					VardiyaGun vardiyaHaftaTatil = null;
 					boolean fazlaMesaiOnayla = calismaModeli.isFazlaMesaiVarMi() == false && vardiyaGun.getVardiya().isCalisma();
+					VardiyaGun vardiyaHaftaTatil = null;
 					try {
 						Vardiya vardiya = vardiyaGun.getIslemVardiya();
 						if (vardiyaGun.isFiiliHesapla() == false && vardiyaGun.isBayramAyir() == false) {
@@ -23723,6 +23722,7 @@ public class OrtakIslemler implements Serializable {
 														fm1.setVardiyaGun(vardiyaGun);
 														fm1.setBasZaman(basZaman);
 														fm1.setBitZaman(islemVardiya.getVardiyaBasZaman());
+
 														fm1.setHareketId(girisHareket.getId());
 														personelFazlaMesaiList.add(fm1);
 														fm2.setBasZaman(islemVardiya.getVardiyaBitZaman());
@@ -23766,29 +23766,39 @@ public class OrtakIslemler implements Serializable {
 													}
 												}
 											}
-											for (PersonelFazlaMesai pfm : personelFazlaMesaiList) {
-												if (personelFazlaMesaiList.size() == 1)
-													personelFazlaMesai = pfm;
-												pfm.setBasZaman(getSaniyeSifirla(pfm.getBasZaman(), vardiyaGun));
-												pfm.setBitZaman(getSaniyeSifirla(pfm.getBitZaman(), vardiyaGun));
-												pfm.setFazlaMesaiOnayDurum(fazlaMesaiOnayDurum);
-												pfm.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANMADI);
-												// List yemekler = arifeGunu && arifeYemekEkle && oncekiCikisZaman != null && oncekiCikisZaman.getTime() == girisZaman.getTime() ? new ArrayList<YemekIzin>() : yemekList;
-												// double fazlaMesaiSaati = getSaatSure(pfm.getBasZaman(), pfm.getBitZaman(), yemekler, vardiyaGun, session);
-												// fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesaiSaati, vardiyaGun.getFazlaMesaiYuvarla());
-												// pfm.setFazlaMesaiSaati(fazlaMesaiSaati);
-												pfm.setFazlaMesaiSaati(0.0d);
-												pfm.setOlusturanUser(sistemUser != null ? sistemUser : loginUser);
-												if (cikisHareket.isTatil())
-													tatilMesaiMap.put(pfm.getHareketId(), personelFazlaMesai.getFazlaMesaiSaati());
-												if (pfm.getHareketId() != null) {
-													vardiyaGun.addPersonelFazlaMesai(pfm);
-													if (updateSatus) {
-														pdksEntityController.saveOrUpdate(session, null, pfm);
-														flush = true;
+											if (personelFazlaMesaiList.isEmpty() == false) {
+												boolean fazlaMesaiSureHesapla = calismaModeli.isFazlaMesaiSureHesaplansin();
+												List<YemekIzin> list = new ArrayList<YemekIzin>();
+												for (PersonelFazlaMesai pfm : personelFazlaMesaiList) {
+													if (personelFazlaMesaiList.size() == 1)
+														personelFazlaMesai = pfm;
+													pfm.setBasZaman(getSaniyeSifirla(pfm.getBasZaman(), vardiyaGun));
+													pfm.setBitZaman(getSaniyeSifirla(pfm.getBitZaman(), vardiyaGun));
+													pfm.setFazlaMesaiOnayDurum(fazlaMesaiOnayDurum);
+													pfm.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANMADI);
+													// List yemekler = arifeGunu && arifeYemekEkle && oncekiCikisZaman != null && oncekiCikisZaman.getTime() == girisZaman.getTime() ? new ArrayList<YemekIzin>() : yemekList;
+													// double fazlaMesaiSaati = getSaatSure(pfm.getBasZaman(), pfm.getBitZaman(), yemekler, vardiyaGun, session);
+													// fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesaiSaati, vardiyaGun.getFazlaMesaiYuvarla());
+													// pfm.setFazlaMesaiSaati(fazlaMesaiSaati);
+													double fazlaMesaiSaati = 0.0d;
+													if (fazlaMesaiSureHesapla) {
+														fazlaMesaiSaati = getSaatSure(pfm.getBasZaman(), pfm.getBitZaman(), list, vardiyaGun, session);
+														fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesaiSaati, vardiyaGun.getFazlaMesaiYuvarla());
+														pfm.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANDI);
 													}
-
+													pfm.setFazlaMesaiSaati(fazlaMesaiSaati);
+													pfm.setOlusturanUser(sistemUser != null ? sistemUser : loginUser);
+													if (cikisHareket.isTatil())
+														tatilMesaiMap.put(pfm.getHareketId(), personelFazlaMesai.getFazlaMesaiSaati());
+													if (pfm.getHareketId() != null) {
+														vardiyaGun.addPersonelFazlaMesai(pfm);
+														if (updateSatus) {
+															pdksEntityController.saveOrUpdate(session, null, pfm);
+															flush = true;
+														}
+													}
 												}
+												list = null;
 											}
 
 										}
